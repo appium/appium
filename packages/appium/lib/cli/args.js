@@ -82,7 +82,7 @@ function makeListArgs(type) {
         required: false,
         default: false,
         action: 'store_true',
-        help: 'Show information about newer versions',
+        help: `Show information about available ${type} updates`,
         dest: 'showUpdates',
       },
     ],
@@ -92,7 +92,7 @@ function makeListArgs(type) {
         required: false,
         default: false,
         action: 'store_true',
-        help: 'Show more information about each extension',
+        help: `Show more information about each ${type}`,
         dest: 'verbose',
       },
     ],
@@ -112,9 +112,8 @@ function makeInstallArgs(type) {
       {
         type: 'str',
         help:
-          `Name of the ${type} to install, for example: ` + type === DRIVER_TYPE
-            ? DRIVER_EXAMPLE
-            : PLUGIN_EXAMPLE,
+          `Name of the ${type} to install, for example: ` +
+          (type === DRIVER_TYPE ? DRIVER_EXAMPLE : PLUGIN_EXAMPLE),
       },
     ],
     [
@@ -136,9 +135,8 @@ function makeInstallArgs(type) {
         default: null,
         type: 'str',
         help:
-          `If installing from Git or GitHub, the package name, as defined in the plugin's ` +
-          `package.json file in the "name" field, cannot be determined automatically, and ` +
-          `should be reported here, otherwise the install will probably fail.`,
+          `The Node.js package name of the ${type}. ` +
+          `Required if "source" is set to "git" or "github".`,
         dest: 'packageName',
       },
     ],
@@ -158,9 +156,8 @@ function makeUninstallArgs(type) {
       {
         type: 'str',
         help:
-          `Name of the ${type} to uninstall, for example: ` + type === DRIVER_TYPE
-            ? DRIVER_EXAMPLE
-            : PLUGIN_EXAMPLE,
+          `Name of the ${type} to uninstall, for example: ` +
+          (type === DRIVER_TYPE ? DRIVER_EXAMPLE : PLUGIN_EXAMPLE),
       },
     ],
   ]);
@@ -179,9 +176,8 @@ function makeDoctorArgs(type) {
       {
         type: 'str',
         help:
-          `Name of the ${type} to run doctor checks for, for example: ` + type === DRIVER_TYPE
-            ? DRIVER_EXAMPLE
-            : PLUGIN_EXAMPLE,
+          `Name of the ${type} to run doctor checks for, for example: ` +
+          (type === DRIVER_TYPE ? DRIVER_EXAMPLE : PLUGIN_EXAMPLE),
       },
     ],
   ]);
@@ -201,12 +197,9 @@ function makeUpdateArgs(type) {
         type: 'str',
         help:
           `Name of the ${type} to update, or the word "installed" to update all installed ` +
-            `${type}s. To see available updates, run "appium ${type} list --installed --updates". ` +
-            'For example: ' +
-            type ===
-          DRIVER_TYPE
-            ? DRIVER_EXAMPLE
-            : PLUGIN_EXAMPLE,
+          `${type}s. To see available updates, run "appium ${type} list --installed --updates". ` +
+          'For example: ' +
+          (type === DRIVER_TYPE ? DRIVER_EXAMPLE : PLUGIN_EXAMPLE),
       },
     ],
     [
@@ -216,8 +209,7 @@ function makeUpdateArgs(type) {
         default: false,
         action: 'store_true',
         help:
-          `Include updates that might have a new major revision, and potentially include ` +
-          `breaking changes`,
+          'Include any available major revision updates, which may potentially have breaking changes',
       },
     ],
   ]);
@@ -236,9 +228,8 @@ function makeRunArgs(type) {
       {
         type: 'str',
         help:
-          `Name of the ${type} to run a script from, for example: ` + type === DRIVER_TYPE
-            ? DRIVER_EXAMPLE
-            : PLUGIN_EXAMPLE,
+          `Name of the ${type} to run a script from, for example: ` +
+          (type === DRIVER_TYPE ? DRIVER_EXAMPLE : PLUGIN_EXAMPLE),
       },
     ],
     [
@@ -248,9 +239,8 @@ function makeRunArgs(type) {
         nargs: '?',
         type: 'str',
         help:
-          `Name of the script to run from the ${type}. The script name must be a key ` +
-          `inside the "appium.scripts" field inside the ${type}'s "package.json" file. ` +
-          `If not provided then all available script names are going to be listed.`,
+          `Name of the ${type} script to run. If not provided, return a list ` +
+          `of available scripts for this ${type}.`,
       },
     ],
   ]);

@@ -270,13 +270,11 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
     const currentAutomationName = _.toLower(this.opts.automationName);
 
     const parseFullName = (fullName: string) => {
-      const separatorPos = fullName.indexOf(FEATURE_NAME_SEPARATOR);
+      let separatorPos = fullName.indexOf(FEATURE_NAME_SEPARATOR);
       if (separatorPos < 0) {
-        // This should not happen as we preprocess corresponding server arguments in advance
-        throw new Error(
-          `The full feature name must include both the driver name/wildcard and the feature ` +
-          `name split by a colon, got '${fullName}' instead`
-        );
+        // Workaround for lower appium packages
+        fullName = `${ALL_DRIVERS_MATCH}${FEATURE_NAME_SEPARATOR}${fullName}`;
+        separatorPos = fullName.indexOf(FEATURE_NAME_SEPARATOR);
       }
       return [
         _.toLower(fullName.substring(0, separatorPos)),

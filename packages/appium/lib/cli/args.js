@@ -12,7 +12,7 @@ import {
 import {INSTALL_TYPES} from '../extension/extension-config';
 import {toParserArgs} from '../schema/cli-args';
 const DRIVER_EXAMPLE = 'xcuitest';
-const PLUGIN_EXAMPLE = 'find_by_image';
+const PLUGIN_EXAMPLE = 'images';
 
 /**
  * This is necessary because we pass the array into `argparse`. `argparse` is bad and mutates things. We don't want that.
@@ -32,7 +32,7 @@ const globalExtensionArgs = new Map([
       required: false,
       default: false,
       action: 'store_true',
-      help: 'Use JSON for output format',
+      help: 'Return output in JSON format',
       dest: 'json',
     },
   ],
@@ -108,7 +108,7 @@ function makeInstallArgs(type) {
   return new Map([
     ...globalExtensionArgs,
     [
-      [type],
+      [`${type.toUpperCase()}NAME`],
       {
         type: 'str',
         help:
@@ -123,7 +123,7 @@ function makeInstallArgs(type) {
         default: null,
         choices: INSTALL_TYPES_ARRAY,
         help:
-          `Where to look for the ${type} if it is not one of Appium's verified ` +
+          `Where to look for the ${type} if it is not one of Appium's official ` +
           `${type}s. Possible values: ${INSTALL_TYPES_ARRAY.join(', ')}`,
         dest: 'installType',
       },
@@ -152,7 +152,7 @@ function makeUninstallArgs(type) {
   return new Map([
     ...globalExtensionArgs,
     [
-      [type],
+      [`${type.toUpperCase()}NAME`],
       {
         type: 'str',
         help:
@@ -172,7 +172,7 @@ function makeDoctorArgs(type) {
   return new Map([
     ...globalExtensionArgs,
     [
-      [type],
+      [`${type.toUpperCase()}NAME`],
       {
         type: 'str',
         help:
@@ -192,12 +192,12 @@ function makeUpdateArgs(type) {
   return new Map([
     ...globalExtensionArgs,
     [
-      [type],
+      [`${type.toUpperCase()}NAME`],
       {
         type: 'str',
         help:
-          `Name of the ${type} to update, or the word "installed" to update all installed ` +
-          `${type}s. To see available updates, run "appium ${type} list --installed --updates". ` +
+          `Name of the ${type} to update, or "installed" to update all installed ${type}s. ` +
+          `To see available ${type} updates, run "appium ${type} list --installed --updates". ` +
           'For example: ' +
           (type === DRIVER_TYPE ? DRIVER_EXAMPLE : PLUGIN_EXAMPLE),
       },
@@ -209,7 +209,7 @@ function makeUpdateArgs(type) {
         default: false,
         action: 'store_true',
         help:
-          'Include any available major revision updates, which may potentially have breaking changes',
+          'Include any available major revision updates, which may have breaking changes',
       },
     ],
   ]);
@@ -224,7 +224,7 @@ function makeRunArgs(type) {
   return new Map([
     ...globalExtensionArgs,
     [
-      [type],
+      [`${type.toUpperCase()}NAME`],
       {
         type: 'str',
         help:

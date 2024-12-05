@@ -208,6 +208,7 @@ class ArgParser {
     const serverParser = subParser.add_parser('server', {
       add_help: true,
       help: 'Run an Appium server',
+      description: 'Run an Appium server (the "server" subcommand is optional)',
     });
 
     ArgParser._patchExit(serverParser);
@@ -229,7 +230,8 @@ class ArgParser {
     for (const type of /** @type {[DriverType, PluginType]} */ ([DRIVER_TYPE, PLUGIN_TYPE])) {
       const extParser = subParsers.add_parser(type, {
         add_help: true,
-        help: `Access the ${type} management CLI commands`,
+        help: `Manage Appium ${type}s`,
+        description: `Manage Appium ${type}s using various subcommands`,
       });
 
       ArgParser._patchExit(extParser);
@@ -266,12 +268,12 @@ class ArgParser {
         {
           command: EXT_SUBCOMMAND_RUN,
           args: extensionArgs[type].run,
-          help: `Run a script (if any defined) from the given ${type}`,
+          help: `Run a script (if available) from the given ${type}`,
         },
         {
           command: EXT_SUBCOMMAND_DOCTOR,
           args: extensionArgs[type].doctor,
-          help: `Run doctor checks (if any defined) for the given ${type}`,
+          help: `Run doctor checks (if available) for the given ${type}`,
         },
       ];
 
@@ -299,7 +301,7 @@ class ArgParser {
   static _addSetupToParser(subParser) {
     const setupParser = subParser.add_parser('setup', {
       add_help: true,
-      help: 'Install a preset of official drivers and plugins (default: "mobile")',
+      help: 'Install a preset of multiple drivers and plugins',
       description:
         `Install a preset of official drivers/plugins compatible with the current host platform ` +
         `(${determinePlatformName()}). Existing drivers/plugins will remain. ` +

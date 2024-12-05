@@ -270,7 +270,7 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
     const currentAutomationName = _.toLower(this.opts.automationName);
 
     const parseFullName = (fullName: string) => {
-      let separatorPos = fullName.indexOf(FEATURE_NAME_SEPARATOR);
+      const separatorPos = fullName.indexOf(FEATURE_NAME_SEPARATOR);
       if (separatorPos < 0) {
         // TODO: This is for the backward compatibility with Appium 2.
         // TODO: We should bring back to raise an Error below for Appium 3.

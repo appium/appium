@@ -13,9 +13,12 @@ if (!PROJECT_ID || !API_TOKEN) {
   throw new Error(`Both CROWDIN_PROJECT_ID and CROWDIN_TOKEN environment variables must be set`);
 }
 export const RESOURCES_ROOT = path.resolve('packages', 'appium', 'docs');
-export const ORIGINAL_LANGUAGE = 'en';
+export const DEFAULT_LANGUAGE = 'en';
 export const DOCUMENTS_EXT = '.md';
-export const MKDOCS_YAML = (langName) => `mkdocs-${langName}.yml`;
+// https://community.crowdin.com/t/how-to-make-yaml-keys-translatable/11079
+export const ORIGINAL_MKDOCS_CONFIG = (langName) => `mkdocs-${langName}.yml`;
+export const CROWIN_MKDOCS_CONFIG = 'mkdocs.txt';
+export const MKDOCS_CONTENT_TYPE = 'text/plain';
 const USER_AGENT = 'Appium CI';
 const API_ROOT = 'https://api.crowdin.com/api/v2';
 

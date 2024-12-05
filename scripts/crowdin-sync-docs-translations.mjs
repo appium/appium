@@ -4,11 +4,12 @@ import {waitForCondition} from 'asyncbox';
 import {
   log,
   walk,
-  ORIGINAL_LANGUAGE,
+  DEFAULT_LANGUAGE,
   performApiRequest,
   RESOURCES_ROOT,
   DOCUMENTS_EXT,
-  MKDOCS_YAML,
+  ORIGINAL_MKDOCS_CONFIG,
+  CROWIN_MKDOCS_CONFIG,
 } from './crowdin-common.mjs';
 
 const BUILD_TIMEOUT_MS = 1000 * 60 * 10;
@@ -98,14 +99,14 @@ async function syncTranslatedDocuments(srcDir, dstDir) {
  * @returns {Promise<void>}
  */
 async function syncTranslatedConfig(srcDir, dstDir, dstLanguage) {
-  const configPath = path.join(srcDir, MKDOCS_YAML(ORIGINAL_LANGUAGE));
-  if (!await fs.exists(configPath)) {
-    throw new Error(`Did not find the translated MkDocs config at '${configPath}'`);
+  const srcPath = path.join(srcDir, CROWIN_MKDOCS_CONFIG);
+  if (!await fs.exists(srcPath)) {
+    throw new Error(`Did not find the translated MkDocs config at '${srcPath}'`);
   }
 
-  const dstPath = path.join(dstDir, MKDOCS_YAML(dstLanguage));
+  const dstPath = path.join(dstDir, ORIGINAL_MKDOCS_CONFIG(dstLanguage));
   log.info(`Synchronizing '${dstPath}'`);
-  await fs.mv(configPath, dstPath);
+  await fs.mv(srcPath, dstPath);
 }
 
 async function main() {
@@ -122,7 +123,7 @@ async function main() {
       let count = 0;
       for (const name of srcLanguageNames) {
         const currentPath = path.join(tmpRoot, name);
-        if (!(await fs.stat(currentPath)).isDirectory() || name === ORIGINAL_LANGUAGE) {
+        if (!(await fs.stat(currentPath)).isDirectory() || name === DEFAULT_LANGUAGE) {
           continue;
         }
 

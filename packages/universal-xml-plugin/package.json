@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "@types/xmldom": "0.1.34",
-    "@xmldom/xmldom": "0.9.5",
+    "@xmldom/xmldom": "0.9.6",
     "fast-xml-parser": "4.5.0",
     "lodash": "4.17.21",
     "source-map-support": "0.5.21",

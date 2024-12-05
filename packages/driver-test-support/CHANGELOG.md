@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.7.1](https://github.com/appium/appium/compare/@appium/driver-test-support@0.7.0...@appium/driver-test-support@0.7.1) (2024-12-05)
+
+
+### Bug Fixes
+
+* **base-driver:** add * always for non-separator for backward compatibility ([#20821](https://github.com/appium/appium/issues/20821)) ([6ea0830](https://github.com/appium/appium/commit/6ea0830319c204097233d0659e21b3447b624431))
+* **support:** update dependency axios to v1.7.9 ([#20811](https://github.com/appium/appium/issues/20811)) ([69f100a](https://github.com/appium/appium/commit/69f100ad3e12030708dee4b8a74005dd41976e37))
+* **types:** update dependency type-fest to v4.30.0 ([#20802](https://github.com/appium/appium/issues/20802)) ([8590432](https://github.com/appium/appium/commit/8590432955eb7663e35847db541b9ead3f845a36))
+
+
+
 ## [0.7.0](https://github.com/appium/appium/compare/@appium/driver-test-support@0.6.12...@appium/driver-test-support@0.7.0) (2024-12-02)
 
 

@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.5.7](https://github.com/appium/appium/compare/@appium/fake-driver@5.5.6...@appium/fake-driver@5.5.7) (2024-12-05)
+
+
+### Bug Fixes
+
+* **universal-xml-plugin:** update dependency @xmldom/xmldom to v0.9.6 ([#20819](https://github.com/appium/appium/issues/20819)) ([228b091](https://github.com/appium/appium/commit/228b091edc6f16dfc081642bfc313b66d07bd370))
+
+
+
 ## [5.5.6](https://github.com/appium/appium/compare/@appium/fake-driver@5.5.5...@appium/fake-driver@5.5.6) (2024-11-29)
 
 

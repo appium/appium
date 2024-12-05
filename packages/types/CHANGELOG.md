@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.22.3](https://github.com/appium/appium/compare/@appium/types@0.22.2...@appium/types@0.22.3) (2024-12-05)
+
+
+### Bug Fixes
+
+* **types:** update dependency type-fest to v4.30.0 ([#20802](https://github.com/appium/appium/issues/20802)) ([8590432](https://github.com/appium/appium/commit/8590432955eb7663e35847db541b9ead3f845a36))
+
+
+
 ## [0.22.2](https://github.com/appium/appium/compare/@appium/types@0.22.1...@appium/types@0.22.2) (2024-12-02)
 
 

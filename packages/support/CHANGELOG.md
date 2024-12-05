@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.0.0](https://github.com/appium/appium/compare/@appium/support@5.1.8...@appium/support@6.0.0) (2024-12-05)
+
+
+### ⚠ BREAKING CHANGES
+
+* **support:** revert #20797 which was used for a backward compatibility
+
+### Bug Fixes
+
+* **support:** update dependency axios to v1.7.9 ([#20811](https://github.com/appium/appium/issues/20811)) ([69f100a](https://github.com/appium/appium/commit/69f100ad3e12030708dee4b8a74005dd41976e37))
+* **support:** update dependency teen_process to v2.2.2 ([#20808](https://github.com/appium/appium/issues/20808)) ([c91683f](https://github.com/appium/appium/commit/c91683f50feea937ff8568eab6366465a6cf9a3e))
+* **types:** update dependency type-fest to v4.30.0 ([#20802](https://github.com/appium/appium/issues/20802)) ([8590432](https://github.com/appium/appium/commit/8590432955eb7663e35847db541b9ead3f845a36))
+
+
+### Miscellaneous Chores
+
+* **support:** revert [#20797](https://github.com/appium/appium/issues/20797) as a backward compatibility ([#20801](https://github.com/appium/appium/issues/20801)) ([16c3ae2](https://github.com/appium/appium/commit/16c3ae25eace19bf63ded56f5196865cfa6eca51))
+
+
+
 ## [5.1.8](https://github.com/appium/appium/compare/@appium/support@5.1.7...@appium/support@5.1.8) (2024-12-02)
 
 

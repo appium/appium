@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.26](https://github.com/appium/appium/compare/@appium/docutils@1.0.25...@appium/docutils@1.0.26) (2024-12-05)
+
+
+### Bug Fixes
+
+* **docutils:** update dependency lilconfig to v3.1.3 ([#20803](https://github.com/appium/appium/issues/20803)) ([93fa5cc](https://github.com/appium/appium/commit/93fa5ccb06eb5089bb3e8a8d9e67dad7f4446a0a))
+* **support:** update dependency teen_process to v2.2.2 ([#20808](https://github.com/appium/appium/issues/20808)) ([c91683f](https://github.com/appium/appium/commit/c91683f50feea937ff8568eab6366465a6cf9a3e))
+* **types:** update dependency type-fest to v4.30.0 ([#20802](https://github.com/appium/appium/issues/20802)) ([8590432](https://github.com/appium/appium/commit/8590432955eb7663e35847db541b9ead3f845a36))
+
+
+
 ## [1.0.25](https://github.com/appium/appium/compare/@appium/docutils@1.0.24...@appium/docutils@1.0.25) (2024-12-02)
 
 

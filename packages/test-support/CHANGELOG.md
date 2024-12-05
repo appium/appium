@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.1.0](https://github.com/appium/appium/compare/@appium/test-support@3.0.53...@appium/test-support@3.1.0) (2024-12-05)
+
+
+### Features
+
+* **test-support:** Remove obsolete helpers ([#20817](https://github.com/appium/appium/issues/20817)) ([81a5b57](https://github.com/appium/appium/commit/81a5b576739f67c1c7f311217ecc50e467f5a491))
+
+
+
 ## [3.0.53](https://github.com/appium/appium/compare/@appium/test-support@3.0.52...@appium/test-support@3.0.53) (2024-12-02)
 
 **Note:** Version bump only for package @appium/test-support

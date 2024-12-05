@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.13.1](https://github.com/appium/appium/compare/@appium/base-driver@9.13.0...@appium/base-driver@9.13.1) (2024-12-05)
+
+
+### Bug Fixes
+
+* **base-driver:** add * always for non-separator for backward compatibility ([#20821](https://github.com/appium/appium/issues/20821)) ([6ea0830](https://github.com/appium/appium/commit/6ea0830319c204097233d0659e21b3447b624431))
+* **base-driver:** update dependency @types/method-override to v3 ([#20799](https://github.com/appium/appium/issues/20799)) ([42ef484](https://github.com/appium/appium/commit/42ef4841f9a379d8e9ce531eb5375eab03902e3f))
+* **support:** update dependency axios to v1.7.9 ([#20811](https://github.com/appium/appium/issues/20811)) ([69f100a](https://github.com/appium/appium/commit/69f100ad3e12030708dee4b8a74005dd41976e37))
+* **types:** update dependency type-fest to v4.30.0 ([#20802](https://github.com/appium/appium/issues/20802)) ([8590432](https://github.com/appium/appium/commit/8590432955eb7663e35847db541b9ead3f845a36))
+
+
+
 ## [9.13.0](https://github.com/appium/appium/compare/@appium/base-driver@9.12.2...@appium/base-driver@9.13.0) (2024-12-02)
 
 

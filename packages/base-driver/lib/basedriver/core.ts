@@ -272,9 +272,7 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
     const parseFullName = (fullName: string) => {
       let separatorPos = fullName.indexOf(FEATURE_NAME_SEPARATOR);
       if (separatorPos < 0) {
-        // Workaround for lower appium packages
-        fullName = `${ALL_DRIVERS_MATCH}${FEATURE_NAME_SEPARATOR}${fullName}`;
-        separatorPos = fullName.indexOf(FEATURE_NAME_SEPARATOR);
+        return [ALL_DRIVERS_MATCH, fullName];
       }
       return [
         _.toLower(fullName.substring(0, separatorPos)),

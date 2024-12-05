@@ -14,6 +14,7 @@ import {
 import {fs} from '@appium/support';
 
 const LANGUAGE_ROOT = path.resolve(RESOURCES_ROOT, DEFAULT_LANGUAGE);
+// Max supported value is 500
 const MAX_ITEMS_PER_PAGE = 300;
 const DOCUMENT_CONTENT_TYPE = 'text/markdown';
 

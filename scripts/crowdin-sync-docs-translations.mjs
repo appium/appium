@@ -1,6 +1,7 @@
 import path from 'node:path';
 import {fs, net, tempDir, zip} from '@appium/support';
 import {waitForCondition} from 'asyncbox';
+import {spawn} from 'node:child_process';
 import {
   log,
   walk,
@@ -93,6 +94,46 @@ async function syncTranslatedDocuments(srcDir, dstDir) {
 
 /**
  *
+ * @param {string} yamlPath
+ * @returns {Promise<boolean>}
+ */
+async function validateYaml(yamlPath) {
+  log.debug(`Checking if '${yamlPath}' is a valid YAML file`);
+  const validatorProcess = spawn('ruby', ['-ryaml', '-e', 'p YAML.load(STDIN.read)']);
+  validatorProcess.stderr.on('data', (chunk) => log.debug(`STDERR: ${chunk.toString()}`));
+  validatorProcess.stdout.on('data', (chunk) => log.debug(`STDOUT: ${chunk.toString()}`));
+  const inputStream = fs.createReadStream(yamlPath);
+  inputStream.pipe(validatorProcess.stdin);
+  try {
+    return await new Promise((resolve, reject) => {
+      inputStream.once('error', reject);
+      validatorProcess.once('exit', (code, signal) => {
+        inputStream.unpipe(validatorProcess.stdin);
+        log.debug(`Yaml validator process exited with code ${code}, signal ${signal}`);
+        if (code === 0) {
+          log.info(`'${yamlPath}' is a valid YAML file`);
+          resolve(true);
+        } else {
+          reject(new Error(`'${yamlPath}' is not valid YAML file. Was it corrupted during translation?`));
+        }
+      });
+      validatorProcess.once('error', (e) => {
+        inputStream.unpipe(validatorProcess.stdin);
+        reject(e);
+      });
+    });
+  } catch (err) {
+    validatorProcess.kill(9);
+    log.warn(err.message);
+    return false;
+  } finally {
+    validatorProcess.removeAllListeners();
+    inputStream.removeAllListeners();
+  }
+}
+
+/**
+ *
  * @param {string} srcDir
  * @param {string} dstDir
  * @param {string} dstLanguage
@@ -103,8 +144,13 @@ async function syncTranslatedConfig(srcDir, dstDir, dstLanguage) {
   if (!await fs.exists(srcPath)) {
     throw new Error(`Did not find the translated MkDocs config at '${srcPath}'`);
   }
+  const configFileName = ORIGINAL_MKDOCS_CONFIG(dstLanguage);
+  if (!await validateYaml(srcPath)) {
+    log.warn(`Skipping the corrupted translated MkDocs config '${configFileName}'`);
+    return;
+  }
 
-  const dstPath = path.join(dstDir, ORIGINAL_MKDOCS_CONFIG(dstLanguage));
+  const dstPath = path.join(dstDir, configFileName);
   log.info(`Synchronizing '${dstPath}'`);
   await fs.mv(srcPath, dstPath);
 }

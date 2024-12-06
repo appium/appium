@@ -18,9 +18,11 @@ import {finalizeSchema, getArgSpec, hasArgSpec} from '../schema';
 import {rootDir} from '../config';
 import {getExtensionArgs, getServerArgs} from './args';
 import {
+  DEFAULT_PLUGINS,
   SUBCOMMAND_MOBILE,
   SUBCOMMAND_DESKTOP,
   SUBCOMMAND_BROWSER,
+  SUBCOMMAND_RESET,
   getPresetDrivers,
   determinePlatformName
 } from './setup-command';
@@ -53,7 +55,8 @@ class ArgParser {
     const parser = new ArgumentParser({
       add_help: true,
       description:
-        'A webdriver-compatible server that facilitates automation of web, mobile, and other types of apps across various platforms.',
+        'A webdriver-compatible server that facilitates automation of web, mobile, and other ' +
+        'types of apps across various platforms.',
       prog,
     });
 
@@ -84,9 +87,6 @@ class ArgParser {
 
     const subParsers = parser.add_subparsers({dest: 'subcommand'});
 
-    // add the 'setup' command
-    ArgParser._addSetupToParser(subParsers);
-
     // add the 'server' subcommand, and store the raw arguments on the parser
     // object as a way for other parts of the code to work with the arguments
     // conceptually rather than just through argparse
@@ -96,6 +96,9 @@ class ArgParser {
 
     // add the 'driver' and 'plugin' subcommands
     ArgParser._addExtensionCommandsToParser(subParsers);
+
+    // add the 'setup' command
+    ArgParser._addSetupToParser(subParsers);
 
     // backwards compatibility / drop-in wrapper
     /**
@@ -205,7 +208,8 @@ class ArgParser {
   static _addServerToParser(subParser) {
     const serverParser = subParser.add_parser('server', {
       add_help: true,
-      help: 'Run an Appium server',
+      help: 'Start an Appium server',
+      description: 'Start an Appium server (the "server" subcommand is optional)',
     });
 
     ArgParser._patchExit(serverParser);
@@ -227,7 +231,8 @@ class ArgParser {
     for (const type of /** @type {[DriverType, PluginType]} */ ([DRIVER_TYPE, PLUGIN_TYPE])) {
       const extParser = subParsers.add_parser(type, {
         add_help: true,
-        help: `Access the ${type} management CLI commands`,
+        help: `Manage Appium ${type}s`,
+        description: `Manage Appium ${type}s using various subcommands`,
       });
 
       ArgParser._patchExit(extParser);
@@ -259,19 +264,17 @@ class ArgParser {
         {
           command: EXT_SUBCOMMAND_UPDATE,
           args: extensionArgs[type].update,
-          help: `Update installed ${type}s to the latest version`,
+          help: `Update one or more installed ${type}s to the latest version`,
         },
         {
           command: EXT_SUBCOMMAND_RUN,
           args: extensionArgs[type].run,
-          help:
-            `Run a script (defined inside the ${type}'s package.json under the ` +
-            `“scripts” field inside the “appium” field) from an installed ${type}`,
+          help: `Run a script (if available) from the given ${type}`,
         },
         {
           command: EXT_SUBCOMMAND_DOCTOR,
           args: extensionArgs[type].doctor,
-          help: `Run doctor checks (if any defined) for the given ${type}`,
+          help: `Run doctor checks (if available) for the given ${type}`,
         },
       ];
 
@@ -299,9 +302,12 @@ class ArgParser {
   static _addSetupToParser(subParser) {
     const setupParser = subParser.add_parser('setup', {
       add_help: true,
-      help: `Select a preset of official drivers/plugins to install ` +
-        `compatible with '${determinePlatformName()}' host platform. ` +
-        `Existing drivers/plugins will remain. The default preset is 'mobile'.`,
+      help: 'Batch install or uninstall Appium drivers and plugins',
+      description:
+        `Install a preset of official drivers/plugins compatible with the current host platform ` +
+        `(${determinePlatformName()}). Existing drivers/plugins will remain. The default preset ` +
+        `is "mobile". Providing the special "reset" subcommand will instead uninstall all ` +
+        `drivers and plugins, and remove their related manifest files.`,
     });
 
 
@@ -313,15 +319,25 @@ class ArgParser {
     const parserSpecs = [
       {
         command: SUBCOMMAND_MOBILE,
-        help: `The preset for mobile devices: ${_.join(getPresetDrivers(SUBCOMMAND_MOBILE), ',')}`
+        help:
+          `The preset for mobile devices ` +
+          `(drivers: ${_.join(getPresetDrivers(SUBCOMMAND_MOBILE), ',')}; plugins: ${DEFAULT_PLUGINS})`
       },
       {
         command: SUBCOMMAND_BROWSER,
-        help: `The preset for desktop browser drivers: ${_.join(getPresetDrivers(SUBCOMMAND_BROWSER), ',')}`
+        help:
+          `The preset for desktop browsers ` +
+          `(drivers: ${_.join(getPresetDrivers(SUBCOMMAND_BROWSER), ',')}; plugins: ${DEFAULT_PLUGINS})`
       },
       {
         command: SUBCOMMAND_DESKTOP,
-        help: `The preset for desktop application drivers: ${_.join(getPresetDrivers(SUBCOMMAND_DESKTOP), ',')}`
+        help:
+          `The preset for desktop applications ` +
+          `(drivers: ${_.join(getPresetDrivers(SUBCOMMAND_DESKTOP), ',')}; plugins: ${DEFAULT_PLUGINS})`
+      },
+      {
+        command: SUBCOMMAND_RESET,
+        help: 'Remove all installed drivers and plugins'
       },
     ];
 

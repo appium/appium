@@ -22,6 +22,7 @@ import {
   SUBCOMMAND_MOBILE,
   SUBCOMMAND_DESKTOP,
   SUBCOMMAND_BROWSER,
+  SUBCOMMAND_RESET,
   getPresetDrivers,
   determinePlatformName
 } from './setup-command';
@@ -86,9 +87,6 @@ class ArgParser {
 
     const subParsers = parser.add_subparsers({dest: 'subcommand'});
 
-    // add the 'setup' command
-    ArgParser._addSetupToParser(subParsers);
-
     // add the 'server' subcommand, and store the raw arguments on the parser
     // object as a way for other parts of the code to work with the arguments
     // conceptually rather than just through argparse
@@ -98,6 +96,9 @@ class ArgParser {
 
     // add the 'driver' and 'plugin' subcommands
     ArgParser._addExtensionCommandsToParser(subParsers);
+
+    // add the 'setup' command
+    ArgParser._addSetupToParser(subParsers);
 
     // backwards compatibility / drop-in wrapper
     /**
@@ -207,8 +208,8 @@ class ArgParser {
   static _addServerToParser(subParser) {
     const serverParser = subParser.add_parser('server', {
       add_help: true,
-      help: 'Run an Appium server',
-      description: 'Run an Appium server (the "server" subcommand is optional)',
+      help: 'Start an Appium server',
+      description: 'Start an Appium server (the "server" subcommand is optional)',
     });
 
     ArgParser._patchExit(serverParser);
@@ -301,11 +302,12 @@ class ArgParser {
   static _addSetupToParser(subParser) {
     const setupParser = subParser.add_parser('setup', {
       add_help: true,
-      help: 'Install a preset of multiple drivers and plugins',
+      help: 'Batch install or uninstall Appium drivers and plugins',
       description:
         `Install a preset of official drivers/plugins compatible with the current host platform ` +
-        `(${determinePlatformName()}). Existing drivers/plugins will remain. ` +
-        `The default preset is "mobile".`,
+        `(${determinePlatformName()}). Existing drivers/plugins will remain. The default preset ` +
+        `is "mobile". Providing the special "reset" subcommand will instead uninstall all ` +
+        `drivers and plugins, and remove their related manifest files.`,
     });
 
 
@@ -332,6 +334,10 @@ class ArgParser {
         help:
           `The preset for desktop applications ` +
           `(drivers: ${_.join(getPresetDrivers(SUBCOMMAND_DESKTOP), ',')}; plugins: ${DEFAULT_PLUGINS})`
+      },
+      {
+        command: SUBCOMMAND_RESET,
+        help: 'Remove all installed drivers and plugins'
       },
     ];
 

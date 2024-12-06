@@ -108,7 +108,7 @@ function makeInstallArgs(type) {
   return new Map([
     ...globalExtensionArgs,
     [
-      [`${type.toUpperCase()}NAME`],
+      [`${type}Name`],
       {
         type: 'str',
         help:
@@ -152,7 +152,7 @@ function makeUninstallArgs(type) {
   return new Map([
     ...globalExtensionArgs,
     [
-      [`${type.toUpperCase()}NAME`],
+      [`${type}Name`],
       {
         type: 'str',
         help:
@@ -172,7 +172,7 @@ function makeDoctorArgs(type) {
   return new Map([
     ...globalExtensionArgs,
     [
-      [`${type.toUpperCase()}NAME`],
+      [`${type}Name`],
       {
         type: 'str',
         help:
@@ -192,7 +192,7 @@ function makeUpdateArgs(type) {
   return new Map([
     ...globalExtensionArgs,
     [
-      [`${type.toUpperCase()}NAME`],
+      [`${type}Name`],
       {
         type: 'str',
         help:
@@ -224,7 +224,7 @@ function makeRunArgs(type) {
   return new Map([
     ...globalExtensionArgs,
     [
-      [`${type.toUpperCase()}NAME`],
+      [`${type}Name`],
       {
         type: 'str',
         help:

@@ -304,7 +304,7 @@ describe('parser', function () {
         const args = p.parseArgs([DRIVER_TYPE, 'install', 'foobar']);
         args.subcommand.should.eql(DRIVER_TYPE);
         args.driverCommand.should.eql('install');
-        args.driver.should.eql('foobar');
+        args.driverName.should.eql('foobar');
         should.not.exist(args.installType);
         args.json.should.eql(false);
       });
@@ -330,7 +330,7 @@ describe('parser', function () {
         const args = p.parseArgs([DRIVER_TYPE, 'uninstall', 'foobar']);
         args.subcommand.should.eql(DRIVER_TYPE);
         args.driverCommand.should.eql('uninstall');
-        args.driver.should.eql('foobar');
+        args.driverName.should.eql('foobar');
         args.json.should.eql(false);
       });
       it('should allow json format', function () {
@@ -346,7 +346,7 @@ describe('parser', function () {
         const args = p.parseArgs([DRIVER_TYPE, 'update', 'foobar']);
         args.subcommand.should.eql(DRIVER_TYPE);
         args.driverCommand.should.eql('update');
-        args.driver.should.eql('foobar');
+        args.driverName.should.eql('foobar');
         args.json.should.eql(false);
       });
       it('should allow json format', function () {
@@ -362,7 +362,7 @@ describe('parser', function () {
         const args = p.parseArgs([DRIVER_TYPE, 'run', 'foo']);
         args.subcommand.should.eql(DRIVER_TYPE);
         args.driverCommand.should.eql('run');
-        args.driver.should.eql('foo');
+        args.driverName.should.eql('foo');
         _.isNull(args.scriptName).should.be.true;
         args.json.should.eql(false);
       });
@@ -370,7 +370,7 @@ describe('parser', function () {
         const args = p.parseArgs([DRIVER_TYPE, 'run', 'foo', 'bar']);
         args.subcommand.should.eql(DRIVER_TYPE);
         args.driverCommand.should.eql('run');
-        args.driver.should.eql('foo');
+        args.driverName.should.eql('foo');
         args.scriptName.should.eql('bar');
         args.json.should.eql(false);
       });
@@ -385,7 +385,7 @@ describe('parser', function () {
         const args = p.parseArgs([PLUGIN_TYPE, 'run', 'foo']);
         args.subcommand.should.eql(PLUGIN_TYPE);
         args.pluginCommand.should.eql('run');
-        args.plugin.should.eql('foo');
+        args.pluginName.should.eql('foo');
         _.isNull(args.scriptName).should.be.true;
         args.json.should.eql(false);
       });
@@ -393,7 +393,7 @@ describe('parser', function () {
         const args = p.parseArgs([PLUGIN_TYPE, 'run', 'foo', 'bar']);
         args.subcommand.should.eql(PLUGIN_TYPE);
         args.pluginCommand.should.eql('run');
-        args.plugin.should.eql('foo');
+        args.pluginName.should.eql('foo');
         args.scriptName.should.eql('bar');
         args.json.should.eql(false);
       });

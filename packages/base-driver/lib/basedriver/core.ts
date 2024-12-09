@@ -14,7 +14,7 @@ import type {
   Protocol,
   RouteMatcher,
   StringRecord,
-  BidiMethodDef,
+  BidiModuleMap,
 } from '@appium/types';
 import AsyncLock from 'async-lock';
 import _ from 'lodash';
@@ -111,6 +111,8 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
   bidiEventSubs: Record<string, string[]>;
 
   doesSupportBidi: boolean;
+
+  bidiCommands: BidiModuleMap = BIDI_COMMANDS as BidiModuleMap;
 
   constructor(opts: InitialOpts = <InitialOpts>{}, shouldValidateCaps = true) {
     this._log = logger.getLogger(helpers.generateDriverLogPrefix(this as Core<C>));
@@ -428,6 +430,17 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
     }
   }
 
+  updateBidiCommands(cmds: BidiModuleMap): void {
+    const overlappingKeys = _.intersection(Object.keys(cmds), Object.keys(this.bidiCommands));
+    if (overlappingKeys.length) {
+      this.log.warn(`Overwriting existing bidi modules: ${JSON.stringify(overlappingKeys)}. This may not be intended!`);
+    }
+    this.bidiCommands = {
+      ...this.bidiCommands,
+      ...cmds,
+    };
+  }
+
   async executeBidiCommand(bidiCmd: string, bidiParams: StringRecord): Promise<any> {
     const [moduleName, methodName] = bidiCmd.split('.');
 
@@ -440,12 +453,13 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
       );
     }
 
-    // if the command module isn't part of our spec, reject
-    if (!BIDI_COMMANDS[moduleName]) {
+
+    // if the command module or method isn't part of our spec, reject
+    if (!this.bidiCommands[moduleName] || !this.bidiCommands[moduleName][methodName]) {
       throw new errors.UnknownCommandError();
     }
 
-    const {command, params} = BIDI_COMMANDS[moduleName][methodName] as BidiMethodDef;
+    const {command, params} = this.bidiCommands[moduleName][methodName];
     // if the command method isn't part of our spec, also reject
     if (!command) {
       throw new errors.UnknownCommandError();

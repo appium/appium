@@ -2,7 +2,7 @@ import type {EventEmitter} from 'node:events';
 import type {Merge} from 'type-fest';
 import type {ActionSequence} from './action';
 import type {Capabilities, DriverCaps, W3CCapabilities, W3CDriverCaps} from './capabilities';
-import type {ExecuteMethodMap, MethodMap} from './command';
+import type {BidiModuleMap, ExecuteMethodMap, MethodMap} from './command';
 import type {ServerArgs} from './config';
 import type {HTTPHeaders, HTTPMethod} from './http';
 import type {AppiumLogger} from './logger';
@@ -604,6 +604,7 @@ export interface Core<C extends Constraints, Settings extends StringRecord = Str
   eventHistory: EventHistory;
   bidiEventSubs: Record<string, string[]>;
   doesSupportBidi: boolean;
+  updateBidiCommands(cmds: BidiModuleMap): void;
   onUnexpectedShutdown(handler: () => any): void;
   /**
    * @summary Retrieve the server's current status.
@@ -1991,6 +1992,23 @@ export interface DriverStatic<T extends Driver> {
   baseVersion: string;
   updateServer?: UpdateServerCallback;
   newMethodMap?: MethodMap<T>;
+  /**
+    * Drivers can define new custom bidi commands and map them to driver methods. The format must
+    * be the same as that used by Appium's bidi-commands.js file, for example:
+    * @example
+    * {
+    *   myNewBidiModule: {
+    *     myNewBidiCommand: {
+    *       command: 'driverMethodThatWillBeCalled',
+    *       params: {
+    *         required: ['requiredParam'],
+    *         optional: ['optionalParam'],
+    *       }
+    *     }
+    *   }
+    * }
+    */
+  newBidiCommands?: BidiModuleMap;
   executeMethodMap?: ExecuteMethodMap<T>;
 }
 

@@ -695,6 +695,10 @@ class AppiumDriver extends DriverCore {
         driverInstance.relaxedSecurityEnabled = true;
       }
 
+      // We also want to assign any new Bidi Commands that the driver has specified, including all
+      // the standard bidi commands
+      driverInstance.updateBidiCommands(InnerDriver.newBidiCommands ?? {});
+
       if (!_.isEmpty(this.args.denyInsecure)) {
         this.log.info('Explicitly preventing use of insecure features:');
         this.args.denyInsecure.map((a) => this.log.info(`    ${a}`));

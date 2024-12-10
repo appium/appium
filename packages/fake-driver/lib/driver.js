@@ -225,7 +225,6 @@ export class FakeDriver extends BaseDriver {
     fake: {
       getFakeThing: {
         command: 'getFakeThing',
-        params: [],
       },
       setFakeThing: {
         command: 'setFakeThing',

@@ -324,6 +324,10 @@ Currently, you also need to define a `doesSupportBidi` field on your driver inst
 it is set to `true`. Appium will not turn on its Websocket servers for your driver and set up any
 handlers unless your driver says that it supports BiDi in this way.
 
+You are not limited to BiDi commands that are defined in the official BiDi specification. If you
+wish to define new commands, you may do so; you just need to tell Appium about them! See
+[below](#extend-the-existing-protocol-with-new-commands) for more information.
+
 ### Implement element finding
 
 Element finding is a special command implementation case. You don't actually want to override
@@ -574,9 +578,10 @@ to the upstream connection.
 
 You may find that the existing commands don't cut it for your driver. If you want to expose
 behaviours that don't map to any of the existing commands, you can create new commands in one of
-two ways:
+three ways:
 
-1. Extending the WebDriver protocol and creating client-side plugins to access the extensions
+1. Extending the classic WebDriver protocol and creating client-side plugins to access the extensions via the classic HTTP interface
+1. Extending the WebDriver BiDi protocol with new modules and methods, accessed from a client via the BiDi interface
 1. Overloading the Execute Script command by defining [Execute
    Methods](../guides/execute-methods.md)
 
@@ -606,7 +611,39 @@ won't have nice client-side functions designed to target these endpoints. So you
 create and release client-side plugins for each language you want to support (directions or
 examples can be found at the relevant client docs).
 
-An alternative to this way of doing things is to overload a command which all WebDriver clients
+The second way of adding new commands is adding them as BiDi commands (accessed via the BiDi
+websocket interface, rather than the classic HTTP interface). BiDi commands come in two parts:
+a "module", which is basically a container or namespace, and a "command", which is the name of your
+new command.
+
+As with the first method, you teach Appium to recognize your new BiDi commands by adding a static
+field to your driver class, called `newBidiCommands`. It has a format similar to `newMethodMap`.
+Basically it encapsulates information about the BiDi module, BiDi command name, reference to your
+driver instance method that will handle the command, and required and optional parameters. Here's
+an example of a `newBidiCommands` as implemented on an imaginary driver:
+
+```js
+static newBidiCommands = {
+  video: {
+    startFramerateCapture: {
+      command: 'startFrameCap',
+      params: {
+        required: ['videoSource'],
+        optional: ['showOnScreen'],
+      }
+    },
+    stopFramerateCapture: {
+      command: 'stopFrameCap',
+    },
+  }
+};
+```
+
+In this imaginary example, we have defined two new BiDi commands: `video.startFramerateCapture` and
+`video.stopFramerateCapture`. The first command takes a required and an optional parameter, and the
+second does not. When combined with generic BiDi support in your driver (see [the section on BiDi](#implement-webdriver-bidi-commands) above), and given an implementation of the appropriate methods on your driver (e.g. `startFrameCap` and `stopFrameCap` in this example), clients would be able to send these BiDi commands using whatever mechanism normally exists for doing so in the client library.
+
+An alternative to these other ways of doing things is to overload a command which all WebDriver clients
 have access to already: Execute Script. Appium provides some a convenient tool for making this
 easy. Let's say you are building a driver for stereo system called `soundz`, and you wanted to
 create a command for playing a song by name. You could expose this to your users in such a way that
@@ -656,6 +693,10 @@ A couple notes about this system:
    mode!
 1. The `executeMethod` helper will reject with an error if a script name doesn't match one of the
    script names defined as a command in `executeMethodMap`, or if there are missing parameters.
+
+One of the nice things about the Execute Method strategy is that methods implemented in this way
+will be available via the classic or BiDi interfaces (since they will result in the same Appium
+handlers being called).
 
 
 ### Build Appium Doctor checks

@@ -551,6 +551,7 @@ describe('FakeDriver via HTTP', function () {
   describe('Bidi protocol', function () {
     withServer();
     const capabilities = {...caps, webSocketUrl: true, 'appium:runClock': true};
+    /** @type import('webdriverio').Browser **/
     let driver;
 
     beforeEach(async function () {
@@ -600,6 +601,14 @@ describe('FakeDriver via HTTP', function () {
       collectedEvents = [];
       await B.delay(750);
       collectedEvents.should.be.empty;
+    });
+
+    it('should allow custom bidi commands', async function () {
+      let {result} = await driver.send({method: 'fake.getFakeThing', params: {}});
+      should.not.exist(result);
+      await driver.send({method: 'fake.setFakeThing', params: {thing: 'this is from bidi'}});
+      ({result} = await driver.send({method: 'fake.getFakeThing', params: {}}));
+      result.should.eql('this is from bidi');
     });
   });
 });

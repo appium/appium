@@ -221,6 +221,20 @@ export class FakeDriver extends BaseDriver {
     await B.delay(1);
   }
 
+  static newBidiCommands = /** @type {const} */({
+    fake: {
+      getFakeThing: {
+        command: 'getFakeThing',
+      },
+      setFakeThing: {
+        command: 'setFakeThing',
+        params: {
+          required: ['thing'],
+        },
+      },
+    }
+  });
+
   static newMethodMap = /** @type {const} */ ({
     '/session/:sessionId/fakedriver': {
       GET: {command: 'getFakeThing'},

@@ -138,8 +138,14 @@ export type ExecuteMethodMap<T extends Plugin | Driver> = T extends Plugin
   ? Readonly<StringRecord<DriverExecuteMethodDef<T>>>
   : never;
 
+export interface BidiMethodParams {
+  required?: readonly string[];
+  optional?: readonly string[];
+};
+
 export interface BidiMethodDef extends BaseExecuteMethodDef {
   command: string;
+  params?: BidiMethodParams;
 }
 
 export interface BidiMethodMap {

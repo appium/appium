@@ -4,7 +4,6 @@ import {BaseDriver} from '@appium/base-driver';
 import {exec} from 'teen_process';
 import {fs, tempDir} from '@appium/support';
 import axios from 'axios';
-import {command} from 'webdriver';
 import B from 'bluebird';
 import _ from 'lodash';
 import {createSandbox} from 'sinon';
@@ -480,46 +479,6 @@ describe('FakeDriver via HTTP', function () {
         (
           await axios.get(`${testServerBaseSessionUrl}/${sessionId}/fakedriver`)
         ).data.value.should.eql({yes: 'lolno'});
-      } finally {
-        await driver.deleteSession();
-      }
-    });
-
-    it.skip('should log a single deprecation warning if a deprecated method is used and not overridden by a newMethodMap', async function () {
-      let driver = await wdio({...wdOpts, capabilities: caps});
-      try {
-        driver.addCommand(
-          'deprecated',
-          command('POST', '/session/:sessionId/deprecated', {
-            command: 'deprecated',
-            description: 'Call a deprecated command',
-            parameters: [],
-            ref: '',
-          }),
-        );
-        driver.addCommand(
-          'doubleClick',
-          command('POST', '/session/:sessionId/doubleclick', {
-            command: 'doubleClick',
-            description: 'Global double click',
-            parameters: [],
-            ref: '',
-          }),
-        );
-        await driver
-          .executeScript('fake: getDeprecatedCommandsCalled', [])
-          .should.eventually.eql([]);
-        await driver.deprecated();
-        await driver.deprecated();
-        await driver.shake();
-
-        // this call should not trigger a deprecation even though deprecated by appium because it's
-        // overridden as not deprecated by fake driver
-        await driver.doubleClick();
-
-        await driver
-          .executeScript('fake: getDeprecatedCommandsCalled', [])
-          .should.eventually.eql(['callDeprecatedCommand', 'mobileShake']);
       } finally {
         await driver.deleteSession();
       }

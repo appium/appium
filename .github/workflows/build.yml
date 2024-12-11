@@ -42,6 +42,9 @@ on:
       - '!**/sample-code/**'
       - '!packages/*/docs/**'
 
+env:
+  CI: true
+
 permissions:
   contents: read
 

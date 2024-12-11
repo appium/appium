@@ -252,6 +252,30 @@ describe('FakeDriver via HTTP', function () {
       await driver.getPageSource().should.eventually.be.rejectedWith(/terminated/);
     });
 
+    it('should not allow umbrella commands to prevent newCommandTimeout on inner driver', async function () {
+      let localCaps = Object.assign(
+        {
+          'appium:newCommandTimeout': 0.25,
+        },
+        caps,
+      );
+      let driver = await wdio({...wdOpts, capabilities: localCaps});
+      should.exist(driver.sessionId);
+      driver.addCommand(
+        'getSessions',
+        async () => (await axios.get(`${testServerBaseUrl}/sessions`)).data.value
+      );
+
+      // get the session list 6 times over 300ms. each request will be below the new command
+      // timeout but since they are not received by the driver the session should still time out
+      for (let i = 0; i < 6; i++) {
+        await driver.getSessions();
+        await B.delay(50);
+      }
+      await driver.getPageSource().should.eventually.be.rejectedWith(/terminated/);
+      await driver.getSessions().should.eventually.be.empty;
+    });
+
     it('should accept valid W3C capabilities and start a W3C session', async function () {
       // Try with valid capabilities and check that it returns a session ID
       const w3cCaps = {

@@ -69,7 +69,7 @@ and click through to the appropriate client documentation.
 
 ## BiDi
 
-Appium started supporting [WebDriver BiDi](https://w3c.github.io/webdriver-bidi/).
+Appium can support [WebDriver BiDi](https://w3c.github.io/webdriver-bidi/) protocol.
 The actual behavior depends on individual drivers.
 
 | Capability Name  | Type     | Description                                    |

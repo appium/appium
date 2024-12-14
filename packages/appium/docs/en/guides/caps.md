@@ -32,7 +32,7 @@ Here is a list of all the globally-recognized Appium capabilities:
 !!! info
 
     Individual drivers and plugins can support other capabilities, so refer to their documentation
-    for lists ofspecific capability names. Some drivers may also not support all of these capabilities
+    for lists of specific capability names. Some drivers may also not support all of these capabilities
 
 | <div style="width:12em">Capability</div>   | Type      | Required? | Description  |
 |--------------------------------------------|-----------|-----------|----------------------------|
@@ -66,6 +66,15 @@ will document how it interprets these capabilities and any other platform-specif
 Each Appium client has its own way of constructing capabilities and starting a session. For
 examples of doing this in each client library, head to the [Ecosystem](../ecosystem/index.md) page
 and click through to the appropriate client documentation.
+
+## BiDi
+
+Appium started supporting [WebDriver BiDi](https://w3c.github.io/webdriver-bidi/).
+The actual behavior depends on individual drivers.
+
+| Capability Name  | Type     | Description                                    |
+|------------------|----------|------------------------------------------------|
+| `webSocketUrl` | `boolean` | To enable BiDi protocol in the session. |
 
 ## Using `appium:options` to Group Capabilities
 

@@ -527,7 +527,7 @@ class AppiumDriver extends DriverCore {
         context = '';
       }
       if (!method || !params) {
-        throw new Error(
+        this.log.warn(
           `Driver emitted a bidi event that was malformed. Require method and params keys ` +
             `(with optional context). But instead received: ${JSON.stringify({
               context,
@@ -535,6 +535,7 @@ class AppiumDriver extends DriverCore {
               params,
             })}`,
         );
+        return;
       }
       if (ws.readyState !== WebSocket.OPEN) {
         // if the websocket is not still 'open', then we can ignore sending these events
@@ -546,9 +547,11 @@ class AppiumDriver extends DriverCore {
         return;
       }
 
-      if (bidiHandlerDriver.bidiEventSubs[method]?.includes(context)) {
+      const eventSubs = bidiHandlerDriver.bidiEventSubs[method];
+      if (_.isArray(eventSubs) && eventSubs.includes(context)) {
         this.log.info(
-          `<-- BIDI EVENT ${method} (context: '${context}', params: ${JSON.stringify(params)})`,
+          `<-- BIDI EVENT ${method} (context: '${context}', ` +
+          `params: ${_.truncate(JSON.stringify(params), {length: 300})})`,
         );
         // now we can send the event onto the socket
         const ev = {type: 'event', context, method, params};

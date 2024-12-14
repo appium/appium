@@ -350,6 +350,7 @@ export interface ILogCommands {
 export interface IBidiCommands {
   bidiSubscribe(events: string[], contexts: string[]): Promise<void>;
   bidiUnsubscribe(events: string[], contexts: string[]): Promise<void>;
+  bidiStatus(): Promise<DriverStatus>;
 }
 
 /**
@@ -575,6 +576,12 @@ export interface EventHistoryCommand {
 }
 
 export type Protocol = 'MJSONWP' | 'W3C';
+
+export interface DriverStatus {
+  ready: boolean,
+  message: string,
+  [key: string]: any;
+}
 
 /**
  * Methods and properties which both `AppiumDriver` and `BaseDriver` inherit.

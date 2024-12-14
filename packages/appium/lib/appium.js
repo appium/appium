@@ -527,7 +527,7 @@ class AppiumDriver extends DriverCore {
         context = '';
       }
       if (!method || !params) {
-        this.log.error(
+        this.log.warn(
           `Driver emitted a bidi event that was malformed. Require method and params keys ` +
             `(with optional context). But instead received: ${JSON.stringify({
               context,

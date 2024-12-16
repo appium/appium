@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "peerDependencies": {
-    "appium": "^2.0.0-beta.42"
+    "appium": "^2.0.0-beta.42 || ^3.0.0-beta.0"
   },
   "devDependencies": {
     "appium": "next"

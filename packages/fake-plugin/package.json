@@ -47,7 +47,7 @@
     "source-map-support": "0.5.21"
   },
   "peerDependencies": {
-    "appium": "^2.0.0-beta.35"
+    "appium": "^2.0.0-beta.35 || ^3.0.0-beta.0"
   },
   "engines": {
     "node": "^14.17.0 || ^16.13.0 || >=18.0.0",

@@ -28,11 +28,28 @@ const wdOpts = {
   capabilities: W3C_PREFIXED_CAPS,
 };
 
+/** @type {Partial<import('appium/types').ParsedArgs>} */
+let baseServerArgs;
+
+function serverSetup(args) {
+  /** @type {{server: AppiumServer | null}} */
+  const retContainer = {server: null};
+
+  before(async function () {
+    // then start server if we need to
+    retContainer.server = /** @type {AppiumServer} */ (await appiumServer({...baseServerArgs, ...args}));
+  });
+  after(async function () {
+    if (retContainer.server) {
+      await retContainer.server.close();
+    }
+  });
+  return retContainer;
+}
+
 describe('FakePlugin w/ FakeDriver via HTTP', function () {
   /** @type {string} */
   let appiumHome;
-  /** @type {Partial<import('appium/types').ParsedArgs>} */
-  let baseServerArgs;
   /** @type {string} */
   let testServerBaseUrl;
   /** @type {number} */
@@ -133,27 +150,9 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
 
   for (const registrationType of ['explicit', 'all']) {
     describe(`with plugin registered via type ${registrationType}`, function () {
-      /** @type {AppiumServer} */
-      let server;
       /** @type {import('type-fest').LiteralUnion<'all', string>[]} */
-      let usePlugins;
-      before(async function () {
-        // then start server if we need to
-        usePlugins = registrationType === 'explicit' ? ['fake'] : ['all'];
-        const args = {
-          appiumHome,
-          port,
-          address: TEST_HOST,
-          usePlugins,
-          useDrivers: ['fake'],
-        };
-        server = /** @type {AppiumServer} */ (await appiumServer(args));
-      });
-      after(async function () {
-        if (server) {
-          await server.close();
-        }
-      });
+      const usePlugins = registrationType === 'explicit' ? ['fake'] : ['all'];
+      serverSetup({useDrivers: ['fake'], usePlugins});
       it('should update the server', async function () {
         const res = {fake: 'fakeResponse'};
         (await axios.post(`http://${TEST_HOST}:${port}/fake`)).data.should.eql(res);
@@ -367,6 +366,27 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
     it('should let driver handle unknown execute methods', async function () {
       const sum = await driver.executeScript('fake: addition', [{num1: 2, num2: 3}]);
       sum.should.eql(5);
+    });
+  });
+
+  describe('BiDi support', function () {
+    describe('with a single plugin', function() {
+      serverSetup({useDrivers: ['fake'], usePlugins: ['fake']});
+
+      /** @type {import('webdriverio').Browser} */
+      let driver;
+
+      before(async function () {
+        driver = await wdio(wdOpts);
+      });
+      after(async function () {
+        if (driver) {
+          await driver.deleteSession();
+        }
+      });
+
+      // TODO write bidi tests
+
     });
   });
 });

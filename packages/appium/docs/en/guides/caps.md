@@ -67,13 +67,14 @@ Each Appium client has its own way of constructing capabilities and starting a s
 examples of doing this in each client library, head to the [Ecosystem](../ecosystem/index.md) page
 and click through to the appropriate client documentation.
 
-## BiDi
+## BiDi Protocol Support
 
-Appium can support [WebDriver BiDi](https://w3c.github.io/webdriver-bidi/) protocol.
-The actual behavior depends on individual drivers.
+Appium supports [WebDriver BiDi](https://w3c.github.io/webdriver-bidi/) protocol since base–driver 9.5.0.
+The actual behavior depends on individual drivers while the Appium and the baseｰdriver support the protocol.
+Please make sure the individual driver documentation if such a driver supports the protocol and what kind of commands it support.
 
-| Capability Name  | Type     | Description                                    |
-|------------------|----------|------------------------------------------------|
+| Capability Name | Type | Description |
+|---|---|−--|
 | `webSocketUrl` | `boolean` | To enable BiDi protocol in the session. |
 
 ## Using `appium:options` to Group Capabilities

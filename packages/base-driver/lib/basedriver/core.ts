@@ -493,8 +493,12 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
       `Executing bidi command '${bidiCmd}' with params ${logParams} by passing to driver ` +
         `method '${command}'`,
     );
-    const res = (await this[command](...args)) ?? null;
-    this.log.debug(`Responding to bidi command '${bidiCmd}' with ${JSON.stringify(res)}`);
-    return res;
+    const response = await this[command](...args);
+    const finalResponse = _.isUndefined(response) ? {} : response;
+    this.log.debug(
+      `Responding to bidi command '${bidiCmd}' with ` +
+      `${_.truncate(JSON.stringify(finalResponse), {length: MAX_LOG_BODY_LENGTH})}`
+    );
+    return finalResponse;
   }
 }

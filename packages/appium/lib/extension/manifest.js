@@ -242,8 +242,8 @@ export class Manifest {
      * @type {InternalMetadata}
      */
     const internal = {
-      pkgName: pkgJson.name,
-      version: pkgJson.version,
+      pkgName: /** @type {string} */ (pkgJson.name),
+      version: /** @type {string} */ (pkgJson.version),
       appiumVersion: pkgJson.peerDependencies?.appium,
       installType,
       installSpec: `${pkgJson.name}@${pkgJson.version}`,

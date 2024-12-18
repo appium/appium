@@ -529,8 +529,7 @@ describe('FakeDriver via HTTP', function () {
       should.exist(driver.capabilities.webSocketUrl);
     });
 
-    // TODO: Unskip after sessionSubscribe issue is fixed in WDIO
-    it.skip('should interpret the bidi protocol and let the driver handle it by command', async function () {
+    it('should interpret the bidi protocol and let the driver handle it by command', async function () {
       should.not.exist(await driver.getUrl());
 
       await driver.browsingContextNavigate({
@@ -541,8 +540,7 @@ describe('FakeDriver via HTTP', function () {
       await driver.getUrl().should.eventually.eql('https://appium.io');
     });
 
-    // TODO: Unskip after sessionSubscribe issue is fixed in WDIO
-    it.skip('should be able to subscribe and unsubscribe to bidi events', async function () {
+    it('should be able to subscribe and unsubscribe to bidi events', async function () {
       let collectedEvents = [];
       // asyncrhonously start our listener
       driver.on('clock.currentTime', ({time}) => {

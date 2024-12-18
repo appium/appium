@@ -13,6 +13,10 @@ const BIDI_COMMANDS = /** @type {const} */ ({
       command: 'bidiUnsubscribe',
       params: SUBSCRIPTION_REQUEST_PARAMS,
     },
+    status: {
+      command: 'bidiStatus',
+      params: {},
+    }
   },
   browsingContext: {
     navigate: {

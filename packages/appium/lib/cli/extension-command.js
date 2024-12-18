@@ -486,10 +486,11 @@ class ExtensionCliCommand {
   getInstallationReceipt({pkg, installPath, installType, installSpec}) {
     const {appium, name, version, peerDependencies} = pkg;
 
+    const strVersion = /** @type {string} */ (version);
     /** @type {import('appium/types').InternalMetadata} */
     const internal = {
-      pkgName: name,
-      version,
+      pkgName: /** @type {string} */ (name),
+      version: strVersion,
       installType,
       installSpec,
       installPath,

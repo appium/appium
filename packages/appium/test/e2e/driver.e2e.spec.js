@@ -564,8 +564,7 @@ describe('FakeDriver via HTTP', function () {
       collectedEvents.should.be.empty;
     });
 
-    // TODO: Unskip after send issue is fixed in WDIO
-    it.skip('should allow custom bidi commands', async function () {
+    it('should allow custom bidi commands', async function () {
       let {result} = await driver.send({method: 'fake.getFakeThing', params: {}});
       should.not.exist(result);
       await driver.send({method: 'fake.setFakeThing', params: {thing: 'this is from bidi'}});
@@ -615,7 +614,7 @@ describe('Bidi over SSL', function () {
   let should;
 
   before(async function () {
-    // TODO: Unskip after strictSSL issue is fixed in WDIO
+    // TODO: Unskip after https://github.com/webdriverio/webdriverio/issues/13994 is fixed
     return this.skip();
 
     // const chai = await import('chai');

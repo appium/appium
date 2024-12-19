@@ -48,6 +48,9 @@ const desiredCapabilityConstraints = /** @type {const} */ ({
 const sessionsListGuard = new AsyncLock();
 const pendingDriversGuard = new AsyncLock();
 
+/** @type {WeakMap<AnyDriver, Record<string, number>>} */
+const BIDI_EVENT_LOG_MAP = new WeakMap();
+
 /**
  * @extends {DriverCore<AppiumDriverConstraints>}
  */
@@ -325,7 +328,7 @@ class AppiumDriver extends DriverCore {
     // to be a driver matching a session id appended to the bidi base path, or this umbrella driver
     // (if no session id is included in the bidi connection request)
 
-    /** @type {import('@appium/types').ExternalDriver | AppiumDriver} */
+    /** @type {AnyDriver} */
     let bidiHandlerDriver;
 
     /** @type {import('ws').WebSocket | null} */
@@ -460,7 +463,7 @@ class AppiumDriver extends DriverCore {
    * client
    * @param {((data: string | Buffer) => Promise<void>) | null} sendToProxy - a method used to send data to the
    * upstream socket
-   * @param {import('@appium/types').ExternalDriver | AppiumDriver} bidiHandlerDriver - the driver
+   * @param {AnyDriver} bidiHandlerDriver - the driver
    * handling the bidi commands
    * @param {(err: Error) => void} logSocketErr - a special prefixed logger
    */
@@ -471,7 +474,7 @@ class AppiumDriver extends DriverCore {
     });
 
     ws.on('open', () => {
-      this.log.info('Bidi websocket connection is now open');
+      this.log.info('BiDi websocket connection is now open');
     });
 
     // Now set up handlers for the various events that might happen on the websocket connection
@@ -481,7 +484,7 @@ class AppiumDriver extends DriverCore {
       if (proxyClient) {
         const logData = _.truncate(data.toString('utf8'), {length: MAX_LOG_BODY_LENGTH});
         this.log.debug(
-          `--> BIDI Received data from client, sending to upstream bidi socket. Data: ${logData}`,
+          `--> BIDI Received data from client, sending to upstream BiDi socket. Data: ${logData}`,
         );
         // if we're meant to proxy to an upstream bidi socket, just do that
         // @ts-ignore sendToProxy is never null if proxyClient is truthy, but ts doesn't know
@@ -499,12 +502,17 @@ class AppiumDriver extends DriverCore {
       // Probably if a session was started via the socket, and the socket closes, we should end the
       // associated session to free up resources. But otherwise, for sockets attached to existing
       // sessions, doing nothing is probably right.
-      this.log.debug(`Bidi socket connection closed (code ${code}, reason: '${reason}')`);
+      this.log.debug(`BiDi socket connection closed (code ${code}, reason: '${reason}')`);
 
       // If we're proxying, might as well close the upstream connection and clean it up
       if (proxyClient) {
-        this.log.debug('Also closing bidi proxy socket connection');
+        this.log.debug('Also closing BiDi proxy socket connection');
         proxyClient.close(code, reason);
+      }
+
+      const eventLogCounts = BIDI_EVENT_LOG_MAP.get(bidiHandlerDriver);
+      if (!_.isEmpty(eventLogCounts)) {
+        this.log.debug(`BiDi events statistics: ${JSON.stringify(eventLogCounts, null, 2)}`);
       }
     });
   }
@@ -513,7 +521,7 @@ class AppiumDriver extends DriverCore {
    * Set up bidi event listeners
    *
    * @param {import('ws').WebSocket} ws - the websocket connection to/from the client
-   * @param {import('@appium/types').ExternalDriver | AppiumDriver} bidiHandlerDriver - the driver
+   * @param {AnyDriver} bidiHandlerDriver - the driver
    * handling the bidi commands
    * @param {(data: string | Buffer) => Promise<void>} send - a method used to send data to the
    * client
@@ -521,19 +529,24 @@ class AppiumDriver extends DriverCore {
   initBidiEventListeners(ws, bidiHandlerDriver, send) {
     // If the driver emits a bidi event that should maybe get sent to the client, check to make
     // sure the client is subscribed and then pass it on
-    let eventListener = async ({context, method, params}) => {
+    const driverLog = bidiHandlerDriver.log;
+    const driverEe = bidiHandlerDriver.eventEmitter;
+    /** @type {Record<string, number>} */
+    const eventLogCounts = BIDI_EVENT_LOG_MAP.get(bidiHandlerDriver) ?? {};
+    BIDI_EVENT_LOG_MAP.set(bidiHandlerDriver, eventLogCounts);
+    const eventListener = async ({context, method, params = {}}) => {
       // if the driver didn't specify a context, use the empty context
       if (!context) {
         context = '';
       }
       if (!method || !params) {
-        this.log.warn(
+        driverLog.warn(
           `Driver emitted a bidi event that was malformed. Require method and params keys ` +
-            `(with optional context). But instead received: ${JSON.stringify({
+            `(with optional context). But instead received: ${_.truncate(JSON.stringify({
               context,
               method,
               params,
-            })}`,
+            }), {length: 200})}`,
         );
         return;
       }
@@ -542,28 +555,34 @@ class AppiumDriver extends DriverCore {
         if (ws.readyState > WebSocket.OPEN) {
           // if the websocket is closed or closing, we can remove this listener as well to avoid
           // leaks
-          bidiHandlerDriver.eventEmitter.removeListener(BIDI_EVENT_NAME, eventListener);
+          driverEe.removeListener(BIDI_EVENT_NAME, eventListener);
         }
         return;
       }
 
       const eventSubs = bidiHandlerDriver.bidiEventSubs[method];
       if (_.isArray(eventSubs) && eventSubs.includes(context)) {
-        this.log.info(
-          `<-- BIDI EVENT ${method} (context: '${context}', ` +
-          `params: ${_.truncate(JSON.stringify(params), {length: 300})})`,
-        );
+        if (method in eventLogCounts) {
+          ++eventLogCounts[method];
+        } else {
+          driverLog.info(
+            `<-- BIDI EVENT ${method} (context: '${context}', ` +
+            `params: ${_.truncate(JSON.stringify(params), {length: 300})}). ` +
+            `All further similar events won't be logged.`,
+          );
+          eventLogCounts[method] = 1;
+        }
         // now we can send the event onto the socket
         const ev = {type: 'event', context, method, params};
         await send(JSON.stringify(ev));
       }
     };
-    bidiHandlerDriver.eventEmitter.on(BIDI_EVENT_NAME, eventListener);
+    driverEe.on(BIDI_EVENT_NAME, eventListener);
   }
 
   /**
    * @param {Buffer} data
-   * @param {ExternalDriver | AppiumDriver} driver
+   * @param {AnyDriver} driver
    */
   async onBidiMessage(data, driver) {
     let resMessage, id, method, params;
@@ -1365,6 +1384,7 @@ export {AppiumDriver};
 
 /**
  * @typedef {SessionHandlerResult<void>} SessionHandlerDeleteResult
+ * @typedef {import('@appium/types').ExternalDriver | AppiumDriver} AnyDriver
  */
 
 /**

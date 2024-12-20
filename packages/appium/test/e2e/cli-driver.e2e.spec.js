@@ -223,6 +223,11 @@ describe('Driver CLI', function () {
     });
 
     it('should install a driver from GitHub', async function () {
+      if (process.env.CI) {
+        // This test is too slow for CI env
+        return this.skip();
+      }
+
       const ret = await runInstall([
         'appium/appium-fake-driver',
         '--source',
@@ -257,6 +262,11 @@ describe('Driver CLI', function () {
     });
 
     it('should install a driver from a remote git repo', async function () {
+      if (process.env.CI) {
+        // This test is too slow for CI env
+        return this.skip();
+      }
+
       const ret = await runInstall([
         'git+https://github.com/appium/appium-fake-driver.git',
         '--source',

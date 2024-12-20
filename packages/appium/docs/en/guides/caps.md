@@ -71,7 +71,7 @@ and click through to the appropriate client documentation.
 
 Appium supports [WebDriver BiDi](https://w3c.github.io/webdriver-bidi/) protocol since base–driver 9.5.0.
 The actual behavior depends on individual drivers while the Appium and the baseｰdriver support the protocol.
-Please make sure if a driver supports the protocol and what kind of commands/events it support in the documentation.
+Please make sure if a driver supports the protocol and what kind of commands/events it supports in the documentation.
 
 | Capability Name | Type | Description |
 |---|---|−--|

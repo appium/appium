@@ -2,7 +2,7 @@ import type {EventEmitter} from 'node:events';
 import type {Merge} from 'type-fest';
 import type {ActionSequence} from './action';
 import type {Capabilities, DriverCaps, W3CCapabilities, W3CDriverCaps} from './capabilities';
-import type {BidiModuleMap, ExecuteMethodMap, MethodMap} from './command';
+import type {BidiModuleMap, BiDiResultData, ExecuteMethodMap, MethodMap} from './command';
 import type {ServerArgs} from './config';
 import type {HTTPHeaders, HTTPMethod} from './http';
 import type {AppiumLogger} from './logger';
@@ -712,7 +712,7 @@ export interface Driver<
    * @param bidiCmd - the name of the command in the bidi spec
    * @param args - arguments to pass to the command
    */
-  executeBidiCommand(bidiCmd: string, ...args: any[]): Promise<any>;
+  executeBidiCommand(bidiCmd: string, ...args: any[]): Promise<BiDiResultData>;
 
   /**
    * Signify to any owning processes that this driver encountered an error which should cause the

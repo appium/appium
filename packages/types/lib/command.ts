@@ -155,3 +155,25 @@ export interface BidiMethodMap {
 export interface BidiModuleMap {
   [k: string]: BidiMethodMap;
 }
+
+// https://w3c.github.io/webdriver-bidi/#protocol-definition
+export interface GenericBiDiCommandResponse {
+  id: number;
+  [key: string]: any;
+}
+
+export interface BiDiResultData {
+  [key: string]: any;
+}
+
+export interface SuccessBiDiCommandResponse extends GenericBiDiCommandResponse {
+  type: 'success';
+  result: BiDiResultData;
+}
+
+export interface ErrorBiDiCommandResponse extends GenericBiDiCommandResponse {
+  type: 'error';
+  error: string;
+  message: string;
+  stacktrace?: string;
+}

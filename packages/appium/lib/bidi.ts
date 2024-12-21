@@ -63,12 +63,15 @@ export function determineBiDiHost(address: string): string {
  */
 export function onBidiConnection(this: AppiumDriver, ws: WebSocket, req: IncomingMessage): void {
   try {
-    const {bidiHandlerDriver, proxyClient, send, sendToProxy, logSocketErr} = initBidiSocket.bind(this)(
+    const initBiDiSocketFunc: OmitThisParameter<typeof initBidiSocket> = initBidiSocket.bind(this);
+    const {bidiHandlerDriver, proxyClient, send, sendToProxy, logSocketErr} = initBiDiSocketFunc(
       ws,
       req,
     );
 
-    initBidiSocketHandlers.bind(this)(
+    const initBidiSocketHandlersFunc: OmitThisParameter<typeof initBidiSocketHandlers> = initBidiSocketHandlers
+      .bind(this);
+    initBidiSocketHandlersFunc(
       ws,
       proxyClient,
       send,
@@ -77,9 +80,13 @@ export function onBidiConnection(this: AppiumDriver, ws: WebSocket, req: Incomin
       logSocketErr,
     );
     if (proxyClient) {
-      initBidiProxyHandlers.bind(bidiHandlerDriver)(proxyClient, ws, send);
+      const initBidiProxyHandlersFunc: OmitThisParameter<typeof initBidiProxyHandlers> = initBidiProxyHandlers
+        .bind(bidiHandlerDriver);
+      initBidiProxyHandlersFunc(proxyClient, ws, send);
     }
-    initBidiEventListeners.bind(this)(ws, bidiHandlerDriver, send);
+    const initBidiEventListenersFunc: OmitThisParameter<typeof initBidiEventListeners> = initBidiEventListeners
+      .bind(this);
+    initBidiEventListenersFunc(ws, bidiHandlerDriver, send);
   } catch (err) {
     this.log.error(err);
     try {

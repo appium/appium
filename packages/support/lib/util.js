@@ -2,8 +2,8 @@ import B from 'bluebird';
 import _ from 'lodash';
 import os from 'os';
 import path from 'path';
-import fs from './fs';
-import semver from 'semver';
+import { fs } from './fs';
+import * as semver from 'semver';
 import {
   // https://www.npmjs.com/package/shell-quote
   quote as shellQuote,
@@ -19,7 +19,7 @@ import {
   v4 as uuidV4,
   v5 as uuidV5,
 } from 'uuid';
-import _lockfile from 'lockfile';
+import * as _lockfile from 'lockfile';
 
 const W3C_WEB_ELEMENT_IDENTIFIER = 'element-6066-11e4-a52e-4f735466cecf';
 const KiB = 1024;

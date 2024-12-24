@@ -63,11 +63,6 @@ labels:
     matcher:
       files: ['packages/driver-test-support/**']
 
-  - label: '@appium/eslint-config-appium'
-    sync: true
-    matcher:
-      files: ['packages/eslint-config-appium/**']
-
   - label: '@appium/eslint-config-appium-ts'
     sync: true
     matcher:

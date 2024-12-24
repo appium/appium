@@ -31,6 +31,8 @@ describe('server configuration', function () {
     const chaiAsPromised = await import('chai-as-promised');
     chai.use(chaiAsPromised.default);
     should = chai.should();
+
+    port = await getTestPort(true);
   });
 
   function fakeApp() {
@@ -49,10 +51,6 @@ describe('server configuration', function () {
     };
     return app;
   }
-
-  before(async function () {
-    port = await getTestPort(true);
-  });
 
   beforeEach(function () {
     sandbox = createSandbox();

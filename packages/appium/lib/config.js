@@ -3,7 +3,7 @@ import _ from 'lodash';
 import {system, fs, npm} from '@appium/support';
 import axios from 'axios';
 import {exec} from 'teen_process';
-import semver from 'semver';
+import * as semver from 'semver';
 import os from 'node:os';
 import {npmPackage} from './utils';
 import B from 'bluebird';
@@ -194,7 +194,7 @@ export function checkNodeOk() {
 
 export async function showBuildInfo() {
   await updateBuildInfo(true);
-  console.log(JSON.stringify(getBuildInfo())); // eslint-disable-line no-console
+  console.log(JSON.stringify(getBuildInfo()));
 }
 
 /**

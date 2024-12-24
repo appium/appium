@@ -2,7 +2,7 @@
  * Constants used across various modules in this package
  * @module
  */
-// eslint-disable-next-line @typescript-eslint/no-var-requires -- Consola 3 import call is ESM
+
 const {LogLevels} = require('consola');
 import {readFileSync} from 'node:fs';
 import {fs} from '@appium/support';

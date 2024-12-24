@@ -123,7 +123,7 @@ const openDir = tempDir;
  *
  * @returns {Promise<string>} A temp directory path whcih is defined as static in the same process
  */
-// eslint-disable-next-line require-await
+
 async function staticDir() {
   return _static;
 }

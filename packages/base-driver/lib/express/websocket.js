@@ -1,4 +1,4 @@
-/* eslint-disable require-await */
+
 import _ from 'lodash';
 import B from 'bluebird';
 

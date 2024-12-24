@@ -1,4 +1,4 @@
-/* eslint-disable no-case-declarations */
+
 
 import _ from 'lodash';
 import {errors} from 'appium/driver';

@@ -1,7 +1,7 @@
 // @ts-check
 
 import path from 'path';
-import semver from 'semver';
+import * as semver from 'semver';
 import {hasAppiumDependency} from './env';
 import {exec} from 'teen_process';
 import {fs} from './fs';

@@ -1,5 +1,5 @@
 // @ts-check
-/* eslint-disable no-case-declarations */
+
 
 import {BasePlugin} from 'appium/plugin';
 import B from 'bluebird';
@@ -59,7 +59,7 @@ class FakePlugin extends BasePlugin {
     FakePlugin._unexpectedData = null;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars,require-await
+
   static async updateServer(expressApp, httpServer, cliArgs) {
     expressApp.all('/fake', FakePlugin.fakeRoute);
     expressApp.all('/unexpected', FakePlugin.unexpectedData);
@@ -112,7 +112,7 @@ class FakePlugin extends BasePlugin {
     return `<<${handle}>>`;
   }
 
-  // eslint-disable-next-line require-await
+
   async onUnexpectedShutdown(driver, cause) {
     FakePlugin._unexpectedData = `Session ended because ${cause}`;
   }

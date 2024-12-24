@@ -3,7 +3,7 @@ import _ from 'lodash';
 import {homedir} from 'os';
 import path from 'path';
 import readPkg from 'read-pkg';
-import semver from 'semver';
+import * as semver from 'semver';
 
 /**
  * Path to the default `APPIUM_HOME` dir (`~/.appium`).

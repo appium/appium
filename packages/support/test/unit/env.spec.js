@@ -1,4 +1,4 @@
-/* eslint-disable require-await */
+
 // @ts-check
 
 import path from 'path';

@@ -27,7 +27,9 @@ export function errAndQuit(json, msg) {
  * @param {string} msg - string to log
  */
 export function log(json, msg) {
-  !json && console.log(msg);
+  if (!json) {
+    console.log(msg);
+  }
 }
 
 /**

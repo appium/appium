@@ -192,7 +192,7 @@ describe('server plugins', function () {
   });
 
   function updaterWithGetRoute(route, reply) {
-    // eslint-disable-next-line require-await
+
     return async (app, httpServer) => {
       app.get(`/${route}`, (req, res) => {
         res.header['content-type'] = 'text/html';

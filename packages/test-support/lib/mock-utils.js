@@ -16,9 +16,11 @@ import sinon from 'sinon';
 export function withMocks(mockDefs, fn) {
   return () => {
     const mocks = new MockStore();
+    // eslint-disable-next-line mocha/no-top-level-hooks
     beforeEach(function withMocksBeforeEach() {
       mocks.createMocks(mockDefs);
     });
+    // eslint-disable-next-line mocha/no-top-level-hooks
     afterEach(function withMocksAfterEach() {
       mocks.reset();
     });

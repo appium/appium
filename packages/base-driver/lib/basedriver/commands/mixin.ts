@@ -10,6 +10,5 @@ import {BaseDriver} from '../driver';
  * @param mixin Mixin implementation
  */
 export function mixin<C extends Constraints, T extends Partial<BaseDriver<C>>>(mixin: T): void {
-  // eslint-disable-next-line no-restricted-syntax
   Object.assign(BaseDriver.prototype, mixin);
 }

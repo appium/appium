@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* eslint-disable no-console */
+
 
 /**
  * Main CLI entry point for `@appium/docutils`

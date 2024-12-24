@@ -44,6 +44,4 @@ describe('npm', function () {
       (null === npm.getLatestSafeUpgradeFromVersions('10', versions1)).should.be.true;
     });
   });
-
-  it('should have many more unit tests');
 });

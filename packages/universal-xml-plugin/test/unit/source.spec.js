@@ -7,7 +7,7 @@ import {
 } from '../fixtures';
 import {transformAttrs, transformChildNodes, transformSourceXml} from '../../lib/source';
 
-describe('source functions', async function () {
+describe('source functions', function () {
   before(async function () {
     const chai = await import('chai');
     chai.should();

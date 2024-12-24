@@ -33,15 +33,13 @@ describe('environment', function () {
     resolveAppiumHome.cache = new Map();
     findAppiumDependencyPackage.cache = new Map();
     readPackageInDir.cache = new Map();
+
+    oldEnvAppiumHome = process.env.APPIUM_HOME;
+    delete process.env.APPIUM_HOME;
   });
 
   after(async function () {
     await fs.rimraf(cwd);
-  });
-
-  beforeEach(function () {
-    oldEnvAppiumHome = process.env.APPIUM_HOME;
-    delete process.env.APPIUM_HOME;
   });
 
   afterEach(function () {

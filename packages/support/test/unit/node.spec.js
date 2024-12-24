@@ -2,7 +2,7 @@ import {node} from '../../lib';
 import path from 'path';
 import _ from 'lodash';
 
-describe('node utilities', async function () {
+describe('node utilities', function () {
   let should;
 
   before(async function () {

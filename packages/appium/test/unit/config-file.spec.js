@@ -212,14 +212,11 @@ describe('config-file', function () {
           });
 
           describe('when the config file is invalid', function () {
-            beforeEach(function () {
+            beforeEach(async function () {
               lc.search.resolves({
                 config: {foo: 'bar'},
                 filepath: '/path/to/file.json',
               });
-            });
-
-            beforeEach(async function () {
               result = await readConfigFile();
             });
 

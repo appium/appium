@@ -280,7 +280,7 @@ export class FakeDriver extends BaseDriver {
   }
 
   static async updateServer(expressApp, httpServer, cliArgs) {
-    // eslint-disable-line require-await
+
     expressApp.all('/fakedriver', FakeDriver.fakeRoute);
     expressApp.all('/fakedriverCliArgs', (req, res) => {
       res.send(JSON.stringify(cliArgs));

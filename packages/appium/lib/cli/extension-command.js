@@ -17,7 +17,7 @@ import {inspect} from 'node:util';
 import {pathToFileURL} from 'url';
 import {Doctor, EXIT_CODE as DOCTOR_EXIT_CODE} from '../doctor/doctor';
 import {npmPackage} from '../utils';
-import semver from 'semver';
+import * as semver from 'semver';
 
 const UPDATE_ALL = 'installed';
 

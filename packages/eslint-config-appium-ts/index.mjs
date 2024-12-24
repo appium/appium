@@ -234,6 +234,8 @@ export default [
       '**/*-d.ts',
       '**/build/**',
       '**/*.min.js',
+      '**/coverage/**',
+      '**/node_modules/**',
     ],
   }
 

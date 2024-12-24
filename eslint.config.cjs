@@ -13,44 +13,12 @@ const configPromise = async () => {
   return [
     ...tsConfig.default,
     {
-      files: ['packages/fake-driver/**/*'],
-      rules: {'require-await': 'off'}
-    },
-    {
       files: ['packages/support/**/*'],
       languageOptions: {
         globals: {
           ...globals.node,
           BigInt: 'readonly',
         },
-      }
-    },
-    {
-      files: ['packages/*/test/**/*'],
-      rules: {'func-names': 'off'}
-    },
-    {
-      files: [
-        'packages/appium/support.js',
-        'packages/appium/driver.js',
-        'packages/appium/plugin.js'
-      ],
-      languageOptions: {
-        sourceType: 'script'
-      }
-    },
-    {
-      files: [
-        './test/setup.js',
-        './**/scripts/**/*.js',
-        './packages/*/index.js',
-        './packages/docutils/bin/appium-docs.js'
-      ],
-      rules: {
-        '@typescript-eslint/no-var-requires': 'off'
-      },
-      languageOptions: {
-        sourceType: 'script'
       }
     },
     {
@@ -77,13 +45,8 @@ const configPromise = async () => {
         ]
       }
     },
-
-
-
     {
       ignores: [
-        '**/coverage/**',
-        '**/node_modules/**',
         'examples/javascript-wd',
         'sample-code',
         '**/build-fixtures/**',

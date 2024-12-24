@@ -24,7 +24,7 @@ import readPkg from 'read-pkg';
 import sanitize from 'sanitize-filename';
 import which from 'which';
 import log from './logger';
-import Timer from './timing';
+import {Timer} from './timing';
 import {isWindows} from './system';
 import {pluralize} from './util';
 
@@ -259,7 +259,7 @@ const fs = {
               // eslint-disable-next-line promise/prefer-await-to-callbacks
               const done = await callback(item.path, item.stats.isDirectory());
               if (done) {
-                return item.path;
+                return resolve(item.path);
               }
               walker.resume();
             } catch (err) {

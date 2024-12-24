@@ -21,7 +21,7 @@
   },
   "license": "Apache-2.0",
   "author": "https://github.com/appium",
-  "main": "index.mjs",
+  "exports": "./index.mjs",
   "files": [
     "index.mjs"
   ],

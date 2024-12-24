@@ -100,7 +100,7 @@ describe('#zip', function () {
 
         it('should stop iterating zipFile if onEntry callback returns false', async function () {
           let i = 0;
-          // eslint-disable-next-line require-await
+
           await zip.readEntries(zippedFilePath, async () => {
             i++;
             return false;
@@ -280,7 +280,7 @@ describe('#zip', function () {
       const expectedPath = path.join(assetsPath, 'kanji-正世丕.app');
       // we cannot use the `should` syntax because `fs.exists` resolves to a primitive (boolean)
       if (!(await fs.exists(expectedPath))) {
-        throw new chai.AssertionError(`Expected ${expectedPath} to exist, but it does not`);
+        throw new Error(`Expected ${expectedPath} to exist, but it does not`);
       }
     });
   });

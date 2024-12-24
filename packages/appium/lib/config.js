@@ -194,7 +194,7 @@ export function checkNodeOk() {
 
 export async function showBuildInfo() {
   await updateBuildInfo(true);
-  console.log(JSON.stringify(getBuildInfo())); // eslint-disable-line no-console
+  console.log(JSON.stringify(getBuildInfo()));
 }
 
 /**

@@ -1,6 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable require-await */
-
 import {logger} from '@appium/support';
 import type {
   AppiumLogger,

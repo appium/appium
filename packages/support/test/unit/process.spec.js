@@ -80,7 +80,7 @@ describe('process', function () {
       await process.killProcess('tail');
 
       // it may take a moment to actually be registered as killed
-      // eslint-disable-next-line require-await
+
       await retryInterval(10, 100, async () => {
         proc.isRunning.should.be.false;
       });
@@ -88,7 +88,7 @@ describe('process', function () {
     it('should do nothing if the process does not exist', async function () {
       proc.isRunning.should.be.true;
       await process.killProcess('asdfasdfasdf');
-      // eslint-disable-next-line require-await
+
       await retryInterval(10, 100, async () => {
         proc.isRunning.should.be.false;
       }).should.eventually.be.rejected;

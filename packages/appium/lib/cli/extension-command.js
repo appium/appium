@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import B from 'bluebird';
 import _ from 'lodash';
 import path from 'path';

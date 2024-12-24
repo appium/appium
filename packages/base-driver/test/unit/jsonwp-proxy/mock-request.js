@@ -20,7 +20,7 @@ function resFixture(url, method) {
   throw new Error("Can't handle url " + url);
 }
 
-// eslint-disable-next-line require-await
+
 async function request(opts) {
   const {url, method, json} = opts;
   if (/badurl$/.test(url)) {

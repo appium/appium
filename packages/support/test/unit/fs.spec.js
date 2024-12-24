@@ -75,8 +75,6 @@ describe('fs', function () {
       (await fs.readFile(newPath, 'utf8')).should.contain('readFile');
     });
 
-    it('should be able to copy a directory');
-
     it('should throw an error if the source does not exist', async function () {
       await fs.copyFile('/sdfsdfsdfsdf', '/tmp/bla').should.eventually.be.rejected;
     });

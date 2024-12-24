@@ -109,12 +109,14 @@ describe('FakeDriver via HTTP', function () {
    * @param {Partial<import('appium/types').ParsedArgs>} [args]
    */
   function withServer(args = {}) {
+    // eslint-disable-next-line mocha/no-sibling-hooks
     before(async function () {
       args = {...args, appiumHome, port, address: TEST_HOST};
       if (shouldStartServer) {
         server = await appiumServer(args);
       }
     });
+    // eslint-disable-next-line mocha/no-sibling-hooks
     after(async function () {
       if (server) {
         await server.close();

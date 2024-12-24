@@ -358,7 +358,7 @@ describe('AppiumDriver', function () {
         _.keys(appium.sessions).should.not.contain(sessionId);
       });
       it('should remove session if inner driver unexpectedly exits with no error', async function () {
-        let [sessionId] = (await appium.createSession(null, null, _.clone(W3C_CAPS))).value; // eslint-disable-line comma-spacing
+        let [sessionId] = (await appium.createSession(null, null, _.clone(W3C_CAPS))).value;
         _.keys(appium.sessions).should.contain(sessionId);
         appium.sessions[sessionId].eventEmitter.emit('onUnexpectedShutdown');
         // let event loop spin so rejection is handled

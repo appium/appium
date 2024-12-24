@@ -266,7 +266,7 @@ export function driverUnitTestSuite(
           }
         }
         let results = /** @type {PromiseFulfilledResult<any>[]} */ (
-          // eslint-disable-next-line promise/no-native
+
           await Promise.allSettled(cmds)
         );
         for (let i = 1; i < 5; i++) {

@@ -257,10 +257,9 @@ const fs = {
           lastFileProcessed = B.try(async () => await callback(item.path, item.stats.isDirectory()))
             .then(function (done = false) {
               if (done) {
-                resolve(item.path);
-              } else {
-                walker.resume();
+                return resolve(item.path);
               }
+              return walker.resume();
             })
             .catch(reject);
         })
@@ -274,9 +273,7 @@ const fs = {
         })
         .on('end', function () {
           lastFileProcessed
-            .then((file) => {
-              resolve(/** @type {string|undefined} */ (file) ?? null);
-            })
+            .then((file) => resolve(/** @type {string|undefined} */ (file) ?? null))
             .catch(function (err) {
               log.warn(`Unexpected error: ${err.message}`);
               reject(err);

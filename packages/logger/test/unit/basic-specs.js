@@ -7,7 +7,7 @@ describe('basic', function () {
   let chai;
   let log;
 
-  this.before(async function () {
+  before(async function () {
     chai = await import('chai');
     chai.should();
   });
@@ -233,7 +233,7 @@ describe('basic', function () {
       },
     ];
 
-    this.beforeEach(function () {
+    beforeEach(function () {
       result = [];
       logEvents = [];
       logInfoEvents = [];

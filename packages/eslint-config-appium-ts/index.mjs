@@ -29,8 +29,8 @@ export default [
       parser: tsParser,
       globals: {
         ...globals.node,
-        NodeJS: true,
-        BufferEncoding: true,
+        NodeJS: 'readonly',
+        BufferEncoding: 'readonly',
       },
     },
     plugins: {
@@ -187,19 +187,6 @@ export default [
     }
   },
 
-  /**
-  * This disables the `import` plugin from trying to resolve `.test-d.ts` files,
-  * which have a weird resolution strategy.
-  */
-  {
-    name: 'Built Imports',
-    files: ['*.test-d.ts'],
-    rules: {'import/no-unresolved': 'off'}
-  },
-
-  /**
-  * Overrides for tests.
-  */
   {
     ...mochaPlugin.configs.flat.recommended,
     name: 'Test Overrides',
@@ -228,7 +215,9 @@ export default [
       'mocha/no-skipped-tests': 'off',
     },
   },
+
   {
+    name: 'Default Ignores',
     ignores: [
       ...(fs.existsSync(gitignorePath) ? includeIgnoreFile(gitignorePath).ignores : []),
       '**/*-d.ts',

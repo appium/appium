@@ -13,8 +13,6 @@ export default [
   },
   {
     ignores: [
-      'examples/javascript-wd',
-      'sample-code',
       '**/build-fixtures/**',
       'packages/appium/docs/**/assets/**',
       'packages/appium/docs/**/js/**',

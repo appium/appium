@@ -1,19 +1,9 @@
-import globals from 'globals';
 import tsConfig from '@appium/eslint-config-appium-ts';
 
 export default [
   ...tsConfig,
   {
-    files: ['packages/support/**/*'],
-    languageOptions: {
-      globals: {
-        ...globals.node,
-        BigInt: 'readonly',
-      },
-    }
-  },
-  {
-    ...tsConfig.find(({name}) => name === 'Test Overrides'),
+    ...tsConfig.find(({name}) => name === 'Test Files'),
     name: 'Test Support',
     files: [
       'packages/test-support/lib/**',

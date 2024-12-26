@@ -21,7 +21,7 @@ export default [
   importPlugin.flatConfigs.recommended,
 
   {
-    name: 'JS/TS Files',
+    name: 'Script Files',
     files: ['**/*.{js,mjs,cjs,jsx,mjsx,ts,tsx,mtsx}'],
     languageOptions: {
       ecmaVersion: 2022,
@@ -189,7 +189,7 @@ export default [
 
   {
     ...mochaPlugin.configs.flat.recommended,
-    name: 'Test Overrides',
+    name: 'Test Files',
     files: ['**/test/**', '*.spec.*js', '-specs.*js', '*.spec.ts'],
     rules: {
       ...mochaPlugin.configs.flat.recommended.rules,
@@ -217,14 +217,14 @@ export default [
   },
 
   {
-    name: 'Default Ignores',
+    name: 'Ignores',
     ignores: [
       ...(fs.existsSync(gitignorePath) ? includeIgnoreFile(gitignorePath).ignores : []),
       '**/*-d.ts',
       '**/build/**',
       '**/*.min.js',
       '**/coverage/**',
-      '**/node_modules/**',
+      '**/.*',
     ],
   }
 

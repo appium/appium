@@ -48,7 +48,7 @@ Appium extension authors--or anyone else--may use this config as well.
 
 - Do not upgrade to major versions of packages which have become ESM-only.  Unfortunately this is an explicit deny-list.
 - Groups (groups updates into single PR):
-  - ESLint-related and [@appium/eslint-config-appium](https://github.com/appium/appium/tree/master/eslint-config-appium)
+  - ESLint-related and [@appium/eslint-config-appium-ts](https://github.com/appium/appium/tree/master/eslint-config-appium-ts)
   - [teen_process](https://github.com/appium/node-teen_process) and its DT types
   - Appium-scoped (`@appium`) packages. This applies to _other_ repos which depend on Appium, such as official drivers.
 

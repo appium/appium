@@ -44,7 +44,7 @@
     },
     {
       "extends": ["packages:eslint"],
-      "matchPackageNames": ["@appium/eslint-config-appium**"],
+      "matchPackageNames": ["@appium/eslint-config-appium-ts"],
       "groupName": "ESLint-related packages",
       "groupSlug": "eslint"
     },
@@ -54,7 +54,7 @@
       "groupSlug": "teen_process"
     },
     {
-      "matchPackageNames": ["appium", "@appium/**", "!@appium/eslint-config-appium**"],
+      "matchPackageNames": ["appium", "@appium/**", "!@appium/eslint-config-appium-ts"],
       "groupName": "Appium-related packages",
       "groupSlug": "appium"
     }

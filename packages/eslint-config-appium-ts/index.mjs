@@ -165,13 +165,13 @@ export default [
        */
       '@typescript-eslint/no-unused-vars': 'warn',
       /**
-       * Allow native `Promise`s. **This overrides `@appium/eslint-config-appium`.**
+       * Allow native `Promise`s.
        * @remarks Originally, this was so that we could use [bluebird](https://npm.im/bluebird)
        * everywhere, but this is not strictly necessary.
        */
       'promise/no-native': 'off',
       /**
-       * Allow `async` functions without `await`.  **This overrides `@appium/eslint-config-appium`.**
+       * Allow `async` functions without `await`.
        * @remarks Originally, this was to be more clear about the return value of a function, but with
        * the addition of types, this is no longer necessary. Further, both `return somePromise` and
        * `return await somePromise` have their own use-cases.

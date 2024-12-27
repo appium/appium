@@ -1,9 +1,9 @@
 import _ from 'lodash';
-import BaseDriver from 'appium/driver';
+import {BaseDriver} from 'appium/driver';
 import {util} from 'appium/support';
 import ImageElementFinder from '../../lib/finder';
 import {getImgElFromArgs} from '../../lib/plugin';
-import ImageElement from '../../lib/image-element';
+import {ImageElement} from '../../lib/image-element';
 import sinon from 'sinon';
 import {IMAGE_ELEMENT_PREFIX} from '../../lib/constants';
 

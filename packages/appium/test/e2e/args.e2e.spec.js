@@ -3,12 +3,12 @@ import {tempDir, fs} from '@appium/support';
 import {exec} from 'teen_process';
 import B from 'bluebird';
 import {
-  APPIUM_ROOT,
   readAppiumArgErrorFixture,
   formatAppiumArgErrorOutput,
   EXECUTABLE,
   runAppiumRaw,
 } from './e2e-helpers';
+import {APPIUM_ROOT} from '../helpers';
 import { stripColorCodes } from '../../lib/logsink';
 
 describe('argument parsing', function () {

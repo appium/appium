@@ -32,6 +32,7 @@ describe('proxy', function () {
     const chaiAsPromised = await import('chai-as-promised');
     chai.use(chaiAsPromised.default);
     should = chai.should();
+    port = await getTestPort();
   });
 
   function mockProxy(opts = {}) {
@@ -43,10 +44,6 @@ describe('proxy', function () {
     };
     return proxy;
   }
-
-  before(async function () {
-    port = await getTestPort();
-  });
 
   it('should override default params', function () {
     let j = mockProxy({server: '127.0.0.2', port});

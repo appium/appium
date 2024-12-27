@@ -1,5 +1,3 @@
-// transpile:mocha
-
 import {welcome} from '../../../lib/express/static';
 import {createSandbox} from 'sinon';
 

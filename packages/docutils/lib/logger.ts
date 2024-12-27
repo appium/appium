@@ -6,7 +6,7 @@
  * @module
  */
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires -- Consola 3 import call is ESM
+
 const {ConsolaInstance, createConsola, LogLevel} = require('consola');
 import _ from 'lodash';
 import {DEFAULT_LOG_LEVEL, LogLevelMap} from './constants';

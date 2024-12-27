@@ -1,4 +1,4 @@
-/* eslint-disable require-await */
+
 // @ts-check
 
 /**

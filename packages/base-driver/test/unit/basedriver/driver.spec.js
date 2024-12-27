@@ -1,4 +1,4 @@
-import BaseDriver from '../../../lib';
+import {BaseDriver} from '../../../lib';
 import {driverUnitTestSuite} from '@appium/driver-test-support';
 
 driverUnitTestSuite(BaseDriver, {

@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import _ from 'lodash';
 import {getBuildInfo, updateBuildInfo, APPIUM_VER} from './config';
 import {
@@ -168,7 +167,6 @@ class AppiumDriver extends DriverCore {
     return this.sessions[sessionId];
   }
 
-  // eslint-disable-next-line require-await
   async getStatus() {
     // https://www.w3.org/TR/webdriver/#dfn-status
     const statusObj = this._isShuttingDown
@@ -755,7 +753,9 @@ class AppiumDriver extends DriverCore {
       // if we're running with plugins, make sure we log that the default behavior is actually
       // happening so we can tell when the plugin call chain is unwrapping to the default behavior
       // if that's what happens
-      plugins.length && this.log.info(`Executing default handling behavior for command '${cmd}'`);
+      if (plugins.length) {
+        this.log.info(`Executing default handling behavior for command '${cmd}'`);
+      }
 
       // if we make it here, we know that the default behavior is handled
       cmdHandledBy.default = true;
@@ -837,8 +837,9 @@ class AppiumDriver extends DriverCore {
   }
 
   wrapCommandWithPlugins({driver, cmd, args, next, cmdHandledBy, plugins}) {
-    plugins.length &&
+    if (plugins.length) {
       this.log.info(`Plugins which can handle cmd '${cmd}': ${plugins.map((p) => p.name)}`);
+    }
 
     // now we can go through each plugin and wrap `next` around its own handler, passing the *old*
     // next in so that it can call it if it wants to

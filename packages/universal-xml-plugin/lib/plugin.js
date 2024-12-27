@@ -1,4 +1,4 @@
-/* eslint-disable no-case-declarations */
+
 
 import {BasePlugin} from 'appium/plugin';
 import {errors} from 'appium/driver';

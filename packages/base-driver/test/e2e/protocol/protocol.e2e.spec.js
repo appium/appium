@@ -917,7 +917,7 @@ describe('Protocol', function () {
     });
 
     it('should pass on any errors in proxying', async function () {
-      // eslint-disable-next-line require-await
+
       driver.proxyReqRes = async function () {
         throw new Error('foo');
       };
@@ -938,7 +938,7 @@ describe('Protocol', function () {
     });
 
     it('should able to throw ProxyRequestError in proxying', async function () {
-      // eslint-disable-next-line require-await
+
       driver.proxyReqRes = async function () {
         let jsonwp = {
           status: 35,
@@ -961,7 +961,7 @@ describe('Protocol', function () {
     });
 
     it('should let the proxy handle req/res', async function () {
-      // eslint-disable-next-line require-await
+
       driver.proxyReqRes = async function (req, res) {
         res.status(200).json({custom: 'data'});
       };

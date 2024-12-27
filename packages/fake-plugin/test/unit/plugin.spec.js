@@ -1,4 +1,4 @@
-import FakePlugin from '../../lib/plugin';
+import {FakePlugin} from '../../lib/plugin';
 import B from 'bluebird';
 
 class FakeExpress {

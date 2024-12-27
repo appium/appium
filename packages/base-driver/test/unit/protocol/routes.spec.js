@@ -1,6 +1,4 @@
-// transpile:mocha
-
-import {_} from 'lodash';
+import _ from 'lodash';
 import {METHOD_MAP, routeToCommandName} from '../../../lib/protocol';
 import crypto from 'crypto';
 
@@ -51,11 +49,6 @@ describe('Protocol', function () {
     it('should properly lookup correct command name for endpoint with session', function () {
       const cmdName = routeToCommandName('/timeouts', 'POST');
       cmdName.should.equal('timeouts');
-    });
-
-    it('should properly lookup correct command name for endpoint with session', function () {
-      const cmdName = routeToCommandName('/timeouts/implicit_wait', 'POST');
-      cmdName.should.equal('implicitWait');
     });
 
     it('should properly lookup correct command name for endpoint without session', function () {

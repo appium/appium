@@ -157,7 +157,7 @@ export default class ImageElement {
             ignoreDefaultImageTemplateScale: true,
             containerRect: this.containerRect,
           }));
-      } catch (err) {
+      } catch {
         throw new errors.StaleElementReferenceError();
       }
 

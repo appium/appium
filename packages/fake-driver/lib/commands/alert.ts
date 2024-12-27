@@ -46,7 +46,7 @@ const AlertMixin: FakeDriverAlertMixin = {
     this.assertAlert();
     try {
       this.appModel.setAlertText(text);
-    } catch (e) {
+    } catch {
       throw new errors.InvalidElementStateError();
     }
   },

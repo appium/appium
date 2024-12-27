@@ -44,7 +44,7 @@ async function compareImages(mode, firstImage, secondImage, options = {}) {
         result = await getImagesMatches(
           img1, img2, /** @type {import('@appium/opencv').MatchingOptions} */(options)
         );
-      } catch (err) {
+      } catch {
         // might throw if no matches
         result = /** @type {import('@appium/opencv').MatchingResult} */({count: 0});
       }

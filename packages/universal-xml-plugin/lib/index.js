@@ -1,4 +1,4 @@
-import UniversalXMLPlugin from './plugin';
+import {UniversalXMLPlugin} from './plugin';
 import {transformSourceXml} from './source';
 import fs from 'fs';
 export default UniversalXMLPlugin;

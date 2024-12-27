@@ -1,5 +1,5 @@
 import getPort from 'get-port';
-import {curry} from 'lodash';
+import _ from 'lodash';
 
 /**
  * Default test host
@@ -31,7 +31,7 @@ async function getTestPort(force = false) {
  * To rearrange arguments (if needed), use the placeholder from Lodash (`_`).
  *
  */
-const createAppiumURL = curry(
+const createAppiumURL = _.curry(
   /**
    * @param {string} address - Base address (w/ optional protocol)
    * @param {string|number} port - Port number

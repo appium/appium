@@ -2,6 +2,7 @@ import {tempDir, fs, npm} from '@appium/support';
 import {loadExtensions} from '../../../lib/extension';
 import {Manifest} from '../../../lib/extension/manifest';
 import DriverCommand from '../../../lib/cli/driver-command';
+// eslint-disable-next-line import/named
 import {createSandbox} from 'sinon';
 
 describe('DriverCommand', function () {

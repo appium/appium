@@ -7,6 +7,7 @@
 
 import {EventEmitter} from 'events';
 import path from 'path';
+// eslint-disable-next-line import/named
 import {createSandbox} from 'sinon';
 import {version as APPIUM_VER} from '../../../package.json';
 

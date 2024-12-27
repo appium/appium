@@ -1,10 +1,10 @@
 import _ from 'lodash';
-import fs from './fs';
+import {fs} from './fs';
 import B from 'bluebird';
 import {toReadableSizeString} from './util';
 import log from './logger';
 import Ftp from 'jsftp';
-import Timer from './timing';
+import {Timer} from './timing';
 import axios from 'axios';
 import FormData from 'form-data';
 

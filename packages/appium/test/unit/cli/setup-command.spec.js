@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/named
 import {createSandbox} from 'sinon';
 import {system} from '@appium/support';
 import {getPresetDrivers} from '../../../lib/cli/setup-command';

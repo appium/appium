@@ -24,7 +24,7 @@ import {calcSignature} from '../helpers/session';
 import {DELETE_SESSION_COMMAND, determineProtocol, errors} from '../protocol';
 import {processCapabilities, validateCaps} from './capabilities';
 import {DriverCore} from './core';
-import helpers from './helpers';
+import * as helpers from './helpers';
 
 const EVENT_SESSION_INIT = 'newSessionRequested';
 const EVENT_SESSION_START = 'newSessionStarted';

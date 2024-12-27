@@ -16,7 +16,7 @@ async function initMJpegConsumer() {
   if (!MJpegConsumer) {
     try {
       MJpegConsumer = await requirePackage('mjpeg-consumer');
-    } catch (ign) {}
+    } catch {}
   }
   if (!MJpegConsumer) {
     throw new Error(
@@ -78,7 +78,7 @@ class MJpegStream extends Writable {
 
     try {
       return await requireSharp()(lastChunk).png().toBuffer();
-    } catch (e) {
+    } catch {
       return null;
     }
   }

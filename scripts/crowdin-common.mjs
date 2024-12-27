@@ -36,7 +36,7 @@ export async function walk(dir, ext) {
     let stats;
     try {
       stats = await fs.stat(fullPath);
-    } catch (e) {
+    } catch {
       continue;
     }
     if (stats.isDirectory()) {

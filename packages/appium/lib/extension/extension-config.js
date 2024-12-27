@@ -571,7 +571,9 @@ export class ExtensionConfig {
     try {
       entryPointPath = JSON.parse(await fs.readFile(packageJsonPath, 'utf8')).main ?? 'index.js';
     } catch (e) {
-      throw new ReferenceError(`Could not find a ${this.extensionType} installed at ${moduleRoot}`);
+      throw new ReferenceError(
+        `Could not find a ${this.extensionType} installed at ${moduleRoot}: ${e.message}`
+      );
     }
     if (entryPointPath) {
       entryPointPath = path.resolve(moduleRoot, entryPointPath);

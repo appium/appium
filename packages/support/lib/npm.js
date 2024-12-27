@@ -77,7 +77,7 @@ export class NPM {
       // guaranteed to be parseable
       try {
         ret.json = JSON.parse(stdout);
-      } catch (ign) {}
+      } catch {}
     } catch (e) {
       const {
         stdout = '',

@@ -24,8 +24,8 @@ import {
   MAX_LOG_BODY_LENGTH,
 } from '../constants';
 import {errors} from '../protocol';
-import DeviceSettings from './device-settings';
-import helpers, {BASEDRIVER_VER} from './helpers';
+import {DeviceSettings} from './device-settings';
+import * as helpers from './helpers';
 import {BIDI_COMMANDS} from '../protocol/bidi-commands';
 
 const NEW_COMMAND_TIMEOUT_MS = 60 * 1000;
@@ -42,7 +42,7 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
    * Make the basedriver version available so for any driver which inherits from this package, we
    * know which version of basedriver it inherited from
    */
-  static baseVersion = BASEDRIVER_VER;
+  static baseVersion = helpers.BASEDRIVER_VER;
 
   sessionId: string | null;
 
@@ -239,6 +239,7 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
    * method required by MJSONWP in order to determine if the command should
    * be proxied directly to the driver
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   driverForSession(sessionId: string): Core<Constraints> | null {
     return this as Core<Constraints>;
   }
@@ -364,14 +365,17 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
     return null;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   proxyActive(sessionId: string): boolean {
     return false;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getProxyAvoidList(sessionId: string): RouteMatcher[] {
     return [];
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   canProxy(sessionId: string): boolean {
     return false;
   }
@@ -389,6 +393,7 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
    *
    * @returns whether the route should be avoided
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   proxyRouteIsAvoided(sessionId: string, method: HTTPMethod, url: string, body?: any): boolean {
     for (const avoidSchema of this.getProxyAvoidList(sessionId)) {
       if (!_.isArray(avoidSchema) || avoidSchema.length !== 2) {

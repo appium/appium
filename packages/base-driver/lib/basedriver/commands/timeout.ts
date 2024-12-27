@@ -76,19 +76,23 @@ const TimeoutCommands: ITimeoutCommands = {
   },
 
   // pageLoad
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async pageLoadTimeoutW3C<C extends Constraints>(this: BaseDriver<C>, ms) {
     throw new errors.NotImplementedError('Not implemented yet for pageLoad.');
   },
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async pageLoadTimeoutMJSONWP<C extends Constraints>(this: BaseDriver<C>, ms) {
     throw new errors.NotImplementedError('Not implemented yet for pageLoad.');
   },
 
   // script
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async scriptTimeoutW3C<C extends Constraints>(this: BaseDriver<C>, ms) {
     throw new errors.NotImplementedError('Not implemented yet for script.');
   },
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async scriptTimeoutMJSONWP<C extends Constraints>(this: BaseDriver<C>, ms) {
     throw new errors.NotImplementedError('Not implemented yet for script.');
   },

@@ -1,5 +1,6 @@
 import {system} from '../../lib';
 import os from 'os';
+// eslint-disable-next-line import/named
 import {createSandbox} from 'sinon';
 import * as teen_process from 'teen_process';
 import _ from 'lodash';

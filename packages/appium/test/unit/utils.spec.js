@@ -10,6 +10,7 @@ import {
 import {BASE_CAPS, W3C_CAPS} from '../helpers';
 import _ from 'lodash';
 import {stripColors} from '@colors/colors';
+// eslint-disable-next-line import/named
 import {createSandbox} from 'sinon';
 import logger from '../../lib/logger';
 import {fs} from '@appium/support';

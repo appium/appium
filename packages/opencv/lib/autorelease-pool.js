@@ -24,7 +24,7 @@ export class OpenCvAutoreleasePool {
     for (const item of this._items) {
       try {
         item.delete();
-      } catch (ign) {}
+      } catch {}
     }
     this._items.clear();
   }

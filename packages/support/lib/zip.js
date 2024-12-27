@@ -5,11 +5,11 @@ import archiver from 'archiver';
 import {createWriteStream} from 'fs';
 import path from 'path';
 import stream from 'stream';
-import fs from './fs';
+import {fs} from './fs';
 import {isWindows} from './system';
 import {Base64Encode} from 'base64-stream';
 import {toReadableSizeString, GiB} from './util';
-import Timer from './timing';
+import {Timer} from './timing';
 import log from './logger';
 import getStream from 'get-stream';
 import {exec} from 'teen_process';
@@ -17,6 +17,7 @@ import {exec} from 'teen_process';
 /**
  * @type {(path: string, options?: yauzl.Options) => Promise<yauzl.ZipFile>}
  */
+// eslint-disable-next-line import/no-named-as-default-member
 const openZip = B.promisify(yauzl.open);
 /**
  * @type {(source: NodeJS.ReadableStream, destination: NodeJS.WritableStream) => Promise<NodeJS.WritableStream>}
@@ -229,7 +230,7 @@ async function extractWithSystemUnzip(zipFilePath, destDir) {
   let executablePath;
   try {
     executablePath = await getExecutablePath(isWindowsHost ? 'powershell.exe' : 'unzip');
-  } catch (e) {
+  } catch {
     throw new Error('Could not find system unzip');
   }
 

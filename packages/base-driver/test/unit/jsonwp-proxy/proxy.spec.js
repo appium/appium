@@ -17,7 +17,7 @@ function buildReqRes(url, method, body) {
   res.send = (body) => {
     try {
       body = JSON.parse(body);
-    } catch (e) {}
+    } catch {}
     res.sentBody = body;
   };
   return [req, res];

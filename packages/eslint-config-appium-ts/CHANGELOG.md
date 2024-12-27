@@ -3,6 +3,33 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 1.0.0 [Unreleased]
+
+### ⚠ BREAKING CHANGES
+
+* This module is now ESM-only
+* Only ESLint flat config format is supported
+* Bump minimum ESLint version to v9
+* Rule changes:
+  * `@typescript-eslint/no-var-requires`: 'error' ->'off'
+  * `import/no-unresolved` is no longer set to 'off' for `*.test-d.ts` files
+  * `no-redeclare`: 1 ->'off'
+* New rules for all files:
+  * `@typescript-eslint/no-empty-object-type`: 'off'
+  * `@typescript-eslint/no-require-imports`: 'off'
+  * `import/named`: 'warn'
+  * `no-dupe-class-members`: 'off'
+* New rules only for test files:
+  * `@typescript-eslint/no-unused-expressions`: 'off'
+  * `import/no-named-as-default-member`: 'off'
+  * `mocha/consistent-spacing-between-blocks`: 'off'
+  * `mocha/max-top-level-suites`: 'off'
+  * `mocha/no-exports`: 'off'
+  * `mocha/no-setup-in-describe`: 'off'
+  * `mocha/no-skipped-tests`: 'off'
+
+
+
 ## [0.3.3](https://github.com/appium/appium/compare/@appium/eslint-config-appium-ts@0.3.2...@appium/eslint-config-appium-ts@0.3.3) (2024-04-08)
 
 **Note:** Version bump only for package @appium/eslint-config-appium-ts

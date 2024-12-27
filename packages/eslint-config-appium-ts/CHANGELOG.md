@@ -11,9 +11,9 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * Only ESLint flat config format is supported
 * Bump minimum ESLint version to v9
 * Rule changes:
-  * `@typescript-eslint/no-var-requires`: 'error' ->'off'
+  * `@typescript-eslint/no-var-requires`: 'error' -> 'off'
   * `import/no-unresolved` is no longer set to 'off' for `*.test-d.ts` files
-  * `no-redeclare`: 1 ->'off'
+  * `no-redeclare`: 1 -> 'off'
 * New rules for all files:
   * `@typescript-eslint/no-empty-object-type`: 'off'
   * `@typescript-eslint/no-require-imports`: 'off'

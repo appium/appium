@@ -597,7 +597,7 @@ export class ExtensionConfig {
     }
     // note: this will only reload the entry point
     if (process.env.APPIUM_RELOAD_EXTENSIONS && require.cache[entryPointFullPath]) {
-      log.debug(`Removing ${entryPointRelativePath} from require cache`);
+      log.debug(`Removing ${entryPointFullPath} from require cache`);
       delete require.cache[entryPointFullPath];
     }
     return [entryPointFullPath, mainClass];

@@ -704,14 +704,7 @@ export function resolveEsmEntryPoint(exportsValue) {
   }
 
   for (const key of ['.', 'import']) {
-    if (!exportsValue[key]) {
-      continue;
-    }
-
-    if (_.isString(exportsValue[key])) {
-      return exportsValue[key];
-    }
-    if (_.isPlainObject(exportsValue[key])) {
+    if (exportsValue[key]) {
       return resolveEsmEntryPoint(exportsValue[key]);
     }
   }

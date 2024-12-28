@@ -579,7 +579,7 @@ export class ExtensionConfig {
     /** @type {string | undefined} */
     let entryPointRelativePath;
     try {
-      if (extensionManifest.type === 'module' && !!extensionManifest.exports) {
+      if (extensionManifest.type === 'module' && extensionManifest.exports) {
         entryPointRelativePath = resolveEsmEntryPoint(extensionManifest.exports);
       }
       entryPointRelativePath = entryPointRelativePath ?? extensionManifest.main ?? DEFAULT_ENTRY_POINT;

@@ -153,6 +153,20 @@ export class FakeDriver extends BaseDriver {
     return await super.deleteSession(sessionId);
   }
 
+  /**
+   * @returns {Promise<string>}
+   */
+  async getWindowHandle() {
+    return '1';
+  }
+
+  /**
+   * @returns {Promise<string[]>}
+   */
+  async getWindowHandles() {
+    return ['1'];
+  }
+
   get driverData() {
     return {
       isUnique: !!this.caps.uniqueApp,

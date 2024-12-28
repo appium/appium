@@ -692,25 +692,27 @@ export class ExtensionConfig {
 /**
  * https://nodejs.org/api/packages.html#package-entry-points
  *
- * @param {Record<string, any>} exports
+ * @param {any} exports
  * @returns {string | undefined}
  */
 export function resolveEsmEntryPoint(exports) {
   if (_.isString(exports)) {
     return exports;
   }
-  if (_.isPlainObject(exports)) {
-    for (const key of ['.', 'import']) {
-      if (!exports[key]) {
-        continue;
-      }
+  if (!_.isPlainObject(exports)) {
+    return;
+  }
 
-      if (_.isString(exports[key])) {
-        return exports[key];
-      }
-      if (_.isPlainObject(exports[key])) {
-        return resolveEsmEntryPoint(exports[key]);
-      }
+  for (const key of ['.', 'import']) {
+    if (!exports[key]) {
+      continue;
+    }
+
+    if (_.isString(exports[key])) {
+      return exports[key];
+    }
+    if (_.isPlainObject(exports[key])) {
+      return resolveEsmEntryPoint(exports[key]);
     }
   }
 }

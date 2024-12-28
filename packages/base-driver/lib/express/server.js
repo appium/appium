@@ -60,7 +60,7 @@ async function createServer (app, cliArgs) {
   }
   const [cert, key] = await B.all(certKey.map((p) => fs.readFile(p, 'utf8')));
   log.debug('Enabling TLS/SPDY on the server using the provided certificate');
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
+
   return require('spdy').createServer({
     cert,
     key,

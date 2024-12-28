@@ -99,7 +99,7 @@ const TimeoutCommands: ITimeoutCommands = {
   },
 
   setImplicitWait<C extends Constraints>(this: BaseDriver<C>, ms: number) {
-    // eslint-disable-line require-await
+
     this.implicitWaitMs = ms;
     this.log.debug(`Set implicit wait to ${ms}ms`);
     if (this.managedDrivers && this.managedDrivers.length) {

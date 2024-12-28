@@ -1,6 +1,4 @@
-/* eslint-disable no-unused-vars */
 import _ from 'lodash';
-import B from 'bluebird';
 import {getBuildInfo, updateBuildInfo, APPIUM_VER} from './config';
 import {
   BaseDriver,
@@ -10,7 +8,6 @@ import {
   CREATE_SESSION_COMMAND,
   DELETE_SESSION_COMMAND,
   GET_STATUS_COMMAND,
-  MAX_LOG_BODY_LENGTH,
   promoteAppiumOptions,
   promoteAppiumOptionsForObject,
 } from '@appium/base-driver';
@@ -19,20 +16,12 @@ import {
   parseCapsForInnerDriver,
   pullSettings,
   makeNonW3cCapsError,
-  isBroadcastIp,
-  fetchInterfaces,
-  V4_BROADCAST_IP,
   validateFeatures,
 } from './utils';
 import {util, node, logger} from '@appium/support';
 import {getDefaultsForExtension} from './schema';
-import {DRIVER_TYPE, BIDI_BASE_PATH, BIDI_EVENT_NAME} from './constants';
-import WebSocket from 'ws';
-import os from 'node:os';
-
-const MIN_WS_CODE_VAL = 1000;
-const MAX_WS_CODE_VAL = 1015;
-const WS_FALLBACK_CODE = 1011; // server encountered an error while fulfilling request
+import {DRIVER_TYPE, BIDI_BASE_PATH} from './constants';
+import * as bidiHelpers from './bidi';
 
 const desiredCapabilityConstraints = /** @type {const} */ ({
   automationName: {
@@ -178,7 +167,6 @@ class AppiumDriver extends DriverCore {
     return this.sessions[sessionId];
   }
 
-  // eslint-disable-next-line require-await
   async getStatus() {
     // https://www.w3.org/TR/webdriver/#dfn-status
     const statusObj = this._isShuttingDown
@@ -263,347 +251,6 @@ class AppiumDriver extends DriverCore {
         return cliArgs;
       }
     }
-  }
-
-  /**
-   * Initialize a new bidi connection and set up handlers
-   * @param {import('ws').WebSocket} ws The websocket connection object
-   * @param {import('http').IncomingMessage} req The connection pathname, which might include the session id
-   */
-  onBidiConnection(ws, req) {
-    // TODO put bidi-related functionality into a mixin/helper class
-    // wrap all of the handler logic with exception handling so if something blows up we can log
-    // and close the websocket
-    try {
-      const {bidiHandlerDriver, proxyClient, send, sendToProxy, logSocketErr} = this.initBidiSocket(
-        ws,
-        req,
-      );
-
-      this.initBidiSocketHandlers(
-        ws,
-        proxyClient,
-        send,
-        sendToProxy,
-        bidiHandlerDriver,
-        logSocketErr,
-      );
-      this.initBidiProxyHandlers(proxyClient, ws, send);
-      this.initBidiEventListeners(ws, bidiHandlerDriver, send);
-    } catch (err) {
-      this.log.error(err);
-      try {
-        ws.close();
-      } catch (ign) {}
-    }
-  }
-
-  /**
-   * Initialize a new bidi connection
-   * @param {import('ws').WebSocket} ws The websocket connection object
-   * @param {import('http').IncomingMessage} req The connection pathname, which might include the session id
-   */
-  initBidiSocket(ws, req) {
-    let outOfBandErrorPrefix = '';
-    const pathname = req.url;
-    if (!pathname) {
-      throw new Error('Invalid connection request: pathname missing from request');
-    }
-    const bidiSessionRe = new RegExp(`${BIDI_BASE_PATH}/([^/]+)$`);
-    const bidiNoSessionRe = new RegExp(`${BIDI_BASE_PATH}/?$`);
-    const sessionMatch = bidiSessionRe.exec(pathname);
-    const noSessionMatch = bidiNoSessionRe.exec(pathname);
-
-    if (!sessionMatch && !noSessionMatch) {
-      throw new Error(
-        `Got websocket connection for path ${pathname} but didn't know what to do with it. ` +
-          `Ignoring and will close the connection`,
-      );
-    }
-
-    // Let's figure out which driver is going to handle this socket connection. It's either going
-    // to be a driver matching a session id appended to the bidi base path, or this umbrella driver
-    // (if no session id is included in the bidi connection request)
-
-    /** @type {import('@appium/types').ExternalDriver | AppiumDriver} */
-    let bidiHandlerDriver;
-
-    /** @type {import('ws').WebSocket | null} */
-    let proxyClient = null;
-
-    if (sessionMatch) {
-      // If we found a session id, see if it matches an active session
-      const sessionId = sessionMatch[1];
-      bidiHandlerDriver = this.sessions[sessionId];
-      if (!bidiHandlerDriver) {
-        // The session ID sent in doesn't match an active session; just ignore this socket
-        // connection in that case
-        throw new Error(
-          `Got bidi connection request for session with id ${sessionId} which is closed ` +
-            `or does not exist. Closing the socket connection.`,
-        );
-      }
-      const driverName = bidiHandlerDriver.constructor.name;
-      outOfBandErrorPrefix = `[session ${sessionId}] `;
-      this.log.info(`Bidi websocket connection made for session ${sessionId}`);
-      // store this socket connection for later removal on session deletion. theoretically there
-      // can be multiple sockets per session
-      if (!this.bidiSockets[sessionId]) {
-        this.bidiSockets[sessionId] = [];
-      }
-      this.bidiSockets[sessionId].push(ws);
-
-      const bidiProxyUrl = bidiHandlerDriver.bidiProxyUrl;
-      if (bidiProxyUrl) {
-        try {
-          new URL(bidiProxyUrl);
-        } catch (ign) {
-          throw new Error(
-            `Got request for ${driverName} to proxy bidi connections to upstream socket with ` +
-              `url ${bidiProxyUrl}, but this was not a valid url`,
-          );
-        }
-        this.log.info(`Bidi connection for ${driverName} will be proxied to ${bidiProxyUrl}`);
-        proxyClient = new WebSocket(bidiProxyUrl);
-        this.bidiProxyClients[sessionId] = proxyClient;
-      }
-    } else {
-      this.log.info('Bidi websocket connection made to main server');
-      // no need to store the socket connection if it's to the main server since it will just
-      // stay open as long as the server itself is and will close when the server closes.
-      bidiHandlerDriver = this; // eslint-disable-line @typescript-eslint/no-this-alias
-    }
-
-    const logSocketErr = (/** @type {Error} */ err) =>
-      this.log.error(`${outOfBandErrorPrefix}${err}`);
-
-    // This is a function which wraps the 'send' method on a web socket for two reasons:
-    // 1. Make it async-await friendly
-    // 2. Do some logging if there's a send error
-    const sendFactory = (/** @type {import('ws').WebSocket} */ socket) => {
-      const socketSend = B.promisify(socket.send, {context: socket});
-      return async (/** @type {string|Buffer} */ data) => {
-        try {
-          await socketSend(data);
-        } catch (err) {
-          logSocketErr(err);
-        }
-      };
-    };
-
-    // Construct our send method for sending messages to the client
-    const send = sendFactory(ws);
-
-    // Construct a conditional send method for proxying messages from the client to an upstream
-    // bidi socket server (e.g. on a browser)
-    const sendToProxy = proxyClient ? sendFactory(proxyClient) : null;
-
-    return {bidiHandlerDriver, proxyClient, send, sendToProxy, logSocketErr};
-  }
-
-  /**
-   * Set up handlers on upstream bidi socket we are proxying to/from
-   *
-   * @param {import('ws').WebSocket | null} proxyClient - the websocket connection to/from the
-   * upstream socket (the one we're proxying to/from)
-   * @param {import('ws').WebSocket} ws - the websocket connection to/from the client
-   * @param {(data: string | Buffer) => Promise<void>} send - a method used to send data to the
-   * client
-   */
-  initBidiProxyHandlers(proxyClient, ws, send) {
-    // Set up handlers for events that might come from the upstream bidi socket connection if
-    // we're in proxy mode
-    if (proxyClient) {
-      // Here we're receiving a message from the upstream socket server. We want to pass it on to
-      // the client
-      proxyClient.on('message', async (/** @type {Buffer|string} */ data) => {
-        const logData = _.truncate(data.toString('utf8'), {length: MAX_LOG_BODY_LENGTH});
-        this.log.debug(
-          `<-- BIDI Received data from proxied bidi socket, sending to client. Data: ${logData}`,
-        );
-        await send(data);
-      });
-
-      // If the upstream socket server closes the connection, should close the connection to the
-      // client as well
-      proxyClient.on('close', (code, reason) => {
-        this.log.debug(
-          `Upstream bidi socket closed connection (code ${code}, reason: '${reason}'). ` +
-            `Closing proxy connection to client`,
-        );
-        if (!_.isNumber(code)) {
-          code = parseInt(code, 10);
-        }
-        if (_.isNaN(code) || code < MIN_WS_CODE_VAL || code > MAX_WS_CODE_VAL) {
-          this.log.warn(
-            `Received code ${code} from upstream socket, but this is not a valid ` +
-              `websocket code. Rewriting to ${WS_FALLBACK_CODE} for ws compatibility`,
-          );
-          code = WS_FALLBACK_CODE;
-        }
-        ws.close(code, reason);
-      });
-
-      proxyClient.on('error', (err) => {
-        this.log.error(`Got error on upstream bidi socket connection: ${err}`);
-      });
-    }
-  }
-
-  /**
-   * Set up handlers on the bidi socket connection to the client
-   *
-   * @param {import('ws').WebSocket} ws - the websocket connection to/from the client
-   * @param {import('ws').WebSocket | null} proxyClient - the websocket connection to/from the
-   * upstream socket (the one we're proxying to/from, if we're proxying)
-   * @param {(data: string | Buffer) => Promise<void>} send - a method used to send data to the
-   * client
-   * @param {((data: string | Buffer) => Promise<void>) | null} sendToProxy - a method used to send data to the
-   * upstream socket
-   * @param {import('@appium/types').ExternalDriver | AppiumDriver} bidiHandlerDriver - the driver
-   * handling the bidi commands
-   * @param {(err: Error) => void} logSocketErr - a special prefixed logger
-   */
-  initBidiSocketHandlers(ws, proxyClient, send, sendToProxy, bidiHandlerDriver, logSocketErr) {
-    ws.on('error', (err) => {
-      // Can't do much with random errors on the connection other than log them
-      logSocketErr(err);
-    });
-
-    ws.on('open', () => {
-      this.log.info('Bidi websocket connection is now open');
-    });
-
-    // Now set up handlers for the various events that might happen on the websocket connection
-    // coming from the client
-    // First is incoming messages from the client
-    ws.on('message', async (/** @type {Buffer} */ data) => {
-      if (proxyClient) {
-        const logData = _.truncate(data.toString('utf8'), {length: MAX_LOG_BODY_LENGTH});
-        this.log.debug(
-          `--> BIDI Received data from client, sending to upstream bidi socket. Data: ${logData}`,
-        );
-        // if we're meant to proxy to an upstream bidi socket, just do that
-        // @ts-ignore sendToProxy is never null if proxyClient is truthy, but ts doesn't know
-        // that
-        await sendToProxy(data.toString('utf8'));
-      } else {
-        const res = await this.onBidiMessage(data, bidiHandlerDriver);
-        await send(JSON.stringify(res));
-      }
-    });
-
-    // Next consider if the client closes the socket connection on us
-    ws.on('close', (code, reason) => {
-      // Not sure if we need to do anything here if the client closes the websocket connection.
-      // Probably if a session was started via the socket, and the socket closes, we should end the
-      // associated session to free up resources. But otherwise, for sockets attached to existing
-      // sessions, doing nothing is probably right.
-      this.log.debug(`Bidi socket connection closed (code ${code}, reason: '${reason}')`);
-
-      // If we're proxying, might as well close the upstream connection and clean it up
-      if (proxyClient) {
-        this.log.debug('Also closing bidi proxy socket connection');
-        proxyClient.close(code, reason);
-      }
-    });
-  }
-
-  /**
-   * Set up bidi event listeners
-   *
-   * @param {import('ws').WebSocket} ws - the websocket connection to/from the client
-   * @param {import('@appium/types').ExternalDriver | AppiumDriver} bidiHandlerDriver - the driver
-   * handling the bidi commands
-   * @param {(data: string | Buffer) => Promise<void>} send - a method used to send data to the
-   * client
-   */
-  initBidiEventListeners(ws, bidiHandlerDriver, send) {
-    // If the driver emits a bidi event that should maybe get sent to the client, check to make
-    // sure the client is subscribed and then pass it on
-    let eventListener = async ({context, method, params}) => {
-      // if the driver didn't specify a context, use the empty context
-      if (!context) {
-        context = '';
-      }
-      if (!method || !params) {
-        throw new Error(
-          `Driver emitted a bidi event that was malformed. Require method and params keys ` +
-            `(with optional context). But instead received: ${JSON.stringify({
-              context,
-              method,
-              params,
-            })}`,
-        );
-      }
-      if (ws.readyState !== WebSocket.OPEN) {
-        // if the websocket is not still 'open', then we can ignore sending these events
-        if (ws.readyState > WebSocket.OPEN) {
-          // if the websocket is closed or closing, we can remove this listener as well to avoid
-          // leaks
-          bidiHandlerDriver.eventEmitter.removeListener(BIDI_EVENT_NAME, eventListener);
-        }
-        return;
-      }
-
-      if (bidiHandlerDriver.bidiEventSubs[method]?.includes(context)) {
-        this.log.info(
-          `<-- BIDI EVENT ${method} (context: '${context}', params: ${JSON.stringify(params)})`,
-        );
-        // now we can send the event onto the socket
-        const ev = {type: 'event', context, method, params};
-        await send(JSON.stringify(ev));
-      }
-    };
-    bidiHandlerDriver.eventEmitter.on(BIDI_EVENT_NAME, eventListener);
-  }
-
-  /**
-   * @param {Buffer} data
-   * @param {ExternalDriver | AppiumDriver} driver
-   */
-  async onBidiMessage(data, driver) {
-    let resMessage, id, method, params;
-    const dataTruncated = _.truncate(data.toString(), {length: 100});
-    try {
-      try {
-        ({id, method, params} = JSON.parse(data.toString('utf8')));
-      } catch (err) {
-        throw new errors.InvalidArgumentError(
-          `Could not parse Bidi command '${dataTruncated}': ${err.message}`,
-        );
-      }
-      driver.log.info(`--> BIDI message #${id}`);
-      if (!method) {
-        throw new errors.InvalidArgumentError(
-          `Missing method for BiDi operation in '${dataTruncated}'`,
-        );
-      }
-      if (!params) {
-        throw new errors.InvalidArgumentError(
-          `Missing params for BiDi operation in '${dataTruncated}`,
-        );
-      }
-      const result = await driver.executeBidiCommand(method, params);
-      // https://w3c.github.io/webdriver-bidi/#protocol-definition
-      resMessage = {
-        id,
-        type: 'success',
-        result,
-      };
-    } catch (err) {
-      resMessage = err.bidiErrObject(id);
-    }
-    driver.log.info(`<-- BIDI message #${id}`);
-    return resMessage;
-  }
-
-  /**
-   * Log a bidi server error
-   * @param {Error} err
-   */
-  onBidiServerError(err) {
-    this.log.error(`Error from bidi websocket server: ${err}`);
   }
 
   /**
@@ -695,6 +342,10 @@ class AppiumDriver extends DriverCore {
         driverInstance.relaxedSecurityEnabled = true;
       }
 
+      // We also want to assign any new Bidi Commands that the driver has specified, including all
+      // the standard bidi commands
+      driverInstance.updateBidiCommands(InnerDriver.newBidiCommands ?? {});
+
       if (!_.isEmpty(this.args.denyInsecure)) {
         this.log.info('Explicitly preventing use of insecure features:');
         this.args.denyInsecure.map((a) => this.log.info(`    ${a}`));
@@ -783,7 +434,7 @@ class AppiumDriver extends DriverCore {
       if (dCaps.webSocketUrl && driverInstance.doesSupportBidi) {
         const {address, port, basePath} = this.args;
         const scheme = `ws${this.server.isSecure() ? 's' : ''}`;
-        const host = determineBiDiHost(address);
+        const host = bidiHelpers.determineBiDiHost(address);
         const bidiUrl = `${scheme}://${host}:${port}${basePath}${BIDI_BASE_PATH}/${innerSessionId}`;
         this.log.info(
           `Upstream driver responded with webSocketUrl ${dCaps.webSocketUrl}, will rewrite to ` +
@@ -1102,7 +753,9 @@ class AppiumDriver extends DriverCore {
       // if we're running with plugins, make sure we log that the default behavior is actually
       // happening so we can tell when the plugin call chain is unwrapping to the default behavior
       // if that's what happens
-      plugins.length && this.log.info(`Executing default handling behavior for command '${cmd}'`);
+      if (plugins.length) {
+        this.log.info(`Executing default handling behavior for command '${cmd}'`);
+      }
 
       // if we make it here, we know that the default behavior is handled
       cmdHandledBy.default = true;
@@ -1184,8 +837,9 @@ class AppiumDriver extends DriverCore {
   }
 
   wrapCommandWithPlugins({driver, cmd, args, next, cmdHandledBy, plugins}) {
-    plugins.length &&
+    if (plugins.length) {
       this.log.info(`Plugins which can handle cmd '${cmd}': ${plugins.map((p) => p.name)}`);
+    }
 
     // now we can go through each plugin and wrap `next` around its own handler, passing the *old*
     // next in so that it can call it if it wants to
@@ -1276,31 +930,16 @@ class AppiumDriver extends DriverCore {
     const dstSession = this.sessions[sessionId];
     return dstSession && dstSession.canProxy(sessionId);
   }
+
+  onBidiConnection = bidiHelpers.onBidiConnection;
+  onBidiMessage = bidiHelpers.onBidiMessage;
+  onBidiServerError = bidiHelpers.onBidiServerError;
 }
 
 // help decide which commands should be proxied to sub-drivers and which
 // should be handled by this, our umbrella driver
 function isAppiumDriverCommand(cmd) {
   return !isSessionCommand(cmd) || cmd === DELETE_SESSION_COMMAND;
-}
-
-/**
- * Clients cannot use broadcast addresses, like 0.0.0.0 or ::
- * to create connections. Thus we prefer a hostname if such
- * address is provided or the actual address of a non-local interface,
- * in case the host only has one such interface.
- *
- * @param {string} address
- * @returns {string}
- */
-function determineBiDiHost(address) {
-  if (!isBroadcastIp(address)) {
-    return address;
-  }
-
-  const nonLocalInterfaces = fetchInterfaces(address === V4_BROADCAST_IP ? 4 : 6)
-    .filter((iface) => !iface.internal);
-  return nonLocalInterfaces.length === 1 ? nonLocalInterfaces[0].address : os.hostname();
 }
 
 /**

@@ -138,8 +138,14 @@ export type ExecuteMethodMap<T extends Plugin | Driver> = T extends Plugin
   ? Readonly<StringRecord<DriverExecuteMethodDef<T>>>
   : never;
 
+export interface BidiMethodParams {
+  required?: readonly string[];
+  optional?: readonly string[];
+};
+
 export interface BidiMethodDef extends BaseExecuteMethodDef {
   command: string;
+  params?: BidiMethodParams;
 }
 
 export interface BidiMethodMap {
@@ -148,4 +154,26 @@ export interface BidiMethodMap {
 
 export interface BidiModuleMap {
   [k: string]: BidiMethodMap;
+}
+
+// https://w3c.github.io/webdriver-bidi/#protocol-definition
+export interface GenericBiDiCommandResponse {
+  id: number;
+  [key: string]: any;
+}
+
+export interface BiDiResultData {
+  [key: string]: any;
+}
+
+export interface SuccessBiDiCommandResponse extends GenericBiDiCommandResponse {
+  type: 'success';
+  result: BiDiResultData;
+}
+
+export interface ErrorBiDiCommandResponse extends GenericBiDiCommandResponse {
+  type: 'error';
+  error: string;
+  message: string;
+  stacktrace?: string;
 }

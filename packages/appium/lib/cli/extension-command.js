@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import B from 'bluebird';
 import _ from 'lodash';
 import path from 'path';
@@ -18,7 +17,7 @@ import {inspect} from 'node:util';
 import {pathToFileURL} from 'url';
 import {Doctor, EXIT_CODE as DOCTOR_EXIT_CODE} from '../doctor/doctor';
 import {npmPackage} from '../utils';
-import semver from 'semver';
+import * as semver from 'semver';
 
 const UPDATE_ALL = 'installed';
 
@@ -486,10 +485,11 @@ class ExtensionCliCommand {
   getInstallationReceipt({pkg, installPath, installType, installSpec}) {
     const {appium, name, version, peerDependencies} = pkg;
 
+    const strVersion = /** @type {string} */ (version);
     /** @type {import('appium/types').InternalMetadata} */
     const internal = {
-      pkgName: name,
-      version,
+      pkgName: /** @type {string} */ (name),
+      version: strVersion,
       installType,
       installSpec,
       installPath,

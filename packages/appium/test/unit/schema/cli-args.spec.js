@@ -1,5 +1,3 @@
-// @ts-check
-
 import _ from 'lodash';
 import {PLUGIN_TYPE} from '../../../lib/constants';
 import {finalizeSchema, registerSchema, resetSchema} from '../../../lib/schema';
@@ -305,10 +303,6 @@ describe('cli-args', function () {
               /`enum` is only supported for `type: 'string'`/i
             );
           });
-
-          it(
-            'should actually throw earlier by failing schema validation, but that would mean overriding the behavior of `enum` which sounds inadvisable'
-          );
         });
 
         describe('when used with a `string` type', function () {

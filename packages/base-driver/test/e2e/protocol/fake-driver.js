@@ -1,4 +1,4 @@
-/* eslint-disable require-await */
+
 import {errors, BaseDriver, determineProtocol} from '../../../lib';
 import {PROTOCOLS} from '../../../lib/constants';
 import {util} from '@appium/support';

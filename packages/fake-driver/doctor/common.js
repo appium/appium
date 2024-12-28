@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
+
 const {doctor} = require('appium/support');
 
 /** @satisfies {import('@appium/types').IDoctorCheck} */

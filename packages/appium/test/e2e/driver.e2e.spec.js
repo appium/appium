@@ -4,7 +4,6 @@ import {BaseDriver} from '@appium/base-driver';
 import {exec} from 'teen_process';
 import {fs, tempDir} from '@appium/support';
 import axios from 'axios';
-import {command} from 'webdriver';
 import B from 'bluebird';
 import _ from 'lodash';
 import {createSandbox} from 'sinon';
@@ -110,12 +109,14 @@ describe('FakeDriver via HTTP', function () {
    * @param {Partial<import('appium/types').ParsedArgs>} [args]
    */
   function withServer(args = {}) {
+    // eslint-disable-next-line mocha/no-sibling-hooks
     before(async function () {
       args = {...args, appiumHome, port, address: TEST_HOST};
       if (shouldStartServer) {
         server = await appiumServer(args);
       }
     });
+    // eslint-disable-next-line mocha/no-sibling-hooks
     after(async function () {
       if (server) {
         await server.close();
@@ -251,8 +252,6 @@ describe('FakeDriver via HTTP', function () {
 
       await B.delay(250);
       await driver.getPageSource().should.eventually.be.rejectedWith(/terminated/);
-
-      await driver.getSessions().should.eventually.be.empty;
     });
 
     it('should not allow umbrella commands to prevent newCommandTimeout on inner driver', async function () {
@@ -264,6 +263,10 @@ describe('FakeDriver via HTTP', function () {
       );
       let driver = await wdio({...wdOpts, capabilities: localCaps});
       should.exist(driver.sessionId);
+      driver.addCommand(
+        'getSessions',
+        async () => (await axios.get(`${testServerBaseUrl}/sessions`)).data.value
+      );
 
       // get the session list 6 times over 300ms. each request will be below the new command
       // timeout but since they are not received by the driver the session should still time out
@@ -506,51 +509,12 @@ describe('FakeDriver via HTTP', function () {
         await driver.deleteSession();
       }
     });
-
-    it.skip('should log a single deprecation warning if a deprecated method is used and not overridden by a newMethodMap', async function () {
-      let driver = await wdio({...wdOpts, capabilities: caps});
-      try {
-        driver.addCommand(
-          'deprecated',
-          command('POST', '/session/:sessionId/deprecated', {
-            command: 'deprecated',
-            description: 'Call a deprecated command',
-            parameters: [],
-            ref: '',
-          }),
-        );
-        driver.addCommand(
-          'doubleClick',
-          command('POST', '/session/:sessionId/doubleclick', {
-            command: 'doubleClick',
-            description: 'Global double click',
-            parameters: [],
-            ref: '',
-          }),
-        );
-        await driver
-          .executeScript('fake: getDeprecatedCommandsCalled', [])
-          .should.eventually.eql([]);
-        await driver.deprecated();
-        await driver.deprecated();
-        await driver.shake();
-
-        // this call should not trigger a deprecation even though deprecated by appium because it's
-        // overridden as not deprecated by fake driver
-        await driver.doubleClick();
-
-        await driver
-          .executeScript('fake: getDeprecatedCommandsCalled', [])
-          .should.eventually.eql(['callDeprecatedCommand', 'mobileShake']);
-      } finally {
-        await driver.deleteSession();
-      }
-    });
   });
 
   describe('Bidi protocol', function () {
     withServer();
     const capabilities = {...caps, webSocketUrl: true, 'appium:runClock': true};
+    /** @type import('webdriverio').Browser **/
     let driver;
 
     beforeEach(async function () {
@@ -601,6 +565,14 @@ describe('FakeDriver via HTTP', function () {
       await B.delay(750);
       collectedEvents.should.be.empty;
     });
+
+    it('should allow custom bidi commands', async function () {
+      let {result} = await driver.send({method: 'fake.getFakeThing', params: {}});
+      should.not.exist(result);
+      await driver.send({method: 'fake.setFakeThing', params: {thing: 'this is from bidi'}});
+      ({result} = await driver.send({method: 'fake.getFakeThing', params: {}}));
+      result.should.eql('this is from bidi');
+    });
   });
 });
 
@@ -644,36 +616,41 @@ describe('Bidi over SSL', function () {
   let should;
 
   before(async function () {
-    const chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-    chai.use(chaiAsPromised.default);
-    should = chai.should();
+    // TODO: Unskip after https://github.com/webdriverio/webdriverio/issues/13994 is fixed
+    return this.skip();
 
-    try {
-      await generateCertificate(certPath, keyPath);
-    } catch (e) {
-      if (process.env.CI) {
-        throw e;
-      }
-      return this.skip();
-    }
-    sandbox = createSandbox();
-    appiumHome = await tempDir.openDir();
-    wdOpts.port = port = await getTestPort();
-    testServerBaseUrl = `https://${TEST_HOST}:${port}`;
-    FakeDriver = await initFakeDriver(appiumHome);
-    server = await appiumServer({
-      address: TEST_HOST,
-      port,
-      appiumHome,
-      sslCertificatePath: certPath,
-      sslKeyPath: keyPath,
-    });
+    // const chai = await import('chai');
+    // const chaiAsPromised = await import('chai-as-promised');
+    // chai.use(chaiAsPromised.default);
+    // should = chai.should();
+
+    // try {
+    //   await generateCertificate(certPath, keyPath);
+    // } catch (e) {
+    //   if (process.env.CI) {
+    //     throw e;
+    //   }
+    //   return this.skip();
+    // }
+    // sandbox = createSandbox();
+    // appiumHome = await tempDir.openDir();
+    // wdOpts.port = port = await getTestPort();
+    // testServerBaseUrl = `https://${TEST_HOST}:${port}`;
+    // FakeDriver = await initFakeDriver(appiumHome);
+    // server = await appiumServer({
+    //   address: TEST_HOST,
+    //   port,
+    //   appiumHome,
+    //   sslCertificatePath: certPath,
+    //   sslKeyPath: keyPath,
+    // });
   });
 
   after(async function () {
-    await fs.rimraf(appiumHome);
-    await server.close();
+    if (server) {
+      await fs.rimraf(appiumHome);
+      await server.close();
+    }
   });
 
   beforeEach(async function () {

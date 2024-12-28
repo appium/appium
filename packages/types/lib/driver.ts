@@ -2,7 +2,7 @@ import type {EventEmitter} from 'node:events';
 import type {Merge} from 'type-fest';
 import type {ActionSequence} from './action';
 import type {Capabilities, DriverCaps, W3CCapabilities, W3CDriverCaps} from './capabilities';
-import type {ExecuteMethodMap, MethodMap} from './command';
+import type {BidiModuleMap, BiDiResultData, ExecuteMethodMap, MethodMap} from './command';
 import type {ServerArgs} from './config';
 import type {HTTPHeaders, HTTPMethod} from './http';
 import type {AppiumLogger} from './logger';
@@ -350,6 +350,7 @@ export interface ILogCommands {
 export interface IBidiCommands {
   bidiSubscribe(events: string[], contexts: string[]): Promise<void>;
   bidiUnsubscribe(events: string[], contexts: string[]): Promise<void>;
+  bidiStatus(): Promise<DriverStatus>;
 }
 
 /**
@@ -576,6 +577,12 @@ export interface EventHistoryCommand {
 
 export type Protocol = 'MJSONWP' | 'W3C';
 
+export interface DriverStatus {
+  ready: boolean,
+  message: string,
+  [key: string]: any;
+}
+
 /**
  * Methods and properties which both `AppiumDriver` and `BaseDriver` inherit.
  *
@@ -604,6 +611,7 @@ export interface Core<C extends Constraints, Settings extends StringRecord = Str
   eventHistory: EventHistory;
   bidiEventSubs: Record<string, string[]>;
   doesSupportBidi: boolean;
+  updateBidiCommands(cmds: BidiModuleMap): void;
   onUnexpectedShutdown(handler: () => any): void;
   /**
    * @summary Retrieve the server's current status.
@@ -704,7 +712,7 @@ export interface Driver<
    * @param bidiCmd - the name of the command in the bidi spec
    * @param args - arguments to pass to the command
    */
-  executeBidiCommand(bidiCmd: string, ...args: any[]): Promise<any>;
+  executeBidiCommand(bidiCmd: string, ...args: any[]): Promise<BiDiResultData>;
 
   /**
    * Signify to any owning processes that this driver encountered an error which should cause the
@@ -1991,6 +1999,23 @@ export interface DriverStatic<T extends Driver> {
   baseVersion: string;
   updateServer?: UpdateServerCallback;
   newMethodMap?: MethodMap<T>;
+  /**
+    * Drivers can define new custom bidi commands and map them to driver methods. The format must
+    * be the same as that used by Appium's bidi-commands.js file, for example:
+    * @example
+    * {
+    *   myNewBidiModule: {
+    *     myNewBidiCommand: {
+    *       command: 'driverMethodThatWillBeCalled',
+    *       params: {
+    *         required: ['requiredParam'],
+    *         optional: ['optionalParam'],
+    *       }
+    *     }
+    *   }
+    * }
+    */
+  newBidiCommands?: BidiModuleMap;
   executeMethodMap?: ExecuteMethodMap<T>;
 }
 

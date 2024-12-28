@@ -24,7 +24,7 @@ import readPkg from 'read-pkg';
 import sanitize from 'sanitize-filename';
 import which from 'which';
 import log from './logger';
-import Timer from './timing';
+import {Timer} from './timing';
 import {isWindows} from './system';
 import {pluralize} from './util';
 
@@ -239,6 +239,7 @@ const fs = {
     let directoryCount = 0;
     const timer = new Timer().start();
     return await new B(function (resolve, reject) {
+      /** @type {Promise} */
       let lastFileProcessed = B.resolve();
       walker = klaw(dir, {
         depthLimit: recursive ? -1 : 0,
@@ -253,16 +254,18 @@ const fs = {
             directoryCount++;
           }
 
-          // eslint-disable-next-line promise/prefer-await-to-callbacks
-          lastFileProcessed = B.try(async () => await callback(item.path, item.stats.isDirectory()))
-            .then(function (done = false) {
+          lastFileProcessed = (async () => {
+            try {
+              // eslint-disable-next-line promise/prefer-await-to-callbacks
+              const done = await callback(item.path, item.stats.isDirectory());
               if (done) {
-                resolve(item.path);
-              } else {
-                walker.resume();
+                return resolve(item.path);
               }
-            })
-            .catch(reject);
+              walker.resume();
+            } catch (err) {
+              return reject(err);
+            }
+          })();
         })
         .on('error', function (err, item) {
           log.warn(`Got an error while walking '${item.path}': ${err.message}`);
@@ -273,14 +276,15 @@ const fs = {
           }
         })
         .on('end', function () {
-          lastFileProcessed
-            .then((file) => {
-              resolve(/** @type {string|undefined} */ (file) ?? null);
-            })
-            .catch(function (err) {
+          (async () => {
+            try {
+              const file = await lastFileProcessed;
+              return resolve(/** @type {string|undefined} */ (file) ?? null);
+            } catch (err) {
               log.warn(`Unexpected error: ${err.message}`);
-              reject(err);
-            });
+              return reject(err);
+            }
+          })();
         });
     }).finally(function () {
       log.debug(

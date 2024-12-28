@@ -17,9 +17,11 @@ export function withSandbox(mockDefs, fn) {
   return () => {
     /** @type {SandboxStore} */
     const sbx = new SandboxStore();
+    // eslint-disable-next-line mocha/no-top-level-hooks
     beforeEach(function beforeEach() {
       sbx.createSandbox(mockDefs);
     });
+    // eslint-disable-next-line mocha/no-top-level-hooks
     afterEach(function afterEach() {
       sbx.reset();
     });

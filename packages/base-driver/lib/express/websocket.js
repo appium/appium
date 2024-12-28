@@ -41,7 +41,7 @@ async function removeWebSocketHandler(handlerPathname) {
       client.terminate();
     }
     return true;
-  } catch (ign) {
+  } catch {
     // ignore
   } finally {
     delete this.webSocketsMapping[handlerPathname];

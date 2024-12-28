@@ -1,5 +1,5 @@
 import {UniversalXMLPlugin} from '../..';
-import BaseDriver from 'appium/driver';
+import {BaseDriver} from 'appium/driver';
 import {
   XML_IOS,
   XML_ANDROID,

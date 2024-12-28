@@ -6,6 +6,7 @@
  */
 
 import path from 'path';
+// eslint-disable-next-line import/named
 import {createSandbox} from 'sinon';
 
 export function initMocks(sandbox = createSandbox()) {

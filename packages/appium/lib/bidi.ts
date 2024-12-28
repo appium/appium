@@ -91,7 +91,7 @@ export function onBidiConnection(this: AppiumDriver, ws: WebSocket, req: Incomin
     this.log.error(err);
     try {
       ws.close();
-    } catch (ign) {}
+    } catch {}
   }
 }
 
@@ -211,7 +211,7 @@ function initBidiSocket(this: AppiumDriver, ws: WebSocket, req: IncomingMessage)
     if (bidiProxyUrl) {
       try {
         new URL(bidiProxyUrl);
-      } catch (ign) {
+      } catch {
         throw new Error(
           `Got request for ${driverName} to proxy bidi connections to upstream socket with ` +
             `url ${bidiProxyUrl}, but this was not a valid url`,

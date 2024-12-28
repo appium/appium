@@ -207,7 +207,7 @@ class JWProxy {
       if (typeof body !== 'object') {
         try {
           reqOpts.data = JSON.parse(body);
-        } catch (e) {
+        } catch {
           throw new Error(`Cannot interpret the request body as valid JSON: ${truncateBody(body)}`);
         }
       } else {

@@ -113,6 +113,7 @@ function cancellableDelay(ms) {
   // a promise, since `resolve`/`reject` are never called
   delay.cancel = function () {
     clearTimeout(timer);
+    // eslint-disable-next-line import/no-named-as-default-member
     reject(new B.CancellationError());
   };
   return delay;
@@ -131,7 +132,7 @@ function multiResolve(roots, ...args) {
 function safeJsonParse(obj) {
   try {
     return JSON.parse(obj);
-  } catch (ign) {
+  } catch {
     // ignore: this is not json parsable
     return obj;
   }

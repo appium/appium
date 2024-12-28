@@ -189,7 +189,7 @@ function deepFreeze(object) {
   let propNames;
   try {
     propNames = Object.getOwnPropertyNames(object);
-  } catch (ign) {
+  } catch {
     return object;
   }
   for (const name of propNames) {
@@ -220,7 +220,7 @@ function getModuleRootSync (moduleName, filePath) {
           JSON.parse(_fs.readFileSync(manifestPath, 'utf8')).name === moduleName) {
         return currentDir;
       }
-    } catch (ign) {}
+    } catch {}
     currentDir = path.dirname(currentDir);
     isAtFsRoot = currentDir.length <= path.dirname(currentDir).length;
   }

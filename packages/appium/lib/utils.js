@@ -250,7 +250,7 @@ export function adjustNodePath() {
 
       require('module').Module._initPaths();
       return true;
-    } catch (e) {
+    } catch {
       return false;
     }
   };

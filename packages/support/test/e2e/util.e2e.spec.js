@@ -61,7 +61,7 @@ describe('#util', function () {
     afterEach(async function () {
       try {
         await B.all([lockFile, testFile].map((p) => fs.unlink(p)));
-      } catch (ign) {}
+      } catch {}
     });
 
     it('should lock a file during the given behavior', async function () {

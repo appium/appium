@@ -1,4 +1,4 @@
-import Ajv from 'ajv';
+import {Ajv} from 'ajv';
 import addFormats from 'ajv-formats';
 import _ from 'lodash';
 import path from 'path';
@@ -453,7 +453,7 @@ class AppiumSchema {
           let refSchema;
           try {
             refSchema = this.getSchema($ref);
-          } catch (err) {
+          } catch {
             // this can happen if an extension schema supplies a $ref to a non-existent schema
             throw new SchemaUnknownSchemaError($ref);
           }

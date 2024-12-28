@@ -1,5 +1,5 @@
 /* This library is originated from temp.js at http://github.com/bruce/node-temp */
-import fs from './fs';
+import {fs} from './fs';
 import os from 'os';
 import nodePath from 'path';
 import cnst from 'constants';

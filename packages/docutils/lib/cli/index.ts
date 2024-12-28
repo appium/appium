@@ -10,6 +10,7 @@ import {getLogger} from '../logger';
 
 import {fs} from '@appium/support';
 import _ from 'lodash';
+// eslint-disable-next-line import/named
 import {sync as readPkg} from 'read-pkg';
 import {hideBin} from 'yargs/helpers';
 import yargs from 'yargs/yargs';

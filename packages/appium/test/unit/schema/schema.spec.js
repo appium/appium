@@ -1,6 +1,7 @@
 // @ts-check
 
 import _ from 'lodash';
+// eslint-disable-next-line import/named
 import {createSandbox} from 'sinon';
 import {DRIVER_TYPE, PLUGIN_TYPE} from '../../../lib/constants';
 import {AppiumConfigJsonSchema} from '@appium/schema';

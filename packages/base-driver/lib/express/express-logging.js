@@ -49,7 +49,7 @@ const startLogFormatter = morgan(
         reqBody = _.truncate(_.isString(req.body) ? req.body : JSON.stringify(req.body), {
           length: MAX_LOG_BODY_LENGTH,
         });
-      } catch (ign) {}
+      } catch {}
     }
     log.info(requestStartLoggingFormat(tokens, req, res), reqBody.grey);
   },

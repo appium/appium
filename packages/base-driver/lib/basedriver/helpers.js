@@ -389,8 +389,8 @@ export function parseCapsArray(cap) {
     if (_.isArray(parsedCaps)) {
       return parsedCaps;
     }
-  } catch (ign) {
-    logger.warn(`Failed to parse capability as JSON array`);
+  } catch (e) {
+    logger.warn(`Failed to parse capability as JSON array: ${e.message}`);
   }
   if (_.isString(cap)) {
     return [cap];
@@ -406,6 +406,7 @@ export function parseCapsArray(cap) {
  * This parameter is deprecated and is not used.
  * @returns {string}
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function generateDriverLogPrefix(obj, sessionId = null) {
   return `${obj.constructor.name}@${node.getObjectId(obj).substring(0, 4)}`;
 }

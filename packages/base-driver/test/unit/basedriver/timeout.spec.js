@@ -1,6 +1,7 @@
 // @ts-check
 
 import {BaseDriver} from '../../../lib';
+// eslint-disable-next-line import/named
 import {createSandbox} from 'sinon';
 
 describe('timeout', function () {

@@ -1,5 +1,6 @@
 // @ts-check
 
+// eslint-disable-next-line import/named
 import {createSandbox} from 'sinon';
 import {rewiremock} from '../helpers';
 

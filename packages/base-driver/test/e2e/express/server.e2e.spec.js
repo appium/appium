@@ -1,5 +1,6 @@
 import {server} from '../../../lib';
 import axios from 'axios';
+// eslint-disable-next-line import/named
 import {createSandbox} from 'sinon';
 import B from 'bluebird';
 import _ from 'lodash';
@@ -85,7 +86,11 @@ describe('server', function () {
     }).should.be.rejectedWith(/EADDRINUSE/);
   });
   it('should not wait for the server close connections before finishing closing', async function () {
-    let bodyPromise = axios.get(`http://${TEST_HOST}:${port}/pause`).catch(() => {});
+    const bodyPromise = (async () => {
+      try {
+        return await axios.get(`http://${TEST_HOST}:${port}/pause`);
+      } catch {}
+    })();
 
     // relinquish control so that we don't close before the request is received
     await B.delay(100);
@@ -188,7 +193,7 @@ describe('server plugins', function () {
   afterEach(async function () {
     try {
       await hwServer.close();
-    } catch (ign) {}
+    } catch {}
   });
 
   function updaterWithGetRoute(route, reply) {

@@ -151,6 +151,7 @@ function configureServer({
 
   // set up static assets
   app.use(favicon(path.resolve(STATIC_DIR, 'favicon.ico')));
+  // eslint-disable-next-line import/no-named-as-default-member
   app.use(express.static(STATIC_DIR));
 
   // crash routes, for testing

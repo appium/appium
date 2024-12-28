@@ -1,5 +1,6 @@
 import {util, fs, tempDir} from '../../lib';
 import B from 'bluebird';
+// eslint-disable-next-line import/named
 import {createSandbox} from 'sinon';
 import os from 'os';
 import path from 'path';

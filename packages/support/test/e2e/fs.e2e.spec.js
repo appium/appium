@@ -1,4 +1,4 @@
-import fs from '../../lib/fs';
+import {fs} from '../../lib/fs';
 import {isWindows} from '../../lib/system';
 
 describe('isExecutable()', function () {

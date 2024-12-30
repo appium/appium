@@ -35,6 +35,7 @@ export function initMocks(sandbox = createSandbox()) {
       findRoot: /** @type {MockAppiumSupportFs['findRoot']} */ (
         sandbox.stub().returns(path.join(__dirname, '..', '..', '..'))
       ),
+      exists: /** @type {MockAppiumSupportFs['exists']} */ (sandbox.stub().resolves(true)),
     },
     env: {
       resolveAppiumHome: /** @type {MockAppiumSupportEnv['resolveAppiumHome']} */ (
@@ -172,6 +173,7 @@ export function initMocks(sandbox = createSandbox()) {
  * @property {SinonStubbedMember<SupportFs['mkdirp']>} mkdirp
  * @property {SinonStubbedMember<SupportFs['readPackageJsonFrom']>} readPackageJsonFrom
  * @property {SinonStubbedMember<SupportFs['findRoot']>} findRoot
+ * @property {SinonStubbedMember<SupportFs['exists']>} exists
  */
 
 /**

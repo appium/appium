@@ -3,6 +3,7 @@ import path from 'path';
 import {version as APPIUM_VER} from '../../../package.json';
 import {FAKE_DRIVER_DIR, PROJECT_ROOT, rewiremock} from '../../helpers';
 import {initMocks} from './mocks';
+import {resolveEsmEntryPoint} from '../../../lib/extension/extension-config';
 
 describe('ExtensionConfig', function () {
   /** @type {import('sinon').SinonSandbox} */
@@ -45,7 +46,31 @@ describe('ExtensionConfig', function () {
     process.removeAllListeners('exit');
   });
 
-  describe('constructor', function () {});
+  describe('ESM module resolution', function () {
+    it('resolves ESM entry point with simple export', function () {
+      resolveEsmEntryPoint('./index.js').should.eql('./index.js');
+    });
+
+    it('resolves ESM entry point with dot export', function () {
+      resolveEsmEntryPoint({
+        '.': './index.js'
+      }).should.eql('./index.js');
+    });
+
+    it('resolves ESM entry point with import export', function () {
+      resolveEsmEntryPoint({
+        import: './index.js'
+      }).should.eql('./index.js');
+    });
+
+    it('resolves ESM entry point with complex import export', function () {
+      resolveEsmEntryPoint({
+        '.': {
+          import: './index.js'
+        }
+      }).should.eql('./index.js');
+    });
+  });
 
   describe('instance method', function () {
     /** @type {import('appium/lib/extension/extension-config').ExtensionConfig<DriverType>} */

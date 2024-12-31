@@ -616,9 +616,6 @@ describe('Bidi over SSL', function () {
   let previousEnvValue;
 
   before(async function () {
-    // TODO: Unskip after https://github.com/webdriverio/webdriverio/issues/13994 is fixed
-    // return this.skip();
-
     const chai = await import('chai');
     const chaiAsPromised = await import('chai-as-promised');
     chai.use(chaiAsPromised.default);

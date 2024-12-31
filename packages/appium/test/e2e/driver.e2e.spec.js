@@ -606,45 +606,43 @@ describe('Bidi over SSL', function () {
   // since we update the FakeDriver.prototype below, make sure we update the FakeDriver which is
   // actually going to be required by Appium
   /** @type {import('@appium/types').DriverClass} */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let FakeDriver;
-  /** @type {string} */
-  let testServerBaseSessionUrl;
-  /** @type {import('sinon').SinonSandbox} */
-  let sandbox;
   let certPath = 'certificate.cert';
   let keyPath = 'certificate.key';
   const capabilities = {...caps, webSocketUrl: true};
   let should;
+  /** @type {string | undefined} */
+  let previousEnvValue;
 
   before(async function () {
     // TODO: Unskip after https://github.com/webdriverio/webdriverio/issues/13994 is fixed
-    return this.skip();
+    // return this.skip();
 
-    // const chai = await import('chai');
-    // const chaiAsPromised = await import('chai-as-promised');
-    // chai.use(chaiAsPromised.default);
-    // should = chai.should();
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    should = chai.should();
 
-    // try {
-    //   await generateCertificate(certPath, keyPath);
-    // } catch (e) {
-    //   if (process.env.CI) {
-    //     throw e;
-    //   }
-    //   return this.skip();
-    // }
-    // sandbox = createSandbox();
-    // appiumHome = await tempDir.openDir();
-    // wdOpts.port = port = await getTestPort();
-    // testServerBaseUrl = `https://${TEST_HOST}:${port}`;
-    // FakeDriver = await initFakeDriver(appiumHome);
-    // server = await appiumServer({
-    //   address: TEST_HOST,
-    //   port,
-    //   appiumHome,
-    //   sslCertificatePath: certPath,
-    //   sslKeyPath: keyPath,
-    // });
+    try {
+      await generateCertificate(certPath, keyPath);
+    } catch (e) {
+      if (process.env.CI) {
+        throw e;
+      }
+      return this.skip();
+    }
+    appiumHome = await tempDir.openDir();
+    wdOpts.port = port = await getTestPort();
+    testServerBaseUrl = `https://${TEST_HOST}:${port}`;
+    FakeDriver = await initFakeDriver(appiumHome);
+    server = await appiumServer({
+      address: TEST_HOST,
+      port,
+      appiumHome,
+      sslCertificatePath: certPath,
+      sslKeyPath: keyPath,
+    });
   });
 
   after(async function () {
@@ -655,10 +653,13 @@ describe('Bidi over SSL', function () {
   });
 
   beforeEach(async function () {
+    previousEnvValue = process.env.NODE_TLS_REJECT_UNAUTHORIZED;
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
     driver = await wdio({...wdOpts, protocol: 'https', strictSSL: false, capabilities});
   });
 
   afterEach(async function () {
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = previousEnvValue;
     if (driver) {
       await driver.deleteSession();
     }

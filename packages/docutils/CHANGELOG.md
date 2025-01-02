@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.27](https://github.com/appium/appium/compare/@appium/docutils@1.0.26...@appium/docutils@1.0.27) (2025-01-02)
+
+
+### Bug Fixes
+
+* **docutils:** update dependency consola to v3.3.0 ([#20851](https://github.com/appium/appium/issues/20851)) ([aa88083](https://github.com/appium/appium/commit/aa880837da3bdbbc531e9d4c13b8baa76573cb7e))
+* **docutils:** update dependency consola to v3.3.1 ([#20855](https://github.com/appium/appium/issues/20855)) ([861d060](https://github.com/appium/appium/commit/861d060713dade7b6c55b2b0d49e97c6e9e66103))
+* **docutils:** update dependency consola to v3.3.3 ([#20858](https://github.com/appium/appium/issues/20858)) ([4b3a8c2](https://github.com/appium/appium/commit/4b3a8c2197a587ec5a2606b662e4e7667a7852cb))
+* **docutils:** update dependency yaml to v2.7.0 ([#20870](https://github.com/appium/appium/issues/20870)) ([389a3e8](https://github.com/appium/appium/commit/389a3e83ac0069504338f7182a4e938cd391de7e))
+* Reduce linter warnings ([#20860](https://github.com/appium/appium/issues/20860)) ([65658cc](https://github.com/appium/appium/commit/65658ccbdde9144c45cb5aad6a9089a5d6f3a0a3))
+* **types:** update dependency type-fest to v4 ([#20838](https://github.com/appium/appium/issues/20838)) ([a5897dd](https://github.com/appium/appium/commit/a5897dd25a277a42b0c650a52274ba2c891ac3b0))
+* **types:** update dependency type-fest to v4 ([#20843](https://github.com/appium/appium/issues/20843)) ([7abecad](https://github.com/appium/appium/commit/7abecaddd3ed64c7be321650b2a17990e74a7222))
+* **types:** update dependency type-fest to v4.31.0 ([#20857](https://github.com/appium/appium/issues/20857)) ([24abb38](https://github.com/appium/appium/commit/24abb385e54f57457c4fb3f2b654cb63645e7ccd))
+
+
+
 ## [1.0.26](https://github.com/appium/appium/compare/@appium/docutils@1.0.25...@appium/docutils@1.0.26) (2024-12-05)
 
 

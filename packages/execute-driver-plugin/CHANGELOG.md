@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.0](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@3.0.36...@appium/execute-driver-plugin@4.0.0) (2025-01-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* **execute-driver-plugin:** webdriverio major version bumped to 9
+
+### Features
+
+* **execute-driver-plugin:** Bump webdriverio to v9 ([#20824](https://github.com/appium/appium/issues/20824)) ([16e9f94](https://github.com/appium/appium/commit/16e9f9490370342ce0320ba96eacd0ccc66a2ad7))
+
+
+### Bug Fixes
+
+* **execute-driver-plugin:** update dependency webdriverio to v9.4.5 ([#20847](https://github.com/appium/appium/issues/20847)) ([4474412](https://github.com/appium/appium/commit/4474412a60a82556f43fd3f3fb4f4ea2e4bc11ee))
+* **execute-driver-plugin:** update dependency webdriverio to v9.5.0 ([#20871](https://github.com/appium/appium/issues/20871)) ([990a066](https://github.com/appium/appium/commit/990a0667e3442bf01aaf67327066517d6310c371))
+* Reduce linter warnings ([#20860](https://github.com/appium/appium/issues/20860)) ([65658cc](https://github.com/appium/appium/commit/65658ccbdde9144c45cb5aad6a9089a5d6f3a0a3))
+
+
+
 ## [3.0.36](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@3.0.35...@appium/execute-driver-plugin@3.0.36) (2024-10-15)
 
 

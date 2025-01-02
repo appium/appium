@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.14.0](https://github.com/appium/appium/compare/appium@2.13.1...appium@2.14.0) (2025-01-02)
+
+
+### Features
+
+* **appium:** Add session.status BiDi command ([#20839](https://github.com/appium/appium/issues/20839)) ([64e768e](https://github.com/appium/appium/commit/64e768efb7bebd6b5a24d55206d1cad00812777c))
+* **appium:** allow drivers to define their own bidi commands ([#20828](https://github.com/appium/appium/issues/20828)) ([a917ec6](https://github.com/appium/appium/commit/a917ec6ceda2166fb3dcbff6b2768f700db9e103))
+* **appium:** Update entry point resolution logic for ESM extensions ([#20866](https://github.com/appium/appium/issues/20866)) ([bbfc040](https://github.com/appium/appium/commit/bbfc04026f0629d89d8b313616b852896481d08d))
+
+
+### Bug Fixes
+
+* **appium:** update CLI help messages ([#20825](https://github.com/appium/appium/issues/20825)) ([04e2d11](https://github.com/appium/appium/commit/04e2d1154b67c34607ab7a1e2a44b9b4bcfb998f))
+* **docutils:** update dependency yaml to v2.7.0 ([#20870](https://github.com/appium/appium/issues/20870)) ([389a3e8](https://github.com/appium/appium/commit/389a3e83ac0069504338f7182a4e938cd391de7e))
+* **execute-driver-plugin:** update dependency webdriverio to v9.4.5 ([#20847](https://github.com/appium/appium/issues/20847)) ([4474412](https://github.com/appium/appium/commit/4474412a60a82556f43fd3f3fb4f4ea2e4bc11ee))
+* **execute-driver-plugin:** update dependency webdriverio to v9.5.0 ([#20871](https://github.com/appium/appium/issues/20871)) ([990a066](https://github.com/appium/appium/commit/990a0667e3442bf01aaf67327066517d6310c371))
+* Reduce linter warnings ([#20860](https://github.com/appium/appium/issues/20860)) ([65658cc](https://github.com/appium/appium/commit/65658ccbdde9144c45cb5aad6a9089a5d6f3a0a3))
+* **types:** update dependency type-fest to v4 ([#20838](https://github.com/appium/appium/issues/20838)) ([a5897dd](https://github.com/appium/appium/commit/a5897dd25a277a42b0c650a52274ba2c891ac3b0))
+* **types:** update dependency type-fest to v4 ([#20843](https://github.com/appium/appium/issues/20843)) ([7abecad](https://github.com/appium/appium/commit/7abecaddd3ed64c7be321650b2a17990e74a7222))
+* **types:** update dependency type-fest to v4.31.0 ([#20857](https://github.com/appium/appium/issues/20857)) ([24abb38](https://github.com/appium/appium/commit/24abb385e54f57457c4fb3f2b654cb63645e7ccd))
+
+
+
 ## [2.13.1](https://github.com/appium/appium/compare/appium@2.13.0...appium@2.13.1) (2024-12-05)
 
 

@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.51](https://github.com/appium/appium/compare/@appium/base-plugin@2.2.50...@appium/base-plugin@2.2.51) (2025-01-02)
+
+
+### Bug Fixes
+
+* Reduce linter warnings ([#20860](https://github.com/appium/appium/issues/20860)) ([65658cc](https://github.com/appium/appium/commit/65658ccbdde9144c45cb5aad6a9089a5d6f3a0a3))
+
+
+
 ## [2.2.50](https://github.com/appium/appium/compare/@appium/base-plugin@2.2.49...@appium/base-plugin@2.2.50) (2024-12-05)
 
 **Note:** Version bump only for package @appium/base-plugin

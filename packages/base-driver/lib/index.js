@@ -10,6 +10,7 @@ try {
 }
 
 // BaseDriver exports
+export {ExtensionCore} from './basedriver/extension-core';
 import {BaseDriver} from './basedriver/driver';
 export {DriverCore} from './basedriver/core';
 export {DeviceSettings} from './basedriver/device-settings';

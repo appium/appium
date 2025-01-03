@@ -320,10 +320,6 @@ your driver of the appropriate name, and it will be called when the BiDi command
 the client. To see which specific names you should use for BiDi commands, have a look at
 [bidi-commands.js](https://github.com/appium/appium/blob/master/packages/base-driver/lib/protocol/bidi-commands.js)
 
-Currently, you also need to define a `doesSupportBidi` field on your driver instances, and ensure
-it is set to `true`. Appium will not turn on its Websocket servers for your driver and set up any
-handlers unless your driver says that it supports BiDi in this way.
-
 You are not limited to BiDi commands that are defined in the official BiDi specification. If you
 wish to define new commands, you may do so; you just need to tell Appium about them! See
 [below](#extend-the-existing-protocol-with-new-commands) for more information.
@@ -562,11 +558,9 @@ remote endpoint you're proxying to. Appium will take care of all the proxying fo
 ### Proxy BiDi commands to another BiDi implementation
 
 All of the above about proxying WebDriver commands is conceptually also valid for proxying BiDi
-commands specifically. In order to enable BiDi proxying, you need to:
-
-1. Set the `doesSupportBidi` field on your driver instances to `true`.
-1. Implement `get bidiProxyUrl` on your driver. This should return a Websocket URL which is the
-   address of the upstream socket you want BiDi commands to be proxied to.
+commands specifically. In order to enable BiDi proxying, you need to implement `get bidiProxyUrl`
+on your driver. This should return a Websocket URL which is the address of the upstream socket you
+want BiDi commands to be proxied to.
 
 The intended pattern here is for you to start a session on the upstream implementation, check
 whether it has an active BiDi socket in the returned capabilities (e.g., the `webSocketUrl`

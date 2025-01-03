@@ -401,7 +401,7 @@ export function parseCapsArray(cap) {
 /**
  * Generate a string that uniquely describes driver instance
  *
- * @param {import('@appium/types').Core} obj driver instance
+ * @param {object} obj driver instance
  * @param {string?} [sessionId=null] session identifier (if exists).
  * This parameter is deprecated and is not used.
  * @returns {string}

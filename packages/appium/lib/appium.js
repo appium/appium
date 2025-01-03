@@ -141,17 +141,6 @@ class AppiumDriver extends DriverCore {
   }
 
   /**
-   * Retrieves logger instance for the current umbrella driver instance
-   */
-  get log() {
-    if (!this._log) {
-      const instanceName = `${this.constructor.name}@${node.getObjectId(this).substring(0, 4)}`;
-      this._log = logger.getLogger(instanceName);
-    }
-    return this._log;
-  }
-
-  /**
    * Cancel commands queueing for the umbrella Appium driver
    */
   get isCommandsQueueEnabled() {
@@ -429,11 +418,10 @@ class AppiumDriver extends DriverCore {
         await driverInstance.updateSettings(jwpSettings);
       }
 
-      // if the user has asked for bidi support, and the driver says that it supports bidi,
-      // send our bidi url back to the user. The inner driver will need to have already saved any
-      // internal bidi urls it might want to proxy to, cause we are going to overwrite that
-      // information here!
-      if (dCaps.webSocketUrl && driverInstance.doesSupportBidi) {
+      // if the user has asked for bidi support, send our bidi url back to the user. The inner
+      // driver will need to have already saved any internal bidi urls it might want to proxy to,
+      // cause we are going to overwrite that information here!
+      if (dCaps.webSocketUrl) {
         const {address, port, basePath} = this.args;
         const scheme = `ws${this.server.isSecure() ? 's' : ''}`;
         const host = bidiHelpers.determineBiDiHost(address);
@@ -628,7 +616,7 @@ class AppiumDriver extends DriverCore {
    * Get the appropriate plugins for a session (or sessionless plugins)
    *
    * @param {?string} sessionId - the sessionId (or null) to use to find plugins
-   * @returns {Array} - array of plugin instances
+   * @returns {Array<import('@appium/types').Plugin>} - array of plugin instances
    */
   pluginsForSession(sessionId = null) {
     if (sessionId) {
@@ -672,6 +660,7 @@ class AppiumDriver extends DriverCore {
     for (const [PluginClass, name] of this.pluginClasses.entries()) {
       const cliArgs = this.getCliArgsForPlugin(name);
       const plugin = new PluginClass(name, cliArgs);
+      /** @type {Plugin & ExtensionCore} */(plugin).updateBidiCommands(PluginClass.newBidiCommands ?? {});
       pluginInstances.push(plugin);
     }
     return pluginInstances;
@@ -979,6 +968,7 @@ export {AppiumDriver};
  * @typedef {import('@appium/types').ExternalDriver} ExternalDriver
  * @typedef {import('@appium/types').PluginClass} PluginClass
  * @typedef {import('@appium/types').Plugin} Plugin
+ * @typedef {import('@appium/base-driver').ExtensionCore} ExtensionCore
  * @typedef {import('@appium/types').DriverClass<import('@appium/types').Driver>} DriverClass
  */
 

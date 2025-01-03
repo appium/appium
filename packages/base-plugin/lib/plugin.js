@@ -1,10 +1,10 @@
 import {logger} from '@appium/support';
-import {validateExecuteMethodParams} from '@appium/base-driver';
+import {ExtensionCore, validateExecuteMethodParams} from '@appium/base-driver';
 
 /**
  * @implements {Plugin}
  */
-class BasePlugin {
+class BasePlugin extends ExtensionCore {
   /**
    * Subclasses should use type `import('@appium/types').MethodMap<SubclassName>`.
    *
@@ -45,9 +45,10 @@ class BasePlugin {
    * @param {Record<string,unknown>} [cliArgs]
    */
   constructor(name, cliArgs = {}) {
+    super(`Plugin [${name}]`);
     this.name = name;
     this.cliArgs = cliArgs;
-    this.logger = logger.getLogger(`Plugin [${name}]`);
+    this.logger = this.log; // TODO deprecate 'logger' in favor of 'log'
   }
 
   /**

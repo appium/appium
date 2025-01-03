@@ -31,6 +31,9 @@ const wdOpts = {
 /** @type {Partial<import('appium/types').ParsedArgs>} */
 let baseServerArgs;
 
+/**
+ * @param {Partial<import('appium/types').ParsedArgs>} args
+ */
 function serverSetup(args) {
   /** @type {AppiumServer|null} */
   let server = null;
@@ -79,7 +82,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
         subcommand: DRIVER_TYPE,
         suppressOutput: true,
       },
-      driverConfig
+      driverConfig,
     );
     if (!('fake' in driverList)) {
       await runExtensionCommand(
@@ -89,7 +92,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
           installType: INSTALL_TYPE_LOCAL,
           subcommand: DRIVER_TYPE,
         },
-        driverConfig
+        driverConfig,
       );
     }
 
@@ -101,7 +104,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
         json: true,
         suppressOutput: true,
       },
-      pluginConfig
+      pluginConfig,
     );
     if (!('fake' in pluginList)) {
       await runExtensionCommand(
@@ -111,7 +114,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
           plugin: FAKE_PLUGIN_DIR,
           installType: INSTALL_TYPE_LOCAL,
         },
-        pluginConfig
+        pluginConfig,
       );
     }
 
@@ -372,20 +375,86 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
 
   describe('BiDi support', function () {
     describe('with a single plugin', function() {
-      serverSetup({});
       /** @type {import('webdriverio').Browser} */
       let driver;
 
-      before(async function () {
-        driver = await wdio(wdOpts);
-      });
+      // this 'after' block needs to come before 'serverSetup' so that the delete session happens
+      // before the server shutdown
       after(async function () {
         if (driver) {
           await driver.deleteSession();
         }
       });
 
-      // TODO write bidi tests
+      serverSetup({});
+
+      before(async function () {
+        const caps = {...wdOpts.capabilities, webSocketUrl: true, 'appium:runClock': true};
+        driver = await wdio({...wdOpts, capabilities: caps});
+      });
+
+      it('should handle custom bidi commands if registered', async function () {
+        let {result} = await driver.send({method: 'fake.getPluginThing', params: {}});
+        should.not.exist(result);
+        await driver.send({method: 'fake.setPluginThing', params: {thing: 'plugin bidi'}});
+        ({result} = await driver.send({method: 'fake.getPluginThing', params: {}}));
+        result.should.eql('plugin bidi');
+      });
+
+      it('should subscribe and unsubscribe to/from custom bidi events', async function () {
+        let retrievals = 0;
+        // asyncrhonously start our listener
+        driver.on('fake.pluginThingRetrieved', () => {
+          retrievals++;
+        });
+
+        await driver.send({method: 'fake.getPluginThing', params: {}});
+        retrievals.should.eql(0);
+
+        await driver.sessionSubscribe({events: ['fake.pluginThingRetrieved']});
+        await driver.send({method: 'fake.getPluginThing', params: {}});
+        await driver.send({method: 'fake.getPluginThing', params: {}});
+        retrievals.should.eql(2);
+
+        await driver.sessionUnsubscribe({events: ['fake.pluginThingRetrieved']});
+        await driver.send({method: 'fake.getPluginThing', params: {}});
+        await driver.send({method: 'fake.getPluginThing', params: {}});
+        retrievals.should.eql(2);
+      });
+
+      it('should subscribe and unsubscribe to/from custom bidi events and merge with driver', async function () {
+        let collectedEvents = [];
+        // asyncrhonously start our listener
+        driver.on('clock.currentTime', ({time}) => {
+          collectedEvents.push(time);
+        });
+
+        // wait for some time to be sure clock events have happened, and assert we don't receive
+        // any yet
+        await B.delay(750);
+        collectedEvents.should.be.empty;
+
+        // now subscribe and wait and assert that some events have been collected
+        await driver.sessionSubscribe({events: ['clock.currentTime']});
+        await B.delay(800);
+        collectedEvents.length.should.eql(5);
+
+        // finally  unsubscribe and wait and assert that some events have been collected
+        await driver.sessionUnsubscribe({events: ['clock.currentTime']});
+        collectedEvents = [];
+        await B.delay(800);
+        collectedEvents.should.be.empty;
+      });
+
+      it('should call underlying driver bidi method if next is called', async function () {
+        const {result} = await driver.send({method: 'fake.doSomeMath', params: {num1: 2, num2: 3}});
+        result.should.eql(11);
+      });
+
+      it('should override and not call underlying driver bidi method if next is not called', async function () {
+        const {result} = await driver.send({method: 'fake.doSomeMath2', params: {num1: 2, num2: 3}});
+        result.should.eql(6);
+      });
     });
   });
 });

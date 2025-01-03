@@ -26,6 +26,7 @@ export interface PluginStatic<P extends Plugin> {
    */
   newMethodMap?: MethodMap<P>;
   executeMethodMap?: ExecuteMethodMap<P>;
+  newBidiCommands?: BidiModuleMap;
 }
 
 /**

@@ -497,7 +497,7 @@ export interface DriverHelpers {
   isPackageOrBundle: (app: string) => boolean;
   duplicateKeys: <T>(input: T, firstKey: string, secondKey: string) => T;
   parseCapsArray: (cap: string | string[]) => string[];
-  generateDriverLogPrefix: <C extends Constraints>(obj: Core<C>, sessionId?: string) => string;
+  generateDriverLogPrefix: (obj: object, sessionId?: string) => string;
 }
 
 export type SettingsUpdateListener<T extends Record<string, unknown> = Record<string, unknown>> = (
@@ -610,7 +610,6 @@ export interface Core<C extends Constraints, Settings extends StringRecord = Str
   isCommandsQueueEnabled: boolean;
   eventHistory: EventHistory;
   bidiEventSubs: Record<string, string[]>;
-  doesSupportBidi: boolean;
   updateBidiCommands(cmds: BidiModuleMap): void;
   onUnexpectedShutdown(handler: () => any): void;
   /**

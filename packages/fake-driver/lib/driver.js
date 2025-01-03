@@ -76,7 +76,6 @@ export class FakeDriver extends BaseDriver {
     this.shook = false;
     this.appModel = new FakeApp();
     this.desiredCapConstraints = FAKE_DRIVER_CONSTRAINTS;
-    this.doesSupportBidi = true;
     this._bidiProxyUrl = null;
   }
 
@@ -235,6 +234,24 @@ export class FakeDriver extends BaseDriver {
     await B.delay(1);
   }
 
+  /**
+   * @param {number} num1
+   * @param {number} num2
+   */
+  async doSomeMath(num1, num2) {
+    await B.delay(1);
+    return num1 + num2;
+  }
+
+  /**
+   * @param {number} num1
+   * @param {number} num2
+   */
+  async doSomeMath2(num1, num2) {
+    await B.delay(1);
+    return num1 + num2;
+  }
+
   static newBidiCommands = /** @type {const} */({
     fake: {
       getFakeThing: {
@@ -244,6 +261,18 @@ export class FakeDriver extends BaseDriver {
         command: 'setFakeThing',
         params: {
           required: ['thing'],
+        },
+      },
+      doSomeMath: {
+        command: 'doSomeMath',
+        params: {
+          required: ['num1', 'num2'],
+        },
+      },
+      doSomeMath2: {
+        command: 'doSomeMath2',
+        params: {
+          required: ['num1', 'num2'],
         },
       },
     }

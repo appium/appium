@@ -325,8 +325,11 @@ If you want to offer functionality that doesn't map to any of the existing comma
 drivers, you can create new commands in one of two ways, just as is possible for drivers:
 
 1. Extending the WebDriver protocol and creating client-side plugins to access the extensions
+1. Extending the WebDriver BiDi protocol with new modules and methods, accessed from a client via the BiDi interface
 1. Overloading the Execute Script command by defining [Execute
    Methods](../guides/execute-methods.md)
+
+#### Extending the HTTP Protocol
 
 If you want to follow the first path, you can direct Appium to recognize new methods and add them
 to its set of allowed HTTP routes and command names. You do this by assigning the `newMethodMap`
@@ -368,7 +371,58 @@ clients won't have nice client-side functions designed to target these endpoints
 to create and release client-side plugins for each language you want to support (directions or
 examples can be found at the relevant client docs).
 
-An alternative to this way of doing things is to overload a command which all WebDriver clients
+#### Extending the BiDi Protocol
+
+You can also make new commands accessible via the WebDriver BiDi (WebSocket-based) protocol. BiDi
+commands come in two parts: a "module", which is basically a container or namespace, and
+a "command", which is the name of your new command.
+
+As with the first method, you teach Appium to recognize your new BiDi commands by adding a static
+field to your driver class, called `newBidiCommands`. It has a format similar to `newMethodMap`.
+Basically it encapsulates information about the BiDi module, BiDi command name, reference to your
+driver instance method that will handle the command, and required and optional parameters. Here's
+an example of a `newBidiCommands` as implemented on an imaginary driver:
+
+```js
+static newBidiCommands = {
+  video: {
+    startFramerateCapture: {
+      command: 'startFrameCap',
+      params: {
+        required: ['videoSource'],
+        optional: ['showOnScreen'],
+      }
+    },
+    stopFramerateCapture: {
+      command: 'stopFrameCap',
+    },
+  }
+};
+```
+
+In this imaginary example, we have defined two new BiDi commands: `video.startFramerateCapture` and
+`video.stopFramerateCapture`. The first command takes a required and an optional parameter, and the
+second does not. When you have implemented the `startFrameCap` and `stopFrameCap` methods on your
+plugin class, they will be called whenever the BiDi commands are triggered by a client. The
+signatures for these methods would look as follows:
+
+```js
+async startFrameCap(next, driver, videoSource, showOnScreen): Promise<any>;
+async stopFrameCap(next, driver): Promise<any>;
+```
+
+As with adding or overriding existing HTTP protocol commands, these methods are injected with
+a `next` parameter and a `driver` parameter. The `driver` object represents the driver currently
+owning the session, and calling `await next()` will execute/return the behavior that would execute
+were the plugin not active (i.e., the driver's own handling of that method, or the chain of
+commands executed with the same name by other active plugins).
+
+Note that, currently, if a driver has BiDi proxying turned on, plugins will not be able to override
+BiDi methods handled by the proxy.
+
+#### Overloading Execute Script
+
+An alternative to these ways of doing things is to overload a command which all WebDriver clients
 have access to already: Execute Script. Make sure to read the section on [adding new
 commands](./build-drivers.md#extend-the-existing-protocol-with-new-commands) in
 the Building Drivers guide to understand the way this works in general. The way it works with

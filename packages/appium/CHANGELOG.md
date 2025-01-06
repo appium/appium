@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.14.1](https://github.com/appium/appium/compare/appium@2.14.0...appium@2.14.1) (2025-01-06)
+
+
+### Bug Fixes
+
+* **appium:** Do not update BiDi commands for drivers which don't support it ([#20879](https://github.com/appium/appium/issues/20879)) ([13d8b03](https://github.com/appium/appium/commit/13d8b03cc185c5f4e0631002614981ee6f86fab4))
+* **execute-driver-plugin:** update dependency webdriverio to v9.5.1 ([#20875](https://github.com/appium/appium/issues/20875)) ([93e4288](https://github.com/appium/appium/commit/93e4288253c07a844e6e10f0dd040b1a40eb92ff))
+* **support:** update dependency teen_process to v2.2.3 ([#20882](https://github.com/appium/appium/issues/20882)) ([488e5de](https://github.com/appium/appium/commit/488e5dea82d3c525acf483952570e32f319f3722))
+
+
+
 ## [2.14.0](https://github.com/appium/appium/compare/appium@2.13.1...appium@2.14.0) (2025-01-02)
 
 

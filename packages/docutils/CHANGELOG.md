@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.28](https://github.com/appium/appium/compare/@appium/docutils@1.0.27...@appium/docutils@1.0.28) (2025-01-06)
+
+
+### Bug Fixes
+
+* **support:** update dependency teen_process to v2.2.3 ([#20882](https://github.com/appium/appium/issues/20882)) ([488e5de](https://github.com/appium/appium/commit/488e5dea82d3c525acf483952570e32f319f3722))
+
+
+
 ## [1.0.27](https://github.com/appium/appium/compare/@appium/docutils@1.0.26...@appium/docutils@1.0.27) (2025-01-02)
 
 

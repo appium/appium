@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.0.2](https://github.com/appium/appium/compare/@appium/support@6.0.1...@appium/support@6.0.2) (2025-01-06)
+
+
+### Bug Fixes
+
+* **support:** update dependency teen_process to v2.2.3 ([#20882](https://github.com/appium/appium/issues/20882)) ([488e5de](https://github.com/appium/appium/commit/488e5dea82d3c525acf483952570e32f319f3722))
+* **support:** update dependency uuid to v11.0.4 ([#20883](https://github.com/appium/appium/issues/20883)) ([6f27d36](https://github.com/appium/appium/commit/6f27d36cf526002af1e40965b793141f5ef065b6))
+
+
+
 ## [6.0.1](https://github.com/appium/appium/compare/@appium/support@6.0.0...@appium/support@6.0.1) (2025-01-02)
 
 

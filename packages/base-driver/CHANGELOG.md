@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.14.1](https://github.com/appium/appium/compare/@appium/base-driver@9.14.0...@appium/base-driver@9.14.1) (2025-01-06)
+
+
+### Bug Fixes
+
+* **driver-test-support:** update dependency @types/lodash to v4.17.14 ([#20877](https://github.com/appium/appium/issues/20877)) ([fe209ed](https://github.com/appium/appium/commit/fe209ed660e0f790c98cd51938d0c75712cfd8e4))
+
+
+
 ## [9.14.0](https://github.com/appium/appium/compare/@appium/base-driver@9.13.1...@appium/base-driver@9.14.0) (2025-01-02)
 
 

@@ -59,20 +59,26 @@ export class ExtensionCore {
       );
     }
 
+    console.log(moduleName, methodName);
 
     // if the command module or method isn't part of our spec, reject
     if (!this.bidiCommands[moduleName] || !this.bidiCommands[moduleName][methodName]) {
+      console.log('not in bidi command map');
+      console.log(this.bidiCommands);
       throw new errors.UnknownCommandError();
     }
 
     const {command} = this.bidiCommands[moduleName][methodName];
+    console.log(`command: ${command}`);
     // if the command method isn't part of our spec, also reject
     if (!command) {
+      console.log('command was ommitted');
       throw new errors.UnknownCommandError();
     }
 
     // If the driver doesn't have this command, it must not be implemented
     if (!this[command]) {
+      console.log('in spec but not implemented');
       throw new errors.NotYetImplementedError();
     }
   }

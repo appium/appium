@@ -394,38 +394,38 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
       });
 
       it('should handle custom bidi commands if registered', async function () {
-        let {result} = await driver.send({method: 'fake.getPluginThing', params: {}});
+        let {result} = await driver.send({method: 'appium:fake.getPluginThing', params: {}});
         should.not.exist(result);
-        await driver.send({method: 'fake.setPluginThing', params: {thing: 'plugin bidi'}});
-        ({result} = await driver.send({method: 'fake.getPluginThing', params: {}}));
+        await driver.send({method: 'appium:fake.setPluginThing', params: {thing: 'plugin bidi'}});
+        ({result} = await driver.send({method: 'appium:fake.getPluginThing', params: {}}));
         result.should.eql('plugin bidi');
       });
 
       it('should subscribe and unsubscribe to/from custom bidi events', async function () {
         let retrievals = 0;
         // asyncrhonously start our listener
-        driver.on('fake.pluginThingRetrieved', () => {
+        driver.on('appium:fake.pluginThingRetrieved', () => {
           retrievals++;
         });
 
-        await driver.send({method: 'fake.getPluginThing', params: {}});
+        await driver.send({method: 'appium:fake.getPluginThing', params: {}});
         retrievals.should.eql(0);
 
-        await driver.sessionSubscribe({events: ['fake.pluginThingRetrieved']});
-        await driver.send({method: 'fake.getPluginThing', params: {}});
-        await driver.send({method: 'fake.getPluginThing', params: {}});
+        await driver.sessionSubscribe({events: ['appium:fake.pluginThingRetrieved']});
+        await driver.send({method: 'appium:fake.getPluginThing', params: {}});
+        await driver.send({method: 'appium:fake.getPluginThing', params: {}});
         retrievals.should.eql(2);
 
-        await driver.sessionUnsubscribe({events: ['fake.pluginThingRetrieved']});
-        await driver.send({method: 'fake.getPluginThing', params: {}});
-        await driver.send({method: 'fake.getPluginThing', params: {}});
+        await driver.sessionUnsubscribe({events: ['appium:fake.pluginThingRetrieved']});
+        await driver.send({method: 'appium:fake.getPluginThing', params: {}});
+        await driver.send({method: 'appium:fake.getPluginThing', params: {}});
         retrievals.should.eql(2);
       });
 
       it('should subscribe and unsubscribe to/from custom bidi events and merge with driver', async function () {
         let collectedEvents = [];
         // asyncrhonously start our listener
-        driver.on('clock.currentTime', ({time}) => {
+        driver.on('appium:clock.currentTime', ({time}) => {
           collectedEvents.push(time);
         });
 
@@ -435,24 +435,24 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
         collectedEvents.should.be.empty;
 
         // now subscribe and wait and assert that some events have been collected
-        await driver.sessionSubscribe({events: ['clock.currentTime']});
+        await driver.sessionSubscribe({events: ['appium:clock.currentTime']});
         await B.delay(800);
         collectedEvents.length.should.eql(5);
 
         // finally  unsubscribe and wait and assert that some events have been collected
-        await driver.sessionUnsubscribe({events: ['clock.currentTime']});
+        await driver.sessionUnsubscribe({events: ['appium:clock.currentTime']});
         collectedEvents = [];
         await B.delay(800);
         collectedEvents.should.be.empty;
       });
 
       it('should call underlying driver bidi method if next is called', async function () {
-        const {result} = await driver.send({method: 'fake.doSomeMath', params: {num1: 2, num2: 3}});
+        const {result} = await driver.send({method: 'appium:fake.doSomeMath', params: {num1: 2, num2: 3}});
         result.should.eql(11);
       });
 
       it('should override and not call underlying driver bidi method if next is not called', async function () {
-        const {result} = await driver.send({method: 'fake.doSomeMath2', params: {num1: 2, num2: 3}});
+        const {result} = await driver.send({method: 'appium:fake.doSomeMath2', params: {num1: 2, num2: 3}});
         result.should.eql(6);
       });
     });

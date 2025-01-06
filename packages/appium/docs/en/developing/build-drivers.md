@@ -618,7 +618,7 @@ an example of a `newBidiCommands` as implemented on an imaginary driver:
 
 ```js
 static newBidiCommands = {
-  video: {
+  'appium:video': {
     startFramerateCapture: {
       command: 'startFrameCap',
       params: {
@@ -633,9 +633,15 @@ static newBidiCommands = {
 };
 ```
 
-In this imaginary example, we have defined two new BiDi commands: `video.startFramerateCapture` and
-`video.stopFramerateCapture`. The first command takes a required and an optional parameter, and the
-second does not. When combined with generic BiDi support in your driver (see [the section on BiDi](#implement-webdriver-bidi-commands) above), and given an implementation of the appropriate methods on your driver (e.g. `startFrameCap` and `stopFrameCap` in this example), clients would be able to send these BiDi commands using whatever mechanism normally exists for doing so in the client library.
+In this imaginary example, we have defined two new BiDi commands:
+`appium:video.startFramerateCapture` and `appium:video.stopFramerateCapture`. Note first of all
+that, because we are defining a custom BiDi command, we should include a 'vendor prefix' (in this
+case, `appium:`, though you should pick something that represents your project). The first command
+takes a required and an optional parameter, and the second does not. When combined with generic
+BiDi support in your driver (see [the section on BiDi](#implement-webdriver-bidi-commands) above),
+and given an implementation of the appropriate methods on your driver (e.g. `startFrameCap` and
+`stopFrameCap` in this example), clients would be able to send these BiDi commands using whatever
+mechanism normally exists for doing so in the client library.
 
 An alternative to these other ways of doing things is to overload a command which all WebDriver clients
 have access to already: Execute Script. Appium provides some a convenient tool for making this
@@ -746,7 +752,7 @@ in `this.currentCpuLoad`):
 
 ```js
 this.eventEmitter.emit('bidiEvent', {
-  method: 'system.cpu',
+  method: 'appium:system.cpu',
   params: {load: this.currentCpuLoad},
 })
 ```

@@ -182,7 +182,7 @@ export class FakeDriver extends BaseDriver {
     while (this._clockRunning) {
       await B.delay(500);
       this.eventEmitter.emit('bidiEvent', {
-        method: 'clock.currentTime',
+        method: 'appium:clock.currentTime',
         params: {time: Date.now()},
       });
     }
@@ -253,7 +253,7 @@ export class FakeDriver extends BaseDriver {
   }
 
   static newBidiCommands = /** @type {const} */({
-    fake: {
+    'appium:fake': {
       getFakeThing: {
         command: 'getFakeThing',
       },

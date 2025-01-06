@@ -385,7 +385,7 @@ an example of a `newBidiCommands` as implemented on an imaginary driver:
 
 ```js
 static newBidiCommands = {
-  video: {
+  'appium:video': {
     startFramerateCapture: {
       command: 'startFrameCap',
       params: {
@@ -400,8 +400,8 @@ static newBidiCommands = {
 };
 ```
 
-In this imaginary example, we have defined two new BiDi commands: `video.startFramerateCapture` and
-`video.stopFramerateCapture`. The first command takes a required and an optional parameter, and the
+In this imaginary example, we have defined two new BiDi commands: `appium:video.startFramerateCapture` and
+`appium:video.stopFramerateCapture`. The first command takes a required and an optional parameter, and the
 second does not. When you have implemented the `startFrameCap` and `stopFrameCap` methods on your
 plugin class, they will be called whenever the BiDi commands are triggered by a client. The
 signatures for these methods would look as follows:
@@ -418,7 +418,9 @@ were the plugin not active (i.e., the driver's own handling of that method, or t
 commands executed with the same name by other active plugins).
 
 Note that, currently, if a driver has BiDi proxying turned on, plugins will not be able to override
-BiDi methods handled by the proxy.
+BiDi methods handled by the proxy. Also note that since these are custom BiDi commands, our module
+name should include a vendor prefix (we chose `appium:`, but you can/should choose something that
+makes sense for your extension).
 
 #### Overloading Execute Script
 
@@ -458,6 +460,11 @@ implements a helper method which we can simply call with all of these arguments.
 Overriding Execute Methods from drivers works as you'd expect: if your plugin defines an Execute
 Method with the same name as that of a driver, your command (in this case `plugMeIn`) will be
 called first. You can choose to run the driver's original behaviour via `next` if you want.
+
+### Emit BiDi Events
+
+Your plugin can emit custom BiDi events in [exactly the same way as Appium
+drivers](./build-drivers.md#emit-bidi-events).
 
 ### Build Appium Doctor checks
 

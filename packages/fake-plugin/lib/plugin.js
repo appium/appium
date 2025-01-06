@@ -43,7 +43,7 @@ class FakePlugin extends BasePlugin {
   });
 
   static newBidiCommands = /** @type {const} */({
-    fake: {
+    'appium:fake': {
       getPluginThing: {
         command: 'getPluginThing',
       },
@@ -106,7 +106,7 @@ class FakePlugin extends BasePlugin {
     while (this._clockRunning) {
       await B.delay(250);
       this.eventEmitter.emit('bidiEvent', {
-        method: 'clock.currentTime',
+        method: 'appium:clock.currentTime',
         params: {time: Date.now()},
       });
     }
@@ -134,7 +134,7 @@ class FakePlugin extends BasePlugin {
    */
   async getPluginThing(next, driver) {
     this.eventEmitter.emit('bidiEvent', {
-      method: 'fake.pluginThingRetrieved',
+      method: 'appium:fake.pluginThingRetrieved',
       params: {},
     });
     return this.pluginThing;

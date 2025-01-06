@@ -62,7 +62,7 @@
     "read-pkg": "5.2.0",
     "semver": "7.6.3",
     "source-map-support": "0.5.21",
-    "teen_process": "2.2.2",
+    "teen_process": "2.2.3",
     "type-fest": "4.31.0",
     "typescript": "5.7.2",
     "yaml": "2.7.0",

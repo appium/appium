@@ -54,7 +54,7 @@ class BasePlugin extends ExtensionCore {
   constructor(name, cliArgs = {}, driverId = null) {
     super();
     if (driverId) {
-      this.updateLogPrefix(`${generateDriverLogPrefix(this)} (for driver ${driverId})`);
+      this.updateLogPrefix(`${generateDriverLogPrefix(this)} <${driverId}>`);
     }
     this.name = name;
     this.cliArgs = cliArgs;

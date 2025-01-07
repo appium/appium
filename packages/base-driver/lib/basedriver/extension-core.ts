@@ -20,7 +20,7 @@ export class ExtensionCore {
   _logPrefix?: string;
   protected _log: AppiumLogger;
   // used to handle driver events
-  eventEmitter: NodeJS.EventEmitter;
+  readonly eventEmitter: NodeJS.EventEmitter;
 
 
   constructor(logPrefix?: string) {
@@ -29,7 +29,7 @@ export class ExtensionCore {
     this.eventEmitter = new EventEmitter();
   }
 
-  get log() {
+  get log(): AppiumLogger {
     if (!this._log) {
       this.updateLogPrefix(this._logPrefix ?? generateDriverLogPrefix(this));
     }

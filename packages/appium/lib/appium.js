@@ -333,7 +333,8 @@ class AppiumDriver extends DriverCore {
       }
 
       // We also want to assign any new Bidi Commands that the driver has specified, including all
-      // the standard bidi commands
+      // the standard bidi commands. But add a method existence guard since some old driver class
+      // instances might not have this method
       if (_.isFunction(driverInstance.updateBidiCommands)) {
         driverInstance.updateBidiCommands(InnerDriver.newBidiCommands ?? {});
       }
@@ -623,10 +624,7 @@ class AppiumDriver extends DriverCore {
     if (sessionId) {
       if (!this.sessionPlugins[sessionId]) {
         const driverId = generateDriverLogPrefix(this.sessions[sessionId]);
-        if (!driverId) {
-          throw new Error(`no driver id`);
-        }
-        this.sessionPlugins[sessionId] = this.createPluginInstances(driverId);
+        this.sessionPlugins[sessionId] = this.createPluginInstances(driverId || null);
       }
       return this.sessionPlugins[sessionId];
     }
@@ -666,7 +664,10 @@ class AppiumDriver extends DriverCore {
     for (const [PluginClass, name] of this.pluginClasses.entries()) {
       const cliArgs = this.getCliArgsForPlugin(name);
       const plugin = new PluginClass(name, cliArgs, driverId);
-      /** @type {Plugin & ExtensionCore} */(plugin).updateBidiCommands(PluginClass.newBidiCommands ?? {});
+      if (_.isFunction(/** @type {Plugin & ExtensionCore} */(plugin).updateBidiCommands)) {
+        // some old plugin classes don't have `updateBidiCommands`
+        /** @type {Plugin & ExtensionCore} */(plugin).updateBidiCommands(PluginClass.newBidiCommands ?? {});
+      }
       pluginInstances.push(plugin);
     }
     return pluginInstances;
@@ -828,7 +829,10 @@ class AppiumDriver extends DriverCore {
       );
       this.sessionPlugins[sessionId] = this.sessionlessPlugins;
       for (const p of /** @type {(Plugin & ExtensionCore)[]} */(this.sessionPlugins[sessionId])) {
-        p.updateLogPrefix(`${generateDriverLogPrefix(p)} (for driver ${generateDriverLogPrefix(this.sessions[sessionId])})`);
+        if (_.isFunction(p.updateLogPrefix)) {
+          // some old plugin classes don't have `updateLogPrefix` yet
+          p.updateLogPrefix(`${generateDriverLogPrefix(p)} <${generateDriverLogPrefix(this.sessions[sessionId])}>`);
+        }
       }
       this.sessionlessPlugins = [];
     }

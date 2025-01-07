@@ -19,7 +19,8 @@ import type {
   SuccessBiDiCommandResponse,
   ExternalDriver,
   StringRecord,
-  Plugin
+  Plugin,
+  BiDiResultData
 } from '@appium/types';
 
 type ExtensionPlugin = Plugin & ExtensionCore
@@ -100,7 +101,7 @@ export function onBidiConnection(this: AppiumDriver, ws: WebSocket, req: Incomin
   }
 }
 
-function wrapCommandWithPlugins(driver: ExtensionCore, plugins: ExtensionCore[], method: string, params: StringRecord) {
+function wrapCommandWithPlugins(driver: ExtensionCore, plugins: ExtensionCore[], method: string, params: StringRecord): () => Promise<BiDiResultData> {
     const [moduleName, methodName] = method.split('.');
     let next = async () => await driver.executeBidiCommand(method, params);
     for (const plugin of plugins.filter((p) => p.doesBidiCommandExist(moduleName, methodName))) {
@@ -415,15 +416,13 @@ function initBidiEventListeners(
   const eventLogCounts: Record<string, number> = BIDI_EVENTS_MAP.get(bidiHandlerDriver) ?? {};
   BIDI_EVENTS_MAP.set(bidiHandlerDriver, eventLogCounts);
   const eventListenerFactory = (extType: 'driver'|'plugin', ext: ExtensionCore) => {
-    const extLog = ext.log;
-    const extEe = ext.eventEmitter;
     const eventListener = async ({context, method, params = {}}) => {
       // if the driver didn't specify a context, use the empty context
       if (!context) {
         context = '';
       }
       if (!method || !params) {
-        extLog.warn(
+        ext.log?.warn( // some old plugins might not have the `log` property
           `${_.capitalize(extType)} emitted a bidi event that was malformed. Require method and params keys ` +
             `(with optional context). But instead received: ${_.truncate(JSON.stringify({
               context,
@@ -437,8 +436,9 @@ function initBidiEventListeners(
         // if the websocket is not still 'open', then we can ignore sending these events
         if (ws.readyState > WebSocket.OPEN) {
           // if the websocket is closed or closing, we can remove this listener as well to avoid
-          // leaks
-          extEe.removeListener(BIDI_EVENT_NAME, eventListener);
+          // leaks. Some old plugin classes might not have the `eventEmitter` property, so use an
+          // existence guard for now.
+          ext.eventEmitter?.removeListener(BIDI_EVENT_NAME, eventListener);
         }
         return;
       }
@@ -448,7 +448,7 @@ function initBidiEventListeners(
         if (method in eventLogCounts) {
           ++eventLogCounts[method];
         } else {
-          extLog.info(
+          ext.log?.info( // some old plugins might not have the `log` property
             `<-- BIDI EVENT ${method} (context: '${context}', ` +
             `params: ${_.truncate(JSON.stringify(params), {length: MAX_LOGGED_DATA_LENGTH})}). ` +
             `All further similar events won't be logged.`,
@@ -464,6 +464,7 @@ function initBidiEventListeners(
   };
   bidiHandlerDriver.eventEmitter.on(BIDI_EVENT_NAME, eventListenerFactory('driver', bidiHandlerDriver as ExtensionCore));
   for (const plugin of bidiHandlerPlugins) {
-    plugin.eventEmitter.on(BIDI_EVENT_NAME, eventListenerFactory('plugin', plugin));
+    // some old plugins might not have the eventEmitter property
+    plugin.eventEmitter?.on(BIDI_EVENT_NAME, eventListenerFactory('plugin', plugin));
   }
 }

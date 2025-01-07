@@ -407,8 +407,8 @@ plugin class, they will be called whenever the BiDi commands are triggered by a 
 signatures for these methods would look as follows:
 
 ```js
-async startFrameCap(next, driver, videoSource, showOnScreen): Promise<any>;
-async stopFrameCap(next, driver): Promise<any>;
+async startFrameCap(next: () => Promise<any>, driver: DriverClass, videoSource: string, showOnScreen: boolean): Promise<any>;
+async stopFrameCap(next: () => Promise<any>, driver: DriverClass): Promise<any>;
 ```
 
 As with adding or overriding existing HTTP protocol commands, these methods are injected with

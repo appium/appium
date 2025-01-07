@@ -12,6 +12,7 @@ export default [
     ],
   },
   {
+    name: 'Ignores',
     ignores: [
       '**/build-fixtures/**',
       'packages/appium/docs/**/assets/**',

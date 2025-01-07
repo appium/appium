@@ -1,21 +1,23 @@
 import path from 'node:path';
 import fs from 'node:fs';
 
+import {includeIgnoreFile} from '@eslint/compat';
 import js from '@eslint/js';
-import tsPlugin from '@typescript-eslint/eslint-plugin';
-import tsParser from '@typescript-eslint/parser';
+import eslintConfigPrettier from 'eslint-config-prettier';
 import globals from 'globals';
 import pluginPromise from 'eslint-plugin-promise';
 import importPlugin from 'eslint-plugin-import';
 import mochaPlugin from 'eslint-plugin-mocha';
-import {includeIgnoreFile} from '@eslint/compat';
+import {configs as tsConfigs, parser as tsParser, plugin as tsPlugin} from 'typescript-eslint';
 
 const gitignorePath = path.resolve(process.cwd(), '.gitignore');
 
 export default [
   js.configs.recommended,
+  eslintConfigPrettier,
   pluginPromise.configs['flat/recommended'],
   importPlugin.flatConfigs.recommended,
+  ...tsConfigs.recommended,
 
   {
     name: 'Script Files',
@@ -47,7 +49,6 @@ export default [
       },
     },
     rules: {
-      ...tsPlugin.configs.recommended.rules,
       /**
        * This rule is configured to warn if a `@ts-ignore` or `@ts-expect-error` directive is used
        * without explanation.

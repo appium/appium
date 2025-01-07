@@ -1,10 +1,16 @@
-import {logger} from '@appium/support';
-import {ExtensionCore, validateExecuteMethodParams} from '@appium/base-driver';
+import {ExtensionCore, generateDriverLogPrefix, validateExecuteMethodParams} from '@appium/base-driver';
 
 /**
  * @implements {Plugin}
  */
 class BasePlugin extends ExtensionCore {
+
+  /**
+   * @deprecated Use this.log instead of this.logger
+   * @type {import('@appium/types').AppiumLogger}
+   */
+  logger;
+
   /**
    * Subclasses should use type `import('@appium/types').MethodMap<SubclassName>`.
    *
@@ -43,12 +49,16 @@ class BasePlugin extends ExtensionCore {
   /**
    * @param {string} name
    * @param {Record<string,unknown>} [cliArgs]
+   * @param {string|null} driverId
    */
-  constructor(name, cliArgs = {}) {
-    super(`Plugin [${name}]`);
+  constructor(name, cliArgs = {}, driverId = null) {
+    super();
+    if (driverId) {
+      this.updateLogPrefix(`${generateDriverLogPrefix(this)} (for driver ${driverId})`);
+    }
     this.name = name;
     this.cliArgs = cliArgs;
-    this.logger = this.log; // TODO deprecate 'logger' in favor of 'log'
+    this.logger = this.log;
   }
 
   /**

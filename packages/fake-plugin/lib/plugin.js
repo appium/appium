@@ -128,11 +128,7 @@ class FakePlugin extends BasePlugin {
     return this.fakeThing;
   }
 
-  /**
-   * @param {() => Promise<any>} next
-   * @param {import('@appium/types').Driver} driver
-   */
-  async getPluginThing(next, driver) {
+  async getPluginThing() {
     this.eventEmitter.emit('bidiEvent', {
       method: 'appium:fake.pluginThingRetrieved',
       params: {},

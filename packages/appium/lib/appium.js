@@ -10,6 +10,7 @@ import {
   GET_STATUS_COMMAND,
   promoteAppiumOptions,
   promoteAppiumOptionsForObject,
+  generateDriverLogPrefix,
 } from '@appium/base-driver';
 import AsyncLock from 'async-lock';
 import {
@@ -18,7 +19,7 @@ import {
   makeNonW3cCapsError,
   validateFeatures,
 } from './utils';
-import {util, node, logger} from '@appium/support';
+import {util} from '@appium/support';
 import {getDefaultsForExtension} from './schema';
 import {DRIVER_TYPE, BIDI_BASE_PATH} from './constants';
 import * as bidiHelpers from './bidi';
@@ -621,7 +622,11 @@ class AppiumDriver extends DriverCore {
   pluginsForSession(sessionId = null) {
     if (sessionId) {
       if (!this.sessionPlugins[sessionId]) {
-        this.sessionPlugins[sessionId] = this.createPluginInstances();
+        const driverId = generateDriverLogPrefix(this.sessions[sessionId]);
+        if (!driverId) {
+          throw new Error(`no driver id`);
+        }
+        this.sessionPlugins[sessionId] = this.createPluginInstances(driverId);
       }
       return this.sessionPlugins[sessionId];
     }
@@ -652,14 +657,15 @@ class AppiumDriver extends DriverCore {
 
   /**
    * Creates instances of all of the enabled Plugin classes
+   * @param {string|null} driverId - ID to use for linking a driver to a plugin in logs
    * @returns {Plugin[]}
    */
-  createPluginInstances() {
+  createPluginInstances(driverId = null) {
     /** @type {Plugin[]} */
     const pluginInstances = [];
     for (const [PluginClass, name] of this.pluginClasses.entries()) {
       const cliArgs = this.getCliArgsForPlugin(name);
-      const plugin = new PluginClass(name, cliArgs);
+      const plugin = new PluginClass(name, cliArgs, driverId);
       /** @type {Plugin & ExtensionCore} */(plugin).updateBidiCommands(PluginClass.newBidiCommands ?? {});
       pluginInstances.push(plugin);
     }
@@ -821,6 +827,9 @@ class AppiumDriver extends DriverCore {
           `to session ID ${sessionId}`,
       );
       this.sessionPlugins[sessionId] = this.sessionlessPlugins;
+      for (const p of /** @type {(Plugin & ExtensionCore)[]} */(this.sessionPlugins[sessionId])) {
+        p.updateLogPrefix(`${generateDriverLogPrefix(p)} (for driver ${generateDriverLogPrefix(this.sessions[sessionId])})`);
+      }
       this.sessionlessPlugins = [];
     }
 

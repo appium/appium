@@ -123,5 +123,5 @@ export type PluginCommand<
 export type PluginClass<P extends Plugin = Plugin> = Class<
   P,
   PluginStatic<P>,
-  [pluginName: string, cliArgs: StringRecord<unknown>]
+  [pluginName: string, cliArgs: StringRecord<unknown>, driverId: string|null]
 >;

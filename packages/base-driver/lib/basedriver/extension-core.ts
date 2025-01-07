@@ -12,21 +12,32 @@ import {
 import {errors} from '../protocol';
 import {BIDI_COMMANDS} from '../protocol/bidi-commands';
 import _ from 'lodash';
-import helpers from './helpers';
+import {generateDriverLogPrefix} from './helpers';
 
 export class ExtensionCore {
   bidiEventSubs: Record<string, string[]>;
   bidiCommands: BidiModuleMap = BIDI_COMMANDS as BidiModuleMap;
-  log: AppiumLogger;
+  _logPrefix?: string;
+  protected _log: AppiumLogger;
   // used to handle driver events
   eventEmitter: NodeJS.EventEmitter;
 
 
   constructor(logPrefix?: string) {
-    logPrefix ??= helpers.generateDriverLogPrefix(this);
-    this.log = logger.getLogger(logPrefix);
+    this._logPrefix = logPrefix;
     this.bidiEventSubs = {};
     this.eventEmitter = new EventEmitter();
+  }
+
+  get log() {
+    if (!this._log) {
+      this.updateLogPrefix(this._logPrefix ?? generateDriverLogPrefix(this));
+    }
+    return this._log;
+  }
+
+  updateLogPrefix(logPrefix: string) {
+    this._log = logger.getLogger(logPrefix);
   }
 
   updateBidiCommands(cmds: BidiModuleMap): void {
@@ -59,26 +70,19 @@ export class ExtensionCore {
       );
     }
 
-    console.log(moduleName, methodName);
-
     // if the command module or method isn't part of our spec, reject
     if (!this.bidiCommands[moduleName] || !this.bidiCommands[moduleName][methodName]) {
-      console.log('not in bidi command map');
-      console.log(this.bidiCommands);
       throw new errors.UnknownCommandError();
     }
 
     const {command} = this.bidiCommands[moduleName][methodName];
-    console.log(`command: ${command}`);
     // if the command method isn't part of our spec, also reject
     if (!command) {
-      console.log('command was ommitted');
       throw new errors.UnknownCommandError();
     }
 
     // If the driver doesn't have this command, it must not be implemented
     if (!this[command]) {
-      console.log('in spec but not implemented');
       throw new errors.NotYetImplementedError();
     }
   }

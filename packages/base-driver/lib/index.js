@@ -49,6 +49,8 @@ export {
 // Web socket helpers
 export {DEFAULT_WS_PATHNAME_PREFIX} from './express/websocket';
 
+export {generateDriverLogPrefix} from './basedriver/helpers';
+
 /**
  * @typedef {import('./express/server').ServerOpts} ServerOpts
  */

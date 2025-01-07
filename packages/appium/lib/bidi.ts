@@ -104,9 +104,7 @@ function wrapCommandWithPlugins(driver: ExtensionCore, plugins: ExtensionCore[],
     const [moduleName, methodName] = method.split('.');
     let next = async () => await driver.executeBidiCommand(method, params);
     for (const plugin of plugins.filter((p) => p.doesBidiCommandExist(moduleName, methodName))) {
-      next = ((_next) => async () => {
-        return await plugin.executeBidiCommand(method, params, _next, driver);
-      })(next);
+      next = ((_next) => async () => await plugin.executeBidiCommand(method, params, _next, driver))(next);
     }
     return next;
 }

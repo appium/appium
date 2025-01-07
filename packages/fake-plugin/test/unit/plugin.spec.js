@@ -1,5 +1,11 @@
-import {FakePlugin} from '../../lib/plugin';
+import {FakePlugin as _FakePlugin} from '../../lib/plugin';
 import B from 'bluebird';
+
+// Let's not use the actual FakePlugin because it runs a timer and we don't want to worry about
+// needing to clean up timers so that unit test processes can exit!
+class FakePlugin extends _FakePlugin {
+  _clockRunning = false;
+}
 
 class FakeExpress {
   constructor() {

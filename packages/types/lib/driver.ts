@@ -610,6 +610,10 @@ export interface Core<C extends Constraints, Settings extends StringRecord = Str
   isCommandsQueueEnabled: boolean;
   eventHistory: EventHistory;
   bidiEventSubs: Record<string, string[]>;
+  /**
+   * @deprecated Drivers no longer need to opt into BiDi support explicitly
+   */
+  doesSupportBidi?: boolean;
   updateBidiCommands(cmds: BidiModuleMap): void;
   onUnexpectedShutdown(handler: () => any): void;
   /**

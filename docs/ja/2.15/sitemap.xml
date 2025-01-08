@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+         <loc>https://appium.io/docs/ja/2.15/</loc>
+         <lastmod>2025-01-08</lastmod>
+    </url>
+    <url>
+         <loc>https://appium.io/docs/ja/2.15/blog/</loc>
+         <lastmod>2025-01-08</lastmod>
+    </url>
+    <url>
+         <loc>https://appium.io/docs/ja/2.15/guides/migrating-1-to-2/</loc>
+         <lastmod>2025-01-08</lastmod>
+    </url>
+    <url>
+         <loc>https://appium.io/docs/ja/2.15/intro/</loc>
+         <lastmod>2025-01-08</lastmod>
+    </url>
+</urlset>

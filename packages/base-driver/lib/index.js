@@ -10,6 +10,7 @@ try {
 }
 
 // BaseDriver exports
+export {ExtensionCore} from './basedriver/extension-core';
 import {BaseDriver} from './basedriver/driver';
 export {DriverCore} from './basedriver/core';
 export {DeviceSettings} from './basedriver/device-settings';
@@ -47,6 +48,8 @@ export {
 
 // Web socket helpers
 export {DEFAULT_WS_PATHNAME_PREFIX} from './express/websocket';
+
+export {generateDriverLogPrefix} from './basedriver/helpers';
 
 /**
  * @typedef {import('./express/server').ServerOpts} ServerOpts

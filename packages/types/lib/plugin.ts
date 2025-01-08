@@ -1,5 +1,5 @@
 import {AsyncReturnType} from 'type-fest';
-import {ExecuteMethodMap, MethodMap} from './command';
+import {BidiModuleMap, ExecuteMethodMap, MethodMap} from './command';
 import {DriverCommand, ExternalDriver} from './driver';
 import {AppiumLogger} from './logger';
 import {UpdateServerCallback} from './server';
@@ -26,6 +26,7 @@ export interface PluginStatic<P extends Plugin> {
    */
   newMethodMap?: MethodMap<P>;
   executeMethodMap?: ExecuteMethodMap<P>;
+  newBidiCommands?: BidiModuleMap;
 }
 
 /**
@@ -122,5 +123,5 @@ export type PluginCommand<
 export type PluginClass<P extends Plugin = Plugin> = Class<
   P,
   PluginStatic<P>,
-  [pluginName: string, cliArgs: StringRecord<unknown>]
+  [pluginName: string, cliArgs: StringRecord<unknown>, driverId: string|null]
 >;

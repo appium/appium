@@ -546,7 +546,7 @@ describe('FakeDriver via HTTP', function () {
     it('should be able to subscribe and unsubscribe to bidi events', async function () {
       let collectedEvents = [];
       // asyncrhonously start our listener
-      driver.on('clock.currentTime', ({time}) => {
+      driver.on('appium:clock.currentTime', ({time}) => {
         collectedEvents.push(time);
       });
 
@@ -556,22 +556,22 @@ describe('FakeDriver via HTTP', function () {
       collectedEvents.should.be.empty;
 
       // now subscribe and wait and assert that some events have been collected
-      await driver.sessionSubscribe({events: ['clock.currentTime']});
+      await driver.sessionSubscribe({events: ['appium:clock.currentTime']});
       await B.delay(750);
       collectedEvents.should.not.be.empty;
 
       // finally  unsubscribe and wait and assert that some events have been collected
-      await driver.sessionUnsubscribe({events: ['clock.currentTime']});
+      await driver.sessionUnsubscribe({events: ['appium:clock.currentTime']});
       collectedEvents = [];
       await B.delay(750);
       collectedEvents.should.be.empty;
     });
 
     it('should allow custom bidi commands', async function () {
-      let {result} = await driver.send({method: 'fake.getFakeThing', params: {}});
+      let {result} = await driver.send({method: 'appium:fake.getFakeThing', params: {}});
       should.not.exist(result);
-      await driver.send({method: 'fake.setFakeThing', params: {thing: 'this is from bidi'}});
-      ({result} = await driver.send({method: 'fake.getFakeThing', params: {}}));
+      await driver.send({method: 'appium:fake.setFakeThing', params: {thing: 'this is from bidi'}});
+      ({result} = await driver.send({method: 'appium:fake.getFakeThing', params: {}}));
       result.should.eql('this is from bidi');
     });
   });

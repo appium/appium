@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.2.0](https://github.com/appium/appium/compare/@appium/fake-plugin@3.1.56...@appium/fake-plugin@3.2.0) (2025-01-08)
+
+
+### Features
+
+* **appium,base-driver,base-plugin:** allow plugins to define custom bidi commands and emit bidi events ([#20876](https://github.com/appium/appium/issues/20876)) ([8df1c21](https://github.com/appium/appium/commit/8df1c217a15d30300c04b9f59cdbdffa70325828))
+
+
+
 ## [3.1.56](https://github.com/appium/appium/compare/@appium/fake-plugin@3.1.55...@appium/fake-plugin@3.1.56) (2025-01-06)
 
 **Note:** Version bump only for package @appium/fake-plugin

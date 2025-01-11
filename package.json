@@ -89,7 +89,7 @@
     "@tsconfig/node14": "14.1.2",
     "@types/chai": "5.0.1",
     "@types/chai-as-promised": "8.0.1",
-    "@types/diff": "6.0.0",
+    "@types/diff": "7.0.0",
     "@types/mocha": "10.0.10",
     "@types/node": "22.10.5",
     "@types/semver": "7.5.8",

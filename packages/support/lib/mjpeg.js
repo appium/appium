@@ -131,7 +131,7 @@ class MJpegStream extends Writable {
       );
 
     const url = this.url;
-    const onErr = (err) => {
+    const onErr = (/** @type {Error} */ err) => {
       // Make sure we don't get an outdated screenshot if there was an error
       this.lastChunk = null;
 
@@ -155,7 +155,10 @@ class MJpegStream extends Writable {
         })
       ).data;
     } catch (e) {
-      return onErr(e);
+      throw new Error(
+        `Cannot connect to the MJPEG stream at ${this.url}. ` +
+        `Original error: ${_.has(e, 'response') ? JSON.stringify(e.response) : /** @type {Error} */ (e).message}`
+      );
     }
 
     this.responseStream

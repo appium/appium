@@ -103,8 +103,8 @@ describe('MJpeg Stream (e2e)', function () {
     stream.updateCount.should.eql(0);
   });
 
-  it('should error out if the server does not send any images before a timeout', async function () {
-    stream = new MJpegStream(serverUrl, _.noop);
-    await stream.start(0).should.eventually.be.rejectedWith(/never sent/);
+  it('should error out if the server cannot be connected', async function () {
+    stream = new MJpegStream('http://localhost', _.noop);
+    await stream.start().should.eventually.be.rejected;
   });
 });

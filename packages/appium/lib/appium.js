@@ -581,8 +581,8 @@ class AppiumDriver extends DriverCore {
     const driverMethodMap = this.driverForSession(sessionId)?.newMethodMap ?? {};
     const pluginMethodMaps = _.flatMap(
       // @ts-ignore It's ok if the newMethodMap property is not there
-      this.pluginsForSession(sessionId).map(p => p.newMethodMap ?? {})
-    )
+      this.pluginsForSession(sessionId).map((p) => p.newMethodMap ?? {})
+    );
     const restApiMethodMap = _.flatMap([
       BASE_METHOD_MAP,
       driverMethodMap,
@@ -590,7 +590,7 @@ class AppiumDriver extends DriverCore {
     ].map(toRestCommandsList));
     return {
       rest: restApiMethodMap,
-    }
+    };
   }
 
   /**

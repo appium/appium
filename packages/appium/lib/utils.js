@@ -533,7 +533,7 @@ export function toRestCommandsList(methodMap) {
         name,
         required,
       };
-    }
+    };
 
     /** @type {import("@appium/types").RestCommandItemParam[]} */
     const requiredParams = (params.required ?? [])
@@ -548,14 +548,14 @@ export function toRestCommandsList(methodMap) {
       : undefined;
   };
 
-  for (const [path, methods] of _.toPairs(methodMap)) {
+  for (const [_, methods] of _.toPairs(methodMap)) {
     for (const [method, spec] of _.toPairs(methods)) {
       result.push({
         method,
         name: spec.command,
         deprecated: spec.deprecated,
         params: toRestCommandParams(spec.payloadParams),
-      })
+      });
     }
   }
   return result;

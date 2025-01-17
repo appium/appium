@@ -59,6 +59,10 @@ export interface BaseMethodDef {
    * Specifies shape of payload
    */
   readonly payloadParams?: PayloadParams;
+  /**
+   * If true, this `Method` will be removed and should not be used by clients
+   */
+  readonly deprecated?: boolean;
 }
 
 /**
@@ -70,11 +74,6 @@ export interface DriverMethodDef<T extends Driver, D extends boolean = boolean>
    * Name of the command.
    */
   readonly command?: D extends true ? string : keyof ConditionalPick<Required<T>, DriverCommand>;
-
-  /**
-   * If this is `true`, we do not validate `command`, because it may not exist in `ExternalDriver`.
-   */
-  readonly deprecated?: D;
 }
 
 /**

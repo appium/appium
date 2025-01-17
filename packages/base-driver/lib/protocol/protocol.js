@@ -16,9 +16,10 @@ import {isW3cCaps} from '../helpers/capabilities';
 import log from '../basedriver/logger';
 import { generateDriverLogPrefix } from '../basedriver/helpers';
 
-const CREATE_SESSION_COMMAND = 'createSession';
-const DELETE_SESSION_COMMAND = 'deleteSession';
-const GET_STATUS_COMMAND = 'getStatus';
+export const CREATE_SESSION_COMMAND = 'createSession';
+export const DELETE_SESSION_COMMAND = 'deleteSession';
+export const GET_STATUS_COMMAND = 'getStatus';
+export const LIST_DRIVER_COMMANDS_COMMAND = 'listCommands';
 
 /** @type {Set<string>} */
 const deprecatedCommandsLogged = new Set();
@@ -559,9 +560,6 @@ export {
   isSessionCommand,
   driverShouldDoJwpProxy,
   determineProtocol,
-  CREATE_SESSION_COMMAND,
-  DELETE_SESSION_COMMAND,
-  GET_STATUS_COMMAND,
   deprecatedCommandsLogged,
   validateExecuteMethodParams,
 };

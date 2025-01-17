@@ -8,9 +8,11 @@ import {
   CREATE_SESSION_COMMAND,
   DELETE_SESSION_COMMAND,
   GET_STATUS_COMMAND,
+  LIST_DRIVER_COMMANDS_COMMAND,
   promoteAppiumOptions,
   promoteAppiumOptionsForObject,
   generateDriverLogPrefix,
+  METHOD_MAP as BASE_METHOD_MAP,
 } from '@appium/base-driver';
 import AsyncLock from 'async-lock';
 import {
@@ -18,6 +20,7 @@ import {
   pullSettings,
   makeNonW3cCapsError,
   validateFeatures,
+  toRestCommandsList,
 } from './utils';
 import {util} from '@appium/support';
 import {getDefaultsForExtension} from './schema';
@@ -567,6 +570,31 @@ class AppiumDriver extends DriverCore {
 
   /**
    * @param {string} sessionId
+   * @returns {import('@appium/types').CommandsMap}
+   */
+  listCommands(sessionId) {
+    if (!sessionId) {
+      return {};
+    }
+
+    // @ts-ignore It's ok if the newMethodMap property is not there
+    const driverMethodMap = this.driverForSession(sessionId)?.newMethodMap ?? {};
+    const pluginMethodMaps = _.flatMap(
+      // @ts-ignore It's ok if the newMethodMap property is not there
+      this.pluginsForSession(sessionId).map(p => p.newMethodMap ?? {})
+    )
+    const restApiMethodMap = _.flatMap([
+      BASE_METHOD_MAP,
+      driverMethodMap,
+      ...pluginMethodMaps,
+    ].map(toRestCommandsList));
+    return {
+      rest: restApiMethodMap,
+    }
+  }
+
+  /**
+   * @param {string} sessionId
    */
   cleanupBidiSockets(sessionId) {
     // clean up any bidi sockets associated with session
@@ -940,10 +968,15 @@ class AppiumDriver extends DriverCore {
   onBidiServerError = bidiHelpers.onBidiServerError;
 }
 
-// help decide which commands should be proxied to sub-drivers and which
-// should be handled by this, our umbrella driver
+/**
+ * Help decide which commands should be proxied to sub-drivers and which
+ * should be handled by this, our umbrella driver
+ * @param {string} cmd
+ * @returns {boolean}
+ */
 function isAppiumDriverCommand(cmd) {
-  return !isSessionCommand(cmd) || cmd === DELETE_SESSION_COMMAND;
+  return !isSessionCommand(cmd)
+    || _.includes([DELETE_SESSION_COMMAND, LIST_DRIVER_COMMANDS_COMMAND], cmd);
 }
 
 /**

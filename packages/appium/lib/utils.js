@@ -495,6 +495,73 @@ export function validateFeatures(features) {
 }
 
 /**
+ *
+ * @param {import('@appium/types').MethodMap<any>} methodMap
+ * @returns {import('@appium/types').RestCommandItem[]}
+ */
+export function toRestCommandsList(methodMap) {
+  /** @type {import('@appium/types').RestCommandItem[]} */
+  const result = [];
+
+  /**
+   * @param {import("@appium/types").PayloadParams | undefined} params
+   * @returns {import("@appium/types").RestCommandItemParam[] | undefined}
+  */
+  const toRestCommandParams = (params) => {
+    if (!params) {
+      return;
+    }
+
+    /**
+     *
+     * @param {any} x
+     * @param {boolean} isRequired
+     * @returns {import("@appium/types").RestCommandItemParam | undefined}
+     */
+    const toRestCommandItemParam = (x, isRequired) => {
+      const isNameAnArray = _.isArray(x);
+      const name = isNameAnArray ? x[0] : x;
+      if (!_.isString(name)) {
+        return;
+      }
+
+      // If parameter names are arrays then this means
+      // either of them is required.
+      // Not sure we could reflect that in here.
+      const required = isRequired && !isNameAnArray;
+      return {
+        name,
+        required,
+      };
+    }
+
+    /** @type {import("@appium/types").RestCommandItemParam[]} */
+    const requiredParams = (params.required ?? [])
+      .map((name) => toRestCommandItemParam(name, true))
+      .filter((x) => !_.isUndefined(x));
+    /** @type {import("@appium/types").RestCommandItemParam[]} */
+    const optionalParams = (params.optional ?? [])
+      .map((name) => toRestCommandItemParam(name, false))
+      .filter((x) => !_.isUndefined(x));
+    return requiredParams.length || optionalParams.length
+      ? [...requiredParams, ...optionalParams]
+      : undefined;
+  };
+
+  for (const [path, methods] of _.toPairs(methodMap)) {
+    for (const [method, spec] of _.toPairs(methods)) {
+      result.push({
+        method,
+        name: spec.command,
+        deprecated: spec.deprecated,
+        params: toRestCommandParams(spec.payloadParams),
+      })
+    }
+  }
+  return result;
+}
+
+/**
  * @typedef {import('@appium/types').StringRecord} StringRecord
  * @typedef {import('@appium/types').BaseDriverCapConstraints} BaseDriverCapConstraints
  */

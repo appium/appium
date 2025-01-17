@@ -353,6 +353,27 @@ export interface IBidiCommands {
   bidiStatus(): Promise<DriverStatus>;
 }
 
+export interface RestCommandItemParam {
+  name: string;
+  required: boolean;
+}
+
+export interface RestCommandItem {
+  method: string;
+  name?: string;
+  deprecated?: boolean;
+  params?: RestCommandItemParam[];
+}
+
+export interface CommandsMap {
+  rest?: RestCommandItem[];
+  bidi?: any;
+}
+
+export interface IInspectorCommands {
+  listCommands(): CommandsMap;
+}
+
 /**
  * A record of {@linkcode LogDef} objects, keyed by the log type name.
  * Used in {@linkcode ILogCommands.supportedLogTypes}

@@ -548,9 +548,10 @@ export function toRestCommandsList(methodMap) {
       : undefined;
   };
 
-  for (const [, methods] of _.toPairs(methodMap)) {
+  for (const [uriPath, methods] of _.toPairs(methodMap)) {
     for (const [method, spec] of _.toPairs(methods)) {
       result.push({
+        path: uriPath,
         method,
         name: spec.command,
         deprecated: spec.deprecated,

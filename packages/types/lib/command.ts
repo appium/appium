@@ -176,3 +176,21 @@ export interface ErrorBiDiCommandResponse extends GenericBiDiCommandResponse {
   message: string;
   stacktrace?: string;
 }
+
+export interface RestCommandItemParam {
+  name: string;
+  required: boolean;
+}
+
+export interface RestCommandItem {
+  method: string;
+  path: string;
+  name?: string;
+  deprecated?: boolean;
+  params?: RestCommandItemParam[];
+}
+
+export interface CommandsMap {
+  rest?: RestCommandItem[];
+  bidi?: any;
+}

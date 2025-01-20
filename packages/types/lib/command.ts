@@ -59,6 +59,10 @@ export interface BaseMethodDef {
    * Specifies shape of payload
    */
   readonly payloadParams?: PayloadParams;
+  /**
+   * Any additional info string or comments to this command.
+   */
+  readonly info?: string;
 }
 
 /**
@@ -113,6 +117,16 @@ export interface BaseExecuteMethodDef {
     required?: ReadonlyArray<string>;
     optional?: ReadonlyArray<string>;
   };
+
+  /**
+   * If this is `true`, then the method is marked for deprecation.
+   */
+  readonly deprecated?: boolean;
+
+  /**
+   * Any additional info string or comments to this execute method.
+   */
+  readonly info?: string;
 }
 
 /**

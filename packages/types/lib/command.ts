@@ -63,6 +63,10 @@ export interface BaseMethodDef {
    * If true, this `Method` will be removed and should not be used by clients
    */
   readonly deprecated?: boolean;
+  /**
+   * Any additional info string or comments to this command.
+   */
+  readonly info?: string;
 }
 
 /**
@@ -112,6 +116,16 @@ export interface BaseExecuteMethodDef {
     required?: ReadonlyArray<string>;
     optional?: ReadonlyArray<string>;
   };
+
+  /**
+   * If this is `true`, then the method is marked for deprecation.
+   */
+  readonly deprecated?: boolean;
+
+  /**
+   * Any additional info string or comments to this execute method.
+   */
+  readonly info?: string;
 }
 
 /**

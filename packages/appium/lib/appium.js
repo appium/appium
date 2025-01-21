@@ -20,7 +20,7 @@ import {
   pullSettings,
   makeNonW3cCapsError,
   validateFeatures,
-  toRestCommandsList,
+  toRestCommandsMap,
 } from './utils';
 import {util} from '@appium/support';
 import {getDefaultsForExtension} from './schema';
@@ -570,26 +570,26 @@ class AppiumDriver extends DriverCore {
 
   /**
    * @param {string} sessionId
-   * @returns {import('@appium/types').CommandsMap}
+   * @returns {import('@appium/types').ListCommandsResponse}
    */
   listCommands(sessionId) {
-    if (!sessionId) {
-      return {};
-    }
-
-    // @ts-ignore It's ok if the newMethodMap property is not there
-    const driverMethodMap = this.driverForSession(sessionId)?.newMethodMap ?? {};
-    const pluginMethodMaps = _.flatMap(
+    /** @type {import('@appium/types').MethodMap<any>} */
+    let driverMethodMap = {};
+    /** @type {Record<string, import('@appium/types').MethodMap<any>>} */
+    let pluginMethodMaps = {};
+    if (sessionId) {
       // @ts-ignore It's ok if the newMethodMap property is not there
-      this.pluginsForSession(sessionId).map((p) => p.newMethodMap ?? {})
-    );
-    const restApiMethodMap = _.flatMap([
-      BASE_METHOD_MAP,
-      driverMethodMap,
-      ...pluginMethodMaps,
-    ].map(toRestCommandsList));
+      driverMethodMap = this.driverForSession(sessionId)?.constructor?.newMethodMap ?? {};
+      // @ts-ignore It's ok if the newMethodMap property is not there
+      pluginMethodMaps = _.fromPairs(
+        this.pluginsForSession(sessionId)
+          .map((p) => p.constructor)
+          // @ts-ignore It's ok if the newMethodMap property is not there
+          .map((c) => [c.name, c.newMethodMap ?? {}])
+      );
+    }
     return {
-      rest: restApiMethodMap,
+      rest: toRestCommandsMap(BASE_METHOD_MAP, driverMethodMap, pluginMethodMaps),
     };
   }
 

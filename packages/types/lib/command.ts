@@ -192,19 +192,61 @@ export interface ErrorBiDiCommandResponse extends GenericBiDiCommandResponse {
 }
 
 export interface RestCommandItemParam {
+  /**
+   * Command paremeter name
+   */
   name: string;
+  /**
+   * True if the paramter is required for the given command
+   */
   required: boolean;
 }
 
 export interface RestCommandItem {
-  method: string;
-  path: string;
-  name?: string;
+  /**
+   * Command name
+   */
+  command?: string;
+  /**
+   * Whether the command is marked for deprecation
+   */
   deprecated?: boolean;
+  /**
+   * Optinal infostring about the command's purpose or a comment
+   */
+  info?: string;
+  /**
+   * List of command parameters
+   */
   params?: RestCommandItemParam[];
 }
 
-export interface CommandsMap {
-  rest?: RestCommandItem[];
+export interface RestMethodsToCommandsMap {
+  /**
+   * Method name to command info mapping
+   */
+  [method: string]: RestCommandItem;
+}
+
+export interface RestCommandsMap {
+  /**
+   * Command paths to methods map in the base driver
+   */
+  base: Record<string, RestMethodsToCommandsMap>;
+  /**
+   * Command paths to methods map in the session-specific driver
+   */
+  driver: Record<string, RestMethodsToCommandsMap>;
+  /**
+   * Plugin name to command paths to methods map
+   */
+  plugins?: Record<string, Record<string, RestMethodsToCommandsMap>>;
+}
+
+export interface ListCommandsResponse {
+  /**
+   * REST APIs mapping
+   */
+  rest?: RestCommandsMap;
   bidi?: any;
 }

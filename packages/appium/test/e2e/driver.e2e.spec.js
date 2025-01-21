@@ -214,7 +214,7 @@ describe('FakeDriver via HTTP', function () {
 
     beforeEach(async function () {
       driver = await wdio({...wdOpts, capabilities: caps});
-    })
+    });
     afterEach(async function () {
       if (driver) {
         await driver.deleteSession();
@@ -231,7 +231,9 @@ describe('FakeDriver via HTTP', function () {
       );
 
       const commands = await driver.listCommands();
-      commands?.rest.length.should.be.greaterThan(0);
+      // console.log(JSON.stringify(commands, null, 2));
+      _.size(commands.rest.base).should.be.greaterThan(1);
+      _.size(commands.rest.driver).should.be.greaterThan(1);
     });
   });
 

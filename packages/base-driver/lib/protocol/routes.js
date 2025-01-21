@@ -871,7 +871,7 @@ export const METHOD_MAP = /** @type {const} */ ({
   // #region Inspector
 
   '/session/:sessionId/appium/commands': {
-    POST: { command: 'listCommands'},
+    POST: {command: 'listCommands'},
   },
 
   // #endregion

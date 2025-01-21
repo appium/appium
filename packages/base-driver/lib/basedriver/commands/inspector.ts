@@ -1,4 +1,4 @@
-import type {Constraints, IInspectorCommands, CommandsMap} from '@appium/types';
+import type {Constraints, IInspectorCommands, ListCommandsResponse} from '@appium/types';
 import {mixin} from './mixin';
 
 declare module '../driver' {
@@ -15,7 +15,7 @@ const InspectorCommands: IInspectorCommands = {
    * @returns
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  listCommands(sessionId?: string | null): CommandsMap {
+  listCommands(sessionId?: string | null): ListCommandsResponse {
     return {};
   }
 };

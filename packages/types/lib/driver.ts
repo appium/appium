@@ -7,7 +7,7 @@ import type {
   BiDiResultData,
   ExecuteMethodMap,
   MethodMap,
-  CommandsMap,
+  ListCommandsResponse,
 } from './command';
 import type {ServerArgs} from './config';
 import type {HTTPHeaders, HTTPMethod} from './http';
@@ -360,7 +360,7 @@ export interface IBidiCommands {
 }
 
 export interface IInspectorCommands {
-  listCommands(): CommandsMap;
+  listCommands(): ListCommandsResponse;
 }
 
 /**

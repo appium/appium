@@ -496,17 +496,16 @@ export function validateFeatures(features) {
 
 /**
  *
- * @param {import('@appium/types').MethodMap<any>} methodMap
- * @returns {import('@appium/types').RestCommandItem[]}
+ * @param {import('@appium/types').MethodMap<any>} baseMethodMap
+ * @param {import('@appium/types').MethodMap<any>} driverMethodMap
+ * @param {Record<string, import('@appium/types').MethodMap<any>>} [pluginMethodMaps]
+ * @returns {import('@appium/types').RestCommandsMap}
  */
-export function toRestCommandsList(methodMap) {
-  /** @type {import('@appium/types').RestCommandItem[]} */
-  const result = [];
-
+export function toRestCommandsMap(baseMethodMap, driverMethodMap, pluginMethodMaps) {
   /**
    * @param {import("@appium/types").PayloadParams | undefined} params
    * @returns {import("@appium/types").RestCommandItemParam[] | undefined}
-  */
+   */
   const toRestCommandParams = (params) => {
     if (!params) {
       return;
@@ -548,18 +547,35 @@ export function toRestCommandsList(methodMap) {
       : undefined;
   };
 
-  for (const [uriPath, methods] of _.toPairs(methodMap)) {
-    for (const [method, spec] of _.toPairs(methods)) {
-      result.push({
-        path: uriPath,
-        method,
-        name: spec.command,
-        deprecated: spec.deprecated,
-        params: toRestCommandParams(spec.payloadParams),
-      });
+  /**
+   *
+   * @param {import('@appium/types').MethodMap<any>} mm
+   * @returns {Record<string, import('@appium/types').RestMethodsToCommandsMap>}
+   */
+  const methodMapToRestCommandsInfo = (mm) => {
+    /** @type {Record<string, import('@appium/types').RestMethodsToCommandsMap>} */
+    const res = {};
+    for (const [uriPath, methods] of _.toPairs(mm)) {
+      const methodsMap = {};
+      for (const [method, spec] of _.toPairs(methods)) {
+        methodsMap[method] = {
+          command: spec.command,
+          deprecated: spec.deprecated,
+          info: spec.info,
+          params: toRestCommandParams(spec.payloadParams),
+        };
+      }
+      // @ts-ignore this is OK
+      res[uriPath] = methodsMap;
     }
-  }
-  return result;
+    return res;
+  };
+
+  return {
+    base: methodMapToRestCommandsInfo(baseMethodMap),
+    driver: methodMapToRestCommandsInfo(driverMethodMap),
+    plugins: pluginMethodMaps ? _.mapValues(pluginMethodMaps, methodMapToRestCommandsInfo) : undefined,
+  };
 }
 
 /**

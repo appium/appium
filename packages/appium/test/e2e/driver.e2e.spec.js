@@ -231,7 +231,6 @@ describe('FakeDriver via HTTP', function () {
       );
 
       const commands = await driver.listCommands();
-      // console.log(JSON.stringify(commands, null, 2));
       _.size(commands.rest.base).should.be.greaterThan(1);
       _.size(commands.rest.driver).should.be.greaterThan(1);
     });

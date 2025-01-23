@@ -49,6 +49,9 @@ export {
 // Web socket helpers
 export {DEFAULT_WS_PATHNAME_PREFIX} from './express/websocket';
 
+// BiDi exports
+export {BIDI_COMMANDS} from './protocol/bidi-commands';
+
 export {generateDriverLogPrefix} from './basedriver/helpers';
 
 /**

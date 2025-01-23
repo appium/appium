@@ -13,6 +13,7 @@ import {
   promoteAppiumOptionsForObject,
   generateDriverLogPrefix,
   METHOD_MAP as BASE_METHOD_MAP,
+  BIDI_COMMANDS as BASE_BIDI_COMMANDS,
 } from '@appium/base-driver';
 import AsyncLock from 'async-lock';
 import {
@@ -21,6 +22,7 @@ import {
   makeNonW3cCapsError,
   validateFeatures,
   toRestCommandsMap,
+  toBiDiCommandsMap,
 } from './utils';
 import {util} from '@appium/support';
 import {getDefaultsForExtension} from './schema';
@@ -574,22 +576,27 @@ class AppiumDriver extends DriverCore {
    */
   listCommands(sessionId) {
     /** @type {import('@appium/types').MethodMap<any>} */
-    let driverMethodMap = {};
+    let driverRestMethodMap = {};
+    /** @type {import('@appium/types').BidiModuleMap} */
+    let driverBiDiCommands = {};
     /** @type {Record<string, import('@appium/types').MethodMap<any>>} */
-    let pluginMethodMaps = {};
+    let pluginRestMethodMaps = {};
+    /** @type {Record<string, import('@appium/types').BidiModuleMap>} */
+    let pluginBiDiCommands = {};
     if (sessionId) {
-      // @ts-ignore It's ok if the newMethodMap property is not there
-      driverMethodMap = this.driverForSession(sessionId)?.constructor?.newMethodMap ?? {};
-      // @ts-ignore It's ok if the newMethodMap property is not there
-      pluginMethodMaps = _.fromPairs(
-        this.pluginsForSession(sessionId)
-          .map((p) => p.constructor)
-          // @ts-ignore It's ok if the newMethodMap property is not there
-          .map((c) => [c.name, c.newMethodMap ?? {}])
+      const driverClass = /** @type {import('@appium/types').DriverClass | undefined} */ (
+        this.driverForSession(sessionId)?.constructor
       );
+      driverRestMethodMap = driverClass?.newMethodMap ?? {};
+      driverBiDiCommands = driverClass?.newBidiCommands ?? {};
+      const pluginClasses = this.pluginsForSession(sessionId)
+        .map((p) => /** @type {import('@appium/types').PluginClass} */ (p.constructor));
+      pluginRestMethodMaps = _.fromPairs(pluginClasses.map((c) => [c.name, c.newMethodMap ?? {}]));
+      pluginBiDiCommands = _.fromPairs(pluginClasses.map((c) => [c.name, c.newBidiCommands ?? {}]));
     }
     return {
-      rest: toRestCommandsMap(BASE_METHOD_MAP, driverMethodMap, pluginMethodMaps),
+      rest: toRestCommandsMap(BASE_METHOD_MAP, driverRestMethodMap, pluginRestMethodMaps),
+      bidi: toBiDiCommandsMap(BASE_BIDI_COMMANDS, driverBiDiCommands, pluginBiDiCommands),
     };
   }
 

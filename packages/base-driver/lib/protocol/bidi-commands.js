@@ -3,7 +3,7 @@ const SUBSCRIPTION_REQUEST_PARAMS = /** @type {const} */ ({
   optional: ['contexts'],
 });
 
-const BIDI_COMMANDS = /** @type {const} */ ({
+export const BIDI_COMMANDS = /** @type {const} */ ({
   session: {
     subscribe: {
       command: 'bidiSubscribe',
@@ -31,5 +31,3 @@ const BIDI_COMMANDS = /** @type {const} */ ({
 
 // TODO add definitions for all bidi commands.
 // spec link: https://w3c.github.io/webdriver-bidi/
-
-export {BIDI_COMMANDS};

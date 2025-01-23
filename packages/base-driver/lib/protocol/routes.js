@@ -575,7 +575,7 @@ export const METHOD_MAP = /** @type {const} */ ({
   '/session/:sessionId/appium/device/current_package': {
     GET: {command: 'getCurrentPackage', deprecated: true},
   },
-  //region Applications Management
+  // #region Applications Management
   '/session/:sessionId/appium/device/install_app': {
     POST: {
       command: 'installApp',
@@ -635,7 +635,7 @@ export const METHOD_MAP = /** @type {const} */ ({
       deprecated: true,
     },
   },
-  //endregion
+  // #endregion
   '/session/:sessionId/appium/device/hide_keyboard': {
     POST: {
       command: 'hideKeyboard',
@@ -868,7 +868,15 @@ export const METHOD_MAP = /** @type {const} */ ({
     POST: {command: 'executeCdp', payloadParams: {required: ['cmd', 'params']}},
   },
 
-  //region Webauthn
+  // #region Inspector
+
+  '/session/:sessionId/appium/commands': {
+    POST: {command: 'listCommands'},
+  },
+
+  // #endregion
+
+  // #region Webauthn
   // https://www.w3.org/TR/webauthn-2/#sctn-automation-add-virtual-authenticator
 
   '/session/:sessionId/webauthn/authenticator': {
@@ -915,7 +923,7 @@ export const METHOD_MAP = /** @type {const} */ ({
     },
   },
 
-  //endregion
+  // #endregion
 });
 
 // driver command names

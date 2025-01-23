@@ -495,6 +495,90 @@ export function validateFeatures(features) {
 }
 
 /**
+ *
+ * @param {import('@appium/types').MethodMap<any>} baseMethodMap
+ * @param {import('@appium/types').MethodMap<any>} driverMethodMap
+ * @param {Record<string, import('@appium/types').MethodMap<any>>} [pluginMethodMaps]
+ * @returns {import('@appium/types').RestCommandsMap}
+ */
+export function toRestCommandsMap(baseMethodMap, driverMethodMap, pluginMethodMaps) {
+  /**
+   * @param {import("@appium/types").PayloadParams | undefined} params
+   * @returns {import("@appium/types").RestCommandItemParam[] | undefined}
+   */
+  const toRestCommandParams = (params) => {
+    if (!params) {
+      return;
+    }
+
+    /**
+     *
+     * @param {any} x
+     * @param {boolean} isRequired
+     * @returns {import("@appium/types").RestCommandItemParam | undefined}
+     */
+    const toRestCommandItemParam = (x, isRequired) => {
+      const isNameAnArray = _.isArray(x);
+      const name = isNameAnArray ? x[0] : x;
+      if (!_.isString(name)) {
+        return;
+      }
+
+      // If parameter names are arrays then this means
+      // either of them is required.
+      // Not sure we could reflect that in here.
+      const required = isRequired && !isNameAnArray;
+      return {
+        name,
+        required,
+      };
+    };
+
+    /** @type {import("@appium/types").RestCommandItemParam[]} */
+    const requiredParams = (params.required ?? [])
+      .map((name) => toRestCommandItemParam(name, true))
+      .filter((x) => !_.isUndefined(x));
+    /** @type {import("@appium/types").RestCommandItemParam[]} */
+    const optionalParams = (params.optional ?? [])
+      .map((name) => toRestCommandItemParam(name, false))
+      .filter((x) => !_.isUndefined(x));
+    return requiredParams.length || optionalParams.length
+      ? [...requiredParams, ...optionalParams]
+      : undefined;
+  };
+
+  /**
+   *
+   * @param {import('@appium/types').MethodMap<any>} mm
+   * @returns {Record<string, import('@appium/types').RestMethodsToCommandsMap>}
+   */
+  const methodMapToRestCommandsInfo = (mm) => {
+    /** @type {Record<string, import('@appium/types').RestMethodsToCommandsMap>} */
+    const res = {};
+    for (const [uriPath, methods] of _.toPairs(mm)) {
+      const methodsMap = {};
+      for (const [method, spec] of _.toPairs(methods)) {
+        methodsMap[method] = {
+          command: spec.command,
+          deprecated: spec.deprecated,
+          info: spec.info,
+          params: toRestCommandParams(spec.payloadParams),
+        };
+      }
+      // @ts-ignore this is OK
+      res[uriPath] = methodsMap;
+    }
+    return res;
+  };
+
+  return {
+    base: methodMapToRestCommandsInfo(baseMethodMap),
+    driver: methodMapToRestCommandsInfo(driverMethodMap),
+    plugins: pluginMethodMaps ? _.mapValues(pluginMethodMaps, methodMapToRestCommandsInfo) : undefined,
+  };
+}
+
+/**
  * @typedef {import('@appium/types').StringRecord} StringRecord
  * @typedef {import('@appium/types').BaseDriverCapConstraints} BaseDriverCapConstraints
  */

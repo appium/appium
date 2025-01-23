@@ -2,7 +2,13 @@ import type {EventEmitter} from 'node:events';
 import type {Merge} from 'type-fest';
 import type {ActionSequence} from './action';
 import type {Capabilities, DriverCaps, W3CCapabilities, W3CDriverCaps} from './capabilities';
-import type {BidiModuleMap, BiDiResultData, ExecuteMethodMap, MethodMap} from './command';
+import type {
+  BidiModuleMap,
+  BiDiResultData,
+  ExecuteMethodMap,
+  MethodMap,
+  ListCommandsResponse,
+} from './command';
 import type {ServerArgs} from './config';
 import type {HTTPHeaders, HTTPMethod} from './http';
 import type {AppiumLogger} from './logger';
@@ -351,6 +357,10 @@ export interface IBidiCommands {
   bidiSubscribe(events: string[], contexts: string[]): Promise<void>;
   bidiUnsubscribe(events: string[], contexts: string[]): Promise<void>;
   bidiStatus(): Promise<DriverStatus>;
+}
+
+export interface IInspectorCommands {
+  listCommands(): ListCommandsResponse;
 }
 
 /**

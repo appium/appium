@@ -208,6 +208,37 @@ describe('FakeDriver via HTTP', function () {
     });
   });
 
+  describe('inspector commands', function () {
+    withServer();
+    let driver;
+
+    beforeEach(async function () {
+      driver = await wdio({...wdOpts, capabilities: caps});
+    });
+    afterEach(async function () {
+      if (driver) {
+        await driver.deleteSession();
+        driver = null;
+      }
+    });
+
+    it('should list available driver commands', async function () {
+      driver.addCommand(
+        'listCommands',
+        async () => (await axios.post(
+          `${testServerBaseSessionUrl}/${driver.sessionId}/appium/commands`
+        )).data.value
+      );
+
+      const commands = await driver.listCommands();
+      JSON.stringify(commands.rest.base['/session/:sessionId/frame'])
+        .should.eql(JSON.stringify({POST: {command: 'setFrame', params: [
+          {name: 'id', required: true}
+        ]}}));
+      _.size(commands.rest.driver).should.be.greaterThan(1);
+    });
+  });
+
   describe('session handling', function () {
     withServer();
 

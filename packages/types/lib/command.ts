@@ -60,6 +60,10 @@ export interface BaseMethodDef {
    */
   readonly payloadParams?: PayloadParams;
   /**
+   * If true, this `Method` will be removed and should not be used by clients
+   */
+  readonly deprecated?: boolean;
+  /**
    * Any additional info string or comments to this command.
    */
   readonly info?: string;
@@ -74,11 +78,6 @@ export interface DriverMethodDef<T extends Driver, D extends boolean = boolean>
    * Name of the command.
    */
   readonly command?: D extends true ? string : keyof ConditionalPick<Required<T>, DriverCommand>;
-
-  /**
-   * If this is `true`, we do not validate `command`, because it may not exist in `ExternalDriver`.
-   */
-  readonly deprecated?: D;
 }
 
 /**
@@ -190,4 +189,64 @@ export interface ErrorBiDiCommandResponse extends GenericBiDiCommandResponse {
   error: string;
   message: string;
   stacktrace?: string;
+}
+
+export interface RestCommandItemParam {
+  /**
+   * Command paremeter name
+   */
+  name: string;
+  /**
+   * True if the paramter is required for the given command
+   */
+  required: boolean;
+}
+
+export interface RestCommandItem {
+  /**
+   * Command name
+   */
+  command?: string;
+  /**
+   * Whether the command is marked for deprecation
+   */
+  deprecated?: boolean;
+  /**
+   * Optinal infostring about the command's purpose or a comment
+   */
+  info?: string;
+  /**
+   * List of command parameters
+   */
+  params?: RestCommandItemParam[];
+}
+
+export interface RestMethodsToCommandsMap {
+  /**
+   * Method name to command info mapping
+   */
+  [method: string]: RestCommandItem;
+}
+
+export interface RestCommandsMap {
+  /**
+   * Command paths to methods map in the base driver
+   */
+  base: Record<string, RestMethodsToCommandsMap>;
+  /**
+   * Command paths to methods map in the session-specific driver
+   */
+  driver: Record<string, RestMethodsToCommandsMap>;
+  /**
+   * Plugin name to command paths to methods map
+   */
+  plugins?: Record<string, Record<string, RestMethodsToCommandsMap>>;
+}
+
+export interface ListCommandsResponse {
+  /**
+   * REST APIs mapping
+   */
+  rest?: RestCommandsMap;
+  bidi?: any;
 }

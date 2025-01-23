@@ -231,7 +231,10 @@ describe('FakeDriver via HTTP', function () {
       );
 
       const commands = await driver.listCommands();
-      _.size(commands.rest.base).should.be.greaterThan(1);
+      JSON.stringify(commands.rest.base['/session/:sessionId/frame'])
+        .should.eql(JSON.stringify({POST: {command: 'setFrame', params: [
+          {name: 'id', required: true}
+        ]}}));
       _.size(commands.rest.driver).should.be.greaterThan(1);
     });
   });

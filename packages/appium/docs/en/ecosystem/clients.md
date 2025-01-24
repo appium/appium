@@ -32,6 +32,7 @@ These clients are not maintained by the Appium team and can be used with other l
 |[Nightwatch.js](https://nightwatchjs.org/guide/mobile-app-testing/introduction.html)|Node.js|
 |[RobotFramework](https://github.com/serhatbolsu/robotframework-appiumlibrary)|DSL|
 |[multicatch's appium-client](https://github.com/multicatch/appium-client)|Rust|
+|[SwiftAppium](https://github.com/milcgroup/swiftappium)|Swift|
 
 In general, any W3C WebDriver spec-compatible client will also integrate well with Appium, though
 some Appium-specific commands may not be implemented in other clients.

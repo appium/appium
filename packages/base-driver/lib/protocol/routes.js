@@ -872,6 +872,11 @@ export const METHOD_MAP = /** @type {const} */ ({
 
   '/session/:sessionId/appium/commands': {
     POST: {command: 'listCommands'},
+    GET: {command: 'listCommands'},
+  },
+  '/session/:sessionId/appium/extensions': {
+    POST: {command: 'listExtensions'},
+    GET: {command: 'listExtensions'},
   },
 
   // #endregion

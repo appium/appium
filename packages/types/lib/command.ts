@@ -302,3 +302,21 @@ export interface ListCommandsResponse {
    */
   bidi?: BiDiCommandsMap;
 }
+
+export interface RestExtensionsMap {
+  /**
+   * Driver execute methods mapping
+   */
+  driver: RestMethodsToCommandsMap;
+  /**
+   * Plugins execute methods mapping
+   */
+  plugins?: Record<string, RestMethodsToCommandsMap>;
+}
+
+export interface ListExtensionsReponse {
+  /**
+   * Rest extensions mapping
+   */
+  rest?: RestExtensionsMap;
+}

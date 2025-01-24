@@ -243,10 +243,62 @@ export interface RestCommandsMap {
   plugins?: Record<string, Record<string, RestMethodsToCommandsMap>>;
 }
 
+export interface BiDiCommandItemParam {
+  /**
+   * Command paremeter name
+   */
+  name: string;
+  /**
+   * True if the paramter is required for the given command
+   */
+  required: boolean;
+}
+
+export interface BiDiCommandItem {
+  /**
+   * Command name
+   */
+  command?: string;
+  /**
+   * Whether the command is marked for deprecation
+   */
+  deprecated?: boolean;
+  /**
+   * Optinal infostring about the command's purpose or a comment
+   */
+  info?: string;
+  /**
+   * List of command parameters
+   */
+  params?: BiDiCommandItemParam[];
+}
+
+export interface BiDiCommandNamesToInfosMap {
+  [name: string]: Record<string, BiDiCommandItem>;
+}
+
+export interface BiDiCommandsMap {
+  /**
+   * Domains to BiDi commands mapping in the base driver
+   */
+  base: Record<string, BiDiCommandNamesToInfosMap>;
+  /**
+   * Domains to BiDi commands mapping in the session-specific driver
+   */
+  driver: Record<string, BiDiCommandNamesToInfosMap>;
+  /**
+   * Plugin name to domains to BiDi commands mapping
+   */
+  plugins?: Record<string, Record<string, BiDiCommandNamesToInfosMap>>;
+}
+
 export interface ListCommandsResponse {
   /**
    * REST APIs mapping
    */
   rest?: RestCommandsMap;
-  bidi?: any;
+  /**
+   * BiDi APIs mapping
+   */
+  bidi?: BiDiCommandsMap;
 }

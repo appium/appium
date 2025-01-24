@@ -579,6 +579,90 @@ export function toRestCommandsMap(baseMethodMap, driverMethodMap, pluginMethodMa
 }
 
 /**
+ *
+ * @param {import('@appium/types').BidiModuleMap} baseModuleMap
+ * @param {import('@appium/types').BidiModuleMap} driverModuleMap
+ * @param {Record<string, import('@appium/types').BidiModuleMap>} [pluginModuleMaps]
+ * @returns {import('@appium/types').BiDiCommandsMap}
+ */
+export function toBiDiCommandsMap(baseModuleMap, driverModuleMap, pluginModuleMaps) {
+  /**
+   * @param {import("@appium/types").BidiMethodParams | undefined} params
+   * @returns {import("@appium/types").BiDiCommandItemParam[] | undefined}
+   */
+  const toBiDiCommandParams = (params) => {
+    if (!params) {
+      return;
+    }
+
+    /**
+     *
+     * @param {any} x
+     * @param {boolean} isRequired
+     * @returns {import("@appium/types").BiDiCommandItemParam | undefined}
+     */
+    const toBiDiCommandItemParam = (x, isRequired) => {
+      const isNameAnArray = _.isArray(x);
+      const name = isNameAnArray ? x[0] : x;
+      if (!_.isString(name)) {
+        return;
+      }
+
+      // If parameter names are arrays then this means
+      // either of them is required.
+      // Not sure we could reflect that in here.
+      const required = isRequired && !isNameAnArray;
+      return {
+        name,
+        required,
+      };
+    };
+
+    /** @type {import("@appium/types").BiDiCommandItemParam[]} */
+    const requiredParams = (params.required ?? [])
+      .map((name) => toBiDiCommandItemParam(name, true))
+      .filter((x) => !_.isUndefined(x));
+    /** @type {import("@appium/types").BiDiCommandItemParam[]} */
+    const optionalParams = (params.optional ?? [])
+      .map((name) => toBiDiCommandItemParam(name, false))
+      .filter((x) => !_.isUndefined(x));
+    return requiredParams.length || optionalParams.length
+      ? [...requiredParams, ...optionalParams]
+      : undefined;
+  };
+
+  /**
+   *
+   * @param {import('@appium/types').BidiModuleMap} mm
+   * @returns {Record<string, import('@appium/types').BiDiCommandNamesToInfosMap>}
+   */
+  const moduleMapToBiDiCommandsInfo = (mm) => {
+    /** @type {Record<string, import('@appium/types').BiDiCommandNamesToInfosMap>} */
+    const res = {};
+    for (const [domain, commands] of _.toPairs(mm)) {
+      const commandsMap = {};
+      for (const [name, spec] of _.toPairs(commands)) {
+        commandsMap[name] = {
+          command: spec.command,
+          deprecated: spec.deprecated,
+          info: spec.info,
+          params: toBiDiCommandParams(spec.params),
+        };
+      }
+      // @ts-ignore this is OK
+      res[domain] = commandsMap;
+    }
+    return res;
+  };
+
+  return {
+    base: moduleMapToBiDiCommandsInfo(baseModuleMap),
+    driver: moduleMapToBiDiCommandsInfo(driverModuleMap),
+    plugins: pluginModuleMaps ? _.mapValues(pluginModuleMaps, moduleMapToBiDiCommandsInfo) : undefined,
+  };
+}
+
+/**
  * @typedef {import('@appium/types').StringRecord} StringRecord
  * @typedef {import('@appium/types').BaseDriverCapConstraints} BaseDriverCapConstraints
  */

@@ -231,11 +231,30 @@ describe('FakeDriver via HTTP', function () {
       );
 
       const commands = await driver.listCommands();
+
       JSON.stringify(commands.rest.base['/session/:sessionId/frame'])
         .should.eql(JSON.stringify({POST: {command: 'setFrame', params: [
           {name: 'id', required: true}
         ]}}));
       _.size(commands.rest.driver).should.be.greaterThan(1);
+
+      JSON.stringify(commands.bidi.base.session.subscribe).should.eql(
+        JSON.stringify({
+          command: 'bidiSubscribe',
+          'params': [
+            {
+              name: 'events',
+              required: true
+            },
+            {
+              name: 'contexts',
+              required: false
+            }
+          ]
+        })
+      );
+      _.size(commands.bidi.base).should.be.greaterThan(1);
+      _.size(commands.bidi.driver).should.be.greaterThan(0);
     });
   });
 

@@ -274,7 +274,7 @@ export interface BiDiCommandItem {
 }
 
 export interface BiDiCommandNamesToInfosMap {
-  [name: string]: Record<string, BiDiCommandItem>;
+  [name: string]: BiDiCommandItem;
 }
 
 export interface BiDiCommandsMap {
@@ -314,7 +314,7 @@ export interface RestExtensionsMap {
   plugins?: Record<string, RestMethodsToCommandsMap>;
 }
 
-export interface ListExtensionsReponse {
+export interface ListExtensionsResponse {
   /**
    * Rest extensions mapping
    */

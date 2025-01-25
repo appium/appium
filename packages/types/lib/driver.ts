@@ -8,7 +8,7 @@ import type {
   ExecuteMethodMap,
   MethodMap,
   ListCommandsResponse,
-  ListExtensionsReponse,
+  ListExtensionsResponse,
 } from './command';
 import type {ServerArgs} from './config';
 import type {HTTPHeaders, HTTPMethod} from './http';
@@ -362,7 +362,7 @@ export interface IBidiCommands {
 
 export interface IInspectorCommands {
   listCommands(): Promise<ListCommandsResponse>;
-  listExtensions(): Promise<ListExtensionsReponse>;
+  listExtensions(): Promise<ListExtensionsResponse>;
 }
 
 /**

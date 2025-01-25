@@ -2,7 +2,7 @@ import type {
   Constraints,
   IInspectorCommands,
   ListCommandsResponse,
-  ListExtensionsReponse,
+  ListExtensionsResponse,
 } from '@appium/types';
 import {mixin} from './mixin';
 
@@ -31,7 +31,7 @@ const InspectorCommands: IInspectorCommands = {
    * @returns
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async listExtensions(sessionId?: string | null): Promise<ListExtensionsReponse> {
+  async listExtensions(sessionId?: string | null): Promise<ListExtensionsResponse> {
     return {};
   },
 };

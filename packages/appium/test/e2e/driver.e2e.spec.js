@@ -225,7 +225,7 @@ describe('FakeDriver via HTTP', function () {
     it('should list available driver commands', async function () {
       driver.addCommand(
         'listCommands',
-        async () => (await axios.post(
+        async () => (await axios.get(
           `${testServerBaseSessionUrl}/${driver.sessionId}/appium/commands`
         )).data.value
       );

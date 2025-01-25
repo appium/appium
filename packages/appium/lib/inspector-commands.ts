@@ -9,7 +9,7 @@ import type {
   BidiModuleMap,
   DriverClass,
   PluginClass,
-  ListExtensionsReponse,
+  ListExtensionsResponse,
   PayloadParams,
   RestCommandItemParam,
   RestMethodsToCommandsMap,
@@ -46,7 +46,7 @@ export async function listCommands(this: AppiumDriver, sessionId?: string): Prom
   };
 }
 
-export async function listExtensions(this: AppiumDriver, sessionId?: string): Promise<ListExtensionsReponse> {
+export async function listExtensions(this: AppiumDriver, sessionId?: string): Promise<ListExtensionsResponse> {
   let driverExecuteMethodMap: ExecuteMethodMap<any> = {};
   let pluginExecuteMethodMaps: Record<string, ExecuteMethodMap<any>> = {};
   if (sessionId) {
@@ -58,8 +58,8 @@ export async function listExtensions(this: AppiumDriver, sessionId?: string): Pr
   }
   return {
     rest: {
-      driver: executeMethodMapToCommndsInfo(driverExecuteMethodMap),
-      plugins: pluginExecuteMethodMaps ? _.mapValues(pluginExecuteMethodMaps, executeMethodMapToCommndsInfo) : undefined,
+      driver: executeMethodMapToCommandsInfo(driverExecuteMethodMap),
+      plugins: pluginExecuteMethodMaps ? _.mapValues(pluginExecuteMethodMaps, executeMethodMapToCommandsInfo) : undefined,
     },
   };
 }
@@ -114,7 +114,7 @@ function methodMapToRestCommandsInfo (mm: MethodMap<any>): Record<string, RestMe
   return res;
 }
 
-function executeMethodMapToCommndsInfo(emm: ExecuteMethodMap<any>): RestMethodsToCommandsMap {
+function executeMethodMapToCommandsInfo(emm: ExecuteMethodMap<any>): RestMethodsToCommandsMap {
   const result: RestMethodsToCommandsMap = {};
   for (const [name, info] of _.toPairs(emm)) {
     result[name] = {

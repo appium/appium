@@ -38,10 +38,10 @@ export const METHOD_MAP = /** @type {const} */ ({
     },
   },
   '/sessions': {
-    GET: {command: 'getSessions'},
+    GET: {command: 'getSessions', deprecated: true},
   },
   '/session/:sessionId': {
-    GET: {command: 'getSession'},
+    GET: {command: 'getSession', deprecated: true},
     DELETE: {command: 'deleteSession'},
   },
   '/session/:sessionId/timeouts': {
@@ -59,7 +59,7 @@ export const METHOD_MAP = /** @type {const} */ ({
               return 'W3C protocol expects any of script, pageLoad or implicit to be set';
             }
           } else {
-            // MJSONWP
+            // TODO: Remove in Appium 3
             if (!util.hasValue(jsonObj.type) || !util.hasValue(jsonObj.ms)) {
               return 'MJSONWP protocol requires type and ms';
             }
@@ -75,19 +75,16 @@ export const METHOD_MAP = /** @type {const} */ ({
   '/session/:sessionId/timeouts/implicit_wait': {
     POST: {command: 'implicitWait', payloadParams: {required: ['ms']}, deprecated: true},
   },
-  // JSONWP
   '/session/:sessionId/window_handle': {
-    GET: {command: 'getWindowHandle'},
+    GET: {command: 'getWindowHandle', deprecated: true},
   },
-  // W3C
+  // Only 'window/handles' exists in W3C WebDriver spec.
   '/session/:sessionId/window/handle': {
-    GET: {command: 'getWindowHandle'},
+    GET: {command: 'getWindowHandle', deprecated: true},
   },
-  // JSONWP
   '/session/:sessionId/window_handles': {
-    GET: {command: 'getWindowHandles'},
+    GET: {command: 'getWindowHandles', deprecated: true},
   },
-  // W3C
   '/session/:sessionId/window/handles': {
     GET: {command: 'getWindowHandles'},
   },
@@ -104,38 +101,22 @@ export const METHOD_MAP = /** @type {const} */ ({
   '/session/:sessionId/refresh': {
     POST: {command: 'refresh'},
   },
-  // MJSONWP
   '/session/:sessionId/execute': {
-    POST: {command: 'execute', payloadParams: {required: ['script', 'args']}},
+    POST: {
+      command: 'execute',
+      payloadParams: {required: ['script', 'args']},
+      deprecated: true
+    },
   },
-  // MJSONWP
   '/session/:sessionId/execute_async': {
     POST: {
       command: 'executeAsync',
       payloadParams: {required: ['script', 'args']},
+      deprecated: true
     },
   },
   '/session/:sessionId/screenshot': {
     GET: {command: 'getScreenshot'},
-  },
-  '/session/:sessionId/ime/available_engines': {
-    GET: {command: 'availableIMEEngines', deprecated: true},
-  },
-  '/session/:sessionId/ime/active_engine': {
-    GET: {command: 'getActiveIMEEngine', deprecated: true},
-  },
-  '/session/:sessionId/ime/activated': {
-    GET: {command: 'isIMEActivated', deprecated: true},
-  },
-  '/session/:sessionId/ime/deactivate': {
-    POST: {command: 'deactivateIMEEngine', deprecated: true},
-  },
-  '/session/:sessionId/ime/activate': {
-    POST: {
-      command: 'activateIMEEngine',
-      payloadParams: {required: ['engine']},
-      deprecated: true,
-    },
   },
   '/session/:sessionId/frame': {
     POST: {command: 'setFrame', payloadParams: {required: ['id']}},
@@ -175,7 +156,19 @@ export const METHOD_MAP = /** @type {const} */ ({
     GET: {deprecated: true},
   },
   '/session/:sessionId/window/:windowhandle/maximize': {
+    POST: {command: 'maximizeWindow', deprecated: true},
+  },
+  '/session/:sessionId/window/maximize': {
     POST: {command: 'maximizeWindow'},
+  },
+  '/session/:sessionId/window/minimize': {
+    POST: {command: 'minimizeWindow'},
+  },
+  '/session/:sessionId/window/fullscreen': {
+    POST: {command: 'fullScreenWindow'},
+  },
+  '/session/:sessionId/window/new': {
+    POST: {command: 'createNewWindow', payloadParams: {optional: ['type']}},
   },
   '/session/:sessionId/cookie': {
     GET: {command: 'getCookies'},
@@ -206,7 +199,7 @@ export const METHOD_MAP = /** @type {const} */ ({
   },
   '/session/:sessionId/element/active': {
     GET: {command: 'active'}, // W3C: https://w3c.github.io/webdriver/webdriver-spec.html#dfn-get-active-element
-    POST: {command: 'active'},
+    POST: {command: 'active', deprecated: true},
   },
   '/session/:sessionId/element/:elementId': {
     GET: {},
@@ -308,6 +301,9 @@ export const METHOD_MAP = /** @type {const} */ ({
       payloadParams: {required: ['orientation']},
     },
   },
+  '/session/:sessionId/element/:elementId/property/:name': {
+    GET: {command: 'getProperty'},
+  },
   // w3c v2 https://www.w3.org/TR/webdriver2/#get-computed-role
   'session/:sessionId/element/:elementId/computedrole': {
     GET: {command: 'getComputedRole'},
@@ -315,10 +311,6 @@ export const METHOD_MAP = /** @type {const} */ ({
   // W3C v2  https://www.w3.org/TR/webdriver2/#get-computed-label
   'session/:sessionId/element/:elementId/computedlabel': {
     GET: {command: 'getComputedLabel'},
-  },
-  '/session/:sessionId/rotation': {
-    GET: {command: 'getRotation'},
-    POST: {command: 'setRotation', payloadParams: {required: ['x', 'y', 'z']}},
   },
   '/session/:sessionId/moveto': {
     POST: {
@@ -355,7 +347,7 @@ export const METHOD_MAP = /** @type {const} */ ({
     POST: {deprecated: true},
   },
   '/session/:sessionId/touch/doubleclick': {
-    POST: {},
+    POST: {deprecated: true},
   },
   '/session/:sessionId/actions': {
     POST: {command: 'performActions', payloadParams: {required: ['actions']}},
@@ -376,10 +368,6 @@ export const METHOD_MAP = /** @type {const} */ ({
       },
       deprecated: true,
     },
-  },
-  '/session/:sessionId/location': {
-    GET: {command: 'getGeoLocation'},
-    POST: {command: 'setGeoLocation', payloadParams: {required: ['location']}},
   },
   '/session/:sessionId/local_storage': {
     GET: {deprecated: true},
@@ -405,29 +393,143 @@ export const METHOD_MAP = /** @type {const} */ ({
   '/session/:sessionId/session_storage/size': {
     GET: {deprecated: true},
   },
-  // Selenium 4 clients
+  '/session/:sessionId/alert/text': {
+    GET: {command: 'getAlertText'},
+    POST: {
+      command: 'setAlertText',
+      payloadParams: SET_ALERT_TEXT_PAYLOAD_PARAMS,
+    },
+  },
+  '/session/:sessionId/alert/accept': {
+    POST: {command: 'postAcceptAlert'},
+  },
+  '/session/:sessionId/alert/dismiss': {
+    POST: {command: 'postDismissAlert'},
+  },
+  '/session/:sessionId/element/:elementId/rect': {
+    GET: {command: 'getElementRect'},
+  },
+  '/session/:sessionId/execute/sync': {
+    POST: {command: 'execute', payloadParams: {required: ['script', 'args']}},
+  },
+  '/session/:sessionId/execute/async': {
+    POST: {
+      command: 'executeAsync',
+      payloadParams: {required: ['script', 'args']},
+    },
+  },
+  '/session/:sessionId/element/:elementId/screenshot': {
+    GET: {command: 'getElementScreenshot'},
+  },
+  '/session/:sessionId/window/rect': {
+    GET: {command: 'getWindowRect'},
+    POST: {
+      command: 'setWindowRect',
+      payloadParams: {optional: ['x', 'y', 'width', 'height']},
+    },
+  },
+
+  //
+  // Compatibility with Selenium/Browsers but not in W3C spec era.
+  //
   '/session/:sessionId/se/log': {
     POST: {command: 'getLog', payloadParams: {required: ['type']}},
   },
-  // Selenium 4 clients
   '/session/:sessionId/se/log/types': {
     GET: {command: 'getLogTypes'},
   },
   // mjsonwire, appium clients
   '/session/:sessionId/log': {
-    POST: {command: 'getLog', payloadParams: {required: ['type']}},
+    POST: {command: 'getLog', payloadParams: {required: ['type']}, deprecated: true},
   },
   // mjsonwire, appium clients
   '/session/:sessionId/log/types': {
-    GET: {command: 'getLogTypes'},
+    GET: {command: 'getLogTypes', deprecated: true},
   },
   '/session/:sessionId/application_cache/status': {
-    GET: {},
+    GET: {deprecated: true},
+  },
+  // #region chromium devtools
+  // https://chromium.googlesource.com/chromium/src/+/master/chrome/test/chromedriver/server/http_handler.cc
+  '/session/:sessionId/:vendor/cdp/execute': {
+    POST: {command: 'executeCdp', payloadParams: {required: ['cmd', 'params']}},
+  },
+  // #endregion
+
+  // #region Webauthn
+  // https://www.w3.org/TR/webauthn-2/#sctn-automation-add-virtual-authenticator
+
+  '/session/:sessionId/webauthn/authenticator': {
+    POST: {
+      command: 'addVirtualAuthenticator',
+      payloadParams: {
+        required: ['protocol', 'transport'],
+        optional: ['hasResidentKey', 'hasUserVerification', 'isUserConsenting', 'isUserVerified'],
+      },
+    },
   },
 
+  '/session/:sessionId/webauthn/authenticator/:authenticatorId': {
+    DELETE: {
+      command: 'removeVirtualAuthenticator',
+    },
+  },
+
+  '/session/:sessionId/webauthn/authenticator/:authenticatorId/credential': {
+    POST: {
+      command: 'addAuthCredential',
+      payloadParams: {
+        required: ['credentialId', 'isResidentCredential', 'rpId', 'privateKey'],
+        optional: ['userHandle', 'signCount'],
+      },
+    },
+  },
+
+  '/session/:sessionId/webauthn/authenticator/:authenticatorId/credentials': {
+    GET: {command: 'getAuthCredential'},
+    DELETE: {command: 'removeAllAuthCredentials'},
+  },
+
+  '/session/:sessionId/webauthn/authenticator/:authenticatorId/credentials/:credentialId': {
+    DELETE: {command: 'removeAuthCredential'},
+  },
+
+  '/session/:sessionId/webauthn/authenticator/:authenticatorId/uv': {
+    POST: {
+      command: 'setUserAuthVerified',
+      payloadParams: {
+        required: ['isUserVerified'],
+      },
+    },
+  },
+  // #endregion
+
   //
-  // mjsonwire
+  // MJSONWP. Remains only for Appium usage in W3C spec era.
   //
+  '/session/:sessionId/ime/available_engines': {
+    GET: {command: 'availableIMEEngines'},
+  },
+  '/session/:sessionId/ime/active_engine': {
+    GET: {command: 'getActiveIMEEngine'},
+  },
+  '/session/:sessionId/ime/activated': {
+    GET: {command: 'isIMEActivated'},
+  },
+  '/session/:sessionId/ime/deactivate': {
+    POST: {command: 'deactivateIMEEngine'},
+  },
+  '/session/:sessionId/ime/activate': {
+    POST: {command: 'activateIMEEngine', payloadParams: {required: ['engine']}},
+  },
+  '/session/:sessionId/rotation': {
+    GET: {command: 'getRotation'},
+    POST: {command: 'setRotation', payloadParams: {required: ['x', 'y', 'z']}},
+  },
+  '/session/:sessionId/location': {
+    GET: {command: 'getGeoLocation'},
+    POST: {command: 'setGeoLocation', payloadParams: {required: ['location']}},
+  },
   '/session/:sessionId/context': {
     GET: {command: 'getCurrentContext'},
     POST: {command: 'setContext', payloadParams: {required: ['name']}},
@@ -464,6 +566,12 @@ export const METHOD_MAP = /** @type {const} */ ({
       command: 'receiveAsyncResponse',
       payloadParams: {required: ['status', 'value']},
     },
+  },
+  '/appium/sessions': {
+    GET: {command: 'getSessions'},
+  },
+  '/session/:sessionId/appium/capabilities': {
+    GET: {command: 'getSession'}
   },
   '/session/:sessionId/appium/device/shake': {
     POST: {command: 'mobileShake', deprecated: true},
@@ -763,85 +871,6 @@ export const METHOD_MAP = /** @type {const} */ ({
       payloadParams: {required: ['vendor', 'event']},
     },
   },
-
-  /*
-   * The W3C spec has some changes to the wire protocol.
-   * https://w3c.github.io/webdriver/webdriver-spec.html
-   * Begin to add those changes here, keeping the old version
-   * since clients still implement them.
-   */
-  // MJSONWP
-  '/session/:sessionId/alert_text': {
-    GET: {command: 'getAlertText'},
-    POST: {
-      command: 'setAlertText',
-      payloadParams: SET_ALERT_TEXT_PAYLOAD_PARAMS,
-    },
-  },
-  // MJSONWP
-  '/session/:sessionId/accept_alert': {
-    POST: {command: 'postAcceptAlert'},
-  },
-  // MJSONWP
-  '/session/:sessionId/dismiss_alert': {
-    POST: {command: 'postDismissAlert'},
-  },
-  // https://w3c.github.io/webdriver/webdriver-spec.html#user-prompts
-  '/session/:sessionId/alert/text': {
-    GET: {command: 'getAlertText'},
-    POST: {
-      command: 'setAlertText',
-      payloadParams: SET_ALERT_TEXT_PAYLOAD_PARAMS,
-    },
-  },
-  '/session/:sessionId/alert/accept': {
-    POST: {command: 'postAcceptAlert'},
-  },
-  '/session/:sessionId/alert/dismiss': {
-    POST: {command: 'postDismissAlert'},
-  },
-  // https://w3c.github.io/webdriver/webdriver-spec.html#get-element-rect
-  '/session/:sessionId/element/:elementId/rect': {
-    GET: {command: 'getElementRect'},
-  },
-  '/session/:sessionId/execute/sync': {
-    POST: {command: 'execute', payloadParams: {required: ['script', 'args']}},
-  },
-  '/session/:sessionId/execute/async': {
-    POST: {
-      command: 'executeAsync',
-      payloadParams: {required: ['script', 'args']},
-    },
-  },
-  // Pre-W3C endpoint for element screenshot
-  '/session/:sessionId/screenshot/:elementId': {
-    GET: {command: 'getElementScreenshot'},
-  },
-  '/session/:sessionId/element/:elementId/screenshot': {
-    GET: {command: 'getElementScreenshot'},
-  },
-  '/session/:sessionId/window/rect': {
-    GET: {command: 'getWindowRect'},
-    POST: {
-      command: 'setWindowRect',
-      payloadParams: {optional: ['x', 'y', 'width', 'height']},
-    },
-  },
-  '/session/:sessionId/window/maximize': {
-    POST: {command: 'maximizeWindow'},
-  },
-  '/session/:sessionId/window/minimize': {
-    POST: {command: 'minimizeWindow'},
-  },
-  '/session/:sessionId/window/fullscreen': {
-    POST: {command: 'fullScreenWindow'},
-  },
-  '/session/:sessionId/window/new': {
-    POST: {command: 'createNewWindow', payloadParams: {optional: ['type']}},
-  },
-  '/session/:sessionId/element/:elementId/property/:name': {
-    GET: {command: 'getProperty'},
-  },
   '/session/:sessionId/appium/device/set_clipboard': {
     POST: {
       command: 'setClipboard',
@@ -862,12 +891,6 @@ export const METHOD_MAP = /** @type {const} */ ({
     },
   },
 
-  // chromium devtools
-  // https://chromium.googlesource.com/chromium/src/+/master/chrome/test/chromedriver/server/http_handler.cc
-  '/session/:sessionId/:vendor/cdp/execute': {
-    POST: {command: 'executeCdp', payloadParams: {required: ['cmd', 'params']}},
-  },
-
   // #region Inspector
 
   '/session/:sessionId/appium/commands': {
@@ -878,55 +901,30 @@ export const METHOD_MAP = /** @type {const} */ ({
   },
 
   // #endregion
-
-  // #region Webauthn
-  // https://www.w3.org/TR/webauthn-2/#sctn-automation-add-virtual-authenticator
-
-  '/session/:sessionId/webauthn/authenticator': {
+  /*
+   * The W3C spec has some changes to the wire protocol.
+   * https://w3c.github.io/webdriver/webdriver-spec.html
+   * Begin to add those changes here, keeping the old version
+   * since clients still implement them.
+   */
+  '/session/:sessionId/alert_text': {
+    GET: {command: 'getAlertText', deprecated: true},
     POST: {
-      command: 'addVirtualAuthenticator',
-      payloadParams: {
-        required: ['protocol', 'transport'],
-        optional: ['hasResidentKey', 'hasUserVerification', 'isUserConsenting', 'isUserVerified'],
-      },
+      command: 'setAlertText',
+      payloadParams: SET_ALERT_TEXT_PAYLOAD_PARAMS,
+      deprecated: true
     },
   },
-
-  '/session/:sessionId/webauthn/authenticator/:authenticatorId': {
-    DELETE: {
-      command: 'removeVirtualAuthenticator',
-    },
+  '/session/:sessionId/accept_alert': {
+    POST: {command: 'postAcceptAlert', deprecated: true},
   },
-
-  '/session/:sessionId/webauthn/authenticator/:authenticatorId/credential': {
-    POST: {
-      command: 'addAuthCredential',
-      payloadParams: {
-        required: ['credentialId', 'isResidentCredential', 'rpId', 'privateKey'],
-        optional: ['userHandle', 'signCount'],
-      },
-    },
+  '/session/:sessionId/dismiss_alert': {
+    POST: {command: 'postDismissAlert', deprecated: true},
   },
-
-  '/session/:sessionId/webauthn/authenticator/:authenticatorId/credentials': {
-    GET: {command: 'getAuthCredential'},
-    DELETE: {command: 'removeAllAuthCredentials'},
+  // Pre-W3C endpoint for element screenshot
+  '/session/:sessionId/screenshot/:elementId': {
+    GET: {command: 'getElementScreenshot', deprecated: true},
   },
-
-  '/session/:sessionId/webauthn/authenticator/:authenticatorId/credentials/:credentialId': {
-    DELETE: {command: 'removeAuthCredential'},
-  },
-
-  '/session/:sessionId/webauthn/authenticator/:authenticatorId/uv': {
-    POST: {
-      command: 'setUserAuthVerified',
-      payloadParams: {
-        required: ['isUserVerified'],
-      },
-    },
-  },
-
-  // #endregion
 });
 
 // driver command names

@@ -111,7 +111,12 @@ class JWProxy {
   }
 
   endpointRequiresSessionId(endpoint) {
-    return !_.includes(['/session', '/sessions', '/status'], endpoint);
+    return !_.includes([
+      '/session',
+      '/sessions',
+      '/status',
+      '/appium/sessions'
+    ], endpoint);
   }
 
   set downstreamProtocol(value) {

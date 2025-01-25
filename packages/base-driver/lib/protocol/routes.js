@@ -29,6 +29,7 @@ export const METHOD_MAP = /** @type {const} */ ({
     POST: {
       command: 'createSession',
       payloadParams: {
+        // TODO: Appium 3 will accept only 'capabilities'.
         validate: (jsonObj) =>
           !jsonObj.capabilities &&
           !jsonObj.desiredCapabilities &&
@@ -129,6 +130,7 @@ export const METHOD_MAP = /** @type {const} */ ({
     POST: {
       command: 'setWindow',
       payloadParams: {
+        // TODO: Appium 3 will only accept 'handle'. 'name' will be ginored.
         optional: ['name', 'handle'],
         // Return both values to match W3C and JSONWP protocols
         makeArgs: (jsonObj) => {
@@ -233,6 +235,7 @@ export const METHOD_MAP = /** @type {const} */ ({
           !util.hasValue(jsonObj.value) &&
           !util.hasValue(jsonObj.text) &&
           'we require one of "text" or "value" params',
+        // TODO: Appium 3 will accept only 'value'.
         optional: ['value', 'text'],
         // override the default argument constructor because of the special
         // logic here. Basically we want to accept either a value (old JSONWP)
@@ -293,13 +296,6 @@ export const METHOD_MAP = /** @type {const} */ ({
   },
   '/session/:sessionId/element/:elementId/css/:propertyName': {
     GET: {command: 'getCssProperty'},
-  },
-  '/session/:sessionId/orientation': {
-    GET: {command: 'getOrientation'},
-    POST: {
-      command: 'setOrientation',
-      payloadParams: {required: ['orientation']},
-    },
   },
   '/session/:sessionId/element/:elementId/property/:name': {
     GET: {command: 'getProperty'},
@@ -530,6 +526,13 @@ export const METHOD_MAP = /** @type {const} */ ({
     GET: {command: 'getGeoLocation'},
     POST: {command: 'setGeoLocation', payloadParams: {required: ['location']}},
   },
+  '/session/:sessionId/orientation': {
+    GET: {command: 'getOrientation'},
+    POST: {
+      command: 'setOrientation',
+      payloadParams: {required: ['orientation']}
+    },
+  },
   '/session/:sessionId/context': {
     GET: {command: 'getCurrentContext'},
     POST: {command: 'setContext', payloadParams: {required: ['name']}},
@@ -568,10 +571,10 @@ export const METHOD_MAP = /** @type {const} */ ({
     },
   },
   '/appium/sessions': {
-    GET: {command: 'getSessions'},
+    GET: {command: 'getAppiumSessions'},
   },
   '/session/:sessionId/appium/capabilities': {
-    GET: {command: 'getSession'}
+    GET: {command: 'getAppiumSessionCapabilities'}
   },
   '/session/:sessionId/appium/device/shake': {
     POST: {command: 'mobileShake', deprecated: true},

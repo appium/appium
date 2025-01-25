@@ -274,7 +274,7 @@ export interface BiDiCommandItem {
 }
 
 export interface BiDiCommandNamesToInfosMap {
-  [name: string]: Record<string, BiDiCommandItem>;
+  [name: string]: BiDiCommandItem;
 }
 
 export interface BiDiCommandsMap {
@@ -301,4 +301,22 @@ export interface ListCommandsResponse {
    * BiDi APIs mapping
    */
   bidi?: BiDiCommandsMap;
+}
+
+export interface RestExtensionsMap {
+  /**
+   * Driver execute methods mapping
+   */
+  driver: RestMethodsToCommandsMap;
+  /**
+   * Plugins execute methods mapping
+   */
+  plugins?: Record<string, RestMethodsToCommandsMap>;
+}
+
+export interface ListExtensionsResponse {
+  /**
+   * Rest extensions mapping
+   */
+  rest?: RestExtensionsMap;
 }

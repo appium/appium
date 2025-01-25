@@ -1,4 +1,9 @@
-import type {Constraints, IInspectorCommands, ListCommandsResponse} from '@appium/types';
+import type {
+  Constraints,
+  IInspectorCommands,
+  ListCommandsResponse,
+  ListExtensionsResponse,
+} from '@appium/types';
 import {mixin} from './mixin';
 
 declare module '../driver' {
@@ -15,9 +20,20 @@ const InspectorCommands: IInspectorCommands = {
    * @returns
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  listCommands(sessionId?: string | null): ListCommandsResponse {
+  async listCommands(sessionId?: string | null): Promise<ListCommandsResponse> {
     return {};
-  }
+  },
+
+  /**
+   * This command is supposed to be handled by the umbrella driver.
+   *
+   * @param sessionId
+   * @returns
+   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async listExtensions(sessionId?: string | null): Promise<ListExtensionsResponse> {
+    return {};
+  },
 };
 
 mixin(InspectorCommands);

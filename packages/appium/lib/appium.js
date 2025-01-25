@@ -9,11 +9,10 @@ import {
   DELETE_SESSION_COMMAND,
   GET_STATUS_COMMAND,
   LIST_DRIVER_COMMANDS_COMMAND,
+  LIST_DRIVER_EXTENSIONS_COMMAND,
   promoteAppiumOptions,
   promoteAppiumOptionsForObject,
   generateDriverLogPrefix,
-  METHOD_MAP as BASE_METHOD_MAP,
-  BIDI_COMMANDS as BASE_BIDI_COMMANDS,
 } from '@appium/base-driver';
 import AsyncLock from 'async-lock';
 import {
@@ -21,13 +20,12 @@ import {
   pullSettings,
   makeNonW3cCapsError,
   validateFeatures,
-  toRestCommandsMap,
-  toBiDiCommandsMap,
 } from './utils';
 import {util} from '@appium/support';
 import {getDefaultsForExtension} from './schema';
 import {DRIVER_TYPE, BIDI_BASE_PATH} from './constants';
 import * as bidiHelpers from './bidi';
+import * as inspectorCommands from './inspector-commands';
 
 const desiredCapabilityConstraints = /** @type {const} */ ({
   automationName: {
@@ -572,36 +570,6 @@ class AppiumDriver extends DriverCore {
 
   /**
    * @param {string} sessionId
-   * @returns {import('@appium/types').ListCommandsResponse}
-   */
-  listCommands(sessionId) {
-    /** @type {import('@appium/types').MethodMap<any>} */
-    let driverRestMethodMap = {};
-    /** @type {import('@appium/types').BidiModuleMap} */
-    let driverBiDiCommands = {};
-    /** @type {Record<string, import('@appium/types').MethodMap<any>>} */
-    let pluginRestMethodMaps = {};
-    /** @type {Record<string, import('@appium/types').BidiModuleMap>} */
-    let pluginBiDiCommands = {};
-    if (sessionId) {
-      const driverClass = /** @type {import('@appium/types').DriverClass | undefined} */ (
-        this.driverForSession(sessionId)?.constructor
-      );
-      driverRestMethodMap = driverClass?.newMethodMap ?? {};
-      driverBiDiCommands = driverClass?.newBidiCommands ?? {};
-      const pluginClasses = this.pluginsForSession(sessionId)
-        .map((p) => /** @type {import('@appium/types').PluginClass} */ (p.constructor));
-      pluginRestMethodMaps = _.fromPairs(pluginClasses.map((c) => [c.name, c.newMethodMap ?? {}]));
-      pluginBiDiCommands = _.fromPairs(pluginClasses.map((c) => [c.name, c.newBidiCommands ?? {}]));
-    }
-    return {
-      rest: toRestCommandsMap(BASE_METHOD_MAP, driverRestMethodMap, pluginRestMethodMaps),
-      bidi: toBiDiCommandsMap(BASE_BIDI_COMMANDS, driverBiDiCommands, pluginBiDiCommands),
-    };
-  }
-
-  /**
-   * @param {string} sessionId
    */
   cleanupBidiSockets(sessionId) {
     // clean up any bidi sockets associated with session
@@ -973,6 +941,8 @@ class AppiumDriver extends DriverCore {
   onBidiConnection = bidiHelpers.onBidiConnection;
   onBidiMessage = bidiHelpers.onBidiMessage;
   onBidiServerError = bidiHelpers.onBidiServerError;
+  listCommands = inspectorCommands.listCommands;
+  listExtensions = inspectorCommands.listExtensions;
 }
 
 /**
@@ -983,7 +953,11 @@ class AppiumDriver extends DriverCore {
  */
 function isAppiumDriverCommand(cmd) {
   return !isSessionCommand(cmd)
-    || _.includes([DELETE_SESSION_COMMAND, LIST_DRIVER_COMMANDS_COMMAND], cmd);
+    || _.includes([
+      DELETE_SESSION_COMMAND,
+      LIST_DRIVER_COMMANDS_COMMAND,
+      LIST_DRIVER_EXTENSIONS_COMMAND,
+    ], cmd);
 }
 
 /**

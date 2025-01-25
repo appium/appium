@@ -225,7 +225,7 @@ describe('FakeDriver via HTTP', function () {
     it('should list available driver commands', async function () {
       driver.addCommand(
         'listCommands',
-        async () => (await axios.post(
+        async () => (await axios.get(
           `${testServerBaseSessionUrl}/${driver.sessionId}/appium/commands`
         )).data.value
       );
@@ -255,6 +255,27 @@ describe('FakeDriver via HTTP', function () {
       );
       _.size(commands.bidi.base).should.be.greaterThan(1);
       _.size(commands.bidi.driver).should.be.greaterThan(0);
+    });
+
+    it('should list available driver extensions', async function () {
+      driver.addCommand(
+        'listExtensions',
+        async () => (await axios.get(
+          `${testServerBaseSessionUrl}/${driver.sessionId}/appium/extensions`
+        )).data.value
+      );
+
+      const extensions = await driver.listExtensions();
+      JSON.stringify(extensions.rest.driver['fake: setThing']).should.eql(
+        JSON.stringify({
+          command: 'setFakeThing',
+          params: [{
+            name: 'thing',
+            required: true
+          }]
+        })
+      );
+      _.size(extensions.rest.driver).should.be.greaterThan(1);
     });
   });
 

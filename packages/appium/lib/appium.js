@@ -8,6 +8,7 @@ import {
   CREATE_SESSION_COMMAND,
   DELETE_SESSION_COMMAND,
   GET_STATUS_COMMAND,
+  GET_APPIUM_SESSION_CAPABILITIES,
   LIST_DRIVER_COMMANDS_COMMAND,
   LIST_DRIVER_EXTENSIONS_COMMAND,
   promoteAppiumOptions,
@@ -202,7 +203,7 @@ class AppiumDriver extends DriverCore {
 
   async getAppiumSessionCapabilities () {
     throw new errors.NotImplementedError('Not implemented yet. ' +
-      'Please check https://github.com/appium/appium/issues/20880 for more details.');
+      'Please add getAppiumSessionCapabilities method in the unbrella driver.');
   }
 
   printNewSessionAnnouncement(driverName, driverVersion, driverBaseVersion) {
@@ -967,6 +968,7 @@ function isAppiumDriverCommand(cmd) {
       DELETE_SESSION_COMMAND,
       LIST_DRIVER_COMMANDS_COMMAND,
       LIST_DRIVER_EXTENSIONS_COMMAND,
+      GET_APPIUM_SESSION_CAPABILITIES
     ], cmd);
 }
 

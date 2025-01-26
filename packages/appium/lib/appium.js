@@ -196,11 +196,13 @@ class AppiumDriver extends DriverCore {
   }
 
   async getAppiumSessions () {
-    throw new errors.NotImplementedError("Not implemented yet. Please check https://github.com/appium/appium/issues/20880 for more details.");
+    throw new errors.NotImplementedError('Not implemented yet. ' +
+      'Please check https://github.com/appium/appium/issues/20880 for more details.');
   }
 
   async getAppiumSessionCapabilities () {
-    throw new errors.NotImplementedError("Not implemented yet. Please check https://github.com/appium/appium/issues/20880 for more details.");
+    throw new errors.NotImplementedError('Not implemented yet. ' +
+      'Please check https://github.com/appium/appium/issues/20880 for more details.');
   }
 
   printNewSessionAnnouncement(driverName, driverVersion, driverBaseVersion) {

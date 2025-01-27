@@ -293,167 +293,6 @@ export const METHOD_MAP = /** @type {const} */ ({
       payloadParams: {optional: ['x', 'y', 'width', 'height']},
     },
   },
-  // #region deprecated
-  '/sessions': {
-    GET: {command: 'getSessions', deprecated: true},
-  },
-  '/session/:sessionId/timeouts/async_script': {
-    POST: {command: 'asyncScriptTimeout', payloadParams: {required: ['ms']}, deprecated: true},
-  },
-  '/session/:sessionId/timeouts/implicit_wait': {
-    POST: {command: 'implicitWait', payloadParams: {required: ['ms']}, deprecated: true},
-  },
-  '/session/:sessionId/window_handle': {
-    GET: {command: 'getWindowHandle', deprecated: true},
-  },
-  // Only 'window/handles' exists in W3C WebDriver spec.
-  '/session/:sessionId/window/handle': {
-    GET: {command: 'getWindowHandle', deprecated: true},
-  },
-  '/session/:sessionId/window_handles': {
-    GET: {command: 'getWindowHandles', deprecated: true},
-  },
-  '/session/:sessionId/execute': {
-    POST: {
-      command: 'execute',
-      payloadParams: {required: ['script', 'args']},
-      deprecated: true
-    },
-  },
-  '/session/:sessionId/execute_async': {
-    POST: {
-      command: 'executeAsync',
-      payloadParams: {required: ['script', 'args']},
-      deprecated: true
-    },
-  },
-  '/session/:sessionId/window/:windowhandle/size': {
-    GET: {command: 'getWindowSize', deprecated: true},
-  },
-  '/session/:sessionId/window/:windowhandle/position': {
-    POST: {deprecated: true},
-    GET: {deprecated: true},
-  },
-  '/session/:sessionId/window/:windowhandle/maximize': {
-    POST: {command: 'maximizeWindow', deprecated: true},
-  },
-  '/session/:sessionId/element/:elementId/submit': {
-    POST: {command: 'submit', deprecated: true},
-  },
-  '/session/:sessionId/keys': {
-    POST: {command: 'keys', payloadParams: {required: ['value']}, deprecated: true},
-  },
-  '/session/:sessionId/element/:elementId/equals/:otherId': {
-    GET: {command: 'equalsElement', deprecated: true},
-  },
-  '/session/:sessionId/element/:elementId/location': {
-    GET: {command: 'getLocation', deprecated: true},
-  },
-  '/session/:sessionId/element/:elementId/location_in_view': {
-    GET: {command: 'getLocationInView', deprecated: true},
-  },
-  '/session/:sessionId/element/:elementId/size': {
-    GET: {command: 'getSize', deprecated: true},
-  },
-  '/session/:sessionId/moveto': {
-    POST: {
-      command: 'moveTo',
-      payloadParams: {optional: ['element', 'xoffset', 'yoffset']},
-      deprecated: true,
-    },
-  },
-  '/session/:sessionId/click': {
-    POST: {command: 'clickCurrent', payloadParams: {optional: ['button']}, deprecated: true},
-  },
-  '/session/:sessionId/buttondown': {
-    POST: {command: 'buttonDown', payloadParams: {optional: ['button']}, deprecated: true},
-  },
-  '/session/:sessionId/buttonup': {
-    POST: {command: 'buttonUp', payloadParams: {optional: ['button']}, deprecated: true},
-  },
-  '/session/:sessionId/doubleclick': {
-    POST: {command: 'doubleClick', deprecated: true},
-  },
-  '/session/:sessionId/touch/click': {
-    POST: {command: 'click', payloadParams: {required: ['element']}, deprecated: true},
-  },
-  '/session/:sessionId/touch/down': {
-    POST: {command: 'touchDown', payloadParams: {required: ['x', 'y']}, deprecated: true},
-  },
-  '/session/:sessionId/touch/up': {
-    POST: {command: 'touchUp', payloadParams: {required: ['x', 'y']}, deprecated: true},
-  },
-  '/session/:sessionId/touch/move': {
-    POST: {command: 'touchMove', payloadParams: {required: ['x', 'y']}, deprecated: true},
-  },
-  '/session/:sessionId/touch/scroll': {
-    POST: {deprecated: true},
-  },
-  '/session/:sessionId/touch/doubleclick': {
-    POST: {deprecated: true},
-  },
-  '/session/:sessionId/touch/longclick': {
-    POST: {
-      command: 'touchLongClick',
-      payloadParams: {required: ['elements']},
-      deprecated: true,
-    },
-  },
-  '/session/:sessionId/touch/flick': {
-    POST: {
-      command: 'flick',
-      payloadParams: {
-        optional: ['element', 'xspeed', 'yspeed', 'xoffset', 'yoffset', 'speed'],
-      },
-      deprecated: true,
-    },
-  },
-  '/session/:sessionId/local_storage': {
-    GET: {deprecated: true},
-    POST: {deprecated: true},
-    DELETE: {deprecated: true},
-  },
-  '/session/:sessionId/local_storage/key/:key': {
-    GET: {deprecated: true},
-    DELETE: {deprecated: true},
-  },
-  '/session/:sessionId/local_storage/size': {
-    GET: {deprecated: true},
-  },
-  '/session/:sessionId/session_storage': {
-    GET: {deprecated: true},
-    POST: {deprecated: true},
-    DELETE: {deprecated: true},
-  },
-  '/session/:sessionId/session_storage/key/:key': {
-    GET: {deprecated: true},
-    DELETE: {deprecated: true},
-  },
-  '/session/:sessionId/session_storage/size': {
-    GET: {deprecated: true},
-  },
-  '/session/:sessionId/application_cache/status': {
-    GET: {deprecated: true},
-  },
-  '/session/:sessionId/alert_text': {
-    GET: {command: 'getAlertText', deprecated: true},
-    POST: {
-      command: 'setAlertText',
-      payloadParams: SET_ALERT_TEXT_PAYLOAD_PARAMS,
-      deprecated: true
-    },
-  },
-  '/session/:sessionId/accept_alert': {
-    POST: {command: 'postAcceptAlert', deprecated: true},
-  },
-  '/session/:sessionId/dismiss_alert': {
-    POST: {command: 'postDismissAlert', deprecated: true},
-  },
-  // Pre-W3C endpoint for element screenshot
-  '/session/:sessionId/screenshot/:elementId': {
-    GET: {command: 'getElementScreenshot', deprecated: true},
-  },
-  // #endregion
 
   //
   // Appium specific
@@ -619,7 +458,232 @@ export const METHOD_MAP = /** @type {const} */ ({
   },
   // #endregion
 
-  // #region deprecated endpoints
+  //
+  // 3rd party vendor/protcol support
+  //
+  // #region Selenium/Chromium browsers
+  '/session/:sessionId/se/log': {
+    POST: {command: 'getLog', payloadParams: {required: ['type']}},
+  },
+  '/session/:sessionId/se/log/types': {
+    GET: {command: 'getLogTypes'},
+  },
+  // #endregion
+
+  // #region chromium devtools
+  // https://chromium.googlesource.com/chromium/src/+/master/chrome/test/chromedriver/server/http_handler.cc
+  '/session/:sessionId/:vendor/cdp/execute': {
+    POST: {command: 'executeCdp', payloadParams: {required: ['cmd', 'params']}},
+  },
+  // #endregion
+
+  // #region Webauthn
+  // https://www.w3.org/TR/webauthn-2/#sctn-automation-add-virtual-authenticator
+  '/session/:sessionId/webauthn/authenticator': {
+    POST: {
+      command: 'addVirtualAuthenticator',
+      payloadParams: {
+        required: ['protocol', 'transport'],
+        optional: ['hasResidentKey', 'hasUserVerification', 'isUserConsenting', 'isUserVerified'],
+      },
+    },
+  },
+  '/session/:sessionId/webauthn/authenticator/:authenticatorId': {
+    DELETE: {
+      command: 'removeVirtualAuthenticator',
+    },
+  },
+  '/session/:sessionId/webauthn/authenticator/:authenticatorId/credential': {
+    POST: {
+      command: 'addAuthCredential',
+      payloadParams: {
+        required: ['credentialId', 'isResidentCredential', 'rpId', 'privateKey'],
+        optional: ['userHandle', 'signCount'],
+      },
+    },
+  },
+  '/session/:sessionId/webauthn/authenticator/:authenticatorId/credentials': {
+    GET: {command: 'getAuthCredential'},
+    DELETE: {command: 'removeAllAuthCredentials'},
+  },
+  '/session/:sessionId/webauthn/authenticator/:authenticatorId/credentials/:credentialId': {
+    DELETE: {command: 'removeAuthCredential'},
+  },
+  '/session/:sessionId/webauthn/authenticator/:authenticatorId/uv': {
+    POST: {
+      command: 'setUserAuthVerified',
+      payloadParams: {
+        required: ['isUserVerified'],
+      },
+    },
+  },
+  // #endregion
+
+  //
+  // Endpoints deprecated entirely
+  //
+  // #region MJSONWP
+  '/sessions': {
+    GET: {command: 'getSessions', deprecated: true},
+  },
+  '/session/:sessionId/timeouts/async_script': {
+    POST: {command: 'asyncScriptTimeout', payloadParams: {required: ['ms']}, deprecated: true},
+  },
+  '/session/:sessionId/timeouts/implicit_wait': {
+    POST: {command: 'implicitWait', payloadParams: {required: ['ms']}, deprecated: true},
+  },
+  '/session/:sessionId/window_handle': {
+    GET: {command: 'getWindowHandle', deprecated: true},
+  },
+  // Only 'window/handles' exists in W3C WebDriver spec.
+  '/session/:sessionId/window/handle': {
+    GET: {command: 'getWindowHandle', deprecated: true},
+  },
+  '/session/:sessionId/window_handles': {
+    GET: {command: 'getWindowHandles', deprecated: true},
+  },
+  '/session/:sessionId/execute': {
+    POST: {
+      command: 'execute',
+      payloadParams: {required: ['script', 'args']},
+      deprecated: true
+    },
+  },
+  '/session/:sessionId/execute_async': {
+    POST: {
+      command: 'executeAsync',
+      payloadParams: {required: ['script', 'args']},
+      deprecated: true
+    },
+  },
+  '/session/:sessionId/window/:windowhandle/size': {
+    GET: {command: 'getWindowSize', deprecated: true},
+  },
+  '/session/:sessionId/window/:windowhandle/position': {
+    POST: {deprecated: true},
+    GET: {deprecated: true},
+  },
+  '/session/:sessionId/window/:windowhandle/maximize': {
+    POST: {command: 'maximizeWindow', deprecated: true},
+  },
+  '/session/:sessionId/element/:elementId/submit': {
+    POST: {command: 'submit', deprecated: true},
+  },
+  '/session/:sessionId/keys': {
+    POST: {command: 'keys', payloadParams: {required: ['value']}, deprecated: true},
+  },
+  '/session/:sessionId/element/:elementId/equals/:otherId': {
+    GET: {command: 'equalsElement', deprecated: true},
+  },
+  '/session/:sessionId/element/:elementId/location': {
+    GET: {command: 'getLocation', deprecated: true},
+  },
+  '/session/:sessionId/element/:elementId/location_in_view': {
+    GET: {command: 'getLocationInView', deprecated: true},
+  },
+  '/session/:sessionId/element/:elementId/size': {
+    GET: {command: 'getSize', deprecated: true},
+  },
+  '/session/:sessionId/moveto': {
+    POST: {
+      command: 'moveTo',
+      payloadParams: {optional: ['element', 'xoffset', 'yoffset']},
+      deprecated: true,
+    },
+  },
+  '/session/:sessionId/click': {
+    POST: {command: 'clickCurrent', payloadParams: {optional: ['button']}, deprecated: true},
+  },
+  '/session/:sessionId/buttondown': {
+    POST: {command: 'buttonDown', payloadParams: {optional: ['button']}, deprecated: true},
+  },
+  '/session/:sessionId/buttonup': {
+    POST: {command: 'buttonUp', payloadParams: {optional: ['button']}, deprecated: true},
+  },
+  '/session/:sessionId/doubleclick': {
+    POST: {command: 'doubleClick', deprecated: true},
+  },
+  '/session/:sessionId/touch/click': {
+    POST: {command: 'click', payloadParams: {required: ['element']}, deprecated: true},
+  },
+  '/session/:sessionId/touch/down': {
+    POST: {command: 'touchDown', payloadParams: {required: ['x', 'y']}, deprecated: true},
+  },
+  '/session/:sessionId/touch/up': {
+    POST: {command: 'touchUp', payloadParams: {required: ['x', 'y']}, deprecated: true},
+  },
+  '/session/:sessionId/touch/move': {
+    POST: {command: 'touchMove', payloadParams: {required: ['x', 'y']}, deprecated: true},
+  },
+  '/session/:sessionId/touch/scroll': {
+    POST: {deprecated: true},
+  },
+  '/session/:sessionId/touch/doubleclick': {
+    POST: {deprecated: true},
+  },
+  '/session/:sessionId/touch/longclick': {
+    POST: {
+      command: 'touchLongClick',
+      payloadParams: {required: ['elements']},
+      deprecated: true,
+    },
+  },
+  '/session/:sessionId/touch/flick': {
+    POST: {
+      command: 'flick',
+      payloadParams: {
+        optional: ['element', 'xspeed', 'yspeed', 'xoffset', 'yoffset', 'speed'],
+      },
+      deprecated: true,
+    },
+  },
+  '/session/:sessionId/local_storage': {
+    GET: {deprecated: true},
+    POST: {deprecated: true},
+    DELETE: {deprecated: true},
+  },
+  '/session/:sessionId/local_storage/key/:key': {
+    GET: {deprecated: true},
+    DELETE: {deprecated: true},
+  },
+  '/session/:sessionId/local_storage/size': {
+    GET: {deprecated: true},
+  },
+  '/session/:sessionId/session_storage': {
+    GET: {deprecated: true},
+    POST: {deprecated: true},
+    DELETE: {deprecated: true},
+  },
+  '/session/:sessionId/session_storage/key/:key': {
+    GET: {deprecated: true},
+    DELETE: {deprecated: true},
+  },
+  '/session/:sessionId/session_storage/size': {
+    GET: {deprecated: true},
+  },
+  '/session/:sessionId/application_cache/status': {
+    GET: {deprecated: true},
+  },
+  '/session/:sessionId/alert_text': {
+    GET: {command: 'getAlertText', deprecated: true},
+    POST: {
+      command: 'setAlertText',
+      payloadParams: SET_ALERT_TEXT_PAYLOAD_PARAMS,
+      deprecated: true
+    },
+  },
+  '/session/:sessionId/accept_alert': {
+    POST: {command: 'postAcceptAlert', deprecated: true},
+  },
+  '/session/:sessionId/dismiss_alert': {
+    POST: {command: 'postDismissAlert', deprecated: true},
+  },
+  // Pre-W3C endpoint for element screenshot
+  '/session/:sessionId/screenshot/:elementId': {
+    GET: {command: 'getElementScreenshot', deprecated: true},
+  },
+  // #endregion
+  // #region Appium specific
   '/session/:sessionId/element/:elementId/pageIndex': {
     GET: {command: 'getPageIndex', deprecated: true},
   },
@@ -859,71 +923,12 @@ export const METHOD_MAP = /** @type {const} */ ({
     },
   },
   // #endregion
-
-  //
-  // 3rd party vendor/protcol support
-  //
-  // #region Selenium/Chromium browsers
-  '/session/:sessionId/se/log': {
-    POST: {command: 'getLog', payloadParams: {required: ['type']}},
-  },
-  '/session/:sessionId/se/log/types': {
-    GET: {command: 'getLogTypes'},
-  },
+  // #region JSONWP
   '/session/:sessionId/log': {
     POST: {command: 'getLog', payloadParams: {required: ['type']}, deprecated: true},
   },
   '/session/:sessionId/log/types': {
     GET: {command: 'getLogTypes', deprecated: true},
-  },
-  // #endregion
-
-  // #region chromium devtools
-  // https://chromium.googlesource.com/chromium/src/+/master/chrome/test/chromedriver/server/http_handler.cc
-  '/session/:sessionId/:vendor/cdp/execute': {
-    POST: {command: 'executeCdp', payloadParams: {required: ['cmd', 'params']}},
-  },
-  // #endregion
-
-  // #region Webauthn
-  // https://www.w3.org/TR/webauthn-2/#sctn-automation-add-virtual-authenticator
-  '/session/:sessionId/webauthn/authenticator': {
-    POST: {
-      command: 'addVirtualAuthenticator',
-      payloadParams: {
-        required: ['protocol', 'transport'],
-        optional: ['hasResidentKey', 'hasUserVerification', 'isUserConsenting', 'isUserVerified'],
-      },
-    },
-  },
-  '/session/:sessionId/webauthn/authenticator/:authenticatorId': {
-    DELETE: {
-      command: 'removeVirtualAuthenticator',
-    },
-  },
-  '/session/:sessionId/webauthn/authenticator/:authenticatorId/credential': {
-    POST: {
-      command: 'addAuthCredential',
-      payloadParams: {
-        required: ['credentialId', 'isResidentCredential', 'rpId', 'privateKey'],
-        optional: ['userHandle', 'signCount'],
-      },
-    },
-  },
-  '/session/:sessionId/webauthn/authenticator/:authenticatorId/credentials': {
-    GET: {command: 'getAuthCredential'},
-    DELETE: {command: 'removeAllAuthCredentials'},
-  },
-  '/session/:sessionId/webauthn/authenticator/:authenticatorId/credentials/:credentialId': {
-    DELETE: {command: 'removeAuthCredential'},
-  },
-  '/session/:sessionId/webauthn/authenticator/:authenticatorId/uv': {
-    POST: {
-      command: 'setUserAuthVerified',
-      payloadParams: {
-        required: ['isUserVerified'],
-      },
-    },
   },
   // #endregion
 });

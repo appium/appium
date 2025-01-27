@@ -201,11 +201,6 @@ class AppiumDriver extends DriverCore {
       'Please check https://github.com/appium/appium/issues/20880 for more details.');
   }
 
-  async getAppiumSessionCapabilities () {
-    throw new errors.NotImplementedError('Not implemented yet. ' +
-      'Please add getAppiumSessionCapabilities method in the unbrella driver.');
-  }
-
   printNewSessionAnnouncement(driverName, driverVersion, driverBaseVersion) {
     this.log.info(
       driverVersion

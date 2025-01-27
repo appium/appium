@@ -177,6 +177,38 @@ export function onBidiServerError(this: AppiumDriver, err: Error): void {
 }
 
 /**
+ * Clean up any bidi sockets associated with session
+ *
+ * @param sessionId
+ */
+export function cleanupBidiSockets(this: AppiumDriver, sessionId: string): void {
+  if (!this.bidiSockets[sessionId]) {
+    return;
+  }
+  try {
+    this.log.debug(`Closing bidi socket(s) associated with session ${sessionId}`);
+    for (const ws of this.bidiSockets[sessionId]) {
+      // 1001 means server is going away
+      ws.close(1001, 'Appium session is closing');
+    }
+  } catch {}
+  delete this.bidiSockets[sessionId];
+
+  const proxyClient = this.bidiProxyClients[sessionId];
+  if (!proxyClient) {
+    return;
+  }
+  this.log.debug(`Also closing proxy connection to upstream bidi server`);
+  try {
+    // 1000 means normal closure, which seems correct when Appium is acting as the client
+    proxyClient.close(1000);
+  } catch {}
+  delete this.bidiProxyClients[sessionId];
+}
+
+// #region Private functions
+
+/**
  * Initialize a new bidi connection
  * @param ws The websocket connection object
  * @param req The connection pathname, which might include the session id
@@ -468,3 +500,5 @@ function initBidiEventListeners(
     plugin.eventEmitter?.on(BIDI_EVENT_NAME, eventListenerFactory('plugin', plugin));
   }
 }
+
+// #endregion

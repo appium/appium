@@ -212,10 +212,10 @@ describe('FakeDriver via HTTP', function () {
     withServer();
     let driver;
 
-    beforeEach(async function () {
+    before(async function () {
       driver = await wdio({...wdOpts, capabilities: caps});
     });
-    afterEach(async function () {
+    after(async function () {
       if (driver) {
         await driver.deleteSession();
         driver = null;

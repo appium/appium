@@ -19,7 +19,7 @@ import { generateDriverLogPrefix } from '../basedriver/helpers';
 export const CREATE_SESSION_COMMAND = 'createSession';
 export const DELETE_SESSION_COMMAND = 'deleteSession';
 export const GET_STATUS_COMMAND = 'getStatus';
-export const GET_APPIUM_SESSION_CAPABILITIES = 'getAppiumSessionCapabilities';
+export const GET_APPIUM_SESSION_CAPABILITIES_COMMAND = 'getAppiumSessionCapabilities';
 export const LIST_DRIVER_COMMANDS_COMMAND = 'listCommands';
 export const LIST_DRIVER_EXTENSIONS_COMMAND = 'listExtensions';
 

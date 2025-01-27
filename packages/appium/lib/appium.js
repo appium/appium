@@ -24,7 +24,7 @@ import {
 import {util} from '@appium/support';
 import {getDefaultsForExtension} from './schema';
 import {DRIVER_TYPE, BIDI_BASE_PATH} from './constants';
-import * as bidiHelpers from './bidi';
+import * as bidiCommands from './bidi-commands';
 import * as inspectorCommands from './inspector-commands';
 
 const desiredCapabilityConstraints = /** @type {const} */ ({
@@ -429,7 +429,7 @@ class AppiumDriver extends DriverCore {
       if (dCaps.webSocketUrl) {
         const {address, port, basePath} = this.args;
         const scheme = `ws${this.server.isSecure() ? 's' : ''}`;
-        const host = bidiHelpers.determineBiDiHost(address);
+        const host = bidiCommands.determineBiDiHost(address);
         const bidiUrl = `${scheme}://${host}:${port}${basePath}${BIDI_BASE_PATH}/${innerSessionId}`;
         this.log.info(
           `Upstream driver responded with webSocketUrl ${dCaps.webSocketUrl}, will rewrite to ` +
@@ -565,32 +565,6 @@ class AppiumDriver extends DriverCore {
         protocol,
         error: e,
       };
-    }
-  }
-
-  /**
-   * @param {string} sessionId
-   */
-  cleanupBidiSockets(sessionId) {
-    // clean up any bidi sockets associated with session
-    if (this.bidiSockets[sessionId]) {
-      try {
-        this.log.debug(`Closing bidi socket(s) associated with session ${sessionId}`);
-        for (const ws of this.bidiSockets[sessionId]) {
-          // 1001 means server is going away
-          ws.close(1001, 'Appium session is closing');
-        }
-      } catch {}
-      delete this.bidiSockets[sessionId];
-      const proxyClient = this.bidiProxyClients[sessionId];
-      if (proxyClient) {
-        this.log.debug(`Also closing proxy connection to upstream bidi server`);
-        try {
-          // 1000 means normal closure, which seems correct when Appium is acting as the client
-          proxyClient.close(1000);
-        } catch {}
-        delete this.bidiProxyClients[sessionId];
-      }
     }
   }
 
@@ -938,9 +912,11 @@ class AppiumDriver extends DriverCore {
     return dstSession && dstSession.canProxy(sessionId);
   }
 
-  onBidiConnection = bidiHelpers.onBidiConnection;
-  onBidiMessage = bidiHelpers.onBidiMessage;
-  onBidiServerError = bidiHelpers.onBidiServerError;
+  onBidiConnection = bidiCommands.onBidiConnection;
+  onBidiMessage = bidiCommands.onBidiMessage;
+  onBidiServerError = bidiCommands.onBidiServerError;
+  cleanupBidiSockets = bidiCommands.cleanupBidiSockets;
+
   listCommands = inspectorCommands.listCommands;
   listExtensions = inspectorCommands.listExtensions;
 }

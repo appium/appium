@@ -7,8 +7,6 @@ import type {
   BiDiResultData,
   ExecuteMethodMap,
   MethodMap,
-  ListCommandsResponse,
-  ListExtensionsResponse,
 } from './command';
 import type {ServerArgs} from './config';
 import type {HTTPHeaders, HTTPMethod} from './http';
@@ -24,6 +22,7 @@ export interface IDeviceSettings<T extends StringRecord> {
   update(newSettings: T): Promise<void>;
   getSettings(): T;
 }
+
 export interface ITimeoutCommands {
   /**
    * Set the various timeouts associated with a session
@@ -358,11 +357,6 @@ export interface IBidiCommands {
   bidiSubscribe(events: string[], contexts: string[]): Promise<void>;
   bidiUnsubscribe(events: string[], contexts: string[]): Promise<void>;
   bidiStatus(): Promise<DriverStatus>;
-}
-
-export interface IInspectorCommands {
-  listCommands(): Promise<ListCommandsResponse>;
-  listExtensions(): Promise<ListExtensionsResponse>;
 }
 
 /**

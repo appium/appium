@@ -201,6 +201,12 @@ class AppiumDriver extends DriverCore {
       'Please check https://github.com/appium/appium/issues/20880 for more details.');
   }
 
+  async getAppiumSessionCapabilities () {
+    throw new errors.NotImplementedError('TODO: Implement this method body to call getAppiumSessionCapabilities ' +
+      'from the destination driver instance in a session.'
+    );
+  }
+
   printNewSessionAnnouncement(driverName, driverVersion, driverBaseVersion) {
     this.log.info(
       driverVersion

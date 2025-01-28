@@ -50,7 +50,7 @@
     "@types/async-lock": "1.4.2",
     "@types/bluebird": "3.5.42",
     "@types/express": "5.0.0",
-    "@types/lodash": "4.17.14",
+    "@types/lodash": "4.17.15",
     "@types/method-override": "3.0.0",
     "@types/serve-favicon": "2.5.7",
     "async-lock": "1.4.1",

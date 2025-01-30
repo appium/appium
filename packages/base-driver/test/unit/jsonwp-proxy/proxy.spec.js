@@ -214,6 +214,7 @@ describe('proxy', function () {
 
     [
       '/session/82a9b7da-faaf-4a1d-8ef3-5e4fb5812200',
+      '/session/82a9b7da-faaf-4a1d-8ef3-5e4fb5812200/',
       '/session/82a9b7da-faaf-4a1d-8ef3-5e4fb5812200/url',
       '/session/82a9b7da-faaf-4a1d-8ef3-5e4fb5812200/element/3d001db2-7987-42a7-975d-8d5d5304083f',
     ].forEach(function (endpoint) {

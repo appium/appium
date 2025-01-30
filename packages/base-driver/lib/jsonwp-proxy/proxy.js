@@ -111,8 +111,8 @@ class JWProxy {
   }
 
   /**
-   * Return true if the given endpoint starts with '/session' and
-   * possibly it requires session id after the path.
+   * Return true if the given endpoint started with '/session' and
+   * it could have session id after the path.
    * e.g.
    * - should return true
    *   - /session/82a9b7da-faaf-4a1d-8ef3-5e4fb5812200

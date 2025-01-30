@@ -209,4 +209,29 @@ describe('proxy', function () {
       res.sentBody.should.eql({value: {message: 'chrome not reachable'}});
     });
   });
+  describe('endpointRequiresSessionId', function () {
+    const j = mockProxy({sessionId: '123'});
+
+    [
+      '/session/82a9b7da-faaf-4a1d-8ef3-5e4fb5812200',
+      '/session/82a9b7da-faaf-4a1d-8ef3-5e4fb5812200/url',
+      '/session/82a9b7da-faaf-4a1d-8ef3-5e4fb5812200/element/3d001db2-7987-42a7-975d-8d5d5304083f',
+    ].forEach(function (endpoint) {
+        it(`should be true with ${endpoint}`, function () {
+          j.endpointRequiresSessionId(endpoint).should.be.true;
+        });
+    });
+
+    [
+      '/session',
+      '/session/',
+      '/sessions',
+      '/appium/sessions',
+      '/status',
+    ].forEach(function (endpoint) {
+        it(`should be false with ${endpoint}`, function () {
+          j.endpointRequiresSessionId(endpoint).should.be.false;
+        });
+    });
+  });
 });

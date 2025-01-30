@@ -110,13 +110,24 @@ class JWProxy {
     this._activeRequests = [];
   }
 
+  /**
+   * Return true if the given endpoint starts with '/session' and
+   * possibly it requires session id after the path.
+   * e.g.
+   * - should return true
+   *   - /session/82a9b7da-faaf-4a1d-8ef3-5e4fb5812200
+   *   - /session/82a9b7da-faaf-4a1d-8ef3-5e4fb5812200/url
+   * - should return false
+   *   - /session
+   *   - /sessions
+   *   - /session/
+   *   - /status
+   *   - /appium/sessions
+   * @param {string} endpoint
+   * @returns {boolean}
+   */
   endpointRequiresSessionId(endpoint) {
-    return !_.includes([
-      '/session',
-      '/sessions',
-      '/status',
-      '/appium/sessions'
-    ], endpoint);
+    return new RegExp(/^\/session\/[^/.]+(|\/.*)$/).test(endpoint);
   }
 
   set downstreamProtocol(value) {

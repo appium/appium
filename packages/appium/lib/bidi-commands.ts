@@ -293,8 +293,12 @@ function initBidiSocket(this: AppiumDriver, ws: WebSocket, req: IncomingMessage)
   // 2. Do some logging if there's a send error
   const sendFactory = (socket: WebSocket) => {
     const socketSend = B.promisify(socket.send, {context: socket});
+    const isUpstreamSend = proxyClient === socket;
     return async (data: string | Buffer) => {
       try {
+        if (isUpstreamSend) {
+          await assertUpstreamState(socket);
+        }
         await socketSend(data);
       } catch (err) {
         logSocketErr(err);
@@ -499,6 +503,47 @@ function initBidiEventListeners(
     // some old plugins might not have the eventEmitter property
     plugin.eventEmitter?.on(BIDI_EVENT_NAME, eventListenerFactory('plugin', plugin));
   }
+}
+
+async function assertUpstreamState(
+  ws: WebSocket,
+  timeoutMs: number = 5000,
+): Promise<WebSocket> {
+  if (ws.OPEN) {
+    return ws;
+  }
+  if (ws.CLOSED || ws.CLOSING) {
+    throw new Error(
+      `The upstream BiDi web socket at ${ws.url} is not open, ` +
+      `so we cannot proxy connections to it`
+    );
+  }
+
+  let errorListener;
+  let openListener;
+  // The socket is in CONNECTING state. Wait up to `timeoutMs` until it is open
+  try {
+    await new Promise((resolve, reject) => {
+      setTimeout(() => reject(
+        new Error(
+          `The upstream BiDi web socket at ${ws.url} did not ` +
+          `open after ${timeoutMs}ms timeout`
+        )
+      ), timeoutMs);
+      ws.once('error', reject);
+      errorListener = reject;
+      ws.once('open', resolve);
+      openListener = resolve;
+    });
+  } finally {
+    if (errorListener) {
+      ws.off('error', errorListener);
+    }
+    if (openListener) {
+      ws.off('open', openListener);
+    }
+  }
+  return ws;
 }
 
 // #endregion

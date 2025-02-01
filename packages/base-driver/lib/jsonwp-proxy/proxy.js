@@ -15,6 +15,7 @@ import ProtocolConverter from './protocol-converter';
 import {formatResponseValue, formatStatus} from '../protocol/helpers';
 import http from 'http';
 import https from 'https';
+import { match as pathToRegexMatch } from 'path-to-regexp';
 
 const DEFAULT_LOG = logger.getLogger('WD Proxy');
 const DEFAULT_REQUEST_TIMEOUT = 240000;
@@ -110,13 +111,24 @@ class JWProxy {
     this._activeRequests = [];
   }
 
+  /**
+   * Return true if the given endpoint started with '/session' and
+   * it could have session id after the path.
+   * e.g.
+   * - should return true
+   *   - /session/82a9b7da-faaf-4a1d-8ef3-5e4fb5812200
+   *   - /session/82a9b7da-faaf-4a1d-8ef3-5e4fb5812200/url
+   * - should return false
+   *   - /session
+   *   - /sessions
+   *   - /session/
+   *   - /status
+   *   - /appium/sessions
+   * @param {string} endpoint
+   * @returns {boolean}
+   */
   endpointRequiresSessionId(endpoint) {
-    return !_.includes([
-      '/session',
-      '/sessions',
-      '/status',
-      '/appium/sessions'
-    ], endpoint);
+    return !!(pathToRegexMatch('/session/:sessionId{/*command}')(endpoint));
   }
 
   set downstreamProtocol(value) {
@@ -133,7 +145,7 @@ class JWProxy {
       url = '/';
     }
     const proxyBase = `${this.scheme}://${this.server}:${this.port}${this.base}`;
-    const endpointRe = '(/(session|status))';
+    const endpointRe = '(/(session|status|appium))';
     let remainingUrl = '';
     if (/^http/.test(url)) {
       const first = new RegExp(`(https?://.+)${endpointRe}`).exec(url);
@@ -147,7 +159,7 @@ class JWProxy {
       throw new Error(`Did not know what to do with url '${url}'`);
     }
 
-    const stripPrefixRe = new RegExp('^.*?(/(session|status).*)$');
+    const stripPrefixRe = new RegExp('^.*?(/(session|status|appium).*)$');
     if (stripPrefixRe.test(remainingUrl)) {
       remainingUrl = /** @type {RegExpExecArray} */ (stripPrefixRe.exec(remainingUrl))[1];
     }

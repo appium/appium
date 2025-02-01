@@ -109,6 +109,12 @@ describe('proxy', function () {
 
       should.exist(newUrl);
     });
+    it('should not throw an error if url does not require a session id with appium vendor prefix and its null', function () {
+      let j = mockProxy();
+      let newUrl = j.getUrlForProxy('/appium/something');
+
+      should.exist(newUrl);
+    });
   });
   describe('straight proxy', function () {
     it('should successfully proxy straight', async function () {

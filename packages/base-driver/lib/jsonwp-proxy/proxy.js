@@ -145,7 +145,7 @@ class JWProxy {
       url = '/';
     }
     const proxyBase = `${this.scheme}://${this.server}:${this.port}${this.base}`;
-    const endpointRe = '(/(session|status))';
+    const endpointRe = '(/(session|status|appium))';
     let remainingUrl = '';
     if (/^http/.test(url)) {
       const first = new RegExp(`(https?://.+)${endpointRe}`).exec(url);
@@ -159,7 +159,7 @@ class JWProxy {
       throw new Error(`Did not know what to do with url '${url}'`);
     }
 
-    const stripPrefixRe = new RegExp('^.*?(/(session|status).*)$');
+    const stripPrefixRe = new RegExp('^.*?(/(session|status|appium).*)$');
     if (stripPrefixRe.test(remainingUrl)) {
       remainingUrl = /** @type {RegExpExecArray} */ (stripPrefixRe.exec(remainingUrl))[1];
     }

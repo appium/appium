@@ -41,7 +41,6 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@types/bluebird": "3.5.42",
     "bluebird": "3.7.2",
     "lodash": "4.17.21",
     "opencv-bindings": "4.5.5",

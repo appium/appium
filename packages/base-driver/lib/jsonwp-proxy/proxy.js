@@ -15,7 +15,7 @@ import ProtocolConverter from './protocol-converter';
 import {formatResponseValue, formatStatus} from '../protocol/helpers';
 import http from 'http';
 import https from 'https';
-import { match } from 'path-to-regexp';
+import { match as pathToRegexMatch } from 'path-to-regexp';
 
 const DEFAULT_LOG = logger.getLogger('WD Proxy');
 const DEFAULT_REQUEST_TIMEOUT = 240000;
@@ -128,7 +128,7 @@ class JWProxy {
    * @returns {boolean}
    */
   endpointRequiresSessionId(endpoint) {
-    return !!(match('/session/:sessionId{/*command}')(endpoint));
+    return !!(pathToRegexMatch('/session/:sessionId{/*command}')(endpoint));
   }
 
   set downstreamProtocol(value) {

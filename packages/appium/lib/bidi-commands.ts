@@ -509,10 +509,10 @@ async function assertUpstreamState(
   ws: WebSocket,
   timeoutMs: number = 5000,
 ): Promise<WebSocket> {
-  if (ws.OPEN) {
+  if (ws.readyState === ws.OPEN) {
     return ws;
   }
-  if (ws.CLOSED || ws.CLOSING) {
+  if (ws.readyState > ws.OPEN) {
     throw new Error(
       `The upstream BiDi web socket at ${ws.url} is not open, ` +
       `so we cannot proxy connections to it`

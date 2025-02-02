@@ -41,7 +41,6 @@
   "dependencies": {
     "@appium/base-plugin": "^2.3.0",
     "@appium/support": "^6.0.3",
-    "@types/bluebird": "3.5.42",
     "bluebird": "3.7.2",
     "lodash": "4.17.21",
     "source-map-support": "0.5.21"

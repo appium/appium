@@ -295,6 +295,7 @@ function initBidiSocket(this: AppiumDriver, ws: WebSocket, req: IncomingMessage)
     const socketSend = B.promisify(socket.send, {context: socket});
     return async (data: string | Buffer) => {
       try {
+        await assertIsOpen(socket);
         await socketSend(data);
       } catch (err) {
         logSocketErr(err);
@@ -499,6 +500,44 @@ function initBidiEventListeners(
     // some old plugins might not have the eventEmitter property
     plugin.eventEmitter?.on(BIDI_EVENT_NAME, eventListenerFactory('plugin', plugin));
   }
+}
+
+async function assertIsOpen(
+  ws: WebSocket,
+  timeoutMs: number = 5000,
+): Promise<WebSocket> {
+  if (ws.readyState === ws.OPEN) {
+    return ws;
+  }
+  if (ws.readyState > ws.OPEN) {
+    throw new Error(`The BiDi web socket at ${ws.url} is not open`);
+  }
+
+  let errorListener;
+  let openListener;
+  // The socket is in CONNECTING state. Wait up to `timeoutMs` until it is open
+  try {
+    await new Promise((resolve, reject) => {
+      setTimeout(() => reject(
+        new Error(
+          `The BiDi web socket at ${ws.url} did not ` +
+          `open after ${timeoutMs}ms timeout`
+        )
+      ), timeoutMs);
+      ws.once('error', reject);
+      errorListener = reject;
+      ws.once('open', resolve);
+      openListener = resolve;
+    });
+  } finally {
+    if (errorListener) {
+      ws.off('error', errorListener);
+    }
+    if (openListener) {
+      ws.off('open', openListener);
+    }
+  }
+  return ws;
 }
 
 // #endregion

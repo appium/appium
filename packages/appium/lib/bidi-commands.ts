@@ -293,12 +293,9 @@ function initBidiSocket(this: AppiumDriver, ws: WebSocket, req: IncomingMessage)
   // 2. Do some logging if there's a send error
   const sendFactory = (socket: WebSocket) => {
     const socketSend = B.promisify(socket.send, {context: socket});
-    const isUpstreamSend = proxyClient === socket;
     return async (data: string | Buffer) => {
       try {
-        if (isUpstreamSend) {
-          await assertUpstreamState(socket);
-        }
+        await assertIsOpen(socket);
         await socketSend(data);
       } catch (err) {
         logSocketErr(err);
@@ -505,7 +502,7 @@ function initBidiEventListeners(
   }
 }
 
-async function assertUpstreamState(
+async function assertIsOpen(
   ws: WebSocket,
   timeoutMs: number = 5000,
 ): Promise<WebSocket> {
@@ -513,10 +510,7 @@ async function assertUpstreamState(
     return ws;
   }
   if (ws.readyState > ws.OPEN) {
-    throw new Error(
-      `The upstream BiDi web socket at ${ws.url} is not open, ` +
-      `so we cannot proxy connections to it`
-    );
+    throw new Error(`The BiDi web socket at ${ws.url} is not open`);
   }
 
   let errorListener;
@@ -526,7 +520,7 @@ async function assertUpstreamState(
     await new Promise((resolve, reject) => {
       setTimeout(() => reject(
         new Error(
-          `The upstream BiDi web socket at ${ws.url} did not ` +
+          `The BiDi web socket at ${ws.url} did not ` +
           `open after ${timeoutMs}ms timeout`
         )
       ), timeoutMs);

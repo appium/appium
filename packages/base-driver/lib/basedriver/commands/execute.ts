@@ -30,7 +30,7 @@ const ExecuteCommands: IExecuteCommands = {
       const closestMatch = closest(script, availableScripts);
       throw new errors.UnsupportedOperationError(
         `Unsupported execute method '${script}', did you mean '${closestMatch}'? ` +
-        `Make sure you have the most recent driver updates. ` +
+        `Make sure you have the installed ${Driver.name} is up-to-date. ` +
         `Execute methods available in the current driver version are: ` +
         availableScripts.join(', ')
       );

@@ -31,7 +31,8 @@ const ExecuteCommands: IExecuteCommands = {
       throw new errors.UnsupportedOperationError(
         `Unsupported execute method '${script}', did you mean '${closestMatch}'? ` +
         `Make sure you have the most recent driver updates. ` +
-        `Available methods are: ${availableScripts.join(', ')}`
+        `Execute methods available in the current driver version are: ` +
+        availableScripts.join(', ')
       );
     }
     const args = validateExecuteMethodParams(protoArgs, commandMetadata.params);

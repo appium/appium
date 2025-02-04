@@ -10,7 +10,7 @@ import {
 } from '@appium/types';
 import {mixin} from './mixin';
 import {BaseDriver} from '../driver';
-import {closest} from 'fastest-levenshtein';
+import {distance} from 'fastest-levenshtein';
 
 declare module '../driver' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -27,12 +27,24 @@ const ExecuteCommands: IExecuteCommands = {
     const commandMetadata = {...Driver.executeMethodMap?.[script]};
     if (!commandMetadata.command) {
       const availableScripts = _.keys(Driver.executeMethodMap);
-      const closestMatch = closest(script, availableScripts);
+      if (_.isEmpty(availableScripts)) {
+        throw new errors.UnsupportedOperationError(
+          `Unsupported execute method '${script}'. ` +
+          `Make sure the installed ${Driver.name} is up-to-date. ` +
+          `The current driver version does not define any execute methods.`
+        );
+      }
+      const matchesMap = _.fromPairs(
+        availableScripts.map((name) => [distance(script, name), name])
+      );
+      const sortedMatches = _.keys(matchesMap)
+        .sort((a, b) => parseInt(a, 10) - parseInt(b, 10))
+        .map((x) => matchesMap[x]);
       throw new errors.UnsupportedOperationError(
-        `Unsupported execute method '${script}', did you mean '${closestMatch}'? ` +
-        `Make sure you have the installed ${Driver.name} is up-to-date. ` +
+        `Unsupported execute method '${script}', did you mean '${sortedMatches[0]}'? ` +
+        `Make sure the installed ${Driver.name} is up-to-date. ` +
         `Execute methods available in the current driver version are: ` +
-        availableScripts.join(', ')
+        sortedMatches.join(', ')
       );
     }
     const args = validateExecuteMethodParams(protoArgs, commandMetadata.params);

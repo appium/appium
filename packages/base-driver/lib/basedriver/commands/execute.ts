@@ -34,12 +34,21 @@ const ExecuteCommands: IExecuteCommands = {
           `The current driver version does not define any execute methods.`
         );
       }
-      const matchesMap = _.fromPairs(
-        availableScripts.map((name) => [distance(script, name), name])
+      const matchesMap: StringRecord<string[]> = availableScripts
+        .map((name) => [distance(script, name), name])
+        .reduce((acc, [key, value]) => {
+          if (key in acc) {
+            acc[key].push(value);
+          } else {
+            acc[key] = [value];
+          }
+          return acc;
+        }, {});
+      const sortedMatches = _.flatMap(
+        _.keys(matchesMap)
+          .sort((a, b) => parseInt(a, 10) - parseInt(b, 10))
+          .map((x) => matchesMap[x])
       );
-      const sortedMatches = _.keys(matchesMap)
-        .sort((a, b) => parseInt(a, 10) - parseInt(b, 10))
-        .map((x) => matchesMap[x]);
       throw new errors.UnsupportedOperationError(
         `Unsupported execute method '${script}', did you mean '${sortedMatches[0]}'? ` +
         `Make sure the installed ${Driver.name} is up-to-date. ` +

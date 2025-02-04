@@ -44,7 +44,7 @@ const ExecuteCommands: IExecuteCommands = {
           }
           return acc;
         }, {});
-      const sortedMatches = _.flatMap(
+      const sortedMatches = _.flatten(
         _.keys(matchesMap)
           .sort((a, b) => parseInt(a, 10) - parseInt(b, 10))
           .map((x) => matchesMap[x])

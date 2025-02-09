@@ -592,7 +592,10 @@ class AppiumDriver extends DriverCore {
   async deleteSession(sessionId) {
     let protocol;
     try {
-      const { dstSession, otherSessionsData } = await this.getDestinationSession(sessionId, AppiumDriver.name);
+      const {
+        dstSession,
+        otherSessionsData
+      } = await this.getDestinationSession(sessionId, AppiumDriver.name);
       // this may not be correct, but if `dstSession` was falsy, the call to `deleteSession()` would
       // throw anyway.
       if (!dstSession) {

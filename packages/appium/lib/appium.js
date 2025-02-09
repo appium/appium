@@ -251,7 +251,8 @@ class AppiumDriver extends DriverCore {
       throw new Error('Session not found');
     }
 
-    if (!(typeof dstSession.getAppiumSessionCapabilities === 'function')) {
+
+    if (!_.isFunction(dstSession.getAppiumSessionCapabilities)) {
       throw new errors.UnsupportedOperationError("The session doesn't support the endpoint.");
     };
 

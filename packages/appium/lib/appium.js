@@ -240,15 +240,25 @@ class AppiumDriver extends DriverCore {
       'Please check https://github.com/appium/appium/issues/20880 for more details.');
   }
 
+  /**
+   * Return session capabilities info related to the destination driver.
+   * @param sessionId - the id of the session to return capabilities info.
+   * @returns {Promise<AppiumSessionCapabilities>} A session capabilities object
+   */
   async getAppiumSessionCapabilities (sessionId) {
     const { dstSession } = await this.getDestinationSession(sessionId, AppiumDriver.name);
     if (!dstSession) {
       throw new Error('Session not found');
     }
+
+    if (!(typeof dstSession.getAppiumSessionCapabilities === 'function')) {
+      throw new errors.UnsupportedOperationError("The session doesn't support the endpoint.");
+    };
+
     return {
       protocol: dstSession.protocol,
-      value: dstSession.getAppiumSessionCapabilities(sessionId)
-    }
+      value: await dstSession.getAppiumSessionCapabilities(sessionId)
+    };
   }
 
   printNewSessionAnnouncement(driverName, driverVersion, driverBaseVersion) {
@@ -1043,3 +1053,12 @@ export {AppiumDriver};
  * @typedef {typeof desiredCapabilityConstraints} AppiumDriverConstraints
  * @typedef {import('@appium/types').W3CDriverCaps<AppiumDriverConstraints>} W3CAppiumDriverCaps
  */
+
+
+/**
+ * Used by {@linkcode AppiumDriver.getAppiumSessionCapabilities}
+ * @typedef AppiumSessionCapabilities
+ * @property {object} [value]
+ * @property {Error} [error]
+ * @property {string} [protocol]
+*/

@@ -1054,7 +1054,6 @@ export {AppiumDriver};
  * @typedef {import('@appium/types').W3CDriverCaps<AppiumDriverConstraints>} W3CAppiumDriverCaps
  */
 
-
 /**
  * Used by {@linkcode AppiumDriver.getAppiumSessionCapabilities}
  * @typedef AppiumSessionCapabilities

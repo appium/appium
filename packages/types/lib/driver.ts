@@ -13,7 +13,7 @@ import type {HTTPHeaders, HTTPMethod} from './http';
 import type {AppiumLogger} from './logger';
 import type {AppiumServer, UpdateServerCallback} from './server';
 import type {Class, Element, StringRecord} from './util';
-import internal from 'node:stream';
+import type internal from 'node:stream';
 
 /**
  * Interface implemented by the `DeviceSettings` class in `@appium/base-driver`
@@ -475,11 +475,10 @@ export interface ISessionHandler<
    */
   getSession(): Promise<SingularSessionData<C, SessionData>>;
 
-
   /**
    * Return session capabilities info.
-  * @param sessionId - the id of the session to return capabilities info.
-  * @returns A session capabilities object
+   * @param sessionId - the id of the session to return capabilities info.
+   * @returns A session capabilities object
    */
   getAppiumSessionCapabilities?(sessionId?: string): Promise<AppiumSessionCapabilities>;
 }

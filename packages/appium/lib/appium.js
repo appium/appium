@@ -196,15 +196,59 @@ class AppiumDriver extends DriverCore {
     }));
   }
 
+
+  /**
+   * Returns current destination session info.
+   * @param {string} sessionId
+   * @param {string} appiumDriverName
+   * @returns {Promise<{dstSession: ?ExternalDriver, otherSessionsData: DriverData[]}>}
+   * @throws {Error} if an error occurred
+   */
+  async getDestinationSession(sessionId, appiumDriverName) {
+    return await sessionsListGuard.acquire(appiumDriverName, () => {
+      if (!this.sessions[sessionId]) {
+        return {
+          dstSession: null,
+          otherSessionsData: []
+        };
+      }
+      const curConstructorName = this.sessions[sessionId].constructor.name;
+      const otherSessionsData = _.toPairs(this.sessions)
+        .filter(
+          ([key, value]) => value.constructor.name === curConstructorName && key !== sessionId,
+        )
+        .map(([, value]) => value.driverData);
+      const dstSession = this.sessions[sessionId];
+      this.log.info(`Removing session ${sessionId} from our master session list`);
+      // regardless of whether the deleteSession completes successfully or not
+      // make the session unavailable, because who knows what state it might
+      // be in otherwise
+      delete this.sessions[sessionId];
+      delete this.sessionPlugins[sessionId];
+
+      this.cleanupBidiSockets(sessionId);
+
+      return {
+        dstSession,
+        otherSessionsData
+      };
+    });
+  }
+
   async getAppiumSessions () {
     throw new errors.NotImplementedError('Not implemented yet. ' +
       'Please check https://github.com/appium/appium/issues/20880 for more details.');
   }
 
-  async getAppiumSessionCapabilities () {
-    throw new errors.NotImplementedError('TODO: Implement this method body to call getAppiumSessionCapabilities ' +
-      'from the destination driver instance in a session.'
-    );
+  async getAppiumSessionCapabilities (sessionId) {
+    const { dstSession } = await this.getDestinationSession(sessionId, AppiumDriver.name);
+    if (!dstSession) {
+      throw new Error('Session not found');
+    }
+    return {
+      protocol: dstSession.protocol,
+      value: dstSession.getAppiumSessionCapabilities(sessionId)
+    }
   }
 
   printNewSessionAnnouncement(driverName, driverVersion, driverBaseVersion) {
@@ -538,35 +582,13 @@ class AppiumDriver extends DriverCore {
   async deleteSession(sessionId) {
     let protocol;
     try {
-      let otherSessionsData;
-      const dstSession = await sessionsListGuard.acquire(AppiumDriver.name, () => {
-        if (!this.sessions[sessionId]) {
-          return;
-        }
-        const curConstructorName = this.sessions[sessionId].constructor.name;
-        otherSessionsData = _.toPairs(this.sessions)
-          .filter(
-            ([key, value]) => value.constructor.name === curConstructorName && key !== sessionId,
-          )
-          .map(([, value]) => value.driverData);
-        const dstSession = this.sessions[sessionId];
-        protocol = dstSession.protocol;
-        this.log.info(`Removing session ${sessionId} from our master session list`);
-        // regardless of whether the deleteSession completes successfully or not
-        // make the session unavailable, because who knows what state it might
-        // be in otherwise
-        delete this.sessions[sessionId];
-        delete this.sessionPlugins[sessionId];
-
-        this.cleanupBidiSockets(sessionId);
-
-        return dstSession;
-      });
+      const { dstSession, otherSessionsData } = await this.getDestinationSession(sessionId, AppiumDriver.name);
       // this may not be correct, but if `dstSession` was falsy, the call to `deleteSession()` would
       // throw anyway.
       if (!dstSession) {
         throw new Error('Session not found');
       }
+      protocol = dstSession.protocol;
       return {
         protocol,
         value: await dstSession.deleteSession(sessionId, otherSessionsData),

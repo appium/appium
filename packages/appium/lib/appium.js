@@ -224,10 +224,7 @@ class AppiumDriver extends DriverCore {
       );
     };
 
-    return {
-      protocol: dstSession.protocol,
-      value: await dstSession.getAppiumSessionCapabilities(sessionId)
-    };
+    return await dstSession.getAppiumSessionCapabilities(sessionId);
   }
 
   printNewSessionAnnouncement(driverName, driverVersion, driverBaseVersion) {

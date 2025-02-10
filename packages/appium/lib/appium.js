@@ -437,7 +437,7 @@ class AppiumDriver extends DriverCore {
       );
 
       // set the New Command Timeout for the inner driver
-      await driverInstance.startNewCommandTimeout();
+      driverInstance.startNewCommandTimeout();
 
       // apply initial values to Appium settings (if provided)
       if (driverInstance.isW3CProtocol() && !_.isEmpty(w3cSettings)) {

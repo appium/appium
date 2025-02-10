@@ -207,7 +207,7 @@ class AppiumDriver extends DriverCore {
    * https://github.com/appium/appium/issues/20880
    *
    * @param sessionId - the id of the session to return capabilities info.
-   * @returns {Promise<{value: AppiumSessionCapabilities, error?: Error, protocol?: string}>}
+   * @returns {Promise<{value: object, error?: Error, protocol?: string}>}
    */
   async getAppiumSessionCapabilities (sessionId) {
     const dstSession = this.driverForSession(sessionId);
@@ -1044,11 +1044,3 @@ export {AppiumDriver};
  * @typedef {typeof desiredCapabilityConstraints} AppiumDriverConstraints
  * @typedef {import('@appium/types').W3CDriverCaps<AppiumDriverConstraints>} W3CAppiumDriverCaps
  */
-
-/**
- * Used by {@linkcode AppiumDriver.getAppiumSessionCapabilities}
- * @typedef AppiumSessionCapabilities
- * @property {object} [value]
- * @property {Error} [error]
- * @property {string} [protocol]
-*/

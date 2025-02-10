@@ -189,11 +189,6 @@ export interface MultiSessionData<C extends Constraints = Constraints> {
 }
 
 /**
- * Data returned by {@linkcode ISessionHandler.getAppiumSessionCapabilities}.
- */
-export interface AppiumSessionCapabilities {}
-
-/**
  * Data returned by {@linkcode ISessionHandler.getSession}.
  *
  * @typeParam C - The driver's constraints
@@ -477,11 +472,14 @@ export interface ISessionHandler<
 
   /**
    * Return session capabilities info.
+   * FIXME: Please define better type after deciding the response format in
+   * https://github.com/appium/appium/issues/20880
    * @param sessionId - the id of the session to return capabilities info.
    * @returns A session capabilities object
    */
-  getAppiumSessionCapabilities?(sessionId?: string): Promise<AppiumSessionCapabilities>;
-}
+  getAppiumSessionCapabilities?(sessionId?: string): Promise<{
+    value: object, error?: Error, protocol?: string}>
+  };
 
 /**
  * Custom session data for a driver.

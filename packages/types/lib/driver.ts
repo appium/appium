@@ -477,7 +477,7 @@ export interface ISessionHandler<
    * @param sessionId - the id of the session to return capabilities info.
    * @returns A session capabilities object
    */
-  getAppiumSessionCapabilities?(sessionId?: string): Promise<{
+  getAppiumSessionCapabilities?(sessionId: string): Promise<{
     value: object, error?: Error, protocol?: string}>
   };
 

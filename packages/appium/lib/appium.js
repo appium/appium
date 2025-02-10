@@ -204,20 +204,24 @@ class AppiumDriver extends DriverCore {
 
   /**
    * Return session capabilities info related to the destination driver.
+   * https://github.com/appium/appium/issues/20880
+   *
    * @param sessionId - the id of the session to return capabilities info.
-   * @returns {Promise<{value: AppiumSessionCapabilities, error?: Error, protocol: string|undefined}>}
+   * @returns {Promise<{value: AppiumSessionCapabilities, error?: Error, protocol?: string}>}
    */
   async getAppiumSessionCapabilities (sessionId) {
-    const dstSession = this.sessions[sessionId];
+    const dstSession = this.driverForSession(sessionId);
     if (!dstSession) {
-      throw new Error(`The session with id '${sessionId}' does not exist`);
+      throw new Error(`The session with id '${sessionId}' does not exist.`);
     }
 
     // to extend the newCommandTimeout for session id related endpoint call.
     await dstSession.startNewCommandTimeout();
 
     if (!_.isFunction(dstSession.getAppiumSessionCapabilities)) {
-      throw new errors.UnsupportedOperationError('The driver does not support the endpoint.');
+      throw new errors.UnsupportedOperationError(
+        `${dstSession.constructor.name} does not support session capabilities retrieval yet.`
+      );
     };
 
     return {

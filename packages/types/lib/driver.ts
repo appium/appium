@@ -189,7 +189,12 @@ export interface MultiSessionData<C extends Constraints = Constraints> {
 }
 
 /**
- * Data returned by {@linkcode ISessionCommands.getSession}.
+ * Data returned by {@linkcode ISessionHandler.getAppiumSessionCapabilities}.
+ */
+export interface AppiumSessionCapabilities {}
+
+/**
+ * Data returned by {@linkcode ISessionHandler.getSession}.
  *
  * @typeParam C - The driver's constraints
  * @typeParam T - Any extra data the driver stuffs in here
@@ -469,6 +474,13 @@ export interface ISessionHandler<
    * @returns A session data object
    */
   getSession(): Promise<SingularSessionData<C, SessionData>>;
+
+  /**
+   * Return session capabilities info.
+   * @param sessionId - the id of the session to return capabilities info.
+   * @returns A session capabilities object
+   */
+  getAppiumSessionCapabilities?(sessionId?: string): Promise<AppiumSessionCapabilities>;
 }
 
 /**

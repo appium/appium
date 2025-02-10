@@ -201,10 +201,29 @@ class AppiumDriver extends DriverCore {
       'Please check https://github.com/appium/appium/issues/20880 for more details.');
   }
 
-  async getAppiumSessionCapabilities () {
-    throw new errors.NotImplementedError('TODO: Implement this method body to call getAppiumSessionCapabilities ' +
-      'from the destination driver instance in a session.'
-    );
+
+  /**
+   * Return session capabilities info related to the destination driver.
+   * @param sessionId - the id of the session to return capabilities info.
+   * @returns {Promise<{value: AppiumSessionCapabilities, error?: Error, protocol: string|undefined}>}
+   */
+  async getAppiumSessionCapabilities (sessionId) {
+    const dstSession = this.sessions[sessionId];
+    if (!dstSession) {
+      throw new Error(`The session with id '${sessionId}' does not exist`);
+    }
+
+    // to extend the newCommandTimeout for session id related endpoint call.
+    await dstSession.startNewCommandTimeout();
+
+    if (!_.isFunction(dstSession.getAppiumSessionCapabilities)) {
+      throw new errors.UnsupportedOperationError('The driver does not support the endpoint.');
+    };
+
+    return {
+      protocol: dstSession.protocol,
+      value: await dstSession.getAppiumSessionCapabilities(sessionId)
+    };
   }
 
   printNewSessionAnnouncement(driverName, driverVersion, driverBaseVersion) {
@@ -418,7 +437,7 @@ class AppiumDriver extends DriverCore {
       );
 
       // set the New Command Timeout for the inner driver
-      driverInstance.startNewCommandTimeout();
+      await driverInstance.startNewCommandTimeout();
 
       // apply initial values to Appium settings (if provided)
       if (driverInstance.isW3CProtocol() && !_.isEmpty(w3cSettings)) {
@@ -1021,3 +1040,11 @@ export {AppiumDriver};
  * @typedef {typeof desiredCapabilityConstraints} AppiumDriverConstraints
  * @typedef {import('@appium/types').W3CDriverCaps<AppiumDriverConstraints>} W3CAppiumDriverCaps
  */
+
+/**
+ * Used by {@linkcode AppiumDriver.getAppiumSessionCapabilities}
+ * @typedef AppiumSessionCapabilities
+ * @property {object} [value]
+ * @property {Error} [error]
+ * @property {string} [protocol]
+*/

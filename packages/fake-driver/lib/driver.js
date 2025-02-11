@@ -157,7 +157,7 @@ export class FakeDriver extends BaseDriver {
       sessionId,
       'newInfo': 'fakedriver specific stuff',
       ...this.caps
-    }
+    };
   }
 
   /**

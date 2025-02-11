@@ -978,4 +978,4 @@ export function routeToCommandName(endpoint, method, basePath = DEFAULT_BASE_PAT
 }
 
 // driver commands that do not require a session to already exist
-export const NO_SESSION_ID_COMMANDS = ['createSession', 'getStatus', 'getSessions'];
+export const NO_SESSION_ID_COMMANDS = ['createSession', 'getStatus', 'getSessions', 'getAppiumSessions'];

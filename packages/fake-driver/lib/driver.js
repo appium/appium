@@ -154,7 +154,8 @@ export class FakeDriver extends BaseDriver {
 
   async getAppiumSessionCapabilities(sessionId) {
     return {
-      'info': 'this value should not be returned'
+      'info': 'additional info',
+      ...this.caps
     };
   }
 

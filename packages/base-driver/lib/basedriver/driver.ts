@@ -369,7 +369,7 @@ export class BaseDriver<
   }
 
   /**
-   * Returns capabilities for the session and event history (if applicable)
+   * Returns capabilities for the session
    */
   async getAppiumSessionCapabilities() {
     return this.caps;

@@ -43,12 +43,16 @@ Returns capabilities for the session and event history (if applicable)
 
 A session data object
 
-### `getSession` / `getAppiumSessionCapabilities`
+### `getSession`
 
-`GET` **`/session/:sessionId`** / `GET` **`/session/:sessionId/appium/capabilities`**
+`GET` **`/session/:sessionId`**
 
 Returns capabilities for the session and event history (if applicable).
-`getSession` is deprecated.
+
+!!! warning "Deprecated"
+
+    Please use `getAppiumSessionCapabilities` to get the session capabilities.
+    Please use `getLogEvents` to get event history.
 
 
 <!-- comment source: multiple -->
@@ -56,6 +60,20 @@ Returns capabilities for the session and event history (if applicable).
 #### Response
 
 `SingularSessionData`<`C`, `SessionData`\>
+
+A session data object
+
+### `getAppiumSessionCapabilities`
+
+`GET` **`/session/:sessionId/appium/capabilities`**
+
+Returns capabilities for the session.
+
+<!-- comment source: multiple -->
+
+#### Response
+
+`DriverCaps`<`C`\>
 
 A session data object
 

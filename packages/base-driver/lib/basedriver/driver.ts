@@ -359,19 +359,20 @@ export class BaseDriver<
 
   /**
    * Returns capabilities for the session and event history (if applicable)
-   * @deprecated Use getAppiumSessionCapabilities instead
+   * @deprecated Use {@linkcode ISessionCommands.getAppiumSessionCapabilities} instead for getting the capabilities.
+   * Use {@linkcode EventCommands.getLogEvents} instead to get the event history.
    */
   async getSession() {
-    return await this.getAppiumSessionCapabilities();
+    return (
+      this.caps.eventTimings ? {...this.caps, events: this.eventHistory} : this.caps
+    ) as SingularSessionData<C, SessionData>;
   }
 
   /**
    * Returns capabilities for the session and event history (if applicable)
    */
   async getAppiumSessionCapabilities() {
-    return (
-      this.caps.eventTimings ? {...this.caps, events: this.eventHistory} : this.caps
-    ) as SingularSessionData<C, SessionData>;
+    return this.caps;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

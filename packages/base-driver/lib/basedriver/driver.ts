@@ -362,7 +362,7 @@ export class BaseDriver<
    * @deprecated Use getAppiumSessionCapabilities instead
    */
   async getSession() {
-    return await this.getAppiumSessionCapabilities()
+    return await this.getAppiumSessionCapabilities();
   }
 
   /**

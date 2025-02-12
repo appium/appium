@@ -371,7 +371,7 @@ export class BaseDriver<
   /**
    * Returns capabilities for the session
    */
-  async getAppiumSessionCapabilities() {
+  async getAppiumSessionCapabilities(): Promise<DriverCaps<C>> {
     return this.caps;
   }
 

@@ -63,7 +63,7 @@ generate various kinds of reports from event timings output:
 
 !!! note
 
-    In the past, the events were available as a part of `GET /session/:id` response
+    In the past, events were available as a part of `GET /session/:id` response
 
 ## Add a custom event
 

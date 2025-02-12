@@ -61,6 +61,10 @@ The Appium team maintains an event timings parser tool that can be used to
 generate various kinds of reports from event timings output:
 [appium/appium-event-parser](https://github.com/appium/appium-event-parser).
 
+!!! note
+
+    In the past, the events were available as a part of `GET /session/:id` response
+
 ## Add a custom event
 
 !!! warning "TODO"

@@ -152,13 +152,6 @@ export class FakeDriver extends BaseDriver {
     return await super.deleteSession(sessionId);
   }
 
-  async getAppiumSessionCapabilities(sessionId) {
-    return {
-      'info': 'additional info',
-      ...this.caps
-    };
-  }
-
   /**
    * @returns {Promise<string>}
    */

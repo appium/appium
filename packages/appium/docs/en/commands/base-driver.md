@@ -43,11 +43,13 @@ Returns capabilities for the session and event history (if applicable)
 
 A session data object
 
-### `getSession`
+### `getSession` / `getAppiumSessionCapabilities`
 
-`GET` **`/session/:sessionId`**
+`GET` **`/session/:sessionId`** / `GET` **`/session/:sessionId/appium/capabilities`**
 
-Returns capabilities for the session and event history (if applicable)
+Returns capabilities for the session and event history (if applicable).
+`getSession` is deprecated.
+
 
 <!-- comment source: multiple -->
 

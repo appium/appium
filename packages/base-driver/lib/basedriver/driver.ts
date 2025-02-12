@@ -359,8 +359,16 @@ export class BaseDriver<
 
   /**
    * Returns capabilities for the session and event history (if applicable)
+   * @deprecated Use getAppiumSessionCapabilities instead
    */
   async getSession() {
+    return await this.getAppiumSessionCapabilities()
+  }
+
+  /**
+   * Returns capabilities for the session and event history (if applicable)
+   */
+  async getAppiumSessionCapabilities() {
     return (
       this.caps.eventTimings ? {...this.caps, events: this.eventHistory} : this.caps
     ) as SingularSessionData<C, SessionData>;

@@ -46,7 +46,7 @@ exhaustive list to share here. It's best to actually get one of these responses
 from a real session to inspect the possible event types.)
 
 The `commands` property is an array of objects. Each object has the name of the
-Appium-internal command (for example, `click`), as well as the time the command
+Appium-internal command (for example `click`), as well as the time the command
 started processing and the time it finished processing.
 
 With this data, you can calculate the time between events, or a strict timeline

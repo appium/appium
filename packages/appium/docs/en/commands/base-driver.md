@@ -73,7 +73,7 @@ Returns capabilities for the session.
 
 #### Response
 
-`DriverCaps`<`C`\>
+`AppiumSessionCapabilities`
 
 A session data object
 

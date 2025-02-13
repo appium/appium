@@ -16,6 +16,7 @@ import {
   type InitialOpts,
   type DefaultDeleteSessionResult,
   type SingularSessionData,
+  type AppiumSessionCapabilities,
 } from '@appium/types';
 import B from 'bluebird';
 import _ from 'lodash';
@@ -371,8 +372,8 @@ export class BaseDriver<
   /**
    * Returns capabilities for the session
    */
-  async getAppiumSessionCapabilities(): Promise<DriverCaps<C>> {
-    return this.caps;
+  async getAppiumSessionCapabilities(): Promise<AppiumSessionCapabilities> {
+    return {capabilities: this.caps};
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

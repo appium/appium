@@ -16,7 +16,7 @@ import {
   type InitialOpts,
   type DefaultDeleteSessionResult,
   type SingularSessionData,
-  type AppiumSessionCapabilities,
+  type SessionCapabilities,
 } from '@appium/types';
 import B from 'bluebird';
 import _ from 'lodash';
@@ -372,7 +372,7 @@ export class BaseDriver<
   /**
    * Returns capabilities for the session
    */
-  async getAppiumSessionCapabilities(): Promise<AppiumSessionCapabilities> {
+  async getAppiumSessionCapabilities(): Promise<SessionCapabilities<C>> {
     return {capabilities: this.caps};
   }
 

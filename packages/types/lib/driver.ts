@@ -209,7 +209,7 @@ export type SingularSessionData<
  * @typeParam C - The driver's constraints
  * @typeParam T - Any extra data the driver stuffs in here
  */
-export type AppiumSessionCapabilities<
+export type SessionCapabilities<
   C extends Constraints = Constraints,
   T extends StringRecord = StringRecord,
 > = {

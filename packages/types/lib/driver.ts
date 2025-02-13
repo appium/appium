@@ -212,7 +212,9 @@ export type SingularSessionData<
 export type AppiumSessionCapabilities<
   C extends Constraints = Constraints,
   T extends StringRecord = StringRecord,
-> = Record<'capabilities', DriverCaps<C>> & T;
+> = {
+  capabilities: DriverCaps<C>;
+} & T;
 
 export interface IFindCommands {
   /**

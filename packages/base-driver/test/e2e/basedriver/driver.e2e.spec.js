@@ -57,8 +57,3 @@ describe('BaseDriver', function () {
     });
   });
 });
-
-
-/**
- * @typedef {import('@appium/driver-test-support').SessionHelpers} SessionHelpers
- */

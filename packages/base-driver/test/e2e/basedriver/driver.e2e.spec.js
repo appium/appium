@@ -1,13 +1,17 @@
-import { server, routeConfiguringFunction } from '../../../lib';
+import { BaseDriver, server, routeConfiguringFunction } from '../../../lib';
 import { FakeDriver } from '../protocol/fake-driver';
 import axios from 'axios';
-import {TEST_HOST, getTestPort} from '@appium/driver-test-support';
+import {TEST_HOST, getTestPort, driverE2ETestSuite} from '@appium/driver-test-support';
 
 const DEFAULT_CAPS = {
   platformName: 'fake',
   'appium:automationNAme': 'fake',
 };
 
+driverE2ETestSuite(BaseDriver, {
+  platformName: 'iOS',
+  'appium:deviceName': 'Delorean',
+});
 
 describe('BaseDriver', function () {
   let port;

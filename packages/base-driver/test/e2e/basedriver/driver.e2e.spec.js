@@ -4,8 +4,8 @@ import axios from 'axios';
 import {TEST_HOST, getTestPort} from '@appium/driver-test-support';
 
 const DEFAULT_CAPS = {
-  platformName: 'iOS',
-  'appium:deviceName': 'Delorean',
+  platformName: 'fake',
+  'appium:automationNAme': 'fake',
 };
 
 

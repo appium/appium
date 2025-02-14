@@ -15,6 +15,7 @@
   "packageRules": [
     {
       "matchPackageNames": [
+        "@types/supports-color",
         "@types/wrap-ansi",
         "chalk",
         "conf",

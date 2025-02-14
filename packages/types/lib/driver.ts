@@ -203,6 +203,19 @@ export type SingularSessionData<
   error?: string;
 } & T;
 
+/**
+ * Data returned by {@linkcode ISessionCommands.getAppiumSessionCapabilities}.
+ *
+ * @typeParam C - The driver's constraints
+ * @typeParam T - Any extra data the driver stuffs in here
+ */
+export type SessionCapabilities<
+  C extends Constraints = Constraints,
+  T extends StringRecord = StringRecord,
+> = {
+  capabilities: DriverCaps<C>;
+} & T;
+
 export interface IFindCommands {
   /**
    * Find a UI element given a locator strategy and a selector, erroring if it can't be found

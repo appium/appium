@@ -16,6 +16,7 @@ import {
   type InitialOpts,
   type DefaultDeleteSessionResult,
   type SingularSessionData,
+  type SessionCapabilities,
 } from '@appium/types';
 import B from 'bluebird';
 import _ from 'lodash';
@@ -359,11 +360,20 @@ export class BaseDriver<
 
   /**
    * Returns capabilities for the session and event history (if applicable)
+   * @deprecated Use {@linkcode ISessionCommands.getAppiumSessionCapabilities} instead for getting the capabilities.
+   * Use {@linkcode EventCommands.getLogEvents} instead to get the event history.
    */
   async getSession() {
     return (
       this.caps.eventTimings ? {...this.caps, events: this.eventHistory} : this.caps
     ) as SingularSessionData<C, SessionData>;
+  }
+
+  /**
+   * Returns capabilities for the session
+   */
+  async getAppiumSessionCapabilities(): Promise<SessionCapabilities<C>> {
+    return {capabilities: this.caps};
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

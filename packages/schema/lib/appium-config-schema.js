@@ -117,9 +117,21 @@ export const AppiumConfigJsonSchema = /** @type {const} */ ({
           appiumCliAliases: ['ka'],
           default: 600,
           description:
-            'Number of seconds the Appium server should apply as both the keep-alive timeout and the connection timeout for all requests. A value of 0 disables the timeout.',
+            'Number of seconds the Appium server should apply as both the keep-alive timeout and the connection timeout ' +
+            'for all requests. A value of 0 disables the timeout.',
           minimum: 0,
           title: 'keep-alive-timeout config',
+          type: 'integer',
+        },
+        'request-timeout': {
+          default: 3600,
+          description:
+            'Number of seconds the Appium server should apply for receiving the entire HTTP request from the client. ' +
+            'A value of 0 disables the timeout. Set it to a non-zero value to protect against ' +
+            'potential Denial-of-Service attacks in case the server is deployed without a reverse proxy in front. ' +
+            'HTTP requests that are running longer than allowed by this timeout would be rejected with the status code 408.',
+          minimum: 0,
+          title: 'request-timeout config',
           type: 'integer',
         },
         'local-timezone': {

@@ -42,6 +42,10 @@ export type DenyInsecureConfig = string[];
  */
 export type KeepAliveTimeoutConfig = number;
 /**
+ * Number of seconds the Appium server should apply for receiving the entire HTTP request from the client. A value of 0 disables the timeout. Set it to a non-zero value to protect against potential Denial-of-Service attacks in case the server is deployed without a reverse proxy in front. HTTP requests that are running longer than allowed by this timeout would be rejected with the status code 408.
+ */
+export type RequestTimeoutConfig = number;
+/**
  * Use local timezone for timestamps
  */
 export type LocalTimezoneConfig = boolean;
@@ -193,6 +197,7 @@ export interface ServerConfig {
   "deny-insecure"?: DenyInsecureConfig;
   driver?: DriverConfig;
   "keep-alive-timeout"?: KeepAliveTimeoutConfig;
+  "request-timeout"?: RequestTimeoutConfig;
   "local-timezone"?: LocalTimezoneConfig;
   log?: LogConfig;
   "log-filters"?: LogFiltersConfig;

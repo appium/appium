@@ -120,6 +120,13 @@
           "title": "keep-alive-timeout config",
           "type": "integer"
         },
+        "request-timeout": {
+          "default": 3600,
+          "description": "Number of seconds the Appium server should apply for receiving the entire HTTP request from the client. A value of 0 disables the timeout. Set it to a non-zero value to protect against potential Denial-of-Service attacks in case the server is deployed without a reverse proxy in front. HTTP requests that are running longer than allowed by this timeout would be rejected with the status code 408.",
+          "minimum": 0,
+          "title": "request-timeout config",
+          "type": "integer"
+        },
         "local-timezone": {
           "default": false,
           "description": "Use local timezone for timestamps",

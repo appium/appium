@@ -34,6 +34,7 @@ below.
 |`--driver`|Driver-specific configuration. Keys should correspond to driver package names|object|||
 |`--drivers-import-chunk-size`|The maximum amount of drivers that could be imported in parallel on server startup|number|`3`||
 |`--keep-alive-timeout`|Number of seconds the Appium server should apply as both the keep-alive timeout and the connection timeout for all requests. Setting this to `0` disables the timeout.|integer|`600`|`-ka`|
+|`--request-timeout`|Number of seconds the Appium server should apply for receiving the entire HTTP request from the client. A value of 0 disables the timeout. Set it to a non-zero value to protect against potential Denial-of-Service attacks in case the server is deployed without a reverse proxy in front. HTTP requests that are running longer than allowed by this timeout would be rejected with the status code 408.|integer|`3600`||
 |`--local-timezone`|Use local timezone for timestamps|boolean|`false`||
 |`--log`|Also send log output to this file|string||`-g`|
 |`--log-filters`|One or more log filtering rules|array|||

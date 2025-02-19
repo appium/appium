@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.16.0](https://github.com/appium/appium/compare/@appium/base-driver@9.15.0...@appium/base-driver@9.16.0) (2025-02-19)
+
+
+### Features
+
+* Add /appium/extensions API to list available extensions ([#20931](https://github.com/appium/appium/issues/20931)) ([a6b6077](https://github.com/appium/appium/commit/a6b6077ecd0749598f52d9f29b3220f47d7ad636))
+* add /appium/sessions, /session/:sessionId/appium/capabilities and deprecated marks will be removed in the future ([#20936](https://github.com/appium/appium/issues/20936)) ([eeb59ca](https://github.com/appium/appium/commit/eeb59cab071fdafa44f091e9d0e2676414c85c5d))
+* Add BiDi commands to the listCommands API output ([#20925](https://github.com/appium/appium/issues/20925)) ([2635dcb](https://github.com/appium/appium/commit/2635dcb457be2dc02dfbee5ad4c6ab132f5af8de))
+* **appium:** Add a command line parameter to configure HTTP server request timeout ([#21003](https://github.com/appium/appium/issues/21003)) ([eb1b156](https://github.com/appium/appium/commit/eb1b156146bc338da9c6ded5a2c5beab22ac0ed8))
+* **base-driver:** Add an API to list commands ([#20914](https://github.com/appium/appium/issues/20914)) ([059f1cb](https://github.com/appium/appium/commit/059f1cb698ccdbc58494af9303c5bf264a1893d9))
+* **base-driver:** Print the closest match if the given script did not match ([#20956](https://github.com/appium/appium/issues/20956)) ([f8b5799](https://github.com/appium/appium/commit/f8b57999e5a4a13a089cff12954de5d99c8a35fc))
+
+
+### Bug Fixes
+
+* **driver-test-support:** update definitelytyped ([#20942](https://github.com/appium/appium/issues/20942)) ([f7c63ee](https://github.com/appium/appium/commit/f7c63ee5d87be21eba577a4cfd0b0a08a050afeb))
+* **types:** update dependency type-fest to v4.32.0 ([#20900](https://github.com/appium/appium/issues/20900)) ([fbc8530](https://github.com/appium/appium/commit/fbc85308a5398e7c9966792da713e60e47ed7f00))
+* **types:** update dependency type-fest to v4.33.0 ([#20923](https://github.com/appium/appium/issues/20923)) ([2409d32](https://github.com/appium/appium/commit/2409d3223a77aa7e84e0cb05a70be3bfa0c69157))
+* **types:** update dependency type-fest to v4.34.1 ([#20971](https://github.com/appium/appium/issues/20971)) ([0a7490e](https://github.com/appium/appium/commit/0a7490ed53ccfa9243df779e74bafadfc8415c87))
+* **types:** update dependency type-fest to v4.35.0 ([#20999](https://github.com/appium/appium/issues/20999)) ([3dc7336](https://github.com/appium/appium/commit/3dc7336b5fce10b9c1b095cd7a8a1841dbc3de12))
+
+
+
 ## [9.15.0](https://github.com/appium/appium/compare/@appium/base-driver@9.14.1...@appium/base-driver@9.15.0) (2025-01-08)
 
 

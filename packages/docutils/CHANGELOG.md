@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.30](https://github.com/appium/appium/compare/@appium/docutils@1.0.29...@appium/docutils@1.0.30) (2025-02-19)
+
+
+### Bug Fixes
+
+* **docutils:** update dependency consola to v3.4.0 ([#20908](https://github.com/appium/appium/issues/20908)) ([8fb0da3](https://github.com/appium/appium/commit/8fb0da34bb58c44c30ac8900a62510f1fcb663bc))
+* **docutils:** update dependency typescript to v5.7.3 ([#20893](https://github.com/appium/appium/issues/20893)) ([6706a00](https://github.com/appium/appium/commit/6706a0037eda5f7eb9eb2a4b0fb49888618c12c2))
+* **support:** update dependency semver to v7.7.0 ([#20948](https://github.com/appium/appium/issues/20948)) ([81ebd75](https://github.com/appium/appium/commit/81ebd758cb8a87d388124036e5158207041a6b2f))
+* **support:** update dependency semver to v7.7.1 ([#20961](https://github.com/appium/appium/issues/20961)) ([4c08944](https://github.com/appium/appium/commit/4c089440e655fbe3c8da919f8f625b7d7179f00a))
+* **types:** update dependency type-fest to v4.32.0 ([#20900](https://github.com/appium/appium/issues/20900)) ([fbc8530](https://github.com/appium/appium/commit/fbc85308a5398e7c9966792da713e60e47ed7f00))
+* **types:** update dependency type-fest to v4.33.0 ([#20923](https://github.com/appium/appium/issues/20923)) ([2409d32](https://github.com/appium/appium/commit/2409d3223a77aa7e84e0cb05a70be3bfa0c69157))
+* **types:** update dependency type-fest to v4.34.1 ([#20971](https://github.com/appium/appium/issues/20971)) ([0a7490e](https://github.com/appium/appium/commit/0a7490ed53ccfa9243df779e74bafadfc8415c87))
+* **types:** update dependency type-fest to v4.35.0 ([#20999](https://github.com/appium/appium/issues/20999)) ([3dc7336](https://github.com/appium/appium/commit/3dc7336b5fce10b9c1b095cd7a8a1841dbc3de12))
+
+
+
 ## [1.0.29](https://github.com/appium/appium/compare/@appium/docutils@1.0.28...@appium/docutils@1.0.29) (2025-01-08)
 
 **Note:** Version bump only for package @appium/docutils

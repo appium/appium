@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.8.0](https://github.com/appium/appium/compare/@appium/schema@0.7.1...@appium/schema@0.8.0) (2025-02-19)
+
+
+### Features
+
+* **appium:** Add a command line parameter to configure HTTP server request timeout ([#21003](https://github.com/appium/appium/issues/21003)) ([eb1b156](https://github.com/appium/appium/commit/eb1b156146bc338da9c6ded5a2c5beab22ac0ed8))
+
+
+
 ## [0.7.1](https://github.com/appium/appium/compare/@appium/schema@0.7.0...@appium/schema@0.7.1) (2025-01-02)
 
 

@@ -3,6 +3,41 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.16.0](https://github.com/appium/appium/compare/appium@2.15.0...appium@2.16.0) (2025-02-19)
+
+
+### Features
+
+* Add /appium/extensions API to list available extensions ([#20931](https://github.com/appium/appium/issues/20931)) ([a6b6077](https://github.com/appium/appium/commit/a6b6077ecd0749598f52d9f29b3220f47d7ad636))
+* add /appium/sessions, /session/:sessionId/appium/capabilities and deprecated marks will be removed in the future ([#20936](https://github.com/appium/appium/issues/20936)) ([eeb59ca](https://github.com/appium/appium/commit/eeb59cab071fdafa44f091e9d0e2676414c85c5d))
+* Add BiDi commands to the listCommands API output ([#20925](https://github.com/appium/appium/issues/20925)) ([2635dcb](https://github.com/appium/appium/commit/2635dcb457be2dc02dfbee5ad4c6ab132f5af8de))
+* **appium:** Add a command line parameter to configure HTTP server request timeout ([#21003](https://github.com/appium/appium/issues/21003)) ([eb1b156](https://github.com/appium/appium/commit/eb1b156146bc338da9c6ded5a2c5beab22ac0ed8))
+* **base-driver:** Add an API to list commands ([#20914](https://github.com/appium/appium/issues/20914)) ([059f1cb](https://github.com/appium/appium/commit/059f1cb698ccdbc58494af9303c5bf264a1893d9))
+
+
+### Bug Fixes
+
+* **appium:** add await for async function ([#20974](https://github.com/appium/appium/issues/20974)) ([21e2aab](https://github.com/appium/appium/commit/21e2aabc391fefe0dff8e29fe1cd6be908d5b3d0))
+* **appium:** Wait for upstream web socket to open before sending data to it ([#20953](https://github.com/appium/appium/issues/20953)) ([3cfe3af](https://github.com/appium/appium/commit/3cfe3af1c8d88c8ec79d2d89c7e76d697205c86b))
+* **execute-driver-plugin:** update dependency webdriverio to v9.5.3 ([#20895](https://github.com/appium/appium/issues/20895)) ([8741474](https://github.com/appium/appium/commit/874147449a26bbec03b08e7e95fb9e4c6b5881af))
+* **execute-driver-plugin:** update dependency webdriverio to v9.5.4 ([#20898](https://github.com/appium/appium/issues/20898)) ([7f91d5c](https://github.com/appium/appium/commit/7f91d5cba850100124088d774ba8704e3765863f))
+* **execute-driver-plugin:** update dependency webdriverio to v9.5.7 ([#20903](https://github.com/appium/appium/issues/20903)) ([c60fdc8](https://github.com/appium/appium/commit/c60fdc8d847b4aeed2d8b8307180194ee32e5ca9))
+* **execute-driver-plugin:** update dependency webdriverio to v9.7.0 ([#20930](https://github.com/appium/appium/issues/20930)) ([5780982](https://github.com/appium/appium/commit/57809826a410b71dca155f59e081f77dcaf671ed))
+* **execute-driver-plugin:** update dependency webdriverio to v9.7.1 ([#20934](https://github.com/appium/appium/issues/20934)) ([50fa5d6](https://github.com/appium/appium/commit/50fa5d670bd967200a78e5b4b8a54d5c9b85901b))
+* **execute-driver-plugin:** update dependency webdriverio to v9.7.2 ([#20944](https://github.com/appium/appium/issues/20944)) ([f5e0819](https://github.com/appium/appium/commit/f5e0819f505b55421b7d260f69a41ae980390a91))
+* **execute-driver-plugin:** update dependency webdriverio to v9.8.0 ([#20964](https://github.com/appium/appium/issues/20964)) ([ce32226](https://github.com/appium/appium/commit/ce32226cb57fb3f07bf4862dbbfcba227ff1230c))
+* **execute-driver-plugin:** update dependency webdriverio to v9.9.0 ([#20994](https://github.com/appium/appium/issues/20994)) ([b3c877f](https://github.com/appium/appium/commit/b3c877f66ddf3ccf7a25ca1f7a3952c660bd7dda))
+* **execute-driver-plugin:** update dependency webdriverio to v9.9.1 ([#20996](https://github.com/appium/appium/issues/20996)) ([c6a080f](https://github.com/appium/appium/commit/c6a080f7ade03a49a274ce6fbc84629406fdc2a7))
+* **execute-driver-plugin:** update dependency webdriverio to v9.9.3 ([#21005](https://github.com/appium/appium/issues/21005)) ([686a630](https://github.com/appium/appium/commit/686a630fbdf525db16b42fdfc1bbdaf6426b41d0))
+* **support:** update dependency semver to v7.7.0 ([#20948](https://github.com/appium/appium/issues/20948)) ([81ebd75](https://github.com/appium/appium/commit/81ebd758cb8a87d388124036e5158207041a6b2f))
+* **support:** update dependency semver to v7.7.1 ([#20961](https://github.com/appium/appium/issues/20961)) ([4c08944](https://github.com/appium/appium/commit/4c089440e655fbe3c8da919f8f625b7d7179f00a))
+* **types:** update dependency type-fest to v4.32.0 ([#20900](https://github.com/appium/appium/issues/20900)) ([fbc8530](https://github.com/appium/appium/commit/fbc85308a5398e7c9966792da713e60e47ed7f00))
+* **types:** update dependency type-fest to v4.33.0 ([#20923](https://github.com/appium/appium/issues/20923)) ([2409d32](https://github.com/appium/appium/commit/2409d3223a77aa7e84e0cb05a70be3bfa0c69157))
+* **types:** update dependency type-fest to v4.34.1 ([#20971](https://github.com/appium/appium/issues/20971)) ([0a7490e](https://github.com/appium/appium/commit/0a7490ed53ccfa9243df779e74bafadfc8415c87))
+* **types:** update dependency type-fest to v4.35.0 ([#20999](https://github.com/appium/appium/issues/20999)) ([3dc7336](https://github.com/appium/appium/commit/3dc7336b5fce10b9c1b095cd7a8a1841dbc3de12))
+
+
+
 ## [2.15.0](https://github.com/appium/appium/compare/appium@2.14.1...appium@2.15.0) (2025-01-08)
 
 

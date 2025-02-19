@@ -76,7 +76,7 @@ async function createServer (app, cliArgs) {
  * @param {ServerOpts} opts
  * @returns {Promise<AppiumServer>}
  */
-async function server(opts) {
+export async function server(opts) {
   const {
     routeConfiguringFunction,
     port,
@@ -87,6 +87,7 @@ async function server(opts) {
     extraMethodMap = {},
     serverUpdaters = [],
     keepAliveTimeout = KEEP_ALIVE_TIMEOUT_MS,
+    requestTimeout,
   } = opts;
 
   const app = express();
@@ -123,7 +124,13 @@ async function server(opts) {
       // want to block extensions' ability to add routes if they want.
       app.all('*', catch404Handler);
 
-      await startServer({httpServer, hostname, port, keepAliveTimeout});
+      await startServer({
+        httpServer,
+        hostname,
+        port,
+        keepAliveTimeout,
+        requestTimeout,
+      });
 
       resolve(appiumServer);
     } catch (err) {
@@ -136,7 +143,7 @@ async function server(opts) {
  * Sets up some Express middleware and stuff
  * @param {ConfigureServerOpts} opts
  */
-function configureServer({
+export function configureServer({
   app,
   addRoutes,
   allowCors = true,
@@ -267,13 +274,22 @@ function configureHttp({httpServer, reject, keepAliveTimeout, gracefulShutdownTi
  * @param {StartServerOpts} opts
  * @returns {Promise<void>}
  */
-async function startServer({httpServer, port, hostname, keepAliveTimeout}) {
+async function startServer({
+  httpServer,
+  port,
+  hostname,
+  keepAliveTimeout,
+  requestTimeout,
+}) {
   // If the hostname is omitted, the server will accept
   // connections on any IP address
   /** @type {(port: number, hostname?: string) => B<http.Server>} */
   const start = B.promisify(httpServer.listen, {context: httpServer});
   const startPromise = start(port, hostname);
   httpServer.keepAliveTimeout = keepAliveTimeout;
+  if (_.isInteger(requestTimeout)) {
+    httpServer.requestTimeout = Number(requestTimeout);
+  }
   // headers timeout must be greater than keepAliveTimeout
   httpServer.headersTimeout = keepAliveTimeout + 5 * 1000;
   await startPromise;
@@ -284,7 +300,7 @@ async function startServer({httpServer, port, hostname, keepAliveTimeout}) {
  * @param {string} basePath
  * @returns {string}
  */
-function normalizeBasePath(basePath) {
+export function normalizeBasePath(basePath) {
   if (!_.isString(basePath)) {
     throw new Error(`Invalid path prefix ${basePath}`);
   }
@@ -302,7 +318,6 @@ function normalizeBasePath(basePath) {
   return basePath;
 }
 
-export {server, configureServer, normalizeBasePath};
 
 /**
  * Options for {@linkcode startServer}.
@@ -311,6 +326,8 @@ export {server, configureServer, normalizeBasePath};
  * @property {number} port - Port to run on
  * @property {number} keepAliveTimeout - Keep-alive timeout in milliseconds
  * @property {string} [hostname] - Optional hostname
+ * @property {number} [requestTimeout] - The timeout value in milliseconds for
+ * receiving the entire request from the client
  */
 
 /**
@@ -344,6 +361,7 @@ export {server, configureServer, normalizeBasePath};
  * @property {MethodMap} [extraMethodMap]
  * @property {import('@appium/types').UpdateServerCallback[]} [serverUpdaters]
  * @property {number} [keepAliveTimeout]
+ * @property {number} [requestTimeout]
  */
 
 /**

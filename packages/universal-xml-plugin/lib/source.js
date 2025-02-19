@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import {XMLParser, XMLBuilder} from 'fast-xml-parser';
 import NODE_MAP from './node-map';
 import {ATTR_MAP, REMOVE_ATTRS} from './attr-map';
 import TRANSFORMS from './transformers';
@@ -7,21 +6,6 @@ import TRANSFORMS from './transformers';
 export const ATTR_PREFIX = '@_';
 export const IDX_PATH_PREFIX = `${ATTR_PREFIX}indexPath`;
 export const IDX_PREFIX = `${ATTR_PREFIX}index`;
-
-const PARSE_OPTS = {
-  ignoreAttributes: false,
-  ignoreDeclaration: true,
-  attributeNamePrefix: ATTR_PREFIX,
-  isArray: (name, jPath, isLeafNode, isAttribute) => !isAttribute,
-};
-
-const GEN_OPTS = {
-  ignoreAttributes: false,
-  attributeNamePrefix: ATTR_PREFIX,
-  allowBooleanAttributes: true,
-  suppressBooleanAttributes: false,
-  format: true,
-};
 
 const isAttr = (/** @type {string} */ k) => k.startsWith(ATTR_PREFIX);
 const isNode = (/** @type {string} */ k) => !isAttr(k);
@@ -31,19 +15,19 @@ const isNode = (/** @type {string} */ k) => !isAttr(k);
  * @param {string} xmlStr
  * @param {string} platform
  * @param {{metadata?: Object, addIndexPath?: boolean}} opts
- * @returns {{xml: string, unknowns: NodesAndAttributes}}
+ * @returns {Promise<{xml: string, unknowns: NodesAndAttributes}>}
  */
-export function transformSourceXml(xmlStr, platform, {metadata = {}, addIndexPath = false} = {}) {
+export async function transformSourceXml(xmlStr, platform, {metadata = {}, addIndexPath = false} = {}) {
   // first thing we want to do is modify the ios source root node, because it doesn't include the
   // necessary index attribute, so we add it if it's not there
   xmlStr = xmlStr.replace('<AppiumAUT>', '<AppiumAUT index="0">');
-  const xmlObj = new XMLParser(PARSE_OPTS).parse(xmlStr);
+  const xmlObj = (await singletonXmlParser()).parse(xmlStr);
   const unknowns = transformNode(xmlObj, platform, {
     metadata,
     addIndexPath,
     parentPath: '',
   });
-  let transformedXml = new XMLBuilder(GEN_OPTS).build(xmlObj).trim();
+  let transformedXml = (await singletonXmlBuilder()).build(xmlObj).trim();
   transformedXml = `<?xml version="1.0" encoding="UTF-8"?>\n${transformedXml}`;
   return {xml: transformedXml, unknowns};
 }
@@ -216,6 +200,26 @@ export function transformAttrs(nodeObj, attrs, platform) {
   }
   return unknownAttrs;
 }
+
+const singletonXmlBuilder = _.memoize(async function makeXmlBuilder() {
+  const { XMLBuilder } = await import('fast-xml-parser');
+  return new XMLBuilder({
+    ignoreAttributes: false,
+    attributeNamePrefix: ATTR_PREFIX,
+    suppressBooleanAttributes: false,
+    format: true,
+  });
+});
+
+const singletonXmlParser = _.memoize(async function makeXmlParser() {
+  const { XMLParser } = await import('fast-xml-parser');
+  return new XMLParser({
+    ignoreAttributes: false,
+    ignoreDeclaration: true,
+    attributeNamePrefix: ATTR_PREFIX,
+    isArray: (name, jPath, isLeafNode, isAttribute) => !isAttribute,
+  });
+});
 
 /**
  * @typedef {{nodes: string[], attrs: string[]}} NodesAndAttributes

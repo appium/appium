@@ -21,6 +21,11 @@
   "bugs": {
     "url": "https://github.com/appium/appium/issues"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appium/appium.git",
+    "directory": "packages/tsconfig"
+  },
   "homepage": "https://appium.io",
   "engines": {
     "node": "^14.17.0 || ^16.13.0 || >=18.0.0",

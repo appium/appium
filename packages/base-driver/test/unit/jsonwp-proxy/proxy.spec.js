@@ -88,6 +88,11 @@ describe('proxy', function () {
       j.getUrlForProxy('/my/base/path/session/456/element/200/value', 'POST').should.eql(
         `http://${TEST_HOST}:${port}/session/123/element/200/value`
       );
+
+      j = mockProxy({reqBasePath: '/my/base/path'});
+      j.getUrlForProxy('/my/base/path/session', 'POST').should.eql(
+        `http://${TEST_HOST}:${port}/session`
+      );
     });
     it('should work with urls which do not have session ids', function () {
       let j = mockProxy({sessionId: '123'});

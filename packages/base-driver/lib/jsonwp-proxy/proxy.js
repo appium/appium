@@ -21,7 +21,7 @@ import nodeUrl from 'node:url';
 
 const DEFAULT_LOG = logger.getLogger('WD Proxy');
 const DEFAULT_REQUEST_TIMEOUT = 240000;
-const LOOSE_COMMAND_MATCHER = pathToRegexMatch('{/*prefix}/session/:sessionId{/*command}');
+const COMMAND_WITH_SESSION_ID_MATCHER = pathToRegexMatch('/session/:sessionId{/*command}');
 
 const {MJSONWP, W3C} = PROTOCOLS;
 
@@ -137,11 +137,14 @@ class JWProxy {
     ) {
       throw new Error(`Did not know how to proxy the url '${url}'`);
     }
-    const match = LOOSE_COMMAND_MATCHER(parsedUrl.pathname);
-    const normalizedPathname = _.trimEnd(
+    const pathname = this.reqBasePath && parsedUrl.pathname.startsWith(this.reqBasePath)
+      ? parsedUrl.pathname.replace(this.reqBasePath, '')
+      : parsedUrl.pathname;
+    const match = COMMAND_WITH_SESSION_ID_MATCHER(pathname);
+    let normalizedPathname = _.trimEnd(
       match && _.isArray(match.params?.command)
         ? `/${match.params.command.join('/')}`
-        : parsedUrl.pathname,
+        : pathname,
       '/'
     );
     const commandName = normalizedPathname

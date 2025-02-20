@@ -29,7 +29,7 @@
   "dependencies": {
     "console-control-strings": "1.1.0",
     "lodash": "4.17.21",
-    "lru-cache": "10.4.3",
+    "lru-cache": "11.0.2",
     "set-blocking": "2.0.0"
   },
   "license": "ISC",

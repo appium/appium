@@ -21,7 +21,7 @@ import nodeUrl from 'node:url';
 
 const DEFAULT_LOG = logger.getLogger('WD Proxy');
 const DEFAULT_REQUEST_TIMEOUT = 240000;
-const COMMAND_WITH_SESSION_ID_MATCHER = pathToRegexMatch('/session/:sessionId{/*command}');
+const COMMAND_WITH_SESSION_ID_MATCHER = pathToRegexMatch('{/*prefix}/session/:sessionId{/*command}');
 
 const {MJSONWP, W3C} = PROTOCOLS;
 
@@ -137,10 +137,19 @@ class JWProxy {
     ) {
       throw new Error(`Did not know how to proxy the url '${url}'`);
     }
-    const pathname = this.reqBasePath && parsedUrl.pathname.startsWith(this.reqBasePath)
+    let pathname = this.reqBasePath && parsedUrl.pathname.startsWith(this.reqBasePath)
       ? parsedUrl.pathname.replace(this.reqBasePath, '')
       : parsedUrl.pathname;
     const match = COMMAND_WITH_SESSION_ID_MATCHER(pathname);
+    // This is needed for the backward compatibility
+    // if drivers don't set reqBasePath properly
+    if (!this.reqBasePath) {
+      if (match && _.isArray(match.params?.prefix)) {
+        pathname = pathname.replace(`/${match.params?.prefix.join('/')}`, '');
+      } else if (_.startsWith(pathname, '/wd/hub')) {
+        pathname = pathname.replace('/wd/hub', '');
+      }
+    }
     const normalizedPathname = _.trimEnd(
       match && _.isArray(match.params?.command)
         ? `/${match.params.command.join('/')}`

@@ -10,7 +10,7 @@
     ":enableVulnerabilityAlerts",
     ":rebaseStalePrs",
     ":semanticCommits",
-    ":semanticPrefixChore"
+    ":semanticCommitTypeAll(chore)"
   ],
   "packageRules": [
     {

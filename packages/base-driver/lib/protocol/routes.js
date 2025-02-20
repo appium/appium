@@ -4,6 +4,12 @@ import _ from 'lodash';
 import {util} from '@appium/support';
 import {PROTOCOLS, DEFAULT_BASE_PATH} from '../constants';
 import {match} from 'path-to-regexp';
+import { LRUCache } from 'lru-cache';
+
+/** @type {LRUCache<string, string>} */
+const COMMAND_NAMES_CACHE = new LRUCache({
+  max: 1024,
+});
 
 const SET_ALERT_TEXT_PAYLOAD_PARAMS = {
   validate: (jsonObj) =>
@@ -941,7 +947,7 @@ export const ALL_COMMANDS = _.flatMap(_.values(METHOD_MAP).map(_.values))
 /**
  *
  * @param {string} endpoint
- * @param {import('@appium/types').HTTPMethod} method
+ * @param {import('@appium/types').HTTPMethod} [method]
  * @param {string} [basePath=DEFAULT_BASE_PATH]
  * @returns {string|undefined}
  */
@@ -959,22 +965,46 @@ export function routeToCommandName(endpoint, method, basePath = DEFAULT_BASE_PAT
     throw new Error(`'${endpoint}' cannot be translated to a command name: ${err.message}`);
   }
 
+  const normalizedMethod = _.toUpper(method);
+  const cacheKey = toCommandNameCacheKey(normalizedPathname, normalizedMethod);
+  if (COMMAND_NAMES_CACHE.has(cacheKey)) {
+    return COMMAND_NAMES_CACHE.get(cacheKey) || undefined;
+  }
+
   /** @type {string[]} */
   const possiblePathnames = [];
   if (!normalizedPathname.startsWith('/session/')) {
     possiblePathnames.push(`/session/any-session-id${normalizedPathname}`);
   }
   possiblePathnames.push(normalizedPathname);
-  const normalizedMethod = _.toUpper(method);
   for (const [routePath, routeSpec] of _.toPairs(METHOD_MAP)) {
     const routeMatcher = match(routePath);
     if (possiblePathnames.some((pp) => routeMatcher(pp))) {
-      const commandName = routeSpec?.[normalizedMethod]?.command;
+      const commandForAnyMethod = () => _.first(
+        (_.keys(routeSpec) ?? []).map((key) => routeSpec[key]?.command)
+      );
+      const commandName = normalizedMethod
+        ? routeSpec?.[normalizedMethod]?.command
+        : commandForAnyMethod();
       if (commandName) {
+        COMMAND_NAMES_CACHE.set(cacheKey, commandName);
         return commandName;
       }
     }
   }
+  // storing an empty string means we did not find any match for this set of arguments
+  // and we want to cache this result
+  COMMAND_NAMES_CACHE.set(cacheKey, '');
+}
+
+/**
+ *
+ * @param {string} endpoint
+ * @param {string} [method]
+ * @returns {string}
+ */
+function toCommandNameCacheKey(endpoint, method) {
+  return `${endpoint}:${method ?? ''}`;
 }
 
 // driver commands that do not require a session to already exist

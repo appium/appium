@@ -9,16 +9,19 @@ import {
   errorFromW3CJsonCode,
   getResponseForW3CError,
 } from '../protocol/errors';
-import {routeToCommandName} from '../protocol';
+import {isSessionCommand, routeToCommandName} from '../protocol';
 import {MAX_LOG_BODY_LENGTH, DEFAULT_BASE_PATH, PROTOCOLS} from '../constants';
 import ProtocolConverter from './protocol-converter';
 import {formatResponseValue, formatStatus} from '../protocol/helpers';
 import http from 'http';
 import https from 'https';
 import { match as pathToRegexMatch } from 'path-to-regexp';
+import nodeUrl from 'node:url';
+
 
 const DEFAULT_LOG = logger.getLogger('WD Proxy');
 const DEFAULT_REQUEST_TIMEOUT = 240000;
+const COMMAND_WITH_SESSION_ID_MATCHER = pathToRegexMatch('/session/:sessionId{/*command}');
 
 const {MJSONWP, W3C} = PROTOCOLS;
 
@@ -111,26 +114,6 @@ class JWProxy {
     this._activeRequests = [];
   }
 
-  /**
-   * Return true if the given endpoint started with '/session' and
-   * it could have session id after the path.
-   * e.g.
-   * - should return true
-   *   - /session/82a9b7da-faaf-4a1d-8ef3-5e4fb5812200
-   *   - /session/82a9b7da-faaf-4a1d-8ef3-5e4fb5812200/url
-   * - should return false
-   *   - /session
-   *   - /sessions
-   *   - /session/
-   *   - /status
-   *   - /appium/sessions
-   * @param {string} endpoint
-   * @returns {boolean}
-   */
-  endpointRequiresSessionId(endpoint) {
-    return !!(pathToRegexMatch('/session/:sessionId{/*command}')(endpoint));
-  }
-
   set downstreamProtocol(value) {
     this._downstreamProtocol = value;
     this.protocolConverter.downstreamProtocol = value;
@@ -140,67 +123,61 @@ class JWProxy {
     return this._downstreamProtocol;
   }
 
-  getUrlForProxy(url) {
-    if (url === '') {
-      url = '/';
+  /**
+   *
+   * @param {string} url
+   * @param {string} [method]
+   * @returns {string}
+   */
+  getUrlForProxy(url, method) {
+    const parsedUrl = nodeUrl.parse(url || '/');
+    if (
+      !parsedUrl.href || !parsedUrl.pathname
+      || (parsedUrl.protocol && !['http:', 'https:'].includes(parsedUrl.protocol))
+    ) {
+      throw new Error(`Did not know how to proxy the url '${url}'`);
     }
-    const proxyBase = `${this.scheme}://${this.server}:${this.port}${this.base}`;
-    const endpointRe = '(/(session|status|appium))';
-    let remainingUrl = '';
-    if (/^http/.test(url)) {
-      const first = new RegExp(`(https?://.+)${endpointRe}`).exec(url);
-      if (!first) {
-        throw new Error('Got a complete url but could not extract JWP endpoint');
-      }
-      remainingUrl = url.replace(first[1], '');
-    } else if (new RegExp('^/').test(url)) {
-      remainingUrl = url;
-    } else {
-      throw new Error(`Did not know what to do with url '${url}'`);
+    const pathname = this.reqBasePath && parsedUrl.pathname.startsWith(this.reqBasePath)
+      ? parsedUrl.pathname.replace(this.reqBasePath, '')
+      : parsedUrl.pathname;
+    const match = COMMAND_WITH_SESSION_ID_MATCHER(pathname);
+    const normalizedPathname = _.trimEnd(
+      match && _.isArray(match.params?.command)
+        ? `/${match.params.command.join('/')}`
+        : pathname,
+      '/'
+    );
+    const commandName = normalizedPathname
+      ? routeToCommandName(
+        normalizedPathname,
+        /** @type {import('@appium/types').HTTPMethod | undefined} */ (method)
+      )
+      : '';
+    const requiresSessionId = !commandName || (commandName && isSessionCommand(commandName));
+    const proxyPrefix = `${this.scheme}://${this.server}:${this.port}${this.base}`;
+    let proxySuffix = normalizedPathname ? `/${_.trimStart(normalizedPathname, '/')}` : '';
+    if (parsedUrl.search) {
+      proxySuffix += parsedUrl.search;
     }
-
-    const stripPrefixRe = new RegExp('^.*?(/(session|status|appium).*)$');
-    if (stripPrefixRe.test(remainingUrl)) {
-      remainingUrl = /** @type {RegExpExecArray} */ (stripPrefixRe.exec(remainingUrl))[1];
+    if (!requiresSessionId) {
+      return `${proxyPrefix}${proxySuffix}`;
     }
-
-    if (!new RegExp(endpointRe).test(remainingUrl)) {
-      remainingUrl = `/session/${this.sessionId}${remainingUrl}`;
+    if (!this.sessionId) {
+      throw new ReferenceError(`Session ID is not set, but saw a URL that requires it (${url})`);
     }
-
-    const requiresSessionId = this.endpointRequiresSessionId(remainingUrl);
-
-    if (requiresSessionId && this.sessionId === null) {
-      throw new Error('Trying to proxy a session command without session id');
-    }
-
-    const sessionBaseRe = new RegExp('^/session/([^/]+)');
-    if (sessionBaseRe.test(remainingUrl)) {
-      if (this.sessionId === null) {
-        throw new ReferenceError(
-          `Session ID is not set, but saw a URL path referencing a session (${remainingUrl}). This may be a bug in your client.`
-        );
-      }
-      // we have something like /session/:id/foobar, so we need to replace
-      // the session id
-      const match = sessionBaseRe.exec(remainingUrl);
-      // TODO: if `requiresSessionId` is `false` and `sessionId` is `null`, this is a bug.
-      // are we sure `sessionId` is not `null`?
-      remainingUrl = remainingUrl.replace(
-        /** @type {RegExpExecArray} */ (match)[1],
-        /** @type {string} */ (this.sessionId)
-      );
-    } else if (requiresSessionId) {
-      throw new Error(`Could not find :session section for url: ${remainingUrl}`);
-    }
-    remainingUrl = remainingUrl.replace(/\/$/, ''); // can't have trailing slashes
-
-    return proxyBase + remainingUrl;
+    return `${proxyPrefix}/session/${this.sessionId}${proxySuffix}`;
   }
 
+  /**
+   *
+   * @param {string} url
+   * @param {string} method
+   * @param {any} body
+   * @returns {Promise<any>}
+   */
   async proxy(url, method, body = null) {
     method = method.toUpperCase();
-    const newUrl = this.getUrlForProxy(url);
+    const newUrl = this.getUrlForProxy(url, method);
     const truncateBody = (content) =>
       _.truncate(_.isString(content) ? content : JSON.stringify(content), {
         length: MAX_LOG_BODY_LENGTH,

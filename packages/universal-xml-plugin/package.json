@@ -18,7 +18,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/appium/appium-plugins.git"
+    "url": "https://github.com/appium/appium.git",
+    "directory": "packages/universal-xml-plugin"
   },
   "license": "Apache-2.0",
   "author": "https://github.com/appium",

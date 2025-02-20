@@ -42,7 +42,7 @@ Appium extension authors--or anyone else--may use this config as well.
 - `:enableVulnerabilityAlerts` - For "security" purposes
 - `:rebaseStalePrs` - Renovate will automatically rebase its PRs
 - `:semanticCommits` - Renovate will use semantic commit messages
-- `:semanticPrefixChore` - Renovate's PRs have the `chore` prefix in its semantic commit message
+- `:semanticCommitTypeAll(chore)` - Renovate's PRs have the `chore` prefix in its semantic commit message
 
 ### Custom Rules
 

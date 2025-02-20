@@ -78,6 +78,12 @@ describe('proxy', function () {
         `http://${TEST_HOST}:${port}/session/123/element/200/value`
       );
     });
+    it('should keep query parameters', function () {
+      let j = mockProxy({sessionId: '123'});
+      j.getUrlForProxy('/element/200/value?foo=1&bar=2', 'POST').should.eql(
+        `http://${TEST_HOST}:${port}/session/123/element/200/value?foo=1&bar=2`
+      );
+    });
     it('should respect nonstandard incoming request base path', function () {
       let j = mockProxy({sessionId: '123', reqBasePath: ''});
       j.getUrlForProxy('/session/456/element/200/value', 'POST').should.eql(

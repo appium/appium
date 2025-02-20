@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.16.1](https://github.com/appium/appium/compare/@appium/base-driver@9.16.0...@appium/base-driver@9.16.1) (2025-02-20)
+
+
+### Bug Fixes
+
+* **base-driver:** Optimize the logic of getUrlForProxy ([#21018](https://github.com/appium/appium/issues/21018)) ([8a664a4](https://github.com/appium/appium/commit/8a664a4eef97f45c5bdf7f19708149488b63d7fc))
+
+
+
 ## [9.16.0](https://github.com/appium/appium/compare/@appium/base-driver@9.15.0...@appium/base-driver@9.16.0) (2025-02-19)
 
 

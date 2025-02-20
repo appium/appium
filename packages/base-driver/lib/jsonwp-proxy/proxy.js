@@ -152,7 +152,10 @@ class JWProxy {
       : '';
     const requiresSessionId = !commandName || (commandName && isSessionCommand(commandName));
     const proxyPrefix = `${this.scheme}://${this.server}:${this.port}${this.base}`;
-    const proxySuffix = normalizedPathname ? `/${_.trimStart(normalizedPathname, '/')}` : '';
+    let proxySuffix = normalizedPathname ? `/${_.trimStart(normalizedPathname, '/')}` : '';
+    if (parsedUrl.search) {
+      proxySuffix += parsedUrl.search;
+    }
     if (!requiresSessionId) {
       return `${proxyPrefix}${proxySuffix}`;
     }

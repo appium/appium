@@ -141,7 +141,7 @@ class JWProxy {
       ? parsedUrl.pathname.replace(this.reqBasePath, '')
       : parsedUrl.pathname;
     const match = COMMAND_WITH_SESSION_ID_MATCHER(pathname);
-    let normalizedPathname = _.trimEnd(
+    const normalizedPathname = _.trimEnd(
       match && _.isArray(match.params?.command)
         ? `/${match.params.command.join('/')}`
         : pathname,

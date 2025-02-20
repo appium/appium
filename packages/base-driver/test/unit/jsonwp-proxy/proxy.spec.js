@@ -87,6 +87,15 @@ describe('proxy', function () {
           `http://${TEST_HOST}:${port}/session/123/element/200/value?foo=1&bar=2`
         );
     });
+    it('should fix legacy proxy urls if reqBasePath is unset', function () {
+      const j = mockProxy({sessionId: '123', reqBasePath: ''});
+      j.getUrlForProxy('/wd/hub/session/456/element/200/value', 'POST').should.eql(
+        `http://${TEST_HOST}:${port}/session/123/element/200/value`
+      );
+      j.getUrlForProxy('/yolo/session/456/element/200/value', 'POST').should.eql(
+        `http://${TEST_HOST}:${port}/session/123/element/200/value`
+      );
+    });
     it('should respect nonstandard incoming request base path', function () {
       mockProxy({sessionId: '123', reqBasePath: ''})
         .getUrlForProxy('/session/456/element/200/value', 'POST').should.eql(

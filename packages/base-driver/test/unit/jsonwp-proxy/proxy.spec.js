@@ -61,44 +61,47 @@ describe('proxy', function () {
   });
   describe('getUrlForProxy', function () {
     it('should modify session id, host, and port', function () {
-      let j = mockProxy({sessionId: '123'});
-      j.getUrlForProxy('http://host.com:1234/session/456/element/200/value', 'POST').should.eql(
-        `http://${TEST_HOST}:${port}/session/123/element/200/value`
-      );
+      mockProxy({sessionId: '123'})
+        .getUrlForProxy('http://host.com:1234/session/456/element/200/value', 'POST').should.eql(
+          `http://${TEST_HOST}:${port}/session/123/element/200/value`
+        );
     });
     it('should prepend scheme, host and port if not provided', function () {
       let j = mockProxy({sessionId: '123'});
       j.getUrlForProxy('/session/456/element/200/value', 'POST').should.eql(
         `http://${TEST_HOST}:${port}/session/123/element/200/value`
       );
+      j.getUrlForProxy('/session/456/appium/settings', 'POST').should.eql(
+        `http://${TEST_HOST}:${port}/session/123/appium/settings`
+      );
     });
     it('should prepend scheme, host, port and session if not provided', function () {
-      let j = mockProxy({sessionId: '123'});
-      j.getUrlForProxy('/element/200/value', 'POST').should.eql(
-        `http://${TEST_HOST}:${port}/session/123/element/200/value`
-      );
+      mockProxy({sessionId: '123'})
+        .getUrlForProxy('/element/200/value', 'POST').should.eql(
+          `http://${TEST_HOST}:${port}/session/123/element/200/value`
+        );
     });
     it('should keep query parameters', function () {
-      let j = mockProxy({sessionId: '123'});
-      j.getUrlForProxy('/element/200/value?foo=1&bar=2', 'POST').should.eql(
-        `http://${TEST_HOST}:${port}/session/123/element/200/value?foo=1&bar=2`
-      );
+      mockProxy({sessionId: '123'})
+        .getUrlForProxy('/element/200/value?foo=1&bar=2', 'POST').should.eql(
+          `http://${TEST_HOST}:${port}/session/123/element/200/value?foo=1&bar=2`
+        );
     });
     it('should respect nonstandard incoming request base path', function () {
-      let j = mockProxy({sessionId: '123', reqBasePath: ''});
-      j.getUrlForProxy('/session/456/element/200/value', 'POST').should.eql(
-        `http://${TEST_HOST}:${port}/session/123/element/200/value`
-      );
+      mockProxy({sessionId: '123', reqBasePath: ''})
+        .getUrlForProxy('/session/456/element/200/value', 'POST').should.eql(
+          `http://${TEST_HOST}:${port}/session/123/element/200/value`
+        );
 
-      j = mockProxy({sessionId: '123', reqBasePath: '/my/base/path'});
-      j.getUrlForProxy('/my/base/path/session/456/element/200/value', 'POST').should.eql(
-        `http://${TEST_HOST}:${port}/session/123/element/200/value`
-      );
+      mockProxy({sessionId: '123', reqBasePath: '/my/base/path'})
+        .getUrlForProxy('/my/base/path/session/456/element/200/value', 'POST').should.eql(
+          `http://${TEST_HOST}:${port}/session/123/element/200/value`
+        );
 
-      j = mockProxy({reqBasePath: '/my/base/path'});
-      j.getUrlForProxy('/my/base/path/session', 'POST').should.eql(
-        `http://${TEST_HOST}:${port}/session`
-      );
+      mockProxy({reqBasePath: '/my/base/path'})
+        .getUrlForProxy('/my/base/path/session', 'POST').should.eql(
+          `http://${TEST_HOST}:${port}/session`
+        );
     });
     it('should work with urls which do not have session ids', function () {
       let j = mockProxy({sessionId: '123'});
@@ -106,8 +109,10 @@ describe('proxy', function () {
         `http://${TEST_HOST}:${port}/session`
       );
 
-      let newUrl = j.getUrlForProxy('/session', 'POST');
-      newUrl.should.eql(`http://${TEST_HOST}:${port}/session`);
+      j.getUrlForProxy('/session', 'POST')
+        .should.eql(`http://${TEST_HOST}:${port}/session`);
+      j.getUrlForProxy('/appium/sessions', 'GET')
+        .should.eql(`http://${TEST_HOST}:${port}/appium/sessions`);
     });
     it('should throw an error if url requires a sessionId but its null', function () {
       let j = mockProxy();
@@ -121,9 +126,7 @@ describe('proxy', function () {
       e.message.should.contain('not set');
     });
     it('should not throw an error if url does not require a session id and its null', function () {
-      let j = mockProxy();
-      let newUrl = j.getUrlForProxy('/status', 'GET');
-
+      let newUrl = mockProxy().getUrlForProxy('/status', 'GET');
       should.exist(newUrl);
     });
   });

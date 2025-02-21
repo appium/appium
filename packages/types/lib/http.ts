@@ -30,10 +30,10 @@ export type HTTPMethod =
   | 'unlink'
   | 'UNLINK';
 
-export interface ProxyResponse {
+export interface ProxyResponse<T = any> {
   statusCode: number;
   headers: HTTPHeaders;
-  body: any;
+  body: HTTPBody<T>;
 }
 
 export type HTTPBody<T = any> = T;

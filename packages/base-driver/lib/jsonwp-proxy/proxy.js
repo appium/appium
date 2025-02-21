@@ -310,8 +310,8 @@ export class JWProxy {
    *
    * @param {string} url
    * @param {import('@appium/types').HTTPMethod} method
-   * @param {any} [body=null]
-   * @returns {Promise<[import('@appium/types').ProxyResponse, any]>}
+   * @param {import('@appium/types').HTTPBody} [body=null]
+   * @returns {Promise<[import('@appium/types').ProxyResponse, import('@appium/types').HTTPBody]>}
    */
   async proxyCommand(url, method, body = null) {
     const parsedUrl = this._parseUrl(url);
@@ -329,8 +329,8 @@ export class JWProxy {
    *
    * @param {string} url
    * @param {import('@appium/types').HTTPMethod} method
-   * @param {Object} [body=null]
-   * @returns {Promise<unknown>}
+   * @param {import('@appium/types').HTTPBody} [body=null]
+   * @returns {Promise<import('@appium/types').HTTPBody>}
    */
   async command(url, method, body = null) {
     let response;

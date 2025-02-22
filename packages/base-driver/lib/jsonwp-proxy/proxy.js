@@ -57,12 +57,11 @@ export class JWProxy {
    * @param {import('@appium/types').ProxyOptions} [opts={}]
    */
   constructor(opts = {}) {
-    const fileteredOpts = _.pick(opts, ALLOWED_OPTS);
-
+    const filteredOpts = _.pick(opts, ALLOWED_OPTS);
     // omit 'log' in the defaults assignment here because 'log' is a getter and we are going to set
     // it to this._log (which lies behind the getter) further down
     /** @type {import('@appium/types').ProxyOptions} */
-    const options = _.defaults(_.omit(fileteredOpts, 'log'), {
+    const options = _.defaults(_.omit(filteredOpts, 'log'), {
       scheme: 'http',
       server: 'localhost',
       port: 4444,

@@ -37,7 +37,7 @@ const ALLOWED_OPTS = [
   'keepAlive',
 ];
 
-class JWProxy {
+export class JWProxy {
   /** @type {string} */
   scheme;
   /** @type {string} */
@@ -81,6 +81,8 @@ class JWProxy {
     this.httpsAgent = new https.Agent(agentOpts);
     this.protocolConverter = new ProtocolConverter(this.proxy.bind(this), opts.log);
     this._log = opts.log;
+
+    this.log.debug(`${this.constructor.name} options: ${JSON.stringify(options)}`);
   }
 
   get log() {
@@ -130,32 +132,8 @@ class JWProxy {
    * @returns {string}
    */
   getUrlForProxy(url, method) {
-    const parsedUrl = nodeUrl.parse(url || '/');
-    if (
-      !parsedUrl.href || !parsedUrl.pathname
-      || (parsedUrl.protocol && !['http:', 'https:'].includes(parsedUrl.protocol))
-    ) {
-      throw new Error(`Did not know how to proxy the url '${url}'`);
-    }
-    let pathname = this.reqBasePath && parsedUrl.pathname.startsWith(this.reqBasePath)
-      ? parsedUrl.pathname.replace(this.reqBasePath, '')
-      : parsedUrl.pathname;
-    const match = COMMAND_WITH_SESSION_ID_MATCHER(pathname);
-    // This is needed for the backward compatibility
-    // if drivers don't set reqBasePath properly
-    if (!this.reqBasePath) {
-      if (match && _.isArray(match.params?.prefix)) {
-        pathname = pathname.replace(`/${match.params?.prefix.join('/')}`, '');
-      } else if (_.startsWith(pathname, '/wd/hub')) {
-        pathname = pathname.replace('/wd/hub', '');
-      }
-    }
-    const normalizedPathname = _.trimEnd(
-      match && _.isArray(match.params?.command)
-        ? `/${match.params.command.join('/')}`
-        : pathname,
-      '/'
-    );
+    const parsedUrl = this._parseUrl(url);
+    const normalizedPathname = this._toNormalizedPathname(parsedUrl);
     const commandName = normalizedPathname
       ? routeToCommandName(
         normalizedPathname,
@@ -181,8 +159,8 @@ class JWProxy {
    *
    * @param {string} url
    * @param {string} method
-   * @param {any} body
-   * @returns {Promise<any>}
+   * @param {import('@appium/types').HTTPBody} [body=null]
+   * @returns {Promise<[import('@appium/types').ProxyResponse, import('@appium/types').HTTPBody]>}
    */
   async proxy(url, method, body = null) {
     method = method.toUpperCase();
@@ -255,8 +233,12 @@ class JWProxy {
         // Some servers, like chromedriver may return response code 200 for non-zero JSONWP statuses
         throwProxyError(data);
       }
-      const res = {statusCode: status, headers, body: data};
-      return [res, data];
+      const headersMap = /** @type {import('@appium/types').HTTPHeaders} */ (headers);
+      return [{
+        statusCode: status,
+        headers: headersMap,
+        body: data,
+      }, data];
     } catch (e) {
       // We only consider an error unexpected if this was not
       // an async request module error or if the response cannot be cast to
@@ -279,6 +261,11 @@ class JWProxy {
     }
   }
 
+  /**
+   *
+   * @param {Record<string, any>} resObj
+   * @returns {typeof PROTOCOLS[keyof typeof PROTOCOLS] | undefined}
+   */
   getProtocolFromResBody(resObj) {
     if (_.isInteger(resObj.status)) {
       return MJSONWP;
@@ -289,6 +276,7 @@ class JWProxy {
   }
 
   /**
+   * @deprecated This method is not used anymore and will be removed
    *
    * @param {string} url
    * @param {import('@appium/types').HTTPMethod} method
@@ -322,10 +310,13 @@ class JWProxy {
    *
    * @param {string} url
    * @param {import('@appium/types').HTTPMethod} method
-   * @param {any?} body
+   * @param {import('@appium/types').HTTPBody} [body=null]
+   * @returns {Promise<[import('@appium/types').ProxyResponse, import('@appium/types').HTTPBody]>}
    */
   async proxyCommand(url, method, body = null) {
-    const commandName = this.requestToCommandName(url, method);
+    const parsedUrl = this._parseUrl(url);
+    const normalizedPathname = this._toNormalizedPathname(parsedUrl);
+    const commandName = normalizedPathname ? routeToCommandName(normalizedPathname, method) : '';
     if (!commandName) {
       return await this.proxy(url, method, body);
     }
@@ -338,8 +329,8 @@ class JWProxy {
    *
    * @param {string} url
    * @param {import('@appium/types').HTTPMethod} method
-   * @param {any?} body
-   * @returns {Promise<unknown>}
+   * @param {import('@appium/types').HTTPBody} [body=null]
+   * @returns {Promise<import('@appium/types').HTTPBody>}
    */
   async command(url, method, body = null) {
     let response;
@@ -393,20 +384,40 @@ class JWProxy {
     );
   }
 
+  /**
+   *
+   * @param {string} url
+   * @returns {string | null}
+   */
   getSessionIdFromUrl(url) {
     const match = url.match(/\/session\/([^/]+)/);
     return match ? match[1] : null;
   }
 
+  /**
+   *
+   * @param {import('express').Request} req
+   * @param {import('express').Response} res
+   */
   async proxyReqRes(req, res) {
     // ! this method must not throw any exceptions
     // ! make sure to call res.send before return
+    /** @type {number} */
     let statusCode;
+    /** @type {import('@appium/types').HTTPBody} */
     let resBodyObj;
     try {
       let response;
-      [response, resBodyObj] = await this.proxyCommand(req.originalUrl, req.method, req.body);
-      res.headers = response.headers;
+      [response, resBodyObj] = await this.proxyCommand(
+        req.originalUrl,
+        /** @type {import('@appium/types').HTTPMethod} */ (req.method),
+        req.body
+      );
+      for (const [name, value] of _.toPairs(response.headers)) {
+        if (!_.isNil(value)) {
+          res.setHeader(name, _.isBoolean(value) ? String(value) : value);
+        }
+      }
       statusCode = response.statusCode;
     } catch (err) {
       [statusCode, resBodyObj] = getResponseForW3CError(
@@ -438,11 +449,57 @@ class JWProxy {
     resBodyObj.value = formatResponseValue(resBodyObj.value);
     res.status(statusCode).send(JSON.stringify(formatStatus(resBodyObj)));
   }
+
+  /**
+   *
+   * @param {string} url
+   * @returns {ParsedUrl}
+   */
+  _parseUrl(url) {
+    const parsedUrl = nodeUrl.parse(url || '/');
+    if (
+      _.isNil(parsedUrl.href) || _.isNil(parsedUrl.pathname)
+      || (parsedUrl.protocol && !['http:', 'https:'].includes(parsedUrl.protocol))
+    ) {
+      throw new Error(`Did not know how to proxy the url '${url}'`);
+    }
+    return parsedUrl;
+  }
+
+  /**
+   *
+   * @param {ParsedUrl} parsedUrl
+   * @returns {string}
+   */
+  _toNormalizedPathname(parsedUrl) {
+    if (!_.isString(parsedUrl.pathname)) {
+      return '';
+    }
+    let pathname = this.reqBasePath && parsedUrl.pathname.startsWith(this.reqBasePath)
+      ? parsedUrl.pathname.replace(this.reqBasePath, '')
+      : parsedUrl.pathname;
+    const match = COMMAND_WITH_SESSION_ID_MATCHER(pathname);
+    // This is needed for the backward compatibility
+    // if drivers don't set reqBasePath properly
+    if (!this.reqBasePath) {
+      if (match && _.isArray(match.params?.prefix)) {
+        pathname = pathname.replace(`/${match.params?.prefix.join('/')}`, '');
+      } else if (_.startsWith(pathname, '/wd/hub')) {
+        pathname = pathname.replace('/wd/hub', '');
+      }
+    }
+    return _.trimEnd(
+      match && _.isArray(match.params?.command)
+        ? `/${match.params.command.join('/')}`
+        : pathname,
+      '/'
+    );
+  }
 }
 
-export {JWProxy};
 export default JWProxy;
 
 /**
  * @typedef {Error & {response: {data: import('type-fest').JsonObject, status: import('http-status-codes').StatusCodes}}} ProxyError
+ * @typedef {nodeUrl.UrlWithStringQuery} ParsedUrl
  */

@@ -10,6 +10,9 @@ function buildReqRes(url, method, body) {
   res.set = (k, v) => {
     res[k] = v;
   };
+  res.setHeader = (k, v) => {
+    res.headers[k] = v;
+  };
   res.status = (code) => {
     res.sentCode = code;
     return res;

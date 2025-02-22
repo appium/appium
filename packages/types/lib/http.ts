@@ -29,3 +29,11 @@ export type HTTPMethod =
   | 'LINK'
   | 'unlink'
   | 'UNLINK';
+
+export interface ProxyResponse<T = any> {
+  statusCode: number;
+  headers: HTTPHeaders;
+  body: HTTPBody<T>;
+}
+
+export type HTTPBody<T = any> = T;

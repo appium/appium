@@ -37,11 +37,11 @@ export class ProxyRequest {
     this._ee.emit(CANCEL_EVENT);
   }
 
-  async _makeRequest(): Promise<axios.AxiosResponse> {
+  private async _makeRequest(): Promise<axios.AxiosResponse> {
     return await axios(this._requestConfig);
   }
 
-  async _makeRacingTimer(): Promise<void> {
+  private async _makeRacingTimer(): Promise<void> {
     return await new Promise((resolve, reject) => {
       this._ee.once(FINISH_EVENT, resolve);
       this._ee.once(CANCEL_EVENT, () => reject(new CancellationError(

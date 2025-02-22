@@ -48,7 +48,7 @@ export interface ProxyOptions {
   /**
    * Downstream server hostname
    *
-   * @default 'localhost''
+   * @default 'localhost'
    */
   server?: string;
   /**

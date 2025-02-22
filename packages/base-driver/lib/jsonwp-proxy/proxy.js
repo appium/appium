@@ -276,7 +276,7 @@ export class JWProxy {
   /**
    *
    * @param {Record<string, any>} resObj
-   * @returns {typeof PROTOCOLS[keyof typeof PROTOCOLS] | undefined}
+   * @returns {Protocol | undefined}
    */
   getProtocolFromResBody(resObj) {
     if (_.isInteger(resObj.status)) {

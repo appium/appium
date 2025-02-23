@@ -53,12 +53,15 @@ export class JWProxy {
   /** @type {number} */
   timeout;
 
+  /**
+   * @param {import('@appium/types').ProxyOptions} [opts={}]
+   */
   constructor(opts = {}) {
-    opts = _.pick(opts, ALLOWED_OPTS);
-
+    const filteredOpts = _.pick(opts, ALLOWED_OPTS);
     // omit 'log' in the defaults assignment here because 'log' is a getter and we are going to set
     // it to this._log (which lies behind the getter) further down
-    const options = _.defaults(_.omit(opts, 'log'), {
+    /** @type {import('@appium/types').ProxyOptions} */
+    const options = _.defaults(_.omit(filteredOpts, 'log'), {
       scheme: 'http',
       server: 'localhost',
       port: 4444,
@@ -67,7 +70,7 @@ export class JWProxy {
       sessionId: null,
       timeout: DEFAULT_REQUEST_TIMEOUT,
     });
-    options.scheme = options.scheme.toLowerCase();
+    options.scheme = /** @type {string} */ (options.scheme).toLowerCase();
     Object.assign(this, options);
 
     this._activeRequests = [];

@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import {logger, util} from '@appium/support';
-import axios from 'axios';
 import {getSummaryByCode} from '../jsonwp-status/status';
 import {
   errors,
@@ -17,7 +16,7 @@ import http from 'http';
 import https from 'https';
 import { match as pathToRegexMatch } from 'path-to-regexp';
 import nodeUrl from 'node:url';
-
+import { ProxyRequest } from './proxy-request';
 
 const DEFAULT_LOG = logger.getLogger('WD Proxy');
 const DEFAULT_REQUEST_TIMEOUT = 240000;
@@ -52,6 +51,10 @@ export class JWProxy {
   sessionId;
   /** @type {number} */
   timeout;
+  /** @type {Protocol | null | undefined} */
+  _downstreamProtocol;
+  /** @type {ProxyRequest[]} */
+  _activeRequests;
 
   /**
    * @param {import('@appium/types').ProxyOptions} [opts={}]
@@ -102,23 +105,32 @@ export class JWProxy {
    * @returns {Promise<import('axios').AxiosResponse>}
    */
   async request(requestConfig) {
-    const reqPromise = axios(requestConfig);
-    this._activeRequests.push(reqPromise);
+    const req = new ProxyRequest(requestConfig);
+    this._activeRequests.push(req);
     try {
-      return await reqPromise;
+      return await req.execute();
     } finally {
-      _.pull(this._activeRequests, reqPromise);
+      _.pull(this._activeRequests, req);
     }
   }
 
+  /**
+   * @returns {number}
+   */
   getActiveRequestsCount() {
     return this._activeRequests.length;
   }
 
   cancelActiveRequests() {
+    for (const ar of this._activeRequests) {
+      ar.cancel();
+    }
     this._activeRequests = [];
   }
 
+  /**
+   * @param {Protocol | null | undefined} value
+   */
   set downstreamProtocol(value) {
     this._downstreamProtocol = value;
     this.protocolConverter.downstreamProtocol = value;
@@ -267,7 +279,7 @@ export class JWProxy {
   /**
    *
    * @param {Record<string, any>} resObj
-   * @returns {typeof PROTOCOLS[keyof typeof PROTOCOLS] | undefined}
+   * @returns {Protocol | undefined}
    */
   getProtocolFromResBody(resObj) {
     if (_.isInteger(resObj.status)) {
@@ -505,4 +517,5 @@ export default JWProxy;
 /**
  * @typedef {Error & {response: {data: import('type-fest').JsonObject, status: import('http-status-codes').StatusCodes}}} ProxyError
  * @typedef {nodeUrl.UrlWithStringQuery} ParsedUrl
+ * @typedef {typeof PROTOCOLS[keyof typeof PROTOCOLS]} Protocol
  */

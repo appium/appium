@@ -515,7 +515,7 @@ export interface DriverHelpers {
   ) => Promise<string>;
   isPackageOrBundle: (app: string) => boolean;
   duplicateKeys: <T>(input: T, firstKey: string, secondKey: string) => T;
-  parseCapsArray: (cap: string | string[]) => string[];
+  parseCapsArray: (cap: object) => object[];
   generateDriverLogPrefix: (obj: object, sessionId?: string) => string;
 }
 

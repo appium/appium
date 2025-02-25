@@ -376,26 +376,29 @@ export function duplicateKeys(input, firstKey, secondKey) {
  * Takes a desired capability and tries to JSON.parse it as an array,
  * and either returns the parsed array or a singleton array.
  *
- * @param {string|Array<String>} cap A desired capability
+ * @param {string[]} cap A desired capability
  */
 export function parseCapsArray(cap) {
   if (_.isArray(cap)) {
     return cap;
   }
 
-  let parsedCaps;
   try {
-    parsedCaps = JSON.parse(cap);
+    const parsedCaps = JSON.parse(cap);
     if (_.isArray(parsedCaps)) {
       return parsedCaps;
     }
   } catch (e) {
-    logger.warn(`Failed to parse capability as JSON array: ${e.message}`);
+    const message = `Failed to parse capability as JSON array: ${e.message}`;
+    if (_.isString(cap) && _.startsWith(_.trimStart(cap), '[')) {
+      throw new TypeError(message);
+    }
+    logger.warn(message);
   }
   if (_.isString(cap)) {
     return [cap];
   }
-  throw new Error(`must provide a string or JSON Array; received ${cap}`);
+  throw new TypeError(`Expected a string or a valid JSON array; received '${cap}'`);
 }
 
 /**

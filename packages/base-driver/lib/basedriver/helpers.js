@@ -373,32 +373,33 @@ export function duplicateKeys(input, firstKey, secondKey) {
 }
 
 /**
- * Takes a desired capability and tries to JSON.parse it as an array,
+ * Takes a capability value and tries to JSON.parse it as an array,
  * and either returns the parsed array or a singleton array.
  *
- * @param {string[]} cap A desired capability
+ * @param {string|string[]} capValue Capability value
+ * @returns {string[]}
  */
-export function parseCapsArray(cap) {
-  if (_.isArray(cap)) {
-    return cap;
+export function parseCapsArray(capValue) {
+  if (_.isArray(capValue)) {
+    return capValue;
   }
 
   try {
-    const parsedCaps = JSON.parse(cap);
-    if (_.isArray(parsedCaps)) {
-      return parsedCaps;
+    const parsed = JSON.parse(capValue);
+    if (_.isArray(parsed)) {
+      return parsed;
     }
   } catch (e) {
     const message = `Failed to parse capability as JSON array: ${e.message}`;
-    if (_.isString(cap) && _.startsWith(_.trimStart(cap), '[')) {
+    if (_.isString(capValue) && _.startsWith(_.trimStart(capValue), '[')) {
       throw new TypeError(message);
     }
     logger.warn(message);
   }
-  if (_.isString(cap)) {
-    return [cap];
+  if (_.isString(capValue)) {
+    return [capValue];
   }
-  throw new TypeError(`Expected a string or a valid JSON array; received '${cap}'`);
+  throw new TypeError(`Expected a string or a valid JSON array; received '${capValue}'`);
 }
 
 /**

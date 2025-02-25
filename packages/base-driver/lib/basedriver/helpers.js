@@ -376,8 +376,8 @@ export function duplicateKeys(input, firstKey, secondKey) {
  * Takes a capability value and tries to JSON.parse it as an array,
  * and either returns the parsed array or a singleton array.
  *
- * @param {object} capValue Capability value
- * @returns {object[]}
+ * @param {string|string[]} capValue Capability value
+ * @returns {string[]}
  */
 export function parseCapsArray(capValue) {
   if (_.isArray(capValue)) {

@@ -128,7 +128,7 @@
     "cpy-cli": "5.0.0",
     "cross-env": "7.0.3",
     "eslint": "9.21.0",
-    "eslint-config-prettier": "10.0.1",
+    "eslint-config-prettier": "10.0.2",
     "eslint-import-resolver-typescript": "3.8.3",
     "eslint-plugin-import": "2.31.0",
     "eslint-plugin-mocha": "10.5.0",

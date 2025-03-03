@@ -42,7 +42,7 @@
     "test:unit": "mocha --timeout 10s --slow 5s \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@xmldom/xmldom": "0.9.7",
+    "@xmldom/xmldom": "0.9.8",
     "asyncbox": "3.0.0",
     "bluebird": "3.7.2",
     "lodash": "4.17.21",

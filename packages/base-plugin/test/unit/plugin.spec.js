@@ -1,4 +1,4 @@
-import BasePlugin from '../../lib/plugin';
+import {BasePlugin} from '../../lib/plugin';
 
 describe('base plugin', function () {
   let should;

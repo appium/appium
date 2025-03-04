@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.8.1](https://github.com/appium/appium/compare/@appium/schema@0.8.0...@appium/schema@0.8.1) (2025-02-20)
+
+**Note:** Version bump only for package @appium/schema
+
+
+
+
+
+## [0.8.0](https://github.com/appium/appium/compare/@appium/schema@0.7.1...@appium/schema@0.8.0) (2025-02-19)
+
+
+### Features
+
+* **appium:** Add a command line parameter to configure HTTP server request timeout ([#21003](https://github.com/appium/appium/issues/21003)) ([eb1b156](https://github.com/appium/appium/commit/eb1b156146bc338da9c6ded5a2c5beab22ac0ed8))
+
+
+
+## [0.7.1](https://github.com/appium/appium/compare/@appium/schema@0.7.0...@appium/schema@0.7.1) (2025-01-02)
+
+
+### Bug Fixes
+
+* Reduce linter warnings ([#20860](https://github.com/appium/appium/issues/20860)) ([65658cc](https://github.com/appium/appium/commit/65658ccbdde9144c45cb5aad6a9089a5d6f3a0a3))
+
+
+
 ## [0.7.0](https://github.com/appium/appium/compare/@appium/schema@0.6.1...@appium/schema@0.7.0) (2024-10-15)
 
 

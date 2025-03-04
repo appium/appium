@@ -40,11 +40,6 @@ Android TV, Samsung), and more!
         <img src="assets/images/sponsor-logo-browserstack-light.png#only-light" style="width: 220px;" />
       </a>
     </div>
-    <div class="homepageSponsor">
-      <a href="https://saucelabs.com/resources/blog/appium-strategic-partner">
-        <img src="assets/images/sponsor-logo-sauce.png" style="width: 200px;" />
-      </a>
-    </div>
   </div>
 </div>
 

@@ -41,7 +41,7 @@ async function write() {
   let schema;
   try {
     ({AppiumConfigJsonSchema: schema} = require(SCHEMA_SRC));
-  } catch (err) {
+  } catch {
     throw new Error(
       `${error} Failed to read ${SCHEMA_SRC}; did you execute \`npm run build\` first?`
     );

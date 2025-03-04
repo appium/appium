@@ -10,9 +10,9 @@ information and command length. This is an advanced feature that is controlled
 by the use of the `appium:eventTimings` capability (set it to `true` to log event
 timings).
 
-With this capability turned on, the `GET /session/:id` response (i.e., the
-response to `driver.getSessionDetails()` or similar, depending on client) will
-be decorated with an `events` property. This is the structure of that `events`
+With this capability turned on, the `POST /session/:id/appium/events` response (i.e., 
+the response to `driver.logs.events` or similar, depending on client) will be 
+decorated with an `events` property. This is the structure of that `events`
 property:
 
 ```
@@ -54,12 +54,16 @@ of events, or statistical information about average length of a certain type of
 command, and so on.
 
 You can only receive data about events that have happened when you make the
-call to `/session/:id`, so the best time to get data about an entire session is
+call to `/session/:id/appium/events`, so the best time to get data about an entire session is
 right before quitting it.
 
 The Appium team maintains an event timings parser tool that can be used to
 generate various kinds of reports from event timings output:
 [appium/appium-event-parser](https://github.com/appium/appium-event-parser).
+
+!!! note
+
+    In the past, events were available as a part of `GET /session/:id` response
 
 ## Add a custom event
 

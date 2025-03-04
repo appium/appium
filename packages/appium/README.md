@@ -204,11 +204,6 @@ contribution of project development and leadership!
   </a>
 </p>
 
-<p align="center">
-  <a href="https://saucelabs.com/resources/blog/appium-strategic-partner"><img src="packages/appium/docs/overrides/assets/images/sponsor-logo-sauce.png"
-width="300" alt="Sauce Labs" /></a>
-</p>
-
 ### Other Sponsors
 
 A full list of sponsors is available at our [Sponsors page](https://appium.io/docs/en/latest/sponsors/).

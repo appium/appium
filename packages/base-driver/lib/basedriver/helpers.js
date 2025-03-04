@@ -373,39 +373,44 @@ export function duplicateKeys(input, firstKey, secondKey) {
 }
 
 /**
- * Takes a desired capability and tries to JSON.parse it as an array,
+ * Takes a capability value and tries to JSON.parse it as an array,
  * and either returns the parsed array or a singleton array.
  *
- * @param {string|Array<String>} cap A desired capability
+ * @param {string|string[]} capValue Capability value
+ * @returns {string[]}
  */
-export function parseCapsArray(cap) {
-  if (_.isArray(cap)) {
-    return cap;
+export function parseCapsArray(capValue) {
+  if (_.isArray(capValue)) {
+    return capValue;
   }
 
-  let parsedCaps;
   try {
-    parsedCaps = JSON.parse(cap);
-    if (_.isArray(parsedCaps)) {
-      return parsedCaps;
+    const parsed = JSON.parse(capValue);
+    if (_.isArray(parsed)) {
+      return parsed;
     }
-  } catch (ign) {
-    logger.warn(`Failed to parse capability as JSON array`);
+  } catch (e) {
+    const message = `Failed to parse capability as JSON array: ${e.message}`;
+    if (_.isString(capValue) && _.startsWith(_.trimStart(capValue), '[')) {
+      throw new TypeError(message);
+    }
+    logger.warn(message);
   }
-  if (_.isString(cap)) {
-    return [cap];
+  if (_.isString(capValue)) {
+    return [capValue];
   }
-  throw new Error(`must provide a string or JSON Array; received ${cap}`);
+  throw new TypeError(`Expected a string or a valid JSON array; received '${capValue}'`);
 }
 
 /**
  * Generate a string that uniquely describes driver instance
  *
- * @param {import('@appium/types').Core} obj driver instance
+ * @param {object} obj driver instance
  * @param {string?} [sessionId=null] session identifier (if exists).
  * This parameter is deprecated and is not used.
  * @returns {string}
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function generateDriverLogPrefix(obj, sessionId = null) {
   return `${obj.constructor.name}@${node.getObjectId(obj).substring(0, 4)}`;
 }

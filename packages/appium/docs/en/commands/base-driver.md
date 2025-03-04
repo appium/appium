@@ -47,13 +47,33 @@ A session data object
 
 `GET` **`/session/:sessionId`**
 
-Returns capabilities for the session and event history (if applicable)
+Returns capabilities for the session and event history (if applicable).
+
+!!! warning "Deprecated"
+
+    Please use `getAppiumSessionCapabilities` to get the session capabilities.
+    Please use `getLogEvents` to get event history.
+
 
 <!-- comment source: multiple -->
 
 #### Response
 
 `SingularSessionData`<`C`, `SessionData`\>
+
+A session data object
+
+### `getAppiumSessionCapabilities`
+
+`GET` **`/session/:sessionId/appium/capabilities`**
+
+Returns capabilities for the session.
+
+<!-- comment source: multiple -->
+
+#### Response
+
+`AppiumSessionCapabilities`
 
 A session data object
 

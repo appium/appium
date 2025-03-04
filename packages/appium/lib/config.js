@@ -115,7 +115,7 @@ export async function getGitRev(useGithubApiFallback = false) {
         cwd: __dirname,
       });
       return stdout.trim();
-    } catch (ign) {}
+    } catch {}
   }
 
   if (!useGithubApiFallback) {
@@ -132,7 +132,7 @@ export async function getGitRev(useGithubApiFallback = false) {
         },
       })
     ).data?.object?.sha;
-  } catch (ign) {}
+  } catch {}
   return null;
 }
 
@@ -149,7 +149,7 @@ async function getGitTimestamp(commitSha, useGithubApiFallback = false) {
         cwd: __dirname,
       });
       return stdout.trim();
-    } catch (ign) {}
+    } catch {}
   }
 
   if (!useGithubApiFallback) {
@@ -164,7 +164,7 @@ async function getGitTimestamp(commitSha, useGithubApiFallback = false) {
         },
       })
     ).data?.tagger?.date;
-  } catch (ign) {}
+  } catch {}
   return null;
 }
 
@@ -356,7 +356,7 @@ export async function requireDir(root, requireWriteable = true, displayName = 'f
   if (requireWriteable) {
     try {
       await fs.access(root, fs.constants.W_OK);
-    } catch (e) {
+    } catch {
       throw new Error(
         `The ${displayName} '${root}' must be ` +
         `writeable for the current user account '${os.userInfo().username}'`

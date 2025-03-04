@@ -3,6 +3,85 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.16.2](https://github.com/appium/appium/compare/@appium/base-driver@9.16.1...@appium/base-driver@9.16.2) (2025-02-20)
+
+
+### Bug Fixes
+
+* **base-driver:** Restore the legacy proxy url behaviour ([#21021](https://github.com/appium/appium/issues/21021)) ([dd64a48](https://github.com/appium/appium/commit/dd64a48fca047a728ad109d525bc4787daa75edc))
+
+
+
+## [9.16.1](https://github.com/appium/appium/compare/@appium/base-driver@9.16.0...@appium/base-driver@9.16.1) (2025-02-20)
+
+
+### Bug Fixes
+
+* **base-driver:** Optimize the logic of getUrlForProxy ([#21018](https://github.com/appium/appium/issues/21018)) ([8a664a4](https://github.com/appium/appium/commit/8a664a4eef97f45c5bdf7f19708149488b63d7fc))
+
+
+
+## [9.16.0](https://github.com/appium/appium/compare/@appium/base-driver@9.15.0...@appium/base-driver@9.16.0) (2025-02-19)
+
+
+### Features
+
+* Add /appium/extensions API to list available extensions ([#20931](https://github.com/appium/appium/issues/20931)) ([a6b6077](https://github.com/appium/appium/commit/a6b6077ecd0749598f52d9f29b3220f47d7ad636))
+* add /appium/sessions, /session/:sessionId/appium/capabilities and deprecated marks will be removed in the future ([#20936](https://github.com/appium/appium/issues/20936)) ([eeb59ca](https://github.com/appium/appium/commit/eeb59cab071fdafa44f091e9d0e2676414c85c5d))
+* Add BiDi commands to the listCommands API output ([#20925](https://github.com/appium/appium/issues/20925)) ([2635dcb](https://github.com/appium/appium/commit/2635dcb457be2dc02dfbee5ad4c6ab132f5af8de))
+* **appium:** Add a command line parameter to configure HTTP server request timeout ([#21003](https://github.com/appium/appium/issues/21003)) ([eb1b156](https://github.com/appium/appium/commit/eb1b156146bc338da9c6ded5a2c5beab22ac0ed8))
+* **base-driver:** Add an API to list commands ([#20914](https://github.com/appium/appium/issues/20914)) ([059f1cb](https://github.com/appium/appium/commit/059f1cb698ccdbc58494af9303c5bf264a1893d9))
+* **base-driver:** Print the closest match if the given script did not match ([#20956](https://github.com/appium/appium/issues/20956)) ([f8b5799](https://github.com/appium/appium/commit/f8b57999e5a4a13a089cff12954de5d99c8a35fc))
+
+
+### Bug Fixes
+
+* **driver-test-support:** update definitelytyped ([#20942](https://github.com/appium/appium/issues/20942)) ([f7c63ee](https://github.com/appium/appium/commit/f7c63ee5d87be21eba577a4cfd0b0a08a050afeb))
+* **types:** update dependency type-fest to v4.32.0 ([#20900](https://github.com/appium/appium/issues/20900)) ([fbc8530](https://github.com/appium/appium/commit/fbc85308a5398e7c9966792da713e60e47ed7f00))
+* **types:** update dependency type-fest to v4.33.0 ([#20923](https://github.com/appium/appium/issues/20923)) ([2409d32](https://github.com/appium/appium/commit/2409d3223a77aa7e84e0cb05a70be3bfa0c69157))
+* **types:** update dependency type-fest to v4.34.1 ([#20971](https://github.com/appium/appium/issues/20971)) ([0a7490e](https://github.com/appium/appium/commit/0a7490ed53ccfa9243df779e74bafadfc8415c87))
+* **types:** update dependency type-fest to v4.35.0 ([#20999](https://github.com/appium/appium/issues/20999)) ([3dc7336](https://github.com/appium/appium/commit/3dc7336b5fce10b9c1b095cd7a8a1841dbc3de12))
+
+
+
+## [9.15.0](https://github.com/appium/appium/compare/@appium/base-driver@9.14.1...@appium/base-driver@9.15.0) (2025-01-08)
+
+
+### Features
+
+* **appium,base-driver,base-plugin:** allow plugins to define custom bidi commands and emit bidi events ([#20876](https://github.com/appium/appium/issues/20876)) ([8df1c21](https://github.com/appium/appium/commit/8df1c217a15d30300c04b9f59cdbdffa70325828))
+
+
+
+## [9.14.1](https://github.com/appium/appium/compare/@appium/base-driver@9.14.0...@appium/base-driver@9.14.1) (2025-01-06)
+
+
+### Bug Fixes
+
+* **driver-test-support:** update dependency @types/lodash to v4.17.14 ([#20877](https://github.com/appium/appium/issues/20877)) ([fe209ed](https://github.com/appium/appium/commit/fe209ed660e0f790c98cd51938d0c75712cfd8e4))
+
+
+
+## [9.14.0](https://github.com/appium/appium/compare/@appium/base-driver@9.13.1...@appium/base-driver@9.14.0) (2025-01-02)
+
+
+### Features
+
+* **appium:** Add session.status BiDi command ([#20839](https://github.com/appium/appium/issues/20839)) ([64e768e](https://github.com/appium/appium/commit/64e768efb7bebd6b5a24d55206d1cad00812777c))
+* **appium:** allow drivers to define their own bidi commands ([#20828](https://github.com/appium/appium/issues/20828)) ([a917ec6](https://github.com/appium/appium/commit/a917ec6ceda2166fb3dcbff6b2768f700db9e103))
+
+
+### Bug Fixes
+
+* **base-driver:** Return an empty object if the corresponding API response is undefined ([#20845](https://github.com/appium/appium/issues/20845)) ([c765bc3](https://github.com/appium/appium/commit/c765bc31e03d37ed194fcd52f4e4a2ca1128b260))
+* **base-driver:** update dependency express to v4.21.2 ([#20823](https://github.com/appium/appium/issues/20823)) ([c032352](https://github.com/appium/appium/commit/c032352fade2146cdce5feb0906726ad07a30e4f))
+* Reduce linter warnings ([#20860](https://github.com/appium/appium/issues/20860)) ([65658cc](https://github.com/appium/appium/commit/65658ccbdde9144c45cb5aad6a9089a5d6f3a0a3))
+* **types:** update dependency type-fest to v4 ([#20838](https://github.com/appium/appium/issues/20838)) ([a5897dd](https://github.com/appium/appium/commit/a5897dd25a277a42b0c650a52274ba2c891ac3b0))
+* **types:** update dependency type-fest to v4 ([#20843](https://github.com/appium/appium/issues/20843)) ([7abecad](https://github.com/appium/appium/commit/7abecaddd3ed64c7be321650b2a17990e74a7222))
+* **types:** update dependency type-fest to v4.31.0 ([#20857](https://github.com/appium/appium/issues/20857)) ([24abb38](https://github.com/appium/appium/commit/24abb385e54f57457c4fb3f2b654cb63645e7ccd))
+
+
+
 ## [9.13.1](https://github.com/appium/appium/compare/@appium/base-driver@9.13.0...@appium/base-driver@9.13.1) (2024-12-05)
 
 

@@ -3,6 +3,100 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.16.2](https://github.com/appium/appium/compare/appium@2.16.1...appium@2.16.2) (2025-02-20)
+
+**Note:** Version bump only for package appium
+
+
+
+
+
+## [2.16.1](https://github.com/appium/appium/compare/appium@2.16.0...appium@2.16.1) (2025-02-20)
+
+**Note:** Version bump only for package appium
+
+
+
+
+
+## [2.16.0](https://github.com/appium/appium/compare/appium@2.15.0...appium@2.16.0) (2025-02-19)
+
+
+### Features
+
+* Add /appium/extensions API to list available extensions ([#20931](https://github.com/appium/appium/issues/20931)) ([a6b6077](https://github.com/appium/appium/commit/a6b6077ecd0749598f52d9f29b3220f47d7ad636))
+* add /appium/sessions, /session/:sessionId/appium/capabilities and deprecated marks will be removed in the future ([#20936](https://github.com/appium/appium/issues/20936)) ([eeb59ca](https://github.com/appium/appium/commit/eeb59cab071fdafa44f091e9d0e2676414c85c5d))
+* Add BiDi commands to the listCommands API output ([#20925](https://github.com/appium/appium/issues/20925)) ([2635dcb](https://github.com/appium/appium/commit/2635dcb457be2dc02dfbee5ad4c6ab132f5af8de))
+* **appium:** Add a command line parameter to configure HTTP server request timeout ([#21003](https://github.com/appium/appium/issues/21003)) ([eb1b156](https://github.com/appium/appium/commit/eb1b156146bc338da9c6ded5a2c5beab22ac0ed8))
+* **base-driver:** Add an API to list commands ([#20914](https://github.com/appium/appium/issues/20914)) ([059f1cb](https://github.com/appium/appium/commit/059f1cb698ccdbc58494af9303c5bf264a1893d9))
+
+
+### Bug Fixes
+
+* **appium:** add await for async function ([#20974](https://github.com/appium/appium/issues/20974)) ([21e2aab](https://github.com/appium/appium/commit/21e2aabc391fefe0dff8e29fe1cd6be908d5b3d0))
+* **appium:** Wait for upstream web socket to open before sending data to it ([#20953](https://github.com/appium/appium/issues/20953)) ([3cfe3af](https://github.com/appium/appium/commit/3cfe3af1c8d88c8ec79d2d89c7e76d697205c86b))
+* **execute-driver-plugin:** update dependency webdriverio to v9.5.3 ([#20895](https://github.com/appium/appium/issues/20895)) ([8741474](https://github.com/appium/appium/commit/874147449a26bbec03b08e7e95fb9e4c6b5881af))
+* **execute-driver-plugin:** update dependency webdriverio to v9.5.4 ([#20898](https://github.com/appium/appium/issues/20898)) ([7f91d5c](https://github.com/appium/appium/commit/7f91d5cba850100124088d774ba8704e3765863f))
+* **execute-driver-plugin:** update dependency webdriverio to v9.5.7 ([#20903](https://github.com/appium/appium/issues/20903)) ([c60fdc8](https://github.com/appium/appium/commit/c60fdc8d847b4aeed2d8b8307180194ee32e5ca9))
+* **execute-driver-plugin:** update dependency webdriverio to v9.7.0 ([#20930](https://github.com/appium/appium/issues/20930)) ([5780982](https://github.com/appium/appium/commit/57809826a410b71dca155f59e081f77dcaf671ed))
+* **execute-driver-plugin:** update dependency webdriverio to v9.7.1 ([#20934](https://github.com/appium/appium/issues/20934)) ([50fa5d6](https://github.com/appium/appium/commit/50fa5d670bd967200a78e5b4b8a54d5c9b85901b))
+* **execute-driver-plugin:** update dependency webdriverio to v9.7.2 ([#20944](https://github.com/appium/appium/issues/20944)) ([f5e0819](https://github.com/appium/appium/commit/f5e0819f505b55421b7d260f69a41ae980390a91))
+* **execute-driver-plugin:** update dependency webdriverio to v9.8.0 ([#20964](https://github.com/appium/appium/issues/20964)) ([ce32226](https://github.com/appium/appium/commit/ce32226cb57fb3f07bf4862dbbfcba227ff1230c))
+* **execute-driver-plugin:** update dependency webdriverio to v9.9.0 ([#20994](https://github.com/appium/appium/issues/20994)) ([b3c877f](https://github.com/appium/appium/commit/b3c877f66ddf3ccf7a25ca1f7a3952c660bd7dda))
+* **execute-driver-plugin:** update dependency webdriverio to v9.9.1 ([#20996](https://github.com/appium/appium/issues/20996)) ([c6a080f](https://github.com/appium/appium/commit/c6a080f7ade03a49a274ce6fbc84629406fdc2a7))
+* **execute-driver-plugin:** update dependency webdriverio to v9.9.3 ([#21005](https://github.com/appium/appium/issues/21005)) ([686a630](https://github.com/appium/appium/commit/686a630fbdf525db16b42fdfc1bbdaf6426b41d0))
+* **support:** update dependency semver to v7.7.0 ([#20948](https://github.com/appium/appium/issues/20948)) ([81ebd75](https://github.com/appium/appium/commit/81ebd758cb8a87d388124036e5158207041a6b2f))
+* **support:** update dependency semver to v7.7.1 ([#20961](https://github.com/appium/appium/issues/20961)) ([4c08944](https://github.com/appium/appium/commit/4c089440e655fbe3c8da919f8f625b7d7179f00a))
+* **types:** update dependency type-fest to v4.32.0 ([#20900](https://github.com/appium/appium/issues/20900)) ([fbc8530](https://github.com/appium/appium/commit/fbc85308a5398e7c9966792da713e60e47ed7f00))
+* **types:** update dependency type-fest to v4.33.0 ([#20923](https://github.com/appium/appium/issues/20923)) ([2409d32](https://github.com/appium/appium/commit/2409d3223a77aa7e84e0cb05a70be3bfa0c69157))
+* **types:** update dependency type-fest to v4.34.1 ([#20971](https://github.com/appium/appium/issues/20971)) ([0a7490e](https://github.com/appium/appium/commit/0a7490ed53ccfa9243df779e74bafadfc8415c87))
+* **types:** update dependency type-fest to v4.35.0 ([#20999](https://github.com/appium/appium/issues/20999)) ([3dc7336](https://github.com/appium/appium/commit/3dc7336b5fce10b9c1b095cd7a8a1841dbc3de12))
+
+
+
+## [2.15.0](https://github.com/appium/appium/compare/appium@2.14.1...appium@2.15.0) (2025-01-08)
+
+
+### Features
+
+* **appium,base-driver,base-plugin:** allow plugins to define custom bidi commands and emit bidi events ([#20876](https://github.com/appium/appium/issues/20876)) ([8df1c21](https://github.com/appium/appium/commit/8df1c217a15d30300c04b9f59cdbdffa70325828))
+
+
+
+## [2.14.1](https://github.com/appium/appium/compare/appium@2.14.0...appium@2.14.1) (2025-01-06)
+
+
+### Bug Fixes
+
+* **appium:** Do not update BiDi commands for drivers which don't support it ([#20879](https://github.com/appium/appium/issues/20879)) ([13d8b03](https://github.com/appium/appium/commit/13d8b03cc185c5f4e0631002614981ee6f86fab4))
+* **execute-driver-plugin:** update dependency webdriverio to v9.5.1 ([#20875](https://github.com/appium/appium/issues/20875)) ([93e4288](https://github.com/appium/appium/commit/93e4288253c07a844e6e10f0dd040b1a40eb92ff))
+* **support:** update dependency teen_process to v2.2.3 ([#20882](https://github.com/appium/appium/issues/20882)) ([488e5de](https://github.com/appium/appium/commit/488e5dea82d3c525acf483952570e32f319f3722))
+
+
+
+## [2.14.0](https://github.com/appium/appium/compare/appium@2.13.1...appium@2.14.0) (2025-01-02)
+
+
+### Features
+
+* **appium:** Add session.status BiDi command ([#20839](https://github.com/appium/appium/issues/20839)) ([64e768e](https://github.com/appium/appium/commit/64e768efb7bebd6b5a24d55206d1cad00812777c))
+* **appium:** allow drivers to define their own bidi commands ([#20828](https://github.com/appium/appium/issues/20828)) ([a917ec6](https://github.com/appium/appium/commit/a917ec6ceda2166fb3dcbff6b2768f700db9e103))
+* **appium:** Update entry point resolution logic for ESM extensions ([#20866](https://github.com/appium/appium/issues/20866)) ([bbfc040](https://github.com/appium/appium/commit/bbfc04026f0629d89d8b313616b852896481d08d))
+
+
+### Bug Fixes
+
+* **appium:** update CLI help messages ([#20825](https://github.com/appium/appium/issues/20825)) ([04e2d11](https://github.com/appium/appium/commit/04e2d1154b67c34607ab7a1e2a44b9b4bcfb998f))
+* **docutils:** update dependency yaml to v2.7.0 ([#20870](https://github.com/appium/appium/issues/20870)) ([389a3e8](https://github.com/appium/appium/commit/389a3e83ac0069504338f7182a4e938cd391de7e))
+* **execute-driver-plugin:** update dependency webdriverio to v9.4.5 ([#20847](https://github.com/appium/appium/issues/20847)) ([4474412](https://github.com/appium/appium/commit/4474412a60a82556f43fd3f3fb4f4ea2e4bc11ee))
+* **execute-driver-plugin:** update dependency webdriverio to v9.5.0 ([#20871](https://github.com/appium/appium/issues/20871)) ([990a066](https://github.com/appium/appium/commit/990a0667e3442bf01aaf67327066517d6310c371))
+* Reduce linter warnings ([#20860](https://github.com/appium/appium/issues/20860)) ([65658cc](https://github.com/appium/appium/commit/65658ccbdde9144c45cb5aad6a9089a5d6f3a0a3))
+* **types:** update dependency type-fest to v4 ([#20838](https://github.com/appium/appium/issues/20838)) ([a5897dd](https://github.com/appium/appium/commit/a5897dd25a277a42b0c650a52274ba2c891ac3b0))
+* **types:** update dependency type-fest to v4 ([#20843](https://github.com/appium/appium/issues/20843)) ([7abecad](https://github.com/appium/appium/commit/7abecaddd3ed64c7be321650b2a17990e74a7222))
+* **types:** update dependency type-fest to v4.31.0 ([#20857](https://github.com/appium/appium/issues/20857)) ([24abb38](https://github.com/appium/appium/commit/24abb385e54f57457c4fb3f2b654cb63645e7ccd))
+
+
+
 ## [2.13.1](https://github.com/appium/appium/compare/appium@2.13.0...appium@2.13.1) (2024-12-05)
 
 

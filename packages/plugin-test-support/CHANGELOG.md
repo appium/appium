@@ -3,6 +3,48 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.51](https://github.com/appium/appium/compare/@appium/plugin-test-support@0.3.50...@appium/plugin-test-support@0.3.51) (2025-02-20)
+
+**Note:** Version bump only for package @appium/plugin-test-support
+
+
+
+
+
+## [0.3.50](https://github.com/appium/appium/compare/@appium/plugin-test-support@0.3.49...@appium/plugin-test-support@0.3.50) (2025-02-19)
+
+**Note:** Version bump only for package @appium/plugin-test-support
+
+
+
+
+
+## [0.3.49](https://github.com/appium/appium/compare/@appium/plugin-test-support@0.3.48...@appium/plugin-test-support@0.3.49) (2025-01-08)
+
+**Note:** Version bump only for package @appium/plugin-test-support
+
+
+
+
+
+## [0.3.48](https://github.com/appium/appium/compare/@appium/plugin-test-support@0.3.47...@appium/plugin-test-support@0.3.48) (2025-01-06)
+
+
+### Bug Fixes
+
+* **support:** update dependency teen_process to v2.2.3 ([#20882](https://github.com/appium/appium/issues/20882)) ([488e5de](https://github.com/appium/appium/commit/488e5dea82d3c525acf483952570e32f319f3722))
+
+
+
+## [0.3.47](https://github.com/appium/appium/compare/@appium/plugin-test-support@0.3.46...@appium/plugin-test-support@0.3.47) (2025-01-02)
+
+
+### Bug Fixes
+
+* Reduce linter warnings ([#20860](https://github.com/appium/appium/issues/20860)) ([65658cc](https://github.com/appium/appium/commit/65658ccbdde9144c45cb5aad6a9089a5d6f3a0a3))
+
+
+
 ## [0.3.46](https://github.com/appium/appium/compare/@appium/plugin-test-support@0.3.45...@appium/plugin-test-support@0.3.46) (2024-12-05)
 
 

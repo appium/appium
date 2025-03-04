@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-named-as-default
 import Express from 'express';
 import bodyParser from 'body-parser';
 

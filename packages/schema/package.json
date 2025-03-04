@@ -1,6 +1,6 @@
 {
   "name": "@appium/schema",
-  "version": "0.7.0",
+  "version": "0.8.1",
   "description": "Appium Configuration Schema",
   "keywords": [
     "automation",
@@ -19,7 +19,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/appium/appium.git",
-    "directory": "schema"
+    "directory": "packages/schema"
   },
   "license": "Apache-2.0",
   "author": "https://github.com/appium",
@@ -38,7 +38,6 @@
     "test": "exit 0"
   },
   "dependencies": {
-    "@types/json-schema": "7.0.15",
     "json-schema": "0.4.0",
     "source-map-support": "0.5.21"
   },

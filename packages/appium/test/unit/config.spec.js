@@ -1,6 +1,7 @@
 // @ts-check
 
 import _ from 'lodash';
+// eslint-disable-next-line import/named
 import {createSandbox} from 'sinon';
 import {getParser} from '../../lib/cli/parser';
 import {

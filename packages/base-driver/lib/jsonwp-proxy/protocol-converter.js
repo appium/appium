@@ -43,6 +43,11 @@ const {MJSONWP, W3C} = PROTOCOLS;
 const DEFAULT_LOG = logger.getLogger('Protocol Converter');
 
 class ProtocolConverter {
+  /**
+   *
+   * @param {ProxyFunction} proxyFunc
+   * @param {import('@appium/types').AppiumLogger | null} [log=null]
+   */
   constructor(proxyFunc, log = null) {
     this.proxyFunc = proxyFunc;
     this._downstreamProtocol = null;
@@ -67,7 +72,7 @@ class ProtocolConverter {
    * provided in the request, we need to do 3 proxies and combine the result
    *
    * @param {Object} body Request body
-   * @return {Array} Array of W3C + MJSONWP compatible timeout objects
+   * @return {Object[]} Array of W3C + MJSONWP compatible timeout objects
    */
   getTimeoutRequestObjects(body) {
     if (this.downstreamProtocol === W3C && _.has(body, 'ms') && _.has(body, 'type')) {
@@ -99,9 +104,10 @@ class ProtocolConverter {
 
   /**
    * Proxy an array of timeout objects and merge the result
-   * @param {String} url Endpoint url
-   * @param {String} method Endpoint method
-   * @param {Object} body Request body
+   * @param {string} url Endpoint url
+   * @param {string} method Endpoint method
+   * @param {import('@appium/types').HTTPBody} body Request body
+   * @returns {Promise<[import('@appium/types').ProxyResponse, import('@appium/types').HTTPBody]>}
    */
   async proxySetTimeouts(url, method, body) {
     let response, resBody;
@@ -127,9 +133,16 @@ class ProtocolConverter {
 
       // ...Otherwise, continue to the next timeouts call
     }
-    return [response, resBody];
+    return [/** @type {import('@appium/types').ProxyResponse} */(response), resBody];
   }
 
+  /**
+   *
+   * @param {string} url
+   * @param {string} method
+   * @param {import('@appium/types').HTTPBody} body
+   * @returns {Promise<[import('@appium/types').ProxyResponse, import('@appium/types').HTTPBody]>}
+   */
   async proxySetWindow(url, method, body) {
     const bodyObj = util.safeJsonParse(body);
     if (_.isPlainObject(bodyObj)) {
@@ -160,6 +173,13 @@ class ProtocolConverter {
     return await this.proxyFunc(url, method, body);
   }
 
+  /**
+   *
+   * @param {string} url
+   * @param {string} method
+   * @param {import('@appium/types').HTTPBody} body
+   * @returns {Promise<[import('@appium/types').ProxyResponse, import('@appium/types').HTTPBody]>}
+   */
   async proxySetValue(url, method, body) {
     const bodyObj = util.safeJsonParse(body);
     if (_.isPlainObject(bodyObj) && (util.hasValue(bodyObj.text) || util.hasValue(bodyObj.value))) {
@@ -186,6 +206,13 @@ class ProtocolConverter {
     return await this.proxyFunc(url, method, body);
   }
 
+  /**
+   *
+   * @param {string} url
+   * @param {string} method
+   * @param {import('@appium/types').HTTPBody} body
+   * @returns {Promise<[import('@appium/types').ProxyResponse, import('@appium/types').HTTPBody]>}
+   */
   async proxySetFrame(url, method, body) {
     const bodyObj = util.safeJsonParse(body);
     return _.has(bodyObj, 'id') && _.isPlainObject(bodyObj.id)
@@ -196,6 +223,13 @@ class ProtocolConverter {
       : await this.proxyFunc(url, method, body);
   }
 
+  /**
+   *
+   * @param {string} url
+   * @param {string} method
+   * @param {import('@appium/types').HTTPBody} body
+   * @returns {Promise<[import('@appium/types').ProxyResponse, import('@appium/types').HTTPBody]>}
+   */
   async proxyPerformActions(url, method, body) {
     const bodyObj = util.safeJsonParse(body);
     return _.isPlainObject(bodyObj)
@@ -207,6 +241,12 @@ class ProtocolConverter {
       : await this.proxyFunc(url, method, body);
   }
 
+  /**
+   *
+   * @param {string} url
+   * @param {string} method
+   * @returns {Promise<[import('@appium/types').ProxyResponse, import('@appium/types').HTTPBody]>}
+   */
   async proxyReleaseActions(url, method) {
     return await this.proxyFunc(url, method);
   }
@@ -218,8 +258,8 @@ class ProtocolConverter {
    * @param {string} commandName
    * @param {string} url
    * @param {string} method
-   * @param {?string|object} body
-   * @returns The proxyfying result as [response, responseBody] tuple
+   * @param {import('@appium/types').HTTPBody} [body]
+   * @returns {Promise<[import('@appium/types').ProxyResponse, import('@appium/types').HTTPBody]>}
    */
   async convertAndProxy(commandName, url, method, body) {
     if (!this.downstreamProtocol) {
@@ -272,3 +312,7 @@ class ProtocolConverter {
 }
 
 export default ProtocolConverter;
+
+/**
+ * @typedef {(url: string, method: string, body?: import('@appium/types').HTTPBody) => Promise<[import('@appium/types').ProxyResponse, import('@appium/types').HTTPBody]>} ProxyFunction
+ */

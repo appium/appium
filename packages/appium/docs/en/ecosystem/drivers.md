@@ -44,8 +44,6 @@ These drivers are not maintained by the Appium team and can be used to target ad
 |[Tizen](https://github.com/Samsung/appium-tizen-driver)|`--source=npm appium-tizen-driver`|Android|Native|Community / Samsung|
 |[TizenTV](https://github.com/headspinio/appium-tizen-tv-driver)|`--source=npm appium-tizen-tv-driver`|Samsung TV|Web|HeadSpin|
 |[Youi](https://github.com/YOU-i-Labs/appium-youiengine-driver)|`--source=npm appium-youiengine-driver`|iOS, Android, macOS, Linux, tvOS|Native|Community / You.i|
-|[axe UiAutomator2](https://docs.deque.com/devtools-mobile/appium-setup)|`--source=npm @axe-devtools/axe-appium-uiautomator2-driver`|Android|Native|[Deque](https://www.deque.com)|
-|[axe XCUITest](https://docs.deque.com/devtools-mobile/appium-setup)|`--source=npm @axe-devtools/axe-appium-xcuitest-driver`|iOS|Native|[Deque](https://www.deque.com)|
 
 !!! note
 

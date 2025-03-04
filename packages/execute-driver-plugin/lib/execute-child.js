@@ -74,7 +74,7 @@ function coerceScriptResult(obj) {
   // get rid of custom objects, functions, etc... and turn them into POJOs
   try {
     obj = JSON.parse(JSON.stringify(obj));
-  } catch (e) {
+  } catch {
     log.warn(
       'Could not convert executeDriverScript to safe response!' +
         `Result was: ${JSON.stringify(obj)}. Will make it null`,

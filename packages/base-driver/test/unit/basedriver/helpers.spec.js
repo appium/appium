@@ -153,4 +153,7 @@ describe('parseCapsArray', function () {
   it('should return an array without change', function () {
     parseCapsArray(['a', 'b']).should.eql(['a', 'b']);
   });
+  it('should fail if an invalid JSON array is provided', function () {
+    (() => parseCapsArray(`['*']`)).should.throw();
+  });
 });

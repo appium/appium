@@ -3,6 +3,55 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.30](https://github.com/appium/appium/compare/@appium/images-plugin@3.0.29...@appium/images-plugin@3.0.30) (2025-02-20)
+
+**Note:** Version bump only for package @appium/images-plugin
+
+
+
+
+
+## [3.0.29](https://github.com/appium/appium/compare/@appium/images-plugin@3.0.28...@appium/images-plugin@3.0.29) (2025-02-20)
+
+**Note:** Version bump only for package @appium/images-plugin
+
+
+
+
+
+## [3.0.28](https://github.com/appium/appium/compare/@appium/images-plugin@3.0.27...@appium/images-plugin@3.0.28) (2025-02-19)
+
+**Note:** Version bump only for package @appium/images-plugin
+
+
+
+
+
+## [3.0.27](https://github.com/appium/appium/compare/@appium/images-plugin@3.0.26...@appium/images-plugin@3.0.27) (2025-01-08)
+
+**Note:** Version bump only for package @appium/images-plugin
+
+
+
+
+
+## [3.0.26](https://github.com/appium/appium/compare/@appium/images-plugin@3.0.25...@appium/images-plugin@3.0.26) (2025-01-06)
+
+**Note:** Version bump only for package @appium/images-plugin
+
+
+
+
+
+## [3.0.25](https://github.com/appium/appium/compare/@appium/images-plugin@3.0.24...@appium/images-plugin@3.0.25) (2025-01-02)
+
+
+### Bug Fixes
+
+* Reduce linter warnings ([#20860](https://github.com/appium/appium/issues/20860)) ([65658cc](https://github.com/appium/appium/commit/65658ccbdde9144c45cb5aad6a9089a5d6f3a0a3))
+
+
+
 ## [3.0.24](https://github.com/appium/appium/compare/@appium/images-plugin@3.0.23...@appium/images-plugin@3.0.24) (2024-12-05)
 
 **Note:** Version bump only for package @appium/images-plugin

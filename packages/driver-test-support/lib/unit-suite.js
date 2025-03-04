@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import B from 'bluebird';
+// eslint-disable-next-line import/named
 import {createSandbox} from 'sinon';
 
 // wrap these tests in a function so we can export the tests and re-use them

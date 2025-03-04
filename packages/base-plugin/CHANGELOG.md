@@ -3,6 +3,56 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.3.3](https://github.com/appium/appium/compare/@appium/base-plugin@2.3.2...@appium/base-plugin@2.3.3) (2025-02-20)
+
+**Note:** Version bump only for package @appium/base-plugin
+
+
+
+
+
+## [2.3.2](https://github.com/appium/appium/compare/@appium/base-plugin@2.3.1...@appium/base-plugin@2.3.2) (2025-02-20)
+
+**Note:** Version bump only for package @appium/base-plugin
+
+
+
+
+
+## [2.3.1](https://github.com/appium/appium/compare/@appium/base-plugin@2.3.0...@appium/base-plugin@2.3.1) (2025-02-19)
+
+**Note:** Version bump only for package @appium/base-plugin
+
+
+
+
+
+## [2.3.0](https://github.com/appium/appium/compare/@appium/base-plugin@2.2.52...@appium/base-plugin@2.3.0) (2025-01-08)
+
+
+### Features
+
+* **appium,base-driver,base-plugin:** allow plugins to define custom bidi commands and emit bidi events ([#20876](https://github.com/appium/appium/issues/20876)) ([8df1c21](https://github.com/appium/appium/commit/8df1c217a15d30300c04b9f59cdbdffa70325828))
+
+
+
+## [2.2.52](https://github.com/appium/appium/compare/@appium/base-plugin@2.2.51...@appium/base-plugin@2.2.52) (2025-01-06)
+
+**Note:** Version bump only for package @appium/base-plugin
+
+
+
+
+
+## [2.2.51](https://github.com/appium/appium/compare/@appium/base-plugin@2.2.50...@appium/base-plugin@2.2.51) (2025-01-02)
+
+
+### Bug Fixes
+
+* Reduce linter warnings ([#20860](https://github.com/appium/appium/issues/20860)) ([65658cc](https://github.com/appium/appium/commit/65658ccbdde9144c45cb5aad6a9089a5d6f3a0a3))
+
+
+
 ## [2.2.50](https://github.com/appium/appium/compare/@appium/base-plugin@2.2.49...@appium/base-plugin@2.2.50) (2024-12-05)
 
 **Note:** Version bump only for package @appium/base-plugin

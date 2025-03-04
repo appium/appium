@@ -14,6 +14,7 @@ import {
 } from '../schema/schema';
 import { pathToFileURL } from 'url';
 
+const DEFAULT_ENTRY_POINT = 'index.js';
 /**
  * "npm" install type
  * Used when extension was installed by npm package name
@@ -567,23 +568,39 @@ export class ExtensionConfig {
     const {mainClass} = this.installedExtensions[extName];
     const moduleRoot = this.getInstallPath(extName);
     const packageJsonPath = path.join(moduleRoot, 'package.json');
-    let entryPointPath;
+    let extensionManifest;
     try {
-      entryPointPath = JSON.parse(await fs.readFile(packageJsonPath, 'utf8')).main ?? 'index.js';
+      extensionManifest = JSON.parse(await fs.readFile(packageJsonPath, 'utf8'));
     } catch (e) {
-      throw new ReferenceError(`Could not find a ${this.extensionType} installed at ${moduleRoot}`);
+      throw new ReferenceError(
+        `Could not read the ${this.extensionType} manifest at ${packageJsonPath}: ${e.message}`
+      );
     }
-    if (entryPointPath) {
-      entryPointPath = path.resolve(moduleRoot, entryPointPath);
-    } else {
-      throw new ReferenceError(`Cannot find a valid ${this.extensionType} main entry point in '${packageJsonPath}'`);
+    /** @type {string | undefined} */
+    let entryPointRelativePath;
+    try {
+      if (extensionManifest.type === 'module' && extensionManifest.exports) {
+        entryPointRelativePath = resolveEsmEntryPoint(extensionManifest.exports);
+      }
+      entryPointRelativePath = entryPointRelativePath ?? extensionManifest.main ?? DEFAULT_ENTRY_POINT;
+    } catch (e) {
+      throw new ReferenceError(
+        `Could not find the ${this.extensionType} installed at ${moduleRoot}: ${e.message}`
+      );
+    }
+    const entryPointFullPath = path.resolve(moduleRoot, /** @type {string} */ (entryPointRelativePath));
+    if (!await fs.exists(entryPointFullPath)) {
+      throw new ReferenceError(
+        `Cannot find a valid ${this.extensionType} main entry point in '${packageJsonPath}'. ` +
+        `Assumed entry point: '${entryPointFullPath}'`
+      );
     }
     // note: this will only reload the entry point
-    if (process.env.APPIUM_RELOAD_EXTENSIONS && require.cache[entryPointPath]) {
-      log.debug(`Removing ${entryPointPath} from require cache`);
-      delete require.cache[entryPointPath];
+    if (process.env.APPIUM_RELOAD_EXTENSIONS && require.cache[entryPointFullPath]) {
+      log.debug(`Removing ${entryPointFullPath} from require cache`);
+      delete require.cache[entryPointFullPath];
     }
-    return [entryPointPath, mainClass];
+    return [entryPointFullPath, mainClass];
   }
 
   /**
@@ -669,6 +686,27 @@ export class ExtensionConfig {
       extName,
       extManifest
     );
+  }
+}
+
+/**
+ * https://nodejs.org/api/packages.html#package-entry-points
+ *
+ * @param {any} exportsValue
+ * @returns {string | undefined}
+ */
+export function resolveEsmEntryPoint(exportsValue) {
+  if (_.isString(exportsValue) && exportsValue) {
+    return exportsValue;
+  }
+  if (!_.isPlainObject(exportsValue)) {
+    return;
+  }
+
+  for (const key of ['.', 'import']) {
+    if (exportsValue[key]) {
+      return resolveEsmEntryPoint(exportsValue[key]);
+    }
   }
 }
 

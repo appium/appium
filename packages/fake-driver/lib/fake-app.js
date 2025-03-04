@@ -2,7 +2,7 @@ import {fs} from 'appium/support';
 import {readFileSync} from 'fs';
 import path from 'path';
 import XMLDom from '@xmldom/xmldom';
-import xpath from 'xpath';
+import * as xpath from 'xpath';
 import log from './logger';
 import _ from 'lodash';
 import {FakeElement} from './fake-element';

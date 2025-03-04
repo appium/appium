@@ -1,6 +1,7 @@
 import {server, routeConfiguringFunction, errors, JWProxy, BaseDriver} from '../../../lib';
 import {FakeDriver} from './fake-driver';
 import axios from 'axios';
+// eslint-disable-next-line import/named
 import {createSandbox} from 'sinon';
 import {StatusCodes as HTTPStatusCodes} from 'http-status-codes';
 import {createProxyServer} from './helpers';

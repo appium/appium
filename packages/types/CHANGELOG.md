@@ -3,6 +3,63 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.25.1](https://github.com/appium/appium/compare/@appium/types@0.25.0...@appium/types@0.25.1) (2025-02-20)
+
+**Note:** Version bump only for package @appium/types
+
+
+
+
+
+## [0.25.0](https://github.com/appium/appium/compare/@appium/types@0.24.0...@appium/types@0.25.0) (2025-02-19)
+
+
+### Features
+
+* Add /appium/extensions API to list available extensions ([#20931](https://github.com/appium/appium/issues/20931)) ([a6b6077](https://github.com/appium/appium/commit/a6b6077ecd0749598f52d9f29b3220f47d7ad636))
+* Add BiDi commands to the listCommands API output ([#20925](https://github.com/appium/appium/issues/20925)) ([2635dcb](https://github.com/appium/appium/commit/2635dcb457be2dc02dfbee5ad4c6ab132f5af8de))
+* **appium:** Add a command line parameter to configure HTTP server request timeout ([#21003](https://github.com/appium/appium/issues/21003)) ([eb1b156](https://github.com/appium/appium/commit/eb1b156146bc338da9c6ded5a2c5beab22ac0ed8))
+* **base-driver:** Add an API to list commands ([#20914](https://github.com/appium/appium/issues/20914)) ([059f1cb](https://github.com/appium/appium/commit/059f1cb698ccdbc58494af9303c5bf264a1893d9))
+* **types:** Add an optional `info` field to base method type definitions ([#20917](https://github.com/appium/appium/issues/20917)) ([fe4ffc1](https://github.com/appium/appium/commit/fe4ffc159a87cb7566775203efe4659d1508b5b0))
+
+
+### Bug Fixes
+
+* **deps:** update definitelytyped ([#20928](https://github.com/appium/appium/issues/20928)) ([1f65cf6](https://github.com/appium/appium/commit/1f65cf6555a18d3ba02b4506942b4217839618ff))
+* **types:** update dependency type-fest to v4.32.0 ([#20900](https://github.com/appium/appium/issues/20900)) ([fbc8530](https://github.com/appium/appium/commit/fbc85308a5398e7c9966792da713e60e47ed7f00))
+* **types:** update dependency type-fest to v4.33.0 ([#20923](https://github.com/appium/appium/issues/20923)) ([2409d32](https://github.com/appium/appium/commit/2409d3223a77aa7e84e0cb05a70be3bfa0c69157))
+* **types:** update dependency type-fest to v4.34.1 ([#20971](https://github.com/appium/appium/issues/20971)) ([0a7490e](https://github.com/appium/appium/commit/0a7490ed53ccfa9243df779e74bafadfc8415c87))
+* **types:** update dependency type-fest to v4.35.0 ([#20999](https://github.com/appium/appium/issues/20999)) ([3dc7336](https://github.com/appium/appium/commit/3dc7336b5fce10b9c1b095cd7a8a1841dbc3de12))
+
+
+
+## [0.24.0](https://github.com/appium/appium/compare/@appium/types@0.23.0...@appium/types@0.24.0) (2025-01-08)
+
+
+### Features
+
+* **appium,base-driver,base-plugin:** allow plugins to define custom bidi commands and emit bidi events ([#20876](https://github.com/appium/appium/issues/20876)) ([8df1c21](https://github.com/appium/appium/commit/8df1c217a15d30300c04b9f59cdbdffa70325828))
+
+
+
+## [0.23.0](https://github.com/appium/appium/compare/@appium/types@0.22.3...@appium/types@0.23.0) (2025-01-02)
+
+
+### Features
+
+* **appium:** Add session.status BiDi command ([#20839](https://github.com/appium/appium/issues/20839)) ([64e768e](https://github.com/appium/appium/commit/64e768efb7bebd6b5a24d55206d1cad00812777c))
+* **appium:** allow drivers to define their own bidi commands ([#20828](https://github.com/appium/appium/issues/20828)) ([a917ec6](https://github.com/appium/appium/commit/a917ec6ceda2166fb3dcbff6b2768f700db9e103))
+
+
+### Bug Fixes
+
+* Reduce linter warnings ([#20860](https://github.com/appium/appium/issues/20860)) ([65658cc](https://github.com/appium/appium/commit/65658ccbdde9144c45cb5aad6a9089a5d6f3a0a3))
+* **types:** update dependency type-fest to v4 ([#20838](https://github.com/appium/appium/issues/20838)) ([a5897dd](https://github.com/appium/appium/commit/a5897dd25a277a42b0c650a52274ba2c891ac3b0))
+* **types:** update dependency type-fest to v4 ([#20843](https://github.com/appium/appium/issues/20843)) ([7abecad](https://github.com/appium/appium/commit/7abecaddd3ed64c7be321650b2a17990e74a7222))
+* **types:** update dependency type-fest to v4.31.0 ([#20857](https://github.com/appium/appium/issues/20857)) ([24abb38](https://github.com/appium/appium/commit/24abb385e54f57457c4fb3f2b654cb63645e7ccd))
+
+
+
 ## [0.22.3](https://github.com/appium/appium/compare/@appium/types@0.22.2...@appium/types@0.22.3) (2024-12-05)
 
 

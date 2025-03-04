@@ -4,12 +4,13 @@ try {
   B.config({
     cancellation: true,
   });
-} catch (ign) {
+} catch {
   // sometimes during testing this somehow gets required twice and results in an error about
   // cancellation not being able to be enabled after promise has been configured
 }
 
 // BaseDriver exports
+export {ExtensionCore} from './basedriver/extension-core';
 import {BaseDriver} from './basedriver/driver';
 export {DriverCore} from './basedriver/core';
 export {DeviceSettings} from './basedriver/device-settings';
@@ -47,6 +48,11 @@ export {
 
 // Web socket helpers
 export {DEFAULT_WS_PATHNAME_PREFIX} from './express/websocket';
+
+// BiDi exports
+export {BIDI_COMMANDS} from './protocol/bidi-commands';
+
+export {generateDriverLogPrefix} from './basedriver/helpers';
 
 /**
  * @typedef {import('./express/server').ServerOpts} ServerOpts

@@ -1,7 +1,7 @@
 import xmlplist from 'plist';
 import bplistCreate from 'bplist-creator';
 import bplistParse from 'bplist-parser';
-import fs from './fs';
+import {fs} from './fs';
 import log from './logger';
 import _ from 'lodash';
 
@@ -47,7 +47,7 @@ async function parsePlistFile(plist, mustExist = true, quiet = true) {
     } else {
       throw new Error(`Binary file '${plist}'' appears to be empty`);
     }
-  } catch (ign) {
+  } catch {
     try {
       obj = await parseXmlPlistFile(plist);
       type = 'xml';

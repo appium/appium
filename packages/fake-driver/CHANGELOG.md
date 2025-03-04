@@ -3,6 +3,39 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.7.1](https://github.com/appium/appium/compare/@appium/fake-driver@5.7.0...@appium/fake-driver@5.7.1) (2025-02-19)
+
+
+### Bug Fixes
+
+* **universal-xml-plugin:** update dependency @xmldom/xmldom to v0.9.7 ([#20918](https://github.com/appium/appium/issues/20918)) ([7e1f1e5](https://github.com/appium/appium/commit/7e1f1e5aad19d709a48cd4d06196fa4db792400f))
+
+
+
+## [5.7.0](https://github.com/appium/appium/compare/@appium/fake-driver@5.6.0...@appium/fake-driver@5.7.0) (2025-01-08)
+
+
+### Features
+
+* **appium,base-driver,base-plugin:** allow plugins to define custom bidi commands and emit bidi events ([#20876](https://github.com/appium/appium/issues/20876)) ([8df1c21](https://github.com/appium/appium/commit/8df1c217a15d30300c04b9f59cdbdffa70325828))
+
+
+
+## [5.6.0](https://github.com/appium/appium/compare/@appium/fake-driver@5.5.7...@appium/fake-driver@5.6.0) (2025-01-02)
+
+
+### Features
+
+* **appium:** allow drivers to define their own bidi commands ([#20828](https://github.com/appium/appium/issues/20828)) ([a917ec6](https://github.com/appium/appium/commit/a917ec6ceda2166fb3dcbff6b2768f700db9e103))
+* **fake-driver:** add getWindowHandle and getWindowHandles to reduce wdio errors in CI ([#20865](https://github.com/appium/appium/issues/20865)) ([c5443e9](https://github.com/appium/appium/commit/c5443e9fc9ac6e71bf2ddda6f66d5eccd24b20de))
+
+
+### Bug Fixes
+
+* Reduce linter warnings ([#20860](https://github.com/appium/appium/issues/20860)) ([65658cc](https://github.com/appium/appium/commit/65658ccbdde9144c45cb5aad6a9089a5d6f3a0a3))
+
+
+
 ## [5.5.7](https://github.com/appium/appium/compare/@appium/fake-driver@5.5.6...@appium/fake-driver@5.5.7) (2024-12-05)
 
 

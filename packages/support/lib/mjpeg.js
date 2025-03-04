@@ -16,7 +16,7 @@ async function initMJpegConsumer() {
   if (!MJpegConsumer) {
     try {
       MJpegConsumer = await requirePackage('mjpeg-consumer');
-    } catch (ign) {}
+    } catch {}
   }
   if (!MJpegConsumer) {
     throw new Error(
@@ -78,7 +78,7 @@ class MJpegStream extends Writable {
 
     try {
       return await requireSharp()(lastChunk).png().toBuffer();
-    } catch (e) {
+    } catch {
       return null;
     }
   }
@@ -116,22 +116,23 @@ class MJpegStream extends Writable {
     await initMJpegConsumer();
 
     this.consumer = new MJpegConsumer();
-
-    // use the deferred pattern so we can wait for the start of the stream
-    // based on what comes in from an external pipe
-    const startPromise = new B((res, rej) => {
-      this.registerStartSuccess = res;
-      this.registerStartFailure = rej;
-    })
-      // start a timeout so that if the server does not return data, we don't
-      // block forever.
-      .timeout(
-        serverTimeout,
-        `Waited ${serverTimeout}ms but the MJPEG server never sent any images`
-      );
-
     const url = this.url;
-    const onErr = (err) => {
+    try {
+      this.responseStream = (
+        await axios({
+          url,
+          responseType: 'stream',
+          timeout: serverTimeout,
+        })
+      ).data;
+    } catch (e) {
+      throw new Error(
+        `Cannot connect to the MJPEG stream at ${url}. ` +
+        `Original error: ${_.has(e, 'response') ? JSON.stringify(e.response) : /** @type {Error} */ (e).message}`
+      );
+    }
+
+    const onErr = (/** @type {Error} */ err) => {
       // Make sure we don't get an outdated screenshot if there was an error
       this.lastChunk = null;
 
@@ -145,18 +146,18 @@ class MJpegStream extends Writable {
       log.debug(`The connection to MJPEG server at ${url} has been closed`);
       this.lastChunk = null;
     };
-
-    try {
-      this.responseStream = (
-        await axios({
-          url,
-          responseType: 'stream',
-          timeout: serverTimeout,
-        })
-      ).data;
-    } catch (e) {
-      return onErr(e);
-    }
+    // use the deferred pattern so we can wait for the start of the stream
+    // based on what comes in from an external pipe
+    const startPromise = new B((res, rej) => {
+      this.registerStartSuccess = res;
+      this.registerStartFailure = rej;
+    })
+      // start a timeout so that if the server does not return data, we don't
+      // block forever.
+      .timeout(
+        serverTimeout,
+        `Waited ${serverTimeout}ms but the MJPEG server never sent any images`
+      );
 
     this.responseStream
       .once('close', onClose)

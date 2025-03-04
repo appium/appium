@@ -320,10 +320,6 @@ your driver of the appropriate name, and it will be called when the BiDi command
 the client. To see which specific names you should use for BiDi commands, have a look at
 [bidi-commands.js](https://github.com/appium/appium/blob/master/packages/base-driver/lib/protocol/bidi-commands.js)
 
-Currently, you also need to define a `doesSupportBidi` field on your driver instances, and ensure
-it is set to `true`. Appium will not turn on its Websocket servers for your driver and set up any
-handlers unless your driver says that it supports BiDi in this way.
-
 You are not limited to BiDi commands that are defined in the official BiDi specification. If you
 wish to define new commands, you may do so; you just need to tell Appium about them! See
 [below](#extend-the-existing-protocol-with-new-commands) for more information.
@@ -562,11 +558,9 @@ remote endpoint you're proxying to. Appium will take care of all the proxying fo
 ### Proxy BiDi commands to another BiDi implementation
 
 All of the above about proxying WebDriver commands is conceptually also valid for proxying BiDi
-commands specifically. In order to enable BiDi proxying, you need to:
-
-1. Set the `doesSupportBidi` field on your driver instances to `true`.
-1. Implement `get bidiProxyUrl` on your driver. This should return a Websocket URL which is the
-   address of the upstream socket you want BiDi commands to be proxied to.
+commands specifically. In order to enable BiDi proxying, you need to implement `get bidiProxyUrl`
+on your driver. This should return a Websocket URL which is the address of the upstream socket you
+want BiDi commands to be proxied to.
 
 The intended pattern here is for you to start a session on the upstream implementation, check
 whether it has an active BiDi socket in the returned capabilities (e.g., the `webSocketUrl`
@@ -624,7 +618,7 @@ an example of a `newBidiCommands` as implemented on an imaginary driver:
 
 ```js
 static newBidiCommands = {
-  video: {
+  'appium:video': {
     startFramerateCapture: {
       command: 'startFrameCap',
       params: {
@@ -639,9 +633,15 @@ static newBidiCommands = {
 };
 ```
 
-In this imaginary example, we have defined two new BiDi commands: `video.startFramerateCapture` and
-`video.stopFramerateCapture`. The first command takes a required and an optional parameter, and the
-second does not. When combined with generic BiDi support in your driver (see [the section on BiDi](#implement-webdriver-bidi-commands) above), and given an implementation of the appropriate methods on your driver (e.g. `startFrameCap` and `stopFrameCap` in this example), clients would be able to send these BiDi commands using whatever mechanism normally exists for doing so in the client library.
+In this imaginary example, we have defined two new BiDi commands:
+`appium:video.startFramerateCapture` and `appium:video.stopFramerateCapture`. Note first of all
+that, because we are defining a custom BiDi command, we should include a 'vendor prefix' (in this
+case, `appium:`, though you should pick something that represents your project). The first command
+takes a required and an optional parameter, and the second does not. When combined with generic
+BiDi support in your driver (see [the section on BiDi](#implement-webdriver-bidi-commands) above),
+and given an implementation of the appropriate methods on your driver (e.g. `startFrameCap` and
+`stopFrameCap` in this example), clients would be able to send these BiDi commands using whatever
+mechanism normally exists for doing so in the client library.
 
 An alternative to these other ways of doing things is to overload a command which all WebDriver clients
 have access to already: Execute Script. Appium provides some a convenient tool for making this
@@ -752,7 +752,7 @@ in `this.currentCpuLoad`):
 
 ```js
 this.eventEmitter.emit('bidiEvent', {
-  method: 'system.cpu',
+  method: 'appium:system.cpu',
   params: {load: this.currentCpuLoad},
 })
 ```

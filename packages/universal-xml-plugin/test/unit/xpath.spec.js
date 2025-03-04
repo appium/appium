@@ -16,18 +16,18 @@ describe('xpath functions', function () {
     });
   });
   describe('transformQuery', function () {
-    it('should transform a query into a single new query', function () {
-      const {xml} = transformSourceXml(XML_IOS, 'ios', {addIndexPath: true});
+    it('should transform a query into a single new query', async function () {
+      const {xml} = await transformSourceXml(XML_IOS, 'ios', {addIndexPath: true});
       transformQuery('//TextInput', xml, false).should.eql(
         '/*[1]/*[1]/*[1]/*[1]/*[2]/*[1]/*[1]/*[1]/*[1]/*[1]/*[1]/*[2]/*[1]/*[1]/*[1]'
       );
     });
-    it('should transform a query into a multiple new queries if asked', function () {
-      const {xml} = transformSourceXml(XML_IOS, 'ios', {addIndexPath: true});
+    it('should transform a query into a multiple new queries if asked', async function () {
+      const {xml} = await transformSourceXml(XML_IOS, 'ios', {addIndexPath: true});
       transformQuery('//Window', xml, true).split('|').should.have.length(2);
     });
-    it('should return null for queries that dont find anything', function () {
-      const {xml} = transformSourceXml(XML_IOS, 'ios', {addIndexPath: true});
+    it('should return null for queries that dont find anything', async function () {
+      const {xml} = await transformSourceXml(XML_IOS, 'ios', {addIndexPath: true});
       should.not.exist(transformQuery('//blah', xml, false));
     });
   });

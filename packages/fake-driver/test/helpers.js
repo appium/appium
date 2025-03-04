@@ -41,7 +41,7 @@ async function initSession(w3cPrefixedCaps) {
 async function deleteSession(driver) {
   try {
     await driver.deleteSession();
-  } catch (ign) {}
+  } catch {}
 }
 
 export {

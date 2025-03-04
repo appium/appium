@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import {logger, util} from '@appium/support';
-import axios from 'axios';
 import {getSummaryByCode} from '../jsonwp-status/status';
 import {
   errors,
@@ -9,15 +8,19 @@ import {
   errorFromW3CJsonCode,
   getResponseForW3CError,
 } from '../protocol/errors';
-import {routeToCommandName} from '../protocol';
+import {isSessionCommand, routeToCommandName} from '../protocol';
 import {MAX_LOG_BODY_LENGTH, DEFAULT_BASE_PATH, PROTOCOLS} from '../constants';
 import ProtocolConverter from './protocol-converter';
 import {formatResponseValue, formatStatus} from '../protocol/helpers';
 import http from 'http';
 import https from 'https';
+import { match as pathToRegexMatch } from 'path-to-regexp';
+import nodeUrl from 'node:url';
+import { ProxyRequest } from './proxy-request';
 
 const DEFAULT_LOG = logger.getLogger('WD Proxy');
 const DEFAULT_REQUEST_TIMEOUT = 240000;
+const COMMAND_WITH_SESSION_ID_MATCHER = pathToRegexMatch('{/*prefix}/session/:sessionId{/*command}');
 
 const {MJSONWP, W3C} = PROTOCOLS;
 
@@ -33,7 +36,7 @@ const ALLOWED_OPTS = [
   'keepAlive',
 ];
 
-class JWProxy {
+export class JWProxy {
   /** @type {string} */
   scheme;
   /** @type {string} */
@@ -48,13 +51,20 @@ class JWProxy {
   sessionId;
   /** @type {number} */
   timeout;
+  /** @type {Protocol | null | undefined} */
+  _downstreamProtocol;
+  /** @type {ProxyRequest[]} */
+  _activeRequests;
 
+  /**
+   * @param {import('@appium/types').ProxyOptions} [opts={}]
+   */
   constructor(opts = {}) {
-    opts = _.pick(opts, ALLOWED_OPTS);
-
+    const filteredOpts = _.pick(opts, ALLOWED_OPTS);
     // omit 'log' in the defaults assignment here because 'log' is a getter and we are going to set
     // it to this._log (which lies behind the getter) further down
-    const options = _.defaults(_.omit(opts, 'log'), {
+    /** @type {import('@appium/types').ProxyOptions} */
+    const options = _.defaults(_.omit(filteredOpts, 'log'), {
       scheme: 'http',
       server: 'localhost',
       port: 4444,
@@ -63,7 +73,7 @@ class JWProxy {
       sessionId: null,
       timeout: DEFAULT_REQUEST_TIMEOUT,
     });
-    options.scheme = options.scheme.toLowerCase();
+    options.scheme = /** @type {string} */ (options.scheme).toLowerCase();
     Object.assign(this, options);
 
     this._activeRequests = [];
@@ -77,6 +87,8 @@ class JWProxy {
     this.httpsAgent = new https.Agent(agentOpts);
     this.protocolConverter = new ProtocolConverter(this.proxy.bind(this), opts.log);
     this._log = opts.log;
+
+    this.log.debug(`${this.constructor.name} options: ${JSON.stringify(options)}`);
   }
 
   get log() {
@@ -93,27 +105,32 @@ class JWProxy {
    * @returns {Promise<import('axios').AxiosResponse>}
    */
   async request(requestConfig) {
-    const reqPromise = axios(requestConfig);
-    this._activeRequests.push(reqPromise);
+    const req = new ProxyRequest(requestConfig);
+    this._activeRequests.push(req);
     try {
-      return await reqPromise;
+      return await req.execute();
     } finally {
-      _.pull(this._activeRequests, reqPromise);
+      _.pull(this._activeRequests, req);
     }
   }
 
+  /**
+   * @returns {number}
+   */
   getActiveRequestsCount() {
     return this._activeRequests.length;
   }
 
   cancelActiveRequests() {
+    for (const ar of this._activeRequests) {
+      ar.cancel();
+    }
     this._activeRequests = [];
   }
 
-  endpointRequiresSessionId(endpoint) {
-    return !_.includes(['/session', '/sessions', '/status'], endpoint);
-  }
-
+  /**
+   * @param {Protocol | null | undefined} value
+   */
   set downstreamProtocol(value) {
     this._downstreamProtocol = value;
     this.protocolConverter.downstreamProtocol = value;
@@ -123,67 +140,46 @@ class JWProxy {
     return this._downstreamProtocol;
   }
 
-  getUrlForProxy(url) {
-    if (url === '') {
-      url = '/';
+  /**
+   *
+   * @param {string} url
+   * @param {string} [method]
+   * @returns {string}
+   */
+  getUrlForProxy(url, method) {
+    const parsedUrl = this._parseUrl(url);
+    const normalizedPathname = this._toNormalizedPathname(parsedUrl);
+    const commandName = normalizedPathname
+      ? routeToCommandName(
+        normalizedPathname,
+        /** @type {import('@appium/types').HTTPMethod | undefined} */ (method)
+      )
+      : '';
+    const requiresSessionId = !commandName || (commandName && isSessionCommand(commandName));
+    const proxyPrefix = `${this.scheme}://${this.server}:${this.port}${this.base}`;
+    let proxySuffix = normalizedPathname ? `/${_.trimStart(normalizedPathname, '/')}` : '';
+    if (parsedUrl.search) {
+      proxySuffix += parsedUrl.search;
     }
-    const proxyBase = `${this.scheme}://${this.server}:${this.port}${this.base}`;
-    const endpointRe = '(/(session|status))';
-    let remainingUrl = '';
-    if (/^http/.test(url)) {
-      const first = new RegExp(`(https?://.+)${endpointRe}`).exec(url);
-      if (!first) {
-        throw new Error('Got a complete url but could not extract JWP endpoint');
-      }
-      remainingUrl = url.replace(first[1], '');
-    } else if (new RegExp('^/').test(url)) {
-      remainingUrl = url;
-    } else {
-      throw new Error(`Did not know what to do with url '${url}'`);
+    if (!requiresSessionId) {
+      return `${proxyPrefix}${proxySuffix}`;
     }
-
-    const stripPrefixRe = new RegExp('^.*?(/(session|status).*)$');
-    if (stripPrefixRe.test(remainingUrl)) {
-      remainingUrl = /** @type {RegExpExecArray} */ (stripPrefixRe.exec(remainingUrl))[1];
+    if (!this.sessionId) {
+      throw new ReferenceError(`Session ID is not set, but saw a URL that requires it (${url})`);
     }
-
-    if (!new RegExp(endpointRe).test(remainingUrl)) {
-      remainingUrl = `/session/${this.sessionId}${remainingUrl}`;
-    }
-
-    const requiresSessionId = this.endpointRequiresSessionId(remainingUrl);
-
-    if (requiresSessionId && this.sessionId === null) {
-      throw new Error('Trying to proxy a session command without session id');
-    }
-
-    const sessionBaseRe = new RegExp('^/session/([^/]+)');
-    if (sessionBaseRe.test(remainingUrl)) {
-      if (this.sessionId === null) {
-        throw new ReferenceError(
-          `Session ID is not set, but saw a URL path referencing a session (${remainingUrl}). This may be a bug in your client.`
-        );
-      }
-      // we have something like /session/:id/foobar, so we need to replace
-      // the session id
-      const match = sessionBaseRe.exec(remainingUrl);
-      // TODO: if `requiresSessionId` is `false` and `sessionId` is `null`, this is a bug.
-      // are we sure `sessionId` is not `null`?
-      remainingUrl = remainingUrl.replace(
-        /** @type {RegExpExecArray} */ (match)[1],
-        /** @type {string} */ (this.sessionId)
-      );
-    } else if (requiresSessionId) {
-      throw new Error(`Could not find :session section for url: ${remainingUrl}`);
-    }
-    remainingUrl = remainingUrl.replace(/\/$/, ''); // can't have trailing slashes
-
-    return proxyBase + remainingUrl;
+    return `${proxyPrefix}/session/${this.sessionId}${proxySuffix}`;
   }
 
+  /**
+   *
+   * @param {string} url
+   * @param {string} method
+   * @param {import('@appium/types').HTTPBody} [body=null]
+   * @returns {Promise<[import('@appium/types').ProxyResponse, import('@appium/types').HTTPBody]>}
+   */
   async proxy(url, method, body = null) {
     method = method.toUpperCase();
-    const newUrl = this.getUrlForProxy(url);
+    const newUrl = this.getUrlForProxy(url, method);
     const truncateBody = (content) =>
       _.truncate(_.isString(content) ? content : JSON.stringify(content), {
         length: MAX_LOG_BODY_LENGTH,
@@ -207,7 +203,7 @@ class JWProxy {
       if (typeof body !== 'object') {
         try {
           reqOpts.data = JSON.parse(body);
-        } catch (e) {
+        } catch {
           throw new Error(`Cannot interpret the request body as valid JSON: ${truncateBody(body)}`);
         }
       } else {
@@ -252,8 +248,12 @@ class JWProxy {
         // Some servers, like chromedriver may return response code 200 for non-zero JSONWP statuses
         throwProxyError(data);
       }
-      const res = {statusCode: status, headers, body: data};
-      return [res, data];
+      const headersMap = /** @type {import('@appium/types').HTTPHeaders} */ (headers);
+      return [{
+        statusCode: status,
+        headers: headersMap,
+        body: data,
+      }, data];
     } catch (e) {
       // We only consider an error unexpected if this was not
       // an async request module error or if the response cannot be cast to
@@ -276,6 +276,11 @@ class JWProxy {
     }
   }
 
+  /**
+   *
+   * @param {Record<string, any>} resObj
+   * @returns {Protocol | undefined}
+   */
   getProtocolFromResBody(resObj) {
     if (_.isInteger(resObj.status)) {
       return MJSONWP;
@@ -286,6 +291,7 @@ class JWProxy {
   }
 
   /**
+   * @deprecated This method is not used anymore and will be removed
    *
    * @param {string} url
    * @param {import('@appium/types').HTTPMethod} method
@@ -319,10 +325,13 @@ class JWProxy {
    *
    * @param {string} url
    * @param {import('@appium/types').HTTPMethod} method
-   * @param {any?} body
+   * @param {import('@appium/types').HTTPBody} [body=null]
+   * @returns {Promise<[import('@appium/types').ProxyResponse, import('@appium/types').HTTPBody]>}
    */
   async proxyCommand(url, method, body = null) {
-    const commandName = this.requestToCommandName(url, method);
+    const parsedUrl = this._parseUrl(url);
+    const normalizedPathname = this._toNormalizedPathname(parsedUrl);
+    const commandName = normalizedPathname ? routeToCommandName(normalizedPathname, method) : '';
     if (!commandName) {
       return await this.proxy(url, method, body);
     }
@@ -335,8 +344,8 @@ class JWProxy {
    *
    * @param {string} url
    * @param {import('@appium/types').HTTPMethod} method
-   * @param {any?} body
-   * @returns {Promise<unknown>}
+   * @param {import('@appium/types').HTTPBody} [body=null]
+   * @returns {Promise<import('@appium/types').HTTPBody>}
    */
   async command(url, method, body = null) {
     let response;
@@ -390,20 +399,40 @@ class JWProxy {
     );
   }
 
+  /**
+   *
+   * @param {string} url
+   * @returns {string | null}
+   */
   getSessionIdFromUrl(url) {
     const match = url.match(/\/session\/([^/]+)/);
     return match ? match[1] : null;
   }
 
+  /**
+   *
+   * @param {import('express').Request} req
+   * @param {import('express').Response} res
+   */
   async proxyReqRes(req, res) {
     // ! this method must not throw any exceptions
     // ! make sure to call res.send before return
+    /** @type {number} */
     let statusCode;
+    /** @type {import('@appium/types').HTTPBody} */
     let resBodyObj;
     try {
       let response;
-      [response, resBodyObj] = await this.proxyCommand(req.originalUrl, req.method, req.body);
-      res.headers = response.headers;
+      [response, resBodyObj] = await this.proxyCommand(
+        req.originalUrl,
+        /** @type {import('@appium/types').HTTPMethod} */ (req.method),
+        req.body
+      );
+      for (const [name, value] of _.toPairs(response.headers)) {
+        if (!_.isNil(value)) {
+          res.setHeader(name, _.isBoolean(value) ? String(value) : value);
+        }
+      }
       statusCode = response.statusCode;
     } catch (err) {
       [statusCode, resBodyObj] = getResponseForW3CError(
@@ -435,11 +464,58 @@ class JWProxy {
     resBodyObj.value = formatResponseValue(resBodyObj.value);
     res.status(statusCode).send(JSON.stringify(formatStatus(resBodyObj)));
   }
+
+  /**
+   *
+   * @param {string} url
+   * @returns {ParsedUrl}
+   */
+  _parseUrl(url) {
+    const parsedUrl = nodeUrl.parse(url || '/');
+    if (
+      _.isNil(parsedUrl.href) || _.isNil(parsedUrl.pathname)
+      || (parsedUrl.protocol && !['http:', 'https:'].includes(parsedUrl.protocol))
+    ) {
+      throw new Error(`Did not know how to proxy the url '${url}'`);
+    }
+    return parsedUrl;
+  }
+
+  /**
+   *
+   * @param {ParsedUrl} parsedUrl
+   * @returns {string}
+   */
+  _toNormalizedPathname(parsedUrl) {
+    if (!_.isString(parsedUrl.pathname)) {
+      return '';
+    }
+    let pathname = this.reqBasePath && parsedUrl.pathname.startsWith(this.reqBasePath)
+      ? parsedUrl.pathname.replace(this.reqBasePath, '')
+      : parsedUrl.pathname;
+    const match = COMMAND_WITH_SESSION_ID_MATCHER(pathname);
+    // This is needed for the backward compatibility
+    // if drivers don't set reqBasePath properly
+    if (!this.reqBasePath) {
+      if (match && _.isArray(match.params?.prefix)) {
+        pathname = pathname.replace(`/${match.params?.prefix.join('/')}`, '');
+      } else if (_.startsWith(pathname, '/wd/hub')) {
+        pathname = pathname.replace('/wd/hub', '');
+      }
+    }
+    return _.trimEnd(
+      match && _.isArray(match.params?.command)
+        ? `/${match.params.command.join('/')}`
+        : pathname,
+      '/'
+    );
+  }
 }
 
-export {JWProxy};
 export default JWProxy;
 
 /**
  * @typedef {Error & {response: {data: import('type-fest').JsonObject, status: import('http-status-codes').StatusCodes}}} ProxyError
+ * @typedef {nodeUrl.UrlWithStringQuery} ParsedUrl
+ * @typedef {typeof PROTOCOLS[keyof typeof PROTOCOLS]} Protocol
  */

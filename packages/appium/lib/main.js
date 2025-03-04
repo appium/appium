@@ -397,8 +397,10 @@ async function main(args) {
     extraMethodMap,
     cliArgs: parsedArgs,
   };
-  if (parsedArgs.keepAliveTimeout) {
-    serverOpts.keepAliveTimeout = parsedArgs.keepAliveTimeout * 1000;
+  for (const timeoutArgName of ['keepAliveTimeout', 'requestTimeout']) {
+    if (_.isInteger(parsedArgs[timeoutArgName])) {
+      serverOpts[timeoutArgName] = parsedArgs[timeoutArgName] * 1000;
+    }
   }
   let server;
   const bidiServer = new WebSocketServer({noServer: true});

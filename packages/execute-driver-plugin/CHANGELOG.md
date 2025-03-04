@@ -3,6 +3,53 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.2](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@4.0.1...@appium/execute-driver-plugin@4.0.2) (2025-02-19)
+
+
+### Bug Fixes
+
+* **execute-driver-plugin:** update dependency webdriverio to v9.5.3 ([#20895](https://github.com/appium/appium/issues/20895)) ([8741474](https://github.com/appium/appium/commit/874147449a26bbec03b08e7e95fb9e4c6b5881af))
+* **execute-driver-plugin:** update dependency webdriverio to v9.5.4 ([#20898](https://github.com/appium/appium/issues/20898)) ([7f91d5c](https://github.com/appium/appium/commit/7f91d5cba850100124088d774ba8704e3765863f))
+* **execute-driver-plugin:** update dependency webdriverio to v9.5.7 ([#20903](https://github.com/appium/appium/issues/20903)) ([c60fdc8](https://github.com/appium/appium/commit/c60fdc8d847b4aeed2d8b8307180194ee32e5ca9))
+* **execute-driver-plugin:** update dependency webdriverio to v9.7.0 ([#20930](https://github.com/appium/appium/issues/20930)) ([5780982](https://github.com/appium/appium/commit/57809826a410b71dca155f59e081f77dcaf671ed))
+* **execute-driver-plugin:** update dependency webdriverio to v9.7.1 ([#20934](https://github.com/appium/appium/issues/20934)) ([50fa5d6](https://github.com/appium/appium/commit/50fa5d670bd967200a78e5b4b8a54d5c9b85901b))
+* **execute-driver-plugin:** update dependency webdriverio to v9.7.2 ([#20944](https://github.com/appium/appium/issues/20944)) ([f5e0819](https://github.com/appium/appium/commit/f5e0819f505b55421b7d260f69a41ae980390a91))
+* **execute-driver-plugin:** update dependency webdriverio to v9.8.0 ([#20964](https://github.com/appium/appium/issues/20964)) ([ce32226](https://github.com/appium/appium/commit/ce32226cb57fb3f07bf4862dbbfcba227ff1230c))
+* **execute-driver-plugin:** update dependency webdriverio to v9.9.0 ([#20994](https://github.com/appium/appium/issues/20994)) ([b3c877f](https://github.com/appium/appium/commit/b3c877f66ddf3ccf7a25ca1f7a3952c660bd7dda))
+* **execute-driver-plugin:** update dependency webdriverio to v9.9.1 ([#20996](https://github.com/appium/appium/issues/20996)) ([c6a080f](https://github.com/appium/appium/commit/c6a080f7ade03a49a274ce6fbc84629406fdc2a7))
+* **execute-driver-plugin:** update dependency webdriverio to v9.9.3 ([#21005](https://github.com/appium/appium/issues/21005)) ([686a630](https://github.com/appium/appium/commit/686a630fbdf525db16b42fdfc1bbdaf6426b41d0))
+
+
+
+## [4.0.1](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@4.0.0...@appium/execute-driver-plugin@4.0.1) (2025-01-06)
+
+
+### Bug Fixes
+
+* **execute-driver-plugin:** update dependency webdriverio to v9.5.1 ([#20875](https://github.com/appium/appium/issues/20875)) ([93e4288](https://github.com/appium/appium/commit/93e4288253c07a844e6e10f0dd040b1a40eb92ff))
+
+
+
+## [4.0.0](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@3.0.36...@appium/execute-driver-plugin@4.0.0) (2025-01-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* **execute-driver-plugin:** webdriverio major version bumped to 9
+
+### Features
+
+* **execute-driver-plugin:** Bump webdriverio to v9 ([#20824](https://github.com/appium/appium/issues/20824)) ([16e9f94](https://github.com/appium/appium/commit/16e9f9490370342ce0320ba96eacd0ccc66a2ad7))
+
+
+### Bug Fixes
+
+* **execute-driver-plugin:** update dependency webdriverio to v9.4.5 ([#20847](https://github.com/appium/appium/issues/20847)) ([4474412](https://github.com/appium/appium/commit/4474412a60a82556f43fd3f3fb4f4ea2e4bc11ee))
+* **execute-driver-plugin:** update dependency webdriverio to v9.5.0 ([#20871](https://github.com/appium/appium/issues/20871)) ([990a066](https://github.com/appium/appium/commit/990a0667e3442bf01aaf67327066517d6310c371))
+* Reduce linter warnings ([#20860](https://github.com/appium/appium/issues/20860)) ([65658cc](https://github.com/appium/appium/commit/65658ccbdde9144c45cb5aad6a9089a5d6f3a0a3))
+
+
+
 ## [3.0.36](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@3.0.35...@appium/execute-driver-plugin@3.0.36) (2024-10-15)
 
 

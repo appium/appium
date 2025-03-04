@@ -1,5 +1,3 @@
-
-
 import {BasePlugin} from 'appium/plugin';
 import {errors} from 'appium/driver';
 import {transformSourceXml} from './source';
@@ -14,7 +12,7 @@ export default class UniversalXMLPlugin extends BasePlugin {
     if (platformName.toLowerCase() === 'android') {
       metadata.appPackage = driver.opts.appPackage;
     }
-    const {xml, unknowns} = transformSourceXml(source, platformName.toLowerCase(), {
+    const {xml, unknowns} = await transformSourceXml(source, platformName.toLowerCase(), {
       metadata,
       addIndexPath,
     });

@@ -8,8 +8,11 @@ import {
   CREATE_SESSION_COMMAND,
   DELETE_SESSION_COMMAND,
   GET_STATUS_COMMAND,
+  LIST_DRIVER_COMMANDS_COMMAND,
+  LIST_DRIVER_EXTENSIONS_COMMAND,
   promoteAppiumOptions,
   promoteAppiumOptionsForObject,
+  generateDriverLogPrefix,
 } from '@appium/base-driver';
 import AsyncLock from 'async-lock';
 import {
@@ -18,10 +21,11 @@ import {
   makeNonW3cCapsError,
   validateFeatures,
 } from './utils';
-import {util, node, logger} from '@appium/support';
+import {util} from '@appium/support';
 import {getDefaultsForExtension} from './schema';
 import {DRIVER_TYPE, BIDI_BASE_PATH} from './constants';
-import * as bidiHelpers from './bidi';
+import * as bidiCommands from './bidi-commands';
+import * as inspectorCommands from './inspector-commands';
 
 const desiredCapabilityConstraints = /** @type {const} */ ({
   automationName: {
@@ -141,17 +145,6 @@ class AppiumDriver extends DriverCore {
   }
 
   /**
-   * Retrieves logger instance for the current umbrella driver instance
-   */
-  get log() {
-    if (!this._log) {
-      const instanceName = `${this.constructor.name}@${node.getObjectId(this).substring(0, 4)}`;
-      this._log = logger.getLogger(instanceName);
-    }
-    return this._log;
-  }
-
-  /**
    * Cancel commands queueing for the umbrella Appium driver
    */
   get isCommandsQueueEnabled() {
@@ -200,6 +193,11 @@ class AppiumDriver extends DriverCore {
       id,
       capabilities: /** @type {import('@appium/types').DriverCaps<any>} */ (driver.caps),
     }));
+  }
+
+  async getAppiumSessions () {
+    throw new errors.NotImplementedError('Not implemented yet. ' +
+      'Please check https://github.com/appium/appium/issues/20880 for more details.');
   }
 
   printNewSessionAnnouncement(driverName, driverVersion, driverBaseVersion) {
@@ -343,8 +341,11 @@ class AppiumDriver extends DriverCore {
       }
 
       // We also want to assign any new Bidi Commands that the driver has specified, including all
-      // the standard bidi commands
-      driverInstance.updateBidiCommands(InnerDriver.newBidiCommands ?? {});
+      // the standard bidi commands. But add a method existence guard since some old driver class
+      // instances might not have this method
+      if (_.isFunction(driverInstance.updateBidiCommands)) {
+        driverInstance.updateBidiCommands(InnerDriver.newBidiCommands ?? {});
+      }
 
       if (!_.isEmpty(this.args.denyInsecure)) {
         this.log.info('Explicitly preventing use of insecure features:');
@@ -410,7 +411,7 @@ class AppiumDriver extends DriverCore {
       );
 
       // set the New Command Timeout for the inner driver
-      driverInstance.startNewCommandTimeout();
+      await driverInstance.startNewCommandTimeout();
 
       // apply initial values to Appium settings (if provided)
       if (driverInstance.isW3CProtocol() && !_.isEmpty(w3cSettings)) {
@@ -427,14 +428,13 @@ class AppiumDriver extends DriverCore {
         await driverInstance.updateSettings(jwpSettings);
       }
 
-      // if the user has asked for bidi support, and the driver says that it supports bidi,
-      // send our bidi url back to the user. The inner driver will need to have already saved any
-      // internal bidi urls it might want to proxy to, cause we are going to overwrite that
-      // information here!
-      if (dCaps.webSocketUrl && driverInstance.doesSupportBidi) {
+      // if the user has asked for bidi support, send our bidi url back to the user. The inner
+      // driver will need to have already saved any internal bidi urls it might want to proxy to,
+      // cause we are going to overwrite that information here!
+      if (dCaps.webSocketUrl) {
         const {address, port, basePath} = this.args;
         const scheme = `ws${this.server.isSecure() ? 's' : ''}`;
-        const host = bidiHelpers.determineBiDiHost(address);
+        const host = bidiCommands.determineBiDiHost(address);
         const bidiUrl = `${scheme}://${host}:${port}${basePath}${BIDI_BASE_PATH}/${innerSessionId}`;
         this.log.info(
           `Upstream driver responded with webSocketUrl ${dCaps.webSocketUrl}, will rewrite to ` +
@@ -573,32 +573,6 @@ class AppiumDriver extends DriverCore {
     }
   }
 
-  /**
-   * @param {string} sessionId
-   */
-  cleanupBidiSockets(sessionId) {
-    // clean up any bidi sockets associated with session
-    if (this.bidiSockets[sessionId]) {
-      try {
-        this.log.debug(`Closing bidi socket(s) associated with session ${sessionId}`);
-        for (const ws of this.bidiSockets[sessionId]) {
-          // 1001 means server is going away
-          ws.close(1001, 'Appium session is closing');
-        }
-      } catch {}
-      delete this.bidiSockets[sessionId];
-      const proxyClient = this.bidiProxyClients[sessionId];
-      if (proxyClient) {
-        this.log.debug(`Also closing proxy connection to upstream bidi server`);
-        try {
-          // 1000 means normal closure, which seems correct when Appium is acting as the client
-          proxyClient.close(1000);
-        } catch {}
-        delete this.bidiProxyClients[sessionId];
-      }
-    }
-  }
-
   async deleteAllSessions(opts = {}) {
     const sessionsCount = _.size(this.sessions);
     if (0 === sessionsCount) {
@@ -626,12 +600,13 @@ class AppiumDriver extends DriverCore {
    * Get the appropriate plugins for a session (or sessionless plugins)
    *
    * @param {?string} sessionId - the sessionId (or null) to use to find plugins
-   * @returns {Array} - array of plugin instances
+   * @returns {Array<import('@appium/types').Plugin>} - array of plugin instances
    */
   pluginsForSession(sessionId = null) {
     if (sessionId) {
       if (!this.sessionPlugins[sessionId]) {
-        this.sessionPlugins[sessionId] = this.createPluginInstances();
+        const driverId = generateDriverLogPrefix(this.sessions[sessionId]);
+        this.sessionPlugins[sessionId] = this.createPluginInstances(driverId || null);
       }
       return this.sessionPlugins[sessionId];
     }
@@ -662,14 +637,19 @@ class AppiumDriver extends DriverCore {
 
   /**
    * Creates instances of all of the enabled Plugin classes
+   * @param {string|null} driverId - ID to use for linking a driver to a plugin in logs
    * @returns {Plugin[]}
    */
-  createPluginInstances() {
+  createPluginInstances(driverId = null) {
     /** @type {Plugin[]} */
     const pluginInstances = [];
     for (const [PluginClass, name] of this.pluginClasses.entries()) {
       const cliArgs = this.getCliArgsForPlugin(name);
-      const plugin = new PluginClass(name, cliArgs);
+      const plugin = new PluginClass(name, cliArgs, driverId);
+      if (_.isFunction(/** @type {Plugin & ExtensionCore} */(plugin).updateBidiCommands)) {
+        // some old plugin classes don't have `updateBidiCommands`
+        /** @type {Plugin & ExtensionCore} */(plugin).updateBidiCommands(PluginClass.newBidiCommands ?? {});
+      }
       pluginInstances.push(plugin);
     }
     return pluginInstances;
@@ -830,6 +810,12 @@ class AppiumDriver extends DriverCore {
           `to session ID ${sessionId}`,
       );
       this.sessionPlugins[sessionId] = this.sessionlessPlugins;
+      for (const p of /** @type {(Plugin & ExtensionCore)[]} */(this.sessionPlugins[sessionId])) {
+        if (_.isFunction(p.updateLogPrefix)) {
+          // some old plugin classes don't have `updateLogPrefix` yet
+          p.updateLogPrefix(`${generateDriverLogPrefix(p)} <${generateDriverLogPrefix(this.sessions[sessionId])}>`);
+        }
+      }
       this.sessionlessPlugins = [];
     }
 
@@ -931,15 +917,28 @@ class AppiumDriver extends DriverCore {
     return dstSession && dstSession.canProxy(sessionId);
   }
 
-  onBidiConnection = bidiHelpers.onBidiConnection;
-  onBidiMessage = bidiHelpers.onBidiMessage;
-  onBidiServerError = bidiHelpers.onBidiServerError;
+  onBidiConnection = bidiCommands.onBidiConnection;
+  onBidiMessage = bidiCommands.onBidiMessage;
+  onBidiServerError = bidiCommands.onBidiServerError;
+  cleanupBidiSockets = bidiCommands.cleanupBidiSockets;
+
+  listCommands = inspectorCommands.listCommands;
+  listExtensions = inspectorCommands.listExtensions;
 }
 
-// help decide which commands should be proxied to sub-drivers and which
-// should be handled by this, our umbrella driver
+/**
+ * Help decide which commands should be proxied to sub-drivers and which
+ * should be handled by this, our umbrella driver
+ * @param {string} cmd
+ * @returns {boolean}
+ */
 function isAppiumDriverCommand(cmd) {
-  return !isSessionCommand(cmd) || cmd === DELETE_SESSION_COMMAND;
+  return !isSessionCommand(cmd)
+    || _.includes([
+      DELETE_SESSION_COMMAND,
+      LIST_DRIVER_COMMANDS_COMMAND,
+      LIST_DRIVER_EXTENSIONS_COMMAND,
+    ], cmd);
 }
 
 /**
@@ -977,6 +976,7 @@ export {AppiumDriver};
  * @typedef {import('@appium/types').ExternalDriver} ExternalDriver
  * @typedef {import('@appium/types').PluginClass} PluginClass
  * @typedef {import('@appium/types').Plugin} Plugin
+ * @typedef {import('@appium/base-driver').ExtensionCore} ExtensionCore
  * @typedef {import('@appium/types').DriverClass<import('@appium/types').Driver>} DriverClass
  */
 

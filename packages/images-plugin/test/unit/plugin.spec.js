@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import {ImageElementPlugin} from '../../lib/plugin';
 import {
   MATCH_FEATURES_MODE,
@@ -179,18 +180,22 @@ describe('ImageElementPlugin#handle', function () {
   });
 
   describe('performActions', function () {
-    it('should replace with coords of the image elements in PerformActions(pointerMove, scroll) parameters', async function () {
-      const origin = util.wrapElement(elId);
-      let actionSequences = [
+    let imageEl;
+    let nativeEl;
+    before(async function () {
+      imageEl = await p.findElement(next, driver, IMAGE_STRATEGY, TEST_IMG_2_PART_B64);
+      nativeEl = util.wrapElement('dummy-native-element-id');
+    });
+    it('should replace with coords of the image elements in pointerMove, scroll actions', async function () {
+      const actionSequences = [
         {
           type: 'pointer',
           id: 'mouse',
           parameters: {pointerType: 'touch'},
           actions: [
-            {type: 'pointerMove', x: 0, y: 0, duration: 0, origin},
-            {type: 'pointerDown', button: 0},
-            {type: 'pause', duration: 125},
-            {type: 'pointerUp', button: 0},
+            {type: 'pointerMove', x: 0, y: 0, duration: 0, origin: imageEl},
+            {type: 'pause', duration: 0},
+            {type: 'pointerMove', x: 15, y: 25, duration: 0, origin: imageEl},
           ],
         },
         {
@@ -198,23 +203,7 @@ describe('ImageElementPlugin#handle', function () {
           id: 'wheel',
           actions: [
             {type: 'pause', duration: 0},
-            {type: 'pause', duration: 0},
-            {type: 'pause', duration: 0},
-            {type: 'pause', duration: 0},
-            {type: 'scroll', x: 0, y: 0, deltaX: 1, deltaY: 2, origin},
-          ],
-        },
-        {
-          type: 'key',
-          id: 'key',
-          actions: [
-            {type: 'pause', duration: 0},
-            {type: 'pause', duration: 0},
-            {type: 'pause', duration: 0},
-            {type: 'pause', duration: 0},
-            {type: 'pause', duration: 0},
-            {type: 'keyDown', value: 'a'},
-            {type: 'keyUp', value: 'a'},
+            {type: 'scroll', x: 1, y: 0, deltaX: 1, deltaY: 2, origin: imageEl},
           ],
         },
       ];
@@ -226,6 +215,31 @@ describe('ImageElementPlugin#handle', function () {
           parameters: {pointerType: 'touch'},
           actions: [
             {type: 'pointerMove', x: 24, y: 40, duration: 0},
+            {type: 'pause', duration: 0},
+            {type: 'pointerMove', x: 39, y: 65, duration: 0},
+          ],
+        },
+        {
+          type: 'wheel',
+          id: 'wheel',
+          actions: [
+            {type: 'pause', duration: 0},
+            {type: 'scroll', x: 25, y: 40, deltaX: 1, deltaY: 2},
+          ],
+        },
+      ]);
+    });
+    it('should not be modified except pointerMove and scroll actions includes image element as origin', async function () {
+      const actionSequences = [
+        {
+          type: 'pointer',
+          id: 'mouse',
+          parameters: {pointerType: 'touch'},
+          actions: [
+            {type: 'pointerMove', x: 1, y: 1, duration: 0},
+            {type: 'pointerMove', x: 2, y: 2, duration: 10, origin: nativeEl},
+            {type: 'pointerMove', x: 3, y: 3, duration: 20, origin: 'viewport'},
+            {type: 'pointerMove', x: 4, y: 4, duration: 30, origin: 'pointer'},
             {type: 'pointerDown', button: 0},
             {type: 'pause', duration: 125},
             {type: 'pointerUp', button: 0},
@@ -235,27 +249,26 @@ describe('ImageElementPlugin#handle', function () {
           type: 'wheel',
           id: 'wheel',
           actions: [
-            {type: 'pause', duration: 0},
-            {type: 'pause', duration: 0},
-            {type: 'pause', duration: 0},
-            {type: 'pause', duration: 0},
-            {type: 'scroll', x: 24, y: 40, deltaX: 1, deltaY: 2},
+            ..._.range(7).map(() => ({type: 'pause', duration: 0})),
+            {type: 'scroll', x: 1, y: 1, deltaX: 1, deltaY: 2},
+            {type: 'scroll', x: 2, y: 2, deltaX: 2, deltaY: 3, origin: nativeEl},
+            {type: 'scroll', x: 3, y: 3, deltaX: 3, deltaY: 4, origin: 'viewport'},
+            {type: 'scroll', x: 4, y: 4, deltaX: 4, deltaY: 5, origin: 'pointer'},
           ],
         },
         {
           type: 'key',
           id: 'key',
           actions: [
-            {type: 'pause', duration: 0},
-            {type: 'pause', duration: 0},
-            {type: 'pause', duration: 0},
-            {type: 'pause', duration: 0},
-            {type: 'pause', duration: 0},
+            ..._.range(11).map(() => ({type: 'pause', duration: 0})),
             {type: 'keyDown', value: 'a'},
             {type: 'keyUp', value: 'a'},
           ],
         },
-      ]);
+      ];
+      const clone = _.cloneDeep(actionSequences);
+      await p.performActions(next, driver, actionSequences);
+      actionSequences.should.eql(clone);
     });
   });
 });

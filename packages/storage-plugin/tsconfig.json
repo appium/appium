@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "outDir": "build",
+    "checkJs": true
+  },
+  "extends": "@appium/tsconfig/tsconfig.plugin.json",
+  "include": ["lib", "index.js"],
+  "references": [
+    {
+      "path": "../base-plugin"
+    }
+  ]
+}

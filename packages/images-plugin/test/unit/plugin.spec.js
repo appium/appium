@@ -133,89 +133,6 @@ describe('ImageElementPlugin#handle', function () {
         },
       ]);
     });
-    it('should replace with coords of the image elements in PerformActions parameters', async function () {
-      let called = false;
-      const next = () => {
-        called = true;
-      };
-      const origin = util.wrapElement(elId);
-      let actionSequences = [
-        {
-          type: 'pointer',
-          id: 'mouse',
-          parameters: {pointerType: 'touch'},
-          actions: [
-            {type: 'pointerMove', x: 0, y: 0, duration: 0, origin},
-            {type: 'pointerDown', button: 0},
-            {type: 'pause', duration: 125},
-            {type: 'pointerUp', button: 0},
-          ],
-        },
-        {
-          type: 'wheel',
-          id: 'wheel',
-          actions: [
-            {type: 'pause', duration: 0},
-            {type: 'pause', duration: 0},
-            {type: 'pause', duration: 0},
-            {type: 'pause', duration: 0},
-            {type: 'scroll', x: 0, y: 0, deltaX: 1, deltaY: 2, origin},
-          ],
-        },
-        {
-          type: 'key',
-          id: 'key',
-          actions: [
-            {type: 'pause', duration: 0},
-            {type: 'pause', duration: 0},
-            {type: 'pause', duration: 0},
-            {type: 'pause', duration: 0},
-            {type: 'pause', duration: 0},
-            {type: 'keyDown', value: 'a'},
-            {type: 'keyUp', value: 'a'},
-          ],
-        },
-      ];
-      await p.performActions(next, driver, actionSequences);
-      called.should.be.true;
-      actionSequences.should.eql([
-        {
-          type: 'pointer',
-          id: 'mouse',
-          parameters: {pointerType: 'touch'},
-          actions: [
-            {type: 'pointerMove', x: 24, y: 40, duration: 0},
-            {type: 'pointerDown', button: 0},
-            {type: 'pause', duration: 125},
-            {type: 'pointerUp', button: 0},
-          ],
-        },
-        {
-          type: 'wheel',
-          id: 'wheel',
-          actions: [
-            {type: 'pause', duration: 0},
-            {type: 'pause', duration: 0},
-            {type: 'pause', duration: 0},
-            {type: 'pause', duration: 0},
-            {type: 'scroll', x: 24, y: 40, deltaX: 1, deltaY: 2},
-          ],
-        },
-        {
-          type: 'key',
-          id: 'key',
-          actions: [
-            {type: 'pause', duration: 0},
-            {type: 'pause', duration: 0},
-            {type: 'pause', duration: 0},
-            {type: 'pause', duration: 0},
-            {type: 'pause', duration: 0},
-            {type: 'keyDown', value: 'a'},
-            {type: 'keyUp', value: 'a'},
-          ],
-        },
-      ]);
-    });
     it('should always say the element is displayed', async function () {
       await p.handle(next, driver, 'elementDisplayed', elId).should.eventually.be.true;
     });
@@ -258,6 +175,87 @@ describe('ImageElementPlugin#handle', function () {
       await p
         .handle(next, driver, 'getAttribute', 'rando', elId)
         .should.eventually.be.rejectedWith(/not yet/i);
+    });
+  });
+
+  describe('performActions', function () {
+    it('should replace with coords of the image elements in PerformActions(pointerMove, scroll) parameters', async function () {
+      const origin = util.wrapElement(elId);
+      let actionSequences = [
+        {
+          type: 'pointer',
+          id: 'mouse',
+          parameters: {pointerType: 'touch'},
+          actions: [
+            {type: 'pointerMove', x: 0, y: 0, duration: 0, origin},
+            {type: 'pointerDown', button: 0},
+            {type: 'pause', duration: 125},
+            {type: 'pointerUp', button: 0},
+          ],
+        },
+        {
+          type: 'wheel',
+          id: 'wheel',
+          actions: [
+            {type: 'pause', duration: 0},
+            {type: 'pause', duration: 0},
+            {type: 'pause', duration: 0},
+            {type: 'pause', duration: 0},
+            {type: 'scroll', x: 0, y: 0, deltaX: 1, deltaY: 2, origin},
+          ],
+        },
+        {
+          type: 'key',
+          id: 'key',
+          actions: [
+            {type: 'pause', duration: 0},
+            {type: 'pause', duration: 0},
+            {type: 'pause', duration: 0},
+            {type: 'pause', duration: 0},
+            {type: 'pause', duration: 0},
+            {type: 'keyDown', value: 'a'},
+            {type: 'keyUp', value: 'a'},
+          ],
+        },
+      ];
+      await p.performActions(next, driver, actionSequences);
+      actionSequences.should.eql([
+        {
+          type: 'pointer',
+          id: 'mouse',
+          parameters: {pointerType: 'touch'},
+          actions: [
+            {type: 'pointerMove', x: 24, y: 40, duration: 0},
+            {type: 'pointerDown', button: 0},
+            {type: 'pause', duration: 125},
+            {type: 'pointerUp', button: 0},
+          ],
+        },
+        {
+          type: 'wheel',
+          id: 'wheel',
+          actions: [
+            {type: 'pause', duration: 0},
+            {type: 'pause', duration: 0},
+            {type: 'pause', duration: 0},
+            {type: 'pause', duration: 0},
+            {type: 'scroll', x: 24, y: 40, deltaX: 1, deltaY: 2},
+          ],
+        },
+        {
+          type: 'key',
+          id: 'key',
+          actions: [
+            {type: 'pause', duration: 0},
+            {type: 'pause', duration: 0},
+            {type: 'pause', duration: 0},
+            {type: 'pause', duration: 0},
+            {type: 'pause', duration: 0},
+            {type: 'keyDown', value: 'a'},
+            {type: 'keyUp', value: 'a'},
+          ],
+        },
+      ]);
     });
   });
 });

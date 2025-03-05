@@ -39,7 +39,7 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/base-plugin": "^2.3.3",
+    "@appium/base-plugin": "^3.0.0-beta.0",
     "@appium/support": "^6.0.6",
     "bluebird": "3.7.2",
     "lodash": "4.17.21",

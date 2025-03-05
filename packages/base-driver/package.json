@@ -1,6 +1,6 @@
 {
   "name": "@appium/base-driver",
-  "version": "9.16.2",
+  "version": "10.0.0-beta.0",
   "description": "Base driver class for Appium drivers",
   "keywords": [
     "automation",
@@ -73,7 +73,8 @@
     "npm": ">=8"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "tag": "beta"
   },
   "gitHead": "8480a85ce2fa466360e0fb1a7f66628331907f02",
   "tsd": {

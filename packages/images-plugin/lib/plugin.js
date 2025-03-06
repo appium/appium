@@ -93,7 +93,10 @@ export default class ImageElementPlugin extends BasePlugin {
           continue;
         }
 
-        const actionWithEl = /** @type {import('@appium/types').PointerMoveAction | import('@appium/types').ScrollAction} */ (action);
+        const actionWithEl =
+          /** @type {import('@appium/types').PointerMoveAction | import('@appium/types').ScrollAction} */ (
+            action
+          );
 
         const elId = util.unwrapElement(/** @type {import('@appium/types').Element} */ (actionWithEl.origin));
         if (!_.startsWith(elId, IMAGE_ELEMENT_PREFIX)) {

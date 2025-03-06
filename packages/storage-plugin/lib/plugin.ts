@@ -12,7 +12,13 @@ export class StoragePlugin extends BasePlugin {
   static newBidiCommands = BIDI_COMMANDS_MAP;
 
   async uploadStorageItem(
-    name: string, hash: string, size: number, chunk: string, position: number
+    next: () => Promise<any>,
+    driver: unknown,
+    name: string,
+    hash: string,
+    size: number,
+    chunk: string,
+    position: number
   ): Promise<void> {
     await this._excuteStorageMethod(
       async (storage: Storage) => await storage.addChunk({
@@ -31,7 +37,11 @@ export class StoragePlugin extends BasePlugin {
     );
   }
 
-  async deleteStorageItem(name: string): Promise<boolean> {
+  async deleteStorageItem(
+    next: () => Promise<any>,
+    driver: unknown,
+    name: string
+  ): Promise<boolean> {
     return await this._excuteStorageMethod(
       async (storage: Storage) => await storage.delete(name)
     );

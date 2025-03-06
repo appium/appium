@@ -48,6 +48,7 @@ describe('StoragePlugin', function () {
   afterEach(async function () {
     if (driver) {
       await driver.deleteSession();
+      driver = null;
     }
     if (storageRoot && await fs.exists(storageRoot)) {
       await fs.rimraf(storageRoot);
@@ -88,11 +89,11 @@ describe('StoragePlugin', function () {
     items.length.should.eql(0);
   });
 
-  async function addFileToStorage(fullPath, name) {
-    const {size} = await fs.stat(fullPath);
-    const hash = await fs.hash(fullPath);
+  async function addFileToStorage(sourcePath, name) {
+    const {size} = await fs.stat(sourcePath);
+    const hash = await fs.hash(sourcePath);
     let bytesRead = 0;
-    const readHandle = await fs.openFile(fullPath, 'r');
+    const readHandle = await fs.openFile(sourcePath, 'r');
     try {
       while (bytesRead < size) {
         const bufferSize = Math.min(BUFFER_SIZE, size - bytesRead);

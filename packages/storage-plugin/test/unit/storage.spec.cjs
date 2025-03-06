@@ -12,7 +12,7 @@ describe('storage', function () {
   let tmpRoot;
   /** @type {Storage | undefined | null} */
   let storage;
-  /** @type {string | undefined} */
+  /** @type {string | undefined | null} */
   let storageRoot;
 
   before(async function () {
@@ -40,6 +40,7 @@ describe('storage', function () {
     }
     if (storageRoot && await fs.exists(storageRoot)) {
       await fs.rimraf(storageRoot);
+      storageRoot = null;
     }
   });
 

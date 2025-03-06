@@ -41,7 +41,7 @@
     "@appium/logger": "^1.6.1",
     "@appium/schema": "^0.8.1",
     "@appium/tsconfig": "^0.3.4",
-    "type-fest": "4.36.0"
+    "type-fest": "4.37.0"
   },
   "engines": {
     "node": "^14.17.0 || ^16.13.0 || >=18.0.0",

@@ -89,6 +89,19 @@ describe('ImageElementPlugin', function () {
     width.should.eql(80);
     height.should.eql(91);
     await imageEl.click();
+
+    const actionSequence = {
+      type: 'pointer',
+      id: 'mouse',
+      parameters: {pointerType: 'touch'},
+      actions: [
+        {type: 'pointerMove', x: 0, y: 0, duration: 0, origin: imageEl},
+        {type: 'pointerDown', button: 0},
+        {type: 'pause', duration: 125},
+        {type: 'pointerUp', button: 0},
+      ],
+    };
+    await driver.performActions([actionSequence]);
   });
 
   it('should find subelements', async function () {

@@ -1,7 +1,6 @@
-
-
 import _ from 'lodash';
 import {errors} from 'appium/driver';
+import {util} from '@appium/support';
 import {BasePlugin} from 'appium/plugin';
 import {compareImages} from './compare';
 import ImageElementFinder from './finder';
@@ -81,6 +80,48 @@ export default class ImageElementPlugin extends BasePlugin {
     }
 
     // otherwise just do the normal thing
+    return await next();
+  }
+
+  async performActions(next, driver, ...args) {
+    // Replace with coordinates when ActionSequence includes image elements.
+    const [actionSequences] = /** @type {[import('@appium/types').ActionSequence[]]} */ (args);
+    for (const actionSequence of actionSequences) {
+      for (const action of actionSequence.actions) {
+        // The actions that can have an Element as the origin are "pointerMove" and "scroll".
+        if (
+          !_.isPlainObject(
+            /** @type {{origin?: "viewport" | "pointer" | import('@appium/types').Element}} */ (
+              action
+            ).origin,
+          )
+        ) {
+          continue;
+        }
+
+        const actionWithEl =
+          /** @type {import('@appium/types').PointerMoveAction | import('@appium/types').ScrollAction} */ (
+            action
+          );
+
+        const elId = util.unwrapElement(/** @type {import('@appium/types').Element} */ (actionWithEl.origin));
+        if (!_.startsWith(elId, IMAGE_ELEMENT_PREFIX)) {
+          continue;
+        }
+
+        const imgEl = this.finder.getImageElement(elId);
+        if (!imgEl) {
+          throw new errors.NoSuchElementError();
+        }
+
+        // Add the element's center coordinates to the offset value.
+        actionWithEl.x += imgEl.center.x;
+        actionWithEl.y += imgEl.center.y;
+        // Set the origin to the viewport so that the external driver can process it using coordinates.
+        delete actionWithEl.origin;
+      }
+    }
+
     return await next();
   }
 }

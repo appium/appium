@@ -4,7 +4,7 @@
     "checkJs": true
   },
   "extends": "@appium/tsconfig/tsconfig.plugin.json",
-  "include": ["lib", "index.js"],
+  "include": ["lib"],
   "references": [
     {
       "path": "../base-plugin"

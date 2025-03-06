@@ -89,7 +89,13 @@ export default class ImageElementPlugin extends BasePlugin {
     for (const actionSequence of actionSequences) {
       for (const action of actionSequence.actions) {
         // The actions that can have an Element as the origin are "pointerMove" and "scroll".
-        if (!_.has(action, 'origin') || !_.isPlainObject(action.origin)) {
+        if (
+          !_.isPlainObject(
+            /** @type {{origin?: "viewport" | "pointer" | import('@appium/types').Element}} */ (
+              action
+            ).origin,
+          )
+        ) {
           continue;
         }
 

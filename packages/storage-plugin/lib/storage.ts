@@ -100,6 +100,7 @@ export class Storage {
         return this._knownNames.has(basename) || namesInProgress.has(basename);
       });
     if (_.isEmpty(files)) {
+      this._knownNames.clear();
       return;
     }
 
@@ -140,6 +141,7 @@ export class Storage {
       return;
     }
     if (_.isEmpty(itemNames)) {
+      this._knownNames.clear();
       return;
     }
 
@@ -155,6 +157,7 @@ export class Storage {
         rimrafSync(path.join(this._root, matchedName));
       }
     }
+    this._knownNames.clear();
   }
 
   private async _listFiles(): Promise<Path[]> {

@@ -10,3 +10,10 @@ export interface FileChunkOpts {
   /** Start byte number of the chunk in the original file */
   position: number;
 }
+
+export interface StorageItem {
+  /** Item name */
+  name: string;
+  /** Item size in bytes */
+  size: number;
+}

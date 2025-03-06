@@ -31,7 +31,7 @@ export class StoragePlugin extends BasePlugin {
     return await storage.list();
   }
 
-  async delete(name: string): Promise<any> {
+  async delete(name: string): Promise<boolean> {
     const storage = await this._getStorageSingleton();
     return await storage.delete(name);
   }
@@ -46,7 +46,7 @@ export class StoragePlugin extends BasePlugin {
     } else {
       storageRoot = await tempDir.openDir();
       shouldPreserveRoot = false;
-      this.log.info(`Created '${storageRoot}' as the server storage root folder`);
+      this.log.info(`Created '${storageRoot}' as the temporary server storage root folder`);
     }
     SHARED_STORAGE = new Storage(storageRoot, shouldPreserveRoot, this.log);
     await SHARED_STORAGE.reset();

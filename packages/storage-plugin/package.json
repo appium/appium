@@ -16,8 +16,8 @@
   "bugs": {
     "url": "https://github.com/appium/appium/issues"
   },
-  "main": "./build/index.js",
-  "types": "./build/index.d.ts",
+  "main": "./build/lib/index.js",
+  "types": "./build/lib/index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/appium/appium.git",
@@ -29,7 +29,6 @@
     "lib": "./lib"
   },
   "files": [
-    "index.js",
     "lib",
     "build",
     "tsconfig.json",

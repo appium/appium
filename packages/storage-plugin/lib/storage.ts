@@ -1,18 +1,21 @@
-import { fs } from 'appium/support';
+import { fs, util } from 'appium/support';
 import _ from 'lodash';
 import B from 'bluebird';
 import type { Path } from 'path-scurry';
 import path from 'node:path';
 import type { Dirent, Stats } from 'node:fs';
 import { rimrafSync } from 'rimraf';
-import { FileChunkOpts as FileChunkOptions } from './types';
+import { FileChunkOpts as FileChunkOptions, StorageItem } from './types';
 import AsyncLock from 'async-lock';
 import type { FileHandle } from 'node:fs/promises';
 import type { AppiumLogger } from '@appium/types';
 
-const MAX_RESET_TASKS = 5;
+const MAX_TASKS = 5;
 const TMP_EXT = '.filepart';
 const BUFFER_SIZE = 0xFFFF;
+// 100 KB
+const MAX_CHUNK_SIZE = 100 * 1024;
+
 
 export class Storage {
   private readonly _root: string;
@@ -26,18 +29,28 @@ export class Storage {
     this._shouldPreserveRoot = shouldPreserveRoot;
   }
 
-  async list(): Promise<Path[]> {
-    const files = await this._listFiles();
-    return files.filter((p) => !_.endsWith(p.fullpath(), TMP_EXT));
+  async list(): Promise<StorageItem[]> {
+    const items = (await this._listFiles())
+      .filter((p) => !_.endsWith(p.fullpath(), TMP_EXT));
+    const statPromises: B<Stats>[] = [];
+    for (const item of items) {
+      const pending = statPromises.filter((p) => p.isPending());
+      if (pending.length >= MAX_TASKS) {
+        await B.any(pending);
+      }
+      statPromises.push(B.resolve(fs.stat(item.fullpath())));
+    }
+    return _.zip(
+      items.map((f) => f.fullpath()),
+      await B.all(statPromises)
+    )
+    .map(([fullpath, stat]) => ({
+      name: path.basename(fullpath as string),
+      size: (stat as Stats).size,
+    }));
   }
 
   async addChunk(opts: FileChunkOptions): Promise<void> {
-    if (_.includes(opts.name, path.sep)) {
-      throw new StorageArgumentError(
-        `The provided file name '${opts.name}' must not contain any ` +
-        `path separators`
-      );
-    }
     if (opts.name in this._inProgressUploads) {
       await this._handleExistingUpload(this._inProgressUploads[opts.name], opts);
     } else {
@@ -69,10 +82,10 @@ export class Storage {
 
     const promises: B<any>[] = [];
     for (const fullPath of files) {
-      if (promises.length >= MAX_RESET_TASKS) {
-        await B.any(promises);
+      const pending = promises.filter((p) => p.isPending());
+      if (pending.length >= MAX_TASKS) {
+        await B.any(pending);
       }
-      _.remove(promises, (p) => p.isFulfilled());
       promises.push(B.resolve(fs.rimraf(fullPath)));
     }
     await B.all(promises);
@@ -92,7 +105,6 @@ export class Storage {
   private async _listFiles(): Promise<Path[]> {
     const paths = (await fs.glob('*', {
       cwd: this._root,
-      absolute: true,
       withFileTypes: true,
     })) as unknown as Path[];
     return paths.filter((item) => item.isFile());
@@ -102,29 +114,16 @@ export class Storage {
     uploadInfo: InProgressUpload,
     opts: FileChunkOptions,
   ): Promise<void> {
-    if (uploadInfo.totalSize !== opts.size) {
-      throw new StorageArgumentError(
-        `The provided size value '${opts.size}' must be equal ` +
-        `to the expected size value of '${uploadInfo.totalSize}' ` +
-        `for '${opts.name}'`
-      );
-    }
-    if (_.toLower(uploadInfo.hash) !== _.toLower(opts.hash)) {
-      throw new StorageArgumentError(
-        `The provided hash value '${opts.hash}' must be equal ` +
-        `to the expected hash value of '${uploadInfo.hash}' ` +
-        `for '${opts.name}'`
-      );
-    }
-    await uploadInfo.lock.acquire(this.constructor.name, async () => {
+    const validatedOpts = requireValidOptions(opts);
+    await uploadInfo.lock.acquire(opts.name, async () => {
       const fhandle = await fs.openFile(uploadInfo.fullPath, 'w');
-      await this._writeChunk(fhandle, uploadInfo, opts);
+      await this._writeChunk(fhandle, uploadInfo, validatedOpts);
     });
   }
 
   private async _handleNewUpload(opts: FileChunkOptions): Promise<void> {
     this._log.info(`Handling a new file upload: ${JSON.stringify(_.omit(opts, 'chunk', 'position'))}`);
-    const fullPath = path.join(this._root, toTempName(opts.name));
+    const fullPath = path.join(this._root, toTempName(requireValidOptions(opts).name));
     const inProgressInfo: InProgressUpload = {
       lock: new AsyncLock(),
       totalSize: opts.size,
@@ -133,7 +132,7 @@ export class Storage {
       fullPath,
     };
     this._inProgressUploads[opts.name] = inProgressInfo;
-    await inProgressInfo.lock.acquire(this.constructor.name, async () => {
+    await inProgressInfo.lock.acquire(opts.name, async () => {
       const fhandle = await createDummyFile(inProgressInfo.fullPath, inProgressInfo.totalSize);
       await this._writeChunk(fhandle, inProgressInfo, opts);
     });
@@ -145,6 +144,12 @@ export class Storage {
     opts: FileChunkOptions,
   ): Promise<void> {
     const buffer = Buffer.from(opts.chunk, 'base64');
+    if (buffer.length > MAX_CHUNK_SIZE) {
+      throw new StorageArgumentError(
+        `The provided chunk length (${util.toReadableSizeString(buffer.length)}) must be ` +
+        `below ${util.toReadableSizeString(MAX_CHUNK_SIZE)}`
+      );
+    }
     try {
       await fhandle.write(buffer, 0, buffer.length, opts.position);
       uploadInfo.currentSize += buffer.length;
@@ -161,7 +166,8 @@ export class Storage {
         throw new StorageArgumentError(
           `The actual hash value '${actualHash}' must be equal ` +
           `to the expected hash value of '${uploadInfo.hash}' ` +
-          `for '${opts.name}'`
+          `for '${opts.name}'. ` +
+          `Please verify if all file parts have been suplied properly`
         );
       }
       await fs.mv(uploadInfo.fullPath, path.join(this._root, opts.name));
@@ -174,7 +180,7 @@ function toTempName(origName: string): string {
   return `${origName}${TMP_EXT}`;
 }
 
-async function createDummyFile(filePath: string, size: number): Promise<FileHandle> {
+export async function createDummyFile(filePath: string, size: number): Promise<FileHandle> {
   const fhandle = await fs.openFile(filePath, 'w');
   let bytesWritten = 0;
   while (bytesWritten < size) {
@@ -189,6 +195,47 @@ async function createDummyFile(filePath: string, size: number): Promise<FileHand
     bytesWritten += bufferSize;
   }
   return fhandle;
+}
+
+function requireValidOptions(opts: FileChunkOptions, uploadInfo?: InProgressUpload): FileChunkOptions {
+  if (_.includes(opts.name, path.sep)) {
+    throw new StorageArgumentError(
+      `The provided file name '${opts.name}' must not contain any ` +
+      `path separators`
+    );
+  }
+  if (opts.size <= 0) {
+    throw new StorageArgumentError(
+      `The provided file size '${opts.size}' must be greater than zero`
+    );
+  }
+  if (opts.position < 0) {
+    throw new StorageArgumentError(
+      `The provided file position '${opts.position}' must be greater or equal to zero`
+    );
+  }
+  if (_.isEmpty(opts.chunk)) {
+    throw new StorageArgumentError(`The provided chunk must not be empty`);
+  }
+  if (!uploadInfo) {
+    return opts;
+  }
+
+  if (uploadInfo.totalSize !== opts.size) {
+    throw new StorageArgumentError(
+      `The provided size value '${opts.size}' must be equal ` +
+      `to the expected size value of '${uploadInfo.totalSize}' ` +
+      `for '${opts.name}'`
+    );
+  }
+  if (_.toLower(uploadInfo.hash) !== _.toLower(opts.hash)) {
+    throw new StorageArgumentError(
+      `The provided hash value '${opts.hash}' must be equal ` +
+      `to the expected hash value of '${uploadInfo.hash}' ` +
+      `for '${opts.name}'`
+    );
+  }
+  return opts;
 }
 
 interface InProgressUpload {

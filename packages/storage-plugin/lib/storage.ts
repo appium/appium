@@ -276,6 +276,11 @@ function requireValidOptions(opts: FileChunkOptions, uploadInfo?: InProgressUplo
       `The provided file position '${opts.position}' must be greater or equal to zero`
     );
   }
+  if (opts.position >= opts.size) {
+    throw new StorageArgumentError(
+      `The provided file position '${opts.position}' must be less than the file size (${opts.size})`
+    );
+  }
   if (_.isEmpty(opts.chunk)) {
     throw new StorageArgumentError(`The provided chunk must not be empty`);
   }

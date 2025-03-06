@@ -1,4 +1,4 @@
-export interface FileChunkOpts {
+export interface FileChunkOptions {
   /** Destination file name */
   name: string;
   /** SHA1 hash of the file */

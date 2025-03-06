@@ -6,7 +6,7 @@ import path from 'node:path';
 import type { Stats } from 'node:fs';
 import nativeFs from 'node:fs';
 import { rimrafSync } from 'rimraf';
-import { FileChunkOpts as FileChunkOptions, StorageItem } from './types';
+import { FileChunkOptions, StorageItem } from './types';
 import AsyncLock from 'async-lock';
 import type { FileHandle } from 'node:fs/promises';
 import type { AppiumLogger } from '@appium/types';

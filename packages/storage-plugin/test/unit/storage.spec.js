@@ -70,6 +70,7 @@ describe('storage', function () {
     _.isEmpty(files).should.be.false;
     files[0].name.should.eql(name);
     files[0].size.should.eql(size);
+    files[0].path.should.eql(path.join(storageRoot, name));
     (await storage.delete(name)).should.be.true;
     files = await storage.list();
     _.isEmpty(files).should.be.true;

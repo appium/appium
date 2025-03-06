@@ -52,6 +52,7 @@ export class Storage {
     )
     .map(([fullpath, stat]) => ({
       name: path.basename(fullpath as string),
+      path: fullpath as string,
       size: (stat as Stats).size,
     }));
   }

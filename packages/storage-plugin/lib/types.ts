@@ -14,6 +14,8 @@ export interface FileChunkOpts {
 export interface StorageItem {
   /** Item name */
   name: string;
+  /** Full path to the item on the server FS */
+  path: string;
   /** Item size in bytes */
   size: number;
 }

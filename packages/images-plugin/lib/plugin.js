@@ -89,24 +89,27 @@ export default class ImageElementPlugin extends BasePlugin {
     for (const actionSequence of actionSequences) {
       for (const action of actionSequence.actions) {
         // The actions that can have an Element as the origin are "pointerMove" and "scroll".
-        if (
-          (action.type === 'pointerMove' || action.type === 'scroll') &&
-          !_.isNil(action.origin) &&
-          !_.isString(action.origin)
-        ) {
-          const elId = util.unwrapElement(action.origin);
-          if (_.isString(elId) && elId.startsWith(IMAGE_ELEMENT_PREFIX)) {
-            const imgEl = this.finder.getImageElement(elId);
-            if (!imgEl) {
-              throw new errors.NoSuchElementError();
-            }
-            // Add the element's center coordinates to the offset value.
-            action.x += imgEl.center.x;
-            action.y += imgEl.center.y;
-            // Set the origin to the viewport so that the external driver can process it using coordinates.
-            delete action.origin;
-          }
+        if (!_.has(action, 'origin') || !_.isPlainObject(action.origin)) {
+          continue;
         }
+
+        const actionWithEl = /** @type {import('@appium/types').PointerMoveAction | import('@appium/types').ScrollAction} */ (action);
+
+        const elId = util.unwrapElement(/** @type {import('@appium/types').Element} */ (actionWithEl.origin));
+        if (!_.startsWith(elId, IMAGE_ELEMENT_PREFIX)) {
+          continue;
+        }
+
+        const imgEl = this.finder.getImageElement(elId);
+        if (!imgEl) {
+          throw new errors.NoSuchElementError();
+        }
+
+        // Add the element's center coordinates to the offset value.
+        actionWithEl.x += imgEl.center.x;
+        actionWithEl.y += imgEl.center.y;
+        // Set the origin to the viewport so that the external driver can process it using coordinates.
+        delete actionWithEl.origin;
       }
     }
 

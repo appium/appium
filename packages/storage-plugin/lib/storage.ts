@@ -181,7 +181,7 @@ export class Storage {
   }
 
   private async _handleNewUpload(opts: FileChunkOptions): Promise<void> {
-    this._log.info(`Handling a new file upload: ${JSON.stringify(_.omit(opts, 'chunk', 'position'))}`);
+    this._log.info(`Handling a new file upload: ${formatForLogs(opts)}`);
     const fullPath = path.join(this._root, toTempName(requireValidOptions(opts).name));
     const inProgressInfo: InProgressUpload = {
       lock: new AsyncLock(),
@@ -217,8 +217,7 @@ export class Storage {
     }
     if (uploadInfo.currentSize >= uploadInfo.totalSize) {
       this._log.info(
-        `The upload of ${JSON.stringify(_.omit(opts, 'chunk', 'position'))} ` +
-        `seem to have finsihed. Verifying hashes.`
+        `The upload of ${formatForLogs(opts)} seem to have finsihed. Verifying hashes.`
       );
       const actualHash = await fs.hash(uploadInfo.fullPath);
       if (_.toLower(actualHash) !== _.toLower(uploadInfo.hash)) {
@@ -240,6 +239,13 @@ export class Storage {
 
 function toTempName(origName: string): string {
   return `${origName}${TMP_EXT}`;
+}
+
+function formatForLogs(opts: FileChunkOptions): string {
+  return JSON.stringify({
+    name: opts.name,
+    size: opts.size,
+  });
 }
 
 export async function createDummyFile(filePath: string, size: number): Promise<FileHandle> {

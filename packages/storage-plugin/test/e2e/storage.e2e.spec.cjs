@@ -9,7 +9,7 @@ const BUFFER_SIZE = 0xFFF;
 const THIS_PLUGIN_DIR = path.join(__dirname, '..', '..');
 const APPIUM_HOME = path.join(THIS_PLUGIN_DIR, 'local_appium_home');
 const FAKE_DRIVER_DIR = path.join(THIS_PLUGIN_DIR, '..', 'fake-driver');
-const TEST_HOST = 'localhost';
+const TEST_HOST = '127.0.0.1';
 const TEST_PORT = 4723;
 const TEST_FAKE_APP = path.join(
   APPIUM_HOME,
@@ -72,20 +72,24 @@ describe('StoragePlugin', function () {
   });
 
   it('should manage storage files', async function () {
-    _.isEmpty(await driver.send({method: 'appium:storage.list', params: {}})).should.be.true;
+    let {result: items} = await driver.send({method: 'appium:storage.list', params: {}});
+    _.isEmpty(items).should.be.true;
     const name1 = path.basename('foo1.bar');
     const name2 = path.basename('foo2.bar');
     await Promise.all([
       addFileToStorage(TEST_FAKE_APP, name1),
       addFileToStorage(TEST_FAKE_APP, name2),
     ]);
-    const items = await driver.send({method: 'appium:storage.list', params: {}});
+    ({result: items} = await driver.send({method: 'appium:storage.list', params: {}}));
     items.length.should.eql(2);
     _.isEqual(new Set(items.map(({name}) => name)), new Set([name1, name2])).should.be.true;
-    await driver.send({method: 'appium:storage.delete', params: {name: name1}});
+    let {result} = await driver.send({method: 'appium:storage.delete', params: {name: name1}});
+    result.should.be.true;
+    ({result: items} = await driver.send({method: 'appium:storage.list', params: {}}));
     items.length.should.eql(1);
     items[0].name.should.eql(name2);
     await driver.send({method: 'appium:storage.reset', params: {}});
+    ({result: items} = await driver.send({method: 'appium:storage.list', params: {}}));
     items.length.should.eql(0);
   });
 
@@ -104,7 +108,7 @@ describe('StoragePlugin', function () {
           hash,
           size,
           chunk: buffer.toString('base64'),
-          bytesRead,
+          position: bytesRead,
         }});
         bytesRead += bufferSize;
       }

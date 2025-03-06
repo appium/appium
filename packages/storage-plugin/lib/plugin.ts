@@ -1,6 +1,7 @@
 import { BasePlugin } from 'appium/plugin';
+import { errors } from 'appium/driver';
 import { BIDI_COMMANDS_MAP } from './bidi-commands-map';
-import { Storage } from './storage';
+import { Storage, StorageArgumentError } from './storage';
 import _ from 'lodash';
 import { tempDir, fs } from '@appium/support';
 import { StorageItem } from './types';
@@ -17,29 +18,33 @@ export class StoragePlugin extends BasePlugin {
   async uploadStorageItem(
     name: string, hash: string, size: number, chunk: string, position: number
   ): Promise<void> {
-    const storage = await this._getStorageSingleton();
-    await storage.addChunk({
-      name,
-      hash,
-      size,
-      chunk,
-      position,
-    });
+    await this._excuteStorageMethod(
+      async (storage: Storage) => await storage.addChunk({
+        name,
+        hash,
+        size,
+        chunk,
+        position,
+      })
+    );
   }
 
   async listStorageItems(): Promise<StorageItem[]> {
-    const storage = await this._getStorageSingleton();
-    return await storage.list();
+    return await this._excuteStorageMethod(
+      async (storage: Storage) => await storage.list()
+    );
   }
 
   async deleteStorageItem(name: string): Promise<boolean> {
-    const storage = await this._getStorageSingleton();
-    return await storage.delete(name);
+    return await this._excuteStorageMethod(
+      async (storage: Storage) => await storage.delete(name)
+    );
   }
 
   async resetStorage(): Promise<void> {
-    const storage = await this._getStorageSingleton();
-    await storage.reset();
+    await this._excuteStorageMethod(
+      async (storage: Storage) => await storage.reset()
+    );
   }
 
   private _getStorageSingleton = _.memoize(async () => {
@@ -58,6 +63,18 @@ export class StoragePlugin extends BasePlugin {
     await SHARED_STORAGE.reset();
     return SHARED_STORAGE;
   });
+
+  private async _excuteStorageMethod<T>(method: (storage: Storage) => Promise<T>): Promise<T> {
+    const storage = await this._getStorageSingleton();
+    try {
+      return await method(storage);
+    } catch (e) {
+      if (e instanceof StorageArgumentError) {
+        throw new errors.InvalidArgumentError(e.message);
+      }
+      throw e;
+    }
+  }
 }
 
 process.once('exit', () => {

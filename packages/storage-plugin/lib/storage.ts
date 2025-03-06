@@ -308,4 +308,4 @@ interface InProgressUpload {
   fullPath: string;
 }
 
-class StorageArgumentError extends Error {}
+export class StorageArgumentError extends Error {}

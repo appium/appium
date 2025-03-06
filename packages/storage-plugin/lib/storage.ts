@@ -266,10 +266,9 @@ export async function createDummyFile(filePath: string, size: number): Promise<F
 }
 
 function requireValidOptions(opts: FileChunkOptions, uploadInfo?: InProgressUpload): FileChunkOptions {
-  if (_.includes(opts.name, path.sep)) {
+  if (opts.name !== path.basename(opts.name)) {
     throw new StorageArgumentError(
-      `The provided file name '${opts.name}' must not contain any ` +
-      `path separators`
+      `The provided name value '${opts.name}' must be a valid file name`
     );
   }
   if (opts.size <= 0) {

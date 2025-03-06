@@ -37,7 +37,8 @@ to the Appium server's file system it is necessary to perform following steps:
 
 - Calculate the size of the source file
 - Calculate [SHA1](https://en.wikipedia.org/wiki/SHA-1#:~:text=In%20cryptography%2C%20SHA%2D1%20(,rendered%20as%2040%20hexadecimal%20digits.) hash of the source file
-- Start reading the source file into 64 KB chunks. The single chunk size must not be greater than 100 KB
+- Start reading the source file into small chunks. The recommended size of a single chunk is 64 KB.
+  The overall chunk size before encoding to base64 must not be greater than 512 KB.
 - After each chunk is retrieved call `appium:storage.upload` BiDi command and pass
   the following parameters to it:
   - `name` (required): The destination file name. It could be the same as the local one. Must not include any path separator characters.

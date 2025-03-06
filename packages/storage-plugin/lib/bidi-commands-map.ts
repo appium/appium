@@ -5,7 +5,13 @@ export const BIDI_COMMANDS_MAP: BidiModuleMap = {
     upload: {
       command: 'uploadStorageItem',
       params: {
-        required: ['name', 'hash', 'size', 'chunk', 'position'],
+        required: [
+          'name',
+          'hash',
+          'size',
+          'position',
+          'chunk',
+        ],
       }
     },
     list: {

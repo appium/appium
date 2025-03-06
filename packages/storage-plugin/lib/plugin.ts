@@ -17,8 +17,8 @@ export class StoragePlugin extends BasePlugin {
     name: string,
     hash: string,
     size: number,
+    position: number,
     chunk: string,
-    position: number
   ): Promise<void> {
     await this._excuteStorageMethod(
       async (storage: Storage) => await storage.addChunk({

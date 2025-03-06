@@ -5,10 +5,10 @@ export interface FileChunkOpts {
   hash: string;
   /** Total file size */
   size: number;
-  /** Base64-encoded file chunk as a string. Must not be greater than 64KB */
-  chunk: string;
   /** Start byte number of the chunk in the original file */
   position: number;
+  /** Base64-encoded file chunk as a string. Must not be greater than 64KB */
+  chunk: string;
 }
 
 export interface StorageItem {

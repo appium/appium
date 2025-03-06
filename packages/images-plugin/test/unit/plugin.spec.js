@@ -194,7 +194,6 @@ describe('ImageElementPlugin#handle', function () {
           parameters: {pointerType: 'touch'},
           actions: [
             {type: 'pointerMove', x: 0, y: 0, duration: 0, origin: imageEl},
-            {type: 'pause', duration: 0},
             {type: 'pointerMove', x: 15, y: 25, duration: 0, origin: imageEl},
           ],
         },
@@ -202,7 +201,6 @@ describe('ImageElementPlugin#handle', function () {
           type: 'wheel',
           id: 'wheel',
           actions: [
-            {type: 'pause', duration: 0},
             {type: 'scroll', x: 1, y: 0, deltaX: 1, deltaY: 2, origin: imageEl},
           ],
         },
@@ -215,7 +213,6 @@ describe('ImageElementPlugin#handle', function () {
           parameters: {pointerType: 'touch'},
           actions: [
             {type: 'pointerMove', x: 24, y: 40, duration: 0},
-            {type: 'pause', duration: 0},
             {type: 'pointerMove', x: 39, y: 65, duration: 0},
           ],
         },
@@ -223,7 +220,6 @@ describe('ImageElementPlugin#handle', function () {
           type: 'wheel',
           id: 'wheel',
           actions: [
-            {type: 'pause', duration: 0},
             {type: 'scroll', x: 25, y: 40, deltaX: 1, deltaY: 2},
           ],
         },
@@ -249,7 +245,6 @@ describe('ImageElementPlugin#handle', function () {
           type: 'wheel',
           id: 'wheel',
           actions: [
-            ..._.range(7).map(() => ({type: 'pause', duration: 0})),
             {type: 'scroll', x: 1, y: 1, deltaX: 1, deltaY: 2},
             {type: 'scroll', x: 2, y: 2, deltaX: 2, deltaY: 3, origin: nativeEl},
             {type: 'scroll', x: 3, y: 3, deltaX: 3, deltaY: 4, origin: 'viewport'},
@@ -260,7 +255,6 @@ describe('ImageElementPlugin#handle', function () {
           type: 'key',
           id: 'key',
           actions: [
-            ..._.range(11).map(() => ({type: 'pause', duration: 0})),
             {type: 'keyDown', value: 'a'},
             {type: 'keyUp', value: 'a'},
           ],

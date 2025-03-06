@@ -53,7 +53,7 @@ describe('storage', function () {
   it('should only reset known files', async function () {
     const name = 'foo.bar';
     await fs.writeFile(path.join(storageRoot, name), Buffer.alloc(1));
-    storage = new Storage(storageRoot, false, log);
+    storage = new Storage(storageRoot, true, log);
     const files = await storage.list();
     _.isEmpty(files).should.be.true;
     (await storage.delete(name)).should.be.false;

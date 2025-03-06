@@ -78,8 +78,13 @@ export class Storage {
   }
 
   async reset(): Promise<void> {
+    if (!this._shouldPreserveRoot) {
+      await fs.rimraf(this._root);
+    }
+
     if (!await fs.exists(this._root)) {
       await fs.mkdirp(this._root);
+      return;
     }
 
     const namesInProgress = new Set<string>(
@@ -113,12 +118,16 @@ export class Storage {
   cleanupSync(): void {
     this._log.debug(`Cleaning up the '${this._root}' server storage folder`);
 
+    if (!this._shouldPreserveRoot) {
+      rimrafSync(this._root);
+      return;
+    }
+
     const namesInProgress = new Set<string>(
       _.values(this._inProgressUploads)
       .map(({fullPath}) => path.basename(fullPath))
     );
     this._inProgressUploads = {};
-
     let itemNames: string[];
     try {
       itemNames = nativeFs.readdirSync(this._root)
@@ -131,9 +140,6 @@ export class Storage {
       return;
     }
     if (_.isEmpty(itemNames)) {
-      if (!this._shouldPreserveRoot) {
-        rimrafSync(this._root);
-      }
       return;
     }
 
@@ -143,9 +149,7 @@ export class Storage {
       return;
     }
     if (_.isEqual(matchedNames, itemNames)) {
-      rimrafSync(this._root, {
-        preserveRoot: this._shouldPreserveRoot,
-      });
+      rimrafSync(this._root);
     } else {
       for (const matchedName of matchedNames) {
         rimrafSync(path.join(this._root, matchedName));

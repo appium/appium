@@ -4,7 +4,7 @@ import {remote as wdio} from 'webdriverio';
 import {MATCH_FEATURES_MODE, GET_SIMILARITY_MODE} from '../../lib/constants';
 import {TEST_IMG_1_B64, TEST_IMG_2_B64, APPSTORE_IMG_PATH} from '../fixtures';
 import {pluginE2EHarness} from '@appium/plugin-test-support';
-import {tempDir, fs, util} from '@appium/support';
+import {tempDir, fs} from '@appium/support';
 import sharp from 'sharp';
 
 const THIS_PLUGIN_DIR = path.join(__dirname, '..', '..');
@@ -90,13 +90,12 @@ describe('ImageElementPlugin', function () {
     height.should.eql(91);
     await imageEl.click();
 
-    const origin = util.wrapElement(imageEl.elementId);
     const actionSequence = {
       type: 'pointer',
       id: 'mouse',
       parameters: {pointerType: 'touch'},
       actions: [
-        {type: 'pointerMove', x: 0, y: 0, duration: 0, origin},
+        {type: 'pointerMove', x: 0, y: 0, duration: 0, origin: imageEl},
         {type: 'pointerDown', button: 0},
         {type: 'pause', duration: 125},
         {type: 'pointerUp', button: 0},

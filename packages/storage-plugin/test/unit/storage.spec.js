@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { Storage, createDummyFile } from '../../lib/storage';
-import { tempDir, fs, logger } from 'appium/support';
+import { tempDir, fs, logger } from '@appium/support';
 import path from 'node:path';
 
 const log = logger.getLogger();
@@ -48,6 +48,17 @@ describe('storage', function () {
     const files = await storage.list();
     _.isEmpty(files).should.be.true;
     (await storage.delete('foo')).should.be.false;
+  });
+
+  it('should only reset known files', async function () {
+    const name = 'foo.bar';
+    await fs.writeFile(path.join(storageRoot, name), Buffer.alloc(1));
+    storage = new Storage(storageRoot, false, log);
+    const files = await storage.list();
+    _.isEmpty(files).should.be.true;
+    (await storage.delete(name)).should.be.false;
+    await storage.reset();
+    (await fs.exists(path.join(storageRoot, name))).should.be.true;
   });
 
   it('should perform basic operations', async function () {

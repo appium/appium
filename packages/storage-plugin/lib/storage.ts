@@ -1,9 +1,10 @@
-import { fs, util } from 'appium/support';
+import { fs, util } from '@appium/support';
 import _ from 'lodash';
 import B from 'bluebird';
 import type { Path } from 'path-scurry';
 import path from 'node:path';
-import type { Dirent, Stats } from 'node:fs';
+import type { Stats } from 'node:fs';
+import nativeFs from 'node:fs';
 import { rimrafSync } from 'rimraf';
 import { FileChunkOpts as FileChunkOptions, StorageItem } from './types';
 import AsyncLock from 'async-lock';
@@ -21,6 +22,7 @@ export class Storage {
   private readonly _root: string;
   private readonly _log: AppiumLogger;
   private readonly _shouldPreserveRoot: boolean;
+  private readonly _knownNames = new Set<string>();
   private _inProgressUploads: Record<string, InProgressUpload> = {};
 
   constructor(root: string, shouldPreserveRoot: boolean, log: AppiumLogger) {
@@ -31,7 +33,11 @@ export class Storage {
 
   async list(): Promise<StorageItem[]> {
     const items = (await this._listFiles())
-      .filter((p) => !_.endsWith(p.fullpath(), TMP_EXT));
+      .filter((p) => this._knownNames.has(path.basename(p.fullpath())));
+    if (_.isEmpty(items)) {
+      return [];
+    }
+
     const statPromises: B<Stats>[] = [];
     for (const item of items) {
       const pending = statPromises.filter((p) => p.isPending());
@@ -59,11 +65,15 @@ export class Storage {
   }
 
   async delete(name: string): Promise<boolean> {
+    if (!this._knownNames.has(name)) {
+      return false;
+    }
     const destinationPath = path.join(this._root, name);
     if (!await fs.exists(destinationPath)) {
       return false;
     }
     await fs.rimraf(destinationPath);
+    this._knownNames.delete(name);
     return true;
   }
 
@@ -72,10 +82,18 @@ export class Storage {
       await fs.mkdirp(this._root);
     }
 
+    const namesInProgress = new Set<string>(
+      _.values(this._inProgressUploads)
+      .map(({fullPath}) => path.basename(fullPath))
+    );
     this._inProgressUploads = {};
 
     const files = (await this._listFiles())
-      .map((item) => item.fullpath());
+      .map((p) => p.fullpath())
+      .filter((fullPath) => {
+        const basename = path.basename(fullPath);
+        return this._knownNames.has(basename) || namesInProgress.has(basename);
+      });
     if (_.isEmpty(files)) {
       return;
     }
@@ -89,17 +107,50 @@ export class Storage {
       promises.push(B.resolve(fs.rimraf(fullPath)));
     }
     await B.all(promises);
+    this._knownNames.clear();
   }
 
   cleanupSync(): void {
-    this._log.debug(`Cleaning up all files from the '${this._root}' server storage folder`);
+    this._log.debug(`Cleaning up the '${this._root}' server storage folder`);
 
+    const namesInProgress = new Set<string>(
+      _.values(this._inProgressUploads)
+      .map(({fullPath}) => path.basename(fullPath))
+    );
     this._inProgressUploads = {};
 
-    rimrafSync(this._root, {
-      preserveRoot: this._shouldPreserveRoot,
-      filter: (path: string, ent: Dirent | Stats) => ent.isFile(),
-    });
+    let itemNames: string[];
+    try {
+      itemNames = nativeFs.readdirSync(this._root)
+        .filter((name) => !_.startsWith(name, '.'));
+    } catch (e) {
+      this._log.warn(
+        `Cannot list the '${this._root}' server storage folder, original error: ${e.message}. ` +
+        `Skipping the cleanup.`
+      );
+      return;
+    }
+    if (_.isEmpty(itemNames)) {
+      if (!this._shouldPreserveRoot) {
+        rimrafSync(this._root);
+      }
+      return;
+    }
+
+    const matchedNames = itemNames
+      .filter((name) => this._knownNames.has(name) || namesInProgress.has(name));
+    if (_.isEmpty(matchedNames)) {
+      return;
+    }
+    if (_.isEqual(matchedNames, itemNames)) {
+      rimrafSync(this._root, {
+        preserveRoot: this._shouldPreserveRoot,
+      });
+    } else {
+      for (const matchedName of matchedNames) {
+        rimrafSync(path.join(this._root, matchedName));
+      }
+    }
   }
 
   private async _listFiles(): Promise<Path[]> {
@@ -171,7 +222,10 @@ export class Storage {
         );
       }
       await fs.mv(uploadInfo.fullPath, path.join(this._root, opts.name));
-      delete this._inProgressUploads[opts.name];
+      if (opts.name in this._inProgressUploads) {
+        delete this._inProgressUploads[opts.name];
+      }
+      this._knownNames.add(opts.name);
     }
   }
 }

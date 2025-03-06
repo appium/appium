@@ -3,19 +3,19 @@ import type { BidiModuleMap } from '@appium/types';
 export const BIDI_COMMANDS_MAP: BidiModuleMap = {
   'appium:storage': {
     upload: {
-      command: 'upload',
+      command: 'uploadStorageItem',
       params: {
         required: ['name', 'hash', 'size', 'chunk', 'position'],
       }
     },
     list: {
-      command: 'list',
+      command: 'listStorageItems',
     },
     reset: {
-      command: 'reset',
+      command: 'resetStorage',
     },
     delete: {
-      command: 'delete',
+      command: 'deleteStorageItem',
       params: {
         required: ['name'],
       },

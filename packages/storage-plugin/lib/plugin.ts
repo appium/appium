@@ -2,7 +2,8 @@ import { BasePlugin } from 'appium/plugin';
 import { BIDI_COMMANDS_MAP } from './bidi-commands-map';
 import { Storage } from './storage';
 import _ from 'lodash';
-import { tempDir, fs } from 'appium/support';
+import { tempDir, fs } from '@appium/support';
+import { StorageItem } from './types';
 
 let SHARED_STORAGE: Storage | null = null;
 
@@ -13,9 +14,9 @@ export class StoragePlugin extends BasePlugin {
 
   static newBidiCommands = BIDI_COMMANDS_MAP;
 
-  async upload(
+  async uploadStorageItem(
     name: string, hash: string, size: number, chunk: string, position: number
-  ): Promise<any> {
+  ): Promise<void> {
     const storage = await this._getStorageSingleton();
     await storage.addChunk({
       name,
@@ -26,14 +27,19 @@ export class StoragePlugin extends BasePlugin {
     });
   }
 
-  async list(): Promise<any> {
+  async listStorageItems(): Promise<StorageItem[]> {
     const storage = await this._getStorageSingleton();
     return await storage.list();
   }
 
-  async delete(name: string): Promise<boolean> {
+  async deleteStorageItem(name: string): Promise<boolean> {
     const storage = await this._getStorageSingleton();
     return await storage.delete(name);
+  }
+
+  async resetStorage(): Promise<void> {
+    const storage = await this._getStorageSingleton();
+    await storage.reset();
   }
 
   private _getStorageSingleton = _.memoize(async () => {

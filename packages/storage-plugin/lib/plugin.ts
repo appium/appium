@@ -9,10 +9,6 @@ import { StorageItem } from './types';
 let SHARED_STORAGE: Storage | null = null;
 
 export class StoragePlugin extends BasePlugin {
-  constructor(name: string, cliArgs: Record<string, unknown>) {
-    super(name, cliArgs);
-  }
-
   static newBidiCommands = BIDI_COMMANDS_MAP;
 
   async uploadStorageItem(

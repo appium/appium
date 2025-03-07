@@ -1,4 +1,4 @@
-import { fs, util } from '@appium/support';
+import { fs, timing } from '@appium/support';
 import _ from 'lodash';
 import B from 'bluebird';
 import type { Path } from 'path-scurry';
@@ -6,17 +6,17 @@ import path from 'node:path';
 import type { Stats } from 'node:fs';
 import nativeFs from 'node:fs';
 import { rimrafSync } from 'rimraf';
-import { FileChunkOptions, StorageItem } from './types';
+import { ItemOptions, StorageItem } from './types';
 import AsyncLock from 'async-lock';
-import type { FileHandle } from 'node:fs/promises';
 import type { AppiumLogger } from '@appium/types';
+import type Stream from 'node:stream';
+import type WebSocket from 'ws';
 
 const MAX_TASKS = 5;
 const TMP_EXT = '.filepart';
-const BUFFER_SIZE = 0xFFFF;
-// 512 KB
-const MAX_CHUNK_SIZE = 512 * 1024;
 const ADDITION_LOCK = new AsyncLock();
+const WS_SERVER_ERROR = 1011;
+const SHA1_HASH_LEN = 40;
 
 
 export class Storage {
@@ -65,17 +65,13 @@ export class Storage {
     }));
   }
 
-  async addChunk(opts: FileChunkOptions): Promise<void> {
-    requireValidOptions(opts);
-    await ADDITION_LOCK.acquire(opts.name, async () => {
-      if (opts.name in this._inProgressAdditions) {
-        const additionInfo = this._inProgressAdditions[opts.name];
-        await this._handleExistingItem(
-          additionInfo,
-          requireValidOptions(opts, additionInfo),
-        );
+  async add(opts: ItemOptions, source: Stream | WebSocket): Promise<void> {
+    const {name} = requireValidItemOptions(opts);
+    await ADDITION_LOCK.acquire(name, async () => {
+      if (_.has(source, 'pipe')) {
+        await this._addFromStream(opts, source as Stream);
       } else {
-        await this._handleNewItem(opts);
+        await this._addFromWebSocket(opts, source as WebSocket);
       }
     });
   }
@@ -193,67 +189,83 @@ export class Storage {
     return paths.filter((item) => item.isFile());
   }
 
-  private async _handleExistingItem(
-    additionInfo: InProgressAddition,
-    opts: FileChunkOptions,
-  ): Promise<void> {
-    const fhandle = await fs.openFile(additionInfo.fullPath, 'w');
-    await this._writeChunk(fhandle, additionInfo, opts);
-  }
-
-  private async _handleNewItem(opts: FileChunkOptions): Promise<void> {
-    this._log.info(`Handling a new storage item addition: ${formatForLogs(opts)}`);
-    const fullPath = path.join(this._root, toTempName(requireValidOptions(opts).name));
-    const inProgressInfo: InProgressAddition = {
-      totalSize: opts.size,
-      hash: opts.hash,
-      currentSize: 0,
-      fullPath,
-    };
-    const fhandle = await createDummyFile(inProgressInfo.fullPath, inProgressInfo.totalSize);
-    this._inProgressAdditions[opts.name] = inProgressInfo;
-    await this._writeChunk(fhandle, inProgressInfo, opts);
-  }
-
-  private async _writeChunk(
-    fhandle: FileHandle,
-    additionInfo: InProgressAddition,
-    opts: FileChunkOptions,
-  ): Promise<void> {
-    const buffer = Buffer.from(opts.chunk, 'base64');
-    if (buffer.length > MAX_CHUNK_SIZE) {
-      throw new StorageArgumentError(
-        `The provided chunk length (${util.toReadableSizeString(buffer.length)}) must be ` +
-        `below ${util.toReadableSizeString(MAX_CHUNK_SIZE)}`
-      );
-    }
+  private async _addFromStream(opts: ItemOptions, source: Stream): Promise<void> {
+    const {name} = opts;
+    const fullPath = path.join(this._root, toTempName(name));
+    const inProgressInfo: InProgressAddition = {fullPath};
+    this._inProgressAdditions[name] = inProgressInfo;
     try {
-      await fhandle.write(buffer, 0, buffer.length, opts.position);
-      additionInfo.currentSize += buffer.length;
+      const timer = new timing.Timer().start();
+      const destination = fs.createWriteStream(fullPath);
+      source.pipe(destination);
+      try {
+        await new Promise((resolve, reject) => {
+          destination.once('finish', () => resolve(true));
+          source.once('error', reject);
+          destination.once('error', reject);
+        });
+        await this._finalizeItem(opts, timer, fullPath);
+      } catch (e) {
+        await fs.rimraf(fullPath);
+        throw e;
+      }
     } finally {
-      await fhandle.close();
+      delete this._inProgressAdditions[name];
     }
-    if (additionInfo.currentSize < additionInfo.totalSize) {
-      return;
-    }
+  }
 
+  private async _addFromWebSocket(opts: ItemOptions, source: WebSocket): Promise<void> {
+    const {name} = opts;
+    const fullPath = path.join(this._root, toTempName(name));
+    const inProgressInfo: InProgressAddition = {fullPath};
+    this._inProgressAdditions[name] = inProgressInfo;
+    try {
+      const timer = new timing.Timer().start();
+      const destination = fs.createWriteStream(fullPath);
+      try {
+        await new Promise((resolve, reject) => {
+          source.on('message', (data: WebSocket.RawData) => {
+            destination.write(data, (e) => {
+              if (e) {
+                source.close(WS_SERVER_ERROR);
+                reject(e);
+              }
+            });
+          });
+          source.once('close', () => {
+            destination.close(() => resolve(true));
+          });
+          source.once('error', reject);
+          destination.once('error', (e) => {
+            source.close(WS_SERVER_ERROR);
+            reject(e);
+          });
+        });
+        await this._finalizeItem(opts, timer, fullPath);
+      } catch (e) {
+        await fs.rimraf(fullPath);
+        throw e;
+      }
+    } finally {
+      delete this._inProgressAdditions[name];
+    }
+  }
+
+  private async _finalizeItem(opts: ItemOptions, timer: timing.Timer, fullPath: string): Promise<void> {
+    const {name, hash} = opts;
     this._log.info(
-      `The addition of ${formatForLogs(opts)} seem to have finsihed. Verifying hashes.`
+      `The addition of '${name}' is completed within ` +
+      `${timer.getDuration().asMilliSeconds}ms. Verifying hashes.`
     );
-    const actualHash = await fs.hash(additionInfo.fullPath);
-    if (_.toLower(actualHash) !== _.toLower(additionInfo.hash)) {
+    const actualHash = await fs.hash(fullPath);
+    if (_.toLower(actualHash) !== _.toLower(hash)) {
       throw new StorageArgumentError(
         `The actual hash value '${actualHash}' must be equal ` +
-        `to the expected hash value of '${additionInfo.hash}' ` +
-        `for '${opts.name}'. ` +
-        `Please verify if all file parts have been suplied properly`
+        `to the expected hash value of '${hash}' for '${name}'`
       );
     }
-    await fs.mv(additionInfo.fullPath, path.join(this._root, opts.name));
-    if (opts.name in this._inProgressAdditions) {
-      delete this._inProgressAdditions[opts.name];
-    }
-    this._knownNames.add(opts.name);
+    await fs.mv(fullPath, path.join(this._root, name));
+    this._knownNames.add(name);
   }
 }
 
@@ -261,49 +273,7 @@ function toTempName(origName: string): string {
   return `${origName}${TMP_EXT}`;
 }
 
-function formatForLogs(opts: FileChunkOptions): string {
-  return JSON.stringify({
-    name: opts.name,
-    size: opts.size,
-  });
-}
-
-export async function createDummyFile(filePath: string, size: number): Promise<FileHandle> {
-  const fhandle = await fs.openFile(filePath, 'w');
-  let bytesWritten = 0;
-  while (bytesWritten < size) {
-    const bufferSize = Math.min(BUFFER_SIZE, size - bytesWritten);
-    try {
-      await fhandle.write(Buffer.alloc(bufferSize), 0, bufferSize, bytesWritten);
-    } catch (e) {
-      await fhandle.close();
-      await fs.rimraf(filePath);
-      throw e;
-    }
-    bytesWritten += bufferSize;
-  }
-  return fhandle;
-}
-
-function requireValidOptions(opts: FileChunkOptions, additionInfo?: InProgressAddition): FileChunkOptions {
-  if (additionInfo) {
-    if (additionInfo.totalSize !== opts.size) {
-      throw new StorageArgumentError(
-        `The provided size value '${opts.size}' must be the same ` +
-        `as the initial size value of '${additionInfo.totalSize}' ` +
-        `for '${opts.name}'`
-      );
-    }
-    if (_.toLower(additionInfo.hash) !== _.toLower(opts.hash)) {
-      throw new StorageArgumentError(
-        `The provided hash value '${opts.hash}' must be the same ` +
-        `as the inital hash value '${additionInfo.hash}' ` +
-        `for '${opts.name}'`
-      );
-    }
-    return opts;
-  }
-
+export function requireValidItemOptions(opts: ItemOptions): ItemOptions {
   if (_.isEmpty(opts.name)) {
     throw new StorageArgumentError(`The provided file name '${opts.name}' must not be empty`);
   }
@@ -316,31 +286,16 @@ function requireValidOptions(opts: FileChunkOptions, additionInfo?: InProgressAd
       `Did you mean '${sanitizedName}'?`
     );
   }
-  if (opts.size <= 0) {
+  if (!_.isString(opts.hash) || opts.hash.length !== SHA1_HASH_LEN) {
     throw new StorageArgumentError(
-      `The provided file size '${opts.size}' must be greater than zero`
+      `The provided hash value '${opts.hash}' must be a valid SHA1 string, for ` +
+      `example 'ccc963411b2621335657963322890305ebe96186'`
     );
-  }
-  if (opts.position < 0) {
-    throw new StorageArgumentError(
-      `The provided file position '${opts.position}' must be greater or equal to zero`
-    );
-  }
-  if (opts.position >= opts.size) {
-    throw new StorageArgumentError(
-      `The provided file position '${opts.position}' must be less than the file size (${opts.size})`
-    );
-  }
-  if (_.isEmpty(opts.chunk)) {
-    throw new StorageArgumentError(`The provided chunk must not be empty`);
   }
   return opts;
 }
 
 interface InProgressAddition {
-  totalSize: number;
-  currentSize: number;
-  hash: string;
   fullPath: string;
 }
 

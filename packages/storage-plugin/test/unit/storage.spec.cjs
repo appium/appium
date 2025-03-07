@@ -1,11 +1,9 @@
 import _ from 'lodash';
-import { Storage, createDummyFile } from '../../lib/storage';
+import { Storage } from '../../lib/storage';
 import { tempDir, fs, logger } from '@appium/support';
 import path from 'node:path';
 
 const log = logger.getLogger();
-const BUFFER_SIZE = 0xFFF;
-
 
 describe('storage', function () {
   /** @type {string | undefined} */
@@ -101,35 +99,10 @@ describe('storage', function () {
 
   async function addFileToStorage(name, size) {
     const dummyPath = path.join(tmpRoot, name);
-    const writeHandle = await createDummyFile(dummyPath, size);
-    await writeHandle.close();
-    const dummyHash = await fs.hash(dummyPath);
-    let bytesRead = 0;
-    const bufferInfos = [];
-    const readHandle = await fs.openFile(dummyPath, 'r');
-    try {
-      while (bytesRead < size) {
-        const bufferSize = Math.min(BUFFER_SIZE, size - bytesRead);
-        const buffer = Buffer.alloc(bufferSize);
-        await readHandle.read(buffer, 0, buffer.length, bytesRead);
-        bufferInfos.push([buffer, bytesRead]);
-        bytesRead += bufferSize;
-      }
-    } finally {
-      await readHandle.close();
-    }
-
-    const promises = [];
-    for (const [buffer, position] of bufferInfos) {
-      promises.push(storage.addChunk({
-        name,
-        hash: dummyHash,
-        size,
-        chunk: buffer.toString('base64'),
-        position,
-      }));
-    }
-    await Promise.all(promises);
+    await fs.writeFile(dummyPath, Buffer.alloc(size));
+    const hash = await fs.hash(dummyPath);
+    await storage.add({name, hash}, fs.createReadStream(dummyPath));
+    return dummyPath;
   }
 
 });

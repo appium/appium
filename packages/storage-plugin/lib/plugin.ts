@@ -65,7 +65,16 @@ export class StoragePlugin extends BasePlugin {
       shouldPreserveRoot = false;
       this.log.info(`Created '${storageRoot}' as the temporary server storage root folder`);
     }
-    SHARED_STORAGE = new Storage(storageRoot, shouldPreserveRoot, this.log);
+    const shouldKeep = ['true', '1', 'yes'].includes(_.toLower(process.env.APPIUM_STORAGE_KEEP_ALL));
+    if (shouldKeep) {
+      this.log.info('All server storage items will be preserved unless deleted explcitly');
+    }
+    SHARED_STORAGE = new Storage(
+      storageRoot,
+      shouldPreserveRoot,
+      shouldKeep,
+      this.log,
+    );
     await SHARED_STORAGE.reset();
     return SHARED_STORAGE;
   });

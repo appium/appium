@@ -23,13 +23,20 @@ export class Storage {
   private readonly _root: string;
   private readonly _log: AppiumLogger;
   private readonly _shouldPreserveRoot: boolean;
+  private readonly _shouldKeepKnownItems: boolean;
   private readonly _knownNames = new Set<string>();
   private _inProgressAdditions: Record<string, InProgressAddition> = {};
 
-  constructor(root: string, shouldPreserveRoot: boolean, log: AppiumLogger) {
+  constructor(
+    root: string,
+    shouldPreserveRoot: boolean,
+    shouldKeepItems: boolean,
+    log: AppiumLogger,
+  ) {
     this._root = root;
     this._log = log;
     this._shouldPreserveRoot = shouldPreserveRoot;
+    this._shouldKeepKnownItems = shouldKeepItems;
   }
 
   async list(): Promise<StorageItem[]> {
@@ -87,7 +94,7 @@ export class Storage {
   }
 
   async reset(): Promise<void> {
-    if (!this._shouldPreserveRoot) {
+    if (!this._shouldPreserveRoot && !this._shouldKeepKnownItems) {
       await fs.rimraf(this._root);
     }
 
@@ -106,10 +113,13 @@ export class Storage {
       .map((p) => p.fullpath())
       .filter((fullPath) => {
         const basename = path.basename(fullPath);
-        return this._knownNames.has(basename) || namesInProgress.has(basename);
+        return (!this._shouldKeepKnownItems && this._knownNames.has(basename))
+          || namesInProgress.has(basename);
       });
     if (_.isEmpty(files)) {
-      this._knownNames.clear();
+      if (!this._shouldKeepKnownItems) {
+        this._knownNames.clear();
+      }
       return;
     }
 
@@ -122,13 +132,15 @@ export class Storage {
       promises.push(B.resolve(fs.rimraf(fullPath)));
     }
     await B.all(promises);
-    this._knownNames.clear();
+    if (!this._shouldKeepKnownItems) {
+      this._knownNames.clear();
+    }
   }
 
   cleanupSync(): void {
     this._log.debug(`Cleaning up the '${this._root}' server storage folder`);
 
-    if (!this._shouldPreserveRoot) {
+    if (!this._shouldPreserveRoot && !this._shouldKeepKnownItems) {
       rimrafSync(this._root);
       return;
     }
@@ -150,23 +162,27 @@ export class Storage {
       return;
     }
     if (_.isEmpty(itemNames)) {
-      this._knownNames.clear();
+      if (!this._shouldPreserveRoot) {
+        rimrafSync(this._root);
+      }
+      if (!this._shouldKeepKnownItems) {
+        this._knownNames.clear();
+      }
       return;
     }
 
-    const matchedNames = itemNames
-      .filter((name) => this._knownNames.has(name) || namesInProgress.has(name));
-    if (_.isEmpty(matchedNames)) {
-      return;
+    const matchedNames = itemNames.filter(
+      (name) => (!this._shouldKeepKnownItems && this._knownNames.has(name)) || namesInProgress.has(name)
+    );
+    for (const matchedName of matchedNames) {
+      rimrafSync(path.join(this._root, matchedName));
     }
-    if (_.isEqual(matchedNames, itemNames)) {
+    if (!this._shouldKeepKnownItems) {
+      this._knownNames.clear();
+    }
+    if (!this._shouldPreserveRoot && _.isEmpty(_.without(itemNames, ...matchedNames))) {
       rimrafSync(this._root);
-    } else {
-      for (const matchedName of matchedNames) {
-        rimrafSync(path.join(this._root, matchedName));
-      }
     }
-    this._knownNames.clear();
   }
 
   private async _listFiles(): Promise<Path[]> {

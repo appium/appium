@@ -19,15 +19,26 @@ Add the plugin name to the list of plugins to use upon server startup:
 appium --use-plugins=storage
 ```
 
-By default, the plugin created a new temporary folder where it manages uploaded files.
-It is also possible to customize this folder by assigning a custom path to the
-`APPIUM_STORAGE_ROOT` environment variable. The plugin automatically deletes the
+By default, the plugin creates a new temporary folder where it manages uploaded files.
+
+### Environment Variables
+
+#### APPIUM_STORAGE_ROOT
+
+It is also possible to customize the repository root folder path by assigning a custom path to the
+`APPIUM_STORAGE_ROOT` environment variable upon server startup. The plugin automatically deletes the
 root folder recursively upon server process termination, unless the server is
 killed forcefully. If `APPIUM_STORAGE_ROOT` points to folder, which already exists,
 then only files managed by the plugin lifecycle are going to be deleted upon storage
 reset or upon server process termination.
 
-After the plugin is activated you may use the following BiDi commands from your test sessions:
+#### APPIUM_STORAGE_KEEP_ALL
+
+If this environment variable is set to `true`, `1` or `yes` then the plugin will always keep
+the previously uploaded storage files even after the server process is terminated.
+
+After the plugin is activated you may use the following [BiDi](https://w3c.github.io/webdriver-bidi/)
+commands from your test sessions:
 
 ### appium:storage.upload
 
@@ -73,6 +84,8 @@ Accepted parameters:
 ### appium:storage.reset
 
 Resets the server storage by deleting all uploaded files as well as incomplete uploads.
+If [APPIUM_STORAGE_KEEP_ALL](#appium_storage_keep_all) flag is enabled then
+only the latter is going to be cleaned up.
 
 ## CDDL Definitions
 

@@ -7,7 +7,7 @@ import {
   DRIVER_TYPE,
   EXT_SUBCOMMAND_LIST as LIST,
 } from '../../lib/constants';
-import {FAKE_DRIVER_DIR, resolveFixture} from '../helpers';
+import {FAKE_DRIVER_DIR, resolveFixture} from '../helpers.cjs';
 import {installLocalExtension, runAppiumJson} from './e2e-helpers';
 
 describe('manifest handling', function () {

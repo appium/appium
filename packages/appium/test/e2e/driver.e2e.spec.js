@@ -21,7 +21,7 @@ import {
   TEST_FAKE_APP,
   TEST_HOST,
   W3C_PREFIXED_CAPS,
-} from '../helpers';
+} from '../helpers.cjs';
 
 /** @type {string} */
 let testServerBaseUrl;

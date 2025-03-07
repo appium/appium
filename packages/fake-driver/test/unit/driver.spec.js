@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import {FakeDriver} from '../../lib';
-import {W3C_CAPS, W3C_PREFIXED_CAPS} from '../helpers';
+import {W3C_CAPS, W3C_PREFIXED_CAPS} from '../helpers.cjs';
 import {driverUnitTestSuite} from '@appium/driver-test-support';
 
 // test the same things as for base driver

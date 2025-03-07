@@ -5,7 +5,7 @@ import fs from 'fs';
 import {createSandbox} from 'sinon';
 import YAML from 'yaml';
 import * as schema from '../../lib/schema/schema';
-import {resolveFixture, rewiremock} from '../helpers';
+import {resolveFixture, rewiremock} from '../helpers.cjs';
 
 describe('config-file', function () {
   const GOOD_YAML_CONFIG_FILEPATH = resolveFixture('config', 'appium-config-good.yaml');

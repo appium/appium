@@ -10,7 +10,7 @@ import {
   EXT_SUBCOMMAND_LIST as LIST,
   PKG_HASHFILE_RELATIVE_PATH,
 } from '../../lib/constants';
-import {FAKE_DRIVER_DIR, resolveFixture} from '../helpers';
+import {FAKE_DRIVER_DIR, resolveFixture} from '../helpers.cjs';
 import {installLocalExtension, runAppiumJson} from './e2e-helpers';
 
 const {MANIFEST_RELATIVE_PATH} = env;

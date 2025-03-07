@@ -33,9 +33,9 @@
   ],
   "scripts": {
     "test": "npm run test:unit",
-    "test:e2e": "mocha -t 160s --slow 20s \"./test/e2e/**/*.spec.js\"",
+    "test:e2e": "mocha -t 160s --slow 20s \"./test/e2e/**/*.spec.*js\"",
     "test:smoke": "node ./index.js",
-    "test:unit": "mocha \"./test/unit/**/*.spec.js\""
+    "test:unit": "mocha \"./test/unit/**/*.spec.*js\""
   },
   "dependencies": {
     "bluebird": "3.7.2",

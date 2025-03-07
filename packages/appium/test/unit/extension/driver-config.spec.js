@@ -3,8 +3,8 @@
 import {promises as fs} from 'fs';
 import {Manifest} from '../../../lib/extension/manifest';
 import {resetSchema} from '../../../lib/schema';
-import {resolveFixture, rewiremock} from '../../helpers';
-import {initMocks} from './mocks';
+import {resolveFixture, rewiremock} from '../../helpers.cjs';
+import {initMocks} from './mocks.cjs';
 
 describe('DriverConfig', function () {
   /** @type {string} */
@@ -18,10 +18,10 @@ describe('DriverConfig', function () {
   /** @type {sinon.SinonSandbox} */
   let sandbox;
 
-  /** @type {import('./mocks').MockAppiumSupport} */
+  /** @type {import('./mocks.cjs').MockAppiumSupport} */
   let MockAppiumSupport;
 
-  /** @type {import('./mocks').MockResolveFrom} */
+  /** @type {import('./mocks.cjs').MockResolveFrom} */
   let MockResolveFrom;
 
   /**
@@ -43,7 +43,7 @@ describe('DriverConfig', function () {
 
   beforeEach(function () {
     manifest = Manifest.getInstance('/somewhere/');
-    /** @type {import('./mocks').Overrides} */
+    /** @type {import('./mocks.cjs').Overrides} */
     let overrides;
     ({MockAppiumSupport, MockResolveFrom, overrides, sandbox} = initMocks());
     MockAppiumSupport.fs.readFile.resolves(yamlFixture);

@@ -1,6 +1,6 @@
 import {runQuery, transformQuery, getNodeAttrVal} from '../../lib/xpath';
 import {transformSourceXml} from '../../lib/source';
-import {XML_IOS} from '../fixtures';
+import {XML_IOS} from '../fixtures/index.cjs';
 
 describe('xpath functions', function () {
   let should;

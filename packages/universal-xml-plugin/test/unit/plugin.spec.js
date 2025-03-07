@@ -6,7 +6,7 @@ import {
   XML_IOS_TRANSFORMED,
   XML_ANDROID_TRANSFORMED,
   XML_WEBVIEW,
-} from '../fixtures';
+} from '../fixtures/index.cjs';
 import {runQuery, getNodeAttrVal} from '../../lib/xpath';
 
 describe('UniversalXMLPlugin', function () {

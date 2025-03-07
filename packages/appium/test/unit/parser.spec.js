@@ -4,7 +4,7 @@ import {getParser} from '../../lib/cli/parser';
 import {INSTALL_TYPES} from '../../lib/extension/extension-config';
 import * as schema from '../../lib/schema/schema';
 import {readConfigFile} from '../../lib/config-file';
-import {resolveFixture} from '../helpers';
+import {resolveFixture} from '../helpers.cjs';
 
 // these paths should not make assumptions about the current working directory
 const ALLOW_FIXTURE = resolveFixture('allow-feat.txt');

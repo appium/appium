@@ -2,7 +2,7 @@
 import {fs, tempDir} from '@appium/support';
 import path from 'path';
 import {DRIVER_TYPE} from '../../lib/constants';
-import {resolveFixture} from '../helpers';
+import {resolveFixture} from '../helpers.cjs';
 import {installLocalExtension, runAppium} from './e2e-helpers';
 
 describe('CLI behavior controlled by schema', function () {

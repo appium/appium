@@ -2,7 +2,7 @@
 import {DriverConfig} from '../../../lib/extension/driver-config';
 import {ExtensionCommand} from '../../../lib/cli/extension-command';
 import sinon from 'sinon';
-import {FAKE_DRIVER_DIR} from '../../helpers';
+import {FAKE_DRIVER_DIR} from '../../helpers.cjs';
 import {Manifest} from '../../../lib/extension/manifest';
 
 /**

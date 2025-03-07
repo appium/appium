@@ -1,4 +1,4 @@
-import {initSession, deleteSession, W3C_PREFIXED_CAPS} from '../helpers';
+import {initSession, deleteSession, W3C_PREFIXED_CAPS} from '../helpers.cjs';
 
 function elementTests() {
   describe('element interaction and introspection', function () {

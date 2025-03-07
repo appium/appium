@@ -2,8 +2,8 @@
 import B from 'bluebird';
 import {promises as fs} from 'fs';
 import {DRIVER_TYPE, PLUGIN_TYPE} from '../../../lib/constants';
-import {resolveFixture, rewiremock} from '../../helpers';
-import {initMocks} from './mocks';
+import {resolveFixture, rewiremock} from '../../helpers.cjs';
+import {initMocks} from './mocks.cjs';
 import {version as APPIUM_VER} from '../../../package.json';
 import EventEmitter from 'events';
 
@@ -16,13 +16,13 @@ describe('Manifest', function () {
   /** @type {string} */
   let yamlFixture;
 
-  /** @type {import('./mocks').MockPackageChanged} */
+  /** @type {import('./mocks.cjs').MockPackageChanged} */
   let MockPackageChanged;
 
-  /** @type {import('./mocks').MockAppiumSupport} */
+  /** @type {import('./mocks.cjs').MockAppiumSupport} */
   let MockAppiumSupport;
 
-  /** @type {import('./mocks').MockGlob} */
+  /** @type {import('./mocks.cjs').MockGlob} */
   let MockGlob;
 
   let expect;

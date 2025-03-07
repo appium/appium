@@ -44,7 +44,7 @@
     "test": "npm run test:unit",
     "test:e2e": "echo \"No e2e tests for this package\"",
     "test:smoke": "node ./index.js",
-    "test:unit": "mocha \"./test/unit/**/*.spec.js\"",
+    "test:unit": "mocha \"./test/unit/**/*.spec.*js\"",
     "start": "node ./build/lib/cli/index.js"
   },
   "dependencies": {

@@ -7,7 +7,7 @@ import {
   adjustNodePath,
   fetchInterfaces,
 } from '../../lib/utils';
-import {BASE_CAPS, W3C_CAPS} from '../helpers';
+import {BASE_CAPS, W3C_CAPS} from '../helpers.cjs';
 import _ from 'lodash';
 import {stripColors} from '@colors/colors';
 // eslint-disable-next-line import/named

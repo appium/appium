@@ -3,8 +3,8 @@
 import {promises as fs} from 'fs';
 import {Manifest} from '../../../lib/extension/manifest';
 import {resetSchema} from '../../../lib/schema';
-import {resolveFixture, rewiremock} from '../../helpers';
-import {initMocks} from './mocks';
+import {resolveFixture, rewiremock} from '../../helpers.cjs';
+import {initMocks} from './mocks.cjs';
 
 describe('PluginConfig', function () {
   /** @type {string} */
@@ -18,10 +18,10 @@ describe('PluginConfig', function () {
   /** @type {sinon.SinonSandbox} */
   let sandbox;
 
-  /** @type {import('./mocks').MockAppiumSupport} */
+  /** @type {import('./mocks.cjs').MockAppiumSupport} */
   let MockAppiumSupport;
 
-  /** @type {import('./mocks').MockResolveFrom} */
+  /** @type {import('./mocks.cjs').MockResolveFrom} */
   let MockResolveFrom;
 
   /**
@@ -42,7 +42,7 @@ describe('PluginConfig', function () {
   });
 
   beforeEach(function () {
-    /** @type {import('./mocks').Overrides} */
+    /** @type {import('./mocks.cjs').Overrides} */
     let overrides;
     manifest = Manifest.getInstance('/somewhere/');
     ({MockAppiumSupport, MockResolveFrom, sandbox, overrides} = initMocks());

@@ -42,7 +42,7 @@
   "scripts": {
     "test": "npm run test:unit",
     "test:smoke": "node ./index.js",
-    "test:unit": "mocha \"./test/unit/**/*.spec.js\""
+    "test:unit": "mocha \"./test/unit/**/*.spec.*js\""
   },
   "dependencies": {
     "@appium/support": "^6.0.6",

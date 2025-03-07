@@ -10,7 +10,7 @@ import _ from 'lodash';
 import {createSandbox} from 'sinon';
 import {finalizeSchema, registerSchema, resetSchema} from '../../lib/schema/schema';
 import {insertAppiumPrefixes, removeAppiumPrefixes} from '../../lib/utils';
-import {rewiremock, BASE_CAPS, W3C_CAPS, W3C_PREFIXED_CAPS} from '../helpers';
+import {rewiremock, BASE_CAPS, W3C_CAPS, W3C_PREFIXED_CAPS} from '../helpers.cjs';
 import {BasePlugin} from '@appium/base-plugin';
 
 const SESSION_ID = '1';

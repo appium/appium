@@ -8,7 +8,7 @@ import {
   TEST_HOST,
   TEST_PORT,
   W3C_PREFIXED_CAPS,
-} from '../helpers';
+} from '../helpers.cjs';
 import contextTests from './context-tests';
 import findElementTests from './find-element-tests';
 import elementInteractionTests from './element-interaction-tests';

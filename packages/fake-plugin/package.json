@@ -36,7 +36,7 @@
   "scripts": {
     "test": "npm run test:unit",
     "test:smoke": "node ./index.js",
-    "test:unit": "mocha \"./test/unit/**/*.spec.js\""
+    "test:unit": "mocha \"./test/unit/**/*.spec.*js\""
   },
   "dependencies": {
     "@appium/base-plugin": "^2.3.3",

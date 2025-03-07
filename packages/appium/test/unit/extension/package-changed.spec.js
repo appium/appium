@@ -1,8 +1,8 @@
 // @ts-check
 import path from 'path';
 import {PKG_HASHFILE_RELATIVE_PATH} from '../../../lib/constants';
-import {rewiremock} from '../../helpers';
-import {initMocks} from './mocks';
+import {rewiremock} from '../../helpers.cjs';
+import {initMocks} from './mocks.cjs';
 
 describe('package-changed', function () {
   /** @type {typeof import('appium/lib/extension/package-changed').packageDidChange} */
@@ -11,10 +11,10 @@ describe('package-changed', function () {
   /** @type {sinon.SinonSandbox} */
   let sandbox;
 
-  /** @type {import('./mocks').MockPackageChanged} */
+  /** @type {import('./mocks.cjs').MockPackageChanged} */
   let MockPackageChanged;
 
-  /** @type {import('./mocks').MockAppiumSupport} */
+  /** @type {import('./mocks.cjs').MockAppiumSupport} */
   let MockAppiumSupport;
 
   let expect;

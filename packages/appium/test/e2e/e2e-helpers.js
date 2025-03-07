@@ -8,7 +8,7 @@ import '@colors/colors';
 import _ from 'lodash';
 import path from 'path';
 import {exec} from 'teen_process';
-import {APPIUM_ROOT, resolveFixture} from '../helpers';
+import {APPIUM_ROOT, resolveFixture} from '../helpers.cjs';
 
 /**
  * Path to the (compiled) main script of the `appium` executable.

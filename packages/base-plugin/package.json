@@ -37,7 +37,7 @@
   "scripts": {
     "test": "npm run test:unit",
     "test:smoke": "node ./index.js",
-    "test:unit": "mocha \"./test/unit/**/*.spec.js\""
+    "test:unit": "mocha \"./test/unit/**/*.spec.*js\""
   },
   "dependencies": {
     "@appium/base-driver": "^9.16.2",

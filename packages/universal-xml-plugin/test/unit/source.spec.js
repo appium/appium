@@ -4,7 +4,7 @@ import {
   XML_IOS_TRANSFORMED_INDEX_PATH,
   XML_IOS_EDGE,
   XML_IOS_EDGE_TRANSFORMED,
-} from '../fixtures';
+} from '../fixtures/index.cjs';
 import {transformAttrs, transformChildNodes, transformSourceXml} from '../../lib/source';
 
 describe('source functions', function () {

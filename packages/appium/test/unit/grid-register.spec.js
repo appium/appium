@@ -2,7 +2,7 @@
 
 // eslint-disable-next-line import/named
 import {createSandbox} from 'sinon';
-import {rewiremock} from '../helpers';
+import {rewiremock} from '../helpers.cjs';
 
 describe('grid-register', function () {
   let sandbox;

@@ -13,7 +13,7 @@ import {
   EXT_SUBCOMMAND_DOCTOR as DOCTOR,
   KNOWN_DRIVERS,
 } from '../../lib/constants';
-import {FAKE_DRIVER_DIR, resolveFixture} from '../helpers';
+import {FAKE_DRIVER_DIR, resolveFixture} from '../helpers.cjs';
 import {installLocalExtension, runAppiumJson, runAppiumRaw} from './e2e-helpers';
 
 const TEST_DRIVER_DIR = path.dirname(resolveFixture('test-driver/package.json'));

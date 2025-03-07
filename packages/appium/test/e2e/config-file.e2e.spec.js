@@ -4,7 +4,7 @@ import {DRIVER_TYPE} from '../../lib/constants';
 import {readConfigFile} from '../../lib/config-file';
 import {finalizeSchema, registerSchema, resetSchema} from '../../lib/schema/schema';
 import extSchema from '../fixtures/driver-schema';
-import {resolveFixture} from '../helpers';
+import {resolveFixture} from '../helpers.cjs';
 import _ from 'lodash';
 import {system} from '@appium/support';
 

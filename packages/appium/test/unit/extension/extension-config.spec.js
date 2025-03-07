@@ -1,8 +1,8 @@
 import {DRIVER_TYPE} from '../../../lib/constants';
 import path from 'path';
 import {version as APPIUM_VER} from '../../../package.json';
-import {FAKE_DRIVER_DIR, PROJECT_ROOT, rewiremock} from '../../helpers';
-import {initMocks} from './mocks';
+import {FAKE_DRIVER_DIR, PROJECT_ROOT, rewiremock} from '../../helpers.cjs';
+import {initMocks} from './mocks.cjs';
 import {resolveEsmEntryPoint} from '../../../lib/extension/extension-config';
 
 describe('ExtensionConfig', function () {
@@ -15,7 +15,7 @@ describe('ExtensionConfig', function () {
   /** @type {typeof import('appium/lib/extension/manifest').Manifest} */
   let Manifest;
 
-  /** @type {import('./mocks').MockAppiumSupport} */
+  /** @type {import('./mocks.cjs').MockAppiumSupport} */
   let MockAppiumSupport;
 
   let expect;

@@ -8,7 +8,7 @@ import {
   EXECUTABLE,
   runAppiumRaw,
 } from './e2e-helpers';
-import {APPIUM_ROOT} from '../helpers';
+import {APPIUM_ROOT} from '../helpers.cjs';
 import { stripColorCodes } from '../../lib/logsink';
 
 describe('argument parsing', function () {

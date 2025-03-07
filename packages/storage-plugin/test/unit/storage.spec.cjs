@@ -100,8 +100,8 @@ describe('storage', function () {
   async function addFileToStorage(name, size) {
     const dummyPath = path.join(tmpRoot, name);
     await fs.writeFile(dummyPath, Buffer.alloc(size));
-    const hash = await fs.hash(dummyPath);
-    await storage.add({name, hash}, fs.createReadStream(dummyPath));
+    const sha1 = await fs.hash(dummyPath);
+    await storage.add({name, sha1}, fs.createReadStream(dummyPath));
     return dummyPath;
   }
 

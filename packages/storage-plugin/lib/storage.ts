@@ -11,6 +11,7 @@ import AsyncLock from 'async-lock';
 import type { AppiumLogger } from '@appium/types';
 import type Stream from 'node:stream';
 import type WebSocket from 'ws';
+import { createHash } from 'node:crypto';
 
 const MAX_TASKS = 5;
 const TMP_EXT = '.filepart';
@@ -204,7 +205,7 @@ export class Storage {
           source.once('error', reject);
           destination.once('error', reject);
         });
-        await this._finalizeItem(opts, timer, fullPath);
+        await this._finalizeItem(opts, timer, fullPath, await fs.hash(fullPath));
       } catch (e) {
         await fs.rimraf(fullPath);
         throw e;
@@ -215,22 +216,35 @@ export class Storage {
   }
 
   private async _addFromWebSocket(opts: ItemOptions, source: WebSocket): Promise<void> {
-    const {name} = opts;
+    const {name, sha1} = opts;
     const fullPath = path.join(this._root, toTempName(name));
     const inProgressInfo: InProgressAddition = {fullPath};
     this._inProgressAdditions[name] = inProgressInfo;
     try {
       const timer = new timing.Timer().start();
       const destination = fs.createWriteStream(fullPath);
+      const sha1sum = createHash('sha1');
+      let didDigestMatch = false;
+      let recentDigest: string | null = null;
       try {
         await new Promise((resolve, reject) => {
           source.on('message', (data: WebSocket.RawData) => {
+            if (didDigestMatch) {
+              // ignore further chunks if hashes have already matched
+              return;
+            }
             destination.write(data, (e) => {
               if (e) {
                 source.close(WS_SERVER_ERROR);
                 reject(e);
               }
             });
+            sha1sum.update(data as any);
+            recentDigest = sha1sum.copy().digest('hex');
+            if (_.toLower(recentDigest) === _.toLower(sha1)) {
+              didDigestMatch = true;
+              destination.close(() => resolve(true));
+            }
           });
           source.once('close', () => {
             destination.close(() => resolve(true));
@@ -241,7 +255,7 @@ export class Storage {
             reject(e);
           });
         });
-        await this._finalizeItem(opts, timer, fullPath);
+        await this._finalizeItem(opts, timer, fullPath, recentDigest ?? sha1sum.digest('hex'));
       } catch (e) {
         await fs.rimraf(fullPath);
         throw e;
@@ -251,17 +265,21 @@ export class Storage {
     }
   }
 
-  private async _finalizeItem(opts: ItemOptions, timer: timing.Timer, fullPath: string): Promise<void> {
-    const {name, hash} = opts;
+  private async _finalizeItem(
+    opts: ItemOptions,
+    timer: timing.Timer,
+    fullPath: string,
+    actualHashDigest: string,
+  ): Promise<void> {
+    const {name, sha1} = opts;
     this._log.info(
-      `The addition of '${name}' is completed within ` +
+      `'${name}' has been added to the server storage within ` +
       `${timer.getDuration().asMilliSeconds}ms. Verifying hashes.`
     );
-    const actualHash = await fs.hash(fullPath);
-    if (_.toLower(actualHash) !== _.toLower(hash)) {
+    if (_.toLower(actualHashDigest) !== _.toLower(sha1)) {
       throw new StorageArgumentError(
-        `The actual hash value '${actualHash}' must be equal ` +
-        `to the expected hash value of '${hash}' for '${name}'`
+        `The actual SHA1 hash value '${actualHashDigest}' must be equal ` +
+        `to the expected hash value of '${sha1}' for '${name}'`
       );
     }
     await fs.mv(fullPath, path.join(this._root, name));
@@ -286,9 +304,9 @@ export function requireValidItemOptions(opts: ItemOptions): ItemOptions {
       `Did you mean '${sanitizedName}'?`
     );
   }
-  if (!_.isString(opts.hash) || opts.hash.length !== SHA1_HASH_LEN) {
+  if (!_.isString(opts.sha1) || opts.sha1.length !== SHA1_HASH_LEN) {
     throw new StorageArgumentError(
-      `The provided hash value '${opts.hash}' must be a valid SHA1 string, for ` +
+      `The provided hash value '${opts.sha1}' must be a valid SHA1 string, for ` +
       `example 'ccc963411b2621335657963322890305ebe96186'`
     );
   }

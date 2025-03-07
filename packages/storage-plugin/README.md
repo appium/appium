@@ -50,7 +50,7 @@ creating any driver instances.
 ### POST /storage/add
 
 ```bash
-curl -X POST --header "Content-Type: application/json" --data '{"name":"app.ipa","hash":"ccc963411b2621335657963322890305ebe96186"}' http://127.0.0.1:4723/storage/add
+curl -X POST --header "Content-Type: application/json" --data '{"name":"app.ipa","sha1":"ccc963411b2621335657963322890305ebe96186"}' http://127.0.0.1:4723/storage/add
 ```
 
 The purpose of this command is to upload files to the remote storage partially
@@ -61,8 +61,7 @@ to the Appium server's file system it is necessary to perform following steps:
 - Decide the name of the destination file in the server storage. It might be the same as the original file name.
 - Perform a request to this endpoint to notify the server about the intention to add a new storage item where parameters are:
   - `name` (required): The destination file name. It could be the same as the local one. Must not include any path separator characters.
-  - `hash` (required): SHA1 hash of the destination file. Must be the same as the hash of the source file.
-    Used to verify the uploaded file after all chunks are sent to the server.
+  - `sha1` (required): SHA1 hash of the destination file. Must be the same as the hash of the source file. Used to verify the uploaded file after all chunks are sent to the server.
 - The received response is a JSON that looks like
 
   ```json
@@ -88,8 +87,11 @@ to the Appium server's file system it is necessary to perform following steps:
 - Start reading the source file into small chunks. The recommended size of a single chunk is 64 KB.
   The overall chunk size before encoding to base64 must not be greater than 512 KB.
 - After each chunk is retrieved pass it to the `stream` web socket.
-- After the last chunk upload is completed close the `stream` web socket to notify the server
-  about the upload completion. The server must then deliver either a success or a failure
+- After the last chunk upload is completed either close the `stream` web
+  socket to explicitly notify the server about the upload completion, or
+  wait until the success event is delivered from the `events` web socket
+  as soon as file hashes successfully match.
+  The server must always deliver either a success or a failure
   event via the `events` web socket as described above.
 
 It is also possible to upload multiple files in parallel.

@@ -2,7 +2,7 @@ export interface ItemOptions {
   /** Destination file name */
   name: string;
   /** SHA1 hash of the file */
-  hash: string;
+  sha1: string;
 }
 
 export interface StorageItem {
@@ -15,7 +15,9 @@ export interface StorageItem {
 }
 
 export interface WsEndpoints {
+  /** Websocket pathname used to upload file chunks */
   stream: string;
+  /** Websocket pathname used to deliver events to the client */
   events: string;
 }
 

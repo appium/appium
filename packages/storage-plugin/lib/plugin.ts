@@ -50,7 +50,7 @@ STORAGE_HANDLERS.addStorageItem = async function addStorageItem(
   req: Request, httpServer: AppiumServer
 ): Promise<AddRequestResult> {
   const itemOptions = requireValidItemOptions(
-    parseRequestArgs(req, ['name', 'hash']) as ItemOptions
+    parseRequestArgs(req, ['name', 'sha1']) as ItemOptions
   );
   const [stream, events] = prepareWebSockets(httpServer, itemOptions);
   return {
@@ -106,7 +106,7 @@ function prepareWebSockets(httpServer: AppiumServer, itemOptions: ItemOptions): 
   const eventsServer = new WebSocket.Server({
     noServer: true,
   });
-  const commonPathname = `${STORAGE_PREFIX}/add/${itemOptions.hash}`;
+  const commonPathname = `${STORAGE_PREFIX}/add/${itemOptions.sha1}`;
   const streamPathname = `${commonPathname}/stream`;
   const eventsPathname = `${commonPathname}/events`;
 
@@ -125,7 +125,7 @@ function prepareWebSockets(httpServer: AppiumServer, itemOptions: ItemOptions): 
       signaler.removeAllListeners();
     }, 100);
   };
-  STORAGE_ADDITIONS_CACHE.set(itemOptions.hash, streamDoneCallback);
+  STORAGE_ADDITIONS_CACHE.set(itemOptions.sha1, streamDoneCallback);
   eventsServer.on('connection', async (wsUpstream: WebSocket) => {
     signaler.on('status', (value) => wsUpstream.send(JSON.stringify(value)));
   });

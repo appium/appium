@@ -46,8 +46,8 @@ describe('StoragePlugin', function () {
     const baseUrl = `http://${TEST_HOST}:${TEST_PORT}/storage`;
     driver.addCommand(
       'addStorageItem',
-      async (name, hash) => (await axios.post(
-        `${baseUrl}/add`, {name, hash}
+      async (name, sha1) => (await axios.post(
+        `${baseUrl}/add`, {name, sha1}
       )).data.value
     );
     driver.addCommand(

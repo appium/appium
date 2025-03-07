@@ -10,7 +10,7 @@ import sharp from 'sharp';
 const THIS_PLUGIN_DIR = path.join(__dirname, '..', '..');
 const APPIUM_HOME = path.join(THIS_PLUGIN_DIR, 'local_appium_home');
 const FAKE_DRIVER_DIR = path.join(THIS_PLUGIN_DIR, '..', 'fake-driver');
-const TEST_HOST = 'localhost';
+const TEST_HOST = '127.0.0.1';
 const TEST_PORT = 4723;
 const TEST_FAKE_APP = path.join(
   APPIUM_HOME,

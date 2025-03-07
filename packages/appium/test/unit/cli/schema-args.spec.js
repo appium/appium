@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/named
 import {createSandbox} from 'sinon';
 import {finalizeSchema, resetSchema, SchemaFinalizationError} from '../../../lib/schema/schema';
-import {rewiremock} from '../../helpers.cjs';
+import rewiremock from 'rewiremock';
 
 describe('cli/schema-args', function () {
   /** @type {import('appium/lib/schema/cli-args').toParserArgs} */

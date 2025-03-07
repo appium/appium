@@ -2,7 +2,7 @@
 // @ts-check
 
 import path from 'path';
-import {rewiremock} from '../helpers';
+import rewiremock from 'rewiremock';
 import {initMocks} from '../mocks';
 
 describe('env', function () {

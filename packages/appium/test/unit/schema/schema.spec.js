@@ -9,7 +9,7 @@ import {APPIUM_CONFIG_SCHEMA_ID} from '../../../lib/schema/arg-spec';
 import defaultArgsFixture from '../../fixtures/default-args';
 import DRIVER_SCHEMA_FIXTURE from '../../fixtures/driver-schema';
 import flattenedSchemaFixture from '../../fixtures/flattened-schema';
-import {rewiremock} from '../../helpers.cjs';
+import rewiremock from 'rewiremock';
 
 describe('schema', function () {
   /** @type {sinon.SinonSandbox} */

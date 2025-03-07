@@ -1,9 +1,10 @@
 import {DRIVER_TYPE} from '../../../lib/constants';
 import path from 'path';
 import {version as APPIUM_VER} from '../../../package.json';
-import {FAKE_DRIVER_DIR, PROJECT_ROOT, rewiremock} from '../../helpers.cjs';
+import {FAKE_DRIVER_DIR, PROJECT_ROOT} from '../../helpers.cjs';
 import {initMocks} from './mocks.cjs';
 import {resolveEsmEntryPoint} from '../../../lib/extension/extension-config';
+import rewiremock from 'rewiremock';
 
 describe('ExtensionConfig', function () {
   /** @type {import('sinon').SinonSandbox} */

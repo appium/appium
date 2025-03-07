@@ -2,7 +2,8 @@
 import B from 'bluebird';
 import {promises as fs} from 'fs';
 import {DRIVER_TYPE, PLUGIN_TYPE} from '../../../lib/constants';
-import {resolveFixture, rewiremock} from '../../helpers.cjs';
+import {resolveFixture} from '../../helpers.cjs';
+import rewiremock from 'rewiremock';
 import {initMocks} from './mocks.cjs';
 import {version as APPIUM_VER} from '../../../package.json';
 import EventEmitter from 'events';

@@ -1,7 +1,7 @@
 // @ts-check
 import path from 'path';
 import {PKG_HASHFILE_RELATIVE_PATH} from '../../../lib/constants';
-import {rewiremock} from '../../helpers.cjs';
+import rewiremock from 'rewiremock';
 import {initMocks} from './mocks.cjs';
 
 describe('package-changed', function () {

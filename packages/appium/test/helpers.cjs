@@ -2,7 +2,7 @@
 
 import getPort from 'get-port';
 import path from 'path';
-import rewiremock, {addPlugin, overrideEntryPoint, plugins} from 'rewiremock';
+import {addPlugin, overrideEntryPoint, plugins} from 'rewiremock';
 import {insertAppiumPrefixes} from '../lib/utils';
 
 const TEST_HOST = '127.0.0.1';
@@ -71,7 +71,6 @@ export {
   W3C_CAPS,
   PROJECT_ROOT,
   getTestPort,
-  rewiremock,
   resolveFixture,
   FAKE_DRIVER_DIR,
   FAKE_PLUGIN_DIR,

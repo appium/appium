@@ -1,5 +1,4 @@
 import { BasePlugin } from 'appium/plugin';
-import { errors } from 'appium/driver';
 import { requireValidItemOptions, Storage, StorageArgumentError } from './storage';
 import _ from 'lodash';
 import { tempDir, fs, logger } from '@appium/support';
@@ -33,10 +32,7 @@ export class StoragePlugin extends BasePlugin {
         const value = await STORAGE_HANDLERS[methodName](req, httpServer);
         body = {value: value ?? null};
       } catch (e) {
-        const finalError = e instanceof StorageArgumentError
-          ? new errors.InvalidArgumentError(e.message)
-          : e;
-        [status, body] = toW3cResponseError(finalError);
+        [status, body] = toW3cResponseError(e);
       }
       log.debug(`Responding with ${JSON.stringify(body.value)}`);
       res.set('content-type', 'application/json; charset=utf-8');

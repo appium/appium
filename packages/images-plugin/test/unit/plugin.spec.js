@@ -7,7 +7,7 @@ import {
   IMAGE_STRATEGY,
 } from '../../lib/constants';
 import {BaseDriver} from 'appium/driver';
-import {TEST_IMG_1_B64, TEST_IMG_2_B64, TEST_IMG_2_PART_B64} from '../fixtures';
+import {TEST_IMG_1_B64, TEST_IMG_2_B64, TEST_IMG_2_PART_B64} from '../fixtures/index.cjs';
 import {util} from '@appium/support';
 
 describe('ImageElementPlugin#handle', function () {

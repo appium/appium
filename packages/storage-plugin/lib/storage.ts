@@ -68,7 +68,7 @@ export class Storage {
   async add(opts: ItemOptions, source: Stream | WebSocket): Promise<void> {
     const {name} = requireValidItemOptions(opts);
     await ADDITION_LOCK.acquire(name, async () => {
-      if (_.has(source, 'pipe')) {
+      if (_.isFunction((source as any).pipe)) {
         await this._addFromStream(opts, source as Stream);
       } else {
         await this._addFromWebSocket(opts, source as WebSocket);

@@ -144,7 +144,6 @@ function prepareWebSockets(httpServer: AppiumServer, itemOptions: ItemOptions): 
       };
       log.debug(`Notifying about the successful addition of '${itemOptions.name}' to the server storage`);
       signaler.emit('status', successEvent);
-      streamServer.close();
       STORAGE_ADDITIONS_CACHE.delete(itemOptions.sha1);
     } catch (e) {
       log.debug(`Notifying about a failure while adding '${itemOptions.name}' to the server storage`);

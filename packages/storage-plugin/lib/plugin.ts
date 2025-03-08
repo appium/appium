@@ -166,7 +166,7 @@ function prepareWebSockets(httpServer: AppiumServer, itemOptions: ItemOptions): 
 
 const getStorageSingleton = _.memoize(async () => {
   let storageRoot: string;
-  let shouldPreserveRoot: boolean;
+  let shouldPreserveRoot = false;
   let shouldPreserveFiles = false;
   if (process.env.APPIUM_STORAGE_ROOT) {
     storageRoot = process.env.APPIUM_STORAGE_ROOT;
@@ -174,14 +174,18 @@ const getStorageSingleton = _.memoize(async () => {
     log.info(`Set '${storageRoot}' as the server storage root folder`);
   } else {
     storageRoot = await tempDir.openDir();
-    shouldPreserveRoot = false;
     log.info(`Created '${storageRoot}' as the temporary server storage root folder`);
   }
   if (process.env.APPIUM_STORAGE_KEEP_ALL) {
     shouldPreserveFiles = ['true', '1', 'yes'].includes(_.toLower(process.env.APPIUM_STORAGE_KEEP_ALL));
   }
   if (shouldPreserveFiles) {
-    log.info('All server storage items will be preserved unless deleted explicitly');
+    log.info(`All server storage items will be always preserved unless deleted explicitly`);
+  } else {
+    log.info(
+      `All server storage items will be cleaned up automatically from '${storageRoot}' after ` +
+      `Appium server termination`
+    );
   }
   SHARED_STORAGE = new Storage(
     storageRoot,

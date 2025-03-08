@@ -1,0 +1,71 @@
+{
+  "name": "@appium/storage-plugin",
+  "version": "0.0.1",
+  "description": "Server-side storage plugin",
+  "keywords": [
+    "automation",
+    "javascript",
+    "selenium",
+    "webdriver",
+    "ios",
+    "android",
+    "testing",
+    "storage"
+  ],
+  "homepage": "https://appium.io",
+  "bugs": {
+    "url": "https://github.com/appium/appium/issues"
+  },
+  "main": "./build/lib/index.js",
+  "types": "./build/lib/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appium/appium.git",
+    "directory": "packages/storage-plugin"
+  },
+  "license": "Apache-2.0",
+  "author": "https://github.com/appium",
+  "directories": {
+    "lib": "./lib"
+  },
+  "files": [
+    "lib",
+    "build",
+    "tsconfig.json",
+    "!build/tsconfig.tsbuildinfo"
+  ],
+  "scripts": {
+    "test": "npm run test:unit",
+    "test:smoke": "node ./build/lib/index.js",
+    "test:unit": "mocha \"./test/unit/**/*.spec.*js\"",
+    "test:e2e": "mocha --timeout 20s --slow 10s \"./test/e2e/**/*.spec.*js\""
+  },
+  "dependencies": {
+    "@appium/base-plugin": "^2.3.3",
+    "@appium/support": "^6.0.6",
+    "async-lock": "1.4.1",
+    "bluebird": "3.7.2",
+    "lodash": "4.17.21",
+    "lru-cache": "10.4.3",
+    "rimraf": "5.0.10",
+    "source-map-support": "0.5.21",
+    "ws": "8.18.1"
+  },
+  "peerDependencies": {
+    "appium": "^2.0.0"
+  },
+  "engines": {
+    "node": "^14.17.0 || ^16.13.0 || >=18.0.0",
+    "npm": ">=8"
+  },
+  "appium": {
+    "pluginName": "storage",
+    "mainClass": "StoragePlugin"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "tags": [
+    "appium"
+  ]
+}

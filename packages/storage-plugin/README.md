@@ -106,7 +106,8 @@ If a folder with the same name already exists in the storage, an error will be t
 curl http://127.0.0.1:4723/storage/list
 ```
 
-Lists all files previously uploaded to the storage. Only completed file uploads are listed.
+Lists all files that are present in the storage folder.
+Incomplete uploads are excluded from this list.
 The result of calling this API is a list of items, where each item has the following properties:
 
 - `name` (string): The name of the file in the storage

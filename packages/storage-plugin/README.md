@@ -33,14 +33,16 @@ By default, the plugin creates a new temporary folder where it manages uploaded 
 It is also possible to customize the repository root folder path by assigning a custom path to the
 `APPIUM_STORAGE_ROOT` environment variable upon server startup. The plugin automatically deletes the
 root folder recursively upon server process termination, unless the server is
-killed forcefully. If `APPIUM_STORAGE_ROOT` points to folder, which already exists,
-then only files managed by the plugin lifecycle are going to be deleted upon storage
-reset or upon server process termination.
+killed forcefully. If `APPIUM_STORAGE_ROOT` points to an existing folder,
+then all files there are going to be preserved by default unless a different behavior is
+requested by [APPIUM_STORAGE_KEEP_ALL](#appium_storage_keep_all) environment variable value.
 
 #### APPIUM_STORAGE_KEEP_ALL
 
 If this environment variable is set to `true`, `1` or `yes` then the plugin will always keep
-the previously uploaded storage files even after the server process is terminated.
+storage files after the server process is terminated. All other
+values of this variable enforce the plugin to always delete all files
+from the storage folder.
 
 After the plugin is activated you may use the following API endpoints at your Appium server.
 These APIs are not connected to sessions and might be invoked without creating a test session.

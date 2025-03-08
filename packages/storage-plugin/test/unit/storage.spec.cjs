@@ -49,15 +49,31 @@ describe('storage', function () {
     (await storage.delete('foo')).should.be.false;
   });
 
-  it('should only reset known files', async function () {
+  it('should reset all files if shouldPreserveFiles is not requested', async function () {
     const name = 'foo.bar';
+    const tmpName = 'bar.baz.filepart';
     await fs.writeFile(path.join(storageRoot, name), Buffer.alloc(1));
+    await fs.writeFile(path.join(storageRoot, tmpName), Buffer.alloc(1));
     storage = new Storage(storageRoot, true, false, log);
     const files = await storage.list();
-    _.isEmpty(files).should.be.true;
-    (await storage.delete(name)).should.be.false;
+    files.length.should.eql(1);
     await storage.reset();
-    (await fs.exists(path.join(storageRoot, name))).should.be.true;
+    (await fs.exists(path.join(storageRoot, name))).should.be.false;
+    (await fs.exists(path.join(storageRoot, tmpName))).should.be.false;
+  });
+
+  it('should only reset parital files if shouldPreserveFiles requested', async function () {
+    const name = 'foo.bar';
+    const tmpName = 'bar.baz.filepart';
+    await fs.writeFile(path.join(storageRoot, name), Buffer.alloc(1));
+    await fs.writeFile(path.join(storageRoot, tmpName), Buffer.alloc(1));
+    storage = new Storage(storageRoot, true, true, log);
+    let files = await storage.list();
+    files.length.should.eql(1);
+    await storage.reset();
+    files = await storage.list();
+    files.length.should.eql(1);
+    (await fs.exists(path.join(storageRoot, tmpName))).should.be.false;
   });
 
   it('should perform basic operations', async function () {

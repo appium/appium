@@ -17,7 +17,7 @@ const STORAGE_PREFIX = '/storage';
 const WS_TTL_MS = 5 * 60 * 1000;
 const STORAGE_HANDLERS: Record<string, (req: Request, httpServer?: AppiumServer) => Promise<any>> = {};
 const STORAGE_ADDITIONS_CACHE: LRUCache<string, () => any> = new LRUCache({
-  max: 50,
+  max: 20,
   ttl: WS_TTL_MS,
   dispose: (f: () => any) => f(),
 });
@@ -115,7 +115,7 @@ function prepareWebSockets(httpServer: AppiumServer, itemOptions: ItemOptions): 
   });
   const signaler = new EventEmitter();
   const streamDoneCallback = () => {
-    log.debug(`Removing storage web socket listeners at ${commonPathname}`);
+    log.debug(`Unmounting stream and events web sockets at ${commonPathname}`);
     httpServer.removeWebSocketHandler(streamPathname);
     httpServer.removeWebSocketHandler(eventsPathname);
     setTimeout(() => {
@@ -145,7 +145,7 @@ function prepareWebSockets(httpServer: AppiumServer, itemOptions: ItemOptions): 
       log.debug(`Notifying about the successful addition of '${itemOptions.name}' to the server storage`);
       signaler.emit('status', successEvent);
       streamServer.close();
-      STORAGE_ADDITIONS_CACHE.delete(streamPathname);
+      STORAGE_ADDITIONS_CACHE.delete(itemOptions.sha1);
     } catch (e) {
       log.debug(`Notifying about a failure while adding '${itemOptions.name}' to the server storage`);
       // in case of a failure we do not want to close the server yet

@@ -25,7 +25,7 @@ const STORAGE_ADDITIONS_CACHE: LRUCache<string, () => any> = new LRUCache({
 export class StoragePlugin extends BasePlugin {
 
   static async updateServer(expressApp: Express, httpServer: AppiumServer): Promise<void> {
-    const buildHanlder = (methodName: string) => async (req: Request, res: Response) => {
+    const buildHandler = (methodName: string) => async (req: Request, res: Response) => {
       let status = 200;
       let body: any;
       try {
@@ -34,15 +34,15 @@ export class StoragePlugin extends BasePlugin {
       } catch (e) {
         [status, body] = toW3cResponseError(e);
       }
-      log.debug(`Responding with ${JSON.stringify(body.value)}`);
+      log.debug(`Responding to ${methodName} with ${JSON.stringify(body.value)}`);
       res.set('content-type', 'application/json; charset=utf-8');
       res.status(status).send(body);
     };
 
-    expressApp.post(`${STORAGE_PREFIX}/add`, buildHanlder('addStorageItem'));
-    expressApp.get(`${STORAGE_PREFIX}/list`, buildHanlder('listStorageItems'));
-    expressApp.post(`${STORAGE_PREFIX}/reset`, buildHanlder('resetStorage'));
-    expressApp.post(`${STORAGE_PREFIX}/delete`, buildHanlder('deleteStorageItem'));
+    expressApp.post(`${STORAGE_PREFIX}/add`, buildHandler(STORAGE_HANDLERS.addStorageItem.name));
+    expressApp.get(`${STORAGE_PREFIX}/list`, buildHandler(STORAGE_HANDLERS.listStorageItems.name));
+    expressApp.post(`${STORAGE_PREFIX}/reset`, buildHandler(STORAGE_HANDLERS.resetStorage.name));
+    expressApp.post(`${STORAGE_PREFIX}/delete`, buildHandler(STORAGE_HANDLERS.deleteStorageItem.name));
   }
 }
 
@@ -100,20 +100,19 @@ function parseRequestArgs(req: Request, requiredKeys: string[]): Record<string, 
 }
 
 function prepareWebSockets(httpServer: AppiumServer, itemOptions: ItemOptions): [string, string] {
+  const commonPathname = `${STORAGE_PREFIX}/add/${itemOptions.sha1}`;
+  const streamPathname = `${commonPathname}/stream`;
+  const eventsPathname = `${commonPathname}/events`;
+  if (!_.isEmpty(httpServer.getWebSocketHandlers(streamPathname))) {
+    return [streamPathname, eventsPathname];
+  }
+
   const streamServer = new WebSocket.Server({
     noServer: true,
   });
   const eventsServer = new WebSocket.Server({
     noServer: true,
   });
-  const commonPathname = `${STORAGE_PREFIX}/add/${itemOptions.sha1}`;
-  const streamPathname = `${commonPathname}/stream`;
-  const eventsPathname = `${commonPathname}/events`;
-
-  if (!_.isEmpty(httpServer.getWebSocketHandlers(streamPathname))) {
-    return [streamPathname, eventsPathname];
-  }
-
   const signaler = new EventEmitter();
   const streamDoneCallback = () => {
     log.debug(`Removing storage web socket listeners at ${commonPathname}`);
@@ -129,21 +128,35 @@ function prepareWebSockets(httpServer: AppiumServer, itemOptions: ItemOptions): 
   eventsServer.on('connection', async (wsUpstream: WebSocket) => {
     signaler.on('status', (value) => wsUpstream.send(JSON.stringify(value)));
   });
+  eventsServer.on('error', (e) => {
+    log.info(`The ${eventsPathname} web socket server has notified about an error: ${e.message}`);
+  });
   streamServer.on('connection', async (wsUpstream: WebSocket) => {
     log.info(`Starting a new server storage upload of '${itemOptions.name}' at ${streamPathname}`);
     const storage = await getStorageSingleton();
     try {
       await storage.add(itemOptions, wsUpstream);
-      const successEvent = {value: {success: true}};
+      const successEvent = {
+        value: {
+          success: true,
+          ...itemOptions,
+        }
+      };
+      log.debug(`Notifying about the successful addition of '${itemOptions.name}' to the server storage`);
       signaler.emit('status', successEvent);
       streamServer.close();
       STORAGE_ADDITIONS_CACHE.delete(streamPathname);
     } catch (e) {
+      log.debug(`Notifying about a failure while adding '${itemOptions.name}' to the server storage`);
       // in case of a failure we do not want to close the server yet
       // in anticipation of a retry
       log.error(e);
-      signaler.emit('status', toW3cResponseError(e));
+      const [, errorBody] = toW3cResponseError(e);
+      signaler.emit('status', errorBody);
     }
+  });
+  streamServer.on('error', (e) => {
+    log.info(`The ${streamPathname} web socket server has notified about an error: ${e.message}`);
   });
   httpServer.addWebSocketHandler(streamPathname, streamServer);
   httpServer.addWebSocketHandler(eventsPathname, eventsServer);

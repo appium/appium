@@ -57,7 +57,7 @@ The purpose of this command is to upload files to the remote storage partially
 to avoid excessive memory usage. In order to upload a file from a local file system
 to the Appium server's file system it is necessary to perform following steps:
 
-- Calculate [SHA1](https://en.wikipedia.org/wiki/SHA-1#:~:text=In%20cryptography%2C%20SHA%2D1%20(,rendered%20as%2040%20hexadecimal%20digits.) hash of the source file
+- Calculate [SHA1](https://en.wikipedia.org/wiki/SHA-1) hash of the source file
 - Decide the name of the destination file in the server storage. It might be the same as the original file name.
 - Perform a request to this endpoint to notify the server about the intention to add a new storage item where parameters are:
   - `name` (required): The destination file name. It could be the same as the local one. Must not include any path separator characters.
@@ -81,11 +81,10 @@ to the Appium server's file system it is necessary to perform following steps:
   payload would be successfully uploaded
 - Connect to both web sockets.
 - Start listening for messages on the `events` web socket. Each message there is a JSON object wrapped
-  to a string. The message must be either `{"value": {"success": true}}` to notify about a successful
-  file upload, or `{"value": {"error": "<error signature>", "messsage": "<error message>", "traceback": "<server traceback>"}}`
+  to a string. The message must be either `{"value": {"success": true, "name":"app.ipa","sha1":"ccc963411b2621335657963322890305ebe96186"}}` to notify about a successful
+  file upload, or `{"value": {"error": "<error signature>", "message": "<error message>", "traceback": "<server traceback>"}}`
   to notify about any exceptions during the upload process.
 - Start reading the source file into small chunks. The recommended size of a single chunk is 64 KB.
-  The overall chunk size before encoding to base64 must not be greater than 512 KB.
 - After each chunk is retrieved pass it to the `stream` web socket.
 - After the last chunk upload is completed either close the `stream` web
   socket to explicitly notify the server about the upload completion, or
@@ -96,6 +95,8 @@ to the Appium server's file system it is necessary to perform following steps:
 
 It is also possible to upload multiple files in parallel.
 Only flat files hierarchies are supported in the storage, no subfolders are allowed.
+IF a file with the same name already exists in the storage, it will be overridden with the new one.
+If a folder with the same name already exists in the storage, an error will be thrown.
 
 ### GET /storage/list
 

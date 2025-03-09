@@ -25,7 +25,6 @@ export class Storage {
   private readonly _log: AppiumLogger;
   private readonly _shouldPreserveRoot: boolean;
   private readonly _shouldPreserveFiles: boolean;
-  private _inProgressAdditions: Record<string, InProgressAddition> = {};
 
   constructor(
     root: string,
@@ -67,7 +66,8 @@ export class Storage {
 
   async add(opts: ItemOptions, source: Stream | WebSocket): Promise<void> {
     const {name} = requireValidItemOptions(opts);
-    await ADDITION_LOCK.acquire(name, async () => {
+    // _.toLower is needed for case-insensitive server filesystems
+    await ADDITION_LOCK.acquire(_.toLower(name), async () => {
       if (_.isFunction((source as any).pipe)) {
         await this._addFromStream(opts, source as Stream);
       } else {
@@ -98,8 +98,6 @@ export class Storage {
       return;
     }
 
-    this._inProgressAdditions = {};
-
     const files = (await this._listFiles())
       .map((p) => p.fullpath())
       .filter(
@@ -128,7 +126,6 @@ export class Storage {
       return;
     }
 
-    this._inProgressAdditions = {};
     let itemNames: string[];
     try {
       itemNames = nativeFs.readdirSync(this._root)
@@ -169,75 +166,63 @@ export class Storage {
   private async _addFromStream(opts: ItemOptions, source: Stream): Promise<void> {
     const {name} = opts;
     const fullPath = path.join(this._root, toTempName(name));
-    const inProgressInfo: InProgressAddition = {fullPath};
-    this._inProgressAdditions[name] = inProgressInfo;
+    const timer = new timing.Timer().start();
+    const destination = fs.createWriteStream(fullPath);
+    source.pipe(destination);
     try {
-      const timer = new timing.Timer().start();
-      const destination = fs.createWriteStream(fullPath);
-      source.pipe(destination);
-      try {
-        await new Promise((resolve, reject) => {
-          destination.once('finish', () => resolve(true));
-          source.once('error', reject);
-          destination.once('error', reject);
-        });
-        await this._finalizeItem(opts, timer, fullPath, await fs.hash(fullPath));
-      } catch (e) {
-        await fs.rimraf(fullPath);
-        throw e;
-      }
-    } finally {
-      delete this._inProgressAdditions[name];
+      await new Promise((resolve, reject) => {
+        destination.once('finish', () => resolve(true));
+        source.once('error', reject);
+        destination.once('error', reject);
+      });
+      await this._finalizeItem(opts, timer, fullPath, await fs.hash(fullPath));
+    } catch (e) {
+      await fs.rimraf(fullPath);
+      throw e;
     }
   }
 
   private async _addFromWebSocket(opts: ItemOptions, source: WebSocket): Promise<void> {
     const {name, sha1} = opts;
     const fullPath = path.join(this._root, toTempName(name));
-    const inProgressInfo: InProgressAddition = {fullPath};
-    this._inProgressAdditions[name] = inProgressInfo;
+    const timer = new timing.Timer().start();
+    const destination = fs.createWriteStream(fullPath);
+    const sha1sum = createHash('sha1');
+    let didDigestMatch = false;
+    let recentDigest: string | null = null;
     try {
-      const timer = new timing.Timer().start();
-      const destination = fs.createWriteStream(fullPath);
-      const sha1sum = createHash('sha1');
-      let didDigestMatch = false;
-      let recentDigest: string | null = null;
-      try {
-        await new Promise((resolve, reject) => {
-          source.on('message', (data: WebSocket.RawData) => {
-            if (didDigestMatch) {
-              // ignore further chunks if hashes have already matched
-              return;
-            }
-            destination.write(data, (e) => {
-              if (e) {
-                source.close(WS_SERVER_ERROR);
-                reject(e);
-              }
-            });
-            sha1sum.update(data as any);
-            recentDigest = sha1sum.copy().digest('hex');
-            if (_.toLower(recentDigest) === _.toLower(sha1)) {
-              didDigestMatch = true;
-              destination.close(() => resolve(true));
+      await new Promise((resolve, reject) => {
+        source.on('message', (data: WebSocket.RawData) => {
+          if (didDigestMatch) {
+            // ignore further chunks if hashes have already matched
+            return;
+          }
+          destination.write(data, (e) => {
+            if (e) {
+              source.close(WS_SERVER_ERROR);
+              reject(e);
             }
           });
-          source.once('close', () => {
+          sha1sum.update(data as any);
+          recentDigest = sha1sum.copy().digest('hex');
+          if (_.toLower(recentDigest) === _.toLower(sha1)) {
+            didDigestMatch = true;
             destination.close(() => resolve(true));
-          });
-          source.once('error', reject);
-          destination.once('error', (e) => {
-            source.close(WS_SERVER_ERROR);
-            reject(e);
-          });
+          }
         });
-        await this._finalizeItem(opts, timer, fullPath, recentDigest ?? sha1sum.digest('hex'));
-      } catch (e) {
-        await fs.rimraf(fullPath);
-        throw e;
-      }
-    } finally {
-      delete this._inProgressAdditions[name];
+        source.once('close', () => {
+          destination.close(() => resolve(true));
+        });
+        source.once('error', reject);
+        destination.once('error', (e) => {
+          source.close(WS_SERVER_ERROR);
+          reject(e);
+        });
+      });
+      await this._finalizeItem(opts, timer, fullPath, recentDigest ?? sha1sum.digest('hex'));
+    } catch (e) {
+      await fs.rimraf(fullPath);
+      throw e;
     }
   }
 
@@ -286,10 +271,6 @@ export function requireValidItemOptions(opts: ItemOptions): ItemOptions {
     );
   }
   return opts;
-}
-
-interface InProgressAddition {
-  fullPath: string;
 }
 
 export class StorageArgumentError extends Error {}

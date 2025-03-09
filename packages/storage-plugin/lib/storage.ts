@@ -24,25 +24,24 @@ export class Storage {
   private readonly _root: string;
   private readonly _log: AppiumLogger;
   private readonly _shouldPreserveRoot: boolean;
-  private readonly _shouldKeepKnownItems: boolean;
-  private readonly _knownNames = new Set<string>();
+  private readonly _shouldPreserveFiles: boolean;
   private _inProgressAdditions: Record<string, InProgressAddition> = {};
 
   constructor(
     root: string,
     shouldPreserveRoot: boolean,
-    shouldKeepItems: boolean,
+    shouldPreserveFiles: boolean,
     log: AppiumLogger,
   ) {
     this._root = root;
     this._log = log;
     this._shouldPreserveRoot = shouldPreserveRoot;
-    this._shouldKeepKnownItems = shouldKeepItems;
+    this._shouldPreserveFiles = shouldPreserveFiles;
   }
 
   async list(): Promise<StorageItem[]> {
     const items = (await this._listFiles())
-      .filter((p) => this._knownNames.has(path.basename(p.fullpath())));
+      .filter((p) => !p.fullpath().endsWith(TMP_EXT));
     if (_.isEmpty(items)) {
       return [];
     }
@@ -78,7 +77,7 @@ export class Storage {
   }
 
   async delete(name: string): Promise<boolean> {
-    if (!this._knownNames.has(name)) {
+    if (_.toLower(name).endsWith(TMP_EXT)) {
       return false;
     }
     const destinationPath = path.join(this._root, name);
@@ -86,12 +85,11 @@ export class Storage {
       return false;
     }
     await fs.rimraf(destinationPath);
-    this._knownNames.delete(name);
     return true;
   }
 
   async reset(): Promise<void> {
-    if (!this._shouldPreserveRoot && !this._shouldKeepKnownItems) {
+    if (!this._shouldPreserveRoot && !this._shouldPreserveFiles) {
       await fs.rimraf(this._root);
     }
 
@@ -100,23 +98,14 @@ export class Storage {
       return;
     }
 
-    const namesInProgress = new Set<string>(
-      _.values(this._inProgressAdditions)
-      .map(({fullPath}) => path.basename(fullPath))
-    );
     this._inProgressAdditions = {};
 
     const files = (await this._listFiles())
       .map((p) => p.fullpath())
-      .filter((fullPath) => {
-        const basename = path.basename(fullPath);
-        return (!this._shouldKeepKnownItems && this._knownNames.has(basename))
-          || namesInProgress.has(basename);
-      });
+      .filter(
+        (fullPath) => !this._shouldPreserveFiles || _.toLower(path.basename(fullPath)).endsWith(TMP_EXT)
+      );
     if (_.isEmpty(files)) {
-      if (!this._shouldKeepKnownItems) {
-        this._knownNames.clear();
-      }
       return;
     }
 
@@ -129,23 +118,16 @@ export class Storage {
       promises.push(B.resolve(fs.rimraf(fullPath)));
     }
     await B.all(promises);
-    if (!this._shouldKeepKnownItems) {
-      this._knownNames.clear();
-    }
   }
 
   cleanupSync(): void {
     this._log.debug(`Cleaning up the '${this._root}' server storage folder`);
 
-    if (!this._shouldPreserveRoot && !this._shouldKeepKnownItems) {
+    if (!this._shouldPreserveRoot && !this._shouldPreserveFiles) {
       rimrafSync(this._root);
       return;
     }
 
-    const namesInProgress = new Set<string>(
-      _.values(this._inProgressAdditions)
-      .map(({fullPath}) => path.basename(fullPath))
-    );
     this._inProgressAdditions = {};
     let itemNames: string[];
     try {
@@ -153,7 +135,7 @@ export class Storage {
         .filter((name) => !_.startsWith(name, '.'));
     } catch (e) {
       this._log.warn(
-        `Cannot list the '${this._root}' server storage folder, original error: ${e.message}. ` +
+        `Cannot list the '${this._root}' server storage folder. Original error: ${e.message}. ` +
         `Skipping the cleanup.`
       );
       return;
@@ -162,20 +144,14 @@ export class Storage {
       if (!this._shouldPreserveRoot) {
         rimrafSync(this._root);
       }
-      if (!this._shouldKeepKnownItems) {
-        this._knownNames.clear();
-      }
       return;
     }
 
     const matchedNames = itemNames.filter(
-      (name) => (!this._shouldKeepKnownItems && this._knownNames.has(name)) || namesInProgress.has(name)
+      (name) => !this._shouldPreserveFiles || _.toLower(name).endsWith(TMP_EXT)
     );
     for (const matchedName of matchedNames) {
       rimrafSync(path.join(this._root, matchedName));
-    }
-    if (!this._shouldKeepKnownItems) {
-      this._knownNames.clear();
     }
     if (!this._shouldPreserveRoot && _.isEmpty(_.without(itemNames, ...matchedNames))) {
       rimrafSync(this._root);
@@ -283,7 +259,6 @@ export class Storage {
       );
     }
     await fs.mv(fullPath, path.join(this._root, name));
-    this._knownNames.add(name);
   }
 }
 

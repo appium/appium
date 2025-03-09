@@ -34,7 +34,9 @@ export class StoragePlugin extends BasePlugin {
       } catch (e) {
         [status, body] = toW3cResponseError(e);
       }
-      log.debug(`Responding to ${methodName} with ${JSON.stringify(body.value)}`);
+      log.debug(
+        `Responding to ${methodName} with ${_.truncate(JSON.stringify(body.value), {length: 200})}`
+      );
       res.set('content-type', 'application/json; charset=utf-8');
       res.status(status).send(body);
     };
@@ -144,7 +146,6 @@ function prepareWebSockets(httpServer: AppiumServer, itemOptions: ItemOptions): 
       };
       log.debug(`Notifying about the successful addition of '${itemOptions.name}' to the server storage`);
       signaler.emit('status', successEvent);
-      streamServer.close();
       STORAGE_ADDITIONS_CACHE.delete(itemOptions.sha1);
     } catch (e) {
       log.debug(`Notifying about a failure while adding '${itemOptions.name}' to the server storage`);
@@ -166,24 +167,31 @@ function prepareWebSockets(httpServer: AppiumServer, itemOptions: ItemOptions): 
 
 const getStorageSingleton = _.memoize(async () => {
   let storageRoot: string;
-  let shouldPreserveRoot: boolean;
+  let shouldPreserveRoot = false;
+  let shouldPreserveFiles = false;
   if (process.env.APPIUM_STORAGE_ROOT) {
     storageRoot = process.env.APPIUM_STORAGE_ROOT;
-    shouldPreserveRoot = await fs.exists(storageRoot);
+    shouldPreserveRoot = shouldPreserveFiles = await fs.exists(storageRoot);
     log.info(`Set '${storageRoot}' as the server storage root folder`);
   } else {
     storageRoot = await tempDir.openDir();
-    shouldPreserveRoot = false;
     log.info(`Created '${storageRoot}' as the temporary server storage root folder`);
   }
-  const shouldKeep = ['true', '1', 'yes'].includes(_.toLower(process.env.APPIUM_STORAGE_KEEP_ALL));
-  if (shouldKeep) {
-    log.info('All server storage items will be preserved unless deleted explcitly');
+  if (process.env.APPIUM_STORAGE_KEEP_ALL) {
+    shouldPreserveFiles = ['true', '1', 'yes'].includes(_.toLower(process.env.APPIUM_STORAGE_KEEP_ALL));
+  }
+  if (shouldPreserveFiles) {
+    log.info(`All server storage items will be always preserved unless deleted explicitly`);
+  } else {
+    log.info(
+      `All server storage items will be cleaned up automatically from '${storageRoot}' after ` +
+      `Appium server termination`
+    );
   }
   SHARED_STORAGE = new Storage(
     storageRoot,
     shouldPreserveRoot,
-    shouldKeep,
+    shouldPreserveFiles,
     log,
   );
   await SHARED_STORAGE.reset();

@@ -65,24 +65,24 @@ STORAGE_HANDLERS.addStorageItem = async function addStorageItem(
 };
 
 STORAGE_HANDLERS.listStorageItems = async function listStorageItems(): Promise<StorageItem[]> {
-  return await excuteStorageMethod(
+  return await executeStorageMethod(
     async (storage: Storage) => await storage.list()
   );
 };
 
 STORAGE_HANDLERS.deleteStorageItem = async function deleteStorageItem(req: Request): Promise<boolean> {
-  return await excuteStorageMethod(
+  return await executeStorageMethod(
     async (storage: Storage) => await storage.delete(parseRequestArgs(req, ['name']).name)
   );
 };
 
 STORAGE_HANDLERS.resetStorage = async function resetStorage(): Promise<void> {
-  await excuteStorageMethod(
+  await executeStorageMethod(
     async (storage: Storage) => await storage.reset()
   );
 };
 
-async function excuteStorageMethod<T>(method: (storage: Storage) => Promise<T>): Promise<T> {
+async function executeStorageMethod<T>(method: (storage: Storage) => Promise<T>): Promise<T> {
   const storage = await getStorageSingleton();
   return await method(storage);
 }

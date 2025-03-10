@@ -2,7 +2,7 @@
 
 !!! tip
 
-    All of these commands can be invoked without creating a session, allowing you to
+    All these commands can be invoked without creating a session, allowing you to
     prepare your test environment in advance.
 
 ### `addStorageItem`

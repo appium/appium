@@ -52,7 +52,7 @@ The procedure for storing a local file on the Appium server is as follows:
 
 It is also possible to upload multiple files in parallel (up to 20 jobs are supported).
 Only flat files hierarchies are supported in the storage, no subfolders are allowed.
-IF a file with the same name already exists in the storage, it will be overridden with the new one.
+If a file with the same name already exists in the storage, it will be overridden with the new one.
 If a folder with the same name already exists in the storage, an error will be thrown.
 
 ### Environment Variables

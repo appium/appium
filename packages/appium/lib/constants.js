@@ -35,6 +35,7 @@ export const KNOWN_PLUGINS = Object.freeze(
     images: '@appium/images-plugin',
     'execute-driver': '@appium/execute-driver-plugin',
     'relaxed-caps': '@appium/relaxed-caps-plugin',
+    'storage': '@appium/storage-plugin',
     'universal-xml': '@appium/universal-xml-plugin',
   }),
 );

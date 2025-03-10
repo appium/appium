@@ -23,6 +23,7 @@ These plugins are are currently maintained by the Appium team:
 |[Execute Driver](https://github.com/appium/appium/tree/master/packages/execute-driver-plugin)|`execute-driver`|Run entire batches of commands in a single call to the Appium server|
 |[Images](https://github.com/appium/appium/tree/master/packages/images-plugin)|`images`|Image matching and comparison features|
 |[Relaxed Caps](https://github.com/appium/appium/tree/master/packages/relaxed-caps-plugin)|`relaxed-caps`|Relax Appium's requirement for vendor prefixes on capabilities|
+|[Storage](https://github.com/appium/appium/tree/master/packages/storage-plugin)|`storage`|Server-side storage with client-side management|
 |[Universal XML](https://github.com/appium/appium/tree/master/packages/universal-xml-plugin)|`universal-xml`|Instead of the standard XML format for iOS and Android, use an XML definition that is the same across both platforms|
 
 ### Other Plugins

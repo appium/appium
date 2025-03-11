@@ -110,6 +110,11 @@ describe('proxy', function () {
           `http://${TEST_HOST}:${port}/session/123/element/200/value`
         );
 
+      mockProxy({sessionId: '123', reqBasePath: '/wd/hub'})
+        .getUrlForProxy('/wd/hub/session/456', 'GET').should.eql(
+          `http://${TEST_HOST}:${port}/session/123`
+        );
+
       mockProxy({reqBasePath: '/my/base/path'})
         .getUrlForProxy('/my/base/path/session', 'POST').should.eql(
           `http://${TEST_HOST}:${port}/session`

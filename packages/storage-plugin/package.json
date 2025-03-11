@@ -1,6 +1,6 @@
 {
   "name": "@appium/storage-plugin",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Server-side storage plugin",
   "keywords": [
     "automation",
@@ -9,8 +9,8 @@
     "webdriver",
     "ios",
     "android",
-    "testing",
-    "storage"
+    "firefoxos",
+    "testing"
   ],
   "homepage": "https://appium.io",
   "bugs": {
@@ -41,8 +41,8 @@
     "test:e2e": "mocha --timeout 20s --slow 10s \"./test/e2e/**/*.spec.*js\""
   },
   "dependencies": {
-    "@appium/base-plugin": "^2.3.3",
-    "@appium/support": "^6.0.6",
+    "@appium/base-plugin": "^2.3.4",
+    "@appium/support": "^6.0.7",
     "async-lock": "1.4.1",
     "bluebird": "3.7.2",
     "lodash": "4.17.21",

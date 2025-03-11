@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.1.0](https://github.com/appium/appium/compare/@appium/images-plugin@3.0.30...@appium/images-plugin@3.1.0) (2025-03-11)
+
+
+### Features
+
+* **images-plugin:** supports image elements included in actions. ([#21055](https://github.com/appium/appium/issues/21055)) ([0c50504](https://github.com/appium/appium/commit/0c50504266eb5553dafd08bfb6161f643357114f))
+
+
+
 ## [3.0.30](https://github.com/appium/appium/compare/@appium/images-plugin@3.0.29...@appium/images-plugin@3.0.30) (2025-02-20)
 
 **Note:** Version bump only for package @appium/images-plugin

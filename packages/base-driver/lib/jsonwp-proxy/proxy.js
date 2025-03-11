@@ -504,8 +504,8 @@ export class JWProxy {
       }
     }
     return _.trimEnd(
-      match && _.isArray(match.params?.command)
-        ? `/${match.params.command.join('/')}`
+      match
+        ? (_.isArray(match.params.command) ? `/${match.params.command.join('/')}` : '')
         : pathname,
       '/'
     );

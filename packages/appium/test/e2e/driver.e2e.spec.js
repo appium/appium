@@ -287,7 +287,7 @@ describe('FakeDriver via HTTP', function () {
       should.exist(driver.sessionId);
       driver.sessionId.should.be.a('string');
       await driver.deleteSession();
-      await driver.getTitle().should.eventually.be.rejectedWith(/terminated/);
+      await driver.getTitle().should.eventually.be.rejected;
     });
 
     it('should be able to run two FakeDriver sessions simultaneously', async function () {

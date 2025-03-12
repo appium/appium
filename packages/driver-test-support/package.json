@@ -42,7 +42,7 @@
   "types": "./build/lib/index.d.ts",
   "dependencies": {
     "@appium/types": "^0.25.2",
-    "axios": "1.8.2",
+    "axios": "1.8.3",
     "bluebird": "3.7.2",
     "chai": "5.2.0",
     "chai-as-promised": "8.0.1",

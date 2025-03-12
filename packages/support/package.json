@@ -46,7 +46,7 @@
     "@appium/types": "^0.25.2",
     "@colors/colors": "1.6.0",
     "archiver": "7.0.1",
-    "axios": "1.8.2",
+    "axios": "1.8.3",
     "base64-stream": "1.0.0",
     "bluebird": "3.7.2",
     "bplist-creator": "0.1.1",

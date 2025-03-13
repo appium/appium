@@ -2,7 +2,7 @@ import _ from 'lodash';
 import path from 'path';
 import url from 'url';
 import logger from './logger';
-import {tempDir, fs, util, zip, timing, node} from '@appium/support';
+import {tempDir, fs, util, timing, node} from '@appium/support';
 import { LRUCache } from 'lru-cache';
 import AsyncLock from 'async-lock';
 import axios from 'axios';
@@ -10,9 +10,6 @@ import B from 'bluebird';
 
 // for compat with running tests transpiled and in-place
 export const {version: BASEDRIVER_VER} = fs.readPackageJsonFrom(__dirname);
-const IPA_EXT = '.ipa';
-const ZIP_EXTS = new Set(['.zip', IPA_EXT]);
-const ZIP_MIME_TYPES = ['application/zip', 'application/x-zip-compressed', 'multipart/x-zip'];
 const CACHED_APPS_MAX_AGE_MS = 1000 * 60 * toNaturalNumber(60 * 24, 'APPIUM_APPS_CACHE_MAX_AGE');
 const MAX_CACHED_APPS = toNaturalNumber(1024, 'APPIUM_APPS_CACHE_MAX_ITEMS');
 const HTTP_STATUS_NOT_MODIFIED = 304;
@@ -62,9 +59,17 @@ process.on('exit', () => {
 });
 
 /**
+ * Perform inital application package configuration
+ * to prepare it for the further consumption by a driver:
+ *
+ * - Manages caching logic
+ * - Downloads the app from a remote URL to the local filesystem
+ * - Determines package name
+ * - Checks basic requiremenets on the application package
  *
  * @param {string} app
  * @param {string|string[]|import('@appium/types').ConfigureAppOptions} options
+ * @returns {Promise<string>}
  */
 export async function configureApp(
   app,
@@ -72,9 +77,10 @@ export async function configureApp(
 ) {
   if (!_.isString(app)) {
     // immediately shortcircuit if not given an app
-    return;
+    return '';
   }
 
+  /** @type {string[]} */
   let supportedAppExtensions;
   const onPostProcess = !_.isString(options) && !_.isArray(options) ? options.onPostProcess : undefined;
   const onDownload = !_.isString(options) && !_.isArray(options) ? options.onDownload : undefined;
@@ -86,13 +92,13 @@ export async function configureApp(
   } else if (_.isPlainObject(options)) {
     supportedAppExtensions = options.supportedExtensions;
   }
+  // @ts-ignore this is OK
   if (_.isEmpty(supportedAppExtensions)) {
     throw new Error(`One or more supported app extensions must be provided`);
   }
 
   let newApp = app;
   const originalAppLink = app;
-  let shouldUnzipApp = false;
   let packageHash = null;
   /** @type {import('axios').AxiosResponse['headers']|undefined} */
   let headers = undefined;
@@ -172,67 +178,19 @@ export async function configureApp(
           ({stream, headers, status} = await queryAppLink(newApp, {...DEFAULT_REQ_HEADERS}));
         }
 
-        let fileName = null;
-        const basename = fs.sanitizeName(path.basename(decodeURIComponent(pathname ?? '')), {
-          replacement: SANITIZE_REPLACEMENT,
-        });
-        const extname = path.extname(basename);
-        // to determine if we need to unzip the app, we have a number of places
-        // to look: content type, content disposition, or the file extension
-        if (ZIP_EXTS.has(extname)) {
-          fileName = basename;
-          shouldUnzipApp = true;
-        }
-        if (headers['content-type']) {
-          const ct = headers['content-type'];
-          logger.debug(`Content-Type: ${ct}`);
-          // the filetype may not be obvious for certain urls, so check the mime type too
-          if (
-            ZIP_MIME_TYPES.some((mimeType) =>
-              new RegExp(`\\b${_.escapeRegExp(mimeType)}\\b`).test(ct)
-            )
-          ) {
-            if (!fileName) {
-              fileName = `${DEFAULT_BASENAME}.zip`;
-            }
-            shouldUnzipApp = true;
-          }
-        }
-        if (headers['content-disposition'] && /^attachment/i.test(headers['content-disposition'])) {
-          logger.debug(`Content-Disposition: ${headers['content-disposition']}`);
-          const match = /filename="([^"]+)/i.exec(headers['content-disposition']);
-          if (match) {
-            fileName = fs.sanitizeName(match[1], {
-              replacement: SANITIZE_REPLACEMENT,
-            });
-            shouldUnzipApp = shouldUnzipApp || ZIP_EXTS.has(path.extname(fileName));
-          }
-        }
-        if (!fileName) {
-          // assign the default file name and the extension if none has been detected
-          const resultingName = basename
-            ? basename.substring(0, basename.length - extname.length)
-            : DEFAULT_BASENAME;
-          let resultingExt = extname;
-          if (!supportedAppExtensions.includes(resultingExt)) {
-            logger.info(
-              `The current file extension '${resultingExt}' is not supported. ` +
-                `Defaulting to '${_.first(supportedAppExtensions)}'`
-            );
-            resultingExt = /** @type {string} */ (_.first(supportedAppExtensions));
-          }
-          fileName = `${resultingName}${resultingExt}`;
-        }
-        newApp = onDownload
-          ? await onDownload({
+        if (onDownload) {
+          newApp = await onDownload({
             url: originalAppLink,
             headers: /** @type {import('@appium/types').HTTPHeaders} */ (_.clone(headers)),
             stream,
-          })
-          : await fetchApp(stream, await tempDir.path({
+          });
+        } else {
+          const fileName = determineFilename(headers, pathname, supportedAppExtensions);
+          newApp = await fetchApp(stream, await tempDir.path({
             prefix: fileName,
             suffix: '',
           }));
+        }
       } finally {
         if (!stream.closed) {
           stream.destroy();
@@ -241,7 +199,6 @@ export async function configureApp(
     } else if (await fs.exists(newApp)) {
       // Use the local app
       logger.info(`Using local app '${newApp}'`);
-      shouldUnzipApp = ZIP_EXTS.has(path.extname(newApp));
     } else {
       let errorMessage = `The application at '${newApp}' does not exist or is not accessible`;
       // protocol value for 'C:\\temp' is 'c:', so we check the length as well
@@ -258,34 +215,7 @@ export async function configureApp(
       packageHash = await calculateFileIntegrity(newApp);
     }
 
-    if (isPackageAFile && shouldUnzipApp && !_.isFunction(onPostProcess)) {
-      const archivePath = newApp;
-      if (packageHash === cachedAppInfo?.packageHash) {
-        const fullPath = cachedAppInfo?.fullPath;
-        if (await isAppIntegrityOk(/** @type {string} */ (fullPath), cachedAppInfo?.integrity)) {
-          if (archivePath !== app) {
-            await fs.rimraf(archivePath);
-          }
-          logger.info(`Will reuse previously cached application at '${fullPath}'`);
-          return verifyAppExtension(/** @type {string} */ (fullPath), supportedAppExtensions);
-        }
-        logger.info(
-          `The application at '${fullPath}' does not exist anymore ` +
-            `or its integrity has been damaged. Deleting it from the cache`
-        );
-        APPLICATIONS_CACHE.delete(appCacheKey);
-      }
-      const tmpRoot = await tempDir.openDir();
-      try {
-        newApp = await unzipApp(archivePath, tmpRoot, supportedAppExtensions);
-      } finally {
-        if (newApp !== archivePath && archivePath !== app) {
-          await fs.rimraf(archivePath);
-        }
-      }
-      logger.info(`Unzipped local app to '${newApp}'`);
-    }
-
+    /** @type {(appPathToCache: string) => Promise<string>} */
     const storeAppInCache = async (appPathToCache) => {
       const cachedFullPath = cachedAppInfo?.fullPath;
       if (cachedFullPath && cachedFullPath !== appPathToCache) {
@@ -497,83 +427,6 @@ async function fetchApp(srcStream, dstPath) {
 }
 
 /**
- * Extracts the bundle from an archive into the given folder
- *
- * @param {string} zipPath Full path to the archive containing the bundle
- * @param {string} dstRoot Full path to the folder where the extracted bundle
- * should be placed
- * @param {Array<string>|string} supportedAppExtensions The list of extensions
- * the target application bundle supports, for example ['.apk', '.apks'] for
- * Android packages
- * @returns {Promise<string>} Full path to the bundle in the destination folder
- * @throws {Error} If the given archive is invalid or no application bundles
- * have been found inside
- */
-async function unzipApp(zipPath, dstRoot, supportedAppExtensions) {
-  await zip.assertValidZip(zipPath);
-
-  if (!_.isArray(supportedAppExtensions)) {
-    supportedAppExtensions = [supportedAppExtensions];
-  }
-
-  const tmpRoot = await tempDir.openDir();
-  try {
-    logger.debug(`Unzipping '${zipPath}'`);
-    const timer = new timing.Timer().start();
-    const useSystemUnzip = isEnvOptionEnabled('APPIUM_PREFER_SYSTEM_UNZIP', true);
-    /**
-     * Attempt to use use the system `unzip` (e.g., `/usr/bin/unzip`) due
-     * to the significant performance improvement it provides over the native
-     * JS "unzip" implementation.
-     * @type {import('@appium/support/lib/zip').ExtractAllOptions}
-     */
-    const extractionOpts = {useSystemUnzip};
-    // https://github.com/appium/appium/issues/14100
-    if (path.extname(zipPath) === IPA_EXT) {
-      logger.debug(
-        `Enforcing UTF-8 encoding on the extracted file names for '${path.basename(zipPath)}'`
-      );
-      extractionOpts.fileNamesEncoding = 'utf8';
-    }
-    await zip.extractAllTo(zipPath, tmpRoot, extractionOpts);
-    const globPattern = `**/*.+(${supportedAppExtensions
-      .map((ext) => ext.replace(/^\./, ''))
-      .join('|')})`;
-    const sortedBundleItems = (
-      await fs.glob(globPattern, {
-        cwd: tmpRoot,
-        // Get the top level match
-      })
-    ).sort((a, b) => a.split(path.sep).length - b.split(path.sep).length);
-    if (_.isEmpty(sortedBundleItems)) {
-      throw logger.errorWithException(
-        `App unzipped OK, but we could not find any '${supportedAppExtensions}' ` +
-          util.pluralize('bundle', supportedAppExtensions.length, false) +
-          ` in it. Make sure your archive contains at least one package having ` +
-          `'${supportedAppExtensions}' ${util.pluralize(
-            'extension',
-            supportedAppExtensions.length,
-            false
-          )}`
-      );
-    }
-    logger.debug(
-      `Extracted ${util.pluralize('bundle item', sortedBundleItems.length, true)} ` +
-        `from '${zipPath}' in ${Math.round(
-          timer.getDuration().asMilliSeconds
-        )}ms: ${sortedBundleItems}`
-    );
-    const matchedBundle = /** @type {string} */ (_.first(sortedBundleItems));
-    logger.info(`Assuming '${matchedBundle}' is the correct bundle`);
-    const dstPath = path.resolve(dstRoot, path.basename(matchedBundle));
-    await fs.mv(path.resolve(tmpRoot, matchedBundle), dstPath, {mkdirp: true});
-    return dstPath;
-  } finally {
-    await fs.rimraf(tmpRoot);
-  }
-}
-
-/**
  * Transforms the given app link to the cache key.
  * This is necessary to properly cache apps
  * having the same address, but different query strings,
@@ -612,6 +465,47 @@ function parseAppLink(appLink) {
   } catch {
     return {};
   }
+}
+
+/**
+ * Tries to determine the file name of the payload that is going
+ * to be downloaded from an URL
+ *
+ * @param {import('axios').RawAxiosRequestHeaders} headers
+ * @param {string} pathname
+ * @param {string[]} supportedAppExtensions
+ * @returns {string}
+ */
+function determineFilename(headers, pathname, supportedAppExtensions) {
+  const basename = fs.sanitizeName(path.basename(decodeURIComponent(pathname ?? '')), {
+    replacement: SANITIZE_REPLACEMENT,
+  });
+  const extname = path.extname(basename);
+  if (headers['content-disposition'] && /^attachment/i.test(
+    /** @type {string} */ (headers['content-disposition']
+  ))) {
+    logger.debug(`Content-Disposition: ${headers['content-disposition']}`);
+    const match = /filename="([^"]+)/i.exec(/** @type {string} */ (headers['content-disposition']));
+    if (match) {
+      return fs.sanitizeName(match[1], {
+        replacement: SANITIZE_REPLACEMENT,
+      });
+    }
+  }
+
+  // assign the default file name and the extension if none has been detected
+  const resultingName = basename
+    ? basename.substring(0, basename.length - extname.length)
+    : DEFAULT_BASENAME;
+  let resultingExt = extname;
+  if (!supportedAppExtensions.map(_.toLower).includes(_.toLower(resultingExt))) {
+    logger.info(
+      `The current file extension '${resultingExt}' is not supported. ` +
+        `Defaulting to '${_.first(supportedAppExtensions)}'`
+    );
+    resultingExt = /** @type {string} */ (_.first(supportedAppExtensions));
+  }
+  return `${resultingName}${resultingExt}`;
 }
 
 /**

@@ -581,9 +581,11 @@ export function driverUnitTestSuite(
       d = new DriverClass();
     });
 
-    it('should handled with wild card if feature name is invalid', function () {
-      d.allowInsecure = ['foo'];
-      d.isFeatureEnabled('foo').should.be.true;
+    it('should throw if feature name is invalid', function () {
+      (() => {
+        d.allowInsecure = ['foo'];
+        d.isFeatureEnabled('foo');
+      }).should.throw();
     });
 
     it('should allow global setting for insecurity', function () {

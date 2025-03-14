@@ -416,8 +416,7 @@ export function adler32(str, seed = null) {
 			c = str.charCodeAt(i++);
 			if (c < 0x80) {
         a += c;
-      }
-			else if (c < 0x800) {
+      } else if (c < 0x800) {
 				a += 192 | ((c >> 6) & 31);
         b += a;
         --M;
@@ -471,23 +470,20 @@ export function isBroadcastIp(address) {
  */
 export function validateFeatures(features) {
   const validator = (/** @type {string} */ fullName) => {
-    const separatorPos = fullName.indexOf(FEATURE_NAME_SEPARATOR);
-    // TODO: This is for the backward compatibility with Appium2
-    // TODO: In Appium3 the separator will be mandatory
-    if (separatorPos < 0) {
-      return `${ALL_DRIVERS_MATCH}${FEATURE_NAME_SEPARATOR}${fullName}`;
-    }
+    const errMsg = `The full feature name must include both the destination automation name or the ` +
+      `'${ALL_DRIVERS_MATCH}' wildcard to apply the feature to all installed drivers, and ` +
+      `the feature name split by a colon, got '${fullName}' instead`;
 
+    const separatorPos = fullName.indexOf(FEATURE_NAME_SEPARATOR);
+    if (separatorPos < 0) {
+      throw new Error(errMsg);
+    }
     const [automationName, featureName] = [
       fullName.substring(0, separatorPos),
       fullName.substring(separatorPos + 1)
     ];
     if (!automationName || !featureName) {
-      throw new Error(
-        `The full feature name must include both the destination automation name or the ` +
-        `'${ALL_DRIVERS_MATCH}' wildcard to apply the feature to all installed drivers, and ` +
-        `the feature name split by a colon, got '${fullName}' instead`
-      );
+      throw new Error(errMsg);
     }
     return fullName;
   };

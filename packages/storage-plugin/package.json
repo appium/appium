@@ -1,7 +1,7 @@
 {
-  "name": "@appium/plugin-test-support",
-  "version": "0.3.52",
-  "description": "Testing utilities for Appium plugins",
+  "name": "@appium/storage-plugin",
+  "version": "0.1.0",
+  "description": "Server-side storage plugin",
   "keywords": [
     "automation",
     "javascript",
@@ -16,47 +16,56 @@
   "bugs": {
     "url": "https://github.com/appium/appium/issues"
   },
+  "main": "./build/lib/index.js",
+  "types": "./build/lib/index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/appium/appium.git",
-    "directory": "packages/plugin-test-support"
+    "directory": "packages/storage-plugin"
   },
   "license": "Apache-2.0",
   "author": "https://github.com/appium",
-  "main": "index.js",
-  "types": "build/lib/harness.d.ts",
   "directories": {
-    "lib": "lib"
+    "lib": "./lib"
   },
   "files": [
     "lib",
-    "index.js",
     "build",
     "tsconfig.json",
     "!build/tsconfig.tsbuildinfo"
   ],
   "scripts": {
     "test": "npm run test:unit",
-    "test:smoke": "node ./index.js",
-    "test:unit": "exit 0"
+    "test:smoke": "node ./build/lib/index.js",
+    "test:unit": "mocha \"./test/unit/**/*.spec.*js\"",
+    "test:e2e": "mocha --timeout 20s --slow 10s \"./test/e2e/**/*.spec.*js\""
   },
   "dependencies": {
-    "@appium/types": "^0.25.2",
-    "get-port": "5.1.1",
-    "log-symbols": "4.1.0",
+    "@appium/base-plugin": "^2.3.4",
+    "@appium/support": "^6.0.7",
+    "async-lock": "1.4.1",
+    "bluebird": "3.7.2",
+    "lodash": "4.17.21",
+    "lru-cache": "10.4.3",
+    "rimraf": "5.0.10",
     "source-map-support": "0.5.21",
-    "teen_process": "2.3.1"
+    "ws": "8.18.1"
   },
   "peerDependencies": {
-    "appium": "^2.0.0-beta.43 || ^3.0.0-beta.0",
-    "mocha": "*"
+    "appium": "^2.0.0 || ^3.0.0-beta.0"
   },
   "engines": {
     "node": "^14.17.0 || ^16.13.0 || >=18.0.0",
     "npm": ">=8"
   },
+  "appium": {
+    "pluginName": "storage",
+    "mainClass": "StoragePlugin"
+  },
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "8480a85ce2fa466360e0fb1a7f66628331907f02"
+  "tags": [
+    "appium"
+  ]
 }

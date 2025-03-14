@@ -1,6 +1,6 @@
 {
   "name": "@appium/images-plugin",
-  "version": "3.0.30",
+  "version": "3.1.0",
   "description": "Plugin for working with images and image elements in Appium",
   "keywords": [
     "automation",
@@ -34,13 +34,13 @@
   ],
   "scripts": {
     "test": "npm run test:unit",
-    "test:e2e": "mocha --timeout 40s --slow 20s \"./test/e2e/**/*.spec.js\"",
+    "test:e2e": "mocha --timeout 40s --slow 20s \"./test/e2e/**/*.spec.*js\"",
     "test:smoke": "node ./index.js",
-    "test:unit": "mocha \"./test/unit/**/*.spec.js\""
+    "test:unit": "mocha \"./test/unit/**/*.spec.*js\""
   },
   "dependencies": {
     "@appium/opencv": "^3.0.8",
-    "@appium/support": "^6.0.6",
+    "@appium/support": "^6.0.7",
     "lodash": "4.17.21",
     "lru-cache": "10.4.3",
     "sharp": "0.33.5",

@@ -503,12 +503,11 @@ export class JWProxy {
         pathname = pathname.replace('/wd/hub', '');
       }
     }
-    return _.trimEnd(
-      match && _.isArray(match.params?.command)
-        ? `/${match.params.command.join('/')}`
-        : pathname,
-      '/'
-    );
+    let result = pathname;
+    if (match) {
+      result = _.isArray(match.params?.command) ? `/${match.params.command.join('/')}` : '';
+    }
+    return _.trimEnd(result, '/');
   }
 }
 

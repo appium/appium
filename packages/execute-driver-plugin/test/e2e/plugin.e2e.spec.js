@@ -78,7 +78,7 @@ describe('ExecuteDriverPlugin', function () {
     });
     pluginE2EHarness({
       ...e2eSetupOpts,
-      serverArgs: {allowInsecure: ['execute_driver_script']},
+      serverArgs: {allowInsecure: ['*:execute_driver_script']},
     });
     before(async function () {
       driver = await wdio({...WDIO_OPTS, port: this.port});

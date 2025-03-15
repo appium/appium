@@ -180,45 +180,31 @@ Appium会使用`appiumCliTransformer: 'csv'`。
 
 不需要这种特殊处理的属性直接使用`ajv`进行验证。这是如何工作的一些解释，所以接下来就是这样。
 
-#### Validation of Individual Arguments via `ajv`
+#### 通过 `ajv` 实现单个参数的验证
 
-When we think of a JSON schema, we tend to think, "I have this JSON file and I want to validate it
-against the schema". That's valid, and in fact Appium does just that with config files! However,
-Appium does not do this when validating arguments.
+当我们思考 JSON 模式时，通常会认为“我有一个 JSON 文件需要根据模式进行验证”。这种理解是正确的，实际上 Appium 在处理配置文件时正是这样做的！不过，Appium 在验证参数时采用了不同的方式。
 
 !!! 注意
 
-    During implementation, I was tempted to mash all of the arguments together into
-    a config-file-like data structure and then validate it all at once. I think that would have
-    been _possible_, but since an object full of CLI arguments is a flat key/value structure and
-    the schema is not, this seemed like trouble.
+    在实现过程中，我曾试图将所有参数组合成一个类似配置文件的数据结构进行统一验证。虽然这在理论上是可行的，但由于 CLI 参数对象是扁平的键/值结构，而模式本身并非扁平结构，这种做法可能会引发问题。
 
-Instead, Appium validates a value against a specific property _within_ the schema. To do this, it
-maintains a mapping between a CLI argument definition and its corresponding property. The mapping
-itself is a `Map` with a unique identifier for the argument as the key, and an `ArgSpec`
-(`lib/schema/arg-spec.js`) object as the value.
+Appium 实际采用的方式是：针对模式中特定的属性对参数值进行验证。为此，系统维护了 CLI 参数定义与对应模式属性之间的映射关系。这个映射关系通过一个 `Map` 实现，其中键是参数的唯一标识符，值是一个 `ArgSpec` 对象（定义于 `lib/schema/arg-spec.js`）。
 
-An `ArgSpec` object stores the following metadata:
+`ArgSpec` 对象包含以下元数据：
 
-| Property Name   | Description                                                                           |
-| --------------- | ------------------------------------------------------------------------------------- |
-| `name`          | Canonical name of the argument, corresponding to the property name in the schema.     |
-| `extType?`      | `driver` or `plugin`, if appropriate                                                  |
-| `extName?`      | Extension name, if appropriate                                                        |
-| `ref`           | Computed `$id` of the property in the schema                                          |
-| `arg`           | Argument as accepted on CLI, without leading dashes                                   |
-| `dest`          | Property name in parsed arguments object (as returned by `argparse`'s `parse_args()`) |
-| `defaultValue?` | Value of the `default` keyword in schema, if appropriate                              |
+| 属性名称        | 描述                                                                                     |
+| --------------- | --------------------------------------------------------------------------------------- |
+| `name`          | 参数的规范名称，对应模式中的属性名                                                      |
+| `extType?`      | 扩展类型（`driver` 或 `plugin`），如果适用                                                |
+| `extName?`      | 扩展名称，如果适用                                                                        |
+| `ref`           | 模式中该属性的计算后 `$id` 引用                                                         |
+| `arg`           | CLI 接受的参数名（不带前导短横线）                                                      |
+| `dest`          | 解析后参数对象的属性名（由 `argparse` 的 `parse_args()` 返回）                          |
+| `defaultValue?` | 模式中 `default` 关键字对应的值（如果存在）                                               |
 
-When a schema is [finalized](#schema-finalization), the `Map` is populated with `ArgSpec` objects
-for all known arguments.
+当模式完成[最终化](#schema-finalization)时，该 `Map` 会被填充所有已知参数的 `ArgSpec` 对象。
 
-So when the adapter is creating the pipeline of functions for the argument's `type`, it already has
-an `ArgSpec` for the argument. It creates a function which calls `validate(value, ref)` (in
-`lib/schema/schema.js`) where `value` is whatever the user provided, and `ref` is the `ref`
-property of the `ArgSpec`. The concept is that `ajv` can validate using _any_ `ref` it knows about;
-each property in a schema can be referenced by this `ref` whether it's defined or not. To help
-visualize, if a schema is:
+在适配器为参数的 `type` 创建函数管道时，系统已经拥有该参数的 `ArgSpec`。它会创建一个调用 `validate(value, ref)` 的函数（位于 `lib/schema/schema.js`），其中 `value` 是用户提供的参数值，`ref` 是 `ArgSpec` 的 `ref` 属性。核心原理在于 `ajv` 可以使用任何已知的 `ref` 进行验证——无论该属性是否被显式定义，模式中的每个属性都可以通过其 `ref` 被引用。以下列模式为例：
 
 ```json
 {
@@ -232,20 +218,13 @@ visualize, if a schema is:
 }
 ```
 
-The `ref` of `foo` would be `my-schema.json#/properties/foo`. Assuming our `Ajv` instance knows
-about this `my-schema.json`, then we can call its `getSchema(ref)` method (which has a `schema`
-property, but is a misnomer nonetheless) to get a validation function; `validate(value, ref)` in
-`schema.js` calls this validation function.
+其中 `foo` 的 `ref` 应为 `my-schema.json#/properties/foo`。假设我们的 `Ajv` 实例已注册该模式，即可通过 `getSchema(ref)` 方法（虽然名称有误，但其 `schema` 属性有效）获取验证函数；`schema.js` 中的 `validate(value, ref)` 方法正是调用此验证函数。
 
 !!! 注意
 
-    The schema spec says a schema author can supply an explicit `$id` keyword to override this;
-    it's unsupported by Appium at this time. If needed, extension authors must carefully use `$ref`
-    without custom `$id`s. It's highly unlikely an extension would have a schema so complicated as
-    to need this, however; Appium itself doesn't even use `$ref` to define its own properties!
+    虽然模式规范允许通过显式声明 `$id` 来覆盖默认引用标识，但 Appium 目前不支持此特性。如有需要，扩展开发者必须谨慎使用不包含自定义 `$id` 的 `$ref` 引用。不过 Appium 自身的模式定义都未使用 `$ref`，可见扩展通常不需要如此复杂的模式结构。
 
-Next, let's take a look at how Appium loads schemas. This actually happens _before_ any argument
-validation.
+接下来我们将探讨 Appium 如何加载模式。值得注意的是，模式加载过程实际上发生在参数验证之前。 
 
 ## Schema Loading
 

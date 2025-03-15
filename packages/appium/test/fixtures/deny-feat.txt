@@ -1,5 +1,5 @@
 
-nofeature1
-nofeature2
+*:nofeature1
+*:nofeature2
 
-nofeature3
+*:nofeature3

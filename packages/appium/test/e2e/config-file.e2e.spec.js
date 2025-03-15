@@ -117,7 +117,7 @@ describe('config file behavior', function () {
             result.should.deep.equal({
               config: {
                 server: {
-                  allowInsecure: ['foo', 'bar', 'baz'],
+                  allowInsecure: ['*:foo', '*:bar', '*:baz'],
                 },
               },
               filepath: SECURITY_ARRAY_FILEPATH,

@@ -38,7 +38,7 @@
     "test:smoke": "node .",
     "test:unit": "mocha \"test/unit/**/*.spec.ts\"",
     "test:types": "tsd",
-    "test:e2e": "mocha -t 20s \"test/e2e/**/*.e2e.spec.ts\""
+    "test:e2e": "mocha --exit -t 20s \"test/e2e/**/*.e2e.spec.ts\""
   },
   "dependencies": {
     "env-paths": "2.2.1",

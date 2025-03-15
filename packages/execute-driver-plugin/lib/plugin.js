@@ -46,7 +46,8 @@ export default class ExecuteDriverPlugin extends BasePlugin {
       throw new Error(
         `Execute driver script functionality is not available ` +
           `unless server is started with --allow-insecure including ` +
-          `the '${FEAT_FLAG}' flag, e.g., --allow-insecure=${FEAT_FLAG}`
+          `the '${FEAT_FLAG}' flag, e.g., ` +
+          `--allow-insecure=${driver.opts.automationName ?? '*'}:${FEAT_FLAG}`
       );
     }
 

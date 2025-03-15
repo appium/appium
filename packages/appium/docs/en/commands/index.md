@@ -21,4 +21,5 @@ The command listings can be found here:
 * [Execute Driver Plugin](./execute-driver-plugin.md)
 * [Images Plugin](./images-plugin.md)
 * [Relaxed Caps Plugin](./relaxed-caps-plugin.md)
+* [Storage Plugin](./storage-plugin.md)
 * [Universal XML Plugin](./universal-xml-plugin.md)

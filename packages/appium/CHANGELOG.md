@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.17.0](https://github.com/appium/appium/compare/appium@2.16.2...appium@2.17.0) (2025-03-11)
+
+
+### Features
+
+* **images-plugin:** supports image elements included in actions. ([#21055](https://github.com/appium/appium/issues/21055)) ([0c50504](https://github.com/appium/appium/commit/0c50504266eb5553dafd08bfb6161f643357114f))
+
+
+
 ## [2.16.2](https://github.com/appium/appium/compare/appium@2.16.1...appium@2.16.2) (2025-02-20)
 
 **Note:** Version bump only for package appium

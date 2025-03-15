@@ -6,7 +6,7 @@ import {IMAGE_STRATEGY} from '../../lib/constants';
 import ImageElementFinder from '../../lib/finder';
 import {ImageElement} from '../../lib/image-element';
 import sinon from 'sinon';
-import {TINY_PNG, TiNY_PNG_BUF, TINY_PNG_DIMS} from '../fixtures';
+import {TINY_PNG, TiNY_PNG_BUF, TINY_PNG_DIMS} from '../fixtures/index.cjs';
 import sharp from 'sharp';
 
 const compareModule = require('../../lib/compare');

@@ -46,6 +46,7 @@ nav:
       - commands/execute-driver-plugin.md
       - commands/images-plugin.md
       - commands/relaxed-caps-plugin.md
+      - commands/storage-plugin.md
       - commands/universal-xml-plugin.md
   - Guides:
       - Migration:

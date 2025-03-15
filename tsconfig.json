@@ -68,5 +68,8 @@
     {
       "path": "packages/logger"
     },
+    {
+      "path": "packages/storage-plugin"
+    },
   ]
 }

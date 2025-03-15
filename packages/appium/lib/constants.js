@@ -32,8 +32,9 @@ export const USE_ALL_PLUGINS = 'all';
 // npm package. I.e., these are the officially recognized plugins.
 export const KNOWN_PLUGINS = Object.freeze(
   /** @type {const} */ ({
-    images: '@appium/images-plugin',
     'execute-driver': '@appium/execute-driver-plugin',
+    images: '@appium/images-plugin',
+    inspector: 'appium-inspector-plugin',
     'relaxed-caps': '@appium/relaxed-caps-plugin',
     storage: '@appium/storage-plugin',
     'universal-xml': '@appium/universal-xml-plugin',

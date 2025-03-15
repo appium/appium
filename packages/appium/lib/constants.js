@@ -37,6 +37,7 @@ export const KNOWN_PLUGINS = Object.freeze(
     'relaxed-caps': '@appium/relaxed-caps-plugin',
     storage: '@appium/storage-plugin',
     'universal-xml': '@appium/universal-xml-plugin',
+    inspector: 'appium-inspector-plugin',
   }),
 );
 

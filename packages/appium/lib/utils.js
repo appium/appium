@@ -472,7 +472,7 @@ export function validateFeatures(features) {
   const validator = (/** @type {string} */ fullName) => {
     const errMsg = `The full feature name must include both the destination automation name or the ` +
       `'${ALL_DRIVERS_MATCH}' wildcard to apply the feature to all installed drivers, and ` +
-      `the feature name split by a colon, got '${fullName}' instead`;
+      `the feature name split by a colon. Got '${fullName}' instead`;
 
     const separatorPos = fullName.indexOf(FEATURE_NAME_SEPARATOR);
     if (separatorPos < 0) {

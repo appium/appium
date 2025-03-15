@@ -30,6 +30,7 @@ to driver/client documentation
 * [opencv](packages/opencv/CHANGELOG.md)
 * [plugin-test-support](packages/plugin-test-support/CHANGELOG.md)
 * [schema](packages/schema/CHANGELOG.md)
+* [storage-plugin](packages/storage-plugin/CHANGELOG.md)
 * [strongbox](packages/strongbox/CHANGELOG.md)
 * [support](packages/support/CHANGELOG.md)
 * [test-support](packages/test-support/CHANGELOG.md)

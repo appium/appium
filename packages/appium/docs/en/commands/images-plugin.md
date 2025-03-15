@@ -65,3 +65,25 @@ Find a a list of all UI elements matching a given a locator strategy and a selec
 `any`
 
 A possibly-empty list of element objects
+
+### `performActions`
+
+`POST` **`/session/:sessionId/actions`**
+
+If the actions contains image elements as origin, convert them to viewport coordinates before sending it to the external driver
+
+**`See`**
+
+[https://w3c.github.io/webdriver/#perform-actions](https://w3c.github.io/webdriver/#perform-actions)
+
+<!-- comment source: method-signature -->
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `actions` | `ActionSequence[]` | an array of action sequences |
+
+#### Response
+
+`null`

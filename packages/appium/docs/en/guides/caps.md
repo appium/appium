@@ -73,9 +73,9 @@ Appium supports [WebDriver BiDi](https://w3c.github.io/webdriver-bidi/) protocol
 The actual behavior depends on individual drivers while the Appium and the baseｰdriver support the protocol.
 Please make sure if a driver supports the protocol and what kind of commands/events it supports in the documentation.
 
-| Capability Name | Type | Description |
-|---|---|−--|
-| `webSocketUrl` | `boolean` | To enable BiDi protocol in the session. |
+| Capability Name | Type      | Description                             |
+|-----------------|-----------|-----------------------------------------|
+| `webSocketUrl`  | `boolean` | To enable BiDi protocol in the session. |
 
 ## Using `appium:options` to Group Capabilities
 

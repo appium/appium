@@ -41,7 +41,7 @@
   },
   "dependencies": {
     "@appium/base-driver": "^10.0.0-beta.0",
-    "@appium/support": "^6.0.6"
+    "@appium/support": "^6.0.7"
   },
   "engines": {
     "node": "^14.17.0 || ^16.13.0 || >=18.0.0",

@@ -25,6 +25,8 @@ These plugins are are currently maintained by the Appium team:
 |[Relaxed Caps](https://github.com/appium/appium/tree/master/packages/relaxed-caps-plugin)|`relaxed-caps`|Relax Appium's requirement for vendor prefixes on capabilities|
 |[Storage](https://github.com/appium/appium/tree/master/packages/storage-plugin)|`storage`|Server-side storage with client-side management|
 |[Universal XML](https://github.com/appium/appium/tree/master/packages/universal-xml-plugin)|`universal-xml`|Instead of the standard XML format for iOS and Android, use an XML definition that is the same across both platforms|
+|[Inspector](https://github.com/appium/appium-inspector/tree/main/plugins)|`inspector`|Integrate the [Appium Inspector](https://github.com/appium/appium-inspector) directly into your Appium server installation, providing a web-based interface for inspecting and interacting with your application under test.|
+
 
 ### Other Plugins
 

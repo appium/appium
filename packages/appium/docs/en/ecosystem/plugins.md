@@ -27,7 +27,6 @@ These plugins are are currently maintained by the Appium team:
 |[Storage](https://github.com/appium/appium/tree/master/packages/storage-plugin)|`storage`|Server-side storage with client-side management|
 |[Universal XML](https://github.com/appium/appium/tree/master/packages/universal-xml-plugin)|`universal-xml`|Instead of the standard XML format for iOS and Android, use an XML definition that is the same across both platforms|
 
-
 ### Other Plugins
 
 These plugins are not maintained by the Appium team and can provide additional functionality:

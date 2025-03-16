@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.16.3](https://github.com/appium/appium/compare/@appium/base-driver@9.16.2...@appium/base-driver@9.16.3) (2025-03-11)
+
+
+### Bug Fixes
+
+* **base-driver:** Fix proxy url generation ([#21099](https://github.com/appium/appium/issues/21099)) ([e68757b](https://github.com/appium/appium/commit/e68757b3493a5b0f961f7136c0ae6e857d806f09))
+* **base-driver:** Tune capabilities array parsing ([#21044](https://github.com/appium/appium/issues/21044)) ([594bc04](https://github.com/appium/appium/commit/594bc04c03fb073cd7ad31d7e23f77fb8041b92e))
+* **base-driver:** Update parseCapsArray function types ([#21045](https://github.com/appium/appium/issues/21045)) ([5541142](https://github.com/appium/appium/commit/554114203fbe26f303337f049f942e046c815074))
+
+
+
 ## [9.16.2](https://github.com/appium/appium/compare/@appium/base-driver@9.16.1...@appium/base-driver@9.16.2) (2025-02-20)
 
 

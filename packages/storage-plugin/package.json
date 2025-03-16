@@ -1,7 +1,7 @@
 {
-  "name": "@appium/images-plugin",
-  "version": "3.1.0",
-  "description": "Plugin for working with images and image elements in Appium",
+  "name": "@appium/storage-plugin",
+  "version": "0.1.0",
+  "description": "Server-side storage plugin",
   "keywords": [
     "automation",
     "javascript",
@@ -16,35 +16,40 @@
   "bugs": {
     "url": "https://github.com/appium/appium/issues"
   },
+  "main": "./build/lib/index.js",
+  "types": "./build/lib/index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/appium/appium.git",
-    "directory": "packages/images-plugin"
+    "directory": "packages/storage-plugin"
   },
   "license": "Apache-2.0",
   "author": "https://github.com/appium",
-  "types": "./build/lib/plugin.d.ts",
+  "directories": {
+    "lib": "./lib"
+  },
   "files": [
-    "build",
-    "docs",
     "lib",
-    "index.js",
+    "build",
     "tsconfig.json",
     "!build/tsconfig.tsbuildinfo"
   ],
   "scripts": {
     "test": "npm run test:unit",
-    "test:e2e": "mocha --exit --timeout 40s --slow 20s \"./test/e2e/**/*.spec.js\"",
-    "test:smoke": "node ./index.js",
-    "test:unit": "mocha \"./test/unit/**/*.spec.*js\""
+    "test:smoke": "node ./build/lib/index.js",
+    "test:unit": "mocha \"./test/unit/**/*.spec.*js\"",
+    "test:e2e": "mocha --timeout 20s --slow 10s \"./test/e2e/**/*.spec.*js\""
   },
   "dependencies": {
-    "@appium/opencv": "^3.0.8",
+    "@appium/base-plugin": "^2.3.4",
     "@appium/support": "^6.0.7",
+    "async-lock": "1.4.1",
+    "bluebird": "3.7.2",
     "lodash": "4.17.21",
     "lru-cache": "10.4.3",
-    "sharp": "0.33.5",
-    "source-map-support": "0.5.21"
+    "rimraf": "5.0.10",
+    "source-map-support": "0.5.21",
+    "ws": "8.18.1"
   },
   "peerDependencies": {
     "appium": "^2.0.0 || ^3.0.0-beta.0"
@@ -54,11 +59,13 @@
     "npm": ">=8"
   },
   "appium": {
-    "pluginName": "images",
-    "mainClass": "ImageElementPlugin"
+    "pluginName": "storage",
+    "mainClass": "StoragePlugin"
   },
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "84b211330dc84849af9cc1f3a5c5ad32e15b2e72"
+  "tags": [
+    "appium"
+  ]
 }

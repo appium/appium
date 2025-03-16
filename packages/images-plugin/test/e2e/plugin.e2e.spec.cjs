@@ -2,7 +2,7 @@ import _ from 'lodash';
 import path from 'path';
 import {remote as wdio} from 'webdriverio';
 import {MATCH_FEATURES_MODE, GET_SIMILARITY_MODE} from '../../lib/constants';
-import {TEST_IMG_1_B64, TEST_IMG_2_B64, APPSTORE_IMG_PATH} from '../fixtures';
+import {TEST_IMG_1_B64, TEST_IMG_2_B64, APPSTORE_IMG_PATH} from '../fixtures/index.cjs';
 import {pluginE2EHarness} from '@appium/plugin-test-support';
 import {tempDir, fs} from '@appium/support';
 import sharp from 'sharp';
@@ -10,7 +10,7 @@ import sharp from 'sharp';
 const THIS_PLUGIN_DIR = path.join(__dirname, '..', '..');
 const APPIUM_HOME = path.join(THIS_PLUGIN_DIR, 'local_appium_home');
 const FAKE_DRIVER_DIR = path.join(THIS_PLUGIN_DIR, '..', 'fake-driver');
-const TEST_HOST = 'localhost';
+const TEST_HOST = '127.0.0.1';
 const TEST_PORT = 4723;
 const TEST_FAKE_APP = path.join(
   APPIUM_HOME,
@@ -89,6 +89,19 @@ describe('ImageElementPlugin', function () {
     width.should.eql(80);
     height.should.eql(91);
     await imageEl.click();
+
+    const actionSequence = {
+      type: 'pointer',
+      id: 'mouse',
+      parameters: {pointerType: 'touch'},
+      actions: [
+        {type: 'pointerMove', x: 0, y: 0, duration: 0, origin: imageEl},
+        {type: 'pointerDown', button: 0},
+        {type: 'pause', duration: 125},
+        {type: 'pointerUp', button: 0},
+      ],
+    };
+    await driver.performActions([actionSequence]);
   });
 
   it('should find subelements', async function () {

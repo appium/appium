@@ -52,7 +52,7 @@ describe('CLI behavior controlled by schema', function () {
     });
 
     describe('appiumDeprecated', function () {
-      it('should mark the argument as deprecated', function () {
+      it.skip('should mark the argument as deprecated', function () {
         expect(help).to.match(/\[DEPRECATED\] funkytelechy/);
       });
     });

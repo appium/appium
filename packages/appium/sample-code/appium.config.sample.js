@@ -2,7 +2,7 @@ module.exports = {
   server: {
     address: '127.0.0.1',
     'allow-cors': true,
-    'allow-insecure': ['foo', 'bar'],
+    'allow-insecure': ['*:foo', '*:bar'],
     'base-path': '/',
     'callback-address': '127.0.0.1',
     'callback-port': 4723,
@@ -10,7 +10,7 @@ module.exports = {
     'default-capabilities': {
       key: 'value',
     },
-    'deny-insecure': ['baz', 'quux'],
+    'deny-insecure': ['*:baz', '*:quux'],
     driver: {
       xcuitest: {
         key: 'value',

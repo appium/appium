@@ -34,7 +34,7 @@
   ],
   "scripts": {
     "test": "npm run test:unit",
-    "test:e2e": "mocha --timeout 40s --slow 20s \"./test/e2e/**/*.spec.*js\"",
+    "test:e2e": "mocha --exit --timeout 40s --slow 20s \"./test/e2e/**/*.spec.*js\"",
     "test:smoke": "node ./index.js",
     "test:unit": "mocha \"./test/unit/**/*.spec.*js\""
   },

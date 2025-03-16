@@ -125,9 +125,9 @@ describe('parser', function () {
       it('should parse --allow-insecure correctly', function () {
         p.parseArgs([]).should.not.have.property('allowInsecure');
         p.parseArgs(['--allow-insecure', '']).allowInsecure.should.eql([]);
-        p.parseArgs(['--allow-insecure', 'foo']).allowInsecure.should.eql(['foo']);
-        p.parseArgs(['--allow-insecure', 'foo,bar']).allowInsecure.should.eql(['foo', 'bar']);
-        p.parseArgs(['--allow-insecure', 'foo ,bar']).allowInsecure.should.eql(['foo', 'bar']);
+        p.parseArgs(['--allow-insecure', '*:foo']).allowInsecure.should.eql(['*:foo']);
+        p.parseArgs(['--allow-insecure', '*:foo,*:bar']).allowInsecure.should.eql(['*:foo', '*:bar']);
+        p.parseArgs(['--allow-insecure', '*:foo ,*:bar']).allowInsecure.should.eql(['*:foo', '*:bar']);
       });
 
       it('should parse --address correctly', function () {
@@ -145,9 +145,9 @@ describe('parser', function () {
       it('should parse --deny-insecure correctly', function () {
         p.parseArgs([]).should.not.have.property('denyInsecure');
         p.parseArgs(['--deny-insecure', '']).denyInsecure.should.eql([]);
-        p.parseArgs(['--deny-insecure', 'foo']).denyInsecure.should.eql(['foo']);
-        p.parseArgs(['--deny-insecure', 'foo,bar']).denyInsecure.should.eql(['foo', 'bar']);
-        p.parseArgs(['--deny-insecure', 'foo ,bar']).denyInsecure.should.eql(['foo', 'bar']);
+        p.parseArgs(['--deny-insecure', '*:foo']).denyInsecure.should.eql(['*:foo']);
+        p.parseArgs(['--deny-insecure', '*:foo,*:bar']).denyInsecure.should.eql(['*:foo', '*:bar']);
+        p.parseArgs(['--deny-insecure', '*:foo ,*:bar']).denyInsecure.should.eql(['*:foo', '*:bar']);
       });
 
       it('should parse --allow-insecure & --deny-insecure from files', function () {
@@ -157,8 +157,8 @@ describe('parser', function () {
           '--deny-insecure',
           DENY_FIXTURE,
         ]);
-        parsed.allowInsecure.should.eql(['feature1', 'feature2', 'feature3']);
-        parsed.denyInsecure.should.eql(['nofeature1', 'nofeature2', 'nofeature3']);
+        parsed.allowInsecure.should.eql(['*:feature1', '*:feature2', '*:feature3']);
+        parsed.denyInsecure.should.eql(['*:nofeature1', '*:nofeature2', '*:nofeature3']);
       });
 
       it('should allow a string for --use-drivers', function () {

@@ -253,14 +253,16 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
 
     const parseFullName = (fullName: string) => {
       const separatorPos = fullName.indexOf(FEATURE_NAME_SEPARATOR);
-      if (separatorPos < 0) {
-        // TODO: This is for the backward compatibility with Appium 2.
-        // TODO: We should bring back to raise an Error below for Appium 3.
-        // throw new Error(
-        //   `The full feature name must include both the driver name/wildcard and the feature ` +
-        //   `name split by a colon, got '${fullName}' instead`
-        // );
-        return [ALL_DRIVERS_MATCH, fullName];
+      if (separatorPos <= 0) {
+        // we do not expect this to happen as
+        // arguments are validated upon server startup,
+        // but better be safe than sorry
+        throw new Error(
+          `The full feature name must include both the automation name ` +
+          `'${this.opts.automationName}' or the '${ALL_DRIVERS_MATCH}' ` +
+          `wildcard to apply the feature to all installed drivers, and ` +
+          `the feature name split by a colon. Got '${fullName}' instead`
+        );
       }
       return [
         _.toLower(fullName.substring(0, separatorPos)),

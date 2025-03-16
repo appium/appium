@@ -20,6 +20,7 @@ The command listings can be found here:
 * [Base Driver](./base-driver.md)
 * [Execute Driver Plugin](./execute-driver-plugin.md)
 * [Images Plugin](./images-plugin.md)
+* [Inspector](https://github.com/appium/appium-inspector/tree/main/plugins)
 * [Relaxed Caps Plugin](./relaxed-caps-plugin.md)
 * [Storage Plugin](./storage-plugin.md)
 * [Universal XML Plugin](./universal-xml-plugin.md)

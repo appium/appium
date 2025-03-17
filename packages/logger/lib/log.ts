@@ -386,12 +386,13 @@ export class Log extends EventEmitter implements Logger {
       stack: undefined,
     };
 
+    // mask sensitive data
     if (_.has(arg, SENSITIVE_MESSAGE_KEY)) {
       const { isSensitive } = this._asyncStorage.getStore() ?? {};
       result.arg = isSensitive ? DEFAULT_SECURE_REPLACER : arg[SENSITIVE_MESSAGE_KEY];
     }
 
-    // resolve stack traces to a plain string.
+    // resolve stack traces to a plain string
     if (_.isError(result.arg) && result.arg.stack) {
       result.stack = result.arg.stack + '';
       Object.defineProperty(result.arg, 'stack', {

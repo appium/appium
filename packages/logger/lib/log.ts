@@ -387,7 +387,7 @@ export class Log extends EventEmitter implements Logger {
     };
 
     // mask sensitive data
-    if (_.has(arg, SENSITIVE_MESSAGE_KEY)) {
+    if (_.has(result.arg, SENSITIVE_MESSAGE_KEY)) {
       const { isSensitive } = this._asyncStorage.getStore() ?? {};
       result.arg = isSensitive ? DEFAULT_SECURE_REPLACER : arg[SENSITIVE_MESSAGE_KEY];
     }

@@ -36,6 +36,21 @@ const ALLOWED_OPTS = [
   'keepAlive',
 ];
 
+const PROXY_SKIP_HEADERS = [
+  // We might change the proxied response payload, so let Express
+  // to calculate the content length automatically
+  'content-length',
+  // https://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html
+  'proxy-authenticate',
+  'proxy-authorization',
+  'keep-alive',
+  'connection',
+  'te',
+  'trailers',
+  'upgrade',
+  'connection',
+];
+
 export class JWProxy {
   /** @type {string} */
   scheme;
@@ -429,7 +444,7 @@ export class JWProxy {
         req.body
       );
       for (const [name, value] of _.toPairs(response.headers)) {
-        if (!_.isNil(value)) {
+        if (!_.isNil(value) && !PROXY_SKIP_HEADERS.includes(_.toLower(name))) {
           res.setHeader(name, _.isBoolean(value) ? String(value) : value);
         }
       }

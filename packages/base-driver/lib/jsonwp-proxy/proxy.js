@@ -434,7 +434,7 @@ export class JWProxy {
         isErrorType(err, errors.ProxyRequestError) ? err.getActualError() : err
       );
     }
-    res.set('content-type', 'application/json; charset=utf-8');
+    res.setHeader('content-type', 'application/json; charset=utf-8');
     if (!_.isPlainObject(resBodyObj)) {
       const error = new errors.UnknownError(
         `The downstream server response with the status code ${statusCode} is not a valid JSON object: ` +

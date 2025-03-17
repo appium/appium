@@ -1,4 +1,4 @@
-import globalLog from '@appium/logger';
+import globalLog, { markSensitive as _markSensitive } from '@appium/logger';
 import _ from 'lodash';
 import moment from 'moment';
 
@@ -82,6 +82,23 @@ export function getLogger(prefix = null) {
     wrappedLogger.level = 'verbose';
   }
   return /** @type {AppiumLogger} */ (wrappedLogger);
+}
+
+/**
+ * Marks arbitrary log message as sensitive.
+ * This message will then be replaced with the default replacer
+ * while being logged by any `info`, `debug`, etc. methods if the
+ * asyncStorage has `isSensitive` flag enabled in its async context.
+ * The latter is enabled by the corresponding HTTP middleware
+ * in response to the `X-Appium-Is-Sensitive` request header
+ * being set to 'true'.
+ *
+ * @template {any} T
+ * @param {T} logMessage
+ * @returns {{[k: string]: T}}
+ */
+export function markSensitive(logMessage) {
+  return _markSensitive(logMessage);
 }
 
 /**

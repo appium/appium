@@ -16,7 +16,10 @@ import type {
 import type {Writable} from 'node:stream';
 import {AsyncLocalStorage} from 'node:async_hooks';
 import { unleakString } from './utils';
-import { SecureValuesPreprocessor } from './secure-values-preprocessor';
+import {
+  DEFAULT_SECURE_REPLACER,
+  SecureValuesPreprocessor
+} from './secure-values-preprocessor';
 import { LRUCache } from 'lru-cache';
 
 const DEFAULT_LOG_LEVELS = [
@@ -32,6 +35,7 @@ const DEFAULT_LOG_LEVELS = [
   ['silent', Infinity],
 ] as const;
 const DEFAULT_HISTORY_SIZE = 10000;
+const SENSITIVE_MESSAGE_KEY = 'f2b06625-35a2-4ed3-939a-b0b0a4abc750';
 
 setBlocking(true);
 
@@ -230,17 +234,11 @@ export class Log extends EventEmitter implements Logger {
     }
 
     const messageArguments: any[] = [];
-    let stack: string | null = null;
-    for (const formatArg of [message, ...args]) {
-      messageArguments.push(formatArg);
-      // resolve stack traces to a plain string.
-      if (_.isError(formatArg) && formatArg.stack) {
-        Object.defineProperty(formatArg, 'stack', {
-          value: (stack = formatArg.stack + ''),
-          enumerable: true,
-          writable: true,
-        });
-      }
+    let stack: string | undefined;
+    for (const arg of [message, ...args]) {
+      const result = this._formatLogArgument(arg);
+      stack = result.stack;
+      messageArguments.push(result.arg);
     }
     if (stack) {
       messageArguments.unshift(`${stack}\n`);
@@ -382,9 +380,42 @@ export class Log extends EventEmitter implements Logger {
     }
   }
 
+  private _formatLogArgument(arg: any): ArgumentFormatResult {
+    const result: ArgumentFormatResult = {
+      arg,
+      stack: undefined,
+    };
+
+    if (_.has(arg, SENSITIVE_MESSAGE_KEY)) {
+      const { isSensitive } = this._asyncStorage.getStore() ?? {};
+      result.arg = isSensitive ? DEFAULT_SECURE_REPLACER : arg[SENSITIVE_MESSAGE_KEY];
+    }
+
+    // resolve stack traces to a plain string.
+    if (_.isError(arg) && arg.stack) {
+      result.stack = arg.stack + '';
+      Object.defineProperty(arg, 'stack', {
+        value: result.stack,
+        enumerable: true,
+        writable: true,
+      });
+    }
+
+    return result;
+  }
+
   // this functionality has been deliberately disabled
   private clearProgress(): void {}
   private showProgress(): void {}
+}
+
+export function markSensitive<T=any>(logMessage: T): {[SENSITIVE_MESSAGE_KEY]: T} {
+  return {[SENSITIVE_MESSAGE_KEY]: logMessage};
+}
+
+interface ArgumentFormatResult {
+  arg: any,
+  stack: string | undefined,
 }
 
 export const GLOBAL_LOG = new Log();

@@ -82,8 +82,15 @@ export function handleLogContext(req, res, next) {
 
   const sessionId = SESSION_ID_PATTERN.exec(req.url)?.[1];
   const sessionInfo = sessionId ? {sessionId, sessionSignature: calcSignature(sessionId)} : {};
+  const doesContainSensitiveData = ['true', '1', 'yes'].includes(
+    _.toLower(_.first(req.headers['x-appium-is-sensitive']))
+  );
 
-  log.updateAsyncContext({requestId, ...sessionInfo}, true);
+  log.updateAsyncContext({
+    requestId,
+    ...sessionInfo,
+    isSensitive: doesContainSensitiveData,
+  }, true);
 
   return next();
 }

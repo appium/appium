@@ -392,9 +392,9 @@ export class Log extends EventEmitter implements Logger {
     }
 
     // resolve stack traces to a plain string.
-    if (_.isError(arg) && arg.stack) {
-      result.stack = arg.stack + '';
-      Object.defineProperty(arg, 'stack', {
+    if (_.isError(result.arg) && result.arg.stack) {
+      result.stack = result.arg.stack + '';
+      Object.defineProperty(result.arg, 'stack', {
         value: result.stack,
         enumerable: true,
         writable: true,

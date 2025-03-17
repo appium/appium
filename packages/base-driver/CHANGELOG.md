@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.16.4](https://github.com/appium/appium/compare/@appium/base-driver@9.16.3...@appium/base-driver@9.16.4) (2025-03-17)
+
+
+### Bug Fixes
+
+* **base-driver:** Exclude proxied headers from the server response ([#21120](https://github.com/appium/appium/issues/21120)) ([f800c9d](https://github.com/appium/appium/commit/f800c9d760ab3271532c42a507fbaf2bf190fc4b))
+
+
+
 ## [9.16.3](https://github.com/appium/appium/compare/@appium/base-driver@9.16.2...@appium/base-driver@9.16.3) (2025-03-11)
 
 

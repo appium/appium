@@ -40,6 +40,8 @@ const PROXY_SKIP_HEADERS = [
   // We might change the proxied response payload, so let Express
   // to calculate the content length automatically
   'content-length',
+  'server',
+  'host',
   // https://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html
   'proxy-authenticate',
   'proxy-authorization',

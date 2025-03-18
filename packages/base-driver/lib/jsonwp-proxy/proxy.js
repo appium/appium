@@ -17,6 +17,7 @@ import https from 'https';
 import { match as pathToRegexMatch } from 'path-to-regexp';
 import nodeUrl from 'node:url';
 import { ProxyRequest } from './proxy-request';
+import {markSensitive} from '@appium/support/lib/logging';
 
 const DEFAULT_LOG = logger.getLogger('WD Proxy');
 const DEFAULT_REQUEST_TIMEOUT = 240000;
@@ -204,7 +205,9 @@ export class JWProxy {
         try {
           reqOpts.data = JSON.parse(body);
         } catch {
-          throw new Error(`Cannot interpret the request body as valid JSON: ${truncateBody(body)}`);
+          throw new Error(
+            `Cannot interpret the request body as valid JSON: ${markSensitive(truncateBody(body))}`,
+          );
         }
       } else {
         reqOpts.data = body;
@@ -213,7 +216,7 @@ export class JWProxy {
 
     this.log.debug(
       `Proxying [${method} ${url || '/'}] to [${method} ${newUrl}] ` +
-        (reqOpts.data ? `with body: ${truncateBody(reqOpts.data)}` : 'with no body')
+        (reqOpts.data ? `with body: ${markSensitive(truncateBody(reqOpts.data))}` : 'with no body'),
     );
 
     const throwProxyError = (error) => {

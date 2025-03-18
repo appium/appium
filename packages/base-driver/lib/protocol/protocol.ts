@@ -21,6 +21,7 @@ import type { BaseDriver } from '../basedriver/driver';
 import type { Request, Response, Application } from 'express';
 import type { MultidimensionalReadonlyArray } from 'type-fest';
 import type { RouteConfiguringFunction } from '../express/server';
+import {markSensitive} from '@appium/support/lib/logging';
 
 export const CREATE_SESSION_COMMAND = 'createSession';
 export const DELETE_SESSION_COMMAND = 'deleteSession';
@@ -396,7 +397,7 @@ function buildHandler(
       getLogger(driver, req.params.sessionId).debug(
         `Calling ` +
           `${driver.constructor.name}.${spec.command}() with args: ` +
-          _.truncate(JSON.stringify(args), {length: MAX_LOG_BODY_LENGTH})
+          markSensitive(_.truncate(JSON.stringify(args), {length: MAX_LOG_BODY_LENGTH})),
       );
 
       if (didPluginOverrideProxy) {

@@ -2,6 +2,7 @@ import _ from 'lodash';
 import {logger, util} from '@appium/support';
 import {duplicateKeys} from '../basedriver/helpers';
 import {MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY, PROTOCOLS} from '../constants';
+import {markSensitive} from '@appium/support/lib/logging';
 
 export const COMMAND_URLS_CONFLICTS = [
   {
@@ -187,11 +188,13 @@ class ProtocolConverter {
       if (util.hasValue(text) && !util.hasValue(value)) {
         value = _.isString(text) ? [...text] : _.isArray(text) ? text : [];
         this.log.debug(
-          `Added 'value' property ${JSON.stringify(value)} to 'setValue' request body`
+          `Added 'value' property ${markSensitive(JSON.stringify(value))} to 'setValue' request body`,
         );
       } else if (!util.hasValue(text) && util.hasValue(value)) {
         text = _.isArray(value) ? value.join('') : _.isString(value) ? value : '';
-        this.log.debug(`Added 'text' property ${JSON.stringify(text)} to 'setValue' request body`);
+        this.log.debug(
+          `Added 'text' property ${markSensitive(JSON.stringify(text))} to 'setValue' request body`,
+        );
       }
       return await this.proxyFunc(
         url,

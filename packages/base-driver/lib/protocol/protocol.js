@@ -15,6 +15,7 @@ import {MAX_LOG_BODY_LENGTH, PROTOCOLS, DEFAULT_BASE_PATH} from '../constants';
 import {isW3cCaps} from '../helpers/capabilities';
 import log from '../basedriver/logger';
 import { generateDriverLogPrefix } from '../basedriver/helpers';
+import {markSensitive} from '@appium/support/lib/logging';
 
 export const CREATE_SESSION_COMMAND = 'createSession';
 export const DELETE_SESSION_COMMAND = 'deleteSession';
@@ -376,7 +377,7 @@ function buildHandler(app, method, path, spec, driver, isSessCmd) {
       getLogger(driver, req.params.sessionId).debug(
         `Calling ` +
           `${driver.constructor.name}.${spec.command}() with args: ` +
-          _.truncate(JSON.stringify(args), {length: MAX_LOG_BODY_LENGTH})
+          markSensitive(_.truncate(JSON.stringify(args), {length: MAX_LOG_BODY_LENGTH})),
       );
 
       if (didPluginOverrideProxy) {

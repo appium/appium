@@ -50,7 +50,7 @@
     "bluebird": "3.7.2",
     "lodash": "4.17.21",
     "loud-rejection": "2.2.0",
-    "sinon": "19.0.2",
+    "sinon": "19.0.4",
     "source-map-support": "0.5.21"
   },
   "engines": {

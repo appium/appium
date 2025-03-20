@@ -180,45 +180,31 @@ Appium会使用`appiumCliTransformer: 'csv'`。
 
 不需要这种特殊处理的属性直接使用`ajv`进行验证。这是如何工作的一些解释，所以接下来就是这样。
 
-#### Validation of Individual Arguments via `ajv`
+#### 通过 `ajv` 实现单个参数的验证
 
-When we think of a JSON schema, we tend to think, "I have this JSON file and I want to validate it
-against the schema". That's valid, and in fact Appium does just that with config files! However,
-Appium does not do this when validating arguments.
+当我们思考 JSON 模式时，通常会认为“我有一个 JSON 文件需要根据模式进行验证”。这种理解是正确的，实际上 Appium 在处理配置文件时正是这样做的！不过，Appium 在验证参数时采用了不同的方式。
 
 !!! 注意
 
-    During implementation, I was tempted to mash all of the arguments together into
-    a config-file-like data structure and then validate it all at once. I think that would have
-    been _possible_, but since an object full of CLI arguments is a flat key/value structure and
-    the schema is not, this seemed like trouble.
+    在实现过程中，我曾试图将所有参数组合成一个类似配置文件的数据结构进行统一验证。虽然这在理论上是可行的，但由于 CLI 参数对象是扁平的键/值结构，而模式本身并非扁平结构，这种做法可能会引发问题。
 
-Instead, Appium validates a value against a specific property _within_ the schema. To do this, it
-maintains a mapping between a CLI argument definition and its corresponding property. The mapping
-itself is a `Map` with a unique identifier for the argument as the key, and an `ArgSpec`
-(`lib/schema/arg-spec.js`) object as the value.
+Appium 实际采用的方式是：针对模式中特定的属性对参数值进行验证。为此，系统维护了 CLI 参数定义与对应模式属性之间的映射关系。这个映射关系通过一个 `Map` 实现，其中键是参数的唯一标识符，值是一个 `ArgSpec` 对象（定义于 `lib/schema/arg-spec.js`）。
 
-An `ArgSpec` object stores the following metadata:
+`ArgSpec` 对象包含以下元数据：
 
-| Property Name   | Description                                                                           |
-| --------------- | ------------------------------------------------------------------------------------- |
-| `name`          | Canonical name of the argument, corresponding to the property name in the schema.     |
-| `extType?`      | `driver` or `plugin`, if appropriate                                                  |
-| `extName?`      | Extension name, if appropriate                                                        |
-| `ref`           | Computed `$id` of the property in the schema                                          |
-| `arg`           | Argument as accepted on CLI, without leading dashes                                   |
-| `dest`          | Property name in parsed arguments object (as returned by `argparse`'s `parse_args()`) |
-| `defaultValue?` | Value of the `default` keyword in schema, if appropriate                              |
+| 属性名称        | 描述                                                                                     |
+| --------------- | --------------------------------------------------------------------------------------- |
+| `name`          | 参数的规范名称，对应模式中的属性名                                                      |
+| `extType?`      | 扩展类型（`driver` 或 `plugin`），如果适用                                                |
+| `extName?`      | 扩展名称，如果适用                                                                        |
+| `ref`           | 模式中该属性的计算后 `$id` 引用                                                         |
+| `arg`           | CLI 接受的参数名（不带前导短横线）                                                      |
+| `dest`          | 解析后参数对象的属性名（由 `argparse` 的 `parse_args()` 返回）                          |
+| `defaultValue?` | 模式中 `default` 关键字对应的值（如果存在）                                               |
 
-When a schema is [finalized](#schema-finalization), the `Map` is populated with `ArgSpec` objects
-for all known arguments.
+当模式完成[最终化](#schema-finalization)时，该 `Map` 会被填充所有已知参数的 `ArgSpec` 对象。
 
-So when the adapter is creating the pipeline of functions for the argument's `type`, it already has
-an `ArgSpec` for the argument. It creates a function which calls `validate(value, ref)` (in
-`lib/schema/schema.js`) where `value` is whatever the user provided, and `ref` is the `ref`
-property of the `ArgSpec`. The concept is that `ajv` can validate using _any_ `ref` it knows about;
-each property in a schema can be referenced by this `ref` whether it's defined or not. To help
-visualize, if a schema is:
+在适配器为参数的 `type` 创建函数管道时，系统已经拥有该参数的 `ArgSpec`。它会创建一个调用 `validate(value, ref)` 的函数（位于 `lib/schema/schema.js`），其中 `value` 是用户提供的参数值，`ref` 是 `ArgSpec` 的 `ref` 属性。核心原理在于 `ajv` 可以使用任何已知的 `ref` 进行验证——无论该属性是否被显式定义，模式中的每个属性都可以通过其 `ref` 被引用。以下列模式为例：
 
 ```json
 {
@@ -232,76 +218,50 @@ visualize, if a schema is:
 }
 ```
 
-The `ref` of `foo` would be `my-schema.json#/properties/foo`. Assuming our `Ajv` instance knows
-about this `my-schema.json`, then we can call its `getSchema(ref)` method (which has a `schema`
-property, but is a misnomer nonetheless) to get a validation function; `validate(value, ref)` in
-`schema.js` calls this validation function.
+其中 `foo` 的 `ref` 应为 `my-schema.json#/properties/foo`。假设我们的 `Ajv` 实例已注册该模式，即可通过 `getSchema(ref)` 方法（虽然名称有误，但其 `schema` 属性有效）获取验证函数；`schema.js` 中的 `validate(value, ref)` 方法正是调用此验证函数。
 
 !!! 注意
 
-    The schema spec says a schema author can supply an explicit `$id` keyword to override this;
-    it's unsupported by Appium at this time. If needed, extension authors must carefully use `$ref`
-    without custom `$id`s. It's highly unlikely an extension would have a schema so complicated as
-    to need this, however; Appium itself doesn't even use `$ref` to define its own properties!
+    虽然模式规范允许通过显式声明 `$id` 来覆盖默认引用标识，但 Appium 目前不支持此特性。如有需要，扩展开发者必须谨慎使用不包含自定义 `$id` 的 `$ref` 引用。不过 Appium 自身的模式定义都未使用 `$ref`，可见扩展通常不需要如此复杂的模式结构。
 
-Next, let's take a look at how Appium loads schemas. This actually happens _before_ any argument
-validation.
+接下来我们将探讨 Appium 如何加载模式。值得注意的是，模式加载过程实际上发生在参数验证之前。 
 
-## Schema Loading
+## 模式加载
 
-Let's ignore extensions for a moment, and start with the base schema.
+让我们暂时忽略扩展功能，先从基础模式开始解析。
 
-When something first imports the `lib/schema/schema.js` module, an instance of an `AppiumSchema` is
-created. This is a singleton, and its methods are exported from the module (all of which are bound
-to the instance).
+当首次导入 `lib/schema/schema.js` 模块时，系统会创建一个 `AppiumSchema` 实例。该实例为单例模式，其所有方法（均已绑定到实例）都通过该模块对外暴露。
 
-The constructor does very little; it instantiates an `Ajv` instance and configures it with Appium's
-[custom keywords](#custom-keyword-reference) and adds support for the `format` keyword via the
-[ajv-formats](https://npm.im/ajv-formats) module.
+构造函数仅执行基础操作：实例化一个 `Ajv` 验证器实例，并通过以下方式对其进行配置：添加 Appium 的[自定义关键字](#custom-keyword-reference);
+通过 [ajv-formats](https://npm.im/ajv-formats) 模块启用 `format` 关键字支持。
 
-Otherwise, the `AppiumSchema` instance does not interact with the `Ajv` instance until its
-`finalize()` method (exported as `finalizeSchema()`) is called. When this method is called, we're
-saying "we are not going to add any more schemas; go ahead and create `ArgSpec` objects and
-register schemas with `ajv`".
+在调用 `finalize()` 方法（导出为 `finalizeSchema()`）之前，`AppiumSchema` 实例不会与 `Ajv` 实例产生交互。此方法的调用标志着"模式定义阶段结束，将开始创建 `ArgSpec` 对象并向 `ajv` 注册最终模式"。
 
-When does finalization happen? Well:
+最终化触发的时机如下：
 
-1. When the `appium` executable begins, it _checks for and configures extensions_ (hand-wave) in `APPIUM_HOME`.
-2. Only then does it start to think about arguments--it instantiates an `ArgParser`, which (as you'll recall) runs the adapter to convert the schema to arguments.
-3. _Finalization happens here_--when creating the parser. Appium need the schema(s) to be registered with `ajv` in order to create validation functions for arguments.
-4. Thereafter, Appium parses the arguments with the `ArgParser`.
-5. Finally, decides what to do with the returned object.
+1. 当 `appium` 可执行文件启动时，首先在 `APPIUM_HOME` 目录中检查并配置扩展（此处简化处理）
+2. 随后开始处理参数——实例化 `ArgParser`，该操作会运行适配器将模式转换为参数定义
+3. 最终化在此处发生：创建解析器时，Appium 需要向 `ajv` 注册模式以生成参数验证函数
+4. 通过 `ArgParser`完成参数解析
+5. 最终根据解析结果决定后续操作流程
 
-Without extensions, `finalize()` still knows about the Appium base schema
-(`appium-config-schema.js`), and just registers that. However, step 1. above is doing a _lot of
-work_, so let's look at how extensions come into play.
+即使没有扩展功能，`finalize()` 仍会识别 Appium 的基础模式（`appium-config-schema.js`）并进行注册。不过上述步骤 1 实际涉及复杂的扩展处理机制，接下来我们将深入探讨扩展功能的影响。
 
-## Extension Support
+## 扩展支持
 
-One of the design goals of this system is the following:
+本系统的设计目标之一是：
 
-_An extension should be able to register custom CLI arguments with the Appium, and a user should be
-able to use them like any other argument_.
+扩展应该能够向Appium注册自定义CLI参数，用户应该能够像使用其他参数一样使用它们。
 
-Previously, Appium 2 accepted arguments in this manner (via `--driverArgs`), but validation was
-hand-rolled and required extension implementors to use a custom API. It also required the user to
-awkwardly pass a JSON string as the configuration on the command-line. Further, no contextual help
-(via `--help`) existed for these arguments.
+此前，Appium 2通过`--driverArgs`方式接受参数，但验证过程需要手动实现，并要求扩展开发者使用自定义API。这种方式还要求用户在命令行中笨拙地传递JSON字符串作为配置。此外，这些参数没有上下文帮助信息（通过`--help`）。
 
-Now, by providing a schema for its options, a driver or plugin can register CLI arguments and
-config file schemas with Appium.
+现在，通过为选项提供模式（schema），驱动或插件可以向Appium注册CLI参数和配置文件模式。
 
-To register a schema, an extension must provide the `appium.schema` property in its `package.json`.
-The value may be a schema or a path to a schema. If the latter, the schema should be JSON or
-a CommonJS module (ESM not supported at this time, nor is YAML).
+要注册模式，扩展必须在其`package.json`中提供`appium.schema`属性。该值可以是模式本身或模式文件的路径。如果是路径，模式文件应为JSON或CommonJS模块（目前不支持ESM和YAML）。
 
-For any property in this schema, the property will appear as a CLI argument of the form
-`--<extension-type>-<extension-name>-<property-name>`. For example, if the `fake` driver provides
-a property `foo`, the argument will be `--driver-fake-foo`, and will show in `appium server --help`
-like any other CLI argument.
+对于该模式中的任何属性，都将以`--<扩展类型>-<扩展名称>-<属性名称>`的形式作为CLI参数出现。例如，如果`fake`驱动提供了`foo`属性，对应的参数将是`--driver-fake-foo`，并会像其他CLI参数一样显示在`appium server --help`中。
 
-The corresponding property in a config file would be
-`server.<extension-type>.<extension-name>.<property-name>`, e.g.:
+配置文件中对应的属性路径为`server.<扩展类型>.<扩展名称>.<属性名称>`，例如：
 
 ```json
 {
@@ -315,47 +275,35 @@ The corresponding property in a config file would be
 }
 ```
 
-The naming convention described above avoids problems of one extension type having a name conflict
-with a different extension type.
+上述命名约定避免了不同扩展类型之间的名称冲突问题。
 
 !!! 注意
 
-    While an extension can provide aliases via `appiumCliAliases`, "short" flags are disallowed,
-    since all arguments from extensions are prefixed with `--<extension-type>-<extension-name>-`.
-    The extension name and argument name will be kebab-cased for the CLI, according to [Lodash's
-    rules](https://lodash.com/docs/4.17.15#kebabCase) around kebab-casing.
+    虽然扩展可以通过`appiumCliAliases`提供别名，但禁止使用"短"标志（short flags），因为所有扩展参数都带有`--<扩展类型>-<扩展名称>-`前缀。根据[Lodash的kebab-case规则](https://lodash.com/docs/4.17.15#kebabCase)，扩展名称和参数名称在CLI中将被转换为kebab-case格式。
 
-The schema object will look much like Appium's base schema, but it will only have top-level
-properties (nested properties are currently unsupported). Example:
+模式对象的结构与Appium基础模式相似，但仅支持顶层属性（目前不支持嵌套属性）。示例：
 
 ```json
 {
-  "title": "my rad schema for the cowabunga driver",
+  "title": "为cowabunga驱动设计的超棒模式",
   "type": "object",
   "properties": {
     "fizz": {
       "type": "string",
       "default": "buzz",
-      "$comment": "corresponds to CLI --driver-cowabunga-fizz"
+      "$comment": "对应CLI参数--driver-cowabunga-fizz"
     }
   }
 }
 ```
 
-As written in a user's config file, this would be the `server.driver.cowabunga.fizz` property.
+在用户的配置文件中，该属性将表示为`server.driver.cowabunga.fizz`。
 
-When extensions are loaded, the `schema` property is verified and the schema is registered with the
-`AppiumSchema` (it is _not_ registered with `Ajv` until `finalize()` is called).
+当扩展被加载时，`schema`属性会被验证，并且模式会被注册到`AppiumSchema`中（在调用`finalize()`之前不会注册到`Ajv`）。
 
-During finalization, each registered schema is added to the `Ajv` instance. The schema is assigned
-an `$id` based on the extension type and name (which overrides whatever the extension provides, if
-anything). Schemas are also forced to disallowed unknown arguments via the `additionalProperties:
-false` keyword.
+在最终化阶段，每个注册的模式都会被添加到`Ajv`实例中。模式会根据扩展类型和名称分配一个`$id`（这会覆盖扩展可能提供的任何现有ID）。模式还会通过`additionalProperties: false`强制禁止未知参数。
 
-Behind the scenes, the base schema has `driver` and `plugin` properties which are objects. When
-finalized, a property is added to each--corresponding to an extension name--and the value of this
-property is a reference to the `$id` of a property in the extension schema. For example, the
-`server.driver` property will look like this:
+在底层实现中，基础模式包含`driver`和`plugin`属性（都是对象类型）。最终化时，会为每个属性添加对应扩展名称的子属性，其值是对扩展模式中`$id`的引用。例如，`server.driver`属性将如下所示：
 
 ```json
 {
@@ -367,45 +315,30 @@ property is a reference to the `$id` of a property in the extension schema. For 
 }
 ```
 
-This is why we call it the "base" schema--it is _mutated_ when extensions provide schemas. The
-extension schemas are kept separately, but the _references_ are added to the schema before it's
-ultimately added to `ajv`. This works because an `Ajv` instance understands references _from_ any
-schema it knows about _to_ any schema it knows about.
+这就是为什么我们称之为“基础”模式——当扩展提供模式时，它会发生变化。扩展模式是分开保存的，但在最终将其添加到`ajv`之前，会将引用添加到模式中。这是有效的，因为`Ajv`实例能够理解已注册模式之间的相互引用。
 
 !!! 注意
 
-    This makes it impossible to provide a complete static schema for Appium _and_ the installed
-    extensions (as of Nov 5 2021). A static `.json` schema _is_ generated from the base (via a Gulp
-    task), but it does not contain any extension schemas. The static schema also has uses beyond
-    Appium; e.g., IDEs can provide contextual error-checking of config files this way. Let's solve
-    this?
+    这使得为Appium及其安装的扩展提供完整的静态模式变得不可能（截至2021年11月5日）。基础模式会通过Gulp任务生成静态`.json`模式文件，但不包含任何扩展模式。这种静态模式还有其他用途，例如IDE可以通过这种方式提供配置文件的上下文错误检查。这个问题需要后续解决？
 
-Just like how we look up the reference ID of a particular argument in the base schema, validation
-of arguments from extensions happens the exact same way. If the `cowabunga` driver has the schema
-ID `driver-cowabunga.json`, then the `fizz` property can be referenced from any schema registered
-with `ajv` via `driver-cowabunga.json#/properties/fizz`. "Base" schema arguments begin with
-`appium.json#properties/` instead.
+与在基础模式中查找参数的引用ID方式相同，扩展参数的验证过程完全一致。如果`cowabunga`驱动的模式ID是`driver-cowabunga.json`，那么`fizz`属性可以通过`driver-cowabunga.json#/properties/fizz`路径在任意已注册模式中被引用。“基础”模式参数的引用路径则以`appium.json#properties/`开头。 
 
-## Development Environment Support
+## 开发环境支持
 
-During the flow of development, a couple extra tasks have been automated to maintain the base
-schema:
+在开发流程中，我们自动化了以下几个任务来维护基础模式：
 
-- As a post-transpilation step, a `lib/appium-config.schema.json` gets generated from
-- `lib/schema/appium-config-schema.js` (in addition to its CJS counterpart generated by Babel).
-- This file is under version control. It ends up being _copied_ to
-- `build/lib/appium-config.schema.json` in this step. A pre-commit hook (see
-- `scripts/generate-schema-declarations.js` in the root monorepo) generates
-- a `types/appium-config-schema.d.ts` from the above JSON file. The types in `types/types.d.ts`
-- depend upon this file. This file is under version control.
+- 作为后置转译步骤，会从 `lib/schema/appium-config-schema.js` 生成 `lib/appium-config.schema.json`（除了 Babel 生成的 CJS 对应文件外）
+- 该文件受版本控制管理。在此步骤中会被复制到 `build/lib/appium-config.schema.json`
+- 通过预提交钩子（参见 monorepo 根目录的 `scripts/generate-schema-declarations.js`）会从上述 JSON 文件生成 `types/appium-config-schema.d.ts`
+- `types/types.d.ts` 中的类型定义依赖此文件，该文件受版本控制管理
 
-## Custom Keyword Reference
+## 自定义关键字参考
 
-Keywords are defined in `lib/schema/keywords.js`.
+关键字定义于 `lib/schema/keywords.js`
 
-- `appiumCliAliases`: allows a schema to express aliases (e.g., a CLI argument can be `--verbose` or `-v`). This is an array of strings. Strings shorter than three (3) characters will begin with a single dash (`-`) instead of a double-dash (`--`). Note that any argument provided by an extension will begin with a double-dash, because these are required to have the `--<extension-type>-<extension-name>-` prefix.
-- `appiumCliDest`: allows a schema to specify a custom property name in the post-`argprase` arguments objects. If not set, this becomes a camelCased string.
-- `appiumCliDescription`: allows a schema to override the description of the argument when displayed on the command-line. This is useful paired with `appiumCliTransformer` (or `array`/`object`-typed properties), since there's a substantial difference between what a CLI-using user can provide vs. what a config-file-using user can provide.
-- `appiumCliTransformer`: currently a choice between `csv` and `json`. These are custom functions which post-process a value. They are not used when loading & validating config files, but the idea should be that they result in the same object you'd get if you used whatever the config file wanted (e.g., an array of strings). `csv` is for comma-delimited strings and CSV files; `json` is for raw JSON strings and `.json` files.
-- `appiumCliIgnore`: If `true`, do not support this property on the CLI.
-- `appiumDeprecated`: If `true`, the property is considered "deprecated", and will be displayed as such to the user (e.g., in the `--help` output). Note the JSON Schema draft-2019-09 introduces a new keyword `deprecated` which we should use instead if upgrading to this metaschema. When doing so, `appiumDeprecated` should itself be marked as `deprecated`.
+- `appiumCliAliases`: 允许模式声明参数别名（例如 CLI 参数可以是 `--verbose` 或 `-v`）。值为字符串数组。短于三（3）个字符的字符串将使用单短横线（`-`）而非双短横线（`--`）开头。注意任何由扩展提供的参数都必须以双短横线开头，因为这些参数需要带有 `--<extension-type>-<extension-name>-` 前缀
+- `appiumCliDest`: 允许模式指定 `argparse` 解析后参数对象中的自定义属性名。若未设置，将转换为驼峰式命名
+- `appiumCliDescription`: 允许模式覆盖命令行显示的参数描述。与 `appiumCliTransformer`（或 `array`/`object` 类型属性）配合使用时非常有用，因为 CLI 用户可提供的内容与配置文件用户可提供的内容存在显著差异
+- `appiumCliTransformer`: 目前支持 `csv` 和 `json` 两种选项。这些是用于后处理值的自定义函数。在加载和验证配置文件时不使用这些转换器，但核心思想是它们应该产生与使用配置文件相同的对象（例如字符串数组）。`csv` 用于逗号分隔字符串和 CSV 文件；`json` 用于原始 JSON 字符串和 `.json` 文件
+- `appiumCliIgnore`: 若为 `true`，则不在 CLI 中支持该属性
+- `appiumDeprecated`: 若为 `true`，该属性将被视为"已弃用"，并会向用户显示为弃用状态（例如在 `--help` 输出中）。注意 JSON Schema draft-2019-09 引入了新的 `deprecated` 关键字，如果我们升级到该元模式应该改用此关键字。迁移时，`appiumDeprecated` 本身应被标记为 `deprecated` 

@@ -44,7 +44,7 @@
     "test:types": "tsd"
   },
   "dependencies": {
-    "@appium/support": "^6.0.7",
+    "@appium/support": "^6.0.8",
     "@appium/types": "^0.25.2",
     "@colors/colors": "1.6.0",
     "async-lock": "1.4.1",
@@ -69,8 +69,8 @@
     "spdy": "4.0.2"
   },
   "engines": {
-    "node": "^14.17.0 || ^16.13.0 || >=18.0.0",
-    "npm": ">=8"
+    "node": "^20.9.0 || >=22.11.0",
+    "npm": ">=10"
   },
   "publishConfig": {
     "access": "public",

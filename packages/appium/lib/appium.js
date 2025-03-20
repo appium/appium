@@ -5,6 +5,7 @@ import {
   DriverCore,
   errors,
   isSessionCommand,
+  PROTOCOLS,
   CREATE_SESSION_COMMAND,
   DELETE_SESSION_COMMAND,
   GET_STATUS_COMMAND,
@@ -253,50 +254,42 @@ class AppiumDriver extends DriverCore {
 
   /**
    * Create a new session
-   * @param {W3CAppiumDriverCaps} jsonwpCaps JSONWP formatted desired capabilities
-   * @param {W3CAppiumDriverCaps} [reqCaps] Required capabilities (JSONWP standard)
-   * @param {W3CAppiumDriverCaps} [w3cCapabilities] W3C capabilities
+   *
+   * @param {W3CAppiumDriverCaps} w3cCapabilities1 W3C capabilities
+   * @param {W3CAppiumDriverCaps} [w3cCapabilities2] W3C capabilities (legacy)
+   * @param {W3CAppiumDriverCaps} [w3cCapabilities3] W3C capabilities (legacy)
    * @returns {Promise<SessionHandlerCreateResult>}
    */
-  async createSession(jsonwpCaps, reqCaps, w3cCapabilities) {
+  async createSession(w3cCapabilities1, w3cCapabilities2, w3cCapabilities3) {
     const defaultCapabilities = _.cloneDeep(this.args.defaultCapabilities);
     const defaultSettings = pullSettings(defaultCapabilities);
-    jsonwpCaps = _.cloneDeep(jsonwpCaps);
-    const jwpSettings = {...defaultSettings, ...pullSettings(jsonwpCaps)};
-    w3cCapabilities = _.cloneDeep(w3cCapabilities);
+    const w3cCapabilities = _.cloneDeep(w3cCapabilities3 ?? w3cCapabilities2 ?? w3cCapabilities1);
     if (
       !_.isPlainObject(w3cCapabilities) ||
       !(_.isArray(w3cCapabilities?.firstMatch) || _.isPlainObject(w3cCapabilities?.alwaysMatch))
     ) {
       throw makeNonW3cCapsError();
     }
-    // It is possible that the client only provides caps using JSONWP standard,
-    // although firstMatch/alwaysMatch properties are still present.
-    // In such case we assume the client understands W3C protocol and merge the given
-    // JSONWP caps to W3C caps
     const w3cSettings = {
-      ...jwpSettings,
+      ...defaultSettings,
       ...pullSettings((w3cCapabilities ?? {}).alwaysMatch ?? {}),
     };
     for (const firstMatchEntry of (w3cCapabilities ?? {}).firstMatch ?? []) {
       Object.assign(w3cSettings, pullSettings(firstMatchEntry));
     }
 
-    /** @type {string|undefined} */
-    let protocol;
+    const protocol = PROTOCOLS.W3C;
     let innerSessionId, dCaps;
     try {
       // Parse the caps into a format that the InnerDriver will accept
       const parsedCaps = parseCapsForInnerDriver(
-        jsonwpCaps,
         promoteAppiumOptions(/** @type {W3CAppiumDriverCaps} */ (w3cCapabilities)),
         this.desiredCapConstraints,
         defaultCapabilities ? promoteAppiumOptionsForObject(defaultCapabilities) : undefined,
       );
 
-      const {desiredCaps, processedJsonwpCapabilities, processedW3CCapabilities} =
+      const {desiredCaps, processedW3CCapabilities} =
         /** @type {import('./utils').ParsedDriverCaps<AppiumDriverConstraints>} */ (parsedCaps);
-      protocol = parsedCaps.protocol;
       const error = /** @type {import('./utils').InvalidCaps<AppiumDriverConstraints>} */ (
         parsedCaps
       ).error;
@@ -390,12 +383,11 @@ class AppiumDriver extends DriverCore {
 
       try {
         [innerSessionId, dCaps] = await driverInstance.createSession(
-          processedJsonwpCapabilities,
-          reqCaps,
+          /** @type {any} */ (processedW3CCapabilities),
+          processedW3CCapabilities,
           processedW3CCapabilities,
           [...runningDriversData, ...otherPendingDriversData],
         );
-        protocol = driverInstance.protocol;
         this.sessions[innerSessionId] = driverInstance;
       } finally {
         await pendingDriversGuard.acquire(AppiumDriver.name, () => {
@@ -420,12 +412,6 @@ class AppiumDriver extends DriverCore {
             JSON.stringify(w3cSettings),
         );
         await driverInstance.updateSettings(w3cSettings);
-      } else if (driverInstance.isMjsonwpProtocol() && !_.isEmpty(jwpSettings)) {
-        this.log.info(
-          `Applying the initial values to Appium settings parsed from MJSONWP caps: ` +
-            JSON.stringify(jwpSettings),
-        );
-        await driverInstance.updateSettings(jwpSettings);
       }
 
       // if the user has asked for bidi support, send our bidi url back to the user. The inner

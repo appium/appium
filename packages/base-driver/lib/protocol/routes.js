@@ -28,7 +28,7 @@ export const METHOD_MAP = /** @type {const} */ ({
     POST: {
       command: 'createSession',
       payloadParams: {
-        required: ['capabilities'],
+        optional: ['capabilities', 'capabilities', 'capabilities'],
       },
     },
   },

@@ -1,10 +1,7 @@
-// @ts-check
-
 import _ from 'lodash';
-import {util} from '@appium/support';
 import {DEFAULT_BASE_PATH} from '../constants';
 import {match} from 'path-to-regexp';
-import { LRUCache } from 'lru-cache';
+import {LRUCache} from 'lru-cache';
 
 /** @type {LRUCache<string, string>} */
 const COMMAND_NAMES_CACHE = new LRUCache({
@@ -43,12 +40,8 @@ export const METHOD_MAP = /** @type {const} */ ({
     POST: {
       command: 'timeouts',
       payloadParams: {
-        validate: (jsonObj) => {
-          if (
-            !util.hasValue(jsonObj.script) &&
-            !util.hasValue(jsonObj.pageLoad) &&
-            !util.hasValue(jsonObj.implicit)
-          ) {
+        validate: ({script, pageLoad, implicit}) => {
+          if ([script, pageLoad, implicit].every(_.isNil)) {
             return 'W3C protocol expects any of script, pageLoad or implicit to be set';
           }
         },

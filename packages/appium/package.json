@@ -60,21 +60,12 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-<<<<<<< HEAD
     "@appium/base-driver": "^10.0.0-beta.0",
     "@appium/base-plugin": "^3.0.0-beta.0",
-    "@appium/docutils": "^1.0.33",
-    "@appium/logger": "^1.6.1",
-    "@appium/schema": "^0.8.1",
-    "@appium/support": "^6.0.7",
-=======
-    "@appium/base-driver": "^9.16.4",
-    "@appium/base-plugin": "^2.3.5",
     "@appium/docutils": "^1.0.34",
     "@appium/logger": "^1.6.1",
     "@appium/schema": "^0.8.1",
     "@appium/support": "^6.0.8",
->>>>>>> eccae910993d1862efba79f1e576ea0ee76a935f
     "@appium/types": "^0.25.2",
     "@sidvind/better-ajv-errors": "3.0.1",
     "ajv": "8.17.1",

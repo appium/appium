@@ -16,36 +16,23 @@ import logger from '../../lib/logger';
 import {fs} from '@appium/support';
 
 describe('utils', function () {
-  let should;
-
   beforeEach(async function () {
     const chai = await import('chai');
     const chaiAsPromised = await import('chai-as-promised');
     chai.use(chaiAsPromised.default);
-    should = chai.should();
+    chai.should();
   });
 
   describe('parseCapsForInnerDriver()', function () {
     it('should return an error if only JSONWP provided', function () {
-      let {error, protocol} = parseCapsForInnerDriver(BASE_CAPS);
-      protocol.should.equal('W3C');
+      const {error} = parseCapsForInnerDriver(BASE_CAPS);
       error.message.should.match(/W3C/);
     });
     it('should return W3C caps unchanged if only W3C caps were provided', function () {
-      let {desiredCaps, processedJsonwpCapabilities, processedW3CCapabilities, protocol} =
-        parseCapsForInnerDriver(undefined, W3C_CAPS);
+      const {desiredCaps, processedW3CCapabilities} =
+        parseCapsForInnerDriver(W3C_CAPS);
       desiredCaps.should.deep.equal(BASE_CAPS);
-      should.not.exist(processedJsonwpCapabilities);
       processedW3CCapabilities.should.deep.equal(W3C_CAPS);
-      protocol.should.equal('W3C');
-    });
-    it('should return JSONWP and W3C caps if both were provided', function () {
-      let {desiredCaps, processedJsonwpCapabilities, processedW3CCapabilities, protocol} =
-        parseCapsForInnerDriver(BASE_CAPS, W3C_CAPS);
-      desiredCaps.should.deep.equal(BASE_CAPS);
-      processedJsonwpCapabilities.should.deep.equal(BASE_CAPS);
-      processedW3CCapabilities.should.deep.equal(W3C_CAPS);
-      protocol.should.equal('W3C');
     });
     it('should include default capabilities in results', function () {
       const defaultW3CCaps = {
@@ -56,13 +43,9 @@ describe('utils', function () {
         foo: 'bar',
         baz: 'bla',
       };
-      const {desiredCaps, processedJsonwpCapabilities, processedW3CCapabilities} =
-        parseCapsForInnerDriver(BASE_CAPS, W3C_CAPS, {}, defaultW3CCaps);
+      const {desiredCaps, processedW3CCapabilities} =
+        parseCapsForInnerDriver(W3C_CAPS, {}, defaultW3CCaps);
       desiredCaps.should.deep.equal({
-        ...expectedDefaultCaps,
-        ...BASE_CAPS,
-      });
-      processedJsonwpCapabilities.should.deep.equal({
         ...expectedDefaultCaps,
         ...BASE_CAPS,
       });
@@ -73,7 +56,6 @@ describe('utils', function () {
     });
     it('should allow valid default capabilities', function () {
       const res = parseCapsForInnerDriver(
-        null,
         W3C_CAPS,
         {},
         {
@@ -84,7 +66,6 @@ describe('utils', function () {
     });
     it('should not allow invalid default capabilities', function () {
       const res = parseCapsForInnerDriver(
-        null,
         W3C_CAPS,
         {},
         {
@@ -98,7 +79,7 @@ describe('utils', function () {
       _.isNull(res.error._stacktrace).should.be.true;
     });
     it('should reject if W3C caps are not passing constraints', function () {
-      const err = parseCapsForInnerDriver(undefined, W3C_CAPS, {
+      const err = parseCapsForInnerDriver(W3C_CAPS, {
         hello: {presence: true},
       }).error;
       err.message.should.match(/'hello' can't be blank/);
@@ -109,7 +90,7 @@ describe('utils', function () {
         ...W3C_CAPS,
         firstMatch: [{foo: 'bar'}, {'appium:hello': 'world'}],
       };
-      const error = parseCapsForInnerDriver(BASE_CAPS, w3cCaps, {
+      const error = parseCapsForInnerDriver(w3cCaps, {
         hello: {presence: true},
       }).error;
       error.jsonwpCode.should.eql(61);
@@ -118,7 +99,7 @@ describe('utils', function () {
       _.isNull(error._stacktrace).should.be.true;
     });
     it('should add appium prefixes to W3C caps that are not standard in W3C', function () {
-      parseCapsForInnerDriver(undefined, {
+      parseCapsForInnerDriver({
         alwaysMatch: {
           platformName: 'Fake',
           propertyName: 'PROP_NAME',

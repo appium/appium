@@ -2,7 +2,6 @@ import _ from 'lodash';
 import logger from './logger';
 import {
   processCapabilities,
-  PROTOCOLS,
   STANDARD_CAPS,
   errors,
 } from '@appium/base-driver';

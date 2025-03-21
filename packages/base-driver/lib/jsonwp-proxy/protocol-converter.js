@@ -187,12 +187,12 @@ class ProtocolConverter {
       if (util.hasValue(text) && !util.hasValue(value)) {
         value = _.isString(text) ? [...text] : _.isArray(text) ? text : [];
         this.log.debug(
-          `Added 'value' property ${logger.markSensitive(JSON.stringify(value))} to 'setValue' request body`,
+          `Added 'value' property to 'setValue' request body. Value:`, logger.markSensitive(JSON.stringify(value))
         );
       } else if (!util.hasValue(text) && util.hasValue(value)) {
         text = _.isArray(value) ? value.join('') : _.isString(value) ? value : '';
         this.log.debug(
-          `Added 'text' property ${logger.markSensitive(JSON.stringify(text))} to 'setValue' request body`,
+          `Added 'text' property to 'setValue' request body. Value: `, logger.markSensitive(JSON.stringify(text))
         );
       }
       return await this.proxyFunc(

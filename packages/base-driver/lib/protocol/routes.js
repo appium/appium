@@ -33,6 +33,9 @@ export const METHOD_MAP = /** @type {const} */ ({
     },
   },
   '/session/:sessionId': {
+    // Even though this command is not present in the official W3C protocol
+    // we find it useful and keep it for good in Appium
+    GET: {command: 'getSession'},
     DELETE: {command: 'deleteSession'},
   },
   '/session/:sessionId/timeouts': {

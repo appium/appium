@@ -6,7 +6,7 @@ import type {
   LogFilter,
 } from './types';
 
-const DEFAULT_REPLACER = '**SECURE**';
+export const DEFAULT_SECURE_REPLACER = '**SECURE**';
 
 /**
  * Type guard for log filter type
@@ -42,7 +42,7 @@ export class SecureValuesPreprocessor {
    */
   parseRule(rule: string | LogFilter): SecureValuePreprocessingRule {
     let pattern: string | undefined;
-    let replacer = DEFAULT_REPLACER;
+    let replacer = DEFAULT_SECURE_REPLACER;
     let flags = ['g'];
     if (_.isString(rule)) {
       if (rule.length === 0) {
@@ -142,7 +142,7 @@ export class SecureValuesPreprocessor {
 
     let result = str;
     for (const rule of this._rules) {
-      result = result.replace(rule.pattern, rule.replacer ?? DEFAULT_REPLACER);
+      result = result.replace(rule.pattern, rule.replacer ?? DEFAULT_SECURE_REPLACER);
     }
     return result;
   }

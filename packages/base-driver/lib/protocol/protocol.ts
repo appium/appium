@@ -397,7 +397,7 @@ function buildHandler(
       getLogger(driver, req.params.sessionId).debug(
         `Calling ` +
           `${driver.constructor.name}.${spec.command}() with args: ` +
-          markSensitive(_.truncate(JSON.stringify(args), {length: MAX_LOG_BODY_LENGTH})),
+          logger.markSensitive(_.truncate(JSON.stringify(args), {length: MAX_LOG_BODY_LENGTH})),
       );
 
       if (didPluginOverrideProxy) {

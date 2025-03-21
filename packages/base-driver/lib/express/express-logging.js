@@ -3,7 +3,7 @@ import '@colors/colors';
 import morgan from 'morgan';
 import log from './logger';
 import {MAX_LOG_BODY_LENGTH} from '../constants';
-import {markSensitive} from '@appium/support/lib/logging';
+import {logger} from '@appium/support';
 
 // Copied the morgan compile function over so that cooler formats
 // may be configured
@@ -52,7 +52,7 @@ const startLogFormatter = morgan(
         });
       } catch {}
     }
-    log.info(requestStartLoggingFormat(tokens, req, res), markSensitive(reqBody).grey);
+    log.info(requestStartLoggingFormat(tokens, req, res), logger.markSensitive(reqBody).grey);
   },
   {immediate: true}
 );

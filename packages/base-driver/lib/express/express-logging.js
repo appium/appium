@@ -52,7 +52,7 @@ const startLogFormatter = morgan(
         });
       } catch {}
     }
-    log.info(requestStartLoggingFormat(tokens, req, res), logger.markSensitive(reqBody).grey);
+    log.info(requestStartLoggingFormat(tokens, req, res), logger.markSensitive(reqBody.grey));
   },
   {immediate: true}
 );

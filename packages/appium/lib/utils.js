@@ -56,6 +56,16 @@ export const inspect = _.flow(
 );
 
 /**
+ * Checks if the given object is valid W3C capabilities
+ *
+ * @param {any} caps
+ * @returns {caps is W3CCapabilities<any>}
+ */
+export function isW3cCaps(caps) {
+  return _.isPlainObject(caps) && (_.isArray(caps?.firstMatch) || _.isPlainObject(caps?.alwaysMatch));
+}
+
+/**
  * Takes the caps that were provided in the request and translates them
  * into caps that can be used by the inner drivers.
  *
@@ -70,19 +80,15 @@ export function parseCapsForInnerDriver(
   constraints = /** @type {C} */ ({}),
   defaultCapabilities = {}
 ) {
-  // Check if the caller sent JSONWP caps, W3C caps, or both
-  const hasW3CCaps =
-    _.isPlainObject(w3cCapabilities) &&
-    (_.has(w3cCapabilities, 'alwaysMatch') || _.has(w3cCapabilities, 'firstMatch'));
-  let desiredCaps = /** @type {ParsedDriverCaps<C>['desiredCaps']} */ ({});
-  /** @type {ParsedDriverCaps<C>['processedW3CCapabilities'] | undefined} */
-  let processedW3CCapabilities;
-
-  if (!hasW3CCaps) {
+  if (!isW3cCaps(w3cCapabilities)) {
     return /** @type {InvalidCaps<C>} */ ({
       error: makeNonW3cCapsError(),
     });
   }
+
+  let desiredCaps = /** @type {ParsedDriverCaps<C>['desiredCaps']} */ ({});
+  /** @type {ParsedDriverCaps<C>['processedW3CCapabilities'] | undefined} */
+  let processedW3CCapabilities;
 
   // Make sure we don't mutate the original arguments
   w3cCapabilities = _.cloneDeep(w3cCapabilities);

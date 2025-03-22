@@ -336,18 +336,18 @@ describe('FakeDriver via HTTP', function () {
       let driver = await wdio({...wdOpts, capabilities: localCaps});
       should.exist(driver.sessionId);
       driver.addCommand(
-        'getSessions',
-        async () => (await axios.get(`${testServerBaseUrl}/sessions`)).data.value
+        'getStatus',
+        async () => (await axios.get(`${testServerBaseUrl}/status`)).data.value
       );
 
       // get the session list 6 times over 300ms. each request will be below the new command
       // timeout but since they are not received by the driver the session should still time out
       for (let i = 0; i < 6; i++) {
-        await driver.getSessions();
+        await driver.getStatus();
         await B.delay(50);
       }
       await driver.getPageSource().should.eventually.be.rejectedWith(/terminated/);
-      await driver.getSessions().should.eventually.be.empty;
+      await driver.getStatus().should.eventually.be.empty;
     });
 
     it('should accept valid W3C capabilities and start a W3C session', async function () {
@@ -553,18 +553,19 @@ describe('FakeDriver via HTTP', function () {
         .stub(FakeDriver.prototype, 'createSession')
         .callsFake(async function (jsonwpCaps) {
           const res = await BaseDriver.prototype.createSession.call(this, jsonwpCaps);
-          this.protocol.should.equal('MJSONWP');
+          this.protocol.should.equal('W3C');
           return res;
         });
-
-      const res = await axios.post(testServerBaseSessionUrl, combinedCaps, {
-        validateStatus: null,
-      });
-      const {data, status} = res;
-      status.should.eql(500);
-      data.value.message.should.match(/older capabilities/);
-
-      createSessionStub.restore();
+      try {
+        const res = await axios.post(testServerBaseSessionUrl, combinedCaps, {
+          validateStatus: null,
+        });
+        const {data, status} = res;
+        status.should.eql(500);
+        data.value.message.should.match(/older capabilities/);
+      } finally {
+        createSessionStub.restore();
+      }
     });
 
     it('should allow drivers to update the method map with new routes and commands', async function () {

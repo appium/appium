@@ -161,9 +161,9 @@ class FakePlugin extends BasePlugin {
   }
 
   async findElement(next, driver, ...args) {
-    this.logger.info(`Before findElement is run with args ${JSON.stringify(args)}`);
+    this.log.info(`Before findElement is run with args ${JSON.stringify(args)}`);
     const originalRes = await next();
-    this.logger.info(`After findElement is run`);
+    this.log.info(`After findElement is run`);
     originalRes.fake = true;
     return originalRes;
   }

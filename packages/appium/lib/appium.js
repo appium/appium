@@ -21,6 +21,7 @@ import {
   pullSettings,
   makeNonW3cCapsError,
   validateFeatures,
+  isW3cCaps,
 } from './utils';
 import {util} from '@appium/support';
 import {getDefaultsForExtension} from './schema';
@@ -263,18 +264,17 @@ class AppiumDriver extends DriverCore {
   async createSession(w3cCapabilities1, w3cCapabilities2, w3cCapabilities3) {
     const defaultCapabilities = _.cloneDeep(this.args.defaultCapabilities);
     const defaultSettings = pullSettings(defaultCapabilities);
-    const w3cCapabilities = _.cloneDeep(w3cCapabilities3 ?? w3cCapabilities2 ?? w3cCapabilities1);
-    if (
-      !_.isPlainObject(w3cCapabilities) ||
-      !(_.isArray(w3cCapabilities?.firstMatch) || _.isPlainObject(w3cCapabilities?.alwaysMatch))
-    ) {
+    const w3cCapabilities = _.cloneDeep(
+      [w3cCapabilities3, w3cCapabilities2, w3cCapabilities1].find(isW3cCaps)
+    );
+    if (!w3cCapabilities) {
       throw makeNonW3cCapsError();
     }
     const w3cSettings = {
       ...defaultSettings,
-      ...pullSettings((w3cCapabilities ?? {}).alwaysMatch ?? {}),
+      ...pullSettings(w3cCapabilities.alwaysMatch ?? {}),
     };
-    for (const firstMatchEntry of (w3cCapabilities ?? {}).firstMatch ?? []) {
+    for (const firstMatchEntry of w3cCapabilities.firstMatch ?? []) {
       Object.assign(w3cSettings, pullSettings(firstMatchEntry));
     }
 

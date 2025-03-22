@@ -33,8 +33,7 @@ export const METHOD_MAP = /** @type {const} */ ({
     },
   },
   '/session/:sessionId': {
-    // Even though this command is not present in the official W3C protocol
-    // we find it useful and keep it for good in Appium
+    // TODO: Decide on the future of this route later
     GET: {command: 'getSession'},
     DELETE: {command: 'deleteSession'},
   },

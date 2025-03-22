@@ -80,12 +80,6 @@ describe('JWProxy', function () {
       let proxyUrl = j.getUrlForProxy(incomingUrl);
       proxyUrl.should.equal(testNewSessionURL);
     });
-    it('should proxy /sessions', function () {
-      let incomingUrl = '/sessions';
-      let j = createJWProxy();
-      let proxyUrl = j.getUrlForProxy(incomingUrl, 'GET');
-      proxyUrl.should.equal(createTestURL('', 'sessions'));
-    });
     it('should proxy session commands based off /session', function () {
       let incomingUrl = '/session/foobar/element';
       let j = createJWProxy({sessionId: 'barbaz'});

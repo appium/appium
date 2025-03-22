@@ -217,7 +217,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
           await axios.post(`${testServerBaseSessionUrl}/${sessionId}/context`, {
             name: 'PROXY',
           });
-          const handle = (await axios.get(`${testServerBaseSessionUrl}/${sessionId}/window/handle`))
+          const handle = (await axios.get(`${testServerBaseSessionUrl}/${sessionId}/window`))
             .data.value;
           handle.should.eql('<<proxied via proxyCommand>>');
         } finally {

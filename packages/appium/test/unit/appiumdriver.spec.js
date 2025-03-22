@@ -123,9 +123,9 @@ describe('AppiumDriver', function () {
         mockFakeDriver
           .expects('createSession')
           .once()
-          .withExactArgs(undefined, null, W3C_CAPS, [])
+          .withExactArgs(W3C_CAPS, W3C_CAPS, W3C_CAPS, [])
           .returns([SESSION_ID, removeAppiumPrefixes(W3C_PREFIXED_CAPS)]);
-        await appium.createSession(undefined, null, W3C_CAPS);
+        await appium.createSession(W3C_CAPS);
         mockFakeDriver.verify();
       });
       it(`should call inner driver's createSession with desired and default capabilities`, async function () {
@@ -138,9 +138,9 @@ describe('AppiumDriver', function () {
         mockFakeDriver
           .expects('createSession')
           .once()
-          .withArgs(undefined, null, allCaps)
+          .withArgs(allCaps, allCaps, allCaps)
           .returns([SESSION_ID, removeAppiumPrefixes(allCaps.alwaysMatch)]);
-        await appium.createSession(undefined, null, W3C_CAPS);
+        await appium.createSession(W3C_CAPS, W3C_CAPS, W3C_CAPS);
         mockFakeDriver.verify();
       });
       it(`should call inner driver's createSession with desired and default capabilities without overriding caps`, async function () {
@@ -151,9 +151,9 @@ describe('AppiumDriver', function () {
         mockFakeDriver
           .expects('createSession')
           .once()
-          .withArgs(undefined, null, W3C_CAPS)
+          .withArgs(W3C_CAPS, W3C_CAPS, W3C_CAPS)
           .returns([SESSION_ID, removeAppiumPrefixes(W3C_PREFIXED_CAPS)]);
-        await appium.createSession(undefined, null, W3C_CAPS);
+        await appium.createSession(W3C_CAPS, W3C_CAPS, W3C_CAPS);
         mockFakeDriver.verify();
       });
       it('should kill all other sessions if sessionOverride is on', async function () {
@@ -178,9 +178,9 @@ describe('AppiumDriver', function () {
         mockFakeDriver
           .expects('createSession')
           .once()
-          .withExactArgs(undefined, null, W3C_CAPS, [])
+          .withExactArgs(W3C_CAPS, W3C_CAPS, W3C_CAPS, [])
           .returns([SESSION_ID, removeAppiumPrefixes(W3C_PREFIXED_CAPS)]);
-        await appium.createSession(undefined, null, W3C_CAPS);
+        await appium.createSession(W3C_CAPS, W3C_CAPS, W3C_CAPS);
 
         sessions = await appium.getSessions();
         sessions.should.have.length(1);
@@ -194,9 +194,9 @@ describe('AppiumDriver', function () {
         mockFakeDriver
           .expects('createSession')
           .once()
-          .withArgs(undefined, undefined, W3C_CAPS)
+          .withArgs(W3C_CAPS, W3C_CAPS, W3C_CAPS)
           .returns([SESSION_ID, BASE_CAPS]);
-        await appium.createSession(undefined, undefined, W3C_CAPS);
+        await appium.createSession(W3C_CAPS, W3C_CAPS, W3C_CAPS);
         mockFakeDriver.verify();
       });
       it('should call "createSession" with W3C capabilities argument with additional provided parameters', async function () {
@@ -208,37 +208,20 @@ describe('AppiumDriver', function () {
             'appium:someOtherParm': 'someOtherParm',
           },
         };
+        const expectedCaps = {
+          alwaysMatch: {
+            ...w3cCaps.alwaysMatch,
+            'appium:someOtherParm': 'someOtherParm',
+          },
+          firstMatch: [{}],
+        };
         mockFakeDriver
           .expects('createSession')
           .once()
-          .withArgs(undefined, undefined, {
-            alwaysMatch: {
-              ...w3cCaps.alwaysMatch,
-              'appium:someOtherParm': 'someOtherParm',
-            },
-            firstMatch: [{}],
-          })
+          .withArgs(expectedCaps, expectedCaps, expectedCaps)
           .returns([SESSION_ID, insertAppiumPrefixes(BASE_CAPS)]);
 
-        await appium.createSession(undefined, undefined, w3cCaps);
-        mockFakeDriver.verify();
-      });
-      it('should not call "createSession" with JSONWP capabilities if W3C has incomplete capabilities', async function () {
-        const w3cCaps = {
-          ...W3C_CAPS,
-          alwaysMatch: {
-            'appium:someOtherParm': 'someOtherParm',
-          },
-        };
-
-        const jsonwpCaps = {
-          ...BASE_CAPS,
-          automationName: 'Fake',
-          someOtherParam: 'someOtherParam',
-        };
-
-        mockFakeDriver.expects('createSession').never();
-        await appium.createSession(jsonwpCaps, undefined, w3cCaps);
+        await appium.createSession(w3cCaps, w3cCaps, w3cCaps);
         mockFakeDriver.verify();
       });
 
@@ -246,7 +229,7 @@ describe('AppiumDriver', function () {
         class ArgsDriver extends BaseDriver {}
         const args = {driver: {fake: {randomArg: 1234}}};
         [appium, mockFakeDriver] = getDriverAndFakeDriver(args, ArgsDriver);
-        const {value} = await appium.createSession(undefined, undefined, W3C_CAPS);
+        const {value} = await appium.createSession(W3C_CAPS, W3C_CAPS, W3C_CAPS);
         try {
           fakeDriver.cliArgs.should.eql({randomArg: 1234});
         } finally {

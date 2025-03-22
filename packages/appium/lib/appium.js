@@ -14,6 +14,7 @@ import {
   promoteAppiumOptions,
   promoteAppiumOptionsForObject,
   generateDriverLogPrefix,
+  isW3cCaps,
 } from '@appium/base-driver';
 import AsyncLock from 'async-lock';
 import {
@@ -21,7 +22,6 @@ import {
   pullSettings,
   makeNonW3cCapsError,
   validateFeatures,
-  isW3cCaps,
 } from './utils';
 import {util} from '@appium/support';
 import {getDefaultsForExtension} from './schema';

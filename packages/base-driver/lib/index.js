@@ -54,6 +54,8 @@ export {BIDI_COMMANDS} from './protocol/bidi-commands';
 
 export {generateDriverLogPrefix} from './basedriver/helpers';
 
+export {isW3cCaps} from './helpers/capabilities';
+
 /**
  * @typedef {import('./express/server').ServerOpts} ServerOpts
  */

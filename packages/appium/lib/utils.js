@@ -4,6 +4,7 @@ import {
   processCapabilities,
   STANDARD_CAPS,
   errors,
+  isW3cCaps,
 } from '@appium/base-driver';
 import {inspect as dump} from 'util';
 import {node, fs} from '@appium/support';
@@ -54,16 +55,6 @@ export const inspect = _.flow(
     logger.info(...args);
   }
 );
-
-/**
- * Checks if the given object is valid W3C capabilities
- *
- * @param {any} caps
- * @returns {caps is W3CCapabilities<any>}
- */
-export function isW3cCaps(caps) {
-  return _.isPlainObject(caps) && (_.isArray(caps?.firstMatch) || _.isPlainObject(caps?.alwaysMatch));
-}
 
 /**
  * Takes the caps that were provided in the request and translates them

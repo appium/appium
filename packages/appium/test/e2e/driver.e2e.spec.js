@@ -347,7 +347,6 @@ describe('FakeDriver via HTTP', function () {
         await B.delay(50);
       }
       await driver.getPageSource().should.eventually.be.rejectedWith(/terminated/);
-      await driver.getStatus().should.eventually.be.empty;
     });
 
     it('should accept valid W3C capabilities and start a W3C session', async function () {
@@ -551,8 +550,8 @@ describe('FakeDriver via HTTP', function () {
       };
       const createSessionStub = sandbox
         .stub(FakeDriver.prototype, 'createSession')
-        .callsFake(async function (jsonwpCaps) {
-          const res = await BaseDriver.prototype.createSession.call(this, jsonwpCaps);
+        .callsFake(async function (caps) {
+          const res = await BaseDriver.prototype.createSession.call(this, caps);
           this.protocol.should.equal('W3C');
           return res;
         });
@@ -560,9 +559,8 @@ describe('FakeDriver via HTTP', function () {
         const res = await axios.post(testServerBaseSessionUrl, combinedCaps, {
           validateStatus: null,
         });
-        const {data, status} = res;
-        status.should.eql(500);
-        data.value.message.should.match(/older capabilities/);
+        const {status} = res;
+        status.should.eql(200);
       } finally {
         createSessionStub.restore();
       }

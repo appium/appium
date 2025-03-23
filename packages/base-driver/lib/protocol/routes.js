@@ -82,7 +82,7 @@ export const METHOD_MAP = /** @type {const} */ ({
     POST: {
       command: 'setWindow',
       payloadParams: {
-        required: ['name'],
+        required: ['handle'],
       },
     },
     DELETE: {command: 'closeWindow'},

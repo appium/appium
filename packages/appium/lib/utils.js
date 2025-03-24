@@ -2,9 +2,9 @@ import _ from 'lodash';
 import logger from './logger';
 import {
   processCapabilities,
-  PROTOCOLS,
   STANDARD_CAPS,
   errors,
+  isW3cCaps,
 } from '@appium/base-driver';
 import {inspect as dump} from 'util';
 import {node, fs} from '@appium/support';
@@ -61,124 +61,89 @@ export const inspect = _.flow(
  * into caps that can be used by the inner drivers.
  *
  * @template {Constraints} C
- * @template [J=any]
- * @param {J} jsonwpCapabilities
  * @param {W3CCapabilities<C>} w3cCapabilities
  * @param {C} constraints
  * @param {NSCapabilities<C>} [defaultCapabilities]
- * @returns {ParsedDriverCaps<C,J>|InvalidCaps<C,J>}
+ * @returns {ParsedDriverCaps<C>|InvalidCaps<C>}
  */
 export function parseCapsForInnerDriver(
-  jsonwpCapabilities,
   w3cCapabilities,
   constraints = /** @type {C} */ ({}),
   defaultCapabilities = {}
 ) {
-  // Check if the caller sent JSONWP caps, W3C caps, or both
-  const hasW3CCaps =
-    _.isPlainObject(w3cCapabilities) &&
-    (_.has(w3cCapabilities, 'alwaysMatch') || _.has(w3cCapabilities, 'firstMatch'));
-  const hasJSONWPCaps = _.isPlainObject(jsonwpCapabilities);
-  let desiredCaps = /** @type {ParsedDriverCaps<C>['desiredCaps']} */ ({});
-  /** @type {ParsedDriverCaps<C>['processedW3CCapabilities']} */
-  let processedW3CCapabilities;
-  /** @type {ParsedDriverCaps<C>['processedJsonwpCapabilities']} */
-  let processedJsonwpCapabilities;
-
-  if (!hasW3CCaps) {
+  if (!isW3cCaps(w3cCapabilities)) {
     return /** @type {InvalidCaps<C>} */ ({
-      protocol: PROTOCOLS.W3C,
       error: makeNonW3cCapsError(),
     });
   }
 
-  const {W3C} = PROTOCOLS;
-  const protocol = W3C;
+  let desiredCaps = /** @type {ParsedDriverCaps<C>['desiredCaps']} */ ({});
+  /** @type {ParsedDriverCaps<C>['processedW3CCapabilities'] | undefined} */
+  let processedW3CCapabilities;
 
   // Make sure we don't mutate the original arguments
-  jsonwpCapabilities = _.cloneDeep(jsonwpCapabilities);
   w3cCapabilities = _.cloneDeep(w3cCapabilities);
   defaultCapabilities = _.cloneDeep(defaultCapabilities);
 
   if (!_.isEmpty(defaultCapabilities)) {
-    if (hasW3CCaps) {
-      for (const [defaultCapKey, defaultCapValue] of _.toPairs(defaultCapabilities)) {
-        let isCapAlreadySet = false;
-        // Check if the key is already present in firstMatch entries
-        for (const firstMatchEntry of w3cCapabilities.firstMatch ?? []) {
-          if (
-            _.isPlainObject(firstMatchEntry) &&
-            _.has(removeAppiumPrefixes(firstMatchEntry), removeAppiumPrefix(defaultCapKey))
-          ) {
-            isCapAlreadySet = true;
-            break;
-          }
-        }
-        // Check if the key is already present in alwaysMatch entries
-        isCapAlreadySet =
-          isCapAlreadySet ||
-          (_.isPlainObject(w3cCapabilities.alwaysMatch) &&
-            _.has(
-              removeAppiumPrefixes(w3cCapabilities.alwaysMatch),
-              removeAppiumPrefix(defaultCapKey)
-            ));
-        if (isCapAlreadySet) {
-          // Skip if the key is already present in the provided caps
-          continue;
-        }
-
-        // Only add the default capability if it is not overridden
-        if (_.isEmpty(w3cCapabilities.firstMatch)) {
-          w3cCapabilities.firstMatch = /** @type {W3CCapabilities<C>['firstMatch']} */ ([
-            {[defaultCapKey]: defaultCapValue},
-          ]);
-        } else {
-          w3cCapabilities.firstMatch[0][defaultCapKey] = defaultCapValue;
+    for (const [defaultCapKey, defaultCapValue] of _.toPairs(defaultCapabilities)) {
+      let isCapAlreadySet = false;
+      // Check if the key is already present in firstMatch entries
+      for (const firstMatchEntry of w3cCapabilities.firstMatch ?? []) {
+        if (
+          _.isPlainObject(firstMatchEntry) &&
+          _.has(removeAppiumPrefixes(firstMatchEntry), removeAppiumPrefix(defaultCapKey))
+        ) {
+          isCapAlreadySet = true;
+          break;
         }
       }
-    }
-    if (hasJSONWPCaps) {
-      jsonwpCapabilities = {
-        ...removeAppiumPrefixes(defaultCapabilities),
-        ...jsonwpCapabilities,
-      };
+      // Check if the key is already present in alwaysMatch entries
+      isCapAlreadySet =
+        isCapAlreadySet ||
+        (_.isPlainObject(w3cCapabilities.alwaysMatch) &&
+          _.has(
+            removeAppiumPrefixes(w3cCapabilities.alwaysMatch),
+            removeAppiumPrefix(defaultCapKey)
+          ));
+      if (isCapAlreadySet) {
+        // Skip if the key is already present in the provided caps
+        continue;
+      }
+
+      // Only add the default capability if it is not overridden
+      if (_.isEmpty(w3cCapabilities.firstMatch)) {
+        w3cCapabilities.firstMatch = /** @type {W3CCapabilities<C>['firstMatch']} */ ([
+          {[defaultCapKey]: defaultCapValue},
+        ]);
+      } else {
+        w3cCapabilities.firstMatch[0][defaultCapKey] = defaultCapValue;
+      }
     }
   }
 
-  // Get MJSONWP caps
-  if (hasJSONWPCaps) {
-    processedJsonwpCapabilities = {...jsonwpCapabilities};
+  // Call the process capabilities algorithm to find matching caps on the W3C
+  // (see: https://github.com/jlipps/simple-wd-spec#processing-capabilities)
+  try {
+    desiredCaps = processCapabilities(w3cCapabilities, constraints, true);
+  } catch (error) {
+    logger.info(`Could not parse W3C capabilities: ${error.message}`);
+    return /** @type {InvalidCaps<C>} */ ({
+      desiredCaps,
+      processedW3CCapabilities,
+      error,
+    });
   }
 
-  // Get W3C caps
-  if (hasW3CCaps) {
-    // Call the process capabilities algorithm to find matching caps on the W3C
-    // (see: https://github.com/jlipps/simple-wd-spec#processing-capabilities)
-    try {
-      desiredCaps = processCapabilities(w3cCapabilities, constraints, true);
-    } catch (error) {
-      logger.info(`Could not parse W3C capabilities: ${error.message}`);
-      return /** @type {InvalidCaps<C,J>} */ ({
-        desiredCaps,
-        processedJsonwpCapabilities,
-        processedW3CCapabilities,
-        protocol,
-        error,
-      });
-    }
+  // Create a new w3c capabilities payload that contains only the matching caps in `alwaysMatch`
+  processedW3CCapabilities = {
+    alwaysMatch: {...insertAppiumPrefixes(desiredCaps)},
+    firstMatch: [{}],
+  };
 
-    // Create a new w3c capabilities payload that contains only the matching caps in `alwaysMatch`
-    processedW3CCapabilities = {
-      alwaysMatch: {...insertAppiumPrefixes(desiredCaps)},
-      firstMatch: [{}],
-    };
-  }
-
-  return /** @type {ParsedDriverCaps<C,J>} */ ({
+  return /** @type {ParsedDriverCaps<C>} */ ({
     desiredCaps,
-    processedJsonwpCapabilities,
     processedW3CCapabilities,
-    protocol,
   });
 }
 
@@ -497,23 +462,17 @@ export function validateFeatures(features) {
 
 /**
  * @template {Constraints} [C=BaseDriverCapConstraints]
- * @template [J=any]
  * @typedef ParsedDriverCaps
  * @property {Capabilities<C>} desiredCaps
- * @property {string} protocol
- * @property {J} [processedJsonwpCapabilities]
- * @property {W3CCapabilities<C>} [processedW3CCapabilities]
+ * @property {W3CCapabilities<C>} processedW3CCapabilities
  */
 
 /**
  * @todo protocol is more specific
  * @template {Constraints} [C=BaseDriverCapConstraints]
- * @template [J=any]
  * @typedef InvalidCaps
  * @property {Error} error
- * @property {string} protocol
  * @property {Capabilities<C>} [desiredCaps]
- * @property {J} [processedJsonwpCapabilities]
  * @property {W3CCapabilities<C>} [processedW3CCapabilities]
  */
 

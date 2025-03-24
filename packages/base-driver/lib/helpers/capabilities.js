@@ -2,7 +2,14 @@
 
 import _ from 'lodash';
 
-function isW3cCaps(caps) {
+/**
+ * Determine whether the given agument is valid
+ * W3C capabilities instance.
+ *
+ * @param {any} caps
+ * @returns {caps is import('@appium/types').W3CCapabilities}
+ */
+export function isW3cCaps(caps) {
   if (!_.isPlainObject(caps)) {
     return false;
   }
@@ -32,7 +39,7 @@ function isW3cCaps(caps) {
  * @param {AppiumLogger} log
  * @returns {Capabilities<C>}
  */
-function fixCaps(oldCaps, desiredCapConstraints, log) {
+export function fixCaps(oldCaps, desiredCapConstraints, log) {
   let caps = _.clone(oldCaps);
 
   // boolean capabilities can be passed in as strings 'false' and 'true'
@@ -72,8 +79,6 @@ function fixCaps(oldCaps, desiredCapConstraints, log) {
 
   return caps;
 }
-
-export {isW3cCaps, fixCaps};
 
 /**
  * @typedef {import('@appium/types').Constraints} Constraints

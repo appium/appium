@@ -48,7 +48,7 @@
     "chai-as-promised": "8.0.1",
     "get-port": "5.1.1",
     "lodash": "4.17.21",
-    "sinon": "19.0.4",
+    "sinon": "19.0.5",
     "source-map-support": "0.5.21",
     "type-fest": "4.38.0"
   },

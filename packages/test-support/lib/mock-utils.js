@@ -1,4 +1,3 @@
-import B from 'bluebird';
 import sinon from 'sinon';
 
 /**
@@ -68,7 +67,7 @@ export class MockStore {
     if (this.#mocks) {
       throw new ReferenceError('Cannot create mocks twice; call `reset()` first.');
     }
-    this.sandbox = this.sandbox ?? sinon.createSandbox().usingPromise(B);
+    this.sandbox = this.sandbox ?? sinon.createSandbox();
     for (const [key, value] of Object.entries(mockDefs)) {
       this[key] = this.sandbox.mock(value);
     }

@@ -5,6 +5,9 @@ export {handleIdempotency} from './idempotency';
 import {match} from 'path-to-regexp';
 import {util} from '@appium/support';
 import {calcSignature} from '../helpers/session';
+import {getResponseForW3CError} from '../protocol/errors';
+
+const SESSION_ID_PATTERN = /\/session\/([^/]+)/;
 
 /**
  *
@@ -14,20 +17,16 @@ import {calcSignature} from '../helpers/session';
  * @returns {any}
  */
 export function allowCrossDomain(req, res, next) {
-  try {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, OPTIONS, DELETE');
-    res.header(
-      'Access-Control-Allow-Headers',
-      'Cache-Control, Pragma, Origin, X-Requested-With, Content-Type, Accept, User-Agent'
-    );
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, OPTIONS, DELETE');
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Cache-Control, Pragma, Origin, X-Requested-With, Content-Type, Accept, User-Agent'
+  );
 
-    // need to respond 200 to OPTIONS
-    if ('OPTIONS' === req.method) {
-      return res.sendStatus(200);
-    }
-  } catch (err) {
-    log.error(`Unexpected error: ${err.stack}`);
+  // need to respond 200 to OPTIONS
+  if ('OPTIONS' === req.method) {
+    return res.sendStatus(200);
   }
   next();
 }
@@ -47,26 +46,6 @@ export function allowCrossDomainAsyncExecute(basePath) {
       return next();
     }
     allowCrossDomain(req, res, next);
-  };
-}
-
-/**
- *
- * @param {string} basePath
- * @returns {import('express').RequestHandler}
- */
-export function fixPythonContentType(basePath) {
-  return (req, res, next) => {
-    // hack because python client library gives us wrong content-type
-    if (
-      new RegExp(`^${_.escapeRegExp(basePath)}`).test(req.path) &&
-      /^Python/.test(req.headers['user-agent'] ?? '')
-    ) {
-      if (req.headers['content-type'] === 'application/x-www-form-urlencoded') {
-        req.headers['content-type'] = 'application/json; charset=utf-8';
-      }
-    }
-    next();
   };
 }
 
@@ -142,19 +121,11 @@ export function catchAllHandler(err, req, res, next) {
   }
 
   log.error(`Uncaught error: ${err.message}`);
-  log.error('Sending generic error response');
-  const error = errors.UnknownError;
-  res.status(error.w3cStatus()).json(
-    patchWithSessionId(req, {
-      status: error.code(),
-      value: {
-        error: error.error(),
-        message: `An unknown server-side error occurred while processing the command: ${err.message}`,
-        stacktrace: err.stack,
-      },
-    })
+  const error = new errors.UnknownCommandError(
+    `An unknown server-side error occurred while processing the command: ${err.message}`
   );
-  log.error(err);
+  const [status, body] = getResponseForW3CError(error);
+  res.status(status).json(body);
 }
 
 /**
@@ -163,28 +134,10 @@ export function catchAllHandler(err, req, res, next) {
  */
 export function catch404Handler(req, res) {
   log.debug(`No route found for ${req.url}`);
-  const error = errors.UnknownCommandError;
-  res.status(error.w3cStatus()).json(
-    patchWithSessionId(req, {
-      status: error.code(),
-      value: {
-        error: error.error(),
-        message:
-          'The requested resource could not be found, or a request was ' +
-          'received using an HTTP method that is not supported by the mapped ' +
-          'resource',
-        stacktrace: '',
-      },
-    })
+  const error = new errors.UnknownCommandError(
+    'The requested resource could not be found, or a request was ' +
+    'received using an HTTP method that is not supported by the mapped resource'
   );
-}
-
-const SESSION_ID_PATTERN = /\/session\/([^/]+)/;
-
-function patchWithSessionId(req, body) {
-  const match = SESSION_ID_PATTERN.exec(req.url);
-  if (match) {
-    body.sessionId = match[1];
-  }
-  return body;
+  const [status, body] = getResponseForW3CError(error);
+  res.status(status).json(body);
 }

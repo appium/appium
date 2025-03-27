@@ -11,7 +11,7 @@ import {
 import {isSessionCommand, routeToCommandName} from '../protocol';
 import {MAX_LOG_BODY_LENGTH, DEFAULT_BASE_PATH, PROTOCOLS} from '../constants';
 import ProtocolConverter from './protocol-converter';
-import {formatResponseValue, formatStatus} from '../protocol/helpers';
+import {formatResponseValue, ensureW3cResponse} from '../protocol/helpers';
 import http from 'http';
 import https from 'https';
 import { match as pathToRegexMatch } from 'path-to-regexp';
@@ -457,7 +457,7 @@ export class JWProxy {
       }
     }
     resBodyObj.value = formatResponseValue(resBodyObj.value);
-    res.status(statusCode).send(JSON.stringify(formatStatus(resBodyObj)));
+    res.status(statusCode).json(ensureW3cResponse(resBodyObj));
   }
 
   /**

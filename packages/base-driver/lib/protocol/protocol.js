@@ -10,7 +10,7 @@ import {
 } from './errors';
 import {METHOD_MAP, NO_SESSION_ID_COMMANDS} from './routes';
 import B from 'bluebird';
-import {formatResponseValue, formatStatus} from './helpers';
+import {formatResponseValue, ensureW3cResponse} from './helpers';
 import {MAX_LOG_BODY_LENGTH, PROTOCOLS, DEFAULT_BASE_PATH} from '../constants';
 import {isW3cCaps} from '../helpers/capabilities';
 import log from '../basedriver/logger';
@@ -29,21 +29,32 @@ function determineProtocol(createSessionArgs) {
   return _.some(createSessionArgs, isW3cCaps) ? PROTOCOLS.W3C : PROTOCOLS.MJSONWP;
 }
 
+/**
+ *
+ * @param {import('../basedriver/driver').BaseDriver} driver
+ * @param {string | null} [sessionId=null]
+ * @returns {keyof PROTOCOLS}
+ */
 function extractProtocol(driver, sessionId = null) {
-  const dstDriver = _.isFunction(driver.driverForSession)
+  const dstDriver = _.isFunction(driver.driverForSession) && sessionId
     ? driver.driverForSession(sessionId)
     : driver;
   if (dstDriver === driver) {
     // Shortcircuit if the driver instance is not an umbrella driver
     // or it is Fake driver instance, where `driver.driverForSession`
     // always returns self instance
-    return driver.protocol;
+    return driver.protocol ?? PROTOCOLS.W3C;
   }
 
   // Extract the protocol for the current session if the given driver is the umbrella one
   return dstDriver?.protocol ?? PROTOCOLS.W3C;
 }
 
+/**
+ *
+ * @param {any} command
+ * @returns {boolean}
+ */
 function isSessionCommand(command) {
   return !_.includes(NO_SESSION_ID_COMMANDS, command);
 }
@@ -287,9 +298,9 @@ function routeConfiguringFunction(driver) {
 }
 
 function buildHandler(app, method, path, spec, driver, isSessCmd) {
-  let asyncHandler = async (req, res) => {
+  let asyncHandler = async (/** @type {import('express').Request} */ req, /** @type {import('express').Response} */ res) => {
     let jsonObj = req.body;
-    let httpResBody = {};
+    let httpResBody = /** @type {any} */ ({});
     let httpStatus = 200;
     let newSessionId;
     let currentProtocol = extractProtocol(driver, req.params.sessionId);
@@ -489,24 +500,14 @@ function buildHandler(app, method, path, spec, driver, isSessCmd) {
 
     // decode the response, which is either a string or json
     if (_.isString(httpResBody)) {
-      res.status(httpStatus).send(httpResBody);
+      res.status(httpStatus)
+        .setHeader('content-type', 'application/json; charset=utf-8')
+        .send(httpResBody);
     } else {
-      if (newSessionId) {
-        if (currentProtocol === PROTOCOLS.W3C) {
-          httpResBody.value.sessionId = newSessionId;
-        } else {
-          httpResBody.sessionId = newSessionId;
-        }
-      } else {
-        httpResBody.sessionId = req.params.sessionId || null;
+      if (newSessionId && currentProtocol === PROTOCOLS.W3C) {
+        httpResBody.value.sessionId = newSessionId;
       }
-      // Don't include sessionId in W3C responses
-      if (currentProtocol === PROTOCOLS.W3C) {
-        delete httpResBody.sessionId;
-      }
-
-      httpResBody = formatStatus(httpResBody);
-      res.status(httpStatus).json(httpResBody);
+      res.status(httpStatus).json(ensureW3cResponse(httpResBody));
     }
   };
   // add the method to the app

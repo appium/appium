@@ -65,7 +65,7 @@ describe('server configuration', function () {
     const app = fakeApp();
     const configureRoutes = () => {};
     configureServer({app, addRoutes: configureRoutes});
-    app.use.callCount.should.equal(16);
+    app.use.callCount.should.equal(15);
     app.all.callCount.should.equal(4);
   });
 

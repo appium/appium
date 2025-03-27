@@ -20,6 +20,9 @@ function buildReqRes(url, method, body) {
     } catch {}
     res.sentBody = body;
   };
+  res.json = (body) => {
+    res.sentBody = body;
+  };
   return [req, res];
 }
 

@@ -154,7 +154,7 @@ export const METHOD_MAP = /** @type {const} */ ({
     POST: {
       command: 'setValue',
       payloadParams: {
-        required: ['value'],
+        required: ['text'],
       },
     },
   },

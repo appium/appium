@@ -121,9 +121,8 @@ export function catchAllHandler(err, req, res, next) {
   }
 
   log.error(`Uncaught error: ${err.message}`);
-  const error = new errors.UnknownCommandError(
-    `An unknown server-side error occurred while processing the command: ${err.message}`
-  );
+  const error = new errors.UnknownError(err);
+  error.stacktrace = err.stack;
   const [status, body] = getResponseForW3CError(error);
   res.status(status).json(body);
 }
@@ -134,10 +133,6 @@ export function catchAllHandler(err, req, res, next) {
  */
 export function catch404Handler(req, res) {
   log.debug(`No route found for ${req.url}`);
-  const error = new errors.UnknownCommandError(
-    'The requested resource could not be found, or a request was ' +
-    'received using an HTTP method that is not supported by the mapped resource'
-  );
-  const [status, body] = getResponseForW3CError(error);
+  const [status, body] = getResponseForW3CError(new errors.UnknownCommandError());
   res.status(status).json(body);
 }

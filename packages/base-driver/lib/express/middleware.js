@@ -78,7 +78,9 @@ export function fixPythonContentType(basePath) {
  * @returns {any}
  */
 export function handleLogContext(req, res, next) {
-  const requestId = util.uuidV4();
+  const requestId = Array.isArray(req.headers['x-request-id'])
+    ? req.headers['x-request-id'][0]
+    : req.headers['x-request-id'] || util.uuidV4();
 
   const sessionId = SESSION_ID_PATTERN.exec(req.url)?.[1];
   const sessionInfo = sessionId ? {sessionId, sessionSignature: calcSignature(sessionId)} : {};

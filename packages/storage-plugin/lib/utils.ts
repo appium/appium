@@ -6,7 +6,7 @@ export function toW3cResponseError(err: any): [number, Record<string, any>] {
   if (_.isFunction(getResponseForW3CError)) {
     return getResponseForW3CError(err) as [number, Record<string, any>];
   }
-  // TODO: deprecate the below after the plugin is compatible to Appium3
+  // TODO: deprecate the below after the plugin only supports Appium3+
   const protocolError = _.has(err, 'w3cStatus') ? err : new errors.UnknownError(err);
   return [protocolError.w3cStatus, {
     value: {

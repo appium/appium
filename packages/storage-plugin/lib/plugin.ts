@@ -8,7 +8,7 @@ import { AppiumServer } from '@appium/types';
 import { LRUCache } from 'lru-cache';
 import WebSocket from 'ws';
 import { EventEmitter } from 'node:stream';
-import { getResponseForW3CError } from 'appium/driver';
+import { toW3cResponseError } from './utils';
 
 const log = logger.getLogger('StoragePlugin');
 
@@ -32,7 +32,7 @@ export class StoragePlugin extends BasePlugin {
         const value = await STORAGE_HANDLERS[methodName](req, httpServer);
         body = {value: value ?? null};
       } catch (e) {
-        [status, body] = getResponseForW3CError(e);
+        [status, body] = toW3cResponseError(e);
       }
       log.debug(
         `Responding to ${methodName} with ${_.truncate(JSON.stringify(body.value), {length: 200})}`
@@ -152,7 +152,7 @@ function prepareWebSockets(httpServer: AppiumServer, itemOptions: ItemOptions): 
       // in case of a failure we do not want to close the server yet
       // in anticipation of a retry
       log.error(e);
-      const [, errorBody] = getResponseForW3CError(e);
+      const [, errorBody] = toW3cResponseError(e);
       signaler.emit('status', errorBody);
     }
   });

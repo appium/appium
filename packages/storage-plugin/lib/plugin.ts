@@ -8,7 +8,7 @@ import { AppiumServer } from '@appium/types';
 import { LRUCache } from 'lru-cache';
 import WebSocket from 'ws';
 import { EventEmitter } from 'node:stream';
-import { getResponseForW3CError } from '@appium/base-driver';
+import { getResponseForW3CError } from 'appium/driver';
 
 const log = logger.getLogger('StoragePlugin');
 

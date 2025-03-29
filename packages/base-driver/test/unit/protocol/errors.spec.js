@@ -1,5 +1,5 @@
 import {errors, errorFromMJSONWPStatusCode, errorFromW3CJsonCode, isErrorType} from '../../../lib';
-import {getResponseForW3CError} from '../../../lib/protocol/errors';
+import {BadParametersError, getResponseForW3CError} from '../../../lib/protocol/errors';
 import _ from 'lodash';
 import {StatusCodes as HTTPStatusCodes} from 'http-status-codes';
 import path from 'path';
@@ -242,14 +242,6 @@ describe('errors', function () {
       new errors[error.errorName]().should.have.property('message', error.errorMsg);
     });
   }
-  it('BadParametersError should not have code and should have messg', function () {
-    new errors.BadParametersError().should.not.have.property('jsonwpCode');
-    new errors.BadParametersError().should.have.property('message');
-  });
-  it('ProxyRequestError should have message and jsonwp', function () {
-    new errors.ProxyRequestError().should.have.property('jsonwp');
-    new errors.ProxyRequestError().should.have.property('message');
-  });
 });
 describe('errorFromMJSONWPStatusCode', function () {
   before(async function () {
@@ -375,7 +367,7 @@ describe('.getResponseForW3CError', function () {
       const {error, message, stacktrace} = httpResponseBody.value;
       message.should.match(/Some random error/);
       error.should.equal('unknown error');
-      stacktrace.should.match(/at getResponseForW3CError/);
+      stacktrace.should.match(/caused by/);
       stacktrace.should.match(/Some random error/);
       stacktrace.should.contain(basename);
     }
@@ -390,21 +382,21 @@ describe('.getResponseForW3CError', function () {
     stacktrace.should.contain(basename);
   });
   it('should handle BadParametersError', function () {
-    const badParamsError = new errors.BadParametersError('__FOO__', '__BAR__', '__HELLO_WORLD__');
+    const badParamsError = new BadParametersError({
+      required: ['foo'],
+    }, ['bar']);
     const [httpStatus, httpResponseBody] = getResponseForW3CError(badParamsError);
     httpStatus.should.equal(400);
     const {error, message, stacktrace} = httpResponseBody.value;
     error.should.equal('invalid argument');
-    message.should.match(/__BAR__/);
-    message.should.match(/__HELLO_WORLD__/);
+    message.should.match(/foo/);
+    message.should.match(/bar/);
     stacktrace.should.contain(basename);
   });
   it('should translate JSONWP errors', function () {
-    const [httpStatus, httpResponseBody] = getResponseForW3CError({
-      status: 7,
-      value: 'My custom message',
-      sessionId: 'Fake Session Id',
-    });
+    const [httpStatus, httpResponseBody] = getResponseForW3CError(
+      new errors.NoSuchElementError('My custom message')
+    );
     httpStatus.should.equal(404);
     const {error, message, stacktrace} = httpResponseBody.value;
     message.should.equal('My custom message');

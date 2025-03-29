@@ -4,11 +4,11 @@ import _ from 'lodash';
 import { tempDir, fs, logger } from '@appium/support';
 import { AddRequestResult, ItemOptions, StorageItem } from './types';
 import type { Express, Request, Response } from 'express';
-import { toW3cResponseError } from './utils';
 import { AppiumServer } from '@appium/types';
 import { LRUCache } from 'lru-cache';
 import WebSocket from 'ws';
 import { EventEmitter } from 'node:stream';
+import { toW3cResponseError } from './utils';
 
 const log = logger.getLogger('StoragePlugin');
 

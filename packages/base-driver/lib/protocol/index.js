@@ -12,7 +12,13 @@ import {
   validateExecuteMethodParams,
 } from './protocol';
 import {NO_SESSION_ID_COMMANDS, ALL_COMMANDS, METHOD_MAP, routeToCommandName} from './routes';
-import {errors, isErrorType, errorFromMJSONWPStatusCode, errorFromW3CJsonCode} from './errors';
+import {
+  errors,
+  isErrorType,
+  errorFromMJSONWPStatusCode,
+  errorFromW3CJsonCode,
+  getResponseForW3CError,
+} from './errors';
 
 export {
   routeConfiguringFunction,
@@ -34,4 +40,5 @@ export {
   GET_STATUS_COMMAND,
   LIST_DRIVER_COMMANDS_COMMAND,
   LIST_DRIVER_EXTENSIONS_COMMAND,
+  getResponseForW3CError,
 };

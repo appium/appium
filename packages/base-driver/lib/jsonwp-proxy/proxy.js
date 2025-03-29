@@ -204,7 +204,9 @@ export class JWProxy {
         try {
           reqOpts.data = JSON.parse(body);
         } catch {
-          throw new Error(`Cannot interpret the request body as valid JSON: ${truncateBody(body)}`);
+          throw new Error(
+            `Cannot interpret the request body as valid JSON:`, logger.markSensitive(truncateBody(body))
+          );
         }
       } else {
         reqOpts.data = body;
@@ -212,8 +214,8 @@ export class JWProxy {
     }
 
     this.log.debug(
-      `Proxying [${method} ${url || '/'}] to [${method} ${newUrl}] ` +
-        (reqOpts.data ? `with body: ${truncateBody(reqOpts.data)}` : 'with no body')
+      `Proxying [${method} ${url || '/'}] to [${method} ${newUrl}] ` + (reqOpts.data ? `with body:` : 'with no body'),
+      reqOpts.data ? logger.markSensitive(truncateBody(reqOpts.data)) : ''
     );
 
     const throwProxyError = (error) => {

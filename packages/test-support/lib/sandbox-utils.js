@@ -1,6 +1,5 @@
 import sinon from 'sinon';
 import _ from 'lodash';
-import B from 'bluebird';
 import {MockStore} from './mock-utils';
 
 /**
@@ -59,7 +58,7 @@ export class SandboxStore {
    * @param {Mocks} mocks
    */
   createSandbox(mocks = /** @type {Mocks} */ ({})) {
-    this.sandbox = this.sandbox ?? sinon.createSandbox().usingPromise(B);
+    this.sandbox = this.sandbox ?? sinon.createSandbox();
     this.mocks = new MockStore(this.sandbox).createMocks(mocks);
   }
 

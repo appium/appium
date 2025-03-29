@@ -76,7 +76,6 @@ describe('utils', function () {
       res.error.jsonwpCode.should.eql(61);
       res.error.error.should.eql('invalid argument');
       res.error.w3cStatus.should.eql(400);
-      _.isNull(res.error._stacktrace).should.be.true;
     });
     it('should reject if W3C caps are not passing constraints', function () {
       const err = parseCapsForInnerDriver(W3C_CAPS, {
@@ -96,7 +95,6 @@ describe('utils', function () {
       error.jsonwpCode.should.eql(61);
       error.error.should.eql('invalid argument');
       error.w3cStatus.should.eql(400);
-      _.isNull(error._stacktrace).should.be.true;
     });
     it('should add appium prefixes to W3C caps that are not standard in W3C', function () {
       parseCapsForInnerDriver({

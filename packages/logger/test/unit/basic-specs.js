@@ -1,10 +1,12 @@
 /* eslint-disable no-console */
-import { Log } from '../../lib/log';
+import { Log, markSensitive} from '../../lib/log';
 import { unleakString } from '../../lib/utils';
 import {Stream} from 'node:stream';
+import _ from 'lodash';
 
 describe('basic', function () {
   let chai;
+  /** @type {Log} */
   let log;
 
   before(async function () {
@@ -358,6 +360,15 @@ describe('basic', function () {
         log.log('verbose', 'oops', err);
         setTimeout(reject, 1000);
       });
+    });
+
+    it('replaces senstive messages', async function() {
+      log.updateAsyncStorage({isSensitive: true}, true);
+      log.log('verbose', 'test', markSensitive('log 1'));
+      _.last(log.record).message.should.eql('**SECURE**');
+      log.updateAsyncStorage({isSensitive: false}, true);
+      log.log('verbose', 'test', markSensitive('log 1'));
+      _.last(log.record).message.should.eql('log 1');
     });
 
     it('max record size', function() {

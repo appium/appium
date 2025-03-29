@@ -1128,7 +1128,9 @@ function isProtocolError(err) {
 
 /**
  * Convert an Appium error to proper W3C HTTP response
+ *
  * @param {ProtocolError|MJSONWPError} err The error that needs to be translated
+ * @returns {[number, {value: {error: string, message: string, stacktrace?: string}}]}
  */
 function getResponseForW3CError(err) {
   let httpStatus;
@@ -1158,51 +1160,13 @@ function getResponseForW3CError(err) {
     w3cErrorString = UnknownError.error();
   }
 
-  let httpResBody = {
+  const httpResBody = {
     value: {
       error: w3cErrorString,
       message: err.message,
       stacktrace: err.stacktrace || err.stack,
     },
   };
-  return [httpStatus, httpResBody];
-}
-
-/**
- * Convert an Appium error to a proper JSONWP response
- * @param {ProtocolError} err The error to be converted
- */
-function getResponseForJsonwpError(err) {
-  if (isUnknownError(err)) {
-    err = new errors.UnknownError(err);
-  }
-  // MJSONWP errors are usually 500 status code so set it to that by default
-  let httpStatus = HTTPStatusCodes.INTERNAL_SERVER_ERROR;
-
-  /** @type {HttpResultBody} */
-  let httpResBody = {
-    status: err.jsonwpCode,
-    value: {
-      message: err.message,
-    },
-  };
-
-  if (isErrorType(err, errors.BadParametersError)) {
-    // respond with a 400 if we have bad parameters
-    mjsonwpLog.debug(`Bad parameters: ${err}`);
-    httpStatus = HTTPStatusCodes.BAD_REQUEST;
-    httpResBody = err.message;
-  } else if (
-    isErrorType(err, errors.NotYetImplementedError) ||
-    isErrorType(err, errors.NotImplementedError)
-  ) {
-    // respond with a 501 if the method is not implemented
-    httpStatus = HTTPStatusCodes.NOT_IMPLEMENTED;
-  } else if (isErrorType(err, errors.NoSuchDriverError)) {
-    // respond with a 404 if there is no driver for the session
-    httpStatus = HTTPStatusCodes.NOT_FOUND;
-  }
-
   return [httpStatus, httpResBody];
 }
 
@@ -1213,7 +1177,6 @@ export {
   errorFromMJSONWPStatusCode,
   errorFromW3CJsonCode,
   getResponseForW3CError,
-  getResponseForJsonwpError,
 };
 
 /**

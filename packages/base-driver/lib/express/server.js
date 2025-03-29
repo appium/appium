@@ -9,7 +9,6 @@ import log from './logger';
 import {startLogFormatter, endLogFormatter} from './express-logging';
 import {
   allowCrossDomain,
-  fixPythonContentType,
   defaultToJSONContentType,
   catchAllHandler,
   allowCrossDomainAsyncExecute,
@@ -172,7 +171,6 @@ export function configureServer({
     app.use(allowCrossDomainAsyncExecute(basePath));
   }
   app.use(handleIdempotency);
-  app.use(fixPythonContentType(basePath));
   app.use(defaultToJSONContentType);
   app.use(bodyParser.urlencoded({extended: true}));
   app.use(methodOverride());

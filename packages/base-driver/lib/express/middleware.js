@@ -128,9 +128,7 @@ export function catchAllHandler(err, req, res, next) {
   }
 
   log.error(`Uncaught error: ${err.message}`);
-  const error = new errors.UnknownError(err);
-  error.stacktrace = err.stack;
-  const [status, body] = getResponseForW3CError(error);
+  const [status, body] = getResponseForW3CError(err);
   res.status(status).json(body);
 }
 

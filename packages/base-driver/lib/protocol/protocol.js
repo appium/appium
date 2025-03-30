@@ -7,6 +7,7 @@ import {
   getResponseForW3CError,
   errorFromMJSONWPStatusCode,
   errorFromW3CJsonCode,
+  BadParametersError,
 } from './errors';
 import {METHOD_MAP, NO_SESSION_ID_COMMANDS} from './routes';
 import B from 'bluebird';
@@ -134,7 +135,7 @@ export function checkParams(paramSets, jsonObj, protocol) {
     if (paramSets.validate) {
       let message = paramSets.validate(jsonObj, protocol);
       if (message) {
-        throw new errors.BadParametersError(message, jsonObj);
+        throw new errors.InvalidArgumentError(message);
       }
     }
   }
@@ -165,7 +166,7 @@ export function checkParams(paramSets, jsonObj, protocol) {
       return;
     }
   }
-  throw new errors.BadParametersError(paramSets, receivedParams);
+  throw new BadParametersError(paramSets, receivedParams);
 }
 
 /*

@@ -826,7 +826,7 @@ export class InvalidContextError extends ProtocolError {
   }
 }
 
-// These are aliases for UnknownMethodError
+// Aliases to UnknownMethodError
 export class NotYetImplementedError extends UnknownMethodError {
   constructor(message: string = '', cause?: Error) {
     super(message || 'Method has not yet been implemented', cause);
@@ -936,17 +936,18 @@ export class ProxyRequestError extends BaseError {
     // If the response error is an object and value is an object, it's a W3C error (for JSONWP value is a string)
     if (_.isPlainObject(responseErrorObj.value) && _.has(responseErrorObj.value, 'error')) {
       this._w3cError = responseErrorObj.value;
-      this._w3cErrorStatus = httpStatus || HTTPStatusCodes.BAD_REQUEST;
+      this._w3cErrorStatus = httpStatus;
     } else if (_.has(responseErrorObj, 'status')) {
       this._jwpError = responseErrorObj;
     }
   }
 
   getActualError(): ProtocolError {
-    // If it's MJSONWP error, returns actual error cause for request failure based on `jsonwp.status`
     if (util.hasValue(this._jwpError?.status) && util.hasValue(this._jwpError?.value)) {
+      // If it's MJSONWP error, returns actual error cause for request failure based on `jsonwp.status`
       return errorFromMJSONWPStatusCode(this._jwpError.status, this._jwpError.value);
-    } else if (util.hasValue(this._w3cError) && _.isNumber(this._w3cErrorStatus) && this._w3cErrorStatus >= 300) {
+    }
+    if (util.hasValue(this._w3cError) && _.isNumber(this._w3cErrorStatus) && this._w3cErrorStatus >= 300) {
       return errorFromW3CJsonCode(
         this._w3cError.error,
         this._w3cError.message || this.message,
@@ -1045,15 +1046,12 @@ export function isErrorType<T>(err: any, type: Class<T>): err is T {
  * @return The error that is associated with provided JSONWP status code
  */
 export function errorFromMJSONWPStatusCode(code: number, value: string | {message: string} = ''): ProtocolError {
+  const ErrorClass = jsonwpErrorCodeMap[code] ?? UnknownError;
+  mjsonwpLog.debug(`Matched JSONWP error code ${code} to ${ErrorClass.name}`);
   // if `value` is an object, pull message from it, otherwise use the plain
   // value, or default to an empty string, if null
   const message = ((value || {}) as any).message || value || '';
-  if (code !== UnknownError.code() && jsonwpErrorCodeMap[code]) {
-    mjsonwpLog.debug(`Matched JSONWP error code ${code} to ${jsonwpErrorCodeMap[code].name}`);
-    return new jsonwpErrorCodeMap[code](message);
-  }
-  mjsonwpLog.debug(`Matched JSONWP error code ${code} to ${UnknownError.name}`);
-  return new UnknownError(message);
+  return new ErrorClass(message);
 }
 
 /**
@@ -1064,14 +1062,9 @@ export function errorFromMJSONWPStatusCode(code: number, value: string | {messag
  * @return The error that is associated with the W3C error string
  */
 export function errorFromW3CJsonCode(signature: string, message: string, stacktrace?: string): ProtocolError {
-  if (signature && w3cErrorCodeMap[signature.toLowerCase()]) {
-    w3cLog.debug(`Matched W3C error code '${signature}' to ${w3cErrorCodeMap[signature.toLowerCase()].name}`);
-    const resultError = new w3cErrorCodeMap[signature.toLowerCase()](message);
-    resultError.stacktrace = stacktrace;
-    return resultError;
-  }
-  w3cLog.debug(`Matched W3C error code '${signature}' to ${UnknownError.name}`);
-  const resultError = new UnknownError(message);
+  const ErrorClass = w3cErrorCodeMap[_.toLower(signature)] ?? UnknownError;
+  w3cLog.debug(`Matched W3C error code '${signature}' to ${ErrorClass.name}`);
+  const resultError = new ErrorClass(message);
   resultError.stacktrace = stacktrace;
   return resultError;
 }
@@ -1095,12 +1088,12 @@ export function getResponseForW3CError(err: any): [number, { value: W3CError }] 
   ];
 
   // err is ProtocolError
-  if ('error' in err && 'w3cStatus' in err) {
+  if (['error', 'w3cStatus'].every((prop) => _.has(err, prop))) {
     return protocolErrorToResponse(err);
   }
 
   // err is ProxyRequestError
-  if ('getActualError' in err && _.isFunction(err.getActualError)) {
+  if (_.has(err, 'getActualError') && _.isFunction(err.getActualError)) {
     return protocolErrorToResponse(err.getActualError());
   }
 

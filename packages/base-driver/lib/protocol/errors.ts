@@ -399,13 +399,16 @@ export class InsecureCertificateError extends ProtocolError {
   static error() {
     return 'insecure certificate';
   }
+  static w3cStatus() {
+    return HTTPStatusCodes.BAD_REQUEST;
+  }
 
   constructor(message: string = '', cause?: Error) {
     super(
       message ||
         'Navigation caused the user agent to hit a certificate warning, which is usually the result of an expired or invalid TLS certificate',
-      ElementIsNotSelectableError.code(),
-      UnknownError.w3cStatus(),
+      UnknownError.code(),
+      InsecureCertificateError.w3cStatus(),
       InsecureCertificateError.error(),
       cause,
     );

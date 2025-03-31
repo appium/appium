@@ -4,7 +4,7 @@
  * @module
  */
 
-import {fs, util} from '@appium/support';
+import {fs, npm, util} from '@appium/support';
 import chalk from 'chalk';
 import _ from 'lodash';
 import {EventEmitter} from 'node:events';
@@ -380,8 +380,9 @@ export class DocutilsValidator extends EventEmitter {
     if (!npmPath) {
       throw new DocutilsError(`Could not find ${NAME_NPM} in PATH. That seems weird, doesn't it?`);
     }
+
     try {
-      const {stdout: npmVersion} = await exec(npmPath, ['-v']);
+      const {stdout: npmVersion} = await npm.exec('-v', [], {cwd: this.cwd});
       if (!satisfies(npmVersion.trim(), npmEngineRange)) {
         return this.fail(`${NAME_NPM} v${npmVersion} is installed, but ${npmEngineRange} is required`);
       }
@@ -506,10 +507,15 @@ export class DocutilsValidator extends EventEmitter {
       return this.fail(`Could not find ${NAME_PACKAGE_JSON} in ${this.cwd}`);
     }
 
+    const npmPath = this.npmPath ?? (await whichNpm());
+    if (!npmPath) {
+      throw new DocutilsError(`Could not find ${NAME_NPM} in PATH. That seems weird, doesn't it?`);
+    }
+
     let typeScriptVersion: string;
     let rawTypeScriptVersion: string;
     try {
-      ({stdout: rawTypeScriptVersion} = await exec(NAME_NPM, ['exec', 'tsc', '--', '--version'], {
+      ({stdout: rawTypeScriptVersion} = await npm.exec('exec', ['tsc', '--', '--version'], {
         cwd: pkgDir,
       }));
     } catch {

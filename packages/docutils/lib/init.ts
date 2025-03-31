@@ -5,7 +5,7 @@
  */
 
 import * as JSON5 from 'json5';
-import {NAME_MKDOCS_YML, NAME_TSCONFIG_JSON, NAME_PYTHON, PIP_ENV_VARS, REQUIREMENTS_TXT_PATH} from './constants';
+import {NAME_MKDOCS_YML, NAME_TSCONFIG_JSON, PIP_ENV_VARS, REQUIREMENTS_TXT_PATH} from './constants';
 import YAML from 'yaml';
 import {exec} from 'teen_process';
 import {Simplify} from 'type-fest';
@@ -15,7 +15,7 @@ import type { ScaffoldTask } from './scaffold';
 import {getLogger} from './logger';
 import {MkDocsYml, TsConfigJson} from './model';
 import _ from 'lodash';
-import {findPython, stringifyJson5, stringifyYaml} from './fs';
+import {requirePython, stringifyJson5, stringifyYaml} from './fs';
 
 /**
  * Data for the base `mkdocs.yml` file
@@ -139,7 +139,7 @@ export async function initPython({
   dryRun = false,
   upgrade = false,
 }: InitPythonOptions = {}): Promise<void> {
-  pythonPath = pythonPath ?? (await findPython()) ?? NAME_PYTHON;
+  const foundPythonPath = await requirePython(pythonPath);
 
   const args = ['-m', 'pip', 'install', '-r', REQUIREMENTS_TXT_PATH];
   if (upgrade) {
@@ -148,19 +148,19 @@ export async function initPython({
   if (dryRun) {
     dryRunLog.info(
       'Would execute command: %s %s (environment variables: %s)',
-      pythonPath,
+      foundPythonPath,
       args.join(' '),
       PIP_ENV_VARS,
     );
   } else {
     log.debug('Executing command: %s %s (environment variables: %s)',
-      pythonPath,
+      foundPythonPath,
       args.join(' '),
       PIP_ENV_VARS,
     );
     log.info('Installing Python dependencies...');
     try {
-      const result = await exec(pythonPath, args, {env: PIP_ENV_VARS, shell: true});
+      const result = await exec(foundPythonPath, args, {env: PIP_ENV_VARS, shell: true});
       const {code, stdout} = result;
       if (code !== 0) {
         throw new DocutilsError(`Could not install Python dependencies. Reason: ${stdout}`);
@@ -171,7 +171,7 @@ export async function initPython({
       );
     }
   }
-  log.success('Installed Python dependencies (or dependencies already installed)');
+  log.success('Successfully installed Python dependencies');
 }
 
 /**

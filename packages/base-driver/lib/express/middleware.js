@@ -78,13 +78,11 @@ export function fixPythonContentType(basePath) {
  * @returns {any}
  */
 export function handleLogContext(req, res, next) {
-  const requestId = util.uuidV4();
+  const requestId = fetchHeaderValue(req, 'x-request-id') || util.uuidV4();
 
   const sessionId = SESSION_ID_PATTERN.exec(req.url)?.[1];
   const sessionInfo = sessionId ? {sessionId, sessionSignature: calcSignature(sessionId)} : {};
-  const isSensitiveHeaderValue = _.isArray(req.headers['x-appium-is-sensitive'])
-    ? _.first(req.headers['x-appium-is-sensitive'])
-    : req.headers['x-appium-is-sensitive'];
+  const isSensitiveHeaderValue = fetchHeaderValue(req, 'x-appium-is-sensitive');
 
   log.updateAsyncContext({
     requestId,
@@ -188,10 +186,26 @@ export function catch404Handler(req, res) {
 
 const SESSION_ID_PATTERN = /\/session\/([^/]+)/;
 
+/**
+ * @param {import('express').Request} req
+ * @param {any} body
+ * @returns {any}
+ */
 function patchWithSessionId(req, body) {
   const match = SESSION_ID_PATTERN.exec(req.url);
   if (match) {
     body.sessionId = match[1];
   }
   return body;
+}
+
+/**
+ * @param {import('express').Request} req
+ * @param {string} name
+ * @returns {string | undefined}
+ */
+function fetchHeaderValue(req, name) {
+  return _.isArray(req.headers[name])
+    ? req.headers[name][0]
+    : req.headers[name];
 }

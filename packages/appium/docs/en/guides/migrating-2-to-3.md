@@ -103,10 +103,140 @@ also listed, along with any extra information.
     * :octicons-arrow-right-24: `GET /session/:sessionId/alert/text`
 * `POST /session/:sessionId/alert_text`
     * :octicons-arrow-right-24: `POST /session/:sessionId/alert/text`
+* `POST /session/:sessionId/appium/app/background`
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `mobile: backgroundApp`
+    * :octicons-info-24: Supported in drivers: Espresso, UiAutomator2, XCUITest
+* `POST /session/:sessionId/appium/app/close`
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `mobile: terminateApp`
+    * :octicons-info-24: Supported in drivers: Espresso, UiAutomator2, XCUITest
+* `POST /session/:sessionId/appium/app/end_test_coverage`
+    * :octicons-no-entry-fill-12: No replacement available
+* `POST /session/:sessionId/appium/app/launch`
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `mobile: launchApp`
+    * :octicons-info-24: Supported in drivers: XCUITest
+    * :octicons-info-24: Espresso and UiAutomator2 drivers also have `mobile: activateApp`
+* `POST /session/:sessionId/appium/app/reset`
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `mobile: clearApp`
+    * :octicons-info-24: Supported in drivers: Espresso, UiAutomator2, XCUITest (simulator only)
+* `POST /session/:sessionId/appium/app/strings`
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `mobile: getAppStrings`
+    * :octicons-info-24: Supported in drivers: Espresso, UiAutomator2, XCUITest
 * `GET /session/:sessionId/appium/device/app_state`
     * :octicons-arrow-right-24: `POST /session/:sessionId/appium/device/app_state`
+* `GET /session/:sessionId/appium/device/current_activity`
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `mobile: getCurrentActivity`
+    * :octicons-info-24: Supported in drivers: Espresso, UiAutomator2
+* `GET /session/:sessionId/appium/device/current_package`
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `mobile: getCurrentPackage`
+    * :octicons-info-24: Supported in drivers: Espresso, UiAutomator2
+* `GET /session/:sessionId/appium/device/display_density`
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `mobile: getDisplayDensity`
+    * :octicons-info-24: Supported in drivers: Espresso, UiAutomator2
+* `POST /session/:sessionId/appium/device/finger_print`
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `mobile: fingerPrint`
+    * :octicons-info-24: Supported in drivers: Espresso, UiAutomator2 (emulators only)
+* `POST /session/:sessionId/appium/device/get_clipboard`
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `mobile: getClipboard`
+    * :octicons-info-24: Supported in drivers: Espresso, UiAutomator2, XCUITest
+* `POST /session/:sessionId/appium/device/gsm_call`
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `mobile: gsmCall`
+    * :octicons-info-24: Supported in drivers: Espresso, UiAutomator2 (emulators only)
+* `POST /session/:sessionId/appium/device/gsm_signal`
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `mobile: gsmSignal`
+    * :octicons-info-24: Supported in drivers: Espresso, UiAutomator2 (emulators only)
+* `POST /session/:sessionId/appium/device/gsm_voice`
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `mobile: gsmVoice`
+    * :octicons-info-24: Supported in drivers: Espresso, UiAutomator2 (emulators only)
+* `POST /session/:sessionId/appium/device/is_locked`
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `mobile: isLocked`
+    * :octicons-info-24: Supported in drivers: Espresso, UiAutomator2, XCUITest
+* `POST /session/:sessionId/appium/device/keyevent`
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `mobile: pressKey`
+    * :octicons-info-24: Supported in drivers: Espresso, UiAutomator2
+* `POST /session/:sessionId/appium/device/lock`
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `mobile: lock`
+    * :octicons-info-24: Supported in drivers: Espresso, UiAutomator2, XCUITest
+* `POST /session/:sessionId/appium/device/long_press_keycode`
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `mobile: pressKey`
+    * :octicons-info-24: Set the `isLongPress` value in the payload data
+    * :octicons-info-24: Supported in drivers: Espresso, UiAutomator2
+* `POST /session/:sessionId/appium/device/network_speed`
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `mobile: networkSpeed`
+    * :octicons-info-24: Supported in drivers: Espresso, UiAutomator2 (emulators only)
+* `POST /session/:sessionId/appium/device/open_notifications`
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `mobile: statusBar`
+    * :octicons-info-24: Set the `command` value in the payload data to `expandNotifications`
+    * :octicons-info-24: Supported in drivers: Espresso, UiAutomator2 (which also has `mobile: openNotifications`)
+* `POST /session/:sessionId/appium/device/power_ac`
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `mobile: powerAC`
+    * :octicons-info-24: Supported in drivers: Espresso, UiAutomator2 (emulators only)
+* `POST /session/:sessionId/appium/device/power_capacity`
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `mobile: powerCapacity`
+    * :octicons-info-24: Supported in drivers: Espresso, UiAutomator2 (emulators only)
+* `POST /session/:sessionId/appium/device/press_keycode`
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `mobile: pressKey`
+    * :octicons-info-24: Supported in drivers: Espresso, UiAutomator2
+    * :octicons-info-24: XCUITest driver also has `mobile: pressButton`
+* `POST /session/:sessionId/appium/device/send_sms`
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `mobile: sendSms`
+    * :octicons-info-24: Supported in drivers: Espresso, UiAutomator2 (emulators only)
+* `POST /session/:sessionId/appium/device/set_clipboard`
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `mobile: setClipboard`
+    * :octicons-info-24: Supported in drivers: Espresso, UiAutomator2, XCUITest
+* `POST /session/:sessionId/appium/device/shake`
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `mobile: shake`
+    * :octicons-info-24: Supported in drivers: XCUITest (simulator only)
+* `POST /session/:sessionId/appium/device/start_activity`
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `mobile: startActivity`
+    * :octicons-info-24: Supported in drivers: Espresso, UiAutomator2
+* `GET /session/:sessionId/appium/device/system_bars`
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `mobile: getSystemBars`
+    * :octicons-info-24: Supported in drivers: Espresso, UiAutomator2
+    * :octicons-info-24: XCUITest driver also has `mobile: deviceScreenInfo`
+* `POST /session/:sessionId/appium/device/toggle_airplane_mode`
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `mobile: setConnectivity`
+    * :octicons-info-24: Set the `airplaneMode` value in the payload data
+    * :octicons-info-24: Supported in drivers: Espresso, UiAutomator2
+* `POST /session/:sessionId/appium/device/toggle_data`
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `mobile: setConnectivity`
+    * :octicons-info-24: Set the `data` value in the payload data
+    * :octicons-info-24: Supported in drivers: Espresso, UiAutomator2
+* `POST /session/:sessionId/appium/device/toggle_location_services`
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `mobile: toggleGps`
+    * :octicons-info-24: Supported in drivers: Espresso, UiAutomator2
+* `POST /session/:sessionId/appium/device/toggle_wifi`
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `mobile: setConnectivity`
+    * :octicons-info-24: Set the `wifi` value in the payload data
+    * :octicons-info-24: Supported in drivers: Espresso, UiAutomator2
+* `POST /session/:sessionId/appium/device/unlock`
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `mobile: unlock`
+    * :octicons-info-24: Supported in drivers: Espresso, UiAutomator2, XCUITest
+* `POST /session/:sessionId/appium/element/:elementId/value`
+    * :octicons-arrow-right-24: `POST /session/:sessionId/element/:elementId/value`
+* `POST /session/:sessionId/appium/element/:elementId/replace_value`
+    * :octicons-arrow-right-24: `POST /session/:sessionId/element/:elementId/value`
+* `POST /session/:sessionId/appium/getPerformanceData`
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `mobile: getPerformanceData`
+    * :octicons-info-24: Supported in drivers: Espresso, UiAutomator2
+* `POST /session/:sessionId/appium/performanceData/types`
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `mobile: getPerformanceDataTypes`
+    * :octicons-info-24: Supported in drivers: Espresso, UiAutomator2
+* `POST /session/:sessionId/appium/receive_async_response`
+    * :octicons-no-entry-fill-12: No replacement available
+* `POST /session/:sessionId/appium/simulator/toggle_touch_id_enrollment`
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `mobile: enrollBiometric`
+    * :octicons-info-24: Supported in drivers: XCUITest (simulator only)
+* `POST /session/:sessionId/appium/simulator/touch_id`
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `mobile: sendBiometricMatch`
+    * :octicons-info-24: Supported in drivers: XCUITest (simulator only)
+* `POST /session/:sessionId/appium/start_recording_screen`
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `mobile: startMediaProjectionRecording`
+    * :octicons-info-24: Supported in drivers: Espresso, UiAutomator2
+* `POST /session/:sessionId/appium/stop_recording_screen`
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `mobile: stopMediaProjectionRecording`
+    * :octicons-info-24: Supported in drivers: Espresso, UiAutomator2
 * `GET /session/:sessionId/application_cache/status`
-    * :octicons-no-entry-fill-12: No W3C replacement available
+    * :octicons-no-entry-fill-12: No replacement available
 * `POST /session/:sessionId/buttondown`
     * :octicons-arrow-right-24: `POST /session/:sessionId/actions`
     * :octicons-info-24: Use the `pointerDown` action in the [W3C Actions API](https://www.w3.org/TR/webdriver2/#actions)
@@ -124,21 +254,21 @@ also listed, along with any extra information.
 * `POST /session/:sessionId/element/active`
     * :octicons-arrow-right-24: `GET /session/:sessionId/element/active`
 * `GET /session/:sessionId/element/:elementId/equals/:otherId`
-    * :octicons-no-entry-fill-12: No W3C replacement available
+    * :octicons-no-entry-fill-12: No replacement available
 * `GET /session/:sessionId/element/:elementId/location`
     * :octicons-arrow-right-24: `GET /session/:sessionId/element/:elementId/rect`
     * :octicons-info-24: Response also includes the `width` and `height` fields with the element
     size values
 * `GET /session/:sessionId/element/:elementId/location_in_view`
-    * :octicons-no-entry-fill-12: No W3C replacement available
+    * :octicons-no-entry-fill-12: No replacement available
 * `GET /session/:sessionId/element/:elementId/pageIndex`
-    * :octicons-no-entry-fill-12: No W3C replacement available
+    * :octicons-no-entry-fill-12: No replacement available
 * `GET /session/:sessionId/element/:elementId/size`
     * :octicons-arrow-right-24: `GET /session/:sessionId/element/:elementId/rect`
     * :octicons-info-24: Response also includes the `x` and `y` fields with the element location
     values
 * `POST /session/:sessionId/element/:elementId/submit`
-    * :octicons-no-entry-fill-12: No W3C replacement available - the form submission button needs
+    * :octicons-no-entry-fill-12: No replacement available - the form submission button needs
     to be clicked
 * `POST /session/:sessionId/execute`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync`
@@ -148,38 +278,38 @@ also listed, along with any extra information.
     * :octicons-arrow-right-24: `POST /session/:sessionId/element/:elementId/value`
     * :fontawesome-solid-triangle-exclamation: Now requires the element ID
 * `GET /session/:sessionId/local_storage`
-    * :octicons-no-entry-fill-12: No W3C replacement available
+    * :octicons-no-entry-fill-12: No replacement available
 * `POST /session/:sessionId/local_storage`
-    * :octicons-no-entry-fill-12: No W3C replacement available
+    * :octicons-no-entry-fill-12: No replacement available
 * `DELETE /session/:sessionId/local_storage`
-    * :octicons-no-entry-fill-12: No W3C replacement available
+    * :octicons-no-entry-fill-12: No replacement available
 * `GET /session/:sessionId/local_storage/key/:key`
-    * :octicons-no-entry-fill-12: No W3C replacement available
+    * :octicons-no-entry-fill-12: No replacement available
 * `DELETE /session/:sessionId/local_storage/key/:key`
-    * :octicons-no-entry-fill-12: No W3C replacement available
+    * :octicons-no-entry-fill-12: No replacement available
 * `GET /session/:sessionId/local_storage/size`
-    * :octicons-no-entry-fill-12: No W3C replacement available
+    * :octicons-no-entry-fill-12: No replacement available
 * `POST /session/:sessionId/log`
     * :octicons-arrow-right-24: `POST /session/:sessionId/se/log`
-* `POST /session/:sessionId/log/types`
-    * :octicons-arrow-right-24: `POST /session/:sessionId/se/log/types`
+* `GET /session/:sessionId/log/types`
+    * :octicons-arrow-right-24: `GET /session/:sessionId/se/log/types`
 * `POST /session/:sessionId/moveto`
     * :octicons-arrow-right-24: `POST /session/:sessionId/actions`
     * :octicons-info-24: Use the `pointerMove` action in the [W3C Actions API](https://www.w3.org/TR/webdriver2/#actions)
 * `GET /session/:sessionId/screenshot/:elementId`
     * :octicons-arrow-right-24: `GET /session/:sessionId/element/:elementId/screenshot`
 * `GET /session/:sessionId/session_storage`
-    * :octicons-no-entry-fill-12: No W3C replacement available
+    * :octicons-no-entry-fill-12: No replacement available
 * `POST /session/:sessionId/session_storage`
-    * :octicons-no-entry-fill-12: No W3C replacement available
+    * :octicons-no-entry-fill-12: No replacement available
 * `DELETE /session/:sessionId/session_storage`
-    * :octicons-no-entry-fill-12: No W3C replacement available
+    * :octicons-no-entry-fill-12: No replacement available
 * `GET /session/:sessionId/session_storage/key/:key`
-    * :octicons-no-entry-fill-12: No W3C replacement available
+    * :octicons-no-entry-fill-12: No replacement available
 * `DELETE /session/:sessionId/session_storage/key/:key`
-    * :octicons-no-entry-fill-12: No W3C replacement available
+    * :octicons-no-entry-fill-12: No replacement available
 * `GET /session/:sessionId/session_storage/size`
-    * :octicons-no-entry-fill-12: No W3C replacement available
+    * :octicons-no-entry-fill-12: No replacement available
 * `POST /session/:sessionId/timeouts/async_script`
     * :octicons-arrow-right-24: `POST /session/:sessionId/timeouts`
     * :octicons-info-24: Set the `script` value in the payload data

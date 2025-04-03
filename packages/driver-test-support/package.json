@@ -50,7 +50,7 @@
     "lodash": "4.17.21",
     "sinon": "20.0.0",
     "source-map-support": "0.5.21",
-    "type-fest": "4.39.0"
+    "type-fest": "4.39.1"
   },
   "peerDependencies": {
     "appium": "^2.0.0-beta.43",

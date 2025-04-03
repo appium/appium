@@ -275,16 +275,15 @@ the drivers which support that option:
     * :octicons-no-entry-24: No replacement available
 * `POST /session/:sessionId/buttondown`
     * :octicons-arrow-right-24: `POST /session/:sessionId/actions` with the `pointerDown` action
-    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `windows: keys` :material-microsoft-windows:
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `windows: keys`
+    :material-microsoft-windows:
 * `POST /session/:sessionId/buttonup`
     * :octicons-arrow-right-24: `POST /session/:sessionId/actions` with the `pointerUp` action
-    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `windows: keys` :material-microsoft-windows:
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `windows: keys`
+    :material-microsoft-windows:
 * `POST /session/:sessionId/click`
     * :octicons-arrow-right-24: `POST /session/:sessionId/actions` with the `pointerDown` &
     `pointerUp` actions
-    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with one of:
-        * `macos: click` or `macos: rightClick` :material-apple-finder:
-        * `windows: click` :material-microsoft-windows:
 * `POST /session/:sessionId/dismiss_alert`
     * :octicons-arrow-right-24: `POST /session/:sessionId/alert/dismiss`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with one of:
@@ -293,9 +292,6 @@ the drivers which support that option:
 * `POST /session/:sessionId/doubleclick`
     * :octicons-arrow-right-24: `POST /session/:sessionId/actions` with the `pointerDown` &
     `pointerUp` actions
-    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with one of:
-        * `macos: doubleClick` :material-apple-finder:
-        * `windows: click` :material-microsoft-windows:
 * `POST /session/:sessionId/element/active`
     * :octicons-arrow-right-24: `GET /session/:sessionId/element/active`
 * `GET /session/:sessionId/element/:elementId/equals/:otherId`
@@ -309,14 +305,13 @@ the drivers which support that option:
 * `GET /session/:sessionId/element/:elementId/size`
     * :octicons-arrow-right-24: `GET /session/:sessionId/element/:elementId/rect`
 * `POST /session/:sessionId/element/:elementId/submit`
-    * :octicons-no-entry-24: No replacement available - the form submission button needs
-    to be clicked
+    * :octicons-no-entry-24: No replacement available
 * `POST /session/:sessionId/execute`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync`
 * `POST /session/:sessionId/execute_async`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/async`
 * `POST /session/:sessionId/keys`
-    * :octicons-arrow-right-24: `POST /session/:sessionId/element/:elementId/value`
+    * :octicons-no-entry-24: No replacement available
 * `GET /session/:sessionId/local_storage`
     * :octicons-no-entry-24: No replacement available
 * `POST /session/:sessionId/local_storage`
@@ -356,17 +351,39 @@ the drivers which support that option:
 * `POST /session/:sessionId/touch/click`
     * :octicons-arrow-right-24: `POST /session/:sessionId/actions` with the `pointerDown` &
     `pointerUp` actions
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with one of:
+        * `mobile: tap` or `mobile: tapWithNumberOfTaps` :material-apple:
+        * `mobile: clickGesture` :material-android:
+        * `mobile: clickAction` :material-coffee:
+        * `macos: click`, `macos: rightClick`, `macos: press` or `macos: tap` :material-apple-finder:
+        * `windows: click` :material-microsoft-windows:
 * `POST /session/:sessionId/touch/doubleclick`
     * :octicons-arrow-right-24: `POST /session/:sessionId/actions` with the `pointerDown` &
     `pointerUp` actions
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with one of:
+        * `mobile: doubleTap` or `mobile: tapWithNumberOfTaps` :material-apple:
+        * `mobile: doubleClickGesture` :material-android:
+        * `mobile: clickAction` :material-coffee:
+        * `macos: doubleClick` or `macos: doubleTap` :material-apple-finder:
+        * `windows: click` :material-microsoft-windows:
 * `POST /session/:sessionId/touch/down`
     * :octicons-arrow-right-24: `POST /session/:sessionId/actions` with the `pointerDown` action
-* **`POST /session/:sessionId/touch/flick`**
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `windows: keys`
+    :material-microsoft-windows:
+* `POST /session/:sessionId/touch/flick`
     * :octicons-arrow-right-24: `POST /session/:sessionId/actions` with the `pointerDown`,
     `pointerMove` & `pointerUp` actions
-* **`POST /session/:sessionId/touch/longclick`**
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `mobile: flingGesture`
+    :material-android:
+* `POST /session/:sessionId/touch/longclick`
     * :octicons-arrow-right-24: `POST /session/:sessionId/actions` with the `pointerDown`, `pause`
     & `pointerUp` actions
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with one of:
+        * `mobile: touchAndHold` :material-apple:
+        * `mobile: longClickGesture` :material-android:
+        * `mobile: clickAction` :material-coffee:
+        * `macos: press` :material-apple-finder:
+        * `windows: click` :material-microsoft-windows:
 * `POST /session/:sessionId/touch/multi/perform`
     * :octicons-arrow-right-24: `POST /session/:sessionId/actions`
 * `POST /session/:sessionId/touch/move`
@@ -376,8 +393,16 @@ the drivers which support that option:
 * `POST /session/:sessionId/touch/scroll`
     * :octicons-arrow-right-24: `POST /session/:sessionId/actions` with the `pointerDown`,
     `pointerMove` & `pointerUp` actions
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with one of:
+        * `mobile: scroll` or `mobile: swipe` :material-apple:
+        * `mobile: scrollGesture` or `mobile: swipeGesture` :material-android:
+        * `mobile: swipe` :material-coffee:
+        * `macos: scroll` or `macos: swipe` :material-apple-finder:
+        * `windows: scroll` :material-microsoft-windows:
 * `POST /session/:sessionId/touch/up`
     * :octicons-arrow-right-24: `POST /session/:sessionId/actions` with the `pointerUp` action
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `windows: keys`
+    :material-microsoft-windows:
 * `GET /session/:sessionId/window_handle`
     * :octicons-arrow-right-24: `GET /session/:sessionId/window`
 * `GET /session/:sessionId/window/handle`

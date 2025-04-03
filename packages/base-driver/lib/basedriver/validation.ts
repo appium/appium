@@ -81,8 +81,11 @@ export class Validator {
       if (_.isUndefined(value) && options) {
         return `is required to be present`;
       }
-      if (!_.isUndefined(value) && _.has(options, 'allowEmpty') && !options.allowEmpty && _.isEmpty(value)) {
-        return `must not be empty`;
+      if (
+        !options?.allowEmpty &&
+        (!_.isUndefined(value) && _.isEmpty(value) || _.isString(value) && !_.trim(value))
+      ) {
+        return `must not be empty or blank`;
       }
       return null;
     }

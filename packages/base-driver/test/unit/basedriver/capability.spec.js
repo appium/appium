@@ -344,66 +344,25 @@ describe('Desired Capabilities', function () {
     }
   });
 
-  it('should still validate null/undefined/empty caps whose presence is required', async function () {
-    d.desiredCapConstraints = {
-      foo: {
-        presence: true,
-      },
-    };
-
-    await d
-      .createSession({
-        alwaysMatch: {
-          platformName: 'iOS',
-          'appium:foo': null,
+  for (const capValue of [null, '', {}, [], ' ',]) {
+    it(`should still validate ${JSON.stringify(capValue)} whose presence is required`, async function () {
+      d.desiredCapConstraints = {
+        foo: {
+          presence: true,
         },
-        firstMatch: [{}],
-      })
-      .should.be.rejectedWith(/required/);
+      };
 
-    await d
-      // @ts-expect-error `null` is not actually allowed here
-      .createSession(null, {
-        alwaysMatch: {
-          platformName: 'iOS',
-          'appium:foo': '',
-        },
-        firstMatch: [{}],
-      })
-      .should.be.rejectedWith(/blank/);
-
-    await d
-      .createSession({
-        firstMatch: [
-          {
+      await d
+        .createSession({
+          alwaysMatch: {
             platformName: 'iOS',
-            'appium:foo': {},
+            'appium:foo': capValue,
           },
-        ],
-        alwaysMatch: {},
-      })
-      .should.be.rejectedWith(/blank/);
-
-    await d
-      .createSession({
-        alwaysMatch: {
-          platformName: 'iOS',
-          'appium:foo': [],
-        },
-        firstMatch: [{}],
-      })
-      .should.be.rejectedWith(/blank/);
-
-    await d
-      .createSession({
-        alwaysMatch: {
-          platformName: 'iOS',
-          'appium:foo': '  ',
-        },
-        firstMatch: [{}],
-      })
-      .should.be.rejectedWith(/blank/);
-  });
+          firstMatch: [{}],
+        })
+        .should.be.rejectedWith(/(blank|required)/);
+    });
+  }
 
   describe('w3c', function () {
     it('should accept w3c capabilities', async function () {

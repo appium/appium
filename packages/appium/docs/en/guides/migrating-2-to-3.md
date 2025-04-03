@@ -35,9 +35,10 @@ close-to-direct replacements in either standard W3C endpoints, other Appium endp
 driver-specific extension commands. These endpoints, along with replacements (where applicable)
 are listed [in the **Removed Endpoints** section](#removed).
 
-Some standard W3C endpoints used in Appium 2 were also present in the old JSONWP specification, but
-required different parameters. Appium 3 changes these endpoints to only accept the W3C parameters.
-These endpoints are listed [in the **Modified Endpoints** section](#modified).
+Some W3C endpoints used in Appium 2 were also defined in old JSONWP specification, but required
+different parameters, and Appium 2 supported both parameter sets for the same endpoints. Appium 3
+changes these endpoints to only accept the W3C parameters. These endpoints are listed
+[in the **Modified Endpoints** section](#modified).
 
 !!! info "Actions Needed"
 

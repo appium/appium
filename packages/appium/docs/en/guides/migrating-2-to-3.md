@@ -312,7 +312,8 @@ the drivers which support that option:
 * `POST /session/:sessionId/execute_async`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/async`
 * `POST /session/:sessionId/keys`
-    * :octicons-no-entry-24: No replacement available
+    * :octicons-arrow-right-24: `POST /session/:sessionId/actions` with the `keyDown` & `keyUp`
+    actions
 * `GET /session/:sessionId/local_storage`
     * :octicons-no-entry-24: No replacement available
 * `POST /session/:sessionId/local_storage`

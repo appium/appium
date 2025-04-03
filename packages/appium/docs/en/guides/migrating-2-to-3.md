@@ -1,6 +1,11 @@
 ---
 title: Migrating to Appium 3
 ---
+<style>
+    .md-typeset .grid {
+        grid-template-columns: repeat(auto-fit,minmax(min(100%,11rem),1fr));
+    }
+</style>
 
 This document is a guide for those who are using Appium 2 and would like to upgrade to Appium 3.
 It contains a list of breaking changes, as well as suggestions for handling them.
@@ -12,9 +17,9 @@ upgrade with fewer breaking changes, which should result in a much simpler migra
 
 ### Node 20+ Required
 
-With Appium 2, the minimum required Node version was set to `14.17.0`. Support for Node 14 had
-already ended before the release of Appium 2, which meant that even users on outdated Node versions
-were able to use it.
+With Appium 2, the minimum required Node version was `14.17.0`. Support for Node 14 had already
+ended before the release of Appium 2, which meant that even users on outdated Node versions were
+able to use it.
 
 Appium 3 drops support for outdated Node versions, and bumps the minimum required version to Node
 `20.9.0`, as well as the minimum `npm` version to `10`.
@@ -91,209 +96,220 @@ projects may want to check [the Express 5 Migration Guide](https://expressjs.com
 ### Removed
 
 The following are all endpoints removed in Appium 3. Where applicable, one or more suggested
-replacement endpoints are also listed, along with any extra information.
+replacement endpoints are also listed, along with any extra information. Since many of the
+suggested options are specific to certain drivers, where applicable, icons are used to indicate
+the drivers which support that option:
+
+<div class="grid cards" markdown>
+
+-   :material-apple:{ .lg } - [XCUITest driver](https://appium.github.io/appium-xcuitest-driver/latest/)
+-   :material-android:{ .lg } - [UiAutomator2 driver](https://github.com/appium/appium-uiautomator2-driver/)
+-   :material-coffee:{ .lg } - [Espresso driver](https://github.com/appium/appium-espresso-driver)
+-   :material-apple-finder:{ .lg } - [Mac2 driver](https://github.com/appium/appium-mac2-driver)
+-   :material-microsoft-windows:{ .lg } - [Windows driver](https://github.com/appium/appium-windows-driver)
+
+</div>
 
 * `GET /sessions`
     * :octicons-arrow-right-24: `GET /appium/sessions`
 * `POST /session/:sessionId/accept_alert`
     * :octicons-arrow-right-24: `POST /session/:sessionId/alert/accept`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with one of:
-        * `mobile: alert` [^xcui]
-        * `mobile: acceptAlert` [^uia2]
+        * `mobile: alert` :material-apple:
+        * `mobile: acceptAlert` :material-android:
 * `GET /session/:sessionId/alert_text`
     * :octicons-arrow-right-24: `GET /session/:sessionId/alert/text`
 * `POST /session/:sessionId/alert_text`
     * :octicons-arrow-right-24: `POST /session/:sessionId/alert/text`
 * `POST /session/:sessionId/appium/app/background`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with
-    `mobile: backgroundApp` [^xcui] [^uia2] [^espr]
+    `mobile: backgroundApp` :material-apple: :material-android: :material-coffee:
 * `POST /session/:sessionId/appium/app/close`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with one of:
-        * `mobile: terminateApp` [^xcui] [^uia2] [^espr]
-        * `macos: terminateApp` [^mac]
-        * `windows: closeApp` [^win]
+        * `mobile: terminateApp` :material-apple: :material-android: :material-coffee:
+        * `macos: terminateApp` :material-apple-finder:
+        * `windows: closeApp` :material-microsoft-windows:
 * `POST /session/:sessionId/appium/app/end_test_coverage`
-    * :octicons-no-entry-fill-12: No replacement available
+    * :octicons-no-entry-24: No replacement available
 * `POST /session/:sessionId/appium/app/launch`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with one of:
-        * `mobile: launchApp` [^xcui]
-        * `mobile: activateApp` [^uia2] [^espr]
-        * `macos: launchApp` or `macos: activateApp` [^mac]
-        * `windows: launchApp` [^win]
+        * `mobile: launchApp` :material-apple:
+        * `mobile: activateApp` :material-android: :material-coffee:
+        * `macos: launchApp` or `macos: activateApp` :material-apple-finder:
+        * `windows: launchApp` :material-microsoft-windows:
 * `POST /session/:sessionId/appium/app/reset`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with
-    `mobile: clearApp` [^xcui] [^uia2] [^espr]
-    * :octicons-info-24: XCUITest driver supports this only in simulators
+    `mobile: clearApp` :material-apple: [^sim] :material-android: :material-coffee:
 * `POST /session/:sessionId/appium/app/strings`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with
-    `mobile: getAppStrings` [^xcui] [^uia2] [^espr]
+    `mobile: getAppStrings` :material-apple: :material-android: :material-coffee:
 * `GET /session/:sessionId/appium/device/app_state`
     * :octicons-arrow-right-24: `POST /session/:sessionId/appium/device/app_state`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with one of:
-        * `mobile: queryAppState` [^xcui] [^uia2] [^espr]
-        * `macos: queryAppState` [^mac]
+        * `mobile: queryAppState` :material-apple: :material-android: :material-coffee:
+        * `macos: queryAppState` :material-apple-finder:
 * `GET /session/:sessionId/appium/device/current_activity`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with
-    `mobile: getCurrentActivity` [^uia2] [^espr]
+    `mobile: getCurrentActivity` :material-android: :material-coffee:
 * `GET /session/:sessionId/appium/device/current_package`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with
-    `mobile: getCurrentPackage` [^uia2] [^espr]
+    `mobile: getCurrentPackage` :material-android: :material-coffee:
 * `GET /session/:sessionId/appium/device/display_density`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with
-    `mobile: getDisplayDensity` [^uia2] [^espr]
+    `mobile: getDisplayDensity` :material-android: :material-coffee:
 * `POST /session/:sessionId/appium/device/finger_print`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with
-    `mobile: fingerPrint` [^uia2] [^espr] [^sim]
+    `mobile: fingerPrint` :material-android: [^sim] :material-coffee: [^sim]
 * `POST /session/:sessionId/appium/device/get_clipboard`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with one of:
-        * `mobile: getClipboard` [^xcui] [^uia2] [^espr]
-        * `mobile: getPasteboard` [^xcui] [^sim]
-        * `windows: getClipboard` [^win]
+        * `mobile: getClipboard` :material-apple: :material-android: :material-coffee:
+        * `mobile: getPasteboard` :material-apple: [^sim]
+        * `windows: getClipboard` :material-microsoft-windows:
 * `POST /session/:sessionId/appium/device/gsm_call`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with
-    `mobile: gsmCall` [^uia2] [^espr] [^sim]
+    `mobile: gsmCall` :material-android: [^sim] :material-coffee: [^sim]
 * `POST /session/:sessionId/appium/device/gsm_signal`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with
-    `mobile: gsmSignal` [^uia2] [^espr] [^sim]
+    `mobile: gsmSignal` :material-android: [^sim] :material-coffee: [^sim]
 * `POST /session/:sessionId/appium/device/gsm_voice`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with
-    `mobile: gsmVoice` [^uia2] [^espr] [^sim]
+    `mobile: gsmVoice` :material-android: [^sim] :material-coffee: [^sim]
 * `POST /session/:sessionId/appium/device/is_locked`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with
-    `mobile: isLocked` [^xcui] [^uia2] [^espr]
+    `mobile: isLocked` :material-apple: :material-android: :material-coffee:
 * `POST /session/:sessionId/appium/device/keyevent`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with one of:
-        * `mobile: pressKey` [^uia2] [^espr]
-        * `macos: keys` [^mac]
-        * `windows: keys` [^win]
-    * :octicons-info-24: XCUITest driver also supports `mobile: keys` on iPadOS
+        * `mobile: keys` :material-apple: (iPadOS only)
+        * `mobile: pressKey` :material-android: :material-coffee:
+        * `macos: keys` :material-apple-finder:
+        * `windows: keys` :material-microsoft-windows:
 * `POST /session/:sessionId/appium/device/lock`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with
-    `mobile: lock` [^xcui] [^uia2] [^espr]
+    `mobile: lock` :material-apple: :material-android: :material-coffee:
 * `POST /session/:sessionId/appium/device/long_press_keycode`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with
-    `mobile: pressKey` [^uia2] [^espr]
+    `mobile: pressKey` :material-android: :material-coffee:
 * `POST /session/:sessionId/appium/device/network_speed`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with
-    `mobile: networkSpeed` [^uia2] [^espr] [^sim]
+    `mobile: networkSpeed` :material-android: [^sim] :material-coffee: [^sim]
 * `POST /session/:sessionId/appium/device/open_notifications`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with one of:
-        * `mobile: statusBar` [^uia2] [^espr]
-        * `mobile: openNotifications` [^uia2]
+        * `mobile: statusBar` :material-android: :material-coffee:
+        * `mobile: openNotifications` :material-android:
 * `POST /session/:sessionId/appium/device/power_ac`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with
-    `mobile: powerAC` [^uia2] [^espr] [^sim]
+    `mobile: powerAC` :material-android: [^sim] :material-coffee: [^sim]
 * `POST /session/:sessionId/appium/device/power_capacity`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with
-    `mobile: powerCapacity` [^uia2] [^espr] [^sim]
+    `mobile: powerCapacity` :material-android: [^sim] :material-coffee: [^sim]
 * `POST /session/:sessionId/appium/device/press_keycode`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with one of:
-        * `mobile: pressKey` [^uia2] [^espr]
-        * `macos: keys` [^mac]
-        * `windows: keys` [^win]
-    * :octicons-info-24: XCUITest driver also supports `mobile: keys` on iPadOS
+        * `mobile: keys` :material-apple: (iPadOS only)
+        * `mobile: pressKey` :material-android: :material-coffee:
+        * `macos: keys` :material-apple-finder:
+        * `windows: keys` :material-microsoft-windows:
 * `POST /session/:sessionId/appium/device/send_sms`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with
-    `mobile: sendSms` [^uia2] [^espr] [^sim]
+    `mobile: sendSms` :material-android: [^sim] :material-coffee: [^sim]
 * `POST /session/:sessionId/appium/device/set_clipboard`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with one of:
-        * `mobile: setClipboard` [^xcui] [^uia2] [^espr]
-        * `mobile: setPasteboard` [^xcui] [^sim]
-        * `windows: setClipboard` [^win]
+        * `mobile: setClipboard` :material-apple: :material-android: :material-coffee:
+        * `mobile: setPasteboard` :material-apple: [^sim]
+        * `windows: setClipboard` :material-microsoft-windows:
 * `POST /session/:sessionId/appium/device/shake`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with
-    `mobile: shake` [^xcui] [^sim]
+    `mobile: shake` :material-apple: [^sim]
 * `POST /session/:sessionId/appium/device/start_activity`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with
-    `mobile: startActivity` [^uia2] [^espr]
+    `mobile: startActivity` :material-android: :material-coffee:
 * `GET /session/:sessionId/appium/device/system_bars`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with one of:
-        * `mobile: deviceScreenInfo` [^xcui]
-        * `mobile: getSystemBars` [^uia2] [^espr]
+        * `mobile: deviceScreenInfo` :material-apple:
+        * `mobile: getSystemBars` :material-android: :material-coffee:
 * `POST /session/:sessionId/appium/device/toggle_airplane_mode`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with
-    `mobile: setConnectivity` [^uia2] [^espr]
+    `mobile: setConnectivity` :material-android: :material-coffee:
 * `POST /session/:sessionId/appium/device/toggle_data`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with
-    `mobile: setConnectivity` [^uia2] [^espr]
+    `mobile: setConnectivity` :material-android: :material-coffee:
 * `POST /session/:sessionId/appium/device/toggle_location_services`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with
-    `mobile: toggleGps` [^uia2] [^espr]
+    `mobile: toggleGps` :material-android: :material-coffee:
 * `POST /session/:sessionId/appium/device/toggle_wifi`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with
-    `mobile: setConnectivity` [^uia2] [^espr]
+    `mobile: setConnectivity` :material-android: :material-coffee:
 * `POST /session/:sessionId/appium/device/unlock`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with
-    `mobile: unlock` [^xcui] [^uia2] [^espr]
+    `mobile: unlock` :material-apple: :material-android: :material-coffee:
 * `POST /session/:sessionId/appium/element/:elementId/value`
     * :octicons-arrow-right-24: `POST /session/:sessionId/element/:elementId/value`
 * `POST /session/:sessionId/appium/element/:elementId/replace_value`
     * :octicons-arrow-right-24: `POST /session/:sessionId/element/:elementId/value`
 * `POST /session/:sessionId/appium/getPerformanceData`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with
-    `mobile: getPerformanceData` [^uia2] [^espr]
+    `mobile: getPerformanceData` :material-android: :material-coffee:
 * `POST /session/:sessionId/appium/performanceData/types`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with
-    `mobile: getPerformanceDataTypes` [^uia2] [^espr]
+    `mobile: getPerformanceDataTypes` :material-android: :material-coffee:
 * `POST /session/:sessionId/appium/receive_async_response`
-    * :octicons-no-entry-fill-12: No replacement available
+    * :octicons-no-entry-24: No replacement available
 * `POST /session/:sessionId/appium/simulator/toggle_touch_id_enrollment`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with
-    `mobile: enrollBiometric` [^xcui] [^sim]
+    `mobile: enrollBiometric` :material-apple: [^sim]
 * `POST /session/:sessionId/appium/simulator/touch_id`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with
-    `mobile: sendBiometricMatch` [^xcui] [^sim]
+    `mobile: sendBiometricMatch` :material-apple: [^sim]
 * `POST /session/:sessionId/appium/start_recording_screen`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with one of:
-        * `mobile: startXCTestScreenRecording` [^xcui]
-        * `mobile: startMediaProjectionRecording` [^uia2] [^espr]
-        * `macos: startRecordingScreen` or `macos: startNativeScreenRecording` [^mac]
-        * `windows: startRecordingScreen` [^win]
+        * `mobile: startXCTestScreenRecording` :material-apple:
+        * `mobile: startMediaProjectionRecording` :material-android: :material-coffee:
+        * `macos: startRecordingScreen` or `macos: startNativeScreenRecording` :material-apple-finder:
+        * `windows: startRecordingScreen` :material-microsoft-windows:
 * `POST /session/:sessionId/appium/stop_recording_screen`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with one of:
-        * `mobile: stopXCTestScreenRecording` [^xcui]
-        * `mobile: stopMediaProjectionRecording` [^uia2] [^espr]
-        * `macos: stopRecordingScreen` or `macos: stopNativeScreenRecording` [^mac]
-        * `windows: stopRecordingScreen` [^win]
+        * `mobile: stopXCTestScreenRecording` :material-apple:
+        * `mobile: stopMediaProjectionRecording` :material-android: :material-coffee:
+        * `macos: stopRecordingScreen` or `macos: stopNativeScreenRecording` :material-apple-finder:
+        * `windows: stopRecordingScreen` :material-microsoft-windows:
 * `GET /session/:sessionId/application_cache/status`
-    * :octicons-no-entry-fill-12: No replacement available
+    * :octicons-no-entry-24: No replacement available
 * `POST /session/:sessionId/buttondown`
     * :octicons-arrow-right-24: `POST /session/:sessionId/actions` with the `pointerDown` action
-    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `windows: keys` [^win]
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `windows: keys` :material-microsoft-windows:
 * `POST /session/:sessionId/buttonup`
     * :octicons-arrow-right-24: `POST /session/:sessionId/actions` with the `pointerUp` action
-    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `windows: keys` [^win]
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `windows: keys` :material-microsoft-windows:
 * `POST /session/:sessionId/click`
     * :octicons-arrow-right-24: `POST /session/:sessionId/actions` with the `pointerDown` &
     `pointerUp` actions
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with one of:
-        * `macos: click` or `macos: rightClick` [^mac]
-        * `windows: click` [^win]
+        * `macos: click` or `macos: rightClick` :material-apple-finder:
+        * `windows: click` :material-microsoft-windows:
 * `POST /session/:sessionId/dismiss_alert`
     * :octicons-arrow-right-24: `POST /session/:sessionId/alert/dismiss`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with one of:
-        * `mobile: alert` [^xcui]
-        * `mobile: dismissAlert` [^uia2]
+        * `mobile: alert` :material-apple:
+        * `mobile: dismissAlert` :material-android:
 * `POST /session/:sessionId/doubleclick`
     * :octicons-arrow-right-24: `POST /session/:sessionId/actions` with the `pointerDown` &
     `pointerUp` actions
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with one of:
-        * `macos: doubleClick` [^mac]
-        * `windows: click` [^win]
+        * `macos: doubleClick` :material-apple-finder:
+        * `windows: click` :material-microsoft-windows:
 * `POST /session/:sessionId/element/active`
     * :octicons-arrow-right-24: `GET /session/:sessionId/element/active`
 * `GET /session/:sessionId/element/:elementId/equals/:otherId`
-    * :octicons-no-entry-fill-12: No replacement available
+    * :octicons-no-entry-24: No replacement available
 * `GET /session/:sessionId/element/:elementId/location`
     * :octicons-arrow-right-24: `GET /session/:sessionId/element/:elementId/rect`
 * `GET /session/:sessionId/element/:elementId/location_in_view`
-    * :octicons-no-entry-fill-12: No replacement available
+    * :octicons-no-entry-24: No replacement available
 * `GET /session/:sessionId/element/:elementId/pageIndex`
-    * :octicons-no-entry-fill-12: No replacement available
+    * :octicons-no-entry-24: No replacement available
 * `GET /session/:sessionId/element/:elementId/size`
     * :octicons-arrow-right-24: `GET /session/:sessionId/element/:elementId/rect`
 * `POST /session/:sessionId/element/:elementId/submit`
-    * :octicons-no-entry-fill-12: No replacement available - the form submission button needs
+    * :octicons-no-entry-24: No replacement available - the form submission button needs
     to be clicked
 * `POST /session/:sessionId/execute`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync`
@@ -302,17 +318,17 @@ replacement endpoints are also listed, along with any extra information.
 * `POST /session/:sessionId/keys`
     * :octicons-arrow-right-24: `POST /session/:sessionId/element/:elementId/value`
 * `GET /session/:sessionId/local_storage`
-    * :octicons-no-entry-fill-12: No replacement available
+    * :octicons-no-entry-24: No replacement available
 * `POST /session/:sessionId/local_storage`
-    * :octicons-no-entry-fill-12: No replacement available
+    * :octicons-no-entry-24: No replacement available
 * `DELETE /session/:sessionId/local_storage`
-    * :octicons-no-entry-fill-12: No replacement available
+    * :octicons-no-entry-24: No replacement available
 * `GET /session/:sessionId/local_storage/key/:key`
-    * :octicons-no-entry-fill-12: No replacement available
+    * :octicons-no-entry-24: No replacement available
 * `DELETE /session/:sessionId/local_storage/key/:key`
-    * :octicons-no-entry-fill-12: No replacement available
+    * :octicons-no-entry-24: No replacement available
 * `GET /session/:sessionId/local_storage/size`
-    * :octicons-no-entry-fill-12: No replacement available
+    * :octicons-no-entry-24: No replacement available
 * `POST /session/:sessionId/log`
     * :octicons-arrow-right-24: `POST /session/:sessionId/se/log`
 * `GET /session/:sessionId/log/types`
@@ -322,17 +338,17 @@ replacement endpoints are also listed, along with any extra information.
 * `GET /session/:sessionId/screenshot/:elementId`
     * :octicons-arrow-right-24: `GET /session/:sessionId/element/:elementId/screenshot`
 * `GET /session/:sessionId/session_storage`
-    * :octicons-no-entry-fill-12: No replacement available
+    * :octicons-no-entry-24: No replacement available
 * `POST /session/:sessionId/session_storage`
-    * :octicons-no-entry-fill-12: No replacement available
+    * :octicons-no-entry-24: No replacement available
 * `DELETE /session/:sessionId/session_storage`
-    * :octicons-no-entry-fill-12: No replacement available
+    * :octicons-no-entry-24: No replacement available
 * `GET /session/:sessionId/session_storage/key/:key`
-    * :octicons-no-entry-fill-12: No replacement available
+    * :octicons-no-entry-24: No replacement available
 * `DELETE /session/:sessionId/session_storage/key/:key`
-    * :octicons-no-entry-fill-12: No replacement available
+    * :octicons-no-entry-24: No replacement available
 * `GET /session/:sessionId/session_storage/size`
-    * :octicons-no-entry-fill-12: No replacement available
+    * :octicons-no-entry-24: No replacement available
 * `POST /session/:sessionId/timeouts/async_script`
     * :octicons-arrow-right-24: `POST /session/:sessionId/timeouts`
 * `POST /session/:sessionId/timeouts/implicit_wait`
@@ -404,9 +420,4 @@ still accepts in Appium 3.
     * :octicons-x-24: `name`
     * :octicons-check-24: `handle`
 
-[^xcui]: Supported in [XCUITest driver](https://appium.github.io/appium-xcuitest-driver/latest/)
-[^uia2]: Supported in [UiAutomator2 driver](https://github.com/appium/appium-uiautomator2-driver/)
-[^espr]: Supported in [Espresso driver](https://github.com/appium/appium-espresso-driver)
-[^mac]: Supported in [Mac2 driver](https://github.com/appium/appium-mac2-driver)
-[^win]: Supported in [Windows driver](https://github.com/appium/appium-windows-driver)
 [^sim]: Supported in emulators/simulators only

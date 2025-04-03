@@ -2,7 +2,7 @@
 
 import B from 'bluebird';
 import {BaseDriver, errors} from '../../../lib/index';
-import {validator} from '../../../lib/basedriver/desired-caps';
+import {validator} from '../../../lib/basedriver/validation';
 // eslint-disable-next-line import/named
 import {createSandbox} from 'sinon';
 
@@ -359,7 +359,7 @@ describe('Desired Capabilities', function () {
         },
         firstMatch: [{}],
       })
-      .should.be.rejectedWith(/blank/);
+      .should.be.rejectedWith(/required/);
 
     await d
       // @ts-expect-error `null` is not actually allowed here

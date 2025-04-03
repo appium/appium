@@ -81,7 +81,7 @@ describe('utils', function () {
       const err = parseCapsForInnerDriver(W3C_CAPS, {
         hello: {presence: true},
       }).error;
-      err.message.should.match(/'hello' can't be blank/);
+      err.message.should.match(/required/);
       _.isError(err).should.be.true;
     });
     it('should only accept W3C caps that have passing constraints', function () {

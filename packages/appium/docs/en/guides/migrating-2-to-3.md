@@ -314,6 +314,7 @@ the drivers which support that option:
 * `POST /session/:sessionId/keys`
     * :octicons-arrow-right-24: `POST /session/:sessionId/actions` with the `keyDown` & `keyUp`
     actions
+        * Selenium-based clients can also use [Send Keys](https://www.selenium.dev/documentation/webdriver/actions_api/keyboard/#send-keys)
 * `GET /session/:sessionId/local_storage`
     * :octicons-no-entry-24: No replacement available
 * `POST /session/:sessionId/local_storage`
@@ -332,6 +333,7 @@ the drivers which support that option:
     * :octicons-arrow-right-24: `GET /session/:sessionId/se/log/types`
 * `POST /session/:sessionId/moveto`
     * :octicons-arrow-right-24: `POST /session/:sessionId/actions` with the `pointerMove` action
+        * Selenium-based clients can also use [Move by Offset](https://www.selenium.dev/documentation/webdriver/actions_api/mouse/#move-by-offset)
 * `GET /session/:sessionId/screenshot/:elementId`
     * :octicons-arrow-right-24: `GET /session/:sessionId/element/:elementId/screenshot`
 * `GET /session/:sessionId/session_storage`
@@ -353,6 +355,7 @@ the drivers which support that option:
 * `POST /session/:sessionId/touch/click`
     * :octicons-arrow-right-24: `POST /session/:sessionId/actions` with the `pointerDown` &
     `pointerUp` actions
+        * Selenium-based clients can also use [Click and Release](https://www.selenium.dev/documentation/webdriver/actions_api/mouse/#click-and-release)
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with one of:
         * `mobile: tap` or `mobile: tapWithNumberOfTaps` :material-apple:
         * `mobile: clickGesture` :material-android:
@@ -362,6 +365,7 @@ the drivers which support that option:
 * `POST /session/:sessionId/touch/doubleclick`
     * :octicons-arrow-right-24: `POST /session/:sessionId/actions` with the `pointerDown` &
     `pointerUp` actions
+        * Selenium-based clients can also use [Double Click](https://www.selenium.dev/documentation/webdriver/actions_api/mouse/#double-click)
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with one of:
         * `mobile: doubleTap` or `mobile: tapWithNumberOfTaps` :material-apple:
         * `mobile: doubleClickGesture` :material-android:
@@ -390,6 +394,7 @@ the drivers which support that option:
     * :octicons-arrow-right-24: `POST /session/:sessionId/actions`
 * `POST /session/:sessionId/touch/move`
     * :octicons-arrow-right-24: `POST /session/:sessionId/actions` with the `pointerMove` action
+        * Selenium-based clients can also use [Move by Offset](https://www.selenium.dev/documentation/webdriver/actions_api/mouse/#move-by-offset)
 * `POST /session/:sessionId/touch/perform`
     * :octicons-arrow-right-24: `POST /session/:sessionId/actions`
 * `POST /session/:sessionId/touch/scroll`

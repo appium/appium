@@ -35,10 +35,10 @@ close-to-direct replacements in either standard W3C endpoints, other Appium endp
 driver-specific extension commands. These endpoints, along with replacements (where applicable)
 are listed [in the **Removed Endpoints** section](#removed).
 
-Some W3C endpoints used in Appium 2 were also defined in old JSONWP specification, but required
-different parameters, and Appium 2 supported both parameter sets for the same endpoints. Appium 3
-changes these endpoints to only accept the W3C parameters. These endpoints are listed
-[in the **Modified Endpoints** section](#modified).
+Some W3C endpoints used in Appium also existed in the old JSONWP standard, but required other
+parameters. With Appium 2, both standards for these endpoints were supported. Appium 3 changes
+these endpoints by removing support for the JSONWP parameters, and only accepting the W3C
+parameters. These endpoints are listed [in the **Modified Endpoints** section](#modified).
 
 !!! info "Actions Needed"
 
@@ -75,9 +75,9 @@ without a scope. Note that the behavior of the `--relaxed-security` flag remains
 
 ### Unzip Logic Removed
 
-Appium 3 removes the custom unzip logic used when working with files such as application packages.
+Appium 3 removes the custom unzip logic used when working with files like application packages.
 Such files are often only relevant to particular platforms, therefore the functionality for
-handling such operations has been moved to relevant drivers.
+handling these operations has been moved to relevant drivers.
 
 !!! info "Actions Needed"
 
@@ -430,8 +430,8 @@ the drivers which support that option:
 ### Modified
 
 The following are all endpoints modified in Appium 3, by removing handling for old or unused
-parameters. Each endpoint lists the parameters it no longer accepts, as well as the parameters it
-still accepts in Appium 3.
+parameters (note that no new parameters have been added). Each endpoint lists the parameters it no
+longer accepts, as well as the parameters it continues to accept in Appium 3.
 
 * `POST /session`
     * :octicons-x-24: `desiredCapabilities`, `requiredCapabilities`

@@ -40,7 +40,7 @@ const validators = {
     return null;
   },
   hasPossibleAttributes(value, options) {
-    if (!value || !_.isArray(value) || !options) {
+    if (!value || !_.isArray(value)) {
       // if just a bare value or empty, allow it through
       return null;
     }

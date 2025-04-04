@@ -13,7 +13,7 @@ export class Validator {
       }
 
       if (_.isString(value)) {
-        return options ? null : 'most not be of type string';
+        return options ? null : 'must not be of type string';
       }
 
       return options ? 'must be of type string' : null;
@@ -24,7 +24,7 @@ export class Validator {
       }
 
       if (_.isNumber(value)) {
-        return options ? null : 'most not be of type string';
+        return options ? null : 'must not be of type number';
       }
 
       // allow a string value
@@ -41,7 +41,7 @@ export class Validator {
       }
 
       if (_.isBoolean(value)) {
-        return options ? null : 'most not be of type boolean';
+        return options ? null : 'must not be of type boolean';
       }
 
       // allow a string value
@@ -57,7 +57,7 @@ export class Validator {
       }
 
       if (_.isPlainObject(value)) {
-        return options ? null : 'most not be a plain object';
+        return options ? null : 'must not be a plain object';
       }
 
       return options ? 'must be a plain object' : null;
@@ -68,7 +68,7 @@ export class Validator {
       }
 
       if (_.isArray(value)) {
-        return options ? null : 'most not be of type array';
+        return options ? null : 'must not be of type array';
       }
 
       return options ? 'must be of type array' : null;

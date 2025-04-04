@@ -67,7 +67,7 @@ export class Validator {
       if (optionsArr.some((opt) => opt === value)) {
         return null;
       }
-      return `must be contained by '${JSON.stringify(optionsArr)}'`;
+      return `must be contained by ${JSON.stringify(optionsArr)}`;
     },
     inclusionCaseInsensitive: (value: any, options?: any): string | null => {
       if (_.isUndefined(value) || !options) {
@@ -77,7 +77,7 @@ export class Validator {
       if (optionsArr.some((opt) => _.toLower(opt) === _.toLower(value))) {
         return null;
       }
-      return `must be contained by '${JSON.stringify(optionsArr)}'`;
+      return `must be contained by ${JSON.stringify(optionsArr)}`;
     },
     presence: (value: any, options?: any): string | null => {
       if (_.isUndefined(value) && options) {

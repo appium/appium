@@ -40,11 +40,11 @@ export class Validator {
       return 'must be of type boolean';
     },
     isObject: (value: any, options?: any): string | null => {
-      if (_.isObject(value) || _.isUndefined(value) || !options) {
+      if (_.isPlainObject(value) || _.isUndefined(value) || !options) {
         return null;
       }
 
-      return 'must be of type object';
+      return 'must be a plain object';
     },
     isArray: (value: any, options?: any): string | null => {
       if (_.isArray(value) || _.isUndefined(value) || !options) {

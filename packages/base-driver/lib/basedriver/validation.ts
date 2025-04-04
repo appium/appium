@@ -3,7 +3,10 @@ import log from './logger';
 import _ from 'lodash';
 
 export class Validator {
-  private readonly validators: Record<keyof Constraint, (value: any, options?: any, key?: string) => string | null> = {
+  private readonly _validators: Record<
+    keyof Constraint,
+    (value: any, options?: any, key?: string) => string | null
+  > = {
     isString: (value: any, options?: any): string | null => {
       if (_.isString(value) || _.isUndefined(value) || !options) {
         return null;
@@ -98,11 +101,11 @@ export class Validator {
     for (const [key, constraint] of _.toPairs(constraints)) {
       const value = values[key];
       for (const [validatorName, options] of _.toPairs(constraint)) {
-        if (!(validatorName in this.validators)) {
+        if (!(validatorName in this._validators)) {
           continue;
         }
 
-        const validationError = this.validators[validatorName](value, options, key);
+        const validationError = this._validators[validatorName](value, options, key);
         if (_.isNil(validationError)) {
           continue;
         }

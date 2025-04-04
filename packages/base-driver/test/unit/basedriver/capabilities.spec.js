@@ -39,7 +39,7 @@ describe('caps', function () {
 
     describe('throws errors if constraints are not met', function () {
       it('returns invalid argument error if "present" constraint not met on property', function () {
-        (() => validateCaps({}, {foo: {presence: true}})).should.throw(/'foo' can't be blank/);
+        (() => validateCaps({}, {foo: {presence: true}})).should.throw(/'foo' is required/);
       });
 
       it('returns the capability that was passed in if "skipPresenceConstraint" is false', function () {
@@ -69,13 +69,13 @@ describe('caps', function () {
       it('returns invalid argument error if "inclusion" constraint not met on property', function () {
         (() =>
           validateCaps({foo: '3'}, {foo: {inclusionCaseInsensitive: ['1', '2']}})).should.throw(
-          /'foo' 3 not part of 1,2/
+          /'foo' must be contained/
         );
       });
 
       it('returns invalid argument error if "inclusionCaseInsensitive" constraint not met on property', function () {
         (() => validateCaps({foo: 'a'}, {foo: {inclusion: ['A', 'B', 'C']}})).should.throw(
-          /'foo' a is not included in the list/
+          /'foo' must be contained/
         );
       });
     });
@@ -361,7 +361,7 @@ describe('caps', function () {
               presence: true,
             },
           }
-        )).should.throw(/'missingCap' can't be blank/);
+        )).should.throw(/'missingCap' is required/);
     });
 
     describe('validate Appium constraints', function () {

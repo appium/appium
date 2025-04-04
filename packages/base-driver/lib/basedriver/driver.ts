@@ -410,9 +410,9 @@ export class BaseDriver<
     } catch (e) {
       throw this.log.errorWithException(
         new errors.SessionNotCreatedError(
-          `The desiredCapabilities object was not valid for the ` +
-            `following reason(s): ${e.message}`,
-        ),
+          `Session capabilities were not valid for the ` +
+          `following reason(s): ${e.message}`, e
+        )
       );
     }
 

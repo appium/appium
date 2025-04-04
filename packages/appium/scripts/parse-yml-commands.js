@@ -5,7 +5,6 @@
 const path = require('path');
 const yaml = require('yaml');
 const {fs, util, logger} = require('@appium/support');
-const validate = require('validate.js');
 const Handlebars = require('handlebars');
 const _ = require('lodash');
 const {asyncify} = require('asyncbox');
@@ -13,47 +12,48 @@ const url = require('url');
 
 const log = logger.getLogger('YamlParser');
 
-validate.validators.array = function array(value, options, key, attributes) {
-  if (attributes[key] && !validate.isArray(attributes[key])) {
-    return `must be an array`;
-  }
-};
+const validators = {
+  isArray: (value, options) => {
+    if (_.isUndefined(value) || _.isArray(value) || !options) {
+      return null;
+    }
+    return 'must be an array';
+  },
+  presence: (value, options) => {
+    if (_.isUndefined(value) && options) {
+      return 'must be present';
+    }
+    return null;
+  },
+  hasAttributes: (value, options) => {
+    if (!value || !options) {
+      return null;
+    }
 
-validate.validators.hasAttributes = function hasAttributes(value, options) {
-  if (!value) {
-    return;
-  }
-
-  if (!_.isArray(value)) {
-    value = [value];
-  }
-
-  for (const item of value) {
-    for (const option of options) {
-      if (_.isUndefined(item[option])) {
-        return `must have attributes: ${options}`;
+    for (const item of (_.isArray(value) ? value : [value])) {
+      for (const option of options) {
+        if (!_.has(item, option)) {
+          return `must have attributes: ${options}`;
+        }
       }
     }
-  }
-};
+    return null;
+  },
+  hasPossibleAttributes(value, options) {
+    if (!value || !_.isArray(value)) {
+      // if just a bare value or empty, allow it through
+      return null;
+    }
 
-validate.validators.hasPossibleAttributes = function hasPossibleAttributes(value, options) {
-  if (!value) {
-    return;
-  }
-
-  // if just a bare value, allow it through
-  if (!_.isArray(value)) {
-    return;
-  }
-
-  for (const item of value) {
-    for (const key of _.keys(item)) {
-      if (!options.includes(key)) {
-        return `must not include '${key}'. Available options: ${options}`;
+    for (const item of value) {
+      for (const key of _.keys(item)) {
+        if (!_.includes(options, key)) {
+          return `must not include '${key}'. Available options: ${options}`;
+        }
       }
     }
-  }
+    return null;
+  },
 };
 
 const CLIENT_URL_TYPES = {
@@ -62,7 +62,7 @@ const CLIENT_URL_TYPES = {
   ios: 'iOS',
 };
 
-const validator = {
+const constraints = {
   name: {presence: true},
   short_description: {presence: true},
   example_usage: {},
@@ -87,16 +87,16 @@ const validator = {
   driver_support: {presence: true},
   'endpoint.url': {presence: true},
   'endpoint.url_parameters': {
-    array: true,
+    isArray: true,
     hasAttributes: ['name', 'description'],
   },
   'endpoint.json_parameters': {
-    array: true,
+    isArray: true,
     hasAttributes: ['name', 'description'],
   },
   'endpoint.response': {hasAttributes: ['type', 'description']},
   specifications: {presence: true},
-  links: {array: true, hasAttributes: ['name', 'url']},
+  links: {isArray: true, hasAttributes: ['name', 'url']},
 };
 
 // What range of platforms do the driver's support
@@ -273,6 +273,30 @@ async function registerSpecUrlHelper() {
 
 const YAML_DIR = path.join(__dirname, '..', 'commands-yml');
 
+function validate(values) {
+  const result = {};
+  for (const [key, constraint] of _.toPairs(constraints)) {
+    const value = values[key];
+    for (const [validatorName, options] of _.toPairs(constraint)) {
+      if (!(validatorName in validators)) {
+        continue;
+      }
+
+      const validationError = validators[validatorName](value, options, key);
+      if (_.isNil(validationError)) {
+        continue;
+      }
+
+      if (key in result) {
+        result[key].push(validationError);
+      } else {
+        result[key] = [validationError];
+      }
+    }
+  }
+  return _.isEmpty(result) ? null : result;
+}
+
 async function generateCommands() {
   await registerSpecUrlHelper();
 
@@ -295,7 +319,7 @@ async function generateCommands() {
     const inputYML = await fs.readFile(filename, 'utf8');
     const inputJSON = yaml.parse(inputYML);
     inputJSON.ymlFileName = `/${path.relative(rootFolder, filename)}`;
-    const validationErrors = validate(inputJSON, validator);
+    const validationErrors = validate(inputJSON);
     if (validationErrors) {
       throw new Error(`Data validation error for ${filename}: ${JSON.stringify(validationErrors)}`);
     }

@@ -10,7 +10,7 @@ import type {
   MergeExclusive,
 } from 'type-fest';
 import _ from 'lodash';
-import {validator} from './desired-caps';
+import {validator} from './validation';
 import {util} from '@appium/support';
 import log from './logger';
 import {errors} from '../protocol/errors';
@@ -94,9 +94,7 @@ export function validateCaps<C extends Constraints>(
     )
   ) as C;
 
-  const validationErrors = validator.validate(_.pickBy(caps, util.hasValue), constraints, {
-    fullMessages: false,
-  });
+  const validationErrors = validator.validate(_.pickBy(caps, util.hasValue), constraints);
 
   if (validationErrors) {
     const message: string[] = [];

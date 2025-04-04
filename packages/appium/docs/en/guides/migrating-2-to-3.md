@@ -131,7 +131,8 @@ the drivers which support that option:
         * `macos: terminateApp` :material-apple-finder:
         * `windows: closeApp` :material-microsoft-windows:
 * `POST /session/:sessionId/appium/app/end_test_coverage`
-    * :octicons-no-entry-24: No replacement available
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `mobile: shell`
+    :material-android: :material-coffee:
 * `POST /session/:sessionId/appium/app/launch`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with one of:
         * `mobile: launchApp` :material-apple:
@@ -273,7 +274,7 @@ the drivers which support that option:
         * `macos: stopRecordingScreen` or `macos: stopNativeScreenRecording` :material-apple-finder:
         * `windows: stopRecordingScreen` :material-microsoft-windows:
 * `GET /session/:sessionId/application_cache/status`
-    * :octicons-no-entry-24: No replacement available
+    * :octicons-no-entry-24: JSONWP protocol command with no direct replacement
 * `POST /session/:sessionId/buttondown`
     * :octicons-arrow-right-24: `POST /session/:sessionId/actions` with the `pointerDown` action
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with `windows: keys`
@@ -296,17 +297,17 @@ the drivers which support that option:
 * `POST /session/:sessionId/element/active`
     * :octicons-arrow-right-24: `GET /session/:sessionId/element/active`
 * `GET /session/:sessionId/element/:elementId/equals/:otherId`
-    * :octicons-no-entry-24: No replacement available
+    * :octicons-no-entry-24: JSONWP protocol command with no direct replacement
 * `GET /session/:sessionId/element/:elementId/location`
     * :octicons-arrow-right-24: `GET /session/:sessionId/element/:elementId/rect`
 * `GET /session/:sessionId/element/:elementId/location_in_view`
-    * :octicons-no-entry-24: No replacement available
+    * :octicons-no-entry-24: JSONWP protocol command with no direct replacement
 * `GET /session/:sessionId/element/:elementId/pageIndex`
-    * :octicons-no-entry-24: No replacement available
+    * :octicons-no-entry-24: MJSONWP protocol command with no direct replacement
 * `GET /session/:sessionId/element/:elementId/size`
     * :octicons-arrow-right-24: `GET /session/:sessionId/element/:elementId/rect`
 * `POST /session/:sessionId/element/:elementId/submit`
-    * :octicons-no-entry-24: No replacement available
+    * :octicons-no-entry-24: JSONWP protocol command with no direct replacement
 * `POST /session/:sessionId/execute`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync`
 * `POST /session/:sessionId/execute_async`
@@ -316,17 +317,17 @@ the drivers which support that option:
     actions
         * Selenium-based clients can also use [Send Keys](https://www.selenium.dev/documentation/webdriver/actions_api/keyboard/#send-keys)
 * `GET /session/:sessionId/local_storage`
-    * :octicons-no-entry-24: No replacement available
+    * :octicons-no-entry-24: JSONWP protocol command with no direct replacement
 * `POST /session/:sessionId/local_storage`
-    * :octicons-no-entry-24: No replacement available
+    * :octicons-no-entry-24: JSONWP protocol command with no direct replacement
 * `DELETE /session/:sessionId/local_storage`
-    * :octicons-no-entry-24: No replacement available
+    * :octicons-no-entry-24: JSONWP protocol command with no direct replacement
 * `GET /session/:sessionId/local_storage/key/:key`
-    * :octicons-no-entry-24: No replacement available
+    * :octicons-no-entry-24: JSONWP protocol command with no direct replacement
 * `DELETE /session/:sessionId/local_storage/key/:key`
-    * :octicons-no-entry-24: No replacement available
+    * :octicons-no-entry-24: JSONWP protocol command with no direct replacement
 * `GET /session/:sessionId/local_storage/size`
-    * :octicons-no-entry-24: No replacement available
+    * :octicons-no-entry-24: JSONWP protocol command with no direct replacement
 * `POST /session/:sessionId/log`
     * :octicons-arrow-right-24: `POST /session/:sessionId/se/log`
 * `GET /session/:sessionId/log/types`
@@ -337,17 +338,17 @@ the drivers which support that option:
 * `GET /session/:sessionId/screenshot/:elementId`
     * :octicons-arrow-right-24: `GET /session/:sessionId/element/:elementId/screenshot`
 * `GET /session/:sessionId/session_storage`
-    * :octicons-no-entry-24: No replacement available
+    * :octicons-no-entry-24: JSONWP protocol command with no direct replacement
 * `POST /session/:sessionId/session_storage`
-    * :octicons-no-entry-24: No replacement available
+    * :octicons-no-entry-24: JSONWP protocol command with no direct replacement
 * `DELETE /session/:sessionId/session_storage`
-    * :octicons-no-entry-24: No replacement available
+    * :octicons-no-entry-24: JSONWP protocol command with no direct replacement
 * `GET /session/:sessionId/session_storage/key/:key`
-    * :octicons-no-entry-24: No replacement available
+    * :octicons-no-entry-24: JSONWP protocol command with no direct replacement
 * `DELETE /session/:sessionId/session_storage/key/:key`
-    * :octicons-no-entry-24: No replacement available
+    * :octicons-no-entry-24: JSONWP protocol command with no direct replacement
 * `GET /session/:sessionId/session_storage/size`
-    * :octicons-no-entry-24: No replacement available
+    * :octicons-no-entry-24: JSONWP protocol command with no direct replacement
 * `POST /session/:sessionId/timeouts/async_script`
     * :octicons-arrow-right-24: `POST /session/:sessionId/timeouts`
 * `POST /session/:sessionId/timeouts/implicit_wait`

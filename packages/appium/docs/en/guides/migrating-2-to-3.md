@@ -135,7 +135,7 @@ the drivers which support that option:
 * `POST /session/:sessionId/appium/app/launch`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with one of:
         * `mobile: launchApp` :material-apple:
-        * `mobile: activateApp` :material-android: :material-coffee:
+        * `mobile: activateApp` or `mobile: startActivity` :material-android: :material-coffee:
         * `macos: launchApp` or `macos: activateApp` :material-apple-finder:
         * `windows: launchApp` :material-microsoft-windows:
 * `POST /session/:sessionId/appium/app/reset`
@@ -253,7 +253,7 @@ the drivers which support that option:
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with
     `mobile: getPerformanceDataTypes` :material-android: :material-coffee:
 * `POST /session/:sessionId/appium/receive_async_response`
-    * :octicons-no-entry-24: No replacement available
+    * :octicons-arrow-right-24: `POST /session/:sessionId/execute/async`
 * `POST /session/:sessionId/appium/simulator/toggle_touch_id_enrollment`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/sync` with
     `mobile: enrollBiometric` :material-apple: [^sim]

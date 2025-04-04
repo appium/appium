@@ -26,7 +26,7 @@ const validators = {
     return null;
   },
   hasAttributes: (value, options) => {
-    if (!value) {
+    if (!value || !options) {
       return null;
     }
 
@@ -40,7 +40,7 @@ const validators = {
     return null;
   },
   hasPossibleAttributes(value, options) {
-    if (!value || !_.isArray(value)) {
+    if (!value || !_.isArray(value) || !options) {
       // if just a bare value or empty, allow it through
       return null;
     }

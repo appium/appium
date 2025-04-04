@@ -8,50 +8,70 @@ export class Validator {
     (value: any, options?: any, key?: string) => string | null
   > = {
     isString: (value: any, options?: any): string | null => {
-      if (_.isString(value) || _.isUndefined(value) || !options) {
+      if (_.isUndefined(value) || _.isNil(options)) {
         return null;
       }
 
-      return 'must be of type string';
+      if (_.isString(value)) {
+        return options ? null : 'most not be of type string';
+      }
+
+      return options ? 'must be of type string' : null;
     },
     isNumber: (value: any, options?: any): string | null => {
-      if (_.isNumber(value) || _.isUndefined(value) || !options) {
+      if (_.isUndefined(value) || _.isNil(options)) {
         return null;
+      }
+
+      if (_.isNumber(value)) {
+        return options ? null : 'most not be of type string';
       }
 
       // allow a string value
-      if (_.isString(value) && !isNaN(Number(value))) {
+      if (options && _.isString(value) && !isNaN(Number(value))) {
         log.warn('Number capability passed in as string. Functionality may be compromised.');
         return null;
       }
 
-      return 'must be of type number';
+      return options ? 'must be of type number' : null;
     },
     isBoolean: (value: any, options?: any): string | null => {
-      if (_.isBoolean(value) || _.isUndefined(value) || !options) {
+      if (_.isUndefined(value) || _.isNil(options)) {
         return null;
+      }
+
+      if (_.isBoolean(value)) {
+        return options ? null : 'most not be of type boolean';
       }
 
       // allow a string value
-      if (_.isString(value) && ['true', 'false', ''].includes(value)) {
+      if (options && _.isString(value) && ['true', 'false', ''].includes(value)) {
         return null;
       }
 
-      return 'must be of type boolean';
+      return options ? 'must be of type boolean' : null;
     },
     isObject: (value: any, options?: any): string | null => {
-      if (_.isPlainObject(value) || _.isUndefined(value) || !options) {
+      if (_.isUndefined(value) || _.isNil(options)) {
         return null;
       }
 
-      return 'must be a plain object';
+      if (_.isPlainObject(value)) {
+        return options ? null : 'most not be a plain object';
+      }
+
+      return options ? 'must be a plain object' : null;
     },
     isArray: (value: any, options?: any): string | null => {
-      if (_.isArray(value) || _.isUndefined(value) || !options) {
+      if (_.isUndefined(value) || _.isNil(options)) {
         return null;
       }
 
-      return 'must be of type array';
+      if (_.isArray(value)) {
+        return options ? null : 'most not be of type array';
+      }
+
+      return options ? 'must be of type array' : null;
     },
     deprecated: (value: any, options?: any, key?: string): string | null => {
       if (!_.isUndefined(value) && options) {
@@ -90,7 +110,7 @@ export class Validator {
         !options?.allowEmpty &&
         ((!_.isUndefined(value) && _.isEmpty(value)) || (_.isString(value) && !_.trim(value)))
       ) {
-        return `must not be empty or blank`;
+        return 'must not be empty or blank';
       }
       return null;
     }

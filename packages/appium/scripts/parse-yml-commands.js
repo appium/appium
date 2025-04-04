@@ -17,11 +17,11 @@ const validators = {
     if (_.isUndefined(value) || _.isArray(value) || !options) {
       return null;
     }
-    return ` must be an array`;
+    return 'must be an array';
   },
   presence: (value, options) => {
     if (_.isUndefined(value) && options) {
-      return `must be present`;
+      return 'must be present';
     }
     return null;
   },

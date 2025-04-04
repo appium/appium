@@ -344,7 +344,7 @@ describe('Desired Capabilities', function () {
     }
   });
 
-  for (const capValue of [null, '', {}, [], ' ',]) {
+  for (const capValue of [null, '', {}, [], ' ']) {
     it(`should still validate ${JSON.stringify(capValue)} whose presence is required`, async function () {
       d.desiredCapConstraints = {
         foo: {

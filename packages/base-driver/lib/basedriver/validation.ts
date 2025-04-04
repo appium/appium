@@ -85,7 +85,7 @@ export class Validator {
       }
       if (
         !options?.allowEmpty &&
-        (!_.isUndefined(value) && _.isEmpty(value) || _.isString(value) && !_.trim(value))
+        ((!_.isUndefined(value) && _.isEmpty(value)) || (_.isString(value) && !_.trim(value)))
       ) {
         return `must not be empty or blank`;
       }

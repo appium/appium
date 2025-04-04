@@ -29,7 +29,7 @@ describe('Desired Capabilities', function () {
     d = new BaseDriver();
     sandbox = createSandbox();
     logWarnSpy = sandbox.spy(d.log, 'warn');
-    deprecatedStub = sandbox.stub(validator.validators, 'deprecated');
+    deprecatedStub = sandbox.stub(validator._validators, 'deprecated');
   });
 
   afterEach(function () {

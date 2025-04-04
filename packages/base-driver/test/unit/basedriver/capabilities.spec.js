@@ -69,13 +69,13 @@ describe('caps', function () {
       it('returns invalid argument error if "inclusion" constraint not met on property', function () {
         (() =>
           validateCaps({foo: '3'}, {foo: {inclusionCaseInsensitive: ['1', '2']}})).should.throw(
-          /'foo'.*not part of.*/
+          /'foo' must be contained/
         );
       });
 
       it('returns invalid argument error if "inclusionCaseInsensitive" constraint not met on property', function () {
         (() => validateCaps({foo: 'a'}, {foo: {inclusion: ['A', 'B', 'C']}})).should.throw(
-          /'foo'.*not part of.*/
+          /'foo' must be contained/
         );
       });
     });

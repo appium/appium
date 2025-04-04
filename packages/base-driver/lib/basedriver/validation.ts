@@ -63,23 +63,25 @@ export class Validator {
       if (_.isUndefined(value) || !options) {
         return null;
       }
-      if (_.isArray(options) && options.some((opt) => opt === value)) {
+      const optionsArr = _.isArray(options) ? options : [options];
+      if (optionsArr.some((opt) => opt === value)) {
         return null;
       }
-      return `-> '${value}' not part of '${options ?? []}'`;
+      return `must be contained by '${JSON.stringify(optionsArr)}'`;
     },
     inclusionCaseInsensitive: (value: any, options?: any): string | null => {
       if (_.isUndefined(value) || !options) {
         return null;
       }
-      if (_.isArray(options) && options.some((opt) => _.toLower(opt) === _.toLower(value))) {
+      const optionsArr = _.isArray(options) ? options : [options];
+      if (optionsArr.some((opt) => _.toLower(opt) === _.toLower(value))) {
         return null;
       }
-      return `-> '${value}' not part of '${options ?? []}'`;
+      return `must be contained by '${JSON.stringify(optionsArr)}'`;
     },
     presence: (value: any, options?: any): string | null => {
       if (_.isUndefined(value) && options) {
-        return `is required to be present`;
+        return 'is required to be present';
       }
       if (
         !options?.allowEmpty &&

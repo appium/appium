@@ -154,7 +154,7 @@
     "typescript": "5.8.2",
     "typescript-eslint": "8.29.0",
     "validate.js": "0.13.1",
-    "webdriverio": "9.12.2",
+    "webdriverio": "9.12.3",
     "ws": "8.18.1",
     "yaml-js": "0.3.1"
   },

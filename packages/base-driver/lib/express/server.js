@@ -122,7 +122,7 @@ export async function server(opts) {
       // once all configurations and updaters have been applied, make sure to set up a catchall
       // handler so that anything unknown 404s. But do this after everything else since we don't
       // want to block extensions' ability to add routes if they want.
-      app.all('*', catch404Handler);
+      app.all('/*splat', catch404Handler);
 
       await startServer({
         httpServer,

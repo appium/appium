@@ -68,6 +68,7 @@ theme:
     - content.action.edit
     - content.code.annotate
     - content.code.copy
+    - content.tabs.link
     - navigation.sections
     - navigation.tabs
     - navigation.top

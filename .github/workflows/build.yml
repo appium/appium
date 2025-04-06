@@ -58,7 +58,7 @@ jobs:
     outputs:
       versions: ${{ steps.generate-matrix.outputs.lts }}
     steps:
-    - name: Select all active LTS versions of Node.js
+    - name: Select all current LTS versions of Node.js
       id: generate-matrix
       uses: msimerson/node-lts-versions@v1
 

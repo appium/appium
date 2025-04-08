@@ -152,7 +152,7 @@
     "ts-node": "10.9.2",
     "tsd": "0.31.2",
     "typescript": "5.8.3",
-    "typescript-eslint": "8.29.0",
+    "typescript-eslint": "8.29.1",
     "validate.js": "0.13.1",
     "webdriverio": "9.12.4",
     "ws": "8.18.1",

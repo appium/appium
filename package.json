@@ -150,7 +150,7 @@
     "sinon": "20.0.0",
     "sync-monorepo-packages": "1.0.2",
     "ts-node": "10.9.2",
-    "tsd": "0.31.2",
+    "tsd": "0.32.0",
     "typescript": "5.8.3",
     "typescript-eslint": "8.29.1",
     "validate.js": "0.13.1",

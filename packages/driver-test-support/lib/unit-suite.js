@@ -553,25 +553,6 @@ export function driverUnitTestSuite(
         });
       });
     });
-    describe('.reset', function () {
-      it('should reset as W3C if the original session was W3C', async function () {
-        const caps = {
-          alwaysMatch: {
-            'appium:app': 'Fake',
-            'appium:deviceName': 'Fake',
-            'appium:automationName': 'Fake',
-            platformName: 'Fake',
-            ...defaultCaps,
-          },
-
-          firstMatch: [{}],
-        };
-        await d.createSession(caps);
-        expect(d.protocol).to.equal('W3C');
-        await d.reset();
-        expect(d.protocol).to.equal('W3C');
-      });
-    });
   });
 
   describe('.isFeatureEnabled', function () {

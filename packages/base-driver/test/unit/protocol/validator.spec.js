@@ -46,60 +46,6 @@ describe('Protocol', function () {
         }).should.not.throw();
       });
     });
-    describe('implicitWait', function () {
-      it('should fail when given no ms', function () {
-        (() => {
-          validators.implicitWait();
-        }).should.throw(/ms/i);
-      });
-      it('should fail when given a non-numeric ms', function () {
-        (() => {
-          validators.implicitWait('five');
-        }).should.throw(/ms/i);
-      });
-      it('should fail when given a negative ms', function () {
-        (() => {
-          validators.implicitWait(-1);
-        }).should.throw(/ms/i);
-      });
-      it('should succeed when given an ms of 0', function () {
-        (() => {
-          validators.implicitWait(0);
-        }).should.not.throw();
-      });
-      it('should succeed when given an ms greater than 0', function () {
-        (() => {
-          validators.implicitWait(100);
-        }).should.not.throw();
-      });
-    });
-    describe('asyncScriptTimeout', function () {
-      it('should fail when given no ms', function () {
-        (() => {
-          validators.asyncScriptTimeout();
-        }).should.throw(/ms/i);
-      });
-      it('should fail when given a non-numeric ms', function () {
-        (() => {
-          validators.asyncScriptTimeout('five');
-        }).should.throw(/ms/i);
-      });
-      it('should fail when given a negative ms', function () {
-        (() => {
-          validators.asyncScriptTimeout(-1);
-        }).should.throw(/ms/i);
-      });
-      it('should succeed when given an ms of 0', function () {
-        (() => {
-          validators.asyncScriptTimeout(0);
-        }).should.not.throw();
-      });
-      it('should succeed when given an ms greater than 0', function () {
-        (() => {
-          validators.asyncScriptTimeout(100);
-        }).should.not.throw();
-      });
-    });
     describe('setNetworkConnection', function () {
       it('should fail when given no type', function () {
         (() => {

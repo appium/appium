@@ -250,21 +250,6 @@ export const METHOD_MAP = /** @type {const} */ ({
   //
   // Appium specific
   //
-  '/session/:sessionId/ime/available_engines': {
-    GET: {command: 'availableIMEEngines'},
-  },
-  '/session/:sessionId/ime/active_engine': {
-    GET: {command: 'getActiveIMEEngine'},
-  },
-  '/session/:sessionId/ime/activated': {
-    GET: {command: 'isIMEActivated'},
-  },
-  '/session/:sessionId/ime/deactivate': {
-    POST: {command: 'deactivateIMEEngine'},
-  },
-  '/session/:sessionId/ime/activate': {
-    POST: {command: 'activateIMEEngine', payloadParams: {required: ['engine']}},
-  },
   '/session/:sessionId/rotation': {
     GET: {command: 'getRotation'},
     POST: {command: 'setRotation', payloadParams: {required: ['x', 'y', 'z']}},
@@ -292,12 +277,6 @@ export const METHOD_MAP = /** @type {const} */ ({
     POST: {
       command: 'setNetworkConnection',
       payloadParams: {unwrap: 'parameters', required: ['type']},
-    },
-  },
-  '/session/:sessionId/receive_async_response': {
-    POST: {
-      command: 'receiveAsyncResponse',
-      payloadParams: {required: ['status', 'value']},
     },
   },
   '/appium/sessions': {

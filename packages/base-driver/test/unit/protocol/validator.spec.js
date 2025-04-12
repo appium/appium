@@ -100,24 +100,6 @@ describe('Protocol', function () {
         }).should.not.throw();
       });
     });
-    describe('clickCurrent', function () {
-      it('should fail when given an invalid button', function () {
-        (() => {
-          validators.clickCurrent(4);
-        }).should.throw(/0, 1, or 2/i);
-      });
-      it('should succeed when given a valid button', function () {
-        (() => {
-          validators.clickCurrent(0);
-        }).should.not.throw();
-        (() => {
-          validators.clickCurrent(1);
-        }).should.not.throw();
-        (() => {
-          validators.clickCurrent(2);
-        }).should.not.throw();
-      });
-    });
     describe('setNetworkConnection', function () {
       it('should fail when given no type', function () {
         (() => {

@@ -32,24 +32,6 @@ export function allowCrossDomain(req, res, next) {
 }
 
 /**
- * @param {string} basePath
- * @returns {import('express').RequestHandler}
- */
-export function allowCrossDomainAsyncExecute(basePath) {
-  return (req, res, next) => {
-    // there are two paths for async responses, so cover both
-    // https://regex101.com/r/txYiEz/1
-    const receiveAsyncResponseRegExp = new RegExp(
-      `${_.escapeRegExp(basePath)}/session/[a-f0-9-]+/(appium/)?receive_async_response`
-    );
-    if (!receiveAsyncResponseRegExp.test(req.url)) {
-      return next();
-    }
-    allowCrossDomain(req, res, next);
-  };
-}
-
-/**
  *
  * @param {import('express').Request} req
  * @param {import('express').Response} res

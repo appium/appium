@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import {util, logger} from '@appium/support';
+import {validators} from './validators';
 import {
   errors,
   isErrorType,
@@ -378,6 +379,10 @@ function buildHandler(app, method, path, spec, driver, isSessCmd) {
       // the driver methods
       let args = makeArgs(req.params, jsonObj, spec.payloadParams || {}, currentProtocol);
       let driverRes;
+      // validate command args according to MJSONWP
+      if (validators[spec.command]) {
+        validators[spec.command](...args);
+      }
 
       // run the driver command wrapped inside the argument validators
       getLogger(driver, req.params.sessionId).debug(

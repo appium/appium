@@ -10,6 +10,9 @@ function msValidator(ms) {
   }
 }
 
+/**
+ * @deprecated
+ */
 const validators = {
   setUrl: (url) => {
     // either an `xyz://`, `about:`, or `data:` scheme is allowed

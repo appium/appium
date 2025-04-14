@@ -316,7 +316,11 @@ export const METHOD_MAP = /** @type {const} */ ({
     POST: {command: 'deactivateIMEEngine', deprecated: true},
   },
   '/session/:sessionId/ime/activate': {
-    POST: {command: 'activateIMEEngine', payloadParams: {required: ['engine']}},
+    POST: {
+      command: 'activateIMEEngine',
+      payloadParams: {required: ['engine']},
+      deprecated: true,
+    },
   },
   '/session/:sessionId/rotation': {
     GET: {command: 'getRotation'},

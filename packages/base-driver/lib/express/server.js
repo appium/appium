@@ -11,6 +11,7 @@ import {
   allowCrossDomain,
   defaultToJSONContentType,
   catchAllHandler,
+  allowCrossDomainAsyncExecute,
   handleIdempotency,
   handleUpgrade,
   catch404Handler,
@@ -166,6 +167,8 @@ export function configureServer({
   app.use(handleUpgrade(webSocketsMapping));
   if (allowCors) {
     app.use(allowCrossDomain);
+  } else {
+    app.use(allowCrossDomainAsyncExecute(basePath));
   }
   app.use(handleIdempotency);
   app.use(defaultToJSONContentType);

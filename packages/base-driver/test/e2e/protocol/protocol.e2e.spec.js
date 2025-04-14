@@ -229,6 +229,18 @@ describe('Protocol', function () {
       });
     });
 
+    it('should return the correct error even if driver does not throw', async function () {
+      const {status, data} = await axios({
+        url: `${baseUrl}/session/foo/bar`,
+        method: 'POST',
+        data: {url: 'http://appium.io'},
+        validateStatus: null,
+      });
+      status.should.equal(404);
+      data.value.error.should.eql('unknown command');
+      data.value.message.should.contain('resource');
+    });
+
     describe('w3c sendkeys migration', function () {
       it('should accept value for sendkeys', async function () {
         const {data} = await axios({

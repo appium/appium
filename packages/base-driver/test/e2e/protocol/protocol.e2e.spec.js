@@ -231,18 +231,14 @@ describe('Protocol', function () {
 
     it('should return the correct error even if driver does not throw', async function () {
       const {status, data} = await axios({
-        url: `${baseUrl}/session/foo/appium/receive_async_response`,
-        method: 'POST',
-        data: {response: 'baz'},
+        url: `${baseUrl}/session/foo/appium/settings`,
+        method: 'GET',
         validateStatus: null,
       });
       status.should.equal(500);
       data.value.error.should.eql('unknown error');
-      data.value.message.should.eql(
-        'An unknown server-side error occurred while processing ' +
-          'the command. Original error: Mishandled Driver Error'
-      );
-      data.sessionId.should.eql('foo');
+      data.value.message.should.eql('Mishandled Driver Error');
+      should.not.exist(data.sessionId);
     });
 
     describe('w3c sendkeys migration', function () {

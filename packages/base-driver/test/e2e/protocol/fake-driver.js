@@ -83,10 +83,6 @@ class FakeDriver extends BaseDriver {
     return ms;
   }
 
-  async clickCurrent(button) {
-    return button;
-  }
-
   async setNetworkConnection(type) {
     return type;
   }
@@ -119,7 +115,7 @@ class FakeDriver extends BaseDriver {
     return app;
   }
 
-  async receiveAsyncResponse() {
+  async getSettings() {
     // this is here to test a failing command that does not throw an error
     return {status: 13, value: 'Mishandled Driver Error'};
   }

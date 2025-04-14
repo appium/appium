@@ -34,7 +34,7 @@ export const METHOD_MAP = /** @type {const} */ ({
   },
   '/session/:sessionId': {
     // TODO: Decide on the future of this route later
-    GET: {command: 'getSession'},
+    GET: {command: 'getSession', deprecated: true},
     DELETE: {command: 'deleteSession'},
   },
   '/session/:sessionId/timeouts': {

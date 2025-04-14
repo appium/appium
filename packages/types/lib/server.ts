@@ -1,7 +1,6 @@
 import type {Express} from 'express';
 import type {Server as WSServer} from 'ws';
 import type {Server as HTTPServer} from 'node:http';
-import type {Socket} from 'node:net';
 import {ServerArgs} from './config';
 
 /**
@@ -47,13 +46,6 @@ export interface AppiumServerExtension {
   webSocketsMapping: Record<string, WSServer>;
   /** Returns true if the server operates via HTTPS protocol */
   isSecure(): boolean;
-}
-
-/**
- * @deprecated This interface will be removed
- */
-export interface AppiumServerSocket extends Socket {
-  _openReqCount: number;
 }
 
 export {WSServer};

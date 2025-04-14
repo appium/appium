@@ -166,6 +166,11 @@ export class FakeDriver extends BaseDriver {
     return ['1'];
   }
 
+  async getSettings() {
+    // this is here to test a failing command that does not throw an error
+    return {status: 13, value: 'Mishandled Driver Error'};
+  }
+
   get driverData() {
     return {
       isUnique: !!this.caps.uniqueApp,

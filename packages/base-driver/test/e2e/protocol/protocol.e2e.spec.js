@@ -231,14 +231,14 @@ describe('Protocol', function () {
 
     it('should return the correct error even if driver does not throw', async function () {
       const {status, data} = await axios({
-        url: `${baseUrl}/session/foo/bar`,
-        method: 'POST',
-        data: {url: 'http://appium.io'},
+        url: `${baseUrl}/session/foo/appium/settings`,
+        method: 'GET',
         validateStatus: null,
       });
-      status.should.equal(404);
-      data.value.error.should.eql('unknown command');
-      data.value.message.should.contain('resource');
+      status.should.equal(500);
+      data.value.error.should.eql('unknown error');
+      data.value.message.should.eql('Mishandled Driver Error');
+      should.not.exist(data.sessionId);
     });
 
     describe('w3c sendkeys migration', function () {

@@ -15,24 +15,20 @@ const MIN_TIMEOUT = 0;
 
 const TimeoutCommands: ITimeoutCommands = {
   async timeouts<C extends Constraints>(this: BaseDriver<C>, type, ms, script, pageLoad, implicit) {
-    if (util.hasValue(type) && util.hasValue(ms)) {
-      this.log.debug(`MJSONWP timeout arguments: ${JSON.stringify({type, ms})}}`);
+    if (type && util.hasValue(ms)) {
+      this.log.debug(`Timeout arguments: ${JSON.stringify({type, ms})}}`);
 
       switch (type) {
         case 'command':
-          await this.newCommandTimeout(ms);
-          return;
+          return void (await this.newCommandTimeout(ms));
         case 'implicit':
-          await this.implicitWaitMJSONWP(ms);
-          return;
+          return void (await this.implicitWaitW3C(ms));
         case 'page load':
-          await this.pageLoadTimeoutMJSONWP(ms);
-          return;
+          return void (await this.pageLoadTimeoutW3C(ms));
         case 'script':
-          await this.scriptTimeoutMJSONWP(ms);
-          return;
+          return void (await this.scriptTimeoutW3C(ms));
         default:
-          throw new Error(`'${type}' type is not supported for MJSONWP timeout`);
+          throw new Error(`'${type}' type is not supported for the timeout API`);
       }
     }
 
@@ -63,47 +59,28 @@ const TimeoutCommands: ITimeoutCommands = {
   },
 
   // implicit
-  async implicitWaitW3C<C extends Constraints>(this: BaseDriver<C>, ms) {
-    await this.implicitWait(ms);
-  },
-
-  async implicitWaitMJSONWP<C extends Constraints>(this: BaseDriver<C>, ms) {
-    await this.implicitWait(ms);
-  },
-
-  async implicitWait<C extends Constraints>(this: BaseDriver<C>, ms) {
+  async implicitWaitW3C<C extends Constraints>(this: BaseDriver<C>, ms: number) {
     this.setImplicitWait(this.parseTimeoutArgument(ms));
   },
 
   // pageLoad
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async pageLoadTimeoutW3C<C extends Constraints>(this: BaseDriver<C>, ms) {
-    throw new errors.NotImplementedError('Not implemented yet for pageLoad.');
-  },
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async pageLoadTimeoutMJSONWP<C extends Constraints>(this: BaseDriver<C>, ms) {
+  async pageLoadTimeoutW3C<C extends Constraints>(this: BaseDriver<C>, ms: number) {
     throw new errors.NotImplementedError('Not implemented yet for pageLoad.');
   },
 
   // script
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async scriptTimeoutW3C<C extends Constraints>(this: BaseDriver<C>, ms) {
-    throw new errors.NotImplementedError('Not implemented yet for script.');
-  },
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async scriptTimeoutMJSONWP<C extends Constraints>(this: BaseDriver<C>, ms) {
+  async scriptTimeoutW3C<C extends Constraints>(this: BaseDriver<C>, ms: number) {
     throw new errors.NotImplementedError('Not implemented yet for script.');
   },
 
   // command
-  async newCommandTimeout<C extends Constraints>(this: BaseDriver<C>, ms) {
+  async newCommandTimeout<C extends Constraints>(this: BaseDriver<C>, ms: number) {
     this.setNewCommandTimeout(this.parseTimeoutArgument(ms));
   },
 
   setImplicitWait<C extends Constraints>(this: BaseDriver<C>, ms: number) {
-
     this.implicitWaitMs = ms;
     this.log.debug(`Set implicit wait to ${ms}ms`);
     if (this.managedDrivers && this.managedDrivers.length) {

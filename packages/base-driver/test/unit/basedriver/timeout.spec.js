@@ -71,26 +71,6 @@ describe('timeout', function () {
       });
     });
   });
-  describe('implicitWait', function () {
-    it('should call setImplicitWait when given an integer', async function () {
-      await driver.implicitWait(42);
-      implicitWaitSpy.calledOnce.should.be.true;
-      implicitWaitSpy.firstCall.args[0].should.equal(42);
-      driver.implicitWaitMs.should.eql(42);
-    });
-    it('should call setImplicitWait when given a string', async function () {
-      await driver.implicitWait('42');
-      implicitWaitSpy.calledOnce.should.be.true;
-      implicitWaitSpy.firstCall.args[0].should.equal(42);
-      driver.implicitWaitMs.should.eql(42);
-    });
-    it('should throw an error if something random is sent', async function () {
-      await driver.implicitWait('howdy').should.eventually.be.rejected;
-    });
-    it('should throw an error if timeout is negative', async function () {
-      await driver.implicitWait(-42).should.eventually.be.rejected;
-    });
-  });
 
   describe('set implicit wait', function () {
     it('should set the implicit wait with an integer', function () {

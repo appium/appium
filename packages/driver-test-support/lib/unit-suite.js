@@ -337,7 +337,6 @@ export function driverUnitTestSuite(
         await d.deleteSession();
       });
       it('should get timeouts that we set', async function () {
-        // @ts-expect-error
         await d.timeouts(undefined, undefined, undefined, undefined, 1000);
         await d.getTimeouts().should.eventually.have.property('implicit', 1000);
         await d.timeouts('command', 2000);
@@ -345,7 +344,6 @@ export function driverUnitTestSuite(
           implicit: 1000,
           command: 2000,
         });
-        // @ts-expect-error
         await d.timeouts(undefined, undefined, undefined, undefined, 3000);
         await d.getTimeouts().should.eventually.deep.equal({
           implicit: 3000,

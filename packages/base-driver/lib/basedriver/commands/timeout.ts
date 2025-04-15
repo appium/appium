@@ -16,21 +16,17 @@ const MIN_TIMEOUT = 0;
 const TimeoutCommands: ITimeoutCommands = {
   async timeouts<C extends Constraints>(this: BaseDriver<C>, type, ms, script, pageLoad, implicit) {
     if (type && util.hasValue(ms)) {
-      this.log.debug(`MJSONWP timeout arguments: ${JSON.stringify({type, ms})}}`);
+      this.log.debug(`Timeout arguments: ${JSON.stringify({type, ms})}}`);
 
       switch (type) {
         case 'command':
-          await this.newCommandTimeout(ms);
-          return;
+          return void (await this.newCommandTimeout(ms));
         case 'implicit':
-          await this.implicitWaitW3C(ms);
-          return;
+          return void (await this.implicitWaitW3C(ms));
         case 'page load':
-          await this.pageLoadTimeoutW3C(ms);
-          return;
+          return void (await this.pageLoadTimeoutW3C(ms));
         case 'script':
-          await this.scriptTimeoutW3C(ms);
-          return;
+          return void (await this.scriptTimeoutW3C(ms));
         default:
           throw new Error(`'${type}' type is not supported for the timeout API`);
       }

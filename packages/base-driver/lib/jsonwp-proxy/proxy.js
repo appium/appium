@@ -291,37 +291,6 @@ export class JWProxy {
   }
 
   /**
-   * @deprecated This method is not used anymore and will be removed
-   *
-   * @param {string} url
-   * @param {import('@appium/types').HTTPMethod} method
-   * @returns {string|undefined}
-   */
-  requestToCommandName(url, method) {
-    /**
-     *
-     * @param {RegExp} pattern
-     * @returns {string|undefined}
-     */
-    const extractCommandName = (pattern) => {
-      const pathMatch = pattern.exec(url);
-      if (pathMatch) {
-        return routeToCommandName(pathMatch[1], method, this.reqBasePath);
-      }
-    };
-    let commandName = routeToCommandName(url, method, this.reqBasePath);
-    if (!commandName && _.includes(url, `${this.reqBasePath}/session/`)) {
-      commandName = extractCommandName(
-        new RegExp(`${_.escapeRegExp(this.reqBasePath)}/session/[^/]+(.+)`)
-      );
-    }
-    if (!commandName && _.includes(url, this.reqBasePath)) {
-      commandName = extractCommandName(new RegExp(`${_.escapeRegExp(this.reqBasePath)}(/.+)`));
-    }
-    return commandName;
-  }
-
-  /**
    *
    * @param {string} url
    * @param {import('@appium/types').HTTPMethod} method

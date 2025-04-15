@@ -35,8 +35,8 @@ export interface ITimeoutCommands {
    * @param implicit - the number in ms for the implicit wait timeout, used for the W3C command
    */
   timeouts(
-    type: string,
-    ms: number | string,
+    type?: string,
+    ms?: number | string,
     script?: number,
     pageLoad?: number,
     implicit?: number | string,
@@ -48,16 +48,6 @@ export interface ITimeoutCommands {
    * @param ms - the timeout in ms
    */
   setNewCommandTimeout(ms: number): void;
-
-  /**
-   * Set the implicit wait timeout
-   *
-   * @param ms - the timeout in ms
-   *
-   * @deprecated Use `timeouts` instead
-   *
-   */
-  implicitWait(ms: number | string): Promise<void>;
 
   /**
    * A helper method (not a command) used to set the implicit wait value
@@ -91,14 +81,6 @@ export interface ITimeoutCommands {
   implicitWaitW3C(ms: number): Promise<void>;
 
   /**
-   * Set the implicit wait value that was sent in via the JSONWP
-   *
-   * @param ms - the timeout in ms
-   * @deprecated
-   */
-  implicitWaitMJSONWP(ms: number): Promise<void>;
-
-  /**
    * Set the page load timeout value that was sent in via the W3C protocol
    *
    * @param ms - the timeout in ms
@@ -106,27 +88,11 @@ export interface ITimeoutCommands {
   pageLoadTimeoutW3C(ms: number): Promise<void>;
 
   /**
-   * Set the page load timeout value that was sent in via the JSONWP
-   *
-   * @param ms - the timeout in ms
-   * @deprecated
-   */
-  pageLoadTimeoutMJSONWP(ms: number): Promise<void>;
-
-  /**
    * Set the script timeout value that was sent in via the W3C protocol
    *
    * @param ms - the timeout in ms
    */
   scriptTimeoutW3C(ms: number): Promise<void>;
-
-  /**
-   * Set the script timeout value that was sent in via the JSONWP
-   *
-   * @param ms - the timeout in ms
-   * @deprecated
-   */
-  scriptTimeoutMJSONWP(ms: number): Promise<void>;
 
   /**
    * Set Appium's new command timeout

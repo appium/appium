@@ -349,6 +349,7 @@ export const METHOD_MAP = /** @type {const} */ ({
     POST: {
       command: 'setNetworkConnection',
       payloadParams: {unwrap: 'parameters', required: ['type']},
+      deprecated: true,
     },
   },
   '/session/:sessionId/receive_async_response': {

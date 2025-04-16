@@ -345,10 +345,11 @@ export const METHOD_MAP = /** @type {const} */ ({
     GET: {command: 'getContexts'},
   },
   '/session/:sessionId/network_connection': {
-    GET: {command: 'getNetworkConnection'},
+    GET: {command: 'getNetworkConnection', deprecated: true},
     POST: {
       command: 'setNetworkConnection',
       payloadParams: {unwrap: 'parameters', required: ['type']},
+      deprecated: true,
     },
   },
   '/session/:sessionId/receive_async_response': {

@@ -367,16 +367,16 @@ Icons are used to indicate endpoint support in either certain drivers, or in the
     * :octicons-arrow-right-24: `GET /session/:sessionId/window` :simple-appium:
 * `POST /session/:sessionId/window/:windowhandle/maximize`
     * :octicons-arrow-right-24: `POST /session/:sessionId/window/maximize` :simple-appium:
-    * :fontawesome-solid-triangle-exclamation: Only supported for the current window
+        * :fontawesome-solid-triangle-exclamation: Only supported for the current window
 * `GET /session/:sessionId/window/:windowhandle/position`
     * :octicons-arrow-right-24: `GET /session/:sessionId/window/rect` :simple-appium:
-    * :fontawesome-solid-triangle-exclamation: Only supported for the current window
+        * :fontawesome-solid-triangle-exclamation: Only supported for the current window
 * `POST /session/:sessionId/window/:windowhandle/position`
     * :octicons-arrow-right-24: `POST /session/:sessionId/window/rect` :simple-appium:
-    * :fontawesome-solid-triangle-exclamation: Only supported for the current window
+        * :fontawesome-solid-triangle-exclamation: Only supported for the current window
 * `GET /session/:sessionId/window/:windowhandle/size`
     * :octicons-arrow-right-24: `GET /session/:sessionId/window/rect` :simple-appium:
-    * :fontawesome-solid-triangle-exclamation: Only supported for the current window
+        * :fontawesome-solid-triangle-exclamation: Only supported for the current window
 
 ### Modified
 

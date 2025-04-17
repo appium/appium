@@ -30,12 +30,12 @@ Appium 3 drops support for outdated Node versions, and bumps the minimum require
 
 ### Deprecated Endpoints Removed
 
-Appium 3 removes many previously deprecated server endpoints. Nearly all of these have direct or
-close-to-direct replacements in either standard W3C endpoints, other Appium endpoints, or
-driver-specific extension commands. These endpoints, along with replacements (where applicable)
-are listed [in the **Removed Endpoints** section](#removed).
+Appium 3 removes many previously deprecated server endpoints. Some of these endpoints have now
+become specific to one or more drivers, while most others have direct or close-to-direct
+replacements in other endpoints. These endpoints, along with replacements (where applicable) are listed
+[in the **Removed Endpoints** section](#removed).
 
-Some W3C endpoints used in Appium also existed in the old JSONWP standard, but required other
+Some W3C endpoints used in Appium also existed in the old JSONWP standard, but required different
 parameters. With Appium 2, both standards for these endpoints were supported. Appium 3 changes
 these endpoints by removing support for the JSONWP parameters, and only accepting the W3C
 parameters. These endpoints are listed [in the **Modified Endpoints** section](#modified).
@@ -96,13 +96,16 @@ projects may want to check [the Express 5 Migration Guide](https://expressjs.com
 ## Endpoint Changes
 ### Removed
 
-The following are all endpoints removed in Appium 3. Where applicable, one or more suggested
-replacement endpoints are also listed, along with any extra information. Since many of the
-suggested options are specific to certain drivers, where applicable, icons are used to indicate
-the drivers which support that option:
+The following is a list of all the Appium server endpoints removed in Appium 3. For ease of
+migration, additional information is provided for each endpoint: drivers that still support the
+endpoint; suggested replacement endpoints, or, rarely, the lack of any available replacements.
+
+Icons are used to indicate endpoint support in either certain drivers, or in the core Appium server
+(applicable to all drivers):
 
 <div class="grid cards" markdown>
 
+-   :simple-appium:{ .lg } - Appium server
 -   :material-apple:{ .lg } - [XCUITest driver](https://appium.github.io/appium-xcuitest-driver/latest/)
 -   :material-android:{ .lg } - [UiAutomator2 driver](https://github.com/appium/appium-uiautomator2-driver/)
 -   :material-coffee:{ .lg } - [Espresso driver](https://github.com/appium/appium-espresso-driver)

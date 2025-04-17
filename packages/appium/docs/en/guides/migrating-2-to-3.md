@@ -32,8 +32,8 @@ Appium 3 drops support for outdated Node versions, and bumps the minimum require
 
 Appium 3 removes many previously deprecated server endpoints. Some of these endpoints have now
 become specific to one or more drivers, while most others have direct or close-to-direct
-replacements in other endpoints. These endpoints, along with replacements (where applicable) are listed
-[in the **Removed Endpoints** section](#removed).
+replacements in other endpoints. All removed endpoints, along with replacements (where applicable)
+are listed [in the **Removed Endpoints** section](#removed).
 
 Some W3C endpoints used in Appium also existed in the old JSONWP standard, but required different
 parameters. With Appium 2, both standards for these endpoints were supported. Appium 3 changes

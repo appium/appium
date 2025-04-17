@@ -238,19 +238,17 @@ Icons are used to indicate endpoint support in either certain drivers, or in the
 * `GET /session/:sessionId/application_cache/status`
     * :octicons-no-entry-24: JSONWP protocol command with no direct replacement
 * `POST /session/:sessionId/buttondown`
-    * :octicons-arrow-right-24: `POST /session/:sessionId/actions` with the `pointerDown` action :simple-appium:
+    * :octicons-arrow-right-24: [W3C Actions API](https://www.selenium.dev/documentation/webdriver/actions_api/) (`pointerDown`) :simple-appium:
     * :octicons-arrow-right-24: `windows: keys` execute method :material-microsoft-windows:
 * `POST /session/:sessionId/buttonup`
-    * :octicons-arrow-right-24: `POST /session/:sessionId/actions` with the `pointerUp` action :simple-appium:
+    * :octicons-arrow-right-24: W3C Actions API (`pointerUp`) :simple-appium:
     * :octicons-arrow-right-24: `windows: keys` execute method :material-microsoft-windows:
 * `POST /session/:sessionId/click`
-    * :octicons-arrow-right-24: `POST /session/:sessionId/actions` with the `pointerDown` &
-    `pointerUp` actions :simple-appium:
+    * :octicons-arrow-right-24: W3C Actions API (`pointerDown` & `pointerUp`) :simple-appium:
 * `POST /session/:sessionId/dismiss_alert`
     * :octicons-arrow-right-24: `POST /session/:sessionId/alert/dismiss` :simple-appium:
 * `POST /session/:sessionId/doubleclick`
-    * :octicons-arrow-right-24: `POST /session/:sessionId/actions` with the `pointerDown` &
-    `pointerUp` actions :simple-appium:
+    * :octicons-arrow-right-24: W3C Actions API (`pointerDown` & `pointerUp`) :simple-appium:
 * `POST /session/:sessionId/element/active`
     * :octicons-arrow-right-24: `GET /session/:sessionId/element/active` :simple-appium:
 * `GET /session/:sessionId/element/:elementId/equals/:otherId`
@@ -270,8 +268,7 @@ Icons are used to indicate endpoint support in either certain drivers, or in the
 * `POST /session/:sessionId/execute_async`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/async` :simple-appium:
 * `POST /session/:sessionId/keys`
-    * :octicons-arrow-right-24: `POST /session/:sessionId/actions` with the `keyDown` & `keyUp`
-    actions :simple-appium:
+    * :octicons-arrow-right-24: W3C Actions API (`keyDown` & `keyUp`) :simple-appium:
         * Selenium-based clients can also use [Send Keys](https://www.selenium.dev/documentation/webdriver/actions_api/keyboard/#send-keys)
 * `GET /session/:sessionId/local_storage`
     * :octicons-no-entry-24: JSONWP protocol command with no direct replacement
@@ -290,7 +287,7 @@ Icons are used to indicate endpoint support in either certain drivers, or in the
 * `GET /session/:sessionId/log/types`
     * :octicons-arrow-right-24: `GET /session/:sessionId/se/log/types` :simple-appium:
 * `POST /session/:sessionId/moveto`
-    * :octicons-arrow-right-24: `POST /session/:sessionId/actions` with the `pointerMove` action :simple-appium:
+    * :octicons-arrow-right-24: W3C Actions API (`pointerMove`) :simple-appium:
         * Selenium-based clients can also use [Move by Offset](https://www.selenium.dev/documentation/webdriver/actions_api/mouse/#move-by-offset)
 * `GET /session/:sessionId/screenshot/:elementId`
     * :octicons-arrow-right-24: `GET /session/:sessionId/element/:elementId/screenshot` :simple-appium:
@@ -311,8 +308,7 @@ Icons are used to indicate endpoint support in either certain drivers, or in the
 * `POST /session/:sessionId/timeouts/implicit_wait`
     * :octicons-arrow-right-24: `POST /session/:sessionId/timeouts` :simple-appium:
 * `POST /session/:sessionId/touch/click`
-    * :octicons-arrow-right-24: `POST /session/:sessionId/actions` with the `pointerDown` &
-    `pointerUp` actions :simple-appium:
+    * :octicons-arrow-right-24: W3C Actions API (`pointerDown` & `pointerUp`) :simple-appium:
         * Selenium-based clients can also use [Click and Release](https://www.selenium.dev/documentation/webdriver/actions_api/mouse/#click-and-release)
     * :octicons-arrow-right-24: `mobile: tap` or `mobile: tapWithNumberOfTaps` execute methods :material-apple:
     * :octicons-arrow-right-24: `mobile: clickGesture` execute method :material-android:
@@ -320,8 +316,7 @@ Icons are used to indicate endpoint support in either certain drivers, or in the
     * :octicons-arrow-right-24: `macos: click`, `macos: rightClick`, `macos: press` or `macos: tap` execute methods :material-apple-finder:
     * :octicons-arrow-right-24: `windows: click` execute method :material-microsoft-windows:
 * `POST /session/:sessionId/touch/doubleclick`
-    * :octicons-arrow-right-24: `POST /session/:sessionId/actions` with the `pointerDown` &
-    `pointerUp` actions :simple-appium:
+    * :octicons-arrow-right-24: W3C Actions API (`pointerDown` & `pointerUp`) :simple-appium:
         * Selenium-based clients can also use [Double Click](https://www.selenium.dev/documentation/webdriver/actions_api/mouse/#double-click)
     * :octicons-arrow-right-24: `mobile: doubleTap` or `mobile: tapWithNumberOfTaps` execute methods :material-apple:
     * :octicons-arrow-right-24: `mobile: doubleClickGesture` execute method :material-android:
@@ -329,15 +324,13 @@ Icons are used to indicate endpoint support in either certain drivers, or in the
     * :octicons-arrow-right-24: `macos: doubleClick` or `macos: doubleTap` execute methods :material-apple-finder:
     * :octicons-arrow-right-24: `windows: click` execute method :material-microsoft-windows:
 * `POST /session/:sessionId/touch/down`
-    * :octicons-arrow-right-24: `POST /session/:sessionId/actions` with the `pointerDown` action :simple-appium:
+    * :octicons-arrow-right-24: W3C Actions API (`pointerDown`) :simple-appium:
     * :octicons-arrow-right-24: `windows: keys` execute method :material-microsoft-windows:
 * `POST /session/:sessionId/touch/flick`
-    * :octicons-arrow-right-24: `POST /session/:sessionId/actions` with the `pointerDown`,
-    `pointerMove` & `pointerUp` actions :simple-appium:
+    * :octicons-arrow-right-24: W3C Actions API (`pointerDown`, `pointerMove` & `pointerUp`) :simple-appium:
     * :octicons-arrow-right-24: `mobile: flingGesture` execute method :material-android:
 * `POST /session/:sessionId/touch/longclick`
-    * :octicons-arrow-right-24: `POST /session/:sessionId/actions` with the `pointerDown`, `pause`
-    & `pointerUp` actions :simple-appium:
+    * :octicons-arrow-right-24: W3C Actions API (`pointerDown`, `pause` & `pointerUp`) :simple-appium:
     * :octicons-arrow-right-24: `mobile: touchAndHold` execute method :material-apple:
     * :octicons-arrow-right-24: `mobile: longClickGesture` execute method :material-android:
     * :octicons-arrow-right-24: `mobile: clickAction` execute method :material-coffee:
@@ -346,20 +339,19 @@ Icons are used to indicate endpoint support in either certain drivers, or in the
 * `POST /session/:sessionId/touch/multi/perform`
     * :octicons-arrow-right-24: `POST /session/:sessionId/actions` :simple-appium:
 * `POST /session/:sessionId/touch/move`
-    * :octicons-arrow-right-24: `POST /session/:sessionId/actions` with the `pointerMove` action :simple-appium:
+    * :octicons-arrow-right-24: W3C Actions API (`pointerMove`) :simple-appium:
         * Selenium-based clients can also use [Move by Offset](https://www.selenium.dev/documentation/webdriver/actions_api/mouse/#move-by-offset)
 * `POST /session/:sessionId/touch/perform`
     * :octicons-arrow-right-24: `POST /session/:sessionId/actions` :simple-appium:
 * `POST /session/:sessionId/touch/scroll`
-    * :octicons-arrow-right-24: `POST /session/:sessionId/actions` with the `pointerDown`,
-    `pointerMove` & `pointerUp` actions :simple-appium:
+    * :octicons-arrow-right-24: W3C Actions API (`pointerDown`, `pointerMove` & `pointerUp`) :simple-appium:
     * :octicons-arrow-right-24: `mobile: scroll` or `mobile: swipe` execute methods :material-apple:
     * :octicons-arrow-right-24: `mobile: scrollGesture` or `mobile: swipeGesture` execute methods :material-android:
     * :octicons-arrow-right-24: `mobile: swipe` execute method :material-coffee:
     * :octicons-arrow-right-24: `macos: scroll` or `macos: swipe` execute methods :material-apple-finder:
     * :octicons-arrow-right-24: `windows: scroll` execute method :material-microsoft-windows:
 * `POST /session/:sessionId/touch/up`
-    * :octicons-arrow-right-24: `POST /session/:sessionId/actions` with the `pointerUp` action :simple-appium:
+    * :octicons-arrow-right-24: W3C Actions API (`pointerUp`) :simple-appium:
     * :octicons-arrow-right-24: `windows: keys` execute method :material-microsoft-windows:
 * `GET /session/:sessionId/window_handle`
     * :octicons-arrow-right-24: `GET /session/:sessionId/window` :simple-appium:

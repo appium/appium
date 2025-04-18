@@ -23,18 +23,6 @@ Appium 2 afterwards.
 
 ## Breaking Changes
 
-### Default Base Path Changed
-
-In Appium 1, the default Appium server URL was `http://localhost:4723/wd/hub`, where the `/wd/hub`
-part (the base path) was a legacy convention from Selenium 1. Appium 2 changes the default base
-path to `/`, therefore the default server URL is now `http://localhost:4723/`.
-
-!!! info "Actions Needed"
-
-    In your test scripts, change the base path of the target server URL from `/wd/hub` to `/`.
-    Alternatively, you can retain the Appium 1 base path by launching Appium with the
-    `--base-path=/wd/hub` [command-line argument](../cli/args.md).
-
 ### Drivers Installed Separately
 
 When installing Appium 1, all available drivers would be installed alongside the main Appium
@@ -77,53 +65,6 @@ located at `$APPIUM_HOME/node_modules/appium-xcuitest-driver/node_modules/appium
     If your code uses the paths to Appium driver files, update it to use the `APPIUM_HOME` environment
     variable
 
-### Driver-Specific CLI Options Changed
-
-With Appium 1, command-line options specific to particular drivers were all hosted on the main
-Appium server. So, for example, `--chromedriver-executable` was a CLI parameter you could use to
-set the Chromedriver location for the UiAutomator2 driver.
-
-In Appium 2, all driver-specific CLI options have been moved to the drivers themselves. However,
-depending on the driver, these options may now need to be passed in another way:
-
-* Some options can still be passed as different CLI flags, for example:
-```bash
-appium --webdriveragent-port=5000                 # Appium 1
-appium --driver-xcuitest-webdriveragent-port=5000 # Appium 2
-```
-* Some options can now be passed as environment variables, for example:
-```bash
-appium --chromedriver-version=100 # Appium 1
-CHROMEDRIVER_VERSION=100 appium   # Appium 2
-```
-* Some options can now be passed as [capabilities](https://appium.io/docs/en/latest/guides/caps/),
-for example:
-```bash
-appium --chromedriver-executable=/path/to/chromedriver # Appium 1
-appium:chromedriverExecutable = /path/to/chromedriver  # Appium 2
-```
-
-!!! info "Actions Needed"
-
-    If you are using driver-specific CLI options, refer to that driver's documentation for how to
-    apply them in Appium 2
-
-### Some Commands Moved to Drivers
-
-In Appium 1, commands that were specific to certain drivers were built into the main Appium server.
-Appium 2, in line with its modular approach, moves many such commands to the drivers themselves.
-For example, `pressKeyCode` was specific to the UiAutomator2 driver, and is now understood only by
-that driver.
-
-In practice, the only breaking change here is the error returned when invoking a command not
-implemented by the active driver. In Appium 1, this would return a `501 Not Yet Implemented` error,
-whereas Appium 2 now returns `404 Not Found`: if the active driver doesn't know about the command,
-the Appium server will not define the route corresponding to the command.
-
-!!! info "Actions Needed"
-
-    Ensure you have installed all the drivers you were using in Appium 1
-
 ### Drivers Updated Separately
 
 In Appium 1, in order to get updates to your drivers, you would simply wait for those updates to be
@@ -156,6 +97,101 @@ server package.
 !!! info "Actions Needed"
 
     Make sure to use the [Appium Extension CLI](../cli/extensions.md) to manage your drivers
+
+### Deprecated Packages No Longer Supported
+
+The Appium 1 ecosystem included several drivers, clients and other packages that had since been
+deprecated and replaced with newer packages. Appium 2 no longer includes support for these packages,
+and it is recommended to migrate to the following replacements:
+
+|Appium 1 Package|Replacement in Appium 2|
+|--|--|
+|iOS Driver|[XCUITest Driver](https://appium.github.io/appium-xcuitest-driver/latest/)|
+|UiAutomator Driver|[UiAutomator2](https://github.com/appium/appium-uiautomator2-driver/)|
+|`wd` Client|[WebdriverIO Client](https://webdriver.io/)|
+|Appium Desktop|[Appium Inspector](https://github.com/appium/appium-inspector)|
+
+!!! info "Actions Needed"
+
+    If you are using any of the aforementioned package(s), migrate to their recommended replacement(s)
+
+### Default Base Path Changed
+
+In Appium 1, the default Appium server URL was `http://localhost:4723/wd/hub`, where the `/wd/hub`
+part (the base path) was a legacy convention from Selenium 1. Appium 2 changes the default base
+path to `/`, therefore the default server URL is now `http://localhost:4723/`.
+
+!!! info "Actions Needed"
+
+    In your test scripts, change the base path of the target server URL from `/wd/hub` to `/`.
+    Alternatively, you can retain the Appium 1 base path by launching Appium with the
+    `--base-path=/wd/hub` [command-line argument](../cli/args.md).
+
+### Server Port 0 No Longer Supported
+
+In Appium 1, it was possible to specify `--port 0` during server startup, which had the effect of
+starting Appium on a random free port. Appium 2 no longer allows this, and requires port values to
+be `1` or higher. If you wish to start Appium on a random port, you must now take care of this on
+your own prior to launching the server.
+
+!!! info "Actions Needed"
+
+    If you are launching Appium with `--port 0`, change the port number value to `1` or higher
+
+### Driver-Specific CLI Options Changed
+
+With Appium 1, command-line options specific to particular drivers were all hosted on the main
+Appium server. So, for example, `--chromedriver-executable` was a CLI parameter you could use to
+set the Chromedriver location for the UiAutomator2 driver.
+
+In Appium 2, all driver-specific CLI options have been moved to the drivers themselves. However,
+depending on the driver, these options may now need to be passed in another way:
+
+* Some options can still be passed as different CLI flags, for example:
+```bash
+appium --webdriveragent-port=5000                 # Appium 1
+appium --driver-xcuitest-webdriveragent-port=5000 # Appium 2
+```
+* Some options can now be passed as environment variables, for example:
+```bash
+appium --chromedriver-version=100 # Appium 1
+CHROMEDRIVER_VERSION=100 appium   # Appium 2
+```
+* Some options can now be passed as [capabilities](https://appium.io/docs/en/latest/guides/caps/),
+for example:
+```bash
+appium --chromedriver-executable=/path/to/chromedriver # Appium 1
+appium:chromedriverExecutable = /path/to/chromedriver  # Appium 2
+```
+
+!!! info "Actions Needed"
+
+    If you are using driver-specific CLI options, refer to that driver's documentation for how to
+    apply them in Appium 2
+
+### Filepaths No Longer Supported for Some CLI Options
+
+In Appium 1, some server command-line options could be invoked by passing a filepath as their
+value, and Appium would then parse the contents of that file as the actual value for that option.
+There were four options that supported this:
+
+* `--nodeconfig`
+* `--default-capabilities`
+* `--allow-insecure`
+* `--deny-insecure`
+
+Appium 2 no longer attempts to parse the contents of filepaths passed to these options, and offers
+two ways to specify the value for these options:
+
+* As strings, directly on the command line
+    * `--nodeconfig` / `--default-capabilities`: JSON string
+    * `--allow-insecure` / `--deny-insecure`: comma-separated list
+* In the [Appium Configuration file](./config.md)
+
+!!! info "Actions Needed"
+
+    If you are using any of the aforementioned CLI options with a filepath value, update your code
+    to pass the file contents either directly or through the Appium config file
 
 ### Old Protocols Dropped
 
@@ -240,6 +276,22 @@ For more information on capabilities, have a look at the [Capabilities Guide](./
     Add the `appium:` prefix to all Appium-specific capabilities used in your tests, or wrap them
     inside an `appium:options` object
 
+### Some Commands Moved to Drivers
+
+In Appium 1, commands that were specific to certain drivers were built into the main Appium server.
+Appium 2, in line with its modular approach, moves many such commands to the drivers themselves.
+For example, `pressKeyCode` was specific to the UiAutomator2 driver, and is now understood only by
+that driver.
+
+In practice, the only breaking change here is the error returned when invoking a command not
+implemented by the active driver. In Appium 1, this would return a `501 Not Yet Implemented` error,
+whereas Appium 2 now returns `404 Not Found`: if the active driver doesn't know about the command,
+the Appium server will not define the route corresponding to the command.
+
+!!! info "Actions Needed"
+
+    Ensure you have installed all the drivers you were using in Appium 1
+
 ### Deprecated Commands Removed
 
 In addition to the driver-specific commands moved to the drivers themselves, some commands which
@@ -278,58 +330,6 @@ are no longer bundled with Appium 2:
     ```
     appium --use-plugins=images,execute-driver
     ```
-
-### Filepaths No Longer Supported for Some CLI Options
-
-In Appium 1, some server command-line options could be invoked by passing a filepath as their
-value, and Appium would then parse the contents of that file as the actual value for that option.
-There were four options that supported this:
-
-* `--nodeconfig`
-* `--default-capabilities`
-* `--allow-insecure`
-* `--deny-insecure`
-
-Appium 2 no longer attempts to parse the contents of filepaths passed to these options, and offers
-two ways to specify the value for these options:
-
-* As strings, directly on the command line
-    * `--nodeconfig` / `--default-capabilities`: JSON string
-    * `--allow-insecure` / `--deny-insecure`: comma-separated list
-* In the [Appium Configuration file](./config.md)
-
-!!! info "Actions Needed"
-
-    If you are using any of the aforementioned CLI options with a filepath value, update your code
-    to pass the file contents either directly or through the Appium config file
-
-### Deprecated Packages No Longer Supported
-
-The Appium 1 ecosystem included several drivers, clients and other packages that had since been
-deprecated and replaced with newer packages. Appium 2 no longer includes support for these packages,
-and it is recommended to migrate to the following replacements:
-
-|Appium 1 Package|Replacement in Appium 2|
-|--|--|
-|iOS Driver|[XCUITest Driver](https://appium.github.io/appium-xcuitest-driver/latest/)|
-|UiAutomator Driver|[UiAutomator2](https://github.com/appium/appium-uiautomator2-driver/)|
-|`wd` Client|[WebdriverIO Client](https://webdriver.io/)|
-|Appium Desktop|[Appium Inspector](https://github.com/appium/appium-inspector)|
-
-!!! info "Actions Needed"
-
-    If you are using any of the aforementioned package(s), migrate to their recommended replacement(s)
-
-### Server Port 0 No Longer Supported
-
-In Appium 1, it was possible to specify `--port 0` during server startup, which had the effect of
-starting Appium on a random free port. Appium 2 no longer allows this, and requires port values to
-be `1` or higher. If you wish to start Appium on a random port, you must now take care of this on
-your own prior to launching the server.
-
-!!! info "Actions Needed"
-
-    If you are launching Appium with `--port 0`, change the port number value to `1` or higher
 
 ### Internal Packages Renamed
 

@@ -159,9 +159,9 @@ CHROMEDRIVER_VERSION=100 appium   # Appium 2
 ```
 * Some options can now be passed as [capabilities](https://appium.io/docs/en/latest/guides/caps/),
 for example:
-```bash
-appium --chromedriver-executable=/path/to/chromedriver # Appium 1
-appium:chromedriverExecutable = /path/to/chromedriver  # Appium 2
+```
+appium --chromedriver-executable=/path/to/chromedriver      # Appium 1
+{"appium:chromedriverExecutable": "/path/to/chromedriver"}  # Appium 2
 ```
 
 !!! info "Actions Needed"

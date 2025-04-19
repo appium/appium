@@ -39,7 +39,7 @@ npm i -g appium --drivers=xcuitest,uiautomator2
 ```bash
 appium driver install uiautomator2
 ```
-* Use the [Appium Setup CLI command](../cli/setup.md), for example:
+* Use the [Appium Setup CLI command](../cli/setup.md) (added in Appium `2.6`), for example:
 ```bash
 appium setup mobile
 ```
@@ -115,7 +115,7 @@ and it is recommended to migrate to the following replacements:
 
     If you are using any of the aforementioned package(s), migrate to their recommended replacement(s)
 
-### Default Base Path Changed
+### Default Server Base Path Changed
 
 In Appium 1, the default Appium server URL was `http://localhost:4723/wd/hub`, where the `/wd/hub`
 part (the base path) was a legacy convention from Selenium 1. Appium 2 changes the default base
@@ -276,37 +276,6 @@ For more information on capabilities, have a look at the [Capabilities Guide](./
     Add the `appium:` prefix to all Appium-specific capabilities used in your tests, or wrap them
     inside an `appium:options` object
 
-### Some Commands Moved to Drivers
-
-In Appium 1, commands that were specific to certain drivers were built into the main Appium server.
-Appium 2, in line with its modular approach, moves many such commands to the drivers themselves.
-For example, `pressKeyCode` was specific to the UiAutomator2 driver, and is now understood only by
-that driver.
-
-In practice, the only breaking change here is the error returned when invoking a command not
-implemented by the active driver. In Appium 1, this would return a `501 Not Yet Implemented` error,
-whereas Appium 2 now returns `404 Not Found`: if the active driver doesn't know about the command,
-the Appium server will not define the route corresponding to the command.
-
-!!! info "Actions Needed"
-
-    Ensure you have installed all the drivers you were using in Appium 1
-
-### Deprecated Commands Removed
-
-In addition to the driver-specific commands moved to the drivers themselves, some commands which
-were a part of the old JSON Wire Protocol and not a part of the W3C Protocol have been removed:
-
-- TODO (these commands are being identified and removed and will be updated here when complete)
-
-If your Appium/Selenium client is up to date, it will most likely have already removed support for
-these commands.
-
-!!! info "Actions Needed"
-
-    Check your Appium client documentation for the affected methods, and adjust your code to use
-    their replacements
-
 ### Advanced Features Moved to Plugins
 
 One of the design goals for Appium 2 is to extract non-core features into special extensions called
@@ -330,6 +299,27 @@ are no longer bundled with Appium 2:
     ```
     appium --use-plugins=images,execute-driver
     ```
+
+### Endpoint Changes
+
+A few server endpoints used in Appium 1 were accepting old or unused parameters. Appium 2 removes
+support for these parameters. The following is a list of these changed endpoints, along with the
+parameters they no longer accept, as well as the parameters they continue to accept in Appium 2.
+
+* `POST /session/:sessionId/appium/device/gsm_signal`
+    * :octicons-x-24: `signalStrengh`
+    * :octicons-check-24: `signalStrength`
+* `POST /session/:sessionId/appium/element/:elementId/value`
+    * :octicons-x-24: `value`
+    * :octicons-check-24: `text`
+* `POST /session/:sessionId/appium/element/:elementId/replace_value`
+    * :octicons-x-24: `value`
+    * :octicons-check-24: `text`
+
+!!! info "Actions Needed"
+
+    Check your Appium client documentation for the methods using these endpoints, and adjust your
+    code to only use the accepted parameters
 
 ### Internal Packages Renamed
 

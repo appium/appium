@@ -62,7 +62,7 @@ located at `$APPIUM_HOME/node_modules/appium-xcuitest-driver/node_modules/appium
 
 !!! info "Actions Needed"
 
-    If your code uses the paths to Appium driver files, update it to use the `APPIUM_HOME` environment
+    If your code uses paths to Appium driver files, update it to use the `APPIUM_HOME` environment
     variable
 
 ### Drivers Updated Separately
@@ -219,9 +219,9 @@ vendor prefix.
 
 The list of standard capabilities is described in the [WebDriver Protocol specification](https://www.w3.org/TR/webdriver/#capabilities),
 and includes a few commonly used capabilities like `browserName` and `platformName`. All other
-capabilities must now start with the vendor name and a colon (the vendor prefix), such as `appium:`.
-Since most of Appium's capabilities go beyond the standard W3C capabilities, all of them must
-include the `appium:` prefix (unless specified otherwise):
+capabilities must now start with the vendor name and a colon (the vendor prefix), for example,
+`moz:` or `goog:`. Since most of Appium's capabilities go beyond the standard W3C capabilities,
+all of them must include the `appium:` prefix (unless specified otherwise):
 
 ```
 deviceName        # Appium 1

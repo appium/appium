@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.0](https://github.com/appium/appium/compare/@appium/docutils@1.0.34...@appium/docutils@1.1.0) (2025-04-25)
+
+
+### Features
+
+* **docutils:** add MkDocs Material codeblock & text format features ([#21184](https://github.com/appium/appium/issues/21184)) ([55da22f](https://github.com/appium/appium/commit/55da22fc4000a1142782cc5fddcb526cb30b2f09))
+
+
+### Bug Fixes
+
+* **docutils:** add & adjust various log messages ([#21160](https://github.com/appium/appium/issues/21160)) ([804b1a3](https://github.com/appium/appium/commit/804b1a3c15acdf95066d45e7c36518cb8600dbbb))
+
+
+
 ## [1.0.34](https://github.com/appium/appium/compare/@appium/docutils@1.0.33...@appium/docutils@1.0.34) (2025-03-17)
 
 **Note:** Version bump only for package @appium/docutils

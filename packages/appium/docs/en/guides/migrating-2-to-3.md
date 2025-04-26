@@ -125,7 +125,6 @@ Icons are used to indicate endpoint support in either certain drivers, or in the
 * `POST /session/:sessionId/alert_text`
     * :octicons-arrow-right-24: `POST /session/:sessionId/alert/text` :simple-appium:
 * `POST /session/:sessionId/appium/app/background`
-    * :octicons-check-24: Moved to drivers: :material-android: :material-coffee:
     * :octicons-arrow-right-24: `mobile: backgroundApp` execute method :material-apple: :material-android: :material-coffee:
 * `POST /session/:sessionId/appium/app/close`
     * :octicons-check-24: Moved to drivers: :material-microsoft-windows:
@@ -143,23 +142,18 @@ Icons are used to indicate endpoint support in either certain drivers, or in the
 * `POST /session/:sessionId/appium/app/reset`
     * :octicons-arrow-right-24: `mobile: clearApp` execute method :material-apple: [^sim] :material-android: :material-coffee:
 * `POST /session/:sessionId/appium/app/strings`
-    * :octicons-check-24: Moved to drivers: :material-android: :material-coffee:
     * :octicons-arrow-right-24: `mobile: getAppStrings` execute method :material-apple: :material-android: :material-coffee:
 * `GET /session/:sessionId/appium/device/app_state`
     * :octicons-arrow-right-24: `POST /session/:sessionId/appium/device/app_state` :simple-appium:
     * :octicons-arrow-right-24: `mobile: queryAppState` execute method :material-apple: :material-android: :material-coffee:
     * :octicons-arrow-right-24: `macos: queryAppState` execute method :material-apple-finder:
 * `GET /session/:sessionId/appium/device/current_activity`
-    * :octicons-check-24: Moved to drivers: :material-android: :material-coffee:
     * :octicons-arrow-right-24: `mobile: getCurrentActivity` execute method :material-android: :material-coffee:
 * `GET /session/:sessionId/appium/device/current_package`
-    * :octicons-check-24: Moved to drivers: :material-android: :material-coffee:
     * :octicons-arrow-right-24: `mobile: getCurrentPackage` execute method :material-android: :material-coffee:
 * `GET /session/:sessionId/appium/device/display_density`
-    * :octicons-check-24: Moved to drivers: :material-android: :material-coffee:
     * :octicons-arrow-right-24: `mobile: getDisplayDensity` execute method :material-android: :material-coffee:
 * `POST /session/:sessionId/appium/device/finger_print`
-    * :octicons-check-24: Moved to drivers: :material-android: :material-coffee:
     * :octicons-arrow-right-24: `mobile: fingerPrint` execute method :material-android: [^sim] :material-coffee: [^sim]
 * `POST /session/:sessionId/appium/device/get_clipboard`
     * :octicons-check-24: Moved to drivers: :material-android: :material-coffee:
@@ -167,50 +161,37 @@ Icons are used to indicate endpoint support in either certain drivers, or in the
     * :octicons-arrow-right-24: `mobile: getPasteboard` execute method :material-apple: [^sim]
     * :octicons-arrow-right-24: `windows: getClipboard` execute method :material-microsoft-windows:
 * `POST /session/:sessionId/appium/device/gsm_call`
-    * :octicons-check-24: Moved to drivers: :material-android: :material-coffee:
     * :octicons-arrow-right-24: `mobile: gsmCall` execute method :material-android: [^sim] :material-coffee: [^sim]
 * `POST /session/:sessionId/appium/device/gsm_signal`
-    * :octicons-check-24: Moved to drivers: :material-android: :material-coffee:
     * :octicons-arrow-right-24: `mobile: gsmSignal` execute method :material-android: [^sim] :material-coffee: [^sim]
 * `POST /session/:sessionId/appium/device/gsm_voice`
-    * :octicons-check-24: Moved to drivers: :material-android: :material-coffee:
     * :octicons-arrow-right-24: `mobile: gsmVoice` execute method :material-android: [^sim] :material-coffee: [^sim]
 * `POST /session/:sessionId/appium/device/is_locked`
-    * :octicons-check-24: Moved to drivers: :material-android: :material-coffee:
     * :octicons-arrow-right-24: `mobile: isLocked` execute method :material-apple: :material-android: :material-coffee:
 * `POST /session/:sessionId/appium/device/keyevent`
-    * :octicons-check-24: Moved to drivers: :material-android: :material-coffee:
     * :octicons-arrow-right-24: `mobile: keys` execute method :material-apple: (iPadOS only)
     * :octicons-arrow-right-24: `mobile: pressKey` execute method :material-android: :material-coffee:
     * :octicons-arrow-right-24: `macos: keys` execute method :material-apple-finder:
     * :octicons-arrow-right-24: `windows: keys` execute method :material-microsoft-windows:
 * `POST /session/:sessionId/appium/device/lock`
-    * :octicons-check-24: Moved to drivers: :material-android: :material-coffee:
     * :octicons-arrow-right-24: `mobile: lock` execute method :material-apple: :material-android: :material-coffee:
 * `POST /session/:sessionId/appium/device/long_press_keycode`
-    * :octicons-check-24: Moved to drivers: :material-android: :material-coffee:
     * :octicons-arrow-right-24: `mobile: pressKey` execute method :material-android: :material-coffee:
 * `POST /session/:sessionId/appium/device/network_speed`
-    * :octicons-check-24: Moved to drivers: :material-android: :material-coffee:
     * :octicons-arrow-right-24: `mobile: networkSpeed` execute method :material-android: [^sim] :material-coffee: [^sim]
 * `POST /session/:sessionId/appium/device/open_notifications`
-    * :octicons-check-24: Moved to drivers: :material-android: :material-coffee:
     * :octicons-arrow-right-24: `mobile: statusBar` execute method :material-android: :material-coffee:
     * :octicons-arrow-right-24: `mobile: openNotifications` execute method :material-android:
 * `POST /session/:sessionId/appium/device/power_ac`
-    * :octicons-check-24: Moved to drivers: :material-android: :material-coffee:
     * :octicons-arrow-right-24: `mobile: powerAC` execute method :material-android: [^sim] :material-coffee: [^sim]
 * `POST /session/:sessionId/appium/device/power_capacity`
-    * :octicons-check-24: Moved to drivers: :material-android: :material-coffee:
     * :octicons-arrow-right-24: `mobile: powerCapacity` execute method :material-android: [^sim] :material-coffee: [^sim]
 * `POST /session/:sessionId/appium/device/press_keycode`
-    * :octicons-check-24: Moved to drivers: :material-android: :material-coffee:
     * :octicons-arrow-right-24: `mobile: keys` execute method :material-apple: (iPadOS only)
     * :octicons-arrow-right-24: `mobile: pressKey` execute method :material-android: :material-coffee:
     * :octicons-arrow-right-24: `macos: keys` execute method :material-apple-finder:
     * :octicons-arrow-right-24: `windows: keys` execute method :material-microsoft-windows:
 * `POST /session/:sessionId/appium/device/send_sms`
-    * :octicons-check-24: Moved to drivers: :material-android: :material-coffee:
     * :octicons-arrow-right-24: `mobile: sendSms` execute method :material-android: [^sim] :material-coffee: [^sim]
 * `POST /session/:sessionId/appium/device/set_clipboard`
     * :octicons-arrow-right-24: `mobile: setClipboard` execute method :material-apple: :material-android: :material-coffee:
@@ -219,38 +200,27 @@ Icons are used to indicate endpoint support in either certain drivers, or in the
 * `POST /session/:sessionId/appium/device/shake`
     * :octicons-arrow-right-24: `mobile: shake` execute method :material-apple: [^sim]
 * `POST /session/:sessionId/appium/device/start_activity`
-    * :octicons-check-24: Moved to drivers: :material-android: :material-coffee:
     * :octicons-arrow-right-24: `mobile: startActivity` execute method :material-android: :material-coffee:
 * `GET /session/:sessionId/appium/device/system_bars`
-    * :octicons-check-24: Moved to drivers: :material-android: :material-coffee:
     * :octicons-arrow-right-24: `mobile: deviceScreenInfo` execute method :material-apple:
     * :octicons-arrow-right-24: `mobile: getSystemBars` execute method :material-android: :material-coffee:
 * `POST /session/:sessionId/appium/device/toggle_airplane_mode`
-    * :octicons-check-24: Moved to drivers: :material-android: :material-coffee:
     * :octicons-arrow-right-24: `mobile: setConnectivity` execute method :material-android: :material-coffee:
 * `POST /session/:sessionId/appium/device/toggle_data`
-    * :octicons-check-24: Moved to drivers: :material-android: :material-coffee:
     * :octicons-arrow-right-24: `mobile: setConnectivity` execute method :material-android: :material-coffee:
 * `POST /session/:sessionId/appium/device/toggle_location_services`
-    * :octicons-check-24: Moved to drivers: :material-android: :material-coffee:
     * :octicons-arrow-right-24: `mobile: toggleGps` execute method :material-android: :material-coffee:
 * `POST /session/:sessionId/appium/device/toggle_wifi`
-    * :octicons-check-24: Moved to drivers: :material-android: :material-coffee:
     * :octicons-arrow-right-24: `mobile: setConnectivity` execute method :material-android: :material-coffee:
 * `POST /session/:sessionId/appium/device/unlock`
-    * :octicons-check-24: Moved to drivers: :material-android: :material-coffee:
     * :octicons-arrow-right-24: `mobile: unlock` execute method :material-apple: :material-android: :material-coffee:
 * `POST /session/:sessionId/appium/element/:elementId/value`
-    * :octicons-check-24: Moved to drivers: :material-android: :material-coffee:
     * :octicons-arrow-right-24: `POST /session/:sessionId/element/:elementId/value` :simple-appium:
 * `POST /session/:sessionId/appium/element/:elementId/replace_value`
-    * :octicons-check-24: Moved to drivers: :material-android: :material-coffee:
     * :octicons-arrow-right-24: `POST /session/:sessionId/element/:elementId/value` :simple-appium:
 * `POST /session/:sessionId/appium/getPerformanceData`
-    * :octicons-check-24: Moved to drivers: :material-android: :material-coffee:
     * :octicons-arrow-right-24: `mobile: getPerformanceData` execute method :material-android: :material-coffee:
 * `POST /session/:sessionId/appium/performanceData/types`
-    * :octicons-check-24: Moved to drivers: :material-android: :material-coffee:
     * :octicons-arrow-right-24: `mobile: getPerformanceDataTypes` execute method :material-android: :material-coffee:
 * `POST /session/:sessionId/appium/receive_async_response`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/async` :simple-appium:
@@ -293,14 +263,14 @@ Icons are used to indicate endpoint support in either certain drivers, or in the
 * `GET /session/:sessionId/element/:elementId/equals/:otherId`
     * :octicons-check-24: Moved to drivers: :material-microsoft-windows:
 * `GET /session/:sessionId/element/:elementId/location`
-    * :octicons-check-24: Moved to drivers: :material-android: :material-coffee: :material-microsoft-windows:
+    * :octicons-check-24: Moved to drivers: :material-microsoft-windows:
     * :octicons-arrow-right-24: `GET /session/:sessionId/element/:elementId/rect` :simple-appium:
 * `GET /session/:sessionId/element/:elementId/location_in_view`
-    * :octicons-check-24: Moved to drivers: :material-android: :material-coffee: :material-microsoft-windows:
+    * :octicons-check-24: Moved to drivers: :material-microsoft-windows:
 * `GET /session/:sessionId/element/:elementId/pageIndex`
     * :octicons-no-entry-24: MJSONWP protocol command with no direct replacement
 * `GET /session/:sessionId/element/:elementId/size`
-    * :octicons-check-24: Moved to drivers: :material-android: :material-coffee: :material-microsoft-windows:
+    * :octicons-check-24: Moved to drivers: :material-microsoft-windows:
     * :octicons-arrow-right-24: `GET /session/:sessionId/element/:elementId/rect` :simple-appium:
 * `POST /session/:sessionId/element/:elementId/submit`
     * :octicons-no-entry-24: JSONWP protocol command with no direct replacement
@@ -309,7 +279,7 @@ Icons are used to indicate endpoint support in either certain drivers, or in the
 * `POST /session/:sessionId/execute_async`
     * :octicons-arrow-right-24: `POST /session/:sessionId/execute/async` :simple-appium:
 * `POST /session/:sessionId/keys`
-    * :octicons-check-24: Moved to drivers: :material-android: :material-coffee: :material-microsoft-windows:
+    * :octicons-check-24: Moved to drivers: :material-microsoft-windows:
     * :octicons-arrow-right-24: W3C Actions API (`keyDown` & `keyUp`) :simple-appium:
         * Selenium-based clients can also use [Send Keys](https://www.selenium.dev/documentation/webdriver/actions_api/keyboard/#send-keys)
 * `GET /session/:sessionId/local_storage`
@@ -348,7 +318,6 @@ Icons are used to indicate endpoint support in either certain drivers, or in the
 * `POST /session/:sessionId/timeouts/async_script`
     * :octicons-arrow-right-24: `POST /session/:sessionId/timeouts` :simple-appium:
 * `POST /session/:sessionId/timeouts/implicit_wait`
-    * :octicons-check-24: Moved to drivers: :material-android: :material-coffee:
     * :octicons-arrow-right-24: `POST /session/:sessionId/timeouts` :simple-appium:
 * `POST /session/:sessionId/touch/click`
     * :octicons-check-24: Moved to drivers: :material-microsoft-windows:
@@ -422,7 +391,7 @@ Icons are used to indicate endpoint support in either certain drivers, or in the
     * :octicons-arrow-right-24: `POST /session/:sessionId/window/rect` :simple-appium:
         * :fontawesome-solid-triangle-exclamation: Only supported for the current window
 * `GET /session/:sessionId/window/:windowhandle/size`
-    * :octicons-check-24: Moved to drivers: :material-android: :material-coffee: :material-microsoft-windows:
+    * :octicons-check-24: Moved to drivers: :material-microsoft-windows:
     * :octicons-arrow-right-24: `GET /session/:sessionId/window/rect` :simple-appium:
         * :fontawesome-solid-triangle-exclamation: Only supported for the current window
 

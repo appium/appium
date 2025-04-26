@@ -1,7 +1,7 @@
 {
   "name": "@appium/eslint-config-appium-ts",
   "type": "module",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Shared ESLint config for Appium projects (TypeScript version)",
   "keywords": [
     "eslint",

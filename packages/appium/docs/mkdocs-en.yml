@@ -58,6 +58,7 @@ nav:
           - guides/config.md
           - guides/security.md
           - guides/log-filters.md
+          - guides/headers.md
           - guides/grid.md
           - guides/caching.md
           - guides/tls.md

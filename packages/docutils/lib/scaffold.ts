@@ -12,8 +12,8 @@ import {JsonValue, JsonObject} from 'type-fest';
 import {DocutilsError} from './error';
 import {relative} from './util';
 import _ from 'lodash';
-import {stringifyJson, readPackageJson, safeWriteFile} from './fs';
-import {NAME_ERR_ENOENT, NAME_ERR_EEXIST} from './constants';
+import {stringifyJson, readPackageJson, writeFileString} from './fs';
+import {NAME_ERR_ENOENT} from './constants';
 
 const log = getLogger('init');
 const dryRunLog = getLogger('dry-run', log);
@@ -91,7 +91,7 @@ export function createScaffoldTask<Opts extends ScaffoldTaskOptions, T extends J
     dest = dest ?? path.join(pkgDir, defaultFilename);
     const relativeDest = relativePath(dest);
     log.debug('Initializing %s', relativeDest);
-    let shouldWriteDest = false;
+    let destChangesNeeded = false;
     let isNew = false;
     let destContent: T;
     let result: ScaffoldTaskResult<T>;
@@ -103,7 +103,7 @@ export function createScaffoldTask<Opts extends ScaffoldTaskOptions, T extends J
       if (err.code !== NAME_ERR_ENOENT) {
         throw err;
       }
-      shouldWriteDest = true;
+      destChangesNeeded = true;
       log.debug('Creating new file %s', relativeDest);
       destContent = {} as T;
       isNew = true;
@@ -112,9 +112,9 @@ export function createScaffoldTask<Opts extends ScaffoldTaskOptions, T extends J
     const defaults: T = transform(defaultContent, opts, pkg);
     const finalDestContent: T = _.defaultsDeep({}, destContent, defaults);
 
-    shouldWriteDest = shouldWriteDest || !_.isEqual(destContent, finalDestContent);
+    destChangesNeeded = destChangesNeeded || !_.isEqual(destContent, finalDestContent);
 
-    if (shouldWriteDest) {
+    if (destChangesNeeded) {
       log.info('Changes needed in %s', relativeDest);
       log.debug('Original %s: %O', relativeDest, destContent);
       log.debug('Final %s: %O', relativeDest, finalDestContent);
@@ -126,20 +126,19 @@ export function createScaffoldTask<Opts extends ScaffoldTaskOptions, T extends J
         return result;
       }
 
-      try {
-        await safeWriteFile(dest, finalDestContent, overwrite);
-        if (isNew) {
-          log.success('Initialized %s', description);
-        } else {
-          log.success('Updated %s', description);
-        }
-      } catch (e) {
-        const err = e as NodeJS.ErrnoException;
-        // this should only be thrown if `force` is false
-        if (err.code === NAME_ERR_EEXIST) {
-          log.info(`${relativeDest} already exists; continuing...`);
-          log.debug(`Tried to apply patch:\n\n${patch}`);
-        } else {
+      if (!isNew && !overwrite) {
+        log.info('File %s already exists, continuing (enable overwrite with "--force")', relativeDest);
+        log.debug('Tried to apply patch:\n\n%s', patch);
+      } else {
+        try {
+          await writeFileString(dest, finalDestContent);
+          if (isNew) {
+            log.success('Initialized %s', description);
+          } else {
+            log.success('Updated %s', description);
+          }
+        } catch (e) {
+          const err = e as NodeJS.ErrnoException;
           throw new DocutilsError(`Could not write to ${relativeDest}. Reason: ${err.message}`, {
             cause: err,
           });

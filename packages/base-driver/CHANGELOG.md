@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.17.0](https://github.com/appium/appium/compare/@appium/base-driver@9.16.4...@appium/base-driver@9.17.0) (2025-04-25)
+
+
+### Features
+
+* Add a possibility to mask sensitive log values depending on request headers ([#21123](https://github.com/appium/appium/issues/21123)) ([c24d2ac](https://github.com/appium/appium/commit/c24d2ac46123f41ee9b54e0adefacfabd149089c))
+* **base-driver:** Accept `x-request-id` as override to generated requestId in `handleLogContext` ([#21154](https://github.com/appium/appium/issues/21154)) ([a82476f](https://github.com/appium/appium/commit/a82476f2fcb4aa3a3c4660d96fdd261a98afa4af))
+
+
+
 ## [9.16.4](https://github.com/appium/appium/compare/@appium/base-driver@9.16.3...@appium/base-driver@9.16.4) (2025-03-17)
 
 

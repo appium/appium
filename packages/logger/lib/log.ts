@@ -237,8 +237,11 @@ export class Log extends EventEmitter implements Logger {
     let stack: string | undefined;
     for (const arg of [message, ...args]) {
       const result = this._formatLogArgument(arg);
-      stack = result.stack;
-      messageArguments.push(result.arg);
+      if (result.stack) {
+        stack = result.stack;
+      } else {
+        messageArguments.push(result.arg);
+      }
     }
     if (stack) {
       messageArguments.unshift(`${stack}\n`);

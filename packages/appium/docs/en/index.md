@@ -12,13 +12,6 @@ title: Welcome
   }
 </style>
 
-<div style="text-align:center;width:100%;background-color:#ec366d;margin-top:-3em;margin-bottom:2em;">
-  <h3 style="color:#ffffff;padding: 8px;">
-    AppiumConf 2025 is partnering with SeleniumConf<br/> <span style="font-size:0.8em;">March 26-28 in Valencia, Spain. Join us to learn and connect with the community!</span><br/>
-    <a style="color:#fcba12" href="https://seleniumconf.com/" target="_blank">Register Now</a>
-  </h3>
-</div>
-
 <div style="text-align: center">
   <img src="assets/images/appium-logo-horiz.png" style="max-width: 400px;" />
 </div>

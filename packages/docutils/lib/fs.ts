@@ -11,7 +11,15 @@ import _pkgDir from 'pkg-dir';
 import readPkg, {NormalizedPackageJson, PackageJson} from 'read-pkg';
 import {JsonValue} from 'type-fest';
 import YAML from 'yaml';
-import {NAME_MIKE, NAME_MKDOCS_YML, NAME_NPM, NAME_PACKAGE_JSON, NAME_PYTHON} from './constants';
+import {
+  MESSAGE_PYTHON_MISSING,
+  NAME_MIKE,
+  NAME_MKDOCS,
+  NAME_MKDOCS_YML,
+  NAME_NPM,
+  NAME_PACKAGE_JSON,
+  NAME_PYTHON,
+} from './constants';
 import {DocutilsError} from './error';
 import {getLogger} from './logger';
 import {MkDocsYml} from './model';
@@ -152,18 +160,14 @@ export const readJson = _.memoize(
 );
 
 /**
- * Writes a file, but will not overwrite an existing file unless `overwrite` is true
- *
- * Will stringify JSON objects
+ * Writes contents to a file. Any JSON objects are stringified
  * @param filepath - Path to file
  * @param content - File contents
- * @param overwrite - If `true`, overwrite existing files
  */
-export function safeWriteFile(filepath: string, content: JsonValue, overwrite = false) {
+export function writeFileString(filepath: string, content: JsonValue) {
   const data: string = _.isString(content) ? content : JSON.stringify(content, undefined, 2);
   return fs.writeFile(filepath, data, {
     encoding: 'utf8',
-    flag: overwrite ? 'w' : 'wx',
   });
 }
 
@@ -188,6 +192,28 @@ const whichPython = _.partial(cachedWhich, NAME_PYTHON, {nothrow: true});
  * Finds `python3` executable
  */
 const whichPython3 = _.partial(cachedWhich, `${NAME_PYTHON}3`, {nothrow: true});
+
+/**
+ * Check if `mkdocs` is installed
+ */
+export const isMkDocsInstalled = _.memoize(async (): Promise<boolean> => {
+  // see if it's in PATH
+  const mkDocsPath = await cachedWhich(NAME_MKDOCS, {nothrow: true});
+  if (mkDocsPath) {
+    return true;
+  }
+  // if it isn't, it should be invokable via `python -m`
+  const pythonPath = await findPython();
+  if (!pythonPath) {
+    return false;
+  }
+  try {
+    await exec(pythonPath, ['-m', NAME_MKDOCS]);
+    return true;
+  } catch {
+    return false;
+  }
+});
 
 /**
  * `mike` cannot be invoked via `python -m`, so we need to find the script.
@@ -224,6 +250,17 @@ export const findMike = _.partial(async () => {
 export const findPython = _.memoize(
   async (): Promise<string | null> => (await whichPython3()) ?? (await whichPython()),
 );
+
+/**
+ * Check if a path to Python exists, otherwise raise DocutilsError
+ */
+export async function requirePython(pythonPath?: string): Promise<string> {
+  const foundPythonPath = pythonPath ?? (await findPython());
+  if (!foundPythonPath) {
+    throw new DocutilsError(MESSAGE_PYTHON_MISSING);
+  }
+  return foundPythonPath;
+}
 
 /**
  * Reads an `mkdocs.yml` file, merges inherited configs, and returns the result. The result is cached.

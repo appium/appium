@@ -42,7 +42,7 @@ Here is a list of all the globally-recognized Appium capabilities:
 | `appium:app`                               | `string`  | no        | The path to an installable application |
 | `appium:deviceName`                        | `string`  | no        | The name of a particular device to automate, e.g., `iPhone 14` (currently only actually useful for specifying iOS simulators, since in other situations it's typically recommended to use a specific device id via the `appium:udid` capability). |
 | `appium:platformVersion`                   | `string`  | no        | The version of a platform, e.g., for iOS, `16.0` |
-| `appium:newCommandTimeout`                 | `number`  | no        | The number of seconds the Appium server should wait for clients to send commands before deciding that the client has gone away and the session should shut down |
+| `appium:newCommandTimeout`                 | `number`  | no        | The number of seconds the Appium server should wait for clients to send commands before deciding that the client has gone away and the session should shut down. `60` seconds by default. Setting it to zero disables the timer. |
 | `appium:noReset`                           | `boolean` | no        | If true, instruct an Appium driver to avoid its usual reset logic during session start and cleanup (default `false`) |
 | `appium:fullReset`                         | `boolean` | no        | If true, instruct an Appium driver to augment its usual reset logic with additional steps to ensure maximum environmental reproducibility (default `false`) |
 | `appium:eventTimings`                      | `boolean` | no        | If true, instruct an Appium driver to collect [Event Timings](./event-timing.md) (default `false`) |

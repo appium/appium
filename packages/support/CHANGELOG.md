@@ -3,15 +3,6 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-## [6.1.0](https://github.com/appium/appium/compare/@appium/support@6.0.8...@appium/support@6.1.0) (2025-04-25)
-
-
-### Features
-
-* Add a possibility to mask sensitive log values depending on request headers ([#21123](https://github.com/appium/appium/issues/21123)) ([c24d2ac](https://github.com/appium/appium/commit/c24d2ac46123f41ee9b54e0adefacfabd149089c))
-
-
-
 ## [6.0.8](https://github.com/appium/appium/compare/@appium/support@6.0.7...@appium/support@6.0.8) (2025-03-17)
 
 **Note:** Version bump only for package @appium/support

@@ -7,9 +7,9 @@
 
 import path from 'node:path';
 import {exec, TeenProcessExecOptions} from 'teen_process';
-import {DEFAULT_SITE_DIR, NAME_BIN, NAME_MKDOCS, NAME_MKDOCS_YML} from '../constants';
+import {DEFAULT_SITE_DIR, NAME_BIN, NAME_MKDOCS, NAME_MKDOCS_YML, NAME_PYTHON} from '../constants';
 import {DocutilsError} from '../error';
-import {findMkDocsYml, isMkDocsInstalled, readMkDocsYml, requirePython} from '../fs';
+import {findMkDocsYml, findPython, readMkDocsYml} from '../fs';
 import {getLogger} from '../logger';
 import {relative, spawnBackgroundProcess, SpawnBackgroundProcessOpts, stopwatch} from '../util';
 
@@ -58,11 +58,11 @@ export async function buildSite({
 }: BuildMkDocsOpts = {}) {
   const stop = stopwatch('build-mkdocs');
 
-  const pythonPath = await requirePython();
-
-  const mkdocsInstalled = await isMkDocsInstalled();
-  if (!mkdocsInstalled) {
-    throw new DocutilsError(`Could not find MkDocs executable; please run "${NAME_BIN} init"`);
+  const pythonPath = await findPython();
+  if (!pythonPath) {
+    throw new DocutilsError(
+      `Could not find ${NAME_PYTHON}3/${NAME_PYTHON} executable in PATH; please install Python v3`,
+    );
   }
 
   mkDocsYmlPath = mkDocsYmlPath
@@ -70,7 +70,7 @@ export async function buildSite({
     : await findMkDocsYml(cwd);
   if (!mkDocsYmlPath) {
     throw new DocutilsError(
-      `Could not find ${NAME_MKDOCS_YML} from ${cwd}; please run "${NAME_BIN} init"`,
+      `Could not find ${NAME_MKDOCS_YML} from ${cwd}; run "${NAME_BIN} init" to create it`,
     );
   }
   const mkdocsArgs = ['-f', mkDocsYmlPath];

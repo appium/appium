@@ -16,9 +16,10 @@ import {
   NAME_BIN,
   NAME_MIKE,
   NAME_MKDOCS_YML,
+  NAME_PYTHON,
 } from '../constants';
 import {DocutilsError} from '../error';
-import {findMike, findMkDocsYml, isMkDocsInstalled, readPackageJson, requirePython} from '../fs';
+import {findMike, findMkDocsYml, findPython, readPackageJson} from '../fs';
 import {getLogger} from '../logger';
 import {argify, spawnBackgroundProcess, SpawnBackgroundProcessOpts, stopwatch} from '../util';
 
@@ -36,7 +37,6 @@ async function doServe(
   opts: SpawnBackgroundProcessOpts = {},
 ) {
   const finalArgs = ['serve', ...args];
-  log.debug('Executing %s via: %s %O', NAME_MIKE, mikePath, finalArgs);
   return spawnBackgroundProcess(mikePath, finalArgs, opts);
 }
 
@@ -99,17 +99,18 @@ export async function deploy({
 }: DeployOpts = {}) {
   const stop = stopwatch('deploy');
 
-  await requirePython();
+  const pythonPath = await findPython();
 
-  const mkdocsInstalled = await isMkDocsInstalled();
-  if (!mkdocsInstalled) {
-    throw new DocutilsError(`Could not find MkDocs executable; please run "${NAME_BIN} init"`);
+  if (!pythonPath) {
+    throw new DocutilsError(
+      `Could not find ${NAME_PYTHON}3/${NAME_PYTHON} executable in PATH; please install Python v3`,
+    );
   }
 
   mkDocsYmlPath = mkDocsYmlPath ?? (await findMkDocsYml(cwd));
   if (!mkDocsYmlPath) {
     throw new DocutilsError(
-      `Could not find ${NAME_MKDOCS_YML} from ${cwd}; please run "${NAME_BIN} init"`,
+      `Could not find ${NAME_MKDOCS_YML} from ${cwd}; run "${NAME_BIN} init" to create it`,
     );
   }
   version = version ?? (await findDeployVersion(packageJsonPath, cwd));

@@ -58,9 +58,9 @@ jobs:
   prepare_matrix:
     runs-on: ubuntu-latest
     outputs:
-      versions: ${{ steps.generate-matrix.outputs.lts }}
+      versions: ${{ steps.generate-matrix.outputs.active }}
     steps:
-    - name: Select all current LTS versions of Node.js
+    - name: Select all active LTS versions of Node.js
       id: generate-matrix
       uses: msimerson/node-lts-versions@v1
 

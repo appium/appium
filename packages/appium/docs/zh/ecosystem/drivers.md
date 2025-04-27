@@ -43,7 +43,6 @@ appium driver install <驱动名称>
 |[Tizen](https://github.com/Samsung/appium-tizen-driver)|`--source=npm appium-tizen-driver`|Android|Native|Community / Samsung|
 |[TizenTV](https://github.com/headspinio/appium-tizen-tv-driver)|`--source=npm appium-tizen-tv-driver`|Samsung TV|Web|HeadSpin|
 |[Youi](https://github.com/YOU-i-Labs/appium-youiengine-driver)|`--source=npm appium-youiengine-driver`|iOS, Android, macOS, Linux, tvOS|Native|Community / You.i|
-|[NovaWindows](https://github.com/AutomateThePlanet/appium-novawindows-driver)|`--source=npm appium-novawindows-driver`|Windows|Native|Community / Automate The Planet|
 
 !!! 注意
 

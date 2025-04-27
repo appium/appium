@@ -3,20 +3,9 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-## [2.18.0](https://github.com/appium/appium/compare/appium@2.17.1...appium@2.18.0) (2025-04-25)
-
-
-### Features
-
-* **base-driver:** Accept `x-request-id` as override to generated requestId in `handleLogContext` ([#21154](https://github.com/appium/appium/issues/21154)) ([a82476f](https://github.com/appium/appium/commit/a82476f2fcb4aa3a3c4660d96fdd261a98afa4af))
-
-
-
 ## [2.17.1](https://github.com/appium/appium/compare/appium@2.17.0...appium@2.17.1) (2025-03-17)
 
 **Note:** Version bump only for package appium
-
-
 
 
 

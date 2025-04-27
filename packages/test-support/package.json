@@ -1,6 +1,6 @@
 {
   "name": "@appium/test-support",
-  "version": "3.1.9",
+  "version": "3.1.8",
   "description": "A collection of test utilities used across Appium packages",
   "keywords": [
     "automation",
@@ -45,7 +45,7 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/support": "^6.1.0",
+    "@appium/support": "^6.0.8",
     "@colors/colors": "1.6.0",
     "bluebird": "3.7.2",
     "lodash": "4.17.21",

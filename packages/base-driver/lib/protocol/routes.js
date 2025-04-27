@@ -251,23 +251,19 @@ export const METHOD_MAP = /** @type {const} */ ({
   // Appium specific
   //
   '/session/:sessionId/ime/available_engines': {
-    GET: {command: 'availableIMEEngines', deprecated: true},
+    GET: {command: 'availableIMEEngines'},
   },
   '/session/:sessionId/ime/active_engine': {
-    GET: {command: 'getActiveIMEEngine', deprecated: true},
+    GET: {command: 'getActiveIMEEngine'},
   },
   '/session/:sessionId/ime/activated': {
-    GET: {command: 'isIMEActivated', deprecated: true},
+    GET: {command: 'isIMEActivated'},
   },
   '/session/:sessionId/ime/deactivate': {
-    POST: {command: 'deactivateIMEEngine', deprecated: true},
+    POST: {command: 'deactivateIMEEngine'},
   },
   '/session/:sessionId/ime/activate': {
-    POST: {
-      command: 'activateIMEEngine',
-      payloadParams: {required: ['engine']},
-      deprecated: true,
-    },
+    POST: {command: 'activateIMEEngine', payloadParams: {required: ['engine']}},
   },
   '/session/:sessionId/rotation': {
     GET: {command: 'getRotation'},
@@ -292,18 +288,16 @@ export const METHOD_MAP = /** @type {const} */ ({
     GET: {command: 'getContexts'},
   },
   '/session/:sessionId/network_connection': {
-    GET: {command: 'getNetworkConnection', deprecated: true},
+    GET: {command: 'getNetworkConnection'},
     POST: {
       command: 'setNetworkConnection',
       payloadParams: {unwrap: 'parameters', required: ['type']},
-      deprecated: true,
     },
   },
   '/session/:sessionId/receive_async_response': {
     POST: {
       command: 'receiveAsyncResponse',
       payloadParams: {required: ['status', 'value']},
-      deprecated: true,
     },
   },
   '/appium/sessions': {

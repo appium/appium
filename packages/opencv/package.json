@@ -1,6 +1,6 @@
 {
   "name": "@appium/opencv",
-  "version": "3.0.9",
+  "version": "3.0.8",
   "description": "OpenCV-related helper library",
   "keywords": [
     "automation",
@@ -44,7 +44,7 @@
     "bluebird": "3.7.2",
     "lodash": "4.17.21",
     "opencv-bindings": "4.5.5",
-    "sharp": "0.34.1",
+    "sharp": "0.33.5",
     "source-map-support": "0.5.21"
   },
   "engines": {

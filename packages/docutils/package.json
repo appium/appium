@@ -1,6 +1,6 @@
 {
   "name": "@appium/docutils",
-  "version": "1.1.0",
+  "version": "1.0.34",
   "description": "Documentation generation utilities for Appium and related projects",
   "keywords": [
     "automation",
@@ -48,7 +48,7 @@
     "start": "node ./build/lib/cli/index.js"
   },
   "dependencies": {
-    "@appium/support": "^6.1.0",
+    "@appium/support": "^6.0.8",
     "@appium/tsconfig": "^0.3.5",
     "@sliphua/lilconfig-ts-loader": "3.2.2",
     "chalk": "4.1.2",
@@ -62,9 +62,9 @@
     "semver": "7.7.1",
     "source-map-support": "0.5.21",
     "teen_process": "2.3.1",
-    "type-fest": "4.40.0",
-    "typescript": "5.8.3",
-    "yaml": "2.7.1",
+    "type-fest": "4.38.0",
+    "typescript": "5.8.2",
+    "yaml": "2.7.0",
     "yargs": "17.7.2",
     "yargs-parser": "21.1.1"
   },

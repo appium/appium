@@ -1,6 +1,6 @@
 {
   "name": "@appium/types",
-  "version": "0.25.3",
+  "version": "0.25.2",
   "description": "Various type declarations used across Appium",
   "keywords": [
     "automation",
@@ -38,10 +38,10 @@
     "test:types": "tsd"
   },
   "dependencies": {
-    "@appium/logger": "^1.7.0",
+    "@appium/logger": "^1.6.1",
     "@appium/schema": "^0.8.1",
     "@appium/tsconfig": "^0.3.5",
-    "type-fest": "4.40.0"
+    "type-fest": "4.38.0"
   },
   "engines": {
     "node": "^14.17.0 || ^16.13.0 || >=18.0.0",

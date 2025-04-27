@@ -74,6 +74,11 @@ export const NAME_TYPESCRIPT = 'typescript';
 export const NAME_ERR_ENOENT = 'ENOENT';
 
 /**
+ * Code for a "file already exists" error
+ */
+export const NAME_ERR_EEXIST = 'EEXIST';
+
+/**
  * Name of the default theme
  */
 export const NAME_THEME = 'material';
@@ -148,8 +153,3 @@ export const DEFAULT_SITE_DIR = 'site';
  * To ensure backwards compatibility, its environment variable version is used
  */
 export const PIP_ENV_VARS = {PIP_BREAK_SYSTEM_PACKAGES: '1'};
-
-/**
- * Error message emitted when the path to Python was not found
- */
-export const MESSAGE_PYTHON_MISSING = 'Could not find Python in PATH. Is it installed?';

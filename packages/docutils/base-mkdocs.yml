@@ -1,30 +1,20 @@
 markdown_extensions:
-  - admonition
-  - attr_list
-  - footnotes
-  - md_in_html
   - meta
-  - pymdownx.caret
-  - pymdownx.critic
+  - attr_list
+  - admonition
+  - md_in_html
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
   - pymdownx.details
+  - pymdownx.tabbed:
+      alternate_style: true
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
-  - pymdownx.highlight:
-      anchor_linenums: true
-      line_spans: __span
-      pygments_lang_class: true
-  - pymdownx.inlinehilite
-  - pymdownx.keys
-  - pymdownx.mark
-  - pymdownx.snippets
-  - pymdownx.superfences
-  - pymdownx.tabbed:
-      alternate_style: true
-  - pymdownx.tasklist:
-      custom_checkbox: true
-  - pymdownx.tilde
-  - tables
+  - footnotes
   - toc:
       permalink: true
 
@@ -73,9 +63,6 @@ theme:
       quote: octicons/quote-16
   features:
     - content.action.edit
-    - content.code.annotate
-    - content.code.copy
-    - content.tabs.link
     - navigation.sections
     - navigation.tabs
     - navigation.top

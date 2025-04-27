@@ -3,21 +3,6 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-## [1.7.0](https://github.com/appium/appium/compare/@appium/logger@1.6.1...@appium/logger@1.7.0) (2025-04-25)
-
-
-### Features
-
-* Add a possibility to mask sensitive log values depending on request headers ([#21123](https://github.com/appium/appium/issues/21123)) ([c24d2ac](https://github.com/appium/appium/commit/c24d2ac46123f41ee9b54e0adefacfabd149089c))
-
-
-### Bug Fixes
-
-* **appium:** Return hostname as web socket url for BiDi if a broadcast address is assigned to the server ([#20603](https://github.com/appium/appium/issues/20603)) ([f0de55d](https://github.com/appium/appium/commit/f0de55da0da2fc0305876a948704c1f0a2a5990f))
-* **logger:** Error stack logging ([#21176](https://github.com/appium/appium/issues/21176)) ([1de5d0a](https://github.com/appium/appium/commit/1de5d0a0e8994b170a44eebe2d0575d5c74c3ff2))
-
-
-
 ## [1.6.1](https://github.com/appium/appium/compare/@appium/logger@1.6.0...@appium/logger@1.6.1) (2024-08-07)
 
 

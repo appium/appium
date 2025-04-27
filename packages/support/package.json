@@ -1,6 +1,6 @@
 {
   "name": "@appium/support",
-  "version": "6.1.0",
+  "version": "6.0.8",
   "description": "Support libs used across appium packages",
   "keywords": [
     "automation",
@@ -41,12 +41,12 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/logger": "^1.7.0",
+    "@appium/logger": "^1.6.1",
     "@appium/tsconfig": "^0.3.5",
-    "@appium/types": "^0.25.3",
+    "@appium/types": "^0.25.2",
     "@colors/colors": "1.6.0",
     "archiver": "7.0.1",
-    "axios": "1.9.0",
+    "axios": "1.8.4",
     "base64-stream": "1.0.0",
     "bluebird": "3.7.2",
     "bplist-creator": "0.1.1",
@@ -73,13 +73,13 @@
     "source-map-support": "0.5.21",
     "supports-color": "8.1.1",
     "teen_process": "2.3.1",
-    "type-fest": "4.40.0",
+    "type-fest": "4.38.0",
     "uuid": "11.1.0",
     "which": "4.0.0",
     "yauzl": "3.2.0"
   },
   "optionalDependencies": {
-    "sharp": "0.34.1"
+    "sharp": "0.33.5"
   },
   "engines": {
     "node": "^14.17.0 || ^16.13.0 || >=18.0.0",

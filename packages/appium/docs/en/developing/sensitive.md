@@ -1,7 +1,9 @@
+---
 hide:
   - toc
 
 title: Masking Sensitive Log Data
+---
 
 Since Appium server version 2.18.0 there is a possibility to mask sensitive
 values in logs. The below tutorial explains how to use this feature in third-party

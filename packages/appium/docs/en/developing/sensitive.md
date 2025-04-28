@@ -1,6 +1,7 @@
----
-title: Sensitive Log Data
----
+hide:
+  - toc
+
+title: Masking Sensitive Log Data
 
 Since Appium server version 2.18.0 there is a possibility to mask sensitive
 values in logs. The below tutorial explains how to use this feature in third-party
@@ -23,20 +24,20 @@ In order to get some value in logs replaced by a generic mask it is necessary:
 
 - Change the logging expression to wrap sensitive values and format them, for example:
 
-```js
-this.log.info(`Value: ${value}`);
-```
+    ```js
+    this.log.info(`Value: ${value}`);
+    ```
 
-becomes
+    becomes
 
-```js
-import {logger} from '@appium/support';
+    ```js
+    import {logger} from '@appium/support';
 
-this.log.info('Value: %s', logger.markSensitive(value));
-```
+    this.log.info('Value: %s', logger.markSensitive(value));
+    ```
 
-The formatting happens via the standard Node.js's
-[util.format](https://nodejs.org/api/util.html#utilformatformat-args) API.
+    The formatting happens via the standard Node.js's
+    [util.format](https://nodejs.org/api/util.html#utilformatformat-args) API.
 
 - While sending the appropriate server request, where this log line is used and should be masked,
   add the custom header `X-Appium-Is-Sensitive` with its value set to `1` or `true`.

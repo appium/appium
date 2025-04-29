@@ -172,7 +172,7 @@ describe('AppiumDriver', function () {
         appium.sessions['xyz-321-abc'] = fakeDrivers[1];
         appium.sessions['123-abc-xyz'] = fakeDrivers[2];
 
-        let sessions = await appium.getSessions();
+        let sessions = await appium.getAppiumSessions();
         sessions.should.have.length(3);
 
         mockFakeDriver
@@ -182,7 +182,7 @@ describe('AppiumDriver', function () {
           .returns([SESSION_ID, removeAppiumPrefixes(W3C_PREFIXED_CAPS)]);
         await appium.createSession(undefined, null, W3C_CAPS);
 
-        sessions = await appium.getSessions();
+        sessions = await appium.getAppiumSessions();
         sessions.should.have.length(1);
 
         for (let mfd of mockFakeDrivers) {
@@ -265,10 +265,10 @@ describe('AppiumDriver', function () {
       });
       it('should remove the session if it is found', async function () {
         let [sessionId] = (await appium.createSession(null, null, W3C_CAPS)).value;
-        let sessions = await appium.getSessions();
+        let sessions = await appium.getAppiumSessions();
         sessions.should.have.length(1);
         await appium.deleteSession(sessionId);
-        sessions = await appium.getSessions();
+        sessions = await appium.getAppiumSessions();
         sessions.should.have.length(0);
       });
       it("should call inner driver's deleteSession method", async function () {
@@ -281,7 +281,7 @@ describe('AppiumDriver', function () {
         await mockFakeDriver.object.deleteSession();
       });
     });
-    describe('getSessions', function () {
+    describe('getAppiumSessions', function () {
       let appium, mockFakeDriver;
       let sessions;
       before(function () {
@@ -294,7 +294,7 @@ describe('AppiumDriver', function () {
         mockFakeDriver.restore();
       });
       it('should return an empty array of sessions', async function () {
-        sessions = await appium.getSessions();
+        sessions = await appium.getAppiumSessions();
         sessions.should.be.an('array');
         sessions.should.be.empty;
       });
@@ -316,12 +316,14 @@ describe('AppiumDriver', function () {
           .returns(['fake-session-id-2', removeAppiumPrefixes(caps2.alwaysMatch)]);
         let [session2Id, session2Caps] = (await appium.createSession(null, null, caps2)).value;
 
-        sessions = await appium.getSessions();
+        sessions = await appium.getAppiumSessions();
         sessions.should.be.an('array');
         sessions.should.have.length(2);
         sessions[0].id.should.equal(session1Id);
+        sessions[0].should.have.property('created');
         removeAppiumPrefixes(caps1.alwaysMatch).should.eql(session1Caps);
         sessions[1].id.should.equal(session2Id);
+        sessions[1].should.have.property('created');
         removeAppiumPrefixes(caps2.alwaysMatch).should.eql(session2Caps);
       });
     });

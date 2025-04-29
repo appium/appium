@@ -41,6 +41,8 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
 
   sessionId: string | null;
 
+  sessionCreationTime: number;
+
   opts: DriverOpts<C>;
 
   initialOpts: InitialOpts;

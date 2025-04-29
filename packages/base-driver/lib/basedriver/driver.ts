@@ -10,6 +10,7 @@ import {
   type DriverCaps,
   type DriverData,
   type MultiSessionData,
+  type DatedMultiSessionData,
   type ServerArgs,
   type StringRecord,
   type W3CDriverCaps,
@@ -302,6 +303,7 @@ export class BaseDriver<
     this.validateDesiredCaps(caps);
 
     this.sessionId = util.uuidV4();
+    this.sessionCreationTime = Date.now();
     this.caps = caps;
     // merge caps onto opts so we don't need to worry about what's where
     this.opts = {..._.cloneDeep(this.initialOpts), ...this.caps};
@@ -345,6 +347,11 @@ export class BaseDriver<
 
     return [this.sessionId, caps] as CreateResult;
   }
+
+  /**
+   * Returns the session id and capabilities for the session
+   * @deprecated Use {@linkcode getAppiumSessions} instead for getting the session data.
+   */
   async getSessions() {
     const ret: MultiSessionData<C>[] = [];
 
@@ -359,8 +366,25 @@ export class BaseDriver<
   }
 
   /**
+   * Returns the session id, creation time and capabilities for the session
+   */
+  async getAppiumSessions() {
+    const ret: DatedMultiSessionData<C>[] = [];
+
+    if (this.sessionId) {
+      ret.push({
+        id: this.sessionId,
+        created: this.sessionCreationTime,
+        capabilities: this.caps,
+      });
+    }
+
+    return ret;
+  }
+
+  /**
    * Returns capabilities for the session and event history (if applicable)
-   * @deprecated Use {@linkcode ISessionCommands.getAppiumSessionCapabilities} instead for getting the capabilities.
+   * @deprecated Use {@linkcode getAppiumSessionCapabilities} instead for getting the capabilities.
    * Use {@linkcode EventCommands.getLogEvents} instead to get the event history.
    */
   async getSession() {

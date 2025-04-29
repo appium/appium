@@ -188,6 +188,11 @@ class AppiumDriver extends DriverCore {
     });
   }
 
+  /**
+   * Retrieve information about all active sessions
+   * @returns {Promise<import('@appium/types').MultiSessionData[]>}
+   * @deprecated Use {@linkcode getAppiumSessions} instead
+   */
   async getSessions() {
     return _.toPairs(this.sessions).map(([id, driver]) => ({
       id,
@@ -195,9 +200,16 @@ class AppiumDriver extends DriverCore {
     }));
   }
 
+  /**
+   * Retrieve information about all active sessions
+   * @returns {Promise<import('@appium/types').DatedMultiSessionData[]>}
+   */
   async getAppiumSessions () {
-    throw new errors.NotImplementedError('Not implemented yet. ' +
-      'Please check https://github.com/appium/appium/issues/20880 for more details.');
+    return _.toPairs(this.sessions).map(([id, driver]) => ({
+      id,
+      created: driver.sessionCreationTime,
+      capabilities: /** @type {import('@appium/types').DriverCaps<any>} */ (driver.caps),
+    }));
   }
 
   printNewSessionAnnouncement(driverName, driverVersion, driverBaseVersion) {

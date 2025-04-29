@@ -158,7 +158,7 @@ describe('Desired Capabilities', function () {
       });
       logWarnSpy.called.should.be.true;
 
-      let sessions = await d.getSessions();
+      let sessions = await d.getAppiumSessions();
       sessions[0].capabilities.noReset.should.eql(false);
     });
 
@@ -173,7 +173,7 @@ describe('Desired Capabilities', function () {
       });
       logWarnSpy.called.should.be.true;
 
-      let sessions = await d.getSessions();
+      let sessions = await d.getAppiumSessions();
       sessions[0].capabilities.noReset.should.eql(true);
     });
 
@@ -187,7 +187,7 @@ describe('Desired Capabilities', function () {
       });
       logWarnSpy.called.should.be.false;
 
-      let sessions = await d.getSessions();
+      let sessions = await d.getAppiumSessions();
       sessions[0].capabilities.language.should.eql('true');
     });
   });
@@ -204,7 +204,7 @@ describe('Desired Capabilities', function () {
       });
       logWarnSpy.called.should.be.true;
 
-      let sessions = await d.getSessions();
+      let sessions = await d.getAppiumSessions();
       sessions[0].capabilities.newCommandTimeout.should.eql(1);
     });
 
@@ -219,7 +219,7 @@ describe('Desired Capabilities', function () {
       });
       logWarnSpy.called.should.be.true;
 
-      let sessions = await d.getSessions();
+      let sessions = await d.getAppiumSessions();
       sessions[0].capabilities.newCommandTimeout.should.eql(1.1);
     });
 
@@ -233,7 +233,7 @@ describe('Desired Capabilities', function () {
       });
       logWarnSpy.called.should.be.false;
 
-      let sessions = await d.getSessions();
+      let sessions = await d.getAppiumSessions();
       sessions[0].capabilities.language.should.eql('1');
     });
   });

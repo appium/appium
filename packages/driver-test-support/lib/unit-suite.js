@@ -94,14 +94,14 @@ export function driverUnitTestSuite(
     });
 
     it('should return sessions if no session exists', async function () {
-      let sessions = await d.getSessions();
+      let sessions = await d.getAppiumSessions();
       sessions.length.should.equal(0);
     });
 
     it('should return sessions', async function () {
       const caps = _.cloneDeep(w3cCaps);
       await d.createSession(caps);
-      let sessions = await d.getSessions();
+      let sessions = await d.getAppiumSessions();
 
       sessions.length.should.equal(1);
       sessions[0].should.include({

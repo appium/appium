@@ -202,12 +202,12 @@ class AppiumDriver extends DriverCore {
 
   /**
    * Retrieve information about all active sessions
-   * @returns {Promise<import('@appium/types').DatedMultiSessionData[]>}
+   * @returns {Promise<import('@appium/types').TimestampedMultiSessionData[]>}
    */
   async getAppiumSessions () {
     return _.toPairs(this.sessions).map(([id, driver]) => ({
       id,
-      created: driver.sessionCreationTime,
+      created: driver.sessionCreationTimestampMs,
       capabilities: /** @type {import('@appium/types').DriverCaps<any>} */ (driver.caps),
     }));
   }

@@ -10,7 +10,6 @@ import {
   type DriverCaps,
   type DriverData,
   type MultiSessionData,
-  type DatedMultiSessionData,
   type ServerArgs,
   type StringRecord,
   type W3CDriverCaps,
@@ -303,7 +302,7 @@ export class BaseDriver<
     this.validateDesiredCaps(caps);
 
     this.sessionId = util.uuidV4();
-    this.sessionCreationTime = Date.now();
+    this.sessionCreationTimestampMs = Date.now();
     this.caps = caps;
     // merge caps onto opts so we don't need to worry about what's where
     this.opts = {..._.cloneDeep(this.initialOpts), ...this.caps};
@@ -350,7 +349,7 @@ export class BaseDriver<
 
   /**
    * Returns the session id and capabilities for the session
-   * @deprecated Use {@linkcode getAppiumSessions} instead for getting the session data.
+   * @deprecated Use AppiumDriver.getAppiumSessions instead for getting the session data.
    */
   async getSessions() {
     const ret: MultiSessionData<C>[] = [];
@@ -358,23 +357,6 @@ export class BaseDriver<
     if (this.sessionId) {
       ret.push({
         id: this.sessionId,
-        capabilities: this.caps,
-      });
-    }
-
-    return ret;
-  }
-
-  /**
-   * Returns the session id, creation time and capabilities for the session
-   */
-  async getAppiumSessions() {
-    const ret: DatedMultiSessionData<C>[] = [];
-
-    if (this.sessionId) {
-      ret.push({
-        id: this.sessionId,
-        created: this.sessionCreationTime,
         capabilities: this.caps,
       });
     }

@@ -194,11 +194,11 @@ export interface MultiSessionData<C extends Constraints = Constraints> {
 }
 
 /**
- * Data returned by {@linkcode ISessionHandler.getAppiumSessions}.
+ * Data returned by `AppiumDriver.getAppiumSessions`
  *
  * @typeParam C - The driver's constraints
  */
-export interface DatedMultiSessionData<C extends Constraints = Constraints> {
+export interface TimestampedMultiSessionData<C extends Constraints = Constraints> {
   id: string;
   created: number;
   capabilities: DriverCaps<C>;
@@ -493,13 +493,6 @@ export interface ISessionHandler<
   getSessions(): Promise<MultiSessionData[]>;
 
   /**
-   * Get data for all sessions running on an Appium server
-   *
-   * @returns A list of session data objects
-   */
-  getAppiumSessions(): Promise<DatedMultiSessionData[]>;
-
-  /**
    * Get the data for the current session
    *
    * @returns A session data object
@@ -633,7 +626,7 @@ export interface DriverStatus {
 export interface Core<C extends Constraints, Settings extends StringRecord = StringRecord> {
   shouldValidateCaps: boolean;
   sessionId: string | null;
-  sessionCreationTime: number;
+  sessionCreationTimestampMs: number;
   opts: DriverOpts<C>;
   initialOpts: InitialOpts;
   protocol?: Protocol;

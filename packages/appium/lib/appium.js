@@ -20,10 +20,11 @@ import {
   pullSettings,
   makeNonW3cCapsError,
   validateFeatures,
+  filterGlobalFeatures,
 } from './utils';
 import {util} from '@appium/support';
 import {getDefaultsForExtension} from './schema';
-import {DRIVER_TYPE, BIDI_BASE_PATH} from './constants';
+import {DRIVER_TYPE, BIDI_BASE_PATH, SESSION_DISCOVERY_FEATURE} from './constants';
 import * as bidiCommands from './bidi-commands';
 import * as inspectorCommands from './inspector-commands';
 
@@ -201,10 +202,17 @@ class AppiumDriver extends DriverCore {
   }
 
   /**
-   * Retrieve information about all active sessions
+   * Retrieve information about all active sessions.
+   * Results are returned only if the `session_discovery` insecure feature is enabled.
    * @returns {Promise<import('@appium/types').TimestampedMultiSessionData[]>}
    */
   async getAppiumSessions () {
+    // We are using `isFeatureEnabled` instead of `assertFeatureEnabled`,
+    // otherwise users that don't want to expose their session list
+    // will get an error every time someone tries to request them
+    if (!this.isFeatureEnabled(SESSION_DISCOVERY_FEATURE)) {
+      return [];
+    }
     return _.toPairs(this.sessions).map(([id, driver]) => ({
       id,
       created: driver.sessionCreationTimestampMs,
@@ -349,7 +357,7 @@ class AppiumDriver extends DriverCore {
             `server command line argument. All insecure features will be ` +
             `enabled unless explicitly disabled by --deny-insecure`,
         );
-        driverInstance.relaxedSecurityEnabled = true;
+        this.relaxedSecurityEnabled = driverInstance.relaxedSecurityEnabled = true;
       }
 
       // We also want to assign any new Bidi Commands that the driver has specified, including all
@@ -363,12 +371,14 @@ class AppiumDriver extends DriverCore {
         this.log.info('Explicitly preventing use of insecure features:');
         this.args.denyInsecure.map((a) => this.log.info(`    ${a}`));
         driverInstance.denyInsecure = validateFeatures(this.args.denyInsecure);
+        this.denyInsecure = filterGlobalFeatures(driverInstance.denyInsecure);
       }
 
       if (!_.isEmpty(this.args.allowInsecure)) {
         this.log.info('Explicitly enabling use of insecure features:');
         this.args.allowInsecure.map((a) => this.log.info(`    ${a}`));
         driverInstance.allowInsecure = validateFeatures(this.args.allowInsecure);
+        this.allowInsecure = filterGlobalFeatures(driverInstance.allowInsecure);
       }
 
       // Likewise, any driver-specific CLI args that were passed in should be assigned directly to

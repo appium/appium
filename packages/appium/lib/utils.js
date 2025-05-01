@@ -495,6 +495,22 @@ export function validateFeatures(features) {
 }
 
 /**
+ * Filters the list of allowed/denied features to only those that are applied server-wide
+ * Assumes that all feature names have already been validated
+ *
+ * @param {string[]} features
+ * @returns {string[]}
+ */
+export function filterGlobalFeatures(features) {
+  const validator = (/** @type {string} */ fullName) => {
+    const separatorPos = fullName.indexOf(FEATURE_NAME_SEPARATOR);
+    const automationName = fullName.substring(0, separatorPos);
+    return automationName === ALL_DRIVERS_MATCH;
+  };
+  return features.filter(validator);
+}
+
+/**
  * @typedef {import('@appium/types').StringRecord} StringRecord
  * @typedef {import('@appium/types').BaseDriverCapConstraints} BaseDriverCapConstraints
  */

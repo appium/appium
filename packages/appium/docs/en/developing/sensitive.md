@@ -42,7 +42,7 @@ In order to get some value in logs replaced by a generic mask it is necessary:
     [util.format](https://nodejs.org/api/util.html#utilformatformat-args) API.
 
 - While sending the appropriate server request, where this log line is used and should be masked,
-  add the custom header `X-Appium-Is-Sensitive` with its value set to `1` or `true`.
+  add the custom header `X-Appium-Is-Sensitive` with its value set to `1` or `true` (case-insensitive).
   Without such header the above log value is not going to be masked.
   This way it is possible to conditionally mask log records depending on which
   request is being handled by the extension if the log expression is used in the

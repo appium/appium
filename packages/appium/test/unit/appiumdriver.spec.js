@@ -1,6 +1,6 @@
 // @ts-check
 
-import {PLUGIN_TYPE} from '../../lib/constants';
+import {PLUGIN_TYPE, SESSION_DISCOVERY_FEATURE} from '../../lib/constants';
 import B from 'bluebird';
 import {BaseDriver} from '@appium/base-driver';
 import {FakeDriver} from '@appium/fake-driver';
@@ -14,6 +14,7 @@ import {rewiremock, BASE_CAPS, W3C_CAPS, W3C_PREFIXED_CAPS} from '../helpers';
 import {BasePlugin} from '@appium/base-plugin';
 
 const SESSION_ID = '1';
+const SESSION_DISCOVERY_ENABLED = {allowInsecure: [`*:${SESSION_DISCOVERY_FEATURE}`]};
 
 describe('AppiumDriver', function () {
   /** @type {import('sinon').SinonSandbox} */
@@ -112,7 +113,7 @@ describe('AppiumDriver', function () {
       /** @type {sinon.SinonMock} */
       let mockFakeDriver;
       beforeEach(function () {
-        [appium, mockFakeDriver] = getDriverAndFakeDriver();
+        [appium, mockFakeDriver] = getDriverAndFakeDriver(SESSION_DISCOVERY_ENABLED);
       });
       afterEach(async function () {
         mockFakeDriver.restore();
@@ -172,9 +173,6 @@ describe('AppiumDriver', function () {
         appium.sessions['xyz-321-abc'] = fakeDrivers[1];
         appium.sessions['123-abc-xyz'] = fakeDrivers[2];
 
-        let sessions = await appium.getAppiumSessions();
-        sessions.should.have.length(3);
-
         mockFakeDriver
           .expects('createSession')
           .once()
@@ -182,7 +180,7 @@ describe('AppiumDriver', function () {
           .returns([SESSION_ID, removeAppiumPrefixes(W3C_PREFIXED_CAPS)]);
         await appium.createSession(undefined, null, W3C_CAPS);
 
-        sessions = await appium.getAppiumSessions();
+        const sessions = await appium.getAppiumSessions();
         sessions.should.have.length(1);
 
         for (let mfd of mockFakeDrivers) {
@@ -258,7 +256,7 @@ describe('AppiumDriver', function () {
       let appium;
       let mockFakeDriver;
       beforeEach(function () {
-        [appium, mockFakeDriver] = getDriverAndFakeDriver();
+        [appium, mockFakeDriver] = getDriverAndFakeDriver(SESSION_DISCOVERY_ENABLED);
       });
       afterEach(function () {
         mockFakeDriver.restore();
@@ -285,7 +283,7 @@ describe('AppiumDriver', function () {
       let appium, mockFakeDriver;
       let sessions;
       before(function () {
-        [appium, mockFakeDriver] = getDriverAndFakeDriver();
+        [appium, mockFakeDriver] = getDriverAndFakeDriver(SESSION_DISCOVERY_ENABLED);
       });
       afterEach(async function () {
         for (let session of sessions) {

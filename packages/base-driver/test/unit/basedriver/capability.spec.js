@@ -159,7 +159,8 @@ describe('Desired Capabilities', function () {
       logWarnSpy.called.should.be.true;
 
       let sessionCaps = await d.getAppiumSessionCapabilities();
-      sessionCaps.capabilities.noReset?.should.eql(false);
+      // @ts-expect-error the 'noReset' property should exist
+      sessionCaps.capabilities.noReset.should.eql(false);
     });
 
     it('should allow a string "true"', async function () {
@@ -174,7 +175,8 @@ describe('Desired Capabilities', function () {
       logWarnSpy.called.should.be.true;
 
       let sessionCaps = await d.getAppiumSessionCapabilities();
-      sessionCaps.capabilities.noReset?.should.eql(true);
+      // @ts-expect-error the 'noReset' property should exist
+      sessionCaps.capabilities.noReset.should.eql(true);
     });
 
     it('should allow a string "true" in string capabilities', async function () {
@@ -188,7 +190,8 @@ describe('Desired Capabilities', function () {
       logWarnSpy.called.should.be.false;
 
       let sessionCaps = await d.getAppiumSessionCapabilities();
-      sessionCaps.capabilities.language?.should.eql('true');
+      // @ts-expect-error the 'language' property should exist
+      sessionCaps.capabilities.language.should.eql('true');
     });
   });
 
@@ -205,7 +208,8 @@ describe('Desired Capabilities', function () {
       logWarnSpy.called.should.be.true;
 
       let sessionCaps = await d.getAppiumSessionCapabilities();
-      sessionCaps.capabilities.newCommandTimeout?.should.eql(1);
+      // @ts-expect-error the 'newCommandTimeout' property should exist
+      sessionCaps.capabilities.newCommandTimeout.should.eql(1);
     });
 
     it('should allow a string "1.1"', async function () {
@@ -220,7 +224,8 @@ describe('Desired Capabilities', function () {
       logWarnSpy.called.should.be.true;
 
       let sessionCaps = await d.getAppiumSessionCapabilities();
-      sessionCaps.capabilities.newCommandTimeout?.should.eql(1.1);
+      // @ts-expect-error the 'newCommandTimeout' property should exist
+      sessionCaps.capabilities.newCommandTimeout.should.eql(1.1);
     });
 
     it('should allow a string "1" in string capabilities', async function () {
@@ -234,7 +239,8 @@ describe('Desired Capabilities', function () {
       logWarnSpy.called.should.be.false;
 
       let sessionCaps = await d.getAppiumSessionCapabilities();
-      sessionCaps.capabilities.language?.should.eql('1');
+      // @ts-expect-error the 'language' property should exist
+      sessionCaps.capabilities.language.should.eql('1');
     });
   });
 

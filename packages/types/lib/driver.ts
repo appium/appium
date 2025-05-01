@@ -200,7 +200,7 @@ export interface MultiSessionData<C extends Constraints = Constraints> {
  */
 export interface TimestampedMultiSessionData<C extends Constraints = Constraints> {
   id: string;
-  created: number;
+  created: number; // Unix timestamp in milliseconds
   capabilities: DriverCaps<C>;
 }
 

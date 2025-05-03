@@ -207,12 +207,7 @@ class AppiumDriver extends DriverCore {
    * @returns {Promise<import('@appium/types').TimestampedMultiSessionData[]>}
    */
   async getAppiumSessions () {
-    // We are using `isFeatureEnabled` instead of `assertFeatureEnabled`,
-    // otherwise users that don't want to expose their session list
-    // will get an error every time someone tries to request them
-    if (!this.isFeatureEnabled(SESSION_DISCOVERY_FEATURE)) {
-      return [];
-    }
+    this.assertFeatureEnabled(SESSION_DISCOVERY_FEATURE);
     return _.toPairs(this.sessions).map(([id, driver]) => ({
       id,
       created: driver.sessionCreationTimestampMs,

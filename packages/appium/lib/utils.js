@@ -502,12 +502,15 @@ export function validateFeatures(features) {
  * @returns {string[]}
  */
 export function filterGlobalFeatures(features) {
-  const validator = (/** @type {string} */ fullName) => {
+  const filterFn = (/** @type {string} */ fullName) => {
     const separatorPos = fullName.indexOf(FEATURE_NAME_SEPARATOR);
+    if (separatorPos <= 0) {
+      return false;
+    }
     const automationName = fullName.substring(0, separatorPos);
     return automationName === ALL_DRIVERS_MATCH;
   };
-  return features.filter(validator);
+  return features.filter(filterFn);
 }
 
 /**

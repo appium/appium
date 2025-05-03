@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import {getBuildInfo, updateBuildInfo, APPIUM_VER} from './config';
+import logger from './logger';
 import {
   BaseDriver,
   DriverCore,
@@ -20,7 +21,7 @@ import {
   pullSettings,
   makeNonW3cCapsError,
   validateFeatures,
-  filterGlobalFeatures,
+  filterInsecureFeatures,
 } from './utils';
 import {util} from '@appium/support';
 import {getDefaultsForExtension} from './schema';
@@ -150,6 +151,37 @@ class AppiumDriver extends DriverCore {
    */
   get isCommandsQueueEnabled() {
     return false;
+  }
+
+  /**
+   * Configures insecure features according to the values in `args.relaxedSecurityEnabled`,
+   * `args.allowInsecure`, and `args.denyInsecure`, and informs the user about any
+   * globally-applied features.
+   * Uses `logger` instead of `this.log` to reduce user confusion.
+   */
+  configureInsecureFeatures() {
+    if (this.args.relaxedSecurityEnabled) {
+      logger.info(
+        `Enabling relaxed security. All insecure features will be ` +
+          `enabled unless explicitly disabled by --deny-insecure`,
+      );
+      this.relaxedSecurityEnabled = true;
+    } else if (!_.isEmpty(this.args.allowInsecure)) {
+      this.allowInsecure = validateFeatures(this.args.allowInsecure);
+      const globalAllowedFeatures = filterInsecureFeatures(this.allowInsecure);
+      if (!_.isEmpty(globalAllowedFeatures)) {
+        logger.info('Explicitly enabling insecure features:');
+        globalAllowedFeatures.map((a) => logger.info(`    ${a}`));
+      }
+    }
+    if (!_.isEmpty(this.args.denyInsecure)) {
+      this.denyInsecure = validateFeatures(this.args.denyInsecure);
+      const globalDeniedFeatures = filterInsecureFeatures(this.denyInsecure);
+      if (!_.isEmpty(globalDeniedFeatures)) {
+        logger.info('Explicitly disabling insecure features:');
+        globalDeniedFeatures.map((a) => logger.info(`    ${a}`));
+      }
+    }
   }
 
   sessionExists(sessionId) {
@@ -342,17 +374,30 @@ class AppiumDriver extends DriverCore {
 
       const driverInstance = /** @type {ExternalDriver} */ (new InnerDriver(this.args, true));
 
-      // We want to assign security values directly on the driver. The driver
-      // should not read security values from `this.opts` because those values
-      // could have been set by a malicious user via capabilities, whereas we
-      // want a guarantee the values were set by the appium server admin
-      if (this.args.relaxedSecurityEnabled) {
+      // If anything in the umbrella driver's insecure feature configuration applies to this driver,
+      // assign it to the driver instance
+      if (this.relaxedSecurityEnabled) {
         this.log.info(
-          `Applying relaxed security to '${InnerDriver.name}' as per ` +
-            `server command line argument. All insecure features will be ` +
-            `enabled unless explicitly disabled by --deny-insecure`,
+          `Enabling relaxed security for this session as per the server configuration. ` +
+            `All insecure features will be enabled unless explicitly disabled by --deny-insecure`,
         );
-        this.relaxedSecurityEnabled = driverInstance.relaxedSecurityEnabled = true;
+        driverInstance.relaxedSecurityEnabled = true;
+      }
+      const allowedDriverFeatures = filterInsecureFeatures(this.allowInsecure, driverName);
+      if (!_.isEmpty(allowedDriverFeatures)) {
+        this.log.info('Explicitly enabling insecure features for this session ' +
+          'as per the server configuration:',
+        );
+        allowedDriverFeatures.map((a) => this.log.info(`    ${a}`));
+        driverInstance.allowInsecure = allowedDriverFeatures;
+      }
+      const deniedDriverFeatures = filterInsecureFeatures(this.denyInsecure, driverName);
+      if (!_.isEmpty(deniedDriverFeatures)) {
+        this.log.info('Explicitly disabling insecure features for this session ' +
+          'as per the server configuration:',
+        );
+        deniedDriverFeatures.map((a) => this.log.info(`    ${a}`));
+        driverInstance.denyInsecure = deniedDriverFeatures;
       }
 
       // We also want to assign any new Bidi Commands that the driver has specified, including all
@@ -360,20 +405,6 @@ class AppiumDriver extends DriverCore {
       // instances might not have this method
       if (_.isFunction(driverInstance.updateBidiCommands)) {
         driverInstance.updateBidiCommands(InnerDriver.newBidiCommands ?? {});
-      }
-
-      if (!_.isEmpty(this.args.denyInsecure)) {
-        this.log.info('Explicitly preventing use of insecure features:');
-        this.args.denyInsecure.map((a) => this.log.info(`    ${a}`));
-        driverInstance.denyInsecure = validateFeatures(this.args.denyInsecure);
-        this.denyInsecure = filterGlobalFeatures(driverInstance.denyInsecure);
-      }
-
-      if (!_.isEmpty(this.args.allowInsecure)) {
-        this.log.info('Explicitly enabling use of insecure features:');
-        this.args.allowInsecure.map((a) => this.log.info(`    ${a}`));
-        driverInstance.allowInsecure = validateFeatures(this.args.allowInsecure);
-        this.allowInsecure = filterGlobalFeatures(driverInstance.allowInsecure);
       }
 
       // Likewise, any driver-specific CLI args that were passed in should be assigned directly to

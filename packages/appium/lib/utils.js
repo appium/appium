@@ -495,20 +495,21 @@ export function validateFeatures(features) {
 }
 
 /**
- * Filters the list of allowed/denied features to only those that are applied server-wide
+ * Filters the list of insecure features to only those that are
+ * applicable to the given driver name.
  * Assumes that all feature names have already been validated
  *
  * @param {string[]} features
  * @returns {string[]}
  */
-export function filterGlobalFeatures(features) {
+export function filterInsecureFeatures(features, driverName = ALL_DRIVERS_MATCH) {
   const filterFn = (/** @type {string} */ fullName) => {
     const separatorPos = fullName.indexOf(FEATURE_NAME_SEPARATOR);
     if (separatorPos <= 0) {
       return false;
     }
     const automationName = fullName.substring(0, separatorPos);
-    return automationName === ALL_DRIVERS_MATCH;
+    return [driverName, ALL_DRIVERS_MATCH].includes(automationName);
   };
   return features.filter(filterFn);
 }

@@ -107,6 +107,40 @@ describe('AppiumDriver', function () {
 
       return [appium, mockFakeDriver];
     }
+    describe('configureInsecureFeatures', function () {
+      it('should not allow insecure features by default', function () {
+        const appium = new AppiumDriver({});
+        appium.configureInsecureFeatures();
+        appium.allowInsecure.should.be.empty;
+        appium.denyInsecure.should.be.empty;
+        appium.relaxedSecurityEnabled.should.be.false;
+      });
+      it('should allow insecure features', function () {
+        const appium = new AppiumDriver({allowInsecure: ['foo:bar']});
+        appium.configureInsecureFeatures();
+        appium.allowInsecure.should.eql(['foo:bar']);
+      });
+      it('should deny insecure features', function () {
+        const appium = new AppiumDriver({denyInsecure: ['foo:baz']});
+        appium.configureInsecureFeatures();
+        appium.denyInsecure.should.eql(['foo:baz']);
+      });
+      it('should allow relaxed security', function () {
+        const appium = new AppiumDriver({relaxedSecurityEnabled: true});
+        appium.configureInsecureFeatures();
+        appium.relaxedSecurityEnabled.should.be.true;
+      });
+      it('should ignore allowed features in combination with relaxed security', function () {
+        const appium = new AppiumDriver({
+          allowInsecure: ['foo:bar'],
+          relaxedSecurityEnabled: true,
+        });
+        appium.configureInsecureFeatures();
+        appium.allowInsecure.should.be.empty;
+        appium.relaxedSecurityEnabled.should.be.true;
+      });
+    });
+
     describe('createSession', function () {
       /** @type {AppiumDriver} */
       let appium;
@@ -158,6 +192,7 @@ describe('AppiumDriver', function () {
         mockFakeDriver.verify();
       });
       it('should kill all other sessions if sessionOverride is on', async function () {
+        appium.configureInsecureFeatures();
         appium.args.sessionOverride = true;
 
         // mock three sessions that should be removed when the new one is created
@@ -173,6 +208,9 @@ describe('AppiumDriver', function () {
         appium.sessions['xyz-321-abc'] = fakeDrivers[1];
         appium.sessions['123-abc-xyz'] = fakeDrivers[2];
 
+        let sessions = await appium.getAppiumSessions();
+        sessions.should.have.length(3);
+
         mockFakeDriver
           .expects('createSession')
           .once()
@@ -180,7 +218,7 @@ describe('AppiumDriver', function () {
           .returns([SESSION_ID, removeAppiumPrefixes(W3C_PREFIXED_CAPS)]);
         await appium.createSession(undefined, null, W3C_CAPS);
 
-        const sessions = await appium.getAppiumSessions();
+        sessions = await appium.getAppiumSessions();
         sessions.should.have.length(1);
 
         for (let mfd of mockFakeDrivers) {
@@ -262,6 +300,7 @@ describe('AppiumDriver', function () {
         mockFakeDriver.restore();
       });
       it('should remove the session if it is found', async function () {
+        appium.configureInsecureFeatures();
         let [sessionId] = (await appium.createSession(null, null, W3C_CAPS)).value;
         let sessions = await appium.getAppiumSessions();
         sessions.should.have.length(1);
@@ -284,6 +323,7 @@ describe('AppiumDriver', function () {
       let sessions;
       before(function () {
         [appium, mockFakeDriver] = getDriverAndFakeDriver(SESSION_DISCOVERY_ENABLED);
+        appium.configureInsecureFeatures();
       });
       afterEach(async function () {
         for (let session of sessions) {

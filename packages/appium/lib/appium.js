@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import {getBuildInfo, updateBuildInfo, APPIUM_VER} from './config';
-import logger from './logger';
 import {
   BaseDriver,
   DriverCore,
@@ -16,17 +15,12 @@ import {
   generateDriverLogPrefix,
 } from '@appium/base-driver';
 import AsyncLock from 'async-lock';
-import {
-  parseCapsForInnerDriver,
-  pullSettings,
-  makeNonW3cCapsError,
-  validateFeatures,
-  filterInsecureFeatures,
-} from './utils';
+import {parseCapsForInnerDriver, pullSettings, makeNonW3cCapsError} from './utils';
 import {util} from '@appium/support';
 import {getDefaultsForExtension} from './schema';
 import {DRIVER_TYPE, BIDI_BASE_PATH, SESSION_DISCOVERY_FEATURE} from './constants';
 import * as bidiCommands from './bidi-commands';
+import * as insecureFeatures from './insecure-features';
 import * as inspectorCommands from './inspector-commands';
 
 const desiredCapabilityConstraints = /** @type {const} */ ({
@@ -151,39 +145,6 @@ class AppiumDriver extends DriverCore {
    */
   get isCommandsQueueEnabled() {
     return false;
-  }
-
-  /**
-   * Configures insecure features according to the values in `args.relaxedSecurityEnabled`,
-   * `args.allowInsecure`, and `args.denyInsecure`, and informs the user about any
-   * globally-applied features.
-   * Uses `logger` instead of `this.log` to reduce user confusion.
-   */
-  configureInsecureFeatures() {
-    if (this.args.relaxedSecurityEnabled) {
-      logger.info(
-        `Enabling relaxed security. All insecure features will be ` +
-          `enabled unless explicitly disabled by --deny-insecure`,
-      );
-      this.relaxedSecurityEnabled = true;
-    } else if (!_.isEmpty(this.args.allowInsecure)) {
-      this.allowInsecure = validateFeatures(this.args.allowInsecure);
-      const globalAllowedFeatures = filterInsecureFeatures(this.allowInsecure);
-      if (!_.isEmpty(globalAllowedFeatures)) {
-        logger.info('Explicitly enabling insecure features:');
-        globalAllowedFeatures.forEach((a) => logger.info(`    ${a}`));
-      }
-    }
-    if (_.isEmpty(this.args.denyInsecure)) {
-      return;
-    }
-    this.denyInsecure = validateFeatures(this.args.denyInsecure);
-    const globalDeniedFeatures = filterInsecureFeatures(this.denyInsecure);
-    if (_.isEmpty(globalDeniedFeatures)) {
-      return;
-    }
-    logger.info('Explicitly disabling insecure features:');
-    globalDeniedFeatures.forEach((a) => logger.info(`    ${a}`));
   }
 
   sessionExists(sessionId) {
@@ -376,7 +337,7 @@ class AppiumDriver extends DriverCore {
 
       const driverInstance = /** @type {ExternalDriver} */ (new InnerDriver(this.args, true));
 
-      this.configureDriverInsecureFeatures(driverInstance, driverName);
+      this.configureDriverFeatures(driverInstance, driverName);
 
       // We also want to assign any new Bidi Commands that the driver has specified, including all
       // the standard bidi commands. But add a method existence guard since some old driver class
@@ -525,40 +486,6 @@ class AppiumDriver extends DriverCore {
           `Is 'onUnexpectedShutdown' method available for '${driver.constructor.name}'?`,
       );
     }
-  }
-
-  /**
-   * If anything in the umbrella driver's insecure feature configuration applies to this driver,
-   * assign it to the driver instance
-   *
-   * @param {ExternalDriver} driver
-   * @param {string} driverName
-   */
-  configureDriverInsecureFeatures(driver, driverName) {
-    if (this.relaxedSecurityEnabled) {
-      this.log.info(
-        `Enabling relaxed security for this session as per the server configuration. ` +
-          `All insecure features will be enabled unless explicitly disabled by --deny-insecure`,
-      );
-      driver.relaxedSecurityEnabled = true;
-    }
-    const allowedDriverFeatures = filterInsecureFeatures(this.allowInsecure, driverName);
-    if (!_.isEmpty(allowedDriverFeatures)) {
-      this.log.info('Explicitly enabling insecure features for this session ' +
-        'as per the server configuration:',
-      );
-      allowedDriverFeatures.forEach((a) => this.log.info(`    ${a}`));
-      driver.allowInsecure = allowedDriverFeatures;
-    }
-    const deniedDriverFeatures = filterInsecureFeatures(this.denyInsecure, driverName);
-    if (_.isEmpty(deniedDriverFeatures)) {
-      return;
-    }
-    this.log.info('Explicitly disabling insecure features for this session ' +
-      'as per the server configuration:',
-    );
-    deniedDriverFeatures.forEach((a) => this.log.info(`    ${a}`));
-    driver.denyInsecure = deniedDriverFeatures;
   }
 
   /**
@@ -981,6 +908,9 @@ class AppiumDriver extends DriverCore {
   onBidiMessage = bidiCommands.onBidiMessage;
   onBidiServerError = bidiCommands.onBidiServerError;
   cleanupBidiSockets = bidiCommands.cleanupBidiSockets;
+
+  configureGlobalFeatures = insecureFeatures.configureGlobalFeatures;
+  configureDriverFeatures = insecureFeatures.configureDriverFeatures;
 
   listCommands = inspectorCommands.listCommands;
   listExtensions = inspectorCommands.listExtensions;

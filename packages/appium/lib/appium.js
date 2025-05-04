@@ -171,17 +171,19 @@ class AppiumDriver extends DriverCore {
       const globalAllowedFeatures = filterInsecureFeatures(this.allowInsecure);
       if (!_.isEmpty(globalAllowedFeatures)) {
         logger.info('Explicitly enabling insecure features:');
-        globalAllowedFeatures.map((a) => logger.info(`    ${a}`));
+        globalAllowedFeatures.forEach((a) => logger.info(`    ${a}`));
       }
     }
-    if (!_.isEmpty(this.args.denyInsecure)) {
-      this.denyInsecure = validateFeatures(this.args.denyInsecure);
-      const globalDeniedFeatures = filterInsecureFeatures(this.denyInsecure);
-      if (!_.isEmpty(globalDeniedFeatures)) {
-        logger.info('Explicitly disabling insecure features:');
-        globalDeniedFeatures.map((a) => logger.info(`    ${a}`));
-      }
+    if (_.isEmpty(this.args.denyInsecure)) {
+      return;
     }
+    this.denyInsecure = validateFeatures(this.args.denyInsecure);
+    const globalDeniedFeatures = filterInsecureFeatures(this.denyInsecure);
+    if (_.isEmpty(globalDeniedFeatures)) {
+      return;
+    }
+    logger.info('Explicitly disabling insecure features:');
+    globalDeniedFeatures.forEach((a) => logger.info(`    ${a}`));
   }
 
   sessionExists(sessionId) {
@@ -374,31 +376,7 @@ class AppiumDriver extends DriverCore {
 
       const driverInstance = /** @type {ExternalDriver} */ (new InnerDriver(this.args, true));
 
-      // If anything in the umbrella driver's insecure feature configuration applies to this driver,
-      // assign it to the driver instance
-      if (this.relaxedSecurityEnabled) {
-        this.log.info(
-          `Enabling relaxed security for this session as per the server configuration. ` +
-            `All insecure features will be enabled unless explicitly disabled by --deny-insecure`,
-        );
-        driverInstance.relaxedSecurityEnabled = true;
-      }
-      const allowedDriverFeatures = filterInsecureFeatures(this.allowInsecure, driverName);
-      if (!_.isEmpty(allowedDriverFeatures)) {
-        this.log.info('Explicitly enabling insecure features for this session ' +
-          'as per the server configuration:',
-        );
-        allowedDriverFeatures.map((a) => this.log.info(`    ${a}`));
-        driverInstance.allowInsecure = allowedDriverFeatures;
-      }
-      const deniedDriverFeatures = filterInsecureFeatures(this.denyInsecure, driverName);
-      if (!_.isEmpty(deniedDriverFeatures)) {
-        this.log.info('Explicitly disabling insecure features for this session ' +
-          'as per the server configuration:',
-        );
-        deniedDriverFeatures.map((a) => this.log.info(`    ${a}`));
-        driverInstance.denyInsecure = deniedDriverFeatures;
-      }
+      this.configureDriverInsecureFeatures(driverInstance, driverName);
 
       // We also want to assign any new Bidi Commands that the driver has specified, including all
       // the standard bidi commands. But add a method existence guard since some old driver class
@@ -547,6 +525,40 @@ class AppiumDriver extends DriverCore {
           `Is 'onUnexpectedShutdown' method available for '${driver.constructor.name}'?`,
       );
     }
+  }
+
+  /**
+   * If anything in the umbrella driver's insecure feature configuration applies to this driver,
+   * assign it to the driver instance
+   *
+   * @param {ExternalDriver} driver
+   * @param {string} driverName
+   */
+  configureDriverInsecureFeatures(driver, driverName) {
+    if (this.relaxedSecurityEnabled) {
+      this.log.info(
+        `Enabling relaxed security for this session as per the server configuration. ` +
+          `All insecure features will be enabled unless explicitly disabled by --deny-insecure`,
+      );
+      driver.relaxedSecurityEnabled = true;
+    }
+    const allowedDriverFeatures = filterInsecureFeatures(this.allowInsecure, driverName);
+    if (!_.isEmpty(allowedDriverFeatures)) {
+      this.log.info('Explicitly enabling insecure features for this session ' +
+        'as per the server configuration:',
+      );
+      allowedDriverFeatures.forEach((a) => this.log.info(`    ${a}`));
+      driver.allowInsecure = allowedDriverFeatures;
+    }
+    const deniedDriverFeatures = filterInsecureFeatures(this.denyInsecure, driverName);
+    if (_.isEmpty(deniedDriverFeatures)) {
+      return;
+    }
+    this.log.info('Explicitly disabling insecure features for this session ' +
+      'as per the server configuration:',
+    );
+    deniedDriverFeatures.forEach((a) => this.log.info(`    ${a}`));
+    driver.denyInsecure = deniedDriverFeatures;
   }
 
   /**

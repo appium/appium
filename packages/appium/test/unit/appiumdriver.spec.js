@@ -143,7 +143,6 @@ describe('AppiumDriver', function () {
         appium.relaxedSecurityEnabled.should.be.true;
       });
     });
-
     describe('createSession', function () {
       /** @type {AppiumDriver} */
       let appium;
@@ -319,6 +318,67 @@ describe('AppiumDriver', function () {
 
         // cleanup, since we faked the delete session call
         await mockFakeDriver.object.deleteSession();
+      });
+    });
+    describe('configureDriverFeatures', function () {
+      /** @type {AppiumDriver} */
+      let appium;
+
+      /**
+       *
+       * @param {import('@appium/types').DriverOpts<import('../../lib/appium').AppiumDriverConstraints>} appiumArgs
+       * @returns {Promise<FakeDriver>}
+       */
+      async function getDriverAndInstance(appiumArgs) {
+        appium = new AppiumDriver(appiumArgs);
+        appium.configureGlobalFeatures();
+        const fakeDriver = new FakeDriver();
+        const mockFakeDriver = sandbox.mock(fakeDriver);
+        const mockedDriverReturnerClass = function Driver() {
+          return fakeDriver;
+        };
+
+        appium.driverConfig = {
+          findMatchingDriver: sandbox.stub().returns({
+            driver: mockedDriverReturnerClass,
+            version: '1.2.3',
+            driverName: 'fake',
+          }),
+        };
+
+        mockFakeDriver
+          .expects('createSession')
+          .once()
+          .withExactArgs(undefined, null, W3C_CAPS, [])
+          .returns([SESSION_ID, removeAppiumPrefixes(W3C_PREFIXED_CAPS)]);
+        await appium.createSession(undefined, null, W3C_CAPS);
+
+        return fakeDriver;
+      }
+      afterEach(async function () {
+        await appium.deleteSession(SESSION_ID);
+      });
+      it(`should not apply any insecure features by default`, async function () {
+        fakeDriver = await getDriverAndInstance({});
+        fakeDriver.allowInsecure.should.be.empty;
+        fakeDriver.denyInsecure.should.be.empty;
+        fakeDriver.relaxedSecurityEnabled.should.be.false;
+      });
+      it(`should apply relaxed security`, async function () {
+        fakeDriver = await getDriverAndInstance({relaxedSecurityEnabled: true});;
+        fakeDriver.relaxedSecurityEnabled.should.be.true;
+      });
+      it(`should apply global-scope insecure features`, async function () {
+        fakeDriver = await getDriverAndInstance({
+          allowInsecure: ['*:foo'],
+          denyInsecure: ['*:bar'],
+        });
+        fakeDriver.allowInsecure.should.eql(['*:foo']);
+        fakeDriver.denyInsecure.should.eql(['*:bar']);
+      });
+      it(`should apply driver-scope insecure features only if the driver name matches`, async function () {
+        fakeDriver = await getDriverAndInstance({allowInsecure: ['fake:foo', 'real:bar']});
+        fakeDriver.allowInsecure.should.eql(['fake:foo']);
       });
     });
     describe('getAppiumSessions', function () {

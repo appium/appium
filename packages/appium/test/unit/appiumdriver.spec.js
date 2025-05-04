@@ -108,34 +108,36 @@ describe('AppiumDriver', function () {
       return [appium, mockFakeDriver];
     }
     describe('configureGlobalFeatures', function () {
+      /** @type {AppiumDriver} */
+      let appium;
+
       /**
        * @param {import('@appium/types').DriverOpts<import('../../lib/appium').AppiumDriverConstraints>} cliArgs
        */
-      function getDriver(cliArgs) {
-        const appium = new AppiumDriver(cliArgs);
+      function createDriver(cliArgs) {
+        appium = new AppiumDriver(cliArgs);
         appium.configureGlobalFeatures();
-        return appium;
       };
       it('should not allow insecure features by default', function () {
-        const appium = getDriver({});
+        createDriver({});
         appium.allowInsecure.should.be.empty;
         appium.denyInsecure.should.be.empty;
         appium.relaxedSecurityEnabled.should.be.false;
       });
       it('should allow insecure features', function () {
-        const appium = getDriver({allowInsecure: ['foo:bar']});
+        createDriver({allowInsecure: ['foo:bar']});
         appium.allowInsecure.should.eql(['foo:bar']);
       });
       it('should deny insecure features', function () {
-        const appium = getDriver({denyInsecure: ['foo:baz']});
+        createDriver({denyInsecure: ['foo:baz']});
         appium.denyInsecure.should.eql(['foo:baz']);
       });
       it('should allow relaxed security', function () {
-        const appium = getDriver({relaxedSecurityEnabled: true});
+        createDriver({relaxedSecurityEnabled: true});
         appium.relaxedSecurityEnabled.should.be.true;
       });
       it('should ignore allowed features in combination with relaxed security', function () {
-        const appium = getDriver({
+        createDriver({
           allowInsecure: ['foo:bar'],
           relaxedSecurityEnabled: true,
         });
@@ -329,7 +331,7 @@ describe('AppiumDriver', function () {
        * @param {import('@appium/types').DriverOpts<import('../../lib/appium').AppiumDriverConstraints>} appiumArgs
        * @returns {Promise<FakeDriver>}
        */
-      async function getDriverAndInstance(appiumArgs) {
+      async function getDriverInstance(appiumArgs) {
         appium = new AppiumDriver(appiumArgs);
         appium.configureGlobalFeatures();
         const fakeDriver = new FakeDriver();
@@ -359,17 +361,17 @@ describe('AppiumDriver', function () {
         await appium.deleteSession(SESSION_ID);
       });
       it(`should not apply any insecure features by default`, async function () {
-        fakeDriver = await getDriverAndInstance({});
+        fakeDriver = await getDriverInstance({});
         fakeDriver.allowInsecure.should.be.empty;
         fakeDriver.denyInsecure.should.be.empty;
         fakeDriver.relaxedSecurityEnabled.should.be.false;
       });
       it(`should apply relaxed security`, async function () {
-        fakeDriver = await getDriverAndInstance({relaxedSecurityEnabled: true});;
+        fakeDriver = await getDriverInstance({relaxedSecurityEnabled: true});;
         fakeDriver.relaxedSecurityEnabled.should.be.true;
       });
       it(`should apply global-scope insecure features`, async function () {
-        fakeDriver = await getDriverAndInstance({
+        fakeDriver = await getDriverInstance({
           allowInsecure: ['*:foo'],
           denyInsecure: ['*:bar'],
         });
@@ -377,7 +379,7 @@ describe('AppiumDriver', function () {
         fakeDriver.denyInsecure.should.eql(['*:bar']);
       });
       it(`should apply driver-scope insecure features only if the driver name matches`, async function () {
-        fakeDriver = await getDriverAndInstance({allowInsecure: ['fake:foo', 'real:bar']});
+        fakeDriver = await getDriverInstance({allowInsecure: ['fake:foo', 'real:bar']});
         fakeDriver.allowInsecure.should.eql(['fake:foo']);
       });
     });

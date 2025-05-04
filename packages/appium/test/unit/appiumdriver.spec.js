@@ -108,34 +108,37 @@ describe('AppiumDriver', function () {
       return [appium, mockFakeDriver];
     }
     describe('configureGlobalFeatures', function () {
-      it('should not allow insecure features by default', function () {
-        const appium = new AppiumDriver({});
+      /**
+       * @param {import('@appium/types').DriverOpts<import('../../lib/appium').AppiumDriverConstraints>} cliArgs
+       */
+      function getDriver(cliArgs) {
+        const appium = new AppiumDriver(cliArgs);
         appium.configureGlobalFeatures();
+        return appium;
+      };
+      it('should not allow insecure features by default', function () {
+        const appium = getDriver({});
         appium.allowInsecure.should.be.empty;
         appium.denyInsecure.should.be.empty;
         appium.relaxedSecurityEnabled.should.be.false;
       });
       it('should allow insecure features', function () {
-        const appium = new AppiumDriver({allowInsecure: ['foo:bar']});
-        appium.configureGlobalFeatures();
+        const appium = getDriver({allowInsecure: ['foo:bar']});
         appium.allowInsecure.should.eql(['foo:bar']);
       });
       it('should deny insecure features', function () {
-        const appium = new AppiumDriver({denyInsecure: ['foo:baz']});
-        appium.configureGlobalFeatures();
+        const appium = getDriver({denyInsecure: ['foo:baz']});
         appium.denyInsecure.should.eql(['foo:baz']);
       });
       it('should allow relaxed security', function () {
-        const appium = new AppiumDriver({relaxedSecurityEnabled: true});
-        appium.configureGlobalFeatures();
+        const appium = getDriver({relaxedSecurityEnabled: true});
         appium.relaxedSecurityEnabled.should.be.true;
       });
       it('should ignore allowed features in combination with relaxed security', function () {
-        const appium = new AppiumDriver({
+        const appium = getDriver({
           allowInsecure: ['foo:bar'],
           relaxedSecurityEnabled: true,
         });
-        appium.configureGlobalFeatures();
         appium.allowInsecure.should.be.empty;
         appium.relaxedSecurityEnabled.should.be.true;
       });

@@ -27,9 +27,9 @@ Appium when starting it from the command line:
 
 |<div style="width:10em">Parameter</div>|Description|
 |---------------------------------------|-----------|
-|`--relaxed-security`                   |Setting this flag turns on _all_ insecure features (unless blocked by `--deny-insecure`; see below)|
-|`--allow-insecure`                     |Setting this flag to a comma-separated list of feature names or a path to a file containing a feature list (each name on a separate line) will allow _only_ the features listed. For example, `--allow-insecure=adb_shell` will cause _only_ the ADB shell execution feature to be enabled. This is true _unless_ `--relaxed-security` is also used, in which case all features will still be enabled. It makes no sense to combine this flag with `--relaxed-security`.|
-|`--deny-insecure`                      |This flag can likewise be set to a comma-separated list of feature names, or a path to a feature file. Any features listed here will be _disabled_, regardless of whether `--relaxed-security` is set and regardless of whether the names are also listed with `--allow-insecure`.|
+|`--relaxed-security`|Turns on _all_ insecure features (unless blocked by `--deny-insecure`; see below)|
+|`--allow-insecure`|Turns on _only_ specified features. Features can be provided as a comma-separated list of feature names, or in the [Appium Configuration file](./config.md). For example, `--allow-insecure=adb_shell` will cause _only_ the ADB shell execution feature to be enabled. Has no effect when used in combination with `--relaxed-security`.|
+|`--deny-insecure`|Explicitly turns _off_ specified features, overriding `--relaxed-security` and any features specified using `--allow-insecure`. Like `--allow-insecure`, features can be provided as a comma-separated list of feature names, or in the [Appium Configuration file](./config.md).|
 
 ## Insecure Features
 
@@ -44,17 +44,15 @@ might use. Here is an incomplete list of examples from some of Appium's official
 |`record_audio`|Allow recording of host machine audio inputs|XCUITest|
 |`execute_driver_script`| Allows to send a request which has multiple Appium commands.|Execute Driver Plugin|
 
-## Driver-scope security
+Some insecure features operate on the server level, and do not require a driver session:
 
-Since Appium server version 2.12.3 there is a possibility to prefix each feature name with the corresponding automationName where it is going to be applied. For example, if you provide the following features to allow:
-`uiautomator2:adb_shell,xcuitest:get_server_logs,*:record_audio`, then the `adb_shell` would only be allowed
-for the UiAutomator2 driver, `get_server` - for the XCUITest driver and the `record_audio` one - for
-all installed drivers. Feature names provided without explicit automation name prefix are equivalent to
-these having the `*:` prefix. The same feature naming rule applies to the list of denied features.
+|<div style="width:12em">Feature Name</div>|Description|
+|------------|-----------|
+|`session_discovery`|Allows retrieving the list of active server sessions via `GET /appium/sessions`|
 
 ## Examples
 
-To turn on the `get_server_logs` feature for my Appium server, I could start it like this:
+To turn on the `get_server_logs` feature, the Appium server could be started like this:
 
 ```bash
 appium --allow-insecure=get_server_logs
@@ -71,3 +69,29 @@ To allow all features except one:
 ```bash
 appium --relaxed-security --deny-insecure=adb_shell
 ```
+
+## Driver-scope security
+
+Since Appium server version `2.13`, it is possible to apply features on a per-driver basis. This
+can be achieved by prefixing each feature name with the `automationName` of the driver for which
+the feature should be applied. To apply a feature for all drivers, or to apply a server-level
+feature, the wildcard (`*`) prefix should be used.
+
+For example, the server could be started as follows:
+```bash
+appium --allow-insecure=uiautomator2:adb_shell,xcuitest:get_server_logs,*:record_audio
+```
+
+This would result in the following:
+
+* The `adb_shell` feature would be enabled only for the UiAutomator2 driver
+* The `get_server_logs` feature would be enabled only for the XCUITest driver
+* The `record_audio` feature would be enabled for all drivers
+
+Feature provided without an explicit prefix are equivalent to having the wildcard prefix.
+These prefix rules apply to both the `--allow-insecure` and `--deny-insecure` server arguments.
+
+!!! warning
+
+    Starting from Appium 3, the scope prefix is required, and features provided without a scope will
+    raise an error. Note that the behavior of the `--relaxed-security` flag remains unchanged.

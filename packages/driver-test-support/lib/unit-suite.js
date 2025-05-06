@@ -93,26 +93,6 @@ export function driverUnitTestSuite(
       caps.should.equal(await d.getSession());
     });
 
-    it('should return sessions if no session exists', async function () {
-      let sessions = await d.getSessions();
-      sessions.length.should.equal(0);
-    });
-
-    it('should return sessions', async function () {
-      const caps = _.cloneDeep(w3cCaps);
-      await d.createSession(caps);
-      let sessions = await d.getSessions();
-
-      sessions.length.should.equal(1);
-      sessions[0].should.include({
-        id: d.sessionId,
-      });
-      sessions[0].capabilities.should.include({
-        deviceName: 'Commodore 64',
-        platformName: 'Fake',
-      });
-    });
-
     it('should fulfill an unexpected driver quit promise', async function () {
       // make a command that will wait a bit so we can crash while it's running
       sandbox.stub(d, 'getStatus').callsFake(async () => {

@@ -15,16 +15,12 @@ import {
   generateDriverLogPrefix,
 } from '@appium/base-driver';
 import AsyncLock from 'async-lock';
-import {
-  parseCapsForInnerDriver,
-  pullSettings,
-  makeNonW3cCapsError,
-  validateFeatures,
-} from './utils';
+import {parseCapsForInnerDriver, pullSettings, makeNonW3cCapsError} from './utils';
 import {util} from '@appium/support';
 import {getDefaultsForExtension} from './schema';
-import {DRIVER_TYPE, BIDI_BASE_PATH} from './constants';
+import {DRIVER_TYPE, BIDI_BASE_PATH, SESSION_DISCOVERY_FEATURE} from './constants';
 import * as bidiCommands from './bidi-commands';
+import * as insecureFeatures from './insecure-features';
 import * as inspectorCommands from './inspector-commands';
 
 const desiredCapabilityConstraints = /** @type {const} */ ({
@@ -188,6 +184,11 @@ class AppiumDriver extends DriverCore {
     });
   }
 
+  /**
+   * Retrieve information about all active sessions
+   * @returns {Promise<import('@appium/types').MultiSessionData[]>}
+   * @deprecated Use {@linkcode getAppiumSessions} instead
+   */
   async getSessions() {
     return _.toPairs(this.sessions).map(([id, driver]) => ({
       id,
@@ -195,9 +196,18 @@ class AppiumDriver extends DriverCore {
     }));
   }
 
+  /**
+   * Retrieve information about all active sessions.
+   * Results are returned only if the `session_discovery` insecure feature is enabled.
+   * @returns {Promise<import('@appium/types').TimestampedMultiSessionData[]>}
+   */
   async getAppiumSessions () {
-    throw new errors.NotImplementedError('Not implemented yet. ' +
-      'Please check https://github.com/appium/appium/issues/20880 for more details.');
+    this.assertFeatureEnabled(SESSION_DISCOVERY_FEATURE);
+    return _.toPairs(this.sessions).map(([id, driver]) => ({
+      id,
+      created: driver.sessionCreationTimestampMs,
+      capabilities: /** @type {import('@appium/types').DriverCaps<any>} */ (driver.caps),
+    }));
   }
 
   printNewSessionAnnouncement(driverName, driverVersion, driverBaseVersion) {
@@ -327,36 +337,13 @@ class AppiumDriver extends DriverCore {
 
       const driverInstance = /** @type {ExternalDriver} */ (new InnerDriver(this.args, true));
 
-      // We want to assign security values directly on the driver. The driver
-      // should not read security values from `this.opts` because those values
-      // could have been set by a malicious user via capabilities, whereas we
-      // want a guarantee the values were set by the appium server admin
-      if (this.args.relaxedSecurityEnabled) {
-        this.log.info(
-          `Applying relaxed security to '${InnerDriver.name}' as per ` +
-            `server command line argument. All insecure features will be ` +
-            `enabled unless explicitly disabled by --deny-insecure`,
-        );
-        driverInstance.relaxedSecurityEnabled = true;
-      }
+      this.configureDriverFeatures(driverInstance, driverName);
 
       // We also want to assign any new Bidi Commands that the driver has specified, including all
       // the standard bidi commands. But add a method existence guard since some old driver class
       // instances might not have this method
       if (_.isFunction(driverInstance.updateBidiCommands)) {
         driverInstance.updateBidiCommands(InnerDriver.newBidiCommands ?? {});
-      }
-
-      if (!_.isEmpty(this.args.denyInsecure)) {
-        this.log.info('Explicitly preventing use of insecure features:');
-        this.args.denyInsecure.map((a) => this.log.info(`    ${a}`));
-        driverInstance.denyInsecure = validateFeatures(this.args.denyInsecure);
-      }
-
-      if (!_.isEmpty(this.args.allowInsecure)) {
-        this.log.info('Explicitly enabling use of insecure features:');
-        this.args.allowInsecure.map((a) => this.log.info(`    ${a}`));
-        driverInstance.allowInsecure = validateFeatures(this.args.allowInsecure);
       }
 
       // Likewise, any driver-specific CLI args that were passed in should be assigned directly to
@@ -921,6 +908,9 @@ class AppiumDriver extends DriverCore {
   onBidiMessage = bidiCommands.onBidiMessage;
   onBidiServerError = bidiCommands.onBidiServerError;
   cleanupBidiSockets = bidiCommands.cleanupBidiSockets;
+
+  configureGlobalFeatures = insecureFeatures.configureGlobalFeatures;
+  configureDriverFeatures = insecureFeatures.configureDriverFeatures;
 
   listCommands = inspectorCommands.listCommands;
   listExtensions = inspectorCommands.listExtensions;

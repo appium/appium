@@ -17,8 +17,6 @@ const STANDARD_CAPS_LOWERCASE = new Set([...STANDARD_CAPS].map((cap) => cap.toLo
 export const V4_BROADCAST_IP = '0.0.0.0';
 export const V6_BROADCAST_IP = '::';
 export const npmPackage = fs.readPackageJsonFrom(__dirname);
-const ALL_DRIVERS_MATCH = '*';
-const FEATURE_NAME_SEPARATOR = ':';
 
 /**
  *
@@ -461,37 +459,6 @@ export function adler32(str, seed = null) {
  */
 export function isBroadcastIp(address) {
   return [V4_BROADCAST_IP, V6_BROADCAST_IP, `[${V6_BROADCAST_IP}]`].includes(address);
-}
-
-/**
- * Validates the list of allowed/denied server features
- *
- * @param {string[]} features
- * @returns {string[]}
- */
-export function validateFeatures(features) {
-  const validator = (/** @type {string} */ fullName) => {
-    const separatorPos = fullName.indexOf(FEATURE_NAME_SEPARATOR);
-    // TODO: This is for the backward compatibility with Appium2
-    // TODO: In Appium3 the separator will be mandatory
-    if (separatorPos < 0) {
-      return `${ALL_DRIVERS_MATCH}${FEATURE_NAME_SEPARATOR}${fullName}`;
-    }
-
-    const [automationName, featureName] = [
-      fullName.substring(0, separatorPos),
-      fullName.substring(separatorPos + 1)
-    ];
-    if (!automationName || !featureName) {
-      throw new Error(
-        `The full feature name must include both the destination automation name or the ` +
-        `'${ALL_DRIVERS_MATCH}' wildcard to apply the feature to all installed drivers, and ` +
-        `the feature name split by a colon, got '${fullName}' instead`
-      );
-    }
-    return fullName;
-  };
-  return features.map(validator);
 }
 
 /**

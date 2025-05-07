@@ -15,9 +15,9 @@ const MIN_TIMEOUT = 0;
 
 const TimeoutCommands: ITimeoutCommands = {
   async timeouts<C extends Constraints>(this: BaseDriver<C>, type, ms, script, pageLoad, implicit) {
-    if (type && util.hasValue(ms)) {
+    if (type && _.isString(type) && util.hasValue(ms)) {
+      // legacy stuff with some Appium-specific additions
       this.log.debug(`Timeout arguments: ${JSON.stringify({type, ms})}}`);
-
       switch (type) {
         case 'command':
           return void (await this.newCommandTimeout(ms));
@@ -32,14 +32,10 @@ const TimeoutCommands: ITimeoutCommands = {
       }
     }
 
-    // Otherwise assume it is W3C protocol
-    this.log.debug(
-      `W3C timeout argument: ${JSON.stringify({
-        script,
-        pageLoad,
-        implicit,
-      })}}`
-    );
+    this.log.debug(`W3C timeout argument: ${JSON.stringify({script, pageLoad, implicit})}}`);
+    if ([script, pageLoad, implicit].every(_.isNil)) {
+      throw new errors.InvalidArgumentError('W3C protocol expects any of script, pageLoad or implicit to be set');
+    }
     if (util.hasValue(script)) {
       await this.scriptTimeoutW3C(script);
     }

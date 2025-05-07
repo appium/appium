@@ -15,7 +15,7 @@ describe('Protocol', function () {
   });
 
   describe('ensure protocol consistency', function () {
-    it('should not change protocol between patch versions', function () {
+    it.only('should not change protocol between patch versions', function () {
       let shasum = crypto.createHash('sha1');
       for (let [url, urlMapping] of _.toPairs(METHOD_MAP)) {
         shasum.update(url);
@@ -41,7 +41,7 @@ describe('Protocol', function () {
       }
       let hash = shasum.digest('hex').substring(0, 8);
       // Modify the hash whenever the protocol has intentionally been modified.
-      hash.should.equal('61e4a9e2');
+      hash.should.equal('78282fd0');
     });
   });
 

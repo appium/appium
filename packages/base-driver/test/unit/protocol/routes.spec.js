@@ -15,7 +15,7 @@ describe('Protocol', function () {
   });
 
   describe('ensure protocol consistency', function () {
-    it.only('should not change protocol between patch versions', function () {
+    it('should not change protocol between patch versions', function () {
       let shasum = crypto.createHash('sha1');
       for (let [url, urlMapping] of _.toPairs(METHOD_MAP)) {
         shasum.update(url);

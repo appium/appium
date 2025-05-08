@@ -4,21 +4,17 @@
  * @module
  */
 
-import {fs, npm, util} from '@appium/support';
+import {fs, util} from '@appium/support';
 import chalk from 'chalk';
 import _ from 'lodash';
 import {EventEmitter} from 'node:events';
-import {satisfies} from 'semver';
 import {exec} from 'teen_process';
 import {
-  DOCUTILS_PKG,
   MESSAGE_PYTHON_MISSING,
   NAME_BIN,
   NAME_ERR_ENOENT,
   NAME_MKDOCS,
   NAME_MKDOCS_YML,
-  NAME_NPM,
-  NAME_PACKAGE_JSON,
   NAME_PIP,
   NAME_PYTHON,
   NAME_REQUIREMENTS_TXT,
@@ -29,7 +25,6 @@ import {
   findMkDocsYml,
   isMkDocsInstalled,
   readMkDocsYml,
-  whichNpm,
   findPython,
 } from './fs';
 import {getLogger} from './logger';
@@ -50,10 +45,7 @@ const log = getLogger('validate');
 /**
  * The "kinds" of validation which were requested to be performed
  */
-export type ValidationKind =
-  | typeof NAME_PYTHON
-  | typeof NAME_NPM
-  | typeof NAME_MKDOCS;
+export type ValidationKind = typeof NAME_PYTHON | typeof NAME_MKDOCS;
 
 /**
  * This class is designed to run _all_ validation checks (as requested by the user), and emit events for
@@ -70,11 +62,6 @@ export class DocutilsValidator extends EventEmitter {
    * @todo This cannot yet be overriden by user
    */
   protected readonly cwd: string;
-
-  /**
-   * Path to `npm` executable.
-   */
-  protected readonly npmPath?: string;
 
   /**
    * Path to `python` executable.
@@ -146,15 +133,10 @@ export class DocutilsValidator extends EventEmitter {
     this.packageJsonPath = opts.packageJson;
     this.pythonPath = opts.pythonPath;
     this.cwd = opts.cwd ?? process.cwd();
-    this.npmPath = opts.npm;
     this.mkDocsYmlPath = opts.mkdocsYml;
 
     if (opts.python) {
       this.validations.add(NAME_PYTHON);
-    }
-    if (opts.typescript) {
-      // npm validation is required for typescript
-      this.validations.add(NAME_NPM);
     }
     if (opts.mkdocs) {
       this.validations.add(NAME_MKDOCS);
@@ -181,10 +163,6 @@ export class DocutilsValidator extends EventEmitter {
       if (this.validations.has(NAME_MKDOCS)) {
         await this.validateMkDocs();
         await this.validateMkDocsConfig();
-      }
-
-      if (this.validations.has(NAME_NPM)) {
-        await this.validateNpmVersion();
       }
 
       this.emit(DocutilsValidator.END, this.emittedErrors.size);
@@ -328,35 +306,6 @@ export class DocutilsValidator extends EventEmitter {
   }
 
   /**
-   * Validates that the version of `npm` matches what's described in this package's `engines` field.
-   *
-   * This is required because other validators need `npm exec` to work, which is only available in npm 7+.
-   */
-  protected async validateNpmVersion() {
-    log.debug(`Validating ${NAME_NPM} version`);
-
-    const npmEngineRange = DOCUTILS_PKG.engines?.npm;
-    if (!npmEngineRange) {
-      throw new DocutilsError(`Could not find property 'engines.npm' in ${NAME_PACKAGE_JSON}. This is a bug`);
-    }
-
-    const npmPath = this.npmPath ?? (await whichNpm());
-    if (!npmPath) {
-      throw new DocutilsError(`Could not find ${NAME_NPM} in PATH. That seems weird, doesn't it?`);
-    }
-
-    try {
-      const {stdout: npmVersion} = await npm.exec('-v', [], {cwd: this.cwd});
-      if (!satisfies(npmVersion.trim(), npmEngineRange)) {
-        return this.fail(`${NAME_NPM} v${npmVersion} is installed, but ${npmEngineRange} is required`);
-      }
-    } catch {
-      return this.fail(`Could not retrieve ${NAME_NPM} version`);
-    }
-    this.ok(`${NAME_NPM} version OK`);
-  }
-
-  /**
    * Asserts that the dependencies as listed in `requirements.txt` are installed.
    *
    * @privateRemarks This lists all installed packages with `pip` and then compares them to the
@@ -475,10 +424,6 @@ export interface DocutilsValidatorOpts {
    */
   mkdocsYml?: string;
   /**
-   * Path to `npm` executable
-   */
-  npm?: string;
-  /**
    * Path to `package.json`
    */
   packageJson?: string;
@@ -490,10 +435,6 @@ export interface DocutilsValidatorOpts {
    * Path to `python` executable
    */
   pythonPath?: string;
-  /**
-   * If `true`, run TypeScript validation
-   */
-  typescript?: boolean;
   /**
    * If `true`, run MkDocs validation
    */

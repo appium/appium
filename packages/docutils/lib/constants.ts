@@ -4,10 +4,8 @@
  */
 
 const {LogLevels} = require('consola');
-import {readFileSync} from 'node:fs';
 import {fs} from '@appium/support';
 import path from 'node:path';
-import {PackageJson} from 'type-fest';
 
 /**
  * CLI executable name
@@ -59,11 +57,6 @@ export const NAME_MIKE = 'mike';
 export const NAME_PIP = 'pip';
 
 /**
- * Name of the `npm` executable, which we use to check for
- */
-export const NAME_NPM = 'npm';
-
-/**
  * Code for a "file not found" error
  */
 export const NAME_ERR_ENOENT = 'ENOENT';
@@ -81,13 +74,6 @@ export const DEFAULT_LOG_LEVEL = 'info';
  * Blocking I/O
  */
 export const PKG_ROOT_DIR = fs.findRoot(__dirname);
-/**
- * Blocking I/O
- */
-
-export const DOCUTILS_PKG: PackageJson = JSON.parse(
-  readFileSync(path.join(PKG_ROOT_DIR, NAME_PACKAGE_JSON), 'utf8'),
-);
 
 /**
  * Path to the `requirements.txt` file (in this package)

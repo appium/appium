@@ -16,7 +16,6 @@ import {
   NAME_MIKE,
   NAME_MKDOCS,
   NAME_MKDOCS_YML,
-  NAME_NPM,
   NAME_PACKAGE_JSON,
   NAME_PYTHON,
 } from './constants';
@@ -169,11 +168,6 @@ type WhichFunction = (cmd: string, opts?: {nothrow: boolean}) => Promise<string|
  * `which` with memoization
  */
 const cachedWhich = _.memoize(fs.which as WhichFunction);
-
-/**
- * Finds `npm` executable
- */
-export const whichNpm = _.partial(cachedWhich, NAME_NPM, {nothrow: true});
 
 /**
  * Finds `python` executable

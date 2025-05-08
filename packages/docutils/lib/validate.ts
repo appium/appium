@@ -89,11 +89,6 @@ export class DocutilsValidator extends EventEmitter {
   protected mkDocsYmlPath?: string;
 
   /**
-   * Path to `package.json`.  If not provided, will be lazily resolved.
-   */
-  protected packageJsonPath?: string;
-
-  /**
    * Path to the package directory.  If not provided, will be lazily resolved.
    */
   protected pkgDir?: string;
@@ -130,7 +125,6 @@ export class DocutilsValidator extends EventEmitter {
   constructor(opts: DocutilsValidatorOpts = {}) {
     super();
 
-    this.packageJsonPath = opts.packageJson;
     this.pythonPath = opts.pythonPath;
     this.cwd = opts.cwd ?? process.cwd();
     this.mkDocsYmlPath = opts.mkdocsYml;
@@ -423,10 +417,6 @@ export interface DocutilsValidatorOpts {
    * Path to `mkdocs.yml`
    */
   mkdocsYml?: string;
-  /**
-   * Path to `package.json`
-   */
-  packageJson?: string;
   /**
    * If `true`, run Python validation
    */

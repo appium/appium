@@ -42,12 +42,7 @@ export const METHOD_MAP = /** @type {const} */ ({
     POST: {
       command: 'timeouts',
       payloadParams: {
-        validate: ({script, pageLoad, implicit}) => {
-          if ([script, pageLoad, implicit].every(_.isNil)) {
-            return 'W3C protocol expects any of script, pageLoad or implicit to be set';
-          }
-        },
-        optional: ['script', 'pageLoad', 'implicit'],
+        optional: ['type', 'ms', 'script', 'pageLoad', 'implicit'],
       },
     },
   },

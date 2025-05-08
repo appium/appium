@@ -8,7 +8,6 @@ import {fs, npm, util} from '@appium/support';
 import chalk from 'chalk';
 import _ from 'lodash';
 import {EventEmitter} from 'node:events';
-import path from 'node:path';
 import {satisfies} from 'semver';
 import {exec} from 'teen_process';
 import {
@@ -23,13 +22,11 @@ import {
   NAME_PIP,
   NAME_PYTHON,
   NAME_REQUIREMENTS_TXT,
-  NAME_TYPESCRIPT,
   REQUIREMENTS_TXT_PATH,
 } from './constants';
 import {DocutilsError} from './error';
 import {
   findMkDocsYml,
-  findPkgDir,
   isMkDocsInstalled,
   readMkDocsYml,
   whichNpm,
@@ -44,11 +41,6 @@ import {MkDocsYml, PipPackage} from './model';
 const PYTHON_VER_STR = 'Python 3.';
 
 /**
- * Matches the TypeScript version string from `tsc --version`
- */
-const TYPESCRIPT_VERSION_REGEX = /Version\s(\d+\.\d+\..+)/;
-
-/**
  * Matches the MkDocs version string from `mkdocs --version`
  */
 const MKDOCS_VERSION_REGEX = /\s+version\s+(\d+\.\d+\.\S+)/;
@@ -60,7 +52,6 @@ const log = getLogger('validate');
  */
 export type ValidationKind =
   | typeof NAME_PYTHON
-  | typeof NAME_TYPESCRIPT
   | typeof NAME_NPM
   | typeof NAME_MKDOCS;
 
@@ -162,7 +153,6 @@ export class DocutilsValidator extends EventEmitter {
       this.validations.add(NAME_PYTHON);
     }
     if (opts.typescript) {
-      this.validations.add(NAME_TYPESCRIPT);
       // npm validation is required for typescript
       this.validations.add(NAME_NPM);
     }
@@ -197,10 +187,6 @@ export class DocutilsValidator extends EventEmitter {
         await this.validateNpmVersion();
       }
 
-      if (this.validations.has(NAME_TYPESCRIPT)) {
-        await this.validateTypeScript();
-      }
-
       this.emit(DocutilsValidator.END, this.emittedErrors.size);
     } finally {
       this.reset();
@@ -218,18 +204,6 @@ export class DocutilsValidator extends EventEmitter {
     if (!this.emittedErrors.has(dErr.message)) {
       this.emit(DocutilsValidator.FAILURE, dErr);
     }
-  }
-
-  /**
-   * Resolves with a the parent directory of `package.json`, if we can find it.
-   */
-  protected async findPkgDir(): Promise<string | undefined> {
-    return (
-      this.pkgDir ??
-      (this.pkgDir = this.packageJsonPath
-        ? path.dirname(this.packageJsonPath)
-        : await findPkgDir(this.cwd))
-    );
   }
 
   /**
@@ -484,56 +458,6 @@ export class DocutilsValidator extends EventEmitter {
       return this.fail(`Could not retrieve Python version`);
     }
     this.ok('Python version OK');
-  }
-
-  /**
-   * Asserts that TypeScript is installed, runnable, and the correct version.
-   */
-  protected async validateTypeScript() {
-    log.debug(`Validating ${NAME_TYPESCRIPT} version`);
-
-    const pkgDir = await this.findPkgDir();
-    if (!pkgDir) {
-      return this.fail(`Could not find ${NAME_PACKAGE_JSON} in ${this.cwd}`);
-    }
-
-    const npmPath = this.npmPath ?? (await whichNpm());
-    if (!npmPath) {
-      throw new DocutilsError(`Could not find ${NAME_NPM} in PATH. That seems weird, doesn't it?`);
-    }
-
-    let typeScriptVersion: string;
-    let rawTypeScriptVersion: string;
-    try {
-      ({stdout: rawTypeScriptVersion} = await npm.exec('exec', ['tsc', '--', '--version'], {
-        cwd: pkgDir,
-      }));
-    } catch {
-      return this.fail(`Could not find TypeScript compiler ("tsc") from ${pkgDir}`);
-    }
-
-    const match = rawTypeScriptVersion.match(TYPESCRIPT_VERSION_REGEX);
-    if (match) {
-      typeScriptVersion = match[1];
-    } else {
-      return this.fail(
-        `Could not parse TypeScript version from "tsc --version"; output was:\n ${rawTypeScriptVersion}`,
-      );
-    }
-
-    const reqdTypeScriptVersion = DOCUTILS_PKG.dependencies?.typescript;
-    if (!reqdTypeScriptVersion) {
-      throw new DocutilsError(
-        `Could not find ${NAME_TYPESCRIPT} dependency in ${NAME_PACKAGE_JSON}. This is a bug`,
-      );
-    }
-
-    if (!satisfies(typeScriptVersion, reqdTypeScriptVersion)) {
-      return this.fail(
-        `TypeScript v${typeScriptVersion} is installed, but v${reqdTypeScriptVersion} is required`,
-      );
-    }
-    this.ok('TypeScript install OK');
   }
 }
 

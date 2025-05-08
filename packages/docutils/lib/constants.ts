@@ -64,11 +64,6 @@ export const NAME_PIP = 'pip';
 export const NAME_NPM = 'npm';
 
 /**
- * The name of the `typescript` package (not the `tsc` executable)
- */
-export const NAME_TYPESCRIPT = 'typescript';
-
-/**
  * Code for a "file not found" error
  */
 export const NAME_ERR_ENOENT = 'ENOENT';

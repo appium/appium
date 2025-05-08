@@ -32,7 +32,7 @@ const log = getLogger('fs');
  *
  * Caches result
  */
-export const findPkgDir = _.memoize(_pkgDir);
+const findPkgDir = _.memoize(_pkgDir);
 
 /**
  * Stringifies a thing into a YAML

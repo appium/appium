@@ -33,15 +33,6 @@ const opts = {
     requiresArg: true,
     type: 'string',
   },
-  'npm-path': {
-    defaultDescription: '(derived from shell)',
-    description: 'Path to npm executable',
-    group: ValidateCommandGroup.Paths,
-    nargs: 1,
-    normalize: true,
-    requiresArg: true,
-    type: 'string',
-  },
   python: {
     default: true,
     description: 'Validate Python 3 environment',
@@ -57,21 +48,6 @@ const opts = {
     requiresArg: true,
     type: 'string',
   },
-  'tsconfig-json': {
-    defaultDescription: './tsconfig.json',
-    describe: 'Path to tsconfig.json',
-    group: ValidateCommandGroup.Paths,
-    nargs: 1,
-    normalize: true,
-    requiresArg: true,
-    type: 'string',
-  },
-  typescript: {
-    default: true,
-    description: 'Validate TypeScript environment',
-    group: ValidateCommandGroup.Behavior,
-    type: 'boolean',
-  },
 } as const satisfies Record<string, Options>;
 
 type ValidateOptions = InferredOptionTypes<typeof opts>;
@@ -81,8 +57,8 @@ export default {
   describe: 'Validate Environment',
   builder(yargs) {
     return yargs.options(opts).check(async (argv) => {
-      if (!argv.python && !argv.typescript && !argv.mkdocs) {
-        return 'No validation targets specified; one or more of --python, --typescript or --mkdocs must be provided';
+      if (!argv.python && !argv.mkdocs) {
+        return 'No validation targets specified; one or more of --python or --mkdocs must be provided';
       }
       return checkMissingPaths(opts, ValidateCommandGroup.Paths, argv);
     });

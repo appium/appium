@@ -23,7 +23,6 @@ import {
   NAME_PIP,
   NAME_PYTHON,
   NAME_REQUIREMENTS_TXT,
-  NAME_TSCONFIG_JSON,
   NAME_TYPESCRIPT,
   REQUIREMENTS_TXT_PATH,
 } from './constants';
@@ -32,14 +31,12 @@ import {
   findMkDocsYml,
   findPkgDir,
   isMkDocsInstalled,
-  readJson5,
   readMkDocsYml,
   whichNpm,
   findPython,
 } from './fs';
 import {getLogger} from './logger';
 import {MkDocsYml, PipPackage} from './model';
-import {relative} from './util';
 
 /**
  * Matches the Python version string from `python --version`
@@ -124,11 +121,6 @@ export class DocutilsValidator extends EventEmitter {
   protected pkgDir?: string;
 
   /**
-   * Path to `tsconfig.json`.  If not provided, will be lazily resolved.
-   */
-  protected tsconfigJsonPath?: string;
-
-  /**
    * Emitted when validation begins with a list of validation kinds to be performed
    * @event
    */
@@ -163,7 +155,6 @@ export class DocutilsValidator extends EventEmitter {
     this.packageJsonPath = opts.packageJson;
     this.pythonPath = opts.pythonPath;
     this.cwd = opts.cwd ?? process.cwd();
-    this.tsconfigJsonPath = opts.tsconfigJson;
     this.npmPath = opts.npm;
     this.mkDocsYmlPath = opts.mkdocsYml;
 
@@ -208,7 +199,6 @@ export class DocutilsValidator extends EventEmitter {
 
       if (this.validations.has(NAME_TYPESCRIPT)) {
         await this.validateTypeScript();
-        await this.validateTypeScriptConfig();
       }
 
       this.emit(DocutilsValidator.END, this.emittedErrors.size);
@@ -545,33 +535,6 @@ export class DocutilsValidator extends EventEmitter {
     }
     this.ok('TypeScript install OK');
   }
-
-  /**
-   * Validates a `tsconfig.json` file
-   */
-  protected async validateTypeScriptConfig() {
-    log.debug(`Validating ${NAME_TSCONFIG_JSON}`);
-
-    const pkgDir = await this.findPkgDir();
-    if (!pkgDir) {
-      return this.fail(`Could not find ${NAME_PACKAGE_JSON} in ${this.cwd}`);
-    }
-
-    const tsconfigJsonPath = this.tsconfigJsonPath ?? path.join(pkgDir, NAME_TSCONFIG_JSON);
-    const relTsconfigJsonPath = relative(this.cwd, tsconfigJsonPath);
-    try {
-      await readJson5(tsconfigJsonPath);
-    } catch (e) {
-      if (e instanceof SyntaxError) {
-        return this.fail(`Could not parse ${NAME_TSCONFIG_JSON} at ${relTsconfigJsonPath}: ${e}`);
-      }
-      return this.fail(
-        `Could not find ${NAME_TSCONFIG_JSON} at ${relTsconfigJsonPath}; please run "${NAME_BIN} init"`,
-      );
-    }
-
-    this.ok('TypeScript config OK');
-  }
 }
 
 /**
@@ -603,10 +566,6 @@ export interface DocutilsValidatorOpts {
    * Path to `python` executable
    */
   pythonPath?: string;
-  /**
-   * Path to `tsconfig.json`
-   */
-  tsconfigJson?: string;
   /**
    * If `true`, run TypeScript validation
    */

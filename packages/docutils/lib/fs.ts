@@ -144,14 +144,6 @@ async function _readPkgJson(
 export const readPackageJson = _.memoize(_readPkgJson);
 
 /**
- * Reads a JSON5 file and parses it
- */
-export const readJson5 = _.memoize(
-  async <T extends JsonValue>(filepath: string): Promise<T> =>
-    JSON5.parse(await fs.readFile(filepath, 'utf8')),
-);
-
-/**
  * Reads a JSON file and parses it
  */
 export const readJson = _.memoize(

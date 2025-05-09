@@ -299,7 +299,7 @@ function buildHandler(app, method, path, spec, driver, isSessCmd) {
       if (spec.deprecated && !deprecatedCommandsLogged.has(spec.command)) {
         deprecatedCommandsLogged.add(spec.command);
         getLogger(driver, req.params.sessionId).warn(
-          `The '${method} ${path}' API has been deprecated and will be removed in a future ` +
+          `The ${method} ${path} endpoint has been deprecated and will be removed in a future ` +
             `version of Appium or your driver/plugin. Please use a different API or contact the ` +
             `driver/plugin author to add an explicit support for it.`
         );

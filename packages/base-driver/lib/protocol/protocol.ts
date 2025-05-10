@@ -105,31 +105,29 @@ export function checkParams(paramSets: PayloadParams, jsonObj: any, protocol?: k
   let optionalParams: string[] = [];
   const receivedParams: string[] = _.keys(jsonObj);
 
-  if (paramSets) {
-    if (paramSets.required) {
-      // we might have an array of parameters,
-      // or an array of arrays of parameters, so standardize
-      requiredParams = _.cloneDeep(
-        (hasMultipleRequiredParamSets(paramSets.required)
-          ? paramSets.required
-          : [paramSets.required]
-        ) as string[][]
-      );
-    }
-    // optional parameters are just an array
-    if (paramSets.optional) {
-      optionalParams = _.cloneDeep(paramSets.optional as string[]);
-    }
+  if (paramSets.required) {
+    // we might have an array of parameters,
+    // or an array of arrays of parameters, so standardize
+    requiredParams = _.cloneDeep(
+      (hasMultipleRequiredParamSets(paramSets.required)
+        ? paramSets.required
+        : [paramSets.required]
+      ) as string[][]
+    );
+  }
+  // optional parameters are just an array
+  if (paramSets.optional) {
+    optionalParams = _.cloneDeep(paramSets.optional as string[]);
+  }
 
-    // If a function was provided as the 'validate' key, it will here be called with
-    // jsonObj as the param. If it returns something falsy, verification will be
-    // considered to have passed. If it returns something else, that will be the
-    // argument to an error which is thrown to the user
-    if (paramSets.validate) {
-      const message = paramSets.validate(jsonObj, protocol ?? PROTOCOLS.W3C);
-      if (message) {
-        throw new errors.InvalidArgumentError(_.isString(message) ? message : undefined);
-      }
+  // If a function was provided as the 'validate' key, it will here be called with
+  // jsonObj as the param. If it returns something falsy, verification will be
+  // considered to have passed. If it returns something else, that will be the
+  // argument to an error which is thrown to the user
+  if (paramSets.validate) {
+    const message = paramSets.validate(jsonObj, protocol ?? PROTOCOLS.W3C);
+    if (message) {
+      throw new errors.InvalidArgumentError(_.isString(message) ? message : undefined);
     }
   }
 

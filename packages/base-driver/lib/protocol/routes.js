@@ -151,7 +151,7 @@ export const METHOD_MAP = /** @type {const} */ ({
       payloadParams: {
         validate: (jsonObj) =>
           _.isUndefined(jsonObj.text) &&
-          'we require "text" params',
+          '"text" parameter is required',
         optional: ['text'],
         // override the default argument constructor because of the special
         // logic here. Appium wants to accept only 'text' for w3c protocl,

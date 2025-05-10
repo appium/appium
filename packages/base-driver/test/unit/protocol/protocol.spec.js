@@ -91,5 +91,23 @@ describe('Protocol', function () {
         );
       });
     });
+
+    it('should pass if a set of required params is matched', function () {
+      const args = checkParams(
+        {
+          required: [['foo'], ['bar']],
+          optional: ['baz'],
+        },
+        {
+          foo: 'foo',
+          bar: 'bar',
+          baz: 'baz',
+        }
+      );
+      args.should.eql({
+        foo: 'foo',
+        baz: 'baz',
+      });
+    });
   });
 });

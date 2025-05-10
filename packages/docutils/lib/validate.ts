@@ -89,11 +89,6 @@ export class DocutilsValidator extends EventEmitter {
   protected mkDocsYmlPath?: string;
 
   /**
-   * Path to the package directory.  If not provided, will be lazily resolved.
-   */
-  protected pkgDir?: string;
-
-  /**
    * Emitted when validation begins with a list of validation kinds to be performed
    * @event
    */

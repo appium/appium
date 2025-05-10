@@ -95,37 +95,44 @@ function hasMultipleRequiredParamSets(
   return Boolean(required && _.isArray(_.first(required)));
 }
 
-export function checkParams(paramSets: PayloadParams, jsonObj: any, protocol?: keyof typeof PROTOCOLS): void {
-  if (_.isEmpty(paramSets?.required)) {
-    // if we have no required parameters, all is well
-    return;
+function pickKnownParams(args: Record<string, any>, unknownNames: string[]): Record<string, any> {
+  if (_.isEmpty(unknownNames)) {
+    return args;
   }
+  log.info(`The following script arguments are not known and will be ignored: ${unknownNames}`);
+  return _.pickBy(args, (v, k) => !unknownNames.includes(k));
+}
 
+export function checkParams(
+  paramSpec: PayloadParams,
+  args: Record<string, any>,
+  protocol?: keyof typeof PROTOCOLS
+): Record<string, any> {
   let requiredParams: string[][] = [];
   let optionalParams: string[] = [];
-  const receivedParams: string[] = _.keys(jsonObj);
+  const actualParamNames: string[] = _.keys(args);
 
-  if (paramSets.required) {
+  if (paramSpec.required) {
     // we might have an array of parameters,
     // or an array of arrays of parameters, so standardize
     requiredParams = _.cloneDeep(
-      (hasMultipleRequiredParamSets(paramSets.required)
-        ? paramSets.required
-        : [paramSets.required]
+      (hasMultipleRequiredParamSets(paramSpec.required)
+        ? paramSpec.required
+        : [paramSpec.required]
       ) as string[][]
     );
   }
   // optional parameters are just an array
-  if (paramSets.optional) {
-    optionalParams = _.cloneDeep(paramSets.optional as string[]);
+  if (paramSpec.optional) {
+    optionalParams = _.cloneDeep(paramSpec.optional as string[]);
   }
 
   // If a function was provided as the 'validate' key, it will here be called with
-  // jsonObj as the param. If it returns something falsy, verification will be
+  // args as the param. If it returns something falsy, verification will be
   // considered to have passed. If it returns something else, that will be the
   // argument to an error which is thrown to the user
-  if (paramSets.validate) {
-    const message = paramSets.validate(jsonObj, protocol ?? PROTOCOLS.W3C);
+  if (paramSpec.validate) {
+    const message = paramSpec.validate(args, protocol ?? PROTOCOLS.W3C);
     if (message) {
       throw new errors.InvalidArgumentError(_.isString(message) ? message : undefined);
     }
@@ -140,25 +147,29 @@ export function checkParams(paramSets: PayloadParams, jsonObj: any, protocol?: k
     optionalParams.push('id');
   }
 
+  if (_.isEmpty(requiredParams)) {
+    // if we don't have any required parameters, then just filter out unknown ones
+    return pickKnownParams(args, _.difference(actualParamNames, [], optionalParams));
+  }
+
   // go through the required parameters and check against our arguments
   let matchedReqParamSet: string[] = [];
-  for (const paramSet of requiredParams) {
-    if (
-      _.difference(receivedParams, paramSet, optionalParams).length === 0 &&
-      _.difference(paramSet, receivedParams).length === 0
-    ) {
-      // we have a set of parameters that is correct so short-circuit
-      return;
+  for (const requiredParamsSet of requiredParams) {
+    if (_.isEmpty(_.difference(requiredParamsSet, actualParamNames))) {
+      return pickKnownParams(
+        args,
+        _.difference(actualParamNames, requiredParamsSet, optionalParams)
+      );
     }
-    if (!_.isEmpty(paramSet) && _.isEmpty(matchedReqParamSet)) {
-      matchedReqParamSet = paramSet;
+    if (!_.isEmpty(requiredParamsSet) && _.isEmpty(matchedReqParamSet)) {
+      matchedReqParamSet = requiredParamsSet;
     }
   }
   throw new BadParametersError({
-    ...paramSets,
+    ...paramSpec,
     required: matchedReqParamSet,
     optional: optionalParams,
-  }, receivedParams);
+  }, actualParamNames);
 }
 
 /*
@@ -228,7 +239,7 @@ export function validateExecuteMethodParams(params: any[], paramSpec?: PayloadPa
         `arguments to execute script and instead received: ${JSON.stringify(params)}`
     );
   }
-  let args: Record<string, any> = params[0] ?? {};
+  const args: Record<string, any> = params[0] ?? {};
   if (!_.isPlainObject(args)) {
     throw new errors.InvalidArgumentError(
       `Did not receive an appropriate execute method parameters object. It needs to be ` +
@@ -236,23 +247,12 @@ export function validateExecuteMethodParams(params: any[], paramSpec?: PayloadPa
     );
   }
   const specToUse = {
-    ...paramSpec,
+    ...(paramSpec ?? {}),
     required: paramSpec?.required ?? [],
     optional: paramSpec?.optional ?? [],
   };
-  if (paramSpec) {
-    const unknownNames = _.difference(
-      _.keys(args),
-      hasMultipleRequiredParamSets(specToUse.required) ? _.flatten(specToUse.required) : specToUse.required,
-      specToUse.optional
-    );
-    if (!_.isEmpty(unknownNames)) {
-      log.info(`The following script arguments are not known and will be ignored: ${unknownNames}`);
-      args = _.pickBy(args, (v, k) => !unknownNames.includes(k));
-    }
-    checkParams(specToUse, args);
-  }
-  return makeArgs({}, args, specToUse);
+  const filteredArgs = checkParams(specToUse, args);
+  return makeArgs({}, filteredArgs, specToUse);
 }
 
 

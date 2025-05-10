@@ -156,11 +156,11 @@ export function checkParams(
   let matchedReqParamSet: string[] = [];
   for (const requiredParamsSet of requiredParams) {
     if (!_.isArray(requiredParamsSet)) {
-      log.warn(
-        `The required parameter set item ${JSON.stringify(requiredParamsSet)} is not an array. ` +
+      throw new Error(
+        `The required parameter set item ${JSON.stringify(requiredParamsSet)} ` +
+        `in ${JSON.stringify(paramSpec)} is not an array. ` +
         `This is a bug in the method map definition.`
       );
-      continue;
     }
     if (_.isEmpty(_.difference(requiredParamsSet, actualParamNames))) {
       return pickKnownParams(

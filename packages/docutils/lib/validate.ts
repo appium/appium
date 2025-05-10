@@ -4,52 +4,36 @@
  * @module
  */
 
-import {fs, npm, util} from '@appium/support';
+import {fs, util} from '@appium/support';
 import chalk from 'chalk';
 import _ from 'lodash';
 import {EventEmitter} from 'node:events';
-import path from 'node:path';
-import {satisfies} from 'semver';
 import {exec} from 'teen_process';
 import {
-  DOCUTILS_PKG,
   MESSAGE_PYTHON_MISSING,
   NAME_BIN,
   NAME_ERR_ENOENT,
   NAME_MKDOCS,
   NAME_MKDOCS_YML,
-  NAME_NPM,
-  NAME_PACKAGE_JSON,
   NAME_PIP,
   NAME_PYTHON,
   NAME_REQUIREMENTS_TXT,
-  NAME_TSCONFIG_JSON,
-  NAME_TYPESCRIPT,
   REQUIREMENTS_TXT_PATH,
 } from './constants';
 import {DocutilsError} from './error';
 import {
   findMkDocsYml,
-  findPkgDir,
   isMkDocsInstalled,
-  readJson5,
   readMkDocsYml,
-  whichNpm,
   findPython,
 } from './fs';
 import {getLogger} from './logger';
 import {MkDocsYml, PipPackage} from './model';
-import {relative} from './util';
 
 /**
  * Matches the Python version string from `python --version`
  */
 const PYTHON_VER_STR = 'Python 3.';
-
-/**
- * Matches the TypeScript version string from `tsc --version`
- */
-const TYPESCRIPT_VERSION_REGEX = /Version\s(\d+\.\d+\..+)/;
 
 /**
  * Matches the MkDocs version string from `mkdocs --version`
@@ -61,11 +45,7 @@ const log = getLogger('validate');
 /**
  * The "kinds" of validation which were requested to be performed
  */
-export type ValidationKind =
-  | typeof NAME_PYTHON
-  | typeof NAME_TYPESCRIPT
-  | typeof NAME_NPM
-  | typeof NAME_MKDOCS;
+export type ValidationKind = typeof NAME_PYTHON | typeof NAME_MKDOCS;
 
 /**
  * This class is designed to run _all_ validation checks (as requested by the user), and emit events for
@@ -82,11 +62,6 @@ export class DocutilsValidator extends EventEmitter {
    * @todo This cannot yet be overriden by user
    */
   protected readonly cwd: string;
-
-  /**
-   * Path to `npm` executable.
-   */
-  protected readonly npmPath?: string;
 
   /**
    * Path to `python` executable.
@@ -112,21 +87,6 @@ export class DocutilsValidator extends EventEmitter {
    * Path to `mkdocs.yml`.  If not provided, will be lazily resolved.
    */
   protected mkDocsYmlPath?: string;
-
-  /**
-   * Path to `package.json`.  If not provided, will be lazily resolved.
-   */
-  protected packageJsonPath?: string;
-
-  /**
-   * Path to the package directory.  If not provided, will be lazily resolved.
-   */
-  protected pkgDir?: string;
-
-  /**
-   * Path to `tsconfig.json`.  If not provided, will be lazily resolved.
-   */
-  protected tsconfigJsonPath?: string;
 
   /**
    * Emitted when validation begins with a list of validation kinds to be performed
@@ -160,20 +120,12 @@ export class DocutilsValidator extends EventEmitter {
   constructor(opts: DocutilsValidatorOpts = {}) {
     super();
 
-    this.packageJsonPath = opts.packageJson;
     this.pythonPath = opts.pythonPath;
     this.cwd = opts.cwd ?? process.cwd();
-    this.tsconfigJsonPath = opts.tsconfigJson;
-    this.npmPath = opts.npm;
     this.mkDocsYmlPath = opts.mkdocsYml;
 
     if (opts.python) {
       this.validations.add(NAME_PYTHON);
-    }
-    if (opts.typescript) {
-      this.validations.add(NAME_TYPESCRIPT);
-      // npm validation is required for typescript
-      this.validations.add(NAME_NPM);
     }
     if (opts.mkdocs) {
       this.validations.add(NAME_MKDOCS);
@@ -202,15 +154,6 @@ export class DocutilsValidator extends EventEmitter {
         await this.validateMkDocsConfig();
       }
 
-      if (this.validations.has(NAME_NPM)) {
-        await this.validateNpmVersion();
-      }
-
-      if (this.validations.has(NAME_TYPESCRIPT)) {
-        await this.validateTypeScript();
-        await this.validateTypeScriptConfig();
-      }
-
       this.emit(DocutilsValidator.END, this.emittedErrors.size);
     } finally {
       this.reset();
@@ -228,18 +171,6 @@ export class DocutilsValidator extends EventEmitter {
     if (!this.emittedErrors.has(dErr.message)) {
       this.emit(DocutilsValidator.FAILURE, dErr);
     }
-  }
-
-  /**
-   * Resolves with a the parent directory of `package.json`, if we can find it.
-   */
-  protected async findPkgDir(): Promise<string | undefined> {
-    return (
-      this.pkgDir ??
-      (this.pkgDir = this.packageJsonPath
-        ? path.dirname(this.packageJsonPath)
-        : await findPkgDir(this.cwd))
-    );
   }
 
   /**
@@ -364,35 +295,6 @@ export class DocutilsValidator extends EventEmitter {
   }
 
   /**
-   * Validates that the version of `npm` matches what's described in this package's `engines` field.
-   *
-   * This is required because other validators need `npm exec` to work, which is only available in npm 7+.
-   */
-  protected async validateNpmVersion() {
-    log.debug(`Validating ${NAME_NPM} version`);
-
-    const npmEngineRange = DOCUTILS_PKG.engines?.npm;
-    if (!npmEngineRange) {
-      throw new DocutilsError(`Could not find property 'engines.npm' in ${NAME_PACKAGE_JSON}. This is a bug`);
-    }
-
-    const npmPath = this.npmPath ?? (await whichNpm());
-    if (!npmPath) {
-      throw new DocutilsError(`Could not find ${NAME_NPM} in PATH. That seems weird, doesn't it?`);
-    }
-
-    try {
-      const {stdout: npmVersion} = await npm.exec('-v', [], {cwd: this.cwd});
-      if (!satisfies(npmVersion.trim(), npmEngineRange)) {
-        return this.fail(`${NAME_NPM} v${npmVersion} is installed, but ${npmEngineRange} is required`);
-      }
-    } catch {
-      return this.fail(`Could not retrieve ${NAME_NPM} version`);
-    }
-    this.ok(`${NAME_NPM} version OK`);
-  }
-
-  /**
    * Asserts that the dependencies as listed in `requirements.txt` are installed.
    *
    * @privateRemarks This lists all installed packages with `pip` and then compares them to the
@@ -495,83 +397,6 @@ export class DocutilsValidator extends EventEmitter {
     }
     this.ok('Python version OK');
   }
-
-  /**
-   * Asserts that TypeScript is installed, runnable, and the correct version.
-   */
-  protected async validateTypeScript() {
-    log.debug(`Validating ${NAME_TYPESCRIPT} version`);
-
-    const pkgDir = await this.findPkgDir();
-    if (!pkgDir) {
-      return this.fail(`Could not find ${NAME_PACKAGE_JSON} in ${this.cwd}`);
-    }
-
-    const npmPath = this.npmPath ?? (await whichNpm());
-    if (!npmPath) {
-      throw new DocutilsError(`Could not find ${NAME_NPM} in PATH. That seems weird, doesn't it?`);
-    }
-
-    let typeScriptVersion: string;
-    let rawTypeScriptVersion: string;
-    try {
-      ({stdout: rawTypeScriptVersion} = await npm.exec('exec', ['tsc', '--', '--version'], {
-        cwd: pkgDir,
-      }));
-    } catch {
-      return this.fail(`Could not find TypeScript compiler ("tsc") from ${pkgDir}`);
-    }
-
-    const match = rawTypeScriptVersion.match(TYPESCRIPT_VERSION_REGEX);
-    if (match) {
-      typeScriptVersion = match[1];
-    } else {
-      return this.fail(
-        `Could not parse TypeScript version from "tsc --version"; output was:\n ${rawTypeScriptVersion}`,
-      );
-    }
-
-    const reqdTypeScriptVersion = DOCUTILS_PKG.dependencies?.typescript;
-    if (!reqdTypeScriptVersion) {
-      throw new DocutilsError(
-        `Could not find ${NAME_TYPESCRIPT} dependency in ${NAME_PACKAGE_JSON}. This is a bug`,
-      );
-    }
-
-    if (!satisfies(typeScriptVersion, reqdTypeScriptVersion)) {
-      return this.fail(
-        `TypeScript v${typeScriptVersion} is installed, but v${reqdTypeScriptVersion} is required`,
-      );
-    }
-    this.ok('TypeScript install OK');
-  }
-
-  /**
-   * Validates a `tsconfig.json` file
-   */
-  protected async validateTypeScriptConfig() {
-    log.debug(`Validating ${NAME_TSCONFIG_JSON}`);
-
-    const pkgDir = await this.findPkgDir();
-    if (!pkgDir) {
-      return this.fail(`Could not find ${NAME_PACKAGE_JSON} in ${this.cwd}`);
-    }
-
-    const tsconfigJsonPath = this.tsconfigJsonPath ?? path.join(pkgDir, NAME_TSCONFIG_JSON);
-    const relTsconfigJsonPath = relative(this.cwd, tsconfigJsonPath);
-    try {
-      await readJson5(tsconfigJsonPath);
-    } catch (e) {
-      if (e instanceof SyntaxError) {
-        return this.fail(`Could not parse ${NAME_TSCONFIG_JSON} at ${relTsconfigJsonPath}: ${e}`);
-      }
-      return this.fail(
-        `Could not find ${NAME_TSCONFIG_JSON} at ${relTsconfigJsonPath}; please run "${NAME_BIN} init"`,
-      );
-    }
-
-    this.ok('TypeScript config OK');
-  }
 }
 
 /**
@@ -588,14 +413,6 @@ export interface DocutilsValidatorOpts {
    */
   mkdocsYml?: string;
   /**
-   * Path to `npm` executable
-   */
-  npm?: string;
-  /**
-   * Path to `package.json`
-   */
-  packageJson?: string;
-  /**
    * If `true`, run Python validation
    */
   python?: boolean;
@@ -603,14 +420,6 @@ export interface DocutilsValidatorOpts {
    * Path to `python` executable
    */
   pythonPath?: string;
-  /**
-   * Path to `tsconfig.json`
-   */
-  tsconfigJson?: string;
-  /**
-   * If `true`, run TypeScript validation
-   */
-  typescript?: boolean;
   /**
    * If `true`, run MkDocs validation
    */

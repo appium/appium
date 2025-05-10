@@ -4,7 +4,6 @@
  */
 
 import {fs} from '@appium/support';
-import * as JSON5 from 'json5';
 import _ from 'lodash';
 import path from 'node:path';
 import _pkgDir from 'pkg-dir';
@@ -16,7 +15,6 @@ import {
   NAME_MIKE,
   NAME_MKDOCS,
   NAME_MKDOCS_YML,
-  NAME_NPM,
   NAME_PACKAGE_JSON,
   NAME_PYTHON,
 } from './constants';
@@ -32,7 +30,7 @@ const log = getLogger('fs');
  *
  * Caches result
  */
-export const findPkgDir = _.memoize(_pkgDir);
+const findPkgDir = _.memoize(_pkgDir);
 
 /**
  * Stringifies a thing into a YAML
@@ -44,16 +42,6 @@ export const stringifyYaml: (value: JsonValue) => string = _.partialRight(
   {indent: 2},
   undefined,
 );
-
-/**
- * Stringifies something into JSON5.  I think the only difference between this and `JSON.stringify`
- * is that if an object has a `toJSON5()` method, it will be used.
- * @param value Something to stringify
- * @returns JSON5 string
- */
-export const stringifyJson5: (value: JsonValue) => string = _.partialRight(JSON5.stringify, {
-  indent: 2,
-});
 
 /**
  * Pretty-stringifies a JSON value
@@ -144,14 +132,6 @@ async function _readPkgJson(
 export const readPackageJson = _.memoize(_readPkgJson);
 
 /**
- * Reads a JSON5 file and parses it
- */
-export const readJson5 = _.memoize(
-  async <T extends JsonValue>(filepath: string): Promise<T> =>
-    JSON5.parse(await fs.readFile(filepath, 'utf8')),
-);
-
-/**
  * Reads a JSON file and parses it
  */
 export const readJson = _.memoize(
@@ -177,11 +157,6 @@ type WhichFunction = (cmd: string, opts?: {nothrow: boolean}) => Promise<string|
  * `which` with memoization
  */
 const cachedWhich = _.memoize(fs.which as WhichFunction);
-
-/**
- * Finds `npm` executable
- */
-export const whichNpm = _.partial(cachedWhich, NAME_NPM, {nothrow: true});
 
 /**
  * Finds `python` executable

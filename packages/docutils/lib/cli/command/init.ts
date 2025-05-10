@@ -3,7 +3,6 @@
  * @module
  */
 
-import _ from 'lodash';
 import type {CommandModule, InferredOptionTypes, Options} from 'yargs';
 import {init} from '../../init';
 import {getLogger} from '../../logger';
@@ -50,17 +49,6 @@ const opts = {
     describe: 'Overwrite existing configurations',
     group: InitCommandGroup.Behavior,
     type: 'boolean',
-  },
-  include: {
-    alias: 'i',
-    array: true,
-    coerce: (value: string | string[]) => _.castArray(value),
-    description: 'Files to include in compilation (globs OK)',
-    nargs: 1,
-    group: InitCommandGroup.MkDocs,
-    requiresArg: true,
-    type: 'string',
-    implies: 'mkdocs',
   },
   mkdocs: {
     default: true,
@@ -138,22 +126,6 @@ const opts = {
     requiresArg: true,
     type: 'string',
     implies: 'mkdocs',
-  },
-  'tsconfig-json': {
-    defaultDescription: './tsconfig.json',
-    describe: 'Path to new or existing tsconfig.json',
-    group: InitCommandGroup.Behavior,
-    nargs: 1,
-    normalize: true,
-    requiresArg: true,
-    type: 'string',
-    implies: 'typescript',
-  },
-  typescript: {
-    default: true,
-    description: 'Create tsconfig.json if needed',
-    group: InitCommandGroup.Behavior,
-    type: 'boolean',
   },
   upgrade: {
     alias: 'up',

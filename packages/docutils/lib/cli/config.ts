@@ -3,7 +3,6 @@
  * @module
  */
 
-import loadTs from '@sliphua/lilconfig-ts-loader';
 import {lilconfig, Loader} from 'lilconfig';
 import _ from 'lodash';
 import path from 'node:path';
@@ -20,10 +19,6 @@ const log = getLogger('config');
  * `lilconfig` loader for YAML
  */
 const loadYaml: Loader = _.rearg(YAML.parse, [2, 0, 1]);
-/**
- * `lilconfig` loader for ESM/CJS
- */
-const loadEsm: Loader = (filepath: string) => import(filepath);
 
 /**
  * Controls how we load/find a config file.
@@ -75,10 +70,6 @@ export async function loadConfig(filepath?: string, cwd = process.cwd()): Promis
     loaders: {
       '.yaml': loadYaml,
       '.yml': loadYaml,
-      '.ts': loadTs,
-      '.js': loadEsm,
-      '.cjs': loadEsm,
-      '.mjs': loadEsm,
     },
   });
 

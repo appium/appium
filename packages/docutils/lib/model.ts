@@ -4,14 +4,7 @@
  * @module
  */
 
-import type {Jsonify, JsonValue, TsConfigJson as TsConfigJsonBase} from 'type-fest';
-
-/**
- * A `tsconfig.json` file w/ `$schema` prop
- */
-export type TsConfigJson = TsConfigJsonBase & {
-  $schema?: string;
-};
+import type {Jsonify, JsonValue} from 'type-fest';
 
 /**
  * The `nav` prop of an `mkdocs.yml` file

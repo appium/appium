@@ -143,20 +143,23 @@ export function checkParams(paramSets: PayloadParams, jsonObj: any, protocol?: k
   }
 
   // go through the required parameters and check against our arguments
+  let matchedReqParamSet: string[] = [];
   for (const paramSet of requiredParams) {
     if (
       _.difference(receivedParams, paramSet, optionalParams).length === 0 &&
       _.difference(paramSet, receivedParams).length === 0
     ) {
-      // we have a set of parameters that is correct
-      // so short-circuit
+      // we have a set of parameters that is correct so short-circuit
       return;
+    }
+    if (!_.isEmpty(paramSet) && _.isEmpty(matchedReqParamSet)) {
+      matchedReqParamSet = paramSet;
     }
   }
   throw new BadParametersError({
     ...paramSets,
-    required: _.flatten(requiredParams) as string[],
-    optional: paramSets.optional as string[],
+    required: matchedReqParamSet,
+    optional: optionalParams,
   }, receivedParams);
 }
 

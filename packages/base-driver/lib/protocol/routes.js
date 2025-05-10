@@ -2,6 +2,7 @@ import _ from 'lodash';
 import {DEFAULT_BASE_PATH} from '../constants';
 import {match} from 'path-to-regexp';
 import {LRUCache} from 'lru-cache';
+import { util } from '@appium/support';
 
 /** @type {LRUCache<string, string>} */
 const COMMAND_NAMES_CACHE = new LRUCache({
@@ -149,7 +150,15 @@ export const METHOD_MAP = /** @type {const} */ ({
     POST: {
       command: 'setValue',
       payloadParams: {
-        required: ['text'],
+        validate: (jsonObj) =>
+          !util.hasValue(jsonObj.text) &&
+          'we require "text" params',
+        optional: ['text'],
+        // override the default argument constructor because of the special
+        // logic here. Appium wants to accept only 'text' for w3c protocl,
+        // but clients might send 'text' and 'value' for backward compatibility reason.
+        // Then, Appium will pickup only 'text' in the server side.
+        makeArgs: (jsonObj) => [jsonObj.text],
       },
     },
   },

@@ -99,7 +99,7 @@ function pickKnownParams(args: Record<string, any>, unknownNames: string[]): Rec
   if (_.isEmpty(unknownNames)) {
     return args;
   }
-  log.info(`The following script arguments are not known and will be ignored: ${unknownNames}`);
+  log.info(`The following arguments are not known and will be ignored: ${unknownNames}`);
   return _.pickBy(args, (v, k) => !unknownNames.includes(k));
 }
 

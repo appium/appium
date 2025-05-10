@@ -4,7 +4,6 @@
  */
 
 import {fs} from '@appium/support';
-import * as JSON5 from 'json5';
 import _ from 'lodash';
 import path from 'node:path';
 import _pkgDir from 'pkg-dir';
@@ -43,16 +42,6 @@ export const stringifyYaml: (value: JsonValue) => string = _.partialRight(
   {indent: 2},
   undefined,
 );
-
-/**
- * Stringifies something into JSON5.  I think the only difference between this and `JSON.stringify`
- * is that if an object has a `toJSON5()` method, it will be used.
- * @param value Something to stringify
- * @returns JSON5 string
- */
-export const stringifyJson5: (value: JsonValue) => string = _.partialRight(JSON5.stringify, {
-  indent: 2,
-});
 
 /**
  * Pretty-stringifies a JSON value

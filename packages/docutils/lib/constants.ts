@@ -18,10 +18,6 @@ export const NAME_BIN = 'appium-docs';
 export const NAME_MKDOCS_YML = 'mkdocs.yml';
 
 /**
- * Default name of the `tsconfig.json` config file
- */
-export const NAME_TSCONFIG_JSON = 'tsconfig.json';
-/**
  * `python` executable
  */
 export const NAME_PYTHON = 'python';

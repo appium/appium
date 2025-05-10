@@ -4,8 +4,7 @@
  * @module
  */
 
-import * as JSON5 from 'json5';
-import {NAME_MKDOCS_YML, NAME_TSCONFIG_JSON, PIP_ENV_VARS, REQUIREMENTS_TXT_PATH} from './constants';
+import {NAME_MKDOCS_YML, PIP_ENV_VARS, REQUIREMENTS_TXT_PATH} from './constants';
 import YAML from 'yaml';
 import {exec} from 'teen_process';
 import {Simplify} from 'type-fest';
@@ -13,9 +12,8 @@ import {DocutilsError} from './error';
 import {createScaffoldTask, ScaffoldTaskOptions} from './scaffold';
 import type { ScaffoldTask } from './scaffold';
 import {getLogger} from './logger';
-import {MkDocsYml, TsConfigJson} from './model';
-import _ from 'lodash';
-import {requirePython, stringifyJson5, stringifyYaml} from './fs';
+import {MkDocsYml} from './model';
+import {requirePython, stringifyYaml} from './fs';
 
 /**
  * Data for the base `mkdocs.yml` file
@@ -26,53 +24,8 @@ const BASE_MKDOCS_YML: Readonly<MkDocsYml> = Object.freeze({
   site_dir: 'site',
 });
 
-/**
- * Data for the base `tsconfig.json` file
- */
-const BASE_TSCONFIG_JSON: Readonly<TsConfigJson> = Object.freeze({
-  $schema: 'https://json.schemastore.org/tsconfig',
-  extends: '@appium/tsconfig/tsconfig.json',
-  compilerOptions: {
-    outDir: 'build',
-  },
-});
-
 const log = getLogger('init');
 const dryRunLog = getLogger('dry-run', log);
-
-/**
- * Files included, by default, in `tsconfig.json`
- */
-const DEFAULT_INCLUDE = ['lib', 'test', 'index.js'];
-/**
- * Function which scaffolds a `tsconfig.json` file
- */
-export const initTsConfigJson = createScaffoldTask<InitTsConfigOptions, TsConfigJson>(
-  NAME_TSCONFIG_JSON,
-  BASE_TSCONFIG_JSON,
-  'TypeScript configuration',
-  {
-    /**
-     * Merges the contents of the `include` property with any passed on the CLI. If neither exists,
-     * uses the default set of includes.
-     * @param content Parsed and/or scaffolded `tsconfig.json`
-     * @param opts Options specific to this task
-     * @returns `tsconfig.json` content with potentially-modified `include` prop
-     */
-    transform: (content, {include}) => {
-      include = [...(content.include ?? include ?? [])];
-      if (_.isEmpty(include)) {
-        include = [...DEFAULT_INCLUDE];
-      }
-      return {
-        ...content,
-        include: _.uniq(include),
-      };
-    },
-    deserialize: JSON5.parse,
-    serialize: stringifyJson5,
-  },
-);
 
 /**
  * Function which scaffolds an `mkdocs.yml` file
@@ -192,12 +145,9 @@ export interface InitMkDocsOptions extends ScaffoldTaskOptions {
  * console output which would need mitigation.
  */
 export async function init({
-  typescript,
   python,
-  tsconfigJson: tsconfigJsonPath,
   packageJson: packageJsonPath,
   overwrite,
-  include,
   mkdocs,
   mkdocsYml: mkdocsYmlPath,
   siteName,
@@ -209,17 +159,6 @@ export async function init({
   pythonPath,
   upgrade,
 }: InitOptions = {}): Promise<void> {
-  if (typescript && !upgrade) {
-    await initTsConfigJson({
-      dest: tsconfigJsonPath,
-      packageJson: packageJsonPath,
-      overwrite,
-      include,
-      dryRun,
-      cwd,
-    });
-  }
-
   if (python) {
     await initPython({pythonPath, dryRun, upgrade});
   }
@@ -239,12 +178,6 @@ export async function init({
   }
 }
 
-export interface InitTsConfigOptions extends ScaffoldTaskOptions {
-  /**
-   * List of source files (globs supported); typically `src` or `lib`
-   */
-  include?: string[];
-}
 export interface InitPythonOptions extends ScaffoldTaskOptions {
   /**
    * Path to `python` (v3.x) executable
@@ -263,11 +196,7 @@ export interface InitPythonOptions extends ScaffoldTaskOptions {
  * The props of the various "path" options are rewritten as `dest` for the scaffold tasks functions.
  */
 export type InitOptions = Simplify<
-  Omit<InitPythonOptions & InitTsConfigOptions & InitMkDocsOptions, 'dest'> & {
-    /**
-     * If `true` will initialize a `tsconfig.json` file
-     */
-    typescript?: boolean;
+  Omit<InitPythonOptions & InitMkDocsOptions, 'dest'> & {
     /**
      * If `true` will install Python deps
      */
@@ -276,10 +205,6 @@ export type InitOptions = Simplify<
      * If `true` will initialize a `mkdocs.yml` file
      */
     mkdocs?: boolean;
-    /**
-     * Path to new or existing `tsconfig.json` file
-     */
-    tsconfigJson?: string;
     /**
      * Path to existing `package.json` file
      */

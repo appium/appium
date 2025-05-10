@@ -156,8 +156,8 @@ export const METHOD_MAP = /** @type {const} */ ({
         optional: ['text'],
         // override the default argument constructor because of the special
         // logic here. Appium wants to accept only 'text' for w3c protocl,
-        // but clients might send 'text' and 'value' for backward compatibility reason.
-        // Then, Appium will pickup only 'text' in the server side.
+        // but clients might send 'text' and 'value' for backward compatibility.
+        // Then, Appium will accept only 'text'.
         makeArgs: (jsonObj) => [jsonObj.text],
       },
     },

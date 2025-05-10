@@ -47,10 +47,10 @@ parameters. These endpoints are listed [in the **Modified Endpoints** section](#
 
 ### Feature Flag Prefix Required
 
-With Appium 2, it was possible to opt into certain [insecure features](http://appium.io/docs/en/latest/guides/security/)
-on server startup, which could be enabled using the `--allow-insecure` or `--relaxed-security`
-flags. Appium `2.13` added the ability to optionally provide a scope prefix to specific features,
-ensuring that they would only be enabled for the specified driver (or all of them).
+With Appium 2, it was possible to opt into certain [insecure features](./security.md) on server
+startup, which could be enabled using the `--allow-insecure` or `--relaxed-security` flags. Appium
+`2.13` added the ability to optionally provide a scope prefix to specific features, ensuring that
+they would only be enabled for the specified driver (or all of them).
 
 Appium 3 makes the scope prefix mandatory, and will throw an error if features are specified
 without a scope. Note that the behavior of the `--relaxed-security` flag remains unchanged.
@@ -68,10 +68,40 @@ without a scope. Note that the behavior of the `--relaxed-security` flag remains
     appium --allow-insecure=uiautomator2:adb_shell
     ```
     Alternatively, if you wish to keep the Appium 2 behavior and enable the feature for _all_
-    drivers that support it, you can run it like so:
+    drivers that support it, you can use the wildcard (`*`) prefix:
     ```
     appium --allow-insecure=*:adb_shell
     ```
+    Server-scope features like `session_discovery` also require the wildcard prefix.
+
+
+### Session Discovery Requires Feature Flag
+
+In Appium 2, it was possible to retrieve all active server sessions via the `GET /sessions`
+endpoint. This information could then be used, for example, in Appium Inspector, in order to attach
+to an existing session, instead of creating a new one.
+
+Appium 3 makes two changes to the session discovery process:
+
+* The `GET /sessions` endpoint is replaced with `GET /appium/sessions` (see [the Removed Endpoints section](#removed))
+* The use of the new endpoint requires the `session_discovery` [feature flag](./security.md)
+
+The return value of `GET /appium/sessions` is largely identical to `GET /sessions`, but additionally
+includes the `created` field for each session entry, indicating the session creation time as a Unix
+timestamp. The rest of the result format remains unchanged.
+
+To reduce migration efforts, the `GET /appium/sessions` endpoint (locked behind the aforementioned
+feature flag) is also available in Appium `2.19`, allowing you to adjust your code before upgrading
+to Appium 3. As for Appium Inspector, support for this new endpoint is available starting from
+version `2025.3.1`.
+
+!!! info "Actions Needed"
+
+    * If your code uses session retrieval, change the endpoint from `GET /sessions` to
+    `GET /appium/sessions`
+    * If you use Appium Inspector's Attach to Session feature, upgrade to version `2025.3.1` or later
+    * In both cases, ensure your Appium server is launched with the `session_discovery`
+    [feature flag](./security.md)
 
 ### Unzip Logic Removed
 
@@ -118,7 +148,7 @@ Icons are used to indicate endpoint support in either certain drivers, or in the
     * :octicons-arrow-right-24: `GET /appium/sessions` :simple-appium:
 * `POST /session/:sessionId/accept_alert`
     * :octicons-arrow-right-24: `POST /session/:sessionId/alert/accept` :simple-appium:
-    * :octicons-arrow-right-24: `mobile: alert` [execute method](https://appium.io/docs/en/latest/guides/execute-methods/) :material-apple:
+    * :octicons-arrow-right-24: `mobile: alert` [execute method](./execute-methods.md) :material-apple:
     * :octicons-arrow-right-24: `mobile: acceptAlert` execute method :material-android:
 * `GET /session/:sessionId/alert_text`
     * :octicons-arrow-right-24: `GET /session/:sessionId/alert/text` :simple-appium:

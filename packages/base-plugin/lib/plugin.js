@@ -87,7 +87,7 @@ class BasePlugin extends ExtensionCore {
     const command = /** @type {import('@appium/types').PluginCommand<Driver<C>>} */ (
       this[commandMetadata.command]
     );
-    const args = validateExecuteMethodParams(protoArgs, commandMetadata.params);
+    const args = validateExecuteMethodParams(/** @type {any[]} */ (protoArgs), commandMetadata.params);
     return await command.call(this, next, driver, ...args);
   }
 }

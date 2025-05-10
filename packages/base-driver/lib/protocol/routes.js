@@ -2,7 +2,6 @@ import _ from 'lodash';
 import {DEFAULT_BASE_PATH} from '../constants';
 import {match} from 'path-to-regexp';
 import {LRUCache} from 'lru-cache';
-import { util } from '@appium/support';
 
 /** @type {LRUCache<string, string>} */
 const COMMAND_NAMES_CACHE = new LRUCache({
@@ -151,7 +150,7 @@ export const METHOD_MAP = /** @type {const} */ ({
       command: 'setValue',
       payloadParams: {
         validate: (jsonObj) =>
-          !util.hasValue(jsonObj.text) &&
+          _.isUndefined(jsonObj.text) &&
           'we require "text" params',
         optional: ['text'],
         // override the default argument constructor because of the special

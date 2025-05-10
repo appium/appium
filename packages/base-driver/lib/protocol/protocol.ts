@@ -149,7 +149,7 @@ export function checkParams(
 
   if (_.isEmpty(requiredParams)) {
     // if we don't have any required parameters, then just filter out unknown ones
-    return pickKnownParams(args, _.difference(actualParamNames, [], optionalParams));
+    return pickKnownParams(args, _.difference(actualParamNames, optionalParams));
   }
 
   // go through the required parameters and check against our arguments

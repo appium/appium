@@ -149,7 +149,15 @@ export const METHOD_MAP = /** @type {const} */ ({
     POST: {
       command: 'setValue',
       payloadParams: {
-        required: ['text'],
+        validate: (jsonObj) =>
+          _.isUndefined(jsonObj.text) &&
+          '"text" parameter is required',
+        optional: ['text'],
+        // override the default argument constructor because of the special
+        // logic here. Appium wants to accept only 'text' for w3c protocl,
+        // but clients might send 'text' and 'value' for backward compatibility.
+        // Then, Appium will accept only 'text'.
+        makeArgs: (jsonObj) => [jsonObj.text],
       },
     },
   },

@@ -2,7 +2,7 @@ import _ from 'lodash';
 import {METHOD_MAP, routeToCommandName} from '../../../lib/protocol';
 import crypto from 'crypto';
 
-describe('Protocol', function () {
+describe('Routes', function () {
   // TODO test against an explicit protocol rather than a hash of a previous
   // protocol
   let chai;

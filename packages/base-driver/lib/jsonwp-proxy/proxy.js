@@ -214,8 +214,9 @@ export class JWProxy {
     }
 
     this.log.debug(
-      `Proxying [${method} ${url || '/'}] to [${method} ${newUrl}] ` + (reqOpts.data ? `with body:` : 'with no body'),
-      reqOpts.data ? logger.markSensitive(truncateBody(reqOpts.data)) : ''
+      `Proxying [%s %s] to [%s %s] with ${reqOpts.data ? 'body: %s' : '%s body'}`,
+      method, url || '/', method, newUrl,
+      reqOpts.data ? logger.markSensitive(truncateBody(reqOpts.data)) : 'no'
     );
 
     const throwProxyError = (error) => {

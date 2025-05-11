@@ -186,14 +186,10 @@ class ProtocolConverter {
       let {text, value} = bodyObj;
       if (util.hasValue(text) && !util.hasValue(value)) {
         value = _.isString(text) ? [...text] : _.isArray(text) ? text : [];
-        this.log.debug(
-          `Added 'value' property to 'setValue' request body. Value:`, logger.markSensitive(JSON.stringify(value))
-        );
+        this.log.debug(`Added 'value' property to 'setValue' request body`);
       } else if (!util.hasValue(text) && util.hasValue(value)) {
         text = _.isArray(value) ? value.join('') : _.isString(value) ? value : '';
-        this.log.debug(
-          `Added 'text' property to 'setValue' request body. Value: `, logger.markSensitive(JSON.stringify(text))
-        );
+        this.log.debug(`Added 'text' property to 'setValue' request body`);
       }
       return await this.proxyFunc(
         url,

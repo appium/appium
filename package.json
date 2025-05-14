@@ -172,6 +172,6 @@
     "ajv-formats": {
       "ajv": "8.17.1"
     },
-    "http-cache-semantics": "4.1.1"
+    "http-cache-semantics": "4.2.0"
   }
 }

@@ -317,9 +317,9 @@ function buildHandler(
       if (spec.deprecated && spec.command && !deprecatedCommandsLogged.has(spec.command)) {
         deprecatedCommandsLogged.add(spec.command);
         getLogger(driver, req.params.sessionId).warn(
-          `Command '${spec.command}' has been deprecated and will be removed in a future ` +
-            `version of Appium or your driver/plugin. Please use a different method or contact the ` +
-            `driver/plugin author to add explicit support for the command before it is removed`
+          `The ${method} ${path} endpoint has been deprecated and will be removed in a future ` +
+            `version of Appium or your driver/plugin. Please use a different endpoint or contact the ` +
+            `driver/plugin author to add explicit support for the endpoint before it is removed`
         );
       }
 

@@ -375,6 +375,9 @@ async function main(args) {
 
   await logStartupInfo(parsedArgs);
 
+  // handle the insecure feature configuration since some features may apply globally
+  appiumDriver.configureGlobalFeatures();
+
   const appiumHomeSourceName = determineAppiumHomeSource(args?.appiumHome);
   logger.debug(`The ${appiumHomeSourceName}: ${appiumHome}`);
 

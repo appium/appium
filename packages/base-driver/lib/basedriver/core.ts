@@ -41,6 +41,8 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
 
   sessionId: string | null;
 
+  sessionCreationTimestampMs: number;
+
   opts: DriverOpts<C>;
 
   initialOpts: InitialOpts;
@@ -305,7 +307,7 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
         `Potentially insecure feature '${name}' has not been ` +
           `enabled. If you want to enable this feature and accept ` +
           `the security ramifications, please do so by following ` +
-          `the documented instructions at http://appium.io/docs/en/2.0/guides/security/`,
+          `the documented instructions at http://appium.io/docs/en/latest/guides/security/`,
       );
     }
   }

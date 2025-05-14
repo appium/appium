@@ -149,13 +149,29 @@ export interface IExecuteCommands {
   ): Promise<TReturn>;
 }
 
+/**
+ * Data returned by {@linkcode ISessionHandler.getSessions}.
+ *
+ * @typeParam C - The driver's constraints
+ */
 export interface MultiSessionData<C extends Constraints = Constraints> {
   id: string;
   capabilities: DriverCaps<C>;
 }
 
 /**
- * Data returned by {@linkcode ISessionCommands.getSession}.
+ * Data returned by `AppiumDriver.getAppiumSessions`
+ *
+ * @typeParam C - The driver's constraints
+ */
+export interface TimestampedMultiSessionData<C extends Constraints = Constraints> {
+  id: string;
+  created: number; // Unix timestamp in milliseconds
+  capabilities: DriverCaps<C>;
+}
+
+/**
+ * Data returned by {@linkcode ISessionHandler.getSession}.
  *
  * @typeParam C - The driver's constraints
  * @typeParam T - Any extra data the driver stuffs in here
@@ -576,6 +592,7 @@ export interface DriverStatus {
 export interface Core<C extends Constraints, Settings extends StringRecord = StringRecord> {
   shouldValidateCaps: boolean;
   sessionId: string | null;
+  sessionCreationTimestampMs: number;
   opts: DriverOpts<C>;
   initialOpts: InitialOpts;
   protocol?: Protocol;

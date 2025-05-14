@@ -23,14 +23,14 @@ below.
 |--|--|--|--|--|
 |`--address`|IP address to listen on|string|`0.0.0.0`|`-a`|
 |`--allow-cors`|Whether the Appium server should allow web browser connections from any host|boolean|`false`||
-|`--allow-insecure`|Set which insecure features are allowed to run in this server's sessions. Features are defined on a driver level; see documentation for more details. Note that features defined via `--deny-insecure` will be disabled, even if also listed here. If string, a path to a text file containing policy or a comma-delimited list.|array<string>|`[]`||
+|`--allow-insecure`|Set which [insecure features](../guides/security.md) are allowed to run in this server's sessions. Most features are defined on a driver level; see driver documentation for more details. Individual features can be overridden by `--deny-insecure`. Has no effect in combination with `--relaxed-security`.|array<string>|`[]`||
 |`--base-path`|Base path to use as the prefix for all webdriver routes running on the server|string|`""`|`-pa`|
 |`--callback-address`|Callback IP address (default: same as `--address`)|string||`-ca`|
 |`--callback-port`|Callback port (default: same as `--port`) (Value must be between `1` and `65535`)|integer|`4723`|`-cp`|
 |`--config`|Path to an [Appium configuration JSON file](../guides/config.md)|string|||
 |`--debug-log-spacing`|Add exaggerated spacing in logs to help with visual inspection|boolean|`false`||
 |`--default-capabilities`|Set the default desired capabilities, which will be set on each session unless overridden by received capabilities. If a string, a path to a JSON file containing the capabilities, or raw JSON.|object||`-dc`|
-|`--deny-insecure`|Set which insecure features are not allowed to run in this server's sessions. Features are defined on a driver level; see documentation for more details. Features listed here will not be enabled even if also listed in `--allow-insecure`, and even if `--relaxed-security` is enabled. If string, a path to a text file containing policy or a comma-delimited list.|array<string>|`[]`||
+|`--deny-insecure`|Set which [insecure features](../guides/security.md) are not allowed to run in this server's sessions. Most features are defined on a driver level; see driver documentation for more details. Since all insecure features are disabled by default, this argument has no effect without either `--allow-insecure` or `--relaxed-security`, and is applied after both.|array<string>|`[]`||
 |`--driver`|Driver-specific configuration. Keys should correspond to driver package names|object|||
 |`--drivers-import-chunk-size`|The maximum amount of drivers that could be imported in parallel on server startup|number|`3`||
 |`--keep-alive-timeout`|Number of seconds the Appium server should apply as both the keep-alive timeout and the connection timeout for all requests. Setting this to `0` disables the timeout.|integer|`600`|`-ka`|
@@ -48,7 +48,7 @@ below.
 |`--plugin`|Plugin-specific configuration. Keys should correspond to plugin package names|object|||
 |`--plugins-import-chunk-size`|The maximum amount of plugins that could be imported in parallel on server startup|number|`7`||
 |`--port`|Port to listen on (Value must be between `1` and `65535`)|integer|`4723`|`-p`|
-|`--relaxed-security`|Disable additional security checks, so it is possible to use some advanced features, provided by drivers supporting this option. Only enable it if all the clients are in the trusted network and it's not the case if a client could potentially break out of the session sandbox. Specific features can be overridden by using `--deny-insecure`|boolean|`false`||
+|`--relaxed-security`|Allow all [insecure features](../guides/security.md). Only use this if all clients are in a trusted network and could not potentially break out of the session sandbox. Specific features can be overridden by using `--deny-insecure`.|boolean|`false`||
 |`--session-override`|Enables session override (clobbering)|boolean|`false`||
 |`--ssl-cert-path`|Absolute path to the `.cert` file if TLS is used. Must be provided together with `--ssl-key-path`. See the [SSL/TLS/SPDY Support guide](../guides/tls.md) for details|string|||
 |`--ssl-key-path`|Absolute path to the `.key` file if TLS is used. Must be provided together with `--ssl-cert-path`. See the [SSL/TLS/SPDY Support guide](../guides/tls.md) for details|string|||

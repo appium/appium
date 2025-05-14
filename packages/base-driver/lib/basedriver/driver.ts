@@ -302,6 +302,7 @@ export class BaseDriver<
     this.validateDesiredCaps(caps);
 
     this.sessionId = util.uuidV4();
+    this.sessionCreationTimestampMs = Date.now();
     this.caps = caps;
     // merge caps onto opts so we don't need to worry about what's where
     this.opts = {..._.cloneDeep(this.initialOpts), ...this.caps};
@@ -345,6 +346,11 @@ export class BaseDriver<
 
     return [this.sessionId, caps] as CreateResult;
   }
+
+  /**
+   * Returns the session id and capabilities for the session
+   * @deprecated Use AppiumDriver.getAppiumSessions instead for getting the session data.
+   */
   async getSessions() {
     const ret: MultiSessionData<C>[] = [];
 
@@ -360,7 +366,7 @@ export class BaseDriver<
 
   /**
    * Returns capabilities for the session and event history (if applicable)
-   * @deprecated Use {@linkcode ISessionCommands.getAppiumSessionCapabilities} instead for getting the capabilities.
+   * @deprecated Use {@linkcode getAppiumSessionCapabilities} instead for getting the capabilities.
    * Use {@linkcode EventCommands.getLogEvents} instead to get the event history.
    */
   async getSession() {

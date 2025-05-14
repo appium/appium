@@ -40,7 +40,7 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/base-driver": "^10.0.0-beta.0",
+    "@appium/base-driver": "^9.17.0",
     "@appium/support": "^6.1.0"
   },
   "engines": {

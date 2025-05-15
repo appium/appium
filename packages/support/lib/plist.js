@@ -1,6 +1,6 @@
 import xmlplist from 'plist';
 import bplistCreate from 'bplist-creator';
-import bplistParse from 'bplist-parser';
+import { parseFile, parseBuffer } from 'bplist-parser';
 import {fs} from './fs';
 import log from './logger';
 import _ from 'lodash';
@@ -41,7 +41,7 @@ async function parsePlistFile(plist, mustExist = true, quiet = true) {
   let obj = {};
   let type = 'binary';
   try {
-    obj = await bplistParse.parseFile(plist);
+    obj = await parseFile(plist);
     if (obj.length) {
       obj = obj[0];
     } else {
@@ -108,7 +108,7 @@ function createBinaryPlist(data) {
  * @param {Buffer} data The beffer of a binary plist
  */
 function parseBinaryPlist(data) {
-  return bplistParse.parseBuffer(data);
+  return parseBuffer(data);
 }
 
 function getXmlPlist(data) {

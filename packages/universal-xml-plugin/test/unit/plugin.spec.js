@@ -1,4 +1,4 @@
-import {UniversalXMLPlugin} from '../..';
+import {UniversalXMLPlugin} from '../../lib/plugin';
 import {BaseDriver} from 'appium/driver';
 import {
   XML_IOS,

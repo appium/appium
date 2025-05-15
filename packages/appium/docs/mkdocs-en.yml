@@ -75,6 +75,7 @@ nav:
       - developing/build-plugins.md
       - developing/build-docs.md
       - developing/build-doctor-checks.md
+      - developing/sensitive.md
       - Developer Reference:
           - developing/config-system.md
   - Contributing: contributing.md

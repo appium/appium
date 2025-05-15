@@ -62,7 +62,7 @@
     "path-to-regexp": "8.2.0",
     "serve-favicon": "2.5.0",
     "source-map-support": "0.5.21",
-    "type-fest": "4.40.0"
+    "type-fest": "4.40.1"
   },
   "optionalDependencies": {
     "spdy": "4.0.2"

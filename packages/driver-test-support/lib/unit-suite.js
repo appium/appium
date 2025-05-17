@@ -212,7 +212,7 @@ export function driverUnitTestSuite(
           await B.delay(waitMs);
           return Date.now();
         });
-        sandbox.stub(d, 'getSessions').callsFake(async () => {
+        sandbox.stub(d, 'deleteSession').callsFake(async () => {
           await B.delay(waitMs);
           throw new Error('multipass');
         });
@@ -241,7 +241,7 @@ export function driverUnitTestSuite(
         let cmds = [];
         for (let i = 0; i < numCmds; i++) {
           if (i === 5) {
-            cmds.push(d.executeCommand('getSessions'));
+            cmds.push(d.executeCommand('deleteSession'));
           } else {
             cmds.push(d.executeCommand('getStatus'));
           }

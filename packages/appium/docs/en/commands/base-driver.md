@@ -337,9 +337,9 @@ Get the current page/app source as HTML/XML
 
 The UI hierarchy in a platform-appropriate format (e.g., HTML for a web page)
 
-### `getSessions`
+### `getAppiumSessions`
 
-`GET` **`/sessions`**
+`GET` **`/appium/sessions`**
 
 Get data for all sessions running on an Appium server
 
@@ -347,17 +347,27 @@ Get data for all sessions running on an Appium server
 
 #### Response
 
-A list of session data objects.
-Each session data object will be returned with `id` and the session's capabilities as `capabilities` keys like an example below:
+A list of session data objects, where each object contains 3 keys:
+
+* `id`: the session ID
+* `created`: the session creation time as a Unix timestamp in milliseconds
+* `capabilities`: the session capabilities
+
+Data is only returned if the `session_discovery` [insecure feature](../guides/security.md)
+is enabled on the server.
+
+#### Example
 
 ```json
 [
   {
     "id":"ba30c6da-c266-4734-8ddb-c16f5bb53e16",
+    "created": 1736092760555,
     "capabilities":{ "platformName":"ios","browserName":"safari","automationName":"xcuitest","platformVersion":"17.2","deviceName":"iPhone 15" }
   },
   {
     "id":"1441110c-1ece-4e45-abbf-ebf404f45f0a",
+    "created": 1736092760555,
     "capabilities":{ "platformName":"ios","browserName":"safari","automationName":"xcuitest","platformVersion":"17.0","deviceName":"iPhone 14" }
   },
   ...

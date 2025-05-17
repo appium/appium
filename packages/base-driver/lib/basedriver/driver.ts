@@ -9,7 +9,6 @@ import {
   type Driver,
   type DriverCaps,
   type DriverData,
-  type MultiSessionData,
   type ServerArgs,
   type StringRecord,
   type W3CDriverCaps,
@@ -345,23 +344,6 @@ export class BaseDriver<
     this.log.info(`Session created with session id: ${this.sessionId}`);
 
     return [this.sessionId, caps] as CreateResult;
-  }
-
-  /**
-   * Returns the session id and capabilities for the session
-   * @deprecated Use AppiumDriver.getAppiumSessions instead for getting the session data.
-   */
-  async getSessions() {
-    const ret: MultiSessionData<C>[] = [];
-
-    if (this.sessionId) {
-      ret.push({
-        id: this.sessionId,
-        capabilities: this.caps,
-      });
-    }
-
-    return ret;
   }
 
   /**

@@ -150,16 +150,6 @@ export interface IExecuteCommands {
 }
 
 /**
- * Data returned by {@linkcode ISessionHandler.getSessions}.
- *
- * @typeParam C - The driver's constraints
- */
-export interface MultiSessionData<C extends Constraints = Constraints> {
-  id: string;
-  capabilities: DriverCaps<C>;
-}
-
-/**
  * Data returned by `AppiumDriver.getAppiumSessions`
  *
  * @typeParam C - The driver's constraints
@@ -450,13 +440,6 @@ export interface ISessionHandler<
    * @param driverData - the driver data for other currently-running sessions
    */
   deleteSession(sessionId?: string, driverData?: DriverData[]): Promise<DeleteResult | void>;
-
-  /**
-   * Get data for all sessions running on an Appium server
-   *
-   * @returns A list of session data objects
-   */
-  getSessions(): Promise<MultiSessionData[]>;
 
   /**
    * Get the data for the current session

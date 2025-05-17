@@ -187,18 +187,6 @@ class AppiumDriver extends DriverCore {
   }
 
   /**
-   * Retrieve information about all active sessions
-   * @returns {Promise<import('@appium/types').MultiSessionData[]>}
-   * @deprecated Use {@linkcode getAppiumSessions} instead
-   */
-  async getSessions() {
-    return _.toPairs(this.sessions).map(([id, driver]) => ({
-      id,
-      capabilities: /** @type {import('@appium/types').DriverCaps<any>} */ (driver.caps),
-    }));
-  }
-
-  /**
    * Retrieve information about all active sessions.
    * Results are returned only if the `session_discovery` insecure feature is enabled.
    * @returns {Promise<import('@appium/types').TimestampedMultiSessionData[]>}

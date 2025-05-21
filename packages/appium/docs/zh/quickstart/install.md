@@ -1,41 +1,53 @@
 ---
 hide:
   - toc
-
-title: 安装 Appium
+title: Install Appium
 ---
 
-!!! 信息
+!!! info
 
-    安装前，请务必检查[系统要求](./requirements.md).
-
-您可以使用 `npm` 在全局范围内安装 Appium：
-
-```bash
-npm i -g appium
+```
+Before installing, make sure to check the [System Requirements](./requirements.md).
 ```
 
-!!! 注意
+Appium can be installed globally using `npm`:
 
-    目前不支持其他软件包管理器。
+```bash
+npm install -g appium
+```
 
-安装完成后，您应该可以从命令行运行 Appium：
+!!! note
+
+```
+Other package managers are not currently supported.
+```
+
+## Starting Appium
+
+Appium can be started [using the command line](../cli/index.md):
 
 ```
 appium
 ```
 
-你应该会看到一些输出结果，开头一行是这样的:
+This launches the Appium server process, which loads all the installed Appium drivers, and
+begins waiting for new session requests from client connections (such as test automation scripts).
+Since the server process is independent from its clients, it must be explicitly launched before
+attempting to start a new session.
+
+When the server is launched, the console log will list all the valid URLs that clients can use to
+connect to this server:
 
 ```
-[Appium] 欢迎来到 Appium v2.4.1
+[Appium] You can provide the following URLs in your client code to connect to this server:
+[Appium] 	http://127.0.0.1:4723/ (only accessible from the same host)
+(... any other URLs ...)
 ```
 
-为了更新Appiums使用 `npm`:
+Once a client requests a new session, the Appium server process will start logging all details about
+this session until its termination. Keep this in mind - if you ever encounter issues with Appium
+tests, you can always check the server log for more details.
 
-```bash
-npm update -g appium
-```
-
-就是这样！如果你看到这个，说明 Appium 服务器已经启动并运行。按 (Ctrl-C)
-继续退出并跳转到到  [下一步](./uiauto2-driver.md), 在这里我们将安装一个用于自动运行 Android 应用程序的驱动程序.
+So what's next? Even though Appium is installed and running, it does not come bundled with any
+drivers, which means it cannot automate anything yet. We will therefore set up automation for
+Android - continue to [Installing the UiAutomator2 Driver](./uiauto2-driver.md).

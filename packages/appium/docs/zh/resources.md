@@ -2,18 +2,19 @@
 hide:
   - navigation
   - toc
-title: Additional Resources
+
+title: 其他资源
 ---
 
-Here you can find links to additional Appium resources around the web:
+在这里，您可以找到网络上其他 Appium 资源的链接:
 
-## Websites
+## 网站
 
-- [Appium Pro](https://appiumpro.com) - a blog and newsletter written by one of Appium's
-  maintainers, Jonathan Lipps, with lots of useful guides
+- [Appium Pro](https://appiumpro.com) - 是Appium其中一名维护者乔纳森-利普斯（Jonathan Lipps）撰写的博客和时事通讯。
+撰写的博客和时事通讯，其中包含大量实用指南
 
-## Online Courses
+## 在线课程
 
-- [Appium and Selenium Fundamentals](https://ui.headspin.io/university/learn/appium-selenium-fundamentals-2020) - a comprehensive video course on learning Python, Selenium, and Appium by Jonathan Lipps
-- [Mobile Test Automation with Appium](https://testautomationu.applitools.com/appium-java-tutorial/) - a video course by Moataz Nabil
-- [Advanced Appium](https://www.linkedin.com/learning/advanced-appium) - a video course by Jonathan Lipps
+- [Appium 和 Selenium 基础](https://ui.headspin.io/university/learn/appium-selenium-fundamentals-2020) - Jonathan Lipps 编写的学习 Python、Selenium 和 Appium 的综合视频课程
+- [使用 Appium 实现移动测试自动化](https://testautomationu.applitools.com/appium-java-tutorial/) - 由 Moataz Nabil 制作的视频课程
+- [高级Appoium](https://www.linkedin.com/learning/advanced-appium) - 乔纳森-利普斯（Jonathan Lipps）的视频课程

@@ -1,200 +1,90 @@
 ---
-title: How Does Appium Work?
+title: Appium如何工作？
 ---
 
-As mentioned on the main page, Appium is an open-source project and ecosystem of related software,
-designed to facilitate UI automation of many app platforms. With the release of Appium 2, Appium
-has the following primary goals:[^1]
+正如主页上提到的那样，Appium是一个开源项目和相关软件生态系统，旨在促进许多应用程序平台的UI自动化。随着Appium 2的发布，Appium的主要目标如下：[^1]
 
-- Make platform-specific automation capabilities available under a cross-platform, standard API
-- Allow easy access to this API from any programming language
-- Provide tools to enable convenient community development of Appium extensions
+- 在跨平台、标准API下提供特定于平台的自动化功能
+- 允许从任何编程语言轻松访问此API
+- 提供工具以方便社区开发Appium扩展
 
-[^1]: To meet these primary goals, we also work with a set of secondary goals or methodology
-    principles, which we also encourage for Appium extension developers:
+[^1]:
+    为了实现这些主要目标，我们还制定了一套次要目标或方法论原则，我们也鼓励Appium扩展开发人员这样做：
 
-    - As far as possible, rely on (and contribute to) open source technology
-    - As far as possible, rely on vendor-provided tools for a given platform
-    - As far as possible, rely on automation tools that allow automation of unmodified apps (prefer
-      not to require the user to build in additional SDKs or software that introduce discrepancies
-      between the test version of the app and the production version)
-    - As far as possible, rely on existing standards instead of creating new ones
+    - 尽可能依赖（并贡献）开源技术
+    - 尽可能依赖供应商为给定平台提供的工具
+    - 尽可能依赖允许不修改应用程序就能实现自动化的工具（不要让用户构建额外的SDK或软件，从而导致应用程序的测试版本和生产版本之间存在差异）
+    - 尽可能依赖现有标准而不是创建新标准
 
-So, take any app platform you know about, like iOS or Android. Appium wants for there to be a way
-for developers and testers to write UI automation code for that platform, according to a single,
-unified API. Based on Appium's goals, we have a lot of questions to answer to make it all work:
+因此，请选择您所知道的任何应用程序平台，例如iOS或Android。Appium希望有一种方法让开发人员和测试人员根据单一、统一的API为该平台编写UI自动化代码。根据Appium的目标，我们有很多问题需要回答才能使这一切顺利进行：
 
-- Which API should that "single, unified" API be?
-- How do we map that API to automation behaviour for a specific platform?
-- How do we make that API accessible via multiple popular programming languages?
+- “单一、统一”API应该是哪个API？
+- 我们如何将该API映射到特定平台的自动化行为？
+- 我们如何通过多种流行编程语言访问该API？
 
-There's another, larger, question lurking in the background here too, given that there are more app
-platforms out there than just iOS and Android:
+考虑到除了iOS和Android之外还有更多的应用程序平台，这里还隐藏着另一个更大的问题：
 
-- How do we enable automation for _all_ the platforms?
+- 我们如何实现所有平台的自动化？
 
-Exploring Appium's answers to these questions may not be the quickest way to learn what Appium is,
-but it is certainly a good one! So let's dive in.
+探索Appium对这些问题的答案可能不是了解Appium是什么的最快方法，但它肯定是一个很好的方法！那么让我们深入研究吧。
 
-## Appium's choice of API
+## Appium对API的选择
 
-Appium is very fortunate to have been preceded by a technology which has been a long-standing
-pioneer in the field of UI automation, namely [Selenium](https://selenium.dev). The goal of the
-Selenium project has been to support UI automation of web browsers, and in this way we can think of
-it as occupying a subset of Appium's goals. Along the way, Selenium (and, after they merged,
-another project called WebDriver) developed a relatively stable API for browser automation.
+Appium非常幸运，它先于UI自动化领域的长期先驱技术 [Selenium](https://selenium.dev) 。Selenium项目的目标是支持网络浏览器的UI自动化，通过这种方式，我们可以将其视为占据Appium目标的一个子集。一路走来，Selenium（以及合并后的另一个名为WebDriver的项目）开发了一个相对稳定的浏览器自动化API。
 
-Over the years, Selenium worked with various web browser vendors and the [W3C](https://w3.org)
-standards group to turn its API into an official web browser standard, called the WebDriver
-specification. All the main browsers now
-implement automation capabilities inline with the WebDriver spec, without the Selenium team having
-to maintain any software that performs actual automation; standards for the win!
+多年来，Selenium与多家网络浏览器供应商和 [W3C](https://w3.org) 标准小组合作，将其API转变为官方网络浏览器标准，称为 [WebDriver规范](https://w3c.github.io/webdriver/)。所有主要浏览器现在都实现了符合WebDriver规范的自动化功能，Selenium团队无需维护任何执行实际自动化的软件；胜利的标准！
 
-Appium's initial goals were to develop an automation standard for mobile apps (iOS and Android). We
-could have made up something new, but in the spirit of joining forces and keeping standards, well,
-standard, we decided to adopt the WebDriver spec as Appium's API.[^2] While user interaction on
-websites and in mobile native apps are not entirely identical (with even greater differences once
-we start to consider, for example, TV platforms controlled by simple remotes), the fact is that
-most software UIs are pretty much the same. This means that the WebDriver spec provides automation
-API primitives (finding elements, interacting with elements, loading pages or screens, etc...) that
-more or less map to any platform.
+Appium的最初目标是为移动应用程序（iOS和Android）开发自动化标准。我们本可以创造一些新的东西，但要本着团结一致和保持标准的精神，好吧，标准，我们决定采用WebDriver规范作为Appium的API。[^2]虽然网站和移动原生应用程序中的用户交互并不完全相同（例如，一旦我们开始考虑由简单遥控器控制的电视平台，差异就会更大），实际上大多数软件UI几乎相同。这意味着WebDriver规范提供自动化API基元（查找元素、与元素交互、加载页面或屏幕等）或多或少映射到任何平台。
 
-[^2]: Technically, when Appium was first written, we were dealing with something older than the
-    WebDriver spec, called the JSON Wire Protocol. Since then, Appium continued to evolve along with
-    the W3C spec and is fully W3C-compliant.
+[^2]: 从技术上讲，当Appium第一次编写时，我们正在处理比WebDriver规范更早的东西，称为JSON Wire Protocol。从那时起，Appium继续随着W3C规范发展，并且完全符合W3C。
 
-Of course, Appium wants to support the cases where user interaction _does_ differ from web to
-mobile or web to TV, and so Appium also makes use of the built-in _extensibility_ of the WebDriver
-spec. The result is that, no matter what platform you want to automate, when you use Appium, you
-will do so using the standard WebDriver spec, with two caveats:
+当然，Appium希望支持用户交互从网页到移动设备或从网页到电视的不同情况，因此Appium还利用了WebDriver规范的内置可扩展性。结果是，无论您想要实现哪个平台自动化，当您使用Appium时，您都将使用标准的WebDriver规范来执行，但有两个警告：
 
-- We might not have any way to support a particular WebDriver API command on a given platform, and
-  so some commands might be unsupported (for example, getting or setting cookies is not possible in
-  the world of native mobile app automation).
-- We might support automation behaviours that go _beyond_ what's available in the WebDriver API
-  command list, though any such commands will be valid and spec-compliant extensions to the
-  WebDriver API.
+- 我们可能无法在给定的平台上支持特定的WebDriver API命令，因此某些命令可能不受支持（例如，在原生移动应用程序自动化中，获取或设置cookie是不可能的）。
+- 我们可能支持超出WebDriver API命令列表中可用范围的自动化行为，尽管任何此类命令都是WebDriver API的有效且符合规范的扩展。
 
-How do you actually _use_ the WebDriver API, particularly in the context of Appium? We'll cover
-that in the [section below](#universal-programming-language-access) on how Appium provides
-universal programming language access. All you need to know for now is that the way Appium
-introduces a universal UI automation interface is by implementing the WebDriver protocol.
+您实际上如何使用WebDriver API，特别是在Appium的环境中？我们将在[下面](#universal-programming-language-access)关于Appium如何提供通用编程语言访问的部分中讨论这一点。目前您需要知道的是，Appium引入通用UI自动化界面的方式是通过实现WebDriver协议。
 
-## Platform automation behaviour
+## 平台自动化行为
 
-The next question is, how does Appium map this protocol to automation behaviour on a wide range of
-platforms? The trick is that, strictly speaking, Appium doesn't! It leaves this responsibility up
-to a kind of software module called an Appium _driver_. There's a whole Driver
-Introduction which you can read next, so we won't go into huge detail on how they
-work for now.
+下一个问题是，Appium如何将该协议映射到广泛平台上的自动化行为？严格来说，Appium没有这样做！它将这一责任留给了一种名为Appium驱动程序的软件模块。接下来您可以阅读完整的[驱动程序简介](./drivers.md)，因此我们目前不会详细介绍它们的工作原理。
 
-What's important to understand at the moment is that a driver is kind of like a pluggable module
-for Appium that gives Appium the power to automate a particular platform (or set of platforms,
-depending on the goal of the driver). At the end of the day, a driver's responsibility is to simply
-implement an Appium-internal interface representing the WebDriver protocol. How it implements this
-interface is totally up to the driver, based on its strategy for making automation happen on
-a specific platform. Typically, and with a lot more complexity and difficulty in the details,
-a driver does this by relying on platform-specific automation technologies. For example, Apple
-maintains an iOS automation technology called
-[XCUITest](https://developer.apple.com/documentation/xctest/user_interface_tests). The Appium
-driver that supports iOS app automation is called the XCUITest
-Driver because ultimately what it does is
-convert the WebDriver protocol to XCUITest library calls.
+目前需要了解的重要一点是，驱动程序有点像Appium的可插入模块，它使Appium能够自动化特定平台（或一组平台，具体取决于驱动程序的目标）。归根结底，驱动程序的责任只是简单地实现代表WebDriver协议的Appium内部接口。它如何实现这个接口完全取决于驱动程序，基于其在特定平台上实现自动化的策略。通常，由于细节上的复杂性和困难性要大得多，驱动程序通过依赖于平台特定的自动化技术来做到这一点。例如，苹果维护一项名为[XCUITest](https://developer.apple.com/documentation/xctest/user_interface_tests)的iOS自动化技术。支持iOS应用自动化的Appium驱动程序被称为[XCUITest
+Driver](https://github.com/appium/appium-xcuitest-driver)，因为它最终的作用是将WebDriver协议转换为XCUITest库调用。
 
-One of the reasons that drivers are independent, pluggable modules is that they work completely
-differently from one another. The tools and requirements for building and using drivers for
-different platforms are completely different. And so Appium lets you use just the drivers that you
-need for your automation tasks. Choosing drivers and installing them so that you can use them with
-your Appium instance is so important that Appium has its very own CLI for managing
-drivers.
+驱动程序是独立的可插入模块，这样做的原因之一是因为它们的工作方式完全不同。构建和使用不同平台驱动程序的工具和需求也是完全不同的。因此，Appium允许您仅使用自动化任务所需的驱动程序。选择驱动程序并安装它们，以便您可以将它们与Appium实例一起使用，这是非常重要的，因此Appium拥有自己的[CLI来管理驱动程序](../cli/extensions.md)。
 
-So, to answer our original question, the way that Appium provides access to automation capabilities
-for a given platform is that the Appium team (or anyone else[^3]) writes a _driver_ for that
-platform, implementing as much or little of the WebDriver protocol as desired. The driver can then
-be installed by anyone using Appium.
+因此，为了回答我们最初的问题，Appium为给定平台提供自动化功能访问的方式是，Appium团队（或其他任何人[^3]）为该平台编写驱动程序，根据需要实现尽可能多或尽可能少的WebDriver协议。然后任何使用Appium的人都可以安装该驱动程序。
 
-[^3]: You can build and share your own drivers! Check out Building
-    Drivers to learn more about how to develop drivers in Node.js
-    that can be used with Appium.
+[^3]:您可以构建和共享自己的驱动程序！查看[构建驱动程序](../developing/build-drivers.md)，了解更多关于如何在Node.js中开发可与Appium一起使用的驱动程序的信息。
 
-## Universal programming language access
+## 通用编程语言访问
 
-But what does it mean, or look like, to _use_ Appium, anyway? Since Appium is ultimately a Node.js
-program, it _could_ have looked like importing Appium and its drivers as libraries into your own
-Node.js programs. But that wouldn't meet Appium's goal of providing automation capabilities to
-people using any popular programming language.
+但使用Appium到底是什么意思，或者看起来是什么样子呢？由于Appium最终是一个Node.js程序，因此看起来就像将Appium及其驱动程序作为库导入到您自己的Node.js程序中。但这无法满足Appium为使用任何流行编程语言的人们提供自动化功能的目标。
 
-Luckily, the fact that Appium rode in on Selenium's coattails meant that we had a solution to this
-problem from day one. You see, the WebDriver specification is actually an HTTP-based protocol,
-meaning it is designed to be used over a network rather than within the memory of a single program.
+幸运的是，Appium搭上了Selenium的顺风车，这意味着我们从第一天起就有了解决这个问题的办法。你看，WebDriver规范实际上是一个基于HTTP的协议，这意味着它被设计为在网络上使用，而不是在单个程序的内存中使用。
 
-One of the main benefits of this "client-server" architecture is that it allows the automation
-implementer (the thing doing the automation, in this case the 'server') to be completely distinct
-from the automation runner (the thing defining what automation should be done, in what steps,
-etc..., in this case the 'client'). Basically, all the "hard stuff" (actually figuring out how to
-make automation happen on a given platform) can be handled in one place by the server, and "thin"
-client libraries can be written in any programming language which simply encode HTTP requests to
-the server in language-appropriate way. It's possible, in other words, to bring basic Appium
-/ WebDriver capabilities to a new programming language relatively easily, assuming high-level HTTP
-libraries exist, simply by coding up a basic HTTP client in that language.
+这种“客户端-服务器”架构的主要好处之一是，它允许自动化实现者（执行自动化的东西，这里指服务器端）与自动化运行者（定义自动化应该执行什么、在哪些步骤中等，这里指客户端）完全不同。基本上，所有“硬东西”（实际上是弄清楚如何在给定的平台上实现自动化）都可以由服务器在一个地方处理，而“瘦”客户端库可以用任何编程语言编写，这些语言只需以适当的语言对服务器的HTTP请求进行编码。换句话说，如果存在高级的HTTP库，那么通过在那种语言中编写一个基本的HTTP客户端，就可以相对容易地将基本的Appium/WebDriver功能引入到新的编程语言中。
 
-There are a couple important takeaways here for you, the Appium user:
+对于Appium用户来说，这里有几个重要的要点：
 
-- Appium is an _HTTP server_. It must run as a process on some computer for as long as you want to
-  be able to use it for automation. It must be accessible on the network to whichever computer you
-  want to use to run the automation from (whether that is the same machine or one across the
-  world).
-- Unless you want to write raw HTTP calls or use cURL, using Appium for automation involves the use
-  of an [Appium Client](clients.md) in the language of your choice. The goal of each of these
-  clients is to encapsulate the WebDriver protocol so that rather than worrying about the protocol
-  itself, you can work with objects and methods that feel idiomatic for your language.
-- The Appium server and the Appium client do _not_ need to be running on the same computer. You
-  simply need to be able to send HTTP requests from the client to the server over some network.
-  This greatly facilitates the use of cloud providers for Appium, since they can host the Appium
-  server and any related drivers and devices, and all you need to do is point your client script to
-  their secure endpoints.
+- Appium是一个HTTP服务器。只要您想将其用于自动化，它就必须在某台计算机上作为进程运行。它必须可以在网络上访问您想用来运行自动化的任何计算机（无论是同一台机器还是世界各地的机器）。
+- 除非您想编写原始HTTP调用或使用cURL，否则使用Appium进行自动化需要使用您选择的语言的[Appium客户端](clients.md)。每个客户端的目标都是封装WebDriver协议，这样您就可以使用对您的语言来说习惯的对象和方法，而不用担心协议本身。
+- Appium服务器和Appium客户端不需要在同一台计算机上运行。您只需要能够通过某种网络将HTTP请求从客户端发送到服务器即可。这极大地方便了Appium云提供商的使用，因为它们可以托管Appium服务器以及任何相关驱动程序和设备，并且您需要做的就是将您的客户端脚本指向其安全端点。
 
-And of course, none of this is about "testing" per se, purely about the use of Appium and its
-client libraries for automation purposes. If you want to do automation for the purpose of
-"testing", you'll likely want to enlist the help of test runners, test frameworks, and the like,
-none of which need be related to Appium; one of the benefits of Appium's "universal accessibility"
-is that it plays well with whatever set of tools you find most beneficial for your situation.
+当然，这些都不是关于“测试”本身，而纯粹是关于使用Appium及其客户端库来实现自动化目的。如果你想以“测试”为目的进行自动化，你可能会希望获得测试运行者、测试框架等的帮助，这些都不需要与Appium相关；Appium的“通用可访问性”的好处之一是，它可以很好地与你认为对你的情况最有利的任何一组工具配合使用。
 
-## Appium's huge scope
+## Appium的广阔应用范围
 
-Appium's vision (automation of everything under a single API) is huge! Certainly, much bigger than
-the team of core maintainers for the open source project. So how does Appium hope to achieve this
-goal? Basically, by empowering the community to develop functionality on top of Appium as
-a _platform_. This is what we call the Appium "ecosystem".
+Appium的愿景（在单个API下实现一切自动化）是巨大的！当然，这比开源项目的核心维护人员团队要大得多。那么Appium希望如何实现这个目标呢？基本上，通过授权社区在Appium作为平台的基础上开发功能。这就是我们所说的Appium“生态系统”。
 
-The Appium team does officially maintain a few drivers itself (for example, the XCUITest driver
-that we spoke about earlier). But it cannot hope to have the platform-specific expertise or the
-capacity to maintain drivers for many different platforms. But what we have done, particularly
-beginning with Appium 2, is to provide tools to empower the community to join in our vision:
+Appium团队本身确实正式维护了一些驱动程序（例如，我们之前谈到的XCUITest驱动程序）。但不能指望他们拥有特定于平台的专业知识或为许多不同平台维护驱动程序的能力。但我们所做的，特别是从Appium 2开始，是提供工具来帮助社区加入我们的愿景：
 
-- Anyone can create a driver simply by creating a Node.js module that conforms to the appropriate
-  conventions and implements any (sub|super)set of the WebDriver protocol. Creating a driver often
-  involves a minimal amount of code because the WebDriver protocol details are abstracted away, and
-  many helper libraries are available---the same libraries that power the Appium team's own
-  drivers.
-- Sharing drivers with others is easy using the Appium driver CLI. There is no central authority.
-  Anyone can share drivers publicly or privately, for free or for sale. Drivers can be open or
-  closed source (though obviously we appreciate open source!).
+- 任何人都可以通过创建一个符合约定的Node.js模块来创建驱动程序，并实现WebDriver协议的任何子集或超集。创建驱动程序通常需要最少的代码，因为WebDriver协议的细节被抽象出来，并且有许多辅助库可用——这些库也为Appium团队自己的驱动程序提供动力。
+- 使用Appium驱动程序CLI可以轻松地与他人共享驱动程序。没有中央权力机构。任何人都可以公开或私下、免费或出售共享驱动程序。驱动程序可以是开源的，也可以是闭源的（尽管我们很欣赏开源！）。
 
-Appium's vision of being a platform for development extends beyond the support of automation for
-all app platforms. As a popular automation tool, there are many opportunities for integrating
-Appium with all kinds of other tools and services. In addition, there are many feature ideas for
-Appium, either as a core server or in its incarnation across various drivers, which the core team
-will never have time to build. And so, with Appium 2, Appium has released a plugin system that
-enables anyone to build and share modules that change how Appium works!
+Appium作为开发平台的愿景不仅限于支持所有应用平台的自动化。作为一种流行的自动化工具，Appium有很多机会与各种其他工具和服务集成。此外，对于Appium，无论是作为核心服务器还是通过各种驱动程序的实现，都有许多特性的想法，这些是核心团队永远没有时间来构建的。因此，在Appium 2中，Appium发布了一个插件系统，使任何人都可以构建和共享改变Appium工作方式的模块！
 
-In the same way that drivers are easily shareable and consumable via the Appium driver CLI, plugins
-can be published and consumed via a parallel [Plugin CLI](../cli/extensions.md). Plugins can do all
-sorts of things, for example adding the ability for Appium to find and interact with screen regions
-based on a template image (as in the images). There are very few
-limitations on what you can do with plugins, so you might also be interested in learning how to
-[Build Plugins](../developing/build-plugins.md) in Node.js that can be used with Appium.
+就像驱动程序可以通过Appium驱动程序CLI轻松共享和使用一样，插件也可以通过相似的[插件CLI](../cli/extensions.md)发布和使用。插件可以做各种各样的事情，例如为Appium添加根据模板图像查找屏幕区域并与屏幕区域交互的能力（如在[图像插件](https://github.com/appium/appium/tree/master/packages/images-plugin)中）。你可以用插件做什么几乎没有限制，所以你可能也有兴趣学习如何在Node.js中[构建](../developing/build-plugins.md)可以与Appium一起使用的插件。
 
-So that's Appium: an extensible, universal interface for the UI automation of potentially
-everything! Read on into some of the specific intro docs for more details, or check out the various
-guides to dive into some more general concepts and features of Appium.
+这就是Appium：一个可扩展的通用界面，用于实现潜在一切的UI自动化！请继续阅读一些具体的介绍文档以获取更多详细信息，或查看各种指南以深入了解Appium的一些概念和功能。

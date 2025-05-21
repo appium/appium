@@ -1,38 +1,33 @@
 ---
 hide:
   - toc
-title: Appium in a Nutshell
+
+title: Appium 简介
 ---
+正如主页上提到的那样，Appium旨在支持许多不同平台（移动端、网页端、桌面端等）的UI自动化。不仅如此，它还旨在支持用不同语言（JS、Java、Python等）编写的自动化代码。将所有这些功能结合到一个程序中是一项非常艰巨、甚至不可能的任务！
 
-As mentioned on the main page, Appium aims to support UI automation of many _different platforms_
-(mobile, web, desktop, etc.). Not only that, but it also aims to support automation code written in
-_different languages_ (JS, Java, Python, etc.). Combining all of this functionality in a single
-program is a very daunting, if not impossible task!
-
-In order to achieve this, Appium is effectively split into four parts:
+为了实现这一目标，Appium实际上被分为四个部分：
 
 <div class="grid cards" markdown>
-
-- :material-image-filter-center-focus-strong: **Appium Core** - defines the core APIs
-- :material-car: **Drivers** - implement connectivity to specific platforms
-- :octicons-code-16: **Clients** - implement Appium's API in specific languages
-- :fontawesome-solid-plug: **Plugins** - change or extend Appium's core functionality
-
+-   :material-image-filter-center-focus-strong: __Appium Core__ - 定义核心API
+-   :material-car: __Drivers__ - 实现与特定平台的连接
+-   :octicons-code-16: __Clients__ - 用特定语言实现Appium的API
+-   :fontawesome-solid-plug: __Plugins__ - 更改或扩展Appium的核心功能
 </div>
 
-Therefore, in order to start automating something with Appium, you need to:
+因此，为了开始使用Appium自动化某些内容，你需要：
 
-- Install Appium itself
-- Install a driver for your target platform
-- Install a client library for your target programming language
-- (Optional) install one or more plugins
+- 安装Appium本身
+- 为你的目标平台安装驱动程序
+- 为你的目标编程语言安装客户端库
+- （可选）安装一个或多个插件
 
-These are the basics! If you are ready to jump in, proceed with the [Quickstart](../quickstart/index.md)!
+这些都是基础！如果你准备好加入，请继续[快速入门](../quickstart/index.md)！
 
-If you wish to learn more details about how it all works, see these pages for background material:
+如果你想了解有关其运作方式的更多详细信息，请参阅以下页面了解背景材料：
 
 - [Appium Core](./appium.md)
 - [Appium Drivers](./drivers.md)
 - [Appium Clients](./clients.md)
 
-Finally, to learn about the origins of Appium, check out the [Appium Project History](./history.md).
+最后，要了解Appium的起源，请查看[Appium项目历史](./history.md)。

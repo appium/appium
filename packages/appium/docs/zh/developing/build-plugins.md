@@ -25,13 +25,13 @@ explicitly trusted!).
 
 There are a wide variety of open source Appium plugins available for perusal. It's definitely
 recommended to explore the code for some other plugins before embarking on writing your own. The
-Appium team maintains a set of official plugins in the Appium GitHub
-repo. Links to other open source plugins can be found in the
+Appium team maintains a set of official plugins in the [Appium GitHub
+repo](https://github.com/appium/appium). Links to other open source plugins can be found in the
 [Plugin list](../ecosystem/plugins.md)
 
 ## Basic requirements for plugins
 
-These are the things your plugin _must_ do (or be), if you want it to be a valid Appium plugin.
+These are the things your plugin *must* do (or be), if you want it to be a valid Appium plugin.
 
 ### Node.js package with Appium extension metadata
 
@@ -47,23 +47,21 @@ work with certain versions of Appium). For Appium 2, for example, this would loo
 Your `package.json` must contain an `appium` field, like this (we call this the 'Appium extension
 metadata'):
 
-````
-```json
-{
-  ...,
-  "appium": {
-    "pluginName": "fake",
-    "mainClass": "FakePlugin"
-  },
-  ...
-}
-```
-````
+    ```json
+    {
+      ...,
+      "appium": {
+        "pluginName": "fake",
+        "mainClass": "FakePlugin"
+      },
+      ...
+    }
+    ```
 
 The required subfields are:
 
-- `pluginName`: this should be a short name for your plugin.
-- `mainClass`: this is a named export (in CommonJS style) from your `main` field. It must be a
+* `pluginName`: this should be a short name for your plugin.
+* `mainClass`: this is a named export (in CommonJS style) from your `main` field. It must be a
   class which extends Appium's `BasePlugin` (see below).
 
 ### Extend Appium's `BasePlugin` class
@@ -71,7 +69,7 @@ The required subfields are:
 Ultimately, your plugin is much easier to write because most of the hard work of defining patterns
 for overriding commands is done for you. This is
 all encoded up as a class which Appium exports for you to use, called `BasePlugin`. It is exported
-from `appium/plugin`, so you can use one of these styles to import it and create your _own_ class
+from `appium/plugin`, so you can use one of these styles to import it and create your *own* class
 that extends it:
 
 ```js
@@ -85,16 +83,14 @@ export class MyPlugin extends BasePlugin {
 
 !!! note
 
-```
-In all the code samples below, whenever we reference an example method, it is assumed
-that it is defined _within_ the class, though this is not explicitly written, for the sake of
-clarity and space.
-```
+    In all the code samples below, whenever we reference an example method, it is assumed
+    that it is defined _within_ the class, though this is not explicitly written, for the sake of
+    clarity and space.
 
 ### Make your plugin available
 
 That's basically it! With a Node.js package exporting a plugin class and with correct Appium
-extension metadata, you've got yourself an Appium plugin! Now it doesn't _do_ anything, but you can
+extension metadata, you've got yourself an Appium plugin! Now it doesn't *do* anything, but you can
 load it up in Appium, activate it, etc...
 
 To make it available to users, you could publish it via NPM. When you do so, your plugin will be
@@ -173,8 +169,8 @@ server.
 This is the most normal behavior for Appium plugins -- to modify or replace the execution of one or
 more commands that would normally be handled by the active driver. To override the default command
 handling, you need to implement `async` methods in your class with the same name as the Appium
-commands to be handled (just exactly how drivers themselves are
-implemented). Curious what command names there
+commands to be handled (just exactly how [drivers themselves are
+implemented](./build-drivers.md#implement-webdriver-commands)). Curious what command names there
 are? They are defined in the Appium base driver's
 [routes.js](https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js) file,
 and of course you can add more as defined in the next section.
@@ -182,8 +178,8 @@ and of course you can add more as defined in the next section.
 Each command method is sent the following arguments:
 
 1. `next`: This is a reference to an `async` function which encapsulates the chain of behaviors which would take place if this plugin were not handling the command. You can choose to call the next behavior in the chain at any point in your logic (by making sure to include `await next()` somewhere), or not. If you don't, it means the default behavior (or any plugins registered after this one) won't be run.
-2. `driver`: This is the object representing the driver handling the current session. You have access to it for any work you need to do, for example calling other driver methods, checking capabilities or settings, etc...
-3. `...args`: A spread array with any arguments that have been applied to the command by the user.
+1. `driver`: This is the object representing the driver handling the current session. You have access to it for any work you need to do, for example calling other driver methods, checking capabilities or settings, etc...
+1. `...args`: A spread array with any arguments that have been applied to the command by the user.
 
 For example, if we wanted to override the `setUrl` command to simply add some extra logging on top,
 we would implement as follows:
@@ -200,15 +196,15 @@ async setUrl(next, driver, url) {
 
 ### Intercept and handle _all_ Appium commands
 
-You might find yourself in a position where you want to handle _all_ commands, in order to inspect
+You might find yourself in a position where you want to handle *all* commands, in order to inspect
 payloads to determine whether or not to act in some way. If so, you can implement `async handle`,
 and any command that is not handled by one of your named methods will be handled by this method
 instead. It takes the following parameters (with all the same semantics as above):
 
 1. `next`
-2. `driver`
-3. `cmdName` - string representing the command being run
-4. `...args`
+1. `driver`
+1. `cmdName` - string representing the command being run
+1. `...args`
 
 For example, let's say we want to log timing for all Appium commands as part of a plugin. We could
 do this by implementing `handle` in our plugin class as follows:
@@ -226,28 +222,35 @@ async handle(next, driver, cmdName, ...args) {
 }
 ```
 
-### Working with driver proxies
+### Work around driver proxies
 
 There is a bit of a gotcha with handling Appium commands. Appium drivers have the ability to turn
 on a special 'proxy' mode, wherein the Appium server process takes a look at incoming URLs, and
 decides whether to forward them on to some upstream WebDriver server. It could happen that
 a command which a plugin wants to handle is designated as a command which is being proxied to an
-upstream server. In this case, we might run into a problem, because the plugin never gets a chance to
-handle that command! The way Appium handles this is as follows:
+upstream server. In this case, we run into a problem, because the plugin never gets a chance to
+handle that command! For this reason, plugins can implement a special member function called
+`shouldAvoidProxy`, which takes the following parameters:
 
-1. When a command comes in, before deciding whether to proxy the command, the main protocol handler
-  checks to see whether a plugin would handle the command.
-2. If a plugin would _not_ handle the command--all proceeds as normal, and the request is either
-  proxied or not, based on the driver's proxy mode.
-3. If a plugin _would_ handle the command, then the proxy behavior is skipped for the time being,
-  and wrapped up as the `next` function sent to the plugin. So if you have a command handler in
-  your plugin, and you want to be sure that the default driver proxying _does_ take place, then
-  simply `await next()` instead of (or in addition to) whatever your plugin handler is doing.
+1. `method` - string denoting HTTP method (`GET`, `POST`, etc...)
+2. `route` - string denoting the requested resource, for example `/session/8b3d9aa8-a0ca-47b9-9ab7-446e818ec4fc/source`
+3. `body` - optional value of any type representing the WebDriver request body
+
+These parameters define an incoming request. If you want to handle a command in your plugin which
+would normally be proxied directly through a driver, you could disable or 'avoid' proxying the
+request, and instead have the request fall into the typical Appium command execution flow (and
+thereby your own command function). To avoid proxying a request, just return `true` from
+`shouldAvoidProxy`. Some examples of how this method is used are in the [Universal XML
+plugin](https://github.com/appium/appium/blob/master/packages/universal-xml/lib/plugin.js) (where
+we want to avoid proxying the `getPageSource` command, or in the [Images
+plugin](https://github.com/appium/appium/blob/master/packages/images-plugin/lib/plugin.js) (where
+we want to conditionally avoid proxying any command if it looks like it contains an image element).
+
 
 ### Throw WebDriver-specific errors
 
-The WebDriver spec defines a set of error
-codes to accompany command responses if an
+The WebDriver spec defines a [set of error
+codes](https://github.com/jlipps/simple-wd-spec#error-codes) to accompany command responses if an
 error occurred. Appium has created error classes for each of these codes, so you can throw the
 appropriate error from inside a command, and it will do the right thing in terms of the protocol
 response to the user. To get access to these error classes, import them from `appium/driver`:
@@ -272,7 +275,7 @@ const log = logging.getLogger('MyPlugin');
 
 ## Further possibilities for Appium plugins
 
-These are things your plugin _can_ do to take advantage of extra plugin features or do its job more
+These are things your plugin *can* do to take advantage of extra plugin features or do its job more
 conveniently.
 
 ### Add a schema for custom command line arguments
@@ -282,8 +285,8 @@ Appium server is started (for example, ports that a server administrator should 
 be passed in as capabilities).
 
 This works largely the same for plugins as it does for drivers, so for more details have a look at
-the equivalent section in the building drivers
-doc.
+[the equivalent section in the building drivers
+doc](./build-drivers.md#add-a-schema-for-custom-command-line-arguments).
 
 The only difference is that to construct the CLI argument name, you prefix it with
 `--plugin-<name>`. So for example, if you have a plugin named `pluggo` and a CLI arg defined with
@@ -329,11 +332,8 @@ If you want to offer functionality that doesn't map to any of the existing comma
 drivers, you can create new commands in one of two ways, just as is possible for drivers:
 
 1. Extending the WebDriver protocol and creating client-side plugins to access the extensions
-2. Extending the WebDriver BiDi protocol with new modules and methods, accessed from a client via the BiDi interface
-3. Overloading the Execute Script command by defining Execute
-  Methods
-
-#### Extending the HTTP Protocol
+1. Overloading the Execute Script command by defining [Execute
+   Methods](../guides/execute-methods.md)
 
 If you want to follow the first path, you can direct Appium to recognize new methods and add them
 to its set of allowed HTTP routes and command names. You do this by assigning the `newMethodMap`
@@ -358,9 +358,7 @@ static newMethodMap = {
 
 !!! note
 
-```
-If you're using TypeScript, static member objects like these should be defined `as const`.
-```
+    If you're using TypeScript, static member objects like these should be defined `as const`.
 
 In this example we're adding a few new routes and a total of 3 new commands. For more examples of
 how to define commands in this way, it's best to have a look through `routes.js`. Now all you need
@@ -377,62 +375,9 @@ clients won't have nice client-side functions designed to target these endpoints
 to create and release client-side plugins for each language you want to support (directions or
 examples can be found at the relevant client docs).
 
-#### Extending the BiDi Protocol
-
-You can also make new commands accessible via the WebDriver BiDi (WebSocket-based) protocol. BiDi
-commands come in two parts: a "module", which is basically a container or namespace, and
-a "command", which is the name of your new command.
-
-As with the first method, you teach Appium to recognize your new BiDi commands by adding a static
-field to your driver class, called `newBidiCommands`. It has a format similar to `newMethodMap`.
-Basically it encapsulates information about the BiDi module, BiDi command name, reference to your
-driver instance method that will handle the command, and required and optional parameters. Here's
-an example of a `newBidiCommands` as implemented on an imaginary driver:
-
-```js
-static newBidiCommands = {
-  'appium:video': {
-    startFramerateCapture: {
-      command: 'startFrameCap',
-      params: {
-        required: ['videoSource'],
-        optional: ['showOnScreen'],
-      }
-    },
-    stopFramerateCapture: {
-      command: 'stopFrameCap',
-    },
-  }
-};
-```
-
-In this imaginary example, we have defined two new BiDi commands: `appium:video.startFramerateCapture` and
-`appium:video.stopFramerateCapture`. The first command takes a required and an optional parameter, and the
-second does not. When you have implemented the `startFrameCap` and `stopFrameCap` methods on your
-plugin class, they will be called whenever the BiDi commands are triggered by a client. The
-signatures for these methods would look as follows:
-
-```js
-async startFrameCap(next: () => Promise<any>, driver: DriverClass, videoSource: string, showOnScreen: boolean): Promise<any>;
-async stopFrameCap(next: () => Promise<any>, driver: DriverClass): Promise<any>;
-```
-
-As with adding or overriding existing HTTP protocol commands, these methods are injected with
-a `next` parameter and a `driver` parameter. The `driver` object represents the driver currently
-owning the session, and calling `await next()` will execute/return the behavior that would execute
-were the plugin not active (i.e., the driver's own handling of that method, or the chain of
-commands executed with the same name by other active plugins).
-
-Note that, currently, if a driver has BiDi proxying turned on, plugins will not be able to override
-BiDi methods handled by the proxy. Also note that since these are custom BiDi commands, our module
-name should include a vendor prefix (we chose `appium:`, but you can/should choose something that
-makes sense for your extension).
-
-#### Overloading Execute Script
-
-An alternative to these ways of doing things is to overload a command which all WebDriver clients
-have access to already: Execute Script. Make sure to read the section on adding new
-commands in
+An alternative to this way of doing things is to overload a command which all WebDriver clients
+have access to already: Execute Script. Make sure to read the section on [adding new
+commands](./build-drivers.md#extend-the-existing-protocol-with-new-commands) in
 the Building Drivers guide to understand the way this works in general. The way it works with
 plugins is only slightly different. Let's look at an example taken from Appium's `fake-plugin`:
 
@@ -457,20 +402,15 @@ We have three important components shown here which make this system work, all o
 inside the plugin class:
 
 1. The `executeMethodMap`, defined in just the same way as for drivers
-2. The implementation of the command method as defined in `executeMethodMap` (in this case,
-  `plugMeIn`)
-3. The overriding/handling of the `execute` command. Just like any plugin command handlers, the
-  first two arguments are `next` and `driver`, followed by the script name and args. `BasePlugin`
-  implements a helper method which we can simply call with all of these arguments.
+1. The implementation of the command method as defined in `executeMethodMap` (in this case,
+   `plugMeIn`)
+1. The overriding/handling of the `execute` command. Just like any plugin command handlers, the
+first two arguments are `next` and `driver`, followed by the script name and args. `BasePlugin`
+implements a helper method which we can simply call with all of these arguments.
 
 Overriding Execute Methods from drivers works as you'd expect: if your plugin defines an Execute
 Method with the same name as that of a driver, your command (in this case `plugMeIn`) will be
 called first. You can choose to run the driver's original behaviour via `next` if you want.
-
-### Emit BiDi Events
-
-Your plugin can emit custom BiDi events in exactly the same way as Appium
-drivers.
 
 ### Build Appium Doctor checks
 
@@ -487,9 +427,9 @@ in a variety of ways). But, for example, you could add new Express middleware to
 support your plugin's requirements. To update the server you must implement the `static async
 updateServer` method in your class. This method takes three parameters:
 
-- `expressApp`: the Express app object
-- `httpServer`: the Node HTTP server object
-- `cliArgs`: a map of the CLI args used to start the Appium server
+* `expressApp`: the Express app object
+* `httpServer`: the Node HTTP server object
+* `cliArgs`: a map of the CLI args used to start the Appium server
 
 You can do whatever you want with them inside the `updateServer` method. You might want to
 reference how these objects are created and worked with in the BaseDriver code, so that you know

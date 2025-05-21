@@ -1,22 +1,23 @@
 ---
 hide:
   - toc
-title: Next Steps
+
+title: 下一步
 ---
 
-Now that you've successfully set up your system for Android automation and run a simple test,
-you'll want to continue exploring this documentation. In particular, these are good guides and
-reference materials especially for beginners:
+既然您已经成功配置了您的系统进行Android自动化并运行了一个简单的测试，
+您可能希望继续探索这份文档。特别是对于初学者，
+以下是一些很好的指南和参考资料：
 
-- The [Ecosystem](../ecosystem/index.md) page: browse the available drivers, clients, plugins, and tools
-- [Managing Appium Drivers and Plugins](../guides/managing-exts.md)
-- [Capabilities](../guides/caps.md)
-- [Settings](../guides/settings.md)
+- 在 [生态系统](../ecosystem/index.md) 页面: 浏览可用的驱动程序, 客户端, 插件, 和工具
+- [管理Appium驱动程序与插件](../guides/managing-exts.md)
+- [能力](../guides/caps.md)
+- [设置](../guides/settings.md)
 
-You'll also find that the [Appium Inspector](https://github.com/appium/appium-inspector) is an
-indispensable tool for writing Appium tests, as it enables visual inspection of apps and
-helps you to discover element locators for use in your test scripts.
+您还会发现[Appium 监测者](https://github.com/appium/appium-inspector) 编写 Appium 测试不可或缺的工具。
+是编写 Appium 测试不可或缺的工具，因为它可以对应用程序进行可视化检查，并
+帮助您发现可用于测试脚本的元素定位器。
 
-You might also take advantage of one of the many online Appium courses available to you.
+您还可以利用为您提供的众多在线 Appium 课程之一。
 
-Good luck and have fun!
+祝你好运，玩得开心！

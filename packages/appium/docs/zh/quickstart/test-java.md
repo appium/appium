@@ -1,22 +1,23 @@
 ---
 hide:
   - toc
-title: Write a Test (Java)
+
+title: 编写一个测试(Java)
 ---
 
-The Appium team maintains an official [client](https://github.com/appium/java-client) for the Java programming language.
-It is built on top of [Selenium](https://github.com/SeleniumHQ/selenium).
-You can also use this client in your Kotlin projects.
+Appium 团队为 Java 编程语言维护一个官方[客户端](https://github.com/appium/java-client).
+它是建立在 [Selenium](https://github.com/SeleniumHQ/selenium)上的.
+您也可以在 Kotlin 项目中使用该客户端.
 
-Follow the [Add Appium java client to your test framework](https://github.com/appium/java-client#add-appium-java-client-to-your-test-framework)
-tutorial in order to connect the library to your test framework sources.
+遵循[在测试框架中添加 Appium Java 客户端](https://github.com/appium/java-client#add-appium-java-client-to-your-test-framework)
+教程，以便将该库连接到测试框架源。
 
-The Appium Java client has dedicated classes to support most of the official Appium drivers. For other drivers
-you could simply use the [AppiumDriver](https://github.com/appium/java-client/blob/master/src/main/java/io/appium/java_client/AppiumDriver.java) class
-or build your custom derivatives from it. Check the [Drivers Support](https://github.com/appium/java-client#drivers-support)
-article to learn more about the current driver class implementations.
+Appium Java 客户端有专门的类来支持大多数官方 Appium 驱动程序。对于其他驱动程序
+您只需使用  [AppiumDriver](https://github.com/appium/java-client/blob/master/src/main/java/io/appium/java_client/AppiumDriver.java)类
+或在此基础上创建您的自定义衍生工具. 请查看 [驱动支持](https://github.com/appium/java-client#drivers-support)
+文章，了解有关当前驱动程序类实现的更多信息.
 
-Follow the [Usage Examples](https://github.com/appium/java-client#usage-examples) article in order understand
-how to invoke Java client features from your test framework.
+请参阅 [使用实例](https://github.com/appium/java-client#usage-examples) 一文，以了解
+如何从测试框架调用 Java 客户端功能。
 
-Once you've managed to successfully run a test, you can read on for some [next steps](./next-steps.md) to explore.
+成功运行测试后，您可以继续阅读以下内容 [下一步骤](./next-steps.md) 继续探索

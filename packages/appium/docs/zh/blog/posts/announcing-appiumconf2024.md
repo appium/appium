@@ -10,12 +10,12 @@ date: 2024-07-13
 We're thrilled to announce that Appium Conf is back and going online for 2024! This is the official Appium conference where you can learn all about what's new in Appium 2.0 and explore the latest in automating tests for devices, mobile apps, and desktop applications.
 
 <!-- more -->
-
 <div style="text-align:center;width:100%">
     <a href="https://confengine.com/conferences/appium-conf-2024/proposals?utm_medium=referal&utm_source=appium.io&utm_campaign=launch">
     <img id="image-36-42" alt="Appium Conf logo" src="https://appiumconf.com/wp-content/uploads/2021/06/Appium-Conf-Logo.svg" data-src="https://appiumconf.com/wp-content/uploads/2021/06/Appium-Conf-Logo.svg" decoding="async">
 </a>
 </div>
+
 
 ## Mark Your Calendars: September 13, 2024
 
@@ -36,7 +36,7 @@ Don't miss this chance to contribute to the Appium community and showcase your e
 
 ## How to Submit Your Proposal
 
-Visit our website at [https://appiumconf.com/](https://appiumconf.com/) and Submit a Proposal. We're excited to see your innovative ideas and experiences with Appium!
+Visit our website at [https://appiumconf.com/](https://appiumconf.com/) and [Submit a Proposal](https://confengine.com/conferences/appium-conf-2024/proposals?utm_medium=referal&utm_source=appium.io&utm_campaign=launch). We're excited to see your innovative ideas and experiences with Appium!
 
 ## Stay Tuned
 

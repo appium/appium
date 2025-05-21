@@ -1,28 +1,24 @@
 ---
 hide:
   - toc
-title: System Requirements
+
+title: 系统要求
 ---
 
-The basic requirements for the Appium server are:
+Appium服务器的基本要求是：
 
-- A macOS, Linux, or Windows operating system
-- [Node.js](https://nodejs.org) version in the [SemVer](https://semver.org) range `^14.17.0 || ^16.13.0 || >=18.0.0`
-  - LTS is recommended
-- [`npm`](https://npmjs.com) version `>=8` (`npm` is usually bundled with Node.js, but can be upgraded
-  independently)
+* macOS、Linux或Windows操作系统
+* [Node.js](https://nodejs.org) 版本在 `^14.17.0 || ^16.13.0 || >=18.0.0` 范围内
+    * 推荐使用LTS版本
+* [`npm`](https://npmjs.com) 版本 `>=8` (`npm` 通常与Node.js捆绑在一起，但可以独立升级)
 
-By itself, Appium is relatively lightweight and doesn't have significant disk space or RAM
-requirements. It can even be run in resource-constrained environments like Raspberry Pi, so long as
-Node.js is available.
+Appium本身相对轻量级，并且没有大量的磁盘空间或RAM要求。
+只要Node.js可用，它甚至可以在Raspberry Pi等资源有限的环境中运行。
 
-### Driver Requirements
+### 驱动程序要求
 
-Drivers for automating specific platforms will likely have other requirements. Refer to the
-documentation of the [Appium driver(s)](../ecosystem/drivers.md) for that platform for additional
-dependencies. It is almost universally the case that Appium drivers for a given platform will
-require the developer toolchain and SDKs for that platform to be installed.
+自动化特定平台的驱动程序可能还有其他要求。有关其他依赖关系，请参阅该平台的[Appium驱动程序](../ecosystem/drivers.md)文档。
+一般情况下，给定平台的Appium驱动程序需要安装该平台的开发人员工具链和SDK。
 
-In order to assist with driver requirements, each (official) driver comes with the Appium Doctor tool,
-which allows to verify if all requirements have been set up. Learn more about how to use this tool in
-the [Command-Line Usage documentation](../cli/extensions.md#doctor).
+为了协助满足驱动程序的要求，每个官方驱动程序都会配备 Appium Doctor 工具，该工具用于验证当前配置是否已满足驱动程序的所有要求。
+您可以在[命令行使用文档](../cli/extensions.md#doctor)中了解更多关于如何使用这个工具的信息。

@@ -28,16 +28,16 @@ In order to validate whether an app bundle downloaded from the given URL could b
 steps are applied:
 
 1. The script checks if the given URL is already present in the cache.
-  If yes then it tries to fetch previously remembered
-  [Last-Modified](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Last-Modified)
-  or [ETag](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/ETag) header values for it.
+   If yes then it tries to fetch previously remembered
+   [Last-Modified](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Last-Modified)
+   or [ETag](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/ETag) header values for it.
 2. If `ETag` value is present then it is put into
-  [If-None-Match request header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/If-None-Match).
-  Else if `Last-Modified` header value is present then it is put into
-  [If-Modified-Since request header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/If-Modified-Since).
-  Otherwise, no caching is applied.
+   [If-None-Match request header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/If-None-Match).
+   Else if `Last-Modified` header value is present then it is put into
+   [If-Modified-Since request header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/If-Modified-Since).
+   Otherwise, no caching is applied.
 3. If the response status is equal to `304` then the previously cached binary is used,
-  otherwise the cached entry is reset and refreshed.
+   otherwise the cached entry is reset and refreshed.
 
 ## Caching of Local Application Bundles
 
@@ -45,9 +45,9 @@ It only makes sense to cache application bundles if they need some preprocessing
 For example, on iOS `.ipa` bundles must be unzipped, because the system installer only works with `.app` folders.
 
 1. The script verifies if the given bundle path is already present in the cache. If the bundle was not in the cache yet
-  then it gets preprocessed and added there.
+then it gets preprocessed and added there.
 2. The script validates the hashsum of the bundle and compares it to the previously stored one. If hash sums don't match
-  then the cached item gets deleted and the preprocessing of the bundle repeats.
+then the cached item gets deleted and the preprocessing of the bundle repeats.
 
 ## How The Cache File System Is Configured
 
@@ -71,8 +71,6 @@ of it. It is a [LRU Cache](https://www.npmjs.com/package/lru-cache) with the fol
 
 !!! warning
 
-```
-Note: The cache root folder is set up for automatic deletion on Appium process termination. This would only
-work if Appium server is killed with `SIGINT` or `SIGTERM`. If `SIGKILL` is used then no cache cleanup
-would be performed.
-```
+    Note: The cache root folder is set up for automatic deletion on Appium process termination. This would only
+    work if Appium server is killed with `SIGINT` or `SIGTERM`. If `SIGKILL` is used then no cache cleanup
+    would be performed.

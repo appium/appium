@@ -1,33 +1,23 @@
 ---
 hide:
   - toc
-title: Setup Command-Line Usage
+
+title: 设置命令行用法
 ---
 
-The `setup` command aims to simplify the initial procedure of setting up Appium. It allows to install
-multiple extensions (drivers/plugins) in one go, without the need to run
-`appium <ext-name> install <ext-name>` multiple times.
+`setup`命令旨在简化Appium的初始设置过程。它允许一次性安装多个扩展（驱动程序/插件），而无需多次运行`appium <ext-name> install <ext-name>`。
 
-The command has several presets that can be used to install different sets of extensions.
-The presets are as follows:
+该命令具有多个预设，可用于安装不同组合的扩展。这些预设如下：
 
-| Preset              | Installation Command                    | Included Drivers                           | Included Plugins |
-| ------------------- | --------------------------------------- | ------------------------------------------ | ---------------- |
-| Mobile              | `appium setup mobile` or `appium setup` | `uiautomator2`, `xcuitest`[^1], `espresso` | `images`         |
-| Desktop application | `appium setup desktop`                  | `mac2`[^1], `windows`[^2]                  | `images`         |
-| Desktop browser     | `appium setup browser`                  | `safari`[^1], `gecko`, `chromium`          | `images`         |
+|预设|安装命令|包含的驱动|包含的插件|
+|--|--|--|--|
+|手机端应用程序|`appium setup mobile` or `appium setup`|`uiautomator2`, `xcuitest`[^1], `espresso`|`images`|
+|桌面端应用程序|`appium setup desktop`|`mac2`[^1], `windows`[^2]|`images`|
+|桌面端浏览器|`appium setup browser`|`safari`[^1], `gecko`, `chromium`|`images`|
 
-Attempting to install a preset while already having one or more of its included extensions installed
-will only install the missing extensions.
+在已安装一个或多个预设包含的扩展的情况下尝试安装预设，将只安装缺少的扩展。
 
-Refer to the [Ecosystem documentation](../ecosystem/index.md) to learn more about the extensions
-listed above.
+请参阅[生态系统](../ecosystem/index.md)文档，了解有关扩展的更多信息。
 
-This commands also supports the functionality that allows to fully reset your Appium server
-deployment if you experience various configuration issues,
-for example, due to a failed upgrade attempt from an older Appium version, on server startup.
-By running `appium setup reset` the server would uninstall all installed drivers, plugins and their related manifest files from the currently used Appium home folder.
-
-[^1]: Only installed if the host machine is running macOS.
-
-[^2]: Only installed if the host machine is running Windows.
+[^1]: 仅在主机运行macOS时才安装。
+[^2]: 仅在主机运行Windows时才安装。

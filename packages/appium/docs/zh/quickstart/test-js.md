@@ -1,76 +1,73 @@
 ---
 hide:
   - toc
-title: Write a Test (JS)
+
+title: 编写一个测试 (JS)
 ---
 
-To write an Appium test in JavaScript (Node.js), we need to choose an Appium-compatible client
-library. The best-maintained library and the one the Appium team recommends using is
-[WebdriverIO](https://webdriver.io), so let's use that. Since we already have Appium installed we
-know our Node and NPM requirements are already satisfied. So just create a new project directory
-somewhere on your computer and then initialize a new Node.js project in it:
+要在 JavaScript（Node.js）中编写 Appium 测试，我们需要选择一个与 Appium 兼容的客户端
+库。维护最好的库和 Appium 团队推荐使用的库是
+[WebdriverIO](https://webdriver.io), 所有就让我们使用它吧。既然我们已经安装了 Appium，我们
+已经满足了 Node 和 NPM 的要求。因此，只需在计算机上创建一个新的项目目录
+然后在其中初始化一个新的 Node.js 项目:
 
 ```bash
 npm init
 ```
 
-It doesn't really matter what you put in the prompts, just so long as you end up with a valid
+您在提示中输入什么内容并不重要，只要您最终得到一个有效的
 `package.json`.
 
-Now, install the `webdriverio` package via NPM:
+
+现在，通过 NPM 安装 `webdriverio` 软件包:
 
 ```bash
 npm i --save-dev webdriverio
 ```
 
-Once this is done, your `package.json` file should include a section like the following:
+完成上述操作后，您的 `package.json` 文件应包含类似以下内容的部分:
 
 ```json title="package.json"
 --8<-- "./sample-code/quickstarts/js/package.json"
 ```
 
-Now it's time to type up the test itself. Create a new file called `test.js` with the following
-contents:
+现在是编写测试本身的时候了。创建一个名为 `test.js` 的新文件，内容如下:
 
 ```js title="test.js"
 --8<-- "./sample-code/quickstarts/js/test.js"
 ```
 
-!!! note
+!!! 注意
 
-```
-It's not within the scope of this guide to give a complete run-down on the WebdriverIO client
-library or everything that's happening here, so we'll leave the code itself unexplained in
-detail for now. You may want to read up particularly on Appium
-[Capabilities](../guides/caps.md) in addition to familiarizing yourself with the excellent
-[WebdriverIO documentation](https://webdriver.io/docs/gettingstarted) for a fuller explanation
-of the various API commands you see and what their purpose is.
-```
+    本指南的范围不包括完整介绍 WebdriverIO 客户端
+    库或这里发生的一切，因此我们暂且不对代码本身进行详细解释。
+    所以目前我们暂时不对代码本身进行详细解释。您可能需要特别阅读 Appium
+    [能力](../guides/caps.md), 除了熟悉优秀的
+    [WebdriverIO 文档](https://webdriver.io/docs/gettingstarted) 来获得更全面的解释,
+    你还可以看到的各种 API 命令以及用途。
 
-!!! note
+!!! 注意
 
-```
-The sample code is available from [GitHub Appium repository](https://github.com/appium/appium/tree/master/packages/appium/sample-code/quickstarts/js).
-```
+    示例代码可从 [GitHub Appium repository](https://github.com/appium/appium/tree/master/packages/appium/sample-code/quickstarts/js).
 
-Basically, this code is doing the following:
 
-1. Defining a set of "Capabilities" (parameters) to send to the Appium server so Appium knows what
-  kind of thing you want to automate.
-2. Starting an Appium session on the built-in Android settings app.
-3. Finding the "Battery" list item and clicking it.
-4. Pausing for a moment purely for visual effect.
-5. Ending the Appium session.
+基本上，这段代码正在执行以下操作：
 
-That's it! Let's give it a try. Before you run the test, make sure that you have an Appium server
-running in another terminal session, otherwise you'll get an error about not being able to connect
-to one. Then, you can execute the script:
+1. 定义一组 "Capabilities" 能力值(参数)，以便 Appium 知道您想自动执行哪种任务。
+要自动执行的任务。
+1. 在内置的 Android 设置应用程序上启动 Appium 会话。
+1. 找到 "Battery"列表项并点击它。
+1. 停顿片刻，纯粹是为了观察自动化视觉效果。
+1. 结束 Appium 会话。
+
+就是这样！让我们试一试吧。运行测试前，请确保您的 Appium 服务器
+在另一个终端会话中运行，否则会出现一个有关无法连接到 Appium 服务器的错误。
+然后，你就可以执行脚本了：
 
 ```bash
 node test.js
 ```
 
-If all goes well, you'll see the Settings app open up and navigate to the "Battery" view before the
-app closes again.
+如果一切顺利，在应用再次关闭之前，你会看到 "设置 "应用打开并导航到 "Battery "视图
 
-Congratulations, you've started your Appium journey! Read on for some [next steps](./next-steps.md) to explore.
+恭喜您，您已经开始了 Appium 之旅！请继续阅读一些 [下一步骤](./next-steps.md) 继续探索.

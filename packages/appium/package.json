@@ -83,7 +83,7 @@
     "resolve-from": "5.0.0",
     "semver": "7.7.2",
     "source-map-support": "0.5.21",
-    "teen_process": "2.3.1",
+    "teen_process": "2.3.2",
     "type-fest": "4.41.0",
     "winston": "3.17.0",
     "wrap-ansi": "7.0.0",

@@ -60,7 +60,7 @@ export function fixPythonContentType(basePath) {
     // hack because python client library gives us wrong content-type
     if (
       new RegExp(`^${_.escapeRegExp(basePath)}`).test(req.path) &&
-      /^Python/.test(req.headers['user-agent'] ?? '')
+      (req.headers['user-agent'] ?? '').startsWith('Python')
     ) {
       if (req.headers['content-type'] === 'application/x-www-form-urlencoded') {
         req.headers['content-type'] = 'application/json; charset=utf-8';

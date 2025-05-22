@@ -333,7 +333,7 @@ class ExtensionCliCommand {
         // contain the '@' symbol, as in `npm install @appium/fake-driver@1.2.0`
         let name;
         const splits = installSpec.split('@');
-        if (installSpec[0] === '@') {
+        if (installSpec.startsWith('@')) {
           // this is the case where we have an npm org included in the package name
           [name, pkgVer] = [`@${splits[1]}`, splits[2]];
         } else {

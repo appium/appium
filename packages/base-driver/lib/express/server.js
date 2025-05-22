@@ -311,7 +311,7 @@ export function normalizeBasePath(basePath) {
 
   // likewise, ensure the path prefix does always START with /, unless the path
   // is empty meaning no base path at all
-  if (basePath !== '' && basePath[0] !== '/') {
+  if (basePath !== '' && !basePath.startsWith('/')) {
     basePath = `/${basePath}`;
   }
 

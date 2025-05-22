@@ -1,6 +1,6 @@
 import {ArgumentTypeError} from 'argparse';
 import _ from 'lodash';
-import {formatErrors as formatErrors} from '../config-file';
+import {formatErrors} from '../config-file';
 import {flattenSchema, validate} from './schema';
 import {transformers, parseCsvLine} from './cli-transformers';
 

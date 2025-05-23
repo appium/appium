@@ -95,7 +95,7 @@ export async function configureApp(
   let shouldUnzipApp = false;
   let packageHash = null;
   /** @type {import('axios').AxiosResponse['headers']|undefined} */
-  let headers = undefined;
+  let headers;
   /** @type {RemoteAppProps} */
   const remoteAppProps = {
     lastModified: null,
@@ -581,7 +581,7 @@ async function unzipApp(zipPath, dstRoot, supportedAppExtensions) {
  *
  * @param {string} app App link.
  * @returns {string} Transformed app link or the original arg if
- * no transfromation is needed.
+ * no transformation is needed.
  */
 function toCacheKey(app) {
   if (!isEnvOptionEnabled('APPIUM_APPS_CACHE_IGNORE_URL_QUERY') || !isSupportedUrl(app)) {
@@ -635,7 +635,7 @@ function isSupportedUrl(app) {
  *
  * @param {string} optionName Option name
  * @param {boolean|null} [defaultValue=null] The value to return if the given env value
- * is not set explcitly
+ * is not set explicitly
  * @returns {boolean} True if the option is enabled
  */
 function isEnvOptionEnabled(optionName, defaultValue = null) {

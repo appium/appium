@@ -164,7 +164,7 @@ function calculateMatchedRect(matchedPoints) {
 }
 
 /**
- * Draws a rectanngle on the given image matrix
+ * Draws a rectangle on the given image matrix
  *
  * @param {OpenCVBindings['Mat']} mat The source image
  * @param {Rect} region The region to highlight
@@ -202,7 +202,7 @@ function highlightRegion(mat, region) {
  * @property {number|Function?} [goodMatchesFactor] The maximum count of "good" matches
  * (e. g. with minimal distances) or a function, which accepts 3 arguments: the current distance,
  * minimal distance, maximum distance and returns true or false to include or exclude the match.
- * @property {boolean} [visualize=false] Whether to return the resulting visalization
+ * @property {boolean} [visualize=false] Whether to return the resulting visualization
  * as an image (useful for debugging purposes)
  */
 
@@ -233,7 +233,7 @@ function highlightRegion(mat, region) {
  * @param {Buffer} img2Data The data of the second image packed into a NodeJS buffer
  * @param {MatchingOptions} [options={}] Set of matching options
  *
- * @returns {Promise<MatchingResult>} Maching result
+ * @returns {Promise<MatchingResult>} Matching result
  * @throws {Error} If `detectorName` value is unknown.
  */
 async function getImagesMatches(img1Data, img2Data, options = {}) {
@@ -325,8 +325,8 @@ async function getImagesMatches(img1Data, img2Data, options = {}) {
     };
     if (visualize) {
       const goodMatchesVec = pool.add(new cv.DMatchVector());
-      for (let i = 0; i < matches.length; i++) {
-        goodMatchesVec.push_back(matches[i]);
+      for (const match of matches) {
+        goodMatchesVec.push_back(match);
       }
       const visualization = pool.add(new cv.Mat());
       const color = pool.add(new cv.Scalar(0, 255, 0, 255));
@@ -472,7 +472,7 @@ async function getImagesSimilarity(img1Data, img2Data, options = {}) {
  * all results are highlighted here.
  * @property {number} score The similarity score as a float number in range [0.0, 1.0].
  * 1.0 is the highest score (means both images are totally equal).
- * @property {OccurrenceResult[]} [multiple] The array of matching OccurenceResults
+ * @property {OccurrenceResult[]} [multiple] The array of matching OccurrenceResults
  * - only when multiple option is passed
  * @property {TemplateMatchingMethod} [method='TM_CCOEFF_NORMED'] The name of the template matching method.
  * Acceptable values are:
@@ -574,17 +574,17 @@ async function getImageOccurrence(fullImgData, partialImgData, options = {}) {
     if (visualize) {
       const fullHighlightedImage = pool.add(fullImg.clone());
 
-      const visualisePromises = [];
+      const visualizePromises = [];
       for (const result of results) {
         const singleHighlightedImage = pool.add(fullImg.clone());
 
         highlightRegion(singleHighlightedImage, result.rect);
         highlightRegion(fullHighlightedImage, result.rect);
-        visualisePromises.push(cvMatToPng(singleHighlightedImage));
+        visualizePromises.push(cvMatToPng(singleHighlightedImage));
       }
       let restPngBuffers = [];
       [visualization, ...restPngBuffers] = await B.all(
-        [cvMatToPng(fullHighlightedImage), ...visualisePromises]
+        [cvMatToPng(fullHighlightedImage), ...visualizePromises]
       );
       for (const [result, pngBuffer] of _.zip(results, restPngBuffers)) {
         // @ts-ignore This is fine
@@ -654,7 +654,7 @@ async function cvMatFromImage(img) {
 function filterNearMatches(nonZeroMatchResults, matchNeighbourThreshold) {
   return nonZeroMatchResults.reduce((acc, element) => {
     if (!acc.some((match) => distance(match, element) <= matchNeighbourThreshold)) {
-      // @ts-ignore TS cannot properly undertstand types here
+      // @ts-ignore TS cannot properly understand types here
       acc.push(element);
     }
     return acc;

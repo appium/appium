@@ -27,7 +27,7 @@ export type ParsedCaps<C extends Constraints> = {
 };
 export type ValidateCapsOpts = {
   /** if true, skip the presence constraint */
-  skipPresenceConstraint?: boolean | undefined;
+  skipPresenceConstraint?: boolean;
 }
 
 /**
@@ -377,7 +377,7 @@ export function promoteAppiumOptionsForObject<C extends Constraints>(obj: NSCapa
     }
     if (isStandardCap(capName)) {
       throw new errors.SessionNotCreatedError(
-        `${PREFIXED_APPIUM_OPTS_CAP} must only contain vendor-specific capabilties. '${capName}' is unexpected`
+        `${PREFIXED_APPIUM_OPTS_CAP} must only contain vendor-specific capabilities. '${capName}' is unexpected`
       );
     }
     return capName;

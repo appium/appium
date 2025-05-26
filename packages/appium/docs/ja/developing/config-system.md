@@ -43,7 +43,7 @@ to its documentation for more information about the search paths. Additionally, 
 support for config files written in YAML via the package [`yaml`](https://npm.im/yaml).
 
 If a config file is found and successfully [validated](#validation), the result will be merged with
-a set of defaults and any additionall CLI arguments. CLI arguments have precedence over config
+a set of defaults and any additional CLI arguments. CLI arguments have precedence over config
 files, and config files have precedence over defaults.
 
 ## Validation

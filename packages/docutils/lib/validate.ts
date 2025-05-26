@@ -79,7 +79,7 @@ export type ValidationKind =
 export class DocutilsValidator extends EventEmitter {
   /**
    * Current working directory. Defaults to `process.cwd()`
-   * @todo This cannot yet be overriden by user
+   * @todo This cannot yet be overridden by user
    */
   protected readonly cwd: string;
 

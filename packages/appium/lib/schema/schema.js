@@ -421,7 +421,7 @@ class AppiumSchema {
    * name. Used when translating to `argparse` options or getting the list of
    * default values (see {@link AppiumSchema.getDefaults}) for CLI or otherwise.
    *
-   * The return value is an intermediate reprsentation used by `cli-args`
+   * The return value is an intermediate representation used by `cli-args`
    * module's `toParserArgs`, which converts the finalized schema to parameters
    * used by `argparse`.
    * @throws If {@link AppiumSchema.finalize} has not been called yet.

@@ -105,7 +105,7 @@ function createBinaryPlist(data) {
 
 /**
  * Parses a Buffer into an Object
- * @param {Buffer} data The beffer of a binary plist
+ * @param {Buffer} data The buffer of a binary plist
  */
 function parseBinaryPlist(data) {
   return bplistParse.parseBuffer(data);

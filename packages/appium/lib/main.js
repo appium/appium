@@ -177,7 +177,7 @@ function determineAppiumHomeSource(appiumHomeFromArgs) {
  *
  * @template {CliCommand} [Cmd=ServerCommand]
  * @template {CliExtensionSubcommand|void} [SubCmd=void]
- * @param {Args<Cmd, SubCmd>} [args] - Partial args (progammatic usage only)
+ * @param {Args<Cmd, SubCmd>} [args] - Partial args (programmatic usage only)
  * @returns {Promise<InitResult<Cmd>>}
  * @example
  * import {init, getSchema} from 'appium';

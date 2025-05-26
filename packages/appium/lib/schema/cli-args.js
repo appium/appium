@@ -225,7 +225,7 @@ function subSchemaToArgDef(subSchema, argSpec) {
  * ArgumentDefinitions for handoff to `argparse`.
  *
  * @throws If schema has not been added to ajv (via `finalizeSchema()`)
- * @returns {import('../cli/args').ArgumentDefinitions} A map of arryas of
+ * @returns {import('../cli/args').ArgumentDefinitions} A map of arrays of
  * aliases to `argparse` arguments; empty if no schema found
  */
 export function toParserArgs() {

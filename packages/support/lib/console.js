@@ -163,7 +163,7 @@ export class CliConsole {
  * Options for {@linkcode CliConsole}.
  *
  * @typedef ConsoleOpts
- * @property {boolean} [jsonMode] - If _truthy_, supress all output except JSON (use {@linkcode CliConsole#json}), which writes to `STDOUT`.
+ * @property {boolean} [jsonMode] - If _truthy_, suppress all output except JSON (use {@linkcode CliConsole#json}), which writes to `STDOUT`.
  * @property {boolean} [useSymbols] - If _falsy_, do not use fancy symbols.
  * @property {boolean} [useColor] - If _falsy_, do not use color output. If _truthy_, forces color output. By default, checks terminal/TTY for support via pkg `supports-color`. Ignored if `useSymbols` is `false`.
  * @see https://npm.im/supports-color

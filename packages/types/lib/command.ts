@@ -193,11 +193,11 @@ export interface ErrorBiDiCommandResponse extends GenericBiDiCommandResponse {
 
 export interface RestCommandItemParam {
   /**
-   * Command paremeter name
+   * Command parameter name
    */
   name: string;
   /**
-   * True if the paramter is required for the given command
+   * True if the parameter is required for the given command
    */
   required: boolean;
 }
@@ -212,7 +212,7 @@ export interface RestCommandItem {
    */
   deprecated?: boolean;
   /**
-   * Optinal infostring about the command's purpose or a comment
+   * Optional infostring about the command's purpose or a comment
    */
   info?: string;
   /**
@@ -245,11 +245,11 @@ export interface RestCommandsMap {
 
 export interface BiDiCommandItemParam {
   /**
-   * Command paremeter name
+   * Command parameter name
    */
   name: string;
   /**
-   * True if the paramter is required for the given command
+   * True if the parameter is required for the given command
    */
   required: boolean;
 }
@@ -264,7 +264,7 @@ export interface BiDiCommandItem {
    */
   deprecated?: boolean;
   /**
-   * Optinal infostring about the command's purpose or a comment
+   * Optional infostring about the command's purpose or a comment
    */
   info?: string;
   /**

@@ -471,7 +471,7 @@ export const METHOD_MAP = /** @type {const} */ ({
   // #endregion
 
   //
-  // 3rd party vendor/protcol support
+  // 3rd party vendor/protocol support
   //
   // #region Selenium/Chromium browsers
   '/session/:sessionId/se/log': {

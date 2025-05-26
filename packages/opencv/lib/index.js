@@ -464,7 +464,7 @@ async function getImagesSimilarity(img1Data, img2Data, options = {}) {
 
 /**
  * @typedef OccurrenceResult
- * @property {import('@appium/types').Rect} rect The region of the partial image occurence
+ * @property {import('@appium/types').Rect} rect The region of the partial image occurrence
  * on the full image
  * @property {Buffer?} [visualization] The visualization of the matching result
  * represented as PNG image buffer. On this image the matching
@@ -623,7 +623,7 @@ async function cvMatToPng(mat) {
 /**
  * Take an image buffer and return a cv.Mat
  *
- * @param {Buffer} img image data buffer. All image formats avilable for
+ * @param {Buffer} img image data buffer. All image formats available for
  * https://www.npmjs.com/package/sharp node library are supported.
  * @return {Promise<OpenCVBindings['Mat']>} OpenCV image matrix
  */

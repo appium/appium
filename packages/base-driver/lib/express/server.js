@@ -233,7 +233,7 @@ function configureHttp({httpServer, reject, keepAliveTimeout, gracefulShutdownTi
       }, gracefulShutdownTimeout);
       httpServer.once('close', () => {
         log.info(
-          `Appium HTTP server has been succesfully closed after ` +
+          `Appium HTTP server has been successfully closed after ` +
           `${timer.getDuration().asMilliSeconds.toFixed(0)}ms`
         );
         clearTimeout(onTimeout);

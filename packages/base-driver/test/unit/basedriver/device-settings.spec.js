@@ -24,7 +24,7 @@ describe('DeviceSettings', function () {
   });
 
   describe('constructor', function () {
-    describe('when no parameteres are provided to the constructor', function () {
+    describe('when no parameters are provided to the constructor', function () {
       it('should not throw', function () {
         expect(() => new DeviceSettings()).not.to.throw();
       });

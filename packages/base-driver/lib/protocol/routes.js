@@ -327,8 +327,15 @@ export const METHOD_MAP = /** @type {const} */ ({
     POST: {command: 'setRotation', payloadParams: {required: ['x', 'y', 'z']}},
   },
   '/session/:sessionId/location': {
-    GET: {command: 'getGeoLocation'},
-    POST: {command: 'setGeoLocation', payloadParams: {required: ['location']}},
+    GET: {
+      command: 'getGeoLocation',
+      deprecated: true,
+    },
+    POST: {
+      command: 'setGeoLocation',
+      payloadParams: {required: ['location']},
+      deprecated: true,
+    },
   },
   '/session/:sessionId/orientation': {
     GET: {command: 'getOrientation'},

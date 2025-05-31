@@ -119,9 +119,9 @@ const _static = tempDir();
 const openDir = tempDir;
 
 /**
- * Returns a path to a temporary directory whcih is defined as static in the same process
+ * Returns a path to a temporary directory which is defined as static in the same process
  *
- * @returns {Promise<string>} A temp directory path whcih is defined as static in the same process
+ * @returns {Promise<string>} A temp directory path which is defined as static in the same process
  */
 
 async function staticDir() {

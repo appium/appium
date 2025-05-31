@@ -105,7 +105,7 @@ export default class PluginCliCommand extends ExtensionCliCommand {
 
     if (!_.isEmpty(missingFields)) {
       throw new Error(
-        `Installed plugin "${installSpec}" did not expose correct fields for compability ` +
+        `Installed plugin "${installSpec}" did not expose correct fields for compatibility ` +
           `with Appium. Missing fields: ${JSON.stringify(missingFields)}`
       );
     }

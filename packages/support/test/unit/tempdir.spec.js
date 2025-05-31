@@ -9,7 +9,7 @@ describe('tempdir', function () {
   });
 
   afterEach(function () {
-    // set the process env as undefiend
+    // set the process env as undefined
     delete process.env.APPIUM_TMP_DIR;
   });
 

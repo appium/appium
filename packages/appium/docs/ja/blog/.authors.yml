@@ -1,0 +1,19 @@
+authors:
+  jlipps:
+    name: 'Jonathan Lipps'
+    description: 'Appium project lead. Learn more about Jonathan at https://jlipps.com'
+    avatar: 'https://gravatar.com/avatar/fdaadd825d92709bcf7fe76dffa12c40681c6108c67bcddf19478b2d00e3794b.jpg'
+    slug: 'jlipps'
+    url: 'https://jlipps.com'
+  srini:
+    name: 'Srinivasan Sekar'
+    description: 'Appium Maintainer'
+    avatar: 'https://avatars.githubusercontent.com/u/8896549?v=4'
+    slug: 'srini'
+    url: 'https://srini.codes'
+  sai:
+    name: 'Sai krishna'
+    description: 'Appium Maintainer'
+    avatar: 'https://avatars.githubusercontent.com/u/4045041?v=4'
+    slug: 'sai'
+    url: 'https://saikrishna.tech'

@@ -42,7 +42,7 @@ to its documentation for more information about the search paths. Additionally, 
 support for config files written in YAML via the package [`yaml`](https://npm.im/yaml).
 
 If a config file is found and successfully [validated](#validation), the result will be merged with
-a set of defaults and any additionall CLI arguments. CLI arguments have precedence over config
+a set of defaults and any additional CLI arguments. CLI arguments have precedence over config
 files, and config files have precedence over defaults.
 
 ## Validation
@@ -203,7 +203,7 @@ desired.
     Any property defined in the schema having type `array` will _automatically_ uses the `csv`
     transformer. Likewise, a property having type `object` will use the `json` transformer. It's
     conceivable that `array` may want to use the `json` transformer, but otherwise, the presence of
-    the `appiumCliTransformer` keyword on an `array`-or-`object`-typed property is not stricly
+    the `appiumCliTransformer` keyword on an `array`-or-`object`-typed property is not strictly
     necessary.
 
 The adapter (remember the adapter?) creates a pipeline function including a special "CSV

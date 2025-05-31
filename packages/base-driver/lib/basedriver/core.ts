@@ -139,7 +139,7 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
   /**
    * Set a callback handler if needed to execute a custom piece of code
    * when the driver is shut down unexpectedly. Multiple calls to this method
-   * will cause the handler to be executed mutiple times
+   * will cause the handler to be executed multiple times
    *
    * @param handler The code to be executed on unexpected shutdown.
    * The function may accept one argument, which is the actual error instance, which

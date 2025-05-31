@@ -31,7 +31,7 @@ export const EXTRA_ARGS = 'extraArgs';
 
 /**
  * If the parsed args do not contain any of these values, then we
- * will automatially inject the `server` subcommand.
+ * will automatically inject the `server` subcommand.
  */
 const NON_SERVER_ARGS = Object.freeze(
   new Set([SETUP_SUBCOMMAND, DRIVER_TYPE, PLUGIN_TYPE, SERVER_SUBCOMMAND, '-h', '--help', '-v', '--version'])

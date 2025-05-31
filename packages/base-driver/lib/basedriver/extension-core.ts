@@ -71,7 +71,7 @@ export class ExtensionCore {
     }
 
     // if the command module or method isn't part of our spec, reject
-    if (!this.bidiCommands[moduleName] || !this.bidiCommands[moduleName][methodName]) {
+    if (!(this.bidiCommands[moduleName]?.[methodName])) {
       throw new errors.UnknownCommandError();
     }
 

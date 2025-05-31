@@ -13,7 +13,7 @@ export class BaseItem<T extends Value, U extends Strongbox = Strongbox> implemen
   /**
    * {@inheritdoc Item.value}
    */
-  protected _value?: T | undefined;
+  protected _value?: T;
 
   /**
    * Parent Strongbox instance

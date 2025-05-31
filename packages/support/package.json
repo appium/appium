@@ -68,18 +68,18 @@
     "read-pkg": "5.2.0",
     "resolve-from": "5.0.0",
     "sanitize-filename": "1.6.3",
-    "semver": "7.7.1",
+    "semver": "7.7.2",
     "shell-quote": "1.8.2",
     "source-map-support": "0.5.21",
     "supports-color": "8.1.1",
-    "teen_process": "2.3.1",
-    "type-fest": "4.40.1",
+    "teen_process": "2.3.2",
+    "type-fest": "4.41.0",
     "uuid": "11.1.0",
     "which": "4.0.0",
     "yauzl": "3.2.0"
   },
   "optionalDependencies": {
-    "sharp": "0.34.1"
+    "sharp": "0.34.2"
   },
   "engines": {
     "node": "^14.17.0 || ^16.13.0 || >=18.0.0",

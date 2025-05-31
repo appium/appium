@@ -2,7 +2,7 @@
 
 ### What is this code of conduct for?
 
-Appium is a piece of technology, but **the core of the Appium community is the people in it**. As such, we are committed to providing a friendly, safe and welcoming environment for all, regardless of gender, gender identity and expression, sexual orientation, ability, physical appearance, body size, race, age, socioeconomic status, religion (or lack thereof), or other marginalized aspect of comunity members. We expect all members of the Appium community to abide by this Code of Conduct whenever interacting in Appium venues (pull requests, GitHub issues, 1-1 or group chat, meetups, conferences, etc...)
+Appium is a piece of technology, but **the core of the Appium community is the people in it**. As such, we are committed to providing a friendly, safe and welcoming environment for all, regardless of gender, gender identity and expression, sexual orientation, ability, physical appearance, body size, race, age, socioeconomic status, religion (or lack thereof), or other marginalized aspect of community members. We expect all members of the Appium community to abide by this Code of Conduct whenever interacting in Appium venues (pull requests, GitHub issues, 1-1 or group chat, meetups, conferences, etc...)
 
 ### Examples of inappropriate behavior
 

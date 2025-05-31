@@ -362,7 +362,7 @@ describe('basic', function () {
       });
     });
 
-    it('replaces senstive messages', async function() {
+    it('replaces sensitive messages', async function() {
       log.updateAsyncStorage({isSensitive: true}, true);
       log.log('verbose', 'test', markSensitive('log 1'));
       _.last(log.record).message.should.eql('**SECURE**');

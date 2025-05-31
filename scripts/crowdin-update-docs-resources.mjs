@@ -151,7 +151,7 @@ async function uploadDocumentsToStorage(matchedFiles) {
   let count = 0;
   for (const matchedFilePath of matchedFiles) {
     const crowdinPath = toCrowdinPath(matchedFilePath);
-    // Hashing is used to make sure we aways create the same storage for the same file path in Crowdin
+    // Hashing is used to make sure we always create the same storage for the same file path in Crowdin
     const storageName = toHash(crowdinPath);
     log.info(`Uploading '${crowdinPath}' to Crowdin storage (${++count} of ${matchedFiles.length})`);
     const storageData = await addStorage(storageName, matchedFilePath, DOCUMENT_CONTENT_TYPE);

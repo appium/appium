@@ -464,7 +464,7 @@ export class ExtensionConfig {
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getConfigProblems(extManifest, extName) {
-    // shoud override this method if special validation is necessary for this extension type
+    // should override this method if special validation is necessary for this extension type
     return [];
   }
 

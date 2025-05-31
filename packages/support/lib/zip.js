@@ -264,7 +264,7 @@ async function _extractEntryTo(zipFile, entry, destDir) {
   const dstPath = path.resolve(destDir, entry.fileName);
 
   // Create dest directory if doesn't exist already
-  if (/\/$/.test(entry.fileName)) {
+  if (entry.fileName.endsWith('/')) {
     if (!(await fs.exists(dstPath))) {
       await fs.mkdirp(dstPath);
     }

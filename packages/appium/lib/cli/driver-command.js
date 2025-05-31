@@ -109,7 +109,7 @@ export default class DriverCliCommand extends ExtensionCliCommand {
 
     if (!_.isEmpty(missingFields)) {
       throw new Error(
-        `Driver "${installSpec}" did not expose correct fields for compability ` +
+        `Driver "${installSpec}" did not expose correct fields for compatibility ` +
           `with Appium. Missing fields: ${JSON.stringify(missingFields)}`
       );
     }

@@ -236,7 +236,7 @@ export class JWProxy {
       }
       this.log.debug(`Got response with status ${status}: ${truncateBody(data)}`);
       isResponseLogged = true;
-      const isSessionCreationRequest = /\/session$/.test(url) && method === 'POST';
+      const isSessionCreationRequest = url.endsWith('/session') && method === 'POST';
       if (isSessionCreationRequest) {
         if (status === 200) {
           this.sessionId = data.sessionId || (data.value || {}).sessionId;

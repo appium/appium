@@ -77,12 +77,12 @@ export type LogLevel =
   | 'silent';
 
 export interface StyleObject {
-  fg?: string | undefined;
-  bg?: string | undefined;
-  bold?: boolean | undefined;
-  inverse?: boolean | undefined;
-  underline?: boolean | undefined;
-  bell?: boolean | undefined;
+  fg?: string;
+  bg?: string;
+  bold?: boolean;
+  inverse?: boolean;
+  underline?: boolean;
+  bell?: boolean;
 }
 
 export interface MessageObject {

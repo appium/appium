@@ -79,7 +79,7 @@ const TimeoutCommands: ITimeoutCommands = {
   setImplicitWait<C extends Constraints>(this: BaseDriver<C>, ms: number) {
     this.implicitWaitMs = ms;
     this.log.debug(`Set implicit wait to ${ms}ms`);
-    if (this.managedDrivers && this.managedDrivers.length) {
+    if (this.managedDrivers?.length) {
       this.log.debug('Setting implicit wait on managed drivers');
       for (const driver of this.managedDrivers) {
         if (_.isFunction(driver.setImplicitWait)) {
@@ -92,7 +92,7 @@ const TimeoutCommands: ITimeoutCommands = {
   setNewCommandTimeout<C extends Constraints>(this: BaseDriver<C>, ms: number) {
     this.newCommandTimeoutMs = ms;
     this.log.debug(`Set new command timeout to ${ms}ms`);
-    if (this.managedDrivers && this.managedDrivers.length) {
+    if (this.managedDrivers?.length) {
       this.log.debug('Setting new command timeout on managed drivers');
       for (const driver of this.managedDrivers) {
         if (_.isFunction(driver.setNewCommandTimeout)) {

@@ -150,14 +150,3 @@ function fetchHeaderValue(req, name) {
     ? req.headers[name][0]
     : req.headers[name];
 }
-
-/**
- * @param {import('express').Request} req
- * @param {string} name
- * @returns {string | undefined}
- */
-function fetchHeaderValue(req, name) {
-  return _.isArray(req.headers[name])
-    ? req.headers[name][0]
-    : req.headers[name];
-}

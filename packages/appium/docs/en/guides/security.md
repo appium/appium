@@ -87,29 +87,3 @@ Turn on all features _except_ `foo` for all drivers:
 ```bash
 appium --relaxed-security --deny-insecure=*:foo
 ```
-
-## Driver-scope security
-
-Since Appium server version `2.13`, it is possible to apply features on a per-driver basis. This
-can be achieved by prefixing each feature name with the `automationName` of the driver for which
-the feature should be applied. To apply a feature for all drivers, or to apply a server-level
-feature, the wildcard (`*`) prefix should be used.
-
-For example, the server could be started as follows:
-```bash
-appium --allow-insecure=uiautomator2:adb_shell,xcuitest:get_server_logs,*:record_audio
-```
-
-This would result in the following:
-
-* The `adb_shell` feature would be enabled only for the UiAutomator2 driver
-* The `get_server_logs` feature would be enabled only for the XCUITest driver
-* The `record_audio` feature would be enabled for all drivers
-
-Feature provided without an explicit prefix are equivalent to having the wildcard prefix.
-These prefix rules apply to both the `--allow-insecure` and `--deny-insecure` server arguments.
-
-!!! warning
-
-    Starting from Appium 3, the scope prefix is required, and features provided without a scope will
-    raise an error. Note that the behavior of the `--relaxed-security` flag remains unchanged.

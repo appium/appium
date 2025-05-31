@@ -55,12 +55,8 @@ might use. Here is an incomplete list of examples from some of Appium's official
 |`record_audio`|Allow recording of host machine audio inputs|XCUITest|
 |`execute_driver_script`| Allows to send a request which has multiple Appium commands.|Execute Driver Plugin|
 
-<<<<<<< HEAD
 Some insecure features operate on the server level, and do not require a driver session. Enabling
 these features requires using the wildcard prefix:
-=======
-Some insecure features operate on the server level, and do not require a driver session:
->>>>>>> 94a0e1604d5dc43acc48f5d663701540a8486b7e
 
 |<div style="width:12em">Feature Name</div>|Description|
 |------------|-----------|

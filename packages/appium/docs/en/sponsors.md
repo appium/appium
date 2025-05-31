@@ -38,7 +38,9 @@ contributors!
 
 ## Gold Sponsors
 
-<a href="https://opencollective.com/appium" target="_blank"><img src="https://opencollective.com/appium/tiers/gold-sponsor.svg?avatarHeight=100&button=false&random=1"/></a>
+<div class="sponsor-section">
+  <a href="https://jetify.com/" target="_blank"><img src="https://images.opencollective.com/jetify/415824c/avatar/64.png" alt="Jetify" /></a>
+</div>
 
 [Become a Gold Sponsor](https://opencollective.com/appium/contribute/gold-sponsor-72877/checkout?interval=month&amount=500&contributeAs=me)
 

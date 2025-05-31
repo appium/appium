@@ -19,12 +19,12 @@ export const COMMAND_URLS_CONFLICTS = [
   {
     commandNames: ['getWindowHandles', 'getWindowHandle'],
     jsonwpConverter(url) {
-      return /\/window$/.test(url)
+      return url.endsWith('/window')
         ? url.replace(/\/window$/, '/window_handle')
         : url.replace(/\/window\/handle(s?)$/, '/window_handle$1');
     },
     w3cConverter(url) {
-      return /\/window_handle$/.test(url)
+      return url.endsWith('/window_handle')
         ? url.replace(/\/window_handle$/, '/window')
         : url.replace(/\/window_handles$/, '/window/handles');
     },

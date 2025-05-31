@@ -16,7 +16,7 @@ const FAKE_DRIVER_CONSTRAINTS = /** @type {const} */ ({
 });
 
 /**
- * Constraints for {@linkcode FakeDriver}'s capabilites
+ * Constraints for {@linkcode FakeDriver}'s capabilities
  * @typedef {typeof FAKE_DRIVER_CONSTRAINTS} FakeDriverConstraints
  */
 

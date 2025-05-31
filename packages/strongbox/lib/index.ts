@@ -40,7 +40,7 @@ export interface Item<T extends Value> {
    *
    * @remarks A custom {@linkcode Item} meant to handle very large files should probably not implement this.
    */
-  value?: T | undefined;
+  value?: T;
 
   /**
    * Deletes the item.

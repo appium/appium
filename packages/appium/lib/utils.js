@@ -344,7 +344,7 @@ export function isPluginCommandArgs(args) {
  *
  * @param {4|6|null} family Either 4 to include ipv4 addresses only,
  * 6 to include ipv6 addresses only, or null to include all of them
- * @returns {os.NetworkInterfaceInfo[]} The list of matched interfcaes
+ * @returns {os.NetworkInterfaceInfo[]} The list of matched interfaces
  */
 export function fetchInterfaces (family = null) {
   let familyValue = null;

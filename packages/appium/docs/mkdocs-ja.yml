@@ -1,21 +1,81 @@
 INHERIT: ./base-mkdocs.yml
 site_url: https://appium.io/docs/ja
 edit_uri: edit/master/packages/appium/docs/ja
-site_description: The Appium automation project documentation
+site_description: Appium 自動化プロジェクトのドキュメント
 docs_dir: ja
 site_dir: site/docs/ja
 theme:
   language: ja
 nav:
-  - はじめに: index.md
-  - 導入:
-      - Appiumについて:
-          - Appiumの全体像: intro/index.md
-  - Command Reference:
-      - ../en/commands/base-driver.md
-      - ../en/commands/execute-driver-plugin.md
-      - ../en/commands/images-plugin.md
-      - ../en/commands/relaxed-caps-plugin.md
-      - ../en/commands/universal-xml-plugin.md
-  - 手引き:
-      - guides/migrating-1-to-2.md
+  - ようこそ: index.md
+  - ブログ: blog/index.md
+  - はじめに:
+      - intro/index.md
+      - 背景:
+          - intro/appium.md
+          - intro/drivers.md
+          - intro/clients.md
+          - intro/history.md
+  - クイックスタート:
+      - quickstart/index.md
+      - quickstart/requirements.md
+      - quickstart/install.md
+      - quickstart/uiauto2-driver.md
+      - テストを書く:
+          - quickstart/test-js.md
+          - quickstart/test-py.md
+          - quickstart/test-java.md
+          - quickstart/test-rb.md
+          - quickstart/test-dotnet.md
+      - quickstart/next-steps.md
+  - エコシステム:
+      - ecosystem/index.md
+      - ecosystem/drivers.md
+      - ecosystem/clients.md
+      - ecosystem/plugins.md
+      - ecosystem/tools.md
+  - CLI リファレンス:
+      - cli/index.md
+      - cli/args.md
+      - cli/env-vars.md
+      - cli/extensions.md
+      - cli/setup.md
+  - コマンドリファレンス:
+      - commands/index.md
+      - commands/base-driver.md
+      - commands/execute-driver-plugin.md
+      - commands/images-plugin.md
+      - commands/relaxed-caps-plugin.md
+      - commands/storage-plugin.md
+      - commands/universal-xml-plugin.md
+  - ガイド:
+      - 移行:
+          - guides/migrating-1-to-2.md
+      - サーバ/ドライバの設定:
+          - guides/managing-exts.md
+          - guides/branch-testing.md
+          - guides/config.md
+          - guides/security.md
+          - guides/log-filters.md
+          - guides/headers.md
+          - guides/grid.md
+          - guides/caching.md
+          - guides/tls.md
+      - セッションに関わる設定:
+          - guides/caps.md
+          - guides/settings.md
+          - guides/execute-methods.md
+          - guides/context.md
+          - guides/event-timing.md
+  - 他のリソース: resources.md
+  - 開発:
+      - developing/index.md
+      - developing/build-drivers.md
+      - developing/build-plugins.md
+      - developing/build-docs.md
+      - developing/build-doctor-checks.md
+      - developing/sensitive.md
+      - 開発者リファレンス:
+          - developing/config-system.md
+  - 貢献: contributing.md
+  - スポンサー: sponsors.md

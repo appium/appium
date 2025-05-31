@@ -44,16 +44,17 @@ contributors!
 
 ## Silver Sponsors
 
-<a href="https://opencollective.com/appium" target="_blank"><img src="https://opencollective.com/appium/tiers/silver-sponsor.svg?avatarHeight=80&button=false&random=1"/></a>
+<div class="sponsor-section">
+  <a href="https://magicpod.com/" target="_blank"><img src="https://images.opencollective.com/magicpod/722b7e4/avatar/64.png" alt="MagicPod" /></a>
+</div>
 
 [Become a Silver Sponsor](https://opencollective.com/appium/contribute/silver-sponsor-72876/checkout?interval=month&amount=250&contributeAs=me)
 
 ## Bronze Sponsors
 
 <div class="sponsor-section">
-  <a href="https://magicpod.com/" target="_blank"><img src="https://images.opencollective.com/magicpod/722b7e4/avatar/64.png" alt="MagicPod" /></a>
-  <a href="https://route4me.com/" target="_blank"><img src="../assets/images/sponsor-logo-route4me.png" alt="Route Planning and Route Mapping" /></a>
-  <a href="https://webdriver.io/" target="_blank"><img src="https://images.opencollective.com/webdriverio/bbdd6c3/logo/64.png" alt="WebdriverIO" /></a>
+  <a href="https://route4me.com/" target="_blank"><img src="https://images.opencollective.com/route4me/71fb6fa/avatar/64.png" alt="Route4Me" /></a>
+  <a href="https://webdriver.io/" target="_blank"><img src="https://images.opencollective.com/webdriverio/bbdd6c3/avatar/64.png" alt="WebdriverIO" /></a>
 </div>
 
 [Become a Bronze Sponsor](https://opencollective.com/appium/contribute/sponsors-70690/checkout?interval=month&amount=100&contributeAs=me)

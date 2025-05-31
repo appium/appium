@@ -231,7 +231,7 @@ function configureHttp({httpServer, reject, keepAliveTimeout, gracefulShutdownTi
       }, gracefulShutdownTimeout);
       httpServer.once('close', () => {
         log.info(
-          `Appium HTTP server has been succesfully closed after ` +
+          `Appium HTTP server has been successfully closed after ` +
           `${timer.getDuration().asMilliSeconds.toFixed(0)}ms`
         );
         clearTimeout(onTimeout);
@@ -309,7 +309,7 @@ export function normalizeBasePath(basePath) {
 
   // likewise, ensure the path prefix does always START with /, unless the path
   // is empty meaning no base path at all
-  if (basePath !== '' && basePath[0] !== '/') {
+  if (basePath !== '' && !basePath.startsWith('/')) {
     basePath = `/${basePath}`;
   }
 

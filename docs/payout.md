@@ -8,7 +8,7 @@ This documentation is a note for the opencollective payout.
 3. Type proper account name in `Who is being paid for this expense?`
     - The form depends on the target user
 4. Select `Next`
-5. Input expense info and complete the form. Then, the user will recieve the expense info.
+5. Input expense info and complete the form. Then, the user will receive the expense info.
     - Expense title: `<year-month> contribution payout`
         - e.g. `2024-07 contribution payout`
     - Description in "Set invoice details"

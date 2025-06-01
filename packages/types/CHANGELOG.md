@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.26.0](https://github.com/appium/appium/compare/@appium/types@0.25.3...@appium/types@0.26.0) (2025-06-01)
+
+
+### Features
+
+* **appium:** implement GET /appium/sessions and deprecate GET /sessions ([#21233](https://github.com/appium/appium/issues/21233)) ([5f6bdfc](https://github.com/appium/appium/commit/5f6bdfc5dfbddab1782a4a86b450c9654ddbd65f))
+
+
+
 ## [0.25.3](https://github.com/appium/appium/compare/@appium/types@0.25.2...@appium/types@0.25.3) (2025-04-25)
 
 **Note:** Version bump only for package @appium/types

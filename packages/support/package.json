@@ -1,6 +1,6 @@
 {
   "name": "@appium/support",
-  "version": "6.1.0",
+  "version": "6.1.1",
   "description": "Support libs used across appium packages",
   "keywords": [
     "automation",
@@ -41,9 +41,9 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/logger": "^1.7.0",
+    "@appium/logger": "^1.7.1",
     "@appium/tsconfig": "^0.3.5",
-    "@appium/types": "^0.25.3",
+    "@appium/types": "^0.26.0",
     "@colors/colors": "1.6.0",
     "archiver": "7.0.1",
     "axios": "1.9.0",

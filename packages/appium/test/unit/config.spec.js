@@ -143,7 +143,6 @@ describe('Config', function () {
           'v16.0.0',
           'v20.18.0',
           'v22.10.0',
-          'v23.0.0',
         ];
         for (const version of unsupportedVersions) {
           it(`should fail if node is ${version}`, function () {

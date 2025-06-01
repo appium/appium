@@ -1,0 +1,31 @@
+.md-source__fact--version {
+  display: none;
+}
+.md-source__fact:nth-child(1n + 2):before {
+  margin-left: 0 !important;
+}
+
+.appium-sponsor-thanks {
+  width: 100%;
+  margin: 0.5rem 0.6rem auto 0.6rem;
+  display: flex;
+  align-items: center;
+}
+
+.appium-sponsor-thanks img {
+  margin: auto 6px;
+  height: 40px;
+}
+
+.homepageSponsors {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin: 10px auto;
+  max-width: 800px;
+}
+
+.homepageSponsor {
+  flex: 1;
+}

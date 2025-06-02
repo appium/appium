@@ -22,11 +22,11 @@ ended before the release of Appium 2, which meant that even users on outdated No
 able to use it.
 
 Appium 3 drops support for outdated Node versions, and bumps the minimum required version to Node
-`20.9.0`, as well as the minimum `npm` version to `10`.
+`20.19.0`, as well as the minimum `npm` version to `10`.
 
 !!! info "Actions Needed"
 
-    Upgrade Node.js to `v20.9.0` or newer, and `npm` to `v10` or newer
+    Upgrade Node.js to `v20.19.0` or newer, and `npm` to `v10` or newer
 
 ### Deprecated Endpoints Removed
 

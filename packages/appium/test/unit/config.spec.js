@@ -141,6 +141,7 @@ describe('Config', function () {
           'v14.17.0',
           'v14.17.5',
           'v16.0.0',
+          'v20.18.0',
           'v22.10.0',
         ];
         for (const version of unsupportedVersions) {
@@ -153,23 +154,20 @@ describe('Config', function () {
       });
 
       describe('supported nodes', function () {
-        it('should succeed if node is 20.9+', function () {
+        it('should succeed if node is ^20.19.0', function () {
           // @ts-expect-error
-          process.version = 'v20.9.0';
+          process.version = 'v20.19.0';
           checkNodeOk.should.not.throw();
           // @ts-expect-error
-          process.version = 'v20.9.5';
+          process.version = 'v20.100.0';
           checkNodeOk.should.not.throw();
         });
-        it('should succeed if node is 22.11+', function () {
+        it('should succeed if node is 22.12+', function () {
           // @ts-expect-error
-          process.version = 'v22.11.0';
+          process.version = 'v22.12.0';
           checkNodeOk.should.not.throw();
           // @ts-expect-error
-          process.version = 'v22.11.5';
-          checkNodeOk.should.not.throw();
-          // @ts-expect-error
-          process.version = 'v23.0.0';
+          process.version = 'v100.0.0';
           checkNodeOk.should.not.throw();
         });
       });

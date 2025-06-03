@@ -69,4 +69,6 @@ export interface AppiumLogger {
    * @param {boolean} [replace=false] if true, replace the existing context info object(default: false)
    */
   updateAsyncContext(contextInfo: AppiumLoggerContext, replace?: boolean): void;
+
+  isSensitive(): boolean;
 }

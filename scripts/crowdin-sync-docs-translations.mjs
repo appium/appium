@@ -84,11 +84,23 @@ async function syncTranslatedDocuments(srcDir, dstDir) {
   }
 
   let count = 0;
+  const relativeTranslatedDocsPaths = [];
   for (const srcPath of srcTranslatedDocs) {
     const relativeTranslatedDocPath = path.relative(srcDir, srcPath);
+    relativeTranslatedDocsPaths.push(relativeTranslatedDocPath);
     const dstPath = path.join(dstDir, relativeTranslatedDocPath);
     log.info(`Synchronizing '${dstPath}' (${++count} of ${srcTranslatedDocs.length})`);
     await fs.mv(srcPath, dstPath, {mkdirp: true});
+  }
+
+  const dstTranslatedDocs = await walk(dstDir, DOCUMENTS_EXT);
+  for (const dstPath of dstTranslatedDocs) {
+    const relativeTranslatedDocPath = path.relative(dstDir, dstPath);
+    if (relativeTranslatedDocsPaths.includes(relativeTranslatedDocPath)) {
+      continue;
+    }
+    log.info(`Removing the obsolete document '${relativeTranslatedDocPath}'`);
+    await fs.rimraf(dstPath);
   }
 }
 

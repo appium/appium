@@ -29,16 +29,15 @@ who contribute a significant ongoing investment of funds to help the project att
 contributors!
 
 <a href="https://www.browserstack.com/browserstack-appium?utm_campaigncode=701OW00000AoUTQYA3&utm_medium=partnered&utm_source=appium">
-  <picture>
-    <source srcset="../assets/images/sponsor-logo-browserstack-dark.png" media="(prefers-color-scheme: dark)"/>
-    <source srcset="../assets/images/sponsor-logo-browserstack-light.png" media="(prefers-color-scheme: light)"/>
-    <img src="../assets/images/sponsor-logo-browserstack-dark.png" width="250" alt="Browserstack"/>
-  </picture>
+  <img src="/docs/en/latest/assets/images/sponsor-logo-browserstack-dark.png#only-dark" width="250" alt="BrowserStack" />
+  <img src="/docs/en/latest/assets/images/sponsor-logo-browserstack-light.png#only-light" width="250" alt="BrowserStack" />
 </a>
 
 ## Gold Sponsors
 
-<a href="https://opencollective.com/appium" target="_blank"><img src="https://opencollective.com/appium/tiers/gold-sponsor.svg?avatarHeight=100&button=false&random=1"/></a>
+<div class="sponsor-section">
+  <a href="https://jetify.com/" target="_blank"><img src="https://images.opencollective.com/jetify/415824c/avatar/64.png" alt="Jetify" /></a>
+</div>
 
 [Become a Gold Sponsor](https://opencollective.com/appium/contribute/gold-sponsor-72877/checkout?interval=month&amount=500&contributeAs=me)
 

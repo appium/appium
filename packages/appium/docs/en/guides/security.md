@@ -27,9 +27,20 @@ Appium when starting it from the command line:
 
 |<div style="width:10em">Parameter</div>|Description|
 |---------------------------------------|-----------|
-|`--relaxed-security`|Turns on _all_ insecure features (unless blocked by `--deny-insecure`; see below)|
-|`--allow-insecure`|Turns on _only_ specified features. Features can be provided as a comma-separated list of feature names, or in the [Appium Configuration file](./config.md). For example, `--allow-insecure=adb_shell` will cause _only_ the ADB shell execution feature to be enabled. Has no effect when used in combination with `--relaxed-security`.|
-|`--deny-insecure`|Explicitly turns _off_ specified features, overriding `--relaxed-security` and any features specified using `--allow-insecure`. Like `--allow-insecure`, features can be provided as a comma-separated list of feature names, or in the [Appium Configuration file](./config.md).|
+|`--relaxed-security`|Turns on _all_ insecure features, except those blocked by `--deny-insecure`|
+|`--allow-insecure`|Turns on _only_ specified features, except those blocked by `--deny-insecure`. Has no effect when used in combination with `--relaxed-security`|
+|`--deny-insecure`|Explicitly turns _off_ specified features, overriding `--relaxed-security` and `--allow-insecure`|
+
+All of the above arguments can also be specified in the [Appium Configuration file](./config.md).
+
+Features passed to `--allow-insecure`/`--deny-insecure` must be specified as a comma-separated list,
+and each feature in the list must additionally include a prefix, indicating the driver to which the
+feature should apply. The prefix can be either the driver's `automationName`, or the wildcard (`*`)
+symbol, if the feature should be applied to all drivers. The prefix and feature name are separated
+using the colon character (`:`).
+
+For example, `first:foo` refers to the `foo` feature for the `first` driver, whereas `*:bar` refers
+to the `bar` feature for all drivers.
 
 ## Insecure Features
 
@@ -53,7 +64,7 @@ these features requires using the wildcard prefix:
 
 ## Examples
 
-To turn on the `get_server_logs` feature, the Appium server could be started like this:
+Turn on the `foo` feature only for the `first` driver:
 
 ```bash
 appium --allow-insecure=first:foo

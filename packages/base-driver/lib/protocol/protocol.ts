@@ -21,7 +21,6 @@ import type { BaseDriver } from '../basedriver/driver';
 import type { Request, Response, Application } from 'express';
 import type { MultidimensionalReadonlyArray } from 'type-fest';
 import type { RouteConfiguringFunction } from '../express/server';
-import {markSensitive} from '@appium/support/lib/logging';
 
 export const CREATE_SESSION_COMMAND = 'createSession';
 export const DELETE_SESSION_COMMAND = 'deleteSession';

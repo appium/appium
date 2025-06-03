@@ -239,5 +239,16 @@ describe('proxy', function () {
       res.sentCode.should.equal(100);
       res.sentBody.should.eql({value: {message: 'chrome not reachable'}});
     });
+    it('should not proxy post request with invalid body', async function () {
+      let j = mockProxy({sessionId: '123'});
+      let [req, res] = buildReqRes('/nochrome', 'POST', 'invalid request');
+      await j.proxyReqRes(req, res);
+      res.sentCode.should.equal(500);
+      res.sentBody.should.have.property('value');
+      res.sentBody.should.have.nested.property('value').includes({
+        error: 'unknown error',
+        message: 'An unknown server-side error occurred while processing the command. Original error: Cannot interpret the request body as valid JSON. Check the server log for more details.'
+      });
+    });
   });
 });

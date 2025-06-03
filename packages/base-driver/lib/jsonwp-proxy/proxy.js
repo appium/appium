@@ -203,10 +203,12 @@ export class JWProxy {
       if (typeof body !== 'object') {
         try {
           reqOpts.data = JSON.parse(body);
-        } catch {
-          // TODO review the format to remove teh `:` when no body is provided
+        } catch (error) {
+          this.log.warn('Invalid body payload (%s): %s', error.message, logger.markSensitive(truncateBody(body)));
+
           throw new Error(
-            `Cannot interpret the request body as valid JSON:`, logger.log.isSensitive() ? body : '');
+            'Cannot interpret the request body as valid JSON. Check the server log for more details.'
+          );
         }
       } else {
         reqOpts.data = body;

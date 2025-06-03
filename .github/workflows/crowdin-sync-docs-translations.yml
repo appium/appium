@@ -4,10 +4,8 @@ name: Sync Crowdin Docs Translations
 
 on:
   workflow_dispatch:
-  # TODO: Uncomment the scheduler as soon as we have existing translations
-  # imported to Crowdin
-  # schedule:
-  #   - cron: 0 0 * * 0
+  schedule:
+    - cron: 0 0 * * *
 
 jobs:
   build:

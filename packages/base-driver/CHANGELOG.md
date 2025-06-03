@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.18.0](https://github.com/appium/appium/compare/@appium/base-driver@9.17.0...@appium/base-driver@9.18.0) (2025-06-01)
+
+
+### Features
+
+* **appium:** implement GET /appium/sessions and deprecate GET /sessions ([#21233](https://github.com/appium/appium/issues/21233)) ([5f6bdfc](https://github.com/appium/appium/commit/5f6bdfc5dfbddab1782a4a86b450c9654ddbd65f))
+
+
+
 ## [9.17.0](https://github.com/appium/appium/compare/@appium/base-driver@9.16.4...@appium/base-driver@9.17.0) (2025-04-25)
 
 

@@ -50,10 +50,6 @@ export function getLogger(prefix = null) {
       // Older Appium dependencies may not have 'updateAsyncStorage'
       this.unwrap().updateAsyncStorage?.(contextInfo, replace);
     },
-    isSensitive() {
-      const { isSensitive } = this._asyncStorage.getStore() ?? {};
-      return isSensitive;
-    }
   };
   // allow access to the level of the underlying logger
   Object.defineProperty(wrappedLogger, 'level', {

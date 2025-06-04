@@ -203,8 +203,11 @@ export class JWProxy {
       if (typeof body !== 'object') {
         try {
           reqOpts.data = JSON.parse(body);
-        } catch {
-          throw new Error(`Cannot interpret the request body as valid JSON: ${truncateBody(body)}`);
+        } catch (error) {
+          this.log.warn('Invalid body payload (%s): %s', error.message, logger.markSensitive(truncateBody(body)));
+          throw new Error(
+            'Cannot interpret the request body as valid JSON. Check the server log for more details.'
+          );
         }
       } else {
         reqOpts.data = body;
@@ -212,8 +215,9 @@ export class JWProxy {
     }
 
     this.log.debug(
-      `Proxying [${method} ${url || '/'}] to [${method} ${newUrl}] ` +
-        (reqOpts.data ? `with body: ${truncateBody(reqOpts.data)}` : 'with no body')
+      `Proxying [%s %s] to [%s %s] with ${reqOpts.data ? 'body: %s' : '%s body'}`,
+      method, url || '/', method, newUrl,
+      reqOpts.data ? logger.markSensitive(truncateBody(reqOpts.data)) : 'no'
     );
 
     const throwProxyError = (error) => {

@@ -394,9 +394,9 @@ function buildHandler(
 
       // run the driver command wrapped inside the argument validators
       getLogger(driver, req.params.sessionId).debug(
-        `Calling ` +
-          `${driver.constructor.name}.${spec.command}() with args: ` +
-          _.truncate(JSON.stringify(args), {length: MAX_LOG_BODY_LENGTH})
+        `Calling %s.%s() with args: %s`,
+        driver.constructor.name, spec.command,
+        logger.markSensitive(_.truncate(JSON.stringify(args), {length: MAX_LOG_BODY_LENGTH}))
       );
 
       if (didPluginOverrideProxy) {

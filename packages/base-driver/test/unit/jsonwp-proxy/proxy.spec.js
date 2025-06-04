@@ -247,8 +247,12 @@ describe('proxy', function () {
       res.sentBody.should.have.property('value');
       res.sentBody.should.have.nested.property('value').includes({
         error: 'unknown error',
-        message: 'An unknown server-side error occurred while processing the command. Original error: Cannot interpret the request body as valid JSON. Check the server log for more details.'
+        message: 'Cannot interpret the request body as valid JSON. Check the server log for more details.'
       });
+      res.sentBody.should.have.nested.property('value.stacktrace')
+        .to.match(/^UnknownError: Cannot interpret the request body as valid JSON\. Check the server log for more details.\n.*/);
+
+
     });
   });
 });

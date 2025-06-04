@@ -175,10 +175,10 @@ export function driverE2ETestSuite(DriverClass, defaultCaps = {}) {
           sessionIds.push(sessionId);
           times++;
         } while (times < 2);
-        _.uniq(sessionIds).length.should.equal(1);
+        should(_.uniq(sessionIds).length).equal(1);
 
         const {status, data} = await endSession(sessionIds[0]);
-        status.should.equal(200);
+        should(status).equal(200);
         should.equal(data.value, null);
       });
 
@@ -207,10 +207,10 @@ export function driverE2ETestSuite(DriverClass, defaultCaps = {}) {
           times++;
         } while (times < 2);
         const sessionIds = _.map(await B.all(reqs), 'sessionId');
-        _.uniq(sessionIds).length.should.equal(1);
+        should(_.uniq(sessionIds).length).equal(1);
 
         const {status, data} = await endSession(sessionIds[0]);
-        status.should.equal(200);
+        should(status).equal(200);
         should.equal(data.value, null);
       });
 
@@ -221,14 +221,14 @@ export function driverE2ETestSuite(DriverClass, defaultCaps = {}) {
           },
         });
 
-        status.should.equal(200);
+        should(status).equal(200);
         should.exist(data.value.sessionId);
-        data.value.capabilities.platformName.should.equal(defaultCaps.platformName);
-        data.value.capabilities.deviceName.should.equal(defaultCaps['appium:deviceName']);
+        should(data.value.capabilities.platformName).equal(defaultCaps.platformName);
+        should(data.value.capabilities.deviceName).equal(defaultCaps['appium:deviceName']);
 
         ({status, data} = await endSession(/** @type {string} */ (d.sessionId)));
 
-        status.should.equal(200);
+        should(status).equal(200);
         should.equal(data.value, null);
         should.equal(d.sessionId, null);
       });
@@ -268,7 +268,7 @@ export function driverE2ETestSuite(DriverClass, defaultCaps = {}) {
 
       it('should set a default commandTimeout', async function () {
         let newSession = await startTimeoutSession();
-        d.newCommandTimeoutMs.should.be.above(0);
+        should(d.newCommandTimeoutMs).be.above(0);
         await endSession(newSession.sessionId);
       });
 
@@ -294,8 +294,8 @@ export function driverE2ETestSuite(DriverClass, defaultCaps = {}) {
           using: 'name',
           value: 'foo',
         });
-        (Date.now() - start).should.be.above(150);
-        value.should.eql(['foo']);
+        should(Date.now() - start).be.above(150);
+        should(value).eql(['foo']);
         await endSession(newSession.sessionId);
       });
 
@@ -309,7 +309,7 @@ export function driverE2ETestSuite(DriverClass, defaultCaps = {}) {
         });
         await B.delay(400);
         const value = await getSession(/** @type {string} */ (d.sessionId));
-        value.platformName?.should.equal(defaultCaps.platformName);
+        should(value.platformName).equal(defaultCaps.platformName);
         const resp = (await endSession(newSession.sessionId)).data.value;
         should.equal(resp, null);
 
@@ -328,10 +328,10 @@ export function driverE2ETestSuite(DriverClass, defaultCaps = {}) {
         });
         await B.delay(400);
         const value = await getSession(/** @type {string} */ (sessionId));
-        /** @type {string} */ (value.error).should.equal('invalid session id');
+        should(/** @type {string} */ (value.error)).equal('invalid session id');
         should.equal(d.sessionId, null);
         const resp = (await endSession(newSession.sessionId)).data.value;
-        /** @type {string} */ (/** @type { {error: string} } */ (resp).error).should.equal(
+        should(/** @type {string} */ (/** @type { {error: string} } */ (resp).error)).equal(
           'invalid session id'
         );
       });
@@ -340,7 +340,7 @@ export function driverE2ETestSuite(DriverClass, defaultCaps = {}) {
         // @ts-expect-error
         should.not.exist(d.noCommandTimer);
         let newSession = await startTimeoutSession(0.25);
-        newSession.sessionId.should.equal(d.sessionId);
+        should(newSession.sessionId).equal(d.sessionId);
         // @ts-expect-error
         should.exist(d.noCommandTimer);
         await endSession(newSession.sessionId);
@@ -357,13 +357,13 @@ export function driverE2ETestSuite(DriverClass, defaultCaps = {}) {
         d.settings.getSettings().ignoreUnimportantViews.should.be.false;
       });
       it('should not reject when `updateSettings` method is not provided', async function () {
-        await d.settings.update({ignoreUnimportantViews: true}).should.not.be.rejected;
+        await should(d.settings.update({ignoreUnimportantViews: true})).not.be.rejected();
       });
       it('should reject for invalid update object', async function () {
-        await d.settings
+        await should(
           // @ts-expect-error
-          .update('invalid json')
-          .should.be.rejectedWith('JSON');
+          d.settings.update('invalid json')
+        ).be.rejectedWith('JSON');
       });
     });
 

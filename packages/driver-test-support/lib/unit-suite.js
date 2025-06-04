@@ -344,7 +344,7 @@ export function driverUnitTestSuite(
           },
           firstMatch: [{}],
         };
-        expect(await d.createSession(newCaps)).to.be.rejectedWith(/noReset.+fullReset/);
+        await expect(d.createSession(newCaps)).to.be.rejectedWith(/noReset.+fullReset/);
       });
     });
 

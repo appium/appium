@@ -205,7 +205,6 @@ export class JWProxy {
           reqOpts.data = JSON.parse(body);
         } catch (error) {
           this.log.warn('Invalid body payload (%s): %s', error.message, logger.markSensitive(truncateBody(body)));
-
           throw new Error(
             'Cannot interpret the request body as valid JSON. Check the server log for more details.'
           );

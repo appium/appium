@@ -12,6 +12,7 @@ import {
   ORIGINAL_MKDOCS_CONFIG,
   CROWIN_MKDOCS_CONFIG,
 } from './crowdin-common.mjs';
+import _ from 'lodash';
 
 const BUILD_TIMEOUT_MS = 1000 * 60 * 10;
 const BUILD_STATUS = {
@@ -78,17 +79,26 @@ async function downloadTranslations(buildId, dstPath) {
  * @returns {Promise<void>}
  */
 async function syncTranslatedDocuments(srcDir, dstDir) {
-  const srcTranslatedDocs = await walk(srcDir, DOCUMENTS_EXT);
+  const srcTranslatedDocs = (await walk(srcDir, DOCUMENTS_EXT)).map((p) => path.relative(srcDir, p));
   if (srcTranslatedDocs.length === 0) {
     return;
   }
 
   let count = 0;
-  for (const srcPath of srcTranslatedDocs) {
-    const relativeTranslatedDocPath = path.relative(srcDir, srcPath);
-    const dstPath = path.join(dstDir, relativeTranslatedDocPath);
-    log.info(`Synchronizing '${dstPath}' (${++count} of ${srcTranslatedDocs.length})`);
-    await fs.mv(srcPath, dstPath, {mkdirp: true});
+  for (const relativePath of srcTranslatedDocs) {
+    log.info(`Synchronizing '${relativePath}' (${++count} of ${srcTranslatedDocs.length})`);
+    await fs.mv(
+      path.join(srcDir, relativePath),
+      path.join(dstDir, relativePath),
+      {mkdirp: true}
+    );
+  }
+
+  const dstDocs = (await walk(dstDir, DOCUMENTS_EXT)).map((p) => path.relative(dstDir, p));
+  const obsoleteDocs = _.difference(dstDocs, srcTranslatedDocs);
+  for (const relativePath of obsoleteDocs) {
+    log.info(`Removing the obsolete document '${relativePath}'`);
+    await fs.rimraf(path.join(dstDir, relativePath));
   }
 }
 

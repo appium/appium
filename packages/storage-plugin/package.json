@@ -48,7 +48,7 @@
     "lru-cache": "11.1.0",
     "rimraf": "6.0.1",
     "source-map-support": "0.5.21",
-    "ws": "8.17.1"
+    "ws": "8.18.2"
   },
   "peerDependencies": {
     "appium": "^2.0.0 || ^3.0.0-beta.0"

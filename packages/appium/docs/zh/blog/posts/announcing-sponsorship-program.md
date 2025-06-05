@@ -13,13 +13,13 @@ some of the details.
 
 <!-- more -->
 
-First of all, the details and fine print will always be available at Appium's [Governance
-document](https://github.com/appium/appium/blob/master/GOVERNANCE.md), which outlines how the
+First of all, the details and fine print will always be available at Appium's Governance
+document, which outlines how the
 project is run, who makes project decisions, etc... This document will be kept up to date with the
 latest details of the program, so that's the place to bookmark for reference!
 
-As of now, Appium has opened up sponsorship opportunities via our [OpenCollective
-page](https://opencollective.com/appium). OpenCollective is a service which allows people to donate
+As of now, Appium has opened up sponsorship opportunities via our OpenCollective
+page. OpenCollective is a service which allows people to donate
 to open source groups. We've defined a number of giving tiers for donations, within a very wide
 range, and welcome any financial amount with gratitude! Based on the donation tier, sponsorship
 comes with a variety of benefits, including recognition at different places in the Appium repo,

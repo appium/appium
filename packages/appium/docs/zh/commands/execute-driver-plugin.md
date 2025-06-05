@@ -1,22 +1,22 @@
-# 插件: execute-driver
+# Plugin: execute-driver
 
 ### `executeDriverScript`
 
 `POST` **`/session/:sessionId/appium/execute_driver`**
 
-在插件中执行命令
+Implementation of a command within a plugin
 
-至少，`D`必须是`ExternalDriver`，但插件可以更严格地限制它支持哪些驱动程序。
+At minimum, `D` must be `ExternalDriver`, but a plugin can be more narrow about which drivers it supports.
 
 <!-- comment source: method-signature -->
 
-#### 参数
+#### Parameters
 
-| 名字 | 类型 |
-| :------ | :------ |
+| Name     | Type                                                                                                                                                        |
+| :------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `script` | [script: string, scriptType: string, timeoutMs: number] |
-| `type?` | [script: string, scriptType: string, timeoutMs: number] |
+| `type?`  | [script: string, scriptType: string, timeoutMs: number] |
 
-#### 响应
+#### Response
 
 `unknown`

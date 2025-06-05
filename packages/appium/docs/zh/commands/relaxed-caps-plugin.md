@@ -1,27 +1,27 @@
-# 插件: relaxed-caps
+# Plugin: relaxed-caps
 
 ### `createSession`
 
 `POST` **`/session`**
 
-开始新的自动化会话
+Start a new automation session
 
-**`请参阅`**
+**`See`**
 
 [https://w3c.github.io/webdriver/#new-session](https://w3c.github.io/webdriver/#new-session)
 
 <!-- comment source: multiple -->
 
-#### 参数
+#### Parameters
 
-| 名字 | 类型 | 描述 |
-| :------ | :------ | :------ |
-| `desiredCapabilities?` | `any` | 新的会话功能 |
-| `requiredCapabilities?` | `any` | 另一个可以发送新会话功能的地方（通常未定义） |
-| `capabilities?` | `any` | 另一个可以发送新会话功能的地方（通常未定义） |
+| Name                    | Type  | Description                                                                                            |
+| :---------------------- | :---- | :----------------------------------------------------------------------------------------------------- |
+| `desiredCapabilities?`  | `any` | the new session capabilities                                                                           |
+| `requiredCapabilities?` | `any` | another place the new session capabilities could be sent (typically left undefined) |
+| `capabilities?`         | `any` | another place the new session capabilities could be sent (typically left undefined) |
 
-#### 响应
+#### Response
 
 `any`
 
-所创建会话的能力对象
+The capabilities object representing the created session

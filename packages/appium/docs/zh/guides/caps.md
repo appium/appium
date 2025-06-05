@@ -12,7 +12,7 @@ The W3C WebDriver spec's [section on Capabilities](https://w3c.github.io/webdriv
 identifies a small set of 10 standard capabilities, including the following:
 
 | Capability Name  | Type     | Description                                    |
-|------------------|----------|------------------------------------------------|
+| ---------------- | -------- | ---------------------------------------------- |
 | `browserName`    | `string` | The name of the browser to launch and automate |
 | `browserVersion` | `string` | The specific version of the browser            |
 | `platformName`   | `string` | The type of platform hosting the browser       |
@@ -31,23 +31,24 @@ Here is a list of all the globally-recognized Appium capabilities:
 
 !!! info
 
-    Individual drivers and plugins can support other capabilities, so refer to their documentation
-    for lists ofspecific capability names. Some drivers may also not support all of these capabilities
+```
+Individual drivers and plugins can support other capabilities, so refer to their documentation
+for lists of specific capability names. Some drivers may also not support all of these capabilities
+```
 
-| <div style="width:12em">Capability</div>   | Type      | Required? | Description  |
-|--------------------------------------------|-----------|-----------|----------------------------|
-| `platformName`                             | `string`  | yes       | The type of platform hosting the app or browser |
-| `appium:automationName`                    | `string`  | yes       | The name of the Appium driver to use |
-| `browserName`                              | `string`  | no        | The name of the browser to launch and automate, if the driver supports web browsers as a special case |
-| `appium:app`                               | `string`  | no        | The path to an installable application |
-| `appium:deviceName`                        | `string`  | no        | The name of a particular device to automate, e.g., `iPhone 14` (currently only actually useful for specifying iOS simulators, since in other situations it's typically recommended to use a specific device id via the `appium:udid` capability). |
-| `appium:platformVersion`                   | `string`  | no        | The version of a platform, e.g., for iOS, `16.0` |
-| `appium:newCommandTimeout`                 | `number`  | no        | The number of seconds the Appium server should wait for clients to send commands before deciding that the client has gone away and the session should shut down |
-| `appium:noReset`                           | `boolean` | no        | If true, instruct an Appium driver to avoid its usual reset logic during session start and cleanup (default `false`) |
-| `appium:fullReset`                         | `boolean` | no        | If true, instruct an Appium driver to augment its usual reset logic with additional steps to ensure maximum environmental reproducibility (default `false`) |
-| `appium:eventTimings`                      | `boolean` | no        | If true, instruct an Appium driver to collect [Event Timings](./event-timing.md) (default `false`) |
-| `appium:printPageSourceOnFindFailure`      | `boolean` | no        | If true, collect the page source and print it to the Appium log whenever a request to find an element fails (default `false`) |
-
+| <div style="width:12em">Capability</div> | Type      | Required? | Description                                                                                                                                                                                                                                                                                                          |
+| ---------------------------------------- | --------- | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `platformName`                           | `string`  | yes       | The type of platform hosting the app or browser                                                                                                                                                                                                                                                                      |
+| `appium:automationName`                  | `string`  | yes       | The name of the Appium driver to use                                                                                                                                                                                                                                                                                 |
+| `browserName`                            | `string`  | no        | The name of the browser to launch and automate, if the driver supports web browsers as a special case                                                                                                                                                                                                                |
+| `appium:app`                             | `string`  | no        | The path to an installable application                                                                                                                                                                                                                                                                               |
+| `appium:deviceName`                      | `string`  | no        | The name of a particular device to automate, e.g., `iPhone 14` (currently only actually useful for specifying iOS simulators, since in other situations it's typically recommended to use a specific device id via the `appium:udid` capability). |
+| `appium:platformVersion`                 | `string`  | no        | The version of a platform, e.g., for iOS, `16.0`                                                                                                                                                                                                                                     |
+| `appium:newCommandTimeout`               | `number`  | no        | The number of seconds the Appium server should wait for clients to send commands before deciding that the client has gone away and the session should shut down. `60` seconds by default. Setting it to zero disables the timer.                                     |
+| `appium:noReset`                         | `boolean` | no        | If true, instruct an Appium driver to avoid its usual reset logic during session start and cleanup (default `false`)                                                                                                                                                                              |
+| `appium:fullReset`                       | `boolean` | no        | If true, instruct an Appium driver to augment its usual reset logic with additional steps to ensure maximum environmental reproducibility (default `false`)                                                                                                                                       |
+| `appium:eventTimings`                    | `boolean` | no        | If true, instruct an Appium driver to collect [Event Timings](./event-timing.md) (default `false`)                                                                                                                                                                                                |
+| `appium:printPageSourceOnFindFailure`    | `boolean` | no        | If true, collect the page source and print it to the Appium log whenever a request to find an element fails (default `false`)                                                                                                                                                                     |
 
 Some drivers place more complex constraints on capabilities as a group. For example, while the
 `appium:app` and `browserName` capabilities are listed above as optional, if you want to launch
@@ -58,14 +59,26 @@ will document how it interprets these capabilities and any other platform-specif
 
 !!! note
 
-    Capabilities are like parameters used when starting a session. After the capabilities are sent
-    and the session is started, they cannot be changed. If a driver supports updating aspects of
-    its behaviour in the course of a session, it will provide a [Setting](./settings.md) for this
-    purpose instead of, or in addition to, a capability.
+```
+Capabilities are like parameters used when starting a session. After the capabilities are sent
+and the session is started, they cannot be changed. If a driver supports updating aspects of
+its behaviour in the course of a session, it will provide a [Setting](./settings.md) for this
+purpose instead of, or in addition to, a capability.
+```
 
 Each Appium client has its own way of constructing capabilities and starting a session. For
 examples of doing this in each client library, head to the [Ecosystem](../ecosystem/index.md) page
 and click through to the appropriate client documentation.
+
+## BiDi Protocol Support
+
+Appium supports [WebDriver BiDi](https://w3c.github.io/webdriver-bidi/) protocol since base–driver 9.5.0.
+The actual behavior depends on individual drivers while the Appium and the baseｰdriver support the protocol.
+Please make sure if a driver supports the protocol and what kind of commands/events it supports in the documentation.
+
+| Capability Name | Type      | Description                                             |
+| --------------- | --------- | ------------------------------------------------------- |
+| `webSocketUrl`  | `boolean` | To enable BiDi protocol in the session. |
 
 ## Using `appium:options` to Group Capabilities
 
@@ -91,8 +104,10 @@ your client documentation for further examples on how to achieve this.
 
 !!! warning
 
-    If you include the same capabilities both inside and outside of `appium:options`, the values
-    inside of `appium:options` take precedence.
+```
+If you include the same capabilities both inside and outside of `appium:options`, the values
+inside of `appium:options` take precedence.
+```
 
 ## Always-Match and First-Match Capabilities
 
@@ -108,9 +123,11 @@ creates in response to a new session request. This is through the concept of "al
 
 !!! note
 
-    Check out the [spec itself](https://w3c.github.io/webdriver/#processing-capabilities) or
-    a [summarized version](https://github.com/jlipps/simple-wd-spec#processing-capabilities) for
-    a more in-depth description of how capabilities are processed.
+```
+Check out the [spec itself](https://w3c.github.io/webdriver/#processing-capabilities) or
+a [summarized version](https://github.com/jlipps/simple-wd-spec#processing-capabilities) for
+a more in-depth description of how capabilities are processed.
+```
 
 In practice, use of first-match capabilities is not necessary or recommended for use with Appium.
 Instead, we recommend that you define the explicit set of capabilities you want the Appium
@@ -126,8 +143,10 @@ the documentation for your client library to see examples of how it works.
 
 !!! warning
 
-    This section is not intended for end-users of Appium; it is intended for developers building
-    Appium-compatible cloud services.
+```
+This section is not intended for end-users of Appium; it is intended for developers building
+Appium-compatible cloud services.
+```
 
 When managing an Appium cloud, your users may wish to target various independent versions of Appium
 drivers and plugins. It is of course up to each service provider how they wish to implement the
@@ -145,12 +164,12 @@ vendor prefix (so for HeadSpin it would be `headspin`, Sauce Labs it would be `s
 BrowserStack it would be `browserstack`, to name just a few examples). The `$cloud:appiumOptions`
 capability would itself be a JSON object, with the following internal keys:
 
-| <div style="width:10em">Capability</div> | Usage  | Example |
-| ---------------------------------------- | ------ | ------- |
-| `version`           | The version of the Appium server that is used to host and manage drivers. If omitted, the behavior is left up to the provider, but the recommendation would be to provide the latest official version. | `2.0.0` |
-| `automationVersion` | The version of the driver (as specified by `appium:automationName`) that should be used. | `1.55.2` |
-| `automation`        | The name of a custom driver to use (see below for more info). This would override `appium:automationName` and `$cloud:automationVersion`. | `{"name": "@org/custom-driver", "source": "github", "package": "custom-driver"}` |
-| `plugins`           | The list of plugins (and potentially versions of plugins) that should be activated (see below for more info). | `["images", "universal-xml"]` |
+| <div style="width:10em">Capability</div> | Usage                                                                                                                                                                                                                                  | Example                                                                          |
+| ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `version`                                | The version of the Appium server that is used to host and manage drivers. If omitted, the behavior is left up to the provider, but the recommendation would be to provide the latest official version. | `2.0.0`                                                                          |
+| `automationVersion`                      | The version of the driver (as specified by `appium:automationName`) that should be used.                                                                                                            | `1.55.2`                                                                         |
+| `automation`                             | The name of a custom driver to use (see below for more info). This would override `appium:automationName` and `$cloud:automationVersion`.                                           | `{"name": "@org/custom-driver", "source": "github", "package": "custom-driver"}` |
+| `plugins`                                | The list of plugins (and potentially versions of plugins) that should be activated (see below for more info).                                                                    | `["images", "universal-xml"]`                                                    |
 
 ### Basic example
 

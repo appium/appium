@@ -12,7 +12,9 @@ two basic strategies: using Appium's extension CLI interface, or managing extens
 
 !!! note
 
-    Other package managers are not currently supported.
+```
+Other package managers are not currently supported.
+```
 
 ## Using Appium's Extension CLI
 
@@ -61,10 +63,10 @@ like any other dependency. Basically, whenever you run Appium, if you have not e
 `APPIUM_HOME`, it will:
 
 1. Try to determine whether the _current directory_ is inside an `npm` package.
-1. If so, it will check whether `appium` is a dependency (dev, prod, or peer) in the project's
-   `package.json`
-1. If so, _unless you have specified `APPIUM_HOME` in your environment_, Appium will ignore load
-   drivers and plugins defined in that `package.json` file instead.
+2. If so, it will check whether `appium` is a dependency (dev, prod, or peer) in the project's
+  `package.json`
+3. If so, _unless you have specified `APPIUM_HOME` in your environment_, Appium will ignore load
+  drivers and plugins defined in that `package.json` file instead.
 
 This means you are freely able to add Appium drivers and plugins as regular package dependencies or
 dev dependencies. For example, if your project has a `package.json` which includes the following:
@@ -82,6 +84,6 @@ Then, if you run `npx appium` inside your project, Appium will detect that it is
 the project, and will load the XCUITest driver which is also listed as a dev dependency for the
 project.
 
-This strategy is *only* recommended if you are already using `npm` for your project.
+This strategy is _only_ recommended if you are already using `npm` for your project.
 Otherwise, it is recommended that you use Appium's Extension CLI and, if necessary, adjust
 `APPIUM_HOME` to change the location of stored extensions.

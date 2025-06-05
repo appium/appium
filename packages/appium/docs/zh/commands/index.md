@@ -1,22 +1,27 @@
 ---
 hide:
   - toc
-
-title: 命令简介
+title: Intro to Commands
 ---
 
-在这里，您可以找到Appium主模块通过其基本驱动程序公开的各种命令，以及几个插件中可用的命令。
+Here you can find various commands exposed by the main Appium module through its base driver, as
+well as the commands available in several plugins.
 
-!!! 注意
+!!! note
 
-    Appium基本驱动程序只公开少数几个命令，因为它本身不是为单独使用而设计的。
-    请参阅您的[Appium驱动程序](../ecosystem/drivers.md)的文档，了解它公开的命令
-    然后查阅您的[Appium客户端](../ecosystem/clients.md)文档，了解该命令的确切语法。
-    
-命令列表可以在此处找到：
+```
+The Appium base driver only exposes a few commands, as it is not meant to be used on its own.
+Please refer to the documentation of your [Appium driver](../ecosystem/drivers.md) to learn
+about the commands it exposes, and then check your [Appium client](../ecosystem/clients.md)
+documentation for the exact syntax of that command.
+```
 
-* [基础驱动程序](./base-driver.md)
-* [执行驱动程序插件](./execute-driver-plugin.md)
-* [图片插件](./images-plugin.md)
-* [宽松能力插件](./relaxed-caps-plugin.md)
-* [通用XML插件](./universal-xml-plugin.md)
+The command listings can be found here:
+
+- [Base Driver](./base-driver.md)
+- [Execute Driver Plugin](./execute-driver-plugin.md)
+- [Images Plugin](./images-plugin.md)
+- [Inspector](https://github.com/appium/appium-inspector/tree/main/plugins)
+- [Relaxed Caps Plugin](./relaxed-caps-plugin.md)
+- [Storage Plugin](./storage-plugin.md)
+- [Universal XML Plugin](./universal-xml-plugin.md)

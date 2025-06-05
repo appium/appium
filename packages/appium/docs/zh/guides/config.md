@@ -18,7 +18,9 @@ You can store your config data in the following kinds of files:
 
 !!! warning
 
-    Note: Configuration files in ESM format are not currently supported.
+```
+Note: Configuration files in ESM format are not currently supported.
+```
 
 ## Supported Config File Locations
 
@@ -42,7 +44,7 @@ property in your `package.json` and it will be automatically discovered.
 Appium will search _up_ the directory tree from the current working directory for one of these
 files. If it reaches the current user's home directory or filesystem root, it will stop looking.
 
-To specify a _custom_ location for your config file, use `appium --config-file /path/to/config/file`.
+To specify a _custom_ location for your config file, use `appium --config /path/to/config/file`.
 
 #### Configuration File Format
 
@@ -91,8 +93,10 @@ and the values of any specific configuration it provides are under this. For exa
 
 !!! note
 
-    The above configuration corresponds to the `--driver-xcuitest-webkit-debug-proxy-port` CLI argument.
+```
+The above configuration corresponds to the `--driver-xcuitest-webkit-debug-proxy-port` CLI argument.
+```
 
 All properties are case-sensitive and will be in
-[kebab-case](https://en.wikipedia.org/wiki/Naming_convention_(programming)#Delimiter-separated_words).
+[kebab-case](https://en.wikipedia.org/wiki/Naming_convention_\(programming\)#Delimiter-separated_words).
 For example, `callback-port` is allowed, but `callbackPort` is not.

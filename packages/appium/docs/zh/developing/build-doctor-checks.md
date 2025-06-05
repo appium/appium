@@ -21,13 +21,13 @@ The interface defines the following methods and properties:
 
 - `diagnose(): Promise<DoctorCheckResult>`: Contains the code to diagnose a possible issue
 - `fix(): Promise<string|null>`: Either fixes the actual problem if `hasAutofix()` returns true or
-  returns a string description for possible manual fixes. If this method throws an exception named
-  `FixSkippedError` and `hasAutofix()` returns true then the result of the method invocation
-  is going to be ignored.
+ returns a string description for possible manual fixes. If this method throws an exception named
+ `FixSkippedError` and `hasAutofix()` returns true then the result of the method invocation
+ is going to be ignored.
 - `hasAutofix(): boolean`: Whether calling `fix()` would resolve the found issue
 - `isOptional(): boolean`: Whether the found issue can be ignored and is not a showstopper
 - `log: AppiumLogger`: May be used for logging. This property may be assigned
-  by the instance itself or by the Appium server if it is left unassigned.
+ by the instance itself or by the Appium server if it is left unassigned.
 
 The `DoctorCheckResult` object returned by the `diagnose()` method must contain the following properties:
 

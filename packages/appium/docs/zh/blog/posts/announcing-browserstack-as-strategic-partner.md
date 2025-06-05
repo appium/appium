@@ -6,9 +6,9 @@ date: 2024-06-10
 
 # Announcing BrowserStack as Appium's Strategic Partner
 
-We have another exciting announcement for you! As part of our recently-announced [sponsorship and
+We have another exciting announcement for you! As part of our recently-announced sponsorship and
 contributor compensation
-program](https://appium.io/docs/en/latest/blog/2024/05/14/announcing-appiums-sponsorship-program/),
+program,
 we are obviously in need of significant funding to support giving back to our contributor
 community. We are therefore extremely happy to announce one of our brand new exclusive Strategic Partners: <a
 href="https://www.browserstack.com/browserstack-appium?utm_campaigncode=701OW00000AoUTQYA3&utm_medium=partnered&utm_source=appium">BrowserStack</a>!

@@ -1,7 +1,6 @@
 ---
 hide:
   - toc
-
 title: Session Settings
 ---
 
@@ -26,17 +25,19 @@ change it back to `false`.
 
 Settings are implemented via the following API endpoints:
 
-| Command           | <div style="width:18em">Method/Route</div>  | Params                             | Description                        | Returns                            |
-|-------------------|---------------------------------------------|------------------------------------|------------------------------------|------------------------------------|
-| `Update Settings` | `POST /session/:id/appium/settings`         | `settings` (`Record<string, any>`) | Update the provided setting values | `null`                             |
-| `Get Settings`    | `GET /session/:id/appium/settings`          |                                    | Return the current settings        | `settings` (`Record<string, any>`) |
+| Command           | <div style="width:18em">Method/Route</div> | Params                                                | Description                        | Returns                                               |
+| ----------------- | ------------------------------------------ | ----------------------------------------------------- | ---------------------------------- | ----------------------------------------------------- |
+| `Update Settings` | `POST /session/:id/appium/settings`        | `settings` (`Record<string, any>`) | Update the provided setting values | `null`                                                |
+| `Get Settings`    | `GET /session/:id/appium/settings`         |                                                       | Return the current settings        | `settings` (`Record<string, any>`) |
 
 The `settings` object must be a set of keys and values, where the key is the setting name, and the
 value is any documented valid value for that setting.
 
 !!! info
 
-    Settings are driver-specific, so refer to your driver's documentation for a list of supported settings
+```
+Settings are driver-specific, so refer to your driver's documentation for a list of supported settings
+```
 
 ## Initializing Settings via Capabilities
 

@@ -25,11 +25,22 @@ this is the responsibility of the server admin who configures and launches the A
 The [Server CLI Args](../cli/args.md) doc outlines three relevant arguments which may be passed to
 Appium when starting it from the command line:
 
-| <div style="width:10em">Parameter</div> | Description                                                                                                                                                                                                                                                                                                                                                                                               |
-| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--relaxed-security`                    | Turns on _all_ insecure features (unless blocked by `--deny-insecure`; see below)                                                                                                                                                                                                                                                                                                      |
-| `--allow-insecure`                      | Turns on _only_ specified features. Features can be provided as a comma-separated list of feature names, or in the [Appium Configuration file](./config.md). For example, `--allow-insecure=adb_shell` will cause _only_ the ADB shell execution feature to be enabled. Has no effect when used in combination with `--relaxed-security`. |
-| `--deny-insecure`                       | Explicitly turns _off_ specified features, overriding `--relaxed-security` and any features specified using `--allow-insecure`. Like `--allow-insecure`, features can be provided as a comma-separated list of feature names, or in the [Appium Configuration file](./config.md).                                                                                         |
+| <div style="width:10em">Parameter</div> | Description                                                                                                                                                     |
+| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--relaxed-security`                    | Turns on _all_ insecure features, except those blocked by `--deny-insecure`                                                                                     |
+| `--allow-insecure`                      | Turns on _only_ specified features, except those blocked by `--deny-insecure`. Has no effect when used in combination with `--relaxed-security` |
+| `--deny-insecure`                       | Explicitly turns _off_ specified features, overriding `--relaxed-security` and `--allow-insecure`                                                               |
+
+All of the above arguments can also be specified in the [Appium Configuration file](./config.md).
+
+Features passed to `--allow-insecure`/`--deny-insecure` must be specified as a comma-separated list,
+and each feature in the list must additionally include a prefix, indicating the driver to which the
+feature should apply. The prefix can be either the driver's `automationName`, or the wildcard (`*`)
+symbol, if the feature should be applied to all drivers. The prefix and feature name are separated
+using the colon character (`:`).
+
+For example, `first:foo` refers to the `foo` feature for the `first` driver, whereas `*:bar` refers
+to the `bar` feature for all drivers.
 
 ## Insecure Features
 
@@ -44,7 +55,8 @@ might use. Here is an incomplete list of examples from some of Appium's official
 | `record_audio`                             | Allow recording of host machine audio inputs                                            | XCUITest                                       |
 | `execute_driver_script`                    | Allows to send a request which has multiple Appium commands.            | Execute Driver Plugin                          |
 
-Some insecure features operate on the server level, and do not require a driver session:
+Some insecure features operate on the server level, and do not require a driver session. Enabling
+these features requires using the wildcard prefix:
 
 | <div style="width:12em">Feature Name</div> | Description                                                                     |
 | ------------------------------------------ | ------------------------------------------------------------------------------- |
@@ -52,49 +64,26 @@ Some insecure features operate on the server level, and do not require a driver 
 
 ## Examples
 
-To turn on the `get_server_logs` feature, the Appium server could be started like this:
+Turn on the `foo` feature only for the `first` driver:
 
 ```bash
-appium --allow-insecure=get_server_logs
+appium --allow-insecure=first:foo
 ```
 
-To turn on multiple features:
+Turn on the `foo` feature for all drivers:
 
 ```bash
-appium --allow-insecure=get_server_logs,record_audio
+appium --allow-insecure=*:foo
 ```
 
-To allow all features except one:
+Turn on the `foo` feature for all drivers _except_ `first`:
 
 ```bash
-appium --relaxed-security --deny-insecure=adb_shell
+appium --allow-insecure=*:foo --deny-insecure=first:foo
 ```
 
-## Driver-scope security
-
-Since Appium server version `2.13`, it is possible to apply features on a per-driver basis. This
-can be achieved by prefixing each feature name with the `automationName` of the driver for which
-the feature should be applied. To apply a feature for all drivers, or to apply a server-level
-feature, the wildcard (`*`) prefix should be used.
-
-For example, the server could be started as follows:
+Turn on all features _except_ `foo` for all drivers:
 
 ```bash
-appium --allow-insecure=uiautomator2:adb_shell,xcuitest:get_server_logs,*:record_audio
-```
-
-This would result in the following:
-
-- The `adb_shell` feature would be enabled only for the UiAutomator2 driver
-- The `get_server_logs` feature would be enabled only for the XCUITest driver
-- The `record_audio` feature would be enabled for all drivers
-
-Feature provided without an explicit prefix are equivalent to having the wildcard prefix.
-These prefix rules apply to both the `--allow-insecure` and `--deny-insecure` server arguments.
-
-!!! warning
-
-```
-Starting from Appium 3, the scope prefix is required, and features provided without a scope will
-raise an error. Note that the behavior of the `--relaxed-security` flag remains unchanged.
+appium --relaxed-security --deny-insecure=*:foo
 ```

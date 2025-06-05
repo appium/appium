@@ -1,7 +1,6 @@
 ---
 hide:
   - toc
-
 title: Managing Contexts
 ---
 
@@ -15,18 +14,18 @@ Appium provides a set of APIs for working with different app modes, called "cont
 drivers can implement if they support automation commands in these different modes. There are three
 basic commands that Appium has added to the W3C WebDriver spec for this purpose:
 
-| Command Name          | Method/Route                | Params            | Description                                   | Returns         |
-|-----------------------|-----------------------------|-------------------|-----------------------------------------------|-----------------|
-| `Get Contexts`        | `GET /session/:id/contexts` |                   | Get a list of the available contexts          | `array<string>` |
-| `Get Current Context` | `GET /session/:id/context`  |                   | Get the name of the active context            | `string`        |
+| Command Name          | Method/Route                | Params                               | Description                                   | Returns         |
+| --------------------- | --------------------------- | ------------------------------------ | --------------------------------------------- | --------------- |
+| `Get Contexts`        | `GET /session/:id/contexts` |                                      | Get a list of the available contexts          | `array<string>` |
+| `Get Current Context` | `GET /session/:id/context`  |                                      | Get the name of the active context            | `string`        |
 | `Set Context`         | `POST /session/:id/context` | `name` (`string`) | Switch into the context with the given `name` | `null`          |
 
 This API is flexible enough to handle a variety of semantic interpretations on the part of the
 driver. For example, the XCUITest driver includes two kinds of contexts: the native app context and
 any active webviews, as one context per webview. A call to `Get Contexts` will return the list of
 names, which you as a test author can sift through and use to switch into the appropriate context.
-As another example, the [Appium Altunity
-Plugin](https://github.com/headspinio/appium-altunity-plugin) introduces the concept of a `UNITY`
+As another example, the Appium Altunity
+Plugin introduces the concept of a `UNITY`
 context, which encapsulates all the plugin's specific behaviour to ensure that when outside of the
 `UNITY` context, the active driver's usual command implementations are used.
 

@@ -1,13 +1,13 @@
 INHERIT: ./base-mkdocs.yml
 site_url: https://appium.io/docs/zh
 edit_uri: edit/master/packages/appium/docs/zh
-site_description: The Appium automation project documentation
+site_description: Appium自动化项目文档
 docs_dir: zh
 site_dir: site/docs/zh
 theme:
   language: zh
 nav:
-  - 首页: index.md
+  - 欢迎使用: index.md
   - 博客: blog/index.md
   - 简介:
       - intro/index.md
@@ -21,7 +21,7 @@ nav:
       - quickstart/requirements.md
       - quickstart/install.md
       - quickstart/uiauto2-driver.md
-      - Write a Test:
+      - 写一个测试:
           - quickstart/test-js.md
           - quickstart/test-py.md
           - quickstart/test-java.md
@@ -46,20 +46,23 @@ nav:
       - commands/execute-driver-plugin.md
       - commands/images-plugin.md
       - commands/relaxed-caps-plugin.md
+      - commands/storage-plugin.md
       - commands/universal-xml-plugin.md
   - 指南:
-      - Migration:
+      - 迁移:
+          - guides/migrating-2-to-3.md
           - guides/migrating-1-to-2.md
-      - Server/Driver Configuration:
+      - 服务器/驱动程序配置:
           - guides/managing-exts.md
           - guides/branch-testing.md
           - guides/config.md
           - guides/security.md
           - guides/log-filters.md
+          - guides/headers.md
           - guides/grid.md
           - guides/caching.md
           - guides/tls.md
-      - Session Configuration:
+      - 会话配置:
           - guides/caps.md
           - guides/settings.md
           - guides/execute-methods.md
@@ -72,7 +75,8 @@ nav:
       - developing/build-plugins.md
       - developing/build-docs.md
       - developing/build-doctor-checks.md
-  - 贡献:
-      - contributing/index.md
-      - contributing/develop.md
-      - contributing/config-system.md
+      - developing/sensitive.md
+      - 开发者参考:
+          - developing/config-system.md
+  - 贡献: contributing.md
+  - 赞助商: sponsors.md

@@ -94,10 +94,10 @@ manager for all the nodes. So in the end we'll have 5 processes running at once:
 confusion of logs. Here is how you'd start each process:
 
 0. `appium --config appium1.yml`
-0. `appium --config appium2.yml`
-0. `java -jar /path/to/selenium.jar node --config node1.toml`
-0. `java -jar /path/to/selenium.jar node --config node2.toml`
-0. `java -jar /path/to/selenium.jar hub`
+1. `appium --config appium2.yml`
+2. `java -jar /path/to/selenium.jar node --config node1.toml`
+3. `java -jar /path/to/selenium.jar node --config node2.toml`
+4. `java -jar /path/to/selenium.jar hub`
 
 Once you wait a few moments for the nodes to detect their Appium servers, and to register with the
 hub, you'll be able to send all your Appium traffic via the single hub endpoint (defaulting to

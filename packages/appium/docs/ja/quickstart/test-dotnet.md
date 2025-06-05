@@ -82,7 +82,7 @@ of the various API commands you see and what their purpose is.
 Basically, this code is doing the following:
 
 1. Defining a set of "Capabilities" (parameters) to send to the Appium server so Appium knows what
-  kind of thing you want to automate. Some of these parameters can be overriden using environment variables.
+  kind of thing you want to automate. Some of these parameters can be overridden using environment variables.
 2. Starting an Appium session on the built-in Android settings app.
 3. Finding the "Battery" list item and clicking it.
 4. Ending the Appium session.

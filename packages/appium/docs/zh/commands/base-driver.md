@@ -1,229 +1,258 @@
-# 驱动: base-driver
+# Driver: base-driver
 
 ### `createSession`
 
 `POST` **`/session`**
 
-从历史上看，前两个参数是专门用于JSONWP功能的，但是Appium2已经放弃了对这些参数的支持。
-现在我们只接受W3C格式的功能对象，这种对象可以通过三个参数中的任意一个来传递。
+Historically the first two arguments were reserved for JSONWP capabilities.
+Appium 2 has dropped the support of these, so now we only accept capability
+objects in W3C format and thus allow any of the three arguments to represent
+the latter.
 
-**`请参阅`**
+**`See`**
 
 [https://w3c.github.io/webdriver/#new-session](https://w3c.github.io/webdriver/#new-session)
 
 <!-- comment source: multiple -->
 
-#### 参数
+#### Parameters
 
-| 名字 | 类型 | 描述 |
-| :------ | :------ | :------ |
-| `desiredCapabilities?` | `W3CDriverCaps`<`C`\> | 新的会话功能 |
-| `requiredCapabilities?` | `W3CDriverCaps`<`C`\> | 另一个可以发送新会话功能的地方（通常未定义） |
-| `capabilities?` | `W3CDriverCaps`<`C`\> | 另一个可以发送新会话功能的地方（通常未定义） |
+| Name                    | Type                                            | Description                                                                                            |
+| :---------------------- | :---------------------------------------------- | :----------------------------------------------------------------------------------------------------- |
+| `desiredCapabilities?`  | `W3CDriverCaps`<`C`\> | the new session capabilities                                                                           |
+| `requiredCapabilities?` | `W3CDriverCaps`<`C`\> | another place the new session capabilities could be sent (typically left undefined) |
+| `capabilities?`         | `W3CDriverCaps`<`C`\> | another place the new session capabilities could be sent (typically left undefined) |
 
-#### 响应
+#### Response
 
 `CreateResult`
 
-表示所创建会话的能力对象
+The capabilities object representing the created session
 
 ### `deleteSession`
 
 `DELETE` **`/session/:sessionId`**
 
-返回会话和事件历史记录的功能（如果可用）
+Returns capabilities for the session and event history (if applicable)
 
 <!-- comment source: method-signature -->
 
-#### 响应
+#### Response
 
 `SingularSessionData`<`C`, `SessionData`\>
 
-会话数据对象
+A session data object
 
 ### `getSession`
 
 `GET` **`/session/:sessionId`**
 
-返回会话和事件历史记录的功能（如果可用）
+Returns capabilities for the session and event history (if applicable).
+
+!!! warning "Deprecated"
+
+```
+Please use `getAppiumSessionCapabilities` to get the session capabilities.
+Please use `getLogEvents` to get event history.
+```
 
 <!-- comment source: multiple -->
 
-#### 响应
+#### Response
 
 `SingularSessionData`<`C`, `SessionData`\>
 
-会话数据对象
+A session data object
+
+### `getAppiumSessionCapabilities`
+
+`GET` **`/session/:sessionId/appium/capabilities`**
+
+Returns capabilities for the session.
+
+<!-- comment source: multiple -->
+
+#### Response
+
+`AppiumSessionCapabilities`
+
+A session data object
 
 ### `findElement`
 
 `POST` **`/session/:sessionId/element`**
 
-在给定定位策略和选择器的情况下查找UI元素，如果找不到则报错
+Find a UI element given a locator strategy and a selector, erroring if it can't be found
 
-**`请参阅`**
+**`See`**
 
 [https://w3c.github.io/webdriver/#find-element](https://w3c.github.io/webdriver/#find-element)
 
 <!-- comment source: method-signature -->
 
-#### 参数
+#### Parameters
 
-| 名字 | 类型 | 描述 |
-| :------ | :------ | :------ |
-| `using` | `string` | 定位策略 |
-| `value` | `string` | 选择器与策略相结合，找到特定元素 |
+| Name    | Type     | Description                                                            |
+| :------ | :------- | :--------------------------------------------------------------------- |
+| `using` | `string` | the locator strategy                                                   |
+| `value` | `string` | the selector to combine with the strategy to find the specific element |
 
-#### 响应
+#### Response
 
 `Element`<`string`\>
 
-对元素id进行编码的元素对象，可用于元素相关命令
+The element object encoding the element id which can be used in element-related
+commands
 
 ### `findElementFromElement`
 
 `POST` **`/session/:sessionId/element/:elementId/element`**
 
-在给定定位策略和选择器的情况下查找UI元素，如果找不到则会报错，仅在给定元素的子元素中查找。
+Find a UI element given a locator strategy and a selector, erroring if it can't be found. Only
+look for elements among the set of descendants of a given element
 
-**`请参阅`**
+**`See`**
 
 [https://w3c.github.io/webdriver/#find-element-from-element](https://w3c.github.io/webdriver/#find-element-from-element)
 
 <!-- comment source: method-signature -->
 
-#### 参数
+#### Parameters
 
-| 名字 | 类型 | 描述 |
-| :------ | :------ | :------ |
-| `using` | `string` | 定位策略 |
-| `value` | `string` | 选择器与策略相结合，找到特定元素 |
+| Name    | Type     | Description                                                            |
+| :------ | :------- | :--------------------------------------------------------------------- |
+| `using` | `string` | the locator strategy                                                   |
+| `value` | `string` | the selector to combine with the strategy to find the specific element |
 
-#### 响应
+#### Response
 
 `Element`<`string`\>
 
-对元素id进行编码的元素对象，可用于元素相关命令
+The element object encoding the element id which can be used in element-related
+commands
 
 ### `findElementFromShadowRoot`
 
 `POST` **`/session/:sessionId/shadow/:shadowId/element`**
 
-从阴影根中查找元素。
+Find an element from a shadow root
 
-**`请参阅`**
+**`See`**
 
 [https://w3c.github.io/webdriver/#find-element-from-shadow-root](https://w3c.github.io/webdriver/#find-element-from-shadow-root)
 
 <!-- comment source: method-signature -->
 
-#### 参数
+#### Parameters
 
-| 名字 | 类型 | 描述 |
-| :------ | :------ | :------ |
-| `using` | `string` | 定位策略 |
-| `value` | `string` | 选择器与策略相结合，找到特定元素 |
+| Name    | Type     | Description                                                             |
+| :------ | :------- | :---------------------------------------------------------------------- |
+| `using` | `string` | the locator strategy                                                    |
+| `value` | `string` | the selector to combine with the strategy to find the specific elements |
 
-#### 响应
+#### Response
 
 `Element`<`string`\>
 
-阴影根内与选择器匹配的元素
+The element inside the shadow root matching the selector
 
 ### `findElements`
 
 `POST` **`/session/:sessionId/elements`**
 
-查找与给定定位策略和选择器匹配的所有UI元素的列表
+Find a a list of all UI elements matching a given a locator strategy and a selector
 
-**`请参阅`**
+**`See`**
 
 [https://w3c.github.io/webdriver/#find-elements](https://w3c.github.io/webdriver/#find-elements)
 
 <!-- comment source: method-signature -->
 
-#### 参数
+#### Parameters
 
-| 名字 | 类型 | 描述 |
-| :------ | :------ | :------ |
-| `using` | `string` | 定位策略 |
-| `value` | `string` | 选择器与策略相结合，找到特定元素 |
+| Name    | Type     | Description                                                             |
+| :------ | :------- | :---------------------------------------------------------------------- |
+| `using` | `string` | the locator strategy                                                    |
+| `value` | `string` | the selector to combine with the strategy to find the specific elements |
 
-#### 响应
+#### Response
 
 `Element`<`string`\>[]
 
-仅在给定元素的子元素中查找。
+A possibly-empty list of element objects
 
 ### `findElementsFromElement`
 
 `POST` **`/session/:sessionId/element/:elementId/elements`**
 
-查找与给定定位策略和选择器匹配的所有UI元素的列表，仅在给定元素的子元素中查找。
+Find a a list of all UI elements matching a given a locator strategy and a selector. Only
+look for elements among the set of descendants of a given element
 
-**`请参阅`**
+**`See`**
 
 [https://w3c.github.io/webdriver/#find-elements-from-element](https://w3c.github.io/webdriver/#find-elements-from-element)
 
 <!-- comment source: method-signature -->
 
-#### 参数
+#### Parameters
 
-| 名字 | 类型 | 描述 |
-| :------ | :------ | :------ |
-| `using` | `string` | 定位策略 |
-| `value` | `string` | 选择器与策略相结合，找到特定元素 |
+| Name    | Type     | Description                                                             |
+| :------ | :------- | :---------------------------------------------------------------------- |
+| `using` | `string` | the locator strategy                                                    |
+| `value` | `string` | the selector to combine with the strategy to find the specific elements |
 
-#### 响应
+#### Response
 
 `Element`<`string`\>[]
 
-仅在给定元素的子元素中查找。
+A possibly-empty list of element objects
 
 ### `findElementsFromShadowRoot`
 
 `POST` **`/session/:sessionId/shadow/:shadowId/elements`**
 
-从阴影根中查找元素。
+Find elements from a shadow root
 
-**`请参阅`**
+**`See`**
 
 [https://w3c.github.io/webdriver/#find-element-from-shadow-root](https://w3c.github.io/webdriver/#find-element-from-shadow-root)
 
 <!-- comment source: method-signature -->
 
-#### 参数
+#### Parameters
 
-| 名字 | 类型 | 描述 |
-| :------ | :------ | :------ |
-| `using` | `string` | 定位策略 |
-| `value` | `string` | 选择器与策略相结合，找到特定元素 |
+| Name    | Type     | Description                                                             |
+| :------ | :------- | :---------------------------------------------------------------------- |
+| `using` | `string` | the locator strategy                                                    |
+| `value` | `string` | the selector to combine with the strategy to find the specific elements |
 
-#### 响应
+#### Response
 
 `Element`<`string`\>[]
 
-在阴影根内与选择器匹配的可能为空的元素列表。
+A possibly empty list of elements inside the shadow root matching the selector
 
 ### `getLog`
 
 `POST` **`/session/:sessionId/log`**
 
-获取给定日志类型的日志。
+Get the log for a given log type.
 
-!!! warning "已弃用"
+!!! warning "Deprecated"
 
-    请使用`/session/:sessionId/se/log`代替
+```
+Please use the `/session/:sessionId/se/log` endpoint instead
+```
 
 <!-- comment source: method-signature -->
 
-#### 参数
+#### Parameters
 
-| 名字 | 类型 | 描述 |
-| :------ | :------ | :------ |
-| `type` | `string` | ILogCommands.supportedLogTypes中定义的日志类型的名称/密钥。 |
+| Name   | Type     | Description                                                                                        |
+| :----- | :------- | :------------------------------------------------------------------------------------------------- |
+| `type` | `string` | Name/key of log type as defined in ILogCommands.supportedLogTypes. |
 
-#### 响应
+#### Response
 
 `any`
 
@@ -231,17 +260,17 @@
 
 `POST` **`/session/:sessionId/se/log`**
 
-获取给定日志类型的日志。
+Get the log for a given log type.
 
 <!-- comment source: method-signature -->
 
-#### 参数
+#### Parameters
 
-| 名字 | 类型 | 描述 |
-| :------ | :------ | :------ |
-| `type` | `string` | ILogCommands.supportedLogTypes中定义的日志类型的名称/密钥。 |
+| Name   | Type     | Description                                                                                        |
+| :----- | :------- | :------------------------------------------------------------------------------------------------- |
+| `type` | `string` | Name/key of log type as defined in ILogCommands.supportedLogTypes. |
 
-#### 响应
+#### Response
 
 `any`
 
@@ -249,35 +278,37 @@
 
 `POST` **`/session/:sessionId/appium/events`**
 
-获取当前会话中发生的事件列表。
+Get a list of events that have occurred in the current session
 
 <!-- comment source: method-signature -->
 
-#### 参数
+#### Parameters
 
-| 名字 | 类型 | 描述 |
-| :------ | :------ | :------ |
-| `type?` | `string` \| `string`[] | 通过包含一个或多个类型筛选返回的事件 |
+| Name    | Type                                                                         | Description                                               |
+| :------ | :--------------------------------------------------------------------------- | :-------------------------------------------------------- |
+| `type?` | `string` \\| `string`[] | filter the returned events by including one or more types |
 
-#### 响应
+#### Response
 
 `EventHistory` \| `Record`<`string`, `number`\>
 
-会话的事件历史记录。
+The event history for the session
 
 ### `getLogTypes`
 
 `GET` **`/session/:sessionId/log/types`**
 
-以字符串列表的形式获取可用日志类型。
+Get available log types as a list of strings
 
-!!! warning "已弃用"
+!!! warning "Deprecated"
 
-    请使用`/session/:sessionId/se/log/types`代替
+```
+Please use the `/session/:sessionId/se/log/types` endpoint instead
+```
 
 <!-- comment source: method-signature -->
 
-#### 响应
+#### Response
 
 `string`[]
 
@@ -285,11 +316,11 @@
 
 `GET` **`/session/:sessionId/se/log/types`**
 
-以字符串列表的形式获取可用日志类型。
+Get available log types as a list of strings
 
 <!-- comment source: method-signature -->
 
-#### 响应
+#### Response
 
 `string`[]
 
@@ -297,40 +328,51 @@
 
 `GET` **`/session/:sessionId/source`**
 
-以HTML/XML格式获取当前页面/应用程序源代码。
+Get the current page/app source as HTML/XML
 
-**`请参阅`**
+**`See`**
 
 [https://w3c.github.io/webdriver/#get-page-source](https://w3c.github.io/webdriver/#get-page-source)
 
 <!-- comment source: method-signature -->
 
-#### 响应
+#### Response
 
 `string`
 
-以适合平台的格式呈现的用户界面层次结构（例如，对于网页使用HTML）。
+The UI hierarchy in a platform-appropriate format (e.g., HTML for a web page)
 
-### `getSessions`
+### `getAppiumSessions`
 
-`GET` **`/sessions`**
+`GET` **`/appium/sessions`**
 
-获取Appium服务器上运行的所有会话的数据。
+Get data for all sessions running on an Appium server
 
 <!-- comment source: method-signature -->
 
-#### 响应
+#### Response
 
-会话数据对象列表。每个会话数据对象都将返回`id`和会话的功能作为`capabilities`键，如下所示：
+A list of session data objects, where each object contains 3 keys:
+
+- `id`: the session ID
+- `created`: the session creation time as a Unix timestamp in milliseconds
+- `capabilities`: the session capabilities
+
+Data is only returned if the `session_discovery` [insecure feature](../guides/security.md)
+is enabled on the server.
+
+#### Example
 
 ```json
 [
   {
     "id":"ba30c6da-c266-4734-8ddb-c16f5bb53e16",
+    "created": 1736092760555,
     "capabilities":{ "platformName":"ios","browserName":"safari","automationName":"xcuitest","platformVersion":"17.2","deviceName":"iPhone 15" }
   },
   {
     "id":"1441110c-1ece-4e45-abbf-ebf404f45f0a",
+    "created": 1736092760555,
     "capabilities":{ "platformName":"ios","browserName":"safari","automationName":"xcuitest","platformVersion":"17.0","deviceName":"iPhone 14" }
   },
   ...
@@ -341,54 +383,56 @@
 
 `GET` **`/session/:sessionId/appium/settings`**
 
-使用新的设置对象更新会话的设置字典。
+Update the session's settings dictionary with a new settings object
 
 <!-- comment source: method-signature -->
 
-#### 响应
+#### Response
 
-``null``
+`null`
 
 ### `updateSettings`
 
 `POST` **`/session/:sessionId/appium/settings`**
 
-使用新的设置对象更新会话的设置字典。
+Update the session's settings dictionary with a new settings object
 
 <!-- comment source: method-signature -->
 
-#### 参数
+#### Parameters
 
-| 名字 | 类型 | 描述 |
-| :------ | :------ | :------ |
-| `settings` | `Settings` | 一个包含设置名称和值的键值映射，映射中未列出的名称将不会修改其值。 |
+| Name       | Type       | Description                                                                                                                                   |
+| :--------- | :--------- | :-------------------------------------------------------------------------------------------------------------------------------------------- |
+| `settings` | `Settings` | A key-value map of setting names to values. Settings not named in the map will not have their value adjusted. |
 
-#### 响应
+#### Response
 
-``null``
+`null`
 
 ### `getStatus`
 
 `GET` **`/status`**
 
-**`概述`**
+**`Summary`**
 
-检索服务器的当前状态。
+Retrieve the server's current status.
 
-**`描述`**
+**`Description`**
 
-返回关于远程端是否处于可以创建新会话的状态的信息，并且还可以包含特定于实现的任意元信息。
+Returns information about whether a remote end is in a state in which it can create new sessions and can additionally include arbitrary meta information that is specific to the implementation.
 
-就绪状态由主体的ready属性表示，如果当前尝试创建会话会失败，则该属性为false。然而值为true并不能保证新建会话命令一定会成功。
+The readiness state is represented by the ready property of the body, which is false if an attempt to create a session at the current time would fail. However, the value true does not guarantee that a New Session command will succeed.
 
-实现可以选择将额外的元信息作为主体的一部分包含进来，但顶级属性ready和message是保留的，并且不能被覆盖。
+Implementations may optionally include additional meta information as part of the body, but the top-level properties ready and message are reserved and must not be overwritten.
 
 <!-- comment source: builtin-interface -->
 
-#### 示例
+#### Examples
 
 <!-- BEGIN:EXAMPLES -->
+
 ##### JavaScript
+
 <!-- BEGIN:EXAMPLE lang=JavaScript -->
 
 ```js
@@ -397,7 +441,9 @@ await driver.status();
 ```
 
 <!-- END:EXAMPLE -->
+
 ##### Python
+
 <!-- BEGIN:EXAMPLE lang=Python -->
 
 ```python
@@ -405,7 +451,9 @@ driver.get_status()
 ```
 
 <!-- END:EXAMPLE -->
+
 ##### Java
+
 <!-- BEGIN:EXAMPLE lang=Java -->
 
 ```java
@@ -413,7 +461,9 @@ driver.getStatus();
 ```
 
 <!-- END:EXAMPLE -->
+
 ##### Ruby
+
 <!-- BEGIN:EXAMPLE lang=Ruby -->
 
 ```ruby
@@ -425,9 +475,10 @@ remote_status
 ```
 
 <!-- END:EXAMPLE -->
+
 <!-- END:EXAMPLES -->
 
-#### 响应
+#### Response
 
 `Object`
 
@@ -435,101 +486,105 @@ remote_status
 
 `GET` **`/session/:sessionId/timeouts`**
 
-设置与会话相关的各种超时。
+Set the various timeouts associated with a session
 
-**`请参阅`**
+**`See`**
 
 [https://w3c.github.io/webdriver/#set-timeouts](https://w3c.github.io/webdriver/#set-timeouts)
 
 <!-- comment source: method-signature -->
 
-#### 响应
+#### Response
 
-``null``
+`null`
 
 ### `timeouts`
 
 `POST` **`/session/:sessionId/timeouts`**
 
-设置与会话相关的各种超时。
+Set the various timeouts associated with a session
 
-**`请参阅`**
+**`See`**
 
 [https://w3c.github.io/webdriver/#set-timeouts](https://w3c.github.io/webdriver/#set-timeouts)
 
 <!-- comment source: method-signature -->
 
-#### 参数
+#### Parameters
 
-| 名字 | 类型 | 描述 |
-| :------ | :------ | :------ |
-| `type?` | `string` | 仅用于旧的（JSONWP）命令，超时的类型 |
-| `ms?` | `string` \| `number` | 仅用于旧的（JSONWP）命令，表示超时的毫秒数 |
-| `script?` | `number` | 用于W3C命令的脚本超时时间（以毫秒为单位） |
-| `pageLoad?` | `number` | 用于W3C命令的页面加载超时时间（以毫秒为单位） |
-| `implicit?` | `string` \| `number` | 用于W3C命令的隐式等待超时时间（以毫秒为单位） |
+| Name        | Type                   | Description                                                                        |
+| :---------- | :--------------------- | :--------------------------------------------------------------------------------- |
+| `type?`     | `string`               | used only for the old (JSONWP) command, the type of the timeout |
+| `ms?`       | `string` \\| `number` | used only for the old (JSONWP) command, the ms for the timeout  |
+| `script?`   | `number`               | the number in ms for the script timeout, used for the W3C command                  |
+| `pageLoad?` | `number`               | the number in ms for the pageLoad timeout, used for the W3C command                |
+| `implicit?` | `string` \\| `number` | the number in ms for the implicit wait timeout, used for the W3C command           |
 
-#### 响应
+#### Response
 
-``null``
+`null`
 
 ### `implicitWait`
 
 `POST` **`/session/:sessionId/timeouts/implicit_wait`**
 
-设置隐式等待超时时间
+Set the implicit wait timeout
 
-!!! warning "已弃用"
+!!! warning "Deprecated"
 
-    请使用`/session/:sessionId/timeouts`代替
+```
+Please use the `/session/:sessionId/timeouts` endpoint instead
+```
 
-使用`timeouts`代替
+Use `timeouts` instead
 
 <!-- comment source: method-signature -->
 
-#### 参数
+#### Parameters
 
-| 名字 | 类型 | 描述 |
-| :------ | :------ | :------ |
-| `ms` | `string` \| `number` | the timeout in ms |
+| Name | Type                   | Description       |
+| :--- | :--------------------- | :---------------- |
+| `ms` | `string` \\| `number` | the timeout in ms |
 
-#### 响应
+#### Response
 
-``null``
+`null`
 
 ### `logCustomEvent`
 
 `POST` **`/session/:sessionId/appium/log_event`**
 
-将自定义命名事件添加到Appium事件日志中
+Add a custom-named event to the Appium event log
 
 <!-- comment source: method-signature -->
 
-#### 参数
+#### Parameters
 
-| 名字 | 类型 | 描述 |
-| :------ | :------ | :------ |
-| `vendor` | `string` | 事件所属的供应商或工具的名称，用于为事件命名 |
-| `event` | `string` | 事件本身的名称 |
+| Name     | Type     | Description                                                                 |
+| :------- | :------- | :-------------------------------------------------------------------------- |
+| `vendor` | `string` | the name of the vendor or tool the event belongs to, to namespace the event |
+| `event`  | `string` | the name of the event itself                                                |
 
-#### 响应
+#### Response
 
-``null``
+`null`
 
 ### `reset`
 
 `POST` **`/session/:sessionId/appium/app/reset`**
 
-重置当前会话（运行删除会话并创建会话子程序）
+Reset the current session (run the delete session and create session subroutines)
 
-!!! warning "已弃用"
+!!! warning "Deprecated"
 
-    请使用每个驱动程序的启动、激活、终止或清理方法。
+```
+Please use each driver's launch, activate, terminate or cleanup method.
+```
 
-改用显式会话管理命令代替
+Use explicit session management commands instead
 
 <!-- comment source: method-signature -->
 
-#### 响应
+#### Response
 
-``null``
+`null`

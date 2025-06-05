@@ -50,6 +50,7 @@ nav:
       - commands/universal-xml-plugin.md
   - ガイド:
       - 移行:
+          - guides/migrating-2-to-3.md
           - guides/migrating-1-to-2.md
       - サーバ/ドライバの設定:
           - guides/managing-exts.md

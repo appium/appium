@@ -1,22 +1,18 @@
 ---
 hide:
   - toc
-title: Next Steps
+title: 次のステップ
 ---
 
-Now that you've successfully set up your system for Android automation and run a simple test,
-you'll want to continue exploring this documentation. In particular, these are good guides and
-reference materials especially for beginners:
+Android自動化用のシステムの設定と簡単なテストの実行が完了したら、このドキュメントを引き続き参照してください。 特に初心者にとって、これらは優れたガイドと参考資料です：
 
-- The [Ecosystem](../ecosystem/index.md) page: browse the available drivers, clients, plugins, and tools
-- [Managing Appium Drivers and Plugins](../guides/managing-exts.md)
+- [エコシステム](../ecosystem/index.md) ページ: 利用可能なドライバー、クライアント、プラグイン、ツールを見る
+- [Appium ドライバーとプラグインの管理](../guides/managing-exts.md)
 - [Capabilities](../guides/caps.md)
 - [Settings](../guides/settings.md)
 
-You'll also find that the [Appium Inspector](https://github.com/appium/appium-inspector) is an
-indispensable tool for writing Appium tests, as it enables visual inspection of apps and
-helps you to discover element locators for use in your test scripts.
+また、[Appium Inspector](https://github.com/appium/appium-inspector) は、アプリの視覚的な検査を可能にし、テストスクリプトで使用する要素ロケーターを見つけるのに役立つ、Appium テストの作成に不可欠なツールです。
 
-You might also take advantage of one of the many online Appium courses available to you.
+また、多くのオンライン Appium コースもご活用いただけます。
 
-Good luck and have fun!
+頑張って楽しんでください！

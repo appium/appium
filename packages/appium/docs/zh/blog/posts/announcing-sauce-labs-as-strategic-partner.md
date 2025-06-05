@@ -6,8 +6,8 @@ date: 2024-06-10
 
 # Announcing Sauce Labs as Appium's Strategic Partner
 
-The good news surrounding our new [sponsorship and contributor compensation
-program](https://appium.io/docs/en/latest/blog/2024/05/14/announcing-appiums-sponsorship-program/)
+The good news surrounding our new sponsorship and contributor compensation
+program
 just keeps coming! Effective immediately we are fortunate and excited to be able to welcome a new Strategic Partner to
 the Appium project: <a href="https://saucelabs.com/resources/blog/appium-strategic-partner">Sauce Labs</a>!
 

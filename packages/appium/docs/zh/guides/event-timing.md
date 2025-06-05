@@ -1,7 +1,6 @@
 ---
 hide:
   - toc
-
 title: Retrieving Event Timings
 ---
 
@@ -10,8 +9,8 @@ information and command length. This is an advanced feature that is controlled
 by the use of the `appium:eventTimings` capability (set it to `true` to log event
 timings).
 
-With this capability turned on, the `POST /session/:id/appium/events` response (i.e., 
-the response to `driver.logs.events` or similar, depending on client) will be 
+With this capability turned on, the `POST /session/:id/appium/events` response (i.e.,
+the response to `driver.logs.events` or similar, depending on client) will be
 decorated with an `events` property. This is the structure of that `events`
 property:
 
@@ -31,15 +30,15 @@ property:
 
 In other words, the `events` property has 2 kinds of properties of its own:
 
-* Properties which are the names of event types
-* The `commands` property
+- Properties which are the names of event types
+- The `commands` property
 
 Properties which are names of event types correspond to an array of timestamps
 when that event happened. It's an array because events might happen multiple
 times in the course of a session. Examples of event types include:
 
-* `newSessionRequested`
-* `newSessionStarted`
+- `newSessionRequested`
+- `newSessionStarted`
 
 (Individual drivers will define their own event types, so we do not have an
 exhaustive list to share here. It's best to actually get one of these responses
@@ -63,14 +62,18 @@ generate various kinds of reports from event timings output:
 
 !!! note
 
-    In the past, events were available as a part of `GET /session/:id` response
+```
+In the past, events were available as a part of `GET /session/:id` response
+```
 
 ## Add a custom event
 
 !!! warning "TODO"
 
-    The links to the commands in the following paragraph do not yet work since these docs are under
-    construction.
+```
+The links to the commands in the following paragraph do not yet work since these docs are under
+construction.
+```
 
 You can add custom events that will show up in the event timings data. You can send a custom event
 name to the Appium server using the [Log Event API](#TODO), and the server will store the

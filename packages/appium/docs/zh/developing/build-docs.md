@@ -35,9 +35,9 @@ To take advantage of Appium's documentation utilities, you'll need to install:
 - [pip](https://pip.pypa.io/en/stable/installation/) (this may be installed automatically with Python)
 - The `@appium/docutils` package:
 
-    ```bash
-    npm install --save-dev @appium/docutils
-    ```
+  ```bash
+  npm install --save-dev @appium/docutils
+  ```
 
 ### Initializing an Extension for Building Docs
 
@@ -50,7 +50,7 @@ npx appium-docs init
 This will:
 
 1. Create a `tsconfig.json` if one does not already exist. This is necessary even if your extension
-is not written in TypeScript.
+  is not written in TypeScript.
 2. Create a `mkdocs.yml` with the necessary configuration for MkDocs.
 
 ### Documenting Your Extension
@@ -60,7 +60,7 @@ files in the `docs` directory. You can therefore create your Markdown documentat
 them in `docs`, and add links to these files in `mkdocs.yml`.
 
 Refer to the [MkDocs documentation](https://www.mkdocs.org/user-guide/writing-your-docs/) for
-information on how to organize and structure your documentation. 
+information on how to organize and structure your documentation.
 
 ### Building the Docs
 

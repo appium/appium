@@ -14,8 +14,8 @@ all the following are true:
 But because many Appium users might not be able to guarantee such a safe environment, the Appium
 team puts many features behind a security protection mechanism which forces system admins (the
 people that are in charge of starting the Appium server) to _explicitly opt-in_ to these features.
-(Third-party driver and plugin authors can also [hide behaviour behind security
-flags](../developing/build-drivers.md).)
+(Third-party driver and plugin authors can also hide behaviour behind security
+flags.)
 
 For security reasons, Appium client sessions can _not_ request feature enablement via capabilities;
 this is the responsibility of the server admin who configures and launches the Appium server.
@@ -25,11 +25,22 @@ this is the responsibility of the server admin who configures and launches the A
 The [Server CLI Args](../cli/args.md) doc outlines three relevant arguments which may be passed to
 Appium when starting it from the command line:
 
-|<div style="width:10em">Parameter</div>|Description|
-|---------------------------------------|-----------|
-|`--relaxed-security`                   |Setting this flag turns on _all_ insecure features (unless blocked by `--deny-insecure`; see below)|
-|`--allow-insecure`                     |Setting this flag to a comma-separated list of feature names or a path to a file containing a feature list (each name on a separate line) will allow _only_ the features listed. For example, `--allow-insecure=adb_shell` will cause _only_ the ADB shell execution feature to be enabled. This is true _unless_ `--relaxed-security` is also used, in which case all features will still be enabled. It makes no sense to combine this flag with `--relaxed-security`.|
-|`--deny-insecure`                      |This flag can likewise be set to a comma-separated list of feature names, or a path to a feature file. Any features listed here will be _disabled_, regardless of whether `--relaxed-security` is set and regardless of whether the names are also listed with `--allow-insecure`.|
+| <div style="width:10em">Parameter</div> | Description                                                                                                                                                     |
+| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--relaxed-security`                    | Turns on _all_ insecure features, except those blocked by `--deny-insecure`                                                                                     |
+| `--allow-insecure`                      | Turns on _only_ specified features, except those blocked by `--deny-insecure`. Has no effect when used in combination with `--relaxed-security` |
+| `--deny-insecure`                       | Explicitly turns _off_ specified features, overriding `--relaxed-security` and `--allow-insecure`                                                               |
+
+All of the above arguments can also be specified in the [Appium Configuration file](./config.md).
+
+Features passed to `--allow-insecure`/`--deny-insecure` must be specified as a comma-separated list,
+and each feature in the list must additionally include a prefix, indicating the driver to which the
+feature should apply. The prefix can be either the driver's `automationName`, or the wildcard (`*`)
+symbol, if the feature should be applied to all drivers. The prefix and feature name are separated
+using the colon character (`:`).
+
+For example, `first:foo` refers to the `foo` feature for the `first` driver, whereas `*:bar` refers
+to the `bar` feature for all drivers.
 
 ## Insecure Features
 
@@ -37,29 +48,42 @@ Each Appium driver is responsible for its own security, and can create its own f
 you should read through the documentation for a particular driver to know which feature names it
 might use. Here is an incomplete list of examples from some of Appium's official drivers:
 
-|<div style="width:12em">Feature Name</div>|Description|Supported Extension(s)|
-|------------|-----------|-------|
-|`get_server_logs`|Allows retrieving of Appium server logs via the Webdriver log interface|IOS, XCUITest, Android, UiAutomator2, Espresso|
-|`adb_shell`|Allows execution of arbitrary shell commands via ADB, using the `mobile: shell` command|Android, UiAutomator2, Espresso|
-|`record_audio`|Allow recording of host machine audio inputs|XCUITest|
-|`execute_driver_script`| Allows to send a request which has multiple Appium commands.|Execute Driver Plugin|
+| <div style="width:12em">Feature Name</div> | Description                                                                             | Supported Extension(s)      |
+| ------------------------------------------ | --------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| `get_server_logs`                          | Allows retrieving of Appium server logs via the Webdriver log interface                 | IOS, XCUITest, Android, UiAutomator2, Espresso |
+| `adb_shell`                                | Allows execution of arbitrary shell commands via ADB, using the `mobile: shell` command | Android, UiAutomator2, Espresso                |
+| `record_audio`                             | Allow recording of host machine audio inputs                                            | XCUITest                                       |
+| `execute_driver_script`                    | Allows to send a request which has multiple Appium commands.            | Execute Driver Plugin                          |
+
+Some insecure features operate on the server level, and do not require a driver session. Enabling
+these features requires using the wildcard prefix:
+
+| <div style="width:12em">Feature Name</div> | Description                                                                     |
+| ------------------------------------------ | ------------------------------------------------------------------------------- |
+| `session_discovery`                        | Allows retrieving the list of active server sessions via `GET /appium/sessions` |
 
 ## Examples
 
-To turn on the `get_server_logs` feature for my Appium server, I could start it like this:
+Turn on the `foo` feature only for the `first` driver:
 
 ```bash
-appium --allow-insecure=get_server_logs
+appium --allow-insecure=first:foo
 ```
 
-To turn on multiple features:
+Turn on the `foo` feature for all drivers:
 
 ```bash
-appium --allow-insecure=get_server_logs,record_audio
+appium --allow-insecure=*:foo
 ```
 
-To allow all features except one:
+Turn on the `foo` feature for all drivers _except_ `first`:
 
 ```bash
-appium --relaxed-security --deny-insecure=adb_shell
+appium --allow-insecure=*:foo --deny-insecure=first:foo
+```
+
+Turn on all features _except_ `foo` for all drivers:
+
+```bash
+appium --relaxed-security --deny-insecure=*:foo
 ```

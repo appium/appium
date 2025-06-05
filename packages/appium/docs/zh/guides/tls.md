@@ -1,13 +1,13 @@
 ---
 hide:
   - toc
-
 title: SSL/TLS/SPDY Support
 ---
 
-Appium 2.2 introduces the option to start the Appium server with SSL/TLS support. 
+Appium 2.2 introduces the option to start the Appium server with SSL/TLS support.
 
 ## Command Line Arguments
+
 In order to enable secure connections to the server, you need to provide the following command
 line arguments:
 

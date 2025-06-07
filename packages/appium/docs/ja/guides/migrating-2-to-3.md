@@ -1,5 +1,5 @@
 ---
-title: Migrating to Appium 3
+title: Appium 3 へ移行する
 ---
 
 <style>
@@ -8,13 +8,12 @@ title: Migrating to Appium 3
     }
 </style>
 
-This document is a guide for those who are using Appium 2 and would like to upgrade to Appium 3.
-It contains a list of breaking changes, as well as suggestions for handling them.
+このドキュメントは既にAppium 2 を利用している人がAppium 3 に移行するための手引きです。
+破壊的変更と、それらを処理するためのヒントが含まれています。
 
-While Appium 2 was a major overhaul of the entire Appium architecture, Appium 3 is a smaller
-upgrade with fewer breaking changes, which should result in a much simpler migration process.
+Appium 2 はAppiumアーキテクチャ全体の大きな見直しをしました。 Appium 3 は限られた破壊的変更のみの比較的小さな更新であり、移行プロセスがはるかに簡易になります。
 
-\## Breaking Changes
+\## 破壊的変更
 
 ### Node 20+ Required
 

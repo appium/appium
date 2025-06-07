@@ -170,7 +170,7 @@ This is the most normal behavior for Appium plugins -- to modify or replace the 
 more commands that would normally be handled by the active driver. To override the default command
 handling, you need to implement `async` methods in your class with the same name as the Appium
 commands to be handled (just exactly how [drivers themselves are
-implemented](./build-drivers.md#implement-webdriver-commands)). Curious what command names there
+implemented](./build-drivers.md#implement-webdriver-classic-commands)). Curious what command names there
 are? They are defined in the Appium base driver's
 [routes.js](https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js) file,
 and of course you can add more as defined in the next section.

@@ -60,7 +60,7 @@
     "teen_process": "2.3.2",
     "type-fest": "4.41.0",
     "yaml": "2.8.0",
-    "yargs": "17.7.2",
+    "yargs": "18.0.0",
     "yargs-parser": "21.1.1"
   },
   "engines": {

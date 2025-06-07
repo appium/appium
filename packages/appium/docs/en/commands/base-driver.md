@@ -233,28 +233,6 @@ A possibly empty list of elements inside the shadow root matching the selector
 
 ### `getLog`
 
-`POST` **`/session/:sessionId/log`**
-
-Get the log for a given log type.
-
-!!! warning "Deprecated"
-
-    Please use the `/session/:sessionId/se/log` endpoint instead
-
-<!-- comment source: method-signature -->
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `type` | `string` | Name/key of log type as defined in ILogCommands.supportedLogTypes. |
-
-#### Response
-
-`any`
-
-### `getLog`
-
 `POST` **`/session/:sessionId/se/log`**
 
 Get the log for a given log type.
@@ -290,22 +268,6 @@ Get a list of events that have occurred in the current session
 `EventHistory` \| `Record`<`string`, `number`\>
 
 The event history for the session
-
-### `getLogTypes`
-
-`GET` **`/session/:sessionId/log/types`**
-
-Get available log types as a list of strings
-
-!!! warning "Deprecated"
-
-    Please use the `/session/:sessionId/se/log/types` endpoint instead
-
-<!-- comment source: method-signature -->
-
-#### Response
-
-`string`[]
 
 ### `getLogTypes`
 
@@ -510,30 +472,6 @@ Set the various timeouts associated with a session
 
 ``null``
 
-### `implicitWait`
-
-`POST` **`/session/:sessionId/timeouts/implicit_wait`**
-
-Set the implicit wait timeout
-
-!!! warning "Deprecated"
-
-    Please use the `/session/:sessionId/timeouts` endpoint instead
-
-Use `timeouts` instead
-
-<!-- comment source: method-signature -->
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `ms` | `string` \| `number` | the timeout in ms |
-
-#### Response
-
-``null``
-
 ### `logCustomEvent`
 
 `POST` **`/session/:sessionId/appium/log_event`**
@@ -548,24 +486,6 @@ Add a custom-named event to the Appium event log
 | :------ | :------ | :------ |
 | `vendor` | `string` | the name of the vendor or tool the event belongs to, to namespace the event |
 | `event` | `string` | the name of the event itself |
-
-#### Response
-
-``null``
-
-### `reset`
-
-`POST` **`/session/:sessionId/appium/app/reset`**
-
-Reset the current session (run the delete session and create session subroutines)
-
-!!! warning "Deprecated"
-
-    Please use each driver's launch, activate, terminate or cleanup method.
-
-Use explicit session management commands instead
-
-<!-- comment source: method-signature -->
 
 #### Response
 

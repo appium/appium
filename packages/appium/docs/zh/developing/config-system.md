@@ -261,7 +261,7 @@ An `ArgSpec` object stores the following metadata:
 | `dest`          | Property name in parsed arguments object (as returned by `argparse`'s `parse_args()`) |
 | `defaultValue?` | Value of the `default` keyword in schema, if appropriate                                                 |
 
-When a schema is [finalized](#schema-finalization), the `Map` is populated with `ArgSpec` objects
+When a schema is [finalized](#schema-loading), the `Map` is populated with `ArgSpec` objects
 for all known arguments.
 
 So when the adapter is creating the pipeline of functions for the argument's `type`, it already has

@@ -68,14 +68,7 @@ In the past, events were available as a part of `GET /session/:id` response
 
 ## Add a custom event
 
-!!! warning "TODO"
-
-```
-The links to the commands in the following paragraph do not yet work since these docs are under
-construction.
-```
-
 You can add custom events that will show up in the event timings data. You can send a custom event
-name to the Appium server using the [Log Event API](#TODO), and the server will store the
-timestamp. The [Get Events](#TODO) command can be used to retrieve named events' timestamps later
-on.
+name to the Appium server using the [Log Custom Event API](../commands/base-driver.md#logcustomevent),
+and the server will store the timestamp. The [Get Log Events](../commands/base-driver.md#getlogevents)
+command can be used to retrieve named events' timestamps later on.

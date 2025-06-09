@@ -286,7 +286,7 @@ export default class ImageElementFinder {
     if (!driver.getScreenshot) {
       throw new Error("This driver does not support the required 'getScreenshot' command");
     }
-    const settings = Object.assign({}, DEFAULT_SETTINGS, driver.settings.getSettings());
+    const settings = {...DEFAULT_SETTINGS, ...driver.settings.getSettings()};
     const {fixImageFindScreenshotDims} = settings;
 
     const screenshot = Buffer.from(await driver.getScreenshot(), 'base64');

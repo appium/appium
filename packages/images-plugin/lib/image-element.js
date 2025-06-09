@@ -128,7 +128,7 @@ export default class ImageElement {
   async click(driver) {
     // before we click we need to make sure the element is actually still there
     // where we expect it to be
-    const settings = Object.assign({}, DEFAULT_SETTINGS, driver.settings.getSettings());
+    const settings = {...DEFAULT_SETTINGS, ...driver.settings.getSettings()};
     const {
       autoUpdateImageElementPosition: updatePos,
       checkForImageElementStaleness,

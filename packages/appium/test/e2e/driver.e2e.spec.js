@@ -313,12 +313,10 @@ describe('FakeDriver via HTTP', function () {
     });
 
     it('should use the newCommandTimeout of the inner Driver on session creation', async function () {
-      let localCaps = Object.assign(
-        {
-          'appium:newCommandTimeout': 0.25,
-        },
-        caps,
-      );
+      let localCaps = {
+        'appium:newCommandTimeout': 0.25,
+        ...caps,
+      };
       let driver = await wdio({...wdOpts, capabilities: localCaps});
       should.exist(driver.sessionId);
 
@@ -327,12 +325,10 @@ describe('FakeDriver via HTTP', function () {
     });
 
     it('should not allow umbrella commands to prevent newCommandTimeout on inner driver', async function () {
-      let localCaps = Object.assign(
-        {
-          'appium:newCommandTimeout': 0.25,
-        },
-        caps,
-      );
+      let localCaps = {
+        'appium:newCommandTimeout': 0.25,
+        ...caps,
+      };
       let driver = await wdio({...wdOpts, capabilities: localCaps});
       should.exist(driver.sessionId);
       driver.addCommand(

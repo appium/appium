@@ -194,10 +194,11 @@ class ProtocolConverter {
       return await this.proxyFunc(
         url,
         method,
-        Object.assign({}, bodyObj, {
+        {
+          ...bodyObj,
           text,
           value,
-        })
+        }
       );
     }
 

@@ -240,20 +240,17 @@ export class ExtensionConfig {
       for (const summary of errorSummaries) {
         log.error(summary);
       }
-    } else {
+    } else if (!_.isEmpty(warningSummaries)) {
       // only display warnings if there are no errors!
-
-      if (!_.isEmpty(warningSummaries)) {
-        log.warn(
-          `Appium encountered ${util.pluralize(
-            'warning',
-            warningMap.size,
-            true
-          )} while validating ${this.extensionType}s found in manifest ${this.manifestPath}`
-        );
-        for (const summary of warningSummaries) {
-          log.warn(summary);
-        }
+      log.warn(
+        `Appium encountered ${util.pluralize(
+          'warning',
+          warningMap.size,
+          true
+        )} while validating ${this.extensionType}s found in manifest ${this.manifestPath}`
+      );
+      for (const summary of warningSummaries) {
+        log.warn(summary);
       }
     }
     return exts;

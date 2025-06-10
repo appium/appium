@@ -140,7 +140,7 @@
     "midnight-smoker": "8.0.0",
     "mjpeg-consumer": "2.0.0",
     "mjpeg-server": "0.3.1",
-    "mocha": "11.5.0",
+    "mocha": "11.6.0",
     "npm-run-all2": "8.0.4",
     "prettier": "3.5.3",
     "rewiremock": "3.14.6",

@@ -390,19 +390,17 @@ export class Manifest {
         if (err.code === 'ENOENT') {
           data = _.cloneDeep(INITIAL_MANIFEST_DATA);
           shouldWrite = true;
+        } else if (this.#manifestPath) {
+          throw new Error(
+            `Appium had trouble loading the extension installation ` +
+              `cache file (${this.#manifestPath}). It may be invalid YAML. Specific error: ${
+                err.message
+              }`
+          );
         } else {
-          if (this.#manifestPath) {
-            throw new Error(
-              `Appium had trouble loading the extension installation ` +
-                `cache file (${this.#manifestPath}). It may be invalid YAML. Specific error: ${
-                  err.message
-                }`
-            );
-          } else {
-            throw new Error(
-              `Appium encountered an unknown problem. Specific error: ${err.message}`
-            );
-          }
+          throw new Error(
+            `Appium encountered an unknown problem. Specific error: ${err.message}`
+          );
         }
       }
 

@@ -296,12 +296,10 @@ async function getImagesMatches(img1Data, img2Data, options = {}) {
         matches = matches.filter((match) =>
           goodMatchesFactor(match.distance, minDistance, maxDistance)
         );
-      } else {
-        if (matches.length > goodMatchesFactor) {
-          matches = matches
-            .sort((match1, match2) => match1.distance - match2.distance)
-            .slice(0, goodMatchesFactor);
-        }
+      } else if (matches.length > goodMatchesFactor) {
+        matches = matches
+          .sort((match1, match2) => match1.distance - match2.distance)
+          .slice(0, goodMatchesFactor);
       }
     }
 

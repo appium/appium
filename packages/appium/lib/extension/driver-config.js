@@ -84,20 +84,18 @@ export class DriverConfig extends ExtensionConfig {
         err: 'Missing or incorrect supported platformNames list.',
         val: platformNames,
       });
+    } else if (_.isEmpty(platformNames)) {
+      problems.push({
+        err: 'Empty platformNames list.',
+        val: platformNames,
+      });
     } else {
-      if (_.isEmpty(platformNames)) {
-        problems.push({
-          err: 'Empty platformNames list.',
-          val: platformNames,
-        });
-      } else {
-        for (const pName of platformNames) {
-          if (!_.isString(pName)) {
-            problems.push({
-              err: 'Incorrectly formatted platformName.',
-              val: pName,
-            });
-          }
+      for (const pName of platformNames) {
+        if (!_.isString(pName)) {
+          problems.push({
+            err: 'Incorrectly formatted platformName.',
+            val: pName,
+          });
         }
       }
     }

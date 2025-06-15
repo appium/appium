@@ -59,19 +59,7 @@ export async function init(args) {
   const transports = await createTransports(args);
   const transportNames = new Set(transports.map((tr) => tr.constructor.name));
 
-    // interface LoggerOptions {
-    //   levels?: Config.AbstractConfigSetLevels;
-    //   silent?: boolean;
-    //   format?: logform.Format;
-    //   level?: string;
-    //   exitOnError?: Function | boolean;
-    //   defaultMeta?: any;
-    //   transports?: Transport[] | Transport;
-    //   handleExceptions?: boolean;
-    //   handleRejections?: boolean;
-    //   exceptionHandlers?: any;
-    //   rejectionHandlers?: any;
-    // }
+
   log = createLogger({
     transports,
     levels: LEVELS_MAP,
@@ -157,6 +145,11 @@ function createConsoleTransport(args, logLvl) {
     name: 'console',
     level: logLvl,
     stderrLevels: ['error'],
+    format: format.combine(
+      formatTimestamp(args),
+      isLogColorEnabled(args) ? colorizeFormat : stripColorFormat,
+      formatLog(args, true),
+    ),
   });
 }
 
@@ -173,6 +166,11 @@ function createFileTransport(args, logLvl) {
     filename: args.logFile,
     maxFiles: 1,
     level: logLvl,
+    format: format.combine(
+      stripColorFormat,
+      formatTimestamp(args),
+      formatLog(args, false),
+    ),
   });
 }
 
@@ -199,6 +197,10 @@ function createHttpTransport(args, logLvl) {
     port,
     path: '/',
     level: logLvl,
+    format: format.combine(
+      stripColorFormat,
+      formatLog(args, false),
+    ),
   });
 }
 

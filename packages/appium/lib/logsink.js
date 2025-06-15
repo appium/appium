@@ -134,8 +134,6 @@ const stripColorFormat = format(function stripColor(info) {
  */
 function createConsoleTransport(args, logLvl) {
   return new transports.Console({
-    // @ts-expect-error The 'name' property should exist
-    name: 'console',
     level: logLvl,
     stderrLevels: ['error'],
     format: format.combine(
@@ -154,8 +152,6 @@ function createConsoleTransport(args, logLvl) {
  */
 function createFileTransport(args, logLvl) {
   return new transports.File({
-    // @ts-expect-error The 'name' property should exist
-    name: 'file',
     filename: args.logFile,
     maxFiles: 1,
     level: logLvl,
@@ -184,8 +180,6 @@ function createHttpTransport(args, logLvl) {
   }
 
   return new transports.Http({
-    // @ts-expect-error The 'name' property should exist
-    name: 'http',
     host,
     port,
     path: '/',

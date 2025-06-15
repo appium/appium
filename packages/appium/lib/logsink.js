@@ -133,7 +133,9 @@ const stripColorFormat = format(function stripColor(info) {
  * @returns {transports.ConsoleTransportInstance}
  */
 function createConsoleTransport(args, logLvl) {
-  return new transports.Console({
+  /** @type {AppiumConsoleTRansportOptions} */
+  const opt = {
+    name: 'console',
     level: logLvl,
     stderrLevels: ['error'],
     format: format.combine(
@@ -141,7 +143,8 @@ function createConsoleTransport(args, logLvl) {
       isLogColorEnabled(args) ? colorizeFormat : stripColorFormat,
       formatLog(args, true),
     ),
-  });
+  };
+  return new transports.Console(opt);
 }
 
 /**
@@ -151,7 +154,9 @@ function createConsoleTransport(args, logLvl) {
  * @returns {transports.FileTransportInstance}
  */
 function createFileTransport(args, logLvl) {
-  return new transports.File({
+  /** @type {AppiumFileTransportOptions} */
+  const opt = {
+    name: 'file',
     filename: args.logFile,
     maxFiles: 1,
     level: logLvl,
@@ -160,7 +165,8 @@ function createFileTransport(args, logLvl) {
       formatTimestamp(args),
       formatLog(args, false),
     ),
-  });
+  };
+  return new transports.File(opt);
 }
 
 /**
@@ -179,7 +185,9 @@ function createHttpTransport(args, logLvl) {
     port = parseInt(hostAndPort[1], 10);
   }
 
-  return new transports.Http({
+  /** @type {AppiumHttpTransportOptions} */
+  const opt = {
+    name: 'http',
     host,
     port,
     path: '/',
@@ -188,7 +196,8 @@ function createHttpTransport(args, logLvl) {
       stripColorFormat,
       formatLog(args, false),
     ),
-  });
+  };
+  return new transports.Http(opt);
 }
 
 /**
@@ -349,4 +358,7 @@ export default init;
 /**
  * @typedef {import('appium/types').ParsedArgs} ParsedArgs
  * @typedef {import('@appium/logger').MessageObject} MessageObject
+ * @typedef {transports.ConsoleTransportOptions & {name: string}} AppiumConsoleTRansportOptions
+ * @typedef {transports.FileTransportOptions & {name: string}} AppiumFileTransportOptions
+ * @typedef {transports.HttpTransportOptions & {name: string}} AppiumHttpTransportOptions
  */

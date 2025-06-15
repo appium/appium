@@ -61,6 +61,8 @@ export async function init(args) {
   log = createLogger({
     transports,
     levels: LEVELS_MAP,
+    handleExceptions: true,
+    exitOnError: false
   });
 
   const reportedLoggerErrors = new Set();
@@ -131,12 +133,9 @@ const stripColorFormat = format(function stripColor(info) {
  * @returns {transports.ConsoleTransportInstance}
  */
 function createConsoleTransport(args, logLvl) {
-  return new transports.Console({
-    // @ts-expect-error The 'name' property should exist
+  /** @type {AppiumConsoleTransportOptions} */
+  const opt = {
     name: 'console',
-    handleExceptions: true,
-    exitOnError: false,
-    json: false,
     level: logLvl,
     stderrLevels: ['error'],
     format: format.combine(
@@ -144,7 +143,8 @@ function createConsoleTransport(args, logLvl) {
       isLogColorEnabled(args) ? colorizeFormat : stripColorFormat,
       formatLog(args, true),
     ),
-  });
+  };
+  return new transports.Console(opt);
 }
 
 /**
@@ -154,21 +154,19 @@ function createConsoleTransport(args, logLvl) {
  * @returns {transports.FileTransportInstance}
  */
 function createFileTransport(args, logLvl) {
-  return new transports.File({
-    // @ts-expect-error The 'name' property should exist
+  /** @type {AppiumFileTransportOptions} */
+  const opt = {
     name: 'file',
     filename: args.logFile,
     maxFiles: 1,
-    handleExceptions: true,
-    exitOnError: false,
-    json: false,
     level: logLvl,
     format: format.combine(
       stripColorFormat,
       formatTimestamp(args),
       formatLog(args, false),
     ),
-  });
+  };
+  return new transports.File(opt);
 }
 
 /**
@@ -187,21 +185,19 @@ function createHttpTransport(args, logLvl) {
     port = parseInt(hostAndPort[1], 10);
   }
 
-  return new transports.Http({
-    // @ts-expect-error The 'name' property should exist
+  /** @type {AppiumHttpTransportOptions} */
+  const opt = {
     name: 'http',
     host,
     port,
     path: '/',
-    handleExceptions: true,
-    exitOnError: false,
-    json: false,
     level: logLvl,
     format: format.combine(
       stripColorFormat,
       formatLog(args, false),
     ),
-  });
+  };
+  return new transports.Http(opt);
 }
 
 /**
@@ -362,4 +358,7 @@ export default init;
 /**
  * @typedef {import('appium/types').ParsedArgs} ParsedArgs
  * @typedef {import('@appium/logger').MessageObject} MessageObject
+ * @typedef {transports.ConsoleTransportOptions & {name: string}} AppiumConsoleTransportOptions
+ * @typedef {transports.FileTransportOptions & {name: string}} AppiumFileTransportOptions
+ * @typedef {transports.HttpTransportOptions & {name: string}} AppiumHttpTransportOptions
  */

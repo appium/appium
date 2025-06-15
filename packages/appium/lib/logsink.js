@@ -58,9 +58,30 @@ export async function init(args) {
 
   const transports = await createTransports(args);
   const transportNames = new Set(transports.map((tr) => tr.constructor.name));
+
+    // interface LoggerOptions {
+    //   levels?: Config.AbstractConfigSetLevels;
+    //   silent?: boolean;
+    //   format?: logform.Format;
+    //   level?: string;
+    //   exitOnError?: Function | boolean;
+    //   defaultMeta?: any;
+    //   transports?: Transport[] | Transport;
+    //   handleExceptions?: boolean;
+    //   handleRejections?: boolean;
+    //   exceptionHandlers?: any;
+    //   rejectionHandlers?: any;
+    // }
   log = createLogger({
     transports,
     levels: LEVELS_MAP,
+    handleExceptions: true,
+    exitOnError: false,
+    format: format.combine(
+      formatTimestamp(args),
+      isLogColorEnabled(args) ? colorizeFormat : stripColorFormat,
+      formatLog(args, false),
+    ),
   });
 
   const reportedLoggerErrors = new Set();
@@ -134,16 +155,8 @@ function createConsoleTransport(args, logLvl) {
   return new transports.Console({
     // @ts-expect-error The 'name' property should exist
     name: 'console',
-    handleExceptions: true,
-    exitOnError: false,
-    json: false,
     level: logLvl,
     stderrLevels: ['error'],
-    format: format.combine(
-      formatTimestamp(args),
-      isLogColorEnabled(args) ? colorizeFormat : stripColorFormat,
-      formatLog(args, true),
-    ),
   });
 }
 
@@ -159,15 +172,7 @@ function createFileTransport(args, logLvl) {
     name: 'file',
     filename: args.logFile,
     maxFiles: 1,
-    handleExceptions: true,
-    exitOnError: false,
-    json: false,
     level: logLvl,
-    format: format.combine(
-      stripColorFormat,
-      formatTimestamp(args),
-      formatLog(args, false),
-    ),
   });
 }
 
@@ -193,14 +198,7 @@ function createHttpTransport(args, logLvl) {
     host,
     port,
     path: '/',
-    handleExceptions: true,
-    exitOnError: false,
-    json: false,
     level: logLvl,
-    format: format.combine(
-      stripColorFormat,
-      formatLog(args, false),
-    ),
   });
 }
 

@@ -62,12 +62,7 @@ export async function init(args) {
     transports,
     levels: LEVELS_MAP,
     handleExceptions: true,
-    exitOnError: false,
-    format: format.combine(
-      formatTimestamp(args),
-      isLogColorEnabled(args) ? colorizeFormat : stripColorFormat,
-      formatLog(args, false),
-    ),
+    exitOnError: false
   });
 
   const reportedLoggerErrors = new Set();

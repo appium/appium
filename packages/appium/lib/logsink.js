@@ -58,8 +58,6 @@ export async function init(args) {
 
   const transports = await createTransports(args);
   const transportNames = new Set(transports.map((tr) => tr.constructor.name));
-
-
   log = createLogger({
     transports,
     levels: LEVELS_MAP,

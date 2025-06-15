@@ -133,7 +133,7 @@ const stripColorFormat = format(function stripColor(info) {
  * @returns {transports.ConsoleTransportInstance}
  */
 function createConsoleTransport(args, logLvl) {
-  /** @type {AppiumConsoleTRansportOptions} */
+  /** @type {AppiumConsoleTransportOptions} */
   const opt = {
     name: 'console',
     level: logLvl,
@@ -358,7 +358,7 @@ export default init;
 /**
  * @typedef {import('appium/types').ParsedArgs} ParsedArgs
  * @typedef {import('@appium/logger').MessageObject} MessageObject
- * @typedef {transports.ConsoleTransportOptions & {name: string}} AppiumConsoleTRansportOptions
+ * @typedef {transports.ConsoleTransportOptions & {name: string}} AppiumConsoleTransportOptions
  * @typedef {transports.FileTransportOptions & {name: string}} AppiumFileTransportOptions
  * @typedef {transports.HttpTransportOptions & {name: string}} AppiumHttpTransportOptions
  */

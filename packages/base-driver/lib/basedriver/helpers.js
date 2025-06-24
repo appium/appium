@@ -121,12 +121,12 @@ export async function configureApp(
   }
   const appCacheKey = toCacheKey(app);
 
-  const cachedAppInfo = APPLICATIONS_CACHE.get(appCacheKey);
-  if (cachedAppInfo) {
-    logger.debug(`Cached app data: ${JSON.stringify(cachedAppInfo, null, 2)}`);
-  }
-
   return await APPLICATIONS_CACHE_GUARD.acquire(appCacheKey, async () => {
+    const cachedAppInfo = APPLICATIONS_CACHE.get(appCacheKey);
+    if (cachedAppInfo) {
+      logger.debug(`Cached app data: ${JSON.stringify(cachedAppInfo, null, 2)}`);
+    }
+
     if (isUrl) {
       // Use the app from remote URL
       logger.info(`Using downloadable app '${newApp}'`);

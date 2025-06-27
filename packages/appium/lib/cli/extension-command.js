@@ -975,7 +975,7 @@ async function injectAppiumSymlink(dstFolder) {
   let appiumModuleRoot;
   try {
     appiumModuleRoot = getAppiumModuleRoot();
-    const symlinkPath = path.join(dstFolder, 'appium');
+    const symlinkPath = path.join(dstFolder, path.basename(appiumModuleRoot));
     if (await fs.exists(dstFolder) && !(await fs.exists(symlinkPath))) {
       await fs.symlink(appiumModuleRoot, symlinkPath, system.isWindows() ? 'junction' : 'dir');
     }

@@ -190,18 +190,36 @@ export function getPackageVersion(pkgName) {
 }
 
 /**
+ * Returns the root directory of the Appium module.
+ *
+ * @returns {string} - The absolute path to the Appium module root directory.
+ * @throws {Error} - If the Appium module root cannot be determined.
+ */
+export const getAppiumModuleRoot = _.memoize(function getAppiumModuleRoot() {
+  const selfRoot = node.getModuleRootSync('appium', __filename);
+  if (!selfRoot) {
+    throw new Error('Cannot find the appium module root. This is likely a bug in Appium.');
+  }
+  return selfRoot;
+});
+
+/**
  * Adjusts NODE_PATH environment variable,
- * so drivers and plugins could load their peer dependencies.
+ * so CJS drivers and plugins could load their peer dependencies.
  * Read https://nodejs.org/api/modules.html#loading-from-the-global-folders
  * for more details.
+ *
+ * Unfortunately this hack does not work with ESM modules,
  * @returns {void}
  */
 export function adjustNodePath() {
-  const selfRoot = node.getModuleRootSync('appium', __filename);
-  if (!selfRoot || path.dirname(selfRoot).length >= selfRoot.length) {
+  let appiumModuleSearchRoot;
+  try {
+    appiumModuleSearchRoot = path.dirname(getAppiumModuleRoot());
+  } catch (error) {
+    logger.warn(error.message);
     return;
   }
-  const nodeModulesRoot = path.dirname(selfRoot);
 
   const refreshRequirePaths = () => {
     try {
@@ -219,7 +237,7 @@ export function adjustNodePath() {
   };
 
   if (!process.env.NODE_PATH) {
-    process.env.NODE_PATH = nodeModulesRoot;
+    process.env.NODE_PATH = appiumModuleSearchRoot;
     if (refreshRequirePaths()) {
       process.env.APPIUM_OMIT_PEER_DEPS = '1';
     } else {
@@ -229,17 +247,17 @@ export function adjustNodePath() {
   }
 
   const nodePathParts = process.env.NODE_PATH.split(path.delimiter);
-  if (nodePathParts.includes(nodeModulesRoot)) {
+  if (nodePathParts.includes(appiumModuleSearchRoot)) {
     process.env.APPIUM_OMIT_PEER_DEPS = '1';
     return;
   }
 
-  nodePathParts.push(nodeModulesRoot);
+  nodePathParts.push(appiumModuleSearchRoot);
   process.env.NODE_PATH = nodePathParts.join(path.delimiter);
   if (refreshRequirePaths()) {
     process.env.APPIUM_OMIT_PEER_DEPS = '1';
   } else {
-    process.env.NODE_PATH = _.without(nodePathParts, nodeModulesRoot).join(path.delimiter);
+    process.env.NODE_PATH = _.without(nodePathParts, appiumModuleSearchRoot).join(path.delimiter);
   }
 }
 

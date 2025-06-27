@@ -16,7 +16,7 @@ import {spawn} from 'child_process';
 import {inspect} from 'node:util';
 import {pathToFileURL} from 'url';
 import {Doctor, EXIT_CODE as DOCTOR_EXIT_CODE} from '../doctor/doctor';
-import {npmPackage} from '../utils';
+import {getAppiumModuleRoot, npmPackage} from '../utils';
 import * as semver from 'semver';
 
 const UPDATE_ALL = 'installed';
@@ -443,19 +443,24 @@ class ExtensionCliCommand {
     // the string used for installation is either <name>@<ver> in the case of a standard NPM
     // package, or whatever the user sent in otherwise.
     const installStr = installType === INSTALL_TYPE_NPM ? `${pkgName}${pkgVer ? `@${pkgVer}` : ''}` : installSpec;
+    const appiumHome = this.config.appiumHome;
     try {
-      const {pkg, path} = await spinWith(this.isJsonOutput, msg, async () => {
-        const {pkg, installPath: path} = await npm.installPackage(this.config.appiumHome, installStr, {
+      const {pkg, installPath} = await spinWith(this.isJsonOutput, msg, async () => {
+        const {pkg, installPath} = await npm.installPackage(appiumHome, installStr, {
           pkgName,
           installType,
         });
         this.validatePackageJson(pkg, installSpec);
-        return {pkg, path};
+        return {pkg, installPath};
       });
+
+      // After the extension is installed, we try to inject the appium module symlink
+      // into the extension's node_modules folder if it is not there yet.
+      await injectAppiumSymlink.bind(this)(path.join(installPath, 'node_modules'));
 
       return this.getInstallationReceipt({
         pkg,
-        installPath: path,
+        installPath,
         installType,
         installSpec,
       });
@@ -950,6 +955,31 @@ class ExtensionCliCommand {
       this.log.error(`Encountered an error when running '${scriptName}': ${err.message}`.red);
       return {error: err.message};
     }
+  }
+}
+
+/**
+ * This is needed to ensure proper module resolution for installed extensions,
+ * especially ESM ones.
+ *
+ * @this {ExtensionCliCommand}
+ * @param {string} dstFolder The destination folder where the symlink should be created
+ * @returns {Promise<void>}
+ */
+async function injectAppiumSymlink(dstFolder) {
+  let appiumModuleRoot;
+  try {
+    appiumModuleRoot = getAppiumModuleRoot();
+    const symlinkPath = path.join(dstFolder, path.basename(appiumModuleRoot));
+    if (await fs.exists(dstFolder) && !(await fs.exists(symlinkPath))) {
+      await fs.symlink(appiumModuleRoot, symlinkPath, system.isWindows() ? 'junction' : 'dir');
+    }
+  } catch (error) {
+    // This error is not fatal, we may still doing just fine if the module being loaded is a CJS one
+    this.log.info(
+      `Cannot create a symlink to the appium module '${appiumModuleRoot}' in '${dstFolder}'. ` +
+      `Original error: ${error.message}`
+    );
   }
 }
 

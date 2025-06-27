@@ -972,15 +972,19 @@ class ExtensionCliCommand {
  * @returns {Promise<void>}
  */
 async function injectAppiumSymlink(dstFolder) {
+  let appiumModuleRoot;
   try {
-    const appiumModuleRoot = getAppiumModuleRoot();
+    appiumModuleRoot = getAppiumModuleRoot();
     const symlinkPath = path.join(dstFolder, 'appium');
     if (await fs.exists(dstFolder) && !(await fs.exists(symlinkPath))) {
       await fs.symlink(appiumModuleRoot, symlinkPath, system.isWindows() ? 'junction' : 'dir');
     }
   } catch (error) {
     // This error is not fatal, we may still doing just fine if the module being loaded is a CJS one
-    this.log.info(`Cannot create a symlink to the appium module in '${dstFolder}'. Original error: ${error.message}`);
+    this.log.info(
+      `Cannot create a symlink to the appium module '${appiumModuleRoot}' in '${dstFolder}'. ` +
+      `Original error: ${error.message}`
+    );
   }
 }
 

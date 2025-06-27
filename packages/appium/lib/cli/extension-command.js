@@ -454,14 +454,9 @@ class ExtensionCliCommand {
         return {pkg, installPath};
       });
 
-      // If the extension is installed, we try to inject the appium module symlink into global node_modules
-      // as well as into the extension's node_modules folder.
-      for (const root of [
-        path.join(path.dirname(installPath), 'node_modules'),
-        path.join(installPath, 'node_modules'),
-      ]) {
-        await injectAppiumSymlink.bind(this)(root);
-      }
+      // After the extension is installed, we try to inject the appium module symlink
+      // into the extension's node_modules folder if it is not there yet.
+      await injectAppiumSymlink.bind(this)(path.join(installPath, 'node_modules'));
 
       return this.getInstallationReceipt({
         pkg,

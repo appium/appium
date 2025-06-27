@@ -1,7 +1,7 @@
-import {errors, errorFromMJSONWPStatusCode, errorFromW3CJsonCode, isErrorType} from '../../../lib';
-import {BadParametersError, getResponseForW3CError} from '../../../lib/protocol/errors';
+import { errors, errorFromW3CJsonCode, isErrorType } from '../../../lib';
+import { BadParametersError, getResponseForW3CError } from '../../../lib/protocol/errors';
 import _ from 'lodash';
-import {StatusCodes as HTTPStatusCodes} from 'http-status-codes';
+import { StatusCodes as HTTPStatusCodes } from 'http-status-codes';
 import path from 'path';
 
 const basename = path.basename(__filename);
@@ -13,7 +13,6 @@ let errorsList = [
     errorName: 'NoSuchDriverError',
     errorMsg: 'A session is either terminated or not started',
     error: 'invalid session id',
-    errorCode: 6,
   },
   {
     errorName: 'ElementClickInterceptedError',
@@ -42,7 +41,6 @@ let errorsList = [
     errorName: 'NoSuchElementError',
     errorMsg: 'An element could not be located on the page using the ' + 'given search parameters.',
     error: 'no such element',
-    errorCode: 7,
   },
   {
     errorName: 'NoSuchFrameError',
@@ -50,7 +48,6 @@ let errorsList = [
       'A request to switch to a frame could not be satisfied ' +
       'because the frame could not be found.',
     error: 'no such frame',
-    errorCode: 8,
   },
   {
     errorName: 'UnknownCommandError',
@@ -59,7 +56,6 @@ let errorsList = [
       'was received using an HTTP method that is not supported by ' +
       'the mapped resource.',
     error: 'unknown command',
-    errorCode: 9,
   },
   {
     errorName: 'StaleElementReferenceError',
@@ -67,14 +63,13 @@ let errorsList = [
       'An element command failed because the referenced element is ' +
       'no longer attached to the DOM.',
     error: 'stale element reference',
-    errorCode: 10,
   },
   {
     errorName: 'ElementNotVisibleError',
     errorMsg:
       'An element command could not be completed because the ' +
       'element is not visible on the page.',
-    errorCode: 11,
+    error: 'element not visible',
   },
   {
     errorName: 'InvalidElementStateError',
@@ -83,36 +78,31 @@ let errorsList = [
       'is in an invalid state (e.g. attempting to click a disabled ' +
       'element).',
     error: 'invalid element state',
-    errorCode: 12,
   },
   {
     errorName: 'UnknownError',
     errorMsg: 'An unknown server-side error occurred while processing the ' + 'command.',
     error: 'unknown error',
-    errorCode: 13,
   },
   {
     errorName: 'ElementIsNotSelectableError',
     errorMsg: 'An attempt was made to select an element that cannot ' + 'be selected.',
     error: 'element not selectable',
-    errorCode: 15,
   },
   {
     errorName: 'JavaScriptError',
     errorMsg: 'An error occurred while executing user supplied JavaScript.',
     error: 'javascript error',
-    errorCode: 17,
   },
   {
     errorName: 'XPathLookupError',
     errorMsg: 'An error occurred while searching for an element by XPath.',
-    errorCode: 19,
+    error: 'invalid selector',
   },
   {
     errorName: 'TimeoutError',
     errorMsg: 'An operation did not complete before its timeout expired.',
     error: 'timeout',
-    errorCode: 21,
   },
   {
     errorName: 'NoSuchWindowError',
@@ -120,7 +110,6 @@ let errorsList = [
       'A request to switch to a different window could not be ' +
       'satisfied because the window could not be found.',
     error: 'no such window',
-    errorCode: 23,
   },
   {
     errorName: 'InvalidCookieDomainError',
@@ -128,7 +117,6 @@ let errorsList = [
       'An illegal attempt was made to set a cookie under a different ' +
       'domain than the current page.',
     error: 'invalid cookie domain',
-    errorCode: 24,
   },
   {
     errorName: 'InvalidCoordinatesError',
@@ -139,57 +127,51 @@ let errorsList = [
     errorName: 'UnableToSetCookieError',
     errorMsg: `A request to set a cookie's value could not be satisfied.`,
     error: 'unable to set cookie',
-    errorCode: 25,
   },
   {
     errorName: 'UnexpectedAlertOpenError',
     errorMsg: 'A modal dialog was open, blocking this operation',
     error: 'unexpected alert open',
-    errorCode: 26,
   },
   {
     errorName: 'NoAlertOpenError',
     errorMsg: 'An attempt was made to operate on a modal dialog when one was ' + 'not open.',
-    errorCode: 27,
+    error: 'no such alert',
   },
   {
     errorName: 'ScriptTimeoutError',
     errorMsg: 'A script did not complete before its timeout expired.',
     error: 'script timeout',
-    errorCode: 28,
   },
   {
     errorName: 'InvalidElementCoordinatesError',
     errorMsg: 'The coordinates provided to an interactions operation are ' + 'invalid.',
-    errorCode: 29,
+    error: 'unsupported operation',
   },
   {
     errorName: 'IMENotAvailableError',
     errorMsg: 'IME was not available.',
-    errorCode: 30,
+    error: 'unsupported operation',
   },
   {
     errorName: 'IMEEngineActivationFailedError',
     errorMsg: 'An IME engine could not be started.',
-    errorCode: 31,
+    error: 'unsupported operation',
   },
   {
     errorName: 'InvalidSelectorError',
     errorMsg: 'Argument was an invalid selector (e.g. XPath/CSS).',
     error: 'invalid selector',
-    errorCode: 32,
   },
   {
     errorName: 'SessionNotCreatedError',
     errorMsg: 'A new session could not be created.',
     error: 'session not created',
-    errorCode: 33,
   },
   {
     errorName: 'MoveTargetOutOfBoundsError',
     errorMsg: 'Target provided for a move action is out of bounds.',
     error: 'move target out of bounds',
-    errorCode: 34,
   },
   {
     errorName: 'NoSuchAlertError',
@@ -206,7 +188,6 @@ let errorsList = [
     errorName: 'NotYetImplementedError',
     errorMsg: 'Method has not yet been implemented',
     error: 'unknown method',
-    errorCode: 405,
   },
   {
     errorName: 'UnknownCommandError',
@@ -233,59 +214,13 @@ describe('errors', function () {
   });
 
   for (let error of errorsList) {
-    it(error.errorName + ' should have a JSONWP code or W3C code and message', function () {
-      if (error.errorCode) {
-        new errors[error.errorName]().should.have.property('jsonwpCode', error.errorCode);
-      } else {
-        new errors[error.errorName]().should.have.property('error', error.error);
-      }
+    it(error.errorName + ' should have a W3C code and message', function () {
+      new errors[error.errorName]().should.have.property('error', error.error);
       new errors[error.errorName]().should.have.property('message', error.errorMsg);
     });
   }
 });
-describe('errorFromMJSONWPStatusCode', function () {
-  before(async function () {
-    const chai = await import('chai');
-    chai.should();
-  });
 
-  for (let error of errorsList) {
-    if (error.errorName !== 'NotYetImplementedError') {
-      it(error.errorCode + ' should return correct error', function () {
-        if (error.errorCode) {
-          errorFromMJSONWPStatusCode(error.errorCode).should.have.property(
-            'jsonwpCode',
-            error.errorCode
-          );
-          errorFromMJSONWPStatusCode(error.errorCode).should.have.property(
-            'message',
-            error.errorMsg
-          );
-          if (!_.includes([13, 33], error.errorCode)) {
-            errorFromMJSONWPStatusCode(error.errorCode, 'abcd').should.have.property(
-              'jsonwpCode',
-              error.errorCode
-            );
-            errorFromMJSONWPStatusCode(error.errorCode, 'abcd').should.have.property(
-              'message',
-              'abcd'
-            );
-          }
-        } else {
-          isErrorType(errorFromMJSONWPStatusCode(error.errorCode), errors.UnknownError).should.be
-            .true;
-        }
-      });
-    }
-  }
-  it('should throw unknown error for unknown code', function () {
-    errorFromMJSONWPStatusCode(99).should.have.property('jsonwpCode', 13);
-    errorFromMJSONWPStatusCode(99).should.have.property(
-      'message',
-      'An unknown server-side error occurred ' + 'while processing the command.'
-    );
-  });
-});
 describe('errorFromW3CJsonCode', function () {
   before(async function () {
     const chai = await import('chai');
@@ -295,7 +230,7 @@ describe('errorFromW3CJsonCode', function () {
   for (let error of errorsList) {
     if (error.errorName !== 'NotYetImplementedError') {
       it(error.errorName + ' should return correct error', function () {
-        const {error: w3cError} = error;
+        const { error: w3cError } = error;
         if (w3cError) {
           errorFromW3CJsonCode(w3cError).error.should.equal(error.error);
           errorFromW3CJsonCode(w3cError).should.have.property('message', error.errorMsg);
@@ -364,7 +299,7 @@ describe('.getResponseForW3CError', function () {
     } catch (e) {
       const [httpStatus, httpResponseBody] = getResponseForW3CError(e);
       httpStatus.should.equal(500);
-      const {error, message, stacktrace} = httpResponseBody.value;
+      const { error, message, stacktrace } = httpResponseBody.value;
       message.should.match(/Some random error/);
       error.should.equal('unknown error');
       stacktrace.should.match(/caused by/);
@@ -376,7 +311,7 @@ describe('.getResponseForW3CError', function () {
     const noSuchElementError = new errors.NoSuchElementError('specific error message');
     const [httpStatus, httpResponseBody] = getResponseForW3CError(noSuchElementError);
     httpStatus.should.equal(404);
-    const {error, message, stacktrace} = httpResponseBody.value;
+    const { error, message, stacktrace } = httpResponseBody.value;
     error.should.equal('no such element');
     message.should.match(/specific error message/);
     stacktrace.should.contain(basename);
@@ -387,61 +322,17 @@ describe('.getResponseForW3CError', function () {
     }, ['bar']);
     const [httpStatus, httpResponseBody] = getResponseForW3CError(badParamsError);
     httpStatus.should.equal(400);
-    const {error, message, stacktrace} = httpResponseBody.value;
+    const { error, message, stacktrace } = httpResponseBody.value;
     error.should.equal('invalid argument');
     message.should.match(/foo/);
     message.should.match(/bar/);
     stacktrace.should.contain(basename);
-  });
-  it('should translate JSONWP errors', function () {
-    const [httpStatus, httpResponseBody] = getResponseForW3CError(
-      new errors.NoSuchElementError('My custom message')
-    );
-    httpStatus.should.equal(404);
-    const {error, message, stacktrace} = httpResponseBody.value;
-    message.should.equal('My custom message');
-    error.should.equal('no such element');
-    stacktrace.should.exist;
   });
 });
 describe('.getActualError', function () {
   before(async function () {
     const chai = await import('chai');
     chai.should();
-  });
-
-  describe('MJSONWP', function () {
-    it('should map a status code 7 no such element error as a NoSuchElementError', function () {
-      const actualError = new errors.ProxyRequestError('Error message does not matter', {
-        value: 'does not matter',
-        status: 7,
-      }).getActualError();
-      isErrorType(actualError, errors.NoSuchElementError).should.be.true;
-    });
-    it('should map a status code 10, StaleElementReferenceError', function () {
-      const actualError = new errors.ProxyRequestError('Error message does not matter', {
-        value: 'Does not matter',
-        status: 10,
-      }).getActualError();
-      isErrorType(actualError, errors.StaleElementReferenceError).should.be.true;
-    });
-    it('should map an unknown error to UnknownError', function () {
-      const actualError = new errors.ProxyRequestError('Error message does not matter', {
-        value: 'Does not matter',
-        status: -100,
-      }).getActualError();
-      isErrorType(actualError, errors.UnknownError).should.be.true;
-    });
-    it('should parse a JSON string', function () {
-      const actualError = new errors.ProxyRequestError(
-        'Error message does not matter',
-        JSON.stringify({
-          value: 'Does not matter',
-          status: -100,
-        })
-      ).getActualError();
-      isErrorType(actualError, errors.UnknownError).should.be.true;
-    });
   });
 
   describe('W3C', function () {

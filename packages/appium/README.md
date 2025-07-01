@@ -204,6 +204,16 @@ contribution of project development and leadership!
   </a>
 </p>
 
+<p align="center">
+  <a href="https://lambdatest.com/?utm_source=appium.io&utm_medium=organic&utm_campaign=june_25&utm_term=sk&utm_content=webpage">
+    <picture>
+      <source srcset="packages/appium/docs/overrides/assets/images/sponsor-logo-lambdatest-dark.png" media="(prefers-color-scheme: dark)"/>
+      <source srcset="packages/appium/docs/overrides/assets/images/sponsor-logo-lambdatest-light.png" media="(prefers-color-scheme: light)"/>
+      <img src="packages/appium/docs/overrides/assets/images/sponsor-logo-lambdatest-dark.png" width="300" alt="LambdaTest"/>
+    </picture>
+  </a>
+</p>
+
 ### Other Sponsors
 
 A full list of sponsors is available at our [Sponsors page](https://appium.io/docs/en/latest/sponsors/).

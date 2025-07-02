@@ -2,6 +2,7 @@
 hide:
   - navigation
   - toc
+
 title: 欢迎使用
 ---
 
@@ -25,6 +26,12 @@ title: 欢迎使用
       <a href="https://www.browserstack.com/browserstack-appium?utm_campaigncode=701OW00000AoUTQYA3&utm_medium=partnered&utm_source=appium">
         <img src="assets/images/sponsor-logo-browserstack-dark.png#only-dark" style="width: 220px;" />
         <img src="assets/images/sponsor-logo-browserstack-light.png#only-light" style="width: 220px;" />
+      </a>
+    </div>
+    <div class="homepageSponsor">
+      <a href="https://lambdatest.com/?utm_source=appium.io&utm_medium=organic&utm_campaign=june_25&utm_term=sk&utm_content=webpage">
+        <img src="assets/images/sponsor-logo-lambdatest-dark.png#only-dark" style="width: 220px;" />
+        <img src="assets/images/sponsor-logo-lambdatest-light.png#only-light" style="width: 220px;" />
       </a>
     </div>
   </div>

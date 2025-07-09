@@ -44,7 +44,7 @@
     "@appium/types": "^0.26.0",
     "axios": "1.10.0",
     "bluebird": "3.7.2",
-    "chai": "5.2.0",
+    "chai": "5.2.1",
     "chai-as-promised": "8.0.1",
     "get-port": "5.1.1",
     "lodash": "4.17.21",

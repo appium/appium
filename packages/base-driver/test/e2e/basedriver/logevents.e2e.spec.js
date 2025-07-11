@@ -1,13 +1,9 @@
 import {server, routeConfiguringFunction} from '../../../lib';
 import axios from 'axios';
+// eslint-disable-next-line import/named
 import {createSandbox} from 'sinon';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
 import {MockExecuteDriver} from '../protocol/mock-execute-driver';
-
-chai.use(chaiAsPromised);
-const should = chai.should();
 
 let port, baseUrl;
 
@@ -17,6 +13,10 @@ describe('Execute Command Test', function () {
   let httpServer;
 
   beforeEach(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
     sandbox = createSandbox();
     port = await getTestPort();
     baseUrl = `http://${TEST_HOST}:${port}`;

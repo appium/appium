@@ -104,7 +104,7 @@
     "@types/mocha": "10.0.10",
     "@types/mv": "2.1.4",
     "@types/ncp": "2.0.8",
-    "@types/node": "22.16.2",
+    "@types/node": "22.16.3",
     "@types/pluralize": "0.0.33",
     "@types/semver": "7.7.0",
     "@types/serve-favicon": "2.5.7",

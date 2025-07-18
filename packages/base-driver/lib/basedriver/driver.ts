@@ -161,6 +161,18 @@ export class BaseDriver<
 
     // log timing information about this command
     const endTime = Date.now();
+
+    if (cmd === 'execute') {
+      const firstArg = args?.[0];
+      const mobileCommandMatch = typeof firstArg === 'string' && firstArg.startsWith('mobile:')
+        ? firstArg.slice('mobile:'.length).trim()
+        : null;
+
+      if (mobileCommandMatch) {
+        cmd = mobileCommandMatch;
+      }
+    }
+
     this._eventHistory.commands.push({cmd, startTime, endTime});
     if (cmd === 'createSession') {
       this.logEvent(EVENT_SESSION_START);

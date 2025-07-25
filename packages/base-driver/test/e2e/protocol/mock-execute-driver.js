@@ -15,7 +15,7 @@ class MockExecuteDriver extends BaseDriver {
     return {executed: script, args};
   }
 
-  modifyCommandName(cmd, args) {
+  clarifyCommandName(cmd, args) {
     if (cmd === 'execute') {
       const firstArg = args?.[0];
       if (typeof firstArg === 'string' && firstArg.startsWith('mobile:')) {

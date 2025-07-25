@@ -14,6 +14,16 @@ class MockExecuteDriver extends BaseDriver {
   async execute(script, args) {
     return {executed: script, args};
   }
+
+  modifyCommandName(cmd, args) {
+    if (cmd === 'execute') {
+      const firstArg = args?.[0];
+      if (typeof firstArg === 'string' && firstArg.startsWith('mobile:')) {
+        return firstArg.slice('mobile:'.length).trim();
+      }
+    }
+    return cmd;
+  }
 }
 
 export {MockExecuteDriver};

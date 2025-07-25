@@ -162,16 +162,7 @@ export class BaseDriver<
     // log timing information about this command
     const endTime = Date.now();
 
-    if (cmd === 'execute') {
-      const firstArg = args?.[0];
-      const mobileCommandMatch = typeof firstArg === 'string' && firstArg.startsWith('mobile:')
-        ? firstArg.slice('mobile:'.length).trim()
-        : null;
-
-      if (mobileCommandMatch) {
-        cmd = mobileCommandMatch;
-      }
-    }
+    cmd = this.modifyCommandName(cmd, args);
 
     this._eventHistory.commands.push({cmd, startTime, endTime});
     if (cmd === 'createSession') {
@@ -181,6 +172,11 @@ export class BaseDriver<
     }
 
     return res;
+  }
+
+  protected modifyCommandName(cmd: string, args: any[]): string {
+    // Default implementation: Do nothing
+    return cmd;
   }
 
   async startUnexpectedShutdown(

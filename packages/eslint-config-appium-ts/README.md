@@ -7,7 +7,7 @@
 
 ## Usage
 
-Install the package with **`npm` v8 or newer**:
+Install the package:
 
 ```bash
 npm install @appium/eslint-config-appium-ts --save-dev
@@ -23,18 +23,6 @@ export default [
   // add any other config changes 
 ];
 ```
-
-## Peer Dependencies
-
-This config requires the following packages be installed (as peer dependencies) in your project.  See the `package.json` for the required versions.
-
-- [eslint](https://www.npmjs.com/package/eslint)
-- [eslint-config-prettier](https://www.npmjs.com/package/eslint-config-prettier)
-- [eslint-plugin-import](https://www.npmjs.com/package/eslint-plugin-import)
-- [eslint-plugin-mocha](https://www.npmjs.com/package/eslint-plugin-mocha)
-- [eslint-plugin-promise](https://www.npmjs.com/package/eslint-plugin-promise)
-- [@typescript-eslint/eslint-plugin](https://www.npmjs.com/package/@typescript-eslint/eslint-plugin)
-- [@typescript-eslint/parser](https://www.npmjs.com/package/@typescript-eslint/parser)
 
 ## Notes
 

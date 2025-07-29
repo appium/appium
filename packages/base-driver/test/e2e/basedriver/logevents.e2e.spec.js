@@ -50,6 +50,6 @@ describe('Execute Command Test', function () {
     const events = await driver.getLogEvents();
     const command = events.commands[0];
 
-    command.should.have.property('cmd', 'activateApp');
+    command.should.have.property('cmd', 'mobileActivateApp');
   });
 });

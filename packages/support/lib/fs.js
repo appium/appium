@@ -154,7 +154,25 @@ const fs = {
     const ensureDestination = async (/** @type {import('fs').PathLike} */ p) => {
       if (opts?.mkdirp && !(await this.exists(p))) {
         await fsPromises.mkdir(p, { recursive: true });
+        return true;
       }
+      return false;
+    };
+    const renameFile = async (
+      /** @type {import('fs').PathLike} */ src,
+      /** @type {import('fs').PathLike} */ dst,
+      /** @type {boolean} */ skipExistenceCheck
+    ) => {
+      if (!skipExistenceCheck && await this.exists(dst)) {
+        if (opts?.clobber === false) {
+          const err = new Error(`The destination path '${dst}' already exists`);
+          // @ts-ignore Legacy compat
+          err.code = 'EEXIST';
+          throw err;
+        }
+        await this.rimraf(dst);
+      }
+      await fsPromises.rename(src, dst);
     };
 
     /** @type {import('fs').Stats} */
@@ -168,10 +186,10 @@ const fs = {
       throw err;
     }
     if (fromStat.isFile()) {
-      await ensureDestination(path.dirname(to));
-      await fsPromises.rename(from, to);
+      const dstRootWasCreated = await ensureDestination(path.dirname(to));
+      await renameFile(from, to, dstRootWasCreated);
     } else if (fromStat.isDirectory()) {
-      await ensureDestination(to);
+      const dstRootWasCreated = await ensureDestination(to);
       const items = await fsPromises.readdir(from, { withFileTypes: true });
       for (const item of items) {
         const srcPath = path.join(from, item.name);
@@ -179,7 +197,7 @@ const fs = {
         if (item.isDirectory()) {
           await this.mv(srcPath, destPath, opts);
         } else if (item.isFile()) {
-          await fsPromises.rename(srcPath, destPath);
+          await renameFile(srcPath, destPath, dstRootWasCreated);
         }
       }
     } else {
@@ -451,8 +469,9 @@ export default fs;
 /**
  * @typedef {Object} mv
  * @property {boolean} [mkdirp=false] Whether to automatically create the destination folder structure
- * @deprecated @property {boolean} [clobber=false] Legacy deprecated property, not used anymore
- * @deprecated @property {number} [limit=16] Legacy deprecated property, not used anymore
+ * @property {boolean} [clobber=true] Set it to false if you want an exception to be thrown
+ * if the destination file already exists
+ * @property {number} [limit=16] Legacy deprecated property, not used anymore
  */
 
 /**

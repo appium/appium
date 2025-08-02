@@ -55,6 +55,24 @@ describe('fs', function () {
       const dstPath = path.join(dstRoot, path.basename(srcPath));
       await fs.mv(srcPath, dstPath).should.eventually.be.rejected;
     });
+
+    it('should fail if destination path already exists and clobber is disabled', async function () {
+      const srcPath = path.join(srcRoot, 'src.file');
+      await fs.writeFile(srcPath, Buffer.from('bar'));
+      const dstPath = path.join(dstRoot, path.basename(srcPath));
+      await fs.writeFile(dstPath, Buffer.from('foo'));
+      await fs.mv(srcPath, dstPath, {clobber: false}).should.eventually.be.rejected;
+      (await fs.readFile(dstPath)).toString().should.eql('foo');
+    });
+
+    it('should override a file if already exists by default', async function () {
+      const srcPath = path.join(srcRoot, 'src.file');
+      await fs.writeFile(srcPath, Buffer.from('bar'));
+      const dstPath = path.join(dstRoot, path.basename(srcPath));
+      await fs.writeFile(dstPath, Buffer.from('foo'));
+      await fs.mv(srcPath, dstPath);
+      (await fs.readFile(dstPath)).toString().should.eql('bar');
+    });
   });
 
   describe('isExecutable()', function () {

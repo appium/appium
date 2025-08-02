@@ -16,7 +16,6 @@ import {
 import { glob } from 'glob';
 import klaw from 'klaw';
 import _ from 'lodash';
-import mv from 'mv';
 import ncp from 'ncp';
 import path from 'path';
 import pkgDir from 'pkg-dir';
@@ -144,9 +143,69 @@ const fs = {
   },
 
   /**
-   * Move a file
+   * Move a file or a folder
+   *
+   * @param {string} from Source file/folder
+   * @param {string} to Destination file/folder
+   * @param {mv} [opts] Move options
+   * @returns {Promise<void>}
    */
-  mv: /** @type {(from: string, to: string, opts?: mv.Options) => B<void>} */ (B.promisify(mv)),
+  async mv(from, to, opts) {
+    const ensureDestination = async (/** @type {import('fs').PathLike} */ p) => {
+      if (opts?.mkdirp && !(await this.exists(p))) {
+        await fsPromises.mkdir(p, { recursive: true });
+        return true;
+      }
+      return false;
+    };
+    const renameFile = async (
+      /** @type {import('fs').PathLike} */ src,
+      /** @type {import('fs').PathLike} */ dst,
+      /** @type {boolean} */ skipExistenceCheck
+    ) => {
+      if (!skipExistenceCheck && await this.exists(dst)) {
+        if (opts?.clobber === false) {
+          const err = new Error(`The destination path '${dst}' already exists`);
+          // @ts-ignore Legacy compat
+          err.code = 'EEXIST';
+          throw err;
+        }
+        await this.rimraf(dst);
+      }
+      await fsPromises.rename(src, dst);
+    };
+
+    /** @type {import('fs').Stats} */
+    let fromStat;
+    try {
+      fromStat = await fsPromises.stat(from);
+    } catch (err) {
+      if (err.code === 'ENOENT') {
+        throw new Error(`The source path '${from}' does not exist or is not accessible`);
+      }
+      throw err;
+    }
+    if (fromStat.isFile()) {
+      const dstRootWasCreated = await ensureDestination(path.dirname(to));
+      await renameFile(from, to, dstRootWasCreated);
+    } else if (fromStat.isDirectory()) {
+      const dstRootWasCreated = await ensureDestination(to);
+      const items = await fsPromises.readdir(from, { withFileTypes: true });
+      for (const item of items) {
+        const srcPath = path.join(from, item.name);
+        const destPath = path.join(to, item.name);
+        if (item.isDirectory()) {
+          await this.mv(srcPath, destPath, opts);
+        } else if (item.isFile()) {
+          await renameFile(srcPath, destPath, dstRootWasCreated);
+        }
+      }
+    } else {
+      return;
+    }
+
+    await this.rimraf(from);
+  },
 
   /**
    * Find path to an executable in system `PATH`
@@ -404,8 +463,15 @@ export default fs;
 
 /**
  * @typedef {import('glob')} glob
- * @typedef {import('mv')} mv
  * @typedef {import('fs').PathLike} PathLike
+ */
+
+/**
+ * @typedef {Object} mv
+ * @property {boolean} [mkdirp=false] Whether to automatically create the destination folder structure
+ * @property {boolean} [clobber=true] Set it to false if you want an exception to be thrown
+ * if the destination file already exists
+ * @property {number} [limit=16] Legacy deprecated property, not used anymore
  */
 
 /**

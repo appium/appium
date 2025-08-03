@@ -1,6 +1,7 @@
 ---
 hide:
   - toc
+
 title: Write a Test (Python)
 ---
 

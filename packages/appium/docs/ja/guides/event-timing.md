@@ -1,6 +1,7 @@
 ---
 hide:
   - toc
+
 title: Retrieving Event Timings
 ---
 

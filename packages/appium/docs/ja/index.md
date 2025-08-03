@@ -42,7 +42,7 @@ Appiumのドキュメントにようこそ！ Appiumはオープンソースプ�
 
 <div class="grid cards" markdown>
 
-- [**Introduction**](./intro/index.md) を読んでして、主要なコンセプトを理解してください
+- [**Introduction**](./intro/index.md) を読んで、主要なコンセプトを理解してください
 - [**Quickstart**](./quickstart/index.md) を通して、基本的なAndroidテストを用意、実行します。
 - 使用するドライバ、クライアント、プラグインの一覧については、 [**Ecosystem**](./ecosystem/index.md) ページを参照してください。
 - コマンドラインからAppiumを使用する場合、[**CLI リファレンス**](./cli/index.md)を参照してください。

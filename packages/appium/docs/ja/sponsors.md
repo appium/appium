@@ -11,9 +11,7 @@ title: Sponsors & Backers
   .sponsor-section img { height: 64px; padding-right: 1em; }
 </style>
 
-Appium is an Apache-2 licensed open source project whose development is made possible entirely by
-donations of time and money by individuals and companies who benefit from our software and our
-mission. If you'd like to join this amazing group and help ensure Appium's continued development
+If you'd like to join this amazing group and help ensure Appium's continued development
 and maintenance, you can contribute via Appium's OpenCollective
 Hub.
 
@@ -24,9 +22,7 @@ maintenance as part of their employees' core job duties!
 
 ## Strategic Partners
 
-We are very grateful for the financial and marketing support of our exclusive Strategic Partners,
-who contribute a significant ongoing investment of funds to help the project attract and reward
-contributors!
+私たちは、プロジェクトが貢献者を惹きつけ、報いることができるよう、継続的に多大な資金を投資してくださっている戦略的パートナーの皆さまからの財政的およびマーケティング面での支援に、心より感謝しています！
 
 <a href="https://www.browserstack.com/browserstack-appium?utm_campaigncode=701OW00000AoUTQYA3&utm_medium=partnered&utm_source=appium">
   <img src="/docs/en/latest/assets/images/sponsor-logo-browserstack-dark.png#only-dark" width="250" alt="BrowserStack" />

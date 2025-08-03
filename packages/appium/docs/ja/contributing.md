@@ -1,6 +1,7 @@
 ---
 hide:
   - navigation
+
 title: Contributing to Appium
 ---
 

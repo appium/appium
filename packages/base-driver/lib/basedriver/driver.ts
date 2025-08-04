@@ -163,12 +163,7 @@ export class BaseDriver<
     // log timing information about this command
     const endTime = Date.now();
 
-    if (cmd === 'execute') {
-      const firstArg = args?.[0];
-      if (typeof firstArg === 'string' && firstArg.includes(':')) {
-        cmd = resolveExecuteExtensionName(this, firstArg);
-      }
-    }
+    cmd = this.clarifyCommandName(cmd, args);
 
     this._eventHistory.commands.push({cmd, startTime, endTime});
     if (cmd === 'createSession') {
@@ -178,6 +173,17 @@ export class BaseDriver<
     }
 
     return res;
+  }
+
+  protected clarifyCommandName(cmd: string, args: string[]) {
+    if (cmd === 'execute') {
+      const firstArg = args?.[0];
+      if (typeof firstArg === 'string' && firstArg.trim().length > 0) {
+        cmd = resolveExecuteExtensionName.call(this, firstArg);
+      }
+    }
+
+    return cmd;
   }
 
   async startUnexpectedShutdown(

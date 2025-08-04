@@ -175,11 +175,11 @@ export class BaseDriver<
     return res;
   }
 
-  protected clarifyCommandName(cmd: string, args: string[]) {
+  protected clarifyCommandName(cmd: string, args: string[]): string {
     if (cmd === 'execute') {
       const firstArg = args?.[0];
-      if (typeof firstArg === 'string' && firstArg.trim().length > 0) {
-        cmd = resolveExecuteExtensionName.call(this, firstArg);
+      if (_.isString(firstArg) && firstArg.trim().length > 0) {
+        return resolveExecuteExtensionName.call(this, firstArg);
       }
     }
 

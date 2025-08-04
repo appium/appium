@@ -1,6 +1,6 @@
 import _ from 'lodash';
-import {Constraints, Driver, DriverClass} from '@appium/types';
-import BaseDriver from '../basedriver/driver';
+import type {Constraints, Driver, DriverClass} from '@appium/types';
+import type {BaseDriver} from '../basedriver/driver';
 
 /**
  * Resolves the name of extension method corresponding to an `execute` command string

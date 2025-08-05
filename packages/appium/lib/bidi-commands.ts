@@ -7,6 +7,7 @@ import {
 import {BIDI_BASE_PATH, BIDI_EVENT_NAME} from './constants';
 import WebSocket from 'ws';
 import os from 'node:os';
+import { markNonEmittable } from '@appium/logger';
 import {
   isBroadcastIp,
   fetchInterfaces,
@@ -462,6 +463,7 @@ function initBidiEventListeners(
               method,
               params,
             }), {length: MAX_LOGGED_DATA_LENGTH})}`,
+          markNonEmittable() // mark this log as non-emittable to avoid recursive call stack
         );
         return;
       }
@@ -485,6 +487,7 @@ function initBidiEventListeners(
             `<-- BIDI EVENT ${method} (context: '${context}', ` +
             `params: ${_.truncate(JSON.stringify(params), {length: MAX_LOGGED_DATA_LENGTH})}). ` +
             `All further similar events won't be logged.`,
+            markNonEmittable() // mark this log as non-emittable to avoid recursive call stack
           );
           eventLogCounts[method] = 1;
         }

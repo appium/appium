@@ -36,6 +36,7 @@ const DEFAULT_LOG_LEVELS = [
 ] as const;
 const DEFAULT_HISTORY_SIZE = 10000;
 const SENSITIVE_MESSAGE_KEY = 'f2b06625-35a2-4ed3-939a-b0b0a4abc750';
+const NON_EMITTABLE_FLAG = Object.freeze({'b3e29d33-379e-49c4-a77b-8dfc2c13e2ad': true});
 
 setBlocking(true);
 
@@ -235,7 +236,13 @@ export class Log extends EventEmitter implements Logger {
 
     const messageArguments: any[] = [];
     let stack: string | undefined;
+    let shouldEmitEvents = true;
     for (const arg of [message, ...args]) {
+      if (arg === NON_EMITTABLE_FLAG) {
+        shouldEmitEvents = false;
+        continue;
+      }
+
       const result = this._formatLogArgument(arg);
       if (result.stack) {
         stack = result.stack;
@@ -256,10 +263,12 @@ export class Log extends EventEmitter implements Logger {
       message: this._secureValuesPreprocessor.preprocess(unleakString(formattedMessage)),
     };
 
-    this.emit('log', m);
-    this.emit('log.' + level, m);
-    if (m.prefix) {
-      this.emit(m.prefix, m);
+    if (shouldEmitEvents) {
+      this.emit('log', m);
+      this.emit(`log.${level}`, m);
+      if (m.prefix) {
+        this.emit(m.prefix, m);
+      }
     }
 
     this._history.set(m.id, m);
@@ -415,6 +424,10 @@ export class Log extends EventEmitter implements Logger {
 
 export function markSensitive<T=any>(logMessage: T): {[SENSITIVE_MESSAGE_KEY]: T} {
   return {[SENSITIVE_MESSAGE_KEY]: logMessage};
+}
+
+export function markNonEmittable(): typeof NON_EMITTABLE_FLAG {
+  return NON_EMITTABLE_FLAG;
 }
 
 interface ArgumentFormatResult {

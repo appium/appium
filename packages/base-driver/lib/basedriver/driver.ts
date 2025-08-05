@@ -163,7 +163,9 @@ export class BaseDriver<
     // log timing information about this command
     const endTime = Date.now();
 
-    cmd = this.clarifyCommandName(cmd, args);
+    if (_.isFunction((this as any).clarifyCommandName)) {
+      cmd = (this as any).clarifyCommandName(cmd, args);
+    }
 
     this._eventHistory.commands.push({cmd, startTime, endTime});
     if (cmd === 'createSession') {

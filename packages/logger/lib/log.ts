@@ -36,7 +36,7 @@ const DEFAULT_LOG_LEVELS = [
 ] as const;
 const DEFAULT_HISTORY_SIZE = 10000;
 const SENSITIVE_MESSAGE_KEY = 'f2b06625-35a2-4ed3-939a-b0b0a4abc750';
-const NON_EMITTABLE_FLAG = Object.freeze({'b3e29d33-379e-49c4-a77b-8dfc2c13e2ad': true});
+const NON_EMITTABLE_FLAG = JSON.stringify({'b3e29d33-379e-49c4-a77b-8dfc2c13e2ad': true});
 
 setBlocking(true);
 

@@ -1,6 +1,7 @@
 ---
 hide:
   - toc
+
 title: Appium Plugins
 ---
 

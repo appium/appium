@@ -36,7 +36,7 @@ Don't miss this chance to contribute to the Appium community and showcase your e
 
 ## How to Submit Your Proposal
 
-Visit our website at [https://appiumconf.com/](https://appiumconf.com/) and Submit a Proposal. We're excited to see your innovative ideas and experiences with Appium!
+Visit our website at [https://appiumconf.com/](https://appiumconf.com/) and [Submit a Proposal](https://confengine.com/conferences/appium-conf-2024/proposals?utm_medium=referal&utm_source=appium.io&utm_campaign=launch). We're excited to see your innovative ideas and experiences with Appium!
 
 ## Stay Tuned
 

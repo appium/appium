@@ -1,6 +1,7 @@
 ---
 hide:
   - toc
+
 title: Masking Sensitive Log Data
 ---
 

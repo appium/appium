@@ -481,7 +481,7 @@ function initBidiEventListeners(
         if (method in eventLogCounts) {
           ++eventLogCounts[method];
         } else {
-          ext.log?.info( // some old plugins might not have the `log` property
+          ext.log?.debug( // some old plugins might not have the `log` property
             `<-- BIDI EVENT ${method} (context: '${context}', ` +
             `params: ${_.truncate(JSON.stringify(params), {length: MAX_LOGGED_DATA_LENGTH})}). ` +
             `All further similar events won't be logged.`,

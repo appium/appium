@@ -163,8 +163,8 @@ export class BaseDriver<
     // log timing information about this command
     const endTime = Date.now();
 
-    if (_.isFunction((this as any).clarifyCommandName)) {
-      cmd = (this as any).clarifyCommandName(cmd, args);
+    if (this.clarifyCommandName) {
+      cmd = this.clarifyCommandName(cmd, args);
     }
 
     this._eventHistory.commands.push({cmd, startTime, endTime});
@@ -177,7 +177,7 @@ export class BaseDriver<
     return res;
   }
 
-  protected clarifyCommandName(cmd: string, args: string[]): string {
+  clarifyCommandName(cmd: string, args: string[]): string {
     if (cmd === 'execute') {
       const firstArg = args?.[0];
       if (_.isString(firstArg) && firstArg.trim().length > 0) {

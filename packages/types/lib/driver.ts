@@ -692,6 +692,19 @@ export interface Driver<
    */
   executeCommand(cmd: string, ...args: any[]): Promise<any>;
 
+
+  /**
+   * A helper method to modify the command name before it's logged.
+   *
+   * Useful for resolving generic commands like 'execute' to a more specific
+   * name based on arguments (e.g., identifying custom extensions).
+   *
+   * @param cmd - The original command name
+   * @param args - Arguments passed to the command
+   * @returns A potentially updated command name
+   */
+  clarifyCommandName?(cmd: string, args: string[]): string;
+
   /** Execute a driver (WebDriver Bidi protocol) command by its name as defined in the bidi commands file
    * @param bidiCmd - the name of the command in the bidi spec
    * @param args - arguments to pass to the command

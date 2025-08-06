@@ -25,6 +25,7 @@ import {DELETE_SESSION_COMMAND, determineProtocol, errors} from '../protocol';
 import {processCapabilities, validateCaps} from './capabilities';
 import {DriverCore} from './core';
 import * as helpers from './helpers';
+import {resolveExecuteExtensionName} from '../helpers/extension-command-name';
 
 const EVENT_SESSION_INIT = 'newSessionRequested';
 const EVENT_SESSION_START = 'newSessionStarted';
@@ -161,6 +162,11 @@ export class BaseDriver<
 
     // log timing information about this command
     const endTime = Date.now();
+
+    if (this.clarifyCommandName) {
+      cmd = this.clarifyCommandName(cmd, args);
+    }
+
     this._eventHistory.commands.push({cmd, startTime, endTime});
     if (cmd === 'createSession') {
       this.logEvent(EVENT_SESSION_START);
@@ -169,6 +175,17 @@ export class BaseDriver<
     }
 
     return res;
+  }
+
+  clarifyCommandName(cmd: string, args: string[]): string {
+    if (cmd === 'execute') {
+      const firstArg = args?.[0];
+      if (_.isString(firstArg) && firstArg.trim().length > 0) {
+        return resolveExecuteExtensionName.call(this, firstArg);
+      }
+    }
+
+    return cmd;
   }
 
   async startUnexpectedShutdown(

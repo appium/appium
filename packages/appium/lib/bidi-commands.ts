@@ -189,7 +189,7 @@ export function cleanupBidiSockets(this: AppiumDriver, sessionId: string): void 
     this.log.debug(`Closing bidi socket(s) associated with session ${sessionId}`);
     for (const ws of this.bidiSockets[sessionId]) {
       // 1001 means server is going away
-      ws.close(1001, 'Appium session is closing');
+      ws.close(1001);
     }
   } catch {}
   delete this.bidiSockets[sessionId];

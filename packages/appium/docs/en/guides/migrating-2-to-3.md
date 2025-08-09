@@ -13,6 +13,17 @@ It contains a list of breaking changes, as well as suggestions for handling them
 While Appium 2 was a major overhaul of the entire Appium architecture, Appium 3 is a smaller
 upgrade with fewer breaking changes, which should result in a much simpler migration process.
 
+## Installation
+
+The installation method for Appium 3 remains the same as for Appium 2. If you want to upgrade, you
+may wish to do so via a clean install, by first removing Appium 2:
+
+```bash
+appium setup reset
+npm uninstall -g appium
+npm install -g appium
+```
+
 ## Breaking Changes
 
 ### Node 20+ Required

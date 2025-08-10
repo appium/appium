@@ -1,7 +1,7 @@
 {
   "name": "@appium/eslint-config-appium-ts",
   "type": "module",
-  "version": "1.0.4",
+  "version": "2.0.0-rc.0",
   "description": "Shared ESLint config for Appium projects (TypeScript version)",
   "keywords": [
     "eslint",
@@ -46,7 +46,8 @@
     "npm": ">=10"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "tag": "rc"
   },
   "gitHead": "8480a85ce2fa466360e0fb1a7f66628331907f02"
 }

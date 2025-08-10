@@ -40,8 +40,8 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/base-driver": "^10.0.0-beta.0",
-    "@appium/support": "^6.1.1"
+    "@appium/base-driver": "^10.0.0-rc.1",
+    "@appium/support": "^7.0.0-rc.0"
   },
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
@@ -49,7 +49,7 @@
   },
   "publishConfig": {
     "access": "public",
-    "tag": "beta"
+    "tag": "rc"
   },
   "gitHead": "8480a85ce2fa466360e0fb1a7f66628331907f02",
   "tags": [

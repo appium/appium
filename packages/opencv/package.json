@@ -1,6 +1,6 @@
 {
   "name": "@appium/opencv",
-  "version": "3.0.10",
+  "version": "4.0.0-rc.0",
   "description": "OpenCV-related helper library",
   "keywords": [
     "automation",
@@ -52,7 +52,8 @@
     "npm": ">=10"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "tag": "rc"
   },
   "gitHead": "84b211330dc84849af9cc1f3a5c5ad32e15b2e72"
 }

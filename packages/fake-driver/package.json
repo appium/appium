@@ -1,6 +1,6 @@
 {
   "name": "@appium/fake-driver",
-  "version": "5.7.3",
+  "version": "6.0.0-rc.0",
   "description": "Mock driver used internally by Appium for testing. Ignore",
   "keywords": [
     "automation",
@@ -50,14 +50,15 @@
     "xpath": "0.0.34"
   },
   "peerDependencies": {
-    "appium": "^2.4.1 || ^3.0.0-beta.0"
+    "appium": "^2.4.1 || ^3.0.0-rc.1"
   },
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
     "npm": ">=10"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "tag": "rc"
   },
   "access": "public",
   "appium": {

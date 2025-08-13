@@ -17,7 +17,7 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     - run: |
         git config user.name github-actions
         git config user.email github-actions@github.com

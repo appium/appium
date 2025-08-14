@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.0-rc.1](https://github.com/appium/appium/compare/@appium/strongbox@0.3.3...@appium/strongbox@1.0.0-rc.1) (2025-08-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* set minimum Node.js version to v20.19.0 (#21394)
+
+### Features
+
+* **base-driver:** Make extension name prefix mandatory ([#21110](https://github.com/appium/appium/issues/21110)) ([9402291](https://github.com/appium/appium/commit/9402291f1c634bcb376ff69aef7a7b4d0628cbd4))
+
+
+### Bug Fixes
+
+* Reduce linter warnings ([#20860](https://github.com/appium/appium/issues/20860)) ([65658cc](https://github.com/appium/appium/commit/65658ccbdde9144c45cb5aad6a9089a5d6f3a0a3))
+
+
+### Miscellaneous Chores
+
+* set minimum Node.js version to v20.19.0 ([#21394](https://github.com/appium/appium/issues/21394)) ([37e22c4](https://github.com/appium/appium/commit/37e22c4f9c9920cea3f340841ab1b7c60e3147e9))
+
+
+
 ## [0.3.4](https://github.com/appium/appium/compare/@appium/strongbox@0.3.3...@appium/strongbox@0.3.4) (2025-06-01)
 
 

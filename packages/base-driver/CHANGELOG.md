@@ -3,6 +3,42 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.0.0-rc.2](https://github.com/appium/appium/compare/@appium/base-driver@9.16.2...@appium/base-driver@10.0.0-rc.2) (2025-08-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* set minimum Node.js version to v20.19.0 (#21394)
+
+### Features
+
+* **base-driver:** Drop the unzip logic from basedriver helpers ([#21105](https://github.com/appium/appium/issues/21105)) ([45c6c42](https://github.com/appium/appium/commit/45c6c42e8fa8b680cdd5ec6cbee2027f7fbdc557))
+* **base-driver:** Make extension name prefix mandatory ([#21110](https://github.com/appium/appium/issues/21110)) ([9402291](https://github.com/appium/appium/commit/9402291f1c634bcb376ff69aef7a7b4d0628cbd4))
+* **base-driver:** Migrate errors to typescript ([#21157](https://github.com/appium/appium/issues/21157)) ([d904726](https://github.com/appium/appium/commit/d904726d56353365612c6e0a7dfdb209cc34132b))
+* **base-driver:** Migrate protocol.js to typescript ([#21241](https://github.com/appium/appium/issues/21241)) ([023cd43](https://github.com/appium/appium/commit/023cd43a58f85a66971cfc7aed2656aeeb014032))
+* **base-driver:** Remove dependency to validate.js ([#21175](https://github.com/appium/appium/issues/21175)) ([661c5d0](https://github.com/appium/appium/commit/661c5d0bd31f65690fe61c0e396833251c5bae84))
+* **base-driver:** Remove deprecated routes ([#21134](https://github.com/appium/appium/issues/21134)) ([4716f40](https://github.com/appium/appium/commit/4716f40226da0a1743f4e570a99c67ce9d581b50))
+* **base-driver:** Use `markSensitive` to mask password input field value ([#21118](https://github.com/appium/appium/issues/21118)) ([aa5d794](https://github.com/appium/appium/commit/aa5d794ff3286076859e6b5e38026fa6c3e62e2c))
+
+
+### Bug Fixes
+
+* adjust parameter for W3C element send keys endpoint ([#21149](https://github.com/appium/appium/issues/21149)) ([2cb3a31](https://github.com/appium/appium/commit/2cb3a31252cf0190180acf0c353112880d586b31))
+* **base-driver,types:** For extension commands that use prefix "mobile", ensure logEvents() has the name of executed script ([#21416](https://github.com/appium/appium/issues/21416)) ([c410201](https://github.com/appium/appium/commit/c410201baa701dfe2dc43feac71f0c7ea21b1bd2))
+* **base-driver:** /timeouts API arguments ([#21238](https://github.com/appium/appium/issues/21238)) ([c7a20d8](https://github.com/appium/appium/commit/c7a20d8d7df6c2f784eedda862fc66b1a5aa7b89))
+* **base-driver:** Drop unknown method arguments ([#21245](https://github.com/appium/appium/issues/21245)) ([748c7e0](https://github.com/appium/appium/commit/748c7e0c6d59a5ff2282a52a60d098e3a73379b9))
+* **base-driver:** Make it work with Express5 ([#20789](https://github.com/appium/appium/issues/20789)) ([e1e00ed](https://github.com/appium/appium/commit/e1e00ed97afdd8f0ce1505761102901aadb86919))
+* **base-driver:** Tune capabilities array parsing ([#21044](https://github.com/appium/appium/issues/21044)) ([594bc04](https://github.com/appium/appium/commit/594bc04c03fb073cd7ad31d7e23f77fb8041b92e))
+* **base-driver:** Update parseCapsArray function types ([#21045](https://github.com/appium/appium/issues/21045)) ([5541142](https://github.com/appium/appium/commit/554114203fbe26f303337f049f942e046c815074))
+* change cache logic ([#21380](https://github.com/appium/appium/issues/21380)) ([34eb1c2](https://github.com/appium/appium/commit/34eb1c25c71ef08f739257960167bcbbcafa3e51))
+
+
+### Miscellaneous Chores
+
+* set minimum Node.js version to v20.19.0 ([#21394](https://github.com/appium/appium/issues/21394)) ([37e22c4](https://github.com/appium/appium/commit/37e22c4f9c9920cea3f340841ab1b7c60e3147e9))
+
+
+
 ## [9.18.0](https://github.com/appium/appium/compare/@appium/base-driver@9.17.0...@appium/base-driver@9.18.0) (2025-06-01)
 
 

@@ -3,6 +3,34 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.0-rc.2](https://github.com/appium/appium/compare/appium@2.16.2...appium@3.0.0-rc.2) (2025-08-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* set minimum Node.js version to v20.19.0 (#21394)
+
+### Features
+
+* **appium:** add inspector in preset plugin ([#21114](https://github.com/appium/appium/issues/21114)) ([fdb5c7f](https://github.com/appium/appium/commit/fdb5c7fc4a4ec4078195f879d6c1e2e0e3397419))
+* **base-driver:** Make extension name prefix mandatory ([#21110](https://github.com/appium/appium/issues/21110)) ([9402291](https://github.com/appium/appium/commit/9402291f1c634bcb376ff69aef7a7b4d0628cbd4))
+* **base-driver:** Migrate errors to typescript ([#21157](https://github.com/appium/appium/issues/21157)) ([d904726](https://github.com/appium/appium/commit/d904726d56353365612c6e0a7dfdb209cc34132b))
+* **base-driver:** Remove dependency to validate.js ([#21175](https://github.com/appium/appium/issues/21175)) ([661c5d0](https://github.com/appium/appium/commit/661c5d0bd31f65690fe61c0e396833251c5bae84))
+* **base-driver:** Remove deprecated routes ([#21134](https://github.com/appium/appium/issues/21134)) ([4716f40](https://github.com/appium/appium/commit/4716f40226da0a1743f4e570a99c67ce9d581b50))
+
+
+### Bug Fixes
+
+* **appium:** Add appium module symlink while installing extensions ([#21389](https://github.com/appium/appium/issues/21389)) ([1859ea1](https://github.com/appium/appium/commit/1859ea1c3efc37a3537f55bbfe06d6532b02d7e9))
+* use v3 syntax for winston ([#21363](https://github.com/appium/appium/issues/21363)) ([2c94133](https://github.com/appium/appium/commit/2c94133390d04f6160044a1c8bbb31f7925fced8))
+
+
+### Miscellaneous Chores
+
+* set minimum Node.js version to v20.19.0 ([#21394](https://github.com/appium/appium/issues/21394)) ([37e22c4](https://github.com/appium/appium/commit/37e22c4f9c9920cea3f340841ab1b7c60e3147e9))
+
+
+
 ## [2.19.0](https://github.com/appium/appium/compare/appium@2.18.0...appium@2.19.0) (2025-06-01)
 
 

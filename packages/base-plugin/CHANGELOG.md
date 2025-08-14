@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.0-rc.2](https://github.com/appium/appium/compare/@appium/base-plugin@2.3.3...@appium/base-plugin@3.0.0-rc.2) (2025-08-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* set minimum Node.js version to v20.19.0 (#21394)
+
+### Features
+
+* **base-driver:** Migrate protocol.js to typescript ([#21241](https://github.com/appium/appium/issues/21241)) ([023cd43](https://github.com/appium/appium/commit/023cd43a58f85a66971cfc7aed2656aeeb014032))
+
+
+### Miscellaneous Chores
+
+* set minimum Node.js version to v20.19.0 ([#21394](https://github.com/appium/appium/issues/21394)) ([37e22c4](https://github.com/appium/appium/commit/37e22c4f9c9920cea3f340841ab1b7c60e3147e9))
+
+
+
 ## [2.3.7](https://github.com/appium/appium/compare/@appium/base-plugin@2.3.6...@appium/base-plugin@2.3.7) (2025-06-01)
 
 **Note:** Version bump only for package @appium/base-plugin

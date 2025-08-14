@@ -1,6 +1,6 @@
 {
   "name": "@appium/relaxed-caps-plugin",
-  "version": "2.0.0-rc.0",
+  "version": "2.0.0-rc.1",
   "description": "An Appium plugin that loosens requirements for vendor prefixes on caps",
   "keywords": [
     "automation",

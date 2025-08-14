@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.0-rc.1](https://github.com/appium/appium/compare/@appium/eslint-config-appium-ts@1.0.3...@appium/eslint-config-appium-ts@2.0.0-rc.1) (2025-08-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* set minimum Node.js version to v20.19.0 (#21394)
+
+### Bug Fixes
+
+* **eslint-config-appium-ts:** adjust dependency configuration ([#21444](https://github.com/appium/appium/issues/21444)) ([e3f05cf](https://github.com/appium/appium/commit/e3f05cf961310a5bf144cc0bf8e1089c47744493))
+
+
+### Miscellaneous Chores
+
+* set minimum Node.js version to v20.19.0 ([#21394](https://github.com/appium/appium/issues/21394)) ([37e22c4](https://github.com/appium/appium/commit/37e22c4f9c9920cea3f340841ab1b7c60e3147e9))
+
+
+
 ## [1.0.4](https://github.com/appium/appium/compare/@appium/eslint-config-appium-ts@1.0.3...@appium/eslint-config-appium-ts@1.0.4) (2025-04-25)
 
 **Note:** Version bump only for package @appium/eslint-config-appium-ts

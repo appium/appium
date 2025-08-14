@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.0-rc.1](https://github.com/appium/appium/compare/@appium/docutils@1.0.32...@appium/docutils@2.0.0-rc.1) (2025-08-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* set minimum Node.js version to v20.19.0 (#21394)
+
+### Miscellaneous Chores
+
+* set minimum Node.js version to v20.19.0 ([#21394](https://github.com/appium/appium/issues/21394)) ([37e22c4](https://github.com/appium/appium/commit/37e22c4f9c9920cea3f340841ab1b7c60e3147e9))
+
+
+
 ## [1.1.1](https://github.com/appium/appium/compare/@appium/docutils@1.1.0...@appium/docutils@1.1.1) (2025-06-01)
 
 **Note:** Version bump only for package @appium/docutils

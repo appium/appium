@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.0-rc.1](https://github.com/appium/appium/compare/@appium/types@0.25.1...@appium/types@1.0.0-rc.1) (2025-08-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* set minimum Node.js version to v20.19.0 (#21394)
+
+### Features
+
+* **base-driver:** Migrate protocol.js to typescript ([#21241](https://github.com/appium/appium/issues/21241)) ([023cd43](https://github.com/appium/appium/commit/023cd43a58f85a66971cfc7aed2656aeeb014032))
+
+
+### Bug Fixes
+
+* **base-driver,types:** For extension commands that use prefix "mobile", ensure logEvents() has the name of executed script ([#21416](https://github.com/appium/appium/issues/21416)) ([c410201](https://github.com/appium/appium/commit/c410201baa701dfe2dc43feac71f0c7ea21b1bd2))
+
+
+### Miscellaneous Chores
+
+* set minimum Node.js version to v20.19.0 ([#21394](https://github.com/appium/appium/issues/21394)) ([37e22c4](https://github.com/appium/appium/commit/37e22c4f9c9920cea3f340841ab1b7c60e3147e9))
+
+
+
 ## [0.26.0](https://github.com/appium/appium/compare/@appium/types@0.25.3...@appium/types@0.26.0) (2025-06-01)
 
 

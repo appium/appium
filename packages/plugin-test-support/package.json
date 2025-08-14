@@ -1,6 +1,6 @@
 {
   "name": "@appium/plugin-test-support",
-  "version": "0.3.54",
+  "version": "1.0.0-rc.0",
   "description": "Testing utilities for Appium plugins",
   "keywords": [
     "automation",
@@ -41,14 +41,14 @@
     "test:unit": "exit 0"
   },
   "dependencies": {
-    "@appium/types": "^0.26.0",
+    "@appium/types": "^1.0.0-rc.0",
     "get-port": "5.1.1",
     "log-symbols": "4.1.0",
     "source-map-support": "0.5.21",
     "teen_process": "2.3.3"
   },
   "peerDependencies": {
-    "appium": "^2.0.0-beta.43 || ^3.0.0-beta.0",
+    "appium": "^3.0.0-beta.0",
     "mocha": "*"
   },
   "engines": {
@@ -56,7 +56,8 @@
     "npm": ">=10"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "tag": "rc"
   },
   "gitHead": "8480a85ce2fa466360e0fb1a7f66628331907f02"
 }

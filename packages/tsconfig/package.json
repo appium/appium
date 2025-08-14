@@ -1,6 +1,6 @@
 {
   "name": "@appium/tsconfig",
-  "version": "0.3.5",
+  "version": "1.0.0-rc.0",
   "description": "Shared TypeScript Config for Appium",
   "main": "tsconfig.json",
   "keywords": [
@@ -38,7 +38,8 @@
     "test:smoke": "node tsconfig.json && node tsconfig.plugin.json"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "tag": "rc"
   },
   "gitHead": "84b211330dc84849af9cc1f3a5c5ad32e15b2e72"
 }

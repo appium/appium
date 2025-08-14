@@ -1,6 +1,6 @@
 {
   "name": "@appium/strongbox",
-  "version": "0.3.4",
+  "version": "1.0.0-rc.0",
   "description": "Persistent storage for Appium extensions",
   "keywords": [
     "automation",
@@ -49,7 +49,8 @@
     "npm": ">=10"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "tag": "rc"
   },
   "tsd": {
     "directory": "test/types"

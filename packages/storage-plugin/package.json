@@ -1,7 +1,7 @@
 {
   "name": "@appium/storage-plugin",
-  "version": "0.1.3",
-  "description": "Server-side storage plugin",
+  "version": "1.0.0-rc.0",
+  "description": "Server-side storage plugin for Appium",
   "keywords": [
     "automation",
     "javascript",
@@ -41,7 +41,7 @@
     "test:e2e": "mocha --timeout 20s --slow 10s \"./test/e2e/**/*.spec.*js\""
   },
   "dependencies": {
-    "@appium/support": "^6.1.1",
+    "@appium/support": "^7.0.0-rc.0",
     "async-lock": "1.4.1",
     "bluebird": "3.7.2",
     "lodash": "4.17.21",
@@ -51,7 +51,7 @@
     "ws": "8.18.3"
   },
   "peerDependencies": {
-    "appium": "^2.0.0 || ^3.0.0-beta.0"
+    "appium": "^3.0.0-beta.0"
   },
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
@@ -62,7 +62,8 @@
     "mainClass": "StoragePlugin"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "tag": "rc"
   },
   "tags": [
     "appium"

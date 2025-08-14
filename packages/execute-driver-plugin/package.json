@@ -1,7 +1,7 @@
 {
   "name": "@appium/execute-driver-plugin",
-  "version": "4.0.6",
-  "description": "Plugin for batching and executing driver commands with Appiums",
+  "version": "5.0.0-rc.0",
+  "description": "Plugin for batching and executing Appium driver commands",
   "keywords": [
     "automation",
     "javascript",
@@ -44,14 +44,15 @@
     "webdriverio": "9.19.1"
   },
   "peerDependencies": {
-    "appium": "^2.0.0-beta.35 || ^3.0.0-beta.0"
+    "appium": "^3.0.0-beta.0"
   },
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
     "npm": ">=10"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "tag": "rc"
   },
   "appium": {
     "pluginName": "execute-driver",

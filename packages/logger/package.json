@@ -1,6 +1,6 @@
 {
   "name": "@appium/logger",
-  "version": "1.7.1",
+  "version": "2.0.0-rc.0",
   "author": "https://github.com/appium",
   "description": "A Universal Logger For The Appium Ecosystem",
   "repository": {
@@ -42,7 +42,8 @@
   },
   "homepage": "https://appium.io",
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "tag": "rc"
   },
   "gitHead": "8480a85ce2fa466360e0fb1a7f66628331907f02",
   "keywords": [

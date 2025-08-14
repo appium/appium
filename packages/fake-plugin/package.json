@@ -1,7 +1,7 @@
 {
   "name": "@appium/fake-plugin",
-  "version": "3.2.7",
-  "description": "A fake Appium 2.0 plugin",
+  "version": "4.0.0-rc.0",
+  "description": "A fake Appium plugin",
   "keywords": [
     "automation",
     "javascript",
@@ -39,14 +39,14 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/base-plugin": "^3.0.0-beta.0",
-    "@appium/support": "^6.1.1",
+    "@appium/base-plugin": "^3.0.0-rc.1",
+    "@appium/support": "^7.0.0-rc.0",
     "bluebird": "3.7.2",
     "lodash": "4.17.21",
     "source-map-support": "0.5.21"
   },
   "peerDependencies": {
-    "appium": "^2.0.0-beta.35 || ^3.0.0-beta.0"
+    "appium": "^3.0.0-beta.0"
   },
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
@@ -61,7 +61,8 @@
     }
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "tag": "rc"
   },
   "gitHead": "8480a85ce2fa466360e0fb1a7f66628331907f02",
   "tags": [

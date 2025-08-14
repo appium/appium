@@ -1,6 +1,6 @@
 {
   "name": "@appium/schema",
-  "version": "0.8.1",
+  "version": "1.0.0-rc.0",
   "description": "Appium Configuration Schema",
   "keywords": [
     "automation",
@@ -46,7 +46,8 @@
     "npm": ">=10"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "tag": "rc"
   },
   "gitHead": "84b211330dc84849af9cc1f3a5c5ad32e15b2e72"
 }

@@ -13,6 +13,16 @@ title: Appium 3 へ移行する
 
 Appium 2 はAppiumアーキテクチャ全体の大きな見直しをしました。 Appium 3 は限られた破壊的変更のみの比較的小さな更新であり、移行プロセスがはるかに簡易になります。
 
+## Installation
+
+The installation method for Appium 3 remains the same as for Appium 2. If you want to upgrade, you
+can simply install Appium 3 on top of your existing installation:
+
+```bash
+# optional: `appium setup reset`
+npm install -g appium
+```
+
 \## 破壊的変更
 
 ### Node 20+ Required

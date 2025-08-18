@@ -62,8 +62,7 @@
     "mainClass": "StoragePlugin"
   },
   "publishConfig": {
-    "access": "public",
-    "tag": "rc"
+    "access": "public"
   },
   "tags": [
     "appium"

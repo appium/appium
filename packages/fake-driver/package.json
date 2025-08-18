@@ -57,8 +57,7 @@
     "npm": ">=10"
   },
   "publishConfig": {
-    "access": "public",
-    "tag": "rc"
+    "access": "public"
   },
   "access": "public",
   "appium": {

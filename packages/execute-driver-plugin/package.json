@@ -51,8 +51,7 @@
     "npm": ">=10"
   },
   "publishConfig": {
-    "access": "public",
-    "tag": "rc"
+    "access": "public"
   },
   "appium": {
     "pluginName": "execute-driver",

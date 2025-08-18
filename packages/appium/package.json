@@ -95,8 +95,7 @@
     "npm": ">=10"
   },
   "publishConfig": {
-    "access": "public",
-    "tag": "rc"
+    "access": "public"
   },
   "gitHead": "3fa73a1d1a95e3868fbceb005f8b1deb4ac53eaf"
 }

@@ -49,8 +49,7 @@
     "npm": ">=10"
   },
   "publishConfig": {
-    "access": "public",
-    "tag": "rc"
+    "access": "public"
   },
   "tsd": {
     "directory": "test/types"

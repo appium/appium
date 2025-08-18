@@ -1,6 +1,6 @@
 {
   "name": "@appium/schema",
-  "version": "1.0.0-rc.1",
+  "version": "1.0.0",
   "description": "Appium Configuration Schema",
   "keywords": [
     "automation",

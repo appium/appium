@@ -1,6 +1,6 @@
 {
   "name": "@appium/fake-plugin",
-  "version": "4.0.0-rc.1",
+  "version": "4.0.0",
   "description": "A fake Appium plugin",
   "keywords": [
     "automation",
@@ -39,8 +39,8 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/base-plugin": "^3.0.0-rc.2",
-    "@appium/support": "^7.0.0-rc.1",
+    "@appium/base-plugin": "^3.0.0",
+    "@appium/support": "^7.0.0",
     "bluebird": "3.7.2",
     "lodash": "4.17.21",
     "source-map-support": "0.5.21"

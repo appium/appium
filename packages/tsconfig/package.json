@@ -1,6 +1,6 @@
 {
   "name": "@appium/tsconfig",
-  "version": "1.0.0-rc.1",
+  "version": "1.0.0",
   "description": "Shared TypeScript Config for Appium",
   "main": "tsconfig.json",
   "keywords": [

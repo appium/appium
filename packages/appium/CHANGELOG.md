@@ -5,7 +5,10 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [3.0.0](https://github.com/appium/appium/compare/appium@3.0.0-rc.2...appium@3.0.0) (2025-08-18)
 
-**Note:** Version bump only for package appium
+### Appium 3 Is Here! 🚀
+
+[See the blog post](https://appium.io/docs/en/latest/blog/2025/08/07/-appium-3/)
+and [the migration guide](https://appium.io/docs/en/latest/guides/migrating-2-to-3/) for more details.
 
 
 

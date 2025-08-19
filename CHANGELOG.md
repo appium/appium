@@ -5,7 +5,7 @@ most of which have their own changelogs. Links to these individual changelogs ar
 
 ## Main Appium Module
 
-* ### [Appium 2 Changelog](packages/appium/CHANGELOG.md)
+* ### [Appium Changelog](packages/appium/CHANGELOG.md)
 * [Appium 1.x Changelog](https://github.com/appium/appium/blob/1.x/CHANGELOG.md)
 
 ## Drivers / Clients
@@ -16,6 +16,7 @@ to driver/client documentation
 * [execute-driver-plugin](packages/execute-driver-plugin/CHANGELOG.md)
 * [images-plugin](packages/images-plugin/CHANGELOG.md)
 * [relaxed-caps-plugin](packages/relaxed-caps-plugin/CHANGELOG.md)
+* [storage-plugin](packages/storage-plugin/CHANGELOG.md)
 * [universal-xml-plugin](packages/universal-xml-plugin/CHANGELOG.md)
 
 ## Other Modules
@@ -30,7 +31,6 @@ to driver/client documentation
 * [opencv](packages/opencv/CHANGELOG.md)
 * [plugin-test-support](packages/plugin-test-support/CHANGELOG.md)
 * [schema](packages/schema/CHANGELOG.md)
-* [storage-plugin](packages/storage-plugin/CHANGELOG.md)
 * [strongbox](packages/strongbox/CHANGELOG.md)
 * [support](packages/support/CHANGELOG.md)
 * [test-support](packages/test-support/CHANGELOG.md)

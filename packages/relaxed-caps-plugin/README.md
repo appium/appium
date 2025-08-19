@@ -16,7 +16,7 @@ do not have a prefix.
 
 There are a lot of test scripts out there that don't conform to the W3C capability requirements,
 so this plugin is designed to make it easy to keep running these scripts even with the stricter
-capability requirements in Appium 2.
+capability requirements since Appium 2.
 
 ## Installation
 

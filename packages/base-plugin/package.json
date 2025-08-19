@@ -1,7 +1,7 @@
 {
   "name": "@appium/base-plugin",
   "version": "3.0.0",
-  "description": "The base plugin used to create Appium 2.0 plugins",
+  "description": "The base plugin used to create Appium plugins",
   "keywords": [
     "automation",
     "javascript",

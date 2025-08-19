@@ -39,18 +39,13 @@ programming languages, which means there is an entire ecosystem of related softw
 * [__Clients__](#clients) allow writing Appium tests in your programming language of choice
 * [__Plugins__](#plugins) allow to further extend Appium functionality
 
-## Migrating From Appium 1 to Appium 2
+## Upgrading From Older Versions
 
-As of January 1st, 2022, the Appium team no longer maintains or supports Appium 1. All officially
-supported platform drivers are only compatible with Appium 2.
+The Appium team only provides support for the most recent version of Appium. If you wish to upgrade from
+an older major Appium version, please refer to the migration guides:
 
-__[Please read the Migration Guide](https://appium.io/docs/en/latest/guides/migrating-1-to-2/) if you
-are still using Appium 1.__
-
-> [!WARNING]
-> If you use Appium Desktop or Appium Server GUI, you will not be able to upgrade to Appium 2, as
-both of these tools have been deprecated. Please use [Appium Inspector](https://github.com/appium/appium-inspector)
-in combination with a standalone Appium 2 server.
+* [Appium v2 to v3](https://appium.io/docs/en/latest/guides/migrating-2-to-3/)
+* [Appium v1 to v2](https://appium.io/docs/en/latest/guides/migrating-1-to-2/)
 
 ## Installation
 

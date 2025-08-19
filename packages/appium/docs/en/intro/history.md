@@ -157,8 +157,7 @@ it was easy for users or third-party developers to build their own Appium
 on the Appium codebase, and to see support for new platforms added to Appium by
 groups other than the core team. That vision has begun to be fulfilled, with
 groups like Microsoft and Youi.tv adding drivers to Appium for Windows desktop
-app automation and Youi.tv app automation, respectively. Who knows what
-platforms will be added next?
+app automation and Youi.tv app automation, respectively.
 
 ## Appium To The People
 
@@ -172,11 +171,22 @@ foundation, we hope that the door will open even more widely for new
 contributors, either as individuals or representing one of the many companies
 which now have an interest in seeing Appium move forward.
 
-Eventually, the JS Foundation merged into the [OpenJS Foundation](https://openjsf.org), and Appium
-is currently an Impact Project in the foundation.
+Eventually, the JS Foundation merged into the [OpenJS Foundation](https://openjsf.org),
+and Appium became an Impact Project in the foundation.
 
 ## Appium 2.0
 
-Appium 2 was released in 2023, with a new focus on Appium as an ecosystem rather than a singular
-project. Drivers and plugins can be developed and shared by anyone, opening up a world of
-possibilities for automation-related development for platforms far beyond iOS and Android.
+Appium 2 was released in 2023 and introduced an entirely revamped architecture, shifting focus to Appium
+as an ecosystem rather than a singular project. This unlocked the ability for anyone to develop
+and share their own Appium extensions (drivers and plugins), opening up a world of possibilities
+for automation-related development for platforms far beyond iOS and Android! As a result,
+many third-party extensions were created, such as new drivers for Flutter and Windows, plugins for
+mocking APIs and managing device farms, new Appium clients based on Rust and Swift, and much more.
+
+Around this time was also when we started a sponsorship program for Appium, which attracted various
+major and minor sponsors alike. This allowed us to give back to the Appium community, by compensating
+contributors for their voluntary work on the project.
+
+## Appium 3.0
+
+2025 also saw the release of Appium 3.

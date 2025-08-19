@@ -177,7 +177,7 @@ and Appium became an Impact Project in the foundation.
 ## Appium 2.0
 
 Appium 2 was released in 2023 and introduced an entirely revamped architecture, shifting focus to Appium
-as an ecosystem rather than a singular project. This unlocked the ability for anyone to develop
+as an ecosystem rather than an all-in-one project. This unlocked the ability for anyone to develop
 and share their own Appium extensions (drivers and plugins), opening up a world of possibilities
 for automation-related development for platforms far beyond iOS and Android! As a result,
 many third-party extensions were created, such as new drivers for Flutter and Windows, plugins for
@@ -189,4 +189,8 @@ contributors for their voluntary work on the project.
 
 ## Appium 3.0
 
-2025 also saw the release of Appium 3.
+2025 saw the release of Appium 3. This update was a lot smaller than Appium 2 and included only a
+few behavioral changes, instead focusing on removing deprecated code and updating compatibility for
+more modern ecosystems. Still, this reduced scope was also to be expected: since Appium 2, the
+main feature development efforts had shifted to individual drivers and plugins, many of which had
+gone through multiple major updates during the Appium 2 era.

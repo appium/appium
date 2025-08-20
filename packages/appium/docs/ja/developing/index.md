@@ -5,7 +5,7 @@ hide:
 title: Intro to Development
 ---
 
-Appium 2 is built with a modular structure, which means that Appium extensions (drivers and plugins)
+Appium is built with a modular structure, which means that Appium extensions (drivers and plugins)
 are decoupled from the main Appium module, and you only need to install the extensions that you
 want to use. This modular structure also unlocks the ability to develop entirely new extensions!
 

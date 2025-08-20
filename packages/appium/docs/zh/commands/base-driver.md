@@ -5,7 +5,7 @@
 `POST` **`/session`**
 
 Historically the first two arguments were reserved for JSONWP capabilities.
-Appium 2 has dropped the support of these, so now we only accept capability
+These are no longer supported since Appium 2, so now we only accept capability
 objects in W3C format and thus allow any of the three arguments to represent
 the latter.
 

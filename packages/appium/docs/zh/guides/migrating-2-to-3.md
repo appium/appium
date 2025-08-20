@@ -33,7 +33,8 @@ ended before the release of Appium 2, which meant that even users on outdated No
 able to use it.
 
 Appium 3 drops support for outdated Node versions, and bumps the minimum required version to Node
-`20.19.0`, as well as the minimum `npm` version to `10`.
+`20.19.0` (with the semver range `^20.19.0 || ^22.12.0 || >=24.0.0`), as well as the minimum `npm`
+version to `10`.
 
 !!! info "Actions Needed"
 

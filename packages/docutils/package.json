@@ -1,6 +1,6 @@
 {
   "name": "@appium/docutils",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Documentation generation utilities for Appium and related projects",
   "keywords": [
     "automation",

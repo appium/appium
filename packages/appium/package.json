@@ -1,6 +1,6 @@
 {
   "name": "appium",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Automation for Apps.",
   "keywords": [
     "automation",
@@ -61,8 +61,8 @@
   },
   "dependencies": {
     "@appium/base-driver": "^10.0.0",
-    "@appium/base-plugin": "^3.0.0",
-    "@appium/docutils": "^2.0.0",
+    "@appium/base-plugin": "^3.0.1",
+    "@appium/docutils": "^2.0.1",
     "@appium/logger": "^2.0.0",
     "@appium/schema": "^1.0.0",
     "@appium/support": "^7.0.0",

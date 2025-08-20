@@ -128,7 +128,7 @@ drivers and plugins. It is of course up to each service provider how they wish t
 discovery, installation, and availability of any official or third party drivers or plugins. But
 the Appium team does provide several suggestions, for consistency across the industry. _These are
 recommendations only,_ and not a standard, but adopting it will help users to navigate the increased
-complexity that working with Appium 2 in a cloud environment may bring.
+complexity that working with Appium in a cloud environment may bring.
 
 ### Suggested capabilities
 

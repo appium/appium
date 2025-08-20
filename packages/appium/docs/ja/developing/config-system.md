@@ -2,8 +2,8 @@
 title: Appium's Config System
 ---
 
-Appium 2 supports [configuration files](../guides/config.md). A configuration file is intended to
-have (nearly) 1:1 parity with command-line arguments. An end user can supply Appium 2 with
+Appium includes support for [configuration files](../guides/config.md). A configuration file is
+intended to have (nearly) 1:1 parity with command-line arguments. An end user can supply Appium with
 a configuration file, CLI args, or both (the args have precedence over the config file).
 
 This document will be a technical overview of how the configuration system works. It is intended
@@ -336,7 +336,7 @@ One of the design goals of this system is the following:
 _An extension should be able to register custom CLI arguments with the Appium, and a user should be
 able to use them like any other argument_.
 
-Previously, Appium 2 accepted arguments in this manner (via `--driverArgs`), but validation was
+Previously, Appium accepted arguments in this manner (via `--driverArgs`), but validation was
 hand-rolled and required extension implementors to use a custom API. It also required the user to
 awkwardly pass a JSON string as the configuration on the command-line. Further, no contextual help
 (via `--help`) existed for these arguments.

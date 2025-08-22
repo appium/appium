@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "extends": "@tsconfig/node14/tsconfig.json",
+  "extends": "@tsconfig/node20/tsconfig.json",
   "ts-node": {
     "transpileOnly": true
   },
@@ -16,7 +16,6 @@
     "sourceMap": true,
     "removeComments": false,
     "strict": false,
-    "types": ["node"],
-    "lib": ["es2020", "ES2021.WeakRef"]
+    "types": ["node"]
   }
 }

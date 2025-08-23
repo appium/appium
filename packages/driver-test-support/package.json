@@ -45,7 +45,7 @@
     "axios": "1.11.0",
     "bluebird": "3.7.2",
     "chai": "5.3.3",
-    "chai-as-promised": "8.0.1",
+    "chai-as-promised": "8.0.2",
     "get-port": "5.1.1",
     "lodash": "4.17.21",
     "sinon": "21.0.0",

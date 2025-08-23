@@ -122,7 +122,7 @@
     "@types/yargs": "17.0.33",
     "asyncbox": "3.0.0",
     "chai": "5.3.3",
-    "chai-as-promised": "8.0.1",
+    "chai-as-promised": "8.0.2",
     "conventional-changelog-conventionalcommits": "7.0.2",
     "cpy-cli": "6.0.0",
     "cross-env": "10.0.0",

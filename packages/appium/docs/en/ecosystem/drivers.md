@@ -20,7 +20,7 @@ To learn more about drivers, check out the [Driver Intro](../intro/drivers.md).
 These drivers are currently maintained by the Appium team:
 
 |Driver|Installation Key|Platform(s)|Mode(s)|Important Notes|
-|--|--|--|--|
+|--|--|--|--|--|
 |[Chromium](https://github.com/appium/appium-chromium-driver)|`chromium`|macOS, Windows, Linux|Web||
 |[Espresso](https://github.com/appium/appium-espresso-driver)|`espresso`|Android|Native||
 |[Gecko](https://github.com/appium/appium-geckodriver)|`gecko`|macOS, Windows, Linux, Android|Web||

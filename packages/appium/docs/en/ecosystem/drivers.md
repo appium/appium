@@ -27,24 +27,24 @@ These drivers are currently maintained by the Appium team:
 |[Mac2](https://github.com/appium/appium-mac2-driver)|`mac2`|macOS|Native|
 |[Safari](https://github.com/appium/appium-safari-driver)|`safari`|macOS, iOS|Web|
 |[UiAutomator2](https://github.com/appium/appium-uiautomator2-driver)|`uiautomator2`|Android|Native, Hybrid, Web|
-|[Windows](https://github.com/appium/appium-windows-driver)|`windows`|Windows|Native|
 |[XCUITest](https://github.com/appium/appium-xcuitest-driver)|`xcuitest`|iOS|Native, Hybrid, Web|
 
 ### Other Drivers
 
 These drivers are not maintained by the Appium team and can be used to target additional platforms:
 
-|Driver|Installation Key|Platform(s)|Mode(s)|Supported By|
-|--|--|--|--|--|
-|[Flutter](https://github.com/appium/appium-flutter-driver)|`--source=npm appium-flutter-driver`|iOS, Android|Native|Community|
-|[Flutter Integration](https://github.com/AppiumTestDistribution/appium-flutter-integration-driver)|`--source=npm appium-flutter-integration-driver`|iOS, Android|Native|Community / `@AppiumTestDistribution`|
-|[LG WebOS](https://github.com/headspinio/appium-lg-webos-driver)|`--source=npm appium-lg-webos-driver`|LG TV|Web|HeadSpin|
-|[Linux](https://github.com/fantonglang/appium-linux-driver)|`--source=npm @stdspa/appium-linux-driver`|Linux|Native|`@fantonglang`|
-|[Roku](https://github.com/headspinio/appium-roku-driver)|`--source=npm @headspinio/appium-roku-driver`|Roku|Native|HeadSpin|
-|[Tizen](https://github.com/Samsung/appium-tizen-driver)|`--source=npm appium-tizen-driver`|Android|Native|Community / Samsung|
-|[TizenTV](https://github.com/headspinio/appium-tizen-tv-driver)|`--source=npm appium-tizen-tv-driver`|Samsung TV|Web|HeadSpin|
-|[Youi](https://github.com/YOU-i-Labs/appium-youiengine-driver)|`--source=npm appium-youiengine-driver`|iOS, Android, macOS, Linux, tvOS|Native|Community / You.i|
-|[NovaWindows](https://github.com/AutomateThePlanet/appium-novawindows-driver)|`--source=npm appium-novawindows-driver`|Windows|Native|Community / Automate The Planet|
+|Driver|Installation Key|Platform(s)|Mode(s)|Supported By|Important Notes|
+|--|--|--|--|--|--|
+|[Windows](https://github.com/appium/appium-windows-driver)|`--source=npm appium-windows-driver`|Windows|Native|Appium Team (driver only)/Microsoft (WAD server)|The server part has not been maintained by Microsoft since 2022|
+|[Flutter](https://github.com/appium/appium-flutter-driver)|`--source=npm appium-flutter-driver`|iOS, Android|Native|Appium Team/Community||
+|[Flutter Integration](https://github.com/AppiumTestDistribution/appium-flutter-integration-driver)|`--source=npm appium-flutter-integration-driver`|iOS, Android|Native|Community / `@AppiumTestDistribution`||
+|[LG WebOS](https://github.com/headspinio/appium-lg-webos-driver)|`--source=npm appium-lg-webos-driver`|LG TV|Web|HeadSpin||
+|[Linux](https://github.com/fantonglang/appium-linux-driver)|`--source=npm @stdspa/appium-linux-driver`|Linux|Native|`@fantonglang`|The server part has not been maintained by Microsoft since 2022|
+|[Roku](https://github.com/headspinio/appium-roku-driver)|`--source=npm @headspinio/appium-roku-driver`|Roku|Native|HeadSpin||
+|[Tizen](https://github.com/Samsung/appium-tizen-driver)|`--source=npm appium-tizen-driver`|Android|Native|Community / Samsung|The driver has not been maintained since 2020|
+|[TizenTV](https://github.com/headspinio/appium-tizen-tv-driver)|`--source=npm appium-tizen-tv-driver`|Samsung TV|Web|HeadSpin||
+|[Youi](https://github.com/YOU-i-Labs/appium-youiengine-driver)|`--source=npm appium-youiengine-driver`|iOS, Android, macOS, Linux, tvOS|Native|Community / You.i|The driver has not been maintained since 2022|
+|[NovaWindows](https://github.com/AutomateThePlanet/appium-novawindows-driver)|`--source=npm appium-novawindows-driver`|Windows|Native|Community / Automate The Planet||
 
 !!! note
 

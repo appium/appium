@@ -28,7 +28,7 @@ These drivers are currently maintained by the Appium team:
 |[Safari](https://github.com/appium/appium-safari-driver)|`safari`|macOS, iOS|Web||
 |[UiAutomator2](https://github.com/appium/appium-uiautomator2-driver)|`uiautomator2`|Android|Native, Hybrid, Web||
 |[XCUITest](https://github.com/appium/appium-xcuitest-driver)|`xcuitest`|iOS|Native, Hybrid, Web||
-|[Windows](https://github.com/appium/appium-windows-driver)|`--source=npm appium-windows-driver`|Windows|Native|Only the Node.js-based driver part is maintained by the Appium team. The server part (WinAppDriver executable) has not been maintained by Microsoft since 2022|
+|[Windows](https://github.com/appium/appium-windows-driver)|`windows`|Windows|Native|Only the Node.js-based driver part is maintained by the Appium team. The server part (WinAppDriver executable) has not been maintained by Microsoft since 2022|
 
 ### Other Drivers
 

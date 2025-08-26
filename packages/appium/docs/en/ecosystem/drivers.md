@@ -17,57 +17,57 @@ These drivers are currently maintained by the Appium team:
 
 ### [Chromium](https://github.com/appium/appium-chromium-driver)
 
-```sh
+* Target: Desktop and mobile Chromium browsers (Chrome, Microsoft Edge, etc.)
+* Mode: Web
+
+```sh title="Install This Driver"
 appium driver install chromium
 ```
 
-* Target platforms: Desktop and mobile Chromium browsers (Chrome, Microsoft Edge, etc.)
-* Mode: Web
-
 ### [Espresso](https://github.com/appium/appium-espresso-driver)
 
-```sh
+* Target: Android applications
+* Mode: Native
+
+```sh title="Install This Driver"
 appium driver install espresso
 ```
 
-* Target platform: Android
-* Mode: Native
+### [Gecko](https://github.com/appium/appium-geckodriver)
 
-### [Gecko](https://github.com/appium/appium-gecko-driver)
+* Target: Desktop and mobile Gecko browsers (Firefox)
+* Mode: Web
 
-```sh
+```sh title="Install This Driver"
 appium driver install gecko
 ```
 
-* Target platforms: Desktop and mobile Gecko browsers (Firefox)
-* Mode: Web
-
 ### [Mac2](https://github.com/appium/appium-mac2-driver)
 
-```sh
+* Target: macOS applications
+* Mode: Native
+
+```sh title="Install This Driver"
 appium driver install mac2
 ```
 
-* Target platform: macOS
-* Mode: Native
-
 ### [Safari](https://github.com/appium/appium-safari-driver)
 
-```sh
+* Target: Desktop and mobile Safari browsers
+* Mode: Web
+
+```sh title="Install This Driver"
 appium driver install safari
 ```
 
-* Target platforms: Desktop and mobile Safari browser
-* Mode: Web
-
 ### [UiAutomator2](https://github.com/appium/appium-uiautomator2-driver)
 
-```sh
+* Target: Android, Android TV, Android Wear applications
+* Modes: Native, Hybrid, Web
+
+```sh title="Install This Driver"
 appium driver install uiautomator2
 ```
-
-* Target platforms: Android, Android TV, Android Wear
-* Modes: Native, Hybrid, Web
 
 ### [Windows](https://github.com/appium/appium-windows-driver)
 
@@ -76,21 +76,21 @@ appium driver install uiautomator2
     Only the Node.js-based driver part is maintained by the Appium team. The server part
     (WinAppDriver executable) is provided by Microsoft, but has not been maintained since 2022.
 
-```sh
+* Target: Windows applications
+* Mode: Native
+
+```sh title="Install This Driver"
 appium driver install windows
 ```
 
-* Target platform: Windows 10 or later
-* Mode: Native
-
 ### [XCUITest](https://appium.github.io/appium-xcuitest-driver/)
 
-```sh
+* Target: iOS, iPadOS, tvOS applications
+* Modes: Native, Hybrid, Web
+
+```sh title="Install This Driver"
 appium driver install xcuitest
 ```
-
-* Target platforms: iOS, iPadOS, tvOS
-* Modes: Native, Hybrid, Web
 
 ## Other Drivers
 
@@ -98,33 +98,33 @@ These drivers are not maintained by the Appium team and can be used to target ot
 
 ### [Flutter](https://github.com/appium/appium-flutter-driver)
 
-```sh
-appium driver install --source=npm appium-flutter-driver
-```
-
-* Target platforms: iOS, Android
+* Target: iOS and Android applications built with Flutter
 * Mode: Native
 * Supported by: Appium Team / Community
 
-### [Flutter Integration](https://github.com/AppiumTestDistribution/appium-flutter-integration-driver)
-
-```sh
-appium driver install --source=npm appium-flutter-integration-driver
+```sh title="Install This Driver"
+appium driver install --source=npm appium-flutter-driver
 ```
 
-* Target platforms: iOS, Android
+### [Flutter Integration](https://github.com/AppiumTestDistribution/appium-flutter-integration-driver)
+
+* Target: iOS and Android applications built with Flutter
 * Mode: Native
 * Supported by: Community / `@AppiumTestDistribution`
 
-### [LG WebOS](https://github.com/headspinio/appium-lg-webos-driver)
-
-```sh
-appium driver install --source=npm appium-lg-webos-driver
+```sh title="Install This Driver"
+appium driver install --source=npm appium-flutter-integration-driver
 ```
 
-* Target platform: LG TV
+### [LG WebOS](https://github.com/headspinio/appium-lg-webos-driver)
+
+* Target: LG TV web applications
 * Mode: Web
 * Supported by: HeadSpin
+
+```sh title="Install This Driver"
+appium driver install --source=npm appium-lg-webos-driver
+```
 
 ### [Linux](https://github.com/fantonglang/appium-linux-driver)
 
@@ -132,36 +132,36 @@ appium driver install --source=npm appium-lg-webos-driver
 
     This driver has not been maintained since 2022 and requires a custom Appium installation
 
-```sh
+* Target: Linux applications
+* Mode: Native
+* Supported by: `@fantonglang`
+
+```sh title="Install This Driver"
 git clone https://github.com/fantonglang/appium
 cd appium
 yarn install
 node ./
 ```
 
-* Target platform: Linux
-* Mode: Native
-* Supported by: `@fantonglang`
-
 ### [NovaWindows](https://github.com/AutomateThePlanet/appium-novawindows-driver)
 
-```sh
-appium driver install --source=npm appium-novawindows-driver
-```
-
-* Target platform: Windows 10 or later
+* Target: Windows applications
 * Mode: Native
 * Supported by: Community / Automate The Planet
 
-### [Roku](https://github.com/headspinio/appium-roku-driver)
-
-```sh
-appium driver install --source=npm @headspinio/appium-roku-driver
+```sh title="Install This Driver"
+appium driver install --source=npm appium-novawindows-driver
 ```
 
-* Target platform: Roku
+### [Roku](https://github.com/headspinio/appium-roku-driver)
+
+* Target: Roku channels (applications)
 * Mode: Native
 * Supported by: HeadSpin
+
+```sh title="Install This Driver"
+appium driver install --source=npm @headspinio/appium-roku-driver
+```
 
 ### [Tizen](https://github.com/Samsung/appium-tizen-driver)
 
@@ -169,23 +169,23 @@ appium driver install --source=npm @headspinio/appium-roku-driver
 
     This driver has not been maintained since 2020 and is only compatible with Appium 1
 
-```sh
-npm install appium-tizen-driver
-```
-
-* Target platform: Tizen
+* Target: Tizen applications
 * Mode: Native
 * Supported by: Community / Samsung
 
-### [TizenTV](https://github.com/headspinio/appium-tizen-tv-driver)
-
-```sh
-appium driver install --source=npm appium-tizen-tv-driver
+```sh title="Install This Driver"
+npm install appium-tizen-driver
 ```
 
-* Target platform: Tizen TV
+### [TizenTV](https://github.com/headspinio/appium-tizen-tv-driver)
+
+* Target: Tizen TV web applications
 * Mode: Web
 * Supported by: HeadSpin
+
+```sh title="Install This Driver"
+appium driver install --source=npm appium-tizen-tv-driver
+```
 
 ### [You.i Engine](https://github.com/YOU-i-Labs/appium-youiengine-driver)
 
@@ -193,10 +193,10 @@ appium driver install --source=npm appium-tizen-tv-driver
 
     This driver has not been maintained since 2022 and is only compatible with Appium 1
 
-```sh
-npm install appium-youiengine-driver
-```
-
-* Target platforms: iOS, Android, macOS, Linux, tvOS
+* Target: iOS, Android, macOS, Linux, tvOS applications built with You.i Engine
 * Mode: Native
 * Supported by: Community / You.i
+
+```sh title="Install This Driver"
+npm install appium-youiengine-driver
+```

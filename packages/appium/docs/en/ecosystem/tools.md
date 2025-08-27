@@ -1,42 +1,53 @@
 ---
-hide:
-  - toc
-
 title: Appium-Related Tools
 ---
 
-There are several Appium tools that have been created to to assist with things not directly related
-to testing, such as Appium installation, test development, and more.
+The Appium ecosystem also includes several tools that have been created to assist with things not
+directly related to running tests, such as Appium installation, test development, and more.
 
-### [Appium Inspector](https://appium.github.io/appium-inspector/latest/)
+!!! note
+
+    If you maintain an Appium tool that you would like to be listed here, feel free to create a PR!
+
+## Official Tools
+
+These tools are currently maintained by the Appium team:
+
+### [Appium Inspector](https://appium.github.io/appium-inspector/)
 
 Appium has a graphical client which can be used to inspect application screenshots, view the
-application hierarchy, run Appium commands, record app interactions, and more. It is very useful
-for Appium test development.
+application hierarchy, search for elements, run Appium commands, record app interactions, and more.
+It can be very useful for Appium test development.
 
-Find downloads and more information on its GitHub page: [Appium Inspector](https://github.com/appium/appium-inspector)
+## Extension Tools
+
+Appium driver or plugin developers can choose to include these tools in their driver/plugin:
 
 ### Appium Doctor
 
-Appium Doctor is a command-line tool built into Appium drivers and plugins.
-The command is expected to be used to validate whether a driver or plugin has all of its prerequisites and other environment details set up correctly
-if the driver/plugin author implemented the `doctor` command.
+The Appium Doctor tool can be used to validate whether all prerequisites and other environment
+details needed for the driver/plugin have been set up correctly. The tool can be accessed via the
+[`doctor` command in the Appium CLI](../cli/extensions.md#doctor):
 
-For example, `uiautomator2` driver provides the `doctor` command below.
-
-```
-appium driver doctor uiautomator2
+```sh
+appium {driver|plugin} doctor <extension-name>
 ```
 
-It shows no result if the driver/plugin author did not implement them.
+It shows no results if the driver/plugin author did not implement Doctor support.
 
-More information on this command can be found in the [Command-Line Usage documentation](../cli/extensions.md#doctor).
-For driver/plugin developers, please read [Building Doctor Checks](../developing/build-doctor-checks.md).
+!!! note
 
-### Other Tools
+    If you maintain an Appium extension and would like to add Appium Doctor support for it, check
+    out the documentation on [Building Doctor Checks](../developing/build-doctor-checks.md).
 
-These tools are not maintained by the Appium team and can be used to assist with other problems:
+## Other Tools
 
-|Name|Description|Supported By|
-|---|---|---|
-|[appium-installer](https://github.com/AppiumTestDistribution/appium-installer)|Help set up an Appium environment for Android and iOS|`@AppiumTestDistribution`|
+These tools are not maintained by the Appium team:
+
+### [Appium Installer](https://github.com/AppiumTestDistribution/appium-installer)
+
+Appium Installer is a command-line tool for simplifying setups of new Appium test environments.
+It includes commands for installing Appium, its drivers and plugins, as well as validating
+prerequisites for iOS or Android emulators or real devices.
+
+Supported by: `@AppiumTestDistribution`

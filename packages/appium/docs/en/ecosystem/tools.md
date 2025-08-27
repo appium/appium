@@ -51,3 +51,7 @@ It includes commands for installing Appium, its drivers and plugins, as well as 
 prerequisites for iOS or Android emulators or real devices.
 
 Supported by: `@AppiumTestDistribution`
+
+```sh title="Install This Tool"
+npm install -g appium-installer
+```

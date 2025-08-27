@@ -58,8 +58,8 @@ gem install appium_lib_core
 
 Language: :material-language-ruby: Ruby
 
-This client is a wrapper for the Ruby Core Client with additional helper methods, though they may
-also result in additional complexity. For this reason, the Ruby Core Client is recommended instead.
+This client is a wrapper for the Ruby Core Client with several helper methods, though this may
+add additional complexity, therefore the Ruby Core Client is recommended instead.
 
 ```sh title="Install From RubyGems"
 gem install appium_lib
@@ -84,8 +84,8 @@ some Appium-specific commands may not be implemented in other clients.
 
 Language: :material-language-javascript: :material-language-typescript: JavaScript/TypeScript
 
-```sh title="Install Using npm"
-npm install @wdio/appium-service
+```sh title="Setup Using npm"
+npm init wdio@latest .
 ```
 
 ### [Nightwatch.js](https://nightwatchjs.org/guide/mobile-app-testing/introduction.html)

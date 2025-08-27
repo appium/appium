@@ -24,7 +24,7 @@ appium plugin install execute-driver
 
 ### [Images](https://github.com/appium/appium/tree/master/packages/images-plugin)
 
-Enable image matching and comparison features
+Add support for image matching and comparison features
 
 ```sh title="Install This Plugin"
 appium plugin install images
@@ -32,9 +32,8 @@ appium plugin install images
 
 ### [Inspector](https://github.com/appium/appium-inspector/tree/main/plugins)
 
-Integrate the [Appium Inspector](https://github.com/appium/appium-inspector) directly into your
-Appium server installation, providing a web-based interface for inspecting and interacting with
-your application under test.
+Integrate the [Appium Inspector](https://appium.github.io/appium-inspector/) directly into your
+Appium server installation
 
 ```sh title="Install This Plugin"
 appium plugin install inspector

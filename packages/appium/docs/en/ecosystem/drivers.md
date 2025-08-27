@@ -71,7 +71,7 @@ appium driver install uiautomator2
 
 ### [Windows](https://github.com/appium/appium-windows-driver)
 
-!!! note
+!!! warning
 
     Only the Node.js-based driver part is maintained by the Appium team. The server part
     (WinAppDriver executable) is provided by Microsoft, but has not been maintained since 2022.
@@ -128,7 +128,7 @@ appium driver install --source=npm appium-lg-webos-driver
 
 ### [Linux](https://github.com/fantonglang/appium-linux-driver)
 
-!!! note
+!!! warning
 
     This driver has not been maintained since 2022 and requires a custom Appium installation
 
@@ -144,6 +144,11 @@ node ./
 ```
 
 ### [NovaWindows](https://github.com/AutomateThePlanet/appium-novawindows-driver)
+
+!!! info
+
+    This driver is recommended as a drop-in replacement for the partially unmaintained
+    [Windows driver](#windows)
 
 * Target: Windows applications
 * Mode: Native
@@ -165,7 +170,7 @@ appium driver install --source=npm @headspinio/appium-roku-driver
 
 ### [Tizen](https://github.com/Samsung/appium-tizen-driver)
 
-!!! note
+!!! warning
 
     This driver has not been maintained since 2020 and is only compatible with Appium 1
 
@@ -189,7 +194,7 @@ appium driver install --source=npm appium-tizen-tv-driver
 
 ### [You.i Engine](https://github.com/YOU-i-Labs/appium-youiengine-driver)
 
-!!! note
+!!! warning
 
     This driver has not been maintained since 2022 and is only compatible with Appium 1
 

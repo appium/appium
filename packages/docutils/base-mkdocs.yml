@@ -76,6 +76,7 @@ theme:
     - content.code.annotate
     - content.code.copy
     - content.tabs.link
+    - navigation.indexes
     - navigation.sections
     - navigation.tabs
     - navigation.top

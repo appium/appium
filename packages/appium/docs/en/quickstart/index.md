@@ -2,7 +2,7 @@
 hide:
   - toc
 
-title: Quickstart Intro
+title: Getting Started
 ---
 
 Let's get up and running with Appium! To successfully use this quickstart, it's recommended that

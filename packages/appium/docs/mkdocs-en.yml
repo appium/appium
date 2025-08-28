@@ -68,7 +68,8 @@ nav:
           - guides/execute-methods.md
           - guides/context.md
           - guides/event-timing.md
-  - More Resources: resources.md
+  - More Resources:
+      - resources/index.md
   - Developing:
       - developing/index.md
       - developing/build-drivers.md
@@ -78,5 +79,7 @@ nav:
       - developing/sensitive.md
       - Developer Reference:
           - developing/config-system.md
-  - Contributing: contributing.md
-  - Sponsors: sponsors.md
+  - Contributing:
+      - contributing/index.md
+  - Sponsors:
+      - sponsors/index.md

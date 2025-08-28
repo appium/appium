@@ -2,7 +2,7 @@
 hide:
   - toc
 
-title: Command-Line Overview
+title: Command Line Interface
 ---
 
 Appium provides a command-line executable (`appium`), which will likely be your main way of interacting with

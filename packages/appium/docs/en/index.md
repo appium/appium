@@ -51,9 +51,9 @@ Android TV, Samsung), and more!
 -   Visit the [__Ecosystem__](./ecosystem/index.md) page for a list of drivers, clients and plugins you may want to use
 -   Refer to the [__CLI Reference__](./cli/index.md) for using Appium from the command line
 -   See the [__Command Reference__](./commands/index.md) for a list of commands exposed by Appium and plugins
--   Read the different [__Guides__](./guides/migrating-1-to-2.md) for a variety of instructions, tips and tricks
--   Check out various third-party [__Resources__](./resources.md) to explore Appium around the web
+-   Read the different [__Guides__](./guides/migrating-2-to-3.md) for a variety of instructions, tips and tricks
+-   Check out various third-party [__Resources__](./resources/index.md) to explore Appium around the web
 -   For creating your own Appium extensions, see the [__Developer__](./developing/index.md) documentation
--   For contributions to Appium itself, refer to the [__Contributing__](./contributing.md) page
+-   For contributions to Appium itself, refer to the [__Contributing__](./contributing/index.md) page
 
 </div>

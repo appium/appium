@@ -2,7 +2,7 @@
 hide:
   - toc
 
-title: "クイックスタート: はじめに"
+title: Getting Started
 ---
 
 さっそくAppiumを使ってみましょう！ このクイックスタートをうまく使うために、[はじめに](../intro/index.md)を読み、Appiumの実行やスクリプトの記述に関わる概念を理解することをお勧めします。
@@ -11,9 +11,9 @@ title: "クイックスタート: はじめに"
 
 1. Appiumをインストールする
 2. Appiumドライバーとその依存関係をインストールする
-  - このガイドでは、[UiAutomator2 driver](https://github.com/appium/appium-uiautomator2-driver) について説明します
+   - このガイドでは、[UiAutomator2 driver](https://github.com/appium/appium-uiautomator2-driver) について説明します
 3. お好みの言語でAppiumクライアント・ライブラリをインストールする
-  - このガイドでは、JavaScript、Python、Java、Ruby、.NETの例で説明します
+   - このガイドでは、JavaScript、Python、Java、Ruby、.NETの例で説明します
 4. サンプルアプリケーションを使用した簡単なAppiumでの自動化スクリプトの作成と実行
 
 ### 必要条件

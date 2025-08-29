@@ -2,7 +2,7 @@
 hide:
   - toc
 
-title: Intro to Development
+title: Developing Appium Extensions
 ---
 
 Appium is built with a modular structure, which means that Appium extensions (drivers and plugins)

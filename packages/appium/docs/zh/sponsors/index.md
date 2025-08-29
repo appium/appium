@@ -40,24 +40,21 @@ contributors!
 
 ## Gold Sponsors
 
-<div class="sponsor-section">
-  <a href="https://jetify.com/" target="_blank"><img src="https://images.opencollective.com/jetify/415824c/avatar/64.png" alt="Jetify" /></a>
+<div class="sponsor-section"><a href="https://jetify.com/" target="_blank"><img src="https://images.opencollective.com/jetify/415824c/avatar/64.png" alt="Jetify" /></a>
 </div>
 
 [Become a Gold Sponsor](https://opencollective.com/appium/contribute/gold-sponsor-72877/checkout?interval=month&amount=500&contributeAs=me)
 
 ## Silver Sponsors
 
-<div class="sponsor-section">
-  <a href="https://magicpod.com/" target="_blank"><img src="https://images.opencollective.com/magicpod/722b7e4/avatar/64.png" alt="MagicPod" /></a>
+<div class="sponsor-section"><a href="https://magicpod.com/" target="_blank"><img src="https://images.opencollective.com/magicpod/722b7e4/avatar/64.png" alt="MagicPod" /></a>
 </div>
 
 [Become a Silver Sponsor](https://opencollective.com/appium/contribute/silver-sponsor-72876/checkout?interval=month&amount=250&contributeAs=me)
 
 ## Bronze Sponsors
 
-<div class="sponsor-section">
-  <a href="https://route4me.com/" target="_blank"><img src="https://images.opencollective.com/route4me/71fb6fa/avatar/64.png" alt="Route4Me" /></a>
+<div class="sponsor-section"><a href="https://route4me.com/" target="_blank"><img src="https://images.opencollective.com/route4me/71fb6fa/avatar/64.png" alt="Route4Me" /></a>
   <a href="https://webdriver.io/" target="_blank"><img src="https://images.opencollective.com/webdriverio/bbdd6c3/avatar/64.png" alt="WebdriverIO" /></a>
 </div>
 

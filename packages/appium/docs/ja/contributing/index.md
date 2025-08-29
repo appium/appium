@@ -1,6 +1,7 @@
 ---
 hide:
   - navigation
+
 title: Contributing to Appium
 ---
 
@@ -46,12 +47,10 @@ We are always open to pull requests for improving the Appium code or documentati
 
 !!! info
 
-```
-Developer information may not be kept up to date as frequently as user-facing information, or
-it may be most relevant in its current form on the online repository, not in this published
-version. Make sure to check the repo or discuss with maintainers. We would be glad to help
-new contributors get started!
-```
+    Developer information may not be kept up to date as frequently as user-facing information, or
+    it may be most relevant in its current form on the online repository, not in this published
+    version. Make sure to check the repo or discuss with maintainers. We would be glad to help
+    new contributors get started!
 
 Start by cloning the repository (we recommend [forking](https://github.com/appium/appium/fork)
 it first):
@@ -63,9 +62,7 @@ cd appium
 
 !!! info
 
-```
-If you are VS Code user, you can easily check out the project using [Runme](https://runme.dev/api/runme?repository=https%3A%2F%2Fgithub.com%2Fappium%2Fappium.git&fileToOpen=packages%2Fappium%2Fdocs%2Fen%2Fcontributing%2Findex.md).
-```
+    If you are VS Code user, you can easily check out the project using [Runme](https://runme.dev/api/runme?repository=https%3A%2F%2Fgithub.com%2Fappium%2Fappium.git&fileToOpen=packages%2Fappium%2Fdocs%2Fen%2Fcontributing%2Findex.md).
 
 Install dependencies:
 

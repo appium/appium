@@ -1,7 +1,8 @@
 ---
 hide:
   - toc
-title: Intro to Commands
+
+title: Command Reference
 ---
 
 Here you can find various commands exposed by the main Appium module through its base driver, as

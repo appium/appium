@@ -46,9 +46,9 @@ title: 欢迎使用
 - 访问 [**生态系统**](./ecosystem/index.md) 页面，获取您可能想要使用的驱动程序、客户端和插件列表
 - 阅读 [**命令行参考**](./cli/index.md) 了解Appium的命令行使用方法
 - 阅读 [**命令参考**](./commands/index.md) 了解Appium和插件的可用命令列表
-- 阅读不同的 [**指南**](./guides/migrating-1-to-2.md)，了解各种说明、提示和技巧
-- 查看各种第三方 [**资源**](./resources.md) 以探索网络上的 Appium
+- Read the different [**Guides**](./guides/migrating-2-to-3.md) for a variety of instructions, tips and tricks
+- Check out various third-party [**Resources**](./resources/index.md) to explore Appium around the web
 - 要创建自己的 Appium 扩展，请参阅 [**开发者**](./developing/index.md) 文档
-- 有关对 Appium 本身的贡献，请查阅 [**贡献**](./contributing.md) 页面
+- For contributions to Appium itself, refer to the [**Contributing**](./contributing/index.md) page
 
 </div>

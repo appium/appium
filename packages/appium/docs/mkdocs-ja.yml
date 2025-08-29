@@ -68,7 +68,8 @@ nav:
           - guides/execute-methods.md
           - guides/context.md
           - guides/event-timing.md
-  - 他のリソース: resources.md
+  - More Resources:
+      - resources/index.md
   - 開発:
       - developing/index.md
       - developing/build-drivers.md
@@ -78,5 +79,7 @@ nav:
       - developing/sensitive.md
       - 開発者リファレンス:
           - developing/config-system.md
-  - 貢献: contributing.md
-  - スポンサー: sponsors.md
+  - Contributing:
+      - contributing/index.md
+  - Sponsors:
+      - sponsors/index.md

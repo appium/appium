@@ -47,9 +47,9 @@ Appiumのドキュメントにようこそ！ Appiumはオープンソースプ�
 - 使用するドライバ、クライアント、プラグインの一覧については、 [**Ecosystem**](./ecosystem/index.md) ページを参照してください。
 - コマンドラインからAppiumを使用する場合、[**CLI リファレンス**](./cli/index.md)を参照してください。
 - Appiumとプラグインで公開されているコマンドの一覧は[**Command Reference**](./commands/index.md)を参照してください。
-- [**Guides**](./guides/migrating-1-to-2.md) にあるさまざまな使い方、ヒント、コツを読んでください。
-- 様々なサードパーティーの [**Resources**](./resources.md) をチェックして、ウェブ上のAppiumを探してみてください。
+- Read the different [**Guides**](./guides/migrating-2-to-3.md) for a variety of instructions, tips and tricks
+- Check out various third-party [**Resources**](./resources/index.md) to explore Appium around the web
 - 独自の Appium 拡張を作成するには、 [**Developer**](./developing/index.md) ドキュメントを参考にしてください。
-- Appium自体への貢献については、 [**Contributing**](./contributing.md) を参照してください。
+- For contributions to Appium itself, refer to the [**Contributing**](./contributing/index.md) page
 
 </div>

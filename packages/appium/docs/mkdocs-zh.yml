@@ -68,7 +68,8 @@ nav:
           - guides/execute-methods.md
           - guides/context.md
           - guides/event-timing.md
-  - 更多资源: resources.md
+  - More Resources:
+      - resources/index.md
   - 开发:
       - developing/index.md
       - developing/build-drivers.md
@@ -78,5 +79,7 @@ nav:
       - developing/sensitive.md
       - 开发者参考:
           - developing/config-system.md
-  - 贡献: contributing.md
-  - 赞助商: sponsors.md
+  - Contributing:
+      - contributing/index.md
+  - Sponsors:
+      - sponsors/index.md

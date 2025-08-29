@@ -1,7 +1,8 @@
 ---
 hide:
   - toc
-title: Quickstart Intro
+
+title: Getting Started
 ---
 
 Let's get up and running with Appium! To successfully use this quickstart, it's recommended that
@@ -12,9 +13,9 @@ The basic plan for this quickstart is as follows:
 
 1. Install Appium
 2. Install an Appium driver and its dependencies
-  - This guide provides instructions for the [UiAutomator2 driver](https://github.com/appium/appium-uiautomator2-driver)
+   - This guide provides instructions for the [UiAutomator2 driver](https://github.com/appium/appium-uiautomator2-driver)
 3. Install an Appium client library in your language of choice
-  - This guide contains options for JavaScript, Python, Java, Ruby, and .NET
+   - This guide contains options for JavaScript, Python, Java, Ruby, and .NET
 4. Write and run a simple Appium automation script using a sample application
 
 ### Requirements

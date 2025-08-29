@@ -1,7 +1,8 @@
 ---
 hide:
   - toc
-title: Ecosystem Overview
+
+title: The Appium Ecosystem
 ---
 
 Appium has a wide ecosystem of related software and tools. This section of the Appium documentation

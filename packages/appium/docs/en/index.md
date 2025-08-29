@@ -49,11 +49,11 @@ Android TV, Samsung), and more!
 -   Check out the [__Introduction__](./intro/index.md) to make sure you understand the key concepts
 -   Go through the [__Quickstart__](./quickstart/index.md) to get set up and run a basic Android test
 -   Visit the [__Ecosystem__](./ecosystem/index.md) page for a list of drivers, clients and plugins you may want to use
--   Refer to the [__CLI Reference__](./cli/index.md) for using Appium from the command line
--   See the [__Command Reference__](./commands/index.md) for a list of commands exposed by Appium and plugins
+-   Consult the [__Reference__](./reference/index.md) page for information on the Appium CLI and supported endpoints
 -   Read the different [__Guides__](./guides/migrating-2-to-3.md) for a variety of instructions, tips and tricks
 -   Check out various third-party [__Resources__](./resources/index.md) to explore Appium around the web
 -   For creating your own Appium extensions, see the [__Developer__](./developing/index.md) documentation
 -   For contributions to Appium itself, refer to the [__Contributing__](./contributing/index.md) page
+-   Have a look at the [__Appium Blog__](./blog/index.md) to learn what's new in the project
 
 </div>

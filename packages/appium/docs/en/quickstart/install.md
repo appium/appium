@@ -21,7 +21,7 @@ npm install -g appium
 
 ## Starting Appium
 
-Appium can be started [using the command line](../cli/index.md):
+Appium can be started [using the command line](../reference/cli/index.md):
 
 ```
 appium

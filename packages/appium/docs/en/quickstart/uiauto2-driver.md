@@ -62,7 +62,7 @@ set up on your system, so you can get busy making Android apps if you want!
 
 ### Standard Install
 
-Like all Appium drivers, the UiAutomator2 driver is installed via the [Appium Extension CLI](../cli/extensions.md).
+Like all Appium drivers, the UiAutomator2 driver is installed via the [Appium Extension CLI](../reference/cli/extensions.md).
 Since UiAutomator2 is maintained by the core Appium team, it has an 'official' driver name
 (`uiautomator2`), which makes the installation simpler.
 
@@ -89,7 +89,7 @@ must be used to select this driver for use during an Appium session (in this cas
 
 !!! note
 
-    In this quickstart we have used the [Extension CLI](../cli/extensions.md) to install the
+    In this quickstart we have used the [Extension CLI](../reference/cli/extensions.md) to install the
     UiAutomator2 driver, but if you are incorporating Appium into a Node.js project, you might
     prefer to use `npm` to manage Appium and its connected drivers. To learn more about this
     technique, visit the guide on [managing Appium extensions](../guides/managing-exts.md).
@@ -108,7 +108,7 @@ Running this will install Appium's mobile-specific drivers: UiAutomator2, [XCUIT
 (only if running macOS), and [Espresso](https://github.com/appium/appium-espresso-driver).
 
 You can also use this command to batch install drivers for desktop applications or desktop browsers.
-For more details on this, refer to the [Setup command documentation](../cli/setup.md).
+For more details on this, refer to the [Setup command documentation](../reference/cli/setup.md).
 
 ### Validating the Install
 

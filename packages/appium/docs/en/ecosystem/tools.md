@@ -27,7 +27,7 @@ Appium driver or plugin developers can choose to include these tools in their dr
 
 The Appium Doctor tool can be used to validate whether all prerequisites and other environment
 details needed for the driver/plugin have been set up correctly. The tool can be accessed via the
-[`doctor` command in the Appium CLI](../cli/extensions.md#doctor):
+[`doctor` command in the Appium CLI](../reference/cli/extensions.md#doctor):
 
 ```sh
 appium {driver|plugin} doctor <extension-name>

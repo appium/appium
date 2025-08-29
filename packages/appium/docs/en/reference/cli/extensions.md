@@ -5,7 +5,7 @@ title: Extension Command-Line Usage
 Appium allows for the flexible installation and management of various _extensions_, such as _drivers_
 (which provide Appium with the capability to automate a given platform) and _plugins_ (which can
 augment or alter the way individual Appium commands work). For a conceptual understanding of these
-entities, please review the [Introduction](../intro/index.md).
+entities, please review the [Introduction](../../intro/index.md).
 
 Management of drivers and plugins is handled by Appium's Extension CLI (command-line interface).
 
@@ -34,7 +34,7 @@ and tuned for human consumption.
 
 Run doctor checks for the given extension, which validate whether the extension has its prerequisites
 configured correctly. Note that not all extensions include doctor checks. See the
-[Building Doctor Checks](../developing/build-doctor-checks.md) tutorial for more details on
+[Building Doctor Checks](../../developing/build-doctor-checks.md) tutorial for more details on
 how to create them.
 
 Usage:

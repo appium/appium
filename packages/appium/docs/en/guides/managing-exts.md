@@ -16,7 +16,7 @@ two basic strategies: using Appium's extension CLI interface, or managing extens
 
 ## Using Appium's Extension CLI
 
-With Appium's [Extension CLI](../cli/extensions.md), you let Appium manage drivers and plugins for
+With Appium's [Extension CLI](../reference/cli/extensions.md), you let Appium manage drivers and plugins for
 you.  You will use CLI commands to tell Appium which extensions you would like to install, update,
 or remove. Here's an example of how you might install a driver using the CLI:
 

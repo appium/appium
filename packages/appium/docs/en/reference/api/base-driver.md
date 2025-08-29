@@ -315,7 +315,7 @@ A list of session data objects, where each object contains 3 keys:
 * `created`: the session creation time as a Unix timestamp in milliseconds
 * `capabilities`: the session capabilities
 
-Data is only returned if the `session_discovery` [insecure feature](../guides/security.md)
+Data is only returned if the `session_discovery` [insecure feature](../../guides/security.md)
 is enabled on the server.
 
 #### Example

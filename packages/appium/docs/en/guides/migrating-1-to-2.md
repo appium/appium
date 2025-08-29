@@ -35,11 +35,11 @@ When it comes to installing Appium 2 drivers, there are several approaches you c
 ```bash
 npm i -g appium --drivers=xcuitest,uiautomator2
 ```
-* Use the [Appium Extension CLI](../cli/extensions.md), for example:
+* Use the [Appium Extension CLI](../reference/cli/extensions.md), for example:
 ```bash
 appium driver install uiautomator2
 ```
-* Use the [Appium Setup CLI command](../cli/setup.md) (added in Appium `2.6`), for example:
+* Use the [Appium Setup CLI command](../reference/cli/setup.md) (added in Appium `2.6`), for example:
 ```bash
 appium setup mobile
 ```
@@ -73,7 +73,7 @@ server and drivers are separate packages, they can release new versions independ
 other - this means that you no longer need to wait for a new Appium server release, but can install
 the latest driver versions right away.
 
-Checking for driver updates is done by using the [Appium Extension CLI](../cli/extensions.md):
+Checking for driver updates is done by using the [Appium Extension CLI](../reference/cli/extensions.md):
 
 ```bash
 appium driver list --updates
@@ -96,7 +96,7 @@ server package.
 
 !!! info "Actions Needed"
 
-    Make sure to use the [Appium Extension CLI](../cli/extensions.md) to manage your drivers
+    Make sure to use the [Appium Extension CLI](../reference/cli/extensions.md) to manage your drivers
 
 ### Deprecated Packages No Longer Supported
 
@@ -125,7 +125,7 @@ path to `/`, therefore the default server URL is now `http://localhost:4723/`.
 
     In your test scripts, change the base path of the target server URL from `/wd/hub` to `/`.
     Alternatively, you can retain the Appium 1 base path by launching Appium with the
-    `--base-path=/wd/hub` [command-line argument](../cli/args.md).
+    `--base-path=/wd/hub` [command-line argument](../reference/cli/args.md).
 
 ### Server Port 0 No Longer Supported
 
@@ -157,8 +157,7 @@ appium --driver-xcuitest-webdriveragent-port=5000 # Appium 2
 appium --chromedriver-version=100 # Appium 1
 CHROMEDRIVER_VERSION=100 appium   # Appium 2
 ```
-* Some options can now be passed as [capabilities](https://appium.io/docs/en/latest/guides/caps/),
-for example:
+* Some options can now be passed as [capabilities](./caps.md), for example:
 ```
 appium --chromedriver-executable=/path/to/chromedriver      # Appium 1
 {"appium:chromedriverExecutable": "/path/to/chromedriver"}  # Appium 2
@@ -345,7 +344,7 @@ wish to take advantage of with Appium 2:
 
 You are no longer limited to official drivers or plugins, or ones that the Appium team even knows
 about! Developers can now create their own custom drivers or plugins, which can be installed via
-Appium's [Extension CLI](../cli/extensions.md) from `npm`, `git`, GitHub, or even the local
+Appium's [Extension CLI](../reference/cli/extensions.md) from `npm`, `git`, GitHub, or even the local
 filesystem. Interested in building a driver or plugin? Check out the
 [Building Drivers](../developing/build-drivers.md) and
 [Building Plugins](../developing/build-plugins.md) guides.

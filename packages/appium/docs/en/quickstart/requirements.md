@@ -26,4 +26,4 @@ require the developer toolchain and SDKs for that platform to be installed.
 
 In order to assist with driver requirements, each (official) driver comes with the Appium Doctor tool,
 which allows to verify if all requirements have been set up. Learn more about how to use this tool in
-the [Command-Line Usage documentation](../cli/extensions.md#doctor).
+the [Command-Line Usage documentation](../reference/cli/extensions.md#doctor).

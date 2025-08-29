@@ -107,7 +107,7 @@ differently from one another. The tools and requirements for building and using 
 different platforms are completely different. And so Appium lets you use just the drivers that you
 need for your automation tasks. Choosing drivers and installing them so that you can use them with
 your Appium instance is so important that Appium has its very own [CLI for managing
-drivers](../cli/extensions.md).
+drivers](../reference/cli/extensions.md).
 
 So, to answer our original question, the way that Appium provides access to automation capabilities
 for a given platform is that the Appium team (or anyone else[^3]) writes a *driver* for that
@@ -190,9 +190,9 @@ will never have time to build. And so, with Appium 2, Appium has released a plug
 enables anyone to build and share modules that change how Appium works!
 
 In the same way that drivers are easily shareable and consumable via the Appium driver CLI, plugins
-can be published and consumed via a parallel [Plugin CLI](../cli/extensions.md). Plugins can do all
-sorts of things, for example adding the ability for Appium to find and interact with screen regions
-based on a template image (as in the [`images`
+can be published and consumed via a parallel [Plugin CLI](../reference/cli/extensions.md). Plugins
+can do all sorts of things, for example adding the ability for Appium to find and interact with
+screen regions based on a template image (as in the [`images`
 plugin](https://github.com/appium/appium/tree/master/packages/images-plugin)). There are very few
 limitations on what you can do with plugins, so you might also be interested in learning how to
 [Build Plugins](../developing/build-plugins.md) in Node.js that can be used with Appium.

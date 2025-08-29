@@ -27,7 +27,7 @@ appium --use-plugins=storage
 
 By default, the plugin creates a new temporary folder where it manages uploaded files.
 
-[Refer to the Appium documentation for a list of commands supported by this plugin.](https://appium.io/docs/en/latest/commands/storage-plugin/)
+[Refer to the Appium documentation for the endpoints supported by this plugin.](https://appium.io/docs/en/latest/reference/api/storage-plugin/)
 
 ### Storing a File
 

@@ -10,9 +10,9 @@ as well as the endpoints added or modified by official plugins.
 
 Since all Appium drivers inherit the Appium base driver, they support all of its endpoints as well,
 but may additionally define endpoints of their own. Refer to the documentation of your
-[Appium driver](../ecosystem/drivers.md) to learn about its specific endpoints.
+[Appium driver](../../ecosystem/drivers.md) to learn about its specific endpoints.
 
-The recommended way of calling these API endpoints is through your [Appium client](../ecosystem/clients.md).
+The recommended way of calling these API endpoints is through your [Appium client](../../ecosystem/clients.md).
 Refer to the documentation of your client for the exact commands used to invoke specific endpoints.
 
 The endpoint listings are as follows:

@@ -210,21 +210,30 @@ appium {driver|plugin} update <extension-name>
     appium plugin update installed
     ```
 
-### `uninstall`
+## `appium driver/plugin uninstall`
 
-Remove an installed extension.
+Removes an installed extension.
 
-Usage:
+#### Usage
 
 ```
-appium <ext-type> uninstall <ext-name> [--json]
+appium {driver|plugin} uninstall <extension-name>
 ```
 
-Required arguments:
+|Argument|Description|
+|--|--|
+|`extension-name`|The short name of the installed extension|
 
-- `<ext-type>`: must be `driver` or `plugin`
-- `<ext-name>`: the name of the extension to uninstall
+#### Options
 
-Optional arguments:
+|Argument|Description|Type|
+|--|--|--|
+|`--json`|Return the result in JSON format|boolean|
 
-- `--json`: return the result in JSON format
+#### Example
+
+- Remove the `images` plugin:
+
+    ```
+    appium plugin uninstall images
+    ```

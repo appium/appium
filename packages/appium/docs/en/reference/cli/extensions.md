@@ -13,7 +13,7 @@ Provides management options for a specific extension (driver or plugin). Both th
 The following sub-subcommands are supported: `doctor`, `install`, `list`, `run`, `update`,
 and `uninstall`.
 
-## `appium driver/plugin doctor`
+## `doctor`
 
 Runs doctor checks for an installed extension, which validate whether the extension has its prerequisites
 configured correctly. Note that not all extensions include doctor checks.
@@ -47,7 +47,7 @@ appium {driver|plugin} doctor <extension-name>
     appium driver doctor uiautomator2
     ```
 
-## `appium driver/plugin install`
+## `install`
 
 Installs an extension.
 
@@ -117,7 +117,7 @@ appium {driver|plugin} install <install-spec>
     appium driver install git://github.com/appium/appium-xcuitest-driver.git --source=git --package=appium-xcuitest-driver
     ```
 
-## `appium driver/plugin list`
+## `list`
 
 Lists all installed extensions, plus all official extensions that are not installed.
 
@@ -143,7 +143,7 @@ appium {driver|plugin} list
     appium driver list --installed --updates
     ```
 
-## `appium driver/plugin run`
+## `run`
 
 Runs an extension script, which can assist with setup or perform other tasks. Note that not all
 extensions include scripts.
@@ -174,7 +174,7 @@ appium {driver|plugin} run <extension-name> <script-name> [script-args]
     appium driver run uiautomator2 reset
     ```
 
-## `appium driver/plugin update`
+## `update`
 
 Updates one or more extensions. Only supported for extensions installed via `npm`. By default,
 Appium will only update minor and patch versions, in order to prevent any breaking changes.
@@ -210,7 +210,7 @@ appium {driver|plugin} update <extension-name>
     appium plugin update installed
     ```
 
-## `appium driver/plugin uninstall`
+## `uninstall`
 
 Removes an installed extension.
 

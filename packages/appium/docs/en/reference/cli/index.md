@@ -6,7 +6,7 @@ title: Command Line Interface
 ---
 
 Appium provides a command-line executable (`appium`), which can be used to configure and launch
-the Appium server, as well as manage drivers and plugins.
+the Appium server, as well as manage Appium extensions (drivers and plugins).
 
 The executable has four main subcommands: `server`, `driver`, `plugin`, and `setup`.
 

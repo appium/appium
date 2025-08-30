@@ -5,9 +5,7 @@ hide:
 title: appium server
 ---
 
-Launch an Appium server
-
-### Usage
+Launches an Appium server.
 
 ```
 appium server

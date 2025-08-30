@@ -5,16 +5,14 @@ title: Extension Command-Line Usage
 Appium allows for the flexible installation and management of various _extensions_, such as _drivers_
 (which provide Appium with the capability to automate a given platform) and _plugins_ (which can
 augment or alter the way individual Appium commands work). For a conceptual understanding of these
-entities, please review the [Introduction](../intro/index.md).
+entities, please review the [Introduction](../../intro/index.md).
 
 Management of drivers and plugins is handled by Appium's Extension CLI (command-line interface).
 
 !!! note
 
-```
-This reference uses placeholders to refer to various options. Anywhere you see one of these
-placeholders in the reference, ensure you replace it with the correct type of actual content.
-```
+    This reference uses placeholders to refer to various options. Anywhere you see one of these
+    placeholders in the reference, ensure you replace it with the correct type of actual content.
 
 | Placeholder        | Meaning                                                                                                                                                                                                                                                                 |
 | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -36,7 +34,7 @@ and tuned for human consumption.
 
 Run doctor checks for the given extension, which validate whether the extension has its prerequisites
 configured correctly. Note that not all extensions include doctor checks. See the
-[Building Doctor Checks](../developing/build-doctor-checks.md) tutorial for more details on
+[Building Doctor Checks](../../developing/build-doctor-checks.md) tutorial for more details on
 how to create them.
 
 Usage:
@@ -110,27 +108,27 @@ by `npm install`:
 
 - Install the latest XCUITest driver:
 
-  ```
-  appium driver install xcuitest
-  ```
+    ```
+    appium driver install xcuitest
+    ```
 
 - Install the XCUITest driver at version 4.11.1:
 
-  ```
-  appium driver install xcuitest@4.11.1
-  ```
+    ```
+    appium driver install xcuitest@4.11.1
+    ```
 
 - Install the `beta` version of the `@appium/fake-driver` from NPM:
 
-  ```
-  appium driver install --source=npm @appium/fake-driver@beta
-  ```
+    ```
+    appium driver install --source=npm @appium/fake-driver@beta
+    ```
 
 - Install a locally-developed plugin:
 
-  ```
-  appium plugin install --source=local /path/to/my/plugin
-  ```
+    ```
+    appium plugin install --source=local /path/to/my/plugin
+    ```
 
 ### `list`
 

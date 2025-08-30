@@ -51,10 +51,8 @@ Returns capabilities for the session and event history (if applicable).
 
 !!! warning "Deprecated"
 
-```
-Please use `getAppiumSessionCapabilities` to get the session capabilities.
-Please use `getLogEvents` to get event history.
-```
+    Please use `getAppiumSessionCapabilities` to get the session capabilities.
+    Please use `getLogEvents` to get event history.
 
 <!-- comment source: multiple -->
 
@@ -316,7 +314,7 @@ A list of session data objects, where each object contains 3 keys:
 - `created`: the session creation time as a Unix timestamp in milliseconds
 - `capabilities`: the session capabilities
 
-Data is only returned if the `session_discovery` [insecure feature](../guides/security.md)
+Data is only returned if the `session_discovery` [insecure feature](../../guides/security.md)
 is enabled on the server.
 
 #### Example

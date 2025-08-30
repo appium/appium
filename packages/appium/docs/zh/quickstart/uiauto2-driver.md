@@ -24,34 +24,34 @@ According to the driver, in addition to a working Appium server, we also need to
 ### Android SDK
 
 - The easiest way to set up the Android SDK requirements is by downloading [Android Studio](https://developer.android.com/studio).
-    We need to use its SDK manager (_Settings -> Languages & Frameworks -> Android SDK_)
-    to download the following items:
-    - Android SDK Platform (select whichever Android platform we want to automate, for example, API level 30)
-    - Android SDK Platform-Tools
+  We need to use its SDK manager (_Settings -> Languages & Frameworks -> Android SDK_)
+  to download the following items:
+  - Android SDK Platform (select whichever Android platform we want to automate, for example, API level 30)
+  - Android SDK Platform-Tools
 - If you wish, you can also download these items without Android Studio:
-    - Android SDK Platform can be downloaded using `sdkmanager` included in [Android command-line tools](https://developer.android.com/studio#command-line-tools-only)
-    - [Android SDK Platform-Tools](https://developer.android.com/tools/releases/platform-tools)
+  - Android SDK Platform can be downloaded using `sdkmanager` included in [Android command-line tools](https://developer.android.com/studio#command-line-tools-only)
+  - [Android SDK Platform-Tools](https://developer.android.com/tools/releases/platform-tools)
 - Set up the `ANDROID_HOME` environment variable to point to the directory where the Android SDK is
-    installed. You can usually find the path to this directory in the Android Studio SDK manager. It
-    will contain the `platform-tools` and other directories.
+  installed. You can usually find the path to this directory in the Android Studio SDK manager. It
+  will contain the `platform-tools` and other directories.
 
 ### Java JDK
 
 - Install the Java JDK (for the most recent Android API levels, JDK 9 is required, otherwise JDK
-    8 is required). You can download this from [Oracle](https://jdk.java.net/) or [Adoptium](https://adoptium.net/en-GB/temurin/releases/).
-    Make sure you get the JDK and not the JRE.
+  8 is required). You can download this from [Oracle](https://jdk.java.net/) or [Adoptium](https://adoptium.net/en-GB/temurin/releases/).
+  Make sure you get the JDK and not the JRE.
 - Set up the `JAVA_HOME` environment variable to point to the JDK home directory. It will contain
-    the `bin`, `include`, and other directories.
+  the `bin`, `include`, and other directories.
 
 ### Prepare the Device
 
 - If using an emulator, use Android Studio to create and launch an Android Virtual Device (AVD).
-    You may need to download the system images for the API level of the emulator you want to
-    create. Using the AVD creation wizard in Android Studio is generally the easiest way to do all of
-    this.
+  You may need to download the system images for the API level of the emulator you want to
+  create. Using the AVD creation wizard in Android Studio is generally the easiest way to do all of
+  this.
 - If using a real device, you should [set it up for development and enable USB Debugging](https://developer.android.com/studio/debug/dev-options).
 - With the emulator or device connected, you can run `adb devices` (via the binary located at
-    `$ANDROID_HOME/platform-tools/adb`) to verify that your device shows up as connected.
+  `$ANDROID_HOME/platform-tools/adb`) to verify that your device shows up as connected.
 
 Once your device shows up as connected in `adb`, and you've verified that the environment variables
 are set up correctly, you should be good to go! If you ran into problems with any of these steps,
@@ -64,7 +64,7 @@ set up on your system, so you can get busy making Android apps if you want!
 
 ### Standard Install
 
-Like all Appium drivers, the UiAutomator2 driver is installed via the [Appium Extension CLI](../cli/extensions.md).
+Like all Appium drivers, the UiAutomator2 driver is installed via the [Appium Extension CLI](../reference/cli/extensions.md).
 Since UiAutomator2 is maintained by the core Appium team, it has an 'official' driver name
 (`uiautomator2`), which makes the installation simpler.
 
@@ -92,7 +92,7 @@ must be used to select this driver for use during an Appium session (in this cas
 !!! note
 
 ```
-In this quickstart we have used the [Extension CLI](../cli/extensions.md) to install the
+In this quickstart we have used the [Extension CLI](../reference/cli/extensions.md) to install the
 UiAutomator2 driver, but if you are incorporating Appium into a Node.js project, you might
 prefer to use `npm` to manage Appium and its connected drivers. To learn more about this
 technique, visit the guide on [managing Appium extensions](../guides/managing-exts.md).
@@ -112,7 +112,7 @@ Running this will install Appium's mobile-specific drivers: UiAutomator2, [XCUIT
 (only if running macOS), and [Espresso](https://github.com/appium/appium-espresso-driver).
 
 You can also use this command to batch install drivers for desktop applications or desktop browsers.
-For more details on this, refer to the [Setup command documentation](../cli/setup.md).
+For more details on this, refer to the [Setup command documentation](../reference/cli/setup.md).
 
 ### Validating the Install
 

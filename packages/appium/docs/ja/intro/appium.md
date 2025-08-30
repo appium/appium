@@ -180,9 +180,9 @@ will never have time to build. And so, with Appium 2, Appium has released a plug
 enables anyone to build and share modules that change how Appium works!
 
 In the same way that drivers are easily shareable and consumable via the Appium driver CLI, plugins
-can be published and consumed via a parallel [Plugin CLI](../cli/extensions.md). Plugins can do all
-sorts of things, for example adding the ability for Appium to find and interact with screen regions
-based on a template image (as in the images). There are very few
+can be published and consumed via a parallel [Plugin CLI](../reference/cli/extensions.md). Plugins
+can do all sorts of things, for example adding the ability for Appium to find and interact with
+screen regions based on a template image (as in the images). There are very few
 limitations on what you can do with plugins, so you might also be interested in learning how to
 [Build Plugins](../developing/build-plugins.md) in Node.js that can be used with Appium.
 

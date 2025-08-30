@@ -34,20 +34,22 @@ nav:
       - ecosystem/clients.md
       - ecosystem/plugins.md
       - ecosystem/tools.md
-  - 命令行参考:
-      - cli/index.md
-      - cli/args.md
-      - cli/env-vars.md
-      - cli/extensions.md
-      - cli/setup.md
-  - 命令参考:
-      - commands/index.md
-      - commands/base-driver.md
-      - commands/execute-driver-plugin.md
-      - commands/images-plugin.md
-      - commands/relaxed-caps-plugin.md
-      - commands/storage-plugin.md
-      - commands/universal-xml-plugin.md
+  - Reference:
+      - reference/index.md
+      - Command Line Interface:
+          - reference/cli/index.md
+          - reference/cli/args.md
+          - reference/cli/env-vars.md
+          - reference/cli/extensions.md
+          - reference/cli/setup.md
+      - API Endpoints:
+          - reference/api/index.md
+          - reference/api/base-driver.md
+          - reference/api/execute-driver-plugin.md
+          - reference/api/images-plugin.md
+          - reference/api/relaxed-caps-plugin.md
+          - reference/api/storage-plugin.md
+          - reference/api/universal-xml-plugin.md
   - 指南:
       - 迁移:
           - guides/migrating-2-to-3.md

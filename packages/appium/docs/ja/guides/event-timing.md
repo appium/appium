@@ -70,6 +70,6 @@ In the past, events were available as a part of `GET /session/:id` response
 ## Add a custom event
 
 You can add custom events that will show up in the event timings data. You can send a custom event
-name to the Appium server using the [Log Custom Event API](../commands/base-driver.md#logcustomevent),
-and the server will store the timestamp. The [Get Log Events](../commands/base-driver.md#getlogevents)
+name to the Appium server using the [Log Custom Event API](../reference/api/base-driver.md#logcustomevent),
+and the server will store the timestamp. The [Get Log Events](../reference/api/base-driver.md#getlogevents)
 command can be used to retrieve named events' timestamps later on.

@@ -1,6 +1,7 @@
 ---
 hide:
   - toc
+
 title: Install Appium
 ---
 
@@ -24,7 +25,7 @@ Other package managers are not currently supported.
 
 ## Starting Appium
 
-Appium can be started [using the command line](../cli/index.md):
+Appium can be started [using the command line](../reference/cli/index.md):
 
 ```
 appium

@@ -25,7 +25,7 @@ npm install -g appium
 
 ## Appiumを実行する
 
-Appiumは [コマンドラインを使用して](../cli/index.md)始めることができます：
+Appium can be started [using the command line](../reference/cli/index.md):
 
 ```
 appium

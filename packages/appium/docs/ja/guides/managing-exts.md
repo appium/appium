@@ -18,7 +18,7 @@ Other package managers are not currently supported.
 
 ## Using Appium's Extension CLI
 
-With Appium's [Extension CLI](../cli/extensions.md), you let Appium manage drivers and plugins for
+With Appium's [Extension CLI](../reference/cli/extensions.md), you let Appium manage drivers and plugins for
 you.  You will use CLI commands to tell Appium which extensions you would like to install, update,
 or remove. Here's an example of how you might install a driver using the CLI:
 
@@ -64,9 +64,9 @@ like any other dependency. Basically, whenever you run Appium, if you have not e
 
 1. Try to determine whether the _current directory_ is inside an `npm` package.
 2. If so, it will check whether `appium` is a dependency (dev, prod, or peer) in the project's
-  `package.json`
+   `package.json`
 3. If so, _unless you have specified `APPIUM_HOME` in your environment_, Appium will ignore load
-  drivers and plugins defined in that `package.json` file instead.
+   drivers and plugins defined in that `package.json` file instead.
 
 This means you are freely able to add Appium drivers and plugins as regular package dependencies or
 dev dependencies. For example, if your project has a `package.json` which includes the following:

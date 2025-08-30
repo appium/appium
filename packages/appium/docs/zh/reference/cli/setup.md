@@ -1,6 +1,7 @@
 ---
 hide:
   - toc
+
 title: Setup Command-Line Usage
 ---
 
@@ -20,7 +21,7 @@ The presets are as follows:
 Attempting to install a preset while already having one or more of its included extensions installed
 will only install the missing extensions.
 
-Refer to the [Ecosystem documentation](../ecosystem/index.md) to learn more about the extensions
+Refer to the [Ecosystem documentation](../../ecosystem/index.md) to learn more about the extensions
 listed above.
 
 This commands also supports the functionality that allows to fully reset your Appium server

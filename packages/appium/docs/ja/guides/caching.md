@@ -28,16 +28,16 @@ In order to validate whether an app bundle downloaded from the given URL could b
 steps are applied:
 
 1. The script checks if the given URL is already present in the cache.
-  If yes then it tries to fetch previously remembered
-  [Last-Modified](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Last-Modified)
-  or [ETag](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/ETag) header values for it.
+   If yes then it tries to fetch previously remembered
+   [Last-Modified](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Last-Modified)
+   or [ETag](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/ETag) header values for it.
 2. If `ETag` value is present then it is put into
-  [If-None-Match request header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/If-None-Match).
-  Else if `Last-Modified` header value is present then it is put into
-  [If-Modified-Since request header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/If-Modified-Since).
-  Otherwise, no caching is applied.
+   [If-None-Match request header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/If-None-Match).
+   Else if `Last-Modified` header value is present then it is put into
+   [If-Modified-Since request header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/If-Modified-Since).
+   Otherwise, no caching is applied.
 3. If the response status is equal to `304` then the previously cached binary is used,
-  otherwise the cached entry is reset and refreshed.
+   otherwise the cached entry is reset and refreshed.
 
 ## Caching of Local Application Bundles
 
@@ -45,9 +45,9 @@ It only makes sense to cache application bundles if they need some preprocessing
 For example, on iOS `.ipa` bundles must be unzipped, because the system installer only works with `.app` folders.
 
 1. The script verifies if the given bundle path is already present in the cache. If the bundle was not in the cache yet
-  then it gets preprocessed and added there.
+   then it gets preprocessed and added there.
 2. The script validates the hashsum of the bundle and compares it to the previously stored one. If hash sums don't match
-  then the cached item gets deleted and the preprocessing of the bundle repeats.
+   then the cached item gets deleted and the preprocessing of the bundle repeats.
 
 ## How The Cache File System Is Configured
 
@@ -56,15 +56,15 @@ on per-process basis, so each test session initialized in scope of the same Appi
 of it. It is a [LRU Cache](https://www.npmjs.com/package/lru-cache) with the following limitations:
 
 - Max items: 1024. You may customize it by providing a new value to
-  the [APPIUM_APPS_CACHE_MAX_ITEMS](../cli/env-vars.md) environment variable.
+  the [APPIUM_APPS_CACHE_MAX_ITEMS](../reference/cli/env-vars.md) environment variable.
   Do not set it to a lower number than the amount of apps in all parallel sessions per process.
 - Max time to live (TTL) for each entry: 24 hours.
   You may customize it by providing a new value to the
-  [APPIUM_APPS_CACHE_MAX_AGE](../cli/env-vars.md) environment variable.
+  [APPIUM_APPS_CACHE_MAX_AGE](../reference/cli/env-vars.md) environment variable.
   Do not set it to a lower number than the duration of a single session startup.
 - TTL is refreshed for each entry upon access
 - By default the full application URL is used as cache key. You may change this behavior
-  by enabling the [APPIUM_APPS_CACHE_IGNORE_URL_QUERY](../cli/env-vars.md) environment variable.
+  by enabling the [APPIUM_APPS_CACHE_IGNORE_URL_QUERY](../reference/cli/env-vars.md) environment variable.
   If the above option is enabled then the 'search' part of the app URL will be cut off from cache keys.
   See the corresponding [feature request](https://discuss.appium.io/t/regarding-app-caching-when-using-aws-s3-presigned-urls/42713)
   for more details.

@@ -45,11 +45,11 @@ Appiumのドキュメントにようこそ！ Appiumはオープンソースプ�
 - [**Introduction**](./intro/index.md) を読んで、主要なコンセプトを理解してください
 - [**Quickstart**](./quickstart/index.md) を通して、基本的なAndroidテストを用意、実行します。
 - 使用するドライバ、クライアント、プラグインの一覧については、 [**Ecosystem**](./ecosystem/index.md) ページを参照してください。
-- コマンドラインからAppiumを使用する場合、[**CLI リファレンス**](./cli/index.md)を参照してください。
-- Appiumとプラグインで公開されているコマンドの一覧は[**Command Reference**](./commands/index.md)を参照してください。
+- Consult the [**Reference**](./reference/index.md) page for information on the Appium CLI and supported endpoints
 - Read the different [**Guides**](./guides/migrating-2-to-3.md) for a variety of instructions, tips and tricks
 - Check out various third-party [**Resources**](./resources/index.md) to explore Appium around the web
 - 独自の Appium 拡張を作成するには、 [**Developer**](./developing/index.md) ドキュメントを参考にしてください。
 - For contributions to Appium itself, refer to the [**Contributing**](./contributing/index.md) page
+- Have a look at the [**Appium Blog**](./blog/index.md) to learn what's new in the project
 
 </div>

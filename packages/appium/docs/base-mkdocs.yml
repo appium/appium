@@ -33,7 +33,7 @@ plugins:
       'commands/storage-plugin.md': 'reference/api/storage-plugin.md'
       'commands/universal-xml-plugin.md': 'reference/api/universal-xml-plugin.md'
       'cli/index.md': 'reference/cli/index.md'
-      'cli/args.md': 'reference/cli/args.md'
+      'cli/args.md': 'reference/cli/server.md'
       'cli/env-vars.md': 'reference/cli/env-vars.md'
       'cli/extensions.md': 'reference/cli/extensions.md'
       'cli/setup.md': 'reference/cli/setup.md'

@@ -133,7 +133,7 @@ appium plugin uninstall <plugin-name>
 ## Server Command Line Interface
 
 In order to start sending commands to the Appium server, it must be running on the URL and port
-where your client library expects it to listen. [Appium's command-line interface](http://appium.io/docs/en/latest/cli/args/)
+where your client library expects it to listen. [Appium's command-line interface](http://appium.io/docs/en/latest/cli/server/)
 is used to launch and configure the server:
 
 ```bash

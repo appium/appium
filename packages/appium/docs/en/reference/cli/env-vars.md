@@ -5,7 +5,7 @@ hide:
 title: Environment Variables
 ---
 
-The primary ways of configuring the Appium server are via [Command-Line Arguments](./args.md) or
+The primary ways of configuring the Appium server are via [Command-Line Arguments](./server.md) or
 the [Config File](../../guides/config.md). However, some more advanced features are toggled or
 configured via environment variables. To set environment variables, refer to the documentation for
 your operating system and terminal.

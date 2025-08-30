@@ -22,7 +22,7 @@ this is the responsibility of the server admin who configures and launches the A
 
 ## Security Server Args
 
-The [Server CLI Args](../reference/cli/args.md) doc outlines three relevant arguments which may be passed to
+The [Server CLI](../reference/cli/server.md) doc outlines three relevant arguments which may be passed to
 Appium when starting it from the command line:
 
 |<div style="width:10em">Parameter</div>|Description|

@@ -70,7 +70,6 @@ The following options are used for reference or debug purposes. They are only su
 
 |<div style="width:10em">Argument</div>|Description|Alias|
 |--|--|--|
-|`--help`|Print instructions on using the Appium command-line. This argument can also be used for any Appium subcommands.|`-h`|
 |`--show-build-info`|Print detailed information on the Appium server version||
 |`--show-config`|Print the current Appium server configuration details||
 |`--show-debug-info`|Print information on the current environment: details about the operating system, Node.js, and Appium itself||

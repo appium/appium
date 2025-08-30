@@ -1,6 +1,11 @@
 ---
 title: appium setup
 ---
+<style>
+  ul[data-md-component="toc"] .md-nav {
+    display: none;
+  }
+</style>
 
 Installs a specific preset of extensions (drivers and plugins), or uninstalls all extensions.
 When installing a preset, any already installed extensions will remain.
@@ -17,6 +22,8 @@ Installs the following extensions for browser webview testing:
 * Drivers: `safari`[^1], `gecko`, `chromium`
 * Plugins: `images`
 
+#### Usage
+
 ```
 appium setup browser
 ```
@@ -28,6 +35,8 @@ Installs the following extensions for desktop application testing:
 * Drivers: `mac2`[^1], `windows`[^2]
 * Plugins: `images`
 
+#### Usage
+
 ```
 appium setup desktop
 ```
@@ -38,6 +47,8 @@ Installs the following extensions for mobile testing:
 
 * Drivers: `uiautomator2`, `xcuitest`[^1], `espresso`
 * Plugins: `images`
+
+#### Usage
 
 ```
 appium setup mobile
@@ -54,6 +65,8 @@ appium setup
 Uninstalls all installed extensions, along with their manifest files, from the Appium home
 directory. This can be useful if you experience configuration issues on server startup, for
 example, due to a failed upgrade attempt from an older Appium version.
+
+#### Usage
 
 ```
 appium setup reset

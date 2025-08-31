@@ -38,10 +38,10 @@ nav:
       - reference/index.md
       - Command Line Interface:
           - reference/cli/index.md
-          - reference/cli/args.md
-          - reference/cli/env-vars.md
+          - reference/cli/server.md
           - reference/cli/extensions.md
           - reference/cli/setup.md
+          - reference/cli/env-vars.md
       - API Endpoints:
           - reference/api/index.md
           - reference/api/base-driver.md

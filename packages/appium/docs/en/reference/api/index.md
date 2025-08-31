@@ -18,8 +18,4 @@ Refer to the documentation of your client for the exact commands used to invoke 
 The endpoint listings are as follows:
 
 * [Base Driver](./base-driver.md)
-* [Execute Driver Plugin](./execute-driver-plugin.md)
-* [Images Plugin](./images-plugin.md)
-* [Relaxed Caps Plugin](./relaxed-caps-plugin.md)
-* [Storage Plugin](./storage-plugin.md)
-* [Universal XML Plugin](./universal-xml-plugin.md)
+* [Endpoints Used by Official Plugins](./plugins.md)

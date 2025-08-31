@@ -1,108 +1,84 @@
 ---
-title: Extension Command-Line Usage
+title: appium driver/plugin
 ---
 
-Appium allows for the flexible installation and management of various _extensions_, such as _drivers_
-(which provide Appium with the capability to automate a given platform) and _plugins_ (which can
-augment or alter the way individual Appium commands work). For a conceptual understanding of these
-entities, please review the [Introduction](../../intro/index.md).
+<style>
+  ul[data-md-component="toc"] .md-nav {
+    display: none;
+  }
+</style>
 
-Management of drivers and plugins is handled by Appium's Extension CLI (command-line interface).
+Provides management options for a specific extension (driver or plugin). Both the `appium driver` and
+`appium plugin` subcommands support the same options.
+
+The following sub-subcommands are supported: `doctor`, `install`, `list`, `run`, `update`,
+and `uninstall`.
+
+## `doctor`
+
+Runs doctor checks for an installed extension, which validate whether the extension has its prerequisites
+configured correctly. Note that not all extensions include doctor checks.
 
 !!! note
 
-    This reference uses placeholders to refer to various options. Anywhere you see one of these
-    placeholders in the reference, ensure you replace it with the correct type of actual content.
+    If you maintain an Appium extension and would like to add Appium Doctor support for it, check
+    out the documentation on [Building Doctor Checks](../../developing/build-doctor-checks.md).
 
-| Placeholder        | Meaning                                                                                                                                                                                                                                                                 |
-| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `<ext-type>`       | "Extension type". It should be either `driver` or `plugin`. All the Extension CLI commands can be used with either drivers or plugins, so you must specify which type of extension will be used                                         |
-| `<ext-name>`       | "Extension name". This is the short name of the extension found in a call to `appium <ext-type> list`. This is distinct from the NPM package name of the extension or, in general, the "install spec" of the extension. |
-| `<install-spec>`   | "Install specification". This refers to the string used to indicate what extension Appium should install.                                                                                                                               |
-| `<install-source>` | This refers to the method that Appium should use to install an extension.                                                                                                                                                                               |
-
-## Commands
-
-All Extension CLI commands begin with `appium <ext-type>`, i.e., either `appium driver` or `appium
-plugin`.
-
-All Extension CLI commands can take an optional `--json` argument, which will return the result of
-the command as a machine-readable JSON string rather than the standard output, which is colourized
-and tuned for human consumption.
-
-### `doctor`
-
-Run doctor checks for the given extension, which validate whether the extension has its prerequisites
-configured correctly. Note that not all extensions include doctor checks. See the
-[Building Doctor Checks](../../developing/build-doctor-checks.md) tutorial for more details on
-how to create them.
-
-Usage:
+#### Usage
 
 ```
-appium <ext-type> doctor <ext-name>
+appium {driver|plugin} doctor <extension-name>
 ```
 
-Required arguments:
+| Argument         | Description                               |
+| ---------------- | ----------------------------------------- |
+| `extension-name` | The short name of the installed extension |
 
-- `<ext-type>`: must be `driver` or `plugin`
-- `<ext-name>`: the name of the extension whose doctor checks you want to run
+#### Options
 
-Optional arguments:
+| Argument | Description                      | Type    |
+| -------- | -------------------------------- | ------- |
+| `--json` | Return the result in JSON format | boolean |
 
-- `--json`: return the result in JSON format
+#### Example
 
-Example (run doctor checks for the UiAutomator2 driver):
+- Run doctor checks for the UiAutomator2 driver:
+
+    ```
+    appium driver doctor uiautomator2
+    ```
+
+## `install`
+
+Installs an extension.
+
+#### Usage
 
 ```
-appium driver doctor uiautomator2
+appium {driver|plugin} install <install-spec>
 ```
 
-### `install`
+| <div style="width:7em">Argument</div> | Description                                                                                                                                                                                                                                                       |
+| ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `install-spec`                        | The short name of an official extension, with optional `npm` version or tag modifier. If using the `--source` option, the expected format of this argument will change ([see below](#source-vs-install-spec)). |
 
-Install an extension. If successful, respond with the short name of the extension which can be used
-in other invocations of the Extension CLI. If the extension is a driver, also note which platforms
-may be used with the driver.
+#### Options
 
-Usage:
+| Argument    | Description                                                                                                                                                                                                                                                                      | Type    |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
+| `--json`    | Return the result in JSON format                                                                                                                                                                                                                                                 | boolean |
+| `--package` | The Node.js package name of the extension. Required if `--source` is set to `git` or `github`.                                                                                                                                   | string  |
+| `--source`  | The location where Appium should look for the given extension. Supported values are `git`, `github`, `local`, or `npm`. Changes the expected format of `install-spec` ([see below](#source-vs-install-spec)). | string  |
 
-```
-appium <ext-type> install <install-spec> [--source=<install-source>] [--package=<package-name>] [--json]
-```
+#### Source vs Install Spec
 
-Required arguments:
-
-- `<ext-type>`: must be `driver` or `plugin`
-- `<install-spec>`: this is the name, location, and/or version of the extension you want to
-  install. Its possible values are dependent on the `<install-source>` (see below).
-
-Optional arguments:
-
-- `--source`: this directs Appium where to find your extension. See below for a table of possible
-  source types and corresponding install specification.
-- `--package`: when `<install-source>` is `git` or `github`, `--package` is required. It should be
-  the Node.js package name of the extension. Without this information, Appium will not be able to
-  find the installed package.
-- `--json`: return the result in JSON format
-
-| Install source type | Behaviour                                                                                                                                                                                                                                                                                                                                                                                                 |
-| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| None                | This is the default behaviour when no `--source` is used. In this case, Appium will look at `<install-spec>` and match it against the name of extensions available when running `appium <ext-type> list`, i.e., against the officially recognized extension names. If found, it will install that extension at the latest version via NPM |
-| `npm`               | Install an extension based on its NPM package name. Here, `<install-spec>` must be the NPM package name with any additional NPM installation modifiers, like version (see below)                                                                                                                                                                                       |
-| `github`            | Install an extension via a GitHub spec of the form `<org>/<repo>`                                                                                                                                                                                                                                                                                                                                         |
-| `git`               | Install an extension via a Git URL (e.g., `git+ssh://git-host.com/repo.git`)                                                                                                                                                                                                                                                                           |
-| `local`             | Install an extension via a local path. This must be a path to the directory where the Node.js package information for the driver is located.                                                                                                                                                                                                              |
-
-#### NPM-based `<install-spec>`
-
-When Appium is installing an extension via NPM (as is the case when `--source` is either omitted or
-set to `npm`), the `<install-spec>` can be complex, and can include any kind of information allowed
-by `npm install`:
-
-- `[@scope]/<name>`
-- `[@scope]/<name>@<version>`
-- `[@scope]/<name>@<tag>`
-- `[@scope]/<name>@<version range>`
+| `source` | Format of `<install-spec>`                                                                                                                                              |
+| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| None     | The short name of an official extension, with optional modifiers as supported by `npm install` (e.g. version or tag) |
+| `git`    | The Git URL of the extension                                                                                                                                            |
+| `github` | The GitHub repository URL of the extension                                                                                                                              |
+| `local`  | The local path to the extension containing its `package.json` file                                                                                                      |
+| `npm`    | The name of the `npm` package, with optional modifiers as supported by `npm install` (e.g. version or tag)           |
 
 #### Examples
 
@@ -112,115 +88,153 @@ by `npm install`:
     appium driver install xcuitest
     ```
 
-- Install the XCUITest driver at version 4.11.1:
+- Install the XCUITest driver at version 9.0.0:
 
     ```
-    appium driver install xcuitest@4.11.1
+    appium driver install xcuitest@9.0.0
     ```
 
-- Install the `beta` version of the `@appium/fake-driver` from NPM:
+- Install the `beta` version of `@appium/fake-driver` from `npm`:
 
     ```
-    appium driver install --source=npm @appium/fake-driver@beta
+    appium driver install @appium/fake-driver@beta --source=npm
     ```
 
 - Install a locally-developed plugin:
 
     ```
-    appium plugin install --source=local /path/to/my/plugin
+    appium plugin install /path/to/my/plugin --source=local
     ```
 
-### `list`
+- Install the XCUITest driver from GitHub:
 
-List installed and available extensions. "Available" extensions include those which are officially
-recognized by the Appium team, but you are not limited to installing only the extensions displayed
-in this list.
+    ```
+    appium driver install https://github.com/appium/appium-xcuitest-driver --source=github --package=appium-xcuitest-driver
+    ```
 
-Usage:
+- Install the XCUITest driver using a Git URL:
 
-```
-appium <ext-type> list [--installed] [--updates] [--json]
-```
+    ```
+    appium driver install git://github.com/appium/appium-xcuitest-driver.git --source=git --package=appium-xcuitest-driver
+    ```
 
-Required arguments:
+## `list`
 
-- `<ext-type>`: must be `driver` or `plugin`
+Lists all installed extensions, plus all official extensions that are not installed.
 
-Optional arguments:
-
-- `--installed`: show only installed extensions, not installed plus available extensions
-- `--updates`: for extensions installed via NPM, display a message if there are any updates
-- `--json`: return the result in JSON format
-
-### `run`
-
-Run a script included in an extension package. Extension authors can include runnable scripts that
-assist with setup or perform other tasks. These scripts are given names (called the `<script-name>`
-in this reference) by extension authors and will generally be documented in extension
-documentation.
-
-Usage:
+#### Usage
 
 ```
-appium <ext-type> run <ext-name> [--json] <script-name> [script-args]
+appium {driver|plugin} list
 ```
 
-Required arguments:
+#### Options
 
-- `<ext-type>`: must be `driver` or `plugin`
-- `<ext-name>`: the name of the extension whose script you want to run
-- `<script-name>`: the name of the script the extension has published
+| <div style="width:7em">Argument</div> | Description                                                                                                                                                            | Type    |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
+| `--installed`                         | Only list all installed extensions                                                                                                                                     | boolean |
+| `--json`                              | Return the result in JSON format                                                                                                                                       | boolean |
+| `--updates`                           | List all extensions along with information on whether newer versions are available. Only supported for extensions installed via `npm`. | boolean |
 
-Optional arguments:
+#### Example
 
-- `script-args`: any arguments that Appium does not interpret as belonging to its own set of
-  arguments will be passed along to the extension script
-- `--json`: return the result in JSON format
+- List all installed drivers and check if they have newer versions available:
 
-Example (run the `reset` script included with the UiAutomator2 driver):
+    ```
+    appium driver list --installed --updates
+    ```
 
-```
-appium driver run uiautomator2 reset
-```
+## `run`
 
-### `update`
+Runs an extension script, which can assist with setup or perform other tasks. Note that not all
+extensions include scripts.
 
-Update one or more extensions that have been installed via NPM. By default, Appium will not
-automatically update any extension past a major version boundary, so as to prevent
-unintended breaking changes.
-
-Usage:
+#### Usage
 
 ```
-appium <ext-type> update <ext-name> [--unsafe] [--json]
+appium {driver|plugin} run <extension-name> <script-name> [script-args]
 ```
 
-Required arguments:
+| Argument         | Description                                   |
+| ---------------- | --------------------------------------------- |
+| `extension-name` | The short name of the installed extension     |
+| `script-name`    | The name of the script to be run              |
+| `script-args`    | Any additional arguments passed to the script |
 
-- `<ext-type>`: must be `driver` or `plugin`
-- `<ext-name>`: the name of the extension to update, or the string `installed` (which will update
-  all installed extensions)
+#### Options
 
-Optional arguments:
+| Argument | Description                      | Type    |
+| -------- | -------------------------------- | ------- |
+| `--json` | Return the result in JSON format | boolean |
 
-- `--unsafe`: direct Appium to go ahead and update past a major version boundary
-- `--json`: return the result in JSON format
+#### Example
 
-### `uninstall`
+- Run the `reset` script included in the UiAutomator2 driver:
 
-Remove an installed extension.
+    ```
+    appium driver run uiautomator2 reset
+    ```
 
-Usage:
+## `update`
+
+Updates one or more extensions. Only supported for extensions installed via `npm`. By default,
+Appium will only update minor and patch versions, in order to prevent any breaking changes.
+
+#### Usage
 
 ```
-appium <ext-type> uninstall <ext-name> [--json]
+appium {driver|plugin} update <extension-name>
 ```
 
-Required arguments:
+| Argument         | Description                                                                                  |
+| ---------------- | -------------------------------------------------------------------------------------------- |
+| `extension-name` | The short name of the installed extension, or `installed` to update all installed extensions |
 
-- `<ext-type>`: must be `driver` or `plugin`
-- `<ext-name>`: the name of the extension to uninstall
+#### Options
 
-Optional arguments:
+| Argument   | Description                                                       | Type    |
+| ---------- | ----------------------------------------------------------------- | ------- |
+| `--json`   | Return the result in JSON format                                  | boolean |
+| `--unsafe` | Allow updates of major versions, which may cause breaking changes | boolean |
 
-- `--json`: return the result in JSON format
+#### Examples
+
+- Update the UiAutomator2 driver to its latest major version:
+
+    ```
+    appium driver update uiautomator2 --unsafe
+    ```
+
+- Update all installed plugins:
+
+    ```
+    appium plugin update installed
+    ```
+
+## `uninstall`
+
+Removes an installed extension.
+
+#### Usage
+
+```
+appium {driver|plugin} uninstall <extension-name>
+```
+
+| Argument         | Description                               |
+| ---------------- | ----------------------------------------- |
+| `extension-name` | The short name of the installed extension |
+
+#### Options
+
+| Argument | Description                      | Type    |
+| -------- | -------------------------------- | ------- |
+| `--json` | Return the result in JSON format | boolean |
+
+#### Example
+
+- Remove the `images` plugin:
+
+    ```
+    appium plugin uninstall images
+    ```

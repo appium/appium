@@ -139,7 +139,7 @@ path to `/`, therefore the default server URL is now `http://localhost:4723/`.
 ```
 In your test scripts, change the base path of the target server URL from `/wd/hub` to `/`.
 Alternatively, you can retain the Appium 1 base path by launching Appium with the
-`--base-path=/wd/hub` [command-line argument](../reference/cli/args.md).
+`--base-path=/wd/hub` [command-line argument](../reference/cli/server.md).
 ```
 
 ### Server Port 0 No Longer Supported

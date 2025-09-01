@@ -23,8 +23,8 @@ Executes a driver script in a child process.
 
 |Name|Description|Type|Default|
 |--|--|--|--|
-|`script`|The script to be executed|string||
-|`type?`|The name of the library executing the script|string|`webdriverio`|
+|`script`|Script to be executed|string||
+|`type?`|Name of the library executing the script|string|`webdriverio`|
 |`timeout?`|Timeout (in milliseconds) for the script process|number|`3600000`|
 
 #### Response
@@ -33,7 +33,7 @@ Executes a driver script in a child process.
 
 |Name|Description|Type|
 |--|--|--|
-|`result`|The result returned by the script|any|
+|`result`|Result returned by the script|any|
 |`logs`|Logs generated during script execution|object|
 
 ## Images Plugin
@@ -63,9 +63,9 @@ Compares two images using the specified mode of comparison:
 
 |<div style="width:10em">Name</div>|Description|Type|<div style="width:6em">Default</div>|
 |--|--|--|--|
-|`detectorName?`|The OpenCV feature detector to use. Supported values are: `AKAZE`, `AgastFeatureDetector`, `BRISK`, `FastFeatureDetector`, `GFTTDetector`, `KAZE`, `MSER`, or `ORB`.|string|`ORB`|
+|`detectorName?`|Name of the OpenCV feature detector to use. Supported values are: `AKAZE`, `AgastFeatureDetector`, `BRISK`, `FastFeatureDetector`, `GFTTDetector`, `KAZE`, `MSER`, or `ORB`.|string|`ORB`|
 |`goodMatchesFactor?`|Maximum number of 'good' matches; or a function accepting current distance, min distance and max distance, and returning a boolean indicating whether the match should be included or not.|number or function||
-|`matchFunc?`|The OpenCV descriptor matcher to use. Supported values are: `FlannBased`, `BruteForce`, `BruteForce-L1`, `BruteForce-Hamming`, `BruteForce-HammingLUT`, or `BruteForce-SL2`.|string|`BruteForce`|
+|`matchFunc?`|Name of the OpenCV descriptor matcher to use. Supported values are: `FlannBased`, `BruteForce`, `BruteForce-L1`, `BruteForce-Hamming`, `BruteForce-HammingLUT`, or `BruteForce-SL2`.|string|`BruteForce`|
 |`visualize?`|Whether to include an image of the matcher visualization in the response|boolean|`false`|
 
 **`options` for `mode=matchTemplate`**
@@ -73,7 +73,7 @@ Compares two images using the specified mode of comparison:
 |<div style="width:13em">Name</div>|Description|Type|<div style="width:9em">Default</div>|
 |--|--|--|--|
 |`matchNeighbourThreshold?`|Maximum pixel distance between two matches to consider them the same match|number|`10`|
-|`method?`|The OpenCV template matching method to use. Supported values are: `TM_CCOEFF`, `TM_CCOEFF_NORMED`, `TM_CCORR`, `TM_CCORR_NORMED`, `TM_SQDIFF`, or `TM_SQDIFF_NORMED`.|string|`TM_CCOEFF_NORMED`|
+|`method?`|Name of the OpenCV template matching method to use. Supported values are: `TM_CCOEFF`, `TM_CCOEFF_NORMED`, `TM_CCORR`, `TM_CCORR_NORMED`, `TM_SQDIFF`, or `TM_SQDIFF_NORMED`.|string|`TM_CCOEFF_NORMED`|
 |`multiple?`|Whether to look for multiple occurrences of the image|boolean|`false`|
 |`threshold?`|Threshold to use for accepting/rejecting a match|number|`0.5`|
 |`visualize?`|Whether to include an image of the matcher visualization in the response|boolean|`false`|
@@ -82,7 +82,7 @@ Compares two images using the specified mode of comparison:
 
 |<div style="width:6em">Name</div>|Description|Type|<div style="width:9em">Default</div>|
 |--|--|--|--|
-|`method?`|The OpenCV template matching method to use. Supported values are: `TM_CCOEFF`, `TM_CCOEFF_NORMED`, `TM_CCORR`, `TM_CCORR_NORMED`, `TM_SQDIFF`, or `TM_SQDIFF_NORMED`.|string|`TM_CCOEFF_NORMED`|
+|`method?`|Name of the OpenCV template matching method to use. Supported values are: `TM_CCOEFF`, `TM_CCOEFF_NORMED`, `TM_CCORR`, `TM_CCORR_NORMED`, `TM_SQDIFF`, or `TM_SQDIFF_NORMED`.|string|`TM_CCOEFF_NORMED`|
 |`visualize?`|Whether to include an image of the matcher visualization in the response|boolean|`false`|
 
 #### Response
@@ -161,6 +161,100 @@ Modifies the `createSession` endpoint:
 
 * Adds the `appium:` prefix to all keys in `capabilities`, unless they match a standard W3C
   capability, or already have any prefix
+
+## Storage Plugin
+
+!!! tip
+
+    All endpoints for this plugin can be invoked without creating a session, allowing you to prepare
+    your test environment in advance.
+
+### `addStorageItem`
+
+```
+POST /storage/add
+```
+
+Adds a new file to the storage.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`name`|Name used for saving the file (must not include path separator characters)|string|
+|`sha1`|SHA1 hash of the file to be uploaded|string|
+
+#### Response
+
+`Promise<AddRequestResult>` - an object with the following properties:
+
+|Name|Description|Type|
+|--|--|--|
+|`ttlMs`|Timeout (in milliseconds) for both web sockets to remain active, or for a file payload to be successfully uploaded|number|
+|`ws.events`|Path for the events web socket used to notify about upload success or failure|string|
+|`ws.stream`|Path for the streaming web socket used to upload the file content|string|
+
+Example:
+```json
+{
+  "ws": {
+    "stream": "/storage/add/ccc963411b2621335657963322890305ebe96186/stream",
+    "events": "/storage/add/ccc963411b2621335657963322890305ebe96186/events"
+  },
+  "ttlMs": 300000
+}
+```
+
+### `deleteStorageItem`
+
+```
+POST /storage/delete
+```
+
+Deletes a file in the storage.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`name`|Name of the file to be deleted|string|
+
+#### Response
+
+`Promise<boolean>` - `true` upon successful file deletion, or `false` if the file does not exist in
+the storage 
+
+### `listStorageItems`
+
+```
+GET /storage/list
+```
+
+List all files present in the storage.
+
+#### Response
+
+`Promise<List<StorageItem>>` - a list of items, where each item has the following properties:
+
+|Name|Description|Type|
+|--|--|--|
+|`name`|Name of the file in the storage|string|
+|`path`|Full path to the file on the remote file system|string|
+|`size`|File size in bytes|number|
+
+### `resetStorage`
+
+```
+POST /storage/reset
+```
+
+Deletes all uploaded files and stops any incomplete uploads.
+If the [`APPIUM_STORAGE_KEEP_ALL` flag](../cli/env-vars.md) is set, all uploaded files will be
+preserved, and only the incomplete uploads will be stopped.
+
+#### Response
+
+`Promise<void>`
 
 ## Universal XML Plugin
 

@@ -29,12 +29,12 @@ Executes a driver script in a child process.
 
 #### Response
 
-`Promise<{result, logs}>`
+`Promise<RunScriptResult>` - an object with the following properties:
 
 |Name|Description|Type|
 |--|--|--|
 |`result`|The result returned by the script|any|
-|`logs`|Logs created during the script|object|
+|`logs`|Logs generated during script execution|object|
 
 ## Images Plugin
 
@@ -87,7 +87,35 @@ Compares two images using the specified mode of comparison:
 
 #### Response
 
-`Promise<ComparisonResult>` - the value depends on the `mode` input parameter
+`Promise<ComparisonResult>` - an object whose properties depend on the `mode` input parameter:
+
+**`ComparisonResult` for `mode=matchFeatures`**
+
+|<div style="width:8em">Name</div>|Description|Type|
+|--|--|--|
+|`count`|Number of matched edges on both images, after applying `goodMatchesFactor` (if specified).|number|
+|`points1`|Array of matching points on `firstImage`|`{x, y}[]`|
+|`points2`|Array of matching points on `secondImage`|`{x, y}[]`|
+|`rect1`|Bounding rectangle for `points1`|`{x, y, width, height}`|
+|`rect2`|Bounding rectangle for `points2`|`{x, y, width, height}`|
+|`totalCount`|Total number of matched edges on both images, before applying `goodMatchesFactor` (if specified)|number|
+|`visualization?`|Image of the matcher visualization. Only included if the `visualize` input option was enabled.|Buffer|
+
+**`ComparisonResult` for `mode=matchTemplate`**
+
+|<div style="width:8em">Name</div>|Description|Type|
+|--|--|--|
+|`rect`|Region of `firstImage` where a match was found for `secondImage`|`{x, y, width, height}`|
+|`multiple?`|Array of all comparison results. Only included if the `multiple` input option was enabled.|`{rect, score, visualization?}`|
+|`score`|Similarity score between both images in the range `[0.0, 1.0]`|number|
+|`visualization?`|Image of the matcher visualization. Only included if the `visualize` input option was enabled.|Buffer|
+
+**`ComparisonResult` for `mode=getSimilarity`**
+
+|<div style="width:8em">Name</div>|Description|Type|
+|--|--|--|
+|`score`|Similarity score between both images in the range `[0.0, 1.0]`|number|
+|`visualization?`|Image of the matcher visualization. Only included if the `visualize` input option was enabled.|Buffer|
 
 ### `findElement`
 

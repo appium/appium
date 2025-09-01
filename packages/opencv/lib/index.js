@@ -457,7 +457,16 @@ async function getImagesSimilarity(img1Data, img2Data, options = {}) {
  * @property {number|boolean} [multiple=false] find multiple matches in the image
  * @property {number} [matchNeighbourThreshold=10] The pixel distance between matches we consider
  * to be part of the same template match
- * @property {TemplateMatchingMethod} [method='TM_CCOEFF_NORMED']
+ * @property {TemplateMatchingMethod} [method='TM_CCOEFF_NORMED'] The name of the template matching method.
+ * Acceptable values are:
+ * - `TM_CCOEFF`
+ * - `TM_CCOEFF_NORMED` (default)
+ * - `TM_CCORR`
+ * - `TM_CCORR_NORMED`
+ * - `TM_SQDIFF`
+ * - `TM_SQDIFF_NORMED`
+ * Read https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_imgproc/py_template_matching/py_template_matching.html
+ * for more details.
  */
 
 /**
@@ -472,16 +481,6 @@ async function getImagesSimilarity(img1Data, img2Data, options = {}) {
  * 1.0 is the highest score (means both images are totally equal).
  * @property {OccurrenceResult[]} [multiple] The array of matching OccurrenceResults
  * - only when multiple option is passed
- * @property {TemplateMatchingMethod} [method='TM_CCOEFF_NORMED'] The name of the template matching method.
- * Acceptable values are:
- * - `TM_CCOEFF`
- * - `TM_CCOEFF_NORMED` (default)
- * - `TM_CCORR`
- * - `TM_CCORR_NORMED`
- * - `TM_SQDIFF`
- * - `TM_SQDIFF_NORMED`
- * Read https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_imgproc/py_template_matching/py_template_matching.html
- * for more details.
  */
 
 /**

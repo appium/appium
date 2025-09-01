@@ -145,6 +145,51 @@ POST /session/:sessionId/actions
 
 Modifies the `performActions` endpoint:
 
-* If any action in `actions` specifies `origin`, and `origin` is set to an image element:
-  * Removes the `origin` property
-  * Increments the `x` and `y` properties by the center coordinates of the image element
+* If any action in `actions` includes `origin`, whose value is an image element:
+    * Removes the `origin` property
+    * Increments the `x` and `y` properties by the center coordinates of the image element
+
+## Relaxed Caps Plugin
+
+### `createSession`
+
+```
+POST /session
+```
+
+Modifies the `createSession` endpoint:
+
+* Adds the `appium:` prefix to all keys in `capabilities`, unless they match a standard W3C
+  capability, or already have any prefix
+
+## Universal XML Plugin
+
+### `findElement`
+
+```
+POST /session/:sessionId/element
+```
+
+Modifies the `findElement` endpoint:
+
+* Adds support for universal node/attribute names for the `value` parameter (the selector)
+
+### `findElements`
+
+```
+POST /session/:sessionId/elements
+```
+
+Modifies the `findElements` endpoint:
+
+* Adds support for universal node/attribute names for the `value` parameter (the selector)
+
+### `getPageSource`
+
+```
+GET /session/:sessionId/source
+```
+
+Modifies the `getPageSource` endpoint:
+
+* Modifies the result by translating node/attribute names to their universal names

@@ -1,48 +1,5 @@
 # Driver: base-driver
 
-### `createSession`
-
-`POST` **`/session`**
-
-Historically the first two arguments were reserved for JSONWP capabilities.
-These are no longer supported since Appium 2, so now we only accept capability
-objects in W3C format and thus allow any of the three arguments to represent
-the latter.
-
-**`See`**
-
-[https://w3c.github.io/webdriver/#new-session](https://w3c.github.io/webdriver/#new-session)
-
-<!-- comment source: multiple -->
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `desiredCapabilities?` | `W3CDriverCaps`<`C`\> | the new session capabilities |
-| `requiredCapabilities?` | `W3CDriverCaps`<`C`\> | another place the new session capabilities could be sent (typically left undefined) |
-| `capabilities?` | `W3CDriverCaps`<`C`\> | another place the new session capabilities could be sent (typically left undefined) |
-
-#### Response
-
-`CreateResult`
-
-The capabilities object representing the created session
-
-### `deleteSession`
-
-`DELETE` **`/session/:sessionId`**
-
-Returns capabilities for the session and event history (if applicable)
-
-<!-- comment source: method-signature -->
-
-#### Response
-
-`SingularSessionData`<`C`, `SessionData`\>
-
-A session data object
-
 ### `getSession`
 
 `GET` **`/session/:sessionId`**
@@ -429,48 +386,6 @@ remote_status
 #### Response
 
 `Object`
-
-### `getTimeouts`
-
-`GET` **`/session/:sessionId/timeouts`**
-
-Set the various timeouts associated with a session
-
-**`See`**
-
-[https://w3c.github.io/webdriver/#set-timeouts](https://w3c.github.io/webdriver/#set-timeouts)
-
-<!-- comment source: method-signature -->
-
-#### Response
-
-``null``
-
-### `timeouts`
-
-`POST` **`/session/:sessionId/timeouts`**
-
-Set the various timeouts associated with a session
-
-**`See`**
-
-[https://w3c.github.io/webdriver/#set-timeouts](https://w3c.github.io/webdriver/#set-timeouts)
-
-<!-- comment source: method-signature -->
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `type?` | `string` | used only for the old (JSONWP) command, the type of the timeout |
-| `ms?` | `string` \| `number` | used only for the old (JSONWP) command, the ms for the timeout |
-| `script?` | `number` | the number in ms for the script timeout, used for the W3C command |
-| `pageLoad?` | `number` | the number in ms for the pageLoad timeout, used for the W3C command |
-| `implicit?` | `string` \| `number` | the number in ms for the implicit wait timeout, used for the W3C command |
-
-#### Response
-
-``null``
 
 ### `logCustomEvent`
 

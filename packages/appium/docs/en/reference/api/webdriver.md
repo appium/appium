@@ -9,7 +9,7 @@ title: WebDriver Protocol
 
 This page lists the endpoints defined in the [W3C WebDriver protocol](https://w3c.github.io/webdriver/).
 
-### `createSession`
+### `newSession`
 
 ```
 POST /session
@@ -40,3 +40,58 @@ supported, and any of the 3 parameters can be used for W3C capabilities.
 |--|--|--|
 |`sessionId`|ID of the new session|string|
 |`capabilities`|Capabilities processed by the driver|object|
+
+### `deleteSession`
+
+```
+DELETE /session/:sessionId
+```
+
+> WebDriver documentation: [Delete Session](https://w3c.github.io/webdriver/#delete-session)
+
+Closes the current session.
+
+#### Response
+
+`null`
+
+### `getTimeouts`
+
+```
+GET /session/:sessionId/timeouts
+```
+
+> WebDriver documentation: [Get Timeouts](https://w3c.github.io/webdriver/#get-timeouts)
+
+Retrieve the timeout values of the current session.
+
+#### Response
+
+`TimeoutsResult` - an object with the following properties:
+
+|Name|Description|Type|
+|--|--|--|
+|`command`|Command timeout|number|
+|`implicit`|Implicit wait timeout|number|
+
+### `setTimeouts`
+
+```
+POST /session/:sessionId/timeouts
+```
+
+> WebDriver documentation: [Set Timeouts](https://w3c.github.io/webdriver/#set-timeouts)
+
+Set the timeout values of the current session.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`implicit?`|Implicit wait timeout (in milliseconds)|number|
+|`pageLoad?`|Page load timeout (in milliseconds)|number|
+|`script?`|Script timeout (in milliseconds)|number|
+
+#### Response
+
+`null`

@@ -29,7 +29,7 @@ Executes a driver script in a child process.
 
 #### Response
 
-`Promise<RunScriptResult>` - an object with the following properties:
+`RunScriptResult` - an object with the following properties:
 
 |Name|Description|Type|
 |--|--|--|
@@ -87,7 +87,7 @@ Compares two images using the specified mode of comparison:
 
 #### Response
 
-`Promise<ComparisonResult>` - an object whose properties depend on the `mode` input parameter:
+`ComparisonResult` - an object whose properties depend on the `mode` input parameter:
 
 **`ComparisonResult` for `mode=matchFeatures`**
 
@@ -157,7 +157,7 @@ Modifies the `performActions` endpoint:
 POST /session
 ```
 
-Modifies the `createSession` endpoint:
+Modifies the [`createSession](./webdriver.md#createsession) endpoint:
 
 * Adds the `appium:` prefix to all keys in `capabilities`, unless they match a standard W3C
   capability, or already have any prefix
@@ -186,7 +186,7 @@ Adds a new file to the storage.
 
 #### Response
 
-`Promise<AddRequestResult>` - an object with the following properties:
+`AddRequestResult` - an object with the following properties:
 
 |Name|Description|Type|
 |--|--|--|
@@ -221,7 +221,7 @@ Deletes a file in the storage.
 
 #### Response
 
-`Promise<boolean>` - `true` upon successful file deletion, or `false` if the file does not exist in
+`boolean` - `true` upon successful file deletion, or `false` if the file does not exist in
 the storage 
 
 ### `listStorageItems`
@@ -234,7 +234,7 @@ List all files present in the storage.
 
 #### Response
 
-`Promise<List<StorageItem>>` - a list of items, where each item has the following properties:
+`List<StorageItem>` - a list of items, where each item has the following properties:
 
 |Name|Description|Type|
 |--|--|--|
@@ -254,7 +254,7 @@ preserved, and only the incomplete uploads will be stopped.
 
 #### Response
 
-`Promise<void>`
+`void`
 
 ## Universal XML Plugin
 

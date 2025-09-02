@@ -15,7 +15,7 @@ but may additionally define endpoints of their own. Refer to the documentation o
 The recommended way of calling these API endpoints is through your [Appium client](../../ecosystem/clients.md).
 Refer to the documentation of your client for the exact commands used to invoke specific endpoints.
 
-The endpoint listings are as follows:
+All endpoint listings are grouped by their protocol, with an additional group for plugin endpoints:
 
-* [Base Driver](./base-driver.md)
+* [WebDriver Protocol](./webdriver.md)
 * [Endpoints Used by Official Plugins](./plugins.md)

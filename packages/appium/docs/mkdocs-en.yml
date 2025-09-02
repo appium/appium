@@ -44,7 +44,7 @@ nav:
           - reference/cli/env-vars.md
       - API Endpoints:
           - reference/api/index.md
-          - reference/api/base-driver.md
+          - reference/api/webdriver.md
           - reference/api/plugins.md
   - Guides:
       - Migration:

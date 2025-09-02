@@ -123,9 +123,9 @@ Compares two images using the specified mode of comparison:
 POST /session/:sessionId/element
 ```
 
-Modifies the `findElement` endpoint:
+Modifies the [`findElement`](./webdriver.md#findelement) endpoint:
 
-* Adds `-image` to the supported values for the `using` parameter (the locator strategy)
+* Adds `-image` to the supported values for the `using` parameter (the location strategy)
 
 ### `findElements`
 
@@ -133,9 +133,9 @@ Modifies the `findElement` endpoint:
 POST /session/:sessionId/elements
 ```
 
-Modifies the `findElements` endpoint:
+Modifies the [`findElements`](./webdriver.md#findelements) endpoint:
 
-* Adds `-image` to the supported values for the `using` parameter (the locator strategy)
+* Adds `-image` to the supported values for the `using` parameter (the location strategy)
 
 ### `performActions`
 
@@ -264,7 +264,7 @@ preserved, and only the incomplete uploads will be stopped.
 POST /session/:sessionId/element
 ```
 
-Modifies the `findElement` endpoint:
+Modifies the [`findElement`](./webdriver.md#findelement) endpoint:
 
 * Adds support for universal node/attribute names for the `value` parameter (the selector)
 
@@ -274,7 +274,7 @@ Modifies the `findElement` endpoint:
 POST /session/:sessionId/elements
 ```
 
-Modifies the `findElements` endpoint:
+Modifies the [`findElements`](./webdriver.md#findelements) endpoint:
 
 * Adds support for universal node/attribute names for the `value` parameter (the selector)
 
@@ -286,4 +286,4 @@ GET /session/:sessionId/source
 
 Modifies the `getPageSource` endpoint:
 
-* Modifies the result by translating node/attribute names to their universal names
+* After retrieving the result, translates node/attribute names to their universal names

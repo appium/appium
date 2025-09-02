@@ -124,13 +124,14 @@ POST /session/:sessionId/element
 
 > WebDriver documentation: [Find Element](https://w3c.github.io/webdriver/#find-element)
 
-Finds an element in the current browsing context.
+Finds the first element in the current browsing context that matches the provided selector and
+location strategy, starting from the root node.
 
 #### Parameters
 
 |Name|Description|Type|
 |--|--|--|
-|`using`|Locator strategy to use when searching|string|
+|`using`|Location strategy to use when searching|string|
 |`value`|Selector used to find the element|string|
 
 #### Response
@@ -141,3 +142,113 @@ Finds an element in the current browsing context.
 |--|--|--|
 |`element-6066-11e4-a52e-4f735466cecf`|The element ID|string|
 |`ELEMENT`|The element ID used in the obsolete Mobile JSON Wire Protocol (MJSONWP). Has the same value as `element-6066-11e4-a52e-4f735466cecf`.|string|
+
+### `findElements`
+
+```
+POST /session/:sessionId/elements
+```
+
+> WebDriver documentation: [Find Elements](https://w3c.github.io/webdriver/#find-elements)
+
+Finds all elements in the current browsing context that match the provided selector and location
+strategy, starting from the root node.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`using`|Location strategy to use when searching|string|
+|`value`|Selector used to find the element|string|
+
+#### Response
+
+`Element[]` - an array containing zero or more [`Element` objects](#response_5)
+
+### `findElementFromElement`
+
+```
+POST /session/:sessionId/element/:elementId/element
+```
+
+> WebDriver documentation: [Find Element From Element](https://w3c.github.io/webdriver/#find-element-from-element)
+
+Finds the first element in the current browsing context that matches the provided selector and
+location strategy, starting from the element node identified by `:elementId`.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`using`|Location strategy to use when searching|string|
+|`value`|Selector used to find the element|string|
+
+#### Response
+
+[`Element`](#response_5)
+
+### `findElementsFromElement`
+
+```
+POST /session/:sessionId/element/:elementId/elements
+```
+
+> WebDriver documentation: [Find Elements From Element](https://w3c.github.io/webdriver/#find-elements-from-element)
+
+Finds all elements in the current browsing context that match the provided selector and location
+strategy, starting from the element node identified by `:elementId`.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`using`|Location strategy to use when searching|string|
+|`value`|Selector used to find the element|string|
+
+#### Response
+
+[`Element[]`](#response_6)
+
+### `findElementFromShadowRoot`
+
+```
+POST /session/:sessionId/shadow/:shadowId/element
+```
+
+> WebDriver documentation: [Find Element From Shadow Root](https://w3c.github.io/webdriver/#find-element-from-shadow-root)
+
+Finds the first element in the current browsing context that matches the provided selector and
+location strategy, starting from the shadow root node identified by `:shadowId`.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`using`|Location strategy to use when searching|string|
+|`value`|Selector used to find the element|string|
+
+#### Response
+
+[`Element`](#response_5)
+
+### `findElementsFromShadowRoot`
+
+```
+POST /session/:sessionId/shadow/:shadowId/elements
+```
+
+> WebDriver documentation: [Find Elements From Shadow Root](https://w3c.github.io/webdriver/#find-elements-from-shadow-root)
+
+Finds all elements in the current browsing context that match the provided selector and location
+strategy, starting from the shadow root node identified by `:shadowId`.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`using`|Location strategy to use when searching|string|
+|`value`|Selector used to find the element|string|
+
+#### Response
+
+[`Element[]`](#response_6)

@@ -21,8 +21,8 @@ Creates a new WebDriver session.
 
 Appium implements a modified version of this endpoint due to historical reasons. While the W3C
 endpoint only accepts 1 parameter, Appium's implementation allows up to 3 parameters, since this
-was originally required by the JSONWP protocol. As of Appium 2, the JSONWP format is no longer
-supported, and any of the 3 parameters can be used for W3C capabilities.
+was required by the obsolete JSON Wire Protocol (JSONWP). As of Appium 2, the JSONWP format is no
+longer supported, and any of the 3 parameters can be used for W3C capabilities.
 
 #### Parameters
 
@@ -55,6 +55,26 @@ Closes the current session.
 
 `null`
 
+### `getStatus`
+
+```
+GET /status
+```
+
+> WebDriver documentation: [Status](https://w3c.github.io/webdriver/#status)
+
+Retrieves the current status of the Appium server.
+
+#### Response
+
+`GetStatusResult` - an object with the following properties:
+
+|Name|Description|Type|
+|--|--|--|
+|`build`|Implementation-specific information. For Appium, this is an object containing the `version` key, whose value matches the Appium server version.|`{version}`|
+|`message`|Explanation of the `ready` value|string|
+|`ready`|Whether the server is able to create new sessions|boolean|
+
 ### `getTimeouts`
 
 ```
@@ -63,11 +83,11 @@ GET /session/:sessionId/timeouts
 
 > WebDriver documentation: [Get Timeouts](https://w3c.github.io/webdriver/#get-timeouts)
 
-Retrieve the timeout values of the current session.
+Retrieves the timeout values of the current session.
 
 #### Response
 
-`TimeoutsResult` - an object with the following properties:
+`GetTimeoutsResult` - an object with the following properties:
 
 |Name|Description|Type|
 |--|--|--|
@@ -82,7 +102,7 @@ POST /session/:sessionId/timeouts
 
 > WebDriver documentation: [Set Timeouts](https://w3c.github.io/webdriver/#set-timeouts)
 
-Set the timeout values of the current session.
+Sets the timeout values of the current session.
 
 #### Parameters
 
@@ -95,3 +115,29 @@ Set the timeout values of the current session.
 #### Response
 
 `null`
+
+### `findElement`
+
+```
+POST /session/:sessionId/element
+```
+
+> WebDriver documentation: [Find Element](https://w3c.github.io/webdriver/#find-element)
+
+Finds an element in the current browsing context.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`using`|Locator strategy to use when searching|string|
+|`value`|Selector used to find the element|string|
+
+#### Response
+
+`Element` - an object with the following properties:
+
+|Name|Description|Type|
+|--|--|--|
+|`element-6066-11e4-a52e-4f735466cecf`|The element ID|string|
+|`ELEMENT`|The element ID used in the obsolete Mobile JSON Wire Protocol (MJSONWP). Has the same value as `element-6066-11e4-a52e-4f735466cecf`.|string|

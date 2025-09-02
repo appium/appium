@@ -34,32 +34,6 @@ Returns capabilities for the session.
 
 A session data object
 
-### `findElement`
-
-`POST` **`/session/:sessionId/element`**
-
-Find a UI element given a locator strategy and a selector, erroring if it can't be found
-
-**`See`**
-
-[https://w3c.github.io/webdriver/#find-element](https://w3c.github.io/webdriver/#find-element)
-
-<!-- comment source: method-signature -->
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `using` | `string` | the locator strategy |
-| `value` | `string` | the selector to combine with the strategy to find the specific element |
-
-#### Response
-
-`Element`<`string`\>
-
-The element object encoding the element id which can be used in element-related
-commands
-
 ### `findElementFromElement`
 
 `POST` **`/session/:sessionId/element/:elementId/element`**
@@ -322,70 +296,6 @@ Update the session's settings dictionary with a new settings object
 #### Response
 
 ``null``
-
-### `getStatus`
-
-`GET` **`/status`**
-
-**`Summary`**
-
-Retrieve the server's current status.
-
-**`Description`**
-
-Returns information about whether a remote end is in a state in which it can create new sessions and can additionally include arbitrary meta information that is specific to the implementation.
-
-The readiness state is represented by the ready property of the body, which is false if an attempt to create a session at the current time would fail. However, the value true does not guarantee that a New Session command will succeed.
-
-Implementations may optionally include additional meta information as part of the body, but the top-level properties ready and message are reserved and must not be overwritten.
-
-<!-- comment source: builtin-interface -->
-
-#### Examples
-
-<!-- BEGIN:EXAMPLES -->
-##### JavaScript
-<!-- BEGIN:EXAMPLE lang=JavaScript -->
-
-```js
-// webdriver.io example
-await driver.status();
-```
-
-<!-- END:EXAMPLE -->
-##### Python
-<!-- BEGIN:EXAMPLE lang=Python -->
-
-```python
-driver.get_status()
-```
-
-<!-- END:EXAMPLE -->
-##### Java
-<!-- BEGIN:EXAMPLE lang=Java -->
-
-```java
-driver.getStatus();
-```
-
-<!-- END:EXAMPLE -->
-##### Ruby
-<!-- BEGIN:EXAMPLE lang=Ruby -->
-
-```ruby
-# ruby_lib example
-remote_status
-
-# ruby_lib_core example
-@driver.remote_status
-```
-
-<!-- END:EXAMPLE -->
-<!-- END:EXAMPLES -->
-
-#### Response
-
-`Object`
 
 ### `logCustomEvent`
 

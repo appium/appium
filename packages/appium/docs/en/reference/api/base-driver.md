@@ -84,24 +84,6 @@ Get available log types as a list of strings
 
 `string`[]
 
-### `getPageSource`
-
-`GET` **`/session/:sessionId/source`**
-
-Get the current page/app source as HTML/XML
-
-**`See`**
-
-[https://w3c.github.io/webdriver/#get-page-source](https://w3c.github.io/webdriver/#get-page-source)
-
-<!-- comment source: method-signature -->
-
-#### Response
-
-`string`
-
-The UI hierarchy in a platform-appropriate format (e.g., HTML for a web page)
-
 ### `getAppiumSessions`
 
 `GET` **`/appium/sessions`**

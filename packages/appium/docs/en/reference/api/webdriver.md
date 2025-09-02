@@ -7,7 +7,7 @@ title: WebDriver Protocol
   }
 </style>
 
-This page lists the endpoints defined in the [W3C WebDriver protocol](https://w3c.github.io/webdriver/).
+This page lists the Appium endpoints defined in the [W3C WebDriver protocol](https://w3c.github.io/webdriver/).
 
 ### `newSession`
 
@@ -19,10 +19,10 @@ POST /session
 
 Creates a new WebDriver session.
 
-Appium implements a modified version of this endpoint due to historical reasons. While the W3C
-endpoint only accepts 1 parameter, Appium's implementation allows up to 3 parameters, since this
-was required by the obsolete JSON Wire Protocol (JSONWP). As of Appium 2, the JSONWP format is no
-longer supported, and any of the 3 parameters can be used for W3C capabilities.
+Appium implements a modified version of this endpoint for historical reasons. While the W3C
+endpoint only accepts 1 parameter, Appium's implementation allows up to 3 parameters, as this was
+required by the obsolete JSON Wire Protocol (JSONWP). Since Appium 2, the JSONWP format is no
+longer supported, and any of the 3 parameters can be used to specify the W3C capabilities.
 
 #### Parameters
 
@@ -252,3 +252,17 @@ strategy, starting from the shadow root node identified by `:shadowId`.
 #### Response
 
 [`Element[]`](#response_6)
+
+### `getPageSource`
+
+```
+GET /session/:sessionId/source
+```
+
+> WebDriver documentation: [Get Page Source](https://w3c.github.io/webdriver/#get-page-source)
+
+Retrieves the page/application source of the current browsing context as HTML/XML
+
+#### Response
+
+`string` - the DOM of the current browsing context

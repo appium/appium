@@ -10,7 +10,7 @@ title: WebDriver Protocol
 The following is a list of [W3C WebDriver protocol](https://w3c.github.io/webdriver/) endpoints
 used in Appium.
 
-### `newSession`
+### `createSession`
 
 ```
 POST /session
@@ -95,7 +95,7 @@ Retrieves the timeout values of the current session.
 |`command`|Command timeout|number|
 |`implicit`|Implicit wait timeout|number|
 
-### `setTimeouts`
+### `timeouts`
 
 ```
 POST /session/:sessionId/timeouts

@@ -157,7 +157,7 @@ Modifies the `performActions` endpoint:
 POST /session
 ```
 
-Modifies the [`createSession](./webdriver.md#createsession) endpoint:
+Modifies the [`createSession`](./webdriver.md#createsession) endpoint:
 
 * Adds the `appium:` prefix to all keys in `capabilities`, unless they match a standard W3C
   capability, or already have any prefix

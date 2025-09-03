@@ -7,7 +7,7 @@ title: Plugin Endpoints
   }
 </style>
 
-This page lists the endpoints added or modified by official plugins.
+The following is a list of endpoints added or modified by official Appium plugins.
 
 ## Execute Driver Plugin
 
@@ -284,6 +284,6 @@ Modifies the [`findElements`](./webdriver.md#findelements) endpoint:
 GET /session/:sessionId/source
 ```
 
-Modifies the `getPageSource` endpoint:
+Modifies the [`getPageSource`](./webdriver.md#getpagesource) endpoint:
 
 * After retrieving the result, translates node/attribute names to their universal names

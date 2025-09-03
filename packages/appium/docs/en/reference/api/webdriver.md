@@ -7,7 +7,8 @@ title: WebDriver Protocol
   }
 </style>
 
-This page lists the Appium endpoints defined in the [W3C WebDriver protocol](https://w3c.github.io/webdriver/).
+The following is a list of [W3C WebDriver protocol](https://w3c.github.io/webdriver/) endpoints
+used in Appium.
 
 ### `newSession`
 
@@ -21,16 +22,16 @@ Creates a new WebDriver session.
 
 Appium implements a modified version of this endpoint for historical reasons. While the W3C
 endpoint only accepts 1 parameter, Appium's implementation allows up to 3 parameters, as this was
-required by the obsolete JSON Wire Protocol (JSONWP). Since Appium 2, the JSONWP format is no
-longer supported, and any of the 3 parameters can be used to specify the W3C capabilities.
+required by the legacy JSON Wire Protocol (JSONWP). Since Appium 2, the JSONWP format is no longer
+supported, and any of the 3 parameters can be used to specify the W3C capabilities.
 
 #### Parameters
 
 |Name|Description|Type|
 |--|--|--|
-|`capabilities1?`|Capabilities of the new session|`W3CDriverCaps`|
-|`capabilities2?`|Another location for the new session capabilities (legacy)|`W3CDriverCaps`|
-|`capabilities3?`|Another location for the new session capabilities (legacy)|`W3CDriverCaps`|
+|`w3cCapabilities1?`|Capabilities of the new session|`W3CDriverCaps`|
+|`w3cCapabilities2?`|Another location for the new session capabilities (legacy)|`W3CDriverCaps`|
+|`w3cCapabilities?`|Another location for the new session capabilities (legacy)|`W3CDriverCaps`|
 
 #### Response
 
@@ -141,7 +142,7 @@ location strategy, starting from the root node.
 |Name|Description|Type|
 |--|--|--|
 |`element-6066-11e4-a52e-4f735466cecf`|The element ID|string|
-|`ELEMENT`|The element ID used in the obsolete Mobile JSON Wire Protocol (MJSONWP). Has the same value as `element-6066-11e4-a52e-4f735466cecf`.|string|
+|`ELEMENT`|The element ID used in the legacy Mobile JSON Wire Protocol (MJSONWP). Has the same value as `element-6066-11e4-a52e-4f735466cecf`.|string|
 
 ### `findElements`
 
@@ -261,7 +262,7 @@ GET /session/:sessionId/source
 
 > WebDriver documentation: [Get Page Source](https://w3c.github.io/webdriver/#get-page-source)
 
-Retrieves the page/application source of the current browsing context as HTML/XML
+Retrieves the page/application source of the current browsing context in HTML/XML format.
 
 #### Response
 

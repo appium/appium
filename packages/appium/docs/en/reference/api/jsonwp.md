@@ -7,8 +7,8 @@ title: JSON Wire Protocol
   }
 </style>
 
-This page lists the Appium endpoints defined in the legacy
-[JSON Wire Protocol (JSONWP)](https://www.selenium.dev/documentation/legacy/json_wire_protocol/).
+The following is a list of legacy [JSON Wire Protocol (JSONWP)](https://www.selenium.dev/documentation/legacy/json_wire_protocol/)
+endpoints used in Appium.
 
 ### `getSession`
 
@@ -26,8 +26,8 @@ the event history and timings.
 
 !!! warning "Deprecated"
 
-    For retrieving capabilities, please use `getAppiumSessionCapabilities`.<br />
-    For retrieving event history, please use `getLogEvents`.
+    For retrieving capabilities, please use [`getAppiumSessionCapabilities`](./appium.md#getappiumsessioncapabilities).<br />
+    For retrieving event history, please use [`getLogEvents`](./appium.md#getlogevents).
 
 #### Response
 

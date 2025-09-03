@@ -45,6 +45,7 @@ nav:
       - API Endpoints:
           - reference/api/index.md
           - reference/api/webdriver.md
+          - reference/api/jsonwp.md
           - reference/api/plugins.md
   - Guides:
       - Migration:

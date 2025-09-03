@@ -51,11 +51,21 @@ function hasValue(val) {
   return !_.isUndefined(val) && !_.isNull(val);
 }
 
-// escape spaces in string, for commandline calls
+/**
+ * Escape spaces in string, for commandline calls
+ * @param {string} str - The string to escape spaces in
+ * @returns {string} The string with escaped spaces
+ */
 function escapeSpace(str) {
   return str.split(/ /).join('\\ ');
 }
 
+/**
+ * Escape special characters in string
+ * @param {string|any} str - The string to escape special characters in
+ * @param {boolean} [quoteEscape=false] - Whether to escape quotes
+ * @returns {string|any} The string with escaped special characters, or original value if not a string
+ */
 function escapeSpecialChars(str, quoteEscape) {
   if (typeof str !== 'string') {
     return str;
@@ -80,6 +90,10 @@ function escapeSpecialChars(str, quoteEscape) {
   return str;
 }
 
+/**
+ * Get the local IP address of the machine
+ * @returns {string} The local IP address, defaults to '127.0.0.1' if not found
+ */
 function localIp() {
   let ip = _.chain(os.networkInterfaces())
     .values()

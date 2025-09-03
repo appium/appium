@@ -46,6 +46,8 @@ nav:
           - reference/api/index.md
           - reference/api/webdriver.md
           - reference/api/jsonwp.md
+          - reference/api/appium.md
+          - reference/api/others.md
           - reference/api/plugins.md
   - Guides:
       - Migration:

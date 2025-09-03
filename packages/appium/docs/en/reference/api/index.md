@@ -19,4 +19,6 @@ All endpoint listings are grouped by their protocol, with an additional group fo
 
 * [WebDriver Protocol](./webdriver.md)
 * [JSON Wire Protocol](./jsonwp.md)
+* [Appium Protocol](./appium.md)
+* [Other Protocols](./others.md)
 * [Endpoints Used by Official Plugins](./plugins.md)

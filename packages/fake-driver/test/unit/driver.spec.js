@@ -38,4 +38,11 @@ describe('FakeDriver', function () {
     await d1.deleteSession(session1Id);
     await d2.deleteSession(session2Id);
   });
+  it('should return deprecated commands called', async function () {
+    let driver = new FakeDriver();
+    let [sessionId] = await driver.createSession(null, null, _.cloneDeep(W3C_CAPS));
+    let deprecatedCommands = await driver.getDeprecatedCommandsCalled();
+    deprecatedCommands.should.be.an('array');
+    await driver.deleteSession(sessionId);
+  });
 });

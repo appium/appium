@@ -1,5 +1,6 @@
 import B from 'bluebird';
 import {BaseDriver, errors} from 'appium/driver';
+import {deprecatedCommandsLogged} from '@appium/base-driver/lib/protocol/protocol';
 import {FakeApp} from './fake-app';
 
 const FAKE_DRIVER_CONSTRAINTS = /** @type {const} */ ({
@@ -118,8 +119,7 @@ export class FakeDriver extends BaseDriver {
    * @returns {Promise<[string,FakeDriverCaps]>}
    */
   async createSession(w3cCapabilities1, w3cCapabilities2, w3cCapabilities3, driverData = []) {
-    // TODO add validation on caps.app that we will get for free from
-    // BaseDriver
+    // BaseDriver automatically validates capabilities using desiredCapConstraints
 
     // check to see if any other sessions have set uniqueApp. If so, emulate
     // not being able to start a session because of system resources
@@ -221,8 +221,7 @@ export class FakeDriver extends BaseDriver {
    */
   async getDeprecatedCommandsCalled() {
     await B.delay(1);
-    // TODO: Properly get deprecatedCommandsLogged list from the base-driver
-    return [];
+    return Array.from(deprecatedCommandsLogged);
   }
 
   /**

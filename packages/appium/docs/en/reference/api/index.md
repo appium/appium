@@ -15,11 +15,10 @@ but may additionally define endpoints of their own. Refer to the documentation o
 The recommended way of calling these API endpoints is through your [Appium client](../../ecosystem/clients.md).
 Refer to the documentation of your client for the exact commands used to invoke specific endpoints.
 
-The endpoint listings are as follows:
+All endpoint listings are grouped by their protocol, with an additional group for plugin endpoints:
 
-* [Base Driver](./base-driver.md)
-* [Execute Driver Plugin](./execute-driver-plugin.md)
-* [Images Plugin](./images-plugin.md)
-* [Relaxed Caps Plugin](./relaxed-caps-plugin.md)
-* [Storage Plugin](./storage-plugin.md)
-* [Universal XML Plugin](./universal-xml-plugin.md)
+* [WebDriver Protocol](./webdriver.md)
+* [JSON Wire Protocol](./jsonwp.md)
+* [Appium Protocol](./appium.md)
+* [Other Protocols](./others.md)
+* [Endpoints Used by Official Plugins](./plugins.md)

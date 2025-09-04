@@ -21,7 +21,7 @@ The interface defines the following methods and properties:
 
 - `diagnose(): Promise<DoctorCheckResult>`: Contains the code to diagnose a possible issue
 - `fix(): Promise<string|null>`: Either fixes the actual problem if `hasAutofix()` returns true or
-  returns a string description for possible manual fixes. If this method throws an exception named
+ returns a string description for possible manual fixes. If this method throws an exception named
  `FixSkippedError` and `hasAutofix()` returns true then the result of the method invocation
  is going to be ignored.
 - `hasAutofix(): boolean`: Whether calling `fix()` would resolve the found issue

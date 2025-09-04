@@ -42,7 +42,7 @@
     "@appium/opencv": "^4.0.0",
     "@appium/support": "^7.0.0",
     "lodash": "4.17.21",
-    "lru-cache": "11.1.0",
+    "lru-cache": "11.2.1",
     "sharp": "0.34.3",
     "source-map-support": "0.5.21"
   },

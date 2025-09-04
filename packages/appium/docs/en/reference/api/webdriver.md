@@ -117,6 +117,326 @@ Sets the timeout values of the current session.
 
 `null`
 
+### `setUrl`
+
+```
+POST /session/:sessionId/url
+```
+
+> WebDriver documentation: [Navigate To](https://w3c.github.io/webdriver/#navigate-to)
+
+Navigates the current top-level browsing context to the specified URL.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`url`|The URL to navigate to|string|
+
+#### Response
+
+`null`
+
+### `getUrl`
+
+```
+GET /session/:sessionId/url
+```
+
+> WebDriver documentation: [Get Current URL](https://w3c.github.io/webdriver/#get-current-url)
+
+Retrieves the URL of the current top-level browsing context.
+
+#### Response
+
+`string` - the current URL
+
+### `back`
+
+```
+POST /session/:sessionId/back
+```
+
+> WebDriver documentation: [Back](https://w3c.github.io/webdriver/#back)
+
+Navigates backwards in the browser history, if possible.
+
+#### Response
+
+`null`
+
+### `forward`
+
+```
+POST /session/:sessionId/forward
+```
+
+> WebDriver documentation: [Forward](https://w3c.github.io/webdriver/#forward)
+
+Navigates forwards in the browser history, if possible.
+
+#### Response
+
+`null`
+
+### `refresh`
+
+```
+POST /session/:sessionId/refresh
+```
+
+> WebDriver documentation: [Refresh](https://w3c.github.io/webdriver/#refresh)
+
+Reloads the window of the current top-level browsing context.
+
+#### Response
+
+`null`
+
+### `title`
+
+```
+GET /session/:sessionId/title
+```
+
+> WebDriver documentation: [Get Title](https://w3c.github.io/webdriver/#get-title)
+
+Retrieves the window title of the top-level browsing context.
+
+#### Response
+
+`string` - the page title
+
+### `getWindowHandle`
+
+```
+GET /session/:sessionId/window
+```
+
+> WebDriver documentation: [Get Window Handle](https://w3c.github.io/webdriver/#get-window-handle)
+
+Retrieves the window handle of the top-level browsing context.
+
+#### Response
+
+`string` - the window handle identifier
+
+### `closeWindow`
+
+```
+DELETE /session/:sessionId/window
+```
+
+> WebDriver documentation: [Close Window](https://w3c.github.io/webdriver/#close-window)
+
+Closes the current top-level browsing context.
+
+#### Response
+
+`string[]` - an array of zero or more remaining window handle identifiers
+
+### `setWindow`
+
+```
+POST /session/:sessionId/window
+```
+
+> WebDriver documentation: [Switch To Window](https://w3c.github.io/webdriver/#switch-to-window)
+
+Selects the top-level browsing context.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`handle`|Identifier for the window to switch to|string|
+
+#### Response
+
+`null`
+
+### `getWindowHandles`
+
+```
+GET /session/:sessionId/window/handles
+```
+
+> WebDriver documentation: [Get Window Handles](https://w3c.github.io/webdriver/#get-window-handles)
+
+Retrieves a list of window handles for every top-level browsing context.
+
+#### Response
+
+`string[]` - an array of zero or more window handle identifiers
+
+### `createNewWindow`
+
+```
+POST /session/:sessionId/window/new
+```
+
+> WebDriver documentation: [New Window](https://w3c.github.io/webdriver/#new-window)
+
+Creates a new window or tab.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`type?`|Type of window to create (`window` or `tab`)|string|
+
+#### Response
+
+`object` - window handle and type
+
+
+### `setFrame`
+
+```
+POST /session/:sessionId/frame
+```
+
+> WebDriver documentation: [Switch To Frame](https://w3c.github.io/webdriver/#switch-to-frame)
+
+Changes focus to another frame on the page.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`id`|Identifier for the frame (index, element, or null)|number \| string \| object|
+
+#### Response
+
+`null`
+
+### `switchToParentFrame`
+
+```
+POST /session/:sessionId/frame/parent
+```
+
+> WebDriver documentation: [Switch To Parent Frame](https://w3c.github.io/webdriver/#switch-to-parent-frame)
+
+Changes focus to the parent frame.
+
+#### Response
+
+`null`
+
+### `getWindowRect`
+
+```
+GET /session/:sessionId/window/rect
+```
+
+> WebDriver documentation: [Get Window Rect](https://w3c.github.io/webdriver/#get-window-rect)
+
+Retrieves the size and position of the current window.
+
+#### Response
+
+`object` - an object with `x`, `y`, `width`, and `height` properties
+
+### `setWindowRect`
+
+```
+POST /session/:sessionId/window/rect
+```
+
+> WebDriver documentation: [Set Window Rect](https://w3c.github.io/webdriver/#set-window-rect)
+
+Sets the size and/or position of the current window.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`x?`|X coordinate of the window|number|
+|`y?`|Y coordinate of the window|number|
+|`width?`|Width of the window|number|
+|`height?`|Height of the window|number|
+
+#### Response
+
+`object` - an object with `x`, `y`, `width`, and `height` properties
+
+### `maximizeWindow`
+
+```
+POST /session/:sessionId/window/maximize
+```
+
+> WebDriver documentation: [Maximize Window](https://w3c.github.io/webdriver/#maximize-window)
+
+Maximizes the current window.
+
+#### Response
+
+`object` - window rect information
+
+### `minimizeWindow`
+
+```
+POST /session/:sessionId/window/minimize
+```
+
+> WebDriver documentation: [Minimize Window](https://w3c.github.io/webdriver/#minimize-window)
+
+Minimizes the current window.
+
+#### Response
+
+`object` - window rect information
+
+### `fullScreenWindow`
+
+```
+POST /session/:sessionId/window/fullscreen
+```
+
+> WebDriver documentation: [Fullscreen Window](https://w3c.github.io/webdriver/#fullscreen-window)
+
+Makes the current window fullscreen.
+
+#### Response
+
+`object` - window rect information
+
+### `active`
+
+```
+GET /session/:sessionId/element/active
+```
+
+> WebDriver documentation: [Get Active Element](https://w3c.github.io/webdriver/#get-active-element)
+
+Retrieves the element on the page that currently has focus.
+
+#### Response
+
+[`Element`](#response_5)
+
+### `elementShadowRoot`
+
+```
+GET /session/:sessionId/element/:elementId/shadow
+```
+
+> WebDriver documentation: [Get Shadow Root](https://w3c.github.io/webdriver/#get-shadow-root)
+
+Retrieves the shadow root of the specified element.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`elementId`|ID of the element|string|
+
+#### Response
+
+`object` - shadow root object
+
 ### `findElement`
 
 ```
@@ -254,6 +574,290 @@ strategy, starting from the shadow root node identified by `:shadowId`.
 
 [`Element[]`](#response_6)
 
+### `elementSelected`
+
+```
+GET /session/:sessionId/element/:elementId/selected
+```
+
+> WebDriver documentation: [Is Element Selected](https://w3c.github.io/webdriver/#is-element-selected)
+
+Determines if an element is currently selected.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`elementId`|ID of the element|string|
+
+#### Response
+
+`boolean`
+
+### `elementDisplayed`
+
+```
+GET /session/:sessionId/element/:elementId/displayed
+```
+
+> WebDriver documentation: [Element Displayedness](https://w3c.github.io/webdriver/#element-displayedness)
+
+Determines if an element is currently displayed.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`elementId`|ID of the element|string|
+
+#### Response
+
+`boolean`
+
+### `getAttribute`
+
+```
+GET /session/:sessionId/element/:elementId/attribute/:name
+```
+
+> WebDriver documentation: [Get Element Attribute](https://w3c.github.io/webdriver/#get-element-attribute)
+
+Gets the value of an element's attribute.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`elementId`|ID of the element|string|
+|`name`|Attribute name|string|
+
+#### Response
+
+`string` - attribute value
+
+### `getProperty`
+
+```
+GET /session/:sessionId/element/:elementId/property/:name
+```
+
+> WebDriver documentation: [Get Element Property](https://w3c.github.io/webdriver/#get-element-property)
+
+Gets the value of an element's property.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`elementId`|ID of the element|string|
+|`name`|Property name|string|
+
+#### Response
+
+`string` - property value
+
+### `getCssProperty`
+
+```
+GET /session/:sessionId/element/:elementId/css/:propertyName
+```
+
+> WebDriver documentation: [Get Element CSS Value](https://w3c.github.io/webdriver/#get-element-css-value)
+
+Queries the value of an element's computed CSS property.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`elementId`|ID of the element|string|
+|`propertyName`|CSS property name|string|
+
+#### Response
+
+`string` - CSS property value
+
+### `getText`
+
+```
+GET /session/:sessionId/element/:elementId/text
+```
+
+> WebDriver documentation: [Get Element Text](https://w3c.github.io/webdriver/#get-element-text)
+
+Returns the visible text for the specified element.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`elementId`|ID of the element|string|
+
+#### Response
+
+`string` - visible text
+
+### `getName`
+
+```
+GET /session/:sessionId/element/:elementId/name
+```
+
+> WebDriver documentation: [Get Element Tag Name](https://w3c.github.io/webdriver/#get-element-tag-name)
+
+Queries for an element's tag name.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`elementId`|ID of the element|string|
+
+#### Response
+
+`string` - tag name
+
+### `getElementRect`
+
+```
+GET /session/:sessionId/element/:elementId/rect
+```
+
+> WebDriver documentation: [Get Element Rect](https://w3c.github.io/webdriver/#get-element-rect)
+
+Retrieves the dimensions and coordinates of the specified element.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`elementId`|ID of the element|string|
+
+#### Response
+
+`object` - an object with `x`, `y`, `width`, and `height` properties
+
+### `elementEnabled`
+
+```
+GET /session/:sessionId/element/:elementId/enabled
+```
+
+> WebDriver documentation: [Is Element Enabled](https://w3c.github.io/webdriver/#is-element-enabled)
+
+Determines if an element is currently enabled.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`elementId`|ID of the element|string|
+
+#### Response
+
+`boolean`
+
+### `getComputedRole`
+
+```
+GET /session/:sessionId/element/:elementId/computedrole
+```
+
+> WebDriver documentation: [Get Computed Role](https://www.w3.org/TR/webdriver2/#get-computed-role)
+
+Gets the computed role of the element.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`elementId`|ID of the element|string|
+
+#### Response
+
+`string` - computed role
+
+### `getComputedLabel`
+
+```
+GET /session/:sessionId/element/:elementId/computedlabel
+```
+
+> WebDriver documentation: [Get Computed Label](https://www.w3.org/TR/webdriver2/#get-computed-label)
+
+Gets the computed label of the element.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`elementId`|ID of the element|string|
+
+#### Response
+
+`string` - computed label
+
+### `click`
+
+```
+POST /session/:sessionId/element/:elementId/click
+```
+
+> WebDriver documentation: [Element Click](https://w3c.github.io/webdriver/#element-click)
+
+Clicks on the specified element.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`elementId`|ID of the element to click|string|
+
+#### Response
+
+`null`
+
+### `clear`
+
+```
+POST /session/:sessionId/element/:elementId/clear
+```
+
+> WebDriver documentation: [Clear Element](https://w3c.github.io/webdriver/#clear-element)
+
+Clears a text element's value.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`elementId`|ID of the element|string|
+
+#### Response
+
+`null`
+
+### `setValue`
+
+```
+POST /session/:sessionId/element/:elementId/value
+```
+
+> WebDriver documentation: [Element Send Keys](https://w3c.github.io/webdriver/#element-send-keys)
+
+Sends a sequence of key strokes to the specified element.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`elementId`|ID of the element|string|
+|`text`|Text to send|string|
+
+#### Response
+
+`null`
+
 ### `getPageSource`
 
 ```
@@ -267,3 +871,264 @@ Retrieves the page/application source of the current browsing context in HTML/XM
 #### Response
 
 `string` - the DOM of the current browsing context
+
+### `execute`
+
+```
+POST /session/:sessionId/execute/sync
+```
+
+> WebDriver documentation: [Execute Script](https://w3c.github.io/webdriver/#execute-script)
+
+Executes a synchronous JavaScript script in the current browsing context.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`script`|The script to execute|string|
+|`args`|Arguments for the script|array|
+
+#### Response
+
+`any` - the result of the script execution
+
+### `executeAsync`
+
+```
+POST /session/:sessionId/execute/async
+```
+
+> WebDriver documentation: [Execute Async Script](https://w3c.github.io/webdriver/#execute-async-script)
+
+Executes an asynchronous JavaScript script in the current browsing context.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`script`|The script to execute|string|
+|`args`|Arguments for the script|array|
+
+#### Response
+
+`any` - the result of the script execution
+
+### `getCookies`
+
+```
+GET /session/:sessionId/cookie
+```
+
+> WebDriver documentation: [Get Cookies](https://w3c.github.io/webdriver/#get-cookies)
+
+Retrieves all cookies visible to the current page.
+
+#### Response
+
+`object[]` - array of cookie objects
+
+### `getCookie`
+
+```
+GET /session/:sessionId/cookie/:name
+```
+
+> WebDriver documentation: [Get Named Cookie](https://w3c.github.io/webdriver/#get-named-cookie)
+
+Retrieves a cookie by name.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`name`|Name of the cookie|string|
+
+#### Response
+
+`object` - cookie object
+
+### `setCookie`
+
+```
+POST /session/:sessionId/cookie
+```
+
+> WebDriver documentation: [Add Cookie](https://w3c.github.io/webdriver/#add-cookie)
+
+Sets a cookie.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`cookie`|Cookie object to set|object|
+
+#### Response
+
+`null`
+
+### `deleteCookie`
+
+```
+DELETE /session/:sessionId/cookie/:name
+```
+
+> WebDriver documentation: [Delete Cookie](https://w3c.github.io/webdriver/#delete-cookie)
+
+Deletes a cookie by name.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`name`|Name of the cookie|string|
+
+#### Response
+
+`null`
+
+### `deleteCookies`
+
+```
+DELETE /session/:sessionId/cookie
+```
+
+> WebDriver documentation: [Delete All Cookies](https://w3c.github.io/webdriver/#delete-all-cookies)
+
+Deletes all cookies visible to the current page.
+
+#### Response
+
+`null`
+
+
+### `performActions`
+
+```
+POST /session/:sessionId/actions
+```
+
+> WebDriver documentation: [Perform Actions](https://w3c.github.io/webdriver/#perform-actions)
+
+Performs a sequence of actions.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`actions`|Array of action objects|object[]|
+
+#### Response
+
+`null`
+
+### `releaseActions`
+
+```
+DELETE /session/:sessionId/actions
+```
+
+> WebDriver documentation: [Release Actions](https://w3c.github.io/webdriver/#release-actions)
+
+Releases all actions.
+
+#### Response
+
+`null`
+
+### `postDismissAlert`
+
+```
+POST /session/:sessionId/alert/dismiss
+```
+
+> WebDriver documentation: [Dismiss Alert](https://w3c.github.io/webdriver/#dismiss-alert)
+
+Dismisses the currently displayed alert dialog.
+
+#### Response
+
+`null`
+
+### `postAcceptAlert`
+
+```
+POST /session/:sessionId/alert/accept
+```
+
+> WebDriver documentation: [Accept Alert](https://w3c.github.io/webdriver/#accept-alert)
+
+Accepts the currently displayed alert dialog.
+
+#### Response
+
+`null`
+
+### `getAlertText`
+
+```
+GET /session/:sessionId/alert/text
+```
+
+> WebDriver documentation: [Get Alert Text](https://w3c.github.io/webdriver/#get-alert-text)
+
+Gets the text of the currently displayed alert dialog.
+
+#### Response
+
+`string` - alert text
+
+### `setAlertText`
+
+```
+POST /session/:sessionId/alert/text
+```
+
+> WebDriver documentation: [Set Alert Text](https://w3c.github.io/webdriver/#set-alert-text)
+
+Sets the text of the currently displayed alert dialog.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`text`|Text to set|string|
+
+#### Response
+
+`null`
+
+### `getScreenshot`
+
+```
+GET /session/:sessionId/screenshot
+```
+
+> WebDriver documentation: [Take Screenshot](https://w3c.github.io/webdriver/#take-screenshot)
+
+Takes a screenshot of the current browsing context.
+
+#### Response
+
+`string` - a base64-encoded PNG image
+
+### `getElementScreenshot`
+
+```
+GET /session/:sessionId/element/:elementId/screenshot
+```
+
+> WebDriver documentation: [Take Element Screenshot](https://w3c.github.io/webdriver/#take-element-screenshot)
+
+Takes a screenshot of the specified element.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`elementId`|ID of the element|string|
+
+#### Response
+
+`string` - a base64-encoded PNG image

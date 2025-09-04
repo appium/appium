@@ -23,8 +23,7 @@ class AppiumTest < Test::Unit::TestCase
     @driver&.quit
   end
 
-  def test_version
-    @driver.wait { |d| d.find_element :xpath, '//*[@text="Battery"]' }.click
+  def test_find_apps
+    @driver.wait { |d| d.find_element :xpath, '//*[@text="Apps"]' }.click
   end
 end
-

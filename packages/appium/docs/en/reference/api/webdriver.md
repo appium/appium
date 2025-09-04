@@ -283,11 +283,16 @@ Creates a new window or tab.
 
 |Name|Description|Type|
 |--|--|--|
-|`type?`|Type of window to create (`window` or `tab`)|string|
+|`type`|Type of window to create (`window` or `tab`)|string|
 
 #### Response
 
-`object` - window handle and type
+`NewWindow` -  an object with the following properties:
+
+|Name|Description|Type|
+|--|--|--|
+|`handle`|ID of the created window handle|string|
+|`type`|Type of the created window (`window` or `tab`)|string|
 
 
 ### `setFrame`
@@ -298,13 +303,13 @@ POST /session/:sessionId/frame
 
 > WebDriver documentation: [Switch To Frame](https://w3c.github.io/webdriver/#switch-to-frame)
 
-Changes focus to another frame on the page.
+Selects the top-level or child browsing context as the current browsing context.
 
 #### Parameters
 
 |Name|Description|Type|
 |--|--|--|
-|`id`|Identifier for the frame (index, element, or null)|number \| string \| object|
+|`id`|Identifier for the frame|null, number, or [`Element`](#response_23)|
 
 #### Response
 
@@ -318,7 +323,7 @@ POST /session/:sessionId/frame/parent
 
 > WebDriver documentation: [Switch To Parent Frame](https://w3c.github.io/webdriver/#switch-to-parent-frame)
 
-Changes focus to the parent frame.
+Sets the current browsing context to the parent of the current browsing context.
 
 #### Response
 
@@ -336,7 +341,14 @@ Retrieves the size and position of the current window.
 
 #### Response
 
-`object` - an object with `x`, `y`, `width`, and `height` properties
+`Rect` -  an object with the following properties:
+
+|Name|Description|Type|
+|--|--|--|
+|`height`|Window height|number|
+|`width`|Window width|number|
+|`x`|X-axis position of the top-left corner of the window|number|
+|`y`|Y-axis position of the top-left corner of the window|number|
 
 ### `setWindowRect`
 
@@ -352,14 +364,14 @@ Sets the size and/or position of the current window.
 
 |Name|Description|Type|
 |--|--|--|
-|`x?`|X coordinate of the window|number|
-|`y?`|Y coordinate of the window|number|
-|`width?`|Width of the window|number|
-|`height?`|Height of the window|number|
+|`height?`|Window height|number|
+|`width?`|Window width|number|
+|`x?`|X-axis position of the top-left corner of the window|number|
+|`y?`|Y-axis position of the top-left corner of the window|number|
 
 #### Response
 
-`object` - an object with `x`, `y`, `width`, and `height` properties
+[`Rect`](#response_18) - the new window size
 
 ### `maximizeWindow`
 
@@ -373,7 +385,7 @@ Maximizes the current window.
 
 #### Response
 
-`object` - window rect information
+[`Rect`](#response_18) - the new window size
 
 ### `minimizeWindow`
 
@@ -387,7 +399,7 @@ Minimizes the current window.
 
 #### Response
 
-`object` - window rect information
+[`Rect`](#response_18) - the new window size
 
 ### `fullScreenWindow`
 
@@ -401,7 +413,7 @@ Makes the current window fullscreen.
 
 #### Response
 
-`object` - window rect information
+[`Rect`](#response_18) - the new window size
 
 ### `active`
 
@@ -411,11 +423,16 @@ GET /session/:sessionId/element/active
 
 > WebDriver documentation: [Get Active Element](https://w3c.github.io/webdriver/#get-active-element)
 
-Retrieves the element on the page that currently has focus.
+Retrieves the currently focused element.
 
 #### Response
 
-[`Element`](#response_5)
+`Element` - an object with the following properties:
+
+|Name|Description|Type|
+|--|--|--|
+|`element-6066-11e4-a52e-4f735466cecf`|Element ID|string|
+|`ELEMENT`|Element ID (same value as `element-6066-11e4-a52e-4f735466cecf`). This key was used in the legacy Mobile JSON Wire Protocol (MJSONWP).|string|
 
 ### `elementShadowRoot`
 
@@ -425,17 +442,15 @@ GET /session/:sessionId/element/:elementId/shadow
 
 > WebDriver documentation: [Get Shadow Root](https://w3c.github.io/webdriver/#get-shadow-root)
 
-Retrieves the shadow root of the specified element.
-
-#### Parameters
-
-|Name|Description|Type|
-|--|--|--|
-|`elementId`|ID of the element|string|
+Retrieves the shadow root of the element identified by `:elementId`.
 
 #### Response
 
-`object` - shadow root object
+`ShadowElement` - an object with the following properties:
+
+|Name|Description|Type|
+|--|--|--|
+|`shadow-6066-11e4-a52e-4f735466cecf`|Shadow root ID|string|
 
 ### `findElement`
 
@@ -457,12 +472,7 @@ location strategy, starting from the root node.
 
 #### Response
 
-`Element` - an object with the following properties:
-
-|Name|Description|Type|
-|--|--|--|
-|`element-6066-11e4-a52e-4f735466cecf`|The element ID|string|
-|`ELEMENT`|The element ID used in the legacy Mobile JSON Wire Protocol (MJSONWP). Has the same value as `element-6066-11e4-a52e-4f735466cecf`.|string|
+[`Element`](#response_23)
 
 ### `findElements`
 
@@ -484,7 +494,7 @@ strategy, starting from the root node.
 
 #### Response
 
-`Element[]` - an array containing zero or more [`Element` objects](#response_5)
+`Element[]` - an array containing zero or more [`Element` objects](#response_23)
 
 ### `findElementFromElement`
 
@@ -506,7 +516,7 @@ location strategy, starting from the element node identified by `:elementId`.
 
 #### Response
 
-[`Element`](#response_5)
+[`Element`](#response_23)
 
 ### `findElementsFromElement`
 
@@ -528,7 +538,7 @@ strategy, starting from the element node identified by `:elementId`.
 
 #### Response
 
-[`Element[]`](#response_6)
+[`Element[]`](#response_26)
 
 ### `findElementFromShadowRoot`
 
@@ -550,7 +560,7 @@ location strategy, starting from the shadow root node identified by `:shadowId`.
 
 #### Response
 
-[`Element`](#response_5)
+[`Element`](#response_23)
 
 ### `findElementsFromShadowRoot`
 
@@ -572,7 +582,7 @@ strategy, starting from the shadow root node identified by `:shadowId`.
 
 #### Response
 
-[`Element[]`](#response_6)
+[`Element[]`](#response_26)
 
 ### `elementSelected`
 

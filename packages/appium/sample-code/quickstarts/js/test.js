@@ -18,8 +18,8 @@ const wdOpts = {
 async function runTest() {
   const driver = await remote(wdOpts);
   try {
-    const batteryItem = await driver.$('//*[@text="Battery"]');
-    await batteryItem.click();
+    const appsItem = await driver.$('//*[@text="Apps"]');
+    await appsItem.click();
   } finally {
     await driver.pause(1000);
     await driver.deleteSession();

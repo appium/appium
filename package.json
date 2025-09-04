@@ -106,7 +106,7 @@
     "@types/ncp": "2.0.8",
     "@types/node": "22.18.0",
     "@types/pluralize": "0.0.33",
-    "@types/semver": "7.7.0",
+    "@types/semver": "7.7.1",
     "@types/serve-favicon": "2.5.7",
     "@types/shell-quote": "1.7.5",
     "@types/sinon": "17.0.4",

@@ -10,6 +10,10 @@ title: WebDriver Protocol
 The following is a list of [W3C WebDriver protocol](https://w3c.github.io/webdriver/) endpoints
 used in Appium.
 
+!!! note
+
+    Drivers or plugins may implement modified versions of these endpoints.
+
 ### `createSession`
 
 ```
@@ -131,7 +135,7 @@ Navigates the current top-level browsing context to the specified URL.
 
 |Name|Description|Type|
 |--|--|--|
-|`url`|The URL to navigate to|string|
+|`url`|URL to navigate to|string|
 
 #### Response
 
@@ -592,17 +596,12 @@ GET /session/:sessionId/element/:elementId/selected
 
 > WebDriver documentation: [Is Element Selected](https://w3c.github.io/webdriver/#is-element-selected)
 
-Determines if an element is currently selected.
-
-#### Parameters
-
-|Name|Description|Type|
-|--|--|--|
-|`elementId`|ID of the element|string|
+Determines if the element identified by `:elementId` is currently selected. This property is only
+relevant to certain elements types, such as checkboxes, radio buttons, or options.
 
 #### Response
 
-`boolean`
+`boolean` - `true` if the element is selected, otherwise `false`
 
 ### `elementDisplayed`
 
@@ -612,17 +611,11 @@ GET /session/:sessionId/element/:elementId/displayed
 
 > WebDriver documentation: [Element Displayedness](https://w3c.github.io/webdriver/#element-displayedness)
 
-Determines if an element is currently displayed.
-
-#### Parameters
-
-|Name|Description|Type|
-|--|--|--|
-|`elementId`|ID of the element|string|
+Determines if the element identified by `:elementId` is currently displayed.
 
 #### Response
 
-`boolean`
+`boolean` - `true` if the element is displayed, otherwise `false`
 
 ### `getAttribute`
 
@@ -632,18 +625,11 @@ GET /session/:sessionId/element/:elementId/attribute/:name
 
 > WebDriver documentation: [Get Element Attribute](https://w3c.github.io/webdriver/#get-element-attribute)
 
-Gets the value of an element's attribute.
-
-#### Parameters
-
-|Name|Description|Type|
-|--|--|--|
-|`elementId`|ID of the element|string|
-|`name`|Attribute name|string|
+Retrieves the value of the `:name` attribute for the element identified by `:elementId`.
 
 #### Response
 
-`string` - attribute value
+`string` - the attribute value, or `null` if the attribute does not exist
 
 ### `getProperty`
 
@@ -653,18 +639,11 @@ GET /session/:sessionId/element/:elementId/property/:name
 
 > WebDriver documentation: [Get Element Property](https://w3c.github.io/webdriver/#get-element-property)
 
-Gets the value of an element's property.
-
-#### Parameters
-
-|Name|Description|Type|
-|--|--|--|
-|`elementId`|ID of the element|string|
-|`name`|Property name|string|
+Retrieves the value of the `:name` property for the element identified by `:elementId`.
 
 #### Response
 
-`string` - property value
+`string` - the property value, or `null` if the property does not exist
 
 ### `getCssProperty`
 
@@ -674,18 +653,12 @@ GET /session/:sessionId/element/:elementId/css/:propertyName
 
 > WebDriver documentation: [Get Element CSS Value](https://w3c.github.io/webdriver/#get-element-css-value)
 
-Queries the value of an element's computed CSS property.
-
-#### Parameters
-
-|Name|Description|Type|
-|--|--|--|
-|`elementId`|ID of the element|string|
-|`propertyName`|CSS property name|string|
+Retrieves the value of the `:propertyName` computed CSS property for the element identified by
+`:elementId`.
 
 #### Response
 
-`string` - CSS property value
+`string` - the CSS property value, or `null` if the property does not exist
 
 ### `getText`
 
@@ -695,17 +668,12 @@ GET /session/:sessionId/element/:elementId/text
 
 > WebDriver documentation: [Get Element Text](https://w3c.github.io/webdriver/#get-element-text)
 
-Returns the visible text for the specified element.
-
-#### Parameters
-
-|Name|Description|Type|
-|--|--|--|
-|`elementId`|ID of the element|string|
+Retrieves the text of the element identified by `:elementId`, as well as the text of its child
+elements (if any).
 
 #### Response
 
-`string` - visible text
+`string` - the element text (including its child elements)
 
 ### `getName`
 
@@ -715,17 +683,11 @@ GET /session/:sessionId/element/:elementId/name
 
 > WebDriver documentation: [Get Element Tag Name](https://w3c.github.io/webdriver/#get-element-tag-name)
 
-Queries for an element's tag name.
-
-#### Parameters
-
-|Name|Description|Type|
-|--|--|--|
-|`elementId`|ID of the element|string|
+Retrieves the tag name of the element identified by `:elementId`.
 
 #### Response
 
-`string` - tag name
+`string` - the element tag name
 
 ### `getElementRect`
 
@@ -735,17 +697,11 @@ GET /session/:sessionId/element/:elementId/rect
 
 > WebDriver documentation: [Get Element Rect](https://w3c.github.io/webdriver/#get-element-rect)
 
-Retrieves the dimensions and coordinates of the specified element.
-
-#### Parameters
-
-|Name|Description|Type|
-|--|--|--|
-|`elementId`|ID of the element|string|
+Retrieves the dimensions and coordinates of the element identified by `:elementId`.
 
 #### Response
 
-`object` - an object with `x`, `y`, `width`, and `height` properties
+[`Rect`](#response_18)
 
 ### `elementEnabled`
 
@@ -755,17 +711,12 @@ GET /session/:sessionId/element/:elementId/enabled
 
 > WebDriver documentation: [Is Element Enabled](https://w3c.github.io/webdriver/#is-element-enabled)
 
-Determines if an element is currently enabled.
-
-#### Parameters
-
-|Name|Description|Type|
-|--|--|--|
-|`elementId`|ID of the element|string|
+Determines if the element identified by `:elementId` is currently enabled. This property is only
+relevant to certain elements types, such as buttons, input fields, checkboxes, etc.
 
 #### Response
 
-`boolean`
+`boolean` - `true` if the element is enabled, otherwise `false`
 
 ### `getComputedRole`
 
@@ -773,19 +724,14 @@ Determines if an element is currently enabled.
 GET /session/:sessionId/element/:elementId/computedrole
 ```
 
-> WebDriver documentation: [Get Computed Role](https://www.w3.org/TR/webdriver2/#get-computed-role)
+> WebDriver documentation: [Get Computed Role](https://w3c.github.io/webdriver/#get-computed-role)
 
-Gets the computed role of the element.
-
-#### Parameters
-
-|Name|Description|Type|
-|--|--|--|
-|`elementId`|ID of the element|string|
+Retrieves the computed [WAI-ARIA](https://w3c.github.io/aria/#introroles) role of the element
+identified by `:elementId`.
 
 #### Response
 
-`string` - computed role
+`string` - the element computed role
 
 ### `getComputedLabel`
 
@@ -793,19 +739,14 @@ Gets the computed role of the element.
 GET /session/:sessionId/element/:elementId/computedlabel
 ```
 
-> WebDriver documentation: [Get Computed Label](https://www.w3.org/TR/webdriver2/#get-computed-label)
+> WebDriver documentation: [Get Computed Label](https://w3c.github.io/webdriver/#get-computed-label)
 
-Gets the computed label of the element.
-
-#### Parameters
-
-|Name|Description|Type|
-|--|--|--|
-|`elementId`|ID of the element|string|
+Retrieves the [accessible name](https://w3c.github.io/accname/#dfn-accessible-name) of the
+element identified by `:elementId`.
 
 #### Response
 
-`string` - computed label
+`string` - the element accessible name
 
 ### `click`
 

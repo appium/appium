@@ -92,7 +92,7 @@ function escapeSpecialChars(str, quoteEscape) {
 
 /**
  * Get the local IP address of the machine
- * @returns {string} The local IP address, defaults to '127.0.0.1' if not found
+ * @returns {string|undefined} The local IP address of the first external IPv4 interface, or undefined if not found
  */
 function localIp() {
   let ip = _.chain(os.networkInterfaces())

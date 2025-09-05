@@ -12,7 +12,8 @@ used in Appium.
 
 !!! note
 
-    Drivers or plugins may implement modified versions of these endpoints.
+    Most WebDriver endpoints have no implementation within Appium, and are proxied directly to the
+    receiving driver.
 
 ### `createSession`
 
@@ -597,7 +598,7 @@ GET /session/:sessionId/element/:elementId/selected
 > WebDriver documentation: [Is Element Selected](https://w3c.github.io/webdriver/#is-element-selected)
 
 Determines if the element identified by `:elementId` is currently selected. This property is only
-relevant to certain elements types, such as checkboxes, radio buttons, or options.
+relevant to certain element types, such as checkboxes, radio buttons, or options.
 
 #### Response
 
@@ -712,7 +713,7 @@ GET /session/:sessionId/element/:elementId/enabled
 > WebDriver documentation: [Is Element Enabled](https://w3c.github.io/webdriver/#is-element-enabled)
 
 Determines if the element identified by `:elementId` is currently enabled. This property is only
-relevant to certain elements types, such as buttons, input fields, checkboxes, etc.
+relevant to certain element types, such as buttons, input fields, checkboxes, etc.
 
 #### Response
 
@@ -756,13 +757,7 @@ POST /session/:sessionId/element/:elementId/click
 
 > WebDriver documentation: [Element Click](https://w3c.github.io/webdriver/#element-click)
 
-Clicks on the specified element.
-
-#### Parameters
-
-|Name|Description|Type|
-|--|--|--|
-|`elementId`|ID of the element to click|string|
+Clicks on the identified by `:elementId`.
 
 #### Response
 
@@ -774,15 +769,10 @@ Clicks on the specified element.
 POST /session/:sessionId/element/:elementId/clear
 ```
 
-> WebDriver documentation: [Clear Element](https://w3c.github.io/webdriver/#clear-element)
+> WebDriver documentation: [Element Clear](https://w3c.github.io/webdriver/#element-clear)
 
-Clears a text element's value.
-
-#### Parameters
-
-|Name|Description|Type|
-|--|--|--|
-|`elementId`|ID of the element|string|
+Clears the identified by `:elementId`. This functionality is only relevant to certain element types,
+such as input fields.
 
 #### Response
 
@@ -796,13 +786,13 @@ POST /session/:sessionId/element/:elementId/value
 
 > WebDriver documentation: [Element Send Keys](https://w3c.github.io/webdriver/#element-send-keys)
 
-Sends a sequence of key strokes to the specified element.
+Sends keys to the element the identified by `:elementId`. This functionality is only relevant to
+keyboard-interactable element types, such as input fields.
 
 #### Parameters
 
 |Name|Description|Type|
 |--|--|--|
-|`elementId`|ID of the element|string|
 |`text`|Text to send|string|
 
 #### Response
@@ -831,14 +821,14 @@ POST /session/:sessionId/execute/sync
 
 > WebDriver documentation: [Execute Script](https://w3c.github.io/webdriver/#execute-script)
 
-Executes a synchronous JavaScript script in the current browsing context.
+Executes synchronous JavaScript code in the current browsing context.
 
 #### Parameters
 
 |Name|Description|Type|
 |--|--|--|
-|`script`|The script to execute|string|
-|`args`|Arguments for the script|array|
+|`script`|Script function to execute|string|
+|`args`|Arguments passed to the script|array|
 
 #### Response
 
@@ -852,18 +842,22 @@ POST /session/:sessionId/execute/async
 
 > WebDriver documentation: [Execute Async Script](https://w3c.github.io/webdriver/#execute-async-script)
 
-Executes an asynchronous JavaScript script in the current browsing context.
+Executes asynchronous JavaScript code in the current browsing context.
+
+The `script` function is provided an additional argument (applied after `args`), which is a
+function that can be invoked (within `script`) to trigger script completion. The first argument
+passed to this completion function is returned as the endpoint response.
 
 #### Parameters
 
 |Name|Description|Type|
 |--|--|--|
-|`script`|The script to execute|string|
+|`script`|Script function to execute|string|
 |`args`|Arguments for the script|array|
 
 #### Response
 
-`any` - the result of the script execution
+`any` - the result returned by the completion function of the script
 
 ### `getCookies`
 
@@ -873,11 +867,11 @@ GET /session/:sessionId/cookie
 
 > WebDriver documentation: [Get Cookies](https://w3c.github.io/webdriver/#get-cookies)
 
-Retrieves all cookies visible to the current page.
+Retrieves all cookies of the current browsing context.
 
 #### Response
 
-`object[]` - array of cookie objects
+`Cookie[]` - an array containing zero or more [`Cookie` objects](#response_49)
 
 ### `getCookie`
 
@@ -887,17 +881,22 @@ GET /session/:sessionId/cookie/:name
 
 > WebDriver documentation: [Get Named Cookie](https://w3c.github.io/webdriver/#get-named-cookie)
 
-Retrieves a cookie by name.
-
-#### Parameters
-
-|Name|Description|Type|
-|--|--|--|
-|`name`|Name of the cookie|string|
+Retrieves a cookie with the name identified by `:name` from the current browsing context.
 
 #### Response
 
-`object` - cookie object
+`Cookie` - an object with the following properties:
+
+|Name|Description|Type|
+|--|--|--|
+|`domain?`|Cookie domain|string|
+|`expiry?`|Cookie expiration time (in seconds) as a Unix timestamp|number|
+|`httpOnly?`|Whether the cookie is an HTTP only cookie|boolean|
+|`name`|Cookie name|string|
+|`path?`|Cookie path|string|
+|`sameSite?`|SameSite policy type of the cookie (either `Lax` or `Strict`)|string|
+|`secure?`|Whether the cookie is a secure cookie|boolean|
+|`value`|Cookie value|string|
 
 ### `setCookie`
 
@@ -907,13 +906,13 @@ POST /session/:sessionId/cookie
 
 > WebDriver documentation: [Add Cookie](https://w3c.github.io/webdriver/#add-cookie)
 
-Sets a cookie.
+Adds a cookie to the cookie store of the current browsing context.
 
 #### Parameters
 
 |Name|Description|Type|
 |--|--|--|
-|`cookie`|Cookie object to set|object|
+|`cookie`|Cookie object to add|[`Cookie`](#response_49)|
 
 #### Response
 
@@ -927,13 +926,7 @@ DELETE /session/:sessionId/cookie/:name
 
 > WebDriver documentation: [Delete Cookie](https://w3c.github.io/webdriver/#delete-cookie)
 
-Deletes a cookie by name.
-
-#### Parameters
-
-|Name|Description|Type|
-|--|--|--|
-|`name`|Name of the cookie|string|
+Deletes a cookie with the name identified by `:name` from the current browsing context.
 
 #### Response
 
@@ -947,12 +940,11 @@ DELETE /session/:sessionId/cookie
 
 > WebDriver documentation: [Delete All Cookies](https://w3c.github.io/webdriver/#delete-all-cookies)
 
-Deletes all cookies visible to the current page.
+Deletes all cookies from the current browsing context.
 
 #### Response
 
 `null`
-
 
 ### `performActions`
 

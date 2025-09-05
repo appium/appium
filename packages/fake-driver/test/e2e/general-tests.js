@@ -30,7 +30,7 @@ function generalTests() {
       let source = await driver.getPageSource();
       source.should.contain('<MockNavBar id="nav"');
     });
-    // Note: driver.pageIndex testing not needed for basic functionality
+    // TODO do we want to test driver.pageIndex? probably not
 
     it('should get the orientation', async function () {
       (await driver.getOrientation()).should.equal('PORTRAIT');

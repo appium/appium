@@ -10,10 +10,10 @@ title: WebDriver Protocol
 The following is a list of [W3C WebDriver protocol](https://w3c.github.io/webdriver/) endpoints
 used in Appium.
 
-!!! note
+!!! info
 
-    Most WebDriver endpoints have no implementation within Appium, and are proxied directly to the
-    receiving driver.
+    Most WebDriver endpoints are not implemented within Appium itself, and are instead proxied
+    directly to the driver, which is responsible for the actual endpoint implementation.
 
 ### `createSession`
 

@@ -12,7 +12,7 @@ Now, we get inside the directory and create a new [NUnit](https://nunit.org/) pr
 
 ```bash
 cd dotnet-client
-dotnet new nunit --name appiumtest 
+dotnet new nunit --name appiumtest
 
 cd appiumtest
 
@@ -61,10 +61,10 @@ public class Tests
     }
 
     [Test]
-    public void TestBattery()
+    public void TestFindApps()
     {
         _driver.StartActivity("com.android.settings", ".Settings");
-        _driver.FindElement(By.XPath("//*[@text='Battery']")).Click();
+        _driver.FindElement(By.XPath("//*[@text='Apps']")).Click();
     }
 }
 ```
@@ -75,7 +75,7 @@ public class Tests
 It's not within the scope of this guide to give a complete run-down on the dotnet client
 library or everything that's happening here, so we'll leave the code itself unexplained in
 detail for now. You may want to read up particularly on Appium
-[Capabilities](../guides/caps.md) in addition to familiarizing yourself with the 
+[Capabilities](../guides/caps.md) in addition to familiarizing yourself with the
 [dotnet client driver documentation](https://github.com/appium/dotnet-client/) for a fuller explanation
 of the various API commands you see and what their purpose is.
 ```
@@ -83,9 +83,9 @@ of the various API commands you see and what their purpose is.
 Basically, this code is doing the following:
 
 1. Defining a set of "Capabilities" (parameters) to send to the Appium server so Appium knows what
-  kind of thing you want to automate. Some of these parameters can be overridden using environment variables.
+   kind of thing you want to automate. Some of these parameters can be overridden using environment variables.
 2. Starting an Appium session on the built-in Android settings app.
-3. Finding the "Battery" list item and clicking it.
+3. Finding the "Apps" list item and clicking it.
 4. Ending the Appium session.
 
 That's it! Let's give it a try. Before you run the test, make sure that you have an Appium server
@@ -102,6 +102,6 @@ dotnet test
 # Passed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: 323 ms - appiumtest.dll (net7.0)
 ```
 
-If all goes well, you'll see the Settings app open up and navigate to the "Battery" view in the emulator before the app closes again.
+If all goes well, you'll see the Settings app open up and navigate to the "Apps" view in the emulator before the app closes again.
 
 Congratulations, you've started your Appium journey! Read on for some [next steps](./next-steps.md) to explore.

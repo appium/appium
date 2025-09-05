@@ -41,8 +41,18 @@ describe('FakeDriver', function () {
   it('should return deprecated commands called', async function () {
     let driver = new FakeDriver();
     let [sessionId] = await driver.createSession(null, null, _.cloneDeep(W3C_CAPS));
+    
+    // Initially should be empty
     let deprecatedCommands = await driver.getDeprecatedCommandsCalled();
-    deprecatedCommands.should.be.an('array');
+    deprecatedCommands.should.be.an('array').with.length(0);
+    
+    // Call a deprecated command
+    await driver.callDeprecatedCommand();
+    
+    // Now should contain the deprecated command
+    deprecatedCommands = await driver.getDeprecatedCommandsCalled();
+    deprecatedCommands.should.be.an('array').that.includes('callDeprecatedCommand');
+    
     await driver.deleteSession(sessionId);
   });
 });

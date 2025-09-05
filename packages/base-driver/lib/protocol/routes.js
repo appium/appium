@@ -192,12 +192,10 @@ export const METHOD_MAP = /** @type {const} */ ({
   '/session/:sessionId/element/:elementId/property/:name': {
     GET: {command: 'getProperty'},
   },
-  // w3c v2 https://www.w3.org/TR/webdriver2/#get-computed-role
-  'session/:sessionId/element/:elementId/computedrole': {
+  '/session/:sessionId/element/:elementId/computedrole': {
     GET: {command: 'getComputedRole'},
   },
-  // W3C v2  https://www.w3.org/TR/webdriver2/#get-computed-label
-  'session/:sessionId/element/:elementId/computedlabel': {
+  '/session/:sessionId/element/:elementId/computedlabel': {
     GET: {command: 'getComputedLabel'},
   },
   '/session/:sessionId/actions': {

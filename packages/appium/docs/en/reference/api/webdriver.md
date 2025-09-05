@@ -954,13 +954,13 @@ POST /session/:sessionId/actions
 
 > WebDriver documentation: [Perform Actions](https://w3c.github.io/webdriver/#perform-actions)
 
-Performs a sequence of actions.
+Performs a sequence of [actions](https://w3c.github.io/webdriver/#actions).
 
 #### Parameters
 
 |Name|Description|Type|
 |--|--|--|
-|`actions`|Array of action objects|object[]|
+|`actions`|Array of action objects|`ActionSequence[]`|
 
 #### Response
 
@@ -974,7 +974,7 @@ DELETE /session/:sessionId/actions
 
 > WebDriver documentation: [Release Actions](https://w3c.github.io/webdriver/#release-actions)
 
-Releases all actions.
+Releases all currently depressed keys and pointer buttons.
 
 #### Response
 
@@ -988,7 +988,7 @@ POST /session/:sessionId/alert/dismiss
 
 > WebDriver documentation: [Dismiss Alert](https://w3c.github.io/webdriver/#dismiss-alert)
 
-Dismisses the currently displayed alert dialog.
+Dismisses the currently displayed user prompt.
 
 #### Response
 
@@ -1002,7 +1002,7 @@ POST /session/:sessionId/alert/accept
 
 > WebDriver documentation: [Accept Alert](https://w3c.github.io/webdriver/#accept-alert)
 
-Accepts the currently displayed alert dialog.
+Accepts the currently displayed user prompt.
 
 #### Response
 
@@ -1016,11 +1016,11 @@ GET /session/:sessionId/alert/text
 
 > WebDriver documentation: [Get Alert Text](https://w3c.github.io/webdriver/#get-alert-text)
 
-Gets the text of the currently displayed alert dialog.
+Retrieves the text of the currently displayed user prompt.
 
 #### Response
 
-`string` - alert text
+`string` - prompt text
 
 ### `setAlertText`
 
@@ -1028,9 +1028,9 @@ Gets the text of the currently displayed alert dialog.
 POST /session/:sessionId/alert/text
 ```
 
-> WebDriver documentation: [Set Alert Text](https://w3c.github.io/webdriver/#set-alert-text)
+> WebDriver documentation: [Send Alert Text](https://w3c.github.io/webdriver/#send-alert-text)
 
-Sets the text of the currently displayed alert dialog.
+Sets the text of the currently displayed user prompt.
 
 #### Parameters
 
@@ -1064,13 +1064,8 @@ GET /session/:sessionId/element/:elementId/screenshot
 
 > WebDriver documentation: [Take Element Screenshot](https://w3c.github.io/webdriver/#take-element-screenshot)
 
-Takes a screenshot of the specified element.
-
-#### Parameters
-
-|Name|Description|Type|
-|--|--|--|
-|`elementId`|ID of the element|string|
+Takes a screenshot of the visible region encompassed by the bounding rectangle of the element
+identified by `:elementId`.
 
 #### Response
 

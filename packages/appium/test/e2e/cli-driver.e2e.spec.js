@@ -111,10 +111,6 @@ describe('Driver CLI', function () {
     });
 
     it('should show updates for installed drivers with --updates', async function () {
-      // Skip in CI to avoid npm registry network dependencies
-      if (process.env.CI) {
-        return this.skip();
-      }
 
       if (system.isWindows()) {
         // TODO: Windows path handling may need fixes in npm exec or extension command parsing

@@ -44,12 +44,11 @@ nav:
           - reference/cli/env-vars.md
       - API Endpoints:
           - reference/api/index.md
-          - reference/api/base-driver.md
-          - reference/api/execute-driver-plugin.md
-          - reference/api/images-plugin.md
-          - reference/api/relaxed-caps-plugin.md
-          - reference/api/storage-plugin.md
-          - reference/api/universal-xml-plugin.md
+          - reference/api/webdriver.md
+          - reference/api/jsonwp.md
+          - reference/api/appium.md
+          - reference/api/others.md
+          - reference/api/plugins.md
   - Guides:
       - Migration:
           - guides/migrating-2-to-3.md

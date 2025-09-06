@@ -1,6 +1,7 @@
 ---
 hide:
   - toc
+
 title: Write a Test (Python)
 ---
 
@@ -42,9 +43,9 @@ The sample code is available from [GitHub Appium repository](https://github.com/
 Basically, this code is doing the following:
 
 1. Defining a set of "Capabilities" (parameters) to send to the Appium server so Appium knows what
-  kind of thing you want to automate.
+   kind of thing you want to automate.
 2. Starting an Appium session on the built-in Android settings app.
-3. Finding the "Battery" list item and clicking it.
+3. Finding the "Apps" list item and clicking it.
 4. Pausing for a moment purely for visual effect.
 5. Ending the Appium session.
 
@@ -56,7 +57,7 @@ to one. Then, you can execute the script:
 python test.py
 ```
 
-If all goes well, you'll see the Settings app open up and navigate to the "Battery" view before the
+If all goes well, you'll see the Settings app open up and navigate to the "Apps" view before the
 app closes again.
 
 Congratulations, you've started your Appium journey! Read on for some [next steps](./next-steps.md) to explore.

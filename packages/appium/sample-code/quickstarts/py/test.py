@@ -23,8 +23,8 @@ class TestAppium(unittest.TestCase):
         if self.driver:
             self.driver.quit()
 
-    def test_find_battery(self) -> None:
-        el = self.driver.find_element(by=AppiumBy.XPATH, value='//*[@text="Battery"]')
+    def test_find_apps(self) -> None:
+        el = self.driver.find_element(by=AppiumBy.XPATH, value='//*[@text="Apps"]')
         el.click()
 
 if __name__ == '__main__':

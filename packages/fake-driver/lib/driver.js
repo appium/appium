@@ -62,8 +62,6 @@ export class FakeDriver extends BaseDriver {
   /** @type {boolean} */
   _clockRunning = false;
 
-  /** @type {Set<string>} */
-  _deprecatedCommandsCalled = new Set();
 
   constructor(
     opts = /** @type {import('@appium/types').InitialOpts} */ ({}),
@@ -223,7 +221,8 @@ export class FakeDriver extends BaseDriver {
    */
   async getDeprecatedCommandsCalled() {
     await B.delay(1);
-    return Array.from(this._deprecatedCommandsCalled);
+    // TODO: Properly get deprecatedCommandsLogged list from the base-driver
+    return [];
   }
 
   /**
@@ -232,8 +231,6 @@ export class FakeDriver extends BaseDriver {
    * @returns {Promise<void>}
    */
   async callDeprecatedCommand() {
-    // Track that this deprecated command was called
-    this._deprecatedCommandsCalled.add('callDeprecatedCommand');
     await B.delay(1);
   }
 

@@ -50,11 +50,6 @@ describe('MJpeg Stream (e2e)', function () {
     chai.use(chaiAsPromised.default);
     should = chai.should();
 
-    // TODO: remove when buffertools can handle v12
-    if (process.version.startsWith('v12')) {
-      return this.skip();
-    }
-
     port = await getPort();
     serverUrl = `http://${MJPEG_HOST}:${port}`;
     mJpegServer = await initMJpegServer(port);

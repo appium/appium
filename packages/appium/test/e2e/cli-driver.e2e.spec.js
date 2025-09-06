@@ -111,14 +111,9 @@ describe('Driver CLI', function () {
     });
 
     it('should show updates for installed drivers with --updates', async function () {
-      if (process.env.CI) {
-        // FIXME XXX this test won't work until multiple versions of fake driver have been
-        // published which support appium 3
-        return this.skip();
-      }
 
       if (system.isWindows()) {
-        // TODO figure out why this isn't working on windows
+        // TODO: Windows path handling may need fixes in npm exec or extension command parsing
         return this.skip();
       }
       const versions = /** @type {string[]} */ (

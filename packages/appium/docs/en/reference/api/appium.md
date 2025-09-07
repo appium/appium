@@ -10,7 +10,7 @@ title: Appium Protocol
 The following is a list of endpoints used in Appium that are defined in the Appium extension of the
 W3C WebDriver protocol.
 
-### `getAppiumSessions`
+### getAppiumSessions
 
 ```
 GET /appium/sessions
@@ -32,7 +32,7 @@ Retrieves information about all active server sessions.
 |`created`|Session creation time (in milliseconds) as a Unix timestamp|number|
 |`id`|Session ID|string|
 
-### `getAppiumSessionCapabilities`
+### getAppiumSessionCapabilities
 
 ```
 GET /session/:sessionId/appium/capabilities
@@ -48,7 +48,7 @@ Retrieves the [session capabilities](../../guides/caps.md).
 |--|--|--|
 |`capabilities`|Session capabilities|object|
 
-### `getSettings`
+### getSettings
 
 ```
 GET /session/:sessionId/appium/settings
@@ -60,7 +60,7 @@ Retrieves the [current session settings](../../guides/settings.md).
 
 `Settings` - an object containing setting names and their values
 
-### `updateSettings`
+### updateSettings
 
 ```
 POST /session/:sessionId/appium/settings
@@ -78,7 +78,7 @@ Updates the specified session settings. Any other previously set settings will r
 
 `null`
 
-### `listCommands`
+### listCommands
 
 ```
 GET /session/:sessionId/appium/commands
@@ -92,7 +92,7 @@ Retrieves the URL endpoints and WebDriver BiDi commands supported in the current
 their origin (base Appium, driver-specific, or plugin-specific). Refer to [the type definition file](https://github.com/appium/appium/blob/master/packages/types/lib/command.ts)
 for a detailed structure of this object.
 
-### `listExtensions`
+### listExtensions
 
 ```
 GET /session/:sessionId/appium/extensions
@@ -106,7 +106,7 @@ Retrieves the [execute methods](../../guides/execute-methods.md) supported in th
 origin (driver-specific or plugin-specific). Refer to [the type definition file](https://github.com/appium/appium/blob/master/packages/types/lib/command.ts)
 for a detailed structure of this object.
 
-### `getLogEvents`
+### getLogEvents
 
 ```
 POST /session/:sessionId/appium/events
@@ -147,7 +147,7 @@ grouped into three categories, as shown by the following example response:
 * Namespaced keys can be added using the `logCustomEvent` endpoint, but may also be provided by
   drivers/plugins. Their value is an array of event times (in milliseconds), as Unix timestamps.
 
-### `logCustomEvent`
+### logCustomEvent
 
 ```
 POST /session/:sessionId/appium/log_event
@@ -166,7 +166,7 @@ Logs a custom event, which can be retrieved using the [`getLogEvents`](#getlogev
 
 `null`
 
-### `getDeviceTime`
+### getDeviceTime
 
 ```
 POST /session/:sessionId/appium/device/system_time
@@ -184,7 +184,7 @@ Retrieves the current system time of the device under test.
 
 `string` - the device time
 
-### `activateApp`
+### activateApp
 
 ```
 POST /session/:sessionId/appium/device/activate_app
@@ -203,7 +203,7 @@ Activates an app on the device under test.
 
 `void`
 
-### `terminateApp`
+### terminateApp
 
 ```
 POST /session/:sessionId/appium/device/terminate_app
@@ -222,7 +222,7 @@ Terminates an app on the device under test.
 
 `void`
 
-### `queryAppState`
+### queryAppState
 
 ```
 POST /session/:sessionId/appium/device/app_state
@@ -248,7 +248,7 @@ Retrieves the state of an app on the device under test.
 |`3`|Running in background|
 |`4`|Running in foreground|
 
-### `installApp`
+### installApp
 
 ```
 POST /session/:sessionId/appium/device/install_app
@@ -267,7 +267,7 @@ Installs an app on the device under test.
 
 `void`
 
-### `removeApp`
+### removeApp
 
 ```
 POST /session/:sessionId/appium/device/remove_app
@@ -286,7 +286,7 @@ Uninstalls an app from the device under test.
 
 `boolean` - `true` if uninstall was successful, otherwise `false`
 
-### `isAppInstalled`
+### isAppInstalled
 
 ```
 POST /session/:sessionId/appium/device/app_installed
@@ -304,7 +304,7 @@ Determines if an app is installed on the device under test.
 
 `boolean` - `true` if app is installed, otherwise `false`
 
-### `hideKeyboard`
+### hideKeyboard
 
 ```
 POST /session/:sessionId/appium/device/hide_keyboard
@@ -326,7 +326,7 @@ Attempts to hide the virtual keyboard on the device under test.
 `boolean` - `true` if the operation was successful, otherwise `false`. Note that some platforms
 may never return a `false` value.
 
-### `isKeyboardShown`
+### isKeyboardShown
 
 ```
 GET /session/:sessionId/appium/device/is_keyboard_shown
@@ -338,7 +338,7 @@ Determines if the virtual keyboard is shown on the device under test.
 
 `boolean` - `true` if the keyboard is shown, otherwise `false`
 
-### `pushFile`
+### pushFile
 
 ```
 POST /session/:sessionId/appium/device/push_file
@@ -357,7 +357,7 @@ Pushes data to a file on the device under test.
 
 `void`
 
-### `pullFile`
+### pullFile
 
 ```
 POST /session/:sessionId/appium/device/pull_file
@@ -375,7 +375,7 @@ Retrieves data from a file on the device under test.
 
 `string` - the Base64-encoded contents of the file
 
-### `pullFolder`
+### pullFolder
 
 ```
 POST /session/:sessionId/appium/device/pull_folder

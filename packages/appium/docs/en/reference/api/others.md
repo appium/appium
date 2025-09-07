@@ -19,7 +19,7 @@ vendor-agnostic commands.
 
     Endpoints specified by this protocol are not officially documented.
 
-### `executeCdp`
+### executeCdp
 
 ```
 POST /session/:sessionId/:vendor/cdp/execute
@@ -49,7 +49,7 @@ based on Selenium.
 
     Endpoints specified by this protocol are not officially documented.
 
-### `getLog`
+### getLog
 
 ```
 POST /session/:sessionId/se/log
@@ -76,7 +76,7 @@ Typically a log entry is an object with the following properties:
 |`message`|Contents of the actual log message|string|
 |`timestamp`|Message timestamp (in milliseconds) in Unix format|number|
 
-### `getLogTypes`
+### getLogTypes
 
 ```
 GET /session/:sessionId/se/log/types
@@ -93,7 +93,7 @@ Retrieves the available log types that can be used to call the [`getLog`](#getlo
 The [Web Authentication protocol](https://w3c.github.io/webauthn/) (WebAuthn) is an extension of
 the W3C WebDriver protocol.
 
-### `addVirtualAuthenticator`
+### addVirtualAuthenticator
 
 ```
 POST /session/:sessionId/webauthn/authenticator
@@ -118,7 +118,7 @@ Creates a software [virtual authenticator](https://w3c.github.io/webauthn/#virtu
 
 `string` - the ID of the created authenticator
 
-### `removeVirtualAuthenticator`
+### removeVirtualAuthenticator
 
 ```
 DELETE /session/:sessionId/webauthn/authenticator/:authenticatorId
@@ -132,7 +132,7 @@ Removes the virtual authenticator identified by `:authenticatorId`.
 
 `null`
 
-### `addAuthCredential`
+### addAuthCredential
 
 ```
 POST /session/:sessionId/webauthn/authenticator/:authenticatorId/credential
@@ -158,7 +158,7 @@ into the virtual authenticator identified by `:authenticatorId`.
 
 `null`
 
-### `getAuthCredential`
+### getAuthCredential
 
 ```
 GET /session/:sessionId/webauthn/authenticator/:authenticatorId/credentials
@@ -183,7 +183,7 @@ Retrieves all Public Key Credential Sources stored in the virtual authenticator 
 |`signCount`|Initial value for the signature counter|number|`0`|
 |`userHandle`|User handle associated with the credential, in Base64url encoding|string|`null`|
 
-### `removeAuthCredential`
+### removeAuthCredential
 
 ```
 DELETE /session/:sessionId/webauthn/authenticator/:authenticatorId/credentials/:credentialId
@@ -198,7 +198,7 @@ identified by `:authenticatorId`.
 
 `null`
 
-### `removeAllAuthCredentials`
+### removeAllAuthCredentials
 
 ```
 DELETE /session/:sessionId/webauthn/authenticator/:authenticatorId/credentials
@@ -213,7 +213,7 @@ Removes all Public Key Credential Sources from the virtual authenticator identif
 
 `null`
 
-### `setUserAuthVerified`
+### setUserAuthVerified
 
 ```
 POST /session/:sessionId/webauthn/authenticator/:authenticatorId/uv

@@ -144,7 +144,7 @@ Modifies the [`findElements`](./webdriver.md#findelements) endpoint:
 POST /session/:sessionId/actions
 ```
 
-Modifies the `performActions` endpoint:
+Modifies the [`performActions`](./webdriver.md#performactions) endpoint:
 
 - If any action in `actions` includes `origin`, whose value is an image element:
   - Removes the `origin` property

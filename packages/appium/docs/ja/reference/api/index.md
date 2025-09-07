@@ -18,6 +18,7 @@ Refer to the documentation of your client for the exact commands used to invoke 
 All endpoint listings are grouped by their protocol, with an additional group for plugin endpoints:
 
 - [WebDriver Protocol](./webdriver.md)
+- [WebDriver BiDi Protocol](./bidi.md)
 - [JSON Wire Protocol](./jsonwp.md)
 - [Appium Protocol](./appium.md)
 - [Other Protocols](./others.md)

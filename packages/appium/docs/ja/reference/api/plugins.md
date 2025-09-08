@@ -12,7 +12,7 @@ The following is a list of endpoints added or modified by official Appium plugin
 
 ## Execute Driver Plugin
 
-### `executeDriverScript`
+### executeDriverScript
 
 ```
 POST /session/:sessionId/appium/execute_driver
@@ -39,7 +39,7 @@ Executes a driver script in a child process.
 
 ## Images Plugin
 
-### `compareImages`
+### compareImages
 
 ```
 POST /session/:sessionId/appium/compare_images
@@ -118,7 +118,7 @@ Compares two images using the specified mode of comparison:
 | `score`                           | Similarity score between both images in the range `[0.0, 1.0]`                                                                 | number |
 | `visualization?`                  | Image of the matcher visualization. Only included if the `visualize` input option was enabled. | Buffer |
 
-### `findElement`
+### findElement
 
 ```
 POST /session/:sessionId/element
@@ -128,7 +128,7 @@ Modifies the [`findElement`](./webdriver.md#findelement) endpoint:
 
 - Adds `-image` to the supported values for the `using` parameter (the location strategy)
 
-### `findElements`
+### findElements
 
 ```
 POST /session/:sessionId/elements
@@ -138,7 +138,7 @@ Modifies the [`findElements`](./webdriver.md#findelements) endpoint:
 
 - Adds `-image` to the supported values for the `using` parameter (the location strategy)
 
-### `performActions`
+### performActions
 
 ```
 POST /session/:sessionId/actions
@@ -152,7 +152,7 @@ Modifies the [`performActions`](./webdriver.md#performactions) endpoint:
 
 ## Relaxed Caps Plugin
 
-### `createSession`
+### createSession
 
 ```
 POST /session
@@ -170,7 +170,7 @@ Modifies the [`createSession`](./webdriver.md#createsession) endpoint:
     All endpoints for this plugin can be invoked without creating a session, allowing you to prepare
     your test environment in advance.
 
-### `addStorageItem`
+### addStorageItem
 
 ```
 POST /storage/add
@@ -207,7 +207,7 @@ Example:
 }
 ```
 
-### `deleteStorageItem`
+### deleteStorageItem
 
 ```
 POST /storage/delete
@@ -226,7 +226,7 @@ Deletes a file in the storage.
 `boolean` - `true` upon successful file deletion, or `false` if the file does not exist in
 the storage
 
-### `listStorageItems`
+### listStorageItems
 
 ```
 GET /storage/list
@@ -244,7 +244,7 @@ List all files present in the storage.
 | `path` | Full path to the file on the remote file system | string |
 | `size` | File size in bytes                              | number |
 
-### `resetStorage`
+### resetStorage
 
 ```
 POST /storage/reset
@@ -260,7 +260,7 @@ preserved, and only the incomplete uploads will be stopped.
 
 ## Universal XML Plugin
 
-### `findElement`
+### findElement
 
 ```
 POST /session/:sessionId/element
@@ -270,7 +270,7 @@ Modifies the [`findElement`](./webdriver.md#findelement) endpoint:
 
 - Adds support for universal node/attribute names for the `value` parameter (the selector)
 
-### `findElements`
+### findElements
 
 ```
 POST /session/:sessionId/elements
@@ -280,7 +280,7 @@ Modifies the [`findElements`](./webdriver.md#findelements) endpoint:
 
 - Adds support for universal node/attribute names for the `value` parameter (the selector)
 
-### `getPageSource`
+### getPageSource
 
 ```
 GET /session/:sessionId/source

@@ -405,9 +405,8 @@ describe('Driver CLI', function () {
       });
 
       describe('when the script fails', function () {
-        it('should return an error', async function () {
-          const out = await runRun([driverName, 'fake-error']);
-          out.should.have.property('error');
+        it('should throw an error', async function () {
+          await expect(runRun([driverName, 'fake-error'])).to.be.rejectedWith(Error);
         });
       });
 

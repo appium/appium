@@ -46,10 +46,9 @@ describe('Plugin CLI', function () {
       out.should.not.have.property('error');
     });
 
-    it('should run a valid plugin, valid error prone script, and return error in json', async function () {
+    it('should run a valid plugin, valid error prone script, and throw error', async function () {
       const pluginName = 'fake';
-      const out = await runRun([pluginName, 'fake-error', '--json']);
-      out.should.have.property('error');
+      await expect(runRun([pluginName, 'fake-error', '--json'])).to.be.rejectedWith(Error);
     });
 
     it('should take a valid plugin, invalid script, and throw an error', async function () {

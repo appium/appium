@@ -52,9 +52,11 @@ export default class PluginCliCommand extends ExtensionCliCommand {
   }
 
   /**
+   * Run a script from a plugin
    *
    * @param {PluginRunOptions} opts
    * @returns {Promise<import('./extension-command').RunOutput>}
+   * @throws {Error} if the script fails to run
    */
   async run({plugin, scriptName, extraArgs}) {
     return await super._run({

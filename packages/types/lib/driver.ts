@@ -15,13 +15,7 @@ import type {
   DefaultDeleteSessionResult,
   DriverData,
   EventHistory,
-  ILogCommands,
-  IFindCommands,
-  ISettingsCommands,
-  ITimeoutCommands,
-  IEventCommands,
-  IExecuteCommands,
-  ISessionHandler,
+  IImplementableCommands,
 } from './driver-commands';
 import type {HTTPHeaders, HTTPMethod} from './http';
 import type {AppiumLogger} from './logger';
@@ -232,13 +226,7 @@ export interface Driver<
   CreateResult = DefaultCreateSessionResult<C>,
   DeleteResult = DefaultDeleteSessionResult,
   SessionData extends StringRecord = StringRecord,
-> extends ILogCommands,
-    IFindCommands,
-    ISettingsCommands<Settings>,
-    ITimeoutCommands,
-    IEventCommands,
-    IExecuteCommands,
-    ISessionHandler<C, CreateResult, DeleteResult, SessionData>,
+> extends IImplementableCommands<C, Settings, CreateResult, DeleteResult, SessionData>,
     Core<C, Settings> {
   /**
    * The set of command line arguments set for this driver

@@ -433,3 +433,20 @@ export type SessionCapabilities<
 > = {
   capabilities: DriverCaps<C>;
 } & T;
+
+/**
+ * Interface for all commands expected to be implemented by BaseDriver.
+ */
+export type IImplementableCommands<
+  C extends Constraints = Constraints,
+  Settings extends StringRecord = StringRecord,
+  CreateResult = DefaultCreateSessionResult<C>,
+  DeleteResult = DefaultDeleteSessionResult,
+  SessionData extends StringRecord = StringRecord,
+> = ILogCommands
+  & IFindCommands
+  & ISettingsCommands<Settings>
+  & ITimeoutCommands
+  & IEventCommands
+  & IExecuteCommands
+  & ISessionHandler<C, CreateResult, DeleteResult, SessionData>;

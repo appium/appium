@@ -53,9 +53,11 @@ export default class DriverCliCommand extends ExtensionCliCommand {
   }
 
   /**
+   * Run a script from a driver
    *
    * @param {DriverRunOptions} opts
    * @return {Promise<import('./extension-command').RunOutput>}
+   * @throws {Error} if the script fails to run
    */
   async run({driver, scriptName, extraArgs}) {
     return await super._run({

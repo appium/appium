@@ -45,7 +45,9 @@ nav:
       - API Endpoints:
           - reference/api/index.md
           - reference/api/webdriver.md
+          - reference/api/bidi.md
           - reference/api/jsonwp.md
+          - reference/api/mjsonwp.md
           - reference/api/appium.md
           - reference/api/others.md
           - reference/api/plugins.md

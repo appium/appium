@@ -927,33 +927,33 @@ class ExtensionCliCommand {
         this.log.ok(`${scriptName} successfully ran`.green);
         return {output: output.getBuff()};
       } catch (err) {
-        this.log.error(`Encountered an error when running '${scriptName}': ${err.message}`.red);
-        return {error: err.message, output: output.getBuff()};
+        const message = `Encountered an error when running '${scriptName}': ${err.message}`;
+        throw this._createFatalError(message);
       }
     }
 
     try {
       await new B((resolve, reject) => {
         this._runUnbuffered(moduleRoot, scriptPath, extraArgs)
-          .on('error', (err) => {
+          .once('error', (err) => {
             // generally this is of the "I can't find the script" variety.
             // this is a developer bug: the extension is pointing to a script that is not where the
             // developer said it would be (in `appium.scripts` of the extension's `package.json`)
             reject(err);
           })
-          .on('close', (code) => {
+          .once('close', (code) => {
             if (code === 0) {
               resolve();
             } else {
-              reject(new Error(`Script "${scriptName}" exited with code ${code}`));
+              reject(new Error(`Script exited with code ${code}`));
             }
           });
       });
       this.log.ok(`${scriptName} successfully ran`.green);
       return {};
     } catch (err) {
-      this.log.error(`Encountered an error when running '${scriptName}': ${err.message}`.red);
-      return {error: err.message};
+      const message = `Encountered an error when running '${scriptName}': ${err.message}`;
+      throw this._createFatalError(message);
     }
   }
 }
@@ -1079,7 +1079,6 @@ export {ExtensionCliCommand as ExtensionCommand};
  * Return value of {@linkcode ExtensionCliCommand._run}
  *
  * @typedef RunOutput
- * @property {string} [error] - error message if script ran unsuccessfully, otherwise undefined
  * @property {string[]} [output] - script output if `bufferOutput` was `true` in {@linkcode RunOptions}
  */
 

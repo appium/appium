@@ -15,7 +15,7 @@ used in Appium.
     Most WebDriver endpoints are not implemented within Appium itself, and are instead proxied
     directly to the driver, which is responsible for the actual endpoint implementation.
 
-### `createSession`
+### createSession
 
 ```
 POST /session
@@ -47,7 +47,7 @@ supported, and any of the 3 parameters can be used to specify the W3C capabiliti
 |`sessionId`|ID of the new session|string|
 |`capabilities`|Capabilities processed by the driver|object|
 
-### `deleteSession`
+### deleteSession
 
 ```
 DELETE /session/:sessionId
@@ -61,7 +61,7 @@ Closes the current session.
 
 `null`
 
-### `getStatus`
+### getStatus
 
 ```
 GET /status
@@ -81,7 +81,7 @@ Retrieves the current status of the Appium server.
 |`message`|Explanation of the `ready` value|string|
 |`ready`|Whether the server is able to create new sessions|boolean|
 
-### `getTimeouts`
+### getTimeouts
 
 ```
 GET /session/:sessionId/timeouts
@@ -100,7 +100,7 @@ Retrieves the timeout values of the current session.
 |`command`|Command timeout|number|
 |`implicit`|Implicit wait timeout|number|
 
-### `timeouts`
+### timeouts
 
 ```
 POST /session/:sessionId/timeouts
@@ -122,7 +122,7 @@ Sets the timeout values of the current session.
 
 `null`
 
-### `setUrl`
+### setUrl
 
 ```
 POST /session/:sessionId/url
@@ -142,7 +142,7 @@ Navigates the current top-level browsing context to the specified URL.
 
 `null`
 
-### `getUrl`
+### getUrl
 
 ```
 GET /session/:sessionId/url
@@ -156,7 +156,7 @@ Retrieves the URL of the current top-level browsing context.
 
 `string` - the current URL
 
-### `back`
+### back
 
 ```
 POST /session/:sessionId/back
@@ -170,7 +170,7 @@ Navigates backwards in the browser history, if possible.
 
 `null`
 
-### `forward`
+### forward
 
 ```
 POST /session/:sessionId/forward
@@ -184,7 +184,7 @@ Navigates forwards in the browser history, if possible.
 
 `null`
 
-### `refresh`
+### refresh
 
 ```
 POST /session/:sessionId/refresh
@@ -198,7 +198,7 @@ Reloads the window of the current top-level browsing context.
 
 `null`
 
-### `title`
+### title
 
 ```
 GET /session/:sessionId/title
@@ -212,7 +212,7 @@ Retrieves the window title of the top-level browsing context.
 
 `string` - the page title
 
-### `getWindowHandle`
+### getWindowHandle
 
 ```
 GET /session/:sessionId/window
@@ -226,7 +226,7 @@ Retrieves the window handle of the top-level browsing context.
 
 `string` - the window handle identifier
 
-### `closeWindow`
+### closeWindow
 
 ```
 DELETE /session/:sessionId/window
@@ -240,7 +240,7 @@ Closes the current top-level browsing context.
 
 `string[]` - an array of zero or more remaining window handle identifiers
 
-### `setWindow`
+### setWindow
 
 ```
 POST /session/:sessionId/window
@@ -260,7 +260,7 @@ Selects the top-level browsing context.
 
 `null`
 
-### `getWindowHandles`
+### getWindowHandles
 
 ```
 GET /session/:sessionId/window/handles
@@ -274,7 +274,7 @@ Retrieves a list of window handles for every top-level browsing context.
 
 `string[]` - an array of zero or more window handle identifiers
 
-### `createNewWindow`
+### createNewWindow
 
 ```
 POST /session/:sessionId/window/new
@@ -300,7 +300,7 @@ Creates a new window or tab.
 |`type`|Type of the created window (`window` or `tab`)|string|
 
 
-### `setFrame`
+### setFrame
 
 ```
 POST /session/:sessionId/frame
@@ -320,7 +320,7 @@ Selects the top-level or child browsing context as the current browsing context.
 
 `null`
 
-### `switchToParentFrame`
+### switchToParentFrame
 
 ```
 POST /session/:sessionId/frame/parent
@@ -334,7 +334,7 @@ Sets the current browsing context to the parent of the current browsing context.
 
 `null`
 
-### `getWindowRect`
+### getWindowRect
 
 ```
 GET /session/:sessionId/window/rect
@@ -355,7 +355,7 @@ Retrieves the size and position of the current window.
 |`x`|X-axis position of the top-left corner of the window|number|
 |`y`|Y-axis position of the top-left corner of the window|number|
 
-### `setWindowRect`
+### setWindowRect
 
 ```
 POST /session/:sessionId/window/rect
@@ -378,7 +378,7 @@ Sets the size and/or position of the current window.
 
 [`Rect`](#response_18) - the new window size
 
-### `maximizeWindow`
+### maximizeWindow
 
 ```
 POST /session/:sessionId/window/maximize
@@ -392,7 +392,7 @@ Maximizes the current window.
 
 [`Rect`](#response_18) - the new window size
 
-### `minimizeWindow`
+### minimizeWindow
 
 ```
 POST /session/:sessionId/window/minimize
@@ -406,7 +406,7 @@ Minimizes the current window.
 
 [`Rect`](#response_18) - the new window size
 
-### `fullScreenWindow`
+### fullScreenWindow
 
 ```
 POST /session/:sessionId/window/fullscreen
@@ -420,7 +420,7 @@ Makes the current window fullscreen.
 
 [`Rect`](#response_18) - the new window size
 
-### `active`
+### active
 
 ```
 GET /session/:sessionId/element/active
@@ -439,7 +439,7 @@ Retrieves the currently focused element.
 |`element-6066-11e4-a52e-4f735466cecf`|Element ID|string|
 |`ELEMENT`|Element ID (same value as `element-6066-11e4-a52e-4f735466cecf`). This key was used in the legacy Mobile JSON Wire Protocol (MJSONWP).|string|
 
-### `elementShadowRoot`
+### elementShadowRoot
 
 ```
 GET /session/:sessionId/element/:elementId/shadow
@@ -457,7 +457,7 @@ Retrieves the shadow root of the element identified by `:elementId`.
 |--|--|--|
 |`shadow-6066-11e4-a52e-4f735466cecf`|Shadow root ID|string|
 
-### `findElement`
+### findElement
 
 ```
 POST /session/:sessionId/element
@@ -479,7 +479,7 @@ location strategy, starting from the root node.
 
 [`Element`](#response_23)
 
-### `findElements`
+### findElements
 
 ```
 POST /session/:sessionId/elements
@@ -501,7 +501,7 @@ strategy, starting from the root node.
 
 `Element[]` - an array containing zero or more [`Element` objects](#response_23)
 
-### `findElementFromElement`
+### findElementFromElement
 
 ```
 POST /session/:sessionId/element/:elementId/element
@@ -523,7 +523,7 @@ location strategy, starting from the element node identified by `:elementId`.
 
 [`Element`](#response_23)
 
-### `findElementsFromElement`
+### findElementsFromElement
 
 ```
 POST /session/:sessionId/element/:elementId/elements
@@ -545,7 +545,7 @@ strategy, starting from the element node identified by `:elementId`.
 
 [`Element[]`](#response_26)
 
-### `findElementFromShadowRoot`
+### findElementFromShadowRoot
 
 ```
 POST /session/:sessionId/shadow/:shadowId/element
@@ -567,7 +567,7 @@ location strategy, starting from the shadow root node identified by `:shadowId`.
 
 [`Element`](#response_23)
 
-### `findElementsFromShadowRoot`
+### findElementsFromShadowRoot
 
 ```
 POST /session/:sessionId/shadow/:shadowId/elements
@@ -589,7 +589,7 @@ strategy, starting from the shadow root node identified by `:shadowId`.
 
 [`Element[]`](#response_26)
 
-### `elementSelected`
+### elementSelected
 
 ```
 GET /session/:sessionId/element/:elementId/selected
@@ -604,7 +604,7 @@ relevant to certain element types, such as checkboxes, radio buttons, or options
 
 `boolean` - `true` if the element is selected, otherwise `false`
 
-### `elementDisplayed`
+### elementDisplayed
 
 ```
 GET /session/:sessionId/element/:elementId/displayed
@@ -618,7 +618,7 @@ Determines if the element identified by `:elementId` is currently displayed.
 
 `boolean` - `true` if the element is displayed, otherwise `false`
 
-### `getAttribute`
+### getAttribute
 
 ```
 GET /session/:sessionId/element/:elementId/attribute/:name
@@ -632,7 +632,7 @@ Retrieves the value of the `:name` attribute for the element identified by `:ele
 
 `string` - the attribute value, or `null` if the attribute does not exist
 
-### `getProperty`
+### getProperty
 
 ```
 GET /session/:sessionId/element/:elementId/property/:name
@@ -646,7 +646,7 @@ Retrieves the value of the `:name` property for the element identified by `:elem
 
 `string` - the property value, or `null` if the property does not exist
 
-### `getCssProperty`
+### getCssProperty
 
 ```
 GET /session/:sessionId/element/:elementId/css/:propertyName
@@ -661,7 +661,7 @@ Retrieves the value of the `:propertyName` computed CSS property for the element
 
 `string` - the CSS property value, or `null` if the property does not exist
 
-### `getText`
+### getText
 
 ```
 GET /session/:sessionId/element/:elementId/text
@@ -676,7 +676,7 @@ elements (if any).
 
 `string` - the element text (including its child elements)
 
-### `getName`
+### getName
 
 ```
 GET /session/:sessionId/element/:elementId/name
@@ -690,7 +690,7 @@ Retrieves the tag name of the element identified by `:elementId`.
 
 `string` - the element tag name
 
-### `getElementRect`
+### getElementRect
 
 ```
 GET /session/:sessionId/element/:elementId/rect
@@ -704,7 +704,7 @@ Retrieves the dimensions and coordinates of the element identified by `:elementI
 
 [`Rect`](#response_18)
 
-### `elementEnabled`
+### elementEnabled
 
 ```
 GET /session/:sessionId/element/:elementId/enabled
@@ -719,7 +719,7 @@ relevant to certain element types, such as buttons, input fields, checkboxes, et
 
 `boolean` - `true` if the element is enabled, otherwise `false`
 
-### `getComputedRole`
+### getComputedRole
 
 ```
 GET /session/:sessionId/element/:elementId/computedrole
@@ -734,7 +734,7 @@ identified by `:elementId`.
 
 `string` - the element computed role
 
-### `getComputedLabel`
+### getComputedLabel
 
 ```
 GET /session/:sessionId/element/:elementId/computedlabel
@@ -749,7 +749,7 @@ element identified by `:elementId`.
 
 `string` - the element accessible name
 
-### `click`
+### click
 
 ```
 POST /session/:sessionId/element/:elementId/click
@@ -763,7 +763,7 @@ Clicks on the identified by `:elementId`.
 
 `null`
 
-### `clear`
+### clear
 
 ```
 POST /session/:sessionId/element/:elementId/clear
@@ -778,7 +778,7 @@ such as input fields.
 
 `null`
 
-### `setValue`
+### setValue
 
 ```
 POST /session/:sessionId/element/:elementId/value
@@ -799,7 +799,7 @@ keyboard-interactable element types, such as input fields.
 
 `null`
 
-### `getPageSource`
+### getPageSource
 
 ```
 GET /session/:sessionId/source
@@ -813,7 +813,7 @@ Retrieves the page/application source of the current browsing context in HTML/XM
 
 `string` - the DOM of the current browsing context
 
-### `execute`
+### execute
 
 ```
 POST /session/:sessionId/execute/sync
@@ -834,7 +834,7 @@ Executes synchronous JavaScript code in the current browsing context.
 
 `any` - the result of the script execution
 
-### `executeAsync`
+### executeAsync
 
 ```
 POST /session/:sessionId/execute/async
@@ -859,7 +859,7 @@ passed to this completion function is returned as the endpoint response.
 
 `any` - the result returned by the completion function of the script
 
-### `getCookies`
+### getCookies
 
 ```
 GET /session/:sessionId/cookie
@@ -873,7 +873,7 @@ Retrieves all cookies of the current browsing context.
 
 `Cookie[]` - an array containing zero or more [`Cookie` objects](#response_49)
 
-### `getCookie`
+### getCookie
 
 ```
 GET /session/:sessionId/cookie/:name
@@ -898,7 +898,7 @@ Retrieves a cookie with the name identified by `:name` from the current browsing
 |`secure?`|Whether the cookie is a secure cookie|boolean|
 |`value`|Cookie value|string|
 
-### `setCookie`
+### setCookie
 
 ```
 POST /session/:sessionId/cookie
@@ -918,7 +918,7 @@ Adds a cookie to the cookie store of the current browsing context.
 
 `null`
 
-### `deleteCookie`
+### deleteCookie
 
 ```
 DELETE /session/:sessionId/cookie/:name
@@ -932,7 +932,7 @@ Deletes a cookie with the name identified by `:name` from the current browsing c
 
 `null`
 
-### `deleteCookies`
+### deleteCookies
 
 ```
 DELETE /session/:sessionId/cookie
@@ -946,7 +946,7 @@ Deletes all cookies from the current browsing context.
 
 `null`
 
-### `performActions`
+### performActions
 
 ```
 POST /session/:sessionId/actions
@@ -966,7 +966,7 @@ Performs a sequence of [actions](https://w3c.github.io/webdriver/#actions).
 
 `null`
 
-### `releaseActions`
+### releaseActions
 
 ```
 DELETE /session/:sessionId/actions
@@ -980,7 +980,7 @@ Releases all currently depressed keys and pointer buttons.
 
 `null`
 
-### `postDismissAlert`
+### postDismissAlert
 
 ```
 POST /session/:sessionId/alert/dismiss
@@ -994,7 +994,7 @@ Dismisses the currently displayed user prompt.
 
 `null`
 
-### `postAcceptAlert`
+### postAcceptAlert
 
 ```
 POST /session/:sessionId/alert/accept
@@ -1008,7 +1008,7 @@ Accepts the currently displayed user prompt.
 
 `null`
 
-### `getAlertText`
+### getAlertText
 
 ```
 GET /session/:sessionId/alert/text
@@ -1022,7 +1022,7 @@ Retrieves the text of the currently displayed user prompt.
 
 `string` - prompt text
 
-### `setAlertText`
+### setAlertText
 
 ```
 POST /session/:sessionId/alert/text
@@ -1042,7 +1042,7 @@ Sets the text of the currently displayed user prompt.
 
 `null`
 
-### `getScreenshot`
+### getScreenshot
 
 ```
 GET /session/:sessionId/screenshot
@@ -1056,7 +1056,7 @@ Takes a screenshot of the current browsing context.
 
 `string` - a base64-encoded PNG image
 
-### `getElementScreenshot`
+### getElementScreenshot
 
 ```
 GET /session/:sessionId/element/:elementId/screenshot

@@ -15,10 +15,16 @@ but may additionally define endpoints of their own. Refer to the documentation o
 The recommended way of calling these API endpoints is through your [Appium client](../../ecosystem/clients.md).
 Refer to the documentation of your client for the exact commands used to invoke specific endpoints.
 
-All endpoint listings are grouped by their protocol, with an additional group for plugin endpoints:
+All endpoints are grouped by their protocol, with an additional group for plugin endpoints:
 
-* [WebDriver Protocol](./webdriver.md)
-* [JSON Wire Protocol](./jsonwp.md)
-* [Appium Protocol](./appium.md)
-* [Other Protocols](./others.md)
-* [Endpoints Used by Official Plugins](./plugins.md)
+<div class="grid cards" markdown>
+
+-   [__WebDriver Protocol__](./webdriver.md)
+-   [__WebDriver BiDi Protocol__](./bidi.md)
+-   [__JSON Wire Protocol__](./jsonwp.md)
+-   [__Mobile JSON Wire Protocol__](./mjsonwp.md)
+-   [__Appium Protocol__](./appium.md)
+-   [__Other Protocols__](./others.md)
+-   [__Endpoints Used by Official Plugins__](./plugins.md)
+
+</div>

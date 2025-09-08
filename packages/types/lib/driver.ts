@@ -12,7 +12,7 @@ import type {
   DefaultDeleteSessionResult,
   DriverData,
   EventHistory,
-  IImplementableCommands,
+  IImplementedCommands,
   IWDClassicCommands,
   IAppiumCommands,
   IJSONWPCommands,
@@ -35,23 +35,6 @@ export interface IDeviceSettings<T extends StringRecord> {
   getSettings(): T;
 }
 
-/**
- * Data returned by `AppiumDriver.getAppiumSessions`
- *
- * @typeParam C - The driver's constraints
- */
-export interface TimestampedMultiSessionData<C extends Constraints = Constraints> {
-  id: string;
-  created: number; // Unix timestamp in milliseconds
-  capabilities: DriverCaps<C>;
-}
-
-export interface IBidiCommands {
-  bidiSubscribe(events: string[], contexts: string[]): Promise<void>;
-  bidiUnsubscribe(events: string[], contexts: string[]): Promise<void>;
-  bidiStatus(): Promise<DriverStatus>;
-}
-
 export interface DriverHelpers {
   configureApp: (
     app: string,
@@ -70,12 +53,6 @@ export type SettingsUpdateListener<T extends Record<string, unknown> = Record<st
 ) => Promise<void>;
 
 export type Protocol = 'MJSONWP' | 'W3C';
-
-export interface DriverStatus {
-  ready: boolean,
-  message: string,
-  [key: string]: any;
-}
 
 /**
  * Methods and properties which both `AppiumDriver` and `BaseDriver` inherit.
@@ -172,7 +149,7 @@ export interface Driver<
   CreateResult = DefaultCreateSessionResult<C>,
   DeleteResult = DefaultDeleteSessionResult,
   SessionData extends StringRecord = StringRecord,
-> extends IImplementableCommands<C, Settings, CreateResult, DeleteResult, SessionData>,
+> extends IImplementedCommands<C, Settings, CreateResult, DeleteResult, SessionData>,
     Core<C, Settings> {
   /**
    * The set of command line arguments set for this driver

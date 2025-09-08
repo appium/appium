@@ -7,8 +7,6 @@ import type {
   ExecuteMethodMap,
   MethodMap,
 } from './command-maps';
-import type {Constraints} from './constraints';
-import type {ServerArgs} from './config';
 import type {
   DefaultCreateSessionResult,
   DefaultDeleteSessionResult,
@@ -20,7 +18,9 @@ import type {
   IJSONWPCommands,
   IMJSONWPCommands,
   IOtherProtocolCommands,
-} from './driver-commands';
+} from './commands';
+import type {Constraints} from './constraints';
+import type {ServerArgs} from './config';
 import type {HTTPHeaders, HTTPMethod} from './http';
 import type {AppiumLogger} from './logger';
 import type {AppiumServer, UpdateServerCallback} from './server';

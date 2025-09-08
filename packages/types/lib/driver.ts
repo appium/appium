@@ -7,7 +7,7 @@ import type {
   BiDiResultData,
   ExecuteMethodMap,
   MethodMap,
-} from './command';
+} from './command-maps';
 import type {ServerArgs} from './config';
 import type {HTTPHeaders, HTTPMethod} from './http';
 import type {AppiumLogger} from './logger';

@@ -1,4 +1,4 @@
-export * from './command';
+export * from './command-maps';
 export * from './action';
 export * from './appium-config';
 export * from './capabilities';

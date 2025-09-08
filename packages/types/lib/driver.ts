@@ -17,6 +17,7 @@ import type {
   IImplementableCommands,
   IWDClassicCommands,
   IAppiumCommands,
+  IJSONWPCommands,
 } from './driver-commands';
 import type {HTTPHeaders, HTTPMethod} from './http';
 import type {AppiumLogger} from './logger';
@@ -65,12 +66,6 @@ export type SettingsUpdateListener<T extends Record<string, unknown> = Record<st
   newValue: unknown,
   curValue: unknown,
 ) => Promise<void>;
-
-export interface Location {
-  latitude: number;
-  longitude: number;
-  altitude?: number;
-}
 
 export interface Rotation {
   x: number;
@@ -313,36 +308,8 @@ export interface ExternalDriver<
   SessionData extends StringRecord = StringRecord,
 > extends Driver<C, CArgs, Settings, CreateResult, DeleteResult, SessionData>,
     IWDClassicCommands,
-    IAppiumCommands {
-
-  /**
-   * Get the device orientation
-   *
-   * @returns The orientation string
-   */
-  getOrientation?(): Promise<string>;
-
-  /**
-   * Set the device orientation
-   *
-   * @param orientation - the orientation string
-   */
-  setOrientation?(orientation: string): Promise<void>;
-
-  /**
-   * Get the virtual or real geographical location of a device
-   *
-   * @returns The location
-   */
-  getGeoLocation?(): Promise<Location>;
-
-  /**
-   * Set the virtual geographical location of a device
-   *
-   * @param location - the location including latitude and longitude
-   * @returns The complete location
-   */
-  setGeoLocation?(location: Partial<Location>): Promise<Location>;
+    IAppiumCommands,
+    IJSONWPCommands {
 
   // MJSONWIRE
 

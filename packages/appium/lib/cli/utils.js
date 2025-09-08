@@ -59,12 +59,29 @@ export class RingBuffer {
     this.size = size;
     this.buffer = [];
   }
+
+  /**
+   * Get the current buffer contents
+   *
+   * @returns {any[]}
+   */
   getBuff() {
     return this.buffer;
   }
+
+  /**
+   * Remove the oldest item from the buffer
+   *
+   * @returns {void}
+   */
   dequeue() {
     this.buffer.shift();
   }
+  /**
+   * Add an item to the buffer
+   *
+   * @param {any} item
+   */
   enqueue(item) {
     if (this.buffer.length >= this.size) {
       this.dequeue();

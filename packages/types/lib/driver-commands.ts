@@ -1080,3 +1080,189 @@ export interface Location {
   longitude: number;
   altitude?: number;
 }
+
+/**
+ * Interface for all MJSONWP commands proxied to the external driver.
+ */
+export interface IMJSONWPCommands<Ctx = string> {
+  /**
+   * Get the currently active context
+   * @see {@link https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md#webviews-and-other-contexts}
+   *
+   * @returns The context name
+   */
+  getCurrentContext?(): Promise<Ctx | null>;
+
+  /**
+   * Switch to a context by name
+   * @see {@link https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md#webviews-and-other-contexts}
+   *
+   * @param name - the context name
+   */
+  setContext?(name: string, ...args: any[]): Promise<void>;
+
+  /**
+   * Get the list of available contexts
+   * @see {@link https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md#webviews-and-other-contexts}
+   *
+   * @returns The list of context names
+   */
+  getContexts?(): Promise<Ctx[]>;
+
+  /**
+   * Get the network connection state of a device
+   * @see {@link https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md#device-modes}
+   *
+   * @returns A number which is a bitmask representing categories like Data, Wifi, and Airplane
+   * mode status
+   */
+  getNetworkConnection?(): Promise<number>;
+
+  /**
+   * Set the network connection of the device
+   * @see {@link https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md#device-modes}
+   *
+   * @param type - the bitmask representing network state
+   * @returns A number which is a bitmask representing categories like Data, Wifi, and Airplane
+   * mode status
+   */
+  setNetworkConnection?(type: number): Promise<number>;
+
+  /**
+   * Get the current rotation state of the device
+   * @see {@link https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md#device-rotation}
+   *
+   * @returns The Rotation object consisting of x, y, and z rotation values (0 <= n <= 360)
+   */
+  getRotation?(): Promise<Rotation>;
+
+  /**
+   * Set the device rotation state
+   * @see {@link https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md#device-rotation}
+   *
+   * @param x - the degree to which the device is rotated around the x axis (0 <= x <= 360)
+   * @param y - the degree to which the device is rotated around the y axis (0 <= y <= 360)
+   * @param z - the degree to which the device is rotated around the z axis (0 <= z <= 360)
+   */
+  setRotation?(x: number, y: number, z: number): Promise<void>;
+}
+
+export interface Rotation {
+  x: number;
+  y: number;
+  z: number;
+}
+
+/**
+ * Interface for all WebDriver extension commands from other protocols proxied to the external driver.
+ */
+export interface IOtherProtocolCommands {
+  // Chromium DevTools
+
+  /**
+   * Execute a devtools command
+   *
+   * @param cmd - the command
+   * @param params - any command-specific command parameters
+   *
+   * @returns The result of the command execution
+   */
+  executeCdp?(cmd: string, params: unknown): Promise<unknown>;
+
+  // Web Authentication
+
+  /**
+   * Add a virtual authenticator to a browser
+   * @see {@link https://www.w3.org/TR/webauthn-2/#sctn-automation-add-virtual-authenticator}
+   *
+   * @param protocol  - the protocol
+   * @param transport - a valid AuthenticatorTransport value
+   * @param hasResidentKey - whether there is a resident key
+   * @param hasUserVerification - whether the authenticator has user verification
+   * @param isUserConsenting - whether it is a user consenting authenticator
+   * @param isUserVerified - whether the user is verified
+   *
+   * @returns The authenticator ID
+   */
+  addVirtualAuthenticator?(
+    protocol: 'ctap/u2f' | 'ctap2' | 'ctap2_1',
+    transport: string,
+    hasResidentKey?: boolean,
+    hasUserVerification?: boolean,
+    isUserConsenting?: boolean,
+    isUserVerified?: boolean,
+  ): Promise<string>;
+
+  /**
+   * Remove a virtual authenticator
+   * @see {@link https://www.w3.org/TR/webauthn-2/#sctn-automation-remove-virtual-authenticator}
+   *
+   * @param authenticatorId - the ID returned in the call to add the authenticator
+   */
+  removeVirtualAuthenticator?(authenticatorId: string): Promise<void>;
+
+  /**
+   * Inject a public key credential source into a virtual authenticator
+   * @see {@link https://www.w3.org/TR/webauthn-2/#sctn-automation-add-credential}
+   *
+   * @param credentialId - the base64 encoded credential ID
+   * @param isResidentCredential - if true, a client-side credential, otherwise a server-side
+   * credential
+   * @param rpId - the relying party ID the credential is scoped to
+   * @param privateKey - the base64 encoded private key package
+   * @param userHandle - the base64 encoded user handle
+   * @param signCount - the initial value for a signature counter
+   */
+  addAuthCredential?(
+    credentialId: string,
+    isResidentCredential: boolean,
+    rpId: string,
+    privateKey: string,
+    userHandle: string,
+    signCount: number,
+    authenticatorId: string,
+  ): Promise<void>;
+
+  /**
+   * Get the list of public key credential sources
+   * @see {@link https://www.w3.org/TR/webauthn-2/#sctn-automation-get-credentials}
+   *
+   * @returns The list of Credentials
+   */
+  getAuthCredential?(): Promise<Credential[]>;
+
+  /**
+   * Remove all auth credentials
+   * @see {@link https://www.w3.org/TR/webauthn-2/#sctn-automation-remove-all-credentials}
+   */
+  removeAllAuthCredentials?(): Promise<void>;
+
+  /**
+   * Remove a specific auth credential
+   *
+   * @param credentialId - the credential ID
+   * @param authenticatorId - the authenticator ID
+   */
+  removeAuthCredential?(credentialId: string, authenticatorId: string): Promise<void>;
+
+  /**
+   * Set the isUserVerified property of an authenticator
+   * @see {@link https://www.w3.org/TR/webauthn-2/#sctn-automation-set-user-verified}
+   *
+   * @param isUserVerified - the value of the isUserVerified property
+   * @param authenticatorId - the authenticator id
+   */
+  setUserAuthVerified?(isUserVerified: boolean, authenticatorId: string): Promise<void>;
+}
+
+// Web Authentication
+
+export interface Credential {
+  credentialId: string;
+  isResidentCredential: boolean;
+  rpId: string;
+  privateKey: string;
+  userHandle?: string;
+  signCount: number;
+  largeBlob?: string;
+}

@@ -14,7 +14,7 @@ commands supported in Appium.
 Unlike other protocols that specify URL endpoints, the WebDriver BiDi protocol specifies commands
 sent as a websocket event, that both drivers and clients can emit or listen to.
 
-### `bidiStatus`
+### bidiStatus
 
 ```
 session.status
@@ -28,7 +28,7 @@ Retrieves the current status of the Appium server.
 
 [`GetStatusResult`](./webdriver.md#response_2)
 
-### `bidiSubscribe`
+### bidiSubscribe
 
 ```
 session.subscribe
@@ -49,7 +49,7 @@ Subscribes to one or more BiDi events.
 
 `null`
 
-### `bidiUnsubscribe`
+### bidiUnsubscribe
 
 ```
 session.unsubscribe

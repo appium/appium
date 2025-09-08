@@ -69,8 +69,6 @@ export type SettingsUpdateListener<T extends Record<string, unknown> = Record<st
   curValue: unknown,
 ) => Promise<void>;
 
-export type Orientation = 'LANDSCAPE' | 'PORTRAIT';
-
 export type Protocol = 'MJSONWP' | 'W3C';
 
 export interface DriverStatus {

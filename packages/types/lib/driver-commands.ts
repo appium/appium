@@ -1050,14 +1050,14 @@ export interface IJSONWPCommands {
    *
    * @returns The orientation string
    */
-  getOrientation?(): Promise<string>;
+  getOrientation?(): Promise<Orientation>;
 
   /**
    * Set the device orientation
    *
    * @param orientation - the orientation string
    */
-  setOrientation?(orientation: string): Promise<void>;
+  setOrientation?(orientation: Orientation): Promise<void>;
 
   /**
    * Get the virtual or real geographical location of a device
@@ -1074,6 +1074,8 @@ export interface IJSONWPCommands {
    */
   setGeoLocation?(location: Partial<Location>): Promise<Location>;
 }
+
+export type Orientation = 'LANDSCAPE' | 'PORTRAIT';
 
 export interface Location {
   latitude: number;

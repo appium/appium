@@ -254,8 +254,8 @@ export interface Driver<
 }
 
 /**
- * External drivers must subclass `BaseDriver`, and can implement any of these methods.
- * None of these are implemented within Appium itself.
+ * External drivers must subclass `BaseDriver`, and can implement any methods from this interface.
+ * None of these methods are implemented within Appium itself.
  */
 export interface ExternalDriver<
   C extends Constraints = Constraints,

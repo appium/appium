@@ -4,6 +4,7 @@ export * from './appium-config';
 export * from './capabilities';
 export * from './config';
 export * from './constraints';
+export * from './driver-commands';
 export * from './driver';
 export * from './plugin';
 export * from './http';

@@ -1,5 +1,4 @@
-import {BaseDriverCapConstraints} from './constraints';
-import {Constraint, Constraints} from './driver';
+import {Constraint, Constraints, BaseDriverCapConstraints} from './constraints';
 import {StandardCapabilities} from './standard-caps';
 import {AnyCase, StringRecord} from './util';
 

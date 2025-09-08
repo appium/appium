@@ -1,5 +1,5 @@
 import {AsyncReturnType} from 'type-fest';
-import {BidiModuleMap, ExecuteMethodMap, MethodMap} from './command';
+import {BidiModuleMap, ExecuteMethodMap, MethodMap} from './command-maps';
 import {DriverCommand, ExternalDriver} from './driver';
 import {AppiumLogger} from './logger';
 import {UpdateServerCallback} from './server';

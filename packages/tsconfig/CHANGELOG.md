@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.0](https://github.com/appium/appium/compare/@appium/tsconfig@1.0.0...@appium/tsconfig@1.1.0) (2025-09-09)
+
+
+### Features
+
+* **tsconfig:** update base to Node20 ([#21505](https://github.com/appium/appium/issues/21505)) ([2d1af2b](https://github.com/appium/appium/commit/2d1af2bd67b2fdf5df1d2f8fa795270cc5ec06a7))
+
+
+
 ## [1.0.0](https://github.com/appium/appium/compare/@appium/tsconfig@1.0.0-rc.1...@appium/tsconfig@1.0.0) (2025-08-18)
 
 **Note:** Version bump only for package @appium/tsconfig

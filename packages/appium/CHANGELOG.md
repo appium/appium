@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.2](https://github.com/appium/appium/compare/appium@3.0.1...appium@3.0.2) (2025-09-09)
+
+
+### Bug Fixes
+
+* **appium:** Return a non-zero exit code if an extension script execution fails ([#21563](https://github.com/appium/appium/issues/21563)) ([5d73a4f](https://github.com/appium/appium/commit/5d73a4fb49a39bd4b81f51763e62f4e52b650f06))
+
+
+
 ## [3.0.1](https://github.com/appium/appium/compare/appium@3.0.0...appium@3.0.1) (2025-08-20)
 
 **Note:** Version bump only for package appium

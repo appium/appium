@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.0.1](https://github.com/appium/appium/compare/@appium/base-driver@10.0.0...@appium/base-driver@10.0.1) (2025-09-09)
+
+
+### Bug Fixes
+
+* **base-driver:** fix /computedrole and /computedlabel routes ([#21551](https://github.com/appium/appium/issues/21551)) ([3034fe9](https://github.com/appium/appium/commit/3034fe9b7cd9a461bb4d25a0cd7167888c08254b))
+
+
+
 ## [10.0.0](https://github.com/appium/appium/compare/@appium/base-driver@10.0.0-rc.2...@appium/base-driver@10.0.0) (2025-08-18)
 
 **Note:** Version bump only for package @appium/base-driver

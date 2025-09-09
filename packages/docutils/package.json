@@ -1,6 +1,6 @@
 {
   "name": "@appium/docutils",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "Documentation generation utilities for Appium and related projects",
   "keywords": [
     "automation",
@@ -48,7 +48,7 @@
     "start": "node ./build/lib/cli/index.js"
   },
   "dependencies": {
-    "@appium/support": "^7.0.0",
+    "@appium/support": "^7.0.1",
     "chalk": "4.1.2",
     "consola": "3.4.2",
     "diff": "8.0.2",

@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.0](https://github.com/appium/appium/compare/@appium/docutils@2.0.1...@appium/docutils@2.1.0) (2025-09-09)
+
+
+### Features
+
+* **docutils:** enable section index pages ([#21524](https://github.com/appium/appium/issues/21524)) ([4884a76](https://github.com/appium/appium/commit/4884a769887820491f99abce1ff564a2cd5c4f3f))
+
+
+
 ## [2.0.1](https://github.com/appium/appium/compare/@appium/docutils@2.0.0...@appium/docutils@2.0.1) (2025-08-20)
 
 **Note:** Version bump only for package @appium/docutils

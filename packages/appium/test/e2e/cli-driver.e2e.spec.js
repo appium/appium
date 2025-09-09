@@ -138,7 +138,10 @@ describe('Driver CLI', function () {
         /** @type {Record<string,import('appium/lib/cli/extension-command').InstalledExtensionListData>} */ (
           await runList(['--updates'])
         );
-      const updateVersion = String(fake.updateVersion || fake.unsafeUpdateVersion);
+      const updateVersion = fake.updateVersion || fake.unsafeUpdateVersion;
+      if (!updateVersion) {
+        throw new Error(`No update version found. Expected an update from ${penultimateFakeDriverVersionAsOfRightNow} to a newer version, but got null. This might indicate the update check is not working properly.`);
+      }
       util.compareVersions(
         String(updateVersion),
         '>',

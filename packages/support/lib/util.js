@@ -84,8 +84,8 @@ function escapeSpecialChars(str, quoteEscape) {
     .replace(/[\"]/g, '\\"') // eslint-disable-line no-useless-escape
     .replace(/\\'/g, "\\'");
   if (quoteEscape) {
-    let re = new RegExp(quoteEscape, 'g');
-    str = str.replace(re, `\\${quoteEscape}`);
+    let re = new RegExp('"', 'g');
+    str = str.replace(re, '\\"');
   }
   return str;
 }
@@ -327,7 +327,11 @@ async function isSameDestination(path1, path2, ...pathN) {
  * @throws {Error} if strict mode is enabled and `ver` cannot be coerced
  */
 function coerceVersion(ver, strict = /** @type {Strict} */ (true)) {
-  const result = semver.valid(semver.coerce(`${ver}`));
+  // First try to parse as-is, then coerce if needed
+  let result = semver.valid(`${ver}`);
+  if (!result) {
+    result = semver.valid(semver.coerce(`${ver}`));
+  }
   if (strict && !result) {
     throw new Error(`'${ver}' cannot be coerced to a valid version number`);
   }
@@ -357,9 +361,26 @@ function compareVersions(ver1, operator, ver2) {
     );
   }
 
-  const semverOperator = ['==', '!='].includes(operator) ? '=' : operator;
-  const result = semver.satisfies(coerceVersion(ver1), `${semverOperator}${coerceVersion(ver2)}`);
-  return operator === '!=' ? !result : result;
+  const coercedVer1 = coerceVersion(ver1);
+  const coercedVer2 = coerceVersion(ver2);
+  
+  switch (operator) {
+    case '>':
+      return semver.gt(coercedVer1, coercedVer2);
+    case '<':
+      return semver.lt(coercedVer1, coercedVer2);
+    case '>=':
+      return semver.gte(coercedVer1, coercedVer2);
+    case '<=':
+      return semver.lte(coercedVer1, coercedVer2);
+    case '==':
+    case '=':
+      return semver.eq(coercedVer1, coercedVer2);
+    case '!=':
+      return !semver.eq(coercedVer1, coercedVer2);
+    default:
+      throw new Error(`Unsupported operator: ${operator}`);
+  }
 }
 
 /**

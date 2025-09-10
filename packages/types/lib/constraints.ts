@@ -1,4 +1,21 @@
-import type {Constraints} from './driver';
+/**
+ * A collection of constraints describing the allowed capabilities for a driver.
+ */
+export type Constraints = {
+  readonly [name: string]: Constraint;
+};
+
+export interface Constraint {
+  readonly presence?: boolean | Readonly<{allowEmpty: boolean}>;
+  readonly isString?: boolean;
+  readonly isNumber?: boolean;
+  readonly isBoolean?: boolean;
+  readonly isObject?: boolean;
+  readonly isArray?: boolean;
+  readonly deprecated?: boolean;
+  readonly inclusion?: Readonly<[string, ...string[]]>;
+  readonly inclusionCaseInsensitive?: Readonly<[string, ...string[]]>;
+}
 
 export const BASE_DESIRED_CAP_CONSTRAINTS = {
   platformName: {

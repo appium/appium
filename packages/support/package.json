@@ -1,6 +1,6 @@
 {
   "name": "@appium/support",
-  "version": "7.0.0",
+  "version": "7.0.1",
   "description": "Support libs used across Appium packages",
   "keywords": [
     "automation",
@@ -41,9 +41,9 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/logger": "^2.0.0",
-    "@appium/tsconfig": "^1.0.0",
-    "@appium/types": "^1.0.0",
+    "@appium/logger": "^2.0.1",
+    "@appium/tsconfig": "^1.1.0",
+    "@appium/types": "^1.0.1",
     "@colors/colors": "1.6.0",
     "archiver": "7.0.1",
     "axios": "1.11.0",
@@ -73,7 +73,7 @@
     "supports-color": "8.1.1",
     "teen_process": "3.0.1",
     "type-fest": "4.41.0",
-    "uuid": "12.0.0",
+    "uuid": "13.0.0",
     "which": "5.0.0",
     "yauzl": "3.2.0"
   },

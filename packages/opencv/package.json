@@ -1,6 +1,6 @@
 {
   "name": "@appium/opencv",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "OpenCV-related helper library",
   "keywords": [
     "automation",

@@ -30,7 +30,7 @@ It's important to keep this important point in mind: there is nothing "magic" ab
 
 Because finding elements by image relies on image analysis software in conjunction with Appium's screenshot functionality and the reference images you yourself provide, we provide a number of settings that help you modulate this feature, in some cases potentially speeding up the match or making it more accurate.
 
-To access these settings, you should use the Appium [Settings API](https://github.com/appium/appium/blob/master/docs/en/advanced-concepts/settings.md), or pre-set any settings as capabilities using the [special `settings[]` capability](https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/caps.md#update-settings). These are the settings that are available:
+To access these settings, you should use the Appium [Settings API](http://appium.io/docs/en/latest/guides/settings/), or pre-set any settings as capabilities using the [special `settings[]` capability](http://appium.io/docs/en/latest/guides/settings/#initializing-settings-via-capabilities). These are the settings that are available:
 
 |Setting Name|Description|Possible Values|Default Value|
 |------------|-----------|---------------|-------------|

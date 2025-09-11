@@ -526,6 +526,9 @@ export const METHOD_MAP = /** @type {const} */ ({
   },
   // Secure Payment Confirmation
   // https://www.w3.org/TR/secure-payment-confirmation/
+  '/session/:sessionId/secure-payment-confirmation/set-mode': {
+    POST: {command: 'setSPCTransactionMode', payloadParams: {required: ['mode']}},
+  },
 
   // Federated Credential Management
   // https://www.w3.org/TR/fedcm-1/

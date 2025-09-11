@@ -101,11 +101,21 @@ export interface IOtherProtocolCommands {
 
   /**
    * Set the protocol handler automation mode
-   * @see {@link https://html.spec.whatwg.org/multipage/system-state.html#custom-handlers}
+   * @see {@link https://html.spec.whatwg.org/multipage/system-state.html#user-agent-automation}
    *
    * @param mode - the protocol handler automation mode
    */
   setRPHRegistrationMode?(mode: RPHRegistrationMode): Promise<void>;
+
+  // Secure Payment Confirmation
+
+  /**
+   * Set the current transaction automation mode
+   * @see {@link https://www.w3.org/TR/secure-payment-confirmation/#sctn-automation-set-spc-transaction-mode}
+   *
+   * @param mode - the transaction automation mode
+   */
+  setSPCTransactionMode?(mode: SPCTransactionMode): Promise<void>;
 
   // Web Authentication
 
@@ -227,6 +237,10 @@ export type VirtualSensorReading = VirtualSensorXYZReading | VirtualSensorSingle
 // Custom Handlers
 
 export type RPHRegistrationMode = 'autoAccept' | 'autoReject' | 'none';
+
+// Secure Payment Confirmation
+
+export type SPCTransactionMode = 'autoAccept' | 'autoChooseToAuthAnotherWay' | 'autoReject' | 'autoOptOut';
 
 // Web Authentication
 

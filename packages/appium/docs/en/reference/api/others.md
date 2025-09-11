@@ -235,6 +235,32 @@ Simulates the generation of a test report, which can be retrieved by registered 
 
 `null`
 
+## Secure Payment Confirmation Protocol
+
+The [Secure Payment Confirmation protocol](https://www.w3.org/TR/secure-payment-confirmation) (SPC)
+is an extension of the W3C WebDriver protocol.
+
+### setSPCTransactionMode
+
+```
+POST /session/:sessionId/secure-payment-confirmation/set-mode
+```
+
+> SPC documentation: [Set SPC Transaction Mode](https://www.w3.org/TR/secure-payment-confirmation/#sctn-automation-set-spc-transaction-mode)
+
+Sets the transaction automation mode, for automated handling of transaction confirmation prompts.
+By default, this mode is set to `none`.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`mode`|Automation mode to set. Supported values are `autoAccept`, `autoChooseToAuthAnotherWay`, `autoReject`, or `autoOptOut`.|string|
+
+#### Response
+
+`null`
+
 ## Selenium Protocol
 
 The Selenium protocol is an extension of the W3C WebDriver protocol, supported in Appium clients

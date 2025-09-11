@@ -2,7 +2,10 @@
  * Interface for all WebDriver extension commands from other protocols proxied to the external driver.
  */
 export interface IOtherProtocolCommands {
-  // Chromium DevTools
+
+  /**
+   * Chromium DevTools
+   */
 
   /**
    * Execute a devtools command
@@ -14,7 +17,9 @@ export interface IOtherProtocolCommands {
    */
   executeCdp?(cmd: string, params: unknown): Promise<unknown>;
 
-  // Permissions
+  /**
+   * Permissions
+   */
 
   /**
    * Set the permission state of a PermissionDescriptor
@@ -25,7 +30,9 @@ export interface IOtherProtocolCommands {
    */
   setPermissions?(descriptor: PermissionDescriptor, state: PermissionState): Promise<void>;
 
-  // Reporting
+  /**
+   * Reporting
+   */
 
   /**
    * Generate a test report for registered observers
@@ -36,7 +43,9 @@ export interface IOtherProtocolCommands {
    */
   generateTestReport?(message: string, group?: string): Promise<void>;
 
-  // Device Posture
+  /**
+   * Device Posture
+   */
 
   /**
    * Override the device posture
@@ -44,15 +53,17 @@ export interface IOtherProtocolCommands {
    *
    * @param posture - the posture to which the device should be set
    */
-  setDevicePosture?(posture: DevicePostureType): Promise<void>;
 
+  setDevicePosture?(posture: DevicePostureType): Promise<void>;
   /**
    * Return device posture control back to hardware
    * @see {@link https://www.w3.org/TR/device-posture/#clear-device-posture}
    */
   clearDevicePosture?(): Promise<void>;
 
-  // Generic Sensor
+  /**
+   * Generic Sensor
+   */
 
   /**
    * Create a virtual sensor
@@ -97,7 +108,9 @@ export interface IOtherProtocolCommands {
    */
   deleteVirtualSensor?(sensorType: string): Promise<void>;
 
-  // Custom Handlers
+  /**
+   * Custom Handlers
+   */
 
   /**
    * Set the protocol handler automation mode
@@ -107,7 +120,9 @@ export interface IOtherProtocolCommands {
    */
   setRPHRegistrationMode?(mode: RPHRegistrationMode): Promise<void>;
 
-  // Secure Payment Confirmation
+  /**
+   * Secure Payment Confirmation
+   */
 
   /**
    * Set the current transaction automation mode
@@ -117,7 +132,9 @@ export interface IOtherProtocolCommands {
    */
   setSPCTransactionMode?(mode: SPCTransactionMode): Promise<void>;
 
-  // Compute Pressure
+  /**
+   * Compute Pressure
+   */
 
   /**
    * Create a virtual pressure source
@@ -145,7 +162,9 @@ export interface IOtherProtocolCommands {
    */
   deleteVirtualPressureSource?(pressureSourceType: string): Promise<void>;
 
-  // Federated Credential Management
+  /**
+   * Federated Credential Management
+   */
 
   /**
    * Cancel the currently open FedCM dialog
@@ -205,7 +224,9 @@ export interface IOtherProtocolCommands {
    */
   fedCMResetCooldown?(): Promise<void>;
 
-  // Web Authentication
+  /**
+   * Web Authentication
+   */
 
   /**
    * Add a virtual authenticator to a browser

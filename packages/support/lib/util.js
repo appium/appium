@@ -63,7 +63,7 @@ function escapeSpace(str) {
 /**
  * Escape special characters in string
  * @param {string|any} str - The string to escape special characters in
- * @param {boolean} [quoteEscape=false] - Whether to escape quotes
+ * @param {string|boolean} [quoteEscape=false] - Character to escape or boolean for quotes
  * @returns {string|any} The string with escaped special characters, or original value if not a string
  */
 function escapeSpecialChars(str, quoteEscape) {
@@ -84,8 +84,15 @@ function escapeSpecialChars(str, quoteEscape) {
     .replace(/[\"]/g, '\\"') // eslint-disable-line no-useless-escape
     .replace(/\\'/g, "\\'");
   if (quoteEscape) {
-    let re = new RegExp('"', 'g');
-    str = str.replace(re, '\\"');
+    if (typeof quoteEscape === 'string') {
+      // Escape arbitrary character
+      let re = new RegExp(quoteEscape.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+      str = str.replace(re, `\\${quoteEscape}`);
+    } else {
+      // Legacy behavior: escape quotes
+      let re = new RegExp('"', 'g');
+      str = str.replace(re, '\\"');
+    }
   }
   return str;
 }

@@ -232,6 +232,22 @@ export const METHOD_MAP = /** @type {const} */ ({
   '/session/:sessionId/element/:elementId/screenshot': {
     GET: {command: 'getElementScreenshot'},
   },
+  '/session/:sessionId/print': {
+    POST: {
+      command: 'printPage',
+      payloadParams: {
+        optional: [
+          'orientation',
+          'scale',
+          'background',
+          'page',
+          'margin',
+          'shrinkToFit',
+          'pageRanges',
+        ],
+      }
+    }
+  },
   // #endregion
   // #region JSONWP
   // https://www.selenium.dev/documentation/legacy/json_wire_protocol/

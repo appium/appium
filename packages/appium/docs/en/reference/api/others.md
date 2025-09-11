@@ -40,6 +40,59 @@ for a list of available methods and their parameters.
 
 `any` - the result of executing the CDP method
 
+## Permissions Protocol
+
+The [Permissions protocol](https://www.w3.org/TR/permissions/) is an extension of the W3C WebDriver
+protocol.
+
+### setPermissions
+
+```
+POST /session/:sessionId/permissions
+```
+
+> Permissions documentation: [Set Permission](https://www.w3.org/TR/permissions/#webdriver-command-set-permission)
+
+Simulates user modification of the permission state of a PermissionDescriptor (a permissible feature
+with optional additional properties).
+
+#### Parameters
+
+|<div style="width:6em">Name</div>|Description|Type|
+|--|--|--|
+|`descriptor`|Object specifying the feature name in its `name` key, along with any other keys for additional properties|object|
+|`state`|New permission state for this descriptor. Supported values are: `granted`, `denied`, or `prompt`.|string|
+
+#### Response
+
+`null`
+
+## Reporting Protocol
+
+The [Reporting protocol](https://www.w3.org/TR/reporting-1/) is an extension of the W3C WebDriver
+protocol.
+
+### generateTestReport
+
+```
+POST /session/:sessionId/reporting/generate_test_report
+```
+
+> Reporting documentation: [Generate Test Report](https://www.w3.org/TR/reporting-1/#generate-test-report-command)
+
+Simulates the generation of a test report, which can be retrieved by registered reporting observers.
+
+#### Parameters
+
+|Name|Description|Type|Default|
+|--|--|--|--|
+|`message`|Message displayed in the report|string||
+|`group?`|Destination group to deliver the report to|string|`default`|
+
+#### Response
+
+`null`
+
 ## Selenium Protocol
 
 The Selenium protocol is an extension of the W3C WebDriver protocol, supported in Appium clients

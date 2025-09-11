@@ -14,6 +14,28 @@ export interface IOtherProtocolCommands {
    */
   executeCdp?(cmd: string, params: unknown): Promise<unknown>;
 
+  // Permissions
+
+  /**
+   * Set the permission state of a PermissionDescriptor
+   * @see {@link https://www.w3.org/TR/permissions/#webdriver-command-set-permission}
+   *
+   * @param descriptor - the PermissionDescriptor
+   * @param state - the new state
+   */
+  setPermissions?(descriptor: PermissionDescriptor, state: PermissionState): Promise<void>;
+
+  // Reporting
+
+  /**
+   * Generate a test report for registered observers
+   * @see {@link https://www.w3.org/TR/reporting-1/#generate-test-report-command}
+   *
+   * @param message - the message to be displayed in the report
+   * @param group - the destination group to deliver the report to
+   */
+  generateTestReport?(message: string, group?: string): Promise<void>;
+
   // Web Authentication
 
   /**
@@ -98,6 +120,15 @@ export interface IOtherProtocolCommands {
    * @param authenticatorId - the authenticator id
    */
   setUserAuthVerified?(isUserVerified: boolean, authenticatorId: string): Promise<void>;
+}
+
+// Permissions
+
+export type PermissionState = 'granted' | 'denied' | 'prompt';
+
+export interface PermissionDescriptor {
+  name: string;
+  [key: string]: any;
 }
 
 // Web Authentication

@@ -441,9 +441,19 @@ export const METHOD_MAP = /** @type {const} */ ({
 
   // Reporting
   // https://www.w3.org/TR/reporting-1/
+  '/session/:sessionId/reporting/generate_test_report': {
+    POST: {
+      command: 'generateTestReport',
+      payloadParams: {required: ['message'], optional: ['group']},
+    },
+  },
 
   // Permissions
   // https://www.w3.org/TR/permissions/
+  '/session/:sessionId/permissions': {
+    POST: {command: 'setPermissions', payloadParams: {required: ['descriptor', 'state']}},
+  },
+
 
   // Device Posture
   // https://www.w3.org/TR/device-posture/

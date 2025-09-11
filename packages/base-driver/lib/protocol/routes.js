@@ -463,7 +463,6 @@ export const METHOD_MAP = /** @type {const} */ ({
 
   // Generic Sensor
   // https://www.w3.org/TR/generic-sensor/
-
   '/session/:sessionId/sensor': {
     POST: {
       command: 'createVirtualSensor',
@@ -479,8 +478,11 @@ export const METHOD_MAP = /** @type {const} */ ({
     DELETE: {command: 'deleteVirtualSensor'},
   },
 
-  // Set RPH Registration Mode
+  // Custom Handlers
   // https://html.spec.whatwg.org/multipage/system-state.html#user-agent-automation
+  '/session/:sessionId/custom-handlers/set-mode': {
+    POST: {command: 'setRPHRegistrationMode', payloadParams: {required: ['mode']}},
+  },
 
   // Webauthn
   // https://www.w3.org/TR/webauthn-2/#sctn-automation-add-virtual-authenticator

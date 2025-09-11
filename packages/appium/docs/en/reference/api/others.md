@@ -40,6 +40,32 @@ for a list of available methods and their parameters.
 
 `any` - the result of executing the CDP method
 
+## Custom Handlers Protocol
+
+The [Custom Handlers protocol](https://html.spec.whatwg.org/multipage/system-state.html#user-agent-automation)
+is an extension of the W3C WebDriver protocol, defined by the HTML Standard specification.
+
+### setRPHRegistrationMode
+
+```
+POST /session/:sessionId/custom-handlers/set-mode
+```
+
+> Custom Handlers documentation: [Set RPH Registration Mode](https://html.spec.whatwg.org/multipage/system-state.html#user-agent-automation)
+
+Sets the protocol handler automation mode, for processing registrations of custom protocol handlers.
+By default, this mode is set to `none`.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`mode`|Automation mode to set. Supported values are `autoAccept`, `autoReject`, or `none`.|string|
+
+#### Response
+
+`null`
+
 ## Device Posture Protocol
 
 The [Device Posture protocol](https://www.w3.org/TR/device-posture/) is an extension of the W3C

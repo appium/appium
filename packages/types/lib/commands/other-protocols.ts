@@ -97,6 +97,16 @@ export interface IOtherProtocolCommands {
    */
   deleteVirtualSensor?(sensorType: string): Promise<void>;
 
+  // Custom Handlers
+
+  /**
+   * Set the protocol handler automation mode
+   * @see {@link https://html.spec.whatwg.org/multipage/system-state.html#custom-handlers}
+   *
+   * @param mode - the protocol handler automation mode
+   */
+  setRPHRegistrationMode?(mode: RPHRegistrationMode): Promise<void>;
+
   // Web Authentication
 
   /**
@@ -213,6 +223,10 @@ export interface VirtualSensorSingleValueReading {
 }
 
 export type VirtualSensorReading = VirtualSensorXYZReading | VirtualSensorSingleValueReading;
+
+// Custom Handlers
+
+export type RPHRegistrationMode = 'autoAccept' | 'autoReject' | 'none';
 
 // Web Authentication
 

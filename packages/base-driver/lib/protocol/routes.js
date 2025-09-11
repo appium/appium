@@ -16,14 +16,8 @@ const COMMAND_NAMES_CACHE = new LRUCache({
  */
 export const METHOD_MAP = /** @type {const} */ ({
 
-  //
-  // W3C WebDriver
-  // https://www.w3.org/TR/webdriver1/
+  // #region W3C WebDriver
   // https://www.w3.org/TR/webdriver2/
-  //
-  '/status': {
-    GET: {command: 'getStatus'},
-  },
   '/session': {
     POST: {
       command: 'createSession',
@@ -33,9 +27,12 @@ export const METHOD_MAP = /** @type {const} */ ({
     },
   },
   '/session/:sessionId': {
-    // TODO: Decide on the future of this route later
+    // TODO: JSONWP route, remove in the future
     GET: {command: 'getSession', deprecated: true},
     DELETE: {command: 'deleteSession'},
+  },
+  '/status': {
+    GET: {command: 'getStatus'},
   },
   '/session/:sessionId/timeouts': {
     GET: {command: 'getTimeouts'},
@@ -45,9 +42,6 @@ export const METHOD_MAP = /** @type {const} */ ({
         optional: ['type', 'ms', 'script', 'pageLoad', 'implicit'],
       },
     },
-  },
-  '/session/:sessionId/window/handles': {
-    GET: {command: 'getWindowHandles'},
   },
   '/session/:sessionId/url': {
     GET: {command: 'getUrl'},
@@ -62,15 +56,8 @@ export const METHOD_MAP = /** @type {const} */ ({
   '/session/:sessionId/refresh': {
     POST: {command: 'refresh'},
   },
-
-  '/session/:sessionId/screenshot': {
-    GET: {command: 'getScreenshot'},
-  },
-  '/session/:sessionId/frame': {
-    POST: {command: 'setFrame', payloadParams: {required: ['id']}},
-  },
-  '/session/:sessionId/frame/parent': {
-    POST: {command: 'switchToParentFrame'},
+  '/session/:sessionId/title': {
+    GET: {command: 'title'},
   },
   '/session/:sessionId/window': {
     GET: {command: 'getWindowHandle'},
@@ -82,6 +69,25 @@ export const METHOD_MAP = /** @type {const} */ ({
     },
     DELETE: {command: 'closeWindow'},
   },
+  '/session/:sessionId/window/handles': {
+    GET: {command: 'getWindowHandles'},
+  },
+  '/session/:sessionId/window/new': {
+    POST: {command: 'createNewWindow', payloadParams: {optional: ['type']}},
+  },
+  '/session/:sessionId/frame': {
+    POST: {command: 'setFrame', payloadParams: {required: ['id']}},
+  },
+  '/session/:sessionId/frame/parent': {
+    POST: {command: 'switchToParentFrame'},
+  },
+  '/session/:sessionId/window/rect': {
+    GET: {command: 'getWindowRect'},
+    POST: {
+      command: 'setWindowRect',
+      payloadParams: {optional: ['x', 'y', 'width', 'height']},
+    },
+  },
   '/session/:sessionId/window/maximize': {
     POST: {command: 'maximizeWindow'},
   },
@@ -91,23 +97,11 @@ export const METHOD_MAP = /** @type {const} */ ({
   '/session/:sessionId/window/fullscreen': {
     POST: {command: 'fullScreenWindow'},
   },
-  '/session/:sessionId/window/new': {
-    POST: {command: 'createNewWindow', payloadParams: {optional: ['type']}},
+  '/session/:sessionId/element/active': {
+    GET: {command: 'active'},
   },
-  '/session/:sessionId/cookie': {
-    GET: {command: 'getCookies'},
-    POST: {command: 'setCookie', payloadParams: {required: ['cookie']}},
-    DELETE: {command: 'deleteCookies'},
-  },
-  '/session/:sessionId/cookie/:name': {
-    GET: {command: 'getCookie'},
-    DELETE: {command: 'deleteCookie'},
-  },
-  '/session/:sessionId/source': {
-    GET: {command: 'getPageSource'},
-  },
-  '/session/:sessionId/title': {
-    GET: {command: 'title'},
+  '/session/:sessionId/element/:elementId/shadow': {
+    GET: {command: 'elementShadowRoot'},
   },
   '/session/:sessionId/element': {
     POST: {
@@ -121,12 +115,6 @@ export const METHOD_MAP = /** @type {const} */ ({
       payloadParams: {required: ['using', 'value']},
     },
   },
-  '/session/:sessionId/element/active': {
-    GET: {command: 'active'},
-  },
-  '/session/:sessionId/element/:elementId': {
-    GET: {},
-  },
   '/session/:sessionId/element/:elementId/element': {
     POST: {
       command: 'findElementFromElement',
@@ -138,41 +126,6 @@ export const METHOD_MAP = /** @type {const} */ ({
       command: 'findElementsFromElement',
       payloadParams: {required: ['using', 'value']},
     },
-  },
-  '/session/:sessionId/element/:elementId/click': {
-    POST: {command: 'click'},
-  },
-  '/session/:sessionId/element/:elementId/text': {
-    GET: {command: 'getText'},
-  },
-  '/session/:sessionId/element/:elementId/value': {
-    POST: {
-      command: 'setValue',
-      payloadParams: {
-        required: ['text'],
-      },
-    },
-  },
-  '/session/:sessionId/element/:elementId/name': {
-    GET: {command: 'getName'},
-  },
-  '/session/:sessionId/element/:elementId/clear': {
-    POST: {command: 'clear'},
-  },
-  '/session/:sessionId/element/:elementId/selected': {
-    GET: {command: 'elementSelected'},
-  },
-  '/session/:sessionId/element/:elementId/enabled': {
-    GET: {command: 'elementEnabled'},
-  },
-  '/session/:sessionId/element/:elementId/attribute/:name': {
-    GET: {command: 'getAttribute'},
-  },
-  '/session/:sessionId/element/:elementId/displayed': {
-    GET: {command: 'elementDisplayed'},
-  },
-  '/session/:sessionId/element/:elementId/shadow': {
-    GET: {command: 'elementShadowRoot'},
   },
   '/session/:sessionId/shadow/:shadowId/element': {
     POST: {
@@ -186,11 +139,32 @@ export const METHOD_MAP = /** @type {const} */ ({
       payloadParams: {required: ['using', 'value']},
     },
   },
-  '/session/:sessionId/element/:elementId/css/:propertyName': {
-    GET: {command: 'getCssProperty'},
+  '/session/:sessionId/element/:elementId/selected': {
+    GET: {command: 'elementSelected'},
+  },
+  '/session/:sessionId/element/:elementId/displayed': {
+    GET: {command: 'elementDisplayed'},
+  },
+  '/session/:sessionId/element/:elementId/attribute/:name': {
+    GET: {command: 'getAttribute'},
   },
   '/session/:sessionId/element/:elementId/property/:name': {
     GET: {command: 'getProperty'},
+  },
+  '/session/:sessionId/element/:elementId/css/:propertyName': {
+    GET: {command: 'getCssProperty'},
+  },
+  '/session/:sessionId/element/:elementId/text': {
+    GET: {command: 'getText'},
+  },
+  '/session/:sessionId/element/:elementId/name': {
+    GET: {command: 'getName'},
+  },
+  '/session/:sessionId/element/:elementId/rect': {
+    GET: {command: 'getElementRect'},
+  },
+  '/session/:sessionId/element/:elementId/enabled': {
+    GET: {command: 'elementEnabled'},
   },
   '/session/:sessionId/element/:elementId/computedrole': {
     GET: {command: 'getComputedRole'},
@@ -198,27 +172,22 @@ export const METHOD_MAP = /** @type {const} */ ({
   '/session/:sessionId/element/:elementId/computedlabel': {
     GET: {command: 'getComputedLabel'},
   },
-  '/session/:sessionId/actions': {
-    POST: {command: 'performActions', payloadParams: {required: ['actions']}},
-    DELETE: {command: 'releaseActions'},
+  '/session/:sessionId/element/:elementId/click': {
+    POST: {command: 'click'},
   },
-  '/session/:sessionId/alert/text': {
-    GET: {command: 'getAlertText'},
+  '/session/:sessionId/element/:elementId/clear': {
+    POST: {command: 'clear'},
+  },
+  '/session/:sessionId/element/:elementId/value': {
     POST: {
-      command: 'setAlertText',
+      command: 'setValue',
       payloadParams: {
         required: ['text'],
       },
     },
   },
-  '/session/:sessionId/alert/accept': {
-    POST: {command: 'postAcceptAlert'},
-  },
-  '/session/:sessionId/alert/dismiss': {
-    POST: {command: 'postDismissAlert'},
-  },
-  '/session/:sessionId/element/:elementId/rect': {
-    GET: {command: 'getElementRect'},
+  '/session/:sessionId/source': {
+    GET: {command: 'getPageSource'},
   },
   '/session/:sessionId/execute/sync': {
     POST: {command: 'execute', payloadParams: {required: ['script', 'args']}},
@@ -229,20 +198,59 @@ export const METHOD_MAP = /** @type {const} */ ({
       payloadParams: {required: ['script', 'args']},
     },
   },
+  '/session/:sessionId/cookie': {
+    GET: {command: 'getCookies'},
+    POST: {command: 'setCookie', payloadParams: {required: ['cookie']}},
+    DELETE: {command: 'deleteCookies'},
+  },
+  '/session/:sessionId/cookie/:name': {
+    GET: {command: 'getCookie'},
+    DELETE: {command: 'deleteCookie'},
+  },
+  '/session/:sessionId/actions': {
+    POST: {command: 'performActions', payloadParams: {required: ['actions']}},
+    DELETE: {command: 'releaseActions'},
+  },
+  '/session/:sessionId/alert/dismiss': {
+    POST: {command: 'postDismissAlert'},
+  },
+  '/session/:sessionId/alert/accept': {
+    POST: {command: 'postAcceptAlert'},
+  },
+  '/session/:sessionId/alert/text': {
+    GET: {command: 'getAlertText'},
+    POST: {
+      command: 'setAlertText',
+      payloadParams: {
+        required: ['text'],
+      },
+    },
+  },
+  '/session/:sessionId/screenshot': {
+    GET: {command: 'getScreenshot'},
+  },
   '/session/:sessionId/element/:elementId/screenshot': {
     GET: {command: 'getElementScreenshot'},
   },
-  '/session/:sessionId/window/rect': {
-    GET: {command: 'getWindowRect'},
+  '/session/:sessionId/print': {
     POST: {
-      command: 'setWindowRect',
-      payloadParams: {optional: ['x', 'y', 'width', 'height']},
-    },
+      command: 'printPage',
+      payloadParams: {
+        optional: [
+          'orientation',
+          'scale',
+          'background',
+          'page',
+          'margin',
+          'shrinkToFit',
+          'pageRanges',
+        ],
+      }
+    }
   },
-
-  //
-  // Appium specific
-  //
+  // #endregion
+  // #region JSONWP
+  // https://www.selenium.dev/documentation/legacy/json_wire_protocol/
   '/session/:sessionId/ime/available_engines': {
     GET: {command: 'availableIMEEngines', deprecated: true},
   },
@@ -262,9 +270,12 @@ export const METHOD_MAP = /** @type {const} */ ({
       deprecated: true,
     },
   },
-  '/session/:sessionId/rotation': {
-    GET: {command: 'getRotation'},
-    POST: {command: 'setRotation', payloadParams: {required: ['x', 'y', 'z']}},
+  '/session/:sessionId/orientation': {
+    GET: {command: 'getOrientation'},
+    POST: {
+      command: 'setOrientation',
+      payloadParams: {required: ['orientation']}
+    },
   },
   '/session/:sessionId/location': {
     GET: {
@@ -277,12 +288,12 @@ export const METHOD_MAP = /** @type {const} */ ({
       deprecated: true,
     },
   },
-  '/session/:sessionId/orientation': {
-    GET: {command: 'getOrientation'},
-    POST: {
-      command: 'setOrientation',
-      payloadParams: {required: ['orientation']}
-    },
+  // #endregion
+  // #region MJSONWP
+  // https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md
+  '/session/:sessionId/rotation': {
+    GET: {command: 'getRotation'},
+    POST: {command: 'setRotation', payloadParams: {required: ['x', 'y', 'z']}},
   },
   '/session/:sessionId/context': {
     GET: {command: 'getCurrentContext'},
@@ -299,45 +310,40 @@ export const METHOD_MAP = /** @type {const} */ ({
       deprecated: true,
     },
   },
-  '/session/:sessionId/receive_async_response': {
-    POST: {
-      command: 'receiveAsyncResponse',
-      payloadParams: {required: ['status', 'value']},
-      deprecated: true,
-    },
-  },
+  // #endregion
+  // #region Appium
   '/appium/sessions': {
     GET: {command: 'getAppiumSessions'},
   },
   '/session/:sessionId/appium/capabilities': {
     GET: {command: 'getAppiumSessionCapabilities'}
   },
+  '/session/:sessionId/appium/settings': {
+    POST: {command: 'updateSettings', payloadParams: {required: ['settings']}},
+    GET: {command: 'getSettings'},
+  },
+  '/session/:sessionId/appium/commands': {
+    GET: {command: 'listCommands'},
+  },
+  '/session/:sessionId/appium/extensions': {
+    GET: {command: 'listExtensions'},
+  },
+  '/session/:sessionId/appium/events': {
+    POST: {command: 'getLogEvents', payloadParams: {optional: ['type']}},
+  },
+  '/session/:sessionId/appium/log_event': {
+    POST: {
+      command: 'logCustomEvent',
+      payloadParams: {required: ['vendor', 'event']},
+    },
+  },
   '/session/:sessionId/appium/device/system_time': {
     GET: {command: 'getDeviceTime'},
     POST: {command: 'getDeviceTime', payloadParams: {optional: ['format']}},
   },
-  // #region Applications Management
-  '/session/:sessionId/appium/device/install_app': {
-    POST: {
-      command: 'installApp',
-      payloadParams: {
-        required: ['appPath'],
-        optional: ['options'],
-      },
-    },
-  },
   '/session/:sessionId/appium/device/activate_app': {
     POST: {
       command: 'activateApp',
-      payloadParams: {
-        required: [['appId'], ['bundleId']],
-        optional: ['options'],
-      },
-    },
-  },
-  '/session/:sessionId/appium/device/remove_app': {
-    POST: {
-      command: 'removeApp',
       payloadParams: {
         required: [['appId'], ['bundleId']],
         optional: ['options'],
@@ -353,14 +359,6 @@ export const METHOD_MAP = /** @type {const} */ ({
       },
     },
   },
-  '/session/:sessionId/appium/device/app_installed': {
-    POST: {
-      command: 'isAppInstalled',
-      payloadParams: {
-        required: [['appId'], ['bundleId']],
-      },
-    },
-  },
   '/session/:sessionId/appium/device/app_state': {
     POST: {
       command: 'queryAppState',
@@ -369,7 +367,32 @@ export const METHOD_MAP = /** @type {const} */ ({
       },
     },
   },
-  // #endregion
+  '/session/:sessionId/appium/device/install_app': {
+    POST: {
+      command: 'installApp',
+      payloadParams: {
+        required: ['appPath'],
+        optional: ['options'],
+      },
+    },
+  },
+  '/session/:sessionId/appium/device/remove_app': {
+    POST: {
+      command: 'removeApp',
+      payloadParams: {
+        required: [['appId'], ['bundleId']],
+        optional: ['options'],
+      },
+    },
+  },
+  '/session/:sessionId/appium/device/app_installed': {
+    POST: {
+      command: 'isAppInstalled',
+      payloadParams: {
+        required: [['appId'], ['bundleId']],
+      },
+    },
+  },
   '/session/:sessionId/appium/device/hide_keyboard': {
     POST: {
       command: 'hideKeyboard',
@@ -388,48 +411,35 @@ export const METHOD_MAP = /** @type {const} */ ({
   '/session/:sessionId/appium/device/pull_folder': {
     POST: {command: 'pullFolder', payloadParams: {required: ['path']}},
   },
-  '/session/:sessionId/appium/settings': {
-    POST: {command: 'updateSettings', payloadParams: {required: ['settings']}},
-    GET: {command: 'getSettings'},
-  },
-  '/session/:sessionId/appium/events': {
-    POST: {command: 'getLogEvents', payloadParams: {optional: ['type']}},
-  },
-  '/session/:sessionId/appium/log_event': {
+  // #endregion
+  // #region Unknown
+  '/session/:sessionId/receive_async_response': {
     POST: {
-      command: 'logCustomEvent',
-      payloadParams: {required: ['vendor', 'event']},
+      command: 'receiveAsyncResponse',
+      payloadParams: {required: ['status', 'value']},
+      deprecated: true,
     },
   },
-  // #region Inspector
-  '/session/:sessionId/appium/commands': {
-    GET: {command: 'listCommands'},
-  },
-  '/session/:sessionId/appium/extensions': {
-    GET: {command: 'listExtensions'},
+  '/session/:sessionId/element/:elementId': {
+    GET: {},
   },
   // #endregion
-
-  //
-  // 3rd party vendor/protocol support
-  //
-  // #region Selenium/Chromium browsers
+  // #region Other Protocols
+  // Selenium/Chromium browsers
   '/session/:sessionId/se/log': {
     POST: {command: 'getLog', payloadParams: {required: ['type']}},
   },
   '/session/:sessionId/se/log/types': {
     GET: {command: 'getLogTypes'},
   },
-  // #endregion
 
-  // #region chromium devtools
+  // Chromium devtools
   // https://chromium.googlesource.com/chromium/src/+/master/chrome/test/chromedriver/server/http_handler.cc
   '/session/:sessionId/:vendor/cdp/execute': {
     POST: {command: 'executeCdp', payloadParams: {required: ['cmd', 'params']}},
   },
-  // #endregion
 
-  // #region Webauthn
+  // Webauthn
   // https://www.w3.org/TR/webauthn-2/#sctn-automation-add-virtual-authenticator
   '/session/:sessionId/webauthn/authenticator': {
     POST: {

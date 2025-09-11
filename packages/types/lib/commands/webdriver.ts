@@ -440,6 +440,30 @@ export interface IWDClassicCommands {
    * @returns A base64-encoded string representing the PNG image data for the element rect
    */
   getElementScreenshot?(elementId: string): Promise<string>;
+
+  /**
+   * Print the page by rendering it as a PDF document
+   * @see {@link https://w3c.github.io/webdriver/#print-page}
+   *
+   * @param orientation - the orientation of the page ("portrait" or "landscape")
+   * @param scale - the page scale, between 0.1 and 2
+   * @param background - whether to include background images
+   * @param page - the width and height of the printed page
+   * @param margin - the margins of the printed page
+   * @param shrinkToFit - whether to resize page contents to match {@linkcode PrintPageSize.width}
+   * @param pageRanges - array of page numbers and/or page ranges (dash-separated strings) to be printed
+   *
+   * @returns A base64-encoded string representing the PDF document
+   */
+  printPage?(
+    orientation?: string,
+    scale?: number,
+    background?: boolean,
+    page?: PrintPageSize,
+    margin?: PrintPageMargins,
+    shrinkToFit?: boolean,
+    pageRanges?: (number | string)[]
+  ): Promise<string>;
 }
 
 export type NewWindowType = 'tab' | 'window';
@@ -472,4 +496,16 @@ export interface Cookie {
   httpOnly?: boolean;
   expiry?: number;
   sameSite?: 'Lax' | 'Strict';
+}
+
+export interface PrintPageSize {
+  width?: number;
+  height?: number;
+}
+
+export interface PrintPageMargins {
+  top?: number;
+  bottom?: number;
+  left?: number;
+  right?: number;
 }

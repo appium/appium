@@ -535,6 +535,17 @@ export const METHOD_MAP = /** @type {const} */ ({
 
   // Compute Pressure
   // https://www.w3.org/TR/compute-pressure/
+  '/session/:sessionId/pressuresource': {
+    POST: {
+      command: 'createVirtualPressureSource',
+      payloadParams: {required: ['type'], optional: ['supported']},
+    },
+  },
+  '/session/:sessionId/pressuresource/:pressureSourceType': {
+    POST: {command: 'updateVirtualPressureSource', payloadParams: {required: ['sample']}},
+    DELETE: {command: 'deleteVirtualPressureSource'},
+  },
+
 
   // #endregion
 });

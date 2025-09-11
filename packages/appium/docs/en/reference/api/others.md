@@ -40,6 +40,66 @@ for a list of available methods and their parameters.
 
 `any` - the result of executing the CDP method
 
+## Compute Pressure Protocol
+
+The [Compute Pressure protocol](https://www.w3.org/TR/generic-sensor/) is an extension of the W3C
+WebDriver protocol.
+
+### createVirtualPressureSource
+
+```
+POST /session/:sessionId/pressuresource
+```
+
+> Compute Pressure documentation: [Create Virtual Pressure Source](https://www.w3.org/TR/compute-pressure/#create-virtual-pressure-source)
+
+Creates a new virtual pressure source.
+
+#### Parameters
+
+|<div style="width:6em">Name</div>|Description|Type|Default|
+|--|--|--|--|
+|`type`|Type of pressure source to create|string||
+|`supported?`|Whether the pressure source should be configured as supported|boolean|`true`|
+
+#### Response
+
+`null`
+
+### updateVirtualPressureSource
+
+```
+POST /session/:sessionId/pressuresource/:pressureSourceType
+```
+
+> Compute Pressure documentation: [Update Virtual Pressure Source](https://www.w3.org/TR/compute-pressure/#update-virtual-pressure-source)
+
+Updates the state of a virtual pressure source with the type identified by `:pressureSourceType`.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`sample`|Pressure state. Supported values are `nominal`, `fair`, `serious`, or `critical`.|string|
+
+#### Response
+
+`null`
+
+### deleteVirtualPressureSource
+
+```
+DELETE /session/:sessionId/pressuresource/:pressureSourceType
+```
+
+> Compute Pressure documentation: [Delete Virtual Pressure Source](https://www.w3.org/TR/compute-pressure/#delete-virtual-pressure-source)
+
+Deletes the virtual pressure source with the type identified by `:pressureSourceType`.
+
+#### Response
+
+`null`
+
 ## Custom Handlers Protocol
 
 The [Custom Handlers protocol](https://html.spec.whatwg.org/multipage/system-state.html#user-agent-automation)

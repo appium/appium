@@ -117,6 +117,34 @@ export interface IOtherProtocolCommands {
    */
   setSPCTransactionMode?(mode: SPCTransactionMode): Promise<void>;
 
+  // Compute Pressure
+
+  /**
+   * Create a virtual pressure source
+   * @see {@link https://www.w3.org/TR/compute-pressure/#create-virtual-pressure-source}
+   *
+   * @param type - the virtual pressure source type to create
+   * @param supported - whether the pressure source should be configured as supported
+   */
+  createVirtualPressureSource?(type: string, supported?: boolean): Promise<void>;
+
+  /**
+   * Update the state of a virtual pressure source
+   * @see {@link https://www.w3.org/TR/compute-pressure/#update-virtual-pressure-source}
+   *
+   * @param sensorType - the virtual pressure source type
+   * @param sample - the pressure state
+   */
+  updateVirtualPressureSource?(pressureSourceType: string, sample: PressureSourceState): Promise<void>;
+
+  /**
+   * Delete a virtual pressure source
+   * @see {@link https://www.w3.org/TR/compute-pressure/#delete-virtual-pressure-source}
+   *
+   * @param pressureSourceType - the virtual pressure source type
+   */
+  deleteVirtualPressureSource?(pressureSourceType: string): Promise<void>;
+
   // Web Authentication
 
   /**
@@ -241,6 +269,10 @@ export type RPHRegistrationMode = 'autoAccept' | 'autoReject' | 'none';
 // Secure Payment Confirmation
 
 export type SPCTransactionMode = 'autoAccept' | 'autoChooseToAuthAnotherWay' | 'autoReject' | 'autoOptOut';
+
+// Compute Pressure
+
+export type PressureSourceState = 'nominal' | 'fair' | 'serious' | 'critical';
 
 // Web Authentication
 

@@ -228,7 +228,7 @@ Clicks a button in the currently open FedCM dialog.
 ### fedCMGetAccounts
 
 ```
-POST /session/:sessionId/fedcm/accountlist
+GET /session/:sessionId/fedcm/accountlist
 ```
 
 > FedCM documentation: [Account List](https://www.w3.org/TR/fedcm-1/#webdriver-accountlist)
@@ -254,7 +254,7 @@ Retrieves all accounts that the user can select in the currently open FedCM dial
 ### fedCMGetTitle
 
 ```
-POST /session/:sessionId/fedcm/gettitle
+GET /session/:sessionId/fedcm/gettitle
 ```
 
 > FedCM documentation: [Get Title](https://www.w3.org/TR/fedcm-1/#webdriver-gettitle)
@@ -273,7 +273,7 @@ Retrieves the title and subtitle (if one exists) of the currently open FedCM dia
 ### fedCMGetDialogType
 
 ```
-POST /session/:sessionId/fedcm/getdialogtype
+GET /session/:sessionId/fedcm/getdialogtype
 ```
 
 > FedCM documentation: [Get Dialog Type](https://www.w3.org/TR/fedcm-1/#webdriver-getdialogtype)

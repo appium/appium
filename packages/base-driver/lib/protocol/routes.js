@@ -439,6 +439,21 @@ export const METHOD_MAP = /** @type {const} */ ({
     POST: {command: 'executeCdp', payloadParams: {required: ['cmd', 'params']}},
   },
 
+  // Reporting
+  // https://www.w3.org/TR/reporting-1/
+
+  // Permissions
+  // https://www.w3.org/TR/permissions/
+
+  // Device Posture
+  // https://www.w3.org/TR/device-posture/
+
+  // Sensors
+  // https://www.w3.org/TR/generic-sensor/
+
+  // Set RPH Registration Mode
+  // https://html.spec.whatwg.org/multipage/system-state.html#user-agent-automation
+
   // Webauthn
   // https://www.w3.org/TR/webauthn-2/#sctn-automation-add-virtual-authenticator
   '/session/:sessionId/webauthn/authenticator': {
@@ -479,6 +494,15 @@ export const METHOD_MAP = /** @type {const} */ ({
       },
     },
   },
+  // Secure Payment Confirmation
+  // https://www.w3.org/TR/secure-payment-confirmation/
+
+  // Federated Credential Management
+  // https://www.w3.org/TR/fedcm-1/
+
+  // Compute Pressure
+  // https://www.w3.org/TR/compute-pressure/
+
   // #endregion
 });
 

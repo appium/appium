@@ -168,7 +168,8 @@ Clears the previously set device posture, returning posture control back to the 
 ## Federated Credential Management Protocol
 
 The [Federated Credential Management protocol](https://www.w3.org/TR/fedcm-1) (FedCM) is an
-extension of the W3C WebDriver protocol.
+extension of the W3C WebDriver protocol. Clients can enable this protocol by using the
+[`fedcm:accounts`](https://www.w3.org/TR/fedcm-1/#webdriver-capability) capability.
 
 ### fedCMCancelDialog
 
@@ -525,7 +526,9 @@ Retrieves the available log types that can be used to call the [`getLog`](#getlo
 ## Web Authentication Protocol
 
 The [Web Authentication protocol](https://w3c.github.io/webauthn/) (WebAuthn) is an extension of
-the W3C WebDriver protocol.
+the W3C WebDriver protocol. Clients can enable this protocol by using the
+[`webauthn:virtualAuthenticators`](https://w3c.github.io/webauthn/#sctn-automation-webdriver-capability)
+capability.
 
 ### addVirtualAuthenticator
 

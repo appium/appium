@@ -52,6 +52,51 @@ export interface IOtherProtocolCommands {
    */
   clearDevicePosture?(): Promise<void>;
 
+  // Generic Sensor
+
+  /**
+   * Create a virtual sensor
+   * @see {@link https://www.w3.org/TR/generic-sensor/#create-virtual-sensor-command}
+   *
+   * @param type - the virtual sensor type to create
+   * @param connected - whether the sensor should be configured as connected
+   * @param maxSamplingFrequency - the maximum sampling frequency of this sensor
+   * @param minSamplingFrequency - the minimum sampling frequency of this sensor
+   */
+  createVirtualSensor?(
+    type: string,
+    connected?: boolean,
+    maxSamplingFrequency?: number,
+    minSamplingFrequency?: number,
+  ): Promise<void>;
+
+  /**
+   * Retrieve information about a virtual sensor
+   * @see {@link https://www.w3.org/TR/generic-sensor/#get-virtual-sensor-information-command}
+   *
+   * @param sensorType - the virtual sensor type
+   *
+   * @returns an object with sensor information such as its requested sampling frequency
+   */
+  getVirtualSensorInfo?(sensorType: string): Promise<VirtualSensorInfo>;
+
+  /**
+   * Update a virtual sensor with a new reading
+   * @see {@link https://www.w3.org/TR/generic-sensor/#update-virtual-sensor-reading-command}
+   *
+   * @param sensorType - the virtual sensor type
+   * @param reading - sensor type-specific sensor reading data
+   */
+  updateVirtualSensorReading?(sensorType: string, reading: VirtualSensorReading): Promise<void>;
+
+  /**
+   * Delete a virtual sensor
+   * @see {@link https://www.w3.org/TR/generic-sensor/#delete-virtual-sensor-command}
+   *
+   * @param sensorType - the virtual sensor type
+   */
+  deleteVirtualSensor?(sensorType: string): Promise<void>;
+
   // Web Authentication
 
   /**
@@ -150,6 +195,24 @@ export interface PermissionDescriptor {
 // Device Posture
 
 export type DevicePostureType = 'continuous' | 'folded';
+
+// Generic Sensor
+
+export interface VirtualSensorInfo {
+  requestedSamplingFrequency: number;
+}
+
+export interface VirtualSensorXYZReading {
+  x: number;
+  y: number;
+  z: number;
+}
+
+export interface VirtualSensorSingleValueReading {
+  [key: string]: number;
+}
+
+export type VirtualSensorReading = VirtualSensorXYZReading | VirtualSensorSingleValueReading;
 
 // Web Authentication
 

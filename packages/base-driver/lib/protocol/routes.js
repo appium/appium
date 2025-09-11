@@ -461,8 +461,23 @@ export const METHOD_MAP = /** @type {const} */ ({
     DELETE: {command: 'clearDevicePosture'},
   },
 
-  // Sensors
+  // Generic Sensor
   // https://www.w3.org/TR/generic-sensor/
+
+  '/session/:sessionId/sensor': {
+    POST: {
+      command: 'createVirtualSensor',
+      payloadParams: {
+        required: ['type'],
+        optional: ['connected', 'maxSamplingFrequency', 'minSamplingFrequency'],
+      },
+    },
+  },
+  '/session/:sessionId/sensors/:sensorType': {
+    GET: {command: 'getVirtualSensorInfo'},
+    POST: {command: 'updateVirtualSensorReading', payloadParams: {required: ['reading']}},
+    DELETE: {command: 'deleteVirtualSensor'},
+  },
 
   // Set RPH Registration Mode
   // https://html.spec.whatwg.org/multipage/system-state.html#user-agent-automation

@@ -40,6 +40,83 @@ for a list of available methods and their parameters.
 
 `any` - the result of executing the CDP method
 
+## Generic Sensor Protocol
+
+The [Generic Sensor protocol](https://www.w3.org/TR/generic-sensor/) is an extension of the W3C
+WebDriver protocol.
+
+### createVirtualSensor
+
+```
+POST /session/:sessionId/sensor
+```
+
+> Generic Sensor documentation: [Create Virtual Sensor](https://www.w3.org/TR/generic-sensor/#create-virtual-sensor-command)
+
+Creates a new virtual sensor.
+
+#### Parameters
+
+|<div style="width:12em">Name</div>|Description|Type|Default|
+|--|--|--|--|
+|`type`|Type of sensor to create|string||
+|`connected?`|Whether the sensor should be configured as connected|boolean|`true`|
+|`maxSamplingFrequency?`|Maximum sensor sampling frequency|number||
+|`minSamplingFrequency?`|Minimum sensor sampling frequency|number||
+
+#### Response
+
+`null`
+
+### getVirtualSensorInfo
+
+```
+GET /session/:sessionId/sensor/:sensorType
+```
+
+> Generic Sensor documentation: [Get Virtual Sensor Information](https://www.w3.org/TR/generic-sensor/#get-virtual-sensor-information-command)
+
+Retrieves information about the virtual sensor with the type identified by `:sensorType`.
+
+#### Response
+
+`GetVirtualSensorInfoResponse` - an object containing the `requestedSamplingFrequency` key, whose
+value is the requested sampling frequency of the sensor type
+
+### updateVirtualSensorReading
+
+```
+POST /session/:sessionId/sensor/:sensorType
+```
+
+> Generic Sensor documentation: [Update Virtual Sensor Reading](https://www.w3.org/TR/generic-sensor/#update-virtual-sensor-reading-command)
+
+Updates the virtual sensor with the type identified by `:sensorType` with a new reading.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`reading`|Object containing reading properties specific to the sensor type|object|
+
+#### Response
+
+`null`
+
+### deleteVirtualSensor
+
+```
+DELETE /session/:sessionId/sensor/:sensorType
+```
+
+> Generic Sensor documentation: [Delete Virtual Sensor](https://www.w3.org/TR/generic-sensor/#delete-virtual-sensor-command)
+
+Deletes the virtual sensor with the type identified by `:sensorType`.
+
+#### Response
+
+`null`
+
 ## Permissions Protocol
 
 The [Permissions protocol](https://www.w3.org/TR/permissions/) is an extension of the W3C WebDriver

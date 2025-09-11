@@ -145,13 +145,73 @@ export interface IOtherProtocolCommands {
    */
   deleteVirtualPressureSource?(pressureSourceType: string): Promise<void>;
 
+  // Federated Credential Management
+
+  /**
+   * Cancel the currently open FedCM dialog
+   * @see {@link https://www.w3.org/TR/fedcm-1/#webdriver-canceldialog}
+   */
+  fedCMCancelDialog?(): Promise<void>;
+
+  /**
+   * Select an account to use for the currently open FedCM dialog
+   * @see {@link https://www.w3.org/TR/fedcm-1/#webdriver-selectaccount}
+   *
+   * @param accountIndex - index of the account in the list of available accounts
+   */
+  fedCMSelectAccount?(accountIndex: number): Promise<void>;
+
+  /**
+   * Click a button in the currently open FedCM dialog
+   * @see {@link https://www.w3.org/TR/fedcm-1/#webdriver-clickdialogbutton}
+   *
+   * @param dialogButton - button identifier
+   */
+  fedCMClickDialogButton?(dialogButton: string): Promise<void>;
+
+  /**
+   * Return all accounts that the user can select in the currently open FedCM dialog
+   * @see {@link https://www.w3.org/TR/fedcm-1/#webdriver-accountlist}
+   *
+   * @returns list of account objects
+   */
+  fedCMGetAccounts?(): Promise<FedCMAccount[]>;
+
+  /**
+   * Return the title and subtitle (if one exists) of the currently open FedCM dialog
+   * @see {@link https://www.w3.org/TR/fedcm-1/#webdriver-gettitle}
+   *
+   * @returns dialog title and subtitle (if one exists)
+   */
+  fedCMGetTitle?(): Promise<FedCMDialogTitle>;
+
+  /**
+   * Return the type of the currently open FedCM dialog
+   * @see {@link https://www.w3.org/TR/fedcm-1/#webdriver-getdialogtype}
+   *
+   * @returns dialog type
+   */
+  fedCMGetDialogType?(): Promise<string>;
+
+  /**
+   * Set the state of the promise rejection delay
+   * @see {@link https://www.w3.org/TR/fedcm-1/#webdriver-setdelayenabled}
+   */
+  fedCMSetDelayEnabled?(enabled: boolean): Promise<void>;
+
+  /**
+   * Reset the cooldown delay used after dismissing a FedCM dialog
+   * @see {@link https://www.w3.org/TR/fedcm-1/#webdriver-resetcooldown}
+   */
+  fedCMResetCooldown?(): Promise<void>;
+
   // Web Authentication
 
   /**
    * Add a virtual authenticator to a browser
    * @see {@link https://www.w3.org/TR/webauthn-2/#sctn-automation-add-virtual-authenticator}
    *
-   * @param protocol  - the protocol
+   * @param protocol - the protocol
    * @param transport - a valid AuthenticatorTransport value
    * @param hasResidentKey - whether there is a resident key
    * @param hasUserVerification - whether the authenticator has user verification
@@ -273,6 +333,25 @@ export type SPCTransactionMode = 'autoAccept' | 'autoChooseToAuthAnotherWay' | '
 // Compute Pressure
 
 export type PressureSourceState = 'nominal' | 'fair' | 'serious' | 'critical';
+
+// Federated Credential Management
+
+export interface FedCMAccount {
+  accountId: string;
+  email: string;
+  name: string;
+  givenName?: string;
+  pictureUrl?: string;
+  idpConfigUrl: string;
+  loginState: string;
+  termsOfServiceUrl?: string;
+  privacyPolicyUrl?: string;
+}
+
+export interface FedCMDialogTitle {
+  title: string;
+  subtitle?: string;
+}
 
 // Web Authentication
 

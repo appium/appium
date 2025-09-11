@@ -532,6 +532,30 @@ export const METHOD_MAP = /** @type {const} */ ({
 
   // Federated Credential Management
   // https://www.w3.org/TR/fedcm-1/
+  '/session/:sessionId/fedcm/canceldialog': {
+    POST: {command: 'fedCMCancelDialog'},
+  },
+  '/session/:sessionId/fedcm/selectaccount': {
+    POST: {command: 'fedCMSelectAccount', payloadParams: {required: ['accountIndex']}},
+  },
+  '/session/:sessionId/fedcm/clickdialogbutton': {
+    POST: {command: 'fedCMClickDialogButton', payloadParams: {required: ['dialogButton']}},
+  },
+  '/session/:sessionId/fedcm/accountlist': {
+    GET: {command: 'fedCMGetAccounts'},
+  },
+  '/session/:sessionId/fedcm/gettitle': {
+    GET: {command: 'fedCMGetTitle'},
+  },
+  '/session/:sessionId/fedcm/getdialogtype': {
+    GET: {command: 'fedCMGetDialogType'},
+  },
+  '/session/:sessionId/fedcm/setdelayenabled': {
+    POST: {command: 'fedCMSetDelayEnabled', payloadParams: {required: ['enabled']}},
+  },
+  '/session/:sessionId/fedcm/resetcooldown': {
+    POST: {command: 'fedCMResetCooldown'},
+  },
 
   // Compute Pressure
   // https://www.w3.org/TR/compute-pressure/

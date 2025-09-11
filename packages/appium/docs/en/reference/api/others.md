@@ -42,7 +42,7 @@ for a list of available methods and their parameters.
 
 ## Compute Pressure Protocol
 
-The [Compute Pressure protocol](https://www.w3.org/TR/generic-sensor/) is an extension of the W3C
+The [Compute Pressure protocol](https://www.w3.org/TR/compute-pressure/) is an extension of the W3C
 WebDriver protocol.
 
 ### createVirtualPressureSource
@@ -160,6 +160,159 @@ DELETE /session/:sessionId/deviceposture
 > Device Posture documentation: [Clear Device Posture](https://www.w3.org/TR/device-posture/#clear-device-posture)
 
 Clears the previously set device posture, returning posture control back to the device hardware.
+
+#### Response
+
+`null`
+
+## Federated Credential Management Protocol
+
+The [Federated Credential Management protocol](https://www.w3.org/TR/fedcm-1) (FedCM) is an
+extension of the W3C WebDriver protocol.
+
+### fedCMCancelDialog
+
+```
+POST /session/:sessionId/fedcm/canceldialog
+```
+
+> FedCM documentation: [Cancel Dialog](https://www.w3.org/TR/fedcm-1/#webdriver-canceldialog)
+
+Cancels the currently open FedCM dialog.
+
+#### Response
+
+`null`
+
+### fedCMSelectAccount
+
+```
+POST /session/:sessionId/fedcm/selectaccount
+```
+
+> FedCM documentation: [Select Account](https://www.w3.org/TR/fedcm-1/#webdriver-selectaccount)
+
+Selects an account to use for the currently open FedCM dialog.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`accountIndex`|Index of the account in the list of available accounts|number|
+
+#### Response
+
+`null`
+
+### fedCMClickDialogButton
+
+```
+POST /session/:sessionId/fedcm/clickdialogbutton
+```
+
+> FedCM documentation: [Click Dialog Button](https://www.w3.org/TR/fedcm-1/#webdriver-clickdialogbutton)
+
+Clicks a button in the currently open FedCM dialog.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`dialogButton`|Identifier of the button to click. Must be set to `ConfirmIdpLoginContinue`.|string|
+
+#### Response
+
+`null`
+
+### fedCMGetAccounts
+
+```
+POST /session/:sessionId/fedcm/accountlist
+```
+
+> FedCM documentation: [Account List](https://www.w3.org/TR/fedcm-1/#webdriver-accountlist)
+
+Retrieves all accounts that the user can select in the currently open FedCM dialog.
+
+#### Response
+
+`FedCMAccount[]` - an array of objects, where each object includes the following properties:
+
+|<div style="width:10em">Name</div>|Description|Type|
+|--|--|--|
+|`accountId`|Account ID|string|
+|`email`|Account email|string|
+|`name`|Account name|string|
+|`givenName?`|Account given name|string|
+|`pictureUrl?`|Account picture URL|string|
+|`idpConfigUrl`|URL of the identity provider configuration file|string|
+|`loginState`|Login state. Set to `SignUp` if the account is not connected, otherwise `SignIn`.|string|
+|`termsOfServiceUrl?`|Terms of Service URL of the website, if `loginState` is set to `SignUp`|string|
+|`privacyPolicyUrl?`|Privacy Policy URL of the website, if `loginState` is set to `SignUp`|string|
+
+### fedCMGetTitle
+
+```
+POST /session/:sessionId/fedcm/gettitle
+```
+
+> FedCM documentation: [Get Title](https://www.w3.org/TR/fedcm-1/#webdriver-gettitle)
+
+Retrieves the title and subtitle (if one exists) of the currently open FedCM dialog.
+
+#### Response
+
+`FedCMDialogTitle` - an object with the following properties:
+
+|Name|Description|Type|
+|--|--|--|
+|`title`|Dialog title|string|
+|`subtitle?`|Dialog subtitle|string|
+
+### fedCMGetDialogType
+
+```
+POST /session/:sessionId/fedcm/getdialogtype
+```
+
+> FedCM documentation: [Get Dialog Type](https://www.w3.org/TR/fedcm-1/#webdriver-getdialogtype)
+
+Retrieves the type of the currently open FedCM dialog.
+
+#### Response
+
+`string` - can be set to `AutoReauthn`, `AccountChooser`, or `ConfirmIdpLogin`
+
+### fedCMSetDelayEnabled
+
+```
+POST /session/:sessionId/fedcm/setdelayenabled
+```
+
+> FedCM documentation: [Set Delay Enabled](https://www.w3.org/TR/fedcm-1/#webdriver-setdelayenabled)
+
+Sets the state of the promise rejection delay, which is used to prevent information leakage about
+the logged in state of the user.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`enabled`|Whether to enable the promise rejection delay|boolean|
+
+#### Response
+
+`null`
+
+### fedCMResetCooldown
+
+```
+POST /session/:sessionId/fedcm/resetcooldown
+```
+
+> FedCM documentation: [Reset Cooldown](https://www.w3.org/TR/fedcm-1/#webdriver-resetcooldown)
+
+Resets the cooldown delay used after dismissing a FedCM dialog.
 
 #### Response
 

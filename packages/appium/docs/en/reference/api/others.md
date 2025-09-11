@@ -40,6 +40,45 @@ for a list of available methods and their parameters.
 
 `any` - the result of executing the CDP method
 
+## Device Posture Protocol
+
+The [Device Posture protocol](https://www.w3.org/TR/device-posture/) is an extension of the W3C
+WebDriver protocol.
+
+### setDevicePosture
+
+```
+POST /session/:sessionId/deviceposture
+```
+
+> Device Posture documentation: [Set Device Posture](https://www.w3.org/TR/device-posture/#set-device-posture)
+
+Sets the device posture, overriding the posture set by the device hardware.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`posture`|Posture to which the device should be set. Supported values are `continuous` or `folded`.|string|
+
+#### Response
+
+`null`
+
+### clearDevicePosture
+
+```
+DELETE /session/:sessionId/deviceposture
+```
+
+> Device Posture documentation: [Clear Device Posture](https://www.w3.org/TR/device-posture/#clear-device-posture)
+
+Clears the previously set device posture, returning posture control back to the device hardware.
+
+#### Response
+
+`null`
+
 ## Generic Sensor Protocol
 
 The [Generic Sensor protocol](https://www.w3.org/TR/generic-sensor/) is an extension of the W3C
@@ -165,45 +204,6 @@ Simulates the generation of a test report, which can be retrieved by registered 
 |--|--|--|--|
 |`message`|Message displayed in the report|string||
 |`group?`|Destination group to deliver the report to|string|`default`|
-
-#### Response
-
-`null`
-
-## Device Posture Protocol
-
-The [Device Posture protocol](https://www.w3.org/TR/device-posture/) is an extension of the W3C
-WebDriver protocol.
-
-### setDevicePosture
-
-```
-POST /session/:sessionId/deviceposture
-```
-
-> Device Posture documentation: [Set Device Posture](https://www.w3.org/TR/device-posture/#set-device-posture)
-
-Sets the device posture, overriding the posture set by the device hardware.
-
-#### Parameters
-
-|Name|Description|Type|
-|--|--|--|
-|`posture`|Posture to which the device should be set. Supported values are `continuous` or `folded`.|string|
-
-#### Response
-
-`null`
-
-### clearDevicePosture
-
-```
-DELETE /session/:sessionId/deviceposture
-```
-
-> Device Posture documentation: [Clear Device Posture](https://www.w3.org/TR/device-posture/#clear-device-posture)
-
-Clears the previously set device posture, returning posture control back to the device hardware.
 
 #### Response
 

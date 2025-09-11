@@ -36,6 +36,22 @@ export interface IOtherProtocolCommands {
    */
   generateTestReport?(message: string, group?: string): Promise<void>;
 
+  // Device Posture
+
+  /**
+   * Override the device posture
+   * @see {@link https://www.w3.org/TR/device-posture/#set-device-posture}
+   *
+   * @param posture - the posture to which the device should be set
+   */
+  setDevicePosture?(posture: DevicePostureType): Promise<void>;
+
+  /**
+   * Return device posture control back to hardware
+   * @see {@link https://www.w3.org/TR/device-posture/#clear-device-posture}
+   */
+  clearDevicePosture?(): Promise<void>;
+
   // Web Authentication
 
   /**
@@ -130,6 +146,10 @@ export interface PermissionDescriptor {
   name: string;
   [key: string]: any;
 }
+
+// Device Posture
+
+export type DevicePostureType = 'continuous' | 'folded';
 
 // Web Authentication
 

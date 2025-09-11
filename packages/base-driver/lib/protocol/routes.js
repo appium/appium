@@ -454,9 +454,12 @@ export const METHOD_MAP = /** @type {const} */ ({
     POST: {command: 'setPermissions', payloadParams: {required: ['descriptor', 'state']}},
   },
 
-
   // Device Posture
   // https://www.w3.org/TR/device-posture/
+  '/session/:sessionId/deviceposture': {
+    POST: {command: 'setDevicePosture', payloadParams: {required: ['posture']}},
+    DELETE: {command: 'clearDevicePosture'},
+  },
 
   // Sensors
   // https://www.w3.org/TR/generic-sensor/

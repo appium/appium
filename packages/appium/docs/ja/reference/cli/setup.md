@@ -21,7 +21,7 @@ mentioned below.
 Installs the following extensions for browser webview testing:
 
 - Drivers: `safari`[^1], `gecko`, `chromium`
-- Plugins: `images`
+- Plugins: `images`, `inspector`
 
 #### Usage
 
@@ -34,7 +34,7 @@ appium setup browser
 Installs the following extensions for desktop application testing:
 
 - Drivers: `mac2`[^1], `windows`[^2]
-- Plugins: `images`
+- Plugins: `images`, `inspector`
 
 #### Usage
 
@@ -47,7 +47,7 @@ appium setup desktop
 Installs the following extensions for mobile testing:
 
 - Drivers: `uiautomator2`, `xcuitest`[^1], `espresso`
-- Plugins: `images`
+- Plugins: `images`, `inspector`
 
 #### Usage
 

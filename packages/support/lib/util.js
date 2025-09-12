@@ -378,7 +378,7 @@ function compareVersions(ver1, operator, ver2) {
 
   const coercedVer1 = coerceVersion(ver1);
   const coercedVer2 = coerceVersion(ver2);
-  
+
   switch (operator) {
     case '>':
       return semver.gt(coercedVer1, coercedVer2);

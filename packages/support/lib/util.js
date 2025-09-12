@@ -89,7 +89,7 @@ function escapeSpecialChars(str, quoteEscape) {
       let re = new RegExp(quoteEscape.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
       str = str.replace(re, `\\${quoteEscape}`);
     } else {
-      // Legacy behavior: escape quotes
+      // Legacy behavior: when quoteEscape is boolean true, escape double quotes
       let re = new RegExp('"', 'g');
       str = str.replace(re, '\\"');
     }

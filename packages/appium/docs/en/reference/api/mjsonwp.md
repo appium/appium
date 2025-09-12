@@ -8,7 +8,7 @@ title: Mobile JSON Wire Protocol
 </style>
 
 The following is a list of legacy [Mobile JSON Wire Protocol (MJSONWP)](https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md)
-endpoints used in Appium.
+endpoints supported in Appium.
 
 ### getRotation
 

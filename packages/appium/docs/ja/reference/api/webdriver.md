@@ -1070,3 +1070,45 @@ identified by `:elementId`.
 #### Response
 
 `string` - a base64-encoded PNG image
+
+### printPage
+
+```
+POST /session/:sessionId/print
+```
+
+> WebDriver documentation: [Print Page](https://w3c.github.io/webdriver/#print-page)
+
+Prints the page by rendering it as a paginated PDF document.
+
+#### Parameters
+
+| <div style="width:7em">Name</div> | Description                                                                                       | <div style="width:9em">Type</div>                | Default    |
+| --------------------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------ | ---------- |
+| `orientation?`                    | Page orientation. Supported values are `portrait` or `landscape`. | string                                           | `portrait` |
+| `scale?`                          | Page scale. Supported values are in the range `[0.1, 2]`.         | number                                           | `1`        |
+| `background?`                     | Whether to include background images                                                              | boolean                                          | `false`    |
+| `page?`                           | Object specifying the page width and height                                                       | [`PrintPageSize`](#printpagesizeparameter)       | `{}`       |
+| `margin?`                         | Object specifying the page margins                                                                | [`PrintPageMargins`](#printpagemarginsparameter) | `{}`       |
+| `shrinkToFit?`                    | Whether to resize page contents to match `PrintPageSize.width`                                    | boolean                                          | `true`     |
+| `pageRanges?`                     | Array of pages to be printed, for example, `[1, 4, '8-9']`                                        | array                                            | `[]`       |
+
+##### `PrintPageSize`
+
+| Name      | Description                                                                                  | Type   | Default |
+| --------- | -------------------------------------------------------------------------------------------- | ------ | ------- |
+| `width?`  | Page width. Must be greater than or equal to `(2.54 / 72)`.  | number | `21.59` |
+| `height?` | Page height. Must be greater than or equal to `(2.54 / 72)`. | number | `27.94` |
+
+##### `PrintPageMargins`
+
+| Name      | Description                                                                               | Type   | Default |
+| --------- | ----------------------------------------------------------------------------------------- | ------ | ------- |
+| `top?`    | Page top margin. Must be greater than or equal to `0`.    | number | `1`     |
+| `bottom?` | Page bottom margin. Must be greater than or equal to `0`. | number | `1`     |
+| `left?`   | Page left margin. Must be greater than or equal to `0`.   | number | `1`     |
+| `right?`  | Page right margin. Must be greater than or equal to `0`.  | number | `1`     |
+
+#### Response
+
+`string` - a base64-encoded PDF document

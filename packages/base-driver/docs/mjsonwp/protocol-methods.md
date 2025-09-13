@@ -68,7 +68,7 @@ GET         | `session/{sessionId}/alert_text`                               | G
 POST        | `session/{sessionId}/alert_text`                               | Sends keystrokes to the currently displayed dialog
 POST        | `session/{sessionId}/accept_alert`                             | Accepts the currently displayed alert dialog.
 POST        | `session/{sessionId}/dismiss_alert`                            | Dismisses the currently displayed alert dialog.
-POST        | `session/{sessionId}/moveto`                                   | Move the pointer by an offset of the specificed element.
+POST        | `session/{sessionId}/moveto`                                   | Move the pointer by an offset of the specified element.
 POST        | `session/{sessionId}/click`                                    | Click on the current pointer position.
 POST        | `session/{sessionId}/touch/click`                              | Single tap on the touch enabled device.
 POST        | `session/{sessionId}/touch/down`                               | Finger down on the screen.
@@ -112,14 +112,14 @@ POST        | `session/{sessionId}/appium/device/is_locked`                  | C
 POST        | `session/{sessionId}/appium/start_recording_screen`            | start recording the screen.
 POST        | `session/{sessionId}/appium/stop_recording_screen`             | stop recording the screen.
 POST        | `session/{sessionId}/appium/performanceData/types`             | returns the information types of the system state which is supported to read as like cpu, memory, network traffic, and battery.
-POST        | `session/{sessionId}/appium/getPerformanceData`				 | returns the information of the system state which is supported to read as like cpu, memory, network traffic, and battery.
+POST        | `session/{sessionId}/appium/getPerformanceData`                | returns the information of the system state which is supported to read as like cpu, memory, network traffic, and battery.
 POST        | `session/{sessionId}/appium/device/press_keycode`              | Press a particular key code on the device.
 POST        | `session/{sessionId}/appium/device/long_press_keycode`         | Press and hold a particular key code on the device.
 POST        | `session/{sessionId}/appium/device/keyevent`                   | Send a key code to the device.
 GET         | `session/{sessionId}/appium/device/current_activity`           | Retrieve the current activity running on the device.
 GET         | `session/{sessionId}/appium/device/current_package`            | Retrieve the current package running on the device.
 POST        | `session/{sessionId}/appium/device/install_app`                | Install the given app onto the device.
-POST        | `session/{sessionId}/appium/device/remove_app`                 | Remote an app from the device.
+POST        | `session/{sessionId}/appium/device/remove_app`                 | Remove an app from the device.
 POST        | `session/{sessionId}/appium/device/app_installed`              | Check whether the specified app is installed on the device.
 POST        | `session/{sessionId}/appium/device/hide_keyboard`              | Hide the soft keyboard.
 GET         | `session/{sessionId}/appium/device/is_keyboard_shown`          | Whether or not the soft keyboard is shown.

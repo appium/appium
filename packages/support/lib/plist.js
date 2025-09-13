@@ -28,7 +28,7 @@ async function parseXmlPlistFile(plistFilename) {
  * @returns {Promise<any>} parsed plist JS Object
  */
 async function parsePlistFile(plist, mustExist = true, quiet = true) {
-  // handle nonexistant file
+  // handle nonexistent file
   if (!(await fs.exists(plist))) {
     if (mustExist) {
       throw log.errorWithException(`Plist file doesn't exist: '${plist}'`);

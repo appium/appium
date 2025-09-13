@@ -111,14 +111,9 @@ describe('Driver CLI', function () {
     });
 
     it('should show updates for installed drivers with --updates', async function () {
-      if (process.env.CI) {
-        // FIXME XXX this test won't work until multiple versions of fake driver have been
-        // published which support appium 3
-        return this.skip();
-      }
 
       if (system.isWindows()) {
-        // TODO figure out why this isn't working on windows
+        // TODO: Windows path handling may need fixes in npm exec or extension command parsing
         return this.skip();
       }
       const versions = /** @type {string[]} */ (
@@ -143,7 +138,10 @@ describe('Driver CLI', function () {
         /** @type {Record<string,import('appium/lib/cli/extension-command').InstalledExtensionListData>} */ (
           await runList(['--updates'])
         );
-      const updateVersion = String(fake.updateVersion || fake.unsafeUpdateVersion);
+      const updateVersion = fake.updateVersion || fake.unsafeUpdateVersion;
+      if (!updateVersion) {
+        throw new Error(`No update version found. Expected an update from ${penultimateFakeDriverVersionAsOfRightNow} to a newer version, but got null. This might indicate the update check is not working properly.`);
+      }
       util.compareVersions(
         String(updateVersion),
         '>',

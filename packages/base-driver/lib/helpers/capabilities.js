@@ -3,7 +3,7 @@
 import _ from 'lodash';
 
 /**
- * Determine whether the given agument is valid
+ * Determine whether the given argument is valid
  * W3C capabilities instance.
  *
  * @param {any} caps

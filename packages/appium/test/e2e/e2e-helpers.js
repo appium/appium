@@ -121,7 +121,7 @@ async function _runAppiumJson(appiumHome, args) {
 
 /**
  * Runs the `appium` executable with the given args in JSON mode.
- * Will reject with the contents of `STDOUT` (which were to be pasred) if parsing into JSON fails.
+ * Will reject with the contents of `STDOUT` (which were to be parsed) if parsing into JSON fails.
  *
  * The caller must wrap the call (in parens) with a docstring containing a return type.
  * i.e., add `@type {MyType}` tag.

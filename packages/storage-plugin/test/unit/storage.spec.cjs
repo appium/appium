@@ -62,7 +62,7 @@ describe('storage', function () {
     (await fs.exists(path.join(storageRoot, tmpName))).should.be.false;
   });
 
-  it('should only reset parital files if shouldPreserveFiles requested', async function () {
+  it('should only reset partial files if shouldPreserveFiles requested', async function () {
     const name = 'foo.bar';
     const tmpName = 'bar.baz.filepart';
     await fs.writeFile(path.join(storageRoot, name), Buffer.alloc(1));

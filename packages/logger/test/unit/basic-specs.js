@@ -414,7 +414,7 @@ describe('basic', function () {
       log = new Log();
     });
 
-    it('to nonexistant level', function() {
+    it('to nonexistent level', function() {
       log.emitLog({ prefix: 'test', level: 'asdf' });
     });
   });
@@ -424,7 +424,7 @@ describe('basic', function () {
       log = new Log();
     });
 
-    it('with nonexistant stream', function() {
+    it('with nonexistent stream', function() {
       log.stream = null;
       (log._format('message') === undefined).should.be.true;
     });

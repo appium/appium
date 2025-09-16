@@ -61,17 +61,6 @@ function escapeSpace(str) {
 }
 
 /**
- * Escape a specific character in a string
- * @param {string} str - The string to escape character in
- * @param {string} char - The character to escape
- * @returns {string} The string with escaped character
- */
-function escapeCharacter(str, char) {
-  const re = new RegExp(char.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-  return str.replace(re, `\\${char}`);
-}
-
-/**
  * Escape special characters in string
  * @param {string|any} str - The string to escape special characters in
  * @param {string|boolean} [quoteEscape=false] - Character to escape or boolean for quotes
@@ -96,10 +85,13 @@ function escapeSpecialChars(str, quoteEscape) {
     .replace(/\\'/g, "\\'");
   if (quoteEscape) {
     if (typeof quoteEscape === 'string') {
-      str = escapeCharacter(str, quoteEscape);
+      // Escape arbitrary character
+      let re = new RegExp(quoteEscape.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+      str = str.replace(re, `\\${quoteEscape}`);
     } else {
       // Legacy behavior: when quoteEscape is boolean true, escape double quotes
-      str = escapeCharacter(str, '"');
+      let re = new RegExp('"', 'g');
+      str = str.replace(re, '\\"');
     }
   }
   return str;
@@ -579,7 +571,6 @@ function getLockFileGuard(lockFile, opts = {}) {
 export {
   hasValue,
   escapeSpace,
-  escapeCharacter,
   escapeSpecialChars,
   localIp,
   cancellableDelay,

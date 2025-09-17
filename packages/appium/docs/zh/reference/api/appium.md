@@ -8,8 +8,8 @@ title: Appium Protocol
   }
 </style>
 
-The following is a list of endpoints used in Appium that are defined in the Appium extension of the
-W3C WebDriver protocol.
+The following is a list of endpoints supported in Appium, that are defined in the Appium extension
+of the W3C WebDriver protocol.
 
 ### getAppiumSessions
 

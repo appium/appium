@@ -7,7 +7,7 @@ title: Other Protocols
   }
 </style>
 
-The following is a list of endpoints used in Appium that are defined in other protocols.
+The following is a list of endpoints supported in Appium that are defined in other protocols.
 
 ## Chromedriver Protocol
 
@@ -39,6 +39,441 @@ for a list of available methods and their parameters.
 #### Response
 
 `any` - the result of executing the CDP method
+
+## Compute Pressure Protocol
+
+The [Compute Pressure protocol](https://www.w3.org/TR/compute-pressure/) is an extension of the W3C
+WebDriver protocol.
+
+### createVirtualPressureSource
+
+```
+POST /session/:sessionId/pressuresource
+```
+
+> Compute Pressure documentation: [Create Virtual Pressure Source](https://www.w3.org/TR/compute-pressure/#create-virtual-pressure-source)
+
+Creates a new virtual pressure source.
+
+#### Parameters
+
+|<div style="width:6em">Name</div>|Description|Type|Default|
+|--|--|--|--|
+|`type`|Type of pressure source to create|string||
+|`supported?`|Whether the pressure source should be configured as supported|boolean|`true`|
+
+#### Response
+
+`null`
+
+### updateVirtualPressureSource
+
+```
+POST /session/:sessionId/pressuresource/:pressureSourceType
+```
+
+> Compute Pressure documentation: [Update Virtual Pressure Source](https://www.w3.org/TR/compute-pressure/#update-virtual-pressure-source)
+
+Updates the state of a virtual pressure source with the type identified by `:pressureSourceType`.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`sample`|Pressure state. Supported values are `nominal`, `fair`, `serious`, or `critical`.|string|
+
+#### Response
+
+`null`
+
+### deleteVirtualPressureSource
+
+```
+DELETE /session/:sessionId/pressuresource/:pressureSourceType
+```
+
+> Compute Pressure documentation: [Delete Virtual Pressure Source](https://www.w3.org/TR/compute-pressure/#delete-virtual-pressure-source)
+
+Deletes the virtual pressure source with the type identified by `:pressureSourceType`.
+
+#### Response
+
+`null`
+
+## Custom Handlers Protocol
+
+The [Custom Handlers protocol](https://html.spec.whatwg.org/multipage/system-state.html#user-agent-automation)
+is an extension of the W3C WebDriver protocol, defined by the HTML Standard specification.
+
+### setRPHRegistrationMode
+
+```
+POST /session/:sessionId/custom-handlers/set-mode
+```
+
+> Custom Handlers documentation: [Set RPH Registration Mode](https://html.spec.whatwg.org/multipage/system-state.html#user-agent-automation)
+
+Sets the protocol handler automation mode, for processing registrations of custom protocol handlers.
+By default, this mode is set to `none`.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`mode`|Automation mode to set. Supported values are `autoAccept`, `autoReject`, or `none`.|string|
+
+#### Response
+
+`null`
+
+## Device Posture Protocol
+
+The [Device Posture protocol](https://www.w3.org/TR/device-posture/) is an extension of the W3C
+WebDriver protocol.
+
+### setDevicePosture
+
+```
+POST /session/:sessionId/deviceposture
+```
+
+> Device Posture documentation: [Set Device Posture](https://www.w3.org/TR/device-posture/#set-device-posture)
+
+Sets the device posture, overriding the posture set by the device hardware.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`posture`|Posture to which the device should be set. Supported values are `continuous` or `folded`.|string|
+
+#### Response
+
+`null`
+
+### clearDevicePosture
+
+```
+DELETE /session/:sessionId/deviceposture
+```
+
+> Device Posture documentation: [Clear Device Posture](https://www.w3.org/TR/device-posture/#clear-device-posture)
+
+Clears the previously set device posture, returning posture control back to the device hardware.
+
+#### Response
+
+`null`
+
+## Federated Credential Management Protocol
+
+The [Federated Credential Management protocol](https://www.w3.org/TR/fedcm-1) (FedCM) is an
+extension of the W3C WebDriver protocol. Clients can enable this protocol by using the
+[`fedcm:accounts`](https://www.w3.org/TR/fedcm-1/#webdriver-capability) capability.
+
+### fedCMCancelDialog
+
+```
+POST /session/:sessionId/fedcm/canceldialog
+```
+
+> FedCM documentation: [Cancel Dialog](https://www.w3.org/TR/fedcm-1/#webdriver-canceldialog)
+
+Cancels the currently open FedCM dialog.
+
+#### Response
+
+`null`
+
+### fedCMSelectAccount
+
+```
+POST /session/:sessionId/fedcm/selectaccount
+```
+
+> FedCM documentation: [Select Account](https://www.w3.org/TR/fedcm-1/#webdriver-selectaccount)
+
+Selects an account to use for the currently open FedCM dialog.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`accountIndex`|Index of the account in the list of available accounts|number|
+
+#### Response
+
+`null`
+
+### fedCMClickDialogButton
+
+```
+POST /session/:sessionId/fedcm/clickdialogbutton
+```
+
+> FedCM documentation: [Click Dialog Button](https://www.w3.org/TR/fedcm-1/#webdriver-clickdialogbutton)
+
+Clicks a button in the currently open FedCM dialog.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`dialogButton`|Identifier of the button to click. Must be set to `ConfirmIdpLoginContinue`.|string|
+
+#### Response
+
+`null`
+
+### fedCMGetAccounts
+
+```
+GET /session/:sessionId/fedcm/accountlist
+```
+
+> FedCM documentation: [Account List](https://www.w3.org/TR/fedcm-1/#webdriver-accountlist)
+
+Retrieves all accounts that the user can select in the currently open FedCM dialog.
+
+#### Response
+
+`FedCMAccount[]` - an array of objects, where each object includes the following properties:
+
+|<div style="width:10em">Name</div>|Description|Type|
+|--|--|--|
+|`accountId`|Account ID|string|
+|`email`|Account email|string|
+|`name`|Account name|string|
+|`givenName?`|Account given name|string|
+|`pictureUrl?`|Account picture URL|string|
+|`idpConfigUrl`|URL of the identity provider configuration file|string|
+|`loginState`|Login state. Set to `SignUp` if the account is not connected, otherwise `SignIn`.|string|
+|`termsOfServiceUrl?`|Terms of Service URL of the website, if `loginState` is set to `SignUp`|string|
+|`privacyPolicyUrl?`|Privacy Policy URL of the website, if `loginState` is set to `SignUp`|string|
+
+### fedCMGetTitle
+
+```
+GET /session/:sessionId/fedcm/gettitle
+```
+
+> FedCM documentation: [Get Title](https://www.w3.org/TR/fedcm-1/#webdriver-gettitle)
+
+Retrieves the title and subtitle (if one exists) of the currently open FedCM dialog.
+
+#### Response
+
+`FedCMDialogTitle` - an object with the following properties:
+
+|Name|Description|Type|
+|--|--|--|
+|`title`|Dialog title|string|
+|`subtitle?`|Dialog subtitle|string|
+
+### fedCMGetDialogType
+
+```
+GET /session/:sessionId/fedcm/getdialogtype
+```
+
+> FedCM documentation: [Get Dialog Type](https://www.w3.org/TR/fedcm-1/#webdriver-getdialogtype)
+
+Retrieves the type of the currently open FedCM dialog.
+
+#### Response
+
+`string` - can be set to `AutoReauthn`, `AccountChooser`, or `ConfirmIdpLogin`
+
+### fedCMSetDelayEnabled
+
+```
+POST /session/:sessionId/fedcm/setdelayenabled
+```
+
+> FedCM documentation: [Set Delay Enabled](https://www.w3.org/TR/fedcm-1/#webdriver-setdelayenabled)
+
+Sets the state of the promise rejection delay, which is used to prevent information leakage about
+the logged in state of the user.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`enabled`|Whether to enable the promise rejection delay|boolean|
+
+#### Response
+
+`null`
+
+### fedCMResetCooldown
+
+```
+POST /session/:sessionId/fedcm/resetcooldown
+```
+
+> FedCM documentation: [Reset Cooldown](https://www.w3.org/TR/fedcm-1/#webdriver-resetcooldown)
+
+Resets the cooldown delay used after dismissing a FedCM dialog.
+
+#### Response
+
+`null`
+
+## Generic Sensor Protocol
+
+The [Generic Sensor protocol](https://www.w3.org/TR/generic-sensor/) is an extension of the W3C
+WebDriver protocol.
+
+### createVirtualSensor
+
+```
+POST /session/:sessionId/sensor
+```
+
+> Generic Sensor documentation: [Create Virtual Sensor](https://www.w3.org/TR/generic-sensor/#create-virtual-sensor-command)
+
+Creates a new virtual sensor.
+
+#### Parameters
+
+|<div style="width:12em">Name</div>|Description|Type|Default|
+|--|--|--|--|
+|`type`|Type of sensor to create|string||
+|`connected?`|Whether the sensor should be configured as connected|boolean|`true`|
+|`maxSamplingFrequency?`|Maximum sensor sampling frequency|number||
+|`minSamplingFrequency?`|Minimum sensor sampling frequency|number||
+
+#### Response
+
+`null`
+
+### getVirtualSensorInfo
+
+```
+GET /session/:sessionId/sensor/:sensorType
+```
+
+> Generic Sensor documentation: [Get Virtual Sensor Information](https://www.w3.org/TR/generic-sensor/#get-virtual-sensor-information-command)
+
+Retrieves information about the virtual sensor with the type identified by `:sensorType`.
+
+#### Response
+
+`GetVirtualSensorInfoResponse` - an object containing the `requestedSamplingFrequency` key, whose
+value is the requested sampling frequency of the sensor type
+
+### updateVirtualSensorReading
+
+```
+POST /session/:sessionId/sensor/:sensorType
+```
+
+> Generic Sensor documentation: [Update Virtual Sensor Reading](https://www.w3.org/TR/generic-sensor/#update-virtual-sensor-reading-command)
+
+Updates the virtual sensor with the type identified by `:sensorType` with a new reading.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`reading`|Object containing reading properties specific to the sensor type|object|
+
+#### Response
+
+`null`
+
+### deleteVirtualSensor
+
+```
+DELETE /session/:sessionId/sensor/:sensorType
+```
+
+> Generic Sensor documentation: [Delete Virtual Sensor](https://www.w3.org/TR/generic-sensor/#delete-virtual-sensor-command)
+
+Deletes the virtual sensor with the type identified by `:sensorType`.
+
+#### Response
+
+`null`
+
+## Permissions Protocol
+
+The [Permissions protocol](https://www.w3.org/TR/permissions/) is an extension of the W3C WebDriver
+protocol.
+
+### setPermissions
+
+```
+POST /session/:sessionId/permissions
+```
+
+> Permissions documentation: [Set Permission](https://www.w3.org/TR/permissions/#webdriver-command-set-permission)
+
+Simulates user modification of the permission state of a PermissionDescriptor (a permissible feature
+with optional additional properties).
+
+#### Parameters
+
+|<div style="width:6em">Name</div>|Description|Type|
+|--|--|--|
+|`descriptor`|Object specifying the feature name in its `name` key, along with any other keys for additional properties|object|
+|`state`|New permission state for this descriptor. Supported values are: `granted`, `denied`, or `prompt`.|string|
+
+#### Response
+
+`null`
+
+## Reporting Protocol
+
+The [Reporting protocol](https://www.w3.org/TR/reporting-1/) is an extension of the W3C WebDriver
+protocol.
+
+### generateTestReport
+
+```
+POST /session/:sessionId/reporting/generate_test_report
+```
+
+> Reporting documentation: [Generate Test Report](https://www.w3.org/TR/reporting-1/#generate-test-report-command)
+
+Simulates the generation of a test report, which can be retrieved by registered reporting observers.
+
+#### Parameters
+
+|Name|Description|Type|Default|
+|--|--|--|--|
+|`message`|Message displayed in the report|string||
+|`group?`|Destination group to deliver the report to|string|`default`|
+
+#### Response
+
+`null`
+
+## Secure Payment Confirmation Protocol
+
+The [Secure Payment Confirmation protocol](https://www.w3.org/TR/secure-payment-confirmation) (SPC)
+is an extension of the W3C WebDriver protocol.
+
+### setSPCTransactionMode
+
+```
+POST /session/:sessionId/secure-payment-confirmation/set-mode
+```
+
+> SPC documentation: [Set SPC Transaction Mode](https://www.w3.org/TR/secure-payment-confirmation/#sctn-automation-set-spc-transaction-mode)
+
+Sets the transaction automation mode, for automated handling of transaction confirmation prompts.
+By default, this mode is set to `none`.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`mode`|Automation mode to set. Supported values are `autoAccept`, `autoChooseToAuthAnotherWay`, `autoReject`, or `autoOptOut`.|string|
+
+#### Response
+
+`null`
 
 ## Selenium Protocol
 
@@ -91,7 +526,9 @@ Retrieves the available log types that can be used to call the [`getLog`](#getlo
 ## Web Authentication Protocol
 
 The [Web Authentication protocol](https://w3c.github.io/webauthn/) (WebAuthn) is an extension of
-the W3C WebDriver protocol.
+the W3C WebDriver protocol. Clients can enable this protocol by using the
+[`webauthn:virtualAuthenticators`](https://w3c.github.io/webauthn/#sctn-automation-webdriver-capability)
+capability.
 
 ### addVirtualAuthenticator
 

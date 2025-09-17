@@ -59,13 +59,13 @@ process.on('exit', () => {
 });
 
 /**
- * Perform inital application package configuration
+ * Perform initial application package configuration
  * to prepare it for the further consumption by a driver:
  *
  * - Manages caching logic
  * - Downloads the app from a remote URL to the local filesystem
  * - Determines package name
- * - Checks basic requiremenets on the application package
+ * - Checks basic requirements on the application package
  *
  * @param {string} app
  * @param {string|string[]|import('@appium/types').ConfigureAppOptions} options

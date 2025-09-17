@@ -249,6 +249,7 @@ export const METHOD_MAP = /** @type {const} */ ({
     }
   },
   // #endregion
+
   // #region JSONWP
   // https://www.selenium.dev/documentation/legacy/json_wire_protocol/
   '/session/:sessionId/ime/available_engines': {
@@ -289,6 +290,7 @@ export const METHOD_MAP = /** @type {const} */ ({
     },
   },
   // #endregion
+
   // #region MJSONWP
   // https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md
   '/session/:sessionId/rotation': {
@@ -311,6 +313,7 @@ export const METHOD_MAP = /** @type {const} */ ({
     },
   },
   // #endregion
+
   // #region Appium
   '/appium/sessions': {
     GET: {command: 'getAppiumSessions'},
@@ -412,6 +415,7 @@ export const METHOD_MAP = /** @type {const} */ ({
     POST: {command: 'pullFolder', payloadParams: {required: ['path']}},
   },
   // #endregion
+
   // #region Unknown
   '/session/:sessionId/receive_async_response': {
     POST: {
@@ -424,6 +428,7 @@ export const METHOD_MAP = /** @type {const} */ ({
     GET: {},
   },
   // #endregion
+
   // #region Other Protocols
   // Selenium/Chromium browsers
   '/session/:sessionId/se/log': {
@@ -432,13 +437,51 @@ export const METHOD_MAP = /** @type {const} */ ({
   '/session/:sessionId/se/log/types': {
     GET: {command: 'getLogTypes'},
   },
-
   // Chromium devtools
   // https://chromium.googlesource.com/chromium/src/+/master/chrome/test/chromedriver/server/http_handler.cc
   '/session/:sessionId/:vendor/cdp/execute': {
     POST: {command: 'executeCdp', payloadParams: {required: ['cmd', 'params']}},
   },
-
+  // Reporting
+  // https://www.w3.org/TR/reporting-1/
+  '/session/:sessionId/reporting/generate_test_report': {
+    POST: {
+      command: 'generateTestReport',
+      payloadParams: {required: ['message'], optional: ['group']},
+    },
+  },
+  // Permissions
+  // https://www.w3.org/TR/permissions/
+  '/session/:sessionId/permissions': {
+    POST: {command: 'setPermissions', payloadParams: {required: ['descriptor', 'state']}},
+  },
+  // Device Posture
+  // https://www.w3.org/TR/device-posture/
+  '/session/:sessionId/deviceposture': {
+    POST: {command: 'setDevicePosture', payloadParams: {required: ['posture']}},
+    DELETE: {command: 'clearDevicePosture'},
+  },
+  // Generic Sensor
+  // https://www.w3.org/TR/generic-sensor/
+  '/session/:sessionId/sensor': {
+    POST: {
+      command: 'createVirtualSensor',
+      payloadParams: {
+        required: ['type'],
+        optional: ['connected', 'maxSamplingFrequency', 'minSamplingFrequency'],
+      },
+    },
+  },
+  '/session/:sessionId/sensors/:sensorType': {
+    GET: {command: 'getVirtualSensorInfo'},
+    POST: {command: 'updateVirtualSensorReading', payloadParams: {required: ['reading']}},
+    DELETE: {command: 'deleteVirtualSensor'},
+  },
+  // Custom Handlers
+  // https://html.spec.whatwg.org/multipage/system-state.html#user-agent-automation
+  '/session/:sessionId/custom-handlers/set-mode': {
+    POST: {command: 'setRPHRegistrationMode', payloadParams: {required: ['mode']}},
+  },
   // Webauthn
   // https://www.w3.org/TR/webauthn-2/#sctn-automation-add-virtual-authenticator
   '/session/:sessionId/webauthn/authenticator': {
@@ -478,6 +521,49 @@ export const METHOD_MAP = /** @type {const} */ ({
         required: ['isUserVerified'],
       },
     },
+  },
+  // Secure Payment Confirmation
+  // https://www.w3.org/TR/secure-payment-confirmation/
+  '/session/:sessionId/secure-payment-confirmation/set-mode': {
+    POST: {command: 'setSPCTransactionMode', payloadParams: {required: ['mode']}},
+  },
+  // Federated Credential Management
+  // https://www.w3.org/TR/fedcm-1/
+  '/session/:sessionId/fedcm/canceldialog': {
+    POST: {command: 'fedCMCancelDialog'},
+  },
+  '/session/:sessionId/fedcm/selectaccount': {
+    POST: {command: 'fedCMSelectAccount', payloadParams: {required: ['accountIndex']}},
+  },
+  '/session/:sessionId/fedcm/clickdialogbutton': {
+    POST: {command: 'fedCMClickDialogButton', payloadParams: {required: ['dialogButton']}},
+  },
+  '/session/:sessionId/fedcm/accountlist': {
+    GET: {command: 'fedCMGetAccounts'},
+  },
+  '/session/:sessionId/fedcm/gettitle': {
+    GET: {command: 'fedCMGetTitle'},
+  },
+  '/session/:sessionId/fedcm/getdialogtype': {
+    GET: {command: 'fedCMGetDialogType'},
+  },
+  '/session/:sessionId/fedcm/setdelayenabled': {
+    POST: {command: 'fedCMSetDelayEnabled', payloadParams: {required: ['enabled']}},
+  },
+  '/session/:sessionId/fedcm/resetcooldown': {
+    POST: {command: 'fedCMResetCooldown'},
+  },
+  // Compute Pressure
+  // https://www.w3.org/TR/compute-pressure/
+  '/session/:sessionId/pressuresource': {
+    POST: {
+      command: 'createVirtualPressureSource',
+      payloadParams: {required: ['type'], optional: ['supported']},
+    },
+  },
+  '/session/:sessionId/pressuresource/:pressureSourceType': {
+    POST: {command: 'updateVirtualPressureSource', payloadParams: {required: ['sample']}},
+    DELETE: {command: 'deleteVirtualPressureSource'},
   },
   // #endregion
 });

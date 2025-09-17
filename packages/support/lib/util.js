@@ -51,16 +51,27 @@ function hasValue(val) {
   return !_.isUndefined(val) && !_.isNull(val);
 }
 
-// escape spaces in string, for commandline calls
+/**
+ * Escape spaces in string, for commandline calls
+ * @param {string} str - The string to escape spaces in
+ * @returns {string} The string with escaped spaces
+ */
 function escapeSpace(str) {
   return str.split(/ /).join('\\ ');
 }
 
+/**
+ * Escape special characters in string
+ * @param {string|any} str - The string to escape special characters in
+ * @param {string} quoteEscape - Whether to escape quotes
+ * @returns {string|any} The string with escaped special characters, or original value if not a string
+ */
 function escapeSpecialChars(str, quoteEscape) {
   if (typeof str !== 'string') {
     return str;
   }
   if (typeof quoteEscape === 'undefined') {
+    // @ts-ignore to set false to mark no quote escaping
     quoteEscape = false;
   }
   str = str
@@ -74,12 +85,16 @@ function escapeSpecialChars(str, quoteEscape) {
     .replace(/[\"]/g, '\\"') // eslint-disable-line no-useless-escape
     .replace(/\\'/g, "\\'");
   if (quoteEscape) {
-    let re = new RegExp(quoteEscape, 'g');
+    const re = new RegExp(quoteEscape, 'g');
     str = str.replace(re, `\\${quoteEscape}`);
   }
   return str;
 }
 
+/**
+ * Get the local IP address of the machine
+ * @returns {string|undefined} The local IP address of the first external IPv4 interface, or undefined if not found
+ */
 function localIp() {
   let ip = _.chain(os.networkInterfaces())
     .values()
@@ -313,7 +328,11 @@ async function isSameDestination(path1, path2, ...pathN) {
  * @throws {Error} if strict mode is enabled and `ver` cannot be coerced
  */
 function coerceVersion(ver, strict = /** @type {Strict} */ (true)) {
-  const result = semver.valid(semver.coerce(`${ver}`));
+  // First try to parse as-is, then coerce if needed
+  let result = semver.valid(`${ver}`);
+  if (!result) {
+    result = semver.valid(semver.coerce(`${ver}`));
+  }
   if (strict && !result) {
     throw new Error(`'${ver}' cannot be coerced to a valid version number`);
   }

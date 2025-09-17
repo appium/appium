@@ -82,6 +82,7 @@ function escapeSpecialChars(str, quoteEscape) {
     return str;
   }
   if (typeof quoteEscape === 'undefined') {
+    // @ts-ignore to set false to mark no quote escaping
     quoteEscape = false;
   }
   str = str
@@ -376,26 +377,9 @@ function compareVersions(ver1, operator, ver2) {
     );
   }
 
-  const coercedVer1 = coerceVersion(ver1);
-  const coercedVer2 = coerceVersion(ver2);
-
-  switch (operator) {
-    case '>':
-      return semver.gt(coercedVer1, coercedVer2);
-    case '<':
-      return semver.lt(coercedVer1, coercedVer2);
-    case '>=':
-      return semver.gte(coercedVer1, coercedVer2);
-    case '<=':
-      return semver.lte(coercedVer1, coercedVer2);
-    case '==':
-    case '=':
-      return semver.eq(coercedVer1, coercedVer2);
-    case '!=':
-      return !semver.eq(coercedVer1, coercedVer2);
-    default:
-      throw new Error(`Unsupported operator: ${operator}`);
-  }
+  const semverOperator = ['==', '!='].includes(operator) ? '=' : operator;
+  const result = semver.satisfies(coerceVersion(ver1), `${semverOperator}${coerceVersion(ver2)}`);
+  return operator === '!=' ? !result : result;
 }
 
 /**

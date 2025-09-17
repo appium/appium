@@ -470,6 +470,57 @@ describe('util', function () {
     });
   });
 
+  describe('coerceVersion', function () {
+    it('should preserve prerelease versions', function () {
+      util.coerceVersion('6.0.0-rc.1').should.equal('6.0.0-rc.1');
+      util.coerceVersion('1.0.0-alpha.1').should.equal('1.0.0-alpha.1');
+      util.coerceVersion('2.0.0-beta.2').should.equal('2.0.0-beta.2');
+      util.coerceVersion('3.0.0-rc.3').should.equal('3.0.0-rc.3');
+    });
+
+    it('should handle regular versions correctly', function () {
+      util.coerceVersion('1.0.0').should.equal('1.0.0');
+      util.coerceVersion('2.1.3').should.equal('2.1.3');
+      util.coerceVersion('10.15.2').should.equal('10.15.2');
+    });
+
+    it('should coerce partial versions to full versions', function () {
+      util.coerceVersion('1').should.equal('1.0.0');
+      util.coerceVersion('1.0').should.equal('1.0.0');
+      util.coerceVersion('2.1').should.equal('2.1.0');
+    });
+
+    it('should handle numeric inputs', function () {
+      util.coerceVersion(1).should.equal('1.0.0');
+      util.coerceVersion(2.1).should.equal('2.1.0');
+    });
+
+    it('should throw error for invalid versions in strict mode', function () {
+      should.throw(() => util.coerceVersion('invalid'), /cannot be coerced/);
+      should.throw(() => util.coerceVersion(''), /cannot be coerced/);
+      should.throw(() => util.coerceVersion(null), /cannot be coerced/);
+      should.throw(() => util.coerceVersion(undefined), /cannot be coerced/);
+    });
+
+    it('should return null for invalid versions in non-strict mode', function () {
+      should.not.exist(util.coerceVersion('invalid', false));
+      should.not.exist(util.coerceVersion('', false));
+      should.not.exist(util.coerceVersion(null, false));
+      should.not.exist(util.coerceVersion(undefined, false));
+    });
+
+    it('should handle edge cases with prerelease versions', function () {
+      util.coerceVersion('1.0.0-0').should.equal('1.0.0-0');
+      util.coerceVersion('1.0.0-alpha').should.equal('1.0.0-alpha');
+      util.coerceVersion('1.0.0-alpha.0').should.equal('1.0.0-alpha.0');
+    });
+
+    it('should strip build metadata but preserve prerelease versions', function () {
+      util.coerceVersion('1.0.0-rc.1+build.1').should.equal('1.0.0-rc.1');
+      util.coerceVersion('2.0.0-alpha.2+exp.sha.5114f85').should.equal('2.0.0-alpha.2');
+    });
+  });
+
   describe('compareVersions', function () {
     it('should compare two correct version numbers', function () {
       util.compareVersions('10.0', '<', '11.0').should.eql(true);

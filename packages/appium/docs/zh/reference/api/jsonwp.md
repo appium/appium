@@ -9,7 +9,7 @@ title: JSON Wire Protocol
 </style>
 
 The following is a list of legacy [JSON Wire Protocol (JSONWP)](https://www.selenium.dev/documentation/legacy/json_wire_protocol/)
-endpoints used in Appium.
+endpoints supported in Appium.
 
 ### getSession
 

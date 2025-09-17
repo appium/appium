@@ -8,7 +8,7 @@ title: WebDriver Protocol
 </style>
 
 The following is a list of [W3C WebDriver protocol](https://w3c.github.io/webdriver/) endpoints
-used in Appium.
+supported in Appium.
 
 !!! info
 
@@ -1088,8 +1088,8 @@ Prints the page by rendering it as a paginated PDF document.
 |`orientation?`|Page orientation. Supported values are `portrait` or `landscape`.|string|`portrait`|
 |`scale?`|Page scale. Supported values are in the range `[0.1, 2]`.|number|`1`|
 |`background?`|Whether to include background images|boolean|`false`|
-|`page?`|Object specifying the page width and height|[`PrintPageSize`](#printpagesizeparameter)|`{}`|
-|`margin?`|Object specifying the page margins|[`PrintPageMargins`](#printpagemarginsparameter)|`{}`|
+|`page?`|Object specifying the page width and height|[`PrintPageSize`](#printpagesize)|`{}`|
+|`margin?`|Object specifying the page margins|[`PrintPageMargins`](#printpagemargins)|`{}`|
 |`shrinkToFit?`|Whether to resize page contents to match `PrintPageSize.width`|boolean|`true`|
 |`pageRanges?`|Array of pages to be printed, for example, `[1, 4, '8-9']`|array|`[]`|
 

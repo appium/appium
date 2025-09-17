@@ -34,7 +34,7 @@ const DRIVERS_ONLY_WINDOWS = ['windows'];
 /**
  * Plugin names listed in KNOWN_PLUGINS to install by default.
  */
-export const DEFAULT_PLUGINS = ['images'];
+export const DEFAULT_PLUGINS = ['images', 'inspector'];
 
 /**
  * Return a list of drivers available for current host platform.

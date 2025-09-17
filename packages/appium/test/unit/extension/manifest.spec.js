@@ -549,7 +549,7 @@ describe('Manifest', function () {
         expect(manifest.getExtensionData(DRIVER_TYPE)).to.have.property('myDriver');
       });
 
-      describe('when the underyling implementation emits "error"', function () {
+      describe('when the underlying implementation emits "error"', function () {
         beforeEach(function () {
           // @ts-expect-error
           MockGlob.callsFake(() => {

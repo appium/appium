@@ -421,7 +421,7 @@ export default class ImageElementFinder {
 
    */
   /**
-   * Get a image that will be used for template maching.
+   * Get a image that will be used for template matching.
    * Returns scaled image if scale ratio is provided.
    *
    * @param {Buffer} template - image used as a template to be

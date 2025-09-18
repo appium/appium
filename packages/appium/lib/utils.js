@@ -485,11 +485,6 @@ export function isBroadcastIp(address) {
  */
 
 /**
- * @template T
- * @typedef {import('type-fest').StringKeyOf<T>} StringKeyOf
- */
-
-/**
  * @typedef {import('@appium/types').Constraints} Constraints
  */
 

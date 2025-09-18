@@ -6,7 +6,7 @@ import type {
   StandardCapabilities,
 } from '@appium/types';
 import type {
-  StringKeyOf,
+  KeyAsString,
   MergeExclusive,
 } from 'type-fest';
 import _ from 'lodash';
@@ -127,7 +127,7 @@ export const STANDARD_CAPS = Object.freeze(
       'timeouts',
       'unhandledPromptBehavior',
       'webSocketUrl',
-    ]) as StringKeyOf<StandardCapabilities>[]
+    ]) as KeyAsString<StandardCapabilities>[]
   )
 );
 
@@ -155,7 +155,7 @@ export function stripAppiumPrefixes<C extends Constraints>(caps: NSCapabilities<
 
   // Strip out the 'appium:' prefix
   for (const prefixedCap of prefixedCaps) {
-    const strippedCapName = prefixedCap.substring(APPIUM_VENDOR_PREFIX.length) as StringKeyOf<Capabilities<C>>;
+    const strippedCapName = prefixedCap.substring(APPIUM_VENDOR_PREFIX.length) as KeyAsString<Capabilities<C>>;
 
     // If it's standard capability that was prefixed, add it to an array of incorrectly prefixed capabilities
     if (isStandardCap(strippedCapName)) {

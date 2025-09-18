@@ -118,7 +118,7 @@ function executeMethodMapToCommandsInfo(emm: ExecuteMethodMap<any>): RestMethods
   const result: RestMethodsToCommandsMap = {};
   for (const [name, info] of _.toPairs(emm)) {
     result[name] = {
-      command: info.command,
+      command: info.command as string,
       deprecated: info.deprecated,
       info: info.info,
       params: toRestCommandParams(info.params),

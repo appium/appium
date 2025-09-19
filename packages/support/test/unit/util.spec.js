@@ -579,4 +579,56 @@ describe('util', function () {
       util.pluralize('word', 2, {inclusive: true}).should.eql('2 words');
     });
   });
+
+  describe('escapeCharacter', function () {
+    it('should exist', function () {
+      should.exist(util.escapeCharacter);
+    });
+
+    it('should escape a simple character', function () {
+      util.escapeCharacter('hello world', 'o').should.eql('hell\\o w\\orld');
+    });
+
+    it('should escape multiple occurrences of a character', function () {
+      util.escapeCharacter('abc abc abc', 'a').should.eql('\\abc \\abc \\abc');
+    });
+
+    it('should escape special regex characters', function () {
+      util.escapeCharacter('test[test]', '[').should.eql('test\\[test]');
+      util.escapeCharacter('test.test', '.').should.eql('test\\.test');
+      util.escapeCharacter('test*test', '*').should.eql('test\\*test');
+      util.escapeCharacter('test+test', '+').should.eql('test\\+test');
+      util.escapeCharacter('test?test', '?').should.eql('test\\?test');
+      util.escapeCharacter('test^test', '^').should.eql('test\\^test');
+      util.escapeCharacter('test$test', '$').should.eql('test\\$test');
+      util.escapeCharacter('test{test}', '{').should.eql('test\\{test}');
+      util.escapeCharacter('test}test', '}').should.eql('test\\}test');
+      util.escapeCharacter('test(test)', '(').should.eql('test\\(test)');
+      util.escapeCharacter('test)test', ')').should.eql('test\\)test');
+      util.escapeCharacter('test|test', '|').should.eql('test\\|test');
+      util.escapeCharacter('test\\test', '\\').should.eql('test\\\\test');
+    });
+
+    it('should handle empty string', function () {
+      util.escapeCharacter('', 'a').should.eql('');
+    });
+
+    it('should handle character not in string', function () {
+      util.escapeCharacter('hello', 'x').should.eql('hello');
+    });
+
+    it('should handle single character string', function () {
+      util.escapeCharacter('a', 'a').should.eql('\\a');
+    });
+
+    it('should escape at beginning and end of string', function () {
+      util.escapeCharacter('abc', 'a').should.eql('\\abc');
+      util.escapeCharacter('abc', 'c').should.eql('ab\\c');
+    });
+
+    it('should handle multiple special characters in one string', function () {
+      util.escapeCharacter('test[123].js', '[').should.eql('test\\[123].js');
+      util.escapeCharacter('test[123].js', '.').should.eql('test[123]\\.js');
+    });
+  });
 });

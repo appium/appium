@@ -27,7 +27,7 @@ import {
 } from './config';
 import {readConfigFile} from './config-file';
 import {loadExtensions, getActivePlugins, getActiveDrivers} from './extension';
-import {SERVER_SUBCOMMAND, LONG_STACKTRACE_LIMIT} from './constants';
+import {SERVER_SUBCOMMAND, LONG_STACKTRACE_LIMIT, BIDI_BASE_PATH} from './constants';
 import registerNode from './grid-register';
 import {getDefaultsForSchema, validate as validateSchema} from './schema/schema';
 import {
@@ -411,8 +411,8 @@ async function main(args) {
   bidiServer.on('error', appiumDriver.onBidiServerError.bind(appiumDriver));
   try {
     server = await baseServer(serverOpts);
-    server.addWebSocketHandler('/bidi', bidiServer);
-    server.addWebSocketHandler('/bidi/:sessionId', bidiServer);
+    server.addWebSocketHandler(`${BIDI_BASE_PATH}`, bidiServer);
+    server.addWebSocketHandler(`${BIDI_BASE_PATH}/:sessionId`, bidiServer);
   } catch (err) {
     logger.error(
       `Could not configure Appium server. It's possible that a driver or plugin tried ` +

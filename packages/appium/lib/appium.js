@@ -396,7 +396,7 @@ class AppiumDriver extends DriverCore {
         const {address, port, basePath} = this.args;
         const scheme = `ws${this.server.isSecure() ? 's' : ''}`;
         const host = bidiCommands.determineBiDiHost(address);
-        const bidiUrl = `${scheme}://${host}:${port}${basePath}${BIDI_BASE_PATH}/${innerSessionId}`;
+        const bidiUrl = `${scheme}://${host}:${port}${BIDI_BASE_PATH}/${innerSessionId}`;
         this.log.info(
           `Upstream driver responded with webSocketUrl ${dCaps.webSocketUrl}, will rewrite to ` +
           `${bidiUrl} for response to client`

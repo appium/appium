@@ -412,7 +412,7 @@ async function main(args) {
   bidiServer.on('error', appiumDriver.onBidiServerError.bind(appiumDriver));
   try {
     server = await baseServer(serverOpts);
-    const bidiBasePath = `${notmalizedBasePath}${BIDI_BASE_PATH}`
+    const bidiBasePath = `${notmalizedBasePath}${BIDI_BASE_PATH}`;
     server.addWebSocketHandler(bidiBasePath, bidiServer);
     server.addWebSocketHandler(`${bidiBasePath}/:sessionId`, bidiServer);
   } catch (err) {

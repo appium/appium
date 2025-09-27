@@ -643,13 +643,14 @@ describe('FakeDriver via HTTP', function () {
   });
 
   describe('Bidi protocol with base path', function () {
-    withServer({basePath: '/wd/hub'});
+    const basePath = '/wd/hub';
+    withServer({basePath});
     const capabilities = {...caps, webSocketUrl: true, 'appium:runClock': true};
     /** @type import('webdriverio').Browser **/
     let driver;
 
     beforeEach(async function () {
-      driver = await wdio({...wdOpts, capabilities});
+      driver = await wdio({...wdOpts, path: basePath, capabilities});
     });
 
     afterEach(async function () {

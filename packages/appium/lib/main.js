@@ -400,7 +400,7 @@ async function main(args) {
     extraMethodMap,
     cliArgs: parsedArgs,
   };
-  const notmalizedBasePath = normalizeBasePath(parsedArgs.basePath);
+  const normalizedBasePath = normalizeBasePath(parsedArgs.basePath);
   for (const timeoutArgName of ['keepAliveTimeout', 'requestTimeout']) {
     if (_.isInteger(parsedArgs[timeoutArgName])) {
       serverOpts[timeoutArgName] = parsedArgs[timeoutArgName] * 1000;
@@ -412,7 +412,7 @@ async function main(args) {
   bidiServer.on('error', appiumDriver.onBidiServerError.bind(appiumDriver));
   try {
     server = await baseServer(serverOpts);
-    const bidiBasePath = `${notmalizedBasePath}${BIDI_BASE_PATH}`;
+    const bidiBasePath = `${normalizedBasePath}${BIDI_BASE_PATH}`;
     server.addWebSocketHandler(bidiBasePath, bidiServer);
     server.addWebSocketHandler(`${bidiBasePath}/:sessionId`, bidiServer);
   } catch (err) {
@@ -440,7 +440,7 @@ async function main(args) {
         parsedArgs.nodeconfig,
         parsedArgs.address,
         parsedArgs.port,
-        notmalizedBasePath,
+        normalizedBasePath,
       );
     }
   } catch (err) {
@@ -466,7 +466,7 @@ async function main(args) {
   const protocol = server.isSecure() ? 'https' : 'http';
   const address = net.isIPv6(parsedArgs.address) ? `[${parsedArgs.address}]` : parsedArgs.address;
   logServerAddress(
-    `${protocol}://${address}:${parsedArgs.port}${notmalizedBasePath}`,
+    `${protocol}://${address}:${parsedArgs.port}${normalizedBasePath}`,
   );
 
   driverConfig.print();

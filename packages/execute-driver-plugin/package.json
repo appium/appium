@@ -41,7 +41,7 @@
     "bluebird": "3.7.2",
     "lodash": "4.17.21",
     "source-map-support": "0.5.21",
-    "webdriverio": "9.19.2"
+    "webdriverio": "9.20.0"
   },
   "peerDependencies": {
     "appium": "^3.0.0-beta.0"

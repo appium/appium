@@ -50,7 +50,7 @@ npx appium-docs init
 This will:
 
 1. Create a `tsconfig.json` if one does not already exist. This is necessary even if your extension
-  is not written in TypeScript.
+   is not written in TypeScript.
 2. Create a `mkdocs.yml` with the necessary configuration for MkDocs.
 
 ### Documenting Your Extension

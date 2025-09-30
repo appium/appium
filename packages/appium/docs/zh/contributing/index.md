@@ -2,148 +2,120 @@
 hide:
   - navigation
 
-title: Contributing to Appium
+title: ""
 ---
 
-The Appium project would not exist without the many contributions of code, documentation,
-maintenance, and support from companies and volunteers. As such, we welcome contributions!
+As such, we welcome contributions!
 
 There are a lot of different ways to help the project - see below for everything you can do and the
-processes to follow for each contribution method. Note that no matter how you contribute, your
-participation is governed by our [Code of Conduct](https://github.com/appium/appium/blob/master/CONDUCT.md).
+processes to follow for each contribution method. 加入讨论论坛
 
-## Join the Discussion Forum
+## 你无需了解 Appium 的内部实现就能做出贡献！如果你有使用 Appium 的经验并愿意分享，请考虑在 Appium 论坛（discuss.appium.io）帮助其他用户。去看看是否有你能回答的问题。
 
-You don't need to know the internals of Appium to be able to contribute! If you have experience with
-using Appium and feel like sharing your knowledge with others, consider helping out users on the
-Appium forums at [discuss.appium.io](https://discuss.appium.io/). Hop on over and see if there are
-any questions that you can answer.
+报告错误或功能请求 如果你遇到错误，或有希望 Appium 支持的新功能，请在我们的 GitHub issue 跟踪器中告知我们。创建 issue 时请使用合适的问题表单模板。
 
-## Report Bugs or Feature Requests
+## 除了创建 issue 之外，你还可以帮助我们调查已报告的问题。你只需对 Appium 有足够的熟悉度以便尝试复现 bug。
 
 If you've encountered a bug, or have a cool feature in mind that you think Appium should support,
 make sure to let us know at our [GitHub issue tracker](https://github.com/appium/appium/issues).
-Please use the appropriate issue form template when creating your issue.
+你无需了解 Appium 的内部实现也可以参与贡献！如果你有使用 Appium 的经验并愿意分享，请考虑在 Appium 论坛（discuss.appium.io）帮助其他用户。去看看是否有你可以回答的问题。
 
-## Triage Issues
+## 报告缺陷或功能需求
 
-In addition to creating issues, you can also help us investigate already reported issues. All you
-need is enough familiarity with Appium to try and reproduce bugs.
+如果你遇到错误，或有希望 Appium 支持的新功能想法，请在我们的 GitHub 问题跟踪器中告诉我们。创建问题时请使用相应的问题表单模版。 问题分级（Triage Issues）
 
-You can get started by checking our [GitHub issue tracker](https://github.com/appium/appium/issues)
-for issues with labels such as `Needs Triage` or `Needs Info`, and leaving relevant comments:
+除了创建问题，你也可以帮助我们调查已报告的问题。你只需对 Appium 有足够的熟悉度以尝试重现这些问题。
 
 - If the issue is a duplicate, drop a link to the original issue
-- If the user has not provided enough information (such as Appium logs), ask them for more details
-- If you can reproduce the problem on your own environment, provide all the information that you think
-  would help us track down the cause of the issue
+- 需要分类（Needs Triage）
+- 需要信息（Needs Info）
 
-For further information on triaging Appium issues (for any Appium project repository), please contact
-any member of the [Technical Committee](https://github.com/appium/appium/blob/master/GOVERNANCE.md#the-technical-committee).
+如果该问题是重复的，请附上原始问题的链接
 
-## Contribute Code
+## 如果用户未提供足够的信息（例如 Appium 日志），请向他们索取更多细节
 
-We are always open to pull requests for improving the Appium code or documentation!
+如果你能在自己的环境中重现该问题，请提供所有你认为有助于我们查找原因的信息
 
 !!! info
 
-    Developer information may not be kept up to date as frequently as user-facing information, or
-    it may be most relevant in its current form on the online repository, not in this published
-    version. Make sure to check the repo or discuss with maintainers. We would be glad to help
-    new contributors get started!
+    关于为 Appium（任何 Appium 项目仓库）进行问题分类的更多信息，请联系任意一位技术委员会成员。
 
-Start by cloning the repository (we recommend [forking](https://github.com/appium/appium/fork)
-it first):
+贡献代码
+
+```sh
+我们欢迎通过拉取请求（pull requests）来改进 Appium 的代码或文档！
+```
+
+!!! info
+
+    开发者信息可能不会像面向用户的信息那样频繁更新，或在当前发布版本中并非始终适用。请务必查看在线仓库或与维护者讨论。我们很乐意帮助新贡献者入门！
+
+首先克隆仓库（推荐先 fork）：
 
 ```sh
 git clone https://github.com/appium/appium.git
 cd appium
 ```
 
-!!! info
+如果你是 VS Code 用户，可以使用 [Runme](https://runme.dev/api/runme?repository=https%3A%2F%2Fgithub.com%2Fappium%2Fappium.git&fileToOpen=packages%2Fappium%2Fdocs%2Fen%2Fcontributing%2Findex.md) 轻松检出该项目。
 
-    If you are VS Code user, you can easily check out the project using [Runme](https://runme.dev/api/runme?repository=https%3A%2F%2Fgithub.com%2Fappium%2Fappium.git&fileToOpen=packages%2Fappium%2Fdocs%2Fen%2Fcontributing%2Findex.md).
-
-Install dependencies:
+安装依赖：
 
 ```sh
 npm install
 ```
 
-From here on there are several things you can do.
-
-Build the project:
+接下来你可以做几件事情。
 
 ```sh
+构建项目：
+```
+
 npm run build
-```
-
-Build the project and watch for changes:
 
 ```sh
+构建项目并监听更改：
+```
+
 npm run dev
-```
-
-Start the locally built Appium server:
 
 ```sh
+
+```
+
 npm start
-```
-
-Run various tests:
 
 ```sh
-npm run lint
-npm run test:unit
-npm run test:types
-npm run test:smoke
-npm run test:e2e
-npm run test:quick # unit and types
-npm run test:slow # everything
+运行各种测试：
 ```
 
-You can also run tests for specific workspaces, e.g.:
+### npm run lint&#xA;npm run test:unit&#xA;npm run test:types&#xA;npm run test:smoke&#xA;npm run test:e2e&#xA;npm run test:quick # unit 和 types&#xA;npm run test:slow # 全部测试
 
-```sh
+你也可以为特定工作区运行测试，例如：
 export APPIUM_WORKSPACE=@appium/base-driver
-npm run test:unit -w $APPIUM_WORKSPACE
+npm run test:unit -w $APPIUM_WORKSPACE 文档
+
+本项目的文档位于项目仓库中，采用 Markdown 文件形式，由 @appium/docutils 模块的文档系统构建。该模块基于 MkDocs，因此需要在系统上安装 Python。
+
+```sh
+@appium/docutils
 ```
 
-### Documentation
-
-The documentation for this project is [available in the project repository itself](https://github.com/appium/appium/tree/master/packages/appium/docs).
-It is contained in Markdown files, which are built by our documentation system in the
-`@appium/docutils` module. This module is based on [MkDocs](https://www.mkdocs.org/) and therefore
-requires [Python](https://www.python.org/) to be installed on your system.
-
-Install Python dependencies:
+安装 Python 依赖：
 
 ```sh
 npm run install-docs-deps
 ```
 
-After making your changes, you can run the documentation server in dev mode:
+在完成修改后，你可以以开发模式运行文档服务器：
 
-```sh
-npm run dev:docs
-```
+## npm run dev:docs
 
-You can then view the documentation at `http://127.0.0.1:8000/docs/en`.
+然后可以在 http://127.0.0.1:8000/docs/en 查看文档。 http://127.0.0.1:8000/docs/en
 
-## Translating Appium Documentation
+### 如果你希望参与将 Appium 文档翻译成你的语言，请加入 Appium Documentation Crowdin 项目的翻译者组并开始翻译。如果你发现可用的 Crowdin 语言列表中缺少你的语言，请创建 issue 告知我们。
 
-The process of Appium documents localization into languages other than English is automated and is done via
-the [Crowdin Translations Management System](https://crowdin.com). Do not edit any translated documents
-directly in the GitHub Appium repository as they are going to be replaced with ones exported from Crowdin
-during an upcoming sync.
-
-### Where To Start
-
-If you would like to contribute to the translation of Appium documents into your language then simply join
-the translators group for the [Appium Documentation](https://crowdin.com/project/appium-documentation)
-Crowdin project, and start translating documents there. If you see that your language is missing from
-the list of available Crowdin languages then simply let us know by creating an
-[issue](https://github.com/appium/appium/issues).
+Appium 文档翻译（非英语语言）的流程是自动化的，由 Crowdin 翻译管理系统完成。不要直接在 GitHub 上编辑任何已翻译的文档，因为它们将在即将的同步中被 Crowdin 导出的版本覆盖。 从何开始
 
 ### Source Language Updates
 

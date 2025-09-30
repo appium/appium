@@ -236,13 +236,13 @@ upstream server. In this case, we might run into a problem, because the plugin n
 handle that command! The way Appium handles this is as follows:
 
 1. When a command comes in, before deciding whether to proxy the command, the main protocol handler
-  checks to see whether a plugin would handle the command.
+   checks to see whether a plugin would handle the command.
 2. If a plugin would _not_ handle the command--all proceeds as normal, and the request is either
-  proxied or not, based on the driver's proxy mode.
+   proxied or not, based on the driver's proxy mode.
 3. If a plugin _would_ handle the command, then the proxy behavior is skipped for the time being,
-  and wrapped up as the `next` function sent to the plugin. So if you have a command handler in
-  your plugin, and you want to be sure that the default driver proxying _does_ take place, then
-  simply `await next()` instead of (or in addition to) whatever your plugin handler is doing.
+   and wrapped up as the `next` function sent to the plugin. So if you have a command handler in
+   your plugin, and you want to be sure that the default driver proxying _does_ take place, then
+   simply `await next()` instead of (or in addition to) whatever your plugin handler is doing.
 
 ### Throw WebDriver-specific errors
 
@@ -331,7 +331,7 @@ drivers, you can create new commands in one of two ways, just as is possible for
 1. Extending the WebDriver protocol and creating client-side plugins to access the extensions
 2. Extending the WebDriver BiDi protocol with new modules and methods, accessed from a client via the BiDi interface
 3. Overloading the Execute Script command by defining Execute
-  Methods
+   Methods
 
 #### Extending the HTTP Protocol
 
@@ -458,10 +458,10 @@ inside the plugin class:
 
 1. The `executeMethodMap`, defined in just the same way as for drivers
 2. The implementation of the command method as defined in `executeMethodMap` (in this case,
-  `plugMeIn`)
+   `plugMeIn`)
 3. The overriding/handling of the `execute` command. Just like any plugin command handlers, the
-  first two arguments are `next` and `driver`, followed by the script name and args. `BasePlugin`
-  implements a helper method which we can simply call with all of these arguments.
+   first two arguments are `next` and `driver`, followed by the script name and args. `BasePlugin`
+   implements a helper method which we can simply call with all of these arguments.
 
 Overriding Execute Methods from drivers works as you'd expect: if your plugin defines an Execute
 Method with the same name as that of a driver, your command (in this case `plugMeIn`) will be

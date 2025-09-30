@@ -1,6 +1,7 @@
 ---
 hide:
   - toc
+
 title: Intro to Appium Clients
 ---
 
@@ -111,8 +112,8 @@ System.Console.WriteLine(driver.PageSource);
 Each of these scripts, despite being in different languages, does the same thing under the hood:
 
 1. Call `Find Element` with a `using` parameter of `xpath` and a `value` parameter expressing the
-  XPath query used to find an element. (If you're confused about these terms, you might find an
-  introduction to Appium or Selenium useful)
+   XPath query used to find an element. (If you're confused about these terms, you might find an
+   introduction to Appium or Selenium useful)
 2. Call `Click Element` with the ID of the element found in the previous call.
 3. Call `Get Element Text` with the ID of the same element, and print it to the console.
 4. Call `Get Page Source` to retrieve the page/app source and print it to the console.

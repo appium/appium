@@ -11,3 +11,5 @@ package.json
 # generated
 packages/types/lib/appium-config.ts
 **/*.hbs
+
+/.nx/workspace-data

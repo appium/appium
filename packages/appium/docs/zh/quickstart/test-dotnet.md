@@ -2,13 +2,13 @@
 hide:
   - toc
 
-title: Write a Test (.NET)
+title: 编写测试 (.NET)
 ---
 
-The [Appium .NET Client](https://github.com/appium/dotnet-client/) is
-an official Appium client in C#. This driver is an extension of the Selenium C# client. It has all the functionalities of the regular driver, but add Appium-specific methods on top of this. The driver is available on the public NuGet Gallery as [Appium.WebDriver](https://www.nuget.org/packages/Appium.WebDriver/).
+[Appium .NET Client](https://github.com/appium/dotnet-client/) 是
+官方的 Appium C# 客户端。 这个驱动程序是 Selenium C# 客户端的扩展。 它具有常规驱动程序的所有功能，但在之上添加了 Appium 特定的方法。 该驱动程序在公共 NuGet Gallery 上作为 [Appium.WebDriver](https://www.nuget.org/packages/Appium.WebDriver/) 提供。
 
-Now, we get inside the directory and create a new [NUnit](https://nunit.org/) project. We will also add the references to the Appium.Net driver, and other dependencies.
+现在，我们进入目录并创建一个新的 [NUnit](https://nunit.org/) 项目。 我们还将添加对 Appium.Net 驱动程序和其他依赖项的引用。
 
 ```bash
 cd dotnet-client
@@ -16,12 +16,12 @@ dotnet new nunit --name appiumtest
 
 cd appiumtest
 
-# This will install the latest 5.x version
+# 这将安装最新的 5.x 版本
 dotnet add package Appium.WebDriver  --prerelease
 dotnet add package Newtonsoft.Json --version 13.0.3
 ```
 
-Once this is done, your project should have a placeholder file `UnitTest1.cs`. We will replace the code to include the OpenQA namespaces, an initialization of the driver, and the actual test.
+完成后，您的项目应该有一个占位符文件 `UnitTest1.cs`。 我们将替换代码以包含 OpenQA 命名空间、驱动程序的初始化以及实际测试。
 
 ```C# title="UnitTest1.cs"
 using OpenQA.Selenium;
@@ -69,39 +69,31 @@ public class Tests
 }
 ```
 
-!!! note
+!!! 备注
 
 ```
-It's not within the scope of this guide to give a complete run-down on the dotnet client
-library or everything that's happening here, so we'll leave the code itself unexplained in
-detail for now. You may want to read up particularly on Appium
-[Capabilities](../guides/caps.md) in addition to familiarizing yourself with the
-[dotnet client driver documentation](https://github.com/appium/dotnet-client/) for a fuller explanation
-of the various API commands you see and what their purpose is.
+这份指南的范围不包括对 dotnet 客户端库或此处发生的一切进行完整说明，因此我们暂时不对代码本身进行详细解释。您可能需要特别阅读 Appium [Capabilities](../guides/caps.md)，以及熟悉 [dotnet 客户端驱动程序文档](https://github.com/appium/dotnet-client/) 以获得对您看到的各种 API 命令及其目的的更全面解释。
 ```
 
-Basically, this code is doing the following:
+基本上，此代码执行以下操作：
 
-1. Defining a set of "Capabilities" (parameters) to send to the Appium server so Appium knows what
-   kind of thing you want to automate. Some of these parameters can be overridden using environment variables.
-2. Starting an Appium session on the built-in Android settings app.
-3. Finding the "Apps" list item and clicking it.
-4. Ending the Appium session.
+1. 定义一组"Capabilities"（参数）发送到 Appium 服务器，以便 Appium 知道您想要自动化什么。 有些参数可以使用环境变量覆盖。
+2. 在内置的 Android 设置应用上启动 Appium 会话。
+3. 查找"Apps"列表项并点击它。
+4. 结束 Appium 会话。
 
-That's it! Let's give it a try. Before you run the test, make sure that you have an Appium server
-running in another terminal session, otherwise you'll get an error about not being able to connect
-to one. Then, you can execute the script:
+就是这样！ 让我们试试。 在运行测试之前，请确保在另一个终端会话中运行 Appium 服务器，否则您会收到无法连接的错误。 然后，您可以执行脚本：
 
 ```bash
 dotnet test
 
-# Example output:
+# 示例输出：
 # Starting test execution, please wait...
 # A total of 1 test files matched the specified pattern.
 
 # Passed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: 323 ms - appiumtest.dll (net7.0)
 ```
 
-If all goes well, you'll see the Settings app open up and navigate to the "Apps" view in the emulator before the app closes again.
+如果一切顺利，您将看到设置应用打开并在模拟器中导航到"Apps"视图，然后应用再次关闭。
 
-Congratulations, you've started your Appium journey! Read on for some [next steps](./next-steps.md) to explore.
+恭喜，您已经开始了 Appium 之旅！ 继续阅读一些 [后续步骤](./next-steps.md) 以进行探索。

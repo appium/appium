@@ -2,28 +2,22 @@
 hide:
   - toc
 
-title: Getting Started
+title: 入门指南
 ---
 
-Let's get up and running with Appium! To successfully use this quickstart, it's recommended that
-you first have read the [Introduction](../intro/index.md), so that you understand the concepts involved in
-running Appium and writing Appium scripts.
+让我们开始使用Appium！ 为了成功使用此快速入门，建议您首先阅读[介绍](../intro/index.md)，以便了解运行Appium和编写Appium脚本的概念。
 
-The basic plan for this quickstart is as follows:
+此快速入门的基本计划如下：
 
-1. Install Appium
-2. Install an Appium driver and its dependencies
-   - This guide provides instructions for the [UiAutomator2 driver](https://github.com/appium/appium-uiautomator2-driver)
-3. Install an Appium client library in your language of choice
-   - This guide contains options for JavaScript, Python, Java, Ruby, and .NET
-4. Write and run a simple Appium automation script using a sample application
+1. 安装Appium
+2. 安装Appium驱动程序及其依赖项
+   - 本指南提供了[UiAutomator2 驱动程序](https://github.com/appium/appium-uiautomator2-driver) 的说明
+3. 在您选择的语言中安装Appium客户端库
+   - 本指南包含JavaScript、Python、Java、Ruby和.NET的选项
+4. 使用示例应用程序编写并运行简单的Appium自动化脚本
 
-### Requirements
+### 系统需求
 
-Before getting started, make sure your system satisfies the
-[requirements](../quickstart/requirements.md) for running the Appium server. Additional requirements
-will be discussed in conjunction with installing the UiAutomator2 driver. The guide also assumes
-you have basic command line proficiency on your platform, for example being able to run commands, set
-and persist environment variables, etc...
+在开始之前，请确保您的系统满足运行Appium服务器的[要求](../quickstart/requirements.md)。 其他要求将在安装UiAutomator2驱动程序时讨论。 本指南还假设您在平台上具有基本的命令行熟练度，例如能够运行命令、设置和持久化环境变量等...
 
-Now you're ready to get started! So head on over to [Installing Appium](./install.md).
+现在您准备开始了！ 前往安装[Appium](./install.md)。

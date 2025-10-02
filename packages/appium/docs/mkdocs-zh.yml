@@ -1,5 +1,5 @@
 INHERIT: ./base-mkdocs.yml
-site_url: https://appium.io/docs/cn
+site_url: https://appium.io/docs/zh
 edit_uri: edit/master/packages/appium/docs/zh
 site_description: Appium自动化项目文档
 docs_dir: zh

@@ -1,6 +1,7 @@
 ---
 hide:
   - toc
+
 title: Execute Methods
 ---
 
@@ -9,10 +10,10 @@ defined by the W3C WebDriver spec, Appium needs a way for these "extended" comma
 by client libraries. There are two main strategies for this:
 
 1. Appium drivers define new W3C-compatible API routes, and Appium clients are updated to include
-  support for those new routes.
+   support for those new routes.
 2. Appium drivers define so-called "Execute Methods" which provide new functionality by
-  overloading the existing `Execute Script` command which is already available in any WebDriver-
-  based client library (including all Selenium and Appium clients).
+   overloading the existing `Execute Script` command which is already available in any WebDriver-
+   based client library (including all Selenium and Appium clients).
 
 There are pros and cons for each strategy, but it is ultimately up to the extension author to
 decide how they wish implement new commands.
@@ -133,9 +134,9 @@ Javascript execution:
 
 1. The script string is just a command name; it will be provided by the driver documentation
 2. The standard way to provide parameters is as a _single_ object with keys representing parameter
-  names and values representing parameter values. So in this case, we had to specify both the
-  parameter name (`bundleId`) as the key of the parameters object, and the parameter value
-  (`com.my.app`) as the value for that key. A driver can define parameters as _required_ or _optional_.
+   names and values representing parameter values. So in this case, we had to specify both the
+   parameter name (`bundleId`) as the key of the parameters object, and the parameter value
+   (`com.my.app`) as the value for that key. A driver can define parameters as _required_ or _optional_.
 
 Of course, always refer to the documentation for the particular Execute Method in case the author
 has made any alterations to the standard access method.

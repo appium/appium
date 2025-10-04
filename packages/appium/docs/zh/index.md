@@ -1,6 +1,6 @@
 ---
 hide:
-  - navigation
+  - 导航栏
   - toc
 
 title: 欢迎使用
@@ -44,11 +44,11 @@ title: 欢迎使用
 - 查看 [**简介**](./intro/index.md) 以确保您理解关键概念
 - 通过 [**快速开始**](./quickstart/index.md) 来设置并运行一个基本的 Android 测试
 - 访问 [**生态系统**](./ecosystem/index.md) 页面，获取您可能想要使用的驱动程序、客户端和插件列表
-- Consult the [**Reference**](./reference/index.md) page for information on the Appium CLI and supported endpoints
-- Read the different [**Guides**](./guides/migrating-2-to-3.md) for a variety of instructions, tips and tricks
-- Check out various third-party [**Resources**](./resources/index.md) to explore Appium around the web
+- 访问 [**Reference**](./reference/index.md) 页面获取Appium CLI 和支持的端点信息
+- 阅读不同版本的 [**指南**](./guides/migrating-2-to-3.md)，了解各版本的说明、提示和技巧
+- 查看各种第三方 [**资源**](./resources/index.md) 以探索网络上的 Appium
 - 要创建自己的 Appium 扩展，请参阅 [**开发者**](./developing/index.md) 文档
-- For contributions to Appium itself, refer to the [**Contributing**](./contributing/index.md) page
-- Have a look at the [**Appium Blog**](./blog/index.md) to learn what's new in the project
+- 有关对 Appium 的贡献，请查阅 [**贡献**](./contributing/index.md) 页面
+- 查看 [**Appium博客**](./blog/index.md) ，了解项目中的新内容
 
 </div>

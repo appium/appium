@@ -27,7 +27,7 @@ import {
 } from './config';
 import {readConfigFile} from './config-file';
 import {loadExtensions, getActivePlugins, getActiveDrivers} from './extension';
-import {SERVER_SUBCOMMAND, LONG_STACKTRACE_LIMIT} from './constants';
+import {SERVER_SUBCOMMAND, LONG_STACKTRACE_LIMIT, BIDI_BASE_PATH} from './constants';
 import registerNode from './grid-register';
 import {getDefaultsForSchema, validate as validateSchema} from './schema/schema';
 import {
@@ -400,6 +400,7 @@ async function main(args) {
     extraMethodMap,
     cliArgs: parsedArgs,
   };
+  const normalizedBasePath = normalizeBasePath(parsedArgs.basePath);
   for (const timeoutArgName of ['keepAliveTimeout', 'requestTimeout']) {
     if (_.isInteger(parsedArgs[timeoutArgName])) {
       serverOpts[timeoutArgName] = parsedArgs[timeoutArgName] * 1000;
@@ -411,8 +412,9 @@ async function main(args) {
   bidiServer.on('error', appiumDriver.onBidiServerError.bind(appiumDriver));
   try {
     server = await baseServer(serverOpts);
-    server.addWebSocketHandler('/bidi', bidiServer);
-    server.addWebSocketHandler('/bidi/:sessionId', bidiServer);
+    const bidiBasePath = `${normalizedBasePath}${BIDI_BASE_PATH}`;
+    server.addWebSocketHandler(bidiBasePath, bidiServer);
+    server.addWebSocketHandler(`${bidiBasePath}/:sessionId`, bidiServer);
   } catch (err) {
     logger.error(
       `Could not configure Appium server. It's possible that a driver or plugin tried ` +
@@ -438,7 +440,7 @@ async function main(args) {
         parsedArgs.nodeconfig,
         parsedArgs.address,
         parsedArgs.port,
-        parsedArgs.basePath,
+        normalizedBasePath,
       );
     }
   } catch (err) {
@@ -464,7 +466,7 @@ async function main(args) {
   const protocol = server.isSecure() ? 'https' : 'http';
   const address = net.isIPv6(parsedArgs.address) ? `[${parsedArgs.address}]` : parsedArgs.address;
   logServerAddress(
-    `${protocol}://${address}:${parsedArgs.port}${normalizeBasePath(parsedArgs.basePath)}`,
+    `${protocol}://${address}:${parsedArgs.port}${normalizedBasePath}`,
   );
 
   driverConfig.print();

@@ -9,40 +9,40 @@ theme:
 nav:
   - 欢迎使用: index.md
   - 博客: blog/index.md
-  - 简介:
+  - 简介：
       - intro/index.md
-      - 背景:
+      - 背景：
           - intro/appium.md
           - intro/drivers.md
           - intro/clients.md
           - intro/history.md
-  - 快速开始:
+  - 快速开始：
       - quickstart/index.md
       - quickstart/requirements.md
       - quickstart/install.md
       - quickstart/uiauto2-driver.md
-      - 写一个测试:
+      - 写一个测试：
           - quickstart/test-js.md
           - quickstart/test-py.md
           - quickstart/test-java.md
           - quickstart/test-rb.md
           - quickstart/test-dotnet.md
       - quickstart/next-steps.md
-  - 生态系统:
+  - 生态系统：
       - ecosystem/index.md
       - ecosystem/drivers.md
       - ecosystem/clients.md
       - ecosystem/plugins.md
       - ecosystem/tools.md
-  - Reference:
+  - 参考：
       - reference/index.md
-      - Command Line Interface:
+      - 命令行界面：
           - reference/cli/index.md
           - reference/cli/server.md
           - reference/cli/extensions.md
           - reference/cli/setup.md
           - reference/cli/env-vars.md
-      - API Endpoints:
+      - API 端点：
           - reference/api/index.md
           - reference/api/webdriver.md
           - reference/api/bidi.md
@@ -51,11 +51,11 @@ nav:
           - reference/api/appium.md
           - reference/api/others.md
           - reference/api/plugins.md
-  - 指南:
-      - 迁移:
+  - 指南：
+      - 迁移：
           - guides/migrating-2-to-3.md
           - guides/migrating-1-to-2.md
-      - 服务器/驱动程序配置:
+      - 服务器/驱动程序配置：
           - guides/managing-exts.md
           - guides/branch-testing.md
           - guides/config.md
@@ -65,24 +65,24 @@ nav:
           - guides/grid.md
           - guides/caching.md
           - guides/tls.md
-      - 会话配置:
+      - 会话配置：
           - guides/caps.md
           - guides/settings.md
           - guides/execute-methods.md
           - guides/context.md
           - guides/event-timing.md
-  - More Resources:
+  - 更多资源：
       - resources/index.md
-  - 开发:
+  - 开发：
       - developing/index.md
       - developing/build-drivers.md
       - developing/build-plugins.md
       - developing/build-docs.md
       - developing/build-doctor-checks.md
       - developing/sensitive.md
-      - 开发者参考:
+      - 开发者参考：
           - developing/config-system.md
-  - Contributing:
+  - 贡献：
       - contributing/index.md
-  - Sponsors:
+  - 赞助者：
       - sponsors/index.md

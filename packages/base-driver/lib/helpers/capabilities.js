@@ -59,7 +59,7 @@ export function fixCaps(oldCaps, desiredCapConstraints, log) {
   }
 
   // int capabilities are often sent in as strings by frameworks
-  let intCaps = /** @type {import('type-fest').StringKeyOf<typeof caps>[]} */ (
+  let intCaps = /** @type {import('type-fest').KeyAsString<typeof caps>[]} */ (
     _.keys(_.pickBy(desiredCapConstraints, (k) => k.isNumber === true))
   );
   for (let cap of intCaps) {

@@ -641,6 +641,39 @@ describe('FakeDriver via HTTP', function () {
       result.should.eql('this is from bidi');
     });
   });
+
+  describe('Bidi protocol with base path', function () {
+    const basePath = '/wd/hub';
+    withServer({basePath});
+    const capabilities = {...caps, webSocketUrl: true, 'appium:runClock': true};
+    /** @type import('webdriverio').Browser **/
+    let driver;
+
+    beforeEach(async function () {
+      driver = await wdio({...wdOpts, path: basePath, capabilities});
+    });
+
+    afterEach(async function () {
+      if (driver) {
+        await driver.deleteSession();
+      }
+    });
+
+    it('should respond with bidi specific capability when a driver supports it', async function () {
+      should.exist(driver.capabilities.webSocketUrl);
+    });
+
+    it('should interpret the bidi protocol and let the driver handle it by command', async function () {
+      should.not.exist(await driver.getUrl());
+
+      await driver.browsingContextNavigate({
+        context: 'foo',
+        url: 'https://appium.io',
+        wait: 'complete',
+      });
+      await driver.getUrl().should.eventually.eql('https://appium.io');
+    });
+  });
 });
 
 describe('Bidi over SSL', function () {

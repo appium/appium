@@ -125,7 +125,9 @@ export const STANDARD_CAPS = Object.freeze(
       'proxy',
       'setWindowRect',
       'timeouts',
+      'strictFileInteractability',
       'unhandledPromptBehavior',
+      'userAgent',
       'webSocketUrl',
     ]) as KeyAsString<StandardCapabilities>[]
   )

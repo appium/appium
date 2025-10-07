@@ -10,7 +10,10 @@ const STANDARD_CAPS = [
   'proxy',
   'setWindowRect',
   'timeouts',
+  'strictFileInteractability',
   'unhandledPromptBehavior',
+  'userAgent',
+  'webSocketUrl',
 ];
 
 const VENDOR_PREFIX = 'appium';

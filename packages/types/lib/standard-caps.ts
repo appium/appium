@@ -59,6 +59,10 @@ export interface StandardCapabilities {
    */
   unhandledPromptBehavior?: string;
   /**
+   * Identifies the default User-Agent value of the endpoint node.
+   */
+  userAgent?: string;
+  /**
    * WebDriver clients opt in to a bidirectional connection by requesting a capability with the name "webSocketUrl" and value true.
    */
   webSocketUrl?: boolean;

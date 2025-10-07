@@ -17,6 +17,10 @@ export interface ProxyObject {
 }
 export type Timeouts = Record<'script' | 'pageLoad' | 'implicit', number>;
 
+/**
+ * W3C standard capabilities
+ * @see https://www.w3.org/TR/webdriver2/#dfn-table-of-standard-capabilities)
+ */
 export interface StandardCapabilities {
   /**
    * Identifies the user agent.
@@ -58,6 +62,10 @@ export interface StandardCapabilities {
    * Describes the current session’s user prompt handler. Defaults to the dismiss and notify state.
    */
   unhandledPromptBehavior?: string;
+  /**
+   * Identifies the default User-Agent value of the endpoint node.
+   */
+  userAgent?: string;
   /**
    * WebDriver clients opt in to a bidirectional connection by requesting a capability with the name "webSocketUrl" and value true.
    */

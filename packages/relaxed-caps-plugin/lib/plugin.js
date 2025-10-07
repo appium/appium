@@ -1,6 +1,10 @@
 import _ from 'lodash';
 import { BasePlugin } from 'appium/plugin';
 
+/**
+ * W3C standard capabilities
+ * @see https://www.w3.org/TR/webdriver2/#dfn-table-of-standard-capabilities)
+ */
 const STANDARD_CAPS = [
   'browserName',
   'browserVersion',

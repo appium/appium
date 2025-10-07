@@ -17,6 +17,10 @@ export interface ProxyObject {
 }
 export type Timeouts = Record<'script' | 'pageLoad' | 'implicit', number>;
 
+/**
+ * W3C standard capabilities
+ * @see https://www.w3.org/TR/webdriver2/#dfn-table-of-standard-capabilities)
+ */
 export interface StandardCapabilities {
   /**
    * Identifies the user agent.

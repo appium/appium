@@ -112,7 +112,7 @@ export function validateCaps<C extends Constraints>(
 
 /**
  * Standard, non-prefixed capabilities
- * @see https://www.w3.org/TR/webdriver/#dfn-table-of-standard-capabilities)
+ * @see https://www.w3.org/TR/webdriver2/#dfn-table-of-standard-capabilities)
  */
 export const STANDARD_CAPS = Object.freeze(
   new Set(

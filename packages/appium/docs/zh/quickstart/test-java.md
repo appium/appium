@@ -2,22 +2,19 @@
 hide:
   - toc
 
-title: Write a Test (Java)
+title: 编写测试 (Java)
 ---
 
-The Appium team maintains an official [client](https://github.com/appium/java-client) for the Java programming language.
-It is built on top of [Selenium](https://github.com/SeleniumHQ/selenium).
-You can also use this client in your Kotlin projects.
+Appium 团队维护了一个官方的 [客户端](https://github.com/appium/java-client) 用于 Java 编程语言。
+它建立在 [Selenium](https://github.com/SeleniumHQ/selenium) 之上。
+您也可以在 Kotlin 项目中使用此客户端。
 
-Follow the [Add Appium java client to your test framework](https://github.com/appium/java-client#add-appium-java-client-to-your-test-framework)
-tutorial in order to connect the library to your test framework sources.
+按照 [将 Appium Java 客户端添加到您的测试框架](https://github.com/appium/java-client#add-appium-java-client-to-your-test-framework) 教程将库连接到您的测试框架源代码。
 
-The Appium Java client has dedicated classes to support most of the official Appium drivers. For other drivers
-you could simply use the [AppiumDriver](https://github.com/appium/java-client/blob/master/src/main/java/io/appium/java_client/AppiumDriver.java) class
-or build your custom derivatives from it. Check the [Drivers Support](https://github.com/appium/java-client#drivers-support)
-article to learn more about the current driver class implementations.
+Appium Java 客户端具有专用类来支持大多数官方 Appium 驱动程序。 对于其他驱动程序，您可以简单地使用 [AppiumDriver](https://github.com/appium/java-client/blob/master/src/main/java/io/appium/java_client/AppiumDriver.java) 类
+或从中构建自定义派生类。 查看 [驱动程序支持](https://github.com/appium/java-client#drivers-support) 文章以了解当前驱动程序类实现的更多信息。
 
-Follow the [Usage Examples](https://github.com/appium/java-client#usage-examples) article in order understand
-how to invoke Java client features from your test framework.
+按照 [使用示例](https://github.com/appium/java-client#usage-examples) 文章以了解
+如何从您的测试框架调用 Java 客户端功能。
 
-Once you've managed to successfully run a test, you can read on for some [next steps](./next-steps.md) to explore.
+一旦您成功运行了一个测试，您可以继续阅读一些 [后续步骤](./next-steps.md) 以进行探索。

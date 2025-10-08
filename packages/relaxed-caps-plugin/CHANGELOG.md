@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.1](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@2.0.0...@appium/relaxed-caps-plugin@2.0.1) (2025-10-08)
+
+
+### Bug Fixes
+
+* **base-driver,relaxed-caps-plugin,types:** add missing W3C caps ([#21642](https://github.com/appium/appium/issues/21642)) ([e6635b7](https://github.com/appium/appium/commit/e6635b737d0f42d8fd38c3d8bea70067d2e7c87a))
+
+
+
 ## [2.0.0](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@2.0.0-rc.1...@appium/relaxed-caps-plugin@2.0.0) (2025-08-18)
 
 **Note:** Version bump only for package @appium/relaxed-caps-plugin

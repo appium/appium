@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.1.0](https://github.com/appium/appium/compare/appium@3.0.2...appium@3.1.0) (2025-10-08)
+
+
+### Features
+
+* add 21 WebDriver extension endpoints ([#21577](https://github.com/appium/appium/issues/21577)) ([7f906fc](https://github.com/appium/appium/commit/7f906fcf9a0dd84f348b0b3a79da818281f21835))
+* add inspector to plugins installed via `appium setup` ([#21578](https://github.com/appium/appium/issues/21578)) ([1753dcd](https://github.com/appium/appium/commit/1753dcd5e9f4ee3a9bd869f2e846a8a1c68b6970))
+* add W3C printPage endpoint ([#21576](https://github.com/appium/appium/issues/21576)) ([cbea4f2](https://github.com/appium/appium/commit/cbea4f2e97d2d291bd67fd98359b37caab1b21fa))
+
+
+### Bug Fixes
+
+* **appium:** fix base path handling in bidi ([#21611](https://github.com/appium/appium/issues/21611)) ([dad0757](https://github.com/appium/appium/commit/dad07575c9d754751160a53e0fb8053bbddac75b))
+
+
+
 ## [3.0.2](https://github.com/appium/appium/compare/appium@3.0.1...appium@3.0.2) (2025-09-09)
 
 

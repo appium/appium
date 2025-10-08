@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.0](https://github.com/appium/appium/compare/@appium/types@1.0.1...@appium/types@1.1.0) (2025-10-08)
+
+
+### Features
+
+* add 21 WebDriver extension endpoints ([#21577](https://github.com/appium/appium/issues/21577)) ([7f906fc](https://github.com/appium/appium/commit/7f906fcf9a0dd84f348b0b3a79da818281f21835))
+* add W3C printPage endpoint ([#21576](https://github.com/appium/appium/issues/21576)) ([cbea4f2](https://github.com/appium/appium/commit/cbea4f2e97d2d291bd67fd98359b37caab1b21fa))
+
+
+### Bug Fixes
+
+* **base-driver,relaxed-caps-plugin,types:** add missing W3C caps ([#21642](https://github.com/appium/appium/issues/21642)) ([e6635b7](https://github.com/appium/appium/commit/e6635b737d0f42d8fd38c3d8bea70067d2e7c87a))
+
+
+
 ## [1.0.1](https://github.com/appium/appium/compare/@appium/types@1.0.0...@appium/types@1.0.1) (2025-09-09)
 
 **Note:** Version bump only for package @appium/types

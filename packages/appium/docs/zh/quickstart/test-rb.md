@@ -2,18 +2,18 @@
 hide:
   - toc
 
-title: Write a Test (Ruby)
+title: 编写测试 (Ruby)
 ---
 
-The [AppiumLib](https://github.com/appium/ruby_lib) and the [AppiumLibCore](https://github.com/appium/ruby_lib_core) (**recommended**) are official Appium client libraries in Ruby, which are available via gem under the [appium_lib](https://rubygems.org/gems/appium_lib) and the [appium_lib_core](https://rubygems.org/gems/appium_lib_core) package names. The appium_lib_core inherits from the Selenium Ruby Binding, and the appium_lib inherits from the appium_lib_core, so installing these libraries include the selenium binding. We recommend `appium_lib_core` if you need a less complex client-side solution. The `appium_lib` has some useful methods the core does not have, but for the cost of greater complexity and historical methods which may not work in the latest environment.
+[AppiumLib](https://github.com/appium/ruby_lib) 和 [AppiumLibCore](https://github.com/appium/ruby_lib_core)（**推荐**）是 Ruby 中的官方 Appium 客户端库，可通过 gem 以 [appium_lib](https://rubygems.org/gems/appium_lib) 和 [appium_lib_core](https://rubygems.org/gems/appium_lib_core) 包名获取。 appium_lib_core 继承自 Selenium Ruby Binding，而 appium_lib 继承自 appium_lib_core，因此安装这些库包括 selenium 绑定。 如果您需要一个不太复杂的客户端解决方案，我们推荐 `appium_lib_core`。 `appium_lib` 有一些核心没有的有用方法，但代价是更大的复杂性和可能在最新环境中不工作的历史方法。
 
-As the first step, let's initialize a Gemfile to manage the dependency:
+作为第一步，让我们初始化一个 Gemfile 来管理依赖项：
 
 ```bash
 bundle init
 ```
 
-Then, you could add Appium Ruby Client dependency as below:
+然后，您可以如下添加 Appium Ruby Client 依赖项：
 
 ```bash
 bundle add appium_lib_core
@@ -21,24 +21,24 @@ bundle add appium_lib_core
 # bundle add appium_lib
 ```
 
-Test code example below uses `test-unit` module, thus please run:
+下面的测试代码示例使用 `test-unit` 模块，因此请运行：
 
 ```bash
 bundle add test-unit
 ```
 
-Once these steps has done, your `Gemfile` file should include:
+一旦这些步骤完成，您的 `Gemfile` 文件应该包含：
 
 ```ruby title="Gemfile"
 --8<-- "./sample-code/quickstarts/rb/Gemfile"
 ```
 
-The `appium_lib_core` is the main part as an Appium client.
-`appium_lib` has various helper methods, but the driver instance was ordinary designed to be used as a global variable. It could causes an issue to handle the instance.
-`appium_lib_core` does not have such a global variable.
+`appium_lib_core` 是作为 Appium 客户端的主要部分。
+`appium_lib` 有各种辅助方法，但驱动程序实例通常被设计为全局变量使用。 它可能导致处理实例的问题。
+`appium_lib_core` 没有这样的全局变量。
 
-This example is by the `appium_lib_core` with `test-unit` gem module.
-Tes code in `appium_lib` should be similar.
+此示例使用 `appium_lib_core` 和 `test-unit` gem 模块。
+在 `appium_lib` 中的测试代码应该类似。
 
 ```ruby title="test.rb"
 --8<-- "./sample-code/quickstarts/rb/test.rb"
@@ -47,39 +47,34 @@ Tes code in `appium_lib` should be similar.
 !!! note
 
 ```
-It's not within the scope of this guide to give a complete run-down on the Ruby client
-library or everything that's happening here, so we'll leave the code itself unexplained in detail for now.
+这份指南的范围不包括对 Ruby 客户端库或此处发生的一切进行完整说明，因此我们暂时不对代码本身进行详细解释。
 
-- You may want to read up particularly on Appium [Capabilities](../guides/caps.md).
-- [functional test code](https://github.com/appium/ruby_lib_core/tree/master/test/functional) in the appium_lib_core GitHub repository should help to find more working example.
-- Documentation [appium_lib_core](https://www.rubydoc.info/github/appium/ruby_lib_core) and [appium_lib](https://www.rubydoc.info/github/appium/ruby_lib) also helps to find available methods.
+- 您可能需要特别阅读 Appium [Capabilities](../guides/caps.md)。
+- appium_lib_core GitHub 仓库中的 [功能测试代码](https://github.com/appium/ruby_lib_core/tree/master/test/functional) 应该有助于找到更多工作示例。
+- 文档 [appium_lib_core](https://www.rubydoc.info/github/appium/ruby_lib_core) 和 [appium_lib](https://www.rubydoc.info/github/appium/ruby_lib) 也有助于找到可用方法。
 ```
 
 !!! note
 
 ```
-The sample code is available from [GitHub Appium repository](https://github.com/appium/appium/tree/master/packages/appium/sample-code/quickstarts/rb).
+示例代码可从 [GitHub Appium 仓库](https://github.com/appium/appium/tree/master/packages/appium/sample-code/quickstarts/rb) 获取。
 ```
 
-Basically, this code is doing the following:
+基本上，此代码执行以下操作：
 
-1. Defining a set of "Capabilities" (parameters) to send to the Appium server so Appium knows what
-   kind of thing you want to automate.
-2. Starting an Appium session on the built-in Android settings app.
-3. Finding the "Apps" list item and clicking it.
-4. Pausing for a moment purely for visual effect.
-5. Ending the Appium session.
+1. 定义一组"Capabilities"（参数）发送到 Appium 服务器，以便 Appium 知道您想要自动化什么。
+2. 在内置的 Android 设置应用上启动 Appium 会话。
+3. 查找"Apps"列表项并点击它。
+4. 暂停片刻纯粹为了视觉效果。
+5. 结束 Appium 会话。
 
-That's it! Let's give it a try. Before you run the test, make sure that you have an Appium server
-running in another terminal session, otherwise you'll get an error about not being able to connect
-to one. Then, you can execute the script:
+就是这样！ 让我们试试。 在运行测试之前，请确保在另一个终端会话中运行 Appium 服务器，否则您会收到无法连接的错误。 然后，您可以执行脚本：
 
 ```bash
-# Please run "bundle install" first if your environment has not run the installation command yet.
+# 如果您的环境尚未运行安装命令，请先运行 "bundle install"。
 bundle exec ruby test.rb
 ```
 
-If all goes well, you'll see the Settings app open up and navigate to the "Apps" view before the
-app closes again.
+如果一切顺利，您将看到设置应用打开并导航到"Apps"视图，然后应用再次关闭。
 
-Congratulations, you've started your Appium journey! Read on for some [next steps](./next-steps.md) to explore.
+恭喜，您已经开始了 Appium 之旅！ 继续阅读一些 [后续步骤](./next-steps.md) 以进行探索。

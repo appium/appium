@@ -66,8 +66,8 @@ async function checkReportStatus(reportId) {
 
 /**
  * Wait for report to be ready and download it
- * @param {string} reportId
- * @returns {Promise<any>} Parsed report data
+ * @param {string} reportId - The unique identifier of the generated report
+ * @returns {Promise<CrowdinReportData>} Parsed report data from Crowdin
  */
 async function downloadReport(reportId) {
   log.info(`Waiting up to ${REPORT_TIMEOUT_MS / 1000}s for report ${reportId} to finish`);
@@ -109,8 +109,8 @@ async function downloadReport(reportId) {
 
 /**
  * Process report data and group by language and translator
- * @param {any} reportData
- * @returns {object} Grouped statistics
+ * @param {CrowdinReportData} reportData - Raw report data from Crowdin API
+ * @returns {ProcessedStats} Grouped statistics by language and user
  */
 function processReportData(reportData) {
   const stats = {};
@@ -163,12 +163,12 @@ async function getProjectInfo() {
 
 /**
  * Format statistics as Slack message blocks
- * @param {object} stats - Grouped statistics
+ * @param {ProcessedStats} stats - Grouped statistics by language and user
  * @param {string} projectName - Project name
- * @param {string} from - Start date
- * @param {string} to - End date
- * @param {string} generatedAt - Generation timestamp
- * @returns {object} Slack message payload
+ * @param {string} from - Start date in ISO 8601 format
+ * @param {string} to - End date in ISO 8601 format
+ * @param {string} generatedAt - Generation timestamp in ISO 8601 format
+ * @returns {object} Slack message payload with blocks
  */
 function formatSlackMessage(stats, projectName, from, to, generatedAt) {
   const monthName = new Date(from).toLocaleString('en-US', { month: 'long', year: 'numeric' });
@@ -285,3 +285,47 @@ async function main() {
 
 (async () => await main())();
 
+// Type definitions
+
+/**
+ * @typedef {Object} CrowdinUser
+ * @property {string} id - User ID
+ * @property {string} username - Username
+ * @property {string} fullName - Full name
+ * @property {string} avatarUrl - Avatar URL
+ * @property {string} joined - Join date
+ */
+
+/**
+ * @typedef {Object} CrowdinLanguage
+ * @property {string} id - Language ID (e.g., "zh-CN")
+ * @property {string} name - Language name (e.g., "Chinese Simplified")
+ */
+
+/**
+ * @typedef {Object} CrowdinReportRecord
+ * @property {CrowdinUser} user - User information
+ * @property {CrowdinLanguage[]} languages - Languages the user contributed to
+ * @property {number} translated - Number of strings translated
+ * @property {number} approved - Number of strings approved
+ * @property {number} voted - Number of votes cast
+ * @property {number} positiveVotes - Number of positive votes received
+ * @property {number} negativeVotes - Number of negative votes received
+ * @property {number} winning - Number of winning translations
+ */
+
+/**
+ * @typedef {Object} CrowdinReportData
+ * @property {CrowdinReportRecord[]} data - Array of report records
+ */
+
+/**
+ * @typedef {Object} UserStats
+ * @property {number} translated - Number of strings translated
+ * @property {number} approved - Number of strings approved
+ */
+
+/**
+ * @typedef {Record<string, Record<string, UserStats>>} ProcessedStats
+ * Language name mapped to username mapped to stats
+ */

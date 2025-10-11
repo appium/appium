@@ -99,7 +99,7 @@ async function downloadReport(reportId) {
   // Download the report file
   const tmpFile = await tempDir.path({prefix: 'crowdin-report', suffix: '.json'});
   try {
-    await net.downloadFile(downloadData.url, tmpFile);
+    await net.downloadFile(downloadData.url, tmpFile, {isMetered: false});
     const content = await fs.readFile(tmpFile, 'utf8');
     return JSON.parse(content);
   } finally {

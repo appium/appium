@@ -470,6 +470,57 @@ describe('util', function () {
     });
   });
 
+  describe('coerceVersion', function () {
+    it('should preserve prerelease versions', function () {
+      util.coerceVersion('6.0.0-rc.1').should.equal('6.0.0-rc.1');
+      util.coerceVersion('1.0.0-alpha.1').should.equal('1.0.0-alpha.1');
+      util.coerceVersion('2.0.0-beta.2').should.equal('2.0.0-beta.2');
+      util.coerceVersion('3.0.0-rc.3').should.equal('3.0.0-rc.3');
+    });
+
+    it('should handle regular versions correctly', function () {
+      util.coerceVersion('1.0.0').should.equal('1.0.0');
+      util.coerceVersion('2.1.3').should.equal('2.1.3');
+      util.coerceVersion('10.15.2').should.equal('10.15.2');
+    });
+
+    it('should coerce partial versions to full versions', function () {
+      util.coerceVersion('1').should.equal('1.0.0');
+      util.coerceVersion('1.0').should.equal('1.0.0');
+      util.coerceVersion('2.1').should.equal('2.1.0');
+    });
+
+    it('should handle numeric inputs', function () {
+      util.coerceVersion(1).should.equal('1.0.0');
+      util.coerceVersion(2.1).should.equal('2.1.0');
+    });
+
+    it('should throw error for invalid versions in strict mode', function () {
+      should.throw(() => util.coerceVersion('invalid'), /cannot be coerced/);
+      should.throw(() => util.coerceVersion(''), /cannot be coerced/);
+      should.throw(() => util.coerceVersion(null), /cannot be coerced/);
+      should.throw(() => util.coerceVersion(undefined), /cannot be coerced/);
+    });
+
+    it('should return null for invalid versions in non-strict mode', function () {
+      should.not.exist(util.coerceVersion('invalid', false));
+      should.not.exist(util.coerceVersion('', false));
+      should.not.exist(util.coerceVersion(null, false));
+      should.not.exist(util.coerceVersion(undefined, false));
+    });
+
+    it('should handle edge cases with prerelease versions', function () {
+      util.coerceVersion('1.0.0-0').should.equal('1.0.0-0');
+      util.coerceVersion('1.0.0-alpha').should.equal('1.0.0-alpha');
+      util.coerceVersion('1.0.0-alpha.0').should.equal('1.0.0-alpha.0');
+    });
+
+    it('should strip build metadata but preserve prerelease versions', function () {
+      util.coerceVersion('1.0.0-rc.1+build.1').should.equal('1.0.0-rc.1');
+      util.coerceVersion('2.0.0-alpha.2+exp.sha.5114f85').should.equal('2.0.0-alpha.2');
+    });
+  });
+
   describe('compareVersions', function () {
     it('should compare two correct version numbers', function () {
       util.compareVersions('10.0', '<', '11.0').should.eql(true);
@@ -526,6 +577,58 @@ describe('util', function () {
     });
     it('should pluralize a string and prepend the number through options', function () {
       util.pluralize('word', 2, {inclusive: true}).should.eql('2 words');
+    });
+  });
+
+  describe('escapeCharacter', function () {
+    it('should exist', function () {
+      should.exist(util.escapeCharacter);
+    });
+
+    it('should escape a simple character', function () {
+      util.escapeCharacter('hello world', 'o').should.eql('hell\\o w\\orld');
+    });
+
+    it('should escape multiple occurrences of a character', function () {
+      util.escapeCharacter('abc abc abc', 'a').should.eql('\\abc \\abc \\abc');
+    });
+
+    it('should escape special regex characters', function () {
+      util.escapeCharacter('test[test]', '[').should.eql('test\\[test]');
+      util.escapeCharacter('test.test', '.').should.eql('test\\.test');
+      util.escapeCharacter('test*test', '*').should.eql('test\\*test');
+      util.escapeCharacter('test+test', '+').should.eql('test\\+test');
+      util.escapeCharacter('test?test', '?').should.eql('test\\?test');
+      util.escapeCharacter('test^test', '^').should.eql('test\\^test');
+      util.escapeCharacter('test$test', '$').should.eql('test\\$test');
+      util.escapeCharacter('test{test}', '{').should.eql('test\\{test}');
+      util.escapeCharacter('test}test', '}').should.eql('test\\}test');
+      util.escapeCharacter('test(test)', '(').should.eql('test\\(test)');
+      util.escapeCharacter('test)test', ')').should.eql('test\\)test');
+      util.escapeCharacter('test|test', '|').should.eql('test\\|test');
+      util.escapeCharacter('test\\test', '\\').should.eql('test\\\\test');
+    });
+
+    it('should handle empty string', function () {
+      util.escapeCharacter('', 'a').should.eql('');
+    });
+
+    it('should handle character not in string', function () {
+      util.escapeCharacter('hello', 'x').should.eql('hello');
+    });
+
+    it('should handle single character string', function () {
+      util.escapeCharacter('a', 'a').should.eql('\\a');
+    });
+
+    it('should escape at beginning and end of string', function () {
+      util.escapeCharacter('abc', 'a').should.eql('\\abc');
+      util.escapeCharacter('abc', 'c').should.eql('ab\\c');
+    });
+
+    it('should handle multiple special characters in one string', function () {
+      util.escapeCharacter('test[123].js', '[').should.eql('test\\[123].js');
+      util.escapeCharacter('test[123].js', '.').should.eql('test[123]\\.js');
     });
   });
 });

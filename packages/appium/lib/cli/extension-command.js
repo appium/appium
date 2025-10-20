@@ -454,6 +454,17 @@ class ExtensionCliCommand {
         return {pkg, installPath};
       });
 
+      const symlinkInjectionPromises = _.uniq([
+        ...Object.values(this.config.installedExtensions).map(({installPath}) => installPath),
+        installPath,
+      ]).map((installPath) => injectAppiumSymlink.bind(this)(path.join(installPath, 'node_modules')));
+      // After the extension is installed, we try to inject the appium module symlink
+      // into the extension's node_modules folder if it is not there yet.
+      // We also inject the symlink into other installed extensions' node_modules folders
+      // as these might be cleaned up unexpectedly by npm
+      // (see https://github.com/appium/python-client/pull/1177#issuecomment-3419826643).
+      await Promise.all(symlinkInjectionPromises);
+
       return this.getInstallationReceipt({
         pkg,
         installPath,
@@ -732,17 +743,6 @@ class ExtensionCliCommand {
       pkgName,
       pkgVer: version,
     });
-
-    const symlinkInjectionPromises = _.uniq([
-      ...Object.values(this.config.installedExtensions).map(({installPath}) => installPath),
-      extData.installPath,
-    ]).map((installPath) => injectAppiumSymlink.bind(this)(path.join(installPath, 'node_modules')));
-    // After the extension is installed, we try to inject the appium module symlink
-    // into the extension's node_modules folder if it is not there yet.
-    // We also inject the symlink into other installed extensions' node_modules folders
-    // as these might be cleaned up unexpectedly by npm
-    // (see https://github.com/appium/python-client/pull/1177#issuecomment-3419826643).
-    await B.all(symlinkInjectionPromises);
 
     delete extData[/** @type {string} */ (`${this.type}Name`)];
     await this.config.updateExtension(installSpec, extData);

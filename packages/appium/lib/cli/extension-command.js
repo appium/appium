@@ -456,9 +456,9 @@ class ExtensionCliCommand {
 
       /** @type {Promise<void>[]} */
       const symlinkInjectionPromises = _.uniq([
-        ...Object.values(this.config.installedExtensions).map(({installPath}) => installPath),
+        ...Object.values(this.config.installedExtensions).map((ext) => ext.installPath),
         installPath,
-      ]).map((installPath) => injectAppiumSymlink.bind(this)(path.join(installPath, 'node_modules')));
+      ]).map((instPath) => injectAppiumSymlink.bind(this)(path.join(instPath, 'node_modules')));
       // After the extension is installed, we try to inject the appium module symlink
       // into the extension's node_modules folder if it is not there yet.
       // We also inject the symlink into other installed extensions' node_modules folders

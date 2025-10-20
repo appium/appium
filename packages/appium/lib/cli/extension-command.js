@@ -454,6 +454,7 @@ class ExtensionCliCommand {
         return {pkg, installPath};
       });
 
+      /** @type {Promise<void>[]} */
       const symlinkInjectionPromises = _.uniq([
         ...Object.values(this.config.installedExtensions).map(({installPath}) => installPath),
         installPath,

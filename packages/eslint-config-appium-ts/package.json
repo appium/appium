@@ -36,7 +36,7 @@
     "eslint-plugin-import": "2.32.0",
     "eslint-plugin-mocha": "10.5.0",
     "eslint-plugin-promise": "7.2.1",
-    "typescript-eslint": "8.46.1"
+    "typescript-eslint": "8.46.2"
   },
   "peerDependencies": {
     "eslint": "^9.0.0"

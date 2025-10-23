@@ -1,0 +1,43 @@
+# Collects translation statistics from Crowdin for the last calendar month
+# and posts them to Slack grouped by project, language, and translator
+
+name: Crowdin Translation Statistics
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Run on the first day of each month at 9:00 AM UTC
+    - cron: 0 9 1 * *
+
+jobs:
+  collect-stats:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - project_id_var: CROWDIN_DOCS_PROJECT_ID
+            project_name: appium-documentation
+          - project_id_var: CROWDIN_INSPECTOR_PROJECT_ID
+            project_name: appium-inspector
+
+    steps:
+      - uses: actions/checkout@v5
+      - name: Use Node.js LTS
+        uses: actions/setup-node@v5
+        with:
+          node-version: lts/*
+          cache: 'npm'
+      - name: Install Dependencies
+        run: npm ci
+      - name: Collect Crowdin Stats for ${{ matrix.project_name }}
+        id: crowdin-stats
+        run: node ./scripts/crowdin-stats.mjs > crowdin-stats-${{ matrix.project_name }}.json
+        env:
+          CROWDIN_PROJECT_ID: ${{ vars[matrix.project_id_var] }}
+          CROWDIN_TOKEN: ${{ secrets.CROWDIN_DOCS_TOKEN }}
+      - name: Post to Slack for ${{ matrix.project_name }}
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload-file-path: crowdin-stats-${{ matrix.project_name }}.json

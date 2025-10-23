@@ -59,3 +59,29 @@ Supported by: `@AppiumTestDistribution`
 ```sh title="Install This Tool"
 npm install -g appium-installer
 ```
+
+### [Jarvis Appium](https://github.com/AppiumTestDistribution/mcp-appium)
+
+Jarvis Appium is a Model Context Protocol (MCP) server that provides mobile test development and
+automation capabilities using Appium.
+
+Supported by: `@AppiumTestDistribution`
+
+```json title="Install This Tool"
+// Add the following to your MCP client configuration
+{
+  "mcpServers": {
+    "jarvis-appium": {
+      "disabled": false,
+      "timeout": 100,
+      "type": "stdio",
+      "command": "npx",
+      "args": ["jarvis-appium"],
+      "env": {
+        "ANDROID_HOME": "/path/to/android/sdk",
+        "CAPABILITIES_CONFIG": "/path/to/your/capabilities.json"
+      }
+    }
+  }
+}
+```

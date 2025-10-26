@@ -92,6 +92,31 @@ const fs = {
   },
 
   /**
+   * @param {import("fs").PathLike} src
+   * @param {import("fs").PathLike} dst
+   * @param {boolean | undefined} clobber
+   */
+  async moveFileAcrossDevice(src, dst, clobber) {
+    const outFlags = clobber ? 'w' : 'wx';
+    const ins = fs.createReadStream(src);
+    const outs = fs.createWriteStream(dst, {flags: outFlags});
+    ins.on('error', () => {
+      ins.destroy();
+      outs.destroy();
+      outs.removeListener('close', onClose);
+    });
+    outs.on('error', () => {
+      ins.destroy();
+      outs.destroy();
+      outs.removeListener('close', onClose);
+    });
+    outs.once('close', onClose);
+    ins.pipe(outs);
+    async function onClose() {
+      await fsPromises.unlink(src);
+    }
+  },
+  /**
    * Remove a directory and all its contents, recursively in sync
    * @param {PathLike} filepath
    * @returns undefined
@@ -172,7 +197,15 @@ const fs = {
         }
         await this.rimraf(dst);
       }
-      await fsPromises.rename(src, dst);
+      try {
+        await fsPromises.rename(src, dst);
+      } catch (err) {
+        if (err.code === 'EXDEV') {
+          await this.moveFileAcrossDevice(src, dst, opts?.clobber);
+        } else {
+          throw err;
+        }
+      }
     };
 
     /** @type {import('fs').Stats} */

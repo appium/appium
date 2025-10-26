@@ -73,6 +73,30 @@ describe('fs', function () {
       await fs.mv(srcPath, dstPath);
       (await fs.readFile(dstPath)).toString().should.eql('bar');
     });
+
+    it('should handle cross-device move by falling back to copy-and-delete', async function () {
+      const srcPath = path.join(srcRoot, 'src.file');
+      await fs.writeFile(srcPath, Buffer.from('bar'));
+      const dstPath = path.join(dstRoot, path.basename(srcPath));
+
+      // Mock fsPromises.rename to simulate EXDEV error
+      const originalRename = fs.rename;
+      fs.rename = async (src, dst) => {
+        const err = new Error('cross-device link not permitted');
+        err.code = 'EXDEV';
+        throw err;
+      };
+
+      try {
+        await fs.mv(srcPath, dstPath);
+        (await fs.exists(dstPath)).should.be.true;
+        (await fs.exists(srcPath)).should.be.false;
+        (await fs.readFile(dstPath)).toString().should.eql('bar');
+      } finally {
+        // Restore original function
+        fs.rename = originalRename;
+      }
+    });
   });
 
   describe('isExecutable()', function () {

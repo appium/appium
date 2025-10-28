@@ -172,7 +172,17 @@ const fs = {
         }
         await this.rimraf(dst);
       }
-      await fsPromises.rename(src, dst);
+      try {
+        await fsPromises.rename(src, dst);
+      } catch (err) {
+        // Handle cross-device link error by falling back to copy-and-delete
+        if (err.code === 'EXDEV') {
+          await this.copyFile(String(src), String(dst));
+          await this.rimraf(src);
+        } else {
+          throw err;
+        }
+      }
     };
 
     /** @type {import('fs').Stats} */

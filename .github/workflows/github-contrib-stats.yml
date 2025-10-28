@@ -1,0 +1,36 @@
+# Collects GitHub contribution statistics from the Appium organization for the last calendar month
+# and posts them to Slack with commit details and complexity scores
+
+name: GitHub Contribution Statistics
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Run on the first day of each month at 09:00 AM UTC
+    - cron: 0 9 1 * *
+
+jobs:
+  collect-contrib-stats:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+      - name: Use Node.js LTS
+        uses: actions/setup-node@v5
+        with:
+          node-version: lts/*
+          cache: 'npm'
+      - name: Install Dependencies
+        run: npm ci
+      - name: Collect GitHub Contribution Stats
+        id: github-stats
+        run: node ./scripts/github-contrib-stats.mjs > github-contrib-stats.json
+        env:
+          # GITHUB_TOKEN is optional - if not provided, uses unauthenticated requests (rate limited)
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Post to Slack
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload-file-path: github-contrib-stats.json

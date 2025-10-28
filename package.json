@@ -94,7 +94,7 @@
     "@types/bluebird": "3.5.42",
     "@types/chai": "5.2.3",
     "@types/chai-as-promised": "8.0.2",
-    "@types/express": "5.0.4",
+    "@types/express": "5.0.5",
     "@types/jsftp": "2.1.5",
     "@types/json-schema": "7.0.15",
     "@types/klaw": "3.0.7",

@@ -1,5 +1,5 @@
 # Collects GitHub contribution statistics from the Appium organization for the last calendar month
-# and posts them to Slack with commit details and complexity scores
+# and posts it to Slack
 
 name: GitHub Contribution Statistics
 

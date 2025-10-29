@@ -29,7 +29,7 @@ jobs:
           # GITHUB_TOKEN is optional - if not provided, uses unauthenticated requests (rate limited)
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Post to Slack
-        uses: slackapi/slack-github-action@v2.0.0
+        uses: slackapi/slack-github-action@v2.1.1
         with:
           errors: true
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}

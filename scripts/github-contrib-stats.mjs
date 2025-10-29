@@ -197,9 +197,9 @@ function formatSlackMessage(pullRequests, from, to, generatedAt) {
     });
   } else {
     // Create table header
-    const tableHeader = '| Created | Merged | Author | Repository | Title | Complexity |\n|---------|--------|--------|------------|-------|------------|';
+    const tableHeader = '| # | Created | Merged | Author | Repository | Title | Complexity |\n|---|---------|--------|--------|------------|-------|------------|';
     // Create table rows
-    const tableRowLines = pullRequests.map((pr) => {
+    const tableRowLines = pullRequests.map((pr, index) => {
       // Format created date (when PR was created)
       const createdDate = new Date(pr.created_at).toLocaleDateString('en-US', {
         month: 'short',
@@ -220,7 +220,7 @@ function formatSlackMessage(pullRequests, from, to, generatedAt) {
         prTitle = prTitle.substring(0, MAX_TITLE_LENGTH - 1) + '…';
       }
 
-      return `| ${createdDate} | ${mergedDate} | [${authorName}](${authorUrl}) | ${pr.repository} | [${prTitle}](${pr.html_url}) | |`;
+      return `| ${index + 1} | ${createdDate} | ${mergedDate} | [${authorName}](${authorUrl}) | ${pr.repository} | [${prTitle}](${pr.html_url}) | |`;
     });
 
     // Slack section text has a 3000 character limit. Keep under ~2900 to be safe.

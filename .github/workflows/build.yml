@@ -90,6 +90,8 @@ jobs:
         with:
           useRollingCache: true
           install-command: npm ci --foreground-scripts
+      - name: Build packages
+        run: npm run build
       - name: Run smoke, unit & E2E tests
         run: |
           # Ensure stdout/stderr are flushed before process exit (Node.js 24+ compatibility)
@@ -108,8 +110,9 @@ jobs:
           fi
           exit $exit_code
         env:
-          # Ensure streams are flushed properly
-          NODE_OPTIONS: --no-warnings
+          # Disable V8 code caching to avoid bytecode deserialization errors (Node.js 24+)
+          # This prevents V8 from trying to deserialize cached bytecode that may be incompatible
+          NODE_OPTIONS: --no-warnings --no-code-cache
 
   lint:
     name: Lint

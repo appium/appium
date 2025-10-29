@@ -579,12 +579,6 @@ describe('FakeDriver via HTTP', function () {
   });
 
   describe('Bidi protocol', function () {
-    before(function () {
-      if (parseInt(process.versions.node.split('.')[0], 10) >= 24) {
-        this.skip();
-      }
-    });
-
     withServer();
     const capabilities = {...caps, webSocketUrl: true, 'appium:runClock': true};
     /** @type import('webdriverio').Browser **/

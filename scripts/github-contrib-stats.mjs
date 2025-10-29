@@ -18,6 +18,32 @@ function extractDatePart(isoString) {
   return isoString.split('T')[0];
 }
 
+/**
+ * Pad text to a specific width, truncating if necessary
+ * Handles Slack link syntax by preserving link structure
+ * @param {string} str - Text to pad
+ * @param {number} width - Target width
+ * @returns {string} Padded string
+ */
+function pad(str, width) {
+  const s = String(str || '');
+  if (s.length <= width) {
+    return s.padEnd(width);
+  }
+  // For Slack links, try to preserve the link structure
+  const linkMatch = s.match(/^<(.+?)\|(.+?)>$/);
+  if (linkMatch) {
+    const [, url, text] = linkMatch;
+    const maxTextLen = width - url.length - 5; // Account for < > | characters
+    if (maxTextLen > 0) {
+      const truncatedText = text.length > maxTextLen ? text.substring(0, maxTextLen - 1) + '…' : text;
+      return `<${url}|${truncatedText}>`.padEnd(width);
+    }
+  }
+  // Fallback: truncate the whole string
+  return s.substring(0, width - 3) + '…';
+}
+
 // Internal exclusion list - usernames to exclude from reports
 const INTERNAL_EXCLUSION_LIST = [
   'dependabot',
@@ -196,8 +222,32 @@ function formatSlackMessage(pullRequests, from, to, generatedAt) {
       },
     });
   } else {
+    // Column widths
+    const colWidths = {
+      num: 4,
+      created: 9,
+      merged: 9,
+      author: 20,
+      repo: 25,
+      title: 68,
+      complexity: 4,
+    };
+
     // Create table header
-    const tableHeader = '| # | Created | Merged | Author | Repository | Title | Complexity |\n|---|---------|--------|--------|------------|-------|------------|';
+    const tableHeader = [
+      pad('#', colWidths.num),
+      pad('Created', colWidths.created),
+      pad('Merged', colWidths.merged),
+      pad('Author', colWidths.author),
+      pad('Repository', colWidths.repo),
+      pad('Title', colWidths.title),
+      pad('Complexity', colWidths.complexity),
+    ].join(' | ');
+
+    const separator = ['─'.repeat(colWidths.num), '─'.repeat(colWidths.created), '─'.repeat(colWidths.merged),
+      '─'.repeat(colWidths.author), '─'.repeat(colWidths.repo), '─'.repeat(colWidths.title),
+      '─'.repeat(colWidths.complexity)].join(' | ');
+
     // Create table rows
     const tableRowLines = pullRequests.map((pr, index) => {
       // Format created date (when PR was created)
@@ -220,25 +270,34 @@ function formatSlackMessage(pullRequests, from, to, generatedAt) {
         prTitle = prTitle.substring(0, MAX_TITLE_LENGTH - 1) + '…';
       }
 
-      return `| ${index + 1} | ${createdDate} | ${mergedDate} | [${authorName}](${authorUrl}) | ${pr.repository} | [${prTitle}](${pr.html_url}) | |`;
+      return [
+        pad(index + 1, colWidths.num),
+        pad(createdDate, colWidths.created),
+        pad(mergedDate, colWidths.merged),
+        pad(`<${authorUrl}|${authorName}>`, colWidths.author),
+        pad(pr.repository, colWidths.repo),
+        pad(`<${pr.html_url}|${prTitle}>`, colWidths.title),
+        pad('', colWidths.complexity),
+      ].join(' | ');
     });
 
     // Slack section text has a 3000 character limit. Keep under ~2900 to be safe.
     const MAX_SECTION_CHARS = 2900;
     let currentLines = [];
-    let currentLen = tableHeader.length + 6; // include code fence/newlines overhead
+    const headerWithSeparator = `${tableHeader}\n${separator}`;
+    let currentLen = headerWithSeparator.length + 6; // include code fence/newlines overhead
 
     const flushSection = () => {
       if (currentLines.length === 0) {
         return;
       }
-      const content = `\`\`\`\n${tableHeader}\n${currentLines.join('\n')}\n\`\`\``;
+      const content = `\`\`\`\n${headerWithSeparator}\n${currentLines.join('\n')}\n\`\`\``;
       blocks.push({
         type: 'section',
         text: {type: 'mrkdwn', text: content},
       });
       currentLines = [];
-      currentLen = tableHeader.length + 6;
+      currentLen = headerWithSeparator.length + 6;
     };
 
     for (const line of tableRowLines) {

@@ -31,6 +31,7 @@ jobs:
       - name: Post to Slack
         uses: slackapi/slack-github-action@v2.0.0
         with:
+          errors: true
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
           webhook-type: incoming-webhook
           payload-file-path: github-contrib-stats.json

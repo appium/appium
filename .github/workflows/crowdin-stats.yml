@@ -38,6 +38,7 @@ jobs:
       - name: Post to Slack for ${{ matrix.project_name }}
         uses: slackapi/slack-github-action@v2.0.0
         with:
+          errors: true
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
           webhook-type: incoming-webhook
           payload-file-path: crowdin-stats-${{ matrix.project_name }}.json

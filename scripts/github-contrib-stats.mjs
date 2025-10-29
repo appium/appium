@@ -197,9 +197,9 @@ function formatSlackMessage(pullRequests, from, to, generatedAt) {
     });
   } else {
     // Create table header
-    const tableHeader = '| Created | Merged | Author | Repository | Title | Complexity |\n|---------|--------|--------|------------|-------|------------|';
+    const tableHeader = '| # | Created | Merged | Author | Repository | Title | Complexity |\n|---|---------|--------|--------|------------|-------|------------|';
     // Create table rows
-    const tableRows = pullRequests.map((pr) => {
+    const tableRowLines = pullRequests.map((pr, index) => {
       // Format created date (when PR was created)
       const createdDate = new Date(pr.created_at).toLocaleDateString('en-US', {
         month: 'short',
@@ -220,16 +220,36 @@ function formatSlackMessage(pullRequests, from, to, generatedAt) {
         prTitle = prTitle.substring(0, MAX_TITLE_LENGTH - 1) + '…';
       }
 
-      return `| ${createdDate} | ${mergedDate} | [${authorName}](${authorUrl}) | ${pr.repository} | [${prTitle}](${pr.html_url}) | |`;
-    }).join('\n');
-
-    blocks.push({
-      type: 'section',
-      text: {
-        type: 'mrkdwn',
-        text: `\`\`\`\n${tableHeader}\n${tableRows}\n\`\`\``,
-      },
+      return `| ${index + 1} | ${createdDate} | ${mergedDate} | [${authorName}](${authorUrl}) | ${pr.repository} | [${prTitle}](${pr.html_url}) | |`;
     });
+
+    // Slack section text has a 3000 character limit. Keep under ~2900 to be safe.
+    const MAX_SECTION_CHARS = 2900;
+    let currentLines = [];
+    let currentLen = tableHeader.length + 6; // include code fence/newlines overhead
+
+    const flushSection = () => {
+      if (currentLines.length === 0) {
+        return;
+      }
+      const content = `\`\`\`\n${tableHeader}\n${currentLines.join('\n')}\n\`\`\``;
+      blocks.push({
+        type: 'section',
+        text: {type: 'mrkdwn', text: content},
+      });
+      currentLines = [];
+      currentLen = tableHeader.length + 6;
+    };
+
+    for (const line of tableRowLines) {
+      const addLen = line.length + 1; // plus newline
+      if (currentLen + addLen > MAX_SECTION_CHARS) {
+        flushSection();
+      }
+      currentLines.push(line);
+      currentLen += addLen;
+    }
+    flushSection();
   }
 
   blocks.push(

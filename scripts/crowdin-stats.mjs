@@ -206,32 +206,46 @@ function formatSlackMessage(stats, projectName, from, to, generatedAt) {
       },
     });
   } else {
+    // Slack section text is limited to 3000 characters. Keep a safety margin.
+    const MAX_SECTION_CHARS = 2900;
     for (const [language, users] of Object.entries(stats)) {
       const userEntries = Object.entries(users)
         .filter(([, counts]) => counts.translated > 0 || counts.approved > 0)
         .sort(([, a], [, b]) => (b.translated + b.approved) - (a.translated + a.approved));
 
-      // Skip this language if no users have activity
       if (userEntries.length === 0) {
         continue;
       }
 
-      const userLines = userEntries
-        .map(([user, counts]) =>
-          `• *${user}*: ${counts.translated} translated, ${counts.approved} approved`
-        )
-        .join('\n');
-
       const totalTranslated = userEntries.reduce((sum, [, u]) => sum + u.translated, 0);
       const totalApproved = userEntries.reduce((sum, [, u]) => sum + u.approved, 0);
+      const header = `*${language}* (Total: ${totalTranslated} translated, ${totalApproved} approved)`;
 
-      blocks.push({
-        type: 'section',
-        text: {
-          type: 'mrkdwn',
-          text: `*${language}* (Total: ${totalTranslated} translated, ${totalApproved} approved)\n${userLines}`,
-        },
-      });
+      // Build bullet lines
+      const lines = userEntries.map(([user, counts]) => `• *${user}*: ${counts.translated} translated, ${counts.approved} approved`);
+
+      // Chunk lines so each section stays under limit
+      let current = header;
+      let buf = [];
+
+      const flush = () => {
+        const text = buf.length ? `${current}\n${buf.join('\n')}` : current;
+        blocks.push({
+          type: 'section',
+          text: {type: 'mrkdwn', text},
+        });
+        buf = [];
+        current = header; // next chunk keeps the same header for clarity
+      };
+
+      for (const line of lines) {
+        const tentative = buf.length ? `${current}\n${buf.join('\n')}\n${line}` : `${current}\n${line}`;
+        if (tentative.length > MAX_SECTION_CHARS) {
+          flush();
+        }
+        buf.push(line);
+      }
+      flush();
     }
   }
 

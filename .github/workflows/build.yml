@@ -64,6 +64,48 @@ jobs:
       id: generate-matrix
       uses: msimerson/node-lts-versions@v1
 
+  prepare_e2e_packages:
+    runs-on: ubuntu-latest
+    outputs:
+      packages: ${{ steps.discover-packages.outputs.packages }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Discover packages with e2e tests
+        id: discover-packages
+        run: |
+          packages=()
+          for package_dir in packages/*/; do
+            package_json="${package_dir}package.json"
+            if [[ -f "$package_json" ]]; then
+              # Check if package.json has test:e2e script and it's not a no-op
+              pkg_info=$(node -e "
+                try {
+                  const pkg = require('./$package_json');
+                  const script = pkg.scripts && pkg.scripts['test:e2e'];
+                  if (script && !script.includes('echo') && !script.includes('No e2e tests')) {
+                    const pkgName = pkg.name || '${package_dir%/}';
+                    console.log(pkgName);
+                  }
+                } catch(e) {
+                  // Ignore errors
+                }
+              ")
+              if [[ -n "$pkg_info" ]]; then
+                packages+=("$pkg_info")
+              fi
+            fi
+          done
+          # Convert array to JSON array for GitHub Actions matrix
+          if [[ ${#packages[@]} -eq 0 ]]; then
+            echo "No packages with e2e tests found"
+            packages_json="[]"
+          else
+            packages_json=$(printf '%s\n' "${packages[@]}" | jq -R . | jq -s .)
+          fi
+          echo "packages=$packages_json" >> $GITHUB_OUTPUT
+          echo "Found packages with e2e tests:"
+          echo "$packages_json" | jq -r '.[]' | sed 's/^/  - /'
+
   test-smoke:
     needs:
     - prepare_matrix
@@ -99,19 +141,7 @@ jobs:
             rm -rf "$HOME/.cache/node"/* 2>/dev/null || true
           fi
       - name: Run smoke tests
-        run: |
-          set -o pipefail
-          if command -v stdbuf >/dev/null 2>&1; then
-            stdbuf -oL -eL npm run test:smoke
-            exit_code=$?
-          else
-            npm run test:smoke
-            exit_code=$?
-            sleep 0.1
-          fi
-          exit $exit_code
-        env:
-          NODE_OPTIONS: --no-warnings
+        run: npm run test:smoke
 
   test-unit:
     needs:
@@ -148,19 +178,7 @@ jobs:
             rm -rf "$HOME/.cache/node"/* 2>/dev/null || true
           fi
       - name: Run unit tests
-        run: |
-          set -o pipefail
-          if command -v stdbuf >/dev/null 2>&1; then
-            stdbuf -oL -eL npm run test:unit
-            exit_code=$?
-          else
-            npm run test:unit
-            exit_code=$?
-            sleep 0.1
-          fi
-          exit $exit_code
-        env:
-          NODE_OPTIONS: --no-warnings
+        run: npm run test:unit
 
   test-types:
     needs:
@@ -197,30 +215,19 @@ jobs:
             rm -rf "$HOME/.cache/node"/* 2>/dev/null || true
           fi
       - name: Run type tests
-        run: |
-          set -o pipefail
-          if command -v stdbuf >/dev/null 2>&1; then
-            stdbuf -oL -eL npm run test:types
-            exit_code=$?
-          else
-            npm run test:types
-            exit_code=$?
-            sleep 0.1
-          fi
-          exit $exit_code
-        env:
-          NODE_OPTIONS: --no-warnings
+        run: npm run test:types
 
   test-e2e:
     needs:
     - prepare_matrix
-    name: E2E Tests
+    - prepare_e2e_packages
+    name: E2E Tests - ${{ matrix.package }}
     strategy:
+      fail-fast: false
       matrix:
         node-version: ${{ fromJSON(needs.prepare_matrix.outputs.versions) }}
-        os:
-        - ubuntu-latest
-    runs-on: ${{ matrix.os }}
+        package: ${{ fromJSON(needs.prepare_e2e_packages.outputs.packages) }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
       - name: Use Node.js ${{ matrix.node-version }}
@@ -245,14 +252,14 @@ jobs:
           if [[ -d "$HOME/.cache/node" ]]; then
             rm -rf "$HOME/.cache/node"/* 2>/dev/null || true
           fi
-      - name: Run E2E tests
+      - name: Run E2E tests for ${{ matrix.package }}
         run: |
           set -o pipefail
           if command -v stdbuf >/dev/null 2>&1; then
-            stdbuf -oL -eL npm run test:e2e
+            stdbuf -oL -eL lerna run test:e2e --scope "${{ matrix.package }}" --no-bail
             exit_code=$?
           else
-            npm run test:e2e
+            lerna run test:e2e --scope "${{ matrix.package }}" --no-bail
             exit_code=$?
             sleep 0.1
           fi

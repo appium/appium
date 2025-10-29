@@ -223,7 +223,7 @@ jobs:
     needs:
     - prepare_matrix
     - prepare_e2e_packages
-    name: E2E Tests - ${{ matrix.package }}
+    name: E2E Tests - ${{ matrix.package }} (Node ${{ matrix.node-version }})
     strategy:
       fail-fast: false
       matrix:

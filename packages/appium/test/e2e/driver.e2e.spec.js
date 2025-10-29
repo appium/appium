@@ -720,6 +720,12 @@ describe('Bidi over SSL', function () {
     chai.use(chaiAsPromised.default);
     should = chai.should();
 
+    // Skip on Node.js 24+ due to spdy package incompatibility (http_parser removed)
+    const nodeMajorVersion = parseInt(process.version.slice(1).split('.')[0], 10);
+    if (nodeMajorVersion >= 24) {
+      return this.skip();
+    }
+
     try {
       await generateCertificate(certPath, keyPath);
     } catch (e) {

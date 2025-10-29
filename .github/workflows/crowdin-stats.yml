@@ -36,7 +36,7 @@ jobs:
           CROWDIN_PROJECT_ID: ${{ vars[matrix.project_id_var] }}
           CROWDIN_TOKEN: ${{ secrets.CROWDIN_DOCS_TOKEN }}
       - name: Post to Slack for ${{ matrix.project_name }}
-        uses: slackapi/slack-github-action@v2.0.0
+        uses: slackapi/slack-github-action@v2.1.1
         with:
           errors: true
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}

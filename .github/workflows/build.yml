@@ -78,20 +78,22 @@ jobs:
             package_json="${package_dir}package.json"
             if [[ -f "$package_json" ]]; then
               # Check if package.json has test:e2e script and it's not a no-op
-              pkg_info=$(node -e "
+              has_e2e=$(node -e "
                 try {
                   const pkg = require('./$package_json');
                   const script = pkg.scripts && pkg.scripts['test:e2e'];
                   if (script && !script.includes('echo') && !script.includes('No e2e tests')) {
-                    const pkgName = pkg.name || '${package_dir%/}';
-                    console.log(pkgName);
+                    console.log('true');
                   }
                 } catch(e) {
                   // Ignore errors
                 }
               ")
-              if [[ -n "$pkg_info" ]]; then
-                packages+=("$pkg_info")
+              if [[ "$has_e2e" == "true" ]]; then
+                # Use the directory path without packages/ prefix (remove trailing slash)
+                package_name="${package_dir%/}"
+                package_name="${package_name#packages/}"
+                packages+=("$package_name")
               fi
             fi
           done
@@ -103,7 +105,6 @@ jobs:
             # Use jq to create a compact single-line JSON array
             packages_json=$(printf '%s\n' "${packages[@]}" | jq -R '.' | jq -s '.' | jq -c '.')
           fi
-          # Output to GITHUB_OUTPUT as a single-line string
           echo "packages=$packages_json" >> $GITHUB_OUTPUT
           echo "Found packages with e2e tests:"
           echo "$packages_json" | jq -r '.[]' | sed 's/^/  - /'
@@ -223,12 +224,12 @@ jobs:
     needs:
     - prepare_matrix
     - prepare_e2e_packages
-    name: E2E Tests - ${{ matrix.package }} (Node ${{ matrix.node-version }})
+    name: E2E Tests - ${{ matrix.package_dir }} (Node ${{ matrix.node-version }})
     strategy:
       fail-fast: false
       matrix:
         node-version: ${{ fromJSON(needs.prepare_matrix.outputs.versions) }}
-        package: ${{ fromJSON(needs.prepare_e2e_packages.outputs.packages) }}
+        package_dir: ${{ fromJSON(needs.prepare_e2e_packages.outputs.packages) }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -254,20 +255,11 @@ jobs:
           if [[ -d "$HOME/.cache/node" ]]; then
             rm -rf "$HOME/.cache/node"/* 2>/dev/null || true
           fi
-      - name: Run E2E tests for ${{ matrix.package }}
+      - name: Run E2E tests for ${{ matrix.package_dir }}
         run: |
           set -o pipefail
-          if command -v stdbuf >/dev/null 2>&1; then
-            stdbuf -oL -eL lerna run test:e2e --scope "${{ matrix.package }}" --no-bail
-            exit_code=$?
-          else
-            lerna run test:e2e --scope "${{ matrix.package }}" --no-bail
-            exit_code=$?
-            sleep 0.1
-          fi
-          exit $exit_code
-        env:
-          NODE_OPTIONS: --no-warnings
+          cd "packages/${{ matrix.package_dir }}"
+          npm run test:e2e
 
   lint:
     name: Lint

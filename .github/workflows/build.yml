@@ -100,8 +100,10 @@ jobs:
             echo "No packages with e2e tests found"
             packages_json="[]"
           else
-            packages_json=$(printf '%s\n' "${packages[@]}" | jq -R . | jq -s .)
+            # Use jq to create a compact single-line JSON array
+            packages_json=$(printf '%s\n' "${packages[@]}" | jq -R '.' | jq -s '.' | jq -c '.')
           fi
+          # Output to GITHUB_OUTPUT as a single-line string
           echo "packages=$packages_json" >> $GITHUB_OUTPUT
           echo "Found packages with e2e tests:"
           echo "$packages_json" | jq -r '.[]' | sed 's/^/  - /'

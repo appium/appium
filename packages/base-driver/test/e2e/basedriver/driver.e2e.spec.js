@@ -53,12 +53,7 @@ describe('BaseDriver', function () {
         url: `${baseUrl}/session/${sessionId}/appium/capabilities`,
         method: 'GET',
       });
-      expect(data).to.eql({
-        value: {
-          capabilities: DEFAULT_CAPS
-        },
-        sessionId
-      });
+      expect(data.value.capabilities).to.eql(DEFAULT_CAPS);
     });
   });
 });

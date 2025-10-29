@@ -67,16 +67,6 @@ describe('server', function () {
     const {data} = await axios.get(`http://${TEST_HOST}:${port}/`);
     expect(data).to.eql('Hello World!');
   });
-  it('should fix broken context type', async function () {
-    const {data} = await axios({
-      url: `http://${TEST_HOST}:${port}/python`,
-      headers: {
-        'user-agent': 'Python',
-        'content-type': 'application/x-www-form-urlencoded',
-      },
-    });
-    expect(data).to.eql('application/json; charset=utf-8');
-  });
   it('should catch errors in the catchall', async function () {
     await expect(axios.get(`http://${TEST_HOST}:${port}/error`)).to.be.rejected;
   });

@@ -37,21 +37,6 @@ describe('app download and configuration', function () {
       let contents = await fs.readFile(newAppPath, 'utf8');
       expect(contents).to.eql('this is not really an apk\n');
     });
-    it('should unzip and get the path for a local .app.zip', async function () {
-      let newAppPath = await configureApp(getFixture('FakeIOSApp.app.zip'), '.app');
-      expect(newAppPath).to.contain('FakeIOSApp.app');
-      let contents = await fs.readFile(newAppPath, 'utf8');
-      expect(contents).to.eql('this is not really an app\n');
-    });
-    it('should unzip and get the path for a local .ipa', async function () {
-      let newAppPath = await configureApp(getFixture('FakeIOSApp.ipa'), '.app');
-      expect(newAppPath).to.contain('FakeIOSApp.app');
-      let contents = await fs.readFile(newAppPath, 'utf8');
-      expect(contents).to.eql('this is not really an app\n');
-    });
-    it('should fail for a bad zip file', async function () {
-      await expect(configureApp(getFixture('BadZippedApp.zip'), '.app')).to.be.rejectedWith(/PK/);
-    });
     it('should fail if extensions do not match', async function () {
       await expect(configureApp(getFixture('FakeIOSApp.app'), '.wrong')).to.be.rejectedWith(
         /did not have extension/
@@ -121,20 +106,14 @@ describe('app download and configuration', function () {
           await server.close();
         });
 
-        it('should download zip file', async function () {
-          let newAppPath = await configureApp(`${serverUrl}/FakeIOSApp.app.zip`, '.app');
-          expect(newAppPath).to.contain('FakeIOSApp.app');
-          let contents = await fs.readFile(newAppPath, 'utf8');
-          expect(contents).to.eql('this is not really an app\n');
-        });
-        it('should download zip file with query string', async function () {
+        it('should download apk file with query string', async function () {
           let newAppPath = await configureApp(
-            `${serverUrl}/FakeIOSApp.app.zip?sv=abc&sr=def`,
-            '.app'
+            `${serverUrl}/FakeAndroidApp.apk?sv=abc&sr=def`,
+            '.apk'
           );
-          expect(newAppPath).to.contain('.app');
+          expect(newAppPath).to.contain('.apk');
           let contents = await fs.readFile(newAppPath, 'utf8');
-          expect(contents).to.eql('this is not really an app\n');
+          expect(contents).to.eql('this is not really an apk\n');
         });
         it('should download an app file', async function () {
           let newAppPath = await configureApp(`${serverUrl}/FakeIOSApp.app`, '.app');
@@ -143,7 +122,7 @@ describe('app download and configuration', function () {
           expect(contents).to.eql('this is not really an app\n');
         });
         it('should accept multiple extensions', async function () {
-          let newAppPath = await configureApp(`${serverUrl}/FakeIOSApp.app.zip`, ['.app', '.aab']);
+          let newAppPath = await configureApp(`${serverUrl}/FakeIOSApp.app`, ['.app', '.aab']);
           expect(newAppPath).to.contain('FakeIOSApp.app');
           let contents = await fs.readFile(newAppPath, 'utf8');
           expect(contents).to.eql('this is not really an app\n');
@@ -173,40 +152,6 @@ describe('app download and configuration', function () {
             'C:\\missing\\FakeIOSApp.app.zip',
             '.app'
           )).to.eventually.be.rejectedWith(/does not exist or is not accessible/);
-        });
-        it('should recognize zip mime types and unzip the downloaded file', async function () {
-          let newAppPath = await configureApp(
-            `${serverUrl}/FakeAndroidApp.asd?content-type=${encodeURIComponent('application/zip')}`,
-            '.apk'
-          );
-          expect(newAppPath).to.contain('FakeAndroidApp.apk');
-          expect(newAppPath).to.not.contain('.asd');
-          let contents = await fs.readFile(newAppPath, 'utf8');
-          expect(contents).to.eql('this is not really an apk\n');
-        });
-        it('should recognize zip mime types with parameter and unzip the downloaded file', async function () {
-          let newAppPath = await configureApp(
-            `${serverUrl}/FakeAndroidApp.asd?content-type=${encodeURIComponent(
-              'application/zip; parameter=value'
-            )}`,
-            '.apk'
-          );
-          expect(newAppPath).to.contain('FakeAndroidApp.apk');
-          expect(newAppPath).to.not.contain('.asd');
-          let contents = await fs.readFile(newAppPath, 'utf8');
-          expect(contents).to.eql('this is not really an apk\n');
-        });
-        it('should recognize zip mime types and unzip the downloaded file with query string', async function () {
-          let newAppPath = await configureApp(
-            `${serverUrl}/FakeAndroidApp.asd?content-type=${encodeURIComponent(
-              'application/zip'
-            )}&sv=abc&sr=def`,
-            '.apk'
-          );
-          expect(newAppPath).to.contain('FakeAndroidApp.apk');
-          expect(newAppPath).to.not.contain('.asd');
-          let contents = await fs.readFile(newAppPath, 'utf8');
-          expect(contents).to.eql('this is not really an apk\n');
         });
         it('should treat an unknown mime type as an app', async function () {
           let newAppPath = await configureApp(

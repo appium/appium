@@ -9,6 +9,7 @@ describe('Websockets (e2e)', function () {
   let baseServer;
   let driver;
   let port;
+  let expect;
   const SESSION_ID = 'foo';
   const WS_DATA = 'Hello';
 
@@ -16,7 +17,7 @@ describe('Websockets (e2e)', function () {
     const chai = await import('chai');
     const chaisAsPromised = await import('chai-as-promised');
     chai.use(chaisAsPromised.default);
-    chai.should();
+    expect = chai.expect;
 
     driver = new FakeDriver();
     driver.sessionId = SESSION_ID;
@@ -43,19 +44,19 @@ describe('Websockets (e2e)', function () {
       const endpoint = `${DEFAULT_WS_PATHNAME_PREFIX}/hello`;
       const timeout = 5000;
       await baseServer.addWebSocketHandler(endpoint, wss);
-      _.keys(await baseServer.getWebSocketHandlers()).length.should.eql(1);
+      expect(_.keys(await baseServer.getWebSocketHandlers()).length).to.eql(1);
       await new B((resolve, reject) => {
         const client = new WebSocket(`ws://${TEST_HOST}:${port}${endpoint}`);
         client.once('upgrade', (res) => {
           try {
-            res.statusCode.should.eql(101);
+            expect(res.statusCode).to.eql(101);
           } catch (e) {
             reject(e);
           }
         });
         client.once('message', (data) => {
           const dataStr = _.isString(data) ? data : data.toString();
-          dataStr.should.eql(WS_DATA);
+          expect(dataStr).to.eql(WS_DATA);
           resolve();
         });
         client.once('error', reject);
@@ -65,8 +66,8 @@ describe('Websockets (e2e)', function () {
         );
       });
 
-      (await baseServer.removeWebSocketHandler(endpoint)).should.be.true;
-      _.keys(await baseServer.getWebSocketHandlers()).length.should.eql(0);
+      expect(await baseServer.removeWebSocketHandler(endpoint)).to.be.true;
+      expect(_.keys(await baseServer.getWebSocketHandlers()).length).to.eql(0);
       await new B((resolve, reject) => {
         const client = new WebSocket(`ws://${TEST_HOST}:${port}${endpoint}`);
         client.on('message', (data) =>

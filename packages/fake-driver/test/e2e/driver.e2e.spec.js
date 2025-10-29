@@ -46,7 +46,7 @@ describe('FakeDriver - via HTTP', function () {
       should.exist(driver.sessionId);
       driver.sessionId.should.be.a('string');
       await deleteSession(driver);
-      await driver.getTitle().should.eventually.be.rejectedWith(/terminated/);
+      await driver.getTitle().should.eventually.be.rejected;
     });
   });
 

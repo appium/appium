@@ -11,12 +11,13 @@ describe('Execute Command Test', function () {
   let sandbox;
   let driver;
   let httpServer;
+  let expect;
 
   beforeEach(async function () {
     const chai = await import('chai');
     const chaiAsPromised = await import('chai-as-promised');
     chai.use(chaiAsPromised.default);
-    chai.should();
+    expect = chai.expect;
     sandbox = createSandbox();
     port = await getTestPort();
     baseUrl = `http://${TEST_HOST}:${port}`;
@@ -43,13 +44,13 @@ describe('Execute Command Test', function () {
       args,
     });
 
-    res.status.should.eql(200);
-    res.data.should.have.property('value');
-    res.data.value.should.deep.equal({executed: script, args});
+    expect(res.status).to.eql(200);
+    expect(res.data).to.have.property('value');
+    expect(res.data.value).to.deep.equal({executed: script, args});
 
     const events = await driver.getLogEvents();
     const command = events.commands[0];
 
-    command.should.have.property('cmd', 'mobileActivateApp');
+    expect(command).to.have.property('cmd', 'mobileActivateApp');
   });
 });

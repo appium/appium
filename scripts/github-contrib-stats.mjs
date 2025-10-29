@@ -18,6 +18,32 @@ function extractDatePart(isoString) {
   return isoString.split('T')[0];
 }
 
+/**
+ * Pad text to a specific width, truncating if necessary
+ * Handles Slack link syntax by preserving link structure
+ * @param {string} str - Text to pad
+ * @param {number} width - Target width
+ * @returns {string} Padded string
+ */
+function pad(str, width) {
+  const s = String(str || '');
+  if (s.length <= width) {
+    return s.padEnd(width);
+  }
+  // For Slack links, try to preserve the link structure
+  const linkMatch = s.match(/^<(.+?)\|(.+?)>$/);
+  if (linkMatch) {
+    const [, url, text] = linkMatch;
+    const maxTextLen = width - url.length - 5; // Account for < > | characters
+    if (maxTextLen > 0) {
+      const truncatedText = text.length > maxTextLen ? text.substring(0, maxTextLen - 1) + '…' : text;
+      return `<${url}|${truncatedText}>`.padEnd(width);
+    }
+  }
+  // Fallback: truncate the whole string
+  return s.substring(0, width - 3) + '…';
+}
+
 // Internal exclusion list - usernames to exclude from reports
 const INTERNAL_EXCLUSION_LIST = [
   'dependabot',
@@ -196,26 +222,6 @@ function formatSlackMessage(pullRequests, from, to, generatedAt) {
       },
     });
   } else {
-    // Helper function to pad text to a specific width
-    const pad = (str, width) => {
-      const s = String(str || '');
-      if (s.length <= width) {
-        return s.padEnd(width);
-      }
-      // For Slack links, try to preserve the link structure
-      const linkMatch = s.match(/^<(.+?)\|(.+?)>$/);
-      if (linkMatch) {
-        const [, url, text] = linkMatch;
-        const maxTextLen = width - url.length - 5; // Account for < > | characters
-        if (maxTextLen > 0) {
-          const truncatedText = text.length > maxTextLen ? text.substring(0, maxTextLen - 1) + '…' : text;
-          return `<${url}|${truncatedText}>`.padEnd(width);
-        }
-      }
-      // Fallback: truncate the whole string
-      return s.substring(0, width - 3) + '…';
-    };
-
     // Column widths
     const colWidths = {
       num: 4,

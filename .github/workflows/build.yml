@@ -120,29 +120,13 @@ jobs:
         - ubuntu-latest
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v5
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v6
+      - name: Setup, install and build
+        uses: ./.github/actions/setup-build
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-      - name: Install dependencies
-        uses: bahmutov/npm-install@v1
-        with:
-          useRollingCache: true
           install-command: npm ci --foreground-scripts
-      - name: Build packages
-        run: npm run build
-      - name: Clear V8 code cache (Node.js 24+ compatibility)
-        run: |
-          # Clear V8 code cache to avoid bytecode deserialization errors
-          # Node.js 24 may have cached bytecode that's incompatible
-          if [[ -d "$HOME/.node" ]]; then
-            rm -rf "$HOME/.node"/* 2>/dev/null || true
-          fi
-          if [[ -d "$HOME/.cache/node" ]]; then
-            rm -rf "$HOME/.cache/node"/* 2>/dev/null || true
-          fi
+          run-build: 'true'
+          clear-v8-cache: 'true'
       - name: Run smoke tests
         run: npm run test:smoke
 
@@ -157,29 +141,13 @@ jobs:
         - ubuntu-latest
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v5
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v6
+      - name: Setup, install and build
+        uses: ./.github/actions/setup-build
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-      - name: Install dependencies
-        uses: bahmutov/npm-install@v1
-        with:
-          useRollingCache: true
           install-command: npm ci --foreground-scripts
-      - name: Build packages
-        run: npm run build
-      - name: Clear V8 code cache (Node.js 24+ compatibility)
-        run: |
-          # Clear V8 code cache to avoid bytecode deserialization errors
-          # Node.js 24 may have cached bytecode that's incompatible
-          if [[ -d "$HOME/.node" ]]; then
-            rm -rf "$HOME/.node"/* 2>/dev/null || true
-          fi
-          if [[ -d "$HOME/.cache/node" ]]; then
-            rm -rf "$HOME/.cache/node"/* 2>/dev/null || true
-          fi
+          run-build: 'true'
+          clear-v8-cache: 'true'
       - name: Run unit tests
         run: npm run test:unit
 
@@ -194,29 +162,13 @@ jobs:
         - ubuntu-latest
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v5
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v6
+      - name: Setup, install and build
+        uses: ./.github/actions/setup-build
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-      - name: Install dependencies
-        uses: bahmutov/npm-install@v1
-        with:
-          useRollingCache: true
           install-command: npm ci --foreground-scripts
-      - name: Build packages
-        run: npm run build
-      - name: Clear V8 code cache (Node.js 24+ compatibility)
-        run: |
-          # Clear V8 code cache to avoid bytecode deserialization errors
-          # Node.js 24 may have cached bytecode that's incompatible
-          if [[ -d "$HOME/.node" ]]; then
-            rm -rf "$HOME/.node"/* 2>/dev/null || true
-          fi
-          if [[ -d "$HOME/.cache/node" ]]; then
-            rm -rf "$HOME/.cache/node"/* 2>/dev/null || true
-          fi
+          run-build: 'true'
+          clear-v8-cache: 'true'
       - name: Run type tests
         run: npm run test:types
 
@@ -232,29 +184,13 @@ jobs:
         package_dir: ${{ fromJSON(needs.prepare_e2e_packages.outputs.packages) }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v6
+      - name: Setup, install and build
+        uses: ./.github/actions/setup-build
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-      - name: Install dependencies
-        uses: bahmutov/npm-install@v1
-        with:
-          useRollingCache: true
           install-command: npm ci --foreground-scripts
-      - name: Build packages
-        run: npm run build
-      - name: Clear V8 code cache (Node.js 24+ compatibility)
-        run: |
-          # Clear V8 code cache to avoid bytecode deserialization errors
-          # Node.js 24 may have cached bytecode that's incompatible
-          if [[ -d "$HOME/.node" ]]; then
-            rm -rf "$HOME/.node"/* 2>/dev/null || true
-          fi
-          if [[ -d "$HOME/.cache/node" ]]; then
-            rm -rf "$HOME/.cache/node"/* 2>/dev/null || true
-          fi
+          run-build: 'true'
+          clear-v8-cache: 'true'
       - name: Run E2E tests for ${{ matrix.package_dir }}
         run: |
           set -o pipefail
@@ -265,11 +201,12 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - name: Install dependencies
-        uses: bahmutov/npm-install@v1
+      - name: Setup and install (no build)
+        uses: ./.github/actions/setup-build
         with:
-          useRollingCache: true
+          node-version: lts/*
           install-command: npm ci
+          run-build: 'false'
+          clear-v8-cache: 'false'
       - name: ESLint
         run: npm run lint:ci

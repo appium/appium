@@ -23,7 +23,6 @@ inputs:
 runs:
   using: composite
   steps:
-    - uses: actions/checkout@v5
     - name: Use Node.js ${{ inputs.node-version }}
       uses: actions/setup-node@v6
       with:

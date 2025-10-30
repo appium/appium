@@ -116,9 +116,7 @@ jobs:
     strategy:
       matrix:
         node-version: ${{ fromJSON(needs.prepare_matrix.outputs.versions) }}
-        os:
-        - ubuntu-latest
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
       - name: Setup, install and build
@@ -138,9 +136,7 @@ jobs:
     strategy:
       matrix:
         node-version: ${{ fromJSON(needs.prepare_matrix.outputs.versions) }}
-        os:
-        - ubuntu-latest
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
       - name: Setup, install and build
@@ -160,9 +156,7 @@ jobs:
     strategy:
       matrix:
         node-version: ${{ fromJSON(needs.prepare_matrix.outputs.versions) }}
-        os:
-        - ubuntu-latest
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
       - name: Setup, install and build

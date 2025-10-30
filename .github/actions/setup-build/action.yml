@@ -1,0 +1,50 @@
+name: Setup Node, Install, Build
+
+description: |
+  Common setup for Appium CI jobs: checkout, setup Node, install deps, optional build, optional V8 cache clear.
+
+inputs:
+  node-version:
+    description: Node.js version to setup
+    required: true
+  install-command:
+    description: npm install command
+    required: false
+    default: npm ci --foreground-scripts
+  run-build:
+    description: Whether to run npm run build
+    required: false
+    default: 'true'
+  clear-v8-cache:
+    description: Whether to clear V8 code cache (for Node.js 24+ compatibility)
+    required: false
+    default: 'true'
+
+runs:
+  using: composite
+  steps:
+    - name: Use Node.js ${{ inputs.node-version }}
+      uses: actions/setup-node@v6
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: npm
+    - name: Install dependencies
+      uses: bahmutov/npm-install@v1
+      with:
+        useRollingCache: true
+        install-command: ${{ inputs.install-command }}
+    - name: Build packages
+      if: ${{ inputs.run-build == 'true' }}
+      shell: bash
+      run: npm run build
+    - name: Clear V8 code cache
+      if: ${{ inputs.clear-v8-cache == 'true' }}
+      shell: bash
+      run: |
+        # Clear V8 code cache to avoid bytecode deserialization errors
+        if [[ -d "$HOME/.node" ]]; then
+          rm -rf "$HOME/.node"/* 2>/dev/null || true
+        fi
+        if [[ -d "$HOME/.cache/node" ]]; then
+          rm -rf "$HOME/.cache/node"/* 2>/dev/null || true
+        fi

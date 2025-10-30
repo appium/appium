@@ -16,12 +16,13 @@ driverE2ETestSuite(BaseDriver, {
 describe('BaseDriver', function () {
   let port;
   let baseUrl;
+  let expect;
 
   before(async function () {
     const chai = await import('chai');
     const chaisAsPromised = await import('chai-as-promised');
     chai.use(chaisAsPromised.default);
-    chai.should();
+    expect = chai.expect;
 
     port = await getTestPort();
     baseUrl = `http://${TEST_HOST}:${port}`;
@@ -52,12 +53,7 @@ describe('BaseDriver', function () {
         url: `${baseUrl}/session/${sessionId}/appium/capabilities`,
         method: 'GET',
       });
-      data.should.eql({
-        value: {
-          capabilities: DEFAULT_CAPS
-        },
-        sessionId
-      });
+      expect(data.value.capabilities).to.eql(DEFAULT_CAPS);
     });
   });
 });

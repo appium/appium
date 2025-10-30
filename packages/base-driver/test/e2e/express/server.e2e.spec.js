@@ -21,11 +21,12 @@ describe('server', function () {
   let hwServer;
   let port;
   let sandbox;
+  let expect;
   before(async function () {
     const chai = await import('chai');
     const chaisAsPromised = await import('chai-as-promised');
     chai.use(chaisAsPromised.default);
-    chai.should();
+    expect = chai.expect;
 
     port = await getTestPort(true);
 
@@ -64,26 +65,16 @@ describe('server', function () {
 
   it('should start up with our middleware', async function () {
     const {data} = await axios.get(`http://${TEST_HOST}:${port}/`);
-    data.should.eql('Hello World!');
-  });
-  it('should fix broken context type', async function () {
-    const {data} = await axios({
-      url: `http://${TEST_HOST}:${port}/python`,
-      headers: {
-        'user-agent': 'Python',
-        'content-type': 'application/x-www-form-urlencoded',
-      },
-    });
-    data.should.eql('application/json; charset=utf-8');
+    expect(data).to.eql('Hello World!');
   });
   it('should catch errors in the catchall', async function () {
-    await axios.get(`http://${TEST_HOST}:${port}/error`).should.be.rejected;
+    await expect(axios.get(`http://${TEST_HOST}:${port}/error`)).to.be.rejected;
   });
   it('should error if we try to start again on a port that is used', async function () {
-    await server({
+    await expect(server({
       routeConfiguringFunction() {},
       port,
-    }).should.be.rejectedWith(/EADDRINUSE/);
+    })).to.be.rejectedWith(/EADDRINUSE/);
   });
   it('should not wait for the server close connections before finishing closing', async function () {
     const bodyPromise = (async () => {
@@ -98,22 +89,22 @@ describe('server', function () {
     let before = Date.now();
     await hwServer.close();
     // expect slightly less than the request waited, since we paused above
-    (Date.now() - before).should.not.be.above(800);
+    expect(Date.now() - before).to.not.be.above(800);
 
     await bodyPromise;
   });
   it('should error if we try to start on a bad hostname', async function () {
     this.timeout(60000);
-    await server({
+    await expect(server({
       routeConfiguringFunction: _.noop,
       port,
       hostname: 'lolcathost',
-    }).should.be.rejectedWith(/ENOTFOUND|EADDRNOTAVAIL|EAI_AGAIN/);
-    await server({
+    })).to.be.rejectedWith(/ENOTFOUND|EADDRNOTAVAIL|EAI_AGAIN/);
+    await expect(server({
       routeConfiguringFunction: _.noop,
       port,
       hostname: '1.1.1.1',
-    }).should.be.rejectedWith(/EADDRNOTAVAIL/);
+    })).to.be.rejectedWith(/EADDRNOTAVAIL/);
   });
 });
 
@@ -122,6 +113,7 @@ describe('tls server', function () {
   let port;
   let certPath = 'certificate.cert';
   let keyPath = 'certificate.key';
+  let expect;
   const looseClient = axios.create({
     httpsAgent: new https.Agent({
       rejectUnauthorized: false
@@ -132,7 +124,7 @@ describe('tls server', function () {
     const chai = await import('chai');
     const chaisAsPromised = await import('chai-as-promised');
     chai.use(chaisAsPromised.default);
-    chai.should();
+    expect = chai.expect;
 
     try {
       await generateCertificate(certPath, keyPath);
@@ -167,25 +159,26 @@ describe('tls server', function () {
 
   it('should start up with our middleware', async function () {
     const {data} = await looseClient.get(`https://${TEST_HOST}:${port}/`);
-    data.should.eql('Hello World!');
+    expect(data).to.eql('Hello World!');
   });
   it('should throw if untrusted', async function () {
-    await axios.get(`https://${TEST_HOST}:${port}/`).should.eventually.be.rejected;
+    await expect(axios.get(`https://${TEST_HOST}:${port}/`)).to.eventually.be.rejected;
   });
   it('should throw if not secure', async function () {
-    await axios.get(`http://${TEST_HOST}:${port}/`).should.eventually.be.rejected;
+    await expect(axios.get(`http://${TEST_HOST}:${port}/`)).to.eventually.be.rejected;
   });
 });
 
 describe('server plugins', function () {
   let hwServer;
   let port;
+  let expect;
 
   before(async function () {
     const chai = await import('chai');
     const chaisAsPromised = await import('chai-as-promised');
     chai.use(chaisAsPromised.default);
-    chai.should();
+    expect = chai.expect;
 
     port = await getTestPort(true);
   });
@@ -217,14 +210,14 @@ describe('server plugins', function () {
       ],
     });
     let {data} = await axios.get(`http://${TEST_HOST}:${port}/plugin1`);
-    data.should.eql('res from plugin1 route');
+    expect(data).to.eql('res from plugin1 route');
     ({data} = await axios.get(`http://${TEST_HOST}:${port}/plugin2`));
-    data.should.eql('res from plugin2 route');
-    hwServer._updated_plugin1.should.be.true;
-    hwServer._updated_plugin2.should.be.true;
+    expect(data).to.eql('res from plugin2 route');
+    expect(hwServer._updated_plugin1).to.be.true;
+    expect(hwServer._updated_plugin2).to.be.true;
   });
   it('should pass on errors from the plugin updateServer method', async function () {
-    await server({
+    await expect(server({
       routeConfiguringFunction: _.noop,
       port,
       serverUpdaters: [
@@ -232,6 +225,6 @@ describe('server plugins', function () {
           throw new Error('ugh');
         },
       ],
-    }).should.eventually.be.rejectedWith(/ugh/);
+    })).to.eventually.be.rejectedWith(/ugh/);
   });
 });

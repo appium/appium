@@ -57,6 +57,30 @@ const INTERNAL_EXCLUSION_LIST = [
 ];
 
 /**
+ * Sort PRs by merged date (asc), then by author login (asc)
+ * @param {GitHubPullRequest[]} pullRequests
+ * @returns {GitHubPullRequest[]}
+ */
+function sortPullRequests(pullRequests) {
+  return [...pullRequests].sort((a, b) => {
+    const aMerged = a.merged_at ? new Date(a.merged_at).getTime() : 0;
+    const bMerged = b.merged_at ? new Date(b.merged_at).getTime() : 0;
+    if (aMerged !== bMerged) {
+      return aMerged - bMerged;
+    }
+    const aAuthor = (a.author?.login || '').toLowerCase();
+    const bAuthor = (b.author?.login || '').toLowerCase();
+    if (aAuthor < bAuthor) {
+      return -1;
+    }
+    if (aAuthor > bAuthor) {
+      return 1;
+    }
+    return 0;
+  });
+}
+
+/**
  * Get the date range for the last calendar month
  * @returns {{from: string, to: string}}
  */
@@ -122,7 +146,8 @@ async function getMergedPullRequestsFromSearch(dateRange, token) {
   const excludedAuthors = INTERNAL_EXCLUSION_LIST.map((author) => `-author:${author}`).join(' ');
   const searchQuery = `org:${GITHUB_ORG} is:pr is:merged merged:${fromDate}..${toDate} ${excludedAuthors}`;
   while (true) {
-    const endpoint = `/search/issues?q=${encodeURIComponent(searchQuery)}&page=${page}&per_page=${perPage}&sort=created&order=asc`;
+    // Rely on local sorting; omit API-side sort/order for simplicity
+    const endpoint = `/search/issues?q=${encodeURIComponent(searchQuery)}&page=${page}&per_page=${perPage}`;
     const {data} = await makeGitHubRequest(endpoint, token);
     if (!data.items?.length) {
       break;
@@ -223,7 +248,8 @@ function formatSlackMessage(pullRequests, from, to, generatedAt) {
       const repoUrl = `https://github.com/${GITHUB_ORG}/${pr.repository}`;
 
       // Format as simple markdown row with Slack-formatted links
-      return `${index + 1} • <${pr.html_url}|${prTitle}> • <${authorUrl}|${authorName}> • <${repoUrl}|${pr.repository}> • Created: ${createdDate} • Merged: ${mergedDate}`;
+      // Column order changed to: index • author • title • repo • dates
+      return `${index + 1} • <${authorUrl}|${authorName}> • <${pr.html_url}|${prTitle}> • <${repoUrl}|${pr.repository}> • Created: ${createdDate} • Merged: ${mergedDate}`;
     });
 
     // Slack section text has a 3000 character limit. Keep under ~2900 to be safe.
@@ -289,9 +315,11 @@ async function main() {
 
   const generatedAt = new Date().toISOString();
 
+  const sortedPullRequests = sortPullRequests(allPullRequests);
+
   // Output Slack-formatted message to stdout
   const slackMessage = formatSlackMessage(
-    allPullRequests,
+    sortedPullRequests,
     dateRange.from,
     dateRange.to,
     generatedAt

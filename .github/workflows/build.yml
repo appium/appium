@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - master
-      - appium3
     # this list of paths could potentially impact the build
     paths:
       - '**/tsconfig*.json'
@@ -25,7 +24,6 @@ on:
   pull_request:
     branches:
       - master
-      - appium3
     paths:
       - '**/tsconfig*.json'
       - 'packages/base-driver/static/**/*'
@@ -52,7 +50,7 @@ permissions:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   prepare_matrix:
@@ -174,6 +172,7 @@ jobs:
     - prepare_matrix
     - prepare_e2e_packages
     name: E2E Tests - ${{ matrix.package_dir }} (Node ${{ matrix.node-version }})
+    if: ${{ github.event_name == 'pull_request' }}
     strategy:
       fail-fast: false
       matrix:

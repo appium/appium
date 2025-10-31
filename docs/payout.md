@@ -20,6 +20,9 @@ This documentation is a note for the opencollective payout.
             - `PR contribution: https://github.com/appium/dotnet-client/pull/810, https://github.com/appium/dotnet-client/pull/808`
             - `PR contribution: https://github.com/appium/java-client/pull/2206, https://github.com/appium/java-client/pull/2203 and a few PRs`
             - `Community contribution in Q&A forum at https://discuss.appium.io/`
+        - Translations
+        - e.g.
+          - `Translation contributions for https://crowdin.com/project/appium-documentation`
     - For Date
         - today
     - For Amount

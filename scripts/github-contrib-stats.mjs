@@ -57,17 +57,12 @@ const INTERNAL_EXCLUSION_LIST = [
 ];
 
 /**
- * Sort PRs by merged date (asc), then by author login (asc)
+ * Sort PRs by author login (asc), then by merged date (asc)
  * @param {GitHubPullRequest[]} pullRequests
  * @returns {GitHubPullRequest[]}
  */
 function sortPullRequests(pullRequests) {
   return [...pullRequests].sort((a, b) => {
-    const aMerged = a.merged_at ? new Date(a.merged_at).getTime() : 0;
-    const bMerged = b.merged_at ? new Date(b.merged_at).getTime() : 0;
-    if (aMerged !== bMerged) {
-      return aMerged - bMerged;
-    }
     const aAuthor = (a.author?.login || '').toLowerCase();
     const bAuthor = (b.author?.login || '').toLowerCase();
     if (aAuthor < bAuthor) {
@@ -76,7 +71,10 @@ function sortPullRequests(pullRequests) {
     if (aAuthor > bAuthor) {
       return 1;
     }
-    return 0;
+    // If authors are equal, sort by merged date
+    const aMerged = a.merged_at ? new Date(a.merged_at).getTime() : 0;
+    const bMerged = b.merged_at ? new Date(b.merged_at).getTime() : 0;
+    return aMerged - bMerged;
   });
 }
 

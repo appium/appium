@@ -54,6 +54,9 @@ const INTERNAL_EXCLUSION_LIST = [
   'saikrishna321',
   'srinivasantarget',
   'eglitise',
+  'navin772',
+  'harsha509',
+  'Delta456',
 ];
 
 /**

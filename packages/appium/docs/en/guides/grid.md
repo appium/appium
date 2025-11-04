@@ -22,9 +22,11 @@ server:
   use-drivers:
     - xcuitest
   default-capabilities:
-    wdaLocalPort: 8100
-    mjpegServerPort: 9100
-    mjpegScreenshotUrl: "http://localhost:9100"
+    appium:wdaLocalPort: 8100
+    appium:mjpegServerPort: 9100
+    appium:mjpegScreenshotUrl: "http://localhost:9100"
+    appium:platformVersion: "26.0"
+    appium:deviceName: "iPhone 17"
 ```
 
 In the above YAML config file, we specify the Appium server port, the driver used, and parameters
@@ -39,9 +41,11 @@ server:
   use-drivers:
     - xcuitest
   default-capabilities:
-    wdaLocalPort: 8110
-    mjpegServerPort: 9110
-    mjpegScreenshotUrl: "http://localhost:9110"
+    appium:wdaLocalPort: 8110
+    appium:mjpegServerPort: 9110
+    appium:mjpegScreenshotUrl: "http://localhost:9110"
+    appium:platformVersion: "26.0"
+    appium:deviceName: "iPhone 16"
 ```
 
 ### Define the Grid node configs
@@ -60,11 +64,15 @@ port = 5555
 [node]
 detect-drivers = false
 
+[events]
+publish = "tcp://HUB_IP_ADDRESS:4442"
+subscribe = "tcp://HUB_IP_ADDRESS:4443"
+
 [relay]
 url = "http://localhost:4723"
 status-endpoint = "/status"
 configs = [
-    "1", "{\"platformName\": \"iOS\", \"appium:platformVersion\": \"15.5\", \"appium:deviceName\": \"iPhone 13\", \"appium:automationName\": \"XCUITest\"}"
+    "1", "{\"platformName\": \"iOS\", \"appium:automationName\": \"XCUITest\"}"
 ]
 ```
 
@@ -76,11 +84,15 @@ port = 5565
 [node]
 detect-drivers = false
 
+[events]
+publish = "tcp://HUB_IP_ADDRESS:4442"
+subscribe = "tcp://HUB_IP_ADDRESS:4443"
+
 [relay]
 url = "http://localhost:4733"
 status-endpoint = "/status"
 configs = [
-    "1", "{\"platformName\": \"iOS\", \"appium:platformVersion\": \"15.5\", \"appium:deviceName\": \"iPhone 12\", \"appium:automationName\": \"XCUITest\"}"
+    "1", "{\"platformName\": \"iOS\", \"appium:automationName\": \"XCUITest\"}"
 ]
 ```
 

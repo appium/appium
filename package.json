@@ -85,7 +85,7 @@
   },
   "devDependencies": {
     "@colors/colors": "1.6.0",
-    "@eslint/js": "9.39.0",
+    "@eslint/js": "9.39.1",
     "@tsconfig/node20": "20.1.6",
     "@types/argparse": "2.0.17",
     "@types/archiver": "7.0.0",
@@ -125,7 +125,7 @@
     "conventional-changelog-conventionalcommits": "7.0.2",
     "cpy-cli": "6.0.0",
     "cross-env": "10.1.0",
-    "eslint": "9.39.0",
+    "eslint": "9.39.1",
     "eslint-config-prettier": "10.1.8",
     "eslint-import-resolver-typescript": "4.4.4",
     "eslint-plugin-import": "2.32.0",
@@ -151,7 +151,7 @@
     "ts-node": "10.9.2",
     "tsd": "0.33.0",
     "typescript": "5.9.3",
-    "typescript-eslint": "8.46.2",
+    "typescript-eslint": "8.46.3",
     "webdriverio": "9.20.0",
     "ws": "8.18.3",
     "yaml-js": "0.3.1"

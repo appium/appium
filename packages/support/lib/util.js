@@ -61,9 +61,20 @@ function escapeSpace(str) {
 }
 
 /**
+ * Escape a specific character in a string
+ * @param {string} str - The string to escape character in
+ * @param {string} char - The character to escape
+ * @returns {string} The string with escaped character
+ */
+function escapeCharacter(str, char) {
+  const re = new RegExp(char.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+  return str.replace(re, `\\${char}`);
+}
+
+/**
  * Escape special characters in string
  * @param {string|any} str - The string to escape special characters in
- * @param {string} quoteEscape - Whether to escape quotes
+ * @param {string|boolean} [quoteEscape=false] - Character to escape or boolean for quotes
  * @returns {string|any} The string with escaped special characters, or original value if not a string
  */
 function escapeSpecialChars(str, quoteEscape) {
@@ -85,8 +96,12 @@ function escapeSpecialChars(str, quoteEscape) {
     .replace(/[\"]/g, '\\"') // eslint-disable-line no-useless-escape
     .replace(/\\'/g, "\\'");
   if (quoteEscape) {
-    const re = new RegExp(quoteEscape, 'g');
-    str = str.replace(re, `\\${quoteEscape}`);
+    if (typeof quoteEscape === 'string') {
+      str = escapeCharacter(str, quoteEscape);
+    } else {
+      // Legacy behavior: when quoteEscape is boolean true, escape double quotes
+      str = escapeCharacter(str, '"');
+    }
   }
   return str;
 }
@@ -548,6 +563,7 @@ function getLockFileGuard(lockFile, opts = {}) {
 export {
   hasValue,
   escapeSpace,
+  escapeCharacter,
   escapeSpecialChars,
   localIp,
   cancellableDelay,

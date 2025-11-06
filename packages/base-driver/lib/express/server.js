@@ -253,7 +253,9 @@ function configureHttp({httpServer, reject, keepAliveTimeout, gracefulShutdownTi
     appiumServer['shouldUpgradeCallback'] = (req) => _.toLower(req.headers?.upgrade) === 'websocket';
     appiumServer.on('upgrade', (req, socket, head) => {
       // @ts-ignore - socket is Duplex in 'upgrade' event but compatible with Socket for handleUpgrade
-      tryHandleWebSocketUpgrade(req, socket, head, appiumServer.webSocketsMapping);
+      if (!tryHandleWebSocketUpgrade(req, socket, head, appiumServer.webSocketsMapping)) {
+        socket.destroy();
+      }
     });
   }
 

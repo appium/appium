@@ -97,9 +97,10 @@ export function defaultToJSONContentType(req, res, next) {
  * @returns {boolean} - Returns true if the upgrade was handled, false otherwise
  */
 export function tryHandleWebSocketUpgrade(req, socket, head, webSocketsMapping) {
-  if (!req.headers?.upgrade || _.toLower(req.headers.upgrade) !== 'websocket') {
+  if (_.toLower(req.headers?.upgrade) !== 'websocket') {
     return false;
   }
+
   let currentPathname;
   try {
     currentPathname = new URL(req.url ?? '', 'http://localhost').pathname;

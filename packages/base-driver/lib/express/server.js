@@ -252,7 +252,6 @@ function configureHttp({httpServer, reject, keepAliveTimeout, gracefulShutdownTi
     // eslint-disable-next-line dot-notation
     appiumServer['shouldUpgradeCallback'] = (req) => _.toLower(req.headers?.upgrade) === 'websocket';
     appiumServer.on('upgrade', (req, socket, head) => {
-      // @ts-ignore - socket is Duplex in 'upgrade' event but compatible with Socket for handleUpgrade
       if (!tryHandleWebSocketUpgrade(req, socket, head, appiumServer.webSocketsMapping)) {
         socket.destroy();
       }

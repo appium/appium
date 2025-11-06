@@ -91,7 +91,7 @@ export function defaultToJSONContentType(req, res, next) {
  * against registered WebSocket handlers in the webSocketsMapping.
  *
  * @param {import('http').IncomingMessage} req - The HTTP request
- * @param {import('net').Socket} socket - The network socket
+ * @param {import('stream').Duplex} socket - The network socket
  * @param {Buffer} head - The first packet of the upgraded stream
  * @param {import('@appium/types').StringRecord<import('@appium/types').WSServer>} webSocketsMapping - Mapping of paths to WebSocket servers
  * @returns {boolean} - Returns true if the upgrade was handled, false otherwise

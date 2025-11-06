@@ -244,7 +244,6 @@ function configureHttp({httpServer, reject, keepAliveTimeout, gracefulShutdownTi
     return Boolean(this['_spdyState']?.secure);
   };
 
-  // Use shouldUpgradeCallback if available (Node.js >= 22.21.0 or >= 24.9.0)
   // This avoids Express middleware timeout issues with long-lived WebSocket connections
   // See: https://github.com/appium/appium/issues/20760
   // See: https://github.com/nodejs/node/pull/59824
@@ -252,7 +251,7 @@ function configureHttp({httpServer, reject, keepAliveTimeout, gracefulShutdownTi
     // shouldUpgradeCallback only returns a boolean to indicate if the upgrade should proceed
     // eslint-disable-next-line dot-notation
     appiumServer['shouldUpgradeCallback'] = (req) => _.toLower(req.headers?.upgrade) === 'websocket';
-    httpServer.on('upgrade', (req, socket, head) => {
+    appiumServer.on('upgrade', (req, socket, head) => {
       // @ts-ignore - socket is Duplex in 'upgrade' event but compatible with Socket for handleUpgrade
       tryHandleWebSocketUpgrade(req, socket, head, appiumServer.webSocketsMapping);
     });

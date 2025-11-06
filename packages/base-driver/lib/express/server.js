@@ -249,10 +249,13 @@ function configureHttp({httpServer, reject, keepAliveTimeout, gracefulShutdownTi
   // See: https://github.com/appium/appium/issues/20760
   // See: https://github.com/nodejs/node/pull/59824
   if (hasShouldUpgradeCallback(httpServer)) {
-    // Use bracket notation to set property that may not exist in type definitions
+    // shouldUpgradeCallback only returns a boolean to indicate if the upgrade should proceed
     // eslint-disable-next-line dot-notation
-    appiumServer['shouldUpgradeCallback'] = (req, socket, head) =>
+    appiumServer['shouldUpgradeCallback'] = (req) => _.toLower(req.headers?.upgrade) === 'websocket';
+    httpServer.on('upgrade', (req, socket, head) => {
+      // @ts-ignore - socket is Duplex in 'upgrade' event but compatible with Socket for handleUpgrade
       tryHandleWebSocketUpgrade(req, socket, head, appiumServer.webSocketsMapping);
+    });
   }
 
   // http.Server.close() only stops new connections, but we need to wait until

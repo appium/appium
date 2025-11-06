@@ -81,7 +81,7 @@ describe('fs', function () {
 
       // Mock fsPromises.rename to simulate EXDEV error
       const originalRename = fs.rename;
-      fs.rename = async (src, dst) => {
+      fs.rename = async () => {
         const err = new Error('cross-device link not permitted');
         err.code = 'EXDEV';
         throw err;

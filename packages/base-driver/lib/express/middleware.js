@@ -87,29 +87,47 @@ export function defaultToJSONContentType(req, res, next) {
 }
 
 /**
+ * Core function to handle WebSocket upgrade requests by matching the request path
+ * against registered WebSocket handlers in the webSocketsMapping.
+ *
+ * @param {import('http').IncomingMessage} req - The HTTP request
+ * @param {import('net').Socket} socket - The network socket
+ * @param {Buffer} head - The first packet of the upgraded stream
+ * @param {import('@appium/types').StringRecord<import('@appium/types').WSServer>} webSocketsMapping - Mapping of paths to WebSocket servers
+ * @returns {boolean} - Returns true if the upgrade was handled, false otherwise
+ */
+export function tryHandleWebSocketUpgrade(req, socket, head, webSocketsMapping) {
+  if (!req.headers?.upgrade || _.toLower(req.headers.upgrade) !== 'websocket') {
+    return false;
+  }
+  let currentPathname;
+  try {
+    currentPathname = new URL(req.url ?? '', 'http://localhost').pathname;
+  } catch {
+    currentPathname = req.url ?? '';
+  }
+  for (const [pathname, wsServer] of _.toPairs(webSocketsMapping)) {
+    if (match(pathname)(currentPathname)) {
+      wsServer.handleUpgrade(req, socket, head, (ws) => {
+        wsServer.emit('connection', ws, req);
+      });
+      return true;
+    }
+  }
+  log.info(`Did not match the websocket upgrade request at ${currentPathname} to any known route`);
+  return false;
+}
+
+/**
  *
  * @param {import('@appium/types').StringRecord<import('@appium/types').WSServer>} webSocketsMapping
  * @returns {import('express').RequestHandler}
  */
 export function handleUpgrade(webSocketsMapping) {
   return (req, res, next) => {
-    if (!req.headers?.upgrade || _.toLower(req.headers.upgrade) !== 'websocket') {
-      return next();
+    if (tryHandleWebSocketUpgrade(req, req.socket, Buffer.from(''), webSocketsMapping)) {
+      return;
     }
-    let currentPathname;
-    try {
-      currentPathname = new URL(req.url ?? '').pathname;
-    } catch {
-      currentPathname = req.url ?? '';
-    }
-    for (const [pathname, wsServer] of _.toPairs(webSocketsMapping)) {
-      if (match(pathname)(currentPathname)) {
-        return wsServer.handleUpgrade(req, req.socket, Buffer.from(''), (ws) => {
-          wsServer.emit('connection', ws, req);
-        });
-      }
-    }
-    log.info(`Did not match the websocket upgrade request at ${currentPathname} to any known route`);
     next();
   };
 }

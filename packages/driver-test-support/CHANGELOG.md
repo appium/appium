@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.4](https://github.com/appium/appium/compare/@appium/driver-test-support@1.0.3...@appium/driver-test-support@1.0.4) (2025-11-12)
+
+
+### Bug Fixes
+
+* **driver-test-support:** fix test failures due to invalid syntax ([#21683](https://github.com/appium/appium/issues/21683)) ([b12a473](https://github.com/appium/appium/commit/b12a47349af2890b17edb055d6f5145686cbc170))
+
+
+
 ## [1.0.3](https://github.com/appium/appium/compare/@appium/driver-test-support@1.0.2...@appium/driver-test-support@1.0.3) (2025-10-08)
 
 **Note:** Version bump only for package @appium/driver-test-support

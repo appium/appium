@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.0.3](https://github.com/appium/appium/compare/@appium/support@7.0.2...@appium/support@7.0.3) (2025-11-12)
+
+
+### Bug Fixes
+
+* **base-driver:** Use shouldUpgradeCallback for proper upgrades processing ([#21706](https://github.com/appium/appium/issues/21706)) ([fc273da](https://github.com/appium/appium/commit/fc273da0ef04d3362f10c710f7c8692d7a03fd21))
+* **support:** Properly handle moving to another volume ([#21672](https://github.com/appium/appium/issues/21672)) ([5d62688](https://github.com/appium/appium/commit/5d62688e8b5244ca432b5f276b23062ddb757b6b))
+
+
+
 ## [7.0.2](https://github.com/appium/appium/compare/@appium/support@7.0.1...@appium/support@7.0.2) (2025-10-08)
 
 **Note:** Version bump only for package @appium/support

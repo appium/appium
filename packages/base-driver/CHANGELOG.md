@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.1.1](https://github.com/appium/appium/compare/@appium/base-driver@10.1.0...@appium/base-driver@10.1.1) (2025-11-12)
+
+
+### Bug Fixes
+
+* **base-driver:** Use shouldUpgradeCallback for proper upgrades processing ([#21706](https://github.com/appium/appium/issues/21706)) ([fc273da](https://github.com/appium/appium/commit/fc273da0ef04d3362f10c710f7c8692d7a03fd21))
+
+
+
 ## [10.1.0](https://github.com/appium/appium/compare/@appium/base-driver@10.0.1...@appium/base-driver@10.1.0) (2025-10-08)
 
 

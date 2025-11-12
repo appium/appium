@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.1.1](https://github.com/appium/appium/compare/appium@3.1.0...appium@3.1.1) (2025-11-12)
+
+
+### Bug Fixes
+
+* **appium:** Inject symlinks for all installed extensions ([#21664](https://github.com/appium/appium/issues/21664)) ([8f5aac3](https://github.com/appium/appium/commit/8f5aac3722c9572d61f7e6bef20fe43bb14e0674))
+
+
+
 ## [3.1.0](https://github.com/appium/appium/compare/appium@3.0.2...appium@3.1.0) (2025-10-08)
 
 

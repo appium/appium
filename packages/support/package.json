@@ -1,6 +1,6 @@
 {
   "name": "@appium/support",
-  "version": "7.0.2",
+  "version": "7.0.3",
   "description": "Support libs used across Appium packages",
   "keywords": [
     "automation",
@@ -43,7 +43,7 @@
   "dependencies": {
     "@appium/logger": "^2.0.2",
     "@appium/tsconfig": "^1.1.0",
-    "@appium/types": "^1.1.0",
+    "@appium/types": "^1.1.1",
     "@colors/colors": "1.6.0",
     "archiver": "7.0.1",
     "axios": "1.13.2",

@@ -16,4 +16,4 @@ own Appium extension:
 * For creating a plugin, take a look at the [Build Plugins](build-plugins.md) page
 * Drivers and plugins both need documentation, so check out the [Build Documentation](./build-docs.md) page
 * For creating a doctor check, see the [Building Doctor Checks](./build-doctor-checks.md) page
-* For puhsling a package, see the [Publishing Packages](./publishing-packages.md) page
+* For publishing a package, see the [Publishing Packages](./publishing-packages.md) page

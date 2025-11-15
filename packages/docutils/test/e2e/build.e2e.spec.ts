@@ -247,70 +247,62 @@ describe('@appium/docutils build e2e', function () {
 
   describe('CLI help', function () {
     it('should print help when --help is passed', async function () {
-      // Capture stdout by temporarily overriding process.stdout.write
       let helpOutput = '';
-      const originalWrite = process.stdout.write.bind(process.stdout);
-      const mockWrite = (chunk: any) => {
-        if (typeof chunk === 'string' || Buffer.isBuffer(chunk)) {
-          helpOutput += chunk.toString();
-        }
-        return true;
-      };
 
-      process.stdout.write = mockWrite as typeof process.stdout.write;
+      // Create yargs instance similar to CLI
+      const y = yargs(['--help'])
+        .scriptName(NAME_BIN)
+        .command(buildCommand)
+        .command(initCommand)
+        .command(validateCommand)
+        .options({
+          verbose: {
+            type: 'boolean',
+            describe: 'Alias for --log-level=debug',
+          },
+          'log-level': {
+            alias: 'L',
+            choices: ['debug', 'info', 'warn', 'error', 'silent'],
+            describe: 'Sets the log level',
+            default: 'info',
+          },
+          config: {
+            alias: 'c',
+            type: 'string',
+            describe: 'Path to config file',
+            normalize: true,
+            nargs: 1,
+            requiresArg: true,
+            defaultDescription: '(discovered automatically)',
+          },
+          'no-config': {
+            type: 'boolean',
+            describe: 'Disable config file discovery',
+          },
+        })
+        .demandCommand(1)
+        .strict();
 
+      // Try getHelp first (returns a string, no I/O needed)
       try {
-        // Create yargs instance similar to CLI
-        const y = yargs(['--help'])
-          .scriptName(NAME_BIN)
-          .command(buildCommand)
-          .command(initCommand)
-          .command(validateCommand)
-          .options({
-            verbose: {
-              type: 'boolean',
-              describe: 'Alias for --log-level=debug',
-            },
-            'log-level': {
-              alias: 'L',
-              choices: ['debug', 'info', 'warn', 'error', 'silent'],
-              describe: 'Sets the log level',
-              default: 'info',
-            },
-            config: {
-              alias: 'c',
-              type: 'string',
-              describe: 'Path to config file',
-              normalize: true,
-              nargs: 1,
-              requiresArg: true,
-              defaultDescription: '(discovered automatically)',
-            },
-            'no-config': {
-              type: 'boolean',
-              describe: 'Disable config file discovery',
-            },
-          })
-          .demandCommand(1)
-          .strict();
-
-        // Get help text using yargs' getHelp method
         const helpText = await y.getHelp();
         helpOutput = helpText;
       } catch {
-        // If getHelp doesn't work, try showHelp which writes to stdout
-        if (!helpOutput) {
-          const y = yargs(['--help'])
-            .scriptName(NAME_BIN)
-            .command(buildCommand)
-            .command(initCommand)
-            .command(validateCommand)
-            .demandCommand(1)
-            .strict();
+        // If getHelp doesn't work, use showHelp which writes to stderr by default
+        // Capture stderr since showHelp() writes to stderr by default
+        const originalStderrWrite = process.stderr.write.bind(process.stderr);
+        const mockStderrWrite = (chunk: any) => {
+          if (typeof chunk === 'string' || Buffer.isBuffer(chunk)) {
+            helpOutput += chunk.toString();
+          }
+          return true;
+        };
+        process.stderr.write = mockStderrWrite as typeof process.stderr.write;
+        try {
           y.showHelp();
+        } finally {
+          process.stderr.write = originalStderrWrite;
         }
-      } finally {
-        process.stdout.write = originalWrite;
       }
 
       // Verify help output contains expected content

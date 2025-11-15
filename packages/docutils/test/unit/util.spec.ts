@@ -1,12 +1,12 @@
 import {argify} from '../../lib/util';
 import _ from 'lodash';
+import * as chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+
+chai.use(chaiAsPromised);
+const {expect} = chai;
 
 describe('argify', function () {
-  before(async function () {
-    const chai = await import('chai');
-    chai.should();
-  });
-
   it('should create args from params', function () {
     // deploy example
     const version = '2.0';
@@ -29,7 +29,7 @@ describe('argify', function () {
       ),
       version,
     ];
-    mikeArgs.should.eql([
+    expect(mikeArgs).to.eql([
       '--config-file',
       '/path/to/yml',
       '--push',
@@ -45,3 +45,4 @@ describe('argify', function () {
     ]);
   });
 });
+

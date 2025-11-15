@@ -1,7 +1,7 @@
 import betterAjvErrors from '@sidvind/better-ajv-errors';
 import {lilconfig} from 'lilconfig';
 import _ from 'lodash';
-import yaml from 'yaml';
+import * as yaml from 'yaml';
 import {getSchema, validate} from './schema/schema';
 
 /**

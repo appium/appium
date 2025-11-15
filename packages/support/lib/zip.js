@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import B from 'bluebird';
-import yauzl from 'yauzl';
+import * as yauzl from 'yauzl';
 import archiver from 'archiver';
 import {createWriteStream} from 'fs';
 import path from 'path';
@@ -17,7 +17,6 @@ import {exec} from 'teen_process';
 /**
  * @type {(path: string, options?: yauzl.Options) => Promise<yauzl.ZipFile>}
  */
-// eslint-disable-next-line import/no-named-as-default-member
 const openZip = B.promisify(yauzl.open);
 /**
  * @type {(source: NodeJS.ReadableStream, destination: NodeJS.WritableStream) => Promise<NodeJS.WritableStream>}

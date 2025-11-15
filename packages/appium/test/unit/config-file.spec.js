@@ -3,7 +3,7 @@
 import fs from 'fs';
 // eslint-disable-next-line import/named
 import {createSandbox} from 'sinon';
-import YAML from 'yaml';
+import * as YAML from 'yaml';
 import * as schema from '../../lib/schema/schema';
 import {resolveFixture, rewiremock} from '../helpers';
 

@@ -1,6 +1,6 @@
 import {fs, tempDir} from '@appium/support';
 import path from 'node:path';
-import YAML from 'yaml';
+import * as YAML from 'yaml';
 import {
   CACHE_DIR_RELATIVE_PATH,
   CURRENT_SCHEMA_REV,

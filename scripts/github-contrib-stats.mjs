@@ -249,7 +249,7 @@ function formatSlackMessage(pullRequests, from, to, generatedAt) {
       const repoUrl = `https://github.com/${GITHUB_ORG}/${pr.repository}`;
 
       // Format as simple markdown row with Slack-formatted links
-      // Column order changed to: index • author • title • repo • dates
+      // Column order changed to: index • author • title • URL for the PR • repo • dates
       return `${index + 1} • <${authorUrl}|${authorName}> • <${pr.html_url}|${prTitle}> • ${pr.html_url} • <${repoUrl}|${pr.repository}> • Created: ${createdDate} • Merged: ${mergedDate}`;
     });
 

@@ -1,15 +1,23 @@
 ---
-title: Publish packages
+title: Publishing Packages
 ---
 
 ## npm
 
-Appium follows [Trusted publishing for npm packages](https://docs.npmjs.com/trusted-publishers) when publishing npm packages via GitHub Actions.
+Appium uses [Trusted Publishing](https://docs.npmjs.com/trusted-publishers) to publish npm packages via GitHub Actions. This method provides a secure way to publish packages without managing long-lived authentication tokens.
 
-1. Register the target package on npmjs.com by following the [Trusted publishing for npm packages](https://docs.npmjs.com/trusted-publishers) guide
-2. Add the `id-token: write` permission to your GitHub Actions workflow
-3. Run `npm publish` in the workflow
+### Setup Instructions
 
-If you use package publishing libraries such as [Semantic Release](https://github.com/semantic-release/semantic-release), you'll need to verify that the library supports the trusted publishing method.
+1. Register your package on [npmjs.com](https://npmjs.com) following the [Trusted Publishing guide](https://docs.npmjs.com/trusted-publishers)
+2. Add the `id-token: write` permission to your GitHub Actions workflow file
+3. Run `npm publish` in your workflow
 
-Semantic Release has supported this method since version [25.0.1](https://github.com/semantic-release/semantic-release/releases/tag/v25.0.1). The setup guide is available [here](https://github.com/semantic-release/npm?tab=readme-ov-file#trusted-publishing-from-github-actions).
+### Using automation tools
+
+If you use automation tools like [Semantic Release](https://github.com/semantic-release/semantic-release), ensure the tool supports trusted publishing.
+
+Semantic Release has supported trusted publishing since version [25.0.1](https://github.com/semantic-release/semantic-release/releases/tag/v25.0.1). Refer to the [setup guide](https://github.com/semantic-release/npm?tab=readme-ov-file#trusted-publishing-from-github-actions) for configuration details.
+
+### Appium Organization
+
+Appium publishes npm packages under the [Appium Organization](https://www.npmjs.com/settings/appium/packages) on npm.

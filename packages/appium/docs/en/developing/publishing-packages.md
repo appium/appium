@@ -16,7 +16,7 @@ Appium uses [Trusted Publishing](https://docs.npmjs.com/trusted-publishers) to p
 
 If you use automation tools like [Semantic Release](https://github.com/semantic-release/semantic-release), ensure the tool supports trusted publishing.
 
-Semantic Release has supported trusted publishing since version [25.0.1](https://github.com/semantic-release/semantic-release/releases/tag/v25.0.1). Refer to the [setup guide](https://github.com/semantic-release/npm?tab=readme-ov-file#trusted-publishing-from-github-actions) for configuration details.
+Semantic Release has support for trusted publishing since version [25.0.1](https://github.com/semantic-release/semantic-release/releases/tag/v25.0.1). Refer to the [setup guide](https://github.com/semantic-release/npm?tab=readme-ov-file#trusted-publishing-from-github-actions) for configuration details.
 
 ### Appium Organization
 

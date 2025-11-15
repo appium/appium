@@ -80,7 +80,7 @@ nav:
       - developing/build-docs.md
       - developing/build-doctor-checks.md
       - developing/sensitive.md
-      - developing/publish-packages.md
+      - developing/publishing-packages.md
       - Developer Reference:
           - developing/config-system.md
   - Contributing:

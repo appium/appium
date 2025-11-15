@@ -3,7 +3,7 @@
 import {env, fs, npm, tempDir} from '@appium/support';
 import path from 'node:path';
 import resolveFrom from 'resolve-from';
-import YAML from 'yaml';
+import * as YAML from 'yaml';
 import {
   DRIVER_TYPE,
   EXT_SUBCOMMAND_INSTALL as INSTALL,

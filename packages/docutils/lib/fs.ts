@@ -9,7 +9,7 @@ import path from 'node:path';
 import _pkgDir from 'pkg-dir';
 import readPkg, {NormalizedPackageJson, PackageJson} from 'read-pkg';
 import {JsonValue} from 'type-fest';
-import YAML from 'yaml';
+import * as YAML from 'yaml';
 import {
   MESSAGE_PYTHON_MISSING,
   NAME_MIKE,

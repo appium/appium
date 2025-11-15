@@ -6,7 +6,7 @@
 import {lilconfig, Loader} from 'lilconfig';
 import _ from 'lodash';
 import path from 'node:path';
-import YAML from 'yaml';
+import * as YAML from 'yaml';
 import parser from 'yargs-parser';
 import {hideBin} from 'yargs/helpers';
 import {DEFAULT_LOG_LEVEL, LogLevelMap, NAME_BIN} from '../constants';

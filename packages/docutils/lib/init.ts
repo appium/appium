@@ -5,7 +5,7 @@
  */
 
 import {NAME_MKDOCS_YML, PIP_ENV_VARS, REQUIREMENTS_TXT_PATH} from './constants';
-import YAML from 'yaml';
+import * as YAML from 'yaml';
 import {exec} from 'teen_process';
 import {Simplify} from 'type-fest';
 import {DocutilsError} from './error';

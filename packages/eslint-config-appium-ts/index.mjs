@@ -185,11 +185,11 @@ export default [
   },
 
   {
-    ...mochaPlugin.configs.flat.recommended,
+    ...mochaPlugin.configs.recommended,
     name: 'Test Files',
     files: ['**/test/**', '*.spec.*js', '-specs.*js', '*.spec.ts'],
     rules: {
-      ...mochaPlugin.configs.flat.recommended.rules,
+      ...mochaPlugin.configs.recommended.rules,
       /**
        * Both `@ts-expect-error` and `@ts-ignore` are allowed to be used with impunity in tests.
        * @remarks We often test things which explicitly violate types.
@@ -208,8 +208,8 @@ export default [
       'mocha/no-exclusive-tests': 2,
       'mocha/no-exports': 'off',
       'mocha/no-mocha-arrows': 2,
+      'mocha/no-pending-tests': 'off',
       'mocha/no-setup-in-describe': 'off',
-      'mocha/no-skipped-tests': 'off',
     },
   },
 

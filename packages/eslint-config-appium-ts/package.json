@@ -34,7 +34,7 @@
     "eslint-config-prettier": "10.1.8",
     "eslint-import-resolver-typescript": "4.4.4",
     "eslint-plugin-import": "2.32.0",
-    "eslint-plugin-mocha": "10.5.0",
+    "eslint-plugin-mocha": "11.2.0",
     "eslint-plugin-promise": "7.2.1",
     "typescript-eslint": "8.46.4"
   },

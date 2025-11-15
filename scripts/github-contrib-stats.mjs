@@ -250,7 +250,7 @@ function formatSlackMessage(pullRequests, from, to, generatedAt) {
 
       // Format as simple markdown row with Slack-formatted links
       // Column order changed to: index • author • title • repo • dates
-      return `${index + 1} • <${authorUrl}|${authorName}> • <${pr.html_url}|${prTitle}> • <${repoUrl}|${pr.repository}> • Created: ${createdDate} • Merged: ${mergedDate}`;
+      return `${index + 1} • <${authorUrl}|${authorName}> • <${pr.html_url}|${prTitle}> • ${pr.html_url} • <${repoUrl}|${pr.repository}> • Created: ${createdDate} • Merged: ${mergedDate}`;
     });
 
     // Slack section text has a 3000 character limit. Keep under ~2900 to be safe.

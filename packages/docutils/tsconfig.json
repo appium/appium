@@ -10,6 +10,6 @@
     },
     "strict": true
   },
-  "include": ["./lib/**/*"],
+  "include": ["./lib/**/*", "./test/**/*"],
   "references": [{"path": "../types"}, {"path": "../support"}]
 }

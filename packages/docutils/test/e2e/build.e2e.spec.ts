@@ -125,7 +125,7 @@ describe('@appium/docutils build e2e', function () {
       });
 
       await createDocsFile(projectDir, 'index.md', '# Test Documentation\n\nThis is a test page.\n');
-      await ensurePythonDeps(projectDir, this);
+      await ensurePythonDeps(projectDir, this as Mocha.Context);
 
       // Build the site
       await buildSite({
@@ -158,7 +158,7 @@ describe('@appium/docutils build e2e', function () {
       });
 
       await createDocsFile(projectDir, 'index.md', '# Test Documentation 2\n\nThis is another test page.\n');
-      await ensurePythonDeps(projectDir, this);
+      await ensurePythonDeps(projectDir, this as Mocha.Context);
 
       // Build the site with custom site-dir
       const customSiteDirPath = path.join(projectDir, customSiteDir);

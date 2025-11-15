@@ -44,7 +44,7 @@
     "test": "npm run test:unit",
     "test:e2e": "mocha --exit --timeout 60s --slow 30s \"./test/e2e/**/*.e2e.spec.ts\"",
     "test:smoke": "node ./index.js",
-    "test:unit": "mocha \"./test/unit/**/*.spec.js\"",
+    "test:unit": "mocha \"./test/unit/**/*.spec.ts\"",
     "start": "node ./build/lib/cli/index.js"
   },
   "dependencies": {

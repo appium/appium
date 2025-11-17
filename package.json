@@ -109,7 +109,7 @@
     "@types/semver": "7.7.1",
     "@types/serve-favicon": "2.5.7",
     "@types/shell-quote": "1.7.5",
-    "@types/sinon": "20.0.0",
+    "@types/sinon": "21.0.0",
     "@types/sinon-chai": "4.0.0",
     "@types/source-map-support": "0.5.10",
     "@types/supports-color": "8.1.3",

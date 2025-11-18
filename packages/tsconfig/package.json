@@ -32,7 +32,7 @@
     "npm": ">=10"
   },
   "dependencies": {
-    "@tsconfig/node20": "20.1.7"
+    "@tsconfig/node20": "20.1.8"
   },
   "scripts": {
     "test:smoke": "node tsconfig.json && node tsconfig.plugin.json"

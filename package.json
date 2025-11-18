@@ -86,7 +86,7 @@
   "devDependencies": {
     "@colors/colors": "1.6.0",
     "@eslint/js": "9.39.1",
-    "@tsconfig/node20": "20.1.7",
+    "@tsconfig/node20": "20.1.8",
     "@types/argparse": "2.0.17",
     "@types/archiver": "7.0.0",
     "@types/async-lock": "1.4.2",

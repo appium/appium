@@ -13,7 +13,7 @@ jobs:
     env:
       FOSSA_API_KEY: ${{secrets.FOSSA_API_KEY}}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           ref: master
       - name: Install dependencies

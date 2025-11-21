@@ -1,81 +1,64 @@
 ---
-title: Install the UiAutomator2 Driver
+title: 安装 UiAutomator2 驱动程序
 ---
 
-You can't do much with Appium unless you have a [driver](../intro/drivers.md), which is an
-interface that allows Appium to automate a particular platform.
+除非您有[驱动程序](../intro/drivers.md)，否则您无法使用 Appium 做太多事情，驱动程序是一个允许 Appium 自动化特定平台的接口。
 
 !!! info
 
 ```
-For this quickstart guide, we're going to be automating an app on the Android platform, because
-the system requirements for Android automation via Appium are the same as for Appium itself
-(whereas the iOS driver, for example, requires you to be using macOS).
+对于这个快速入门指南，我们将在 Android 平台上自动化一个应用，因为通过 Appium 进行 Android 自动化的系统要求与 Appium 本身相同（而 iOS 驱动程序，则要求您使用 macOS）。
 ```
 
-The driver we're going to use is called the UiAutomator2
-Driver. It's worth visiting that driver's
-documentation and bookmarking it, because it will be an invaluable reference down the line.
+我们要使用的驱动程序称为 [UiAutomator2 驱动程序](https://github.com/appium/appium-uiautomator2-driver)。 请访问该驱动程序的文档并将其加入书签，因为它将成为未来宝贵的参考。
 
-## Set up Android automation requirements
+## 设置 Android 自动化要求
 
-According to the driver, in addition to a working Appium server, we also need to set up the following:
+根据驱动程序，除了工作 Appium 服务器，我们还需要设置以下内容：
 
 ### Android SDK
 
-- The easiest way to set up the Android SDK requirements is by downloading [Android Studio](https://developer.android.com/studio).
-  We need to use its SDK manager (_Settings -> Languages & Frameworks -> Android SDK_)
-  to download the following items:
-  - Android SDK Platform (select whichever Android platform we want to automate, for example, API level 30)
-  - Android SDK Platform-Tools
-- If you wish, you can also download these items without Android Studio:
-  - Android SDK Platform can be downloaded using `sdkmanager` included in [Android command-line tools](https://developer.android.com/studio#command-line-tools-only)
-  - [Android SDK Platform-Tools](https://developer.android.com/tools/releases/platform-tools)
-- Set up the `ANDROID_HOME` environment variable to point to the directory where the Android SDK is
-  installed. You can usually find the path to this directory in the Android Studio SDK manager. It
-  will contain the `platform-tools` and other directories.
+- 设置 Android SDK 的最简单方法是下载 [Android Studio](https://developer.android.com/studio)。
+  我们需要使用其 SDK 管理器（_设置 -> 语言和框架 -> Android SDK_）下载以下项目：
+  - Android SDK 平台（选择我们想要自动化的任何 Android 平台，例如 API 级别 30）
+  - Android SDK 平台工具
+- 如果您愿意，您也可以在没有 Android Studio 的情况下下载这些项目：
+  - Android SDK 平台可以使用包含在 [Android 命令行工具](https://developer.android.com/studio#command-line-tools-only) 中的 `sdkmanager` 下载
+  - [Android SDK 平台工具](https://developer.android.com/tools/releases/platform-tools)
+- 设置 `ANDROID_HOME` 环境变量指向安装 Android SDK 的目录。 您通常可以在 Android Studio SDK 管理器中找到此目录的路径。 它将包含 `platform-tools` 和其他目录。
 
 ### Java JDK
 
-- Install the Java JDK (for the most recent Android API levels, JDK 9 is required, otherwise JDK
-  8 is required). You can download this from [Oracle](https://jdk.java.net/) or [Adoptium](https://adoptium.net/en-GB/temurin/releases/).
-  Make sure you get the JDK and not the JRE.
-- Set up the `JAVA_HOME` environment variable to point to the JDK home directory. It will contain
-  the `bin`, `include`, and other directories.
+- 安装 Java JDK（对于最新的 Android API 级别，需要 JDK 9，否则请用 JDK 8）。 您可以从 [Oracle](https://jdk.java.net/) 或 [Adoptium](https://adoptium.net/en-GB/temurin/releases/) 下载此软件。
+  确保您获得 JDK 而不是 JRE。
+- 设置 `JAVA_HOME` 环境变量指向 JDK 主目录。 它将包含 `bin`、`include` 和其他目录。
 
-### Prepare the Device
+### 准备设备
 
-- If using an emulator, use Android Studio to create and launch an Android Virtual Device (AVD).
-  You may need to download the system images for the API level of the emulator you want to
-  create. Using the AVD creation wizard in Android Studio is generally the easiest way to do all of
-  this.
-- If using a real device, you should [set it up for development and enable USB Debugging](https://developer.android.com/studio/debug/dev-options).
-- With the emulator or device connected, you can run `adb devices` (via the binary located at
-  `$ANDROID_HOME/platform-tools/adb`) to verify that your device shows up as connected.
+- 如果使用模拟器，使用 Android Studio 创建和启动 Android 虚拟设备 (AVD)。
+  您可能需要下载要创建的模拟器的 API 级别的系统映像。 使用 Android Studio 中的 AVD 创建向导通常是完成所有这些的最简单方法。
+- 如果使用真实设备，您应该为其设置[开发者模式并启用 USB 调试](https://developer.android.com/studio/debug/dev-options)。
+- 连接模拟器或设备后，您可以运行 `adb devices`（adb位于 `$ANDROID_HOME/platform-tools/adb`）来验证您的设备是否显示为已连接。
 
-Once your device shows up as connected in `adb`, and you've verified that the environment variables
-are set up correctly, you should be good to go! If you ran into problems with any of these steps,
-refer to the driver documentation, or the various Android or Java documentation sites as necessary.
+一旦您的设备在 `adb` 中显示为已连接，并且您验证了环境变量设置正确，您应该准备好了！ 如果您在这些步骤中的任何一个遇到问题，请参考驱动程序文档，或根据需要参考各种 Android 或 Java 文档站点。
 
-Also, congratulations: whether or not you intended to, you now have the Android developer toolchain
-set up on your system, so you can get busy making Android apps if you want!
+恭喜：无论您是否打算这样做，您现在已经在系统上设置了 Android 开发者工具链，所以如果您愿意，可以开始制作 Android 应用！
 
-## Install the driver itself
+## 安装驱动程序本身
 
-### Standard Install
+### 标准安装
 
-Like all Appium drivers, the UiAutomator2 driver is installed via the [Appium Extension CLI](../reference/cli/extensions.md).
-Since UiAutomator2 is maintained by the core Appium team, it has an 'official' driver name
-(`uiautomator2`), which makes the installation simpler.
+像所有 Appium 驱动程序一样，UiAutomator 2 驱动程序通过 [Appium 扩展 CLI](../reference/cli/extensions.md) 安装。
+由于 UiAutomator 2 由核心 Appium 团队维护，它有一个“官方”驱动程序名称（`uiautomator2`），这使得安装更简单。
 
-Before installing, make sure your Appium server is _not_ running (if it is, quit it with _Ctrl-C_).
-Then run the following command:
+在安装之前，确保您的 Appium 服务器_未_运行（如果正在运行，请用 _Ctrl-C_ 退出）。
+然后运行以下命令：
 
 ```bash
 appium driver install uiautomator2
 ```
 
-It should produce output that looks something like:
+它应该产生看起来像这样的输出：
 
 ```
 Attempting to find and install driver 'uiautomator2'
@@ -85,57 +68,45 @@ Driver uiautomator2@2.0.5 successfully installed
 - platformNames: ["Android"]
 ```
 
-Note how the installation process specifies what platforms is the driver valid for (in this case,
-`Android`), and what automation name (the `appium:automationName` [capability](../guides/caps.md))
-must be used to select this driver for use during an Appium session (in this case, `UiAutomator2`).
+注意安装过程如何指定驱动程序的适用平台（在这里选 `Android`），以及必须用于在 Appium 会话期间选择此驱动程序的自动化名称（`appium:automationName` [能力](../guides/caps.md)）（在这里选 `UiAutomator2`）。
 
 !!! note
 
 ```
-In this quickstart we have used the [Extension CLI](../reference/cli/extensions.md) to install the
-UiAutomator2 driver, but if you are incorporating Appium into a Node.js project, you might
-prefer to use `npm` to manage Appium and its connected drivers. To learn more about this
-technique, visit the guide on [managing Appium extensions](../guides/managing-exts.md).
+在这个快速入门中，我们使用了 [CLI扩展](../reference/cli/extensions.md) 来安装 UiAutomator 2 驱动程序，但如果您将 Appium 纳入 Node.js 项目，您可能更喜欢使用 `npm` 来管理 Appium 及其连接的驱动程序。要了解更多关于此技术的信息，请访问关于[管理 Appium 扩展](../guides/managing-exts.md)的指南。
 ```
 
-### Batch Install
+### 批量安装
 
-You may want to use Appium with more than one driver. One way to accomplish this is to run
-`appium driver install <driver-name>` for each individual driver, but you can also install multiple
-drivers in one go:
+您可能希望将 Appium 与多个驱动程序一起使用。 一种方法是为每个单独的驱动程序运行 `appium driver install <driver-name>`，但您也可以一次性安装多个驱动程序：
 
 ```
 appium setup
 ```
 
-Running this will install Appium's mobile-specific drivers: UiAutomator2, [XCUITest](https://appium.github.io/appium-xcuitest-driver/)
-(only if running macOS), and [Espresso](https://github.com/appium/appium-espresso-driver).
+运行此命令将安装 Appium 的移动端特定驱动程序：UiAutomator2、[XCUITest](https://appium.github.io/appium-xcuitest-driver/)（仅在运行 macOS 时），以及 [Espresso](https://github.com/appium/appium-espresso-driver)。
 
-You can also use this command to batch install drivers for desktop applications or desktop browsers.
-For more details on this, refer to the [Setup command documentation](../reference/cli/setup.md).
+您也可以使用此命令批量安装桌面应用程序或桌面浏览器的驱动程序。
+有关更多详细信息，请参考[设置命令文档](../reference/cli/setup.md)。
 
-### Validating the Install
+### 验证安装
 
-The UiAutomator2 driver, like all official Appium drivers, comes with the Appium Doctor tool, which
-allows validating whether all prerequisites have been set up correctly:
+UiAutomator2 驱动程序，像所有官方 Appium 驱动程序一样，带有 Appium Doctor 工具，它允许验证是否所有先决条件都已正确设置：
 
 ```
 appium driver doctor uiautomator2
 ```
 
-This guide has focused on essential requirements, so Appium Doctor may suggest one or more optional
-fixes. But if you see `0 required fixes needed`, that means everything is set up!
+本指南专注于基本要求，因此 Appium Doctor 可能建议一个或多个可选修复。 但如果您看到 `0 required fixes needed`，那意味着一切都设置好了！
 
-Now, start the Appium server again (run `appium`), and you should see that the newly-installed
-driver is listed as available:
+现在，再次启动 Appium 服务器（运行 `appium`），您应该看到新安装的驱动程序列为可用：
 
 ```
 [Appium] Available drivers:
 [Appium]   - uiautomator2@2.0.5 (automationName 'UiAutomator2')
 ```
 
-With the Android setup complete and the UiAutomator2 driver installed, you're ready to write your
-first test! Now select your preferred language and give it a shot:
+Android 设置完成并安装了 UiAutomator2 驱动程序，准备编写第一个测试吧！ 现在选择您喜欢的语言并试试：
 
 <div class="grid cards" markdown>
 

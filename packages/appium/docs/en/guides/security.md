@@ -73,13 +73,13 @@ appium --allow-insecure=first:foo
 Turn on the `foo` feature for all drivers:
 
 ```bash
-appium '--allow-insecure=*:foo'
+appium --allow-insecure='*:foo'
 ```
 
 Turn on the `foo` feature for all drivers _except_ `first`:
 
 ```bash
-appium '--allow-insecure=*:foo' --deny-insecure=first:foo
+appium --allow-insecure='*:foo' --deny-insecure=first:foo
 ```
 
 Turn on all features _except_ `foo` for all drivers:

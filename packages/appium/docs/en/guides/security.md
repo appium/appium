@@ -95,9 +95,3 @@ Turn on multiple insecure features for specific drivers:
 ```bash
 appium '--allow-insecure=uiautomator2:adb_shell,xcuitest:get_server_logs'
 ```
-
-Turn on all insecure features except one:
-
-```bash
-appium '--allow-insecure=*:*' --deny-insecure='*:foo'
-```

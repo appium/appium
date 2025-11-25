@@ -5,7 +5,7 @@ title: Appium Server Security
 The Appium team makes every effort to ensure the security of the Appium server. This is especially
 important when Appium is run in a multitenant environment, or when multiple users are running
 sessions on the same Appium server. In general, you can only safely enable all of Appium's features if
-All the following are true:
+all the following are true:
 
 - You're running your own Appium server locally or within a protected internal network
 - You're not sharing it with any untrusted parties
@@ -13,7 +13,7 @@ All the following are true:
 
 But because many Appium users might not be able to guarantee such a safe environment, the Appium
 team puts many features behind a security protection mechanism, which forces system admins (the
-people that are in charge of starting the Appium server) to _explicitly opt-in_ to these features.
+people who are in charge of starting the Appium server) to _explicitly opt-in_ to these features.
 (Third-party driver and plugin authors can also [hide behaviour behind security
 flags](../developing/build-drivers.md).)
 
@@ -56,7 +56,7 @@ might use. Here is an incomplete list of examples from some of Appium's official
 |`execute_driver_script`| Allows sending a request that has multiple Appium commands.|Execute Driver Plugin|
 
 Some insecure features operate on the server level and do not require a driver session. Enabling
-These features require using the wildcard prefix:
+these features require using the wildcard prefix:
 
 |<div style="width:12em">Feature Name</div>|Description|
 |------------|-----------|

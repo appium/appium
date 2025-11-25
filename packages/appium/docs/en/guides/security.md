@@ -88,7 +88,7 @@ Turn on all features _except_ `foo` for all drivers:
 appium --relaxed-security --deny-insecure='*:foo'
 ```
 
-### Multiple insecure features
+Multiple insecure features
 
 Turn on multiple insecure features for specific drivers:
 

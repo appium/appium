@@ -99,7 +99,7 @@
     "@types/json-schema": "7.0.15",
     "@types/klaw": "3.0.7",
     "@types/lockfile": "1.0.4",
-    "@types/lodash": "4.17.20",
+    "@types/lodash": "4.17.21",
     "@types/method-override": "3.0.0",
     "@types/mocha": "10.0.10",
     "@types/mv": "2.1.4",

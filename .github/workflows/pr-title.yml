@@ -4,12 +4,7 @@ on:
     types: [opened, edited, synchronize, reopened]
 
 jobs:
-  conventional:
-    name: PR Title
-    runs-on: ubuntu-latest
-    steps:
-    - uses: beemojs/conventional-pr-action@v3
-      with:
-        config-preset: angular
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  lint:
+    uses: appium/appium-workflows/.github/workflows/pr-title.yml@main
+    with:
+      config-preset: angular

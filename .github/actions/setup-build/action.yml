@@ -15,10 +15,6 @@ inputs:
     description: Whether to run npm run build
     required: false
     default: 'true'
-  clear-v8-cache:
-    description: Whether to clear V8 code cache (for Node.js 24+ compatibility)
-    required: false
-    default: 'true'
 
 runs:
   using: composite
@@ -28,23 +24,18 @@ runs:
       with:
         node-version: ${{ inputs.node-version }}
         cache: npm
-    - name: Install dependencies
-      uses: bahmutov/npm-install@v1
+    - name: SocketDev Security Check
+      uses: SocketDev/action@v1
       with:
-        useRollingCache: true
-        install-command: ${{ inputs.install-command }}
+        mode: firewall-free
+    - name: Install dependencies
+      shell: bash
+      run: |
+        # Replace npm with sfw npm in the install command
+        install_cmd="${{ inputs.install-command }}"
+        install_cmd="${install_cmd//npm /sfw npm }"
+        $install_cmd
     - name: Build packages
       if: ${{ inputs.run-build == 'true' }}
       shell: bash
       run: npm run build
-    - name: Clear V8 code cache
-      if: ${{ inputs.clear-v8-cache == 'true' }}
-      shell: bash
-      run: |
-        # Clear V8 code cache to avoid bytecode deserialization errors
-        if [[ -d "$HOME/.node" ]]; then
-          rm -rf "$HOME/.node"/* 2>/dev/null || true
-        fi
-        if [[ -d "$HOME/.cache/node" ]]; then
-          rm -rf "$HOME/.cache/node"/* 2>/dev/null || true
-        fi

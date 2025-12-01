@@ -54,13 +54,7 @@ concurrency:
 
 jobs:
   prepare_matrix:
-    runs-on: ubuntu-latest
-    outputs:
-      versions: ${{ steps.generate-matrix.outputs.lts }}
-    steps:
-    - name: Select all current LTS versions of Node.js
-      id: generate-matrix
-      uses: msimerson/node-lts-versions@v1
+    uses: appium/appium-workflows/.github/workflows/node-lts-matrix.yml@main
 
   prepare_e2e_packages:
     runs-on: ubuntu-latest
@@ -123,7 +117,6 @@ jobs:
           node-version: ${{ matrix.node-version }}
           install-command: npm ci --foreground-scripts
           run-build: 'true'
-          clear-v8-cache: 'true'
       - name: Run smoke tests
         run: npm run test:smoke
 
@@ -143,7 +136,6 @@ jobs:
           node-version: ${{ matrix.node-version }}
           install-command: npm ci --foreground-scripts
           run-build: 'true'
-          clear-v8-cache: 'true'
       - name: Run unit tests
         run: npm run test:unit
 
@@ -163,7 +155,6 @@ jobs:
           node-version: ${{ matrix.node-version }}
           install-command: npm ci --foreground-scripts
           run-build: 'true'
-          clear-v8-cache: 'true'
       - name: Run type tests
         run: npm run test:types
 
@@ -187,7 +178,6 @@ jobs:
           node-version: ${{ matrix.node-version }}
           install-command: npm ci --foreground-scripts
           run-build: 'true'
-          clear-v8-cache: 'true'
       - name: Run E2E tests for ${{ matrix.package_dir }}
         run: |
           set -o pipefail
@@ -205,6 +195,5 @@ jobs:
           node-version: lts/*
           install-command: npm ci
           run-build: 'false'
-          clear-v8-cache: 'false'
       - name: ESLint
         run: npm run lint:ci

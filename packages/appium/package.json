@@ -67,7 +67,7 @@
     "@appium/schema": "^1.0.0",
     "@appium/support": "^7.0.3",
     "@appium/types": "^1.1.1",
-    "@sidvind/better-ajv-errors": "4.0.0",
+    "@sidvind/better-ajv-errors": "4.0.1",
     "ajv": "8.17.1",
     "ajv-formats": "3.0.1",
     "argparse": "2.0.1",
@@ -88,7 +88,7 @@
     "winston": "3.18.3",
     "wrap-ansi": "7.0.0",
     "ws": "8.18.3",
-    "yaml": "2.8.1"
+    "yaml": "2.8.2"
   },
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0",

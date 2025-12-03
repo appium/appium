@@ -84,7 +84,7 @@
     "semver": "7.7.3",
     "source-map-support": "0.5.21",
     "teen_process": "3.0.3",
-    "type-fest": "5.2.0",
+    "type-fest": "5.3.0",
     "winston": "3.18.3",
     "wrap-ansi": "7.0.0",
     "ws": "8.18.3",

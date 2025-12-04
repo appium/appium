@@ -75,8 +75,11 @@ theme:
     - content.action.edit
     - content.code.annotate
     - content.code.copy
+    - content.footnote.tooltips
     - content.tabs.link
+    - content.tooltips
     - navigation.indexes
+    - navigation.path
     - navigation.sections
     - navigation.tabs
     - navigation.top

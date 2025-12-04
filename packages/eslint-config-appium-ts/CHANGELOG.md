@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.5](https://github.com/appium/appium/compare/@appium/eslint-config-appium-ts@2.0.4...@appium/eslint-config-appium-ts@2.0.5) (2025-12-04)
+
+
+### Bug Fixes
+
+* **eslint-config-appium-ts:** update eslint-plugin-mocha to v11 ([#21722](https://github.com/appium/appium/issues/21722)) ([cabe2e5](https://github.com/appium/appium/commit/cabe2e53bc6d7b23cefc80334eb5d0aa89a72d4f))
+
+
+
 ## [2.0.4](https://github.com/appium/appium/compare/@appium/eslint-config-appium-ts@2.0.3...@appium/eslint-config-appium-ts@2.0.4) (2025-11-12)
 
 **Note:** Version bump only for package @appium/eslint-config-appium-ts

@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.0](https://github.com/appium/appium/compare/@appium/docutils@2.1.2...@appium/docutils@2.2.0) (2025-12-04)
+
+
+### Features
+
+* **docutils:** add 3 Material for MkDocs features ([#21784](https://github.com/appium/appium/issues/21784)) ([86d84b8](https://github.com/appium/appium/commit/86d84b8c6ae490271007a43dffdeaaca33b849c0))
+
+
+
 ## [2.1.2](https://github.com/appium/appium/compare/@appium/docutils@2.1.1...@appium/docutils@2.1.2) (2025-11-12)
 
 **Note:** Version bump only for package @appium/docutils

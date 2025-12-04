@@ -45,7 +45,7 @@
     "async-lock": "1.4.1",
     "bluebird": "3.7.2",
     "lodash": "4.17.21",
-    "lru-cache": "11.2.2",
+    "lru-cache": "11.2.4",
     "rimraf": "6.1.2",
     "source-map-support": "0.5.21",
     "ws": "8.18.3"

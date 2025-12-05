@@ -3,29 +3,26 @@ import fs from 'node:fs';
 
 import {includeIgnoreFile} from '@eslint/compat';
 import js from '@eslint/js';
+import stylistic from '@stylistic/eslint-plugin';
+import {defineConfig, globalIgnores} from 'eslint/config';
 import eslintConfigPrettier from 'eslint-config-prettier';
+import {createTypeScriptImportResolver} from 'eslint-import-resolver-typescript';
 import globals from 'globals';
 import pluginPromise from 'eslint-plugin-promise';
-import importPlugin from 'eslint-plugin-import';
+import {importX} from 'eslint-plugin-import-x';
 import mochaPlugin from 'eslint-plugin-mocha';
-import {configs as tsConfigs, parser as tsParser, plugin as tsPlugin} from 'typescript-eslint';
+import nodePlugin from 'eslint-plugin-n';
+import {configs as tsConfigs} from 'typescript-eslint';
 
 const gitignorePath = path.resolve(process.cwd(), '.gitignore');
 
-export default [
-  js.configs.recommended,
-  eslintConfigPrettier,
-  pluginPromise.configs['flat/recommended'],
-  importPlugin.flatConfigs.recommended,
-  ...tsConfigs.recommended,
-
+export default defineConfig([
   {
     name: 'Script Files',
     files: ['**/*.{js,mjs,cjs,jsx,mjsx,ts,tsx,mtsx}'],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'module',
-      parser: tsParser,
       globals: {
         ...globals.node,
         NodeJS: 'readonly',
@@ -33,22 +30,50 @@ export default [
       },
     },
     plugins: {
-      '@typescript-eslint': tsPlugin,
+      '@stylistic': stylistic,
+      'import-x': importX,
+      js,
+      n: nodePlugin,
+      promise: pluginPromise,
     },
+    extends: [
+      'js/recommended',
+      'promise/flat/recommended',
+      'import-x/flat/recommended',
+      tsConfigs.recommended,
+      eslintConfigPrettier,
+    ],
     settings: {
-      /**
-      * This stuff enables `eslint-plugin-import` to resolve TS modules.
-      */
-      'import/parsers': {
-        '@typescript-eslint/parser': ['.ts', '.tsx', '.mtsx'],
-      },
-      'import/resolver': {
-        typescript: {
+      'import-x/resolver-next': [
+        createTypeScriptImportResolver({
           project: ['tsconfig.json', './packages/*/tsconfig.json'],
-        },
-      },
+        })
+      ],
     },
     rules: {
+      '@stylistic/array-bracket-spacing': 'error',
+      '@stylistic/arrow-parens': 'warn',
+      '@stylistic/arrow-spacing': 'error',
+      '@stylistic/comma-spacing': 'error',
+      '@stylistic/key-spacing': 'error',
+      '@stylistic/keyword-spacing': 'error',
+      '@stylistic/no-multi-spaces': 'error',
+      '@stylistic/no-trailing-spaces': 'error',
+      '@stylistic/no-whitespace-before-property': 'error',
+      '@stylistic/quotes': [
+        'error',
+        'single',
+        {
+          avoidEscape: true,
+          allowTemplateLiterals: 'always',
+        },
+      ],
+      '@stylistic/semi': 'error',
+      '@stylistic/space-before-blocks': 'error',
+      '@stylistic/space-in-parens': 'error',
+      '@stylistic/space-infix-ops': 'error',
+      '@stylistic/space-unary-ops': 'error',
+
       /**
        * This rule is configured to warn if a `@ts-ignore` or `@ts-expect-error` directive is used
        * without explanation.
@@ -71,7 +96,6 @@ export default [
        * @remarks This is because empty interfaces have a use case in declaration merging.  Otherwise,
        * an empty interface can be a type alias, e.g., `type Foo = Bar` where `Bar` is an interface.
        */
-      '@typescript-eslint/no-empty-interface': 'off',
       '@typescript-eslint/no-empty-object-type': 'off',
       /**
        * Explicit `any` types are allowed.
@@ -93,76 +117,28 @@ export default [
        * Sometimes we want unused variables to be present in base class method declarations.
        */
       '@typescript-eslint/no-unused-vars': 'warn',
-      '@typescript-eslint/no-var-requires': 'off',
 
-      'import/export': 2,
-      'import/named': 'warn',
-      'import/no-duplicates': 2,
-      'import/no-unresolved': 2,
+      'import-x/named': 'warn',
+      'import-x/no-duplicates': 'error',
 
-      'promise/catch-or-return': 1,
-      /**
-       * Allow native `Promise`s.
-       * @remarks Originally, this was so that we could use [bluebird](https://npm.im/bluebird)
-       * everywhere, but this is not strictly necessary.
-       */
-      'promise/no-native': 'off',
-      'promise/no-return-wrap': 1,
-      'promise/prefer-await-to-callbacks': 1,
-      'promise/prefer-await-to-then': 1,
-      'promise/param-names': 1,
+      'n/no-deprecated-api': 'warn',
 
-      'array-bracket-spacing': 2,
-      'arrow-body-style': [1, 'as-needed'],
-      'arrow-parens': [1, 'always'],
-      'arrow-spacing': 2,
-      /**
-       * Disables the `brace-style` rule.
-       * @remarks Due to the way `prettier` sometimes formats extremely verbose types, sometimes it is necessary
-       * to indent in a way that is not allowed by the default `brace-style` rule.
-       */
-      'brace-style': 'off',
-      'comma-dangle': 0,
-      'comma-spacing': [
-        2,
-        {
-          before: false,
-          after: true,
-        },
-      ],
-      'curly': [2, 'all'],
-      'dot-notation': 2,
-      'eqeqeq': [2, 'smart'],
-      'key-spacing': [
-        2,
-        {
-          mode: 'strict',
-          beforeColon: false,
-          afterColon: true,
-        },
-      ],
-      'keyword-spacing': 2,
-      'no-buffer-constructor': 1,
-      'no-console': 2,
-      'no-dupe-class-members': 'off',
-      'no-empty': 0,
-      'no-multi-spaces': 2,
-      'no-prototype-builtins': 1,
-      'no-redeclare': 'off',
-      'no-trailing-spaces': 2,
-      'no-var': 2,
-      'no-whitespace-before-property': 2,
-      'object-shorthand': 2,
-      'quotes': [
-        2,
-        'single',
-        {
-          avoidEscape: true,
-          allowTemplateLiterals: true,
-        },
-      ],
-      'radix': [2, 'always'],
-      'require-atomic-updates': 0,
+      'promise/catch-or-return': 'warn',
+      'promise/no-return-wrap': 'warn',
+      'promise/prefer-await-to-callbacks': 'warn',
+      'promise/prefer-await-to-then': 'warn',
+      'promise/param-names': 'warn',
+
+      'arrow-body-style': 'warn',
+      'curly': 'error',
+      'dot-notation': 'error',
+      'eqeqeq': ['error', 'smart'],
+      'no-console': 'error',
+      'no-empty': 'off',
+      'no-prototype-builtins': 'warn',
+      'object-shorthand': 'error',
+      'radix': 'error',
+      'require-atomic-updates': 'off',
       /**
        * Allow `async` functions without `await`.
        * @remarks Originally, this was to be more clear about the return value of a function, but with
@@ -170,26 +146,17 @@ export default [
        * `return await somePromise` have their own use-cases.
        */
       'require-await': 'off',
-      'semi': [2, 'always'],
-      'space-before-blocks': [2, 'always'],
-      'space-in-parens': [2, 'never'],
-      'space-infix-ops': 2,
-      'space-unary-ops': [
-        2,
-        {
-          words: true,
-          nonwords: false,
-        },
-      ],
     }
   },
 
   {
-    ...mochaPlugin.configs.recommended,
     name: 'Test Files',
     files: ['**/test/**', '*.spec.*js', '-specs.*js', '*.spec.ts'],
+    plugins: {
+      mocha: mochaPlugin,
+    },
+    extends: [mochaPlugin.configs.recommended],
     rules: {
-      ...mochaPlugin.configs.recommended.rules,
       /**
        * Both `@ts-expect-error` and `@ts-ignore` are allowed to be used with impunity in tests.
        * @remarks We often test things which explicitly violate types.
@@ -202,27 +169,21 @@ export default [
        */
       '@typescript-eslint/no-non-null-assertion': 'off',
       '@typescript-eslint/no-unused-expressions': 'off',
-      'import/no-named-as-default-member': 'off',
+      'import-x/no-named-as-default-member': 'off',
       'mocha/consistent-spacing-between-blocks': 'off',
       'mocha/max-top-level-suites': 'off',
-      'mocha/no-exclusive-tests': 2,
+      'mocha/no-exclusive-tests': 'error',
       'mocha/no-exports': 'off',
-      'mocha/no-mocha-arrows': 2,
       'mocha/no-pending-tests': 'off',
       'mocha/no-setup-in-describe': 'off',
     },
   },
-
-  {
-    name: 'Ignores',
-    ignores: [
-      ...(fs.existsSync(gitignorePath) ? includeIgnoreFile(gitignorePath).ignores : []),
-      '**/.*',
-      '**/*-d.ts',
-      '**/*.min.js',
-      '**/build/**',
-      '**/coverage/**',
-    ],
-  }
-
-];
+  fs.existsSync(gitignorePath) ? includeIgnoreFile(gitignorePath) : {},
+  globalIgnores([
+    '**/.*',
+    '**/*-d.ts',
+    '**/*.min.js',
+    '**/build/**',
+    '**/coverage/**',
+  ]),
+]);

@@ -91,6 +91,14 @@ export interface ProxyOptions {
    * @default true
    */
   keepAlive?: boolean;
+  /**
+   * Additional HTTP headers to send to the downstream server on every request.
+   *
+   * These headers are merged into the default headers Appium uses
+   * (`content-type`, `user-agent`, `accept`). If a header provided here
+   * has the same name as a default header, the value provided here wins.
+   */
+  headers?: HTTPHeaders;
 }
 
 export type HTTPBody<T = any> = T;

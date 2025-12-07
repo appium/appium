@@ -34,6 +34,7 @@ const ALLOWED_OPTS = [
   'timeout',
   'log',
   'keepAlive',
+  'headers',
 ];
 
 export class JWProxy {
@@ -51,6 +52,8 @@ export class JWProxy {
   sessionId;
   /** @type {number} */
   timeout;
+  /** @type {import('@appium/types').HTTPHeaders | undefined} */
+  headers;
   /** @type {Protocol | null | undefined} */
   _downstreamProtocol;
   /** @type {ProxyRequest[]} */
@@ -192,6 +195,7 @@ export class JWProxy {
         'content-type': 'application/json; charset=utf-8',
         'user-agent': 'appium',
         accept: 'application/json, */*',
+        ...(this.headers ?? {}),
       },
       proxy: false,
       timeout: this.timeout,

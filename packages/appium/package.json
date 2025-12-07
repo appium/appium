@@ -85,7 +85,7 @@
     "source-map-support": "0.5.21",
     "teen_process": "3.0.4",
     "type-fest": "5.3.0",
-    "winston": "3.18.3",
+    "winston": "3.19.0",
     "wrap-ansi": "7.0.0",
     "ws": "8.18.3",
     "yaml": "2.8.2"

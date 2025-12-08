@@ -2,6 +2,7 @@
   "name": "@appium/test-support",
   "version": "4.0.4",
   "description": "A collection of test utilities used across Appium packages",
+  "deprecated": "This module is deprecated. Use sinon directly instead (e.g., sinon.createSandbox() with Mocha hooks).",
   "keywords": [
     "automation",
     "javascript",

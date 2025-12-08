@@ -8,6 +8,7 @@ import sinon from 'sinon';
  *
  * _Synchronously_ calls `fn` with the {@linkcode MockStore} after hooks have been created, but not before they have been run.
  *
+ * @deprecated Use `sinon.createSandbox()` directly with Mocha `beforeEach`/`afterEach` hooks instead.
  * @param {Record<string|symbol,any>} mockDefs
  * @param {(mocks: MockStore) => void} fn
  * @returns {() => void}
@@ -29,6 +30,7 @@ export function withMocks(mockDefs, fn) {
 
 /**
  * Convenience function for calling `mocks.verify()`.
+ * @deprecated Call `sandbox.verify()` directly on your sinon sandbox instead.
  * @param {MockStore} mocks - Returned by callback from {@linkcode withMocks}
  */
 export function verifyMocks(mocks) {
@@ -38,6 +40,7 @@ export function verifyMocks(mocks) {
 /**
  * @template {Record<string,any>} Mocks
  * @extends {Mocks}
+ * @deprecated Use `sinon.createSandbox()` and `sandbox.mock()` directly instead.
  */
 export class MockStore {
   /**

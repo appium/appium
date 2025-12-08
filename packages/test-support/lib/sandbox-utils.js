@@ -4,6 +4,7 @@ import {MockStore} from './mock-utils';
 
 /**
  * @template {Record<string,any>|{mocks: Record<string,any>}} Mocks
+ * @deprecated Use `sinon.createSandbox()` directly with Mocha `beforeEach`/`afterEach` hooks instead.
  * @param {Mocks} mockDefs
  * @param {(sandboxStore: SandboxStore) => void} fn
  * @returns {() => void}
@@ -30,6 +31,7 @@ export function withSandbox(mockDefs, fn) {
 
 /**
  * Convenience function for calling {@linkcode SandboxStore.verify}.
+ * @deprecated Call `sandbox.verify()` directly on your sinon sandbox instead.
  * @param {SandboxStore|MockStore} sbxOrMocks
  */
 export function verifySandbox(sbxOrMocks) {
@@ -38,6 +40,7 @@ export function verifySandbox(sbxOrMocks) {
 
 /**
  * @template {Record<string,any>} Mocks
+ * @deprecated Use `sinon.createSandbox()` directly instead.
  */
 export class SandboxStore {
   /** @type {MockStore<Record<string,any>>} */

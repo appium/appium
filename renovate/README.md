@@ -36,7 +36,6 @@ Appium extension authors--or anyone else--may use this config as well.
 
 - `config:js-app` - everything gets pinned except peer deps (plus a bunch of other reasonable defaults)
 - `group:definitelyTyped` - Groups all `@types/*` packages into one PR
-- `workarounds:typesNodeVersioning` - `@types/node` tracks Node.js versions instead
 - `:automergeStableNonMajor` - Automatically merges "patch" and "minor" updates for semver stable (>=1.0.0) packages (assuming they pass CI)
 - `:automergeDigest` - Automatically merges "digest" updates (assuming they pass CI)
 - `:enableVulnerabilityAlerts` - For "security" purposes
@@ -46,13 +45,10 @@ Appium extension authors--or anyone else--may use this config as well.
 
 ### Custom Rules
 
-- Do not upgrade to major versions of packages which have become ESM-only.  Unfortunately this is an explicit deny-list.
 - Groups (groups updates into single PR):
   - ESLint-related and [@appium/eslint-config-appium-ts](https://github.com/appium/appium/tree/master/eslint-config-appium-ts)
   - [teen_process](https://github.com/appium/node-teen_process) and its DT types
   - Appium-scoped (`@appium`) packages. This applies to _other_ repos which depend on Appium, such as official drivers.
-
-> Note: The packages in the do-not-upgrade-majors list _may or may not be used_ by Appium; the intent is to not remove anything from this list (unless they start publishing CJS again).
 
 ### Additional Config
 

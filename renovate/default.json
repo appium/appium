@@ -15,7 +15,6 @@
     {
       "matchPackageNames": [
         "@types/wrap-ansi",
-        "env-paths",
         "get-port",
         "get-stream",
         "log-symbols",

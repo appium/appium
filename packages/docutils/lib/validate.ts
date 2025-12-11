@@ -5,7 +5,6 @@
  */
 
 import {fs, util} from '@appium/support';
-import chalk from 'chalk';
 import _ from 'lodash';
 import {EventEmitter} from 'node:events';
 import {exec} from 'teen_process';
@@ -21,12 +20,7 @@ import {
   REQUIREMENTS_TXT_PATH,
 } from './constants';
 import {DocutilsError} from './error';
-import {
-  findMkDocsYml,
-  isMkDocsInstalled,
-  readMkDocsYml,
-  findPython,
-} from './fs';
+import {findMkDocsYml, isMkDocsInstalled, readMkDocsYml, findPython} from './fs';
 import {getLogger} from './logger';
 import {MkDocsYml, PipPackage} from './model';
 
@@ -319,7 +313,7 @@ export class DocutilsValidator extends EventEmitter {
       ]));
     } catch {
       return this.fail(
-        `Could not find ${NAME_PIP} installation for Python at ${pythonPath}. Is it installed?`
+        `Could not find ${NAME_PIP} installation for Python at ${pythonPath}. Is it installed?`,
       );
     }
 
@@ -352,7 +346,7 @@ export class DocutilsValidator extends EventEmitter {
           'package',
           missingPackages.length,
         )} could not be found:\n${missingPackages
-          .map((p) => chalk`- {yellow ${p.name}} @ {yellow ${p.version}}`)
+          .map((p) => `- ${p.name} @ ${p.version}`)
           .join('\n')}`,
       );
     }
@@ -364,7 +358,7 @@ export class DocutilsValidator extends EventEmitter {
         )} are installed, but at the wrong version:\n${invalidVersionPackages
           .map(
             ([expected, actual]) =>
-              chalk`- {yellow ${expected.name}} @ {yellow ${expected.version}} (found {red ${actual.version}})`,
+              `- ${expected.name} @ ${expected.version} (found ${actual.version})`,
           )
           .join('\n')}`,
       );

@@ -4,7 +4,6 @@
   "extends": [
     "config:js-app",
     "group:definitelyTyped",
-    "workarounds:typesNodeVersioning",
     ":automergeStableNonMajor",
     ":automergeDigest",
     ":enableVulnerabilityAlerts",
@@ -34,18 +33,15 @@
     {
       "extends": ["packages:eslint"],
       "matchPackageNames": ["@appium/eslint-config-appium-ts"],
-      "groupName": "ESLint-related packages",
-      "groupSlug": "eslint"
+      "groupName": "ESLint-related packages"
     },
     {
       "matchPackageNames": ["teen_process", "@types/teen_process"],
-      "groupName": "teen_process-related packages",
-      "groupSlug": "teen_process"
+      "groupName": "teen_process-related packages"
     },
     {
       "matchPackageNames": ["appium", "@appium/**", "!@appium/eslint-config-appium-ts"],
-      "groupName": "Appium-related packages",
-      "groupSlug": "appium"
+      "groupName": "Appium-related packages"
     }
   ],
   "semanticCommitScope": "{{#if parentDir}}{{parentDir}}{{else}}deps{{/if}}"

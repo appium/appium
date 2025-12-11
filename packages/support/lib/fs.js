@@ -31,7 +31,7 @@ const ncpAsync =
   /** @type {(source: string, dest: string, opts: ncp.Options|undefined) => B<void>} */ (
     B.promisify(ncp)
   );
-const findRootCached = _.memoize(packageDirectorySync);
+const findRootCached = _.memoize(packageDirectorySync, (opts) => opts?.cwd ?? crypto.randomUUID());
 
 const fs = {
   /**

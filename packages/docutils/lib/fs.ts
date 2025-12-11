@@ -5,6 +5,7 @@
 
 import {fs} from '@appium/support';
 import _ from 'lodash';
+import crypto from 'node:crypto';
 import path from 'node:path';
 import {packageDirectory} from 'package-directory';
 import readPkg, {NormalizedPackageJson, PackageJson} from 'read-pkg';
@@ -30,7 +31,7 @@ const log = getLogger('fs');
  *
  * Caches result
  */
-const findPkgDir = _.memoize(packageDirectory);
+const findPkgDir = _.memoize(packageDirectory, (opts) => opts?.cwd ?? crypto.randomUUID());
 
 /**
  * Stringifies a thing into a YAML

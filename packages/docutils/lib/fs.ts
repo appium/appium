@@ -6,7 +6,7 @@
 import {fs} from '@appium/support';
 import _ from 'lodash';
 import path from 'node:path';
-import _pkgDir from 'pkg-dir';
+import {packageDirectory} from 'package-directory';
 import readPkg, {NormalizedPackageJson, PackageJson} from 'read-pkg';
 import {JsonValue} from 'type-fest';
 import * as YAML from 'yaml';
@@ -30,7 +30,7 @@ const log = getLogger('fs');
  *
  * Caches result
  */
-const findPkgDir = _.memoize(_pkgDir);
+const findPkgDir = _.memoize(packageDirectory);
 
 /**
  * Stringifies a thing into a YAML
@@ -75,7 +75,7 @@ export async function findInPkgDir(
   filename: string,
   cwd = process.cwd(),
 ): Promise<string | undefined> {
-  const pkgDir = await findPkgDir(cwd);
+  const pkgDir = await findPkgDir({cwd});
   if (!pkgDir) {
     return;
   }
@@ -109,7 +109,7 @@ async function _readPkgJson(
   cwd: string,
   normalize?: boolean,
 ): Promise<{pkgPath: string; pkg: PackageJson | NormalizedPackageJson}> {
-  const pkgDir = await findPkgDir(cwd);
+  const pkgDir = await findPkgDir({cwd});
   if (!pkgDir) {
     throw new DocutilsError(
       `Could not find a ${NAME_PACKAGE_JSON} near ${cwd}; please create it before using this utility`,

@@ -17,7 +17,6 @@
         "@types/wrap-ansi",
         "log-symbols",
         "ora",
-        "pkg-dir",
         "read-pkg",
         "wrap-ansi"
       ],

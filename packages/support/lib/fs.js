@@ -17,8 +17,8 @@ import { glob } from 'glob';
 import klaw from 'klaw';
 import _ from 'lodash';
 import ncp from 'ncp';
+import {packageDirectorySync} from 'package-directory';
 import path from 'path';
-import pkgDir from 'pkg-dir';
 import readPkg from 'read-pkg';
 import sanitize from 'sanitize-filename';
 import which from 'which';
@@ -31,7 +31,7 @@ const ncpAsync =
   /** @type {(source: string, dest: string, opts: ncp.Options|undefined) => B<void>} */ (
     B.promisify(ncp)
   );
-const findRootCached = _.memoize(pkgDir.sync);
+const findRootCached = _.memoize(packageDirectorySync);
 
 const fs = {
   /**
@@ -395,7 +395,7 @@ const fs = {
     if (!dir || !path.isAbsolute(dir)) {
       throw new TypeError('`findRoot()` must be provided a non-empty, absolute path');
     }
-    const result = findRootCached(dir);
+    const result = findRootCached({cwd: dir});
     if (!result) {
       throw new Error(`\`findRoot()\` could not find \`package.json\` from ${dir}`);
     }

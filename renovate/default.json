@@ -14,7 +14,6 @@
   "packageRules": [
     {
       "matchPackageNames": [
-        "@types/supports-color",
         "@types/wrap-ansi",
         "env-paths",
         "get-port",
@@ -23,7 +22,6 @@
         "ora",
         "pkg-dir",
         "read-pkg",
-        "supports-color",
         "wrap-ansi"
       ],
       "matchUpdateTypes": ["major"],

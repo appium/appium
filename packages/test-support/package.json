@@ -51,8 +51,7 @@
     "bluebird": "3.7.2",
     "lodash": "4.17.21",
     "loud-rejection": "2.2.0",
-    "sinon": "21.0.0",
-    "source-map-support": "0.5.21"
+    "sinon": "21.0.0"
   },
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0",

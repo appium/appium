@@ -69,7 +69,6 @@
     "sanitize-filename": "1.6.3",
     "semver": "7.7.3",
     "shell-quote": "1.8.3",
-    "source-map-support": "0.5.21",
     "supports-color": "8.1.1",
     "teen_process": "3.0.5",
     "type-fest": "5.3.1",

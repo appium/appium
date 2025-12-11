@@ -44,8 +44,7 @@
     "bluebird": "3.7.2",
     "lodash": "4.17.21",
     "opencv-bindings": "4.5.5",
-    "sharp": "0.34.5",
-    "source-map-support": "0.5.21"
+    "sharp": "0.34.5"
   },
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0",

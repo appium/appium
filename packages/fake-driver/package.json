@@ -46,7 +46,6 @@
     "asyncbox": "3.0.0",
     "bluebird": "3.7.2",
     "lodash": "4.17.21",
-    "source-map-support": "0.5.21",
     "xpath": "0.0.34"
   },
   "peerDependencies": {

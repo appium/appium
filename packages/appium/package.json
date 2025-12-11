@@ -82,7 +82,6 @@
     "package-changed": "3.0.0",
     "resolve-from": "5.0.0",
     "semver": "7.7.3",
-    "source-map-support": "0.5.21",
     "teen_process": "3.0.5",
     "type-fest": "5.3.1",
     "winston": "3.19.0",

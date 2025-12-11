@@ -130,7 +130,7 @@
     "eslint-plugin-mocha": "11.2.0",
     "eslint-plugin-promise": "7.2.1",
     "finalhandler": "2.1.1",
-    "get-port": "5.1.1",
+    "get-port": "7.1.0",
     "json-schema-to-typescript": "15.0.4",
     "lerna": "9.0.3",
     "log-symbols": "4.1.0",

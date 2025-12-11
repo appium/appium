@@ -15,7 +15,6 @@
     {
       "matchPackageNames": [
         "@types/wrap-ansi",
-        "get-stream",
         "log-symbols",
         "ora",
         "pkg-dir",

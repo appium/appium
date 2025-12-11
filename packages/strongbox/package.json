@@ -41,7 +41,7 @@
     "test:e2e": "mocha --exit -t 20s \"test/e2e/**/*.e2e.spec.ts\""
   },
   "dependencies": {
-    "env-paths": "2.2.1",
+    "env-paths": "3.0.0",
     "slugify": "1.6.6"
   },
   "engines": {

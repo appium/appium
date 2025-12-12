@@ -353,16 +353,16 @@ export function generateDriverLogPrefix(obj, sessionId = null) {
  * @returns {Promise<RemoteAppData>}
  */
 async function queryAppLink(appLink, reqHeaders) {
-  const {href, password, username} = new URL(appLink);
-  const axiosUrl = password
-    ? href.replace(`${username}:${password}@`, '')
-    : username
-      ? href.replace(`${username}@`, '')
-      : href;
+  const url = new URL(appLink);
+  // Extract credentials, then remove them from the URL for axios
+  const {username, password} = url;
+  url.username = '';
+  url.password = '';
+  const axiosUrl = url.href;
   /** @type {import('axios').AxiosBasicCredentials|undefined} */
   const axiosAuth = username ? {
     username,
-    password: password ?? '',
+    password,
   } : undefined;
   /**
    * @type {import('axios').RawAxiosRequestConfig}

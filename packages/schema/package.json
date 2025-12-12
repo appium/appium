@@ -38,8 +38,7 @@
     "test": "exit 0"
   },
   "dependencies": {
-    "json-schema": "0.4.0",
-    "source-map-support": "0.5.21"
+    "json-schema": "0.4.0"
   },
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0",

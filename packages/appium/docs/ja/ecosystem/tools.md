@@ -21,6 +21,41 @@ Appium has a graphical client which can be used to inspect application screensho
 application hierarchy, search for elements, run Appium commands, record app interactions, and more.
 It can be very useful for Appium test development.
 
+\=== "Install as an Appium Plugin"
+
+````
+```bash
+appium plugin install inspector
+```
+````
+
+\=== "Install Standalone"
+
+```
+Download the app from the Appium Inspector repo's [GitHub Releases section](https://github.com/appium/appium-inspector/releases).
+```
+
+### [Appium MCP](https://github.com/appium/appium-mcp)
+
+Appium MCP is a Model Context Protocol (MCP) server that provides mobile test development and
+automation capabilities using Appium.
+
+```json title="Install This Tool"
+// Add the following to your MCP client configuration
+{
+  "appium-mcp": {
+    "disabled": false,
+    "timeout": 100,
+    "type": "stdio",
+    "command": "npx",
+    "args": ["appium-mcp@latest"],
+    "env": {
+      "ANDROID_HOME": "/path/to/android/sdk"
+    }
+  }
+}
+```
+
 ## Extension Tools
 
 Appium driver or plugin developers can choose to include these tools in their driver/plugin:
@@ -35,7 +70,7 @@ details needed for the driver/plugin have been set up correctly. The tool can be
 appium {driver|plugin} doctor <extension-name>
 ```
 
-It shows no results if the driver/plugin author did not implement Doctor support.
+It shows no results if the driver/plugin does not have such validation checks.
 
 !!! note
 
@@ -58,30 +93,4 @@ Supported by: `@AppiumTestDistribution`
 
 ```sh title="Install This Tool"
 npm install -g appium-installer
-```
-
-### [Jarvis Appium](https://github.com/AppiumTestDistribution/mcp-appium)
-
-Jarvis Appium is a Model Context Protocol (MCP) server that provides mobile test development and
-automation capabilities using Appium.
-
-Supported by: `@AppiumTestDistribution`
-
-```json title="Install This Tool"
-// Add the following to your MCP client configuration
-{
-  "mcpServers": {
-    "jarvis-appium": {
-      "disabled": false,
-      "timeout": 100,
-      "type": "stdio",
-      "command": "npx",
-      "args": ["jarvis-appium"],
-      "env": {
-        "ANDROID_HOME": "/path/to/android/sdk",
-        "CAPABILITIES_CONFIG": "/path/to/your/capabilities.json"
-      }
-    }
-  }
-}
 ```

@@ -47,7 +47,7 @@ export function initMocks(sandbox = createSandbox()) {
   const overrides = {
     'resolve-from': MockResolveFrom,
     'read-pkg': MockReadPkg,
-    'pkg-dir': MockPkgDir,
+    'package-directory': MockPkgDir,
     teen_process: MockTeenProcess,
     fs: MockFs,
   };
@@ -69,8 +69,8 @@ export function initMocks(sandbox = createSandbox()) {
  */
 
 /**
- * Mocks for `pkg-dir` package
- * @typedef {sinon.SinonStubbedMember<import('pkg-dir')>} MockPkgDir
+ * Mocks for `package-directory` package
+ * @typedef {sinon.SinonStubbedMember<import('package-directory').packageDirectory>} MockPkgDir
  */
 
 /**
@@ -80,7 +80,7 @@ export function initMocks(sandbox = createSandbox()) {
 
 /**
  * For passing into `rewiremock.proxy()`.
- * @typedef { {'resolve-from': MockResolveFrom, 'pkg-dir': MockPkgDir, 'read-pkg': MockReadPkg, 'teen_process': MockTeenProcess, fs: MockFs} } Overrides
+ * @typedef { {'resolve-from': MockResolveFrom, 'package-directory': MockPkgDir, 'read-pkg': MockReadPkg, 'teen_process': MockTeenProcess, fs: MockFs} } Overrides
  */
 
 /**

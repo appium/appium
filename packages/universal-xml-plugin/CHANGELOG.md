@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.3](https://github.com/appium/appium/compare/@appium/universal-xml-plugin@2.0.2...@appium/universal-xml-plugin@2.0.3) (2025-12-04)
+
+**Note:** Version bump only for package @appium/universal-xml-plugin
+
+
+
+
+
 ## [2.0.2](https://github.com/appium/appium/compare/@appium/universal-xml-plugin@2.0.1...@appium/universal-xml-plugin@2.0.2) (2025-11-12)
 
 **Note:** Version bump only for package @appium/universal-xml-plugin

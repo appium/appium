@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import {supportsColor} from 'supports-color';
+import {createSupportsColor} from 'supports-color';
 import {Console as NodeConsole} from 'console';
 import '@colors/colors';
 import symbols from 'log-symbols';
@@ -60,7 +60,7 @@ export class CliConsole {
   constructor({jsonMode = false, useSymbols = true, useColor} = {}) {
     this.#console = new NodeConsole(process.stdout, jsonMode ? new NullWritable() : process.stderr);
     this.#useSymbols = Boolean(useSymbols);
-    this.#useColor = Boolean(useColor ?? supportsColor(process.stderr));
+    this.#useColor = Boolean(useColor ?? createSupportsColor(process.stderr));
   }
 
   /**

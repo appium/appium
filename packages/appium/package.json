@@ -1,6 +1,6 @@
 {
   "name": "appium",
-  "version": "3.1.1",
+  "version": "3.1.2",
   "description": "Automation for Apps.",
   "keywords": [
     "automation",
@@ -60,13 +60,13 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/base-driver": "^10.1.1",
-    "@appium/base-plugin": "^3.0.4",
-    "@appium/docutils": "^2.1.2",
-    "@appium/logger": "^2.0.2",
+    "@appium/base-driver": "^10.1.2",
+    "@appium/base-plugin": "^3.0.5",
+    "@appium/docutils": "^2.2.0",
+    "@appium/logger": "^2.0.3",
     "@appium/schema": "^1.0.0",
-    "@appium/support": "^7.0.3",
-    "@appium/types": "^1.1.1",
+    "@appium/support": "^7.0.4",
+    "@appium/types": "^1.1.2",
     "@sidvind/better-ajv-errors": "4.0.1",
     "ajv": "8.17.1",
     "ajv-formats": "3.0.1",
@@ -82,10 +82,9 @@
     "package-changed": "3.0.0",
     "resolve-from": "5.0.0",
     "semver": "7.7.3",
-    "source-map-support": "0.5.21",
-    "teen_process": "3.0.4",
-    "type-fest": "5.3.0",
-    "winston": "3.18.3",
+    "teen_process": "3.0.5",
+    "type-fest": "5.3.1",
+    "winston": "3.19.0",
     "wrap-ansi": "7.0.0",
     "ws": "8.18.3",
     "yaml": "2.8.2"

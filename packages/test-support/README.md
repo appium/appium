@@ -1,5 +1,7 @@
 # @appium/test-support
 
+> ⚠️ **DEPRECATED**: This module is deprecated. Use `sinon` directly instead (e.g., `sinon.createSandbox()` with Mocha `beforeEach`/`afterEach` hooks).
+
 > A collection of test utility libs used across Appium packages
 
 [![NPM version](http://img.shields.io/npm/v/@appium/test-support.svg)](https://npmjs.org/package/@appium/test-support)

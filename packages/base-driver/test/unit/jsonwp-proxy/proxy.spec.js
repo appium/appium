@@ -149,6 +149,30 @@ describe('proxy', function () {
       res.statusCode.should.equal(200);
       body.should.eql({status: 0, value: {foo: 'bar'}});
     });
+    it('should apply custom headers to downstream requests', async function () {
+      const customHeaders = {
+        'x-custom-header': 'foobar',
+        'user-agent': 'my-appium-client',
+      };
+      let capturedConfig;
+      const j = mockProxy({headers: customHeaders});
+      j.request = async function (config) {
+        capturedConfig = config;
+        return await request(config);
+      };
+      await j.proxy('/status', 'GET');
+      capturedConfig.should.have.property('headers');
+      capturedConfig.headers.should.have.property('x-custom-header', 'foobar');
+      capturedConfig.headers.should.have.property('user-agent', 'my-appium-client');
+      capturedConfig.headers.should.have.property(
+        'content-type',
+        'application/json; charset=utf-8'
+      );
+      capturedConfig.headers.should.have.property(
+        'accept',
+        'application/json, */*'
+      );
+    });
     it('should pass along request errors', function () {
       const j = mockProxy({sessionId: '123'});
       j.proxy('/badurl', 'GET').should.eventually.be.rejectedWith('Could not proxy');

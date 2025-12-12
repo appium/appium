@@ -13,7 +13,21 @@ Install the package:
 npm install @appium/eslint-config-appium-ts --save-dev
 ```
 
-And then, in your `eslint.config.mjs` file, extend the configuration:
+Then add it to your `eslint.config.mjs` file:
+
+```js
+import appiumConfig from '@appium/eslint-config-appium-ts';
+import {defineConfig} from 'eslint/config';
+
+export default defineConfig([
+  {
+    extends: [appiumConfig],
+    // add any other config changes 
+  },
+]);
+```
+
+Or for ESLint `< 9.22.0`:
 
 ```js
 import appiumConfig from '@appium/eslint-config-appium-ts';

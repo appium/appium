@@ -15,6 +15,7 @@ import {formatResponseValue, ensureW3cResponse} from '../protocol/helpers';
 import http from 'http';
 import https from 'https';
 import { match as pathToRegexMatch } from 'path-to-regexp';
+import nodeUrl from 'node:url';
 import { ProxyRequest } from './proxy-request';
 
 const DEFAULT_LOG = logger.getLogger('WD Proxy');
@@ -439,10 +440,11 @@ export class JWProxy {
   /**
    *
    * @param {string} url
-   * @returns {URL}
+   * @returns {ParsedUrl}
    */
   _parseUrl(url) {
-    const parsedUrl = new URL(url || '/');
+    // eslint-disable-next-line n/no-deprecated-api -- we need relative URL support
+    const parsedUrl = nodeUrl.parse(url || '/');
     if (
       _.isNil(parsedUrl.href) || _.isNil(parsedUrl.pathname)
       || (parsedUrl.protocol && !['http:', 'https:'].includes(parsedUrl.protocol))
@@ -454,7 +456,7 @@ export class JWProxy {
 
   /**
    *
-   * @param {URL} parsedUrl
+   * @param {ParsedUrl} parsedUrl
    * @returns {string}
    */
   _toNormalizedPathname(parsedUrl) {
@@ -486,5 +488,6 @@ export default JWProxy;
 
 /**
  * @typedef {Error & {response: {data: import('type-fest').JsonObject, status: import('http-status-codes').StatusCodes}}} ProxyError
+ * @typedef {nodeUrl.UrlWithStringQuery} ParsedUrl
  * @typedef {typeof PROTOCOLS[keyof typeof PROTOCOLS]} Protocol
  */

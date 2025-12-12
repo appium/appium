@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/named
 import {createSandbox} from 'sinon';
 import {getGitRev, getBuildInfo, updateBuildInfo, APPIUM_VER} from '../../lib/config';
 import axios from 'axios';

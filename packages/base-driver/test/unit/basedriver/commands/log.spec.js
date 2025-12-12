@@ -1,5 +1,4 @@
 // @ts-check
-// eslint-disable-next-line import/named
 import {createSandbox} from 'sinon';
 import _ from 'lodash';
 import {BaseDriver} from '../../../../lib';

@@ -6,7 +6,6 @@ import {BaseDriver} from '@appium/base-driver';
 import {FakeDriver} from '@appium/fake-driver';
 import {sleep} from 'asyncbox';
 import _ from 'lodash';
-// eslint-disable-next-line import/named
 import {createSandbox} from 'sinon';
 import {finalizeSchema, registerSchema, resetSchema} from '../../lib/schema/schema';
 import {insertAppiumPrefixes, removeAppiumPrefixes} from '../../lib/utils';

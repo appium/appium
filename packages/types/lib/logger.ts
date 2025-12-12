@@ -24,7 +24,7 @@ export type AppiumLoggerContext = {
   sessionId?: string;
   sessionSignature?: string;
   [key: string]: any
-}
+};
 
 /**
  * Describes the internal logger.

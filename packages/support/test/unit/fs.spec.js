@@ -1,6 +1,5 @@
 import {fs, system, tempDir} from '../../lib';
 import path from 'path';
-// eslint-disable-next-line import/named
 import {createSandbox} from 'sinon';
 import {exec} from 'teen_process';
 import _ from 'lodash';

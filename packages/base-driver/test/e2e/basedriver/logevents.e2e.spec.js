@@ -1,6 +1,5 @@
 import {server, routeConfiguringFunction} from '../../../lib';
 import axios from 'axios';
-// eslint-disable-next-line import/named
 import {createSandbox} from 'sinon';
 import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
 import {MockExecuteDriver} from '../protocol/mock-execute-driver';

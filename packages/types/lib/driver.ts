@@ -380,11 +380,11 @@ export interface CachedAppInfo {
   /**
    * Date instance; the value of the file's `Last-Modified` header
    */
-  lastModified?: Date|null;
+  lastModified?: Date | null;
   /**
    * The value of the file's `Etag` header
    */
-  etag?: string|null;
+  etag?: string | null;
   /**
    * `true` if the file contains an `immutable` mark in `Cache-control` header
    */
@@ -392,7 +392,7 @@ export interface CachedAppInfo {
   /**
    * Integer representation of `maxAge` parameter in `Cache-control` header
    */
-  maxAge?: number|null;
+  maxAge?: number | null;
   /**
    * The timestamp this item has been added to the cache (measured in Unix epoch milliseconds)
    */

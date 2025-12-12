@@ -28,7 +28,7 @@ export type ParsedCaps<C extends Constraints> = {
 export type ValidateCapsOpts = {
   /** if true, skip the presence constraint */
   skipPresenceConstraint?: boolean;
-}
+};
 
 /**
  * Takes primary caps object and merges it into a secondary caps object.

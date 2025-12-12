@@ -26,7 +26,7 @@ export type CliCommandSetupSubcommand = 'mobile' | 'browser' | 'desktop' | 'rese
  * Possible subcommands of {@linkcode CliCommandDriver} or
  * {@linkcode CliCommandPlugin}.
  */
-export type CliExtensionSubcommand = 'install' | 'list' | 'run' | 'uninstall' | 'update'| 'doctor';
+export type CliExtensionSubcommand = 'install' | 'list' | 'run' | 'uninstall' | 'update' | 'doctor';
 
 export interface CliExtensionSubcommandListArgs {
   showInstalled?: boolean;

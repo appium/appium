@@ -151,7 +151,7 @@ export function writeFileString(filepath: string, content: JsonValue) {
   });
 }
 
-type WhichFunction = (cmd: string, opts?: {nothrow: boolean}) => Promise<string|null>;
+type WhichFunction = (cmd: string, opts?: {nothrow: boolean}) => Promise<string | null>;
 
 /**
  * `which` with memoization

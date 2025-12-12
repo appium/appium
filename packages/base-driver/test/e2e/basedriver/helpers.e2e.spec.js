@@ -1,5 +1,4 @@
 import path from 'path';
-import url from 'url';
 import {fs} from '@appium/support';
 import {configureApp} from '../../../lib/basedriver/helpers';
 import http from 'http';
@@ -83,7 +82,7 @@ describe('app download and configuration', function () {
               return;
             }
             // for testing zip file content types
-            const contentType = new URLSearchParams(url.parse(req.url).search).get('content-type');
+            const contentType = new URLSearchParams(new URL(req.url).search).get('content-type');
             if (contentType !== null) {
               res.setHeader('content-type', contentType);
             }

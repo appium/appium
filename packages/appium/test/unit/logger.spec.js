@@ -1,5 +1,4 @@
 import {init as logsinkInit, clear as logsinkClear} from '../../lib/logsink';
-// eslint-disable-next-line import/named
 import {createSandbox} from 'sinon';
 import {logger} from '@appium/support';
 

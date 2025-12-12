@@ -6,7 +6,6 @@ import {fs, tempDir} from '@appium/support';
 import axios from 'axios';
 import B from 'bluebird';
 import _ from 'lodash';
-// eslint-disable-next-line import/named
 import {createSandbox} from 'sinon';
 import {remote as wdio} from 'webdriverio';
 import {runExtensionCommand} from '../../lib/cli/extension';

@@ -23,7 +23,7 @@ import type {
   BiDiResultData
 } from '@appium/types';
 
-type ExtensionPlugin = Plugin & ExtensionCore
+type ExtensionPlugin = Plugin & ExtensionCore;
 type AnyDriver = ExternalDriver | AppiumDriver;
 type SendData = (data: string | Buffer) => Promise<void>;
 type LogSocketError = (err: Error) => void;
@@ -448,7 +448,7 @@ function initBidiEventListeners(
   // sure the client is subscribed and then pass it on
   const eventLogCounts: Record<string, number> = BIDI_EVENTS_MAP.get(bidiHandlerDriver) ?? {};
   BIDI_EVENTS_MAP.set(bidiHandlerDriver, eventLogCounts);
-  const eventListenerFactory = (extType: 'driver'|'plugin', ext: ExtensionCore) => {
+  const eventListenerFactory = (extType: 'driver' | 'plugin', ext: ExtensionCore) => {
     const eventListener = async ({context, method, params = {}}) => {
       // if the driver didn't specify a context, use the empty context
       if (!context) {

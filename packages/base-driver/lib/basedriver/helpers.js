@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import path from 'path';
-import url from 'url';
 import logger from './logger';
 import {tempDir, fs, util, timing, node} from '@appium/support';
 import { LRUCache } from 'lru-cache';
@@ -354,12 +353,16 @@ export function generateDriverLogPrefix(obj, sessionId = null) {
  * @returns {Promise<RemoteAppData>}
  */
 async function queryAppLink(appLink, reqHeaders) {
-  const {href, auth} = url.parse(appLink);
-  const axiosUrl = auth ? href.replace(`${auth}@`, '') : href;
+  const {href, password, username} = new URL(appLink);
+  const axiosUrl = password
+    ? href.replace(`${username}:${password}@`, '')
+    : username
+      ? href.replace(`${username}@`, '')
+      : href;
   /** @type {import('axios').AxiosBasicCredentials|undefined} */
-  const axiosAuth = auth ? {
-    username: auth.substring(0, auth.indexOf(':')),
-    password: auth.substring(auth.indexOf(':') + 1),
+  const axiosAuth = username ? {
+    username,
+    password: password ?? '',
   } : undefined;
   /**
    * @type {import('axios').RawAxiosRequestConfig}

@@ -85,7 +85,7 @@
   },
   "devDependencies": {
     "@colors/colors": "1.6.0",
-    "@eslint/js": "9.39.1",
+    "@eslint/js": "9.39.2",
     "@stylistic/eslint-plugin": "5.6.1",
     "@tsconfig/node20": "20.1.8",
     "@types/archiver": "7.0.0",
@@ -124,7 +124,7 @@
     "conventional-changelog-conventionalcommits": "7.0.2",
     "cpy-cli": "6.0.0",
     "cross-env": "10.1.0",
-    "eslint": "9.39.1",
+    "eslint": "9.39.2",
     "eslint-config-prettier": "10.1.8",
     "eslint-import-resolver-typescript": "4.4.4",
     "eslint-plugin-import-x": "4.16.1",

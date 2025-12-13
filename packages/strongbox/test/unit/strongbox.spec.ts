@@ -2,7 +2,6 @@ import path from 'node:path';
 import rewiremock from 'rewiremock/node';
 import type {Strongbox as TStrongbox, StrongboxOpts, Item, Value} from '../../lib';
 import {
-  // eslint-disable-next-line import/named
   createSandbox,
   SinonSandbox,
   SinonStubbedMember,

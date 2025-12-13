@@ -1,24 +1,30 @@
-import tsConfig from '@appium/eslint-config-appium-ts';
+import appiumConfig from '@appium/eslint-config-appium-ts';
+import {defineConfig, globalIgnores} from 'eslint/config';
 
-export default [
-  ...tsConfig,
-  {
-    ...tsConfig.find(({name}) => name === 'Test Files'),
-    name: 'Test Support',
-    files: [
-      'packages/test-support/lib/**',
-      'packages/driver-test-support/lib/**',
-      'packages/plugin-test-support/lib/**',
-    ],
-  },
-  {
-    name: 'Ignores',
-    ignores: [
-      '**/build-fixtures/**',
-      'packages/appium/docs/**/assets/**',
-      'packages/appium/docs/**/js/**',
-      'packages/appium/sample-code/**',
-    ],
-  },
+// Create a modified config subset for test support files:
+// Extract the test file related configs (Mocha plugin and custom rules),
+// then override their 'files' property
+const testFileConfigItems = [appiumConfig[8], appiumConfig[9]];
+const testSupportFiles = [
+  'packages/test-support/lib/**',
+  'packages/driver-test-support/lib/**',
+  'packages/plugin-test-support/lib/**',
 ];
+const testSupportConfig = testFileConfigItems.map((item) => ({...item, files: testSupportFiles}));
 
+export default defineConfig([
+  {
+    name: 'Base Config',
+    extends: [appiumConfig],
+  },
+  {
+    name: 'Test Support',
+    extends: [testSupportConfig],
+  },
+  globalIgnores([
+    '**/build-fixtures/**',
+    'packages/appium/docs/**/assets/**',
+    'packages/appium/docs/**/js/**',
+    'packages/appium/sample-code/**',
+  ]),
+]);

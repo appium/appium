@@ -1,6 +1,5 @@
 import {server} from '../../../lib';
 import axios from 'axios';
-// eslint-disable-next-line import/named
 import {createSandbox} from 'sinon';
 import B from 'bluebird';
 import _ from 'lodash';

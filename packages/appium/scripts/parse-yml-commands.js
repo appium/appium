@@ -8,7 +8,6 @@ const {fs, util, logger} = require('@appium/support');
 const Handlebars = require('handlebars');
 const _ = require('lodash');
 const {asyncify} = require('asyncbox');
-const url = require('url');
 
 const log = logger.getLogger('YamlParser');
 
@@ -192,7 +191,7 @@ Handlebars.registerHelper('if_eq', function ifEq(a, b, opts) {
 });
 
 function getBaseHostname(fullUrl) {
-  const baseUrl = url.parse(fullUrl);
+  const baseUrl = new URL(fullUrl);
   return baseUrl.hostname;
 }
 

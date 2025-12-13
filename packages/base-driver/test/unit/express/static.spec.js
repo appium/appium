@@ -1,5 +1,4 @@
 import {welcome} from '../../../lib/express/static';
-// eslint-disable-next-line import/named
 import {createSandbox} from 'sinon';
 
 describe('welcome', function () {

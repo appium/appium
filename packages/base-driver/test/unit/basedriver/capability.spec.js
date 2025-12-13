@@ -3,7 +3,6 @@
 import B from 'bluebird';
 import {BaseDriver, errors} from '../../../lib/index';
 import {validator} from '../../../lib/basedriver/validation';
-// eslint-disable-next-line import/named
 import {createSandbox} from 'sinon';
 
 // TODO: we need module-level mocks for the logger

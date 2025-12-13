@@ -2,7 +2,6 @@
 import {fs} from 'appium/support';
 import {main as appiumServer} from 'appium';
 import getPort from 'get-port';
-// eslint-disable-next-line import/named
 import {info, success, warning} from 'log-symbols';
 import {exec} from 'teen_process';
 
@@ -36,7 +35,6 @@ export function pluginE2EHarness(opts) {
    */
   let server;
 
-  // eslint-disable-next-line mocha/no-top-level-hooks
   before(async function () {
     const chai = await import('chai');
     const chaiAsPromised = await import('chai-as-promised');
@@ -136,7 +134,6 @@ export function pluginE2EHarness(opts) {
     await createServer();
   });
 
-  // eslint-disable-next-line mocha/no-top-level-hooks
   after(async function () {
     if (server) {
       await server.close();

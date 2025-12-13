@@ -1,7 +1,6 @@
 import path from 'node:path';
 import rewiremock from 'rewiremock/node';
 import {
-  // eslint-disable-next-line import/named
   createSandbox,
   SinonSandbox,
   SinonStubbedMember

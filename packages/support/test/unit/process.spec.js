@@ -1,5 +1,4 @@
 import * as teenProcess from 'teen_process';
-// eslint-disable-next-line import/named
 import {createSandbox} from 'sinon';
 import {process, system} from '../../lib';
 import {retryInterval} from 'asyncbox';

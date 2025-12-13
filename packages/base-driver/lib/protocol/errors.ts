@@ -74,7 +74,7 @@ export class ProtocolError extends BaseError {
    * @see https://w3c.github.io/webdriver-bidi/#protocol-definition
    * @returns The object conforming to the shape of a BiDi error response
    */
-  bidiErrObject(id: string|number): ErrorBiDiCommandResponse {
+  bidiErrObject(id: string | number): ErrorBiDiCommandResponse {
     // if we don't have an id, the client didn't send one, so we have nothing to send back.
     // send back zero rather than making something up
     const intId = (_.isInteger(id) ? id : (parseInt(`${id}`, 10) || 0)) as number;
@@ -1116,6 +1116,6 @@ interface W3CError {
 }
 
 interface ParameterRequirements {
-  required: string[]|string;
-  optional?: string[]|string;
+  required: string[] | string;
+  optional?: string[] | string;
 }

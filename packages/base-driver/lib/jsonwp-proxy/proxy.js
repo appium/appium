@@ -443,6 +443,7 @@ export class JWProxy {
    * @returns {ParsedUrl}
    */
   _parseUrl(url) {
+    // eslint-disable-next-line n/no-deprecated-api -- we need relative URL support
     const parsedUrl = nodeUrl.parse(url || '/');
     if (
       _.isNil(parsedUrl.href) || _.isNil(parsedUrl.pathname)

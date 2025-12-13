@@ -2,7 +2,6 @@
 
 import {server, routeConfiguringFunction} from '../../../lib';
 import {configureServer, normalizeBasePath} from '../../../lib/express/server';
-// eslint-disable-next-line import/named
 import {createSandbox} from 'sinon';
 import {getTestPort} from '@appium/driver-test-support';
 

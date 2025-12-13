@@ -37,7 +37,7 @@ export interface IDoctorCheck {
    * if hasAutofix returns true or
    * returns a string description for possible manual fixes
    */
-  fix(): Promise<string|null>;
+  fix(): Promise<string | null>;
   /**
    * Whether calling {@link fix()} would resolve the found issue
    */

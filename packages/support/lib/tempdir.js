@@ -2,10 +2,10 @@
 import {fs} from './fs';
 import os from 'os';
 import nodePath from 'path';
-import cnst from 'constants';
+import {constants} from 'node:fs';
 import log from './logger';
 
-const RDWR_EXCL = cnst.O_CREAT | cnst.O_TRUNC | cnst.O_RDWR | cnst.O_EXCL;
+const RDWR_EXCL = constants.O_CREAT | constants.O_TRUNC | constants.O_RDWR | constants.O_EXCL;
 
 /**
  * Generate a temporary directory in os.tempdir() or process.env.APPIUM_TMP_DIR.

@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/named
 import {createSandbox} from 'sinon';
 import {finalizeSchema, resetSchema, SchemaFinalizationError} from '../../../lib/schema/schema';
 import {rewiremock} from '../../helpers';

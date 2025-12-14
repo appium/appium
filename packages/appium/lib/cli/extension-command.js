@@ -215,7 +215,7 @@ class ExtensionCliCommand {
    */
   async _addRepositoryUrlsToListData(listData) {
     await spinWith(this.isJsonOutput, 'Fetching repository information', async () => {
-      for (const [, data] of _.toPairs(listData)) {
+      for (const data of _.values(listData)) {
         const repoUrl = await this._getRepositoryUrl(data);
         if (repoUrl) {
           /** @type {any} */ (data).repositoryUrl = repoUrl;

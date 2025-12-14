@@ -134,6 +134,7 @@ appium {driver|plugin} list
 |`--installed`|Only list all installed extensions|boolean|
 |`--json`|Return the result in JSON format|boolean|
 |`--updates`|List all extensions along with information on whether newer versions are available. Only supported for extensions installed via `npm`.|boolean|
+|`--verbose`|Show additional details for each extension|boolean|
 
 #### Example
 

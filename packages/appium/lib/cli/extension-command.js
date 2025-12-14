@@ -218,7 +218,7 @@ class ExtensionCliCommand {
       for (const data of _.values(listData)) {
         const repoUrl = await this._getRepositoryUrl(data);
         if (repoUrl) {
-          /** @type {any} */ (data).repositoryUrl = repoUrl;
+          data.repositoryUrl = repoUrl;
         }
       }
     });
@@ -237,8 +237,8 @@ class ExtensionCliCommand {
     /** @type {Record<string, string>} */
     const repoUrlMap = {};
     for (const [name, data] of _.toPairs(listData)) {
-      if (/** @type {any} */ (data).repositoryUrl) {
-        repoUrlMap[name] = /** @type {any} */ (data).repositoryUrl;
+      if (data.repositoryUrl) {
+        repoUrlMap[name] = data.repositoryUrl;
       }
     }
 
@@ -1235,6 +1235,7 @@ export {ExtensionCliCommand as ExtensionCommand};
  * @property {string|null} unsafeUpdateVersion - Same as above, but a major version bump
  * @property {string} [updateError] - Update check error message (if present)
  * @property {boolean} [devMode] - If Appium is run from an extension's working copy
+ * @property {string} [repositoryUrl] - Repository URL for the extension (if available)
  */
 
 /**

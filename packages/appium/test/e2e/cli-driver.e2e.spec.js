@@ -98,10 +98,12 @@ describe('Driver CLI', function () {
     it('should list available drivers in json format', async function () {
       const driverData = await runList();
       for (const d of Object.keys(KNOWN_DRIVERS)) {
-        driverData[d].should.eql({
-          installed: false,
-          pkgName: KNOWN_DRIVERS[d],
-        });
+        driverData[d].should.have.property('installed', false);
+        driverData[d].should.have.property('pkgName', KNOWN_DRIVERS[d]);
+        // repositoryUrl may be present if available
+        if (driverData[d].repositoryUrl) {
+          driverData[d].repositoryUrl.should.be.a('string');
+        }
       }
     });
 
@@ -179,6 +181,8 @@ describe('Driver CLI', function () {
       const list = await runList(['--installed']);
       // @ts-ignore
       delete list.uiautomator2.installed;
+      // @ts-ignore
+      delete list.uiautomator2.repositoryUrl;
       list.should.eql(ret);
     });
 
@@ -190,6 +194,8 @@ describe('Driver CLI', function () {
       const list = await runList(['--installed']);
       // @ts-ignore
       delete list.fake.installed;
+      // @ts-ignore
+      delete list.fake.repositoryUrl;
       list.should.eql(ret);
     });
 
@@ -223,6 +229,8 @@ describe('Driver CLI', function () {
       const list = await runList(['--installed']);
       // @ts-ignore
       delete list.fake.installed;
+      // @ts-ignore
+      delete list.fake.repositoryUrl;
       list.should.eql(ret);
     });
 
@@ -245,6 +253,8 @@ describe('Driver CLI', function () {
       const list = await runList(['--installed']);
       // @ts-ignore
       delete list.fake.installed;
+      // @ts-ignore
+      delete list.fake.repositoryUrl;
       list.should.eql(ret);
     });
 
@@ -262,6 +272,8 @@ describe('Driver CLI', function () {
       const list = await runList(['--installed', '--json']);
       // @ts-ignore
       delete list.fake.installed;
+      // @ts-ignore
+      delete list.fake.repositoryUrl;
       list.should.eql(ret);
     });
 
@@ -284,6 +296,8 @@ describe('Driver CLI', function () {
       const list = await runList(['--installed']);
       // @ts-ignore
       delete list.fake.installed;
+      // @ts-ignore
+      delete list.fake.repositoryUrl;
       list.should.eql(ret);
     });
 

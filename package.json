@@ -135,7 +135,7 @@
     "get-port": "7.1.0",
     "json-schema-to-typescript": "15.0.4",
     "lerna": "9.0.3",
-    "log-symbols": "4.1.0",
+    "log-symbols": "7.0.1",
     "midnight-smoker": "8.0.0",
     "mjpeg-consumer": "2.0.0",
     "mjpeg-server": "0.3.1",

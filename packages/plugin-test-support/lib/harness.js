@@ -2,7 +2,7 @@
 import {fs} from 'appium/support';
 import {main as appiumServer} from 'appium';
 import getPort from 'get-port';
-import {info, success, warning} from 'log-symbols';
+import logSymbols from 'log-symbols';
 import {exec} from 'teen_process';
 
 const APPIUM_BIN = require.resolve('appium');
@@ -50,7 +50,7 @@ export function pluginE2EHarness(opts) {
       if (appiumHome) {
         env.APPIUM_HOME = appiumHome;
         await fs.mkdirp(appiumHome);
-        console.log(`${info} Set \`APPIUM_HOME\` to ${appiumHome}`);
+        console.log(`${logSymbols.info} Set \`APPIUM_HOME\` to ${appiumHome}`);
       }
 
       return env;
@@ -61,26 +61,26 @@ export function pluginE2EHarness(opts) {
      * @param {AppiumEnv} env
      */
     const installDriver = async (env) => {
-      console.log(`${info} Checking if driver "${driverName}" is installed...`);
+      console.log(`${logSymbols.info} Checking if driver "${driverName}" is installed...`);
       const driverListArgs = [APPIUM_BIN, 'driver', 'list', '--json'];
-      console.log(`${info} Running: ${process.execPath} ${driverListArgs.join(' ')}`);
+      console.log(`${logSymbols.info} Running: ${process.execPath} ${driverListArgs.join(' ')}`);
       const {stdout: driverListJson} = await exec(process.execPath, driverListArgs, {
         env,
       });
       const installedDrivers = JSON.parse(driverListJson);
 
       if (!installedDrivers[driverName]?.installed) {
-        console.log(`${warning} Driver "${driverName}" not installed; installing...`);
+        console.log(`${logSymbols.warning} Driver "${driverName}" not installed; installing...`);
         const driverArgs = [APPIUM_BIN, 'driver', 'install', '--source', driverSource, driverSpec];
         if (driverPackage) {
           driverArgs.push('--package', driverPackage);
         }
-        console.log(`${info} Running: ${process.execPath} ${driverArgs.join(' ')}`);
+        console.log(`${logSymbols.info} Running: ${process.execPath} ${driverArgs.join(' ')}`);
         await exec(process.execPath, driverArgs, {
           env,
         });
       }
-      console.log(`${success} Installed driver "${driverName}"`);
+      console.log(`${logSymbols.success} Installed driver "${driverName}"`);
     };
 
     /**
@@ -88,7 +88,7 @@ export function pluginE2EHarness(opts) {
      * @param {AppiumEnv} env
      */
     const installPlugin = async (env) => {
-      console.log(`${info} Checking if plugin "${pluginName}" is installed...`);
+      console.log(`${logSymbols.info} Checking if plugin "${pluginName}" is installed...`);
       const pluginListArgs = [APPIUM_BIN, 'plugin', 'list', '--json'];
       const {stdout: pluginListJson} = await exec(process.execPath, pluginListArgs, {
         env,
@@ -96,24 +96,24 @@ export function pluginE2EHarness(opts) {
       const installedPlugins = JSON.parse(pluginListJson);
 
       if (!installedPlugins[pluginName]?.installed) {
-        console.log(`${warning} Plugin "${pluginName}" not installed; installing...`);
+        console.log(`${logSymbols.warning} Plugin "${pluginName}" not installed; installing...`);
         const pluginArgs = [APPIUM_BIN, 'plugin', 'install', '--source', pluginSource, pluginSpec];
         if (pluginPackage) {
           pluginArgs.push('--package', pluginPackage);
         }
-        console.log(`${info} Running: ${process.execPath} ${pluginArgs.join(' ')}`);
+        console.log(`${logSymbols.info} Running: ${process.execPath} ${pluginArgs.join(' ')}`);
         await exec(process.execPath, pluginArgs, {
           env,
         });
       }
-      console.log(`${success} Installed plugin "${pluginName}"`);
+      console.log(`${logSymbols.success} Installed plugin "${pluginName}"`);
     };
 
     const createServer = async () => {
       if (!port) {
         port = await getPort();
       }
-      console.log(`${info} Will use port ${port} for Appium server`);
+      console.log(`${logSymbols.info} Will use port ${port} for Appium server`);
       this.port = port;
 
       /** @type {import('appium/types').Args} */

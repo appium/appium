@@ -10,6 +10,7 @@
 const path = require('path');
 const {writeFile, mkdir} = require('fs').promises;
 const logSymbols = require('log-symbols');
+const {error, info, success} = logSymbols.default;
 
 /**
  * `@appium/schema` package root.
@@ -43,7 +44,7 @@ async function write() {
     ({AppiumConfigJsonSchema: schema} = require(SCHEMA_SRC));
   } catch {
     throw new Error(
-      `${logSymbols.error} Failed to read ${SCHEMA_SRC}; did you execute \`npm run build\` first?`
+      `${error} Failed to read ${SCHEMA_SRC}; did you execute \`npm run build\` first?`
     );
   }
 
@@ -52,9 +53,9 @@ async function write() {
   try {
     await mkdir(OUTPUT_DIR, {recursive: true});
     await writeFile(OUTPUT_PATH, json);
-    console.log(`${logSymbols.info} Wrote JSON schema to ${OUTPUT_PATH}`);
+    console.log(`${info} Wrote JSON schema to ${OUTPUT_PATH}`);
   } catch (err) {
-    throw new Error(`${logSymbols.error} Failed to write JSON schema to ${OUTPUT_PATH}: ${err.message}`);
+    throw new Error(`${error} Failed to write JSON schema to ${OUTPUT_PATH}: ${err.message}`);
   }
 }
 
@@ -66,7 +67,7 @@ async function main() {
     process.exitCode = 1;
     return;
   }
-  console.log(`${logSymbols.success} Done.`);
+  console.log(`${success} Done.`);
 }
 
 if (require.main === module) {

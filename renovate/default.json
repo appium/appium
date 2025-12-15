@@ -14,10 +14,8 @@
   "packageRules": [
     {
       "matchPackageNames": [
-        "@types/wrap-ansi",
         "ora",
-        "read-pkg",
-        "wrap-ansi"
+        "read-pkg"
       ],
       "matchUpdateTypes": ["major"],
       "enabled": false

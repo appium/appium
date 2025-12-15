@@ -9,6 +9,7 @@ const {compileFromFile} = require('json-schema-to-typescript');
 const path = require('path');
 const {promises: fs} = require('fs');
 const logSymbols = require('log-symbols');
+const {error, info, success} = logSymbols.default;
 
 /**
  * Path to `@appium/types` package root
@@ -41,16 +42,16 @@ async function main() {
       ts = await compileFromFile(JSON_SCHEMA_PATH);
     } catch (err) {
       throw new Error(
-        `${logSymbols.error} Could not convert Appium schema JSON to TypeScript: ${err.message}. Does it exist?`
+        `${error} Could not convert Appium schema JSON to TypeScript: ${err.message}. Does it exist?`
       );
     }
     try {
       await fs.writeFile(OUTPUT_PATH, ts);
     } catch (err) {
-      throw new Error(`${logSymbols.error} Could not write Appium schema declaration file: ${err.message}`);
+      throw new Error(`${error} Could not write Appium schema declaration file: ${err.message}`);
     }
-    console.log(`${logSymbols.info} Wrote %s`, OUTPUT_PATH);
-    console.log(`${logSymbols.success} Done.`);
+    console.log(`${info} Wrote %s`, OUTPUT_PATH);
+    console.log(`${success} Done.`);
   } catch (err) {
     console.error(err.message);
     process.exitCode = 1;

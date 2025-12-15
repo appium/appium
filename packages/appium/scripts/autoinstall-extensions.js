@@ -38,7 +38,6 @@ let PLUGIN_TYPE;
 /** @type {typeof import('../lib/extension').loadExtensions} */
 let loadExtensions;
 
-const _ = require('lodash');
 const ora = require('ora');
 
 /** @type {typeof import('@appium/support').env} */

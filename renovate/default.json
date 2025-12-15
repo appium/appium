@@ -15,7 +15,6 @@
     {
       "matchPackageNames": [
         "@types/wrap-ansi",
-        "log-symbols",
         "ora",
         "read-pkg",
         "wrap-ansi"

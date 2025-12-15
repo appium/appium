@@ -58,7 +58,7 @@
     "klaw": "4.1.0",
     "lockfile": "1.0.4",
     "lodash": "4.17.21",
-    "log-symbols": "4.1.0",
+    "log-symbols": "7.0.1",
     "moment": "2.30.1",
     "ncp": "2.0.0",
     "package-directory": "8.1.0",

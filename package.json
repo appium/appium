@@ -114,7 +114,6 @@
     "@types/sinon-chai": "4.0.0",
     "@types/teen_process": "2.0.4",
     "@types/which": "3.0.4",
-    "@types/wrap-ansi": "3.0.0",
     "@types/ws": "8.18.1",
     "@types/xmldom": "0.1.34",
     "@types/yargs": "17.0.35",

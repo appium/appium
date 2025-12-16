@@ -129,7 +129,9 @@ class ExtensionCliCommand {
   async list({showInstalled, showUpdates, verbose = false}) {
     const listData = this._buildListData(showInstalled);
 
-    const lsMsg = `Listing ${showInstalled ? 'installed' : 'available'} ${this.type}s${verbose ? ' (verbose mode)' : ''}`;
+    const lsMsg =
+      `Listing ${showInstalled ? 'installed' : 'available'} ${this.type}s` +
+      (verbose ? ' (verbose mode)' : '');
     await this._checkForUpdates(listData, showUpdates, lsMsg);
 
     // Fetch repository URLs for all extensions (needed for both JSON and display output)
@@ -144,7 +146,7 @@ class ExtensionCliCommand {
       return listData;
     }
 
-    return await this._displayNormalOutput(listData, showUpdates);
+    return await this._displayNormalListOutput(listData, showUpdates);
   }
 
   /**
@@ -241,7 +243,7 @@ class ExtensionCliCommand {
    * @returns {Promise<ExtensionList<ExtType>>}
    * @private
    */
-  async _displayNormalOutput(listData, showUpdates) {
+  async _displayNormalListOutput(listData, showUpdates) {
     for (const [name, data] of _.toPairs(listData)) {
       const line = await this._formatExtensionLine(name, data, showUpdates);
       this.log.log(line);
@@ -354,7 +356,6 @@ class ExtensionCliCommand {
     }
     return txt;
   }
-
 
   /**
    * Get repository URL from package data

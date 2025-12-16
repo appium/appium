@@ -7,7 +7,7 @@ import {fs} from '@appium/support';
 import _ from 'lodash';
 import path from 'node:path';
 import {packageDirectory} from 'package-directory';
-import readPkg, {NormalizedPackageJson, PackageJson} from 'read-pkg';
+import {readPackage, NormalizedPackageJson, PackageJson} from 'read-pkg';
 import {JsonValue} from 'type-fest';
 import * as YAML from 'yaml';
 import {
@@ -118,10 +118,10 @@ async function _readPkgJson(
   const pkgPath = path.join(pkgDir, NAME_PACKAGE_JSON);
   log.debug('Found `package.json` at %s', pkgPath);
   if (normalize) {
-    const pkg = await readPkg({cwd: pkgDir, normalize});
+    const pkg = await readPackage({cwd: pkgDir, normalize});
     return {pkg, pkgPath};
   } else {
-    const pkg = await readPkg({cwd: pkgDir});
+    const pkg = await readPackage({cwd: pkgDir});
     return {pkg, pkgPath};
   }
 }

@@ -15,9 +15,9 @@ export function initMocks(sandbox = createSandbox()) {
 
   const MockPkgDir = /** @type {MockPkgDir} */ (sandbox.stub().resolvesArg(0));
 
-  const MockReadPkg = /** @type {MockReadPkg} */ (
-    sandbox.stub().callsFake(async () => MockReadPkg.__pkg)
-  );
+  const MockReadPkg = /** @type {MockReadPkg} */ ({
+    readPackage: sandbox.stub().callsFake(async () => MockReadPkg.__pkg)
+  });
 
   // just an accessible place to put a mock package.json if we need it
   MockReadPkg.__pkg = {
@@ -83,7 +83,8 @@ export function initMocks(sandbox = createSandbox()) {
  */
 
 /**
- * @typedef {sinon.SinonStubbedMember<import('read-pkg')> & {__pkg: import('read-pkg').NormalizedPackageJson}} MockReadPkg
+ * Mocks for `read-pkg` package
+ * @typedef { {readPackage: sinon.SinonStubbedMember<import('read-pkg').readPackage>, __pkg: import('read-pkg').NormalizedPackageJson}} MockReadPkg
  */
 
 /**

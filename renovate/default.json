@@ -13,10 +13,7 @@
   ],
   "packageRules": [
     {
-      "matchPackageNames": [
-        "ora",
-        "read-pkg"
-      ],
+      "matchPackageNames": ["ora"],
       "matchUpdateTypes": ["major"],
       "enabled": false
     },

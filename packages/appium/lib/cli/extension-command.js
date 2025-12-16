@@ -131,17 +131,18 @@ class ExtensionCliCommand {
 
     const lsMsg =
       `Listing ${showInstalled ? 'installed' : 'available'} ${this.type}s` +
-      (verbose ? ' (verbose mode)' : '');
+      (verbose ? ' (verbose mode)' : '(rerun with --verbose for more info)');
     await this._checkForUpdates(listData, showUpdates, lsMsg);
 
-    // Fetch repository URLs for all extensions (needed for both JSON and display output)
-    await this._addRepositoryUrlsToListData(listData);
-
     if (this.isJsonOutput) {
+      // Fetch repository URLs for all extensions (needed for JSON output)
+      await this._addRepositoryUrlsToListData(listData);
       return listData;
     }
 
     if (verbose) {
+      // Fetch repository URLs for all extensions (needed for verbose output)
+      await this._addRepositoryUrlsToListData(listData);
       this.log.log(inspect(listData, {colors: true, depth: null}));
       return listData;
     }
@@ -263,46 +264,12 @@ class ExtensionCliCommand {
    */
   async _formatExtensionLine(name, data, showUpdates) {
     if (data.installed) {
-      return await this._formatInstalledExtensionLine(
-        name, /** @type {InstalledExtensionListData<ExtType>} */ (data), showUpdates
-      );
+      const installTxt = this._formatInstallText(/** @type {InstalledExtensionListData<ExtType>} */ (data));
+      const updateTxt = showUpdates ? this._formatUpdateText(/** @type {InstalledExtensionListData<ExtType>} */ (data)) : '';
+      return `- ${name.yellow}${installTxt}${updateTxt}`;
     }
-    return this._formatNonInstalledExtensionLine(name, data);
-  }
-
-  /**
-   * Format line for an installed extension
-   * @template {ExtensionType} ExtType
-   * @param {string} name
-   * @param {InstalledExtensionListData<ExtType>} data
-   * @param {boolean} showUpdates
-   * @returns {Promise<string>}
-   * @private
-   */
-  async _formatInstalledExtensionLine(name, data, showUpdates) {
-    const installTxt = this._formatInstallText(data);
-    const updateTxt = showUpdates ? this._formatUpdateText(data) : '';
-
-    return `- ${name.yellow}${installTxt}${updateTxt}`;
-  }
-
-  /**
-   * Format line for a non-installed extension
-   * @template {ExtensionType} ExtType
-   * @param {string} name
-   * @param {ExtensionListData<ExtType>} data
-   * @returns {string}
-   * @private
-   */
-  _formatNonInstalledExtensionLine(name, data) {
     const installTxt = ' [not installed]'.grey;
-    let pkgNameTxt = '';
-
-    if (data.pkgName) {
-      pkgNameTxt = ` (${data.pkgName})`.cyan;
-    }
-
-    return `- ${name.yellow}${pkgNameTxt}${installTxt}`;
+    return `- ${name.yellow}${installTxt}`;
   }
 
   /**

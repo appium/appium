@@ -189,21 +189,25 @@ class ExtensionCliCommand {
       return;
     }
     await spinWith(this.isJsonOutput, lsMsg, async () => {
-      for (const [ext, data] of _.toPairs(listData)) {
-        if (!data.installed || data.installType !== INSTALL_TYPE_NPM) {
-          // don't need to check for updates on exts that aren't installed
-          // also don't need to check for updates on non-npm exts
-          continue;
-        }
-        try {
-          const updates = await this.checkForExtensionUpdate(ext);
-          data.updateVersion = updates.safeUpdate;
-          data.unsafeUpdateVersion = updates.unsafeUpdate;
-          data.upToDate = updates.safeUpdate === null && updates.unsafeUpdate === null;
-        } catch (e) {
-          data.updateError = e.message;
-        }
-      }
+      // Filter to only extensions that need update checks (installed npm packages)
+      const extensionsToCheck = _.toPairs(listData).filter(
+        ([, data]) => data.installed && data.installType === INSTALL_TYPE_NPM
+      );
+
+      await B.map(
+        extensionsToCheck,
+        async ([ext, data]) => {
+          try {
+            const updates = await this.checkForExtensionUpdate(ext);
+            data.updateVersion = updates.safeUpdate;
+            data.unsafeUpdateVersion = updates.unsafeUpdate;
+            data.upToDate = updates.safeUpdate === null && updates.unsafeUpdate === null;
+          } catch (e) {
+            data.updateError = e.message;
+          }
+        },
+        {concurrency: MAX_CONCURRENT_REPO_FETCHES}
+      );
     });
   }
 

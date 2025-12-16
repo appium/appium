@@ -2,7 +2,7 @@ import B from 'bluebird';
 import _ from 'lodash';
 import path from 'path';
 import {npm, util, env, console, fs, system} from '@appium/support';
-import {spinWith, RingBuffer, createTerminalLink} from './utils';
+import {spinWith, RingBuffer} from './utils';
 import {
   INSTALL_TYPE_NPM,
   INSTALL_TYPE_GIT,
@@ -20,6 +20,7 @@ import {getAppiumModuleRoot, npmPackage} from '../utils';
 import * as semver from 'semver';
 
 const UPDATE_ALL = 'installed';
+const MAX_CONCURRENT_REPO_FETCHES = 5;
 
 class NotUpdatableError extends Error {}
 class NoUpdatesAvailableError extends Error {}
@@ -215,12 +216,16 @@ class ExtensionCliCommand {
    */
   async _addRepositoryUrlsToListData(listData) {
     await spinWith(this.isJsonOutput, 'Fetching repository information', async () => {
-      for (const data of _.values(listData)) {
-        const repoUrl = await this._getRepositoryUrl(data);
-        if (repoUrl) {
-          data.repositoryUrl = repoUrl;
-        }
-      }
+      await B.map(
+        _.values(listData),
+        async (data) => {
+          const repoUrl = await this._getRepositoryUrl(data);
+          if (repoUrl) {
+            data.repositoryUrl = repoUrl;
+          }
+        },
+        {concurrency: MAX_CONCURRENT_REPO_FETCHES}
+      );
     });
   }
 
@@ -233,17 +238,8 @@ class ExtensionCliCommand {
    * @private
    */
   async _displayNormalOutput(listData, showUpdates) {
-    // Create a map of repository URLs for quick lookup during formatting
-    /** @type {Record<string, string>} */
-    const repoUrlMap = {};
     for (const [name, data] of _.toPairs(listData)) {
-      if (data.repositoryUrl) {
-        repoUrlMap[name] = data.repositoryUrl;
-      }
-    }
-
-    for (const [name, data] of _.toPairs(listData)) {
-      const line = await this._formatExtensionLine(name, data, showUpdates, repoUrlMap);
+      const line = await this._formatExtensionLine(name, data, showUpdates);
       this.log.log(line);
     }
 
@@ -256,17 +252,16 @@ class ExtensionCliCommand {
    * @param {string} name
    * @param {ExtensionListData<ExtType>} data
    * @param {boolean} showUpdates
-   * @param {Record<string, string>} repoUrlMap
    * @returns {Promise<string>}
    * @private
    */
-  async _formatExtensionLine(name, data, showUpdates, repoUrlMap) {
+  async _formatExtensionLine(name, data, showUpdates) {
     if (data.installed) {
       return await this._formatInstalledExtensionLine(
         name, /** @type {InstalledExtensionListData<ExtType>} */ (data), showUpdates
       );
     }
-    return this._formatNonInstalledExtensionLine(name, data, repoUrlMap);
+    return this._formatNonInstalledExtensionLine(name, data);
   }
 
   /**
@@ -281,9 +276,8 @@ class ExtensionCliCommand {
   async _formatInstalledExtensionLine(name, data, showUpdates) {
     const installTxt = this._formatInstallText(data);
     const updateTxt = showUpdates ? this._formatUpdateText(data) : '';
-    const repoUrlTxt = await this._getInstalledExtensionRepoUrl(data);
 
-    return `- ${name.yellow}${installTxt}${updateTxt}${repoUrlTxt}`;
+    return `- ${name.yellow}${installTxt}${updateTxt}`;
   }
 
   /**
@@ -291,23 +285,18 @@ class ExtensionCliCommand {
    * @template {ExtensionType} ExtType
    * @param {string} name
    * @param {ExtensionListData<ExtType>} data
-   * @param {Record<string, string>} repoUrlMap
    * @returns {string}
    * @private
    */
-  _formatNonInstalledExtensionLine(name, data, repoUrlMap) {
+  _formatNonInstalledExtensionLine(name, data) {
     const installTxt = ' [not installed]'.grey;
     let pkgNameTxt = '';
-    let repoUrlTxt = '';
 
     if (data.pkgName) {
       pkgNameTxt = ` (${data.pkgName})`.cyan;
-      if (repoUrlMap[name]) {
-        repoUrlTxt = ` ${createTerminalLink(repoUrlMap[name], repoUrlMap[name])}`.grey;
-      }
     }
 
-    return `- ${name.yellow}${pkgNameTxt}${installTxt}${repoUrlTxt}`;
+    return `- ${name.yellow}${pkgNameTxt}${installTxt}`;
   }
 
   /**
@@ -362,38 +351,6 @@ class ExtensionCliCommand {
     return txt;
   }
 
-  /**
-   * Get repository URL for an installed extension
-   * @template {ExtensionType} ExtType
-   * @param {InstalledExtensionListData<ExtType>} data
-   * @returns {Promise<string>}
-   * @private
-   */
-  async _getInstalledExtensionRepoUrl(data) {
-    if (!data.installPath) {
-      return '';
-    }
-    try {
-      const pkgJsonPath = path.join(data.installPath, 'package.json');
-      if (await fs.exists(pkgJsonPath)) {
-        const pkg = JSON.parse(await fs.readFile(pkgJsonPath, 'utf8'));
-        if (pkg.repository) {
-          let repoUrl;
-          if (typeof pkg.repository === 'string') {
-            repoUrl = pkg.repository;
-          } else if (pkg.repository.url) {
-            repoUrl = pkg.repository.url.replace(/^git\+/, '').replace(/\.git$/, '');
-          }
-          if (repoUrl) {
-            return ` ${createTerminalLink(repoUrl, repoUrl)}`.grey;
-          }
-        }
-      }
-    } catch {
-      // Ignore errors reading package.json
-    }
-    return '';
-  }
 
   /**
    * Get repository URL from package data

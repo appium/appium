@@ -54,20 +54,6 @@ export async function spinWith(json, msg, fn) {
   }
 }
 
-/**
- * Create a clickable terminal link using OSC 8 escape sequence
- * @param {string} url - The URL to link to
- * @param {string} text - The text to display
- * @returns {string} The formatted link or plain text if terminal doesn't support links
- */
-export function createTerminalLink(url, text) {
-  if (process.stdout.isTTY && process.env.TERM && !process.env.NO_COLOR) {
-    // OSC 8 escape sequence for hyperlinks
-    return `\u001b]8;;${url}\u001b\\${text}\u001b]8;;\u001b\\`;
-  }
-  return text;
-}
-
 export class RingBuffer {
   constructor(size = 50) {
     this.size = size;

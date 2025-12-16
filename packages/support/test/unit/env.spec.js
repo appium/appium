@@ -111,7 +111,7 @@ describe('env', function () {
             // this is needed because the default behavior is `resolvesArg(0)`; `.resolves()`
             // does not override this behavior! I don't know why!
             // .resetBehavior();
-            MockReadPkg.resolves();
+            MockReadPkg.readPackage.resolves();
           });
 
           it('should resolve with DEFAULT_APPIUM_HOME', async function () {
@@ -126,7 +126,7 @@ describe('env', function () {
 
           describe('when `appium` is a dependency which does not resolve to a file path`', function () {
             beforeEach(function () {
-              MockReadPkg.resolves({devDependencies: {appium: '2.0.0-beta.25'}});
+              MockReadPkg.readPackage.resolves({devDependencies: {appium: '2.0.0-beta.25'}});
             });
 
             it('should resolve with the identity', async function () {
@@ -136,7 +136,7 @@ describe('env', function () {
 
           describe('when `appium` is a dependency for version 0.x', function () {
             beforeEach(function () {
-              MockReadPkg.resolves({devDependencies: {appium: '0.9.0'}});
+              MockReadPkg.readPackage.resolves({devDependencies: {appium: '0.9.0'}});
             });
             it('should resolve with DEFAULT_APPIUM_HOME', async function () {
               await expect(env.resolveAppiumHome(appiumHome)).to.eventually.equal(
@@ -147,7 +147,7 @@ describe('env', function () {
 
           describe('when `appium` is a dependency for version 1.x', function () {
             beforeEach(function () {
-              MockReadPkg.resolves({devDependencies: {appium: '1.2.3'}});
+              MockReadPkg.readPackage.resolves({devDependencies: {appium: '1.2.3'}});
             });
 
             it('should resolve with DEFAULT_APPIUM_HOME', async function () {
@@ -162,7 +162,7 @@ describe('env', function () {
       describe('when reading `package.json` causes an exception', function () {
         beforeEach(function () {
           // unclear if this is even possible
-          MockReadPkg.rejects(new Error('on the fritz'));
+          MockReadPkg.readPackage.rejects(new Error('on the fritz'));
         });
 
         it('should resolve with DEFAULT_APPIUM_HOME', async function () {
@@ -189,7 +189,7 @@ describe('env', function () {
   describe('readPackageInDir()', function () {
     it('should delegate to `read-pkg`', async function () {
       await env.readPackageInDir('/somewhere');
-      MockReadPkg.calledWithExactly({
+      MockReadPkg.readPackage.calledWithExactly({
         cwd: '/somewhere',
         normalize: true,
       }).should.be.true;
@@ -244,7 +244,7 @@ describe('env', function () {
 
           describe('when `appium` dep is current`', function () {
             beforeEach(function () {
-              MockReadPkg.resolves({
+              MockReadPkg.readPackage.resolves({
                 devDependencies: {appium: '2.0.0'},
               });
             });
@@ -256,7 +256,7 @@ describe('env', function () {
 
           describe('when `appium` dep is v1.x', function () {
             beforeEach(function () {
-              MockReadPkg.resolves({
+              MockReadPkg.readPackage.resolves({
                 optionalDependencies: {appium: '1.x'},
               });
             });
@@ -267,7 +267,7 @@ describe('env', function () {
 
           describe('when `appium` dep is v0.x', function () {
             beforeEach(function () {
-              MockReadPkg.resolves({
+              MockReadPkg.readPackage.resolves({
                 dependencies: {appium: '0.x'},
               });
             });

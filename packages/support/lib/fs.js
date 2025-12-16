@@ -19,7 +19,7 @@ import _ from 'lodash';
 import ncp from 'ncp';
 import {packageDirectorySync} from 'package-directory';
 import path from 'path';
-import readPkg from 'read-pkg';
+import {readPackageSync} from 'read-pkg';
 import sanitize from 'sanitize-filename';
 import which from 'which';
 import log from './logger';
@@ -376,7 +376,7 @@ const fs = {
   readPackageJsonFrom(dir, opts = {}) {
     const cwd = fs.findRoot(dir);
     try {
-      return readPkg.sync(
+      return readPackageSync(
         /** @type {import('read-pkg').NormalizeOptions} */ ({normalize: true, ...opts, cwd})
       );
     } catch (err) {

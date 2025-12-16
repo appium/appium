@@ -2,7 +2,7 @@
 import _ from 'lodash';
 import {homedir} from 'os';
 import path from 'path';
-import readPkg from 'read-pkg';
+import {readPackage} from 'read-pkg';
 import * as semver from 'semver';
 
 /**
@@ -96,7 +96,7 @@ export const readPackageInDir = _.memoize(
    * @returns {Promise<import('read-pkg').NormalizedPackageJson|undefined>}
    */
   async function _readPackageInDir(cwd) {
-    return await readPkg({cwd, normalize: true});
+    return await readPackage({cwd, normalize: true});
   }
 );
 

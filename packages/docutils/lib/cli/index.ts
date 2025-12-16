@@ -10,7 +10,7 @@ import {getLogger} from '../logger';
 
 import {fs} from '@appium/support';
 import _ from 'lodash';
-import {sync as readPkg} from 'read-pkg';
+import {readPackageSync} from 'read-pkg';
 import {hideBin} from 'yargs/helpers';
 import yargs from 'yargs/yargs';
 import {DEFAULT_LOG_LEVEL, LogLevelMap, NAME_BIN} from '../constants';
@@ -18,7 +18,7 @@ import {DocutilsError} from '../error';
 import {build, init, validate} from './command';
 import {findConfig} from './config';
 
-const pkg = readPkg({cwd: fs.findRoot(__dirname)});
+const pkg = readPackageSync({cwd: fs.findRoot(__dirname)});
 const log = getLogger('cli');
 const IMPLICATIONS_FAILED_REGEX = /implications\s+failed:\n\s*(.+)\s->\s(.+)$/i;
 

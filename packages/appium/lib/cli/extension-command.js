@@ -20,6 +20,7 @@ import {getAppiumModuleRoot, npmPackage} from '../utils';
 import * as semver from 'semver';
 
 const UPDATE_ALL = 'installed';
+const MAX_CONCURRENT_REPO_FETCHES = 5;
 
 class NotUpdatableError extends Error {}
 class NoUpdatesAvailableError extends Error {}
@@ -96,6 +97,7 @@ class ExtensionCliCommand {
    * For TS to understand that a function throws an exception, it must actually throw an exception--
    * in other words, _calling_ a function which is guaranteed to throw an exception is not enough--
    * nor is something like `@returns {never}` which does not imply a thrown exception.
+   *
    * @param {string} message
    * @protected
    * @throws {Error}
@@ -121,18 +123,45 @@ class ExtensionCliCommand {
 
   /**
    * List extensions
+   *
    * @template {ExtensionType} ExtType
    * @param {ListOptions} opts
    * @return {Promise<ExtensionList<ExtType>>} map of extension names to extension data
    */
   async list({showInstalled, showUpdates, verbose = false}) {
-    let lsMsg = `Listing ${showInstalled ? 'installed' : 'available'} ${this.type}s`;
-    if (verbose) {
-      lsMsg += ' (verbose mode)';
+    const listData = this._buildListData(showInstalled);
+
+    const lsMsg =
+      `Listing ${showInstalled ? 'installed' : 'available'} ${this.type}s` +
+      (verbose ? ' (verbose mode)' : ' (rerun with --verbose for more info)');
+    await this._checkForUpdates(listData, showUpdates, lsMsg);
+
+    if (this.isJsonOutput) {
+      await this._addRepositoryUrlsToListData(listData);
+      return listData;
     }
+
+    if (verbose) {
+      await this._addRepositoryUrlsToListData(listData);
+      this.log.log(inspect(listData, {colors: true, depth: null}));
+      return listData;
+    }
+
+    return await this._displayNormalListOutput(listData, showUpdates);
+  }
+
+  /**
+   * Build the initial list data structure from installed and known extensions
+   *
+   * @template {ExtensionType} ExtType
+   * @param {boolean} showInstalled
+   * @returns {ExtensionList<ExtType>}
+   * @private
+   */
+  _buildListData(showInstalled) {
     const installedNames = Object.keys(this.config.installedExtensions);
     const knownNames = Object.keys(this.knownExtensions);
-    const listData = [...installedNames, ...knownNames].reduce((acc, name) => {
+    return [...installedNames, ...knownNames].reduce((acc, name) => {
       if (!acc[name]) {
         if (installedNames.includes(name)) {
           acc[name] = {
@@ -148,99 +177,233 @@ class ExtensionCliCommand {
       }
       return acc;
     }, /** @type {ExtensionList<ExtType>} */ ({}));
+  }
 
-    // if we want to show whether updates are available, put that behind a spinner
+  /**
+   * Check for available updates for installed extensions
+   *
+   * @template {ExtensionType} ExtType
+   * @param {ExtensionList<ExtType>} listData
+   * @param {boolean} showUpdates
+   * @param {string} lsMsg
+   * @returns {Promise<void>}
+   * @private
+   */
+  async _checkForUpdates(listData, showUpdates, lsMsg) {
     await spinWith(this.isJsonOutput, lsMsg, async () => {
+      // We'd like to still show lsMsg even if showUpdates is false
       if (!showUpdates) {
         return;
       }
-      for (const [ext, data] of _.toPairs(listData)) {
-        if (!data.installed || data.installType !== INSTALL_TYPE_NPM) {
-          // don't need to check for updates on exts that aren't installed
-          // also don't need to check for updates on non-npm exts
-          continue;
-        }
-        try {
-          const updates = await this.checkForExtensionUpdate(ext);
-          data.updateVersion = updates.safeUpdate;
-          data.unsafeUpdateVersion = updates.unsafeUpdate;
-          data.upToDate = updates.safeUpdate === null && updates.unsafeUpdate === null;
-        } catch (e) {
-          data.updateError = e.message;
-        }
-      }
-    });
 
-    /**
-     * Type guard to narrow "installed" extensions, which have more data
-     * @param {any} data
-     * @returns {data is InstalledExtensionListData<ExtType>}
-     */
-    const extIsInstalled = (data) => Boolean(data.installed);
+      // Filter to only extensions that need update checks (installed npm packages)
+      const extensionsToCheck = _.toPairs(listData).filter(
+        ([, data]) => data.installed && data.installType === INSTALL_TYPE_NPM
+      );
 
-    // if we're just getting the data, short circuit return here since we don't need to do any
-    // formatting logic
-    if (this.isJsonOutput) {
-      return listData;
-    }
-
-    if (verbose) {
-      this.log.log(inspect(listData, {colors: true, depth: null}));
-      return listData;
-    }
-    for (const [name, data] of _.toPairs(listData)) {
-      let installTxt = ' [not installed]'.grey;
-      let updateTxt = '';
-      let upToDateTxt = '';
-      let unsafeUpdateTxt = '';
-      if (extIsInstalled(data)) {
-        const {
-          installType,
-          installSpec,
-          updateVersion,
-          unsafeUpdateVersion,
-          version,
-          upToDate,
-          updateError,
-        } = data;
-        let typeTxt;
-        switch (installType) {
-          case INSTALL_TYPE_GIT:
-          case INSTALL_TYPE_GITHUB:
-            typeTxt = `(cloned from ${installSpec})`.yellow;
-            break;
-          case INSTALL_TYPE_LOCAL:
-            typeTxt = `(linked from ${installSpec})`.magenta;
-            break;
-          case INSTALL_TYPE_DEV:
-            typeTxt = '(dev mode)';
-            break;
-          default:
-            typeTxt = '(npm)';
-        }
-        installTxt = `@${version.yellow} ${('[installed ' + typeTxt + ']').green}`;
-
-        if (showUpdates) {
-          if (updateError) {
-            updateTxt = ` [Cannot check for updates: ${updateError}]`.red;
-          } else {
-            if (updateVersion) {
-              updateTxt = ` [${updateVersion} available]`.magenta;
-            }
-            if (upToDate) {
-              upToDateTxt = ` [Up to date]`.green;
-            }
-            if (unsafeUpdateVersion) {
-              unsafeUpdateTxt = ` [${unsafeUpdateVersion} available (potentially unsafe)]`.cyan;
-            }
+      await B.map(
+        extensionsToCheck,
+        async ([ext, data]) => {
+          try {
+            const updates = await this.checkForExtensionUpdate(ext);
+            data.updateVersion = updates.safeUpdate;
+            data.unsafeUpdateVersion = updates.unsafeUpdate;
+            data.upToDate = updates.safeUpdate === null && updates.unsafeUpdate === null;
+          } catch (e) {
+            data.updateError = e.message;
           }
-        }
-      }
+        },
+        {concurrency: MAX_CONCURRENT_REPO_FETCHES}
+      );
+    });
+  }
 
-      this.log.log(`- ${name.yellow}${installTxt}${updateTxt}${upToDateTxt}${unsafeUpdateTxt}`);
+  /**
+   * Add repository URLs to list data for all extensions
+   *
+   * @template {ExtensionType} ExtType
+   * @param {ExtensionList<ExtType>} listData
+   * @returns {Promise<void>}
+   * @private
+   */
+  async _addRepositoryUrlsToListData(listData) {
+    await spinWith(this.isJsonOutput, 'Fetching repository information', async () => {
+      await B.map(
+        _.values(listData),
+        async (data) => {
+          const repoUrl = await this._getRepositoryUrl(data);
+          if (repoUrl) {
+            data.repositoryUrl = repoUrl;
+          }
+        },
+        {concurrency: MAX_CONCURRENT_REPO_FETCHES}
+      );
+    });
+  }
+
+  /**
+   * Display normal formatted output
+   *
+   * @template {ExtensionType} ExtType
+   * @param {ExtensionList<ExtType>} listData
+   * @param {boolean} showUpdates
+   * @returns {Promise<ExtensionList<ExtType>>}
+   * @private
+   */
+  async _displayNormalListOutput(listData, showUpdates) {
+    for (const [name, data] of _.toPairs(listData)) {
+      const line = await this._formatExtensionLine(name, data, showUpdates);
+      this.log.log(line);
     }
 
     return listData;
+  }
+
+  /**
+   * Format a single extension line for display
+   *
+   * @template {ExtensionType} ExtType
+   * @param {string} name
+   * @param {ExtensionListData<ExtType>} data
+   * @param {boolean} showUpdates
+   * @returns {Promise<string>}
+   * @private
+   */
+  async _formatExtensionLine(name, data, showUpdates) {
+    if (data.installed) {
+      const installTxt = this._formatInstallText(/** @type {InstalledExtensionListData<ExtType>} */ (data));
+      const updateTxt = showUpdates ? this._formatUpdateText(/** @type {InstalledExtensionListData<ExtType>} */ (data)) : '';
+      return `- ${name.yellow}${installTxt}${updateTxt}`;
+    }
+    const installTxt = ' [not installed]'.grey;
+    return `- ${name.yellow}${installTxt}`;
+  }
+
+  /**
+   * Format installation status text
+   *
+   * @template {ExtensionType} ExtType
+   * @param {InstalledExtensionListData<ExtType>} data
+   * @returns {string}
+   * @private
+   */
+  _formatInstallText(data) {
+    const {installType, installSpec, version} = data;
+    let typeTxt;
+    switch (installType) {
+      case INSTALL_TYPE_GIT:
+      case INSTALL_TYPE_GITHUB:
+        typeTxt = `(cloned from ${installSpec})`.yellow;
+        break;
+      case INSTALL_TYPE_LOCAL:
+        typeTxt = `(linked from ${installSpec})`.magenta;
+        break;
+      case INSTALL_TYPE_DEV:
+        typeTxt = '(dev mode)';
+        break;
+      default:
+        typeTxt = '(npm)';
+    }
+    return `@${version.yellow} ${('[installed ' + typeTxt + ']').green}`;
+  }
+
+  /**
+   * Format update information text
+   *
+   * @template {ExtensionType} ExtType
+   * @param {InstalledExtensionListData<ExtType>} data
+   * @returns {string}
+   * @private
+   */
+  _formatUpdateText(data) {
+    const {updateVersion, unsafeUpdateVersion, upToDate, updateError} = data;
+    if (updateError) {
+      return ` [Cannot check for updates: ${updateError}]`.red;
+    }
+    let txt = '';
+    if (updateVersion) {
+      txt += ` [${updateVersion} available]`.magenta;
+    }
+    if (upToDate) {
+      txt += ` [Up to date]`.green;
+    }
+    if (unsafeUpdateVersion) {
+      txt += ` [${unsafeUpdateVersion} available (potentially unsafe)]`.cyan;
+    }
+    return txt;
+  }
+
+  /**
+   * Get repository URL from package data
+   *
+   * @template {ExtensionType} ExtType
+   * @param {ExtensionListData<ExtType>} data
+   * @returns {Promise<string|null>}
+   * @private
+   */
+  async _getRepositoryUrl(data) {
+    if (data.installed && data.installPath) {
+      return await this._getRepositoryUrlFromInstalled(
+        /** @type {InstalledExtensionListData<ExtType>} */ (data)
+      );
+    }
+    if (data.pkgName && !data.installed) {
+      return await this._getRepositoryUrlFromNpm(data.pkgName);
+    }
+    return null;
+  }
+
+  /**
+   * Get repository URL from installed extension's package.json
+   *
+   * @template {ExtensionType} ExtType
+   * @param {InstalledExtensionListData<ExtType>} data
+   * @returns {Promise<string|null>}
+   * @private
+   */
+  async _getRepositoryUrlFromInstalled(data) {
+    try {
+      const pkgJsonPath = path.join(data.installPath, 'package.json');
+      if (await fs.exists(pkgJsonPath)) {
+        const pkg = JSON.parse(await fs.readFile(pkgJsonPath, 'utf8'));
+        if (pkg.repository) {
+          if (typeof pkg.repository === 'string') {
+            return pkg.repository;
+          }
+          if (pkg.repository.url) {
+            return pkg.repository.url.replace(/^git\+/, '').replace(/\.git$/, '');
+          }
+        }
+      }
+    } catch {
+      // Ignore errors reading package.json
+    }
+    return null;
+  }
+
+  /**
+   * Get repository URL from npm for a package name
+   *
+   * @param {string} pkgName
+   * @returns {Promise<string|null>}
+   * @private
+   */
+  async _getRepositoryUrlFromNpm(pkgName) {
+    try {
+      const repoInfo = await npm.getPackageInfo(pkgName, ['repository']);
+      // When requesting only 'repository', npm.getPackageInfo returns the repository object directly
+      if (repoInfo) {
+        if (typeof repoInfo === 'string') {
+          return repoInfo;
+        }
+        if (repoInfo.url) {
+          return repoInfo.url.replace(/^git\+/, '').replace(/\.git$/, '');
+        }
+      }
+    } catch {
+      // Ignore errors fetching from npm
+    }
+    return null;
   }
 
   /**
@@ -1013,6 +1176,7 @@ export {ExtensionCliCommand as ExtensionCommand};
  * @property {string|null} unsafeUpdateVersion - Same as above, but a major version bump
  * @property {string} [updateError] - Update check error message (if present)
  * @property {boolean} [devMode] - If Appium is run from an extension's working copy
+ * @property {string} [repositoryUrl] - Repository URL for the extension (if available)
  */
 
 /**

@@ -97,6 +97,7 @@ class ExtensionCliCommand {
    * For TS to understand that a function throws an exception, it must actually throw an exception--
    * in other words, _calling_ a function which is guaranteed to throw an exception is not enough--
    * nor is something like `@returns {never}` which does not imply a thrown exception.
+   *
    * @param {string} message
    * @protected
    * @throws {Error}
@@ -122,6 +123,7 @@ class ExtensionCliCommand {
 
   /**
    * List extensions
+   *
    * @template {ExtensionType} ExtType
    * @param {ListOptions} opts
    * @return {Promise<ExtensionList<ExtType>>} map of extension names to extension data
@@ -131,17 +133,15 @@ class ExtensionCliCommand {
 
     const lsMsg =
       `Listing ${showInstalled ? 'installed' : 'available'} ${this.type}s` +
-      (verbose ? ' (verbose mode)' : '(rerun with --verbose for more info)');
+      (verbose ? ' (verbose mode)' : ' (rerun with --verbose for more info)');
     await this._checkForUpdates(listData, showUpdates, lsMsg);
 
     if (this.isJsonOutput) {
-      // Fetch repository URLs for all extensions (needed for JSON output)
       await this._addRepositoryUrlsToListData(listData);
       return listData;
     }
 
     if (verbose) {
-      // Fetch repository URLs for all extensions (needed for verbose output)
       await this._addRepositoryUrlsToListData(listData);
       this.log.log(inspect(listData, {colors: true, depth: null}));
       return listData;
@@ -152,6 +152,7 @@ class ExtensionCliCommand {
 
   /**
    * Build the initial list data structure from installed and known extensions
+   *
    * @template {ExtensionType} ExtType
    * @param {boolean} showInstalled
    * @returns {ExtensionList<ExtType>}
@@ -180,6 +181,7 @@ class ExtensionCliCommand {
 
   /**
    * Check for available updates for installed extensions
+   *
    * @template {ExtensionType} ExtType
    * @param {ExtensionList<ExtType>} listData
    * @param {boolean} showUpdates
@@ -188,10 +190,12 @@ class ExtensionCliCommand {
    * @private
    */
   async _checkForUpdates(listData, showUpdates, lsMsg) {
-    if (!showUpdates) {
-      return;
-    }
     await spinWith(this.isJsonOutput, lsMsg, async () => {
+      // We'd like to still show lsMsg even if showUpdates is false
+      if (!showUpdates) {
+        return;
+      }
+
       // Filter to only extensions that need update checks (installed npm packages)
       const extensionsToCheck = _.toPairs(listData).filter(
         ([, data]) => data.installed && data.installType === INSTALL_TYPE_NPM
@@ -216,6 +220,7 @@ class ExtensionCliCommand {
 
   /**
    * Add repository URLs to list data for all extensions
+   *
    * @template {ExtensionType} ExtType
    * @param {ExtensionList<ExtType>} listData
    * @returns {Promise<void>}
@@ -238,6 +243,7 @@ class ExtensionCliCommand {
 
   /**
    * Display normal formatted output
+   *
    * @template {ExtensionType} ExtType
    * @param {ExtensionList<ExtType>} listData
    * @param {boolean} showUpdates
@@ -255,6 +261,7 @@ class ExtensionCliCommand {
 
   /**
    * Format a single extension line for display
+   *
    * @template {ExtensionType} ExtType
    * @param {string} name
    * @param {ExtensionListData<ExtType>} data
@@ -274,6 +281,7 @@ class ExtensionCliCommand {
 
   /**
    * Format installation status text
+   *
    * @template {ExtensionType} ExtType
    * @param {InstalledExtensionListData<ExtType>} data
    * @returns {string}
@@ -301,6 +309,7 @@ class ExtensionCliCommand {
 
   /**
    * Format update information text
+   *
    * @template {ExtensionType} ExtType
    * @param {InstalledExtensionListData<ExtType>} data
    * @returns {string}
@@ -326,6 +335,7 @@ class ExtensionCliCommand {
 
   /**
    * Get repository URL from package data
+   *
    * @template {ExtensionType} ExtType
    * @param {ExtensionListData<ExtType>} data
    * @returns {Promise<string|null>}
@@ -345,6 +355,7 @@ class ExtensionCliCommand {
 
   /**
    * Get repository URL from installed extension's package.json
+   *
    * @template {ExtensionType} ExtType
    * @param {InstalledExtensionListData<ExtType>} data
    * @returns {Promise<string|null>}
@@ -372,6 +383,7 @@ class ExtensionCliCommand {
 
   /**
    * Get repository URL from npm for a package name
+   *
    * @param {string} pkgName
    * @returns {Promise<string|null>}
    * @private

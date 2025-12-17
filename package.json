@@ -143,7 +143,7 @@
     "prettier": "3.7.4",
     "rewiremock": "3.14.6",
     "rimraf": "6.1.2",
-    "serve-static": "2.2.0",
+    "serve-static": "2.2.1",
     "sinon": "21.0.0",
     "sync-monorepo-packages": "1.0.2",
     "teen_process": "3.0.6",

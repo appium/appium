@@ -117,7 +117,7 @@
     "@types/ws": "8.18.1",
     "@types/xmldom": "0.1.34",
     "@types/yargs": "17.0.35",
-    "asyncbox": "3.0.0",
+    "asyncbox": "4.0.1",
     "chai": "6.2.1",
     "chai-as-promised": "8.0.2",
     "conventional-changelog-conventionalcommits": "7.0.2",

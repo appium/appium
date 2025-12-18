@@ -72,7 +72,7 @@
     "ajv-formats": "3.0.1",
     "argparse": "2.0.1",
     "async-lock": "1.4.1",
-    "asyncbox": "3.0.0",
+    "asyncbox": "4.0.1",
     "axios": "1.13.2",
     "bluebird": "3.7.2",
     "lilconfig": "3.1.3",

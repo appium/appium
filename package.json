@@ -144,7 +144,7 @@
     "rewiremock": "3.14.6",
     "rimraf": "6.1.2",
     "serve-static": "2.2.1",
-    "sinon": "21.0.0",
+    "sinon": "21.0.1",
     "sync-monorepo-packages": "1.0.2",
     "teen_process": "3.0.6",
     "ts-node": "10.9.2",

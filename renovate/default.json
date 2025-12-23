@@ -16,10 +16,6 @@
       "matchPackageNames": ["ora"],
       "matchUpdateTypes": ["major"],
       "enabled": false
-    },
-    {
-      "matchPackageNames": ["teen_process", "@types/teen_process"],
-      "groupName": "teen_process-related packages"
     }
   ],
   "semanticCommitScope": "{{#if parentDir}}{{parentDir}}{{else}}deps{{/if}}"

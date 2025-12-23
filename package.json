@@ -146,7 +146,7 @@
     "serve-static": "2.2.1",
     "sinon": "21.0.1",
     "sync-monorepo-packages": "1.0.2",
-    "teen_process": "3.0.6",
+    "teen_process": "4.0.7",
     "ts-node": "10.9.2",
     "tsd": "0.33.0",
     "typescript": "5.9.3",

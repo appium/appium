@@ -43,11 +43,6 @@ Appium extension authors--or anyone else--may use this config as well.
 - `:semanticCommits` - Renovate will use semantic commit messages
 - `:semanticCommitTypeAll(chore)` - Renovate's PRs have the `chore` prefix in its semantic commit message
 
-### Custom Rules
-
-- Groups (groups updates into single PR):
-  - [teen_process](https://github.com/appium/node-teen_process) and its DT types
-
 ### Additional Config
 
 - Uses the parent directory for the commit scope if applicable; otherwise uses `deps`. The parent directory is _typically_ only applicable in monorepos.

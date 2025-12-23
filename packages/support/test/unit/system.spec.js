@@ -4,11 +4,10 @@ import {createSandbox} from 'sinon';
 import * as teen_process from 'teen_process';
 import _ from 'lodash';
 
-let tpMock,
-  osMock = null;
+let osMock = null;
 let SANDBOX = Symbol();
 let mocks = {};
-let libs = {teen_process, os, system};
+let libs = {os, system};
 
 describe('system', function () {
   let sandbox;
@@ -25,6 +24,7 @@ describe('system', function () {
   });
 
   afterEach(function () {
+    sandbox.verify();
     sandbox.restore();
   });
 
@@ -53,47 +53,40 @@ describe('system', function () {
   });
 
   describe('mac OSX version', function () {
-    beforeEach(function () {
-      tpMock = sandbox.mock(teen_process);
-    });
-    afterEach(function () {
-      tpMock.verify();
-    });
-
     it('should return correct version for 10.10.5', async function () {
-      tpMock
-        .expects('exec')
-        .once()
-        .withExactArgs('sw_vers', ['-productVersion'])
-        .returns({stdout: '10.10.5'});
+      sandbox.stub(teen_process, 'exec').get(() =>
+        sandbox.stub()
+          .withArgs('sw_vers', ['-productVersion'])
+          .returns({stdout: '10.10.5'})
+      );
       await system.macOsxVersion().should.eventually.equal('10.10');
     });
 
     it('should return correct version for 10.12', async function () {
-      tpMock
-        .expects('exec')
-        .once()
-        .withExactArgs('sw_vers', ['-productVersion'])
-        .returns({stdout: '10.12.0'});
+      sandbox.stub(teen_process, 'exec').get(() =>
+        sandbox.stub()
+          .withArgs('sw_vers', ['-productVersion'])
+          .returns({stdout: '10.12.0'})
+      );
       await system.macOsxVersion().should.eventually.equal('10.12');
     });
 
     it('should return correct version for 10.12 with newline', async function () {
-      tpMock
-        .expects('exec')
-        .once()
-        .withExactArgs('sw_vers', ['-productVersion'])
-        .returns({stdout: '10.12   \n'});
+      sandbox.stub(teen_process, 'exec').get(() =>
+        sandbox.stub()
+          .withArgs('sw_vers', ['-productVersion'])
+          .returns({stdout: '10.12   \n'})
+      );
       await system.macOsxVersion().should.eventually.equal('10.12');
     });
 
     it("should throw an error if OSX version can't be determined", async function () {
       let invalidOsx = 'error getting operation system version blabla';
-      tpMock
-        .expects('exec')
-        .once()
-        .withExactArgs('sw_vers', ['-productVersion'])
-        .returns({stdout: invalidOsx});
+      sandbox.stub(teen_process, 'exec').get(() =>
+        sandbox.stub()
+          .withArgs('sw_vers', ['-productVersion'])
+          .returns({stdout: invalidOsx})
+      );
       await system
         .macOsxVersion()
         .should.eventually.be.rejectedWith(new RegExp(_.escapeRegExp(invalidOsx)));
@@ -115,11 +108,11 @@ describe('system', function () {
 
     it('should return correct architecture if it is a 64 bit Mac/Linux', async function () {
       mocks.os.expects('type').thrice().returns('Darwin');
-      mocks.teen_process
-        .expects('exec')
-        .once()
-        .withExactArgs('uname', ['-m'])
-        .returns({stdout: 'x86_64'});
+      sandbox.stub(teen_process, 'exec').get(() =>
+        sandbox.stub()
+          .withArgs('uname', ['-m'])
+          .returns({stdout: 'x86_64'})
+      );
       let arch = await system.arch();
       arch.should.equal('64');
       mocks[SANDBOX].verify();
@@ -127,11 +120,11 @@ describe('system', function () {
 
     it('should return correct architecture if it is a 32 bit Mac/Linux', async function () {
       mocks.os.expects('type').twice().returns('Linux');
-      mocks.teen_process
-        .expects('exec')
-        .once()
-        .withExactArgs('uname', ['-m'])
-        .returns({stdout: 'i686'});
+      sandbox.stub(teen_process, 'exec').get(() =>
+        sandbox.stub()
+          .withArgs('uname', ['-m'])
+          .returns({stdout: 'i686'})
+      );
       let arch = await system.arch();
       arch.should.equal('32');
       mocks[SANDBOX].verify();

@@ -2,6 +2,7 @@ import {createSandbox} from 'sinon';
 import {getGitRev, getBuildInfo, updateBuildInfo, APPIUM_VER} from '../../lib/config';
 import axios from 'axios';
 import * as teenProcess from 'teen_process';
+import { expect } from 'chai';
 
 
 describe('Config', function () {
@@ -13,6 +14,7 @@ describe('Config', function () {
   });
 
   afterEach(function () {
+    sandbox.verify();
     sandbox.restore();
   });
 
@@ -37,8 +39,10 @@ describe('Config', function () {
 
     async function verifyBuildInfoUpdate(useLocalGit, {sha, built} = {}) {
       const buildInfo = getBuildInfo();
+
+      const innerExecStub = sandbox.stub().throws();
       if (!useLocalGit) {
-        mockTp.expects('exec').atLeast(1).throws();
+        sandbox.stub(teenProcess, 'exec').get(() => innerExecStub);
       }
       buildInfo['git-sha'] = undefined;
       buildInfo.built = undefined;
@@ -55,17 +59,18 @@ describe('Config', function () {
         should.exist(buildInfo.built);
       }
       should.exist(buildInfo.version);
+
+      if (!useLocalGit) {
+        expect(innerExecStub.callCount).to.be.at.least(1);
+      }
     }
 
     let getStub;
-    let mockTp;
     beforeEach(function () {
       getStub = sandbox.stub(axios, 'get');
-      mockTp = sandbox.mock(teenProcess);
     });
     afterEach(function () {
       getStub.restore();
-      mockTp.restore();
     });
 
     it('should get a configuration object if the local git metadata is present', async function () {

@@ -45,8 +45,7 @@ Appium extension authors--or anyone else--may use this config as well.
 
 ### Custom Rules
 
-- Groups (groups updates into single PR):
-  - [teen_process](https://github.com/appium/node-teen_process) and its DT types
+- No
 
 ### Additional Config
 

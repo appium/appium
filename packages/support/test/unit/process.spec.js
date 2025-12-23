@@ -20,6 +20,7 @@ describe('process', function () {
   });
 
   afterEach(function () {
+    sandbox.verify();
     sandbox.restore();
   });
 
@@ -50,12 +51,8 @@ describe('process', function () {
       pids.should.have.length(0);
     });
     it('should throw an error if pgrep fails', async function () {
-      let tpMock = sandbox.mock(teenProcess);
-      tpMock.expects('exec').throws({message: 'Oops', code: 2});
-
+      sandbox.stub(teenProcess, 'exec').get(() => sandbox.stub().throws({message: 'Oops', code: 2}));
       await process.getProcessIds('tail').should.eventually.be.rejectedWith(/Oops/);
-
-      tpMock.restore();
     });
   });
 
@@ -94,26 +91,15 @@ describe('process', function () {
       }).should.eventually.be.rejected;
     });
     it('should throw an error if pgrep fails', async function () {
-      let tpMock = sandbox.mock(teenProcess);
-      tpMock.expects('exec').throws({message: 'Oops', code: 2});
-
+      sandbox.stub(teenProcess, 'exec').get(() => sandbox.stub().throws({message: 'Oops', code: 2}));
       await process.killProcess('tail').should.eventually.be.rejectedWith(/Oops/);
-
-      tpMock.restore();
     });
     it('should throw an error if pkill fails', async function () {
-      let tpMock = sandbox.mock(teenProcess);
-      tpMock
-        .expects('exec')
-        .twice()
-        .onFirstCall()
-        .returns({stdout: '42\n'})
-        .onSecondCall()
-        .throws({message: 'Oops', code: 2});
-
+      const innerExecStub = sandbox.stub();
+      innerExecStub.returns({stdout: '42\n'});
+      innerExecStub.throws({message: 'Oops', code: 2});
+      sandbox.stub(teenProcess, 'exec').get(() => innerExecStub);
       await process.killProcess('tail').should.eventually.be.rejectedWith(/Oops/);
-
-      tpMock.restore();
     });
   });
 });

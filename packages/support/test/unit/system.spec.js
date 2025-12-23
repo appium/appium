@@ -4,11 +4,10 @@ import {createSandbox} from 'sinon';
 import * as teen_process from 'teen_process';
 import _ from 'lodash';
 
-let tpMock,
-  osMock = null;
+let osMock = null;
 let SANDBOX = Symbol();
 let mocks = {};
-let libs = {teen_process, os, system};
+let libs = {os, system};
 
 describe('system', function () {
   let sandbox;
@@ -54,13 +53,6 @@ describe('system', function () {
   });
 
   describe('mac OSX version', function () {
-    beforeEach(function () {
-      tpMock = sandbox.mock(teen_process);
-    });
-    afterEach(function () {
-      tpMock.verify();
-    });
-
     it('should return correct version for 10.10.5', async function () {
       sandbox.stub(teen_process, 'exec').get(() =>
         sandbox.stub()

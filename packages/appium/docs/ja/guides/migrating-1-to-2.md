@@ -28,12 +28,6 @@ installing it only installs the core Appium server, without any drivers.
 
 When it comes to installing Appium 2 drivers, there are several approaches you can take:
 
-- Add the `--drivers` flag when installing Appium, for example:
-
-```bash
-npm i -g appium --drivers=xcuitest,uiautomator2
-```
-
 - Use the [Appium Extension CLI](../reference/cli/extensions.md), for example:
 
 ```bash

@@ -37,7 +37,6 @@
     "driver.*",
     "support.*",
     "plugin.*",
-    "scripts/autoinstall-extensions.js",
     "types",
     "tsconfig.json",
     "!build/tsconfig.tsbuildinfo"
@@ -52,7 +51,6 @@
     "dev:docs:ja": "appium-docs build --serve --mkdocs-yml ./docs/mkdocs-ja.yml",
     "dev:docs:zh": "appium-docs build --serve --mkdocs-yml ./docs/mkdocs-zh.yml",
     "install-docs-deps": "appium-docs init --no-mkdocs",
-    "postinstall": "node ./scripts/autoinstall-extensions.js",
     "publish:docs": "cross-env APPIUM_DOCS_PUBLISH=1 npm run build:docs",
     "test": "npm run test:unit",
     "test:e2e": "mocha --exit --timeout 1m --slow 30s \"./test/e2e/**/*.spec.js\"",

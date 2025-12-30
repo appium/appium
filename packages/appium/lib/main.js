@@ -43,6 +43,7 @@ import {
   isBroadcastIp,
 } from './utils';
 import net from 'node:net';
+import { injectAppiumSymlinks } from './cli/extension-command';
 
 const {resolveAppiumHome} = env;
 /*
@@ -313,6 +314,15 @@ async function init(args) {
       }
       if (isPluginCommandArgs(preConfigArgs)) {
         await runExtensionCommand(preConfigArgs, pluginConfig);
+      }
+
+      if (isDriverCommandArgs(preConfigArgs) || isPluginCommandArgs(preConfigArgs)) {
+        // @ts-ignore The linter suggest using dot
+        const cmd = preConfigArgs.driverCommand || preConfigArgs.pluginCommand;
+        if (cmd === 'install') {
+          logger.info('[debug] =======> doing injection')
+          await injectAppiumSymlinks(driverConfig, pluginConfig, logger);
+        }
       }
     }
     return /** @type {InitResult<Cmd>} */ ({});

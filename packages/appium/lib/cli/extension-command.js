@@ -1127,14 +1127,11 @@ class ExtensionCliCommand {
  * @param {import('@appium/types').AppiumLogger} logger
  */
 export async function injectAppiumSymlinks(driverConfig, pluginConfig, logger) {
-  const installPaths = _.compact([
+  const installPaths = [
     ...Object.values(driverConfig.installedExtensions || {}),
     ...Object.values(pluginConfig.installedExtensions || {})
-  ].map((details) => {
-    if (details.installType === INSTALL_TYPE_NPM) {
-      return details.installPath;
-    }
-  }));
+  ].filter((details) => details.installType === INSTALL_TYPE_NPM)
+   .map((details) => details.installPath);
   // After the extension is installed, we try to inject the appium module symlink
   // into the extension's node_modules folder if it is not there yet.
   // We also inject the symlink into other installed extensions' node_modules folders

@@ -269,6 +269,28 @@ describe('ExtensionCommand', function () {
 
         expect(fsSymlinkStub).to.have.been.calledTwice;
       });
+
+      it('should not create symlinks for invalid format - no installPath', async function () {
+        const driverConfig = {
+          installedExtensions: {
+            'driver-for-test': {
+              installType: 'npm',
+            },
+          },
+        };
+        const pluginConfig = {
+          installedExtensions: {
+            'plugin-for-test': {
+              installType: 'npm',
+            },
+          },
+        };
+
+        // @ts-expect-error - partial config for testing
+        await injectAppiumSymlinks(driverConfig, pluginConfig, logger);
+
+        expect(fsSymlinkStub).to.not.have.been.called;
+      });
     });
 
     describe('when there are non-npm installed extensions', function () {

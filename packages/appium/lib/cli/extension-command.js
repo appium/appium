@@ -1127,21 +1127,21 @@ class ExtensionCliCommand {
  * @param {import('@appium/types').AppiumLogger} logger
  */
 export async function injectAppiumSymlinks(driverConfig, pluginConfig, logger) {
-  const installPaths = [
+  const installPaths = _.compact([
     ...Object.values(driverConfig.installedExtensions || {}),
     ...Object.values(pluginConfig.installedExtensions || {})
   ].map((details) => {
     if (details.installType === INSTALL_TYPE_NPM) {
       return details.installPath;
     }
-  });
+  }));
   // After the extension is installed, we try to inject the appium module symlink
   // into the extension's node_modules folder if it is not there yet.
   // We also inject the symlink into other installed extensions' node_modules folders
   // as these might be cleaned up unexpectedly by npm
   // (see https://github.com/appium/python-client/pull/1177#issuecomment-3419826643).
   await Promise.all(
-    _.compact(installPaths).map((installPath) => injectAppiumSymlink(path.join(installPath, 'node_modules'), logger))
+    installPaths.map((installPath) => injectAppiumSymlink(path.join(installPath, 'node_modules'), logger))
   );
 }
 

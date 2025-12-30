@@ -320,7 +320,6 @@ async function init(args) {
         // @ts-ignore The linter suggest using dot
         const cmd = preConfigArgs.driverCommand || preConfigArgs.pluginCommand;
         if (cmd === 'install') {
-          logger.info('[debug] =======> doing injection')
           await injectAppiumSymlinks(driverConfig, pluginConfig, logger);
         }
       }

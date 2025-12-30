@@ -1119,6 +1119,8 @@ class ExtensionCliCommand {
 }
 
 /**
+ * This is needed to ensure proper module resolution for installed extensions,
+ * especially ESM ones.
  *
  * @param {ExtensionConfig<ExtensionType>} driverConfig
  * @param {ExtensionConfig<ExtensionType>} pluginConfig

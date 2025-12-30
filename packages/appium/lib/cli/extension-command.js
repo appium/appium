@@ -617,18 +617,6 @@ class ExtensionCliCommand {
         return {pkg, installPath};
       });
 
-      /** @type {Promise<void>[]} */
-      const symlinkInjectionPromises = _.uniq([
-        ...Object.values(this.config.installedExtensions).map((ext) => ext.installPath),
-        installPath,
-      ]).map((instPath) => injectAppiumSymlink.bind(this)(path.join(instPath, 'node_modules')));
-      // After the extension is installed, we try to inject the appium module symlink
-      // into the extension's node_modules folder if it is not there yet.
-      // We also inject the symlink into other installed extensions' node_modules folders
-      // as these might be cleaned up unexpectedly by npm
-      // (see https://github.com/appium/python-client/pull/1177#issuecomment-3419826643).
-      await Promise.all(symlinkInjectionPromises);
-
       return this.getInstallationReceipt({
         pkg,
         installPath,
@@ -1134,11 +1122,35 @@ class ExtensionCliCommand {
  * This is needed to ensure proper module resolution for installed extensions,
  * especially ESM ones.
  *
- * @this {ExtensionCliCommand}
+ * @param {ExtensionConfig<ExtensionType>} driverConfig
+ * @param {ExtensionConfig<ExtensionType>} pluginConfig
+ * @param {import('@appium/types').AppiumLogger} logger
+ */
+export async function injectAppiumSymlinks(driverConfig, pluginConfig, logger) {
+  const installPaths = _.compact([
+    ...Object.values(driverConfig.installedExtensions || {}),
+    ...Object.values(pluginConfig.installedExtensions || {})
+  ].filter((details) => details.installType === INSTALL_TYPE_NPM)
+   .map((details) => details.installPath));
+  // After the extension is installed, we try to inject the appium module symlink
+  // into the extension's node_modules folder if it is not there yet.
+  // We also inject the symlink into other installed extensions' node_modules folders
+  // as these might be cleaned up unexpectedly by npm
+  // (see https://github.com/appium/python-client/pull/1177#issuecomment-3419826643).
+  await Promise.all(
+    installPaths.map((installPath) => injectAppiumSymlink(path.join(installPath, 'node_modules'), logger))
+  );
+}
+
+/**
+ * This is needed to ensure proper module resolution for installed extensions,
+ * especially ESM ones.
+ *
  * @param {string} dstFolder The destination folder where the symlink should be created
+ * @param {import('@appium/types').AppiumLogger} logger
  * @returns {Promise<void>}
  */
-async function injectAppiumSymlink(dstFolder) {
+async function injectAppiumSymlink(dstFolder, logger) {
   let appiumModuleRoot;
   try {
     appiumModuleRoot = getAppiumModuleRoot();
@@ -1148,7 +1160,7 @@ async function injectAppiumSymlink(dstFolder) {
     }
   } catch (error) {
     // This error is not fatal, we may still doing just fine if the module being loaded is a CJS one
-    this.log.info(
+    logger.info(
       `Cannot create a symlink to the appium module '${appiumModuleRoot}' in '${dstFolder}'. ` +
       `Original error: ${error.message}`
     );

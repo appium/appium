@@ -144,6 +144,7 @@
     "rimraf": "6.1.2",
     "serve-static": "2.2.1",
     "sinon": "21.0.1",
+    "sinon-chai": "4.0.1",
     "sync-monorepo-packages": "1.0.2",
     "teen_process": "4.0.7",
     "ts-node": "10.9.2",

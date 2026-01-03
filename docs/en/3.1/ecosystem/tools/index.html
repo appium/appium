@@ -128,6 +128,19 @@
     </div>
     <div data-md-component="announce">
       
+        <aside class="md-banner">
+          <div class="md-banner__inner md-grid md-typeset">
+            
+            
+    <center>
+    SeleniumConf & AppiumConf returns on May 6-8, 2026! Join us to learn and connect with the community!
+    <a href="https://seleniumconf.com/">Register Now</a>
+    </center>
+
+          </div>
+          
+        </aside>
+      
     </div>
     
       <div data-md-color-scheme="default" data-md-component="outdated" hidden>
@@ -1341,6 +1354,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#appium-mcp" class="md-nav__link">
+    <span class="md-ellipsis">
+      Appium MCP
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1384,15 +1406,6 @@
   <a href="#appium-installer" class="md-nav__link">
     <span class="md-ellipsis">
       Appium Installer
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#jarvis-appium" class="md-nav__link">
-    <span class="md-ellipsis">
-      Jarvis Appium
     </span>
   </a>
   
@@ -2910,6 +2923,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#appium-mcp" class="md-nav__link">
+    <span class="md-ellipsis">
+      Appium MCP
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2958,15 +2980,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#jarvis-appium" class="md-nav__link">
-    <span class="md-ellipsis">
-      Jarvis Appium
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -3009,15 +3022,43 @@ directly related to running tests, such as Appium installation, test development
 <p>Appium has a graphical client which can be used to inspect application screenshots, view the
 application hierarchy, search for elements, run Appium commands, record app interactions, and more.
 It can be very useful for Appium test development.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Install as an Appium Plugin</label><label for="__tabbed_1_2">Install Standalone</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>appium<span class="w"> </span>plugin<span class="w"> </span>install<span class="w"> </span>inspector
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<p>Download the app from the Appium Inspector repo's <a href="https://github.com/appium/appium-inspector/releases">GitHub Releases section</a>.</p>
+</div>
+</div>
+</div>
+<h3 id="appium-mcp"><a href="https://github.com/appium/appium-mcp">Appium MCP</a><a class="headerlink" href="#appium-mcp" title="Permanent link">&para;</a></h3>
+<p>Appium MCP is a Model Context Protocol (MCP) server that provides mobile test development and
+automation capabilities using Appium.</p>
+<div class="language-json highlight"><span class="filename">Install This Tool</span><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">// Add the following to your MCP client configuration</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="p">{</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="nt">&quot;appium-mcp&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="nt">&quot;disabled&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="nt">&quot;timeout&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;stdio&quot;</span><span class="p">,</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;npx&quot;</span><span class="p">,</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">    </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;appium-mcp@latest&quot;</span><span class="p">],</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">    </span><span class="nt">&quot;env&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">      </span><span class="nt">&quot;ANDROID_HOME&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/path/to/android/sdk&quot;</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="p">}</span>
+</span></code></pre></div>
 <h2 id="extension-tools">Extension Tools<a class="headerlink" href="#extension-tools" title="Permanent link">&para;</a></h2>
 <p>Appium driver or plugin developers can choose to include these tools in their driver/plugin:</p>
 <h3 id="appium-doctor">Appium Doctor<a class="headerlink" href="#appium-doctor" title="Permanent link">&para;</a></h3>
 <p>The Appium Doctor tool can be used to validate whether all prerequisites and other environment
 details needed for the driver/plugin have been set up correctly. The tool can be accessed via the
 <a href="../../reference/cli/extensions/#doctor"><code>doctor</code> command in the Appium CLI</a>:</p>
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>appium<span class="w"> </span><span class="o">{</span>driver<span class="p">|</span>plugin<span class="o">}</span><span class="w"> </span>doctor<span class="w"> </span>&lt;extension-name&gt;
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>appium<span class="w"> </span><span class="o">{</span>driver<span class="p">|</span>plugin<span class="o">}</span><span class="w"> </span>doctor<span class="w"> </span>&lt;extension-name&gt;
 </span></code></pre></div>
-<p>It shows no results if the driver/plugin author did not implement Doctor support.</p>
+<p>It shows no results if the driver/plugin does not have such validation checks.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>If you maintain an Appium extension and would like to add Appium Doctor support for it, check
@@ -3030,28 +3071,7 @@ out the documentation on <a href="../../developing/build-doctor-checks/">Buildin
 It includes commands for installing Appium, its drivers and plugins, as well as validating
 prerequisites for iOS or Android emulators or real devices.</p>
 <p>Supported by: <code>@AppiumTestDistribution</code></p>
-<div class="language-sh highlight"><span class="filename">Install This Tool</span><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>npm<span class="w"> </span>install<span class="w"> </span>-g<span class="w"> </span>appium-installer
-</span></code></pre></div>
-<h3 id="jarvis-appium"><a href="https://github.com/AppiumTestDistribution/mcp-appium">Jarvis Appium</a><a class="headerlink" href="#jarvis-appium" title="Permanent link">&para;</a></h3>
-<p>Jarvis Appium is a Model Context Protocol (MCP) server that provides mobile test development and
-automation capabilities using Appium.</p>
-<p>Supported by: <code>@AppiumTestDistribution</code></p>
-<div class="language-json highlight"><span class="filename">Install This Tool</span><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// Add the following to your MCP client configuration</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="p">{</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="nt">&quot;mcpServers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="nt">&quot;jarvis-appium&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">      </span><span class="nt">&quot;disabled&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">      </span><span class="nt">&quot;timeout&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;stdio&quot;</span><span class="p">,</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">      </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;npx&quot;</span><span class="p">,</span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">      </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;jarvis-appium&quot;</span><span class="p">],</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">      </span><span class="nt">&quot;env&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">        </span><span class="nt">&quot;ANDROID_HOME&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/path/to/android/sdk&quot;</span><span class="p">,</span>
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">        </span><span class="nt">&quot;CAPABILITIES_CONFIG&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/path/to/your/capabilities.json&quot;</span>
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">      </span><span class="p">}</span>
-</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="p">}</span>
+<div class="language-sh highlight"><span class="filename">Install This Tool</span><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>npm<span class="w"> </span>install<span class="w"> </span>-g<span class="w"> </span>appium-installer
 </span></code></pre></div>
 
 
@@ -3073,7 +3093,7 @@ automation capabilities using Appium.</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2025-10-22T17:20:41+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2025-10-22</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2025-12-05T21:16:18+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2025-12-05</span>
   </span>
 
     
@@ -3228,7 +3248,7 @@ automation capabilities using Appium.</p>
       </div>
       <script>var consent=__md_get("__consent");if(consent)for(var input of document.forms.consent.elements)input.name&&(input.checked=consent[input.name]||!1);else"file:"!==location.protocol&&setTimeout((function(){document.querySelector("[data-md-component=consent]").hidden=!1}),250);var form=document.forms.consent;for(var action of["submit","reset"])form.addEventListener(action,(function(e){if(e.preventDefault(),"reset"===e.type)for(var n of document.forms.consent.elements)n.name&&(n.checked=!1);__md_set("__consent",Object.fromEntries(Array.from(new FormData(form).keys()).map((function(e){return[e,!0]})))),location.hash="",location.reload()}))</script>
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["content.action.edit", "content.code.annotate", "content.code.copy", "content.tabs.link", "navigation.indexes", "navigation.sections", "navigation.tabs", "navigation.top", "toc.follow"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.action.edit", "content.code.annotate", "content.code.copy", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "navigation.indexes", "navigation.path", "navigation.sections", "navigation.tabs", "navigation.top", "toc.follow"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
       <script src="../../assets/javascripts/bundle.88dd0f4e.min.js"></script>

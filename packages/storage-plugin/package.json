@@ -47,7 +47,7 @@
     "lodash": "4.17.21",
     "lru-cache": "11.2.4",
     "rimraf": "6.1.2",
-    "ws": "8.18.3"
+    "ws": "8.19.0"
   },
   "peerDependencies": {
     "appium": "^3.0.0-beta.0"

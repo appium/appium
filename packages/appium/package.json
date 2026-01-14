@@ -83,7 +83,7 @@
     "resolve-from": "5.0.0",
     "semver": "7.7.3",
     "teen_process": "4.0.7",
-    "type-fest": "5.3.1",
+    "type-fest": "5.4.1",
     "winston": "3.19.0",
     "ws": "8.19.0",
     "yaml": "2.8.2"

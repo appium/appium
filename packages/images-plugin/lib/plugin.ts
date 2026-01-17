@@ -3,22 +3,26 @@ import {errors} from 'appium/driver';
 import {util} from '@appium/support';
 import {BasePlugin} from 'appium/plugin';
 import {compareImages} from './compare';
-import ImageElementFinder from './finder';
+import {ImageElementFinder} from './finder';
 import {ImageElement} from './image-element';
 import {IMAGE_STRATEGY, IMAGE_ELEMENT_PREFIX} from './constants';
+import type {ExternalDriver, Element, ActionSequence, MethodMap} from '@appium/types';
+import type {MatchingOptions, SimilarityOptions, OccurrenceOptions} from '@appium/opencv';
 
-function getImgElFromArgs(args) {
+export function getImgElFromArgs(args: any[]): string | undefined {
   return args.find((arg) => _.isString(arg) && arg.startsWith(IMAGE_ELEMENT_PREFIX));
 }
 
-export default class ImageElementPlugin extends BasePlugin {
-  constructor(pluginName) {
+export class ImageElementPlugin extends BasePlugin {
+  readonly finder: ImageElementFinder;
+
+  constructor(pluginName: string) {
     super(pluginName);
     this.finder = new ImageElementFinder();
   }
 
   // this plugin supports a non-standard 'compare images' command
-  static newMethodMap = /** @type {const} */ ({
+  static newMethodMap: MethodMap<ImageElementPlugin> = {
     '/session/:sessionId/appium/compare_images': {
       POST: {
         command: 'compareImages',
@@ -29,30 +33,33 @@ export default class ImageElementPlugin extends BasePlugin {
         neverProxy: true,
       },
     },
-  });
+  } as const;
 
-  async compareImages(next, driver, ...args) {
-    // @ts-ignore Arguments should be ok there
-    return await compareImages(...args);
+  async compareImages(
+    next: () => Promise<any>,
+    driver: ExternalDriver,
+    mode: string,
+    firstImage: string | Buffer,
+    secondImage: string | Buffer,
+    options?: MatchingOptions | SimilarityOptions | OccurrenceOptions
+  ): Promise<any> {
+    return await compareImages(mode, firstImage, secondImage, options);
   }
 
-  async findElement(next, driver, ...args) {
+  async findElement(next: () => Promise<any>, driver: ExternalDriver, ...args: any[]): Promise<any> {
     return await this._find(false, next, driver, ...args);
   }
 
-  async findElements(next, driver, ...args) {
+  async findElements(next: () => Promise<any>, driver: ExternalDriver, ...args: any[]): Promise<any> {
     return await this._find(true, next, driver, ...args);
   }
 
-  /**
-   *
-   * @param {boolean} multiple
-   * @param {*} next
-   * @param {*} driver
-   * @param  {...any} args
-   * @returns {Promise<any>}
-   */
-  async _find(multiple, next, driver, ...args) {
+  private async _find(
+    multiple: boolean,
+    next: () => Promise<any>,
+    driver: ExternalDriver,
+    ...args: any[]
+  ): Promise<any> {
     const [strategy, selector] = args;
 
     // if we're not actually finding by image, just do the normal thing
@@ -63,7 +70,12 @@ export default class ImageElementPlugin extends BasePlugin {
     return await this.finder.findByImage(Buffer.from(selector, 'base64'), driver, {multiple});
   }
 
-  async handle(next, driver, cmdName, ...args) {
+  async handle(
+    next: () => Promise<any>,
+    driver: ExternalDriver,
+    cmdName: string,
+    ...args: any[]
+  ): Promise<any> {
     // if we have a command that involves an image element id, attempt to find the image element
     // and execute the command on it
     const imgElId = getImgElFromArgs(args);
@@ -83,28 +95,22 @@ export default class ImageElementPlugin extends BasePlugin {
     return await next();
   }
 
-  async performActions(next, driver, ...args) {
+  async performActions(
+    next: () => Promise<any>,
+    driver: ExternalDriver,
+    actionSequences: ActionSequence[]
+  ): Promise<any> {
     // Replace with coordinates when ActionSequence includes image elements.
-    const [actionSequences] = /** @type {[import('@appium/types').ActionSequence[]]} */ (args);
     for (const actionSequence of actionSequences) {
       for (const action of actionSequence.actions) {
         // The actions that can have an Element as the origin are "pointerMove" and "scroll".
-        if (
-          !_.isPlainObject(
-            /** @type {{origin?: "viewport" | "pointer" | import('@appium/types').Element}} */ (
-              action
-            ).origin,
-          )
-        ) {
+        if (!_.isPlainObject((action as any).origin)) {
           continue;
         }
 
-        const actionWithEl =
-          /** @type {import('@appium/types').PointerMoveAction | import('@appium/types').ScrollAction} */ (
-            action
-          );
+        const actionWithEl = action as any;
 
-        const elId = util.unwrapElement(/** @type {import('@appium/types').Element} */ (actionWithEl.origin));
+        const elId = util.unwrapElement(actionWithEl.origin as Element);
         if (!_.startsWith(elId, IMAGE_ELEMENT_PREFIX)) {
           continue;
         }
@@ -125,5 +131,3 @@ export default class ImageElementPlugin extends BasePlugin {
     return await next();
   }
 }
-
-export {ImageElementPlugin, getImgElFromArgs, IMAGE_STRATEGY};

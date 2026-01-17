@@ -3,7 +3,7 @@ import {util} from 'appium/support';
 import {BaseDriver} from 'appium/driver';
 import {ImageElementPlugin} from '../../lib/plugin';
 import {IMAGE_STRATEGY} from '../../lib/constants';
-import ImageElementFinder from '../../lib/finder';
+import {ImageElementFinder} from '../../lib/finder';
 import {ImageElement} from '../../lib/image-element';
 import sinon from 'sinon';
 import {TINY_PNG, TiNY_PNG_BUF, TINY_PNG_DIMS} from '../fixtures/index.cjs';

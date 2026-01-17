@@ -1,7 +1,7 @@
 // @ts-check
 
 import getPort from 'get-port';
-import path from 'path';
+import path from 'node:path';
 import rewiremock, {addPlugin, overrideEntryPoint, plugins} from 'rewiremock';
 import {insertAppiumPrefixes} from '../lib/utils';
 

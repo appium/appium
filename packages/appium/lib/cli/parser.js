@@ -1,7 +1,7 @@
 import {fs} from '@appium/support';
 import {ArgumentParser} from 'argparse';
 import _ from 'lodash';
-import path from 'path';
+import path from 'node:path';
 import {
   DRIVER_TYPE,
   EXT_SUBCOMMAND_DOCTOR,

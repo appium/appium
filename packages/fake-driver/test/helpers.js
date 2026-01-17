@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import {remote as wdio} from 'webdriverio';
 
 const TEST_HOST = '127.0.0.1';

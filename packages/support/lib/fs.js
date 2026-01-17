@@ -1,7 +1,7 @@
 // @ts-check
 
 import B from 'bluebird';
-import crypto from 'crypto';
+import crypto from 'node:crypto';
 import {
   close,
   constants,
@@ -12,13 +12,13 @@ import {
   write,
   rmSync,
   open,
-} from 'fs';
+} from 'node:fs';
 import { glob } from 'glob';
 import klaw from 'klaw';
 import _ from 'lodash';
 import ncp from 'ncp';
 import {packageDirectorySync} from 'package-directory';
-import path from 'path';
+import path from 'node:path';
 import {readPackageSync} from 'read-pkg';
 import sanitize from 'sanitize-filename';
 import which from 'which';

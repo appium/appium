@@ -1,5 +1,5 @@
 import B from 'bluebird';
-import path from 'path';
+import path from 'node:path';
 import * as util from '../../lib/util';
 import {tempDir, fs} from '../../lib/index';
 

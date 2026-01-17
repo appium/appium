@@ -2,7 +2,7 @@ import {errors, errorFromMJSONWPStatusCode, errorFromW3CJsonCode, isErrorType} f
 import {BadParametersError, getResponseForW3CError} from '../../../lib/protocol/errors';
 import _ from 'lodash';
 import {StatusCodes as HTTPStatusCodes} from 'http-status-codes';
-import path from 'path';
+import path from 'node:path';
 
 const basename = path.basename(__filename);
 

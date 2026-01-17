@@ -1,7 +1,7 @@
 // @ts-check
 import _ from 'lodash';
-import {homedir} from 'os';
-import path from 'path';
+import {homedir} from 'node:os';
+import path from 'node:path';
 import {readPackage} from 'read-pkg';
 import * as semver from 'semver';
 

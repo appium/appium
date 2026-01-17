@@ -1,7 +1,7 @@
 import B from 'bluebird';
 import _ from 'lodash';
-import os from 'os';
-import path from 'path';
+import os from 'node:os';
+import path from 'node:path';
 import { fs } from './fs';
 import * as semver from 'semver';
 import {
@@ -10,7 +10,7 @@ import {
   parse as shellParse,
 } from 'shell-quote';
 import pluralizeLib from 'pluralize';
-import stream from 'stream';
+import stream from 'node:stream';
 import {Base64Encode} from 'base64-stream';
 import {
   // https://www.npmjs.com/package/uuid

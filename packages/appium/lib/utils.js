@@ -6,9 +6,9 @@ import {
   errors,
   isW3cCaps,
 } from '@appium/base-driver';
-import {inspect as dump} from 'util';
+import {inspect as dump} from 'node:util';
 import {node, fs} from '@appium/support';
-import path from 'path';
+import path from 'node:path';
 import {SERVER_SUBCOMMAND, DRIVER_TYPE, PLUGIN_TYPE, SETUP_SUBCOMMAND} from './constants';
 import os from 'node:os';
 
@@ -229,7 +229,7 @@ export function adjustNodePath() {
       // See https://gist.github.com/branneman/8048520#7-the-hack
       // @ts-ignore see above comment
 
-      require('module').Module._initPaths();
+      require('node:module').Module._initPaths();
       return true;
     } catch {
       return false;

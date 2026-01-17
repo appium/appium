@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import path from 'path';
+import path from 'node:path';
 import logger from './logger';
 import {tempDir, fs, util, timing, node} from '@appium/support';
 import { LRUCache } from 'lru-cache';

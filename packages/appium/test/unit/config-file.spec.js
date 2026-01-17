@@ -1,6 +1,6 @@
 // @ts-check
 
-import fs from 'fs';
+import fs from 'node:fs';
 import {createSandbox} from 'sinon';
 import * as YAML from 'yaml';
 import * as schema from '../../lib/schema/schema';

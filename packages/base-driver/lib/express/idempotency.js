@@ -1,7 +1,7 @@
 import log from './logger';
 import { LRUCache } from 'lru-cache';
 import _ from 'lodash';
-import {EventEmitter} from 'events';
+import {EventEmitter} from 'node:events';
 
 const IDEMPOTENT_RESPONSES = new LRUCache({
   max: 64,

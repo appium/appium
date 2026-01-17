@@ -1,6 +1,6 @@
 // @ts-check
 
-import path from 'path';
+import path from 'node:path';
 
 import {pluginE2EHarness} from '@appium/plugin-test-support';
 import {remote as wdio} from 'webdriverio';

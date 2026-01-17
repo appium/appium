@@ -1,5 +1,5 @@
 import {DRIVER_TYPE} from '../../../lib/constants';
-import path from 'path';
+import path from 'node:path';
 import {version as APPIUM_VER} from '../../../package.json';
 import {FAKE_DRIVER_DIR, PROJECT_ROOT, rewiremock} from '../../helpers';
 import {initMocks} from './mocks';

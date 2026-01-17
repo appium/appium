@@ -1,6 +1,6 @@
 import B from 'bluebird';
 import _ from 'lodash';
-import path from 'path';
+import path from 'node:path';
 import {npm, util, env, console, fs, system} from '@appium/support';
 import {spinWith, RingBuffer} from './utils';
 import {
@@ -12,9 +12,9 @@ import {
 } from '../extension/extension-config';
 import {SubProcess} from 'teen_process';
 import {packageDidChange} from '../extension/package-changed';
-import {spawn} from 'child_process';
+import {spawn} from 'node:child_process';
 import {inspect} from 'node:util';
-import {pathToFileURL} from 'url';
+import {pathToFileURL} from 'node:url';
 import {Doctor, EXIT_CODE as DOCTOR_EXIT_CODE} from '../doctor/doctor';
 import {getAppiumModuleRoot, npmPackage} from '../utils';
 import * as semver from 'semver';

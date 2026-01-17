@@ -2,8 +2,8 @@ import {isWindows} from './system';
 import log from './logger';
 import _ from 'lodash';
 import {exec} from 'teen_process';
-import path from 'path';
-import _fs from 'fs';
+import path from 'node:path';
+import _fs from 'node:fs';
 import {v4 as uuidV4} from 'uuid';
 
 const ECMA_SIZES = Object.freeze({

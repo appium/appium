@@ -6,8 +6,8 @@
  */
 
 const {compileFromFile} = require('json-schema-to-typescript');
-const path = require('path');
-const {promises: fs} = require('fs');
+const path = require('node:path');
+const {promises: fs} = require('node:fs');
 const logSymbols = require('log-symbols');
 const {error, info, success} = logSymbols.default;
 

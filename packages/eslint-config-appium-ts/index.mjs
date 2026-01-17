@@ -13,6 +13,7 @@ import {importX} from 'eslint-plugin-import-x';
 import mochaPlugin from 'eslint-plugin-mocha';
 import nodePlugin from 'eslint-plugin-n';
 import {configs as tsConfigs} from 'typescript-eslint';
+import unicorn from 'eslint-plugin-unicorn';
 
 const gitignorePath = path.resolve(process.cwd(), '.gitignore');
 
@@ -35,6 +36,7 @@ export default defineConfig([
       js,
       n: nodePlugin,
       promise: pluginPromise,
+      unicorn
     },
     extends: [
       'js/recommended',
@@ -146,6 +148,7 @@ export default defineConfig([
        * `return await somePromise` have their own use-cases.
        */
       'require-await': 'off',
+      'unicorn/prefer-node-protocol': 'warn'
     }
   },
 
@@ -154,6 +157,7 @@ export default defineConfig([
     files: ['**/test/**', '*.spec.*js', '-specs.*js', '*.spec.ts'],
     plugins: {
       mocha: mochaPlugin,
+      unicorn
     },
     extends: [mochaPlugin.configs.recommended],
     rules: {

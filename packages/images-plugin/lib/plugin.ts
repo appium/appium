@@ -6,7 +6,7 @@ import {compareImages} from './compare';
 import {ImageElementFinder} from './finder';
 import {ImageElement} from './image-element';
 import {IMAGE_STRATEGY, IMAGE_ELEMENT_PREFIX} from './constants';
-import type {ExternalDriver, Element, ActionSequence} from '@appium/types';
+import type {ExternalDriver, Element, ActionSequence, MethodMap} from '@appium/types';
 import type {MatchingOptions, SimilarityOptions, OccurrenceOptions} from '@appium/opencv';
 
 export function getImgElFromArgs(args: any[]): string | undefined {
@@ -22,7 +22,7 @@ export class ImageElementPlugin extends BasePlugin {
   }
 
   // this plugin supports a non-standard 'compare images' command
-  static newMethodMap = {
+  static newMethodMap: MethodMap<ImageElementPlugin> = {
     '/session/:sessionId/appium/compare_images': {
       POST: {
         command: 'compareImages',

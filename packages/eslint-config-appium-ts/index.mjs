@@ -157,7 +157,6 @@ export default defineConfig([
     files: ['**/test/**', '*.spec.*js', '-specs.*js', '*.spec.ts'],
     plugins: {
       mocha: mochaPlugin,
-      unicorn
     },
     extends: [mochaPlugin.configs.recommended],
     rules: {

@@ -1,5 +1,5 @@
 import {cropBase64Image} from '../../lib/image-util';
-import path from 'path';
+import path from 'node:path';
 import sharp from 'sharp';
 import {fs} from '../../lib';
 

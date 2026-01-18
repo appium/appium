@@ -2,7 +2,7 @@ import _ from 'lodash';
 import log from './logger';
 import B from 'bluebird';
 import {requireSharp} from './image-util';
-import {Writable} from 'stream';
+import {Writable} from 'node:stream';
 import {requirePackage} from './node';
 import axios from 'axios';
 

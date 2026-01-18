@@ -1,11 +1,11 @@
 // @ts-check
 import B from 'bluebird';
-import {promises as fs} from 'fs';
+import {promises as fs} from 'node:fs';
 import {DRIVER_TYPE, PLUGIN_TYPE} from '../../../lib/constants';
 import {resolveFixture, rewiremock} from '../../helpers';
 import {initMocks} from './mocks';
 import {version as APPIUM_VER} from '../../../package.json';
-import EventEmitter from 'events';
+import EventEmitter from 'node:events';
 
 describe('Manifest', function () {
   /**

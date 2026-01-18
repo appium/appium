@@ -5,8 +5,8 @@
  * A collection of mocks reused across unit tests.
  */
 
-import {EventEmitter} from 'events';
-import path from 'path';
+import {EventEmitter} from 'node:events';
+import path from 'node:path';
 import {createSandbox} from 'sinon';
 import {version as APPIUM_VER} from '../../../package.json';
 

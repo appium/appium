@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import * as zip from '../../lib/zip';
 import {tempDir, fs} from '../../lib/index';
 import {MockReadWriteStream} from '../helpers';

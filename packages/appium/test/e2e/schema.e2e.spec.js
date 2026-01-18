@@ -1,6 +1,6 @@
 // @ts-check
 import {fs, tempDir} from '@appium/support';
-import path from 'path';
+import path from 'node:path';
 import {DRIVER_TYPE} from '../../lib/constants';
 import {resolveFixture} from '../helpers';
 import {installLocalExtension, runAppium} from './e2e-helpers';

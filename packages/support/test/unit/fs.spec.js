@@ -1,5 +1,5 @@
 import {fs, system, tempDir} from '../../lib';
-import path from 'path';
+import path from 'node:path';
 import {createSandbox} from 'sinon';
 import {exec} from 'teen_process';
 import _ from 'lodash';

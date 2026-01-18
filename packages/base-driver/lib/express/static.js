@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import log from './logger';
 import _ from 'lodash';
 import {fs} from '@appium/support';

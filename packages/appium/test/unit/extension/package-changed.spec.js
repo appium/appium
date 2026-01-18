@@ -1,5 +1,5 @@
 // @ts-check
-import path from 'path';
+import path from 'node:path';
 import {PKG_HASHFILE_RELATIVE_PATH} from '../../../lib/constants';
 import {rewiremock} from '../../helpers';
 import {initMocks} from './mocks';

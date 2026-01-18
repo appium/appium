@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import path from 'path';
+import path from 'node:path';
 import {remote as wdio} from 'webdriverio';
 import {pluginE2EHarness} from '@appium/plugin-test-support';
 import {tempDir, fs} from '@appium/support';

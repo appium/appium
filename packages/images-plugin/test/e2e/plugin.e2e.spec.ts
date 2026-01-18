@@ -6,6 +6,10 @@ import {TEST_IMG_1_B64, TEST_IMG_2_B64, APPSTORE_IMG_PATH} from '../fixtures/ind
 import {pluginE2EHarness} from '@appium/plugin-test-support';
 import {tempDir, fs} from '@appium/support';
 import sharp from 'sharp';
+import {expect, use} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+
+use(chaiAsPromised);
 
 const THIS_PLUGIN_DIR = path.join(__dirname, '..', '..');
 const APPIUM_HOME = path.join(THIS_PLUGIN_DIR, 'local_appium_home');
@@ -35,23 +39,9 @@ const WDIO_OPTS = {
 };
 
 describe('ImageElementPlugin', function () {
-  let server;
-  let driver;
-
-  beforeEach(async function () {
-    driver = await wdio(WDIO_OPTS);
-  });
-
-  afterEach(async function () {
-    if (driver) {
-      await driver.deleteSession();
-    }
-  });
-
   pluginE2EHarness({
     before,
     after,
-    server,
     port: TEST_PORT,
     host: TEST_HOST,
     appiumHome: APPIUM_HOME,
@@ -63,6 +53,18 @@ describe('ImageElementPlugin', function () {
     pluginSpec: THIS_PLUGIN_DIR,
   });
 
+  let driver: any;
+
+  beforeEach(async function () {
+    driver = await wdio(WDIO_OPTS);
+  });
+
+  afterEach(async function () {
+    if (driver) {
+      await driver.deleteSession();
+    }
+  });
+
   it('should add the compareImages route', async function () {
     let comparison = await driver.compareImages(
       MATCH_FEATURES_MODE,
@@ -70,24 +72,24 @@ describe('ImageElementPlugin', function () {
       TEST_IMG_2_B64,
       {}
     );
-    comparison.count.should.eql(0);
+    expect(comparison.count).to.eql(0);
     comparison = await driver.compareImages(
       GET_SIMILARITY_MODE,
       TEST_IMG_1_B64,
       TEST_IMG_2_B64,
       {}
     );
-    comparison.score.should.be.above(0.2);
+    expect(comparison.score).to.be.above(0.2);
   });
 
   it('should find and interact with image elements', async function () {
     const imageEl = await driver.$(APPSTORE_IMG_PATH);
     const {x, y} = await imageEl.getLocation();
     const {width, height} = await imageEl.getSize();
-    x.should.eql(28);
-    y.should.eql(72);
-    width.should.eql(80);
-    height.should.eql(91);
+    expect(x).to.eql(28);
+    expect(y).to.eql(72);
+    expect(width).to.eql(80);
+    expect(height).to.eql(91);
     await imageEl.click();
 
     const actionSequence = {
@@ -115,15 +117,15 @@ describe('ImageElementPlugin', function () {
       await sharp(screenshotPath)
       .extract(
         {
-          left: parseInt(width / 4, 10),
-          top: parseInt(height / 4, 10),
-          width: parseInt(width / 2, 10),
-          height: parseInt(height / 2, 10),
+          left: parseInt((width / 4).toString(), 10),
+          top: parseInt((height / 4).toString(), 10),
+          width: parseInt((width / 2).toString(), 10),
+          height: parseInt((height / 2).toString(), 10),
         }
       )
       .toFile(tmpImgPath);
       const subEl = await imageEl.$(tmpImgPath);
-      _.isNil(subEl).should.be.false;
+      expect(_.isNil(subEl)).to.be.false;
     } finally {
       await fs.rimraf(tmpRoot);
     }

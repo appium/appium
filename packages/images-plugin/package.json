@@ -34,9 +34,9 @@
   ],
   "scripts": {
     "test": "npm run test:unit",
-    "test:e2e": "mocha --exit --timeout 40s --slow 20s \"./test/e2e/**/*.spec.*js\"",
     "test:smoke": "node ./build/lib/index.js",
-    "test:unit": "mocha \"./test/unit/**/*.spec.*js\""
+    "test:unit": "mocha \"./test/unit/**/*.spec.*ts\"",
+    "test:e2e": "mocha --exit --timeout 40s --slow 20s \"./test/e2e/**/*.spec.*ts\""
   },
   "dependencies": {
     "@appium/opencv": "^4.0.3",

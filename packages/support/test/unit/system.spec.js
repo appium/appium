@@ -1,5 +1,5 @@
 import {system} from '../../lib';
-import os from 'os';
+import os from 'node:os';
 import {createSandbox} from 'sinon';
 import * as teen_process from 'teen_process';
 import _ from 'lodash';

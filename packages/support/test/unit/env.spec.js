@@ -1,7 +1,7 @@
 
 // @ts-check
 
-import path from 'path';
+import path from 'node:path';
 import {rewiremock} from '../helpers';
 import {initMocks} from '../mocks';
 

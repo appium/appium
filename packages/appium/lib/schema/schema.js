@@ -1,7 +1,7 @@
 import {Ajv} from 'ajv';
 import addFormats from 'ajv-formats';
 import _ from 'lodash';
-import path from 'path';
+import path from 'node:path';
 import {DRIVER_TYPE, PLUGIN_TYPE} from '../constants';
 import {AppiumConfigJsonSchema} from '@appium/schema';
 import {APPIUM_CONFIG_SCHEMA_ID, ArgSpec, SERVER_PROP_NAME} from './arg-spec';

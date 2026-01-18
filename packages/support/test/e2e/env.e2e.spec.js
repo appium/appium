@@ -1,6 +1,6 @@
 // @ts-check
 
-import path from 'path';
+import path from 'node:path';
 import {fs, tempDir} from '../../lib';
 import {
   DEFAULT_APPIUM_HOME,

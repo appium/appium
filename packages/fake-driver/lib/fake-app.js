@@ -1,6 +1,6 @@
 import {fs} from 'appium/support';
-import {readFileSync} from 'fs';
-import path from 'path';
+import {readFileSync} from 'node:fs';
+import path from 'node:path';
 import XMLDom from '@xmldom/xmldom';
 import * as xpath from 'xpath';
 import log from './logger';

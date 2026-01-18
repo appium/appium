@@ -1,5 +1,5 @@
 import {ArgumentTypeError} from 'argparse';
-import {readFileSync, existsSync} from 'fs';
+import {readFileSync, existsSync} from 'node:fs';
 
 /**
  * This module provides custom keywords for Appium schemas, as well as

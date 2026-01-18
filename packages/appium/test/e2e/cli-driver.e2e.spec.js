@@ -2,7 +2,7 @@
 
 import {exec} from 'teen_process';
 import {fs, system, tempDir, util} from '@appium/support';
-import path from 'path';
+import path from 'node:path';
 import resolveFrom from 'resolve-from';
 import {
   DRIVER_TYPE,

@@ -1,5 +1,5 @@
 import {getImagesMatches, getImagesSimilarity, getImageOccurrence} from '../../lib';
-import path from 'path';
+import path from 'node:path';
 import {fs} from '@appium/support';
 
 const FIXTURES_ROOT = path.resolve(__dirname, 'images');

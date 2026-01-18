@@ -1,6 +1,6 @@
 // @ts-check
 
-import {promises as fs} from 'fs';
+import {promises as fs} from 'node:fs';
 import {Manifest} from '../../../lib/extension/manifest';
 import {resetSchema} from '../../../lib/schema';
 import {resolveFixture, rewiremock} from '../../helpers';

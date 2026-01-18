@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import {downloadFile} from '../../lib/net';
 import {tempDir, fs} from '../../lib/index';
 

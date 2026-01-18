@@ -6,7 +6,7 @@
 import {console, fs} from '@appium/support';
 import '@colors/colors';
 import _ from 'lodash';
-import path from 'path';
+import path from 'node:path';
 import {exec} from 'teen_process';
 import {APPIUM_ROOT, resolveFixture} from '../helpers';
 

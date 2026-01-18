@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import {mjpeg} from '../../lib';
 import B from 'bluebird';
-import http from 'http';
+import http from 'node:http';
 import mJpegServer from 'mjpeg-server';
 import getPort from 'get-port';
 

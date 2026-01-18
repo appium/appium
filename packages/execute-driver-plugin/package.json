@@ -40,7 +40,7 @@
   "dependencies": {
     "bluebird": "3.7.2",
     "lodash": "4.17.21",
-    "webdriverio": "9.23.0"
+    "webdriverio": "9.23.2"
   },
   "peerDependencies": {
     "appium": "^3.0.0-beta.0"

@@ -1,6 +1,6 @@
 import {BasePlugin} from 'appium/plugin';
 import _ from 'lodash';
-import cp from 'child_process';
+import cp from 'node:child_process';
 import {timing} from 'appium/support';
 import B from 'bluebird';
 

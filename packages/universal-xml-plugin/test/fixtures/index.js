@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 
 const XML_IOS = fs.readFileSync(path.resolve(__dirname, 'ios.xml'), 'utf8').trim();
 const XML_IOS_TRANSFORMED = fs.readFileSync(path.resolve(__dirname, 'ios-transformed.xml'), 'utf8').trim();

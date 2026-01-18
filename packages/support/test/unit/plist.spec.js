@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import {plist, tempDir, fs} from '../../lib';
 
 const binaryPlistPath = path.join(__dirname, 'assets', 'sample_binary.plist');

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-const path = require('path');
-const childProcess = require('child_process');
+const path = require('node:path');
+const childProcess = require('node:child_process');
 const _ = require('lodash');
 
 const res = JSON.parse(

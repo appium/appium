@@ -1,6 +1,6 @@
 import {exec} from 'teen_process';
 import _ from 'lodash';
-import os from 'os';
+import os from 'node:os';
 
 const VERSION_PATTERN = /^(\d+\.\d+)/m;
 

@@ -5,7 +5,7 @@
  * A collection of mocks reused across unit tests.
  */
 
-import path from 'path';
+import path from 'node:path';
 import {createSandbox} from 'sinon';
 
 export function initMocks(sandbox = createSandbox()) {

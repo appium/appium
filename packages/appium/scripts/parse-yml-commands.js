@@ -2,7 +2,7 @@
 
 // @ts-check
 
-const path = require('path');
+const path = require('node:path');
 const yaml = require('yaml');
 const {fs, util, logger} = require('@appium/support');
 const Handlebars = require('handlebars');

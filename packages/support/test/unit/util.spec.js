@@ -1,8 +1,8 @@
 import {util, fs, tempDir} from '../../lib';
 import B from 'bluebird';
 import {createSandbox} from 'sinon';
-import os from 'os';
-import path from 'path';
+import os from 'node:os';
+import path from 'node:path';
 import _ from 'lodash';
 
 const {W3C_WEB_ELEMENT_IDENTIFIER} = util;

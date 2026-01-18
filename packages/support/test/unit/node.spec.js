@@ -1,5 +1,5 @@
 import {node} from '../../lib';
-import path from 'path';
+import path from 'node:path';
 import _ from 'lodash';
 
 describe('node utilities', function () {

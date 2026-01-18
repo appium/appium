@@ -1,9 +1,9 @@
 import _ from 'lodash';
 import {createSupportsColor} from 'supports-color';
-import {Console as NodeConsole} from 'console';
+import {Console as NodeConsole} from 'node:console';
 import '@colors/colors';
 import symbols from 'log-symbols';
-import {Writable} from 'stream';
+import {Writable} from 'node:stream';
 
 /**
  * Stream to nowhere. Used when we want to disable any output other than JSON output.

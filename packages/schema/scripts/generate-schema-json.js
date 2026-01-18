@@ -7,8 +7,8 @@
  * then outputs the result.
  */
 
-const path = require('path');
-const {writeFile, mkdir} = require('fs').promises;
+const path = require('node:path');
+const {writeFile, mkdir} = require('node:fs').promises;
 const logSymbols = require('log-symbols');
 const {error, info, success} = logSymbols.default;
 

@@ -41,7 +41,7 @@
   "dependencies": {
     "@appium/opencv": "^4.0.3",
     "@appium/support": "^7.0.4",
-    "lodash": "4.17.21",
+    "lodash": "4.17.23",
     "lru-cache": "11.2.4",
     "sharp": "0.34.5"
   },

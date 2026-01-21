@@ -45,7 +45,7 @@
     "@xmldom/xmldom": "0.9.8",
     "asyncbox": "5.0.0",
     "bluebird": "3.7.2",
-    "lodash": "4.17.21",
+    "lodash": "4.17.23",
     "xpath": "0.0.34"
   },
   "peerDependencies": {

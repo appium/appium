@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "bluebird": "3.7.2",
-    "lodash": "4.17.21",
+    "lodash": "4.17.23",
     "opencv-bindings": "4.5.5",
     "sharp": "0.34.5"
   },

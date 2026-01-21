@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "console-control-strings": "1.1.0",
-    "lodash": "4.17.21",
+    "lodash": "4.17.23",
     "lru-cache": "11.2.4",
     "set-blocking": "2.0.0"
   },

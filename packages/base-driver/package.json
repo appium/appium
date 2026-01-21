@@ -48,7 +48,7 @@
     "@appium/types": "^1.1.2",
     "@colors/colors": "1.6.0",
     "async-lock": "1.4.1",
-    "asyncbox": "4.0.1",
+    "asyncbox": "5.0.0",
     "axios": "1.13.2",
     "bluebird": "3.7.2",
     "body-parser": "2.2.2",

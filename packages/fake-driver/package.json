@@ -43,7 +43,7 @@
   },
   "dependencies": {
     "@xmldom/xmldom": "0.9.8",
-    "asyncbox": "4.0.1",
+    "asyncbox": "5.0.0",
     "bluebird": "3.7.2",
     "lodash": "4.17.21",
     "xpath": "0.0.34"

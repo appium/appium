@@ -7,7 +7,6 @@ const yaml = require('yaml');
 const {fs, util, logger} = require('@appium/support');
 const Handlebars = require('handlebars');
 const _ = require('lodash');
-const {asyncify} = require('asyncbox');
 
 const log = logger.getLogger('YamlParser');
 
@@ -417,4 +416,4 @@ async function main() {
   await generateCommandIndex();
 }
 
-asyncify(main);
+main();

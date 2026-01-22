@@ -9,7 +9,6 @@ import {
   normalizeBasePath,
 } from '@appium/base-driver';
 import {util, env} from '@appium/support';
-import {asyncify} from 'asyncbox';
 import _ from 'lodash';
 import {AppiumDriver} from './appium';
 import {runExtensionCommand} from './cli/extension';
@@ -490,7 +489,7 @@ async function main(args) {
 // (more specifically, `build/lib/main.js`)
 // the executable is now `../index.js`, so that module will typically be `require.main`.
 if (require.main === module) {
-  asyncify(main);
+  main();
 }
 
 // everything below here is intended to be a public API.

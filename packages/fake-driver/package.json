@@ -31,7 +31,8 @@
     "build",
     "test/fixtures",
     "tsconfig.json",
-    "!build/tsconfig.tsbuildinfo"
+    "!build/tsconfig.tsbuildinfo",
+    "!build/test"
   ],
   "scripts": {
     "build": "cpy lib/screen.png build",

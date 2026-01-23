@@ -38,6 +38,7 @@
     "build",
     "tsconfig.json",
     "!build/tsconfig.tsbuildinfo",
+    "!build/test",
     "requirements.txt"
   ],
   "scripts": {

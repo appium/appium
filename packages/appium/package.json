@@ -40,7 +40,8 @@
     "scripts/autoinstall-extensions.js",
     "types",
     "tsconfig.json",
-    "!build/tsconfig.tsbuildinfo"
+    "!build/tsconfig.tsbuildinfo",
+    "!build/test"
   ],
   "scripts": {
     "build:docs": "node docs/scripts/build-docs.js",

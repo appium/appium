@@ -82,7 +82,7 @@
     "package-changed": "3.0.0",
     "resolve-from": "5.0.0",
     "semver": "7.7.3",
-    "teen_process": "4.0.7",
+    "teen_process": "4.0.8",
     "type-fest": "5.4.1",
     "winston": "3.19.0",
     "ws": "8.19.0",

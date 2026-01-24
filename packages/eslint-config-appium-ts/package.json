@@ -31,7 +31,7 @@
   "dependencies": {
     "@eslint/compat": "2.0.1",
     "@eslint/js": "9.39.2",
-    "@stylistic/eslint-plugin": "5.7.0",
+    "@stylistic/eslint-plugin": "5.7.1",
     "eslint-config-prettier": "10.1.8",
     "eslint-import-resolver-typescript": "4.4.4",
     "eslint-plugin-import-x": "4.16.1",

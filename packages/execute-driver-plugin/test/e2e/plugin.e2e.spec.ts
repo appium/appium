@@ -1,11 +1,13 @@
-// @ts-check
-
 import path from 'node:path';
 
 import {pluginE2EHarness} from '@appium/plugin-test-support';
 import {remote as wdio} from 'webdriverio';
 import {W3C_ELEMENT_KEY, MJSONWP_ELEMENT_KEY} from '../../lib/execute-child';
 import {fs} from 'appium/support';
+import {expect, use} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+
+use(chaiAsPromised);
 
 const THIS_PLUGIN_DIR = path.join(__dirname, '..', '..');
 const APPIUM_HOME = path.join(THIS_PLUGIN_DIR, 'local_appium_home');
@@ -34,22 +36,18 @@ const WDIO_OPTS = {
 };
 
 describe('ExecuteDriverPlugin', function () {
-  /** @type {import('webdriverio').Browser<'async'>} */
-  let driver;
+  let driver: any;
 
   const basicScript = `return 'foo'`;
-  /**
-   * @type {import('@appium/plugin-test-support').E2ESetupOpts}
-   */
   const e2eSetupOpts = {
     before,
     after,
     host: TEST_HOST,
     driverName: 'fake',
-    driverSource: 'local',
+    driverSource: 'local' as const,
     driverSpec: FAKE_DRIVER_DIR,
     pluginName: 'execute-driver',
-    pluginSource: 'local',
+    pluginSource: 'local' as const,
     pluginSpec: THIS_PLUGIN_DIR,
     appiumHome: APPIUM_HOME,
   };
@@ -66,9 +64,9 @@ describe('ExecuteDriverPlugin', function () {
 
     it('should not work unless the allowInsecure feature flag is set', async function () {
       driver = await wdio({...WDIO_OPTS, port: this.port});
-      await driver
-        .executeDriverScript(basicScript)
-        .should.be.rejectedWith(/allow-insecure.+execute_driver_script/i);
+      await expect(driver.executeDriverScript(basicScript)).to.eventually.be.rejectedWith(
+        /allow-insecure.+execute_driver_script/i
+      );
     });
   });
 
@@ -92,15 +90,15 @@ describe('ExecuteDriverPlugin', function () {
       `;
       const expectedTimeouts = {command: 60000, implicit: 0};
       const {result, logs} = await driver.executeDriverScript(script);
-      result[0].should.eql(expectedTimeouts);
-      result[1].build.should.exist;
-      result[1].build.version.should.exist;
-      logs.should.eql({error: [], warn: [], log: []});
+      expect(result[0]).to.eql(expectedTimeouts);
+      expect(result[1].build).to.exist;
+      expect(result[1].build.version).to.exist;
+      expect(logs).to.eql({error: [], warn: [], log: []});
     });
 
     it('should fail with any script type other than webdriverio currently', async function () {
       const script = `return 'foo'`;
-      await driver.executeDriverScript(script, 'wd').should.be.rejectedWith(/webdriverio/);
+      await expect(driver.executeDriverScript(script, 'wd')).to.eventually.be.rejectedWith(/webdriverio/);
     });
 
     it('should execute a webdriverio script that returns elements correctly', async function () {
@@ -108,7 +106,7 @@ describe('ExecuteDriverPlugin', function () {
         return await driver.$("#Button1");
       `;
       const {result} = await driver.executeDriverScript(script);
-      result.should.eql({
+      expect(result).to.eql({
         [W3C_ELEMENT_KEY]: '1',
         [MJSONWP_ELEMENT_KEY]: '1',
       });
@@ -124,7 +122,7 @@ describe('ExecuteDriverPlugin', function () {
         [W3C_ELEMENT_KEY]: '1',
         [MJSONWP_ELEMENT_KEY]: '1',
       };
-      result.should.eql({element: elObj, elements: [elObj, elObj]});
+      expect(result).to.eql({element: elObj, elements: [elObj, elObj]});
     });
 
     it('should store and return logs to the user', async function () {
@@ -136,7 +134,7 @@ describe('ExecuteDriverPlugin', function () {
         return null;
       `;
       const {logs} = await driver.executeDriverScript(script);
-      logs.should.eql({log: ['foo', 'foo2'], warn: ['bar'], error: ['baz']});
+      expect(logs).to.eql({log: ['foo', 'foo2'], warn: ['bar'], error: ['baz']});
     });
 
     it('should have appium specific commands available', async function () {
@@ -144,7 +142,7 @@ describe('ExecuteDriverPlugin', function () {
         return typeof driver.lock;
       `;
       const {result} = await driver.executeDriverScript(script);
-      result.should.eql('function');
+      expect(result).to.eql('function');
     });
 
     it('should correctly handle errors that happen in a webdriverio script', async function () {
@@ -152,20 +150,20 @@ describe('ExecuteDriverPlugin', function () {
         return await driver.$("~notfound");
       `;
       const {result} = await driver.executeDriverScript(script);
-      result.error.error.should.equal('no such element');
-      result.error.message.should.match(/element could not be located/);
-      result.error.stacktrace.should.includes('NoSuchElementError:');
-      result.selector.should.equal('~notfound');
-      result.sessionId.should.equal(driver.sessionId);
+      expect(result.error.error).to.equal('no such element');
+      expect(result.error.message).to.match(/element could not be located/);
+      expect(result.error.stacktrace).to.include('NoSuchElementError:');
+      expect(result.selector).to.equal('~notfound');
+      expect(result.sessionId).to.equal(driver.sessionId);
     });
 
     it('should correctly handle errors that happen when a script cannot be compiled', async function () {
       const script = `
         return {;
       `;
-      await driver
-        .executeDriverScript(script)
-        .should.be.rejectedWith(/Could not execute driver script.+Unexpected token/);
+      await expect(driver.executeDriverScript(script)).to.eventually.be.rejectedWith(
+        /Could not execute driver script.+Unexpected token/
+      );
     });
 
     it('should be able to set a timeout on a driver script', async function () {
@@ -173,9 +171,9 @@ describe('ExecuteDriverPlugin', function () {
         await Promise.delay(1000);
         return true;
       `;
-      await driver
-        .executeDriverScript(script, 'webdriverio', 50)
-        .should.be.rejectedWith(/.+50.+timeout.+/);
+      await expect(driver.executeDriverScript(script, 'webdriverio', 50)).to.eventually.be.rejectedWith(
+        /.+50.+timeout.+/
+      );
     });
   });
 });

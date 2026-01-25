@@ -23,20 +23,20 @@
   },
   "license": "Apache-2.0",
   "author": "https://github.com/appium",
-  "types": "./build/lib/plugin.d.ts",
+  "main": "./build/lib/index.js",
+  "types": "./build/lib/index.d.ts",
   "files": [
     "build",
     "lib",
-    "index.js",
     "tsconfig.json",
     "!build/tsconfig.tsbuildinfo",
     "!build/test"
   ],
   "scripts": {
     "test": "npm run test:unit",
-    "test:e2e": "mocha --exit -t 160s --slow 20s \"./test/e2e/**/*.spec.js\"",
-    "test:smoke": "node ./index.js",
-    "test:unit": "mocha \"./test/unit/**/*.spec.js\""
+    "test:e2e": "mocha --exit -t 160s --slow 20s \"./test/e2e/**/*.spec.*ts\"",
+    "test:smoke": "node ./build/lib/index.js",
+    "test:unit": "mocha \"./test/unit/**/*.spec.*ts\""
   },
   "dependencies": {
     "bluebird": "3.7.2",

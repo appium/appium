@@ -2,12 +2,10 @@ import _ from 'lodash';
 import B from 'bluebird';
 import vm from 'node:vm';
 import {logger, util} from 'appium/support';
+import type {DriverScriptMessageEvent, ScriptResult, RunScriptResult} from './types';
 
 const log = logger.getLogger('ExecuteDriver Child');
-/**
- * @type {(res: ScriptResult) => Promise<void>}
- */
-let send;
+let send: (res: ScriptResult) => Promise<void>;
 
 // duplicate defining these keys here so we don't need to re-load a huge appium
 // dependency tree into memory just to run a wdio script
@@ -16,11 +14,11 @@ export const MJSONWP_ELEMENT_KEY = 'ELEMENT';
 
 /**
  * Run the script in a VM.
- * @param {DriverScriptMessageEvent} eventParams
- * @returns {Promise<RunScriptResult>}
+ * @param eventParams - The driver script message event parameters
+ * @returns Promise resolving to the run script result
  * @throws {TypeError}
  */
-async function runScript(eventParams) {
+async function runScript(eventParams: DriverScriptMessageEvent): Promise<RunScriptResult> {
   const {driverOpts, script, timeoutMs} = eventParams;
   if (!_.isNumber(timeoutMs)) {
     throw new TypeError('Timeout parameter must be a number');
@@ -28,15 +26,17 @@ async function runScript(eventParams) {
 
   /**
    * set up fake logger
-   * @type {string[]}
    */
-  const logLevels = ['error', 'warn', 'log'];
-  const logs = {};
-  const consoleFns = {};
-  for (const level of logLevels) {
-    logs[level] = [];
-    consoleFns[level] = (...logMsgs) => logs[level].push(...logMsgs);
-  }
+  const logs: {error: any[]; warn: any[]; log: any[]} = {
+    error: [],
+    warn: [],
+    log: [],
+  };
+  const consoleFns: {error: (...args: any[]) => void; warn: (...args: any[]) => void; log: (...args: any[]) => void} = {
+    error: (...logMsgs) => logs.error.push(...logMsgs),
+    warn: (...logMsgs) => logs.warn.push(...logMsgs),
+    log: (...logMsgs) => logs.log.push(...logMsgs),
+  };
 
   const {attach} = await import('webdriverio');
 
@@ -51,7 +51,7 @@ async function runScript(eventParams) {
   let result = await vm.runInNewContext(
     fullScript,
     {driver, console: consoleFns, Promise: B},
-    {timeout: timeoutMs, breakOnSigint: true},
+    {timeout: timeoutMs, breakOnSigint: true}
   );
 
   result = coerceScriptResult(result);
@@ -65,11 +65,10 @@ async function runScript(eventParams) {
  * response. So make sure we convert the things we know about to their
  * appropriate response format, and squash other weird things.
  *
- * @param {Object} obj - object to convert and sanitize
- *
- * @return {Object} - safely converted object
+ * @param obj - object to convert and sanitize
+ * @return safely converted object
  */
-function coerceScriptResult(obj) {
+function coerceScriptResult(obj: any): any {
   // first ensure obj is of a type that can be JSON encoded safely. This will
   // get rid of custom objects, functions, etc... and turn them into POJOs
   try {
@@ -77,12 +76,12 @@ function coerceScriptResult(obj) {
   } catch {
     log.warn(
       'Could not convert executeDriverScript to safe response!' +
-        `Result was: ${JSON.stringify(obj)}. Will make it null`,
+        `Result was: ${JSON.stringify(obj)}. Will make it null`
     );
     return null;
   }
 
-  let res;
+  let res: any;
 
   // now we begin our recursive case options
   if (_.isPlainObject(obj)) {
@@ -125,19 +124,18 @@ function coerceScriptResult(obj) {
 
 /**
  * Entry point to runScript
- * @param {DriverScriptMessageEvent} eventParams
+ * @param eventParams - The driver script message event parameters
  */
-async function main(eventParams) {
+async function main(eventParams: DriverScriptMessageEvent): Promise<void> {
   /**
    * keep the response of runScript
-   * @type {ScriptResult}
    */
-  let res;
+  let res: ScriptResult;
   log.info('Parameters received from parent process');
   try {
     res = {success: await runScript(eventParams)};
     log.info('runScript success');
-  } catch (error) {
+  } catch (error: any) {
     log.info('runScript error');
     res = {error: {message: error.message, stack: error.stack}};
   }
@@ -146,33 +144,7 @@ async function main(eventParams) {
 
 // ensure we're running this script in IPC mode
 if (require.main === module && _.isFunction(process.send)) {
-  send = B.promisify(process.send, {context: process});
+  send = B.promisify(process.send, {context: process}) as (res: ScriptResult) => Promise<void>;
   log.info('Running driver execution in child process');
   process.on('message', main);
 }
-
-
-/**
- * @typedef DriverScriptMessageEvent
- * @property {any} driverOpts - the driver options
- * @property {string} script - the javascript to execute
- * @property {number} timeoutMs - script timeout in milliseconds
- */
-
-/**
- * @typedef ScriptResult
- * @property {any} [success]
- * @property {ScriptResultError} [error]
- */
-
-/**
- * @typedef ScriptResultError
- * @property {any} message
- * @property {any} stack
- */
-
-/**
- * @typedef RunScriptResult
- * @property {any} result
- * @property {object} logs
- */

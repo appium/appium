@@ -3,45 +3,46 @@ import _ from 'lodash';
 import cp from 'node:child_process';
 import {timing} from 'appium/support';
 import B from 'bluebird';
+import type {ExternalDriver, NextPluginCallback, MethodMap, PluginCommand} from '@appium/types';
 
 const FEAT_FLAG = 'execute_driver_script';
 const DEFAULT_SCRIPT_TIMEOUT_MS = 1000 * 60 * 60; // default to 1 hour timeout
 const SCRIPT_TYPE_WDIO = 'webdriverio';
 
-export default class ExecuteDriverPlugin extends BasePlugin {
-  static newMethodMap = /** @type {const} */ ({
+export class ExecuteDriverPlugin extends BasePlugin {
+  static newMethodMap: MethodMap<ExecuteDriverPlugin> = {
     '/session/:sessionId/appium/execute_driver': {
       POST: {
         command: 'executeDriverScript',
         payloadParams: {required: ['script'], optional: ['type', 'timeout']},
       },
     },
-  });
+  } as const;
 
   /**
    * This method takes a string which is executed as javascript in the context of
    * a new nodejs VM, and which has available a webdriverio driver object, having
    * already been attached to the currently running session.
    *
-   * @param {import('@appium/types').NextPluginCallback} next - standard behaviour for executeDriverScript
-   * @param {import('@appium/types').ExternalDriver} driver - Appium driver handling this command
-   * @param {string} script - the string representing the driver script to run
-   * @param {string} [scriptType='webdriverio'] - the name of the driver script
-   * library (currently only webdriverio is supported)
-   * @param {number} [timeoutMs=3600000] - timeout for the script process
-   *
-   * @returns {Promise<any>} - a JSONifiable object representing the return value of
-   * the script
-   * @type {import('@appium/types').PluginCommand<import('@appium/types').ExternalDriver, [script: string, scriptType: string?, timeoutMs: number?]>}
+   * @param next - standard behaviour for executeDriverScript
+   * @param driver - Appium driver handling this command
+   * @param script - the string representing the driver script to run
+   * @param scriptType - the name of the driver script library (currently only webdriverio is supported). Defaults to `'webdriverio'`.
+   * @param timeoutMs - timeout for the script process. Defaults to `3600000`.
+   * @returns a JSONifiable object representing the return value of the script
    * @throws {Error}
    */
-  async executeDriverScript(
-    next,
-    driver,
-    script,
-    scriptType = 'webdriverio',
-    timeoutMs = DEFAULT_SCRIPT_TIMEOUT_MS
-  ) {
+  executeDriverScript: PluginCommand<
+    ExternalDriver,
+    [script: string, scriptType?: string, timeoutMs?: number],
+    any
+  > = async (
+    next: NextPluginCallback,
+    driver: ExternalDriver,
+    script: string,
+    scriptType: string = 'webdriverio',
+    timeoutMs: number = DEFAULT_SCRIPT_TIMEOUT_MS
+  ) => {
     if (!driver.isFeatureEnabled(FEAT_FLAG)) {
       throw new Error(
         `Execute driver script functionality is not available ` +
@@ -80,13 +81,13 @@ export default class ExecuteDriverPlugin extends BasePlugin {
       isMobile: true,
       capabilities: driver.caps,
     };
-    this.logger.info(
+    this.log.info(
       `Constructed webdriverio driver options; W3C mode is ${driverOpts.isW3C ? 'on' : 'off'}`
     );
 
     // fork the execution script as a child process
     const childScript = require.resolve('./execute-child.js');
-    this.logger.info(`Forking process to run webdriver script as child using ${childScript}`);
+    this.log.info(`Forking process to run webdriver script as child using ${childScript}`);
     const scriptProc = cp.fork(childScript);
 
     // keep track of whether we have canceled the script timeout, so we can stop
@@ -99,11 +100,11 @@ export default class ExecuteDriverPlugin extends BasePlugin {
 
       // promise that deals with the result from the child process
       const waitForResult = async () => {
-        const res = await new B((res) => {
+        const res = await new B<{error?: {message: string}; success?: any}>((res) => {
           scriptProc.on('message', res); // this is node IPC
         });
 
-        this.logger.info(
+        this.log.info(
           'Received execute driver script result from child process, shutting it down'
         );
 
@@ -134,12 +135,12 @@ export default class ExecuteDriverPlugin extends BasePlugin {
 
       // now that the child script is alive, send it the data it needs to start
       // running the driver script
-      this.logger.info('Sending driver and script data to child');
+      this.log.info('Sending driver and script data to child');
       scriptProc.send({driverOpts, script, timeoutMs});
 
       // and set up a race between the response from the child and the timeout
       return await B.race([waitForResult(), waitForTimeout()]);
-    } catch (err) {
+    } catch (err: any) {
       throw new Error(`Could not execute driver script. Original error was: ${err}`);
     } finally {
       // ensure we always cancel the timeout so that the timeout promise stops
@@ -147,18 +148,16 @@ export default class ExecuteDriverPlugin extends BasePlugin {
       timeoutCanceled = true;
 
       if (scriptProc.connected) {
-        this.logger.info('Disconnecting from child proc');
+        this.log.info('Disconnecting from child proc');
         scriptProc.disconnect();
       }
 
       if (scriptProc.exitCode === null) {
-        this.logger.info('Disconnecting from and killing driver script child proc');
+        this.log.info('Disconnecting from and killing driver script child proc');
         scriptProc.kill();
       } else {
-        this.logger.info('Script already ended on its own, no need to kill it');
+        this.log.info('Script already ended on its own, no need to kill it');
       }
     }
-  }
+  };
 }
-
-export {ExecuteDriverPlugin};

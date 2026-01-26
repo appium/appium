@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.2.0](https://github.com/appium/appium/compare/appium@3.1.2...appium@3.2.0) (2026-01-26)
+
+
+### Features
+
+* **appium:** Add repository links to verbose extensions list ([#21813](https://github.com/appium/appium/issues/21813)) ([ce91686](https://github.com/appium/appium/commit/ce91686852b0baab5f46990f5d40db4747922924))
+
+
+### Bug Fixes
+
+* **appium:** appium symlink behavior across drivers/plugins installations ([#21837](https://github.com/appium/appium/issues/21837)) ([529aeb4](https://github.com/appium/appium/commit/529aeb48f10419e21555cec05835ff07bb0e2e51))
+* apply npm run lint:fix ([#21867](https://github.com/appium/appium/issues/21867)) ([5e28714](https://github.com/appium/appium/commit/5e28714442cf59ee35b085e01e82c3f5483891fd))
+* **docs:** add missing verbose flag for CLI list command ([#21814](https://github.com/appium/appium/issues/21814)) ([dcfaa88](https://github.com/appium/appium/commit/dcfaa88830f6a5c608c92f5ae72445e065261d38))
+
+
+
 ## [3.1.2](https://github.com/appium/appium/compare/appium@3.1.1...appium@3.1.2) (2025-12-04)
 
 **Note:** Version bump only for package appium

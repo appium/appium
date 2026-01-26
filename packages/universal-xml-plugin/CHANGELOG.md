@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.4](https://github.com/appium/appium/compare/@appium/universal-xml-plugin@2.0.3...@appium/universal-xml-plugin@2.0.4) (2026-01-26)
+
+
+### Bug Fixes
+
+* apply npm run lint:fix ([#21867](https://github.com/appium/appium/issues/21867)) ([5e28714](https://github.com/appium/appium/commit/5e28714442cf59ee35b085e01e82c3f5483891fd))
+
+
+
 ## [2.0.3](https://github.com/appium/appium/compare/@appium/universal-xml-plugin@2.0.2...@appium/universal-xml-plugin@2.0.3) (2025-12-04)
 
 **Note:** Version bump only for package @appium/universal-xml-plugin

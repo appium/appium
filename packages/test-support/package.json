@@ -1,6 +1,6 @@
 {
   "name": "@appium/test-support",
-  "version": "4.0.4",
+  "version": "4.0.5",
   "description": "A collection of test utilities used across Appium packages",
   "deprecated": "This module is deprecated. Use sinon directly instead (e.g., sinon.createSandbox() with Mocha hooks).",
   "keywords": [
@@ -47,7 +47,7 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/support": "^7.0.4",
+    "@appium/support": "^7.0.5",
     "@colors/colors": "1.6.0",
     "bluebird": "3.7.2",
     "lodash": "4.17.23",

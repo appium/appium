@@ -1,6 +1,6 @@
 {
   "name": "@appium/driver-test-support",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Test utilities for Appium drivers",
   "keywords": [
     "automation",
@@ -42,7 +42,7 @@
   },
   "types": "./build/lib/index.d.ts",
   "dependencies": {
-    "@appium/types": "^1.1.2",
+    "@appium/types": "^1.2.0",
     "axios": "1.13.3",
     "bluebird": "3.7.2",
     "chai": "6.2.2",

@@ -1,6 +1,6 @@
 {
   "name": "@appium/plugin-test-support",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Testing utilities for Appium plugins",
   "keywords": [
     "automation",
@@ -42,7 +42,7 @@
     "test:unit": "exit 0"
   },
   "dependencies": {
-    "@appium/types": "^1.1.2",
+    "@appium/types": "^1.2.0",
     "get-port": "7.1.0",
     "log-symbols": "7.0.1",
     "teen_process": "4.0.8"

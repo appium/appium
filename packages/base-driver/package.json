@@ -1,6 +1,6 @@
 {
   "name": "@appium/base-driver",
-  "version": "10.1.2",
+  "version": "10.2.0",
   "description": "Base driver class for Appium drivers",
   "keywords": [
     "automation",
@@ -45,8 +45,8 @@
     "test:types": "tsd"
   },
   "dependencies": {
-    "@appium/support": "^7.0.4",
-    "@appium/types": "^1.1.2",
+    "@appium/support": "^7.0.5",
+    "@appium/types": "^1.2.0",
     "@colors/colors": "1.6.0",
     "async-lock": "1.4.1",
     "asyncbox": "6.0.1",

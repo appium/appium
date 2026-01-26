@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.0](https://github.com/appium/appium/compare/@appium/eslint-config-appium-ts@2.0.5...@appium/eslint-config-appium-ts@3.0.0) (2026-01-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* **eslint-config-appium-ts:** modernize ESLint config (#21781)
+
+### Features
+
+* **eslint-config-appium-ts:** add unicorn/prefer-node-protocol with warn ([#21864](https://github.com/appium/appium/issues/21864)) ([77c9b58](https://github.com/appium/appium/commit/77c9b5898907d7380276d5982c7e175d10440c73))
+* **eslint-config-appium-ts:** modernize ESLint config ([#21781](https://github.com/appium/appium/issues/21781)) ([b0b219a](https://github.com/appium/appium/commit/b0b219aa019d893bf30e90203a8265625777c47f))
+
+
+
 ## [2.0.5](https://github.com/appium/appium/compare/@appium/eslint-config-appium-ts@2.0.4...@appium/eslint-config-appium-ts@2.0.5) (2025-12-04)
 
 

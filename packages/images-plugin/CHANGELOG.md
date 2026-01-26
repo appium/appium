@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.0](https://github.com/appium/appium/compare/@appium/images-plugin@4.0.4...@appium/images-plugin@4.1.0) (2026-01-26)
+
+
+### Features
+
+* **images-plugin:** Migrate to typescript ([#21865](https://github.com/appium/appium/issues/21865)) ([1450737](https://github.com/appium/appium/commit/14507371f7cb3c5e468f58ebc3b303109dcff3d7))
+
+
+### Bug Fixes
+
+* apply npm run lint:fix ([#21867](https://github.com/appium/appium/issues/21867)) ([5e28714](https://github.com/appium/appium/commit/5e28714442cf59ee35b085e01e82c3f5483891fd))
+
+
+
 ## [4.0.4](https://github.com/appium/appium/compare/@appium/images-plugin@4.0.3...@appium/images-plugin@4.0.4) (2025-12-04)
 
 **Note:** Version bump only for package @appium/images-plugin

@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.0.2](https://github.com/appium/appium/compare/@appium/fake-driver@6.0.1...@appium/fake-driver@6.0.2) (2026-01-26)
+
+
+### Bug Fixes
+
+* apply npm run lint:fix ([#21867](https://github.com/appium/appium/issues/21867)) ([5e28714](https://github.com/appium/appium/commit/5e28714442cf59ee35b085e01e82c3f5483891fd))
+
+
+
 ## [6.0.1](https://github.com/appium/appium/compare/@appium/fake-driver@6.0.0...@appium/fake-driver@6.0.1) (2025-10-08)
 
 **Note:** Version bump only for package @appium/fake-driver

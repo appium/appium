@@ -53,5 +53,6 @@
   },
   "tsd": {
     "directory": "test/types"
-  }
+  },
+  "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8"
 }

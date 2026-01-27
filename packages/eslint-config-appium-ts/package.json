@@ -39,7 +39,7 @@
     "eslint-plugin-n": "17.23.2",
     "eslint-plugin-promise": "7.2.1",
     "eslint-plugin-unicorn": "62.0.0",
-    "typescript-eslint": "8.53.1"
+    "typescript-eslint": "8.54.0"
   },
   "peerDependencies": {
     "eslint": "^9.0.0"

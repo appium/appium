@@ -29,9 +29,9 @@ title: 欢迎使用
       </a>
     </div>
     <div class="homepageSponsor">
-      <a href="https://www.testmuai.com">
-        <img src="assets/images/sponsor-logo-testmuai-dark.png#only-dark" style="width: 220px;" />
-        <img src="assets/images/sponsor-logo-testmuai-light.png#only-light" style="width: 220px;" />
+      <a href="https://lambdatest.com/?utm_source=appium.io&utm_medium=organic&utm_campaign=june_25&utm_term=sk&utm_content=webpage">
+        <img src="assets/images/sponsor-logo-lambdatest-dark.png#only-dark" style="width: 220px;" />
+        <img src="assets/images/sponsor-logo-lambdatest-light.png#only-light" style="width: 220px;" />
       </a>
     </div>
   </div>

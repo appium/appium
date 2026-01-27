@@ -4,31 +4,38 @@ authors:
 date: 2025-07-01
 ---
 
-# Announcing TestMu AI (formerly LambdaTest) as Appium Strategic Partner
+# Announcing LambdaTest as Appium Strategic Partner
 
 After recently celebrating the 1-year anniversary of our Sponsorship Program and Compensation
 Scheme,
 the Appium project is very excited to announce that <a
-href="https://www.testmuai.com">TestMu AI (formerly LambdaTest)</a>
+href="https://lambdatest.com/?utm_source=appium.io&utm_medium=organic&utm_campaign=june_25&utm_term=sk&utm_content=webpage">LambdaTest</a>
 is coming on board as one of our Strategic Partners!
 
 <!-- more -->
 
-<div style="text-align:center;width:100%"><a href="https://www.testmuai.com">
-    <img src="/docs/en/latest/assets/images/sponsor-logo-testmuai-dark.png#only-dark" width="300" />
-    <img src="/docs/en/latest/assets/images/sponsor-logo-testmuai-light.png#only-light" width="300" />
+<div style="text-align:center;width:100%"><a href="https://lambdatest.com/?utm_source=appium.io&utm_medium=organic&utm_campaign=june_25&utm_term=sk&utm_content=webpage">
+    <img src="/docs/en/latest/assets/images/sponsor-logo-lambdatest-dark.png#only-dark" width="300" />
+    <img src="/docs/en/latest/assets/images/sponsor-logo-lambdatest-light.png#only-light" width="300" />
   </a>
 </div>
 
-Having long been active in the Appium community and the automated testing industry, TestMu AI is
+Having long been active in the Appium community and the automated testing industry, LambdaTest is
 now significantly stepping up their investment into these areas. With the decision to come on board
-as a Strategic Partner, TestMu AI will support the Appium project through financial contribution
+as a Strategic Partner, LambdaTest will support the Appium project through financial contribution
 as well as contribution of code and project maintenance. Obviously, without the generous support of
-partners like TestMu AI, we would not be able to continue our contributor compensation scheme,
+partners like LambdaTest, we would not be able to continue our contributor compensation scheme,
 which has seen the release of a substantial amount of funds to Appium maintainers and contributors
-over the last year. Thanks again to TestMu AI, and stay tuned for more collaboration updates
+over the last year. Thanks again to LambdaTest, and stay tuned for more collaboration updates
 throughout the year!
 
-**About TestMu AI (formerly LambdaTest)**
+**About LambdaTest**
 
-<em>TestMu AI (formerly LambdaTest) is a Full Stack Agentic AI Quality Engineering platform that empowers teams to test intelligently and ship faster. Engineered for scale, it offers end-to-end AI agents to plan, author, execute, and analyze software quality. AI-native by design, the platform enables testing of web, mobile, and enterprise applications at any scale across real devices, real browsers, and custom real-world environments.</em>
+<em>LambdaTest is a GenAI-powered Quality Engineering Platform that empowers teams to test
+intelligently, smarter, and ship faster. Built for scale, it offers a full-stack testing cloud with
+10K+ real mobile devices and 3,000+ browsers. With AI-native test management, MCP servers, and
+agent-based automation, LambdaTest supports Selenium, Appium, Playwright, and all major frameworks.
+AI Agents like HyperExecute and KaneAI bring the power of AI and cloud into your software testing
+workflow, enabling seamless automation testing with 120+ integrations. LambdaTest Agents accelerate
+your testing throughout the entire SDLC, from test planning and authoring to automation,
+infrastructure, execution, RCA, and reporting.</em>

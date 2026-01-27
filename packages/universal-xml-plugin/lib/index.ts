@@ -18,8 +18,7 @@ export async function main(): Promise<void> {
   if (!xmlDataPath || !platform) {
     console.error('Usage: node index.js <xmlDataPath> <platform> [optsJson]'); // eslint-disable-line no-console
     console.error('  Or: node index.js --smoke-test (for smoke tests)'); // eslint-disable-line no-console
-    process.exitCode = 1;
-    return;
+    process.exit(1);
   }
 
   const xmlData = await fs.readFile(xmlDataPath, 'utf8');

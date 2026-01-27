@@ -34,7 +34,7 @@
   ],
   "scripts": {
     "test": "npm run test:unit",
-    "test:smoke": "node ./build/lib/index.js",
+    "test:smoke": "node ./build/lib/index.js --smoke-test",
     "test:unit": "mocha \"./test/unit/**/*.spec.*ts\""
   },
   "dependencies": {

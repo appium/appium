@@ -1,11 +1,12 @@
 import {ATTR_PREFIX} from './source';
+import type {TransformMetadata} from './types';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function ios(_nodeObj: any): void {
+export function ios(_nodeObj: any): void {
   // iOS transformer does nothing
 }
 
-function android(nodeObj: any, metadata: Record<string, any>): void {
+export function android(nodeObj: any, metadata: TransformMetadata): void {
   // strip android:id from front of id
   const resId = nodeObj[`${ATTR_PREFIX}resource-id`];
   if (resId && metadata.appPackage) {
@@ -26,8 +27,3 @@ function android(nodeObj: any, metadata: Record<string, any>): void {
     nodeObj[`${ATTR_PREFIX}height`] = height.toString();
   }
 }
-
-export default {
-  ios,
-  android,
-};

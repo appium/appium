@@ -1,8 +1,15 @@
 import _ from 'lodash';
+import {XMLBuilder, XMLParser} from 'fast-xml-parser';
 import NODE_MAP from './node-map';
 import {ATTR_MAP, REMOVE_ATTRS} from './attr-map';
-import TRANSFORMS from './transformers';
-import type {NodesAndAttributes, TransformSourceXmlOptions, TransformNodeOptions} from './types';
+import * as TRANSFORMS from './transformers';
+import type {
+  NodesAndAttributes,
+  TransformSourceXmlOptions,
+  TransformNodeOptions,
+  UniversalNameMap,
+  TransformMetadata,
+} from './types';
 
 export const ATTR_PREFIX = '@_';
 export const IDX_PATH_PREFIX = `${ATTR_PREFIX}indexPath`;
@@ -24,18 +31,18 @@ const isNode = (k: string): boolean => !isAttr(k);
 export async function transformSourceXml(
   xmlStr: string,
   platform: string,
-  {metadata = {}, addIndexPath = false}: TransformSourceXmlOptions = {}
+  {metadata = {} as TransformMetadata, addIndexPath = false}: TransformSourceXmlOptions = {}
 ): Promise<{xml: string; unknowns: NodesAndAttributes}> {
   // first thing we want to do is modify the ios source root node, because it doesn't include the
   // necessary index attribute, so we add it if it's not there
   xmlStr = xmlStr.replace('<AppiumAUT>', '<AppiumAUT index="0">');
-  const xmlObj = (await singletonXmlParser()).parse(xmlStr);
+  const xmlObj = singletonXmlParser().parse(xmlStr);
   const unknowns = transformNode(xmlObj, platform, {
     metadata,
     addIndexPath,
     parentPath: '',
   });
-  let transformedXml = (await singletonXmlBuilder()).build(xmlObj).trim();
+  let transformedXml = singletonXmlBuilder().build(xmlObj).trim();
   transformedXml = `<?xml version="1.0" encoding="UTF-8"?>\n${transformedXml}`;
   return {xml: transformedXml, unknowns};
 }
@@ -49,7 +56,7 @@ export async function transformSourceXml(
  * @returns The universal name or null if not found
  */
 function getUniversalName(
-  nameMap: Record<string, Record<string, string | string[]>>,
+  nameMap: UniversalNameMap | Readonly<UniversalNameMap>,
   name: string,
   platform: string
 ): string | null {
@@ -73,7 +80,7 @@ function getUniversalName(
  * @returns The universal node name or null if not found
  */
 export function getUniversalNodeName(nodeName: string, platform: string): string | null {
-  return getUniversalName(NODE_MAP as unknown as Record<string, Record<string, string | string[]>>, nodeName, platform);
+  return getUniversalName(NODE_MAP, nodeName, platform);
 }
 
 /**
@@ -84,7 +91,7 @@ export function getUniversalNodeName(nodeName: string, platform: string): string
  * @returns The universal attribute name or null if not found
  */
 export function getUniversalAttrName(attrName: string, platform: string): string | null {
-  return getUniversalName(ATTR_MAP as unknown as Record<string, Record<string, string | string[]>>, attrName, platform);
+  return getUniversalName(ATTR_MAP, attrName, platform);
 }
 
 /**
@@ -119,7 +126,7 @@ export function transformNode(
 
     const transformFn = TRANSFORMS[platform as keyof typeof TRANSFORMS];
     if (transformFn) {
-      transformFn(nodeObj, metadata || {});
+      transformFn(nodeObj, metadata || ({} as TransformMetadata));
     }
     unknownAttrs.push(...transformAttrs(nodeObj, attrs, platform));
     const unknowns = transformChildNodes(nodeObj, childNodeNames, platform, {
@@ -239,8 +246,7 @@ export function transformAttrs(nodeObj: any, attrs: string[], platform: string):
   return unknownAttrs;
 }
 
-const singletonXmlBuilder = _.memoize(async function makeXmlBuilder() {
-  const {XMLBuilder} = await import('fast-xml-parser');
+const singletonXmlBuilder = _.memoize(function makeXmlBuilder() {
   return new XMLBuilder({
     ignoreAttributes: false,
     attributeNamePrefix: ATTR_PREFIX,
@@ -249,8 +255,7 @@ const singletonXmlBuilder = _.memoize(async function makeXmlBuilder() {
   });
 });
 
-const singletonXmlParser = _.memoize(async function makeXmlParser() {
-  const {XMLParser} = await import('fast-xml-parser');
+const singletonXmlParser = _.memoize(function makeXmlParser() {
   return new XMLParser({
     ignoreAttributes: false,
     ignoreDeclaration: true,

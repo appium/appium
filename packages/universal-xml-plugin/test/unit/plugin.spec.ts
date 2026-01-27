@@ -47,8 +47,8 @@ describe('UniversalXMLPlugin', function () {
         return nodes[0];
       };
       const node = await p.findElement(next, driver as any, 'xpath', '//TextInput[@axId="username"]');
-      expect(getNodeAttrVal(node, 'value')).to.eql('alice');
-      expect(node.nodeName).to.eql('XCUIElementTypeTextField');
+      expect(getNodeAttrVal(node as any, 'value')).to.eql('alice');
+      expect((node as any).nodeName).to.eql('XCUIElementTypeTextField');
     });
 
     it('should turn an xpath query into another query run on the original android source', async function () {
@@ -61,8 +61,8 @@ describe('UniversalXMLPlugin', function () {
         return nodes[0];
       };
       const node = await p.findElement(next, driver as any, 'xpath', '//TextInput[@axId="username"]');
-      expect(getNodeAttrVal(node, 'content-desc')).to.eql('username');
-      expect(node.nodeName).to.eql('android.widget.EditText');
+      expect(getNodeAttrVal(node as any, 'content-desc')).to.eql('username');
+      expect((node as any).nodeName).to.eql('android.widget.EditText');
     });
 
     it('should not modify the xpath query and proxy the call to underlying driver', async function () {
@@ -76,8 +76,8 @@ describe('UniversalXMLPlugin', function () {
         return Promise.resolve(nodes[0]);
       };
       const node = await p.findElement(next, driver as any, 'xpath', selector);
-      expect(getNodeAttrVal(node, 'id')).to.eql('section-1');
-      expect(node.nodeName).to.eql('div');
+      expect(getNodeAttrVal(node as any, 'id')).to.eql('section-1');
+      expect((node as any).nodeName).to.eql('div');
     });
   });
 });

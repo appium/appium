@@ -41,15 +41,10 @@ export function transformQuery(query: string, xmlStr: string, multiple: boolean)
     return `/${newQuery}`;
   });
 
-  let newSelector: string | null = null;
-  if (newQueries.length) {
-    if (multiple) {
-      newSelector = newQueries.join(' | ');
-    } else {
-      newSelector = newQueries[0];
-    }
+  if (newQueries.length === 0) {
+    return null;
   }
-  return newSelector;
+  return multiple ? newQueries.join(' | ') : newQueries[0];
 }
 
 /**

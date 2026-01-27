@@ -17,7 +17,6 @@ export async function main(): Promise<void> {
 
   if (!xmlDataPath || !platform) {
     console.error('Usage: node index.js <xmlDataPath> <platform> [optsJson]'); // eslint-disable-line no-console
-    console.error('  Or: node index.js --smoke-test (for smoke tests)'); // eslint-disable-line no-console
     process.exit(1);
   }
 

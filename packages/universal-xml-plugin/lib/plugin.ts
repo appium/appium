@@ -2,17 +2,23 @@ import {BasePlugin} from 'appium/plugin';
 import {errors} from 'appium/driver';
 import {transformSourceXml} from './source';
 import {transformQuery} from './xpath';
-import log from './logger';
+import {log} from './logger';
+import type {ExternalDriver, NextPluginCallback} from '@appium/types';
 
-export default class UniversalXMLPlugin extends BasePlugin {
-  async getPageSource(next, driver, sessId, addIndexPath = false) {
+export class UniversalXMLPlugin extends BasePlugin {
+  async getPageSource(
+    next: NextPluginCallback | null,
+    driver: ExternalDriver,
+    sessId?: any,
+    addIndexPath: boolean = false
+  ): Promise<string> {
     const source = next ? await next() : await driver.getPageSource();
-    const metadata = {};
-    const {platformName} = driver.caps;
-    if (platformName.toLowerCase() === 'android') {
-      metadata.appPackage = driver.opts.appPackage;
+    const metadata: Record<string, any> = {};
+    const platformName = (driver.caps as any)?.platformName;
+    if (platformName?.toLowerCase() === 'android') {
+      metadata.appPackage = (driver.opts as any)?.appPackage;
     }
-    const {xml, unknowns} = await transformSourceXml(source, platformName.toLowerCase(), {
+    const {xml, unknowns} = await transformSourceXml(String(source), platformName?.toLowerCase() || '', {
       metadata,
       addIndexPath,
     });
@@ -21,7 +27,7 @@ export default class UniversalXMLPlugin extends BasePlugin {
         `The XML mapper found ${unknowns.nodes.length} node(s) / ` +
           `tag name(s) that it didn't know about. These should be ` +
           `reported to improve the quality of the plugin: ` +
-          unknowns.nodes.join(', '),
+          unknowns.nodes.join(', ')
       );
     }
     if (unknowns.attrs.length) {
@@ -29,23 +35,39 @@ export default class UniversalXMLPlugin extends BasePlugin {
         `The XML mapper found ${unknowns.attrs.length} attributes ` +
           `that it didn't know about. These should be reported to ` +
           `improve the quality of the plugin: ` +
-          unknowns.attrs.join(', '),
+          unknowns.attrs.join(', ')
       );
     }
     return xml;
   }
 
-  async findElement(...args) {
-    return await this._find(false, ...args);
+  async findElement(
+    next: NextPluginCallback,
+    driver: ExternalDriver,
+    strategy: string,
+    selector: string
+  ): Promise<any> {
+    return await this._find(false, next, driver, strategy, selector);
   }
 
-  async findElements(...args) {
-    return await this._find(true, ...args);
+  async findElements(
+    next: NextPluginCallback,
+    driver: ExternalDriver,
+    strategy: string,
+    selector: string
+  ): Promise<any[]> {
+    return await this._find(true, next, driver, strategy, selector);
   }
 
-  async _find(multiple, next, driver, strategy, selector) {
-    const {platformName} = driver.caps;
-    if (strategy.toLowerCase() !== 'xpath' || (await driver.getCurrentContext()) !== 'NATIVE_APP') {
+  private async _find(
+    multiple: boolean,
+    next: NextPluginCallback,
+    driver: ExternalDriver,
+    strategy: string,
+    selector: string
+  ): Promise<any> {
+    const platformName = (driver.caps as any)?.platformName;
+    if (strategy.toLowerCase() !== 'xpath' || !driver.getCurrentContext || (await driver.getCurrentContext()) !== 'NATIVE_APP') {
       return await next();
     }
     const xml = await this.getPageSource(null, driver, null, true);
@@ -56,7 +78,7 @@ export default class UniversalXMLPlugin extends BasePlugin {
     if (newSelector === null) {
       log.warn(
         `Selector was not able to be translated to underlying XML. Either the requested ` +
-          `element does not exist or there was an error in translation`,
+          `element does not exist or there was an error in translation`
       );
       if (multiple) {
         return [];
@@ -64,7 +86,7 @@ export default class UniversalXMLPlugin extends BasePlugin {
       throw new errors.NoSuchElementError();
     }
 
-    if (platformName.toLowerCase() === 'ios') {
+    if (platformName?.toLowerCase() === 'ios') {
       // with the XCUITest driver, the <AppiumAUT> wrapper element is present in the source but is
       // not present in the source considered by WDA, so our index path based xpath queries will
       // not work with WDA as-is. We need to remove the first path segment.
@@ -77,5 +99,3 @@ export default class UniversalXMLPlugin extends BasePlugin {
     return await driver[finder](strategy, newSelector);
   }
 }
-
-export {UniversalXMLPlugin};

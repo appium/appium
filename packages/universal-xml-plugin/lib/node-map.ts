@@ -221,4 +221,4 @@ export default {
   Window: {
     ios: 'XCUIElementTypeWindow',
   },
-};
+} as const;

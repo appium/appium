@@ -2,22 +2,30 @@ import _ from 'lodash';
 import NODE_MAP from './node-map';
 import {ATTR_MAP, REMOVE_ATTRS} from './attr-map';
 import TRANSFORMS from './transformers';
+import type {NodesAndAttributes, TransformSourceXmlOptions, TransformNodeOptions} from './types';
 
 export const ATTR_PREFIX = '@_';
 export const IDX_PATH_PREFIX = `${ATTR_PREFIX}indexPath`;
 export const IDX_PREFIX = `${ATTR_PREFIX}index`;
 
-const isAttr = (/** @type {string} */ k) => k.startsWith(ATTR_PREFIX);
-const isNode = (/** @type {string} */ k) => !isAttr(k);
+const isAttr = (k: string): boolean => k.startsWith(ATTR_PREFIX);
+const isNode = (k: string): boolean => !isAttr(k);
 
 /**
+ * Transforms source XML to universal format
  *
- * @param {string} xmlStr
- * @param {string} platform
- * @param {{metadata?: Object, addIndexPath?: boolean}} opts
- * @returns {Promise<{xml: string, unknowns: NodesAndAttributes}>}
+ * @param xmlStr - The XML string to transform
+ * @param platform - The platform name ('ios' or 'android')
+ * @param opts - Transformation options
+ * @param opts.metadata - Optional metadata object
+ * @param opts.addIndexPath - Whether to add index path attributes
+ * @returns Promise resolving to transformed XML and unknown nodes/attributes
  */
-export async function transformSourceXml(xmlStr, platform, {metadata = {}, addIndexPath = false} = {}) {
+export async function transformSourceXml(
+  xmlStr: string,
+  platform: string,
+  {metadata = {}, addIndexPath = false}: TransformSourceXmlOptions = {}
+): Promise<{xml: string; unknowns: NodesAndAttributes}> {
   // first thing we want to do is modify the ios source root node, because it doesn't include the
   // necessary index attribute, so we add it if it's not there
   xmlStr = xmlStr.replace('<AppiumAUT>', '<AppiumAUT index="0">');
@@ -33,13 +41,18 @@ export async function transformSourceXml(xmlStr, platform, {metadata = {}, addIn
 }
 
 /**
+ * Gets the universal name for a platform-specific name from a name map
  *
- * @param {Object} nameMap
- * @param {string} name
- * @param {string} platform
- * @returns {string | null}
+ * @param nameMap - The name mapping object
+ * @param name - The platform-specific name
+ * @param platform - The platform name
+ * @returns The universal name or null if not found
  */
-function getUniversalName(nameMap, name, platform) {
+function getUniversalName(
+  nameMap: Record<string, Record<string, string | string[]>>,
+  name: string,
+  platform: string
+): string | null {
   for (const translatedName of Object.keys(nameMap)) {
     const sourceNodes = nameMap[translatedName]?.[platform];
     if (_.isArray(sourceNodes) && sourceNodes.includes(name)) {
@@ -53,51 +66,61 @@ function getUniversalName(nameMap, name, platform) {
 }
 
 /**
+ * Gets the universal node name for a platform-specific node name
  *
- * @param {any} nodeName
- * @param {string} platform
- * @returns {string?}
+ * @param nodeName - The platform-specific node name
+ * @param platform - The platform name
+ * @returns The universal node name or null if not found
  */
-export function getUniversalNodeName(nodeName, platform) {
-  return getUniversalName(NODE_MAP, nodeName, platform);
+export function getUniversalNodeName(nodeName: string, platform: string): string | null {
+  return getUniversalName(NODE_MAP as unknown as Record<string, Record<string, string | string[]>>, nodeName, platform);
 }
 
 /**
+ * Gets the universal attribute name for a platform-specific attribute name
  *
- * @param {string} attrName
- * @param {string} platform
- * @returns {string?}
+ * @param attrName - The platform-specific attribute name
+ * @param platform - The platform name
+ * @returns The universal attribute name or null if not found
  */
-export function getUniversalAttrName(attrName, platform) {
-  return getUniversalName(ATTR_MAP, attrName, platform);
+export function getUniversalAttrName(attrName: string, platform: string): string | null {
+  return getUniversalName(ATTR_MAP as unknown as Record<string, Record<string, string | string[]>>, attrName, platform);
 }
 
 /**
+ * Transforms a node object recursively
  *
- * @param {any} nodeObj
- * @param {string} platform
- * @param {{metadata?: Object, addIndexPath?: boolean, parentPath?: string}} opts
- * @returns {NodesAndAttributes}
+ * @param nodeObj - The node object to transform
+ * @param platform - The platform name
+ * @param opts - Transformation options
+ * @returns Object containing unknown nodes and attributes
  */
-export function transformNode(nodeObj, platform, {metadata, addIndexPath, parentPath}) {
-  const unknownNodes = [];
-  const unknownAttrs = [];
+export function transformNode(
+  nodeObj: any,
+  platform: string,
+  {metadata, addIndexPath, parentPath}: TransformNodeOptions
+): NodesAndAttributes {
+  const unknownNodes: string[] = [];
+  const unknownAttrs: string[] = [];
   if (_.isPlainObject(nodeObj)) {
     const keys = Object.keys(nodeObj);
     const childNodeNames = keys.filter(isNode);
     const attrs = keys.filter(isAttr);
-    let thisIndexPath = parentPath;
+    let thisIndexPath = parentPath || '';
 
     if (attrs.length && addIndexPath) {
       if (!attrs.includes(IDX_PREFIX)) {
         throw new Error(`Index path is required but node found with no 'index' attribute`);
       }
 
-      thisIndexPath = `${parentPath}/${nodeObj[IDX_PREFIX]}`;
+      thisIndexPath = `${parentPath || ''}/${nodeObj[IDX_PREFIX]}`;
       nodeObj[IDX_PATH_PREFIX] = thisIndexPath;
     }
 
-    TRANSFORMS[platform]?.(nodeObj, metadata);
+    const transformFn = TRANSFORMS[platform as keyof typeof TRANSFORMS];
+    if (transformFn) {
+      transformFn(nodeObj, metadata || {});
+    }
     unknownAttrs.push(...transformAttrs(nodeObj, attrs, platform));
     const unknowns = transformChildNodes(nodeObj, childNodeNames, platform, {
       metadata,
@@ -111,7 +134,7 @@ export function transformNode(nodeObj, platform, {metadata, addIndexPath, parent
       const {nodes, attrs} = transformNode(childObj, platform, {
         metadata,
         addIndexPath,
-        parentPath,
+        parentPath: parentPath || '',
       });
       unknownNodes.push(...nodes);
       unknownAttrs.push(...attrs);
@@ -124,27 +147,28 @@ export function transformNode(nodeObj, platform, {metadata, addIndexPath, parent
 }
 
 /**
+ * Transforms child nodes of a node object
  *
- * @param {any} nodeObj
- * @param {string[]} childNodeNames
- * @param {string} platform
- * @param {{metadata?: Object, addIndexPath?: boolean, parentPath?: string}} opts
- * @returns {NodesAndAttributes}
+ * @param nodeObj - The node object containing child nodes
+ * @param childNodeNames - Array of child node names
+ * @param platform - The platform name
+ * @param opts - Transformation options
+ * @returns Object containing unknown nodes and attributes
  */
 export function transformChildNodes(
-  nodeObj,
-  childNodeNames,
-  platform,
-  {metadata, addIndexPath, parentPath}
-) {
-  const unknownNodes = [];
-  const unknownAttrs = [];
+  nodeObj: any,
+  childNodeNames: string[],
+  platform: string,
+  {metadata, addIndexPath, parentPath}: TransformNodeOptions
+): NodesAndAttributes {
+  const unknownNodes: string[] = [];
+  const unknownAttrs: string[] = [];
   for (const nodeName of childNodeNames) {
     // before modifying the name of this child node, recurse down and modify the subtree
     const {nodes, attrs} = transformNode(nodeObj[nodeName], platform, {
       metadata,
       addIndexPath,
-      parentPath,
+      parentPath: parentPath || '',
     });
     unknownNodes.push(...nodes);
     unknownAttrs.push(...attrs);
@@ -163,7 +187,20 @@ export function transformChildNodes(
       // if we already have a node with the universal name, that means we are mapping a second
       // original node name to the same universal node name, so we just push all its children into
       // the list
-      nodeObj[universalName].push(...nodeObj[nodeName]);
+      if (_.isArray(nodeObj[universalName])) {
+        if (_.isArray(nodeObj[nodeName])) {
+          nodeObj[universalName].push(...nodeObj[nodeName]);
+        } else {
+          nodeObj[universalName].push(nodeObj[nodeName]);
+        }
+      } else {
+        nodeObj[universalName] = [nodeObj[universalName]];
+        if (_.isArray(nodeObj[nodeName])) {
+          nodeObj[universalName].push(...nodeObj[nodeName]);
+        } else {
+          nodeObj[universalName].push(nodeObj[nodeName]);
+        }
+      }
     } else {
       nodeObj[universalName] = nodeObj[nodeName];
     }
@@ -173,17 +210,18 @@ export function transformChildNodes(
 }
 
 /**
+ * Transforms attributes of a node object
  *
- * @param {any} nodeObj
- * @param {string[]} attrs
- * @param {string} platform
- * @returns {string[]}
+ * @param nodeObj - The node object containing attributes
+ * @param attrs - Array of attribute keys
+ * @param platform - The platform name
+ * @returns Array of unknown attribute names
  */
-export function transformAttrs(nodeObj, attrs, platform) {
-  const unknownAttrs = [];
+export function transformAttrs(nodeObj: any, attrs: string[], platform: string): string[] {
+  const unknownAttrs: string[] = [];
   for (const attr of attrs) {
     const cleanAttr = attr.substring(2);
-    if (REMOVE_ATTRS.includes(cleanAttr)) {
+    if ((REMOVE_ATTRS as readonly string[]).includes(cleanAttr)) {
       delete nodeObj[attr];
       continue;
     }
@@ -202,7 +240,7 @@ export function transformAttrs(nodeObj, attrs, platform) {
 }
 
 const singletonXmlBuilder = _.memoize(async function makeXmlBuilder() {
-  const { XMLBuilder } = await import('fast-xml-parser');
+  const {XMLBuilder} = await import('fast-xml-parser');
   return new XMLBuilder({
     ignoreAttributes: false,
     attributeNamePrefix: ATTR_PREFIX,
@@ -212,7 +250,7 @@ const singletonXmlBuilder = _.memoize(async function makeXmlBuilder() {
 });
 
 const singletonXmlParser = _.memoize(async function makeXmlParser() {
-  const { XMLParser } = await import('fast-xml-parser');
+  const {XMLParser} = await import('fast-xml-parser');
   return new XMLParser({
     ignoreAttributes: false,
     ignoreDeclaration: true,
@@ -220,7 +258,3 @@ const singletonXmlParser = _.memoize(async function makeXmlParser() {
     isArray: (name, jPath, isLeafNode, isAttribute) => !isAttribute,
   });
 });
-
-/**
- * @typedef {{nodes: string[], attrs: string[]}} NodesAndAttributes
- */

@@ -1,5 +1,5 @@
 // uses the same format as NODE_MAP in node-map.js
-const ATTR_MAP = {
+export const ATTR_MAP = {
   x: {ios: 'x', android: 'x'},
   y: {ios: 'y', android: 'y'},
   width: {ios: 'width', android: 'width'},
@@ -10,10 +10,10 @@ const ATTR_MAP = {
   text: {ios: 'label', android: 'text'},
   visible: {ios: 'visible', android: 'displayed'},
   value: {ios: 'value'},
-};
+} as const;
 
 // these attributes shouldn't be mapped and should instead just be removed
-const REMOVE_ATTRS = [
+export const REMOVE_ATTRS = [
   'index',
   'type',
   'package',
@@ -30,6 +30,4 @@ const REMOVE_ATTRS = [
   'selected',
   'bounds',
   'rotation',
-];
-
-export {ATTR_MAP, REMOVE_ATTRS};
+] as const;

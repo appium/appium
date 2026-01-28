@@ -118,6 +118,12 @@ appium {driver|plugin} install <install-spec>
     appium driver install git://github.com/appium/appium-xcuitest-driver.git --source=git --package=appium-xcuitest-driver
     ```
 
+- Install a branch of XCUITest driver repository using a Git URL:
+
+    ```
+    appium driver install git://github.com/appium/appium-xcuitest-driver.git#specific-branch --source=git --package=appium-xcuitest-driver
+    ```
+
 ## `list`
 
 Lists all installed extensions, plus all official extensions that are not installed.

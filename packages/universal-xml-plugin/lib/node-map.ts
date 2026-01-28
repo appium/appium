@@ -6,7 +6,9 @@
  * array of strings. This means that there can be a many-to-one relationship between
  * platform-specific node names and universal node names.
  */
-export default {
+import type {UniversalNameMap} from './types';
+
+const NODE_MAP: UniversalNameMap = {
   Alert: {
     ios: 'XCUIElementTypeAlert',
     android: 'android.widget.Toast',
@@ -222,3 +224,5 @@ export default {
     ios: 'XCUIElementTypeWindow',
   },
 };
+
+export default NODE_MAP;

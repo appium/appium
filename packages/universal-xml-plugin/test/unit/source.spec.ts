@@ -6,40 +6,39 @@ import {
   XML_IOS_EDGE_TRANSFORMED,
 } from '../fixtures';
 import {transformAttrs, transformChildNodes, transformSourceXml} from '../../lib/source';
+import {expect, use} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+
+use(chaiAsPromised);
 
 describe('source functions', function () {
-  before(async function () {
-    const chai = await import('chai');
-    chai.should();
-  });
-
   describe('transformSourceXml', function () {
     it('should transform an xml doc based on platform', async function () {
       const {
         xml,
         unknowns: {nodes, attrs},
       } = await transformSourceXml(XML_IOS, 'ios');
-      xml.should.eql(XML_IOS_TRANSFORMED);
-      nodes.should.eql([]);
-      attrs.should.eql([]);
+      expect(xml).to.eql(XML_IOS_TRANSFORMED);
+      expect(nodes).to.eql([]);
+      expect(attrs).to.eql([]);
     });
     it('should transform an xml doc and include index path', async function () {
       const {
         xml,
         unknowns: {nodes, attrs},
       } = await transformSourceXml(XML_IOS, 'ios', {addIndexPath: true});
-      xml.should.eql(XML_IOS_TRANSFORMED_INDEX_PATH);
-      nodes.should.eql([]);
-      attrs.should.eql([]);
+      expect(xml).to.eql(XML_IOS_TRANSFORMED_INDEX_PATH);
+      expect(nodes).to.eql([]);
+      expect(attrs).to.eql([]);
     });
     it('should transform an xml doc and return any unknown nodes or attrs', async function () {
       const {
         xml,
         unknowns: {nodes, attrs},
       } = await transformSourceXml(XML_IOS_EDGE, 'ios');
-      xml.should.eql(XML_IOS_EDGE_TRANSFORMED);
-      nodes.should.eql(['SomeRandoElement']);
-      attrs.should.eql(['oddAttribute']);
+      expect(xml).to.eql(XML_IOS_EDGE_TRANSFORMED);
+      expect(nodes).to.eql(['SomeRandoElement']);
+      expect(attrs).to.eql(['oddAttribute']);
     });
   });
   describe('transformChildNodes', function () {
@@ -50,11 +49,11 @@ describe('source functions', function () {
         XCUIElementTypeTab: [{}],
       };
       const metadata = {};
-      transformChildNodes(node, Object.keys(node), 'ios', metadata).should.eql({
+      expect(transformChildNodes(node, Object.keys(node), 'ios', metadata)).to.eql({
         nodes: [],
         attrs: [],
       });
-      node.should.eql({Button: [{}, {}], Icon: [{}]});
+      expect(node).to.eql({Button: [{}, {}], Icon: [{}]});
     });
     it('should leave unknown nodes intact and add them to unknowns list', function () {
       const node = {
@@ -63,11 +62,11 @@ describe('source functions', function () {
         XCUIElementTypeTab: [{}],
       };
       const metadata = {};
-      transformChildNodes(node, Object.keys(node), 'ios', metadata).should.eql({
+      expect(transformChildNodes(node, Object.keys(node), 'ios', metadata)).to.eql({
         nodes: ['UnknownThingo'],
         attrs: [],
       });
-      node.should.eql({Button: [{}], UnknownThingo: [{}], Icon: [{}]});
+      expect(node).to.eql({Button: [{}], UnknownThingo: [{}], Icon: [{}]});
     });
     it('should leave nodes for other platforms intact and add them to unknowns list', function () {
       const node = {
@@ -76,11 +75,11 @@ describe('source functions', function () {
         XCUIElementTypeTab: [{}],
       };
       const metadata = {};
-      transformChildNodes(node, Object.keys(node), 'ios', metadata).should.eql({
+      expect(transformChildNodes(node, Object.keys(node), 'ios', metadata)).to.eql({
         nodes: ['android.widget.EditText'],
         attrs: [],
       });
-      node.should.eql({
+      expect(node).to.eql({
         Button: [{}],
         'android.widget.EditText': [{}],
         Icon: [{}],
@@ -89,36 +88,36 @@ describe('source functions', function () {
   });
   describe('transformAttrs', function () {
     it('should remove attributes in the REMOVE_ATTRS list', function () {
-      const obj = {'@_type': 'foo', '@_package': 'yes', '@_class': 'lol'};
+      const obj: any = {'@_type': 'foo', '@_package': 'yes', '@_class': 'lol'};
       const attrs = Object.keys(obj);
       const unknowns = transformAttrs(obj, attrs, 'ios');
-      obj.should.eql({});
-      unknowns.should.eql([]);
+      expect(obj).to.eql({});
+      expect(unknowns).to.eql([]);
     });
     it('should translate attributes for the platform', function () {
-      const obj = {'@_type': 'foo', '@_resource-id': 'someId'};
+      const obj: any = {'@_type': 'foo', '@_resource-id': 'someId'};
       const attrs = Object.keys(obj);
       const unknowns = transformAttrs(obj, attrs, 'android');
-      obj.should.eql({'@_id': 'someId'});
-      unknowns.should.eql([]);
+      expect(obj).to.eql({'@_id': 'someId'});
+      expect(unknowns).to.eql([]);
     });
     it('should not translate unknown attributes and return them in the unknowns list', function () {
-      const obj = {
+      const obj: any = {
         '@_type': 'foo',
         '@_resource-id': 'someId',
         '@_rando': 'lorian',
       };
       const attrs = Object.keys(obj);
       const unknowns = transformAttrs(obj, attrs, 'android');
-      obj.should.eql({'@_id': 'someId', '@_rando': 'lorian'});
-      unknowns.should.eql(['rando']);
+      expect(obj).to.eql({'@_id': 'someId', '@_rando': 'lorian'});
+      expect(unknowns).to.eql(['rando']);
     });
     it('should not translate attributes for a different platform', function () {
-      const obj = {'@_type': 'foo', '@_resource-id': 'someId'};
+      const obj: any = {'@_type': 'foo', '@_resource-id': 'someId'};
       const attrs = Object.keys(obj);
       const unknowns = transformAttrs(obj, attrs, 'ios');
-      obj.should.eql({'@_resource-id': 'someId'});
-      unknowns.should.eql(['resource-id']);
+      expect(obj).to.eql({'@_resource-id': 'someId'});
+      expect(unknowns).to.eql(['resource-id']);
     });
   });
 });

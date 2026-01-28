@@ -1,10 +1,12 @@
 import {ATTR_PREFIX} from './source';
+import type {TransformMetadata} from './types';
 
-function ios(nodeObj /*, metadata*/) {
-  return nodeObj;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function ios(_nodeObj: any): void {
+  // iOS transformer does nothing
 }
 
-function android(nodeObj, metadata) {
+export function android(nodeObj: any, metadata: TransformMetadata): void {
   // strip android:id from front of id
   const resId = nodeObj[`${ATTR_PREFIX}resource-id`];
   if (resId && metadata.appPackage) {
@@ -17,16 +19,11 @@ function android(nodeObj, metadata) {
       .split(/\[|\]|,/)
       .filter((str) => str !== '');
     const [x, y, x2, y2] = boundsArray;
-    const width = x2 - x;
-    const height = y2 - y;
+    const width = parseInt(x2, 10) - parseInt(x, 10);
+    const height = parseInt(y2, 10) - parseInt(y, 10);
     nodeObj[`${ATTR_PREFIX}x`] = x;
     nodeObj[`${ATTR_PREFIX}y`] = y;
-    nodeObj[`${ATTR_PREFIX}width`] = width;
-    nodeObj[`${ATTR_PREFIX}height`] = height;
+    nodeObj[`${ATTR_PREFIX}width`] = width.toString();
+    nodeObj[`${ATTR_PREFIX}height`] = height.toString();
   }
 }
-
-export default {
-  ios,
-  android,
-};

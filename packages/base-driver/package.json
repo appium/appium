@@ -50,7 +50,7 @@
     "@colors/colors": "1.6.0",
     "async-lock": "1.4.1",
     "asyncbox": "6.0.1",
-    "axios": "1.13.3",
+    "axios": "1.13.4",
     "bluebird": "3.7.2",
     "body-parser": "2.2.2",
     "express": "5.2.1",

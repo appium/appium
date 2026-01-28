@@ -8,9 +8,7 @@ date: 2025-07-01
 
 After recently celebrating the 1-year anniversary of our [Sponsorship Program and Compensation
 Scheme](https://appium.io/docs/en/latest/blog/2024/05/14/announcing-appiums-sponsorship-program/),
-the Appium project is very excited to announce that <a
-href="https://www.testmuai.com">TestMu AI (formerly LambdaTest)</a>
-is coming on board as one of our Strategic Partners!
+the Appium project is very excited to announce that <a href="https://www.testmuai.com/blog/testmu-as-appium-strategic-partner/">TestMu AI (formerly LambdaTest)</a> is coming on board as one of our Strategic Partners!
 
 <!-- more -->
 
@@ -32,4 +30,11 @@ throughout the year!
 
 **About TestMu AI (formerly LambdaTest)**
 
-<em>TestMu AI (formerly LambdaTest) is a Full Stack Agentic AI Quality Engineering platform that empowers teams to test intelligently and ship faster. Engineered for scale, it offers end-to-end AI agents to plan, author, execute, and analyze software quality. AI-native by design, the platform enables testing of web, mobile, and enterprise applications at any scale across real devices, real browsers, and custom real-world environments.</em>
+<em>TestMu AI is a GenAI-powered Quality Engineering Platform that empowers teams to test
+intelligently, smarter, and ship faster. Built for scale, it offers a full-stack testing cloud with
+10K+ real mobile devices and 3,000+ browsers. With AI-native test management, MCP servers, and
+agent-based automation, TestMu AI supports Selenium, Appium, Playwright, and all major frameworks.
+AI Agents like HyperExecute and KaneAI bring the power of AI and cloud into your software testing
+workflow, enabling seamless automation testing with 120+ integrations. TestMu AI Agents accelerate
+your testing throughout the entire SDLC, from test planning and authoring to automation,
+infrastructure, execution, RCA, and reporting.</em>

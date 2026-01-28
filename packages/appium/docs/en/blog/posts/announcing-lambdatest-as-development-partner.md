@@ -30,7 +30,8 @@ These contributions strengthen critical infrastructure within the Appium ecosyst
 
 **About TestMu AI (formerly LambdaTest)**
 
-TestMu AI (formerly LambdaTest) is a Full Stack Agentic AI Quality Engineering platform that empowers teams to test intelligently and ship faster. Engineered for scale, it offers end-to-end AI agents to plan, author, execute, and analyze software quality. AI-native by design, the platform enables testing of web, mobile, and enterprise applications at any scale across real devices, real browsers, and custom real-world environments.
+TestMu AI's platform already serves a massive community of Appium users. As a GenAI-powered Quality Engineering Platform, they provide a full-stack testing cloud with 10,000+ real mobile devices and 3,000+ browsers.
+Beyond standard infrastructure, they are pushing the boundaries of test execution with AI-native test management and next-generation agents like KaneAI. By supporting Appium alongside Selenium, Playwright, and other major frameworks, TestMu AI helps teams orchestrate intelligent automation at cloud scale.
 
 TestMu AI will continue contributing people, code, and development expertise to strengthen Appium's core functionality. Their commitment represents a significant investment into the future of the framework, and we're thrilled to have them collaborating with us at this deeper level.
 The Appium project is proud to recognize TestMu AI as our newest official Development Partner. We can't wait to see what we'll build together!

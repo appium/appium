@@ -7,14 +7,19 @@
  * then outputs the result.
  */
 
-const path = require('node:path');
-const {writeFile, mkdir} = require('node:fs').promises;
-const logSymbols = require('log-symbols');
-const {error, info, success} = logSymbols.default;
+import path from 'node:path';
+import {writeFile, mkdir} from 'node:fs/promises';
+import {fileURLToPath, pathToFileURL} from 'node:url';
+import {createRequire} from 'node:module';
+import logSymbols from 'log-symbols';
+
+const {error, info, success} = logSymbols;
 
 /**
  * `@appium/schema` package root.
  */
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const SCHEMA_ROOT = path.join(__dirname, '..');
 
 /**
@@ -41,6 +46,8 @@ async function write() {
   /** @type {typeof import('../lib/appium-config-schema').AppiumConfigJsonSchema} */
   let schema;
   try {
+    // Use createRequire to require CommonJS module from ESM
+    const require = createRequire(import.meta.url);
     ({AppiumConfigJsonSchema: schema} = require(SCHEMA_SRC));
   } catch {
     throw new Error(
@@ -70,8 +77,7 @@ async function main() {
   console.log(`${success} Done.`);
 }
 
-if (require.main === module) {
+// Check if this module is being run directly
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   main();
 }
-
-module.exports = {main, write};

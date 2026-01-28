@@ -3,7 +3,6 @@
   "compilerOptions": {
     "rootDir": ".",
     "outDir": "build",
-    "checkJs": true,
     "strict": true
   },
   "include": ["lib"]

@@ -351,16 +351,23 @@ describe('ExtensionConfig', function () {
       });
 
       describe('when extension is installed and correctly exports its main class', function () {
+        const pluginModuleRoot = path.join(PROJECT_ROOT, 'packages', 'relaxed-caps-plugin');
+        const packageJsonPath = path.join(pluginModuleRoot, 'package.json');
+        const entryPointPath = path.join(pluginModuleRoot, 'build', 'lib', 'index.js');
+
         beforeEach(function () {
           config.installedExtensions['relaxed-caps'] = {
             mainClass: 'RelaxedCapsPlugin',
           };
-          sandbox
-            .stub(config, 'getInstallPath')
-            .returns(path.join(PROJECT_ROOT, 'packages', 'relaxed-caps-plugin'));
+          sandbox.stub(config, 'getInstallPath').returns(pluginModuleRoot);
+          // _resolveExtension reads package.json and uses manifest.main; delegate to real fs for this path
+          MockAppiumSupport.fs.readFile
+            .withArgs(packageJsonPath, 'utf8')
+            .callsFake(async () => (await import('node:fs/promises')).readFile(packageJsonPath, 'utf8'));
+          MockAppiumSupport.fs.exists.withArgs(entryPointPath).resolves(true);
         });
 
-        it('should return the class', async function () {
+        it('should return the class by loading from the manifest main entry point', async function () {
           expect(await config.requireAsync('relaxed-caps')).to.equal(
             require('@appium/relaxed-caps-plugin').RelaxedCapsPlugin
           );

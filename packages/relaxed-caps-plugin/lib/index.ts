@@ -1,0 +1,1 @@
+export {RelaxedCapsPlugin} from './plugin';

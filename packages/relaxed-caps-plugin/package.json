@@ -23,24 +23,22 @@
   },
   "license": "Apache-2.0",
   "author": "https://github.com/appium",
-  "types": "./build/lib/plugin.d.ts",
+  "main": "./build/lib/index.js",
+  "types": "./build/lib/index.d.ts",
   "directories": {
     "lib": "./lib"
   },
   "files": [
-    "index.js",
+    "build/lib",
     "lib",
-    "build",
-    "tsconfig.json",
-    "!build/tsconfig.tsbuildinfo",
-    "!build/test"
+    "tsconfig.json"
   ],
   "scripts": {
     "test": "npm run test:unit",
-    "test:smoke": "node ./index.js",
-    "test:unit": "mocha \"./test/unit/**/*.spec.js\""
+    "test:unit": "mocha \"./test/unit/**/*.spec.*ts\""
   },
   "dependencies": {
+    "@appium/types": "^1.2.0",
     "lodash": "4.17.23"
   },
   "peerDependencies": {

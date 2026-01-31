@@ -1,4 +1,5 @@
 import sinon from 'sinon';
+import {expect} from 'chai';
 import {RelaxedCapsPlugin} from '../../lib/plugin';
 
 const STD_CAPS = {
@@ -38,13 +39,7 @@ const ADJUSTED_VENDOR_CAPS = {
 };
 
 describe('relaxed caps plugin', function () {
-  let sandbox;
-  let should;
-
-  before(async function () {
-    const chai = await import('chai');
-    should = chai.should();
-  });
+  let sandbox: sinon.SinonSandbox;
 
   beforeEach(function () {
     sandbox = sinon.createSandbox();
@@ -54,32 +49,37 @@ describe('relaxed caps plugin', function () {
     sandbox.restore();
   });
 
-  const rcp = new RelaxedCapsPlugin();
+  const rcp = new RelaxedCapsPlugin('relaxed-caps');
 
   it('should export the name', function () {
-    should.exist(RelaxedCapsPlugin);
+    expect(RelaxedCapsPlugin).to.exist;
   });
 
   describe('#fixCapsIfW3C', function () {
+    // Bracket notation required to call private method in tests
+    /* eslint-disable dot-notation */
     it('should not transform standard caps', function () {
-      rcp.fixCapsIfW3C({alwaysMatch: STD_CAPS}).should.eql({alwaysMatch: STD_CAPS});
+      expect(rcp['fixCapsIfW3C']({alwaysMatch: STD_CAPS})).to.eql({alwaysMatch: STD_CAPS});
     });
     it('should transform non-standard caps', function () {
-      rcp.fixCapsIfW3C({alwaysMatch: MIXED_CAPS}).should.eql({alwaysMatch: ADJUSTED_CAPS});
+      expect(rcp['fixCapsIfW3C']({alwaysMatch: MIXED_CAPS})).to.eql({alwaysMatch: ADJUSTED_CAPS});
     });
     it('should not transform already prefixed caps', function () {
-      rcp.fixCapsIfW3C({firstMatch: [VENDOR_CAPS], alwaysMatch: VENDOR_CAPS})
-        .should.eql({firstMatch: [ADJUSTED_VENDOR_CAPS], alwaysMatch: ADJUSTED_VENDOR_CAPS});
+      expect(
+        rcp['fixCapsIfW3C']({firstMatch: [VENDOR_CAPS], alwaysMatch: VENDOR_CAPS})
+      ).to.eql({firstMatch: [ADJUSTED_VENDOR_CAPS], alwaysMatch: ADJUSTED_VENDOR_CAPS});
     });
     it('should not transform non-W3C caps', function () {
-      rcp.fixCapsIfW3C({desiredCapabilities: VENDOR_CAPS})
-        .should.eql({desiredCapabilities: VENDOR_CAPS});
+      expect(rcp['fixCapsIfW3C']({desiredCapabilities: VENDOR_CAPS})).to.eql({
+        desiredCapabilities: VENDOR_CAPS,
+      });
     });
+    /* eslint-enable dot-notation */
   });
 
   describe('#createSession', function () {
-    const next = () => {};
-    const driver = {createSession: () => {}};
+    const next = () => Promise.resolve();
+    const driver = {createSession: () => Promise.resolve()};
 
     it('should work with W3C style caps format', async function () {
       const mock = sandbox.mock(driver);

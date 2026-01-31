@@ -15,26 +15,26 @@ export class RelaxedCapsPlugin extends BasePlugin {
     caps3?: W3CCapsLike | null,
     ...restArgs: unknown[]
   ): Promise<unknown> {
-    const patchedCaps = [caps1, caps2, caps3].map((c) =>
-      c == null ? c : this.fixCapsIfW3C(c)
-    );
+    const patchedCaps = [caps1, caps2, caps3]
+      .map((c) => _.isPlainObject(c) ? this.fixCapsIfW3C(c) : c);
     return await driver.createSession(...patchedCaps, ...restArgs);
   }
 
-  private fixCapsIfW3C<T extends W3CCapsLike | Record<string, unknown>>(caps: T): T {
-    const result = caps;
-    if (result && this.isW3cCaps(result)) {
-      const w3c = result as W3CCapsLike;
-      if (_.isArray(w3c.firstMatch)) {
-        w3c.firstMatch = w3c.firstMatch.map((c) =>
-          this.addVendorPrefix(c as CapsRecord)
-        );
-      }
-      if (_.isPlainObject(w3c.alwaysMatch)) {
-        w3c.alwaysMatch = this.addVendorPrefix(w3c.alwaysMatch as CapsRecord);
-      }
+  private fixCapsIfW3C<T>(caps: T): T {
+    if (!this.isW3cCaps(caps)) {
+      return caps;
     }
-    return result;
+
+    const w3c = _.cloneDeep(caps) as W3CCapsLike;
+    if (_.isArray(w3c.firstMatch)) {
+      w3c.firstMatch = w3c.firstMatch.map((c) =>
+        this.addVendorPrefix(c as CapsRecord)
+      );
+    }
+    if (_.isPlainObject(w3c.alwaysMatch)) {
+      w3c.alwaysMatch = this.addVendorPrefix(w3c.alwaysMatch as CapsRecord);
+    }
+    return w3c as T;
   }
 
   private isW3cCaps(caps: unknown): caps is W3CCapsLike {

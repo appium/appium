@@ -4,9 +4,10 @@ import {remote as wdio} from 'webdriverio';
 import {pluginE2EHarness} from '@appium/plugin-test-support';
 import {tempDir, fs} from '@appium/support';
 import axios from 'axios';
-import { WebSocket } from 'ws';
+import {WebSocket} from 'ws';
+import {expect} from 'chai';
 
-const BUFFER_SIZE = 0xFFFF;
+const BUFFER_SIZE = 0xffff;
 const THIS_PLUGIN_DIR = path.join(__dirname, '..', '..');
 const APPIUM_HOME = path.join(THIS_PLUGIN_DIR, 'local_appium_home');
 const FAKE_DRIVER_DIR = path.join(THIS_PLUGIN_DIR, '..', 'fake-driver');
@@ -35,10 +36,8 @@ const WDIO_OPTS = {
 };
 
 describe('StoragePlugin', function () {
-  let server;
-  let driver;
-  /** @type {string | undefined | undefined} */
-  let storageRoot;
+  let driver: any;
+  let storageRoot: string | undefined;
 
   beforeEach(async function () {
     storageRoot = await tempDir.openDir();
@@ -46,9 +45,8 @@ describe('StoragePlugin', function () {
     const baseUrl = `http://${TEST_HOST}:${TEST_PORT}/storage`;
     driver.addCommand(
       'addStorageItem',
-      async (name, sha1) => (await axios.post(
-        `${baseUrl}/add`, {name, sha1}
-      )).data.value
+      async (name: string, sha1: string) =>
+        (await axios.post(`${baseUrl}/add`, {name, sha1})).data.value
     );
     driver.addCommand(
       'listStorageItems',
@@ -60,7 +58,8 @@ describe('StoragePlugin', function () {
     );
     driver.addCommand(
       'deleteStorageItem',
-      async (name) => (await axios.post(`${baseUrl}/delete`, {name})).data.value
+      async (name: string) =>
+        (await axios.post(`${baseUrl}/delete`, {name})).data.value
     );
   });
 
@@ -69,16 +68,15 @@ describe('StoragePlugin', function () {
       await driver.deleteSession();
       driver = null;
     }
-    if (storageRoot && await fs.exists(storageRoot)) {
+    if (storageRoot && (await fs.exists(storageRoot))) {
       await fs.rimraf(storageRoot);
-      storageRoot = null;
+      storageRoot = undefined;
     }
   });
 
   pluginE2EHarness({
     before,
     after,
-    server,
     port: TEST_PORT,
     host: TEST_HOST,
     appiumHome: APPIUM_HOME,
@@ -92,7 +90,7 @@ describe('StoragePlugin', function () {
 
   it('should manage storage files', async function () {
     let items = await driver.listStorageItems();
-    _.isEmpty(items).should.be.true;
+    expect(_.isEmpty(items)).to.be.true;
     const name1 = path.basename('foo1.bar');
     const name2 = path.basename('foo2.bar');
     const pkgPath = path.join(__dirname, '..', '..', 'package.json');
@@ -101,30 +99,40 @@ describe('StoragePlugin', function () {
       addFileToStorage(pkgPath, name2),
     ]);
     items = await driver.listStorageItems();
-    items.length.should.eql(2);
-    _.isEqual(new Set(items.map(({name}) => name)), new Set([name1, name2])).should.be.true;
+    expect(items.length).to.eql(2);
+    expect(
+      _.isEqual(
+        new Set(items.map(({name}: {name: string}) => name)),
+        new Set([name1, name2])
+      )
+    ).to.be.true;
     const isDeleted = await driver.deleteStorageItem(name1);
-    isDeleted.should.be.true;
+    expect(isDeleted).to.be.true;
     items = await driver.listStorageItems();
-    items.length.should.eql(1);
-    items[0].name.should.eql(name2);
+    expect(items.length).to.eql(1);
+    expect(items[0].name).to.eql(name2);
     await driver.resetStorageItems();
     items = await driver.listStorageItems();
-    items.length.should.eql(0);
+    expect(items.length).to.eql(0);
   });
 
-  async function addFileToStorage(sourcePath, name) {
+  async function addFileToStorage(
+    sourcePath: string,
+    name: string
+  ): Promise<void> {
     const hash = await fs.hash(sourcePath);
     const {size} = await fs.stat(sourcePath);
-    const {ws: {events, stream}} = await driver.addStorageItem(name, hash, sourcePath);
+    const {
+      ws: {events, stream},
+    } = await driver.addStorageItem(name, hash, sourcePath);
     const streamWs = new WebSocket(`ws://${TEST_HOST}:${TEST_PORT}${stream}`);
     const eventsWs = new WebSocket(`ws://${TEST_HOST}:${TEST_PORT}${events}`);
     try {
-      await new Promise((resolve, reject) => {
+      await new Promise<void>((resolve, reject) => {
         streamWs.once('error', reject);
         eventsWs.once('error', reject);
-        eventsWs.once('message', async (data) => {
-          let strData;
+        eventsWs.once('message', async (data: Buffer | string) => {
+          let strData: string;
           if (_.isBuffer(data)) {
             strData = data.toString();
           } else if (_.isString(data)) {
@@ -135,11 +143,13 @@ describe('StoragePlugin', function () {
           try {
             const {value} = JSON.parse(strData);
             if (value?.success) {
-              resolve(true);
+              resolve();
             } else {
               reject(new Error(JSON.stringify(value)));
             }
-          } catch {}
+          } catch {
+            // ignore
+          }
         });
         streamWs.once('open', async () => {
           const fhandle = await fs.openFile(sourcePath, 'r');

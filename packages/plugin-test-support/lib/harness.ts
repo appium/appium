@@ -2,15 +2,11 @@
 import {createRequire} from 'node:module';
 import {fs} from 'appium/support';
 import {main as appiumServer} from 'appium';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import getPort from 'get-port';
 import logSymbols from 'log-symbols';
 import {exec} from 'teen_process';
 import type {AppiumServer} from '@appium/types';
 import type {E2ESetupOpts, AppiumEnv} from './types';
-
-chai.use(chaiAsPromised);
 
 declare const __filename: string;
 const _require = createRequire(__filename);
@@ -40,6 +36,11 @@ export function pluginE2EHarness(opts: E2ESetupOpts): void {
   let server: AppiumServer | undefined;
 
   before(async function (this: Mocha.Context) {
+    // Lazy-load chai so smoke test (node ./build/lib/index.js --smoke-test) does not require it
+    const chai = await import('chai');
+    const chaiAsPromised = (await import('chai-as-promised')).default;
+    chai.use(chaiAsPromised);
+
     const setupAppiumHome = async (): Promise<AppiumEnv> => {
       const env: AppiumEnv = {...process.env};
 

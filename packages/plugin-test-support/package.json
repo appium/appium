@@ -23,22 +23,19 @@
   },
   "license": "Apache-2.0",
   "author": "https://github.com/appium",
-  "main": "index.js",
-  "types": "build/lib/harness.d.ts",
+  "main": "./build/lib/index.js",
+  "types": "./build/lib/index.d.ts",
   "directories": {
     "lib": "lib"
   },
   "files": [
+    "build/lib",
     "lib",
-    "index.js",
-    "build",
-    "tsconfig.json",
-    "!build/tsconfig.tsbuildinfo",
-    "!build/test"
+    "tsconfig.json"
   ],
   "scripts": {
     "test": "npm run test:unit",
-    "test:smoke": "node ./index.js",
+    "test:smoke": "node ./build/lib/index.js --smoke-test",
     "test:unit": "exit 0"
   },
   "dependencies": {

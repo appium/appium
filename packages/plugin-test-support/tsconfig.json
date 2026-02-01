@@ -3,12 +3,12 @@
   "compilerOptions": {
     "rootDir": ".",
     "outDir": "build",
-    "checkJs": true,
     "paths": {
       "@appium/types": ["../types"],
-      "appium/support": ["../appium/support"]
+      "appium/support": ["../support"],
+      "appium": ["../appium"]
     },
-    "types": ["mocha", "chai", "sinon", "chai-as-promised"]
+    "types": ["mocha", "chai", "sinon", "chai-as-promised", "node"]
   },
   "include": ["./lib"],
   "references": [{"path": "../types"}, {"path": "../support"}]

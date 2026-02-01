@@ -30,16 +30,14 @@
   },
   "files": [
     "lib",
-    "build",
-    "tsconfig.json",
-    "!build/tsconfig.tsbuildinfo",
-    "!build/test"
+    "build/lib",
+    "tsconfig.json"
   ],
   "scripts": {
     "test": "npm run test:unit",
     "test:smoke": "node ./build/lib/index.js",
-    "test:unit": "mocha \"./test/unit/**/*.spec.*js\"",
-    "test:e2e": "mocha --timeout 20s --slow 10s \"./test/e2e/**/*.spec.*js\""
+    "test:unit": "mocha \"./test/unit/**/*.spec.ts\"",
+    "test:e2e": "mocha --timeout 20s --slow 10s \"./test/e2e/**/*.spec.ts\""
   },
   "dependencies": {
     "@appium/support": "^7.0.5",

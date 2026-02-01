@@ -1,19 +1,22 @@
 /* eslint-disable no-console */
+import {createRequire} from 'node:module';
 import {fs} from 'appium/support';
 import {main as appiumServer} from 'appium';
 import getPort from 'get-port';
 import logSymbols from 'log-symbols';
 import {exec} from 'teen_process';
+import type {AppiumServer} from '@appium/types';
+import type {E2ESetupOpts, AppiumEnv} from './types';
 
-const APPIUM_BIN = require.resolve('appium');
+declare const __filename: string;
+const _require = createRequire(__filename);
+const APPIUM_BIN = _require.resolve('appium') as string;
 
 /**
  * Creates hooks to install a driver and a plugin and starts an Appium server w/ the given extensions.
- * @param {E2ESetupOpts} opts
- * @returns {void}
  */
-export function pluginE2EHarness(opts) {
-  let {
+export function pluginE2EHarness(opts: E2ESetupOpts): void {
+  const {
     appiumHome,
     before,
     after,
@@ -30,22 +33,16 @@ export function pluginE2EHarness(opts) {
     host,
   } = opts;
 
-  /**
-   * @type {AppiumServer}
-   */
-  let server;
+  let server: AppiumServer | undefined;
 
-  before(async function () {
+  before(async function (this: Mocha.Context) {
+    // Lazy-load chai so smoke test (node ./build/lib/index.js --smoke-test) does not require it
     const chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-    chai.use(chaiAsPromised.default);
-    chai.should();
+    const chaiAsPromised = (await import('chai-as-promised')).default;
+    chai.use(chaiAsPromised);
 
-    const setupAppiumHome = async () => {
-      /**
-       * @type {AppiumEnv}
-       */
-      const env = {...process.env};
+    const setupAppiumHome = async (): Promise<AppiumEnv> => {
+      const env: AppiumEnv = {...process.env};
 
       if (appiumHome) {
         env.APPIUM_HOME = appiumHome;
@@ -56,18 +53,17 @@ export function pluginE2EHarness(opts) {
       return env;
     };
 
-    /**
-     *
-     * @param {AppiumEnv} env
-     */
-    const installDriver = async (env) => {
+    const installDriver = async (env: AppiumEnv): Promise<void> => {
       console.log(`${logSymbols.info} Checking if driver "${driverName}" is installed...`);
       const driverListArgs = [APPIUM_BIN, 'driver', 'list', '--json'];
       console.log(`${logSymbols.info} Running: ${process.execPath} ${driverListArgs.join(' ')}`);
       const {stdout: driverListJson} = await exec(process.execPath, driverListArgs, {
         env,
       });
-      const installedDrivers = JSON.parse(driverListJson);
+      const installedDrivers = JSON.parse(driverListJson) as Record<
+        string,
+        {installed?: boolean}
+      >;
 
       if (!installedDrivers[driverName]?.installed) {
         console.log(`${logSymbols.warning} Driver "${driverName}" not installed; installing...`);
@@ -83,17 +79,16 @@ export function pluginE2EHarness(opts) {
       console.log(`${logSymbols.success} Installed driver "${driverName}"`);
     };
 
-    /**
-     *
-     * @param {AppiumEnv} env
-     */
-    const installPlugin = async (env) => {
+    const installPlugin = async (env: AppiumEnv): Promise<void> => {
       console.log(`${logSymbols.info} Checking if plugin "${pluginName}" is installed...`);
       const pluginListArgs = [APPIUM_BIN, 'plugin', 'list', '--json'];
       const {stdout: pluginListJson} = await exec(process.execPath, pluginListArgs, {
         env,
       });
-      const installedPlugins = JSON.parse(pluginListJson);
+      const installedPlugins = JSON.parse(pluginListJson) as Record<
+        string,
+        {installed?: boolean}
+      >;
 
       if (!installedPlugins[pluginName]?.installed) {
         console.log(`${logSymbols.warning} Plugin "${pluginName}" not installed; installing...`);
@@ -109,23 +104,20 @@ export function pluginE2EHarness(opts) {
       console.log(`${logSymbols.success} Installed plugin "${pluginName}"`);
     };
 
-    const createServer = async () => {
-      if (!port) {
-        port = await getPort();
-      }
-      console.log(`${logSymbols.info} Will use port ${port} for Appium server`);
-      this.port = port;
+    const createServer = async (): Promise<void> => {
+      const resolvedPort = port ?? (await getPort());
+      console.log(`${logSymbols.info} Will use port ${resolvedPort} for Appium server`);
+      (this as Mocha.Context & {port?: number}).port = resolvedPort;
 
-      /** @type {import('appium/types').Args} */
       const args = {
-        port,
+        port: resolvedPort,
         address: host,
         usePlugins: [pluginName],
         useDrivers: [driverName],
         appiumHome,
         ...serverArgs,
       };
-      server = /** @type {AppiumServer} */ (await appiumServer(args));
+      server = (await appiumServer(args)) as AppiumServer;
     };
 
     const env = await setupAppiumHome();
@@ -140,29 +132,3 @@ export function pluginE2EHarness(opts) {
     }
   });
 }
-
-/**
- * @typedef E2ESetupOpts
- * @property {string} [appiumHome] - Path to Appium home directory
- * @property {Mocha.before} before - Mocha "before all" hook function
- * @property {Mocha.after} after - Mocha "after all" hook function
- * @property {Partial<import('appium/types').Args>} [serverArgs] - Arguments to pass to Appium server
- * @property {import('appium/types').InstallType & string} driverSource - Source of driver to install
- * @property {string} [driverPackage] - Package name of driver to install
- * @property {string} driverName - Name of driver to install
- * @property {string} driverSpec - Spec of driver to install
- * @property {import('appium/types').InstallType & string} pluginSource - Source of plugin to install
- * @property {string} [pluginPackage] - Package name of plugin to install
- * @property {string} pluginSpec - Spec of plugin to install
- * @property {string} pluginName - Name of plugin to install
- * @property {number} [port] - Port to use for Appium server
- * @property {string} [host] - Host to use for Appium server
- */
-
-/**
- * @typedef {import('@appium/types').AppiumServer} AppiumServer
- */
-
-/**
- * @typedef {import('appium/types').AppiumEnv} AppiumEnv
- */

@@ -42,7 +42,7 @@
     "@appium/logger": "^2.0.4",
     "@appium/schema": "^1.0.1",
     "@appium/tsconfig": "^1.1.1",
-    "type-fest": "5.4.2"
+    "type-fest": "5.4.3"
   },
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0",

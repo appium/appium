@@ -41,11 +41,11 @@
   "dependencies": {
     "@appium/base-plugin": "^3.0.6",
     "@appium/support": "^7.0.5",
-    "@appium/types": "^1.2.0",
     "bluebird": "3.7.2",
     "lodash": "4.17.23"
   },
   "devDependencies": {
+    "@appium/types": "^1.2.0",
     "express": "5.2.1"
   },
   "peerDependencies": {

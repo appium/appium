@@ -38,8 +38,10 @@
     "test:smoke": "node ./build/lib/index.js --smoke-test",
     "test:unit": "exit 0"
   },
+  "devDependencies": {
+    "@appium/types": "^1.2.0"
+  },
   "dependencies": {
-    "@appium/types": "^1.2.0",
     "get-port": "7.1.0",
     "log-symbols": "7.0.1",
     "teen_process": "4.0.9"

@@ -42,7 +42,6 @@
   },
   "types": "./build/lib/index.d.ts",
   "dependencies": {
-    "@appium/types": "^1.2.0",
     "axios": "1.13.4",
     "bluebird": "3.7.2",
     "chai": "6.2.2",
@@ -51,6 +50,9 @@
     "lodash": "4.17.23",
     "sinon": "21.0.1",
     "type-fest": "5.4.3"
+  },
+  "devDependencies": {
+    "@appium/types": "^1.2.0"
   },
   "peerDependencies": {
     "appium": "^3.0.0-beta.0",

@@ -115,10 +115,12 @@ export function driverE2ETestSuite(
 
     describe('session handling', function () {
       it('should handle idempotency while creating sessions', async function () {
+        // TODO: Fix this test for Node 24+
         if (parseInt(process.versions.node.split('.')[0], 10) >= 24) {
           this.skip();
         }
 
+        // workaround for https://github.com/node-fetch/node-fetch/issues/1735
         const httpAgent = new Agent({keepAlive: true});
 
         const sessionIds: string[] = [];
@@ -147,10 +149,12 @@ export function driverE2ETestSuite(
       });
 
       it('should handle idempotency while creating parallel sessions', async function () {
+        // TODO: Fix this test for Node 24+
         if (parseInt(process.versions.node.split('.')[0], 10) >= 24) {
           this.skip();
         }
 
+        // workaround for https://github.com/node-fetch/node-fetch/issues/1735
         const httpAgent = new Agent({keepAlive: true});
 
         const reqs: Promise<NewSessionResponse>[] = [];

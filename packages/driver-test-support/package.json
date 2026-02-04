@@ -23,22 +23,19 @@
   },
   "license": "Apache-2.0",
   "author": "https://github.com/appium",
-  "main": "index.js",
+  "main": "./build/lib/index.js",
   "directories": {
-    "lib": "lib"
+    "lib": "./lib"
   },
   "files": [
-    "index.js",
+    "build/lib",
     "lib",
-    "build",
-    "tsconfig.json",
-    "!build/tsconfig.tsbuildinfo",
-    "!build/test"
+    "tsconfig.json"
   ],
   "scripts": {
     "test": "npm run test:unit",
-    "test:smoke": "node ./index.js",
-    "test:unit": "mocha \"test/unit/**/*.spec.js\""
+    "test:smoke": "node ./build/lib/index.js",
+    "test:unit": "mocha \"test/unit/**/*.spec.ts\""
   },
   "types": "./build/lib/index.d.ts",
   "dependencies": {

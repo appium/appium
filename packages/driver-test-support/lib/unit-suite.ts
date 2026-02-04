@@ -1,45 +1,40 @@
 import _ from 'lodash';
 import B from 'bluebird';
 import {createSandbox} from 'sinon';
-
-// wrap these tests in a function so we can export the tests and re-use them
-// for actual driver implementations
+import type {
+  Constraints,
+  Driver,
+  DriverClass,
+  NSDriverCaps,
+  W3CDriverCaps,
+} from '@appium/types';
 
 /**
  * Creates unit test suites for a driver.
- * @template {Constraints} C
- * @param {DriverClass<C>} DriverClass
- * @param {import('@appium/types').NSDriverCaps<C>} [defaultCaps]
  */
-
-export function driverUnitTestSuite(
-  DriverClass,
-  defaultCaps = /** @type {import('@appium/types').NSDriverCaps<C>} */ ({})
-) {
-  // to display the driver under test in report
+export function driverUnitTestSuite<C extends Constraints>(
+  DriverClass: DriverClass<Driver<C>>,
+  defaultCaps: NSDriverCaps<C> = {} as NSDriverCaps<C>
+): void {
   const className = DriverClass.name ?? '(unknown driver)';
 
   describe(`BaseDriver unit suite (as ${className})`, function () {
-    /** @type {InstanceType<typeof DriverClass>} */
-    let d;
-    /** @type {import('@appium/types').W3CDriverCaps<C>} */
-    let w3cCaps;
-    /** @type {import('sinon').SinonSandbox} */
-    let sandbox;
-    let expect;
-    let should;
+    let d: InstanceType<typeof DriverClass>;
+    let w3cCaps: W3CDriverCaps<C>;
+    let sandbox: ReturnType<typeof createSandbox>;
+    let expect: Chai.ExpectStatic;
 
     before(async function () {
       const chai = await import('chai');
       const chaiAsPromised = await import('chai-as-promised');
-      chai.use(chaiAsPromised.default);
-      expect = chai.expect;
-      should = chai.should();
+      (chai as any).use((chaiAsPromised as any).default);
+      expect = (chai as any).expect;
+      (chai as any).should(); // for client code that may use should style
     });
 
     beforeEach(function () {
       sandbox = createSandbox();
-      d = new DriverClass();
+      d = new DriverClass() as InstanceType<typeof DriverClass>;
       w3cCaps = {
         alwaysMatch: {
           ...defaultCaps,
@@ -63,13 +58,13 @@ export function driverUnitTestSuite(
     });
 
     it('should return an empty status object', async function () {
-      let status = await d.getStatus();
-      status.should.eql({});
+      const status = await d.getStatus();
+      expect(status).to.eql({});
     });
 
     it('should return a sessionId from createSession', async function () {
-      let [sessId] = await d.createSession(w3cCaps);
-      should.exist(sessId);
+      const [sessId] = await d.createSession(w3cCaps);
+      expect(sessId).to.exist;
       expect(sessId).to.be.a('string');
       expect(sessId.length).to.be.above(5);
     });
@@ -80,25 +75,24 @@ export function driverUnitTestSuite(
     });
 
     it('should be able to delete a session', async function () {
-      let sessionId1 = await d.createSession(_.cloneDeep(w3cCaps));
+      const sessionId1 = await d.createSession(_.cloneDeep(w3cCaps));
       await d.deleteSession();
-      should.equal(d.sessionId, null);
-      let sessionId2 = await d.createSession(_.cloneDeep(w3cCaps));
+      expect(d.sessionId).to.equal(null);
+      const sessionId2 = await d.createSession(_.cloneDeep(w3cCaps));
       expect(sessionId1).to.not.eql(sessionId2);
     });
 
     it('should get the current session', async function () {
-      let [, caps] = await d.createSession(w3cCaps);
+      const [, caps] = await d.createSession(w3cCaps);
       expect(caps).to.equal(await d.getSession());
     });
 
     it('should fulfill an unexpected driver quit promise', async function () {
-      // make a command that will wait a bit so we can crash while it's running
       sandbox.stub(d, 'getStatus').callsFake(async () => {
         await B.delay(1000);
         return 'good status';
       });
-      let cmdPromise = d.executeCommand('getStatus');
+      const cmdPromise = d.executeCommand('getStatus');
       await B.delay(10);
       const p = new B((resolve, reject) => {
         setTimeout(
@@ -118,8 +112,7 @@ export function driverUnitTestSuite(
     });
 
     it('should not allow commands in middle of unexpected shutdown', async function () {
-      // make a command that will wait a bit so we can crash while it's running
-      sandbox.stub(d, 'deleteSession').callsFake(async function () {
+      sandbox.stub(d, 'deleteSession').callsFake(async function (this: InstanceType<typeof DriverClass>) {
         await B.delay(100);
         DriverClass.prototype.deleteSession.call(this);
       });
@@ -142,8 +135,7 @@ export function driverUnitTestSuite(
     });
 
     it('should allow new commands after done shutting down', async function () {
-      // make a command that will wait a bit so we can crash while it's running
-      sandbox.stub(d, 'deleteSession').callsFake(async function () {
+      sandbox.stub(d, 'deleteSession').callsFake(async function (this: InstanceType<typeof DriverClass>) {
         await B.delay(100);
         DriverClass.prototype.deleteSession.call(this);
       });
@@ -172,7 +164,6 @@ export function driverUnitTestSuite(
     });
 
     it('should distinguish between W3C and JSONWP session', async function () {
-      // Test W3C (leave first 2 args null because those are the JSONWP args)
       await d.executeCommand('createSession', null, null, {
         alwaysMatch: {
           ...defaultCaps,
@@ -188,7 +179,7 @@ export function driverUnitTestSuite(
     describe('protocol detection', function () {
       it('should use W3C if only W3C caps are provided', async function () {
         await d.createSession({
-          alwaysMatch: _.clone(defaultCaps),
+          alwaysMatch: _.clone(defaultCaps) as object,
           firstMatch: [{}],
         });
         expect(d.protocol).to.equal('W3C');
@@ -196,17 +187,16 @@ export function driverUnitTestSuite(
     });
 
     it('should have a method to get driver for a session', async function () {
-      let [sessId] = await d.createSession(w3cCaps);
+      const [sessId] = await d.createSession(w3cCaps);
       expect(d.driverForSession(sessId)).to.eql(d);
     });
 
     describe('command queue', function () {
-      /** @type {InstanceType<DriverClass<Constraints>>} */
-      let d;
-      let waitMs = 10;
+      let d: InstanceType<typeof DriverClass>;
+      const waitMs = 10;
 
       beforeEach(function () {
-        d = new DriverClass();
+        d = new DriverClass() as InstanceType<typeof DriverClass>;
         sandbox.stub(d, 'getStatus').callsFake(async () => {
           await B.delay(waitMs);
           return Date.now();
@@ -222,12 +212,12 @@ export function driverUnitTestSuite(
       });
 
       it('should queue commands and.executeCommand/respond in the order received', async function () {
-        let numCmds = 10;
-        let cmds = [];
+        const numCmds = 10;
+        const cmds: Promise<number>[] = [];
         for (let i = 0; i < numCmds; i++) {
           cmds.push(d.executeCommand('getStatus'));
         }
-        let results = await B.all(cmds);
+        const results = await B.all(cmds) as number[];
         for (let i = 1; i < numCmds; i++) {
           if (results[i] <= results[i - 1]) {
             throw new Error('Got result out of order');
@@ -236,8 +226,8 @@ export function driverUnitTestSuite(
       });
 
       it('should handle errors correctly when queuing', async function () {
-        let numCmds = 10;
-        let cmds = [];
+        const numCmds = 10;
+        const cmds: Promise<number | void>[] = [];
         for (let i = 0; i < numCmds; i++) {
           if (i === 5) {
             cmds.push(d.executeCommand('deleteSession'));
@@ -245,37 +235,41 @@ export function driverUnitTestSuite(
             cmds.push(d.executeCommand('getStatus'));
           }
         }
-        let results = /** @type {PromiseFulfilledResult<any>[]} */ (
-
-          await Promise.allSettled(cmds)
-        );
+        const results = await Promise.allSettled(cmds);
         for (let i = 1; i < 5; i++) {
-          if (results[i].value <= results[i - 1].value) {
-            throw new Error('Got result out of order');
+          const r = results[i];
+          const rPrev = results[i - 1];
+          if (r.status === 'fulfilled' && rPrev.status === 'fulfilled') {
+            if (r.value <= rPrev.value) {
+              throw new Error('Got result out of order');
+            }
           }
         }
-        /** @type {PromiseRejectedResult} */ (
-          /** @type {unknown} */ (results[5])
-        ).reason.message.should.contain('multipass');
+        const rejected = results[5] as PromiseRejectedResult;
+        expect(rejected.reason.message).to.contain('multipass');
         for (let i = 7; i < numCmds; i++) {
-          if (results[i].value <= results[i - 1].value) {
-            throw new Error('Got result out of order');
+          const r = results[i];
+          const rPrev = results[i - 1];
+          if (r.status === 'fulfilled' && rPrev.status === 'fulfilled') {
+            if (r.value <= rPrev.value) {
+              throw new Error('Got result out of order');
+            }
           }
         }
       });
 
       it('should not care if queue empties for a bit', async function () {
-        let numCmds = 10;
-        let cmds = [];
+        const numCmds = 10;
+        let cmds: Promise<number>[] = [];
         for (let i = 0; i < numCmds; i++) {
           cmds.push(d.executeCommand('getStatus'));
         }
-        let results = await B.all(cmds);
+        let results = await B.all(cmds) as number[];
         cmds = [];
         for (let i = 0; i < numCmds; i++) {
           cmds.push(d.executeCommand('getStatus'));
         }
-        results = await B.all(cmds);
+        results = await B.all(cmds) as number[];
         for (let i = 1; i < numCmds; i++) {
           if (results[i] <= results[i - 1]) {
             throw new Error('Got result out of order');
@@ -348,7 +342,7 @@ export function driverUnitTestSuite(
     });
 
     describe('proxying', function () {
-      let sessId;
+      let sessId: string;
       beforeEach(async function () {
         [sessId] = await d.createSession(w3cCaps);
       });
@@ -389,7 +383,7 @@ export function driverUnitTestSuite(
         });
         it('should throw an error when sessionId is wrong', function () {
           expect(() => {
-            d.canProxy();
+            d.canProxy(undefined as any);
           }).to.throw;
         });
       });
@@ -397,44 +391,36 @@ export function driverUnitTestSuite(
       describe('#proxyRouteIsAvoided', function () {
         it('should validate form of avoidance list', function () {
           const avoidStub = sandbox.stub(d, 'getProxyAvoidList');
-          // @ts-expect-error
-          avoidStub.returns([['POST', /\/foo/], ['GET']]);
+          avoidStub.returns([['POST', /\/foo/], ['GET']] as any);
           expect(() => {
-            // @ts-expect-error
-            d.proxyRouteIsAvoided();
+            (d as any).proxyRouteIsAvoided();
           }).to.throw;
           avoidStub.returns([
             ['POST', /\/foo/],
-            // @ts-expect-error
             ['GET', /^foo/, 'bar'],
-          ]);
+          ] as any);
           expect(() => {
-            // @ts-expect-error
-            d.proxyRouteIsAvoided();
+            (d as any).proxyRouteIsAvoided();
           }).to.throw;
         });
         it('should reject bad http methods', function () {
           const avoidStub = sandbox.stub(d, 'getProxyAvoidList');
           avoidStub.returns([
             ['POST', /^foo/],
-            // @ts-expect-error
-            ['BAZETE', /^bar/],
+            ['BAZETE' as any, /^bar/],
           ]);
           expect(() => {
-            // @ts-expect-error
-            d.proxyRouteIsAvoided();
+            (d as any).proxyRouteIsAvoided();
           }).to.throw;
         });
         it('should reject non-regex routes', function () {
           const avoidStub = sandbox.stub(d, 'getProxyAvoidList');
           avoidStub.returns([
             ['POST', /^foo/],
-            // @ts-expect-error
-            ['GET', '/bar'],
+            ['GET', '/bar' as any],
           ]);
           expect(() => {
-            // @ts-expect-error
-            d.proxyRouteIsAvoided();
+            (d as any).proxyRouteIsAvoided();
           }).to.throw;
         });
         it('should return true for routes in the avoid list', function () {
@@ -457,7 +443,7 @@ export function driverUnitTestSuite(
     });
 
     describe('event timing framework', function () {
-      let beforeStartTime;
+      let beforeStartTime: number;
       beforeEach(async function () {
         beforeStartTime = Date.now();
         d.shouldValidateCaps = false;
@@ -468,16 +454,16 @@ export function driverUnitTestSuite(
       });
       describe('#eventHistory', function () {
         it('should have an eventHistory property', function () {
-          should.exist(d.eventHistory);
-          should.exist(d.eventHistory.commands);
+          expect(d.eventHistory).to.exist;
+          expect(d.eventHistory.commands).to.exist;
         });
 
         it('should have a session start timing after session start', function () {
-          let {newSessionRequested, newSessionStarted} = d.eventHistory;
-          newSessionRequested.should.have.length(1);
-          newSessionStarted.should.have.length(1);
-          newSessionRequested[0].should.be.a('number');
-          newSessionStarted[0].should.be.a('number');
+          const {newSessionRequested, newSessionStarted} = d.eventHistory;
+          expect(newSessionRequested).to.have.length(1);
+          expect(newSessionStarted).to.have.length(1);
+          expect(newSessionRequested[0]).to.be.a('number');
+          expect(newSessionStarted[0]).to.be.a('number');
           expect(newSessionRequested[0] >= beforeStartTime).to.be.true;
           expect(newSessionStarted[0] >= newSessionRequested[0]).to.be.true;
         });
@@ -501,12 +487,10 @@ export function driverUnitTestSuite(
             d.logEvent('commands');
           }).to.throw();
           expect(() => {
-            // @ts-expect-error - bad type
-            d.logEvent(1);
+            d.logEvent(1 as any);
           }).to.throw();
           expect(() => {
-            // @ts-expect-error - bad type
-            d.logEvent({});
+            d.logEvent({} as any);
           }).to.throw();
         });
       });
@@ -520,12 +504,12 @@ export function driverUnitTestSuite(
       describe('getSession decoration', function () {
         it('should decorate getSession response if opt-in cap is provided', async function () {
           let res = await d.getSession();
-          should.not.exist(res.events);
+          expect(res.events).to.not.exist;
 
           _.set(d, 'caps.eventTimings', true);
           res = await d.getSession();
-          should.exist(res.events);
-          should.exist(res.events?.newSessionRequested);
+          expect(res.events).to.exist;
+          expect(res.events?.newSessionRequested).to.exist;
           expect(res.events?.newSessionRequested[0]).to.be.a('number');
         });
       });
@@ -533,16 +517,17 @@ export function driverUnitTestSuite(
   });
 
   describe('.isFeatureEnabled', function () {
-    let d;
-    let expect;
+    let d: InstanceType<typeof DriverClass>;
+    let expect: Chai.ExpectStatic;
 
     before(async function () {
       const chai = await import('chai');
-      expect = chai.expect;
+      expect = (chai as any).expect;
+      (chai as any).should(); // for client code that may use should style
     });
 
     beforeEach(function () {
-      d = new DriverClass();
+      d = new DriverClass() as InstanceType<typeof DriverClass>;
     });
 
     it('should throw if feature name is invalid', function () {
@@ -593,23 +578,3 @@ export function driverUnitTestSuite(
     });
   });
 }
-
-/**
- * @typedef {import('@appium/types').BaseNSCapabilities} BaseNSCapabilities
- * @typedef {import('@appium/types').Constraints} Constraints
- */
-
-/**
- * @template {Constraints} C
- * @typedef {import('@appium/types').DriverClass<Driver<C>>} DriverClass
- */
-
-/**
- * @template {Constraints} C
- * @typedef {import('@appium/types').Driver<C>} Driver
- */
-
-/**
- * @template {Constraints} C
- * @typedef {import('@appium/types').W3CCapabilities<C>} W3CCapabilities
- */

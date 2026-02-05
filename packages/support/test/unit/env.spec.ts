@@ -1,7 +1,6 @@
 import path from 'node:path';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import * as chai from 'chai';
 import type {SinonSandbox} from 'sinon';
 import type {TeenProcessExecResult} from 'teen_process';
 import {rewiremock} from '../helpers';
@@ -17,7 +16,6 @@ describe('env', function () {
 
   before(function () {
     use(chaiAsPromised);
-    chai.should();
   });
 
   beforeEach(function () {

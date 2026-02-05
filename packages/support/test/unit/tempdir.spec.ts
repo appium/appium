@@ -1,12 +1,10 @@
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import * as chai from 'chai';
 import {tempDir, fs} from '../../lib';
 
 describe('tempdir', function () {
   before(function () {
     use(chaiAsPromised);
-    chai.should();
   });
 
   afterEach(function () {

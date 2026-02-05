@@ -3,7 +3,6 @@ import B from 'bluebird';
 import http from 'node:http';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import * as chai from 'chai';
 import mJpegServer from 'mjpeg-server';
 import getPort from 'get-port';
 import {mjpeg} from '../../lib';
@@ -40,7 +39,6 @@ describe('MJpeg Stream (e2e)', function () {
 
   before(async function () {
     use(chaiAsPromised);
-    chai.should();
 
     port = await getPort();
     serverUrl = `http://${MJPEG_HOST}:${port}`;

@@ -1,6 +1,5 @@
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import * as chai from 'chai';
 import {fs, system, tempDir} from '../../lib';
 import path from 'node:path';
 import {createSandbox} from 'sinon';
@@ -19,7 +18,6 @@ describe('fs', function () {
 
   before(function () {
     use(chaiAsPromised);
-    chai.should();
   });
 
   beforeEach(function () {
@@ -169,7 +167,7 @@ describe('fs', function () {
   describe('walkDir()', function () {
     it('walkDir recursive', async function () {
       await expect(
-        fs.walkDir(__dirname, true, (item) => item.endsWith(`logger${path.sep}helpers.js`))
+        fs.walkDir(__dirname, true, (item) => item.endsWith(`logger${path.sep}helpers.ts`))
       ).to.eventually.not.be.null;
     });
     it('should walk all elements recursive', async function () {

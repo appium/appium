@@ -1,6 +1,5 @@
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import * as chai from 'chai';
 import path from 'node:path';
 import {plist, tempDir, fs} from '../../lib';
 
@@ -10,7 +9,6 @@ const textPlistPath = path.join(__dirname, 'assets', 'sample_text.plist');
 describe('plist', function () {
   before(function () {
     use(chaiAsPromised);
-    chai.should();
   });
 
   it('should parse plist file as binary', async function () {

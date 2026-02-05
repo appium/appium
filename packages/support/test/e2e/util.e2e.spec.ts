@@ -2,7 +2,6 @@ import B from 'bluebird';
 import path from 'node:path';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import * as chai from 'chai';
 import * as util from '../../lib/util';
 import {tempDir, fs} from '../../lib/index';
 
@@ -13,7 +12,6 @@ describe('#util', function () {
 
   before(async function () {
     use(chaiAsPromised);
-    chai.should();
   });
 
   beforeEach(async function () {

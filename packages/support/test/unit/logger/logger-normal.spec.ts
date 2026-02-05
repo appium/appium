@@ -1,5 +1,4 @@
 import {expect} from 'chai';
-import * as chai from 'chai';
 import {
   getDynamicLogger,
   restoreWriters,
@@ -72,7 +71,6 @@ describe('normal logger with static prefix', function () {
   const PREFIX = 'my_static_prefix';
 
   before(function () {
-    chai.should();
     writers = setupWriters();
     log = getDynamicLogger(false, false, PREFIX);
     log.level = 'silly';

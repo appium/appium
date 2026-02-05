@@ -1,14 +1,9 @@
 import {expect} from 'chai';
-import * as chai from 'chai';
 import AppiumSupport from '../../lib/';
 
 const {system, tempDir, util} = AppiumSupport;
 
 describe('index', function () {
-  before(function () {
-    chai.should();
-  });
-
   describe('default', function () {
     it('should expose an object', function () {
       expect(AppiumSupport).to.exist;

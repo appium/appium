@@ -1,7 +1,6 @@
 import path from 'node:path';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import * as chai from 'chai';
 import {downloadFile} from '../../lib/net';
 import {tempDir, fs} from '../../lib/index';
 
@@ -10,7 +9,6 @@ describe('#net', function () {
 
   before(async function () {
     use(chaiAsPromised);
-    chai.should();
   });
 
   beforeEach(async function () {

@@ -1,6 +1,5 @@
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import * as chai from 'chai';
 import * as teenProcess from 'teen_process';
 import {createSandbox} from 'sinon';
 import {process, system} from '../../lib';
@@ -13,7 +12,6 @@ describe('process', function () {
 
   before(function () {
     use(chaiAsPromised);
-    chai.should();
   });
 
   beforeEach(function () {

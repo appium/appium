@@ -1,7 +1,6 @@
 import path from 'node:path';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import * as chai from 'chai';
 import {fs, tempDir} from '../../lib';
 import {
   DEFAULT_APPIUM_HOME,
@@ -17,7 +16,6 @@ describe('environment', function () {
 
   before(async function () {
     use(chaiAsPromised);
-    chai.should();
     cwd = await tempDir.openDir();
   });
 

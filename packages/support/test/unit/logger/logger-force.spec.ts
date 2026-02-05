@@ -1,5 +1,4 @@
 import {expect} from 'chai';
-import * as chai from 'chai';
 import {getDynamicLogger, restoreWriters, setupWriters, assertOutputContains} from './helpers';
 
 describe('logger with force log', function () {
@@ -7,7 +6,6 @@ describe('logger with force log', function () {
   let log: ReturnType<typeof getDynamicLogger>;
 
   before(function () {
-    chai.should();
     writers = setupWriters();
     log = getDynamicLogger(true, true);
     log.level = 'silly';

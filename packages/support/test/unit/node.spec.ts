@@ -1,14 +1,9 @@
 import {expect, use} from 'chai';
-import * as chai from 'chai';
 import {node} from '../../lib';
 import path from 'node:path';
 import _ from 'lodash';
 
 describe('node utilities', function () {
-  before(function () {
-    chai.should();
-  });
-
   describe('getObjectSize', function () {
     it('should be able to calculate size of different object types', function () {
       expect(node.getObjectSize(1)).to.eql(8);

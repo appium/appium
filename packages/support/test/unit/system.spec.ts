@@ -1,6 +1,5 @@
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import * as chai from 'chai';
 import {system} from '../../lib';
 import os from 'node:os';
 import {createSandbox} from 'sinon';
@@ -17,7 +16,6 @@ describe('system', function () {
 
   before(function () {
     use(chaiAsPromised);
-    chai.should();
   });
 
   beforeEach(function () {

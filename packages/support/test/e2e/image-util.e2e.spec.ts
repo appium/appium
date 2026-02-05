@@ -1,7 +1,6 @@
 import path from 'node:path';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import * as chai from 'chai';
 import sharp from 'sharp';
 import {cropBase64Image} from '../../lib/image-util';
 import {fs} from '../../lib';
@@ -16,7 +15,6 @@ async function getImage(name: string): Promise<string> {
 describe('image-util', function () {
   before(async function () {
     use(chaiAsPromised);
-    chai.should();
   });
 
   describe('cropBase64Image', function () {

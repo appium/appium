@@ -1,7 +1,6 @@
 import path from 'node:path';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import * as chai from 'chai';
 import * as zip from '../../lib/zip';
 import {tempDir, fs} from '../../lib/index';
 import {MockReadWriteStream} from '../helpers';
@@ -15,7 +14,6 @@ describe('#zip', function () {
 
   before(async function () {
     use(chaiAsPromised);
-    chai.should();
   });
 
   optionMap.forEach((options, desc) => {

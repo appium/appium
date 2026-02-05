@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import * as chai from 'chai';
 import {createSandbox} from 'sinon';
 import {timing} from '../../lib';
 
@@ -11,7 +10,6 @@ describe('timing', function () {
 
   before(function () {
     use(chaiAsPromised);
-    chai.should();
   });
 
   beforeEach(function () {

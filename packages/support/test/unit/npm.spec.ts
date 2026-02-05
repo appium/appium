@@ -1,12 +1,7 @@
 import {expect, use} from 'chai';
-import * as chai from 'chai';
 import {NPM} from '../../lib/npm';
 
 describe('npm', function () {
-  before(function () {
-    chai.should();
-  });
-
   describe('getLatestSafeUpgradeFromVersions()', function () {
     const versions1 = [
       '0.1.0',

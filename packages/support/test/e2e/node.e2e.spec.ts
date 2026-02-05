@@ -1,12 +1,10 @@
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import * as chai from 'chai';
 import {node} from '../../lib';
 
 describe('node utilities', function () {
   before(function () {
     use(chaiAsPromised);
-    chai.should();
   });
 
   describe('requirePackage', function () {

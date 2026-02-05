@@ -1,7 +1,6 @@
 import path from 'node:path';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import * as chai from 'chai';
 import {fs} from '../../lib/fs';
 import {openDir} from '../../lib/tempdir';
 import {isWindows} from '../../lib/system';
@@ -9,7 +8,6 @@ import {isWindows} from '../../lib/system';
 describe('fs', function () {
   before(async function () {
     use(chaiAsPromised);
-    chai.should();
   });
 
   describe('mv()', function () {

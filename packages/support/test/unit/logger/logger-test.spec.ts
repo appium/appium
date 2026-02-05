@@ -1,5 +1,4 @@
 import {expect} from 'chai';
-import * as chai from 'chai';
 import {
   getDynamicLogger,
   restoreWriters,
@@ -12,7 +11,6 @@ describe('test logger', function () {
   let log: ReturnType<typeof getDynamicLogger>;
 
   before(function () {
-    chai.should();
     writers = setupWriters();
     log = getDynamicLogger(true, false);
   });

@@ -1,12 +1,10 @@
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import * as chai from 'chai';
 import {npm} from '../../lib/npm';
 
 describe('npm module', function () {
   before(async function () {
     use(chaiAsPromised);
-    chai.should();
   });
 
   describe('getLatestVersion()', function () {

@@ -1,6 +1,5 @@
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import * as chai from 'chai';
 import {util, fs, tempDir} from '../../lib';
 import B from 'bluebird';
 import {createSandbox} from 'sinon';
@@ -15,7 +14,6 @@ describe('util', function () {
 
   before(function () {
     use(chaiAsPromised);
-    chai.should();
   });
 
   beforeEach(function () {

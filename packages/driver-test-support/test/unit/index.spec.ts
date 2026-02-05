@@ -2,12 +2,12 @@ import {TEST_HOST, getTestPort, createAppiumURL} from '../../lib';
 import _ from 'lodash';
 
 describe('TEST_HOST', function () {
-  let expect;
+  let expect: Chai.ExpectStatic;
 
   before(async function () {
     const chai = await import('chai');
-    chai.should();
-    expect = chai.expect;
+    (chai as any).should();
+    expect = (chai as any).expect;
   });
 
   it('should be localhost', function () {
@@ -16,12 +16,12 @@ describe('TEST_HOST', function () {
 });
 
 describe('getTestPort()', function () {
-  let expect;
+  let expect: Chai.ExpectStatic;
 
   before(async function () {
     const chai = await import('chai');
-    chai.should();
-    expect = chai.expect;
+    (chai as any).should();
+    expect = (chai as any).expect;
   });
 
   it('should get a free test port', async function () {
@@ -31,12 +31,12 @@ describe('getTestPort()', function () {
 });
 
 describe('createAppiumURL()', function () {
-  let expect;
+  let expect: Chai.ExpectStatic;
 
   before(async function () {
     const chai = await import('chai');
-    chai.should();
-    expect = chai.expect;
+    (chai as any).should();
+    expect = (chai as any).expect;
   });
 
   it('should create a "new session" URL', function () {

@@ -20,6 +20,7 @@ describe('environment', function () {
   });
 
   beforeEach(function () {
+    // All of these functions are memoized, so we need to reset them before each test.
     resolveManifestPath.cache = new Map();
     resolveAppiumHome.cache = new Map();
     findAppiumDependencyPackage.cache = new Map();
@@ -41,6 +42,11 @@ describe('environment', function () {
     describe('when `appium` is not a package nor can be resolved from the CWD', function () {
       describe('when `APPIUM_HOME` is not present in the environment', function () {
         describe('when providing no `cwd` parameter', function () {
+          /**
+           * If no `cwd` is provided, resolveManifestPath calls resolveAppiumHome, which depends on
+           * the current working directory (process.cwd()). To isolate these tests we chdir to a temp
+           * dir (the same `cwd` we already set up) and restore the original cwd in afterEach.
+           */
           let oldCwd: string;
 
           beforeEach(function () {

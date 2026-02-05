@@ -14,12 +14,19 @@ const TEST_IMG_JPG =
 
 const MJPEG_HOST = '127.0.0.1';
 
+/**
+ * Start an MJPEG server for testing; it sends the same image repeatedly. Caller must close the server.
+ * @param port - Port the server should listen on.
+ * @param intMs - How often the server should push an image (default 300).
+ * @param times - How many times to push an image before closing the connection (default 20).
+ */
 function initMJpegServer(port: number, intMs = 300, times = 20): http.Server {
   const server = http
     .createServer(async function (req, res) {
       const mJpegReqHandler = mJpegServer.createReqHandler(req, res);
       const jpg = Buffer.from(TEST_IMG_JPG, 'base64');
 
+      // Just send the same jpeg over and over.
       for (let i = 0; i < times; i++) {
         await B.delay(intMs);
         mJpegReqHandler._write(jpg, null, _.noop);

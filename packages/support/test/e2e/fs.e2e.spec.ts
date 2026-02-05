@@ -82,6 +82,7 @@ describe('fs', function () {
       await fs.writeFile(srcPath, Buffer.from('bar'));
       const dstPath = path.join(dstRoot!, path.basename(srcPath));
 
+      // Mock fs.rename to simulate EXDEV (cross-device) error so mv falls back to copy-and-delete.
       const originalRename = fs.rename;
       (fs as {rename: typeof fs.rename}).rename = async () => {
         const err = new Error('cross-device link not permitted') as NodeJS.ErrnoException;
@@ -95,6 +96,7 @@ describe('fs', function () {
         expect(await fs.exists(srcPath)).to.be.false;
         expect((await fs.readFile(dstPath)).toString()).to.eql('bar');
       } finally {
+        // Restore original function.
         (fs as {rename: typeof fs.rename}).rename = originalRename;
       }
     });

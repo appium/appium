@@ -1,4 +1,4 @@
-import {expect, use} from 'chai';
+import {expect} from 'chai';
 import {node} from '../../lib';
 import path from 'node:path';
 import _ from 'lodash';

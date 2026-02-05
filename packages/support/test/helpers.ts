@@ -9,6 +9,8 @@ class MockReadWriteStream extends EventEmitter {
 
   pause() {}
 
+  // Signature required by stream interface; encoding not used in mock.
+  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
   setEncoding(_encoding?: string) {}
 
   flush() {}

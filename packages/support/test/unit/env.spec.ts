@@ -26,6 +26,7 @@ describe('env', function () {
     sandbox = result.sandbox;
     const overrides = result.overrides;
 
+    // Ensure an APPIUM_HOME in the environment does not befoul our tests.
     envAppiumHome = process.env.APPIUM_HOME;
     delete process.env.APPIUM_HOME;
 
@@ -94,6 +95,7 @@ describe('env', function () {
       describe('when Appium is not resolvable from cwd', function () {
         describe('when `appium` is not a dependency of the package in the cwd', function () {
           beforeEach(function () {
+            // This is needed because the default behavior is `resolvesArg(0)`; `.resolves()` does not override this behavior! I don't know why!
             MockReadPkg.readPackage.resolves(undefined as any);
           });
 
@@ -144,6 +146,7 @@ describe('env', function () {
 
       describe('when reading `package.json` causes an exception', function () {
         beforeEach(function () {
+          // Unclear if this is even possible.
           MockReadPkg.readPackage.rejects(new Error('on the fritz'));
         });
 
@@ -184,6 +187,7 @@ describe('env', function () {
     describe('when Appium is not resolvable from cwd', function () {
       describe('when `appium` is not a dependency of the local package', function () {
         beforeEach(function () {
+          // This is needed because the default behavior is `resolvesArg(0)`; `.resolves()` does not override this behavior! I don't know why!
           MockPkgDir.resetBehavior();
           MockPkgDir.resolves(undefined);
         });
@@ -218,6 +222,7 @@ describe('env', function () {
       });
 
       describe('when `appium` is a dependency of the local package', function () {
+        // The tests in here are pretty barebones, since there are many variations we haven't covered (despite the LoC coverage). Might be a good application for property testing.
         describe('when `appium` is not yet actually installed', function () {
           beforeEach(function () {
             MockTeenProcess.exec.rejects(new Error());

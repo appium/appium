@@ -22,6 +22,8 @@ export function getDynamicLogger(
   return logger.getLogger(prefix);
 }
 
+/** Restore stubs; signature kept for API compatibility with callers that pass writers. */
+/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
 export function restoreWriters(writers: ReturnType<typeof setupWriters>) {
   sandbox.restore();
 }
@@ -35,7 +37,9 @@ function someoneHadOutput(writers: ReturnType<typeof setupWriters>, output: stri
   for (const writer of _.values(writers)) {
     if (writer.calledWithMatch) {
       hadOutput = writer.calledWithMatch(matchOutput);
-      if (hadOutput) break;
+      if (hadOutput) {
+        break;
+      }
     }
   }
   return hadOutput;

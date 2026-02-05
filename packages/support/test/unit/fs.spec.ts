@@ -106,7 +106,9 @@ describe('fs', function () {
     let smallFilePath: string;
     let bigFilePath: string;
     before(async function () {
+      // Get the path of a small file (this source file).
       smallFilePath = existingPath;
+      // Create a large file to test, about 163840000 bytes.
       bigFilePath = path.resolve(await tempDir.openDir(), 'enormous.txt');
       const file = await fs.open(bigFilePath, 'w');
       let fileData = '';

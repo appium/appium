@@ -87,6 +87,7 @@ describe('#zip', function () {
           await zip.readEntries(zippedFilePath, async ({entry, extractEntryTo}) => {
             expect(entry.fileName).to.equal(expectedEntries[i].name);
 
+            // If it's a file, test that we can extract it to a temporary directory and that the contents are correct.
             if (expectedEntries[i].contents) {
               await extractEntryTo(tmpRoot);
               await expect(
@@ -121,12 +122,15 @@ describe('#zip', function () {
 
       describe('toInMemoryZip()', function () {
         it('should convert a local file to an in-memory zip buffer', async function () {
+          // Convert directory to in-memory buffer.
           const testFolder = path.resolve(assetsPath, 'unzipped');
           const buffer = await zip.toInMemoryZip(testFolder);
           expect(Buffer.isBuffer(buffer)).to.be.true;
 
+          // Write the buffer to a zip file.
           await fs.writeFile(path.resolve(tmpRoot, 'test.zip'), buffer);
 
+          // Unzip the file and test that it has the same contents as the directory that was zipped.
           await zip.extractAllTo(
             path.resolve(tmpRoot, 'test.zip'),
             path.resolve(tmpRoot, 'output'),
@@ -157,6 +161,7 @@ describe('#zip', function () {
             Buffer.from(buffer.toString(), 'base64')
           );
 
+          // Unzip the file and test that it has the same contents as the directory that was zipped.
           await zip.extractAllTo(
             path.resolve(tmpRoot, 'test.zip'),
             path.resolve(tmpRoot, 'output')
@@ -204,8 +209,11 @@ describe('#zip', function () {
             pipe?: (dest?: unknown) => void;
           };
           mockZipFile = {
+            // yauzl API is callback-based; we're mocking it.
+            /* eslint-disable promise/prefer-await-to-callbacks */
             openReadStream: (e: typeof entry, cb: (err: null, s: MockReadWriteStream) => void) =>
               cb(null, mockZipStream),
+            /* eslint-enable promise/prefer-await-to-callbacks */
           };
         });
 
@@ -238,6 +246,7 @@ describe('#zip', function () {
             cwd: testFolder,
           });
 
+          // Unzip the file and test that it has the same contents as the directory that was zipped.
           await zip.extractAllTo(dstPath, path.resolve(tmpRoot, 'output'));
           await expect(
             fs.readFile(path.resolve(tmpRoot, 'output', 'test-dir', 'a.txt'), {
@@ -260,6 +269,7 @@ describe('#zip', function () {
     let tmpRoot: string;
 
     beforeEach(async function () {
+      // XXX: I don't know enough about unicode handling in the windows FS to attempt a fix here.
       if (isWindows()) {
         return this.skip();
       }
@@ -286,6 +296,7 @@ describe('#zip', function () {
 
     it('should retain the proper filenames', async function () {
       const expectedPath = path.join(assetsPath, 'kanji-正世丕.app');
+      // fs.exists returns a boolean; throw with a clear message if the path is missing.
       if (!(await fs.exists(expectedPath))) {
         throw new Error(`Expected ${expectedPath} to exist, but it does not`);
       }

@@ -101,7 +101,7 @@ describe('system', function () {
     });
 
     it('should return correct architecture if it is a 64 bit Mac/Linux', async function () {
-      mocks['os'].expects('type').thrice().returns('Darwin');
+      mocks.os.expects('type').thrice().returns('Darwin');
       (sandbox.stub(teen_process, 'exec') as any).get(() =>
         sandbox.stub().withArgs('uname', ['-m']).returns({stdout: 'x86_64'})
       );
@@ -111,7 +111,7 @@ describe('system', function () {
     });
 
     it('should return correct architecture if it is a 32 bit Mac/Linux', async function () {
-      mocks['os'].expects('type').twice().returns('Linux');
+      mocks.os.expects('type').twice().returns('Linux');
       (sandbox.stub(teen_process, 'exec') as any).get(() =>
         sandbox.stub().withArgs('uname', ['-m']).returns({stdout: 'i686'})
       );
@@ -121,16 +121,16 @@ describe('system', function () {
     });
 
     it('should return correct architecture if it is a 64 bit Windows', async function () {
-      mocks['os'].expects('type').thrice().returns('Windows_NT');
-      mocks['system'].expects('isOSWin64').once().returns(true);
+      mocks.os.expects('type').thrice().returns('Windows_NT');
+      mocks.system.expects('isOSWin64').once().returns(true);
       const arch = await system.arch();
       expect(arch).to.equal('64');
       mocks[SANDBOX].verify();
     });
 
     it('should return correct architecture if it is a 32 bit Windows', async function () {
-      mocks['os'].expects('type').thrice().returns('Windows_NT');
-      mocks['system'].expects('isOSWin64').once().returns(false);
+      mocks.os.expects('type').thrice().returns('Windows_NT');
+      mocks.system.expects('isOSWin64').once().returns(false);
       const arch = await system.arch();
       expect(arch).to.equal('32');
       mocks[SANDBOX].verify();

@@ -88,6 +88,7 @@ describe('#util', function () {
     });
 
     it('should block other behavior until the lock is released', async function () {
+      // First prove that without a lock, we get races.
       await expect(testFileContents()).to.eventually.eql('a');
       const unguardedPromise1 = guardedBehavior('b', 500);
       const unguardedPromise2 = guardedBehavior('c', 100);
@@ -95,6 +96,7 @@ describe('#util', function () {
       await unguardedPromise2;
       await expect(testFileContents()).to.eventually.eql('acb');
 
+      // Now prove that with a lock, we don't get any interlopers.
       const guard = util.getLockFileGuard(lockFile);
       const guardPromise1 = guard(async () => await guardedBehavior('b', 500));
       const guardPromise2 = guard(async () => await guardedBehavior('c', 100));

@@ -1,6 +1,7 @@
-// @ts-check
-
 import path from 'node:path';
+import {expect, use} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import * as chai from 'chai';
 import {fs, tempDir} from '../../lib';
 import {
   DEFAULT_APPIUM_HOME,
@@ -11,24 +12,16 @@ import {
 } from '../../lib/env';
 
 describe('environment', function () {
-  /** @type {string} */
-  let cwd;
-  /** @type {string|undefined} */
-  let oldEnvAppiumHome;
-  let expect;
+  let cwd: string;
+  let oldEnvAppiumHome: string | undefined;
 
   before(async function () {
-    const chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-    chai.use(chaiAsPromised.default);
+    use(chaiAsPromised);
     chai.should();
-    expect = chai.expect;
-
     cwd = await tempDir.openDir();
   });
 
   beforeEach(function () {
-    // all of these functions are memoized, so we need to reset them before each test.
     resolveManifestPath.cache = new Map();
     resolveAppiumHome.cache = new Map();
     findAppiumDependencyPackage.cache = new Map();
@@ -50,15 +43,7 @@ describe('environment', function () {
     describe('when `appium` is not a package nor can be resolved from the CWD', function () {
       describe('when `APPIUM_HOME` is not present in the environment', function () {
         describe('when providing no `cwd` parameter', function () {
-          /**
-           * **IMPORTANT:** If no `cwd` is provided, {@linkcode resolveManifestPath} call {@linkcode resolveAppiumHome}.
-           * `resolveAppiumHome` depends on the value of the current working directory ({@linkcode process.cwd }).
-           * In order to isolate these tests properly, we must create a temp dir and `chdir` to it.
-           * For our purposes, we can just use the `cwd` we set already.
-           *
-           * @type {string}
-           */
-          let oldCwd;
+          let oldCwd: string;
 
           beforeEach(function () {
             oldCwd = process.cwd();
@@ -124,7 +109,6 @@ describe('environment', function () {
               path.join(__dirname, 'fixture', 'appium-v2-dependency.package.json'),
               path.join(cwd, 'package.json')
             );
-            // await fs.symlink(path.join(__dirname, '..', 'appium'), path.join(cwd, 'node_modules', 'appium'), 'junction');
             await fs.copyFile(
               path.join(__dirname, 'fixture', 'appium-v2-package'),
               path.join(cwd, 'node_modules', 'appium')

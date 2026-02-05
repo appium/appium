@@ -1,18 +1,17 @@
 import _ from 'lodash';
+import {expect, use} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import * as chai from 'chai';
 import {createSandbox} from 'sinon';
 import {timing} from '../../lib';
 
 describe('timing', function () {
-  let processMock;
-  let sandbox;
-  let expect;
+  let processMock: ReturnType<ReturnType<typeof createSandbox>['mock']>;
+  let sandbox: ReturnType<typeof createSandbox>;
 
-  before(async function () {
-    const chai = await import('chai');
-    const chaiAsPromised = await import ('chai-as-promised');
-    chai.use(chaiAsPromised.default);
+  before(function () {
+    use(chaiAsPromised);
     chai.should();
-    expect = chai.expect;
   });
 
   beforeEach(function () {
@@ -20,16 +19,17 @@ describe('timing', function () {
   });
 
   afterEach(function () {
-    processMock.verify();
+    if (processMock) {
+      processMock.verify();
+    }
     sandbox.restore();
   });
 
   describe('no bigint', function () {
     const bigintFn = process.hrtime.bigint;
     before(function () {
-      // if the system has BigInt support, remove it
       if (_.isFunction(bigintFn)) {
-        delete process.hrtime.bigint;
+        delete (process.hrtime as any).bigint;
       }
     });
     beforeEach(function () {
@@ -37,17 +37,17 @@ describe('timing', function () {
     });
     after(function () {
       if (_.isFunction(bigintFn)) {
-        process.hrtime.bigint = bigintFn;
+        (process.hrtime as any).bigint = bigintFn;
       }
     });
     it('should get a start time as array', function () {
       const timer = new timing.Timer().start();
-      _.isArray(timer.startTime).should.be.true;
+      expect(_.isArray(timer.startTime)).to.be.true;
     });
     it('should get a duration', function () {
       const timer = new timing.Timer().start();
       const duration = timer.getDuration();
-      _.isNumber(duration.nanos).should.be.true;
+      expect(_.isNumber(duration.nanos)).to.be.true;
     });
     it('should get correct seconds', function () {
       processMock
@@ -60,7 +60,7 @@ describe('timing', function () {
 
       const timer = new timing.Timer().start();
       const duration = timer.getDuration();
-      duration.asSeconds.should.eql(13.000054321);
+      expect(duration.asSeconds).to.eql(13.000054321);
     });
     it('should get correct milliseconds', function () {
       processMock
@@ -73,7 +73,7 @@ describe('timing', function () {
 
       const timer = new timing.Timer().start();
       const duration = timer.getDuration();
-      duration.asMilliSeconds.should.eql(13000.054321);
+      expect(duration.asMilliSeconds).to.eql(13000.054321);
     });
     it('should get correct nanoseconds', function () {
       processMock
@@ -86,7 +86,7 @@ describe('timing', function () {
 
       const timer = new timing.Timer().start();
       const duration = timer.getDuration();
-      duration.asNanoSeconds.should.eql(13000054321);
+      expect(duration.asNanoSeconds).to.eql(13000054321);
     });
     it('should error if the timer was not started', function () {
       const timer = new timing.Timer();
@@ -94,16 +94,12 @@ describe('timing', function () {
     });
     it('should error if start time is a number', function () {
       const timer = new timing.Timer();
-      timer._startTime = 12345;
+      (timer as any)._startTime = 12345;
       expect(() => timer.getDuration()).to.throw('Unable to get duration');
     });
   });
   describe('bigint', function () {
     beforeEach(function () {
-      // the non-mocked test cannot run if BigInt does not exist,
-      // and it cannot be mocked. Luckily support was added in Node 10.4.0,
-      // so it should not be a case where we are testing without this,
-      // though it still can be a test that Appium is _used_ without it.
       if (!_.isFunction(process.hrtime.bigint)) {
         return this.skip();
       }
@@ -129,28 +125,28 @@ describe('timing', function () {
 
       const timer = new timing.Timer().start();
       const duration = timer.getDuration();
-      _.isNumber(duration.nanos).should.be.true;
+      expect(_.isNumber(duration.nanos)).to.be.true;
     });
     it('should get correct seconds', function () {
       setupMocks();
 
       const timer = new timing.Timer().start();
       const duration = timer.getDuration();
-      duration.asSeconds.should.be.eql(10.011483102);
+      expect(duration.asSeconds).to.eql(10.011483102);
     });
     it('should get correct milliseconds', function () {
       setupMocks();
 
       const timer = new timing.Timer().start();
       const duration = timer.getDuration();
-      duration.asMilliSeconds.should.be.eql(10011.483102);
+      expect(duration.asMilliSeconds).to.eql(10011.483102);
     });
     it('should get correct nanoseconds', function () {
       setupMocks();
 
       const timer = new timing.Timer().start();
       const duration = timer.getDuration();
-      duration.asNanoSeconds.should.be.eql(10011483102);
+      expect(duration.asNanoSeconds).to.eql(10011483102);
     });
     it('should error if the timer was not started', function () {
       const timer = new timing.Timer();
@@ -158,7 +154,7 @@ describe('timing', function () {
     });
     it('should error if passing in a non-bigint', function () {
       const timer = new timing.Timer();
-      timer._startTime = 12345;
+      (timer as any)._startTime = 12345;
       expect(() => timer.getDuration()).to.throw('Unable to get duration');
     });
   });

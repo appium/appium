@@ -1,14 +1,15 @@
 import path from 'node:path';
+import {expect, use} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import * as chai from 'chai';
 import {downloadFile} from '../../lib/net';
 import {tempDir, fs} from '../../lib/index';
 
 describe('#net', function () {
-  let tmpRoot;
+  let tmpRoot: string;
 
   before(async function () {
-    const chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-    chai.use(chaiAsPromised.default);
+    use(chaiAsPromised);
     chai.should();
   });
 
@@ -27,7 +28,7 @@ describe('#net', function () {
         'https://appium.io/docs/en/2.0/assets/images/appium-logo-white.png',
         dstPath
       );
-      await fs.exists(dstPath).should.eventually.be.true;
+      await expect(fs.exists(dstPath)).to.eventually.be.true;
     });
   });
 });

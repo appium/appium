@@ -3,16 +3,17 @@ import rewiremock, {addPlugin, overrideEntryPoint, plugins} from 'rewiremock';
 
 overrideEntryPoint(module);
 addPlugin(plugins.nodejs);
+
 class MockReadWriteStream extends EventEmitter {
   resume() {}
 
   pause() {}
 
-  setEncoding() {}
+  setEncoding(_encoding?: string) {}
 
   flush() {}
 
-  write(msg) {
+  write(msg: string | Buffer) {
     this.emit('data', msg);
   }
 

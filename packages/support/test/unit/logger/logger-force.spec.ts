@@ -1,8 +1,13 @@
+import {expect} from 'chai';
+import * as chai from 'chai';
 import {getDynamicLogger, restoreWriters, setupWriters, assertOutputContains} from './helpers';
 
 describe('logger with force log', function () {
-  let writers, log;
+  let writers: ReturnType<typeof setupWriters>;
+  let log: ReturnType<typeof getDynamicLogger>;
+
   before(function () {
+    chai.should();
     writers = setupWriters();
     log = getDynamicLogger(true, true);
     log.level = 'silly';
@@ -27,9 +32,9 @@ describe('logger with force log', function () {
     assertOutputContains(writers, 'warn');
     log.error('error');
     assertOutputContains(writers, 'error');
-    (() => {
+    expect(() => {
       throw log.errorWithException('msg');
-    }).should.throw('msg');
+    }).to.throw('msg');
     assertOutputContains(writers, 'error');
     assertOutputContains(writers, 'msg');
   });

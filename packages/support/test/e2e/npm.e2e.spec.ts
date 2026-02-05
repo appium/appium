@@ -1,14 +1,12 @@
+import {expect, use} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import * as chai from 'chai';
 import {npm} from '../../lib/npm';
 
 describe('npm module', function () {
-  let expect;
-
   before(async function () {
-    const chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-    chai.use(chaiAsPromised.default);
+    use(chaiAsPromised);
     chai.should();
-    expect = chai.expect;
   });
 
   describe('getLatestVersion()', function () {
@@ -19,7 +17,7 @@ describe('npm module', function () {
             process.cwd(),
             'crusher-brush-resize-disfigure-props-desktop-blatancy-prologue'
           )
-        ).not.to.be.rejected;
+        ).to.not.be.rejected;
       });
 
       it('should resolve with "null"', async function () {

@@ -2,9 +2,9 @@ import sinon from 'sinon';
 import _ from 'lodash';
 import {logger} from '../../../lib';
 
-let sandbox;
+let sandbox: sinon.SinonSandbox;
 
-function setupWriters() {
+export function setupWriters() {
   sandbox = sinon.createSandbox();
   return {
     stdout: sandbox.spy(process.stdout, 'write'),
@@ -12,47 +12,43 @@ function setupWriters() {
   };
 }
 
-function getDynamicLogger(testingMode, forceLogs, prefix = null) {
+export function getDynamicLogger(
+  testingMode: boolean,
+  forceLogs: boolean,
+  prefix: string | (() => string) | null = null
+) {
   process.env._TESTING = testingMode ? '1' : '0';
   process.env._FORCE_LOGS = forceLogs ? '1' : '0';
   return logger.getLogger(prefix);
 }
 
-function restoreWriters() {
+export function restoreWriters(writers: ReturnType<typeof setupWriters>) {
   sandbox.restore();
 }
 
-function someoneHadOutput(writers, output) {
+function someoneHadOutput(writers: ReturnType<typeof setupWriters>, output: string) {
   let hadOutput = false;
-  let matchOutput = sinon.match(function (value) {
-    return value && value.indexOf(output) >= 0;
+  const matchOutput = sinon.match(function (value: string) {
+    return !!(value && value.indexOf(output) >= 0);
   }, 'matchOutput');
 
-  for (let writer of _.values(writers)) {
-    if (writer.calledWith) {
+  for (const writer of _.values(writers)) {
+    if (writer.calledWithMatch) {
       hadOutput = writer.calledWithMatch(matchOutput);
-      if (hadOutput) break; // eslint-disable-line curly
+      if (hadOutput) break;
     }
   }
   return hadOutput;
 }
 
-function assertOutputContains(writers, output) {
+export function assertOutputContains(writers: ReturnType<typeof setupWriters>, output: string) {
   if (!someoneHadOutput(writers, output)) {
     throw new Error(`Expected something to have been called with: '${output}'`);
   }
 }
 
-function assertOutputDoesntContain(writers, output) {
+export function assertOutputDoesntContain(writers: ReturnType<typeof setupWriters>, output: string) {
   if (someoneHadOutput(writers, output)) {
     throw new Error(`Expected nothing to have been called with: '${output}'`);
   }
 }
-
-export {
-  setupWriters,
-  restoreWriters,
-  assertOutputContains,
-  assertOutputDoesntContain,
-  getDynamicLogger,
-};

@@ -1,13 +1,10 @@
-// transpile:mocha
-
+import {expect, use} from 'chai';
+import * as chai from 'chai';
 import {NPM} from '../../lib/npm';
 
 describe('npm', function () {
-  let should;
-
-  before(async function () {
-    const chai = await import('chai');
-    should = chai.should();
+  before(function () {
+    chai.should();
   });
 
   describe('getLatestSafeUpgradeFromVersions()', function () {
@@ -28,20 +25,20 @@ describe('npm', function () {
     ];
     const npm = new NPM();
     it('should get the latest minor upgrade in a list of versions', function () {
-      npm.getLatestSafeUpgradeFromVersions('0.1.0', versions1).should.eql('0.2.5');
-      npm.getLatestSafeUpgradeFromVersions('1.0.0', versions1).should.eql('1.2.7');
-      npm.getLatestSafeUpgradeFromVersions('0.2.0', versions1).should.eql('0.2.5');
+      expect(npm.getLatestSafeUpgradeFromVersions('0.1.0', versions1)).to.eql('0.2.5');
+      expect(npm.getLatestSafeUpgradeFromVersions('1.0.0', versions1)).to.eql('1.2.7');
+      expect(npm.getLatestSafeUpgradeFromVersions('0.2.0', versions1)).to.eql('0.2.5');
     });
     it('should throw if the current version cannot be parsed', function () {
-      should.throw(() => {
+      expect(() => {
         npm.getLatestSafeUpgradeFromVersions('', versions1);
-      });
+      }).to.throw();
     });
     it('should ignore an error if one of versions cannot be parsed', function () {
-      npm.getLatestSafeUpgradeFromVersions('0.1.0', ['', '0.2.0']).should.eql('0.2.0');
+      expect(npm.getLatestSafeUpgradeFromVersions('0.1.0', ['', '0.2.0'])).to.eql('0.2.0');
     });
     it('should return null if no newer version is found', function () {
-      (null === npm.getLatestSafeUpgradeFromVersions('10', versions1)).should.be.true;
+      expect(null === npm.getLatestSafeUpgradeFromVersions('10', versions1)).to.be.true;
     });
   });
 });

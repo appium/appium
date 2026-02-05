@@ -1,18 +1,17 @@
 import B from 'bluebird';
 import path from 'node:path';
+import {expect, use} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import * as util from '../../lib/util';
 import {tempDir, fs} from '../../lib/index';
 
 describe('#util', function () {
-  let tmpRoot;
-  let tmpFile;
+  let tmpRoot: string | null = null;
+  let tmpFile: string;
   const content = 'YOLO';
 
   before(async function () {
-    const chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-    chai.use(chaiAsPromised.default);
-    chai.should();
+    use(chaiAsPromised);
   });
 
   beforeEach(async function () {
@@ -32,47 +31,49 @@ describe('#util', function () {
     it('should convert a file to base64 encoding', async function () {
       const data = await util.toInMemoryBase64(tmpFile);
       const fileContent = await fs.readFile(tmpFile);
-      data.toString().should.eql(fileContent.toString('base64'));
+      expect(data.toString()).to.eql(fileContent.toString('base64'));
     });
   });
 
   describe('getLockFileGuard()', function () {
-    let tmpRoot;
-    let lockFile;
-    let testFile;
+    let lockFile: string;
+    let testFile: string;
+    let guardTmpRoot: string;
 
-    async function guardedBehavior(text, msBeforeActing) {
+    async function guardedBehavior(text: string, msBeforeActing: number) {
       await B.delay(msBeforeActing);
       await fs.appendFile(testFile, text, 'utf8');
       return text;
     }
 
-    async function testFileContents() {
+    async function testFileContents(): Promise<string> {
       return (await fs.readFile(testFile)).toString('utf8');
     }
 
     beforeEach(async function () {
-      tmpRoot = await tempDir.openDir();
-      lockFile = path.resolve(tmpRoot, 'test.lock');
-      testFile = path.resolve(tmpRoot, 'test');
+      guardTmpRoot = await tempDir.openDir();
+      lockFile = path.resolve(guardTmpRoot, 'test.lock');
+      testFile = path.resolve(guardTmpRoot, 'test');
       await fs.writeFile(testFile, 'a', 'utf8');
     });
 
     afterEach(async function () {
       try {
         await B.all([lockFile, testFile].map((p) => fs.unlink(p)));
-      } catch {}
+      } catch {
+        // ignore
+      }
     });
 
     it('should lock a file during the given behavior', async function () {
       const guard = util.getLockFileGuard(lockFile);
-      await guard.check().should.eventually.be.false;
+      await expect(guard.check()).to.eventually.be.false;
       const guardPromise = guard(async () => await guardedBehavior('b', 500));
       await B.delay(200);
-      await guard.check().should.eventually.be.true;
+      await expect(guard.check()).to.eventually.be.true;
       await guardPromise;
-      await guard.check().should.eventually.be.false;
-      await testFileContents().should.eventually.eql('ab');
+      await expect(guard.check()).to.eventually.be.false;
+      await expect(testFileContents()).to.eventually.eql('ab');
     });
 
     it('should recover a broken lock file', async function () {
@@ -82,26 +83,26 @@ describe('#util', function () {
         tryRecovery: true,
       });
       await guard(async () => await guardedBehavior('b', 500));
-      await guard.check().should.eventually.be.false;
-      await testFileContents().should.eventually.eql('ab');
+      await expect(guard.check()).to.eventually.be.false;
+      await expect(testFileContents()).to.eventually.eql('ab');
     });
 
     it('should block other behavior until the lock is released', async function () {
-      // first prove that without a lock, we get races
-      await testFileContents().should.eventually.eql('a');
+      // First prove that without a lock, we get races.
+      await expect(testFileContents()).to.eventually.eql('a');
       const unguardedPromise1 = guardedBehavior('b', 500);
       const unguardedPromise2 = guardedBehavior('c', 100);
       await unguardedPromise1;
       await unguardedPromise2;
-      await testFileContents().should.eventually.eql('acb');
+      await expect(testFileContents()).to.eventually.eql('acb');
 
-      // now prove that with a lock, we don't get any interlopers
+      // Now prove that with a lock, we don't get any interlopers.
       const guard = util.getLockFileGuard(lockFile);
       const guardPromise1 = guard(async () => await guardedBehavior('b', 500));
       const guardPromise2 = guard(async () => await guardedBehavior('c', 100));
       await guardPromise1;
       await guardPromise2;
-      await testFileContents().should.eventually.eql('acbbc');
+      await expect(testFileContents()).to.eventually.eql('acbbc');
     });
 
     it('should return the result of the guarded behavior', async function () {
@@ -110,8 +111,8 @@ describe('#util', function () {
       const guardPromise2 = guard(async () => await guardedBehavior('world', 100));
       const ret1 = await guardPromise1;
       const ret2 = await guardPromise2;
-      ret1.should.eql('hello');
-      ret2.should.eql('world');
+      expect(ret1).to.eql('hello');
+      expect(ret2).to.eql('world');
     });
 
     it('should time out if the lock is not released', async function () {
@@ -119,8 +120,8 @@ describe('#util', function () {
       const guard = util.getLockFileGuard(lockFile, {timeout: 0.5});
       const p1 = guard(async () => await guardedBehavior('hello', 1200));
       const p2 = guard(async () => await guardedBehavior('world', 10));
-      await p2.should.eventually.be.rejectedWith(/not acquire lock/);
-      await p1.should.eventually.eql('hello');
+      await expect(p2).to.eventually.be.rejectedWith(/not acquire lock/);
+      await expect(p1).to.eventually.eql('hello');
     });
 
     it('should still release lock if guarded behavior fails', async function () {
@@ -131,8 +132,8 @@ describe('#util', function () {
         throw new Error('bad');
       });
       const p2 = guard(async () => await guardedBehavior('world', 100));
-      await p1.should.eventually.be.rejectedWith(/bad/);
-      await p2.should.eventually.eql('world');
+      await expect(p1).to.eventually.be.rejectedWith(/bad/);
+      await expect(p2).to.eventually.eql('world');
     });
   });
 });

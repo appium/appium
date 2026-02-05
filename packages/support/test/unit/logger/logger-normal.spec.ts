@@ -1,5 +1,4 @@
-// transpile:mocha
-
+import {expect} from 'chai';
 import {
   getDynamicLogger,
   restoreWriters,
@@ -11,7 +10,9 @@ import {
 const LOG_LEVELS = ['silly', 'verbose', 'info', 'http', 'warn', 'error'];
 
 describe('normal logger', function () {
-  let writers, log;
+  let writers: ReturnType<typeof setupWriters>;
+  let log: ReturnType<typeof getDynamicLogger>;
+
   beforeEach(function () {
     writers = setupWriters();
     log = getDynamicLogger(false, false);
@@ -24,23 +25,23 @@ describe('normal logger', function () {
 
   it('should not rewrite log levels outside of testing', function () {
     for (const levelName of LOG_LEVELS) {
-      log[levelName](levelName);
+      (log as any)[levelName](levelName);
       assertOutputContains(writers, levelName);
     }
   });
   it('throw should not rewrite log levels outside of testing and throw error', function () {
-    (() => {
+    expect(() => {
       throw log.errorWithException('msg1');
-    }).should.throw('msg1');
-    (() => {
+    }).to.throw('msg1');
+    expect(() => {
       throw log.errorWithException(new Error('msg2'));
-    }).should.throw('msg2');
+    }).to.throw('msg2');
     assertOutputContains(writers, 'msg1');
     assertOutputContains(writers, 'msg2');
   });
   it('should get and set log levels', function () {
     log.level = 'warn';
-    log.level.should.equal('warn');
+    expect(log.level).to.equal('warn');
     log.info('information');
     log.warn('warning');
     assertOutputDoesntContain(writers, 'information');
@@ -55,7 +56,7 @@ describe('normal logger', function () {
   });
   it('should split stack trace of Error', function () {
     log.level = 'warn';
-    let error = new Error('this is an error');
+    const error = new Error('this is an error');
     error.stack = 'stack line 1\nstack line 2';
     log.warn(error);
     assertOutputDoesntContain(writers, 'stack line 1\nstack line 2');
@@ -65,7 +66,8 @@ describe('normal logger', function () {
 });
 
 describe('normal logger with static prefix', function () {
-  let writers, log;
+  let writers: ReturnType<typeof setupWriters>;
+  let log: ReturnType<typeof getDynamicLogger>;
   const PREFIX = 'my_static_prefix';
 
   before(function () {
@@ -80,22 +82,23 @@ describe('normal logger with static prefix', function () {
 
   it('should not rewrite log levels outside of testing', function () {
     for (const levelName of LOG_LEVELS) {
-      log[levelName](levelName);
+      (log as any)[levelName](levelName);
       assertOutputContains(writers, levelName);
       assertOutputContains(writers, PREFIX);
     }
   });
   it('throw should not rewrite log levels outside of testing and throw error', function () {
-    (() => {
+    expect(() => {
       throw log.errorWithException('msg');
-    }).should.throw('msg');
+    }).to.throw('msg');
     assertOutputContains(writers, 'error');
     assertOutputContains(writers, PREFIX);
   });
 });
 
 describe('normal logger with dynamic prefix', function () {
-  let writers, log;
+  let writers: ReturnType<typeof setupWriters>;
+  let log: ReturnType<typeof getDynamicLogger>;
   const PREFIX = 'my_dynamic_prefix';
 
   before(function () {
@@ -110,15 +113,15 @@ describe('normal logger with dynamic prefix', function () {
 
   it('should not rewrite log levels outside of testing', function () {
     for (const levelName of LOG_LEVELS) {
-      log[levelName](levelName);
+      (log as any)[levelName](levelName);
       assertOutputContains(writers, levelName);
       assertOutputContains(writers, PREFIX);
     }
   });
   it('throw should not rewrite log levels outside of testing and throw error', function () {
-    (() => {
+    expect(() => {
       throw log.errorWithException('msg');
-    }).should.throw('msg');
+    }).to.throw('msg');
     assertOutputContains(writers, 'error');
     assertOutputContains(writers, PREFIX);
   });

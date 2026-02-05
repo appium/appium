@@ -1,27 +1,26 @@
 import path from 'node:path';
+import {expect, use} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import * as zip from '../../lib/zip';
 import {tempDir, fs} from '../../lib/index';
 import {MockReadWriteStream} from '../helpers';
 import {isWindows} from '../../lib/system';
 
 describe('#zip', function () {
-  const optionMap = new Map([
+  const optionMap = new Map<string, Record<string, boolean | undefined>>([
     ['native JS unzip', {}],
     ['system unzip', {useSystemUnzip: true}],
   ]);
 
   before(async function () {
-    const chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-    chai.use(chaiAsPromised.default);
-    chai.should();
+    use(chaiAsPromised);
   });
 
   optionMap.forEach((options, desc) => {
     describe(desc, function () {
-      let assetsPath;
-      let zippedFilePath;
-      let tmpRoot;
+      let assetsPath: string;
+      let zippedFilePath: string;
+      let tmpRoot: string;
 
       beforeEach(async function () {
         assetsPath = await tempDir.openDir();
@@ -48,31 +47,35 @@ describe('#zip', function () {
 
       describe('extractAllTo()', function () {
         it('should extract contents of a .zip file to a directory', async function () {
-          await fs
-            .readFile(path.resolve(assetsPath, 'unzipped', 'test-dir', 'a.txt'), {encoding: 'utf8'})
-            .should.eventually.equal('Hello World');
-          await fs
-            .readFile(path.resolve(assetsPath, 'unzipped', 'test-dir', 'b.txt'), {encoding: 'utf8'})
-            .should.eventually.equal('Foo Bar');
+          await expect(
+            fs.readFile(path.resolve(assetsPath, 'unzipped', 'test-dir', 'a.txt'), {
+              encoding: 'utf8',
+            })
+          ).to.eventually.equal('Hello World');
+          await expect(
+            fs.readFile(path.resolve(assetsPath, 'unzipped', 'test-dir', 'b.txt'), {
+              encoding: 'utf8',
+            })
+          ).to.eventually.equal('Foo Bar');
         });
       });
 
       describe('assertValidZip', function () {
         it('should not throw an error if a valid ZIP file is passed', async function () {
-          await zip.assertValidZip(zippedFilePath).should.eventually.be.fulfilled;
+          await expect(zip.assertValidZip(zippedFilePath)).to.eventually.be.fulfilled;
         });
         it('should throw an error if the file does not exist', async function () {
-          await zip.assertValidZip('blabla').should.eventually.be.rejected;
+          await expect(zip.assertValidZip('blabla')).to.eventually.be.rejected;
         });
         it('should throw an error if the file is invalid', async function () {
-          await zip.assertValidZip(
-            path.resolve(assetsPath, 'unzipped', 'test-dir', 'a.txt')
-          ).should.eventually.be.rejected;
+          await expect(
+            zip.assertValidZip(path.resolve(assetsPath, 'unzipped', 'test-dir', 'a.txt'))
+          ).to.eventually.be.rejected;
         });
       });
 
       describe('readEntries()', function () {
-        const expectedEntries = [
+        const expectedEntries: Array<{name: string; contents?: string}> = [
           {name: 'unzipped/'},
           {name: 'unzipped/test-dir/'},
           {name: 'unzipped/test-dir/a.txt', contents: 'Hello World'},
@@ -82,17 +85,17 @@ describe('#zip', function () {
         it('should iterate entries (directories and files) of zip file', async function () {
           let i = 0;
           await zip.readEntries(zippedFilePath, async ({entry, extractEntryTo}) => {
-            entry.fileName.should.equal(expectedEntries[i].name);
+            expect(entry.fileName).to.equal(expectedEntries[i].name);
 
-            // If it's a file, test that we can extract it to a temporary directory and that the contents are correct
+            // If it's a file, test that we can extract it to a temporary directory and that the contents are correct.
             if (expectedEntries[i].contents) {
               await extractEntryTo(tmpRoot);
-              await fs
-                .readFile(path.resolve(tmpRoot, entry.fileName), {
-                  flags: 'r',
+              await expect(
+                fs.readFile(path.resolve(tmpRoot, entry.fileName), {
+                  flag: 'r',
                   encoding: 'utf8',
                 })
-                .should.eventually.equal(expectedEntries[i].contents);
+              ).to.eventually.equal(expectedEntries[i].contents);
             }
             i++;
           });
@@ -105,29 +108,29 @@ describe('#zip', function () {
             i++;
             return false;
           });
-          i.should.equal(1);
+          expect(i).to.equal(1);
         });
 
         it('should be rejected if it uses a non-zip file', async function () {
-          let promise = zip.readEntries(
+          const promise = zip.readEntries(
             path.resolve(assetsPath, 'unzipped', 'test-dir', 'a.txt'),
             async () => {}
           );
-          await promise.should.eventually.be.rejected;
+          await expect(promise).to.eventually.be.rejected;
         });
       });
 
       describe('toInMemoryZip()', function () {
         it('should convert a local file to an in-memory zip buffer', async function () {
-          // Convert directory to in-memory buffer
+          // Convert directory to in-memory buffer.
           const testFolder = path.resolve(assetsPath, 'unzipped');
           const buffer = await zip.toInMemoryZip(testFolder);
-          Buffer.isBuffer(buffer).should.be.true;
+          expect(Buffer.isBuffer(buffer)).to.be.true;
 
-          // Write the buffer to a zip file
+          // Write the buffer to a zip file.
           await fs.writeFile(path.resolve(tmpRoot, 'test.zip'), buffer);
 
-          // Unzip the file and test that it has the same contents as the directory that was zipped
+          // Unzip the file and test that it has the same contents as the directory that was zipped.
           await zip.extractAllTo(
             path.resolve(tmpRoot, 'test.zip'),
             path.resolve(tmpRoot, 'output'),
@@ -135,16 +138,16 @@ describe('#zip', function () {
               fileNamesEncoding: 'utf8',
             }
           );
-          await fs
-            .readFile(path.resolve(tmpRoot, 'output', 'test-dir', 'a.txt'), {
+          await expect(
+            fs.readFile(path.resolve(tmpRoot, 'output', 'test-dir', 'a.txt'), {
               encoding: 'utf8',
             })
-            .should.eventually.equal('Hello World');
-          await fs
-            .readFile(path.resolve(tmpRoot, 'output', 'test-dir', 'b.txt'), {
+          ).to.eventually.equal('Hello World');
+          await expect(
+            fs.readFile(path.resolve(tmpRoot, 'output', 'test-dir', 'b.txt'), {
               encoding: 'utf8',
             })
-            .should.eventually.equal('Foo Bar');
+          ).to.eventually.equal('Foo Bar');
         });
 
         it('should convert a local folder to an in-memory base64-encoded zip buffer', async function () {
@@ -158,48 +161,59 @@ describe('#zip', function () {
             Buffer.from(buffer.toString(), 'base64')
           );
 
-          // Unzip the file and test that it has the same contents as the directory that was zipped
+          // Unzip the file and test that it has the same contents as the directory that was zipped.
           await zip.extractAllTo(
             path.resolve(tmpRoot, 'test.zip'),
             path.resolve(tmpRoot, 'output')
           );
-          await fs
-            .readFile(path.resolve(tmpRoot, 'output', 'test-dir', 'a.txt'), {
+          await expect(
+            fs.readFile(path.resolve(tmpRoot, 'output', 'test-dir', 'a.txt'), {
               encoding: 'utf8',
             })
-            .should.eventually.equal('Hello World');
-          await fs
-            .readFile(path.resolve(tmpRoot, 'output', 'test-dir', 'b.txt'), {
+          ).to.eventually.equal('Hello World');
+          await expect(
+            fs.readFile(path.resolve(tmpRoot, 'output', 'test-dir', 'b.txt'), {
               encoding: 'utf8',
             })
-            .should.eventually.equal('Foo Bar');
+          ).to.eventually.equal('Foo Bar');
         });
 
         it('should be rejected if use a bad path', async function () {
-          await zip
-            .toInMemoryZip(path.resolve(assetsPath, 'bad_path'))
-            .should.be.rejectedWith(/no such/i);
+          await expect(
+            zip.toInMemoryZip(path.resolve(assetsPath, 'bad_path'))
+          ).to.be.rejectedWith(/no such/i);
         });
 
         it('should be rejected if max size is exceeded', async function () {
           const testFolder = path.resolve(assetsPath, 'unzipped');
-          await zip
-            .toInMemoryZip(testFolder, {
+          await expect(
+            zip.toInMemoryZip(testFolder, {
               maxSize: 1,
             })
-            .should.be.rejectedWith(/must not be greater/);
+          ).to.be.rejectedWith(/must not be greater/);
         });
       });
 
       describe('_extractEntryTo()', function () {
-        let entry, mockZipFile, mockZipStream;
+        let entry: {fileName: string};
+        let destDir: string;
+        let mockZipFile: {openReadStream: (e: typeof entry, cb: (err: null, s: MockReadWriteStream) => void) => void};
+        let mockZipStream: MockReadWriteStream & {pipe?: (dest?: unknown) => void};
+
         beforeEach(async function () {
+          destDir = await tempDir.openDir();
           entry = {
-            fileName: path.resolve(await tempDir.openDir(), 'temp', 'file'),
+            fileName: path.resolve(destDir, 'temp', 'file'),
           };
-          mockZipStream = new MockReadWriteStream();
+          mockZipStream = new MockReadWriteStream() as MockReadWriteStream & {
+            pipe?: (dest?: unknown) => void;
+          };
           mockZipFile = {
-            openReadStream: (entry, cb) => cb(null, mockZipStream), // eslint-disable-line promise/prefer-await-to-callbacks
+            // yauzl API is callback-based; we're mocking it.
+            /* eslint-disable promise/prefer-await-to-callbacks */
+            openReadStream: (e: typeof entry, cb: (err: null, s: MockReadWriteStream) => void) =>
+              cb(null, mockZipStream),
+            /* eslint-enable promise/prefer-await-to-callbacks */
           };
         });
 
@@ -207,18 +221,20 @@ describe('#zip', function () {
           mockZipStream.pipe = () => {
             mockZipStream.emit('error', new Error('zip stream error'));
           };
-          await zip._extractEntryTo(mockZipFile, entry).should.be.rejectedWith('zip stream error');
+          await expect(
+            zip._extractEntryTo(mockZipFile as any, entry as any, destDir)
+          ).to.be.rejectedWith('zip stream error');
         });
 
         it('should be rejected if write stream emits an error', async function () {
-          mockZipStream.pipe = (writeStream) => {
+          mockZipStream.pipe = (writeStream: NodeJS.WritableStream & NodeJS.EventEmitter) => {
             writeStream.emit('error', new Error('write stream error'));
             mockZipStream.end();
             writeStream.end();
           };
-          await zip
-            ._extractEntryTo(mockZipFile, entry)
-            .should.be.rejectedWith('write stream error');
+          await expect(
+            zip._extractEntryTo(mockZipFile as any, entry as any, destDir)
+          ).to.be.rejectedWith('write stream error');
         });
       });
 
@@ -230,28 +246,30 @@ describe('#zip', function () {
             cwd: testFolder,
           });
 
-          // Unzip the file and test that it has the same contents as the directory that was zipped
+          // Unzip the file and test that it has the same contents as the directory that was zipped.
           await zip.extractAllTo(dstPath, path.resolve(tmpRoot, 'output'));
-          await fs
-            .readFile(path.resolve(tmpRoot, 'output', 'test-dir', 'a.txt'), {
+          await expect(
+            fs.readFile(path.resolve(tmpRoot, 'output', 'test-dir', 'a.txt'), {
               encoding: 'utf8',
             })
-            .should.eventually.equal('Hello World');
-          await fs
-            .readFile(path.resolve(tmpRoot, 'output', 'test-dir', 'b.txt'), {
+          ).to.eventually.equal('Hello World');
+          await expect(
+            fs.readFile(path.resolve(tmpRoot, 'output', 'test-dir', 'b.txt'), {
               encoding: 'utf8',
             })
-            .should.eventually.equal('Foo Bar');
+          ).to.eventually.equal('Foo Bar');
         });
       });
     });
   });
 
   describe('unicode filename handling', function () {
-    let zippedFilePath, assetsPath, tmpRoot;
+    let zippedFilePath: string;
+    let assetsPath: string;
+    let tmpRoot: string;
 
     beforeEach(async function () {
-      // XXX: I don't know enough about unicode handling in the windows FS to attempt a fix here
+      // XXX: I don't know enough about unicode handling in the windows FS to attempt a fix here.
       if (isWindows()) {
         return this.skip();
       }
@@ -278,7 +296,7 @@ describe('#zip', function () {
 
     it('should retain the proper filenames', async function () {
       const expectedPath = path.join(assetsPath, 'kanji-正世丕.app');
-      // we cannot use the `should` syntax because `fs.exists` resolves to a primitive (boolean)
+      // fs.exists returns a boolean; throw with a clear message if the path is missing.
       if (!(await fs.exists(expectedPath))) {
         throw new Error(`Expected ${expectedPath} to exist, but it does not`);
       }

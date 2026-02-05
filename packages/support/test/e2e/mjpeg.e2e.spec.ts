@@ -1,9 +1,11 @@
 import _ from 'lodash';
-import {mjpeg} from '../../lib';
 import B from 'bluebird';
 import http from 'node:http';
+import {expect, use} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import mJpegServer from 'mjpeg-server';
 import getPort from 'get-port';
+import {mjpeg} from '../../lib';
 
 const {MJpegStream} = mjpeg;
 
@@ -13,21 +15,18 @@ const TEST_IMG_JPG =
 const MJPEG_HOST = '127.0.0.1';
 
 /**
- * Start an mjpeg server for the purpose of testing, which just sends the same
- * image over and over. Caller is responsible for closing the server.
- * @param {int} port - port the server should listen on
- * @param {int} [intMs] - how often the server should push an image
- * @param {int} [times] - how many times the server should push an image before
- * it closes the connection
- * @returns {http.Server}
+ * Start an MJPEG server for testing; it sends the same image repeatedly. Caller must close the server.
+ * @param port - Port the server should listen on.
+ * @param intMs - How often the server should push an image (default 300).
+ * @param times - How many times to push an image before closing the connection (default 20).
  */
-function initMJpegServer(port, intMs = 300, times = 20) {
+function initMJpegServer(port: number, intMs = 300, times = 20): http.Server {
   const server = http
     .createServer(async function (req, res) {
       const mJpegReqHandler = mJpegServer.createReqHandler(req, res);
       const jpg = Buffer.from(TEST_IMG_JPG, 'base64');
 
-      // just send the same jpeg over and over
+      // Just send the same jpeg over and over.
       for (let i = 0; i < times; i++) {
         await B.delay(intMs);
         mJpegReqHandler._write(jpg, null, _.noop);
@@ -40,19 +39,17 @@ function initMJpegServer(port, intMs = 300, times = 20) {
 }
 
 describe('MJpeg Stream (e2e)', function () {
-  let mJpegServer, stream;
-  let serverUrl, port;
-  let should;
+  let mJpegServer: http.Server | null = null;
+  let stream: InstanceType<typeof MJpegStream>;
+  let serverUrl: string;
+  let port: number;
 
   before(async function () {
-    const chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-    chai.use(chaiAsPromised.default);
-    should = chai.should();
+    use(chaiAsPromised);
 
     port = await getPort();
     serverUrl = `http://${MJPEG_HOST}:${port}`;
-    mJpegServer = await initMJpegServer(port);
+    mJpegServer = initMJpegServer(port);
   });
 
   after(function () {
@@ -60,46 +57,42 @@ describe('MJpeg Stream (e2e)', function () {
       mJpegServer.close();
     }
     if (stream) {
-      stream.stop(); // ensure streams are always stopped
+      stream.stop();
     }
   });
 
   it('should update mjpeg stream based on new data from mjpeg server', async function () {
     stream = new MJpegStream(serverUrl, _.noop);
-    should.not.exist(stream.lastChunk);
+    expect(stream.lastChunk).to.not.exist;
     await stream.start();
-    should.exist(stream.lastChunk);
-    stream.updateCount.should.eql(1);
+    expect(stream.lastChunk).to.exist;
+    expect(stream.updateCount).to.eql(1);
 
-    await B.delay(1000); // let the stream update a bit
-    stream.updateCount.should.be.above(1);
+    await B.delay(1000);
+    expect(stream.updateCount).to.be.above(1);
 
-    // verify jpeg type and byte length of fixture image
     const startBytes = Buffer.from([0xff, 0xd8]);
     const endBytes = Buffer.from([0xff, 0xd9]);
-    const startPos = stream.lastChunk.indexOf(startBytes);
-    const endPos = stream.lastChunk.indexOf(endBytes);
-    startPos.should.eql(0); // proves we have a jpeg
-    endPos.should.eql(1278); // proves we have a jpeg of the right size
+    const startPos = stream.lastChunk!.indexOf(startBytes);
+    const endPos = stream.lastChunk!.indexOf(endBytes);
+    expect(startPos).to.eql(0);
+    expect(endPos).to.eql(1278);
 
-    // verify we can get the base64 version too
     const b64 = stream.lastChunkBase64;
-    b64.should.eql(TEST_IMG_JPG);
+    expect(b64).to.eql(TEST_IMG_JPG);
 
-    // verify we can get the PNG version too
     const png = await stream.lastChunkPNGBase64();
-    png.should.be.a('string');
-    png.indexOf('iVBOR').should.eql(0);
+    expect(png).to.be.a('string');
+    expect(png!.indexOf('iVBOR')).to.eql(0);
 
-    // now stop the stream and wait some more then assert no new data has come in
     stream.stop();
     await B.delay(1000);
-    should.not.exist(stream.lastChunk);
-    stream.updateCount.should.eql(0);
+    expect(stream.lastChunk).to.not.exist;
+    expect(stream.updateCount).to.eql(0);
   });
 
   it('should error out if the server cannot be connected', async function () {
     stream = new MJpegStream('http://localhost', _.noop);
-    await stream.start().should.eventually.be.rejected;
+    await expect(stream.start()).to.eventually.be.rejected;
   });
 });

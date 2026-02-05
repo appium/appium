@@ -1,6 +1,6 @@
-// @ts-check
-
 import path from 'node:path';
+import {expect, use} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import {fs, tempDir} from '../../lib';
 import {
   DEFAULT_APPIUM_HOME,
@@ -11,24 +11,16 @@ import {
 } from '../../lib/env';
 
 describe('environment', function () {
-  /** @type {string} */
-  let cwd;
-  /** @type {string|undefined} */
-  let oldEnvAppiumHome;
-  let expect;
+  let cwd: string;
+  let oldEnvAppiumHome: string | undefined;
 
   before(async function () {
-    const chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-    chai.use(chaiAsPromised.default);
-    chai.should();
-    expect = chai.expect;
-
+    use(chaiAsPromised);
     cwd = await tempDir.openDir();
   });
 
   beforeEach(function () {
-    // all of these functions are memoized, so we need to reset them before each test.
+    // All of these functions are memoized, so we need to reset them before each test.
     resolveManifestPath.cache = new Map();
     resolveAppiumHome.cache = new Map();
     findAppiumDependencyPackage.cache = new Map();
@@ -51,14 +43,11 @@ describe('environment', function () {
       describe('when `APPIUM_HOME` is not present in the environment', function () {
         describe('when providing no `cwd` parameter', function () {
           /**
-           * **IMPORTANT:** If no `cwd` is provided, {@linkcode resolveManifestPath} call {@linkcode resolveAppiumHome}.
-           * `resolveAppiumHome` depends on the value of the current working directory ({@linkcode process.cwd }).
-           * In order to isolate these tests properly, we must create a temp dir and `chdir` to it.
-           * For our purposes, we can just use the `cwd` we set already.
-           *
-           * @type {string}
+           * If no `cwd` is provided, resolveManifestPath calls resolveAppiumHome, which depends on
+           * the current working directory (process.cwd()). To isolate these tests we chdir to a temp
+           * dir (the same `cwd` we already set up) and restore the original cwd in afterEach.
            */
-          let oldCwd;
+          let oldCwd: string;
 
           beforeEach(function () {
             oldCwd = process.cwd();
@@ -124,7 +113,6 @@ describe('environment', function () {
               path.join(__dirname, 'fixture', 'appium-v2-dependency.package.json'),
               path.join(cwd, 'package.json')
             );
-            // await fs.symlink(path.join(__dirname, '..', 'appium'), path.join(cwd, 'node_modules', 'appium'), 'junction');
             await fs.copyFile(
               path.join(__dirname, 'fixture', 'appium-v2-package'),
               path.join(cwd, 'node_modules', 'appium')

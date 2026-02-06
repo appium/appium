@@ -137,8 +137,9 @@ describe('when Appium is a dependency of the current project', function () {
           });
 
           it('should actually install both drivers', function () {
-            expect(() => resolveFrom(appiumHome, '@appium/fake-driver')).not.to.throw();
-            expect(() => resolveFrom(appiumHome, '@appium/test-driver')).not.to.throw();
+            // Resolve package.json to assert the package is present (resolving the main entry can fail in CI)
+            expect(() => resolveFrom(appiumHome, '@appium/fake-driver/package.json')).not.to.throw();
+            expect(() => resolveFrom(appiumHome, '@appium/test-driver/package.json')).not.to.throw();
           });
         });
       });

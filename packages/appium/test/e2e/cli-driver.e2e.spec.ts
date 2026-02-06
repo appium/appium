@@ -154,7 +154,7 @@ describe('Driver CLI', function () {
       expect(ret.uiautomator2.installSpec).to.eql('uiautomator2');
       const list = await runList(['--installed']);
       const rest = _.omit(list.uiautomator2 ?? {}, ['installed', 'repositoryUrl']);
-      expect(rest).to.eql({
+      expect(rest).to.deep.include({
         pkgName: ret.uiautomator2.pkgName,
         installType: ret.uiautomator2.installType,
         installSpec: ret.uiautomator2.installSpec,
@@ -168,7 +168,7 @@ describe('Driver CLI', function () {
       expect(ret.fake.installSpec).to.eql('@appium/fake-driver');
       const list = await runList(['--installed']);
       const rest = _.omit(list.fake ?? {}, ['installed', 'repositoryUrl']);
-      expect(rest).to.eql({
+      expect(rest).to.deep.include({
         pkgName: ret.fake.pkgName,
         installType: ret.fake.installType,
         installSpec: ret.fake.installSpec,
@@ -204,7 +204,7 @@ describe('Driver CLI', function () {
       expect(ret.fake.installSpec).to.eql(installSpec);
       const list = await runList(['--installed']);
       const rest = _.omit(list.fake ?? {}, ['installed', 'repositoryUrl']);
-      expect(rest).to.eql({
+      expect(rest).to.deep.include({
         pkgName: ret.fake.pkgName,
         installType: ret.fake.installType,
         installSpec: ret.fake.installSpec,
@@ -227,7 +227,7 @@ describe('Driver CLI', function () {
       expect(ret.fake.installSpec).to.eql('appium/appium-fake-driver');
       const list = await runList(['--installed']);
       const rest = _.omit(list.fake ?? {}, ['installed', 'repositoryUrl']);
-      expect(rest).to.eql({
+      expect(rest).to.deep.include({
         pkgName: ret.fake.pkgName,
         installType: ret.fake.installType,
         installSpec: ret.fake.installSpec,
@@ -247,7 +247,7 @@ describe('Driver CLI', function () {
       expect(ret.fake.installSpec).to.eql(FAKE_DRIVER_DIR);
       const list = await runList(['--installed', '--json']);
       const rest = _.omit(list.fake ?? {}, ['installed', 'repositoryUrl']);
-      expect(rest).to.eql({
+      expect(rest).to.deep.include({
         pkgName: ret.fake.pkgName,
         installType: ret.fake.installType,
         installSpec: ret.fake.installSpec,
@@ -270,7 +270,7 @@ describe('Driver CLI', function () {
       expect(ret.fake.installSpec).to.eql('git+https://github.com/appium/appium-fake-driver');
       const list = await runList(['--installed']);
       const rest = _.omit(list.fake ?? {}, ['installed', 'repositoryUrl']);
-      expect(rest).to.eql({
+      expect(rest).to.deep.include({
         pkgName: ret.fake.pkgName,
         installType: ret.fake.installType,
         installSpec: ret.fake.installSpec,

@@ -11,9 +11,10 @@
       "@appium/schema": ["../schema"],
       "appium": ["."]
     },
-    "checkJs": true
+    "checkJs": true,
+    "types": ["mocha", "chai", "chai-as-promised", "node"]
   },
-  "include": ["lib", "types"],
+  "include": ["lib", "types", "test"],
   "references": [
     {"path": "../schema"},
     {"path": "../types"},

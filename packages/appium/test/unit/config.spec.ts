@@ -1,6 +1,9 @@
 import _ from 'lodash';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {promises as fs} from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import {createSandbox} from 'sinon';
 import {getParser} from '../../lib/cli/parser';
 import {
@@ -232,8 +235,15 @@ describe('Config', function () {
       // @ts-expect-error
       await expect(requireDir()).to.be.rejectedWith(/must exist/);
     });
-    it('should fail to use an non-writeable dir', async function () {
-      await expect(requireDir('/private')).to.be.rejectedWith(/must be writeable/);
+    it('should fail to use a non-writeable dir', async function () {
+      const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'appium-requireDir-test-'));
+      try {
+        await fs.chmod(tempDir, 0o444);
+        await expect(requireDir(tempDir)).to.be.rejectedWith(/must be writeable/);
+      } finally {
+        await fs.chmod(tempDir, 0o700);
+        await fs.rmdir(tempDir);
+      }
     });
     it('should be able to use a dir with correct permissions', async function () {
       await expect(requireDir('/tmp/test_tmp_dir/with/any/number/of/levels')).to.not.be.rejected;

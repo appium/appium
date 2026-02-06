@@ -1,4 +1,4 @@
-export = {
+module.exports = {
   type: 'object',
   required: ['answer'],
   properties: {
@@ -11,5 +11,5 @@ export = {
         'The answer to the Ultimate Question of Life, The Universe, and Everything',
     },
   },
-  $id: 'driver.json',
+  $id: 'plugin.json',
 };

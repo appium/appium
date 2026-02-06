@@ -316,10 +316,8 @@ describe('cli-args', function () {
               type: 'object',
             };
             const result = getArgs({schema, extName, extType});
-            expect(result['--plugin-blob-foo']).to.have.nested.property(
-              'choices',
-              ['herp', 'derp']
-            );
+            expect(result['--plugin-blob-foo']).to.have.property('choices');
+            expect(result['--plugin-blob-foo'].choices).to.eql(['herp', 'derp']);
           });
         });
       });

@@ -13,8 +13,8 @@ the only supported driver type is `webdriverio`, therefore the script must also 
 Running a driver script in a child process adds a degree of parallelisation, which may result in
 faster test execution.
 
-> [!NOTE]
-> This plugin could execute arbitrary JavaScript code. We recommend using this plugin only in a closed space.
+> [!WARNING]
+> This plugin enables execution of arbitrary JavaScript code. We recommend only using this plugin in a controlled environment.
 
 ## Installation
 

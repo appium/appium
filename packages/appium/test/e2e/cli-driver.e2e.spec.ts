@@ -181,8 +181,8 @@ describe('Driver CLI', function () {
       const list = await runList(['--installed']);
       expect(list.fake).to.exist;
       expect(list.test).to.exist;
-      expect(() => resolveFrom(appiumHome, '@appium/fake-driver')).not.to.throw();
-      expect(() => resolveFrom(appiumHome, 'test-driver')).not.to.throw();
+      expect(() => resolveFrom(appiumHome, '@appium/fake-driver/package.json')).not.to.throw();
+      expect(() => resolveFrom(appiumHome, '@appium/test-driver/package.json')).not.to.throw();
     });
 
     it('should install _two_ drivers from npm', async function () {
@@ -191,8 +191,10 @@ describe('Driver CLI', function () {
       const list = await runList(['--installed']);
       expect(list.fake).to.exist;
       expect(list.uiautomator2).to.exist;
-      expect(() => resolveFrom(appiumHome, '@appium/fake-driver')).not.to.throw();
-      expect(() => resolveFrom(appiumHome, 'appium-uiautomator2-driver')).not.to.throw();
+      expect(() => resolveFrom(appiumHome, '@appium/fake-driver/package.json')).not.to.throw();
+      expect(() =>
+        resolveFrom(appiumHome, 'appium-uiautomator2-driver/package.json')
+      ).not.to.throw();
     });
 
     it('should install a driver from npm with a specific version/tag', async function () {

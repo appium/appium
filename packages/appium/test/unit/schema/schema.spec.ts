@@ -12,18 +12,18 @@ import {expect} from 'chai';
 
 describe('schema', function () {
   let sandbox: ReturnType<typeof createSandbox>;
-  let SchemaFinalizationError: typeof import('../../../lib/schema/schema').SchemaFinalizationError;
-  let SchemaUnknownSchemaError: typeof import('../../../lib/schema/schema').SchemaUnknownSchemaError;
-  let SchemaUnsupportedSchemaError: typeof import('../../../lib/schema/schema').SchemaUnsupportedSchemaError;
-  let resetSchema: typeof import('../../../lib/schema/schema').resetSchema;
-  let registerSchema: typeof import('../../../lib/schema/schema').registerSchema;
-  let getSchema: typeof import('../../../lib/schema/schema').getSchema;
-  let finalizeSchema: typeof import('../../../lib/schema/schema').finalizeSchema;
-  let getDefaultsForSchema: typeof import('../../../lib/schema/schema').getDefaultsForSchema;
-  let flattenSchema: typeof import('../../../lib/schema/schema').flattenSchema;
-  let isFinalized: typeof import('../../../lib/schema/schema').isFinalized;
-  let validate: typeof import('../../../lib/schema/schema').validate;
-  let RoachHotelMap: typeof import('../../../lib/schema/schema').RoachHotelMap;
+  let SchemaFinalizationError: typeof SchemaModule.SchemaFinalizationError;
+  let SchemaUnknownSchemaError: typeof SchemaModule.SchemaUnknownSchemaError;
+  let SchemaUnsupportedSchemaError: typeof SchemaModule.SchemaUnsupportedSchemaError;
+  let resetSchema: typeof SchemaModule.resetSchema;
+  let registerSchema: typeof SchemaModule.registerSchema;
+  let getSchema: typeof SchemaModule.getSchema;
+  let finalizeSchema: typeof SchemaModule.finalizeSchema;
+  let getDefaultsForSchema: typeof SchemaModule.getDefaultsForSchema;
+  let flattenSchema: typeof SchemaModule.flattenSchema;
+  let isFinalized: typeof SchemaModule.isFinalized;
+  let validate: typeof SchemaModule.validate;
+  let RoachHotelMap: typeof SchemaModule.RoachHotelMap;
   let mocks: Record<string, ReturnType<ReturnType<typeof createSandbox>['stub']>>;
 
   beforeEach(function () {

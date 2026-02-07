@@ -1,11 +1,25 @@
-// @ts-nocheck
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import fs from 'node:fs';
-import {createSandbox} from 'sinon';
+import {createSandbox, type SinonSandbox, type SinonSpy, type SinonStubbedMember} from 'sinon';
 import * as YAML from 'yaml';
 import * as schema from '../../lib/schema/schema';
 import {resolveFixture, rewiremock} from '../helpers';
+type LilconfigResult = {config: unknown; filepath: string; isEmpty?: boolean};
+type AsyncSearcherLoadStub = SinonStubbedMember<() => Promise<LilconfigResult>>;
+type AsyncSearcherSearchStub = SinonStubbedMember<() => Promise<LilconfigResult>>;
+
+interface ReadConfigFileResult {
+  config?: unknown;
+  filepath?: string;
+  isEmpty?: boolean;
+  errors?: unknown[];
+  reason?: string;
+}
+
+type ReadConfigFileFn = (filepath?: string, opts?: object) => Promise<ReadConfigFileResult>;
+type FormatErrorsFn = (errors?: unknown[], config?: unknown, opts?: object) => string;
+type NormalizeConfigFn = (config: unknown) => unknown;
 
 const {expect} = chai;
 chai.use(chaiAsPromised);
@@ -19,36 +33,13 @@ describe('config-file', function () {
   const BAD_JSON_CONFIG_FILEPATH = resolveFixture('config', 'appium-config-bad.json');
   const BAD_JSON_CONFIG = require(BAD_JSON_CONFIG_FILEPATH);
 
-  /**
-   * @type {sinon.SinonSandbox}
-   */
-  let sandbox;
-
-  /**
-   * `readConfigFile()` from an isolated `config-file` module
-   * @type {import('appium/lib/config-file').readConfigFile}
-   */
-  let readConfigFile;
-
-  /**
-   * @type {import('appium/lib/config-file').formatErrors}
-   */
-  let formatErrors;
-
-  /**
-   * @type {import('appium/lib/config-file').normalizeConfig}
-   */
-  let normalizeConfig;
-
-  /**
-   * Mock instance of `lilconfig` containing stubs for
-   * `lilconfig#search()` and `lilconfig#load`.
-   * Not _actually_ a `SinonStubbedInstance`, but duck-typed.
-   * @type {sinon.SinonStubbedInstance<ReturnType<import('lilconfig').lilconfig>>}
-   */
-  let lc;
-
-  let mocks;
+  let sandbox: SinonSandbox;
+  let readConfigFile: ReadConfigFileFn;
+  let formatErrors: FormatErrorsFn;
+  let normalizeConfig: NormalizeConfigFn;
+  let lc: {load: AsyncSearcherLoadStub; search: AsyncSearcherSearchStub};
+  let mocks: Record<string, unknown>;
+  let validateSpy: SinonSpy;
 
   before(function () {
     // generally called via the CLI parser, this needs to be done manually in tests.
@@ -63,27 +54,23 @@ describe('config-file', function () {
 
     // we have to manually type this (and `search()`) because we'd only get the real type
     // when stubbing an object prop; e.g., `stub(lilconfig, 'load')`
-    const load = /** @type {AsyncSearcherLoadStub} */ (
-      sandbox.stub().resolves({
-        config: GOOD_JSON_CONFIG,
-        filepath: GOOD_JSON_CONFIG_FILEPATH,
-      })
-    );
-    load.withArgs(GOOD_YAML_CONFIG_FILEPATH).resolves({
+    const load = sandbox.stub().resolves({
+      config: GOOD_JSON_CONFIG,
+      filepath: GOOD_JSON_CONFIG_FILEPATH,
+    }) as AsyncSearcherLoadStub;
+    (load as any).withArgs(GOOD_YAML_CONFIG_FILEPATH).resolves({
       config: GOOD_YAML_CONFIG,
       filepath: GOOD_YAML_CONFIG_FILEPATH,
     });
-    load.withArgs(BAD_JSON_CONFIG_FILEPATH).resolves({
+    (load as any).withArgs(BAD_JSON_CONFIG_FILEPATH).resolves({
       config: BAD_JSON_CONFIG,
       filepath: BAD_JSON_CONFIG_FILEPATH,
     });
 
-    const search = /** @type {AsyncSearcherLoadStub} */ (
-      sandbox.stub().resolves({
-        config: GOOD_JSON_CONFIG,
-        filepath: GOOD_JSON_CONFIG_FILEPATH,
-      })
-    );
+    const search: AsyncSearcherSearchStub = sandbox.stub().resolves({
+      config: GOOD_JSON_CONFIG,
+      filepath: GOOD_JSON_CONFIG_FILEPATH,
+    }) as AsyncSearcherSearchStub;
 
     lc = {
       load,
@@ -107,6 +94,7 @@ describe('config-file', function () {
 
     // just want to be extra-sure `validate()` happens
     sandbox.spy(schema, 'validate');
+    validateSpy = schema.validate as unknown as SinonSpy;
   });
 
   afterEach(function () {
@@ -114,27 +102,24 @@ describe('config-file', function () {
   });
 
   describe('readConfigFile()', function () {
-    /**
-     * @type {import('appium/lib/config-file').ReadConfigFileResult}
-     */
-    let result;
+    let result: ReadConfigFileResult;
 
     it('should support yaml', async function () {
       const {config} = await readConfigFile(GOOD_YAML_CONFIG_FILEPATH);
       expect(config).to.eql(normalizeConfig(GOOD_JSON_CONFIG));
-      expect(schema.validate.calledOnce).to.be.true;
+      expect(validateSpy.calledOnce).to.be.true;
     });
 
     it('should support json', async function () {
       const {config} = await readConfigFile(GOOD_JSON_CONFIG_FILEPATH);
       expect(config).to.eql(normalizeConfig(GOOD_JSON_CONFIG));
-      expect(schema.validate.calledOnce).to.be.true;
+      expect(validateSpy.calledOnce).to.be.true;
     });
 
     it('should support js', async function () {
       const {config} = await readConfigFile(GOOD_JS_CONFIG_FILEPATH);
       expect(config).to.eql(normalizeConfig(GOOD_JSON_CONFIG));
-      expect(schema.validate.calledOnce).to.be.true;
+      expect(validateSpy.calledOnce).to.be.true;
     });
 
     describe('when no filepath provided', function () {
@@ -144,7 +129,7 @@ describe('config-file', function () {
 
       it('should search for a config file', function () {
         expect(lc.search.calledOnce).to.be.true;
-        expect(schema.validate.calledOnce).to.be.true;
+        expect(validateSpy.calledOnce).to.be.true;
       });
 
       it('should not try to load a config file directly', function () {
@@ -153,23 +138,21 @@ describe('config-file', function () {
 
       describe('when no config file is found', function () {
         beforeEach(async function () {
-          lc.search.resolves();
-          /** @type {sinon.SinonSpiedMember<typeof schema.validate>} */ (
-            schema.validate
-          ).resetHistory();
+          (lc.search as any).resolves();
+          validateSpy.resetHistory();
           result = await readConfigFile();
         });
 
         it('should resolve with an empty object', function () {
           expect(result).to.be.an('object').that.is.empty;
-          expect(schema.validate.calledOnce).to.be.false;
+          expect(validateSpy.calledOnce).to.be.false;
         });
       });
 
       describe('when a config file is found', function () {
         describe('when the config file is empty', function () {
           beforeEach(async function () {
-            lc.search.resolves({
+            (lc.search as any).resolves({
               isEmpty: true,
               filepath: '/path/to/file.json',
               config: {},
@@ -185,7 +168,7 @@ describe('config-file', function () {
 
         describe('when the config file is not empty', function () {
           it('should validate the config against a schema', function () {
-            expect(schema.validate.calledOnceWith(GOOD_JSON_CONFIG)).to.be.true;
+            expect(validateSpy.calledOnceWith(GOOD_JSON_CONFIG)).to.be.true;
           });
 
           describe('when the config file is valid', function () {
@@ -204,7 +187,7 @@ describe('config-file', function () {
 
           describe('when the config file is invalid', function () {
             beforeEach(async function () {
-              lc.search.resolves({
+              (lc.search as any).resolves({
                 config: {foo: 'bar'},
                 filepath: '/path/to/file.json',
               });
@@ -269,7 +252,7 @@ describe('config-file', function () {
       describe('when a config file is found', function () {
         describe('when the config file is empty', function () {
           beforeEach(async function () {
-            lc.search.resolves({
+            (lc.search as any).resolves({
               isEmpty: true,
               filepath: '/path/to/file.json',
               config: {},
@@ -284,7 +267,7 @@ describe('config-file', function () {
 
         describe('when the config file is not empty', function () {
           it('should validate the config against a schema', function () {
-            expect(schema.validate.calledOnceWith(GOOD_JSON_CONFIG)).to.be.true;
+            expect(validateSpy.calledOnceWith(GOOD_JSON_CONFIG)).to.be.true;
           });
 
           describe('when the config file is valid', function () {
@@ -330,17 +313,15 @@ describe('config-file', function () {
 
     describe('when provided `errors` as a non-empty array', function () {
       it('should return a string', function () {
-        // @ts-expect-error
         expect(formatErrors([{}])).to.be.a('string');
       });
     });
 
     describe('when `opts.json` is a string', function () {
       it('should call `betterAjvErrors()` with option `json: opts.json`', function () {
-        // @ts-expect-error
         formatErrors([{}], {}, {json: '{"foo": "bar"}'});
         expect(
-          mocks['@sidvind/better-ajv-errors'].calledWith(
+          (mocks['@sidvind/better-ajv-errors'] as SinonSpy).calledWith(
             schema.getSchema(),
             {},
             [{}],
@@ -351,21 +332,3 @@ describe('config-file', function () {
     });
   });
 });
-
-// the following are just aliases
-
-/**
- * @typedef {import('ajv').ErrorObject} ErrorObject
- */
-
-/**
- * @typedef {import('ajv').ValidateFunction} ValidateFunction
- */
-
-/**
- * @typedef {sinon.SinonStubbedMember<ReturnType<import('lilconfig').lilconfig>['load']>} AsyncSearcherLoadStub
- */
-
-/**
- * @typedef {sinon.SinonStubbedMember<ReturnType<import('lilconfig').lilconfig>['search']>} AsyncSearcherSearchStub
- */

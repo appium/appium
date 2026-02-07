@@ -26,8 +26,7 @@ const {expect} = chai;
 chai.use(chaiAsPromised);
 
 describe('Config', function () {
-  /** @type {sinon.SinonSandbox} */
-  let sandbox;
+  let sandbox: import('sinon').SinonSandbox;
 
   beforeEach(function () {
     sandbox = createSandbox();
@@ -38,10 +37,8 @@ describe('Config', function () {
   });
 
   describe('Appium config', function () {
-    /** @type {sinon.SinonSpy<[message?: any, ...extra: any[]],void>} */
-    let log;
-    /** @type {sinon.SinonSpy<[message?: any, ...extra: any[]],void>} */
-    let dir;
+    let log: import('sinon').SinonSpy;
+    let dir: import('sinon').SinonSpy;
     beforeEach(function () {
       log = sandbox.spy(console, 'log');
       dir = sandbox.spy(console, 'dir');

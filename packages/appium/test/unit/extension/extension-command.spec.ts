@@ -1,4 +1,7 @@
-// @ts-nocheck
+import type {ChildProcess} from 'node:child_process';
+import type {Writable} from 'node:stream';
+import type {AppiumLogger} from '@appium/types';
+import type {SinonSandbox, SinonStub} from 'sinon';
 import {DriverConfig} from '../../../lib/extension/driver-config';
 import {ExtensionCommand, injectAppiumSymlinks} from '../../../lib/cli/extension-command';
 import sinon from 'sinon';
@@ -16,16 +19,14 @@ import chaiAsPromised from 'chai-as-promised';
  */
 const FAKE_STDIN_SCRIPT = require(`${FAKE_DRIVER_DIR}/package.json`).appium.scripts['fake-stdin'];
 
-/** @type {sinon.SinonSandbox} */
-let sandbox;
+let sandbox: SinonSandbox;
 
 chai.use(chaiAsPromised);
 chai.use(sinonChai);
 
 describe('ExtensionCommand', function () {
   describe('method', function () {
-    /** @type {ExtensionCommand<any>} */
-    let ec;
+    let ec: ExtensionCommand<any>;
 
     beforeEach(function () {
       sandbox = sinon.createSandbox();
@@ -46,12 +47,11 @@ describe('ExtensionCommand', function () {
       // `Promise` + `ChildProcess`, but I didn't want to add the dep.
       it('should respond to stdin', function (done) {
         // we have to fake writing to STDIN because this is an automated test, after all.
-        const proc = /** @type {import('child_process').ChildProcess} */ (ec
-          ._runUnbuffered(FAKE_DRIVER_DIR, FAKE_STDIN_SCRIPT, [], {
-            stdio: ['pipe', 'inherit', 'inherit'],
-          }));
+        const proc = ec._runUnbuffered(FAKE_DRIVER_DIR, FAKE_STDIN_SCRIPT, [], {
+          stdio: ['pipe', 'inherit', 'inherit'],
+        }) as ChildProcess;
 
-        proc.once('exit', (/** @type {number | null} */ code) => {
+        proc.once('exit', (code: number | null) => {
           try {
             expect(code).to.equal(0);
             done();
@@ -63,7 +63,7 @@ describe('ExtensionCommand', function () {
         setTimeout(() => {
           // TS does not understand that `proc.stdin` is not `null`, because it is only a `Writable`
           // if STDIN is piped from the parent.
-          const stdin = /** @type {import('node:stream').Writable} */ (proc.stdin);
+          const stdin = proc.stdin as Writable;
           stdin.write('\n');
           stdin.end();
         }, 200);
@@ -72,21 +72,11 @@ describe('ExtensionCommand', function () {
   });
 
   describe('injectAppiumSymlinks', function () {
-
-    /** @type {sinon.SinonStub} */
-    let fsExistsStub;
-
-    /** @type {sinon.SinonStub} */
-    let fsSymlinkStub;
-
-    /** @type {sinon.SinonStub} */
-    let getAppiumModuleRootStub;
-
-    /** @type {sinon.SinonStub} */
-    let isWindowsStub;
-
-    /** @type {import('@appium/types').AppiumLogger} */
-    let logger;
+    let fsExistsStub: SinonStub;
+    let fsSymlinkStub: SinonStub;
+    let getAppiumModuleRootStub: SinonStub;
+    let isWindowsStub: SinonStub;
+    let logger: AppiumLogger;
 
     beforeEach(function () {
       sandbox = sinon.createSandbox();
@@ -94,12 +84,12 @@ describe('ExtensionCommand', function () {
       fsSymlinkStub = sandbox.stub(fs, 'symlink');
       getAppiumModuleRootStub = sandbox.stub(utils, 'getAppiumModuleRoot');
       isWindowsStub = sandbox.stub(system, 'isWindows');
-      logger = /** @type {any} */ ({
+      logger = {
         info: sandbox.stub(),
         warn: sandbox.stub(),
         error: sandbox.stub(),
         debug: sandbox.stub(),
-      });
+      } as unknown as AppiumLogger;
 
       getAppiumModuleRootStub.returns('/path/to/appium');
       isWindowsStub.returns(false);

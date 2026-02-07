@@ -1,45 +1,34 @@
+import type {DriverType, PluginType} from '@appium/types';
+import type {ExtManifest, ExtPackageJson, ManifestData} from 'appium/types';
 import B from 'bluebird';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {promises as fs} from 'node:fs';
+import type {SinonSandbox} from 'sinon';
 import {DRIVER_TYPE, PLUGIN_TYPE} from '../../../lib/constants';
 import {resolveFixture, rewiremock} from '../../helpers';
 import {initMocks} from './mocks';
 import {version as APPIUM_VER} from '../../../package.json';
 import EventEmitter from 'node:events';
+import type {MockAppiumSupport, MockGlob, MockPackageChanged} from './mocks';
 
 const {expect} = chai;
 chai.use(chaiAsPromised);
 
 describe('Manifest', function () {
-  /**
-   * @type {sinon.SinonSandbox}
-   */
-  let sandbox;
-
-  /** @type {string} */
-  let yamlFixture;
-
-  /** @type {import('./mocks').MockPackageChanged} */
-  let MockPackageChanged;
-
-  /** @type {import('./mocks').MockAppiumSupport} */
-  let MockAppiumSupport;
-
-  /** @type {import('./mocks').MockGlob} */
-  let MockGlob;
+  let sandbox: SinonSandbox;
+  let yamlFixture: string;
+  let MockPackageChanged: MockPackageChanged;
+  let MockAppiumSupport: MockAppiumSupport;
+  let MockGlob: MockGlob;
+  let Manifest: any;
 
   before(async function () {
     yamlFixture = await fs.readFile(resolveFixture('manifest', 'v3.yaml'), 'utf8');
   });
 
-  /**
-   * @type {typeof import('../../../lib/extension/manifest').Manifest}
-   */
-  let Manifest;
-
   beforeEach(function () {
-    let overrides;
+    let overrides: ReturnType<typeof initMocks>['overrides'];
     ({MockPackageChanged, MockAppiumSupport, MockGlob, overrides, sandbox} = initMocks());
     MockAppiumSupport.fs.readFile.resolves(yamlFixture);
     ({Manifest} = rewiremock.proxy(() => require('../../../lib/extension/manifest'), {
@@ -120,8 +109,7 @@ describe('Manifest', function () {
   });
 
   describe('instance method', function () {
-    /** @type {import('appium/lib/extension/manifest').Manifest} */
-    let manifest;
+    let manifest: any;
 
     beforeEach(function () {
       Manifest.getInstance.cache = new Map();
@@ -238,11 +226,8 @@ describe('Manifest', function () {
       });
 
       describe('when called after `read()`', function () {
-        /** @type {ManifestData} */
-        let data;
-
-        /** @type {ExtManifest<DriverType>} */
-        const extData = {
+        let data: ManifestData;
+        const extData: ExtManifest<DriverType> = {
           version: '1.0.0',
           automationName: 'Derp',
           mainClass: 'SomeClass',
@@ -301,8 +286,7 @@ describe('Manifest', function () {
     });
 
     describe('setExtension()', function () {
-      /** @type {ExtManifest<DriverType>} */
-      const extData = {
+      const extData: ExtManifest<DriverType> = {
         automationName: 'derp',
         version: '1.0.0',
         mainClass: 'SomeClass',
@@ -322,8 +306,6 @@ describe('Manifest', function () {
       });
 
       describe('when existing extension added', function () {
-        /** @type {ExtManifest<DriverType>} */
-
         beforeEach(function () {
           manifest.setExtension(DRIVER_TYPE, 'foo', extData);
         });
@@ -351,8 +333,7 @@ describe('Manifest', function () {
     });
 
     describe('getExtensionData()', function () {
-      /** @type {ExtManifest<DriverType>} */
-      const extData = {
+      const extData: ExtManifest<DriverType> = {
         version: '1.0.0',
         automationName: 'Derp',
         mainClass: 'SomeClass',
@@ -374,8 +355,7 @@ describe('Manifest', function () {
     });
     describe('addExtensionFromPackage()', function () {
       describe('when provided a valid package.json for a driver and its path', function () {
-        /** @type {ExtPackageJson<DriverType>} */
-        let packageJson;
+        let packageJson: ExtPackageJson<DriverType>;
 
         beforeEach(function () {
           packageJson = {
@@ -428,8 +408,7 @@ describe('Manifest', function () {
       });
 
       describe('when provided a valid package.json for a plugin and its path', function () {
-        /** @type {ExtPackageJson<PluginType>} */
-        let packageJson;
+        let packageJson: ExtPackageJson<PluginType>;
         beforeEach(function () {
           packageJson = {
             name: 'derp',
@@ -488,8 +467,7 @@ describe('Manifest', function () {
       });
 
       describe('when the extension has an appium peer dependency beginning with `file:..`', function () {
-        /** @type {ExtPackageJson<DriverType>} */
-        let packageJson;
+        let packageJson: ExtPackageJson<DriverType>;
 
         beforeEach(function () {
           packageJson = {
@@ -612,19 +590,3 @@ describe('Manifest', function () {
     });
   });
 });
-
-/**
- * @template T
- * @typedef {import('appium/types').ExtManifest<T>} ExtManifest
- */
-
-/**
- * @template T
- * @typedef {import('appium/types').ExtPackageJson<T>} ExtPackageJson
- */
-
-/**
- * @typedef {import('@appium/types').DriverType} DriverType
- * @typedef {import('@appium/types').PluginType} PluginType
- * @typedef {import('appium/types').ManifestData} ManifestData
- */

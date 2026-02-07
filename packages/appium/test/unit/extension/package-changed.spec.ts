@@ -1,26 +1,22 @@
-// @ts-nocheck
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import path from 'node:path';
+import type {SinonSandbox} from 'sinon';
 import {PKG_HASHFILE_RELATIVE_PATH} from '../../../lib/constants';
 import {rewiremock} from '../../helpers';
 import {initMocks} from './mocks';
+import type {MockAppiumSupport, MockPackageChanged} from './mocks';
+
+type PackageDidChangeFn = (appiumHome?: string) => Promise<boolean>;
 
 const {expect} = chai;
 chai.use(chaiAsPromised);
 
 describe('package-changed', function () {
-  /** @type {typeof import('appium/lib/extension/package-changed').packageDidChange} */
-  let packageDidChange;
-
-  /** @type {sinon.SinonSandbox} */
-  let sandbox;
-
-  /** @type {import('./mocks').MockPackageChanged} */
-  let MockPackageChanged;
-
-  /** @type {import('./mocks').MockAppiumSupport} */
-  let MockAppiumSupport;
+  let packageDidChange: PackageDidChangeFn;
+  let sandbox: SinonSandbox;
+  let MockPackageChanged: MockPackageChanged;
+  let MockAppiumSupport: MockAppiumSupport;
 
   beforeEach(function () {
     ({MockPackageChanged, MockAppiumSupport, sandbox} = initMocks());
@@ -40,7 +36,6 @@ describe('package-changed', function () {
   describe('packageDidChange()', function () {
     describe('when called without an `appiumHome`', function () {
       it('should reject', async function () {
-        // @ts-expect-error
         await expect(packageDidChange()).to.be.rejectedWith(
           TypeError // from passing `undefined` to `path.join()`
         );

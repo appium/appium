@@ -1,4 +1,3 @@
-// @ts-nocheck
 import {DRIVER_TYPE} from '../../../lib/constants';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
@@ -7,25 +6,20 @@ import {version as APPIUM_VER} from '../../../package.json';
 import {FAKE_DRIVER_DIR, PROJECT_ROOT, rewiremock} from '../../helpers';
 import {initMocks} from './mocks';
 import {resolveEsmEntryPoint} from '../../../lib/extension/extension-config';
+import type {MockAppiumSupport} from './mocks';
+import type {SinonSandbox} from 'sinon';
 
 const {expect} = chai;
 chai.use(chaiAsPromised);
 
 describe('ExtensionConfig', function () {
-  /** @type {import('sinon').SinonSandbox} */
-  let sandbox;
-
-  /** @type {typeof import('appium/lib/extension/extension-config').ExtensionConfig} */
-  let ExtensionConfig;
-
-  /** @type {typeof import('appium/lib/extension/manifest').Manifest} */
-  let Manifest;
-
-  /** @type {import('./mocks').MockAppiumSupport} */
-  let MockAppiumSupport;
+  let sandbox: SinonSandbox;
+  let ExtensionConfig: any;
+  let Manifest: any;
+  let MockAppiumSupport: MockAppiumSupport;
 
   beforeEach(function () {
-    let overrides;
+    let overrides: ReturnType<typeof initMocks>['overrides'];
     ({MockAppiumSupport, overrides, sandbox} = initMocks());
     ({ExtensionConfig} = rewiremock.proxy(
       () => require('../../../lib/extension/extension-config'),
@@ -65,10 +59,8 @@ describe('ExtensionConfig', function () {
   });
 
   describe('instance method', function () {
-    /** @type {import('appium/lib/extension/extension-config').ExtensionConfig<DriverType>} */
-    let config;
-
-    let extData;
+    let config: any;
+    let extData: any;
 
     beforeEach(function () {
       config = new ExtensionConfig(DRIVER_TYPE, new Manifest('/some/path'));
@@ -141,13 +133,8 @@ describe('ExtensionConfig', function () {
     });
 
     describe('getGenericConfigWarnings()', function () {
-      /** @type {ExtManifest<DriverType>} */
-      let extData;
-
-      /**
-       * @type {ExtensionConfig<DriverType>}
-       */
-      let config;
+      let extData: any;
+      let config: any;
 
       beforeEach(function () {
         const manifest = Manifest.getInstance('/some/path');
@@ -296,7 +283,7 @@ describe('ExtensionConfig', function () {
         it('should display a warning count of 1', async function () {
           await config._validate({foo: {}});
           expect(
-            MockAppiumSupport.logger.__logger.warn.calledWith(
+            (MockAppiumSupport.logger.__logger as any).warn.calledWith(
               'Appium encountered 1 warning while validating drivers found in manifest /some/path/extensions.yaml'
             )
           ).to.be.true;
@@ -312,7 +299,7 @@ describe('ExtensionConfig', function () {
         it('should display an error count of 1', async function () {
           await config._validate({foo: {}});
           expect(
-            MockAppiumSupport.logger.__logger.error.calledWith(
+            (MockAppiumSupport.logger.__logger as any).error.calledWith(
               'Appium encountered 1 error while validating drivers found in manifest /some/path/extensions.yaml'
             )
           ).to.be.true;
@@ -372,7 +359,3 @@ describe('ExtensionConfig', function () {
     });
   });
 });
-
-/**
- * @typedef {import('@appium/types').DriverType} DriverType
- */

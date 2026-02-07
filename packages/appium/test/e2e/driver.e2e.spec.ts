@@ -1,3 +1,6 @@
+import type {AppiumServer, DriverClass} from '@appium/types';
+import type {ParsedArgs} from 'appium/types';
+import type {Browser} from 'webdriverio';
 import {BaseDriver} from '@appium/base-driver';
 import {exec} from 'teen_process';
 import {fs, tempDir} from '@appium/support';
@@ -7,6 +10,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
 import {createSandbox} from 'sinon';
+import type {SinonSandbox} from 'sinon';
 import {remote as wdio} from 'webdriverio';
 import {runExtensionCommand} from '../../lib/cli/extension';
 import {DRIVER_TYPE} from '../../lib/constants';
@@ -25,11 +29,8 @@ import {
 const {expect} = chai;
 chai.use(chaiAsPromised);
 
-/** @type {string} */
-let testServerBaseUrl;
-
-/** @type {number} */
-let port;
+let testServerBaseUrl: string;
+let port: number;
 
 const sillyWebServerPort = 1234;
 const sillyWebServerHost = 'hey';
@@ -43,10 +44,7 @@ const wdOpts: { hostname: string; port?: number; connectionRetryCount?: number; 
   connectionRetryCount: 0,
 };
 
-/**
- * @param {string} appiumHome
- */
-async function initFakeDriver(appiumHome) {
+async function initFakeDriver(appiumHome: string) {
   const {driverConfig} = await loadExtensions(appiumHome);
   const driverList = await runExtensionCommand(
     {
@@ -73,19 +71,12 @@ async function initFakeDriver(appiumHome) {
 }
 
 describe('FakeDriver via HTTP', function () {
-  /** @type {AppiumServer} */
-  let server;
-  /** @type {string} */
-  let appiumHome;
-  // since we update the FakeDriver.prototype below, make sure we update the FakeDriver which is
-  // actually going to be required by Appium
-  /** @type {import('@appium/types').DriverClass} */
-  let FakeDriver;
-  /** @type {string} */
-  let testServerBaseSessionUrl;
+  let server: AppiumServer | void;
+  let appiumHome: string;
+  let FakeDriver: DriverClass;
+  let testServerBaseSessionUrl: string;
+  let sandbox: SinonSandbox;
 
-  /** @type {import('sinon').SinonSandbox} */
-  let sandbox;
   before(async function () {
 
     sandbox = createSandbox();
@@ -101,15 +92,12 @@ describe('FakeDriver via HTTP', function () {
     sandbox.restore();
   });
 
-  /**
-   * @param {Partial<import('appium/types').ParsedArgs>} [args]
-   */
-  function withServer(args = {}) {
+  function withServer(args: Partial<ParsedArgs> = {}) {
     // eslint-disable-next-line mocha/no-sibling-hooks
     before(async function () {
-      args = {...args, appiumHome, port, address: TEST_HOST};
+      const merged = {...args, appiumHome, port, address: TEST_HOST};
       if (shouldStartServer) {
-        server = await appiumServer(args);
+        server = await appiumServer(merged);
       }
     });
     // eslint-disable-next-line mocha/no-sibling-hooks
@@ -576,7 +564,6 @@ describe('FakeDriver via HTTP', function () {
   describe('Bidi protocol', function () {
     withServer();
     const capabilities = {...caps, webSocketUrl: true, 'appium:runClock': true};
-    /** @type import('webdriverio').Browser **/
     let driver;
 
     beforeEach(async function () {
@@ -640,7 +627,6 @@ describe('FakeDriver via HTTP', function () {
     const basePath = '/wd/hub';
     withServer({basePath});
     const capabilities = {...caps, webSocketUrl: true, 'appium:runClock': true};
-    /** @type import('webdriverio').Browser **/
     let driver;
 
     beforeEach(async function () {
@@ -671,11 +657,7 @@ describe('FakeDriver via HTTP', function () {
 });
 
 describe('Bidi over SSL', function () {
-  /**
-   * @param {string} certPath
-   * @param {string} keyPath
-   */
-  async function generateCertificate(certPath, keyPath) {
+  async function generateCertificate(certPath: string, keyPath: string) {
     await exec('openssl', [
       'req',
       '-nodes',
@@ -690,22 +672,15 @@ describe('Bidi over SSL', function () {
     ]);
   }
 
-  /** @type {AppiumServer} */
-  let server;
-  /** @type {string} */
-  let appiumHome;
-  /** @type {import('webdriverio').Browser} */
-  let driver;
-  // since we update the FakeDriver.prototype below, make sure we update the FakeDriver which is
-  // actually going to be required by Appium
-  /** @type {import('@appium/types').DriverClass} */
+  let server: AppiumServer;
+  let appiumHome: string;
+  let driver: Browser;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let FakeDriver;
+  let FakeDriver: DriverClass;
   const certPath = 'certificate.cert';
   const keyPath = 'certificate.key';
   const capabilities = {...caps, webSocketUrl: true};
-  /** @type {string | undefined} */
-  let previousEnvValue;
+  let previousEnvValue: string | undefined;
 
   before(async function () {
     // Skip on Node.js 24+ due to spdy package incompatibility (http_parser removed)

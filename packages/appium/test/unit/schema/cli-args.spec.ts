@@ -1,3 +1,4 @@
+import type {ExtensionType} from '@appium/types';
 import _ from 'lodash';
 import {PLUGIN_TYPE} from '../../../lib/constants';
 import {finalizeSchema, registerSchema, resetSchema} from '../../../lib/schema';
@@ -14,7 +15,7 @@ describe('cli-args', function () {
     function getArgs(opts: GetArgsOpts = {}) {
     const {extName, extType, schema} = opts;
     if (schema && extName && extType) {
-      registerSchema(extType as import('@appium/types').ExtensionType, extName, schema as Parameters<typeof registerSchema>[2]);
+      registerSchema(extType as ExtensionType, extName, schema as Parameters<typeof registerSchema>[2]);
     }
     finalizeSchema();
     return _.fromPairs([...toParserArgs()]) as Record<string, {type?: (v: string) => unknown; help?: string; action?: string; metavar?: string; choices?: string[] }>;

@@ -1,7 +1,7 @@
 import {init as logsinkInit, clear as logsinkClear} from '../../lib/logsink';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {createSandbox, type SinonSandbox} from 'sinon';
+import {createSandbox, type SinonSandbox, type SinonSpy} from 'sinon';
 import {logger} from '@appium/support';
 
 const forceLogs = process.env._FORCE_LOGS;
@@ -10,15 +10,15 @@ const log = logger.getLogger('Appium');
 
 describe('logging', function () {
   let sandbox: SinonSandbox;
-  let stderrSpy: import('sinon').SinonSpy;
-  let stdoutSpy: import('sinon').SinonSpy;
+  let stderrSpy: SinonSpy;
+  let stdoutSpy: SinonSpy;
 
   beforeEach(async function () {
     use(chaiAsPromised);
 
     sandbox = createSandbox();
-    stderrSpy = sandbox.spy(process.stderr, 'write') as import('sinon').SinonSpy;
-    stdoutSpy = sandbox.spy(process.stdout, 'write') as import('sinon').SinonSpy;
+    stderrSpy = sandbox.spy(process.stderr, 'write') as SinonSpy;
+    stdoutSpy = sandbox.spy(process.stdout, 'write') as SinonSpy;
     logsinkClear();
   });
 

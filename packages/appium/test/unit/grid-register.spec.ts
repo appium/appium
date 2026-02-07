@@ -1,6 +1,6 @@
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {createSandbox, type SinonSandbox} from 'sinon';
+import {createSandbox, type SinonSandbox, type SinonStub} from 'sinon';
 import {rewiremock} from '../helpers';
 
 type RegisterNodeFn = (
@@ -29,10 +29,10 @@ describe('grid-register', function () {
     let registerNode: RegisterNodeFn;
     let mocks: {
       '@appium/support': {
-        fs: {readFile: import('sinon').SinonStub};
-        logger: {getLogger: import('sinon').SinonStub};
+        fs: {readFile: SinonStub};
+        logger: {getLogger: SinonStub};
       };
-      axios: import('sinon').SinonStub;
+      axios: SinonStub;
     };
 
     beforeEach(function () {

@@ -1,45 +1,42 @@
-// @ts-nocheck
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {promises as fs} from 'node:fs';
+import type {ExtensionType, PluginType} from '@appium/types';
+import type {ExtManifest} from 'appium/types';
+import type {SinonSandbox} from 'sinon';
+import type {PluginConfig as PluginConfigInstance} from '../../../lib/extension/plugin-config';
 import {Manifest} from '../../../lib/extension/manifest';
 import {resetSchema} from '../../../lib/schema';
 import {resolveFixture, rewiremock} from '../../helpers';
 import {initMocks} from './mocks';
+import type {MockAppiumSupport, MockResolveFrom, Overrides} from './mocks';
+
+type ExtManifestWithSchema<ExtType extends ExtensionType> = ExtManifest<ExtType> & {
+  schema: NonNullable<ExtManifest<ExtType>['schema']>;
+};
+
+interface PluginConfigConstructor {
+  create(manifest: Manifest): PluginConfigInstance;
+  getInstance(manifest: Manifest): PluginConfigInstance | undefined;
+}
 
 const {expect} = chai;
 chai.use(chaiAsPromised);
 
 describe('PluginConfig', function () {
-  /** @type {string} */
-  let yamlFixture;
-
-  /**
-   * @type {Manifest}
-   */
-  let manifest;
-
-  /** @type {sinon.SinonSandbox} */
-  let sandbox;
-
-  /** @type {import('./mocks').MockAppiumSupport} */
-  let MockAppiumSupport;
-
-  /** @type {import('./mocks').MockResolveFrom} */
-  let MockResolveFrom;
-
-  /**
-   * @type {typeof import('appium/lib/extension/plugin-config').PluginConfig}
-   */
-  let PluginConfig;
+  let yamlFixture: string;
+  let manifest: Manifest;
+  let sandbox: SinonSandbox;
+  let MockAppiumSupport: MockAppiumSupport;
+  let MockResolveFrom: MockResolveFrom;
+  let PluginConfig: PluginConfigConstructor;
 
   before(async function () {
     yamlFixture = await fs.readFile(resolveFixture('manifest', 'v3.yaml'), 'utf8');
   });
 
   beforeEach(function () {
-    /** @type {import('./mocks').Overrides} */
-    let overrides;
+    let overrides: Overrides;
     manifest = Manifest.getInstance('/somewhere/');
     ({MockAppiumSupport, MockResolveFrom, sandbox, overrides} = initMocks());
     MockAppiumSupport.fs.readFile.resolves(yamlFixture);
@@ -93,8 +90,7 @@ describe('PluginConfig', function () {
       });
 
       describe('when the Manifest is associated with a PluginConfig', function () {
-        /** @type {PluginConfig} */
-        let driverConfig;
+        let driverConfig: PluginConfigInstance;
 
         beforeEach(function () {
           driverConfig = PluginConfig.create(manifest);
@@ -117,16 +113,13 @@ describe('PluginConfig', function () {
             pkgName: 'herrbbbff',
             installType: 'npm',
             installSpec: 'herrbbbff',
-          })
+          } as any)
         ).to.equal(`foo@1.0`);
       });
     });
 
     describe('getConfigProblems()', function () {
-      /**
-       * @type {PluginConfig}
-       */
-      let pluginConfig;
+      let pluginConfig: any;
 
       beforeEach(function () {
         pluginConfig = PluginConfig.create(manifest);
@@ -134,17 +127,13 @@ describe('PluginConfig', function () {
 
       describe('when provided no arguments', function () {
         it('should not throw', function () {
-          // @ts-expect-error
           expect(() => pluginConfig.getConfigProblems()).not.to.throw();
         });
       });
     });
 
     describe('getSchemaProblems()', function () {
-      /**
-       * @type {PluginConfig}
-       */
-      let pluginConfig;
+      let pluginConfig: any;
 
       beforeEach(function () {
         pluginConfig = PluginConfig.create(manifest);
@@ -154,7 +143,6 @@ describe('PluginConfig', function () {
         it('should return an array having an associated problem', function () {
           expect(
             pluginConfig.getSchemaProblems(
-              // @ts-expect-error
               {
                 schema: [],
                 mainClass: 'Asdsh',
@@ -197,7 +185,6 @@ describe('PluginConfig', function () {
             it('should return an array having an associated problem', function () {
               expect(
                 pluginConfig.getSchemaProblems(
-                  // @ts-expect-error
                   {
                     pkgName: 'doop',
                     schema: 'herp.json',
@@ -220,7 +207,6 @@ describe('PluginConfig', function () {
             it('should return an empty array', function () {
               expect(
                 pluginConfig.getSchemaProblems(
-                  // @ts-expect-error
                   {
                     pkgName: '../fixtures',
                     schema: 'plugin-schema.js',
@@ -236,8 +222,7 @@ describe('PluginConfig', function () {
       });
 
       describe('when provided an object `schema` property', function () {
-        /** @type {ExtManifestWithSchema<PluginType>} */
-        let externalManifest;
+        let externalManifest: ExtManifestWithSchema<PluginType>;
 
         describe('when the object is a valid schema', function () {
           beforeEach(function () {
@@ -248,7 +233,7 @@ describe('PluginConfig', function () {
               installType: 'npm',
               mainClass: 'Barrggh',
               schema: {type: 'object', properties: {foo: {type: 'string'}}},
-            };
+            } as unknown as ExtManifestWithSchema<PluginType>;
           });
 
           it('should return an empty array', function () {
@@ -267,10 +252,9 @@ describe('PluginConfig', function () {
               schema: {
                 type: 'object',
                 properties: {foo: {type: 'string'}},
-                // @ts-expect-error
                 $async: true, // this is not allowed
               },
-            };
+            } as unknown as ExtManifestWithSchema<PluginType>;
           });
 
           it('should return an array having an associated problem', function () {
@@ -283,13 +267,8 @@ describe('PluginConfig', function () {
     });
 
     describe('readExtensionSchema()', function () {
-      /**
-       * @type {PluginConfig}
-       */
-      let pluginConfig;
-
-      /** @type {ExtManifestWithSchema<PluginType>} */
-      let extData;
+      let pluginConfig: any;
+      let extData: ExtManifestWithSchema<PluginType>;
 
       const extName = 'stuff';
 
@@ -301,15 +280,14 @@ describe('PluginConfig', function () {
           version: '0.0.0',
           installType: 'npm',
           installSpec: 'some-pkg',
-        };
+        } as unknown as ExtManifestWithSchema<PluginType>;
         MockResolveFrom.returns(resolveFixture('plugin-schema.js'));
         pluginConfig = PluginConfig.create(manifest);
       });
 
       describe('when the extension data is missing `schema`', function () {
         it('should throw', function () {
-          // @ts-expect-error
-          delete extData.schema;
+          delete (extData as {schema?: string}).schema;
           expect(() => pluginConfig.readExtensionSchema(extName, extData)).to.throw(
             TypeError,
             /why is this function being called/i
@@ -345,14 +323,3 @@ describe('PluginConfig', function () {
     });
   });
 });
-
-/**
- * @typedef {import('@appium/types').PluginType} PluginType
- * @typedef {import('appium/lib/extension/plugin-config').PluginConfig} PluginConfig
- * @typedef {import('@appium/types').ExtensionType} ExtensionType
- */
-
-/**
- * @template {ExtensionType} ExtType
- * @typedef {import('appium/types').ExtManifest<ExtType> & {schema: NonNullable<import('appium/types').ExtManifest<ExtType>['schema']>}} ExtManifestWithSchema
- */

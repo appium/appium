@@ -1,3 +1,6 @@
+import type {AppiumServer} from '@appium/types';
+import type {ParsedArgs} from 'appium/types';
+import type {Browser} from 'webdriverio';
 import {fs, tempDir} from '@appium/support';
 import axios from 'axios';
 import B from 'bluebird';
@@ -31,12 +34,8 @@ const wdOpts: {
   capabilities: W3C_PREFIXED_CAPS,
 };
 
-/** @type {Partial<import('appium/types').ParsedArgs>} */
-let baseServerArgs;
+let baseServerArgs: Partial<ParsedArgs>;
 
-/**
- * @param {Partial<import('appium/types').ParsedArgs>} args
- */
 function serverSetup(args: Record<string, unknown>) {
   let server: Awaited<ReturnType<typeof appiumServer>> | null = null;
 
@@ -53,14 +52,10 @@ function serverSetup(args: Record<string, unknown>) {
 }
 
 describe('FakePlugin w/ FakeDriver via HTTP', function () {
-  /** @type {string} */
-  let appiumHome;
-  /** @type {string} */
-  let testServerBaseUrl;
-  /** @type {number} */
-  let port;
-  /** @type {string} */
-  let testServerBaseSessionUrl;
+  let appiumHome: string;
+  let testServerBaseUrl: string;
+  let port: number;
+  let testServerBaseSessionUrl: string;
   before(async function () {
 
     resetSchema();
@@ -149,7 +144,6 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
 
   for (const registrationType of ['explicit', 'all']) {
     describe(`with plugin registered via type ${registrationType}`, function () {
-      /** @type {import('type-fest').LiteralUnion<'all', string>[]} */
       const usePlugins = registrationType === 'explicit' ? ['fake'] : ['all'];
       serverSetup({usePlugins});
       it('should update the server', async function () {
@@ -272,12 +266,11 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
     });
   }
   describe('cli args handling for plugin args', function () {
-    /** @type {AppiumServer} */
-    let server;
+    let server: AppiumServer | void;
     before(async function () {
       // then start server if we need to
       const args = {...baseServerArgs, plugin: FAKE_PLUGIN_ARGS};
-      server = /** @type {AppiumServer} */ (await appiumServer(args));
+      server = await appiumServer(args);
     });
     after(async function () {
       if (server) {
@@ -297,11 +290,10 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
     });
   });
   describe('cli args handling for empty plugin args', function () {
-    /** @type {AppiumServer} */
-    let server;
+    let server: AppiumServer | void;
     before(async function () {
       // then start server if we need to
-      server = /** @type {AppiumServer} */ (await appiumServer(baseServerArgs));
+      server = await appiumServer(baseServerArgs);
     });
     after(async function () {
       if (server) {
@@ -324,11 +316,9 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
   });
 
   describe('Execute Methods', function () {
-    /** @type {AppiumServer} */
-    let server;
+    let server: AppiumServer;
 
-    /** @type {import('webdriverio').Browser} */
-    let driver;
+    let driver: Browser;
 
     before(async function () {
       // then start server if we need to
@@ -339,7 +329,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
         usePlugins: ['fake'],
         useDrivers: ['fake'],
       };
-      server = /** @type {AppiumServer} */ (await appiumServer(args));
+      server = await appiumServer(args);
       driver = await wdio(wdOpts as any);
     });
     after(async function () {
@@ -369,8 +359,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
 
   describe('BiDi support', function () {
     describe('with a single plugin', function() {
-      /** @type {import('webdriverio').Browser} */
-      let driver;
+      let driver: Browser;
 
       // this 'after' block needs to come before 'serverSetup' so that the delete session happens
       // before the server shutdown
@@ -455,7 +444,3 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
     });
   });
 });
-
-/**
- * @typedef {import('@appium/types').AppiumServer} AppiumServer
- */

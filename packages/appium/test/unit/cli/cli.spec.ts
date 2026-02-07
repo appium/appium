@@ -1,4 +1,3 @@
-// @ts-nocheck
 import {tempDir, fs, npm} from '@appium/support';
 import {loadExtensions} from '../../../lib/extension';
 import {Manifest} from '../../../lib/extension/manifest';
@@ -20,7 +19,18 @@ describe('DriverCommand', function () {
     Manifest.getInstance.cache = new Map();
     sandbox.stub(fs, 'exists').resolves(false);
     config = (await loadExtensions(appiumHome)).driverConfig;
-    config.installedExtensions = {[driver]: {version: '1.0.0', pkgName}};
+    config.installedExtensions = {
+      [driver]: {
+        version: '1.0.0',
+        pkgName,
+        automationName: 'Fake',
+        platformNames: ['Fake'],
+        mainClass: 'FakeDriver',
+        installType: 'npm',
+        installSpec: pkgName,
+        installPath: '',
+      },
+    };
     dc = new DriverCommand({config, json: true});
   });
 

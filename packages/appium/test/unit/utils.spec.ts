@@ -1,3 +1,4 @@
+import type {Constraints, W3CCapabilities} from '@appium/types';
 import {
   parseCapsForInnerDriver,
   insertAppiumPrefixes,
@@ -12,7 +13,7 @@ import _ from 'lodash';
 import {stripColors} from '@colors/colors';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {createSandbox, type SinonSandbox} from 'sinon';
+import {createSandbox, type SinonSandbox, type SinonStub} from 'sinon';
 import logger from '../../lib/logger';
 import {fs} from '@appium/support';
 
@@ -23,7 +24,7 @@ describe('utils', function () {
 
   describe('parseCapsForInnerDriver()', function () {
     it('should return an error if only JSONWP provided', function () {
-      const res = parseCapsForInnerDriver(BASE_CAPS as unknown as import('@appium/types').W3CCapabilities<import('@appium/types').Constraints>);
+      const res = parseCapsForInnerDriver(BASE_CAPS as unknown as W3CCapabilities<Constraints>);
       expect('error' in res && res.error).to.be.ok;
       expect((res as {error: {message: string}}).error.message).to.match(/W3C/);
     });
@@ -101,7 +102,7 @@ describe('utils', function () {
           propertyName: 'PROP_NAME',
         },
         firstMatch: [{}],
-      } as unknown as import('@appium/types').W3CCapabilities<import('@appium/types').Constraints>);
+      } as unknown as W3CCapabilities<Constraints>);
       expect((res as {error?: {error: string}}).error!.error).to.includes('invalid argument');
     });
   });
@@ -261,7 +262,7 @@ describe('utils', function () {
     it('should log the result of inspecting a value', function () {
       inspect({foo: 'bar'});
       expect(
-        stripColors((logger.info as import('sinon').SinonStub).firstCall.firstArg)
+        stripColors((logger.info as SinonStub).firstCall.firstArg)
       ).to.match(/\{\s*\n*foo:\s'bar'\s*\n*\}/);
     });
   });

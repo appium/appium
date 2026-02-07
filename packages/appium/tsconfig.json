@@ -15,7 +15,7 @@
     "checkJs": true,
     "types": ["mocha", "chai", "chai-as-promised", "node"]
   },
-  "include": ["lib", "types", "test"],
+  "include": ["lib", "types", "test", "package.json"],
   "references": [
     {"path": "../schema"},
     {"path": "../types"},

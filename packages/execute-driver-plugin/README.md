@@ -13,6 +13,9 @@ the only supported driver type is `webdriverio`, therefore the script must also 
 Running a driver script in a child process adds a degree of parallelisation, which may result in
 faster test execution.
 
+> [!WARNING]
+> This plugin enables execution of arbitrary JavaScript code. We recommend only using this plugin in a controlled environment.
+
 ## Installation
 
 ```
@@ -23,8 +26,10 @@ The plugin must be explicitly activated when launching the Appium server. Since 
 can be arbitrary JavaScript, this is an insecure feature, and must also be explicitly enabled:
 
 ```
-appium --use-plugins=execute-driver --allow-insecure=execute_driver_script
+appium --use-plugins=execute-driver --allow-insecure=<driver>:execute_driver_script
 ```
+
+`<driver>` is the driver name you want to enable the feature.
 
 ## Usage
 

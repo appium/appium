@@ -39,7 +39,13 @@ function alertTests() {
     });
     it('should not do other things while an alert is there', async function () {
       await (await driver.$('#AlertButton')).click();
-      const e = await (await driver.$('#nav')).click().catch((err: Error) => err);
+      await driver.getAlertText(); // ensure alert is open before trying to click elsewhere
+      let e: unknown;
+      try {
+        await (await driver.$('#nav')).click();
+      } catch (err) {
+        e = err;
+      }
       expect(e).to.be.an('error');
       expect((e as Error).message).to.include('modal dialog');
     });

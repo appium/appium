@@ -38,16 +38,14 @@ function alertTests() {
       expect(await driver.getAlertText()).to.equal('foo');
     });
     it('should not do other things while an alert is there', async function () {
-      await (await driver.$('#AlertButton')).click();
-      await driver.getAlertText(); // ensure alert is open before trying to click elsewhere
-      let e: unknown;
       try {
+        await (await driver.$('#AlertButton')).click();
         await (await driver.$('#nav')).click();
+        this.fail('should have thrown an error');
       } catch (err) {
-        e = err;
+        expect(err).to.be.an('error');
+        expect((err as Error).message).to.include('modal dialog');
       }
-      expect(e).to.be.an('error');
-      expect((e as Error).message).to.include('modal dialog');
     });
     it.skip('should accept an alert', function () {
       (driver.acceptAlert() as any).$('nav').click().nodeify();

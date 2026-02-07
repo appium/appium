@@ -14,21 +14,20 @@ export function alertTests() {
       return await deleteSession(driver);
     });
 
-    it('should not work with alerts when one is not present', async function () {
-      const noAlertMessage = 'modal dialog when one was not open';
-      let e: unknown = await driver.getAlertText().catch((err: Error) => err);
-      expect(e).to.be.an('error');
-      expect((e as Error).message).to.include(noAlertMessage);
-      e = await driver.sendAlertText('foo').catch((err: Error) => err);
-      expect(e).to.be.an('error');
-      expect((e as Error).message).to.include(noAlertMessage);
-      e = await driver.acceptAlert().catch((err: Error) => err);
-      expect(e).to.be.an('error');
-      expect((e as Error).message).to.include(noAlertMessage);
-      e = await driver.dismissAlert().catch((err: Error) => err);
-      expect(e).to.be.an('error');
-      expect((e as Error).message).to.include(noAlertMessage);
-    });
+    const noAlertMessage = 'modal dialog when one was not open';
+    const noAlertCases: Array<[string, () => Promise<unknown>]> = [
+      ['getAlertText', () => driver.getAlertText()],
+      ['sendAlertText', () => driver.sendAlertText('foo')],
+      ['acceptAlert', () => driver.acceptAlert()],
+      ['dismissAlert', () => driver.dismissAlert()],
+    ];
+    for (const [name, fn] of noAlertCases) {
+      it(`should reject ${name} when no alert is present`, async function () {
+        const e: unknown = await fn().catch((err: Error) => err);
+        expect(e).to.be.an('error');
+        expect((e as Error).message).to.include(noAlertMessage);
+      });
+    }
     it('should get text of an alert', async function () {
       await (await driver.$('#AlertButton')).click();
       expect(await driver.getAlertText()).to.equal('Fake Alert');

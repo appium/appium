@@ -1,4 +1,6 @@
 import axios from 'axios';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import {driverE2ETestSuite} from '@appium/driver-test-support';
 import {FakeDriver, startServer} from '../../lib/index.js';
 import {
@@ -15,21 +17,18 @@ import elementInteractionTests from './element-interaction-tests';
 import alertTests from './alert-tests';
 import generalTests from './general-tests';
 
+chai.use(chaiAsPromised);
+
 const shouldStartServer = process.env.USE_RUNNING_SERVER !== '0';
 
 // test the same things as for base driver
+// @ts-expect-error FakeDriver constructor opts differ from DriverClass expectation
 driverE2ETestSuite(FakeDriver, W3C_PREFIXED_CAPS);
 
 describe('FakeDriver - via HTTP', function () {
-  let server = null;
-  let should;
+  let server: Awaited<ReturnType<typeof startServer>> | null = null;
 
   before(async function () {
-    const chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-    chai.use(chaiAsPromised.default);
-    should = chai.should();
-
     if (shouldStartServer) {
       server = await startServer(TEST_PORT, TEST_HOST);
     }
@@ -42,11 +41,11 @@ describe('FakeDriver - via HTTP', function () {
 
   describe('session handling', function () {
     it('should start and stop a session', async function () {
-      let driver = await initSession(W3C_PREFIXED_CAPS);
-      should.exist(driver.sessionId);
-      driver.sessionId.should.be.a('string');
+      const driver = await initSession(W3C_PREFIXED_CAPS);
+      expect(driver.sessionId).to.exist;
+      expect(driver.sessionId).to.be.a('string');
       await deleteSession(driver);
-      await driver.getTitle().should.eventually.be.rejected;
+      await expect(driver.getTitle()).to.be.rejected;
     });
   });
 
@@ -67,18 +66,18 @@ describe('FakeDriver - via HTTP', function () {
         },
       });
       const {value, status} = res.data;
-      value.capabilities.should.deep.equal({...BASE_CAPS, fakeCap: 'Foo'});
-      value.sessionId.should.exist;
-      should.not.exist(status);
+      expect(value.capabilities).to.deep.equal({...BASE_CAPS, fakeCap: 'Foo'});
+      expect(value.sessionId).to.exist;
+      expect(status).to.not.exist;
       await axios.delete(`http://${TEST_HOST}:${TEST_PORT}/session/${value.sessionId}`);
     });
 
     it('should fail if given unsupported desiredCapabilities', async function () {
-      await axios
-        .post(`http://${TEST_HOST}:${TEST_PORT}/session`, {
+      await expect(
+        axios.post(`http://${TEST_HOST}:${TEST_PORT}/session`, {
           desiredCapabilities: W3C_PREFIXED_CAPS,
         })
-        .should.eventually.be.rejectedWith(/500/);
+      ).to.eventually.be.rejectedWith(/500/);
     });
   });
 });

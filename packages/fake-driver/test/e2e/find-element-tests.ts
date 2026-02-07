@@ -1,17 +1,14 @@
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import {initSession, deleteSession, W3C_PREFIXED_CAPS} from '../helpers';
+
+chai.use(chaiAsPromised);
 
 function findElementTests() {
   describe('finding elements', function () {
-    let driver;
-    let expect;
+    let driver: Awaited<ReturnType<typeof initSession>>;
 
     before(async function () {
-      const chai = await import('chai');
-      const chaiAsPromised = await import('chai-as-promised');
-      chai.use(chaiAsPromised.default);
-      chai.should();
-      expect = chai.expect;
-
       driver = await initSession(W3C_PREFIXED_CAPS);
     });
     after(async function () {
@@ -20,54 +17,66 @@ function findElementTests() {
 
     describe('by XPath', function () {
       it('should find a single element by xpath', async function () {
-        (await driver.$('//MockWebView')).should.not.be.empty;
+        expect(await driver.$('//MockWebView')).to.not.be.empty;
       });
       it('should not find a single element that is not there', async function () {
-        (await driver.$$('//dontexist')).length.should.equal(0);
+        expect((await driver.$$('//dontexist')).length).to.equal(0);
       });
       it('should find multiple elements', async function () {
-        (await driver.$$('//MockListItem')).length.should.be.equal(3);
+        expect((await driver.$$('//MockListItem')).length).to.equal(3);
       });
     });
 
     describe('by classname', function () {
       it('should find a single element by class', async function () {
-        (await driver.$('.MockWebView')).should.not.be.empty;
+        expect(await driver.$('.MockWebView')).to.not.be.empty;
       });
 
       it('should not find a single element by class that is not there', async function () {
-        (await driver.$$('.dontexist')).length.should.equal(0);;
+        expect((await driver.$$('.dontexist')).length).to.equal(0);
       });
     });
 
     describe('using bad selectors', function () {
       it('should not find a single element with bad selector', async function () {
-        await expect(driver.$('badsel')).to.eventually.be.rejectedWith({code: 32});
+        try {
+          await driver.$('badsel');
+        } catch (e: any) {
+          expect(e).to.include({code: 32});
+          return;
+        }
+        expect.fail('should have thrown');
       });
 
       it('should not find multiple elements with bad selector', async function () {
-        await expect(driver.$$('badsel')).to.eventually.be.rejectedWith({code: 32});
+        try {
+          await driver.$$('badsel');
+        } catch (e: any) {
+          expect(e).to.include({code: 32});
+          return;
+        }
+        expect.fail('should have thrown');
       });
     });
 
     describe('via element selectors', function () {
       it('should find an element from another element', async function () {
-        let el = await driver.$('#1');
-        let title = await el.$('title');
-        let earlierTitle = await driver.$('title');
-        await earlierTitle.isEqual(title).should.eventually.equal(false);
+        const el = await driver.$('#1');
+        const title = await el.$('title');
+        const earlierTitle = await driver.$('title');
+        expect(await earlierTitle.isEqual(title as any)).to.equal(false);
       });
       it('should find multiple elements from another element', async function () {
-        let el = await driver.$('html');
-        (await el.$$('title')).length.should.equal(2);
+        const el = await driver.$('html');
+        expect((await el.$$('title')).length).to.equal(2);
       });
       it(`should not find multiple elements that don't exist from another element`, async function () {
-        let el = await driver.$('#1');
-        (await el.$$('marquee')).length.should.equal(0);
+        const el = await driver.$('#1');
+        expect((await el.$$('marquee')).length).to.equal(0);
       });
       it('should not find elements if root element does not exist', async function () {
-        let el = await driver.$('#blub');
-        await expect(el.$('body')).to.eventually.be.rejectedWith(/Can't call \$/);
+        const el = await driver.$('#blub');
+        await expect(el.$('body')).to.be.rejectedWith(/Can't call \$/);
       });
     });
   });

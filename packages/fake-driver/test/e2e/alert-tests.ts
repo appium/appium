@@ -43,7 +43,7 @@ export function alertTests() {
         this.fail('should have thrown an error');
       } catch (err) {
         expect(err).to.be.an('error');
-        expect((err as Error).message).to.include('modal dialog');
+        expect((err as Error).message).to.include('modal dialog was open, blocking this operation');
       }
     });
     it.skip('should accept an alert', function () {

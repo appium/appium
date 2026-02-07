@@ -28,19 +28,16 @@
   },
   "files": [
     "lib",
-    "build",
-    "test/fixtures",
-    "tsconfig.json",
-    "!build/tsconfig.tsbuildinfo",
-    "!build/test"
+    "build/lib",
+    "tsconfig.json"
   ],
   "scripts": {
     "build": "cpy lib/screen.png build",
     "clean": "npx rimraf build/lib/screen.png",
     "test": "npm run test:unit",
-    "test:e2e": "mocha --exit --timeout 20s --slow 10s \"./test/e2e/**/*.spec.js\"",
+    "test:e2e": "mocha --exit --timeout 20s --slow 10s \"./test/e2e/**/*.spec.ts\"",
     "test:smoke": "node ./build/lib/index.js",
-    "test:unit": "mocha --exit --timeout 10s --slow 5s \"./test/unit/**/*.spec.js\""
+    "test:unit": "mocha --exit --timeout 10s --slow 5s \"./test/unit/**/*.spec.ts\""
   },
   "dependencies": {
     "@xmldom/xmldom": "0.9.8",

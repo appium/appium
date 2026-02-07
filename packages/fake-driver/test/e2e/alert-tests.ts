@@ -15,12 +15,19 @@ function alertTests() {
     });
 
     it('should not work with alerts when one is not present', async function () {
-      expect(await driver.getAlertText().catch((e: {code?: number}) => e)).to.include({code: 27});
-      expect(await driver.sendAlertText('foo').catch((e: {code?: number}) => e)).to.include({
-        code: 27,
-      });
-      expect(await driver.acceptAlert().catch((e: {code?: number}) => e)).to.include({code: 27});
-      expect(await driver.dismissAlert().catch((e: {code?: number}) => e)).to.include({code: 27});
+      const noAlertMessage = 'modal dialog when one was not open';
+      let e = await driver.getAlertText().catch((err: Error) => err);
+      expect(e).to.be.an('error');
+      expect((e as Error).message).to.include(noAlertMessage);
+      e = await driver.sendAlertText('foo').catch((err: Error) => err);
+      expect(e).to.be.an('error');
+      expect((e as Error).message).to.include(noAlertMessage);
+      e = await driver.acceptAlert().catch((err: Error) => err);
+      expect(e).to.be.an('error');
+      expect((e as Error).message).to.include(noAlertMessage);
+      e = await driver.dismissAlert().catch((err: Error) => err);
+      expect(e).to.be.an('error');
+      expect((e as Error).message).to.include(noAlertMessage);
     });
     it('should get text of an alert', async function () {
       await (await driver.$('#AlertButton')).click();
@@ -31,9 +38,10 @@ function alertTests() {
       expect(await driver.getAlertText()).to.equal('foo');
     });
     it('should not do other things while an alert is there', async function () {
-      expect(
-        await (await driver.$('#nav')).click().catch((e: {code?: number}) => e)
-      ).to.include({code: 26});
+      await (await driver.$('#AlertButton')).click();
+      const e = await (await driver.$('#nav')).click().catch((err: Error) => err);
+      expect(e).to.be.an('error');
+      expect((e as Error).message).to.include('modal dialog');
     });
     it.skip('should accept an alert', function () {
       (driver.acceptAlert() as any).$('nav').click().nodeify();

@@ -98,9 +98,11 @@ function elementTests() {
     it('should not get the css property of an element when not in a webview', async function () {
       const btnEl = await driver.$('#Button1');
       const elementId = await (btnEl as any).elementId;
-      expect(
-        await driver.getElementCSSValue(elementId, 'height').catch((e: {code?: number}) => e)
-      ).to.include({code: 36});
+      const e = await driver
+        .getElementCSSValue(elementId, 'height')
+        .catch((err: Error) => err);
+      expect(e).to.be.an('error');
+      expect((e as Error).message).to.include('could not be executed');
     });
     it('should get the css property of an element when in a webview', async function () {
       await driver.switchContext('WEBVIEW_1');

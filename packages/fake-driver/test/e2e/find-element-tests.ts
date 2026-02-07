@@ -42,7 +42,8 @@ function findElementTests() {
         try {
           await driver.$('badsel');
         } catch (e: any) {
-          expect(e).to.include({code: 32});
+          expect(e).to.be.an('error');
+          expect(e.message).to.include('invalid selector');
           return;
         }
         expect.fail('should have thrown');
@@ -52,7 +53,8 @@ function findElementTests() {
         try {
           await driver.$$('badsel');
         } catch (e: any) {
-          expect(e).to.include({code: 32});
+          expect(e).to.be.an('error');
+          expect(e.message).to.include('invalid selector');
           return;
         }
         expect.fail('should have thrown');

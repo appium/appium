@@ -11,5 +11,5 @@ module.exports = {
         'The answer to the Ultimate Question of Life, The Universe, and Everything',
     },
   },
-  $id: 'plugin.json'
+  $id: 'plugin.json',
 };

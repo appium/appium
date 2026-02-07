@@ -1,0 +1,361 @@
+import {DRIVER_TYPE} from '../../../lib/constants';
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import path from 'node:path';
+import {version as APPIUM_VER} from '../../../package.json';
+import {FAKE_DRIVER_DIR, PROJECT_ROOT, rewiremock} from '../../helpers';
+import {initMocks} from './mocks';
+import {resolveEsmEntryPoint} from '../../../lib/extension/extension-config';
+import type {MockAppiumSupport} from './mocks';
+import type {SinonSandbox} from 'sinon';
+
+const {expect} = chai;
+chai.use(chaiAsPromised);
+
+describe('ExtensionConfig', function () {
+  let sandbox: SinonSandbox;
+  let ExtensionConfig: any;
+  let Manifest: any;
+  let MockAppiumSupport: MockAppiumSupport;
+
+  beforeEach(function () {
+    let overrides: ReturnType<typeof initMocks>['overrides'];
+    ({MockAppiumSupport, overrides, sandbox} = initMocks());
+    ({ExtensionConfig} = rewiremock.proxy(
+      () => require('../../../lib/extension/extension-config'),
+      overrides
+    ));
+    ({Manifest} = rewiremock.proxy(() => require('../../../lib/extension/manifest'), overrides));
+
+    MockAppiumSupport.fs.readPackageJsonFrom.returns({version: '2.0.0'});
+  });
+
+  afterEach(function () {
+    sandbox.restore();
+    // avoids a warning about too many listeners, caused by an exit handler in base-driver
+    process.removeAllListeners('exit');
+  });
+
+  describe('ESM module resolution', function () {
+    it('resolves ESM entry point with simple export', function () {
+      expect(resolveEsmEntryPoint('./index.js')).to.eql('./index.js');
+    });
+
+    it('resolves ESM entry point with dot export', function () {
+      expect(resolveEsmEntryPoint({'.': './index.js'})).to.eql('./index.js');
+    });
+
+    it('resolves ESM entry point with import export', function () {
+      expect(resolveEsmEntryPoint({import: './index.js'})).to.eql('./index.js');
+    });
+
+    it('resolves ESM entry point with complex import export', function () {
+      expect(
+        resolveEsmEntryPoint({
+          '.': {import: './index.js'},
+        })
+      ).to.eql('./index.js');
+    });
+  });
+
+  describe('instance method', function () {
+    let config: any;
+    let extData: any;
+
+    beforeEach(function () {
+      config = new ExtensionConfig(DRIVER_TYPE, new Manifest('/some/path'));
+      extData = {
+        version: '1.0.0',
+        automationName: 'Derp',
+        mainClass: 'SomeClass',
+        pkgName: 'derp',
+        platformNames: ['dogs', 'cats'],
+        installSpec: 'derp',
+        installType: 'npm',
+        appiumVersion: APPIUM_VER,
+      };
+      config.addExtension(extData.pkgName, extData);
+    });
+
+    describe('getGenericConfigProblems()', function () {
+      describe('when there are no problems with the extension data', function () {
+        it('should return an empty array', function () {
+          expect(config.getGenericConfigProblems(extData, extData.pkgName)).to.be.empty;
+        });
+      });
+
+      describe('when the extension data is missing a "pkgName" field', function () {
+        let pkgName;
+        beforeEach(function () {
+          ({pkgName} = extData);
+          delete extData.pkgName;
+        });
+
+        it('should return a problem', function () {
+          expect(config.getGenericConfigProblems(extData, pkgName)).to.eql([
+            {
+              err: 'Invalid or missing `name` field in my `package.json` and/or `extensions.yaml` (must be a string)',
+              val: undefined,
+            },
+          ]);
+        });
+      });
+
+      describe('when the extension data is missing a "version" field', function () {
+        beforeEach(function () {
+          delete extData.version;
+        });
+
+        it('should return a problem', function () {
+          expect(config.getGenericConfigProblems(extData, extData.pkgName)).to.eql([
+            {
+              err: 'Invalid or missing `version` field in my `package.json` and/or `extensions.yaml` (must be a string)',
+              val: undefined,
+            },
+          ]);
+        });
+      });
+
+      describe('when the extension data is missing a "appium.mainClass" field', function () {
+        beforeEach(function () {
+          delete extData.mainClass;
+        });
+
+        it('should return a problem', function () {
+          expect(config.getGenericConfigProblems(extData, extData.pkgName)).to.eql([
+            {
+              err: 'Invalid or missing `appium.mainClass` field in my `package.json` and/or `mainClass` field in `extensions.yaml` (must be a string)',
+              val: undefined,
+            },
+          ]);
+        });
+      });
+    });
+
+    describe('getGenericConfigWarnings()', function () {
+      let extData: any;
+      let config: any;
+
+      beforeEach(function () {
+        const manifest = Manifest.getInstance('/some/path');
+        extData = {
+          version: '1.0.0',
+          automationName: 'Derp',
+          mainClass: 'SomeClass',
+          pkgName: 'derp',
+          platformNames: ['dogs', 'cats'],
+          installSpec: 'derp',
+          installType: 'npm',
+          appiumVersion: APPIUM_VER,
+        };
+        manifest.setExtension(DRIVER_TYPE, extData.pkgName, extData);
+        config = new ExtensionConfig(DRIVER_TYPE, manifest);
+      });
+
+      describe('when the extension data is missing an `installSpec` field', function () {
+        beforeEach(function () {
+          delete extData.installSpec;
+        });
+
+        it('should resolve w/ an appropriate warning', async function () {
+          await expect(config.getGenericConfigWarnings(extData, extData.pkgName)).to.eventually.eql(
+            [
+              `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) has 1 invalid or missing field ("installSpec") in \`extensions.yaml\`; this may cause upgrades done via the \`appium\` CLI tool to fail. Please reinstall with \`appium driver uninstall ${extData.pkgName}\` and \`appium driver install ${extData.pkgName}\` to attempt a fix.`,
+            ]
+          );
+        });
+      });
+
+      describe('when the extension data is missing an `installType` field', function () {
+        beforeEach(function () {
+          delete extData.installType;
+        });
+
+        it('should resolve w/ an appropriate warning', async function () {
+          await expect(config.getGenericConfigWarnings(extData, extData.pkgName)).to.eventually.eql(
+            [
+              `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) has 1 invalid or missing field ("installType") in \`extensions.yaml\`; this may cause upgrades done via the \`appium\` CLI tool to fail. Please reinstall with \`appium driver uninstall ${extData.pkgName}\` and \`appium driver install ${extData.pkgName}\` to attempt a fix.`,
+            ]
+          );
+        });
+      });
+
+      describe('when the extension data is missing both `installType` and `installSpec` fields', function () {
+        beforeEach(function () {
+          delete extData.installType;
+          delete extData.installSpec;
+        });
+
+        it('should resolve w/ an appropriate warning', async function () {
+          await expect(config.getGenericConfigWarnings(extData, extData.pkgName)).to.eventually.eql(
+            [
+              `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) has 2 invalid or missing fields ("installSpec", "installType") in \`extensions.yaml\`; this may cause upgrades done via the \`appium\` CLI tool to fail. Please reinstall with \`appium driver uninstall ${extData.pkgName}\` and \`appium driver install ${extData.pkgName}\` to attempt a fix.`,
+            ]
+          );
+        });
+      });
+
+      describe('when the extension data is missing an `appiumVersion` field', function () {
+        beforeEach(function () {
+          delete extData.appiumVersion;
+        });
+
+        describe('when an upgrade is not available', function () {
+          beforeEach(function () {
+            MockAppiumSupport.npm.getLatestSafeUpgradeVersion.resolves(null);
+            MockAppiumSupport.npm.getLatestVersion.resolves(null);
+          });
+          it('should resolve w/ an appropriate warning', async function () {
+            await expect(
+              config.getGenericConfigWarnings(extData, extData.pkgName)
+            ).to.eventually.eql([
+              `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to an invalid or missing peer dependency on Appium. Please ask the developer of \`${extData.pkgName}\` to add a peer dependency on \`^appium@${APPIUM_VER}\`.`,
+            ]);
+          });
+        });
+
+        describe('when an upgrade is available', function () {
+          let updateVersion;
+
+          beforeEach(function () {
+            updateVersion = '1.1.0';
+            MockAppiumSupport.npm.getLatestVersion.resolves(updateVersion);
+            MockAppiumSupport.npm.getLatestSafeUpgradeVersion.resolves(updateVersion);
+          });
+
+          it('should resolve w/ an appropriate warning', async function () {
+            await expect(
+              config.getGenericConfigWarnings(extData, extData.pkgName)
+            ).to.eventually.eql([
+              `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to an invalid or missing peer dependency on Appium. A newer version of \`${extData.pkgName}\` is available; please attempt to upgrade "${extData.pkgName}" to v${updateVersion} or newer.`,
+            ]);
+          });
+        });
+      });
+
+      describe('when the extension data has an `appiumVersion` field which does not satisfy the current version of Appium', function () {
+        beforeEach(function () {
+          extData.appiumVersion = '1.9.9';
+        });
+
+        describe('when an upgrade is available', function () {
+          let updateVersion;
+
+          beforeEach(function () {
+            updateVersion = '1.1.0';
+            MockAppiumSupport.npm.getLatestVersion.resolves(updateVersion);
+            MockAppiumSupport.npm.getLatestSafeUpgradeVersion.resolves(updateVersion);
+          });
+
+          it('should resolve w/ an appropriate warning', async function () {
+            await expect(
+              config.getGenericConfigWarnings(extData, extData.pkgName)
+            ).to.eventually.eql([
+              `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to its peer dependency on Appium ${extData.appiumVersion}. Try to upgrade \`${extData.pkgName}\` to v${updateVersion} or newer.`,
+            ]);
+          });
+        });
+
+        describe('when no upgrade is available', function () {
+          beforeEach(function () {
+            MockAppiumSupport.util.compareVersions.returns(false);
+            MockAppiumSupport.npm.getLatestSafeUpgradeVersion.resolves(null);
+            MockAppiumSupport.npm.getLatestVersion.resolves(null);
+          });
+          it('should resolve w/ an appropriate warning', async function () {
+            await expect(
+              config.getGenericConfigWarnings(extData, extData.pkgName)
+            ).to.eventually.eql([
+              `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to its peer dependency on Appium ${extData.appiumVersion}. Please install a compatible version of the driver.`,
+            ]);
+          });
+        });
+      });
+    });
+
+    describe('_validate()', function () {
+      describe('when there is a single warning', function () {
+        beforeEach(function () {
+          sandbox.stub(config, 'getProblems').resolves([]);
+          sandbox.stub(config, 'getWarnings').resolves([{err: 'some warning', val: 'whatever'}]);
+        });
+
+        it('should display a warning count of 1', async function () {
+          await config._validate({foo: {}});
+          expect(
+            (MockAppiumSupport.logger.__logger as any).warn.calledWith(
+              'Appium encountered 1 warning while validating drivers found in manifest /some/path/extensions.yaml'
+            )
+          ).to.be.true;
+        });
+      });
+
+      describe('when there is a single error', function () {
+        beforeEach(function () {
+          sandbox.stub(config, 'getProblems').resolves([{err: 'some warning', val: 'whatever'}]);
+          sandbox.stub(config, 'getWarnings').resolves([]);
+        });
+
+        it('should display an error count of 1', async function () {
+          await config._validate({foo: {}});
+          expect(
+            (MockAppiumSupport.logger.__logger as any).error.calledWith(
+              'Appium encountered 1 error while validating drivers found in manifest /some/path/extensions.yaml'
+            )
+          ).to.be.true;
+        });
+      });
+    });
+
+    describe('require()', function () {
+      beforeEach(function () {
+        // the `ExtensionConfig` instance doesn't know about fake driver, since it hasn't been
+        // loaded yet.  all we need for the purposes of the `require()` function is a `mainClass`, so
+        // here we go.
+        config.installedExtensions.fake = {pkgName: 'flotsam', mainClass: 'Jetsam'};
+      });
+
+      describe('when the extension is not actually installed', function () {
+        it('should throw', async function () {
+          await expect(config.requireAsync('fake')).to.be.rejectedWith(/cannot find module/i);
+        });
+      });
+
+      describe('when the extension does not export its main class', function () {
+        beforeEach(function () {
+          // since we can't easily mock `require.resolve()` and `require()`, we need to use a real thing.
+          // that real thing will be `@appium/fake-driver`.
+          // ()`config.appiumHome` is stubbed already, so we can't just run `getInstallPath` as-is)
+          sandbox.stub(config, 'getInstallPath').returns(FAKE_DRIVER_DIR);
+        });
+        it('should throw', async function () {
+          await expect(config.requireAsync('fake')).to.be.rejectedWith(/cannot find module/i);
+        });
+      });
+
+      describe('when extension is installed and correctly exports its main class', function () {
+        const pluginModuleRoot = path.join(PROJECT_ROOT, 'packages', 'relaxed-caps-plugin');
+        const packageJsonPath = path.join(pluginModuleRoot, 'package.json');
+        const entryPointPath = path.join(pluginModuleRoot, 'build', 'lib', 'index.js');
+
+        beforeEach(function () {
+          config.installedExtensions['relaxed-caps'] = {
+            mainClass: 'RelaxedCapsPlugin',
+          };
+          sandbox.stub(config, 'getInstallPath').returns(pluginModuleRoot);
+          // _resolveExtension reads package.json and uses manifest.main; delegate to real fs for this path
+          MockAppiumSupport.fs.readFile
+            .withArgs(packageJsonPath, 'utf8')
+            .callsFake(async () => (await import('node:fs/promises')).readFile(packageJsonPath, 'utf8'));
+          MockAppiumSupport.fs.exists.withArgs(entryPointPath).resolves(true);
+        });
+
+        it('should return the class by loading from the manifest main entry point', async function () {
+          expect(await config.requireAsync('relaxed-caps')).to.equal(
+            require('@appium/relaxed-caps-plugin').RelaxedCapsPlugin
+          );
+        });
+      });
+    });
+  });
+});

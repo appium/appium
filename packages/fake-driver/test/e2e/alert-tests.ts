@@ -16,7 +16,7 @@ function alertTests() {
 
     it('should not work with alerts when one is not present', async function () {
       const noAlertMessage = 'modal dialog when one was not open';
-      let e = await driver.getAlertText().catch((err: Error) => err);
+      let e: unknown = await driver.getAlertText().catch((err: Error) => err);
       expect(e).to.be.an('error');
       expect((e as Error).message).to.include(noAlertMessage);
       e = await driver.sendAlertText('foo').catch((err: Error) => err);

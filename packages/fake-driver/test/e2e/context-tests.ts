@@ -4,7 +4,7 @@ import {initSession, deleteSession, W3C_PREFIXED_CAPS} from '../helpers';
 
 chai.use(chaiAsPromised);
 
-function contextTests() {
+export function contextTests() {
   describe('contexts, webviews, frames', function () {
     let driver: Awaited<ReturnType<typeof initSession>>;
     before(async function () {
@@ -58,5 +58,3 @@ function contextTests() {
     });
   });
 }
-
-export default contextTests;

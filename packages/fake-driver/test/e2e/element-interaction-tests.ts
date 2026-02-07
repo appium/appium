@@ -4,7 +4,7 @@ import {initSession, deleteSession, W3C_PREFIXED_CAPS} from '../helpers';
 
 chai.use(chaiAsPromised);
 
-function elementTests() {
+export function elementTests() {
   describe('element interaction and introspection', function () {
     let driver: Awaited<ReturnType<typeof initSession>>;
 
@@ -118,4 +118,3 @@ function elementTests() {
   });
 }
 
-export default elementTests;

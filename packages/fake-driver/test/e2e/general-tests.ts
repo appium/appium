@@ -4,7 +4,7 @@ import {initSession, deleteSession, W3C_PREFIXED_CAPS} from '../helpers';
 
 chai.use(chaiAsPromised);
 
-function generalTests() {
+export function generalTests() {
   describe('generic actions', function () {
     let driver: Awaited<ReturnType<typeof initSession>>;
 
@@ -149,5 +149,3 @@ function generalTests() {
     });
   });
 }
-
-export default generalTests;

@@ -11,11 +11,11 @@ import {
   TEST_PORT,
   W3C_PREFIXED_CAPS,
 } from '../helpers';
-import contextTests from './context-tests';
-import findElementTests from './find-element-tests';
-import elementInteractionTests from './element-interaction-tests';
-import alertTests from './alert-tests';
-import generalTests from './general-tests';
+import {contextTests} from './context-tests';
+import {findElementTests} from './find-element-tests';
+import {elementTests as elementInteractionTests} from './element-interaction-tests';
+import {alertTests} from './alert-tests';
+import {generalTests} from './general-tests';
 
 chai.use(chaiAsPromised);
 

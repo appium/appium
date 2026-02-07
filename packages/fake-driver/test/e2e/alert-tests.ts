@@ -4,7 +4,7 @@ import {initSession, deleteSession, W3C_PREFIXED_CAPS} from '../helpers';
 
 chai.use(chaiAsPromised);
 
-function alertTests() {
+export function alertTests() {
   describe('alerts', function () {
     let driver: Awaited<ReturnType<typeof initSession>>;
     before(async function () {
@@ -58,5 +58,3 @@ function alertTests() {
     });
   });
 }
-
-export default alertTests;

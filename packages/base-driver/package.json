@@ -50,7 +50,7 @@
     "@colors/colors": "1.6.0",
     "async-lock": "1.4.1",
     "asyncbox": "6.1.0",
-    "axios": "1.13.4",
+    "axios": "1.13.5",
     "bluebird": "3.7.2",
     "body-parser": "2.2.2",
     "express": "5.2.1",
@@ -62,7 +62,7 @@
     "morgan": "1.10.1",
     "path-to-regexp": "8.3.0",
     "serve-favicon": "2.5.1",
-    "type-fest": "5.4.3"
+    "type-fest": "5.4.4"
   },
   "optionalDependencies": {
     "spdy": "4.0.2"

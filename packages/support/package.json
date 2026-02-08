@@ -47,7 +47,7 @@
     "@appium/types": "^1.2.0",
     "@colors/colors": "1.6.0",
     "archiver": "7.0.1",
-    "axios": "1.13.4",
+    "axios": "1.13.5",
     "base64-stream": "1.0.0",
     "bluebird": "3.7.2",
     "bplist-creator": "0.1.1",
@@ -72,7 +72,7 @@
     "shell-quote": "1.8.3",
     "supports-color": "10.2.2",
     "teen_process": "4.0.9",
-    "type-fest": "5.4.3",
+    "type-fest": "5.4.4",
     "uuid": "13.0.0",
     "which": "6.0.0",
     "yauzl": "3.2.0"

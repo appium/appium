@@ -73,7 +73,7 @@
     "ajv-formats": "3.0.1",
     "argparse": "2.0.1",
     "async-lock": "1.4.1",
-    "axios": "1.13.4",
+    "axios": "1.13.5",
     "bluebird": "3.7.2",
     "lilconfig": "3.1.3",
     "lodash": "4.17.23",
@@ -83,7 +83,7 @@
     "resolve-from": "5.0.0",
     "semver": "7.7.4",
     "teen_process": "4.0.9",
-    "type-fest": "5.4.3",
+    "type-fest": "5.4.4",
     "winston": "3.19.0",
     "ws": "8.19.0",
     "yaml": "2.8.2"

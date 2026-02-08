@@ -71,8 +71,8 @@ export async function click(this: FakeDriver, elementId: string): Promise<void> 
 
 export async function getAttribute(
   this: FakeDriver,
-  elementId: string,
-  attributeName: string
+  attributeName: string,
+  elementId: string
 ): Promise<string> {
   const el = this.getElement(elementId);
   return el.getAttr(attributeName);
@@ -103,6 +103,7 @@ export async function getCssProperty(
   propertyName: string,
   elementId: string
 ): Promise<string> {
+  this.assertWebviewContext();
   const el = this.getElement(elementId);
   return el.getCss(propertyName) ?? '';
 }

@@ -265,7 +265,7 @@ describe('schema', function () {
         registerSchema(
           DRIVER_TYPE,
           'fake',
-          require('@appium/fake-driver/build/lib/fake-driver-schema').schema
+          require('@appium/fake-driver/build/lib/fake-driver-schema').default
         );
         finalizeSchema();
 

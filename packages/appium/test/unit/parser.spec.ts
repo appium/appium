@@ -180,7 +180,7 @@ describe('parser', function () {
         schema.registerSchema(
           DRIVER_TYPE,
           'fake',
-          require('@appium/fake-driver/build/lib/fake-driver-schema').schema
+          require('@appium/fake-driver/build/lib/fake-driver-schema').default
         );
         schema.finalizeSchema();
         p = getParser(true);

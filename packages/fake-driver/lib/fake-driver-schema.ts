@@ -21,7 +21,7 @@ export interface FakeDriverSchema {
   };
 }
 
-export const schema: FakeDriverSchema = {
+const schema: FakeDriverSchema = {
   type: 'object',
   title: 'Fake Driver Configuration',
   description: 'A schema for Fake Driver arguments',
@@ -39,3 +39,5 @@ export const schema: FakeDriverSchema = {
     },
   },
 };
+
+export default schema;

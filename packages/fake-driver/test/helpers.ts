@@ -31,17 +31,19 @@ const WD_OPTS = {
   hostname: TEST_HOST,
   port: TEST_PORT,
   connectionRetryCount: 0,
-  logLevel: 'error',
+  logLevel: 'error' as const,
 };
 
-async function initSession(w3cPrefixedCaps) {
+async function initSession(w3cPrefixedCaps: object) {
   return await wdio({...WD_OPTS, capabilities: w3cPrefixedCaps});
 }
 
-async function deleteSession(driver) {
+async function deleteSession(driver: Awaited<ReturnType<typeof wdio>>) {
   try {
     await driver.deleteSession();
-  } catch {}
+  } catch {
+    // ignore
+  }
 }
 
 export {

@@ -581,7 +581,7 @@ describe('FakeDriver via HTTP', function () {
     });
 
     it('should interpret the bidi protocol and let the driver handle it by command', async function () {
-      expect(await driver.getUrl()).to.not.exist;
+      expect(await driver.getUrl()).to.not.be.ok;
 
       await driver.browsingContextNavigate({
         context: 'foo',
@@ -644,7 +644,7 @@ describe('FakeDriver via HTTP', function () {
     });
 
     it('should interpret the bidi protocol and let the driver handle it by command', async function () {
-      expect(await driver.getUrl()).to.not.exist;
+      expect(await driver.getUrl()).to.not.be.ok;
 
       await driver.browsingContextNavigate({
         context: 'foo',
@@ -731,7 +731,7 @@ describe('Bidi over SSL', function () {
   });
 
   it('should still run bidi over ssl', async function () {
-    expect(await driver.getUrl()).to.not.exist;
+    expect(await driver.getUrl()).to.not.be.ok;
 
     await driver.browsingContextNavigate({
       context: 'foo',

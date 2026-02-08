@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import {Element} from '@appium/types';
 import {errors} from 'appium/driver';
-import {FakeElement} from '../fake-element';
+import {FakeElement, type XmlNodeLike} from '../fake-element';
 import type {FakeDriver} from '../driver';
 import {util} from 'appium/support';
 
@@ -19,14 +19,32 @@ export function getExistingElementForNode(
   return null;
 }
 
-export function wrapNewEl(this: FakeDriver, obj: FakeElement): Element {
-  const existingElId = this.getExistingElementForNode(obj);
-  if (existingElId) {
-    return {ELEMENT: existingElId, [W3C_WEB_ELEMENT_IDENTIFIER]: existingElId};
+/** Accepts either a FakeElement (reuse existing id) or a raw XmlNodeLike from xpath. */
+export function wrapNewEl(
+  this: FakeDriver,
+  obj: FakeElement | XmlNodeLike
+): Element {
+  const node: XmlNodeLike = _.has(obj, 'node') && (obj as FakeElement).node
+      ? (obj as FakeElement).node
+      : (obj as XmlNodeLike);
+
+  if (_.has(obj, 'node')) {
+    const existingElId = this.getExistingElementForNode(obj as FakeElement);
+    if (existingElId) {
+      return {ELEMENT: existingElId, [W3C_WEB_ELEMENT_IDENTIFIER]: existingElId};
+    }
+  } else {
+    // raw node: reuse id if we already have an element for this node
+    for (const [id, el] of _.toPairs(this.elMap)) {
+      if (el.node === node) {
+        return {ELEMENT: id, [W3C_WEB_ELEMENT_IDENTIFIER]: id};
+      }
+    }
   }
+
   this.maxElId++;
   const maxElId = this.maxElId.toString();
-  this.elMap[maxElId] = new FakeElement(obj.node, this.appModel);
+  this.elMap[maxElId] = new FakeElement(node, this.appModel);
   return {ELEMENT: maxElId, [W3C_WEB_ELEMENT_IDENTIFIER]: maxElId};
 }
 
@@ -75,9 +93,9 @@ async function findElOrElsImpl<Ctx = unknown>(
 
   if (els.length) {
     if (mult) {
-      return els.map((el) => this.wrapNewEl(el as FakeElement));
+      return els.map((el) => this.wrapNewEl(el as XmlNodeLike));
     }
-    return this.wrapNewEl(els[0] as FakeElement);
+    return this.wrapNewEl(els[0] as XmlNodeLike);
   }
   if (mult) {
     return [];

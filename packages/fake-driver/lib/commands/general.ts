@@ -108,7 +108,7 @@ export async function fakeAddition(
 }
 
 export async function getUrl(this: FakeDriver): Promise<string> {
-  return this.url;
+  return this.url ?? '';
 }
 
 export async function bidiNavigate(

@@ -46,7 +46,7 @@
     "get-port": "7.1.0",
     "lodash": "4.17.23",
     "sinon": "21.0.1",
-    "type-fest": "5.4.3"
+    "type-fest": "5.4.4"
   },
   "devDependencies": {
     "@appium/types": "^1.2.0"

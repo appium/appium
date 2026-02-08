@@ -1,70 +1,37 @@
-import {FakeDriver} from '../driver';
+import type {FakeDriver} from '../driver';
 import {errors} from 'appium/driver';
-import {mixin} from './mixin';
 
-interface FakeDriverAlertMixin {
-  assertNoAlert(): void;
-  assertAlert(): void;
-
-  getAlertText(): Promise<string>;
-
-  setAlertText(text: string): Promise<void>;
-
-  postAcceptAlert(): Promise<void>;
-  postDismissAlert(): Promise<void>;
+export function assertNoAlert(this: FakeDriver): void {
+  if (this.appModel.hasAlert()) {
+    throw new errors.UnexpectedAlertOpenError();
+  }
 }
 
-declare module '../driver' {
-  interface FakeDriver extends FakeDriverAlertMixin {}
+export function assertAlert(this: FakeDriver): void {
+  if (!this.appModel.hasAlert()) {
+    throw new errors.NoAlertOpenError();
+  }
 }
 
-const AlertMixin: FakeDriverAlertMixin = {
-  assertNoAlert(this: FakeDriver) {
-    if (this.appModel.hasAlert()) {
-      throw new errors.UnexpectedAlertOpenError();
-    }
-  },
+export async function getAlertText(this: FakeDriver): Promise<string> {
+  assertAlert.call(this);
+  return this.appModel.alertText();
+}
 
-  assertAlert(this: FakeDriver) {
-    if (!this.appModel.hasAlert()) {
-      throw new errors.NoAlertOpenError();
-    }
-  },
+export async function setAlertText(this: FakeDriver, text: string): Promise<void> {
+  assertAlert.call(this);
+  try {
+    this.appModel.setAlertText(text);
+  } catch {
+    throw new errors.InvalidElementStateError();
+  }
+}
 
-  /**
-   * Get the text of an alert
-   */
-  async getAlertText(this: FakeDriver) {
-    this.assertAlert();
-    return this.appModel.alertText();
-  },
+export async function postAcceptAlert(this: FakeDriver): Promise<void> {
+  assertAlert.call(this);
+  this.appModel.handleAlert();
+}
 
-  /**
-   * Set the text of an alert
-   */
-  async setAlertText(this: FakeDriver, text: string) {
-    this.assertAlert();
-    try {
-      this.appModel.setAlertText(text);
-    } catch {
-      throw new errors.InvalidElementStateError();
-    }
-  },
-
-  /**
-   * Accept an alert
-   */
-  async postAcceptAlert(this: FakeDriver) {
-    this.assertAlert();
-    this.appModel.handleAlert();
-  },
-
-  /**
-   * Dismiss an alert
-   */
-  async postDismissAlert(this: FakeDriver) {
-    return this.postAcceptAlert();
-  },
-};
-
-mixin(AlertMixin);
+export async function postDismissAlert(this: FakeDriver): Promise<void> {
+  return postAcceptAlert.call(this);
+}

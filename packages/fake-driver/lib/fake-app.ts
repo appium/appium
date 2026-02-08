@@ -3,18 +3,15 @@ import {readFileSync} from 'node:fs';
 import path from 'node:path';
 import XMLDom from '@xmldom/xmldom';
 import * as xpath from 'xpath';
-import log from './logger';
+import {log} from './logger';
 import _ from 'lodash';
 import {FakeElement, type XmlNodeLike} from './fake-element';
-import type {Location} from '@appium/types';
-import type {Orientation} from '@appium/types';
+import type {ActionSequence, Location, Orientation} from '@appium/types';
+import type {Document as XMLDocument, Node as XMLNode} from '@xmldom/xmldom';
 
 const SCREENSHOT = path.join(__dirname, 'screen.png');
 
-/** Document type from @xmldom/xmldom (avoids conflict with DOM lib) */
-type XMLDocument = import('@xmldom/xmldom').Document;
-
-interface FakeWebView {
+export interface FakeWebView {
   node: XmlNodeLike;
 }
 
@@ -26,11 +23,11 @@ export class FakeApp {
   activeAlert: FakeElement | null;
   lat: number;
   long: number;
-  _width: number | null;
-  _height: number | null;
+  private _width: number | null;
+  private _height: number | null;
   rawXml: string;
   currentOrientation: Orientation;
-  actionLog: import('@appium/types').ActionSequence[][];
+  actionLog: ActionSequence[][];
 
   constructor() {
     this.dom = null;
@@ -76,17 +73,25 @@ export class FakeApp {
     if (this._width === null) {
       this.setDims();
     }
-    return this._width!;
+    const w = this._width;
+    if (w === null) {
+      throw new Error('Cannot fetch app dimensions');
+    }
+    return w;
   }
 
   get height(): number {
-    if (this._width === null) {
+    if (this._height === null) {
       this.setDims();
     }
-    return this._height!;
+    const h = this._height;
+    if (h === null) {
+      throw new Error('Cannot fetch app dimensions');
+    }
+    return h;
   }
 
-  setDims(): void {
+  private setDims(): void {
     const nodes = this.xpathQuery('//app');
     if (!_.isArray(nodes)) {
       throw new Error(
@@ -115,13 +120,13 @@ export class FakeApp {
 
   getWebviews(): FakeWebView[] {
     const nodes = this.xpathQuery('//MockWebView/*[1]');
-    return _.isArray(nodes) ? nodes.map((n) => new FakeWebView(n as unknown as XmlNodeLike)) : [];
+    return _.isArray(nodes) ? nodes.map((n) => new FakeWebViewImpl(n as unknown as XmlNodeLike)) : [];
   }
 
   activateWebview(wv: FakeWebView): void {
     this.activeWebview = wv;
     const fragment = new XMLDom.XMLSerializer().serializeToString(
-      wv.node as unknown as import('@xmldom/xmldom').Node
+      wv.node as unknown as XMLNode
     );
     this.activeDom = new XMLDom.DOMParser().parseFromString(
       fragment,
@@ -137,7 +142,7 @@ export class FakeApp {
   activateFrame(frame: XMLDocument): void {
     this.activeFrame = frame;
     const fragment = new XMLDom.XMLSerializer().serializeToString(
-      frame as unknown as import('@xmldom/xmldom').Node
+      frame as unknown as XMLNode
     );
     this.activeDom = new XMLDom.DOMParser().parseFromString(
       fragment,
@@ -210,8 +215,8 @@ export class FakeApp {
   }
 }
 
-class FakeWebView implements FakeWebView {
-  node: XmlNodeLike;
+export class FakeWebViewImpl implements FakeWebView {
+  readonly node: XmlNodeLike;
   constructor(node: XmlNodeLike) {
     this.node = node;
   }

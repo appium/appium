@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import XMLDom from '@xmldom/xmldom';
+import type {Document as XMLDocument, Node as XMLNode} from '@xmldom/xmldom';
 import type {FakeApp} from './fake-app';
 
 export interface XmlNodeLike {
@@ -8,10 +9,10 @@ export interface XmlNodeLike {
 }
 
 export class FakeElement {
-  app: FakeApp;
-  type: string;
-  nodeAttrs: Record<string, string>;
-  node: XmlNodeLike;
+  readonly app: FakeApp;
+  readonly type: string;
+  readonly nodeAttrs: Record<string, string>;
+  readonly node: XmlNodeLike;
   attrs: Record<string, string>;
   css: Record<string, string>;
 
@@ -28,7 +29,7 @@ export class FakeElement {
     this.parseCss();
   }
 
-  parseCss(): void {
+  private parseCss(): void {
     if (this.nodeAttrs.style) {
       const segments = this.nodeAttrs.style.split(';');
       for (const s of segments) {
@@ -106,13 +107,13 @@ export class FakeElement {
     return null;
   }
 
-  get xmlFragment(): import('@xmldom/xmldom').Document {
+  get xmlFragment(): XMLDocument {
     const frag = new XMLDom.XMLSerializer().serializeToString(
-      this.node as unknown as import('@xmldom/xmldom').Node
+      this.node as unknown as XMLNode
     );
     return new XMLDom.DOMParser().parseFromString(
       frag,
       XMLDom.MIME_TYPE.XML_TEXT
-    ) as import('@xmldom/xmldom').Document;
+    ) as XMLDocument;
   }
 }

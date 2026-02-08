@@ -1,37 +1,104 @@
 import B from 'bluebird';
-import type {Request, Response} from 'express';
+import type {Express, Request, Response} from 'express';
+import type {Server as HttpServer} from 'node:http';
 import {BaseDriver, errors} from 'appium/driver';
-import type {DriverData} from '@appium/types';
+import type {DriverData, InitialOpts} from '@appium/types';
 import {desiredCapConstraints} from './desired-caps';
 import type {FakeDriverConstraints} from './desired-caps';
 import type {FakeDriverCaps, W3CFakeDriverCaps} from './types';
 import {FakeApp} from './fake-app';
 import type {FakeElement} from './fake-element';
+import * as alertCommands from './commands/alert';
+import * as contextsCommands from './commands/contexts';
+import * as elementCommands from './commands/element';
+import * as findCommands from './commands/find';
+import * as generalCommands from './commands/general';
 
 export type {FakeDriverConstraints};
 export type {Orientation} from '@appium/types';
 
-/**
- * @template [Thing=any]
- */
+/** Driver supporting a generic "fake thing" value (getFakeThing / setFakeThing). */
 export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraints> {
   readonly desiredCapConstraints = desiredCapConstraints;
 
   curContext: string;
-  appModel: FakeApp;
+  readonly appModel: FakeApp;
   _proxyActive: boolean;
   shook: boolean;
   focusedElId: string | null;
   fakeThing: Thing | null;
   maxElId: number;
   elMap: Record<string, FakeElement>;
-  _bidiProxyUrl: string | null;
-  _clockRunning = false;
+  private _bidiProxyUrl: string | null;
+  private _clockRunning = false;
+  url: string = '';
 
-  constructor(
-    opts: import('@appium/types').InitialOpts = {} as import('@appium/types').InitialOpts,
-    shouldValidateCaps = true
-  ) {
+  // Alert commands
+  assertNoAlert = alertCommands.assertNoAlert;
+  assertAlert = alertCommands.assertAlert;
+  getAlertText = alertCommands.getAlertText;
+  setAlertText = alertCommands.setAlertText;
+  postAcceptAlert = alertCommands.postAcceptAlert;
+  postDismissAlert = alertCommands.postDismissAlert;
+
+  // Context commands
+  getRawContexts = contextsCommands.getRawContexts;
+  assertWebviewContext = contextsCommands.assertWebviewContext;
+  getCurrentContext = contextsCommands.getCurrentContext;
+  getContexts = contextsCommands.getContexts;
+  setContext = contextsCommands.setContext;
+  setFrame = contextsCommands.setFrame;
+
+  // Element commands
+  getElements = elementCommands.getElements;
+  getElement = elementCommands.getElement;
+  getName = elementCommands.getName;
+  elementDisplayed = elementCommands.elementDisplayed;
+  elementEnabled = elementCommands.elementEnabled;
+  elementSelected = elementCommands.elementSelected;
+  setValue = elementCommands.setValue;
+  getText = elementCommands.getText;
+  clear = elementCommands.clear;
+  click = elementCommands.click;
+  getAttribute = elementCommands.getAttribute;
+  getElementRect = elementCommands.getElementRect;
+  getSize = elementCommands.getSize;
+  equalsElement = elementCommands.equalsElement;
+  getCssProperty = elementCommands.getCssProperty;
+  getLocation = elementCommands.getLocation;
+  getLocationInView = elementCommands.getLocationInView;
+
+  // Find commands
+  getExistingElementForNode = findCommands.getExistingElementForNode;
+  wrapNewEl = findCommands.wrapNewEl;
+  findElOrEls = findCommands.findElOrEls;
+  findElement = findCommands.findElement;
+  findElements = findCommands.findElements;
+  findElementFromElement = findCommands.findElementFromElement;
+  findElementsFromElement = findCommands.findElementsFromElement;
+
+  // General commands
+  title = generalCommands.title;
+  keys = generalCommands.keys;
+  setGeoLocation = generalCommands.setGeoLocation;
+  getGeoLocation = generalCommands.getGeoLocation;
+  getPageSource = generalCommands.getPageSource;
+  getOrientation = generalCommands.getOrientation;
+  setOrientation = generalCommands.setOrientation;
+  getScreenshot = generalCommands.getScreenshot;
+  getWindowSize = generalCommands.getWindowSize;
+  getWindowRect = generalCommands.getWindowRect;
+  performActions = generalCommands.performActions;
+  releaseActions = generalCommands.releaseActions;
+  getLog = generalCommands.getLog;
+  mobileShake = generalCommands.mobileShake;
+  doubleClick = generalCommands.doubleClick;
+  execute = generalCommands.execute;
+  fakeAddition = generalCommands.fakeAddition;
+  getUrl = generalCommands.getUrl;
+  bidiNavigate = generalCommands.bidiNavigate;
+
+  constructor(opts: InitialOpts = {} as InitialOpts, shouldValidateCaps = true) {
     super(opts, shouldValidateCaps);
     this.curContext = 'NATIVE_APP';
     this.elMap = {};
@@ -103,7 +170,7 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
     return [sessionId, caps];
   }
 
-  async deleteSession(sessionId?: string): Promise<void> {
+  override async deleteSession(sessionId?: string): Promise<void> {
     this.stopClock();
     return await super.deleteSession(sessionId);
   }
@@ -116,7 +183,7 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
     return ['1'];
   }
 
-  get driverData(): {isUnique: boolean} {
+  override get driverData(): {isUnique: boolean} {
     return {
       isUnique: !!this.caps.uniqueApp,
     };
@@ -125,21 +192,6 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
   async getFakeThing(): Promise<Thing | null> {
     await B.delay(1);
     return this.fakeThing;
-  }
-
-  async startClock(): Promise<void> {
-    this._clockRunning = true;
-    while (this._clockRunning) {
-      await B.delay(500);
-      this.eventEmitter.emit('bidiEvent', {
-        method: 'appium:clock.currentTime',
-        params: {time: Date.now()},
-      });
-    }
-  }
-
-  stopClock(): void {
-    this._clockRunning = false;
   }
 
   async setFakeThing(thing: Thing): Promise<null> {
@@ -170,6 +222,21 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
   async doSomeMath2(num1: number, num2: number): Promise<number> {
     await B.delay(1);
     return num1 + num2;
+  }
+
+  private async startClock(): Promise<void> {
+    this._clockRunning = true;
+    while (this._clockRunning) {
+      await B.delay(500);
+      this.eventEmitter.emit('bidiEvent', {
+        method: 'appium:clock.currentTime',
+        params: {time: Date.now()},
+      });
+    }
+  }
+
+  private stopClock(): void {
+    this._clockRunning = false;
   }
 
   static newBidiCommands = {
@@ -236,8 +303,8 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
   }
 
   static async updateServer(
-    expressApp: import('express').Express,
-    httpServer: import('http').Server,
+    expressApp: Express,
+    httpServer: HttpServer,
     cliArgs: Record<string, unknown>
   ): Promise<void> {
     expressApp.all('/fakedriver', FakeDriver.fakeRoute);
@@ -246,7 +313,3 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
     });
   }
 }
-
-import './commands';
-
-export default FakeDriver;

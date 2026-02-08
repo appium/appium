@@ -652,8 +652,11 @@ export class ExtensionConfig {
     } else {
       moduleObject = argSchemaPath;
     }
-    // this sucks. default exports should be destroyed
-    const schema = moduleObject.__esModule ? moduleObject.default : moduleObject;
+    // Support default export, named `schema` export, or CJS module.exports
+    const schema =
+      moduleObject?.default ??
+      moduleObject?.schema ??
+      moduleObject;
     registerSchema(extType, extName, schema);
     return schema;
   }

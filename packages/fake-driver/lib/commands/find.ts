@@ -44,18 +44,24 @@ async function findElOrEls<Ctx = any>(
   if (selector === 'badsel') {
     throw new errors.InvalidSelectorError();
   }
-  const els = this.appModel[qMap[strategy]](selector, context);
+  const methodName = qMap[strategy];
+  const raw = (this.appModel[methodName] as (sel: string, ctx?: unknown) => unknown).call(
+    this.appModel,
+    selector,
+    context
+  );
+  const els = _.isArray(raw) ? raw : raw ? [raw] : [];
 
   let retval: Element | Element[];
   if (els.length) {
     if (mult) {
       const allEls: Element[] = [];
       for (const el of els) {
-        allEls.push(this.wrapNewEl(el));
+        allEls.push(this.wrapNewEl(el as import('../fake-element').FakeElement));
       }
       retval = allEls;
     } else {
-      retval = this.wrapNewEl(els[0]);
+      retval = this.wrapNewEl(els[0] as import('../fake-element').FakeElement);
     }
   } else if (mult) {
     retval = [];
@@ -98,9 +104,9 @@ declare module '../driver' {
 }
 
 const FindMixin: FakeDriverFindMixin = {
-  getExistingElementForNode(this: FakeDriver, node) {
+  getExistingElementForNode(this: FakeDriver, node: FakeElement) {
     for (const [id, el] of _.toPairs(this.elMap)) {
-      if (el.node === node) {
+      if (el.node === node.node) {
         return id;
       }
     }
@@ -117,7 +123,7 @@ const FindMixin: FakeDriverFindMixin = {
     // otherwise add the element to the map
     this.maxElId++;
     const maxElId = this.maxElId.toString();
-    this.elMap[maxElId] = new FakeElement(obj, this.appModel);
+    this.elMap[maxElId] = new FakeElement(obj.node, this.appModel);
     return {ELEMENT: maxElId, [W3C_WEB_ELEMENT_IDENTIFIER]: maxElId};
   },
 

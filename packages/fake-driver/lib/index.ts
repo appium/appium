@@ -5,9 +5,9 @@ const DEFAULT_HOST = 'localhost';
 const DEFAULT_PORT = 4774;
 
 async function main() {
-  const getArgValue = (/** @type {string} */ argName) => {
+  const getArgValue = (argName: string): string | null => {
     const argIndex = process.argv.indexOf(argName);
-    return argIndex > 0 ? process.argv[argIndex + 1] : null;
+    return argIndex > 0 ? process.argv[argIndex + 1] ?? null : null;
   };
   const port = parseInt(String(getArgValue('--port')), 10) || DEFAULT_PORT;
   const host = getArgValue('--host') || DEFAULT_HOST;
@@ -15,8 +15,5 @@ async function main() {
 }
 
 export {FakeDriver, startServer, main};
-
-/**
- * @typedef {import('./types').W3CFakeDriverCaps} W3CFakeDriverCaps
- * @typedef {import('./types').FakeDriverCaps} FakeDriverCaps
- */
+export type {FakeDriverCaps, W3CFakeDriverCaps} from './types';
+export default FakeDriver;

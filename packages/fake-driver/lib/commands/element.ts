@@ -65,10 +65,7 @@ const ElementsMixin: FakeDriverElementsMixin = {
   },
 
   async setValue(this: FakeDriver, keys: string | string[], elementId: string) {
-    let value = keys;
-    if (keys instanceof Array) {
-      value = keys.join('');
-    }
+    const value = _.isArray(keys) ? keys.join('') : keys;
     const el = this.getElement(elementId);
     if (el.type !== 'MockInputField') {
       throw new errors.InvalidElementStateError();

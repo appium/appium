@@ -100,10 +100,9 @@ export async function equalsElement(
 
 export async function getCssProperty(
   this: FakeDriver,
-  elementId: string,
-  propertyName: string
+  propertyName: string,
+  elementId: string
 ): Promise<string> {
-  this.assertWebviewContext();
   const el = this.getElement(elementId);
   return el.getCss(propertyName) ?? '';
 }

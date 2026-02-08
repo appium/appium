@@ -123,9 +123,9 @@ export async function findElements(
 
 export async function findElementFromElement(
   this: FakeDriver,
-  elementId: string,
   strategy: string,
-  selector: string
+  selector: string,
+  elementId: string
 ): Promise<Element> {
   const el = this.getElement(elementId);
   return this.findElOrEls(strategy, selector, false, el.xmlFragment);
@@ -133,9 +133,9 @@ export async function findElementFromElement(
 
 export async function findElementsFromElement(
   this: FakeDriver,
-  elementId: string,
   strategy: string,
-  selector: string
+  selector: string,
+  elementId: string
 ): Promise<Element[]> {
   const el = this.getElement(elementId);
   return this.findElOrEls(strategy, selector, true, el.xmlFragment);

@@ -23,8 +23,13 @@ export class FakeElement {
     this.type = xmlNode.tagName;
     this.attrs = {};
     this.css = {};
-    for (const {name, value} of _.values(this.node.attributes as unknown as {name: string; value: string}[])) {
-      this.nodeAttrs[name] = value;
+    const attrs = this.node.attributes as unknown as Array<{name?: string; nodeName?: string; value?: string; nodeValue?: string}>;
+    for (const attr of _.values(attrs)) {
+      const name = attr.name ?? attr.nodeName ?? '';
+      const value = attr.value ?? attr.nodeValue ?? '';
+      if (name) {
+        this.nodeAttrs[name] = value;
+      }
     }
     this.parseCss();
   }

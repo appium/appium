@@ -203,7 +203,16 @@ export class FakeApp {
   }
 
   alertText(): string {
-    return (this.activeAlert?.getAttr('prompt') ?? this.activeAlert?.nodeAttrs?.text) ?? '';
+    const prompt = this.activeAlert?.getAttr('prompt');
+    if (prompt) {
+      return prompt;
+    }
+    const fromAttrs = this.activeAlert?.nodeAttrs?.text;
+    if (fromAttrs) {
+      return fromAttrs;
+    }
+    const node = this.activeAlert?.node as {getAttribute?(name: string): string | null} | undefined;
+    return node?.getAttribute?.('text') ?? '';
   }
 
   handleAlert(): void {

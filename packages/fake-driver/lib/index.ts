@@ -16,4 +16,3 @@ export async function main() {
 
 export {FakeDriver, startServer};
 export type {FakeDriverCaps, W3CFakeDriverCaps} from './types';
-export default FakeDriver;

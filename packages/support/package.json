@@ -65,7 +65,7 @@
     "package-directory": "8.2.0",
     "plist": "3.1.0",
     "pluralize": "8.0.0",
-    "read-pkg": "10.0.0",
+    "read-pkg": "10.1.0",
     "resolve-from": "5.0.0",
     "sanitize-filename": "1.6.3",
     "semver": "7.7.4",

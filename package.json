@@ -86,7 +86,7 @@
   "devDependencies": {
     "@colors/colors": "1.6.0",
     "@eslint/js": "9.39.2",
-    "@stylistic/eslint-plugin": "5.7.1",
+    "@stylistic/eslint-plugin": "5.8.0",
     "@tsconfig/node20": "20.1.9",
     "@types/archiver": "7.0.0",
     "@types/argparse": "2.0.17",

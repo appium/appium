@@ -15,6 +15,7 @@ export interface FakeWebView {
   node: XmlNodeLike;
 }
 
+/** In-memory app model: XML DOM, webviews, alerts, geo, orientation, actions log. */
 export class FakeApp {
   dom: XMLDocument | null;
   activeDom: XMLDocument | null;
@@ -95,7 +96,7 @@ export class FakeApp {
     const nodes = this.xpathQuery('//app');
     if (!_.isArray(nodes)) {
       throw new Error(
-        'Cannot fetch app dimensions because no corresponding node has benn found in the source'
+        'Cannot fetch app dimensions because no corresponding node has been found in the source'
       );
     }
     const app = new FakeElement(nodes[0] as unknown as XmlNodeLike, this);
@@ -202,6 +203,7 @@ export class FakeApp {
     this.activeAlert = new FakeElement(nodes[0] as unknown as XmlNodeLike, this);
   }
 
+  /** Alert text from prompt attr or node text attr (e.g. <alert text="Fake Alert">). */
   alertText(): string {
     const prompt = this.activeAlert?.getAttr('prompt');
     if (prompt) {

@@ -4,6 +4,7 @@ import type {FakeDriver} from '../driver';
 import type {FakeWebView} from '../fake-app';
 import {errors} from 'appium/driver';
 
+/** NATIVE_APP, PROXY, and WEBVIEW_1, WEBVIEW_2, ... from app model. */
 export function getRawContexts(this: FakeDriver): Record<string, unknown> {
   const contexts: Record<string, unknown> = {NATIVE_APP: null, PROXY: null};
   const wvs = this.appModel.getWebviews() ?? [];
@@ -13,6 +14,7 @@ export function getRawContexts(this: FakeDriver): Record<string, unknown> {
   return contexts;
 }
 
+/** Throw if current context is NATIVE_APP (e.g. CSS/title require a webview). */
 export function assertWebviewContext(this: FakeDriver): void {
   if (this.curContext === 'NATIVE_APP') {
     throw new errors.InvalidContextError();

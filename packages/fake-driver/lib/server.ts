@@ -2,6 +2,7 @@ import {log} from './logger';
 import {server as baseServer, routeConfiguringFunction} from 'appium/driver';
 import {FakeDriver} from './driver';
 
+/** Start HTTP server with FakeDriver and default WebDriver routes. */
 export async function startServer(port: number, hostname: string) {
   const d = new FakeDriver();
   const server = await baseServer({

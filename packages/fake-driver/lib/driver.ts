@@ -27,10 +27,14 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
   shook: boolean;
   focusedElId: string | null;
   fakeThing: Thing | null;
+  /** Next numeric id for new elements; keys in elMap are stringified. */
   maxElId: number;
+  /** Map of element id (string) to FakeElement for this session. */
   elMap: Record<string, FakeElement>;
+  /** If set, Bidi connections are proxied to this URL instead of handling locally. */
   private _bidiProxyUrl: string | null;
   private _clockRunning = false;
+  /** Current document URL; set by bidiNavigate, returned by getUrl. */
   url: string = '';
 
   // Alert commands
@@ -139,7 +143,8 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
   }
 
   /**
-   * Comment for `createSession` in `FakeDriver`
+   * Create session and load fake app XML from caps.app.
+   * Starts clock event emitter if caps.runClock is true.
    */
   override async createSession(
     w3cCapabilities1: W3CFakeDriverCaps,
@@ -205,6 +210,7 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
     return this.cliArgs;
   }
 
+  /** TODO: track deprecated commands when called and return their names. */
   async getDeprecatedCommandsCalled(): Promise<string[]> {
     await B.delay(1);
     return [];

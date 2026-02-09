@@ -1,12 +1,14 @@
 import type {FakeDriver} from '../driver';
 import {errors} from 'appium/driver';
 
+/** Throw if an alert is currently open (blocks other commands). */
 export function assertNoAlert(this: FakeDriver): void {
   if (this.appModel.hasAlert()) {
     throw new errors.UnexpectedAlertOpenError();
   }
 }
 
+/** Throw if no alert is open (required before get/set alert text, accept, etc.). */
 export function assertAlert(this: FakeDriver): void {
   if (!this.appModel.hasAlert()) {
     throw new errors.NoAlertOpenError();
@@ -32,6 +34,7 @@ export async function postAcceptAlert(this: FakeDriver): Promise<void> {
   this.appModel.handleAlert();
 }
 
+/** In this fake, dismiss is the same as accept. */
 export async function postDismissAlert(this: FakeDriver): Promise<void> {
   return postAcceptAlert.call(this);
 }

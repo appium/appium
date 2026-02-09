@@ -4,6 +4,7 @@ import type {FakeDriver} from '../driver';
 import type {Position, Rect, Size} from '@appium/types';
 import type {FakeElement} from '../fake-element';
 
+/** Resolve element ids to FakeElements; throws StaleElementReferenceError if any id is missing. */
 export function getElements(this: FakeDriver, elementIds: string[]): FakeElement[] {
   for (const elId of elementIds) {
     if (!_.has(this.elMap, elId)) {
@@ -44,6 +45,7 @@ export async function setValue(
 ): Promise<void> {
   const value = _.isArray(keys) ? keys.join('') : keys;
   const el = this.getElement(elementId);
+  // Only MockInputField supports value in the fake app XML.
   if (el.type !== 'MockInputField') {
     throw new errors.InvalidElementStateError();
   }
@@ -69,6 +71,7 @@ export async function click(this: FakeDriver, elementId: string): Promise<void> 
   this.focusedElId = elementId;
 }
 
+/** Protocol order: attribute name, then element id (from route /attribute/:name). */
 export async function getAttribute(
   this: FakeDriver,
   attributeName: string,
@@ -98,6 +101,7 @@ export async function equalsElement(
   return el1.equals(el2);
 }
 
+/** Protocol order: property name, then element id. Requires webview context. */
 export async function getCssProperty(
   this: FakeDriver,
   propertyName: string,

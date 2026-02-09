@@ -8,6 +8,7 @@ export interface XmlNodeLike {
   attributes: {name: string; value: string}[];
 }
 
+/** Wrapper around an XML node from the fake app DOM; supports attrs, css, visibility, click, alerts. */
 export class FakeElement {
   readonly app: FakeApp;
   readonly type: string;
@@ -23,7 +24,10 @@ export class FakeElement {
     this.type = xmlNode.tagName;
     this.attrs = {};
     this.css = {};
-    const attrs = this.node.attributes as unknown as Array<{name?: string; nodeName?: string; value?: string; nodeValue?: string}>;
+    // Support both DOM Attr (name/value) and nodeName/nodeValue (e.g. @xmldom/xmldom).
+    const attrs = this.node.attributes as unknown as Array<{
+      name?: string; nodeName?: string; value?: string; nodeValue?: string
+    }>;
     for (const attr of _.values(attrs)) {
       const name = attr.name ?? attr.nodeName ?? '';
       const value = attr.value ?? attr.nodeValue ?? '';

@@ -7,6 +7,7 @@ import {util} from 'appium/support';
 
 const {W3C_WEB_ELEMENT_IDENTIFIER} = util;
 
+/** Find an existing element id in elMap for the same underlying node (reference equality). */
 export function getExistingElementForNode(
   this: FakeDriver,
   node: FakeElement
@@ -69,6 +70,7 @@ async function findElOrElsImpl<Ctx = unknown>(
   mult: boolean,
   context?: Ctx
 ): Promise<Element | Element[]> {
+  // Map WebDriver locator strategy to FakeApp query method name.
   const qMap: Record<string, 'xpathQuery' | 'idQuery' | 'classQuery' | 'cssQuery'> = {
     xpath: 'xpathQuery',
     id: 'idQuery',
@@ -112,6 +114,8 @@ export async function findElement(
 ): Promise<Element> {
   return this.findElOrEls(strategy, selector, false);
 }
+
+// Protocol passes (strategy, selector, elementId) for find-from-element routes.
 
 export async function findElements(
   this: FakeDriver,

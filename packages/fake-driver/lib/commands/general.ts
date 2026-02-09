@@ -5,6 +5,7 @@ import type {Orientation} from '@appium/types';
 
 const ORIENTATIONS = new Set<string>(['LANDSCAPE', 'PORTRAIT']);
 
+/** Requires webview context (title comes from active document). */
 export async function title(this: FakeDriver): Promise<string> {
   this.assertWebviewContext();
   return this.appModel.title;
@@ -72,6 +73,7 @@ export async function performActions(
 
 export async function releaseActions(this: FakeDriver): Promise<void> {}
 
+/** Supported log types: 'actions'. TODO: add more log types if needed for tests. */
 export async function getLog(
   this: FakeDriver,
   type: string
@@ -107,10 +109,12 @@ export async function fakeAddition(
   return num1 + num2 + (num3 ?? 0);
 }
 
+/** Get current URL. Returns empty string until bidiNavigate (or equivalent) sets one. @see https://w3c.github.io/webdriver/#get-current-url */
 export async function getUrl(this: FakeDriver): Promise<string> {
   return this.url ?? '';
 }
 
+/** Set current URL (used by Bidi browsingContext.navigate). */
 export async function bidiNavigate(
   this: FakeDriver,
   context: string,

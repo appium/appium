@@ -48,7 +48,7 @@ export async function setContext(this: FakeDriver, context: string): Promise<voi
 }
 
 export async function setFrame(this: FakeDriver, frameId: number | null): Promise<void> {
-  assertWebviewContext.call(this);
+  this.assertWebviewContext();
   if (frameId === null) {
     this.appModel.deactivateFrame();
   } else {

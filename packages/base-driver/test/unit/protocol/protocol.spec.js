@@ -1,4 +1,5 @@
-import { checkParams } from '../../../lib/protocol/protocol';
+import {expect} from 'chai';
+import { checkParams, getSessionId } from '../../../lib/protocol/protocol';
 
 describe('Protocol', function () {
   let chai;
@@ -9,6 +10,21 @@ describe('Protocol', function () {
     const chaiAsPromised = await import('chai-as-promised');
     chai.use(chaiAsPromised.default);
     should = chai.should();
+  });
+
+  describe('getSessionId', function () {
+    it('should raise an error if the given session id was an array', function () {
+      should.throw(() => getSessionId(['7b918a26-0649-11f1-b909-e2a798b4b114']));
+    });
+
+    it('should get session id', function () {
+      const sessionId = '7b918a26-0649-11f1-b909-e2a798b4b114';
+      getSessionId(sessionId).should.eql(sessionId);
+    });
+
+    it('should be undefined', function () {
+      expect(getSessionId(undefined)).to.eql(undefined);
+    });
   });
 
   describe('checkParams', function () {

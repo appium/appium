@@ -14,7 +14,7 @@ import {
   SERVER_SUBCOMMAND,
   SETUP_SUBCOMMAND
 } from '../constants';
-import {finalizeSchema, getArgSpec, hasArgSpec} from '../schema';
+import {finalizeSchema, getAllArgSpecs, getArgSpec, hasArgSpec} from '../schema';
 import {rootDir} from '../config';
 import {getExtensionArgs, getServerArgs} from './args';
 import {
@@ -156,6 +156,25 @@ class ArgParser {
         process.exit(1);
       }
     }
+  }
+
+  /**
+   * Normalize hyphenated server arg keys (e.g. "log-level") to dest form (e.g. "loglevel").
+   * Use when server args come from programmatic init rather than the CLI, so they match
+   * the shape produced by parseArgs() / _transformParsedArgs().
+   * Mutates the given object.
+   *
+   * @param {object} obj - Object that may contain server args with schema property names
+   * @returns {object} The same object with keys normalized
+   */
+  static normalizeServerArgs(obj) {
+    for (const spec of getAllArgSpecs().values()) {
+      if (!spec.extType && obj[spec.name] !== undefined && spec.rawDest !== spec.name) {
+        obj[spec.rawDest] = obj[spec.name] ?? obj[spec.rawDest];
+        delete obj[spec.name];
+      }
+    }
+    return obj;
   }
 
   /**

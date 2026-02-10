@@ -13,7 +13,7 @@ import _ from 'lodash';
 import {AppiumDriver} from './appium';
 import {runExtensionCommand} from './cli/extension';
 import { runSetupCommand } from './cli/setup-command';
-import {getParser} from './cli/parser';
+import {getParser, ArgParser} from './cli/parser';
 import {
   APPIUM_VER,
   checkNodeOk,
@@ -211,6 +211,8 @@ async function init(args) {
       delete args.throwInsteadOfExit;
     }
     preConfigArgs = {...args, subcommand: args.subcommand ?? SERVER_SUBCOMMAND};
+    // Normalize hyphenated keys to dest form so programmatic args match CLI shape
+    ArgParser.normalizeServerArgs(preConfigArgs);
   } else {
     // otherwise parse from CLI
     preConfigArgs = /** @type {Args<Cmd, SubCmd>} */ (parser.parseArgs());

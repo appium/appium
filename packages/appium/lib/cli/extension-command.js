@@ -601,20 +601,23 @@ class ExtensionCliCommand {
    * @returns {Promise<ExtInstallReceipt<ExtType>>}
    */
   async installViaNpm({installSpec, pkgName, pkgVer, installType}) {
-    const msg = `Installing '${installSpec}'`;
+    const installMsg = `Installing '${installSpec}'`;
+    const validateMsg = `Validating '${installSpec}'`;
 
     // the string used for installation is either <name>@<ver> in the case of a standard NPM
     // package, or whatever the user sent in otherwise.
     const installStr = installType === INSTALL_TYPE_NPM ? `${pkgName}${pkgVer ? `@${pkgVer}` : ''}` : installSpec;
     const appiumHome = this.config.appiumHome;
     try {
-      const {pkg, installPath} = await spinWith(this.isJsonOutput, msg, async () => {
-        const {pkg, installPath} = await npm.installPackage(appiumHome, installStr, {
+      const {pkg, installPath} = await spinWith(this.isJsonOutput, installMsg, async () => {
+        return await npm.installPackage(appiumHome, installStr, {
           pkgName,
           installType,
         });
+      });
+
+      await spinWith(this.isJsonOutput, validateMsg, async () => {
         this.validatePackageJson(pkg, installSpec);
-        return {pkg, installPath};
       });
 
       return this.getInstallationReceipt({

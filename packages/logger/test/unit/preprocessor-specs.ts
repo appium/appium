@@ -1,13 +1,8 @@
+import {expect} from 'chai';
 import {SecureValuesPreprocessor} from '../../lib/secure-values-preprocessor';
 
 describe('Log Internals', function () {
-  /** @type {import('../../lib/secure-values-prepreocessor').SecureValuesPreprocessor} */
-  let preprocessor;
-
-  before(async function () {
-    const chai = await import('chai');
-    chai.should();
-  });
+  let preprocessor: SecureValuesPreprocessor;
 
   beforeEach(function () {
     preprocessor = new SecureValuesPreprocessor();
@@ -15,20 +10,20 @@ describe('Log Internals', function () {
 
   it('should preprocess a string and make replacements', async function () {
     const issues = await preprocessor.loadRules(['yolo']);
-    issues.length.should.eql(0);
-    preprocessor.rules.length.should.eql(1);
+    expect(issues.length).to.eql(0);
+    expect(preprocessor.rules.length).to.eql(1);
     const replacer = preprocessor.rules[0].replacer;
-    preprocessor.preprocess(':yolo" yo Yolo yyolo').should.eql(`:${replacer}" yo Yolo yyolo`);
+    expect(preprocessor.preprocess(':yolo" yo Yolo yyolo')).to.eql(`:${replacer}" yo Yolo yyolo`);
   });
 
   it('should preprocess a string and make replacements with multiple simple rules', async function () {
     const issues = await preprocessor.loadRules(['yolo', 'yo']);
-    issues.length.should.eql(0);
-    preprocessor.rules.length.should.eql(2);
+    expect(issues.length).to.eql(0);
+    expect(preprocessor.rules.length).to.eql(2);
     const replacer = preprocessor.rules[0].replacer;
-    preprocessor
-      .preprocess(':yolo" yo Yolo yyolo')
-      .should.eql(`:${replacer}" ${replacer} Yolo yyolo`);
+    expect(preprocessor.preprocess(':yolo" yo Yolo yyolo')).to.eql(
+      `:${replacer}" ${replacer} Yolo yyolo`
+    );
   });
 
   it('should preprocess a string and make replacements with multiple complex rules', async function () {
@@ -37,21 +32,22 @@ describe('Log Internals', function () {
       {text: 'yolo', flags: 'i'},
       {pattern: '^:', replacer: replacer2},
     ]);
-    issues.length.should.eql(0);
-    preprocessor.rules.length.should.eql(2);
+    expect(issues.length).to.eql(0);
+    expect(preprocessor.rules.length).to.eql(2);
     const replacer = preprocessor.rules[0].replacer;
-    preprocessor
-      .preprocess(':yolo" yo Yolo yyolo')
-      .should.eql(`${replacer2}${replacer}" yo ${replacer} yyolo`);
+    expect(preprocessor.preprocess(':yolo" yo Yolo yyolo')).to.eql(
+      `${replacer2}${replacer}" yo ${replacer} yyolo`
+    );
   });
 
   it(`should preprocess a string and apply a rule where 'pattern' has priority over 'text'`, async function () {
-    // NOTE: this is disallowed in the config schema, but is currently allowed when using an external JSON file.
     const replacer = '***';
     const issues = await preprocessor.loadRules([{pattern: '^:', text: 'yo', replacer}]);
-    issues.length.should.eql(0);
-    preprocessor.rules.length.should.eql(1);
-    preprocessor.preprocess(':yolo" yo Yolo yyolo').should.eql(`${replacer}yolo" yo Yolo yyolo`);
+    expect(issues.length).to.eql(0);
+    expect(preprocessor.rules.length).to.eql(1);
+    expect(preprocessor.preprocess(':yolo" yo Yolo yyolo')).to.eql(
+      `${replacer}yolo" yo Yolo yyolo`
+    );
   });
 
   it('should preprocess a string and make replacements with multiple complex rules and issues', async function () {
@@ -60,12 +56,12 @@ describe('Log Internals', function () {
       {text: 'yolo', flags: 'i'},
       {pattern: '^:(', replacer: replacer2},
     ]);
-    issues.length.should.eql(1);
-    preprocessor.rules.length.should.eql(1);
+    expect(issues.length).to.eql(1);
+    expect(preprocessor.rules.length).to.eql(1);
     const replacer = preprocessor.rules[0].replacer;
-    preprocessor
-      .preprocess(':yolo" yo Yolo yyolo')
-      .should.eql(`:${replacer}" yo ${replacer} yyolo`);
+    expect(preprocessor.preprocess(':yolo" yo Yolo yyolo')).to.eql(
+      `:${replacer}" yo ${replacer} yyolo`
+    );
   });
 
   it('should leave the string unchanged if all rules have issues', async function () {
@@ -74,9 +70,9 @@ describe('Log Internals', function () {
       null,
       {flags: 'i'},
       {pattern: '^:(', replacer: replacer2},
-    ]);
-    issues.length.should.eql(3);
-    preprocessor.rules.length.should.eql(0);
-    preprocessor.preprocess(':yolo" yo Yolo yyolo').should.eql(':yolo" yo Yolo yyolo');
+    ] as any);
+    expect(issues.length).to.eql(3);
+    expect(preprocessor.rules.length).to.eql(0);
+    expect(preprocessor.preprocess(':yolo" yo Yolo yyolo')).to.eql(':yolo" yo Yolo yyolo');
   });
 });

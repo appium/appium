@@ -16,12 +16,12 @@ export function assertAlert(this: FakeDriver): void {
 }
 
 export async function getAlertText(this: FakeDriver): Promise<string> {
-  assertAlert.call(this);
+  this.assertAlert();
   return this.appModel.alertText();
 }
 
 export async function setAlertText(this: FakeDriver, text: string): Promise<void> {
-  assertAlert.call(this);
+  this.assertAlert();
   try {
     this.appModel.setAlertText(text);
   } catch {
@@ -30,11 +30,11 @@ export async function setAlertText(this: FakeDriver, text: string): Promise<void
 }
 
 export async function postAcceptAlert(this: FakeDriver): Promise<void> {
-  assertAlert.call(this);
+  this.assertAlert();
   this.appModel.handleAlert();
 }
 
 /** In this fake, dismiss is the same as accept. */
 export async function postDismissAlert(this: FakeDriver): Promise<void> {
-  return postAcceptAlert.call(this);
+  return this.postAcceptAlert();
 }

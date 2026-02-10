@@ -2,7 +2,7 @@ import _ from 'lodash';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {DRIVER_TYPE, PLUGIN_TYPE, SETUP_SUBCOMMAND} from '../../lib/constants';
-import {getParser} from '../../lib/cli/parser';
+import {ArgParser, getParser} from '../../lib/cli/parser';
 import {INSTALL_TYPES} from '../../lib/extension/extension-config';
 import * as schema from '../../lib/schema/schema';
 import {readConfigFile} from '../../lib/config-file';
@@ -112,7 +112,10 @@ describe('parser', function () {
       });
 
       it('should parse --allow-insecure correctly', function () {
-        expect(p.parseArgs([])).to.not.have.property('allowInsecure');
+        // With explicit dest, optional args may be present as undefined when not passed
+        expect(p.parseArgs([])).to.satisfy(
+          (obj) => obj.allowInsecure === undefined || _.isEqual(obj.allowInsecure, [])
+        );
         expect(p.parseArgs(['--allow-insecure', '']).allowInsecure).to.eql([]);
         expect(p.parseArgs(['--allow-insecure', '*:foo']).allowInsecure).to.eql(['*:foo']);
         expect(p.parseArgs(['--allow-insecure', '*:foo,*:bar']).allowInsecure).to.eql(['*:foo', '*:bar']);
@@ -132,7 +135,10 @@ describe('parser', function () {
       });
 
       it('should parse --deny-insecure correctly', function () {
-        expect(p.parseArgs([])).to.not.have.property('denyInsecure');
+        // With explicit dest, optional args may be present as undefined when not passed
+        expect(p.parseArgs([])).to.satisfy(
+          (obj) => obj.denyInsecure === undefined || _.isEqual(obj.denyInsecure, [])
+        );
         expect(p.parseArgs(['--deny-insecure', '']).denyInsecure).to.eql([]);
         expect(p.parseArgs(['--deny-insecure', '*:foo']).denyInsecure).to.eql(['*:foo']);
         expect(p.parseArgs(['--deny-insecure', '*:foo,*:bar']).denyInsecure).to.eql(['*:foo', '*:bar']);
@@ -164,6 +170,14 @@ describe('parser', function () {
 
       it('should recognize --log-level', function () {
         expect(p.parseArgs(['--log-level', 'debug'])).to.have.property('loglevel', 'debug');
+      });
+
+      it('should normalize hyphenated server args to dest form (normalizeServerArgs)', function () {
+        const obj = {'log-level': 'error', port: 4723};
+        ArgParser.normalizeServerArgs(obj);
+        expect(obj).to.have.property('loglevel', 'error');
+        expect(obj).not.to.have.property('log-level');
+        expect(obj).to.have.property('port', 4723);
       });
 
       it('should parse a file for --log-filters', function () {

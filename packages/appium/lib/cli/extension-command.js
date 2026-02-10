@@ -609,12 +609,11 @@ class ExtensionCliCommand {
     const installStr = installType === INSTALL_TYPE_NPM ? `${pkgName}${pkgVer ? `@${pkgVer}` : ''}` : installSpec;
     const appiumHome = this.config.appiumHome;
     try {
-      const {pkg, installPath} = await spinWith(this.isJsonOutput, installMsg, async () => {
-        return await npm.installPackage(appiumHome, installStr, {
-          pkgName,
-          installType,
-        });
-      });
+      const {pkg, installPath} = await spinWith(
+        this.isJsonOutput,
+        installMsg,
+        async () => await npm.installPackage(appiumHome, installStr, {pkgName, installType})
+      );
 
       await spinWith(this.isJsonOutput, validateMsg, async () => {
         this.validatePackageJson(pkg, installSpec);

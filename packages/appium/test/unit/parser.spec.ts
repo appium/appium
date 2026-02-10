@@ -112,10 +112,7 @@ describe('parser', function () {
       });
 
       it('should parse --allow-insecure correctly', function () {
-        // With explicit dest, optional args may be present as undefined when not passed
-        expect(p.parseArgs([])).to.satisfy(
-          (obj) => obj.allowInsecure === undefined || _.isEqual(obj.allowInsecure, [])
-        );
+        expect(p.parseArgs([])).to.satisfy((obj) => obj.allowInsecure === undefined);
         expect(p.parseArgs(['--allow-insecure', '']).allowInsecure).to.eql([]);
         expect(p.parseArgs(['--allow-insecure', '*:foo']).allowInsecure).to.eql(['*:foo']);
         expect(p.parseArgs(['--allow-insecure', '*:foo,*:bar']).allowInsecure).to.eql(['*:foo', '*:bar']);
@@ -135,10 +132,7 @@ describe('parser', function () {
       });
 
       it('should parse --deny-insecure correctly', function () {
-        // With explicit dest, optional args may be present as undefined when not passed
-        expect(p.parseArgs([])).to.satisfy(
-          (obj) => obj.denyInsecure === undefined || _.isEqual(obj.denyInsecure, [])
-        );
+        expect(p.parseArgs([])).to.satisfy((obj) => obj.denyInsecure === undefined);
         expect(p.parseArgs(['--deny-insecure', '']).denyInsecure).to.eql([]);
         expect(p.parseArgs(['--deny-insecure', '*:foo']).denyInsecure).to.eql(['*:foo']);
         expect(p.parseArgs(['--deny-insecure', '*:foo,*:bar']).denyInsecure).to.eql(['*:foo', '*:bar']);

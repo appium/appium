@@ -1,0 +1,234 @@
+import {fs} from 'appium/support';
+import {readFileSync} from 'node:fs';
+import path from 'node:path';
+import XMLDom from '@xmldom/xmldom';
+import * as xpath from 'xpath';
+import {log} from './logger';
+import _ from 'lodash';
+import {FakeElement, type XmlNodeLike} from './fake-element';
+import type {ActionSequence, Location, Orientation} from '@appium/types';
+import type {Document as XMLDocument, Node as XMLNode} from '@xmldom/xmldom';
+
+const SCREENSHOT = path.join(__dirname, 'screen.png');
+
+export interface FakeWebView {
+  node: XmlNodeLike;
+}
+
+/** In-memory app model: XML DOM, webviews, alerts, geo, orientation, actions log. */
+export class FakeApp {
+  dom: XMLDocument | null;
+  activeDom: XMLDocument | null;
+  activeWebview: FakeWebView | null;
+  activeFrame: XMLDocument | null;
+  activeAlert: FakeElement | null;
+  lat: number;
+  long: number;
+  private _width: number | null;
+  private _height: number | null;
+  rawXml: string;
+  currentOrientation: Orientation;
+  actionLog: ActionSequence[][];
+
+  constructor() {
+    this.dom = null;
+    this.activeDom = null;
+    this.activeWebview = null;
+    this.activeFrame = null;
+    this.activeAlert = null;
+    this.lat = 0;
+    this.long = 0;
+    this._width = null;
+    this._height = null;
+    this.rawXml = '';
+    this.currentOrientation = 'PORTRAIT';
+    this.actionLog = [];
+  }
+
+  get title(): string {
+    const nodes = this.xpathQuery('//title');
+    if (!_.isArray(nodes) || nodes.length < 1) {
+      throw new Error('No title!');
+    }
+    const node = nodes[0];
+    const firstChild = node.firstChild as unknown as {data: string} | null;
+    return firstChild?.data ?? '';
+  }
+
+  get currentGeoLocation(): Location {
+    return {
+      latitude: this.lat,
+      longitude: this.long,
+    };
+  }
+
+  get orientation(): Orientation {
+    return this.currentOrientation;
+  }
+
+  set orientation(o: Orientation) {
+    this.currentOrientation = o;
+  }
+
+  get width(): number {
+    if (this._width === null) {
+      this.setDims();
+    }
+    const w = this._width;
+    if (w === null) {
+      throw new Error('Cannot fetch app dimensions');
+    }
+    return w;
+  }
+
+  get height(): number {
+    if (this._height === null) {
+      this.setDims();
+    }
+    const h = this._height;
+    if (h === null) {
+      throw new Error('Cannot fetch app dimensions');
+    }
+    return h;
+  }
+
+  private setDims(): void {
+    const nodes = this.xpathQuery('//app');
+    if (!_.isArray(nodes)) {
+      throw new Error(
+        'Cannot fetch app dimensions because no corresponding node has been found in the source'
+      );
+    }
+    const app = new FakeElement(nodes[0] as unknown as XmlNodeLike, this);
+    this._width = parseInt(app.nodeAttrs.width, 10);
+    this._height = parseInt(app.nodeAttrs.height, 10);
+  }
+
+  async loadApp(appPath: string): Promise<void> {
+    log.info(`Loading Mock app model at ${appPath}`);
+    const data = await fs.readFile(appPath);
+    log.info('Parsing Mock app XML');
+    this.rawXml = data.toString();
+    this.rawXml = this.rawXml.replace('<app ', '<AppiumAUT><app ');
+    this.rawXml = this.rawXml.replace('<app>', '<AppiumAUT><app>');
+    this.rawXml = this.rawXml.replace('</app>', '</app></AppiumAUT>');
+    this.dom = new XMLDom.DOMParser().parseFromString(
+      this.rawXml,
+      XMLDom.MIME_TYPE.XML_TEXT
+    ) as XMLDocument;
+    this.activeDom = this.dom;
+  }
+
+  getWebviews(): FakeWebView[] {
+    const nodes = this.xpathQuery('//MockWebView/*[1]');
+    return _.isArray(nodes) ? nodes.map((n) => new FakeWebViewImpl(n as unknown as XmlNodeLike)) : [];
+  }
+
+  activateWebview(wv: FakeWebView): void {
+    this.activeWebview = wv;
+    const fragment = new XMLDom.XMLSerializer().serializeToString(
+      wv.node as unknown as XMLNode
+    );
+    this.activeDom = new XMLDom.DOMParser().parseFromString(
+      fragment,
+      XMLDom.MIME_TYPE.XML_TEXT
+    ) as XMLDocument;
+  }
+
+  deactivateWebview(): void {
+    this.activeWebview = null;
+    this.activeDom = this.dom;
+  }
+
+  activateFrame(frame: XMLDocument): void {
+    this.activeFrame = frame;
+    const fragment = new XMLDom.XMLSerializer().serializeToString(
+      frame as unknown as XMLNode
+    );
+    this.activeDom = new XMLDom.DOMParser().parseFromString(
+      fragment,
+      XMLDom.MIME_TYPE.XML_TEXT
+    ) as XMLDocument;
+  }
+
+  deactivateFrame(): void {
+    this.activeFrame = null;
+    if (this.activeWebview) {
+      this.activateWebview(this.activeWebview);
+    }
+  }
+
+  xpathQuery(sel: string, ctx?: XMLDocument | null): xpath.SelectedValue {
+    const node = ctx ?? this.activeDom;
+    return xpath.select(
+      sel,
+      node as unknown as Node
+    ) as xpath.SelectedValue;
+  }
+
+  idQuery(id: string, ctx?: XMLDocument | null): xpath.SelectedValue {
+    return this.xpathQuery(`//*[@id="${id}"]`, ctx);
+  }
+
+  classQuery(className: string, ctx?: XMLDocument | null): xpath.SelectedValue {
+    return this.xpathQuery(`//${className}`, ctx);
+  }
+
+  cssQuery(css: string, ctx?: XMLDocument | null): xpath.SelectedValue {
+    if (css.startsWith('#')) {
+      return this.idQuery(css.slice(1), ctx);
+    }
+    if (css.startsWith('.')) {
+      return this.classQuery(css.slice(1), ctx);
+    }
+    return this.classQuery(css, ctx);
+  }
+
+  hasAlert(): boolean {
+    return this.activeAlert !== null;
+  }
+
+  setAlertText(text: string): void {
+    if (!this.activeAlert?.hasPrompt()) {
+      throw new Error('No prompt to set text of');
+    }
+    this.activeAlert?.setAttr('prompt', text);
+  }
+
+  showAlert(alertId: string): void {
+    const nodes = this.xpathQuery(`//alert[@id="${alertId}"]`);
+    if (!_.isArray(nodes) || _.isEmpty(nodes)) {
+      throw new Error(`Alert ${alertId} doesn't exist!`);
+    }
+    this.activeAlert = new FakeElement(nodes[0] as unknown as XmlNodeLike, this);
+  }
+
+  /** Alert text from prompt attr or node text attr (e.g. <alert text="Fake Alert">). */
+  alertText(): string {
+    const prompt = this.activeAlert?.getAttr('prompt');
+    if (prompt) {
+      return prompt;
+    }
+    const fromAttrs = this.activeAlert?.nodeAttrs?.text;
+    if (fromAttrs) {
+      return fromAttrs;
+    }
+    const node = this.activeAlert?.node as {getAttribute?(name: string): string | null} | undefined;
+    return node?.getAttribute?.('text') ?? '';
+  }
+
+  handleAlert(): void {
+    this.activeAlert = null;
+  }
+
+  getScreenshot(): string {
+    return readFileSync(SCREENSHOT, 'base64');
+  }
+}
+
+export class FakeWebViewImpl implements FakeWebView {
+  readonly node: XmlNodeLike;
+  constructor(node: XmlNodeLike) {
+    this.node = node;
+  }
+}

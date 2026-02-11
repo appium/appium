@@ -1,5 +1,5 @@
 {
   "devDependencies": {
-    "webdriverio": "9.23.3"
+    "webdriverio": "9.24.0"
   }
 }

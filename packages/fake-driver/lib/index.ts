@@ -4,19 +4,15 @@ import {startServer} from './server';
 const DEFAULT_HOST = 'localhost';
 const DEFAULT_PORT = 4774;
 
-async function main() {
-  const getArgValue = (/** @type {string} */ argName) => {
+export async function main() {
+  const getArgValue = (argName: string): string | null => {
     const argIndex = process.argv.indexOf(argName);
-    return argIndex > 0 ? process.argv[argIndex + 1] : null;
+    return argIndex > 0 ? process.argv[argIndex + 1] ?? null : null;
   };
   const port = parseInt(String(getArgValue('--port')), 10) || DEFAULT_PORT;
   const host = getArgValue('--host') || DEFAULT_HOST;
   return await startServer(port, host);
 }
 
-export {FakeDriver, startServer, main};
-
-/**
- * @typedef {import('./types').W3CFakeDriverCaps} W3CFakeDriverCaps
- * @typedef {import('./types').FakeDriverCaps} FakeDriverCaps
- */
+export {FakeDriver, startServer};
+export type {FakeDriverCaps, W3CFakeDriverCaps} from './types';

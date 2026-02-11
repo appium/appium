@@ -71,8 +71,8 @@
     },
     "doctor": {
       "checks": [
-        "./doctor/fake1.js",
-        "./doctor/fake2.js"
+        "./build/lib/doctor/fake1.js",
+        "./build/lib/doctor/fake2.js"
       ]
     }
   },

@@ -38,13 +38,13 @@ export function determineProtocol(createSessionArgs: any[]): keyof typeof PROTOC
  * Extract and validate sessionId from Express route parameter.
  * Express may return route params as string | string[] | undefined.
  * Appium uses standard routes (e.g., /session/:sessionId) which should always be strings.
- * Only `(.*)` such as `app.delete('/session/:sessionId(.*)', deleteSessionHandler)`
- * can return `string[]`, so this is not expected in Appium.
- * If an array is received, it indicates invalid protocol format and should raise an error.
+ * Only `*` such as `/session/*sessionId` can return `string[]`.
+ * Then, this method will return the first element as the session id.
+ * It may break existing appium routing hanlding also, thus this method will log
+ * received parameters as well to help debugging.
  * @param driver Running driver
  * @param req The request in Express
  * @returns The normalized sessionId (string or undefined)
- * @throws {Error} If sessionId is an array (indicating invalid protocol format)
  */
 export function getSessionId(driver: Core<any>, req: Request): string | undefined {
   if (Array.isArray(req.params.sessionId)) {

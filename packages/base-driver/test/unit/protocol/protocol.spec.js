@@ -1,5 +1,6 @@
 import {expect} from 'chai';
 import { checkParams, getSessionId } from '../../../lib/protocol/protocol';
+import {FakeDriver} from '@appium/fake-driver';
 
 describe('Protocol', function () {
   let chai;
@@ -13,17 +14,43 @@ describe('Protocol', function () {
   });
 
   describe('getSessionId', function () {
-    it('should raise an error if the given session id was an array', function () {
-      should.throw(() => getSessionId(['7b918a26-0649-11f1-b909-e2a798b4b114']));
+    it('should pick up the first value as the session id', function () {
+      const sessionId = '7b918a26-0649-11f1-b909-e2a798b4b114';
+      const req = {
+        headers: {},
+        url: '/some/path',
+        params: {
+          sessionId: [sessionId]
+        }
+      };
+      const fakeDriver = new FakeDriver();
+      getSessionId(fakeDriver, req).should.eql(sessionId);
     });
 
     it('should get session id', function () {
       const sessionId = '7b918a26-0649-11f1-b909-e2a798b4b114';
-      getSessionId(sessionId).should.eql(sessionId);
+
+      const req = {
+        headers: {},
+        url: '/some/path',
+        params: {
+          sessionId
+        }
+      };
+      const fakeDriver = new FakeDriver();
+      getSessionId(fakeDriver, req).should.eql(sessionId);
     });
 
     it('should be undefined', function () {
-      expect(getSessionId(undefined)).to.eql(undefined);
+      const req = {
+        headers: {},
+        url: '/some/path',
+        params: {
+          sessionId: undefined
+        }
+      };
+      const fakeDriver = new FakeDriver();
+      expect(getSessionId(fakeDriver, req)).to.eql(undefined);
     });
   });
 

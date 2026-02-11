@@ -41,18 +41,20 @@ export function determineProtocol(createSessionArgs: any[]): keyof typeof PROTOC
  * Only `(.*)` such as `app.delete('/session/:sessionId(.*)', deleteSessionHandler)`
  * can return `string[]`, so this is not expected in Appium.
  * If an array is received, it indicates invalid protocol format and should raise an error.
- * @param sessionId - The raw Express route parameter
+ * @param driver Running driver
+ * @param req The request in Express
  * @returns The normalized sessionId (string or undefined)
  * @throws {Error} If sessionId is an array (indicating invalid protocol format)
  */
-export function getSessionId(sessionId: string | string[] | undefined): string | undefined {
-  if (Array.isArray(sessionId)) {
-    throw new Error(
-      `sessionId should be a string, but received an array: ${JSON.stringify(sessionId)}. ` +
-      `This may indicate misconfigured routes or malformed request.`
+export function getSessionId(driver: Core<any>, req: Request): string | undefined {
+  if (Array.isArray(req.params.sessionId)) {
+    const sessionId = req.params.sessionId[0];
+    getLogger(driver, sessionId).warn(
+      `Received sessionId as array: ${JSON.stringify(req.params.sessionId)}. Using first element as the session id: ${sessionId}`
     );
+    return sessionId;
   }
-  return sessionId;
+  return req.params.sessionId;
 }
 
 function extractProtocol(driver: Core<any>, sessionId: string | null = null): keyof typeof PROTOCOLS {
@@ -330,13 +332,14 @@ function buildHandler(
     let httpResBody = {} as any;
     let httpStatus = 200;
     let newSessionId: string | undefined;
-    let currentProtocol = extractProtocol(driver, getSessionId(req.params.sessionId));
+    const sessionId = getSessionId(driver, req);
+    let currentProtocol = extractProtocol(driver, sessionId);
 
     try {
       // if the route accessed is deprecated, log a warning
       if (spec.deprecated && spec.command && !deprecatedCommandsLogged.has(spec.command)) {
         deprecatedCommandsLogged.add(spec.command);
-        getLogger(driver, getSessionId(req.params.sessionId)).warn(
+        getLogger(driver, sessionId).warn(
           `The ${method} ${path} endpoint has been deprecated and will be removed in a future ` +
             `version of Appium or your driver/plugin. Please use a different endpoint or contact the ` +
             `driver/plugin author to add explicit support for the endpoint before it is removed`
@@ -345,7 +348,7 @@ function buildHandler(
 
       // if this is a session command but we don't have a session,
       // error out early (especially before proxying)
-      if (isSessCmd && !driver.sessionExists(getSessionId(req.params.sessionId))) {
+      if (isSessCmd && !driver.sessionExists(sessionId)) {
         throw new errors.NoSuchDriverError();
       }
 
@@ -366,7 +369,7 @@ function buildHandler(
           await doJwpProxy(driver as BaseDriver<any>, req, res);
           return;
         }
-        getLogger(driver, getSessionId(req.params.sessionId)).debug(
+        getLogger(driver, sessionId).debug(
           `Would have proxied ` +
             `command directly, but a plugin exists which might require its value, so will let ` +
             `its value be collected internally and made part of plugin chain`
@@ -413,7 +416,7 @@ function buildHandler(
       }
 
       // run the driver command wrapped inside the argument validators
-      getLogger(driver, getSessionId(req.params.sessionId)).debug(
+      getLogger(driver, sessionId).debug(
         `Calling %s.%s() with args: %s`,
         driver.constructor.name, spec.command,
         logger.markSensitive(_.truncate(JSON.stringify(args), {length: MAX_LOG_BODY_LENGTH}))
@@ -429,7 +432,7 @@ function buildHandler(
       driverRes = await (driver as BaseDriver<any>).executeCommand(spec.command, ...args);
 
       // Get the protocol after executeCommand
-      currentProtocol = extractProtocol(driver, getSessionId(req.params.sessionId)) || currentProtocol;
+      currentProtocol = extractProtocol(driver, sessionId) || currentProtocol;
 
       // If `executeCommand` was overridden and the method returns an object
       // with a protocol and value/error property, re-assign the protocol
@@ -460,12 +463,12 @@ function buildHandler(
 
       // delete should not return anything even if successful
       if (spec.command === DELETE_SESSION_COMMAND) {
-        getLogger(driver, getSessionId(req.params.sessionId)).debug(
+        getLogger(driver, sessionId).debug(
           `Received response: ${_.truncate(JSON.stringify(driverRes), {
             length: MAX_LOG_BODY_LENGTH,
           })}`
         );
-        getLogger(driver, getSessionId(req.params.sessionId)).debug('But deleting session, so not returning');
+        getLogger(driver, sessionId).debug('But deleting session, so not returning');
         driverRes = null;
       }
 
@@ -487,7 +490,7 @@ function buildHandler(
       }
 
       httpResBody.value = driverRes;
-      getLogger(driver, getSessionId(req.params.sessionId) || newSessionId).debug(
+      getLogger(driver, sessionId || newSessionId).debug(
         `Responding ` +
           `to client with driver.${spec.command}() result: ${_.truncate(JSON.stringify(driverRes), {
             length: MAX_LOG_BODY_LENGTH,
@@ -500,7 +503,7 @@ function buildHandler(
       if (err instanceof Error || (_.has(err, 'stack') && _.has(err, 'message'))) {
         actualErr = err;
       } else {
-        getLogger(driver, getSessionId(req.params.sessionId) || newSessionId).warn(
+        getLogger(driver, sessionId || newSessionId).warn(
           'The thrown error object does not seem to be a valid instance of the Error class. This ' +
             'might be a genuine bug of a driver or a plugin.'
         );
@@ -508,7 +511,7 @@ function buildHandler(
       }
 
       currentProtocol =
-        currentProtocol || extractProtocol(driver, getSessionId(req.params.sessionId) || newSessionId);
+        currentProtocol || extractProtocol(driver, sessionId || newSessionId);
 
       let errMsg = err.stacktrace || err.stack;
       if (!_.includes(errMsg, err.message)) {
@@ -519,7 +522,7 @@ function buildHandler(
       if (isErrorType(err, errors.ProxyRequestError)) {
         actualErr = err.getActualError();
       } else {
-        getLogger(driver, getSessionId(req.params.sessionId) || newSessionId).debug(
+        getLogger(driver, sessionId || newSessionId).debug(
           `Encountered internal error running command: ${errMsg}`
         );
       }
@@ -546,8 +549,10 @@ function buildHandler(
 }
 
 export function driverShouldDoJwpProxy(driver: Core<any>, req: import('express').Request, command: string): boolean {
+
+  const sessionId = getSessionId(driver, req);
   // drivers need to explicitly say when the proxy is active
-  if (!driver.proxyActive(getSessionId(req.params.sessionId))) {
+  if (!driver.proxyActive(sessionId)) {
     return false;
   }
 
@@ -559,7 +564,7 @@ export function driverShouldDoJwpProxy(driver: Core<any>, req: import('express')
 
   // validate avoidance schema, and say we shouldn't proxy if anything in the
   // avoid list matches our req
-  if (driver.proxyRouteIsAvoided(getSessionId(req.params.sessionId) as string, req.method, req.originalUrl, req.body)) {
+  if (driver.proxyRouteIsAvoided(sessionId as string, req.method, req.originalUrl, req.body)) {
     return false;
   }
 
@@ -567,7 +572,7 @@ export function driverShouldDoJwpProxy(driver: Core<any>, req: import('express')
 }
 
 async function doJwpProxy(driver: BaseDriver<any>, req: Request, res: Response): Promise<void> {
-  const sessionId = getSessionId(req.params.sessionId) as string;
+  const sessionId = getSessionId(driver, req) as string;
   getLogger(driver, sessionId).info(
     'Driver proxy active, passing request on via HTTP proxy'
   );

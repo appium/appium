@@ -211,12 +211,17 @@ async function createTransports(args) {
   let consoleLogLevel;
   /** @type {string} */
   let fileLogLevel;
-  if (args.loglevel && args.loglevel.match(':')) {
+
+  // Server args are normalized in main so we only see dest form (`loglevel`).
+  // Fall back to schema default so Winston never sees undefined.
+  const rawLogLevel = args.loglevel ?? 'debug';
+
+  if (rawLogLevel && rawLogLevel.includes(':')) {
     // --log-level arg can optionally provide diff logging levels for console and file, separated by a colon
-    const lvlPair = args.loglevel.split(':');
+    const lvlPair = rawLogLevel.split(':');
     [consoleLogLevel, fileLogLevel] = lvlPair;
   } else {
-    consoleLogLevel = fileLogLevel = args.loglevel;
+    consoleLogLevel = fileLogLevel = rawLogLevel;
   }
 
   transports.push(createConsoleTransport(args, consoleLogLevel));

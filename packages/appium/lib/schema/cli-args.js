@@ -112,6 +112,12 @@ function subSchemaToArgDef(subSchema, argSpec) {
     help: makeDescription(subSchema),
   };
 
+  // argparse infers dest from the option string (e.g. --log-level → log_level).
+  // We need schema dest (e.g. loglevel) so merged server args and logsink use the right key.
+  if (!argSpec.extType) {
+    argOpts.dest = argSpec.rawDest;
+  }
+
   /**
    * Generally we will provide a `type` to `argparse` as a function which
    * validates using ajv (which is much more full-featured than what `argparse`

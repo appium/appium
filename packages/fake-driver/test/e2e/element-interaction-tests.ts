@@ -44,7 +44,7 @@ export function elementTests() {
       await el.click();
       await el.click();
       await el.click();
-      expect(await el.getAttribute('clicks')).to.equal(3);
+      expect(await el.getAttribute('clicks')).to.equal('3');
     });
     it('should get the name of an element', async function () {
       let el = await driver.$('MockInputField');

@@ -1,16 +1,10 @@
-import { checkParams } from '../../../lib/protocol/protocol';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import {checkParams} from '../../../lib/protocol/protocol';
+
+chai.use(chaiAsPromised);
 
 describe('Protocol', function () {
-  let chai;
-  let should;
-
-  before(async function () {
-    chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-    chai.use(chaiAsPromised.default);
-    should = chai.should();
-  });
-
   describe('checkParams', function () {
     it('should pass if no params are needed, but some are given', function () {
       const args = checkParams(
@@ -21,7 +15,7 @@ describe('Protocol', function () {
           baz: 'baz',
         }
       );
-      args.should.eql({});
+      expect(args).to.eql({});
     });
 
     it('should preserve session id', function () {
@@ -35,7 +29,7 @@ describe('Protocol', function () {
           bar: 'bar',
         }
       );
-      args.should.eql({
+      expect(args).to.eql({
         sessionId: 'sessionId',
         id: 'id',
         bar: 'bar',
@@ -53,9 +47,9 @@ describe('Protocol', function () {
           baz: 'baz',
         }
       );
-      args.should.eql({
+      expect(args).to.eql({
         bar: 'bar',
-        baz: 'baz'
+        baz: 'baz',
       });
     });
 
@@ -71,14 +65,14 @@ describe('Protocol', function () {
           baz: 'baz',
         }
       );
-      args.should.eql({
-          foo: 'foo',
-          bar: 'bar'
+      expect(args).to.eql({
+        foo: 'foo',
+        bar: 'bar',
       });
     });
 
     it('should fail if required params are missing', function () {
-      should.throw(() => {
+      expect(() => {
         checkParams(
           {
             required: ['foo'],
@@ -89,7 +83,7 @@ describe('Protocol', function () {
             baz: 'baz',
           }
         );
-      });
+      }).to.throw();
     });
 
     it('should pass if a set of required params is matched', function () {
@@ -104,7 +98,7 @@ describe('Protocol', function () {
           baz: 'baz',
         }
       );
-      args.should.eql({
+      expect(args).to.eql({
         foo: 'foo',
         baz: 'baz',
       });

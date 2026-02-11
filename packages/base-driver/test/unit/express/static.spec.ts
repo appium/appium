@@ -1,13 +1,9 @@
+import {expect} from 'chai';
 import {welcome} from '../../../lib/express/static';
 import {createSandbox} from 'sinon';
 
 describe('welcome', function () {
-  let sandbox;
-
-  before(async function () {
-    const chai = await import('chai');
-    chai.should();
-  });
+  let sandbox: sinon.SinonSandbox;
 
   beforeEach(function () {
     sandbox = createSandbox();
@@ -18,12 +14,12 @@ describe('welcome', function () {
   });
 
   it('should fill the template', async function () {
-    let res = {
+    const res = {
       send: sandbox.stub(),
     };
-    await welcome({}, res);
+    await welcome({}, res as any);
 
-    res.send.calledOnce.should.be.true;
-    res.send.args[0][0].should.include("Let's browse!");
+    expect(res.send.calledOnce).to.be.true;
+    expect(res.send.args[0][0]).to.include("Let's browse!");
   });
 });

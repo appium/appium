@@ -1,19 +1,15 @@
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import type {SettingsUpdateListener} from '@appium/types';
 import {node} from '@appium/support';
 import sinon from 'sinon';
 import {DeviceSettings, MAX_SETTINGS_SIZE} from '../../../lib/basedriver/device-settings';
 import {InvalidArgumentError} from '../../../lib/protocol/errors';
 
-describe('DeviceSettings', function () {
-  let sandbox;
-  let expect;
+chai.use(chaiAsPromised);
 
-  before(async function () {
-    const chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-    chai.use(chaiAsPromised.default);
-    chai.should();
-    expect = chai.expect;
-  });
+describe('DeviceSettings', function () {
+  let sandbox: sinon.SinonSandbox;
 
   beforeEach(function () {
     sandbox = sinon.createSandbox();
@@ -31,9 +27,9 @@ describe('DeviceSettings', function () {
     });
 
     it('should not hold on to reference of defaults in constructor', function () {
-      let obj = {foo: 'bar'};
-      let d1 = new DeviceSettings(obj);
-      let d2 = new DeviceSettings(obj);
+      const obj = {foo: 'bar'};
+      const d1 = new DeviceSettings(obj);
+      const d2 = new DeviceSettings(obj);
       d1.getSettings().foo = 'baz';
       expect(d1.getSettings()).to.not.eql(d2.getSettings());
     });
@@ -55,7 +51,9 @@ describe('DeviceSettings', function () {
       describe('when no parameters are provided', function () {
         it('should reject with an InvalidArgumentError', async function () {
           const deviceSettings = new DeviceSettings();
-          await expect(deviceSettings.update()).to.be.rejectedWith(
+          await expect(
+            (deviceSettings.update as (newSettings?: Record<string, unknown>) => Promise<void>)()
+          ).to.be.rejectedWith(
             InvalidArgumentError,
             /with valid JSON/i
           );
@@ -65,7 +63,9 @@ describe('DeviceSettings', function () {
       describe('when a non-plain-object `newSettings` param is provided', function () {
         it('should reject with an InvalidArgumentError', async function () {
           const deviceSettings = new DeviceSettings();
-          await expect(deviceSettings.update(null)).to.be.rejectedWith(
+          await expect(
+            deviceSettings.update(null as unknown as Record<string, unknown>)
+          ).to.be.rejectedWith(
             InvalidArgumentError,
             /with valid JSON/i
           );
@@ -74,7 +74,6 @@ describe('DeviceSettings', function () {
 
       describe('when the size of the `newSettings` param exceeds `MAX_SETTINGS_SIZE`', function () {
         beforeEach(function () {
-          // this is easier than sending a 21MB object
           sandbox.stub(node, 'getObjectSize').returns(MAX_SETTINGS_SIZE + 1);
         });
 
@@ -88,7 +87,7 @@ describe('DeviceSettings', function () {
       });
 
       describe('when the `newSettings` param is valid', function () {
-        let onSettingsUpdate;
+        let onSettingsUpdate: sinon.SinonStub;
 
         beforeEach(function () {
           onSettingsUpdate = sandbox.stub();
@@ -96,21 +95,25 @@ describe('DeviceSettings', function () {
 
         describe('when the new settings do not differ', function () {
           it('should not call the `_onSettingsUpdate` listener', async function () {
-            const deviceSettings = new DeviceSettings({stuff: 'things'}, onSettingsUpdate);
+            const deviceSettings = new DeviceSettings(
+              {stuff: 'things'},
+              onSettingsUpdate as SettingsUpdateListener<Record<string, unknown>>
+            );
             await deviceSettings.update({stuff: 'things'});
-            onSettingsUpdate.called.should.be.false;
+            expect(onSettingsUpdate.called).to.be.false;
           });
         });
 
         describe('when the new settings differ', function () {
           it('should call the `_onSettingsUpdate` listener', async function () {
-            const deviceSettings = new DeviceSettings({}, onSettingsUpdate);
+            const deviceSettings = new DeviceSettings(
+              {},
+              onSettingsUpdate as SettingsUpdateListener<Record<string, unknown>>
+            );
             await deviceSettings.update({stuff: 'things'});
-            onSettingsUpdate.calledOnceWithExactly(
-              'stuff',
-              'things',
-              undefined
-            ).should.be.true;
+            expect(
+              onSettingsUpdate.calledOnceWithExactly('stuff', 'things', undefined)
+            ).to.be.true;
           });
         });
       });

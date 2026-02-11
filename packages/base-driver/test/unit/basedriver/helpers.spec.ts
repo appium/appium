@@ -1,61 +1,60 @@
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import {
   isPackageOrBundle,
   duplicateKeys,
   parseCapsArray,
 } from '../../../lib/basedriver/helpers';
 
+chai.use(chaiAsPromised);
+
 describe('helpers', function () {
-  let should;
-
-  before(async function () {
-    const chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-    chai.use(chaiAsPromised.default);
-    should = chai.should();
-  });
-
   describe('#isPackageOrBundle', function () {
     it('should accept packages and bundles', function () {
-      isPackageOrBundle('io.appium.testapp').should.be.true;
+      expect(isPackageOrBundle('io.appium.testapp')).to.be.true;
     });
     it('should not accept non-packages or non-bundles', function () {
-      isPackageOrBundle('foo').should.be.false;
-      isPackageOrBundle('/path/to/an.app').should.be.false;
-      isPackageOrBundle('/path/to/an.apk').should.be.false;
+      expect(isPackageOrBundle('foo')).to.be.false;
+      expect(isPackageOrBundle('/path/to/an.app')).to.be.false;
+      expect(isPackageOrBundle('/path/to/an.apk')).to.be.false;
     });
   });
 
   describe('#duplicateKeys', function () {
     it('should translate key in an object', function () {
-      duplicateKeys({foo: 'hello world'}, 'foo', 'bar').should.eql({
+      expect(duplicateKeys({foo: 'hello world'}, 'foo', 'bar')).to.eql({
         foo: 'hello world',
         bar: 'hello world',
       });
     });
     it('should translate key in an object within an object', function () {
-      duplicateKeys({key: {foo: 'hello world'}}, 'foo', 'bar').should.eql({
+      expect(duplicateKeys({key: {foo: 'hello world'}}, 'foo', 'bar')).to.eql({
         key: {foo: 'hello world', bar: 'hello world'},
       });
     });
     it('should translate key in an object with an array', function () {
-      duplicateKeys([{key: {foo: 'hello world'}}, {foo: 'HELLO WORLD'}], 'foo', 'bar').should.eql([
+      expect(
+        duplicateKeys([{key: {foo: 'hello world'}}, {foo: 'HELLO WORLD'}], 'foo', 'bar')
+      ).to.eql([
         {key: {foo: 'hello world', bar: 'hello world'}},
         {foo: 'HELLO WORLD', bar: 'HELLO WORLD'},
       ]);
     });
     it('should duplicate both keys', function () {
-      duplicateKeys(
-        {
-          keyOne: {
-            foo: 'hello world',
+      expect(
+        duplicateKeys(
+          {
+            keyOne: {
+              foo: 'hello world',
+            },
+            keyTwo: {
+              bar: 'HELLO WORLD',
+            },
           },
-          keyTwo: {
-            bar: 'HELLO WORLD',
-          },
-        },
-        'foo',
-        'bar'
-      ).should.eql({
+          'foo',
+          'bar'
+        )
+      ).to.eql({
         keyOne: {
           foo: 'hello world',
           bar: 'hello world',
@@ -68,7 +67,7 @@ describe('helpers', function () {
     });
     it('should not do anything to primitives', function () {
       [0, 1, -1, true, false, null, undefined, '', 'Hello World'].forEach((item) => {
-        should.equal(duplicateKeys(item), item);
+        expect((duplicateKeys as any)(item)).to.equal(item);
       });
     });
     it('should rename keys on big complex objects', function () {
@@ -102,26 +101,26 @@ describe('helpers', function () {
         null,
         0,
       ];
-      duplicateKeys(input, 'foo', 'FOO').should.deep.equal(expectedOutput);
+      expect(duplicateKeys(input as any, 'foo', 'FOO')).to.deep.equal(expectedOutput);
     });
   });
 });
 
 describe('parseCapsArray', function () {
   it('should parse string into array', function () {
-    parseCapsArray('/tmp/my/app.zip').should.eql(['/tmp/my/app.zip']);
+    expect(parseCapsArray('/tmp/my/app.zip')).to.eql(['/tmp/my/app.zip']);
   });
   it('should parse array as string into array', function () {
-    parseCapsArray('["/tmp/my/app.zip"]').should.eql(['/tmp/my/app.zip']);
-    parseCapsArray('["/tmp/my/app.zip","/tmp/my/app2.zip"]').should.eql([
+    expect(parseCapsArray('["/tmp/my/app.zip"]')).to.eql(['/tmp/my/app.zip']);
+    expect(parseCapsArray('["/tmp/my/app.zip","/tmp/my/app2.zip"]')).to.eql([
       '/tmp/my/app.zip',
       '/tmp/my/app2.zip',
     ]);
   });
   it('should return an array without change', function () {
-    parseCapsArray(['a', 'b']).should.eql(['a', 'b']);
+    expect(parseCapsArray(['a', 'b'])).to.eql(['a', 'b']);
   });
   it('should fail if an invalid JSON array is provided', function () {
-    (() => parseCapsArray(`['*']`)).should.throw();
+    expect(() => parseCapsArray(`['*']`)).to.throw();
   });
 });

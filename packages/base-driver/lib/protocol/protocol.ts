@@ -49,7 +49,7 @@ export function determineProtocol(createSessionArgs: any[]): keyof typeof PROTOC
 export function getSessionId(driver: Core<any>, req: Request): string | undefined {
   if (Array.isArray(req.params.sessionId)) {
     const sessionId = req.params.sessionId[0];
-    getLogger(driver, sessionId).warn(
+    getLogger(driver, sessionId).debug(
       `Received sessionId as array: ${JSON.stringify(req.params.sessionId)}. Using first element as the session id: ${sessionId}`
     );
     return sessionId;

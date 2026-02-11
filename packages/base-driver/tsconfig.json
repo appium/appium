@@ -10,7 +10,7 @@
     "checkJs": true,
     "types": ["node", "mocha"]
   },
-  "include": ["lib", "test/unit"],
+  "include": ["lib"],
   "exclude": ["build"],
   "references": [{"path": "../support"}, {"path": "../types"}]
 }

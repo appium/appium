@@ -42,7 +42,7 @@
     "test:e2e": "mocha --exit --timeout 20s --slow 10s \"./test/e2e/**/*.spec.js\"",
     "test:smoke": "node ./index.js",
     "test:unit": "mocha \"./test/unit/**/*.spec.ts\"",
-    "test:types": "tsd"
+    "test:types": "tsd && tsc -p tsconfig.test.json"
   },
   "dependencies": {
     "@appium/support": "^7.0.5",

@@ -14,42 +14,20 @@ describe('Protocol', function () {
   });
 
   describe('getSessionId', function () {
+    const sessionId = '7b918a26-0649-11f1-b909-e2a798b4b114';
+    const fakeDriver = new FakeDriver();
     it('should pick up the first value as the session id', function () {
-      const sessionId = '7b918a26-0649-11f1-b909-e2a798b4b114';
-      const req = {
-        headers: {},
-        url: '/some/path',
-        params: {
-          sessionId: [sessionId]
-        }
-      };
-      const fakeDriver = new FakeDriver();
+      const req = {params: {sessionId: [sessionId]}};
       getSessionId(fakeDriver, req).should.eql(sessionId);
     });
 
     it('should get session id', function () {
-      const sessionId = '7b918a26-0649-11f1-b909-e2a798b4b114';
-
-      const req = {
-        headers: {},
-        url: '/some/path',
-        params: {
-          sessionId
-        }
-      };
-      const fakeDriver = new FakeDriver();
+      const req = {params: {sessionId}};
       getSessionId(fakeDriver, req).should.eql(sessionId);
     });
 
     it('should be undefined', function () {
-      const req = {
-        headers: {},
-        url: '/some/path',
-        params: {
-          sessionId: undefined
-        }
-      };
-      const fakeDriver = new FakeDriver();
+      const req = {params: {sessionId: undefined}};
       expect(getSessionId(fakeDriver, req)).to.eql(undefined);
     });
   });

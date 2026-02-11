@@ -43,7 +43,7 @@
     "@appium/opencv": "^4.1.0",
     "@appium/support": "^7.0.5",
     "lodash": "4.17.23",
-    "lru-cache": "11.2.5",
+    "lru-cache": "11.2.6",
     "sharp": "0.34.5"
   },
   "peerDependencies": {

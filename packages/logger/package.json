@@ -25,7 +25,7 @@
   "scripts": {
     "test": "npm run test:unit",
     "test:smoke": "node ./build/index.js",
-    "test:unit": "mocha --exit --timeout 1m \"./test/unit/**/*-specs.js\""
+    "test:unit": "mocha --exit --timeout 1m \"./test/unit/**/*-specs.ts\""
   },
   "dependencies": {
     "console-control-strings": "1.1.0",

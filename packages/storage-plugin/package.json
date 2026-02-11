@@ -44,7 +44,7 @@
     "async-lock": "1.4.1",
     "bluebird": "3.7.2",
     "lodash": "4.17.23",
-    "lru-cache": "11.2.5",
+    "lru-cache": "11.2.6",
     "rimraf": "6.1.2",
     "ws": "8.19.0"
   },

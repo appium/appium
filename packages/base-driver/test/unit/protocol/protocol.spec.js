@@ -1,4 +1,6 @@
-import { checkParams } from '../../../lib/protocol/protocol';
+import {expect} from 'chai';
+import { checkParams, getSessionId } from '../../../lib/protocol/protocol';
+import {FakeDriver} from '@appium/fake-driver';
 
 describe('Protocol', function () {
   let chai;
@@ -9,6 +11,25 @@ describe('Protocol', function () {
     const chaiAsPromised = await import('chai-as-promised');
     chai.use(chaiAsPromised.default);
     should = chai.should();
+  });
+
+  describe('getSessionId', function () {
+    const sessionId = '7b918a26-0649-11f1-b909-e2a798b4b114';
+    const fakeDriver = new FakeDriver();
+    it('should pick up the first value as the session id', function () {
+      const req = {params: {sessionId: [sessionId]}};
+      getSessionId(fakeDriver, req).should.eql(sessionId);
+    });
+
+    it('should get session id', function () {
+      const req = {params: {sessionId}};
+      getSessionId(fakeDriver, req).should.eql(sessionId);
+    });
+
+    it('should be undefined', function () {
+      const req = {params: {sessionId: undefined}};
+      expect(getSessionId(fakeDriver, req)).to.eql(undefined);
+    });
   });
 
   describe('checkParams', function () {

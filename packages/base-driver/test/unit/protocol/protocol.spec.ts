@@ -1,5 +1,6 @@
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import type {Request} from 'express';
 import {checkParams, getSessionId} from '../../../lib/protocol/protocol';
 import {FakeDriver} from '@appium/fake-driver';
 
@@ -11,17 +12,17 @@ describe('Protocol', function () {
     const fakeDriver = new FakeDriver();
 
     it('should pick up the first value as the session id', function () {
-      const req = {params: {sessionId: [sessionId]}};
+      const req = {params: {sessionId: [sessionId]}} as unknown as Request;
       expect(getSessionId(fakeDriver, req)).to.eql(sessionId);
     });
 
     it('should get session id', function () {
-      const req = {params: {sessionId}};
+      const req = {params: {sessionId}} as unknown as Request;
       expect(getSessionId(fakeDriver, req)).to.eql(sessionId);
     });
 
     it('should be undefined', function () {
-      const req = {params: {sessionId: undefined}};
+      const req = {params: {sessionId: undefined}} as unknown as Request;
       expect(getSessionId(fakeDriver, req)).to.eql(undefined);
     });
   });

@@ -40,6 +40,7 @@ describe('proxy', function () {
   });
 
   function mockProxy(opts: any = {}) {
+    // sets default server/port
     opts = {server: TEST_HOST, port, ...opts};
     const proxy = new JWProxy(opts);
     (proxy as any).request = async function (...args: any[]) {
@@ -190,7 +191,7 @@ describe('proxy', function () {
     });
     it('should pass along request errors', function () {
       const j = mockProxy({sessionId: '123'});
-      return expect(j.proxy('/badurl', 'GET')).to.be.rejectedWith('Could not proxy');
+      expect(j.proxy('/badurl', 'GET')).to.be.rejectedWith('Could not proxy');
     });
     it('should proxy error responses and codes', async function () {
       const j = mockProxy({sessionId: '123'});
@@ -209,7 +210,7 @@ describe('proxy', function () {
     });
     it('should pass along request errors', function () {
       const j = mockProxy({sessionId: '123'});
-      return expect(j.command('/badurl', 'GET')).to.be.rejectedWith('Could not proxy');
+      expect(j.command('/badurl', 'GET')).to.be.rejectedWith('Could not proxy');
     });
     it('should throw when a command fails', async function () {
       const j = mockProxy({sessionId: '123'});

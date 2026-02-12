@@ -8,6 +8,8 @@ import chaiAsPromised from 'chai-as-promised';
 
 chai.use(chaiAsPromised);
 
+// TODO: we need module-level mocks for the logger
+
 /** W3C caps for createSession (tests use partial/invalid caps) */
 type TestW3CCaps = W3CCapabilities<Constraints>;
 

@@ -14,6 +14,8 @@ interface ErrorListItem {
   errorCode?: number;
 }
 
+// Error codes and messages have been added according to JsonWireProtocol see
+// https://code.google.com/p/selenium/wiki/JsonWireProtocol#Response_Status_Codes
 const errorsList: ErrorListItem[] = [
   {errorName: 'NoSuchDriverError', errorMsg: 'A session is either terminated or not started', error: 'invalid session id', errorCode: 6},
   {errorName: 'ElementClickInterceptedError', errorMsg: 'The Element Click command could not be completed because the element receiving the events is obscuring the element that was requested clicked', error: 'element click intercepted'},
@@ -98,11 +100,7 @@ describe('errorFromW3CJsonCode', function () {
         if (w3cError) {
           const err = errorFromW3CJsonCode(w3cError, error.errorMsg);
           expect(err.error).to.equal(error.error);
-          if (error.errorName === 'SessionNotCreatedError') {
-            expect(err.message).to.include(error.errorMsg);
-          } else {
-            expect(err).to.have.property('message', error.errorMsg);
-          }
+          expect(err.message).to.include(error.errorMsg);
         } else {
           expect(isErrorType(errorFromW3CJsonCode(error.error ?? 'unknown error', error.errorMsg), errors.UnknownError)).to.be.true;
         }

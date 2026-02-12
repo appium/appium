@@ -9,6 +9,8 @@ chai.use(chaiAsPromised);
 
 describe('Routes', function () {
   describe('ensure protocol consistency', function () {
+    // TODO test against an explicit protocol rather than a hash of a previous
+    // protocol
     it('should not change protocol between patch versions', function () {
       const shasum = crypto.createHash('sha1');
       for (const [url, urlMapping] of _.toPairs(METHOD_MAP)) {

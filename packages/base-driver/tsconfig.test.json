@@ -4,5 +4,5 @@
     "noEmit": true
   },
   "include": ["lib", "test"],
-  "exclude": ["build"]
+  "exclude": ["build", "test/types"]
 }

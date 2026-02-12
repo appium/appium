@@ -571,7 +571,7 @@ describe('Protocol', function () {
           });
 
           beforeEach(function () {
-            const res = createProxyServer(sessionId, port);
+            const res = createProxyServer(port);
             server = res.server;
             app = res.app;
             jwproxy = new JWProxy({server: TEST_HOST, port});

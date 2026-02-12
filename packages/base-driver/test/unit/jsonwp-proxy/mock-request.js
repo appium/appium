@@ -1,4 +1,4 @@
-function resFixture(url, method, _json) {
+function resFixture(url, method, _json) { // eslint-disable-line @typescript-eslint/no-unused-vars
   if (/\/status$/.test(url)) {
     return [200, {status: 0, value: {foo: 'bar'}}];
   }

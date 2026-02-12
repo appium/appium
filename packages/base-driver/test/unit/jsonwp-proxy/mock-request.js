@@ -1,4 +1,4 @@
-function resFixture(url, method) {
+function resFixture(url, method, _json) {
   if (/\/status$/.test(url)) {
     return [200, {status: 0, value: {foo: 'bar'}}];
   }

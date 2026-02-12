@@ -1,33 +1,28 @@
-import {expect} from 'chai';
-import { checkParams, getSessionId } from '../../../lib/protocol/protocol';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import type {Request} from 'express';
+import {checkParams, getSessionId} from '../../../lib/protocol/protocol';
 import {FakeDriver} from '@appium/fake-driver';
 
+chai.use(chaiAsPromised);
+
 describe('Protocol', function () {
-  let chai;
-  let should;
-
-  before(async function () {
-    chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-    chai.use(chaiAsPromised.default);
-    should = chai.should();
-  });
-
   describe('getSessionId', function () {
     const sessionId = '7b918a26-0649-11f1-b909-e2a798b4b114';
     const fakeDriver = new FakeDriver();
+
     it('should pick up the first value as the session id', function () {
-      const req = {params: {sessionId: [sessionId]}};
-      getSessionId(fakeDriver, req).should.eql(sessionId);
+      const req = {params: {sessionId: [sessionId]}} as unknown as Request;
+      expect(getSessionId(fakeDriver, req)).to.eql(sessionId);
     });
 
     it('should get session id', function () {
-      const req = {params: {sessionId}};
-      getSessionId(fakeDriver, req).should.eql(sessionId);
+      const req = {params: {sessionId}} as unknown as Request;
+      expect(getSessionId(fakeDriver, req)).to.eql(sessionId);
     });
 
     it('should be undefined', function () {
-      const req = {params: {sessionId: undefined}};
+      const req = {params: {sessionId: undefined}} as unknown as Request;
       expect(getSessionId(fakeDriver, req)).to.eql(undefined);
     });
   });
@@ -42,7 +37,7 @@ describe('Protocol', function () {
           baz: 'baz',
         }
       );
-      args.should.eql({});
+      expect(args).to.eql({});
     });
 
     it('should preserve session id', function () {
@@ -56,7 +51,7 @@ describe('Protocol', function () {
           bar: 'bar',
         }
       );
-      args.should.eql({
+      expect(args).to.eql({
         sessionId: 'sessionId',
         id: 'id',
         bar: 'bar',
@@ -74,9 +69,9 @@ describe('Protocol', function () {
           baz: 'baz',
         }
       );
-      args.should.eql({
+      expect(args).to.eql({
         bar: 'bar',
-        baz: 'baz'
+        baz: 'baz',
       });
     });
 
@@ -92,14 +87,14 @@ describe('Protocol', function () {
           baz: 'baz',
         }
       );
-      args.should.eql({
-          foo: 'foo',
-          bar: 'bar'
+      expect(args).to.eql({
+        foo: 'foo',
+        bar: 'bar',
       });
     });
 
     it('should fail if required params are missing', function () {
-      should.throw(() => {
+      expect(() => {
         checkParams(
           {
             required: ['foo'],
@@ -110,7 +105,7 @@ describe('Protocol', function () {
             baz: 'baz',
           }
         );
-      });
+      }).to.throw();
     });
 
     it('should pass if a set of required params is matched', function () {
@@ -125,7 +120,7 @@ describe('Protocol', function () {
           baz: 'baz',
         }
       );
-      args.should.eql({
+      expect(args).to.eql({
         foo: 'foo',
         baz: 'baz',
       });

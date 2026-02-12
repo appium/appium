@@ -1,4 +1,4 @@
-import type {Constraints} from '@appium/types';
+import type {Constraints, InitialOpts} from '@appium/types';
 import {BaseDriver} from '../../../lib';
 import {PROTOCOLS} from '../../../lib/constants';
 
@@ -12,13 +12,13 @@ class MockExecuteDriver extends BaseDriver<Constraints> {
   declare jwpProxyActive: boolean;
 
   constructor() {
-    super({} as any);
+    super({} as InitialOpts);
     this.protocol = PROTOCOLS.W3C;
     this.sessionId = null;
     this.jwpProxyActive = false;
   }
 
-  async execute(script: string, args: any[]): Promise<{executed: string; args: any[]}> {
+  async execute(script: string, args: unknown[]): Promise<{executed: string; args: unknown[]}> {
     return {executed: script, args};
   }
 }

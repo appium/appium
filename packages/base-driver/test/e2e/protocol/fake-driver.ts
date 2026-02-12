@@ -1,4 +1,12 @@
-import type {Constraints, RouteMatcher} from '@appium/types';
+import type {
+  Constraints,
+  RouteMatcher,
+  InitialOpts,
+  W3CDriverCaps,
+  DefaultCreateSessionResult,
+  SingularSessionData,
+  StringRecord,
+} from '@appium/types';
 import {errors, BaseDriver, determineProtocol} from '../../../lib';
 import {PROTOCOLS} from '../../../lib/constants';
 import {util} from '@appium/support';
@@ -13,7 +21,7 @@ class FakeDriver extends BaseDriver<Constraints> {
   declare jwpProxyActive: boolean;
 
   constructor() {
-    super({} as any);
+    super({} as InitialOpts);
     this.protocol = PROTOCOLS.MJSONWP;
     this.sessionId = null;
     this.jwpProxyActive = false;
@@ -31,22 +39,23 @@ class FakeDriver extends BaseDriver<Constraints> {
   }
 
   async createSession(
-    desiredCapabilities: any,
-    requiredCapabilities: any,
-    capabilities: any
-  ): Promise<[string, any]> {
+    desiredCapabilities: W3CDriverCaps<Constraints>,
+    requiredCapabilities: W3CDriverCaps<Constraints>,
+    capabilities: W3CDriverCaps<Constraints>
+  ): Promise<DefaultCreateSessionResult<Constraints>> {
     this.sessionId = `fakeSession_${util.uuidV4()}`;
-    return [this.sessionId, capabilities];
+    return [this.sessionId, capabilities] as unknown as DefaultCreateSessionResult<Constraints>;
   }
 
-  async executeCommand(cmd: string, ...args: any[]): Promise<any> {
-    if (!(this as any)[cmd]) {
+  async executeCommand<T = unknown>(cmd: string, ...args: any[]): Promise<T> {
+    const method = (this as unknown as Record<string, (...a: any[]) => unknown>)[cmd];
+    if (!method) {
       throw new errors.NotYetImplementedError();
     }
     if (cmd === 'createSession') {
       this.protocol = determineProtocol(args);
     }
-    return await (this as any)[cmd](...args);
+    return (await method.call(this, ...args)) as T;
   }
 
   async deleteSession(): Promise<void> {
@@ -76,11 +85,11 @@ class FakeDriver extends BaseDriver<Constraints> {
     throw new Error('Too Fresh!');
   }
 
-  async getSession(): Promise<any> {
+  async getSession(): Promise<SingularSessionData<Constraints, StringRecord>> {
     throw new errors.NoSuchDriverError();
   }
 
-  async click(elementId: string, sessionId: string): Promise<any[]> {
+  async click(elementId: string, sessionId: string): Promise<unknown[]> {
     return [elementId, sessionId];
   }
 
@@ -92,7 +101,7 @@ class FakeDriver extends BaseDriver<Constraints> {
     return type;
   }
 
-  async moveTo(element: string | null, xOffset: number, yOffset: number): Promise<any[]> {
+  async moveTo(element: string | null, xOffset: number, yOffset: number): Promise<unknown[]> {
     return [element, xOffset, yOffset];
   }
 
@@ -100,15 +109,15 @@ class FakeDriver extends BaseDriver<Constraints> {
     return '';
   }
 
-  async getAttribute(attr: string, elementId: string, sessionId: string): Promise<any[]> {
+  async getAttribute(attr: string, elementId: string, sessionId: string): Promise<unknown[]> {
     return [attr, elementId, sessionId];
   }
 
-  async setValue(value: string | string[], elementId: string): Promise<any[]> {
+  async setValue(value: string | string[], elementId: string): Promise<unknown[]> {
     return [value, elementId];
   }
 
-  async performTouch(...args: any[]): Promise<any> {
+  async performTouch(...args: unknown[]): Promise<unknown> {
     return args;
   }
 

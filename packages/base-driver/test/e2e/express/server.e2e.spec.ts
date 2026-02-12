@@ -1,5 +1,7 @@
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import type {Application, Request, Response} from 'express';
+import type {ServerArgs} from '@appium/types';
 import {server} from '../../../lib';
 import axios from 'axios';
 import {createSandbox} from 'sinon';
@@ -34,18 +36,18 @@ describe('server', function () {
   before(async function () {
     port = await getTestPort(true);
 
-    function configureRoutes(app: any) {
-      app.get('/', (req: any, res: any) => {
+    function configureRoutes(app: Application) {
+      app.get('/', (_req: Request, res: Response) => {
         res.header['content-type'] = 'text/html';
         res.status(200).send('Hello World!');
       });
-      app.get('/python', (req: any, res: any) => {
+      app.get('/python', (req: Request, res: Response) => {
         res.status(200).send(req.headers['content-type']);
       });
       app.get('/error', () => {
         throw new Error('hahaha');
       });
-      app.get('/pause', async (req: any, res: any) => {
+      app.get('/pause', async (_req: Request, res: Response) => {
         res.header['content-type'] = 'text/html';
         await B.delay(1000);
         res.status(200).send('We have waited!');
@@ -94,10 +96,12 @@ describe('server', function () {
       }
     })();
 
+    // relinquish control so that we don't close before the request is received
     await B.delay(100);
 
     const before = Date.now();
     await hwServer.close();
+    // expect slightly less than the request waited, since we paused above
     expect(Date.now() - before).to.not.be.above(800);
 
     await bodyPromise;
@@ -144,8 +148,8 @@ describe('tls server', function () {
 
     port = await getTestPort(true);
 
-    function configureRoutes(app: any) {
-      app.get('/', (req: any, res: any) => {
+    function configureRoutes(app: Application) {
+      app.get('/', (_req: Request, res: Response) => {
         res.header['content-type'] = 'text/html';
         res.status(200).send('Hello World!');
       });
@@ -156,7 +160,7 @@ describe('tls server', function () {
       cliArgs: {
         sslCertificatePath: certPath,
         sslKeyPath: keyPath,
-      } as any,
+      } as unknown as ServerArgs,
       port,
     });
   });
@@ -199,12 +203,12 @@ describe('server plugins', function () {
   });
 
   function updaterWithGetRoute(route: string, reply: string) {
-    return async (app: any, httpServer: ServerWithPlugins) => {
-      app.get(`/${route}`, (req: any, res: any) => {
+    return async (app: Application, httpServer: ServerWithPlugins) => {
+      app.get(`/${route}`, (_req: Request, res: Response) => {
         res.header['content-type'] = 'text/html';
         res.status(200).send(reply);
       });
-      (httpServer as any)[`_updated_${route}`] = true;
+      (httpServer as ServerWithPlugins & Record<string, boolean>)[`_updated_${route}`] = true;
     };
   }
 

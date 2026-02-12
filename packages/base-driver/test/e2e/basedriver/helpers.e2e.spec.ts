@@ -59,7 +59,9 @@ describe('app download and configuration', function () {
         });
       });
       describe('server available', function () {
-        let server: http.Server & {close(): Promise<void>};
+        // use a local server so there is no dependency on the internet
+        type HttpServerWithAsyncClose = http.Server & {close(): Promise<void>};
+        let server: HttpServerWithAsyncClose;
 
         before(function () {
           const dir = path.resolve(__dirname, '..', 'fixtures');
@@ -76,6 +78,7 @@ describe('app download and configuration', function () {
               res.end();
               return;
             }
+            // for testing zip file content types
             const contentType = new URLSearchParams(
               new URL(req.url ?? '', 'http://localhost').search
             ).get('content-type');
@@ -85,7 +88,9 @@ describe('app download and configuration', function () {
             serve(req, res, finalhandler(req, res));
           });
           const close = httpServer.close.bind(httpServer);
-          (httpServer as any).close = async function () {
+          // Replace close with async version; type assertion needed for method replacement
+          (httpServer as unknown as Record<string, () => Promise<void>>).close = async function () {
+            // pause a moment or we get ECONRESET errors
             await B.delay(1000);
             return await new B<void>((resolve, reject) => {
               httpServer.on('close', resolve);
@@ -97,7 +102,7 @@ describe('app download and configuration', function () {
             });
           };
           httpServer.listen(port);
-          server = httpServer as http.Server & {close(): Promise<void>};
+          server = httpServer as HttpServerWithAsyncClose;
         });
         after(async function () {
           await server.close();

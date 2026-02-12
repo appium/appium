@@ -1,5 +1,6 @@
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import type {Constraints, DriverCaps} from '@appium/types';
 import {BaseDriver, server, routeConfiguringFunction} from '../../../lib';
 import {FakeDriver} from '../protocol/fake-driver';
 import axios from 'axios';
@@ -47,7 +48,7 @@ describe('BaseDriver', function () {
 
     it('should return capabilities', async function () {
       const capabilities = DEFAULT_CAPS;
-      driver.caps = capabilities as any;
+      driver.caps = capabilities as unknown as DriverCaps<Constraints>;
       const {data} = await axios({
         url: `${baseUrl}/session/${sessionId}/appium/capabilities`,
         method: 'GET',

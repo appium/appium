@@ -5,7 +5,6 @@ import type { Path } from 'path-scurry';
 import path from 'node:path';
 import type { Stats } from 'node:fs';
 import nativeFs from 'node:fs';
-import { rimrafSync } from 'rimraf';
 import { ItemOptions, StorageItem } from './types';
 import AsyncLock from 'async-lock';
 import type { AppiumLogger } from '@appium/types';
@@ -122,7 +121,7 @@ export class Storage {
     this._log.debug(`Cleaning up the '${this._root}' server storage folder`);
 
     if (!this._shouldPreserveRoot && !this._shouldPreserveFiles) {
-      rimrafSync(this._root);
+      fs.rimrafSync(this._root);
       return;
     }
 
@@ -139,7 +138,7 @@ export class Storage {
     }
     if (_.isEmpty(itemNames)) {
       if (!this._shouldPreserveRoot) {
-        rimrafSync(this._root);
+        fs.rimrafSync(this._root);
       }
       return;
     }
@@ -148,10 +147,10 @@ export class Storage {
       (name) => !this._shouldPreserveFiles || _.toLower(name).endsWith(TMP_EXT)
     );
     for (const matchedName of matchedNames) {
-      rimrafSync(path.join(this._root, matchedName));
+      fs.rimrafSync(path.join(this._root, matchedName));
     }
     if (!this._shouldPreserveRoot && _.isEmpty(_.without(itemNames, ...matchedNames))) {
-      rimrafSync(this._root);
+      fs.rimrafSync(this._root);
     }
   }
 

@@ -1,4 +1,6 @@
-function resFixture(url, method, _json) { // eslint-disable-line @typescript-eslint/no-unused-vars
+type ResFixtureBody = Record<string, unknown>;
+
+function resFixture(url: string, method: string): [number, ResFixtureBody] {
   if (/\/status$/.test(url)) {
     return [200, {status: 0, value: {foo: 'bar'}}];
   }
@@ -20,19 +22,28 @@ function resFixture(url, method, _json) { // eslint-disable-line @typescript-esl
   throw new Error("Can't handle url " + url);
 }
 
+export interface MockRequestOpts {
+  url: string;
+  method: string;
+  json?: unknown;
+}
 
-async function request(opts) {
-  const {url, method, json} = opts;
+export interface MockRequestResponse {
+  status: number;
+  headers: Record<string, string>;
+  data: ResFixtureBody;
+}
+
+export async function request(opts: MockRequestOpts): Promise<MockRequestResponse> {
+  const {url, method} = opts;
   if (/badurl$/.test(url)) {
     throw new Error('noworky');
   }
 
-  const [status, data] = resFixture(url, method, json);
+  const [status, data] = resFixture(url, method);
   return {
     status,
     headers: {'content-type': 'application/json; charset=utf-8'},
     data,
   };
 }
-
-export default request;

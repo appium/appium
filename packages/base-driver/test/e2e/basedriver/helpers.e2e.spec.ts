@@ -1,7 +1,6 @@
 import path from 'node:path';
 import {fs} from '@appium/support';
 
-declare const __dirname: string;
 import {configureApp} from '../../../lib/basedriver/helpers';
 import http from 'node:http';
 import finalhandler from 'finalhandler';

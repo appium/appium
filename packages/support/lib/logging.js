@@ -133,12 +133,8 @@ function getFinalPrefix(prefix, shouldLogTimestamp = false) {
   // Format the timestamp as HH-mm-ss:SSS
   const now = new Date();
   const pad = (n, z = 2) => String(n).padStart(z, '0');
-  const formattedTimestamp = `[${
-    pad(now.getHours()) + '-' +
-    pad(now.getMinutes()) + '-' +
-    pad(now.getSeconds()) + ':' +
-    pad(now.getMilliseconds(), 3)
-  }]`;
+  const formattedTimestamp =
+    `[${pad(now.getHours())}-${pad(now.getMinutes())}-${pad(now.getSeconds())}:${pad(now.getMilliseconds(), 3)}]`;
   return result ? `${formattedTimestamp} ${result}` : formattedTimestamp;
 }
 

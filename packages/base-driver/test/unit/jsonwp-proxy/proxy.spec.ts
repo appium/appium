@@ -1,7 +1,7 @@
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {JWProxy} from '../../../lib';
-import request from './mock-request';
+import {request, type MockRequestOpts} from './mock-request';
 import {isErrorType, errors} from '../../../lib/protocol/errors';
 import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
 
@@ -44,7 +44,7 @@ describe('proxy', function () {
     opts = {server: TEST_HOST, port, ...opts};
     const proxy = new JWProxy(opts);
     (proxy as any).request = async function (...args: any[]) {
-      return (await request(...args)) as any;
+      return await request(args[0] as MockRequestOpts);
     };
     return proxy;
   }
@@ -172,9 +172,9 @@ describe('proxy', function () {
       };
       let capturedConfig: any;
       const j = mockProxy({headers: customHeaders});
-      (j as any).request = async function (config: any) {
+      (j as any).request = async function (config: MockRequestOpts) {
         capturedConfig = config;
-        return (await request(config)) as any;
+        return await request(config);
       };
       await j.proxy('/status', 'GET');
       expect(capturedConfig).to.have.property('headers');

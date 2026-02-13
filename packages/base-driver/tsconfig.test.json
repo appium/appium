@@ -3,6 +3,6 @@
   "compilerOptions": {
     "noEmit": true
   },
-  "include": ["lib", "test/unit"],
-  "exclude": ["build"]
+  "include": ["lib", "test"],
+  "exclude": ["build", "test/types"]
 }

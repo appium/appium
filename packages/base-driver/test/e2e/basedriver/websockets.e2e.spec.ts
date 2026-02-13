@@ -1,3 +1,5 @@
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
 import {server, routeConfiguringFunction, DEFAULT_WS_PATHNAME_PREFIX} from '../../../lib';
 import {FakeDriver} from '../protocol/fake-driver';
@@ -5,20 +7,16 @@ import WebSocket from 'ws';
 import B from 'bluebird';
 import {TEST_HOST, getTestPort} from '@appium/driver-test-support';
 
+chai.use(chaiAsPromised);
+
 describe('Websockets (e2e)', function () {
-  let baseServer;
-  let driver;
-  let port;
-  let expect;
+  let baseServer: Awaited<ReturnType<typeof server>>;
+  let driver: FakeDriver;
+  let port: number;
   const SESSION_ID = 'foo';
   const WS_DATA = 'Hello';
 
   before(async function () {
-    const chai = await import('chai');
-    const chaisAsPromised = await import('chai-as-promised');
-    chai.use(chaisAsPromised.default);
-    expect = chai.expect;
-
     driver = new FakeDriver();
     driver.sessionId = SESSION_ID;
     port = await getTestPort();
@@ -27,6 +25,7 @@ describe('Websockets (e2e)', function () {
       port,
     });
   });
+
   after(async function () {
     await baseServer.close();
   });

@@ -1,22 +1,21 @@
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import {server, routeConfiguringFunction} from '../../../lib';
 import axios from 'axios';
 import {createSandbox} from 'sinon';
 import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
 import {MockExecuteDriver} from '../protocol/mock-execute-driver';
 
-let port, baseUrl;
+chai.use(chaiAsPromised);
 
 describe('Execute Command Test', function () {
-  let sandbox;
-  let driver;
-  let httpServer;
-  let expect;
+  let sandbox: sinon.SinonSandbox;
+  let driver: MockExecuteDriver;
+  let httpServer: Awaited<ReturnType<typeof server>>;
+  let port: number;
+  let baseUrl: string;
 
   beforeEach(async function () {
-    const chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-    chai.use(chaiAsPromised.default);
-    expect = chai.expect;
     sandbox = createSandbox();
     port = await getTestPort();
     baseUrl = `http://${TEST_HOST}:${port}`;

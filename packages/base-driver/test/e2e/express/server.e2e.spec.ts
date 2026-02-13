@@ -1,46 +1,53 @@
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import type {Application, Request, Response} from 'express';
+import type {ServerArgs} from '@appium/types';
 import {server} from '../../../lib';
 import axios from 'axios';
 import {createSandbox} from 'sinon';
 import B from 'bluebird';
 import _ from 'lodash';
-import { exec } from 'teen_process';
+import {exec} from 'teen_process';
 import https from 'node:https';
 import {TEST_HOST, getTestPort} from '@appium/driver-test-support';
 
-async function generateCertificate (certPath, keyPath) {
+chai.use(chaiAsPromised);
+
+async function generateCertificate(certPath: string, keyPath: string): Promise<void> {
   await exec('openssl', [
-    'req', '-nodes', '-new', '-x509',
-    '-keyout', keyPath,
-    '-out', certPath,
-    '-subj', '/C=US/ST=State/L=City/O=company/OU=Com/CN=www.testserver.local',
+    'req',
+    '-nodes',
+    '-new',
+    '-x509',
+    '-keyout',
+    keyPath,
+    '-out',
+    certPath,
+    '-subj',
+    '/C=US/ST=State/L=City/O=company/OU=Com/CN=www.testserver.local',
   ]);
 }
 
 describe('server', function () {
-  let hwServer;
-  let port;
-  let sandbox;
-  let expect;
-  before(async function () {
-    const chai = await import('chai');
-    const chaisAsPromised = await import('chai-as-promised');
-    chai.use(chaisAsPromised.default);
-    expect = chai.expect;
+  let hwServer: Awaited<ReturnType<typeof server>>;
+  let port: number;
+  let sandbox: sinon.SinonSandbox;
 
+  before(async function () {
     port = await getTestPort(true);
 
-    function configureRoutes(app) {
-      app.get('/', (req, res) => {
+    function configureRoutes(app: Application) {
+      app.get('/', (_req: Request, res: Response) => {
         res.header['content-type'] = 'text/html';
         res.status(200).send('Hello World!');
       });
-      app.get('/python', (req, res) => {
+      app.get('/python', (req: Request, res: Response) => {
         res.status(200).send(req.headers['content-type']);
       });
       app.get('/error', () => {
         throw new Error('hahaha');
       });
-      app.get('/pause', async (req, res) => {
+      app.get('/pause', async (_req: Request, res: Response) => {
         res.header['content-type'] = 'text/html';
         await B.delay(1000);
         res.status(200).send('We have waited!');
@@ -51,13 +58,16 @@ describe('server', function () {
       port,
     });
   });
+
   beforeEach(function () {
     sandbox = createSandbox();
     sandbox.stub(console, 'error');
   });
+
   after(async function () {
     await hwServer.close();
   });
+
   afterEach(function () {
     sandbox.restore();
   });
@@ -70,22 +80,26 @@ describe('server', function () {
     await expect(axios.get(`http://${TEST_HOST}:${port}/error`)).to.be.rejected;
   });
   it('should error if we try to start again on a port that is used', async function () {
-    await expect(server({
-      routeConfiguringFunction() {},
-      port,
-    })).to.be.rejectedWith(/EADDRINUSE/);
+    await expect(
+      server({
+        routeConfiguringFunction() {},
+        port,
+      })
+    ).to.be.rejectedWith(/EADDRINUSE/);
   });
   it('should not wait for the server close connections before finishing closing', async function () {
     const bodyPromise = (async () => {
       try {
         return await axios.get(`http://${TEST_HOST}:${port}/pause`);
-      } catch {}
+      } catch {
+        // ignore
+      }
     })();
 
     // relinquish control so that we don't close before the request is received
     await B.delay(100);
 
-    let before = Date.now();
+    const before = Date.now();
     await hwServer.close();
     // expect slightly less than the request waited, since we paused above
     expect(Date.now() - before).to.not.be.above(800);
@@ -94,37 +108,35 @@ describe('server', function () {
   });
   it('should error if we try to start on a bad hostname', async function () {
     this.timeout(60000);
-    await expect(server({
-      routeConfiguringFunction: _.noop,
-      port,
-      hostname: 'lolcathost',
-    })).to.be.rejectedWith(/ENOTFOUND|EADDRNOTAVAIL|EAI_AGAIN/);
-    await expect(server({
-      routeConfiguringFunction: _.noop,
-      port,
-      hostname: '1.1.1.1',
-    })).to.be.rejectedWith(/EADDRNOTAVAIL/);
+    await expect(
+      server({
+        routeConfiguringFunction: _.noop,
+        port,
+        hostname: 'lolcathost',
+      })
+    ).to.be.rejectedWith(/ENOTFOUND|EADDRNOTAVAIL|EAI_AGAIN/);
+    await expect(
+      server({
+        routeConfiguringFunction: _.noop,
+        port,
+        hostname: '1.1.1.1',
+      })
+    ).to.be.rejectedWith(/EADDRNOTAVAIL/);
   });
 });
 
 describe('tls server', function () {
-  let hwServer;
-  let port;
-  let certPath = 'certificate.cert';
-  let keyPath = 'certificate.key';
-  let expect;
+  let hwServer: Awaited<ReturnType<typeof server>>;
+  let port: number;
+  const certPath = 'certificate.cert';
+  const keyPath = 'certificate.key';
   const looseClient = axios.create({
     httpsAgent: new https.Agent({
-      rejectUnauthorized: false
-    })
+      rejectUnauthorized: false,
+    }),
   });
 
   before(async function () {
-    const chai = await import('chai');
-    const chaisAsPromised = await import('chai-as-promised');
-    chai.use(chaisAsPromised.default);
-    expect = chai.expect;
-
     try {
       await generateCertificate(certPath, keyPath);
     } catch (e) {
@@ -136,8 +148,8 @@ describe('tls server', function () {
 
     port = await getTestPort(true);
 
-    function configureRoutes(app) {
-      app.get('/', (req, res) => {
+    function configureRoutes(app: Application) {
+      app.get('/', (_req: Request, res: Response) => {
         res.header['content-type'] = 'text/html';
         res.status(200).send('Hello World!');
       });
@@ -148,10 +160,11 @@ describe('tls server', function () {
       cliArgs: {
         sslCertificatePath: certPath,
         sslKeyPath: keyPath,
-      },
+      } as unknown as ServerArgs,
       port,
     });
   });
+
   after(async function () {
     await hwServer.close();
   });
@@ -168,46 +181,46 @@ describe('tls server', function () {
   });
 });
 
+type ServerWithPlugins = Awaited<ReturnType<typeof server>> & {
+  _updated_plugin1?: boolean;
+  _updated_plugin2?: boolean;
+};
+
 describe('server plugins', function () {
-  let hwServer;
-  let port;
-  let expect;
+  let hwServer: ServerWithPlugins;
+  let port: number;
 
   before(async function () {
-    const chai = await import('chai');
-    const chaisAsPromised = await import('chai-as-promised');
-    chai.use(chaisAsPromised.default);
-    expect = chai.expect;
-
     port = await getTestPort(true);
   });
 
   afterEach(async function () {
     try {
-      await hwServer.close();
-    } catch {}
+      await hwServer?.close();
+    } catch {
+      // ignore
+    }
   });
 
-  function updaterWithGetRoute(route, reply) {
-
-    return async (app, httpServer) => {
-      app.get(`/${route}`, (req, res) => {
+  function updaterWithGetRoute(route: string, reply: string) {
+    return async (app: Application, httpServer: ServerWithPlugins) => {
+      app.get(`/${route}`, (_req: Request, res: Response) => {
         res.header['content-type'] = 'text/html';
         res.status(200).send(reply);
       });
-      httpServer[`_updated_${route}`] = true;
+      (httpServer as ServerWithPlugins & Record<string, boolean>)[`_updated_${route}`] = true;
     };
   }
 
   it('should allow one or more plugins to update the server', async function () {
-    hwServer = await server({
+    hwServer = (await server({
       routeConfiguringFunction: _.noop,
       port,
       serverUpdaters: [
         updaterWithGetRoute('plugin1', 'res from plugin1 route'),
         updaterWithGetRoute('plugin2', 'res from plugin2 route'),
       ],
-    });
+    })) as ServerWithPlugins;
     let {data} = await axios.get(`http://${TEST_HOST}:${port}/plugin1`);
     expect(data).to.eql('res from plugin1 route');
     ({data} = await axios.get(`http://${TEST_HOST}:${port}/plugin2`));
@@ -216,14 +229,16 @@ describe('server plugins', function () {
     expect(hwServer._updated_plugin2).to.be.true;
   });
   it('should pass on errors from the plugin updateServer method', async function () {
-    await expect(server({
-      routeConfiguringFunction: _.noop,
-      port,
-      serverUpdaters: [
-        () => {
-          throw new Error('ugh');
-        },
-      ],
-    })).to.eventually.be.rejectedWith(/ugh/);
+    await expect(
+      server({
+        routeConfiguringFunction: _.noop,
+        port,
+        serverUpdaters: [
+          () => {
+            throw new Error('ugh');
+          },
+        ],
+      })
+    ).to.eventually.be.rejectedWith(/ugh/);
   });
 });

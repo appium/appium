@@ -1,11 +1,9 @@
 import globalLog, { markSensitive as _markSensitive } from '@appium/logger';
 import _ from 'lodash';
-import moment from 'moment';
 
 /** @type {import('@appium/types').AppiumLoggerLevel[]} */
 export const LEVELS = ['silly', 'verbose', 'debug', 'info', 'http', 'warn', 'error'];
 const MAX_LOG_RECORDS_COUNT = 3000;
-const PREFIX_TIMESTAMP_FORMAT = 'HH-mm-ss:SSS';
 // mock log object is used in testing mode to silence the output
 const MOCK_LOG = {
   unwrap: () => ({
@@ -132,7 +130,15 @@ function getFinalPrefix(prefix, shouldLogTimestamp = false) {
   if (!shouldLogTimestamp) {
     return result;
   }
-  const formattedTimestamp = `[${moment().format(PREFIX_TIMESTAMP_FORMAT)}]`;
+  // Format the timestamp as HH-mm-ss:SSS
+  const now = new Date();
+  const pad = (n, z = 2) => String(n).padStart(z, '0');
+  const formattedTimestamp = `[${
+    pad(now.getHours()) + '-' +
+    pad(now.getMinutes()) + '-' +
+    pad(now.getSeconds()) + ':' +
+    pad(now.getMilliseconds(), 3)
+  }]`;
   return result ? `${formattedTimestamp} ${result}` : formattedTimestamp;
 }
 

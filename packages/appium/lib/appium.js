@@ -560,16 +560,14 @@ class AppiumDriver extends DriverCore {
   /**
    * Get the appropriate plugins for a session (or sessionless plugins)
    *
-   * @param {?string} sessionId - the sessionId (or null) to use to find plugins
+   * @param {string|null} [sessionId=null] - the sessionId (or null) to use to find plugins
    * @returns {Array<import('@appium/types').Plugin>} - array of plugin instances
    */
   pluginsForSession(sessionId = null) {
     if (sessionId) {
-      if (!this.sessionPlugins[sessionId]) {
-        const driverId = generateDriverLogPrefix(this.sessions[sessionId]);
-        this.sessionPlugins[sessionId] = this.createPluginInstances(driverId || null);
-      }
-      return this.sessionPlugins[sessionId];
+      const driver = this.sessions[sessionId];
+      return this.sessionPlugins[sessionId]
+        ?? (driver ? this.createPluginInstances(generateDriverLogPrefix(driver)) : []);
     }
 
     if (_.isEmpty(this.sessionlessPlugins)) {
@@ -598,7 +596,7 @@ class AppiumDriver extends DriverCore {
 
   /**
    * Creates instances of all of the enabled Plugin classes
-   * @param {string|null} driverId - ID to use for linking a driver to a plugin in logs
+   * @param {string|null} [driverId=null] - ID to use for linking a driver to a plugin in logs
    * @returns {Plugin[]}
    */
   createPluginInstances(driverId = null) {

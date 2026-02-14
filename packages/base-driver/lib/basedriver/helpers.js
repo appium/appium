@@ -335,12 +335,16 @@ export function parseCapsArray(capValue) {
  * Generate a string that uniquely describes driver instance
  *
  * @param {object} obj driver instance
- * @param {string?} [sessionId=null] session identifier (if exists).
+ * @param {string|null} [sessionId=null] session identifier (if exists).
  * This parameter is deprecated and is not used.
  * @returns {string}
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function generateDriverLogPrefix(obj, sessionId = null) {
+  if (!obj) {
+    // This should not happen
+    return 'UnknownDriver@????';
+  }
   return `${obj.constructor.name}@${node.getObjectId(obj).substring(0, 4)}`;
 }
 

@@ -56,7 +56,7 @@ export function getSessionId(driver: Core<any>, req: Request): string | undefine
       `Using first element as session id: ${sessionId}. ` +
       `Please fix the route definition to prevent this error.`
     );
-    // This is to not log the message twice.
+    // This is to not log the message multiple times.
     req.params.sessionId = sessionId;
     return sessionId;
   }

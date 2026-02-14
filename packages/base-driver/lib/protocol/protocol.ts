@@ -49,9 +49,15 @@ export function determineProtocol(createSessionArgs: any[]): keyof typeof PROTOC
 export function getSessionId(driver: Core<any>, req: Request): string | undefined {
   if (Array.isArray(req.params.sessionId)) {
     const sessionId = req.params.sessionId[0];
-    getLogger(driver, sessionId).debug(
-      `Received sessionId as array: ${JSON.stringify(req.params.sessionId)}. Using first element as the session id: ${sessionId}`
+    getLogger(driver, sessionId).warn(
+      `Received malformed sessionId as array from route: ${req.originalUrl}. ` +
+      `This indicates a route definition issue. The route should start with '/session/:sessionId' (named parameter) ` +
+      `instead of '/session/*sessionId' (wildcard). ` +
+      `Using first element as session id: ${sessionId}. ` +
+      `Please fix the route definition to prevent this error.`
     );
+    // This is to not log the message twice.
+    req.params.sessionId = sessionId;
     return sessionId;
   }
   return req.params.sessionId;
@@ -364,7 +370,7 @@ function buildHandler(
       if (isSessCmd && !spec.neverProxy && spec.command && driverShouldDoJwpProxy(driver, req, spec.command)) {
         if (
           !('pluginsToHandleCmd' in driver) || !_.isFunction(driver.pluginsToHandleCmd) ||
-          driver.pluginsToHandleCmd(spec.command, req.params.sessionId).length === 0
+          driver.pluginsToHandleCmd(spec.command, sessionId).length === 0
         ) {
           await doJwpProxy(driver as BaseDriver<any>, req, res);
           return;
@@ -581,7 +587,7 @@ async function doJwpProxy(driver: BaseDriver<any>, req: Request, res: Response):
     throw new Error('Trying to proxy to a server but the driver is unable to proxy');
   }
   try {
-    await driver.executeCommand('proxyReqRes', req, res, req.params.sessionId);
+    await driver.executeCommand('proxyReqRes', req, res, sessionId);
   } catch (err) {
     if (isErrorType(err, errors.ProxyRequestError)) {
       throw err;

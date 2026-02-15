@@ -35,12 +35,12 @@ export function determineProtocol(createSessionArgs: any[]): keyof typeof PROTOC
 }
 
 /**
- * Extract and validate sessionId from Express route parameter.
+ * Extract and validate the sessionId from the Express route parameter.
  * Express may return route params as string | string[] | undefined.
  * Appium uses standard routes (e.g., /session/:sessionId) which should always be strings.
  * Only `*` such as `/session/*sessionId` can return `string[]`.
  * Then, this method will return the first element as the session id.
- * It may break existing appium routing hanlding also, thus this method will log
+ * It may break existing appium routing handling also, thus this method will log
  * received parameters as well to help debugging.
  * @param driver Running driver
  * @param req The request in Express
@@ -49,9 +49,15 @@ export function determineProtocol(createSessionArgs: any[]): keyof typeof PROTOC
 export function getSessionId(driver: Core<any>, req: Request): string | undefined {
   if (Array.isArray(req.params.sessionId)) {
     const sessionId = req.params.sessionId[0];
-    getLogger(driver, sessionId).debug(
-      `Received sessionId as array: ${JSON.stringify(req.params.sessionId)}. Using first element as the session id: ${sessionId}`
+    getLogger(driver, sessionId).warn(
+      `Received malformed sessionId as array from the route: ${req.originalUrl}. ` +
+      `This indicates the route definition issue. The route should start with '/session/:sessionId' (named parameter) ` +
+      `instead of '/session/*sessionId' (wildcard). ` +
+      `Using the first element as session id: ${sessionId}. ` +
+      `Please fix the route definition to prevent this error.`
     );
+    // This is to not log the message multiple times.
+    req.params.sessionId = sessionId;
     return sessionId;
   }
   return req.params.sessionId;
@@ -364,7 +370,7 @@ function buildHandler(
       if (isSessCmd && !spec.neverProxy && spec.command && driverShouldDoJwpProxy(driver, req, spec.command)) {
         if (
           !('pluginsToHandleCmd' in driver) || !_.isFunction(driver.pluginsToHandleCmd) ||
-          driver.pluginsToHandleCmd(spec.command, req.params.sessionId).length === 0
+          driver.pluginsToHandleCmd(spec.command, sessionId).length === 0
         ) {
           await doJwpProxy(driver as BaseDriver<any>, req, res);
           return;
@@ -581,7 +587,7 @@ async function doJwpProxy(driver: BaseDriver<any>, req: Request, res: Response):
     throw new Error('Trying to proxy to a server but the driver is unable to proxy');
   }
   try {
-    await driver.executeCommand('proxyReqRes', req, res, req.params.sessionId);
+    await driver.executeCommand('proxyReqRes', req, res, sessionId);
   } catch (err) {
     if (isErrorType(err, errors.ProxyRequestError)) {
       throw err;

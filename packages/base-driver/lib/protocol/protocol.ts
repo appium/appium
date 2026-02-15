@@ -35,12 +35,12 @@ export function determineProtocol(createSessionArgs: any[]): keyof typeof PROTOC
 }
 
 /**
- * Extract and validate sessionId from Express route parameter.
+ * Extract and validate the sessionId from the Express route parameter.
  * Express may return route params as string | string[] | undefined.
  * Appium uses standard routes (e.g., /session/:sessionId) which should always be strings.
  * Only `*` such as `/session/*sessionId` can return `string[]`.
  * Then, this method will return the first element as the session id.
- * It may break existing appium routing hanlding also, thus this method will log
+ * It may break existing appium routing handling also, thus this method will log
  * received parameters as well to help debugging.
  * @param driver Running driver
  * @param req The request in Express
@@ -50,10 +50,10 @@ export function getSessionId(driver: Core<any>, req: Request): string | undefine
   if (Array.isArray(req.params.sessionId)) {
     const sessionId = req.params.sessionId[0];
     getLogger(driver, sessionId).warn(
-      `Received malformed sessionId as array from route: ${req.originalUrl}. ` +
-      `This indicates a route definition issue. The route should start with '/session/:sessionId' (named parameter) ` +
+      `Received malformed sessionId as array from the route: ${req.originalUrl}. ` +
+      `This indicates the route definition issue. The route should start with '/session/:sessionId' (named parameter) ` +
       `instead of '/session/*sessionId' (wildcard). ` +
-      `Using first element as session id: ${sessionId}. ` +
+      `Using the first element as session id: ${sessionId}. ` +
       `Please fix the route definition to prevent this error.`
     );
     // This is to not log the message multiple times.

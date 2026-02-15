@@ -1,25 +1,21 @@
-// @ts-check
 import _ from 'lodash';
 import {homedir} from 'node:os';
 import path from 'node:path';
-import {readPackage} from 'read-pkg';
+import {readPackage, type NormalizedPackageJson} from 'read-pkg';
 import * as semver from 'semver';
 
 /**
  * Path to the default `APPIUM_HOME` dir (`~/.appium`).
- * @type {string}
  */
-export const DEFAULT_APPIUM_HOME = path.resolve(homedir(), '.appium');
+export const DEFAULT_APPIUM_HOME: string = path.resolve(homedir(), '.appium');
 
 /**
  * Basename of extension manifest file.
- * @type {string}
  */
 export const MANIFEST_BASENAME = 'extensions.yaml';
 
 /**
  * Relative path to extension manifest file from `APPIUM_HOME`.
- * @type {string}
  */
 export const MANIFEST_RELATIVE_PATH = path.join(
   'node_modules',
@@ -30,11 +26,8 @@ export const MANIFEST_RELATIVE_PATH = path.join(
 
 /**
  * Resolves `true` if an `appium` dependency can be found somewhere in the given `cwd`.
- *
- * @param {string} cwd
- * @returns {Promise<boolean>}
  */
-export async function hasAppiumDependency(cwd) {
+export async function hasAppiumDependency(cwd: string): Promise<boolean> {
   return Boolean(await findAppiumDependencyPackage(cwd));
 }
 
@@ -44,33 +37,26 @@ export async function hasAppiumDependency(cwd) {
  * Looks at `dependencies` and `devDependencies` for `appium`.
  */
 export const findAppiumDependencyPackage = _.memoize(
-  /**
-   * @param {string} [cwd]
-   * @param {string|semver.Range} [acceptableVersionRange='>=2.0.0-beta'] The expected
-   * semver-compatible range for the Appium dependency. Packages that have 'appium' dependency
-   * not satisfying this range will be skipped.
-   * @returns {Promise<string|undefined>}
-   */
-  async function findAppiumDependencyPackage (
-    cwd = process.cwd(),
-    acceptableVersionRange = '>=2.0.0-beta'
-  ) {
-    /**
-     * Tries to read `package.json` in `root` and resolves the identity if it depends on `appium`;
-     * otherwise resolves `undefined`.
-     * @param {string} root
-     * @returns {Promise<string|undefined>}
-     */
-    const readPkg = async (root) => {
+  async function findAppiumDependencyPackage(
+    cwd: string = process.cwd(),
+    acceptableVersionRange: string | semver.Range = '>=2.0.0-beta'
+  ): Promise<string | undefined> {
+    const readPkg = async (root: string): Promise<string | undefined> => {
       try {
         const pkg = await readPackageInDir(root);
-        const version = semver.minVersion(String(
-          pkg?.dependencies?.appium ??
-          pkg?.devDependencies?.appium ??
-          pkg?.peerDependencies?.appium
-        ));
-        return version && semver.satisfies(version, acceptableVersionRange) ? root : undefined;
-      } catch {}
+        const version = semver.minVersion(
+          String(
+            pkg?.dependencies?.appium ??
+              pkg?.devDependencies?.appium ??
+              pkg?.peerDependencies?.appium
+          )
+        );
+        return version && semver.satisfies(version, acceptableVersionRange)
+          ? root
+          : undefined;
+      } catch {
+        return undefined;
+      }
     };
 
     let currentDir = path.resolve(cwd);
@@ -83,6 +69,7 @@ export const findAppiumDependencyPackage = _.memoize(
       currentDir = path.dirname(currentDir);
       isAtFsRoot = currentDir.length <= path.dirname(currentDir).length;
     }
+    return undefined;
   }
 );
 
@@ -90,12 +77,7 @@ export const findAppiumDependencyPackage = _.memoize(
  * Read a `package.json` in dir `cwd`.  If none found, return `undefined`.
  */
 export const readPackageInDir = _.memoize(
-  /**
-   *
-   * @param {string} cwd - Directory ostensibly having a `package.json`
-   * @returns {Promise<import('read-pkg').NormalizedPackageJson|undefined>}
-   */
-  async function _readPackageInDir(cwd) {
+  async function _readPackageInDir(cwd: string): Promise<NormalizedPackageJson> {
     return await readPackage({cwd, normalize: true});
   }
 );
@@ -109,11 +91,7 @@ export const readPackageInDir = _.memoize(
  * All returned paths will be absolute.
  */
 export const resolveAppiumHome = _.memoize(
-  /**
-   * @param {string} [cwd] - Current working directory.  _Must_ be absolute, if specified.
-   * @returns {Promise<string>}
-   */
-  async function _resolveAppiumHome(cwd = process.cwd()) {
+  async function _resolveAppiumHome(cwd: string = process.cwd()): Promise<string> {
     if (!path.isAbsolute(cwd)) {
       throw new TypeError('`cwd` parameter must be an absolute path');
     }
@@ -122,7 +100,7 @@ export const resolveAppiumHome = _.memoize(
       return path.resolve(cwd, process.env.APPIUM_HOME);
     }
 
-    return await findAppiumDependencyPackage(cwd) ?? DEFAULT_APPIUM_HOME;
+    return (await findAppiumDependencyPackage(cwd)) ?? DEFAULT_APPIUM_HOME;
   }
 );
 
@@ -133,17 +111,11 @@ export const resolveAppiumHome = _.memoize(
  * don't pass a parameter and let `resolveAppiumHome()` handle it.
  */
 export const resolveManifestPath = _.memoize(
-  /**
-   * @param {string} [appiumHome] - Appium home directory
-   * @returns {Promise<string>}
-   */
-  async function _resolveManifestPath(appiumHome) {
-    // can you "await" in a default parameter? is that a good idea?
-    appiumHome = appiumHome ?? (await resolveAppiumHome());
-    return path.join(appiumHome, MANIFEST_RELATIVE_PATH);
+  async function _resolveManifestPath(
+    appiumHome?: string
+  ): Promise<string> {
+    return path.join(
+      appiumHome ?? await resolveAppiumHome(), MANIFEST_RELATIVE_PATH
+    );
   }
 );
-
-/**
- * @typedef {import('read-pkg').NormalizedPackageJson} NormalizedPackageJson
- */

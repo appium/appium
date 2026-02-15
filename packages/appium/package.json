@@ -69,7 +69,7 @@
     "@appium/support": "^7.0.5",
     "@appium/types": "^1.2.0",
     "@sidvind/better-ajv-errors": "4.0.1",
-    "ajv": "8.17.1",
+    "ajv": "8.18.0",
     "ajv-formats": "3.0.1",
     "argparse": "2.0.1",
     "async-lock": "1.4.1",

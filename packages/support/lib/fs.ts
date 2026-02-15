@@ -15,6 +15,7 @@ import {
   type OpenMode,
   type Mode,
   type ReadAsyncOptions,
+  type Stats,
 } from 'node:fs';
 import {glob} from 'glob';
 import type {GlobOptions} from 'glob';
@@ -207,7 +208,7 @@ export const fs = {
       }
     };
 
-    let fromStat: import('node:fs').Stats;
+    let fromStat: Stats;
     try {
       fromStat = await fsPromises.stat(from);
     } catch (err) {

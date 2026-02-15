@@ -323,9 +323,8 @@ export const fs = {
       });
       walker
         .on('data', function (item: klaw.Item) {
-          const w = walker;
-          if (w) {
-            w.pause();
+          if (walker) {
+            walker.pause();
           }
 
           if (!item.stats.isDirectory()) {
@@ -341,13 +340,11 @@ export const fs = {
                 resolve(item.path);
                 return item.path;
               }
-              if (w) {
-                w.resume();
+              if (walker) {
+                walker.resume();
               }
-              return undefined;
             } catch (err) {
               reject(err);
-              return undefined;
             }
           })();
         })

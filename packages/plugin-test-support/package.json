@@ -44,7 +44,7 @@
   "dependencies": {
     "get-port": "7.1.0",
     "log-symbols": "7.0.1",
-    "teen_process": "4.0.9"
+    "teen_process": "4.0.10"
   },
   "peerDependencies": {
     "appium": "^3.0.0-beta.0",

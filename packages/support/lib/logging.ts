@@ -82,7 +82,7 @@ export function getLogger(prefix: AppiumLoggerPrefix | null = null): AppiumLogge
   const isDebugTimestampLoggingEnabled = process.env._LOG_TIMESTAMP === '1';
 
   for (const level of LEVELS) {
-    (wrappedLogger as any)[level] = function (
+    wrappedLogger[level] = function (
       this: typeof wrappedLogger,
       ...args: any[]
     ) {
@@ -105,7 +105,7 @@ export function getLogger(prefix: AppiumLoggerPrefix | null = null): AppiumLogge
   }
 
   if (!usingGlobalLog) {
-    (wrappedLogger as any).level = 'verbose';
+    wrappedLogger.level = 'verbose';
   }
 
   return wrappedLogger;

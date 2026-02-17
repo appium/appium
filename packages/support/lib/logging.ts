@@ -26,7 +26,7 @@ interface GlobalWithNpmlog {
   _global_npmlog?: Logger;
 }
 
-const g = globalThis as typeof globalThis & GlobalWithNpmlog;
+const globalWithNpmlog = globalThis as typeof globalThis & GlobalWithNpmlog;
 
 // mock log object is used in testing mode to silence the output
 const MOCK_LOG = {
@@ -127,11 +127,11 @@ export function markSensitive<T>(logMessage: T): {[k: string]: T} {
 function _getLogger(): [Logger, boolean] {
   const testingMode = process.env._TESTING === '1';
   const forceLogMode = process.env._FORCE_LOGS === '1';
-  const useGlobalLog = !!g._global_npmlog;
+  const useGlobalLog = !!globalWithNpmlog._global_npmlog;
   const logger: Logger =
     testingMode && !forceLogMode
       ? MOCK_LOG
-      : (g._global_npmlog ?? globalLog);
+      : (globalWithNpmlog._global_npmlog ?? globalLog);
   logger.maxRecordSize = MAX_LOG_RECORDS_COUNT;
   return [logger, useGlobalLog];
 }

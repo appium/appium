@@ -55,18 +55,18 @@ export function getLogger(prefix: AppiumLoggerPrefix | null = null): AppiumLogge
   const wrappedLogger = {
     unwrap: () => logger,
     levels: [...LEVELS],
-    prefix,
+    prefix: prefix ?? undefined,
     errorWithException(...args: any[]) {
       this.error(...args);
       return _.isError(args[0]) ? args[0] : new Error(args.join('\n'));
     },
     errorAndThrow(...args: any[]) {
-      throw this.errorWithException(args);
+      throw this.errorWithException(...args);
     },
     updateAsyncContext(contextInfo: AppiumLoggerContext, replace = false) {
       this.unwrap().updateAsyncStorage?.(contextInfo, replace);
     },
-  };
+  } as AppiumLogger;
 
   Object.defineProperty(wrappedLogger, 'level', {
     get() {
@@ -108,7 +108,7 @@ export function getLogger(prefix: AppiumLoggerPrefix | null = null): AppiumLogge
     (wrappedLogger as any).level = 'verbose';
   }
 
-  return wrappedLogger as AppiumLogger;
+  return wrappedLogger;
 }
 
 /**

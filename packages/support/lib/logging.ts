@@ -1,0 +1,153 @@
+import globalLog, {
+  markSensitive as _markSensitive,
+  type Logger,
+} from '@appium/logger';
+import type {
+  AppiumLogger,
+  AppiumLoggerContext,
+  AppiumLoggerLevel,
+  AppiumLoggerPrefix,
+} from '@appium/types';
+import _ from 'lodash';
+
+export const LEVELS: readonly AppiumLoggerLevel[] = [
+  'silly',
+  'verbose',
+  'debug',
+  'info',
+  'http',
+  'warn',
+  'error',
+];
+
+const MAX_LOG_RECORDS_COUNT = 3000;
+
+interface GlobalWithNpmlog {
+  _global_npmlog?: Logger;
+}
+
+const g = globalThis as typeof globalThis & GlobalWithNpmlog;
+
+// mock log object is used in testing mode to silence the output
+const MOCK_LOG = {
+  unwrap: () => ({
+    loadSecureValuesPreprocessingRules: () =>
+      Promise.resolve({issues: [], rules: []}),
+    level: 'verbose',
+    prefix: '',
+    log: _.noop,
+  }),
+  ...(_.fromPairs(LEVELS.map((l) => [l, _.noop])) as Record<
+    AppiumLoggerLevel,
+    (...args: any[]) => void
+  >),
+} as unknown as Logger;
+
+export const log = getLogger();
+
+/**
+ * @param prefix - Optional log prefix
+ * @returns A wrapped Appium logger instance
+ */
+export function getLogger(prefix: AppiumLoggerPrefix | null = null): AppiumLogger {
+  const [logger, usingGlobalLog] = _getLogger();
+
+  const wrappedLogger = {
+    unwrap: () => logger,
+    levels: [...LEVELS],
+    prefix,
+    errorWithException(...args: any[]) {
+      this.error(...args);
+      return _.isError(args[0]) ? args[0] : new Error(args.join('\n'));
+    },
+    errorAndThrow(...args: any[]) {
+      throw this.errorWithException(args);
+    },
+    updateAsyncContext(contextInfo: AppiumLoggerContext, replace = false) {
+      this.unwrap().updateAsyncStorage?.(contextInfo, replace);
+    },
+  };
+
+  Object.defineProperty(wrappedLogger, 'level', {
+    get() {
+      return logger.level;
+    },
+    set(newValue: string) {
+      logger.level = newValue;
+    },
+    enumerable: true,
+    configurable: true,
+  });
+
+  const isDebugTimestampLoggingEnabled = process.env._LOG_TIMESTAMP === '1';
+
+  for (const level of LEVELS) {
+    (wrappedLogger as any)[level] = function (
+      this: typeof wrappedLogger,
+      ...args: any[]
+    ) {
+      const finalPrefix = getFinalPrefix(
+        this.prefix,
+        isDebugTimestampLoggingEnabled
+      );
+      if (args.length) {
+        (logger as Record<string, (...a: any[]) => void>)[level](
+          finalPrefix,
+          ...args
+        );
+      } else {
+        (logger as Record<string, (...a: any[]) => void>)[level](
+          finalPrefix,
+          ''
+        );
+      }
+    };
+  }
+
+  if (!usingGlobalLog) {
+    (wrappedLogger as any).level = 'verbose';
+  }
+
+  return wrappedLogger as AppiumLogger;
+}
+
+/**
+ * Marks arbitrary log message as sensitive.
+ * This message will then be replaced with the default replacer
+ * while being logged by any `info`, `debug`, etc. methods if the
+ * asyncStorage has `isSensitive` flag enabled in its async context.
+ * The latter is enabled by the corresponding HTTP middleware
+ * in response to the `X-Appium-Is-Sensitive` request header
+ * being set to 'true'.
+ */
+export function markSensitive<T>(logMessage: T): {[k: string]: T} {
+  return _markSensitive(logMessage);
+}
+
+function _getLogger(): [Logger, boolean] {
+  const testingMode = process.env._TESTING === '1';
+  const forceLogMode = process.env._FORCE_LOGS === '1';
+  const useGlobalLog = !!g._global_npmlog;
+  const logger: Logger =
+    testingMode && !forceLogMode
+      ? MOCK_LOG
+      : (g._global_npmlog ?? globalLog);
+  logger.maxRecordSize = MAX_LOG_RECORDS_COUNT;
+  return [logger, useGlobalLog];
+}
+
+function getFinalPrefix(
+  prefix: AppiumLoggerPrefix | null | undefined,
+  shouldLogTimestamp = false
+): string {
+  const result = (_.isFunction(prefix) ? prefix() : prefix) ?? '';
+  if (!shouldLogTimestamp) {
+    return result;
+  }
+  const now = new Date();
+  const pad = (n: number, z = 2) => String(n).padStart(z, '0');
+  const formattedTimestamp = `[${pad(now.getHours())}-${pad(now.getMinutes())}-${pad(now.getSeconds())}:${pad(now.getMilliseconds(), 3)}]`;
+  return result ? `${formattedTimestamp} ${result}` : formattedTimestamp;
+}
+
+export default log;

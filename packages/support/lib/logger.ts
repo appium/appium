@@ -1,5 +1,5 @@
 import {getLogger} from './logging';
 
-let log = getLogger('Support');
+const log = getLogger('Support');
 
 export default log;

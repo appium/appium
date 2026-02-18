@@ -1,6 +1,6 @@
 import { fs, timing } from '@appium/support';
 import _ from 'lodash';
-import B from 'bluebird';
+import { asyncmap } from 'asyncbox';
 import type { Path } from 'path-scurry';
 import path from 'node:path';
 import type { Stats } from 'node:fs';
@@ -44,17 +44,14 @@ export class Storage {
       return [];
     }
 
-    const statPromises: B<Stats>[] = [];
-    for (const item of items) {
-      const pending = statPromises.filter((p) => p.isPending());
-      if (pending.length >= MAX_TASKS) {
-        await B.any(pending);
-      }
-      statPromises.push(B.resolve(fs.stat(item.fullpath())));
-    }
+    const stats = await asyncmap(
+      items,
+      (item) => fs.stat(item.fullpath()),
+      {concurrency: MAX_TASKS}
+    );
     return _.zip(
       items.map((f) => f.fullpath()),
-      await B.all(statPromises)
+      stats
     )
     .map(([fullpath, stat]) => ({
       name: path.basename(fullpath as string),
@@ -106,15 +103,11 @@ export class Storage {
       return;
     }
 
-    const promises: B<any>[] = [];
-    for (const fullPath of files) {
-      const pending = promises.filter((p) => p.isPending());
-      if (pending.length >= MAX_TASKS) {
-        await B.any(pending);
-      }
-      promises.push(B.resolve(fs.rimraf(fullPath)));
-    }
-    await B.all(promises);
+    await asyncmap(
+      files,
+      (fullPath) => fs.rimraf(fullPath),
+      {concurrency: MAX_TASKS}
+    );
   }
 
   cleanupSync(): void {

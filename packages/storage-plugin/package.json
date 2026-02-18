@@ -42,7 +42,7 @@
   "dependencies": {
     "@appium/support": "^7.0.5",
     "async-lock": "1.4.1",
-    "bluebird": "3.7.2",
+    "asyncbox": "6.1.0",
     "lodash": "4.17.23",
     "lru-cache": "11.2.6",
     "ws": "8.19.0"

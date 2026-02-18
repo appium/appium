@@ -75,7 +75,7 @@ export class MJpegStream extends Writable {
     try {
       return await requireSharp()(chunk).png().toBuffer();
     } catch (err: any) {
-      log.error(`Cannot convert MJPEG chunk to PNG: ${err.message}`);
+      log.warn(`Cannot convert MJPEG chunk to PNG: ${err.message}`);
       return null;
     }
   }

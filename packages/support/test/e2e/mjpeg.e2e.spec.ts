@@ -63,6 +63,7 @@ describe('MJpeg Stream (e2e)', function () {
 
   it('should update mjpeg stream based on new data from mjpeg server', async function () {
     stream = new MJpegStream(serverUrl, _.noop);
+    /* eslint-disable dot-notation -- access private lastChunk/updateCount for assertion */
     expect(stream['lastChunk']).to.not.exist;
     await stream.start();
     expect(stream['lastChunk']).to.exist;
@@ -89,6 +90,7 @@ describe('MJpeg Stream (e2e)', function () {
     await B.delay(1000);
     expect(stream['lastChunk']).to.not.exist;
     expect(stream['updateCount']).to.eql(0);
+    /* eslint-enable dot-notation */
   });
 
   it('should error out if the server cannot be connected', async function () {

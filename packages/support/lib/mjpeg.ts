@@ -61,7 +61,7 @@ export class MJpegStream extends Writable {
 
   get lastChunkBase64(): string | null {
     const lastChunk = this.lastChunk;
-    if (lastChunk && _.isBuffer(lastChunk)) {
+    if (lastChunk && !_.isEmpty(lastChunk) && _.isBuffer(lastChunk)) {
       return lastChunk.toString('base64');
     }
     return null;
@@ -109,12 +109,14 @@ export class MJpegStream extends Writable {
         })
       ).data as Readable;
     } catch (e) {
-      const message =
-        _.has(e, 'response') && e && typeof e === 'object' && 'response' in e
-          ? JSON.stringify((e as {response: unknown}).response)
-          : e instanceof Error
-            ? e.message
-            : String(e);
+      let message: string;
+      if (e && typeof e === 'object' && 'response' in e) {
+        message = JSON.stringify((e as {response: unknown}).response);
+      } else if (e instanceof Error) {
+        message = e.message;
+      } else {
+        message = String(e);
+      }
       throw new Error(
         `Cannot connect to the MJPEG stream at ${url}. Original error: ${message}`
       );

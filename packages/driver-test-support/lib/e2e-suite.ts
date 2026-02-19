@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import {server, routeConfiguringFunction, DeviceSettings} from 'appium/driver';
 import axios, {type RawAxiosRequestConfig} from 'axios';
-import B from 'bluebird';
+import {sleep} from 'asyncbox';
 import {TEST_HOST, getTestPort, createAppiumURL} from './helpers';
 import sinon from 'sinon';
 import {Agent} from 'node:http';
@@ -177,7 +177,7 @@ export function driverE2ETestSuite(
           );
           times++;
         } while (times < 2);
-        const sessionIds = _.map(await B.all(reqs), 'sessionId');
+        const sessionIds = _.map(await Promise.all(reqs), 'sessionId');
         expect(_.uniq(sessionIds)).to.have.lengthOf(1);
 
         const {status, data} = await endSession(sessionIds[0]);
@@ -225,7 +225,7 @@ export function driverE2ETestSuite(
 
         originalFindElements = d.findElements;
         d.findElements = async function () {
-          await B.delay(200);
+          await sleep(200);
           return ['foo'];
         }.bind(d);
       });
@@ -248,7 +248,7 @@ export function driverE2ETestSuite(
           using: 'name',
           value: 'foo',
         });
-        await B.delay(400);
+        await sleep(400);
         const value = await getSession(sessionId);
         expect(value.error).to.equal('invalid session id');
         expect(d.sessionId).to.be.null;
@@ -276,7 +276,7 @@ export function driverE2ETestSuite(
           using: 'name',
           value: 'foo',
         });
-        await B.delay(400);
+        await sleep(400);
         const value = await getSession(d.sessionId!);
         expect(value.platformName).to.equal(defaultCaps.platformName);
         const resp = (await endSession(newSession.sessionId)).data.value;
@@ -293,7 +293,7 @@ export function driverE2ETestSuite(
           using: 'name',
           value: 'foo',
         });
-        await B.delay(400);
+        await sleep(400);
         const value = await getSession(sessionId!);
         expect((value as any).error).to.equal('invalid session id');
         expect(d.sessionId).to.be.null;
@@ -340,11 +340,11 @@ export function driverE2ETestSuite(
 
       it('should reject a current command when the driver crashes', async function () {
         sandbox.stub(d, 'getStatus').callsFake(async function () {
-          await B.delay(5000);
+          await sleep(5000);
         });
         const reqPromise = getCommand('status', {validateStatus: null});
-        await B.delay(100);
-        const shutdownEventPromise = new B<void>((resolve, reject) => {
+        await sleep(100);
+        const shutdownEventPromise = new Promise<void>((resolve, reject) => {
           setTimeout(
             () =>
               reject(

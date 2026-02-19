@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import B from 'bluebird';
+import {sleep} from 'asyncbox';
 import {createSandbox} from 'sinon';
 import type {
   Constraints,
@@ -89,12 +89,12 @@ export function driverUnitTestSuite<C extends Constraints>(
 
     it('should fulfill an unexpected driver quit promise', async function () {
       sandbox.stub(d, 'getStatus').callsFake(async () => {
-        await B.delay(1000);
+        await sleep(1000);
         return 'good status';
       });
       const cmdPromise = d.executeCommand('getStatus');
-      await B.delay(10);
-      const p = new B((resolve, reject) => {
+      await sleep(10);
+      const p = new Promise<void>((resolve, reject) => {
         setTimeout(
           () =>
             reject(
@@ -113,11 +113,11 @@ export function driverUnitTestSuite<C extends Constraints>(
 
     it('should not allow commands in middle of unexpected shutdown', async function () {
       sandbox.stub(d, 'deleteSession').callsFake(async function (this: InstanceType<typeof DriverClass>) {
-        await B.delay(100);
+        await sleep(100);
         DriverClass.prototype.deleteSession.call(this);
       });
       await d.createSession(w3cCaps);
-      const p = new B((resolve, reject) => {
+      const p = new Promise<void>((resolve, reject) => {
         setTimeout(
           () =>
             reject(
@@ -136,12 +136,12 @@ export function driverUnitTestSuite<C extends Constraints>(
 
     it('should allow new commands after done shutting down', async function () {
       sandbox.stub(d, 'deleteSession').callsFake(async function (this: InstanceType<typeof DriverClass>) {
-        await B.delay(100);
+        await sleep(100);
         DriverClass.prototype.deleteSession.call(this);
       });
 
       await d.createSession(_.cloneDeep(w3cCaps));
-      const p = new B((resolve, reject) => {
+      const p = new Promise<void>((resolve, reject) => {
         setTimeout(
           () =>
             reject(
@@ -157,7 +157,7 @@ export function driverUnitTestSuite<C extends Constraints>(
       await p;
 
       await expect(d.executeCommand('getSession')).to.be.rejectedWith(/shut down/);
-      await B.delay(500);
+      await sleep(500);
 
       await d.executeCommand('createSession', null, null, _.cloneDeep(w3cCaps));
       await d.deleteSession();
@@ -198,11 +198,11 @@ export function driverUnitTestSuite<C extends Constraints>(
       beforeEach(function () {
         d = new DriverClass() as InstanceType<typeof DriverClass>;
         sandbox.stub(d, 'getStatus').callsFake(async () => {
-          await B.delay(waitMs);
+          await sleep(waitMs);
           return Date.now();
         });
         sandbox.stub(d, 'deleteSession').callsFake(async () => {
-          await B.delay(waitMs);
+          await sleep(waitMs);
           throw new Error('multipass');
         });
       });
@@ -217,7 +217,7 @@ export function driverUnitTestSuite<C extends Constraints>(
         for (let i = 0; i < numCmds; i++) {
           cmds.push(d.executeCommand('getStatus'));
         }
-        const results = await B.all(cmds) as number[];
+        const results = await Promise.all(cmds) as number[];
         for (let i = 1; i < numCmds; i++) {
           if (results[i] <= results[i - 1]) {
             throw new Error('Got result out of order');
@@ -264,12 +264,12 @@ export function driverUnitTestSuite<C extends Constraints>(
         for (let i = 0; i < numCmds; i++) {
           cmds.push(d.executeCommand('getStatus'));
         }
-        let results = await B.all(cmds) as number[];
+        let results = await Promise.all(cmds) as number[];
         cmds = [];
         for (let i = 0; i < numCmds; i++) {
           cmds.push(d.executeCommand('getStatus'));
         }
-        results = await B.all(cmds) as number[];
+        results = await Promise.all(cmds) as number[];
         for (let i = 1; i < numCmds; i++) {
           if (results[i] <= results[i - 1]) {
             throw new Error('Got result out of order');

@@ -1,4 +1,4 @@
-import B from 'bluebird';
+import {sleep} from 'asyncbox';
 import type {Express, Request, Response} from 'express';
 import type {Server as HttpServer} from 'node:http';
 import {BaseDriver, errors} from 'appium/driver';
@@ -195,45 +195,45 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
   }
 
   async getFakeThing(): Promise<Thing | null> {
-    await B.delay(1);
+    await sleep(1);
     return this.fakeThing;
   }
 
   async setFakeThing(thing: Thing): Promise<null> {
-    await B.delay(1);
+    await sleep(1);
     this.fakeThing = thing;
     return null;
   }
 
   async getFakeDriverArgs(): Promise<typeof this.cliArgs> {
-    await B.delay(1);
+    await sleep(1);
     return this.cliArgs;
   }
 
   /** TODO: track deprecated commands when called and return their names. */
   async getDeprecatedCommandsCalled(): Promise<string[]> {
-    await B.delay(1);
+    await sleep(1);
     return [];
   }
 
   async callDeprecatedCommand(): Promise<void> {
-    await B.delay(1);
+    await sleep(1);
   }
 
   async doSomeMath(num1: number, num2: number): Promise<number> {
-    await B.delay(1);
+    await sleep(1);
     return num1 + num2;
   }
 
   async doSomeMath2(num1: number, num2: number): Promise<number> {
-    await B.delay(1);
+    await sleep(1);
     return num1 + num2;
   }
 
   private async startClock(): Promise<void> {
     this._clockRunning = true;
     while (this._clockRunning) {
-      await B.delay(500);
+      await sleep(500);
       this.eventEmitter.emit('bidiEvent', {
         method: 'appium:clock.currentTime',
         params: {time: Date.now()},

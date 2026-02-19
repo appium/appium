@@ -67,6 +67,7 @@ export type {
   NetOptions,
   DownloadOptions,
   AuthCredentials,
+  FtpUploadOptions,
   NotHttpUploadOptions,
   HttpUploadOptions,
 } from './net';

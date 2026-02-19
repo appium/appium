@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import {Buffer} from 'node:buffer';
-import B from 'bluebird';
 import sharp from 'sharp';
 import {OpenCvAutoreleasePool} from './autorelease-pool';
 import type {
@@ -71,7 +70,7 @@ const DEFAULT_MATCHING_METHOD: TemplateMatchingMethod = 'TM_CCOEFF_NORMED';
 export async function initOpenCv(): Promise<void> {
   cv = require('opencv-bindings') as OpenCVBindings;
   while (!cv.getBuildInformation) {
-    await B.delay(500);
+    await new Promise((resolve) => setTimeout(resolve, 500));
   }
   // opencv-bindings sets a global unhandledRejection handler of an abort, which we don't want, so
   // undo it here. https://github.com/opencv/opencv/issues/21481
@@ -137,7 +136,7 @@ export async function getImagesMatches(
     const detector = pool.add(new cv[AVAILABLE_DETECTORS[detectorName]]());
     const img1Promise = cvMatFromImage(img1Data);
     const img2Promise = cvMatFromImage(img2Data);
-    const [img1Raw, img2Raw] = await B.all([img1Promise, img2Promise]);
+    const [img1Raw, img2Raw] = await Promise.all([img1Promise, img2Promise]);
     const img1 = pool.add(img1Raw);
     const img2 = pool.add(img2Raw);
     const result1 = detectAndCompute(img1, detector);
@@ -273,7 +272,7 @@ export async function getImagesSimilarity(
   try {
     const templatePromise = cvMatFromImage(img1Data);
     const referencePromise = cvMatFromImage(img2Data);
-    const [templateRaw, referenceRaw] = await B.all([templatePromise, referencePromise]);
+    const [templateRaw, referenceRaw] = await Promise.all([templatePromise, referencePromise]);
     const template = pool.add(templateRaw);
     const reference = pool.add(referenceRaw);
     if (template.rows !== reference.rows || template.cols !== reference.cols) {
@@ -372,7 +371,7 @@ export async function getImageOccurrence(
   try {
     const fullImgPromise = cvMatFromImage(fullImgData);
     const partialImgPromise = cvMatFromImage(partialImgData);
-    const [fullImgRaw, partialImgRaw] = await B.all([fullImgPromise, partialImgPromise]);
+    const [fullImgRaw, partialImgRaw] = await Promise.all([fullImgPromise, partialImgPromise]);
     const fullImg = pool.add(fullImgRaw);
     const partialImg = pool.add(partialImgRaw);
     const matched = pool.add(new cv.Mat());
@@ -446,7 +445,7 @@ export async function getImageOccurrence(
         visualizePromises.push(cvMatToPng(singleHighlightedImage));
       }
       let restPngBuffers: Buffer[] = [];
-      [visualization, ...restPngBuffers] = await B.all([
+      [visualization, ...restPngBuffers] = await Promise.all([
         cvMatToPng(fullHighlightedImage),
         ...visualizePromises,
       ]);

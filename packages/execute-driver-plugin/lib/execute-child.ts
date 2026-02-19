@@ -6,9 +6,11 @@ import type {DriverScriptMessageEvent, ScriptResult, RunScriptResult} from './ty
 
 // Historically, scripts could use the Promise.delay function, which relied on bluebird.
 // The native promise library does not have a 1:1 equivalent, so we add it to maintain backwards compatibility.
-const promiseWithDelay = Object.assign(Promise, {
-  delay: (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms)),
-});
+class PromiseWithDelay<T> extends Promise<T> {
+  static delay(ms: number): Promise<void> {
+    return new Promise<void>((resolve) => setTimeout(resolve, ms));
+  }
+}
 
 const log = logger.getLogger('ExecuteDriver Child');
 let send: (res: ScriptResult) => Promise<void>;
@@ -56,7 +58,7 @@ async function runScript(eventParams: DriverScriptMessageEvent): Promise<RunScri
   // console logger, and a promise library
   let result = await vm.runInNewContext(
     fullScript,
-    {driver, console: consoleFns, Promise: promiseWithDelay},
+    {driver, console: consoleFns, Promise: PromiseWithDelay},
     {timeout: timeoutMs, breakOnSigint: true}
   );
 

@@ -100,7 +100,7 @@ export class ExecuteDriverPlugin extends BasePlugin {
       // promise that deals with the result from the child process
       const waitForResult = async () => {
         const res = await new Promise<{error?: {message: string}; success?: any}>((resolve) => {
-          scriptProc.on('message', resolve); // this is node IPC
+          scriptProc.once('message', resolve); // this is node IPC
         });
 
         this.log.info(

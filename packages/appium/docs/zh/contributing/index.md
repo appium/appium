@@ -7,7 +7,8 @@ title: 对Appium 的贡献
 
 Appium项目离不开来自公司和志愿者的代码、文档、维护和支持的众多贡献。 因此，我们欢迎贡献！
 
-有许多不同的方式可以帮助项目——请参阅下方了解您可以做的一切以及每个贡献方法的流程。 请注意，无论您如何贡献，您的参与都受我们的[行为准则](https://github.com/appium/appium/blob/master/CONDUCT.md)管辖。
+有许多不同的方式可以帮助项目——请参阅下方了解您可以做的一切以及每个贡献方法的流程。 Note that no matter how you contribute, your
+participation is governed by our [Code of Conduct](https://github.com/appium/.github/blob/master/CODE_OF_CONDUCT.md).
 
 ## 加入讨论论坛
 

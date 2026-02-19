@@ -2,7 +2,6 @@ import {BasePlugin} from 'appium/plugin';
 import _ from 'lodash';
 import cp from 'node:child_process';
 import {timing} from 'appium/support';
-import B from 'bluebird';
 import type {ExternalDriver, NextPluginCallback, MethodMap, PluginCommand} from '@appium/types';
 
 const FEAT_FLAG = 'execute_driver_script';
@@ -100,8 +99,8 @@ export class ExecuteDriverPlugin extends BasePlugin {
 
       // promise that deals with the result from the child process
       const waitForResult = async () => {
-        const res = await new B<{error?: {message: string}; success?: any}>((res) => {
-          scriptProc.on('message', res); // this is node IPC
+        const res = await new Promise<{error?: {message: string}; success?: any}>((resolve) => {
+          scriptProc.on('message', resolve); // this is node IPC
         });
 
         this.log.info(
@@ -120,7 +119,7 @@ export class ExecuteDriverPlugin extends BasePlugin {
       // child script
       const waitForTimeout = async () => {
         while (!timeoutCanceled && timer.getDuration().asMilliSeconds < timeoutMs) {
-          await B.delay(500);
+          await new Promise((resolve) => setTimeout(resolve, 500));
         }
 
         if (timeoutCanceled) {
@@ -139,7 +138,7 @@ export class ExecuteDriverPlugin extends BasePlugin {
       scriptProc.send({driverOpts, script, timeoutMs});
 
       // and set up a race between the response from the child and the timeout
-      return await B.race([waitForResult(), waitForTimeout()]);
+      return await Promise.race([waitForResult(), waitForTimeout()]);
     } catch (err: any) {
       throw new Error(`Could not execute driver script. Original error was: ${err}`);
     } finally {

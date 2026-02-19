@@ -1,8 +1,14 @@
 import _ from 'lodash';
-import B from 'bluebird';
 import vm from 'node:vm';
+import {promisify} from 'node:util';
 import {logger, util} from 'appium/support';
 import type {DriverScriptMessageEvent, ScriptResult, RunScriptResult} from './types';
+
+// Historically, scripts could use the Promise.delay function, which relied on bluebird.
+// The native promise library does not have a 1:1 equivalent, so we add it to maintain backwards compatibility.
+const promiseWithDelay = Object.assign(Promise, {
+  delay: (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms)),
+});
 
 const log = logger.getLogger('ExecuteDriver Child');
 let send: (res: ScriptResult) => Promise<void>;
@@ -50,7 +56,7 @@ async function runScript(eventParams: DriverScriptMessageEvent): Promise<RunScri
   // console logger, and a promise library
   let result = await vm.runInNewContext(
     fullScript,
-    {driver, console: consoleFns, Promise: B},
+    {driver, console: consoleFns, Promise: promiseWithDelay},
     {timeout: timeoutMs, breakOnSigint: true}
   );
 
@@ -144,7 +150,7 @@ async function main(eventParams: DriverScriptMessageEvent): Promise<void> {
 
 // ensure we're running this script in IPC mode
 if (require.main === module && _.isFunction(process.send)) {
-  send = B.promisify(process.send, {context: process}) as (res: ScriptResult) => Promise<void>;
+  send = promisify(process.send).bind(process);
   log.info('Running driver execution in child process');
   process.on('message', main);
 }

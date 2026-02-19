@@ -59,7 +59,7 @@ export interface HttpUploadOptions extends NetOptions {
 /**
  * Options for {@linkcode uploadFile} when the remote uses the `ftp` protocol.
  */
-export interface FtpUploadOptions extends NetOptions {};
+export interface FtpUploadOptions extends NetOptions {}
 
 /** @deprecated Use {@linkcode FtpUploadOptions} instead. */
 export type NotHttpUploadOptions = FtpUploadOptions;
@@ -73,7 +73,7 @@ export async function uploadFile(
   uploadOptions: HttpUploadOptions | FtpUploadOptions = {}
 ): Promise<void> {
   if (!(await fs.exists(localPath))) {
-    throw new Error(`'${localPath}' does not exists or is not accessible`);
+    throw new Error(`'${localPath}' does not exist or is not accessible`);
   }
 
   const {isMetered = true} = uploadOptions;
@@ -230,6 +230,7 @@ async function uploadFileToHttp(
         }
       }
     }
+    // AWS S3 POST upload requires this to be the last field; do not move before formFields.
     form.append(fileFieldName, localFileStream);
     requestOpts.headers = {
       ...(_.isPlainObject(headers) ? headers : {}),
@@ -257,7 +258,7 @@ async function uploadFileToFtp(
   uploadOptions: FtpUploadOptions = {}
 ): Promise<void> {
   const {auth} = uploadOptions;
-  const {hostname, port, pathname} = parsedUri;
+  const {protocol, hostname, port, pathname} = parsedUri;
 
   const ftpOpts: {host: string; port: number; user?: string; pass?: string} = {
     host: hostname ?? '',
@@ -267,7 +268,7 @@ async function uploadFileToFtp(
     ftpOpts.user = auth.user;
     ftpOpts.pass = auth.pass;
   }
-  log.debug(`ftp upload options: ${JSON.stringify(ftpOpts)}`);
+  log.debug(`${protocol.slice(0, -1)} upload options: ${JSON.stringify(ftpOpts)}`);
   return await new B<void>((resolve, reject) => {
     new Ftp(ftpOpts).put(localFileStream, pathname, (err) => {
       if (err) {

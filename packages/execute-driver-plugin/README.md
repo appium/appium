@@ -29,7 +29,7 @@ can be arbitrary JavaScript, this is an insecure feature, and must also be expli
 appium --use-plugins=execute-driver --allow-insecure=<driver>:execute_driver_script
 ```
 
-`<driver>` is the driver name you want to enable the feature.
+`<driver>` is the name of the driver whose sessions will have access to the plugin.
 
 ## Usage
 
@@ -40,7 +40,17 @@ const {result, logs} = await driver.executeDriverScript(script);
 // 'logs' contains everything logged to console during script execution
 ```
 
-Refer to your Appium client documentation for the exact syntax of this command.
+Refer to your Appium client documentation for the exact syntax of the script execution command.
+
+Since plugin version `6.0.0`, scripts can also use `setTimeout`/`clearTimeout`, all standard
+`Promise` methods, as well as all methods from Appium's [`asyncbox`](https://github.com/appium/asyncbox)
+utility module:
+
+```js
+// Both scripts are equivalent
+const script1 = `return await new Promise((resolve) => setTimeout(resolve, 1000));`;
+const script2 = `return await asyncbox.sleep(1000);`;
+```
 
 ## License
 

@@ -1,16 +1,9 @@
+import * as asyncbox from 'asyncbox';
 import _ from 'lodash';
 import vm from 'node:vm';
 import {promisify} from 'node:util';
 import {logger, util} from 'appium/support';
 import type {DriverScriptMessageEvent, ScriptResult, RunScriptResult} from './types';
-
-// Historically, scripts could use the Promise.delay function, which relied on bluebird.
-// The native promise library does not have a 1:1 equivalent, so we add it to maintain backwards compatibility.
-class PromiseWithDelay<T> extends Promise<T> {
-  static delay(ms: number): Promise<void> {
-    return new Promise<void>((resolve) => setTimeout(resolve, ms));
-  }
-}
 
 const log = logger.getLogger('ExecuteDriver Child');
 let send: (res: ScriptResult) => Promise<void>;
@@ -54,11 +47,11 @@ async function runScript(eventParams: DriverScriptMessageEvent): Promise<RunScri
 
   log.info('Running driver script in Node vm');
 
-  // run the driver script, giving user access to the driver object, a fake
-  // console logger, and a promise library
+  // run the driver script, giving user access to the driver object, a fake console logger,
+  // the asyncbox module, and standard setTimeout/clearTimeout functions
   let result = await vm.runInNewContext(
     fullScript,
-    {driver, console: consoleFns, Promise: PromiseWithDelay},
+    {driver, console: consoleFns, asyncbox, setTimeout, clearTimeout},
     {timeout: timeoutMs, breakOnSigint: true}
   );
 

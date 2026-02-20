@@ -1,4 +1,3 @@
-import * as asyncbox from 'asyncbox';
 import _ from 'lodash';
 import vm from 'node:vm';
 import {promisify} from 'node:util';
@@ -48,10 +47,10 @@ async function runScript(eventParams: DriverScriptMessageEvent): Promise<RunScri
   log.info('Running driver script in Node vm');
 
   // run the driver script, giving user access to the driver object, a fake console logger,
-  // the asyncbox module, and standard setTimeout/clearTimeout functions
+  // and standard setTimeout/clearTimeout functions
   let result = await vm.runInNewContext(
     fullScript,
-    {driver, console: consoleFns, asyncbox, setTimeout, clearTimeout},
+    {driver, console: consoleFns, setTimeout, clearTimeout},
     {timeout: timeoutMs, breakOnSigint: true}
   );
 

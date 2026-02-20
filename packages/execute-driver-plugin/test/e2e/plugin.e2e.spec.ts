@@ -175,15 +175,5 @@ describe('ExecuteDriverPlugin', function () {
         /.+50.+timeout.+/
       );
     });
-
-    it('should be able to use asyncbox module functions in a driver script', async function () {
-      const script = `
-        await asyncbox.sleep(1000);
-        return true;
-      `;
-      await expect(driver.executeDriverScript(script, 'webdriverio', 50)).to.eventually.be.rejectedWith(
-        /.+50.+timeout.+/
-      );
-    });
   });
 });

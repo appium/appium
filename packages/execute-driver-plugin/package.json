@@ -39,7 +39,6 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.*ts\""
   },
   "dependencies": {
-    "bluebird": "3.7.2",
     "lodash": "4.17.23",
     "webdriverio": "9.24.0"
   },

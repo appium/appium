@@ -166,9 +166,9 @@ describe('ExecuteDriverPlugin', function () {
       );
     });
 
-    it('should be able to set a timeout on a driver script', async function () {
+    it('should be able to use standard promise and timeout functions in a driver script', async function () {
       const script = `
-        await Promise.delay(1000);
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         return true;
       `;
       await expect(driver.executeDriverScript(script, 'webdriverio', 50)).to.eventually.be.rejectedWith(

@@ -422,5 +422,18 @@ interface ArgumentFormatResult {
   stack: string | undefined,
 }
 
-export const GLOBAL_LOG = new Log();
+// Unique key for the process-wide logger on globalThis (avoids collisions with other globals).
+const GLOBAL_NPMLOG_KEY = 'appium-logger-global-8f4a1c2b-5e6d-4a9b-8c3f-7d2e1b0a9c6e';
+
+type GlobalWithLogger = typeof globalThis & { [K in typeof GLOBAL_NPMLOG_KEY]: Log | undefined };
+
+// Reuse process-wide logger so multiple loads of this module use the same Log instance.
+const g = globalThis as GlobalWithLogger;
+export const GLOBAL_LOG =
+  g[GLOBAL_NPMLOG_KEY] ??
+  (() => {
+    const log = new Log();
+    g[GLOBAL_NPMLOG_KEY] = log;
+    return log;
+  })();
 export default GLOBAL_LOG;

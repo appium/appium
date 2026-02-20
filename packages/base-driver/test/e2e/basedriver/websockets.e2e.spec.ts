@@ -66,7 +66,7 @@ describe('Websockets (e2e)', function () {
 
       expect(await baseServer.removeWebSocketHandler(endpoint)).to.be.true;
       expect(_.keys(await baseServer.getWebSocketHandlers()).length).to.eql(0);
-      await new Promise((resolve, reject) => {
+      await new Promise<void>((resolve, reject) => {
         const client = new WebSocket(`ws://${TEST_HOST}:${port}${endpoint}`);
         client.on('message', (data) =>
           reject(

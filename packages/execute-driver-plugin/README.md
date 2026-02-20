@@ -42,14 +42,12 @@ const {result, logs} = await driver.executeDriverScript(script);
 
 Refer to your Appium client documentation for the exact syntax of the script execution command.
 
-Since plugin version `6.0.0`, scripts can also use `setTimeout`/`clearTimeout`, all standard
-`Promise` methods, as well as all methods from Appium's [`asyncbox`](https://github.com/appium/asyncbox)
-utility module:
+Since plugin version `6.0.0`, scripts can also use the `setTimeout`/`clearTimeout` methods,
+enabling the use of unconditional delays:
 
 ```js
-// Both scripts are equivalent
-const script1 = `return await new Promise((resolve) => setTimeout(resolve, 1000));`;
-const script2 = `return await asyncbox.sleep(1000);`;
+// this will take around one second to execute
+const script = `return await new Promise((resolve) => setTimeout(resolve, 1000));`;
 ```
 
 ## License

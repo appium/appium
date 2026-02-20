@@ -1,4 +1,4 @@
-import B from 'bluebird';
+import {sleep} from 'asyncbox';
 import path from 'node:path';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
@@ -41,7 +41,7 @@ describe('#util', function () {
     let guardTmpRoot: string;
 
     async function guardedBehavior(text: string, msBeforeActing: number) {
-      await B.delay(msBeforeActing);
+      await sleep(msBeforeActing);
       await fs.appendFile(testFile, text, 'utf8');
       return text;
     }
@@ -59,7 +59,7 @@ describe('#util', function () {
 
     afterEach(async function () {
       try {
-        await B.all([lockFile, testFile].map((p) => fs.unlink(p)));
+        await Promise.all([lockFile, testFile].map((p) => fs.unlink(p)));
       } catch {
         // ignore
       }
@@ -69,7 +69,7 @@ describe('#util', function () {
       const guard = util.getLockFileGuard(lockFile);
       await expect(guard.check()).to.eventually.be.false;
       const guardPromise = guard(async () => await guardedBehavior('b', 500));
-      await B.delay(200);
+      await sleep(200);
       await expect(guard.check()).to.eventually.be.true;
       await guardPromise;
       await expect(guard.check()).to.eventually.be.false;
@@ -128,7 +128,7 @@ describe('#util', function () {
       this.timeout(5000);
       const guard = util.getLockFileGuard(lockFile);
       const p1 = guard(async () => {
-        await B.delay(500);
+        await sleep(500);
         throw new Error('bad');
       });
       const p2 = guard(async () => await guardedBehavior('world', 100));

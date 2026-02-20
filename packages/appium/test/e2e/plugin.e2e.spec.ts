@@ -3,7 +3,7 @@ import type {ParsedArgs} from 'appium/types';
 import type {Browser} from 'webdriverio';
 import {fs, tempDir} from '@appium/support';
 import axios from 'axios';
-import B from 'bluebird';
+import {sleep} from 'asyncbox';
 import {remote as wdio} from 'webdriverio';
 import {runExtensionCommand} from '../../lib/cli/extension';
 import {DRIVER_TYPE, PLUGIN_TYPE} from '../../lib/constants';
@@ -228,7 +228,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
         try {
           let res = await axios.get(`http://${TEST_HOST}:${port}/unexpected`);
           expect(res.data).to.not.exist;
-          await B.delay(1500);
+          await sleep(1500);
           res = await axios.get(`http://${TEST_HOST}:${port}/unexpected`);
           expect(res.data).to.match(/Session ended/);
           expect(res.data).to.match(/timeout/);
@@ -251,7 +251,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
         try {
           const start = Date.now();
           for (let i = 0; i < 5; i++) {
-            await B.delay(500);
+            await sleep(500);
             await driver.getPageSource();
           }
           // prove that we went beyond the new command timeout as a result of sending commands
@@ -413,16 +413,16 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
           collectedEvents.push(ev.time);
         });
 
-        await B.delay(750);
+        await sleep(750);
         expect(collectedEvents).to.be.empty;
 
         await (driver as any).sessionSubscribe({events: ['appium:clock.currentTime']});
-        await B.delay(800);
+        await sleep(800);
         expect(collectedEvents.length).to.eql(5);
 
         await (driver as any).sessionUnsubscribe({events: ['appium:clock.currentTime']});
         collectedEvents.length = 0;
-        await B.delay(800);
+        await sleep(800);
         expect(collectedEvents).to.be.empty;
       });
 

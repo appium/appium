@@ -1,7 +1,7 @@
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {util, fs, tempDir} from '../../lib';
-import B from 'bluebird';
+import {sleep} from 'asyncbox';
 import {createSandbox} from 'sinon';
 import os from 'node:os';
 import path from 'node:path';
@@ -199,7 +199,7 @@ describe('util', function () {
     });
     it('cancel should work', async function () {
       const delay = util.cancellableDelay('1000');
-      await B.delay(10);
+      await sleep(10);
       delay.cancel();
       await expect(delay).to.eventually.be.rejectedWith(/cancellation error/);
     });

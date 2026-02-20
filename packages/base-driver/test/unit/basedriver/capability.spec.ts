@@ -1,4 +1,4 @@
-import B from 'bluebird';
+import {asyncmap} from 'asyncbox';
 import type {Constraints, InitialOpts, W3CCapabilities} from '@appium/types';
 import {BaseDriver, errors} from '../../../lib/index';
 import {validator} from '../../../lib/basedriver/validation';
@@ -329,7 +329,7 @@ describe('Desired Capabilities', function () {
 
     it('should raise an error if w3c capabilities is not a plain JSON object', async function () {
       const testValues = [true, 'string', [], 100];
-      await B.map(testValues, (val) =>
+      await asyncmap(testValues, (val) =>
         expect(d.createSession(val as unknown as TestW3CCaps)).to.be.rejectedWith(
           errors.SessionNotCreatedError
         )

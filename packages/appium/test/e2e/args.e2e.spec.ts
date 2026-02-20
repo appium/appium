@@ -1,7 +1,6 @@
 import getPort from 'get-port';
 import {tempDir, fs} from '@appium/support';
 import {exec} from 'teen_process';
-import B from 'bluebird';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {
@@ -84,7 +83,7 @@ describe('argument parsing', function () {
 
   describe('when the user provides a value for a boolean argument', function () {
     it('should output a basic error message', async function () {
-      const [runResult, expected] = await B.all([
+      const [runResult, expected] = await Promise.all([
         runAppiumRaw(appiumHome, ['--relaxed-security=sheep'], {}),
         readAppiumArgErrorFixture('cli/cli-error-output-boolean.txt'),
       ]);
@@ -95,7 +94,7 @@ describe('argument parsing', function () {
 
   describe('when the user provides an unknown argument', function () {
     it('should output a basic error message', async function () {
-      const [runResult, expected] = await B.all([
+      const [runResult, expected] = await Promise.all([
         runAppiumRaw(appiumHome, ['--pigs=sheep'], {}),
         readAppiumArgErrorFixture('cli/cli-error-output-unknown.txt'),
       ]);

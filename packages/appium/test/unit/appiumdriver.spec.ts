@@ -3,7 +3,6 @@
 import type {Constraints, W3CCapabilities} from '@appium/types';
 import type {SinonSandbox, SinonStubbedMember} from 'sinon';
 import {PLUGIN_TYPE, SESSION_DISCOVERY_FEATURE} from '../../lib/constants';
-import B from 'bluebird';
 import {BaseDriver} from '@appium/base-driver';
 import {FakeDriver} from '@appium/fake-driver';
 import {sleep} from 'asyncbox';
@@ -59,10 +58,10 @@ describe('AppiumDriver', function () {
       // this test is wacky because we do not await the call to `updateBuildInfo()` within
       // the constructor. in that case, we won't actually know _when_ the promise is resolved or rejected.
       // the following is the workaround
-      const promise = new B((resolve) => {
+      const promise = new Promise<void>((resolve) => {
         MockConfig.updateBuildInfo.callsFake(() => {
           resolve();
-          return B.reject(err);
+          return Promise.reject(err);
         });
       });
 

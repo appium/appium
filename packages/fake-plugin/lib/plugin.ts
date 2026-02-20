@@ -1,5 +1,5 @@
 import {BasePlugin} from 'appium/plugin';
-import B from 'bluebird';
+import {sleep} from 'asyncbox';
 import type {Request, Response, Application} from 'express';
 import type {
   AppiumServer,
@@ -97,7 +97,7 @@ export class FakePlugin extends BasePlugin {
 
   async startClock(): Promise<void> {
     while (this._clockRunning) {
-      await B.delay(250);
+      await sleep(250);
       this.eventEmitter.emit('bidiEvent', {
         method: 'appium:clock.currentTime',
         params: {time: Date.now()},
@@ -121,12 +121,12 @@ export class FakePlugin extends BasePlugin {
     num1: number,
     num2: number
   ): Promise<number> {
-    await B.delay(1);
+    await sleep(1);
     return num1 * num2;
   }
 
   async getFakeThing(): Promise<string> {
-    await B.delay(1);
+    await sleep(1);
     return this.fakeThing;
   }
 
@@ -151,12 +151,12 @@ export class FakePlugin extends BasePlugin {
     _driver: DriverLike,
     socket: string
   ): Promise<string> {
-    await B.delay(1);
+    await sleep(1);
     return `Plugged in to ${socket}`;
   }
 
   async getFakePluginArgs(): Promise<Record<string, unknown>> {
-    await B.delay(1);
+    await sleep(1);
     return this.cliArgs;
   }
 
@@ -165,7 +165,7 @@ export class FakePlugin extends BasePlugin {
     _driver: DriverLike,
     ...args: unknown[]
   ): Promise<string> {
-    await B.delay(10);
+    await sleep(10);
     return `<Fake>${JSON.stringify(args)}</Fake>`;
   }
 
@@ -182,7 +182,7 @@ export class FakePlugin extends BasePlugin {
   }
 
   async getFakeSessionData(_next: () => Promise<unknown>, driver: DriverLike): Promise<unknown> {
-    await B.delay(1);
+    await sleep(1);
     return driver.fakeSessionData ?? null;
   }
 
@@ -191,7 +191,7 @@ export class FakePlugin extends BasePlugin {
     driver: DriverLike,
     ...args: unknown[]
   ): Promise<null> {
-    await B.delay(1);
+    await sleep(1);
     driver.fakeSessionData = args[0];
     return null;
   }

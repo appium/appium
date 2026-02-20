@@ -1,4 +1,3 @@
-import B from 'bluebird';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {FakePlugin as _FakePlugin, type DriverLike} from '../../lib/plugin';
@@ -24,7 +23,7 @@ class FakeExpress {
   }
 
   async get(route: string): Promise<string> {
-    return await new B<string>((resolve, reject) => {
+    return await new Promise<string>((resolve, reject) => {
       try {
         const res = {
           send: resolve,

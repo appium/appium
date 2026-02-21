@@ -135,8 +135,8 @@ function _getLogger(): {logger: Logger; defaultToVerbose: boolean} {
     : (globalWithNpmlog._global_npmlog ?? globalLog);
   if (!testingMode && defaultToVerbose && logger === globalLog) {
     globalWithNpmlog._global_npmlog = globalLog;
+    logger.maxRecordSize = MAX_LOG_RECORDS_COUNT;
   }
-  logger.maxRecordSize = MAX_LOG_RECORDS_COUNT;
   return {logger, defaultToVerbose};
 }
 

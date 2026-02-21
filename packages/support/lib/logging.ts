@@ -50,7 +50,7 @@ export const log = getLogger();
  * @returns A wrapped Appium logger instance
  */
 export function getLogger(prefix: AppiumLoggerPrefix | null = null): AppiumLogger {
-  const [logger, usingGlobalLog] = _getLogger();
+  const {logger, defaultToVerbose} = _getLogger();
 
   const wrappedLogger = {
     unwrap: () => logger,
@@ -104,7 +104,9 @@ export function getLogger(prefix: AppiumLoggerPrefix | null = null): AppiumLogge
     };
   }
 
-  if (!usingGlobalLog) {
+  // Default to verbose when the global was not already set (first use, or standalone);
+  // main server will override later.
+  if (defaultToVerbose) {
     wrappedLogger.level = 'verbose';
   }
 
@@ -124,16 +126,18 @@ export function markSensitive<T>(logMessage: T): {[k: string]: T} {
   return _markSensitive(logMessage);
 }
 
-function _getLogger(): [Logger, boolean] {
+function _getLogger(): {logger: Logger; defaultToVerbose: boolean} {
   const testingMode = process.env._TESTING === '1';
   const forceLogMode = process.env._FORCE_LOGS === '1';
-  const useGlobalLog = !!globalWithNpmlog._global_npmlog;
-  const logger: Logger =
-    testingMode && !forceLogMode
-      ? MOCK_LOG
-      : (globalWithNpmlog._global_npmlog ?? globalLog);
-  logger.maxRecordSize = MAX_LOG_RECORDS_COUNT;
-  return [logger, useGlobalLog];
+  const defaultToVerbose = !globalWithNpmlog._global_npmlog;
+  const logger: Logger = testingMode && !forceLogMode
+    ? MOCK_LOG
+    : (globalWithNpmlog._global_npmlog ?? globalLog);
+  if (!testingMode && !globalWithNpmlog._global_npmlog && logger === globalLog) {
+    globalWithNpmlog._global_npmlog = globalLog;
+    logger.maxRecordSize = MAX_LOG_RECORDS_COUNT;
+  }
+  return {logger, defaultToVerbose};
 }
 
 function getFinalPrefix(

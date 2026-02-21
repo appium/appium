@@ -5,10 +5,6 @@ import _ from 'lodash';
 import { adler32 } from './utils';
 import { LRUCache } from 'lru-cache';
 
-// set up distributed logging before everything else
-global._global_npmlog = globalLog;
-// npmlog is used only for emitting, we use winston for output
-globalLog.level = 'info';
 const LEVELS_MAP = {
   debug: 4,
   info: 3,
@@ -42,6 +38,7 @@ const COLORS_CACHE = new LRUCache({
   updateAgeOnGet: true,
 });
 
+// npmlog is used only for emitting, we use winston for output (global is set by support)
 /** @type {import('winston').Logger?} */
 let log = null;
 
@@ -102,6 +99,8 @@ export async function init(args) {
       }
     }
   });
+  // Only Winston produces output; avoid duplicate lines from the logger's default stream
+  globalLog.stream = null;
 }
 
 /**

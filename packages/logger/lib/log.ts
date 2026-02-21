@@ -44,7 +44,7 @@ export class Log extends EventEmitter implements Logger {
   prefixStyle: StyleObject;
   headingStyle: StyleObject;
   heading: string;
-  stream: Writable; // Defaults to process.stderr
+  stream: Writable | null; // Defaults to process.stderr; set to null when using custom output (e.g. Winston)
 
   _asyncStorage: AsyncLocalStorage<Record<string, any>>;
   _colorEnabled?: boolean;

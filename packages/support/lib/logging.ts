@@ -127,13 +127,15 @@ export function markSensitive<T>(logMessage: T): {[k: string]: T} {
 function _getLogger(): [Logger, boolean] {
   const testingMode = process.env._TESTING === '1';
   const forceLogMode = process.env._FORCE_LOGS === '1';
-  const useGlobalLog = !!globalWithNpmlog._global_npmlog;
-  const logger: Logger =
-    testingMode && !forceLogMode
-      ? MOCK_LOG
-      : (globalWithNpmlog._global_npmlog ?? globalLog);
+  const logger: Logger = testingMode && !forceLogMode
+    ? MOCK_LOG
+    : (globalWithNpmlog._global_npmlog ?? globalLog);
+  // So that other code (e.g. main server) can resolve the same instance; only this module touches _global_npmlog.
+  if (!testingMode && !globalWithNpmlog._global_npmlog && logger === globalLog) {
+    globalWithNpmlog._global_npmlog = globalLog;
+  }
   logger.maxRecordSize = MAX_LOG_RECORDS_COUNT;
-  return [logger, useGlobalLog];
+  return [logger, !!globalWithNpmlog._global_npmlog];
 }
 
 function getFinalPrefix(

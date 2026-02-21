@@ -1,5 +1,6 @@
 import type {EventEmitter} from 'node:events';
 import type {AsyncLocalStorage} from 'node:async_hooks';
+import type {Writable} from 'node:stream';
 
 export interface Logger extends EventEmitter {
   level: string;
@@ -8,7 +9,7 @@ export interface Logger extends EventEmitter {
   prefixStyle: StyleObject;
   headingStyle: StyleObject;
   heading: string;
-  stream: any; // Defaults to process.stderr
+  stream: Writable | null; // Defaults to process.stderr; set to null when using custom output (e.g. Winston)
 
   /**
    * Creates a log message

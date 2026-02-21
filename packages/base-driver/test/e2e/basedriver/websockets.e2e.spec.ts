@@ -4,7 +4,6 @@ import _ from 'lodash';
 import {server, routeConfiguringFunction, DEFAULT_WS_PATHNAME_PREFIX} from '../../../lib';
 import {FakeDriver} from '../protocol/fake-driver';
 import WebSocket from 'ws';
-import B from 'bluebird';
 import {TEST_HOST, getTestPort} from '@appium/driver-test-support';
 
 chai.use(chaiAsPromised);
@@ -44,7 +43,7 @@ describe('Websockets (e2e)', function () {
       const timeout = 5000;
       await baseServer.addWebSocketHandler(endpoint, wss);
       expect(_.keys(await baseServer.getWebSocketHandlers()).length).to.eql(1);
-      await new B((resolve, reject) => {
+      await new Promise<void>((resolve, reject) => {
         const client = new WebSocket(`ws://${TEST_HOST}:${port}${endpoint}`);
         client.once('upgrade', (res) => {
           try {
@@ -67,7 +66,7 @@ describe('Websockets (e2e)', function () {
 
       expect(await baseServer.removeWebSocketHandler(endpoint)).to.be.true;
       expect(_.keys(await baseServer.getWebSocketHandlers()).length).to.eql(0);
-      await new B((resolve, reject) => {
+      await new Promise<void>((resolve, reject) => {
         const client = new WebSocket(`ws://${TEST_HOST}:${port}${endpoint}`);
         client.on('message', (data) =>
           reject(

@@ -5,7 +5,7 @@ import type {ServerArgs} from '@appium/types';
 import {server} from '../../../lib';
 import axios from 'axios';
 import {createSandbox} from 'sinon';
-import B from 'bluebird';
+import {sleep} from 'asyncbox';
 import _ from 'lodash';
 import {exec} from 'teen_process';
 import https from 'node:https';
@@ -49,7 +49,7 @@ describe('server', function () {
       });
       app.get('/pause', async (_req: Request, res: Response) => {
         res.header['content-type'] = 'text/html';
-        await B.delay(1000);
+        await sleep(1000);
         res.status(200).send('We have waited!');
       });
     }
@@ -97,7 +97,7 @@ describe('server', function () {
     })();
 
     // relinquish control so that we don't close before the request is received
-    await B.delay(100);
+    await sleep(100);
 
     const before = Date.now();
     await hwServer.close();

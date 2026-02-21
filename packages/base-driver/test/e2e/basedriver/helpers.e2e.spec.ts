@@ -6,7 +6,7 @@ import http from 'node:http';
 import finalhandler from 'finalhandler';
 import serveStatic from 'serve-static';
 import contentDisposition from 'content-disposition';
-import B from 'bluebird';
+import {sleep} from 'asyncbox';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {TEST_HOST, getTestPort} from '@appium/driver-test-support';
@@ -90,8 +90,8 @@ describe('app download and configuration', function () {
           // Replace close with async version; type assertion needed for method replacement
           (httpServer as unknown as Record<string, () => Promise<void>>).close = async function () {
             // pause a moment or we get ECONRESET errors
-            await B.delay(1000);
-            return await new B<void>((resolve, reject) => {
+            await sleep(1000);
+            return await new Promise<void>((resolve, reject) => {
               httpServer.on('close', resolve);
               close((err: Error | undefined) => {
                 if (err) {

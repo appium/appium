@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import B from 'bluebird';
+import {sleep} from 'asyncbox';
 import http from 'node:http';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
@@ -28,7 +28,7 @@ function initMJpegServer(port: number, intMs = 300, times = 20): http.Server {
 
       // Just send the same jpeg over and over.
       for (let i = 0; i < times; i++) {
-        await B.delay(intMs);
+        await sleep(intMs);
         mJpegReqHandler._write(jpg, null, _.noop);
       }
       mJpegReqHandler.close();
@@ -69,7 +69,7 @@ describe('MJpeg Stream (e2e)', function () {
     expect(stream['lastChunk']).to.exist;
     expect(stream['updateCount']).to.eql(1);
 
-    await B.delay(1000);
+    await sleep(1000);
     expect(stream['updateCount']).to.be.above(1);
 
     const startBytes = Buffer.from([0xff, 0xd8]);
@@ -87,7 +87,7 @@ describe('MJpeg Stream (e2e)', function () {
     expect(png!.indexOf('iVBOR')).to.eql(0);
 
     stream.stop();
-    await B.delay(1000);
+    await sleep(1000);
     expect(stream['lastChunk']).to.not.exist;
     expect(stream['updateCount']).to.eql(0);
     /* eslint-enable dot-notation */

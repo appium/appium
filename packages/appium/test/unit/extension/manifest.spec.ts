@@ -1,6 +1,5 @@
 import type {DriverType, PluginType} from '@appium/types';
 import type {ExtManifest, ExtPackageJson, ManifestData} from 'appium/types';
-import B from 'bluebird';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {promises as fs} from 'node:fs';
@@ -163,7 +162,7 @@ describe('Manifest', function () {
 
       describe('when called again before the first call resolves', function () {
         beforeEach(async function () {
-          await B.all([manifest.read(), manifest.read()]);
+          await Promise.all([manifest.read(), manifest.read()]);
         });
         it('should not read the file twice', function () {
           expect(
@@ -245,7 +244,7 @@ describe('Manifest', function () {
 
         describe('when called again before the first call resolves', function () {
           it('should not write the file twice', async function () {
-            await B.all([manifest.write(), manifest.write()]);
+            await Promise.all([manifest.write(), manifest.write()]);
             expect(MockAppiumSupport.fs.writeFile.calledOnce).to.be.true;
           });
         });

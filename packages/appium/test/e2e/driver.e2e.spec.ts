@@ -5,7 +5,7 @@ import {BaseDriver} from '@appium/base-driver';
 import {exec} from 'teen_process';
 import {fs, tempDir} from '@appium/support';
 import axios from 'axios';
-import B from 'bluebird';
+import {sleep} from 'asyncbox';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
@@ -303,7 +303,7 @@ describe('FakeDriver via HTTP', function () {
       const driver = await wdio({...wdOpts, capabilities: localCaps});
       expect(driver.sessionId).to.exist;
 
-      await B.delay(250);
+      await sleep(250);
       await expect(driver.getPageSource()).to.eventually.be.rejectedWith(/terminated/);
     });
 
@@ -323,7 +323,7 @@ describe('FakeDriver via HTTP', function () {
       // timeout but since they are not received by the driver the session should still time out
       for (let i = 0; i < 6; i++) {
         await (driver as any).getStatus();
-        await B.delay(50);
+        await sleep(50);
       }
       await expect(driver.getPageSource()).to.eventually.be.rejectedWith(/terminated/);
     });
@@ -599,18 +599,18 @@ describe('FakeDriver via HTTP', function () {
 
       // wait for some time to be sure clock events have happened, and assert we don't receive
       // any yet
-      await B.delay(750);
+      await sleep(750);
       expect(collectedEvents).to.be.empty;
 
       // now subscribe and wait and assert that some events have been collected
       await driver.sessionSubscribe({events: ['appium:clock.currentTime']});
-      await B.delay(750);
+      await sleep(750);
       expect(collectedEvents).to.not.be.empty;
 
       // finally  unsubscribe and wait and assert that some events have been collected
       await driver.sessionUnsubscribe({events: ['appium:clock.currentTime']});
       collectedEvents.length = 0;
-      await B.delay(750);
+      await sleep(750);
       expect(collectedEvents).to.be.empty;
     });
 

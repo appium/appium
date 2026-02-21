@@ -133,7 +133,7 @@ function _getLogger(): {logger: Logger; defaultToVerbose: boolean} {
   const logger: Logger = testingMode && !forceLogMode
     ? MOCK_LOG
     : (globalWithNpmlog._global_npmlog ?? globalLog);
-  if (!testingMode && defaultToVerbose && logger === globalLog) {
+  if (!testingMode && !globalWithNpmlog._global_npmlog && logger === globalLog) {
     globalWithNpmlog._global_npmlog = globalLog;
     logger.maxRecordSize = MAX_LOG_RECORDS_COUNT;
   }

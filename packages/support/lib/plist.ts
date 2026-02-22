@@ -5,19 +5,6 @@ import {fs} from './fs';
 import log from './logger';
 import _ from 'lodash';
 
-/** Recursive value type for plist structures (XML and binary plist) */
-export type PlistValue =
-  | string
-  | number
-  | boolean
-  | Date
-  | Buffer
-  | PlistValue[]
-  | {[key: string]: PlistValue};
-
-/** Parsed plist represented as a plain object */
-export type PlistObject = Record<string, PlistValue>;
-
 const BPLIST_IDENTIFIER = {
   BUFFER: Buffer.from('bplist00'),
   TEXT: 'bplist00',
@@ -39,7 +26,7 @@ export async function parsePlistFile(
   plist: string,
   mustExist = true,
   quiet = true
-): Promise<PlistObject> {
+): Promise<object> {
   if (!(await fs.exists(plist))) {
     if (mustExist) {
       throw log.errorWithException(`Plist file doesn't exist: '${plist}'`);
@@ -48,12 +35,12 @@ export async function parsePlistFile(
     return {};
   }
 
-  let obj: PlistObject = {};
+  let obj: object = {};
   let type = 'binary';
   try {
     const parsed = await parseFile(plist);
     if (parsed.length) {
-      obj = parsed[0] as PlistObject;
+      obj = parsed[0] as object;
     } else {
       throw new Error(`Binary file '${plist}' appears to be empty`);
     }
@@ -85,19 +72,19 @@ export async function parsePlistFile(
  */
 export async function updatePlistFile(
   plist: string,
-  updatedFields: PlistObject,
+  updatedFields: object,
   binary = true,
   mustExist = true,
   quiet = true
 ): Promise<void> {
-  let obj: PlistObject;
+  let obj: unknown;
   try {
     obj = await parsePlistFile(plist, mustExist);
   } catch (err) {
     throw log.errorWithException(`Could not update plist: ${(err as Error).message}`);
   }
-  _.extend(obj, updatedFields);
-  const newPlist = binary ? bplistCreate(obj) : xmlplist.build(obj);
+  _.extend(obj as object, updatedFields as object);
+  const newPlist = binary ? bplistCreate(obj as object) : xmlplist.build(obj as object);
   try {
     await fs.writeFile(plist, newPlist);
   } catch (err) {
@@ -114,7 +101,7 @@ export async function updatePlistFile(
  * @param data - The object to be turned into a binary plist
  * @returns Plist in the form of a binary buffer
  */
-export function createBinaryPlist(data: PlistObject): Buffer {
+export function createBinaryPlist(data: object): Buffer {
   return bplistCreate(data);
 }
 
@@ -124,8 +111,8 @@ export function createBinaryPlist(data: PlistObject): Buffer {
  * @param data - The buffer of a binary plist
  * @returns Array of parsed root objects (typically one element)
  */
-export function parseBinaryPlist(data: Buffer): PlistObject[] {
-  return parseBuffer(data) as PlistObject[];
+export function parseBinaryPlist(data: Buffer): object[] {
+  return parseBuffer(data);
 }
 
 /**
@@ -135,7 +122,7 @@ export function parseBinaryPlist(data: Buffer): PlistObject[] {
  * @param binary - Set it to true for a binary plist
  * @returns A buffer or a string depending on the binary parameter
  */
-export function createPlist(object: PlistObject, binary = false): Buffer | string {
+export function createPlist(object: object, binary = false): Buffer | string {
   if (binary) {
     return createBinaryPlist(object);
   }
@@ -149,10 +136,10 @@ export function createPlist(object: PlistObject, binary = false): Buffer | strin
  * @returns Parsed plist as a JS object
  * @throws Will throw an error if the plist type is unknown
  */
-export function parsePlist(data: string | Buffer): PlistObject {
+export function parsePlist(data: string | Buffer): object {
   const textPlist = getXmlPlist(data);
   if (textPlist) {
-    return xmlplist.parse(textPlist) as PlistObject;
+    return xmlplist.parse(textPlist);
   }
 
   const binaryPlist = getBinaryPlist(data);
@@ -163,9 +150,9 @@ export function parsePlist(data: string | Buffer): PlistObject {
   throw new Error(`Unknown type of plist, data: ${data.toString()}`);
 }
 
-async function parseXmlPlistFile(plistFilename: string): Promise<PlistObject> {
+async function parseXmlPlistFile(plistFilename: string): Promise<object> {
   const xmlContent = await fs.readFile(plistFilename, 'utf8');
-  return xmlplist.parse(xmlContent) as PlistObject;
+  return xmlplist.parse(xmlContent) as object;
 }
 
 function getXmlPlist(data: string | Buffer): string | null {

@@ -183,16 +183,12 @@ export class NPM {
     }
     for (const testVer of allVersions) {
       const testSemver = semver.parse(testVer) ?? semver.parse(semver.coerce(testVer));
-      if (testSemver === null) {
-        continue;
-      }
-      if (testSemver.prerelease.length > 0) {
-        continue;
-      }
-      if (curSemver.compare(testSemver) === 1) {
-        continue;
-      }
-      if (testSemver.major > curSemver.major) {
+      if (
+        testSemver === null ||
+        testSemver.prerelease.length > 0 ||
+        curSemver.compare(testSemver) === 1 ||
+        testSemver.major > curSemver.major
+      ) {
         continue;
       }
       if (safeUpgradeVer === null || testSemver.compare(safeUpgradeVer) === 1) {

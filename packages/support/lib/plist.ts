@@ -149,7 +149,9 @@ export function parsePlist(data: string | Buffer): object {
     return parseBinaryPlist(binaryPlist)[0];
   }
 
-  throw new Error(`Unknown type of plist, data: ${data.toString()}`);
+  throw new Error(
+    `Unknown type of plist, data: ${_.truncate(data.toString(), {length: 200})}`
+  );
 }
 
 async function parseXmlPlistFile(plistFilename: string): Promise<object> {

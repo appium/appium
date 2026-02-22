@@ -31,7 +31,9 @@ export async function parsePlistFile(
     if (mustExist) {
       throw log.errorWithException(`Plist file doesn't exist: '${plist}'`);
     }
-    log.debug(`Plist file '${plist}' does not exist. Returning an empty plist.`);
+    if (!quiet) {
+      log.debug(`Plist file '${plist}' does not exist. Returning an empty plist.`);
+    }
     return {};
   }
 
@@ -40,7 +42,7 @@ export async function parsePlistFile(
   try {
     const parsed = await parseFile(plist);
     if (parsed.length) {
-      obj = parsed[0] as object;
+      obj = parsed[0];
     } else {
       throw new Error(`Binary file '${plist}' appears to be empty`);
     }
@@ -77,14 +79,14 @@ export async function updatePlistFile(
   mustExist = true,
   quiet = true
 ): Promise<void> {
-  let obj: unknown;
+  let obj: object;
   try {
     obj = await parsePlistFile(plist, mustExist);
   } catch (err) {
     throw log.errorWithException(`Could not update plist: ${(err as Error).message}`);
   }
-  _.extend(obj as object, updatedFields as object);
-  const newPlist = binary ? bplistCreate(obj as object) : xmlplist.build(obj as object);
+  _.extend(obj, updatedFields);
+  const newPlist = binary ? bplistCreate(obj) : xmlplist.build(obj);
   try {
     await fs.writeFile(plist, newPlist);
   } catch (err) {
@@ -126,7 +128,7 @@ export function createPlist(object: object, binary = false): Buffer | string {
   if (binary) {
     return createBinaryPlist(object);
   }
-  return xmlplist.build(object) as string;
+  return xmlplist.build(object);
 }
 
 /**
@@ -152,7 +154,7 @@ export function parsePlist(data: string | Buffer): object {
 
 async function parseXmlPlistFile(plistFilename: string): Promise<object> {
   const xmlContent = await fs.readFile(plistFilename, 'utf8');
-  return xmlplist.parse(xmlContent) as object;
+  return xmlplist.parse(xmlContent);
 }
 
 function getXmlPlist(data: string | Buffer): string | null {

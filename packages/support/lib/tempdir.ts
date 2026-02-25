@@ -2,6 +2,7 @@
 import {fs} from './fs';
 import os from 'node:os';
 import nodePath from 'node:path';
+import _ from 'lodash';
 import {constants} from 'node:fs';
 import log from './logger';
 
@@ -55,16 +56,14 @@ export async function open(affixes: Affixes): Promise<OpenedAffixes> {
 /** Returns a new path to a temporary directory (alias for the tempDir implementation). */
 export const openDir = tempDir;
 
-const _static = tempDir();
-
 /**
  * Returns a path to a temporary directory which is reused for the life of the process.
  *
  * @returns The same temp directory path on every call.
  */
-export async function staticDir(): Promise<string> {
-  return _static;
-}
+export const staticDir = _.memoize(async function staticDir (): Promise<string> {
+  return tempDir();
+});
 
 // #region Private
 

@@ -87,7 +87,7 @@ export class Timer {
       // startTime was created using process.hrtime()
       const [seconds, nanos] = process.hrtime(this._startTime as [number, number]);
       nanoDuration = seconds * NS_PER_S + nanos;
-    } else if (typeof this._startTime === 'bigint' && _.isFunction(process.hrtime.bigint)) {
+    } else if (typeof this._startTime === 'bigint') {
       // startTime was created using process.hrtime.bigint()
       const endTime = process.hrtime.bigint();
       // get the difference, and convert to number

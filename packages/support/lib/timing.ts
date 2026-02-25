@@ -68,10 +68,7 @@ export class Timer {
     if (!_.isNull(this._startTime)) {
       throw new Error('Timer has already been started.');
     }
-    // once Node 10 is no longer supported, this check can be removed
-    this._startTime = _.isFunction(process.hrtime.bigint)
-      ? process.hrtime.bigint()
-      : process.hrtime();
+    this._startTime = process.hrtime.bigint();
     return this;
   }
 

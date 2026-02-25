@@ -4,7 +4,7 @@ const NS_PER_S = 1e9;
 const NS_PER_MS = 1e6;
 
 /** High-resolution start time: tuple from process.hrtime() or bigint from process.hrtime.bigint() */
-export type HrTime = [number, number] | bigint;
+type HrTime = [number, number] | bigint;
 
 /**
  * Class representing a duration, encapsulating the number and units.

@@ -3,15 +3,16 @@ import _ from 'lodash';
 const NS_PER_S = 1e9;
 const NS_PER_MS = 1e6;
 
+/** High-resolution start time: tuple from process.hrtime() or bigint from process.hrtime.bigint() */
+type HrTime = [number, number] | bigint;
+
 /**
  * Class representing a duration, encapsulating the number and units.
  */
-class Duration {
-  constructor(nanos) {
-    this._nanos = nanos;
-  }
+export class Duration {
+  constructor(private _nanos: number) {}
 
-  get nanos() {
+  get nanos(): number {
     return this._nanos;
   }
 
@@ -20,7 +21,7 @@ class Duration {
    *
    * @returns {number} The duration as nanoseconds
    */
-  get asNanoSeconds() {
+  get asNanoSeconds(): number {
     return this.nanos;
   }
 
@@ -29,7 +30,7 @@ class Duration {
    *
    * @returns {number} The duration as milliseconds
    */
-  get asMilliSeconds() {
+  get asMilliSeconds(): number {
     return this.nanos / NS_PER_MS;
   }
 
@@ -38,25 +39,23 @@ class Duration {
    *
    * @returns {number} The duration fas seconds
    */
-  get asSeconds() {
+  get asSeconds(): number {
     return this.nanos / NS_PER_S;
   }
 
-  toString() {
+  toString(): string {
     // default to milliseconds, rounded
     return this.asMilliSeconds.toFixed(0);
   }
 }
 
-class Timer {
+export class Timer {
   /**
    * Creates a timer
    */
-  constructor() {
-    this._startTime = null;
-  }
+  constructor(private _startTime: HrTime | null = null) {}
 
-  get startTime() {
+  get startTime(): HrTime | null {
     return this._startTime;
   }
 
@@ -65,14 +64,11 @@ class Timer {
    *
    * @return {Timer} The current instance, for chaining
    */
-  start() {
-    if (!_.isNull(this.startTime)) {
+  start(): this {
+    if (!_.isNull(this._startTime)) {
       throw new Error('Timer has already been started.');
     }
-    // once Node 10 is no longer supported, this check can be removed
-    this._startTime = _.isFunction(process.hrtime.bigint)
-      ? process.hrtime.bigint()
-      : process.hrtime();
+    this._startTime = process.hrtime.bigint();
     return this;
   }
 
@@ -81,36 +77,35 @@ class Timer {
    *
    * @return {Duration} the duration
    */
-  getDuration() {
-    if (_.isNull(this.startTime)) {
-      throw new Error(`Unable to get duration. Timer was not started`);
+  getDuration(): Duration {
+    if (_.isNull(this._startTime)) {
+      throw new Error('Unable to get duration. Timer was not started');
     }
 
-    let nanoDuration;
-    if (_.isArray(this.startTime)) {
+    let nanoDuration: number;
+    if (_.isArray(this._startTime)) {
       // startTime was created using process.hrtime()
-      const [seconds, nanos] = process.hrtime(this.startTime);
+      const [seconds, nanos] = process.hrtime(this._startTime as [number, number]);
       nanoDuration = seconds * NS_PER_S + nanos;
-    } else if (typeof this.startTime === 'bigint' && _.isFunction(process.hrtime.bigint)) {
+    } else if (typeof this._startTime === 'bigint') {
       // startTime was created using process.hrtime.bigint()
       const endTime = process.hrtime.bigint();
       // get the difference, and convert to number
-      nanoDuration = Number(endTime - this.startTime);
+      nanoDuration = Number(endTime - this._startTime);
     } else {
-      throw new Error(`Unable to get duration. Start time '${this.startTime}' cannot be parsed`);
+      throw new Error(`Unable to get duration. Start time '${this._startTime}' cannot be parsed`);
     }
 
     return new Duration(nanoDuration);
   }
 
-  toString() {
+  toString(): string {
     try {
       return this.getDuration().toString();
     } catch (err) {
-      return `<err: ${err.message}>`;
+      return `<err: ${(err as Error).message}>`;
     }
   }
 }
 
-export {Timer, Duration};
-export default Timer;
+export {Timer as default};

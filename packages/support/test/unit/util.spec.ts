@@ -195,10 +195,10 @@ describe('util', function () {
 
   describe('cancellableDelay', function () {
     it('should delay', async function () {
-      await util.cancellableDelay('10');
+      await util.cancellableDelay(10);
     });
     it('cancel should work', async function () {
-      const delay = util.cancellableDelay('1000');
+      const delay = util.cancellableDelay(1000);
       await sleep(10);
       delay.cancel();
       await expect(delay).to.eventually.be.rejectedWith(/cancellation error/);

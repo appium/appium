@@ -85,7 +85,7 @@ class ZipExtractor {
           const relativeDestDir = path.relative(dir, canonicalDestDir);
 
           if (relativeDestDir.split(path.sep).includes('..')) {
-            new Error(
+            throw new Error(
               `Out of bound path "${canonicalDestDir}" found while processing file ${fileName}`
             );
           }

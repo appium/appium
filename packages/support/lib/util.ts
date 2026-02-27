@@ -74,7 +74,8 @@ export function escapeSpecialChars(
   if (typeof str !== 'string') {
     return str;
   }
-  let result = str
+
+  const result = str
     .replace(/[\\]/g, '\\\\')
     .replace(/[/]/g, '\\/')
     .replace(/[\b]/g, '\\b')
@@ -84,11 +85,11 @@ export function escapeSpecialChars(
     .replace(/[\t]/g, '\\t')
     .replace(/["]/g, '\\"')
     .replace(/\\'/g, "\\'");
-  if (quoteEscape) {
-    const re = new RegExp(quoteEscape, 'g');
-    result = result.replace(re, `\\${quoteEscape}`);
+  if (!quoteEscape) {
+    return result;
   }
-  return result;
+  const re = new RegExp(quoteEscape, 'g');
+  return result.replace(re, `\\${quoteEscape}`);
 }
 
 /**

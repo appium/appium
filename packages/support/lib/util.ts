@@ -74,9 +74,6 @@ export function escapeSpecialChars(
   if (typeof str !== 'string') {
     return str;
   }
-  if (typeof quoteEscape === 'undefined') {
-    quoteEscape = false;
-  }
   let result = str
     .replace(/[\\]/g, '\\\\')
     .replace(/[/]/g, '\\/')

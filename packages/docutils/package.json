@@ -23,6 +23,7 @@
   },
   "license": "Apache-2.0",
   "author": "https://github.com/appium",
+  "main": "./build/lib/index.js",
   "types": "./build/lib/index.d.ts",
   "directories": {
     "lib": "lib"
@@ -31,20 +32,16 @@
     "appium-docs": "./bin/appium-docs.js"
   },
   "files": [
-    "index.js",
-    "index.d.ts",
     "base-mkdocs.yml",
     "lib",
-    "build",
+    "build/lib",
     "tsconfig.json",
-    "!build/tsconfig.tsbuildinfo",
-    "!build/test",
     "requirements.txt"
   ],
   "scripts": {
     "test": "npm run test:unit",
     "test:e2e": "mocha --exit --timeout 60s --slow 30s \"./test/e2e/**/*.e2e.spec.ts\"",
-    "test:smoke": "node ./index.js",
+    "test:smoke": "node ./build/lib/index.js",
     "test:unit": "mocha \"./test/unit/**/*.spec.ts\"",
     "start": "node ./build/lib/cli/index.js"
   },

@@ -7,7 +7,7 @@ import {fs} from '@appium/support';
 import _ from 'lodash';
 import path from 'node:path';
 import {packageDirectory} from 'package-directory';
-import type { NormalizedPackageJson, PackageJson} from 'read-pkg';
+import type {NormalizedPackageJson, PackageJson} from 'read-pkg';
 import {readPackage} from 'read-pkg';
 import type {JsonValue} from 'type-fest';
 import * as YAML from 'yaml';

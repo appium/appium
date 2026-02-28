@@ -13,7 +13,7 @@ import _ from 'lodash';
 import {readPackageSync} from 'read-pkg';
 import {hideBin} from 'yargs/helpers';
 import yargs from 'yargs/yargs';
-import type { LogLevelMap} from '../constants';
+import type {LogLevelMap} from '../constants';
 import {DEFAULT_LOG_LEVEL, NAME_BIN} from '../constants';
 import {DocutilsError} from '../error';
 import {build, init, validate} from './command';

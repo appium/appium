@@ -10,7 +10,7 @@ import {exec} from 'teen_process';
 import type {Simplify} from 'type-fest';
 import {DocutilsError} from './error';
 import {createScaffoldTask} from './scaffold';
-import type { ScaffoldTask, ScaffoldTaskOptions} from './scaffold';
+import type {ScaffoldTask, ScaffoldTaskOptions} from './scaffold';
 import {getLogger} from './logger';
 import type {MkDocsYml} from './model';
 import {requirePython, stringifyYaml} from './fs';

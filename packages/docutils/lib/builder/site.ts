@@ -6,13 +6,13 @@
  */
 
 import path from 'node:path';
-import type { TeenProcessExecOptions} from 'teen_process';
+import type {TeenProcessExecOptions} from 'teen_process';
 import {exec} from 'teen_process';
 import {DEFAULT_SITE_DIR, NAME_BIN, NAME_MKDOCS, NAME_MKDOCS_YML} from '../constants';
 import {DocutilsError} from '../error';
 import {findMkDocsYml, isMkDocsInstalled, readMkDocsYml, requirePython} from '../fs';
 import {getLogger} from '../logger';
-import type { SpawnBackgroundProcessOpts} from '../util';
+import type {SpawnBackgroundProcessOpts} from '../util';
 import {relative, spawnBackgroundProcess, stopwatch} from '../util';
 
 const log = getLogger('mkdocs');

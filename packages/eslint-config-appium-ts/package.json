@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@eslint/compat": "2.0.2",
-    "@eslint/js": "9.39.3",
+    "@eslint/js": "10.0.1",
     "@stylistic/eslint-plugin": "5.9.0",
     "eslint-config-prettier": "10.1.8",
     "eslint-import-resolver-typescript": "4.4.4",
@@ -42,7 +42,7 @@
     "typescript-eslint": "8.56.1"
   },
   "peerDependencies": {
-    "eslint": "^9.0.0"
+    "eslint": "^9.0.0 || ^10.0.0"
   },
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0",

@@ -1,7 +1,7 @@
 // @ts-check
 
 import type {Constraints, W3CCapabilities} from '@appium/types';
-import type {SinonSandbox, SinonStubbedMember} from 'sinon';
+import type {SinonSandbox, SinonMock, SinonStubbedMember} from 'sinon';
 import {PLUGIN_TYPE, SESSION_DISCOVERY_FEATURE} from '../../lib/constants';
 import {BaseDriver} from '@appium/base-driver';
 import {FakeDriver} from '@appium/fake-driver';
@@ -82,7 +82,7 @@ describe('AppiumDriver', function () {
     function getDriverAndFakeDriver(
       appiumArgs: any = {},
       DriverClass: typeof FakeDriver = FakeDriver
-    ): [InstanceType<typeof AppiumModule.AppiumDriver>, import('sinon').SinonMock] {
+    ): [InstanceType<typeof AppiumModule.AppiumDriver>, SinonMock] {
       const appium = new AppiumDriver(appiumArgs);
       fakeDriver = new DriverClass();
       const mockFakeDriver = sandbox.mock(fakeDriver);
@@ -136,7 +136,7 @@ describe('AppiumDriver', function () {
     });
     describe('createSession', function () {
       let appium: InstanceType<typeof AppiumModule.AppiumDriver>;
-      let mockFakeDriver: import('sinon').SinonMock;
+      let mockFakeDriver: SinonMock;
       beforeEach(function () {
         [appium, mockFakeDriver] = getDriverAndFakeDriver(SESSION_DISCOVERY_ENABLED);
       });
@@ -407,7 +407,7 @@ describe('AppiumDriver', function () {
     describe('sessionExists', function () {});
     describe('attachUnexpectedShutdownHandler', function () {
       let appium: InstanceType<typeof AppiumModule.AppiumDriver>;
-      let mockFakeDriver: import('sinon').SinonMock;
+      let mockFakeDriver: SinonMock;
       beforeEach(function () {
         [appium, mockFakeDriver] = getDriverAndFakeDriver();
       });

@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import {errors, validateExecuteMethodParams} from '../../protocol';
-import {
+import type {
   Constraints,
   Driver,
   DriverClass,
@@ -9,7 +9,7 @@ import {
   StringRecord,
 } from '@appium/types';
 import {mixin} from './mixin';
-import {BaseDriver} from '../driver';
+import type {BaseDriver} from '../driver';
 import {distance} from 'fastest-levenshtein';
 
 declare module '../driver' {

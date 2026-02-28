@@ -1,5 +1,5 @@
 import {expectAssignable, expectNotAssignable} from 'tsd';
-import {
+import type {
   AppiumLogger,
   DriverCommandToPluginCommand,
   ExternalDriver,

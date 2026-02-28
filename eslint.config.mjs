@@ -22,8 +22,8 @@ export default defineConfig([
     extends: [testSupportConfig],
   },
   {
-    name: '@appium/types – enforce type-only imports',
-    files: ['packages/types/lib/**/*.ts'],
+    name: 'Consistent type-only imports (all packages)',
+    files: ['**/*.{ts,tsx,mtsx}'],
     rules: {
       '@typescript-eslint/consistent-type-imports': [
         'error',

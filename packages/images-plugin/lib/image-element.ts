@@ -10,7 +10,7 @@ import {
   IMAGE_EL_TAP_STRATEGY_W3C,
 } from './constants';
 import type {Rect, Element, ExternalDriver, ActionSequence} from '@appium/types';
-import {ImageElementFinder} from './finder';
+import type {ImageElementFinder} from './finder';
 import type {ImageSettings, Dimension, Position, ImageElementOpts} from './types';
 
 const TAP_DURATION_MS = 125;

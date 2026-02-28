@@ -554,7 +554,7 @@ function buildHandler(
   });
 }
 
-export function driverShouldDoJwpProxy(driver: Core<any>, req: import('express').Request, command: string): boolean {
+export function driverShouldDoJwpProxy(driver: Core<any>, req: Request, command: string): boolean {
   const sessionId = getSessionId(driver, req);
   // drivers need to explicitly say when the proxy is active
   if (!driver.proxyActive(sessionId)) {

@@ -1,11 +1,13 @@
 import path from 'node:path';
 import rewiremock from 'rewiremock/node';
 import type {Strongbox as TStrongbox, StrongboxOpts, Item, Value} from '../../lib';
-import {
-  createSandbox,
+import type {
   SinonSandbox,
   SinonStubbedMember,
   SinonStub
+} from 'sinon';
+import {
+  createSandbox
 } from 'sinon';
 import type fs from 'node:fs/promises';
 

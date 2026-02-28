@@ -4,6 +4,7 @@ import chaiAsPromised from 'chai-as-promised';
 import {promises as fs} from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import type {SinonSandbox, SinonSpy} from 'sinon';
 import {createSandbox} from 'sinon';
 import {getParser} from '../../lib/cli/parser';
 import {
@@ -26,7 +27,7 @@ const {expect} = chai;
 chai.use(chaiAsPromised);
 
 describe('Config', function () {
-  let sandbox: import('sinon').SinonSandbox;
+  let sandbox: SinonSandbox;
 
   beforeEach(function () {
     sandbox = createSandbox();
@@ -37,8 +38,8 @@ describe('Config', function () {
   });
 
   describe('Appium config', function () {
-    let log: import('sinon').SinonSpy;
-    let dir: import('sinon').SinonSpy;
+    let log: SinonSpy;
+    let dir: SinonSpy;
     beforeEach(function () {
       log = sandbox.spy(console, 'log');
       dir = sandbox.spy(console, 'dir');

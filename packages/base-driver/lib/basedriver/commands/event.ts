@@ -1,6 +1,6 @@
-import {Constraints, IEventCommands} from '@appium/types';
+import type {Constraints, IEventCommands} from '@appium/types';
 import _ from 'lodash';
-import {BaseDriver} from '../driver';
+import type {BaseDriver} from '../driver';
 import {mixin} from './mixin';
 
 declare module '../driver' {

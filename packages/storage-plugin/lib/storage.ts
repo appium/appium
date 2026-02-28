@@ -5,7 +5,7 @@ import type { Path } from 'path-scurry';
 import path from 'node:path';
 import type { Stats } from 'node:fs';
 import nativeFs from 'node:fs';
-import { ItemOptions, StorageItem } from './types';
+import type { ItemOptions, StorageItem } from './types';
 import AsyncLock from 'async-lock';
 import type { AppiumLogger } from '@appium/types';
 import type Stream from 'node:stream';

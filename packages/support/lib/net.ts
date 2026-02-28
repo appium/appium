@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import {fs} from './fs';
-import B from 'bluebird';
 import {toReadableSizeString} from './util';
 import log from './logger';
 import Ftp from 'jsftp';
@@ -141,7 +140,7 @@ export async function downloadFile(
     responseLength = parseInt(String(responseHeaders['content-length'] ?? '0'), 10);
     (responseStream as NodeJS.ReadableStream).pipe(writer);
 
-    await new B<void>((resolve, reject) => {
+    await new Promise<void>((resolve, reject) => {
       (responseStream as NodeJS.ReadableStream).once('error', reject);
       writer.once('finish', () => resolve());
       writer.once('error', (e: Error) => {
@@ -269,7 +268,7 @@ async function uploadFileToFtp(
     ftpOpts.pass = auth.pass;
   }
   log.debug(`${protocol.slice(0, -1)} upload options: ${JSON.stringify(ftpOpts)}`);
-  return await new B<void>((resolve, reject) => {
+  return await new Promise<void>((resolve, reject) => {
     new Ftp(ftpOpts).put(localFileStream, pathname, (err) => {
       if (err) {
         reject(err);

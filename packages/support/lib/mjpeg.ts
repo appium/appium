@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import log from './logger';
-import B from 'bluebird';
 import {requireSharp} from './image-util';
 import {Writable, type WritableOptions, type Readable} from 'node:stream';
 import {requirePackage} from './node';
@@ -135,13 +134,18 @@ export class MJpegStream extends Writable {
       this.lastChunk = null;
     };
 
-    const startPromise = new B<void>((res, rej) => {
-      this.registerStartSuccess = res;
-      this.registerStartFailure = rej;
-    }).timeout(
-      serverTimeout,
-      `Waited ${serverTimeout}ms but the MJPEG server never sent any images`
-    );
+    const startPromise = Promise.race([
+      new Promise<void>((resolve, reject) => {
+        this.registerStartSuccess = resolve;
+        this.registerStartFailure = reject;
+      }),
+      new Promise<never>((_resolve, reject) =>
+        setTimeout(
+          () => reject(new Error(`Waited ${serverTimeout}ms but the MJPEG server never sent any images`)),
+          serverTimeout
+        )
+      )
+    ]);
 
     (this.responseStream as Readable & {pipe<T extends Writable>(dest: T): T})
       .once('close', onClose)

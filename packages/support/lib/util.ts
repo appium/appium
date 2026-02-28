@@ -316,7 +316,6 @@ export async function isSameDestination(
   ...pathN: string[]
 ): Promise<boolean> {
   const allPaths = [path1, path2, ...pathN];
-
   for (const p of allPaths) {
     if (!(await fs.exists(p))) {
       return false;

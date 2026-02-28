@@ -28,7 +28,7 @@ const DEFAULT_REQ_HEADERS = Object.freeze({
 const AVG_DOWNLOAD_SPEED_MEASUREMENT_THRESHOLD_SEC = 2;
 const APPLICATIONS_CACHE = new LRUCache<string, CachedAppInfoEntry>({
   max: MAX_CACHED_APPS,
-  ttl: CACHED_APPS_MAX_AGE_MS,
+  ttl: CACHED_APPS_MAX_AGE_MS, // expire after 24 hours
   updateAgeOnGet: true,
   dispose: ({fullPath}, app) => {
     logger.info(
@@ -84,6 +84,7 @@ export async function configureApp(
   options: string | string[] | ConfigureAppOptions = {} as ConfigureAppOptions
 ): Promise<string> {
   if (!_.isString(app)) {
+    // immediately shortcircuit if not given an app
     return '';
   }
 
@@ -135,6 +136,7 @@ export async function configureApp(
     }
 
     if (isUrl) {
+      // Use the app from remote URL
       logger.info(`Using downloadable app '${newApp}'`);
       const reqHeaders = {...DEFAULT_REQ_HEADERS};
       if (cachedAppInfo?.etag) {
@@ -207,9 +209,11 @@ export async function configureApp(
         }
       }
     } else if (await fs.exists(newApp)) {
+      // Use the local app
       logger.info(`Using local app '${newApp}'`);
     } else {
       let errorMessage = `The application at '${newApp}' does not exist or is not accessible`;
+      // protocol value for 'C:\\temp' is 'c:', so we check the length as well
       if (_.isString(protocol) && protocol.length > 2) {
         errorMessage =
           `The protocol '${protocol}' used in '${newApp}' is not supported. ` +
@@ -286,6 +290,7 @@ export function isPackageOrBundle(app: string): boolean {
  * @returns A deep copy of `input` with both keys present where objects had either key.
  */
 export function duplicateKeys<T>(input: T, firstKey: string, secondKey: string): T {
+  // If array provided, recursively call on all elements
   if (_.isArray(input)) {
     return input.map((item) => duplicateKeys(item, firstKey, secondKey)) as T;
   }
@@ -348,6 +353,7 @@ export function parseCapsArray(capValue: string | string[]): string[] {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- DriverHelpers interface
 export function generateDriverLogPrefix(obj: object | null, _sessionId?: string | null): string {
   if (!obj) {
+    // This should not happen
     return 'UnknownDriver@????';
   }
   return `${obj.constructor.name}@${node.getObjectId(obj).substring(0, 4)}`;
@@ -392,6 +398,11 @@ function isSupportedUrl(app: string): boolean {
   }
 }
 
+/**
+ * Transforms the given app link to the cache key.
+ * Necessary to properly cache apps having the same address but different query strings,
+ * e.g. ones stored in S3 using presigned URLs.
+ */
 function toCacheKey(app: string): string {
   if (!isEnvOptionEnabled('APPIUM_APPS_CACHE_IGNORE_URL_QUERY') || !isSupportedUrl(app)) {
     return app;
@@ -414,6 +425,7 @@ function toCacheKey(app: string): string {
 
 async function queryAppLink(appLink: string, reqHeaders: RawAxiosRequestHeaders): Promise<RemoteAppData> {
   const url = new URL(appLink);
+  // Extract credentials, then remove them from the URL for axios
   const {username, password} = url;
   url.username = '';
   url.password = '';
@@ -460,6 +472,7 @@ async function fetchApp(srcStream: Readable, dstPath: string): Promise<string> {
     `The application (${util.toReadableSizeString(size)}) ` +
       `has been downloaded to '${dstPath}' in ${secondsElapsed.toFixed(3)}s`
   );
+  // it does not make much sense to approximate the speed for short downloads
   if (secondsElapsed >= AVG_DOWNLOAD_SPEED_MEASUREMENT_THRESHOLD_SEC) {
     const bytesPerSec = Math.floor(size / secondsElapsed);
     logger.debug(`Approximate download speed: ${util.toReadableSizeString(bytesPerSec)}/s`);
@@ -485,6 +498,7 @@ function determineFilename(
     }
   }
 
+  // assign the default file name and the extension if none has been detected
   const resultingName = basename
     ? basename.substring(0, basename.length - extname.length)
     : DEFAULT_BASENAME;
@@ -526,6 +540,13 @@ async function isAppIntegrityOk(
     return false;
   }
 
+  // Folder integrity check is simple:
+  // Verify the previous amount of files is not greater than the current one.
+  // We don't want to use equality comparison because of an assumption that the OS might
+  // create some unwanted service files/cached inside of that folder or its subfolders.
+  // Ofc, validating the hash sum of each file (or at least of file path) would be much
+  // more precise, but we don't need to be very precise here and also don't want to
+  // overuse RAM and have a performance drop.
   return (await fs.stat(currentPath)).isDirectory()
     ? (await calculateFolderIntegrity(currentPath)) >= (expectedIntegrity?.folder ?? 0)
     : (await calculateFileIntegrity(currentPath)) === expectedIntegrity?.file;

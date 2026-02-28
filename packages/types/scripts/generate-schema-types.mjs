@@ -5,11 +5,16 @@
  * and generated from a `.js` file in the `appium` package.
  */
 
-const {compileFromFile} = require('json-schema-to-typescript');
-const path = require('node:path');
-const {promises: fs} = require('node:fs');
-const logSymbols = require('log-symbols');
-const {error, info, success} = logSymbols.default;
+import { compileFromFile } from 'json-schema-to-typescript';
+import path from 'node:path';
+import { promises as fs } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import logSymbols from 'log-symbols';
+
+const { error, info, success } = logSymbols;
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /**
  * Path to `@appium/types` package root

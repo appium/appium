@@ -5,7 +5,7 @@
 
 import _ from 'lodash';
 import type {SpawnOptions} from 'node:child_process';
-import { spawn} from 'node:child_process';
+import {spawn} from 'node:child_process';
 import path from 'node:path';
 
 /**

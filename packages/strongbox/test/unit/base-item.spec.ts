@@ -1,13 +1,8 @@
 import path from 'node:path';
 import rewiremock from 'rewiremock/node';
-import type * as BaseItemModule from '../../lib/base-item';
-import type {
-  SinonSandbox,
-  SinonStubbedMember
-} from 'sinon';
-import {
-  createSandbox
-} from 'sinon';
+import type {BaseItem as TBaseItem} from '../../lib/base-item';
+import type {SinonSandbox, SinonStubbedMember} from 'sinon';
+import {createSandbox} from 'sinon';
 import type fs from 'node:fs/promises';
 import type {Item, Strongbox} from '../../lib';
 
@@ -20,7 +15,7 @@ describe('Strongbox', function () {
   let MockFs: MockFs = {} as any;
   const DATA_DIR = path.resolve(path.sep, 'some', 'dir');
   // note to self: looks like this is safe to do before the rewiremock.proxy call
-  let BaseItem: typeof BaseItemModule.BaseItem;
+  let BaseItem: typeof TBaseItem;
   let expect: any;
 
   before(async function () {

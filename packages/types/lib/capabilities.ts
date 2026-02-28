@@ -1,8 +1,8 @@
-import {Constraint, Constraints, BaseDriverCapConstraints} from './constraints';
-import {StandardCapabilities} from './standard-caps';
-import {AnyCase, StringRecord} from './util';
+import type {Constraint, Constraints, BaseDriverCapConstraints} from './constraints';
+import type {StandardCapabilities} from './standard-caps';
+import type {AnyCase, StringRecord} from './util';
 
-export {StandardCapabilities};
+export type {StandardCapabilities};
 
 export type W3C_APPIUM_PREFIX = 'appium';
 

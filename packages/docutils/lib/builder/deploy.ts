@@ -6,7 +6,8 @@
 
 import _ from 'lodash';
 import path from 'node:path';
-import {exec, TeenProcessExecOptions} from 'teen_process';
+import type {TeenProcessExecOptions} from 'teen_process';
+import {exec} from 'teen_process';
 import {
   DEFAULT_DEPLOY_ALIAS_TYPE,
   DEFAULT_DEPLOY_BRANCH,
@@ -20,7 +21,8 @@ import {
 import {DocutilsError} from '../error';
 import {findMike, findMkDocsYml, isMkDocsInstalled, readPackageJson, requirePython} from '../fs';
 import {getLogger} from '../logger';
-import {argify, spawnBackgroundProcess, SpawnBackgroundProcessOpts, stopwatch} from '../util';
+import type {SpawnBackgroundProcessOpts} from '../util';
+import {argify, spawnBackgroundProcess, stopwatch} from '../util';
 
 const log = getLogger('builder:deploy');
 

@@ -1,9 +1,7 @@
 import _ from 'lodash';
 import B from 'bluebird';
-import {
-  errors,
-  ExtensionCore,
-} from '@appium/base-driver';
+import type {ExtensionCore} from '@appium/base-driver';
+import {errors} from '@appium/base-driver';
 import {BIDI_BASE_PATH, BIDI_EVENT_NAME} from './constants';
 import WebSocket from 'ws';
 import os from 'node:os';

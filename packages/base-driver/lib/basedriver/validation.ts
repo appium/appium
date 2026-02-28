@@ -1,4 +1,4 @@
-import type { Constraint } from '@appium/types';
+import type {Constraint} from '@appium/types';
 import log from './logger';
 import _ from 'lodash';
 

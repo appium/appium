@@ -1,5 +1,6 @@
 import {readFile} from 'node:fs/promises';
-import {Item, Strongbox, strongbox} from '../../lib';
+import type {Item, Strongbox} from '../../lib';
+import {strongbox} from '../../lib';
 
 describe('@appium/strongbox', function () {
   let expect: any;

@@ -1,7 +1,7 @@
 import type {Express} from 'express';
 import type {Server as WSServer} from 'ws';
 import type {Server as HTTPServer} from 'node:http';
-import {ServerArgs} from './config';
+import type {ServerArgs} from './config';
 
 /**
  * Appium's slightly-modified {@linkcode HTTPServer http.Server}.
@@ -48,7 +48,7 @@ export interface AppiumServerExtension {
   isSecure(): boolean;
 }
 
-export {WSServer};
+export type {WSServer};
 
 /**
  * Optionally updates an Appium express app and http server, by calling

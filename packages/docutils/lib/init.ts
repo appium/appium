@@ -7,12 +7,12 @@
 import {NAME_MKDOCS_YML, PIP_ENV_VARS, REQUIREMENTS_TXT_PATH} from './constants';
 import * as YAML from 'yaml';
 import {exec} from 'teen_process';
-import {Simplify} from 'type-fest';
+import type {Simplify} from 'type-fest';
 import {DocutilsError} from './error';
-import {createScaffoldTask, ScaffoldTaskOptions} from './scaffold';
-import type { ScaffoldTask } from './scaffold';
+import {createScaffoldTask} from './scaffold';
+import type {ScaffoldTask, ScaffoldTaskOptions} from './scaffold';
 import {getLogger} from './logger';
-import {MkDocsYml} from './model';
+import type {MkDocsYml} from './model';
 import {requirePython, stringifyYaml} from './fs';
 
 /**

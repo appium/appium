@@ -21,6 +21,16 @@ export default defineConfig([
     name: 'Test Support',
     extends: [testSupportConfig],
   },
+  {
+    name: 'Consistent type-only imports (all packages)',
+    files: ['**/*.{ts,tsx,mtsx}'],
+    rules: {
+      '@typescript-eslint/consistent-type-imports': [
+        'error',
+        { fixStyle: 'separate-type-imports', prefer: 'type-imports' },
+      ],
+    },
+  },
   globalIgnores([
     '**/build-fixtures/**',
     'packages/appium/docs/**/assets/**',

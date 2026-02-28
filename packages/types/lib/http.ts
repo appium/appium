@@ -1,4 +1,4 @@
-import type { AppiumLogger } from './logger';
+import type {AppiumLogger} from './logger';
 
 /**
  * An object of HTTP headers.

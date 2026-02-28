@@ -1,5 +1,5 @@
 import {util} from '@appium/support';
-import {Protocol} from '@appium/types';
+import type {Protocol} from '@appium/types';
 
 // The default maximum length of a single log record
 // containing http request/response body

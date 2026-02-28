@@ -249,14 +249,14 @@ export async function configureApp(
     };
 
     if (_.isFunction(onPostProcess)) {
-      const postProcessArg = {
+      const postProcessArg: PostProcessOptions = {
         cachedAppInfo: _.clone(cachedAppInfo) as CachedAppInfo | undefined,
         isUrl,
         originalAppLink,
-        headers: _.clone(headers),
+        headers: _.clone(headers) as HTTPHeaders,
         appPath: newApp,
       };
-      const result = await onPostProcess(postProcessArg as PostProcessOptions);
+      const result = await onPostProcess(postProcessArg);
       return !result?.appPath || app === result?.appPath || !(await fs.exists(result?.appPath))
         ? newApp
         : await storeAppInCache(result.appPath);
@@ -295,6 +295,7 @@ export function duplicateKeys<T>(input: T, firstKey: string, secondKey: string):
     return input.map((item) => duplicateKeys(item, firstKey, secondKey)) as T;
   }
 
+  // If object, create duplicates for keys and then recursively call on values
   if (_.isPlainObject(input)) {
     const resultObj: Record<string, unknown> = {};
     for (const [key, value] of _.toPairs(input as Record<string, unknown>)) {
@@ -309,6 +310,7 @@ export function duplicateKeys<T>(input: T, firstKey: string, secondKey: string):
     return resultObj as T;
   }
 
+  // Base case. Return primitives without doing anything.
   return input;
 }
 
@@ -508,7 +510,7 @@ function determineFilename(
       `The current file extension '${resultingExt}' is not supported. ` +
         `Defaulting to '${_.first(supportedAppExtensions)}'`
     );
-    resultingExt = _.first(supportedAppExtensions) ?? supportedAppExtensions[0];
+    resultingExt = _.first(supportedAppExtensions) as string;
   }
   return `${resultingName}${resultingExt}`;
 }

@@ -2,13 +2,23 @@ import _ from 'lodash';
 import path from 'node:path';
 import logger from './logger';
 import {tempDir, fs, util, timing, node} from '@appium/support';
-import { LRUCache } from 'lru-cache';
+import {LRUCache} from 'lru-cache';
 import AsyncLock from 'async-lock';
 import axios from 'axios';
 import B from 'bluebird';
+import type {
+  ConfigureAppOptions,
+  CachedAppInfo,
+  PostProcessOptions,
+  HTTPHeaders,
+  DriverHelpers,
+} from '@appium/types';
+import type {AxiosResponseHeaders, RawAxiosRequestHeaders} from 'axios';
+import type {Readable} from 'node:stream';
 
 // for compat with running tests transpiled and in-place
 export const {version: BASEDRIVER_VER} = fs.readPackageJsonFrom(__dirname);
+
 const CACHED_APPS_MAX_AGE_MS = 1000 * 60 * toNaturalNumber(60 * 24, 'APPIUM_APPS_CACHE_MAX_AGE');
 const MAX_CACHED_APPS = toNaturalNumber(1024, 'APPIUM_APPS_CACHE_MAX_ITEMS');
 const HTTP_STATUS_NOT_MODIFIED = 304;
@@ -16,8 +26,7 @@ const DEFAULT_REQ_HEADERS = Object.freeze({
   'user-agent': `Appium (BaseDriver v${BASEDRIVER_VER})`,
 });
 const AVG_DOWNLOAD_SPEED_MEASUREMENT_THRESHOLD_SEC = 2;
-/** @type {LRUCache<string, import('@appium/types').CachedAppInfo>} */
-const APPLICATIONS_CACHE = new LRUCache({
+const APPLICATIONS_CACHE = new LRUCache<string, CachedAppInfoEntry>({
   max: MAX_CACHED_APPS,
   ttl: CACHED_APPS_MAX_AGE_MS, // expire after 24 hours
   updateAgeOnGet: true,
@@ -44,65 +53,65 @@ process.on('exit', () => {
 
   const appPaths = [...APPLICATIONS_CACHE.values()].map(({fullPath}) => fullPath);
   logger.debug(
-    `Performing cleanup of ${appPaths.length} cached ` +
-      util.pluralize('application', appPaths.length)
+    `Performing cleanup of ${util.pluralize('cached application', appPaths.length, true)}`
   );
   for (const appPath of appPaths) {
+    if (!appPath) {
+      continue;
+    }
     try {
-      // @ts-ignore it's defined
       fs.rimrafSync(appPath);
     } catch (e) {
-      logger.warn(e.message);
+      logger.warn((e as Error).message);
     }
   }
 });
 
 /**
- * Perform initial application package configuration
- * to prepare it for the further consumption by a driver:
+ * Performs initial application package configuration so the app is ready for driver use.
+ * Resolves local paths, downloads remote apps (http/https) with optional caching, and
+ * runs optional post-process or custom download hooks.
  *
- * - Manages caching logic
- * - Downloads the app from a remote URL to the local filesystem
- * - Determines package name
- * - Checks basic requirements on the application package
- *
- * @param {string} app
- * @param {string|string[]|import('@appium/types').ConfigureAppOptions} options
- * @returns {Promise<string>}
+ * @param app - Path to a local app or URL of a downloadable app (http/https).
+ * @param options - Supported extensions and optional hooks. Either a single extension
+ * string, an array of extension strings, or {@link ConfigureAppOptions} (e.g.
+ * `supportedExtensions`, `onPostProcess`, `onDownload`).
+ * @returns Resolved path to the application (local path or path to downloaded/cached app).
+ * @throws {Error} If supported extensions are missing, the app path/URL is invalid, or download fails.
  */
 export async function configureApp(
-  app,
-  options = /** @type {import('@appium/types').ConfigureAppOptions} */ ({})
-) {
+  app: string,
+  options: string | string[] | ConfigureAppOptions = {} as ConfigureAppOptions
+): Promise<string> {
   if (!_.isString(app)) {
     // immediately shortcircuit if not given an app
     return '';
   }
 
-  /** @type {string[]} */
-  let supportedAppExtensions;
-  const onPostProcess = !_.isString(options) && !_.isArray(options) ? options.onPostProcess : undefined;
-  const onDownload = !_.isString(options) && !_.isArray(options) ? options.onDownload : undefined;
+  let supportedAppExtensions: string[];
+  const opts = !_.isString(options) && !_.isArray(options) ? options : undefined;
+  const onPostProcess = opts?.onPostProcess;
+  const onDownload = opts?.onDownload;
 
   if (_.isString(options)) {
     supportedAppExtensions = [options];
   } else if (_.isArray(options)) {
     supportedAppExtensions = options;
   } else if (_.isPlainObject(options)) {
-    supportedAppExtensions = options.supportedExtensions;
+    supportedAppExtensions = options.supportedExtensions ?? [];
+  } else {
+    supportedAppExtensions = [];
   }
-  // @ts-ignore this is OK
+
   if (_.isEmpty(supportedAppExtensions)) {
     throw new Error(`One or more supported app extensions must be provided`);
   }
 
   let newApp = app;
   const originalAppLink = app;
-  let packageHash = null;
-  /** @type {import('axios').AxiosResponse['headers']|undefined} */
-  let headers;
-  /** @type {RemoteAppProps} */
-  const remoteAppProps = {
+  let packageHash: string | null = null;
+  let headers: AxiosResponseHeaders | RawAxiosRequestHeaders | undefined;
+  const remoteAppProps: RemoteAppProps = {
     lastModified: null,
     immutable: false,
     maxAge: null,
@@ -129,9 +138,7 @@ export async function configureApp(
     if (isUrl) {
       // Use the app from remote URL
       logger.info(`Using downloadable app '${newApp}'`);
-      const reqHeaders = {
-        ...DEFAULT_REQ_HEADERS,
-      };
+      const reqHeaders = {...DEFAULT_REQ_HEADERS};
       if (cachedAppInfo?.etag) {
         reqHeaders['if-none-match'] = cachedAppInfo.etag;
       } else if (cachedAppInfo?.lastModified) {
@@ -139,7 +146,9 @@ export async function configureApp(
       }
       logger.debug(`Request headers: ${JSON.stringify(reqHeaders)}`);
 
-      let {headers, stream, status} = await queryAppLink(newApp, reqHeaders);
+      let result = await queryAppLink(newApp, reqHeaders);
+      headers = result.headers;
+      let {stream, status} = result;
       logger.debug(`Response status: ${status}`);
       try {
         if (!_.isEmpty(headers)) {
@@ -149,21 +158,22 @@ export async function configureApp(
           }
           if (headers['last-modified']) {
             logger.debug(`Last-Modified: ${headers['last-modified']}`);
-            remoteAppProps.lastModified = new Date(headers['last-modified']);
+            remoteAppProps.lastModified = new Date(headers['last-modified'] as string);
           }
           if (headers['cache-control']) {
             logger.debug(`Cache-Control: ${headers['cache-control']}`);
-            remoteAppProps.immutable = /\bimmutable\b/i.test(headers['cache-control']);
-            const maxAgeMatch = /\bmax-age=(\d+)\b/i.exec(headers['cache-control']);
+            remoteAppProps.immutable = /\bimmutable\b/i.test(String(headers['cache-control']));
+            const maxAgeMatch = /\bmax-age=(\d+)\b/i.exec(String(headers['cache-control']));
             if (maxAgeMatch) {
               remoteAppProps.maxAge = parseInt(maxAgeMatch[1], 10);
             }
           }
         }
         if (cachedAppInfo && status === HTTP_STATUS_NOT_MODIFIED) {
-          if (await isAppIntegrityOk(/** @type {string} */ (cachedAppInfo.fullPath), cachedAppInfo.integrity)) {
-            logger.info(`Reusing previously downloaded application at '${cachedAppInfo.fullPath}'`);
-            return verifyAppExtension(/** @type {string} */ (cachedAppInfo.fullPath), supportedAppExtensions);
+          const cachedPath = cachedAppInfo.fullPath ?? '';
+          if (cachedPath && (await isAppIntegrityOk(cachedPath, cachedAppInfo.integrity))) {
+            logger.info(`Reusing previously downloaded application at '${cachedPath}'`);
+            return verifyAppExtension(cachedPath, supportedAppExtensions);
           }
           logger.info(
             `The application at '${cachedAppInfo.fullPath}' does not exist anymore ` +
@@ -174,17 +184,20 @@ export async function configureApp(
           if (!stream.closed) {
             stream.destroy();
           }
-          ({stream, headers, status} = await queryAppLink(newApp, {...DEFAULT_REQ_HEADERS}));
+          result = await queryAppLink(newApp, {...DEFAULT_REQ_HEADERS});
+          stream = result.stream;
+          headers = result.headers;
+          status = result.status;
         }
 
         if (onDownload) {
           newApp = await onDownload({
             url: originalAppLink,
-            headers: /** @type {import('@appium/types').HTTPHeaders} */ (_.clone(headers)),
+            headers: _.clone(headers) as HTTPHeaders,
             stream,
           });
         } else {
-          const fileName = determineFilename(headers, pathname, supportedAppExtensions);
+          const fileName = determineFilename(headers, pathname ?? '', supportedAppExtensions);
           newApp = await fetchApp(stream, await tempDir.path({
             prefix: fileName,
             suffix: '',
@@ -214,13 +227,12 @@ export async function configureApp(
       packageHash = await calculateFileIntegrity(newApp);
     }
 
-    /** @type {(appPathToCache: string) => Promise<string>} */
-    const storeAppInCache = async (appPathToCache) => {
+    const storeAppInCache = async (appPathToCache: string): Promise<string> => {
       const cachedFullPath = cachedAppInfo?.fullPath;
       if (cachedFullPath && cachedFullPath !== appPathToCache) {
         await fs.rimraf(cachedFullPath);
       }
-      const integrity = {};
+      const integrity: {file?: string; folder?: number} = {};
       if ((await fs.stat(appPathToCache)).isDirectory()) {
         integrity.folder = await calculateFolderIntegrity(appPathToCache);
       } else {
@@ -237,15 +249,14 @@ export async function configureApp(
     };
 
     if (_.isFunction(onPostProcess)) {
-      const result = await onPostProcess(
-        /** @type {import('@appium/types').PostProcessOptions<import('axios').AxiosResponseHeaders>} */ ({
-          cachedAppInfo: _.clone(cachedAppInfo),
-          isUrl,
-          originalAppLink,
-          headers: _.clone(headers),
-          appPath: newApp,
-        })
-      );
+      const postProcessArg: PostProcessOptions = {
+        cachedAppInfo: _.clone(cachedAppInfo) as CachedAppInfo | undefined,
+        isUrl,
+        originalAppLink,
+        headers: _.clone(headers) as HTTPHeaders,
+        appPath: newApp,
+      };
+      const result = await onPostProcess(postProcessArg);
       return !result?.appPath || app === result?.appPath || !(await fs.exists(result?.appPath))
         ? newApp
         : await storeAppInCache(result.appPath);
@@ -259,33 +270,35 @@ export async function configureApp(
 }
 
 /**
- * @param {string} app
- * @returns {boolean}
+ * Returns whether the given string looks like a package or bundle identifier
+ * (e.g. `com.example.app` or `org.company.AnotherApp`).
+ *
+ * @param app - Value to check (e.g. app path or bundle id).
+ * @returns `true` if the value matches a dot-separated identifier pattern.
  */
-export function isPackageOrBundle(app) {
+export function isPackageOrBundle(app: string): boolean {
   return /^([a-zA-Z0-9\-_]+\.[a-zA-Z0-9\-_]+)+$/.test(app);
 }
 
 /**
- * Finds all instances 'firstKey' and create a duplicate with the key 'secondKey',
- * Do the same thing in reverse. If we find 'secondKey', create a duplicate with the key 'firstKey'.
+ * Recursively ensures both keys exist with the same value in objects and arrays.
+ * For each object, if `firstKey` exists its value is also set at `secondKey`, and vice versa.
  *
- * This will cause keys to be overwritten if the object contains 'firstKey' and 'secondKey'.
-
- * @param {*} input Any type of input
- * @param {String} firstKey The first key to duplicate
- * @param {String} secondKey The second key to duplicate
+ * @param input - Object, array, or primitive to process (arrays/objects traversed recursively).
+ * @param firstKey - First key name to mirror.
+ * @param secondKey - Second key name to mirror.
+ * @returns A deep copy of `input` with both keys present where objects had either key.
  */
-export function duplicateKeys(input, firstKey, secondKey) {
+export function duplicateKeys<T>(input: T, firstKey: string, secondKey: string): T {
   // If array provided, recursively call on all elements
   if (_.isArray(input)) {
-    return input.map((item) => duplicateKeys(item, firstKey, secondKey));
+    return input.map((item) => duplicateKeys(item, firstKey, secondKey)) as T;
   }
 
   // If object, create duplicates for keys and then recursively call on values
   if (_.isPlainObject(input)) {
-    const resultObj = {};
-    for (let [key, value] of _.toPairs(input)) {
+    const resultObj: Record<string, unknown> = {};
+    for (const [key, value] of _.toPairs(input as Record<string, unknown>)) {
       const recursivelyCalledValue = duplicateKeys(value, firstKey, secondKey);
       if (key === firstKey) {
         resultObj[secondKey] = recursivelyCalledValue;
@@ -294,7 +307,7 @@ export function duplicateKeys(input, firstKey, secondKey) {
       }
       resultObj[key] = recursivelyCalledValue;
     }
-    return resultObj;
+    return resultObj as T;
   }
 
   // Base case. Return primitives without doing anything.
@@ -302,13 +315,14 @@ export function duplicateKeys(input, firstKey, secondKey) {
 }
 
 /**
- * Takes a capability value and tries to JSON.parse it as an array,
- * and either returns the parsed array or a singleton array.
+ * Normalizes a capability value to a string array. If already an array, returns it;
+ * if a string, parses as JSON array when possible, otherwise returns a single-element array.
  *
- * @param {string|string[]} capValue Capability value
- * @returns {string[]}
+ * @param capValue - Capability value: string (including JSON array like `"[\"a\",\"b\"]"`) or string[].
+ * @returns Array of strings.
+ * @throws {TypeError} If value is not a string/array or JSON parsing fails for array-like input.
  */
-export function parseCapsArray(capValue) {
+export function parseCapsArray(capValue: string | string[]): string[] {
   if (_.isArray(capValue)) {
     return capValue;
   }
@@ -319,7 +333,7 @@ export function parseCapsArray(capValue) {
       return parsed;
     }
   } catch (e) {
-    const message = `Failed to parse capability as JSON array: ${e.message}`;
+    const message = `Failed to parse capability as JSON array: ${(e as Error).message}`;
     if (_.isString(capValue) && _.startsWith(_.trimStart(capValue), '[')) {
       throw new TypeError(message);
     }
@@ -332,15 +346,14 @@ export function parseCapsArray(capValue) {
 }
 
 /**
- * Generate a string that uniquely describes driver instance
+ * Builds a short log prefix for a driver instance (e.g. `UiAutomator2@a1b2`).
  *
- * @param {object} obj driver instance
- * @param {string|null} [sessionId=null] session identifier (if exists).
- * This parameter is deprecated and is not used.
- * @returns {string}
+ * @param obj - Driver or other object; its constructor name and a short id are used.
+ * @param _sessionId - Deprecated and unused; kept for {@link DriverHelpers} interface compatibility.
+ * @returns Prefix string like `DriverName@xxxx`, or `UnknownDriver@????` if `obj` is null.
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function generateDriverLogPrefix(obj, sessionId = null) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- DriverHelpers interface
+export function generateDriverLogPrefix(obj: object | null, _sessionId?: string | null): string {
   if (!obj) {
     // This should not happen
     return 'UnknownDriver@????';
@@ -348,74 +361,111 @@ export function generateDriverLogPrefix(obj, sessionId = null) {
   return `${obj.constructor.name}@${node.getObjectId(obj).substring(0, 4)}`;
 }
 
+// #region Private types and helpers
+interface RemoteAppProps {
+  lastModified: Date | null;
+  immutable: boolean;
+  maxAge: number | null;
+  etag: string | null;
+}
+
+interface RemoteAppData {
+  status: number;
+  stream: Readable;
+  headers: AxiosResponseHeaders | RawAxiosRequestHeaders;
+}
+
+function parseAppLink(appLink: string): URL | {protocol?: string; pathname?: string; href?: string; search?: string} {
+  try {
+    return new URL(appLink);
+  } catch {
+    return {};
+  }
+}
+
+function isEnvOptionEnabled(optionName: string, defaultValue: boolean | null = null): boolean {
+  const value = process.env[optionName];
+  if (!_.isNull(defaultValue) && _.isEmpty(value)) {
+    return defaultValue;
+  }
+  return !_.isEmpty(value) && !['0', 'false', 'no'].includes(_.toLower(value));
+}
+
+function isSupportedUrl(app: string): boolean {
+  try {
+    const {protocol} = parseAppLink(app);
+    return ['http:', 'https:'].includes(protocol ?? '');
+  } catch {
+    return false;
+  }
+}
+
 /**
- * Sends a HTTP GET query to fetch the app with caching enabled.
- * Follows https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching
- *
- * @param {string} appLink The URL to download an app from
- * @param {import('axios').RawAxiosRequestHeaders} reqHeaders Additional HTTP request headers
- * @returns {Promise<RemoteAppData>}
+ * Transforms the given app link to the cache key.
+ * Necessary to properly cache apps having the same address but different query strings,
+ * e.g. ones stored in S3 using presigned URLs.
  */
-async function queryAppLink(appLink, reqHeaders) {
+function toCacheKey(app: string): string {
+  if (!isEnvOptionEnabled('APPIUM_APPS_CACHE_IGNORE_URL_QUERY') || !isSupportedUrl(app)) {
+    return app;
+  }
+  try {
+    const parsed = parseAppLink(app);
+    const href = 'href' in parsed ? parsed.href : undefined;
+    const search = 'search' in parsed ? parsed.search : undefined;
+    if (href && search) {
+      return href.replace(search, '');
+    }
+    if (href) {
+      return href;
+    }
+  } catch {
+    // ignore
+  }
+  return app;
+}
+
+async function queryAppLink(appLink: string, reqHeaders: RawAxiosRequestHeaders): Promise<RemoteAppData> {
   const url = new URL(appLink);
   // Extract credentials, then remove them from the URL for axios
   const {username, password} = url;
   url.username = '';
   url.password = '';
   const axiosUrl = url.href;
-  /** @type {import('axios').AxiosBasicCredentials|undefined} */
-  const axiosAuth = username ? {
-    username,
-    password,
-  } : undefined;
-  /**
-   * @type {import('axios').RawAxiosRequestConfig}
-   */
+  const axiosAuth = username ? {username, password} : undefined;
   const requestOpts = {
     url: axiosUrl,
     auth: axiosAuth,
-    responseType: 'stream',
+    responseType: 'stream' as const,
     timeout: APP_DOWNLOAD_TIMEOUT_MS,
-    validateStatus: (status) =>
+    validateStatus: (status: number) =>
       (status >= 200 && status < 300) || status === HTTP_STATUS_NOT_MODIFIED,
     headers: reqHeaders,
   };
   try {
     const {data: stream, headers, status} = await axios(requestOpts);
-    return {
-      stream,
-      headers,
-      status,
-    };
+    return {stream, headers, status};
   } catch (err) {
-    throw new Error(`Cannot download the app from ${axiosUrl}: ${err.message}`);
+    throw new Error(`Cannot download the app from ${axiosUrl}: ${(err as Error).message}`);
   }
 }
 
-/**
- * Retrieves app payload from the given stream. Also meters the download performance.
- *
- * @param {import('stream').Readable} srcStream The incoming stream
- * @param {string} dstPath The target file path to be written
- * @returns {Promise<string>} The same dstPath
- * @throws {Error} If there was a failure while downloading the file
- */
-async function fetchApp(srcStream, dstPath) {
+async function fetchApp(srcStream: Readable, dstPath: string): Promise<string> {
   const timer = new timing.Timer().start();
   try {
     const writer = fs.createWriteStream(dstPath);
     srcStream.pipe(writer);
 
-    await new B((resolve, reject) => {
+    await new B<void>((resolve, reject) => {
       srcStream.once('error', reject);
-      writer.once('finish', resolve);
-      writer.once('error', (e) => {
+      writer.once('finish', () => resolve());
+      writer.once('error', (e: Error) => {
         srcStream.unpipe(writer);
         reject(e);
       });
     });
   } catch (err) {
-    throw new Error(`Cannot fetch the application: ${err.message}`);
+    throw new Error(`Cannot fetch the application: ${(err as Error).message}`);
   }
 
   const secondsElapsed = timer.getDuration().asSeconds;
@@ -433,70 +483,20 @@ async function fetchApp(srcStream, dstPath) {
   return dstPath;
 }
 
-/**
- * Transforms the given app link to the cache key.
- * This is necessary to properly cache apps
- * having the same address, but different query strings,
- * for example ones stored in S3 using presigned URLs.
- *
- * @param {string} app App link.
- * @returns {string} Transformed app link or the original arg if
- * no transformation is needed.
- */
-function toCacheKey(app) {
-  if (!isEnvOptionEnabled('APPIUM_APPS_CACHE_IGNORE_URL_QUERY') || !isSupportedUrl(app)) {
-    return app;
-  }
-  try {
-    const {href, search} = parseAppLink(app);
-    if (href && search) {
-      return href.replace(search, '');
-    }
-    if (href) {
-      return href;
-    }
-  } catch {}
-  return app;
-}
-
-/**
- * Safely parses the given app link to a URL object
- *
- * @param {string} appLink
- * @returns {URL|import('@appium/types').StringRecord} Parsed URL object
- * or an empty object if the parsing has failed
- */
-function parseAppLink(appLink) {
-  try {
-    return new URL(appLink);
-  } catch {
-    return {};
-  }
-}
-
-/**
- * Tries to determine the file name of the payload that is going
- * to be downloaded from an URL
- *
- * @param {import('axios').RawAxiosRequestHeaders} headers
- * @param {string} pathname
- * @param {string[]} supportedAppExtensions
- * @returns {string}
- */
-function determineFilename(headers, pathname, supportedAppExtensions) {
+function determineFilename(
+  headers: AxiosResponseHeaders | RawAxiosRequestHeaders,
+  pathname: string,
+  supportedAppExtensions: string[]
+): string {
   const basename = fs.sanitizeName(path.basename(decodeURIComponent(pathname ?? '')), {
     replacement: SANITIZE_REPLACEMENT,
   });
   const extname = path.extname(basename);
-  if (headers['content-disposition'] && /^attachment/i.test(
-    /** @type {string} */ (headers['content-disposition']
-  ))) {
+  if (headers['content-disposition'] && /^attachment/i.test(String(headers['content-disposition']))) {
     logger.debug(`Content-Disposition: ${headers['content-disposition']}`);
-    const match = /filename="([^"]+)/i.exec(/** @type {string} */ (headers['content-disposition']));
+    const match = /filename="([^"]+)/i.exec(String(headers['content-disposition']));
     if (match) {
-      return fs.sanitizeName(match[1], {
-        replacement: SANITIZE_REPLACEMENT,
-      });
+      return fs.sanitizeName(match[1], {replacement: SANITIZE_REPLACEMENT});
     }
   }
 
@@ -510,63 +510,12 @@ function determineFilename(headers, pathname, supportedAppExtensions) {
       `The current file extension '${resultingExt}' is not supported. ` +
         `Defaulting to '${_.first(supportedAppExtensions)}'`
     );
-    resultingExt = /** @type {string} */ (_.first(supportedAppExtensions));
+    resultingExt = _.first(supportedAppExtensions) as string;
   }
   return `${resultingName}${resultingExt}`;
 }
 
-/**
- * Checks whether we can threat the given app link
- * as a URL,
- *
- * @param {string} app
- * @returns {boolean} True if app is a supported URL
- */
-function isSupportedUrl(app) {
-  try {
-    const {protocol} = parseAppLink(app);
-    return ['http:', 'https:'].includes(protocol);
-  } catch {
-    return false;
-  }
-}
-
-/**
- * Check if the given environment option is enabled
- *
- * @param {string} optionName Option name
- * @param {boolean|null} [defaultValue=null] The value to return if the given env value
- * is not set explicitly
- * @returns {boolean} True if the option is enabled
- */
-function isEnvOptionEnabled(optionName, defaultValue = null) {
-  const value = process.env[optionName];
-  if (!_.isNull(defaultValue) && _.isEmpty(value)) {
-    return defaultValue;
-  }
-  return !_.isEmpty(value) && !['0', 'false', 'no'].includes(_.toLower(value));
-}
-
-/**
- *
- * @param {string} [envVarName]
- * @param {number} defaultValue
- * @returns {number}
- */
-function toNaturalNumber(defaultValue, envVarName) {
-  if (!envVarName || _.isUndefined(process.env[envVarName])) {
-    return defaultValue;
-  }
-  const num = parseInt(`${process.env[envVarName]}`, 10);
-  return num > 0 ? num : defaultValue;
-}
-
-/**
- * @param {string} app
- * @param {string[]} supportedAppExtensions
- * @returns {string}
- */
-function verifyAppExtension(app, supportedAppExtensions) {
+function verifyAppExtension(app: string, supportedAppExtensions: string[]): string {
   if (supportedAppExtensions.map(_.toLower).includes(_.toLower(path.extname(app)))) {
     return app;
   }
@@ -577,28 +526,18 @@ function verifyAppExtension(app, supportedAppExtensions) {
   );
 }
 
-/**
- * @param {string} folderPath
- * @returns {Promise<number>}
- */
-async function calculateFolderIntegrity(folderPath) {
+async function calculateFolderIntegrity(folderPath: string): Promise<number> {
   return (await fs.glob('**/*', {cwd: folderPath})).length;
 }
 
-/**
- * @param {string} filePath
- * @returns {Promise<string>}
- */
-async function calculateFileIntegrity(filePath) {
+async function calculateFileIntegrity(filePath: string): Promise<string> {
   return await fs.hash(filePath);
 }
 
-/**
- * @param {string} currentPath
- * @param {import('@appium/types').StringRecord} expectedIntegrity
- * @returns {Promise<boolean>}
- */
-async function isAppIntegrityOk(currentPath, expectedIntegrity = {}) {
+async function isAppIntegrityOk(
+  currentPath: string,
+  expectedIntegrity: {file?: string; folder?: number} = {}
+): Promise<boolean> {
   if (!(await fs.exists(currentPath))) {
     return false;
   }
@@ -611,30 +550,29 @@ async function isAppIntegrityOk(currentPath, expectedIntegrity = {}) {
   // more precise, but we don't need to be very precise here and also don't want to
   // overuse RAM and have a performance drop.
   return (await fs.stat(currentPath)).isDirectory()
-    ? (await calculateFolderIntegrity(currentPath)) >= expectedIntegrity?.folder
+    ? (await calculateFolderIntegrity(currentPath)) >= (expectedIntegrity?.folder ?? 0)
     : (await calculateFileIntegrity(currentPath)) === expectedIntegrity?.file;
 }
 
-/** @type {import('@appium/types').DriverHelpers} */
+function toNaturalNumber(defaultValue: number, envVarName?: string): number {
+  if (!envVarName || _.isUndefined(process.env[envVarName])) {
+    return defaultValue;
+  }
+  const num = parseInt(`${process.env[envVarName]}`, 10);
+  return num > 0 ? num : defaultValue;
+}
+
+/** Cache value we store (extends CachedAppInfo with optional packageHash) */
+interface CachedAppInfoEntry extends Omit<CachedAppInfo, 'packageHash'> {
+  packageHash?: string | null;
+  fullPath?: string;
+}
+// #endregion
+
 export default {
   configureApp,
   isPackageOrBundle,
   duplicateKeys,
   parseCapsArray,
   generateDriverLogPrefix,
-};
-
-/**
- * @typedef RemoteAppProps
- * @property {Date?} lastModified
- * @property {boolean} immutable
- * @property {number?} maxAge
- * @property {string?} etag
- */
-
-/**
- * @typedef RemoteAppData Properties of the remote application (e.g. GET HTTP response) to be downloaded.
- * @property {number} status The HTTP status of the response
- * @property {import('stream').Readable} stream The HTTP response body represented as readable stream
- * @property {import('axios').RawAxiosResponseHeaders | import('axios').AxiosResponseHeaders} headers HTTP response headers
- */
+} satisfies DriverHelpers;

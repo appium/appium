@@ -11,9 +11,6 @@ import {
   open,
   type PathLike,
   type MakeDirectoryOptions,
-  type OpenMode,
-  type Mode,
-  type ReadAsyncOptions,
   type Stats,
 } from 'node:fs';
 import {promisify} from 'node:util';
@@ -61,18 +58,6 @@ export type WalkDirCallback = (
   itemPath: string,
   isDirectory: boolean
 ) => boolean | void | Promise<boolean | void>;
-
-/**
- * Promisified fs.read signature.
- * @template TBuffer - Buffer type (e.g. NodeJS.ArrayBufferView)
- */
-export type ReadFn<TBuffer extends NodeJS.ArrayBufferView = NodeJS.ArrayBufferView> = (
-  fd: number,
-  buffer: TBuffer | ReadAsyncOptions<TBuffer>,
-  offset?: number,
-  length?: number,
-  position?: number | null
-) => Promise<{bytesRead: number; buffer: TBuffer}>;
 
 function isErrnoException(err: unknown): err is NodeJS.ErrnoException {
   return err instanceof Error && 'code' in err;
@@ -416,7 +401,7 @@ export const fs = {
   access: fsPromises.access,
   appendFile: fsPromises.appendFile,
   chmod: fsPromises.chmod,
-  close: promisify(close) as (fd: number) => Promise<void>,
+  close: promisify(close),
   constants,
   createWriteStream,
   createReadStream,
@@ -425,14 +410,10 @@ export const fs = {
    * Promisified fs.open. Resolves with a file descriptor (not FileHandle).
    * Use fs.openFile for a FileHandle.
    */
-  open: promisify(open) as (
-    path: PathLike,
-    flags: OpenMode,
-    mode?: Mode | null
-  ) => Promise<number>,
+  open: promisify(open),
   openFile: fsPromises.open,
   readdir: fsPromises.readdir,
-  read: promisify(read) as unknown as ReadFn,
+  read: promisify(read),
   readFile: fsPromises.readFile,
   readlink: fsPromises.readlink,
   realpath: fsPromises.realpath,

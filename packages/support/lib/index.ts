@@ -62,7 +62,7 @@ export default {
 };
 
 export type {ConsoleOpts} from './console';
-export type {ReadFn, WalkDirCallback} from './fs';
+export type {WalkDirCallback} from './fs';
 export type {
   NetOptions,
   DownloadOptions,

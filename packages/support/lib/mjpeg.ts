@@ -29,17 +29,6 @@ async function initMJpegConsumer(): Promise<MJpegConsumerConstructor> {
 
 const MJPEG_SERVER_TIMEOUT_MS = 10000;
 
-/**
- * Error thrown when an MJPEG server operation times out.
- * Mirrors TimeoutError from `bluebird`.
- */
-export class TimeoutError extends Error {
-  constructor(message: string = 'timeout error') {
-    super(message);
-    this.name = 'TimeoutError';
-  }
-}
-
 /** Class which stores the last bit of data streamed into it */
 export class MJpegStream extends Writable {
   readonly errorHandler: (err: Error) => void;
@@ -147,6 +136,7 @@ export class MJpegStream extends Writable {
 
     let timeoutId: NodeJS.Timeout | null = null;
 
+    // Mirror bluebird's `.timeout`: reject with an error if the timeout is exceeded
     try {
       const startPromise = Promise.race([
         new Promise<void>((resolve, reject) => {
@@ -155,7 +145,7 @@ export class MJpegStream extends Writable {
         }),
         new Promise<never>((_resolve, reject) => {
           timeoutId = setTimeout(
-            () => reject(new TimeoutError(`Waited ${serverTimeout}ms but the MJPEG server never sent any images`)),
+            () => reject(new Error(`Waited ${serverTimeout}ms but the MJPEG server never sent any images`)),
             serverTimeout
           );
         })

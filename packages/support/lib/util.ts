@@ -114,17 +114,6 @@ export function localIp(): string | undefined {
 }
 
 /**
- * Error thrown when a cancellable promise is cancelled.
- * Mirrors CancellationError from `bluebird`.
- */
-export class CancellationError extends Error {
-  constructor(message: string = 'cancellation error') {
-    super(message);
-    this.name = 'CancellationError';
-  }
-}
-
-/**
  * Creates a promise that resolves after a delay and can be cancelled via `.cancel()`.
  *
  * @param ms - Delay in milliseconds before the promise resolves
@@ -143,7 +132,7 @@ export function cancellableDelay(ms: number): Promise<void> & {cancel: () => voi
 
   (delay as Promise<void> & {cancel: () => void}).cancel = function () {
     clearTimeout(timer);
-    reject(new CancellationError());
+    reject(new Error('cancellation error'));
   };
   return delay as Promise<void> & {cancel: () => void};
 }

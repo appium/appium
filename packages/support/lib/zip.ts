@@ -108,11 +108,10 @@ export async function _extractEntryTo(
     writeStream.once('error', reject);
   });
 
-  // Create zipReadStream and pipe data to the write stream
-  // (for some odd reason promisify doesn't work on zipfile.openReadStream, it causes an error 'closed')
-  const zipReadStream = await new Promise<NodeJS.ReadableStream>((resolve, reject) => {
-    zipFile.openReadStream(entry, (err, readStream) => (err ? reject(err) : resolve(readStream)));
-  });
+  const openReadStream = promisify(zipFile.openReadStream.bind(zipFile)) as (
+    entry: yauzl.Entry
+  ) => Promise<NodeJS.ReadableStream>;
+  const zipReadStream = await openReadStream(entry);
   const zipReadStreamPromise = new Promise<void>((resolve, reject) => {
     zipReadStream.once('end', resolve);
     zipReadStream.once('error', reject);

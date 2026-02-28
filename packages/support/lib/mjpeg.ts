@@ -134,26 +134,34 @@ export class MJpegStream extends Writable {
       this.lastChunk = null;
     };
 
-    const startPromise = Promise.race([
-      new Promise<void>((resolve, reject) => {
-        this.registerStartSuccess = resolve;
-        this.registerStartFailure = reject;
-      }),
-      new Promise<never>((_resolve, reject) =>
-        setTimeout(
-          () => reject(new Error(`Waited ${serverTimeout}ms but the MJPEG server never sent any images`)),
-          serverTimeout
-        )
-      )
-    ]);
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
-    (this.responseStream as Readable & {pipe<T extends Writable>(dest: T): T})
-      .once('close', onClose)
-      .on('error', onErr)
-      .pipe(this.consumer as unknown as Writable)
-      .pipe(this);
+    try {
+      const startPromise = Promise.race([
+        new Promise<void>((resolve, reject) => {
+          this.registerStartSuccess = resolve;
+          this.registerStartFailure = reject;
+        }),
+        new Promise<never>((_resolve, reject) => {
+          timeoutId = setTimeout(
+            () => reject(new Error(`Waited ${serverTimeout}ms but the MJPEG server never sent any images`)),
+            serverTimeout
+          );
+        })
+      ]);
 
-    await startPromise;
+      (this.responseStream as Readable & {pipe<T extends Writable>(dest: T): T})
+        .once('close', onClose)
+        .on('error', onErr)
+        .pipe(this.consumer as unknown as Writable)
+        .pipe(this);
+
+      await startPromise;
+    } finally {
+      if (timeoutId !== null) {
+        clearTimeout(timeoutId);
+      }
+    }
   }
 
   stop(): void {

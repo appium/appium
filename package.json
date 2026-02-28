@@ -119,7 +119,7 @@
     "asyncbox": "6.1.0",
     "chai": "6.2.2",
     "chai-as-promised": "8.0.2",
-    "conventional-changelog-conventionalcommits": "7.0.2",
+    "conventional-changelog-conventionalcommits": "9.1.0",
     "cpy-cli": "7.0.0",
     "cross-env": "10.1.0",
     "eslint": "9.39.3",

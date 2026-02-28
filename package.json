@@ -87,7 +87,7 @@
     "@colors/colors": "1.6.0",
     "@eslint/js": "9.39.3",
     "@stylistic/eslint-plugin": "5.9.0",
-    "@tsconfig/node20": "20.1.9",
+    "@tsconfig/node22": "22.0.0",
     "@types/archiver": "7.0.0",
     "@types/argparse": "2.0.17",
     "@types/async-lock": "1.4.2",

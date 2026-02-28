@@ -1,4 +1,3 @@
-import B from 'bluebird';
 import crypto from 'node:crypto';
 import {
   close,
@@ -12,11 +11,9 @@ import {
   open,
   type PathLike,
   type MakeDirectoryOptions,
-  type OpenMode,
-  type Mode,
-  type ReadAsyncOptions,
   type Stats,
 } from 'node:fs';
+import {promisify} from 'node:util';
 import {glob} from 'glob';
 import type {GlobOptions} from 'glob';
 import klaw from 'klaw';
@@ -33,11 +30,11 @@ import {Timer} from './timing';
 import {isWindows} from './system';
 import {pluralize} from './util';
 
-const ncpAsync = B.promisify(ncp) as (
+const ncpAsync = promisify(ncp) as (
   source: string,
   dest: string,
   opts?: ncp.Options
-) => B<void>;
+) => Promise<void>;
 const findRootCached = _.memoize(
   packageDirectorySync,
   (opts: {cwd?: string} | undefined) => opts?.cwd
@@ -61,18 +58,6 @@ export type WalkDirCallback = (
   itemPath: string,
   isDirectory: boolean
 ) => boolean | void | Promise<boolean | void>;
-
-/**
- * Promisified fs.read signature.
- * @template TBuffer - Buffer type (e.g. NodeJS.ArrayBufferView)
- */
-export type ReadFn<TBuffer extends NodeJS.ArrayBufferView = NodeJS.ArrayBufferView> = (
-  fd: number,
-  buffer: TBuffer | ReadAsyncOptions<TBuffer>,
-  offset?: number,
-  length?: number,
-  position?: number | null
-) => B<{bytesRead: number; buffer: TBuffer}>;
 
 function isErrnoException(err: unknown): err is NodeJS.ErrnoException {
   return err instanceof Error && 'code' in err;
@@ -246,8 +231,8 @@ export const fs = {
    * Given a glob pattern, resolve with list of files matching that pattern.
    * @see https://github.com/isaacs/node-glob
    */
-  glob(pattern: string, options?: GlobOptions): B<string[]> {
-    return B.resolve(
+  glob(pattern: string, options?: GlobOptions): Promise<string[]> {
+    return Promise.resolve(
       (options ? glob(pattern, options) : glob(pattern)) as Promise<string[]>
     );
   },
@@ -257,7 +242,7 @@ export const fs = {
 
   /** Create a hex digest of some file at `filePath`. */
   async hash(filePath: PathLike, algorithm: string = 'sha1'): Promise<string> {
-    return await new B<string>((resolve, reject) => {
+    return await new Promise<string>((resolve, reject) => {
       const fileHash = crypto.createHash(algorithm);
       const readStream = createReadStream(filePath);
       readStream.on('error', (e: Error) =>
@@ -292,7 +277,7 @@ export const fs = {
    * @param callback - Called for each path; return true to stop
    * @returns The found path or null if not found
    */
-  /* eslint-disable promise/prefer-await-to-callbacks -- walkDir uses callback + stream .on() + Bluebird executor */
+  /* eslint-disable promise/prefer-await-to-callbacks -- walkDir uses callback + stream .on() + Promise executor */
   async walkDir(
     dir: string,
     recursive: boolean,
@@ -316,7 +301,7 @@ export const fs = {
     let fileCount = 0;
     let directoryCount = 0;
     const timer = new Timer().start();
-    return await new B<string | null>(function (resolve, reject) {
+    return await new Promise<string | null>(function (resolve, reject) {
       let lastFileProcessed: Promise<string | undefined> = Promise.resolve(undefined);
       walker = klaw(dir, {
         depthLimit: recursive ? -1 : 0,
@@ -416,7 +401,7 @@ export const fs = {
   access: fsPromises.access,
   appendFile: fsPromises.appendFile,
   chmod: fsPromises.chmod,
-  close: B.promisify(close) as (fd: number) => B<void>,
+  close: promisify(close),
   constants,
   createWriteStream,
   createReadStream,
@@ -425,14 +410,10 @@ export const fs = {
    * Promisified fs.open. Resolves with a file descriptor (not FileHandle).
    * Use fs.openFile for a FileHandle.
    */
-  open: B.promisify(open) as (
-    path: PathLike,
-    flags: OpenMode,
-    mode?: Mode | null
-  ) => B<number>,
+  open: promisify(open),
   openFile: fsPromises.open,
   readdir: fsPromises.readdir,
-  read: B.promisify(read) as unknown as ReadFn,
+  read: promisify(read),
   readFile: fsPromises.readFile,
   readlink: fsPromises.readlink,
   realpath: fsPromises.realpath,
@@ -440,7 +421,7 @@ export const fs = {
   stat: fsPromises.stat,
   symlink: fsPromises.symlink,
   unlink: fsPromises.unlink,
-  write: B.promisify(write),
+  write: promisify(write),
   writeFile: fsPromises.writeFile,
 
   /** @deprecated Use `constants.F_OK` instead. */

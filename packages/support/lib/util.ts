@@ -1,8 +1,9 @@
-import B from 'bluebird';
 import _ from 'lodash';
 import os from 'node:os';
 import path from 'node:path';
 import stream from 'node:stream';
+import {promisify} from 'node:util';
+import {asyncmap} from 'asyncbox';
 import {fs} from './fs';
 import * as semver from 'semver';
 import {quote as shellQuote, parse as shellParse} from 'shell-quote';
@@ -116,24 +117,24 @@ export function localIp(): string | undefined {
  * Creates a promise that resolves after a delay and can be cancelled via `.cancel()`.
  *
  * @param ms - Delay in milliseconds before the promise resolves
- * @returns A Bluebird promise with a `cancel()` method; cancel rejects with CancellationError
+ * @returns A Promise with a `cancel()` method; cancel rejects with an error
  */
-export function cancellableDelay(ms: number): B<void> & {cancel: () => void} {
+export function cancellableDelay(ms: number): Promise<void> & {cancel: () => void} {
   let timer: NodeJS.Timeout;
   let resolve: () => void;
   let reject: (err: Error) => void;
 
-  const delay = new B<void>((_resolve, _reject) => {
+  const delay = new Promise<void>((_resolve, _reject) => {
     resolve = _resolve;
     reject = _reject;
     timer = setTimeout(() => resolve(), ms);
   });
 
-  (delay as B<void> & {cancel: () => void}).cancel = function () {
+  (delay as Promise<void> & {cancel: () => void}).cancel = function () {
     clearTimeout(timer);
-    reject(new B.CancellationError());
+    reject(new Error('cancellation error'));
   };
-  return delay as B<void> & {cancel: () => void};
+  return delay as Promise<void> & {cancel: () => void};
 }
 
 /**
@@ -315,7 +316,7 @@ export async function isSameDestination(
   ...pathN: string[]
 ): Promise<boolean> {
   const allPaths = [path1, path2, ...pathN];
-  if (!(await B.reduce(allPaths, async (a, b) => a && (await fs.exists(b)), true))) {
+  if (!(await asyncmap(allPaths, async (p) => fs.exists(p))).every(Boolean)) {
     return false;
   }
 
@@ -325,7 +326,7 @@ export async function isSameDestination(
   }
 
   const mapCb = async (x: string) => (await fs.stat(x, {bigint: true})).ino;
-  return areAllItemsEqual(await B.map(allPaths, mapCb));
+  return areAllItemsEqual(await asyncmap(allPaths, mapCb));
 }
 
 /**
@@ -462,7 +463,7 @@ export async function toInMemoryBase64(
   const base64EncoderStream = new Base64Encode();
   const encoderWritable = base64EncoderStream as NodeJS.WritableStream;
   const encoderReadable = base64EncoderStream as NodeJS.ReadableStream;
-  const resultWriteStreamPromise = new B<void>((resolve, reject) => {
+  const resultWriteStreamPromise = new Promise<void>((resolve, reject) => {
     resultWriteStream.once('error', (e: Error) => {
       readerStream.unpipe(encoderWritable);
       encoderReadable.unpipe(resultWriteStream);
@@ -471,7 +472,7 @@ export async function toInMemoryBase64(
     });
     resultWriteStream.once('finish', () => resolve());
   });
-  const readStreamPromise = new B<void>((resolve, reject) => {
+  const readStreamPromise = new Promise<void>((resolve, reject) => {
     readerStream.once('close', () => resolve());
     readerStream.once('error', (e: Error) =>
       reject(new Error(`Failed to read '${srcPath}': ${e.message}`))
@@ -480,7 +481,7 @@ export async function toInMemoryBase64(
   readerStream.pipe(encoderWritable);
   encoderReadable.pipe(resultWriteStream);
 
-  await B.all([readStreamPromise, resultWriteStreamPromise]);
+  await Promise.all([readStreamPromise, resultWriteStreamPromise]);
   return Buffer.concat(resultBuffers);
 }
 
@@ -513,12 +514,12 @@ export function getLockFileGuard<T>(
 ): LockFileGuard<T> {
   const {timeout = 120, tryRecovery = false} = opts;
 
-  const lock = B.promisify(_lockfile.lock) as (
+  const lock = promisify(_lockfile.lock) as (
     lockfile: string,
     opts: {wait: number}
-  ) => B<void>;
-  const checkLock = B.promisify(_lockfile.check) as (lockfile: string) => B<boolean>;
-  const unlock = B.promisify(_lockfile.unlock) as (lockfile: string) => B<void>;
+  ) => Promise<void>;
+  const checkLock = promisify(_lockfile.check) as (lockfile: string) => Promise<boolean>;
+  const unlock = promisify(_lockfile.unlock) as (lockfile: string) => Promise<void>;
 
   const guard: LockFileGuard<T> = Object.assign(
     async (behavior: () => Promise<T> | T): Promise<T> => {

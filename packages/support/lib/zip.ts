@@ -1,10 +1,11 @@
 import _ from 'lodash';
-import B from 'bluebird';
+import {promisify} from 'node:util';
 import * as yauzl from 'yauzl';
 import archiver from 'archiver';
 import {createWriteStream} from 'node:fs';
 import path from 'node:path';
 import stream from 'node:stream';
+import {pipeline} from 'node:stream/promises';
 import {fs} from './fs';
 import {isWindows} from './system';
 import {Base64Encode} from 'base64-stream';
@@ -14,15 +15,10 @@ import log from './logger';
 import getStream from 'get-stream';
 import {exec} from 'teen_process';
 
-const openZip = B.promisify(yauzl.open) as (
+const openZip = promisify(yauzl.open) as (
   zipPath: string,
   options?: yauzl.Options
-) => B<yauzl.ZipFile>;
-
-const pipeline = B.promisify(stream.pipeline) as (
-  source: NodeJS.ReadableStream,
-  destination: NodeJS.WritableStream
-) => B<NodeJS.WritableStream>;
+) => Promise<yauzl.ZipFile>;
 
 const ZIP_MAGIC = 'PK';
 const IFMT = 0b1111000000000000;
@@ -107,24 +103,23 @@ export async function _extractEntryTo(
 
   // Create a write stream
   const writeStream = createWriteStream(dstPath, {flags: 'w'});
-  const writeStreamPromise = new B<void>((resolve, reject) => {
+  const writeStreamPromise = new Promise<void>((resolve, reject) => {
     writeStream.once('finish', resolve);
     writeStream.once('error', reject);
   });
 
-  // Create zipReadStream and pipe data to the write stream
-  // (for some odd reason B.promisify doesn't work on zipfile.openReadStream, it causes an error 'closed')
-  const zipReadStream = await new B<NodeJS.ReadableStream>((resolve, reject) => {
-    zipFile.openReadStream(entry, (err, readStream) => (err ? reject(err) : resolve(readStream)));
-  });
-  const zipReadStreamPromise = new B<void>((resolve, reject) => {
+  const openReadStream = promisify(zipFile.openReadStream.bind(zipFile)) as (
+    entry: yauzl.Entry
+  ) => Promise<NodeJS.ReadableStream>;
+  const zipReadStream = await openReadStream(entry);
+  const zipReadStreamPromise = new Promise<void>((resolve, reject) => {
     zipReadStream.once('end', resolve);
     zipReadStream.once('error', reject);
   });
   zipReadStream.pipe(writeStream);
 
   // Wait for the zipReadStream and writeStream to end before returning
-  await B.all([zipReadStreamPromise, writeStreamPromise]);
+  await Promise.all([zipReadStreamPromise, writeStreamPromise]);
 }
 
 export interface ZipEntry {
@@ -152,7 +147,7 @@ export async function readEntries(
 ): Promise<void> {
   // Open a zip file and start reading entries
   const zipfile = await openZip(zipFilePath, {lazyEntries: true});
-  const zipReadStreamPromise = new B<void>((resolve, reject) => {
+  const zipReadStreamPromise = new Promise<void>((resolve, reject) => {
     zipfile.once('end', resolve);
     zipfile.once('error', reject);
 
@@ -239,7 +234,7 @@ export async function toInMemoryZip(
   });
   let srcSize: number | null = null;
   const base64EncoderStream = encodeToBase64 ? new Base64Encode() : null;
-  const resultWriteStreamPromise = new B<void>((resolve, reject) => {
+  const resultWriteStreamPromise = new Promise<void>((resolve, reject) => {
     resultWriteStream.once('error', (e: Error) => {
       if (base64EncoderStream) {
         archive.unpipe(base64EncoderStream);
@@ -256,7 +251,7 @@ export async function toInMemoryZip(
       resolve();
     });
   });
-  const archiveStreamPromise = new B<void>((resolve, reject) => {
+  const archiveStreamPromise = new Promise<void>((resolve, reject) => {
     archive.once('finish', resolve);
     archive.once('error', (e: Error) =>
       reject(new Error(`Failed to archive '${srcPath}': ${e.message}`))
@@ -279,7 +274,7 @@ export async function toInMemoryZip(
   archive.finalize();
 
   // Wait for the streams to finish
-  await B.all([archiveStreamPromise, resultWriteStreamPromise]);
+  await Promise.all([archiveStreamPromise, resultWriteStreamPromise]);
 
   if (timer) {
     log.debug(
@@ -360,7 +355,7 @@ export async function toArchive(
   const {pattern = '**/*', cwd = path.dirname(dstPath), ignore = []} = src;
   const archive = archiver('zip', {zlib: {level}});
   const outStream = fs.createWriteStream(dstPath);
-  await new B<void>((resolve, reject) => {
+  await new Promise<void>((resolve, reject) => {
     archive
       .glob(pattern, {
         cwd,
@@ -415,7 +410,7 @@ class ZipExtractor {
     });
     this.canceled = false;
 
-    return new B<void>((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       this.zipfile.on('error', (err: Error) => {
         this.canceled = true;
         reject(err);
@@ -496,9 +491,9 @@ class ZipExtractor {
       return;
     }
 
-    const openReadStream = B.promisify(
+    const openReadStream = promisify(
       this.zipfile.openReadStream.bind(this.zipfile)
-    ) as (entry: yauzl.Entry) => B<NodeJS.ReadableStream>;
+    ) as (entry: yauzl.Entry) => Promise<NodeJS.ReadableStream>;
     const readStream = await openReadStream(entry);
     if (isSymlink) {
       const link = await getStream(readStream);

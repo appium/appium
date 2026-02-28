@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import log from './logger';
-import B from 'bluebird';
 import {requireSharp} from './image-util';
 import {Writable, type WritableOptions, type Readable} from 'node:stream';
 import {requirePackage} from './node';
@@ -135,21 +134,35 @@ export class MJpegStream extends Writable {
       this.lastChunk = null;
     };
 
-    const startPromise = new B<void>((res, rej) => {
-      this.registerStartSuccess = res;
-      this.registerStartFailure = rej;
-    }).timeout(
-      serverTimeout,
-      `Waited ${serverTimeout}ms but the MJPEG server never sent any images`
-    );
+    let timeoutId: NodeJS.Timeout | null = null;
 
-    (this.responseStream as Readable & {pipe<T extends Writable>(dest: T): T})
-      .once('close', onClose)
-      .on('error', onErr)
-      .pipe(this.consumer as unknown as Writable)
-      .pipe(this);
+    // Mirror bluebird's `.timeout`: reject with an error if the timeout is exceeded
+    try {
+      const startPromise = Promise.race([
+        new Promise<void>((resolve, reject) => {
+          this.registerStartSuccess = resolve;
+          this.registerStartFailure = reject;
+        }),
+        new Promise<never>((_resolve, reject) => {
+          timeoutId = setTimeout(
+            () => reject(new Error(`Waited ${serverTimeout}ms but the MJPEG server never sent any images`)),
+            serverTimeout
+          );
+        })
+      ]);
 
-    await startPromise;
+      (this.responseStream as Readable & {pipe<T extends Writable>(dest: T): T})
+        .once('close', onClose)
+        .on('error', onErr)
+        .pipe(this.consumer as unknown as Writable)
+        .pipe(this);
+
+      await startPromise;
+    } finally {
+      if (timeoutId !== null) {
+        clearTimeout(timeoutId);
+      }
+    }
   }
 
   stop(): void {

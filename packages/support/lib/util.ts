@@ -118,25 +118,25 @@ export function localIp(): string | undefined {
  * Creates a promise that resolves after a delay and can be cancelled via `.cancel()`.
  *
  * @param ms - Delay in milliseconds before the promise resolves
- * @returns A Promise with a `cancel()` method; cancel rejects with an error
+ * @returns A Bluebird promise with a `cancel()` method; cancel rejects with CancellationError
  */
-export function cancellableDelay(ms: number): Promise<void> & {cancel: () => void} {
+// TODO: replace with a native implementation in Appium 4
+export function cancellableDelay(ms: number): B<void> & {cancel: () => void} {
   let timer: NodeJS.Timeout;
   let resolve: () => void;
   let reject: (err: Error) => void;
 
-  const delay = new Promise<void>((_resolve, _reject) => {
+  const delay = new B<void>((_resolve, _reject) => {
     resolve = _resolve;
     reject = _reject;
     timer = setTimeout(() => resolve(), ms);
   });
 
-  (delay as Promise<void> & {cancel: () => void}).cancel = function () {
+  (delay as B<void> & {cancel: () => void}).cancel = function () {
     clearTimeout(timer);
-    // TODO: replace with a non-bluebird error in Appium 4
     reject(new B.CancellationError());
   };
-  return delay as Promise<void> & {cancel: () => void};
+  return delay as B<void> & {cancel: () => void};
 }
 
 /**

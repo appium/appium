@@ -1,3 +1,4 @@
+import B from 'bluebird';
 import _ from 'lodash';
 import os from 'node:os';
 import path from 'node:path';
@@ -132,7 +133,8 @@ export function cancellableDelay(ms: number): Promise<void> & {cancel: () => voi
 
   (delay as Promise<void> & {cancel: () => void}).cancel = function () {
     clearTimeout(timer);
-    reject(new Error('cancellation error'));
+    // TODO: replace with a non-bluebird error in Appium 4
+    reject(new B.CancellationError());
   };
   return delay as Promise<void> & {cancel: () => void};
 }

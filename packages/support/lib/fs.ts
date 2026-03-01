@@ -1,3 +1,4 @@
+import B from 'bluebird';
 import crypto from 'node:crypto';
 import {
   close,
@@ -11,6 +12,7 @@ import {
   open,
   type PathLike,
   type MakeDirectoryOptions,
+  type ReadAsyncOptions,
   type Stats,
 } from 'node:fs';
 import {promisify} from 'node:util';
@@ -58,6 +60,19 @@ export type WalkDirCallback = (
   itemPath: string,
   isDirectory: boolean
 ) => boolean | void | Promise<boolean | void>;
+
+/**
+ * Promisified fs.read signature.
+ * @template TBuffer - Buffer type (e.g. NodeJS.ArrayBufferView)
+ * @deprecated use `typeof read.__promisify__` instead
+ */
+export type ReadFn<TBuffer extends NodeJS.ArrayBufferView = NodeJS.ArrayBufferView> = (
+  fd: number,
+  buffer: TBuffer | ReadAsyncOptions<TBuffer>,
+  offset?: number,
+  length?: number,
+  position?: number | null
+) => B<{bytesRead: number; buffer: TBuffer}>;
 
 function isErrnoException(err: unknown): err is NodeJS.ErrnoException {
   return err instanceof Error && 'code' in err;
@@ -421,7 +436,8 @@ export const fs = {
   stat: fsPromises.stat,
   symlink: fsPromises.symlink,
   unlink: fsPromises.unlink,
-  write: promisify(write),
+  // TODO: replace with native promisify in Appium 4
+  write: B.promisify(write),
   writeFile: fsPromises.writeFile,
 
   /** @deprecated Use `constants.F_OK` instead. */

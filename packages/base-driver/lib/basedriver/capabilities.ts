@@ -12,7 +12,7 @@ import type {
 import _ from 'lodash';
 import {validator} from './validation';
 import {util} from '@appium/support';
-import log from './logger';
+import {log} from './logger';
 import {errors} from '../protocol/errors';
 
 export const APPIUM_VENDOR_PREFIX = 'appium:';

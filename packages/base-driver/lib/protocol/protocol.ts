@@ -14,7 +14,7 @@ import B from 'bluebird';
 import {formatResponseValue, ensureW3cResponse} from './helpers';
 import {MAX_LOG_BODY_LENGTH, PROTOCOLS, DEFAULT_BASE_PATH} from '../constants';
 import {isW3cCaps} from '../helpers/capabilities';
-import log from '../basedriver/logger';
+import {log} from '../basedriver/logger';
 import {generateDriverLogPrefix} from '../basedriver/helpers';
 import type {Core, AppiumLogger, PayloadParams, MethodMap, Driver, DriverMethodDef} from '@appium/types';
 import type {BaseDriver} from '../basedriver/driver';

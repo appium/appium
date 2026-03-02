@@ -358,16 +358,19 @@ function configureHttp({
         }
         process.exit(process.exitCode ?? 0);
       }, gracefulShutdownTimeout ?? 0);
-      httpServer.once('close', () => {
+      const onClose = () => {
         log.info(
           `Appium HTTP server has been successfully closed after ` +
             `${timer.getDuration().asMilliSeconds.toFixed(0)}ms`
         );
         clearTimeout(onTimeout);
         _resolve();
-      });
+      };
+      httpServer.once('close', onClose);
       originalClose((err?: Error) => {
         if (err) {
+          clearTimeout(onTimeout);
+          httpServer.removeListener('close', onClose);
           _reject(err);
         }
       });

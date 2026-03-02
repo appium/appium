@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import path from 'node:path';
 import express from 'express';
-import type {Express} from 'express';
+import type {Express, RequestHandler} from 'express';
 import http from 'node:http';
 import type {Server as HttpServer} from 'node:http';
 import favicon from 'serve-favicon';
@@ -288,7 +288,7 @@ async function createServer(
   const spdy = require('spdy') as {
     createServer: (
       options: {cert: string; key: string; spdy: {plain: boolean; ssl: boolean}},
-      requestListener: express.RequestHandler
+      requestListener: RequestHandler
     ) => HttpServer;
   };
   return spdy.createServer(

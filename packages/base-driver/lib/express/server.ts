@@ -124,6 +124,11 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
   const httpServer = await createServer(app, cliArgs);
 
   return await new B<AppiumServer>(async (resolve, reject) => {
+    // we put an async function as the promise constructor because we want some things to happen in
+    // serial (application of plugin updates, for example). But we still need to use a promise here
+    // because some elements of server start failure only happen in httpServer listeners. So the
+    // way we resolve it is to use an async function here but to wrap all the inner logic in
+    // try/catch so any errors can be passed to reject.
     try {
       const appiumServer = configureHttp({
         httpServer,
@@ -141,10 +146,14 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
         webSocketsMapping: appiumServer.webSocketsMapping,
         useLegacyUpgradeHandler,
       });
+      // allow extensions to update the app and http server objects
       for (const updater of serverUpdaters) {
         await updater(app, appiumServer, cliArgs);
       }
 
+      // once all configurations and updaters have been applied, make sure to set up a catchall
+      // handler so that anything unknown 404s. But do this after everything else since we don't
+      // want to block extensions' ability to add routes if they want.
       app.all('/*all', catch404Handler);
 
       await startServer({
@@ -181,12 +190,17 @@ export function configureServer({
   app.use(endLogFormatter);
   app.use(handleLogContext);
 
+  // set up static assets
   app.use(favicon(path.resolve(STATIC_DIR, 'favicon.ico')));
   app.use(express.static(STATIC_DIR));
 
+  // crash routes, for testing
   app.use(`${basePath}/produce_error`, produceError);
   app.use(`${basePath}/crash`, produceCrash);
 
+  // Only use legacy Express middleware for WebSocket upgrades if shouldUpgradeCallback is not available.
+  // When shouldUpgradeCallback is available, upgrades are handled directly on the HTTP server
+  // to avoid Express middleware timeout issues with long-lived connections
   if (useLegacyUpgradeHandler) {
     app.use(handleUpgrade(webSocketsMapping));
   }
@@ -201,12 +215,15 @@ export function configureServer({
   app.use(methodOverride());
   app.use(catchAllHandler);
 
+  // make sure appium never fails because of a file size upload limit
   app.use(bodyParser.json({limit: '1gb'}));
 
+  // set up start logging (which depends on bodyParser doing its thing)
   app.use(startLogFormatter);
 
   addRoutes(app, {basePath, extraMethodMap});
 
+  // dynamic routes for testing, etc.
   app.all('/welcome', welcome);
   app.all('/test/guinea-pig', guineaPig);
   app.all('/test/guinea-pig-scrollable', guineaPigScrollable);
@@ -224,8 +241,11 @@ export function normalizeBasePath(basePath: string): string {
     throw new Error(`Invalid path prefix ${basePath}`);
   }
 
+  // ensure the path prefix does not end in '/', since our method map starts all paths with '/'
   basePath = basePath.replace(/\/$/, '');
 
+  // likewise, ensure the path prefix does always START with /, unless the path
+  // is empty meaning no base path at all
   if (basePath !== '' && !basePath.startsWith('/')) {
     basePath = `/${basePath}`;
   }
@@ -307,7 +327,11 @@ function configureHttp({
     return Boolean((this as unknown as {_spdyState?: {secure?: boolean}})._spdyState?.secure);
   };
 
+  // This avoids Express middleware timeout issues with long-lived WebSocket connections
+  // See: https://github.com/appium/appium/issues/20760
+  // See: https://github.com/nodejs/node/pull/59824
   if (hasShouldUpgradeCallback(httpServer)) {
+    // shouldUpgradeCallback only returns a boolean to indicate if the upgrade should proceed
     (appiumServer as unknown as {shouldUpgradeCallback?: (req: http.IncomingMessage) => boolean}).shouldUpgradeCallback = (req) =>
       _.toLower(req.headers?.upgrade) === 'websocket';
     appiumServer.on('upgrade', (req, socket, head) => {
@@ -317,6 +341,8 @@ function configureHttp({
     });
   }
 
+  // http.Server.close() only stops new connections, but we need to wait until
+  // all connections are closed and the `close` event is emitted
   const originalClose = appiumServer.close.bind(appiumServer);
   appiumServer.close = async () =>
     await new B<void>((_resolve, _reject) => {
@@ -375,6 +401,7 @@ async function startServer({
   keepAliveTimeout,
   requestTimeout,
 }: StartServerOpts): Promise<void> {
+  // If the hostname is omitted, the server will accept connections on any IP address
   const start = B.promisify(httpServer.listen, {
     context: httpServer,
   }) as (port: number, hostname?: string) => B<HttpServer>;
@@ -383,6 +410,7 @@ async function startServer({
   if (_.isInteger(requestTimeout)) {
     httpServer.requestTimeout = Number(requestTimeout);
   }
+  // headers timeout must be greater than keepAliveTimeout
   httpServer.headersTimeout = keepAliveTimeout + 5 * 1000;
   await startPromise;
 }
@@ -394,6 +422,8 @@ async function startServer({
  * @returns true if shouldUpgradeCallback is available
  */
 function hasShouldUpgradeCallback(server: HttpServer): boolean {
+  // Check if shouldUpgradeCallback is available on http.Server
+  // This is a runtime check that works regardless of TypeScript types
   try {
     return (
       typeof (server as unknown as {shouldUpgradeCallback?: unknown}).shouldUpgradeCallback !==

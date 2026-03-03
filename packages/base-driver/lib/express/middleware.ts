@@ -63,7 +63,7 @@ export function allowCrossDomainAsyncExecute(basePath: string): RequestHandler {
  * Derives `requestId`, optional session id/signature, and `isSensitive` flag from headers/URL.
  */
 export function handleLogContext(req: Request, _res: Response, next: NextFunction): void {
-  const requestId = fetchHeaderValue(req, 'x-request-id') ?? util.uuidV4();
+  const requestId = fetchHeaderValue(req, 'x-request-id') || util.uuidV4();
 
   const sessionId = SESSION_ID_PATTERN.exec(req.url)?.[1];
   const sessionInfo = sessionId ? {sessionId, sessionSignature: calcSignature(sessionId)} : {};

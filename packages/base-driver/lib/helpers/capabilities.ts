@@ -42,34 +42,51 @@ export function fixCaps<C extends Constraints>(
   // which we want to translate into boolean values
   const booleanCaps = _.keys(_.pickBy(desiredCapConstraints, (k) => k.isBoolean === true));
   for (const cap of booleanCaps) {
-    let value = oldCaps[cap];
-    if (_.isString(value)) {
-      value = value.toLowerCase();
-      if (value === 'true' || value === 'false') {
-        log.warn(
-          `Capability '${cap}' changed from string to boolean. This may cause unexpected behavior`
-        );
-        caps[cap] = value === 'true';
-      }
+    const value = oldCaps[cap];
+    if (!_.isString(value)) {
+      continue;
     }
+
+    if (!['true', 'false'].includes(value.toLowerCase())) {
+      log.warn(
+        `String capability '${cap}' ('${value}') cannot be converted to a boolean. ` +
+        `This may cause an unexpected behavior`
+      );
+      continue;
+    }
+
+    log.warn(
+      `Capability '${cap}' changed from string '${value}' to boolean. ` +
+      `This may cause an unexpected behavior`
+    );
+    caps[cap] = value.toLowerCase() === 'true';
   }
 
   // int capabilities are often sent in as strings by frameworks
   const intCaps = _.keys(_.pickBy(desiredCapConstraints, (k) => k.isNumber === true));
   for (const cap of intCaps) {
-    let value = oldCaps[cap];
-    if (_.isString(value)) {
-      value = value.trim();
-      let newValue = parseInt(value as string, 10);
-      if (value !== `${newValue}`) {
-        newValue = parseFloat(value as string);
-      }
-      log.warn(
-        `Capability '${cap}' changed from string ('${value}') to integer (${newValue}). ` +
-        `This may cause unexpected behavior`
-      );
-      caps[cap] = newValue;
+    const value = oldCaps[cap];
+    if (!_.isString(value)) {
+      continue;
     }
+
+    const intValue = parseInt(value as string, 10);
+    const floatValue = parseFloat(value as string);
+    const newValue = floatValue !== intValue ? floatValue : intValue;
+
+    if (Number.isNaN(newValue)) {
+      log.warn(
+        `String capability '${cap}' ('${value}') cannot be converted to a number. ` +
+        `This may cause an unexpected behavior`
+      );
+      continue;
+    }
+
+    log.warn(
+      `Capability '${cap}' changed from string '${value}' to number ${newValue}. ` +
+      `This may cause an unexpected behavior`
+    );
+    caps[cap] = newValue;
   }
 
   return caps as Capabilities<C>;

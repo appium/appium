@@ -2,7 +2,7 @@ import _ from 'lodash';
 import type {NextFunction, Request, RequestHandler, Response} from 'express';
 import type {IncomingMessage} from 'node:http';
 import type {Duplex} from 'node:stream';
-import log from './logger';
+import {log} from './logger';
 import {errors} from '../protocol';
 export {handleIdempotency} from './idempotency';
 import {match} from 'path-to-regexp';

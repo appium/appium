@@ -1,4 +1,5 @@
 import {expect} from 'chai';
+import type {Request, Response} from 'express';
 import {welcome} from '../../../lib/express/static';
 import {createSandbox} from 'sinon';
 
@@ -17,7 +18,7 @@ describe('welcome', function () {
     const res = {
       send: sandbox.stub(),
     };
-    await welcome({}, res as any);
+    await welcome({} as Request, res as unknown as Response);
 
     expect(res.send.calledOnce).to.be.true;
     expect(res.send.args[0][0]).to.include("Let's browse!");

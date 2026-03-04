@@ -38,6 +38,8 @@ export function fixCaps<C extends Constraints>(
 ): Capabilities<C> {
   const caps = _.clone(oldCaps) as Record<string, unknown>;
 
+  const logCastWarning = (prefix: string) => log.warn(`${prefix}. This may cause unexpected behavior`);
+
   // boolean capabilities can be passed in as strings 'false' and 'true'
   // which we want to translate into boolean values
   const booleanCaps = _.keys(_.pickBy(desiredCapConstraints, (k) => k.isBoolean === true));
@@ -48,17 +50,11 @@ export function fixCaps<C extends Constraints>(
     }
 
     if (!['true', 'false'].includes(value.toLowerCase())) {
-      log.warn(
-        `String capability '${cap}' ('${value}') cannot be converted to a boolean. ` +
-        `This may cause an unexpected behavior`
-      );
+      logCastWarning(`String capability '${cap}' ('${value}') cannot be converted to a boolean`);
       continue;
     }
 
-    log.warn(
-      `Capability '${cap}' changed from string '${value}' to boolean. ` +
-      `This may cause an unexpected behavior`
-    );
+    logCastWarning(`Capability '${cap}' changed from string '${value}' to boolean`);
     caps[cap] = value.toLowerCase() === 'true';
   }
 
@@ -75,17 +71,11 @@ export function fixCaps<C extends Constraints>(
     const newValue = floatValue !== intValue ? floatValue : intValue;
 
     if (Number.isNaN(newValue)) {
-      log.warn(
-        `String capability '${cap}' ('${value}') cannot be converted to a number. ` +
-        `This may cause an unexpected behavior`
-      );
+      logCastWarning(`String capability '${cap}' ('${value}') cannot be converted to a number`);
       continue;
     }
 
-    log.warn(
-      `Capability '${cap}' changed from string '${value}' to number ${newValue}. ` +
-      `This may cause an unexpected behavior`
-    );
+    logCastWarning(`Capability '${cap}' changed from string '${value}' to number ${newValue}`);
     caps[cap] = newValue;
   }
 

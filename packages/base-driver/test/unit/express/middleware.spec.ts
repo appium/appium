@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 import {match} from 'path-to-regexp';
 import sinon from 'sinon';
-import log from '../../../lib/express/logger';
+import {log} from '../../../lib/express/logger';
 import {handleLogContext} from '../../../lib/express/middleware';
 
 describe('middleware', function () {

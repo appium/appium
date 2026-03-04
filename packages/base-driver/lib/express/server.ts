@@ -7,7 +7,7 @@ import type {Server as HttpServer} from 'node:http';
 import favicon from 'serve-favicon';
 import bodyParser from 'body-parser';
 import methodOverride from 'method-override';
-import log from './logger';
+import {log} from './logger';
 import {startLogFormatter, endLogFormatter} from './express-logging';
 import {
   allowCrossDomain,

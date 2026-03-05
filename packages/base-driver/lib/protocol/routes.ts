@@ -1,20 +1,17 @@
+import type {Driver, HTTPMethod, MethodMap} from '@appium/types';
 import _ from 'lodash';
 import {DEFAULT_BASE_PATH} from '../constants';
 import {match} from 'path-to-regexp';
 import {LRUCache} from 'lru-cache';
 
-/** @type {LRUCache<string, string>} */
-const COMMAND_NAMES_CACHE = new LRUCache({
+const COMMAND_NAMES_CACHE = new LRUCache<string, string>({
   max: 1024,
 });
 
 /**
- * define the routes, mapping of HTTP methods to particular driver commands, and
- * any parameters that are expected in a request parameters can be `required` or
- * `optional`
- * @satisfies {import('@appium/types').MethodMap<import('../basedriver/driver').BaseDriver>}
+ * Routes: mapping of HTTP methods to driver commands and expected payload parameters.
  */
-export const METHOD_MAP = /** @type {const} */ ({
+export const METHOD_MAP = {
 
   // #region W3C WebDriver
   // https://www.w3.org/TR/webdriver2/
@@ -566,73 +563,60 @@ export const METHOD_MAP = /** @type {const} */ ({
     DELETE: {command: 'deleteVirtualPressureSource'},
   },
   // #endregion
-});
+} as const satisfies MethodMap<Driver>;
 
 // driver command names
 export const ALL_COMMANDS = _.flatMap(_.values(METHOD_MAP).map(_.values))
   .filter((m) => Boolean(m.command))
   .map((m) => m.command);
 
-/**
- *
- * @param {string} endpoint
- * @param {import('@appium/types').HTTPMethod} [method]
- * @param {string} [basePath=DEFAULT_BASE_PATH]
- * @returns {string|undefined}
- */
-export function routeToCommandName(endpoint, method, basePath = DEFAULT_BASE_PATH) {
+export function routeToCommandName(
+  endpoint: string,
+  method?: HTTPMethod,
+  basePath: string = DEFAULT_BASE_PATH
+): string | undefined {
   let normalizedEndpoint = basePath
     ? endpoint.replace(new RegExp(`^${_.escapeRegExp(basePath)}`), '')
     : endpoint;
   normalizedEndpoint = `${_.startsWith(normalizedEndpoint, '/') ? '' : '/'}${normalizedEndpoint}`;
-  /** @type {string} */
-  let normalizedPathname;
+  let normalizedPathname: string;
   try {
-    // we could use any prefix there as we anyway need to only extract the pathname
     normalizedPathname = new URL(`https://appium.io${normalizedEndpoint}`).pathname;
-  } catch (err) {
-    throw new Error(`'${endpoint}' cannot be translated to a command name: ${err.message}`);
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    throw new Error(`'${endpoint}' cannot be translated to a command name: ${msg}`);
   }
 
-  const normalizedMethod = _.toUpper(method);
+  const normalizedMethod = _.toUpper(method ?? '');
   const cacheKey = toCommandNameCacheKey(normalizedPathname, normalizedMethod);
   if (COMMAND_NAMES_CACHE.has(cacheKey)) {
-    return COMMAND_NAMES_CACHE.get(cacheKey) || undefined;
+    const cached = COMMAND_NAMES_CACHE.get(cacheKey);
+    return cached === '' ? undefined : (cached ?? undefined);
   }
 
-  /** @type {string[]} */
-  const possiblePathnames = [];
+  const possiblePathnames: string[] = [];
   if (!normalizedPathname.startsWith('/session/')) {
     possiblePathnames.push(`/session/any-session-id${normalizedPathname}`);
   }
   possiblePathnames.push(normalizedPathname);
+  type RouteMethodDef = {command?: string};
   for (const [routePath, routeSpec] of _.toPairs(METHOD_MAP)) {
     const routeMatcher = match(routePath);
     if (possiblePathnames.some((pp) => routeMatcher(pp))) {
-      const commandForAnyMethod = () => _.first(
-        (_.keys(routeSpec) ?? []).map((key) => routeSpec[key]?.command)
-      );
-      const commandName = normalizedMethod
-        ? routeSpec?.[normalizedMethod]?.command
-        : commandForAnyMethod();
+      const spec = routeSpec as Record<string, RouteMethodDef>;
+      const commandForAnyMethod = () =>
+        _.first((_.keys(spec) ?? []).map((key) => spec[key]?.command));
+      const commandName = normalizedMethod ? spec[normalizedMethod]?.command : commandForAnyMethod();
       if (commandName) {
         COMMAND_NAMES_CACHE.set(cacheKey, commandName);
         return commandName;
       }
     }
   }
-  // storing an empty string means we did not find any match for this set of arguments
-  // and we want to cache this result
   COMMAND_NAMES_CACHE.set(cacheKey, '');
 }
 
-/**
- *
- * @param {string} endpoint
- * @param {string} [method]
- * @returns {string}
- */
-function toCommandNameCacheKey(endpoint, method) {
+function toCommandNameCacheKey(endpoint: string, method?: string): string {
   return `${endpoint}:${method ?? ''}`;
 }
 

@@ -1,4 +1,4 @@
-import type {Driver, HTTPMethod, MethodMap} from '@appium/types';
+import type {Driver, DriverMethodDef, HTTPMethod, MethodMap} from '@appium/types';
 import _ from 'lodash';
 import {DEFAULT_BASE_PATH} from '../constants';
 import {match} from 'path-to-regexp';
@@ -602,13 +602,12 @@ export function routeToCommandName(
     possiblePathnames.push(`/session/any-session-id${normalizedPathname}`);
   }
   possiblePathnames.push(normalizedPathname);
-  type RouteMethodDef = {command?: string};
   for (const [routePath, routeSpec] of _.toPairs(METHOD_MAP)) {
     const routeMatcher = match(routePath);
     if (possiblePathnames.some((pp) => routeMatcher(pp))) {
-      const spec = routeSpec as Record<string, RouteMethodDef>;
+      const spec = routeSpec as Record<string, DriverMethodDef<Driver>>;
       const commandForAnyMethod = () =>
-        _.first((_.keys(spec) ?? []).map((key) => spec[key]?.command));
+        _.first(_.keys(spec).map((key) => spec[key]?.command));
       const commandName = normalizedMethod ? spec[normalizedMethod]?.command : commandForAnyMethod();
       if (commandName) {
         COMMAND_NAMES_CACHE.set(cacheKey, commandName);

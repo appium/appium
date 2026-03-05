@@ -9,7 +9,9 @@ const COMMAND_NAMES_CACHE = new LRUCache<string, string>({
 });
 
 /**
- * Routes: mapping of HTTP methods to driver commands and expected payload parameters.
+ * Define the routes: mapping of HTTP methods to particular driver commands, and
+ * any parameters that are expected in a request. Parameters can be `required` or
+ * `optional`.
  */
 export const METHOD_MAP = {
 
@@ -581,6 +583,7 @@ export function routeToCommandName(
   normalizedEndpoint = `${_.startsWith(normalizedEndpoint, '/') ? '' : '/'}${normalizedEndpoint}`;
   let normalizedPathname: string;
   try {
+    // we could use any prefix there as we anyway need to only extract the pathname
     normalizedPathname = new URL(`https://appium.io${normalizedEndpoint}`).pathname;
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
@@ -589,9 +592,9 @@ export function routeToCommandName(
 
   const normalizedMethod = _.toUpper(method ?? '');
   const cacheKey = toCommandNameCacheKey(normalizedPathname, normalizedMethod);
-  if (COMMAND_NAMES_CACHE.has(cacheKey)) {
-    const cached = COMMAND_NAMES_CACHE.get(cacheKey);
-    return cached === '' ? undefined : (cached ?? undefined);
+  const cached = COMMAND_NAMES_CACHE.get(cacheKey);
+  if (cached !== undefined) {
+    return cached;
   }
 
   const possiblePathnames: string[] = [];
@@ -613,6 +616,8 @@ export function routeToCommandName(
       }
     }
   }
+  // storing an empty string means we did not find any match for this set of arguments
+  // and we want to cache this result
   COMMAND_NAMES_CACHE.set(cacheKey, '');
 }
 

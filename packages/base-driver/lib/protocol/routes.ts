@@ -594,7 +594,7 @@ export function routeToCommandName(
   const cacheKey = toCommandNameCacheKey(normalizedPathname, normalizedMethod);
   const cached = COMMAND_NAMES_CACHE.get(cacheKey);
   if (cached !== undefined) {
-    return cached;
+    return cached || undefined;
   }
 
   const possiblePathnames: string[] = [];

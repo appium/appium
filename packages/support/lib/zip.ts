@@ -9,7 +9,7 @@ import {pipeline} from 'node:stream/promises';
 import {fs} from './fs';
 import {isWindows} from './system';
 import {Base64Encode} from 'base64-stream';
-import {toReadableSizeString, GiB} from './util';
+import {isSubPath, toReadableSizeString, GiB} from './util';
 import {Timer} from './timing';
 import log from './logger';
 import getStream from 'get-stream';
@@ -90,7 +90,7 @@ export async function _extractEntryTo(
   destDir: string
 ): Promise<void> {
   const dstPath = path.resolve(destDir, entry.fileName);
-  if (!dstPath.startsWith(path.normalize(destDir))) {
+  if (!isSubPath(dstPath, destDir)) {
     throw new Error(
       `Out of bound path "${dstPath}" found while processing file ${entry.fileName}`
     );

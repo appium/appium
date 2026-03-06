@@ -90,8 +90,7 @@ export async function _extractEntryTo(
   destDir: string
 ): Promise<void> {
   const dstPath = path.resolve(destDir, entry.fileName);
-  const normalizedDestDir = path.normalize(destDir).toLowerCase();
-  if (!dstPath.toLowerCase().startsWith(normalizedDestDir)) {
+  if (!dstPath.startsWith(path.normalize(destDir))) {
     throw new Error(
       `Out of bound path "${dstPath}" found while processing file ${entry.fileName}`
     );

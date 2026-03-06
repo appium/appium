@@ -90,6 +90,12 @@ export async function _extractEntryTo(
   destDir: string
 ): Promise<void> {
   const dstPath = path.resolve(destDir, entry.fileName);
+  const normalizedDestDir = path.normalize(destDir).toLowerCase();
+  if (!dstPath.toLowerCase().startsWith(normalizedDestDir)) {
+    throw new Error(
+      `Out of bound path "${dstPath}" found while processing file ${entry.fileName}`
+    );
+  }
 
   // Create dest directory if doesn't exist already
   if (entry.fileName.endsWith('/')) {

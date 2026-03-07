@@ -1,9 +1,11 @@
-const SUBSCRIPTION_REQUEST_PARAMS = /** @type {const} */ ({
+import type {BidiModuleMap} from '@appium/types';
+
+const SUBSCRIPTION_REQUEST_PARAMS = {
   required: ['events'],
   optional: ['contexts'],
-});
+} as const;
 
-export const BIDI_COMMANDS = /** @type {const} */ ({
+export const BIDI_COMMANDS = {
   session: {
     subscribe: {
       command: 'bidiSubscribe',
@@ -16,7 +18,7 @@ export const BIDI_COMMANDS = /** @type {const} */ ({
     status: {
       command: 'bidiStatus',
       params: {},
-    }
+    },
   },
   browsingContext: {
     navigate: {
@@ -27,7 +29,7 @@ export const BIDI_COMMANDS = /** @type {const} */ ({
       },
     },
   },
-});
+} as const satisfies BidiModuleMap;
 
 // TODO add definitions for all bidi commands.
 // spec link: https://w3c.github.io/webdriver-bidi/

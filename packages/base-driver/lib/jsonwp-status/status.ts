@@ -1,6 +1,4 @@
-import _ from 'lodash';
-
-const codes = {
+export const codes = {
   Success: {
     code: 0,
     summary: 'The command executed successfully.',
@@ -112,17 +110,16 @@ const codes = {
     code: 35,
     summary: 'No such context found.',
   },
-};
+} as const;
 
-function getSummaryByCode(code) {
-  code = parseInt(code, 10);
-  for (let obj of _.values(codes)) {
-    if (!_.isUndefined(obj.code) && obj.code === code) {
-      return obj.summary;
-    }
-  }
-  return 'An error occurred';
+/**
+ * Returns the summary message for a JSONWP status code.
+ *
+ * @param code - Numeric status code (e.g. 0, 7) or string representation
+ * @returns Human-readable summary for the code, or 'An error occurred' if unknown
+ */
+export function getSummaryByCode(code: number | string): string {
+  const parsed = parseInt(String(code), 10);
+  const match = Object.values(codes).find((obj) => obj.code === parsed);
+  return match?.summary ?? 'An error occurred';
 }
-
-export default codes;
-export {codes, getSummaryByCode};

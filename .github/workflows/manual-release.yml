@@ -1,0 +1,53 @@
+name: Appium Server Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (no publishing or tagging)'
+        required: true
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  id-token: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master' && contains(fromJSON('["mykola-mokhnach", "jlipps", "eglitise", "KazuCocoa"]'), github.actor)
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Configure git user
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+      - name: Setup Node and install deps (LTS)
+        uses: ./.github/actions/setup-build
+        with:
+          node-version: lts/*
+          install-command: npm ci
+          run-build: 'true'
+
+      - name: Run Lerna publish
+        env:
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          set -euo pipefail
+          if [ "$DRY_RUN" = "true" ]; then
+            echo "Running lerna publish in dry-run mode"
+            npm run release -- --yes --dry-run
+          else
+            echo "Running lerna publish for real"
+            npm run release -- --yes
+          fi
+

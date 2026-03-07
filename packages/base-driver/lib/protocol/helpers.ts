@@ -5,13 +5,12 @@ import {MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY} from '../constants';
 /**
  * Preprocesses the resulting value for API responses,
  * so they have keys for both W3C and JSONWP protocols.
- * The argument value is NOT mutated
+ * The argument value is NOT mutated.
  *
- * @param {Object | undefined} resValue The actual response value
- * @returns {Object | null} Either modified value or the same one if
- * nothing has been modified
+ * @param resValue - The actual response value
+ * @returns Either modified value or the same one if nothing has been modified
  */
-export function formatResponseValue(resValue) {
+export function formatResponseValue(resValue: object | undefined): object | null {
   if (_.isUndefined(resValue)) {
     // convert undefined to null
     return null;
@@ -27,13 +26,11 @@ export function formatResponseValue(resValue) {
  * Properly formats the status for API responses,
  * so they are correct for the W3C protocol.
  *
- * @param {Object} responseBody
- * @returns {Object} The fixed response body
+ * @param responseBody - The response body
+ * @returns The fixed response body
  */
-export function ensureW3cResponse(responseBody) {
+export function ensureW3cResponse(responseBody: Record<string, unknown>): Record<string, unknown> {
   return _.isPlainObject(responseBody)
-    ? _.omit(responseBody, ['status', 'sessionId'])
+    ? (_.omit(responseBody, ['status', 'sessionId']) as Record<string, unknown>)
     : responseBody;
 }
-
-export {MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY};

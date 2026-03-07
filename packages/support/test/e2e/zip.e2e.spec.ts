@@ -202,9 +202,6 @@ describe('#zip', function () {
 
         beforeEach(async function () {
           destDir = await tempDir.openDir();
-          entry = {
-            fileName: path.resolve(destDir, 'temp', 'file'),
-          };
           mockZipStream = new MockReadWriteStream() as MockReadWriteStream & {
             pipe?: (dest?: unknown) => void;
           };
@@ -217,7 +214,19 @@ describe('#zip', function () {
           };
         });
 
+        it('should be rejected if entry path is outside of destDir', async function () {
+          entry = {
+            fileName: path.resolve(destDir, '..', 'temp', 'file'),
+          };
+          await expect(
+            zip._extractEntryTo(mockZipFile as any, entry as any, destDir)
+          ).to.be.rejectedWith('Out of bound path');
+        });
+
         it('should be rejected if zip stream emits an error', async function () {
+          entry = {
+            fileName: path.resolve(destDir, 'temp', 'file'),
+          };
           mockZipStream.pipe = () => {
             mockZipStream.emit('error', new Error('zip stream error'));
           };
@@ -227,6 +236,9 @@ describe('#zip', function () {
         });
 
         it('should be rejected if write stream emits an error', async function () {
+          entry = {
+            fileName: path.resolve(destDir, 'temp', 'file'),
+          };
           mockZipStream.pipe = (writeStream: NodeJS.WritableStream & NodeJS.EventEmitter) => {
             writeStream.emit('error', new Error('write stream error'));
             mockZipStream.end();

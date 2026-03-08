@@ -231,8 +231,7 @@ export class ProtocolConverter {
   ): Promise<[ProxyResponse, HTTPBody]> {
     const bodyObj = util.safeJsonParse(body) as Record<string, unknown> | undefined;
     if (_.isPlainObject(bodyObj) && (util.hasValue(bodyObj?.text) || util.hasValue(bodyObj?.value))) {
-      const obj = bodyObj;
-      let {text, value} = obj;
+      let {text, value} = bodyObj;
       if (util.hasValue(text) && !util.hasValue(value)) {
         value = _.isString(text) ? [...text] : _.isArray(text) ? text : [];
         this.log.debug(`Added 'value' property to 'setValue' request body`);
@@ -240,7 +239,7 @@ export class ProtocolConverter {
         text = _.isArray(value) ? value.join('') : _.isString(value) ? value : '';
         this.log.debug(`Added 'text' property to 'setValue' request body`);
       }
-      return await this.proxyFunc(url, method, {...obj, text, value});
+      return await this.proxyFunc(url, method, {...bodyObj, text, value});
     }
     return await this.proxyFunc(url, method, body);
   }

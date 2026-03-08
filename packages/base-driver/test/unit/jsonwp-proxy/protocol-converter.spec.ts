@@ -11,11 +11,14 @@ chai.use(chaiAsPromised);
 
 const {MJSONWP, W3C} = PROTOCOLS;
 
-/** Cast to access private methods in unit tests */
-type ProtocolConverterTest = ProtocolConverter & {
-  getTimeoutRequestObjects(body: Record<string, unknown>): Record<string, unknown>[];
+/**
+ * Type used to access private methods in unit tests.
+ * Standalone type (not intersecting with ProtocolConverter) to avoid TS reducing the intersection to never.
+ */
+interface ProtocolConverterTest {
+  getTimeoutRequestObjects(body: unknown): Record<string, unknown>[];
   proxySetValue(url: string, method: string, body: unknown): Promise<unknown>;
-};
+}
 
 describe('Protocol Converter', function () {
   describe('getTimeoutRequestObjects', function () {

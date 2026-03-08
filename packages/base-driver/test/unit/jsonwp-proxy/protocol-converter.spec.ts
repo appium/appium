@@ -17,7 +17,7 @@ const {MJSONWP, W3C} = PROTOCOLS;
  */
 interface ProtocolConverterTest {
   getTimeoutRequestObjects(body: unknown): Record<string, unknown>[];
-  proxySetValue(url: string, method: string, body: unknown): Promise<unknown>;
+  proxySetValue(url: string, method: string, body: unknown): Promise<[unknown, unknown]>;
 }
 
 describe('Protocol Converter', function () {

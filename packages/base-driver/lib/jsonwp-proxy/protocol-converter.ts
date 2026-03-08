@@ -94,17 +94,17 @@ export class ProtocolConverter {
     // Same url, but different arguments
     switch (commandName) {
       case 'timeouts':
-        return await this.proxySetTimeouts(url, method, body ?? {});
+        return await this.proxySetTimeouts(url, method, body);
       case 'setWindow':
-        return await this.proxySetWindow(url, method, body ?? {});
+        return await this.proxySetWindow(url, method, body);
       case 'setValue':
-        return await this.proxySetValue(url, method, body ?? {});
+        return await this.proxySetValue(url, method, body);
       case 'performActions':
-        return await this.proxyPerformActions(url, method, body ?? {});
+        return await this.proxyPerformActions(url, method, body);
       case 'releaseActions':
         return await this.proxyReleaseActions(url, method);
       case 'setFrame':
-        return await this.proxySetFrame(url, method, body ?? {});
+        return await this.proxySetFrame(url, method, body);
       default:
         break;
     }
@@ -137,19 +137,23 @@ export class ProtocolConverter {
    * at a time. So if we're using W3C and proxying to MJSONWP and there's more than one timeout type
    * provided in the request, we need to do 3 proxies and combine the result.
    */
-  private getTimeoutRequestObjects(body: Record<string, unknown>): Record<string, unknown>[] {
-    if (this.downstreamProtocol === W3C && _.has(body, 'ms') && _.has(body, 'type')) {
+  private getTimeoutRequestObjects(body: HTTPBody): Record<string, unknown>[] {
+    const bodyObj = (util.safeJsonParse(body) as Record<string, unknown>) ?? {};
+    if (_.isNil(body)) {
+      return [];
+    }
+    if (this.downstreamProtocol === W3C && _.has(bodyObj, 'ms') && _.has(bodyObj, 'type')) {
       const typeToW3C = (x: string) => (x === 'page load' ? 'pageLoad' : x);
       return [
         {
-          [typeToW3C(body.type as string)]: body.ms,
+          [typeToW3C(bodyObj.type as string)]: bodyObj.ms,
         },
       ];
     }
 
-    if (this.downstreamProtocol === MJSONWP && (!_.has(body, 'ms') || !_.has(body, 'type'))) {
+    if (this.downstreamProtocol === MJSONWP && (!_.has(bodyObj, 'ms') || !_.has(bodyObj, 'type'))) {
       const typeToJSONWP = (x: string) => (x === 'pageLoad' ? 'page load' : x);
-      return _.toPairs(body)
+      return _.toPairs(bodyObj)
         // Only transform the entry if ms value is a valid positive float number
         .filter((pair) => /^\d+(?:[.,]\d*?)?$/.test(`${pair[1]}`))
         .map((pair) => ({
@@ -158,7 +162,7 @@ export class ProtocolConverter {
         }));
     }
 
-    return [body];
+    return [bodyObj];
   }
 
   /**
@@ -167,11 +171,12 @@ export class ProtocolConverter {
   private async proxySetTimeouts(
     url: string,
     method: string,
-    body: HTTPBody
+    body?: HTTPBody
   ): Promise<[ProxyResponse, HTTPBody]> {
-    const timeoutRequestObjects = this.getTimeoutRequestObjects(
-      (body as Record<string, unknown>) ?? {}
-    );
+    const timeoutRequestObjects = this.getTimeoutRequestObjects(body);
+    if (timeoutRequestObjects.length === 0) {
+      return await this.proxyFunc(url, method, body);
+    }
     this.log.debug(
       `Will send the following request bodies to /timeouts: ${JSON.stringify(timeoutRequestObjects)}`
     );

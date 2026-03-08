@@ -40,6 +40,8 @@ jobs:
 
       - name: Run Lerna publish
         env:
+          # for lerna createRelease
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DRY_RUN: ${{ inputs.dry_run }}
         run: |
           set -euo pipefail

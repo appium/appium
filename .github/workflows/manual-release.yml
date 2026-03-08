@@ -45,7 +45,7 @@ jobs:
           set -euo pipefail
           if [ "$DRY_RUN" = "true" ]; then
             echo "Running lerna publish in dry-run mode"
-            npm run release -- --yes --dry-run
+            printf "n\n" | npx lerna version --no-git-tag-version --no-push
           else
             echo "Running lerna publish for real"
             npm run release -- --yes

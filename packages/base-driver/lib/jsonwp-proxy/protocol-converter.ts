@@ -138,10 +138,11 @@ export class ProtocolConverter {
    * provided in the request, we need to do 3 proxies and combine the result.
    */
   private getTimeoutRequestObjects(body: HTTPBody): Record<string, unknown>[] {
-    const bodyObj = (util.safeJsonParse(body) as Record<string, unknown>) ?? {};
     if (_.isNil(body)) {
       return [];
     }
+
+    const bodyObj = (util.safeJsonParse(body) as Record<string, unknown>) ?? {};
     if (this.downstreamProtocol === W3C && _.has(bodyObj, 'ms') && _.has(bodyObj, 'type')) {
       const typeToW3C = (x: string) => (x === 'page load' ? 'pageLoad' : x);
       return [

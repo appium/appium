@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.0](https://github.com/appium/appium/compare/@appium/schema@1.0.1...@appium/schema@1.1.0) (2026-03-08)
+
+
+### Features
+
+* **schema:** Migrate to typescript ([#21900](https://github.com/appium/appium/issues/21900)) ([d43f749](https://github.com/appium/appium/commit/d43f749fc7fb5e8578c5f80c04e4373d1096e0d4))
+
+
+
 ## [1.0.1](https://github.com/appium/appium/compare/@appium/schema@1.0.0...@appium/schema@1.0.1) (2026-01-26)
 
 

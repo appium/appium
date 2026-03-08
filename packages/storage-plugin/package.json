@@ -1,6 +1,6 @@
 {
   "name": "@appium/storage-plugin",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Server-side storage plugin for Appium",
   "keywords": [
     "automation",
@@ -40,7 +40,7 @@
     "test:e2e": "mocha --timeout 20s --slow 10s \"./test/e2e/**/*.spec.ts\""
   },
   "dependencies": {
-    "@appium/support": "^7.0.5",
+    "@appium/support": "^7.0.6",
     "async-lock": "1.4.1",
     "asyncbox": "6.1.0",
     "lodash": "4.17.23",

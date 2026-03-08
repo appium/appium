@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.0](https://github.com/appium/appium/compare/@appium/fake-plugin@4.0.6...@appium/fake-plugin@4.1.0) (2026-03-08)
+
+
+### Features
+
+* **fake-plugin:** Migrate to typescript ([#21913](https://github.com/appium/appium/issues/21913)) ([7b139d7](https://github.com/appium/appium/commit/7b139d7e3543381c67191abf253314eb4630b0ac))
+
+
+### Bug Fixes
+
+* Move @appium/types to dev dependencies for various packages ([#21920](https://github.com/appium/appium/issues/21920)) ([2615935](https://github.com/appium/appium/commit/261593593947bc59e7a937e518fc6f019cafda7a))
+
+
+
 ## [4.0.6](https://github.com/appium/appium/compare/@appium/fake-plugin@4.0.5...@appium/fake-plugin@4.0.6) (2026-01-26)
 
 **Note:** Version bump only for package @appium/fake-plugin

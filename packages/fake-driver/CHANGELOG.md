@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.1.0](https://github.com/appium/appium/compare/@appium/fake-driver@6.0.2...@appium/fake-driver@6.1.0) (2026-03-08)
+
+
+### Features
+
+* **fake-driver:** Migrate doctor scripts to typescript ([#21946](https://github.com/appium/appium/issues/21946)) ([1707cc1](https://github.com/appium/appium/commit/1707cc1f851d439f00798d2135db44e95a18e681))
+* **fake-driver:** Migrate to typescript ([#21935](https://github.com/appium/appium/issues/21935)) ([0515ae5](https://github.com/appium/appium/commit/0515ae5c499319a846bfd4a57a0fc2a703e70613))
+
+
+### Bug Fixes
+
+* Type imports ([#22025](https://github.com/appium/appium/issues/22025)) ([2f27425](https://github.com/appium/appium/commit/2f27425ea300ca1af1c1da6e4be68d48e7a94346))
+
+
+
 ## [6.0.2](https://github.com/appium/appium/compare/@appium/fake-driver@6.0.1...@appium/fake-driver@6.0.2) (2026-01-26)
 
 

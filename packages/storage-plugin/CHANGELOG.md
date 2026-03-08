@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.6](https://github.com/appium/appium/compare/@appium/storage-plugin@1.0.5...@appium/storage-plugin@1.0.6) (2026-03-08)
+
+
+### Bug Fixes
+
+* Type imports ([#22025](https://github.com/appium/appium/issues/22025)) ([2f27425](https://github.com/appium/appium/commit/2f27425ea300ca1af1c1da6e4be68d48e7a94346))
+
+
+
 ## [1.0.5](https://github.com/appium/appium/compare/@appium/storage-plugin@1.0.4...@appium/storage-plugin@1.0.5) (2026-01-26)
 
 

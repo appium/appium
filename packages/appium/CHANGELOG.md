@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.2.1](https://github.com/appium/appium/compare/appium@3.2.0...appium@3.2.1) (2026-03-08)
+
+
+### Bug Fixes
+
+* **appium:** Fix CLI arguments normalization ([#21945](https://github.com/appium/appium/issues/21945)) ([9ea601c](https://github.com/appium/appium/commit/9ea601c8330d35f45f0712e41867544d925a0f6b))
+* Avoid attaching plugins to a non-existing session ([#21964](https://github.com/appium/appium/issues/21964)) ([9f5faf5](https://github.com/appium/appium/commit/9f5faf5bedffe6196742c09c6793a6450af48ac9))
+* **logger:** Make sure we always have single logger instance per process ([#21991](https://github.com/appium/appium/issues/21991)) ([4daaa14](https://github.com/appium/appium/commit/4daaa14c29bed129d329d0881a93ecdb9de77676))
+* Type imports ([#22025](https://github.com/appium/appium/issues/22025)) ([2f27425](https://github.com/appium/appium/commit/2f27425ea300ca1af1c1da6e4be68d48e7a94346))
+
+
+
 ## [3.2.0](https://github.com/appium/appium/compare/appium@3.1.2...appium@3.2.0) (2026-01-26)
 
 

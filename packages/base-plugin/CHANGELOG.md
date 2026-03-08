@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.1.0](https://github.com/appium/appium/compare/@appium/base-plugin@3.0.6...@appium/base-plugin@3.1.0) (2026-03-08)
+
+
+### Features
+
+* **base-plugin:** Migrate to typescript ([#21918](https://github.com/appium/appium/issues/21918)) ([07b573d](https://github.com/appium/appium/commit/07b573df270273d26691f77ee80cd415402b1508))
+
+
+
 ## [3.0.6](https://github.com/appium/appium/compare/@appium/base-plugin@3.0.5...@appium/base-plugin@3.0.6) (2026-01-26)
 
 **Note:** Version bump only for package @appium/base-plugin

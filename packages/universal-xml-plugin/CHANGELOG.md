@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.0](https://github.com/appium/appium/compare/@appium/universal-xml-plugin@2.0.4...@appium/universal-xml-plugin@2.1.0) (2026-03-08)
+
+
+### Features
+
+* **universal-xml-plugin:** Migrate to typescript ([#21894](https://github.com/appium/appium/issues/21894)) ([75ae614](https://github.com/appium/appium/commit/75ae6145c2462c2ae3a087ce076008f1ea17d452))
+
+
+
 ## [2.0.4](https://github.com/appium/appium/compare/@appium/universal-xml-plugin@2.0.3...@appium/universal-xml-plugin@2.0.4) (2026-01-26)
 
 

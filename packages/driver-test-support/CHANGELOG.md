@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.0](https://github.com/appium/appium/compare/@appium/driver-test-support@1.0.6...@appium/driver-test-support@1.1.0) (2026-03-08)
+
+
+### Features
+
+* **driver-test-support:** Migrate to typescript ([#21922](https://github.com/appium/appium/issues/21922)) ([e33ad95](https://github.com/appium/appium/commit/e33ad958518b3a5da9300a8d54c79d1858655f5c))
+
+
+### Bug Fixes
+
+* Move @appium/types to dev dependencies for various packages ([#21920](https://github.com/appium/appium/issues/21920)) ([2615935](https://github.com/appium/appium/commit/261593593947bc59e7a937e518fc6f019cafda7a))
+
+
+
 ## [1.0.6](https://github.com/appium/appium/compare/@appium/driver-test-support@1.0.5...@appium/driver-test-support@1.0.6) (2026-01-26)
 
 **Note:** Version bump only for package @appium/driver-test-support

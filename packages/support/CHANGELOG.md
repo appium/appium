@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.0.6](https://github.com/appium/appium/compare/@appium/support@7.0.5...@appium/support@7.0.6) (2026-03-08)
+
+
+### Bug Fixes
+
+* **logger:** Make sure we always have single logger instance per process ([#21991](https://github.com/appium/appium/issues/21991)) ([4daaa14](https://github.com/appium/appium/commit/4daaa14c29bed129d329d0881a93ecdb9de77676))
+* **support:** add path traversal check in `_extractEntryTo` ([#22042](https://github.com/appium/appium/issues/22042)) ([eee4c05](https://github.com/appium/appium/commit/eee4c05844f9ac9bab1e1f1e36a20f81d1cd837f))
+* **support:** fix missing throw for Error ([#22014](https://github.com/appium/appium/issues/22014)) ([98d2497](https://github.com/appium/appium/commit/98d2497b490103bfee929120eb884aca57234562))
+* **support:** Make staticDir call lazy ([#22008](https://github.com/appium/appium/issues/22008)) ([dcc6a00](https://github.com/appium/appium/commit/dcc6a00d102400f537cbc15db09ad033813de6d4))
+
+
+
 ## [7.0.5](https://github.com/appium/appium/compare/@appium/support@7.0.4...@appium/support@7.0.5) (2026-01-26)
 
 

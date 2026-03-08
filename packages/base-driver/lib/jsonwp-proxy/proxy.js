@@ -10,7 +10,7 @@ import {
 } from '../protocol/errors';
 import {isSessionCommand, routeToCommandName} from '../protocol';
 import {MAX_LOG_BODY_LENGTH, DEFAULT_BASE_PATH, PROTOCOLS} from '../constants';
-import ProtocolConverter from './protocol-converter';
+import {ProtocolConverter} from './protocol-converter';
 import {formatResponseValue, ensureW3cResponse} from '../protocol/helpers';
 import http from 'node:http';
 import https from 'node:https';

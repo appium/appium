@@ -2,13 +2,20 @@ import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
 import {PROTOCOLS} from '../../../lib/constants';
-import ProtocolConverter, {
+import {
   COMMAND_URLS_CONFLICTS,
+  ProtocolConverter,
 } from '../../../lib/jsonwp-proxy/protocol-converter';
 
 chai.use(chaiAsPromised);
 
 const {MJSONWP, W3C} = PROTOCOLS;
+
+/** Cast to access private methods in unit tests */
+type ProtocolConverterTest = ProtocolConverter & {
+  getTimeoutRequestObjects(body: Record<string, unknown>): Record<string, unknown>[];
+  proxySetValue(url: string, method: string, body: unknown): Promise<unknown>;
+};
 
 describe('Protocol Converter', function () {
   describe('getTimeoutRequestObjects', function () {
@@ -18,13 +25,15 @@ describe('Protocol Converter', function () {
     });
     it('should take W3C inputs and produce MJSONWP compatible objects', function () {
       converter.downstreamProtocol = MJSONWP;
-      const timeoutObjects = converter.getTimeoutRequestObjects({script: 100});
+      const timeoutObjects = (converter as ProtocolConverterTest).getTimeoutRequestObjects({
+        script: 100,
+      });
       expect(timeoutObjects.length).to.equal(1);
       expect(timeoutObjects[0]).to.eql({type: 'script', ms: 100});
     });
     it('should ignore invalid entries while converting from W3C', function () {
       converter.downstreamProtocol = MJSONWP;
-      const timeoutObjects = converter.getTimeoutRequestObjects({
+      const timeoutObjects = (converter as ProtocolConverterTest).getTimeoutRequestObjects({
         script: 100,
         sessionId: '5432a4f3-cd89-4781-8905-ea9d3150840c',
         bar: -1,
@@ -35,8 +44,9 @@ describe('Protocol Converter', function () {
     });
     it('should take multiple W3C timeouts and produce multiple MJSONWP compatible objects', function () {
       converter.downstreamProtocol = MJSONWP;
-      const [scriptTimeout, pageLoadTimeout, implicitTimeout] =
-        converter.getTimeoutRequestObjects({
+      const [scriptTimeout, pageLoadTimeout, implicitTimeout] = (
+        converter as ProtocolConverterTest
+      ).getTimeoutRequestObjects({
           script: 100,
           pageLoad: 200,
           implicit: 300,
@@ -56,7 +66,7 @@ describe('Protocol Converter', function () {
     });
     it('should take MJSONWP input and produce W3C compatible object', function () {
       converter.downstreamProtocol = W3C;
-      const timeoutObjects = converter.getTimeoutRequestObjects({
+      const timeoutObjects = (converter as ProtocolConverterTest).getTimeoutRequestObjects({
         type: 'implicit',
         ms: 300,
       });
@@ -65,7 +75,7 @@ describe('Protocol Converter', function () {
     });
     it('should not change the input if protocol name is unknown', function () {
       converter.downstreamProtocol = null as any;
-      const timeoutObjects = converter.getTimeoutRequestObjects({
+      const timeoutObjects = (converter as ProtocolConverterTest).getTimeoutRequestObjects({
         type: 'implicit',
         ms: 300,
       });
@@ -74,7 +84,7 @@ describe('Protocol Converter', function () {
     });
     it('should not change the input if protocol name is unchanged', function () {
       converter.downstreamProtocol = MJSONWP;
-      const timeoutObjects = converter.getTimeoutRequestObjects({
+      const timeoutObjects = (converter as ProtocolConverterTest).getTimeoutRequestObjects({
         type: 'implicit',
         ms: 300,
       });
@@ -97,7 +107,7 @@ describe('Protocol Converter', function () {
     });
 
     it('should calculate value if not present', async function () {
-      await converter.proxySetValue('', '', {
+      await (converter as ProtocolConverterTest).proxySetValue('', '', {
         text: 'bla',
       });
       expect(responseBody).to.eql({
@@ -106,7 +116,7 @@ describe('Protocol Converter', function () {
       });
     });
     it('should calculate text if not present', async function () {
-      await converter.proxySetValue('', '', {
+      await (converter as ProtocolConverterTest).proxySetValue('', '', {
         value: ['b', 'l', 'a'],
       });
       expect(responseBody).to.eql({
@@ -115,7 +125,7 @@ describe('Protocol Converter', function () {
       });
     });
     it('should keep the response body unchanged if both value and text are present', async function () {
-      await converter.proxySetValue('', '', {
+      await (converter as ProtocolConverterTest).proxySetValue('', '', {
         text: 'bla',
         value: ['b', 'l', 'a'],
       });

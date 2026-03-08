@@ -28,7 +28,7 @@ describe('Protocol Converter', function () {
     });
     it('should take W3C inputs and produce MJSONWP compatible objects', function () {
       converter.downstreamProtocol = MJSONWP;
-      const timeoutObjects = (converter as ProtocolConverterTest).getTimeoutRequestObjects({
+      const timeoutObjects = (converter as unknown as ProtocolConverterTest).getTimeoutRequestObjects({
         script: 100,
       });
       expect(timeoutObjects.length).to.equal(1);
@@ -36,7 +36,7 @@ describe('Protocol Converter', function () {
     });
     it('should ignore invalid entries while converting from W3C', function () {
       converter.downstreamProtocol = MJSONWP;
-      const timeoutObjects = (converter as ProtocolConverterTest).getTimeoutRequestObjects({
+      const timeoutObjects = (converter as unknown as ProtocolConverterTest).getTimeoutRequestObjects({
         script: 100,
         sessionId: '5432a4f3-cd89-4781-8905-ea9d3150840c',
         bar: -1,
@@ -48,7 +48,7 @@ describe('Protocol Converter', function () {
     it('should take multiple W3C timeouts and produce multiple MJSONWP compatible objects', function () {
       converter.downstreamProtocol = MJSONWP;
       const [scriptTimeout, pageLoadTimeout, implicitTimeout] = (
-        converter as ProtocolConverterTest
+        converter as unknown as ProtocolConverterTest
       ).getTimeoutRequestObjects({
           script: 100,
           pageLoad: 200,
@@ -69,7 +69,7 @@ describe('Protocol Converter', function () {
     });
     it('should take MJSONWP input and produce W3C compatible object', function () {
       converter.downstreamProtocol = W3C;
-      const timeoutObjects = (converter as ProtocolConverterTest).getTimeoutRequestObjects({
+      const timeoutObjects = (converter as unknown as ProtocolConverterTest).getTimeoutRequestObjects({
         type: 'implicit',
         ms: 300,
       });
@@ -78,7 +78,7 @@ describe('Protocol Converter', function () {
     });
     it('should not change the input if protocol name is unknown', function () {
       converter.downstreamProtocol = null as any;
-      const timeoutObjects = (converter as ProtocolConverterTest).getTimeoutRequestObjects({
+      const timeoutObjects = (converter as unknown as ProtocolConverterTest).getTimeoutRequestObjects({
         type: 'implicit',
         ms: 300,
       });
@@ -87,7 +87,7 @@ describe('Protocol Converter', function () {
     });
     it('should not change the input if protocol name is unchanged', function () {
       converter.downstreamProtocol = MJSONWP;
-      const timeoutObjects = (converter as ProtocolConverterTest).getTimeoutRequestObjects({
+      const timeoutObjects = (converter as unknown as ProtocolConverterTest).getTimeoutRequestObjects({
         type: 'implicit',
         ms: 300,
       });
@@ -110,7 +110,7 @@ describe('Protocol Converter', function () {
     });
 
     it('should calculate value if not present', async function () {
-      await (converter as ProtocolConverterTest).proxySetValue('', '', {
+      await (converter as unknown as ProtocolConverterTest).proxySetValue('', '', {
         text: 'bla',
       });
       expect(responseBody).to.eql({
@@ -119,7 +119,7 @@ describe('Protocol Converter', function () {
       });
     });
     it('should calculate text if not present', async function () {
-      await (converter as ProtocolConverterTest).proxySetValue('', '', {
+      await (converter as unknown as ProtocolConverterTest).proxySetValue('', '', {
         value: ['b', 'l', 'a'],
       });
       expect(responseBody).to.eql({
@@ -128,7 +128,7 @@ describe('Protocol Converter', function () {
       });
     });
     it('should keep the response body unchanged if both value and text are present', async function () {
-      await (converter as ProtocolConverterTest).proxySetValue('', '', {
+      await (converter as unknown as ProtocolConverterTest).proxySetValue('', '', {
         text: 'bla',
         value: ['b', 'l', 'a'],
       });
@@ -143,7 +143,7 @@ describe('Protocol Converter', function () {
     let w3cConverter: (url: string) => string;
     before(function () {
       for (const command of COMMAND_URLS_CONFLICTS) {
-        if (command.commandNames.includes('getProperty')) {
+        if ((command.commandNames as readonly string[]).includes('getProperty')) {
           jsonwpConverter = command.jsonwpConverter;
           w3cConverter = command.w3cConverter;
         }

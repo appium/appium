@@ -7,7 +7,7 @@ import type {SinonSandbox} from 'sinon';
 import {DRIVER_TYPE, PLUGIN_TYPE} from '../../../lib/constants';
 import {resolveFixture, rewiremock} from '../../helpers';
 import {initMocks} from './mocks';
-import {version as APPIUM_VER} from '../../../package.json';
+import {APPIUM_VER} from '../../../lib/config';
 import EventEmitter from 'node:events';
 import type {MockAppiumSupport, MockGlob, MockPackageChanged} from './mocks';
 

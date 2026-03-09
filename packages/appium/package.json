@@ -32,16 +32,15 @@
   },
   "files": [
     "lib",
-    "build",
+    "build/lib",
+    "build/types",
     "index.js",
     "driver.*",
     "support.*",
     "plugin.*",
     "scripts/autoinstall-extensions.js",
     "types",
-    "tsconfig.json",
-    "!build/tsconfig.tsbuildinfo",
-    "!build/test"
+    "tsconfig.json"
   ],
   "scripts": {
     "build:docs": "node docs/scripts/build-docs.js",

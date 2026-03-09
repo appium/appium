@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.2.2](https://github.com/appium/appium/compare/appium@3.2.1...appium@3.2.2) (2026-03-09)
+
+
+### Bug Fixes
+
+* **appium:** Exclude package.json from tsconfig ([#22052](https://github.com/appium/appium/issues/22052)) ([1d89e2a](https://github.com/appium/appium/commit/1d89e2a5f8e478f3331666d3c308427ab834471a))
+
+
+
 ## [3.2.1](https://github.com/appium/appium/compare/appium@3.2.0...appium@3.2.1) (2026-03-08)
 
 

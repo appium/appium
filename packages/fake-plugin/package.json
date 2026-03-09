@@ -1,6 +1,6 @@
 {
   "name": "@appium/fake-plugin",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "description": "A fake Appium plugin",
   "keywords": [
     "automation",
@@ -39,7 +39,7 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.*ts\""
   },
   "dependencies": {
-    "@appium/base-plugin": "^3.1.0",
+    "@appium/base-plugin": "^3.1.1",
     "@appium/support": "^7.0.6",
     "asyncbox": "6.1.0",
     "lodash": "4.17.23"

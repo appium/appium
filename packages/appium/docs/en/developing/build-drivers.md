@@ -592,9 +592,8 @@ instance:
 - `denyInsecure`: A list of insecure features which are explicitly disabled for this driver (derived
   from server-level options like `--deny-insecure`).
 
-You can use helpers like `isFeatureEnabled` and `assertFeatureEnabled` (implemented by
-`BaseDriver`) together with these flags to gate potentially dangerous functionality in your driver
-and to respect the security posture chosen by whoever is running the Appium server.
+See [Hide behaviour behind security flags](#hide-behaviour-behind-security-flags) for how to use
+these flags in your driver (e.g. via `isFeatureEnabled` and `assertFeatureEnabled`).
 
 ### Extend the existing protocol with new commands
 

@@ -152,13 +152,47 @@ export interface Driver<
 > extends IImplementedCommands<C, Settings, CreateResult, DeleteResult, SessionData>,
     Core<C, Settings> {
   /**
-   * The set of command line arguments set for this driver
+   * The set of command line arguments set for this driver.
+   *
+   * These are derived from the Appium server configuration for this
+   * particular driver (CLI flags and/or config files). They are **not**
+   * user capabilities and cannot be influenced by test code.
    */
   cliArgs: CArgs;
-  // The following properties are assigned by appium */
+  /**
+   * The underlying HTTP server instance hosting this driver.
+   *
+   * This is assigned by the Appium server when a session is created.
+   * It is primarily useful for advanced integrations (for example,
+   * when a driver or plugin needs direct access to the web server).
+   */
   server?: AppiumServer;
+  /**
+   * The hostname or IP address on which the Appium server is listening.
+   *
+   * This is assigned by the Appium server when a session is created,
+   * based on the `--address` (or equivalent config) used to start the
+   * server. It can be used by drivers which need to construct URLs that
+   * point back to the Appium server.
+   */
   serverHost?: string;
+  /**
+   * The TCP port on which the Appium server is listening.
+   *
+   * This is assigned by the Appium server when a session is created,
+   * based on the `--port` (or equivalent config) used to start the
+   * server. It is often used together with {@link Driver.serverHost}
+   * and {@link Driver.serverPath} to build callback or proxy URLs.
+   */
   serverPort?: number;
+  /**
+   * The base path under which WebDriver routes are exposed.
+   *
+   * This is assigned by the Appium server when a session is created,
+   * based on the `--base-path` (or equivalent config) used to start the
+   * server. For example, this might be an empty string (`''`) or
+   * `'/wd/hub'`.
+   */
   serverPath?: string;
 
   // The following methods are implemented by `BaseDriver`.

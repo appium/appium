@@ -42,7 +42,8 @@ nav:
           - reference/cli/extensions.md
           - reference/cli/setup.md
           - reference/cli/env-vars.md
-      - Session Configuration:
+      - Session Properties:
+          - reference/session/index.md
           - reference/session/caps.md
       - API Endpoints:
           - reference/api/index.md

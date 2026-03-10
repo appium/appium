@@ -42,6 +42,7 @@ nav:
           - reference/cli/extensions.md
           - reference/cli/setup.md
           - reference/cli/env-vars.md
+          - reference/cli/insecure-features.md
       - Session Properties:
           - reference/session/index.md
           - reference/session/caps.md

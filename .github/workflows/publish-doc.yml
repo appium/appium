@@ -20,6 +20,9 @@ jobs:
           run-build: 'true'
       - name: Install dependencies (Python)
         run: npm run install-docs-deps
+      - name: Fetch gh-pages
+        run: |
+          git fetch origin gh-pages:gh-pages || true
       - name: Publish docs
         run: |
           npm run docs:publish

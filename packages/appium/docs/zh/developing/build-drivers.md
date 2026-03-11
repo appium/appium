@@ -570,6 +570,33 @@ capability), and then to set an internal field to that value, so that it can be 
 bidiProxyUrl`. Once all this is in place, Appium will proxy BiDi commands from the client straight
 to the upstream connection.
 
+### Understand server-assigned driver properties and security flags
+
+When your driver is running under the main Appium server, Appium assigns a small set of
+server-related properties on your driver instance when a session is created:
+
+- `cliArgs`: Driver-specific configuration derived from the Appium server’s CLI flags and/or
+  configuration files (for example via the `server.driver.<your-driver-name>` section). These
+  options are **not** user capabilities and cannot be influenced directly by test code.
+- `server`, `serverHost`, `serverPort`, `serverPath`: Information about the HTTP server that is
+  hosting your driver. These values reflect how the Appium server was started (for example the
+  `--address`, `--port`, and `--base-path` flags) and are useful when your driver needs to construct
+  URLs that point back to the Appium server itself (for example when setting up proxies, webhooks,
+  or other callbacks).
+
+`BaseDriver` and `AppiumDriver` also cooperate to expose security-related flags on your driver
+instance:
+
+- `relaxedSecurityEnabled`: Indicates whether the server is running with relaxed security enabled
+  (for example via `--relaxed-security`).
+- `allowInsecure`: A list of insecure features which are explicitly allowed for this driver (derived
+  from server-level options like `--allow-insecure`).
+- `denyInsecure`: A list of insecure features which are explicitly disabled for this driver (derived
+  from server-level options like `--deny-insecure`).
+
+See [Hide behaviour behind security flags](#hide-behaviour-behind-security-flags) for how to use
+these flags in your driver (e.g. via `isFeatureEnabled` and `assertFeatureEnabled`).
+
 ### Extend the existing protocol with new commands
 
 You may find that the existing commands don't cut it for your driver. If you want to expose

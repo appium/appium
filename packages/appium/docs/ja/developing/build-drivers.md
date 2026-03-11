@@ -570,6 +570,33 @@ capability), and then to set an internal field to that value, so that it can be 
 bidiProxyUrl`. Once all this is in place, Appium will proxy BiDi commands from the client straight
 to the upstream connection.
 
+### Understand server-assigned driver properties and security flags
+
+When your driver is running under the main Appium server, Appium assigns a small set of
+server-related properties on your driver instance when a session is created:
+
+- `cliArgs`: Driver-specific configuration derived from the Appium server’s CLI flags and/or
+  configuration files (for example via the `server.driver.<your-driver-name>` section). These
+  options are **not** user capabilities and cannot be influenced directly by test code.
+- `server`, `serverHost`, `serverPort`, `serverPath`: Information about the HTTP server that is
+  hosting your driver. These values reflect how the Appium server was started (for example the
+  `--address`, `--port`, and `--base-path` flags) and are useful when your driver needs to construct
+  URLs that point back to the Appium server itself (for example when setting up proxies, webhooks,
+  or other callbacks).
+
+`BaseDriver` and `AppiumDriver` also cooperate to expose security-related flags on your driver
+instance:
+
+- `relaxedSecurityEnabled`: Indicates whether the server is running with relaxed security enabled
+  (for example via `--relaxed-security`).
+- `allowInsecure`: A list of insecure features which are explicitly allowed for this driver (derived
+  from server-level options like `--allow-insecure`).
+- `denyInsecure`: A list of insecure features which are explicitly disabled for this driver (derived
+  from server-level options like `--deny-insecure`).
+
+See [Hide behaviour behind security flags](#hide-behaviour-behind-security-flags) for how to use
+these flags in your driver (e.g. via `isFeatureEnabled` and `assertFeatureEnabled`).
+
 ### Extend the existing protocol with new commands
 
 You may find that the existing commands don't cut it for your driver. If you want to expose
@@ -579,7 +606,7 @@ three ways:
 1. Extending the classic WebDriver protocol and creating client-side plugins to access the extensions via the classic HTTP interface
 2. Extending the WebDriver BiDi protocol with new modules and methods, accessed from a client via the BiDi interface
 3. Overloading the Execute Script command by defining Execute
-  Methods
+   Methods
 
 If you want to follow the first path, you can direct Appium to recognize new methods and add them
 to its set of allowed HTTP routes and command names. You do this by assigning the `newMethodMap`
@@ -685,17 +712,17 @@ async execute(script, args) {
 A couple notes about this system:
 
 1. The arguments array sent via the call to Execute Script must contain only zero or one element(s). The
-  first item in the list is considered to be the parameters object for your method. These parameters
-  will be parsed, validated, and then applied to your overload method in the order specified in
-  `executeMethodMap` (the order specified in the `required` parameters list, followed by the
-  `optional` parameters list). I.e., this framework assumes only a single actual argument sent in via
-  Execute Script (and this argument should be an object with keys/values representing the
-  parameters your execute method expects).
+   first item in the list is considered to be the parameters object for your method. These parameters
+   will be parsed, validated, and then applied to your overload method in the order specified in
+   `executeMethodMap` (the order specified in the `required` parameters list, followed by the
+   `optional` parameters list). I.e., this framework assumes only a single actual argument sent in via
+   Execute Script (and this argument should be an object with keys/values representing the
+   parameters your execute method expects).
 2. Appium does not automatically implement `execute` (the Execute Script handler) for you. You may
-  wish, for example, to only call the `executeMethod` helper function when you're not in proxy
-  mode!
+   wish, for example, to only call the `executeMethod` helper function when you're not in proxy
+   mode!
 3. The `executeMethod` helper will reject with an error if a script name doesn't match one of the
-  script names defined as a command in `executeMethodMap`, or if there are missing parameters.
+   script names defined as a command in `executeMethodMap`, or if there are missing parameters.
 
 One of the nice things about the Execute Method strategy is that methods implemented in this way
 will be available via the classic or BiDi interfaces (since they will result in the same Appium
@@ -770,7 +797,7 @@ that multiple simultaneous sessions don't use the same resources:
 1. Have your users specify resource IDs via capabilities (`appium:driverPort` etc)
 2. Just always use free resources (find a new random port for each session)
 3. Have each driver express what resources it is using, then examine currently-used resources from
-  other drivers when a new session begins.
+   other drivers when a new session begins.
 
 To support this third strategy, you can implement `get driverData` in your driver to return what
 sorts of resources your driver is currently using, for example:

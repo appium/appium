@@ -2749,6 +2749,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#understand-server-assigned-driver-properties-and-security-flags" class="md-nav__link">
+    <span class="md-ellipsis">
+      Understand server-assigned driver properties and security flags
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#extend-the-existing-protocol-with-new-commands" class="md-nav__link">
     <span class="md-ellipsis">
       Extend the existing protocol with new commands
@@ -3389,6 +3398,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#understand-server-assigned-driver-properties-and-security-flags" class="md-nav__link">
+    <span class="md-ellipsis">
+      Understand server-assigned driver properties and security flags
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#extend-the-existing-protocol-with-new-commands" class="md-nav__link">
     <span class="md-ellipsis">
       Extend the existing protocol with new commands
@@ -3925,6 +3943,31 @@ whether it has an active BiDi socket in the returned capabilities (e.g., the <co
 capability), and then to set an internal field to that value, so that it can be returned by <code>get
 bidiProxyUrl</code>. Once all this is in place, Appium will proxy BiDi commands from the client straight
 to the upstream connection.</p>
+<h3 id="understand-server-assigned-driver-properties-and-security-flags">Understand server-assigned driver properties and security flags<a class="headerlink" href="#understand-server-assigned-driver-properties-and-security-flags" title="Permanent link">&para;</a></h3>
+<p>When your driver is running under the main Appium server, Appium assigns a small set of
+server-related properties on your driver instance when a session is created:</p>
+<ul>
+<li><code>cliArgs</code>: Driver-specific configuration derived from the Appium server’s CLI flags and/or
+  configuration files (for example via the <code>server.driver.&lt;your-driver-name&gt;</code> section). These
+  options are <strong>not</strong> user capabilities and cannot be influenced directly by test code.</li>
+<li><code>server</code>, <code>serverHost</code>, <code>serverPort</code>, <code>serverPath</code>: Information about the HTTP server that is
+  hosting your driver. These values reflect how the Appium server was started (for example the
+  <code>--address</code>, <code>--port</code>, and <code>--base-path</code> flags) and are useful when your driver needs to construct
+  URLs that point back to the Appium server itself (for example when setting up proxies, webhooks,
+  or other callbacks).</li>
+</ul>
+<p><code>BaseDriver</code> and <code>AppiumDriver</code> also cooperate to expose security-related flags on your driver
+instance:</p>
+<ul>
+<li><code>relaxedSecurityEnabled</code>: Indicates whether the server is running with relaxed security enabled
+  (for example via <code>--relaxed-security</code>).</li>
+<li><code>allowInsecure</code>: A list of insecure features which are explicitly allowed for this driver (derived
+  from server-level options like <code>--allow-insecure</code>).</li>
+<li><code>denyInsecure</code>: A list of insecure features which are explicitly disabled for this driver (derived
+  from server-level options like <code>--deny-insecure</code>).</li>
+</ul>
+<p>See <a href="#hide-behaviour-behind-security-flags">Hide behaviour behind security flags</a> for how to use
+these flags in your driver (e.g. via <code>isFeatureEnabled</code> and <code>assertFeatureEnabled</code>).</p>
 <h3 id="extend-the-existing-protocol-with-new-commands">Extend the existing protocol with new commands<a class="headerlink" href="#extend-the-existing-protocol-with-new-commands" title="Permanent link">&para;</a></h3>
 <p>You may find that the existing commands don't cut it for your driver. If you want to expose
 behaviours that don't map to any of the existing commands, you can create new commands in one of
@@ -4175,7 +4218,7 @@ unexpected shutdown).</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2025-01-08T21:45:36+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2025-01-08</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2026-03-10T21:23:48+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2026-03-10</span>
   </span>
 
     

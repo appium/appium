@@ -2,6 +2,10 @@ name: Publish docs
 
 on:
   workflow_dispatch:
+  workflow_run:
+    workflows: ["Appium Server Release"]
+    types:
+      - completed
 
 jobs:
   build:

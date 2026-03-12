@@ -5,7 +5,8 @@ title: Session Capabilities
 Capabilities are the core parameters used to start an Appium session. They describe various
 features that you want your session to have, for example, a certain mobile operating system or a
 certain version of a device. Capabilities are represented as key-value pairs, with values allowed
-to be any valid JSON type, including other objects.
+to be any valid JSON type, including other objects. Most importantly, they cannot be changed
+during the lifecycle of the session.
 
 The capabilities used in Appium follow [the W3C WebDriver specification of the same name](https://w3c.github.io/webdriver/#capabilities).
 The WebDriver spec defines a small set of standard capabilities, including the following:
@@ -30,11 +31,11 @@ but it is always a good practice to explicitly include it for clarity.
 
 Here are a few commonly used Appium-specific capabilities:
 
-| Capability Name         | Type     | Description                                    |
-|-------------------------|----------|------------------------------------------------|
-| `appium:automationName` | `string` | The name of the Appium driver to use           |
-| `appium:deviceName`     | `string` | The name of a particular device to automate    |
-| `appium:app`            | `string` | The path to an installable application         |
+| Capability Name         | Type     | Description                                                     |
+|-------------------------|----------|-----------------------------------------------------------------|
+| `appium:automationName` | `string` | The name of the Appium driver to use                            |
+| `appium:udid`           | `string` | The unique device identifier of a particular device to automate |
+| `appium:app`            | `string` | The path to an installable application                          |
 
 All capabilities recognized by the Appium base driver (inherited by all drivers) can be found in the
 [Capabilities Reference document](../reference/session/caps.md). While this common capability set

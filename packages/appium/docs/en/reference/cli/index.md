@@ -31,5 +31,6 @@ The executable has four main subcommands: `server`, `driver`, `plugin`, and `set
 
 </div>
 
-Appium also recognizes several [environment variables](./env-vars.md) and [insecure feature names](./insecure-features.md),
-though drivers and plugins can also define variables and features of their own.
+The Appium server also recognizes several [environment variables](./env-vars.md) and
+[insecure feature names](./insecure-features.md), though drivers and plugins can also define
+variables and features of their own.

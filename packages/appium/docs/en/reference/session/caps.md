@@ -5,12 +5,14 @@ hide:
 title: Capabilities
 ---
 
-The following capabilities are recognized by the Appium server/base driver, and are therefore
-supported by all drivers as well. Some capabilities are directly handled by the server/base driver,
-while others are only validated before being passed to the actual driver.
+The following [capabilities](../../guides/caps.md) are recognized by the Appium server/base driver,
+and are therefore supported by all drivers as well. Some capabilities are directly handled by the
+server/base driver, while others are only validated before being passed to the actual driver.
 
-Please note that any capabilities not listed here will _not_ be rejected by Appium: they will
-simply be forwarded directly to the active driver/plugin.
+!!! note
+
+    Capabilities not listed here will _not_ be rejected by Appium: they will simply be forwarded
+    directly to the active driver/plugin.
 
 ### Required Capabilities
 
@@ -40,15 +42,15 @@ These capabilities are not directly used in the Appium server/base driver, but a
 validation checks due to their relevance in other drivers. The actual handling of these
 capabilities is optional and entirely driver-dependent.
 
-| Capability           | Validation                                                    |
-|----------------------|---------------------------------------------------------------|
-| `platformVersion`    | Must be `string`                                              |
-| `appium:app`         | Must be `string`; empty values are ignored                    |
-| `appium:autoLaunch`  | Must be `boolean`                                             |
-| `appium:autoWebview` | Must be `boolean`                                             |
-| `appium:fullReset`   | Must be `boolean`; mutually exclusive with `appium:noReset`   |
-| `appium:language`    | Must be `string`                                              |
-| `appium:locale`      | Must be `string`                                              |
-| `appium:orientation` | Must be either `LANDSCAPE` or `PORTRAIT`                      |
-| `appium:noReset`     | Must be `boolean`; mutually exclusive with `appium:fullReset` |
-| `appium:udid`        | Must be `string`                                              |
+| Capability                        | Validation                                                    |
+|-----------------------------------|---------------------------------------------------------------|
+| `platformVersion`                 | Must be `string`                                              |
+| `appium:app`                      | Must be `string`; empty values are ignored                    |
+| `appium:autoLaunch` (deprecated)  | Must be `boolean`                                             |
+| `appium:autoWebview`              | Must be `boolean`                                             |
+| `appium:fullReset`                | Must be `boolean`; mutually exclusive with `appium:noReset`   |
+| `appium:language`                 | Must be `string`                                              |
+| `appium:locale`                   | Must be `string`                                              |
+| `appium:orientation`              | Must be either `LANDSCAPE` or `PORTRAIT`                      |
+| `appium:noReset`                  | Must be `boolean`; mutually exclusive with `appium:fullReset` |
+| `appium:udid`                     | Must be `string`                                              |

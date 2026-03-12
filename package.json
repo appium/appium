@@ -132,7 +132,7 @@
     "finalhandler": "2.1.1",
     "get-port": "7.1.0",
     "json-schema-to-typescript": "15.0.4",
-    "lerna": "9.0.5",
+    "lerna": "9.0.6",
     "log-symbols": "7.0.1",
     "midnight-smoker": "8.0.0",
     "mjpeg-consumer": "2.0.0",
@@ -151,7 +151,7 @@
     "tsd": "0.33.0",
     "typescript": "5.9.3",
     "typescript-eslint": "8.57.0",
-    "webdriverio": "9.24.0",
+    "webdriverio": "9.25.0",
     "ws": "8.19.0"
   },
   "engines": {

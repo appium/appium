@@ -9,6 +9,9 @@ The following capabilities are recognized by the Appium server/base driver, and 
 supported by all drivers as well. Some capabilities are directly handled by the server/base driver,
 while others are only validated before being passed to the actual driver.
 
+Please note that any capabilities not listed here will _not_ be rejected by Appium: they will
+simply be forwarded directly to the active driver/plugin.
+
 ### Required Capabilities
 
 These capabilities are used in the Appium server/base driver, and are explicitly required in all

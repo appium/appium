@@ -29,7 +29,7 @@ prefix is `appium:`, and so any Appium-specific capabilities must include this p
 your Appium client, the prefix may be added automatically or in conjunction with certain interfaces,
 but it is always a good practice to explicitly include it for clarity.
 
-Here are a few commonly used Appium-specific capabilities:
+Here are a few commonly (but not universally!) used Appium-specific capabilities:
 
 | Capability Name         | Type     | Description                                                     |
 |-------------------------|----------|-----------------------------------------------------------------|
@@ -44,9 +44,10 @@ define their own capabilities. Make sure to reference their documentation to lea
 capabilities they support. You can find a list of known drivers in the [Ecosystem Drivers](../ecosystem/drivers.md) document.
 
 Drivers are also able to place more complex constraints on capabilities as a group. For example,
-the XCUITest driver requires that at least one of `browserName`, `appium:app`, or `appium:bundleId`
-are included in the capabilities, otherwise it will not know what app to install and/or launch. Each
-driver will document how it interprets these capabilities and any other platform-specific requirements.
+the XCUITest driver recommends that at least one of `browserName`, `appium:app`, or `appium:bundleId`
+is included in the capabilities, otherwise it will not be able to auto-install or auto-launch any
+application. Each driver will document how it interprets these capabilities and any other
+platform-specific requirements.
 
 The way to construct capabilities and start a session will likely differ depending on your Appium
 client. For examples of doing this in each client library, head to the [Ecosystem Clients](../ecosystem/clients.md)

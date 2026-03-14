@@ -123,8 +123,7 @@ function createConsoleTransport(
   args: ParsedArgs,
   logLvl: string
 ): transports.ConsoleTransportInstance {
-  const opt = {
-    name: 'console',
+  const opt: transports.ConsoleTransportOptions = {
     level: logLvl,
     stderrLevels: ['error'],
     format: format.combine(
@@ -140,8 +139,7 @@ function createFileTransport(
   args: ParsedArgs,
   logLvl: string
 ): transports.FileTransportInstance {
-  const opt = {
-    name: 'file',
+  const opt: transports.FileTransportOptions = {
     filename: args.logFile,
     maxFiles: 1,
     level: logLvl,
@@ -167,8 +165,7 @@ function createHttpTransport(
     port = parseInt(hostAndPort[1], 10);
   }
 
-  const opt = {
-    name: 'http',
+  const opt: transports.HttpTransportOptions = {
     host,
     port,
     path: '/',

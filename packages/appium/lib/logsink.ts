@@ -1,22 +1,27 @@
+import type {ParsedArgs} from 'appium/types';
+import type {MessageObject} from '@appium/logger';
+import type {Logger} from 'winston';
+import type Transport from 'winston-transport';
 import globalLog from '@appium/logger';
-import {createLogger, format, transports} from 'winston';
+import winston from 'winston';
+const {createLogger, format, transports} = winston;
 import {fs} from '@appium/support';
 import _ from 'lodash';
-import { adler32 } from './utils';
-import { LRUCache } from 'lru-cache';
+import {adler32} from './utils';
+import {LRUCache} from 'lru-cache';
 
 const LEVELS_MAP = {
   debug: 4,
   info: 3,
   warn: 2,
   error: 1,
-};
+} as const;
 const COLORS_MAP = {
   info: 'cyan',
   debug: 'grey',
   warn: 'yellow',
   error: 'red',
-};
+} as const;
 const TO_WINSTON_LEVELS_MAP = {
   silly: 'debug',
   verbose: 'debug',
@@ -25,49 +30,48 @@ const TO_WINSTON_LEVELS_MAP = {
   http: 'info',
   warn: 'warn',
   error: 'error',
-};
+} as const;
 const COLOR_CODE_PATTERN = /\u001b\[(\d+(;\d+)*)?m/g; // eslint-disable-line no-control-regex
 
 // https://www.ditig.com/publications/256-colors-cheat-sheet
 const MIN_COLOR = 17;
 const MAX_COLOR = 231;
-/** @type {LRUCache<string, number>} */
-const COLORS_CACHE = new LRUCache({
+const COLORS_CACHE = new LRUCache<string, number>({
   max: 1024,
   ttl: 1000 * 60 * 60 * 24, // expire after 24 hours
   updateAgeOnGet: true,
 });
 
 // npmlog is used only for emitting, we use winston for output (global is set by support)
-/** @type {import('winston').Logger?} */
-let log = null;
+let log: Logger | null = null;
 
 /**
+ * Initialize the log sink from parsed CLI/server args.
+ * Sets up Winston transports (console, optional file, optional webhook) and forwards
+ * npmlog messages to them. Call this before other logging setup.
  *
- * @param {import('../types').ParsedArgs} args
- * @returns {Promise<void>}
+ * @param args - Parsed server/CLI arguments (e.g. `loglevel`, `logFile`, `webhook`).
  */
-export async function init(args) {
+export async function init(args: ParsedArgs): Promise<void> {
   globalLog.level = 'silent';
 
   // clean up in case we have initiated before since npmlog is a global object
   clear();
 
-  const transports = await createTransports(args);
-  const transportNames = new Set(transports.map((tr) => tr.constructor.name));
+  const transportList = await createTransports(args);
+  const transportNames = new Set(transportList.map((tr) => tr.constructor.name));
   log = createLogger({
-    transports,
+    transports: transportList,
     levels: LEVELS_MAP,
     handleExceptions: true,
-    exitOnError: false
+    exitOnError: false,
   });
 
-  const reportedLoggerErrors = new Set();
+  const reportedLoggerErrors = new Set<string>();
   // Capture logs emitted via npmlog and pass them through winston
-  globalLog.on('log', (/** @type {MessageObject} */{level, message, prefix}) => {
+  globalLog.on('log', ({level, message, prefix}: MessageObject) => {
     const {sessionSignature} = globalLog.asyncStorage.getStore() ?? {};
-    /** @type {string[]} */
-    const prefixes = [];
+    const prefixes: string[] = [];
     if (sessionSignature) {
       prefixes.push(sessionSignature);
     }
@@ -78,24 +82,26 @@ export async function init(args) {
     if (!_.isEmpty(prefixes)) {
       const finalPrefix = prefixes
         .map(toDecoratedPrefix)
-        .map((pfx) => isLogColorEnabled(args) ? colorizePrefix(pfx) : pfx)
+        .map((pfx) => (isLogColorEnabled(args) ? colorizePrefix(pfx) : pfx))
         .join('');
       msg = `${finalPrefix} ${msg}`;
     }
     const winstonLevel = TO_WINSTON_LEVELS_MAP[level] || 'info';
     try {
-      /** @type {import('winston').Logger} */(log)[winstonLevel](msg);
+      (log as Logger)[winstonLevel as keyof Logger](msg);
       if (_.isFunction(args.logHandler)) {
         args.logHandler(level, msg);
       }
     } catch (e) {
-      if (!reportedLoggerErrors.has(e.message) && process.stderr.writable) {
+      const err = e as Error;
+      if (!reportedLoggerErrors.has(err.message) && process.stderr.writable) {
         // eslint-disable-next-line no-console
         console.error(
           `The log message '${_.truncate(msg, {length: 30})}' cannot be written into ` +
-          `one or more requested destinations: ${transportNames}. Original error: ${e.message}`
+            `one or more requested destinations: ${[...transportNames].join(', ')}. ` +
+            `Original error: ${err.message}`
         );
-        reportedLoggerErrors.add(e.message);
+        reportedLoggerErrors.add(err.message);
       }
     }
   });
@@ -104,35 +110,20 @@ export async function init(args) {
 }
 
 /**
- * @returns {void}
+ * Clear the log sink and remove global log listeners.
+ * Safe to call before re-initializing with `init`.
  */
-export function clear() {
+export function clear(): void {
   log?.clear();
   globalLog.removeAllListeners('log');
 }
 
-// set the custom colors
-const colorizeFormat = format.colorize({
-  colors: COLORS_MAP,
-});
+// #region private helpers
 
-// Strip the color marking within messages
-const stripColorFormat = format(function stripColor(info) {
-  return {
-    ...info,
-    level: stripColorCodes(info.level),
-    message: _.isString(info.message) ? stripColorCodes(info.message) : info.message,
-  };
-})();
-
-/**
- *
- * @param {ParsedArgs} args
- * @param {string} logLvl
- * @returns {transports.ConsoleTransportInstance}
- */
-function createConsoleTransport(args, logLvl) {
-  /** @type {AppiumConsoleTransportOptions} */
+function createConsoleTransport(
+  args: ParsedArgs,
+  logLvl: string
+): winston.transports.ConsoleTransportInstance {
   const opt = {
     name: 'console',
     level: logLvl,
@@ -146,14 +137,10 @@ function createConsoleTransport(args, logLvl) {
   return new transports.Console(opt);
 }
 
-/**
- *
- * @param {ParsedArgs} args
- * @param {string} logLvl
- * @returns {transports.FileTransportInstance}
- */
-function createFileTransport(args, logLvl) {
-  /** @type {AppiumFileTransportOptions} */
+function createFileTransport(
+  args: ParsedArgs,
+  logLvl: string
+): winston.transports.FileTransportInstance {
   const opt = {
     name: 'file',
     filename: args.logFile,
@@ -168,13 +155,10 @@ function createFileTransport(args, logLvl) {
   return new transports.File(opt);
 }
 
-/**
- *
- * @param {ParsedArgs} args
- * @param {string} logLvl
- * @returns {transports.HttpTransportInstance}
- */
-function createHttpTransport(args, logLvl) {
+function createHttpTransport(
+  args: ParsedArgs,
+  logLvl: string
+): winston.transports.HttpTransportInstance {
   let host = '127.0.0.1';
   let port = 9003;
 
@@ -184,32 +168,21 @@ function createHttpTransport(args, logLvl) {
     port = parseInt(hostAndPort[1], 10);
   }
 
-  /** @type {AppiumHttpTransportOptions} */
   const opt = {
     name: 'http',
     host,
     port,
     path: '/',
     level: logLvl,
-    format: format.combine(
-      stripColorFormat,
-      formatLog(args, false),
-    ),
+    format: format.combine(stripColorFormat, formatLog(args, false)),
   };
   return new transports.Http(opt);
 }
 
-/**
- *
- * @param {ParsedArgs} args
- * @returns {Promise<import('winston-transport')[]>}
- */
-async function createTransports(args) {
-  const transports = [];
-  /** @type {string} */
-  let consoleLogLevel;
-  /** @type {string} */
-  let fileLogLevel;
+async function createTransports(args: ParsedArgs): Promise<Transport[]> {
+  const transportList: Transport[] = [];
+  let consoleLogLevel: string;
+  let fileLogLevel: string;
 
   // Server args are normalized in main so we only see dest form (`loglevel`).
   // Fall back to schema default so Winston never sees undefined.
@@ -223,7 +196,7 @@ async function createTransports(args) {
     consoleLogLevel = fileLogLevel = rawLogLevel;
   }
 
-  transports.push(createConsoleTransport(args, consoleLogLevel));
+  transportList.push(createConsoleTransport(args, consoleLogLevel));
 
   if (args.logFile) {
     try {
@@ -234,36 +207,34 @@ async function createTransports(args) {
         await fs.unlink(args.logFile);
       }
 
-      transports.push(createFileTransport(args, fileLogLevel));
+      transportList.push(createFileTransport(args, fileLogLevel));
     } catch (e) {
+      const err = e as Error;
       // eslint-disable-next-line no-console
       console.log(
-        `Tried to attach logging to file '${args.logFile}' but an error ` + `occurred: ${e.message}`
+        `Tried to attach logging to file '${args.logFile}' but an error ` +
+          `occurred: ${err.message}`
       );
     }
   }
 
   if (args.webhook) {
     try {
-      transports.push(createHttpTransport(args, fileLogLevel));
+      transportList.push(createHttpTransport(args, fileLogLevel));
     } catch (e) {
+      const err = e as Error;
       // eslint-disable-next-line no-console
       console.log(
         `Tried to attach logging to Http at ${args.webhook} but ` +
-          `an error occurred: ${e.message}`
+          `an error occurred: ${err.message}`
       );
     }
   }
 
-  return transports;
+  return transportList;
 }
 
-/**
- *
- * @param {string} text
- * @returns {string}
- */
-function toDecoratedPrefix(text) {
+function toDecoratedPrefix(text: string): string {
   return `[${text}]`;
 }
 
@@ -271,27 +242,19 @@ function toDecoratedPrefix(text) {
  * Selects the color of the text in terminal from the MIN_COLOR..MAX_COLOR
  * range. We use adler32 hashing to ensure that equal prefixes would always have
  * same colors.
- *
- * @param {string} text Initial text
- * @returns {string} Colorized text (with pseudocode cchars added)
  */
-function colorizePrefix(text) {
+function colorizePrefix(text: string): string {
   let colorIndex = COLORS_CACHE.get(text);
   if (!colorIndex) {
     const hash = adler32(text);
-    colorIndex = MIN_COLOR + hash % (MAX_COLOR - MIN_COLOR);
+    colorIndex = MIN_COLOR + (hash % (MAX_COLOR - MIN_COLOR));
     COLORS_CACHE.set(text, colorIndex);
   }
   return `\x1b[38;5;${colorIndex}m${text}\x1b[0m`;
 }
 
-/**
- * @param {ParsedArgs} args
- * @param {boolean} targetConsole
- * @returns {import('logform').Format}
- */
-function formatLog(args, targetConsole) {
-  if (['json', 'pretty_json'].includes(args.logFormat)) {
+function formatLog(args: ParsedArgs, targetConsole: boolean): winston.Logform.Format {
+  if (['json', 'pretty_json'].includes(args.logFormat ?? '')) {
     return format.combine(
       format((info) => {
         const infoCopy = {...info};
@@ -311,7 +274,7 @@ function formatLog(args, targetConsole) {
     );
   }
 
-  return format.printf((info) => {
+  return format.printf((info: {timestamp?: string; message?: unknown}) => {
     if (targetConsole) {
       return `${args.logTimestamp ? `${info.timestamp} - ` : ''}${info.message}`;
     }
@@ -319,13 +282,8 @@ function formatLog(args, targetConsole) {
   });
 }
 
-/**
- * add the timestamp in the correct format to the log info object
- *
- * @param {ParsedArgs} args
- * @returns {import('logform').Format}
- */
-function formatTimestamp(args) {
+/** Add the timestamp in the correct format to the log info object. */
+function formatTimestamp(args: ParsedArgs): winston.Logform.Format {
   return format.timestamp({
     format() {
       let date = new Date();
@@ -338,31 +296,31 @@ function formatTimestamp(args) {
   });
 }
 
+// set the custom colors
+const colorizeFormat = format.colorize({
+  colors: COLORS_MAP,
+});
+
 /**
- * Strips color control codes from the given string
+ * Strips ANSI color control codes from a string.
  *
- * @param {string} text
- * @returns {string}
+ * @param text - String that may contain escape codes (e.g. `\u001b[31m`).
+ * @returns The string with all color codes removed.
  */
-export function stripColorCodes(text) {
+export function stripColorCodes(text: string): string {
   return text.replace(COLOR_CODE_PATTERN, '');
 }
 
-/**
- *
- * @param {ParsedArgs} args
- * @returns {boolean}
- */
-function isLogColorEnabled(args) {
+// Strip the color marking within messages (depends on stripColorCodes)
+const stripColorFormat = format(function stripColor(info: {level: string; message: unknown; [key: string]: unknown}) {
+  return {
+    ...info,
+    level: stripColorCodes(info.level),
+    message: _.isString(info.message) ? stripColorCodes(info.message) : info.message,
+  };
+})();
+
+function isLogColorEnabled(args: ParsedArgs): boolean {
   return !args.logNoColors && args.logFormat === 'text';
 }
-
-export default init;
-
-/**
- * @typedef {import('appium/types').ParsedArgs} ParsedArgs
- * @typedef {import('@appium/logger').MessageObject} MessageObject
- * @typedef {transports.ConsoleTransportOptions & {name: string}} AppiumConsoleTransportOptions
- * @typedef {transports.FileTransportOptions & {name: string}} AppiumFileTransportOptions
- * @typedef {transports.HttpTransportOptions & {name: string}} AppiumHttpTransportOptions
- */
+// #endregion

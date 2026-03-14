@@ -1,10 +1,9 @@
 import type {ParsedArgs} from 'appium/types';
 import type {MessageObject} from '@appium/logger';
-import type {Logger} from 'winston';
+import type {Logger, Logform} from 'winston';
 import type Transport from 'winston-transport';
 import globalLog from '@appium/logger';
-import winston from 'winston';
-const {createLogger, format, transports} = winston;
+import {createLogger, format, transports} from 'winston';
 import {fs} from '@appium/support';
 import _ from 'lodash';
 import {adler32} from './utils';
@@ -123,7 +122,7 @@ export function clear(): void {
 function createConsoleTransport(
   args: ParsedArgs,
   logLvl: string
-): winston.transports.ConsoleTransportInstance {
+): transports.ConsoleTransportInstance {
   const opt = {
     name: 'console',
     level: logLvl,
@@ -140,7 +139,7 @@ function createConsoleTransport(
 function createFileTransport(
   args: ParsedArgs,
   logLvl: string
-): winston.transports.FileTransportInstance {
+): transports.FileTransportInstance {
   const opt = {
     name: 'file',
     filename: args.logFile,
@@ -158,7 +157,7 @@ function createFileTransport(
 function createHttpTransport(
   args: ParsedArgs,
   logLvl: string
-): winston.transports.HttpTransportInstance {
+): transports.HttpTransportInstance {
   let host = '127.0.0.1';
   let port = 9003;
 
@@ -253,7 +252,7 @@ function colorizePrefix(text: string): string {
   return `\x1b[38;5;${colorIndex}m${text}\x1b[0m`;
 }
 
-function formatLog(args: ParsedArgs, targetConsole: boolean): winston.Logform.Format {
+function formatLog(args: ParsedArgs, targetConsole: boolean): Logform.Format {
   if (['json', 'pretty_json'].includes(args.logFormat ?? '')) {
     return format.combine(
       format((info) => {
@@ -283,7 +282,7 @@ function formatLog(args: ParsedArgs, targetConsole: boolean): winston.Logform.Fo
 }
 
 /** Add the timestamp in the correct format to the log info object. */
-function formatTimestamp(args: ParsedArgs): winston.Logform.Format {
+function formatTimestamp(args: ParsedArgs): Logform.Format {
   return format.timestamp({
     format() {
       let date = new Date();

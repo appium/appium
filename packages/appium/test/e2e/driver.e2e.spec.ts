@@ -37,7 +37,8 @@ const sillyWebServerHost = 'hey';
 const FAKE_ARGS = {sillyWebServerPort, sillyWebServerHost};
 const FAKE_DRIVER_ARGS = {driver: {fake: FAKE_ARGS}};
 const shouldStartServer = process.env.USE_RUNNING_SERVER !== '0';
-const caps = W3C_PREFIXED_CAPS;
+/** Cast for webdriverio capabilities typing (RequestedStandaloneCapabilities) */
+const caps = W3C_PREFIXED_CAPS as any;
 
 const wdOpts: { hostname: string; port?: number; connectionRetryCount?: number; capabilities?: object; path?: string; protocol?: string; strictSSL?: boolean } = {
   hostname: TEST_HOST,

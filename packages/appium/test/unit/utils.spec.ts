@@ -1,4 +1,10 @@
-import type {Constraints, W3CCapabilities} from '@appium/types';
+import type {
+  BaseDriverCapConstraints,
+  Capabilities,
+  Constraints,
+  NSCapabilities,
+  W3CCapabilities,
+} from '@appium/types';
 import {
   parseCapsForInnerDriver,
   insertAppiumPrefixes,
@@ -79,7 +85,10 @@ describe('utils', function () {
       expect(errRes.error.w3cStatus).to.eql(400);
     });
     it('should reject if W3C caps are not passing constraints', function () {
-      const res = parseCapsForInnerDriver(W3C_CAPS, {hello: {presence: true}});
+      const res = parseCapsForInnerDriver(
+        W3C_CAPS as W3CCapabilities<{hello: {presence: true}}>,
+        {hello: {presence: true}}
+      );
       const err = (res as {error?: Error}).error;
       expect(err!.message).to.match(/required/);
       expect(_.isError(err)).to.be.true;
@@ -88,7 +97,7 @@ describe('utils', function () {
       const w3cCaps = {
         ...W3C_CAPS,
         firstMatch: [{foo: 'bar'}, {'appium:hello': 'world'}],
-      };
+      } as W3CCapabilities<{hello: {presence: true}}>;
       const res = parseCapsForInnerDriver(w3cCaps, {hello: {presence: true}});
       const error = (res as {error?: {jsonwpCode: number; error: string; w3cStatus: number}}).error;
       expect(error!.jsonwpCode).to.eql(61);
@@ -114,7 +123,7 @@ describe('utils', function () {
           'appium:cap1': 'value1',
           'ms:cap2': 'value2',
           someCap: 'someCap',
-        })
+        } as NSCapabilities<BaseDriverCapConstraints>)
       ).to.eql({
         cap1: 'value1',
         'ms:cap2': 'value2',
@@ -125,7 +134,9 @@ describe('utils', function () {
 
   describe('insertAppiumPrefixes()', function () {
     it('should apply prefixes to non-standard capabilities', function () {
-      expect(insertAppiumPrefixes({someCap: 'someCap'})).to.deep.equal({
+      expect(
+        insertAppiumPrefixes({someCap: 'someCap'} as unknown as Capabilities<BaseDriverCapConstraints>)
+      ).to.deep.equal({
         'appium:someCap': 'someCap',
       });
     });
@@ -134,7 +145,7 @@ describe('utils', function () {
         insertAppiumPrefixes({
           browserName: 'BrowserName',
           platformName: 'PlatformName',
-        })
+        } as unknown as Capabilities<BaseDriverCapConstraints>)
       ).to.deep.equal({
         browserName: 'BrowserName',
         platformName: 'PlatformName',
@@ -145,7 +156,7 @@ describe('utils', function () {
         insertAppiumPrefixes({
           'appium:someCap': 'someCap',
           'moz:someOtherCap': 'someOtherCap',
-        })
+        } as unknown as Capabilities<BaseDriverCapConstraints>)
       ).to.deep.equal({
         'appium:someCap': 'someCap',
         'moz:someOtherCap': 'someOtherCap',
@@ -160,7 +171,7 @@ describe('utils', function () {
           platformName: 'PlatformName',
           someOtherCap: 'someOtherCap',
           yetAnotherCap: 'yetAnotherCap',
-        })
+        } as unknown as Capabilities<BaseDriverCapConstraints>)
       ).to.deep.equal({
         'appium:someCap': 'someCap',
         'moz:someOtherCap': 'someOtherCap',

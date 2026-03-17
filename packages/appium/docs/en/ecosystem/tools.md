@@ -49,6 +49,14 @@ automation capabilities using Appium.
 }
 ```
 
+### [Skills](https://github.com/appium/skills)
+
+A set of AI Agent skills to support Appium automation.
+
+Examples:
+- Help building Appium running environment from scratch with AI Agent
+- Help preparing XCUITest driver and WebDriverAgent for real device automation
+
 ## Extension Tools
 
 Appium driver or plugin developers can choose to include these tools in their driver/plugin:

@@ -54,7 +54,7 @@ automation capabilities using Appium.
 A set of AI Agent skills to support Appium automation.
 
 Examples:
-- Help building Appium running environment from scratch with AI Agent
+- Help preparing Appium test environment from scratch, including common driver setup
 - Help preparing XCUITest driver and WebDriverAgent for real device automation
 
 ## Extension Tools

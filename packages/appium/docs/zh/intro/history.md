@@ -1,196 +1,72 @@
 ---
-title: Appium Project History
+title: Appium 项目历史
 ---
 
-Appium has been around in one form or another since 2012. It's been under the
-direction of various individuals and organizations, and it's even been
-implemented in 3 different programming languages! Welcome to more than you ever
-wanted to know about how Appium got to be what is it today...
+Appium 自 2012 年以来以某种形式存在。 它由不同的个人和组织指导，甚至用 3 种不同的编程语言实现过！ 欢迎了解关于 Appium 如何发展到今天这个样子的更多信息……
 
-## Early Inspiration
+## 早期灵感
 
-[Dan Cuellar](https://twitter.com/thedancuellar) was the Test Manager at Zoosk
-in 2011, when he encountered a problem. The length of the test passes on the
-iOS product was getting out of hand. Less testing was an option, but would come
-with additional risk, especially with it taking several days to get patches
-through the iOS App Store Review process. He thought back to his days working
-on websites and realized automation was the answer.
+[Dan Cuellar](https://twitter.com/thedancuellar) 在 2011 年担任 Zoosk 的测试经理时遇到了一个问题。 iOS 产品的测试通过时间变得越来越长，难以控制。 减少测试是一个选择，但会带来额外的风险，特别是在通过 iOS App Store 审核流程获得补丁需要几天时间的情况下。 他回想起自己在网站上工作的日子，意识到自动化是答案。
 
-Dan surveyed the existing landscape of tools, only to find that all of them
-hand major drawbacks. The tool supplied by Apple, UIAutomation, required tests
-to be written in JavaScript, and did not allow for real-time debugging or
-interpretation. It also had to be executed inside the Xcode profiling tool,
-Instruments. Other 3rd-party tools used private APIs and required SDKs and HTTP
-Servers to be embedded into the application. This seemed highly undesirable.
+Dan 调查了现有的工具格局，却发现它们都有重大缺陷。 Apple 提供的工具 UIAutomation 要求测试必须用 JavaScript 编写，并且不允许实时调试或解释。 它还必须在 Xcode 的性能分析工具 Instruments 中执行。 其他第三方工具使用私有 API，并要求将 SDK 和 HTTP 服务器嵌入到应用程序中。 这看起来非常不可取。
 
-Unsatisfied with the existing options, Dan asked his manager for some
-additional time to see if he could find a better way. He spent 2 weeks poking
-and prodding around to see if there was a way to use approved Apple
-technologies to automate an iOS application. The first implementation he tried
-used AppleScript to send messages to Mac UI elements using the OS
-X accessibility APIs. This worked to some degree, but would never work on real
-devices, not to mention other drawbacks.
+对现有选项不满意，Dan 向他的经理要求一些额外的时间，看看他能否找到更好的方法。 他花了 2 周时间探索和试验，看看是否有办法使用 Apple 批准的技术来自动化 iOS 应用程序。 他尝试的第一个实现使用 AppleScript 通过 OS X 辅助功能 API 向 Mac UI 元素发送消息。 这在一定程度上有效，但永远无法在真实设备上工作，更不用说其他缺点了。
 
-So he thought, what if I could get the UIAutomation framework to run in real
-time like an interpreter? He looked into it and he determined that all he would
-need to do is find a way to receive, execute, and reply to commands from within
-a UIAutomation javascript program. Using the utility Apple provided for
-executing shell commands he was able to `cat` sequentially ordered text files
-to receive commands, `eval()` the output to execute them, and write them back
-to disk with `python`. He then prepared code in C# that implemented the
-Selenium-style syntax to write the sequentially ordered javascript commands.
-iOSAuto is born.
+所以他想，如果我能让 UIAutomation 框架像解释器一样实时运行会怎样？ 他研究了一下，确定他所需要做的就是找到一种方法在 UIAutomation JavaScript 程序中接收、执行和回复命令。 使用 Apple 提供的用于执行 shell 命令的实用程序，他能够 `cat` 顺序排列的文本文件来接收命令，`eval()` 输出以执行它们，并用 `python` 将它们写回磁盘。 然后他用 C# 准备了实现 Selenium 样式语法的代码来编写顺序排列的 JavaScript 命令。
+iOSAuto 诞生了。
 
-## Selenium Conference 2012
+## 2012 年 Selenium 大会
 
-Dan was selected to speak at Selenium Conference 2012 in London about an
-entirely different topic. As part of his presentation, he showed off iOS
-Automation using Selenium syntax to demonstrate writing platform-agnostic tests
-that use separate platform-specific page objects with a common interface. To
-his surprise, the cool test architecture would take a backseat to the spectacle
-of iOS tests running like WebDriver tests. Several people suggested that he
-give a lightning talk later in the conference to explain exactly how it worked.
+Dan 被选中在 2012 年伦敦 Selenium 大会上就一个完全不同的主题发表演讲。 作为他演讲的一部分，他展示了使用 Selenium 语法的 iOS 自动化，以演示编写平台无关的测试，这些测试使用具有通用接口的独立平台特定页面对象。 令他惊讶的是，酷炫的测试架构让 iOS 测试像 WebDriver 测试一样运行。 有几个人建议他稍后在会议上做一个闪电演讲来解释它是如何工作的。
 
-On the second day of the conference, Dan stepped up on stage to give the
-lightning talk.  Jason Huggins, co-creator of Selenium, moderated the lightning
-talks.  Dan experienced technical difficulties getting his presentation to
-load, and Jason nearly had to move on to the next lightning talk.  At the last
-moment, the screen turned on and Dan jumped into his presentation. He explained
-the details of his implementation and how it worked, begged for contributors,
-and in five minutes it was over. The crowd applauded politely, and he left the
-stage.
+在会议的第二天，Dan 走上舞台做闪电演讲。  Jason Huggins，Selenium 的共同创建者，主持了闪电演讲。  Dan 在加载演示文稿时遇到了技术困难，Jason 几乎不得不继续下一个闪电演讲。  在最后一刻，屏幕亮了，Dan 开始了他的演讲。 他解释了他的实现细节和工作原理，恳求贡献者，五分钟后就结束了。 观众礼貌地鼓掌，他离开了舞台。
 
-## The Phone Rings
+## 电话响起
 
-Four months after the Selenium Conference, Jason called Dan. Jason had been
-working on iOS testing support for a client at Sauce Labs.  Jason remembered
-Dan's lightning talk and thought the project might be useful to Jason's work,
-but Dan's source code was not public. Jason asked Dan to meet up.  Later that
-week, Dan met Jason in a bar in San Francisco and showed him the source code
-for iOS Auto.
+Selenium 大会四个月后，Jason 打电话给 Dan。 Jason 一直在 Sauce Labs 为客户开发 iOS 测试支持。  Jason 记得 Dan 的闪电演讲，认为这个项目可能对 Jason 的工作有用，但 Dan 的源代码没有公开。 Jason 要求 Dan 见面。  那周晚些时候，Dan 在旧金山的一家酒吧见到了 Jason，并向他展示了 iOS Auto 的源代码。
 
-A long-time open source advocate, Jason encouraged Dan to release his code
-under an open source license.  In August, Dan released the source
-code
-on GitHub in C#. Jason encouraged Dan to change the language to make the
-project more appealing to potential contributors. Dan uploaded a new version
-in
-Python.
-In September, Jason added a web server and began to implement the WebDriver
-wire
-protocol
-over HTTP, making iOS Auto scriptable from any Selenium WebDriver client
-library in any language.
+作为一个长期的开源倡导者，Jason 鼓励 Dan 在开源许可下发布他的代码。  8 月，Dan 在 GitHub 上发布了 [C# 的源代码](https://github.com/penguinho/appium-old/commit/3ab56d3a5601897b2790b5256351f9b5af3f9e90)。 Jason 鼓励 Dan 更改语言以使项目对潜在贡献者更具吸引力。 Dan 上传了 [Python 的新版本]](https://github.com/penguinho/appium-old/commit/9b891207be0957bf209a77242750da17d3eb8eda)。
+9 月，Jason 添加了一个 Web 服务器并开始通过 HTTP 实现 [WebDriver 协议](https://github.com/hugs/appium-old/commit/ae8fe4578640d9af9137d0546190fa29317d1499)，使 iOS Auto 可以从任何语言的任何 Selenium WebDriver 客户端库编写脚本。
 
-## The Mobile Testing Summit
+## 移动测试峰会
 
-Jason decided that the project should be presented at the Mobile Testing
-Summit in November, but suggested that the
-project get a new name first. Many ideas were thrown out and they settled on
-AppleCart. A day later, while he was perusing some of Apple's guidance on
-copyright and trademarks, Jason noticed that under the section of examples for
-names Apple would defend its trademarks against, the first example was
-"AppleCart". He called Dan and informed him of the situation, and they
-brainstormed for a bit before Jason hit the jackpot. Appium... Selenium for
-Apps.
+Jason 决定该项目应该在 11 月的[移动测试峰会](https://twitter.com/mobtestsummit)上展示，但建议项目首先改个新名字。 人们提出了许多想法，他们最终选定了 AppleCart。 一天后，当 Jason 浏览 Apple 关于版权和商标的一些指导时，他注意到在 Apple 会保护其商标的名称示例部分下，第一个例子是"AppleCart"。 他打电话给 Dan 并告知了情况，他们集思广益了一会儿，然后 Jason 中了大奖。 Appium…… 应用程序的 Selenium。
 
-## Sauce Labs and Node.js
+## Sauce Labs 和 Node.js
 
-In January 2013, not long after the Mobile Testing Summit, Sauce Labs decided
-to fully back Appium and provide more developer power. A task force was created
-to evaluate the current state and how best to move forward with the project.
-The team, which included Jonathan Lipps (the current project lead), decided
-that Appium needed a rebirth, and ultimately settled on Node.js as the
-framework to use. Node is well-known as a fast and efficient web server
-backend, and at the end of the day, Appium is just a highly-specialized web
-server. It was also decided that JavaScript as a language was accessible enough
-that Appium would be able to grow into a larger community of open-source
-developers with JavaScript than the other options on the table.
+2013 年 1 月，也就是移动测试峰会后不久，Sauce Labs 决定全力支持 Appium 并提供更多开发人员力量。 创建了一个工作组来评估当前状态以及如何最好地推进该项目。
+该团队包括 Jonathan Lipps（现任项目负责人），他们决定 Appium 需要重生，并最终选择 Node.js 作为使用的框架。 Node 以快速高效的 Web 服务器后端而闻名，而归根结底，Appium 只是一个高度专业化的 Web 服务器。 还决定将 JavaScript 作为一种语言足够易于访问，使得 Appium 能够发展成为一个比其他选项更大的开源开发者社区。
 
-In just a few days, the team leveraged the existing work on Appium and had
-a new version of Appium with as much functionality as the previous Python
-version. The foundation had been laid for Appium's basic architecture, and we
-have been successfully building on it since. A few weeks into this sprint,
-Jonathan Lipps was formally designated project lead and he began to strategize
-how to get more people from the community involved with Appium's development.
+仅仅几天之内，团队就利用 Appium 的现有工作，创建了一个与之前 Python 版本功能相当的新版本 Appium。 为 Appium 的基本架构奠定了基础，从那时起我们一直在成功地构建它。 在这次冲刺开始几周后，Jonathan Lipps 被正式指定为项目负责人，他开始制定战略，如何让更多来自社区的人参与 Appium 的开发。
 
-## Appium Around the World
+## Appium 走向世界
 
-Ultimately, Jonathan decided that getting Appium in front of as many developers
-at conferences and meetups was the best way to attract users and contributions.
-Appium in its new incarnation was debuted at the Google Test Automation
-Conference 2013. Later in 2013,
-Appium was presented at conferences and meetups all around the US, as well as
-in England, Poland, Portugal, and Australia. Notably, Jonathan had Appium
-[perform as instruments in a band](https://www.youtube.com/watch?v=zsbNVkayYRQ)
-and Dan Cuellar put together a fun Appium video
-montage for Selenium Conference.
+最终，Jonathan 决定在会议和聚会上让尽可能多的开发者了解 Appium 是吸引用户和贡献的最佳方式。
+Appium 的新版本在 [2013 年谷歌测试自动化大会](https://www.youtube.com/watch?v=1J0aXDbjiUE)上首次亮相。 2013 年晚些时候，Appium 在美国各地以及英国、波兰、葡萄牙和澳大利亚的会议和聚会上展示。 值得注意的是，Jonathan 让 Appium [作为乐队中的乐器表演](https://www.youtube.com/watch?v=zsbNVkayYRQ)，Dan Cuellar 为 Selenium 大会制作了一个有趣的 [Appium 视频集锦](https://www.youtube.com/watch?v=xkzrEn0v0II)。
 
-But during all these presentations and conferences, the project continued to
-develop. Early in 2013 we released Android and Selendroid support, making
-Appium the first truly cross-platform automation framework. The project also
-continued to attract users and contributors, and by the end of 2013, we'd
-already had well over 1,000 commits.
+在所有这些演讲和会议期间，项目继续发展。 2013 年初，我们发布了 Android 和 Selendroid 支持，使 Appium 成为第一个真正的跨平台自动化框架。 该项目还继续吸引用户和贡献者，到 2013 年底，我们已经有超过 1,000 次提交。
 
-## The Road to Appium 1.0
+## 通往 Appium 1.0 之路
 
-Appium began to grow and mature significantly. In May 2014,
-we released Appium 1.0, which stood as a milestone in Appium's development.
-Appium was given
-[various](https://www.prnewswire.com/news-releases/black-duck-announces-black-duck-open-source-rookies-of-the-year-winners-242383341.html)
-[awards](https://www.infoworld.com/article/2241247/164642-bossie-awards-2014-the-best-open-source-application-development-tools.html)
-and became the most popular open-source cross-platform mobile automation
-framework. Stability improved, bugs were prioritized and fixed, and features
-added. Sauce Labs increased the number of developers it donated to working
-on Appium, but the entire community stayed involved in guiding the project and
-contributing to it, and project governance continued to happen in the open, on
-public mailing lists and GitHub's issue tracker.
+Appium 开始显著增长和成熟。 2014 年 5 月，我们发布了 Appium 1.0，这是 Appium 发展的一个里程碑。
+Appium 获得了[各种](https://www.prnewswire.com/news-releases/black-duck-announces-black-duck-open-source-rookies-of-the-year-winners-242383341.html)[奖项](https://www.infoworld.com/article/2241247/164642-bossie-awards-2014-the-best-open-source-application-development-tools.html)，并成为最受欢迎的开源跨平台移动自动化框架。 稳定性得到改善，错误得到优先处理和修复，功能得到添加。 Sauce Labs 增加了捐赠给 Appium 工作的开发者数量，但整个社区继续参与指导项目并为其做出贡献，项目治理继续在公开的邮件列表和 GitHub 的问题跟踪器上进行。
 
-## The Appium Umbrella Broadens
+## Appium 扩大
 
-Eventually, it became clear that the Appium codebase was not optimized for
-a large team of distributed, sometime contributors. We took the opportunity as
-a committer team to rewrite Appium from the ground up, using a more modern
-version of the JavaScript language, and redoing Appium's architecture so that
-it was easy for users or third-party developers to build their own Appium
-"drivers". We wanted for it to be easier for new contributors to get ramped up
-on the Appium codebase, and to see support for new platforms added to Appium by
-groups other than the core team. That vision has begun to be fulfilled, with
-groups like Microsoft and Youi.tv adding drivers to Appium for Windows desktop
-app automation and Youi.tv app automation, respectively.
+最终，很明显 Appium 代码库没有针对大型分布式团队的兼职贡献者进行优化。 作为提交者团队，我们借此机会从头开始重写 Appium，使用更现代的 JavaScript 语言版本，并重做 Appium 的架构，使用户或第三方开发者可以轻松构建自己的 Appium"驱动程序"。 我们希望新贡献者更容易熟悉 Appium 代码库，并看到核心团队以外的团队为 Appium 添加对新平台的支持。 这一愿景已经开始实现，微软和 Youi.tv 等团体分别为 Windows 桌面应用程序自动化和 Youi.tv 应用程序自动化向 Appium 添加了驱动程序。
 
-## Appium To The People
+## Appium 献给人民
 
-In late 2016, Sauce Labs donated Appium as a project to the JS
-Foundation, in order to cement for the world Sauce's
-commitment that Appium remains open source. The JS Foundation is a non-profit
-open source stewardship organization which takes responsibility for holding the
-copyright for open source projects, as well as ensuring they have a long and
-successful tenure in the community. As a result of our move to a non-profit
-foundation, we hope that the door will open even more widely for new
-contributors, either as individuals or representing one of the many companies
-which now have an interest in seeing Appium move forward.
+2016 年底，Sauce Labs 将 Appium 作为一个项目捐赠给 [JS 基金会](https://js.foundation)，以便向世界证明 Sauce 承诺 Appium 保持开源。 JS 基金会是一个非营利性开源管理组织，负责持有开源项目的版权，并确保它们在社区中拥有长久和成功的任期。 由于我们转移到非营利基金会，我们希望新贡献者的大门会更加敞开，无论是作为个人还是代表现在对 Appium 前进有兴趣的众多公司之一。
 
-Eventually, the JS Foundation merged into the [OpenJS Foundation](https://openjsf.org),
-and Appium became an Impact Project in the foundation.
+最终，JS 基金会并入了 [OpenJS 基金会](https://openjsf.org)，Appium 成为该基金会的影响力项目。
 
 ## Appium 2.0
 
-Appium 2 was released in 2023 and introduced an entirely revamped architecture, shifting focus to Appium
-as an ecosystem rather than an all-in-one project. This unlocked the ability for anyone to develop
-and share their own Appium extensions (drivers and plugins), opening up a world of possibilities
-for automation-related development for platforms far beyond iOS and Android! As a result,
-many third-party extensions were created, such as new drivers for Flutter and Windows, plugins for
-mocking APIs and managing device farms, new Appium clients based on Rust and Swift, and much more.
+Appium 2 于 2023 年发布，引入了一个全新的架构，将重点从一体化项目转移到作为生态系统的 Appium。 这为任何人开发和共享自己的 Appium 扩展（驱动程序和插件）开辟了可能性，为远超 iOS 和 Android 的平台的自动化相关开发打开了一个充满可能性的世界！ 因此，创建了许多第三方扩展，例如用于 Flutter 和 Windows 的新驱动程序、用于模拟 API 和管理设备农场的插件、基于 Rust 和 Swift 的新 Appium 客户端等等。
 
-Around this time was also when we started a sponsorship program for Appium, which attracted various
-major and minor sponsors alike. This allowed us to give back to the Appium community, by compensating
-contributors for their voluntary work on the project.
+大约在这个时候，我们还启动了 Appium 的赞助计划，吸引了各种大小赞助商。 这使我们能够回馈 Appium 社区，为贡献者在项目上的志愿工作提供补偿。
 
 ## Appium 3.0
 
-2025 saw the release of Appium 3. This update was a lot smaller than Appium 2 and included only a
-few behavioral changes, instead focusing on removing deprecated code and updating compatibility for
-more modern ecosystems. Still, this reduced scope was also to be expected: since Appium 2, the
-main feature development efforts had shifted to individual drivers and plugins, many of which had
-gone through multiple major updates during the Appium 2 era.
+2025 年看到了 Appium 3 的发布。 这次更新比 Appium 2 小得多，只包括一些行为变化，而是专注于删除已弃用的代码并更新对更现代生态系统的兼容性。 尽管如此，这种缩小的范围也是意料之中的：自 Appium 2 以来，主要功能开发工作已转移到各个驱动程序和插件，其中许多在 Appium 2 时代经历了多次重大更新。

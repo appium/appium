@@ -345,7 +345,7 @@ export class Strongbox<Options extends StrongboxOpts = StrongboxOpts> implements
   }
 
   private async resolveItemForBasename(basename: string): Promise<Item<any>> {
-    const id = path.join(this.container, slugify(basename));
+    const id = BaseItem.toFilePath(this.container, basename);
     return this.getItem(id) ?? await this.createItem(basename);
   }
 }

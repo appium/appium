@@ -11,6 +11,14 @@ import {slugify} from './util';
  */
 export class BaseItem<T extends Value, U extends Strongbox = Strongbox> implements Item<T> {
   /**
+   * Absolute filesystem path of the file backing an item: `container` + slugified `name`.
+   * Also used to convert a `name` to an `id`.
+   */
+  public static toFilePath(container: string, name: string): string {
+    return path.join(container, slugify(name));
+  }
+
+  /**
    * {@inheritdoc Item.value}
    */
   protected _value?: T;
@@ -40,7 +48,7 @@ export class BaseItem<T extends Value, U extends Strongbox = Strongbox> implemen
     public readonly encoding: ItemEncoding = 'utf8'
   ) {
     this.container = parent.container;
-    this.id = path.join(this.container, slugify(name));
+    this.id = BaseItem.toFilePath(this.container, name);
     Object.defineProperties(this, {
       value: {
         get() {

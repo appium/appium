@@ -55,7 +55,7 @@ To list persisted items without knowing their names in advance:
 const items = await box.listItems();
 ```
 
-`listItems` returns every item in one array; for large containers that can use a lot of memory. Prefer async iteration to process items one at a time:
+`listItems` does not read each file’s contents; call `read()` on an item when you need them. Item order follows the filesystem directory walk (not lexicographic). It returns every item in one array; for large containers that can use a lot of memory, prefer async iteration, which streams directory entries with `opendir` instead of buffering all names first:
 
 ```ts
 for await (const item of box) {

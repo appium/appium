@@ -1,6 +1,5 @@
-import {asyncmap} from 'asyncbox';
 import envPaths from 'env-paths';
-import {readdir, rm} from 'node:fs/promises';
+import {opendir, rm} from 'node:fs/promises';
 import path from 'node:path';
 import {BaseItem} from './base-item';
 import {slugify} from './util';
@@ -270,25 +269,32 @@ export class Strongbox<Options extends StrongboxOpts = StrongboxOpts> implements
    * {@linkcode Strongbox.createItem}), that instance is returned and keeps its original `name`.
    * Otherwise a new item is created using the filename as `name` (see {@linkcode BaseItem}).
    *
-   * @remarks Builds one array of every {@linkcode Item} reference. For containers with many
-   * items, that can use a lot of memory; prefer `for await (const item of box)` ({@linkcode Symbol.asyncIterator})
-   * to process entries incrementally.
+   * @remarks Builds one array of every {@linkcode Item} reference. Does not read file contents;
+   * call {@linkcode Item.read} on each item as needed. Order follows directory iteration
+   * ({@linkcode opendir}), not lexicographic sort. For many items, `for await (const item of box)`
+   * ({@linkcode Symbol.asyncIterator}) streams entries without allocating a full {@linkcode Item}[]
+   * first.
    *
-   * @returns Items in sorted filename order; empty if the container directory does not exist yet
+   * @returns Items in directory iteration order; empty if the container directory does not exist yet
    */
   public async listItems(): Promise<Item<any>[]> {
-    const basenames = await this.listSortedItemBasenames();
-    return await asyncmap(basenames, (basename) => this.resolveItemForBasename(basename));
+    const items: Item<any>[] = [];
+    for await (const basename of this.iterateFileBasenames()) {
+      items.push(this.resolveItemForBasename(basename));
+    }
+    return items;
   }
 
   /**
-   * Yields each persisted item in sorted filename order, like {@linkcode Strongbox.listItems}
-   * but without building a full array. Use `for await (const item of box)`.
+   * Yields each persisted item in the same order as {@linkcode Strongbox.listItems}. Use
+   * `for await (const item of box)`.
+   *
+   * @remarks Walks the container with {@linkcode opendir} and yields one {@linkcode Item} per file
+   * as basenames are seen (no full-name buffer and no sort).
    */
   public async *[Symbol.asyncIterator](): AsyncIterableIterator<Item<any>> {
-    const basenames = await this.listSortedItemBasenames();
-    for (const basename of basenames) {
-      yield await this.resolveItemForBasename(basename);
+    for await (const basename of this.iterateFileBasenames()) {
+      yield this.resolveItemForBasename(basename);
     }
   }
 
@@ -329,24 +335,43 @@ export class Strongbox<Options extends StrongboxOpts = StrongboxOpts> implements
     return newOpts;
   }
 
-  private async listSortedItemBasenames(): Promise<string[]> {
+  /**
+   * Streams regular-file basenames from the container using {@linkcode opendir} (order is
+   * filesystem-defined, not sorted).
+   */
+  private async *iterateFileBasenames(): AsyncIterableIterator<string> {
+    let dir: Awaited<ReturnType<typeof opendir>>;
     try {
-      const entries = await readdir(this.container, {withFileTypes: true});
-      return entries
-        .filter((e) => e.isFile())
-        .map((e) => e.name)
-        .sort();
+      dir = await opendir(this.container);
     } catch (e) {
       if ((e as NodeJS.ErrnoException).code === 'ENOENT') {
-        return [];
+        return;
       }
       throw e;
     }
+    for await (const ent of dir) {
+      if (ent.isFile()) {
+        yield ent.name;
+      }
+    }
   }
 
-  private async resolveItemForBasename(basename: string): Promise<Item<any>> {
+  /**
+   * Registers an {@linkcode Item} for a filename on disk without reading the file (see
+   * {@linkcode Strongbox.createItem}, which loads persisted contents eagerly).
+   */
+  private registerItemWithoutRead(name: string): Item<any> {
+    const item = new (this.defaultItemCtor as ItemCtor<any>)(name, this, 'utf8');
+    if (this.items.has(item.id)) {
+      throw new ReferenceError(`Item with id "${item.id}" already exists`);
+    }
+    this.items.set(item.id, new WeakRef(item));
+    return item;
+  }
+
+  private resolveItemForBasename(basename: string): Item<any> {
     const id = BaseItem.toFilePath(this.container, basename);
-    return this.getItem(id) ?? await this.createItem(basename);
+    return this.getItem(id) ?? this.registerItemWithoutRead(basename);
   }
 }
 

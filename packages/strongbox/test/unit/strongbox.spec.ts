@@ -243,31 +243,38 @@ describe('Strongbox', function () {
         };
       }
 
-      it('should return sorted Items for each file in the container', async function () {
-        MockFs.readdir.resolves([
-          dirent('zebra'),
-          dirent('alpha'),
-          dirent('nested', false),
-        ] as any);
+      function mockOpendir(entries: any[]) {
+        MockFs.opendir.resolves({
+          async *[Symbol.asyncIterator]() {
+            for (const e of entries) {
+              yield e;
+            }
+          },
+          close: sandbox.stub().resolves(),
+        } as any);
+      }
+
+      it('should return Items for each file in opendir iteration order', async function () {
+        mockOpendir([dirent('zebra'), dirent('alpha'), dirent('nested', false)]);
         const items = await box.listItems();
-        expect(items.map((i) => i.name)).to.eql(['alpha', 'zebra']);
-        expect(MockFs.readdir.calledWith(box.container, {withFileTypes: true})).to.be.true;
+        expect(items.map((i) => i.name)).to.eql(['zebra', 'alpha']);
+        expect(MockFs.opendir.calledWith(box.container)).to.be.true;
       });
 
       it('should return an empty array when the container does not exist', async function () {
         const err = Object.assign(new Error('ENOENT'), {code: 'ENOENT'});
-        MockFs.readdir.rejects(err);
+        MockFs.opendir.rejects(err);
         await expect(box.listItems()).to.eventually.eql([]);
       });
 
       it('should rethrow non-ENOENT errors', async function () {
-        MockFs.readdir.rejects(new Error('EACCES'));
+        MockFs.opendir.rejects(new Error('EACCES'));
         await expect(box.listItems()).to.be.rejectedWith('EACCES');
       });
 
       it('should reuse an Item already registered on this instance', async function () {
         const existing = await box.createItem('alpha');
-        MockFs.readdir.resolves([dirent('alpha'), dirent('zebra')] as any);
+        mockOpendir([dirent('alpha'), dirent('zebra')]);
         const items = await box.listItems();
         expect(items[0]).to.equal(existing);
         expect(items.map((i) => i.name)).to.eql(['alpha', 'zebra']);
@@ -283,12 +290,19 @@ describe('Strongbox', function () {
         };
       }
 
+      function mockOpendir(entries: any[]) {
+        MockFs.opendir.resolves({
+          async *[Symbol.asyncIterator]() {
+            for (const e of entries) {
+              yield e;
+            }
+          },
+          close: sandbox.stub().resolves(),
+        } as any);
+      }
+
       it('should yield the same Items in the same order as listItems()', async function () {
-        MockFs.readdir.resolves([
-          dirent('zebra'),
-          dirent('alpha'),
-          dirent('nested', false),
-        ] as any);
+        mockOpendir([dirent('zebra'), dirent('alpha'), dirent('nested', false)]);
         const fromList = await box.listItems();
         const fromIter: typeof fromList = [];
         for await (const item of box) {
@@ -300,7 +314,7 @@ describe('Strongbox', function () {
 
       it('should yield nothing when the container does not exist', async function () {
         const err = Object.assign(new Error('ENOENT'), {code: 'ENOENT'});
-        MockFs.readdir.rejects(err);
+        MockFs.opendir.rejects(err);
         const out: any[] = [];
         for await (const item of box) {
           out.push(item);
@@ -309,7 +323,7 @@ describe('Strongbox', function () {
       });
 
       it('should rethrow non-ENOENT errors', async function () {
-        MockFs.readdir.rejects(new Error('EACCES'));
+        MockFs.opendir.rejects(new Error('EACCES'));
         const gen = box[Symbol.asyncIterator]();
         await expect(gen.next()).to.be.rejectedWith('EACCES');
       });

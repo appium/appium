@@ -41,7 +41,6 @@
     "test:e2e": "mocha --exit -t 20s \"test/e2e/**/*.e2e.spec.ts\""
   },
   "dependencies": {
-    "asyncbox": "6.1.0",
     "env-paths": "4.0.0",
     "slugify": "1.6.8"
   },

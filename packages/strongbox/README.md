@@ -49,6 +49,20 @@ Or write new data to the item:
 await item.write('new stuff');
 ```
 
+To list persisted items without knowing their names in advance:
+
+```ts
+const items = await box.listItems();
+```
+
+`listItems` returns every item in one array; for large containers that can use a lot of memory. Prefer async iteration to process items one at a time:
+
+```ts
+for await (const item of box) {
+  // ...
+}
+```
+
 The last-read contents of the `Item` will be available on the `contents` property, but the value of this property is only current as of the last `read()`:
 
 ```ts

@@ -1,4 +1,4 @@
-import {readFile} from 'node:fs/promises';
+import {readFile, rm} from 'node:fs/promises';
 import type {Item, Strongbox} from '../../lib';
 import {strongbox} from '../../lib';
 
@@ -21,7 +21,7 @@ describe('@appium/strongbox', function () {
     });
 
     afterEach(async function () {
-      await box.clearAll(true);
+      await rm(box.container, {recursive: true, force: true});
     });
 
     describe('when creating an Item with a value', function () {
@@ -75,6 +75,58 @@ describe('@appium/strongbox', function () {
             expect(item.value).to.be.undefined;
           });
         });
+      });
+    });
+
+    describe('listItems()', function () {
+      it('should return Items for persisted files in sorted order', async function () {
+        await box.createItemWithValue('first', 'a');
+        await box.createItemWithValue('second item', 'b');
+        const items = await box.listItems();
+        // second file is `second-item` on disk; item keeps the original createItem name
+        expect(items.map((i) => i.name)).to.eql(['first', 'second item']);
+        await expect(items[0].read()).to.eventually.equal('a');
+        await expect(items[1].read()).to.eventually.equal('b');
+      });
+    });
+
+    describe('Symbol.asyncIterator', function () {
+      it('should match listItems order and contents', async function () {
+        await box.createItemWithValue('first', 'a');
+        await box.createItemWithValue('second item', 'b');
+        const listed = await box.listItems();
+        const iterated: typeof listed = [];
+        for await (const item of box) {
+          iterated.push(item);
+        }
+        expect(iterated.map((i) => i.name)).to.eql(listed.map((i) => i.name));
+        expect(iterated).to.eql(listed);
+      });
+    });
+
+    describe('persistence across Strongbox instances', function () {
+      const NAME = 'e2e-persistence-instance';
+
+      beforeEach(async function () {
+        await rm(strongbox(NAME).container, {recursive: true, force: true});
+      });
+
+      afterEach(async function () {
+        await rm(strongbox(NAME).container, {recursive: true, force: true});
+      });
+
+      it('should expose persisted items from a second instance with the same identifier', async function () {
+        const first = strongbox(NAME);
+        await first.createItemWithValue('item-a', 'hello');
+        await first.createItemWithValue('item-b', 'world');
+
+        const second = strongbox(NAME);
+        expect(second.container).to.equal(first.container);
+
+        const items = await second.listItems();
+        expect(items.map((i) => i.name)).to.eql(['item-a', 'item-b']);
+        await expect(items[0].read()).to.eventually.equal('hello');
+        await expect(items[1].read()).to.eventually.equal('world');
       });
     });
   });

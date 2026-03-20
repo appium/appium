@@ -1,5 +1,6 @@
+import {asyncmap} from 'asyncbox';
 import envPaths from 'env-paths';
-import {rm} from 'node:fs/promises';
+import {readdir, rm} from 'node:fs/promises';
 import path from 'node:path';
 import {BaseItem} from './base-item';
 import {slugify} from './util';
@@ -106,7 +107,7 @@ export type ItemCtor<
  *
  * Manages multiple {@linkcode Item}s.
  */
-export class Strongbox<Options extends StrongboxOpts = StrongboxOpts> {
+export class Strongbox<Options extends StrongboxOpts = StrongboxOpts> implements AsyncIterable<Item<any>> {
   /**
    * Default {@linkcode ItemCtor} to use when creating new {@linkcode Item}s
    */
@@ -263,6 +264,35 @@ export class Strongbox<Options extends StrongboxOpts = StrongboxOpts> {
   }
 
   /**
+   * Lists persisted items by scanning the container directory (one regular file per item).
+   *
+   * Filenames are matched to items by path; if an item was already registered (e.g. via
+   * {@linkcode Strongbox.createItem}), that instance is returned and keeps its original `name`.
+   * Otherwise a new item is created using the filename as `name` (see {@linkcode BaseItem}).
+   *
+   * @remarks Builds one array of every {@linkcode Item} reference. For containers with many
+   * items, that can use a lot of memory; prefer `for await (const item of box)` ({@linkcode Symbol.asyncIterator})
+   * to process entries incrementally.
+   *
+   * @returns Items in sorted filename order; empty if the container directory does not exist yet
+   */
+  public async listItems(): Promise<Item<any>[]> {
+    const basenames = await this.listSortedItemBasenames();
+    return await asyncmap(basenames, (basename) => this.resolveItemForBasename(basename));
+  }
+
+  /**
+   * Yields each persisted item in sorted filename order, like {@linkcode Strongbox.listItems}
+   * but without building a full array. Use `for await (const item of box)`.
+   */
+  public async *[Symbol.asyncIterator](): AsyncIterableIterator<Item<any>> {
+    const basenames = await this.listSortedItemBasenames();
+    for (const basename of basenames) {
+      yield await this.resolveItemForBasename(basename);
+    }
+  }
+
+  /**
    * Performs runtime validation (and optionally transformation) of options.
    *
    * Should not set defaults.
@@ -297,6 +327,26 @@ export class Strongbox<Options extends StrongboxOpts = StrongboxOpts> {
     newOpts.suffix = opts.suffix ?? DEFAULT_SUFFIX;
     newOpts.defaultItemCtor = opts.defaultItemCtor ?? BaseItem;
     return newOpts;
+  }
+
+  private async listSortedItemBasenames(): Promise<string[]> {
+    try {
+      const entries = await readdir(this.container, {withFileTypes: true});
+      return entries
+        .filter((e) => e.isFile())
+        .map((e) => e.name)
+        .sort();
+    } catch (e) {
+      if ((e as NodeJS.ErrnoException).code === 'ENOENT') {
+        return [];
+      }
+      throw e;
+    }
+  }
+
+  private async resolveItemForBasename(basename: string): Promise<Item<any>> {
+    const id = path.join(this.container, slugify(basename));
+    return this.getItem(id) ?? await this.createItem(basename);
   }
 }
 

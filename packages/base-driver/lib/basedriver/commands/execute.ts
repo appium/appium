@@ -57,7 +57,8 @@ const ExecuteCommands: IExecuteCommands = {
       );
     }
     const args = validateExecuteMethodParams(protoArgs as any[], commandMetadata.params);
-    const command = this[commandMetadata.command] as DriverCommand;
+    const commandName = commandMetadata.command as keyof BaseDriver<C>;
+    const command = this[commandName] as DriverCommand;
     return await command.call(this, ...args);
   },
 };

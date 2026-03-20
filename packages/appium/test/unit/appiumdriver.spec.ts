@@ -478,10 +478,10 @@ describe('AppiumDriver', function () {
       describe('when args are not present', function () {
         it('the `cliArgs` prop should be an empty object', function () {
           const appium = new AppiumDriver({} as any);
-          appium.pluginClasses = new Map([
+          appium.pluginClasses = new Map<any, string>([
             [NoArgsPlugin, 'noargs'],
             [ArgsPlugin, 'args'],
-          ]);
+          ]) as Map<any, string>;
           for (const plugin of appium.createPluginInstances()) {
             expect(plugin.cliArgs).to.eql({});
           }
@@ -491,10 +491,10 @@ describe('AppiumDriver', function () {
       describe('when args are equal to the schema defaults', function () {
         it('the `cliArgs` prop should contain the schema defaults', function () {
           const appium = new AppiumDriver({plugin: {args: {randomArg: 2000}}} as any);
-          appium.pluginClasses = new Map([
+          appium.pluginClasses = new Map<any, string>([
             [NoArgsPlugin, 'noargs'],
             [ArgsPlugin, 'args'],
-          ]);
+          ]) as Map<any, string>;
           const [noargs, args] = appium.createPluginInstances();
           expect(noargs.cliArgs).to.eql({});
           expect(args.cliArgs).to.eql({randomArg: 2000});
@@ -503,11 +503,11 @@ describe('AppiumDriver', function () {
         describe('when the default is an "object"', function () {
           it('the `cliArgs` prop should contain the schema defaults', function () {
             const appium = new AppiumDriver({plugin: {arrayarg: {arr: []}}} as any);
-            appium.pluginClasses = new Map([
+            appium.pluginClasses = new Map<any, string>([
               [NoArgsPlugin, 'noargs'],
               [ArgsPlugin, 'args'],
               [ArrayArgPlugin, 'arrayarg'],
-            ]);
+            ]) as Map<any, string>;
             const [noargs, args, arrayarg] = appium.createPluginInstances();
             expect(noargs.cliArgs).to.eql({});
             expect(args.cliArgs).to.eql({});
@@ -519,7 +519,7 @@ describe('AppiumDriver', function () {
       describe('when args are not equal to the schema defaults', function () {
         it('should add cliArgs to the plugin', function () {
           const appium = new AppiumDriver({plugin: {args: {randomArg: 1234}}} as any);
-          appium.pluginClasses = new Map([[ArgsPlugin, 'args']]);
+          appium.pluginClasses = new Map<any, string>([[ArgsPlugin, 'args']]) as Map<any, string>;
           const plugin = _.first(appium.createPluginInstances()) as BasePlugin;
           expect(plugin.cliArgs).to.eql({randomArg: 1234});
         });

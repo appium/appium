@@ -14,7 +14,8 @@
     "version": {
       "conventionalCommits": true,
       "createRelease": "github",
-      "allowBranch": ["master", "appium3"]
+      "allowBranch": ["master", "appium3"],
+      "exact": true
     }
   },
   "ignoreChanges": ["**/test/**", "**/*.md"],

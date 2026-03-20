@@ -15,6 +15,8 @@ import type {
   StringRecord,
 } from '@appium/types';
 
+type BasePluginMapType = Plugin & Record<string, PluginCommand>;
+
 /**
  * Base plugin class for Appium plugins.
  * Subclasses should use type `import('@appium/types').MethodMap<SubclassName>` for
@@ -29,9 +31,9 @@ export class BasePlugin extends ExtensionCore implements Plugin {
    */
   declare logger: AppiumLogger;
 
-  static newMethodMap: MethodMap<BasePlugin> = {};
+  static newMethodMap: MethodMap<BasePluginMapType> = {};
 
-  static executeMethodMap: ExecuteMethodMap<BasePlugin> = {};
+  static executeMethodMap: ExecuteMethodMap<BasePluginMapType> = {};
 
   constructor(
     name: string,

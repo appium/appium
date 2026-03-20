@@ -48,7 +48,7 @@ expectAssignable<PluginExecuteMethodDef<TestPlugin>>(TestPlugin.executeMethodMap
 expectAssignable<ExecuteMethodMap<TestPlugin>>(TestPlugin.executeMethodMap);
 expectAssignable<PluginStatic<TestPlugin>>(TestPlugin);
 expectAssignable<PluginClass<TestPlugin>>(TestPlugin);
-expectNotAssignable<PluginClass>(TestPlugin);
+expectAssignable<PluginClass>(TestPlugin);
 expectAssignable<PluginCommand>(instance.testMethod);
 expectAssignable<PluginCommand>(instance.getPageSource);
 // DriverCommand does not know anything about the driver in which it lives, so `getPageSource` looks

@@ -39,7 +39,7 @@
     "test:unit": "exit 0"
   },
   "devDependencies": {
-    "@appium/types": "^1.2.1"
+    "@appium/types": "~1.2.1"
   },
   "dependencies": {
     "get-port": "7.1.0",

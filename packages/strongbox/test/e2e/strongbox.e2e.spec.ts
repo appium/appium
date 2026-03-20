@@ -85,7 +85,7 @@ describe('@appium/strongbox', function () {
         const items = await box.listItems();
         expect(items.map((i) => i.name).sort()).to.eql(['first', 'second item']);
         const byName = Object.fromEntries(items.map((i) => [i.name, i]));
-        await expect(byName['first'].read()).to.eventually.equal('a');
+        await expect(byName.first.read()).to.eventually.equal('a');
         await expect(byName['second item'].read()).to.eventually.equal('b');
       });
 

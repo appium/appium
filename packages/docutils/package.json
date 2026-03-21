@@ -46,7 +46,7 @@
     "start": "node ./build/lib/cli/index.js"
   },
   "dependencies": {
-    "@appium/support": "^7.0.6",
+    "@appium/support": "7.0.6",
     "consola": "3.4.2",
     "diff": "8.0.3",
     "lilconfig": "3.1.3",

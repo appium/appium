@@ -37,9 +37,9 @@
     "test:types": "tsd"
   },
   "dependencies": {
-    "@appium/logger": "^2.0.5",
-    "@appium/schema": "^1.1.0",
-    "@appium/tsconfig": "^1.1.2",
+    "@appium/logger": "2.0.5",
+    "@appium/schema": "1.1.0",
+    "@appium/tsconfig": "1.1.2",
     "type-fest": "5.5.0"
   },
   "engines": {

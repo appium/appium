@@ -45,8 +45,8 @@
     "test:types": "tsd && tsc -p tsconfig.test.json"
   },
   "dependencies": {
-    "@appium/support": "^7.0.6",
-    "@appium/types": "^1.2.1",
+    "@appium/support": "7.0.6",
+    "@appium/types": "1.2.1",
     "@colors/colors": "1.6.0",
     "async-lock": "1.4.1",
     "asyncbox": "6.1.0",

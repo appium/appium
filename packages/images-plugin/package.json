@@ -40,8 +40,8 @@
     "test:e2e": "mocha --exit --timeout 40s --slow 20s \"./test/e2e/**/*.spec.*ts\""
   },
   "dependencies": {
-    "@appium/opencv": "^4.1.1",
-    "@appium/support": "^7.0.6",
+    "@appium/opencv": "4.1.1",
+    "@appium/support": "7.0.6",
     "lodash": "4.17.23",
     "lru-cache": "11.2.7",
     "sharp": "0.34.5"

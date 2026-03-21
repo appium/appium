@@ -204,7 +204,7 @@ export class Strongbox<Options extends StrongboxOpts = StrongboxOpts> implements
       this,
       encoding
     );
-    if (this.items.has(item.id)) {
+    if (this.getLiveItem(item.id)) {
       throw new ReferenceError(`Item with id "${item.id}" already exists`);
     }
     try {
@@ -254,12 +254,28 @@ export class Strongbox<Options extends StrongboxOpts = StrongboxOpts> implements
 
   /**
    * Attempts to retrieve an {@linkcode Item} by its `id`.
+   * Drops stale {@linkcode WeakRef} map entries when the value was collected.
    * @param id ID of item
    * @returns An `Item`, if found
    */
   public getItem(id: string): Item<any> | undefined {
+    return this.getLiveItem(id);
+  }
+
+  /**
+   * Returns a live {@linkcode Item} or removes a stale {@linkcode WeakRef} from {@linkcode Strongbox.items}.
+   */
+  private getLiveItem(id: string): Item<any> | undefined {
     const ref = this.items.get(id);
-    return ref?.deref();
+    if (!ref) {
+      return undefined;
+    }
+    const item = ref.deref();
+    if (!item) {
+      this.items.delete(id);
+      return undefined;
+    }
+    return item;
   }
 
   /**
@@ -358,11 +374,12 @@ export class Strongbox<Options extends StrongboxOpts = StrongboxOpts> implements
 
   /**
    * Registers an {@linkcode Item} for a filename on disk without reading the file (see
-   * {@linkcode Strongbox.createItem}, which loads persisted contents eagerly).
+   * {@linkcode Strongbox.createItem}, which loads persisted contents eagerly). Uses the same
+   * constructor arity as {@linkcode Strongbox.createItem} when no encoding is given.
    */
   private registerItemWithoutRead(name: string): Item<any> {
-    const item = new (this.defaultItemCtor as ItemCtor<any>)(name, this, 'utf8');
-    if (this.items.has(item.id)) {
+    const item = new (this.defaultItemCtor as ItemCtor<any>)(name, this, undefined);
+    if (this.getLiveItem(item.id)) {
       throw new ReferenceError(`Item with id "${item.id}" already exists`);
     }
     this.items.set(item.id, new WeakRef(item));

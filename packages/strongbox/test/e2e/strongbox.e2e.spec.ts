@@ -79,11 +79,11 @@ describe('@appium/strongbox', function () {
     });
 
     describe('listItems()', function () {
-      it('should return Items for persisted files in directory order', async function () {
+      it('should return an Item for each persisted file with readable contents', async function () {
         await box.createItemWithValue('first', 'a');
         await box.createItemWithValue('second item', 'b');
         const items = await box.listItems();
-        expect(items.map((i) => i.name).sort()).to.eql(['first', 'second item']);
+        expect(items.map((i) => i.name)).to.have.members(['first', 'second item']);
         const byName = Object.fromEntries(items.map((i) => [i.name, i]));
         await expect(byName.first.read()).to.eventually.equal('a');
         await expect(byName['second item'].read()).to.eventually.equal('b');
@@ -104,7 +104,7 @@ describe('@appium/strongbox', function () {
     });
 
     describe('Symbol.asyncIterator', function () {
-      it('should match listItems order and contents', async function () {
+      it('should yield the same Items in the same order as listItems()', async function () {
         await box.createItemWithValue('first', 'a');
         await box.createItemWithValue('second item', 'b');
         const listed = await box.listItems();
@@ -137,7 +137,7 @@ describe('@appium/strongbox', function () {
         expect(second.container).to.equal(first.container);
 
         const items = await second.listItems();
-        expect(items.map((i) => i.name).sort()).to.eql(['item-a', 'item-b']);
+        expect(items.map((i) => i.name)).to.have.members(['item-a', 'item-b']);
         const byName = Object.fromEntries(items.map((i) => [i.name, i]));
         await expect(byName['item-a'].read()).to.eventually.equal('hello');
         await expect(byName['item-b'].read()).to.eventually.equal('world');

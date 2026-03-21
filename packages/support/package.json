@@ -65,7 +65,7 @@
     "pluralize": "8.0.0",
     "read-pkg": "10.1.0",
     "resolve-from": "5.0.0",
-    "sanitize-filename": "1.6.3",
+    "sanitize-filename": "1.6.4",
     "semver": "7.7.4",
     "shell-quote": "1.8.3",
     "supports-color": "10.2.2",

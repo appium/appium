@@ -21,12 +21,27 @@ const GRID_V3_PROXY_API_PATH = '/grid/api/proxy';
 /**
  * Registers this server as a node with a **Selenium Grid 3** hub.
  *
- * @param data - Path or object representing the Selenium Grid 3 node configuration file. If a `string`,
- * all subsequent arguments are required!
+ * When `data` is a path to a JSON config file, `addr`, `port`, and `basePath` are required (they define
+ * how the hub reaches this Appium server). When `data` is an inline config object, those parameters are
+ * optional and only used to fill missing node URL fields in the config.
+ *
+ * @param data - Path to a JSON file or an inline parsed config object
  * @param addr - Bind to this address
  * @param port - Bind to this port
- * @param basePath - Base path for the Appium server (used in the node URL sent to the hub)
+ * @param basePath - Base path for the Appium server (used in the node URL sent to the hub; may be `''`)
  */
+export default async function registerNode(
+  data: string,
+  addr: string,
+  port: number,
+  basePath: string
+): Promise<void>;
+export default async function registerNode(
+  data: Grid3NodeConfig,
+  addr?: string,
+  port?: number,
+  basePath?: string
+): Promise<void>;
 export default async function registerNode(
   data: string | Grid3NodeConfig,
   addr?: string,
@@ -178,7 +193,8 @@ async function isAlreadyRegistered(configHolder: Grid3NodeConfig): Promise<boole
   const id = hubCfg.id;
   try {
     const {data, status} = await axios<Grid3ProxyApiResponse>({
-      url: `${hubUri(hubCfg)}${GRID_V3_PROXY_API_PATH}?id=${id}`,
+      url: `${hubUri(hubCfg)}${GRID_V3_PROXY_API_PATH}`,
+      params: {id},
       timeout: 10000,
     });
     if (status !== 200) {

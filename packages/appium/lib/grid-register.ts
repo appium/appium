@@ -48,6 +48,20 @@ export default async function registerNode(
   port?: number,
   basePath?: string
 ): Promise<void> {
+  if (typeof data === 'string') {
+    if (addr === undefined || port === undefined || basePath === undefined) {
+      throw logger.errorWithException(
+        'When the first argument is a Selenium Grid 3 node config file path, address, port, and basePath ' +
+          'are required (e.g. match your Appium `--address`, `--port`, and base path).'
+      );
+    }
+    if (typeof port !== 'number' || !Number.isFinite(port)) {
+      throw logger.errorWithException(
+        'When registering from a node config file path, port must be a finite number.'
+      );
+    }
+  }
+
   let configHolder: Grid3NodeConfig;
   if (_.isString(data)) {
     const configFilePath = data;

@@ -443,7 +443,7 @@ async function main(args) {
   }
   appiumDriver.server = server;
   try {
-    // configure as node on grid, if necessary
+    // configure as node on Selenium Grid 3 hub, if necessary
     // falsy values should not cause this to run
     if (parsedArgs.nodeconfig) {
       await registerNode(

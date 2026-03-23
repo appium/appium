@@ -42,7 +42,7 @@
     "@appium/types": "1.2.1"
   },
   "dependencies": {
-    "get-port": "7.1.0",
+    "get-port": "7.2.0",
     "log-symbols": "7.0.1",
     "teen_process": "4.1.0"
   },

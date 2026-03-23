@@ -84,7 +84,7 @@
     "teen_process": "4.1.0",
     "type-fest": "5.5.0",
     "winston": "3.19.0",
-    "ws": "8.19.0",
+    "ws": "8.20.0",
     "yaml": "2.8.3"
   },
   "engines": {

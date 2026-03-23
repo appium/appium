@@ -202,6 +202,13 @@ export function getNonDefaultServerArgs(parsedArgs: Args): Args {
   /**
    * This used to be a hideous conditional, but it's broken up into a hideous function instead.
    * hopefully this makes things a little more understandable.
+   * - checks if the default value is defined
+   * - if so, and the default is not an array:
+   *   - ensures the types are the same
+   *   - ensures the values are equal
+   * - if so, and the default is an array:
+   *   - ensures the args value is an array
+   *   - ensures the args values do not differ from the default values
    */
   const isNotDefault = _.overEvery([
     defaultIsDefined,
@@ -224,6 +231,10 @@ export function getNonDefaultServerArgs(parsedArgs: Args): Args {
 
 /**
  * Shows a breakdown of the current config after CLI params, config file loaded & defaults applied.
+ *
+ * The actual shape of `preConfigParsedArgs` and `defaults` does not matter for the purposes of this
+ * function, but it's intended to be called with values of type {@link ParsedArgs} and
+ * `DefaultValues<true>`, respectively.
  */
 export function showConfig(
   nonDefaultPreConfigParsedArgs: Partial<Args>,

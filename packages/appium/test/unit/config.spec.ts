@@ -98,7 +98,6 @@ describe('Config', function () {
 
       describe('when no CLI arguments (other than --show-config) provided', function () {
         it('should not dump CLI args', function () {
-          // @ts-expect-error
           showConfig({}, {}, {}, {});
           expect(log.calledWith('\n(no CLI parameters provided)')).to.be.true;
         });

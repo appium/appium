@@ -2,6 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import fs from 'node:fs';
 import {createSandbox, type SinonSandbox, type SinonSpy, type SinonStubbedMember} from 'sinon';
+import type {IOutputError} from '@sidvind/better-ajv-errors';
 import * as YAML from 'yaml';
 import * as schema from '../../lib/schema/schema';
 import {resolveFixture, rewiremock} from '../helpers';
@@ -18,7 +19,7 @@ interface ReadConfigFileResult {
 }
 
 type ReadConfigFileFn = (filepath?: string, opts?: object) => Promise<ReadConfigFileResult>;
-type FormatErrorsFn = (errors?: unknown[], config?: unknown, opts?: object) => string;
+type FormatErrorsFn = (errors?: unknown[], config?: unknown, opts?: object) => string | IOutputError[];
 type NormalizeConfigFn = (config: unknown) => unknown;
 
 const {expect} = chai;
@@ -314,6 +315,20 @@ describe('config-file', function () {
     describe('when provided `errors` as a non-empty array', function () {
       it('should return a string', function () {
         expect(formatErrors([{}])).to.be.a('string');
+      });
+    });
+
+    describe('when `opts.pretty` is false', function () {
+      it('should call `betterAjvErrors()` with non-CLI output format', function () {
+        formatErrors([{}], {}, {pretty: false});
+        expect(
+          (mocks['@sidvind/better-ajv-errors'] as SinonSpy).calledWith(
+            schema.getSchema(),
+            {},
+            [{}],
+            {format: 'js', json: undefined}
+          )
+        ).to.be.true;
       });
     });
 

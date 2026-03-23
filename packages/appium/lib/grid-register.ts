@@ -25,6 +25,9 @@ const GRID_V3_PROXY_API_PATH = '/grid/api/proxy';
  * how the hub reaches this Appium server). When `data` is an inline config object, those parameters are
  * optional and only used to fill missing node URL fields in the config.
  *
+ * @deprecated Selenium Grid 3 registration is legacy and slated for removal.
+ * Use Selenium Grid 4 integration (node relay) instead.
+ *
  * @param data - Path to a JSON file or an inline parsed config object
  * @param addr - Bind to this address
  * @param port - Bind to this port

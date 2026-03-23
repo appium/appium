@@ -34,7 +34,7 @@ export function formatErrors(
   }
   return betterAjvErrors(getSchema(opts.schemaId), config, errors, {
     json: opts.json,
-    format: 'cli',
+    format: opts.pretty === false ? 'js' : 'cli',
   });
 }
 
@@ -140,6 +140,7 @@ function jsonLoader(filepath: string, content: string): unknown {
   try {
     return JSON.parse(content);
   } catch (e) {
+    rawConfig.delete(filepath);
     throw new Error(
       `The JSON config at '${filepath}' cannot be loaded. Original error: ${(e as Error).message}`
     );

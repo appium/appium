@@ -1,45 +1,79 @@
 import '@colors/colors';
 import _ from 'lodash';
-import { util, doctor, logger } from '@appium/support';
+import {util, doctor, logger} from '@appium/support';
+import type {AppiumLogger, DoctorCheckResult, IDoctorCheck} from '@appium/types';
 
-export const EXIT_CODE = /** @type {const} */ Object.freeze({
+/**
+ * Process exit codes returned by {@link Doctor.run}.
+ */
+export const EXIT_CODE = Object.freeze({
   SUCCESS: 0,
   HAS_MAJOR_ISSUES: 127,
-});
+} as const);
+
+/** Exit code values produced by {@link Doctor.run}. */
+export type DoctorExitCode = (typeof EXIT_CODE)[keyof typeof EXIT_CODE];
+
+/**
+ * A failed check reported during {@link Doctor} diagnostics.
+ */
+export interface DoctorIssue {
+  /** The check that produced this issue. */
+  check: IDoctorCheck;
+  /** Colored message string as logged during diagnosis. */
+  error: string;
+  /** Set after a successful automatic fix attempt. */
+  fixed?: boolean;
+}
 
 export class Doctor {
-  /**
-   * @param {DoctorCheck[]} [checks=[]]
-   */
-  constructor(checks = []) {
+  private readonly log: AppiumLogger;
+  private readonly checks: IDoctorCheck[];
+  private foundIssues: DoctorIssue[];
+
+  constructor(checks: IDoctorCheck[] = []) {
     this.log = logger.getLogger('Doctor');
-    /** @type {DoctorCheck[]} */
     this.checks = checks;
     this.checks
       .filter((c) => _.isNil(c.log))
-      .forEach((c) => { c.log = this.log; });
-    /** @type {DoctorIssue[]} */
+      .forEach((c) => {
+        c.log = this.log;
+      });
     this.foundIssues = [];
   }
 
   /**
-   * @returns {DoctorIssue[]}
+   * Runs diagnostics, reports issues, attempts automatic fixes where supported, and returns an exit code.
+   *
+   * @returns {@link EXIT_CODE.SUCCESS} when there are no issues or all issues were resolved;
+   *   {@link EXIT_CODE.HAS_MAJOR_ISSUES} when manual intervention is still required or fixes failed.
    */
-  get issuesRequiredToFix() {
+  async run(): Promise<DoctorExitCode> {
+    await this.diagnose();
+    if (this.reportSuccess()) {
+      return EXIT_CODE.SUCCESS;
+    }
+    if (await this.reportManualIssues()) {
+      return EXIT_CODE.HAS_MAJOR_ISSUES;
+    }
+    if (!(await this.runAutoFixes())) {
+      return EXIT_CODE.HAS_MAJOR_ISSUES;
+    }
+    return EXIT_CODE.SUCCESS;
+  }
+
+  private get issuesRequiredToFix(): DoctorIssue[] {
     return this.foundIssues.filter((f) => !f.check.isOptional());
   }
 
-  /**
-   * @returns {DoctorIssue[]}
-   */
-  get issuesOptionalToFix() {
+  private get issuesOptionalToFix(): DoctorIssue[] {
     return this.foundIssues.filter((f) => f.check.isOptional());
   }
 
   /**
    * The doctor shows the report
    */
-  async diagnose() {
+  private async diagnose(): Promise<void> {
     this.log.info(`### Starting doctor diagnostics  ###`);
     this.foundIssues = [];
     for (const check of this.checks) {
@@ -49,20 +83,15 @@ export class Doctor {
         this.foundIssues.push(issue);
       }
     }
-    this.log.info(
-      `### Diagnostic completed, ${this.buildFixMessage()}. ###`
-    );
+    this.log.info(`### Diagnostic completed, ${this.buildFixMessage()}. ###`);
     this.log.info('');
   }
 
-  /**
-   * @returns {Promise<boolean>}
-   */
-  async reportManualIssues() {
+  private async reportManualIssues(): Promise<boolean> {
     const manualIssues = _.filter(this.issuesRequiredToFix, (f) => !f.check.hasAutofix());
     const manualIssuesOptional = _.filter(this.issuesOptionalToFix, (f) => !f.check.hasAutofix());
 
-    const handleIssues = async (headerLogs, issues) => {
+    const handleIssues = async (headerLogs: string[], issues: DoctorIssue[]): Promise<void> => {
       if (_.isEmpty(issues)) {
         return;
       }
@@ -70,14 +99,13 @@ export class Doctor {
       for (const logMsg of headerLogs) {
         this.log.info(logMsg);
       }
-      /** @type {string[]} */
-      const fixMessages = [];
+      const fixMessages: string[] = [];
       for (const issue of issues) {
-        let message;
+        let message: string | null;
         try {
           message = await issue.check.fix();
         } catch (e) {
-          message = e.message;
+          message = (e as Error).message;
         }
         if (message) {
           fixMessages.push(message);
@@ -89,14 +117,20 @@ export class Doctor {
       this.log.info('');
     };
 
-    await handleIssues([
-      '### Manual Fixes Needed ###',
-      'The configuration cannot be automatically fixed, please do the following first:',
-    ], manualIssues);
-    await handleIssues([
-      '### Optional Manual Fixes ###',
-      'To fix these optional issues, please do the following manually:',
-    ], manualIssuesOptional);
+    await handleIssues(
+      [
+        '### Manual Fixes Needed ###',
+        'The configuration cannot be automatically fixed, please do the following first:',
+      ],
+      manualIssues
+    );
+    await handleIssues(
+      [
+        '### Optional Manual Fixes ###',
+        'To fix these optional issues, please do the following manually:',
+      ],
+      manualIssuesOptional
+    );
 
     if (manualIssues.length > 0) {
       this.log.info('###');
@@ -108,15 +142,12 @@ export class Doctor {
     return false;
   }
 
-  /**
-   * @param {DoctorIssue} f
-   */
-  async runAutoFix(f) {
+  private async runAutoFix(f: DoctorIssue): Promise<void> {
     this.log.info(`### Fixing: ${f.error} ###`);
     try {
       await f.check.fix();
     } catch (err) {
-      if (err.constructor.name === doctor.FixSkippedError.name) {
+      if (err instanceof doctor.FixSkippedError) {
         this.log.info(`### Skipped fix ###`);
         return;
       } else {
@@ -137,10 +168,7 @@ export class Doctor {
     }
   }
 
-  /**
-   * @returns {Promise<boolean>}
-   */
-  async runAutoFixes() {
+  private async runAutoFixes(): Promise<boolean> {
     const autoFixes = _.filter(this.foundIssues, (f) => f.check.hasAutofix());
     for (const f of autoFixes) {
       await this.runAutoFix(f);
@@ -158,29 +186,7 @@ export class Doctor {
     return true;
   }
 
-  /**
-   * @returns {Promise<EXIT_CODE[keyof EXIT_CODE]>}
-   */
-  async run() {
-    await this.diagnose();
-    if (this.reportSuccess()) {
-      return EXIT_CODE.SUCCESS;
-    }
-    if (await this.reportManualIssues()) {
-      return EXIT_CODE.HAS_MAJOR_ISSUES;
-    }
-    if (!await this.runAutoFixes()) {
-      return EXIT_CODE.HAS_MAJOR_ISSUES;
-    }
-    return EXIT_CODE.SUCCESS;
-  }
-
-  /**
-   * @param {DoctorCheckResult} result
-   * @param {DoctorCheck} check
-   * @returns {DoctorIssue?}
-   */
-  toIssue(result, check) {
+  private toIssue(result: DoctorCheckResult, check: IDoctorCheck): DoctorIssue | null {
     if (result.ok) {
       this.log.info(` ${'\u2714'.green} ${result.message}`);
       return null;
@@ -196,18 +202,14 @@ export class Doctor {
     };
   }
 
-  /**
-   * @returns {string}
-   */
-  buildFixMessage() {
-    return `${util.pluralize('required fix', this.issuesRequiredToFix.length, true)} needed, ` +
-      `${util.pluralize('optional fix', this.issuesOptionalToFix.length, true)} possible`;
+  private buildFixMessage(): string {
+    return (
+      `${util.pluralize('required fix', this.issuesRequiredToFix.length, true)} needed, ` +
+      `${util.pluralize('optional fix', this.issuesOptionalToFix.length, true)} possible`
+    );
   }
 
-  /**
-   * @returns {boolean}
-   */
-  reportSuccess() {
+  private reportSuccess(): boolean {
     if (this.issuesRequiredToFix.length === 0 && this.issuesOptionalToFix.length === 0) {
       this.log.info('Everything looks good, bye!');
       this.log.info('');
@@ -216,15 +218,3 @@ export class Doctor {
     return false;
   }
 }
-
-/**
- * @typedef DoctorIssue
- * @property {DoctorCheck} check
- * @property {string} error
- * @property {boolean} [fixed]
- */
-
-/**
- * @typedef {import('@appium/types').IDoctorCheck} DoctorCheck
- * @typedef {import('@appium/types').DoctorCheckResult} DoctorCheckResult
- */

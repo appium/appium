@@ -1,7 +1,7 @@
 import type {KeywordDefinition} from 'ajv';
 import {transformers} from './cli-transformers';
 
-export type AppiumCliTransformerName = 'csv' | 'json';
+export type AppiumCliTransformerName = keyof typeof transformers;
 
 export interface AppiumJSONSchemaKeywords {
   appiumCliDest?: string;
@@ -63,7 +63,7 @@ export const keywords: Record<string, KeywordDefinition> = {
     keyword: 'appiumCliTransformer',
     metaSchema: {
       type: 'string',
-      enum: Object.keys(transformers),
+      enum: Object.keys(transformers) as AppiumCliTransformerName[],
       description:
         'The name of a custom transformer to run against the value as provided via the CLI.',
     },

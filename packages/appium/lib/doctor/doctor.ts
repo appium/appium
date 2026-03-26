@@ -26,11 +26,17 @@ export interface DoctorIssue {
   fixed?: boolean;
 }
 
+/**
+ * Runs doctor checks and orchestrates manual/automatic fixes.
+ */
 export class Doctor {
   private readonly log: AppiumLogger;
   private readonly checks: IDoctorCheck[];
   private foundIssues: DoctorIssue[];
 
+  /**
+   * @param checks - Checks to run. Checks without a logger receive this instance logger.
+   */
   constructor(checks: IDoctorCheck[] = []) {
     this.log = logger.getLogger('Doctor');
     this.checks = checks;

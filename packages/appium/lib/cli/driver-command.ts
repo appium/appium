@@ -2,6 +2,7 @@ import _ from 'lodash';
 import type {ExtMetadata, ExtRecord, InstallType} from 'appium/types';
 import type {ExtensionConfig} from '../extension/extension-config';
 import ExtensionCliCommand from './extension-command';
+import type {ExtensionUpdateResult, RunOutput} from './extension-command';
 import {KNOWN_DRIVERS} from '../constants';
 import '@colors/colors';
 
@@ -13,7 +14,7 @@ type DriverRunOptions = {driver: string; scriptName: string; extraArgs?: string[
 type DriverDoctorOptions = {driver: string};
 type DriverExtensionConfig = ExtensionConfig<'driver'>;
 
-export default class DriverCliCommand extends ExtensionCliCommand {
+export default class DriverCliCommand extends ExtensionCliCommand<'driver'> {
   constructor({config, json}: {config: DriverExtensionConfig; json: boolean}) {
     super({config, json});
     this.knownExtensions = KNOWN_DRIVERS;
@@ -46,7 +47,7 @@ export default class DriverCliCommand extends ExtensionCliCommand {
    *
    * @param opts - update options
    */
-  async update({driver, unsafe}: DriverUpdateOpts): Promise<unknown> {
+  async update({driver, unsafe}: DriverUpdateOpts): Promise<ExtensionUpdateResult> {
     return await super._update({installSpec: driver, unsafe});
   }
 
@@ -56,11 +57,11 @@ export default class DriverCliCommand extends ExtensionCliCommand {
    * @param opts - script execution options
    * @throws {Error} if the script fails to run
    */
-  async run({driver, scriptName, extraArgs}: DriverRunOptions): Promise<unknown> {
+  async run({driver, scriptName, extraArgs}: DriverRunOptions): Promise<RunOutput> {
     return await super._run({
       installSpec: driver,
       scriptName,
-      extraArgs: extraArgs as any,
+      extraArgs,
       bufferOutput: this.isJsonOutput,
     });
   }
@@ -84,7 +85,7 @@ export default class DriverCliCommand extends ExtensionCliCommand {
    * @param args - installed extension name and metadata
    * @returns formatted success text
    */
-  getPostInstallText({
+  override getPostInstallText({
     extName,
     extData,
   }: {
@@ -107,7 +108,7 @@ export default class DriverCliCommand extends ExtensionCliCommand {
    * @param driverMetadata - `appium` metadata from extension package
    * @param installSpec - install spec from CLI
    */
-  validateExtensionFields(driverMetadata: ExtMetadata<'driver'>, installSpec: string): void {
+  override validateExtensionFields(driverMetadata: ExtMetadata<'driver'>, installSpec: string): void {
     const missingFields = REQ_DRIVER_FIELDS.reduce(
       (acc, field) => (driverMetadata[field] ? acc : [...acc, field]),
       []

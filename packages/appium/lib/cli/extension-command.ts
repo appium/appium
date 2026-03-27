@@ -145,19 +145,6 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
   }
 
   /**
-   * Logs a message and returns an {@linkcode Error} to throw.
-   *
-   * For TS to understand that a function throws an exception, it must actually throw an exception--
-   * in other words, _calling_ a function which is guaranteed to throw an exception is not enough--
-   * nor is something like a `never` return annotation, which does not imply a thrown exception.
-   *
-   * @throws {Error}
-   */
-  protected _createFatalError(message: string): Error {
-    return new Error(this.log.decorate(message, 'error'));
-  }
-
-  /**
    * Executes an extension subcommand from parsed CLI args.
    *
    * @param args - parsed CLI argument object
@@ -198,6 +185,32 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
     }
 
     return await this._displayNormalListOutput(listData, showUpdates);
+  }
+
+  /**
+   * For any `package.json` fields which a particular type of extension requires, validate the
+   * presence and form of those fields on the `package.json` data, throwing an error if anything is
+   * amiss.
+   *
+   * @param extMetadata - the data in the "appium" field of `package.json` for an extension
+   * @param installSpec - Extension name/spec
+   */
+  protected abstract validateExtensionFields(
+    extMetadata: ExtMetadata<ExtType>,
+    installSpec: string
+  ): void;
+
+  /**
+   * Logs a message and returns an {@linkcode Error} to throw.
+   *
+   * For TS to understand that a function throws an exception, it must actually throw an exception--
+   * in other words, _calling_ a function which is guaranteed to throw an exception is not enough--
+   * nor is something like a `never` return annotation, which does not imply a thrown exception.
+   *
+   * @throws {Error}
+   */
+  protected _createFatalError(message: string): Error {
+    return new Error(this.log.decorate(message, 'error'));
   }
 
   /**
@@ -356,127 +369,11 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
   }
 
   /**
-   * Install an extension via NPM
-   *
-   */
-  private async installViaNpm({
-    installSpec,
-    pkgName,
-    pkgVer,
-    installType,
-  }: InstallViaNpmArgs): Promise<Record<string, any>> {
-    const installMsg = `Installing '${installSpec}'`;
-    const validateMsg = `Validating '${installSpec}'`;
-
-    // the string used for installation is either <name>@<ver> in the case of a standard NPM
-    // package, or whatever the user sent in otherwise.
-    const installStr = installType === INSTALL_TYPE_NPM ? `${pkgName}${pkgVer ? `@${pkgVer}` : ''}` : installSpec;
-    const appiumHome = this.config.appiumHome;
-    try {
-      const {pkg, installPath} = await spinWith(
-        this.isJsonOutput,
-        installMsg,
-        async () => await npm.installPackage(appiumHome, installStr, {pkgName, installType})
-      );
-
-      await spinWith(this.isJsonOutput, validateMsg, async () => {
-        this.validatePackageJson(pkg, installSpec);
-      });
-
-      return this.getInstallationReceipt({
-        pkg,
-        installPath,
-        installType,
-        installSpec,
-      });
-    } catch (err) {
-      throw this._createFatalError(`Encountered an error when installing package: ${err.message}`);
-    }
-  }
-
-  /**
    * Get the text which should be displayed to the user after an extension has been installed. This
    * is designed to be overridden by drivers/plugins with their own particular text.
    *
    */
   protected abstract getPostInstallText(args: ExtensionArgs): string;
-
-  /**
-   * Once a package is installed on-disk, this gathers some necessary metadata for validation.
-   *
-   */
-  private getInstallationReceipt({
-    pkg,
-    installPath,
-    installType,
-    installSpec,
-  }: GetInstallationReceiptOpts): Record<string, any> {
-    const {appium, name, version, peerDependencies} = pkg;
-
-    const strVersion = version;
-    const internal = {
-      pkgName: name,
-      version: strVersion,
-      installType,
-      installSpec,
-      installPath,
-      appiumVersion: peerDependencies?.appium,
-    };
-
-    const extMetadata = appium;
-
-    return {
-      ...internal,
-      ...extMetadata,
-    };
-  }
-
-  /**
-   * Validates the _required_ root fields of an extension's `package.json` file.
-   *
-   * These required fields are:
-   * - `name`
-   * - `version`
-   * - `appium`
-   * @param pkg - `package.json` of extension
-   * @param installSpec - Extension name/spec
-   * @throws {ReferenceError} If `package.json` has a missing or invalid field
-   */
-  private validatePackageJson(pkg: Record<string, any>, installSpec: string): boolean {
-    const {appium, name, version} = pkg;
-
-    const createMissingFieldError = (field: string): ReferenceError =>
-      new ReferenceError(
-        `${this.type} "${installSpec}" invalid; missing a \`${field}\` field of its \`package.json\``
-      );
-
-    if (!name) {
-      throw createMissingFieldError('name');
-    }
-    if (!version) {
-      throw createMissingFieldError('version');
-    }
-    if (!appium) {
-      throw createMissingFieldError('appium');
-    }
-
-    this.validateExtensionFields(appium, installSpec);
-
-    return true;
-  }
-
-  /**
-   * For any `package.json` fields which a particular type of extension requires, validate the
-   * presence and form of those fields on the `package.json` data, throwing an error if anything is
-   * amiss.
-   *
-   * @param extMetadata - the data in the "appium" field of `package.json` for an extension
-   * @param installSpec - Extension name/spec
-   */
-  protected abstract validateExtensionFields(
-    extMetadata: Record<string, any>,
-    installSpec: string
-  ): void;
 
   /**
    * Uninstall an extension.
@@ -626,47 +523,6 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
       safeUpdate = null;
     }
     return {current: version, safeUpdate, unsafeUpdate};
-  }
-
-  /**
-   * Actually update an extension installed by NPM, using the NPM cli. And update the installation
-   * manifest.
-   *
-   * @param installSpec - name of extension to update
-   * @param version - version string identifier to update extension to
-   */
-  private async updateExtension(installSpec: string, version: string): Promise<void> {
-    const {pkgName, installType} = this.config.installedExtensions[installSpec];
-    const extData = await this.installViaNpm({
-      installSpec,
-      installType,
-      pkgName,
-      pkgVer: version,
-    });
-
-    delete extData[`${this.type}Name`];
-    await this.config.updateExtension(installSpec, extData as any);
-  }
-
-  /**
-   * Just wraps {@linkcode child_process.spawn} with some default options
-   *
-   * @param cwd - CWD
-   * @param script - Path to script
-   * @param args - Extra args for script
-   * @param opts - Options
-   */
-  private _runUnbuffered(
-    cwd: string,
-    script: string,
-    args: string[] = [],
-    opts: Record<string, any> = {}
-  ) {
-    return spawn(process.execPath, [script, ...args], {
-      cwd,
-      stdio: 'inherit',
-      ...opts,
-    });
   }
 
   /**
@@ -890,6 +746,151 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
       }
       return acc;
     }, {});
+  }
+
+  /**
+   * Install an extension via NPM
+   *
+   */
+  private async installViaNpm({
+    installSpec,
+    pkgName,
+    pkgVer,
+    installType,
+  }: InstallViaNpmArgs): Promise<Record<string, any>> {
+    const installMsg = `Installing '${installSpec}'`;
+    const validateMsg = `Validating '${installSpec}'`;
+
+    // the string used for installation is either <name>@<ver> in the case of a standard NPM
+    // package, or whatever the user sent in otherwise.
+    const installStr = installType === INSTALL_TYPE_NPM ? `${pkgName}${pkgVer ? `@${pkgVer}` : ''}` : installSpec;
+    const appiumHome = this.config.appiumHome;
+    try {
+      const {pkg, installPath} = await spinWith(
+        this.isJsonOutput,
+        installMsg,
+        async () => await npm.installPackage(appiumHome, installStr, {pkgName, installType})
+      );
+
+      await spinWith(this.isJsonOutput, validateMsg, async () => {
+        this.validatePackageJson(pkg, installSpec);
+      });
+
+      return this.getInstallationReceipt({
+        pkg,
+        installPath,
+        installType,
+        installSpec,
+      });
+    } catch (err) {
+      throw this._createFatalError(`Encountered an error when installing package: ${err.message}`);
+    }
+  }
+
+
+  /**
+   * Actually update an extension installed by NPM, using the NPM cli. And update the installation
+   * manifest.
+   *
+   * @param installSpec - name of extension to update
+   * @param version - version string identifier to update extension to
+   */
+  private async updateExtension(installSpec: string, version: string): Promise<void> {
+    const {pkgName, installType} = this.config.installedExtensions[installSpec];
+    const extData = await this.installViaNpm({
+      installSpec,
+      installType,
+      pkgName,
+      pkgVer: version,
+    });
+
+    delete extData[`${this.type}Name`];
+    await this.config.updateExtension(installSpec, extData as any);
+  }
+
+  /**
+   * Just wraps {@linkcode child_process.spawn} with some default options
+   *
+   * @param cwd - CWD
+   * @param script - Path to script
+   * @param args - Extra args for script
+   * @param opts - Options
+   */
+  private _runUnbuffered(
+    cwd: string,
+    script: string,
+    args: string[] = [],
+    opts: Record<string, any> = {}
+  ) {
+    return spawn(process.execPath, [script, ...args], {
+      cwd,
+      stdio: 'inherit',
+      ...opts,
+    });
+  }
+
+  /**
+   * Once a package is installed on-disk, this gathers some necessary metadata for validation.
+   *
+   */
+  private getInstallationReceipt({
+    pkg,
+    installPath,
+    installType,
+    installSpec,
+  }: GetInstallationReceiptOpts): Record<string, any> {
+    const {appium, name, version, peerDependencies} = pkg;
+
+    const strVersion = version;
+    const internal = {
+      pkgName: name,
+      version: strVersion,
+      installType,
+      installSpec,
+      installPath,
+      appiumVersion: peerDependencies?.appium,
+    };
+
+    const extMetadata = appium;
+
+    return {
+      ...internal,
+      ...extMetadata,
+    };
+  }
+
+  /**
+   * Validates the _required_ root fields of an extension's `package.json` file.
+   *
+   * These required fields are:
+   * - `name`
+   * - `version`
+   * - `appium`
+   * @param pkg - `package.json` of extension
+   * @param installSpec - Extension name/spec
+   * @throws {ReferenceError} If `package.json` has a missing or invalid field
+   */
+  private validatePackageJson(pkg: Record<string, any>, installSpec: string): boolean {
+    const {appium, name, version} = pkg;
+
+    const createMissingFieldError = (field: string): ReferenceError =>
+      new ReferenceError(
+        `${this.type} "${installSpec}" invalid; missing a \`${field}\` field of its \`package.json\``
+      );
+
+    if (!name) {
+      throw createMissingFieldError('name');
+    }
+    if (!version) {
+      throw createMissingFieldError('version');
+    }
+    if (!appium) {
+      throw createMissingFieldError('appium');
+    }
+
+    this.validateExtensionFields(appium, installSpec);
+
+    return true;
   }
 
   /**
@@ -1196,7 +1197,7 @@ type DoctorOptions = {installSpec: string};
 /**
  * Return value of {@linkcode ExtensionCliCommand._run}
  */
-type RunOutput = {output?: string[]};
+export type RunOutput = {output?: string[]};
 
 /**
  * Options for {@linkcode ExtensionCliCommand._update}.
@@ -1211,7 +1212,7 @@ type UpdateReport = {from: string; to: string | null};
 /**
  * Return value of {@linkcode ExtensionCliCommand._update}.
  */
-type ExtensionUpdateResult = {errors: Record<string, Error>; updates: Record<string, UpdateReport>};
+export type ExtensionUpdateResult = {errors: Record<string, Error>; updates: Record<string, UpdateReport>};
 
 /**
  * Options for {@linkcode ExtensionCliCommand._uninstall}.

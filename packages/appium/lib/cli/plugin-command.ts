@@ -2,6 +2,7 @@ import _ from 'lodash';
 import type {ExtMetadata, ExtRecord, InstallType} from 'appium/types';
 import type {ExtensionConfig} from '../extension/extension-config';
 import ExtensionCliCommand from './extension-command';
+import type {ExtensionUpdateResult, RunOutput} from './extension-command';
 import {KNOWN_PLUGINS} from '../constants';
 
 const REQ_PLUGIN_FIELDS = ['pluginName', 'mainClass'];
@@ -12,7 +13,7 @@ type PluginRunOptions = {plugin: string; scriptName: string; extraArgs?: string[
 type PluginDoctorOptions = {plugin: string};
 type PluginExtensionConfig = ExtensionConfig<'plugin'>;
 
-export default class PluginCliCommand extends ExtensionCliCommand {
+export default class PluginCliCommand extends ExtensionCliCommand<'plugin'> {
   constructor({config, json}: {config: PluginExtensionConfig; json: boolean}) {
     super({config, json});
     this.knownExtensions = KNOWN_PLUGINS;
@@ -45,7 +46,7 @@ export default class PluginCliCommand extends ExtensionCliCommand {
    *
    * @param opts - update options
    */
-  async update({plugin, unsafe}: PluginUpdateOpts): Promise<unknown> {
+  async update({plugin, unsafe}: PluginUpdateOpts): Promise<ExtensionUpdateResult> {
     return await super._update({installSpec: plugin, unsafe});
   }
 
@@ -55,11 +56,11 @@ export default class PluginCliCommand extends ExtensionCliCommand {
    * @param opts - script execution options
    * @throws {Error} if the script fails to run
    */
-  async run({plugin, scriptName, extraArgs}: PluginRunOptions): Promise<unknown> {
+  async run({plugin, scriptName, extraArgs}: PluginRunOptions): Promise<RunOutput> {
     return await super._run({
       installSpec: plugin,
       scriptName,
-      extraArgs: extraArgs as any,
+      extraArgs,
       bufferOutput: this.isJsonOutput,
     });
   }
@@ -77,7 +78,13 @@ export default class PluginCliCommand extends ExtensionCliCommand {
     });
   }
 
-  getPostInstallText({extName, extData}: {extName: string; extData: {version: string}}): string {
+  /**
+   * Builds the success message displayed after a plugin installation.
+   *
+   * @param args - installed extension name and metadata
+   * @returns formatted success text
+   */
+  override getPostInstallText({extName, extData}: {extName: string; extData: {version: string}}): string {
     return `Plugin ${extName}@${extData.version} successfully installed`.green;
   }
 
@@ -90,7 +97,7 @@ export default class PluginCliCommand extends ExtensionCliCommand {
    * @param pluginMetadata - `appium` metadata from extension package
    * @param installSpec - install spec from CLI
    */
-  validateExtensionFields(pluginMetadata: ExtMetadata<'plugin'>, installSpec: string): void {
+  override validateExtensionFields(pluginMetadata: ExtMetadata<'plugin'>, installSpec: string): void {
     const missingFields = REQ_PLUGIN_FIELDS.reduce(
       (acc, field) => (pluginMetadata[field] ? acc : [...acc, field]),
       []

@@ -28,11 +28,11 @@ describe('ExtensionCommand', function () {
   describe('method', function () {
     let ec: ExtensionCommand;
     class TestExtensionCommand extends ExtensionCommand {
-      protected getPostInstallText(): string {
+      protected override getPostInstallText(): string {
         return '';
       }
 
-      protected validateExtensionFields(): void {}
+      protected override validateExtensionFields(): void {}
     }
 
     beforeEach(function () {

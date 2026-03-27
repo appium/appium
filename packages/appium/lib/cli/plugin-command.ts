@@ -1,8 +1,13 @@
 import _ from 'lodash';
 import type {ExtMetadata, ExtRecord, InstallType} from 'appium/types';
-import type {ExtensionConfig} from '../extension/extension-config';
 import ExtensionCliCommand from './extension-command';
-import type {ExtensionUpdateResult, RunOutput} from './extension-command';
+import type {
+  ExtensionArgs,
+  ExtensionCommandOptions,
+  ExtensionUpdateResult,
+  PostInstallText,
+  RunOutput,
+} from './extension-command';
 import {KNOWN_PLUGINS} from '../constants';
 
 const REQ_PLUGIN_FIELDS = ['pluginName', 'mainClass'];
@@ -11,10 +16,9 @@ type PluginUninstallOpts = {plugin: string};
 type PluginUpdateOpts = {plugin: string; unsafe: boolean};
 type PluginRunOptions = {plugin: string; scriptName: string; extraArgs?: string[]};
 type PluginDoctorOptions = {plugin: string};
-type PluginExtensionConfig = ExtensionConfig<'plugin'>;
 
 export default class PluginCliCommand extends ExtensionCliCommand<'plugin'> {
-  constructor({config, json}: {config: PluginExtensionConfig; json: boolean}) {
+  constructor({config, json}: ExtensionCommandOptions<'plugin'>) {
     super({config, json});
     this.knownExtensions = KNOWN_PLUGINS;
   }
@@ -84,7 +88,7 @@ export default class PluginCliCommand extends ExtensionCliCommand<'plugin'> {
    * @param args - installed extension name and metadata
    * @returns formatted success text
    */
-  override getPostInstallText({extName, extData}: {extName: string; extData: {version: string}}): string {
+  override getPostInstallText({extName, extData}: ExtensionArgs<'plugin'>): PostInstallText {
     return `Plugin ${extName}@${extData.version} successfully installed`.green;
   }
 

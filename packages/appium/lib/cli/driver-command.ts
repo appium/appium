@@ -1,8 +1,13 @@
 import _ from 'lodash';
 import type {ExtMetadata, ExtRecord, InstallType} from 'appium/types';
-import type {ExtensionConfig} from '../extension/extension-config';
 import ExtensionCliCommand from './extension-command';
-import type {ExtensionUpdateResult, RunOutput} from './extension-command';
+import type {
+  ExtensionArgs,
+  ExtensionCommandOptions,
+  ExtensionUpdateResult,
+  PostInstallText,
+  RunOutput,
+} from './extension-command';
 import {KNOWN_DRIVERS} from '../constants';
 import '@colors/colors';
 
@@ -12,10 +17,9 @@ type DriverUninstallOpts = {driver: string};
 type DriverUpdateOpts = {driver: string; unsafe: boolean};
 type DriverRunOptions = {driver: string; scriptName: string; extraArgs?: string[]};
 type DriverDoctorOptions = {driver: string};
-type DriverExtensionConfig = ExtensionConfig<'driver'>;
 
 export default class DriverCliCommand extends ExtensionCliCommand<'driver'> {
-  constructor({config, json}: {config: DriverExtensionConfig; json: boolean}) {
+  constructor({config, json}: ExtensionCommandOptions<'driver'>) {
     super({config, json});
     this.knownExtensions = KNOWN_DRIVERS;
   }
@@ -85,13 +89,7 @@ export default class DriverCliCommand extends ExtensionCliCommand<'driver'> {
    * @param args - installed extension name and metadata
    * @returns formatted success text
    */
-  override getPostInstallText({
-    extName,
-    extData,
-  }: {
-    extName: string;
-    extData: {version: string; automationName: string; platformNames: unknown};
-  }): string {
+  override getPostInstallText({extName, extData}: ExtensionArgs<'driver'>): PostInstallText {
     return (
       `Driver ${extName}@${extData.version} successfully installed\n`.green +
       `- automationName: ${extData.automationName.green}\n` +

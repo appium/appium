@@ -363,7 +363,9 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
     }
 
     // log info for the user
-    this.log.info(this.getPostInstallText({extName, extData: receipt}));
+    this.log.info(
+      this.getPostInstallText({extName, extData: receipt as unknown as ExtInstallReceipt<ExtType>})
+    );
 
     return this.config.installedExtensions;
   }
@@ -373,7 +375,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
    * is designed to be overridden by drivers/plugins with their own particular text.
    *
    */
-  protected abstract getPostInstallText(args: ExtensionArgs): string;
+  protected abstract getPostInstallText(args: ExtensionArgs<ExtType>): PostInstallText;
 
   /**
    * Uninstall an extension.
@@ -838,7 +840,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
     installPath,
     installType,
     installSpec,
-  }: GetInstallationReceiptOpts): Record<string, any> {
+  }: GetInstallationReceiptOpts): ExtInstallReceipt<ExtType> {
     const {appium, name, version, peerDependencies} = pkg;
 
     const strVersion = version;
@@ -856,7 +858,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
     return {
       ...internal,
       ...extMetadata,
-    };
+    } as unknown as ExtInstallReceipt<ExtType>;
   }
 
   /**
@@ -1200,6 +1202,11 @@ type DoctorOptions = {installSpec: string};
 export type RunOutput = {output?: string[]};
 
 /**
+ * Return type of {@linkcode ExtensionCliCommand.getPostInstallText}.
+ */
+export type PostInstallText = string;
+
+/**
  * Options for {@linkcode ExtensionCliCommand._update}.
  */
 type ExtensionUpdateOpts = {installSpec: string; unsafe: boolean};
@@ -1222,7 +1229,10 @@ type UninstallOpts = {installSpec: string};
 /**
  * Used by {@linkcode ExtensionCliCommand.getPostInstallText}
  */
-type ExtensionArgs = {extName: string; extData: Record<string, any>};
+export type ExtensionArgs<ExtType extends ExtensionType = ExtensionType> = {
+  extName: string;
+  extData: ExtInstallReceipt<ExtType>;
+};
 
 /**
  * Options for {@linkcode ExtensionCliCommand.installViaNpm}

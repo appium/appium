@@ -44,11 +44,11 @@ export function log(json: boolean, msg: string): void {
  * @param fn - function to wrap with spinning
  * @returns result of `fn`
  */
-export async function spinWith(
+export async function spinWith<T>(
   json: boolean,
   msg: string,
-  fn: () => any
-): Promise<any> {
+  fn: () => T | Promise<T>
+): Promise<T> {
   if (json) {
     return await fn();
   }

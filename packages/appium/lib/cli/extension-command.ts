@@ -10,6 +10,7 @@ import type {
   ExtRecord as AppiumExtRecord,
   InstallType,
 } from 'appium/types';
+import type {PackageJson} from 'type-fest';
 import type {ExtensionConfig as BaseExtensionConfig} from '../extension/extension-config';
 import {npm, util, env, console, fs, system} from '@appium/support';
 import {spinWith, RingBuffer} from './utils';
@@ -86,8 +87,10 @@ export type ExtensionList<ExtType extends ExtensionType = ExtensionType> = Recor
 /**
  * Omits `driverName`/`pluginName` props from the receipt to make a {@linkcode ExtManifest}
  */
-function receiptToManifest(receipt: Record<string, any>): Record<string, any> {
-  return _.omit(receipt, 'driverName', 'pluginName');
+function receiptToManifest<ExtType extends ExtensionType>(
+  receipt: ExtInstallReceipt<ExtType>
+): ExtManifest<ExtType> {
+  return _.omit(receipt, 'driverName', 'pluginName') as ExtManifest<ExtType>;
 }
 
 /**
@@ -427,7 +430,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
 
     // 'updates' will have ext names as keys and update objects as values, where an update
     // object is of the form {from: versionString, to: versionString}
-    const updates: Record<string, {from: string; to: string}> = {};
+    const updates: Record<string, UpdateReport> = {};
 
     for (const e of extsToUpdate) {
       try {
@@ -455,6 +458,9 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
           );
         }
         const updateVer = unsafe && update.unsafeUpdate ? update.unsafeUpdate : update.safeUpdate;
+        if (!updateVer) {
+          throw new NoUpdatesAvailableError();
+        }
         await spinWith(
           this.isJsonOutput,
           `Updating ${this.type} '${e}' from ${update.current} to ${updateVer}`,
@@ -759,7 +765,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
     pkgName,
     pkgVer,
     installType,
-  }: InstallViaNpmArgs): Promise<Record<string, any>> {
+  }: InstallViaNpmArgs): Promise<ExtInstallReceipt<ExtType>> {
     const installMsg = `Installing '${installSpec}'`;
     const validateMsg = `Validating '${installSpec}'`;
 
@@ -774,12 +780,12 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
         async () => await npm.installPackage(appiumHome, installStr, {pkgName, installType})
       );
 
-      await spinWith(this.isJsonOutput, validateMsg, async () => {
-        this.validatePackageJson(pkg, installSpec);
-      });
+      const validatedPkg = await spinWith(this.isJsonOutput, validateMsg, async () =>
+        this.validatePackageJson(pkg, installSpec)
+      );
 
       return this.getInstallationReceipt({
-        pkg,
+        pkg: validatedPkg,
         installPath,
         installType,
         installSpec,
@@ -840,7 +846,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
     installPath,
     installType,
     installSpec,
-  }: GetInstallationReceiptOpts): ExtInstallReceipt<ExtType> {
+  }: GetInstallationReceiptOpts<ExtType>): ExtInstallReceipt<ExtType> {
     const {appium, name, version, peerDependencies} = pkg;
 
     const strVersion = version;
@@ -872,7 +878,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
    * @param installSpec - Extension name/spec
    * @throws {ReferenceError} If `package.json` has a missing or invalid field
    */
-  private validatePackageJson(pkg: Record<string, any>, installSpec: string): boolean {
+  private validatePackageJson(pkg: PackageJson, installSpec: string): ExtPackageJson<ExtType> {
     const {appium, name, version} = pkg;
 
     const createMissingFieldError = (field: string): ReferenceError =>
@@ -890,9 +896,9 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
       throw createMissingFieldError('appium');
     }
 
-    this.validateExtensionFields(appium, installSpec);
+    this.validateExtensionFields(appium as unknown as ExtMetadata<ExtType>, installSpec);
 
-    return true;
+    return pkg as unknown as ExtPackageJson<ExtType>;
   }
 
   /**
@@ -1164,7 +1170,7 @@ export async function injectAppiumSymlinks(
  *
  * @param dstFolder The destination folder where the symlink should be created
  */
-async function injectAppiumSymlink(dstFolder: string, logger: AppiumLogger) {
+async function injectAppiumSymlink(dstFolder: string, logger: AppiumLogger): Promise<void> {
   let appiumModuleRoot = '';
   try {
     appiumModuleRoot = getAppiumModuleRoot();
@@ -1256,10 +1262,10 @@ type InstallOpts = {installSpec: string; installType: InstallType; packageName?:
 
 type ListOptions = {showInstalled: boolean; showUpdates: boolean; verbose?: boolean};
 
-type GetInstallationReceiptOpts = {
+type GetInstallationReceiptOpts<ExtType extends ExtensionType = ExtensionType> = {
   installPath: string;
   installSpec: string;
-  pkg: ExtPackageJson<ExtensionType>;
+  pkg: ExtPackageJson<ExtType>;
   installType: InstallType;
 };
 

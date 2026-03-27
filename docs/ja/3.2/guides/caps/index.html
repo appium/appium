@@ -29,7 +29,7 @@
       
       
       <link rel="icon" href="../../assets/images/appium-logo.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.4">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
@@ -1577,6 +1577,8 @@
       
         
       
+        
+      
     
     
     
@@ -1642,6 +1644,8 @@
       
         
           
+        
+      
         
       
         
@@ -1818,6 +1822,139 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/cli/insecure-features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Insecure Features
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../reference/session/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Session Properties
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6_3" id="__nav_6_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Session Properties
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/session/caps/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capabilities
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1866,7 +2003,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_4" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -1888,14 +2025,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_6_3" id="__nav_6_3_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_6_4" id="__nav_6_4_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_6_3">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_4">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -3770,8 +3907,13 @@
 
   <h1>Session Capabilities</h1>
 
-<p>「Capabilities」は、Appiumセッションを開始するために使用されるパラメータセットに付けられた名前です。 セット内の情報は、セッションにどのような「Capabilities」を持たせたいかを表します。たとえば、特定のモバイルオペレーティングシステムや特定のデバイスバージョンなどです。 Capabilities はキーと値のペアとして表され、値には他のオブジェクトを含む任意の有効な JSON 型を使用できます。</p>
-<p>W3C WebDriver 仕様の <a href="https://w3c.github.io/webdriver/#capabilities">Capabilities に関するセクション</a> では、以下の機能を含む 10 個の標準機能のセットが定義されています：</p>
+<p>Capabilities are the core parameters used to start an Appium session. They describe various
+features that you want your session to have, for example, a certain mobile operating system or a
+certain version of a device. Capabilities are represented as key-value pairs, with values allowed
+to be any valid JSON type, including other objects. Most importantly, they cannot be changed
+during the lifecycle of the session.</p>
+<p>The capabilities used in Appium follow <a href="https://w3c.github.io/webdriver/#capabilities">the W3C WebDriver specification of the same name</a>.
+The WebDriver spec defines a small set of standard capabilities, including the following:</p>
 <table>
 <thead>
 <tr>
@@ -3798,107 +3940,70 @@
 </tr>
 </tbody>
 </table>
+<p>While the above capabilities are commonly used by Appium drivers, they are not sufficient for
+describing Appium-specific features, such as the name of the driver to use, or the name of the app
+to launch. In order to achieve this, Appium defines its own <a href="https://w3c.github.io/webdriver/#dfn-extension-capability">extension capabilities</a>.</p>
 <h2 id="appiumcapabilities">一般的なAppiumのCapabilities<a class="headerlink" href="#appiumcapabilities" title="Permanent link">&para;</a></h2>
-<p>Appium はこれらのブラウザに焦点を当てた capabilities を理解しますが、いくつかの capabilities も追加導入しています。 WebDriver 仕様によれば、非標準の「拡張 capabilities」には、capabilities を導入したベンダーを示す名前空間となる接頭辞（末尾に「:」）を含める必要があります。 Appium の接頭辞は「appium:」であるため、Appium 固有の capabilities には必ずこの接頭辞を含める必要があります。 使用しているクライアントによっては接頭辞が自動的に追加される場合もあれば、特定のインターフェースと組み合わせて追加される場合もありますが、明確にするために明示的に追加することをお勧めします。</p>
-<p>以下は様々なドライバーで認識される Appium の capabilities の一覧です：</p>
-<div class="admonition info">
-<p class="admonition-title">Info</p>
-</div>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>個々のドライバやプラグインは独自の capabilities をサポートしている場合があるため、具体的な capability 名のリストについては、それぞれのドキュメントを参照してください。また、一部のドライバはこれらの capabilities をすべてサポートしていない場合があります
-</span></code></pre></div>
-<table>
-<thead>
-<tr>
-<th><div style="width:12em">Capability 名</div></th>
-<th>型</th>
-<th>必須か</th>
-<th>説明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>platformName</code></td>
-<td><code>string</code></td>
-<td>はい</td>
-<td>アプリまたはブラウザをホストするプラットフォームの種類</td>
-</tr>
-<tr>
-<td><code>appium:automationName</code></td>
-<td><code>string</code></td>
-<td>はい</td>
-<td>使用するAppiumドライバの名前</td>
-</tr>
-<tr>
-<td><code>browserName</code></td>
-<td><code>string</code></td>
-<td>いいえ</td>
-<td>ドライバーが特別なケースとしてWebブラウザーをサポートしている場合、起動して自動化するブラウザーの名前</td>
-</tr>
-<tr>
-<td><code>appium:app</code></td>
-<td><code>string</code></td>
-<td>いいえ</td>
-<td>インストール可能なアプリケーションへのパス</td>
-</tr>
-<tr>
-<td><code>appium:deviceName</code></td>
-<td><code>string</code></td>
-<td>いいえ</td>
-<td>自動化する特定のデバイスの名前、例：<code>iPhone 14</code>（現在のところ、iOS シミュレーターを指定する場合にのみ役立ちます。他の状況では通常、<code>appium:udid</code> 機能を使用して特定のデバイス Id を使用することをお勧めします）。</td>
-</tr>
-<tr>
-<td><code>appium:platformVersion</code></td>
-<td><code>string</code></td>
-<td>いいえ</td>
-<td>プラットフォームのバージョン（例：iOS の場合は <code>16.0</code>）</td>
-</tr>
-<tr>
-<td><code>appium:newCommandTimeout</code></td>
-<td><code>number</code></td>
-<td>いいえ</td>
-<td>クライアントがこれ以上コマンドを送信してこないと判断しセッションを終了する前に、Appium サーバーがクライアントからのコマンド送信を待機する秒数。 デフォルトは <code>60</code> 秒。 ゼロに設定するとタイマーが無効になります。</td>
-</tr>
-<tr>
-<td><code>appium:noReset</code></td>
-<td><code>boolean</code></td>
-<td>いいえ</td>
-<td>true の場合、セッションの開始とクリーンアップ中に通常のリセット処理を回避するように Appium ドライバーに指示します (デフォルトは <code>false</code>)</td>
-</tr>
-<tr>
-<td><code>appium:fullReset</code></td>
-<td><code>boolean</code></td>
-<td>いいえ</td>
-<td>true の場合、Appium ドライバーに通常のリセット処理に追加の手順を追加して、環境の再現性を最大限に高めるように指示します (デフォルトは <code>false</code>)</td>
-</tr>
-<tr>
-<td><code>appium:eventTimings</code></td>
-<td><code>boolean</code></td>
-<td>いいえ</td>
-<td>true の場合、Appium ドライバーに <a href="../event-timing/">Event Timings</a> を収集するように指示します (デフォルトは <code>false</code>)</td>
-</tr>
-<tr>
-<td><code>appium:printPageSourceOnFindFailure</code></td>
-<td><code>boolean</code></td>
-<td>いいえ</td>
-<td>true の場合、要素の検索リクエストが失敗するたびにページソースを収集し、Appium ログに出力します (デフォルトは <code>false</code>)</td>
-</tr>
-</tbody>
-</table>
-<p>ドライバーの中には、capabilitiesのより複雑な制約をグループとして設定しているものもあります。 たとえば、<code>appium:app</code> および <code>browserName</code>  capabilities は上記では必須ではないと記載していますが、特定のアプリでセッションを開始する場合、XCUITest ドライバーは、<code>appium:app</code>、<code>browserName</code>、または <code>appium:bundleId</code> の少なくとも1 つが capabilities に含まれていることが必要です (含まれていない場合、どのアプリをインストールまたは起動すればよいか判断できないため、ホーム画面からセッションが開かれます)。 各ドライバーは、これらの capabilities やその他のプラットフォーム固有の要件をどのように解釈するかを記述しています。</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-</div>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Capabilitiesは、セッション開始時に使用されるパラメータのようなものです。Capabilitiesが送信され、セッションが開始された後変更できません。ドライバーがセッション中に動作の一部を更新する場合、capabilitiesの代わりに、またはcapabilitiesに加えて、[Settings](./settings.md)も利用可能です。
-</span></code></pre></div>
-<p>各 Appium クライアントには、capabilities を構築し、セッションを開始する独自の方法があります。 各クライアントライブラリでこれを行う例については、<a href="../../ecosystem/">エコシステム</a> ページにアクセスし、適切なクライアントドキュメントをクリックしてください。</p>
-<h2 id="bidi">BiDi プロトコルのサポート<a class="headerlink" href="#bidi" title="Permanent link">&para;</a></h2>
-<p>Appiumは、base-driver 9.5.0以降で<a href="https://w3c.github.io/webdriver-bidi/">WebDriver BiDi</a>プロトコルをサポートしています。
-実際の動作は個々のドライバーによって異なりますが、Appium と base-driver はプロトコルをサポートしています。
-ドライバーが BiDi プロトコルをサポートしているかどうか、また、どのようなコマンド/イベントをサポートしているかはドキュメントで確認してください。</p>
+<p>According to the WebDriver spec, extension capabilities must include a namespace prefix (signifying
+the vendor introducing the capability), and the namespace must end a colon (<code>:</code>). Appium's vendor
+prefix is <code>appium:</code>, and so any Appium-specific capabilities must include this prefix. Depending on
+your Appium client, the prefix may be added automatically or in conjunction with certain interfaces,
+but it is always a good practice to explicitly include it for clarity.</p>
+<p>Here are a few commonly (but not universally!) used Appium-specific capabilities:</p>
 <table>
 <thead>
 <tr>
 <th>Capability 名</th>
+<th>型</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>appium:automationName</code></td>
+<td><code>string</code></td>
+<td>使用するAppiumドライバの名前</td>
+</tr>
+<tr>
+<td><code>appium:udid</code></td>
+<td><code>string</code></td>
+<td>The unique device identifier of a particular device to automate</td>
+</tr>
+<tr>
+<td><code>appium:app</code></td>
+<td><code>string</code></td>
+<td>インストール可能なアプリケーションへのパス</td>
+</tr>
+</tbody>
+</table>
+<p>All capabilities recognized by the Appium base driver (inherited by all drivers) can be found in the
+<a href="../../reference/session/caps/">Capabilities Reference document</a>. While this common capability set
+is fairly small, it can be greatly extended by Appium drivers and plugins, who can (and should)
+define their own capabilities. Make sure to reference their documentation to learn more about the
+capabilities they support. You can find a list of known drivers in the <a href="../../ecosystem/drivers/">Ecosystem Drivers</a> document.</p>
+<p>Drivers are also able to place more complex constraints on capabilities as a group. For example,
+the XCUITest driver recommends that at least one of <code>browserName</code>, <code>appium:app</code>, or <code>appium:bundleId</code>
+is included in the capabilities, otherwise it will not be able to auto-install or auto-launch any
+application. Each driver will document how it interprets these capabilities and any other
+platform-specific requirements.</p>
+<p>The way to construct capabilities and start a session will likely differ depending on your Appium
+client. For examples of doing this in each client library, head to the <a href="../../ecosystem/clients/">Ecosystem Clients</a>
+page and click through to the appropriate client documentation.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+</div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Once your capabilities are sent to the server and the session is started, they cannot be
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>changed. If a driver supports updating its behaviour during a session, it will use the
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>[Settings API](./settings.md) for this purpose.
+</span></code></pre></div>
+<h2 id="bidi">BiDi プロトコルのサポート<a class="headerlink" href="#bidi" title="Permanent link">&para;</a></h2>
+<p>In addition to the standard WebDriver protocol (now known as WebDriver Classic), Appium supports the
+<a href="https://w3c.github.io/webdriver-bidi/">WebDriver BiDi</a> protocol. Support for this protocol is
+opt-in, and requires the use of the standard <code>webSocketUrl</code> capability.</p>
+<table>
+<thead>
+<tr>
+<th>Capability Name</th>
 <th>型</th>
 <th>説明</th>
 </tr>
@@ -3907,29 +4012,33 @@
 <tr>
 <td><code>webSocketUrl</code></td>
 <td><code>boolean</code></td>
-<td>セッションで BiDi プロトコルを有効にします。</td>
+<td>Whether BiDi protocol is enabled in the session</td>
 </tr>
 </tbody>
 </table>
+<p>All BiDi commands supported by the Appium base driver (inherited by all drivers) can be found in the
+<a href="../../reference/api/bidi/">BiDi Protocol API Reference document</a>. Similarly to WebDriver Classic
+commands, individual Appium drivers and plugins can define their own supported standard and custom
+BiDi commands, so make sure to reference their documentation.</p>
 <h2 id="appiumoptions"><code>appium:options</code> を使用して機能をグループ化する<a class="headerlink" href="#appiumoptions" title="Permanent link">&para;</a></h2>
 <p>テストで <code>appium:</code> 機能を多用すると、繰り返しが多くなる可能性があります。 代わりに、すべての機能を単一の <code>appium:options</code> 機能のオブジェクト値として組み合わせることもできます。その場合、オブジェクト内の機能にプレフィックスを使用する必要はありません。 例：</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="nt">&quot;platformName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;iOS&quot;</span><span class="p">,</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="nt">&quot;appium:options&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">        </span><span class="nt">&quot;automationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;XCUITest&quot;</span><span class="p">,</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">        </span><span class="nt">&quot;platformVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;16.0&quot;</span><span class="p">,</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">        </span><span class="nt">&quot;app&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/path/to/your.app&quot;</span><span class="p">,</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">        </span><span class="nt">&quot;deviceName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;iPhone 12&quot;</span><span class="p">,</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">        </span><span class="nt">&quot;noReset&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="p">}</span>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="nt">&quot;platformName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;iOS&quot;</span><span class="p">,</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="nt">&quot;appium:options&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">        </span><span class="nt">&quot;automationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;XCUITest&quot;</span><span class="p">,</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">        </span><span class="nt">&quot;platformVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;16.0&quot;</span><span class="p">,</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">        </span><span class="nt">&quot;app&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/path/to/your.app&quot;</span><span class="p">,</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">        </span><span class="nt">&quot;deviceName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;iPhone 12&quot;</span><span class="p">,</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">        </span><span class="nt">&quot;noReset&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="p">}</span>
 </span></code></pre></div>
 <p>機能値自体がオブジェクトである場合の構築方法は言語によって異なることに注意してください。これを実現する方法の詳細な例については、クライアントのドキュメントを参照してください。</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 </div>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>If you include the same capabilities both inside and outside of `appium:options`, the values
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>inside of `appium:options` take precedence.
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>If you include the same capabilities both inside and outside of `appium:options`, the values
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>inside of `appium:options` take precedence.
 </span></code></pre></div>
 <h2 id="always-match-and-first-match-capabilities">Always-Match and First-Match Capabilities<a class="headerlink" href="#always-match-and-first-match-capabilities" title="Permanent link">&para;</a></h2>
 <p>The W3C spec allows clients to give the Appium server some flexibility in the kind of session it
@@ -3945,9 +4054,8 @@ creates in response to a new session request. This is through the concept of "al
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 </div>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>Check out the [spec itself](https://w3c.github.io/webdriver/#processing-capabilities) or
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>a [summarized version](https://github.com/jlipps/simple-wd-spec#processing-capabilities) for
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>a more in-depth description of how capabilities are processed.
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>Check out the [spec itself](https://w3c.github.io/webdriver/#processing-capabilities) for
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>a more in-depth description of how capabilities are processed.
 </span></code></pre></div>
 <p>In practice, use of first-match capabilities is not necessary or recommended for use with Appium.
 Instead, we recommend that you define the explicit set of capabilities you want the Appium
@@ -3961,8 +4069,8 @@ the documentation for your client library to see examples of how it works.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 </div>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>This section is not intended for end-users of Appium; it is intended for developers building
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>Appium-compatible cloud services.
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>This section is not intended for end-users of Appium; it is intended for developers building
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>Appium-compatible cloud services.
 </span></code></pre></div>
 <p>When managing an Appium cloud, your users may wish to target various independent versions of Appium
 drivers and plugins. It is of course up to each service provider how they wish to implement the
@@ -4015,18 +4123,18 @@ arbitrarily specified extensions, seeing as these may represent untrusted code r
 environment. In the case where arbitrary extensions are not supported, the <code>appium:automationName</code>,
 <code>$cloud:automationVersion</code>, and <code>$cloud:appiumPlugins</code> capabilities should be sufficient. See the
 following JSON object representing capabilities for a session:</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="p">{</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="nt">&quot;platformName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;iOS&quot;</span><span class="p">,</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span><span class="nt">&quot;appium:platformVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;14.4&quot;</span><span class="p">,</span>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">  </span><span class="nt">&quot;appium:deviceName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;iPhone 11&quot;</span><span class="p">,</span>
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">  </span><span class="nt">&quot;appium:app&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Some-App.app.zip&quot;</span><span class="p">,</span>
-</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">  </span><span class="nt">&quot;appium:automationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;XCUITest&quot;</span><span class="p">,</span>
-</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">  </span><span class="nt">&quot;$cloud:appiumOptions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0.0&quot;</span><span class="p">,</span>
-</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">    </span><span class="nt">&quot;automationVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;3.52.0&quot;</span><span class="p">,</span>
-</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;images&quot;</span><span class="p">]</span>
-</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="p">}</span>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="p">{</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="nt">&quot;platformName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;iOS&quot;</span><span class="p">,</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">  </span><span class="nt">&quot;appium:platformVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;14.4&quot;</span><span class="p">,</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">  </span><span class="nt">&quot;appium:deviceName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;iPhone 11&quot;</span><span class="p">,</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">  </span><span class="nt">&quot;appium:app&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Some-App.app.zip&quot;</span><span class="p">,</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">  </span><span class="nt">&quot;appium:automationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;XCUITest&quot;</span><span class="p">,</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">  </span><span class="nt">&quot;$cloud:appiumOptions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0.0&quot;</span><span class="p">,</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="w">    </span><span class="nt">&quot;automationVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;3.52.0&quot;</span><span class="p">,</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;images&quot;</span><span class="p">]</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="p">}</span>
 </span></code></pre></div>
 <p>This set of capabilities requests an Appium 2+ server supporting the XCUITest driver at version
 <code>3.52.0</code>, and the <code>images</code> plugin active. This set is easy for a cloud provider to verify. The
@@ -4037,20 +4145,20 @@ requested are not in a supported set, or if the plugin is not supported, etc...<
 <p>The previous example still looks a bit disorganized, so of course we also recommend that cloud
 providers support the <code>appium:options</code> capability as detailed above, which could turn the previous
 set of capabilities into the following:</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="p">{</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">  </span><span class="nt">&quot;platformName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;iOS&quot;</span><span class="p">,</span>
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">  </span><span class="nt">&quot;appium:options&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">    </span><span class="nt">&quot;platformVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;14.4&quot;</span><span class="p">,</span>
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">    </span><span class="nt">&quot;deviceName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;iPhone 11&quot;</span><span class="p">,</span>
-</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">    </span><span class="nt">&quot;app&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Some-App.app.zip&quot;</span><span class="p">,</span>
-</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">    </span><span class="nt">&quot;automationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;XCUITest&quot;</span>
-</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">  </span><span class="p">},</span>
-</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">  </span><span class="nt">&quot;$cloud:appiumOptions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0.0&quot;</span><span class="p">,</span>
-</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="w">    </span><span class="nt">&quot;automationVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;3.52.0&quot;</span><span class="p">,</span>
-</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;images&quot;</span><span class="p">]</span>
-</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="p">}</span>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="p">{</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="nt">&quot;platformName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;iOS&quot;</span><span class="p">,</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span><span class="nt">&quot;appium:options&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">    </span><span class="nt">&quot;platformVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;14.4&quot;</span><span class="p">,</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">    </span><span class="nt">&quot;deviceName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;iPhone 11&quot;</span><span class="p">,</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">    </span><span class="nt">&quot;app&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Some-App.app.zip&quot;</span><span class="p">,</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">    </span><span class="nt">&quot;automationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;XCUITest&quot;</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">  </span><span class="nt">&quot;$cloud:appiumOptions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0.0&quot;</span><span class="p">,</span>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="w">    </span><span class="nt">&quot;automationVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;3.52.0&quot;</span><span class="p">,</span>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;images&quot;</span><span class="p">]</span>
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="p">}</span>
 </span></code></pre></div>
 <h3 id="extension-objects">Extension objects<a class="headerlink" href="#extension-objects" title="Permanent link">&para;</a></h3>
 <p>Some service providers may wish to dynamically allow access to all of the features of the Appium
@@ -4068,33 +4176,33 @@ define special JSON "extension objects", with the following keys:</p>
 </ul>
 <p>Since each session is handled by a single driver, the <code>$cloud:appiumOptions</code>/<code>$automation</code>
 capability could be used with an extension object value to denote this driver, for example:</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="p">{</span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">    </span><span class="nt">&quot;$cloud:appiumOptions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">        </span><span class="nt">&quot;automation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">            </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;git+https://some-git-host.com/custom-driver-project.git&quot;</span><span class="p">,</span>
-</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">            </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;some-git-sha&quot;</span><span class="p">,</span>
-</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">            </span><span class="nt">&quot;source&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;git&quot;</span><span class="p">,</span>
-</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="w">            </span><span class="nt">&quot;package&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;driver-npm-package-name&quot;</span>
-</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">        </span><span class="p">}</span>
-</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="p">}</span>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="p">{</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">    </span><span class="nt">&quot;$cloud:appiumOptions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">        </span><span class="nt">&quot;automation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">            </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;git+https://some-git-host.com/custom-driver-project.git&quot;</span><span class="p">,</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">            </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;some-git-sha&quot;</span><span class="p">,</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">            </span><span class="nt">&quot;source&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;git&quot;</span><span class="p">,</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">            </span><span class="nt">&quot;package&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;driver-npm-package-name&quot;</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="p">}</span>
 </span></code></pre></div>
 <p>And since sessions can handle multiple plugins, each value in the list of <code>$cloud:appiumPlugins</code>
 could also be an extension object rather than a string, so that specific versions could be
 requested:</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="p">{</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">    </span><span class="nt">&quot;$cloud:appiumOptions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">        </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span>
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">            </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;images&quot;</span><span class="p">,</span>
-</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">            </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.1.0&quot;</span>
-</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">        </span><span class="p">},</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="w">            </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;my-github-org/my-custom-plugin&quot;</span><span class="p">,</span>
-</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="w">            </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;a83f2e&quot;</span><span class="p">,</span>
-</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="w">            </span><span class="nt">&quot;source&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;github&quot;</span><span class="p">,</span>
-</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="w">            </span><span class="nt">&quot;package&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;custom-plugin&quot;</span>
-</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="w">        </span><span class="p">}]</span>
-</span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-9-13"><a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a><span class="p">}</span>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="p">{</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">    </span><span class="nt">&quot;$cloud:appiumOptions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">        </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">            </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;images&quot;</span><span class="p">,</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">            </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.1.0&quot;</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">        </span><span class="p">},</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="w">            </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;my-github-org/my-custom-plugin&quot;</span><span class="p">,</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">            </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;a83f2e&quot;</span><span class="p">,</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="w">            </span><span class="nt">&quot;source&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;github&quot;</span><span class="p">,</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="w">            </span><span class="nt">&quot;package&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;custom-plugin&quot;</span>
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="w">        </span><span class="p">}]</span>
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a><span class="p">}</span>
 </span></code></pre></div>
 <p>These serve as illustrative examples for the recommendations here. Of course, it is up to the
 service providers to implement the handling of these capabilities at their front end / load
@@ -4123,7 +4231,7 @@ running Appium on their own.</p>
     <span class="md-icon" title="最終更新日">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="2026年3月11日 04:57:38 UTC"><span class="timeago" datetime="2026-03-11T04:57:38+00:00" locale="ja"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="2026年3月11日 04:57:38 UTC">2026-03-11</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="2026年3月27日 13:45:24 UTC"><span class="timeago" datetime="2026-03-27T13:45:24+00:00" locale="ja"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="2026年3月27日 13:45:24 UTC">2026-03-27</span>
   </span>
 
     

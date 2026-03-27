@@ -93,7 +93,6 @@ Supported by: `@AppiumTestDistribution`
 npm install -g appclaw
 ```
 
-
 ### [Appium Installer](https://github.com/AppiumTestDistribution/appium-installer)
 
 Appium Installer is a command-line tool for simplifying setups of new Appium test environments.

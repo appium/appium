@@ -1,7 +1,10 @@
 import {fs} from '@appium/support';
 import {ArgumentParser} from 'argparse';
+import type {SubArgumentParserOptions, SubParser} from 'argparse';
 import _ from 'lodash';
 import path from 'node:path';
+import type {DriverType, PluginType} from '@appium/types';
+import type {CliExtensionSubcommand} from 'appium/types';
 import {
   DRIVER_TYPE,
   EXT_SUBCOMMAND_DOCTOR,
@@ -17,6 +20,7 @@ import {
 import {finalizeSchema, getAllArgSpecs, getArgSpec, hasArgSpec} from '../schema';
 import {rootDir} from '../config';
 import {getExtensionArgs, getServerArgs} from './args';
+import type {ArgumentDefinitions} from './args';
 import {
   DEFAULT_PLUGINS,
   SUBCOMMAND_MOBILE,
@@ -38,6 +42,8 @@ const NON_SERVER_ARGS = Object.freeze(
 );
 
 const version = fs.readPackageJsonFrom(rootDir).version;
+type LooseArgsMap = {[key: string]: any};
+type TransformedArgsMap = LooseArgsMap & {[EXTRA_ARGS]: string[]};
 
 /**
  * A wrapper around `argparse`
@@ -46,9 +52,15 @@ const version = fs.readPackageJsonFrom(rootDir).version;
  *    `ArgumentParser` instance for Appium server and its extensions
  * - Handles error conditions, messages, and exit behavior
  */
-class ArgParser {
+export class ArgParser {
+  readonly prog: string;
+  readonly debug: boolean;
+  readonly parser: ArgumentParser;
+  readonly rawArgs: ArgumentDefinitions;
+  readonly parse_args: ArgParser['parseArgs'];
+
   /**
-   * @param {boolean} [debug] - If true, throw instead of exit on error.
+   * @param debug - if true, throw instead of exiting on parse errors
    */
   constructor(debug = false) {
     const prog = process.argv[1] ? path.basename(process.argv[1]) : 'appium';
@@ -62,22 +74,10 @@ class ArgParser {
 
     ArgParser._patchExit(parser);
 
-    /**
-     * Program name (typically `appium`)
-     * @type {string}
-     */
     this.prog = prog;
 
-    /**
-     * If `true`, throw an error on parse failure instead of printing help
-     * @type {boolean}
-     */
     this.debug = debug;
 
-    /**
-     * Wrapped `ArgumentParser` instance
-     * @type {ArgumentParser}
-     */
     this.parser = parser;
 
     parser.add_argument('-v', '--version', {
@@ -101,23 +101,16 @@ class ArgParser {
     ArgParser._addSetupToParser(subParsers);
 
     // backwards compatibility / drop-in wrapper
-    /**
-     * @type {ArgParser['parseArgs']}
-     */
     this.parse_args = this.parseArgs;
   }
 
   /**
-   * Parse arguments from the command line.
+   * Parses CLI args and returns Appium's normalized argument object.
    *
-   * If no subcommand is passed in, this method will inject the `server` subcommand.
-   *
-   * `ArgParser.prototype.parse_args` is an alias of this method.
-   * @template {import('appium/types').CliCommand} [Cmd=import('appium/types').CliCommandServer]
-   * @param {string[]} [args] - Array of arguments, ostensibly from `process.argv`. Gathers args from `process.argv` if not provided.
-   * @returns {import('appium/types').Args<Cmd>} - The parsed arguments
+   * If no explicit subcommand is provided, this injects `server`.
+   * `parse_args` is a backwards-compatible alias of this method.
    */
-  parseArgs(args = process.argv.slice(2)) {
+  parseArgs(args: string[] = process.argv.slice(2)): TransformedArgsMap {
     if (!NON_SERVER_ARGS.has(args[0])) {
       args.unshift(SERVER_SUBCOMMAND);
     }
@@ -159,19 +152,16 @@ class ArgParser {
   }
 
   /**
-   * Normalize hyphenated server arg keys (e.g. "log-level") to dest form (e.g. "loglevel").
-   * Use when server args come from programmatic init rather than the CLI, so they match
-   * the shape produced by parseArgs() / _transformParsedArgs().
-   * Mutates the given object.
+   * Normalizes server arg keys from schema names to parser destination names.
    *
-   * @param {object} obj - Object that may contain server args with schema property names
-   * @returns {object} The same object with keys normalized
+   * This mutates and returns the same object.
    */
-  static normalizeServerArgs(obj) {
+  static normalizeServerArgs<T extends LooseArgsMap>(obj: T): T {
+    const mutableObj = obj as LooseArgsMap;
     for (const spec of getAllArgSpecs().values()) {
-      if (!spec.extType && obj[spec.name] !== undefined && spec.rawDest !== spec.name) {
-        obj[spec.rawDest] = obj[spec.name] ?? obj[spec.rawDest];
-        delete obj[spec.name];
+      if (!spec.extType && mutableObj[spec.name] !== undefined && spec.rawDest !== spec.name) {
+        mutableObj[spec.rawDest] = mutableObj[spec.name] ?? mutableObj[spec.rawDest];
+        delete mutableObj[spec.name];
       }
     }
     return obj;
@@ -183,16 +173,17 @@ class ArgParser {
    * keys to match the intended destination.
    *
    * E.g., `{'driver-foo-bar': baz}` becomes `{driver: {foo: {bar: 'baz'}}}`
-   * @param {object} args
-   * @param {string[]} [unknownArgs]
-   * @returns {object}
    */
-  static _transformParsedArgs(args, unknownArgs = []) {
+  private static _transformParsedArgs(
+    args: LooseArgsMap,
+    unknownArgs: string[] = []
+  ): TransformedArgsMap {
     const result = _.reduce(
       args,
       (unpacked, value, key) => {
-        if (!_.isUndefined(value) && hasArgSpec(key)) {
-          const {dest} = /** @type {import('../schema/arg-spec').ArgSpec} */ (getArgSpec(key));
+        const spec = hasArgSpec(key) ? getArgSpec(key) : undefined;
+        if (!_.isUndefined(value) && spec) {
+          const {dest} = spec;
           _.set(unpacked, dest, value);
         } else {
           // this could be anything that _isn't_ a server arg
@@ -203,14 +194,13 @@ class ArgParser {
       {}
     );
     result[EXTRA_ARGS] = unknownArgs;
-    return result;
+    return result as TransformedArgsMap;
   }
 
   /**
    * Patches the `exit()` method of the parser to throw an error, so we can handle it manually.
-   * @param {ArgumentParser} parser
    */
-  static _patchExit(parser) {
+  private static _patchExit(parser: ArgumentParser): void {
     parser.exit = (code, msg) => {
       if (code) {
         throw new Error(msg);
@@ -220,11 +210,9 @@ class ArgParser {
   }
 
   /**
-   *
-   * @param {import('argparse').SubParser} subParser
-   * @returns {import('./args').ArgumentDefinitions}
+   * Adds the `server` subcommand parser and returns its argument definitions.
    */
-  static _addServerToParser(subParser) {
+  private static _addServerToParser(subParser: SubParser): ArgumentDefinitions {
     const serverParser = subParser.add_parser('server', {
       add_help: true,
       help: 'Start an Appium server',
@@ -244,11 +232,10 @@ class ArgParser {
 
   /**
    * Adds extension sub-sub-commands to `driver`/`plugin` subcommands
-   * @param {import('argparse').SubParser} subParsers
    */
-  static _addExtensionCommandsToParser(subParsers) {
-    for (const type of /** @type {[DriverType, PluginType]} */ ([DRIVER_TYPE, PLUGIN_TYPE])) {
-      const extParser = subParsers.add_parser(type, {
+  private static _addExtensionCommandsToParser(subParser: SubParser): void {
+    for (const type of [DRIVER_TYPE, PLUGIN_TYPE] as [DriverType, PluginType]) {
+      const extParser = subParser.add_parser(type, {
         add_help: true,
         help: `Manage Appium ${type}s`,
         description: `Manage Appium ${type}s using various subcommands`,
@@ -260,10 +247,12 @@ class ArgParser {
         dest: `${type}Command`,
       });
       const extensionArgs = getExtensionArgs();
-      /**
-       * @type { {command: import('appium/types').CliExtensionSubcommand, args: import('./args').ArgumentDefinitions, help: string, aliases?: import('argparse').SubArgumentParserOptions['aliases']}[] }
-       */
-      const parserSpecs = [
+      const parserSpecs: {
+        command: CliExtensionSubcommand;
+        args: ArgumentDefinitions;
+        help: string;
+        aliases?: SubArgumentParserOptions['aliases'];
+      }[] = [
         {
           command: EXT_SUBCOMMAND_LIST,
           args: extensionArgs[type].list,
@@ -316,9 +305,8 @@ class ArgParser {
 
   /**
    * Add subcommand and sub-sub commands for 'setup' subcommand.
-   * @param {import('argparse').SubParser} subParser
    */
-  static _addSetupToParser(subParser) {
+  private static _addSetupToParser(subParser: SubParser): void {
     const setupParser = subParser.add_parser('setup', {
       add_help: true,
       help: 'Batch install or uninstall Appium drivers and plugins',
@@ -368,21 +356,10 @@ class ArgParser {
 }
 
 /**
- * Creates a {@link ArgParser} instance; finalizes the config schema.
- *
- * @constructs ArgParser
- * @param {boolean} [debug] - If `true`, throw instead of exit upon parsing error
- * @returns {ArgParser}
+ * Creates and returns an `ArgParser` after finalizing schema state.
  */
-function getParser(debug) {
+export function getParser(debug = false) {
   finalizeSchema();
 
   return new ArgParser(debug);
 }
-
-export {getParser, ArgParser};
-
-/**
- * @typedef {import('@appium/types').DriverType} DriverType
- * @typedef {import('@appium/types').PluginType} PluginType
- */

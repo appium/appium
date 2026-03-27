@@ -1,4 +1,11 @@
 import _ from 'lodash';
+import type {
+  Args,
+  CliCommandSetup,
+  CliCommandSetupSubcommand,
+  CliExtensionCommand,
+  CliExtensionSubcommand,
+} from 'appium/types';
 import {
   DESKTOP_BROWSERS,
   DESKTOP_DRIVERS,
@@ -7,6 +14,7 @@ import {
 import {runExtensionCommand} from './extension';
 import { system, fs } from '@appium/support';
 import log from '../logger';
+import type {ExtensionConfig} from '../extension/extension-config';
 
 /**
  * Subcommands of preset for setup
@@ -20,13 +28,11 @@ export const SUBCOMMAND_RESET = 'reset';
  * Pairs of preset subcommand and driver candidates.
  * Driver names listed in KNOWN_DRIVERS to install by default
  */
-const PRESET_PAIRS = Object.freeze(
-  /** @type {const} */ ({
-    mobile: _.keys(MOBILE_DRIVERS),
-    desktop: _.keys(DESKTOP_DRIVERS),
-    browser: _.keys(DESKTOP_BROWSERS)
-  }),
-);
+const PRESET_PAIRS = Object.freeze({
+  mobile: _.keys(MOBILE_DRIVERS),
+  desktop: _.keys(DESKTOP_DRIVERS),
+  browser: _.keys(DESKTOP_BROWSERS),
+} as const);
 const DRIVERS_ONLY_MACOS = ['xcuitest', 'safari', 'mac2'];
 
 const DRIVERS_ONLY_WINDOWS = ['windows'];
@@ -36,12 +42,14 @@ const DRIVERS_ONLY_WINDOWS = ['windows'];
  */
 export const DEFAULT_PLUGINS = ['images', 'inspector'];
 
+type DriverConfig = ExtensionConfig<'driver'>;
+type PluginConfig = ExtensionConfig<'plugin'>;
+type CliExtArgs = Args<CliExtensionCommand, CliExtensionSubcommand>;
+
 /**
  * Return a list of drivers available for current host platform.
- * @param {import('appium/types').CliCommandSetupSubcommand} presetName
- * @returns {Array<string>}
  */
-export function getPresetDrivers(presetName) {
+export function getPresetDrivers(presetName: CliCommandSetupSubcommand): string[] {
   return _.filter(PRESET_PAIRS[presetName], (driver) => {
     if (_.includes(DRIVERS_ONLY_MACOS, driver)) {
       return system.isMac();
@@ -58,9 +66,8 @@ export function getPresetDrivers(presetName) {
 
 /**
  * Return desktop platform name for setup command description.
- * @returns {string}
  */
-export function determinePlatformName() {
+export function determinePlatformName(): string {
   if (system.isMac()) {
     return 'macOS';
   } else if (system.isWindows()) {
@@ -70,14 +77,16 @@ export function determinePlatformName() {
 }
 
 /**
- * Run 'setup' command to install drivers/plugins into the given appium home.
- * @template {import('appium/types').CliCommandSetup} SetupCmd
- * @param {import('appium/types').Args<SetupCmd>} preConfigArgs
- * @param {DriverConfig} driverConfig
- * @param {PluginConfig} pluginConfig
- * @returns {Promise<void>}
+ * Runs the `setup` command and applies the selected preset.
+ *
+ * Depending on the subcommand, this installs mobile/desktop/browser presets or
+ * removes all installed extensions and manifests via `reset`.
  */
-export async function runSetupCommand(preConfigArgs, driverConfig, pluginConfig) {
+export async function runSetupCommand(
+  preConfigArgs: Args<CliCommandSetup>,
+  driverConfig: DriverConfig,
+  pluginConfig: PluginConfig
+): Promise<void> {
   switch (preConfigArgs.setupCommand) {
     case SUBCOMMAND_DESKTOP:
       await setupDesktopAppDrivers(driverConfig);
@@ -99,22 +108,19 @@ export async function runSetupCommand(preConfigArgs, driverConfig, pluginConfig)
 
 /**
  * Resets all installed drivers and extensions
- *
- * @param {DriverConfig} driverConfig
- * @param {PluginConfig} pluginConfig
- * @returns {Promise<void>}
  */
-async function resetAllExtensions(driverConfig, pluginConfig) {
-  for (const [command, config] of [
+async function resetAllExtensions(driverConfig: DriverConfig, pluginConfig: PluginConfig): Promise<void> {
+  const commandConfigs: [CliExtensionCommand, DriverConfig | PluginConfig][] = [
     ['driver', driverConfig],
     ['plugin', pluginConfig],
-  ]) {
-    for (const extensionName of _.keys(/** @type {DriverConfig|PluginConfig} */ (config).installedExtensions)) {
+  ];
+  for (const [command, config] of commandConfigs) {
+    for (const extensionName of _.keys(config.installedExtensions)) {
       try {
         await uninstallExtension(
           extensionName,
-          extensionCommandArgs(/** @type {CliExtensionCommand} */ (command), extensionName, 'uninstall'),
-          /** @type {DriverConfig|PluginConfig} */ (config)
+          extensionCommandArgs(command, extensionName, 'uninstall'),
+          config
         );
       } catch (e) {
         log.warn(
@@ -124,7 +130,7 @@ async function resetAllExtensions(driverConfig, pluginConfig) {
       }
     }
 
-    const manifestPath = /** @type {DriverConfig|PluginConfig} */ (config).manifestPath;
+    const manifestPath = config.manifestPath;
     if (!await fs.exists(manifestPath)) {
       continue;
     }
@@ -140,38 +146,29 @@ async function resetAllExtensions(driverConfig, pluginConfig) {
 
 /**
  * Install drivers listed in DEFAULT_DRIVERS.
- * @param {DriverConfig} driverConfig
- * @returns {Promise<void>}
  */
-async function setupMobileDrivers(driverConfig) {
+async function setupMobileDrivers(driverConfig: DriverConfig): Promise<void> {
   await installDrivers(SUBCOMMAND_MOBILE, driverConfig);
 }
 
 /**
  * Install all of known drivers listed in BROWSER_DRIVERS.
- * @param {DriverConfig} driverConfig
- * @returns {Promise<void>}
  */
-async function setupBrowserDrivers(driverConfig) {
+async function setupBrowserDrivers(driverConfig: DriverConfig): Promise<void> {
   await installDrivers(SUBCOMMAND_BROWSER, driverConfig);
 }
 
 /**
  * Install all of known drivers listed in DESKTOP_APP_DRIVERS.
- * @param {DriverConfig} driverConfig
- * @returns {Promise<void>}
  */
-async function setupDesktopAppDrivers(driverConfig) {
+async function setupDesktopAppDrivers(driverConfig: DriverConfig): Promise<void> {
   await installDrivers(SUBCOMMAND_DESKTOP, driverConfig);
 }
 
 /**
  * Install the given driver name. It skips the installation if the given driver name was already installed.
- * @param {import('appium/types').CliCommandSetupSubcommand} subcommand
- * @param {DriverConfig} driverConfig
- * @returns {Promise<void>}
  */
-async function installDrivers(subcommand, driverConfig) {
+async function installDrivers(subcommand: CliCommandSetupSubcommand, driverConfig: DriverConfig): Promise<void> {
   for (const driverName of getPresetDrivers(subcommand)) {
     await installExtension(driverName, extensionCommandArgs('driver', driverName, 'install'), driverConfig);
   }
@@ -179,10 +176,8 @@ async function installDrivers(subcommand, driverConfig) {
 
 /**
  * Install plugins listed in DEFAULT_PLUGINS.
- * @param {PluginConfig} pluginConfig
- * @returns {Promise<void>}
  */
-async function setupDefaultPlugins(pluginConfig) {
+async function setupDefaultPlugins(pluginConfig: PluginConfig): Promise<void> {
   for (const pluginName of DEFAULT_PLUGINS) {
     await installExtension(pluginName, extensionCommandArgs('plugin', pluginName, 'install'), pluginConfig);
   }
@@ -190,12 +185,12 @@ async function setupDefaultPlugins(pluginConfig) {
 
 /**
  * Run the given extensionConfigArgs command after checking if the given extensionName was already installed.
- * @param {string} extensionName
- * @param {Args} extensionConfigArgs
- * @param {DriverConfig|PluginConfig} extensionConfig
- * @returns {Promise<void>}
  */
-async function installExtension(extensionName, extensionConfigArgs, extensionConfig) {
+async function installExtension(
+  extensionName: string,
+  extensionConfigArgs: CliExtArgs,
+  extensionConfig: DriverConfig | PluginConfig
+): Promise<void> {
   if (_.keys(extensionConfig.installedExtensions).includes(extensionName)) {
     log.info(`${extensionName} (${extensionConfig.installedExtensions[extensionName].version}) is already installed. ` +
       `Skipping the installation.`);
@@ -206,12 +201,12 @@ async function installExtension(extensionName, extensionConfigArgs, extensionCon
 
 /**
  * Run the given extensionConfigArgs command after checking if the given extensionName was already installed.
- * @param {string} extensionName
- * @param {Args} extensionConfigArgs
- * @param {DriverConfig|PluginConfig} extensionConfig
- * @returns {Promise<void>}
  */
-async function uninstallExtension(extensionName, extensionConfigArgs, extensionConfig) {
+async function uninstallExtension(
+  extensionName: string,
+  extensionConfigArgs: CliExtArgs,
+  extensionConfig: DriverConfig | PluginConfig
+): Promise<void> {
   if (!_.keys(extensionConfig.installedExtensions).includes(extensionName)) {
     log.info(`${extensionName} (${extensionConfig.installedExtensions[extensionName].version}) is not installed. ` +
       `Skipping its uninstall.`);
@@ -222,24 +217,14 @@ async function uninstallExtension(extensionName, extensionConfigArgs, extensionC
 
 /**
  * Return the command config for driver or plugin.
- * @param {CliExtensionCommand} extensionCommand
- * @param {string} extensionName
- * @param {CliExtensionSubcommand} command
- * @returns {Args}
  */
-function extensionCommandArgs(extensionCommand, extensionName, command) {
+function extensionCommandArgs(
+  extensionCommand: CliExtensionCommand,
+  extensionName: string,
+  command: CliExtensionSubcommand
+): CliExtArgs {
   return (extensionCommand === 'plugin')
     ? {'subcommand': 'plugin', 'pluginCommand': command, 'plugin': extensionName}
     : {'subcommand': 'driver', 'driverCommand': command, 'driver': extensionName};
 }
 
-/**
- * @typedef {import('appium/types').CliExtensionCommand} CliExtensionCommand
- * @typedef {import('appium/types').CliExtensionSubcommand} CliExtensionSubcommand
- * @typedef {import('../extension/extension-config').ExtensionConfig<CliExtensionCommand>} PluginConfig
- * @typedef {import('../extension/extension-config').ExtensionConfig<CliExtensionCommand>} DriverConfig
- */
-
-/**
- * @typedef {import('appium/types').Args<CliExtensionCommand, CliExtensionSubcommand>} Args
- */

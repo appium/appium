@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://appium.io/docs/zh/3.2/reference/api/bidi/">
+        <link rel="canonical" href="https://appium.io/docs/zh/3.2/reference/session/">
       
       
-        <link rel="prev" href="../webdriver/">
+        <link rel="prev" href="../cli/insecure-features/">
       
       
-        <link rel="next" href="../jsonwp/">
+        <link rel="next" href="caps/">
       
       
         
@@ -28,19 +28,19 @@
         
       
       
-      <link rel="icon" href="../../../assets/images/appium-logo.png">
+      <link rel="icon" href="../../assets/images/appium-logo.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
-        <title>WebDriver BiDi Protocol - Appium Documentation</title>
+        <title>Session Properties - Appium Documentation</title>
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
   
@@ -124,11 +124,11 @@
       
     
     
-      <link rel="stylesheet" href="../../../css/timeago.css">
+      <link rel="stylesheet" href="../../css/timeago.css">
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/extra.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/extra.css">
     
-    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -151,11 +151,6 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
-      
-        
-        <a href="#bidistatus" class="md-skip">
-          跳转至
-        </a>
       
     </div>
     <div data-md-component="announce">
@@ -186,7 +181,7 @@
   <nav class="md-header__inner md-grid" aria-label="页眉">
     <a href="/" title="Appium Documentation" class="md-header__button md-logo" aria-label="Appium Documentation" data-md-component="logo">
       
-  <img src="../../../assets/images/appium-logo-white.png" alt="logo">
+  <img src="../../assets/images/appium-logo-white.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -203,7 +198,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              WebDriver BiDi Protocol
+              Session Properties
             
           </span>
         </div>
@@ -356,7 +351,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../.." class="md-tabs__link">
+      <a href="../.." class="md-tabs__link">
         
   
   
@@ -375,7 +370,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../blog/" class="md-tabs__link">
+      <a href="../../blog/" class="md-tabs__link">
         
   
   
@@ -396,7 +391,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../intro/" class="md-tabs__link">
+        <a href="../../intro/" class="md-tabs__link">
           
   
   
@@ -418,7 +413,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../quickstart/" class="md-tabs__link">
+        <a href="../../quickstart/" class="md-tabs__link">
           
   
   
@@ -440,7 +435,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../ecosystem/" class="md-tabs__link">
+        <a href="../../ecosystem/" class="md-tabs__link">
           
   
   
@@ -464,7 +459,7 @@
     
     
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="../../" class="md-tabs__link">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -493,7 +488,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../guides/migrating-2-to-3/" class="md-tabs__link">
+        <a href="../../guides/migrating-2-to-3/" class="md-tabs__link">
           
   
   
@@ -518,7 +513,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../resources/" class="md-tabs__link">
+        <a href="../../resources/" class="md-tabs__link">
           
   
   
@@ -540,7 +535,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../developing/" class="md-tabs__link">
+        <a href="../../developing/" class="md-tabs__link">
           
   
   
@@ -562,7 +557,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../contributing/" class="md-tabs__link">
+        <a href="../../contributing/" class="md-tabs__link">
           
   
   
@@ -584,7 +579,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../sponsors/" class="md-tabs__link">
+        <a href="../../sponsors/" class="md-tabs__link">
           
   
   
@@ -609,6 +604,8 @@
           
             
               
+                
+              
               <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
@@ -622,7 +619,7 @@
   <label class="md-nav__title" for="__drawer">
     <a href="/" title="Appium Documentation" class="md-nav__button md-logo" aria-label="Appium Documentation" data-md-component="logo">
       
-  <img src="../../../assets/images/appium-logo-white.png" alt="logo">
+  <img src="../../assets/images/appium-logo-white.png" alt="logo">
 
     </a>
     Appium Documentation
@@ -649,7 +646,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../.." class="md-nav__link">
+      <a href="../.." class="md-nav__link">
         
   
   
@@ -678,7 +675,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../blog/" class="md-nav__link">
+      <a href="../../blog/" class="md-nav__link">
         
   
   
@@ -730,7 +727,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../intro/" class="md-nav__link ">
+            <a href="../../intro/" class="md-nav__link ">
               
   
   
@@ -836,7 +833,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../intro/appium/" class="md-nav__link">
+      <a href="../../intro/appium/" class="md-nav__link">
         
   
   
@@ -864,7 +861,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../intro/drivers/" class="md-nav__link">
+      <a href="../../intro/drivers/" class="md-nav__link">
         
   
   
@@ -892,7 +889,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../intro/clients/" class="md-nav__link">
+      <a href="../../intro/clients/" class="md-nav__link">
         
   
   
@@ -920,7 +917,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../intro/history/" class="md-nav__link">
+      <a href="../../intro/history/" class="md-nav__link">
         
   
   
@@ -996,7 +993,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../quickstart/" class="md-nav__link ">
+            <a href="../../quickstart/" class="md-nav__link ">
               
   
   
@@ -1040,7 +1037,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../quickstart/requirements/" class="md-nav__link">
+      <a href="../../quickstart/requirements/" class="md-nav__link">
         
   
   
@@ -1068,7 +1065,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../quickstart/install/" class="md-nav__link">
+      <a href="../../quickstart/install/" class="md-nav__link">
         
   
   
@@ -1096,7 +1093,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../quickstart/uiauto2-driver/" class="md-nav__link">
+      <a href="../../quickstart/uiauto2-driver/" class="md-nav__link">
         
   
   
@@ -1188,7 +1185,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../quickstart/test-js/" class="md-nav__link">
+      <a href="../../quickstart/test-js/" class="md-nav__link">
         
   
   
@@ -1216,7 +1213,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../quickstart/test-py/" class="md-nav__link">
+      <a href="../../quickstart/test-py/" class="md-nav__link">
         
   
   
@@ -1244,7 +1241,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../quickstart/test-java/" class="md-nav__link">
+      <a href="../../quickstart/test-java/" class="md-nav__link">
         
   
   
@@ -1272,7 +1269,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../quickstart/test-rb/" class="md-nav__link">
+      <a href="../../quickstart/test-rb/" class="md-nav__link">
         
   
   
@@ -1300,7 +1297,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../quickstart/test-dotnet/" class="md-nav__link">
+      <a href="../../quickstart/test-dotnet/" class="md-nav__link">
         
   
   
@@ -1336,7 +1333,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../quickstart/next-steps/" class="md-nav__link">
+      <a href="../../quickstart/next-steps/" class="md-nav__link">
         
   
   
@@ -1402,7 +1399,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../ecosystem/" class="md-nav__link ">
+            <a href="../../ecosystem/" class="md-nav__link ">
               
   
   
@@ -1446,7 +1443,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../ecosystem/drivers/" class="md-nav__link">
+      <a href="../../ecosystem/drivers/" class="md-nav__link">
         
   
   
@@ -1474,7 +1471,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../ecosystem/clients/" class="md-nav__link">
+      <a href="../../ecosystem/clients/" class="md-nav__link">
         
   
   
@@ -1502,7 +1499,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../ecosystem/plugins/" class="md-nav__link">
+      <a href="../../ecosystem/plugins/" class="md-nav__link">
         
   
   
@@ -1530,7 +1527,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../ecosystem/tools/" class="md-nav__link">
+      <a href="../../ecosystem/tools/" class="md-nav__link">
         
   
   
@@ -1599,7 +1596,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -1679,7 +1676,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../cli/" class="md-nav__link ">
+            <a href="../cli/" class="md-nav__link ">
               
   
   
@@ -1723,7 +1720,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../cli/server/" class="md-nav__link">
+      <a href="../cli/server/" class="md-nav__link">
         
   
   
@@ -1751,7 +1748,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../cli/extensions/" class="md-nav__link">
+      <a href="../cli/extensions/" class="md-nav__link">
         
   
   
@@ -1779,7 +1776,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../cli/setup/" class="md-nav__link">
+      <a href="../cli/setup/" class="md-nav__link">
         
   
   
@@ -1807,7 +1804,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../cli/env-vars/" class="md-nav__link">
+      <a href="../cli/env-vars/" class="md-nav__link">
         
   
   
@@ -1835,7 +1832,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../cli/insecure-features/" class="md-nav__link">
+      <a href="../cli/insecure-features/" class="md-nav__link">
         
   
   
@@ -1868,8 +1865,10 @@
                 
   
   
+    
   
   
+  
     
     
       
@@ -1891,15 +1890,15 @@
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_3" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../session/" class="md-nav__link ">
+            <a href="./" class="md-nav__link md-nav__link--active">
               
   
   
@@ -1917,13 +1916,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_6_3" id="__nav_6_3_label" tabindex="">
+              <label class="md-nav__link md-nav__link--active" for="__nav_6_3" id="__nav_6_3_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_6_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1943,7 +1942,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../session/caps/" class="md-nav__link">
+      <a href="caps/" class="md-nav__link">
         
   
   
@@ -1976,8 +1975,6 @@
                 
   
   
-    
-  
   
   
     
@@ -2013,15 +2010,15 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_4" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_4" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../api/" class="md-nav__link ">
               
   
   
@@ -2045,7 +2042,7 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_4_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_4_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_6_4">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2065,7 +2062,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../webdriver/" class="md-nav__link">
+      <a href="../api/webdriver/" class="md-nav__link">
         
   
   
@@ -2090,35 +2087,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    WebDriver BiDi Protocol
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../api/bidi/" class="md-nav__link">
         
   
   
@@ -2134,130 +2106,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目录">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目录
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#bidistatus" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        bidiStatus
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="bidiStatus">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#response" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Response
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#bidisubscribe" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        bidiSubscribe
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="bidiSubscribe">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#parameters" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Parameters
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#response_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Response
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#bidiunsubscribe" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        bidiUnsubscribe
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="bidiUnsubscribe">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#parameters_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Parameters
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#response_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Response
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -2270,7 +2118,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../jsonwp/" class="md-nav__link">
+      <a href="../api/jsonwp/" class="md-nav__link">
         
   
   
@@ -2298,7 +2146,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mjsonwp/" class="md-nav__link">
+      <a href="../api/mjsonwp/" class="md-nav__link">
         
   
   
@@ -2326,7 +2174,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../appium/" class="md-nav__link">
+      <a href="../api/appium/" class="md-nav__link">
         
   
   
@@ -2354,7 +2202,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../others/" class="md-nav__link">
+      <a href="../api/others/" class="md-nav__link">
         
   
   
@@ -2382,7 +2230,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../plugins/" class="md-nav__link">
+      <a href="../api/plugins/" class="md-nav__link">
         
   
   
@@ -2543,7 +2391,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/migrating-2-to-3/" class="md-nav__link">
+      <a href="../../guides/migrating-2-to-3/" class="md-nav__link">
         
   
   
@@ -2571,7 +2419,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/migrating-1-to-2/" class="md-nav__link">
+      <a href="../../guides/migrating-1-to-2/" class="md-nav__link">
         
   
   
@@ -2679,7 +2527,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/managing-exts/" class="md-nav__link">
+      <a href="../../guides/managing-exts/" class="md-nav__link">
         
   
   
@@ -2707,7 +2555,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/branch-testing/" class="md-nav__link">
+      <a href="../../guides/branch-testing/" class="md-nav__link">
         
   
   
@@ -2735,7 +2583,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/config/" class="md-nav__link">
+      <a href="../../guides/config/" class="md-nav__link">
         
   
   
@@ -2763,7 +2611,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/security/" class="md-nav__link">
+      <a href="../../guides/security/" class="md-nav__link">
         
   
   
@@ -2791,7 +2639,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/log-filters/" class="md-nav__link">
+      <a href="../../guides/log-filters/" class="md-nav__link">
         
   
   
@@ -2819,7 +2667,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/headers/" class="md-nav__link">
+      <a href="../../guides/headers/" class="md-nav__link">
         
   
   
@@ -2847,7 +2695,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/grid/" class="md-nav__link">
+      <a href="../../guides/grid/" class="md-nav__link">
         
   
   
@@ -2875,7 +2723,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/caching/" class="md-nav__link">
+      <a href="../../guides/caching/" class="md-nav__link">
         
   
   
@@ -2903,7 +2751,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/tls/" class="md-nav__link">
+      <a href="../../guides/tls/" class="md-nav__link">
         
   
   
@@ -3003,7 +2851,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/caps/" class="md-nav__link">
+      <a href="../../guides/caps/" class="md-nav__link">
         
   
   
@@ -3031,7 +2879,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/settings/" class="md-nav__link">
+      <a href="../../guides/settings/" class="md-nav__link">
         
   
   
@@ -3059,7 +2907,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/execute-methods/" class="md-nav__link">
+      <a href="../../guides/execute-methods/" class="md-nav__link">
         
   
   
@@ -3087,7 +2935,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/context/" class="md-nav__link">
+      <a href="../../guides/context/" class="md-nav__link">
         
   
   
@@ -3115,7 +2963,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/event-timing/" class="md-nav__link">
+      <a href="../../guides/event-timing/" class="md-nav__link">
         
   
   
@@ -3181,7 +3029,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../resources/" class="md-nav__link ">
+            <a href="../../resources/" class="md-nav__link ">
               
   
   
@@ -3262,7 +3110,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../developing/" class="md-nav__link ">
+            <a href="../../developing/" class="md-nav__link ">
               
   
   
@@ -3306,7 +3154,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../developing/build-drivers/" class="md-nav__link">
+      <a href="../../developing/build-drivers/" class="md-nav__link">
         
   
   
@@ -3334,7 +3182,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../developing/build-plugins/" class="md-nav__link">
+      <a href="../../developing/build-plugins/" class="md-nav__link">
         
   
   
@@ -3362,7 +3210,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../developing/build-docs/" class="md-nav__link">
+      <a href="../../developing/build-docs/" class="md-nav__link">
         
   
   
@@ -3390,7 +3238,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../developing/build-doctor-checks/" class="md-nav__link">
+      <a href="../../developing/build-doctor-checks/" class="md-nav__link">
         
   
   
@@ -3418,7 +3266,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../developing/sensitive/" class="md-nav__link">
+      <a href="../../developing/sensitive/" class="md-nav__link">
         
   
   
@@ -3502,7 +3350,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../developing/config-system/" class="md-nav__link">
+      <a href="../../developing/config-system/" class="md-nav__link">
         
   
   
@@ -3568,7 +3416,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../contributing/" class="md-nav__link ">
+            <a href="../../contributing/" class="md-nav__link ">
               
   
   
@@ -3637,7 +3485,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../sponsors/" class="md-nav__link ">
+            <a href="../../sponsors/" class="md-nav__link ">
               
   
   
@@ -3684,7 +3532,9 @@
             
             
               
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" hidden>
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
@@ -3693,120 +3543,6 @@
   
   
   
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目录
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#bidistatus" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        bidiStatus
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="bidiStatus">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#response" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Response
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#bidisubscribe" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        bidiSubscribe
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="bidiSubscribe">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#parameters" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Parameters
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#response_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Response
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#bidiunsubscribe" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        bidiUnsubscribe
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="bidiUnsubscribe">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#parameters_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Parameters
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#response_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Response
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
   
 </nav>
                   </div>
@@ -3818,6 +3554,8 @@
             <div class="md-content" data-md-component="content">
               
                 
+
+  
 
 
 
@@ -3831,7 +3569,7 @@
   
   
     <li class="md-path__item">
-      <a href="../../.." class="md-path__link">
+      <a href="../.." class="md-path__link">
         
   <span class="md-ellipsis">
     欢迎使用
@@ -3849,7 +3587,7 @@
     
     
       <li class="md-path__item">
-        <a href="../../" class="md-path__link">
+        <a href="../" class="md-path__link">
           
   <span class="md-ellipsis">
     参考
@@ -3867,10 +3605,10 @@
     
     
       <li class="md-path__item">
-        <a href="../" class="md-path__link">
+        <a href="./" class="md-path__link">
           
   <span class="md-ellipsis">
-    API 端点
+    Session Properties
   </span>
 
         </a>
@@ -3886,10 +3624,12 @@
               <article class="md-content__inner md-typeset">
                 
                   
+  
+
 
 
   
-    <a href="https://github.com/appium/appium/edit/master/packages/appium/docs/zh/reference/api/bidi.md" title="编辑此页" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/appium/appium/edit/master/packages/appium/docs/zh/reference/session/index.md" title="编辑此页" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -3897,95 +3637,22 @@
   
 
 
-  <h1>WebDriver BiDi Protocol</h1>
+  <h1>Session Properties</h1>
 
-<style>
-  ul[data-md-component="toc"] .md-nav {
-    display: none;
-  }
-</style>
-
-<p>The following is a list of <a href="https://w3c.github.io/webdriver-bidi/">W3C WebDriver BiDi protocol</a>
-commands supported in Appium.</p>
-<p>Unlike other protocols that specify URL endpoints, the WebDriver BiDi protocol specifies commands
-sent as a websocket event, that both drivers and clients can emit or listen to.</p>
-<h3 id="bidistatus">bidiStatus<a class="headerlink" href="#bidistatus" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>session.status
-</span></code></pre></div>
-<blockquote>
-<p>WebDriver BiDi documentation: <a href="https://w3c.github.io/webdriver-bidi/#command-session-status">session.status</a></p>
-</blockquote>
-<p>Retrieves the current status of the Appium server.</p>
-<h4 id="response">Response<a class="headerlink" href="#response" title="Permanent link">&para;</a></h4>
-<p><a href="../webdriver/#response_2"><code>GetStatusResult</code></a></p>
-<h3 id="bidisubscribe">bidiSubscribe<a class="headerlink" href="#bidisubscribe" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>session.subscribe
-</span></code></pre></div>
-<blockquote>
-<p>WebDriver BiDi documentation: <a href="https://w3c.github.io/webdriver-bidi/#command-session-subscribe">session.subscribe</a></p>
-</blockquote>
-<p>Subscribes to one or more BiDi events.</p>
-<h4 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h4>
-<table>
-<thead>
-<tr>
-<th>Name</th>
-<th>Description</th>
-<th>Type</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>contexts?</code></td>
-<td>Contexts in which to subscribe to the specified events. By default, the global context scope is applied.</td>
-<td>string[]</td>
-<td><code>['']</code></td>
-</tr>
-<tr>
-<td><code>events</code></td>
-<td>Names of events to subscribe to</td>
-<td>string[]</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<h4 id="response_1">Response<a class="headerlink" href="#response_1" title="Permanent link">&para;</a></h4>
-<p><code>null</code></p>
-<h3 id="bidiunsubscribe">bidiUnsubscribe<a class="headerlink" href="#bidiunsubscribe" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>session.unsubscribe
-</span></code></pre></div>
-<blockquote>
-<p>WebDriver BiDi documentation: <a href="https://w3c.github.io/webdriver-bidi/#command-session-unsubscribe">session.unsubscribe</a></p>
-</blockquote>
-<p>Unsubscribes from one or more BiDi events.</p>
-<h4 id="parameters_1">Parameters<a class="headerlink" href="#parameters_1" title="Permanent link">&para;</a></h4>
-<table>
-<thead>
-<tr>
-<th>Name</th>
-<th>Description</th>
-<th>Type</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>contexts?</code></td>
-<td>Contexts in which to unsubscribe from the specified events. By default, the global scope is applied.</td>
-<td>string[]</td>
-<td><code>['']</code></td>
-</tr>
-<tr>
-<td><code>events</code></td>
-<td>Names of events to unsubscribe from</td>
-<td>string[]</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<h4 id="response_2">Response<a class="headerlink" href="#response_2" title="Permanent link">&para;</a></h4>
-<p><code>null</code></p>
+<p>An Appium session has several key properties, each with its own set of supported values:
+capabilities, execute methods, settings, locator strategies, and others. The supported values for
+each property are primarily defined by the active driver and plugins, but some properties also have
+common values provided by the Appium server and its base driver:</p>
+<div class="grid cards">
+<ul>
+<li><a href="caps/"><strong>Capabilities</strong></a></li>
+</ul>
+<p>A small set of basic capabilities</p>
+<ul>
+<li><a href="../api/"><strong>Command Endpoints</strong></a></li>
+</ul>
+<p>The core set of API endpoints</p>
+</div>
 
 
 
@@ -4016,6 +3683,8 @@ sent as a websocket event, that both drivers and clients can emit or listen to.<
   </aside>
 
 
+
+  
 
 
 
@@ -4170,14 +3839,14 @@ sent as a websocket event, that both drivers and clients can emit or listen to.<
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.action.edit", "content.code.annotate", "content.code.copy", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "navigation.indexes", "navigation.path", "navigation.sections", "navigation.tabs", "navigation.top", "toc.follow"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.action.edit", "content.code.annotate", "content.code.copy", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "navigation.indexes", "navigation.path", "navigation.sections", "navigation.tabs", "navigation.top", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
-        <script src="../../../js/timeago.min.js"></script>
+        <script src="../../js/timeago.min.js"></script>
       
-        <script src="../../../js/timeago_mkdocs_material.js"></script>
+        <script src="../../js/timeago_mkdocs_material.js"></script>
       
     
   </body>

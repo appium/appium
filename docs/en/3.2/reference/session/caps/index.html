@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://appium.io/docs/en/3.2/reference/api/bidi/">
+        <link rel="canonical" href="https://appium.io/docs/en/3.2/reference/session/caps/">
       
       
-        <link rel="prev" href="../webdriver/">
+        <link rel="prev" href="../">
       
       
-        <link rel="next" href="../jsonwp/">
+        <link rel="next" href="../../api/">
       
       
         
@@ -33,7 +33,7 @@
     
     
       
-        <title>WebDriver BiDi Protocol - Appium Documentation</title>
+        <title>Capabilities - Appium Documentation</title>
       
     
     
@@ -153,7 +153,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#bidistatus" class="md-skip">
+        <a href="#required-capabilities" class="md-skip">
           Skip to content
         </a>
       
@@ -203,7 +203,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              WebDriver BiDi Protocol
+              Capabilities
             
           </span>
         </div>
@@ -608,6 +608,8 @@
         <div class="md-main__inner md-grid">
           
             
+              
+                
               
               <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
                 <div class="md-sidebar__scrollwrap">
@@ -1868,8 +1870,10 @@
                 
   
   
+    
   
   
+  
     
     
       
@@ -1891,15 +1895,15 @@
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_3" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../session/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -1923,7 +1927,7 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_6_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1940,10 +1944,35 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../session/caps/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capabilities
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1959,6 +1988,57 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#required-capabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Required Capabilities
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#optional-capabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optional Capabilities
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#validated-capabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validated Capabilities
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1976,8 +2056,6 @@
                 
   
   
-    
-  
   
   
     
@@ -2013,15 +2091,15 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_4" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_4" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../api/" class="md-nav__link ">
               
   
   
@@ -2045,7 +2123,7 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_4_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_4_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_6_4">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2065,7 +2143,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../webdriver/" class="md-nav__link">
+      <a href="../../api/webdriver/" class="md-nav__link">
         
   
   
@@ -2090,35 +2168,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    WebDriver BiDi Protocol
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../api/bidi/" class="md-nav__link">
         
   
   
@@ -2134,130 +2187,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#bidistatus" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        bidiStatus
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="bidiStatus">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#response" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Response
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#bidisubscribe" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        bidiSubscribe
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="bidiSubscribe">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#parameters" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Parameters
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#response_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Response
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#bidiunsubscribe" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        bidiUnsubscribe
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="bidiUnsubscribe">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#parameters_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Parameters
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#response_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Response
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -2270,7 +2199,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../jsonwp/" class="md-nav__link">
+      <a href="../../api/jsonwp/" class="md-nav__link">
         
   
   
@@ -2298,7 +2227,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mjsonwp/" class="md-nav__link">
+      <a href="../../api/mjsonwp/" class="md-nav__link">
         
   
   
@@ -2326,7 +2255,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../appium/" class="md-nav__link">
+      <a href="../../api/appium/" class="md-nav__link">
         
   
   
@@ -2354,7 +2283,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../others/" class="md-nav__link">
+      <a href="../../api/others/" class="md-nav__link">
         
   
   
@@ -2382,7 +2311,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../plugins/" class="md-nav__link">
+      <a href="../../api/plugins/" class="md-nav__link">
         
   
   
@@ -3684,7 +3613,9 @@
             
             
               
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" hidden>
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
@@ -3701,108 +3632,35 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#bidistatus" class="md-nav__link">
+  <a href="#required-capabilities" class="md-nav__link">
     <span class="md-ellipsis">
       
-        bidiStatus
+        Required Capabilities
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="bidiStatus">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#response" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Response
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#bidisubscribe" class="md-nav__link">
+  <a href="#optional-capabilities" class="md-nav__link">
     <span class="md-ellipsis">
       
-        bidiSubscribe
+        Optional Capabilities
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="bidiSubscribe">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#parameters" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Parameters
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#response_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Response
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#bidiunsubscribe" class="md-nav__link">
+  <a href="#validated-capabilities" class="md-nav__link">
     <span class="md-ellipsis">
       
-        bidiUnsubscribe
+        Validated Capabilities
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="bidiUnsubscribe">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#parameters_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Parameters
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#response_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Response
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -3818,6 +3676,8 @@
             <div class="md-content" data-md-component="content">
               
                 
+
+  
 
 
 
@@ -3870,7 +3730,7 @@
         <a href="../" class="md-path__link">
           
   <span class="md-ellipsis">
-    API Endpoints
+    Session Properties
   </span>
 
         </a>
@@ -3886,10 +3746,12 @@
               <article class="md-content__inner md-typeset">
                 
                   
+  
+
 
 
   
-    <a href="https://github.com/appium/appium/edit/master/packages/appium/docs/en/reference/api/bidi.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/appium/appium/edit/master/packages/appium/docs/en/reference/session/caps.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -3897,39 +3759,47 @@
   
 
 
-  <h1>WebDriver BiDi Protocol</h1>
+  <h1>Capabilities</h1>
 
-<style>
-  ul[data-md-component="toc"] .md-nav {
-    display: none;
-  }
-</style>
-
-<p>The following is a list of <a href="https://w3c.github.io/webdriver-bidi/">W3C WebDriver BiDi protocol</a>
-commands supported in Appium.</p>
-<p>Unlike other protocols that specify URL endpoints, the WebDriver BiDi protocol specifies commands
-sent as a websocket event, that both drivers and clients can emit or listen to.</p>
-<h3 id="bidistatus">bidiStatus<a class="headerlink" href="#bidistatus" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>session.status
-</span></code></pre></div>
-<blockquote>
-<p>WebDriver BiDi documentation: <a href="https://w3c.github.io/webdriver-bidi/#command-session-status">session.status</a></p>
-</blockquote>
-<p>Retrieves the current status of the Appium server.</p>
-<h4 id="response">Response<a class="headerlink" href="#response" title="Permanent link">&para;</a></h4>
-<p><a href="../webdriver/#response_2"><code>GetStatusResult</code></a></p>
-<h3 id="bidisubscribe">bidiSubscribe<a class="headerlink" href="#bidisubscribe" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>session.subscribe
-</span></code></pre></div>
-<blockquote>
-<p>WebDriver BiDi documentation: <a href="https://w3c.github.io/webdriver-bidi/#command-session-subscribe">session.subscribe</a></p>
-</blockquote>
-<p>Subscribes to one or more BiDi events.</p>
-<h4 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h4>
+<p>The following <a href="../../../guides/caps/">capabilities</a> are recognized by the Appium server/base driver,
+and are therefore supported by all drivers as well. Some capabilities are directly handled by the
+server/base driver, while others are only validated before being passed to the actual driver.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Capabilities not listed here will <em>not</em> be rejected by Appium: they will simply be forwarded
+directly to the active driver/plugin.</p>
+</div>
+<h3 id="required-capabilities">Required Capabilities<a class="headerlink" href="#required-capabilities" title="Permanent link">&para;</a></h3>
+<p>These capabilities are used in the Appium server/base driver, and are explicitly required in all
+Appium sessions.</p>
 <table>
 <thead>
 <tr>
-<th>Name</th>
+<th>Capability</th>
+<th>Description</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>platformName</code></td>
+<td>Type of platform hosting the app or browser</td>
+<td><code>string</code></td>
+</tr>
+<tr>
+<td><code>appium:automationName</code></td>
+<td>Name of the Appium driver to use</td>
+<td><code>string</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="optional-capabilities">Optional Capabilities<a class="headerlink" href="#optional-capabilities" title="Permanent link">&para;</a></h3>
+<p>These capabilities are used in the Appium server/base driver, but are optional, and may have a
+default value.</p>
+<table>
+<thead>
+<tr>
+<th><div style="width:19em">Capability</div></th>
 <th>Description</th>
 <th>Type</th>
 <th>Default</th>
@@ -3937,55 +3807,85 @@ sent as a websocket event, that both drivers and clients can emit or listen to.<
 </thead>
 <tbody>
 <tr>
-<td><code>contexts?</code></td>
-<td>Contexts in which to subscribe to the specified events. By default, the global context scope is applied.</td>
-<td>string[]</td>
-<td><code>['']</code></td>
+<td><code>webSocketUrl</code></td>
+<td>Toggle support of the WebDriver BiDi protocol</td>
+<td><code>boolean</code></td>
+<td></td>
 </tr>
 <tr>
-<td><code>events</code></td>
-<td>Names of events to subscribe to</td>
-<td>string[]</td>
+<td><code>appium:eventTimings</code> (deprecated)</td>
+<td>Toggle collection of <a href="../../../guides/event-timing/">Event Timings</a>. This capability is deprecated - please use the <a href="../../api/appium/#getlogevents"><code>getLogEvents</code></a> endpoint instead.</td>
+<td><code>boolean</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>appium:newCommandTimeout</code></td>
+<td>Number of seconds the Appium server should wait for clients to send commands before stopping the session. A value of <code>0</code> disables the timeout.</td>
+<td><code>number</code></td>
+<td><code>60</code></td>
+</tr>
+<tr>
+<td><code>appium:printPageSourceOnFindFailure</code></td>
+<td>Toggle retrieval of the the page source and its printing to the Appium log, whenever a request to find an element fails</td>
+<td><code>boolean</code></td>
 <td></td>
 </tr>
 </tbody>
 </table>
-<h4 id="response_1">Response<a class="headerlink" href="#response_1" title="Permanent link">&para;</a></h4>
-<p><code>null</code></p>
-<h3 id="bidiunsubscribe">bidiUnsubscribe<a class="headerlink" href="#bidiunsubscribe" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>session.unsubscribe
-</span></code></pre></div>
-<blockquote>
-<p>WebDriver BiDi documentation: <a href="https://w3c.github.io/webdriver-bidi/#command-session-unsubscribe">session.unsubscribe</a></p>
-</blockquote>
-<p>Unsubscribes from one or more BiDi events.</p>
-<h4 id="parameters_1">Parameters<a class="headerlink" href="#parameters_1" title="Permanent link">&para;</a></h4>
+<h3 id="validated-capabilities">Validated Capabilities<a class="headerlink" href="#validated-capabilities" title="Permanent link">&para;</a></h3>
+<p>These capabilities are not directly used in the Appium server/base driver, but are still subject to
+validation checks due to their relevance in other drivers. The actual handling of these
+capabilities is optional and entirely driver-dependent.</p>
 <table>
 <thead>
 <tr>
-<th>Name</th>
-<th>Description</th>
-<th>Type</th>
-<th>Default</th>
+<th>Capability</th>
+<th>Validation</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>contexts?</code></td>
-<td>Contexts in which to unsubscribe from the specified events. By default, the global scope is applied.</td>
-<td>string[]</td>
-<td><code>['']</code></td>
+<td><code>platformVersion</code></td>
+<td>Must be <code>string</code></td>
 </tr>
 <tr>
-<td><code>events</code></td>
-<td>Names of events to unsubscribe from</td>
-<td>string[]</td>
-<td></td>
+<td><code>appium:app</code></td>
+<td>Must be <code>string</code>; empty values are ignored</td>
+</tr>
+<tr>
+<td><code>appium:autoLaunch</code> (deprecated)</td>
+<td>Must be <code>boolean</code></td>
+</tr>
+<tr>
+<td><code>appium:autoWebview</code></td>
+<td>Must be <code>boolean</code></td>
+</tr>
+<tr>
+<td><code>appium:fullReset</code></td>
+<td>Must be <code>boolean</code>; mutually exclusive with <code>appium:noReset</code></td>
+</tr>
+<tr>
+<td><code>appium:language</code></td>
+<td>Must be <code>string</code></td>
+</tr>
+<tr>
+<td><code>appium:locale</code></td>
+<td>Must be <code>string</code></td>
+</tr>
+<tr>
+<td><code>appium:orientation</code></td>
+<td>Must be either <code>LANDSCAPE</code> or <code>PORTRAIT</code></td>
+</tr>
+<tr>
+<td><code>appium:noReset</code></td>
+<td>Must be <code>boolean</code>; mutually exclusive with <code>appium:fullReset</code></td>
+</tr>
+<tr>
+<td><code>appium:udid</code></td>
+<td>Must be <code>string</code></td>
 </tr>
 </tbody>
 </table>
-<h4 id="response_2">Response<a class="headerlink" href="#response_2" title="Permanent link">&para;</a></h4>
-<p><code>null</code></p>
 
 
 
@@ -4016,6 +3916,8 @@ sent as a websocket event, that both drivers and clients can emit or listen to.<
   </aside>
 
 
+
+  
 
 
 

@@ -58,9 +58,7 @@ automation capabilities using Appium.
 
 ### [Skills](https://github.com/appium/skills)
 
-A set of AI Agent skills to support Appium automation.
-
-Examples:
+A set of AI Agent skills to support Appium automation, for example:
 
 - Help preparing Appium test environment from scratch, including common driver setup
 - Help preparing XCUITest driver and WebDriverAgent for real device automation
@@ -91,6 +89,18 @@ out the documentation on [Building Doctor Checks](../developing/build-doctor-che
 ## Other Tools
 
 These tools are not maintained by the Appium team:
+
+### [AppClaw](https://github.com/AppiumTestDistribution/AppClaw)
+
+AppClaw is a CLI-based agentic AI layer for mobile automation, powered by [Appium MCP](#appium-mcp).
+Agent instructions can be passed directly via CLI, or defined as YAML flows in either structured
+or natural language syntax.
+
+Supported by: `@AppiumTestDistribution`
+
+```sh title="Install This Tool"
+npm install -g appclaw
+```
 
 ### [Appium Installer](https://github.com/AppiumTestDistribution/appium-installer)
 

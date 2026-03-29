@@ -1,4 +1,7 @@
 import _ from 'lodash';
+import type {ArgumentOptions} from 'argparse';
+import type {ExtensionType} from '@appium/types';
+import type {CliExtensionSubcommand} from 'appium/types';
 import {
   DRIVER_TYPE,
   PLUGIN_TYPE,
@@ -14,18 +17,21 @@ import {toParserArgs} from '../schema/cli-args';
 const DRIVER_EXAMPLE = 'xcuitest';
 const PLUGIN_EXAMPLE = 'images';
 
+export type ArgumentDefinitions = Map<
+  [name: string] | [name: string, alias: string],
+  ArgumentOptions
+>;
+
 /**
  * This is necessary because we pass the array into `argparse`. `argparse` is bad and mutates things. We don't want that.
  * Bad `argparse`! Bad!
  */
 const INSTALL_TYPES_ARRAY = [...INSTALL_TYPES];
 
-/** @type {Set<ExtensionType>} */
-const EXTENSION_TYPES = new Set([DRIVER_TYPE, PLUGIN_TYPE]);
+const EXTENSION_TYPES = new Set<ExtensionType>([DRIVER_TYPE, PLUGIN_TYPE]);
 
 // this set of args works for both drivers and plugins ('extensions')
-/** @type {ArgumentDefinitions} */
-const globalExtensionArgs = new Map([
+const globalExtensionArgs: ArgumentDefinitions = new Map([
   [
     ['--json'],
     {
@@ -39,10 +45,18 @@ const globalExtensionArgs = new Map([
 ]);
 
 /**
- * Builds a Record of extension types to a Record of subcommands to their argument definitions
+ * Returns CLI argument definitions for extension commands by extension type.
+ *
+ * The result is memoized because parser setup is static across process lifetime.
  */
-const getExtensionArgs = _.memoize(function getExtensionArgs() {
-  const extensionArgs = {};
+export const getExtensionArgs = _.memoize(function getExtensionArgs(): Record<
+  ExtensionType,
+  Record<CliExtensionSubcommand, ArgumentDefinitions>
+> {
+  const extensionArgs = {} as Record<
+    ExtensionType,
+    Record<CliExtensionSubcommand, ArgumentDefinitions>
+  >;
   for (const type of EXTENSION_TYPES) {
     extensionArgs[type] = {
       [EXT_SUBCOMMAND_LIST]: makeListArgs(type),
@@ -53,17 +67,13 @@ const getExtensionArgs = _.memoize(function getExtensionArgs() {
       [EXT_SUBCOMMAND_DOCTOR]: makeDoctorArgs(type),
     };
   }
-  return /** @type {Record<ExtensionType, Record<import('appium/types').CliExtensionSubcommand,ArgumentDefinitions>>} */ (
-    extensionArgs
-  );
+  return extensionArgs;
 });
 
 /**
- * Makes the opts for the `list` subcommand for each extension type.
- * @param {ExtensionType} type
- * @returns {ArgumentDefinitions}
+ * Builds options for the `list` subcommand for an extension type.
  */
-function makeListArgs(type) {
+function makeListArgs(type: ExtensionType): ArgumentDefinitions {
   return new Map([
     ...globalExtensionArgs,
     [
@@ -100,11 +110,9 @@ function makeListArgs(type) {
 }
 
 /**
- * Makes the opts for the `install` subcommand for each extension type
- * @param {ExtensionType} type
- * @returns {ArgumentDefinitions}
+ * Builds options for the `install` subcommand for an extension type.
  */
-function makeInstallArgs(type) {
+function makeInstallArgs(type: ExtensionType): ArgumentDefinitions {
   return new Map([
     ...globalExtensionArgs,
     [
@@ -144,11 +152,9 @@ function makeInstallArgs(type) {
 }
 
 /**
- * Makes the opts for the `uninstall` subcommand for each extension type
- * @param {ExtensionType} type
- * @returns {ArgumentDefinitions}
+ * Builds options for the `uninstall` subcommand for an extension type.
  */
-function makeUninstallArgs(type) {
+function makeUninstallArgs(type: ExtensionType): ArgumentDefinitions {
   return new Map([
     ...globalExtensionArgs,
     [
@@ -164,11 +170,9 @@ function makeUninstallArgs(type) {
 }
 
 /**
- * Makes the opts for the `doctor` subcommand for each extension type
- * @param {ExtensionType} type
- * @returns {ArgumentDefinitions}
+ * Builds options for the `doctor` subcommand for an extension type.
  */
-function makeDoctorArgs(type) {
+function makeDoctorArgs(type: ExtensionType): ArgumentDefinitions {
   return new Map([
     ...globalExtensionArgs,
     [
@@ -184,11 +188,9 @@ function makeDoctorArgs(type) {
 }
 
 /**
- * Makes the opts for the `update` subcommand for each extension type
- * @param {ExtensionType} type
- * @returns {ArgumentDefinitions}
+ * Builds options for the `update` subcommand for an extension type.
  */
-function makeUpdateArgs(type) {
+function makeUpdateArgs(type: ExtensionType): ArgumentDefinitions {
   return new Map([
     ...globalExtensionArgs,
     [
@@ -216,11 +218,9 @@ function makeUpdateArgs(type) {
 }
 
 /**
- * Makes the opts for the `run` subcommand for each extension type
- * @param {ExtensionType} type
- * @returns {ArgumentDefinitions}
+ * Builds options for the `run` subcommand for an extension type.
  */
-function makeRunArgs(type) {
+function makeRunArgs(type: ExtensionType): ArgumentDefinitions {
   return new Map([
     ...globalExtensionArgs,
     [
@@ -247,19 +247,19 @@ function makeRunArgs(type) {
 }
 
 /**
- * Derives the options for the `server` command from the schema, and adds the arguments
- * which are disallowed in the config file.
- * @returns {ArgumentDefinitions}
+ * Returns CLI argument definitions for the `server` command.
+ *
+ * This includes schema-derived options and additional CLI-only options which
+ * are intentionally disallowed in config files.
  */
-function getServerArgs() {
+export function getServerArgs(): ArgumentDefinitions {
   return new Map([...toParserArgs(), ...serverArgsDisallowedInConfig]);
 }
 
 /**
  * These don't make sense in the context of a config file for obvious reasons.
- * @type {ArgumentDefinitions}
  */
-const serverArgsDisallowedInConfig = new Map([
+const serverArgsDisallowedInConfig: ArgumentDefinitions = new Map([
   [
     ['--shell'],
     {
@@ -310,14 +310,3 @@ const serverArgsDisallowedInConfig = new Map([
     },
   ],
 ]);
-
-export {getServerArgs, getExtensionArgs};
-
-/**
- * @typedef {import('@appium/types').ExtensionType} ExtensionType
- */
-
-/**
- * A tuple of argument aliases and argument options
- * @typedef {Map<[name: string]|[name: string, alias: string],import('argparse').ArgumentOptions>} ArgumentDefinitions
- */

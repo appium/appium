@@ -111,7 +111,7 @@ export async function execWithErrorHandling(
     return await exec(cmd, args, opts);
   } catch (err) {
     const execErr = err as ExecError;
-    const execStderr = execErr.stderr ? `\nCommand error:\n${execErr.stderr}` : '';
-    throw new Error(`${execErr.message}${execStderr}`);
+    execErr.message = execErr.stderr ? `${execErr.message}\nCommand error:\n${execErr.stderr}` : execErr.message;
+    throw execErr;
   }
 }

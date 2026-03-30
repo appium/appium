@@ -40,7 +40,7 @@
     "test:unit": "mocha --exit --timeout 10s --slow 5s \"./test/unit/**/*.spec.ts\""
   },
   "dependencies": {
-    "@xmldom/xmldom": "0.9.8",
+    "@xmldom/xmldom": "0.9.9",
     "asyncbox": "6.1.0",
     "lodash": "4.17.23",
     "xpath": "0.0.34"

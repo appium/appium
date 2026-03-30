@@ -1,14 +1,13 @@
 import { fs, timing } from '@appium/support';
 import _ from 'lodash';
-import B from 'bluebird';
-import type { Path } from 'path-scurry';
+import { asyncmap } from 'asyncbox';
+import type {Path} from 'path-scurry';
 import path from 'node:path';
-import type { Stats } from 'node:fs';
+import type {Stats} from 'node:fs';
 import nativeFs from 'node:fs';
-import { rimrafSync } from 'rimraf';
-import { ItemOptions, StorageItem } from './types';
+import type {ItemOptions, StorageItem} from './types';
 import AsyncLock from 'async-lock';
-import type { AppiumLogger } from '@appium/types';
+import type {AppiumLogger} from '@appium/types';
 import type Stream from 'node:stream';
 import type WebSocket from 'ws';
 import { createHash } from 'node:crypto';
@@ -45,17 +44,14 @@ export class Storage {
       return [];
     }
 
-    const statPromises: B<Stats>[] = [];
-    for (const item of items) {
-      const pending = statPromises.filter((p) => p.isPending());
-      if (pending.length >= MAX_TASKS) {
-        await B.any(pending);
-      }
-      statPromises.push(B.resolve(fs.stat(item.fullpath())));
-    }
+    const stats = await asyncmap(
+      items,
+      (item) => fs.stat(item.fullpath()),
+      {concurrency: MAX_TASKS}
+    );
     return _.zip(
       items.map((f) => f.fullpath()),
-      await B.all(statPromises)
+      stats
     )
     .map(([fullpath, stat]) => ({
       name: path.basename(fullpath as string),
@@ -107,22 +103,18 @@ export class Storage {
       return;
     }
 
-    const promises: B<any>[] = [];
-    for (const fullPath of files) {
-      const pending = promises.filter((p) => p.isPending());
-      if (pending.length >= MAX_TASKS) {
-        await B.any(pending);
-      }
-      promises.push(B.resolve(fs.rimraf(fullPath)));
-    }
-    await B.all(promises);
+    await asyncmap(
+      files,
+      (fullPath) => fs.rimraf(fullPath),
+      {concurrency: MAX_TASKS}
+    );
   }
 
   cleanupSync(): void {
     this._log.debug(`Cleaning up the '${this._root}' server storage folder`);
 
     if (!this._shouldPreserveRoot && !this._shouldPreserveFiles) {
-      rimrafSync(this._root);
+      fs.rimrafSync(this._root);
       return;
     }
 
@@ -139,7 +131,7 @@ export class Storage {
     }
     if (_.isEmpty(itemNames)) {
       if (!this._shouldPreserveRoot) {
-        rimrafSync(this._root);
+        fs.rimrafSync(this._root);
       }
       return;
     }
@@ -148,10 +140,10 @@ export class Storage {
       (name) => !this._shouldPreserveFiles || _.toLower(name).endsWith(TMP_EXT)
     );
     for (const matchedName of matchedNames) {
-      rimrafSync(path.join(this._root, matchedName));
+      fs.rimrafSync(path.join(this._root, matchedName));
     }
     if (!this._shouldPreserveRoot && _.isEmpty(_.without(itemNames, ...matchedNames))) {
-      rimrafSync(this._root);
+      fs.rimrafSync(this._root);
     }
   }
 

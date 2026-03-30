@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.0](https://github.com/appium/appium/compare/@appium/plugin-test-support@1.0.5...@appium/plugin-test-support@1.1.0) (2026-03-08)
+
+
+### Features
+
+* **plugin-test-support:** Migrate to typescript ([#21911](https://github.com/appium/appium/issues/21911)) ([27e7e5a](https://github.com/appium/appium/commit/27e7e5a4e2a95320aa681ed6fe106f71d2211e27))
+
+
+### Bug Fixes
+
+* Move @appium/types to dev dependencies for various packages ([#21920](https://github.com/appium/appium/issues/21920)) ([2615935](https://github.com/appium/appium/commit/261593593947bc59e7a937e518fc6f019cafda7a))
+
+
+
+## [1.0.5](https://github.com/appium/appium/compare/@appium/plugin-test-support@1.0.4...@appium/plugin-test-support@1.0.5) (2026-01-26)
+
+**Note:** Version bump only for package @appium/plugin-test-support
+
+
+
+
+
 ## [1.0.4](https://github.com/appium/appium/compare/@appium/plugin-test-support@1.0.3...@appium/plugin-test-support@1.0.4) (2025-12-04)
 
 **Note:** Version bump only for package @appium/plugin-test-support

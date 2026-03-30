@@ -6,12 +6,13 @@
  */
 
 import path from 'node:path';
-import {exec, TeenProcessExecOptions} from 'teen_process';
+import type {TeenProcessExecOptions} from 'teen_process';
 import {DEFAULT_SITE_DIR, NAME_BIN, NAME_MKDOCS, NAME_MKDOCS_YML} from '../constants';
 import {DocutilsError} from '../error';
 import {findMkDocsYml, isMkDocsInstalled, readMkDocsYml, requirePython} from '../fs';
 import {getLogger} from '../logger';
-import {relative, spawnBackgroundProcess, SpawnBackgroundProcessOpts, stopwatch} from '../util';
+import type {SpawnBackgroundProcessOpts} from '../util';
+import {execWithErrorHandling, relative, spawnBackgroundProcess, stopwatch} from '../util';
 
 const log = getLogger('mkdocs');
 
@@ -41,7 +42,7 @@ async function doServe(
 async function doBuild(pythonPath: string, args: string[] = [], opts: TeenProcessExecOptions = {}) {
   const finalArgs = ['-m', NAME_MKDOCS, 'build', ...args];
   log.debug('Executing %s via: %s, %O', NAME_MKDOCS, pythonPath, finalArgs);
-  return await exec(pythonPath, finalArgs, opts);
+  return await execWithErrorHandling(pythonPath, finalArgs, opts);
 }
 
 /**

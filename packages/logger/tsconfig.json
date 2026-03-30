@@ -4,11 +4,12 @@
     "esModuleInterop": true,
     "strict": false,
     "outDir": "build",
-    "types": ["node"],
+    "types": ["node", "mocha"],
     "checkJs": true
   },
   "include": [
     "index.ts",
-    "lib"
+    "lib",
+    "test"
   ]
 }

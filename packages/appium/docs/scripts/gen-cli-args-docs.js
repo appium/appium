@@ -3,7 +3,7 @@
 /* eslint-disable promise/prefer-await-to-callbacks */
 /* eslint-disable promise/prefer-await-to-then */
 
-const path = require('path');
+const path = require('node:path');
 const {fs} = require('@appium/support');
 const {AppiumConfigJsonSchema} = require('@appium/schema');
 

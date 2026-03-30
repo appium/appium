@@ -3,6 +3,39 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.2.2](https://github.com/appium/appium/compare/@appium/base-driver@10.2.1...@appium/base-driver@10.2.2) (2026-03-09)
+
+**Note:** Version bump only for package @appium/base-driver
+
+
+
+
+
+## [10.2.1](https://github.com/appium/appium/compare/@appium/base-driver@10.2.0...@appium/base-driver@10.2.1) (2026-03-08)
+
+
+### Bug Fixes
+
+* Avoid attaching plugins to a non-existing session ([#21964](https://github.com/appium/appium/issues/21964)) ([9f5faf5](https://github.com/appium/appium/commit/9f5faf5bedffe6196742c09c6793a6450af48ac9))
+* **base-driver:** fix session id handling more ([#21962](https://github.com/appium/appium/issues/21962)) ([d734b4c](https://github.com/appium/appium/commit/d734b4c200ac2e4416a0a61074c2f48897b6529d))
+* Type imports ([#22025](https://github.com/appium/appium/issues/22025)) ([2f27425](https://github.com/appium/appium/commit/2f27425ea300ca1af1c1da6e4be68d48e7a94346))
+
+
+
+## [10.2.0](https://github.com/appium/appium/compare/@appium/base-driver@10.1.2...@appium/base-driver@10.2.0) (2026-01-26)
+
+
+### Features
+
+* **base-driver:** add ability to supply custom headers for proxy ([#21790](https://github.com/appium/appium/issues/21790)) ([a4b47c0](https://github.com/appium/appium/commit/a4b47c02c6e72381fa9d191d2a0bced106999705))
+
+
+### Bug Fixes
+
+* apply npm run lint:fix ([#21867](https://github.com/appium/appium/issues/21867)) ([5e28714](https://github.com/appium/appium/commit/5e28714442cf59ee35b085e01e82c3f5483891fd))
+
+
+
 ## [10.1.2](https://github.com/appium/appium/compare/@appium/base-driver@10.1.1...@appium/base-driver@10.1.2) (2025-12-04)
 
 **Note:** Version bump only for package @appium/base-driver

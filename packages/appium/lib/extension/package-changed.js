@@ -1,6 +1,6 @@
 import {fs} from '@appium/support';
 import {isPackageChanged} from 'package-changed';
-import path from 'path';
+import path from 'node:path';
 import {PKG_HASHFILE_RELATIVE_PATH} from '../constants';
 import log from '../logger';
 

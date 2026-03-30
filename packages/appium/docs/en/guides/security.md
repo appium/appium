@@ -3,27 +3,27 @@ title: Appium Server Security
 ---
 
 The Appium team makes every effort to ensure the security of the Appium server. This is especially
-important when Appium is run in a multitenant environment, or when multiple users are running
-sessions on the same Appium server. In general, you can only safely enable all of Appium's features if
-all the following are true:
+important when Appium is run in a multi-tenant environment, or when multiple users are running
+sessions on the same Appium server. To ensure a safe environment for Appium's purposes, all of the
+following should be true:
 
 - You're running your own Appium server locally or within a protected internal network
 - You're not sharing it with any untrusted parties
 - You don't expose Appium's port(s) to the wider internet
 
-But because many Appium users might not be able to guarantee such a safe environment, the Appium
-team puts many features behind a security protection mechanism, which forces system admins (the
-people who are in charge of starting the Appium server) to _explicitly opt-in_ to these features.
-(Third-party driver and plugin authors can also [hide behaviour behind security
-flags](../developing/build-drivers.md).)
+But because not all Appium hosts can guarantee such a safe environment, certain insecure Appium
+features are disabled by default, and require explicit opt-in in order to enable them. Most
+importantly, this can _only_ be done by the Appium server _host_, and Appium _client_ sessions are
+not allowed to change this.
 
-For security reasons, Appium client sessions can _not_ request feature enablement via capabilities.
-This is the responsibility of the server admin who configures and launches the Appium server.
+While it is possible for an Appium host to simply enable all insecure features at once, each
+feature also has a unique name, which can be used for granular control over the server state.
 
 ## Security Server Args
 
-The [Server CLI](../reference/cli/server.md) doc outlines three relevant arguments which may be passed to
-Appium, when starting it from the command line:
+Enabling or disabling insecure features is done via [Appium server launch arguments](../reference/cli/server.md)
+or [configuration file](./config.md). The former document outlines three relevant arguments for
+achieving this:
 
 |<div style="width:10em">Parameter</div>|Description|
 |---------------------------------------|-----------|
@@ -31,36 +31,28 @@ Appium, when starting it from the command line:
 |`--allow-insecure`|Turns on _only_ specified features, except those blocked by `--deny-insecure`. Has no effect when used in combination with `--relaxed-security`|
 |`--deny-insecure`|Explicitly turns _off_ specified features, overriding `--relaxed-security` and `--allow-insecure`|
 
-All of the above arguments can also be specified in the [Appium Configuration file](./config.md).
-
 Features passed to `--allow-insecure`/`--deny-insecure` must be specified as a comma-separated list,
-and each feature in the list must additionally include a prefix, indicating the driver to which the
-feature should apply. The prefix can be either the driver's `automationName`, or the wildcard (`*`)
-symbol, if the feature should be applied to all drivers. The prefix and feature name are separated
-using the colon character (`:`).
+and each feature in the list must additionally include a prefix, indicating the driver to whose
+sessions the feature should apply. The prefix can be either the driver's `automationName`, or the
+wildcard (`*`) symbol, if the feature should be applied to all drivers. The prefix and feature name
+are separated using the colon character (`:`).
 
 For example, `first:foo` refers to the `foo` feature for the `first` driver, whereas `*:bar` refers
 to the `bar` feature for all drivers.
 
 ## Insecure Features
 
-Each Appium driver is responsible for its own security, and can create its own feature names. Thus,
-you should read through the documentation for a particular driver to know which feature names it
-might use. Here is an incomplete list of examples from some of Appium's official drivers:
+Almost all insecure features are defined on a per-driver or plugin basis, so make sure to read the
+documentation for a particular driver/plugin to know which feature names it might use.
 
-|<div style="width:12em">Feature Name</div>|Description|Supported Extension(s)|
-|------------|-----------|-------|
-|`get_server_logs`|Allows retrieving of Appium server logs via the Webdriver log interface|IOS, XCUITest, Android, UiAutomator2, Espresso|
-|`adb_shell`|Allows execution of arbitrary shell commands via ADB, using the `mobile: shell` command|Android, UiAutomator2, Espresso|
-|`record_audio`|Allow recording of host machine audio inputs|XCUITest|
-|`execute_driver_script`| Allows sending a request that has multiple Appium commands.|Execute Driver Plugin|
+Certain insecure features are also defined on the Appium server itself. For a list of these
+features, as well as the features defined in official plugins, see
+[the Insecure Features CLI Reference](../reference/cli/insecure-features.md) doc.
 
-Some insecure features operate on the server level and do not require a driver session. Enabling
-these features require using the wildcard prefix:
+!!! note
 
-|<div style="width:12em">Feature Name</div>|Description|
-|------------|-----------|
-|`session_discovery`|Allows retrieving the list of active server sessions via `GET /appium/sessions`|
+    If you are a driver or plugin author and want to implement insecure features of your own, check
+    out the [Building Drivers documentation](../developing/build-drivers.md#understand-server-assigned-driver-properties-and-security-flags).
 
 ## Examples
 

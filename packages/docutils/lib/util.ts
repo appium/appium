@@ -4,8 +4,11 @@
  */
 
 import _ from 'lodash';
-import {SpawnOptions, spawn} from 'node:child_process';
+import type {SpawnOptions} from 'node:child_process';
+import {spawn} from 'node:child_process';
 import path from 'node:path';
+import type {ExecError, TeenProcessExecOptions} from 'teen_process';
+import {exec} from 'teen_process';
 
 /**
  * Computes a relative path, prepending `./`
@@ -95,3 +98,20 @@ export async function spawnBackgroundProcess(command: string, args: string[], op
 }
 
 export type SpawnBackgroundProcessOpts = Omit<SpawnOptions, 'stdio'>;
+
+/**
+ * Wraps {@linkcode exec} with error handling that appends stderr to the thrown error message.
+ */
+export async function execWithErrorHandling(
+  cmd: string,
+  args?: string[],
+  opts?: TeenProcessExecOptions,
+) {
+  try {
+    return await exec(cmd, args, opts);
+  } catch (err) {
+    const execErr = err as ExecError;
+    execErr.message = execErr.stderr ? `${execErr.message}\nCommand error:\n${execErr.stderr}` : execErr.message;
+    throw execErr;
+  }
+}

@@ -22,7 +22,7 @@ import {
 import {DocutilsError} from './error';
 import {findMkDocsYml, isMkDocsInstalled, readMkDocsYml, findPython} from './fs';
 import {getLogger} from './logger';
-import {MkDocsYml, PipPackage} from './model';
+import type {MkDocsYml, PipPackage} from './model';
 
 /**
  * Matches the Python version string from `python --version`

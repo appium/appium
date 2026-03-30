@@ -1,6 +1,6 @@
 {
   "name": "@appium/support",
-  "version": "7.0.4",
+  "version": "7.0.6",
   "description": "Support libs used across Appium packages",
   "keywords": [
     "automation",
@@ -23,58 +23,57 @@
   },
   "license": "Apache-2.0",
   "author": "https://github.com/appium",
+  "main": "./build/lib/index.js",
   "types": "./build/lib/index.d.ts",
   "directories": {
     "lib": "lib"
   },
   "files": [
-    "index.js",
     "lib",
-    "build",
-    "tsconfig.json",
-    "!build/tsconfig.tsbuildinfo"
+    "build/lib",
+    "tsconfig.json"
   ],
   "scripts": {
     "test": "npm run test:unit",
-    "test:e2e": "mocha --exit --timeout 20s --slow 10s \"./test/e2e/**/*.spec.js\"",
-    "test:smoke": "node ./index.js",
-    "test:unit": "mocha \"./test/unit/**/*.spec.js\""
+    "test:e2e": "mocha --exit --timeout 20s --slow 10s \"./test/e2e/**/*.spec.ts\"",
+    "test:smoke": "node ./build/lib/index.js",
+    "test:unit": "mocha \"./test/unit/**/*.spec.ts\""
   },
   "dependencies": {
-    "@appium/logger": "^2.0.3",
-    "@appium/tsconfig": "^1.1.1",
-    "@appium/types": "^1.1.2",
+    "@appium/logger": "2.0.5",
+    "@appium/tsconfig": "1.1.2",
+    "@appium/types": "1.2.1",
     "@colors/colors": "1.6.0",
     "archiver": "7.0.1",
-    "axios": "1.13.2",
+    "asyncbox": "6.1.0",
+    "axios": "1.14.0",
     "base64-stream": "1.0.0",
     "bluebird": "3.7.2",
     "bplist-creator": "0.1.1",
     "bplist-parser": "0.3.2",
     "form-data": "4.0.5",
     "get-stream": "9.0.1",
-    "glob": "13.0.0",
+    "glob": "13.0.6",
     "jsftp": "2.1.3",
     "klaw": "4.1.0",
     "lockfile": "1.0.4",
-    "lodash": "4.17.21",
+    "lodash": "4.17.23",
     "log-symbols": "7.0.1",
-    "moment": "2.30.1",
     "ncp": "2.0.0",
-    "package-directory": "8.1.0",
+    "package-directory": "8.2.0",
     "plist": "3.1.0",
     "pluralize": "8.0.0",
-    "read-pkg": "10.0.0",
+    "read-pkg": "10.1.0",
     "resolve-from": "5.0.0",
-    "sanitize-filename": "1.6.3",
-    "semver": "7.7.3",
+    "sanitize-filename": "1.6.4",
+    "semver": "7.7.4",
     "shell-quote": "1.8.3",
     "supports-color": "10.2.2",
-    "teen_process": "4.0.7",
-    "type-fest": "5.3.1",
+    "teen_process": "4.1.0",
+    "type-fest": "5.5.0",
     "uuid": "13.0.0",
-    "which": "6.0.0",
-    "yauzl": "3.2.0"
+    "which": "6.0.1",
+    "yauzl": "3.2.1"
   },
   "optionalDependencies": {
     "sharp": "0.34.5"
@@ -86,5 +85,5 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "8480a85ce2fa466360e0fb1a7f66628331907f02"
+  "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8"
 }

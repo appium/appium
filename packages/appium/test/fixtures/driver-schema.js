@@ -11,5 +11,5 @@ module.exports = {
         'The answer to the Ultimate Question of Life, The Universe, and Everything',
     },
   },
-  $id: 'driver.json'
+  $id: 'driver.json',
 };

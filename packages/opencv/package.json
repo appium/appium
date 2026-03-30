@@ -1,6 +1,6 @@
 {
   "name": "@appium/opencv",
-  "version": "4.0.3",
+  "version": "4.1.1",
   "description": "OpenCV-related helper library",
   "keywords": [
     "automation",
@@ -23,26 +23,26 @@
   },
   "license": "Apache-2.0",
   "author": "https://github.com/appium",
+  "main": "./build/lib/index.js",
   "types": "./build/lib/index.d.ts",
   "directories": {
     "lib": "lib"
   },
   "files": [
-    "index.js",
     "lib",
     "build",
     "tsconfig.json",
-    "!build/tsconfig.tsbuildinfo"
+    "!build/tsconfig.tsbuildinfo",
+    "!build/test"
   ],
   "scripts": {
     "test": "npm run test:unit",
-    "test:e2e": "mocha --exit --timeout 20s --slow 10s \"./test/e2e/**/*.spec.js\"",
-    "test:smoke": "node ./index.js",
-    "test:unit": "mocha \"./test/unit/**/*.spec.js\""
+    "test:e2e": "mocha --exit --timeout 20s --slow 10s \"./test/e2e/**/*.spec.*ts\"",
+    "test:smoke": "node ./build/lib/index.js",
+    "test:unit": "mocha \"./test/unit/**/*.spec.*ts\""
   },
   "dependencies": {
-    "bluebird": "3.7.2",
-    "lodash": "4.17.21",
+    "lodash": "4.17.23",
     "opencv-bindings": "4.5.5",
     "sharp": "0.34.5"
   },
@@ -53,5 +53,5 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "84b211330dc84849af9cc1f3a5c5ad32e15b2e72"
+  "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8"
 }

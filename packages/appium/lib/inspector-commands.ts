@@ -19,7 +19,7 @@ import type {
   BiDiCommandNamesToInfosMap,
   ExecuteMethodMap,
 } from '@appium/types';
-import type { AppiumDriver } from './appium';
+import type {AppiumDriver} from './appium';
 
 
 export async function listCommands(this: AppiumDriver, sessionId?: string): Promise<ListCommandsResponse> {

@@ -1,6 +1,6 @@
 {
   "name": "@appium/strongbox",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Persistent storage for Appium extensions",
   "keywords": [
     "automation",
@@ -41,8 +41,8 @@
     "test:e2e": "mocha --exit -t 20s \"test/e2e/**/*.e2e.spec.ts\""
   },
   "dependencies": {
-    "env-paths": "3.0.0",
-    "slugify": "1.6.6"
+    "env-paths": "4.0.0",
+    "slugify": "1.6.8"
   },
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
@@ -53,5 +53,6 @@
   },
   "tsd": {
     "directory": "test/types"
-  }
+  },
+  "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8"
 }

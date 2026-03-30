@@ -12,7 +12,7 @@ import {fs, tempDir} from '@appium/support';
 import {buildSite} from '../../lib/builder';
 import {init, initPython} from '../../lib/init';
 import {stringifyYaml} from '../../lib/fs';
-import {MkDocsYml} from '../../lib/model';
+import type {MkDocsYml} from '../../lib/model';
 import {NAME_MKDOCS_YML, DEFAULT_SITE_DIR, NAME_PACKAGE_JSON, NAME_BIN} from '../../lib/constants';
 import {build as buildCommand, init as initCommand, validate as validateCommand} from '../../lib/cli/command';
 

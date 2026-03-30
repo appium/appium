@@ -1,6 +1,6 @@
 {
   "name": "@appium/images-plugin",
-  "version": "4.0.4",
+  "version": "4.1.1",
   "description": "Plugin for working with images and image elements in Appium",
   "keywords": [
     "automation",
@@ -23,26 +23,27 @@
   },
   "license": "Apache-2.0",
   "author": "https://github.com/appium",
-  "types": "./build/lib/plugin.d.ts",
+  "main": "./build/lib/index.js",
+  "types": "./build/lib/index.d.ts",
   "files": [
     "build",
     "docs",
     "lib",
-    "index.js",
     "tsconfig.json",
-    "!build/tsconfig.tsbuildinfo"
+    "!build/tsconfig.tsbuildinfo",
+    "!build/test"
   ],
   "scripts": {
     "test": "npm run test:unit",
-    "test:e2e": "mocha --exit --timeout 40s --slow 20s \"./test/e2e/**/*.spec.*js\"",
-    "test:smoke": "node ./index.js",
-    "test:unit": "mocha \"./test/unit/**/*.spec.*js\""
+    "test:smoke": "node ./build/lib/index.js",
+    "test:unit": "mocha \"./test/unit/**/*.spec.*ts\"",
+    "test:e2e": "mocha --exit --timeout 40s --slow 20s \"./test/e2e/**/*.spec.*ts\""
   },
   "dependencies": {
-    "@appium/opencv": "^4.0.3",
-    "@appium/support": "^7.0.4",
-    "lodash": "4.17.21",
-    "lru-cache": "11.2.4",
+    "@appium/opencv": "4.1.1",
+    "@appium/support": "7.0.6",
+    "lodash": "4.17.23",
+    "lru-cache": "11.2.7",
     "sharp": "0.34.5"
   },
   "peerDependencies": {
@@ -59,5 +60,5 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "84b211330dc84849af9cc1f3a5c5ad32e15b2e72"
+  "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8"
 }

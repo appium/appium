@@ -20,7 +20,7 @@ const {
   DOCS_REMOTE,
   LATEST_ALIAS,
 } = require('./utils');
-const path = require('path');
+const path = require('node:path');
 const semver = require('semver');
 const {version} = require('../../package.json');
 

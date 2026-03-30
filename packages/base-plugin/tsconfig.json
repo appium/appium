@@ -1,14 +1,8 @@
 {
-  "extends": "@appium/tsconfig/tsconfig.json",
   "compilerOptions": {
     "outDir": "build",
-    "checkJs": true,
-    "strict": true,
-    "paths": {
-      "@appium/support": ["../support"],
-      "@appium/types": ["../types"]
-    }
+    "types": ["mocha", "chai"]
   },
-  "include": ["lib"],
-  "references": [{"path": "../support"}, {"path": "../types"}]
+  "extends": "@appium/tsconfig/tsconfig.plugin.json",
+  "include": ["lib", "test"]
 }

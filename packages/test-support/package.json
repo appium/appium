@@ -1,6 +1,6 @@
 {
   "name": "@appium/test-support",
-  "version": "4.0.4",
+  "version": "4.0.6",
   "description": "A collection of test utilities used across Appium packages",
   "deprecated": "This module is deprecated. Use sinon directly instead (e.g., sinon.createSandbox() with Mocha hooks).",
   "keywords": [
@@ -38,7 +38,8 @@
     "lib",
     "build",
     "tsconfig.json",
-    "!build/tsconfig.tsbuildinfo"
+    "!build/tsconfig.tsbuildinfo",
+    "!build/test"
   ],
   "scripts": {
     "test": "npm run test:unit",
@@ -46,12 +47,12 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/support": "^7.0.4",
+    "@appium/support": "7.0.6",
     "@colors/colors": "1.6.0",
     "bluebird": "3.7.2",
-    "lodash": "4.17.21",
+    "lodash": "4.17.23",
     "loud-rejection": "2.2.0",
-    "sinon": "21.0.1"
+    "sinon": "21.0.3"
   },
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
@@ -60,5 +61,5 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "8480a85ce2fa466360e0fb1a7f66628331907f02"
+  "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8"
 }

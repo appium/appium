@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.2](https://github.com/appium/appium/compare/@appium/docutils@2.2.1...@appium/docutils@2.2.2) (2026-03-08)
+
+
+### Bug Fixes
+
+* Type imports ([#22025](https://github.com/appium/appium/issues/22025)) ([2f27425](https://github.com/appium/appium/commit/2f27425ea300ca1af1c1da6e4be68d48e7a94346))
+
+
+
+## [2.2.1](https://github.com/appium/appium/compare/@appium/docutils@2.2.0...@appium/docutils@2.2.1) (2026-01-26)
+
+**Note:** Version bump only for package @appium/docutils
+
+
+
+
+
 ## [2.2.0](https://github.com/appium/appium/compare/@appium/docutils@2.1.2...@appium/docutils@2.2.0) (2025-12-04)
 
 

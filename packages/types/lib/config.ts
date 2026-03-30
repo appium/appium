@@ -1,6 +1,6 @@
 import type {AppiumConfigJsonSchema} from '@appium/schema';
-import {AppiumConfiguration, ServerConfig} from './appium-config';
-import {Associated, KebabToCamel} from './util';
+import type {AppiumConfiguration, ServerConfig} from './appium-config';
+import type {Associated, KebabToCamel} from './util';
 
 /**
  * The Appium configuration as it would be in a user-provided configuration file.

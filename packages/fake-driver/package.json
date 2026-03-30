@@ -1,6 +1,6 @@
 {
   "name": "@appium/fake-driver",
-  "version": "6.0.1",
+  "version": "6.1.0",
   "description": "Mock driver used internally by Appium for testing. Ignore",
   "keywords": [
     "automation",
@@ -28,24 +28,21 @@
   },
   "files": [
     "lib",
-    "build",
-    "test/fixtures",
-    "tsconfig.json",
-    "!build/tsconfig.tsbuildinfo"
+    "build/lib",
+    "tsconfig.json"
   ],
   "scripts": {
     "build": "cpy lib/screen.png build",
     "clean": "npx rimraf build/lib/screen.png",
     "test": "npm run test:unit",
-    "test:e2e": "mocha --exit --timeout 20s --slow 10s \"./test/e2e/**/*.spec.js\"",
+    "test:e2e": "mocha --exit --timeout 20s --slow 10s \"./test/e2e/**/*.spec.ts\"",
     "test:smoke": "node ./build/lib/index.js",
-    "test:unit": "mocha --exit --timeout 10s --slow 5s \"./test/unit/**/*.spec.js\""
+    "test:unit": "mocha --exit --timeout 10s --slow 5s \"./test/unit/**/*.spec.ts\""
   },
   "dependencies": {
     "@xmldom/xmldom": "0.9.8",
-    "asyncbox": "4.0.1",
-    "bluebird": "3.7.2",
-    "lodash": "4.17.21",
+    "asyncbox": "6.1.0",
+    "lodash": "4.17.23",
     "xpath": "0.0.34"
   },
   "peerDependencies": {
@@ -74,12 +71,12 @@
     },
     "doctor": {
       "checks": [
-        "./doctor/fake1.js",
-        "./doctor/fake2.js"
+        "./build/lib/doctor/fake1.js",
+        "./build/lib/doctor/fake2.js"
       ]
     }
   },
   "main": "./build/lib/index.js",
   "types": "./build/lib/index.d.ts",
-  "gitHead": "8480a85ce2fa466360e0fb1a7f66628331907f02"
+  "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8"
 }

@@ -2,8 +2,8 @@ import {waitForCondition} from 'asyncbox';
 import _ from 'lodash';
 import {util} from '@appium/support';
 import {errors} from '../../protocol';
-import {BaseDriver} from '../driver';
-import {Constraints, ITimeoutCommands} from '@appium/types';
+import type {BaseDriver} from '../driver';
+import type {Constraints, ITimeoutCommands} from '@appium/types';
 import {mixin} from './mixin';
 
 declare module '../driver' {

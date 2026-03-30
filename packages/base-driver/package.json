@@ -1,6 +1,6 @@
 {
   "name": "@appium/base-driver",
-  "version": "10.1.2",
+  "version": "10.2.2",
   "description": "Base driver class for Appium drivers",
   "keywords": [
     "automation",
@@ -34,34 +34,35 @@
     "static",
     "build",
     "tsconfig.json",
-    "!build/tsconfig.tsbuildinfo"
+    "!build/tsconfig.tsbuildinfo",
+    "!build/test"
   ],
   "scripts": {
     "test": "run-p test:unit test:types",
-    "test:e2e": "mocha --exit --timeout 20s --slow 10s \"./test/e2e/**/*.spec.js\"",
+    "test:e2e": "mocha --exit --timeout 20s --slow 10s \"./test/e2e/**/*.spec.ts\"",
     "test:smoke": "node ./index.js",
-    "test:unit": "mocha \"./test/unit/**/*.spec.js\"",
-    "test:types": "tsd"
+    "test:unit": "mocha \"./test/unit/**/*.spec.ts\"",
+    "test:types": "tsd && tsc -p tsconfig.test.json"
   },
   "dependencies": {
-    "@appium/support": "^7.0.4",
-    "@appium/types": "^1.1.2",
+    "@appium/support": "7.0.6",
+    "@appium/types": "1.2.1",
     "@colors/colors": "1.6.0",
     "async-lock": "1.4.1",
-    "asyncbox": "4.0.1",
-    "axios": "1.13.2",
+    "asyncbox": "6.1.0",
+    "axios": "1.14.0",
     "bluebird": "3.7.2",
-    "body-parser": "2.2.1",
+    "body-parser": "2.2.2",
     "express": "5.2.1",
     "fastest-levenshtein": "1.0.16",
     "http-status-codes": "2.3.0",
-    "lodash": "4.17.21",
-    "lru-cache": "11.2.4",
+    "lodash": "4.17.23",
+    "lru-cache": "11.2.7",
     "method-override": "3.0.0",
     "morgan": "1.10.1",
-    "path-to-regexp": "8.3.0",
+    "path-to-regexp": "8.4.0",
     "serve-favicon": "2.5.1",
-    "type-fest": "5.3.1"
+    "type-fest": "5.5.0"
   },
   "optionalDependencies": {
     "spdy": "4.0.2"
@@ -73,7 +74,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "8480a85ce2fa466360e0fb1a7f66628331907f02",
+  "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8",
   "tsd": {
     "directory": "test/types"
   }

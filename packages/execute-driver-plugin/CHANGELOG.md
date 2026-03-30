@@ -3,6 +3,33 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.0.0](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@5.1.0...@appium/execute-driver-plugin@6.0.0) (2026-03-08)
+
+
+### ⚠ BREAKING CHANGES
+
+* **execute-driver-plugin:** The `Promise` object in the script context now matches the global `Promise` object instead of `bluebird`. Methods specific to `bluebird` are no longer supported.
+
+### Features
+
+* **execute-driver-plugin:** replace bluebird usage inside scripts with native promises ([#21990](https://github.com/appium/appium/issues/21990)) ([8895ac7](https://github.com/appium/appium/commit/8895ac79d7ebaff201b899d444fae8ffc3f2726f))
+
+
+
+## [5.1.0](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@5.0.3...@appium/execute-driver-plugin@5.1.0) (2026-01-26)
+
+
+### Features
+
+* **execute-driver-plugin:** Migrate to typescript ([#21887](https://github.com/appium/appium/issues/21887)) ([ab8ee41](https://github.com/appium/appium/commit/ab8ee41e79fcc4a2537d3873779f52f62607f097))
+
+
+### Bug Fixes
+
+* apply npm run lint:fix ([#21867](https://github.com/appium/appium/issues/21867)) ([5e28714](https://github.com/appium/appium/commit/5e28714442cf59ee35b085e01e82c3f5483891fd))
+
+
+
 ## [5.0.3](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@5.0.2...@appium/execute-driver-plugin@5.0.3) (2025-12-04)
 
 **Note:** Version bump only for package @appium/execute-driver-plugin

@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import {util, logger} from '@appium/support';
 import {StatusCodes as HTTPStatusCodes} from 'http-status-codes';
-import type { ErrorBiDiCommandResponse, Class } from '@appium/types';
+import type {ErrorBiDiCommandResponse, Class} from '@appium/types';
 
 const mjsonwpLog = logger.getLogger('MJSONWP');
 const w3cLog = logger.getLogger('W3C');

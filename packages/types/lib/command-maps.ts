@@ -1,7 +1,7 @@
-import {ConditionalPick, MultidimensionalReadonlyArray} from 'type-fest';
-import {Driver, DriverCommand} from './driver';
-import {Plugin, PluginCommand} from './plugin';
-import {StringRecord} from './util';
+import type {ConditionalPick, MultidimensionalReadonlyArray} from 'type-fest';
+import type {Driver, DriverCommand} from './driver';
+import type {Plugin, PluginCommand} from './plugin';
+import type {StringRecord} from './util';
 
 /**
  * Defines the shape of a payload for a {@linkcode MethodDef}.
@@ -87,7 +87,7 @@ export interface PluginMethodDef<T extends Plugin> extends BaseMethodDef {
   /**
    * Name of the command.
    */
-  readonly command?: keyof ConditionalPick<Required<T>, DriverCommand>;
+  readonly command?: keyof ConditionalPick<Required<T>, PluginCommand>;
 }
 
 /**

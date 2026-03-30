@@ -3,6 +3,43 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.2.2](https://github.com/appium/appium/compare/appium@3.2.1...appium@3.2.2) (2026-03-09)
+
+
+### Bug Fixes
+
+* **appium:** Exclude package.json from tsconfig ([#22052](https://github.com/appium/appium/issues/22052)) ([1d89e2a](https://github.com/appium/appium/commit/1d89e2a5f8e478f3331666d3c308427ab834471a))
+
+
+
+## [3.2.1](https://github.com/appium/appium/compare/appium@3.2.0...appium@3.2.1) (2026-03-08)
+
+
+### Bug Fixes
+
+* **appium:** Fix CLI arguments normalization ([#21945](https://github.com/appium/appium/issues/21945)) ([9ea601c](https://github.com/appium/appium/commit/9ea601c8330d35f45f0712e41867544d925a0f6b))
+* Avoid attaching plugins to a non-existing session ([#21964](https://github.com/appium/appium/issues/21964)) ([9f5faf5](https://github.com/appium/appium/commit/9f5faf5bedffe6196742c09c6793a6450af48ac9))
+* **logger:** Make sure we always have single logger instance per process ([#21991](https://github.com/appium/appium/issues/21991)) ([4daaa14](https://github.com/appium/appium/commit/4daaa14c29bed129d329d0881a93ecdb9de77676))
+* Type imports ([#22025](https://github.com/appium/appium/issues/22025)) ([2f27425](https://github.com/appium/appium/commit/2f27425ea300ca1af1c1da6e4be68d48e7a94346))
+
+
+
+## [3.2.0](https://github.com/appium/appium/compare/appium@3.1.2...appium@3.2.0) (2026-01-26)
+
+
+### Features
+
+* **appium:** Add repository links to verbose extensions list ([#21813](https://github.com/appium/appium/issues/21813)) ([ce91686](https://github.com/appium/appium/commit/ce91686852b0baab5f46990f5d40db4747922924))
+
+
+### Bug Fixes
+
+* **appium:** appium symlink behavior across drivers/plugins installations ([#21837](https://github.com/appium/appium/issues/21837)) ([529aeb4](https://github.com/appium/appium/commit/529aeb48f10419e21555cec05835ff07bb0e2e51))
+* apply npm run lint:fix ([#21867](https://github.com/appium/appium/issues/21867)) ([5e28714](https://github.com/appium/appium/commit/5e28714442cf59ee35b085e01e82c3f5483891fd))
+* **docs:** add missing verbose flag for CLI list command ([#21814](https://github.com/appium/appium/issues/21814)) ([dcfaa88](https://github.com/appium/appium/commit/dcfaa88830f6a5c608c92f5ae72445e065261d38))
+
+
+
 ## [3.1.2](https://github.com/appium/appium/compare/appium@3.1.1...appium@3.1.2) (2025-12-04)
 
 **Note:** Version bump only for package appium

@@ -1,7 +1,7 @@
 import {util, fs, system} from '@appium/support';
 import B from 'bluebird';
 import _ from 'lodash';
-import path from 'path';
+import path from 'node:path';
 import resolveFrom from 'resolve-from';
 import {satisfies} from 'semver';
 import {commandClasses} from '../cli/extension';
@@ -12,7 +12,7 @@ import {
   isAllowedSchemaFileExtension,
   registerSchema,
 } from '../schema/schema';
-import { pathToFileURL } from 'url';
+import { pathToFileURL } from 'node:url';
 
 const DEFAULT_ENTRY_POINT = 'index.js';
 /**

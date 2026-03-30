@@ -7,8 +7,9 @@ import {fs} from '@appium/support';
 import _ from 'lodash';
 import path from 'node:path';
 import {packageDirectory} from 'package-directory';
-import {readPackage, NormalizedPackageJson, PackageJson} from 'read-pkg';
-import {JsonValue} from 'type-fest';
+import type {NormalizedPackageJson, PackageJson} from 'read-pkg';
+import {readPackage} from 'read-pkg';
+import type {JsonValue} from 'type-fest';
 import * as YAML from 'yaml';
 import {
   MESSAGE_PYTHON_MISSING,
@@ -20,7 +21,7 @@ import {
 } from './constants';
 import {DocutilsError} from './error';
 import {getLogger} from './logger';
-import {MkDocsYml} from './model';
+import type {MkDocsYml} from './model';
 import {exec} from 'teen_process';
 
 const log = getLogger('fs');

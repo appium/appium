@@ -1,6 +1,6 @@
 {
   "name": "@appium/execute-driver-plugin",
-  "version": "5.0.3",
+  "version": "6.0.0",
   "description": "Plugin for batching and executing Appium driver commands",
   "keywords": [
     "automation",
@@ -23,24 +23,24 @@
   },
   "license": "Apache-2.0",
   "author": "https://github.com/appium",
-  "types": "./build/lib/plugin.d.ts",
+  "main": "./build/lib/index.js",
+  "types": "./build/lib/index.d.ts",
   "files": [
     "build",
     "lib",
-    "index.js",
     "tsconfig.json",
-    "!build/tsconfig.tsbuildinfo"
+    "!build/tsconfig.tsbuildinfo",
+    "!build/test"
   ],
   "scripts": {
     "test": "npm run test:unit",
-    "test:e2e": "mocha --exit -t 160s --slow 20s \"./test/e2e/**/*.spec.js\"",
-    "test:smoke": "node ./index.js",
-    "test:unit": "mocha \"./test/unit/**/*.spec.js\""
+    "test:e2e": "mocha --exit -t 160s --slow 20s \"./test/e2e/**/*.spec.*ts\"",
+    "test:smoke": "node ./build/lib/index.js",
+    "test:unit": "mocha \"./test/unit/**/*.spec.*ts\""
   },
   "dependencies": {
-    "bluebird": "3.7.2",
-    "lodash": "4.17.21",
-    "webdriverio": "9.22.0"
+    "lodash": "4.17.23",
+    "webdriverio": "9.27.0"
   },
   "peerDependencies": {
     "appium": "^3.0.0-beta.0"
@@ -56,5 +56,5 @@
     "pluginName": "execute-driver",
     "mainClass": "ExecuteDriverPlugin"
   },
-  "gitHead": "8480a85ce2fa466360e0fb1a7f66628331907f02"
+  "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8"
 }

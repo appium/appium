@@ -3,6 +3,7 @@
   "compilerOptions": {
     "outDir": "build",
     "checkJs": true,
+    "types": ["mocha", "chai", "chai-as-promised", "node"],
     "paths": {
       "@appium/types": ["../types"],
       "appium/support": ["../appium/support"],
@@ -10,7 +11,7 @@
       "@appium/driver-test-support": ["../driver-test-support"]
     }
   },
-  "include": ["lib"],
+  "include": ["lib", "test"],
   "references": [
     {"path": "../types"},
     {"path": "../support"},

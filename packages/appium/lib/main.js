@@ -9,12 +9,11 @@ import {
   normalizeBasePath,
 } from '@appium/base-driver';
 import {util, env} from '@appium/support';
-import {asyncify} from 'asyncbox';
 import _ from 'lodash';
 import {AppiumDriver} from './appium';
 import {runExtensionCommand} from './cli/extension';
 import { runSetupCommand } from './cli/setup-command';
-import {getParser} from './cli/parser';
+import {getParser, ArgParser} from './cli/parser';
 import {
   APPIUM_VER,
   checkNodeOk,
@@ -43,6 +42,7 @@ import {
   isBroadcastIp,
 } from './utils';
 import net from 'node:net';
+import { injectAppiumSymlinks } from './cli/extension-command';
 
 const {resolveAppiumHome} = env;
 /*
@@ -211,6 +211,8 @@ async function init(args) {
       delete args.throwInsteadOfExit;
     }
     preConfigArgs = {...args, subcommand: args.subcommand ?? SERVER_SUBCOMMAND};
+    // Normalize hyphenated keys to dest form so programmatic args match CLI shape
+    ArgParser.normalizeServerArgs(preConfigArgs);
   } else {
     // otherwise parse from CLI
     preConfigArgs = /** @type {Args<Cmd, SubCmd>} */ (parser.parseArgs());
@@ -313,6 +315,14 @@ async function init(args) {
       }
       if (isPluginCommandArgs(preConfigArgs)) {
         await runExtensionCommand(preConfigArgs, pluginConfig);
+      }
+
+      if (isDriverCommandArgs(preConfigArgs) || isPluginCommandArgs(preConfigArgs)) {
+        // @ts-ignore The linter suggest using dot
+        const cmd = preConfigArgs.driverCommand || preConfigArgs.pluginCommand;
+        if (cmd === 'install') {
+          await injectAppiumSymlinks(driverConfig, pluginConfig, logger);
+        }
       }
     }
     return /** @type {InitResult<Cmd>} */ ({});
@@ -433,7 +443,7 @@ async function main(args) {
   }
   appiumDriver.server = server;
   try {
-    // configure as node on grid, if necessary
+    // configure as node on Selenium Grid 3 hub, if necessary
     // falsy values should not cause this to run
     if (parsedArgs.nodeconfig) {
       await registerNode(
@@ -481,7 +491,7 @@ async function main(args) {
 // (more specifically, `build/lib/main.js`)
 // the executable is now `../index.js`, so that module will typically be `require.main`.
 if (require.main === module) {
-  asyncify(main);
+  main();
 }
 
 // everything below here is intended to be a public API.

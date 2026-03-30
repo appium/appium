@@ -1,6 +1,6 @@
 {
   "name": "@appium/storage-plugin",
-  "version": "1.0.4",
+  "version": "1.0.6",
   "description": "Server-side storage plugin for Appium",
   "keywords": [
     "automation",
@@ -30,24 +30,22 @@
   },
   "files": [
     "lib",
-    "build",
-    "tsconfig.json",
-    "!build/tsconfig.tsbuildinfo"
+    "build/lib",
+    "tsconfig.json"
   ],
   "scripts": {
     "test": "npm run test:unit",
     "test:smoke": "node ./build/lib/index.js",
-    "test:unit": "mocha \"./test/unit/**/*.spec.*js\"",
-    "test:e2e": "mocha --timeout 20s --slow 10s \"./test/e2e/**/*.spec.*js\""
+    "test:unit": "mocha \"./test/unit/**/*.spec.ts\"",
+    "test:e2e": "mocha --timeout 20s --slow 10s \"./test/e2e/**/*.spec.ts\""
   },
   "dependencies": {
-    "@appium/support": "^7.0.4",
+    "@appium/support": "7.0.6",
     "async-lock": "1.4.1",
-    "bluebird": "3.7.2",
-    "lodash": "4.17.21",
-    "lru-cache": "11.2.4",
-    "rimraf": "6.1.2",
-    "ws": "8.18.3"
+    "asyncbox": "6.1.0",
+    "lodash": "4.17.23",
+    "lru-cache": "11.2.7",
+    "ws": "8.20.0"
   },
   "peerDependencies": {
     "appium": "^3.0.0-beta.0"
@@ -65,5 +63,6 @@
   },
   "tags": [
     "appium"
-  ]
+  ],
+  "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8"
 }

@@ -4,8 +4,10 @@
   "extends": [
     "config:js-app",
     "group:definitelyTyped",
+    "security:minimumReleaseAgeNpm",
     ":automergeStableNonMajor",
     ":automergeDigest",
+    ":configMigration",
     ":enableVulnerabilityAlerts",
     ":rebaseStalePrs",
     ":semanticCommits",
@@ -16,6 +18,11 @@
       "matchPackageNames": ["ora"],
       "matchUpdateTypes": ["major"],
       "enabled": false
+    },
+    {
+      "description": "Disable minimum release age checks for Appium organization packages",
+      "matchRepositories": ["appium/**"],
+      "minimumReleaseAge": null
     }
   ],
   "semanticCommitScope": "{{#if parentDir}}{{parentDir}}{{else}}deps{{/if}}"

@@ -36,8 +36,10 @@ Appium extension authors--or anyone else--may use this config as well.
 
 - `config:js-app` - everything gets pinned except peer deps (plus a bunch of other reasonable defaults)
 - `group:definitelyTyped` - Groups all `@types/*` packages into one PR
+- `security:minimumReleaseAgeNpm` - Delays updates for 3 days after they have been published to `npm`, protecting against supply chain attacks
 - `:automergeStableNonMajor` - Automatically merges "patch" and "minor" updates for semver stable (>=1.0.0) packages (assuming they pass CI)
 - `:automergeDigest` - Automatically merges "digest" updates (assuming they pass CI)
+- `:configMigration` - Automatically creates PRs for Renovate config file migration updates
 - `:enableVulnerabilityAlerts` - For "security" purposes
 - `:rebaseStalePrs` - Renovate will automatically rebase its PRs
 - `:semanticCommits` - Renovate will use semantic commit messages

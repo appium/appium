@@ -4,8 +4,10 @@
   "extends": [
     "config:js-app",
     "group:definitelyTyped",
+    "security:minimumReleaseAgeNpm",
     ":automergeStableNonMajor",
     ":automergeDigest",
+    ":configMigration",
     ":enableVulnerabilityAlerts",
     ":rebaseStalePrs",
     ":semanticCommits",

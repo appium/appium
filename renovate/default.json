@@ -21,7 +21,7 @@
     },
     {
       "description": "Disable minimum release age checks for Appium organization packages",
-      "matchRepositories": ["appium/**"],
+      "matchSourceUrls": ["https://github.com/appium/**"],
       "minimumReleaseAge": null
     }
   ],

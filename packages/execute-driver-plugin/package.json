@@ -39,7 +39,7 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.*ts\""
   },
   "dependencies": {
-    "lodash": "4.17.23",
+    "lodash": "4.18.1",
     "webdriverio": "9.27.0"
   },
   "peerDependencies": {

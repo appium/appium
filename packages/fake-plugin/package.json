@@ -42,7 +42,7 @@
     "@appium/base-plugin": "3.1.1",
     "@appium/support": "7.0.6",
     "asyncbox": "6.1.0",
-    "lodash": "4.17.23"
+    "lodash": "4.18.1"
   },
   "devDependencies": {
     "@appium/types": "1.2.1",

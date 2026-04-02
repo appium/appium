@@ -42,7 +42,7 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.*ts\""
   },
   "dependencies": {
-    "lodash": "4.17.23",
+    "lodash": "4.18.1",
     "opencv-bindings": "4.5.5",
     "sharp": "0.34.5"
   },

@@ -60,7 +60,7 @@
     "lru-cache": "11.2.7",
     "method-override": "3.0.0",
     "morgan": "1.10.1",
-    "path-to-regexp": "8.4.1",
+    "path-to-regexp": "8.4.2",
     "serve-favicon": "2.5.1",
     "type-fest": "5.5.0"
   },

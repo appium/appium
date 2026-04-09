@@ -34,9 +34,9 @@
   ],
   "scripts": {
     "test": "npm run test:unit",
-    "test:e2e": "mocha --exit -t 160s --slow 20s \"./test/e2e/**/*.spec.*ts\"",
+    "test:e2e": "mocha --exit -t 160s --slow 20s \"./test/e2e/**/*.spec.ts\"",
     "test:smoke": "node ./build/lib/index.js",
-    "test:unit": "mocha \"./test/unit/**/*.spec.*ts\""
+    "test:unit": "mocha \"./test/unit/**/*.spec.ts\""
   },
   "dependencies": {
     "lodash": "4.18.1",

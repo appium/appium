@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.2.0](https://github.com/appium/appium/compare/@appium/base-plugin@3.1.1...@appium/base-plugin@3.2.0) (2026-04-09)
+
+
+### Features
+
+* use exact version for dependencies in monorepo packages instead of ^ ([#22090](https://github.com/appium/appium/issues/22090)) ([86c8f23](https://github.com/appium/appium/commit/86c8f23a670d0bbc2d359a8235828606bd36e6aa))
+
+
+
 ## [3.1.1](https://github.com/appium/appium/compare/@appium/base-plugin@3.1.0...@appium/base-plugin@3.1.1) (2026-03-09)
 
 **Note:** Version bump only for package @appium/base-plugin

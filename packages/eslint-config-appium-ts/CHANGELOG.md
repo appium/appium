@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.2](https://github.com/appium/appium/compare/@appium/eslint-config-appium-ts@3.0.1...@appium/eslint-config-appium-ts@3.0.2) (2026-04-09)
+
+**Note:** Version bump only for package @appium/eslint-config-appium-ts
+
+
+
+
+
 ## [3.0.1](https://github.com/appium/appium/compare/@appium/eslint-config-appium-ts@3.0.0...@appium/eslint-config-appium-ts@3.0.1) (2026-03-08)
 
 **Note:** Version bump only for package @appium/eslint-config-appium-ts

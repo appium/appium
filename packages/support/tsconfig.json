@@ -1,6 +1,7 @@
 {
   "extends": "@appium/tsconfig/tsconfig.json",
   "compilerOptions": {
+    "rootDir": ".",
     "outDir": "build",
     "paths": {"@appium/types": ["../types"]},
     "types": ["mocha", "chai", "chai-as-promised", "node"]

@@ -1,6 +1,10 @@
 {
   "extends": "@appium/tsconfig/tsconfig.json",
+  "ts-node": {
+    "transpileOnly": true
+  },
   "compilerOptions": {
+    "rootDir": ".",
     "outDir": "build",
     "checkJs": true,
     "types": ["mocha", "chai", "chai-as-promised", "node"],

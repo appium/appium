@@ -26,14 +26,6 @@ const Migrations: Partial<Record<keyof ManifestDataVersions, Migration>> = {
   },
 };
 
-function setSchemaRev(manifest: Manifest, version: number): boolean {
-  if ((manifest.schemaRev ?? 0) < version) {
-    manifest.setSchemaRev(version);
-    return true;
-  }
-  return false;
-}
-
 /**
  * Applies a series of migration functions to a manifest to update its manifest schema version.
  *
@@ -54,4 +46,12 @@ export async function migrate(manifest: Manifest): Promise<boolean> {
   }
 
   return didChange;
+}
+
+function setSchemaRev(manifest: Manifest, version: number): boolean {
+  if ((manifest.schemaRev ?? 0) < version) {
+    manifest.setSchemaRev(version);
+    return true;
+  }
+  return false;
 }

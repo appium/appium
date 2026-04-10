@@ -24,27 +24,32 @@ export async function packageDidChange(appiumHome: string): Promise<boolean> {
     );
   }
 
+  let isChanged: boolean;
+  let writeHash: () => void;
+  let oldHash: string | undefined;
+  let hash: string;
   try {
-    const {isChanged, writeHash, oldHash, hash} = await isPackageChanged({
+    ({isChanged, writeHash, oldHash, hash} = await isPackageChanged({
       cwd: appiumHome,
       hashFilename: PKG_HASHFILE_RELATIVE_PATH,
-    });
-
-    if (isChanged) {
-      try {
-        writeHash();
-        log.debug(
-          `Updated hash of ${appiumHome}/package.json from: ${oldHash ?? '(none)'} to: ${hash}`
-        );
-      } catch (err: any) {
-        throw new Error(
-          `Appium could not write hash file: ${hashFilenameDir}. Original error: ${err.message}`
-        );
-      }
-    }
-
-    return isChanged;
+    }));
   } catch {
+    // If the library fails, assume the manifest may be stale and should be refreshed.
     return true;
   }
+
+  if (isChanged) {
+    try {
+      writeHash();
+      log.debug(
+        `Updated hash of ${appiumHome}/package.json from: ${oldHash ?? '(none)'} to: ${hash}`
+      );
+    } catch (err: any) {
+      throw new Error(
+        `Appium could not write hash file: ${hashFilenameDir}. Original error: ${err.message}`
+      );
+    }
+  }
+
+  return isChanged;
 }

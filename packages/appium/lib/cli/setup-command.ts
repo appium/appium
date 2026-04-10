@@ -131,7 +131,7 @@ async function resetAllExtensions(driverConfig: DriverConfig, pluginConfig: Plug
     }
 
     const manifestPath = config.manifestPath;
-    if (!await fs.exists(manifestPath)) {
+    if (!manifestPath || !await fs.exists(manifestPath)) {
       continue;
     }
 

@@ -38,7 +38,7 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
 
   async validate(): Promise<ExtRecord<DriverType>> {
     this.knownAutomationNames.clear();
-    return await super._validate(this.manifest.getExtensionData(DRIVER_TYPE) as ExtRecord<DriverType>);
+    return await super._validate(this.manifest.getExtensionData(DRIVER_TYPE));
   }
 
   public override extensionDesc(

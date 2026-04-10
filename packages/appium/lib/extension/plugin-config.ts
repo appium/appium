@@ -29,7 +29,7 @@ export class PluginConfig extends ExtensionConfig<PluginType> {
   }
 
   async validate(): Promise<ExtRecord<PluginType>> {
-    return await super._validate(this.manifest.getExtensionData(PLUGIN_TYPE) as ExtRecord<PluginType>);
+    return await super._validate(this.manifest.getExtensionData(PLUGIN_TYPE));
   }
 
   public override extensionDesc(

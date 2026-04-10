@@ -27,7 +27,7 @@ const INITIAL_MANIFEST_DATA: Readonly<ManifestData> = Object.freeze({
 export class Manifest {
   #data!: ManifestData;
   readonly #appiumHome: string;
-  #manifestPath!: string;
+  #manifestPath: string | undefined = undefined;
   #writing: Promise<boolean> | undefined;
   #reading: Promise<void> | undefined;
 
@@ -49,9 +49,10 @@ export class Manifest {
   }
 
   /**
-   * Absolute path to the extension manifest file on disk after it has been resolved (via `read()` or `write()`).
+   * Absolute path to the extension manifest file after {@link Manifest.read} or {@link Manifest.write} has resolved it.
+   * Before that, this is `undefined`.
    */
-  get manifestPath(): string {
+  get manifestPath(): string | undefined {
     return this.#manifestPath;
   }
 
@@ -61,13 +62,14 @@ export class Manifest {
   }
 
   /**
-   * Returns the installed extension record map for drivers or plugins.
+   * Returns the live installed-extension map for drivers or plugins (same object as stored in memory).
+   * Mutations affect the manifest until replaced by a new object (e.g. via `read()`); `setExtension` / `deleteExtension` update this record.
    *
    * @param extType - `"driver"` or `"plugin"`
    */
-  getExtensionData<ExtType extends ExtensionType>(extType: ExtType): Readonly<ExtRecord<ExtType>> {
+  getExtensionData<ExtType extends ExtensionType>(extType: ExtType): ExtRecord<ExtType> {
     const record = extType === DRIVER_TYPE ? this.#data.drivers : this.#data.plugins;
-    return record as unknown as Readonly<ExtRecord<ExtType>>;
+    return record as ExtRecord<ExtType>;
   }
 
   /**
@@ -103,23 +105,21 @@ export class Manifest {
     this.#reading = (async () => {
       let data: ManifestData;
       let shouldWrite = false;
-      await this.#setManifestPath();
+      const manifestPathResolved = await this.#setManifestPath();
       try {
-        const yaml = await fs.readFile(this.#manifestPath, 'utf8');
+        const yaml = await fs.readFile(manifestPathResolved, 'utf8');
         data = YAML.parse(yaml) as ManifestData;
       } catch (err: any) {
         if (err.code === 'ENOENT') {
           data = _.cloneDeep(INITIAL_MANIFEST_DATA) as ManifestData;
           shouldWrite = true;
-        } else if (this.#manifestPath) {
+        } else {
           throw new Error(
             `Appium had trouble loading the extension installation ` +
-              `cache file (${this.#manifestPath}). It may be invalid YAML. Specific error: ${
+              `cache file (${manifestPathResolved}). It may be invalid YAML. Specific error: ${
                 err.message
               }`
           );
-        } else {
-          throw new Error(`Appium encountered an unknown problem. Specific error: ${err.message}`);
         }
       }
 
@@ -159,22 +159,22 @@ export class Manifest {
       return this.#writing;
     }
     this.#writing = (async () => {
-      await this.#setManifestPath();
+      const manifestPathResolved = await this.#setManifestPath();
       try {
-        await fs.mkdirp(path.dirname(this.#manifestPath));
+        await fs.mkdirp(path.dirname(manifestPathResolved));
       } catch (err: any) {
         throw new Error(
           `Appium could not create the directory for the manifest file: ${path.dirname(
-            this.#manifestPath
+            manifestPathResolved
           )}. Original error: ${err.message}`
         );
       }
       try {
-        await fs.writeFile(this.#manifestPath, YAML.stringify(this.#data), 'utf8');
+        await fs.writeFile(manifestPathResolved, YAML.stringify(this.#data), 'utf8');
         return true;
       } catch (err: any) {
         throw new Error(
-          `Appium could not write to manifest at ${this.#manifestPath} using APPIUM_HOME ${
+          `Appium could not write to manifest at ${manifestPathResolved} using APPIUM_HOME ${
             this.#appiumHome
           }. Please ensure it is writable. Original error: ${err.message}`
         );
@@ -258,7 +258,7 @@ export class Manifest {
         ...internal,
       };
       if (!_.isEqual(value, this.#data.drivers[driverName])) {
-        this.setExtension(DRIVER_TYPE, driverName, value as ExtManifest<DriverType>);
+        this.setExtension(DRIVER_TYPE, driverName, value);
         return true;
       }
       return false;
@@ -270,7 +270,7 @@ export class Manifest {
         ...internal,
       };
       if (!_.isEqual(value, this.#data.plugins[pluginName])) {
-        this.setExtension(PLUGIN_TYPE, pluginName, value as ExtManifest<PluginType>);
+        this.setExtension(PLUGIN_TYPE, pluginName, value);
         return true;
       }
       return false;
@@ -288,16 +288,16 @@ export class Manifest {
    * @param extData - Full extension entry to persist in memory
    * @returns The cloned data now held in the manifest
    */
-  setExtension(
-    extType: ExtensionType,
+  setExtension<ExtType extends ExtensionType>(
+    extType: ExtType,
     extName: string,
-    extData: ExtManifest<ExtensionType>
-  ): ExtManifest<ExtensionType> {
-    const data = _.cloneDeep(extData);
+    extData: ExtManifest<ExtType>
+  ): ExtManifest<ExtType> {
+    const data = _.cloneDeep(extData) as ExtManifest<ExtType>;
     if (extType === DRIVER_TYPE) {
-      this.#data.drivers[extName] = data as ExtManifest<DriverType>;
+      this.#data.drivers[extName] = data as unknown as ExtManifest<DriverType>;
     } else {
-      this.#data.plugins[extName] = data as ExtManifest<PluginType>;
+      this.#data.plugins[extName] = data as unknown as ExtManifest<PluginType>;
     }
     return data;
   }
@@ -327,13 +327,14 @@ export class Manifest {
 
   async #setManifestPath(): Promise<string> {
     if (!this.#manifestPath) {
-      this.#manifestPath = await env.resolveManifestPath(this.#appiumHome);
+      const resolved = await env.resolveManifestPath(this.#appiumHome);
+      this.#manifestPath = resolved;
 
-      if (path.relative(this.#appiumHome, this.#manifestPath).startsWith('.')) {
+      if (path.relative(this.#appiumHome, resolved).startsWith('.')) {
         throw new Error(
           `Mismatch between location of APPIUM_HOME and manifest file. APPIUM_HOME: ${
             this.appiumHome
-          }, manifest file: ${this.#manifestPath}`
+          }, manifest file: ${resolved}`
         );
       }
     }

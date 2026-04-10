@@ -82,7 +82,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
   protected constructor(extensionType: ExtType, manifest: Manifest) {
     this.extensionType = extensionType;
     this.manifest = manifest;
-    this.installedExtensions = manifest.getExtensionData(extensionType) as ExtRecord<ExtType>;
+    this.installedExtensions = manifest.getExtensionData(extensionType);
   }
 
   /** Path to `extensions.yaml` after the manifest has been read; otherwise undefined. */
@@ -205,7 +205,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     this.manifest.setExtension(this.extensionType, extName as string, {
       ...existing,
       ...extManifest,
-    } as ExtManifest<ExtType>);
+    });
     if (write) {
       await this.manifest.write();
     }

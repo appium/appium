@@ -58,7 +58,7 @@ export class JWProxy {
   readonly base: string;
   readonly reqBasePath: string;
   sessionId: string | null;
-  readonly timeout: number;
+  timeout: number;
   readonly headers: HTTPHeaders | undefined;
   readonly httpAgent: http.Agent;
   readonly httpsAgent: https.Agent;

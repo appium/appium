@@ -33,7 +33,6 @@ import {
   generateDriverLogPrefix,
   isW3cCaps,
 } from '@appium/base-driver';
-import AsyncLock from 'async-lock';
 import {
   parseCapsForInnerDriver,
   pullSettings,
@@ -48,7 +47,7 @@ import * as insecureFeatures from './insecure-features';
 import * as inspectorCommands from './inspector-commands';
 import type {DriverConfig} from './extension/driver-config';
 
-export const desiredCapabilityConstraints = {
+const desiredCapabilityConstraints = {
   automationName: {
     presence: true,
     isString: true,
@@ -63,30 +62,25 @@ export type AppiumDriverConstraints = typeof desiredCapabilityConstraints;
 export type W3CAppiumDriverCaps = W3CDriverCaps<AppiumDriverConstraints>;
 
 /** Result shape for umbrella {@link AppiumDriver.createSession} / {@link AppiumDriver.deleteSession}. */
-export interface SessionHandlerResult<V = unknown> {
+interface SessionHandlerResult<V = unknown> {
   value?: V;
   error?: Error;
   protocol?: string;
 }
 
-export type SessionHandlerCreateResult = SessionHandlerResult<
+type SessionHandlerCreateResult = SessionHandlerResult<
   [string, DriverCaps<AppiumDriverConstraints>, string | undefined]
 >;
 
-export type SessionHandlerDeleteResult = SessionHandlerResult<void>;
-
-const sessionsListGuard = new AsyncLock();
-const pendingDriversGuard = new AsyncLock();
+type SessionHandlerDeleteResult = SessionHandlerResult<void>;
 
 /**
  * Umbrella driver: owns the session table, loads platform drivers and plugins, and routes
  * commands to the right session driver or plugin chain.
  */
 export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
-  /** Guard with {@link sessionsListGuard} before mutating. */
   readonly sessions: Record<string, ExternalDriver> = {};
 
-  /** Guard with {@link pendingDriversGuard} before mutating. */
   readonly pendingDrivers: Record<string, ExternalDriver[]> = {};
 
   /**
@@ -241,16 +235,15 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
    */
   getCliArgsForDriver(extName: string): StringRecord | undefined {
     const allCliArgsForExt = this.args.driver?.[extName] as StringRecord | undefined;
-
-    if (!_.isEmpty(allCliArgsForExt)) {
-      const defaults = getDefaultsForExtension(DRIVER_TYPE, extName) as StringRecord;
-      const cliArgs = _.isEmpty(defaults)
-        ? allCliArgsForExt
-        : _.omitBy(allCliArgsForExt, (value, key) => _.isEqual(defaults[key], value));
-      if (!_.isEmpty(cliArgs)) {
-        return cliArgs;
-      }
+    if (_.isEmpty(allCliArgsForExt)) {
+      return undefined;
     }
+
+    const defaults = getDefaultsForExtension(DRIVER_TYPE, extName);
+    const cliArgs = _.isEmpty(defaults)
+      ? allCliArgsForExt
+      : _.omitBy(allCliArgsForExt, (value, key) => _.isEqual(defaults[key], value));
+    return _.isEmpty(cliArgs) ? undefined : cliArgs;
   }
 
   /**
@@ -343,13 +336,11 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
         const msg = e instanceof Error ? e.message : String(e);
         throw new errors.SessionNotCreatedError(msg);
       }
-      await pendingDriversGuard.acquire(AppiumDriver.name, () => {
-        this.pendingDrivers[InnerDriver.name] = this.pendingDrivers[InnerDriver.name] || [];
-        otherPendingDriversData = _.compact(
-          this.pendingDrivers[InnerDriver.name].map((drv) => drv.driverData),
-        );
-        this.pendingDrivers[InnerDriver.name].push(driverInstance);
-      });
+      this.pendingDrivers[InnerDriver.name] = this.pendingDrivers[InnerDriver.name] || [];
+      otherPendingDriversData = _.compact(
+        this.pendingDrivers[InnerDriver.name].map((drv) => drv.driverData),
+      );
+      this.pendingDrivers[InnerDriver.name].push(driverInstance);
 
       try {
         [innerSessionId, dCaps] = (await driverInstance.createSession(
@@ -360,9 +351,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
         )) as [string, DriverCaps<AppiumDriverConstraints> & {webSocketUrl?: string | boolean}];
         this.sessions[innerSessionId] = driverInstance;
       } finally {
-        await pendingDriversGuard.acquire(AppiumDriver.name, () => {
-          _.pull(this.pendingDrivers[InnerDriver.name], driverInstance);
-        });
+        _.pull(this.pendingDrivers[InnerDriver.name], driverInstance);
       }
 
       this.attachUnexpectedShutdownHandler(driverInstance, innerSessionId);
@@ -486,17 +475,15 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
     let protocol: Protocol | undefined;
     try {
       let otherSessionsData: DriverData[] | undefined;
-      const dstSession = await sessionsListGuard.acquire(AppiumDriver.name, () => {
-        if (!this.sessions[sessionId]) {
-          return;
-        }
+      let dstSession: ExternalDriver | undefined;
+      if (this.sessions[sessionId]) {
         const curConstructorName = this.sessions[sessionId].constructor.name;
         otherSessionsData = _.toPairs(this.sessions)
           .filter(
             ([key, value]) => value.constructor.name === curConstructorName && key !== sessionId,
           )
           .map(([, value]) => value.driverData);
-        const dstSession = this.sessions[sessionId];
+        dstSession = this.sessions[sessionId];
         protocol = dstSession.protocol;
         this.log.info(`Removing session ${sessionId} from our master session list`);
         // regardless of whether the deleteSession completes successfully or not
@@ -506,9 +493,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
         delete this.sessionPlugins[sessionId];
 
         this.cleanupBidiSockets(sessionId);
-
-        return dstSession;
-      });
+      }
       // this may not be correct, but if `dstSession` was falsy, the call to `deleteSession()` would
       // throw anyway.
       if (!dstSession) {

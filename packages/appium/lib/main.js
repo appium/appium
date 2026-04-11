@@ -381,7 +381,9 @@ async function main(args) {
     pluginConfig, parsedArgs.pluginsImportChunkSize, parsedArgs.usePlugins
   );
   // set the active plugins on the umbrella driver so it can use them for commands
-  appiumDriver.pluginClasses = pluginClasses;
+  for (const [pluginClass, name] of pluginClasses) {
+    appiumDriver.pluginClasses.set(pluginClass, name);
+  }
 
   await logStartupInfo(parsedArgs);
 

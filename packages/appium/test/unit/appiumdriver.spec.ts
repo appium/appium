@@ -33,6 +33,19 @@ chai.use(chaiAsPromised);
 const SESSION_ID = '1';
 const SESSION_DISCOVERY_ENABLED = {allowInsecure: [`*:${SESSION_DISCOVERY_FEATURE}`]};
 
+/**
+ * Fills the umbrella driver's plugin map without replacing the readonly `pluginClasses` reference.
+ */
+function setPluginClassesForTest(
+  appium: {pluginClasses: Map<any, string>},
+  classes: Map<any, string>
+): void {
+  appium.pluginClasses.clear();
+  for (const [cls, name] of classes) {
+    appium.pluginClasses.set(cls, name);
+  }
+}
+
 describe('AppiumDriver', function () {
   let sandbox: SinonSandbox;
   let AppiumDriver: typeof AppiumModule.AppiumDriver;
@@ -95,6 +108,7 @@ describe('AppiumDriver', function () {
         return fakeDriver;
       };
 
+      // stub does not satisfy DriverConfig typing
       (appium as any).driverConfig = {
         findMatchingDriver: sandbox.stub().returns({
           driver: mockedDriverReturnerClass,
@@ -308,6 +322,7 @@ describe('AppiumDriver', function () {
           return fakeDriver;
         };
 
+        // stub does not satisfy DriverConfig typing
         (appium as any).driverConfig = {
           findMatchingDriver: sandbox.stub().returns({
             driver: mockedDriverReturnerClass,
@@ -478,10 +493,13 @@ describe('AppiumDriver', function () {
       describe('when args are not present', function () {
         it('the `cliArgs` prop should be an empty object', function () {
           const appium = new AppiumDriver({} as any);
-          appium.pluginClasses = new Map<any, string>([
-            [NoArgsPlugin, 'noargs'],
-            [ArgsPlugin, 'args'],
-          ]) as Map<any, string>;
+          setPluginClassesForTest(
+            appium,
+            new Map<any, string>([
+              [NoArgsPlugin, 'noargs'],
+              [ArgsPlugin, 'args'],
+            ])
+          );
           for (const plugin of appium.createPluginInstances()) {
             expect(plugin.cliArgs).to.eql({});
           }
@@ -491,10 +509,13 @@ describe('AppiumDriver', function () {
       describe('when args are equal to the schema defaults', function () {
         it('the `cliArgs` prop should contain the schema defaults', function () {
           const appium = new AppiumDriver({plugin: {args: {randomArg: 2000}}} as any);
-          appium.pluginClasses = new Map<any, string>([
-            [NoArgsPlugin, 'noargs'],
-            [ArgsPlugin, 'args'],
-          ]) as Map<any, string>;
+          setPluginClassesForTest(
+            appium,
+            new Map<any, string>([
+              [NoArgsPlugin, 'noargs'],
+              [ArgsPlugin, 'args'],
+            ])
+          );
           const [noargs, args] = appium.createPluginInstances();
           expect(noargs.cliArgs).to.eql({});
           expect(args.cliArgs).to.eql({randomArg: 2000});
@@ -503,11 +524,14 @@ describe('AppiumDriver', function () {
         describe('when the default is an "object"', function () {
           it('the `cliArgs` prop should contain the schema defaults', function () {
             const appium = new AppiumDriver({plugin: {arrayarg: {arr: []}}} as any);
-            appium.pluginClasses = new Map<any, string>([
-              [NoArgsPlugin, 'noargs'],
-              [ArgsPlugin, 'args'],
-              [ArrayArgPlugin, 'arrayarg'],
-            ]) as Map<any, string>;
+            setPluginClassesForTest(
+              appium,
+              new Map<any, string>([
+                [NoArgsPlugin, 'noargs'],
+                [ArgsPlugin, 'args'],
+                [ArrayArgPlugin, 'arrayarg'],
+              ])
+            );
             const [noargs, args, arrayarg] = appium.createPluginInstances();
             expect(noargs.cliArgs).to.eql({});
             expect(args.cliArgs).to.eql({});
@@ -519,7 +543,7 @@ describe('AppiumDriver', function () {
       describe('when args are not equal to the schema defaults', function () {
         it('should add cliArgs to the plugin', function () {
           const appium = new AppiumDriver({plugin: {args: {randomArg: 1234}}} as any);
-          appium.pluginClasses = new Map<any, string>([[ArgsPlugin, 'args']]) as Map<any, string>;
+          setPluginClassesForTest(appium, new Map<any, string>([[ArgsPlugin, 'args']]));
           const plugin = _.first(appium.createPluginInstances()) as BasePlugin;
           expect(plugin.cliArgs).to.eql({randomArg: 1234});
         });

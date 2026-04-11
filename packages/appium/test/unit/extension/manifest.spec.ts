@@ -32,7 +32,7 @@ describe('Manifest', function () {
     MockAppiumSupport.fs.readFile.resolves(yamlFixture);
     ({Manifest} = rewiremock.proxy(() => require('../../../lib/extension/manifest'), {
       ...overrides,
-      '../../../lib/extension/manifest-migrations.js': {migrate: sandbox.stub().resolves()},
+      '../../../lib/extension/manifest-migrations': {migrate: sandbox.stub().resolves()},
     }));
 
     Manifest.getInstance.cache = new Map();

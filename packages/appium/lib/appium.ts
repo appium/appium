@@ -868,19 +868,19 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
   /** Whether the inner session driver is actively proxying for this session id. */
   override proxyActive(sessionId: string): boolean {
     const dstSession = this.sessions[sessionId];
-    return dstSession && _.isFunction(dstSession.proxyActive) && dstSession.proxyActive(sessionId);
+    return _.isFunction(dstSession?.proxyActive) && dstSession.proxyActive(sessionId);
   }
 
   /** URL patterns the session driver does not want proxied; empty if no session or no list. */
   override getProxyAvoidList(sessionId: string): RouteMatcher[] {
     const dstSession = this.sessions[sessionId];
-    return dstSession ? dstSession.getProxyAvoidList() : [];
+    return _.isFunction(dstSession?.getProxyAvoidList) ? dstSession.getProxyAvoidList() : [];
   }
 
   /** Whether the session driver supports proxying for this session. */
   override canProxy(sessionId: string): boolean {
     const dstSession = this.sessions[sessionId];
-    return dstSession && dstSession.canProxy(sessionId);
+    return _.isFunction(dstSession?.canProxy) && dstSession.canProxy(sessionId);
   }
 
   onBidiConnection = bidiCommands.onBidiConnection;

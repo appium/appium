@@ -8,6 +8,7 @@ import type {
   ExternalDriver,
   Plugin,
   PluginClass,
+  PluginCommand,
   Protocol,
   RouteMatcher,
   StringRecord,
@@ -802,10 +803,12 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
         // first attempt to handle the command via a command-specific handler on the plugin
         const cmdHandler = (plugin as Plugin & Record<string, unknown>)[cmd];
         if (_.isFunction(cmdHandler)) {
-          return await (cmdHandler as (n: typeof _next, d: typeof driver, ...a: any[]) => Promise<unknown>)(
+          // Command methods must run with plugin as `this` (detached property access drops binding).
+          return await (cmdHandler as PluginCommand).call(
+            plugin,
             _next,
-            driver,
-            ...args
+            driver as ExternalDriver,
+            ...args,
           );
         }
         if (!_.isFunction(plugin.handle)) {

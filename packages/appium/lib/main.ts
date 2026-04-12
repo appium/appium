@@ -192,25 +192,6 @@ export async function init<
   return {} as InitResult<Cmd>;
 }
 
-function logServerAddress(url: string): void {
-  const urlObj = new URL(url);
-  logger.info(`Appium REST http interface listener started on ${url}`);
-  if (!isBroadcastIp(urlObj.hostname)) {
-    return;
-  }
-
-  const interfaces = fetchInterfaces(urlObj.hostname === V4_BROADCAST_IP ? 4 : 6);
-  const toLabel = (iface: NetworkInterfaceInfo) => {
-    const href = urlObj.href.replace(urlObj.hostname, iface.address);
-    return iface.internal ? `${href} (only accessible from the same host)` : href;
-  };
-  logger.info(
-    `You can provide the following ${interfaces.length === 1 ? 'URL' : 'URLs'} ` +
-      `in your client code to connect to this server:\n` +
-      interfaces.map((iface) => `\t${toLabel(iface)}`).join('\n'),
-  );
-}
-
 /**
  * Initializes Appium's config. Starts server if appropriate and resolves the
  * server instance if so; otherwise resolves with `undefined`.
@@ -337,6 +318,24 @@ export async function main<
   return server as Cmd extends CliCommandServer ? AppiumServer : void;
 }
 
+function logServerAddress(url: string): void {
+  const urlObj = new URL(url);
+  logger.info(`Appium REST http interface listener started on ${url}`);
+  if (!isBroadcastIp(urlObj.hostname)) {
+    return;
+  }
+
+  const interfaces = fetchInterfaces(urlObj.hostname === V4_BROADCAST_IP ? 4 : 6);
+  const toLabel = (iface: NetworkInterfaceInfo) => {
+    const href = urlObj.href.replace(urlObj.hostname, iface.address);
+    return iface.internal ? `${href} (only accessible from the same host)` : href;
+  };
+  logger.info(
+    `You can provide the following ${interfaces.length === 1 ? 'URL' : 'URLs'} ` +
+      `in your client code to connect to this server:\n` +
+      interfaces.map((iface) => `\t${toLabel(iface)}`).join('\n'),
+  );
+}
 
 async function preflightChecks(args: ParsedArgs<CliCommandServer>, throwInsteadOfExit = false): Promise<void> {
   try {
@@ -434,14 +433,6 @@ if (require.main === module) {
 export {readConfigFile} from './config-file';
 export {finalizeSchema, getSchema, validate} from './schema/schema';
 
-// ---------------------------------------------------------------------------
-// Public API types (package `types` → `build/lib/main.d.ts`)
-//
-// CLI / server arg shapes (`Args`, `ParsedArgs`, `CliCommand`, …) live in `appium/types`.
-// Driver and plugin classes (`DriverClass`, `PluginType`, …) live in `@appium/types`.
-// ---------------------------------------------------------------------------
-
-/** Non-server branch: `init` resolves to an empty object. */
 export type ExtCommandInitResult = Record<string, never>;
 
 export type ServerInitData = ExtensionConfigs & {
@@ -453,10 +444,6 @@ export type ServerInitData = ExtensionConfigs & {
 export type InitResult<Cmd extends CliCommand = CliCommandServer> = Cmd extends CliCommandServer
   ? ServerInitData
   : ExtCommandInitResult;
-
-// ---------------------------------------------------------------------------
-// Module-private types
-// ---------------------------------------------------------------------------
 
 /** CLI + programmatic args before `init` narrows by `subcommand`. */
 type PreConfigArgs = Args<CliCommand, CliExtensionSubcommand | CliCommandSetupSubcommand | void>;

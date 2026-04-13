@@ -16,7 +16,7 @@ import type {
 } from '../cli/extension-command';
 import type {ExtCommand} from '../cli/extension';
 import {APPIUM_VER} from '../config';
-import log from '../logger';
+import {log} from '../logger';
 import {
   ALLOWED_SCHEMA_EXTENSIONS,
   isAllowedSchemaFileExtension,

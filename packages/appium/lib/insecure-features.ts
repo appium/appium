@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import logger from './logger';
+import {log as logger} from './logger';
 
 import type {AppiumDriver} from './appium';
 import type {ExternalDriver} from '@appium/types';

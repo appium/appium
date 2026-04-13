@@ -2,7 +2,7 @@ import {fs} from '@appium/support';
 import {isPackageChanged} from 'package-changed';
 import path from 'node:path';
 import {PKG_HASHFILE_RELATIVE_PATH} from '../constants';
-import log from '../logger';
+import {log} from '../logger';
 
 /**
  * Determines if extensions have changed, and updates a hash the `package.json` in `appiumHome` if so.

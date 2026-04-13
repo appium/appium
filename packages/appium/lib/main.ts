@@ -2,7 +2,7 @@
 
 import {WebSocketServer} from 'ws';
 import {init as logsinkInit} from './logsink'; // this import needs to come first since it sets up global npmlog
-import logger from './logger'; // logger needs to remain second
+import {log as logger} from './logger'; // logger needs to remain second
 import {
   routeConfiguringFunction as makeRouter,
   server as baseServer,

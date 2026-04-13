@@ -17,7 +17,7 @@ import type {
   CliCommandSetupSubcommand,
 } from 'appium/types';
 import _ from 'lodash';
-import logger from './logger';
+import {log as logger} from './logger';
 import {
   processCapabilities,
   STANDARD_CAPS,

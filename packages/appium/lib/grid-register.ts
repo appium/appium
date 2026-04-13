@@ -2,7 +2,7 @@ import axios from 'axios';
 import {fs} from '@appium/support';
 import type {StringRecord} from '@appium/types';
 import _ from 'lodash';
-import logger from './logger';
+import {log as logger} from './logger';
 
 /**
  * Selenium **Grid 3** (legacy hub) node integration.

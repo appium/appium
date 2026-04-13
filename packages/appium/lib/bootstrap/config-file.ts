@@ -7,8 +7,6 @@ import type {AppiumConfig, NormalizedAppiumConfig} from '@appium/types';
 import {getSchema, validate} from '../schema/schema';
 import {formatErrors} from '../schema/format-errors';
 
-export {formatErrors, type FormatConfigErrorsOptions, type RawJson} from '../schema/format-errors';
-
 /**
  * A cache of the raw config file (a JSON string) at a filepath.
  * This is used for better error reporting.

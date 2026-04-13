@@ -3,7 +3,7 @@ import B from 'bluebird';
 import type {DriverClass, ExtensionType, PluginClass} from '@appium/types';
 import type {ExtClass} from 'appium/types';
 import {USE_ALL_PLUGINS} from '../constants';
-import log from '../logger';
+import {log} from '../logger';
 import {DriverConfig} from './driver-config';
 import {Manifest} from './manifest';
 import {timing} from '@appium/support';

@@ -20,7 +20,7 @@ import {stripColors} from '@colors/colors';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {createSandbox, type SinonSandbox, type SinonStub} from 'sinon';
-import logger from '../../lib/logger';
+import {log as logger} from '../../lib/logger';
 import {fs} from '@appium/support';
 
 describe('utils', function () {

@@ -2,7 +2,7 @@ import _ from 'lodash';
 import type {DriverClass, DriverType, StringRecord} from '@appium/types';
 import type {ExtManifest, ExtName, ExtRecord} from 'appium/types';
 import {DRIVER_TYPE} from '../constants';
-import log from '../logger';
+import {log} from '../logger';
 import type {ExtManifestProblem} from './extension-config';
 import {ExtensionConfig} from './extension-config';
 import type {Manifest} from './manifest';

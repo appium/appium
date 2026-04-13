@@ -13,7 +13,7 @@ import {
 } from '../constants';
 import {runExtensionCommand} from './extension';
 import { system, fs } from '@appium/support';
-import log from '../logger';
+import {log} from '../logger';
 import type {ExtensionConfig} from '../extension/extension-config';
 
 /**

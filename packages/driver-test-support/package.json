@@ -45,7 +45,7 @@
     "chai-as-promised": "8.0.2",
     "get-port": "7.2.0",
     "lodash": "4.18.1",
-    "sinon": "21.0.3",
+    "sinon": "21.1.0",
     "type-fest": "5.5.0"
   },
   "devDependencies": {

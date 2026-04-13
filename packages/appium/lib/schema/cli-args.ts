@@ -1,7 +1,7 @@
 import {ArgumentTypeError, type ArgumentOptions} from 'argparse';
 import _ from 'lodash';
 import type {JSONSchema7, JSONSchema7TypeName} from 'json-schema';
-import {formatErrors} from '../config-file';
+import {formatErrors} from './format-errors';
 import {flattenSchema, validate} from './schema';
 import {transformers, parseCsvLine} from './cli-transformers';
 import type {ArgSpec} from './arg-spec';

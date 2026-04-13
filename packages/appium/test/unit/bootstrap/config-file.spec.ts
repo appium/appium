@@ -4,8 +4,8 @@ import fs from 'node:fs';
 import {createSandbox, type SinonSandbox, type SinonSpy, type SinonStubbedMember} from 'sinon';
 import type {IOutputError} from '@sidvind/better-ajv-errors';
 import * as YAML from 'yaml';
-import * as schema from '../../lib/schema/schema';
-import {resolveFixture, rewiremock} from '../helpers';
+import * as schema from '../../../lib/schema/schema';
+import {resolveFixture, rewiremock} from '../../helpers';
 type LilconfigResult = {config: unknown; filepath: string; isEmpty?: boolean};
 type AsyncSearcherLoadStub = SinonStubbedMember<() => Promise<LilconfigResult>>;
 type AsyncSearcherSearchStub = SinonStubbedMember<() => Promise<LilconfigResult>>;
@@ -25,7 +25,7 @@ type NormalizeConfigFn = (config: unknown) => unknown;
 const {expect} = chai;
 chai.use(chaiAsPromised);
 
-describe('config-file', function () {
+describe('bootstrap/config-file', function () {
   const GOOD_YAML_CONFIG_FILEPATH = resolveFixture('config', 'appium-config-good.yaml');
   const GOOD_JSON_CONFIG_FILEPATH = resolveFixture('config', 'appium-config-good.json');
   const GOOD_JS_CONFIG_FILEPATH = resolveFixture('config', 'appium-config-good.ts');
@@ -89,7 +89,7 @@ describe('config-file', function () {
     // we only mock lilconfig because it'd otherwise be a pain in the rear to test
     // searching for config files, and it increases the likelihood that we'd load the wrong file.
     ({readConfigFile, formatErrors, normalizeConfig} = rewiremock.proxy(
-      () => require('../../lib/config-file'),
+      () => require('../../../lib/bootstrap/config-file'),
       mocks
     ));
 

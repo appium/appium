@@ -3,7 +3,7 @@ import type {Class, DriverType, ExtensionType, PluginType} from '@appium/types';
 import type {Args, CliExtensionCommand, CliExtensionSubcommand} from 'appium/types';
 import type {ExtensionConfig} from '../extension/extension-config';
 import {DRIVER_TYPE, PLUGIN_TYPE} from '../constants';
-import {isExtensionCommandArgs} from '../utils';
+import {isExtensionCommandArgs} from '../schema/cli-args-guards';
 import DriverCliCommand from './driver-command';
 import PluginCliCommand from './plugin-command';
 import {errAndQuit, JSON_SPACES} from './utils';

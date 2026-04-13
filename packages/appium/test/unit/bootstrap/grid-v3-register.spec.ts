@@ -1,8 +1,8 @@
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {createSandbox, type SinonSandbox, type SinonStub} from 'sinon';
-import type registerNodeType from '../../lib/grid-register';
-import {rewiremock} from '../helpers';
+import type registerNodeType from '../../../lib/bootstrap/grid-v3-register';
+import {rewiremock} from '../../helpers';
 
 /** Mimics `@appium/support` logger so `throw logger.errorWithException(msg)` throws a real `Error`. */
 function createStubAppiumLogger(sandbox: SinonSandbox) {
@@ -21,7 +21,7 @@ function createStubAppiumLogger(sandbox: SinonSandbox) {
   };
 }
 
-describe('grid-register', function () {
+describe('bootstrap/grid-v3-register', function () {
   let sandbox: SinonSandbox;
 
   before(async function () {
@@ -62,7 +62,7 @@ describe('grid-register', function () {
       };
 
       ({default: registerNode} = rewiremock.proxy(
-        () => require('../../lib/grid-register'),
+        () => require('../../../lib/bootstrap/grid-v3-register'),
         mocks
       ) as {default: typeof registerNodeType});
     });

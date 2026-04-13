@@ -2,7 +2,7 @@ import {DRIVER_TYPE} from '../../../lib/constants';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import path from 'node:path';
-import {APPIUM_VER} from '../../../lib/config';
+import {APPIUM_VER} from '../../../lib/helpers/build';
 import {FAKE_DRIVER_DIR, PROJECT_ROOT, rewiremock} from '../../helpers';
 import {initMocks} from './mocks';
 import {resolveEsmEntryPoint} from '../../../lib/extension/extension-config';

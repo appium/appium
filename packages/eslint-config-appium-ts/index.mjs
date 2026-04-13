@@ -10,8 +10,10 @@ import {createTypeScriptImportResolver} from 'eslint-import-resolver-typescript'
 import globals from 'globals';
 import pluginPromise from 'eslint-plugin-promise';
 import {importX} from 'eslint-plugin-import-x';
+import jsdoc from 'eslint-plugin-jsdoc';
 import mochaPlugin from 'eslint-plugin-mocha';
 import nodePlugin from 'eslint-plugin-n';
+import perfectionist from 'eslint-plugin-perfectionist';
 import {configs as tsConfigs} from 'typescript-eslint';
 import unicorn from 'eslint-plugin-unicorn';
 
@@ -34,7 +36,9 @@ export default defineConfig([
       '@stylistic': stylistic,
       'import-x': importX,
       js,
+      jsdoc,
       n: nodePlugin,
+      perfectionist,
       promise: pluginPromise,
       unicorn
     },
@@ -51,6 +55,9 @@ export default defineConfig([
           project: ['tsconfig.json', './packages/*/tsconfig.json'],
         })
       ],
+      jsdoc: {
+        mode: 'typescript',
+      },
     },
     rules: {
       '@stylistic/array-bracket-spacing': 'error',
@@ -119,6 +126,17 @@ export default defineConfig([
        * Sometimes we want unused variables to be present in base class method declarations.
        */
       '@typescript-eslint/no-unused-vars': 'warn',
+      /**
+       * Class / class-expression members: public, then protected, then private (per @typescript-eslint default order).
+       * Interfaces and type literals are excluded — ordering is enforced for classes only.
+       */
+      '@typescript-eslint/member-ordering': [
+        'warn',
+        {
+          interfaces: 'never',
+          typeLiterals: 'never',
+        },
+      ],
 
       'import-x/named': 'warn',
       'import-x/no-duplicates': 'error',
@@ -148,8 +166,62 @@ export default defineConfig([
        * `return await somePromise` have their own use-cases.
        */
       'require-await': 'off',
-      'unicorn/prefer-node-protocol': 'warn'
+      'unicorn/prefer-node-protocol': 'warn',
+
+      /**
+       * Top-level module members: exported declarations before non-exported (e.g. `export-function` before `function`).
+       * `type: 'unsorted'` keeps order within each group as-written; only cross-group placement is enforced.
+       * @see https://perfectionist.dev/rules/sort-modules
+       */
+      'perfectionist/sort-modules': [
+        'warn',
+        {
+          type: 'unsorted',
+        },
+      ],
+
+      /**
+       * JSDoc only on exported function declarations (`export function` / `export default function`).
+       */
+      'jsdoc/require-jsdoc': [
+        'warn',
+        {
+          enableFixer: false,
+          publicOnly: true,
+          require: {
+            ClassDeclaration: false,
+            FunctionDeclaration: true,
+          },
+        },
+      ],
     }
+  },
+
+  {
+    name: 'TypeScript (type-aware)',
+    files: ['**/*.{ts,tsx,mtsx}'],
+    ignores: [
+      // Omitted from many package tsconfigs; without this, projectService reports a parse error.
+      // These paths still lint under the main script config (non-type-aware parser options).
+      '**/*.d.ts',
+      '**/test/**',
+      '**/test-d/**',
+      '**/*.spec.ts',
+      '**/*.spec.tsx',
+      '**/*.test.ts',
+      '**/*.test.tsx',
+    ],
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+      },
+    },
+    rules: {
+      /**
+       * Promise-valued expressions must be awaited, handled, or prefixed with `void` for intentional fire-and-forget.
+       */
+      '@typescript-eslint/no-floating-promises': 'warn',
+    },
   },
 
   {
@@ -179,6 +251,8 @@ export default defineConfig([
       'mocha/no-exports': 'off',
       'mocha/no-pending-tests': 'off',
       'mocha/no-setup-in-describe': 'off',
+
+      'jsdoc/require-jsdoc': 'off',
     },
   },
   fs.existsSync(gitignorePath) ? includeIgnoreFile(gitignorePath) : {},

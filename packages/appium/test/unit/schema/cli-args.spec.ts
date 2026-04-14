@@ -1,4 +1,5 @@
 import type {ExtensionType} from '@appium/types';
+import type {ArgumentOptions} from 'argparse';
 import _ from 'lodash';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
@@ -8,6 +9,12 @@ import {toParserArgs} from '../../../lib/schema/cli-args';
 const {expect} = chai;
 chai.use(chaiAsPromised);
 
+type ParserArgSpec = ArgumentOptions & {
+  type?: (v: string) => unknown;
+};
+
+type ParserArgsMap = Record<string, ParserArgSpec>;
+
 describe('cli-args', function () {
   interface GetArgsOpts {
     extName?: string;
@@ -15,13 +22,13 @@ describe('cli-args', function () {
     schema?: object;
   }
 
-    async function getArgs(opts: GetArgsOpts = {}) {
+  async function getArgs(opts: GetArgsOpts = {}) {
     const {extName, extType, schema} = opts;
     if (schema && extName && extType) {
       await registerSchema(extType as ExtensionType, extName, schema as Parameters<typeof registerSchema>[2]);
     }
     await finalizeSchema();
-    return _.fromPairs([...toParserArgs()]) as Record<string, {type?: (v: string) => unknown; help?: string; action?: string; metavar?: string; choices?: string[] }>;
+    return _.fromPairs([...toParserArgs()]) as ParserArgsMap;
   }
 
   beforeEach(resetSchema);
@@ -33,7 +40,7 @@ describe('cli-args', function () {
       const extType = PLUGIN_TYPE;
 
       describe('type', function () {
-        let result: ReturnType<typeof getArgs>;
+        let result: ParserArgsMap;
 
         describe('boolean', function () {
           beforeEach(async function () {
@@ -159,7 +166,7 @@ describe('cli-args', function () {
       });
 
       describe('appiumCliAliases', function () {
-        let result: ReturnType<typeof getArgs>;
+        let result: ParserArgsMap;
 
         it('should not allow short aliases for extensions', async function () {
           const schema = {
@@ -176,7 +183,7 @@ describe('cli-args', function () {
       });
 
       describe('appiumCliDescription', function () {
-        let result: ReturnType<typeof getArgs>;
+        let result: ParserArgsMap;
 
         it('should be preferred over `description`', async function () {
           const schema = {
@@ -195,7 +202,7 @@ describe('cli-args', function () {
       });
 
       describe('appiumCliTransformer', function () {
-        let result: ReturnType<typeof getArgs>;
+        let result: ParserArgsMap;
 
         it('should use the transformer', async function () {
           const schema = {

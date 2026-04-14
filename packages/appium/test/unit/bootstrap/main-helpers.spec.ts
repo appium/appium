@@ -2,8 +2,10 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {SinonSandbox, SinonSpy} from 'sinon';
 import {createSandbox} from 'sinon';
+import {stripColors} from '@colors/colors';
 import {getBuildInfo} from '../../../lib/helpers/build';
-import {showBuildInfo} from '../../../lib/bootstrap/main-helpers';
+import {inspect, showBuildInfo} from '../../../lib/bootstrap/main-helpers';
+import {log as logger} from '../../../lib/logger';
 
 const {expect} = chai;
 chai.use(chaiAsPromised);
@@ -31,6 +33,14 @@ describe('bootstrap/main-helpers', function () {
       await showBuildInfo();
       expect(log.calledOnce).to.be.true;
       expect(log.firstCall.args).to.contain(JSON.stringify(config));
+    });
+  });
+
+  describe('inspect()', function () {
+    it('should log the result of inspecting a value', function () {
+      const infoLog = sandbox.spy(logger, 'info');
+      inspect({foo: 'bar'});
+      expect(stripColors(infoLog.firstCall.firstArg)).to.match(/\{\s*\n*foo:\s'bar'\s*\n*\}/);
     });
   });
 });

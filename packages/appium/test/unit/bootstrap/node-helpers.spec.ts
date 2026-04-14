@@ -3,7 +3,7 @@ import chaiAsPromised from 'chai-as-promised';
 import {promises as fs} from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import {checkNodeOk, requireDir} from '../../../lib/bootstrap/node-helpers';
+import {adjustNodePath, checkNodeOk, requireDir} from '../../../lib/bootstrap/node-helpers';
 
 const {expect} = chai;
 chai.use(chaiAsPromised);
@@ -98,6 +98,27 @@ describe('bootstrap/node-helpers', function () {
 
     it('should be able to use a dir with correct permissions', async function () {
       await expect(requireDir('/tmp/test_tmp_dir/with/any/number/of/levels')).to.not.be.rejected;
+    });
+  });
+
+  describe('adjustNodePath()', function () {
+    const prevValue = process.env.NODE_PATH;
+
+    beforeEach(function () {
+      if (process.env.NODE_PATH) {
+        delete process.env.NODE_PATH;
+      }
+    });
+
+    afterEach(function () {
+      if (prevValue) {
+        process.env.NODE_PATH = prevValue;
+      }
+    });
+
+    it('should adjust NODE_PATH', async function () {
+      adjustNodePath();
+      await expect(fs.access(process.env.NODE_PATH!)).to.not.be.rejected;
     });
   });
 });

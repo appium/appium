@@ -435,7 +435,7 @@ describe('parser', function () {
     });
 
     it('should not fail if process.argv[1] is undefined', function () {
-      process.argv[1] = '';
+      (process.argv as (string | undefined)[])[1] = undefined;
       const args = getParser();
       expect(args.prog).to.equal('appium');
     });

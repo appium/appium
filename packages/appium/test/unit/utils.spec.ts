@@ -1,55 +1,65 @@
-import {inspect} from '../../lib/bootstrap/main-helpers';
-import {adjustNodePath} from '../../lib/bootstrap/node-helpers';
-import {stripColors} from '@colors/colors';
-import {expect, use} from 'chai';
+import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {createSandbox, type SinonSandbox, type SinonStub} from 'sinon';
-import {log as logger} from '../../lib/logger';
-import {fs} from '@appium/support';
+import {createSandbox, type SinonSandbox} from 'sinon';
+import {node} from '@appium/support';
+import {adler32, getAppiumModuleRoot, npmPackage} from '../../lib/utils';
+
+const {expect} = chai;
+chai.use(chaiAsPromised);
+
+type MemoizedWithCache = (() => string) & {
+  cache: {
+    clear: () => void;
+  };
+};
 
 describe('utils', function () {
-  beforeEach(async function () {
-    use(chaiAsPromised);
+  let sandbox: SinonSandbox;
+
+  beforeEach(function () {
+    sandbox = createSandbox();
+    (getAppiumModuleRoot as MemoizedWithCache).cache.clear();
   });
 
-  describe('inspect()', function () {
-    let sandbox: SinonSandbox;
+  afterEach(function () {
+    sandbox.restore();
+  });
 
-    beforeEach(function () {
-      sandbox = createSandbox();
-      sandbox.spy(logger, 'info');
-    });
-
-    afterEach(function () {
-      sandbox.restore();
-    });
-
-    it('should log the result of inspecting a value', function () {
-      inspect({foo: 'bar'});
-      expect(
-        stripColors((logger.info as SinonStub).firstCall.firstArg)
-      ).to.match(/\{\s*\n*foo:\s'bar'\s*\n*\}/);
+  describe('npmPackage', function () {
+    it('should expose package metadata', function () {
+      expect(npmPackage).to.have.property('name', 'appium');
     });
   });
 
-  describe('adjustNodePath()', function () {
-    const prevValue = process.env.NODE_PATH;
-
-    beforeEach(function () {
-      if (process.env.NODE_PATH) {
-        delete process.env.NODE_PATH;
-      }
+  describe('getAppiumModuleRoot()', function () {
+    it('should return appium module root', function () {
+      sandbox.stub(node, 'getModuleRootSync').returns('/tmp/appium');
+      expect(getAppiumModuleRoot()).to.equal('/tmp/appium');
     });
 
-    afterEach(function () {
-      if (prevValue) {
-        process.env.NODE_PATH = prevValue;
-      }
+    it('should memoize module root lookups', function () {
+      const rootLookup = sandbox.stub(node, 'getModuleRootSync').returns('/tmp/appium');
+      expect(getAppiumModuleRoot()).to.equal('/tmp/appium');
+      expect(getAppiumModuleRoot()).to.equal('/tmp/appium');
+      expect(rootLookup.calledOnce).to.be.true;
     });
 
-    it('should adjust NODE_PATH', async function () {
-      adjustNodePath();
-      await expect(fs.exists(process.env.NODE_PATH!)).to.eventually.be.true;
+    it('should throw when module root cannot be determined', function () {
+      sandbox.stub(node, 'getModuleRootSync').returns(null);
+      expect(getAppiumModuleRoot).to.throw(/Cannot find the appium module root/);
+    });
+  });
+
+  describe('adler32()', function () {
+    it('should compute checksum for known inputs', function () {
+      expect(adler32('')).to.equal(1);
+      expect(adler32('hello')).to.equal(103547413);
+      expect(adler32('😀')).to.equal(122749608);
+    });
+
+    it('should support checksum seeding', function () {
+      const seed = adler32('hello');
+      expect(adler32(' world', seed)).to.equal(adler32('hello world'));
     });
   });
 });

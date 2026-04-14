@@ -5,7 +5,7 @@ import {DRIVER_TYPE, PLUGIN_TYPE, SETUP_SUBCOMMAND} from '../../lib/constants';
 import {ArgParser, getParser} from '../../lib/cli/parser';
 import {INSTALL_TYPES} from '../../lib/extension/extension-config';
 import * as schema from '../../lib/schema/schema';
-import {readConfigFile} from '../../lib/config-file';
+import {readConfigFile} from '../../lib/bootstrap/config-file';
 import {resolveFixture} from '../helpers';
 
 const {expect} = chai;
@@ -416,6 +416,34 @@ describe('parser', function () {
         expect(args.subcommand).to.eql(SETUP_SUBCOMMAND);
         expect(args.setupCommand).to.eql('mobile');
       });
+    });
+  });
+
+  describe('getParser() and process.argv[1]', function () {
+    let argv1: string | undefined;
+
+    before(function () {
+      argv1 = process.argv[1];
+    });
+
+    beforeEach(function () {
+      schema.resetSchema();
+    });
+
+    after(function () {
+      (process.argv as (string | undefined)[])[1] = argv1;
+    });
+
+    it('should not fail if process.argv[1] is undefined', function () {
+      (process.argv as (string | undefined)[])[1] = undefined;
+      const args = getParser();
+      expect(args.prog).to.equal('appium');
+    });
+
+    it('should set "prog" to process.argv[1]', function () {
+      process.argv[1] = 'Hello World';
+      const args = getParser();
+      expect(args.prog).to.equal('Hello World');
     });
   });
 });

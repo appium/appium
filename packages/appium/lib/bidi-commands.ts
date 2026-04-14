@@ -5,11 +5,7 @@ import {errors} from '@appium/base-driver';
 import {BIDI_BASE_PATH, BIDI_EVENT_NAME} from './constants';
 import WebSocket from 'ws';
 import os from 'node:os';
-import {
-  isBroadcastIp,
-  fetchInterfaces,
-  V4_BROADCAST_IP,
-} from './utils';
+import {isBroadcastIp, fetchInterfaces, V4_BROADCAST_IP} from './helpers/network';
 import type {IncomingMessage} from 'node:http';
 import type {AppiumDriver} from './appium';
 import type {

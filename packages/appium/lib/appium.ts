@@ -15,7 +15,6 @@ import type {
   TimestampedMultiSessionData,
   W3CDriverCaps,
 } from '@appium/types';
-import {getBuildInfo, updateBuildInfo, APPIUM_VER} from './config';
 import {
   BaseDriver,
   DriverCore,
@@ -33,12 +32,13 @@ import {
   generateDriverLogPrefix,
   isW3cCaps,
 } from '@appium/base-driver';
+import {APPIUM_VER, getBuildInfo, updateBuildInfo} from './helpers/build';
 import {
+  makeNonW3cCapsError,
   parseCapsForInnerDriver,
   pullSettings,
-  makeNonW3cCapsError,
   type ParsedDriverCaps,
-} from './utils';
+} from './helpers/capability';
 import {util} from '@appium/support';
 import {getDefaultsForExtension} from './schema';
 import {DRIVER_TYPE, BIDI_BASE_PATH, SESSION_DISCOVERY_FEATURE} from './constants';

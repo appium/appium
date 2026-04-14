@@ -1,48 +1,26 @@
-import betterAjvErrors, {type IOutputError} from '@sidvind/better-ajv-errors';
+import type {IOutputError} from '@sidvind/better-ajv-errors';
 import type {ErrorObject, SchemaObject} from 'ajv';
 import {lilconfig, type LoaderSync, type LilconfigResult} from 'lilconfig';
 import _ from 'lodash';
 import * as yaml from 'yaml';
 import type {AppiumConfig, NormalizedAppiumConfig} from '@appium/types';
-import {getSchema, validate} from './schema/schema';
+import {getSchema, validate} from '../schema/schema';
+import {formatErrors} from '../schema/format-errors';
 
 /**
  * A cache of the raw config file (a JSON string) at a filepath.
  * This is used for better error reporting.
  * Note that config files needn't be JSON, but it helps if they are.
  */
-const rawConfig = new Map<string, RawJson>();
-
-/**
- * Given an array of errors and the result of loading a config file, generate a
- * helpful string for the user.
- *
- * - If `opts` contains a `json` property, this should be the original JSON
- *   _string_ of the config file.  This is only applicable if the config file
- *   was in JSON format. If present, it will associate line numbers with errors.
- * - If `errors` happens to be empty, this will throw.
- *
- * @throws {TypeError} If `errors` is empty
- */
-export function formatErrors(
-  errors: ErrorObject[] = [],
-  config: ReadConfigFileResult['config'] | Record<string, unknown> | string = {},
-  opts: FormatConfigErrorsOptions = {}
-): string | IOutputError[] {
-  if (errors && !errors.length) {
-    throw new TypeError('Array of errors must be non-empty');
-  }
-  return betterAjvErrors(getSchema(opts.schemaId), config, errors, {
-    json: opts.json,
-    format: opts.pretty === false ? 'js' : 'cli',
-  });
-}
+const rawConfig = new Map<string, string>();
 
 /**
  * Given an optional path, read a config file. Validates the config file.
  *
  * Call {@link validate} if you already have a config object.
  * @public
+ * @param filepath - Explicit config path; when omitted, searches with lilconfig
+ * @param opts - e.g. `pretty` for formatted validation errors
  * @returns Contains config and filepath, if found, and any errors
  */
 export async function readConfigFile(
@@ -89,8 +67,10 @@ export async function readConfigFile(
 }
 
 /**
- * Convert schema property names to either a) the value of the `appiumCliDest` property, if any; or b) camel-case
- * @returns New object with camel-cased keys (or `dest` keys).
+ * Converts schema property names to either the `appiumCliDest` value, if any, or camelCase.
+ *
+ * @param config - Raw config object as parsed from file
+ * @returns New object with camel-cased keys (or CLI `dest` keys).
  */
 export function normalizeConfig(config: AppiumConfig): NormalizedAppiumConfig {
   const schema = getSchema();
@@ -190,20 +170,6 @@ export interface ReadConfigFileResult {
  */
 export interface ReadConfigFileOptions {
   pretty?: boolean;
-}
-
-/**
- * The string should be a raw JSON string.
- */
-export type RawJson = string;
-
-/**
- * Options for {@link formatErrors}.
- */
-export interface FormatConfigErrorsOptions {
-  json?: RawJson;
-  pretty?: boolean;
-  schemaId?: string;
 }
 
 /**

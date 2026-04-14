@@ -18,7 +18,7 @@ import {
   SETUP_SUBCOMMAND
 } from '../constants';
 import {finalizeSchema, getAllArgSpecs, getArgSpec, hasArgSpec} from '../schema';
-import {rootDir} from '../config';
+import {rootDir} from '../helpers/build';
 import {getExtensionArgs, getServerArgs} from './args';
 import type {ArgumentDefinitions} from './args';
 import {

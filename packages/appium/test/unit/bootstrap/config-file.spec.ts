@@ -2,10 +2,9 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import fs from 'node:fs';
 import {createSandbox, type SinonSandbox, type SinonSpy, type SinonStubbedMember} from 'sinon';
-import type {IOutputError} from '@sidvind/better-ajv-errors';
 import * as YAML from 'yaml';
-import * as schema from '../../lib/schema/schema';
-import {resolveFixture, rewiremock} from '../helpers';
+import * as schema from '../../../lib/schema/schema';
+import {resolveFixture, rewiremock} from '../../helpers';
 type LilconfigResult = {config: unknown; filepath: string; isEmpty?: boolean};
 type AsyncSearcherLoadStub = SinonStubbedMember<() => Promise<LilconfigResult>>;
 type AsyncSearcherSearchStub = SinonStubbedMember<() => Promise<LilconfigResult>>;
@@ -19,13 +18,12 @@ interface ReadConfigFileResult {
 }
 
 type ReadConfigFileFn = (filepath?: string, opts?: object) => Promise<ReadConfigFileResult>;
-type FormatErrorsFn = (errors?: unknown[], config?: unknown, opts?: object) => string | IOutputError[];
 type NormalizeConfigFn = (config: unknown) => unknown;
 
 const {expect} = chai;
 chai.use(chaiAsPromised);
 
-describe('config-file', function () {
+describe('bootstrap/config-file', function () {
   const GOOD_YAML_CONFIG_FILEPATH = resolveFixture('config', 'appium-config-good.yaml');
   const GOOD_JSON_CONFIG_FILEPATH = resolveFixture('config', 'appium-config-good.json');
   const GOOD_JS_CONFIG_FILEPATH = resolveFixture('config', 'appium-config-good.ts');
@@ -36,10 +34,8 @@ describe('config-file', function () {
 
   let sandbox: SinonSandbox;
   let readConfigFile: ReadConfigFileFn;
-  let formatErrors: FormatErrorsFn;
   let normalizeConfig: NormalizeConfigFn;
   let lc: {load: AsyncSearcherLoadStub; search: AsyncSearcherSearchStub};
-  let mocks: Record<string, unknown>;
   let validateSpy: SinonSpy;
 
   before(function () {
@@ -78,7 +74,7 @@ describe('config-file', function () {
       search,
     };
 
-    mocks = {
+    const mocks = {
       lilconfig: {
         lilconfig: sandbox.stub().returns(lc),
       },
@@ -88,8 +84,8 @@ describe('config-file', function () {
     // loads the `config-file` module using the lilconfig mock.
     // we only mock lilconfig because it'd otherwise be a pain in the rear to test
     // searching for config files, and it increases the likelihood that we'd load the wrong file.
-    ({readConfigFile, formatErrors, normalizeConfig} = rewiremock.proxy(
-      () => require('../../lib/config-file'),
+    ({readConfigFile, normalizeConfig} = rewiremock.proxy(
+      () => require('../../../lib/bootstrap/config-file'),
       mocks
     ));
 
@@ -295,54 +291,6 @@ describe('config-file', function () {
             });
           });
         });
-      });
-    });
-  });
-
-  describe('formatErrors()', function () {
-    describe('when provided `errors` as an empty array', function () {
-      it('should throw', function () {
-        expect(() => formatErrors([])).to.throw(TypeError, 'Array of errors must be non-empty');
-      });
-    });
-
-    describe('when provided `errors` as `undefined`', function () {
-      it('should throw', function () {
-        expect(() => formatErrors()).to.throw(TypeError, 'Array of errors must be non-empty');
-      });
-    });
-
-    describe('when provided `errors` as a non-empty array', function () {
-      it('should return a string', function () {
-        expect(formatErrors([{}])).to.be.a('string');
-      });
-    });
-
-    describe('when `opts.pretty` is false', function () {
-      it('should call `betterAjvErrors()` with non-CLI output format', function () {
-        formatErrors([{}], {}, {pretty: false});
-        expect(
-          (mocks['@sidvind/better-ajv-errors'] as SinonSpy).calledWith(
-            schema.getSchema(),
-            {},
-            [{}],
-            {format: 'js', json: undefined}
-          )
-        ).to.be.true;
-      });
-    });
-
-    describe('when `opts.json` is a string', function () {
-      it('should call `betterAjvErrors()` with option `json: opts.json`', function () {
-        formatErrors([{}], {}, {json: '{"foo": "bar"}'});
-        expect(
-          (mocks['@sidvind/better-ajv-errors'] as SinonSpy).calledWith(
-            schema.getSchema(),
-            {},
-            [{}],
-            {format: 'cli', json: '{"foo": "bar"}'}
-          )
-        ).to.be.true;
       });
     });
   });

@@ -16,7 +16,8 @@ import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
 import {createSandbox} from 'sinon';
 import {finalizeSchema, registerSchema, resetSchema} from '../../lib/schema/schema';
-import {insertAppiumPrefixes, removeAppiumPrefixes} from '../../lib/utils';
+import {insertAppiumPrefixes, removeAppiumPrefixes} from '../../lib/helpers/capability';
+import * as buildInfoModule from '../../lib/helpers/build';
 import {rewiremock, BASE_CAPS, W3C_CAPS, W3C_PREFIXED_CAPS} from '../helpers';
 import {BasePlugin} from '@appium/base-plugin';
 import type * as AppiumModule from '../../lib/appium';
@@ -62,7 +63,12 @@ describe('AppiumDriver', function () {
       APPIUM_VER: '2.0',
     };
     ({AppiumDriver} = rewiremock.proxy(() => require('../../lib/appium'), {
-      '../../lib/config': MockConfig,
+      '../../lib/helpers/build': {
+        ...buildInfoModule,
+        getBuildInfo: MockConfig.getBuildInfo,
+        updateBuildInfo: MockConfig.updateBuildInfo,
+        APPIUM_VER: MockConfig.APPIUM_VER,
+      },
     }));
   });
 

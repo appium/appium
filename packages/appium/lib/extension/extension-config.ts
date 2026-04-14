@@ -15,7 +15,7 @@ import type {
   InstalledExtensionListData,
 } from '../cli/extension-command';
 import type {ExtCommand} from '../cli/extension';
-import {APPIUM_VER} from '../config';
+import {APPIUM_VER} from '../helpers/build';
 import {log} from '../logger';
 import {
   ALLOWED_SCHEMA_EXTENSIONS,

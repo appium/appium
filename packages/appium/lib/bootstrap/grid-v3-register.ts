@@ -29,15 +29,29 @@ interface Grid3HubConfiguration {
   register?: boolean;
   registerCycle?: number;
 }
+
 interface Grid3NodeConfig extends StringRecord {
   configuration?: Grid3HubConfiguration;
   capabilities?: unknown;
 }
+
 interface Grid3ProxyApiResponse {
   success: boolean;
   msg?: string;
 }
 
+export default async function registerNode(
+  data: string,
+  addr: string,
+  port: number,
+  basePath: string
+): Promise<void>;
+export default async function registerNode(
+  data: Grid3NodeConfig,
+  addr?: string,
+  port?: number,
+  basePath?: string
+): Promise<void>;
 /**
  * Registers this server as a node with a **Selenium Grid 3** hub.
  *
@@ -52,21 +66,6 @@ interface Grid3ProxyApiResponse {
  * @param addr - Bind to this address
  * @param port - Bind to this port
  * @param basePath - Base path for the Appium server (used in the node URL sent to the hub; may be `''`)
- */
-export default async function registerNode(
-  data: string,
-  addr: string,
-  port: number,
-  basePath: string
-): Promise<void>;
-export default async function registerNode(
-  data: Grid3NodeConfig,
-  addr?: string,
-  port?: number,
-  basePath?: string
-): Promise<void>;
-/**
- * Registers this server with Selenium Grid 3 using either inline or file-based config.
  */
 export default async function registerNode(
   data: string | Grid3NodeConfig,

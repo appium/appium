@@ -109,7 +109,7 @@ class AppiumSchema {
   /**
    * Finalizes all registered schemas into Ajv and generates arg-spec lookups.
    */
-  finalize(): Readonly<Record<string, StrictSchemaObject>> {
+  async finalize(): Promise<Readonly<Record<string, StrictSchemaObject>>> {
     if (this.isFinalized()) {
       return this.#finalizedSchemas as Record<string, StrictSchemaObject>;
     }
@@ -137,27 +137,26 @@ class AppiumSchema {
 
     const finalizedSchemas: Record<string, StrictSchemaObject> = {};
 
-    const finalSchema = _.reduce(
-      this.#registeredSchemas,
-      (base: any, extensionSchemas: Map<string, SchemaObject>, extType: ExtensionType) => {
-        extensionSchemas.forEach((schema, extName) => {
-          const $ref = ArgSpec.toSchemaBaseRef(extType, extName);
-          (schema as any).$id = $ref;
-          (schema as any).additionalProperties = false;
-          base.properties.server.properties[extType].properties[extName] = {$ref, $comment: extName};
-          ajv.validateSchema(schema, true);
-          addArgSpecs((schema as any).properties, extType, extName);
-          ajv.addSchema(schema, $ref);
-          finalizedSchemas[$ref] = schema as StrictSchemaObject;
-        });
-        return base;
-      },
-      baseSchema
-    ) as StrictSchemaObject;
+    for (const [extType, extensionSchemas] of Object.entries(this.#registeredSchemas) as Array<
+      [ExtensionType, Map<string, SchemaObject>]
+    >) {
+      for (const [extName, schema] of extensionSchemas.entries()) {
+        const $ref = ArgSpec.toSchemaBaseRef(extType, extName);
+        (schema as any).$id = $ref;
+        (schema as any).additionalProperties = false;
+        baseSchema.properties.server.properties[extType].properties[extName] = {$ref, $comment: extName};
+        await ajv.validateSchema(schema, true);
+        addArgSpecs((schema as any).properties, extType, extName);
+        ajv.addSchema(schema, $ref);
+        finalizedSchemas[$ref] = schema as StrictSchemaObject;
+      }
+    }
+
+    const finalSchema = baseSchema as StrictSchemaObject;
 
     ajv.addSchema(finalSchema, APPIUM_CONFIG_SCHEMA_ID);
     finalizedSchemas[APPIUM_CONFIG_SCHEMA_ID] = finalSchema;
-    ajv.validateSchema(finalSchema, true);
+    await ajv.validateSchema(finalSchema, true);
     this.#finalizedSchemas = finalizedSchemas;
     return Object.freeze(finalizedSchemas);
   }
@@ -178,7 +177,7 @@ class AppiumSchema {
   /**
    * Registers an extension schema.
    */
-  registerSchema(extType: ExtensionType, extName: string, schema: SchemaObject): void {
+  async registerSchema(extType: ExtensionType, extName: string, schema: SchemaObject): Promise<void> {
     if (!(extType && extName) || _.isUndefined(schema)) {
       throw new TypeError('Expected extension type, extension name, and a defined schema');
     }
@@ -192,7 +191,7 @@ class AppiumSchema {
       }
       throw new SchemaNameConflictError(extType, extName);
     }
-    this.#ajv.validateSchema(schema, true);
+    await this.#ajv.validateSchema(schema, true);
     this.#registeredSchemas[extType].set(normalizedExtName, schema);
   }
 

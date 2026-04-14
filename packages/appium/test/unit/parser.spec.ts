@@ -21,8 +21,8 @@ describe('parser', function () {
   let p;
 
   describe('Main Parser', function () {
-    beforeEach(function () {
-      p = getParser(true);
+    beforeEach(async function () {
+      p = await getParser(true);
     });
 
     it('should accept only server and driver subcommands', function () {
@@ -36,8 +36,8 @@ describe('parser', function () {
 
   describe('Server Parser', function () {
     describe('Appium arguments', function () {
-      beforeEach(function () {
-        p = getParser(true);
+      beforeEach(async function () {
+        p = await getParser(true);
       });
 
       it('should return an arg parser', function () {
@@ -180,18 +180,18 @@ describe('parser', function () {
     });
 
     describe('extension arguments', function () {
-      beforeEach(function () {
+      beforeEach(async function () {
         schema.resetSchema();
         // we have to require() here because babel will not compile stuff in node_modules
         // (even if it's in the monorepo; there may be a way around this)
         // anyway, if we do that, we need to use the `default` prop.
-        schema.registerSchema(
+        await schema.registerSchema(
           DRIVER_TYPE,
           'fake',
           require('@appium/fake-driver/build/lib/fake-driver-schema').default
         );
-        schema.finalizeSchema();
-        p = getParser(true);
+        await schema.finalizeSchema();
+        p = await getParser(true);
       });
 
       it('should parse driver args correctly from a string', async function () {
@@ -220,14 +220,14 @@ describe('parser', function () {
         expect(args).to.not.have.property(DRIVER_TYPE);
       });
 
-      it('should nicely handle extensions w/ dashes in them', function () {
+      it('should nicely handle extensions w/ dashes in them', async function () {
         schema.resetSchema();
-        schema.registerSchema(PLUGIN_TYPE, 'crypto-fiend', {
+        await schema.registerSchema(PLUGIN_TYPE, 'crypto-fiend', {
           type: 'object',
           properties: {elite: {type: 'boolean'}},
         });
-        schema.finalizeSchema();
-        p = getParser(true);
+        await schema.finalizeSchema();
+        p = await getParser(true);
         const args = p.parseArgs(['--plugin-crypto-fiend-elite']);
 
         expect(args).to.have.nested.property('plugin.crypto-fiend.elite', true);
@@ -257,8 +257,8 @@ describe('parser', function () {
 
   describe('Driver Parser', function () {
     let p;
-    beforeEach(function () {
-      p = getParser(true);
+    beforeEach(async function () {
+      p = await getParser(true);
     });
     it('should not allow random sub-subcommands', function () {
       expect(() => p.parseArgs([DRIVER_TYPE, 'foo'])).to.throw();
@@ -403,8 +403,8 @@ describe('parser', function () {
 
   describe('Setup Parser', function () {
     let p;
-    beforeEach(function () {
-      p = getParser(true);
+    beforeEach(async function () {
+      p = await getParser(true);
     });
     it('should not allow random sub-subcommands', function () {
       expect(() => p.parseArgs([SETUP_SUBCOMMAND, 'foo'])).to.throw();
@@ -434,15 +434,15 @@ describe('parser', function () {
       (process.argv as (string | undefined)[])[1] = argv1;
     });
 
-    it('should not fail if process.argv[1] is undefined', function () {
+    it('should not fail if process.argv[1] is undefined', async function () {
       (process.argv as (string | undefined)[])[1] = undefined;
-      const args = getParser();
+      const args = await getParser();
       expect(args.prog).to.equal('appium');
     });
 
-    it('should set "prog" to process.argv[1]', function () {
+    it('should set "prog" to process.argv[1]', async function () {
       process.argv[1] = 'Hello World';
-      const args = getParser();
+      const args = await getParser();
       expect(args.prog).to.equal('Hello World');
     });
   });

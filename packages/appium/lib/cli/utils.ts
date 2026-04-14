@@ -6,6 +6,39 @@ export const JSON_SPACES = 4;
 
 type ErrorLike = Error & {stderr?: unknown};
 
+export class RingBuffer<T = any> {
+  private readonly size: number;
+  private readonly buffer: T[] = [];
+
+  constructor(size = 50) {
+    this.size = size;
+  }
+
+  /**
+   * Get the current buffer contents.
+   */
+  getBuff(): T[] {
+    return this.buffer;
+  }
+
+  /**
+   * Add an item to the buffer.
+   */
+  enqueue(item: T): void {
+    if (this.buffer.length >= this.size) {
+      this.dequeue();
+    }
+    this.buffer.push(item);
+  }
+
+  /**
+   * Remove the oldest item from the buffer.
+   */
+  dequeue(): void {
+    this.buffer.shift();
+  }
+}
+
 /**
  * Log an error to the console and exit the process.
  *
@@ -60,38 +93,5 @@ export async function spinWith<T>(
   } catch (err) {
     spinner.fail();
     throw err;
-  }
-}
-
-export class RingBuffer<T = any> {
-  private readonly size: number;
-  private readonly buffer: T[] = [];
-
-  constructor(size = 50) {
-    this.size = size;
-  }
-
-  /**
-   * Get the current buffer contents.
-   */
-  getBuff(): T[] {
-    return this.buffer;
-  }
-
-  /**
-   * Add an item to the buffer.
-   */
-  enqueue(item: T): void {
-    if (this.buffer.length >= this.size) {
-      this.dequeue();
-    }
-    this.buffer.push(item);
-  }
-
-  /**
-   * Remove the oldest item from the buffer.
-   */
-  dequeue(): void {
-    this.buffer.shift();
   }
 }

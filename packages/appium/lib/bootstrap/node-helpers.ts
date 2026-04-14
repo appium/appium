@@ -21,10 +21,6 @@ interface DebugInfoInput {
   appiumHome: string;
 }
 
-function getNodeVersion(): semver.SemVer {
-  return semver.coerce(process.version) as semver.SemVer;
-}
-
 /**
  * @throws {Error} If Node version is outside of the supported range
  */
@@ -165,6 +161,10 @@ export async function requireDir(
       );
     }
   }
+}
+
+function getNodeVersion(): semver.SemVer {
+  return semver.coerce(process.version) as semver.SemVer;
 }
 
 /**

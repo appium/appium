@@ -18,6 +18,26 @@ import {log as logger} from '../logger';
 const GRID_V3_REGISTER_PATH = '/grid/register';
 const GRID_V3_PROXY_API_PATH = '/grid/api/proxy';
 
+interface Grid3HubConfiguration {
+  hubProtocol?: string;
+  hubHost?: string;
+  hubPort?: number;
+  url?: string;
+  host?: string;
+  port?: number;
+  id?: string;
+  register?: boolean;
+  registerCycle?: number;
+}
+interface Grid3NodeConfig extends StringRecord {
+  configuration?: Grid3HubConfiguration;
+  capabilities?: unknown;
+}
+interface Grid3ProxyApiResponse {
+  success: boolean;
+  msg?: string;
+}
+
 /**
  * Registers this server as a node with a **Selenium Grid 3** hub.
  *
@@ -45,6 +65,9 @@ export default async function registerNode(
   port?: number,
   basePath?: string
 ): Promise<void>;
+/**
+ * Registers this server with Selenium Grid 3 using either inline or file-based config.
+ */
 export default async function registerNode(
   data: string | Grid3NodeConfig,
   addr?: string,
@@ -225,26 +248,4 @@ async function isAlreadyRegistered(configHolder: Grid3NodeConfig): Promise<boole
   } catch (err) {
     logger.debug(`Selenium Grid 3 hub down or not responding: ${(err as Error).message}`);
   }
-}
-
-interface Grid3HubConfiguration {
-  hubProtocol?: string;
-  hubHost?: string;
-  hubPort?: number;
-  url?: string;
-  host?: string;
-  port?: number;
-  id?: string;
-  register?: boolean;
-  registerCycle?: number;
-}
-
-interface Grid3NodeConfig extends StringRecord {
-  configuration?: Grid3HubConfiguration;
-  capabilities?: unknown;
-}
-
-interface Grid3ProxyApiResponse {
-  success: boolean;
-  msg?: string;
 }

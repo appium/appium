@@ -52,10 +52,10 @@ describe('AppiumDriver', function () {
   let AppiumDriver: typeof AppiumModule.AppiumDriver;
   let MockConfig: MockConfigShape;
 
-  beforeEach(function () {
+  beforeEach(async function () {
     sandbox = createSandbox();
     resetSchema();
-    finalizeSchema();
+    await finalizeSchema();
 
     MockConfig = {
       getBuildInfo: sandbox.stub().callsFake(() => ({version: MockConfig.APPIUM_VER})) as MockConfigShape['getBuildInfo'],
@@ -470,12 +470,12 @@ describe('AppiumDriver', function () {
       class ArrayArgPlugin extends BasePlugin {}
       (ArrayArgPlugin as any).baseVersion = '1.0';
 
-      beforeEach(function () {
+      beforeEach(async function () {
         resetSchema();
         // to establish defaults, we need to register a schema for the plugin.
         // note that the `noargs` plugin does not need a schema, because it
         // accepts no arguments.
-        registerSchema(PLUGIN_TYPE, 'args', {
+        await registerSchema(PLUGIN_TYPE, 'args', {
           type: 'object',
           properties: {
             randomArg: {
@@ -484,7 +484,7 @@ describe('AppiumDriver', function () {
             },
           },
         });
-        registerSchema(PLUGIN_TYPE, 'arrayarg', {
+        await registerSchema(PLUGIN_TYPE, 'arrayarg', {
           type: 'object',
           properties: {
             arr: {
@@ -493,7 +493,7 @@ describe('AppiumDriver', function () {
             },
           },
         });
-        finalizeSchema();
+        await finalizeSchema();
       });
 
       describe('when args are not present', function () {

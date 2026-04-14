@@ -15,6 +15,12 @@ export const commandClasses = Object.freeze(
   } as const
 );
 
+export type ExtCommand<ExtType extends ExtensionType> = ExtType extends DriverType
+  ? Class<DriverCliCommand>
+  : ExtType extends PluginType
+    ? Class<PluginCliCommand>
+    : never;
+
 /**
  * Executes a driver/plugin extension subcommand and returns the command result.
  *
@@ -57,9 +63,3 @@ export async function runExtensionCommand<
 
   return jsonResult;
 }
-
-export type ExtCommand<ExtType extends ExtensionType> = ExtType extends DriverType
-  ? Class<DriverCliCommand>
-  : ExtType extends PluginType
-    ? Class<PluginCliCommand>
-    : never;

@@ -101,11 +101,11 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
    * @param extName - Extension key as stored in the manifest
    * @param extManifest - Manifest entry for that extension
    */
-  getProblems(extName: string, extManifest: ExtManifest<ExtType>): ExtManifestProblem[] {
+  async getProblems(extName: string, extManifest: ExtManifest<ExtType>): Promise<ExtManifestProblem[]> {
     return [
       ...this.getGenericConfigProblems(extManifest, extName),
       ...this.getConfigProblems(extManifest, extName),
-      ...this.getSchemaProblems(extManifest, extName),
+      ...(await this.getSchemaProblems(extManifest, extName)),
     ];
   }
 
@@ -300,8 +300,11 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
    * @param extName - Extension key
    * @param extManifest - Manifest entry that includes `schema`
    */
-  readExtensionSchema(extName: string, extManifest: ExtManifestWithSchema<ExtType>): SchemaObject | undefined {
-    return ExtensionConfig._readExtensionSchema(
+  async readExtensionSchema(
+    extName: string,
+    extManifest: ExtManifestWithSchema<ExtType>
+  ): Promise<SchemaObject | undefined> {
+    return await ExtensionConfig._readExtensionSchema(
       this.appiumHome,
       this.extensionType,
       extName,
@@ -475,14 +478,17 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
   }
 
   /** Validates and registers extension CLI/config schema when the manifest defines a `schema` field. */
-  protected getSchemaProblems(extManifest: ExtManifest<ExtType>, extName: string): ExtManifestProblem[] {
+  protected async getSchemaProblems(
+    extManifest: ExtManifest<ExtType>,
+    extName: string
+  ): Promise<ExtManifestProblem[]> {
     const problems: ExtManifestProblem[] = [];
     const {schema: argSchemaPath} = extManifest;
     if (ExtensionConfig.extDataHasSchema(extManifest)) {
       if (_.isString(argSchemaPath)) {
         if (isAllowedSchemaFileExtension(argSchemaPath)) {
           try {
-            this.readExtensionSchema(extName, extManifest);
+            await this.readExtensionSchema(extName, extManifest);
           } catch (err: any) {
             problems.push({
               err: `Unable to register schema at path ${argSchemaPath}; ${err.message}`,
@@ -499,7 +505,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
         }
       } else if (_.isPlainObject(argSchemaPath)) {
         try {
-          this.readExtensionSchema(extName, extManifest);
+          await this.readExtensionSchema(extName, extManifest);
         } catch (err: any) {
           problems.push({
             err: `Unable to register embedded schema; ${err.message}`,
@@ -597,12 +603,12 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     return [entryPointFullPath, mainClass];
   }
 
-  private static _readExtensionSchema<E extends ExtensionType>(
+  private static async _readExtensionSchema<E extends ExtensionType>(
     appiumHome: string,
     extType: E,
     extName: string,
     extManifest: ExtManifestWithSchema<E>
-  ): SchemaObject | undefined {
+  ): Promise<SchemaObject | undefined> {
     const {pkgName, schema: argSchemaPath} = extManifest;
     if (!argSchemaPath) {
       throw new TypeError(
@@ -618,7 +624,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     }
     // this sucks. default exports should be destroyed
     const schema = moduleObject.__esModule ? moduleObject.default : moduleObject;
-    registerSchema(extType, extName, schema as SchemaObject);
+    await registerSchema(extType, extName, schema as SchemaObject);
     return schema;
   }
 }

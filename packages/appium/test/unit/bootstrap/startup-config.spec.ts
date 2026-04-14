@@ -89,9 +89,9 @@ describe('bootstrap/startup-config', function () {
     let args: Record<string, unknown>;
 
     describe('without extension schemas', function () {
-      beforeEach(function () {
+      beforeEach(async function () {
         resetSchema();
-        getParser(true);
+        await getParser(true);
         args = getDefaultsForSchema();
       });
 
@@ -115,14 +115,14 @@ describe('bootstrap/startup-config', function () {
     });
 
     describe('with extension schemas', function () {
-      beforeEach(function () {
+      beforeEach(async function () {
         resetSchema();
-        registerSchema(PLUGIN_TYPE, 'crypto-fiend', {
+        await registerSchema(PLUGIN_TYPE, 'crypto-fiend', {
           type: 'object',
           properties: {elite: {type: 'boolean', default: true}},
         });
-        finalizeSchema();
-        getParser(true);
+        await finalizeSchema();
+        await getParser(true);
         args = getDefaultsForSchema();
       });
 

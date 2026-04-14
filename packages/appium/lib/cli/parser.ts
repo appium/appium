@@ -358,8 +358,8 @@ export class ArgParser {
 /**
  * Creates and returns an `ArgParser` after finalizing schema state.
  */
-export function getParser(debug = false) {
-  finalizeSchema();
+export async function getParser(debug = false): Promise<ArgParser> {
+  await finalizeSchema();
 
   return new ArgParser(debug);
 }

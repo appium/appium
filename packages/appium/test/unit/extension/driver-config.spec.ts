@@ -205,10 +205,9 @@ describe('DriverConfig', function () {
       });
 
       describe('when provided an object with a defined non-string `schema` property', function () {
-        it('should return an array having an associated problem', function () {
+        it('should return an array having an associated problem', async function () {
           expect(
-            driverConfig
-              .getSchemaProblems({schema: []})
+            await driverConfig.getSchemaProblems({schema: []})
           ).to.deep.include({
             err: 'Incorrectly formatted schema field; must be a path to a schema file or a schema object.',
             val: [],
@@ -218,10 +217,9 @@ describe('DriverConfig', function () {
 
       describe('when provided a string `schema` property', function () {
         describe('when the property ends in an unsupported extension', function () {
-          it('should return an array having an associated problem', function () {
+          it('should return an array having an associated problem', async function () {
             expect(
-              driverConfig
-                .getSchemaProblems({schema: 'selenium.java'})
+              await driverConfig.getSchemaProblems({schema: 'selenium.java'})
             ).to.deep.include({
               err: 'Schema file has unsupported extension. Allowed: .json, .js, .cjs',
               val: 'selenium.java',
@@ -231,15 +229,16 @@ describe('DriverConfig', function () {
 
         describe('when the property contains a supported extension', function () {
           describe('when the property as a path cannot be found', function () {
-            it('should return an array having an associated problem', function () {
+            it('should return an array having an associated problem', async function () {
+              const problems = await driverConfig.getSchemaProblems(
+                {
+                  pkgName: 'doop',
+                  schema: 'herp.json',
+                },
+                'foo'
+              );
               expect(
-                driverConfig.getSchemaProblems(
-                  {
-                    pkgName: 'doop',
-                    schema: 'herp.json',
-                  },
-                  'foo'
-                )
+                problems
               )
                 .with.nested.property('[0].err')
                 .to.match(/Unable to register schema at path herp\.json/i);
@@ -260,7 +259,7 @@ describe('DriverConfig', function () {
                   },
                   'foo'
                 )
-              ).to.be.empty;
+              ).to.eventually.be.empty;
             });
           });
         });
@@ -290,9 +289,9 @@ describe('DriverConfig', function () {
       });
 
       describe('when the extension data is missing `schema`', function () {
-        it('should throw', function () {
+        it('should throw', async function () {
           delete (extData as {schema?: string}).schema;
-          expect(() => driverConfig.readExtensionSchema(extName, extData)).to.throw(
+          await expect(driverConfig.readExtensionSchema(extName, extData)).to.be.rejectedWith(
             TypeError,
             /why is this function being called/i
           );

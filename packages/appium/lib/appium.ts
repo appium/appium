@@ -408,7 +408,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
    * notify plugins.
    */
   attachUnexpectedShutdownHandler(driver: ExternalDriver, innerSessionId: string): void {
-    const onShutdown = (cause: Error = new Error('Unknown error')) => {
+    const onShutdown = async (cause: Error = new Error('Unknown error')) => {
       this.log.warn(`Ending session, cause was '${cause.message}'`);
 
       if (this.sessionPlugins[innerSessionId]) {
@@ -418,7 +418,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
               `Plugin ${plugin.name} defines an unexpected shutdown handler; calling it now`,
             );
             try {
-              plugin.onUnexpectedShutdown(driver, cause);
+              await plugin.onUnexpectedShutdown(driver, cause);
             } catch (e) {
               this.log.warn(
                 `Got an error when running plugin ${plugin.name} shutdown handler: ${e}`,
@@ -895,16 +895,6 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
   listExtensions = inspectorCommands.listExtensions;
 }
 
-/** True if `cmd` should run on the umbrella driver instead of only on the session’s inner driver. */
-function isAppiumDriverCommand(cmd: string): boolean {
-  return !isSessionCommand(cmd)
-    || _.includes([
-      DELETE_SESSION_COMMAND,
-      LIST_DRIVER_COMMANDS_COMMAND,
-      LIST_DRIVER_EXTENSIONS_COMMAND,
-    ], cmd);
-}
-
 /**
  * Thrown when Appium tried to proxy a command using a driver's `proxyCommand` method but the
  * method did not exist
@@ -920,5 +910,15 @@ export class NoDriverProxyCommandError extends Error {
         `'command()' method, in addition to the normal 'proxyReqRes'`,
     );
   }
+}
+
+/** True if `cmd` should run on the umbrella driver instead of only on the session’s inner driver. */
+function isAppiumDriverCommand(cmd: string): boolean {
+  return !isSessionCommand(cmd)
+    || _.includes([
+      DELETE_SESSION_COMMAND,
+      LIST_DRIVER_COMMANDS_COMMAND,
+      LIST_DRIVER_EXTENSIONS_COMMAND,
+    ], cmd);
 }
 

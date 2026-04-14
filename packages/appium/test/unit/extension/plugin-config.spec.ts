@@ -205,8 +205,8 @@ describe('PluginConfig', function () {
               MockResolveFrom.returns(resolveFixture('plugin-schema'));
             });
 
-            it('should return an empty array', function () {
-              expect(
+            it('should return an empty array', async function () {
+              await expect(
                 pluginConfig.getSchemaProblems(
                   {
                     pkgName: '../fixtures',
@@ -237,8 +237,8 @@ describe('PluginConfig', function () {
             } as unknown as ExtManifestWithSchema<PluginType>;
           });
 
-          it('should return an empty array', function () {
-            expect(pluginConfig.getSchemaProblems(externalManifest, 'foo')).to.eventually.be.empty;
+          it('should return an empty array', async function () {
+            await expect(pluginConfig.getSchemaProblems(externalManifest, 'foo')).to.eventually.be.empty;
           });
         });
 
@@ -298,9 +298,9 @@ describe('PluginConfig', function () {
 
       describe('when the extension schema has already been registered', function () {
         describe('when the schema is identical (presumably the same extension)', function () {
-          it('should not throw', function () {
-            pluginConfig.readExtensionSchema(extName, extData);
-            expect(() => pluginConfig.readExtensionSchema(extName, extData)).not.to.throw();
+          it('should not throw', async function () {
+            await pluginConfig.readExtensionSchema(extName, extData);
+            await expect(pluginConfig.readExtensionSchema(extName, extData)).to.be.fulfilled;
           });
         });
 
@@ -316,8 +316,8 @@ describe('PluginConfig', function () {
       });
 
       describe('when the extension schema has not yet been registered', function () {
-        it('should resolve and load the extension schema file', function () {
-          pluginConfig.readExtensionSchema(extName, extData);
+        it('should resolve and load the extension schema file', async function () {
+          await pluginConfig.readExtensionSchema(extName, extData);
           expect(MockResolveFrom.calledOnce).to.be.true;
         });
       });

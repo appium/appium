@@ -250,8 +250,8 @@ describe('DriverConfig', function () {
               MockResolveFrom.returns(resolveFixture('driver-schema.js'));
             });
 
-            it('should return an empty array', function () {
-              expect(
+            it('should return an empty array', async function () {
+              await expect(
                 driverConfig.getSchemaProblems(
                   {
                     pkgName: 'whatever',
@@ -299,15 +299,15 @@ describe('DriverConfig', function () {
       });
 
       describe('when the extension schema has already been registered (with the same schema)', function () {
-        it('should not throw', function () {
-          driverConfig.readExtensionSchema(extName, extData);
-          expect(() => driverConfig.readExtensionSchema(extName, extData)).not.to.throw();
+        it('should not throw', async function () {
+          await driverConfig.readExtensionSchema(extName, extData);
+          await expect(driverConfig.readExtensionSchema(extName, extData)).to.be.fulfilled;
         });
       });
 
       describe('when the extension schema has not yet been registered', function () {
-        it('should resolve and load the extension schema file', function () {
-          driverConfig.readExtensionSchema(extName, extData);
+        it('should resolve and load the extension schema file', async function () {
+          await driverConfig.readExtensionSchema(extName, extData);
 
           // we don't have access to the schema registration cache directly, so this is as close as we can get.
           expect(MockResolveFrom.calledOnce).to.be.true;

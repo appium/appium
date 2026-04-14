@@ -96,6 +96,42 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
   }
 
   /**
+   * Type guard: manifest entry includes a `schema` path or inline schema object.
+   *
+   * @param extManifest - Parsed extension metadata
+   */
+  static extDataHasSchema<E extends ExtensionType>(
+    extManifest: ExtManifest<E>
+  ): extManifest is ExtManifestWithSchema<E> {
+    return _.isString(extManifest?.schema) || _.isObject(extManifest?.schema);
+  }
+
+  private static async _readExtensionSchema<E extends ExtensionType>(
+    appiumHome: string,
+    extType: E,
+    extName: string,
+    extManifest: ExtManifestWithSchema<E>
+  ): Promise<SchemaObject | undefined> {
+    const {pkgName, schema: argSchemaPath} = extManifest;
+    if (!argSchemaPath) {
+      throw new TypeError(
+        `No \`schema\` property found in config for ${extType} ${pkgName} -- why is this function being called?`
+      );
+    }
+    let moduleObject: any;
+    if (_.isString(argSchemaPath)) {
+      const schemaPath = resolveFrom(appiumHome, path.join(pkgName, argSchemaPath));
+      moduleObject = require(schemaPath);
+    } else {
+      moduleObject = argSchemaPath;
+    }
+    // this sucks. default exports should be destroyed
+    const schema = moduleObject.__esModule ? moduleObject.default : moduleObject;
+    await registerSchema(extType, extName, schema as SchemaObject);
+    return schema;
+  }
+
+  /**
    * Collects blocking validation issues for one extension (generic fields, type-specific rules, and schema).
    *
    * @param extName - Extension key as stored in the manifest
@@ -250,14 +286,6 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
   }
 
   /**
-   * One-line human description for list output; implemented per extension kind.
-   *
-   * @param extName - Manifest key
-   * @param extManifest - Entry used for version and kind-specific labels
-   */
-  public abstract extensionDesc(extName: ExtName<ExtType>, extManifest: ExtManifest<ExtType>): string;
-
-  /**
    * Root directory of an installed extension, preferring `installPath` and falling back to `node_modules/<pkgName>`.
    *
    * @param extName - Installed extension key
@@ -310,17 +338,6 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
       extName,
       extManifest
     );
-  }
-
-  /**
-   * Type guard: manifest entry includes a `schema` path or inline schema object.
-   *
-   * @param extManifest - Parsed extension metadata
-   */
-  static extDataHasSchema<E extends ExtensionType>(
-    extManifest: ExtManifest<E>
-  ): extManifest is ExtManifestWithSchema<E> {
-    return _.isString(extManifest?.schema) || _.isObject(extManifest?.schema);
   }
 
   /** Optional async warnings for this extension kind; override in subclasses when needed. */
@@ -603,30 +620,14 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     return [entryPointFullPath, mainClass];
   }
 
-  private static async _readExtensionSchema<E extends ExtensionType>(
-    appiumHome: string,
-    extType: E,
-    extName: string,
-    extManifest: ExtManifestWithSchema<E>
-  ): Promise<SchemaObject | undefined> {
-    const {pkgName, schema: argSchemaPath} = extManifest;
-    if (!argSchemaPath) {
-      throw new TypeError(
-        `No \`schema\` property found in config for ${extType} ${pkgName} -- why is this function being called?`
-      );
-    }
-    let moduleObject: any;
-    if (_.isString(argSchemaPath)) {
-      const schemaPath = resolveFrom(appiumHome, path.join(pkgName, argSchemaPath));
-      moduleObject = require(schemaPath);
-    } else {
-      moduleObject = argSchemaPath;
-    }
-    // this sucks. default exports should be destroyed
-    const schema = moduleObject.__esModule ? moduleObject.default : moduleObject;
-    await registerSchema(extType, extName, schema as SchemaObject);
-    return schema;
-  }
+  /**
+   * One-line human description for list output; implemented per extension kind.
+   *
+   * @param extName - Manifest key
+   * @param extManifest - Entry used for version and kind-specific labels
+   */
+  public abstract extensionDesc(extName: ExtName<ExtType>, extManifest: ExtManifest<ExtType>): string;
+
 }
 
 /**

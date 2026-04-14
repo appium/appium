@@ -247,19 +247,6 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
   }
 
   /**
-   * For any `package.json` fields which a particular type of extension requires, validate the
-   * presence and form of those fields on the `package.json` data, throwing an error if anything is
-   * amiss.
-   *
-   * @param extMetadata - the data in the "appium" field of `package.json` for an extension
-   * @param installSpec - Extension name/spec
-   */
-  protected abstract validateExtensionFields(
-    extMetadata: ExtMetadata<ExtType>,
-    installSpec: string
-  ): void;
-
-  /**
    * Logs a message and returns an {@linkcode Error} to throw.
    *
    * For TS to understand that a function throws an exception, it must actually throw an exception--
@@ -428,13 +415,6 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
 
     return this.config.installedExtensions;
   }
-
-  /**
-   * Get the text which should be displayed to the user after an extension has been installed. This
-   * is designed to be overridden by drivers/plugins with their own particular text.
-   *
-   */
-  protected abstract getPostInstallText(args: ExtensionArgs<ExtType>): PostInstallText;
 
   /**
    * Uninstall an extension.
@@ -1180,6 +1160,26 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
       }
     });
   }
+
+  /**
+   * For any `package.json` fields which a particular type of extension requires, validate the
+   * presence and form of those fields on the `package.json` data, throwing an error if anything is
+   * amiss.
+   *
+   * @param extMetadata - the data in the "appium" field of `package.json` for an extension
+   * @param installSpec - Extension name/spec
+   */
+  protected abstract validateExtensionFields(
+    extMetadata: ExtMetadata<ExtType>,
+    installSpec: string
+  ): void;
+
+  /**
+   * Get the text which should be displayed to the user after an extension has been installed. This
+   * is designed to be overridden by drivers/plugins with their own particular text.
+   *
+   */
+  protected abstract getPostInstallText(args: ExtensionArgs<ExtType>): PostInstallText;
 }
 
 /**

@@ -109,6 +109,17 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
 
   readonly args!: DriverOpts<AppiumDriverConstraints>;
 
+  onBidiConnection = bidiCommands.onBidiConnection;
+  onBidiMessage = bidiCommands.onBidiMessage;
+  onBidiServerError = bidiCommands.onBidiServerError;
+  cleanupBidiSockets = bidiCommands.cleanupBidiSockets;
+
+  configureGlobalFeatures = insecureFeatures.configureGlobalFeatures;
+  configureDriverFeatures = insecureFeatures.configureDriverFeatures;
+
+  listCommands = inspectorCommands.listCommands;
+  listExtensions = inspectorCommands.listExtensions;
+
   private _isShuttingDown = false;
 
   /**
@@ -883,16 +894,6 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
     return _.isFunction(dstSession?.canProxy) && dstSession.canProxy(sessionId);
   }
 
-  onBidiConnection = bidiCommands.onBidiConnection;
-  onBidiMessage = bidiCommands.onBidiMessage;
-  onBidiServerError = bidiCommands.onBidiServerError;
-  cleanupBidiSockets = bidiCommands.cleanupBidiSockets;
-
-  configureGlobalFeatures = insecureFeatures.configureGlobalFeatures;
-  configureDriverFeatures = insecureFeatures.configureDriverFeatures;
-
-  listCommands = inspectorCommands.listCommands;
-  listExtensions = inspectorCommands.listExtensions;
 }
 
 /**

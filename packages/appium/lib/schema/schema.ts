@@ -46,13 +46,13 @@ export const ALLOWED_SCHEMA_EXTENSIONS = Object.freeze(
 const SCHEMA_KEY = '$schema';
 
 class AppiumSchema {
+  static #instance: AppiumSchema;
   #argSpecs = new RoachHotelMap<string, ArgSpec>();
   #registeredSchemas: Record<ExtensionType, Map<string, SchemaObject>> = {
     [DRIVER_TYPE]: new Map(),
     [PLUGIN_TYPE]: new Map(),
   };
   #ajv: Ajv;
-  static #instance: AppiumSchema;
   #finalizedSchemas: Record<string, StrictSchemaObject> | null = null;
 
   private constructor() {
@@ -83,6 +83,36 @@ class AppiumSchema {
       ]);
     }
     return AppiumSchema.#instance;
+  }
+
+  /**
+   * Returns `true` if filename extension is an allowed schema extension.
+   */
+  static isAllowedSchemaFileExtension(filename: string): boolean {
+    return ALLOWED_SCHEMA_EXTENSIONS.has(path.extname(filename) as AllowedSchemaExtension);
+  }
+
+  /**
+   * Returns `true` if schema is a plain object and not async.
+   */
+  static isSupportedSchemaType(schema: any): schema is SchemaObject {
+    return _.isPlainObject(schema) && (schema as any).$async !== true;
+  }
+
+  /**
+   * Configures and creates an Ajv instance.
+   */
+  private static _instantiateAjv(): Ajv {
+    const ajv = addFormats(
+      new Ajv({
+        // without this not much validation actually happens
+        allErrors: true,
+      })
+    );
+    _.forEach(keywords, (keyword) => {
+      ajv.addKeyword(keyword);
+    });
+    return ajv;
   }
 
   /**
@@ -319,36 +349,6 @@ class AppiumSchema {
   validate(value: any, ref = APPIUM_CONFIG_SCHEMA_ID): ErrorObject[] {
     const validator = this._getValidator(ref);
     return !validator(value) && _.isArray(validator.errors) ? [...validator.errors] : [];
-  }
-
-  /**
-   * Returns `true` if filename extension is an allowed schema extension.
-   */
-  static isAllowedSchemaFileExtension(filename: string): boolean {
-    return ALLOWED_SCHEMA_EXTENSIONS.has(path.extname(filename) as AllowedSchemaExtension);
-  }
-
-  /**
-   * Returns `true` if schema is a plain object and not async.
-   */
-  static isSupportedSchemaType(schema: any): schema is SchemaObject {
-    return _.isPlainObject(schema) && (schema as any).$async !== true;
-  }
-
-  /**
-   * Configures and creates an Ajv instance.
-   */
-  private static _instantiateAjv(): Ajv {
-    const ajv = addFormats(
-      new Ajv({
-        // without this not much validation actually happens
-        allErrors: true,
-      })
-    );
-    _.forEach(keywords, (keyword) => {
-      ajv.addKeyword(keyword);
-    });
-    return ajv;
   }
 
   /**

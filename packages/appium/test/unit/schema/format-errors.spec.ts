@@ -13,8 +13,8 @@ describe('schema/format-errors', function () {
   let formatErrors: typeof FormatErrorsFn;
   let betterAjvMock: SinonStub;
 
-  before(function () {
-    schema.finalizeSchema();
+  before(async function () {
+    await schema.finalizeSchema();
   });
 
   beforeEach(function () {

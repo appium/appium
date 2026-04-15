@@ -98,6 +98,9 @@ async function init() {
   }
 }
 
+/**
+ * Installs drivers/plugins requested via npm config vars.
+ */
 async function main() {
   if (!(await init())) {
     return;

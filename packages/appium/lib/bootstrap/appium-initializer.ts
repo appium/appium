@@ -58,7 +58,7 @@ export class AppiumInitializer {
 
     const {driverConfig, pluginConfig} = await loadExtensions(appiumHome);
 
-    const {preConfigArgs, throwInsteadOfExit} = this.parsePreConfigArgs(args);
+    const {preConfigArgs, throwInsteadOfExit} = await this.parsePreConfigArgs(args);
     this.throwInsteadOfExit = throwInsteadOfExit;
 
     const configResult = await readConfigFile(preConfigArgs.configFile);
@@ -85,11 +85,11 @@ export class AppiumInitializer {
     return {} as InitResult<Cmd>;
   }
 
-  private parsePreConfigArgs<
+  private async parsePreConfigArgs<
     Cmd extends CliCommand,
     SubCmd extends CliExtensionSubcommand | CliCommandSetupSubcommand | void,
-  >(args?: Args<Cmd, SubCmd>): {preConfigArgs: PreConfigArgs; throwInsteadOfExit: boolean} {
-    const parser = getParser();
+  >(args?: Args<Cmd, SubCmd>): Promise<{preConfigArgs: PreConfigArgs; throwInsteadOfExit: boolean}> {
+    const parser = await getParser();
     let throwInsteadOfExit = false;
 
     if (args) {

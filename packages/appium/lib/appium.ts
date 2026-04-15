@@ -109,6 +109,17 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
 
   readonly args!: DriverOpts<AppiumDriverConstraints>;
 
+  onBidiConnection = bidiCommands.onBidiConnection;
+  onBidiMessage = bidiCommands.onBidiMessage;
+  onBidiServerError = bidiCommands.onBidiServerError;
+  cleanupBidiSockets = bidiCommands.cleanupBidiSockets;
+
+  configureGlobalFeatures = insecureFeatures.configureGlobalFeatures;
+  configureDriverFeatures = insecureFeatures.configureDriverFeatures;
+
+  listCommands = inspectorCommands.listCommands;
+  listExtensions = inspectorCommands.listExtensions;
+
   private _isShuttingDown = false;
 
   /**
@@ -408,7 +419,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
    * notify plugins.
    */
   attachUnexpectedShutdownHandler(driver: ExternalDriver, innerSessionId: string): void {
-    const onShutdown = (cause: Error = new Error('Unknown error')) => {
+    const onShutdown = async (cause: Error = new Error('Unknown error')) => {
       this.log.warn(`Ending session, cause was '${cause.message}'`);
 
       if (this.sessionPlugins[innerSessionId]) {
@@ -418,7 +429,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
               `Plugin ${plugin.name} defines an unexpected shutdown handler; calling it now`,
             );
             try {
-              plugin.onUnexpectedShutdown(driver, cause);
+              await plugin.onUnexpectedShutdown(driver, cause);
             } catch (e) {
               this.log.warn(
                 `Got an error when running plugin ${plugin.name} shutdown handler: ${e}`,
@@ -883,26 +894,6 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
     return _.isFunction(dstSession?.canProxy) && dstSession.canProxy(sessionId);
   }
 
-  onBidiConnection = bidiCommands.onBidiConnection;
-  onBidiMessage = bidiCommands.onBidiMessage;
-  onBidiServerError = bidiCommands.onBidiServerError;
-  cleanupBidiSockets = bidiCommands.cleanupBidiSockets;
-
-  configureGlobalFeatures = insecureFeatures.configureGlobalFeatures;
-  configureDriverFeatures = insecureFeatures.configureDriverFeatures;
-
-  listCommands = inspectorCommands.listCommands;
-  listExtensions = inspectorCommands.listExtensions;
-}
-
-/** True if `cmd` should run on the umbrella driver instead of only on the session’s inner driver. */
-function isAppiumDriverCommand(cmd: string): boolean {
-  return !isSessionCommand(cmd)
-    || _.includes([
-      DELETE_SESSION_COMMAND,
-      LIST_DRIVER_COMMANDS_COMMAND,
-      LIST_DRIVER_EXTENSIONS_COMMAND,
-    ], cmd);
 }
 
 /**
@@ -920,5 +911,15 @@ export class NoDriverProxyCommandError extends Error {
         `'command()' method, in addition to the normal 'proxyReqRes'`,
     );
   }
+}
+
+/** True if `cmd` should run on the umbrella driver instead of only on the session’s inner driver. */
+function isAppiumDriverCommand(cmd: string): boolean {
+  return !isSessionCommand(cmd)
+    || _.includes([
+      DELETE_SESSION_COMMAND,
+      LIST_DRIVER_COMMANDS_COMMAND,
+      LIST_DRIVER_EXTENSIONS_COMMAND,
+    ], cmd);
 }
 

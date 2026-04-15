@@ -105,53 +105,6 @@ export class ArgParser {
   }
 
   /**
-   * Parses CLI args and returns Appium's normalized argument object.
-   *
-   * If no explicit subcommand is provided, this injects `server`.
-   * `parse_args` is a backwards-compatible alias of this method.
-   */
-  parseArgs(args: string[] = process.argv.slice(2)): TransformedArgsMap {
-    if (!NON_SERVER_ARGS.has(args[0])) {
-      args.unshift(SERVER_SUBCOMMAND);
-    }
-
-    try {
-      const parsed = this.parser.parse_known_args(args);
-      const [knownArgs, unknownArgs] = parsed;
-      // XXX: you'd think that argparse, when given an alias for a subcommand,
-      // would set this value to the original subcommand name, but it doesn't.
-      if (knownArgs?.driverCommand === 'ls') {
-        knownArgs.driverCommand = 'list';
-      } else if (knownArgs?.pluginCommand === 'ls') {
-        knownArgs.pluginCommand = 'list';
-      }
-      if (
-        unknownArgs?.length &&
-        (knownArgs.driverCommand === 'run' || knownArgs.pluginCommand === 'run')
-      ) {
-        return ArgParser._transformParsedArgs(knownArgs, unknownArgs);
-      } else if (unknownArgs?.length) {
-        throw new Error(`[ERROR] Unrecognized arguments: ${unknownArgs.join(' ')}`);
-      }
-      return ArgParser._transformParsedArgs(knownArgs);
-    } catch (err) {
-      if (this.debug) {
-        throw err;
-      }
-      // this isn't tested via unit tests (we use `debug: true`) so may escape coverage.
-
-      /* istanbul ignore next */
-      {
-        // eslint-disable-next-line no-console
-        console.error(); // need an extra space since argparse prints usage.
-        // eslint-disable-next-line no-console
-        console.error(err.message);
-        process.exit(1);
-      }
-    }
-  }
-
-  /**
    * Normalizes server arg keys from schema names to parser destination names.
    *
    * This mutates and returns the same object.
@@ -353,13 +306,60 @@ export class ArgParser {
       ArgParser._patchExit(parser);
     }
   }
+
+  /**
+   * Parses CLI args and returns Appium's normalized argument object.
+   *
+   * If no explicit subcommand is provided, this injects `server`.
+   * `parse_args` is a backwards-compatible alias of this method.
+   */
+  parseArgs(args: string[] = process.argv.slice(2)): TransformedArgsMap {
+    if (!NON_SERVER_ARGS.has(args[0])) {
+      args.unshift(SERVER_SUBCOMMAND);
+    }
+
+    try {
+      const parsed = this.parser.parse_known_args(args);
+      const [knownArgs, unknownArgs] = parsed;
+      // XXX: you'd think that argparse, when given an alias for a subcommand,
+      // would set this value to the original subcommand name, but it doesn't.
+      if (knownArgs?.driverCommand === 'ls') {
+        knownArgs.driverCommand = 'list';
+      } else if (knownArgs?.pluginCommand === 'ls') {
+        knownArgs.pluginCommand = 'list';
+      }
+      if (
+        unknownArgs?.length &&
+        (knownArgs.driverCommand === 'run' || knownArgs.pluginCommand === 'run')
+      ) {
+        return ArgParser._transformParsedArgs(knownArgs, unknownArgs);
+      } else if (unknownArgs?.length) {
+        throw new Error(`[ERROR] Unrecognized arguments: ${unknownArgs.join(' ')}`);
+      }
+      return ArgParser._transformParsedArgs(knownArgs);
+    } catch (err) {
+      if (this.debug) {
+        throw err;
+      }
+      // this isn't tested via unit tests (we use `debug: true`) so may escape coverage.
+
+      /* istanbul ignore next */
+      {
+        // eslint-disable-next-line no-console
+        console.error(); // need an extra space since argparse prints usage.
+        // eslint-disable-next-line no-console
+        console.error(err.message);
+        process.exit(1);
+      }
+    }
+  }
 }
 
 /**
  * Creates and returns an `ArgParser` after finalizing schema state.
  */
-export function getParser(debug = false) {
-  finalizeSchema();
+export async function getParser(debug = false): Promise<ArgParser> {
+  await finalizeSchema();
 
   return new ArgParser(debug);
 }

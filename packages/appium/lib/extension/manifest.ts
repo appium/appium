@@ -25,6 +25,13 @@ const INITIAL_MANIFEST_DATA: Readonly<ManifestData> = Object.freeze({
  * Only one instance of this class exists per value of `APPIUM_HOME`.
  */
 export class Manifest {
+  /**
+   * Returns the memoized manifest for an `APPIUM_HOME` directory (one instance per home).
+   *
+   * @param appiumHome - `APPIUM_HOME` path used as the cache key
+   */
+  static getInstance = _.memoize((appiumHome: string): Manifest => new Manifest(appiumHome));
+
   #data!: ManifestData;
   readonly #appiumHome: string;
   #manifestPath: string | undefined = undefined;
@@ -35,13 +42,6 @@ export class Manifest {
     this.#appiumHome = appiumHome;
     this.#data = _.cloneDeep(INITIAL_MANIFEST_DATA) as ManifestData;
   }
-
-  /**
-   * Returns the memoized manifest for an `APPIUM_HOME` directory (one instance per home).
-   *
-   * @param appiumHome - `APPIUM_HOME` path used as the cache key
-   */
-  static getInstance = _.memoize((appiumHome: string): Manifest => new Manifest(appiumHome));
 
   /** `APPIUM_HOME` directory this manifest is tied to. */
   get appiumHome(): string {

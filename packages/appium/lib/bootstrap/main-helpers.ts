@@ -119,19 +119,6 @@ export async function preflightChecks(
   }
 }
 
-function logNonDefaultArgsWarning(args: Args): void {
-  logger.info('Non-default server args:');
-  inspect(args);
-}
-
-function logDefaultCapabilitiesWarning(caps: ParsedArgs<CliCommandServer>['defaultCapabilities']): void {
-  logger.info(
-    'Default capabilities, which will be added to each request ' +
-      'unless overridden by desired capabilities:',
-  );
-  inspect(caps);
-}
-
 /**
  * Prints welcome line (version + optional git rev), non-default server args, and default capabilities.
  */
@@ -217,7 +204,20 @@ export async function createAppiumServer(
   bidiServer.on('error', appiumDriver.onBidiServerError.bind(appiumDriver));
   const server = await baseServer(serverOpts);
   const bidiBasePath = `${normalizedBasePath}${BIDI_BASE_PATH}`;
-  server.addWebSocketHandler(bidiBasePath, bidiServer);
-  server.addWebSocketHandler(`${bidiBasePath}/:sessionId`, bidiServer);
+  await server.addWebSocketHandler(bidiBasePath, bidiServer);
+  await server.addWebSocketHandler(`${bidiBasePath}/:sessionId`, bidiServer);
   return server;
+}
+
+function logNonDefaultArgsWarning(args: Args): void {
+  logger.info('Non-default server args:');
+  inspect(args);
+}
+
+function logDefaultCapabilitiesWarning(caps: ParsedArgs<CliCommandServer>['defaultCapabilities']): void {
+  logger.info(
+    'Default capabilities, which will be added to each request ' +
+      'unless overridden by desired capabilities:',
+  );
+  inspect(caps);
 }

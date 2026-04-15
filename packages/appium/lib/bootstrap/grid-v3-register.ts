@@ -18,6 +18,40 @@ import {log as logger} from '../logger';
 const GRID_V3_REGISTER_PATH = '/grid/register';
 const GRID_V3_PROXY_API_PATH = '/grid/api/proxy';
 
+interface Grid3HubConfiguration {
+  hubProtocol?: string;
+  hubHost?: string;
+  hubPort?: number;
+  url?: string;
+  host?: string;
+  port?: number;
+  id?: string;
+  register?: boolean;
+  registerCycle?: number;
+}
+
+interface Grid3NodeConfig extends StringRecord {
+  configuration?: Grid3HubConfiguration;
+  capabilities?: unknown;
+}
+
+interface Grid3ProxyApiResponse {
+  success: boolean;
+  msg?: string;
+}
+
+export default async function registerNode(
+  data: string,
+  addr: string,
+  port: number,
+  basePath: string
+): Promise<void>;
+export default async function registerNode(
+  data: Grid3NodeConfig,
+  addr?: string,
+  port?: number,
+  basePath?: string
+): Promise<void>;
 /**
  * Registers this server as a node with a **Selenium Grid 3** hub.
  *
@@ -33,18 +67,6 @@ const GRID_V3_PROXY_API_PATH = '/grid/api/proxy';
  * @param port - Bind to this port
  * @param basePath - Base path for the Appium server (used in the node URL sent to the hub; may be `''`)
  */
-export default async function registerNode(
-  data: string,
-  addr: string,
-  port: number,
-  basePath: string
-): Promise<void>;
-export default async function registerNode(
-  data: Grid3NodeConfig,
-  addr?: string,
-  port?: number,
-  basePath?: string
-): Promise<void>;
 export default async function registerNode(
   data: string | Grid3NodeConfig,
   addr?: string,
@@ -225,26 +247,4 @@ async function isAlreadyRegistered(configHolder: Grid3NodeConfig): Promise<boole
   } catch (err) {
     logger.debug(`Selenium Grid 3 hub down or not responding: ${(err as Error).message}`);
   }
-}
-
-interface Grid3HubConfiguration {
-  hubProtocol?: string;
-  hubHost?: string;
-  hubPort?: number;
-  url?: string;
-  host?: string;
-  port?: number;
-  id?: string;
-  register?: boolean;
-  registerCycle?: number;
-}
-
-interface Grid3NodeConfig extends StringRecord {
-  configuration?: Grid3HubConfiguration;
-  capabilities?: unknown;
-}
-
-interface Grid3ProxyApiResponse {
-  success: boolean;
-  msg?: string;
 }

@@ -42,6 +42,14 @@ export class Doctor {
     this.foundIssues = [];
   }
 
+  private get issuesRequiredToFix(): DoctorIssue[] {
+    return this.foundIssues.filter((f) => !f.check.isOptional());
+  }
+
+  private get issuesOptionalToFix(): DoctorIssue[] {
+    return this.foundIssues.filter((f) => f.check.isOptional());
+  }
+
   /**
    * Runs diagnostics, reports issues, attempts automatic fixes where supported, and returns an exit code.
    *
@@ -60,14 +68,6 @@ export class Doctor {
       return EXIT_CODE.HAS_MAJOR_ISSUES;
     }
     return EXIT_CODE.SUCCESS;
-  }
-
-  private get issuesRequiredToFix(): DoctorIssue[] {
-    return this.foundIssues.filter((f) => !f.check.isOptional());
-  }
-
-  private get issuesOptionalToFix(): DoctorIssue[] {
-    return this.foundIssues.filter((f) => f.check.isOptional());
   }
 
   /**

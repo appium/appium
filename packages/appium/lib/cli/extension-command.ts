@@ -33,9 +33,6 @@ import * as semver from 'semver';
 const UPDATE_ALL = 'installed';
 const MAX_CONCURRENT_REPO_FETCHES = 5;
 
-class NotUpdatableError extends Error {}
-class NoUpdatesAvailableError extends Error {}
-
 /**
  * Options for the {@linkcode ExtensionCliCommand} constructor
  */
@@ -43,15 +40,15 @@ export type ExtensionCommandOptions<ExtType extends ExtensionType = ExtensionTyp
   config: ExtensionConfig<ExtType>;
   json: boolean;
 };
-
 export type ExtensionConfig<ExtType extends ExtensionType = ExtensionType> = BaseExtensionConfig<ExtType>;
+
 export type ExtRecord<ExtType extends ExtensionType = ExtensionType> = AppiumExtRecord<ExtType>;
+
 export type ExtMetadata<ExtType extends ExtensionType = ExtensionType> = AppiumExtMetadata<ExtType>;
 export type ExtManifest<ExtType extends ExtensionType = ExtensionType> = AppiumExtManifest<ExtType>;
 export type ExtPackageJson<ExtType extends ExtensionType = ExtensionType> = AppiumExtPackageJson<ExtType>;
 export type ExtInstallReceipt<ExtType extends ExtensionType = ExtensionType> =
   AppiumExtInstallReceipt<ExtType>;
-
 /**
  * Extra stuff about extensions; used indirectly by {@linkcode ExtensionCliCommand.list}.
  */
@@ -64,7 +61,6 @@ export type ExtensionListMetadata = {
   devMode?: boolean;
   repositoryUrl?: string;
 };
-
 /**
  * Possible return value for {@linkcode ExtensionCliCommand.list}
  */
@@ -85,32 +81,92 @@ export type ExtensionList<ExtType extends ExtensionType = ExtensionType> = Recor
 >;
 
 /**
- * Omits `driverName`/`pluginName` props from the receipt to make a {@linkcode ExtManifest}
+ * Return value of {@linkcode ExtensionCliCommand._run}
  */
-function receiptToManifest<ExtType extends ExtensionType>(
-  receipt: ExtInstallReceipt<ExtType>
-): ExtManifest<ExtType> {
-  return _.omit(receipt, 'driverName', 'pluginName') as ExtManifest<ExtType>;
-}
+export type RunOutput = {output?: string[]};
 
 /**
- * Fetches the remote extension version requirements
- *
- * @param pkgName Extension name
- * @param [pkgVer] Extension version (if not provided then the latest is assumed)
+ * Return type of {@linkcode ExtensionCliCommand.getPostInstallText}.
  */
-async function getRemoteExtensionVersionReq(
-  pkgName: string,
-  pkgVer?: string
-): Promise<[string, string | null]> {
-  const allDeps = await npm.getPackageInfo(
-    `${pkgName}${pkgVer ? `@${pkgVer}` : ``}`,
-    ['peerDependencies', 'dependencies']
-  );
-  const requiredVersionPair = _.flatMap(_.values(allDeps).map(_.toPairs))
-    .find(([name]) => name === 'appium');
-  return [npmPackage.version, requiredVersionPair ? requiredVersionPair[1] : null];
-}
+export type PostInstallText = string;
+
+/**
+ * Return value of {@linkcode ExtensionCliCommand._update}.
+ */
+export type ExtensionUpdateResult = {errors: Record<string, Error>; updates: Record<string, UpdateReport>};
+
+/**
+ * Used by {@linkcode ExtensionCliCommand.getPostInstallText}
+ */
+export type ExtensionArgs<ExtType extends ExtensionType = ExtensionType> = {
+  extName: string;
+  extData: ExtInstallReceipt<ExtType>;
+};
+
+/**
+ * Options for {@linkcode ExtensionCliCommand._run}.
+ */
+type RunOptions = {
+  installSpec: string;
+  scriptName?: string;
+  extraArgs?: string[];
+  bufferOutput?: boolean;
+};
+
+/**
+ * Options for {@linkcode ExtensionCliCommand.doctor}.
+ */
+type DoctorOptions = {installSpec: string};
+
+/**
+ * Options for {@linkcode ExtensionCliCommand._update}.
+ */
+type ExtensionUpdateOpts = {installSpec: string; unsafe: boolean};
+
+/**
+ * Part of result of {@linkcode ExtensionCliCommand._update}.
+ */
+type UpdateReport = {from: string; to: string | null};
+
+/**
+ * Options for {@linkcode ExtensionCliCommand._uninstall}.
+ */
+type UninstallOpts = {installSpec: string};
+
+/**
+ * Options for {@linkcode ExtensionCliCommand.installViaNpm}
+ */
+type InstallViaNpmArgs = {
+  installSpec: string;
+  pkgName: string;
+  installType: InstallType;
+  pkgVer?: string;
+};
+
+/**
+ * Object returned by {@linkcode ExtensionCliCommand.checkForExtensionUpdate}
+ */
+type PossibleUpdates = {current: string; safeUpdate: string | null; unsafeUpdate: string | null};
+
+/**
+ * Options for {@linkcode ExtensionCliCommand._install}
+ */
+type InstallOpts = {installSpec: string; installType: InstallType; packageName?: string};
+
+type ListOptions = {showInstalled: boolean; showUpdates: boolean; verbose?: boolean};
+
+type GetInstallationReceiptOpts<ExtType extends ExtensionType = ExtensionType> = {
+  installPath: string;
+  installSpec: string;
+  pkg: ExtPackageJson<ExtType>;
+  installType: InstallType;
+};
+
+type InstalledExtensionLike = {installType?: InstallType; installPath?: string};
+
+class NotUpdatableError extends Error {}
+
+class NoUpdatesAvailableError extends Error {}
 
 abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType> {
   /**
@@ -189,19 +245,6 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
 
     return await this._displayNormalListOutput(listData, showUpdates);
   }
-
-  /**
-   * For any `package.json` fields which a particular type of extension requires, validate the
-   * presence and form of those fields on the `package.json` data, throwing an error if anything is
-   * amiss.
-   *
-   * @param extMetadata - the data in the "appium" field of `package.json` for an extension
-   * @param installSpec - Extension name/spec
-   */
-  protected abstract validateExtensionFields(
-    extMetadata: ExtMetadata<ExtType>,
-    installSpec: string
-  ): void;
 
   /**
    * Logs a message and returns an {@linkcode Error} to throw.
@@ -372,13 +415,6 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
 
     return this.config.installedExtensions;
   }
-
-  /**
-   * Get the text which should be displayed to the user after an extension has been installed. This
-   * is designed to be overridden by drivers/plugins with their own particular text.
-   *
-   */
-  protected abstract getPostInstallText(args: ExtensionArgs<ExtType>): PostInstallText;
 
   /**
    * Uninstall an extension.
@@ -1124,6 +1160,26 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
       }
     });
   }
+
+  /**
+   * For any `package.json` fields which a particular type of extension requires, validate the
+   * presence and form of those fields on the `package.json` data, throwing an error if anything is
+   * amiss.
+   *
+   * @param extMetadata - the data in the "appium" field of `package.json` for an extension
+   * @param installSpec - Extension name/spec
+   */
+  protected abstract validateExtensionFields(
+    extMetadata: ExtMetadata<ExtType>,
+    installSpec: string
+  ): void;
+
+  /**
+   * Get the text which should be displayed to the user after an extension has been installed. This
+   * is designed to be overridden by drivers/plugins with their own particular text.
+   *
+   */
+  protected abstract getPostInstallText(args: ExtensionArgs<ExtType>): PostInstallText;
 }
 
 /**
@@ -1165,6 +1221,34 @@ export async function injectAppiumSymlinks(
 }
 
 /**
+ * Omits `driverName`/`pluginName` props from the receipt to make a {@linkcode ExtManifest}
+ */
+function receiptToManifest<ExtType extends ExtensionType>(
+  receipt: ExtInstallReceipt<ExtType>
+): ExtManifest<ExtType> {
+  return _.omit(receipt, 'driverName', 'pluginName') as ExtManifest<ExtType>;
+}
+
+/**
+ * Fetches the remote extension version requirements
+ *
+ * @param pkgName Extension name
+ * @param [pkgVer] Extension version (if not provided then the latest is assumed)
+ */
+async function getRemoteExtensionVersionReq(
+  pkgName: string,
+  pkgVer?: string
+): Promise<[string, string | null]> {
+  const allDeps = await npm.getPackageInfo(
+    `${pkgName}${pkgVer ? `@${pkgVer}` : ``}`,
+    ['peerDependencies', 'dependencies']
+  );
+  const requiredVersionPair = _.flatMap(_.values(allDeps).map(_.toPairs))
+    .find(([name]) => name === 'appium');
+  return [npmPackage.version, requiredVersionPair ? requiredVersionPair[1] : null];
+}
+
+/**
  * This is needed to ensure proper module resolution for installed extensions,
  * especially ESM ones.
  *
@@ -1186,90 +1270,6 @@ async function injectAppiumSymlink(dstFolder: string, logger: AppiumLogger): Pro
     );
   }
 }
-
-/**
- * Options for {@linkcode ExtensionCliCommand._run}.
- */
-type RunOptions = {
-  installSpec: string;
-  scriptName?: string;
-  extraArgs?: string[];
-  bufferOutput?: boolean;
-};
-
-/**
- * Options for {@linkcode ExtensionCliCommand.doctor}.
- */
-type DoctorOptions = {installSpec: string};
-
-/**
- * Return value of {@linkcode ExtensionCliCommand._run}
- */
-export type RunOutput = {output?: string[]};
-
-/**
- * Return type of {@linkcode ExtensionCliCommand.getPostInstallText}.
- */
-export type PostInstallText = string;
-
-/**
- * Options for {@linkcode ExtensionCliCommand._update}.
- */
-type ExtensionUpdateOpts = {installSpec: string; unsafe: boolean};
-
-/**
- * Part of result of {@linkcode ExtensionCliCommand._update}.
- */
-type UpdateReport = {from: string; to: string | null};
-
-/**
- * Return value of {@linkcode ExtensionCliCommand._update}.
- */
-export type ExtensionUpdateResult = {errors: Record<string, Error>; updates: Record<string, UpdateReport>};
-
-/**
- * Options for {@linkcode ExtensionCliCommand._uninstall}.
- */
-type UninstallOpts = {installSpec: string};
-
-/**
- * Used by {@linkcode ExtensionCliCommand.getPostInstallText}
- */
-export type ExtensionArgs<ExtType extends ExtensionType = ExtensionType> = {
-  extName: string;
-  extData: ExtInstallReceipt<ExtType>;
-};
-
-/**
- * Options for {@linkcode ExtensionCliCommand.installViaNpm}
- */
-type InstallViaNpmArgs = {
-  installSpec: string;
-  pkgName: string;
-  installType: InstallType;
-  pkgVer?: string;
-};
-
-/**
- * Object returned by {@linkcode ExtensionCliCommand.checkForExtensionUpdate}
- */
-type PossibleUpdates = {current: string; safeUpdate: string | null; unsafeUpdate: string | null};
-
-/**
- * Options for {@linkcode ExtensionCliCommand._install}
- */
-type InstallOpts = {installSpec: string; installType: InstallType; packageName?: string};
-
-type ListOptions = {showInstalled: boolean; showUpdates: boolean; verbose?: boolean};
-
-type GetInstallationReceiptOpts<ExtType extends ExtensionType = ExtensionType> = {
-  installPath: string;
-  installSpec: string;
-  pkg: ExtPackageJson<ExtType>;
-  installType: InstallType;
-};
-
-type InstalledExtensionLike = {installType?: InstallType; installPath?: string};
 
 export default ExtensionCliCommand;
 export {ExtensionCliCommand as ExtensionCommand};

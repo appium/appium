@@ -95,6 +95,11 @@ async function _runAppiumRaw(
 
 export const runAppiumRaw = _.curry(_runAppiumRaw);
 
+type RunAppiumJsonCurried = {
+  (appiumHome: string): (args: CliExtArgs | CliArgs) => Promise<unknown>;
+  (appiumHome: string, args: CliExtArgs | CliArgs): Promise<unknown>;
+};
+
 async function _runAppiumJson(
   appiumHome: string,
   args: CliExtArgs | CliArgs
@@ -108,11 +113,6 @@ async function _runAppiumJson(
     throw err;
   }
 }
-
-type RunAppiumJsonCurried = {
-  (appiumHome: string): (args: CliExtArgs | CliArgs) => Promise<unknown>;
-  (appiumHome: string, args: CliExtArgs | CliArgs): Promise<unknown>;
-};
 export const runAppiumJson: RunAppiumJsonCurried = _.curry(_runAppiumJson) as RunAppiumJsonCurried;
 
 export async function installLocalExtension<ExtType extends DriverType | PluginType>(

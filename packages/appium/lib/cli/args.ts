@@ -71,6 +71,16 @@ export const getExtensionArgs = _.memoize(function getExtensionArgs(): Record<
 });
 
 /**
+ * Returns CLI argument definitions for the `server` command.
+ *
+ * This includes schema-derived options and additional CLI-only options which
+ * are intentionally disallowed in config files.
+ */
+export function getServerArgs(): ArgumentDefinitions {
+  return new Map([...toParserArgs(), ...serverArgsDisallowedInConfig]);
+}
+
+/**
  * Builds options for the `list` subcommand for an extension type.
  */
 function makeListArgs(type: ExtensionType): ArgumentDefinitions {
@@ -244,16 +254,6 @@ function makeRunArgs(type: ExtensionType): ArgumentDefinitions {
       },
     ],
   ]);
-}
-
-/**
- * Returns CLI argument definitions for the `server` command.
- *
- * This includes schema-derived options and additional CLI-only options which
- * are intentionally disallowed in config files.
- */
-export function getServerArgs(): ArgumentDefinitions {
-  return new Map([...toParserArgs(), ...serverArgsDisallowedInConfig]);
 }
 
 /**

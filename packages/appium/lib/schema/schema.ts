@@ -46,13 +46,13 @@ export const ALLOWED_SCHEMA_EXTENSIONS = Object.freeze(
 const SCHEMA_KEY = '$schema';
 
 class AppiumSchema {
+  static #instance: AppiumSchema;
   #argSpecs = new RoachHotelMap<string, ArgSpec>();
   #registeredSchemas: Record<ExtensionType, Map<string, SchemaObject>> = {
     [DRIVER_TYPE]: new Map(),
     [PLUGIN_TYPE]: new Map(),
   };
   #ajv: Ajv;
-  static #instance: AppiumSchema;
   #finalizedSchemas: Record<string, StrictSchemaObject> | null = null;
 
   private constructor() {
@@ -86,6 +86,36 @@ class AppiumSchema {
   }
 
   /**
+   * Returns `true` if filename extension is an allowed schema extension.
+   */
+  static isAllowedSchemaFileExtension(filename: string): boolean {
+    return ALLOWED_SCHEMA_EXTENSIONS.has(path.extname(filename) as AllowedSchemaExtension);
+  }
+
+  /**
+   * Returns `true` if schema is a plain object and not async.
+   */
+  static isSupportedSchemaType(schema: any): schema is SchemaObject {
+    return _.isPlainObject(schema) && (schema as any).$async !== true;
+  }
+
+  /**
+   * Configures and creates an Ajv instance.
+   */
+  private static _instantiateAjv(): Ajv {
+    const ajv = addFormats(
+      new Ajv({
+        // without this not much validation actually happens
+        allErrors: true,
+      })
+    );
+    _.forEach(keywords, (keyword) => {
+      ajv.addKeyword(keyword);
+    });
+    return ajv;
+  }
+
+  /**
    * Returns `true` if a schema has been registered for extension type/name.
    */
   hasRegisteredSchema(extType: ExtensionType, extName: string): boolean {
@@ -109,7 +139,7 @@ class AppiumSchema {
   /**
    * Finalizes all registered schemas into Ajv and generates arg-spec lookups.
    */
-  finalize(): Readonly<Record<string, StrictSchemaObject>> {
+  async finalize(): Promise<Readonly<Record<string, StrictSchemaObject>>> {
     if (this.isFinalized()) {
       return this.#finalizedSchemas as Record<string, StrictSchemaObject>;
     }
@@ -137,27 +167,26 @@ class AppiumSchema {
 
     const finalizedSchemas: Record<string, StrictSchemaObject> = {};
 
-    const finalSchema = _.reduce(
-      this.#registeredSchemas,
-      (base: any, extensionSchemas: Map<string, SchemaObject>, extType: ExtensionType) => {
-        extensionSchemas.forEach((schema, extName) => {
-          const $ref = ArgSpec.toSchemaBaseRef(extType, extName);
-          (schema as any).$id = $ref;
-          (schema as any).additionalProperties = false;
-          base.properties.server.properties[extType].properties[extName] = {$ref, $comment: extName};
-          ajv.validateSchema(schema, true);
-          addArgSpecs((schema as any).properties, extType, extName);
-          ajv.addSchema(schema, $ref);
-          finalizedSchemas[$ref] = schema as StrictSchemaObject;
-        });
-        return base;
-      },
-      baseSchema
-    ) as StrictSchemaObject;
+    for (const [extType, extensionSchemas] of Object.entries(this.#registeredSchemas) as Array<
+      [ExtensionType, Map<string, SchemaObject>]
+    >) {
+      for (const [extName, schema] of extensionSchemas.entries()) {
+        const $ref = ArgSpec.toSchemaBaseRef(extType, extName);
+        (schema as any).$id = $ref;
+        (schema as any).additionalProperties = false;
+        baseSchema.properties.server.properties[extType].properties[extName] = {$ref, $comment: extName};
+        await ajv.validateSchema(schema, true);
+        addArgSpecs((schema as any).properties, extType, extName);
+        ajv.addSchema(schema, $ref);
+        finalizedSchemas[$ref] = schema as StrictSchemaObject;
+      }
+    }
+
+    const finalSchema = baseSchema as StrictSchemaObject;
 
     ajv.addSchema(finalSchema, APPIUM_CONFIG_SCHEMA_ID);
     finalizedSchemas[APPIUM_CONFIG_SCHEMA_ID] = finalSchema;
-    ajv.validateSchema(finalSchema, true);
+    await ajv.validateSchema(finalSchema, true);
     this.#finalizedSchemas = finalizedSchemas;
     return Object.freeze(finalizedSchemas);
   }
@@ -178,7 +207,7 @@ class AppiumSchema {
   /**
    * Registers an extension schema.
    */
-  registerSchema(extType: ExtensionType, extName: string, schema: SchemaObject): void {
+  async registerSchema(extType: ExtensionType, extName: string, schema: SchemaObject): Promise<void> {
     if (!(extType && extName) || _.isUndefined(schema)) {
       throw new TypeError('Expected extension type, extension name, and a defined schema');
     }
@@ -192,7 +221,7 @@ class AppiumSchema {
       }
       throw new SchemaNameConflictError(extType, extName);
     }
-    this.#ajv.validateSchema(schema, true);
+    await this.#ajv.validateSchema(schema, true);
     this.#registeredSchemas[extType].set(normalizedExtName, schema);
   }
 
@@ -320,36 +349,6 @@ class AppiumSchema {
   validate(value: any, ref = APPIUM_CONFIG_SCHEMA_ID): ErrorObject[] {
     const validator = this._getValidator(ref);
     return !validator(value) && _.isArray(validator.errors) ? [...validator.errors] : [];
-  }
-
-  /**
-   * Returns `true` if filename extension is an allowed schema extension.
-   */
-  static isAllowedSchemaFileExtension(filename: string): boolean {
-    return ALLOWED_SCHEMA_EXTENSIONS.has(path.extname(filename) as AllowedSchemaExtension);
-  }
-
-  /**
-   * Returns `true` if schema is a plain object and not async.
-   */
-  static isSupportedSchemaType(schema: any): schema is SchemaObject {
-    return _.isPlainObject(schema) && (schema as any).$async !== true;
-  }
-
-  /**
-   * Configures and creates an Ajv instance.
-   */
-  private static _instantiateAjv(): Ajv {
-    const ajv = addFormats(
-      new Ajv({
-        // without this not much validation actually happens
-        allErrors: true,
-      })
-    );
-    _.forEach(keywords, (keyword) => {
-      ajv.addKeyword(keyword);
-    });
-    return ajv;
   }
 
   /**

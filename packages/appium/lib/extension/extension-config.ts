@@ -96,16 +96,52 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
   }
 
   /**
+   * Type guard: manifest entry includes a `schema` path or inline schema object.
+   *
+   * @param extManifest - Parsed extension metadata
+   */
+  static extDataHasSchema<E extends ExtensionType>(
+    extManifest: ExtManifest<E>
+  ): extManifest is ExtManifestWithSchema<E> {
+    return _.isString(extManifest?.schema) || _.isObject(extManifest?.schema);
+  }
+
+  private static async _readExtensionSchema<E extends ExtensionType>(
+    appiumHome: string,
+    extType: E,
+    extName: string,
+    extManifest: ExtManifestWithSchema<E>
+  ): Promise<SchemaObject | undefined> {
+    const {pkgName, schema: argSchemaPath} = extManifest;
+    if (!argSchemaPath) {
+      throw new TypeError(
+        `No \`schema\` property found in config for ${extType} ${pkgName} -- why is this function being called?`
+      );
+    }
+    let moduleObject: any;
+    if (_.isString(argSchemaPath)) {
+      const schemaPath = resolveFrom(appiumHome, path.join(pkgName, argSchemaPath));
+      moduleObject = require(schemaPath);
+    } else {
+      moduleObject = argSchemaPath;
+    }
+    // this sucks. default exports should be destroyed
+    const schema = moduleObject.__esModule ? moduleObject.default : moduleObject;
+    await registerSchema(extType, extName, schema as SchemaObject);
+    return schema;
+  }
+
+  /**
    * Collects blocking validation issues for one extension (generic fields, type-specific rules, and schema).
    *
    * @param extName - Extension key as stored in the manifest
    * @param extManifest - Manifest entry for that extension
    */
-  getProblems(extName: string, extManifest: ExtManifest<ExtType>): ExtManifestProblem[] {
+  async getProblems(extName: string, extManifest: ExtManifest<ExtType>): Promise<ExtManifestProblem[]> {
     return [
       ...this.getGenericConfigProblems(extManifest, extName),
       ...this.getConfigProblems(extManifest, extName),
-      ...this.getSchemaProblems(extManifest, extName),
+      ...(await this.getSchemaProblems(extManifest, extName)),
     ];
   }
 
@@ -250,14 +286,6 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
   }
 
   /**
-   * One-line human description for list output; implemented per extension kind.
-   *
-   * @param extName - Manifest key
-   * @param extManifest - Entry used for version and kind-specific labels
-   */
-  public abstract extensionDesc(extName: ExtName<ExtType>, extManifest: ExtManifest<ExtType>): string;
-
-  /**
    * Root directory of an installed extension, preferring `installPath` and falling back to `node_modules/<pkgName>`.
    *
    * @param extName - Installed extension key
@@ -300,24 +328,16 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
    * @param extName - Extension key
    * @param extManifest - Manifest entry that includes `schema`
    */
-  readExtensionSchema(extName: string, extManifest: ExtManifestWithSchema<ExtType>): SchemaObject | undefined {
-    return ExtensionConfig._readExtensionSchema(
+  async readExtensionSchema(
+    extName: string,
+    extManifest: ExtManifestWithSchema<ExtType>
+  ): Promise<SchemaObject | undefined> {
+    return await ExtensionConfig._readExtensionSchema(
       this.appiumHome,
       this.extensionType,
       extName,
       extManifest
     );
-  }
-
-  /**
-   * Type guard: manifest entry includes a `schema` path or inline schema object.
-   *
-   * @param extManifest - Parsed extension metadata
-   */
-  static extDataHasSchema<E extends ExtensionType>(
-    extManifest: ExtManifest<E>
-  ): extManifest is ExtManifestWithSchema<E> {
-    return _.isString(extManifest?.schema) || _.isObject(extManifest?.schema);
   }
 
   /** Optional async warnings for this extension kind; override in subclasses when needed. */
@@ -475,14 +495,17 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
   }
 
   /** Validates and registers extension CLI/config schema when the manifest defines a `schema` field. */
-  protected getSchemaProblems(extManifest: ExtManifest<ExtType>, extName: string): ExtManifestProblem[] {
+  protected async getSchemaProblems(
+    extManifest: ExtManifest<ExtType>,
+    extName: string
+  ): Promise<ExtManifestProblem[]> {
     const problems: ExtManifestProblem[] = [];
     const {schema: argSchemaPath} = extManifest;
     if (ExtensionConfig.extDataHasSchema(extManifest)) {
       if (_.isString(argSchemaPath)) {
         if (isAllowedSchemaFileExtension(argSchemaPath)) {
           try {
-            this.readExtensionSchema(extName, extManifest);
+            await this.readExtensionSchema(extName, extManifest);
           } catch (err: any) {
             problems.push({
               err: `Unable to register schema at path ${argSchemaPath}; ${err.message}`,
@@ -499,7 +522,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
         }
       } else if (_.isPlainObject(argSchemaPath)) {
         try {
-          this.readExtensionSchema(extName, extManifest);
+          await this.readExtensionSchema(extName, extManifest);
         } catch (err: any) {
           problems.push({
             err: `Unable to register embedded schema; ${err.message}`,
@@ -597,30 +620,14 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     return [entryPointFullPath, mainClass];
   }
 
-  private static _readExtensionSchema<E extends ExtensionType>(
-    appiumHome: string,
-    extType: E,
-    extName: string,
-    extManifest: ExtManifestWithSchema<E>
-  ): SchemaObject | undefined {
-    const {pkgName, schema: argSchemaPath} = extManifest;
-    if (!argSchemaPath) {
-      throw new TypeError(
-        `No \`schema\` property found in config for ${extType} ${pkgName} -- why is this function being called?`
-      );
-    }
-    let moduleObject: any;
-    if (_.isString(argSchemaPath)) {
-      const schemaPath = resolveFrom(appiumHome, path.join(pkgName, argSchemaPath));
-      moduleObject = require(schemaPath);
-    } else {
-      moduleObject = argSchemaPath;
-    }
-    // this sucks. default exports should be destroyed
-    const schema = moduleObject.__esModule ? moduleObject.default : moduleObject;
-    registerSchema(extType, extName, schema as SchemaObject);
-    return schema;
-  }
+  /**
+   * One-line human description for list output; implemented per extension kind.
+   *
+   * @param extName - Manifest key
+   * @param extManifest - Entry used for version and kind-specific labels
+   */
+  public abstract extensionDesc(extName: ExtName<ExtType>, extManifest: ExtManifest<ExtType>): string;
+
 }
 
 /**

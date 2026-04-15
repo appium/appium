@@ -15,6 +15,29 @@ import {formatErrors} from '../schema/format-errors';
 const rawConfig = new Map<string, string>();
 
 /**
+ * Result of calling {@link readConfigFile}.
+ */
+export interface ReadConfigFileResult {
+  errors?: ErrorObject[];
+  filepath?: string;
+  isEmpty?: boolean;
+  config?: NormalizedAppiumConfig;
+  reason?: string | IOutputError[];
+}
+
+/**
+ * Options for {@link readConfigFile}.
+ */
+export interface ReadConfigFileOptions {
+  pretty?: boolean;
+}
+
+/**
+ * This is an `AsyncSearcher` which is inexplicably _not_ exported by the `lilconfig` type definition.
+ */
+type LilconfigAsyncSearcher = ReturnType<typeof lilconfig>;
+
+/**
  * Given an optional path, read a config file. Validates the config file.
  *
  * Call {@link validate} if you already have a config object.
@@ -153,26 +176,3 @@ async function loadConfigFile(lc: LilconfigAsyncSearcher, filepath: string): Pro
 async function searchConfigFile(lc: LilconfigAsyncSearcher): Promise<LilconfigResult> {
   return await lc.search();
 }
-
-/**
- * Result of calling {@link readConfigFile}.
- */
-export interface ReadConfigFileResult {
-  errors?: ErrorObject[];
-  filepath?: string;
-  isEmpty?: boolean;
-  config?: NormalizedAppiumConfig;
-  reason?: string | IOutputError[];
-}
-
-/**
- * Options for {@link readConfigFile}.
- */
-export interface ReadConfigFileOptions {
-  pretty?: boolean;
-}
-
-/**
- * This is an `AsyncSearcher` which is inexplicably _not_ exported by the `lilconfig` type definition.
- */
-type LilconfigAsyncSearcher = ReturnType<typeof lilconfig>;

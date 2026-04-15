@@ -38,12 +38,12 @@ describe('bootstrap/config-file', function () {
   let lc: {load: AsyncSearcherLoadStub; search: AsyncSearcherSearchStub};
   let validateSpy: SinonSpy;
 
-  before(function () {
+  before(async function () {
     // generally called via the CLI parser, this needs to be done manually in tests.
     // we don't need to do this before _each_ test, because we're not changing the schema.
     // if we did change the schema, this would need to be in `beforeEach()` and `afterEach()`
     // would need to call `schema.reset()`.
-    schema.finalizeSchema();
+    await schema.finalizeSchema();
   });
 
   beforeEach(function () {

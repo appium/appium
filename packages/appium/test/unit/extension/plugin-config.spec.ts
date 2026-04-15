@@ -140,9 +140,9 @@ describe('PluginConfig', function () {
       });
 
       describe('when provided an object with a defined `schema` property of unsupported type', function () {
-        it('should return an array having an associated problem', function () {
+        it('should return an array having an associated problem', async function () {
           expect(
-            pluginConfig.getSchemaProblems(
+            await pluginConfig.getSchemaProblems(
               {
                 schema: [],
                 mainClass: 'Asdsh',
@@ -160,9 +160,9 @@ describe('PluginConfig', function () {
 
       describe('when provided a string `schema` property', function () {
         describe('when the property ends in an unsupported extension', function () {
-          it('should return an array having an associated problem', function () {
+          it('should return an array having an associated problem', async function () {
             expect(
-              pluginConfig.getSchemaProblems(
+              await pluginConfig.getSchemaProblems(
                 {
                   schema: 'selenium.java',
                   mainClass: 'Asdsh',
@@ -182,17 +182,18 @@ describe('PluginConfig', function () {
 
         describe('when the property contains a supported extension', function () {
           describe('when the property as a path cannot be found', function () {
-            it('should return an array having an associated problem', function () {
+            it('should return an array having an associated problem', async function () {
+              const problems = await pluginConfig.getSchemaProblems(
+                {
+                  pkgName: 'doop',
+                  schema: 'herp.json',
+                  mainClass: 'Yankovic',
+                  version: '1.0.0',
+                },
+                'foo'
+              );
               expect(
-                pluginConfig.getSchemaProblems(
-                  {
-                    pkgName: 'doop',
-                    schema: 'herp.json',
-                    mainClass: 'Yankovic',
-                    version: '1.0.0',
-                  },
-                  'foo'
-                )
+                problems
               )
                 .with.nested.property('[0].err')
                 .to.match(/Unable to register schema at path herp\.json/i);
@@ -204,8 +205,8 @@ describe('PluginConfig', function () {
               MockResolveFrom.returns(resolveFixture('plugin-schema'));
             });
 
-            it('should return an empty array', function () {
-              expect(
+            it('should return an empty array', async function () {
+              await expect(
                 pluginConfig.getSchemaProblems(
                   {
                     pkgName: '../fixtures',
@@ -215,7 +216,7 @@ describe('PluginConfig', function () {
                   },
                   'foo'
                 )
-              ).to.be.empty;
+              ).to.eventually.be.empty;
             });
           });
         });
@@ -236,8 +237,8 @@ describe('PluginConfig', function () {
             } as unknown as ExtManifestWithSchema<PluginType>;
           });
 
-          it('should return an empty array', function () {
-            expect(pluginConfig.getSchemaProblems(externalManifest, 'foo')).to.be.empty;
+          it('should return an empty array', async function () {
+            await expect(pluginConfig.getSchemaProblems(externalManifest, 'foo')).to.eventually.be.empty;
           });
         });
 
@@ -257,8 +258,8 @@ describe('PluginConfig', function () {
             } as unknown as ExtManifestWithSchema<PluginType>;
           });
 
-          it('should return an array having an associated problem', function () {
-            expect(pluginConfig.getSchemaProblems(externalManifest, 'foo'))
+          it('should return an array having an associated problem', async function () {
+            expect(await pluginConfig.getSchemaProblems(externalManifest, 'foo'))
               .with.nested.property('[0].err')
               .to.match(/Unsupported schema/i);
           });
@@ -286,9 +287,9 @@ describe('PluginConfig', function () {
       });
 
       describe('when the extension data is missing `schema`', function () {
-        it('should throw', function () {
+        it('should throw', async function () {
           delete (extData as {schema?: string}).schema;
-          expect(() => pluginConfig.readExtensionSchema(extName, extData)).to.throw(
+          await expect(pluginConfig.readExtensionSchema(extName, extData)).to.be.rejectedWith(
             TypeError,
             /why is this function being called/i
           );
@@ -297,17 +298,17 @@ describe('PluginConfig', function () {
 
       describe('when the extension schema has already been registered', function () {
         describe('when the schema is identical (presumably the same extension)', function () {
-          it('should not throw', function () {
-            pluginConfig.readExtensionSchema(extName, extData);
-            expect(() => pluginConfig.readExtensionSchema(extName, extData)).not.to.throw();
+          it('should not throw', async function () {
+            await pluginConfig.readExtensionSchema(extName, extData);
+            await expect(pluginConfig.readExtensionSchema(extName, extData)).to.be.fulfilled;
           });
         });
 
         describe('when the schema differs (presumably a different extension)', function () {
-          it('should throw', function () {
-            pluginConfig.readExtensionSchema(extName, extData);
+          it('should throw', async function () {
+            await pluginConfig.readExtensionSchema(extName, extData);
             MockResolveFrom.returns(resolveFixture('driver-schema.js'));
-            expect(() => pluginConfig.readExtensionSchema(extName, extData)).to.throw(
+            await expect(pluginConfig.readExtensionSchema(extName, extData)).to.be.rejectedWith(
               /conflicts with an existing schema/i
             );
           });
@@ -315,8 +316,8 @@ describe('PluginConfig', function () {
       });
 
       describe('when the extension schema has not yet been registered', function () {
-        it('should resolve and load the extension schema file', function () {
-          pluginConfig.readExtensionSchema(extName, extData);
+        it('should resolve and load the extension schema file', async function () {
+          await pluginConfig.readExtensionSchema(extName, extData);
           expect(MockResolveFrom.calledOnce).to.be.true;
         });
       });

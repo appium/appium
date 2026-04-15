@@ -28,6 +28,18 @@ export function restoreWriters(writers: ReturnType<typeof setupWriters>) {
   sandbox.restore();
 }
 
+export function assertOutputContains(writers: ReturnType<typeof setupWriters>, output: string) {
+  if (!someoneHadOutput(writers, output)) {
+    throw new Error(`Expected something to have been called with: '${output}'`);
+  }
+}
+
+export function assertOutputDoesntContain(writers: ReturnType<typeof setupWriters>, output: string) {
+  if (someoneHadOutput(writers, output)) {
+    throw new Error(`Expected nothing to have been called with: '${output}'`);
+  }
+}
+
 function someoneHadOutput(writers: ReturnType<typeof setupWriters>, output: string) {
   let hadOutput = false;
   const matchOutput = sinon.match(function (value: string) {
@@ -43,16 +55,4 @@ function someoneHadOutput(writers: ReturnType<typeof setupWriters>, output: stri
     }
   }
   return hadOutput;
-}
-
-export function assertOutputContains(writers: ReturnType<typeof setupWriters>, output: string) {
-  if (!someoneHadOutput(writers, output)) {
-    throw new Error(`Expected something to have been called with: '${output}'`);
-  }
-}
-
-export function assertOutputDoesntContain(writers: ReturnType<typeof setupWriters>, output: string) {
-  if (someoneHadOutput(writers, output)) {
-    throw new Error(`Expected nothing to have been called with: '${output}'`);
-  }
 }

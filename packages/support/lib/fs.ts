@@ -355,16 +355,14 @@ export const fs = {
             reject(err);
           }
         })
-        .on('end', function () {
-          (async () => {
-            try {
-              const file = await lastFileProcessed;
-              resolve(file ?? null);
-            } catch (err) {
-              log.warn(`Unexpected error: ${err instanceof Error ? err.message : err}`);
-              reject(err);
-            }
-          })();
+        .on('end', async function () {
+          try {
+            const file = await lastFileProcessed;
+            resolve(file ?? null);
+          } catch (err) {
+            log.warn(`Unexpected error: ${err instanceof Error ? err.message : err}`);
+            reject(err);
+          }
         });
     }).finally(function () {
       log.debug(

@@ -43,6 +43,210 @@ export interface ExtractAllOptions {
   useSystemUnzip?: boolean;
 }
 
+export interface ZipEntry {
+  /** The actual entry instance */
+  entry: yauzl.Entry;
+  /**
+   * Async function which accepts the destination folder path
+   * and extracts this entry into it.
+   */
+  extractEntryTo: (destDir: string) => Promise<void>;
+}
+
+export interface ZipOptions {
+  /** Whether to encode the resulting archive to a base64-encoded string */
+  encodeToBase64?: boolean;
+  /** Whether to log the actual archiver performance */
+  isMetered?: boolean;
+  /**
+   * The maximum size of the resulting archive in bytes.
+   * This is set to 1GB by default, because Appium limits the maximum HTTP body size to 1GB.
+   * Also, the NodeJS heap size must be enough to keep the resulting object
+   * (usually this size is limited to 1.4 GB)
+   */
+  maxSize?: number;
+  /**
+   * The compression level.
+   * The maximum level is 9 (the best compression, worst performance).
+   * The minimum compression level is 0 (no compression).
+   */
+  level?: number;
+}
+
+export interface ZipCompressionOptions {
+  /**
+   * Compression level in range 0..9
+   * (greater numbers mean better compression, but longer processing time)
+   */
+  level?: number;
+}
+
+export interface ZipSourceOptions {
+  /** GLOB pattern for compression */
+  pattern?: string;
+  /** The source root folder (the parent folder of the destination file by default) */
+  cwd?: string;
+  /** The list of ignored patterns */
+  ignore?: string[];
+}
+
+interface ZipExtractorOptions {
+  dir: string;
+  fileNamesEncoding?: BufferEncoding;
+  defaultDirMode?: string;
+  defaultFileMode?: string;
+}
+
+// This class is mostly copied from https://github.com/maxogden/extract-zip/blob/master/index.js
+class ZipExtractor {
+  zipfile!: yauzl.ZipFile;
+  private readonly zipPath: string;
+  private readonly opts: ZipExtractorOptions;
+  private canceled = false;
+
+  constructor(sourcePath: string, opts: ZipExtractorOptions) {
+    this.zipPath = sourcePath;
+    this.opts = opts;
+  }
+
+  async extract(): Promise<void> {
+    const {dir, fileNamesEncoding} = this.opts;
+    this.zipfile = await openZip(this.zipPath, {
+      lazyEntries: true,
+      // https://github.com/thejoshwolfe/yauzl/commit/cc7455ac789ba84973184e5ebde0581cdc4c3b39#diff-04c6e90faac2675aa89e2176d2eec7d8R95
+      decodeStrings: !fileNamesEncoding,
+    });
+    this.canceled = false;
+
+    return new Promise<void>((resolve, reject) => {
+      this.zipfile.on('error', (err: Error) => {
+        this.canceled = true;
+        reject(err);
+      });
+      this.zipfile.readEntry();
+
+      this.zipfile.on('close', () => {
+        if (!this.canceled) {
+          resolve();
+        }
+      });
+
+      this.zipfile.on('entry', async (entry: yauzl.Entry) => {
+        if (this.canceled) {
+          return;
+        }
+
+        const fileName = this.extractFileName(entry);
+        if (fileName.startsWith('__MACOSX/')) {
+          this.zipfile.readEntry();
+          return;
+        }
+
+        const destDir = path.dirname(path.join(dir, fileName));
+        try {
+          await fs.mkdir(destDir, {recursive: true});
+
+          const canonicalDestDir = await fs.realpath(destDir);
+          const relativeDestDir = path.relative(dir, canonicalDestDir);
+
+          if (relativeDestDir.split(path.sep).includes('..')) {
+            throw new Error(
+              `Out of bound path "${canonicalDestDir}" found while processing file ${fileName}`
+            );
+          }
+
+          await this.extractEntry(entry);
+          this.zipfile.readEntry();
+        } catch (err) {
+          this.canceled = true;
+          this.zipfile.close();
+          reject(err);
+        }
+      });
+    });
+  }
+
+  private extractFileName(entry: yauzl.Entry): string {
+    if (Buffer.isBuffer(entry.fileName)) {
+      return entry.fileName.toString(this.opts.fileNamesEncoding);
+    }
+    return entry.fileName;
+  }
+
+  private async extractEntry(entry: yauzl.Entry): Promise<void> {
+    if (this.canceled) {
+      return;
+    }
+
+    const {dir} = this.opts;
+
+    const fileName = this.extractFileName(entry);
+    const dest = path.join(dir, fileName);
+
+    // convert external file attr int into a fs stat mode int
+    const mode = (entry.externalFileAttributes >> 16) & 0xffff;
+    // check if it's a symlink or dir (using stat mode constants)
+    const isSymlink = (mode & IFMT) === IFLNK;
+    const isDir =
+      (mode & IFMT) === IFDIR ||
+      // Failsafe, borrowed from jsZip
+      fileName.endsWith('/') ||
+      // check for windows weird way of specifying a directory
+      // https://github.com/maxogden/extract-zip/issues/13#issuecomment-154494566
+      (entry.versionMadeBy >> 8 === 0 && entry.externalFileAttributes === 16);
+    const procMode = this.getExtractedMode(mode, isDir) & 0o777;
+    // always ensure folders are created
+    const destDir = isDir ? dest : path.dirname(dest);
+    const mkdirOptions: Parameters<typeof fs.mkdir>[1] = {recursive: true};
+    if (isDir) {
+      mkdirOptions.mode = procMode;
+    }
+    await fs.mkdir(destDir, mkdirOptions);
+    if (isDir) {
+      return;
+    }
+
+    const openReadStream = promisify(
+      this.zipfile.openReadStream.bind(this.zipfile)
+    ) as (entry: yauzl.Entry) => Promise<NodeJS.ReadableStream>;
+    const readStream = await openReadStream(entry);
+    if (isSymlink) {
+      const link = await getStream(readStream);
+      await fs.symlink(link, dest);
+    } else {
+      await pipeline(readStream, fs.createWriteStream(dest, {mode: procMode}));
+    }
+  }
+
+  private getExtractedMode(entryMode: number, isDir: boolean): number {
+    const {defaultDirMode, defaultFileMode} = this.opts;
+
+    let mode = entryMode;
+    // Set defaults, if necessary
+    if (mode === 0) {
+      if (isDir) {
+        if (defaultDirMode) {
+          mode = parseInt(defaultDirMode, 10);
+        }
+
+        if (!mode) {
+          mode = 0o755;
+        }
+      } else {
+        if (defaultFileMode) {
+          mode = parseInt(defaultFileMode, 10);
+        }
+
+        if (!mode) {
+          mode = 0o644;
+        }
+      }
+    }
+
+    return mode;
+  }
+}
+
 /**
  * Extract zipfile to a directory
  *
@@ -127,16 +331,6 @@ export async function _extractEntryTo(
   await Promise.all([zipReadStreamPromise, writeStreamPromise]);
 }
 
-export interface ZipEntry {
-  /** The actual entry instance */
-  entry: yauzl.Entry;
-  /**
-   * Async function which accepts the destination folder path
-   * and extracts this entry into it.
-   */
-  extractEntryTo: (destDir: string) => Promise<void>;
-}
-
 /**
  * Get entries for a zip folder
  *
@@ -172,26 +366,6 @@ export async function readEntries(
 
   // Wait for the entries to finish being iterated through
   await zipReadStreamPromise;
-}
-
-export interface ZipOptions {
-  /** Whether to encode the resulting archive to a base64-encoded string */
-  encodeToBase64?: boolean;
-  /** Whether to log the actual archiver performance */
-  isMetered?: boolean;
-  /**
-   * The maximum size of the resulting archive in bytes.
-   * This is set to 1GB by default, because Appium limits the maximum HTTP body size to 1GB.
-   * Also, the NodeJS heap size must be enough to keep the resulting object
-   * (usually this size is limited to 1.4 GB)
-   */
-  maxSize?: number;
-  /**
-   * The compression level.
-   * The maximum level is 9 (the best compression, worst performance).
-   * The minimum compression level is 0 (no compression).
-   */
-  level?: number;
 }
 
 /**
@@ -276,10 +450,8 @@ export async function toInMemoryZip(
   } else {
     archive.pipe(resultWriteStream);
   }
-  archive.finalize();
 
-  // Wait for the streams to finish
-  await Promise.all([archiveStreamPromise, resultWriteStreamPromise]);
+  await Promise.all([archive.finalize(), archiveStreamPromise, resultWriteStreamPromise]);
 
   if (timer) {
     log.debug(
@@ -326,23 +498,6 @@ export async function assertValidZip(filePath: string): Promise<boolean> {
   }
 }
 
-export interface ZipCompressionOptions {
-  /**
-   * Compression level in range 0..9
-   * (greater numbers mean better compression, but longer processing time)
-   */
-  level?: number;
-}
-
-export interface ZipSourceOptions {
-  /** GLOB pattern for compression */
-  pattern?: string;
-  /** The source root folder (the parent folder of the destination file by default) */
-  cwd?: string;
-  /** The list of ignored patterns */
-  ignore?: string[];
-}
-
 /**
  * Creates an archive based on the given glob pattern
  *
@@ -361,6 +516,16 @@ export async function toArchive(
   const archive = archiver('zip', {zlib: {level}});
   const outStream = fs.createWriteStream(dstPath);
   await new Promise<void>((resolve, reject) => {
+    const outFinished = new Promise<void>((_resolve, _reject) => {
+      outStream.once('error', (e: Error) => {
+        archive.unpipe(outStream);
+        archive.abort();
+        archive.destroy();
+        _reject(e);
+      });
+      outStream.once('finish', () => _resolve());
+    });
+
     archive
       .glob(pattern, {
         cwd,
@@ -368,173 +533,11 @@ export async function toArchive(
       })
       .on('error', reject)
       .pipe(outStream);
-    outStream
-      .on('error', (e: Error) => {
-        archive.unpipe(outStream);
-        archive.abort();
-        archive.destroy();
-        reject(e);
-      })
-      .on('finish', resolve);
-    archive.finalize();
+
+    void Promise.all([archive.finalize(), outFinished])
+      .then(() => resolve())
+      .catch(reject);
   });
-}
-
-interface ZipExtractorOptions {
-  dir: string;
-  fileNamesEncoding?: BufferEncoding;
-  defaultDirMode?: string;
-  defaultFileMode?: string;
-}
-
-// This class is mostly copied from https://github.com/maxogden/extract-zip/blob/master/index.js
-class ZipExtractor {
-  zipfile!: yauzl.ZipFile;
-  private readonly zipPath: string;
-  private readonly opts: ZipExtractorOptions;
-  private canceled = false;
-
-  constructor(sourcePath: string, opts: ZipExtractorOptions) {
-    this.zipPath = sourcePath;
-    this.opts = opts;
-  }
-
-  private extractFileName(entry: yauzl.Entry): string {
-    if (Buffer.isBuffer(entry.fileName)) {
-      return entry.fileName.toString(this.opts.fileNamesEncoding);
-    }
-    return entry.fileName;
-  }
-
-  async extract(): Promise<void> {
-    const {dir, fileNamesEncoding} = this.opts;
-    this.zipfile = await openZip(this.zipPath, {
-      lazyEntries: true,
-      // https://github.com/thejoshwolfe/yauzl/commit/cc7455ac789ba84973184e5ebde0581cdc4c3b39#diff-04c6e90faac2675aa89e2176d2eec7d8R95
-      decodeStrings: !fileNamesEncoding,
-    });
-    this.canceled = false;
-
-    return new Promise<void>((resolve, reject) => {
-      this.zipfile.on('error', (err: Error) => {
-        this.canceled = true;
-        reject(err);
-      });
-      this.zipfile.readEntry();
-
-      this.zipfile.on('close', () => {
-        if (!this.canceled) {
-          resolve();
-        }
-      });
-
-      this.zipfile.on('entry', async (entry: yauzl.Entry) => {
-        if (this.canceled) {
-          return;
-        }
-
-        const fileName = this.extractFileName(entry);
-        if (fileName.startsWith('__MACOSX/')) {
-          this.zipfile.readEntry();
-          return;
-        }
-
-        const destDir = path.dirname(path.join(dir, fileName));
-        try {
-          await fs.mkdir(destDir, {recursive: true});
-
-          const canonicalDestDir = await fs.realpath(destDir);
-          const relativeDestDir = path.relative(dir, canonicalDestDir);
-
-          if (relativeDestDir.split(path.sep).includes('..')) {
-            throw new Error(
-              `Out of bound path "${canonicalDestDir}" found while processing file ${fileName}`
-            );
-          }
-
-          await this.extractEntry(entry);
-          this.zipfile.readEntry();
-        } catch (err) {
-          this.canceled = true;
-          this.zipfile.close();
-          reject(err);
-        }
-      });
-    });
-  }
-
-  private async extractEntry(entry: yauzl.Entry): Promise<void> {
-    if (this.canceled) {
-      return;
-    }
-
-    const {dir} = this.opts;
-
-    const fileName = this.extractFileName(entry);
-    const dest = path.join(dir, fileName);
-
-    // convert external file attr int into a fs stat mode int
-    const mode = (entry.externalFileAttributes >> 16) & 0xffff;
-    // check if it's a symlink or dir (using stat mode constants)
-    const isSymlink = (mode & IFMT) === IFLNK;
-    const isDir =
-      (mode & IFMT) === IFDIR ||
-      // Failsafe, borrowed from jsZip
-      fileName.endsWith('/') ||
-      // check for windows weird way of specifying a directory
-      // https://github.com/maxogden/extract-zip/issues/13#issuecomment-154494566
-      (entry.versionMadeBy >> 8 === 0 && entry.externalFileAttributes === 16);
-    const procMode = this.getExtractedMode(mode, isDir) & 0o777;
-    // always ensure folders are created
-    const destDir = isDir ? dest : path.dirname(dest);
-    const mkdirOptions: Parameters<typeof fs.mkdir>[1] = {recursive: true};
-    if (isDir) {
-      mkdirOptions.mode = procMode;
-    }
-    await fs.mkdir(destDir, mkdirOptions);
-    if (isDir) {
-      return;
-    }
-
-    const openReadStream = promisify(
-      this.zipfile.openReadStream.bind(this.zipfile)
-    ) as (entry: yauzl.Entry) => Promise<NodeJS.ReadableStream>;
-    const readStream = await openReadStream(entry);
-    if (isSymlink) {
-      const link = await getStream(readStream);
-      await fs.symlink(link, dest);
-    } else {
-      await pipeline(readStream, fs.createWriteStream(dest, {mode: procMode}));
-    }
-  }
-
-  private getExtractedMode(entryMode: number, isDir: boolean): number {
-    const {defaultDirMode, defaultFileMode} = this.opts;
-
-    let mode = entryMode;
-    // Set defaults, if necessary
-    if (mode === 0) {
-      if (isDir) {
-        if (defaultDirMode) {
-          mode = parseInt(defaultDirMode, 10);
-        }
-
-        if (!mode) {
-          mode = 0o755;
-        }
-      } else {
-        if (defaultFileMode) {
-          mode = parseInt(defaultFileMode, 10);
-        }
-
-        if (!mode) {
-          mode = 0o644;
-        }
-      }
-    }
-
-    return mode;
-  }
 }
 
 /**

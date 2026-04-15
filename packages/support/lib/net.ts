@@ -63,6 +63,8 @@ export interface FtpUploadOptions extends NetOptions {}
 /** @deprecated Use {@linkcode FtpUploadOptions} instead. */
 export type NotHttpUploadOptions = FtpUploadOptions;
 
+type AuthLike = AuthCredentials | AxiosBasicCredentials;
+
 /**
  * Uploads the given file to a remote location. HTTP(S) and FTP protocols are supported.
  */
@@ -106,6 +108,8 @@ export async function uploadFile(
     );
   }
 }
+
+// #region Private helpers
 
 /**
  * Downloads the given file via HTTP(S).
@@ -173,10 +177,6 @@ export async function downloadFile(
     }
   }
 }
-
-// #region Private helpers
-
-type AuthLike = AuthCredentials | AxiosBasicCredentials;
 
 function toAxiosAuth(auth: AuthLike | undefined): AxiosBasicCredentials | null {
   if (!auth || !_.isPlainObject(auth)) {

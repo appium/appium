@@ -354,6 +354,32 @@ export function coerceVersion(ver: string, strict = true): string | null {
 
 const SUPPORTED_OPERATORS = ['==', '!=', '>', '<', '>=', '<=', '='];
 
+/** Options for pluralize(). */
+export interface PluralizeOptions {
+  /** If true, prefix the result with the count (e.g. "3 ducks"). */
+  inclusive?: boolean;
+}
+
+/** Options for toInMemoryBase64(). */
+export interface EncodingOptions {
+  /** Maximum size of the resulting buffer in bytes. Default 1GB. */
+  maxSize?: number;
+}
+
+/** Options for getLockFileGuard(). */
+export interface LockFileOptions {
+  /** Max time in seconds to wait for the lock. Default 120. */
+  timeout?: number;
+  /** If true, attempt to unlock and retry once if the first acquisition times out (e.g. stale lock). */
+  tryRecovery?: boolean;
+}
+
+/** Guard function that runs the given behavior under the lock. */
+type LockFileGuardFn<T> = (behavior: () => Promise<T> | T) => Promise<T>;
+
+/** Return type of getLockFileGuard: guard function with a .check() method. */
+type LockFileGuard<T> = LockFileGuardFn<T> & {check: () => Promise<boolean>};
+
 /**
  * Compares two version strings using the given operator.
  *
@@ -392,12 +418,6 @@ export function quote(args: string | string[]): string {
   return shellQuote(_.castArray(args));
 }
 
-/** Options for pluralize(). */
-export interface PluralizeOptions {
-  /** If true, prefix the result with the count (e.g. "3 ducks"). */
-  inclusive?: boolean;
-}
-
 /**
  * Returns the plural or singular form of a word appropriate to the count (e.g. "duck" + 1 → "duck", + 2 → "ducks").
  *
@@ -418,12 +438,6 @@ export function pluralize(
     inclusive = options.inclusive;
   }
   return pluralizeLib(word, count, inclusive);
-}
-
-/** Options for toInMemoryBase64(). */
-export interface EncodingOptions {
-  /** Maximum size of the resulting buffer in bytes. Default 1GB. */
-  maxSize?: number;
 }
 
 /**
@@ -486,20 +500,6 @@ export async function toInMemoryBase64(
   await Promise.all([readStreamPromise, resultWriteStreamPromise]);
   return Buffer.concat(resultBuffers);
 }
-
-/** Options for getLockFileGuard(). */
-export interface LockFileOptions {
-  /** Max time in seconds to wait for the lock. Default 120. */
-  timeout?: number;
-  /** If true, attempt to unlock and retry once if the first acquisition times out (e.g. stale lock). */
-  tryRecovery?: boolean;
-}
-
-/** Guard function that runs the given behavior under the lock. */
-type LockFileGuardFn<T> = (behavior: () => Promise<T> | T) => Promise<T>;
-
-/** Return type of getLockFileGuard: guard function with a .check() method. */
-type LockFileGuard<T> = LockFileGuardFn<T> & {check: () => Promise<boolean>};
 
 /**
  * Creates a guard that serializes access to a critical section using a lock file.

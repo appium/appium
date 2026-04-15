@@ -1,6 +1,12 @@
 import type {DoctorCheckResult} from '@appium/types';
 
 /**
+ * Throw this exception in the fix() method
+ * of your doctor check to skip the actual fix if hasAutofix() is true
+ */
+export class FixSkippedError extends Error {}
+
+/**
  * A shortcut for a successful required doctor check
  */
 export function ok(message: string): DoctorCheckResult {
@@ -27,9 +33,3 @@ export function okOptional(message: string): DoctorCheckResult {
 export function nokOptional(message: string): DoctorCheckResult {
   return {ok: false, optional: true, message};
 }
-
-/**
- * Throw this exception in the fix() method
- * of your doctor check to skip the actual fix if hasAutofix() is true
- */
-export class FixSkippedError extends Error {}

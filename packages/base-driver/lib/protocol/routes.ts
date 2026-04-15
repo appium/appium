@@ -572,6 +572,12 @@ export const ALL_COMMANDS = _.flatMap(_.values(METHOD_MAP).map(_.values))
   .filter((m) => Boolean(m.command))
   .map((m) => m.command);
 
+/**
+ * Resolve a WebDriver URL path and HTTP method to a driver command name from {@link METHOD_MAP}.
+ * @param endpoint - Request URL or path (may include base path)
+ * @param method - HTTP method (used when one path maps to multiple commands)
+ * @param basePath - Optional base path prefix to strip before matching
+ */
 export function routeToCommandName(
   endpoint: string,
   method?: HTTPMethod,

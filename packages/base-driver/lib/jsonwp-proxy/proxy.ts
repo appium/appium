@@ -110,6 +110,21 @@ export class JWProxy {
   }
 
   /**
+   * Gets the protocol used by the downstream server (W3C or MJSONWP).
+   */
+  get downstreamProtocol(): Protocol | null | undefined {
+    return this._downstreamProtocol;
+  }
+
+  /**
+   * Sets the protocol used by the downstream server (W3C or MJSONWP).
+   */
+  set downstreamProtocol(value: Protocol | null | undefined) {
+    this._downstreamProtocol = value;
+    this.protocolConverter.downstreamProtocol = value;
+  }
+
+  /**
    * Returns the number of active downstream HTTP requests.
    */
   getActiveRequestsCount(): number {
@@ -124,21 +139,6 @@ export class JWProxy {
       ar.cancel();
     }
     this._activeRequests = [];
-  }
-
-  /**
-   * Sets the protocol used by the downstream server (W3C or MJSONWP).
-   */
-  set downstreamProtocol(value: Protocol | null | undefined) {
-    this._downstreamProtocol = value;
-    this.protocolConverter.downstreamProtocol = value;
-  }
-
-  /**
-   * Gets the protocol used by the downstream server (W3C or MJSONWP).
-   */
-  get downstreamProtocol(): Protocol | null | undefined {
-    return this._downstreamProtocol;
   }
 
   /**

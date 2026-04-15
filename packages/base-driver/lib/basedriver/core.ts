@@ -77,18 +77,9 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
 
   noCommandTimer: NodeJS.Timeout | null;
 
-  protected _eventHistory: EventHistory;
-
-  /**
-   * TODO: remove this._log and use this.log instead
-   */
-  protected _log: AppiumLogger;
-
   shutdownUnexpectedly: boolean;
 
   shouldValidateCaps: boolean;
-
-  protected commandsQueueGuard: AsyncLock;
 
   /**
    * settings should be instantiated by drivers which extend BaseDriver, but
@@ -99,6 +90,15 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
   settings: DeviceSettings<Settings>;
 
   protocol?: Protocol;
+
+  protected _eventHistory: EventHistory;
+
+  /**
+   * TODO: remove this._log and use this.log instead
+   */
+  protected _log: AppiumLogger;
+
+  protected commandsQueueGuard: AsyncLock;
 
   constructor(opts: InitialOpts = <InitialOpts>{}, shouldValidateCaps = true) {
     super();
@@ -137,19 +137,6 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
   }
 
   /**
-   * Set a callback handler if needed to execute a custom piece of code
-   * when the driver is shut down unexpectedly. Multiple calls to this method
-   * will cause the handler to be executed multiple times
-   *
-   * @param handler The code to be executed on unexpected shutdown.
-   * The function may accept one argument, which is the actual error instance, which
-   * caused the driver to shut down.
-   */
-  onUnexpectedShutdown(handler: (...args: any[]) => void) {
-    this.eventEmitter.on(ON_UNEXPECTED_SHUTDOWN_EVENT, handler);
-  }
-
-  /**
    * This property is used by AppiumDriver to store the data of the
    * specific driver sessions. This data can be later used to adjust
    * properties for driver instances running in parallel.
@@ -180,6 +167,31 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
    */
   get eventHistory() {
     return _.cloneDeep(this._eventHistory);
+  }
+
+  /**
+   * If this driver has requested proxying of bidi connections to an upstream bidi endpoint, this
+   * method should be overridden to return the URL of that websocket, to indicate that bidi
+   * proxying is enabled. Otherwise, a null return will indicate that bidi proxying should not be
+   * active and bidi commands will be handled by this driver.
+   *
+   * @returns {string | null}
+   */
+  get bidiProxyUrl(): string | null {
+    return null;
+  }
+
+  /**
+   * Set a callback handler if needed to execute a custom piece of code
+   * when the driver is shut down unexpectedly. Multiple calls to this method
+   * will cause the handler to be executed multiple times
+   *
+   * @param handler The code to be executed on unexpected shutdown.
+   * The function may accept one argument, which is the actual error instance, which
+   * caused the driver to shut down.
+   */
+  onUnexpectedShutdown(handler: (...args: any[]) => void) {
+    this.eventEmitter.on(ON_UNEXPECTED_SHUTDOWN_EVENT, handler);
   }
 
   /**
@@ -325,18 +337,6 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
         `Locator Strategy '${strategy}' is not supported for this session`,
       );
     }
-  }
-
-  /**
-   * If this driver has requested proxying of bidi connections to an upstream bidi endpoint, this
-   * method should be overridden to return the URL of that websocket, to indicate that bidi
-   * proxying is enabled. Otherwise, a null return will indicate that bidi proxying should not be
-   * active and bidi commands will be handled by this driver.
-   *
-   * @returns {string | null}
-   */
-  get bidiProxyUrl(): string | null {
-    return null;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

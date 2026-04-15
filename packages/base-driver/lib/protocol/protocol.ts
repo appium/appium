@@ -30,6 +30,10 @@ export const LIST_DRIVER_EXTENSIONS_COMMAND = 'listExtensions';
 
 export const deprecatedCommandsLogged: Set<string> = new Set();
 
+/**
+ * Infer W3C vs MJSONWP from new-session capability payloads.
+ * @param createSessionArgs - Arguments passed to the createSession command
+ */
 export function determineProtocol(createSessionArgs: any[]): keyof typeof PROTOCOLS {
   return _.some(createSessionArgs, isW3cCaps) ? PROTOCOLS.W3C : PROTOCOLS.MJSONWP;
 }
@@ -63,74 +67,20 @@ export function getSessionId(driver: Core<any>, req: Request): string | undefine
   return req.params.sessionId;
 }
 
-function extractProtocol(driver: Core<any>, sessionId: string | null = null): keyof typeof PROTOCOLS {
-  const dstDriver = _.isFunction(driver.driverForSession) && sessionId
-    ? driver.driverForSession(sessionId)
-    : driver;
-  if (dstDriver === driver) {
-    // Shortcircuit if the driver instance is not an umbrella driver
-    // or it is Fake driver instance, where `driver.driverForSession`
-    // always returns self instance
-    return driver.protocol ?? PROTOCOLS.W3C;
-  }
-
-  // Extract the protocol for the current session if the given driver is the umbrella one
-  return dstDriver?.protocol ?? PROTOCOLS.W3C;
-}
-
+/**
+ * @param command - Driver command name
+ * @returns Whether the command requires a session id in the URL
+ */
 export function isSessionCommand(command: string): boolean {
   return !_.includes(NO_SESSION_ID_COMMANDS, command);
 }
 
-function getLogger(driver: Core<any>, sessionId: string | null = null): AppiumLogger {
-  const dstDriver =
-    sessionId && _.isFunction(driver.driverForSession)
-      ? driver.driverForSession(sessionId) ?? driver
-      : driver;
-  if (_.isFunction(dstDriver.log?.info)) {
-    return dstDriver.log;
-  }
-
-  const logPrefix = generateDriverLogPrefix(dstDriver);
-  return logger.getLogger(logPrefix);
-}
-
-function wrapParams<T>(paramSets, jsonObj: T): T | Record<string, T> {
-  /* There are commands like performTouch which take a single parameter (primitive type or array).
-   * Some drivers choose to pass this parameter as a value (eg. [action1, action2...]) while others to
-   * wrap it within an object(eg' {gesture:  [action1, action2...]}), which makes it hard to validate.
-   * The wrap option in the spec enforce wrapping before validation, so that all params are wrapped at
-   * the time they are validated and later passed to the commands.
-   */
-  return (_.isArray(jsonObj) || !_.isObject(jsonObj)) && paramSets.wrap
-    ? {[paramSets.wrap]: jsonObj}
-    : jsonObj;
-}
-
-function unwrapParams<T>(paramSets: PayloadParams, jsonObj: T): T | Record<string, T> {
-  /* There are commands like setNetworkConnection which send parameters wrapped inside a key such as
-   * "parameters". This function unwraps them (eg. {"parameters": {"type": 1}} becomes {"type": 1}).
-   */
-  return _.isObject(jsonObj) && paramSets.unwrap && jsonObj[paramSets.unwrap]
-    ? jsonObj[paramSets.unwrap]
-    : jsonObj;
-}
-
-function hasMultipleRequiredParamSets(
-  required: ReadonlyArray<string> | MultidimensionalReadonlyArray<string, 2> | undefined
-): required is MultidimensionalReadonlyArray<string, 2> {
-  //@ts-expect-error Needed to convince lodash typechecks
-  return Boolean(required && _.isArray(_.first(required)));
-}
-
-function pickKnownParams(args: Record<string, any>, unknownNames: string[]): Record<string, any> {
-  if (_.isEmpty(unknownNames)) {
-    return args;
-  }
-  log.info(`The following arguments are not known and will be ignored: ${unknownNames}`);
-  return _.pickBy(args, (v, k) => !unknownNames.includes(k));
-}
-
+/**
+ * Validate request arguments against a route payload spec and return filtered params.
+ * @param paramSpec - Required/optional parameter definition from the method map
+ * @param args - Raw arguments (e.g. JSON body)
+ * @param protocol - Active protocol, used when a custom validate function is present
+ */
 export function checkParams(
   paramSpec: PayloadParams,
   args: Record<string, any>,
@@ -207,12 +157,11 @@ export function checkParams(
   }, actualParamNames);
 }
 
-/*
- * This method takes 3 pieces of data: request parameters ('requestParams'),
- * a request JSON body ('jsonObj'), and 'payloadParams', which is the section
- * from the route definition for a particular endpoint which has instructions
- * on handling parameters. This method returns an array of arguments which will
- * be applied to a command.
+/**
+ * Build the ordered argument list for a driver command from URL params, JSON body, and route spec.
+ * @param requestParams - Express route parameters (e.g. sessionId, element id)
+ * @param jsonObj - Parsed JSON request body
+ * @param payloadParams - Route payload definition (required/optional/makeArgs)
  */
 export function makeArgs(requestParams: PayloadParams, jsonObj: any, payloadParams: PayloadParams): any[] {
   // We want to pass the "url" parameters to the commands in reverse order
@@ -264,6 +213,11 @@ export function makeArgs(requestParams: PayloadParams, jsonObj: any, payloadPara
   return args;
 }
 
+/**
+ * Validate parameters for execute/executeAsync script endpoints.
+ * @param params - Raw execute command arguments from the client
+ * @param paramSpec - Optional payload spec for additional validation
+ */
 export function validateExecuteMethodParams(params: any[], paramSpec?: PayloadParams): any[] {
   // the w3c protocol will give us an array of arguments to apply to a javascript function.
   // that's not what we're doing. we're going to look for a JS object as the first arg, so we
@@ -290,7 +244,10 @@ export function validateExecuteMethodParams(params: any[], paramSpec?: PayloadPa
   return makeArgs({}, filteredArgs, specToUse);
 }
 
-
+/**
+ * Returns a function that registers default (and plugin) HTTP routes on an Express app for a driver.
+ * @param driver - Driver instance used to execute commands
+ */
 export function routeConfiguringFunction(driver: Core<any>): RouteConfiguringFunction {
   if (!driver.sessionExists) {
     throw new Error('Drivers must implement `sessionExists` property');
@@ -323,6 +280,99 @@ export function routeConfiguringFunction(driver: Core<any>): RouteConfiguringFun
       }
     }
   };
+}
+
+/**
+ * Whether an incoming request should be forwarded to the driver's JWProxy for the given command.
+ * @param driver - Active driver
+ * @param req - Incoming HTTP request
+ * @param command - Resolved driver command name
+ */
+export function driverShouldDoJwpProxy(driver: Core<any>, req: Request, command: string): boolean {
+  const sessionId = getSessionId(driver, req);
+  // drivers need to explicitly say when the proxy is active
+  if (!driver.proxyActive(sessionId)) {
+    return false;
+  }
+
+  // we should never proxy deleteSession because we need to give the containing
+  // driver an opportunity to clean itself up
+  if (command === DELETE_SESSION_COMMAND) {
+    return false;
+  }
+
+  // validate avoidance schema, and say we shouldn't proxy if anything in the
+  // avoid list matches our req
+  if (driver.proxyRouteIsAvoided(sessionId as string, req.method, req.originalUrl, req.body)) {
+    return false;
+  }
+
+  return true;
+}
+
+function extractProtocol(driver: Core<any>, sessionId: string | null = null): keyof typeof PROTOCOLS {
+  const dstDriver = _.isFunction(driver.driverForSession) && sessionId
+    ? driver.driverForSession(sessionId)
+    : driver;
+  if (dstDriver === driver) {
+    // Shortcircuit if the driver instance is not an umbrella driver
+    // or it is Fake driver instance, where `driver.driverForSession`
+    // always returns self instance
+    return driver.protocol ?? PROTOCOLS.W3C;
+  }
+
+  // Extract the protocol for the current session if the given driver is the umbrella one
+  return dstDriver?.protocol ?? PROTOCOLS.W3C;
+}
+
+function getLogger(driver: Core<any>, sessionId: string | null = null): AppiumLogger {
+  const dstDriver =
+    sessionId && _.isFunction(driver.driverForSession)
+      ? driver.driverForSession(sessionId) ?? driver
+      : driver;
+  if (_.isFunction(dstDriver.log?.info)) {
+    return dstDriver.log;
+  }
+
+  const logPrefix = generateDriverLogPrefix(dstDriver);
+  return logger.getLogger(logPrefix);
+}
+
+function wrapParams<T>(paramSets, jsonObj: T): T | Record<string, T> {
+  /* There are commands like performTouch which take a single parameter (primitive type or array).
+   * Some drivers choose to pass this parameter as a value (eg. [action1, action2...]) while others to
+   * wrap it within an object(eg' {gesture:  [action1, action2...]}), which makes it hard to validate.
+   * The wrap option in the spec enforce wrapping before validation, so that all params are wrapped at
+   * the time they are validated and later passed to the commands.
+   */
+  return (_.isArray(jsonObj) || !_.isObject(jsonObj)) && paramSets.wrap
+    ? {[paramSets.wrap]: jsonObj}
+    : jsonObj;
+}
+
+function unwrapParams<T>(paramSets: PayloadParams, jsonObj: T): T | Record<string, T> {
+  /* There are commands like setNetworkConnection which send parameters wrapped inside a key such as
+   * "parameters". This function unwraps them (eg. {"parameters": {"type": 1}} becomes {"type": 1}).
+   */
+  return _.isObject(jsonObj) && paramSets.unwrap && jsonObj[paramSets.unwrap]
+    ? jsonObj[paramSets.unwrap]
+    : jsonObj;
+}
+
+
+function hasMultipleRequiredParamSets(
+  required: ReadonlyArray<string> | MultidimensionalReadonlyArray<string, 2> | undefined
+): required is MultidimensionalReadonlyArray<string, 2> {
+  //@ts-expect-error Needed to convince lodash typechecks
+  return Boolean(required && _.isArray(_.first(required)));
+}
+
+function pickKnownParams(args: Record<string, any>, unknownNames: string[]): Record<string, any> {
+  if (_.isEmpty(unknownNames)) {
+    return args;
+  }
+  log.info(`The following arguments are not known and will be ignored: ${unknownNames}`);
+  return _.pickBy(args, (v, k) => !unknownNames.includes(k));
 }
 
 function buildHandler(
@@ -552,28 +602,6 @@ function buildHandler(
   app[method.toLowerCase()](path, (req, res) => {
     B.resolve(asyncHandler(req, res)).done();
   });
-}
-
-export function driverShouldDoJwpProxy(driver: Core<any>, req: Request, command: string): boolean {
-  const sessionId = getSessionId(driver, req);
-  // drivers need to explicitly say when the proxy is active
-  if (!driver.proxyActive(sessionId)) {
-    return false;
-  }
-
-  // we should never proxy deleteSession because we need to give the containing
-  // driver an opportunity to clean itself up
-  if (command === DELETE_SESSION_COMMAND) {
-    return false;
-  }
-
-  // validate avoidance schema, and say we shouldn't proxy if anything in the
-  // avoid list matches our req
-  if (driver.proxyRouteIsAvoided(sessionId as string, req.method, req.originalUrl, req.body)) {
-    return false;
-  }
-
-  return true;
 }
 
 async function doJwpProxy(driver: BaseDriver<any>, req: Request, res: Response): Promise<void> {

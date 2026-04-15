@@ -18,9 +18,9 @@ export class ExtensionCore {
   bidiEventSubs: Record<string, string[]>;
   bidiCommands: BidiModuleMap = BIDI_COMMANDS as BidiModuleMap;
   _logPrefix?: string;
-  protected _log: AppiumLogger;
   // used to handle driver events
   readonly eventEmitter: NodeJS.EventEmitter;
+  protected _log: AppiumLogger;
 
 
   constructor(logPrefix?: string) {

@@ -381,6 +381,8 @@ export function generateDriverLogPrefix(obj: object | null, _sessionId?: string 
   return `${obj.constructor.name}@${node.getObjectId(obj).substring(0, 4)}`;
 }
 
+// #region Private helpers
+
 function parseAppLink(appLink: string): URL | {protocol?: string; pathname?: string; href?: string; search?: string} {
   try {
     return new URL(appLink);

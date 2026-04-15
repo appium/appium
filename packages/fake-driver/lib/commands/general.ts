@@ -10,6 +10,7 @@ export async function title(this: FakeDriver): Promise<string> {
   return this.appModel.title;
 }
 
+/** keys. */
 export async function keys(
   this: FakeDriver,
   value: string | string[]
@@ -20,6 +21,7 @@ export async function keys(
   await this.setValue(value, this.focusedElId);
 }
 
+/** setGeoLocation. */
 export async function setGeoLocation(
   this: FakeDriver,
   location: Location
@@ -29,18 +31,22 @@ export async function setGeoLocation(
   return location;
 }
 
+/** getGeoLocation. */
 export async function getGeoLocation(this: FakeDriver): Promise<Location> {
   return this.appModel.currentGeoLocation;
 }
 
+/** getPageSource. */
 export async function getPageSource(this: FakeDriver): Promise<string> {
   return this.appModel.rawXml;
 }
 
+/** getOrientation. */
 export async function getOrientation(this: FakeDriver): Promise<string> {
   return this.appModel.orientation;
 }
 
+/** setOrientation. */
 export async function setOrientation(
   this: FakeDriver,
   o: Orientation
@@ -51,18 +57,22 @@ export async function setOrientation(
   this.appModel.orientation = o;
 }
 
+/** getScreenshot. */
 export async function getScreenshot(this: FakeDriver): Promise<string> {
   return this.appModel.getScreenshot();
 }
 
+/** getWindowSize. */
 export async function getWindowSize(this: FakeDriver): Promise<Size> {
   return {width: this.appModel.width, height: this.appModel.height};
 }
 
+/** getWindowRect. */
 export async function getWindowRect(this: FakeDriver): Promise<Rect> {
   return {width: this.appModel.width, height: this.appModel.height, x: 0, y: 0};
 }
 
+/** performActions. */
 export async function performActions(
   this: FakeDriver,
   actions: ActionSequence[]
@@ -70,6 +80,7 @@ export async function performActions(
   this.appModel.actionLog.push(actions);
 }
 
+/** releaseActions. */
 export async function releaseActions(this: FakeDriver): Promise<void> {}
 
 /** Supported log types: 'actions'. TODO: add more log types if needed for tests. */
@@ -85,12 +96,15 @@ export async function getLog(
   }
 }
 
+/** mobileShake. */
 export async function mobileShake(this: FakeDriver): Promise<void> {
   this.shook = true;
 }
 
+/** doubleClick. */
 export async function doubleClick(this: FakeDriver): Promise<void> {}
 
+/** execute. */
 export async function execute(
   this: FakeDriver,
   script: string,
@@ -99,6 +113,7 @@ export async function execute(
   return await this.executeMethod(script, args);
 }
 
+/** fakeAddition. */
 export async function fakeAddition(
   this: FakeDriver,
   num1: number,

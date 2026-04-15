@@ -21,7 +21,6 @@ import type {
 } from '@appium/types';
 import type {AppiumDriver} from './appium';
 
-
 /**
  * Returns available REST and BiDi commands for base, driver and plugins.
  */

@@ -192,12 +192,12 @@ export function cleanupBidiSockets(this: AppiumDriver, sessionId: string): void 
 }
 
 function wrapCommandWithPlugins(driver: ExtensionCore, plugins: ExtensionCore[], method: string, params: StringRecord): () => Promise<BiDiResultData> {
-    const [moduleName, methodName] = method.split('.');
-    let next = async () => await driver.executeBidiCommand(method, params);
-    for (const plugin of plugins.filter((p) => p.doesBidiCommandExist(moduleName, methodName))) {
-      next = ((_next) => async () => await plugin.executeBidiCommand(method, params, _next, driver))(next);
-    }
-    return next;
+  const [moduleName, methodName] = method.split('.');
+  let next = async () => await driver.executeBidiCommand(method, params);
+  for (const plugin of plugins.filter((p) => p.doesBidiCommandExist(moduleName, methodName))) {
+    next = ((_next) => async () => await plugin.executeBidiCommand(method, params, _next, driver))(next);
+  }
+  return next;
 }
 
 // #region Private functions

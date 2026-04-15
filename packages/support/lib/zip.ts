@@ -534,7 +534,7 @@ export async function toArchive(
       .on('error', reject)
       .pipe(outStream);
 
-    return Promise.all([archive.finalize(), outFinished])
+    void Promise.all([archive.finalize(), outFinished])
       .then(() => resolve())
       .catch(reject);
   });

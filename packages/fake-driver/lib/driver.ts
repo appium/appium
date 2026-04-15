@@ -132,17 +132,17 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
     };
   }
 
-  static fakeRoute(req: Request, res: Response): void {
+  static fakeRoute(_req: Request, res: Response): void {
     res.send(JSON.stringify({fakedriver: 'fakeResponse'}));
   }
 
   static async updateServer(
     expressApp: Express,
-    httpServer: HttpServer,
+    _httpServer: HttpServer,
     cliArgs: Record<string, unknown>
   ): Promise<void> {
     expressApp.all('/fakedriver', FakeDriver.fakeRoute);
-    expressApp.all('/fakedriverCliArgs', (req: Request, res: Response) => {
+    expressApp.all('/fakedriverCliArgs', (_req: Request, res: Response) => {
       res.send(JSON.stringify(cliArgs));
     });
   }

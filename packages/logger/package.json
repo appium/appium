@@ -30,7 +30,7 @@
   "dependencies": {
     "console-control-strings": "1.1.0",
     "lodash": "4.18.1",
-    "lru-cache": "11.3.3",
+    "lru-cache": "11.3.5",
     "set-blocking": "2.0.0"
   },
   "license": "ISC",

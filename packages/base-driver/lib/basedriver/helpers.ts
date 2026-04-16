@@ -67,7 +67,6 @@ process.on('exit', () => {
   }
 });
 
-// #region Private types and helpers
 interface RemoteAppProps {
   lastModified: Date | null;
   immutable: boolean;
@@ -569,7 +568,6 @@ function toNaturalNumber(defaultValue: number, envVarName?: string): number {
   const num = parseInt(`${process.env[envVarName]}`, 10);
   return num > 0 ? num : defaultValue;
 }
-// #endregion
 
 export default {
   configureApp,

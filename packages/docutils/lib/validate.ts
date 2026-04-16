@@ -41,6 +41,29 @@ const log = getLogger('validate');
  */
 export type ValidationKind = typeof NAME_PYTHON | typeof NAME_MKDOCS;
 
+export interface DocutilsValidatorOpts {
+  /**
+   * Current working directory
+   */
+  cwd?: string;
+  /**
+   * Path to `mkdocs.yml`
+   */
+  mkdocsYml?: string;
+  /**
+   * If `true`, run Python validation
+   */
+  python?: boolean;
+  /**
+   * Path to `python` executable
+   */
+  pythonPath?: string;
+  /**
+   * If `true`, run MkDocs validation
+   */
+  mkdocs?: boolean;
+}
+
 /**
  * This class is designed to run _all_ validation checks (as requested by the user), and emit events for
  * each failure encountered.
@@ -51,6 +74,30 @@ export type ValidationKind = typeof NAME_PYTHON | typeof NAME_MKDOCS;
  * @todo Use [`strict-event-emitter-types`](https://npm.im/strict-event-emitter-types)
  */
 export class DocutilsValidator extends EventEmitter {
+  /**
+   * Emitted when validation begins with a list of validation kinds to be performed
+   * @event
+   */
+  public static readonly BEGIN = 'begin';
+
+  /**
+   * Emitted when validation ends with an error count
+   * @event
+   */
+  public static readonly END = 'end';
+
+  /**
+   * Emitted when a validation fails, with the associated {@linkcode DocutilsError}
+   * @event
+   */
+  public static readonly FAILURE = 'fail';
+
+  /**
+   * Emitted when a validation succeeds
+   * @event
+   */
+  public static readonly SUCCESS = 'ok';
+
   /**
    * Current working directory. Defaults to `process.cwd()`
    * @todo This cannot yet be overridden by user
@@ -81,30 +128,6 @@ export class DocutilsValidator extends EventEmitter {
    * Path to `mkdocs.yml`.  If not provided, will be lazily resolved.
    */
   protected mkDocsYmlPath?: string;
-
-  /**
-   * Emitted when validation begins with a list of validation kinds to be performed
-   * @event
-   */
-  public static readonly BEGIN = 'begin';
-
-  /**
-   * Emitted when validation ends with an error count
-   * @event
-   */
-  public static readonly END = 'end';
-
-  /**
-   * Emitted when a validation fails, with the associated {@linkcode DocutilsError}
-   * @event
-   */
-  public static readonly FAILURE = 'fail';
-
-  /**
-   * Emitted when a validation succeeds
-   * @event
-   */
-  public static readonly SUCCESS = 'ok';
 
   private requirementsTxt: PipPackage[] | undefined;
 
@@ -391,31 +414,4 @@ export class DocutilsValidator extends EventEmitter {
     }
     this.ok('Python version OK');
   }
-}
-
-/**
- * Options for {@linkcode DocutilsValidator} constructor
- */
-
-export interface DocutilsValidatorOpts {
-  /**
-   * Current working directory
-   */
-  cwd?: string;
-  /**
-   * Path to `mkdocs.yml`
-   */
-  mkdocsYml?: string;
-  /**
-   * If `true`, run Python validation
-   */
-  python?: boolean;
-  /**
-   * Path to `python` executable
-   */
-  pythonPath?: string;
-  /**
-   * If `true`, run MkDocs validation
-   */
-  mkdocs?: boolean;
 }

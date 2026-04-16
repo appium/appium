@@ -73,6 +73,8 @@ export const argify: (obj: Record<string, string | number | boolean | undefined>
     _.flatten
   );
 
+export type SpawnBackgroundProcessOpts = Omit<SpawnOptions, 'stdio'>;
+
 /**
  * Spawns a long-running "background" child process.  This is expected to only return control to the
  * parent process in the case of a nonzero exit code from the child process.
@@ -96,8 +98,6 @@ export async function spawnBackgroundProcess(command: string, args: string[], op
       });
   });
 }
-
-export type SpawnBackgroundProcessOpts = Omit<SpawnOptions, 'stdio'>;
 
 /**
  * Wraps {@linkcode exec} with error handling that appends stderr to the thrown error message.

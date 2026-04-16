@@ -6,6 +6,9 @@ import {UniversalXMLPlugin} from './plugin';
 
 export default UniversalXMLPlugin;
 
+/**
+ * CLI entrypoint for transforming source XML.
+ */
 export async function main(): Promise<void> {
   const [, , xmlDataPath, platform, optsJson] = process.argv;
 
@@ -30,5 +33,5 @@ export async function main(): Promise<void> {
 }
 
 if (require.main === module) {
-  (async () => await main())();
+  void main();
 }

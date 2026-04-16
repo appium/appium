@@ -3,42 +3,6 @@ import _ from 'lodash';
 import {MockStore} from './mock-utils';
 
 /**
- * @template {Record<string,any>|{mocks: Record<string,any>}} Mocks
- * @deprecated Use `sinon.createSandbox()` directly with Mocha `beforeEach`/`afterEach` hooks instead.
- * @param {Mocks} mockDefs
- * @param {(sandboxStore: SandboxStore) => void} fn
- * @returns {() => void}
- */
-export function withSandbox(mockDefs, fn) {
-  // backwards-compat
-  if (!_.isEmpty(mockDefs.mocks)) {
-    mockDefs = mockDefs.mocks;
-  }
-  return () => {
-    /** @type {SandboxStore} */
-    const sbx = new SandboxStore();
-    // eslint-disable-next-line mocha/no-top-level-hooks
-    beforeEach(function beforeEach() {
-      sbx.createSandbox(mockDefs);
-    });
-    // eslint-disable-next-line mocha/no-top-level-hooks
-    afterEach(function afterEach() {
-      sbx.reset();
-    });
-    fn(sbx);
-  };
-}
-
-/**
- * Convenience function for calling {@linkcode SandboxStore.verify}.
- * @deprecated Call `sandbox.verify()` directly on your sinon sandbox instead.
- * @param {SandboxStore|MockStore} sbxOrMocks
- */
-export function verifySandbox(sbxOrMocks) {
-  sbxOrMocks.verify();
-}
-
-/**
  * @template {Record<string,any>} Mocks
  * @deprecated Use `sinon.createSandbox()` directly instead.
  */
@@ -81,6 +45,42 @@ export class SandboxStore {
     this.mocks?.reset();
     delete this.sandbox;
   }
+}
+
+/**
+ * @template {Record<string,any>|{mocks: Record<string,any>}} Mocks
+ * @deprecated Use `sinon.createSandbox()` directly with Mocha `beforeEach`/`afterEach` hooks instead.
+ * @param {Mocks} mockDefs
+ * @param {(sandboxStore: SandboxStore) => void} fn
+ * @returns {() => void}
+ */
+export function withSandbox(mockDefs, fn) {
+  // backwards-compat
+  if (!_.isEmpty(mockDefs.mocks)) {
+    mockDefs = mockDefs.mocks;
+  }
+  return () => {
+    /** @type {SandboxStore} */
+    const sbx = new SandboxStore();
+    // eslint-disable-next-line mocha/no-top-level-hooks
+    beforeEach(function beforeEach() {
+      sbx.createSandbox(mockDefs);
+    });
+    // eslint-disable-next-line mocha/no-top-level-hooks
+    afterEach(function afterEach() {
+      sbx.reset();
+    });
+    fn(sbx);
+  };
+}
+
+/**
+ * Convenience function for calling {@linkcode SandboxStore.verify}.
+ * @deprecated Call `sandbox.verify()` directly on your sinon sandbox instead.
+ * @param {SandboxStore|MockStore} sbxOrMocks
+ */
+export function verifySandbox(sbxOrMocks) {
+  sbxOrMocks.verify();
 }
 
 /**

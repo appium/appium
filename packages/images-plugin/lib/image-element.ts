@@ -84,6 +84,52 @@ export class ImageElement {
   }
 
   /**
+   * Handle various Appium commands that involve an image element
+   *
+   * @param driver - the driver to use for commands
+   * @param cmd - the name of the driver command
+   * @param imgEl - image element object
+   * @param args - Rest of arguments for executeScripts
+   *
+   * @returns the result of running a command
+   */
+  static async execute(driver: ExternalDriver, imgEl: ImageElement, cmd: string, ...args: any[]): Promise<any> {
+    switch (cmd) {
+      case 'click':
+        return await imgEl.click(driver);
+      case 'findElementFromElement':
+        return await imgEl.find(false, driver, ...args);
+      case 'findElementsFromElement':
+        return await imgEl.find(true, driver, ...args);
+      case 'elementDisplayed':
+        return true;
+      case 'getSize':
+        return imgEl.size;
+      case 'getLocation':
+      case 'getLocationInView':
+        return imgEl.location;
+      case 'getElementRect':
+        return imgEl.rect;
+      case 'getElementScreenshot':
+        return imgEl.originalImage;
+      case 'getAttribute':
+        // /session/:sessionId/element/:elementId/attribute/:name
+        // /session/:sessionId/element/:elementId/attribute/visual should return the visual data
+        // e.g. ["content-desc","appium-image-element-xxxxx","xxxxx"], ["visual","appium-image-element-xxxxx","xxxxx"]
+        switch (args[0]) {
+          case 'visual':
+            return imgEl.matchedImage;
+          case 'score':
+            return imgEl.score;
+          default:
+            throw new errors.NotYetImplementedError();
+        }
+      default:
+        throw new errors.NotYetImplementedError();
+    }
+  }
+
+  /**
    *
    * @returns this image element as a WebElement
    */
@@ -237,49 +283,4 @@ export class ImageElement {
     });
   }
 
-  /**
-   * Handle various Appium commands that involve an image element
-   *
-   * @param driver - the driver to use for commands
-   * @param cmd - the name of the driver command
-   * @param imgEl - image element object
-   * @param args - Rest of arguments for executeScripts
-   *
-   * @returns the result of running a command
-   */
-  static async execute(driver: ExternalDriver, imgEl: ImageElement, cmd: string, ...args: any[]): Promise<any> {
-    switch (cmd) {
-      case 'click':
-        return await imgEl.click(driver);
-      case 'findElementFromElement':
-        return await imgEl.find(false, driver, ...args);
-      case 'findElementsFromElement':
-        return await imgEl.find(true, driver, ...args);
-      case 'elementDisplayed':
-        return true;
-      case 'getSize':
-        return imgEl.size;
-      case 'getLocation':
-      case 'getLocationInView':
-        return imgEl.location;
-      case 'getElementRect':
-        return imgEl.rect;
-      case 'getElementScreenshot':
-        return imgEl.originalImage;
-      case 'getAttribute':
-        // /session/:sessionId/element/:elementId/attribute/:name
-        // /session/:sessionId/element/:elementId/attribute/visual should return the visual data
-        // e.g. ["content-desc","appium-image-element-xxxxx","xxxxx"], ["visual","appium-image-element-xxxxx","xxxxx"]
-        switch (args[0]) {
-          case 'visual':
-            return imgEl.matchedImage;
-          case 'score':
-            return imgEl.score;
-          default:
-            throw new errors.NotYetImplementedError();
-        }
-      default:
-        throw new errors.NotYetImplementedError();
-    }
-  }
 }

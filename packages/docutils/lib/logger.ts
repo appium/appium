@@ -47,6 +47,11 @@ rootLogger.pauseLogs();
  */
 const loggers: Map<string, WeakRef<typeof ConsolaInstance>> = new Map();
 
+/**
+ * Returns a tagged logger, creating and caching one if needed.
+ * @param tag Logger tag.
+ * @param parent Parent logger to derive from.
+ */
 export function getLogger(tag: string, parent = rootLogger) {
   if (loggers.has(tag)) {
     const logger = loggers.get(tag)?.deref();

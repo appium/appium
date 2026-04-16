@@ -1,43 +1,6 @@
 import sinon from 'sinon';
 
 /**
- * Creates a function which creates Mocha "before each" and "after each" hooks to
- * automatically mock (and un-mock) the mocks provided by `libs`.
- *
- * The values of `libs` are provided directly to {@linkcode SinonSandbox.mock}.
- *
- * _Synchronously_ calls `fn` with the {@linkcode MockStore} after hooks have been created, but not before they have been run.
- *
- * @deprecated Use `sinon.createSandbox()` directly with Mocha `beforeEach`/`afterEach` hooks instead.
- * @param {Record<string|symbol,any>} mockDefs
- * @param {(mocks: MockStore) => void} fn
- * @returns {() => void}
- */
-export function withMocks(mockDefs, fn) {
-  return () => {
-    const mocks = new MockStore();
-    // eslint-disable-next-line mocha/no-top-level-hooks
-    beforeEach(function withMocksBeforeEach() {
-      mocks.createMocks(mockDefs);
-    });
-    // eslint-disable-next-line mocha/no-top-level-hooks
-    afterEach(function withMocksAfterEach() {
-      mocks.reset();
-    });
-    fn(mocks);
-  };
-}
-
-/**
- * Convenience function for calling `mocks.verify()`.
- * @deprecated Call `sandbox.verify()` directly on your sinon sandbox instead.
- * @param {MockStore} mocks - Returned by callback from {@linkcode withMocks}
- */
-export function verifyMocks(mocks) {
-  mocks.verify();
-}
-
-/**
  * @template {Record<string,any>} Mocks
  * @extends {Mocks}
  * @deprecated Use `sinon.createSandbox()` and `sandbox.mock()` directly instead.
@@ -97,6 +60,43 @@ export class MockStore {
     this.sandbox?.restore();
     this.#mocks = undefined;
   }
+}
+
+/**
+ * Creates a function which creates Mocha "before each" and "after each" hooks to
+ * automatically mock (and un-mock) the mocks provided by `libs`.
+ *
+ * The values of `libs` are provided directly to {@linkcode SinonSandbox.mock}.
+ *
+ * _Synchronously_ calls `fn` with the {@linkcode MockStore} after hooks have been created, but not before they have been run.
+ *
+ * @deprecated Use `sinon.createSandbox()` directly with Mocha `beforeEach`/`afterEach` hooks instead.
+ * @param {Record<string|symbol,any>} mockDefs
+ * @param {(mocks: MockStore) => void} fn
+ * @returns {() => void}
+ */
+export function withMocks(mockDefs, fn) {
+  return () => {
+    const mocks = new MockStore();
+    // eslint-disable-next-line mocha/no-top-level-hooks
+    beforeEach(function withMocksBeforeEach() {
+      mocks.createMocks(mockDefs);
+    });
+    // eslint-disable-next-line mocha/no-top-level-hooks
+    afterEach(function withMocksAfterEach() {
+      mocks.reset();
+    });
+    fn(mocks);
+  };
+}
+
+/**
+ * Convenience function for calling `mocks.verify()`.
+ * @deprecated Call `sandbox.verify()` directly on your sinon sandbox instead.
+ * @param {MockStore} mocks - Returned by callback from {@linkcode withMocks}
+ */
+export function verifyMocks(mocks) {
+  mocks.verify();
 }
 
 /**

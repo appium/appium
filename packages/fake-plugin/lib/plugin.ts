@@ -13,11 +13,6 @@ import type {
 export type DriverLike = ExternalDriver & {fakeSessionData?: unknown};
 
 export class FakePlugin extends BasePlugin {
-  private readonly fakeThing: string;
-  private pluginThing: unknown = null;
-  protected _clockRunning: boolean = true;
-  private static _unexpectedData: string | null = null;
-
   static newMethodMap: MethodMap<FakePlugin> = {
     '/session/:sessionId/fake_data': {
       GET: {command: 'getFakeSessionData', neverProxy: true},
@@ -68,10 +63,15 @@ export class FakePlugin extends BasePlugin {
     },
   };
 
+  private static _unexpectedData: string | null = null;
+  protected _clockRunning: boolean = true;
+  private readonly fakeThing: string;
+  private pluginThing: unknown = null;
+
   constructor(name: string, cliArgs: Record<string, unknown> = {}) {
     super(name, cliArgs);
     this.fakeThing = 'PLUGIN_FAKE_THING';
-    this.startClock();
+    void this.startClock();
   }
 
   static fakeRoute(_req: Request, res: Response): void {

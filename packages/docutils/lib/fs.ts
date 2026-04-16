@@ -140,6 +140,8 @@ export const readJson = _.memoize(
     JSON.parse(await fs.readFile(filepath, 'utf8')),
 );
 
+type WhichFunction = (cmd: string, opts?: {nothrow: boolean}) => Promise<string | null>;
+
 /**
  * Writes contents to a file. Any JSON objects are stringified
  * @param filepath - Path to file
@@ -151,8 +153,6 @@ export function writeFileString(filepath: string, content: JsonValue) {
     encoding: 'utf8',
   });
 }
-
-type WhichFunction = (cmd: string, opts?: {nothrow: boolean}) => Promise<string | null>;
 
 /**
  * `which` with memoization

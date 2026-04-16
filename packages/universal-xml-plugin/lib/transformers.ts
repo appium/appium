@@ -1,11 +1,20 @@
 import {ATTR_PREFIX} from './source';
 import type {TransformMetadata} from './types';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function ios(_nodeObj: any): void {
+/**
+ * No-op transformer for iOS source XML.
+ * @param nodeObj Node object to transform.
+ */
+export function ios(nodeObj: any): void {
+  void nodeObj;
   // iOS transformer does nothing
 }
 
+/**
+ * Normalizes Android-specific attributes in source XML.
+ * @param nodeObj Node object to transform.
+ * @param metadata Transformation metadata.
+ */
 export function android(nodeObj: any, metadata: TransformMetadata): void {
   // strip android:id from front of id
   const resId = nodeObj[`${ATTR_PREFIX}resource-id`];

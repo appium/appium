@@ -26,54 +26,86 @@ import {argify, execWithErrorHandling, spawnBackgroundProcess, stopwatch} from '
 const log = getLogger('builder:deploy');
 
 /**
- * Runs `mike serve`
- * @param mikePath Path to `mike` executable
- * @param args Extra args to `mike build`
- * @param opts Extra options for `teen_process.Subprocess.start`
+ * Options for {@linkcode deploy}.
  */
-async function doServe(
-  mikePath: string,
-  args: string[] = [],
-  opts: SpawnBackgroundProcessOpts = {},
-) {
-  const finalArgs = ['serve', ...args];
-  log.debug('Executing %s via: %s %O', NAME_MIKE, mikePath, finalArgs);
-  return spawnBackgroundProcess(mikePath, finalArgs, opts);
-}
+export interface DeployOpts {
+  /**
+   * Path to `mike.yml`
+   */
+  mkdocsYml?: string;
 
-/**
- * Runs `mike build`
- * @param mikePath Path to `mike` executable
- * @param args Extra args to `mike build`
- * @param opts Extra options to `teen_process.exec`
- */
-async function doDeploy(mikePath: string, args: string[] = [], opts: TeenProcessExecOptions = {}) {
-  const finalArgs = ['deploy', ...args];
-  log.debug('Executing %s via: %s %O', NAME_MIKE, mikePath, finalArgs);
-  return await execWithErrorHandling(mikePath, finalArgs, opts);
-}
+  /**
+   * Current working directory
+   * @defaultValue `process.cwd()`
+   */
+  cwd?: string;
 
-/**
- * Derives a deployment version from `package.json`
- * @param packageJsonPath Path to `package.json` if known
- * @param cwd Current working directory
- */
-async function findDeployVersion(packageJsonPath?: string, cwd = process.cwd()): Promise<string> {
-  const {pkg} = await readPackageJson(packageJsonPath ? path.dirname(packageJsonPath) : cwd, true);
-  const version = pkg.version;
-  if (!version) {
-    throw new DocutilsError(
-      'No "version" field found in package.json; please add one or specify a version to deploy',
-    );
-  }
+  /**
+   * Path to `package.json`
+   *
+   * Used to find `mike.yml` if unspecified.
+   */
+  packageJson?: string;
 
-  // return MAJOR.MINOR as the version by default, if that is a thing we can extract, otherwise
-  // just return the version as is
-  const versionParts = version.split('.');
-  if (versionParts.length === 1) {
-    return version;
-  }
-  return `${versionParts[0]}.${versionParts[1]}`;
+  /**
+   * If `true`, run `mike serve` instead of `mike build`
+   */
+  serve?: boolean;
+
+  /**
+   * If `true`, push `branch` to `remote`
+   */
+  push?: boolean;
+  /**
+   * Branch to commit to
+   * @defaultValue gh-pages
+   */
+  branch?: string;
+  /**
+   * Remote to push to
+   * @defaultValue origin
+   */
+  remote?: string;
+  /**
+   * Subdirectory within `branch` to deploy to
+   */
+  deployPrefix?: string;
+  /**
+   * Commit message
+   */
+  message?: string;
+  /**
+   * Version (dir) to deploy build to
+   */
+  deployVersion?: string;
+  /**
+   * Alias for the build (e.g., `latest`); triggers alias update
+   */
+  alias?: string;
+  /**
+   * The approach for creating build alias (`symlink`, `redirect` or `copy`)
+   */
+  aliasType?: string;
+  /**
+   * Port to serve on
+   * @defaultValue 8000
+   */
+  port?: number;
+  /**
+   * Host to serve on
+   * @defaultValue localhost
+   */
+  host?: string;
+
+  /**
+   * Extra options for {@linkcode teen_process.exec}
+   */
+  execOpts?: TeenProcessExecOptions;
+
+  /**
+   * Extra options for {@linkcode spawnBackgroundProcess}
+   */
+  serveOpts?: SpawnBackgroundProcessOpts;
 }
 
 /**
@@ -165,84 +197,52 @@ export async function deploy({
 }
 
 /**
- * Options for {@linkcode deploy}.
+ * Runs `mike serve`
+ * @param mikePath Path to `mike` executable
+ * @param args Extra args to `mike build`
+ * @param opts Extra options for `teen_process.Subprocess.start`
  */
-export interface DeployOpts {
-  /**
-   * Path to `mike.yml`
-   */
-  mkdocsYml?: string;
+async function doServe(
+  mikePath: string,
+  args: string[] = [],
+  opts: SpawnBackgroundProcessOpts = {},
+) {
+  const finalArgs = ['serve', ...args];
+  log.debug('Executing %s via: %s %O', NAME_MIKE, mikePath, finalArgs);
+  return spawnBackgroundProcess(mikePath, finalArgs, opts);
+}
 
-  /**
-   * Current working directory
-   * @defaultValue `process.cwd()`
-   */
-  cwd?: string;
+/**
+ * Runs `mike build`
+ * @param mikePath Path to `mike` executable
+ * @param args Extra args to `mike build`
+ * @param opts Extra options to `teen_process.exec`
+ */
+async function doDeploy(mikePath: string, args: string[] = [], opts: TeenProcessExecOptions = {}) {
+  const finalArgs = ['deploy', ...args];
+  log.debug('Executing %s via: %s %O', NAME_MIKE, mikePath, finalArgs);
+  return await execWithErrorHandling(mikePath, finalArgs, opts);
+}
 
-  /**
-   * Path to `package.json`
-   *
-   * Used to find `mike.yml` if unspecified.
-   */
-  packageJson?: string;
+/**
+ * Derives a deployment version from `package.json`
+ * @param packageJsonPath Path to `package.json` if known
+ * @param cwd Current working directory
+ */
+async function findDeployVersion(packageJsonPath?: string, cwd = process.cwd()): Promise<string> {
+  const {pkg} = await readPackageJson(packageJsonPath ? path.dirname(packageJsonPath) : cwd, true);
+  const version = pkg.version;
+  if (!version) {
+    throw new DocutilsError(
+      'No "version" field found in package.json; please add one or specify a version to deploy',
+    );
+  }
 
-  /**
-   * If `true`, run `mike serve` instead of `mike build`
-   */
-  serve?: boolean;
-
-  /**
-   * If `true`, push `branch` to `remote`
-   */
-  push?: boolean;
-  /**
-   * Branch to commit to
-   * @defaultValue gh-pages
-   */
-  branch?: string;
-  /**
-   * Remote to push to
-   * @defaultValue origin
-   */
-  remote?: string;
-  /**
-   * Subdirectory within `branch` to deploy to
-   */
-  deployPrefix?: string;
-  /**
-   * Commit message
-   */
-  message?: string;
-  /**
-   * Version (dir) to deploy build to
-   */
-  deployVersion?: string;
-  /**
-   * Alias for the build (e.g., `latest`); triggers alias update
-   */
-  alias?: string;
-  /**
-   * The approach for creating build alias (`symlink`, `redirect` or `copy`)
-   */
-  aliasType?: string;
-  /**
-   * Port to serve on
-   * @defaultValue 8000
-   */
-  port?: number;
-  /**
-   * Host to serve on
-   * @defaultValue localhost
-   */
-  host?: string;
-
-  /**
-   * Extra options for {@linkcode teen_process.exec}
-   */
-  execOpts?: TeenProcessExecOptions;
-
-  /**
-   * Extra options for {@linkcode spawnBackgroundProcess}
-   */
-  serveOpts?: SpawnBackgroundProcessOpts;
+  // return MAJOR.MINOR as the version by default, if that is a thing we can extract, otherwise
+  // just return the version as is
+  const versionParts = version.split('.');
+  if (versionParts.length === 1) {
+    return version;
+  }
+  return `${versionParts[0]}.${versionParts[1]}`;
 }

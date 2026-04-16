@@ -102,21 +102,37 @@ export type ItemCtor<
 > = new (name: string, parent: V, encoding?: ItemEncoding) => Item<T>;
 
 /**
+ * Options for {@linkcode strongbox}
+ */
+export interface StrongboxOpts {
+  /**
+   * Override default container, which is chosen according to environment.
+   *
+   * This must be a writable path.
+   */
+  container: string;
+  /**
+   * Default {@linkcode Item} constructor.
+   *
+   * Unless a constructor is specified when calling {@linkcode Strongbox.createItem} or {@linkcode Strongbox.createItemWithValue}, this will be used.
+   * @defaultValue BaseItem
+   */
+  defaultItemCtor: ItemCtor<any>;
+  /**
+   * Extra subdir to append to the auto-generated file directory hierarchy.
+   *
+   * This is ignored if `container` is provided.
+   * @defaultValue 'strongbox'
+   */
+  suffix: string;
+}
+
+/**
  * Main entry point for use of this module
  *
  * Manages multiple {@linkcode Item}s.
  */
 export class Strongbox<Options extends StrongboxOpts = StrongboxOpts> implements AsyncIterable<Item<any>> {
-  /**
-   * Default {@linkcode ItemCtor} to use when creating new {@linkcode Item}s
-   */
-  protected defaultItemCtor: ItemCtor<any>;
-  /**
-   * Store of known {@linkcode Item}s
-   * @internal
-   */
-  protected items: Map<string, WeakRef<Item<any>>>;
-
   /**
    * Override the directory of this container.
    *
@@ -131,6 +147,16 @@ export class Strongbox<Options extends StrongboxOpts = StrongboxOpts> implements
    */
   public readonly id: string;
   public readonly suffix: string;
+
+  /**
+   * Default {@linkcode ItemCtor} to use when creating new {@linkcode Item}s
+   */
+  protected defaultItemCtor: ItemCtor<any>;
+  /**
+   * Store of known {@linkcode Item}s
+   * @internal
+   */
+  protected items: Map<string, WeakRef<Item<any>>>;
 
   /**
    * Slugifies the name & determines the directory
@@ -263,22 +289,6 @@ export class Strongbox<Options extends StrongboxOpts = StrongboxOpts> implements
   }
 
   /**
-   * Returns a live {@linkcode Item} or removes a stale {@linkcode WeakRef} from {@linkcode Strongbox.items}.
-   */
-  private getLiveItem(id: string): Item<any> | undefined {
-    const ref = this.items.get(id);
-    if (!ref) {
-      return undefined;
-    }
-    const item = ref.deref();
-    if (!item) {
-      this.items.delete(id);
-      return undefined;
-    }
-    return item;
-  }
-
-  /**
    * Lists persisted items by scanning the container directory (one regular file per item).
    *
    * Filenames are matched to items by path; if an item was already registered (e.g. via
@@ -352,6 +362,22 @@ export class Strongbox<Options extends StrongboxOpts = StrongboxOpts> implements
   }
 
   /**
+   * Returns a live {@linkcode Item} or removes a stale {@linkcode WeakRef} from {@linkcode Strongbox.items}.
+   */
+  private getLiveItem(id: string): Item<any> | undefined {
+    const ref = this.items.get(id);
+    if (!ref) {
+      return undefined;
+    }
+    const item = ref.deref();
+    if (!item) {
+      this.items.delete(id);
+      return undefined;
+    }
+    return item;
+  }
+
+  /**
    * Streams regular-file basenames from the container using {@linkcode opendir} (order is
    * filesystem-defined, not sorted).
    */
@@ -390,32 +416,6 @@ export class Strongbox<Options extends StrongboxOpts = StrongboxOpts> implements
     const id = BaseItem.toFilePath(this.container, basename);
     return this.getItem(id) ?? this.registerItemWithoutRead(basename);
   }
-}
-
-/**
- * Options for {@linkcode strongbox}
- */
-export interface StrongboxOpts {
-  /**
-   * Override default container, which is chosen according to environment.
-   *
-   * This must be a writable path.
-   */
-  container: string;
-  /**
-   * Default {@linkcode Item} constructor.
-   *
-   * Unless a constructor is specified when calling {@linkcode Strongbox.createItem} or {@linkcode Strongbox.createItemWithValue}, this will be used.
-   * @defaultValue BaseItem
-   */
-  defaultItemCtor: ItemCtor<any>;
-  /**
-   * Extra subdir to append to the auto-generated file directory hierarchy.
-   *
-   * This is ignored if `container` is provided.
-   * @defaultValue 'strongbox'
-   */
-  suffix: string;
 }
 
 /**

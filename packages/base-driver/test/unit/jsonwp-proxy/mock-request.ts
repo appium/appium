@@ -1,4 +1,30 @@
+export interface MockRequestOpts {
+  url: string;
+  method: string;
+  json?: unknown;
+}
+
+export interface MockRequestResponse {
+  status: number;
+  headers: Record<string, string>;
+  data: ResFixtureBody;
+}
+
 type ResFixtureBody = Record<string, unknown>;
+
+export async function request(opts: MockRequestOpts): Promise<MockRequestResponse> {
+  const {url, method} = opts;
+  if (/badurl$/.test(url)) {
+    throw new Error('noworky');
+  }
+
+  const [status, data] = resFixture(url, method);
+  return {
+    status,
+    headers: {'content-type': 'application/json; charset=utf-8'},
+    data,
+  };
+}
 
 function resFixture(url: string, method: string): [number, ResFixtureBody] {
   if (/\/status$/.test(url)) {
@@ -20,30 +46,4 @@ function resFixture(url: string, method: string): [number, ResFixtureBody] {
     return [100, {status: 0, value: {message: 'chrome not reachable'}}];
   }
   throw new Error("Can't handle url " + url);
-}
-
-export interface MockRequestOpts {
-  url: string;
-  method: string;
-  json?: unknown;
-}
-
-export interface MockRequestResponse {
-  status: number;
-  headers: Record<string, string>;
-  data: ResFixtureBody;
-}
-
-export async function request(opts: MockRequestOpts): Promise<MockRequestResponse> {
-  const {url, method} = opts;
-  if (/badurl$/.test(url)) {
-    throw new Error('noworky');
-  }
-
-  const [status, data] = resFixture(url, method);
-  return {
-    status,
-    headers: {'content-type': 'application/json; charset=utf-8'},
-    data,
-  };
 }

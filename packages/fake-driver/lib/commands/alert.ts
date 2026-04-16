@@ -15,11 +15,13 @@ export function assertAlert(this: FakeDriver): void {
   }
 }
 
+/** getAlertText. */
 export async function getAlertText(this: FakeDriver): Promise<string> {
   this.assertAlert();
   return this.appModel.alertText();
 }
 
+/** setAlertText. */
 export async function setAlertText(this: FakeDriver, text: string): Promise<void> {
   this.assertAlert();
   try {
@@ -29,6 +31,7 @@ export async function setAlertText(this: FakeDriver, text: string): Promise<void
   }
 }
 
+/** postAcceptAlert. */
 export async function postAcceptAlert(this: FakeDriver): Promise<void> {
   this.assertAlert();
   this.appModel.handleAlert();

@@ -13,12 +13,19 @@ import * as contextsCommands from './commands/contexts';
 import * as elementCommands from './commands/element';
 import * as findCommands from './commands/find';
 import * as generalCommands from './commands/general';
+import {NEW_BIDI_COMMANDS} from './command-maps/new-bidi-commands';
+import {NEW_METHOD_MAP} from './command-maps/new-method-map';
+import {EXECUTE_METHOD_MAP} from './command-maps/execute-method-map';
 
 export type {FakeDriverConstraints};
 export type {Orientation} from '@appium/types';
 
 /** Driver supporting a generic "fake thing" value (getFakeThing / setFakeThing). */
 export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraints> {
+  static newBidiCommands = NEW_BIDI_COMMANDS;
+  static newMethodMap = NEW_METHOD_MAP;
+  static executeMethodMap = EXECUTE_METHOD_MAP;
+
   readonly desiredCapConstraints = desiredCapConstraints;
 
   curContext: string;
@@ -31,9 +38,6 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
   maxElId: number;
   /** Map of element id (string) to FakeElement for this session. */
   elMap: Record<string, FakeElement>;
-  /** If set, Bidi connections are proxied to this URL instead of handling locally. */
-  private _bidiProxyUrl: string | null;
-  private _clockRunning = false;
   /** Current document URL; set by bidiNavigate, returned by getUrl. */
   url: string = '';
 
@@ -101,6 +105,9 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
   fakeAddition = generalCommands.fakeAddition;
   getUrl = generalCommands.getUrl;
   bidiNavigate = generalCommands.bidiNavigate;
+  /** If set, Bidi connections are proxied to this URL instead of handling locally. */
+  private _bidiProxyUrl: string | null;
+  private _clockRunning = false;
 
   constructor(opts: InitialOpts = {} as InitialOpts, shouldValidateCaps = true) {
     super(opts, shouldValidateCaps);
@@ -115,16 +122,37 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
     this._bidiProxyUrl = null;
   }
 
+  get bidiProxyUrl(): string | null {
+    return this._bidiProxyUrl;
+  }
+
+  override get driverData(): {isUnique: boolean} {
+    return {
+      isUnique: !!this.caps.uniqueApp,
+    };
+  }
+
+  static fakeRoute(_req: Request, res: Response): void {
+    res.send(JSON.stringify({fakedriver: 'fakeResponse'}));
+  }
+
+  static async updateServer(
+    expressApp: Express,
+    _httpServer: HttpServer,
+    cliArgs: Record<string, unknown>
+  ): Promise<void> {
+    expressApp.all('/fakedriver', FakeDriver.fakeRoute);
+    expressApp.all('/fakedriverCliArgs', (_req: Request, res: Response) => {
+      res.send(JSON.stringify(cliArgs));
+    });
+  }
+
   proxyActive(): boolean {
     return this._proxyActive;
   }
 
   canProxy(): boolean {
     return true;
-  }
-
-  get bidiProxyUrl(): string | null {
-    return this._bidiProxyUrl;
   }
 
   proxyReqRes(req: Request, res: Response): void {
@@ -170,7 +198,7 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
     this.caps = caps;
     await this.appModel.loadApp(caps.app);
     if (this.caps.runClock) {
-      this.startClock();
+      void this.startClock();
     }
     return [sessionId, caps];
   }
@@ -186,12 +214,6 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
 
   async getWindowHandles(): Promise<string[]> {
     return ['1'];
-  }
-
-  override get driverData(): {isUnique: boolean} {
-    return {
-      isUnique: !!this.caps.uniqueApp,
-    };
   }
 
   async getFakeThing(): Promise<Thing | null> {
@@ -245,77 +267,4 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
     this._clockRunning = false;
   }
 
-  static newBidiCommands = {
-    'appium:fake': {
-      getFakeThing: {
-        command: 'getFakeThing',
-      },
-      setFakeThing: {
-        command: 'setFakeThing',
-        params: {
-          required: ['thing'],
-        },
-      },
-      doSomeMath: {
-        command: 'doSomeMath',
-        params: {
-          required: ['num1', 'num2'],
-        },
-      },
-      doSomeMath2: {
-        command: 'doSomeMath2',
-        params: {
-          required: ['num1', 'num2'],
-        },
-      },
-    },
-  } as const;
-
-  static newMethodMap = {
-    '/session/:sessionId/fakedriver': {
-      GET: {command: 'getFakeThing'},
-      POST: {command: 'setFakeThing', payloadParams: {required: ['thing'] as const}},
-    },
-    '/session/:sessionId/fakedriverargs': {
-      GET: {command: 'getFakeDriverArgs'},
-    },
-    '/session/:sessionId/deprecated': {
-      POST: {command: 'callDeprecatedCommand', deprecated: true},
-    },
-    '/session/:sessionId/doubleclick': {
-      POST: {command: 'doubleClick'},
-    },
-  } as const;
-
-  static executeMethodMap = {
-    'fake: addition': {
-      command: 'fakeAddition',
-      params: {required: ['num1', 'num2'], optional: ['num3']},
-    },
-    'fake: getThing': {
-      command: 'getFakeThing',
-    },
-    'fake: setThing': {
-      command: 'setFakeThing',
-      params: {required: ['thing']},
-    },
-    'fake: getDeprecatedCommandsCalled': {
-      command: 'getDeprecatedCommandsCalled',
-    },
-  } as const;
-
-  static fakeRoute(req: Request, res: Response): void {
-    res.send(JSON.stringify({fakedriver: 'fakeResponse'}));
-  }
-
-  static async updateServer(
-    expressApp: Express,
-    httpServer: HttpServer,
-    cliArgs: Record<string, unknown>
-  ): Promise<void> {
-    expressApp.all('/fakedriver', FakeDriver.fakeRoute);
-    expressApp.all('/fakedriverCliArgs', (req: Request, res: Response) => {
-      res.send(JSON.stringify(cliArgs));
-    });
-  }
 }

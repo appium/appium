@@ -8,15 +8,6 @@ import type {
 
 export const DEFAULT_SECURE_REPLACER = '**SECURE**';
 
-/**
- * Type guard for log filter type
- * @param {object} value
- * @returns {value is LogFilterRegex}
- */
-function isLogFilterRegex(value: object): value is LogFilterRegex {
-  return 'pattern' in value;
-}
-
 export class SecureValuesPreprocessor {
   _rules: SecureValuePreprocessingRule[];
 
@@ -146,4 +137,13 @@ export class SecureValuesPreprocessor {
     }
     return result;
   }
+}
+
+/**
+ * Type guard for log filter type
+ * @param {object} value
+ * @returns {value is LogFilterRegex}
+ */
+function isLogFilterRegex(value: object): value is LogFilterRegex {
+  return 'pattern' in value;
 }

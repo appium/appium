@@ -239,10 +239,12 @@ export class Storage {
   }
 }
 
-function toTempName(origName: string): string {
-  return `${origName}${TMP_EXT}`;
-}
+export class StorageArgumentError extends Error {}
 
+/**
+ * Validates storage item options and returns the same object when valid.
+ * @param opts Candidate item options.
+ */
 export function requireValidItemOptions(opts: ItemOptions): ItemOptions {
   if (_.isEmpty(opts.name)) {
     throw new StorageArgumentError(`The provided file name '${opts.name}' must not be empty`);
@@ -265,4 +267,6 @@ export function requireValidItemOptions(opts: ItemOptions): ItemOptions {
   return opts;
 }
 
-export class StorageArgumentError extends Error {}
+function toTempName(origName: string): string {
+  return `${origName}${TMP_EXT}`;
+}

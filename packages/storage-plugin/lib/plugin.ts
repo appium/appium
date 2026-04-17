@@ -54,7 +54,7 @@ STORAGE_HANDLERS.addStorageItem = async function addStorageItem(
   const itemOptions = requireValidItemOptions(
     parseRequestArgs(req, ['name', 'sha1']) as ItemOptions
   );
-  const [stream, events] = prepareWebSockets(httpServer, itemOptions);
+  const [stream, events] = await prepareWebSockets(httpServer, itemOptions);
   return {
     ws: {
       stream,
@@ -101,7 +101,7 @@ function parseRequestArgs(req: Request, requiredKeys: string[]): Record<string, 
   return req.body;
 }
 
-function prepareWebSockets(httpServer: AppiumServer, itemOptions: ItemOptions): [string, string] {
+async function prepareWebSockets(httpServer: AppiumServer, itemOptions: ItemOptions): Promise<[string, string]> {
   const commonPathname = `${STORAGE_PREFIX}/add/${itemOptions.sha1}`;
   const streamPathname = `${commonPathname}/stream`;
   const eventsPathname = `${commonPathname}/events`;
@@ -118,8 +118,8 @@ function prepareWebSockets(httpServer: AppiumServer, itemOptions: ItemOptions): 
   const signaler = new EventEmitter();
   const streamDoneCallback = () => {
     log.debug(`Unmounting stream and events web sockets at ${commonPathname}`);
-    httpServer.removeWebSocketHandler(streamPathname);
-    httpServer.removeWebSocketHandler(eventsPathname);
+    void httpServer.removeWebSocketHandler(streamPathname);
+    void httpServer.removeWebSocketHandler(eventsPathname);
     setTimeout(() => {
       streamServer.close();
       eventsServer.close();
@@ -159,8 +159,10 @@ function prepareWebSockets(httpServer: AppiumServer, itemOptions: ItemOptions): 
   streamServer.on('error', (e) => {
     log.info(`The ${streamPathname} web socket server has notified about an error: ${e.message}`);
   });
-  httpServer.addWebSocketHandler(streamPathname, streamServer);
-  httpServer.addWebSocketHandler(eventsPathname, eventsServer);
+  await Promise.all([
+    httpServer.addWebSocketHandler(streamPathname, streamServer),
+    httpServer.addWebSocketHandler(eventsPathname, eventsServer),
+  ]);
 
   return [streamPathname, eventsPathname];
 }

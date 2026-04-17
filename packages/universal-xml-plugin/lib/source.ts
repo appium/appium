@@ -48,31 +48,6 @@ export async function transformSourceXml(
 }
 
 /**
- * Gets the universal name for a platform-specific name from a name map
- *
- * @param nameMap - The name mapping object
- * @param name - The platform-specific name
- * @param platform - The platform name
- * @returns The universal name or null if not found
- */
-function getUniversalName(
-  nameMap: UniversalNameMap | Readonly<UniversalNameMap>,
-  name: string,
-  platform: string
-): string | null {
-  for (const translatedName of Object.keys(nameMap)) {
-    const sourceNodes = nameMap[translatedName]?.[platform];
-    if (_.isArray(sourceNodes) && sourceNodes.includes(name)) {
-      return translatedName;
-    }
-    if (sourceNodes === name) {
-      return translatedName;
-    }
-  }
-  return null;
-}
-
-/**
  * Gets the universal node name for a platform-specific node name
  *
  * @param nodeName - The platform-specific node name
@@ -244,6 +219,31 @@ export function transformAttrs(nodeObj: any, attrs: string[], platform: string):
     }
   }
   return unknownAttrs;
+}
+
+/**
+ * Gets the universal name for a platform-specific name from a name map
+ *
+ * @param nameMap - The name mapping object
+ * @param name - The platform-specific name
+ * @param platform - The platform name
+ * @returns The universal name or null if not found
+ */
+function getUniversalName(
+  nameMap: UniversalNameMap | Readonly<UniversalNameMap>,
+  name: string,
+  platform: string
+): string | null {
+  for (const translatedName of Object.keys(nameMap)) {
+    const sourceNodes = nameMap[translatedName]?.[platform];
+    if (_.isArray(sourceNodes) && sourceNodes.includes(name)) {
+      return translatedName;
+    }
+    if (sourceNodes === name) {
+      return translatedName;
+    }
+  }
+  return null;
 }
 
 const singletonXmlBuilder = _.memoize(function makeXmlBuilder() {

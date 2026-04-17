@@ -14,15 +14,15 @@ import type {
   DriverCommand,
 } from '..';
 class TestPlugin implements Plugin {
-  public logger: AppiumLogger = {} as AppiumLogger;
-
-  constructor(public readonly name: string, public readonly cliArgs: StringRecord<unknown> = {}) {}
-
   static executeMethodMap = {
     'test: method': {
       command: 'testMethod',
     },
   } as const satisfies ExecuteMethodMap<TestPlugin>;
+
+  public logger: AppiumLogger = {} as AppiumLogger;
+
+  constructor(public readonly name: string, public readonly cliArgs: StringRecord<unknown> = {}) {}
 
   public getPageSource: DriverCommandToPluginCommand<
     ExternalDriver['getPageSource'],

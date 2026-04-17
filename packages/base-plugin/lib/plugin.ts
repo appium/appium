@@ -23,6 +23,10 @@ type BasePluginMapType = Plugin & Record<string, PluginCommand>;
  * `newMethodMap` and `ExecuteMethodMap<SubclassName>` for `executeMethodMap`.
  */
 export class BasePlugin extends ExtensionCore implements Plugin {
+  static newMethodMap: MethodMap<BasePluginMapType> = {};
+
+  static executeMethodMap: ExecuteMethodMap<BasePluginMapType> = {};
+
   name: string;
   cliArgs: Record<string, unknown>;
 
@@ -30,10 +34,6 @@ export class BasePlugin extends ExtensionCore implements Plugin {
    * @deprecated Use this.log instead of this.logger
    */
   declare logger: AppiumLogger;
-
-  static newMethodMap: MethodMap<BasePluginMapType> = {};
-
-  static executeMethodMap: ExecuteMethodMap<BasePluginMapType> = {};
 
   constructor(
     name: string,

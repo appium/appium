@@ -5,14 +5,14 @@ import {FakePlugin as _FakePlugin, type DriverLike} from '../../lib/plugin';
 const {expect} = chai;
 chai.use(chaiAsPromised);
 
+interface MockResponse {
+  send: (body: string) => void;
+}
+
 // Let's not use the actual FakePlugin because it runs a timer and we don't want to worry about
 // needing to clean up timers so that unit test processes can exit!
 class FakePlugin extends _FakePlugin {
   _clockRunning = false;
-}
-
-interface MockResponse {
-  send: (body: string) => void;
 }
 
 class FakeExpress {

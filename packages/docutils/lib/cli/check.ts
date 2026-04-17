@@ -11,19 +11,6 @@ import {getLogger} from '../logger';
 const log = getLogger('check');
 
 /**
- * Given a list of objects with `id` and `path` props, filters out the ones that do not exist
- * @param paths Filepaths
- * @returns Missing files
- */
-async function filterMissing(paths: MissingFileData[]): Promise<MissingFileData[]> {
-  const exists = await Promise.all(
-    paths.map(async ({id, path}) => ({id, path, exists: await fs.exists(path)}))
-  );
-  const results = _.reject(exists, 'exists');
-  return _.map(results, (result) => _.omit(result, 'exists'));
-}
-
-/**
  * Data structure describing a missing file; returned by {@linkcode filterMissing}
  */
 interface MissingFileData {
@@ -87,4 +74,17 @@ export async function checkMissingPaths<T extends Record<string, Options>>(
   }
 
   return true;
+}
+
+/**
+ * Given a list of objects with `id` and `path` props, filters out the ones that do not exist
+ * @param paths Filepaths
+ * @returns Missing files
+ */
+async function filterMissing(paths: MissingFileData[]): Promise<MissingFileData[]> {
+  const exists = await Promise.all(
+    paths.map(async ({id, path}) => ({id, path, exists: await fs.exists(path)}))
+  );
+  const results = _.reject(exists, 'exists');
+  return _.map(results, (result) => _.omit(result, 'exists'));
 }

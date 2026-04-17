@@ -106,7 +106,7 @@ export function driverUnitTestSuite<C extends Constraints>(
         );
         d.onUnexpectedShutdown(resolve);
       });
-      d.startUnexpectedShutdown(new Error('We crashed'));
+      void d.startUnexpectedShutdown(new Error('We crashed'));
       await expect(cmdPromise).to.be.rejectedWith(/We crashed/);
       await p;
     });
@@ -129,7 +129,7 @@ export function driverUnitTestSuite<C extends Constraints>(
         );
         d.onUnexpectedShutdown(resolve);
       });
-      d.startUnexpectedShutdown(new Error('We crashed'));
+      void d.startUnexpectedShutdown(new Error('We crashed'));
       await p;
       await expect(d.executeCommand('getSession')).to.be.rejectedWith(/shut down/);
     });
@@ -153,7 +153,7 @@ export function driverUnitTestSuite<C extends Constraints>(
         );
         d.onUnexpectedShutdown(resolve);
       });
-      d.startUnexpectedShutdown(new Error('We crashed'));
+      void d.startUnexpectedShutdown(new Error('We crashed'));
       await p;
 
       await expect(d.executeCommand('getSession')).to.be.rejectedWith(/shut down/);

@@ -19,26 +19,6 @@ const log = getLogger('init');
 const dryRunLog = getLogger('dry-run', log);
 
 /**
- * Creates a unified patch for display in "dry run" mode
- * @param filename - File name to use
- * @param oldData - Old data
- * @param newData - New Data
- * @returns Patch string
- */
-function makePatch<T extends JsonValue>(
-  filename: string,
-  oldData: T | string,
-  newData: T | string,
-  serializer: ScaffoldTaskSerializer<T> = stringifyJson
-) {
-  return createPatch(
-    filename,
-    _.isString(oldData) ? oldData : serializer(oldData),
-    _.isString(newData) ? newData : serializer(newData)
-  );
-}
-
-/**
  * Options for a task which are not the {@link ScaffoldTaskOptions base options}
  */
 export type TaskSpecificOpts<Opts extends ScaffoldTaskOptions> = Omit<
@@ -54,6 +34,84 @@ export type TaskSpecificOpts<Opts extends ScaffoldTaskOptions> = Omit<
 export type ScaffoldTask<Opts extends ScaffoldTaskOptions, T extends JsonObject> = (
   opts: Opts
 ) => Promise<ScaffoldTaskResult<T>>;
+
+/**
+ * Optional function which can be used to post-process the content of a file. Usually used to merge
+ * various options with existing content
+ */
+export type ScaffoldTaskTransformer<Opts extends ScaffoldTaskOptions, T extends JsonValue> = (
+  content: Readonly<T>,
+  opts: TaskSpecificOpts<Opts>,
+  pkg: Readonly<NormalizedPackageJson>
+) => T;
+
+/**
+ * A function which deserializes a string into a JS value.
+ */
+export type ScaffoldTaskDeserializer<T> = (content: string) => T;
+
+/**
+ * A function which serializes a JS value into a string.
+ */
+export type ScaffoldTaskSerializer<T> = (content: T) => string;
+
+/**
+ * Options for {@linkcode createScaffoldTask}
+ */
+export interface CreateScaffoldTaskOptions<Opts extends ScaffoldTaskOptions, T extends JsonValue> {
+  /**
+   * Transformer function
+   */
+  transform?: ScaffoldTaskTransformer<Opts, T>;
+  /**
+   * Deserializer function
+   */
+  deserialize?: ScaffoldTaskDeserializer<T>;
+  /**
+   * Serializer function
+   */
+  serialize?: ScaffoldTaskSerializer<T>;
+}
+
+/**
+ * Base options for all scaffold tasks
+ */
+export interface ScaffoldTaskOptions {
+  /**
+   * Current working directory
+   */
+  cwd?: string;
+  /**
+   * Destination file
+   */
+  dest?: string;
+  /**
+   * If `true` will not write files
+   */
+  dryRun?: boolean;
+  /**
+   * If `true` will overwrite fields in `typedoc.json`
+   */
+  overwrite?: boolean;
+  /**
+   * Path to `package.json`
+   */
+  packageJson?: string;
+}
+
+/**
+ * The return value of a {@linkcode ScaffoldTask}
+ */
+export interface ScaffoldTaskResult<T> {
+  /**
+   * The content of whatever it wrote or would write
+   */
+  content: T;
+  /**
+   * The filepath of whatever it wrote or would write
+   */
+  path: string;
+}
 
 /**
  * Factory for a {@linkcode ScaffoldTask}.
@@ -153,79 +211,21 @@ export function createScaffoldTask<Opts extends ScaffoldTaskOptions, T extends J
 }
 
 /**
- * Optional function which can be used to post-process the content of a file. Usually used to merge
- * various options with existing content
+ * Creates a unified patch for display in "dry run" mode
+ * @param filename - File name to use
+ * @param oldData - Old data
+ * @param newData - New Data
+ * @returns Patch string
  */
-export type ScaffoldTaskTransformer<Opts extends ScaffoldTaskOptions, T extends JsonValue> = (
-  content: Readonly<T>,
-  opts: TaskSpecificOpts<Opts>,
-  pkg: Readonly<NormalizedPackageJson>
-) => T;
-
-/**
- * A function which deserializes a string into a JS value.
- */
-export type ScaffoldTaskDeserializer<T> = (content: string) => T;
-
-/**
- * A function which serializes a JS value into a string.
- */
-export type ScaffoldTaskSerializer<T> = (content: T) => string;
-
-/**
- * Options for {@linkcode createScaffoldTask}
- */
-export interface CreateScaffoldTaskOptions<Opts extends ScaffoldTaskOptions, T extends JsonValue> {
-  /**
-   * Transformer function
-   */
-  transform?: ScaffoldTaskTransformer<Opts, T>;
-  /**
-   * Deserializer function
-   */
-  deserialize?: ScaffoldTaskDeserializer<T>;
-  /**
-   * Serializer function
-   */
-  serialize?: ScaffoldTaskSerializer<T>;
-}
-
-/**
- * Base options for all scaffold tasks
- */
-export interface ScaffoldTaskOptions {
-  /**
-   * Current working directory
-   */
-  cwd?: string;
-  /**
-   * Destination file
-   */
-  dest?: string;
-  /**
-   * If `true` will not write files
-   */
-  dryRun?: boolean;
-  /**
-   * If `true` will overwrite fields in `typedoc.json`
-   */
-  overwrite?: boolean;
-  /**
-   * Path to `package.json`
-   */
-  packageJson?: string;
-}
-
-/**
- * The return value of a {@linkcode ScaffoldTask}
- */
-export interface ScaffoldTaskResult<T> {
-  /**
-   * The content of whatever it wrote or would write
-   */
-  content: T;
-  /**
-   * The filepath of whatever it wrote or would write
-   */
-  path: string;
+function makePatch<T extends JsonValue>(
+  filename: string,
+  oldData: T | string,
+  newData: T | string,
+  serializer: ScaffoldTaskSerializer<T> = stringifyJson
+) {
+  return createPatch(
+    filename,
+    _.isString(oldData) ? oldData : serializer(oldData),
+    _.isString(newData) ? newData : serializer(newData)
+  );
 }

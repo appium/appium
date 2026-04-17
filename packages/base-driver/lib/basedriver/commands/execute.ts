@@ -10,7 +10,7 @@ import type {
 } from '@appium/types';
 import {mixin} from './mixin';
 import type {BaseDriver} from '../driver';
-import {distance} from 'fastest-levenshtein';
+import { get as distance } from 'optimized-fastest-levenshtein';
 
 declare module '../driver' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

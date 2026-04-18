@@ -53,6 +53,7 @@ export default defineConfig([
       'import-x/resolver-next': [
         createTypeScriptImportResolver({
           project: ['tsconfig.json', './packages/*/tsconfig.json'],
+          // TODO: remove this once we have single tsconfig with references
           noWarnOnMultipleProjects: true,
         })
       ],
@@ -215,7 +216,6 @@ export default defineConfig([
     languageOptions: {
       parserOptions: {
         projectService: true,
-        noWarnOnMultipleProjects: true,
       },
     },
     rules: {

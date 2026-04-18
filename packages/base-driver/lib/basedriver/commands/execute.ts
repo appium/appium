@@ -8,9 +8,9 @@ import type {
   IExecuteCommands,
   StringRecord,
 } from '@appium/types';
+import {rankLevenshteinCandidates} from '../../helpers/levenshtein-match';
 import {mixin} from './mixin';
 import type {BaseDriver} from '../driver';
-import {distance} from 'fastest-levenshtein';
 
 declare module '../driver' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -34,23 +34,11 @@ const ExecuteCommands: IExecuteCommands = {
           `The current driver version does not define any execute methods.`
         );
       }
-      const matchesMap: StringRecord<string[]> = availableScripts
-        .map((name) => [distance(script, name), name])
-        .reduce((acc, [key, value]) => {
-          if (key in acc) {
-            acc[key].push(value);
-          } else {
-            acc[key] = [value];
-          }
-          return acc;
-        }, {});
-      const sortedMatches = _.flatten(
-        _.keys(matchesMap)
-          .sort((a, b) => parseInt(a, 10) - parseInt(b, 10))
-          .map((x) => matchesMap[x])
-      );
+      const {sorted: sortedMatches, suggestion} = rankLevenshteinCandidates(script, availableScripts);
       throw new errors.UnsupportedOperationError(
-        `Unsupported execute method '${script}', did you mean '${sortedMatches[0]}'? ` +
+        (suggestion
+          ? `Unsupported execute method '${script}', did you mean '${suggestion}'? `
+          : `Unsupported execute method '${script}'. `) +
         `Make sure the installed ${Driver.name} is up-to-date. ` +
         `Execute methods available in the current driver version are: ` +
         sortedMatches.join(', ')

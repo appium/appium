@@ -20,6 +20,7 @@ import {
 import B from 'bluebird';
 import _ from 'lodash';
 import {fixCaps, isW3cCaps} from '../helpers/capabilities';
+import {getLevenshteinSuggestion} from '../helpers/levenshtein-match';
 import {calcSignature} from '../helpers/session';
 import {DELETE_SESSION_COMMAND, determineProtocol, errors} from '../protocol';
 import {processCapabilities, validateCaps} from './capabilities';
@@ -396,11 +397,17 @@ export class BaseDriver<
   }
 
   logExtraCaps(caps: Capabilities<C>) {
-    const extraCaps = _.difference(_.keys(caps), _.keys(this._desiredCapConstraints));
+    const knownCaps = _.keys(this._desiredCapConstraints);
+    const extraCaps = _.difference(_.keys(caps), knownCaps);
     if (extraCaps.length) {
       this.log.warn(`The following provided capabilities were not recognized by this driver:`);
       for (const cap of extraCaps) {
-        this.log.warn(`  ${cap}`);
+        const suggestion = getLevenshteinSuggestion(cap, knownCaps);
+        this.log.warn(
+          suggestion
+            ? `  ${cap} (did you mean '${suggestion}'?)`
+            : `  ${cap}`,
+        );
       }
     }
   }

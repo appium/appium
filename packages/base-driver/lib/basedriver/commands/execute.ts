@@ -8,7 +8,7 @@ import type {
   IExecuteCommands,
   StringRecord,
 } from '@appium/types';
-import {getLevenshteinSuggestion, sortByLevenshteinDistance} from '../../helpers/levenshtein-match';
+import {rankLevenshteinCandidates} from '../../helpers/levenshtein-match';
 import {mixin} from './mixin';
 import type {BaseDriver} from '../driver';
 
@@ -34,8 +34,7 @@ const ExecuteCommands: IExecuteCommands = {
           `The current driver version does not define any execute methods.`
         );
       }
-      const sortedMatches = sortByLevenshteinDistance(script, availableScripts);
-      const suggestion = getLevenshteinSuggestion(script, availableScripts);
+      const {sorted: sortedMatches, suggestion} = rankLevenshteinCandidates(script, availableScripts);
       throw new errors.UnsupportedOperationError(
         (suggestion
           ? `Unsupported execute method '${script}', did you mean '${suggestion}'? `

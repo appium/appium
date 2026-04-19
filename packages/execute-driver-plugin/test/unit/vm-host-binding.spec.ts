@@ -102,4 +102,123 @@ describe('wrapHostBindingForVmContext', function () {
       )
     ).to.throw();
   });
+
+  it('should block constructor chaining on nested methods (e.g. driver.deleteSession)', function () {
+    const host = Object.create(Object.prototype);
+    host.deleteSession = () => {};
+    const d = wrapHostBindingForVmContext(host);
+    expect(() =>
+      vm.runInNewContext(
+        `const m = d.deleteSession;
+         const func = m.constructor.constructor;
+         func('return typeof process')()`,
+        {d},
+        {timeout: 500}
+      )
+    ).to.throw();
+  });
+
+  it('should block host Function escape via both d.someMethod and O.getOwnPropertyDescriptor for a function-valued property', function () {
+    const host = Object.create(null);
+    function someMethod() {
+      return 1;
+    }
+    Object.defineProperty(host, 'someMethod', {
+      value: someMethod,
+      writable: true,
+      enumerable: true,
+      configurable: true,
+    });
+    const d = wrapHostBindingForVmContext(host);
+
+    expect(() =>
+      vm.runInNewContext(
+        `const m = d.someMethod;
+         const func = m.constructor.constructor;
+         func('return typeof process')();`,
+        {d},
+        {timeout: 500}
+      )
+    ).to.throw();
+
+    expect(() =>
+      vm.runInNewContext(
+        `const desc = Object.getOwnPropertyDescriptor(d, 'someMethod');
+         if (!desc || !('value' in desc)) { throw new Error('expected data descriptor'); }
+         const v = desc.value;
+         const func = v.constructor.constructor;
+         func('return typeof process')();`,
+        {d},
+        {timeout: 500}
+      )
+    ).to.throw();
+  });
+
+  it('should block constructor chaining on .bind() results', function () {
+    const host = Object.create(Object.prototype);
+    host.fn = (x: unknown) => x;
+    const d = wrapHostBindingForVmContext(host);
+    expect(() =>
+      vm.runInNewContext(
+        `const b = d.fn.bind(d);
+         const func = b.constructor.constructor;
+         func('return typeof process')()`,
+        {d},
+        {timeout: 500}
+      )
+    ).to.throw();
+  });
+
+  it('should wrap descriptor values from getOwnPropertyDescriptor', function () {
+    const host = Object.create(null);
+    Object.defineProperty(host, 'm', {
+      value: () => {},
+      writable: true,
+      enumerable: true,
+      configurable: true,
+    });
+    const d = wrapHostBindingForVmContext(host);
+    expect(() =>
+      vm.runInNewContext(
+        `const desc = Object.getOwnPropertyDescriptor(d, 'm');
+         const func = desc.value.constructor.constructor;
+         func('return typeof process')()`,
+        {d},
+        {timeout: 500}
+      )
+    ).to.throw();
+  });
+
+  it('should preserve identity for repeated reads of the same nested method', function () {
+    const host = Object.create(Object.prototype);
+    host.m = () => {};
+    const d = wrapHostBindingForVmContext(host);
+    const same = vm.runInNewContext(`d.m === d.m`, {d}, {timeout: 500});
+    expect(same).to.equal(true);
+  });
+
+  it('should still await Promise results from wrapped methods', async function () {
+    const host = Object.create(Object.prototype);
+    host.p = () => Promise.resolve(7);
+    const d = wrapHostBindingForVmContext(host);
+    const v = vm.runInNewContext(`(async () => await d.p())()`, {d}, {timeout: 500}) as Promise<number>;
+    expect(await v).to.equal(7);
+  });
+
+  it('should block constructor chaining on values fulfilled from wrapped Promises', async function () {
+    const host = Object.create(Object.prototype);
+    host.p = () => Promise.resolve({x: 1});
+    const d = wrapHostBindingForVmContext(host);
+    await expect(
+      vm.runInNewContext(
+        `(async () => {
+          const v = await d.p();
+          const func = v.constructor.constructor;
+          func('return typeof process')();
+        })()`,
+        {d},
+        {timeout: 500}
+      )
+    ).to.eventually.be.rejected;
+  });
 });

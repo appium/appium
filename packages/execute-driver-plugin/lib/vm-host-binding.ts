@@ -5,6 +5,9 @@
  */
 const SAFE_LOOKUP_TARGET: object = Object.freeze(Object.create(null));
 
+/** Host-realm function passed into the VM (e.g. timers, console methods). */
+type HostCallable = (...args: unknown[]) => unknown;
+
 /**
  * Wraps a host-realm object or function before passing it to `vm.runInNewContext`.
  *
@@ -18,7 +21,7 @@ const SAFE_LOOKUP_TARGET: object = Object.freeze(Object.create(null));
  * @param hostValue - Any host object or function placed on the VM context global
  * @returns Proxied value safe to expose as a `vm` context global
  */
-export function wrapHostBindingForVmContext<T extends object | Function>(hostValue: T): T {
+export function wrapHostBindingForVmContext<T extends object | HostCallable>(hostValue: T): T {
   return new Proxy(hostValue, {
     get(target, prop, receiver) {
       if (prop === 'constructor' || prop === '__proto__') {

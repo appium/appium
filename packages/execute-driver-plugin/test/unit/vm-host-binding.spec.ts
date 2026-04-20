@@ -197,6 +197,62 @@ describe('wrapHostBindingForVmContext', function () {
     expect(same).to.equal(true);
   });
 
+  it('should unwrap proxied arguments before invoking host functions', function () {
+    const original = {id: 'host-object'};
+    const host = {
+      provide() {
+        return original;
+      },
+      consume(arg: unknown) {
+        return arg === original;
+      },
+    };
+    const d = wrapHostBindingForVmContext(host);
+    const roundTripsAsOriginal = vm.runInNewContext(
+      `const value = d.provide();
+       d.consume(value);`,
+      {d},
+      {timeout: 500}
+    );
+    expect(roundTripsAsOriginal).to.equal(true);
+  });
+
+  it('should unwrap proxied arguments before invoking host constructors via new', function () {
+    const original = {id: 'ctor-arg'};
+    const host = {
+      Box: class Box {
+        public arg: unknown;
+        constructor(arg: unknown) {
+          this.arg = arg;
+        }
+      },
+      provide() {
+        return original;
+      },
+      isOriginal(value: unknown) {
+        return value === original;
+      },
+    };
+    const d = wrapHostBindingForVmContext(host);
+    const ctorArgRoundTripsAsOriginal = vm.runInNewContext(
+      `const value = d.provide();
+       const box = new d.Box(value);
+       d.isOriginal(box.arg);`,
+      {d},
+      {timeout: 500}
+    );
+    expect(ctorArgRoundTripsAsOriginal).to.equal(true);
+  });
+
+  it('should not double-wrap function proxies', function () {
+    const fn = function hostFn() {
+      return 1;
+    };
+    const wrapped = wrapHostBindingForVmContext(fn);
+    const wrappedAgain = wrapHostBindingForVmContext(wrapped);
+    expect(wrappedAgain).to.equal(wrapped);
+  });
+
   it('should still await Promise results from wrapped methods', async function () {
     const host = Object.create(Object.prototype);
     host.p = () => Promise.resolve(7);

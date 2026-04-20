@@ -55,12 +55,14 @@ const SAFE_LOOKUP_TARGET: object = Object.freeze(Object.create(null));
  * and passed into the VM alongside plain objects.
  */
 type HostCallable = (...args: unknown[]) => unknown;
+type HostTarget = object | HostCallable;
+type HostConstructor = new (...args: unknown[]) => object;
 
 /** Host target → single deep proxy (stable identity, cycle-safe). */
-const targetToProxy = new WeakMap<object | HostCallable, object>();
+const targetToProxy = new WeakMap<HostTarget, object>();
 
 /** Deep proxy → underlying host target (unwrap `this` / receivers / defineProperty). */
-const proxyToTarget = new WeakMap<object, object | HostCallable>();
+const proxyToTarget = new WeakMap<object, HostTarget>();
 
 /**
  * Host `Promise` → null-prototype thenable facade (one per promise; then wrapped by `wrapDeep`).
@@ -77,15 +79,16 @@ const promiseToThenableHost = new WeakMap<Promise<unknown>, object>();
  * @param hostValue - Root binding injected into the VM (e.g. WebdriverIO `driver`, `console`).
  * @returns A proxy whose transitive property/call/descriptor surfaces hide host `Function` leaks.
  */
-export function wrapHostBindingForVmContext<T extends object | HostCallable>(hostValue: T): T {
+export function wrapHostBindingForVmContext<T extends HostTarget>(hostValue: T): T {
   return wrapDeep(hostValue);
 }
 
 /**
  * @returns Whether `value` is a proxy created by this module (`proxyToTarget` has an entry).
+ * Includes both object proxies and function proxies.
  */
-function isOurProxy(value: unknown): value is object {
-  return value !== null && typeof value === 'object' && proxyToTarget.has(value);
+function isOurProxy(value: unknown): value is HostTarget {
+  return value !== null && (typeof value === 'object' || typeof value === 'function') && proxyToTarget.has(value);
 }
 
 /**
@@ -162,20 +165,20 @@ function wrapPromiseAsThenable(p: Promise<unknown>): unknown {
  * @param d - Descriptor from `Reflect.getOwnPropertyDescriptor` on the host target.
  * @returns A new descriptor safe to return from the proxy `getOwnPropertyDescriptor` trap.
  */
-function mapDescriptorForSandbox(d: PropertyDescriptor): PropertyDescriptor {
-  if ('value' in d) {
+function mapDescriptorForSandbox(descriptor: PropertyDescriptor): PropertyDescriptor {
+  if ('value' in descriptor) {
     return {
-      configurable: d.configurable,
-      enumerable: d.enumerable,
-      writable: d.writable,
-      value: wrapIfNeeded(d.value),
+      configurable: descriptor.configurable,
+      enumerable: descriptor.enumerable,
+      writable: descriptor.writable,
+      value: wrapIfNeeded(descriptor.value),
     };
   }
   return {
-    configurable: d.configurable,
-    enumerable: d.enumerable,
-    get: d.get ? (wrapIfNeeded(d.get) as () => unknown) : undefined,
-    set: d.set ? (wrapIfNeeded(d.set) as (v: unknown) => void) : undefined,
+    configurable: descriptor.configurable,
+    enumerable: descriptor.enumerable,
+    get: descriptor.get ? (wrapIfNeeded(descriptor.get) as () => unknown) : undefined,
+    set: descriptor.set ? (wrapIfNeeded(descriptor.set) as (v: unknown) => void) : undefined,
   };
 }
 
@@ -217,41 +220,70 @@ function reflectReceiver(receiver: unknown): unknown {
 }
 
 /**
+ * Unwraps constructor references passed to `Reflect.construct`.
+ *
+ * @param newTarget - Constructor received by the proxy `construct` trap.
+ * @returns Host constructor with this module's proxy removed when applicable.
+ */
+function unwrapConstructor(newTarget: HostCallable): HostConstructor {
+  return unwrapIfProxy(newTarget) as unknown as HostConstructor;
+}
+
+/**
+ * Unwraps each argument before forwarding calls into host functions so VM-facing proxies
+ * round-trip back to their original host targets.
+ *
+ * @param argList - Arguments received by the proxy `apply` trap.
+ * @returns Arguments with this module's proxies replaced by underlying host targets.
+ */
+function unwrapArgList(argList: readonly unknown[]): unknown[] {
+  return argList.map((arg) => unwrapIfProxy(arg));
+}
+
+/**
  * Builds the shared `ProxyHandler` used for every deep wrap (objects and functions).
  *
  * Traps implement the file-level strategy: hide prototype edges, wrap outgoing values, unwrap
  * incoming `this` / descriptors where required by invariants.
  */
-function createDeepHandler(): ProxyHandler<object | HostCallable> {
+function createDeepHandler(): ProxyHandler<HostTarget> {
   return {
-    apply(fnTarget, thisArg, argList) {
+    apply(proxyTarget: HostTarget, thisArg: unknown, argArray: unknown[]): unknown {
+      const hostFn = proxyTarget as HostCallable;
       const hostThis = unwrapIfProxy(thisArg);
-      const result = Reflect.apply(fnTarget as HostCallable, hostThis as object, argList);
+      const hostArgs = unwrapArgList(argArray);
+      const result = Reflect.apply(hostFn, hostThis, hostArgs);
       return wrapIfNeeded(result);
     },
 
-    construct(fnTarget, argList, newTarget): object {
-      const result = Reflect.construct(
-        fnTarget as new (...args: unknown[]) => object,
-        argList,
-        newTarget
-      );
+    construct(proxyTarget: HostTarget, argArray: unknown[], newTarget: unknown): object {
+      const hostCtor = proxyTarget as HostConstructor;
+      const hostArgs = unwrapArgList(argArray);
+      const hostNewTarget = unwrapConstructor(newTarget as HostCallable);
+      const result = Reflect.construct(hostCtor, hostArgs, hostNewTarget);
       return wrapIfNeeded(result) as object;
     },
 
-    defineProperty(t, prop, descriptor) {
-      return Reflect.defineProperty(t, prop, mapDescriptorForHost(descriptor));
+    defineProperty(
+      target: HostTarget,
+      prop: string | symbol,
+      descriptor: PropertyDescriptor
+    ): boolean {
+      return Reflect.defineProperty(target, prop, mapDescriptorForHost(descriptor));
     },
 
-    get(t, prop, receiver) {
+    get(target: HostTarget, prop: string | symbol, receiver: unknown): unknown {
       if (isBlockedPrototypeKey(prop)) {
         return SAFE_LOOKUP_TARGET;
       }
-      const value = Reflect.get(t, prop, reflectReceiver(receiver) as object);
+      const value = Reflect.get(target, prop, reflectReceiver(receiver));
       return wrapIfNeeded(value);
     },
 
-    getOwnPropertyDescriptor(t, prop) {
+    getOwnPropertyDescriptor(
+      target: HostTarget,
+      prop: string | symbol
+    ): PropertyDescriptor | undefined {
       if (isBlockedPrototypeKey(prop)) {
         return {
           configurable: true,
@@ -260,30 +292,33 @@ function createDeepHandler(): ProxyHandler<object | HostCallable> {
           writable: false,
         };
       }
-      const d = Reflect.getOwnPropertyDescriptor(t, prop);
-      if (!d) {
+      const descriptor = Reflect.getOwnPropertyDescriptor(target, prop);
+      if (!descriptor) {
         return undefined;
       }
       // Non-configurable properties must keep a descriptor compatible with the target
       // (SameValue rules for getters / values); wrapping would violate Proxy invariants.
-      if (!d.configurable) {
-        return d;
+      if (!descriptor.configurable) {
+        return descriptor;
       }
-      return mapDescriptorForSandbox(d);
+      return mapDescriptorForSandbox(descriptor);
     },
 
-    getPrototypeOf() {
+    getPrototypeOf(target: HostTarget): object | null {
+      void target;
       return SAFE_LOOKUP_TARGET;
     },
 
-    has(t, prop) {
+    has(target: HostTarget, prop: string | symbol): boolean {
       if (isBlockedPrototypeKey(prop)) {
         return false;
       }
-      return Reflect.has(t, prop);
+      return Reflect.has(target, prop);
     },
 
-    setPrototypeOf() {
+    setPrototypeOf(target: HostTarget, prototype: object | null): boolean {
+      void target;
+      void prototype;
       return false;
     },
   };
@@ -296,7 +331,7 @@ function createDeepHandler(): ProxyHandler<object | HostCallable> {
  * @param hostValue - Raw host reference (not a primitive).
  * @returns Cached or new proxy for `hostValue`.
  */
-function wrapDeep<T extends object | HostCallable>(hostValue: T): T {
+function wrapDeep<T extends HostTarget>(hostValue: T): T {
   if (typeof hostValue !== 'object' && typeof hostValue !== 'function') {
     return hostValue;
   }
@@ -331,5 +366,5 @@ function wrapIfNeeded(value: unknown): unknown {
   if (isNativePromise(value as object)) {
     return wrapPromiseAsThenable(value as Promise<unknown>);
   }
-  return wrapDeep(value as object);
+  return wrapDeep(value as HostTarget);
 }

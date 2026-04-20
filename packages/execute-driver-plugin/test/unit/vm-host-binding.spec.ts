@@ -1,6 +1,9 @@
 import vm from 'node:vm';
-import {expect} from 'chai';
+import {expect, use} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import {wrapHostBindingForVmContext} from '../../lib/vm-host-binding';
+
+use(chaiAsPromised);
 
 describe('wrapHostBindingForVmContext', function () {
   const hostishDriver = Object.create(Object.prototype);
@@ -181,6 +184,9 @@ describe('wrapHostBindingForVmContext', function () {
     expect(() =>
       vm.runInNewContext(
         `const desc = Object.getOwnPropertyDescriptor(d, 'm');
+         if (!desc || !('value' in desc)) {
+           throw new Error('expected data descriptor with value from getOwnPropertyDescriptor');
+         }
          const func = desc.value.constructor.constructor;
          func('return typeof process')()`,
         {d},

@@ -62,7 +62,7 @@
     "morgan": "1.10.1",
     "path-to-regexp": "8.4.2",
     "serve-favicon": "2.5.1",
-    "type-fest": "5.5.0"
+    "type-fest": "5.6.0"
   },
   "optionalDependencies": {
     "spdy": "4.0.2"

@@ -64,7 +64,6 @@ The current committers are (along with their primary areas(s) of ownership or ma
 * [@valfirst](https://github.com/valfirst) - Java client
 * [@navin772](https://github.com/navin772) - appium-ios-remotexpc and appium-mcp
 
-
 See [Emeritus Contributors](#emeritus-contributors) below for a list of people who formerly made
 significant contributions to the project but are no longer actively committing.
 

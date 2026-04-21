@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "@xmldom/xmldom": "0.9.9",
-    "fast-xml-parser": "5.5.11",
+    "fast-xml-parser": "5.7.1",
     "lodash": "4.18.1",
     "xpath": "0.0.34"
   },

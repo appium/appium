@@ -50,6 +50,7 @@ The current committers are (along with their primary areas(s) of ownership or ma
 
 * [@dan-maor](https://github.com/Dan-Maor) - XCUITest driver and iOS internals
 * [@dor-bl](https://github.com/Dor-bl) - DotNet client
+* [@Delta456](https://github.com/Delta456) - appium-ios-remotexpc and appium-mcp
 * [@eglitise](https://github.com/eglitise) - Appium server, Inspector
 * [@jlipps](https://github.com/jlipps) - Appium server, Inspector
 * [@kazucocoa](https://github.com/KazuCocoa) - all Appium projects
@@ -61,6 +62,8 @@ The current committers are (along with their primary areas(s) of ownership or ma
 * [@srinivasantarget](https://github.com/SrinivasanTarget) - Java client
 * [@tomriddly](https://github.com/tomriddly) - appium-ios-device
 * [@valfirst](https://github.com/valfirst) - Java client
+* [@navin772](https://github.com/navin772) - appium-ios-remotexpc and appium-mcp
+
 
 See [Emeritus Contributors](#emeritus-contributors) below for a list of people who formerly made
 significant contributions to the project but are no longer actively committing.

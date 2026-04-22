@@ -557,9 +557,17 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
    */
   pluginsForSession(sessionId: string | null = null): Plugin[] {
     if (sessionId) {
+      const existingPlugins = this.sessionPlugins[sessionId];
+      if (existingPlugins) {
+        return existingPlugins;
+      }
       const driver = this.sessions[sessionId];
-      return this.sessionPlugins[sessionId]
-        ?? (driver ? this.createPluginInstances(generateDriverLogPrefix(driver)) : []);
+      if (!driver) {
+        return [];
+      }
+      return (this.sessionPlugins[sessionId] = this.createPluginInstances(
+        generateDriverLogPrefix(driver),
+      ));
     }
 
     if (_.isEmpty(this.sessionlessPlugins)) {

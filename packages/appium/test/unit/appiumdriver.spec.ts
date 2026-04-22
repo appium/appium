@@ -555,5 +555,21 @@ describe('AppiumDriver', function () {
         });
       });
     });
+
+    describe('pluginsForSession', function () {
+      it('should cache plugin instances per existing session', function () {
+        const appium = new AppiumDriver({} as any);
+        const fakeDriver = new FakeDriver();
+        (appium as any).sessions[SESSION_ID] = fakeDriver;
+
+        const createPluginInstancesSpy = sandbox.spy(appium, 'createPluginInstances');
+        const firstPlugins = appium.pluginsForSession(SESSION_ID);
+        const secondPlugins = appium.pluginsForSession(SESSION_ID);
+
+        expect(firstPlugins).to.equal(secondPlugins);
+        expect(appium.sessionPlugins[SESSION_ID]).to.equal(firstPlugins);
+        expect(createPluginInstancesSpy.calledOnce).to.be.true;
+      });
+    });
   });
 });

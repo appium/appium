@@ -29,7 +29,7 @@
       
       
       <link rel="icon" href="../../assets/images/appium-logo.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.6">
     
     
       
@@ -4058,7 +4058,7 @@ project which depends upon <code>appium</code>. Other filenames and locations ar
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="p">}</span>
 </span></code></pre></div>
 <p>When an Appium server is started via the <code>appium</code> executable, the <code>init</code> function in <code>lib/main.js</code>
-will call into <code>lib/config-file.js</code> to load and/or search for a configuration file and in
+will call into <code>lib/bootstrap/config-file.js</code> to load and/or search for a configuration file and in
 <code>package.json</code>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -4087,7 +4087,7 @@ functionality (e.g., the <code>plugin</code> or <code>driver</code> subcommands)
 especially reviled by @jlipps, and c) <code>ajv</code> accepts objects, not JSON files.</p>
 <p>It is more straightforward to explain how config files are validated, so we'll start there.</p>
 <h3 id="validating-config-files">Validating Config Files<a class="headerlink" href="#validating-config-files" title="Permanent link">&para;</a></h3>
-<p>When a config file is found (<code>lib/config-file.js</code>), it will call the <code>validate</code> function exported
+<p>When a config file is found (<code>lib/bootstrap/config-file.js</code>), it will call the <code>validate</code> function exported
 from <code>lib/schema/schema.js</code> with the contents of the config file. In turn, this asks <code>ajv</code> to
 validate the data against the schema that Appium has provided it.</p>
 <p>If the config file is invalid, errors will be generated to be displayed to the user. Finally, the
@@ -4447,7 +4447,7 @@ schema:</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="April 9, 2026 18:57:40 UTC"><span class="timeago" datetime="2026-04-09T18:57:40+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="April 9, 2026 18:57:40 UTC">2026-04-09</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="April 23, 2026 21:25:07 UTC"><span class="timeago" datetime="2026-04-23T21:25:07+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="April 23, 2026 21:25:07 UTC">2026-04-23</span>
   </span>
 
     

@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.1.1](https://github.com/appium/appium/compare/@appium/support@7.1.0...@appium/support@7.1.1) (2026-04-23)
+
+
+### Bug Fixes
+
+* **support:** lint warnings ([#22175](https://github.com/appium/appium/issues/22175)) ([4da7da0](https://github.com/appium/appium/commit/4da7da0a1458a513fa1f765a38b821a2d5b36302))
+
+
+
 ## [7.1.0](https://github.com/appium/appium/compare/@appium/support@7.0.6...@appium/support@7.1.0) (2026-04-09)
 
 

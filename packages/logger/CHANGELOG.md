@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.7](https://github.com/appium/appium/compare/@appium/logger@2.0.6...@appium/logger@2.0.7) (2026-04-23)
+
+
+### Bug Fixes
+
+* **logger:** linter errors ([#22182](https://github.com/appium/appium/issues/22182)) ([5484e9a](https://github.com/appium/appium/commit/5484e9a4ff9eccd6bd1bb5d22d6297ad1b343a3c))
+
+
+
 ## [2.0.6](https://github.com/appium/appium/compare/@appium/logger@2.0.5...@appium/logger@2.0.6) (2026-04-09)
 
 **Note:** Version bump only for package @appium/logger

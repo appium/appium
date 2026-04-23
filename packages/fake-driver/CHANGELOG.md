@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.1.2](https://github.com/appium/appium/compare/@appium/fake-driver@6.1.1...@appium/fake-driver@6.1.2) (2026-04-23)
+
+
+### Bug Fixes
+
+* **fake-driver:** linter warnings ([#22177](https://github.com/appium/appium/issues/22177)) ([62c7132](https://github.com/appium/appium/commit/62c7132476958bf617506430aca63dd27740bc87))
+
+
+
 ## [6.1.1](https://github.com/appium/appium/compare/@appium/fake-driver@6.1.0...@appium/fake-driver@6.1.1) (2026-04-09)
 
 **Note:** Version bump only for package @appium/fake-driver

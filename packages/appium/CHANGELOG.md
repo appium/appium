@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.3.1](https://github.com/appium/appium/compare/appium@3.3.0...appium@3.3.1) (2026-04-23)
+
+
+### Bug Fixes
+
+* **appium:** lint warnings ([#22171](https://github.com/appium/appium/issues/22171)) ([8e68b3e](https://github.com/appium/appium/commit/8e68b3e2c9c7b6238e0ffc241adbd4d9991ead7a))
+* **appium:** plugins caching per session ([#22203](https://github.com/appium/appium/issues/22203)) ([622f199](https://github.com/appium/appium/commit/622f1999d72d2f7ebc7cc279879ea0fcefe29a54))
+
+
+
 ## [3.3.0](https://github.com/appium/appium/compare/appium@3.2.2...appium@3.3.0) (2026-04-09)
 
 

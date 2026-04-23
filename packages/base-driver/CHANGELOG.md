@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.4.0](https://github.com/appium/appium/compare/@appium/base-driver@10.3.0...@appium/base-driver@10.4.0) (2026-04-23)
+
+
+### Features
+
+* **base-driver:** Show known capability name matches for typos ([#22193](https://github.com/appium/appium/issues/22193)) ([4c4e8d8](https://github.com/appium/appium/commit/4c4e8d89110975fbcf71fceaf99c5a76636d211f))
+
+
+### Bug Fixes
+
+* **base-driver:** lint warnings ([#22174](https://github.com/appium/appium/issues/22174)) ([943866b](https://github.com/appium/appium/commit/943866bcf3c823c7d57b001ccb345cde4f4d2c4d))
+* **base-driver:** Make proxy timeout mutable again ([#22154](https://github.com/appium/appium/issues/22154)) ([dfe8bde](https://github.com/appium/appium/commit/dfe8bde6877b5233a7cba48b319045e29dde3c98))
+
+
+
 ## [10.3.0](https://github.com/appium/appium/compare/@appium/base-driver@10.2.2...@appium/base-driver@10.3.0) (2026-04-09)
 
 

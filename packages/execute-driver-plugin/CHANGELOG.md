@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.0.2](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@6.0.1...@appium/execute-driver-plugin@6.0.2) (2026-04-23)
+
+
+### Bug Fixes
+
+* **execute-driver-plugin:** Protect VM-accessible instances from prototype pollution ([#22195](https://github.com/appium/appium/issues/22195)) ([9670d93](https://github.com/appium/appium/commit/9670d93a1298ebfe42993cd3d37f744c67e209cf))
+
+
+
 ## [6.0.1](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@6.0.0...@appium/execute-driver-plugin@6.0.1) (2026-04-09)
 
 **Note:** Version bump only for package @appium/execute-driver-plugin

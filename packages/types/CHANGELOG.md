@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.1](https://github.com/appium/appium/compare/@appium/types@1.3.0...@appium/types@1.3.1) (2026-04-23)
+
+
+### Bug Fixes
+
+* All the rest of linter warnings ([#22183](https://github.com/appium/appium/issues/22183)) ([efe167f](https://github.com/appium/appium/commit/efe167f59a0a19515b78a53346e5d0b3fc4c744c))
+
+
+
 ## [1.3.0](https://github.com/appium/appium/compare/@appium/types@1.2.1...@appium/types@1.3.0) (2026-04-09)
 
 

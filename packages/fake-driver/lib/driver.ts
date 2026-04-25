@@ -105,6 +105,10 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
   fakeAddition = generalCommands.fakeAddition;
   getUrl = generalCommands.getUrl;
   bidiNavigate = generalCommands.bidiNavigate;
+  getLastPluginMath = generalCommands.getLastPluginMath;
+
+  protected lastPluginMath: {pluginName: string, result: number} | null;
+
   /** If set, Bidi connections are proxied to this URL instead of handling locally. */
   private _bidiProxyUrl: string | null;
   private _clockRunning = false;
@@ -120,6 +124,7 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
     this.shook = false;
     this.appModel = new FakeApp();
     this._bidiProxyUrl = null;
+    this.lastPluginMath = null;
   }
 
   get bidiProxyUrl(): string | null {
@@ -145,6 +150,14 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
     expressApp.all('/fakedriverCliArgs', (_req: Request, res: Response) => {
       res.send(JSON.stringify(cliArgs));
     });
+  }
+
+  onIpcInit(): void {
+    this.ipcSubscribe('pluginMath', (pluginName: string, result: number) => {
+      this.log.info(`A connected plugin did some math with result ${result}`);
+      this.lastPluginMath = {pluginName, result};
+    });
+    this.publishClockStatus();
   }
 
   proxyActive(): boolean {
@@ -224,6 +237,7 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
   async setFakeThing(thing: Thing): Promise<null> {
     await sleep(1);
     this.fakeThing = thing;
+    this.maybeIpc(() => this.ipcPublish('fakeThing', thing));
     return null;
   }
 
@@ -252,8 +266,17 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
     return num1 + num2;
   }
 
+  async fakeStartClock(): Promise<void> {
+    void this.startClock();
+  }
+
+  async fakeStopClock(): Promise<void> {
+    this.stopClock();
+  }
+
   private async startClock(): Promise<void> {
     this._clockRunning = true;
+    this.publishClockStatus();
     while (this._clockRunning) {
       await sleep(500);
       this.eventEmitter.emit('bidiEvent', {
@@ -265,6 +288,20 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
 
   private stopClock(): void {
     this._clockRunning = false;
+    this.publishClockStatus();
+  }
+
+  private publishClockStatus(): void {
+    this.maybeIpc(() => this.ipcPublish('clockLifecycle', {running: this._clockRunning}));
+  }
+
+  private maybeIpc<T>(fn: () => T | undefined) {
+    if (!this.ipc) {
+      this.log.warn(`Tried to run an IPC related command but IPC wasn't set up. Ignoring ` +
+                    `because this driver is used for testing. Could be a sign of programming error.`);
+      return;
+    }
+    return fn();
   }
 
 }

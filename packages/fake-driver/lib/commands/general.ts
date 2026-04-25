@@ -136,3 +136,8 @@ export async function bidiNavigate(
 ): Promise<void> {
   this.url = url;
 }
+
+/** Return the last math result detected by a plugin that publishes it */
+export async function getLastPluginMath(this: FakeDriver): Promise<{pluginName: string, result: number} | null> {
+  return this.lastPluginMath;
+}

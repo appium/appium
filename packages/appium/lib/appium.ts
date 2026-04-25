@@ -46,6 +46,7 @@ import * as bidiCommands from './bidi-commands';
 import * as insecureFeatures from './insecure-features';
 import * as inspectorCommands from './inspector-commands';
 import type {DriverConfig} from './extension/driver-config';
+import {AppiumIpc} from '@appium/base-driver';
 
 const desiredCapabilityConstraints = {
   automationName: {
@@ -92,6 +93,8 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
   readonly pluginClasses = new Map<PluginClass, string>();
 
   readonly sessionPlugins: Record<string, Plugin[]> = {};
+
+  readonly sessionIpcs: Record<string, AppiumIpc> = {};
 
   sessionlessPlugins: Plugin[] = [];
 
@@ -361,6 +364,9 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
           [...runningDriversData, ...otherPendingDriversData]
         )) as [string, DriverCaps<AppiumDriverConstraints> & {webSocketUrl?: string | boolean}];
         this.sessions[innerSessionId] = driverInstance;
+        // create an IPC channel for the driver and all plugins on this session
+        this.sessionIpcs[innerSessionId] = new AppiumIpc();
+        driverInstance.assignIpc(this.sessionIpcs[innerSessionId]);
       } finally {
         _.pull(this.pendingDrivers[InnerDriver.name], driverInstance);
       }
@@ -444,6 +450,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
       this.log.info(`Removing session '${innerSessionId}' from our master session list`);
       delete this.sessions[innerSessionId];
       delete this.sessionPlugins[innerSessionId];
+      delete this.sessionIpcs[innerSessionId];
     };
 
     if (_.isFunction(driver.onUnexpectedShutdown)) {
@@ -496,13 +503,6 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
           .map(([, value]) => value.driverData);
         dstSession = this.sessions[sessionId];
         protocol = dstSession.protocol;
-        this.log.info(`Removing session ${sessionId} from our master session list`);
-        // regardless of whether the deleteSession completes successfully or not
-        // make the session unavailable, because who knows what state it might
-        // be in otherwise
-        delete this.sessions[sessionId];
-        delete this.sessionPlugins[sessionId];
-
         this.cleanupBidiSockets(sessionId);
       }
       // this may not be correct, but if `dstSession` was falsy, the call to `deleteSession()` would
@@ -521,6 +521,14 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
         protocol,
         error: e instanceof Error ? e : new Error(msg),
       };
+    } finally {
+      // regardless of whether the deleteSession completes successfully or not
+      // make the session unavailable, because who knows what state it might
+      // be in otherwise
+      this.log.info(`Removing session ${sessionId} from our master session list`);
+      delete this.sessions[sessionId];
+      delete this.sessionPlugins[sessionId];
+      delete this.sessionIpcs[sessionId];
     }
   }
 
@@ -767,6 +775,8 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
             `${generateDriverLogPrefix(p)} <${generateDriverLogPrefix(this.sessions[newSessionId])}>`
           );
         }
+        // we also want to assign the IPC channel for this session to the plugins
+        p.assignIpc(this.sessionIpcs[newSessionId]);
       }
       this.sessionlessPlugins = [];
     }

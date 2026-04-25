@@ -26,6 +26,7 @@ import type {AppiumLogger} from './logger';
 import type {AppiumServer, UpdateServerCallback} from './server';
 import type {Class, StringRecord} from './util';
 import type internal from 'node:stream';
+import type {IAppiumIpc} from './ipc';
 
 /**
  * Interface implemented by the `DeviceSettings` class in `@appium/base-driver`
@@ -83,6 +84,7 @@ export interface Core<C extends Constraints, Settings extends StringRecord = Str
   eventHistory: EventHistory;
   bidiEventSubs: Record<string, string[]>;
   updateBidiCommands(cmds: BidiModuleMap): void;
+  ipc: IAppiumIpc;
   onUnexpectedShutdown(handler: () => any): void;
   /**
    * @summary Retrieve the server's current status.
@@ -321,6 +323,13 @@ export interface ExternalDriver<
     method: HTTPMethod,
     body?: TReq,
   ): Promise<TRes>;
+
+  /**
+   * Assign an IPC channel to a driver
+   *
+   * @param ipc - the AppiumIpc object
+   */
+  assignIpc(ipc: IAppiumIpc): void;
 }
 
 /**

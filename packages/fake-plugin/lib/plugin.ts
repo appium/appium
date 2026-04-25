@@ -61,12 +61,16 @@ export class FakePlugin extends BasePlugin {
       command: 'plugMeIn',
       params: {required: ['socket']},
     },
+    'fake: getFakeDriverClockStatus': {
+      command: 'getFakeDriverClockStatus',
+    },
   };
 
   private static _unexpectedData: string | null = null;
   protected _clockRunning: boolean = true;
   private readonly fakeThing: string;
   private pluginThing: unknown = null;
+  private fakeDriverClockIsRunning: boolean = false;
 
   constructor(name: string, cliArgs: Record<string, unknown> = {}) {
     super(name, cliArgs);
@@ -93,6 +97,21 @@ export class FakePlugin extends BasePlugin {
     expressApp.all('/cliArgs', (req, res) => {
       res.send(JSON.stringify(cliArgs));
     });
+  }
+
+  onIpcInit() {
+    this.ipcSubscribe('clockLifecycle', (publisher: string, message: boolean) => {
+      if (publisher === 'FakeDriver') {
+        this.fakeDriverClockIsRunning = message;
+      }
+    });
+    // subscribing to clockLifecycle doesn't tell us the current status if it started before this
+    // constructor was called, so retrieve it
+    for (const {publisherName, message} of this.ipcGetMessages('clockLifecycle')) {
+      if (publisherName === 'FakeDriver') {
+        this.fakeDriverClockIsRunning = message;
+      }
+    }
   }
 
   async startClock(): Promise<void> {
@@ -122,7 +141,9 @@ export class FakePlugin extends BasePlugin {
     num2: number
   ): Promise<number> {
     await sleep(1);
-    return num1 * num2;
+    const result = num1 * num2;
+    this.ipcPublish('pluginMath', result);
+    return result;
   }
 
   async getFakeThing(): Promise<string> {
@@ -158,6 +179,10 @@ export class FakePlugin extends BasePlugin {
   async getFakePluginArgs(): Promise<Record<string, unknown>> {
     await sleep(1);
     return this.cliArgs;
+  }
+
+  async getFakeDriverClockStatus(): Promise<boolean> {
+    return this.fakeDriverClockIsRunning;
   }
 
   async getPageSource(

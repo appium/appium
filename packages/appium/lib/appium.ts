@@ -46,7 +46,7 @@ import * as bidiCommands from './bidi-commands';
 import * as insecureFeatures from './insecure-features';
 import * as inspectorCommands from './inspector-commands';
 import type {DriverConfig} from './extension/driver-config';
-import {AppiumIpc} from '@appium/base-driver/lib/basedriver/ipc';
+import {AppiumIpc} from '@appium/base-driver';
 
 const desiredCapabilityConstraints = {
   automationName: {

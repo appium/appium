@@ -24,6 +24,7 @@ const errorsList: ErrorListItem[] = [
   {errorName: 'InvalidArgumentError', errorMsg: 'The arguments passed to the command are either invalid or malformed', error: 'invalid argument'},
   {errorName: 'NoSuchElementError', errorMsg: 'An element could not be located on the page using the given search parameters.', error: 'no such element', errorCode: 7},
   {errorName: 'NoSuchFrameError', errorMsg: 'A request to switch to a frame could not be satisfied because the frame could not be found.', error: 'no such frame', errorCode: 8},
+  {errorName: 'NoSuchShadowRootError', errorMsg: 'The element does not have a shadow root attached.', error: 'no such shadow root', errorCode: 65},
   {errorName: 'UnknownCommandError', errorMsg: 'The requested resource could not be found, or a request was received using an HTTP method that is not supported by the mapped resource.', error: 'unknown command', errorCode: 9},
   {errorName: 'StaleElementReferenceError', errorMsg: 'An element command failed because the referenced element is no longer attached to the DOM.', error: 'stale element reference', errorCode: 10},
   {errorName: 'ElementNotVisibleError', errorMsg: 'An element command could not be completed because the element is not visible on the page.', errorCode: 11},
@@ -120,6 +121,7 @@ describe('w3c Status Codes', function () {
     const non400Errors: [string, number][] = [
       ['NoSuchDriverError', 404],
       ['NoSuchFrameError', 404],
+      ['NoSuchShadowRootError', 404],
       ['NoAlertOpenError', 404],
       ['NoSuchWindowError', 404],
       ['StaleElementReferenceError', 404],

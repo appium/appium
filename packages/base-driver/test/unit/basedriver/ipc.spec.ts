@@ -1,6 +1,5 @@
 import {expect} from 'chai';
 import B from 'bluebird';
-import type {IpcSubscribeCallback, IpcSubscription} from '@appium/types';
 import {AppiumIpc} from '../../../lib/basedriver/ipc';
 
 describe('AppiumIpc', function () {
@@ -40,7 +39,7 @@ describe('AppiumIpc', function () {
       const ipc = new AppiumIpc();
       ipc.subscribe('foo', 'bar', () => {});
       expect(ipc._subscriptions.foo).to.have.length(1);
-      ipc.unsubscribe('foo', 'bar')
+      ipc.unsubscribe('foo', 'bar');
       expect(ipc._subscriptions.foo).to.have.length(0);
     });
   });

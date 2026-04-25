@@ -237,7 +237,7 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
   async setFakeThing(thing: Thing): Promise<null> {
     await sleep(1);
     this.fakeThing = thing;
-    this.ipcPublish('fakeThing', thing);
+    this.maybeIpc(() => this.ipcPublish('fakeThing', thing));
     return null;
   }
 
@@ -292,11 +292,16 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
   }
 
   private publishClockStatus(): void {
+    this.maybeIpc(() => this.ipcPublish('clockLifecycle', {running: this._clockRunning}));
+  }
+
+  private maybeIpc<T>(fn: () => T | undefined) {
     if (!this.ipc) {
-      this.log.warn(`Tried to publish IPC message but ipc wasn't set up. Ignoring`);
+      this.log.warn(`Tried to run an IPC related command but IPC wasn't set up. Ignoring ` +
+                    `because this driver is used for testing. Could be a sign of programming error.`);
       return;
     }
-    this.ipcPublish('clockLifecycle', {running: this._clockRunning});
+    return fn();
   }
 
 }

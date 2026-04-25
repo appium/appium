@@ -4,6 +4,7 @@ import type {DriverCommand, ExternalDriver} from './driver';
 import type {AppiumLogger} from './logger';
 import type {UpdateServerCallback} from './server';
 import type {Class, StringRecord} from './util';
+import {IAppiumIpc} from './ipc';
 
 /**
  * The interface describing the constructor and static properties of a Plugin.
@@ -83,6 +84,11 @@ export interface Plugin {
    * original Appium behavior (or the behavior of the next plugin in a plugin chain).
    */
   handle?: PluginCommand<ExternalDriver, [cmdName: string, ...args: any[]], void>;
+
+  /**
+   * Assign the IPC object used for inter driver/plugin communication
+   */
+  assignIpc: (ipc: IAppiumIpc) => void;
 }
 
 /**

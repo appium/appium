@@ -100,6 +100,7 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
 
   protected commandsQueueGuard: AsyncLock;
 
+
   constructor(opts: InitialOpts = <InitialOpts>{}, shouldValidateCaps = true) {
     super();
     this._log = this.log; // TODO: remove references to this._log and use this.log instead

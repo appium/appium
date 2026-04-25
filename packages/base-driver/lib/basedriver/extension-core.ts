@@ -4,6 +4,7 @@ import type {
   AppiumLogger,
   BidiModuleMap,
   BiDiResultData,
+  IpcSubscribeCallback,
   StringRecord,
 } from '@appium/types';
 import {
@@ -13,10 +14,12 @@ import {errors} from '../protocol';
 import {BIDI_COMMANDS} from '../protocol/bidi-commands';
 import _ from 'lodash';
 import {generateDriverLogPrefix} from './helpers';
+import type {AppiumIpc} from './ipc';
 
 export class ExtensionCore {
   bidiEventSubs: Record<string, string[]>;
   bidiCommands: BidiModuleMap = BIDI_COMMANDS as BidiModuleMap;
+  ipc: AppiumIpc;
   _logPrefix?: string;
   // used to handle driver events
   readonly eventEmitter: NodeJS.EventEmitter;
@@ -124,5 +127,35 @@ export class ExtensionCore {
       `${_.truncate(JSON.stringify(finalResponse), {length: MAX_LOG_BODY_LENGTH})}`
     );
     return finalResponse;
+  }
+
+  assignIpc(ipc: AppiumIpc) {
+    this.ipc = ipc;
+    this.onIpcInit();
+  }
+
+  onIpcInit() {}
+
+  ipcSubscribe(topic: string, cb: IpcSubscribeCallback) { // eslint-disable-line promise/prefer-await-to-callbacks
+    this.ipcGuard(() => this.ipc.subscribe(topic, this.constructor.name, cb));
+  }
+
+  ipcUnsubscribe(topic: string) {
+    this.ipcGuard(() => this.ipc.unsubscribe(topic, this.constructor.name));
+  }
+
+  ipcPublish(topic: string, message: any) {
+    this.ipcGuard(() => this.ipc.publish(topic, this.constructor.name, message));
+  }
+
+  ipcGetMessages(topic: string) {
+    return this.ipcGuard(() => this.ipc.getMessages(topic));
+  }
+
+  private ipcGuard<T>(fn: () => T) {
+    if (!this.ipc) {
+      throw new Error(`Cannot call IPC related function without an IPC object assigned. This is likely a programming error`);
+    }
+    return fn();
   }
 }

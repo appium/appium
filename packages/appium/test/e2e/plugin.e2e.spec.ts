@@ -443,4 +443,44 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
       });
     });
   });
+
+  describe('IPC Support', function () {
+    let driver: Browser;
+
+    // this 'after' block needs to come before 'serverSetup' so that the delete session happens
+    // before the server shutdown
+    after(async function () {
+      if (driver) {
+        await driver.deleteSession();
+      }
+    });
+
+    serverSetup({});
+
+    before(async function () {
+      const caps = {...wdOpts.capabilities, webSocketUrl: true, 'appium:runClock': true};
+      driver = await wdio({...wdOpts, capabilities: caps} as any);
+    });
+
+    it('should allow driver to publish to plugin', async function () {
+      let {running} = await driver.executeScript('fake: getFakeDriverClockStatus', []);
+      expect(running).to.be.true;
+      await driver.executeScript('fake: stopClock', []);
+      ({running} = await driver.executeScript('fake: getFakeDriverClockStatus', []));
+      expect(running).to.be.false;
+    });
+
+    it('should allow plugin to publish to driver', async function () {
+      let lastMath = await driver.executeScript('fake: getLastPluginMath', []);
+      expect(lastMath).to.eql(null);
+      const {result} = await (driver as any).send({
+        method: 'appium:fake.doSomeMath2',
+        params: {num1: 2, num2: 3},
+      });
+      expect(result).to.eql(6);
+      lastMath = await driver.executeScript('fake: getLastPluginMath', []);
+      expect(lastMath).to.eql({pluginName: 'FakePlugin', result: 6});
+    });
+
+  });
 });

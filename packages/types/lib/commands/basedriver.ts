@@ -1,6 +1,7 @@
 import type {DriverCaps, W3CDriverCaps} from '../capabilities';
 import type {Constraints} from '../constraints';
 import type {Element, StringRecord} from '../util';
+import type {IpcMessage, IpcSubscribeCallback} from '../ipc';
 
 export interface IBidiCommands {
   bidiSubscribe(events: string[], contexts: string[]): Promise<void>;

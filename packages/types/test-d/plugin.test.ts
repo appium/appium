@@ -22,6 +22,8 @@ class TestPlugin implements Plugin {
 
   public logger: AppiumLogger = {} as AppiumLogger;
 
+  assignIpc(): void {}
+
   constructor(public readonly name: string, public readonly cliArgs: StringRecord<unknown> = {}) {}
 
   public getPageSource: DriverCommandToPluginCommand<

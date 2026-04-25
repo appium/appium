@@ -292,6 +292,10 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
   }
 
   private publishClockStatus(): void {
+    if (!this.ipc) {
+      this.log.warn(`Tried to publish IPC message but ipc wasn't set up. Ignoring`);
+      return;
+    }
     this.ipcPublish('clockLifecycle', {running: this._clockRunning});
   }
 

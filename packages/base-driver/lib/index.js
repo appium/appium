@@ -14,6 +14,7 @@ export {ExtensionCore} from './basedriver/extension-core';
 import {BaseDriver} from './basedriver/driver';
 export {DriverCore} from './basedriver/core';
 export {DeviceSettings} from './basedriver/device-settings';
+export {AppiumIpc} from './basedriver/ipc';
 
 export {BaseDriver};
 export default BaseDriver;

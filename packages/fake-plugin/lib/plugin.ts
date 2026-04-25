@@ -6,7 +6,6 @@ import type {
   BidiModuleMap,
   ExecuteMethodMap,
   ExternalDriver,
-  IAppiumIpc,
   MethodMap,
 } from '@appium/types';
 

@@ -1,5 +1,5 @@
 import {log} from './logger';
-import type {StringRecord, IpcSubscribeCallback, IAppiumIpc, IpcSubscription, IpcMessage} from "@appium/types";
+import type {StringRecord, IpcSubscribeCallback, IAppiumIpc, IpcSubscription, IpcMessage} from '@appium/types';
 
 export class AppiumIpc implements IAppiumIpc {
   protected _messages: StringRecord<Array<IpcMessage>>;

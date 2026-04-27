@@ -1,19 +1,22 @@
-import {expect} from 'chai';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
 import {AppiumIpc} from '../../../lib/basedriver/ipc';
 
+chai.use(chaiAsPromised);
+
 describe('AppiumIpc', function () {
   describe('subscriptionExists', function () {
-    it('should return false when no topic exists', function () {
+    it('should return false when no topic exists', async function () {
       const ipc = new AppiumIpc();
       expect(ipc.subscriptionExists('foo', 'bar')).to.eql(false);
     });
-    it('should return false when topic exists but no subscriber', function () {
+    it('should return false when topic exists but no subscriber', async function () {
       const ipc = new AppiumIpc();
       ipc._subscriptions.foo = [{subscriberName: 'bar', cb: () => {}}];
       expect(ipc.subscriptionExists('foo', 'baz')).to.eql(false);
     });
-    it('should return true when subscriber is subscribed', function () {
+    it('should return true when subscriber is subscribed', async function () {
       const ipc = new AppiumIpc();
       ipc._subscriptions.foo = [{subscriberName: 'bar', cb: () => {}}];
       expect(ipc.subscriptionExists('foo', 'bar')).to.eql(true);
@@ -21,25 +24,25 @@ describe('AppiumIpc', function () {
   });
 
   describe('subscribe', function () {
-    it('should throw if subscription already exists', function () {
+    it('should throw if subscription already exists', async function () {
       const ipc = new AppiumIpc();
       ipc._subscriptions.foo = [{subscriberName: 'bar', cb: () => {}}];
-      expect(ipc.subscribe.bind(ipc, 'foo', 'bar', () => {})).to.throw();
+      await expect(ipc.subscribe('foo', 'bar', () => {})).to.be.rejected;
     });
-    it('should add to list of subscriptions', function () {
+    it('should add to list of subscriptions', async function () {
       const ipc = new AppiumIpc();
       expect(ipc._subscriptions.foo).to.be.undefined;
-      ipc.subscribe('foo', 'bar', () => {});
+      await ipc.subscribe('foo', 'bar', () => {});
       expect(ipc._subscriptions.foo).to.have.length(1);
     });
   });
 
   describe('unsubscribe', function () {
-    it('should remove from list of subscriptions', function () {
+    it('should remove from list of subscriptions', async function () {
       const ipc = new AppiumIpc();
-      ipc.subscribe('foo', 'bar', () => {});
+      await ipc.subscribe('foo', 'bar', () => {});
       expect(ipc._subscriptions.foo).to.have.length(1);
-      ipc.unsubscribe('foo', 'bar');
+      await ipc.unsubscribe('foo', 'bar');
       expect(ipc._subscriptions.foo).to.have.length(0);
     });
   });
@@ -50,14 +53,13 @@ describe('AppiumIpc', function () {
       let sub1Res = {};
       let sub2Res = {};
       const payload = {some: {cool: 'obj'}};
-      ipc.subscribe('foo', 'bar', (publisher, message) => {
+      await ipc.subscribe('foo', 'bar', (publisher, message) => {
         sub1Res = {publisher, message};
       });
-      ipc.subscribe('foo', 'baz', (publisher, message) => {
+      await ipc.subscribe('foo', 'baz', (publisher, message) => {
         sub2Res = {publisher, message};
       });
-      ipc.publish('foo', 'zowee', payload);
-      await B.delay(10);
+      await ipc.publish('foo', 'zowee', payload);
       expect(sub1Res).to.eql({publisher: 'zowee', message: payload});
       expect(sub2Res).to.eql({publisher: 'zowee', message: payload});
     });
@@ -67,14 +69,13 @@ describe('AppiumIpc', function () {
       let sub1Res = {};
       let sub2Res = {};
       const payload = {some: {cool: 'obj'}};
-      ipc.subscribe('foo', 'bar', (publisher, message) => {
+      await ipc.subscribe('foo', 'bar', (publisher, message) => {
         sub1Res = {publisher, message};
       });
-      ipc.subscribe('foo', 'baz', (publisher, message) => {
+      await ipc.subscribe('foo', 'baz', (publisher, message) => {
         sub2Res = {publisher, message};
       });
-      ipc.publish('foo', 'bar', payload);
-      await B.delay(10);
+      await ipc.publish('foo', 'bar', payload);
       expect(sub1Res).to.eql({});
       expect(sub2Res).to.eql({publisher: 'bar', message: payload});
     });
@@ -85,10 +86,10 @@ describe('AppiumIpc', function () {
       const ipc = new AppiumIpc();
       const payload1 = {hello: 'world'};
       const payload2 = 3;
-      ipc.publish('foo', 'bar', payload1);
-      ipc.publish('foo', 'baz', payload2);
-      ipc.publish('other', 'bar', 5); // should not get message published on other topic
-      expect(ipc.getMessages('foo')).to.eql([
+      await ipc.publish('foo', 'bar', payload1);
+      await ipc.publish('foo', 'baz', payload2);
+      await ipc.publish('other', 'bar', 5); // should not get message published on other topic
+      expect(await ipc.getMessages('foo')).to.eql([
         {publisherName: 'bar', message: payload1},
         {publisherName: 'baz', message: payload2},
       ]);

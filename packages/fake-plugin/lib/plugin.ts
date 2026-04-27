@@ -12,6 +12,8 @@ import type {
 /** Driver as seen by this plugin; may include plugin-specific session data */
 export type DriverLike = ExternalDriver & {fakeSessionData?: unknown};
 
+type ClockStatus = {running: boolean};
+
 export class FakePlugin extends BasePlugin {
   static newMethodMap: MethodMap<FakePlugin> = {
     '/session/:sessionId/fake_data': {
@@ -99,17 +101,17 @@ export class FakePlugin extends BasePlugin {
     });
   }
 
-  onIpcInit() {
-    this.ipcSubscribe('clockLifecycle', (publisher: string, message: boolean) => {
+  async onIpcInit() {
+    await this.ipcSubscribe<ClockStatus>('clockLifecycle', (publisher: string, message: ClockStatus) => {
       if (publisher === 'FakeDriver') {
-        this.fakeDriverClockIsRunning = message;
+        this.fakeDriverClockIsRunning = message.running;
       }
     });
     // subscribing to clockLifecycle doesn't tell us the current status if it started before this
     // constructor was called, so retrieve it
-    for (const {publisherName, message} of this.ipcGetMessages('clockLifecycle')) {
+    for (const {publisherName, message} of await this.ipcGetMessages<ClockStatus>('clockLifecycle')) {
       if (publisherName === 'FakeDriver') {
-        this.fakeDriverClockIsRunning = message;
+        this.fakeDriverClockIsRunning = message.running;
       }
     }
   }
@@ -142,7 +144,7 @@ export class FakePlugin extends BasePlugin {
   ): Promise<number> {
     await sleep(1);
     const result = num1 * num2;
-    this.ipcPublish('pluginMath', result);
+    await this.ipcPublish('pluginMath', result);
     return result;
   }
 

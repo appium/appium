@@ -1,71 +1,77 @@
+import AsyncLock from 'async-lock';
 import {log} from './logger';
 import type {StringRecord, IpcSubscribeCallback, IAppiumIpc, IpcSubscription, IpcMessage} from '@appium/types';
 
+const SUB_LOCK_KEY = 'subscriptions';
+const MSG_LOCK_KEY = 'messages';
+
 export class AppiumIpc implements IAppiumIpc {
-  protected _messages: StringRecord<Array<IpcMessage>>;
-  protected _subscriptions: StringRecord<Array<IpcSubscription>>;
+  protected _messages: StringRecord<Array<IpcMessage<any>>> = {};
+  protected _subscriptions: StringRecord<Array<IpcSubscription<any>>> = {};
+  protected _lock: AsyncLock;
 
-  constructor() {
-    this._messages = {};
-    this._subscriptions = {};
+  constructor () {
+    this._lock = new AsyncLock();
   }
 
-  subscriptionExists(topic: string, subscriberName: string) {
-    if (!this._subscriptions[topic]) {
-      return false;
-    }
-
-    for (const sub of this._subscriptions[topic]) {
-      if (sub.subscriberName === subscriberName) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  subscribe(topic: string, subscriberName: string, cb: IpcSubscribeCallback) { // eslint-disable-line promise/prefer-await-to-callbacks
+  async subscribe<T>(topic: string, subscriberName: string, cb: IpcSubscribeCallback<T>) { // eslint-disable-line promise/prefer-await-to-callbacks
     log.info(`Subscribing ${subscriberName} to topic '${topic}'`);
-    if (this.subscriptionExists(topic, subscriberName)) {
-      throw new Error(`Subscription already exists for topic "${topic}" and subscriber "${subscriberName}"`);
-    }
+    return await this._lock.acquire(SUB_LOCK_KEY, async () => {
+      if (this.subscriptionExists(topic, subscriberName)) {
+        throw new Error(`Subscription already exists for topic "${topic}" and subscriber "${subscriberName}"`);
+      }
 
-    if (!this._subscriptions[topic]) {
-      this._subscriptions[topic] = [];
-    }
-    this._subscriptions[topic].push({subscriberName, cb});
+      if (!this._subscriptions[topic]) {
+        this._subscriptions[topic] = [];
+      }
+      this._subscriptions[topic].push({subscriberName, cb});
+    });
   }
 
-  unsubscribe(topic: string, subscriberName: string) {
+  async unsubscribe(topic: string, subscriberName: string) {
     log.info(`Unsubscribing ${subscriberName} from topic '${topic}'`);
-    if (this.subscriptionExists(topic, subscriberName)) {
-      this._subscriptions[topic] = this._subscriptions[topic].filter((sub) => sub.subscriberName !== subscriberName);
-    }
+    await this._lock.acquire(SUB_LOCK_KEY, async () => {
+      if (this.subscriptionExists(topic, subscriberName)) {
+        this._subscriptions[topic] = this._subscriptions[topic].filter((sub) => sub.subscriberName !== subscriberName);
+      }
+    });
   }
 
-  publish(topic: string, publisherName: string, message: any) {
+  async publish<T>(topic: string, publisherName: string, message: T) {
     log.info(`${publisherName} is publishing a message to topic ${topic}`);
-    if (!this._messages[topic]) {
-      this._messages[topic] = [];
-    }
+    await this._lock.acquire(MSG_LOCK_KEY, () => {
+      if (!this._messages[topic]) {
+        this._messages[topic] = [];
+      }
 
-    // TODO message array should be a queue that removes items when size grows too large
-    this._messages[topic].push({publisherName, message});
+      // TODO message array should be a queue that removes items when size grows too large
+      this._messages[topic].push({publisherName, message});
 
-    if (this._subscriptions[topic]) {
-      for (const sub of this._subscriptions[topic]) {
-        // don't publish a message to a subscriber that is also the publisher of the message
-        if (sub.subscriberName !== publisherName) {
-          sub.cb(publisherName, message);
+      if (this._subscriptions[topic]) {
+        for (const sub of this._subscriptions[topic]) {
+          // don't publish a message to a subscriber that is also the publisher of the message
+          if (sub.subscriberName !== publisherName) {
+            sub.cb(publisherName, message);
+          }
         }
       }
-    }
+    });
   }
 
-  getMessages(topic: string) {
-    if (!this._messages[topic]) {
-      return [];
-    }
+  async getMessages<T>(topic: string) {
+    return await this._lock.acquire(MSG_LOCK_KEY, () => {
+      if (!this._messages[topic]) {
+        return [];
+      }
 
-    return structuredClone(this._messages[topic]);
+      return structuredClone(this._messages[topic] as Array<IpcMessage<T>>);
+    });
   }
+
+  private subscriptionExists(topic: string, subscriberName: string) {
+    // this is a private helper function only called by methods which already have the subscription
+    // lock so we don't need to worry about locking here
+    return !!this._subscriptions[topic]?.find((sub) => sub.subscriberName === subscriberName);
+  }
+
 }

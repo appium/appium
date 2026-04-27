@@ -129,33 +129,33 @@ export class ExtensionCore {
     return finalResponse;
   }
 
-  assignIpc(ipc: AppiumIpc) {
+  async assignIpc(ipc: AppiumIpc) {
     this.ipc = ipc;
-    this.onIpcInit();
+    await this.onIpcInit();
   }
 
-  onIpcInit() {}
+  async onIpcInit() {}
 
-  ipcSubscribe(topic: string, cb: IpcSubscribeCallback) { // eslint-disable-line promise/prefer-await-to-callbacks
-    this.ipcGuard(() => this.ipc.subscribe(topic, this.constructor.name, cb));
+  async ipcSubscribe<T>(topic: string, cb: IpcSubscribeCallback<T>) { // eslint-disable-line promise/prefer-await-to-callbacks
+    await this.ipcGuard(() => this.ipc.subscribe(topic, this.constructor.name, cb));
   }
 
-  ipcUnsubscribe(topic: string) {
-    this.ipcGuard(() => this.ipc.unsubscribe(topic, this.constructor.name));
+  async ipcUnsubscribe(topic: string) {
+    await this.ipcGuard(() => this.ipc.unsubscribe(topic, this.constructor.name));
   }
 
-  ipcPublish(topic: string, message: any) {
-    this.ipcGuard(() => this.ipc.publish(topic, this.constructor.name, message));
+  async ipcPublish<T>(topic: string, message: T) {
+    await this.ipcGuard(() => this.ipc.publish(topic, this.constructor.name, message));
   }
 
-  ipcGetMessages(topic: string) {
-    return this.ipcGuard(() => this.ipc.getMessages(topic));
+  async ipcGetMessages<T>(topic: string) {
+    return await this.ipcGuard(() => this.ipc.getMessages<T>(topic));
   }
 
-  private ipcGuard<T>(fn: () => T) {
+  private async ipcGuard<T>(fn: () => Promise<T>) {
     if (!this.ipc) {
       throw new Error(`Cannot call IPC related function without an IPC object assigned. This is likely a programming error`);
     }
-    return fn();
+    return await fn();
   }
 }

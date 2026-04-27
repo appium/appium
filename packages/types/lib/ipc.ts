@@ -1,19 +1,18 @@
-export type IpcSubscribeCallback = (publisherName: string, message: any) => void;
+export type IpcSubscribeCallback<T> = (publisherName: string, message: T) => void;
 
-export type IpcSubscription = {
+export type IpcSubscription<T> = {
   subscriberName: string;
-  cb: IpcSubscribeCallback;
+  cb: IpcSubscribeCallback<T>;
 };
 
-export type IpcMessage = {
+export type IpcMessage<T> = {
   publisherName: string,
-  message: any,
+  message: T,
 };
 
 export interface IAppiumIpc {
-  subscriptionExists(topic: string, subscriberName: string): boolean;
-  subscribe(topic: string, subscriberName: string, cb: IpcSubscribeCallback): void;
-  unsubscribe(topic: string, subscriberName: string): void;
-  publish(topic: string, publisherName: string, message: any): void;
-  getMessages(topic: string): Array<IpcMessage>;
+  subscribe<T>(topic: string, subscriberName: string, cb: IpcSubscribeCallback<T>): Promise<void>;
+  unsubscribe(topic: string, subscriberName: string): Promise<void>;
+  publish<T>(topic: string, publisherName: string, message: T): Promise<void>;
+  getMessages<T>(topic: string): Promise<Array<IpcMessage<T>>>;
 }

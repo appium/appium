@@ -366,7 +366,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
         this.sessions[innerSessionId] = driverInstance;
         // create an IPC channel for the driver and all plugins on this session
         this.sessionIpcs[innerSessionId] = new AppiumIpc();
-        driverInstance.assignIpc(this.sessionIpcs[innerSessionId]);
+        await driverInstance.assignIpc(this.sessionIpcs[innerSessionId]);
       } finally {
         _.pull(this.pendingDrivers[InnerDriver.name], driverInstance);
       }

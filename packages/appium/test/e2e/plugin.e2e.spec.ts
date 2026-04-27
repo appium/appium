@@ -463,10 +463,10 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
     });
 
     it('should allow driver to publish to plugin', async function () {
-      let {running} = await driver.executeScript('fake: getFakeDriverClockStatus', []);
+      let running = await driver.executeScript('fake: getFakeDriverClockStatus', []);
       expect(running).to.be.true;
       await driver.executeScript('fake: stopClock', []);
-      ({running} = await driver.executeScript('fake: getFakeDriverClockStatus', []));
+      running = await driver.executeScript('fake: getFakeDriverClockStatus', []);
       expect(running).to.be.false;
     });
 

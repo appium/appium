@@ -19,6 +19,7 @@ import {EXECUTE_METHOD_MAP} from './command-maps/execute-method-map';
 
 export type {FakeDriverConstraints};
 export type {Orientation} from '@appium/types';
+export type ClockStatus = {running: boolean};
 
 /** Driver supporting a generic "fake thing" value (getFakeThing / setFakeThing). */
 export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraints> {
@@ -152,8 +153,8 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
     });
   }
 
-  onIpcInit(): void {
-    this.ipcSubscribe('pluginMath', (pluginName: string, result: number) => {
+  async onIpcInit(): Promise<void> {
+    await this.ipcSubscribe('pluginMath', (pluginName: string, result: number) => {
       this.log.info(`A connected plugin did some math with result ${result}`);
       this.lastPluginMath = {pluginName, result};
     });
@@ -217,7 +218,7 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
   }
 
   override async deleteSession(sessionId?: string): Promise<void> {
-    this.stopClock();
+    await this.stopClock();
     return await super.deleteSession(sessionId);
   }
 
@@ -237,7 +238,7 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
   async setFakeThing(thing: Thing): Promise<null> {
     await sleep(1);
     this.fakeThing = thing;
-    this.maybeIpc(() => this.ipcPublish('fakeThing', thing));
+    await this.maybeIpc(() => this.ipcPublish('fakeThing', thing));
     return null;
   }
 
@@ -271,12 +272,12 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
   }
 
   async fakeStopClock(): Promise<void> {
-    this.stopClock();
+    await this.stopClock();
   }
 
   private async startClock(): Promise<void> {
     this._clockRunning = true;
-    this.publishClockStatus();
+    await this.publishClockStatus();
     while (this._clockRunning) {
       await sleep(500);
       this.eventEmitter.emit('bidiEvent', {
@@ -286,22 +287,22 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
     }
   }
 
-  private stopClock(): void {
+  private async stopClock(): Promise<void> {
     this._clockRunning = false;
-    this.publishClockStatus();
+    await this.publishClockStatus();
   }
 
-  private publishClockStatus(): void {
-    this.maybeIpc(() => this.ipcPublish('clockLifecycle', {running: this._clockRunning}));
+  private async publishClockStatus(): Promise<void> {
+    await this.maybeIpc(() => this.ipcPublish<ClockStatus>('clockLifecycle', {running: this._clockRunning}));
   }
 
-  private maybeIpc<T>(fn: () => T | undefined) {
+  private async maybeIpc<T>(fn: () => Promise<T> | undefined) {
     if (!this.ipc) {
       this.log.warn(`Tried to run an IPC related command but IPC wasn't set up. Ignoring ` +
                     `because this driver is used for testing. Could be a sign of programming error.`);
       return;
     }
-    return fn();
+    return await fn();
   }
 
 }

@@ -448,9 +448,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
       }
 
       this.log.info(`Removing session '${innerSessionId}' from our master session list`);
-      delete this.sessions[innerSessionId];
-      delete this.sessionPlugins[innerSessionId];
-      delete this.sessionIpcs[innerSessionId];
+      this.deleteLinkedSessionObjects(innerSessionId);
     };
 
     if (_.isFunction(driver.onUnexpectedShutdown)) {
@@ -526,10 +524,14 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
       // make the session unavailable, because who knows what state it might
       // be in otherwise
       this.log.info(`Removing session ${sessionId} from our master session list`);
-      delete this.sessions[sessionId];
-      delete this.sessionPlugins[sessionId];
-      delete this.sessionIpcs[sessionId];
+      this.deleteLinkedSessionObjects(sessionId);
     }
+  }
+
+  deleteLinkedSessionObjects(sessionId: string) {
+    delete this.sessions[sessionId];
+    delete this.sessionPlugins[sessionId];
+    delete this.sessionIpcs[sessionId];
   }
 
   /**
@@ -776,7 +778,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
           );
         }
         // we also want to assign the IPC channel for this session to the plugins
-        p.assignIpc(this.sessionIpcs[newSessionId]);
+        await p.assignIpc(this.sessionIpcs[newSessionId]);
       }
       this.sessionlessPlugins = [];
     }

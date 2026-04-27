@@ -1,4 +1,4 @@
-export type IpcSubscribeCallback<T> = (publisherName: string, message: T) => void;
+export type IpcSubscribeCallback<T> = (publisherName: string, message: T) => Promise<void>;
 
 export type IpcSubscription<T> = {
   subscriberName: string;

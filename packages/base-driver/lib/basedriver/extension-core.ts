@@ -4,6 +4,7 @@ import type {
   AppiumLogger,
   BidiModuleMap,
   BiDiResultData,
+  IpcMessage,
   IpcSubscribeCallback,
   StringRecord,
 } from '@appium/types';
@@ -129,30 +130,30 @@ export class ExtensionCore {
     return finalResponse;
   }
 
-  async assignIpc(ipc: AppiumIpc) {
+  async assignIpc(ipc: AppiumIpc): Promise<void> {
     this.ipc = ipc;
     await this.onIpcInit();
   }
 
-  async onIpcInit() {}
+  async onIpcInit(): Promise<void> {}
 
   async ipcSubscribe<T>(topic: string, cb: IpcSubscribeCallback<T>) { // eslint-disable-line promise/prefer-await-to-callbacks
     await this.withIpc(() => this.ipc.subscribe(topic, this.constructor.name, cb));
   }
 
-  async ipcUnsubscribe(topic: string) {
+  async ipcUnsubscribe(topic: string): Promise<void> {
     await this.withIpc(() => this.ipc.unsubscribe(topic, this.constructor.name));
   }
 
-  async ipcPublish<T>(topic: string, message: T) {
+  async ipcPublish<T>(topic: string, message: T): Promise<void> {
     await this.withIpc(() => this.ipc.publish(topic, this.constructor.name, message));
   }
 
-  async ipcGetMessages<T>(topic: string) {
+  async ipcGetMessages<T>(topic: string): Promise<IpcMessage<T>[]> {
     return await this.withIpc(() => this.ipc.getMessages<T>(topic));
   }
 
-  private async withIpc<T>(fn: () => Promise<T>) {
+  private async withIpc<T>(fn: () => Promise<T>): Promise<T> {
     if (!this.ipc) {
       throw new Error(`Cannot call IPC related function without an IPC object assigned. This is likely a programming error`);
     }

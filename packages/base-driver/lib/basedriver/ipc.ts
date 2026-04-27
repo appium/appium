@@ -6,9 +6,9 @@ const SUB_LOCK_KEY = 'subscriptions';
 const MSG_LOCK_KEY = 'messages';
 
 export class AppiumIpc implements IAppiumIpc {
-  protected _messages: StringRecord<Array<IpcMessage<any>>> = {};
-  protected _subscriptions: StringRecord<Array<IpcSubscription<any>>> = {};
-  protected _lock: AsyncLock;
+  protected readonly _messages: StringRecord<Array<IpcMessage<any>>> = {};
+  protected readonly _subscriptions: StringRecord<Array<IpcSubscription<any>>> = {};
+  protected readonly _lock: AsyncLock;
 
   constructor () {
     this._lock = new AsyncLock();
@@ -39,7 +39,7 @@ export class AppiumIpc implements IAppiumIpc {
 
   async publish<T>(topic: string, publisherName: string, message: T) {
     log.info(`${publisherName} is publishing a message to topic ${topic}`);
-    await this._lock.acquire(MSG_LOCK_KEY, () => {
+    await this._lock.acquire(MSG_LOCK_KEY, async () => {
       if (!this._messages[topic]) {
         this._messages[topic] = [];
       }
@@ -51,7 +51,12 @@ export class AppiumIpc implements IAppiumIpc {
         for (const sub of this._subscriptions[topic]) {
           // don't publish a message to a subscriber that is also the publisher of the message
           if (sub.subscriberName !== publisherName) {
-            sub.cb(publisherName, message);
+            try {
+              await sub.cb(publisherName, message);
+            } catch (e) {
+              log.error(`Error in IPC subscription callback for subscriber ${sub.subscriberName} on `
+                        + `topic ${topic}: ${e}`);
+            }
           }
         }
       }

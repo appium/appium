@@ -64,6 +64,17 @@ describe('AppiumIpc', function () {
       expect(sub2Res).to.eql({publisher: 'zowee', message: payload});
     });
 
+    it('should not care if the subscription callback throws', async function () {
+      const ipc = new AppiumIpc();
+      let sub1Res = {};
+      const payload = {some: {cool: 'obj'}};
+      await ipc.subscribe('foo', 'bar', (publisher, message) => {
+        throw new Error('blarg');
+      });
+      await ipc.publish('foo', 'zowee', payload);
+      expect(sub1Res).to.eql({});
+    });
+
     it('should not publish messages to the publisher', async function () {
       const ipc = new AppiumIpc();
       let sub1Res = {};

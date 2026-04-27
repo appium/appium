@@ -154,11 +154,11 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
   }
 
   async onIpcInit(): Promise<void> {
-    await this.ipcSubscribe('pluginMath', (pluginName: string, result: number) => {
+    await this.ipcSubscribe('pluginMath', async (pluginName: string, result: number) => {
       this.log.info(`A connected plugin did some math with result ${result}`);
       this.lastPluginMath = {pluginName, result};
     });
-    this.publishClockStatus();
+    await this.publishClockStatus();
   }
 
   proxyActive(): boolean {

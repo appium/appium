@@ -102,7 +102,7 @@ export class FakePlugin extends BasePlugin {
   }
 
   async onIpcInit() {
-    await this.ipcSubscribe<ClockStatus>('clockLifecycle', (publisher: string, message: ClockStatus) => {
+    await this.ipcSubscribe<ClockStatus>('clockLifecycle', async (publisher: string, message: ClockStatus) => {
       if (publisher === 'FakeDriver') {
         this.fakeDriverClockIsRunning = message.running;
       }

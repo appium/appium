@@ -137,22 +137,22 @@ export class ExtensionCore {
   async onIpcInit() {}
 
   async ipcSubscribe<T>(topic: string, cb: IpcSubscribeCallback<T>) { // eslint-disable-line promise/prefer-await-to-callbacks
-    await this.ipcGuard(() => this.ipc.subscribe(topic, this.constructor.name, cb));
+    await this.withIpc(() => this.ipc.subscribe(topic, this.constructor.name, cb));
   }
 
   async ipcUnsubscribe(topic: string) {
-    await this.ipcGuard(() => this.ipc.unsubscribe(topic, this.constructor.name));
+    await this.withIpc(() => this.ipc.unsubscribe(topic, this.constructor.name));
   }
 
   async ipcPublish<T>(topic: string, message: T) {
-    await this.ipcGuard(() => this.ipc.publish(topic, this.constructor.name, message));
+    await this.withIpc(() => this.ipc.publish(topic, this.constructor.name, message));
   }
 
   async ipcGetMessages<T>(topic: string) {
-    return await this.ipcGuard(() => this.ipc.getMessages<T>(topic));
+    return await this.withIpc(() => this.ipc.getMessages<T>(topic));
   }
 
-  private async ipcGuard<T>(fn: () => Promise<T>) {
+  private async withIpc<T>(fn: () => Promise<T>) {
     if (!this.ipc) {
       throw new Error(`Cannot call IPC related function without an IPC object assigned. This is likely a programming error`);
     }

@@ -88,7 +88,7 @@ export interface Plugin {
   /**
    * Assign the IPC object used for inter driver/plugin communication
    */
-  assignIpc: (ipc: IAppiumIpc) => void;
+  assignIpc: (ipc: IAppiumIpc) => Promise<void>;
 }
 
 /**

@@ -87,6 +87,20 @@ describe('AppiumIpc', function () {
       expect(sub1Res).to.eql({});
       expect(sub2Res).to.eql({publisher: 'bar', message: payload});
     });
+
+    it('should allow running ipc commands in subscription callback', async function () {
+      const ipc = new AppiumIpc();
+      let sub1Res = {};
+      let sub1Res2 = {};
+      const payload = {some: {cool: 'obj'}};
+      await ipc.subscribe('foo', 'bar', async (publisher, message) => {
+        sub1Res = {publisher, message};
+        sub1Res2 = (await ipc.getMessages('foo'))[0];
+      });
+      await ipc.publish('foo', 'baz', payload);
+      expect(sub1Res).to.eql({publisher: 'baz', message: payload});
+      expect(sub1Res2).to.eql({publisherName: 'baz', message: payload});
+    });
   });
 
   describe('getMessages', function () {

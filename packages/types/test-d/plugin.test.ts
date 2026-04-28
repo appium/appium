@@ -12,6 +12,7 @@ import type {
   NextPluginCallback,
   PluginCommand,
   DriverCommand,
+  IAppiumIpc,
 } from '..';
 class TestPlugin implements Plugin {
   static executeMethodMap = {
@@ -24,7 +25,7 @@ class TestPlugin implements Plugin {
 
   constructor(public readonly name: string, public readonly cliArgs: StringRecord<unknown> = {}) {}
 
-  async assignIpc(): Promise<void> {}
+  async assignIpc(ipc: IAppiumIpc): Promise<void> {} // eslint-disable-line @typescript-eslint/no-unused-vars
 
   public getPageSource: DriverCommandToPluginCommand<
     ExternalDriver['getPageSource'],

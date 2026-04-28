@@ -4,6 +4,7 @@ import type {
   AppiumLogger,
   BidiModuleMap,
   BiDiResultData,
+  IAppiumIpc,
   IpcMessage,
   IpcSubscribeCallback,
   StringRecord,
@@ -15,12 +16,11 @@ import {errors} from '../protocol';
 import {BIDI_COMMANDS} from '../protocol/bidi-commands';
 import _ from 'lodash';
 import {generateDriverLogPrefix} from './helpers';
-import type {AppiumIpc} from './ipc';
 
 export class ExtensionCore {
   bidiEventSubs: Record<string, string[]>;
   bidiCommands: BidiModuleMap = BIDI_COMMANDS as BidiModuleMap;
-  ipc: AppiumIpc;
+  ipc: IAppiumIpc;
   _logPrefix?: string;
   // used to handle driver events
   readonly eventEmitter: NodeJS.EventEmitter;
@@ -130,7 +130,7 @@ export class ExtensionCore {
     return finalResponse;
   }
 
-  async assignIpc(ipc: AppiumIpc): Promise<void> {
+  async assignIpc(ipc: IAppiumIpc): Promise<void> {
     this.ipc = ipc;
     await this.onIpcInit();
   }

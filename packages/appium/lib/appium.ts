@@ -366,7 +366,10 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
         this.sessions[innerSessionId] = driverInstance;
         // create an IPC channel for the driver and all plugins on this session
         this.sessionIpcs[innerSessionId] = new AppiumIpc();
-        await driverInstance.assignIpc(this.sessionIpcs[innerSessionId]);
+        if (_.isFunction(driverInstance.assignIpc)) {
+          // TODO remove this existence guard as a breaking change in Appium 3
+          await driverInstance.assignIpc(this.sessionIpcs[innerSessionId]);
+        }
       } finally {
         _.pull(this.pendingDrivers[InnerDriver.name], driverInstance);
       }
@@ -778,7 +781,10 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
           );
         }
         // we also want to assign the IPC channel for this session to the plugins
-        await p.assignIpc(this.sessionIpcs[newSessionId]);
+        if (_.isFunction(p.assignIpc)) {
+          // TODO remove this existence guard as a breaking change in Appium 3
+          await p.assignIpc(this.sessionIpcs[newSessionId]);
+        }
       }
       this.sessionlessPlugins = [];
     }

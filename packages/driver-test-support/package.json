@@ -40,7 +40,7 @@
   "types": "./build/lib/index.d.ts",
   "dependencies": {
     "asyncbox": "6.1.0",
-    "axios": "1.15.0",
+    "axios": "1.15.2",
     "chai": "6.2.2",
     "chai-as-promised": "8.0.2",
     "get-port": "7.2.0",

@@ -1,18 +1,16 @@
-/**
- * The async callback function called when a message is published on a certain IPC topic
- *
- * @typeparam T - the data shape for the message intended to be received in the callback
- */
-export type IpcSubscribeCallback<T> = (publisherName: string, message: T) => Promise<void>;
+import type EventEmitter from 'node:events';
 
 /**
  * An IPC subscription consists of a subscriber name (mostly for logging) and a callback.
  *
  * @typeparam T - the data shape for the message intended to be received in the callback
  */
-export type IpcSubscription<T> = {
+export interface IIpcSubscription extends EventEmitter {
   subscriberName: string;
-  cb: IpcSubscribeCallback<T>;
+  topic: string;
+  unsubscribe(): Promise<void>;
+  publish<T>(message: T): Promise<void>;
+  getMessage<T>(): Promise<IpcMessage<T> | undefined>;
 };
 
 /**
@@ -22,6 +20,8 @@ export type IpcSubscription<T> = {
  */
 export type IpcMessage<T> = {
   publisherName: string,
+  timestamp: number,
+  topic: string,
   message: T,
 };
 
@@ -29,8 +29,8 @@ export type IpcMessage<T> = {
  * An interface implemented by the internal IPC object hosted on the Appium server.
  */
 export interface IAppiumIpc {
-  subscribe<T>(topic: string, subscriberName: string, cb: IpcSubscribeCallback<T>): Promise<void>;
+  subscribe<T>(topic: string, subscriberName: string): Promise<IIpcSubscription>;
   unsubscribe(topic: string, subscriberName: string): Promise<void>;
   publish<T>(topic: string, publisherName: string, message: T): Promise<void>;
-  getMessages<T>(topic: string): Promise<Array<IpcMessage<T>>>;
+  getMessage<T>(topic: string): Promise<IpcMessage<T> | undefined>;
 }

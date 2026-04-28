@@ -154,7 +154,8 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
   }
 
   async onIpcInit(): Promise<void> {
-    await this.ipcSubscribe('pluginMath', async (pluginName: string, result: number) => {
+    const sub = await this.ipcSubscribe('pluginMath');
+    sub.on('message', (pluginName: string, result: number) => {
       this.log.info(`A connected plugin did some math with result ${result}`);
       this.lastPluginMath = {pluginName, result};
     });

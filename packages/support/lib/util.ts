@@ -1,5 +1,6 @@
 import B from 'bluebird';
 import _ from 'lodash';
+import {randomUUID} from 'node:crypto';
 import os from 'node:os';
 import path from 'node:path';
 import stream from 'node:stream';
@@ -11,7 +12,7 @@ import {quote as shellQuote, parse as shellParse} from 'shell-quote';
 export {shellParse};
 import pluralizeLib from 'pluralize';
 import {Base64Encode} from 'base64-stream';
-export {v1 as uuidV1, v3 as uuidV3, v4 as uuidV4, v5 as uuidV5} from 'uuid';
+import {v1 as uuidV1Lib, v3 as uuidV3Lib, v5 as uuidV5Lib} from 'uuid';
 import * as _lockfile from 'lockfile';
 import type {Element} from '@appium/types';
 
@@ -27,6 +28,36 @@ export const GiB = MiB * 1024;
 
 /** A string which is never `''`. */
 export type NonEmptyString<T extends string = string> = T extends '' ? never : T;
+
+/**
+ * @deprecated This helper is slated for removal. Please migrate callers away from UUID v1.
+ */
+export function uuidV1(...args: Parameters<typeof uuidV1Lib>): ReturnType<typeof uuidV1Lib> {
+  return uuidV1Lib(...args);
+}
+
+/**
+ * @deprecated This helper is slated for removal. Please migrate callers away from UUID v3.
+ */
+export function uuidV3(...args: Parameters<typeof uuidV3Lib>): ReturnType<typeof uuidV3Lib> {
+  return uuidV3Lib(...args);
+}
+
+/**
+ * Generates a v4 UUID using Node.js crypto.
+ *
+ * @returns A UUID v4 string
+ */
+export function uuidV4(): string {
+  return randomUUID();
+}
+
+/**
+ * @deprecated This helper is slated for removal. Please migrate callers away from UUID v5.
+ */
+export function uuidV5(...args: Parameters<typeof uuidV5Lib>): ReturnType<typeof uuidV5Lib> {
+  return uuidV5Lib(...args);
+}
 
 /**
  * Type guard: returns true if the value is a non-empty string.

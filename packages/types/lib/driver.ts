@@ -329,7 +329,7 @@ export interface ExternalDriver<
    *
    * @param ipc - the AppiumIpc object
    */
-  assignIpc(ipc: IAppiumIpc): Promise<void>;
+  assignIpc?(ipc: IAppiumIpc): Promise<void>;
 }
 
 /**

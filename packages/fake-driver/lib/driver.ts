@@ -278,13 +278,21 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
 
   private async startClock(): Promise<void> {
     this._clockRunning = true;
-    await this.publishClockStatus();
+    try {
+      await this.publishClockStatus();
+    } catch (e) {
+      this.log.error(e);
+    }
     while (this._clockRunning) {
       await sleep(500);
-      this.eventEmitter.emit('bidiEvent', {
-        method: 'appium:clock.currentTime',
-        params: {time: Date.now()},
-      });
+      try {
+        this.eventEmitter.emit('bidiEvent', {
+          method: 'appium:clock.currentTime',
+          params: {time: Date.now()},
+        });
+      } catch (e) {
+        this.log.error(e);
+      }
     }
   }
 

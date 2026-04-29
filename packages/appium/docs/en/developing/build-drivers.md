@@ -970,7 +970,6 @@ await this.ipcGetMessage<T>(topic); // get the last message sent on a topic with
 There are some important things to keep in mind when using Appium's IPC feature:
 - IPC is only available once `onIpcInit` has been called, at the end of the `createSession` flow.
   It cannot be used statically or in `createSession` hooks
-- IPC should not be used in `deleteSession` either, as the call to `super.deleteSession()` might destroy the IPC object
 - In sum, IPC is only for use during a session (this is also to prevent drivers/plugins from
   accessing or reading data sent on IPC channels in other sessions.)
 - The default max size of an IPC message is 1MB. This can be configured by the server-admin by

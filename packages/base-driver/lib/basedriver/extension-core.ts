@@ -137,7 +137,7 @@ export class ExtensionCore {
 
   async onIpcInit(): Promise<void> {}
 
-  async ipcSubscribe<T>(topic: string): Promise<IIpcSubscription> {
+  async ipcSubscribe<T>(topic: string): Promise<IIpcSubscription<T>> {
     return await this.withIpc(() => this.ipc.subscribe<T>(topic, this.constructor.name));
   }
 

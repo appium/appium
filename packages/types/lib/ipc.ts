@@ -1,16 +1,21 @@
-import type EventEmitter from 'node:events';
+import type {EventEmitter} from 'node:events';
+
+export interface IpcEvent<T> {
+  message: IpcMessage<T>[];
+}
 
 /**
  * An IPC subscription consists of a subscriber name (mostly for logging) and a callback.
  *
  * @typeparam T - the data shape for the message intended to be received in the callback
  */
-export interface IIpcSubscription extends EventEmitter {
+export interface IIpcSubscription<T> extends EventEmitter<IpcEvent<T>> {
   subscriberName: string;
   topic: string;
   unsubscribe(): Promise<void>;
-  publish<T>(message: T): Promise<void>;
-  getMessage<T>(): Promise<IpcMessage<T> | undefined>;
+  publish(message: T): Promise<void>;
+  getMessage(): Promise<IpcMessage<T> | undefined>;
+  [Symbol.asyncIterator](): AsyncGenerator<IpcMessage<T>>;
 };
 
 /**
@@ -29,7 +34,7 @@ export type IpcMessage<T> = {
  * An interface implemented by the internal IPC object hosted on the Appium server.
  */
 export interface IAppiumIpc {
-  subscribe<T>(topic: string, subscriberName: string): Promise<IIpcSubscription>; // eslint-disable-line @typescript-eslint/no-unused-vars
+  subscribe<T>(topic: string, subscriberName: string): Promise<IIpcSubscription<T>>;
   unsubscribe(topic: string, subscriberName: string): Promise<void>;
   publish<T>(topic: string, publisherName: string, message: T): Promise<void>;
   getMessage<T>(topic: string): Promise<IpcMessage<T> | undefined>;

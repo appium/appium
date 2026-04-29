@@ -1,6 +1,6 @@
 import AsyncLock from 'async-lock';
 import {log} from './logger';
-import type {StringRecord, IIpcSubscription, IAppiumIpc, IpcMessage} from '@appium/types';
+import type {StringRecord, IIpcSubscription, IAppiumIpc, IpcMessage, IpcEvent} from '@appium/types';
 import EventEmitter from 'node:events';
 import objSizeof from 'object-sizeof';
 
@@ -56,7 +56,7 @@ export class AppiumIpc implements IAppiumIpc {
       throw new Error(`Message with size ${messageSize} bytes is bigger than max size of ${this._maxObjSize} bytes`);
     }
 
-    const message: IpcMessage<T> = {publisherName, data, topic, timestamp: Date.now()};
+    const message: IpcMessage<T> = {publisherName, data: structuredClone(data), topic, timestamp: Date.now()};
 
     await this._lock.acquire(MSG_LOCK_KEY, async () => {
       this._messages[topic] = message;
@@ -69,7 +69,7 @@ export class AppiumIpc implements IAppiumIpc {
     );
 
     for (const sub of subs) {
-      sub.emit(EVT_MESSAGE, message);
+      sub.emit(EVT_MESSAGE, structuredClone(message));
     }
 
   }
@@ -92,7 +92,7 @@ export class AppiumIpc implements IAppiumIpc {
 
 }
 
-export class IpcSubscription<T> extends EventEmitter implements IIpcSubscription {
+export class IpcSubscription<T> extends EventEmitter<IpcEvent<T>> implements IIpcSubscription<T> {
   subscriberName: string;
   topic: string;
 
@@ -105,11 +105,11 @@ export class IpcSubscription<T> extends EventEmitter implements IIpcSubscription
     this.ipc = ipc;
   }
 
-  async getMessage<T>(): Promise<IpcMessage<T> | undefined> {
+  async getMessage(): Promise<IpcMessage<T> | undefined> {
     return await this.ipc.getMessage<T>(this.topic);
   }
 
-  async publish<T>(data: T): Promise<void> {
+  async publish(data: T): Promise<void> {
     return await this.ipc.publish<T>(this.topic, this.subscriberName, data);
   }
 

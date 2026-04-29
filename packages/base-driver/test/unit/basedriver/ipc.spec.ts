@@ -131,6 +131,32 @@ describe('AppiumIpc', function () {
       await expect(ipc.publish('foo', 'bar', payload1)).to.eventually.eql(undefined);
       await expect(ipc.publish('foo', 'bar', payload2)).to.eventually.be.rejectedWith(/24/);
     });
+
+    it('should not allow sharing actual published object, only copies', async function () {
+      const ipc = new AppiumIpc();
+      const payload = {foo: 'bar'};
+      type MsgType = typeof payload;
+      const sub1 = await ipc.subscribe<MsgType>('foo', 'sub1');
+      const sub2 = await ipc.subscribe<MsgType>('foo', 'sub2');
+      sub1.on('message', ({data}) => {
+        expect(data).to.eql({foo: 'bar'});
+        data.foo = 'bad';
+      });
+      sub2.on('message', ({data}) => {
+        expect(data).to.eql({foo: 'bar'});
+        data.foo = 'bad2';
+      });
+      await ipc.publish<MsgType>('foo', 'pub1', payload);
+      await B.delay(0);
+
+      // allowing subscribers to change the data they received should not change the original obj
+      expect(payload).to.eql({foo: 'bar'});
+
+      // changing original object should not change what was published
+      payload.foo = 'new';
+      expect((await sub1.getMessage())!.data).to.eql({foo: 'bar'});
+
+    });
   });
 
   describe('getMessage', function () {

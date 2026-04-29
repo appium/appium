@@ -519,5 +519,5 @@ Even though drivers and plugins don't know anything about each other, it's possi
 send messages that other drivers or plugins can listen for, within the context of the same session,
 using an IPC channel. Given that the developer instructions for this feature are the same for
 drivers and plugins, please head over to the [IPC development docs for
-drivers](./build-plugins.md#send-messages-to-plugins-running-on-the-same-session) at the driver
+drivers](./build-drivers.md#send-messages-to-plugins-running-on-the-same-session) at the driver
 development guide.

@@ -488,17 +488,14 @@ describe('util', function () {
       expect(callCount).to.equal(1);
     });
 
-    it('should memoize using a custom resolver', function () {
+    it('should memoize by first argument only', function () {
       let callCount = 0;
-      const fn = util.memoize(
-        (a: number, b: number) => {
-          callCount += 1;
-          return a + b;
-        },
-        (_a, b) => b
-      );
+      const fn = util.memoize((a: number, b: number) => {
+        callCount += 1;
+        return a + b;
+      });
       expect(fn(1, 2)).to.equal(3);
-      expect(fn(999, 2)).to.equal(3);
+      expect(fn(1, 999)).to.equal(3);
       expect(callCount).to.equal(1);
     });
   });

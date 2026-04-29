@@ -53,17 +53,13 @@ export function hasValue<T>(val: T): val is NonNullable<T> {
 
 /**
  * Creates a memoized version of a function.
- * By default, the first argument is used as the cache key.
  *
  * @param fn - Function to memoize
  * @param resolver - Optional cache key resolver
- * @returns Memoized function with exposed `cache` map
+ * @returns Memoized function
  */
-export function memoize<Fn extends (...args: any[]) => any, Key = unknown>(
-  fn: Fn,
-  resolver?: (...args: Parameters<Fn>) => Key
-): Fn & {cache: Map<Key, ReturnType<Fn>>} {
-  return _.memoize(fn, resolver) as unknown as Fn & {cache: Map<Key, ReturnType<Fn>>};
+export function memoize<Fn extends (...args: any[]) => any>(fn: Fn): Fn {
+  return _.memoize(fn) as unknown as Fn;
 }
 
 /**

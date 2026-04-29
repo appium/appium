@@ -132,7 +132,11 @@ export class ExtensionCore {
 
   async assignIpc(ipc: IAppiumIpc): Promise<void> {
     this.ipc = ipc;
-    await this.onIpcInit();
+    try {
+      await this.onIpcInit();
+    } catch (e) {
+      this.log.error(`Error running onIpcInit: ${e}`);
+    }
   }
 
   async onIpcInit(): Promise<void> {}

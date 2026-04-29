@@ -1,5 +1,10 @@
 import type {EventEmitter} from 'node:events';
 
+/**
+ * A representation of the (only) event allowed on the IpcSubscription EventEmitter object
+ *
+ * @typeparam T - the data shape for the message for a given IPC topic
+ */
 export interface IpcEvent<T> {
   message: IpcMessage<T>[];
 }

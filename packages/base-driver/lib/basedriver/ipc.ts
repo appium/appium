@@ -59,7 +59,6 @@ export class AppiumIpc implements IAppiumIpc {
     const message: IpcMessage<T> = {publisherName, data, topic, timestamp: Date.now()};
 
     await this._lock.acquire(MSG_LOCK_KEY, async () => {
-      // TODO message array should be a queue that removes items when size grows too large
       this._messages[topic] = message;
     });
 

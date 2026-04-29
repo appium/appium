@@ -23,7 +23,7 @@ export class AppiumIpc implements IAppiumIpc {
     log.info(`Initialized new IPC object with max object size of ${maxObjSize} bytes`);
   }
 
-  async subscribe<T>(topic: string, subscriberName: string): Promise<IpcSubscription<T>> { // eslint-disable-line promise/prefer-await-to-callbacks
+  async subscribe<T>(topic: string, subscriberName: string): Promise<IpcSubscription<T>> {
     log.info(`Subscribing ${subscriberName} to topic '${topic}'`);
     return await this._lock.acquire(SUB_LOCK_KEY, async () => {
       if (this.subscriptionExists(topic, subscriberName)) {

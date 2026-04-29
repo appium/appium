@@ -2,7 +2,7 @@ import B from 'bluebird';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {AppiumIpc, EVT_MESSAGE} from '../../../lib/basedriver/ipc';
-import {IpcMessage} from '@appium/types';
+import type {IpcMessage} from '@appium/types';
 
 chai.use(chaiAsPromised);
 

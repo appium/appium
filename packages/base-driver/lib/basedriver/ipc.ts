@@ -2,9 +2,12 @@ import AsyncLock from 'async-lock';
 import {log} from './logger';
 import type {StringRecord, IIpcSubscription, IAppiumIpc, IpcMessage} from '@appium/types';
 import EventEmitter from 'node:events';
+import objSizeof from 'object-sizeof';
 
 const SUB_LOCK_KEY = 'subscriptions';
 const MSG_LOCK_KEY = 'messages';
+
+const DEF_MAX_OBJ_SIZE_BYTES = 1024 * 1024; // 1mb seems like plenty for any plugin to pass a message
 
 export const EVT_MESSAGE = 'message';
 
@@ -12,9 +15,12 @@ export class AppiumIpc implements IAppiumIpc {
   protected readonly _messages: StringRecord<IpcMessage<any>> = {};
   protected readonly _subscriptions: StringRecord<Array<IpcSubscription<any>>> = {};
   protected readonly _lock: AsyncLock;
+  protected readonly _maxObjSize: number;
 
-  constructor () {
+  constructor (maxObjSize: number = DEF_MAX_OBJ_SIZE_BYTES) {
+    this._maxObjSize = maxObjSize;
     this._lock = new AsyncLock();
+    log.info(`Initialized new IPC object with max object size of ${maxObjSize} bytes`);
   }
 
   async subscribe<T>(topic: string, subscriberName: string): Promise<IpcSubscription<T>> { // eslint-disable-line promise/prefer-await-to-callbacks
@@ -44,6 +50,11 @@ export class AppiumIpc implements IAppiumIpc {
 
   async publish<T>(topic: string, publisherName: string, message: T): Promise<void> {
     log.info(`${publisherName} is publishing a message to topic ${topic}`);
+
+    const messageSize = objSizeof(message);
+    if (messageSize > this._maxObjSize) {
+      throw new Error(`Message with size ${messageSize} bytes is bigger than max size of ${this._maxObjSize} bytes`);
+    }
 
     const data: IpcMessage<T> = {publisherName, message, topic, timestamp: Date.now()};
 

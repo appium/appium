@@ -123,6 +123,14 @@ describe('AppiumIpc', function () {
       expect(sub1Res2!.message).to.eql(payload);
       expect(sub1Res2!.publisherName).to.eql('baz');
     });
+
+    it('should throw an error when trying to publish a large message', async function () {
+      const ipc = new AppiumIpc(20); // very small message size
+      const payload1 = 'hello'; // 20 bytes
+      const payload2 = 'helloworld!'; // 24 bytes
+      await expect(ipc.publish('foo', 'bar', payload1)).to.eventually.eql(undefined);
+      await expect(ipc.publish('foo', 'bar', payload2)).to.eventually.be.rejectedWith(/24/);
+    });
   });
 
   describe('getMessage', function () {

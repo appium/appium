@@ -6,7 +6,7 @@ import type {EventEmitter} from 'node:events';
  * @typeparam T - the data shape for the message for a given IPC topic
  */
 export interface IpcEvent<T> {
-  message: IpcMessage<T>[];
+  message: [IpcMessage<T>];
 }
 
 /**

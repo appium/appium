@@ -126,10 +126,10 @@ describe('AppiumIpc', function () {
 
     it('should throw an error when trying to publish a large message', async function () {
       const ipc = new AppiumIpc(20); // very small message size
-      const payload1 = 'hello'; // 20 bytes
-      const payload2 = 'helloworld!'; // 24 bytes
+      const payload1 = 'hi'; // not so many bytes
+      const payload2 = 'helloworld!'.repeat(100); // lotsa bytes
       await expect(ipc.publish('foo', 'bar', payload1)).to.eventually.eql(undefined);
-      await expect(ipc.publish('foo', 'bar', payload2)).to.eventually.be.rejectedWith(/24/);
+      await expect(ipc.publish('foo', 'bar', payload2)).to.eventually.be.rejectedWith(/20/);
     });
 
     it('should not allow sharing actual published object, only copies', async function () {

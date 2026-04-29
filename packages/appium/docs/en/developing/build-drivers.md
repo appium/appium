@@ -919,16 +919,21 @@ Here is an example of how subscribing and use of these subscription methods migh
 async onIpcInit() {
   // we know at this point in our driver/plugin lifecycle that we can use IPC methods
   type MyMessageData = {myData: string}; // let's say the message data for this channel has this shape
+
   const subscription = await this.ipcSubscribe<MyMessageData>('coolTopic');
+
   // listen for new messages on topic
-  subscription.on('message', (message: IpcMessage<MyMessageData>) => {
-    console.log({message});
+  subscription.on('message', (message) => {
+    console.log(message.data); // {myData: 'something'}
   });
+
   // publish a message to the topic
-  await subscription.publish<MyMessageData>({myData: 'hi'});
+  await subscription.publish({myData: 'hi'});
+
   // get last message sent to topic
-  const {data} = await subscription.getMessage<MyMessageData>();
+  const {data} = await subscription.getMessage() ?? {data: null};
   // data = {myData: 'hi'}
+
   // unsubscribe
   await subscription.unsubscribe();
 }

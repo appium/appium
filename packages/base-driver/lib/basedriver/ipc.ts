@@ -48,19 +48,19 @@ export class AppiumIpc implements IAppiumIpc {
     });
   }
 
-  async publish<T>(topic: string, publisherName: string, message: T): Promise<void> {
+  async publish<T>(topic: string, publisherName: string, data: T): Promise<void> {
     log.info(`${publisherName} is publishing a message to topic ${topic}`);
 
-    const messageSize = objSizeof(message);
+    const messageSize = objSizeof(data);
     if (messageSize > this._maxObjSize) {
       throw new Error(`Message with size ${messageSize} bytes is bigger than max size of ${this._maxObjSize} bytes`);
     }
 
-    const data: IpcMessage<T> = {publisherName, message, topic, timestamp: Date.now()};
+    const message: IpcMessage<T> = {publisherName, data, topic, timestamp: Date.now()};
 
     await this._lock.acquire(MSG_LOCK_KEY, async () => {
       // TODO message array should be a queue that removes items when size grows too large
-      this._messages[topic] = data;
+      this._messages[topic] = message;
     });
 
     const subs: IpcSubscription<T>[] = await this._lock.acquire(SUB_LOCK_KEY, () =>
@@ -70,7 +70,7 @@ export class AppiumIpc implements IAppiumIpc {
     );
 
     for (const sub of subs) {
-      sub.emit(EVT_MESSAGE, data);
+      sub.emit(EVT_MESSAGE, message);
     }
 
   }
@@ -110,8 +110,8 @@ export class IpcSubscription<T> extends EventEmitter implements IIpcSubscription
     return await this.ipc.getMessage<T>(this.topic);
   }
 
-  async publish<T>(message: T): Promise<void> {
-    return await this.ipc.publish<T>(this.topic, this.subscriberName, message);
+  async publish<T>(data: T): Promise<void> {
+    return await this.ipc.publish<T>(this.topic, this.subscriberName, data);
   }
 
   async unsubscribe(): Promise<void> {

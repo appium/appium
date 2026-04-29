@@ -62,8 +62,8 @@ describe('AppiumIpc', function () {
       sub2.on(EVT_MESSAGE, (message) => sub2Res = message);
       await ipc.publish('foo', 'zowee', payload);
 
-      expect(sub1Res!.message).to.eql(payload);
-      expect(sub2Res!.message).to.eql(payload);
+      expect(sub1Res!.data).to.eql(payload);
+      expect(sub2Res!.data).to.eql(payload);
 
       expect(sub1Res!.publisherName).to.eql('zowee');
       expect(sub2Res!.publisherName).to.eql('zowee');
@@ -87,7 +87,7 @@ describe('AppiumIpc', function () {
       await ipc.publish('foo', 'baz', payload);
 
       expect(sub2Res!).to.not.exist;
-      expect(sub1Res!.message).to.eql(payload);
+      expect(sub1Res!.data).to.eql(payload);
       expect(sub1Res!.publisherName).to.eql('baz');
     });
 
@@ -100,7 +100,7 @@ describe('AppiumIpc', function () {
       sub1.on(EVT_MESSAGE, (message) => sub1Res = message);
       await sub2.publish(payload);
 
-      expect(sub1Res!.message).to.eql(payload);
+      expect(sub1Res!.data).to.eql(payload);
       expect(sub1Res!.publisherName).to.eql('baz');
       expect(sub1Res!.topic).to.eql('foo');
       expect(sub1Res!).to.have.property('timestamp');
@@ -118,9 +118,9 @@ describe('AppiumIpc', function () {
       });
       await ipc.publish('foo', 'baz', payload);
       await B.delay(0); // just spin once to let the publish callback do its thing
-      expect(sub1Res!.message).to.eql(payload);
+      expect(sub1Res!.data).to.eql(payload);
       expect(sub1Res!.publisherName).to.eql('baz');
-      expect(sub1Res2!.message).to.eql(payload);
+      expect(sub1Res2!.data).to.eql(payload);
       expect(sub1Res2!.publisherName).to.eql('baz');
     });
 
@@ -141,7 +141,7 @@ describe('AppiumIpc', function () {
       await ipc.publish('foo', 'bar', payload1);
       await ipc.publish('foo', 'baz', payload2);
       await ipc.publish('other', 'bar', 5); // should not get message published on other topic
-      expect((await ipc.getMessage('foo'))!.message).to.eql(payload2);
+      expect((await ipc.getMessage('foo'))!.data).to.eql(payload2);
     });
 
     it('should get the message from the subscription object', async function () {
@@ -151,7 +151,7 @@ describe('AppiumIpc', function () {
       const sub1 = await ipc.subscribe<PayloadType>('foo', 'bar');
       const sub2 = await ipc.subscribe<PayloadType>('foo', 'baz');
       await sub1.publish(payload1);
-      expect((await sub2.getMessage())!.message).to.eql(payload1);
+      expect((await sub2.getMessage())!.data).to.eql(payload1);
     });
 
     it('should get messages from the async iterator of the subscription object', async function () {
@@ -177,7 +177,7 @@ describe('AppiumIpc', function () {
           i++;
           expect(message.publisherName).to.eql('bar');
           expect(message.topic).to.eql('foo');
-          received.push(message.message);
+          received.push(message.data);
           if (i >= 3) {
             break;
           }

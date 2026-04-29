@@ -2,7 +2,7 @@ import {sleep} from 'asyncbox';
 import type {Express, Request, Response} from 'express';
 import type {Server as HttpServer} from 'node:http';
 import {BaseDriver, errors} from 'appium/driver';
-import type {DriverData, InitialOpts} from '@appium/types';
+import type {DriverData, InitialOpts, IpcMessage} from '@appium/types';
 import {desiredCapConstraints} from './desired-caps';
 import type {FakeDriverConstraints} from './desired-caps';
 import type {FakeDriverCaps, W3CFakeDriverCaps} from './types';
@@ -155,9 +155,9 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
 
   async onIpcInit(): Promise<void> {
     const sub = await this.ipcSubscribe('pluginMath');
-    sub.on('message', (pluginName: string, result: number) => {
-      this.log.info(`A connected plugin did some math with result ${result}`);
-      this.lastPluginMath = {pluginName, result};
+    sub.on('message', (message: IpcMessage<number>) => {
+      this.log.info(`A connected plugin did some math with result ${message.data}`);
+      this.lastPluginMath = {pluginName: message.publisherName, result: message.data};
     });
     await this.publishClockStatus();
   }

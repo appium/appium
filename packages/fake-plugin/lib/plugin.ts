@@ -6,6 +6,7 @@ import type {
   BidiModuleMap,
   ExecuteMethodMap,
   ExternalDriver,
+  IpcMessage,
   MethodMap,
 } from '@appium/types';
 
@@ -103,16 +104,16 @@ export class FakePlugin extends BasePlugin {
 
   async onIpcInit() {
     const sub = await this.ipcSubscribe<ClockStatus>('clockLifecycle');
-    sub.on('message', (publisher: string, message: ClockStatus) => {
-      if (publisher === 'FakeDriver') {
-        this.fakeDriverClockIsRunning = message.running;
+    sub.on('message', (message: IpcMessage<ClockStatus>) => {
+      if (message.publisherName === 'FakeDriver') {
+        this.fakeDriverClockIsRunning = message.data.running;
       }
     });
     // subscribing to clockLifecycle doesn't tell us the current status if it started before this
     // constructor was called, so retrieve it
     const message = await this.ipcGetMessage<ClockStatus>('clockLifecycle');
     if (message && message.publisherName === 'FakeDriver') {
-      this.fakeDriverClockIsRunning = message.message.running;
+      this.fakeDriverClockIsRunning = message.data.running;
     }
   }
 

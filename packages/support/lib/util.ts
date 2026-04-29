@@ -114,20 +114,6 @@ export function uniq<T>(values: readonly T[]): T[] {
 }
 
 /**
- * Assigns default values for undefined properties on the target object.
- *
- * @param object - Destination object
- * @param sources - Source objects providing defaults
- * @returns The mutated destination object
- */
-export function defaults<T extends object, S extends object[]>(
-  object: T,
-  ...sources: S
-): T & S[number] {
-  return _.defaults(object, ...sources) as T & S[number];
-}
-
-/**
  * Truncates a string to a maximum length.
  *
  * @param value - Input string
@@ -136,13 +122,10 @@ export function defaults<T extends object, S extends object[]>(
  */
 export function truncateString(value: string, options: TruncateStringOptions | number = {}): string {
   const normalizedOptions = _.isNumber(options) ? {length: options} : options;
-  const {length, separator, omission = '…'} = normalizedOptions;
+  const {length, omission = '…'} = normalizedOptions;
   const truncateOpts: TruncateStringOptions = {omission};
   if (!_.isUndefined(length)) {
     truncateOpts.length = length;
-  }
-  if (!_.isUndefined(separator)) {
-    truncateOpts.separator = separator;
   }
   return _.truncate(value as string, truncateOpts);
 }
@@ -476,8 +459,6 @@ export interface TruncateStringOptions {
   length?: number;
   /** Suffix appended to truncated strings. Default "…". */
   omission?: string;
-  /** Optional separator to avoid splitting words/tokens. */
-  separator?: string | RegExp;
 }
 
 /** Guard function that runs the given behavior under the lock. */

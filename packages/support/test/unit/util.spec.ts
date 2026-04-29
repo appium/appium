@@ -602,18 +602,6 @@ describe('util', function () {
     });
   });
 
-  describe('defaults', function () {
-    it('should only assign undefined properties', function () {
-      const actual = util.defaults({a: 1, b: undefined as number | undefined}, {a: 2, b: 2, c: 3});
-      expect(actual).to.eql({a: 1, b: 2, c: 3});
-    });
-
-    it('should keep null values and support multiple sources', function () {
-      const actual = util.defaults({a: null as number | null}, {a: 1}, {b: 2});
-      expect(actual).to.eql({a: null, b: 2});
-    });
-  });
-
   describe('truncateString', function () {
     it('should not change short strings', function () {
       expect(util.truncateString('short')).to.equal('short');
@@ -632,24 +620,6 @@ describe('util', function () {
       expect(util.truncateString('abcdefghijklmnopqrstuvwxyz', {length: 10, omission: '..'})).to.equal(
         'abcdefgh..'
       );
-    });
-
-    it('should support string separator', function () {
-      expect(
-        util.truncateString('hello world this is appium', {
-          length: 16,
-          separator: ' ',
-        })
-      ).to.equal('hello world…');
-    });
-
-    it('should support regexp separator', function () {
-      expect(
-        util.truncateString('hello world this is appium', {
-          length: 16,
-          separator: /\s+/,
-        })
-      ).to.equal('hello world…');
     });
 
     it('should handle non-string values safely', function () {

@@ -885,3 +885,93 @@ this.onUnexpectedShutdown(handler)
 
 `handler` should be a function which receives an error object (representing the reason for the
 unexpected shutdown).
+
+### Send messages to plugins running on the same session
+
+Appium's driver and plugin architecture means that a single driver and any number of plugins can be
+running together for a current session. The driver and plugins don't really know anything about
+each other though, which can make coordination potentially difficult. Without creating any kind of
+tight coupling between drivers or plugins, it's possible for drivers and plugins to communicate
+along a pub/sub style message bus.
+
+Drivers and plugins can implement an instance method called `async onIpcInit`, in which they will
+know that the IPC channel for the session is now active. At this point, they have access to the
+following methods:
+
+#### `async ipcSubscribe<T>(topic: string): Promise<IIpcSubscription>`
+
+This method allows a driver or plugin to subscribe to a topic on the IPC channel for the session.
+Topics are simply strings. To coordinate effectively, drivers or plugins would use the same topic
+string (so this would be something advertised in the driver/plugin documentation).
+
+The result of this call is an `IpcSubscription` object that allows:
+- Looping through messages on the topic via an async generator
+- Hooking up an event handler for new messages
+- Getting the last message sent on the topic
+- Publishing a message to the topic
+- Unsubscribing from the topic
+
+#### `IpcSubscription` object
+
+Here is an example of how subscribing and use of these subscription methods might work:
+
+```ts
+async onIpcInit() {
+  // we know at this point in our driver/plugin lifecycle that we can use IPC methods
+  type MyMessageData = {myData: string}; // let's say the message data for this channel has this shape
+  const subscription = await this.ipcSubscribe<MyMessageData>('coolTopic');
+  // listen for new messages on topic
+  subscription.on('message', (message: IpcMessage<MyMessageData>) => {
+    console.log({message});
+  });
+  // publish a message to the topic
+  await subscription.publish<MyMessageData>({myData: 'hi'});
+  // get last message sent to topic
+  const {data} = await subscription.getMessage<MyMessageData>();
+  // data = {myData: 'hi'}
+  // unsubscribe
+  await subscription.unsubscribe();
+}
+```
+
+With a subscription object, we can also iterate async over it to receive new messages:
+
+```ts
+for await (const message of subscription) {
+  // here we have a message
+}
+```
+
+#### `IpcMessage` object
+
+When you get a message on a topic, it has the following shape:
+
+```ts
+export type IpcMessage<T> = {
+  publisherName: string, // the name of the publishing object
+  timestamp: number,     // when the message was published
+  topic: string,         // the topic the message was published on
+  data: T,               // the arbitrary message data
+};
+```
+
+#### Other methods
+
+In addition to using the subscription object, you can also use other `Ipc*` methods on the
+driver/plugin instance:
+
+```ts
+await this.ipcPublish<T>(topic, message); // publish a message on a topic without being subscribed
+await this.ipcGetMessage<T>(topic); // get the last message sent on a topic without being subscribed
+```
+
+#### IPC Notes
+
+There are some important things to keep in mind when using Appium's IPC feature:
+- IPC is only available once `onIpcInit` has been called, at the end of the `createSession` flow.
+  It cannot be used statically or in `createSession` hooks
+- IPC should not be used in `deleteSession` either, as the call to `super.deleteSession()` might destroy the IPC object
+- In sum, IPC is only for use during a session (this is also to prevent drivers/plugins from
+  accessing or reading data sent on IPC channels in other sessions.)
+- The default max size of an IPC message is 1MB. This can be configured by the server-admin by
+  using the `--max-ipc-message-size` arg (value is a number in bytes).

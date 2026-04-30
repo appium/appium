@@ -69,7 +69,7 @@ export class AppiumIpc implements IAppiumIpc {
     );
 
     for (const sub of subs) {
-      sub.emit(EVT_MESSAGE, structuredClone(message));
+      sub.emit(EVT_MESSAGE, this.messageForPublish(message));
     }
 
   }
@@ -80,7 +80,7 @@ export class AppiumIpc implements IAppiumIpc {
         return;
       }
 
-      return structuredClone(this._messages[topic] as IpcMessage<T>);
+      return this.messageForPublish(this._messages[topic] as IpcMessage<T>);
     });
   }
 
@@ -88,6 +88,13 @@ export class AppiumIpc implements IAppiumIpc {
     // this is a private helper function only called by methods which already have the subscription
     // lock so we don't need to worry about locking here
     return !!this._subscriptions[topic]?.find((sub) => sub.subscriberName === subscriberName);
+  }
+
+  private messageForPublish<T>(message: IpcMessage<T>): IpcMessage<T> {
+    return structuredClone({
+      ...message,
+      publisherName: message.publisherName.split('@')[0]
+    });
   }
 
 }

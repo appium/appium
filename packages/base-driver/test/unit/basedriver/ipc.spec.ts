@@ -157,6 +157,25 @@ describe('AppiumIpc', function () {
       expect((await sub1.getMessage())!.data).to.eql({foo: 'bar'});
 
     });
+
+    it('should not include unique object info in the publisher name', async function () {
+      const ipc = new AppiumIpc();
+      const sub1 = await ipc.subscribe<number>('foo', 'subscriber1@1234');
+      const sub2 = await ipc.subscribe<number>('foo', 'subscriber2@1234');
+      let rcvd: IpcMessage<number>;
+      sub1.on('message', (data) => rcvd = data);
+      await ipc.publish<number>('foo', 'publisher@1234', 5);
+      await B.delay(0);
+      expect(rcvd!.publisherName).to.eql('publisher');
+      expect(rcvd!.data).to.eql(5);
+
+      sub2.on('message', (data) => rcvd = data);
+      await sub1.publish(3);
+      await B.delay(0);
+      expect(rcvd!.publisherName).to.eql('subscriber1');
+      expect(rcvd!.data).to.eql(3);
+
+    });
   });
 
   describe('getMessage', function () {
@@ -212,6 +231,14 @@ describe('AppiumIpc', function () {
 
       await Promise.all([rcvLoop(), sendLoop()]);
       expect(received).to.eql([payload1, payload2, payload3]);
+    });
+
+    it('should not include unique publisher name', async function () {
+      const ipc = new AppiumIpc();
+      const sub1 = await ipc.subscribe<number>('foo', 'subscriber1@1234');
+      await ipc.publish<number>('foo', 'publisher@1234', 5);
+      const {publisherName} = await sub1.getMessage() ?? {publisherName: null};
+      expect(publisherName).to.eql('publisher');
     });
   });
 });

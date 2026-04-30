@@ -128,7 +128,7 @@
     "eslint-plugin-import-x": "4.16.2",
     "eslint-plugin-mocha": "11.2.0",
     "eslint-plugin-n": "17.24.0",
-    "eslint-plugin-promise": "7.2.1",
+    "eslint-plugin-promise": "7.3.0",
     "finalhandler": "2.1.1",
     "get-port": "7.2.0",
     "json-schema-to-typescript": "15.0.4",

@@ -979,3 +979,8 @@ There are some important things to keep in mind when using Appium's IPC feature:
   accessing or reading data sent on IPC channels in other sessions.)
 - The default max size of an IPC message is 1MB. This can be configured by the server-admin by
   using the `--max-ipc-message-size` arg (value is a number in bytes).
+
+To see examples of IPC in action, check out Appium's own
+[FakeDriver](https://github.com/appium/appium/blob/master/packages/fake-driver/lib/driver.ts) and
+[FakePlugin](https://github.com/appium/appium/blob/master/packages/fake-plugin/lib/plugin.ts)
+extensions, which showcase several ways of using IPC messages.

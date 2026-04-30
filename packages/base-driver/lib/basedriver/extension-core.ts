@@ -136,17 +136,20 @@ export class ExtensionCore {
       await this.onIpcInit();
     } catch (e) {
       this.log.error(`Error running onIpcInit: ${e}`);
+      if (e instanceof Error && e.stack) {
+        this.log.error(e.stack);
+      }
     }
   }
 
   async onIpcInit(): Promise<void> {}
 
   async ipcSubscribe<T>(topic: string): Promise<IIpcSubscription<T>> {
-    return await this.withIpc(() => this.ipc.subscribe<T>(topic, this.constructor.name));
+    return await this.withIpc(() => this.ipc.subscribe<T>(topic, this.getIpcId()));
   }
 
   async ipcPublish<T>(topic: string, message: T): Promise<void> {
-    await this.withIpc(() => this.ipc.publish(topic, this.constructor.name, message));
+    await this.withIpc(() => this.ipc.publish(topic, this.getIpcId(), message));
   }
 
   async ipcGetMessage<T>(topic: string): Promise<IpcMessage<T> | undefined> {
@@ -158,5 +161,9 @@ export class ExtensionCore {
       throw new Error(`Cannot call IPC related function without an IPC object assigned. This is likely a programming error`);
     }
     return await fn();
+  }
+
+  private getIpcId(): string {
+    return generateDriverLogPrefix(this);
   }
 }

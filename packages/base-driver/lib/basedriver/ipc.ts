@@ -49,7 +49,7 @@ export class AppiumIpc implements IAppiumIpc {
   }
 
   async publish<T>(topic: string, publisherName: string, data: T): Promise<void> {
-    log.info(`${publisherName} is publishing a message to topic ${topic}`);
+    log.debug(`${publisherName} is publishing a message to topic ${topic}`);
 
     const messageSize = objSizeof(data);
     if (messageSize > this._maxObjSize) {

@@ -1,4 +1,4 @@
-import xmlplist from 'plist';
+import {build as plistBuild, parse as plistParse} from 'plist';
 import bplistCreate from 'bplist-creator';
 import {parseFile, parseBuffer} from 'bplist-parser';
 import {fs} from './fs';
@@ -86,7 +86,7 @@ export async function updatePlistFile(
     throw log.errorWithException(`Could not update plist: ${(err as Error).message}`);
   }
   _.extend(obj, updatedFields);
-  const newPlist = binary ? bplistCreate(obj) : xmlplist.build(obj);
+  const newPlist = binary ? bplistCreate(obj) : plistBuild(obj);
   try {
     await fs.writeFile(plist, newPlist);
   } catch (err) {
@@ -128,7 +128,7 @@ export function createPlist(object: object, binary = false): Buffer | string {
   if (binary) {
     return createBinaryPlist(object);
   }
-  return xmlplist.build(object);
+  return plistBuild(object);
 }
 
 /**
@@ -141,7 +141,7 @@ export function createPlist(object: object, binary = false): Buffer | string {
 export function parsePlist(data: string | Buffer): object {
   const textPlist = getXmlPlist(data);
   if (textPlist) {
-    return xmlplist.parse(textPlist);
+    return plistParse(textPlist);
   }
 
   const binaryPlist = getBinaryPlist(data);
@@ -156,7 +156,7 @@ export function parsePlist(data: string | Buffer): object {
 
 async function parseXmlPlistFile(plistFilename: string): Promise<object> {
   const xmlContent = await fs.readFile(plistFilename, 'utf8');
-  return xmlplist.parse(xmlContent);
+  return plistParse(xmlContent);
 }
 
 function getXmlPlist(data: string | Buffer): string | null {

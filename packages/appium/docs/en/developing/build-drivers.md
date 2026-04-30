@@ -927,7 +927,7 @@ async onIpcInit() {
     console.log(message.data); // {myData: 'something'}
   });
 
-  // publish a message to the topic
+  // publish a message to the topic; might throw if message is larger than configured max size
   await subscription.publish({myData: 'hi'});
 
   // get last message sent to topic
@@ -979,6 +979,8 @@ There are some important things to keep in mind when using Appium's IPC feature:
   accessing or reading data sent on IPC channels in other sessions.)
 - The default max size of an IPC message is 1MB. This can be configured by the server-admin by
   using the `--max-ipc-message-size` arg (value is a number in bytes).
+- If a message exceeds the configured size, any call to `publish`-related methods will throw, so be
+  sure to cover this case in your error handling.
 
 To see examples of IPC in action, check out Appium's own
 [FakeDriver](https://github.com/appium/appium/blob/master/packages/fake-driver/lib/driver.ts) and

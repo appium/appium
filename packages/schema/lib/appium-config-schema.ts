@@ -350,7 +350,7 @@ export const AppiumConfigJsonSchema = {
           appiumCliDescription: 'The maximum size in bytes allowed for message objects sent on IPC topics.',
           description: 'Maximum size in bytes for IPC messages',
           type: 'integer',
-          minimum: 0,
+          minimum: 1,
           default: 1048576,
           title: 'max-ipc-message-size config',
         },

@@ -20,7 +20,6 @@ import {glob} from 'glob';
 import type {GlobOptions} from 'glob';
 import klaw from 'klaw';
 import type {Walker} from 'klaw';
-import _ from 'lodash';
 import ncp from 'ncp';
 import {packageDirectorySync} from 'package-directory';
 import path from 'node:path';
@@ -30,14 +29,14 @@ import which from 'which';
 import log from './logger';
 import {Timer} from './timing';
 import {isWindows} from './system';
-import {pluralize} from './util';
+import {memoize, pluralize} from './util';
 
 const ncpAsync = promisify(ncp) as (
   source: string,
   dest: string,
   opts?: ncp.Options
 ) => Promise<void>;
-const findRootCached = _.memoize(
+const findRootCached = memoize(
   packageDirectorySync,
   (opts: {cwd?: string} | undefined) => opts?.cwd
 );

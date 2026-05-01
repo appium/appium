@@ -1,6 +1,5 @@
 import {isWindows} from './system';
 import log from './logger';
-import _ from 'lodash';
 import {exec} from 'teen_process';
 import path from 'node:path';
 import _fs from 'node:fs';
@@ -165,14 +164,14 @@ function extractAllProperties(obj: object): (string | symbol)[] {
   for (const prop in obj) {
     stringProperties.push(prop);
   }
-  if (_.isFunction(Object.getOwnPropertySymbols)) {
+  if (typeof Object.getOwnPropertySymbols === 'function') {
     stringProperties.push(...Object.getOwnPropertySymbols(obj));
   }
   return stringProperties;
 }
 
 function _getSizeOfObject(seen: WeakSet<object>, object: object): number {
-  if (_.isNil(object)) {
+  if (object == null) {
     return 0;
   }
 
@@ -181,7 +180,7 @@ function _getSizeOfObject(seen: WeakSet<object>, object: object): number {
   const calc = getCalculator(seen);
   for (const key of properties) {
     const val = (object as Record<string | symbol, unknown>)[key];
-    if (typeof val === 'object' && !_.isNil(val)) {
+    if (typeof val === 'object' && val != null) {
       if (seen.has(val as object)) {
         continue;
       }
@@ -203,7 +202,7 @@ function _getSizeOfObject(seen: WeakSet<object>, object: object): number {
 
 function getCalculator(seen: WeakSet<object>): SizeCalculator {
   return function calculator(obj: unknown): number {
-    if (_.isBuffer(obj)) {
+    if (Buffer.isBuffer(obj)) {
       return (obj as Buffer).length;
     }
 
@@ -215,11 +214,11 @@ function getCalculator(seen: WeakSet<object>): SizeCalculator {
       case 'number':
         return ECMA_SIZES.NUMBER;
       case 'symbol':
-        return _.isFunction(Symbol.keyFor) && Symbol.keyFor(obj)
+        return typeof Symbol.keyFor === 'function' && Symbol.keyFor(obj)
           ? (Symbol.keyFor(obj) as string).length * ECMA_SIZES.STRING
           : (obj.toString().length - 8) * ECMA_SIZES.STRING;
       case 'object':
-        return _.isArray(obj)
+        return Array.isArray(obj)
           ? obj.map(getCalculator(seen)).reduce((acc, curr) => acc + curr, 0)
           : _getSizeOfObject(seen, obj as object);
       default:

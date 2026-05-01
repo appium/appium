@@ -498,6 +498,36 @@ describe('util', function () {
       expect(fn(1, 999)).to.equal(3);
       expect(callCount).to.equal(1);
     });
+
+    it('should memoize using a custom resolver', function () {
+      let callCount = 0;
+      const fn = util.memoize(
+        (a: number, b: number) => {
+          callCount += 1;
+          return a + b;
+        },
+        (_a, b) => b
+      );
+      expect(fn(1, 2)).to.equal(3);
+      expect(fn(999, 2)).to.equal(3);
+      expect(callCount).to.equal(1);
+    });
+
+    it('should use resolver keys to isolate cache entries', function () {
+      let callCount = 0;
+      const fn = util.memoize(
+        (value: number) => {
+          callCount += 1;
+          return value * 10;
+        },
+        (value) => value % 2
+      );
+      expect(fn(2)).to.equal(20);
+      expect(fn(4)).to.equal(20);
+      expect(fn(3)).to.equal(30);
+      expect(fn(5)).to.equal(30);
+      expect(callCount).to.equal(2);
+    });
   });
 
   describe('isPlainObject', function () {

@@ -1,5 +1,4 @@
 import {exec} from 'teen_process';
-import _ from 'lodash';
 import os from 'node:os';
 
 const VERSION_PATTERN = /^(\d+\.\d+)/m;
@@ -29,7 +28,7 @@ export function isLinux(): boolean {
  * Whether the current Windows process is 64-bit (or WOW64).
  */
 export function isOSWin64(): boolean {
-  return process.arch === 'x64' || _.has(process.env, 'PROCESSOR_ARCHITEW6432');
+  return process.arch === 'x64' || Object.hasOwn(process.env, 'PROCESSOR_ARCHITEW6432');
 }
 
 /**

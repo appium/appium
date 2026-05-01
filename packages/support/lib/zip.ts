@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {promisify} from 'node:util';
 import * as yauzl from 'yauzl';
 import archiver from 'archiver';
@@ -9,7 +8,7 @@ import {pipeline} from 'node:stream/promises';
 import {fs} from './fs';
 import {isWindows} from './system';
 import {Base64Encode} from 'base64-stream';
-import {isSubPath, toReadableSizeString, GiB} from './util';
+import {isSubPath, memoize, toReadableSizeString, GiB} from './util';
 import {Timer} from './timing';
 import log from './logger';
 import getStream from 'get-stream';
@@ -581,7 +580,7 @@ async function extractWithSystemUnzip(zipFilePath: string, destDir: string): Pro
  * Finds and memoizes the full path to the given executable.
  * Rejects if it is not found.
  */
-const getExecutablePath = _.memoize(
+const getExecutablePath = memoize(
   /**
    * @returns Full Path to the executable
    */

@@ -3,7 +3,7 @@ import bplistCreate from 'bplist-creator';
 import {parseFile, parseBuffer} from 'bplist-parser';
 import {fs} from './fs';
 import log from './logger';
-import _ from 'lodash';
+import {truncateString} from './util';
 
 const BPLIST_IDENTIFIER = {
   BUFFER: Buffer.from('bplist00'),
@@ -85,7 +85,7 @@ export async function updatePlistFile(
   } catch (err) {
     throw log.errorWithException(`Could not update plist: ${(err as Error).message}`);
   }
-  _.extend(obj, updatedFields);
+  Object.assign(obj as Record<string, unknown>, updatedFields);
   const newPlist = binary ? bplistCreate(obj) : plistBuild(obj);
   try {
     await fs.writeFile(plist, newPlist);
@@ -150,7 +150,7 @@ export function parsePlist(data: string | Buffer): object {
   }
 
   throw new Error(
-    `Unknown type of plist, data: ${_.truncate(data.toString(), {length: 200})}`
+    `Unknown type of plist, data: ${truncateString(data.toString(), {length: 200})}`
   );
 }
 
@@ -160,7 +160,7 @@ async function parseXmlPlistFile(plistFilename: string): Promise<object> {
 }
 
 function getXmlPlist(data: string | Buffer): string | null {
-  if (_.isString(data) && data.startsWith(PLIST_IDENTIFIER.TEXT)) {
+  if (typeof data === 'string' && data.startsWith(PLIST_IDENTIFIER.TEXT)) {
     return data;
   }
   if (
@@ -173,7 +173,7 @@ function getXmlPlist(data: string | Buffer): string | null {
 }
 
 function getBinaryPlist(data: string | Buffer): Buffer | null {
-  if (_.isString(data) && data.startsWith(BPLIST_IDENTIFIER.TEXT)) {
+  if (typeof data === 'string' && data.startsWith(BPLIST_IDENTIFIER.TEXT)) {
     return Buffer.from(data);
   }
 

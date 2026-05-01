@@ -1,6 +1,5 @@
-import _ from 'lodash';
 import {fs} from './fs';
-import {toReadableSizeString} from './util';
+import {isPlainObject, toReadableSizeString} from './util';
 import log from './logger';
 import Ftp from 'jsftp';
 import {Timer} from './timing';
@@ -87,7 +86,7 @@ export async function uploadFile(
   if (isHttpUploadOptions(uploadOptions, url)) {
     if (!uploadOptions.fileFieldName) {
       uploadOptions.headers = {
-        ...(_.isPlainObject(uploadOptions.headers) ? uploadOptions.headers : {}),
+        ...(isPlainObject(uploadOptions.headers) ? uploadOptions.headers : {}),
         'Content-Length': size,
       };
     }
@@ -132,7 +131,7 @@ export async function downloadFile(
   if (axiosAuth) {
     requestOpts.auth = axiosAuth;
   }
-  if (_.isPlainObject(headers)) {
+  if (isPlainObject(headers)) {
     requestOpts.headers = headers as RawAxiosRequestConfig['headers'];
   }
 
@@ -179,13 +178,16 @@ export async function downloadFile(
 }
 
 function toAxiosAuth(auth: AuthLike | undefined): AxiosBasicCredentials | null {
-  if (!auth || !_.isPlainObject(auth)) {
+  if (!auth || !isPlainObject(auth)) {
     return null;
   }
 
   const username = 'username' in auth ? auth.username : auth.user;
   const password = 'password' in auth ? auth.password : auth.pass;
-  return username && password ? {username, password} : null;
+  if (typeof username !== 'string' || typeof password !== 'string' || !username || !password) {
+    return null;
+  }
+  return {username, password};
 }
 
 async function uploadFileToHttp(
@@ -218,13 +220,13 @@ async function uploadFileToHttp(
     const form = new FormData();
     if (formFields) {
       let pairs: [string, unknown][] = [];
-      if (_.isArray(formFields)) {
+      if (Array.isArray(formFields)) {
         pairs = formFields as [string, unknown][];
-      } else if (_.isPlainObject(formFields)) {
-        pairs = _.toPairs(formFields);
+      } else if (isPlainObject(formFields)) {
+        pairs = Object.entries(formFields);
       }
       for (const [key, value] of pairs) {
-        if (_.toLower(key) !== _.toLower(fileFieldName)) {
+        if (key.toLowerCase() !== fileFieldName?.toLowerCase()) {
           form.append(key, value as string | Buffer);
         }
       }
@@ -232,19 +234,23 @@ async function uploadFileToHttp(
     // AWS S3 POST upload requires this to be the last field; do not move before formFields.
     form.append(fileFieldName, localFileStream);
     requestOpts.headers = {
-      ...(_.isPlainObject(headers) ? headers : {}),
+      ...(isPlainObject(headers) ? headers : {}),
       ...form.getHeaders(),
     };
     requestOpts.data = form;
   } else {
-    if (_.isPlainObject(headers)) {
+    if (isPlainObject(headers)) {
       requestOpts.headers = headers;
     }
     requestOpts.data = localFileStream;
   }
   log.debug(
     `Performing ${method} to ${href} with options (excluding data): ` +
-      JSON.stringify(_.omit(requestOpts, ['data']))
+      JSON.stringify((() => {
+        const requestOptsWithoutData = {...requestOpts} as Record<string, unknown>;
+        delete requestOptsWithoutData.data;
+        return requestOptsWithoutData;
+      })())
   );
 
   const {status, statusText} = await axios(requestOpts);
@@ -261,7 +267,7 @@ async function uploadFileToFtp(
 
   const ftpOpts: {host: string; port: number; user?: string; pass?: string} = {
     host: hostname ?? '',
-    port: port !== undefined && port !== '' ? _.parseInt(port, 10) : 21,
+    port: port !== undefined && port !== '' ? Number.parseInt(port, 10) : 21,
   };
   if (auth?.user && auth?.pass) {
     ftpOpts.user = auth.user;

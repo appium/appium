@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {createSupportsColor} from 'supports-color';
 import {Console as NodeConsole} from 'node:console';
 import type {Color} from '@colors/colors';
@@ -77,7 +76,7 @@ export class CliConsole {
    * Returns `undefined` if `msg` is `undefined`.
    */
   decorate(msg: string | undefined, symbol?: SymbolKey): string | undefined {
-    if (!_.isString(msg) || !_.isString(symbol) || !this.#useSymbols) {
+    if (typeof msg !== 'string' || typeof symbol !== 'string' || !this.#useSymbols) {
       return msg;
     }
 

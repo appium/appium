@@ -2,9 +2,9 @@
 import {fs} from './fs';
 import os from 'node:os';
 import nodePath from 'node:path';
-import _ from 'lodash';
 import {constants} from 'node:fs';
 import log from './logger';
+import {memoize} from './util';
 
 const RDWR_EXCL = constants.O_CREAT | constants.O_TRUNC | constants.O_RDWR | constants.O_EXCL;
 
@@ -61,7 +61,7 @@ export const openDir = tempDir;
  *
  * @returns The same temp directory path on every call.
  */
-export const staticDir = _.memoize(async function staticDir (): Promise<string> {
+export const staticDir = memoize(async function staticDir (): Promise<string> {
   return tempDir();
 });
 

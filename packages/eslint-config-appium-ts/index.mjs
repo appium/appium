@@ -103,6 +103,17 @@ export default defineConfig([
        */
       '@typescript-eslint/no-empty-function': 'off',
       /**
+       * Warn when type-only imports are not explicitly marked with `type`.
+       * @example `import type {Foo} from './foo'`
+       */
+      '@typescript-eslint/consistent-type-imports': [
+        'warn',
+        {
+          prefer: 'type-imports',
+          fixStyle: 'separate-type-imports',
+        },
+      ],
+      /**
        * Empty interfaces are allowed.
        * @remarks This is because empty interfaces have a use case in declaration merging.  Otherwise,
        * an empty interface can be a type alias, e.g., `type Foo = Bar` where `Bar` is an interface.

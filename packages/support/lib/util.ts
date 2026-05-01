@@ -85,15 +85,15 @@ export function hasValue<T>(val: T): val is NonNullable<T> {
  * Creates a memoized version of a function.
  *
  * @param fn - Function to memoize
- * @param resolver - Optional cache key resolver
- * @returns Memoized function
+ * @param resolver - Optional cache key resolver. If omitted, the first argument is used as the cache key.
+ * @returns Memoized function with a mutable `.cache` map (compatible with lodash-style cache resets in tests).
  */
 export function memoize<Fn extends (...args: any[]) => any>(
   fn: Fn,
   resolver?: (...args: Parameters<Fn>) => unknown
-): Fn {
+): Fn & {cache: Map<unknown, ReturnType<Fn>>} {
   const cache = new Map<unknown, ReturnType<Fn>>();
-  return ((...args: Parameters<Fn>) => {
+  const memoizedFn = ((...args: Parameters<Fn>) => {
     const key = resolver ? resolver(...args) : args[0];
     if (cache.has(key)) {
       return cache.get(key) as ReturnType<Fn>;
@@ -101,7 +101,9 @@ export function memoize<Fn extends (...args: any[]) => any>(
     const result = fn(...args);
     cache.set(key, result);
     return result;
-  }) as unknown as Fn;
+  }) as unknown as Fn & {cache: Map<unknown, ReturnType<Fn>>};
+  memoizedFn.cache = cache;
+  return memoizedFn;
 }
 
 /**

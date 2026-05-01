@@ -1,6 +1,6 @@
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {system} from '../../lib';
+import {system, util} from '../../lib';
 import os from 'node:os';
 import {createSandbox} from 'sinon';
 import * as teen_process from 'teen_process';
@@ -82,7 +82,7 @@ describe('system', function () {
           .returns({stdout: invalidOsx})
       );
       await expect(system.macOsxVersion()).to.eventually.be.rejectedWith(
-        new RegExp(invalidOsx.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+        new RegExp(util.escapeRegExp(invalidOsx))
       );
     });
   });

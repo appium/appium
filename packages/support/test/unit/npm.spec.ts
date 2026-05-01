@@ -33,7 +33,7 @@ describe('npm', function () {
       expect(npm.getLatestSafeUpgradeFromVersions('0.1.0', ['', '0.2.0'])).to.eql('0.2.0');
     });
     it('should return null if no newer version is found', function () {
-      expect(null === npm.getLatestSafeUpgradeFromVersions('10', versions1)).to.be.true;
+      expect(npm.getLatestSafeUpgradeFromVersions('10', versions1)).to.be.null;
     });
   });
 });

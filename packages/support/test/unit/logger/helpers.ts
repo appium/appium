@@ -1,5 +1,4 @@
 import sinon from 'sinon';
-import _ from 'lodash';
 import {logger} from '../../../lib';
 
 let sandbox: sinon.SinonSandbox;
@@ -46,7 +45,7 @@ function someoneHadOutput(writers: ReturnType<typeof setupWriters>, output: stri
     return !!(value && value.indexOf(output) >= 0);
   }, 'matchOutput');
 
-  for (const writer of _.values(writers)) {
+  for (const writer of Object.values(writers)) {
     if (writer.calledWithMatch) {
       hadOutput = writer.calledWithMatch(matchOutput);
       if (hadOutput) {

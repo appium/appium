@@ -92,12 +92,12 @@ export function memoize<Fn extends (...args: any[]) => any>(
   fn: Fn,
   resolver?: (...args: Parameters<Fn>) => unknown
 ): Fn & {cache: Map<unknown, ReturnType<Fn>>} {
-  const memoizedFn = ((...args: Parameters<Fn>) => {
-    const key = resolver ? resolver(...args) : args[0];
+  const memoizedFn = (function (this: unknown, ...args: Parameters<Fn>) {
+    const key = resolver ? resolver.apply(this, args) : args[0];
     if (memoizedFn.cache.has(key)) {
       return memoizedFn.cache.get(key) as ReturnType<Fn>;
     }
-    const result = fn(...args);
+    const result = fn.apply(this, args);
     memoizedFn.cache.set(key, result);
     return result;
   }) as unknown as Fn & {cache: Map<unknown, ReturnType<Fn>>};
@@ -135,7 +135,7 @@ export function isEmpty(value: unknown): boolean {
   if (value instanceof Map || value instanceof Set) {
     return value.size === 0;
   }
-  if (isPlainObject(value)) {
+  if (typeof value === 'object' || typeof value === 'function') {
     return Object.keys(value).length === 0;
   }
   return true;

@@ -5,7 +5,6 @@ import {sleep} from 'asyncbox';
 import {createSandbox} from 'sinon';
 import os from 'node:os';
 import path from 'node:path';
-import _ from 'lodash';
 
 const {W3C_WEB_ELEMENT_IDENTIFIER} = util;
 
@@ -224,7 +223,7 @@ describe('util', function () {
     });
     it('should pass null through', function () {
       const obj = null;
-      expect(_.isNull(util.safeJsonParse(obj))).to.be.true;
+      expect(util.safeJsonParse(obj)).to.be.null;
     });
     it('should pass simple string through', function () {
       const str = 'str';
@@ -257,7 +256,7 @@ describe('util', function () {
     it('should use the replacer function on non-buffer values', function () {
       const obj = {k1: 'v1', k2: 'v2', k3: 'v3'};
       function replacer(_key: string, value: any) {
-        return _.isString(value) ? value.toUpperCase() : value;
+        return typeof value === 'string' ? value.toUpperCase() : value;
       }
       const jsonString = util.jsonStringify(obj, replacer);
       expect(jsonString).to.include('V1');
@@ -271,7 +270,7 @@ describe('util', function () {
         k3: Buffer.from('hi how are you today'),
       };
       function replacer(_key: string, value: any) {
-        return _.isString(value) ? value.toUpperCase() : value;
+        return typeof value === 'string' ? value.toUpperCase() : value;
       }
       const jsonString = util.jsonStringify(obj, replacer);
       expect(jsonString).to.include('V1');
@@ -286,7 +285,7 @@ describe('util', function () {
         k4: {k5: 'v5'},
       };
       function replacer(_key: string, value: any) {
-        return _.isString(value) ? value.toUpperCase() : value;
+        return typeof value === 'string' ? value.toUpperCase() : value;
       }
       const jsonString = util.jsonStringify(obj, replacer);
       expect(jsonString).to.include('V1');
@@ -528,6 +527,26 @@ describe('util', function () {
       expect(fn(5)).to.equal(30);
       expect(callCount).to.equal(2);
     });
+
+    it('should preserve this for resolver and wrapped function', function () {
+      const obj = {
+        prefix: 'ctx',
+        calls: 0,
+        fn: util.memoize(
+          function (this: {prefix: string; calls: number}, value: number) {
+            this.calls += 1;
+            return `${this.prefix}:${value}`;
+          },
+          function (this: {prefix: string}, value: number) {
+            return `${this.prefix}-${value}`;
+          }
+        ),
+      };
+
+      expect(obj.fn(1)).to.equal('ctx:1');
+      expect(obj.fn(1)).to.equal('ctx:1');
+      expect(obj.calls).to.equal(1);
+    });
   });
 
   describe('isPlainObject', function () {
@@ -567,6 +586,19 @@ describe('util', function () {
       expect(util.isEmpty({a: 1})).to.be.false;
       expect(util.isEmpty(new Map())).to.be.true;
       expect(util.isEmpty(new Set([1]))).to.be.false;
+    });
+
+    it('should handle non-plain objects with enumerable own properties', function () {
+      class Thing {}
+      const emptyInstance = new Thing();
+      const nonEmptyInstance = new Thing();
+      (nonEmptyInstance as unknown as {a?: number}).a = 1;
+      expect(util.isEmpty(emptyInstance)).to.be.true;
+      expect(util.isEmpty(nonEmptyInstance)).to.be.false;
+
+      const fn = () => undefined;
+      (fn as unknown as {x?: number}).x = 1;
+      expect(util.isEmpty(fn)).to.be.false;
     });
   });
 

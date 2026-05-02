@@ -118,7 +118,8 @@ export class Manifest {
             `Appium had trouble loading the extension installation ` +
               `cache file (${manifestPathResolved}). It may be invalid YAML. Specific error: ${
                 err.message
-              }`
+              }`,
+            {cause: err}
           );
         }
       }
@@ -166,7 +167,8 @@ export class Manifest {
         throw new Error(
           `Appium could not create the directory for the manifest file: ${path.dirname(
             manifestPathResolved
-          )}. Original error: ${err.message}`
+          )}. Original error: ${err.message}`,
+          {cause: err}
         );
       }
       try {
@@ -176,7 +178,8 @@ export class Manifest {
         throw new Error(
           `Appium could not write to manifest at ${manifestPathResolved} using APPIUM_HOME ${
             this.#appiumHome
-          }. Please ensure it is writable. Original error: ${err.message}`
+          }. Please ensure it is writable. Original error: ${err.message}`,
+          {cause: err}
         );
       }
     })();

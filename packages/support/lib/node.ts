@@ -155,7 +155,7 @@ async function linkGlobalPackage(packageName: string): Promise<void> {
     if (e.stderr) {
       log.debug(e.stderr);
     }
-    throw new Error(msg);
+    throw new Error(msg, {cause: err});
   }
 }
 

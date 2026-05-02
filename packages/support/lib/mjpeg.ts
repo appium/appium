@@ -17,10 +17,11 @@ async function initMJpegConsumer(): Promise<MJpegConsumerConstructor> {
   if (!MJpegConsumer) {
     try {
       MJpegConsumer = (await requirePackage('mjpeg-consumer')) as MJpegConsumerConstructor;
-    } catch {
+    } catch (e) {
       throw new Error(
         'mjpeg-consumer module is required to use MJPEG-over-HTTP features. ' +
-          'Please install it first (npm i -g mjpeg-consumer) and restart Appium.'
+          'Please install it first (npm i -g mjpeg-consumer) and restart Appium.',
+        {cause: e}
       );
     }
   }
@@ -118,7 +119,8 @@ export class MJpegStream extends Writable {
         message = String(e);
       }
       throw new Error(
-        `Cannot connect to the MJPEG stream at ${url}. Original error: ${message}`
+        `Cannot connect to the MJPEG stream at ${url}. Original error: ${message}`,
+        {cause: e}
       );
     }
 

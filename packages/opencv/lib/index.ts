@@ -429,7 +429,8 @@ export async function getImageOccurrence(
       // Below error message, `Cannot find any occurrences` is referenced in find by image
       throw new Error(
         `Cannot find any occurrences of the partial image in the full image. ` +
-          `Original error: ${e?.message || String(e)}`
+          `Original error: ${e?.message || String(e)}`,
+        {cause: e}
       );
     }
 

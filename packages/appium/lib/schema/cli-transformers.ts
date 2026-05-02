@@ -41,7 +41,7 @@ export const transformers = {
       const msg = loadedFromFile
         ? `The provided value of '${csvOrPath}' must be a valid CSV`
         : `Must be a comma-delimited string, e.g., "foo,bar,baz"`;
-      throw new TypeError(`${msg}. Original error: ${(err as Error).message}`);
+      throw new TypeError(`${msg}. Original error: ${(err as Error).message}`, {cause: err});
     }
   },
 
@@ -66,7 +66,7 @@ export const transformers = {
       const msg = loadedFromFile
         ? `'${jsonOrPath}' must be a valid JSON`
         : `The provided value must be a valid JSON`;
-      throw new TypeError(`${msg}. Original error: ${(e as Error).message}`);
+      throw new TypeError(`${msg}. Original error: ${(e as Error).message}`, {cause: e});
     }
   },
 } as const;

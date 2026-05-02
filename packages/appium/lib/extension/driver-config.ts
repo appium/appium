@@ -83,7 +83,7 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
         `Have you installed a driver that supports those ` +
         `capabilities? Run 'appium driver list --installed' to see. ` +
         `(Lower-level error: ${err.message})`;
-      throw new Error(msg);
+      throw new Error(msg, {cause: err});
     }
   }
 

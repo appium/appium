@@ -220,8 +220,11 @@ export class DocutilsValidator extends EventEmitter {
         requiredPackages.push({name, version});
       }
       log.debug('Parsed %s: %O', NAME_REQUIREMENTS_TXT, requiredPackages);
-    } catch {
-      throw new DocutilsError(`Could not find ${REQUIREMENTS_TXT_PATH}. This is a bug`);
+    } catch (e) {
+      throw new DocutilsError(
+        `Could not find ${REQUIREMENTS_TXT_PATH}. This is a bug`,
+        {cause: e}
+      );
     }
 
     return (this.requirementsTxt = requiredPackages);

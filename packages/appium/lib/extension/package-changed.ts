@@ -20,7 +20,8 @@ export async function packageDidChange(appiumHome: string): Promise<boolean> {
     await fs.mkdirp(hashFilenameDir);
   } catch (err: any) {
     throw new Error(
-      `Appium could not create the directory for hash file: ${hashFilenameDir}. Original error: ${err.message}`
+      `Appium could not create the directory for hash file: ${hashFilenameDir}. Original error: ${err.message}`,
+      {cause: err}
     );
   }
 
@@ -46,7 +47,8 @@ export async function packageDidChange(appiumHome: string): Promise<boolean> {
       );
     } catch (err: any) {
       throw new Error(
-        `Appium could not write hash file: ${hashFilenameDir}. Original error: ${err.message}`
+        `Appium could not write hash file: ${hashFilenameDir}. Original error: ${err.message}`,
+        {cause: err}
       );
     }
   }

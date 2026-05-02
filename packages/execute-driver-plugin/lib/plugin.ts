@@ -140,7 +140,7 @@ export class ExecuteDriverPlugin extends BasePlugin {
       // and set up a race between the response from the child and the timeout
       return await Promise.race([waitForResult(), waitForTimeout()]);
     } catch (err: any) {
-      throw new Error(`Could not execute driver script. Original error was: ${err}`);
+      throw new Error(`Could not execute driver script. Original error was: ${err}`, {cause: err});
     } finally {
       // ensure we always cancel the timeout so that the timeout promise stops
       // spinning and allows this process to die gracefully

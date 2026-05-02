@@ -553,8 +553,8 @@ async function extractWithSystemUnzip(zipFilePath: string, destDir: string): Pro
   let executablePath: string;
   try {
     executablePath = await getExecutablePath(isWindowsHost ? 'powershell.exe' : 'unzip');
-  } catch {
-    throw new Error('Could not find system unzip');
+  } catch (e) {
+    throw new Error('Could not find system unzip', {cause: e});
   }
 
   if (isWindowsHost) {

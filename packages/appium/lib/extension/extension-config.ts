@@ -591,7 +591,8 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
       extensionManifest = JSON.parse(await fs.readFile(packageJsonPath, 'utf8'));
     } catch (e: any) {
       throw new ReferenceError(
-        `Could not read the ${this.extensionType} manifest at ${packageJsonPath}: ${e.message}`
+        `Could not read the ${this.extensionType} manifest at ${packageJsonPath}: ${e.message}`,
+        {cause: e}
       );
     }
     let entryPointRelativePath: string | undefined;
@@ -602,7 +603,8 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
       entryPointRelativePath = entryPointRelativePath ?? extensionManifest.main ?? DEFAULT_ENTRY_POINT;
     } catch (e: any) {
       throw new ReferenceError(
-        `Could not find the ${this.extensionType} installed at ${moduleRoot}: ${e.message}`
+        `Could not find the ${this.extensionType} installed at ${moduleRoot}: ${e.message}`,
+        {cause: e}
       );
     }
     const entryPointFullPath = path.resolve(moduleRoot, entryPointRelativePath as string);

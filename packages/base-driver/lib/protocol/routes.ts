@@ -594,7 +594,7 @@ export function routeToCommandName(
     normalizedPathname = new URL(`https://appium.io${normalizedEndpoint}`).pathname;
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
-    throw new Error(`'${endpoint}' cannot be translated to a command name: ${msg}`);
+    throw new Error(`'${endpoint}' cannot be translated to a command name: ${msg}`, {cause: err});
   }
 
   const normalizedMethod = _.toUpper(method ?? '');

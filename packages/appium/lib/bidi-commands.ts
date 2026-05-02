@@ -256,10 +256,11 @@ function initBidiSocket(this: AppiumDriver, ws: WebSocket, req: IncomingMessage)
     if (bidiProxyUrl) {
       try {
         new URL(bidiProxyUrl);
-      } catch {
+      } catch (e) {
         throw new Error(
           `Got request for ${driverName} to proxy bidi connections to upstream socket with ` +
             `url ${bidiProxyUrl}, but this was not a valid url`,
+          {cause: e}
         );
       }
       this.log.info(`Bidi connection for ${driverName} will be proxied to ${bidiProxyUrl}. ` +

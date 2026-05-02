@@ -212,7 +212,10 @@ export const fs = {
       fromStat = await fsPromises.stat(from);
     } catch (err) {
       if (isErrnoException(err) && err.code === 'ENOENT') {
-        throw new Error(`The source path '${from}' does not exist or is not accessible`);
+        throw new Error(
+          `The source path '${from}' does not exist or is not accessible`,
+          {cause: err}
+        );
       }
       throw err;
     }

@@ -47,13 +47,17 @@ async function main() {
       ts = await compileFromFile(JSON_SCHEMA_PATH);
     } catch (err) {
       throw new Error(
-        `${error} Could not convert Appium schema JSON to TypeScript: ${err.message}. Does it exist?`
+        `${error} Could not convert Appium schema JSON to TypeScript: ${err.message}. Does it exist?`,
+        {cause: err}
       );
     }
     try {
       await fs.writeFile(OUTPUT_PATH, ts);
     } catch (err) {
-      throw new Error(`${error} Could not write Appium schema declaration file: ${err.message}`);
+      throw new Error(
+        `${error} Could not write Appium schema declaration file: ${err.message}`,
+        {cause: err}
+      );
     }
     console.log(`${info} Wrote %s`, OUTPUT_PATH);
     console.log(`${success} Done.`);

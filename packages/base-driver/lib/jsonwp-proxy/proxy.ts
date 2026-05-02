@@ -209,7 +209,8 @@ export class JWProxy {
             logger.markSensitive(truncateBody(body))
           );
           throw new Error(
-            'Cannot interpret the request body as valid JSON. Check the server log for more details.'
+            'Cannot interpret the request body as valid JSON. Check the server log for more details.',
+            {cause: error}
           );
         }
       } else {

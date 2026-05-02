@@ -153,7 +153,7 @@ export async function downloadFile(
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    throw new Error(`Cannot download the file from ${remoteUrl}: ${message}`);
+    throw new Error(`Cannot download the file from ${remoteUrl}: ${message}`, {cause: err});
   }
 
   const {size} = await fs.stat(dstPath);

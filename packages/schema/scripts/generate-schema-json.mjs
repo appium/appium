@@ -49,9 +49,10 @@ async function write() {
     // Use createRequire to require CommonJS module from ESM
     const require = createRequire(import.meta.url);
     ({AppiumConfigJsonSchema: schema} = require(SCHEMA_SRC));
-  } catch {
+  } catch (e) {
     throw new Error(
-      `${error} Failed to read ${SCHEMA_SRC}; did you execute \`npm run build\` first?`
+      `${error} Failed to read ${SCHEMA_SRC}; did you execute \`npm run build\` first?`,
+      {cause: e}
     );
   }
 
@@ -62,7 +63,10 @@ async function write() {
     await writeFile(OUTPUT_PATH, json);
     console.log(`${info} Wrote JSON schema to ${OUTPUT_PATH}`);
   } catch (err) {
-    throw new Error(`${error} Failed to write JSON schema to ${OUTPUT_PATH}: ${err.message}`);
+    throw new Error(
+      `${error} Failed to write JSON schema to ${OUTPUT_PATH}: ${err.message}`,
+      {cause: err}
+    );
   }
 }
 

@@ -147,7 +147,10 @@ export async function requireDir(
         return;
       } catch {}
     }
-    throw new Error(`The ${displayName} '${root}' must exist and be a valid directory`);
+    throw new Error(
+      `The ${displayName} '${root}' must exist and be a valid directory`,
+      {cause: e}
+    );
   }
   if (stat && !stat.isDirectory()) {
     throw new Error(`The ${displayName} '${root}' must be a valid directory`);
@@ -155,9 +158,10 @@ export async function requireDir(
   if (requireWriteable) {
     try {
       await fs.access(root, fs.constants.W_OK);
-    } catch {
+    } catch (e) {
       throw new Error(
-        `The ${displayName} '${root}' must be writeable for the current user account '${os.userInfo().username}'`
+        `The ${displayName} '${root}' must be writeable for the current user account '${os.userInfo().username}'`,
+        {cause: e}
       );
     }
   }

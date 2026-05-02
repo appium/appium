@@ -104,7 +104,8 @@ export class NPM {
     } catch (e) {
       const {stdout = '', stderr = '', code = null} = e as ExecError;
       throw new Error(
-        `npm command '${argsCopy.join(' ')}' failed with code ${code}.\n\nSTDOUT:\n${stdout.trim()}\n\nSTDERR:\n${stderr.trim()}`
+        `npm command '${argsCopy.join(' ')}' failed with code ${code}.\n\nSTDOUT:\n${stdout.trim()}\n\nSTDERR:\n${stderr.trim()}`,
+        {cause: e}
       );
     }
     return ret;
@@ -245,11 +246,12 @@ export class NPM {
       const pkgJson = await fs.readFile(pkgJsonPath, 'utf8');
       const pkg = JSON.parse(pkgJson) as PackageJson;
       return {installPath: path.dirname(pkgJsonPath), pkg};
-    } catch {
+    } catch (e) {
       throw new Error(
         'The package was not downloaded correctly; its package.json ' +
           'did not exist or was unreadable. We looked for it at ' +
-          pkgJsonPath
+          pkgJsonPath,
+        {cause: e}
       );
     }
   }

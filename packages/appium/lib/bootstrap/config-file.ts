@@ -129,7 +129,8 @@ function yamlLoader(filepath: string, content: string): unknown {
     return yaml.parse(content);
   } catch (e) {
     throw new Error(
-      `The YAML config at '${filepath}' cannot be loaded. Original error: ${(e as Error).message}`
+      `The YAML config at '${filepath}' cannot be loaded. Original error: ${(e as Error).message}`,
+      {cause: e}
     );
   }
 }
@@ -145,7 +146,8 @@ function jsonLoader(filepath: string, content: string): unknown {
   } catch (e) {
     rawConfig.delete(filepath);
     throw new Error(
-      `The JSON config at '${filepath}' cannot be loaded. Original error: ${(e as Error).message}`
+      `The JSON config at '${filepath}' cannot be loaded. Original error: ${(e as Error).message}`,
+      {cause: e}
     );
   }
 }

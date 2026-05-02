@@ -620,7 +620,7 @@ async function doJwpProxy(driver: BaseDriver<any>, req: Request, res: Response):
     if (isErrorType(err, errors.ProxyRequestError)) {
       throw err;
     } else {
-      throw new Error(`Could not proxy. Proxy error: ${err.message}`);
+      throw new Error(`Could not proxy. Proxy error: ${err.message}`, {cause: err});
     }
   }
 }

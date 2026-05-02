@@ -42,7 +42,7 @@ export async function macOsxVersion(): Promise<string> {
   try {
     stdout = (await exec('sw_vers', ['-productVersion'])).stdout.trim();
   } catch (err) {
-    throw new Error(`Could not detect Mac OS X Version: ${err}`);
+    throw new Error(`Could not detect Mac OS X Version: ${err}`, {cause: err});
   }
 
   const versionMatch = VERSION_PATTERN.exec(stdout);

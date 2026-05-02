@@ -695,7 +695,8 @@ export function getLockFileGuard<T>(
           } else {
             throw new Error(
               `Could not acquire lock on '${lockFile}' after ${timeout}s. ` +
-                `Original error: ${err.message}`
+                `Original error: ${err.message}`,
+              {cause: e}
             );
           }
         }

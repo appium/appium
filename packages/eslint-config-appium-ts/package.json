@@ -41,7 +41,7 @@
     "eslint-plugin-perfectionist": "5.9.0",
     "eslint-plugin-promise": "7.3.0",
     "eslint-plugin-unicorn": "64.0.0",
-    "typescript-eslint": "8.59.0"
+    "typescript-eslint": "8.59.1"
   },
   "peerDependencies": {
     "eslint": "^9.0.0"

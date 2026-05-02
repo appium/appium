@@ -22,9 +22,9 @@ export const getAppiumModuleRoot = _.memoize(function getAppiumModuleRoot(): str
 export function adler32(str: string, seed: number | null = null): number {
   let a = 1,
     b = 0,
-    M = 0,
-    c = 0,
-    d = 0;
+    M: number,
+    c: number,
+    d: number;
   const L = str.length;
   if (typeof seed === 'number') {
     a = seed & 0xffff;

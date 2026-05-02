@@ -130,7 +130,6 @@ export class BaseDriver<
           unexpectedShutdownRejecter = null;
           // @ts-ignore typescript cannot understand this
           unexpectedShutdownResolver?.();
-          unexpectedShutdownResolver = null;
         }
 
         // if we have set a new command timeout (which is the default), start a

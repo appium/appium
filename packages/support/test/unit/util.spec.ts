@@ -129,7 +129,7 @@ describe('util', function () {
 
   describe('localIp', function () {
     it('should find a local ip address', function () {
-      let ifConfigOut: any = {
+      const ifConfigOut: any = {
         lo0: [
           {
             address: '::1',
@@ -185,7 +185,6 @@ describe('util', function () {
       };
       const osMock = sandbox.mock(os);
       osMock.expects('networkInterfaces').returns(ifConfigOut);
-      ifConfigOut = '';
       const ip = util.localIp();
       expect(ip).to.eql('123.123.123.123');
       osMock.verify();

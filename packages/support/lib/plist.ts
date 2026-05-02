@@ -37,7 +37,7 @@ export async function parsePlistFile(
     return {};
   }
 
-  let obj: object = {};
+  let obj: object;
   let type = 'binary';
   try {
     const parsed = await parseFile(plist);

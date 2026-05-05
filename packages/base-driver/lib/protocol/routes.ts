@@ -564,6 +564,17 @@ export const METHOD_MAP = {
     POST: {command: 'updateVirtualPressureSource', payloadParams: {required: ['sample']}},
     DELETE: {command: 'deleteVirtualPressureSource'},
   },
+  // Global Privacy Control (GPC)
+  // https://www.w3.org/TR/gpc/
+  '/session/:sessionId/privacy': {
+    GET: {command: 'getGlobalPrivacyControl'},
+    POST: {command: 'setGlobalPrivacyControl', payloadParams: {required: ['gpc']}},
+  },
+  // Storage Access
+  // https://privacycg.github.io/storage-access/
+  '/session/:sessionId/storageaccess': {
+    POST: {command: 'setStorageAccess', payloadParams: {required: ['blocked', 'origin']}},
+  },
   // #endregion
 } as const satisfies MethodMap<Driver>;
 

@@ -296,6 +296,7 @@ export interface IOtherProtocolCommands {
 
   /**
    * Remove a specific auth credential
+   * @see {@link https://www.w3.org/TR/webauthn-2/#sctn-automation-remove-credential}
    *
    * @param credentialId - the credential ID
    * @param authenticatorId - the authenticator ID
@@ -318,6 +319,7 @@ export interface IOtherProtocolCommands {
   /**
    * Set the do-not-sell-or-share preference value
    * @see {@link https://www.w3.org/TR/gpc/#set-global-privacy-control}
+   *
    * @param gpc - the value to set for the preference
    */
   setGlobalPrivacyControl?(gpc: boolean): Promise<void>;

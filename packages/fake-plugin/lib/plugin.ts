@@ -105,14 +105,14 @@ export class FakePlugin extends BasePlugin {
   async onIpcInit() {
     const sub = await this.ipcSubscribe<ClockStatus>('clockLifecycle');
     sub.on('message', (message: IpcMessage<ClockStatus>) => {
-      if (message.publisherName === 'FakeDriver') {
+      if (message.publisher.name === 'FakeDriver') {
         this.fakeDriverClockIsRunning = message.data.running;
       }
     });
     // subscribing to clockLifecycle doesn't tell us the current status if it started before this
     // constructor was called, so retrieve it
     const message = await this.ipcGetMessage<ClockStatus>('clockLifecycle');
-    if (message && message.publisherName === 'FakeDriver') {
+    if (message && message.publisher.name === 'FakeDriver') {
       this.fakeDriverClockIsRunning = message.data.running;
     }
   }

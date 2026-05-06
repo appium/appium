@@ -1,6 +1,6 @@
 import AsyncLock from 'async-lock';
 import {log} from './logger';
-import type {StringRecord, IIpcSubscription, IAppiumIpc, IpcMessage, IpcEvent} from '@appium/types';
+import type {StringRecord, IIpcSubscription, IAppiumIpc, IpcMessage, IpcEvent, IpcPublisher} from '@appium/types';
 import EventEmitter from 'node:events';
 import {node} from '@appium/support';
 
@@ -14,6 +14,38 @@ export const EVT_MESSAGE = 'message';
 export type AppiumIpcOpts = {
   maxObjSize: number;
 };
+
+export class IpcSubscription<T> extends EventEmitter<IpcEvent<T>> implements IIpcSubscription<T> {
+
+  constructor(
+    public readonly subscriberName: string,
+    public readonly topic: string,
+    private readonly ipc: AppiumIpc
+  ) {
+    super();
+  }
+
+  async getMessage(): Promise<IpcMessage<T> | undefined> {
+    return await this.ipc.getMessage<T>(this.topic);
+  }
+
+  async publish(data: T): Promise<void> {
+    return await this.ipc.publish<T>(this.topic, this.subscriberName, data);
+  }
+
+  async unsubscribe(): Promise<boolean> {
+    return await this.ipc.unsubscribe(this.topic, this.subscriberName);
+  }
+
+  async *[Symbol.asyncIterator](): AsyncGenerator<IpcMessage<T>> {
+    while (true) {
+      const nextVal = await new Promise((resolve) => {
+        this.once(EVT_MESSAGE, resolve);
+      });
+      yield nextVal as IpcMessage<T>;
+    }
+  }
+}
 
 export class AppiumIpc implements IAppiumIpc {
   protected readonly _messages: StringRecord<IpcMessage<any>> = {};
@@ -59,11 +91,17 @@ export class AppiumIpc implements IAppiumIpc {
       throw new Error(`Message with size ${messageSize} bytes is bigger than max size of ${this._maxObjSize} bytes`);
     }
 
-    const message: IpcMessage<T> = {publisherName, data: structuredClone(data), topic, timestamp_ms: Date.now()};
+    let clonedData: T;
+    try {
+      clonedData = structuredClone(data);
+    } catch (e) {
+      log.error(`Could not clone data for IPC publish from ${publisherName} on topic ${topic}`, e);
+      throw e;
+    }
 
-    await this._lock.acquire(MSG_LOCK_KEY, async () => {
-      this._messages[topic] = message;
-    });
+    const message: IpcMessage<T> = {publisher: this.getIpcPublisher(publisherName), data: clonedData, topic, timestamp_ms: Date.now()};
+
+    this._messages[topic] = message;
 
     const subs: IpcSubscription<T>[] = await this._lock.acquire(SUB_LOCK_KEY, () =>
       this._subscriptions[topic] ?
@@ -72,7 +110,7 @@ export class AppiumIpc implements IAppiumIpc {
     );
 
     for (const sub of subs) {
-      sub.emit(EVT_MESSAGE, this.messageForPublish(message));
+      sub.emit(EVT_MESSAGE, structuredClone(message));
     }
 
   }
@@ -83,56 +121,21 @@ export class AppiumIpc implements IAppiumIpc {
         return;
       }
 
-      return this.messageForPublish(this._messages[topic] as IpcMessage<T>);
+      return structuredClone(this._messages[topic] as IpcMessage<T>);
     });
   }
 
   private subscriptionExists(topic: string, subscriberName: string): boolean {
     // this is a private helper function only called by methods which already have the subscription
     // lock so we don't need to worry about locking here
-    return !!this._subscriptions[topic]?.find((sub) => sub.subscriberName === subscriberName);
+    return !!this._subscriptions[topic]?.some((sub) => sub.subscriberName === subscriberName);
   }
 
-  private messageForPublish<T>(message: IpcMessage<T>): IpcMessage<T> {
-    return structuredClone({
-      ...message,
-      publisherName: message.publisherName.split('@')[0]
-    });
-  }
-
-}
-
-export class IpcSubscription<T> extends EventEmitter<IpcEvent<T>> implements IIpcSubscription<T> {
-  subscriberName: string;
-  topic: string;
-
-  private ipc: AppiumIpc;
-
-  constructor(subscriberName: string, topic: string, ipc: AppiumIpc) {
-    super();
-    this.subscriberName = subscriberName;
-    this.topic = topic;
-    this.ipc = ipc;
-  }
-
-  async getMessage(): Promise<IpcMessage<T> | undefined> {
-    return await this.ipc.getMessage<T>(this.topic);
-  }
-
-  async publish(data: T): Promise<void> {
-    return await this.ipc.publish<T>(this.topic, this.subscriberName, data);
-  }
-
-  async unsubscribe(): Promise<boolean> {
-    return await this.ipc.unsubscribe(this.topic, this.subscriberName);
-  }
-
-  async *[Symbol.asyncIterator](): AsyncGenerator<IpcMessage<T>> {
-    while (true) {
-      const nextVal = await new Promise((resolve) => {
-        this.once(EVT_MESSAGE, resolve);
-      });
-      yield nextVal as IpcMessage<T>;
-    }
+  private getIpcPublisher(rawName: string): IpcPublisher {
+    return {
+      name: rawName.split('@')[0],
+      id: rawName,
+    };
   }
 }
+

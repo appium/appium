@@ -29,10 +29,20 @@ export interface IIpcSubscription<T> extends EventEmitter<IpcEvent<T>> {
  * @typeparam T - the type of the expected message
  */
 export type IpcMessage<T> = {
-  publisherName: string,
+  publisher: IpcPublisher,
   timestamp_ms: number,
   topic: string,
   data: T,
+};
+
+/**
+ * A representation of a publisher. The name is a friendly name (usually the class name of the
+ * driver or plugin). The ID is the unique name used internally by Appium, which may include object
+ * reference IDs.
+ */
+export type IpcPublisher = {
+  name: string,
+  id: string,
 };
 
 /**

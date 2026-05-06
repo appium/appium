@@ -11,16 +11,19 @@ const DEF_MAX_OBJ_SIZE_BYTES = 1024 * 1024; // 1mb seems like plenty for any plu
 
 export const EVT_MESSAGE = 'message';
 
+export type AppiumIpcOpts = {
+  maxObjSize: number;
+};
+
 export class AppiumIpc implements IAppiumIpc {
   protected readonly _messages: StringRecord<IpcMessage<any>> = {};
   protected readonly _subscriptions: StringRecord<Array<IpcSubscription<any>>> = {};
-  protected readonly _lock: AsyncLock;
+  protected readonly _lock: AsyncLock = new AsyncLock();
   protected readonly _maxObjSize: number;
 
-  constructor (maxObjSize: number = DEF_MAX_OBJ_SIZE_BYTES) {
-    this._maxObjSize = maxObjSize;
-    this._lock = new AsyncLock();
-    log.info(`Initialized new IPC object with max object size of ${maxObjSize} bytes`);
+  constructor (opts: AppiumIpcOpts = {maxObjSize: DEF_MAX_OBJ_SIZE_BYTES}) {
+    this._maxObjSize = opts.maxObjSize;
+    log.info(`Initialized new IPC object with max object size of ${this._maxObjSize} bytes`);
   }
 
   async subscribe<T>(topic: string, subscriberName: string): Promise<IpcSubscription<T>> {

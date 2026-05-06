@@ -935,7 +935,7 @@ async onIpcInit() {
   // data = {myData: 'hi'}
 
   // unsubscribe
-  await subscription.unsubscribe();
+  await subscription.unsubscribe(); // returns true if we unsubscribed and false if no subscription existed
 }
 ```
 

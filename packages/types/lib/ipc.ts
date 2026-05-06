@@ -17,7 +17,7 @@ export interface IpcEvent<T> {
 export interface IIpcSubscription<T> extends EventEmitter<IpcEvent<T>> {
   subscriberName: string;
   topic: string;
-  unsubscribe(): Promise<void>;
+  unsubscribe(): Promise<boolean>;
   publish(message: T): Promise<void>;
   getMessage(): Promise<IpcMessage<T> | undefined>;
   [Symbol.asyncIterator](): AsyncGenerator<IpcMessage<T>>;
@@ -40,7 +40,7 @@ export type IpcMessage<T> = {
  */
 export interface IAppiumIpc {
   subscribe<T>(topic: string, subscriberName: string): Promise<IIpcSubscription<T>>;
-  unsubscribe(topic: string, subscriberName: string): Promise<void>;
+  unsubscribe(topic: string, subscriberName: string): Promise<boolean>;
   publish<T>(topic: string, publisherName: string, message: T): Promise<void>;
   getMessage<T>(topic: string): Promise<IpcMessage<T> | undefined>;
 }

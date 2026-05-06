@@ -33,21 +33,21 @@ export class AppiumIpc implements IAppiumIpc {
         throw new Error(`Subscription already exists for topic "${topic}" and subscriber "${subscriberName}"`);
       }
 
-      if (!this._subscriptions[topic]) {
-        this._subscriptions[topic] = [];
-      }
+      this._subscriptions[topic] ??= [];
       const sub = new IpcSubscription<T>(subscriberName, topic, this);
       this._subscriptions[topic].push(sub);
       return sub;
     });
   }
 
-  async unsubscribe(topic: string, subscriberName: string): Promise<void> {
+  async unsubscribe(topic: string, subscriberName: string): Promise<boolean> {
     log.info(`Unsubscribing ${subscriberName} from topic '${topic}'`);
-    await this._lock.acquire(SUB_LOCK_KEY, async () => {
+    return await this._lock.acquire(SUB_LOCK_KEY, async () => {
       if (this.subscriptionExists(topic, subscriberName)) {
         this._subscriptions[topic] = this._subscriptions[topic].filter((sub) => sub.subscriberName !== subscriberName);
+        return true;
       }
+      return false;
     });
   }
 
@@ -123,7 +123,7 @@ export class IpcSubscription<T> extends EventEmitter<IpcEvent<T>> implements IIp
     return await this.ipc.publish<T>(this.topic, this.subscriberName, data);
   }
 
-  async unsubscribe(): Promise<void> {
+  async unsubscribe(): Promise<boolean> {
     return await this.ipc.unsubscribe(this.topic, this.subscriberName);
   }
 

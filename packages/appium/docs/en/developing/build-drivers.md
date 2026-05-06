@@ -954,7 +954,7 @@ When you get a message on a topic, it has the following shape:
 ```ts
 export type IpcMessage<T> = {
   publisherName: string, // the name of the publishing object
-  timestamp: number,     // when the message was published
+  timestamp_ms: number,  // when the message was published, in ms since epoch
   topic: string,         // the topic the message was published on
   data: T,               // the arbitrary message data
 };

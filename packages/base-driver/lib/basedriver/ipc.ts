@@ -56,7 +56,7 @@ export class AppiumIpc implements IAppiumIpc {
       throw new Error(`Message with size ${messageSize} bytes is bigger than max size of ${this._maxObjSize} bytes`);
     }
 
-    const message: IpcMessage<T> = {publisherName, data: structuredClone(data), topic, timestamp: Date.now()};
+    const message: IpcMessage<T> = {publisherName, data: structuredClone(data), topic, timestamp_ms: Date.now()};
 
     await this._lock.acquire(MSG_LOCK_KEY, async () => {
       this._messages[topic] = message;

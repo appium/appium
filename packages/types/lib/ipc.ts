@@ -30,7 +30,7 @@ export interface IIpcSubscription<T> extends EventEmitter<IpcEvent<T>> {
  */
 export type IpcMessage<T> = {
   publisherName: string,
-  timestamp: number,
+  timestamp_ms: number,
   topic: string,
   data: T,
 };

@@ -135,10 +135,7 @@ export class ExtensionCore {
     try {
       await this.onIpcInit();
     } catch (e) {
-      this.log.error(`Error running onIpcInit: ${e}`);
-      if (e instanceof Error && e.stack) {
-        this.log.error(e.stack);
-      }
+      this.log.error(`Error running onIpcInit: `, e);
     }
   }
 

@@ -61,8 +61,22 @@ jobs:
             fi
 
             if [[ "$release_output" == *"fatal: tag '"*"' already exists"* ]]; then
-              echo "Detected existing tag failure; attempting publish recovery from tags"
-              npx lerna publish from-git --yes
+              existing_tag="$(printf '%s\n' "$release_output" | sed -n "s/.*fatal: tag '\\([^']*\\)' already exists.*/\\1/p" | head -n 1)"
+              if [ -z "$existing_tag" ]; then
+                echo "Detected existing tag failure, but could not parse tag name"
+                exit $release_exit_code
+              fi
+
+              echo "Detected existing tag failure for ${existing_tag}; attempting publish recovery from tagged commit"
+              git fetch --tags --force origin
+              tagged_commit="$(git rev-list -n 1 "$existing_tag")"
+              if [ -z "$tagged_commit" ]; then
+                echo "Tag ${existing_tag} was not found after fetching tags"
+                exit $release_exit_code
+              fi
+
+              git checkout "$tagged_commit"
+              npx lerna publish from-package --yes
             else
               echo "Release failed and no known recovery condition matched"
               exit $release_exit_code

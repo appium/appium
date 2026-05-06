@@ -511,6 +511,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
       if (!dstSession) {
         throw new Error('Session not found');
       }
+
       return {
         protocol,
         value: await dstSession.deleteSession(sessionId, otherSessionsData),
@@ -782,7 +783,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
         }
         // we also want to assign the IPC channel for this session to the plugins
         if (_.isFunction(p.assignIpc)) {
-          // TODO remove this existence guard as a breaking change in Appium 3
+          // TODO remove this existence guard as a breaking change in Appium 4
           await p.assignIpc(this.sessionIpcs[newSessionId]);
         }
       }

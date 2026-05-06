@@ -20,7 +20,7 @@ import {generateDriverLogPrefix} from './helpers';
 export class ExtensionCore {
   bidiEventSubs: Record<string, string[]>;
   bidiCommands: BidiModuleMap = BIDI_COMMANDS as BidiModuleMap;
-  ipc: IAppiumIpc;
+  ipc?: IAppiumIpc;
   _logPrefix?: string;
   // used to handle driver events
   readonly eventEmitter: NodeJS.EventEmitter;
@@ -142,22 +142,24 @@ export class ExtensionCore {
   async onIpcInit(): Promise<void> {}
 
   async ipcSubscribe<T>(topic: string): Promise<IIpcSubscription<T>> {
-    return await this.withIpc(() => this.ipc.subscribe<T>(topic, this.getIpcId()));
+    this.assertIpc(this.ipc);
+    return await this.ipc.subscribe<T>(topic, this.getIpcId());
   }
 
   async ipcPublish<T>(topic: string, message: T): Promise<void> {
-    await this.withIpc(() => this.ipc.publish(topic, this.getIpcId(), message));
+    this.assertIpc(this.ipc);
+    await this.ipc.publish(topic, this.getIpcId(), message);
   }
 
   async ipcGetMessage<T>(topic: string): Promise<IpcMessage<T> | undefined> {
-    return await this.withIpc(() => this.ipc.getMessage<T>(topic));
+    this.assertIpc(this.ipc);
+    return await this.ipc.getMessage<T>(topic);
   }
 
-  private async withIpc<T>(fn: () => Promise<T>): Promise<T> {
-    if (!this.ipc) {
+  private assertIpc(ipc: IAppiumIpc | undefined): asserts ipc is IAppiumIpc {
+    if (!ipc) {
       throw new Error(`Cannot call IPC related function without an IPC object assigned. This is likely a programming error`);
     }
-    return await fn();
   }
 
   private getIpcId(): string {

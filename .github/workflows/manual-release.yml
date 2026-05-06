@@ -50,6 +50,22 @@ jobs:
             printf "n\n" | npx lerna version --exact --no-git-tag-version --no-push
           else
             echo "Running lerna publish for real"
-            npm run release -- --yes
+            set +e
+            release_output="$(npm run release -- --yes 2>&1)"
+            release_exit_code=$?
+            set -e
+            printf '%s\n' "$release_output"
+
+            if [ $release_exit_code -eq 0 ]; then
+              exit 0
+            fi
+
+            if [[ "$release_output" == *"fatal: tag '"*"' already exists"* ]]; then
+              echo "Detected existing tag failure; attempting publish recovery from tags"
+              npx lerna publish from-git --yes
+            else
+              echo "Release failed and no known recovery condition matched"
+              exit $release_exit_code
+            fi
           fi
 

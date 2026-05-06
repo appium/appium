@@ -1,13 +1,7 @@
-name: Appium Server Release
+name: Appium Server Release (Dry Run)
 
 on:
   workflow_dispatch:
-
-permissions:
-  contents: write
-  pull-requests: write
-  issues: write
-  id-token: write
 
 jobs:
   release:
@@ -20,11 +14,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Configure git user
-        run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-
       - name: Setup Node and install deps (LTS)
         uses: ./.github/actions/setup-build
         with:
@@ -32,9 +21,5 @@ jobs:
           install-command: npm ci
           run-build: 'true'
 
-      - name: Run Lerna publish
-        env:
-          # for lerna createRelease
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DRY_RUN: ${{ inputs.dry_run }}
-        run: npm run release -- --yes
+      - name: Run Lerna version (dry run)
+        run: npx lerna version --exact --no-git-tag-version --no-push

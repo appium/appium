@@ -1,4 +1,7 @@
-name: Appium Server Version
+# This job only publishes new releases on GitHub and updates the changelog, without publishing to NPM.
+# It can be used if the standard release workflow failed and *only* published to NPM.
+
+name: Appium Server Version (Without NPM Publish)
 
 on:
   workflow_dispatch:

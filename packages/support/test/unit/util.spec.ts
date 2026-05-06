@@ -299,6 +299,9 @@ describe('util', function () {
       const el = 4;
       expect(util.unwrapElement(el as any)).to.equal(el);
     });
+    it('should not throw for null element input', function () {
+      expect(util.unwrapElement(null as any)).to.equal(null);
+    });
     it('should pass through an element that is an object', function () {
       const el = {RANDOM: 4};
       expect(util.unwrapElement(el as any)).to.equal(el);

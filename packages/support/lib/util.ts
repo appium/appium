@@ -346,10 +346,11 @@ export function jsonStringify(
  * @returns The element ID string
  */
 export function unwrapElement(el: Element | string): string {
-  const elObj = el as unknown as Record<string, string>;
-  for (const propName of [W3C_WEB_ELEMENT_IDENTIFIER, 'ELEMENT']) {
-    if (Object.hasOwn(elObj, propName)) {
-      return elObj[propName];
+  if (isPlainObject(el)) {
+    for (const propName of [W3C_WEB_ELEMENT_IDENTIFIER, 'ELEMENT']) {
+      if (Object.hasOwn(el, propName)) {
+        return el[propName] as string;
+      }
     }
   }
   return el as string;

@@ -2,7 +2,7 @@ import AsyncLock from 'async-lock';
 import {log} from './logger';
 import type {StringRecord, IIpcSubscription, IAppiumIpc, IpcMessage, IpcEvent} from '@appium/types';
 import EventEmitter from 'node:events';
-import objSizeof from 'object-sizeof';
+import {node} from '@appium/support';
 
 const SUB_LOCK_KEY = 'subscriptions';
 const MSG_LOCK_KEY = 'messages';
@@ -51,7 +51,7 @@ export class AppiumIpc implements IAppiumIpc {
   async publish<T>(topic: string, publisherName: string, data: T): Promise<void> {
     log.debug(`${publisherName} is publishing a message to topic ${topic}`);
 
-    const messageSize = objSizeof(data);
+    const messageSize = node.getObjectSize(data);
     if (messageSize > this._maxObjSize) {
       throw new Error(`Message with size ${messageSize} bytes is bigger than max size of ${this._maxObjSize} bytes`);
     }

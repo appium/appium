@@ -179,6 +179,15 @@ export default defineConfig([
        * `return await somePromise` have their own use-cases.
        */
       'require-await': 'off',
+
+      /**
+       * These rules are enabled by default since ESLint 10.
+       * They are set to 'warn' to prevent a breaking change.
+       */
+      'no-unassigned-vars': 'warn',
+      'no-useless-assignment': 'warn',
+      'preserve-caught-error': 'warn',
+
       'unicorn/prefer-node-protocol': 'warn',
 
       /**

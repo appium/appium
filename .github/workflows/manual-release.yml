@@ -50,5 +50,88 @@ jobs:
             printf "n\n" | npx lerna version --exact --no-git-tag-version --no-push
           else
             echo "Running lerna publish for real"
-            npm run release -- --yes
+            set +e
+            release_output="$(npm run release -- --yes 2>&1)"
+            release_exit_code=$?
+            set -e
+            printf '%s\n' "$release_output"
+
+            if [ $release_exit_code -eq 0 ]; then
+              exit 0
+            fi
+
+            if [[ "$release_output" == *"fatal: tag '"*"' already exists"* ]]; then
+              existing_tag="$(printf '%s\n' "$release_output" | sed -n "s/.*fatal: tag '\\([^']*\\)' already exists.*/\\1/p" | head -n 1)"
+              if [ -z "$existing_tag" ]; then
+                echo "Detected existing tag failure, but could not parse tag name"
+                exit $release_exit_code
+              fi
+
+              echo "Detected existing tag failure for ${existing_tag}; attempting scoped publish recovery from tagged commit"
+              git fetch --tags --force origin
+              tagged_commit="$(git rev-list -n 1 "$existing_tag")"
+              if [ -z "$tagged_commit" ]; then
+                echo "Tag ${existing_tag} was not found after fetching tags"
+                exit $release_exit_code
+              fi
+
+              git checkout "$tagged_commit"
+              missing=()
+              for pkg_json in packages/*/package.json; do
+                if [ ! -f "$pkg_json" ]; then
+                  continue
+                fi
+
+                if [ "$(jq -r '.private // false' "$pkg_json")" = "true" ]; then
+                  continue
+                fi
+
+                pkg_name="$(jq -r '.name // empty' "$pkg_json")"
+                pkg_version="$(jq -r '.version // empty' "$pkg_json")"
+                if [ -z "$pkg_name" ] || [ -z "$pkg_version" ]; then
+                  echo "Skipping malformed package manifest: $pkg_json"
+                  continue
+                fi
+
+                pkg_spec="${pkg_name}@${pkg_version}"
+                if ! npm view "$pkg_spec" version >/dev/null 2>&1; then
+                  missing+=("$pkg_spec")
+                fi
+              done
+
+              if [ ${#missing[@]} -gt 0 ]; then
+                echo "Missing package versions on npm before scoped recovery:"
+                printf ' - %s\n' "${missing[@]}"
+                echo "Publishing missing packages one-by-one with scope"
+                for pkg_spec in "${missing[@]}"; do
+                  pkg_name="${pkg_spec%@*}"
+                  echo "Publishing ${pkg_name}"
+                  set +e
+                  npx lerna publish from-package --yes --scope "$pkg_name"
+                  scoped_exit_code=$?
+                  set -e
+                  if [ $scoped_exit_code -ne 0 ]; then
+                    echo "Scoped publish exited non-zero for ${pkg_name}; will verify on npm"
+                  fi
+                done
+
+                final_missing=()
+                for pkg_spec in "${missing[@]}"; do
+                  if ! npm view "$pkg_spec" version >/dev/null 2>&1; then
+                    final_missing+=("$pkg_spec")
+                  fi
+                done
+
+                if [ ${#final_missing[@]} -gt 0 ]; then
+                  echo "Recovery incomplete after scoped retries. Still missing:"
+                  printf ' - %s\n' "${final_missing[@]}"
+                  exit $release_exit_code
+                fi
+              fi
+
+              echo "All publishable workspace package versions are present on npm; treating recovery as successful."
+            else
+              echo "Release failed and no known recovery condition matched"
+              exit $release_exit_code
+            fi
           fi

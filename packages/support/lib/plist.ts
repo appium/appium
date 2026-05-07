@@ -134,11 +134,11 @@ export function createPlist(object: object, binary = false): Buffer | string {
 /**
  * Parses a buffer or string into a JS object
  *
- * @param data - The plist as a string or Buffer
+ * @param data - The plist as a string, Buffer, Uint8Array, or ArrayBuffer
  * @returns Parsed plist as a JS object
  * @throws Will throw an error if the plist type is unknown
  */
-export function parsePlist(data: string | Buffer): object {
+export function parsePlist(data: string | Buffer | Uint8Array | ArrayBuffer): object {
   const textPlist = getXmlPlist(data);
   if (textPlist) {
     return plistParse(textPlist);
@@ -159,29 +159,44 @@ async function parseXmlPlistFile(plistFilename: string): Promise<object> {
   return plistParse(xmlContent);
 }
 
-function getXmlPlist(data: string | Buffer): string | null {
+function getXmlPlist(data: string | Buffer | Uint8Array | ArrayBuffer): string | null {
   if (typeof data === 'string' && data.startsWith(PLIST_IDENTIFIER.TEXT)) {
     return data;
   }
+  const binaryData = toBufferIfBinaryLike(data);
   if (
-    Buffer.isBuffer(data) &&
-    PLIST_IDENTIFIER.BUFFER.compare(data, 0, PLIST_IDENTIFIER.BUFFER.length) === 0
+    binaryData &&
+    PLIST_IDENTIFIER.BUFFER.compare(binaryData, 0, PLIST_IDENTIFIER.BUFFER.length) === 0
   ) {
-    return data.toString();
+    return binaryData.toString();
   }
   return null;
 }
 
-function getBinaryPlist(data: string | Buffer): Buffer | null {
+function getBinaryPlist(data: string | Buffer | Uint8Array | ArrayBuffer): Buffer | null {
   if (typeof data === 'string' && data.startsWith(BPLIST_IDENTIFIER.TEXT)) {
     return Buffer.from(data);
   }
 
+  const binaryData = toBufferIfBinaryLike(data);
   if (
-    Buffer.isBuffer(data) &&
-    BPLIST_IDENTIFIER.BUFFER.compare(data, 0, BPLIST_IDENTIFIER.BUFFER.length) === 0
+    binaryData &&
+    BPLIST_IDENTIFIER.BUFFER.compare(binaryData, 0, BPLIST_IDENTIFIER.BUFFER.length) === 0
   ) {
+    return binaryData;
+  }
+  return null;
+}
+
+function toBufferIfBinaryLike(data: unknown): Buffer | null {
+  if (Buffer.isBuffer(data)) {
     return data;
+  }
+  if (data instanceof Uint8Array) {
+    return Buffer.from(data.buffer, data.byteOffset, data.byteLength);
+  }
+  if (data instanceof ArrayBuffer) {
+    return Buffer.from(data);
   }
   return null;
 }

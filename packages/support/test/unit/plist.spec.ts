@@ -53,4 +53,37 @@ describe('plist', function () {
       'com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework'
     );
   });
+
+  it('should read text plist from Uint8Array', async function () {
+    const content = await fs.readFile(textPlistPath);
+    const object = plist.parsePlist(new Uint8Array(content));
+    expect(object).to.have.property(
+      'com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework'
+    );
+  });
+
+  it('should read binary plist from Uint8Array', async function () {
+    const content = await fs.readFile(binaryPlistPath);
+    const object = plist.parsePlist(new Uint8Array(content));
+    expect(object).to.have.property(
+      'com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework'
+    );
+  });
+
+  it('should read binary plist from ArrayBuffer', async function () {
+    const content = await fs.readFile(binaryPlistPath);
+    const object = plist.parsePlist(content.buffer.slice(content.byteOffset, content.byteOffset + content.byteLength));
+    expect(object).to.have.property(
+      'com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework'
+    );
+  });
+
+  it('should parse nested data payload returned from plist parser', function () {
+    const innerPayload = plist.createBinaryPlist({answer: 42});
+    const outer = plist.createPlist({payload: innerPayload});
+    const outerParsed = plist.parsePlist(outer as string);
+    const nestedPayload = (outerParsed as {payload: Uint8Array | Buffer | ArrayBuffer}).payload;
+    const nestedParsed = plist.parsePlist(nestedPayload);
+    expect(nestedParsed).to.deep.equal({answer: 42});
+  });
 });

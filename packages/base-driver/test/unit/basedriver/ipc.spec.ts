@@ -71,8 +71,8 @@ describe('AppiumIpc', function () {
       expect(sub1Res!.topic).to.eql('foo');
       expect(sub2Res!.topic).to.eql('foo');
 
-      expect(sub1Res!).to.have.property('timestamp_ms');
-      expect(sub2Res!).to.have.property('timestamp_ms');
+      expect(sub1Res!).to.have.property('timestampMs');
+      expect(sub2Res!).to.have.property('timestampMs');
     });
 
     it('should not publish messages to the publisher', async function () {
@@ -103,7 +103,7 @@ describe('AppiumIpc', function () {
       expect(sub1Res!.data).to.eql(payload);
       expect(sub1Res!.publisher.name).to.eql('baz');
       expect(sub1Res!.topic).to.eql('foo');
-      expect(sub1Res!).to.have.property('timestamp_ms');
+      expect(sub1Res!).to.have.property('timestampMs');
     });
 
     it('should allow running ipc commands in publish event callback', async function () {

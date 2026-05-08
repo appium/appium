@@ -99,7 +99,7 @@ export class AppiumIpc implements IAppiumIpc {
       throw e;
     }
 
-    const message: IpcMessage<T> = {publisher: this.getIpcPublisher(publisherName), data: clonedData, topic, timestamp_ms: Date.now()};
+    const message: IpcMessage<T> = {publisher: this.getIpcPublisher(publisherName), data: clonedData, topic, timestampMs: Date.now()};
 
     this._messages[topic] = message;
 

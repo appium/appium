@@ -146,9 +146,9 @@ export class ExtensionCore {
     return await this.ipc.subscribe<T>(topic, this.getIpcId());
   }
 
-  async ipcPublish<T>(topic: string, message: T): Promise<void> {
+  async ipcPublish<T>(topic: string, data: T): Promise<void> {
     this.assertIpc(this.ipc);
-    await this.ipc.publish(topic, this.getIpcId(), message);
+    await this.ipc.publish(topic, this.getIpcId(), data);
   }
 
   async ipcGetMessage<T>(topic: string): Promise<IpcMessage<T> | undefined> {

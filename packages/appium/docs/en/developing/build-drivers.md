@@ -892,7 +892,9 @@ Appium's driver and plugin architecture means that a single driver and any numbe
 running together for a current session. The driver and plugins don't really know anything about
 each other though, which can make coordination potentially difficult. Without creating any kind of
 tight coupling between drivers or plugins, it's possible for drivers and plugins to communicate
-along a pub/sub style message bus.
+along a pub/sub style message bus. With Appium's IPC feature, "message" means a combination of
+"data" (the data intended to be published or received), and metadata (timestamp, the name of the
+publisher, etc...).
 
 Drivers and plugins can implement an instance method called `async onIpcInit`, in which they will
 know that the IPC channel for the session is now active. At this point, they have access to the
@@ -927,7 +929,7 @@ async onIpcInit() {
     console.log(message.data); // {myData: 'something'}
   });
 
-  // publish a message to the topic; might throw if message is larger than configured max size
+  // publish data to the topic; might throw if the data is larger than configured max size
   await subscription.publish({myData: 'hi'});
 
   // get last message sent to topic
@@ -943,7 +945,7 @@ With a subscription object, we can also iterate async over it to receive new mes
 
 ```ts
 for await (const message of subscription) {
-  // here we have a message
+  // here we have a message and can unwrap its data
 }
 ```
 
@@ -953,10 +955,15 @@ When you get a message on a topic, it has the following shape:
 
 ```ts
 export type IpcMessage<T> = {
-  publisherName: string, // the name of the publishing object
-  timestampMs: number,  // when the message was published, in ms since epoch
-  topic: string,         // the topic the message was published on
-  data: T,               // the arbitrary message data
+  publisher: IpcPublisher, // the name of the publishing object
+  timestampMs: number,     // when the message was published, in ms since epoch
+  topic: string,           // the topic the message was published on
+  data: T,                 // the arbitrary message data
+};
+
+export type IpcPublisher = {
+  name: string,
+  id: string,
 };
 ```
 
@@ -966,7 +973,7 @@ In addition to using the subscription object, you can also use other `Ipc*` meth
 driver/plugin instance:
 
 ```ts
-await this.ipcPublish<T>(topic, message); // publish a message on a topic without being subscribed
+await this.ipcPublish<T>(topic, data); // publish some data on a topic without being subscribed
 await this.ipcGetMessage<T>(topic); // get the last message sent on a topic without being subscribed
 ```
 
@@ -978,7 +985,7 @@ There are some important things to keep in mind when using Appium's IPC feature:
 - In sum, IPC is only for use during a session (this is also to prevent drivers/plugins from
   accessing or reading data sent on IPC channels in other sessions.)
 - The default max size of an IPC message is 1MB. This can be configured by the server-admin by
-  using the `--max-ipc-message-size` arg (value is a number in bytes).
+  using the `--max-ipc-data-size` arg (value is a number in bytes).
 - If a message exceeds the configured size, any call to `publish`-related methods will throw, so be
   sure to cover this case in your error handling.
 

@@ -346,13 +346,13 @@ export const AppiumConfigJsonSchema = {
           title: 'webhook config',
           type: 'string',
         },
-        'max-ipc-message-size': {
+        'max-ipc-data-size': {
           appiumCliDescription: 'The maximum size in bytes allowed for message objects sent on IPC topics.',
           description: 'Maximum size in bytes for IPC messages',
           type: 'integer',
           minimum: 1,
           default: 1048576,
-          title: 'max-ipc-message-size config',
+          title: 'max-ipc-data-size config',
         },
       },
       title: 'server config',

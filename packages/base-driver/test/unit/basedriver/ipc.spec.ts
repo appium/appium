@@ -292,4 +292,14 @@ describe('AppiumIpc', function () {
       expect(received).to.eql([payload1]); // should only have one payload since we unsubscribed
     });
   });
+
+  describe('isActive', function () {
+    it('should tell the truth about subscription status', function () {
+      const ipc = new AppiumIpc();
+      const sub1 = ipc.subscribe<boolean>('foo', 'bar');
+      expect(sub1.isActive).to.be.true;
+      sub1.unsubscribe();
+      expect(sub1.isActive).to.be.false;
+    });
+  });
 });

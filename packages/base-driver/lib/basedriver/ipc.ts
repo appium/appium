@@ -26,19 +26,19 @@ export class IpcSubscription<T> extends EventEmitter<IpcEvent<T>> implements IIp
     super();
   }
 
-  get isSubscribed() {
+  get isActive() {
     return this.ipc.subscriptionExists(this.topic, this.subscriber);
   }
 
   getMessage(): IpcMessage<T> | undefined {
-    if (!this.isSubscribed) {
+    if (!this.isActive) {
       throw new Error('Cannot get message from subscription after unsubscribing');
     }
     return this.ipc.getMessage<T>(this.topic);
   }
 
   async publish(data: T): Promise<void> {
-    if (!this.isSubscribed) {
+    if (!this.isActive) {
       throw new Error('Cannot publish data to topic from subscription after unsubscribing');
     }
     return await this.ipc.publish<T>(this.topic, this.subscriber, data);
@@ -58,7 +58,7 @@ export class IpcSubscription<T> extends EventEmitter<IpcEvent<T>> implements IIp
     // yield any messages that are emitted, but keep an eye out for an unsubscribed that happens
     // while a caller is waiting on the loop, because we want to exit the loop in case of
     // unsubscription, even if we were already waiting on the next message.
-    while (this.isSubscribed) {
+    while (this.isActive) {
       const waitForMessage = new Promise((resolve) => {
         this.once(EVT_MESSAGE, resolve);
       });

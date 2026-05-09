@@ -21,6 +21,7 @@ export interface IIpcSubscription<T> extends EventEmitter<IpcEvent<T>> {
   unsubscribe(): boolean;
   publish(data: T): Promise<void>;
   getMessage(): IpcMessage<T> | undefined;
+  readonly isActive: boolean;
   [Symbol.asyncIterator](): AsyncGenerator<IpcMessage<T>>;
 };
 

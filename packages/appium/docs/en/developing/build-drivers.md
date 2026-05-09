@@ -951,6 +951,15 @@ for await (const message of subscription) {
 
 Note that the iteration will stop when the subscription ends (i.e., when `unsubscribe` is called).
 
+You can also check whether the subscription is still active (if your subscribe and unsubscribe
+logic is not locally connected):
+
+```ts
+if (subscription.isActive) {
+  // we know we have not yet unsubscribed
+}
+```
+
 #### `IpcMessage` object
 
 When you get a message on a topic, it has the following shape:

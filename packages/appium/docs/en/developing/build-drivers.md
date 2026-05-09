@@ -900,7 +900,7 @@ Drivers and plugins can implement an instance method called `async onIpcInit`, i
 know that the IPC channel for the session is now active. At this point, they have access to the
 following methods:
 
-#### `async ipcSubscribe<T>(topic: string): Promise<IIpcSubscription>`
+#### `ipcSubscribe<T>(topic: string): IIpcSubscription`
 
 This method allows a driver or plugin to subscribe to a topic on the IPC channel for the session.
 Topics are simply strings. To coordinate effectively, drivers or plugins would use the same topic
@@ -922,7 +922,7 @@ async onIpcInit() {
   // we know at this point in our driver/plugin lifecycle that we can use IPC methods
   type MyMessageData = {myData: string}; // let's say the message data for this channel has this shape
 
-  const subscription = await this.ipcSubscribe<MyMessageData>('coolTopic');
+  const subscription = this.ipcSubscribe<MyMessageData>('coolTopic');
 
   // listen for new messages on topic
   subscription.on('message', (message) => {
@@ -933,11 +933,11 @@ async onIpcInit() {
   await subscription.publish({myData: 'hi'});
 
   // get last message sent to topic
-  const {data} = await subscription.getMessage() ?? {data: null};
+  const {data} = subscription.getMessage() ?? {data: null};
   // data = {myData: 'hi'}
 
   // unsubscribe
-  await subscription.unsubscribe(); // returns true if we unsubscribed and false if no subscription existed
+  subscription.unsubscribe(); // returns true if we unsubscribed and false if no subscription existed
 }
 ```
 
@@ -976,7 +976,7 @@ driver/plugin instance:
 
 ```ts
 await this.ipcPublish<T>(topic, data); // publish some data on a topic without being subscribed
-await this.ipcGetMessage<T>(topic); // get the last message sent on a topic without being subscribed
+this.ipcGetMessage<T>(topic); // get the last message sent on a topic without being subscribed
 ```
 
 #### IPC Notes

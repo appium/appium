@@ -7,6 +7,7 @@ import type {EventEmitter} from 'node:events';
  */
 export interface IpcEvent<T> {
   message: [IpcMessage<T>];
+  unsubscribed: [];
 }
 
 /**
@@ -17,9 +18,9 @@ export interface IpcEvent<T> {
 export interface IIpcSubscription<T> extends EventEmitter<IpcEvent<T>> {
   subscriberId: string;
   topic: string;
-  unsubscribe(): Promise<boolean>;
+  unsubscribe(): boolean;
   publish(data: T): Promise<void>;
-  getMessage(): Promise<IpcMessage<T> | undefined>;
+  getMessage(): IpcMessage<T> | undefined;
   [Symbol.asyncIterator](): AsyncGenerator<IpcMessage<T>>;
 };
 
@@ -49,8 +50,8 @@ export type IpcPublisher = {
  * An interface implemented by the internal IPC object hosted on the Appium server.
  */
 export interface IAppiumIpc {
-  subscribe<T>(topic: string, subscriberId: string): Promise<IIpcSubscription<T>>;
-  unsubscribe(topic: string, subscriberId: string): Promise<boolean>;
+  subscribe<T>(topic: string, subscriberId: string): IIpcSubscription<T>;
+  unsubscribe(topic: string, subscriberId: string): boolean;
   publish<T>(topic: string, publisherId: string, data: T): Promise<void>;
-  getMessage<T>(topic: string): Promise<IpcMessage<T> | undefined>;
+  getMessage<T>(topic: string): IpcMessage<T> | undefined;
 }

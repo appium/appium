@@ -141,16 +141,16 @@ export class ExtensionCore {
 
   async onIpcInit(): Promise<void> {}
 
-  async ipcSubscribe<T>(topic: string): Promise<IIpcSubscription<T>> {
-    return await this.requireIpc().subscribe<T>(topic, this.getIpcId());
+  ipcSubscribe<T>(topic: string): IIpcSubscription<T> {
+    return this.requireIpc().subscribe<T>(topic, this.getIpcId());
   }
 
   async ipcPublish<T>(topic: string, data: T): Promise<void> {
     await this.requireIpc().publish(topic, this.getIpcId(), data);
   }
 
-  async ipcGetMessage<T>(topic: string): Promise<IpcMessage<T> | undefined> {
-    return await this.requireIpc().getMessage<T>(topic);
+  ipcGetMessage<T>(topic: string): IpcMessage<T> | undefined {
+    return this.requireIpc().getMessage<T>(topic);
   }
 
   private requireIpc(): IAppiumIpc {

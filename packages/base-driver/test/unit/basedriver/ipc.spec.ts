@@ -106,6 +106,23 @@ describe('AppiumIpc', function () {
       expect(sub1Res!).to.have.property('timestampMs');
     });
 
+    it('should not publish to unsubscribed subscribers', async function () {
+      const ipc = new AppiumIpc();
+      const sub1 = await ipc.subscribe<boolean>('foo', 'bar');
+      let sub1Res: boolean = false;
+      sub1.on(EVT_MESSAGE, (message) => sub1Res = message.data);
+      await sub1.unsubscribe();
+      await ipc.publish<boolean>('foo', 'baz', true);
+      expect(sub1Res).to.be.false;
+    });
+
+    it('should not allow publish from subscription object after unsubscribing', async function () {
+      const ipc = new AppiumIpc();
+      const sub1 = await ipc.subscribe<boolean>('foo', 'bar');
+      await sub1.unsubscribe();
+      expect(sub1.publish(true)).to.eventually.throw();
+    });
+
     it('should allow running ipc commands in publish event callback', async function () {
       const ipc = new AppiumIpc();
       const payload = {some: {cool: 'obj'}};
@@ -199,6 +216,13 @@ describe('AppiumIpc', function () {
       expect((await sub2.getMessage())!.data).to.eql(payload1);
     });
 
+    it('should not allow getting message from subscription object after unsubscribing', async function () {
+      const ipc = new AppiumIpc();
+      const sub1 = await ipc.subscribe<boolean>('foo', 'bar');
+      await sub1.unsubscribe();
+      expect(sub1.getMessage()).to.eventually.throw();
+    });
+
     it('should get messages from the async iterator of the subscription object', async function () {
       const ipc = new AppiumIpc();
       const payload1 = {hello: 'world'};
@@ -231,6 +255,36 @@ describe('AppiumIpc', function () {
 
       await Promise.all([rcvLoop(), sendLoop()]);
       expect(received).to.eql([payload1, payload2, payload3]);
+    });
+
+    it('should stop async iterator after unsubscribe', async function () {
+      const ipc = new AppiumIpc();
+      const payload1 = {hello: 'world'};
+      const payload2 = {hello: 'goodbye'};
+      const payload3 = {hello: 'everyone'};
+      type PayloadType = {hello: string};
+      const received: PayloadType[] = [];
+      const sub1 = await ipc.subscribe<PayloadType>('foo', 'bar');
+      const sub2 = await ipc.subscribe<PayloadType>('foo', 'baz');
+
+      const sendLoop = async () => {
+        await B.delay(0);
+        await sub1.publish(payload1);
+        await sub2.unsubscribe(); // unsubscribe the receiver here but keep publishing
+        await sub1.publish(payload2);
+        await sub1.publish(payload3);
+      };
+
+      const rcvLoop = async () => {
+        for await (const message of sub2) {
+          expect(message.publisher.name).to.eql('bar');
+          expect(message.topic).to.eql('foo');
+          received.push(message.data);
+        }
+      };
+
+      await Promise.all([rcvLoop(), sendLoop()]);
+      expect(received).to.eql([payload1]); // should only have one payload since we unsubscribed
     });
 
     it('should not include unique publisher name', async function () {

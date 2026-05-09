@@ -17,27 +17,34 @@ export type AppiumIpcOpts = {
 
 export class IpcSubscription<T> extends EventEmitter<IpcEvent<T>> implements IIpcSubscription<T> {
 
-  private isSubscribed = true;
-
   constructor(
-    public readonly subscriberName: string,
+    public readonly subscriberId: string,
     public readonly topic: string,
     private readonly ipc: AppiumIpc
   ) {
     super();
   }
 
+  get isSubscribed() {
+    return this.ipc.subscriptionExists(this.topic, this.subscriberId);
+  }
+
   async getMessage(): Promise<IpcMessage<T> | undefined> {
+    if (!this.isSubscribed) {
+      throw new Error('Cannot get message from subscription after unsubscribing');
+    }
     return await this.ipc.getMessage<T>(this.topic);
   }
 
   async publish(data: T): Promise<void> {
-    return await this.ipc.publish<T>(this.topic, this.subscriberName, data);
+    if (!this.isSubscribed) {
+      throw new Error('Cannot publish data to topic from subscription after unsubscribing');
+    }
+    return await this.ipc.publish<T>(this.topic, this.subscriberId, data);
   }
 
   async unsubscribe(): Promise<boolean> {
-    this.isSubscribed = false;
-    return await this.ipc.unsubscribe(this.topic, this.subscriberName);
+    return await this.ipc.unsubscribe(this.topic, this.subscriberId);
   }
 
   async *[Symbol.asyncIterator](): AsyncGenerator<IpcMessage<T>> {
@@ -61,33 +68,33 @@ export class AppiumIpc implements IAppiumIpc {
     log.info(`Initialized new IPC object with max object size of ${this._maxObjSize} bytes`);
   }
 
-  async subscribe<T>(topic: string, subscriberName: string): Promise<IpcSubscription<T>> {
-    log.info(`Subscribing ${subscriberName} to topic '${topic}'`);
+  async subscribe<T>(topic: string, subscriberId: string): Promise<IpcSubscription<T>> {
+    log.info(`Subscribing ${subscriberId} to topic '${topic}'`);
     return await this._lock.acquire(SUB_LOCK_KEY, async () => {
-      if (this.subscriptionExists(topic, subscriberName)) {
-        throw new Error(`Subscription already exists for topic "${topic}" and subscriber "${subscriberName}"`);
+      if (this.subscriptionExists(topic, subscriberId)) {
+        throw new Error(`Subscription already exists for topic "${topic}" and subscriber "${subscriberId}"`);
       }
 
       this._subscriptions[topic] ??= [];
-      const sub = new IpcSubscription<T>(subscriberName, topic, this);
+      const sub = new IpcSubscription<T>(subscriberId, topic, this);
       this._subscriptions[topic].push(sub);
       return sub;
     });
   }
 
-  async unsubscribe(topic: string, subscriberName: string): Promise<boolean> {
-    log.info(`Unsubscribing ${subscriberName} from topic '${topic}'`);
+  async unsubscribe(topic: string, subscriberId: string): Promise<boolean> {
+    log.info(`Unsubscribing ${subscriberId} from topic '${topic}'`);
     return await this._lock.acquire(SUB_LOCK_KEY, async () => {
-      if (this.subscriptionExists(topic, subscriberName)) {
-        this._subscriptions[topic] = this._subscriptions[topic].filter((sub) => sub.subscriberName !== subscriberName);
+      if (this.subscriptionExists(topic, subscriberId)) {
+        this._subscriptions[topic] = this._subscriptions[topic].filter((sub) => sub.subscriberId !== subscriberId);
         return true;
       }
       return false;
     });
   }
 
-  async publish<T>(topic: string, publisherName: string, data: T): Promise<void> {
-    log.debug(`${publisherName} is publishing a message to topic ${topic}`);
+  async publish<T>(topic: string, publisherId: string, data: T): Promise<void> {
+    log.debug(`${publisherId} is publishing a message to topic ${topic}`);
 
     const messageSize = node.getObjectSize(data);
     if (messageSize > this._maxObjSize) {
@@ -98,17 +105,17 @@ export class AppiumIpc implements IAppiumIpc {
     try {
       clonedData = structuredClone(data);
     } catch (e) {
-      log.error(`Could not clone data for IPC publish from ${publisherName} on topic ${topic}`, e);
+      log.error(`Could not clone data for IPC publish from ${publisherId} on topic ${topic}`, e);
       throw e;
     }
 
-    const message: IpcMessage<T> = {publisher: this.getIpcPublisher(publisherName), data: clonedData, topic, timestampMs: Date.now()};
+    const message: IpcMessage<T> = {publisher: this.getIpcPublisher(publisherId), data: clonedData, topic, timestampMs: Date.now()};
 
     this._messages[topic] = message;
 
     const subs: IpcSubscription<T>[] = await this._lock.acquire(SUB_LOCK_KEY, () =>
       this._subscriptions[topic] ?
-        this._subscriptions[topic].filter((sub) => sub.subscriberName !== publisherName) :
+        this._subscriptions[topic].filter((sub) => sub.subscriberId !== publisherId) :
         []
     );
 
@@ -128,10 +135,8 @@ export class AppiumIpc implements IAppiumIpc {
     });
   }
 
-  private subscriptionExists(topic: string, subscriberName: string): boolean {
-    // this is a private helper function only called by methods which already have the subscription
-    // lock so we don't need to worry about locking here
-    return !!this._subscriptions[topic]?.some((sub) => sub.subscriberName === subscriberName);
+  subscriptionExists(topic: string, subscriberId: string): boolean {
+    return !!this._subscriptions[topic]?.some((sub) => sub.subscriberId === subscriberId);
   }
 
   private getIpcPublisher(rawName: string): IpcPublisher {

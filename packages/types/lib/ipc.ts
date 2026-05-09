@@ -15,7 +15,7 @@ export interface IpcEvent<T> {
  * @typeparam T - the data shape for the message intended to be received in the callback
  */
 export interface IIpcSubscription<T> extends EventEmitter<IpcEvent<T>> {
-  subscriberName: string;
+  subscriberId: string;
   topic: string;
   unsubscribe(): Promise<boolean>;
   publish(data: T): Promise<void>;
@@ -49,8 +49,8 @@ export type IpcPublisher = {
  * An interface implemented by the internal IPC object hosted on the Appium server.
  */
 export interface IAppiumIpc {
-  subscribe<T>(topic: string, subscriberName: string): Promise<IIpcSubscription<T>>;
-  unsubscribe(topic: string, subscriberName: string): Promise<boolean>;
-  publish<T>(topic: string, publisherName: string, data: T): Promise<void>;
+  subscribe<T>(topic: string, subscriberId: string): Promise<IIpcSubscription<T>>;
+  unsubscribe(topic: string, subscriberId: string): Promise<boolean>;
+  publish<T>(topic: string, publisherId: string, data: T): Promise<void>;
   getMessage<T>(topic: string): Promise<IpcMessage<T> | undefined>;
 }

@@ -142,24 +142,22 @@ export class ExtensionCore {
   async onIpcInit(): Promise<void> {}
 
   async ipcSubscribe<T>(topic: string): Promise<IIpcSubscription<T>> {
-    this.assertIpc(this.ipc);
-    return await this.ipc.subscribe<T>(topic, this.getIpcId());
+    return await this.requireIpc().subscribe<T>(topic, this.getIpcId());
   }
 
   async ipcPublish<T>(topic: string, data: T): Promise<void> {
-    this.assertIpc(this.ipc);
-    await this.ipc.publish(topic, this.getIpcId(), data);
+    await this.requireIpc().publish(topic, this.getIpcId(), data);
   }
 
   async ipcGetMessage<T>(topic: string): Promise<IpcMessage<T> | undefined> {
-    this.assertIpc(this.ipc);
-    return await this.ipc.getMessage<T>(topic);
+    return await this.requireIpc().getMessage<T>(topic);
   }
 
-  private assertIpc(ipc: IAppiumIpc | undefined): asserts ipc is IAppiumIpc {
-    if (!ipc) {
+  private requireIpc(): IAppiumIpc {
+    if (!this.ipc) {
       throw new Error(`Cannot call IPC related function without an IPC object assigned. This is likely a programming error`);
     }
+    return this.ipc;
   }
 
   private getIpcId(): string {

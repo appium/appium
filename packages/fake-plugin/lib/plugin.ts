@@ -8,8 +8,8 @@ import type {
   ExternalDriver,
   IpcMessage,
   MethodMap,
+  IIpcSubscription,
 } from '@appium/types';
-import {IIpcSubscription} from '@appium/types';
 
 /** Driver as seen by this plugin; may include plugin-specific session data */
 export type DriverLike = ExternalDriver & {fakeSessionData?: unknown};

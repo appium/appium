@@ -134,7 +134,7 @@ export class AppiumIpc implements IAppiumIpc {
 
     const subs = this._subscriptions[topic] ?
       this._subscriptions[topic].filter((sub) => sub.subscriber !== publisher) :
-      []
+      [];
 
     for (const sub of subs) {
       sub.emit(EVT_MESSAGE, structuredClone(message));

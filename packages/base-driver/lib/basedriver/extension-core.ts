@@ -6,7 +6,6 @@ import type {
   BiDiResultData,
   IAppiumIpc,
   IIpcSubscription,
-  IpcMessage,
   StringRecord,
 } from '@appium/types';
 import {

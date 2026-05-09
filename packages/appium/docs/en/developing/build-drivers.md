@@ -949,6 +949,8 @@ for await (const message of subscription) {
 }
 ```
 
+Note that the iteration will stop when the subscription ends (i.e., when `unsubscribe` is called).
+
 #### `IpcMessage` object
 
 When you get a message on a topic, it has the following shape:

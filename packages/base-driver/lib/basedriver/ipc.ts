@@ -17,6 +17,8 @@ export type AppiumIpcOpts = {
 
 export class IpcSubscription<T> extends EventEmitter<IpcEvent<T>> implements IIpcSubscription<T> {
 
+  private isSubscribed = true;
+
   constructor(
     public readonly subscriberName: string,
     public readonly topic: string,
@@ -34,11 +36,12 @@ export class IpcSubscription<T> extends EventEmitter<IpcEvent<T>> implements IIp
   }
 
   async unsubscribe(): Promise<boolean> {
+    this.isSubscribed = false;
     return await this.ipc.unsubscribe(this.topic, this.subscriberName);
   }
 
   async *[Symbol.asyncIterator](): AsyncGenerator<IpcMessage<T>> {
-    while (true) {
+    while (this.isSubscribed) {
       const nextVal = await new Promise((resolve) => {
         this.once(EVT_MESSAGE, resolve);
       });

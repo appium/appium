@@ -1,5 +1,5 @@
 import {log} from './logger';
-import type {StringRecord, IIpcSubscription, IAppiumIpc, IpcMessage, IpcEvent, IpcPublisher, AppiumLogger} from '@appium/types';
+import type {StringRecord, IIpcSubscription, IAppiumIpc, IpcMessage, IpcEvent, AppiumLogger} from '@appium/types';
 import EventEmitter from 'node:events';
 import {node} from '@appium/support';
 import {delay} from 'bluebird';
@@ -19,7 +19,7 @@ class StopIterationError extends Error {};
 export class IpcSubscription<T> extends EventEmitter<IpcEvent<T>> implements IIpcSubscription<T> {
 
   constructor(
-    public readonly subscriberId: string,
+    public readonly subscriber: string,
     public readonly topic: string,
     private readonly ipc: AppiumIpc
   ) {
@@ -27,7 +27,7 @@ export class IpcSubscription<T> extends EventEmitter<IpcEvent<T>> implements IIp
   }
 
   get isSubscribed() {
-    return this.ipc.subscriptionExists(this.topic, this.subscriberId);
+    return this.ipc.subscriptionExists(this.topic, this.subscriber);
   }
 
   getMessage(): IpcMessage<T> | undefined {
@@ -41,12 +41,16 @@ export class IpcSubscription<T> extends EventEmitter<IpcEvent<T>> implements IIp
     if (!this.isSubscribed) {
       throw new Error('Cannot publish data to topic from subscription after unsubscribing');
     }
-    return await this.ipc.publish<T>(this.topic, this.subscriberId, data);
+    return await this.ipc.publish<T>(this.topic, this.subscriber, data);
   }
 
   unsubscribe(): boolean {
-    const unsubscribeRes = this.ipc.unsubscribe(this.topic, this.subscriberId);
+    const unsubscribeRes = this.ipc.unsubscribe(this.topic, this.subscriber);
     this.emit('unsubscribed');
+    // remove listeners waiting for messages when we unsubscribe
+    for (const listener of this.listeners(EVT_MESSAGE)) {
+      this.removeListener(EVT_MESSAGE, listener);
+    }
     return unsubscribeRes;
   }
 
@@ -86,49 +90,50 @@ export class AppiumIpc implements IAppiumIpc {
     this.log.debug(`Initialized new IPC object with max object size of ${this._maxObjSize} bytes`);
   }
 
-  subscribe<T>(topic: string, subscriberId: string): IpcSubscription<T> {
-    this.log.info(`Subscribing ${subscriberId} to topic '${topic}'`);
-    if (this.subscriptionExists(topic, subscriberId)) {
-      throw new Error(`Subscription already exists for topic "${topic}" and subscriber "${subscriberId}"`);
+  subscribe<T>(topic: string, subscriber: string): IpcSubscription<T> {
+    this.log.info(`Subscribing ${subscriber} to topic '${topic}'`);
+    if (this.subscriptionExists(topic, subscriber)) {
+      throw new Error(`Subscription already exists for topic "${topic}" and subscriber "${subscriber}"`);
     }
 
     this._subscriptions[topic] ??= [];
-    const sub = new IpcSubscription<T>(subscriberId, topic, this);
+    const sub = new IpcSubscription<T>(subscriber, topic, this);
     this._subscriptions[topic].push(sub);
     return sub;
   }
 
-  unsubscribe(topic: string, subscriberId: string): boolean {
-    this.log.info(`Unsubscribing ${subscriberId} from topic '${topic}'`);
-    if (this.subscriptionExists(topic, subscriberId)) {
-      this._subscriptions[topic] = this._subscriptions[topic].filter((sub) => sub.subscriberId !== subscriberId);
+  unsubscribe(topic: string, subscriber: string): boolean {
+    this.log.info(`Unsubscribing ${subscriber} from topic '${topic}'`);
+    if (this.subscriptionExists(topic, subscriber)) {
+      this._subscriptions[topic] = this._subscriptions[topic].filter((sub) => sub.subscriber !== subscriber);
       return true;
     }
     return false;
   }
 
-  async publish<T>(topic: string, publisherId: string, data: T): Promise<void> {
-    this.log.debug(`${publisherId} is publishing a message to topic ${topic}`);
+  async publish<T>(topic: string, publisher: string, data: T): Promise<void> {
+    this.log.debug(`${publisher} is publishing a message to topic ${topic}`);
 
     const messageSize = node.getObjectSize(data);
     if (messageSize > this._maxObjSize) {
-      throw new Error(`Message with size ${messageSize} bytes is bigger than max size of ${this._maxObjSize} bytes`);
+      throw new Error(`Error when ${publisher} is publishing to topic '${topic}': ` +
+                      `Message with size ${messageSize} bytes is bigger than max size of ${this._maxObjSize} bytes`);
     }
 
     let clonedData: T;
     try {
       clonedData = structuredClone(data);
     } catch (e) {
-      this.log.error(`Could not clone data for IPC publish from ${publisherId} on topic ${topic}`, e);
+      this.log.error(`Could not clone data for IPC publish from ${publisher} on topic ${topic}`);
       throw e;
     }
 
-    const message: IpcMessage<T> = {publisher: this.getIpcPublisher(publisherId), data: clonedData, topic, timestampMs: Date.now()};
+    const message: IpcMessage<T> = {publisher, data: clonedData, topic, timestampMs: Date.now()};
 
     this._messages[topic] = message;
 
     const subs = this._subscriptions[topic] ?
-      this._subscriptions[topic].filter((sub) => sub.subscriberId !== publisherId) :
+      this._subscriptions[topic].filter((sub) => sub.subscriber !== publisher) :
       []
 
     for (const sub of subs) {
@@ -149,15 +154,8 @@ export class AppiumIpc implements IAppiumIpc {
     return structuredClone(this._messages[topic] as IpcMessage<T>);
   }
 
-  subscriptionExists(topic: string, subscriberId: string): boolean {
-    return !!this._subscriptions[topic]?.some((sub) => sub.subscriberId === subscriberId);
-  }
-
-  private getIpcPublisher(rawName: string): IpcPublisher {
-    return {
-      name: rawName.split('@')[0],
-      id: rawName,
-    };
+  subscriptionExists(topic: string, subscriber: string): boolean {
+    return !!this._subscriptions[topic]?.some((sub) => sub.subscriber === subscriber);
   }
 }
 

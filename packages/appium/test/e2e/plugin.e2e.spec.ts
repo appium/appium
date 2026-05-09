@@ -479,7 +479,8 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
       });
       expect(result).to.eql(6);
       lastMath = await driver.executeScript('fake: getLastPluginMath', []);
-      expect(lastMath).to.eql({pluginName: 'FakePlugin', result: 6});
+      expect(lastMath.result).to.eql(6);
+      expect(lastMath.pluginName).to.have.string('FakePlugin');
     });
 
   });

@@ -142,25 +142,11 @@ export class ExtensionCore {
   async onIpcInit(): Promise<void> {}
 
   ipcSubscribe<T>(topic: string): IIpcSubscription<T> {
-    return this.requireIpc().subscribe<T>(topic, this.getIpcId());
-  }
-
-  async ipcPublish<T>(topic: string, data: T): Promise<void> {
-    await this.requireIpc().publish(topic, this.getIpcId(), data);
-  }
-
-  ipcGetMessage<T>(topic: string): IpcMessage<T> | undefined {
-    return this.requireIpc().getMessage<T>(topic);
-  }
-
-  private requireIpc(): IAppiumIpc {
     if (!this.ipc) {
-      throw new Error(`Cannot call IPC related function without an IPC object assigned. This is likely a programming error`);
+      throw new Error(`Cannot subscribe to an IPC topic without an IPC object assigned. ` +
+                      `This is likely a programming error. ipcSubscribe should be called in the ` +
+                      `onIpcInit handler or after you are certain that createSession has completed successfully.`);
     }
-    return this.ipc;
-  }
-
-  private getIpcId(): string {
-    return generateDriverLogPrefix(this);
+    return this.ipc.subscribe<T>(topic, generateDriverLogPrefix(this));
   }
 }

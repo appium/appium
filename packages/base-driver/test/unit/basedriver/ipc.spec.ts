@@ -65,8 +65,8 @@ describe('AppiumIpc', function () {
       expect(sub1Res!.data).to.eql(payload);
       expect(sub2Res!.data).to.eql(payload);
 
-      expect(sub1Res!.publisher.name).to.eql('zowee');
-      expect(sub2Res!.publisher.name).to.eql('zowee');
+      expect(sub1Res!.publisher).to.eql('zowee');
+      expect(sub2Res!.publisher).to.eql('zowee');
 
       expect(sub1Res!.topic).to.eql('foo');
       expect(sub2Res!.topic).to.eql('foo');
@@ -88,7 +88,7 @@ describe('AppiumIpc', function () {
 
       expect(sub2Res!).to.not.exist;
       expect(sub1Res!.data).to.eql(payload);
-      expect(sub1Res!.publisher.name).to.eql('baz');
+      expect(sub1Res!.publisher).to.eql('baz');
     });
 
     it('should publish using subscription object', async function () {
@@ -101,7 +101,7 @@ describe('AppiumIpc', function () {
       await sub2.publish(payload);
 
       expect(sub1Res!.data).to.eql(payload);
-      expect(sub1Res!.publisher.name).to.eql('baz');
+      expect(sub1Res!.publisher).to.eql('baz');
       expect(sub1Res!.topic).to.eql('foo');
       expect(sub1Res!).to.have.property('timestampMs');
     });
@@ -152,9 +152,9 @@ describe('AppiumIpc', function () {
       await ipc.publish('foo', 'baz', payload);
       await B.delay(0); // just spin once to let the publish callback do its thing
       expect(sub1Res!.data).to.eql(payload);
-      expect(sub1Res!.publisher.name).to.eql('baz');
+      expect(sub1Res!.publisher).to.eql('baz');
       expect(sub1Res2!.data).to.eql(payload);
-      expect(sub1Res2!.publisher.name).to.eql('baz');
+      expect(sub1Res2!.publisher).to.eql('baz');
     });
 
     it('should throw an error when trying to publish a large message', async function () {
@@ -188,25 +188,6 @@ describe('AppiumIpc', function () {
       // changing original object should not change what was published
       payload.foo = 'new';
       expect(sub1.getMessage()!.data).to.eql({foo: 'bar'});
-
-    });
-
-    it('should not include unique object info in the publisher name', async function () {
-      const ipc = new AppiumIpc();
-      const sub1 = ipc.subscribe<number>('foo', 'subscriber1@1234');
-      const sub2 = ipc.subscribe<number>('foo', 'subscriber2@1234');
-      let rcvd: IpcMessage<number>;
-      sub1.on('message', (data) => rcvd = data);
-      await ipc.publish<number>('foo', 'publisher@1234', 5);
-      await B.delay(0);
-      expect(rcvd!.publisher.name).to.eql('publisher');
-      expect(rcvd!.data).to.eql(5);
-
-      sub2.on('message', (data) => rcvd = data);
-      await sub1.publish(3);
-      await B.delay(0);
-      expect(rcvd!.publisher.name).to.eql('subscriber1');
-      expect(rcvd!.data).to.eql(3);
 
     });
   });
@@ -267,7 +248,7 @@ describe('AppiumIpc', function () {
         let i = 0;
         for await (const message of sub2) {
           i++;
-          expect(message.publisher.name).to.eql('bar');
+          expect(message.publisher).to.eql('bar');
           expect(message.topic).to.eql('foo');
           received.push(message.data);
           if (i >= 3) {
@@ -301,7 +282,7 @@ describe('AppiumIpc', function () {
 
       const rcvLoop = async () => {
         for await (const message of sub2) {
-          expect(message.publisher.name).to.eql('bar');
+          expect(message.publisher).to.eql('bar');
           expect(message.topic).to.eql('foo');
           received.push(message.data);
         }
@@ -309,14 +290,6 @@ describe('AppiumIpc', function () {
 
       await Promise.all([rcvLoop(), sendLoop()]);
       expect(received).to.eql([payload1]); // should only have one payload since we unsubscribed
-    });
-
-    it('should not include unique publisher name', async function () {
-      const ipc = new AppiumIpc();
-      const sub1 = ipc.subscribe<number>('foo', 'subscriber1@1234');
-      await ipc.publish<number>('foo', 'publisher@1234', 5);
-      const {publisher} = sub1.getMessage() ?? {publisher: null};
-      expect(publisher?.name).to.eql('publisher');
     });
   });
 });

@@ -16,7 +16,7 @@ export interface IpcEvent<T> {
  * @typeparam T - the data shape for the message intended to be received in the callback
  */
 export interface IIpcSubscription<T> extends EventEmitter<IpcEvent<T>> {
-  subscriberId: string;
+  subscriber: string;
   topic: string;
   unsubscribe(): boolean;
   publish(data: T): Promise<void>;
@@ -30,28 +30,18 @@ export interface IIpcSubscription<T> extends EventEmitter<IpcEvent<T>> {
  * @typeparam T - the type of the expected message
  */
 export type IpcMessage<T> = {
-  publisher: IpcPublisher,
+  publisher: string,
   timestampMs: number,
   topic: string,
   data: T,
 };
 
 /**
- * A representation of a publisher. The name is a friendly name (usually the class name of the
- * driver or plugin). The ID is the unique name used internally by Appium, which may include object
- * reference IDs.
- */
-export type IpcPublisher = {
-  name: string,
-  id: string,
-};
-
-/**
  * An interface implemented by the internal IPC object hosted on the Appium server.
  */
 export interface IAppiumIpc {
-  subscribe<T>(topic: string, subscriberId: string): IIpcSubscription<T>;
-  unsubscribe(topic: string, subscriberId: string): boolean;
-  publish<T>(topic: string, publisherId: string, data: T): Promise<void>;
+  subscribe<T>(topic: string, subscriber: string): IIpcSubscription<T>;
+  unsubscribe(topic: string, subscriber: string): boolean;
+  publish<T>(topic: string, publisher: string, data: T): Promise<void>;
   getMessage<T>(topic: string): IpcMessage<T> | undefined;
 }

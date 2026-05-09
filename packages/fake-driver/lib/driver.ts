@@ -2,7 +2,7 @@ import {sleep} from 'asyncbox';
 import type {Express, Request, Response} from 'express';
 import type {Server as HttpServer} from 'node:http';
 import {BaseDriver, errors} from 'appium/driver';
-import type {DriverData, InitialOpts, IpcMessage} from '@appium/types';
+import type {DriverData, IIpcSubscription, InitialOpts, IpcMessage} from '@appium/types';
 import {desiredCapConstraints} from './desired-caps';
 import type {FakeDriverConstraints} from './desired-caps';
 import type {FakeDriverCaps, W3CFakeDriverCaps} from './types';
@@ -41,6 +41,9 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
   elMap: Record<string, FakeElement>;
   /** Current document URL; set by bidiNavigate, returned by getUrl. */
   url: string = '';
+
+  ipcFakeThing?: IIpcSubscription<Thing>;
+  ipcClock?: IIpcSubscription<ClockStatus>;
 
   // Alert commands
   assertNoAlert = alertCommands.assertNoAlert;
@@ -154,11 +157,13 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
   }
 
   async onIpcInit(): Promise<void> {
-    const sub = this.ipcSubscribe('pluginMath');
-    sub.on('message', (message: IpcMessage<number>) => {
+    const fakeMathSub = this.ipcSubscribe('pluginMath');
+    fakeMathSub.on('message', (message: IpcMessage<number>) => {
       this.log.info(`A connected plugin did some math with result ${message.data}`);
-      this.lastPluginMath = {pluginName: message.publisher.name, result: message.data};
+      this.lastPluginMath = {pluginName: message.publisher, result: message.data};
     });
+    this.ipcFakeThing = this.ipcSubscribe('fakeThing');
+    this.ipcClock = this.ipcSubscribe('clockLifecycle');
     await this.publishClockStatus();
   }
 
@@ -239,7 +244,9 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
   async setFakeThing(thing: Thing): Promise<null> {
     await sleep(1);
     this.fakeThing = thing;
-    await this.maybeIpc(() => this.ipcPublish('fakeThing', thing));
+    if (this.ipcFakeThing) {
+      await this.ipcFakeThing.publish(thing);
+    };
     return null;
   }
 
@@ -302,16 +309,9 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
   }
 
   private async publishClockStatus(): Promise<void> {
-    await this.maybeIpc(() => this.ipcPublish<ClockStatus>('clockLifecycle', {running: this._clockRunning}));
-  }
-
-  private async maybeIpc<T>(fn: () => Promise<T> | undefined) {
-    if (!this.ipc) {
-      this.log.warn(`Tried to run an IPC related command but IPC wasn't set up. Ignoring ` +
-                    `because this driver is used for testing. Could be a sign of programming error.`);
+    if (!this.ipcClock) {
       return;
     }
-    return await fn();
+    await this.ipcClock.publish({running: this._clockRunning});
   }
-
 }

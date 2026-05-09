@@ -9,6 +9,7 @@ import type {
   IpcMessage,
   MethodMap,
 } from '@appium/types';
+import {IIpcSubscription} from '@appium/types';
 
 /** Driver as seen by this plugin; may include plugin-specific session data */
 export type DriverLike = ExternalDriver & {fakeSessionData?: unknown};
@@ -74,6 +75,7 @@ export class FakePlugin extends BasePlugin {
   private readonly fakeThing: string;
   private pluginThing: unknown = null;
   private fakeDriverClockIsRunning: boolean = false;
+  private ipcPluginMath: IIpcSubscription<number>;
 
   constructor(name: string, cliArgs: Record<string, unknown> = {}) {
     super(name, cliArgs);
@@ -103,18 +105,17 @@ export class FakePlugin extends BasePlugin {
   }
 
   async onIpcInit() {
-    const sub = this.ipcSubscribe<ClockStatus>('clockLifecycle');
-    sub.on('message', (message: IpcMessage<ClockStatus>) => {
-      if (message.publisher.name === 'FakeDriver') {
-        this.fakeDriverClockIsRunning = message.data.running;
-      }
+    const clockSub = this.ipcSubscribe<ClockStatus>('clockLifecycle');
+    clockSub.on('message', (message: IpcMessage<ClockStatus>) => {
+      this.fakeDriverClockIsRunning = message.data.running;
     });
     // subscribing to clockLifecycle doesn't tell us the current status if it started before this
     // constructor was called, so retrieve it
-    const message = this.ipcGetMessage<ClockStatus>('clockLifecycle');
-    if (message && message.publisher.name === 'FakeDriver') {
+    const message = clockSub.getMessage();
+    if (message) {
       this.fakeDriverClockIsRunning = message.data.running;
     }
+    this.ipcPluginMath = this.ipcSubscribe<number>('pluginMath');
   }
 
   async startClock(): Promise<void> {
@@ -145,7 +146,9 @@ export class FakePlugin extends BasePlugin {
   ): Promise<number> {
     await sleep(1);
     const result = num1 * num2;
-    await this.ipcPublish('pluginMath', result);
+    if (this.ipcPluginMath) {
+      await this.ipcPluginMath.publish(result);
+    }
     return result;
   }
 

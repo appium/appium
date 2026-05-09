@@ -957,26 +957,11 @@ When you get a message on a topic, it has the following shape:
 
 ```ts
 export type IpcMessage<T> = {
-  publisher: IpcPublisher, // the name of the publishing object
-  timestampMs: number,     // when the message was published, in ms since epoch
-  topic: string,           // the topic the message was published on
-  data: T,                 // the arbitrary message data
+  publisher: string,   // the id of the publishing object (typically of the form <ClassName>@<uniqueObjectId>)
+  timestampMs: number, // when the message was published, in ms since epoch
+  topic: string,       // the topic the message was published on
+  data: T,             // the arbitrary message data
 };
-
-export type IpcPublisher = {
-  name: string,
-  id: string,
-};
-```
-
-#### Other methods
-
-In addition to using the subscription object, you can also use other `Ipc*` methods on the
-driver/plugin instance:
-
-```ts
-await this.ipcPublish<T>(topic, data); // publish some data on a topic without being subscribed
-this.ipcGetMessage<T>(topic); // get the last message sent on a topic without being subscribed
 ```
 
 #### IPC Notes
@@ -988,7 +973,7 @@ There are some important things to keep in mind when using Appium's IPC feature:
   accessing or reading data sent on IPC channels in other sessions.)
 - The default max size of an IPC message is 1MB. This can be configured by the server-admin by
   using the `--max-ipc-data-size` arg (value is a number in bytes).
-- If a message exceeds the configured size, any call to `publish`-related methods will throw, so be
+- If a message exceeds the configured size, any call to `publish` methods will throw, so be
   sure to cover this case in your error handling.
 
 To see examples of IPC in action, check out Appium's own

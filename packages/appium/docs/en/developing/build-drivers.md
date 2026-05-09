@@ -984,6 +984,9 @@ There are some important things to keep in mind when using Appium's IPC feature:
   using the `--max-ipc-data-size` arg (value is a number in bytes).
 - If a message exceeds the configured size, any call to `publish` methods will throw, so be
   sure to cover this case in your error handling.
+- Topic names exist within a global namespace per session. So if you don't want to clash with other
+  drivers or plugins, make sure you prefix your topic names with something unique, akin to vendor
+  prefixes in the WebDriver standard (for example: `fake-driver:some-topic`).
 
 To see examples of IPC in action, check out Appium's own
 [FakeDriver](https://github.com/appium/appium/blob/master/packages/fake-driver/lib/driver.ts) and

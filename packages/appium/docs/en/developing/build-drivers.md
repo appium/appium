@@ -960,6 +960,8 @@ if (subscription.isActive) {
 }
 ```
 
+If the subscription is not active, attempts to call `subscription.publish` will throw an error.
+
 #### `IpcMessage` object
 
 When you get a message on a topic, it has the following shape:

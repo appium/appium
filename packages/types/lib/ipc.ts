@@ -37,12 +37,12 @@ export interface IpcEvent<T extends IpcData> {
  * @typeparam T - the data shape for the message intended to be received in the callback
  */
 export interface IIpcSubscription<T extends IpcData> extends EventEmitter<IpcEvent<T>> {
-  subscriber: string;
-  topic: string;
+  readonly subscriber: string;
+  readonly topic: string;
+  readonly isActive: boolean;
   unsubscribe(): boolean;
   publish(data: T): Promise<void>;
   getMessage(): IpcMessage<T> | undefined;
-  readonly isActive: boolean;
   [Symbol.asyncIterator](): AsyncGenerator<IpcMessage<T>>;
 };
 

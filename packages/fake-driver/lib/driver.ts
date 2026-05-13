@@ -42,7 +42,6 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
   /** Current document URL; set by bidiNavigate, returned by getUrl. */
   url: string = '';
 
-  ipcFakeThing?: IIpcSubscription<Thing>;
   ipcClock?: IIpcSubscription<ClockStatus>;
 
   // Alert commands
@@ -116,6 +115,7 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
   /** If set, Bidi connections are proxied to this URL instead of handling locally. */
   private _bidiProxyUrl: string | null;
   private _clockRunning = false;
+  private ipcFakeThing?: IIpcSubscription<Thing>;
 
   constructor(opts: InitialOpts = {} as InitialOpts, shouldValidateCaps = true) {
     super(opts, shouldValidateCaps);

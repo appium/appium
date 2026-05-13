@@ -59,11 +59,28 @@ export class IpcSubscription<T extends IpcData> extends EventEmitter<IpcEvent<T>
     // while a caller is waiting on the loop, because we want to exit the loop in case of
     // unsubscription, even if we were already waiting on the next message.
     while (this.isActive) {
-      const waitForMessage = new Promise((resolve) => {
-        this.once(EVT_MESSAGE, resolve);
+      let waitForMessageRejected = () => {};
+      let waitForUnsubscribedRejected = () => {};
+      const waitForMessage = new Promise((resolve, reject) => {
+        waitForMessageRejected = reject;
+        this.once(EVT_MESSAGE, (message: IpcMessage<T>) => {
+          resolve(message);
+          // ensure that our unsubscribe listener is cleaned up since we don't care anymore
+          for (const listener of this.listeners(EVT_UNSUBSCRIBED)) {
+            this.removeListener(EVT_UNSUBSCRIBED, listener);
+          }
+          // ensure the unsubscribed promise completes;
+          waitForUnsubscribedRejected();
+        });
       });
       const waitForUnsubscribed = new Promise((resolve, reject) => {
-        this.once(EVT_UNSUBSCRIBED, () => reject(new StopIterationError()));
+        waitForUnsubscribedRejected = reject;
+        this.once(EVT_UNSUBSCRIBED, () => {
+          reject(new StopIterationError());
+          // we don't need to clean up our message listener because it's already cleaned up in the
+          // unsubscribe method
+          waitForMessageRejected(); // ensure the wait for message promise completes
+        });
       });
       try {
         const val = await Promise.race([waitForMessage, waitForUnsubscribed]);

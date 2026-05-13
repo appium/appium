@@ -20,11 +20,11 @@ import {generateDriverLogPrefix} from './helpers';
 export class ExtensionCore {
   bidiEventSubs: Record<string, string[]>;
   bidiCommands: BidiModuleMap = BIDI_COMMANDS as BidiModuleMap;
-  ipc?: IAppiumIpc;
   _logPrefix?: string;
   // used to handle driver events
   readonly eventEmitter: NodeJS.EventEmitter;
   protected _log: AppiumLogger;
+  private ipc?: IAppiumIpc;
 
 
   constructor(logPrefix?: string) {

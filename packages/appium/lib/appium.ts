@@ -532,12 +532,6 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
     }
   }
 
-  deleteLinkedSessionObjects(sessionId: string) {
-    delete this.sessions[sessionId];
-    delete this.sessionPlugins[sessionId];
-    delete this.sessionIpcs[sessionId];
-  }
-
   /**
    * Ends every active session, either by normal `deleteSession` or by `startUnexpectedShutdown`
    * when `force` is true.
@@ -919,6 +913,12 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
   override canProxy(sessionId: string): boolean {
     const dstSession = this.sessions[sessionId];
     return _.isFunction(dstSession?.canProxy) && dstSession.canProxy(sessionId);
+  }
+
+  private deleteLinkedSessionObjects(sessionId: string): void {
+    delete this.sessions[sessionId];
+    delete this.sessionPlugins[sessionId];
+    delete this.sessionIpcs[sessionId];
   }
 
 }

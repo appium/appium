@@ -84,7 +84,6 @@ export interface Core<C extends Constraints, Settings extends StringRecord = Str
   eventHistory: EventHistory;
   bidiEventSubs: Record<string, string[]>;
   updateBidiCommands(cmds: BidiModuleMap): void;
-  ipc?: IAppiumIpc;
   onUnexpectedShutdown(handler: () => any): void;
   /**
    * @summary Retrieve the server's current status.

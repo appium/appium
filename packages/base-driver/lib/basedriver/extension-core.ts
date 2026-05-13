@@ -6,6 +6,7 @@ import type {
   BiDiResultData,
   IAppiumIpc,
   IIpcSubscription,
+  IpcData,
   StringRecord,
 } from '@appium/types';
 import {
@@ -140,7 +141,7 @@ export class ExtensionCore {
 
   async onIpcInit(): Promise<void> {}
 
-  ipcSubscribe<T>(topic: string): IIpcSubscription<T> {
+  ipcSubscribe<T extends IpcData>(topic: string): IIpcSubscription<T> {
     if (!this.ipc) {
       throw new Error(`Cannot subscribe to an IPC topic without an IPC object assigned. ` +
                       `This is likely a programming error. ipcSubscribe should be called in the ` +

@@ -2,7 +2,7 @@ import {sleep} from 'asyncbox';
 import type {Express, Request, Response} from 'express';
 import type {Server as HttpServer} from 'node:http';
 import {BaseDriver, errors} from 'appium/driver';
-import type {DriverData, IIpcSubscription, InitialOpts, IpcMessage} from '@appium/types';
+import type {DriverData, IIpcSubscription, InitialOpts, IpcData, IpcMessage} from '@appium/types';
 import {desiredCapConstraints} from './desired-caps';
 import type {FakeDriverConstraints} from './desired-caps';
 import type {FakeDriverCaps, W3CFakeDriverCaps} from './types';
@@ -22,7 +22,7 @@ export type {Orientation} from '@appium/types';
 export type ClockStatus = {running: boolean};
 
 /** Driver supporting a generic "fake thing" value (getFakeThing / setFakeThing). */
-export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraints> {
+export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDriverConstraints> {
   static newBidiCommands = NEW_BIDI_COMMANDS;
   static newMethodMap = NEW_METHOD_MAP;
   static executeMethodMap = EXECUTE_METHOD_MAP;

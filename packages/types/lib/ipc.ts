@@ -1,11 +1,32 @@
 import type {EventEmitter} from 'node:events';
 
 /**
+ * This is the type of data that can be validly cloned and sent over the Ipc channel
+ */
+export type IpcData =
+  | null
+  | undefined
+  | string
+  | number
+  | boolean
+  | bigint
+  | Date
+  | RegExp
+  | Error
+  | ArrayBuffer
+  | SharedArrayBuffer
+  | ArrayBufferView
+  | ReadonlyArray<IpcData>
+  | ReadonlyMap<IpcData, IpcData>
+  | ReadonlySet<IpcData>
+  | {[key: string]: IpcData};
+
+/**
  * A representation of the (only) event allowed on the IpcSubscription EventEmitter object
  *
  * @typeparam T - the data shape for the message for a given IPC topic
  */
-export interface IpcEvent<T> {
+export interface IpcEvent<T extends IpcData> {
   message: [IpcMessage<T>];
   unsubscribed: [];
 }
@@ -15,7 +36,7 @@ export interface IpcEvent<T> {
  *
  * @typeparam T - the data shape for the message intended to be received in the callback
  */
-export interface IIpcSubscription<T> extends EventEmitter<IpcEvent<T>> {
+export interface IIpcSubscription<T extends IpcData> extends EventEmitter<IpcEvent<T>> {
   subscriber: string;
   topic: string;
   unsubscribe(): boolean;
@@ -30,7 +51,7 @@ export interface IIpcSubscription<T> extends EventEmitter<IpcEvent<T>> {
  *
  * @typeparam T - the type of the expected message
  */
-export type IpcMessage<T> = {
+export type IpcMessage<T extends IpcData> = {
   publisher: string,
   timestampMs: number,
   topic: string,
@@ -41,8 +62,8 @@ export type IpcMessage<T> = {
  * An interface implemented by the internal IPC object hosted on the Appium server.
  */
 export interface IAppiumIpc {
-  subscribe<T>(topic: string, subscriber: string): IIpcSubscription<T>;
+  subscribe<T extends IpcData>(topic: string, subscriber: string): IIpcSubscription<T>;
   unsubscribe(topic: string, subscriber: string): boolean;
-  publish<T>(topic: string, publisher: string, data: T): Promise<void>;
-  getMessage<T>(topic: string): IpcMessage<T> | undefined;
+  publish<T extends IpcData>(topic: string, publisher: string, data: T): Promise<void>;
+  getMessage<T extends IpcData>(topic: string): IpcMessage<T> | undefined;
 }

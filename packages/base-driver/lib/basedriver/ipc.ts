@@ -1,5 +1,5 @@
 import {log} from './logger';
-import type {StringRecord, IIpcSubscription, IAppiumIpc, IpcMessage, IpcEvent, AppiumLogger} from '@appium/types';
+import type {StringRecord, IIpcSubscription, IAppiumIpc, IpcMessage, IpcEvent, AppiumLogger, IpcData} from '@appium/types';
 import EventEmitter from 'node:events';
 import {sleep} from 'asyncbox';
 import {node} from '@appium/support';
@@ -16,7 +16,7 @@ export type AppiumIpcOpts = {
 
 class StopIterationError extends Error {};
 
-export class IpcSubscription<T> extends EventEmitter<IpcEvent<T>> implements IIpcSubscription<T> {
+export class IpcSubscription<T extends IpcData> extends EventEmitter<IpcEvent<T>> implements IIpcSubscription<T> {
 
   constructor(
     public readonly subscriber: string,
@@ -90,7 +90,7 @@ export class AppiumIpc implements IAppiumIpc {
     this.log.debug(`Initialized new IPC object with max object size of ${this._maxObjSize} bytes`);
   }
 
-  subscribe<T>(topic: string, subscriber: string): IpcSubscription<T> {
+  subscribe<T extends IpcData>(topic: string, subscriber: string): IpcSubscription<T> {
     this.log.info(`Subscribing ${subscriber} to topic '${topic}'`);
     if (this.subscriptionExists(topic, subscriber)) {
       throw new Error(`Subscription already exists for topic "${topic}" and subscriber "${subscriber}"`);
@@ -111,7 +111,7 @@ export class AppiumIpc implements IAppiumIpc {
     return false;
   }
 
-  async publish<T>(topic: string, publisher: string, data: T): Promise<void> {
+  async publish<T extends IpcData>(topic: string, publisher: string, data: T): Promise<void> {
     this.log.debug(`${publisher} is publishing a message to topic ${topic}`);
 
     const messageSize = node.getObjectSize(data);
@@ -146,7 +146,7 @@ export class AppiumIpc implements IAppiumIpc {
 
   }
 
-  getMessage<T>(topic: string): IpcMessage<T> | undefined {
+  getMessage<T extends IpcData>(topic: string): IpcMessage<T> | undefined {
     if (!this._messages[topic]) {
       return;
     }

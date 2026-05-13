@@ -1,8 +1,8 @@
 import {log} from './logger';
 import type {StringRecord, IIpcSubscription, IAppiumIpc, IpcMessage, IpcEvent, AppiumLogger} from '@appium/types';
 import EventEmitter from 'node:events';
+import {sleep} from 'asyncbox';
 import {node} from '@appium/support';
-import {delay} from 'bluebird';
 
 const DEF_MAX_OBJ_SIZE_BYTES = 1024 * 1024; // 1mb seems like plenty for any plugin to pass a message
 
@@ -142,7 +142,7 @@ export class AppiumIpc implements IAppiumIpc {
 
     // we don't want to return from publish until the async iterators on subscriptions have had
     // a chance to observe the emitted value, otherwise some might get lost
-    await delay(0);
+    await sleep(0);
 
   }
 
@@ -158,4 +158,3 @@ export class AppiumIpc implements IAppiumIpc {
     return !!this._subscriptions[topic]?.some((sub) => sub.subscriber === subscriber);
   }
 }
-

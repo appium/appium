@@ -1,4 +1,4 @@
-import B from 'bluebird';
+import {sleep} from 'asyncbox';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {AppiumIpc, EVT_MESSAGE} from '../../../lib/basedriver/ipc';
@@ -135,7 +135,7 @@ describe('AppiumIpc', function () {
       sub1.unsubscribe(); // intentionally call without awaiting
       ipc.publish('foo', 'baz', payload); // intentionally call without awaiting
       // now that we've fired off a couple publishes, let's unsubscribe
-      await B.delay(10);
+      await sleep(10);
       expect(rcvdCount).to.eql(1); // not 0 or 2
     });
 
@@ -150,7 +150,7 @@ describe('AppiumIpc', function () {
         sub1Res2 = ipc.getMessage<typeof payload>('foo');
       });
       await ipc.publish('foo', 'baz', payload);
-      await B.delay(0); // just spin once to let the publish callback do its thing
+      await sleep(0); // just spin once to let the publish callback do its thing
       expect(sub1Res!.data).to.eql(payload);
       expect(sub1Res!.publisher).to.eql('baz');
       expect(sub1Res2!.data).to.eql(payload);
@@ -180,7 +180,7 @@ describe('AppiumIpc', function () {
         data.foo = 'bad2';
       });
       await ipc.publish<MsgType>('foo', 'pub1', payload);
-      await B.delay(0);
+      await sleep(0);
 
       // allowing subscribers to change the data they received should not change the original obj
       expect(payload).to.eql({foo: 'bar'});
@@ -238,7 +238,7 @@ describe('AppiumIpc', function () {
       const sub2 = ipc.subscribe<PayloadType>('foo', 'baz');
 
       const sendLoop = async () => {
-        await B.delay(50);
+        await sleep(50);
         await sub1.publish(payload1);
         await sub1.publish(payload2);
         await sub1.publish(payload3);
@@ -272,9 +272,9 @@ describe('AppiumIpc', function () {
       const sub2 = ipc.subscribe<PayloadType>('foo', 'baz');
 
       const sendLoop = async () => {
-        await B.delay(20);
+        await sleep(20);
         await sub1.publish(payload1);
-        await B.delay(20);
+        await sleep(20);
         sub2.unsubscribe(); // unsubscribe the receiver here but keep publishing
         await sub1.publish(payload2);
         await sub1.publish(payload3);

@@ -15,6 +15,7 @@ export default {
   logNoColors: false,
   logTimestamp: false,
   longStacktrace: false,
+  maxIpcDataSize: 1048576,
   noPermsCheck: false,
   pluginsImportChunkSize: 7,
   port: 4723,

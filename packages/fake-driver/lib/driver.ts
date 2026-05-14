@@ -2,7 +2,7 @@ import {sleep} from 'asyncbox';
 import type {Express, Request, Response} from 'express';
 import type {Server as HttpServer} from 'node:http';
 import {BaseDriver, errors} from 'appium/driver';
-import type {DriverData, InitialOpts} from '@appium/types';
+import type {DriverData, IIpcSubscription, InitialOpts, IpcData, IpcMessage} from '@appium/types';
 import {desiredCapConstraints} from './desired-caps';
 import type {FakeDriverConstraints} from './desired-caps';
 import type {FakeDriverCaps, W3CFakeDriverCaps} from './types';
@@ -19,9 +19,10 @@ import {EXECUTE_METHOD_MAP} from './command-maps/execute-method-map';
 
 export type {FakeDriverConstraints};
 export type {Orientation} from '@appium/types';
+export type ClockStatus = {running: boolean};
 
 /** Driver supporting a generic "fake thing" value (getFakeThing / setFakeThing). */
-export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraints> {
+export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDriverConstraints> {
   static newBidiCommands = NEW_BIDI_COMMANDS;
   static newMethodMap = NEW_METHOD_MAP;
   static executeMethodMap = EXECUTE_METHOD_MAP;
@@ -40,6 +41,8 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
   elMap: Record<string, FakeElement>;
   /** Current document URL; set by bidiNavigate, returned by getUrl. */
   url: string = '';
+
+  ipcClock?: IIpcSubscription<ClockStatus>;
 
   // Alert commands
   assertNoAlert = alertCommands.assertNoAlert;
@@ -105,9 +108,14 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
   fakeAddition = generalCommands.fakeAddition;
   getUrl = generalCommands.getUrl;
   bidiNavigate = generalCommands.bidiNavigate;
+  getLastPluginMath = generalCommands.getLastPluginMath;
+
+  protected lastPluginMath: {pluginName: string, result: number} | null;
+
   /** If set, Bidi connections are proxied to this URL instead of handling locally. */
   private _bidiProxyUrl: string | null;
   private _clockRunning = false;
+  private ipcFakeThing?: IIpcSubscription<Thing>;
 
   constructor(opts: InitialOpts = {} as InitialOpts, shouldValidateCaps = true) {
     super(opts, shouldValidateCaps);
@@ -120,6 +128,7 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
     this.shook = false;
     this.appModel = new FakeApp();
     this._bidiProxyUrl = null;
+    this.lastPluginMath = null;
   }
 
   get bidiProxyUrl(): string | null {
@@ -145,6 +154,17 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
     expressApp.all('/fakedriverCliArgs', (_req: Request, res: Response) => {
       res.send(JSON.stringify(cliArgs));
     });
+  }
+
+  async onIpcInit(): Promise<void> {
+    const fakeMathSub = this.ipcSubscribe('pluginMath');
+    fakeMathSub.on('message', (message: IpcMessage<number>) => {
+      this.log.info(`A connected plugin did some math with result ${message.data}`);
+      this.lastPluginMath = {pluginName: message.publisher, result: message.data};
+    });
+    this.ipcFakeThing = this.ipcSubscribe('fakeThing');
+    this.ipcClock = this.ipcSubscribe('clockLifecycle');
+    await this.publishClockStatus();
   }
 
   proxyActive(): boolean {
@@ -204,7 +224,7 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
   }
 
   override async deleteSession(sessionId?: string): Promise<void> {
-    this.stopClock();
+    await this.stopClock();
     return await super.deleteSession(sessionId);
   }
 
@@ -224,6 +244,9 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
   async setFakeThing(thing: Thing): Promise<null> {
     await sleep(1);
     this.fakeThing = thing;
+    if (this.ipcFakeThing) {
+      await this.ipcFakeThing.publish(thing);
+    };
     return null;
   }
 
@@ -252,19 +275,43 @@ export class FakeDriver<Thing = unknown> extends BaseDriver<FakeDriverConstraint
     return num1 + num2;
   }
 
+  async fakeStartClock(): Promise<void> {
+    void this.startClock();
+  }
+
+  async fakeStopClock(): Promise<void> {
+    await this.stopClock();
+  }
+
   private async startClock(): Promise<void> {
     this._clockRunning = true;
+    try {
+      await this.publishClockStatus();
+    } catch (e) {
+      this.log.error(e);
+    }
     while (this._clockRunning) {
       await sleep(500);
-      this.eventEmitter.emit('bidiEvent', {
-        method: 'appium:clock.currentTime',
-        params: {time: Date.now()},
-      });
+      try {
+        this.eventEmitter.emit('bidiEvent', {
+          method: 'appium:clock.currentTime',
+          params: {time: Date.now()},
+        });
+      } catch (e) {
+        this.log.error(e);
+      }
     }
   }
 
-  private stopClock(): void {
+  private async stopClock(): Promise<void> {
     this._clockRunning = false;
+    await this.publishClockStatus();
   }
 
+  private async publishClockStatus(): Promise<void> {
+    if (!this.ipcClock) {
+      return;
+    }
+    await this.ipcClock.publish({running: this._clockRunning});
+  }
 }

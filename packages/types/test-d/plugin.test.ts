@@ -12,6 +12,7 @@ import type {
   NextPluginCallback,
   PluginCommand,
   DriverCommand,
+  IAppiumIpc,
 } from '..';
 class TestPlugin implements Plugin {
   static executeMethodMap = {
@@ -23,6 +24,10 @@ class TestPlugin implements Plugin {
   public logger: AppiumLogger = {} as AppiumLogger;
 
   constructor(public readonly name: string, public readonly cliArgs: StringRecord<unknown> = {}) {}
+
+  async assignIpc(ipc: IAppiumIpc): Promise<void> {
+    void ipc;
+  }
 
   public getPageSource: DriverCommandToPluginCommand<
     ExternalDriver['getPageSource'],

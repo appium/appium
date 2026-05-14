@@ -26,6 +26,7 @@ import type {AppiumLogger} from './logger';
 import type {AppiumServer, UpdateServerCallback} from './server';
 import type {Class, StringRecord} from './util';
 import type internal from 'node:stream';
+import type {IAppiumIpc} from './ipc';
 
 /**
  * Interface implemented by the `DeviceSettings` class in `@appium/base-driver`
@@ -321,6 +322,13 @@ export interface ExternalDriver<
     method: HTTPMethod,
     body?: TReq,
   ): Promise<TRes>;
+
+  /**
+   * Assign an IPC channel to a driver
+   *
+   * @param ipc - the AppiumIpc object
+   */
+  assignIpc?(ipc: IAppiumIpc): Promise<void>;
 }
 
 /**

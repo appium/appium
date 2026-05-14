@@ -16,4 +16,13 @@ export const EXECUTE_METHOD_MAP = {
   'fake: getDeprecatedCommandsCalled': {
     command: 'getDeprecatedCommandsCalled',
   },
+  'fake: getLastPluginMath': {
+    command: 'getLastPluginMath',
+  },
+  'fake: startClock': {
+    command: 'fakeStartClock',
+  },
+  'fake: stopClock': {
+    command: 'fakeStopClock',
+  },
 } as const satisfies ExecuteMethodMap<FakeDriver>;

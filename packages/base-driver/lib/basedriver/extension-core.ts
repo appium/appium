@@ -4,6 +4,9 @@ import type {
   AppiumLogger,
   BidiModuleMap,
   BiDiResultData,
+  IAppiumIpc,
+  IIpcSubscription,
+  IpcData,
   StringRecord,
 } from '@appium/types';
 import {
@@ -21,6 +24,7 @@ export class ExtensionCore {
   // used to handle driver events
   readonly eventEmitter: NodeJS.EventEmitter;
   protected _log: AppiumLogger;
+  private ipc?: IAppiumIpc;
 
 
   constructor(logPrefix?: string) {
@@ -124,5 +128,25 @@ export class ExtensionCore {
       `${_.truncate(JSON.stringify(finalResponse), {length: MAX_LOG_BODY_LENGTH})}`
     );
     return finalResponse;
+  }
+
+  async assignIpc(ipc: IAppiumIpc): Promise<void> {
+    this.ipc = ipc;
+    try {
+      await this.onIpcInit();
+    } catch (e) {
+      this.log.error(`Error running onIpcInit: `, e);
+    }
+  }
+
+  async onIpcInit(): Promise<void> {}
+
+  ipcSubscribe<T extends IpcData>(topic: string): IIpcSubscription<T> {
+    if (!this.ipc) {
+      throw new Error(`Cannot subscribe to an IPC topic without an IPC object assigned. ` +
+                      `This is likely a programming error. ipcSubscribe should be called in the ` +
+                      `onIpcInit handler or after you are certain that createSession has completed successfully.`);
+    }
+    return this.ipc.subscribe<T>(topic, generateDriverLogPrefix(this));
   }
 }

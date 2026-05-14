@@ -8,6 +8,7 @@ import type {
   Constraints,
   Driver,
   ExecuteMethodMap,
+  ExternalDriver,
   MethodMap,
   NextPluginCallback,
   Plugin,
@@ -71,7 +72,7 @@ export class BasePlugin extends ExtensionCore implements Plugin {
 
     const command = this[
       commandMetadata.command as keyof this
-    ] as PluginCommand<Driver<C>>;
+    ] as PluginCommand<ExternalDriver<C>>;
     const args = validateExecuteMethodParams(
       protoArgs as unknown[],
       commandMetadata.params

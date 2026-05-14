@@ -25,7 +25,9 @@ class TestPlugin implements Plugin {
 
   constructor(public readonly name: string, public readonly cliArgs: StringRecord<unknown> = {}) {}
 
-  async assignIpc(ipc: IAppiumIpc): Promise<void> {} // eslint-disable-line @typescript-eslint/no-unused-vars
+  async assignIpc(ipc: IAppiumIpc): Promise<void> {
+    void ipc;
+  }
 
   public getPageSource: DriverCommandToPluginCommand<
     ExternalDriver['getPageSource'],

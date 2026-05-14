@@ -131,12 +131,14 @@ describe('AppiumIpc', function () {
       sub1.on(EVT_MESSAGE, () => {
         rcvdCount++;
       });
-      ipc.publish('foo', 'baz', payload); // intentionally call without awaiting
+      const promises = [];
+      promises.push(ipc.publish('foo', 'baz', payload)); // intentionally call without awaiting
       sub1.unsubscribe(); // intentionally call without awaiting
-      ipc.publish('foo', 'baz', payload); // intentionally call without awaiting
+      promises.push(ipc.publish('foo', 'baz', payload)); // intentionally call without awaiting
       // now that we've fired off a couple publishes, let's unsubscribe
       await sleep(10);
       expect(rcvdCount).to.eql(1); // not 0 or 2
+      await Promise.all(promises);
     });
 
     it('should allow running ipc commands in publish event callback', async function () {
@@ -213,11 +215,12 @@ describe('AppiumIpc', function () {
       expect(sub2.getMessage()!.data).to.eql(payload1);
     });
 
-    it('should be no race conditions with publishing', function () {
+    it('should be no race conditions with publishing', async function () {
       const ipc = new AppiumIpc();
-      ipc.publish('foo', 'bar', true); // intentionally avoid waiting
+      const p = ipc.publish('foo', 'bar', true); // intentionally avoid waiting
       const msg = ipc.getMessage('foo');
       expect(msg!.data).to.eql(true);
+      await p; // just make sure promise is done
     });
 
     it('should not allow getting message from subscription object after unsubscribing', function () {

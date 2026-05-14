@@ -45,12 +45,12 @@ export class IpcSubscription<T extends IpcData> extends EventEmitter<IpcEvent<T>
   }
 
   unsubscribe(): boolean {
+    if (!this.isActive) {
+      return false;
+    }
     const unsubscribeRes = this.ipc.unsubscribe(this.topic, this.subscriber);
     this.emit('unsubscribed');
-    // remove listeners waiting for messages when we unsubscribe
-    for (const listener of this.listeners(EVT_MESSAGE)) {
-      this.removeListener(EVT_MESSAGE, listener);
-    }
+    this.removeAllListeners(EVT_MESSAGE);
     return unsubscribeRes;
   }
 

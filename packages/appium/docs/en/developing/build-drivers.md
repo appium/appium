@@ -929,7 +929,8 @@ async onIpcInit() {
     console.log(message.data); // {myData: 'something'}
   });
 
-  // publish data to the topic; might throw if the data is larger than configured max size
+  // publish data to the topic; might throw if the data is larger than configured max size, or we
+  // are no longer subscribed
   await subscription.publish({myData: 'hi'});
 
   // get last message sent to topic
@@ -971,7 +972,7 @@ export type IpcMessage<T> = {
   publisher: string,   // the id of the publishing object (typically of the form <ClassName>@<uniqueObjectId>)
   timestampMs: number, // when the message was published, in ms since epoch
   topic: string,       // the topic the message was published on
-  data: T,             // the arbitrary message data
+  data: T,             // the arbitrary message data. Must be serializable and a valid argument to 'structuredClone()'
 };
 ```
 

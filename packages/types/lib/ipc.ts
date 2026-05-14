@@ -27,8 +27,8 @@ export type IpcData =
  * @typeparam T - the data shape for the message for a given IPC topic
  */
 export interface IpcEvent<T extends IpcData> {
-  message: [IpcMessage<T>];
-  unsubscribed: [];
+  readonly message: [IpcMessage<T>];
+  readonly unsubscribed: [];
 }
 
 /**

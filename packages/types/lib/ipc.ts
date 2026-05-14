@@ -52,10 +52,10 @@ export interface IIpcSubscription<T extends IpcData> extends EventEmitter<IpcEve
  * @typeparam T - the type of the expected message
  */
 export type IpcMessage<T extends IpcData> = {
-  publisher: string,
-  timestampMs: number,
-  topic: string,
-  data: T,
+  readonly publisher: string,
+  readonly timestampMs: number,
+  readonly topic: string,
+  readonly data: T,
 };
 
 /**

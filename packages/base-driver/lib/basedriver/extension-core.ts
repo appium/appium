@@ -130,6 +130,9 @@ export class ExtensionCore {
     return finalResponse;
   }
 
+  /**
+   * @internal Used by AppiumDriver to wire session IPC; extension authors should use {@link onIpcInit} instead.
+   */
   async assignIpc(ipc: IAppiumIpc): Promise<void> {
     this.ipc = ipc;
     try {

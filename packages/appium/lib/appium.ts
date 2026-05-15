@@ -11,6 +11,7 @@ import type {
   PluginCommand,
   Protocol,
   RouteMatcher,
+  IAppiumIpc,
   StringRecord,
   TimestampedMultiSessionData,
   W3CDriverCaps,
@@ -74,6 +75,11 @@ type SessionHandlerCreateResult = SessionHandlerResult<
 >;
 
 type SessionHandlerDeleteResult = SessionHandlerResult<void>;
+
+/** @internal Not part of {@link ExternalDriver}; used only when wiring session IPC. */
+type IpcAssignable = {
+  assignIpc?: (ipc: IAppiumIpc) => Promise<void>;
+};
 
 /**
  * Umbrella driver: owns the session table, loads platform drivers and plugins, and routes
@@ -366,7 +372,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
         this.sessions[innerSessionId] = driverInstance;
         // create an IPC channel for the driver and all plugins on this session
         this.sessionIpcs[innerSessionId] = new AppiumIpc({maxObjSize: this.args.maxIpcDataSize, log: driverInstance.log});
-        const extDriver = driverInstance as unknown as ExtensionCore;
+        const extDriver = driverInstance as unknown as IpcAssignable;
         if (_.isFunction(extDriver.assignIpc)) {
           // TODO remove this existence guard as a breaking change in Appium 3
           await extDriver.assignIpc(this.sessionIpcs[innerSessionId]);
@@ -777,9 +783,10 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
           );
         }
         // we also want to assign the IPC channel for this session to the plugins
-        if (_.isFunction(p.assignIpc)) {
+        const extPlugin = p as unknown as IpcAssignable;
+        if (_.isFunction(extPlugin.assignIpc)) {
           // TODO remove this existence guard as a breaking change in Appium 4
-          await p.assignIpc(this.sessionIpcs[newSessionId]);
+          await extPlugin.assignIpc(this.sessionIpcs[newSessionId]);
         }
       }
       this.sessionlessPlugins = [];

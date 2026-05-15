@@ -5,12 +5,14 @@ import {sleep} from 'asyncbox';
 import {node} from '@appium/support';
 
 const DEF_MAX_OBJ_SIZE_BYTES = 1024 * 1024; // 1mb seems like plenty for any plugin to pass a message
+const DEF_MAX_TOPICS = 1000;
 
 export const EVT_MESSAGE = 'message';
 export const EVT_UNSUBSCRIBED = 'unsubscribed';
 
 export type AppiumIpcOpts = {
   maxObjSize?: number;
+  maxTopics?: number;
   log?: AppiumLogger;
 };
 
@@ -99,12 +101,15 @@ export class AppiumIpc implements IAppiumIpc {
   protected readonly messageByTopic: StringRecord<IpcMessage<any>> = {};
   protected readonly subs: StringRecord<Array<IpcSubscription<any>>> = {};
   protected readonly maxObjSize: number;
+  protected readonly maxTopics: number;
   protected readonly log: AppiumLogger;
 
   constructor (opts: AppiumIpcOpts = {}) {
     this.maxObjSize = opts.maxObjSize ?? DEF_MAX_OBJ_SIZE_BYTES;
+    this.maxTopics = opts.maxTopics ?? DEF_MAX_TOPICS;
     this.log = opts.log ?? log;
-    this.log.debug(`Initialized new IPC object with max object size of ${this.maxObjSize} bytes`);
+    this.log.debug(`Initialized new IPC object with max object size of ${this.maxObjSize} bytes ` +
+      `and max topics of ${this.maxTopics}`);
   }
 
   subscribe<T extends IpcData>(topic: string, subscriber: string): IpcSubscription<T> {
@@ -113,6 +118,7 @@ export class AppiumIpc implements IAppiumIpc {
       throw new Error(`Subscription already exists for topic "${topic}" and subscriber "${subscriber}"`);
     }
 
+    this.assertCanAddTopic(topic);
     this.subs[topic] ??= [];
     const sub = new IpcSubscription<T>(subscriber, topic, this);
     this.subs[topic].push(sub);
@@ -130,6 +136,8 @@ export class AppiumIpc implements IAppiumIpc {
 
   async publish<T extends IpcData>(topic: string, publisher: string, data: T): Promise<void> {
     this.log.debug(`${publisher} is publishing a message to topic ${topic}`);
+
+    this.assertCanAddTopic(topic);
 
     const messageSize = node.getObjectSize(data);
     if (messageSize > this.maxObjSize) {
@@ -173,5 +181,21 @@ export class AppiumIpc implements IAppiumIpc {
 
   subscriptionExists(topic: string, subscriber: string): boolean {
     return !!this.subs[topic]?.some((sub) => sub.subscriber === subscriber);
+  }
+
+  protected topicExists(topic: string): boolean {
+    return !!(this.subs[topic] || this.messageByTopic[topic]);
+  }
+
+  protected topicCount(): number {
+    return new Set([...Object.keys(this.subs), ...Object.keys(this.messageByTopic)]).size;
+  }
+
+  protected assertCanAddTopic(topic: string): void {
+    if (!this.topicExists(topic) && this.topicCount() >= this.maxTopics) {
+      throw new Error(`Cannot create new IPC topic '${topic}': ` +
+        `maximum of ${this.maxTopics} topics per session reached. ` +
+        `Adjust with the --max-ipc-topics server arg.`);
+    }
   }
 }

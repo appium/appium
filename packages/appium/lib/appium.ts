@@ -365,7 +365,11 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
         )) as [string, DriverCaps<AppiumDriverConstraints> & {webSocketUrl?: string | boolean}];
         this.sessions[innerSessionId] = driverInstance;
         // create an IPC channel for the driver and all plugins on this session
-        this.sessionIpcs[innerSessionId] = new AppiumIpc({maxObjSize: this.args.maxIpcDataSize, log: driverInstance.log});
+        this.sessionIpcs[innerSessionId] = new AppiumIpc({
+          maxObjSize: this.args.maxIpcDataSize,
+          maxTopics: this.args.maxIpcTopics,
+          log: driverInstance.log,
+        });
         if (_.isFunction(driverInstance.assignIpc)) {
           // TODO remove this existence guard as a breaking change in Appium 3
           await driverInstance.assignIpc(this.sessionIpcs[innerSessionId]);

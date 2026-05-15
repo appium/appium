@@ -30,6 +30,29 @@ describe('AppiumIpc', function () {
       ipc.subscribe('foo', 'bar');
       expect(() => ipc.subscribe('foo', 'bar')).to.throw;
     });
+
+    it('should throw when subscribing to a new topic beyond the limit', function () {
+      const ipc = new AppiumIpc({maxTopics: 2});
+      ipc.subscribe('topic1', 'sub1');
+      ipc.subscribe('topic2', 'sub2');
+      expect(() => ipc.subscribe('topic3', 'sub3')).to.throw(/2/);
+    });
+
+    it('should allow multiple subscribers on the same topic without counting extra topics', function () {
+      const ipc = new AppiumIpc({maxTopics: 2});
+      ipc.subscribe('topic1', 'sub1');
+      ipc.subscribe('topic1', 'sub2');
+      ipc.subscribe('topic2', 'sub3');
+      expect(() => ipc.subscribe('topic3', 'sub4')).to.throw(/2/);
+    });
+
+    it('should mention --max-ipc-topics in the error when the topic limit is reached', function () {
+      const ipc = new AppiumIpc({maxTopics: 1});
+      ipc.subscribe('topic1', 'sub1');
+      expect(() => ipc.subscribe('topic2', 'sub2')).to.throw(
+        /Cannot create new IPC topic 'topic2': maximum of 1 topics per session reached\. Adjust with the --max-ipc-topics server arg\./
+      );
+    });
   });
 
   describe('unsubscribe', function () {
@@ -165,6 +188,13 @@ describe('AppiumIpc', function () {
       const payload2 = 'helloworld!'.repeat(100); // lotsa bytes
       await expect(ipc.publish('foo', 'bar', payload1)).to.eventually.eql(undefined);
       await expect(ipc.publish('foo', 'bar', payload2)).to.eventually.be.rejectedWith(/20/);
+    });
+
+    it('should throw an error when publishing to a new topic beyond the limit', async function () {
+      const ipc = new AppiumIpc({maxTopics: 2});
+      await ipc.publish('topic1', 'pub', true);
+      await ipc.publish('topic2', 'pub', true);
+      await expect(ipc.publish('topic3', 'pub', true)).to.eventually.be.rejectedWith(/2/);
     });
 
     it('should not allow sharing actual published object, only copies', async function () {

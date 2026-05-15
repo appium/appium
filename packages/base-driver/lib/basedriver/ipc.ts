@@ -150,8 +150,7 @@ export class AppiumIpc implements IAppiumIpc {
     try {
       clonedData = structuredClone(data);
     } catch (e) {
-      this.log.error(`Could not clone data for IPC publish from ${publisher} on topic ${topic}`);
-      throw e;
+      throw new Error(`Could not clone data for IPC publish from ${publisher} on topic ${topic}`, {cause: e});
     }
 
     const message: IpcMessage<T> = {publisher, data: clonedData, topic, timestampMs: Date.now()};

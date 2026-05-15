@@ -150,7 +150,7 @@
     "ts-node": "10.9.2",
     "tsd": "0.33.0",
     "typescript": "6.0.3",
-    "typescript-eslint": "8.59.2",
+    "typescript-eslint": "8.59.3",
     "webdriverio": "9.27.1",
     "ws": "8.20.0"
   },

@@ -197,6 +197,15 @@ describe('AppiumIpc', function () {
       await expect(ipc.publish('topic3', 'pub', true)).to.eventually.be.rejectedWith(/2/);
     });
 
+    it('should count publish-only topics toward the limit without a prior subscribe', async function () {
+      const ipc = new AppiumIpc({maxTopics: 2});
+      await ipc.publish('topic1', 'pub', true);
+      ipc.subscribe('topic2', 'sub');
+      await expect(ipc.publish('topic3', 'pub', true)).to.eventually.be.rejectedWith(
+        /--max-ipc-topics/
+      );
+    });
+
     it('should not allow sharing actual published object, only copies', async function () {
       const ipc = new AppiumIpc();
       const payload = {foo: 'bar'};

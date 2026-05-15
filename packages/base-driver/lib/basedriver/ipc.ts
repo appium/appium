@@ -100,6 +100,7 @@ export class IpcSubscription<T extends IpcData> extends EventEmitter<IpcEvent<T>
 export class AppiumIpc implements IAppiumIpc {
   protected readonly messageByTopic: StringRecord<IpcMessage<any>> = {};
   protected readonly subs: StringRecord<Array<IpcSubscription<any>>> = {};
+  protected readonly topics = new Set<string>();
   protected readonly maxObjSize: number;
   protected readonly maxTopics: number;
   protected readonly log: AppiumLogger;
@@ -118,7 +119,7 @@ export class AppiumIpc implements IAppiumIpc {
       throw new Error(`Subscription already exists for topic "${topic}" and subscriber "${subscriber}"`);
     }
 
-    this.assertCanAddTopic(topic);
+    this.ensureTopic(topic);
     this.subs[topic] ??= [];
     const sub = new IpcSubscription<T>(subscriber, topic, this);
     this.subs[topic].push(sub);
@@ -137,7 +138,7 @@ export class AppiumIpc implements IAppiumIpc {
   async publish<T extends IpcData>(topic: string, publisher: string, data: T): Promise<void> {
     this.log.debug(`${publisher} is publishing a message to topic ${topic}`);
 
-    this.assertCanAddTopic(topic);
+    this.ensureTopic(topic);
 
     const messageSize = node.getObjectSize(data);
     if (messageSize > this.maxObjSize) {
@@ -183,19 +184,15 @@ export class AppiumIpc implements IAppiumIpc {
     return !!this.subs[topic]?.some((sub) => sub.subscriber === subscriber);
   }
 
-  protected topicExists(topic: string): boolean {
-    return !!(this.subs[topic] || this.messageByTopic[topic]);
-  }
-
-  protected topicCount(): number {
-    return new Set([...Object.keys(this.subs), ...Object.keys(this.messageByTopic)]).size;
-  }
-
-  protected assertCanAddTopic(topic: string): void {
-    if (!this.topicExists(topic) && this.topicCount() >= this.maxTopics) {
+  protected ensureTopic(topic: string): void {
+    if (this.topics.has(topic)) {
+      return;
+    }
+    if (this.topics.size >= this.maxTopics) {
       throw new Error(`Cannot create new IPC topic '${topic}': ` +
         `maximum of ${this.maxTopics} topics per session reached. ` +
         `Adjust with the --max-ipc-topics server arg.`);
     }
+    this.topics.add(topic);
   }
 }

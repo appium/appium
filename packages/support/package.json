@@ -44,7 +44,7 @@
     "@appium/tsconfig": "1.1.2",
     "@appium/types": "1.4.0",
     "@colors/colors": "1.6.0",
-    "archiver": "7.0.1",
+    "archiver": "8.0.0",
     "asyncbox": "6.3.0",
     "axios": "1.16.0",
     "base64-stream": "1.0.0",

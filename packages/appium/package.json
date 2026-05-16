@@ -67,7 +67,7 @@
     "@appium/schema": "1.1.1",
     "@appium/support": "7.2.2",
     "@appium/types": "1.4.0",
-    "@sidvind/better-ajv-errors": "5.0.0",
+    "@sidvind/better-ajv-errors": "6.0.0",
     "ajv": "8.20.0",
     "ajv-formats": "3.0.1",
     "argparse": "2.0.1",

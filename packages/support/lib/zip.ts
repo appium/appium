@@ -1,6 +1,6 @@
 import {promisify} from 'node:util';
 import * as yauzl from 'yauzl';
-import archiver from 'archiver';
+import {ZipArchive} from 'archiver';
 import {createWriteStream} from 'node:fs';
 import path from 'node:path';
 import stream from 'node:stream';
@@ -407,7 +407,7 @@ export async function toInMemoryZip(
   });
 
   // Zip 'srcDir' and stream it to the above writable stream
-  const archive = archiver('zip', {
+  const archive = new ZipArchive({
     zlib: {level},
   });
   let srcSize: number | null = null;
@@ -512,7 +512,7 @@ export async function toArchive(
 ): Promise<void> {
   const {level = 9} = opts;
   const {pattern = '**/*', cwd = path.dirname(dstPath), ignore = []} = src;
-  const archive = archiver('zip', {zlib: {level}});
+  const archive = new ZipArchive({zlib: {level}});
   const outStream = fs.createWriteStream(dstPath);
   await new Promise<void>((resolve, reject) => {
     const outFinished = new Promise<void>((_resolve, _reject) => {

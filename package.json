@@ -88,7 +88,6 @@
     "@eslint/js": "10.0.1",
     "@stylistic/eslint-plugin": "5.10.0",
     "@tsconfig/node20": "20.1.9",
-    "@types/archiver": "7.0.0",
     "@types/argparse": "2.0.17",
     "@types/async-lock": "1.4.2",
     "@types/base64-stream": "1.0.5",
@@ -152,7 +151,7 @@
     "typescript": "6.0.3",
     "typescript-eslint": "8.59.3",
     "webdriverio": "9.27.1",
-    "ws": "8.20.0"
+    "ws": "8.20.1"
   },
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0",

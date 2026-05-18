@@ -5,12 +5,14 @@ import {sleep} from 'asyncbox';
 import {node} from '@appium/support';
 
 const DEF_MAX_OBJ_SIZE_BYTES = 1024 * 1024; // 1mb seems like plenty for any plugin to pass a message
+const DEF_MAX_TOPICS = 1000;
 
 export const EVT_MESSAGE = 'message';
 export const EVT_UNSUBSCRIBED = 'unsubscribed';
 
 export type AppiumIpcOpts = {
   maxObjSize?: number;
+  maxTopics?: number;
   log?: AppiumLogger;
 };
 
@@ -80,13 +82,17 @@ export class IpcSubscription<T extends IpcData> extends EventEmitter<IpcEvent<T>
 export class AppiumIpc implements IAppiumIpc {
   protected readonly messageByTopic: StringRecord<IpcMessage<any>> = {};
   protected readonly subs: StringRecord<Array<IpcSubscription<any>>> = {};
+  protected readonly topics = new Set<string>();
   protected readonly maxObjSize: number;
+  protected readonly maxTopics: number;
   protected readonly log: AppiumLogger;
 
   constructor (opts: AppiumIpcOpts = {}) {
     this.maxObjSize = opts.maxObjSize ?? DEF_MAX_OBJ_SIZE_BYTES;
+    this.maxTopics = opts.maxTopics ?? DEF_MAX_TOPICS;
     this.log = opts.log ?? log;
-    this.log.debug(`Initialized new IPC object with max object size of ${this.maxObjSize} bytes`);
+    this.log.debug(`Initialized new IPC object with max object size of ${this.maxObjSize} bytes ` +
+      `and max topics of ${this.maxTopics}`);
   }
 
   subscribe<T extends IpcData>(topic: string, subscriber: string): IpcSubscription<T> {
@@ -95,6 +101,7 @@ export class AppiumIpc implements IAppiumIpc {
       throw new Error(`Subscription already exists for topic "${topic}" and subscriber "${subscriber}"`);
     }
 
+    this.ensureTopic(topic);
     this.subs[topic] ??= [];
     const sub = new IpcSubscription<T>(subscriber, topic, this);
     this.subs[topic].push(sub);
@@ -113,6 +120,8 @@ export class AppiumIpc implements IAppiumIpc {
   async publish<T extends IpcData>(topic: string, publisher: string, data: T): Promise<void> {
     this.log.debug(`${publisher} is publishing a message to topic ${topic}`);
 
+    this.ensureTopic(topic);
+
     const messageSize = node.getObjectSize(data);
     if (messageSize > this.maxObjSize) {
       throw new Error(`Error when ${publisher} is publishing to topic '${topic}': ` +
@@ -123,8 +132,7 @@ export class AppiumIpc implements IAppiumIpc {
     try {
       clonedData = structuredClone(data);
     } catch (e) {
-      this.log.error(`Could not clone data for IPC publish from ${publisher} on topic ${topic}`);
-      throw e;
+      throw new Error(`Could not clone data for IPC publish from ${publisher} on topic ${topic}`, {cause: e});
     }
 
     const message: IpcMessage<T> = {publisher, data: clonedData, topic, timestampMs: Date.now()};
@@ -155,5 +163,17 @@ export class AppiumIpc implements IAppiumIpc {
 
   subscriptionExists(topic: string, subscriber: string): boolean {
     return !!this.subs[topic]?.some((sub) => sub.subscriber === subscriber);
+  }
+
+  protected ensureTopic(topic: string): void {
+    if (this.topics.has(topic)) {
+      return;
+    }
+    if (this.topics.size >= this.maxTopics) {
+      throw new Error(`Cannot create new IPC topic '${topic}': ` +
+        `maximum of ${this.maxTopics} topics per session reached. ` +
+        `Adjust with the --max-ipc-topics server arg.`);
+    }
+    this.topics.add(topic);
   }
 }

@@ -995,6 +995,10 @@ There are some important things to keep in mind when using Appium's IPC feature:
   using the `--max-ipc-data-size` arg (value is a number in bytes).
 - If a message exceeds the configured size, any call to `publish` methods will throw, so be
   sure to cover this case in your error handling.
+- The default max number of IPC topics per session is 1000. This can be configured by the
+  server-admin using the `--max-ipc-topics` arg.
+- If the topic limit is reached, calls to `subscribe` or `publish` on a new topic will throw, so
+  be sure to cover this case in your error handling.
 - Topic names exist within a global namespace per session. So if you don't want to clash with other
   drivers or plugins, make sure you prefix your topic names with something unique, akin to vendor
   prefixes in the WebDriver standard (for example: `fake-driver:some-topic`). We recommend the

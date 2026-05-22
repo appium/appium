@@ -17,7 +17,6 @@ import {
   type SingularSessionData,
   type SessionCapabilities,
 } from '@appium/types';
-import B from 'bluebird';
 import _ from 'lodash';
 import {fixCaps, isW3cCaps} from '../helpers/capabilities';
 import {getLevenshteinSuggestion} from '../helpers/levenshtein-match';
@@ -113,11 +112,11 @@ export class BaseDriver<
         unexpectedShutdownRejecter?.(e);
       };
       try {
-        return await B.race([
+        return await Promise.race([
           this[cmd](...args),
           // This promise is needed to monitor if the session has been
           // shut down unexpectedly while the command was running
-          new B((resolve, reject) => {
+          new Promise((resolve, reject) => {
             unexpectedShutdownResolver = resolve;
             unexpectedShutdownRejecter = reject;
             this.eventEmitter.once(ON_UNEXPECTED_SHUTDOWN_EVENT, onUnexpectedShutdown);

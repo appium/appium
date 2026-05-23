@@ -137,7 +137,7 @@
     "mjpeg-consumer": "2.0.0",
     "mjpeg-server": "0.3.1",
     "mocha": "11.7.5",
-    "npm-run-all2": "8.0.4",
+    "npm-run-all2": "9.0.0",
     "prettier": "3.8.3",
     "rewiremock": "3.14.6",
     "rimraf": "6.1.3",

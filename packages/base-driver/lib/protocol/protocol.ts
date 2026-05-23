@@ -10,7 +10,6 @@ import {
   BadParametersError,
 } from './errors';
 import {METHOD_MAP, NO_SESSION_ID_COMMANDS} from './routes';
-import B from 'bluebird';
 import {formatResponseValue, ensureW3cResponse} from './helpers';
 import {MAX_LOG_BODY_LENGTH, PROTOCOLS, DEFAULT_BASE_PATH} from '../constants';
 import {isW3cCaps} from '../helpers/capabilities';
@@ -600,7 +599,7 @@ function buildHandler(
   };
   // add the method to the app
   app[method.toLowerCase()](path, (req, res) => {
-    B.resolve(asyncHandler(req, res)).done();
+    void asyncHandler(req, res);
   });
 }
 

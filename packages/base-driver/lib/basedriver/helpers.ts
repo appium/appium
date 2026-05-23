@@ -5,7 +5,6 @@ import {tempDir, fs, util, timing, node} from '@appium/support';
 import {LRUCache} from 'lru-cache';
 import AsyncLock from 'async-lock';
 import axios from 'axios';
-import B from 'bluebird';
 import type {
   ConfigureAppOptions,
   CachedAppInfo,
@@ -466,7 +465,7 @@ async function fetchApp(srcStream: Readable, dstPath: string): Promise<string> {
     const writer = fs.createWriteStream(dstPath);
     srcStream.pipe(writer);
 
-    await new B<void>((resolve, reject) => {
+    await new Promise<void>((resolve, reject) => {
       srcStream.once('error', reject);
       writer.once('finish', () => resolve());
       writer.once('error', (e: Error) => {

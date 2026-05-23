@@ -1,14 +1,3 @@
-import B from 'bluebird';
-
-try {
-  B.config({
-    cancellation: true,
-  });
-} catch {
-  // sometimes during testing this somehow gets required twice and results in an error about
-  // cancellation not being able to be enabled after promise has been configured
-}
-
 // BaseDriver exports
 export {ExtensionCore} from './basedriver/extension-core';
 import {BaseDriver} from './basedriver/driver';

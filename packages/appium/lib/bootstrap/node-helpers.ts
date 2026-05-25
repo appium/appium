@@ -3,7 +3,6 @@ import _ from 'lodash';
 import path from 'node:path';
 import os from 'node:os';
 import * as semver from 'semver';
-import B from 'bluebird';
 import {system, fs, npm} from '@appium/support';
 import {log as logger} from '../logger';
 import {getAppiumModuleRoot, npmPackage} from '../utils';
@@ -90,7 +89,7 @@ export async function showDebugInfo({driverConfig, pluginConfig, appiumHome}: De
   const findNpmLocation = async (): Promise<string> =>
     await fs.which(system.isWindows() ? 'npm.cmd' : 'npm');
 
-  const [npmVersion, npmLocation] = await B.all([
+  const [npmVersion, npmLocation] = await Promise.all([
     ...[getNpmVersion, findNpmLocation].map((f) => getSafeResult(f, 'unknown')),
     updateBuildInfo() as Promise<unknown>,
   ]);

@@ -21,13 +21,8 @@
  * `npm install -g appium --drivers=uiautomator2,xcuitest --plugins=images`
  */
 
-const B = require('bluebird');
 const path = require('node:path');
 const {realpath} = require('node:fs/promises');
-
-B.config({
-  cancellation: true,
-});
 
 /** @type {typeof import('../lib/cli/extension').runExtensionCommand} */
 let runExtensionCommand;

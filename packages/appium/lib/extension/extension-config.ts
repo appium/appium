@@ -2,7 +2,6 @@ import type {ExtensionType} from '@appium/types';
 import type {ExtClass, ExtManifest, ExtName, ExtRecord, InstallType} from 'appium/types';
 import type {SchemaObject} from 'ajv';
 import {util, fs, system} from '@appium/support';
-import B from 'bluebird';
 import _ from 'lodash';
 import path from 'node:path';
 import {pathToFileURL} from 'node:url';
@@ -153,7 +152,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
    * @param extManifest - Manifest entry for that extension
    */
   async getWarnings(extName: string, extManifest: ExtManifest<ExtType>): Promise<string[]> {
-    const [genericConfigWarnings, configWarnings] = await B.all([
+    const [genericConfigWarnings, configWarnings] = await Promise.all([
       this.getGenericConfigWarnings(extManifest, extName),
       this.getConfigWarnings(extManifest, extName),
     ]);
@@ -359,7 +358,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     const warningMap = new Map<string, string[]>();
 
     for (const [extName, extManifest] of _.toPairs(exts)) {
-      const [errors, warnings] = await B.all([
+      const [errors, warnings] = await Promise.all([
         this.getProblems(extName, extManifest),
         this.getWarnings(extName, extManifest),
       ]);

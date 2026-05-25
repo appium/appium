@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import B from 'bluebird';
+import {promisify} from 'node:util';
 import type {ExtensionCore} from '@appium/base-driver';
 import {errors} from '@appium/base-driver';
 import {BIDI_BASE_PATH, BIDI_EVENT_NAME} from './constants';
@@ -287,7 +287,7 @@ function initBidiSocket(this: AppiumDriver, ws: WebSocket, req: IncomingMessage)
   // 1. Make it async-await friendly
   // 2. Do some logging if there's a send error
   const sendFactory = (socket: WebSocket) => {
-    const socketSend = B.promisify(socket.send, {context: socket});
+    const socketSend = promisify(socket.send.bind(socket)) as (data: string | Buffer) => Promise<void>;
     return async (data: string | Buffer) => {
       try {
         await assertIsOpen(socket);

@@ -1,4 +1,3 @@
-import B from 'bluebird';
 import {env, fs} from '@appium/support';
 import _ from 'lodash';
 import path from 'node:path';
@@ -224,7 +223,7 @@ export class Manifest {
       queue.push(onMatch(filepath));
     }
 
-    await B.all(queue);
+    await Promise.all(queue);
 
     return didChange;
   }

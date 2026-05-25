@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import B from 'bluebird';
+import {asyncmap} from 'asyncbox';
 import type {DriverClass, ExtensionType, PluginClass} from '@appium/types';
 import type {ExtClass} from 'appium/types';
 import {USE_ALL_PLUGINS} from '../constants';
@@ -32,7 +32,7 @@ export async function loadExtensions(appiumHome: string): Promise<ExtensionConfi
   const driverConfig = DriverConfig.getInstance(manifest) ?? DriverConfig.create(manifest);
   const pluginConfig = PluginConfig.getInstance(manifest) ?? PluginConfig.create(manifest);
 
-  await B.all([driverConfig.validate(), pluginConfig.validate()]);
+  await Promise.all([driverConfig.validate(), pluginConfig.validate()]);
   return {driverConfig, pluginConfig};
 }
 
@@ -110,34 +110,26 @@ async function importExtensions(
   extNames: string[],
   asyncImportChunkSize: number
 ): Promise<Array<[ExtClass<ExtensionType>, string]>> {
-  const allPromises: Array<B<ExtClass<ExtensionType> | undefined>> = [];
-  const activePromisesChunk: Array<B<ExtClass<ExtensionType> | undefined>> = [];
-  for (const extName of extNames) {
-    _.remove(activePromisesChunk, (p) => p.isFulfilled());
-    if (activePromisesChunk.length >= asyncImportChunkSize) {
-      await B.any(activePromisesChunk);
-    }
-    const promise = B.resolve(
-      (async () => {
-        log.info(`Attempting to load ${extType} ${extName}...`);
-        const timer = new timing.Timer().start();
-        try {
-          const extClass = await config.requireAsync(extName as never);
-          log.debug(`${extClass.name} has been successfully loaded in ${timer.getDuration().asSeconds.toFixed(3)}s`);
-          return extClass as ExtClass<ExtensionType>;
-        } catch (err: any) {
-          log.error(
-            `Could not load ${extType} '${extName}', so it will not be available. Error ` +
-              `in loading the ${extType} was: ${err.message}`
-          );
-          log.debug(err.stack);
-        }
-      })()
-    );
-    activePromisesChunk.push(promise);
-    allPromises.push(promise);
-  }
-  return _.zip(await B.all(allPromises), extNames).filter(([extClass]) => Boolean(extClass)) as Array<
+  const extClasses = await asyncmap(
+    extNames,
+    async (extName) => {
+      log.info(`Attempting to load ${extType} ${extName}...`);
+      const timer = new timing.Timer().start();
+      try {
+        const extClass = await config.requireAsync(extName as never);
+        log.debug(`${extClass.name} has been successfully loaded in ${timer.getDuration().asSeconds.toFixed(3)}s`);
+        return extClass as ExtClass<ExtensionType>;
+      } catch (err: any) {
+        log.error(
+          `Could not load ${extType} '${extName}', so it will not be available. Error ` +
+            `in loading the ${extType} was: ${err.message}`
+        );
+        log.debug(err.stack);
+      }
+    },
+    {concurrency: asyncImportChunkSize}
+  );
+  return _.zip(extClasses, extNames).filter(([extClass]) => Boolean(extClass)) as Array<
     [ExtClass<ExtensionType>, string]
   >;
 }

@@ -1,4 +1,4 @@
-import B from 'bluebird';
+import {asyncfilter, asyncmap} from 'asyncbox';
 import _ from 'lodash';
 import path from 'node:path';
 import type {AppiumLogger, ExtensionType, IDoctorCheck} from '@appium/types';
@@ -381,7 +381,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
     // so that's why it's being removed here.
     const extManifest = receiptToManifest(receipt);
 
-    const [errors, warnings] = await B.all([
+    const [errors, warnings] = await Promise.all([
       this.config.getProblems(extName, extManifest as any),
       this.config.getWarnings(extName, extManifest as any),
     ]);
@@ -634,7 +634,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
     }
     const isDoctorCheck = (x) =>
       ['diagnose', 'fix', 'hasAutofix', 'isOptional'].every((method) => _.isFunction(x?.[method]));
-    const checks: IDoctorCheck[] = _.flatMap((await B.all(loadChecksPromises)).filter(Boolean).map(_.toPairs))
+    const checks: IDoctorCheck[] = _.flatMap((await Promise.all(loadChecksPromises)).filter(Boolean).map(_.toPairs))
       .map(([, value]) => value)
       .filter(isDoctorCheck) as IDoctorCheck[];
     if (_.isEmpty(checks)) {
@@ -692,7 +692,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
     if (!scriptName) {
       const allScripts = _.toPairs(extScripts as Record<string, string>);
       const root = this.config.getInstallPath(installSpec);
-      const existingScripts = await B.filter(
+      const existingScripts = await asyncfilter(
         allScripts,
         async ([, p]) => await fs.exists(path.join(root, p))
       );
@@ -747,7 +747,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
     }
 
     try {
-      await new B((resolve, reject) => {
+      await new Promise<void>((resolve, reject) => {
         this._runUnbuffered(moduleRoot, scriptPath, extraArgs)
           .once('error', (err) => {
             // generally this is of the "I can't find the script" variety.
@@ -957,7 +957,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
         ([, data]) => data.installed && data.installType === INSTALL_TYPE_NPM
       );
 
-      await B.map(
+      await asyncmap(
         extensionsToCheck,
         async ([ext, data]) => {
           try {
@@ -980,7 +980,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
    */
   private async _addRepositoryUrlsToListData(listData: ExtensionList): Promise<void> {
     await spinWith(this.isJsonOutput, 'Fetching repository information', async () => {
-      await B.map(
+      await asyncmap(
         _.values(listData),
         async (data) => {
           const repoUrl = await this._getRepositoryUrl(data);

@@ -1,5 +1,5 @@
+import {util} from '@appium/support';
 import sinon from 'sinon';
-import _ from 'lodash';
 import {MockStore} from './mock-utils';
 
 /**
@@ -56,7 +56,7 @@ export class SandboxStore {
  */
 export function withSandbox(mockDefs, fn) {
   // backwards-compat
-  if (!_.isEmpty(mockDefs.mocks)) {
+  if (!util.isEmpty(mockDefs.mocks)) {
     mockDefs = mockDefs.mocks;
   }
   return () => {

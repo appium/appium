@@ -12,11 +12,12 @@ export class UniversalXMLPlugin extends BasePlugin {
     sessId?: any,
     addIndexPath: boolean = false
   ): Promise<string> {
+    void sessId;
     const source = (next ? await next() : await driver.getPageSource()) as string;
     const metadata: TransformMetadata = {};
     const platformName = getPlatformName(driver);
     if (platformName.toLowerCase() === 'android') {
-      metadata.appPackage = (driver.opts as any)?.appPackage;
+      metadata.appPackage = (driver.opts as Record<string, unknown>)?.appPackage as string;
     }
     const {xml, unknowns} = await transformSourceXml(source, platformName.toLowerCase(), {
       metadata,
@@ -115,5 +116,5 @@ export class UniversalXMLPlugin extends BasePlugin {
 }
 
 function getPlatformName(driver: ExternalDriver): string {
-  return ((driver.caps as any)?.platformName as string) || '';
+  return ((driver.caps as Record<string, unknown>)?.platformName as string) || '';
 }

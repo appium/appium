@@ -1,6 +1,5 @@
 import {select as xpathQuery} from 'xpath';
 import {DOMParser, MIME_TYPE} from '@xmldom/xmldom';
-import _ from 'lodash';
 
 /**
  * Runs an XPath query against an XML string.
@@ -25,7 +24,7 @@ export function runQuery(query: string, xmlStr: string): any[] {
  */
 export function transformQuery(query: string, xmlStr: string, multiple: boolean): string | null {
   const nodes = runQuery(query, xmlStr);
-  if (!_.isArray(nodes)) {
+  if (!Array.isArray(nodes)) {
     return null;
   }
 

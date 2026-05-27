@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {BasePlugin} from 'appium/plugin';
 import {isStandardCap} from 'appium/driver';
 import type {CapsRecord, W3CCapsLike} from './types';
@@ -16,7 +15,7 @@ export class RelaxedCapsPlugin extends BasePlugin {
     ...restArgs: unknown[]
   ): Promise<unknown> {
     const patchedCaps = [caps1, caps2, caps3]
-      .map((c) => _.isPlainObject(c) ? this.fixCapsIfW3C(c) : c);
+      .map((c) => isPlainObject(c) ? this.fixCapsIfW3C(c) : c);
     return await driver.createSession(...patchedCaps, ...restArgs);
   }
 
@@ -25,36 +24,36 @@ export class RelaxedCapsPlugin extends BasePlugin {
       return caps;
     }
 
-    const w3c = _.cloneDeep(caps) as W3CCapsLike;
-    if (_.isArray(w3c.firstMatch)) {
+    const w3c = structuredClone(caps) as W3CCapsLike;
+    if (Array.isArray(w3c.firstMatch)) {
       w3c.firstMatch = w3c.firstMatch.map((c) =>
         this.addVendorPrefix(c as CapsRecord)
       );
     }
-    if (_.isPlainObject(w3c.alwaysMatch)) {
+    if (isPlainObject(w3c.alwaysMatch)) {
       w3c.alwaysMatch = this.addVendorPrefix(w3c.alwaysMatch as CapsRecord);
     }
     return w3c as T;
   }
 
   private isW3cCaps(caps: unknown): caps is W3CCapsLike {
-    if (!_.isPlainObject(caps)) {
+    if (!isPlainObject(caps)) {
       return false;
     }
 
-    const isFirstMatchValid = () =>
-      _.isArray((caps as W3CCapsLike).firstMatch) &&
-      !_.isEmpty((caps as W3CCapsLike).firstMatch) &&
-      _.every((caps as W3CCapsLike).firstMatch, _.isPlainObject);
+    const isFirstMatchValid = () => {
+      const firstMatch = (caps as W3CCapsLike).firstMatch;
+      return Array.isArray(firstMatch) && firstMatch.length > 0 && firstMatch.every(isPlainObject);
+    };
     const isAlwaysMatchValid = () =>
-      _.isPlainObject((caps as W3CCapsLike).alwaysMatch);
-    if (_.has(caps, 'firstMatch') && _.has(caps, 'alwaysMatch')) {
+      isPlainObject((caps as W3CCapsLike).alwaysMatch);
+    if (Object.hasOwn(caps, 'firstMatch') && Object.hasOwn(caps, 'alwaysMatch')) {
       return isFirstMatchValid() && isAlwaysMatchValid();
     }
-    if (_.has(caps, 'firstMatch')) {
+    if (Object.hasOwn(caps, 'firstMatch')) {
       return isFirstMatchValid();
     }
-    if (_.has(caps, 'alwaysMatch')) {
+    if (Object.hasOwn(caps, 'alwaysMatch')) {
       return isAlwaysMatchValid();
     }
     return false;
@@ -63,7 +62,7 @@ export class RelaxedCapsPlugin extends BasePlugin {
   private addVendorPrefix(caps: CapsRecord): CapsRecord {
     const newCaps: CapsRecord = {};
 
-    if (!_.isPlainObject(caps)) {
+    if (!isPlainObject(caps)) {
       return caps;
     }
 
@@ -84,4 +83,12 @@ export class RelaxedCapsPlugin extends BasePlugin {
     }
     return newCaps;
   }
+}
+
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  if (value === null || typeof value !== 'object') {
+    return false;
+  }
+  const prototype = Object.getPrototypeOf(value);
+  return prototype === null || prototype === Object.prototype;
 }

@@ -3,7 +3,7 @@
   "compilerOptions": {
     "rootDir": ".",
     "esModuleInterop": true,
-    "strict": false,
+    "strict": true,
     "outDir": "build",
     "types": ["node", "mocha"],
     "checkJs": true

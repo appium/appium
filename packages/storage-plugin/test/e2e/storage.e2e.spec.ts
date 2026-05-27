@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import path from 'node:path';
 import {remote as wdio} from 'webdriverio';
 import {pluginE2EHarness} from '@appium/plugin-test-support';
@@ -90,7 +89,7 @@ describe('StoragePlugin', function () {
 
   it('should manage storage files', async function () {
     let items = await driver.listStorageItems();
-    expect(_.isEmpty(items)).to.be.true;
+    expect(items).to.be.empty;
     const name1 = path.basename('foo1.bar');
     const name2 = path.basename('foo2.bar');
     const pkgPath = path.join(__dirname, '..', '..', 'package.json');
@@ -100,12 +99,9 @@ describe('StoragePlugin', function () {
     ]);
     items = await driver.listStorageItems();
     expect(items.length).to.eql(2);
-    expect(
-      _.isEqual(
-        new Set(items.map(({name}: {name: string}) => name)),
-        new Set([name1, name2])
-      )
-    ).to.be.true;
+    expect(new Set(items.map(({name}: {name: string}) => name))).to.deep.equal(
+      new Set([name1, name2])
+    );
     const isDeleted = await driver.deleteStorageItem(name1);
     expect(isDeleted).to.be.true;
     items = await driver.listStorageItems();
@@ -133,9 +129,9 @@ describe('StoragePlugin', function () {
         eventsWs.once('error', reject);
         eventsWs.once('message', async (data: Buffer | string) => {
           let strData: string;
-          if (_.isBuffer(data)) {
+          if (Buffer.isBuffer(data)) {
             strData = data.toString();
-          } else if (_.isString(data)) {
+          } else if (typeof data === 'string') {
             strData = data;
           } else {
             return;

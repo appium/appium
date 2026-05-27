@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {ImageElementPlugin} from '../../lib/plugin';
 import {
   MATCH_FEATURES_MODE,
@@ -264,7 +263,7 @@ describe('ImageElementPlugin#handle', function () {
           ],
         },
       ];
-      const clone = _.cloneDeep(actionSequences);
+      const clone = structuredClone(actionSequences);
       await p.performActions(next, driver as any, actionSequences);
       expect(actionSequences).to.eql(clone);
     });

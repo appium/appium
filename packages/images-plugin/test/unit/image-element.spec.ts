@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {BaseDriver} from 'appium/driver';
 import {util} from 'appium/support';
 import {ImageElementFinder} from '../../lib/finder';
@@ -143,7 +142,7 @@ describe('ImageElement', function () {
     });
     it('should auto-update element position if requested', async function () {
       const d = new BaseDriver<Constraints>({} as any);
-      (d as any).performActions = _.noop;
+      (d as any).performActions = () => {};
       sandbox.stub(d as any, 'performActions');
       const f = new ImageElementFinder();
       const el = new ImageElement({
@@ -169,7 +168,7 @@ describe('ImageElement', function () {
     });
     it('should tap the center of an element using w3c actions by default', async function () {
       const d = new BaseDriver<Constraints>({} as any);
-      (d as any).performActions = _.noop;
+      (d as any).performActions = () => {};
       const actionStub = sandbox.stub(d as any, 'performActions');
       const el = new ImageElement({
         template: defTemplate,
@@ -187,7 +186,7 @@ describe('ImageElement', function () {
     });
     it('should fall back to touchactions if w3c actions do not exist on driver', async function () {
       const d = new BaseDriver<Constraints>({} as any);
-      (d as any).performTouch = _.noop;
+      (d as any).performTouch = () => {};
       const actionStub = sandbox.stub(d as any, 'performTouch');
       const el = new ImageElement({
         template: defTemplate,
@@ -205,9 +204,9 @@ describe('ImageElement', function () {
     });
     it('should use touchactions if requested', async function () {
       const d = new BaseDriver<Constraints>({} as any);
-      (d as any).performActions = _.noop;
+      (d as any).performActions = () => {};
       const w3cStub = sandbox.stub(d as any, 'performActions');
-      (d as any).performTouch = _.noop;
+      (d as any).performTouch = () => {};
       const touchStub = sandbox.stub(d as any, 'performTouch');
       const el = new ImageElement({
         template: defTemplate,
@@ -341,7 +340,7 @@ describe('image element LRU cache', function () {
     const finder = new ImageElementFinder();
     finder.registerImageElement(el1);
     expect(el1.equals(finder.getImageElement(el1.id)!)).to.be.true;
-    expect(_.isUndefined(finder.getImageElement(el2.id))).to.be.true;
+    expect(finder.getImageElement(el2.id)).to.be.undefined;
   });
   it('once cache reaches max size, should eject image elements', function () {
     const el1 = new ImageElement({
@@ -356,10 +355,10 @@ describe('image element LRU cache', function () {
     });
     const finder = new ImageElementFinder(1);
     finder.registerImageElement(el1);
-    expect(_.isUndefined(finder.getImageElement(el1.id))).to.be.false;
+    expect(finder.getImageElement(el1.id)).to.not.be.undefined;
     finder.registerImageElement(el2);
-    expect(_.isUndefined(finder.getImageElement(el1.id))).to.be.true;
-    expect(_.isUndefined(finder.getImageElement(el2.id))).to.be.false;
+    expect(finder.getImageElement(el1.id)).to.be.undefined;
+    expect(finder.getImageElement(el2.id)).to.not.be.undefined;
   });
 });
 
@@ -371,11 +370,11 @@ describe('getImgElFromArgs', function () {
   });
   it('should not return anything if image element id not in args', function () {
     const args = [1, 'foo'];
-    expect(_.isUndefined(getImgElFromArgs(args))).to.be.true;
+    expect(getImgElFromArgs(args)).to.be.undefined;
   });
   it('should not find image element id in anything but prefix', function () {
     const notImgEl = `foo${IMAGE_ELEMENT_PREFIX}`;
     const args = [1, 'foo', notImgEl];
-    expect(_.isUndefined(getImgElFromArgs(args))).to.be.true;
+    expect(getImgElFromArgs(args)).to.be.undefined;
   });
 });

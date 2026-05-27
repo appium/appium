@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {errors} from 'appium/driver';
 import {
   getImagesMatches,
@@ -44,7 +43,7 @@ export async function compareImages(
   const img1 = Buffer.isBuffer(firstImage) ? firstImage : Buffer.from(firstImage, 'base64');
   const img2 = Buffer.isBuffer(secondImage) ? secondImage : Buffer.from(secondImage, 'base64');
   let result: MatchingResult | SimilarityResult | OccurrenceResult;
-  switch (_.toLower(mode)) {
+  switch (mode.toLowerCase()) {
     case MATCH_FEATURES_MODE.toLowerCase():
       try {
         result = await getImagesMatches(img1, img2, options as MatchingOptions);

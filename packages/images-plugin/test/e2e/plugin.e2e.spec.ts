@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import path from 'node:path';
 import {remote as wdio} from 'webdriverio';
 import {MATCH_FEATURES_MODE, GET_SIMILARITY_MODE} from '../../lib/constants';
@@ -125,7 +124,7 @@ describe('ImageElementPlugin', function () {
       )
       .toFile(tmpImgPath);
       const subEl = await imageEl.$(tmpImgPath);
-      expect(_.isNil(subEl)).to.be.false;
+      expect(subEl).to.not.be.null;
     } finally {
       await fs.rimraf(tmpRoot);
     }

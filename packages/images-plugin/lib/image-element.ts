@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {errors} from 'appium/driver';
 import {util} from '@appium/support';
 import {log} from './logger';
@@ -203,7 +202,7 @@ export class ImageElement {
         );
         if (updatePos) {
           log.warn('Click will proceed at new coordinates');
-          this.rect = _.clone(newImgEl.rect);
+          this.rect = {...newImgEl.rect};
         } else {
           log.warn(
             'Click will take place at original coordinates. If you ' +
@@ -234,7 +233,7 @@ export class ImageElement {
       };
 
       // check if the driver has the appropriate performActions method
-      if ('performActions' in driver && _.isFunction(driver.performActions)) {
+      if ('performActions' in driver && typeof driver.performActions === 'function') {
         return await driver.performActions([action]);
       }
 
@@ -250,7 +249,7 @@ export class ImageElement {
       options: {x, y},
     };
 
-    if ('performTouch' in driver && _.isFunction(driver.performTouch)) {
+    if ('performTouch' in driver && typeof driver.performTouch === 'function') {
       return await driver.performTouch([action]);
     }
 

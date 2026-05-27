@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {errors} from 'appium/driver';
 import {util} from '@appium/support';
 import {BasePlugin} from 'appium/plugin';
@@ -83,14 +82,14 @@ export class ImageElementPlugin extends BasePlugin {
     for (const actionSequence of actionSequences) {
       for (const action of actionSequence.actions) {
         // The actions that can have an Element as the origin are "pointerMove" and "scroll".
-        if (!_.isPlainObject((action as any).origin)) {
+        if (!util.isPlainObject((action as any).origin)) {
           continue;
         }
 
         const actionWithEl = action as any;
 
         const elId = util.unwrapElement(actionWithEl.origin as Element);
-        if (!_.startsWith(elId, IMAGE_ELEMENT_PREFIX)) {
+        if (!elId?.startsWith(IMAGE_ELEMENT_PREFIX)) {
           continue;
         }
 
@@ -132,5 +131,5 @@ export class ImageElementPlugin extends BasePlugin {
  * @param args Command arguments.
  */
 export function getImgElFromArgs(args: any[]): string | undefined {
-  return args.find((arg) => _.isString(arg) && arg.startsWith(IMAGE_ELEMENT_PREFIX));
+  return args.find((arg) => typeof arg === 'string' && arg.startsWith(IMAGE_ELEMENT_PREFIX));
 }

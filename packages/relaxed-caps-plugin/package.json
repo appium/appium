@@ -38,9 +38,7 @@
     "test:smoke": "node ./build/lib/index.js --smoke-test",
     "test:unit": "mocha \"./test/unit/**/*.spec.*ts\""
   },
-  "dependencies": {
-    "lodash": "4.18.1"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@appium/types": "1.4.0"
   },

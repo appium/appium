@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {Buffer} from 'node:buffer';
 import sharp from 'sharp';
 import {OpenCvAutoreleasePool} from './autorelease-pool';
@@ -120,16 +119,16 @@ export async function getImagesMatches(
       goodMatchesFactor,
       matchFunc = 'BruteForce',
     } = options;
-    if (!_.includes(_.keys(AVAILABLE_DETECTORS), detectorName)) {
+    if (!(detectorName in AVAILABLE_DETECTORS)) {
       throw new Error(
         `'${detectorName}' detector is unknown. ` +
-          `Only ${JSON.stringify(_.keys(AVAILABLE_DETECTORS))} detectors are supported.`
+          `Only ${JSON.stringify(Object.keys(AVAILABLE_DETECTORS))} detectors are supported.`
       );
     }
-    if (!_.includes(_.keys(AVAILABLE_MATCHING_FUNCTIONS), matchFunc)) {
+    if (!(matchFunc in AVAILABLE_MATCHING_FUNCTIONS)) {
       throw new Error(
         `'${matchFunc}' matching function is unknown. ` +
-          `Only ${JSON.stringify(_.keys(AVAILABLE_MATCHING_FUNCTIONS))} matching functions are supported.`
+          `Only ${JSON.stringify(Object.keys(AVAILABLE_MATCHING_FUNCTIONS))} matching functions are supported.`
       );
     }
 
@@ -161,20 +160,20 @@ export async function getImagesMatches(
     }
 
     const hasGoodMatchesFactor =
-      _.isFunction(goodMatchesFactor) ||
-      (_.isNumber(goodMatchesFactor) && !_.isNaN(goodMatchesFactor));
+      typeof goodMatchesFactor === 'function' ||
+      (typeof goodMatchesFactor === 'number' && !Number.isNaN(goodMatchesFactor));
 
     if (hasGoodMatchesFactor) {
-      if (_.isFunction(goodMatchesFactor)) {
+      if (typeof goodMatchesFactor === 'function') {
         const distances = matches.map((match: any) => match.distance);
-        const minDistance = _.min(distances);
-        const maxDistance = _.max(distances);
+        const minDistance = distances.length ? Math.min(...distances) : undefined;
+        const maxDistance = distances.length ? Math.max(...distances) : undefined;
         if (minDistance !== undefined && maxDistance !== undefined) {
           matches = matches.filter((match: any) =>
             goodMatchesFactor(match.distance, minDistance, maxDistance)
           );
         }
-      } else if (_.isNumber(goodMatchesFactor) && matches.length > goodMatchesFactor) {
+      } else if (typeof goodMatchesFactor === 'number' && matches.length > goodMatchesFactor) {
         matches = matches
           .sort((match1: any, match2: any) => match1.distance - match2.distance)
           .slice(0, goodMatchesFactor);
@@ -419,7 +418,7 @@ export async function getImageOccurrence(
         });
       }
 
-      if (_.isEmpty(results)) {
+      if (results.length === 0) {
         // Below error message, `Cannot find any occurrences` is referenced in find by image
         throw new Error(
           `Match threshold: ${threshold}. Highest match value found was ${minMax.maxVal}`
@@ -450,9 +449,10 @@ export async function getImageOccurrence(
         cvMatToPng(fullHighlightedImage),
         ...visualizePromises,
       ]);
-      for (const [result, pngBuffer] of _.zip(results, restPngBuffers)) {
-        if (result && pngBuffer) {
-          result.visualization = pngBuffer;
+      for (let i = 0; i < results.length; i++) {
+        const pngBuffer = restPngBuffers[i];
+        if (pngBuffer) {
+          results[i].visualization = pngBuffer;
         }
       }
     }
@@ -510,8 +510,8 @@ function calculateMatchedRect(matchedPoints: Point[]): Rect {
     .map((point) => [Math.sqrt(point.x * point.x + point.y * point.y), point] as [number, Point])
     .sort((pair1, pair2) => pair1[0] - pair2[0])
     .map((pair) => pair[1]);
-  const firstPoint = _.head(pointsSortedByDistance);
-  const lastPoint = _.last(pointsSortedByDistance);
+  const firstPoint = pointsSortedByDistance[0];
+  const lastPoint = pointsSortedByDistance.at(-1);
   if (!firstPoint || !lastPoint) {
     return {
       x: 0,

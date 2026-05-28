@@ -1,7 +1,6 @@
 import {BasePlugin} from 'appium/plugin';
-import _ from 'lodash';
 import cp from 'node:child_process';
-import {timing} from 'appium/support';
+import {timing} from '@appium/support';
 import type {ExternalDriver, NextPluginCallback, MethodMap, PluginCommand} from '@appium/types';
 
 const FEAT_FLAG = 'execute_driver_script';
@@ -62,7 +61,7 @@ export class ExecuteDriverPlugin extends BasePlugin {
       );
     }
 
-    if (!_.isNumber(timeoutMs)) {
+    if (typeof timeoutMs !== 'number' || Number.isNaN(timeoutMs)) {
       throw new TypeError('Timeout parameter must be a number');
     }
 

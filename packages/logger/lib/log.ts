@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {EventEmitter} from 'node:events';
 // @ts-ignore This module does not provide type definitions
 import setBlocking from 'set-blocking';
@@ -15,7 +14,7 @@ import type {
 } from './types';
 import type {Writable} from 'node:stream';
 import {AsyncLocalStorage} from 'node:async_hooks';
-import { unleakString } from './utils';
+import {isPlainObject, unleakString} from './utils';
 import {
   DEFAULT_SECURE_REPLACER,
   SecureValuesPreprocessor
@@ -115,7 +114,7 @@ export class Log extends EventEmitter implements Logger {
   }
 
   updateAsyncStorage(contextInfo: Record<string, any>, replace: boolean): void {
-    if (!_.isPlainObject(contextInfo)) {
+    if (!isPlainObject(contextInfo)) {
       return;
     }
     if (replace) {
@@ -282,7 +281,7 @@ export class Log extends EventEmitter implements Logger {
     const issues = await this._secureValuesPreprocessor.loadRules(rulesJsonPath);
     return {
       issues,
-      rules: _.cloneDeep(this._secureValuesPreprocessor.rules),
+      rules: structuredClone(this._secureValuesPreprocessor.rules),
     };
   }
 
@@ -395,13 +394,17 @@ export class Log extends EventEmitter implements Logger {
     };
 
     // mask sensitive data
-    if (_.has(result.arg, SENSITIVE_MESSAGE_KEY)) {
+    if (
+      result.arg != null &&
+      typeof result.arg === 'object' &&
+      Object.hasOwn(result.arg, SENSITIVE_MESSAGE_KEY)
+    ) {
       const { isSensitive } = this._asyncStorage.getStore() ?? {};
       result.arg = isSensitive ? DEFAULT_SECURE_REPLACER : result.arg[SENSITIVE_MESSAGE_KEY];
     }
 
     // resolve stack traces to a plain string
-    if (_.isError(result.arg) && result.arg.stack) {
+    if (result.arg instanceof Error && result.arg.stack) {
       result.stack = result.arg.stack + '';
       Object.defineProperty(result.arg, 'stack', {
         value: result.stack,

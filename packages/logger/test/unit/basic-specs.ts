@@ -3,7 +3,6 @@ import {expect} from 'chai';
 import {Log, markSensitive} from '../../lib/log';
 import {unleakString} from '../../lib/utils';
 import {Stream} from 'node:stream';
-import _ from 'lodash';
 import type {Log as LogType} from '../../lib/log';
 
 describe('basic', function () {
@@ -207,10 +206,10 @@ describe('basic', function () {
     it('replaces sensitive messages', async function () {
       log.updateAsyncStorage({isSensitive: true}, true);
       log.log('verbose', 'test', markSensitive('log 1'));
-      expect(_.last(log.record)!.message).to.eql('**SECURE**');
+      expect(log.record.at(-1)!.message).to.eql('**SECURE**');
       log.updateAsyncStorage({isSensitive: false}, true);
       log.log('verbose', 'test', markSensitive('log 1'));
-      expect(_.last(log.record)!.message).to.eql('log 1');
+      expect(log.record.at(-1)!.message).to.eql('log 1');
     });
 
     it('max record size', function () {

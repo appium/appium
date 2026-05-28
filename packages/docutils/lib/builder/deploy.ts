@@ -4,7 +4,6 @@
  * @module
  */
 
-import _ from 'lodash';
 import path from 'node:path';
 import type {TeenProcessExecOptions} from 'teen_process';
 import {
@@ -169,7 +168,11 @@ export async function deploy({
   }
   if (serve) {
     const mikeArgs = [
-      ...argify(_.pickBy(mikeOpts, (value) => _.isNumber(value) || Boolean(value))),
+      ...argify(
+        Object.fromEntries(
+          Object.entries(mikeOpts).filter(([, value]) => typeof value === 'number' || Boolean(value))
+        )
+      ),
     ];
     stop(); // discard
     // unsure about how SIGHUP is handled here
@@ -178,9 +181,11 @@ export async function deploy({
     log.info('Deploying into branch %s', branch);
     const mikeArgs = [
       ...argify(
-        _.omitBy(
-          mikeOpts,
-          (value, key) => _.includes(['port', 'host'], key) || (!_.isNumber(value) && !value),
+        Object.fromEntries(
+          Object.entries(mikeOpts).filter(
+            ([key, value]) =>
+              !['port', 'host'].includes(key) && (typeof value === 'number' || Boolean(value))
+          )
         ),
       ),
     ];

@@ -1,21 +1,21 @@
-/**
- * Utilities
- * @module
- */
-
-import _ from 'lodash';
 import type {SpawnOptions} from 'node:child_process';
 import {spawn} from 'node:child_process';
 import path from 'node:path';
 import type {ExecError, TeenProcessExecOptions} from 'teen_process';
 import {exec} from 'teen_process';
+import {util as supportUtil} from '@appium/support';
 
 /**
  * Computes a relative path, prepending `./`
  */
-export const relative = _.curry(
-  (from: string, to: string): string => `.${path.sep}${path.relative(from, to)}`
-);
+export function relative(from: string): (to: string) => string;
+export function relative(from: string, to: string): string;
+export function relative(from: string, to?: string): string | ((to: string) => string) {
+  if (to === undefined) {
+    return (nextTo: string) => `.${path.sep}${path.relative(from, nextTo)}`;
+  }
+  return `.${path.sep}${path.relative(from, to)}`;
+}
 
 /**
  * A stopwatch-like thing
@@ -48,9 +48,8 @@ export type TupleToObject<
  * @param value any value
  * @returns `true` if the array is `string[]`
  */
-export const isStringArray = _.overEvery(_.isArray, _.partial(_.every, _, _.isString)) as (
-  value: any
-) => value is string[];
+export const isStringArray = (value: any): value is string[] =>
+  Array.isArray(value) && value.every((item) => typeof item === 'string');
 
 /**
  * Converts an object of string values to an array of arguments for CLI
@@ -58,22 +57,66 @@ export const isStringArray = _.overEvery(_.isArray, _.partial(_.every, _, _.isSt
  * Supports `boolean` and `number` values as well.  `boolean`s are assumed to be flags which default
  * to `false`, so they will only be added to the array if the value is `true`.
  */
-export const argify: (obj: Record<string, string | number | boolean | undefined>) => string[] =
-  _.flow(
-    _.entries,
-    (list) =>
-      list.map(([key, value]) => {
-        if (value === true) {
-          return [`--${key}`];
-        } else if (value === false || value === undefined) {
-          return;
-        }
-        return [`--${key}`, value];
-      }),
-    _.flatten
-  );
+export const argify = (obj: Record<string, string | number | boolean | undefined>): string[] => {
+  const args: string[] = [];
+  for (const [key, value] of Object.entries(obj)) {
+    if (value === true) {
+      args.push(`--${key}`);
+    } else if (value === false || value === undefined) {
+      continue;
+    } else {
+      args.push(`--${key}`, String(value));
+    }
+  }
+  return args;
+};
 
 export type SpawnBackgroundProcessOpts = Omit<SpawnOptions, 'stdio'>;
+
+/**
+ * Converts a string to kebab-case.
+ * @param value Input string
+ * @returns Kebab-cased string
+ */
+export function kebabCase(value: string): string {
+  return value
+    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
+    .replace(/[_\s]+/g, '-')
+    .toLowerCase();
+}
+
+/**
+ * Performs a deep "defaults" merge into a clone of `target`.
+ * Only undefined properties in `target` are filled from `defaults`.
+ * @param target Destination object
+ * @param defaults Default values object
+ * @returns Merged clone
+ */
+export function mergeDefaultsDeep<T extends Record<string, any>>(target: T, defaults: T): T {
+  const out = structuredClone(target);
+  const stack: Array<{dest: Record<string, any>; src: Record<string, any>}> = [
+    {dest: out, src: defaults},
+  ];
+
+  while (stack.length) {
+    const next = stack.pop();
+    if (!next) {
+      continue;
+    }
+    const {dest, src} = next;
+    for (const [key, srcVal] of Object.entries(src)) {
+      const destVal = dest[key];
+      if (destVal === undefined) {
+        dest[key] = structuredClone(srcVal);
+        continue;
+      }
+      if (supportUtil.isPlainObject(destVal) && supportUtil.isPlainObject(srcVal)) {
+        stack.push({dest: destVal, src: srcVal});
+      }
+    }
+  }
+  return out as T;
+}
 
 /**
  * Spawns a long-running "background" child process.  This is expected to only return control to the

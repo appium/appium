@@ -1,5 +1,4 @@
 import {argify} from '../../lib/util';
-import _ from 'lodash';
 import * as chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
@@ -22,9 +21,11 @@ describe('argify', function () {
     };
     const mikeArgs = [
       ...argify(
-        _.omitBy(
-          mikeOpts,
-          (value, key) => _.includes(['port', 'host'], key) || (!_.isNumber(value) && !value),
+        Object.fromEntries(
+          Object.entries(mikeOpts).filter(
+            ([key, value]) =>
+              !['port', 'host'].includes(key) && (typeof value === 'number' || Boolean(value))
+          )
         ),
       ),
       version,

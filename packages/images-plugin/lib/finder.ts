@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {LRUCache} from 'lru-cache';
 import {errors} from 'appium/driver';
 import {ImageElement} from './image-element';
@@ -101,7 +100,7 @@ export class ImageElementFinder {
     } = settings;
 
     log.info(`Finding image element with match threshold ${threshold}`);
-    if (!driver.getWindowRect && !_.has(driver, 'getWindowSize')) {
+    if (!driver.getWindowRect && !Object.hasOwn(driver, 'getWindowSize')) {
       throw new Error("This driver does not support the required 'getWindowRect' command");
     }
     let screenSize: Size;
@@ -173,7 +172,7 @@ export class ImageElementFinder {
         };
 
         const elOrEls = await compareImages(MATCH_TEMPLATE_MODE, screenshot, template, comparisonOpts);
-        return _.some((_.isArray(elOrEls) ? elOrEls : [elOrEls]).map(pushIfOk));
+        return (Array.isArray(elOrEls) ? elOrEls : [elOrEls]).some(pushIfOk);
       } catch (err: any) {
         // if compareImages fails, we'll get a specific error, but we should
         // retry, so trap that and just return false to trigger the next round of
@@ -200,7 +199,7 @@ export class ImageElementFinder {
       }
     }
 
-    if (_.isEmpty(results)) {
+    if (results.length === 0) {
       if (multiple) {
         return [];
       }
@@ -242,7 +241,7 @@ export class ImageElementFinder {
   async ensureTemplateSize(template: Buffer, maxSize: Size): Promise<Buffer> {
     const imgObj = sharp(template);
     const {width: tplWidth, height: tplHeight} = await imgObj.metadata();
-    if (_.isNil(tplWidth) || _.isNil(tplHeight)) {
+    if (tplWidth == null || tplHeight == null) {
       throw new Error(`Template width/height cannot be determined. Is it a valid image?`);
     }
 
@@ -470,7 +469,7 @@ export class ImageElementFinder {
 
     let imgObj = sharp(template);
     const {width: baseTempWidth, height: baseTempHeigh} = await imgObj.metadata();
-    if (_.isNil(baseTempWidth) || _.isNil(baseTempHeigh)) {
+    if (baseTempWidth == null || baseTempHeigh == null) {
       throw new Error(`Template width/height cannot be determined. Is it a valid image?`);
     }
 

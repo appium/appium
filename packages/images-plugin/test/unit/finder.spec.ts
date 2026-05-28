@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {util} from 'appium/support';
 import {BaseDriver} from 'appium/driver';
 import {ImageElementPlugin} from '../../lib/plugin';
@@ -123,7 +122,7 @@ describe('finding elements by image', function () {
       const imgElProto = await f.findByImage(template, d as any, {multiple: false});
       const imgEl = basicImgElVerify(imgElProto, f);
       expect(imgEl!.originalImage).to.eql(newTemplate);
-      expect(_.last(compareStub.args)![2]).to.eql(newTemplateBuf);
+      expect(compareStub.lastCall.args[2]).to.eql(newTemplateBuf);
     });
 
     it('should fix template size scale if requested', async function () {
@@ -134,7 +133,7 @@ describe('finding elements by image', function () {
       const imgElProto = await f.findByImage(template, d as any, {multiple: false});
       const imgEl = basicImgElVerify(imgElProto, f);
       expect(imgEl!.originalImage).to.eql(newTemplate);
-      expect(_.last(compareStub.args)![2]).to.eql(newTemplateBuf);
+      expect(compareStub.lastCall.args[2]).to.eql(newTemplateBuf);
     });
     it('should not fix template size scale if it is not requested', async function () {
       await (d as any).settings.update({});
@@ -146,7 +145,7 @@ describe('finding elements by image', function () {
       // The template passed to compareImages should be the original (or same buffer reference)
       // when fixImageTemplateScale is not requested
       expect(compareStub.called).to.be.true;
-      const lastCallArgs = _.last(compareStub.args);
+      const lastCallArgs = compareStub.lastCall?.args;
       expect(lastCallArgs![2]).to.eql(template);
     });
 
@@ -175,7 +174,7 @@ describe('finding elements by image', function () {
         shouldCheckStaleness: true,
       }) as ImageElement;
       expect(imgEl).to.be.instanceOf(ImageElement);
-      expect(_.isNil(f.getImageElement(imgEl.id))).to.be.true;
+      expect(f.getImageElement(imgEl.id)).to.be.undefined;
       expect(imgEl.rect).to.eql(rect);
     });
   });

@@ -17,7 +17,7 @@ import {DRIVER_TYPE} from '../../lib/constants';
 import {loadExtensions} from '../../lib/extension';
 import {INSTALL_TYPE_LOCAL} from '../../lib/extension/extension-config';
 import {main as appiumServer} from '../../lib/main';
-import {removeAppiumPrefixes} from '../../lib/utils';
+import {removeAppiumPrefixes} from '../../lib/helpers/capability';
 import {
   FAKE_DRIVER_DIR,
   getTestPort,

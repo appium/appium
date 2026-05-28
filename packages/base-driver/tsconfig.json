@@ -1,5 +1,11 @@
 {
   "extends": "@appium/tsconfig/tsconfig.json",
+  "ts-node": {
+    "transpileOnly": true,
+    "compilerOptions": {
+      "rootDir": "."
+    }
+  },
   "compilerOptions": {
     "outDir": "build",
     "paths": {

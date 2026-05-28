@@ -1,5 +1,4 @@
 import sinon from 'sinon';
-import _ from 'lodash';
 import {logger} from '../../../lib';
 
 let sandbox: sinon.SinonSandbox;
@@ -28,23 +27,6 @@ export function restoreWriters(writers: ReturnType<typeof setupWriters>) {
   sandbox.restore();
 }
 
-function someoneHadOutput(writers: ReturnType<typeof setupWriters>, output: string) {
-  let hadOutput = false;
-  const matchOutput = sinon.match(function (value: string) {
-    return !!(value && value.indexOf(output) >= 0);
-  }, 'matchOutput');
-
-  for (const writer of _.values(writers)) {
-    if (writer.calledWithMatch) {
-      hadOutput = writer.calledWithMatch(matchOutput);
-      if (hadOutput) {
-        break;
-      }
-    }
-  }
-  return hadOutput;
-}
-
 export function assertOutputContains(writers: ReturnType<typeof setupWriters>, output: string) {
   if (!someoneHadOutput(writers, output)) {
     throw new Error(`Expected something to have been called with: '${output}'`);
@@ -55,4 +37,21 @@ export function assertOutputDoesntContain(writers: ReturnType<typeof setupWriter
   if (someoneHadOutput(writers, output)) {
     throw new Error(`Expected nothing to have been called with: '${output}'`);
   }
+}
+
+function someoneHadOutput(writers: ReturnType<typeof setupWriters>, output: string) {
+  let hadOutput = false;
+  const matchOutput = sinon.match(function (value: string) {
+    return !!(value && value.indexOf(output) >= 0);
+  }, 'matchOutput');
+
+  for (const writer of Object.values(writers)) {
+    if (writer.calledWithMatch) {
+      hadOutput = writer.calledWithMatch(matchOutput);
+      if (hadOutput) {
+        break;
+      }
+    }
+  }
+  return hadOutput;
 }

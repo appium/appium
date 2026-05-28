@@ -135,6 +135,10 @@ export const STANDARD_CAPS = Object.freeze(
 
 const STANDARD_CAPS_LOWER = new Set([...STANDARD_CAPS].map((cap) => cap.toLowerCase()));
 
+/**
+ * @param cap - Capability name (any casing)
+ * @returns Whether the name is a W3C standard capability
+ */
 export function isStandardCap(cap: string): boolean {
   return STANDARD_CAPS_LOWER.has(cap.toLowerCase());
 }

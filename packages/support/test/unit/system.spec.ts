@@ -1,10 +1,9 @@
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {system} from '../../lib';
+import {system, util} from '../../lib';
 import os from 'node:os';
 import {createSandbox} from 'sinon';
 import * as teen_process from 'teen_process';
-import _ from 'lodash';
 
 const SANDBOX = Symbol();
 const libs = {os, system};
@@ -83,7 +82,7 @@ describe('system', function () {
           .returns({stdout: invalidOsx})
       );
       await expect(system.macOsxVersion()).to.eventually.be.rejectedWith(
-        new RegExp(_.escapeRegExp(invalidOsx))
+        new RegExp(util.escapeRegExp(invalidOsx))
       );
     });
   });
@@ -91,7 +90,7 @@ describe('system', function () {
   describe('architecture', function () {
     beforeEach(function () {
       mocks[SANDBOX] = sandbox;
-      for (const [key, value] of _.toPairs(libs)) {
+      for (const [key, value] of Object.entries(libs)) {
         mocks[key] = sandbox.mock(value);
       }
     });

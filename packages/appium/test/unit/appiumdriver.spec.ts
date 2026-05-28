@@ -16,7 +16,8 @@ import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
 import {createSandbox} from 'sinon';
 import {finalizeSchema, registerSchema, resetSchema} from '../../lib/schema/schema';
-import {insertAppiumPrefixes, removeAppiumPrefixes} from '../../lib/utils';
+import {insertAppiumPrefixes, removeAppiumPrefixes} from '../../lib/helpers/capability';
+import * as buildInfoModule from '../../lib/helpers/build';
 import {rewiremock, BASE_CAPS, W3C_CAPS, W3C_PREFIXED_CAPS} from '../helpers';
 import {BasePlugin} from '@appium/base-plugin';
 import type * as AppiumModule from '../../lib/appium';
@@ -33,15 +34,28 @@ chai.use(chaiAsPromised);
 const SESSION_ID = '1';
 const SESSION_DISCOVERY_ENABLED = {allowInsecure: [`*:${SESSION_DISCOVERY_FEATURE}`]};
 
+/**
+ * Fills the umbrella driver's plugin map without replacing the readonly `pluginClasses` reference.
+ */
+function setPluginClassesForTest(
+  appium: {pluginClasses: Map<any, string>},
+  classes: Map<any, string>
+): void {
+  appium.pluginClasses.clear();
+  for (const [cls, name] of classes) {
+    appium.pluginClasses.set(cls, name);
+  }
+}
+
 describe('AppiumDriver', function () {
   let sandbox: SinonSandbox;
   let AppiumDriver: typeof AppiumModule.AppiumDriver;
   let MockConfig: MockConfigShape;
 
-  beforeEach(function () {
+  beforeEach(async function () {
     sandbox = createSandbox();
     resetSchema();
-    finalizeSchema();
+    await finalizeSchema();
 
     MockConfig = {
       getBuildInfo: sandbox.stub().callsFake(() => ({version: MockConfig.APPIUM_VER})) as MockConfigShape['getBuildInfo'],
@@ -49,7 +63,12 @@ describe('AppiumDriver', function () {
       APPIUM_VER: '2.0',
     };
     ({AppiumDriver} = rewiremock.proxy(() => require('../../lib/appium'), {
-      '../../lib/config': MockConfig,
+      '../../lib/helpers/build': {
+        ...buildInfoModule,
+        getBuildInfo: MockConfig.getBuildInfo,
+        updateBuildInfo: MockConfig.updateBuildInfo,
+        APPIUM_VER: MockConfig.APPIUM_VER,
+      },
     }));
   });
 
@@ -95,6 +114,7 @@ describe('AppiumDriver', function () {
         return fakeDriver;
       };
 
+      // stub does not satisfy DriverConfig typing
       (appium as any).driverConfig = {
         findMatchingDriver: sandbox.stub().returns({
           driver: mockedDriverReturnerClass,
@@ -308,6 +328,7 @@ describe('AppiumDriver', function () {
           return fakeDriver;
         };
 
+        // stub does not satisfy DriverConfig typing
         (appium as any).driverConfig = {
           findMatchingDriver: sandbox.stub().returns({
             driver: mockedDriverReturnerClass,
@@ -449,12 +470,12 @@ describe('AppiumDriver', function () {
       class ArrayArgPlugin extends BasePlugin {}
       (ArrayArgPlugin as any).baseVersion = '1.0';
 
-      beforeEach(function () {
+      beforeEach(async function () {
         resetSchema();
         // to establish defaults, we need to register a schema for the plugin.
         // note that the `noargs` plugin does not need a schema, because it
         // accepts no arguments.
-        registerSchema(PLUGIN_TYPE, 'args', {
+        await registerSchema(PLUGIN_TYPE, 'args', {
           type: 'object',
           properties: {
             randomArg: {
@@ -463,7 +484,7 @@ describe('AppiumDriver', function () {
             },
           },
         });
-        registerSchema(PLUGIN_TYPE, 'arrayarg', {
+        await registerSchema(PLUGIN_TYPE, 'arrayarg', {
           type: 'object',
           properties: {
             arr: {
@@ -472,16 +493,19 @@ describe('AppiumDriver', function () {
             },
           },
         });
-        finalizeSchema();
+        await finalizeSchema();
       });
 
       describe('when args are not present', function () {
         it('the `cliArgs` prop should be an empty object', function () {
           const appium = new AppiumDriver({} as any);
-          appium.pluginClasses = new Map([
-            [NoArgsPlugin, 'noargs'],
-            [ArgsPlugin, 'args'],
-          ]);
+          setPluginClassesForTest(
+            appium,
+            new Map<any, string>([
+              [NoArgsPlugin, 'noargs'],
+              [ArgsPlugin, 'args'],
+            ])
+          );
           for (const plugin of appium.createPluginInstances()) {
             expect(plugin.cliArgs).to.eql({});
           }
@@ -491,10 +515,13 @@ describe('AppiumDriver', function () {
       describe('when args are equal to the schema defaults', function () {
         it('the `cliArgs` prop should contain the schema defaults', function () {
           const appium = new AppiumDriver({plugin: {args: {randomArg: 2000}}} as any);
-          appium.pluginClasses = new Map([
-            [NoArgsPlugin, 'noargs'],
-            [ArgsPlugin, 'args'],
-          ]);
+          setPluginClassesForTest(
+            appium,
+            new Map<any, string>([
+              [NoArgsPlugin, 'noargs'],
+              [ArgsPlugin, 'args'],
+            ])
+          );
           const [noargs, args] = appium.createPluginInstances();
           expect(noargs.cliArgs).to.eql({});
           expect(args.cliArgs).to.eql({randomArg: 2000});
@@ -503,11 +530,14 @@ describe('AppiumDriver', function () {
         describe('when the default is an "object"', function () {
           it('the `cliArgs` prop should contain the schema defaults', function () {
             const appium = new AppiumDriver({plugin: {arrayarg: {arr: []}}} as any);
-            appium.pluginClasses = new Map([
-              [NoArgsPlugin, 'noargs'],
-              [ArgsPlugin, 'args'],
-              [ArrayArgPlugin, 'arrayarg'],
-            ]);
+            setPluginClassesForTest(
+              appium,
+              new Map<any, string>([
+                [NoArgsPlugin, 'noargs'],
+                [ArgsPlugin, 'args'],
+                [ArrayArgPlugin, 'arrayarg'],
+              ])
+            );
             const [noargs, args, arrayarg] = appium.createPluginInstances();
             expect(noargs.cliArgs).to.eql({});
             expect(args.cliArgs).to.eql({});
@@ -519,10 +549,26 @@ describe('AppiumDriver', function () {
       describe('when args are not equal to the schema defaults', function () {
         it('should add cliArgs to the plugin', function () {
           const appium = new AppiumDriver({plugin: {args: {randomArg: 1234}}} as any);
-          appium.pluginClasses = new Map([[ArgsPlugin, 'args']]);
+          setPluginClassesForTest(appium, new Map<any, string>([[ArgsPlugin, 'args']]));
           const plugin = _.first(appium.createPluginInstances()) as BasePlugin;
           expect(plugin.cliArgs).to.eql({randomArg: 1234});
         });
+      });
+    });
+
+    describe('pluginsForSession', function () {
+      it('should cache plugin instances per existing session', function () {
+        const appium = new AppiumDriver({} as any);
+        const fakeDriver = new FakeDriver();
+        (appium as any).sessions[SESSION_ID] = fakeDriver;
+
+        const createPluginInstancesSpy = sandbox.spy(appium, 'createPluginInstances');
+        const firstPlugins = appium.pluginsForSession(SESSION_ID);
+        const secondPlugins = appium.pluginsForSession(SESSION_ID);
+
+        expect(firstPlugins).to.equal(secondPlugins);
+        expect(appium.sessionPlugins[SESSION_ID]).to.equal(firstPlugins);
+        expect(createPluginInstancesSpy.calledOnce).to.be.true;
       });
     });
   });

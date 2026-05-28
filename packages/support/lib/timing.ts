@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 const NS_PER_S = 1e9;
 const NS_PER_MS = 1e6;
 
@@ -65,7 +63,7 @@ export class Timer {
    * @return {Timer} The current instance, for chaining
    */
   start(): this {
-    if (!_.isNull(this._startTime)) {
+    if (this._startTime !== null) {
       throw new Error('Timer has already been started.');
     }
     this._startTime = process.hrtime.bigint();
@@ -78,12 +76,12 @@ export class Timer {
    * @return {Duration} the duration
    */
   getDuration(): Duration {
-    if (_.isNull(this._startTime)) {
+    if (this._startTime === null) {
       throw new Error('Unable to get duration. Timer was not started');
     }
 
     let nanoDuration: number;
-    if (_.isArray(this._startTime)) {
+    if (Array.isArray(this._startTime)) {
       // startTime was created using process.hrtime()
       const [seconds, nanos] = process.hrtime(this._startTime as [number, number]);
       nanoDuration = seconds * NS_PER_S + nanos;

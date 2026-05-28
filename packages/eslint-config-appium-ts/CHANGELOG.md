@@ -3,6 +3,47 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.2.1](https://github.com/appium/appium/compare/@appium/eslint-config-appium-ts@3.2.0...@appium/eslint-config-appium-ts@3.2.1) (2026-05-06)
+
+
+### Bug Fixes
+
+* **eslint-config-appium-ts:** set new ESLint 10 rules to 'warn' ([#22251](https://github.com/appium/appium/issues/22251)) ([98a1735](https://github.com/appium/appium/commit/98a1735913bcc02be7574156e0f13e1d05fcb87f))
+
+
+
+## [3.2.0](https://github.com/appium/appium/compare/@appium/eslint-config-appium-ts@3.1.0...@appium/eslint-config-appium-ts@3.2.0) (2026-05-06)
+
+
+### Features
+
+* **eslint-config-appium-ts:** Add rule to warn if a type is not imported properly ([#22226](https://github.com/appium/appium/issues/22226)) ([bde5bd5](https://github.com/appium/appium/commit/bde5bd57f4b64bacf6750338e9c9e88ae3cebea1))
+* **eslint-config-appium-ts:** support ESLint 10 ([#22236](https://github.com/appium/appium/issues/22236)) ([4849ad0](https://github.com/appium/appium/commit/4849ad015d331a91dc7c013dda151ee432870293))
+
+
+
+## [3.1.0](https://github.com/appium/appium/compare/@appium/eslint-config-appium-ts@3.0.2...@appium/eslint-config-appium-ts@3.1.0) (2026-04-23)
+
+
+### Features
+
+* **eslint-config-appium-ts:** Add new rules ([#22164](https://github.com/appium/appium/issues/22164)) ([a929cd6](https://github.com/appium/appium/commit/a929cd6024e7312877037e348d57cee054e4875e))
+
+
+### Bug Fixes
+
+* **eslint-config-appium-ts:** Suppress lint warnings ([#22190](https://github.com/appium/appium/issues/22190)) ([6476197](https://github.com/appium/appium/commit/6476197bfffcfbfb1d8819ebd13fd0a54de1bca6))
+
+
+
+## [3.0.2](https://github.com/appium/appium/compare/@appium/eslint-config-appium-ts@3.0.1...@appium/eslint-config-appium-ts@3.0.2) (2026-04-09)
+
+**Note:** Version bump only for package @appium/eslint-config-appium-ts
+
+
+
+
+
 ## [3.0.1](https://github.com/appium/appium/compare/@appium/eslint-config-appium-ts@3.0.0...@appium/eslint-config-appium-ts@3.0.1) (2026-03-08)
 
 **Note:** Version bump only for package @appium/eslint-config-appium-ts

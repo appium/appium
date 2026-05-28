@@ -2,7 +2,7 @@ import path from 'node:path';
 import {log} from './logger';
 import _ from 'lodash';
 import {fs} from '@appium/support';
-import B from 'bluebird';
+import {sleep} from 'asyncbox';
 import type {Request, Response} from 'express';
 
 export const STATIC_DIR = _.isNull(path.resolve(__dirname).match(/build[/\\]lib[/\\]express$/))
@@ -56,7 +56,7 @@ async function guineaPigTemplate(
   log.debug(`Sending guinea pig response with params: ${JSON.stringify(params)}`);
   if (delay) {
     log.debug(`Waiting ${delay}ms before responding`);
-    await B.delay(delay);
+    await sleep(delay);
   }
   res.set('content-type', 'text/html');
   res.cookie('guineacookie1', 'i am a cookie value', {path: '/'});

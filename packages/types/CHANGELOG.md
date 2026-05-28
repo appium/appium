@@ -3,6 +3,33 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.0](https://github.com/appium/appium/compare/@appium/types@1.3.1...@appium/types@1.4.0) (2026-05-06)
+
+
+### Features
+
+* add 3 WebDriver extension endpoints ([#22237](https://github.com/appium/appium/issues/22237)) ([787571d](https://github.com/appium/appium/commit/787571d33836c06bb1332d7bc6cc2f9800bbdd82))
+
+
+
+## [1.3.1](https://github.com/appium/appium/compare/@appium/types@1.3.0...@appium/types@1.3.1) (2026-04-23)
+
+
+### Bug Fixes
+
+* All the rest of linter warnings ([#22183](https://github.com/appium/appium/issues/22183)) ([efe167f](https://github.com/appium/appium/commit/efe167f59a0a19515b78a53346e5d0b3fc4c744c))
+
+
+
+## [1.3.0](https://github.com/appium/appium/compare/@appium/types@1.2.1...@appium/types@1.3.0) (2026-04-09)
+
+
+### Features
+
+* use exact version for dependencies in monorepo packages instead of ^ ([#22090](https://github.com/appium/appium/issues/22090)) ([86c8f23](https://github.com/appium/appium/commit/86c8f23a670d0bbc2d359a8235828606bd36e6aa))
+
+
+
 ## [1.2.1](https://github.com/appium/appium/compare/@appium/types@1.2.0...@appium/types@1.2.1) (2026-03-08)
 
 

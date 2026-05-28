@@ -14,30 +14,36 @@ export function getElements(this: FakeDriver, elementIds: string[]): FakeElement
   return elementIds.map((e) => this.elMap[e]);
 }
 
+/** getElement. */
 export function getElement(this: FakeDriver, elementId: string): FakeElement {
   return this.getElements([elementId])[0];
 }
 
+/** getName. */
 export async function getName(this: FakeDriver, elementId: string): Promise<string> {
   const el = this.getElement(elementId);
   return el.tagName;
 }
 
+/** elementDisplayed. */
 export async function elementDisplayed(this: FakeDriver, elementId: string): Promise<boolean> {
   const el = this.getElement(elementId);
   return el.isVisible();
 }
 
+/** elementEnabled. */
 export async function elementEnabled(this: FakeDriver, elementId: string): Promise<boolean> {
   const el = this.getElement(elementId);
   return el.isEnabled();
 }
 
+/** elementSelected. */
 export async function elementSelected(this: FakeDriver, elementId: string): Promise<boolean> {
   const el = this.getElement(elementId);
   return el.isSelected();
 }
 
+/** setValue. */
 export async function setValue(
   this: FakeDriver,
   keys: string | string[],
@@ -52,15 +58,18 @@ export async function setValue(
   el.setAttr('value', value);
 }
 
+/** getText. */
 export async function getText(this: FakeDriver, elementId: string): Promise<string> {
   const el = this.getElement(elementId);
   return el.getAttr('value');
 }
 
+/** clear. */
 export async function clear(this: FakeDriver, elementId: string): Promise<void> {
   await this.setValue('', elementId);
 }
 
+/** click. */
 export async function click(this: FakeDriver, elementId: string): Promise<void> {
   this.assertNoAlert();
   const el = this.getElement(elementId);
@@ -81,16 +90,19 @@ export async function getAttribute(
   return el.getAttr(attributeName);
 }
 
+/** getElementRect. */
 export async function getElementRect(this: FakeDriver, elementId: string): Promise<Rect> {
   const el = this.getElement(elementId);
   return el.getElementRect();
 }
 
+/** getSize. */
 export async function getSize(this: FakeDriver, elementId: string): Promise<Size> {
   const el = this.getElement(elementId);
   return el.getSize();
 }
 
+/** equalsElement. */
 export async function equalsElement(
   this: FakeDriver,
   elementIdA: string,
@@ -112,11 +124,13 @@ export async function getCssProperty(
   return el.getCss(propertyName) ?? '';
 }
 
+/** getLocation. */
 export async function getLocation(this: FakeDriver, elementId: string): Promise<Position> {
   const el = this.getElement(elementId);
   return el.getLocation();
 }
 
+/** getLocationInView. */
 export async function getLocationInView(
   this: FakeDriver,
   elementId: string

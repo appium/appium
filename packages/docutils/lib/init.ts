@@ -84,50 +84,6 @@ export const initMkDocs: ScaffoldTask<InitMkDocsOptions, MkDocsYml> = createScaf
 );
 
 /**
- * Installs Python dependencies
- * @param opts Options
- */
-export async function initPython({
-  pythonPath,
-  dryRun = false,
-  upgrade = false,
-}: InitPythonOptions = {}): Promise<void> {
-  const foundPythonPath = await requirePython(pythonPath);
-
-  const args = ['-m', 'pip', 'install', '-r', REQUIREMENTS_TXT_PATH];
-  if (upgrade) {
-    args.push('--upgrade');
-  }
-  if (dryRun) {
-    dryRunLog.info(
-      'Would execute command: %s %s (environment variables: %s)',
-      foundPythonPath,
-      args.join(' '),
-      PIP_ENV_VARS,
-    );
-  } else {
-    log.debug('Executing command: %s %s (environment variables: %s)',
-      foundPythonPath,
-      args.join(' '),
-      PIP_ENV_VARS,
-    );
-    log.info('Installing Python dependencies...');
-    try {
-      const result = await exec(foundPythonPath, args, {env: PIP_ENV_VARS, shell: true});
-      const {code, stdout} = result;
-      if (code !== 0) {
-        throw new DocutilsError(`Could not install Python dependencies. Reason: ${stdout}`);
-      }
-    } catch (err) {
-      throw new DocutilsError(
-        `Could not install Python dependencies. Reason: ${(err as Error).message}`,
-      );
-    }
-  }
-  log.success('Successfully installed Python dependencies');
-}
-
-/**
  * Options for {@linkcode initMkDocs}
  */
 export interface InitMkDocsOptions extends ScaffoldTaskOptions {
@@ -136,46 +92,6 @@ export interface InitMkDocsOptions extends ScaffoldTaskOptions {
   repoUrl?: string;
   siteDescription?: string;
   siteName?: string;
-}
-
-/**
- * Main handler for `init` command.
- *
- * This runs tasks in serial; it _could_ run in parallel, but it has deleterious effects upon
- * console output which would need mitigation.
- */
-export async function init({
-  python,
-  packageJson: packageJsonPath,
-  overwrite,
-  mkdocs,
-  mkdocsYml: mkdocsYmlPath,
-  siteName,
-  repoName,
-  repoUrl,
-  copyright,
-  dryRun,
-  cwd,
-  pythonPath,
-  upgrade,
-}: InitOptions = {}): Promise<void> {
-  if (python) {
-    await initPython({pythonPath, dryRun, upgrade});
-  }
-
-  if (mkdocs && !upgrade) {
-    await initMkDocs({
-      dest: mkdocsYmlPath,
-      cwd,
-      siteName,
-      repoUrl,
-      repoName,
-      copyright,
-      packageJson: packageJsonPath,
-      overwrite,
-      dryRun,
-    });
-  }
 }
 
 export interface InitPythonOptions extends ScaffoldTaskOptions {
@@ -220,3 +136,87 @@ export type InitOptions = Simplify<
     upgrade?: boolean;
   }
 >;
+
+/**
+ * Installs Python dependencies
+ * @param opts Options
+ */
+export async function initPython({
+  pythonPath,
+  dryRun = false,
+  upgrade = false,
+}: InitPythonOptions = {}): Promise<void> {
+  const foundPythonPath = await requirePython(pythonPath);
+
+  const args = ['-m', 'pip', 'install', '-r', REQUIREMENTS_TXT_PATH];
+  if (upgrade) {
+    args.push('--upgrade');
+  }
+  if (dryRun) {
+    dryRunLog.info(
+      'Would execute command: %s %s (environment variables: %s)',
+      foundPythonPath,
+      args.join(' '),
+      PIP_ENV_VARS,
+    );
+  } else {
+    log.debug('Executing command: %s %s (environment variables: %s)',
+      foundPythonPath,
+      args.join(' '),
+      PIP_ENV_VARS,
+    );
+    log.info('Installing Python dependencies...');
+    try {
+      const result = await exec(foundPythonPath, args, {env: PIP_ENV_VARS, shell: true});
+      const {code, stdout} = result;
+      if (code !== 0) {
+        throw new DocutilsError(`Could not install Python dependencies. Reason: ${stdout}`);
+      }
+    } catch (err) {
+      throw new DocutilsError(
+        `Could not install Python dependencies. Reason: ${(err as Error).message}`,
+      );
+    }
+  }
+  log.success('Successfully installed Python dependencies');
+}
+
+/**
+ * Main handler for `init` command.
+ *
+ * This runs tasks in serial; it _could_ run in parallel, but it has deleterious effects upon
+ * console output which would need mitigation.
+ */
+export async function init({
+  python,
+  packageJson: packageJsonPath,
+  overwrite,
+  mkdocs,
+  mkdocsYml: mkdocsYmlPath,
+  siteName,
+  repoName,
+  repoUrl,
+  copyright,
+  dryRun,
+  cwd,
+  pythonPath,
+  upgrade,
+}: InitOptions = {}): Promise<void> {
+  if (python) {
+    await initPython({pythonPath, dryRun, upgrade});
+  }
+
+  if (mkdocs && !upgrade) {
+    await initMkDocs({
+      dest: mkdocsYmlPath,
+      cwd,
+      siteName,
+      repoUrl,
+      repoName,
+      copyright,
+      packageJson: packageJsonPath,
+      overwrite,
+      dryRun,
+    });
+  }
+}

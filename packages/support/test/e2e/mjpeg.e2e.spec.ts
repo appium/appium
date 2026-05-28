@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {sleep} from 'asyncbox';
 import http from 'node:http';
 import {expect, use} from 'chai';
@@ -29,7 +28,7 @@ function initMJpegServer(port: number, intMs = 300, times = 20): http.Server {
       // Just send the same jpeg over and over.
       for (let i = 0; i < times; i++) {
         await sleep(intMs);
-        mJpegReqHandler._write(jpg, null, _.noop);
+        mJpegReqHandler._write(jpg, null, () => undefined);
       }
       mJpegReqHandler.close();
     })
@@ -62,7 +61,7 @@ describe('MJpeg Stream (e2e)', function () {
   });
 
   it('should update mjpeg stream based on new data from mjpeg server', async function () {
-    stream = new MJpegStream(serverUrl, _.noop);
+    stream = new MJpegStream(serverUrl, () => undefined);
     /* eslint-disable dot-notation -- access private lastChunk/updateCount for assertion */
     expect(stream['lastChunk']).to.not.exist;
     await stream.start();
@@ -94,7 +93,7 @@ describe('MJpeg Stream (e2e)', function () {
   });
 
   it('should error out if the server cannot be connected', async function () {
-    stream = new MJpegStream('http://localhost', _.noop);
+    stream = new MJpegStream('http://localhost', () => undefined);
     await expect(stream.start()).to.eventually.be.rejected;
   });
 });

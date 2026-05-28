@@ -3,6 +3,50 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.4.2](https://github.com/appium/appium/compare/appium@3.4.1...appium@3.4.2) (2026-05-07)
+
+**Note:** Version bump only for package appium
+
+
+
+
+
+## [3.4.1](https://github.com/appium/appium/compare/appium@3.4.0...appium@3.4.1) (2026-05-06)
+
+**Note:** Version bump only for package appium
+
+
+
+
+
+## [3.4.0](https://github.com/appium/appium/compare/appium@3.3.1...appium@3.4.0) (2026-05-06)
+
+
+### Features
+
+* add 3 WebDriver extension endpoints ([#22237](https://github.com/appium/appium/issues/22237)) ([787571d](https://github.com/appium/appium/commit/787571d33836c06bb1332d7bc6cc2f9800bbdd82))
+
+
+
+## [3.3.1](https://github.com/appium/appium/compare/appium@3.3.0...appium@3.3.1) (2026-04-23)
+
+
+### Bug Fixes
+
+* **appium:** lint warnings ([#22171](https://github.com/appium/appium/issues/22171)) ([8e68b3e](https://github.com/appium/appium/commit/8e68b3e2c9c7b6238e0ffc241adbd4d9991ead7a))
+* **appium:** plugins caching per session ([#22203](https://github.com/appium/appium/issues/22203)) ([622f199](https://github.com/appium/appium/commit/622f1999d72d2f7ebc7cc279879ea0fcefe29a54))
+
+
+
+## [3.3.0](https://github.com/appium/appium/compare/appium@3.2.2...appium@3.3.0) (2026-04-09)
+
+
+### Features
+
+* use exact version for dependencies in monorepo packages instead of ^ ([#22090](https://github.com/appium/appium/issues/22090)) ([86c8f23](https://github.com/appium/appium/commit/86c8f23a670d0bbc2d359a8235828606bd36e6aa))
+
+
+
 ## [3.2.2](https://github.com/appium/appium/compare/appium@3.2.1...appium@3.2.2) (2026-03-09)
 
 

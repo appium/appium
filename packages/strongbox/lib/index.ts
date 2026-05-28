@@ -1,5 +1,5 @@
 import envPaths from 'env-paths';
-import {rm} from 'node:fs/promises';
+import {opendir, rm} from 'node:fs/promises';
 import path from 'node:path';
 import {BaseItem} from './base-item';
 import {slugify} from './util';
@@ -102,21 +102,37 @@ export type ItemCtor<
 > = new (name: string, parent: V, encoding?: ItemEncoding) => Item<T>;
 
 /**
+ * Options for {@linkcode strongbox}
+ */
+export interface StrongboxOpts {
+  /**
+   * Override default container, which is chosen according to environment.
+   *
+   * This must be a writable path.
+   */
+  container: string;
+  /**
+   * Default {@linkcode Item} constructor.
+   *
+   * Unless a constructor is specified when calling {@linkcode Strongbox.createItem} or {@linkcode Strongbox.createItemWithValue}, this will be used.
+   * @defaultValue BaseItem
+   */
+  defaultItemCtor: ItemCtor<any>;
+  /**
+   * Extra subdir to append to the auto-generated file directory hierarchy.
+   *
+   * This is ignored if `container` is provided.
+   * @defaultValue 'strongbox'
+   */
+  suffix: string;
+}
+
+/**
  * Main entry point for use of this module
  *
  * Manages multiple {@linkcode Item}s.
  */
-export class Strongbox<Options extends StrongboxOpts = StrongboxOpts> {
-  /**
-   * Default {@linkcode ItemCtor} to use when creating new {@linkcode Item}s
-   */
-  protected defaultItemCtor: ItemCtor<any>;
-  /**
-   * Store of known {@linkcode Item}s
-   * @internal
-   */
-  protected items: Map<string, WeakRef<Item<any>>>;
-
+export class Strongbox<Options extends StrongboxOpts = StrongboxOpts> implements AsyncIterable<Item<any>> {
   /**
    * Override the directory of this container.
    *
@@ -131,6 +147,16 @@ export class Strongbox<Options extends StrongboxOpts = StrongboxOpts> {
    */
   public readonly id: string;
   public readonly suffix: string;
+
+  /**
+   * Default {@linkcode ItemCtor} to use when creating new {@linkcode Item}s
+   */
+  protected defaultItemCtor: ItemCtor<any>;
+  /**
+   * Store of known {@linkcode Item}s
+   * @internal
+   */
+  protected items: Map<string, WeakRef<Item<any>>>;
 
   /**
    * Slugifies the name & determines the directory
@@ -204,7 +230,7 @@ export class Strongbox<Options extends StrongboxOpts = StrongboxOpts> {
       this,
       encoding
     );
-    if (this.items.has(item.id)) {
+    if (this.getLiveItem(item.id)) {
       throw new ReferenceError(`Item with id "${item.id}" already exists`);
     }
     try {
@@ -254,12 +280,48 @@ export class Strongbox<Options extends StrongboxOpts = StrongboxOpts> {
 
   /**
    * Attempts to retrieve an {@linkcode Item} by its `id`.
+   * Drops stale {@linkcode WeakRef} map entries when the value was collected.
    * @param id ID of item
    * @returns An `Item`, if found
    */
   public getItem(id: string): Item<any> | undefined {
-    const ref = this.items.get(id);
-    return ref?.deref();
+    return this.getLiveItem(id);
+  }
+
+  /**
+   * Lists persisted items by scanning the container directory (one regular file per item).
+   *
+   * Filenames are matched to items by path; if an item was already registered (e.g. via
+   * {@linkcode Strongbox.createItem}), that instance is returned and keeps its original `name`.
+   * Otherwise a new item is created using the filename as `name` (see {@linkcode BaseItem}).
+   *
+   * @remarks Builds one array of every {@linkcode Item} reference. Does not read file contents;
+   * call {@linkcode Item.read} on each item as needed. Order follows directory iteration
+   * ({@linkcode opendir}), not lexicographic sort. For many items, `for await (const item of box)`
+   * ({@linkcode Symbol.asyncIterator}) streams entries without allocating a full {@linkcode Item}[]
+   * first.
+   *
+   * @returns Items in directory iteration order; empty if the container directory does not exist yet
+   */
+  public async listItems(): Promise<Item<any>[]> {
+    const items: Item<any>[] = [];
+    for await (const basename of this.iterateFileBasenames()) {
+      items.push(this.resolveItemForBasename(basename));
+    }
+    return items;
+  }
+
+  /**
+   * Yields each persisted item in the same order as {@linkcode Strongbox.listItems}. Use
+   * `for await (const item of box)`.
+   *
+   * @remarks Walks the container with {@linkcode opendir} and yields one {@linkcode Item} per file
+   * as basenames are seen (no full-name buffer and no sort).
+   */
+  public async *[Symbol.asyncIterator](): AsyncIterableIterator<Item<any>> {
+    for await (const basename of this.iterateFileBasenames()) {
+      yield this.resolveItemForBasename(basename);
+    }
   }
 
   /**
@@ -298,32 +360,62 @@ export class Strongbox<Options extends StrongboxOpts = StrongboxOpts> {
     newOpts.defaultItemCtor = opts.defaultItemCtor ?? BaseItem;
     return newOpts;
   }
-}
 
-/**
- * Options for {@linkcode strongbox}
- */
-export interface StrongboxOpts {
   /**
-   * Override default container, which is chosen according to environment.
-   *
-   * This must be a writable path.
+   * Returns a live {@linkcode Item} or removes a stale {@linkcode WeakRef} from {@linkcode Strongbox.items}.
    */
-  container: string;
+  private getLiveItem(id: string): Item<any> | undefined {
+    const ref = this.items.get(id);
+    if (!ref) {
+      return undefined;
+    }
+    const item = ref.deref();
+    if (!item) {
+      this.items.delete(id);
+      return undefined;
+    }
+    return item;
+  }
+
   /**
-   * Default {@linkcode Item} constructor.
-   *
-   * Unless a constructor is specified when calling {@linkcode Strongbox.createItem} or {@linkcode Strongbox.createItemWithValue}, this will be used.
-   * @defaultValue BaseItem
+   * Streams regular-file basenames from the container using {@linkcode opendir} (order is
+   * filesystem-defined, not sorted).
    */
-  defaultItemCtor: ItemCtor<any>;
+  private async *iterateFileBasenames(): AsyncIterableIterator<string> {
+    let dir: Awaited<ReturnType<typeof opendir>>;
+    try {
+      dir = await opendir(this.container);
+    } catch (e) {
+      if ((e as NodeJS.ErrnoException).code === 'ENOENT') {
+        return;
+      }
+      throw e;
+    }
+    for await (const ent of dir) {
+      if (ent.isFile()) {
+        yield ent.name;
+      }
+    }
+  }
+
   /**
-   * Extra subdir to append to the auto-generated file directory hierarchy.
-   *
-   * This is ignored if `container` is provided.
-   * @defaultValue 'strongbox'
+   * Registers an {@linkcode Item} for a filename on disk without reading the file (see
+   * {@linkcode Strongbox.createItem}, which loads persisted contents eagerly). Uses the same
+   * constructor arity as {@linkcode Strongbox.createItem} when no encoding is given.
    */
-  suffix: string;
+  private registerItemWithoutRead(name: string): Item<any> {
+    const item = new (this.defaultItemCtor as ItemCtor<any>)(name, this, undefined);
+    if (this.getLiveItem(item.id)) {
+      throw new ReferenceError(`Item with id "${item.id}" already exists`);
+    }
+    this.items.set(item.id, new WeakRef(item));
+    return item;
+  }
+
+  private resolveItemForBasename(basename: string): Item<any> {
+    const id = BaseItem.toFilePath(this.container, basename);
+    return this.getItem(id) ?? this.registerItemWithoutRead(basename);
+  }
 }
 
 /**

@@ -1,3 +1,4 @@
+import type {ExtManifest} from 'appium/types';
 import {Manifest} from '../../../lib/extension/manifest';
 import {migrate} from '../../../lib/extension/manifest-migrations';
 import {DRIVER_TYPE} from '../../../lib/constants';
@@ -12,21 +13,16 @@ describe('manifest-migrations', function () {
     it('should trigger refresh', async function () {
       const manifest = Manifest.getInstance(process.cwd());
       // do not explicitly set the schema rev lower here, since that will trigger
-      manifest.setExtension(
-        DRIVER_TYPE,
-        'derp',
-        // @ts-expect-error - old manifest version
-        {
-          version: '1.0.0',
-          automationName: 'Derp',
-          mainClass: 'SomeClass',
-          pkgName: 'derp',
-          platformNames: ['dogs', 'cats'],
-          installSpec: 'derp',
-          installType: 'local',
-          appiumVersion: '2.0.0',
-        }
-      );
+      manifest.setExtension(DRIVER_TYPE, 'derp', {
+        version: '1.0.0',
+        automationName: 'Derp',
+        mainClass: 'SomeClass',
+        pkgName: 'derp',
+        platformNames: ['dogs', 'cats'],
+        installSpec: 'derp',
+        installType: 'local',
+        appiumVersion: '2.0.0',
+      } as ExtManifest<'driver'>);
 
       await expect(migrate(manifest)).to.eventually.be.true;
     });
@@ -46,7 +42,7 @@ describe('manifest-migrations', function () {
         installType: 'local',
         installSpec: 'derp',
         appiumVersion: '2.0.0',
-      });
+      } as ExtManifest<'driver'>);
 
       await expect(migrate(manifest)).to.eventually.be.false;
     });
@@ -66,7 +62,7 @@ describe('manifest-migrations', function () {
         installPath: '/path/to/thing',
         installSpec: 'derp',
         appiumVersion: '2.0.0',
-      });
+      } as ExtManifest<'driver'>);
 
       await expect(migrate(manifest)).to.eventually.be.true;
     });
@@ -86,7 +82,7 @@ describe('manifest-migrations', function () {
         installPath: '/path/to/thing',
         installSpec: 'derp',
         appiumVersion: '2.0.0',
-      });
+      } as ExtManifest<'driver'>);
 
       await expect(migrate(manifest)).to.eventually.be.false;
     });

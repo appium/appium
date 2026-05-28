@@ -356,7 +356,7 @@ export function driverE2ETestSuite(
           );
           d.onUnexpectedShutdown(resolve);
         });
-        d.startUnexpectedShutdown(new Error('Crashytimes'));
+        void d.startUnexpectedShutdown(new Error('Crashytimes'));
         const value = await reqPromise;
         expect((value as any).message).to.contain('Crashytimes');
         await shutdownEventPromise;

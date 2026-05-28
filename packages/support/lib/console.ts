@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {createSupportsColor} from 'supports-color';
 import {Console as NodeConsole} from 'node:console';
 import type {Color} from '@colors/colors';
@@ -7,9 +6,6 @@ import symbols from 'log-symbols';
 import {Writable} from 'node:stream';
 import type {InspectOptions} from 'node:util';
 import type {JsonValue} from 'type-fest';
-
-/** Symbol keys from log-symbols used for decoration */
-type SymbolKey = keyof typeof symbols;
 
 /**
  * Options for {@linkcode CliConsole}.
@@ -24,6 +20,9 @@ export interface ConsoleOpts {
   /** If _falsy_, do not use color output. If _truthy_, forces color output. By default, checks terminal/TTY for support via pkg `supports-color`. Ignored if `useSymbols` is `false`. */
   useColor?: boolean;
 }
+
+/** Symbol keys from log-symbols used for decoration */
+type SymbolKey = keyof typeof symbols;
 
 /**
  * Stream to nowhere. Used when we want to disable any output other than JSON output.
@@ -50,16 +49,16 @@ class NullWritable extends Writable {
  * DO NOT extend this to do anything other than what it already does. Download a library or something.
  */
 export class CliConsole {
-  readonly #console: InstanceType<typeof NodeConsole>;
-  readonly #useSymbols: boolean;
-  readonly #useColor: boolean;
-
   static readonly symbolToColor: Record<SymbolKey, keyof Color> = {
     success: 'green',
     info: 'cyan',
     warning: 'yellow',
     error: 'red',
   };
+
+  readonly #console: InstanceType<typeof NodeConsole>;
+  readonly #useSymbols: boolean;
+  readonly #useColor: boolean;
 
   constructor(opts: ConsoleOpts = {}) {
     const {jsonMode = false, useSymbols = true, useColor} = opts;
@@ -77,7 +76,7 @@ export class CliConsole {
    * Returns `undefined` if `msg` is `undefined`.
    */
   decorate(msg: string | undefined, symbol?: SymbolKey): string | undefined {
-    if (!_.isString(msg) || !_.isString(symbol) || !this.#useSymbols) {
+    if (typeof msg !== 'string' || typeof symbol !== 'string' || !this.#useSymbols) {
       return msg;
     }
 

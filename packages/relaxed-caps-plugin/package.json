@@ -1,6 +1,6 @@
 {
   "name": "@appium/relaxed-caps-plugin",
-  "version": "2.1.0",
+  "version": "2.2.2",
   "description": "An Appium plugin that loosens requirements for vendor prefixes on caps",
   "keywords": [
     "automation",
@@ -38,11 +38,9 @@
     "test:smoke": "node ./build/lib/index.js --smoke-test",
     "test:unit": "mocha \"./test/unit/**/*.spec.*ts\""
   },
-  "dependencies": {
-    "lodash": "4.17.23"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "@appium/types": "^1.2.1"
+    "@appium/types": "1.4.0"
   },
   "peerDependencies": {
     "appium": "^3.0.0-beta.0"

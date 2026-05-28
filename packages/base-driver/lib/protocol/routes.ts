@@ -564,6 +564,17 @@ export const METHOD_MAP = {
     POST: {command: 'updateVirtualPressureSource', payloadParams: {required: ['sample']}},
     DELETE: {command: 'deleteVirtualPressureSource'},
   },
+  // Global Privacy Control (GPC)
+  // https://www.w3.org/TR/gpc/
+  '/session/:sessionId/privacy': {
+    GET: {command: 'getGlobalPrivacyControl'},
+    POST: {command: 'setGlobalPrivacyControl', payloadParams: {required: ['gpc']}},
+  },
+  // Storage Access
+  // https://privacycg.github.io/storage-access/
+  '/session/:sessionId/storageaccess': {
+    POST: {command: 'setStorageAccess', payloadParams: {required: ['blocked', 'origin']}},
+  },
   // #endregion
 } as const satisfies MethodMap<Driver>;
 
@@ -572,6 +583,12 @@ export const ALL_COMMANDS = _.flatMap(_.values(METHOD_MAP).map(_.values))
   .filter((m) => Boolean(m.command))
   .map((m) => m.command);
 
+/**
+ * Resolve a WebDriver URL path and HTTP method to a driver command name from {@link METHOD_MAP}.
+ * @param endpoint - Request URL or path (may include base path)
+ * @param method - HTTP method (used when one path maps to multiple commands)
+ * @param basePath - Optional base path prefix to strip before matching
+ */
 export function routeToCommandName(
   endpoint: string,
   method?: HTTPMethod,
@@ -588,7 +605,7 @@ export function routeToCommandName(
     normalizedPathname = new URL(`https://appium.io${normalizedEndpoint}`).pathname;
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
-    throw new Error(`'${endpoint}' cannot be translated to a command name: ${msg}`);
+    throw new Error(`'${endpoint}' cannot be translated to a command name: ${msg}`, {cause: err});
   }
 
   const normalizedMethod = _.toUpper(method ?? '');

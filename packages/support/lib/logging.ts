@@ -8,7 +8,6 @@ import type {
   AppiumLoggerLevel,
   AppiumLoggerPrefix,
 } from '@appium/types';
-import _ from 'lodash';
 
 export const LEVELS: readonly AppiumLoggerLevel[] = [
   'silly',
@@ -27,6 +26,7 @@ interface GlobalWithNpmlog {
 }
 
 const globalWithNpmlog = globalThis as typeof globalThis & GlobalWithNpmlog;
+const noop = () => {};
 
 // mock log object is used in testing mode to silence the output
 const MOCK_LOG = {
@@ -35,9 +35,9 @@ const MOCK_LOG = {
       Promise.resolve({issues: [], rules: []}),
     level: 'verbose',
     prefix: '',
-    log: _.noop,
+    log: noop,
   }),
-  ...(_.fromPairs(LEVELS.map((l) => [l, _.noop])) as Record<
+  ...(Object.fromEntries(LEVELS.map((l) => [l, noop])) as Record<
     AppiumLoggerLevel,
     (...args: any[]) => void
   >),
@@ -58,7 +58,7 @@ export function getLogger(prefix: AppiumLoggerPrefix | null = null): AppiumLogge
     prefix: prefix ?? undefined,
     errorWithException(...args: any[]) {
       this.error(...args);
-      return _.isError(args[0]) ? args[0] : new Error(args.join('\n'));
+      return args[0] instanceof Error ? args[0] : new Error(args.join('\n'));
     },
     errorAndThrow(...args: any[]) {
       throw this.errorWithException(...args);
@@ -144,7 +144,7 @@ function getFinalPrefix(
   prefix: AppiumLoggerPrefix | null | undefined,
   shouldLogTimestamp = false
 ): string {
-  const result = (_.isFunction(prefix) ? prefix() : prefix) ?? '';
+  const result = (typeof prefix === 'function' ? prefix() : prefix) ?? '';
   if (!shouldLogTimestamp) {
     return result;
   }

@@ -4,6 +4,7 @@ import {startServer} from './server';
 const DEFAULT_HOST = 'localhost';
 const DEFAULT_PORT = 4774;
 
+/** main. */
 export async function main() {
   const getArgValue = (argName: string): string | null => {
     const argIndex = process.argv.indexOf(argName);

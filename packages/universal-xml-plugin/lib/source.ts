@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import {util} from '@appium/support';
 import {XMLBuilder, XMLParser} from 'fast-xml-parser';
 import NODE_MAP from './node-map';
 import {ATTR_MAP, REMOVE_ATTRS} from './attr-map';
@@ -48,31 +48,6 @@ export async function transformSourceXml(
 }
 
 /**
- * Gets the universal name for a platform-specific name from a name map
- *
- * @param nameMap - The name mapping object
- * @param name - The platform-specific name
- * @param platform - The platform name
- * @returns The universal name or null if not found
- */
-function getUniversalName(
-  nameMap: UniversalNameMap | Readonly<UniversalNameMap>,
-  name: string,
-  platform: string
-): string | null {
-  for (const translatedName of Object.keys(nameMap)) {
-    const sourceNodes = nameMap[translatedName]?.[platform];
-    if (_.isArray(sourceNodes) && sourceNodes.includes(name)) {
-      return translatedName;
-    }
-    if (sourceNodes === name) {
-      return translatedName;
-    }
-  }
-  return null;
-}
-
-/**
  * Gets the universal node name for a platform-specific node name
  *
  * @param nodeName - The platform-specific node name
@@ -109,7 +84,7 @@ export function transformNode(
 ): NodesAndAttributes {
   const unknownNodes: string[] = [];
   const unknownAttrs: string[] = [];
-  if (_.isPlainObject(nodeObj)) {
+  if (util.isPlainObject(nodeObj)) {
     const keys = Object.keys(nodeObj);
     const childNodeNames = keys.filter(isNode);
     const attrs = keys.filter(isAttr);
@@ -136,7 +111,7 @@ export function transformNode(
     });
     unknownAttrs.push(...unknowns.attrs);
     unknownNodes.push(...unknowns.nodes);
-  } else if (_.isArray(nodeObj)) {
+  } else if (Array.isArray(nodeObj)) {
     for (const childObj of nodeObj) {
       const {nodes, attrs} = transformNode(childObj, platform, {
         metadata,
@@ -148,8 +123,8 @@ export function transformNode(
     }
   }
   return {
-    nodes: _.uniq(unknownNodes),
-    attrs: _.uniq(unknownAttrs),
+    nodes: util.uniq(unknownNodes),
+    attrs: util.uniq(unknownAttrs),
   };
 }
 
@@ -194,15 +169,15 @@ export function transformChildNodes(
       // if we already have a node with the universal name, that means we are mapping a second
       // original node name to the same universal node name, so we just push all its children into
       // the list
-      if (_.isArray(nodeObj[universalName])) {
-        if (_.isArray(nodeObj[nodeName])) {
+      if (Array.isArray(nodeObj[universalName])) {
+        if (Array.isArray(nodeObj[nodeName])) {
           nodeObj[universalName].push(...nodeObj[nodeName]);
         } else {
           nodeObj[universalName].push(nodeObj[nodeName]);
         }
       } else {
         nodeObj[universalName] = [nodeObj[universalName]];
-        if (_.isArray(nodeObj[nodeName])) {
+        if (Array.isArray(nodeObj[nodeName])) {
           nodeObj[universalName].push(...nodeObj[nodeName]);
         } else {
           nodeObj[universalName].push(nodeObj[nodeName]);
@@ -246,7 +221,32 @@ export function transformAttrs(nodeObj: any, attrs: string[], platform: string):
   return unknownAttrs;
 }
 
-const singletonXmlBuilder = _.memoize(function makeXmlBuilder() {
+/**
+ * Gets the universal name for a platform-specific name from a name map
+ *
+ * @param nameMap - The name mapping object
+ * @param name - The platform-specific name
+ * @param platform - The platform name
+ * @returns The universal name or null if not found
+ */
+function getUniversalName(
+  nameMap: UniversalNameMap | Readonly<UniversalNameMap>,
+  name: string,
+  platform: string
+): string | null {
+  for (const translatedName of Object.keys(nameMap)) {
+    const sourceNodes = nameMap[translatedName]?.[platform];
+    if (Array.isArray(sourceNodes) && sourceNodes.includes(name)) {
+      return translatedName;
+    }
+    if (sourceNodes === name) {
+      return translatedName;
+    }
+  }
+  return null;
+}
+
+const singletonXmlBuilder = util.memoize(function makeXmlBuilder() {
   return new XMLBuilder({
     ignoreAttributes: false,
     attributeNamePrefix: ATTR_PREFIX,
@@ -255,7 +255,7 @@ const singletonXmlBuilder = _.memoize(function makeXmlBuilder() {
   });
 });
 
-const singletonXmlParser = _.memoize(function makeXmlParser() {
+const singletonXmlParser = util.memoize(function makeXmlParser() {
   return new XMLParser({
     ignoreAttributes: false,
     ignoreDeclaration: true,

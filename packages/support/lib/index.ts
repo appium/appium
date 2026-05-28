@@ -73,7 +73,13 @@ export type {
 } from './net';
 export type {InstallPackageOpts, ExecOpts, NpmInstallReceipt} from './npm';
 export type {Affixes, OpenedAffixes} from './tempdir';
-export type {PluralizeOptions, EncodingOptions, LockFileOptions, NonEmptyString} from './util';
+export type {
+  PluralizeOptions,
+  EncodingOptions,
+  LockFileOptions,
+  TruncateStringOptions,
+  NonEmptyString,
+} from './util';
 export type {
   ExtractAllOptions,
   ZipEntry,

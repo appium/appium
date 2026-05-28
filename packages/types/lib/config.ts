@@ -8,17 +8,6 @@ import type {Associated, KebabToCamel} from './util';
 export type AppiumConfig = Partial<AppiumConfiguration>;
 
 /**
- * Derive the "constant" type of the server properties from the schema.
- */
-type AppiumServerJsonSchema = (typeof AppiumConfigJsonSchema)['properties']['server']['properties'];
-
-/**
- * This type associates the types generated from the schema ({@linkcode AppiumConfiguration})
- * with the schema itself (beginning with the `server` prop).
- */
-type ServerConfigMapping = Associated<ServerConfig, AppiumServerJsonSchema>;
-
-/**
  * Camel-cased server config. _Not_ flattened.
  */
 export type NormalizedServerConfig = {
@@ -33,6 +22,26 @@ export type NormalizedServerConfig = {
 export type NormalizedAppiumConfig = {
   server: NormalizedServerConfig;
 };
+
+/**
+ * The final shape of the parsed CLI arguments.
+ *
+ * These will be camel-cased unless overridden by `appiumCliDest` field in schema(s).
+ */
+export type ServerArgs = {
+  [Prop in keyof ServerConfigMapping as SetKeyForProp<Prop>]: KeyOrDefaultForProp<Prop>;
+};
+
+/**
+ * Derive the "constant" type of the server properties from the schema.
+ */
+type AppiumServerJsonSchema = (typeof AppiumConfigJsonSchema)['properties']['server']['properties'];
+
+/**
+ * This type associates the types generated from the schema ({@linkcode AppiumConfiguration})
+ * with the schema itself (beginning with the `server` prop).
+ */
+type ServerConfigMapping = Associated<ServerConfig, AppiumServerJsonSchema>;
 
 /**
  * This type checks if `appiumCliDest` is present in the object via
@@ -53,15 +62,6 @@ type KeyOrDefaultForProp<Prop extends keyof ServerConfigMapping> =
   AppiumServerJsonSchema[Prop] extends WithDefault
     ? NonNullable<ServerConfig[Prop]>
     : ServerConfig[Prop];
-
-/**
- * The final shape of the parsed CLI arguments.
- *
- * These will be camel-cased unless overridden by `appiumCliDest` field in schema(s).
- */
-export type ServerArgs = {
-  [Prop in keyof ServerConfigMapping as SetKeyForProp<Prop>]: KeyOrDefaultForProp<Prop>;
-};
 
 // begin conditionals
 

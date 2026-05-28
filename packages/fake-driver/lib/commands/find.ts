@@ -49,6 +49,7 @@ export function wrapNewEl(
   return {ELEMENT: maxElId, [W3C_WEB_ELEMENT_IDENTIFIER]: maxElId};
 }
 
+/** findElOrElsImpl. */
 async function findElOrElsImpl<Ctx = unknown>(
   this: FakeDriver,
   strategy: string,
@@ -56,6 +57,7 @@ async function findElOrElsImpl<Ctx = unknown>(
   mult: true,
   context?: Ctx
 ): Promise<Element[]>;
+/** findElOrElsImpl. */
 async function findElOrElsImpl<Ctx = unknown>(
   this: FakeDriver,
   strategy: string,
@@ -63,6 +65,7 @@ async function findElOrElsImpl<Ctx = unknown>(
   mult: false,
   context?: Ctx
 ): Promise<Element>;
+/** findElOrElsImpl. */
 async function findElOrElsImpl<Ctx = unknown>(
   this: FakeDriver,
   strategy: string,
@@ -107,6 +110,7 @@ async function findElOrElsImpl<Ctx = unknown>(
 
 export const findElOrEls = findElOrElsImpl;
 
+/** findElement. */
 export async function findElement(
   this: FakeDriver,
   strategy: string,
@@ -117,6 +121,7 @@ export async function findElement(
 
 // Protocol passes (strategy, selector, elementId) for find-from-element routes.
 
+/** findElements. */
 export async function findElements(
   this: FakeDriver,
   strategy: string,
@@ -125,6 +130,7 @@ export async function findElements(
   return this.findElOrEls(strategy, selector, true);
 }
 
+/** findElementFromElement. */
 export async function findElementFromElement(
   this: FakeDriver,
   strategy: string,
@@ -135,6 +141,7 @@ export async function findElementFromElement(
   return this.findElOrEls(strategy, selector, false, el.xmlFragment);
 }
 
+/** findElementsFromElement. */
 export async function findElementsFromElement(
   this: FakeDriver,
   strategy: string,

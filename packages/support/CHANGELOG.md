@@ -3,6 +3,52 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.2.2](https://github.com/appium/appium/compare/@appium/support@7.2.1...@appium/support@7.2.2) (2026-05-07)
+
+
+### Bug Fixes
+
+* **support:** accept Uint8Array/ArrayBuffer in plist parse path ([#22256](https://github.com/appium/appium/issues/22256)) ([8c6c199](https://github.com/appium/appium/commit/8c6c19982e97eded690da51e745c69e4ccc1e6bd))
+
+
+
+## [7.2.1](https://github.com/appium/appium/compare/@appium/support@7.2.0...@appium/support@7.2.1) (2026-05-06)
+
+
+### Bug Fixes
+
+* **support:** Avoid exceptions in unwrapElement ([#22250](https://github.com/appium/appium/issues/22250)) ([3229e74](https://github.com/appium/appium/commit/3229e74d3d9c1c5bc32d63751901c299133539a8))
+
+
+
+## [7.2.0](https://github.com/appium/appium/compare/@appium/support@7.1.1...@appium/support@7.2.0) (2026-05-06)
+
+
+### Features
+
+* **support:** Add various helper utils ([#22213](https://github.com/appium/appium/issues/22213)) ([2c0fb7a](https://github.com/appium/appium/commit/2c0fb7a2e4a8652e51ce010e8832153c49801a9d))
+* **support:** Replace lodash with native alternatives ([#22225](https://github.com/appium/appium/issues/22225)) ([63218cd](https://github.com/appium/appium/commit/63218cdac639c3a15584e5f815f15a8c9f2db049))
+
+
+
+## [7.1.1](https://github.com/appium/appium/compare/@appium/support@7.1.0...@appium/support@7.1.1) (2026-04-23)
+
+
+### Bug Fixes
+
+* **support:** lint warnings ([#22175](https://github.com/appium/appium/issues/22175)) ([4da7da0](https://github.com/appium/appium/commit/4da7da0a1458a513fa1f765a38b821a2d5b36302))
+
+
+
+## [7.1.0](https://github.com/appium/appium/compare/@appium/support@7.0.6...@appium/support@7.1.0) (2026-04-09)
+
+
+### Features
+
+* use exact version for dependencies in monorepo packages instead of ^ ([#22090](https://github.com/appium/appium/issues/22090)) ([86c8f23](https://github.com/appium/appium/commit/86c8f23a670d0bbc2d359a8235828606bd36e6aa))
+
+
+
 ## [7.0.6](https://github.com/appium/appium/compare/@appium/support@7.0.5...@appium/support@7.0.6) (2026-03-08)
 
 

@@ -38,20 +38,18 @@ export class FakeElement {
     this.parseCss();
   }
 
-  private parseCss(): void {
-    if (this.nodeAttrs.style) {
-      const segments = this.nodeAttrs.style.split(';');
-      for (const s of segments) {
-        let [prop, val] = s.split(':');
-        prop = prop.trim();
-        val = val.trim();
-        this.css[prop] = val;
-      }
-    }
-  }
-
   get tagName(): string {
     return this.node.tagName;
+  }
+
+  get xmlFragment(): XMLDocument {
+    const frag = new XMLDom.XMLSerializer().serializeToString(
+      this.node as unknown as XMLNode
+    );
+    return new XMLDom.DOMParser().parseFromString(
+      frag,
+      XMLDom.MIME_TYPE.XML_TEXT
+    ) as XMLDocument;
   }
 
   setAttr(k: string, v: string): void {
@@ -116,13 +114,15 @@ export class FakeElement {
     return null;
   }
 
-  get xmlFragment(): XMLDocument {
-    const frag = new XMLDom.XMLSerializer().serializeToString(
-      this.node as unknown as XMLNode
-    );
-    return new XMLDom.DOMParser().parseFromString(
-      frag,
-      XMLDom.MIME_TYPE.XML_TEXT
-    ) as XMLDocument;
+  private parseCss(): void {
+    if (this.nodeAttrs.style) {
+      const segments = this.nodeAttrs.style.split(';');
+      for (const s of segments) {
+        let [prop, val] = s.split(':');
+        prop = prop.trim();
+        val = val.trim();
+        this.css[prop] = val;
+      }
+    }
   }
 }

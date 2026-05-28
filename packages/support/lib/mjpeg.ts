@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import log from './logger';
 import B from 'bluebird';
 import {requireSharp} from './image-util';
@@ -18,10 +17,11 @@ async function initMJpegConsumer(): Promise<MJpegConsumerConstructor> {
   if (!MJpegConsumer) {
     try {
       MJpegConsumer = (await requirePackage('mjpeg-consumer')) as MJpegConsumerConstructor;
-    } catch {
+    } catch (e) {
       throw new Error(
         'mjpeg-consumer module is required to use MJPEG-over-HTTP features. ' +
-          'Please install it first (npm i -g mjpeg-consumer) and restart Appium.'
+          'Please install it first (npm i -g mjpeg-consumer) and restart Appium.',
+        {cause: e}
       );
     }
   }
@@ -29,6 +29,7 @@ async function initMJpegConsumer(): Promise<MJpegConsumerConstructor> {
 }
 
 const MJPEG_SERVER_TIMEOUT_MS = 10000;
+const noop = () => {};
 
 /** Class which stores the last bit of data streamed into it */
 export class MJpegStream extends Writable {
@@ -50,7 +51,7 @@ export class MJpegStream extends Writable {
    */
   constructor(
     mJpegUrl: string,
-    errorHandler: (err: Error) => void = _.noop,
+    errorHandler: (err: Error) => void = noop,
     options: WritableOptions = {}
   ) {
     super(options);
@@ -61,7 +62,7 @@ export class MJpegStream extends Writable {
 
   get lastChunkBase64(): string | null {
     const lastChunk = this.lastChunk;
-    if (lastChunk && !_.isEmpty(lastChunk) && _.isBuffer(lastChunk)) {
+    if (lastChunk && lastChunk.length > 0 && Buffer.isBuffer(lastChunk)) {
       return lastChunk.toString('base64');
     }
     return null;
@@ -69,7 +70,7 @@ export class MJpegStream extends Writable {
 
   async lastChunkPNG(): Promise<Buffer | null> {
     const chunk = this.lastChunk;
-    if (!chunk || _.isEmpty(chunk) || !_.isBuffer(chunk)) {
+    if (!chunk || chunk.length === 0 || !Buffer.isBuffer(chunk)) {
       return null;
     }
     try {
@@ -118,7 +119,8 @@ export class MJpegStream extends Writable {
         message = String(e);
       }
       throw new Error(
-        `Cannot connect to the MJPEG stream at ${url}. Original error: ${message}`
+        `Cannot connect to the MJPEG stream at ${url}. Original error: ${message}`,
+        {cause: e}
       );
     }
 

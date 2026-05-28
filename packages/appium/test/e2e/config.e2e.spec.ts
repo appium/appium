@@ -1,5 +1,5 @@
 import {createSandbox, type SinonSandbox} from 'sinon';
-import {getGitRev, getBuildInfo, updateBuildInfo, APPIUM_VER} from '../../lib/config';
+import {getBuildInfo, getGitRev, updateBuildInfo, APPIUM_VER} from '../../lib/helpers/build';
 import axios from 'axios';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';

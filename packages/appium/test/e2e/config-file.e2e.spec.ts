@@ -1,5 +1,5 @@
 import {DRIVER_TYPE} from '../../lib/constants';
-import {readConfigFile} from '../../lib/config-file';
+import {readConfigFile} from '../../lib/bootstrap/config-file';
 import {finalizeSchema, registerSchema, resetSchema} from '../../lib/schema/schema';
 import extSchema from '../fixtures/driver-schema';
 import {resolveFixture} from '../helpers';
@@ -25,8 +25,8 @@ describe('config file behavior', function () {
   const EXT_PROPS_FILEPATH = resolveConfigFixture('appium-config-ext-good.json');
   const LOG_FILTERS_FILEPATH = resolveConfigFixture('appium-config-log-filters.json');
 
-  beforeEach(function () {
-    finalizeSchema();
+  beforeEach(async function () {
+    await finalizeSchema();
   });
 
   afterEach(function () {
@@ -199,10 +199,10 @@ describe('config file behavior', function () {
       describe('with extensions', function () {
         let result: Awaited<ReturnType<typeof readConfigFile>>;
 
-        beforeEach(function () {
+        beforeEach(async function () {
           resetSchema();
-          registerSchema(DRIVER_TYPE, 'fake', extSchema as Parameters<typeof registerSchema>[2]);
-          finalizeSchema();
+          await registerSchema(DRIVER_TYPE, 'fake', extSchema as Parameters<typeof registerSchema>[2]);
+          await finalizeSchema();
         });
 
         describe('when provided a config file with unknown properties', function () {

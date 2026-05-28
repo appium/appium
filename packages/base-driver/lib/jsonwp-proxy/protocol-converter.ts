@@ -69,12 +69,12 @@ export class ProtocolConverter {
     return this._log ?? DEFAULT_LOG;
   }
 
-  set downstreamProtocol(value: string | null | undefined) {
-    this._downstreamProtocol = value;
-  }
-
   get downstreamProtocol(): string | null | undefined {
     return this._downstreamProtocol;
+  }
+
+  set downstreamProtocol(value: string | null | undefined) {
+    this._downstreamProtocol = value;
   }
 
   /**

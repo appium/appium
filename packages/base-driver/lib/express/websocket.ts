@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import B from 'bluebird';
 import type {AppiumServer, WSServer} from '@appium/types';
 
 export const DEFAULT_WS_PATHNAME_PREFIX = '/ws';
@@ -72,7 +71,7 @@ export async function removeAllWebSocketHandlers(this: AppiumServer): Promise<bo
   }
 
   return _.some(
-    await B.all(
+    await Promise.all(
       _.keys(this.webSocketsMapping).map((pathname) =>
         this.removeWebSocketHandler(pathname)
       )

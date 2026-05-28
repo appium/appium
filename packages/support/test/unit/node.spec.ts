@@ -1,7 +1,6 @@
 import {expect} from 'chai';
 import {node} from '../../lib';
 import path from 'node:path';
-import _ from 'lodash';
 
 describe('node utilities', function () {
   describe('getObjectSize', function () {
@@ -32,7 +31,7 @@ describe('node utilities', function () {
     });
 
     it('should return null if no root is found', function () {
-      expect(_.isNull(node.getModuleRootSync('yolo', __filename))).to.be.true;
+      expect(node.getModuleRootSync('yolo', __filename)).to.be.null;
     });
   });
 

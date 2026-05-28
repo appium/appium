@@ -21,14 +21,17 @@ export function assertWebviewContext(this: FakeDriver): void {
   }
 }
 
+/** getCurrentContext. */
 export async function getCurrentContext(this: FakeDriver): Promise<string> {
   return this.curContext;
 }
 
+/** getContexts. */
 export async function getContexts(this: FakeDriver): Promise<string[]> {
   return _.keys(this.getRawContexts());
 }
 
+/** setContext. */
 export async function setContext(this: FakeDriver, context: string): Promise<void> {
   const contexts = this.getRawContexts();
   if (context in contexts) {
@@ -47,6 +50,7 @@ export async function setContext(this: FakeDriver, context: string): Promise<voi
   }
 }
 
+/** setFrame. */
 export async function setFrame(this: FakeDriver, frameId: number | null): Promise<void> {
   this.assertWebviewContext();
   if (frameId === null) {

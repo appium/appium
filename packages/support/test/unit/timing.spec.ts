@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {createSandbox} from 'sinon';
@@ -25,7 +24,7 @@ describe('timing', function () {
 
   describe('bigint', function () {
     beforeEach(function () {
-      if (!_.isFunction(process.hrtime.bigint)) {
+      if (typeof process.hrtime.bigint !== 'function') {
         return this.skip();
       }
       processMock = sandbox.mock(process.hrtime);
@@ -50,7 +49,7 @@ describe('timing', function () {
 
       const timer = new timing.Timer().start();
       const duration = timer.getDuration();
-      expect(_.isNumber(duration.nanos)).to.be.true;
+      expect(duration.nanos).to.be.a('number');
     });
     it('should get correct seconds', function () {
       setupMocks();

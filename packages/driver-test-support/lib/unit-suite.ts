@@ -106,7 +106,7 @@ export function driverUnitTestSuite<C extends Constraints>(
         );
         d.onUnexpectedShutdown(resolve);
       });
-      d.startUnexpectedShutdown(new Error('We crashed'));
+      void d.startUnexpectedShutdown(new Error('We crashed'));
       await expect(cmdPromise).to.be.rejectedWith(/We crashed/);
       await p;
     });
@@ -129,7 +129,7 @@ export function driverUnitTestSuite<C extends Constraints>(
         );
         d.onUnexpectedShutdown(resolve);
       });
-      d.startUnexpectedShutdown(new Error('We crashed'));
+      void d.startUnexpectedShutdown(new Error('We crashed'));
       await p;
       await expect(d.executeCommand('getSession')).to.be.rejectedWith(/shut down/);
     });
@@ -153,7 +153,7 @@ export function driverUnitTestSuite<C extends Constraints>(
         );
         d.onUnexpectedShutdown(resolve);
       });
-      d.startUnexpectedShutdown(new Error('We crashed'));
+      void d.startUnexpectedShutdown(new Error('We crashed'));
       await p;
 
       await expect(d.executeCommand('getSession')).to.be.rejectedWith(/shut down/);
@@ -264,12 +264,12 @@ export function driverUnitTestSuite<C extends Constraints>(
         for (let i = 0; i < numCmds; i++) {
           cmds.push(d.executeCommand('getStatus'));
         }
-        let results = await Promise.all(cmds) as number[];
+        await Promise.all(cmds) as number[];
         cmds = [];
         for (let i = 0; i < numCmds; i++) {
           cmds.push(d.executeCommand('getStatus'));
         }
-        results = await Promise.all(cmds) as number[];
+        const results = await Promise.all(cmds) as number[];
         for (let i = 1; i < numCmds; i++) {
           if (results[i] <= results[i - 1]) {
             throw new Error('Got result out of order');

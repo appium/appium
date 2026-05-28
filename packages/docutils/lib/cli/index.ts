@@ -23,6 +23,10 @@ const pkg = readPackageSync({cwd: fs.findRoot(__dirname)});
 const log = getLogger('cli');
 const IMPLICATIONS_FAILED_REGEX = /implications\s+failed:\n\s*(.+)\s->\s(.+)$/i;
 
+/**
+ * Entry point for the docutils CLI.
+ * @param argv Raw argv values (without node/bin by default).
+ */
 export async function main(argv = hideBin(process.argv)) {
   const config = await findConfig(argv);
 

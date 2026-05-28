@@ -4,7 +4,6 @@ import {fs, system, tempDir} from '../../lib';
 import path from 'node:path';
 import {createSandbox} from 'sinon';
 import {exec} from 'teen_process';
-import _ from 'lodash';
 
 // TODO: normalize test organization
 
@@ -174,7 +173,7 @@ describe('fs', function () {
     });
     it('should walk all elements recursive', async function () {
       await expect(
-        fs.walkDir(path.join(__dirname, '..', 'e2e', 'fixture'), true, _.noop)
+        fs.walkDir(path.join(__dirname, '..', 'e2e', 'fixture'), true, () => undefined)
       ).to.eventually.be.null;
     });
     it('should throw error through callback', async function () {
@@ -187,7 +186,7 @@ describe('fs', function () {
       const filePath = await fs.walkDir(__dirname, false, (item) =>
         item.endsWith('logger/helpers.js')
       );
-      expect(_.isNil(filePath)).to.be.true;
+      expect(filePath).to.be.null;
     });
   });
 

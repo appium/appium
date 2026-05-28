@@ -7,7 +7,7 @@ import type {SinonSandbox} from 'sinon';
 import {DRIVER_TYPE, PLUGIN_TYPE} from '../../../lib/constants';
 import {resolveFixture, rewiremock} from '../../helpers';
 import {initMocks} from './mocks';
-import {APPIUM_VER} from '../../../lib/config';
+import {APPIUM_VER} from '../../../lib/helpers/build';
 import EventEmitter from 'node:events';
 import type {MockAppiumSupport, MockGlob, MockPackageChanged} from './mocks';
 
@@ -32,7 +32,7 @@ describe('Manifest', function () {
     MockAppiumSupport.fs.readFile.resolves(yamlFixture);
     ({Manifest} = rewiremock.proxy(() => require('../../../lib/extension/manifest'), {
       ...overrides,
-      '../../../lib/extension/manifest-migrations.js': {migrate: sandbox.stub().resolves()},
+      '../../../lib/extension/manifest-migrations': {migrate: sandbox.stub().resolves()},
     }));
 
     Manifest.getInstance.cache = new Map();

@@ -58,7 +58,7 @@ export class JWProxy {
   readonly base: string;
   readonly reqBasePath: string;
   sessionId: string | null;
-  readonly timeout: number;
+  timeout: number;
   readonly headers: HTTPHeaders | undefined;
   readonly httpAgent: http.Agent;
   readonly httpsAgent: https.Agent;
@@ -110,6 +110,21 @@ export class JWProxy {
   }
 
   /**
+   * Gets the protocol used by the downstream server (W3C or MJSONWP).
+   */
+  get downstreamProtocol(): Protocol | null | undefined {
+    return this._downstreamProtocol;
+  }
+
+  /**
+   * Sets the protocol used by the downstream server (W3C or MJSONWP).
+   */
+  set downstreamProtocol(value: Protocol | null | undefined) {
+    this._downstreamProtocol = value;
+    this.protocolConverter.downstreamProtocol = value;
+  }
+
+  /**
    * Returns the number of active downstream HTTP requests.
    */
   getActiveRequestsCount(): number {
@@ -124,21 +139,6 @@ export class JWProxy {
       ar.cancel();
     }
     this._activeRequests = [];
-  }
-
-  /**
-   * Sets the protocol used by the downstream server (W3C or MJSONWP).
-   */
-  set downstreamProtocol(value: Protocol | null | undefined) {
-    this._downstreamProtocol = value;
-    this.protocolConverter.downstreamProtocol = value;
-  }
-
-  /**
-   * Gets the protocol used by the downstream server (W3C or MJSONWP).
-   */
-  get downstreamProtocol(): Protocol | null | undefined {
-    return this._downstreamProtocol;
   }
 
   /**
@@ -209,7 +209,8 @@ export class JWProxy {
             logger.markSensitive(truncateBody(body))
           );
           throw new Error(
-            'Cannot interpret the request body as valid JSON. Check the server log for more details.'
+            'Cannot interpret the request body as valid JSON. Check the server log for more details.',
+            {cause: error}
           );
         }
       } else {

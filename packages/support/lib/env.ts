@@ -1,8 +1,8 @@
-import _ from 'lodash';
 import {homedir} from 'node:os';
 import path from 'node:path';
 import {readPackage, type NormalizedPackageJson} from 'read-pkg';
 import * as semver from 'semver';
+import {memoize} from './util';
 
 /**
  * Path to the default `APPIUM_HOME` dir (`~/.appium`).
@@ -36,7 +36,7 @@ export async function hasAppiumDependency(cwd: string): Promise<boolean> {
  *
  * Looks at `dependencies` and `devDependencies` for `appium`.
  */
-export const findAppiumDependencyPackage = _.memoize(
+export const findAppiumDependencyPackage = memoize(
   async function findAppiumDependencyPackage(
     cwd: string = process.cwd(),
     acceptableVersionRange: string | semver.Range = '>=2.0.0-beta'
@@ -76,7 +76,7 @@ export const findAppiumDependencyPackage = _.memoize(
 /**
  * Read a `package.json` in dir `cwd`.  If none found, return `undefined`.
  */
-export const readPackageInDir = _.memoize(
+export const readPackageInDir = memoize(
   async function _readPackageInDir(cwd: string): Promise<NormalizedPackageJson> {
     return await readPackage({cwd, normalize: true});
   }
@@ -90,7 +90,7 @@ export const readPackageInDir = _.memoize(
  *
  * All returned paths will be absolute.
  */
-export const resolveAppiumHome = _.memoize(
+export const resolveAppiumHome = memoize(
   async function _resolveAppiumHome(cwd: string = process.cwd()): Promise<string> {
     if (!path.isAbsolute(cwd)) {
       throw new TypeError('`cwd` parameter must be an absolute path');
@@ -110,7 +110,7 @@ export const resolveAppiumHome = _.memoize(
  * The assumption is that, if `appiumHome` has been provided, it was resolved via {@link resolveAppiumHome `resolveAppiumHome()`}!  If unsure,
  * don't pass a parameter and let `resolveAppiumHome()` handle it.
  */
-export const resolveManifestPath = _.memoize(
+export const resolveManifestPath = memoize(
   async function _resolveManifestPath(
     appiumHome?: string
   ): Promise<string> {

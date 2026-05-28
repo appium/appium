@@ -5,7 +5,6 @@ import {sleep} from 'asyncbox';
 import {createSandbox} from 'sinon';
 import os from 'node:os';
 import path from 'node:path';
-import _ from 'lodash';
 
 const {W3C_WEB_ELEMENT_IDENTIFIER} = util;
 
@@ -130,7 +129,7 @@ describe('util', function () {
 
   describe('localIp', function () {
     it('should find a local ip address', function () {
-      let ifConfigOut: any = {
+      const ifConfigOut: any = {
         lo0: [
           {
             address: '::1',
@@ -186,7 +185,6 @@ describe('util', function () {
       };
       const osMock = sandbox.mock(os);
       osMock.expects('networkInterfaces').returns(ifConfigOut);
-      ifConfigOut = '';
       const ip = util.localIp();
       expect(ip).to.eql('123.123.123.123');
       osMock.verify();
@@ -224,7 +222,7 @@ describe('util', function () {
     });
     it('should pass null through', function () {
       const obj = null;
-      expect(_.isNull(util.safeJsonParse(obj))).to.be.true;
+      expect(util.safeJsonParse(obj)).to.be.null;
     });
     it('should pass simple string through', function () {
       const str = 'str';
@@ -257,7 +255,7 @@ describe('util', function () {
     it('should use the replacer function on non-buffer values', function () {
       const obj = {k1: 'v1', k2: 'v2', k3: 'v3'};
       function replacer(_key: string, value: any) {
-        return _.isString(value) ? value.toUpperCase() : value;
+        return typeof value === 'string' ? value.toUpperCase() : value;
       }
       const jsonString = util.jsonStringify(obj, replacer);
       expect(jsonString).to.include('V1');
@@ -271,7 +269,7 @@ describe('util', function () {
         k3: Buffer.from('hi how are you today'),
       };
       function replacer(_key: string, value: any) {
-        return _.isString(value) ? value.toUpperCase() : value;
+        return typeof value === 'string' ? value.toUpperCase() : value;
       }
       const jsonString = util.jsonStringify(obj, replacer);
       expect(jsonString).to.include('V1');
@@ -286,7 +284,7 @@ describe('util', function () {
         k4: {k5: 'v5'},
       };
       function replacer(_key: string, value: any) {
-        return _.isString(value) ? value.toUpperCase() : value;
+        return typeof value === 'string' ? value.toUpperCase() : value;
       }
       const jsonString = util.jsonStringify(obj, replacer);
       expect(jsonString).to.include('V1');
@@ -300,6 +298,9 @@ describe('util', function () {
     it('should pass through an unwrapped element', function () {
       const el = 4;
       expect(util.unwrapElement(el as any)).to.equal(el);
+    });
+    it('should not throw for null element input', function () {
+      expect(util.unwrapElement(null as any)).to.equal(null);
     });
     it('should pass through an element that is an object', function () {
       const el = {RANDOM: 4};
@@ -473,6 +474,230 @@ describe('util', function () {
     });
     it('should pluralize a string and prepend the number through options', function () {
       expect(util.pluralize('word', 2, {inclusive: true})).to.eql('2 words');
+    });
+  });
+
+  describe('memoize', function () {
+    it('should memoize using first argument by default', function () {
+      let callCount = 0;
+      const fn = util.memoize((value: number) => {
+        callCount += 1;
+        return value * 2;
+      });
+      expect(fn(2)).to.equal(4);
+      expect(fn(2)).to.equal(4);
+      expect(callCount).to.equal(1);
+    });
+
+    it('should memoize by first argument only', function () {
+      let callCount = 0;
+      const fn = util.memoize((a: number, b: number) => {
+        callCount += 1;
+        return a + b;
+      });
+      expect(fn(1, 2)).to.equal(3);
+      expect(fn(1, 999)).to.equal(3);
+      expect(callCount).to.equal(1);
+    });
+
+    it('should memoize using a custom resolver', function () {
+      let callCount = 0;
+      const fn = util.memoize(
+        (a: number, b: number) => {
+          callCount += 1;
+          return a + b;
+        },
+        (_a, b) => b
+      );
+      expect(fn(1, 2)).to.equal(3);
+      expect(fn(999, 2)).to.equal(3);
+      expect(callCount).to.equal(1);
+    });
+
+    it('should use resolver keys to isolate cache entries', function () {
+      let callCount = 0;
+      const fn = util.memoize(
+        (value: number) => {
+          callCount += 1;
+          return value * 10;
+        },
+        (value) => value % 2
+      );
+      expect(fn(2)).to.equal(20);
+      expect(fn(4)).to.equal(20);
+      expect(fn(3)).to.equal(30);
+      expect(fn(5)).to.equal(30);
+      expect(callCount).to.equal(2);
+    });
+
+    it('should preserve this for resolver and wrapped function', function () {
+      const obj = {
+        prefix: 'ctx',
+        calls: 0,
+        fn: util.memoize(
+          function (this: {prefix: string; calls: number}, value: number) {
+            this.calls += 1;
+            return `${this.prefix}:${value}`;
+          },
+          function (this: {prefix: string}, value: number) {
+            return `${this.prefix}-${value}`;
+          }
+        ),
+      };
+
+      expect(obj.fn(1)).to.equal('ctx:1');
+      expect(obj.fn(1)).to.equal('ctx:1');
+      expect(obj.calls).to.equal(1);
+    });
+  });
+
+  describe('isPlainObject', function () {
+    it('should return true for plain objects', function () {
+      expect(util.isPlainObject({})).to.be.true;
+      expect(util.isPlainObject(Object.create(null))).to.be.true;
+    });
+
+    it('should return false for non-plain objects', function () {
+      expect(util.isPlainObject([])).to.be.false;
+      expect(util.isPlainObject(new Date())).to.be.false;
+      expect(util.isPlainObject(null)).to.be.false;
+    });
+
+    it('should match lodash behavior for edge cases', function () {
+      const spoofed = {a: 1, [Symbol.toStringTag]: 'Custom'};
+      expect(util.isPlainObject(spoofed)).to.be.true;
+
+      function CustomCtor(this: any) {
+        this.a = 1;
+      }
+      const withCustomCtorOnProto = Object.create({constructor: CustomCtor});
+      expect(util.isPlainObject(withCustomCtorOnProto)).to.be.false;
+    });
+  });
+
+  describe('isEmpty', function () {
+    it('should handle strings and arrays', function () {
+      expect(util.isEmpty('')).to.be.true;
+      expect(util.isEmpty('x')).to.be.false;
+      expect(util.isEmpty([])).to.be.true;
+      expect(util.isEmpty([1])).to.be.false;
+    });
+
+    it('should handle objects and collections', function () {
+      expect(util.isEmpty({})).to.be.true;
+      expect(util.isEmpty({a: 1})).to.be.false;
+      expect(util.isEmpty(new Map())).to.be.true;
+      expect(util.isEmpty(new Set([1]))).to.be.false;
+    });
+
+    it('should handle non-plain objects with enumerable own properties', function () {
+      class Thing {}
+      const emptyInstance = new Thing();
+      const nonEmptyInstance = new Thing();
+      (nonEmptyInstance as unknown as {a?: number}).a = 1;
+      expect(util.isEmpty(emptyInstance)).to.be.true;
+      expect(util.isEmpty(nonEmptyInstance)).to.be.false;
+
+      const fn = () => undefined;
+      (fn as unknown as {x?: number}).x = 1;
+      expect(util.isEmpty(fn)).to.be.false;
+    });
+  });
+
+  describe('isEqual', function () {
+    it('should deeply compare nested objects', function () {
+      expect(util.isEqual({a: [1, {b: 'c'}]}, {a: [1, {b: 'c'}]})).to.be.true;
+      expect(util.isEqual({a: [1, {b: 'c'}]}, {a: [1, {b: 'd'}]})).to.be.false;
+    });
+
+    it('should compare special values and typed objects', function () {
+      expect(util.isEqual(NaN, NaN)).to.be.true;
+      expect(util.isEqual(new Date('2020-01-01'), new Date('2020-01-01'))).to.be.true;
+      expect(util.isEqual(/abc/gi, /abc/gi)).to.be.true;
+      expect(util.isEqual(Buffer.from('a'), Buffer.from('a'))).to.be.true;
+    });
+
+    it('should compare maps and sets', function () {
+      const entries: Array<[string, number | {c: number}]> = [
+        ['a', 1],
+        ['b', {c: 2}],
+      ];
+      expect(util.isEqual(new Map(entries), new Map(entries))).to.be.true;
+      expect(util.isEqual(new Set([1, 2]), new Set([2, 1]))).to.be.true;
+      expect(util.isEqual(new Set([1, 2]), new Set([2, 3]))).to.be.false;
+    });
+
+    it('should compare functions by identity only', function () {
+      const fn1 = () => 1;
+      const fn2 = () => 1;
+      (fn1 as any).x = 1;
+      (fn2 as any).x = 1;
+      expect(util.isEqual(fn1, fn1)).to.be.true;
+      expect(util.isEqual(fn1, fn2)).to.be.false;
+    });
+
+    it('should ignore non-enumerable own properties', function () {
+      const left: Record<string, unknown> = {a: 1};
+      const right: Record<string, unknown> = {a: 1};
+      Object.defineProperty(left, 'hidden', {value: 1, enumerable: false});
+      Object.defineProperty(right, 'hidden', {value: 2, enumerable: false});
+      expect(util.isEqual(left, right)).to.be.true;
+    });
+
+    it('should compare errors and boxed symbols like lodash', function () {
+      expect(util.isEqual(new Error('boom'), new Error('boom'))).to.be.true;
+      expect(util.isEqual(new Error('boom'), new Error('kaboom'))).to.be.false;
+      expect(util.isEqual(Object(Symbol.for('x')), Object(Symbol.for('x')))).to.be.true;
+      expect(util.isEqual(Object(Symbol.for('x')), Object(Symbol.for('y')))).to.be.false;
+    });
+  });
+
+  describe('escapeRegExp', function () {
+    it('should escape regexp metacharacters', function () {
+      expect(util.escapeRegExp('a+b*c?.(x)[y]{z}|^$\\')).to.equal(
+        'a\\+b\\*c\\?\\.\\(x\\)\\[y\\]\\{z\\}\\|\\^\\$\\\\'
+      );
+    });
+  });
+
+  describe('uniq', function () {
+    it('should return a duplicate-free array preserving order', function () {
+      expect(util.uniq([1, 2, 1, 3, 2])).to.eql([1, 2, 3]);
+    });
+  });
+
+  describe('truncateString', function () {
+    it('should not change short strings', function () {
+      expect(util.truncateString('short')).to.equal('short');
+    });
+
+    it('should truncate with default options', function () {
+      const src = 'abcdefghijklmnopqrstuvwxyz0123456789';
+      expect(util.truncateString(src)).to.equal('abcdefghijklmnopqrstuvwxyz012…');
+    });
+
+    it('should support numeric length shorthand', function () {
+      expect(util.truncateString('abcdefghijklmnopqrstuvwxyz', 10)).to.equal('abcdefghi…');
+    });
+
+    it('should support custom omission', function () {
+      expect(util.truncateString('abcdefghijklmnopqrstuvwxyz', {length: 10, omission: '..'})).to.equal(
+        'abcdefgh..'
+      );
+    });
+
+    it('should handle non-string values safely', function () {
+      expect(() => util.truncateString(undefined as any)).not.to.throw();
+      expect(() => util.truncateString(null as any)).not.to.throw();
+      expect(util.truncateString(undefined as any)).to.equal('');
+      expect(util.truncateString(null as any)).to.equal('');
+      expect(util.truncateString(123456 as any, 5)).to.equal('1234…');
+      expect(util.truncateString({a: 1} as any, 8)).to.equal('[object…');
+      expect(util.truncateString(-0 as any)).to.equal('-0');
+    });
+
+    it('should return omission if max length is too small', function () {
+      expect(util.truncateString('hello world', 0)).to.equal('…');
     });
   });
 });

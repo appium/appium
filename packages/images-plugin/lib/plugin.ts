@@ -9,18 +9,7 @@ import {IMAGE_STRATEGY, IMAGE_ELEMENT_PREFIX} from './constants';
 import type {ExternalDriver, Element, ActionSequence, MethodMap} from '@appium/types';
 import type {MatchingOptions, SimilarityOptions, OccurrenceOptions} from '@appium/opencv';
 
-export function getImgElFromArgs(args: any[]): string | undefined {
-  return args.find((arg) => _.isString(arg) && arg.startsWith(IMAGE_ELEMENT_PREFIX));
-}
-
 export class ImageElementPlugin extends BasePlugin {
-  readonly finder: ImageElementFinder;
-
-  constructor(pluginName: string) {
-    super(pluginName);
-    this.finder = new ImageElementFinder();
-  }
-
   // this plugin supports a non-standard 'compare images' command
   static newMethodMap: MethodMap<ImageElementPlugin> = {
     '/session/:sessionId/appium/compare_images': {
@@ -34,6 +23,12 @@ export class ImageElementPlugin extends BasePlugin {
       },
     },
   } as const;
+  readonly finder: ImageElementFinder;
+
+  constructor(pluginName: string) {
+    super(pluginName);
+    this.finder = new ImageElementFinder();
+  }
 
   async compareImages(
     next: () => Promise<any>,
@@ -52,22 +47,6 @@ export class ImageElementPlugin extends BasePlugin {
 
   async findElements(next: () => Promise<any>, driver: ExternalDriver, ...args: any[]): Promise<any> {
     return await this._find(true, next, driver, ...args);
-  }
-
-  private async _find(
-    multiple: boolean,
-    next: () => Promise<any>,
-    driver: ExternalDriver,
-    ...args: any[]
-  ): Promise<any> {
-    const [strategy, selector] = args;
-
-    // if we're not actually finding by image, just do the normal thing
-    if (strategy !== IMAGE_STRATEGY) {
-      return await next();
-    }
-
-    return await this.finder.findByImage(Buffer.from(selector, 'base64'), driver, {multiple});
   }
 
   async handle(
@@ -130,4 +109,28 @@ export class ImageElementPlugin extends BasePlugin {
 
     return await next();
   }
+
+  private async _find(
+    multiple: boolean,
+    next: () => Promise<any>,
+    driver: ExternalDriver,
+    ...args: any[]
+  ): Promise<any> {
+    const [strategy, selector] = args;
+
+    // if we're not actually finding by image, just do the normal thing
+    if (strategy !== IMAGE_STRATEGY) {
+      return await next();
+    }
+
+    return await this.finder.findByImage(Buffer.from(selector, 'base64'), driver, {multiple});
+  }
+}
+
+/**
+ * Returns the first image-element id found in command args.
+ * @param args Command arguments.
+ */
+export function getImgElFromArgs(args: any[]): string | undefined {
+  return args.find((arg) => _.isString(arg) && arg.startsWith(IMAGE_ELEMENT_PREFIX));
 }

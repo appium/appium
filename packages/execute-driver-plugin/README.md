@@ -14,7 +14,7 @@ Running a driver script in a child process adds a degree of parallelisation, whi
 faster test execution.
 
 > [!WARNING]
-> This plugin enables execution of arbitrary JavaScript code. We recommend only using this plugin in a controlled environment.
+> This plugin enables execution of arbitrary JavaScript code. We recommend only using this plugin in a controlled environment. Scripts run in a Node.js `vm` context with a hardened view of the WebdriverIO driver (host-realm prototype metadata is not exposed), but `vm` is still not a full security boundary for untrusted code; treat `--allow-insecure=…:execute_driver_script` as highly privileged.
 
 ## Installation
 

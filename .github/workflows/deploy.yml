@@ -16,7 +16,7 @@ jobs:
     steps:
     - name: Select all current LTS versions of Node.js
       id: generate-matrix
-      uses: msimerson/node-lts-versions@v1
+      uses: msimerson/node-lts-versions@v2
 
   check:
     needs:

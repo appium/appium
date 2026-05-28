@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {Storage} from '../../lib/storage';
 import {tempDir, fs, logger} from '@appium/support';
 import path from 'node:path';
@@ -42,7 +41,7 @@ describe('storage', function () {
   it('should be initially empty', async function () {
     storage = new Storage(storageRoot!, false, false, log);
     const files = await storage.list();
-    expect(_.isEmpty(files)).to.be.true;
+    expect(files).to.be.empty;
     expect(await storage.delete('foo')).to.be.false;
   });
 
@@ -79,13 +78,13 @@ describe('storage', function () {
     const size = 1 * 1024 * 1024;
     await addFileToStorage(name, size);
     let files = await storage.list();
-    expect(_.isEmpty(files)).to.be.false;
+    expect(files).not.to.be.empty;
     expect(files[0].name).to.eql(name);
     expect(files[0].size).to.eql(size);
     expect(files[0].path).to.eql(path.join(storageRoot!, name));
     expect(await storage.delete(name)).to.be.true;
     files = await storage.list();
-    expect(_.isEmpty(files)).to.be.true;
+    expect(files).to.be.empty;
   });
 
   it('should be reset and preserve the root', async function () {
@@ -95,7 +94,7 @@ describe('storage', function () {
     await addFileToStorage(name, size);
     await storage.reset();
     const files = await storage.list();
-    expect(_.isEmpty(files)).to.be.true;
+    expect(files).to.be.empty;
     expect(await fs.exists(storageRoot!)).to.be.true;
   });
 
@@ -106,7 +105,7 @@ describe('storage', function () {
     await addFileToStorage(name, size);
     await storage.reset();
     const files = await storage.list();
-    expect(_.isEmpty(files)).to.be.false;
+    expect(files).not.to.be.empty;
     expect(await fs.exists(storageRoot!)).to.be.true;
   });
 

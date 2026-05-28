@@ -3,6 +3,48 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.4](https://github.com/appium/appium/compare/@appium/test-support@4.1.3...@appium/test-support@4.1.4) (2026-05-07)
+
+**Note:** Version bump only for package @appium/test-support
+
+
+
+
+
+## [4.1.3](https://github.com/appium/appium/compare/@appium/test-support@4.1.2...@appium/test-support@4.1.3) (2026-05-06)
+
+**Note:** Version bump only for package @appium/test-support
+
+
+
+
+
+## [4.1.2](https://github.com/appium/appium/compare/@appium/test-support@4.1.1...@appium/test-support@4.1.2) (2026-05-06)
+
+**Note:** Version bump only for package @appium/test-support
+
+
+
+
+
+## [4.1.1](https://github.com/appium/appium/compare/@appium/test-support@4.1.0...@appium/test-support@4.1.1) (2026-04-23)
+
+
+### Bug Fixes
+
+* All the rest of linter warnings ([#22183](https://github.com/appium/appium/issues/22183)) ([efe167f](https://github.com/appium/appium/commit/efe167f59a0a19515b78a53346e5d0b3fc4c744c))
+
+
+
+## [4.1.0](https://github.com/appium/appium/compare/@appium/test-support@4.0.6...@appium/test-support@4.1.0) (2026-04-09)
+
+
+### Features
+
+* use exact version for dependencies in monorepo packages instead of ^ ([#22090](https://github.com/appium/appium/issues/22090)) ([86c8f23](https://github.com/appium/appium/commit/86c8f23a670d0bbc2d359a8235828606bd36e6aa))
+
+
+
 ## [4.0.6](https://github.com/appium/appium/compare/@appium/test-support@4.0.5...@appium/test-support@4.0.6) (2026-03-08)
 
 **Note:** Version bump only for package @appium/test-support

@@ -26,7 +26,6 @@ import type {AppiumLogger} from './logger';
 import type {AppiumServer, UpdateServerCallback} from './server';
 import type {Class, StringRecord} from './util';
 import type internal from 'node:stream';
-
 /**
  * Interface implemented by the `DeviceSettings` class in `@appium/base-driver`
  */

@@ -34,7 +34,6 @@ import {
   removeAllWebSocketHandlers,
   getWebSocketHandlers,
 } from './websocket';
-import B from 'bluebird';
 import {DEFAULT_BASE_PATH} from '../constants';
 import {fs, timing} from '@appium/support';
 import type {
@@ -123,51 +122,51 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
   const app = express();
   const httpServer = await createServer(app, cliArgs);
 
-  return await new B<AppiumServer>(async (resolve, reject) => {
-    // we put an async function as the promise constructor because we want some things to happen in
-    // serial (application of plugin updates, for example). But we still need to use a promise here
-    // because some elements of server start failure only happen in httpServer listeners. So the
-    // way we resolve it is to use an async function here but to wrap all the inner logic in
-    // try/catch so any errors can be passed to reject.
-    try {
-      const appiumServer = configureHttp({
-        httpServer,
-        reject,
-        keepAliveTimeout,
-        gracefulShutdownTimeout: cliArgs.shutdownTimeout,
-      });
-      const useLegacyUpgradeHandler = !hasShouldUpgradeCallback(httpServer);
-      configureServer({
-        app,
-        addRoutes: routeConfiguringFunction,
-        allowCors,
-        basePath,
-        extraMethodMap,
-        webSocketsMapping: appiumServer.webSocketsMapping,
-        useLegacyUpgradeHandler,
-      });
-      // allow extensions to update the app and http server objects
-      for (const updater of serverUpdaters) {
-        await updater(app, appiumServer, cliArgs);
+  return await new Promise<AppiumServer>((resolve, reject) => {
+    // we use a promise here because some elements of server start failure only happen in
+    // httpServer listeners. The async IIFE runs setup serially (e.g. plugin updates) while
+    // configureHttp can still reject via the listener registered below.
+    void (async () => {
+      try {
+        const appiumServer = configureHttp({
+          httpServer,
+          reject,
+          keepAliveTimeout,
+          gracefulShutdownTimeout: cliArgs.shutdownTimeout,
+        });
+        const useLegacyUpgradeHandler = !hasShouldUpgradeCallback(httpServer);
+        configureServer({
+          app,
+          addRoutes: routeConfiguringFunction,
+          allowCors,
+          basePath,
+          extraMethodMap,
+          webSocketsMapping: appiumServer.webSocketsMapping,
+          useLegacyUpgradeHandler,
+        });
+        // allow extensions to update the app and http server objects
+        for (const updater of serverUpdaters) {
+          await updater(app, appiumServer, cliArgs);
+        }
+
+        // once all configurations and updaters have been applied, make sure to set up a catchall
+        // handler so that anything unknown 404s. But do this after everything else since we don't
+        // want to block extensions' ability to add routes if they want.
+        app.all('/*all', catch404Handler);
+
+        await startServer({
+          httpServer,
+          hostname,
+          port,
+          keepAliveTimeout,
+          requestTimeout,
+        });
+
+        resolve(appiumServer);
+      } catch (err) {
+        reject(err);
       }
-
-      // once all configurations and updaters have been applied, make sure to set up a catchall
-      // handler so that anything unknown 404s. But do this after everything else since we don't
-      // want to block extensions' ability to add routes if they want.
-      app.all('/*all', catch404Handler);
-
-      await startServer({
-        httpServer,
-        hostname,
-        port,
-        keepAliveTimeout,
-        requestTimeout,
-      });
-
-      resolve(appiumServer);
-    } catch (err) {
-      reject(err);
-    }
+    })();
   });
 }
 
@@ -269,7 +268,7 @@ async function createServer(
 
   const certKey = [sslCertificatePath, sslKeyPath];
   const zipped = _.zip(
-    await B.all(certKey.map((p) => fs.exists(p))),
+    await Promise.all(certKey.map((p) => fs.exists(p))),
     ['certificate', 'key'],
     certKey
   ) as [boolean, string, string][];
@@ -280,7 +279,7 @@ async function createServer(
       );
     }
   }
-  const [cert, key] = await B.all(
+  const [cert, key] = await Promise.all(
     certKey.map((p) => fs.readFile(p, 'utf8'))
   ) as [string, string];
   log.debug('Enabling TLS/SPDY on the server using the provided certificate');
@@ -345,7 +344,7 @@ function configureHttp({
   // all connections are closed and the `close` event is emitted
   const originalClose = appiumServer.close.bind(appiumServer);
   appiumServer.close = async () =>
-    await new B<void>((_resolve, _reject) => {
+    await new Promise<void>((_resolve, _reject) => {
       log.info('Closing Appium HTTP server');
       const timer = new timing.Timer().start();
       const onTimeout = setTimeout(() => {
@@ -405,10 +404,19 @@ async function startServer({
   requestTimeout,
 }: StartServerOpts): Promise<void> {
   // If the hostname is omitted, the server will accept connections on any IP address
-  const start = B.promisify(httpServer.listen, {
-    context: httpServer,
-  }) as (port: number, hostname?: string) => B<HttpServer>;
-  const startPromise = start(port, hostname);
+  const startPromise = new Promise<void>((resolve, reject) => {
+    const onError = (err: Error) => {
+      httpServer.removeListener('listening', onListening);
+      reject(err);
+    };
+    const onListening = () => {
+      httpServer.removeListener('error', onError);
+      resolve();
+    };
+    httpServer.once('error', onError);
+    httpServer.once('listening', onListening);
+    httpServer.listen(port, hostname);
+  });
   httpServer.keepAliveTimeout = keepAliveTimeout;
   if (_.isInteger(requestTimeout)) {
     httpServer.requestTimeout = Number(requestTimeout);

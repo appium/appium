@@ -30,7 +30,7 @@ In lieu of a separate file, configuration can be embedded in a project's `packag
 ```
 
 When an Appium server is started via the `appium` executable, the `init` function in `lib/main.js`
-will call into `lib/config-file.js` to load and/or search for a configuration file and in
+will call into `lib/bootstrap/config-file.js` to load and/or search for a configuration file and in
 `package.json`.
 
 !!! note
@@ -69,7 +69,7 @@ It is more straightforward to explain how config files are validated, so we'll s
 
 ### Validating Config Files
 
-When a config file is found (`lib/config-file.js`), it will call the `validate` function exported
+When a config file is found (`lib/bootstrap/config-file.js`), it will call the `validate` function exported
 from `lib/schema/schema.js` with the contents of the config file. In turn, this asks `ajv` to
 validate the data against the schema that Appium has provided it.
 

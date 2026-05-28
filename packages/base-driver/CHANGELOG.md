@@ -3,6 +3,56 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.5.2](https://github.com/appium/appium/compare/@appium/base-driver@10.5.1...@appium/base-driver@10.5.2) (2026-05-07)
+
+**Note:** Version bump only for package @appium/base-driver
+
+
+
+
+
+## [10.5.1](https://github.com/appium/appium/compare/@appium/base-driver@10.5.0...@appium/base-driver@10.5.1) (2026-05-06)
+
+**Note:** Version bump only for package @appium/base-driver
+
+
+
+
+
+## [10.5.0](https://github.com/appium/appium/compare/@appium/base-driver@10.4.0...@appium/base-driver@10.5.0) (2026-05-06)
+
+
+### Features
+
+* add 3 WebDriver extension endpoints ([#22237](https://github.com/appium/appium/issues/22237)) ([787571d](https://github.com/appium/appium/commit/787571d33836c06bb1332d7bc6cc2f9800bbdd82))
+* **base-driver:** map W3C 'no such shadow root' to NoSuchShadowRootError ([#22210](https://github.com/appium/appium/issues/22210)) ([fa1e875](https://github.com/appium/appium/commit/fa1e87535be36647983b70362f00533ef7843b40)), closes [#22209](https://github.com/appium/appium/issues/22209)
+
+
+
+## [10.4.0](https://github.com/appium/appium/compare/@appium/base-driver@10.3.0...@appium/base-driver@10.4.0) (2026-04-23)
+
+
+### Features
+
+* **base-driver:** Show known capability name matches for typos ([#22193](https://github.com/appium/appium/issues/22193)) ([4c4e8d8](https://github.com/appium/appium/commit/4c4e8d89110975fbcf71fceaf99c5a76636d211f))
+
+
+### Bug Fixes
+
+* **base-driver:** lint warnings ([#22174](https://github.com/appium/appium/issues/22174)) ([943866b](https://github.com/appium/appium/commit/943866bcf3c823c7d57b001ccb345cde4f4d2c4d))
+* **base-driver:** Make proxy timeout mutable again ([#22154](https://github.com/appium/appium/issues/22154)) ([dfe8bde](https://github.com/appium/appium/commit/dfe8bde6877b5233a7cba48b319045e29dde3c98))
+
+
+
+## [10.3.0](https://github.com/appium/appium/compare/@appium/base-driver@10.2.2...@appium/base-driver@10.3.0) (2026-04-09)
+
+
+### Features
+
+* use exact version for dependencies in monorepo packages instead of ^ ([#22090](https://github.com/appium/appium/issues/22090)) ([86c8f23](https://github.com/appium/appium/commit/86c8f23a670d0bbc2d359a8235828606bd36e6aa))
+
+
+
 ## [10.2.2](https://github.com/appium/appium/compare/@appium/base-driver@10.2.1...@appium/base-driver@10.2.2) (2026-03-09)
 
 **Note:** Version bump only for package @appium/base-driver

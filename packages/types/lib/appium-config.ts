@@ -171,6 +171,14 @@ export type UsePluginsConfig = string[];
  * Also send log output to this http listener
  */
 export type WebhookConfig = string;
+/**
+ * Maximum size in bytes for IPC messages
+ */
+export type MaxIpcDataSizeConfig = number;
+/**
+ * Maximum number of IPC topics per session
+ */
+export type MaxIpcTopicsConfig = number;
 
 /**
  * A schema for Appium configuration files
@@ -223,6 +231,8 @@ export interface ServerConfig {
   "use-drivers"?: UseDriversConfig;
   "use-plugins"?: UsePluginsConfig;
   webhook?: WebhookConfig;
+  "max-ipc-data-size"?: MaxIpcDataSizeConfig;
+  "max-ipc-topics"?: MaxIpcTopicsConfig;
 }
 /**
  * Set the default desired capabilities, which will be set on each session unless overridden by received capabilities. If a string, a path to a JSON file containing the capabilities, or raw JSON.

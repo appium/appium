@@ -24,11 +24,11 @@ export class FakeApp {
   activeAlert: FakeElement | null;
   lat: number;
   long: number;
-  private _width: number | null;
-  private _height: number | null;
   rawXml: string;
   currentOrientation: Orientation;
   actionLog: ActionSequence[][];
+  private _width: number | null;
+  private _height: number | null;
 
   constructor() {
     this.dom = null;
@@ -66,10 +66,6 @@ export class FakeApp {
     return this.currentOrientation;
   }
 
-  set orientation(o: Orientation) {
-    this.currentOrientation = o;
-  }
-
   get width(): number {
     if (this._width === null) {
       this.setDims();
@@ -92,16 +88,8 @@ export class FakeApp {
     return h;
   }
 
-  private setDims(): void {
-    const nodes = this.xpathQuery('//app');
-    if (!_.isArray(nodes)) {
-      throw new Error(
-        'Cannot fetch app dimensions because no corresponding node has been found in the source'
-      );
-    }
-    const app = new FakeElement(nodes[0] as unknown as XmlNodeLike, this);
-    this._width = parseInt(app.nodeAttrs.width, 10);
-    this._height = parseInt(app.nodeAttrs.height, 10);
+  set orientation(o: Orientation) {
+    this.currentOrientation = o;
   }
 
   async loadApp(appPath: string): Promise<void> {
@@ -223,6 +211,18 @@ export class FakeApp {
 
   getScreenshot(): string {
     return readFileSync(SCREENSHOT, 'base64');
+  }
+
+  private setDims(): void {
+    const nodes = this.xpathQuery('//app');
+    if (!_.isArray(nodes)) {
+      throw new Error(
+        'Cannot fetch app dimensions because no corresponding node has been found in the source'
+      );
+    }
+    const app = new FakeElement(nodes[0] as unknown as XmlNodeLike, this);
+    this._width = parseInt(app.nodeAttrs.width, 10);
+    this._height = parseInt(app.nodeAttrs.height, 10);
   }
 }
 

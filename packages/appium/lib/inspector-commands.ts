@@ -21,7 +21,9 @@ import type {
 } from '@appium/types';
 import type {AppiumDriver} from './appium';
 
-
+/**
+ * Returns available REST and BiDi commands for base, driver and plugins.
+ */
 export async function listCommands(this: AppiumDriver, sessionId?: string): Promise<ListCommandsResponse> {
   let driverRestMethodMap: MethodMap<any> = {};
   let driverBiDiCommands: BidiModuleMap = {};
@@ -46,6 +48,9 @@ export async function listCommands(this: AppiumDriver, sessionId?: string): Prom
   };
 }
 
+/**
+ * Returns available execute methods exposed by driver and plugins.
+ */
 export async function listExtensions(this: AppiumDriver, sessionId?: string): Promise<ListExtensionsResponse> {
   let driverExecuteMethodMap: ExecuteMethodMap<any> = {};
   let pluginExecuteMethodMaps: Record<string, ExecuteMethodMap<any>> = {};

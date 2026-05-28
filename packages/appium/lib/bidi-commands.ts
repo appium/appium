@@ -1,15 +1,11 @@
 import _ from 'lodash';
-import B from 'bluebird';
+import {promisify} from 'node:util';
 import type {ExtensionCore} from '@appium/base-driver';
 import {errors} from '@appium/base-driver';
 import {BIDI_BASE_PATH, BIDI_EVENT_NAME} from './constants';
 import WebSocket from 'ws';
 import os from 'node:os';
-import {
-  isBroadcastIp,
-  fetchInterfaces,
-  V4_BROADCAST_IP,
-} from './utils';
+import {isBroadcastIp, fetchInterfaces, V4_BROADCAST_IP} from './helpers/network';
 import type {IncomingMessage} from 'node:http';
 import type {AppiumDriver} from './appium';
 import type {
@@ -97,15 +93,6 @@ export function onBidiConnection(this: AppiumDriver, ws: WebSocket, req: Incomin
       ws.close();
     } catch {}
   }
-}
-
-function wrapCommandWithPlugins(driver: ExtensionCore, plugins: ExtensionCore[], method: string, params: StringRecord): () => Promise<BiDiResultData> {
-    const [moduleName, methodName] = method.split('.');
-    let next = async () => await driver.executeBidiCommand(method, params);
-    for (const plugin of plugins.filter((p) => p.doesBidiCommandExist(moduleName, methodName))) {
-      next = ((_next) => async () => await plugin.executeBidiCommand(method, params, _next, driver))(next);
-    }
-    return next;
 }
 
 /**
@@ -204,6 +191,15 @@ export function cleanupBidiSockets(this: AppiumDriver, sessionId: string): void 
   delete this.bidiProxyClients[sessionId];
 }
 
+function wrapCommandWithPlugins(driver: ExtensionCore, plugins: ExtensionCore[], method: string, params: StringRecord): () => Promise<BiDiResultData> {
+  const [moduleName, methodName] = method.split('.');
+  let next = async () => await driver.executeBidiCommand(method, params);
+  for (const plugin of plugins.filter((p) => p.doesBidiCommandExist(moduleName, methodName))) {
+    next = ((_next) => async () => await plugin.executeBidiCommand(method, params, _next, driver))(next);
+  }
+  return next;
+}
+
 // #region Private functions
 
 /**
@@ -260,10 +256,11 @@ function initBidiSocket(this: AppiumDriver, ws: WebSocket, req: IncomingMessage)
     if (bidiProxyUrl) {
       try {
         new URL(bidiProxyUrl);
-      } catch {
+      } catch (e) {
         throw new Error(
           `Got request for ${driverName} to proxy bidi connections to upstream socket with ` +
             `url ${bidiProxyUrl}, but this was not a valid url`,
+          {cause: e}
         );
       }
       this.log.info(`Bidi connection for ${driverName} will be proxied to ${bidiProxyUrl}. ` +
@@ -290,7 +287,7 @@ function initBidiSocket(this: AppiumDriver, ws: WebSocket, req: IncomingMessage)
   // 1. Make it async-await friendly
   // 2. Do some logging if there's a send error
   const sendFactory = (socket: WebSocket) => {
-    const socketSend = B.promisify(socket.send, {context: socket});
+    const socketSend = promisify(socket.send.bind(socket)) as (data: string | Buffer) => Promise<void>;
     return async (data: string | Buffer) => {
       try {
         await assertIsOpen(socket);

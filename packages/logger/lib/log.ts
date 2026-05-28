@@ -39,6 +39,11 @@ const SENSITIVE_MESSAGE_KEY = 'f2b06625-35a2-4ed3-939a-b0b0a4abc750';
 
 setBlocking(true);
 
+interface ArgumentFormatResult {
+  arg: any;
+  stack: string | undefined;
+}
+
 export class Log extends EventEmitter implements Logger {
   level: LogLevel | string;
   prefixStyle: StyleObject;
@@ -88,6 +93,10 @@ export class Log extends EventEmitter implements Logger {
     return [...this._history.rvalues()] as MessageObject[];
   }
 
+  get asyncStorage(): AsyncLocalStorage<Record<string, any>> {
+    return this._asyncStorage;
+  }
+
   get maxRecordSize(): number {
     return this._maxRecordSize;
   }
@@ -103,17 +112,6 @@ export class Log extends EventEmitter implements Logger {
       newHistory.set(key, value);
     }
     this._history = newHistory;
-  }
-
-  private useColor(): boolean {
-    // by default, decide based on tty-ness.
-    return (
-      this._colorEnabled ?? Boolean(this.stream && 'isTTY' in this.stream && this.stream.isTTY)
-    );
-  }
-
-  get asyncStorage(): AsyncLocalStorage<Record<string, any>> {
-    return this._asyncStorage;
   }
 
   updateAsyncStorage(contextInfo: Record<string, any>, replace: boolean): void {
@@ -288,6 +286,13 @@ export class Log extends EventEmitter implements Logger {
     };
   }
 
+  private useColor(): boolean {
+    // by default, decide based on tty-ness.
+    return (
+      this._colorEnabled ?? Boolean(this.stream && 'isTTY' in this.stream && this.stream.isTTY)
+    );
+  }
+
   private emitLog(m: MessageObject): void {
     if (this._paused) {
       this._buffer.push(m);
@@ -413,13 +418,13 @@ export class Log extends EventEmitter implements Logger {
   private showProgress(): void {}
 }
 
-export function markSensitive<T=any>(logMessage: T): {[SENSITIVE_MESSAGE_KEY]: T} {
+/**
+ * Wraps a log message so it can be redacted when async storage marks the context as sensitive.
+ * @param logMessage - Value to log; may be wrapped for secure display.
+ * @returns An object keyed with an internal marker containing the message.
+ */
+export function markSensitive<T = any>(logMessage: T): {[SENSITIVE_MESSAGE_KEY]: T} {
   return {[SENSITIVE_MESSAGE_KEY]: logMessage};
-}
-
-interface ArgumentFormatResult {
-  arg: any,
-  stack: string | undefined,
 }
 
 // Unique key for the process-wide logger on globalThis (avoids collisions with other globals).

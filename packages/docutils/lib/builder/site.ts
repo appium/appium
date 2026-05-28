@@ -7,43 +7,62 @@
 
 import path from 'node:path';
 import type {TeenProcessExecOptions} from 'teen_process';
-import {exec} from 'teen_process';
 import {DEFAULT_SITE_DIR, NAME_BIN, NAME_MKDOCS, NAME_MKDOCS_YML} from '../constants';
 import {DocutilsError} from '../error';
 import {findMkDocsYml, isMkDocsInstalled, readMkDocsYml, requirePython} from '../fs';
 import {getLogger} from '../logger';
 import type {SpawnBackgroundProcessOpts} from '../util';
-import {relative, spawnBackgroundProcess, stopwatch} from '../util';
+import {execWithErrorHandling, relative, spawnBackgroundProcess, stopwatch} from '../util';
 
 const log = getLogger('mkdocs');
 
 /**
- * Runs `mkdocs serve`
- * @param pythonPath Path to Python 3 executable
- * @param args Extra args to `mkdocs build`
- * @param opts Extra options for `teen_process.Subprocess.start`
- * @param mkDocsPath Path to `mkdocs` executable
+ * Options for {@linkcode buildSite}.
  */
-async function doServe(
-  pythonPath: string,
-  args: string[] = [],
-  opts: SpawnBackgroundProcessOpts = {},
-) {
-  const finalArgs = ['-m', NAME_MKDOCS, 'serve', ...args];
-  log.debug('Executing %s via: %s, %O', NAME_MKDOCS, pythonPath, finalArgs);
-  return spawnBackgroundProcess(pythonPath, finalArgs, opts);
-}
+export interface BuildMkDocsOpts {
+  /**
+   * Path to `mkdocs.yml`
+   */
+  mkdocsYml?: string;
 
-/**
- * Runs `mkdocs build`
- * @param pythonPath Path to Python 3 executable
- * @param args Extra args to `mkdocs build`
- * @param opts Extra options to `teen_process.exec`
- */
-async function doBuild(pythonPath: string, args: string[] = [], opts: TeenProcessExecOptions = {}) {
-  const finalArgs = ['-m', NAME_MKDOCS, 'build', ...args];
-  log.debug('Executing %s via: %s, %O', NAME_MKDOCS, pythonPath, finalArgs);
-  return await exec(pythonPath, finalArgs, opts);
+  /**
+   * Path to output directory
+   */
+  siteDir?: string;
+
+  /**
+   * MkDocs theme to use
+   * @defaultValue 'mkdocs'
+   */
+  theme?: string;
+
+  /**
+   * Current working directory
+   * @defaultValue `process.cwd()`
+   */
+  cwd?: string;
+
+  /**
+   * Path to `package.json`
+   *
+   * Used to find `mkdocs.yml` if unspecified.
+   */
+  packageJson?: string;
+
+  /**
+   * If `true`, run `mkdocs serve` instead of `mkdocs build`
+   */
+  serve?: boolean;
+
+  /**
+   * Extra options for {@linkcode teen_process.exec}
+   */
+  execOpts?: TeenProcessExecOptions;
+
+  /**
+   * Extra options for {@linkcode spawnBackgroundProcess}
+   */
+  serveOpts?: SpawnBackgroundProcessOpts;
 }
 
 /**
@@ -107,50 +126,30 @@ export async function buildSite({
 }
 
 /**
- * Options for {@linkcode buildSite}.
+ * Runs `mkdocs serve`
+ * @param pythonPath Path to Python 3 executable
+ * @param args Extra args to `mkdocs build`
+ * @param opts Extra options for `teen_process.Subprocess.start`
+ * @param mkDocsPath Path to `mkdocs` executable
  */
-export interface BuildMkDocsOpts {
-  /**
-   * Path to `mkdocs.yml`
-   */
-  mkdocsYml?: string;
+async function doServe(
+  pythonPath: string,
+  args: string[] = [],
+  opts: SpawnBackgroundProcessOpts = {},
+) {
+  const finalArgs = ['-m', NAME_MKDOCS, 'serve', ...args];
+  log.debug('Executing %s via: %s, %O', NAME_MKDOCS, pythonPath, finalArgs);
+  return spawnBackgroundProcess(pythonPath, finalArgs, opts);
+}
 
-  /**
-   * Path to output directory
-   */
-  siteDir?: string;
-
-  /**
-   * MkDocs theme to use
-   * @defaultValue 'mkdocs'
-   */
-  theme?: string;
-
-  /**
-   * Current working directory
-   * @defaultValue `process.cwd()`
-   */
-  cwd?: string;
-
-  /**
-   * Path to `package.json`
-   *
-   * Used to find `mkdocs.yml` if unspecified.
-   */
-  packageJson?: string;
-
-  /**
-   * If `true`, run `mkdocs serve` instead of `mkdocs build`
-   */
-  serve?: boolean;
-
-  /**
-   * Extra options for {@linkcode teen_process.exec}
-   */
-  execOpts?: TeenProcessExecOptions;
-
-  /**
-   * Extra options for {@linkcode spawnBackgroundProcess}
-   */
-  serveOpts?: SpawnBackgroundProcessOpts;
+/**
+ * Runs `mkdocs build`
+ * @param pythonPath Path to Python 3 executable
+ * @param args Extra args to `mkdocs build`
+ * @param opts Extra options to `teen_process.exec`
+ */
+async function doBuild(pythonPath: string, args: string[] = [], opts: TeenProcessExecOptions = {}) {
+  const finalArgs = ['-m', NAME_MKDOCS, 'build', ...args];
+  log.debug('Executing %s via: %s, %O', NAME_MKDOCS, pythonPath, finalArgs);
+  return await execWithErrorHandling(pythonPath, finalArgs, opts);
 }

@@ -296,6 +296,7 @@ export interface IOtherProtocolCommands {
 
   /**
    * Remove a specific auth credential
+   * @see {@link https://www.w3.org/TR/webauthn-2/#sctn-automation-remove-credential}
    *
    * @param credentialId - the credential ID
    * @param authenticatorId - the authenticator ID
@@ -310,6 +311,39 @@ export interface IOtherProtocolCommands {
    * @param authenticatorId - the authenticator id
    */
   setUserAuthVerified?(isUserVerified: boolean, authenticatorId: string): Promise<void>;
+
+  /**
+   * Global Privacy Control (GPC)
+   */
+
+  /**
+   * Set the do-not-sell-or-share preference value
+   * @see {@link https://www.w3.org/TR/gpc/#set-global-privacy-control}
+   *
+   * @param gpc - the value to set for the preference
+   */
+  setGlobalPrivacyControl?(gpc: boolean): Promise<void>;
+
+  /**
+   * Get the do-not-sell-or-share preference value
+   * @see {@link https://www.w3.org/TR/gpc/#get-global-privacy-control}
+   *
+   * @returns the value of the preference
+   */
+  getGlobalPrivacyControl?(): Promise<boolean>;
+
+  /**
+   * Storage Access
+   */
+
+  /**
+   * Set the storage access policy
+   * @see {@link https://privacycg.github.io/storage-access/#set-storage-access-command}
+   *
+   * @param blocked - whether storage access should be blocked
+   * @param origin - the origin for which to set the policy
+   */
+  setStorageAccess?(blocked: boolean, origin: string): Promise<void>;
 }
 
 // Permissions

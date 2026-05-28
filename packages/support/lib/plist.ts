@@ -1,9 +1,9 @@
-import xmlplist from 'plist';
+import {build as plistBuild, parse as plistParse} from 'plist';
 import bplistCreate from 'bplist-creator';
 import {parseFile, parseBuffer} from 'bplist-parser';
 import {fs} from './fs';
 import log from './logger';
-import _ from 'lodash';
+import {truncateString} from './util';
 
 const BPLIST_IDENTIFIER = {
   BUFFER: Buffer.from('bplist00'),
@@ -37,7 +37,7 @@ export async function parsePlistFile(
     return {};
   }
 
-  let obj: object = {};
+  let obj: object;
   let type = 'binary';
   try {
     const parsed = await parseFile(plist);
@@ -85,8 +85,8 @@ export async function updatePlistFile(
   } catch (err) {
     throw log.errorWithException(`Could not update plist: ${(err as Error).message}`);
   }
-  _.extend(obj, updatedFields);
-  const newPlist = binary ? bplistCreate(obj) : xmlplist.build(obj);
+  Object.assign(obj as Record<string, unknown>, updatedFields);
+  const newPlist = binary ? bplistCreate(obj) : plistBuild(obj);
   try {
     await fs.writeFile(plist, newPlist);
   } catch (err) {
@@ -128,20 +128,20 @@ export function createPlist(object: object, binary = false): Buffer | string {
   if (binary) {
     return createBinaryPlist(object);
   }
-  return xmlplist.build(object);
+  return plistBuild(object);
 }
 
 /**
  * Parses a buffer or string into a JS object
  *
- * @param data - The plist as a string or Buffer
+ * @param data - The plist as a string, Buffer, Uint8Array, or ArrayBuffer
  * @returns Parsed plist as a JS object
  * @throws Will throw an error if the plist type is unknown
  */
-export function parsePlist(data: string | Buffer): object {
+export function parsePlist(data: string | Buffer | Uint8Array | ArrayBuffer): object {
   const textPlist = getXmlPlist(data);
   if (textPlist) {
-    return xmlplist.parse(textPlist);
+    return plistParse(textPlist);
   }
 
   const binaryPlist = getBinaryPlist(data);
@@ -150,38 +150,53 @@ export function parsePlist(data: string | Buffer): object {
   }
 
   throw new Error(
-    `Unknown type of plist, data: ${_.truncate(data.toString(), {length: 200})}`
+    `Unknown type of plist, data: ${truncateString(data.toString(), {length: 200})}`
   );
 }
 
 async function parseXmlPlistFile(plistFilename: string): Promise<object> {
   const xmlContent = await fs.readFile(plistFilename, 'utf8');
-  return xmlplist.parse(xmlContent);
+  return plistParse(xmlContent);
 }
 
-function getXmlPlist(data: string | Buffer): string | null {
-  if (_.isString(data) && data.startsWith(PLIST_IDENTIFIER.TEXT)) {
+function getXmlPlist(data: string | Buffer | Uint8Array | ArrayBuffer): string | null {
+  if (typeof data === 'string' && data.startsWith(PLIST_IDENTIFIER.TEXT)) {
     return data;
   }
+  const binaryData = toBufferIfBinaryLike(data);
   if (
-    Buffer.isBuffer(data) &&
-    PLIST_IDENTIFIER.BUFFER.compare(data, 0, PLIST_IDENTIFIER.BUFFER.length) === 0
+    binaryData &&
+    PLIST_IDENTIFIER.BUFFER.compare(binaryData, 0, PLIST_IDENTIFIER.BUFFER.length) === 0
   ) {
-    return data.toString();
+    return binaryData.toString();
   }
   return null;
 }
 
-function getBinaryPlist(data: string | Buffer): Buffer | null {
-  if (_.isString(data) && data.startsWith(BPLIST_IDENTIFIER.TEXT)) {
+function getBinaryPlist(data: string | Buffer | Uint8Array | ArrayBuffer): Buffer | null {
+  if (typeof data === 'string' && data.startsWith(BPLIST_IDENTIFIER.TEXT)) {
     return Buffer.from(data);
   }
 
+  const binaryData = toBufferIfBinaryLike(data);
   if (
-    Buffer.isBuffer(data) &&
-    BPLIST_IDENTIFIER.BUFFER.compare(data, 0, BPLIST_IDENTIFIER.BUFFER.length) === 0
+    binaryData &&
+    BPLIST_IDENTIFIER.BUFFER.compare(binaryData, 0, BPLIST_IDENTIFIER.BUFFER.length) === 0
   ) {
+    return binaryData;
+  }
+  return null;
+}
+
+function toBufferIfBinaryLike(data: unknown): Buffer | null {
+  if (Buffer.isBuffer(data)) {
     return data;
+  }
+  if (data instanceof Uint8Array) {
+    return Buffer.from(data.buffer, data.byteOffset, data.byteLength);
+  }
+  if (data instanceof ArrayBuffer) {
+    return Buffer.from(data);
   }
   return null;
 }

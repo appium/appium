@@ -38,7 +38,7 @@ describe('Routes', function () {
         }
       }
       const hash = shasum.digest('hex').substring(0, 8);
-      expect(hash).to.equal('510cbe79');
+      expect(hash).to.equal('60cf896b');
     });
   });
 

@@ -6,18 +6,17 @@ import type {
   BidiModuleMap,
   ExecuteMethodMap,
   ExternalDriver,
+  IpcMessage,
   MethodMap,
+  IIpcSubscription,
 } from '@appium/types';
 
 /** Driver as seen by this plugin; may include plugin-specific session data */
 export type DriverLike = ExternalDriver & {fakeSessionData?: unknown};
 
-export class FakePlugin extends BasePlugin {
-  private readonly fakeThing: string;
-  private pluginThing: unknown = null;
-  protected _clockRunning: boolean = true;
-  private static _unexpectedData: string | null = null;
+type ClockStatus = {running: boolean};
 
+export class FakePlugin extends BasePlugin {
   static newMethodMap: MethodMap<FakePlugin> = {
     '/session/:sessionId/fake_data': {
       GET: {command: 'getFakeSessionData', neverProxy: true},
@@ -66,12 +65,22 @@ export class FakePlugin extends BasePlugin {
       command: 'plugMeIn',
       params: {required: ['socket']},
     },
+    'fake: getFakeDriverClockStatus': {
+      command: 'getFakeDriverClockStatus',
+    },
   };
+
+  private static _unexpectedData: string | null = null;
+  protected _clockRunning: boolean = true;
+  private readonly fakeThing: string;
+  private pluginThing: unknown = null;
+  private fakeDriverClockIsRunning: boolean = false;
+  private ipcPluginMath: IIpcSubscription<number>;
 
   constructor(name: string, cliArgs: Record<string, unknown> = {}) {
     super(name, cliArgs);
     this.fakeThing = 'PLUGIN_FAKE_THING';
-    this.startClock();
+    void this.startClock();
   }
 
   static fakeRoute(_req: Request, res: Response): void {
@@ -93,6 +102,20 @@ export class FakePlugin extends BasePlugin {
     expressApp.all('/cliArgs', (req, res) => {
       res.send(JSON.stringify(cliArgs));
     });
+  }
+
+  async onIpcInit() {
+    const clockSub = this.ipcSubscribe<ClockStatus>('clockLifecycle');
+    clockSub.on('message', (message: IpcMessage<ClockStatus>) => {
+      this.fakeDriverClockIsRunning = message.data.running;
+    });
+    // subscribing to clockLifecycle doesn't tell us the current status if it started before this
+    // constructor was called, so retrieve it
+    const message = clockSub.getMessage();
+    if (message) {
+      this.fakeDriverClockIsRunning = message.data.running;
+    }
+    this.ipcPluginMath = this.ipcSubscribe<number>('pluginMath');
   }
 
   async startClock(): Promise<void> {
@@ -122,7 +145,11 @@ export class FakePlugin extends BasePlugin {
     num2: number
   ): Promise<number> {
     await sleep(1);
-    return num1 * num2;
+    const result = num1 * num2;
+    if (this.ipcPluginMath) {
+      await this.ipcPluginMath.publish(result);
+    }
+    return result;
   }
 
   async getFakeThing(): Promise<string> {
@@ -158,6 +185,10 @@ export class FakePlugin extends BasePlugin {
   async getFakePluginArgs(): Promise<Record<string, unknown>> {
     await sleep(1);
     return this.cliArgs;
+  }
+
+  async getFakeDriverClockStatus(): Promise<boolean> {
+    return this.fakeDriverClockIsRunning;
   }
 
   async getPageSource(

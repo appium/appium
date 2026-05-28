@@ -1,6 +1,6 @@
 {
   "name": "@appium/driver-test-support",
-  "version": "1.1.0",
+  "version": "1.2.2",
   "description": "Test utilities for Appium drivers",
   "keywords": [
     "automation",
@@ -39,17 +39,17 @@
   },
   "types": "./build/lib/index.d.ts",
   "dependencies": {
-    "asyncbox": "6.1.0",
-    "axios": "1.13.6",
+    "asyncbox": "6.3.0",
+    "axios": "1.16.1",
     "chai": "6.2.2",
     "chai-as-promised": "8.0.2",
-    "get-port": "7.1.0",
-    "lodash": "4.17.23",
-    "sinon": "21.0.2",
-    "type-fest": "5.4.4"
+    "get-port": "7.2.0",
+    "lodash": "4.18.1",
+    "sinon": "22.0.0",
+    "type-fest": "5.6.0"
   },
   "devDependencies": {
-    "@appium/types": "^1.2.1"
+    "@appium/types": "1.4.0"
   },
   "peerDependencies": {
     "appium": "^3.0.0-beta.0",

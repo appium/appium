@@ -87,7 +87,7 @@ export interface PluginMethodDef<T extends Plugin> extends BaseMethodDef {
   /**
    * Name of the command.
    */
-  readonly command?: keyof ConditionalPick<Required<T>, DriverCommand>;
+  readonly command?: keyof ConditionalPick<Required<T>, PluginCommand>;
 }
 
 /**

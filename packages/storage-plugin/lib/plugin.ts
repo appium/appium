@@ -1,7 +1,6 @@
 import { BasePlugin } from 'appium/plugin';
 import { requireValidItemOptions, Storage, StorageArgumentError } from './storage';
-import _ from 'lodash';
-import { tempDir, fs, logger } from '@appium/support';
+import { tempDir, fs, logger, util } from '@appium/support';
 import type {AddRequestResult, ItemOptions, StorageItem} from './types';
 import type {Express, Request, Response} from 'express';
 import type {AppiumServer} from '@appium/types';
@@ -35,7 +34,7 @@ export class StoragePlugin extends BasePlugin {
         [status, body] = getResponseForW3CError(e);
       }
       log.debug(
-        `Responding to ${methodName} with ${_.truncate(JSON.stringify(body.value), {length: 200})}`
+        `Responding to ${methodName} with ${util.truncateString(JSON.stringify(body.value), {length: 200})}`
       );
       res.set('content-type', 'application/json; charset=utf-8');
       res.status(status).send(body);
@@ -54,7 +53,7 @@ STORAGE_HANDLERS.addStorageItem = async function addStorageItem(
   const itemOptions = requireValidItemOptions(
     parseRequestArgs(req, ['name', 'sha1']) as ItemOptions
   );
-  const [stream, events] = prepareWebSockets(httpServer, itemOptions);
+  const [stream, events] = await prepareWebSockets(httpServer, itemOptions);
   return {
     ws: {
       stream,
@@ -88,11 +87,11 @@ async function executeStorageMethod<T>(method: (storage: Storage) => Promise<T>)
 }
 
 function parseRequestArgs(req: Request, requiredKeys: string[]): Record<string, any> {
-  if (!_.isPlainObject(req.body)) {
+  if (!util.isPlainObject(req.body)) {
     throw new StorageArgumentError(`The request body must be a valid JSON object`);
   }
   for (const key of requiredKeys) {
-    if (!_.keys(req.body).includes(key)) {
+    if (!Object.hasOwn(req.body, key)) {
       throw new StorageArgumentError(
         `The required argument '${key}' is missing (expected ${JSON.stringify(requiredKeys)})`
       );
@@ -101,11 +100,11 @@ function parseRequestArgs(req: Request, requiredKeys: string[]): Record<string, 
   return req.body;
 }
 
-function prepareWebSockets(httpServer: AppiumServer, itemOptions: ItemOptions): [string, string] {
+async function prepareWebSockets(httpServer: AppiumServer, itemOptions: ItemOptions): Promise<[string, string]> {
   const commonPathname = `${STORAGE_PREFIX}/add/${itemOptions.sha1}`;
   const streamPathname = `${commonPathname}/stream`;
   const eventsPathname = `${commonPathname}/events`;
-  if (!_.isEmpty(httpServer.getWebSocketHandlers(streamPathname))) {
+  if (!util.isEmpty(httpServer.getWebSocketHandlers(streamPathname))) {
     return [streamPathname, eventsPathname];
   }
 
@@ -118,8 +117,8 @@ function prepareWebSockets(httpServer: AppiumServer, itemOptions: ItemOptions): 
   const signaler = new EventEmitter();
   const streamDoneCallback = () => {
     log.debug(`Unmounting stream and events web sockets at ${commonPathname}`);
-    httpServer.removeWebSocketHandler(streamPathname);
-    httpServer.removeWebSocketHandler(eventsPathname);
+    void httpServer.removeWebSocketHandler(streamPathname);
+    void httpServer.removeWebSocketHandler(eventsPathname);
     setTimeout(() => {
       streamServer.close();
       eventsServer.close();
@@ -159,13 +158,15 @@ function prepareWebSockets(httpServer: AppiumServer, itemOptions: ItemOptions): 
   streamServer.on('error', (e) => {
     log.info(`The ${streamPathname} web socket server has notified about an error: ${e.message}`);
   });
-  httpServer.addWebSocketHandler(streamPathname, streamServer);
-  httpServer.addWebSocketHandler(eventsPathname, eventsServer);
+  await Promise.all([
+    httpServer.addWebSocketHandler(streamPathname, streamServer),
+    httpServer.addWebSocketHandler(eventsPathname, eventsServer),
+  ]);
 
   return [streamPathname, eventsPathname];
 }
 
-const getStorageSingleton = _.memoize(async () => {
+const getStorageSingleton = util.memoize(async () => {
   let storageRoot: string;
   let shouldPreserveRoot = false;
   let shouldPreserveFiles = false;
@@ -178,7 +179,9 @@ const getStorageSingleton = _.memoize(async () => {
     log.info(`Created '${storageRoot}' as the temporary server storage root folder`);
   }
   if (process.env.APPIUM_STORAGE_KEEP_ALL) {
-    shouldPreserveFiles = ['true', '1', 'yes'].includes(_.toLower(process.env.APPIUM_STORAGE_KEEP_ALL));
+    shouldPreserveFiles = ['true', '1', 'yes'].includes(
+      (process.env.APPIUM_STORAGE_KEEP_ALL ?? '').toLowerCase()
+    );
   }
   if (shouldPreserveFiles) {
     log.info(`All server storage items will be always preserved unless deleted explicitly`);

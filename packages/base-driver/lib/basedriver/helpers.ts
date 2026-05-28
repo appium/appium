@@ -5,7 +5,6 @@ import {tempDir, fs, util, timing, node} from '@appium/support';
 import {LRUCache} from 'lru-cache';
 import AsyncLock from 'async-lock';
 import axios from 'axios';
-import B from 'bluebird';
 import type {
   ConfigureAppOptions,
   CachedAppInfo,
@@ -36,7 +35,7 @@ const APPLICATIONS_CACHE = new LRUCache<string, CachedAppInfoEntry>({
         `expired after ${CACHED_APPS_MAX_AGE_MS}ms`
     );
     if (fullPath) {
-      fs.rimraf(fullPath);
+      void fs.rimraf(fullPath);
     }
   },
   noDisposeOnSet: true,
@@ -66,6 +65,25 @@ process.on('exit', () => {
     }
   }
 });
+
+interface RemoteAppProps {
+  lastModified: Date | null;
+  immutable: boolean;
+  maxAge: number | null;
+  etag: string | null;
+}
+
+interface RemoteAppData {
+  status: number;
+  stream: Readable;
+  headers: AxiosResponseHeaders | RawAxiosRequestHeaders;
+}
+
+/** Cache value we store (extends CachedAppInfo with optional packageHash) */
+interface CachedAppInfoEntry extends Omit<CachedAppInfo, 'packageHash'> {
+  packageHash?: string | null;
+  fullPath?: string;
+}
 
 /**
  * Performs initial application package configuration so the app is ready for driver use.
@@ -335,7 +353,7 @@ export function parseCapsArray(capValue: string | string[]): string[] {
   } catch (e) {
     const message = `Failed to parse capability as JSON array: ${(e as Error).message}`;
     if (_.isString(capValue) && _.startsWith(_.trimStart(capValue), '[')) {
-      throw new TypeError(message);
+      throw new TypeError(message, {cause: e});
     }
     logger.warn(message);
   }
@@ -361,19 +379,7 @@ export function generateDriverLogPrefix(obj: object | null, _sessionId?: string 
   return `${obj.constructor.name}@${node.getObjectId(obj).substring(0, 4)}`;
 }
 
-// #region Private types and helpers
-interface RemoteAppProps {
-  lastModified: Date | null;
-  immutable: boolean;
-  maxAge: number | null;
-  etag: string | null;
-}
-
-interface RemoteAppData {
-  status: number;
-  stream: Readable;
-  headers: AxiosResponseHeaders | RawAxiosRequestHeaders;
-}
+// #region Private helpers
 
 function parseAppLink(appLink: string): URL | {protocol?: string; pathname?: string; href?: string; search?: string} {
   try {
@@ -446,7 +452,10 @@ async function queryAppLink(appLink: string, reqHeaders: RawAxiosRequestHeaders)
     const {data: stream, headers, status} = await axios(requestOpts);
     return {stream, headers, status};
   } catch (err) {
-    throw new Error(`Cannot download the app from ${axiosUrl}: ${(err as Error).message}`);
+    throw new Error(
+      `Cannot download the app from ${axiosUrl}: ${(err as Error).message}`,
+      {cause: err}
+    );
   }
 }
 
@@ -456,7 +465,7 @@ async function fetchApp(srcStream: Readable, dstPath: string): Promise<string> {
     const writer = fs.createWriteStream(dstPath);
     srcStream.pipe(writer);
 
-    await new B<void>((resolve, reject) => {
+    await new Promise<void>((resolve, reject) => {
       srcStream.once('error', reject);
       writer.once('finish', () => resolve());
       writer.once('error', (e: Error) => {
@@ -465,7 +474,7 @@ async function fetchApp(srcStream: Readable, dstPath: string): Promise<string> {
       });
     });
   } catch (err) {
-    throw new Error(`Cannot fetch the application: ${(err as Error).message}`);
+    throw new Error(`Cannot fetch the application: ${(err as Error).message}`, {cause: err});
   }
 
   const secondsElapsed = timer.getDuration().asSeconds;
@@ -561,13 +570,6 @@ function toNaturalNumber(defaultValue: number, envVarName?: string): number {
   const num = parseInt(`${process.env[envVarName]}`, 10);
   return num > 0 ? num : defaultValue;
 }
-
-/** Cache value we store (extends CachedAppInfo with optional packageHash) */
-interface CachedAppInfoEntry extends Omit<CachedAppInfo, 'packageHash'> {
-  packageHash?: string | null;
-  fullPath?: string;
-}
-// #endregion
 
 export default {
   configureApp,

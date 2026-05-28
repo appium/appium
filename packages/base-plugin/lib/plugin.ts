@@ -8,6 +8,7 @@ import type {
   Constraints,
   Driver,
   ExecuteMethodMap,
+  ExternalDriver,
   MethodMap,
   NextPluginCallback,
   Plugin,
@@ -15,12 +16,18 @@ import type {
   StringRecord,
 } from '@appium/types';
 
+type BasePluginMapType = Plugin & Record<string, PluginCommand>;
+
 /**
  * Base plugin class for Appium plugins.
  * Subclasses should use type `import('@appium/types').MethodMap<SubclassName>` for
  * `newMethodMap` and `ExecuteMethodMap<SubclassName>` for `executeMethodMap`.
  */
 export class BasePlugin extends ExtensionCore implements Plugin {
+  static newMethodMap: MethodMap<BasePluginMapType> = {};
+
+  static executeMethodMap: ExecuteMethodMap<BasePluginMapType> = {};
+
   name: string;
   cliArgs: Record<string, unknown>;
 
@@ -28,10 +35,6 @@ export class BasePlugin extends ExtensionCore implements Plugin {
    * @deprecated Use this.log instead of this.logger
    */
   declare logger: AppiumLogger;
-
-  static newMethodMap: MethodMap<BasePlugin> = {};
-
-  static executeMethodMap: ExecuteMethodMap<BasePlugin> = {};
 
   constructor(
     name: string,
@@ -69,7 +72,7 @@ export class BasePlugin extends ExtensionCore implements Plugin {
 
     const command = this[
       commandMetadata.command as keyof this
-    ] as PluginCommand<Driver<C>>;
+    ] as PluginCommand<ExternalDriver<C>>;
     const args = validateExecuteMethodParams(
       protoArgs as unknown[],
       commandMetadata.params

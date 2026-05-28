@@ -3,6 +3,7 @@ import vm from 'node:vm';
 import {promisify} from 'node:util';
 import {logger, util} from 'appium/support';
 import type {DriverScriptMessageEvent, ScriptResult, RunScriptResult} from './types';
+import {wrapHostBindingForVmContext} from './vm-host-binding';
 
 const log = logger.getLogger('ExecuteDriver Child');
 let send: (res: ScriptResult) => Promise<void>;
@@ -33,24 +34,34 @@ async function runScript(eventParams: DriverScriptMessageEvent): Promise<RunScri
     log: [],
   };
   const consoleFns: {error: (...args: any[]) => void; warn: (...args: any[]) => void; log: (...args: any[]) => void} = {
-    error: (...logMsgs) => logs.error.push(...logMsgs),
-    warn: (...logMsgs) => logs.warn.push(...logMsgs),
-    log: (...logMsgs) => logs.log.push(...logMsgs),
+    error: wrapHostBindingForVmContext((...logMsgs) => logs.error.push(...logMsgs)),
+    warn: wrapHostBindingForVmContext((...logMsgs) => logs.warn.push(...logMsgs)),
+    log: wrapHostBindingForVmContext((...logMsgs) => logs.log.push(...logMsgs)),
   };
 
   const {attach} = await import('webdriverio');
 
   const driver = await attach(driverOpts);
+  const sandboxDriver = wrapHostBindingForVmContext(driver);
+  const sandboxConsole = wrapHostBindingForVmContext(consoleFns);
+  const sandboxSetTimeout = wrapHostBindingForVmContext(setTimeout);
+  const sandboxClearTimeout = wrapHostBindingForVmContext(clearTimeout);
 
   const fullScript = `(async () => {${script}})();`;
 
   log.info('Running driver script in Node vm');
 
   // run the driver script, giving user access to the driver object, a fake console logger,
-  // and standard setTimeout/clearTimeout functions
+  // and standard setTimeout/clearTimeout functions. Each host value is proxied so
+  // main-realm prototype metadata cannot be used to obtain the host `Function` (VM escape).
   let result = await vm.runInNewContext(
     fullScript,
-    {driver, console: consoleFns, setTimeout, clearTimeout},
+    {
+      driver: sandboxDriver,
+      console: sandboxConsole,
+      setTimeout: sandboxSetTimeout,
+      clearTimeout: sandboxClearTimeout,
+    },
     {timeout: timeoutMs, breakOnSigint: true}
   );
 

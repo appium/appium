@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "rootDir": ".",
     "outDir": "build",
     "types": ["mocha", "chai", "chai-as-promised"]
   },

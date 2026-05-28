@@ -64,14 +64,16 @@ async function syncPackageJsonFields(rootPackageJson, packageDir) {
   copyFields(
     rootPackageJson,
     packageJson,
-    packageName === 'logger' ? LOGGER_COMMON_FIELDS : COMMON_FIELDS
+    packageName === 'logger' ? LOGGER_COMMON_FIELDS : COMMON_FIELDS,
   );
 
   if (!KEYWORD_EXCLUDED_PACKAGES.has(packageName)) {
     packageJson.keywords = rootPackageJson.keywords;
   }
 
-  log.debug(`Updating package.json for ${packageName} at ${packageJsonPath} with fields: ${JSON.stringify(Object.keys(packageJson))}`);
+  log.debug(
+    `Updating package.json for ${packageName} at ${packageJsonPath} with fields: ${JSON.stringify(Object.keys(packageJson))}`,
+  );
 
   await writeJson(packageJsonPath, packageJson);
 }
@@ -82,7 +84,9 @@ async function main() {
   const packageDirs = await getPackageDirs();
   log.debug(`Found ${packageDirs.length} package directories`);
 
-  await Promise.all(packageDirs.map((packageDir) => syncPackageJsonFields(rootPackageJson, packageDir)));
+  await Promise.all(
+    packageDirs.map((packageDir) => syncPackageJsonFields(rootPackageJson, packageDir)),
+  );
   await Promise.all(
     packageDirs
       .filter((packageDir) => !LICENSE_EXCLUDED_PACKAGES.has(path.basename(packageDir)))
@@ -90,7 +94,7 @@ async function main() {
         const licensePath = path.join(packageDir, 'LICENSE');
         log.debug(`Copying LICENSE to ${licensePath}`);
         return fs.copyFile(ROOT_LICENSE, licensePath);
-      })
+      }),
   );
   log.debug(`Copying README to ${APPIUM_PACKAGE_README}`);
   await fs.copyFile(ROOT_README, APPIUM_PACKAGE_README);

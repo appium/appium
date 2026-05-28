@@ -112,11 +112,10 @@ export function parseBinaryPlist(data: Buffer): object[] {
  * @param binary - Set it to true for a binary plist
  * @returns A buffer or a string depending on the binary parameter
  */
+export function createPlist(object: object, binary: true): Buffer;
+export function createPlist(object: object, binary?: false): string;
 export function createPlist(object: object, binary = false): Buffer | string {
-  if (binary) {
-    return createBinaryPlist(object);
-  }
-  return plistBuild(object);
+  return binary ? createBinaryPlist(object) : plistBuild(object);
 }
 
 /**
@@ -129,14 +128,14 @@ export function createPlist(object: object, binary = false): Buffer | string {
 export function parsePlist(data: string | Buffer | Uint8Array | ArrayBuffer): object {
   if (typeof data === 'string') {
     return data.startsWith(BPLIST_IDENTIFIER.TEXT)
-      ? parseBinaryPlist(Buffer.from(data))[0]
+      ? parseBinaryPlistRoot(Buffer.from(data))
       : plistParse(data);
   }
 
   const binaryLikeData = toBufferIfBinaryLike(data);
   if (binaryLikeData) {
     return BPLIST_IDENTIFIER.BUFFER.compare(binaryLikeData, 0, BPLIST_IDENTIFIER.BUFFER.length) === 0
-      ? parseBinaryPlist(binaryLikeData)[0]
+      ? parseBinaryPlistRoot(binaryLikeData)
       : plistParse(binaryLikeData.toString());
   }
 
@@ -154,4 +153,12 @@ function toBufferIfBinaryLike(data: unknown): Buffer | null {
     return Buffer.from(data);
   }
   return null;
+}
+
+function parseBinaryPlistRoot(data: Buffer): object {
+  const parsed = parseBinaryPlist(data);
+  if (!parsed.length) {
+    throw new Error(`Binary plist appears to be empty`);
+  }
+  return parsed[0];
 }

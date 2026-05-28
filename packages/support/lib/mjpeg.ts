@@ -31,7 +31,10 @@ async function initMJpegConsumer(): Promise<MJpegConsumerConstructor> {
 const MJPEG_SERVER_TIMEOUT_MS = 10000;
 const noop = () => {};
 
-/** Class which stores the last bit of data streamed into it */
+/**
+ * @deprecated MJPEG stream helpers in @appium/support are deprecated and will be removed in a future major version.
+ * Class which stores the last bit of data streamed into it.
+ */
 export class MJpegStream extends Writable {
   readonly errorHandler: (err: Error) => void;
   readonly url: string;

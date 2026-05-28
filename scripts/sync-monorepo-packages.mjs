@@ -11,8 +11,8 @@ const ROOT_LICENSE = path.join(ROOT_DIR, 'LICENSE');
 const ROOT_README = path.join(ROOT_DIR, 'README.md');
 const APPIUM_PACKAGE_README = path.join(ROOT_PACKAGES_DIR, 'appium', 'README.md');
 
-const COMMON_FIELDS = ['author', 'license', 'bugs', 'homepage'];
-const LOGGER_COMMON_FIELDS = ['author', 'bugs', 'homepage'];
+const COMMON_FIELDS_TO_COPY = ['author', 'license', 'bugs', 'homepage'];
+const LOGGER_COMMON_FIELDS_TO_COPY = ['author', 'bugs', 'homepage'];
 
 const KEYWORD_EXCLUDED_PACKAGES = new Set(['eslint-config-appium-ts', 'types']);
 // Package names in this set will not receive the LICENSE file from the root,
@@ -64,7 +64,7 @@ async function syncPackageJsonFields(rootPackageJson, packageDir) {
   copyFields(
     rootPackageJson,
     packageJson,
-    packageName === 'logger' ? LOGGER_COMMON_FIELDS : COMMON_FIELDS,
+    packageName === 'logger' ? LOGGER_COMMON_FIELDS_TO_COPY : COMMON_FIELDS_TO_COPY,
   );
 
   if (!KEYWORD_EXCLUDED_PACKAGES.has(packageName)) {

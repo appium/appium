@@ -154,7 +154,7 @@ async function main(eventParams: DriverScriptMessageEvent): Promise<void> {
 
 // ensure we're running this script in IPC mode
 if (require.main === module && typeof process.send === 'function') {
-  send = promisify(process.send).bind(process);
+  send = promisify(process.send).bind(process) as (res: ScriptResult) => Promise<void>;
   log.info('Running driver execution in child process');
   process.on('message', main);
 }

@@ -1,7 +1,6 @@
-import _ from 'lodash';
 import vm from 'node:vm';
 import {promisify} from 'node:util';
-import {logger, util} from 'appium/support';
+import {logger, util} from '@appium/support';
 import type {DriverScriptMessageEvent, ScriptResult, RunScriptResult} from './types';
 import {wrapHostBindingForVmContext} from './vm-host-binding';
 
@@ -21,7 +20,7 @@ export const MJSONWP_ELEMENT_KEY = 'ELEMENT';
  */
 async function runScript(eventParams: DriverScriptMessageEvent): Promise<RunScriptResult> {
   const {driverOpts, script, timeoutMs} = eventParams;
-  if (!_.isNumber(timeoutMs)) {
+  if (typeof timeoutMs !== 'number' || Number.isNaN(timeoutMs)) {
     throw new TypeError('Timeout parameter must be a number');
   }
 
@@ -95,7 +94,7 @@ function coerceScriptResult(obj: any): any {
   let res: any;
 
   // now we begin our recursive case options
-  if (_.isPlainObject(obj)) {
+  if (util.isPlainObject(obj)) {
     // if we have an object, it's either an element object or something else
     // webdriverio has no monadic object types other than element and driver,
     // and we don't want to allow special casing return of driver
@@ -125,7 +124,7 @@ function coerceScriptResult(obj: any): any {
   }
 
   // also handle arrays
-  if (_.isArray(obj)) {
+  if (Array.isArray(obj)) {
     return obj.map(coerceScriptResult);
   }
 
@@ -154,7 +153,7 @@ async function main(eventParams: DriverScriptMessageEvent): Promise<void> {
 }
 
 // ensure we're running this script in IPC mode
-if (require.main === module && _.isFunction(process.send)) {
+if (require.main === module && typeof process.send === 'function') {
   send = promisify(process.send).bind(process);
   log.info('Running driver execution in child process');
   process.on('message', main);

@@ -1,7 +1,6 @@
 import {expect} from 'chai';
 import {errors, errorFromMJSONWPStatusCode, errorFromW3CJsonCode, isErrorType} from '../../../lib';
 import {BadParametersError, getResponseForW3CError} from '../../../lib/protocol/errors';
-import _ from 'lodash';
 import {StatusCodes as HTTPStatusCodes} from 'http-status-codes';
 import path from 'node:path';
 
@@ -77,7 +76,7 @@ describe('errorFromMJSONWPStatusCode', function () {
         if (error.errorCode) {
           expect(errorFromMJSONWPStatusCode(error.errorCode)).to.have.property('jsonwpCode', error.errorCode);
           expect(errorFromMJSONWPStatusCode(error.errorCode)).to.have.property('message', error.errorMsg);
-          if (!_.includes([13, 33], error.errorCode)) {
+          if (![13, 33].includes(error.errorCode)) {
             expect(errorFromMJSONWPStatusCode(error.errorCode, 'abcd')).to.have.property('jsonwpCode', error.errorCode);
             expect(errorFromMJSONWPStatusCode(error.errorCode, 'abcd')).to.have.property('message', 'abcd');
           }

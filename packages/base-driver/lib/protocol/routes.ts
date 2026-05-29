@@ -1,5 +1,5 @@
 import type {Driver, DriverMethodDef, HTTPMethod, MethodMap} from '@appium/types';
-import _ from 'lodash';
+import {util} from '@appium/support';
 import {DEFAULT_BASE_PATH} from '../constants';
 import {match} from 'path-to-regexp';
 import {LRUCache} from 'lru-cache';
@@ -579,9 +579,9 @@ export const METHOD_MAP = {
 } as const satisfies MethodMap<Driver>;
 
 // driver command names
-export const ALL_COMMANDS = _.flatMap(_.values(METHOD_MAP).map(_.values))
-  .filter((m) => Boolean(m.command))
-  .map((m) => m.command);
+export const ALL_COMMANDS = Object.values(METHOD_MAP)
+  .flatMap((methods) => Object.values(methods) as Array<{command?: string}>)
+  .flatMap((m) => (m.command ? [m.command] : []));
 
 /**
  * Resolve a WebDriver URL path and HTTP method to a driver command name from {@link METHOD_MAP}.
@@ -596,9 +596,9 @@ export function routeToCommandName(
 ): string | undefined {
   const resolvedBasePath = basePath ?? DEFAULT_BASE_PATH;
   let normalizedEndpoint = resolvedBasePath
-    ? endpoint.replace(new RegExp(`^${_.escapeRegExp(resolvedBasePath)}`), '')
+    ? endpoint.replace(new RegExp(`^${util.escapeRegExp(resolvedBasePath)}`), '')
     : endpoint;
-  normalizedEndpoint = `${_.startsWith(normalizedEndpoint, '/') ? '' : '/'}${normalizedEndpoint}`;
+  normalizedEndpoint = `${normalizedEndpoint.startsWith('/') ? '' : '/'}${normalizedEndpoint}`;
   let normalizedPathname: string;
   try {
     // we could use any prefix there as we anyway need to only extract the pathname
@@ -608,7 +608,7 @@ export function routeToCommandName(
     throw new Error(`'${endpoint}' cannot be translated to a command name: ${msg}`, {cause: err});
   }
 
-  const normalizedMethod = _.toUpper(method ?? '');
+  const normalizedMethod = (method ?? '').toUpperCase();
   const cacheKey = toCommandNameCacheKey(normalizedPathname, normalizedMethod);
   const cached = COMMAND_NAMES_CACHE.get(cacheKey);
   if (cached !== undefined) {
@@ -620,12 +620,12 @@ export function routeToCommandName(
     possiblePathnames.push(`/session/any-session-id${normalizedPathname}`);
   }
   possiblePathnames.push(normalizedPathname);
-  for (const [routePath, routeSpec] of _.toPairs(METHOD_MAP)) {
+  for (const [routePath, routeSpec] of Object.entries(METHOD_MAP)) {
     const routeMatcher = match(routePath);
     if (possiblePathnames.some((pp) => routeMatcher(pp))) {
       const spec = routeSpec as Record<string, DriverMethodDef<Driver>>;
       const commandForAnyMethod = () =>
-        _.first(_.keys(spec).map((key) => spec[key]?.command));
+        Object.keys(spec).map((key) => spec[key]?.command)[0];
       const commandName = normalizedMethod ? spec[normalizedMethod]?.command : commandForAnyMethod();
       if (commandName) {
         COMMAND_NAMES_CACHE.set(cacheKey, commandName);

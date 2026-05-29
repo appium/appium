@@ -12,7 +12,7 @@ import type {
   StringRecord,
 } from '@appium/types';
 import AsyncLock from 'async-lock';
-import _ from 'lodash';
+import {util} from '@appium/support';
 import os from 'node:os';
 import {
   DEFAULT_BASE_PATH,
@@ -116,7 +116,7 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
     this.shouldValidateCaps = shouldValidateCaps;
 
     // keeping track of initial opts
-    this.initialOpts = _.cloneDeep(opts);
+    this.initialOpts = structuredClone(opts);
 
     this.sessionId = null;
     this.helpers = helpers;
@@ -166,7 +166,7 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
    * inadvertently change data outside of logEvent
    */
   get eventHistory() {
-    return _.cloneDeep(this._eventHistory);
+    return structuredClone(this._eventHistory);
   }
 
   /**
@@ -263,7 +263,7 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
   isFeatureEnabled(name: string): boolean {
     // automationName comparison is case-insensitive,
     // while feature name is case-sensitive
-    const currentAutomationName = _.toLower(this.opts.automationName);
+    const currentAutomationName = String(this.opts.automationName).toLowerCase();
 
     const parseFullName = (fullName: string) => {
       const separatorPos = fullName.indexOf(FEATURE_NAME_SEPARATOR);
@@ -279,7 +279,7 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
         );
       }
       return [
-        _.toLower(fullName.substring(0, separatorPos)),
+        fullName.substring(0, separatorPos).toLowerCase(),
         fullName.substring(separatorPos + 1)
       ];
     };
@@ -288,12 +288,12 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
       [currentAutomationName, ALL_DRIVERS_MATCH].includes(automationName) && featureName === name;
 
     // if we have explicitly denied this feature, return false immediately
-    if (!_.isEmpty(this.denyInsecure) && parseFullNames(this.denyInsecure).some(matches)) {
+    if (!util.isEmpty(this.denyInsecure) && parseFullNames(this.denyInsecure).some(matches)) {
       return false;
     }
 
     // if we specifically have allowed the feature, return true
-    if (!_.isEmpty(this.allowInsecure) && parseFullNames(this.allowInsecure).some(matches)) {
+    if (!util.isEmpty(this.allowInsecure) && parseFullNames(this.allowInsecure).some(matches)) {
       return true;
     }
 
@@ -332,7 +332,7 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
       validStrategies = validStrategies.concat(this.webLocatorStrategies);
     }
 
-    if (!_.includes(validStrategies, strategy)) {
+    if (!validStrategies.includes(strategy)) {
       throw new errors.InvalidSelectorError(
         `Locator Strategy '${strategy}' is not supported for this session`,
       );
@@ -370,17 +370,17 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   proxyRouteIsAvoided(sessionId: string, method: HTTPMethod, url: string, body?: any): boolean {
     for (const avoidSchema of this.getProxyAvoidList(sessionId)) {
-      if (!_.isArray(avoidSchema) || avoidSchema.length !== 2) {
+      if (!Array.isArray(avoidSchema) || avoidSchema.length !== 2) {
         throw new Error('Proxy avoidance must be a list of pairs');
       }
       const [avoidMethod, avoidPathRegex] = avoidSchema;
-      if (!_.includes(['GET', 'POST', 'DELETE'], avoidMethod)) {
+      if (!['GET', 'POST', 'DELETE'].includes(avoidMethod)) {
         throw new Error(`Unrecognized proxy avoidance method '${avoidMethod}'`);
       }
-      if (!_.isRegExp(avoidPathRegex)) {
+      if (!(avoidPathRegex instanceof RegExp)) {
         throw new Error('Proxy avoidance path must be a regular expression');
       }
-      const normalizedUrl = url.replace(new RegExp(`^${_.escapeRegExp(this.basePath)}`), '');
+      const normalizedUrl = url.replace(new RegExp(`^${util.escapeRegExp(this.basePath)}`), '');
       if (avoidMethod === method && avoidPathRegex.test(normalizedUrl)) {
         return true;
       }

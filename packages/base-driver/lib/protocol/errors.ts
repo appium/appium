@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {util, logger} from '@appium/support';
 import {StatusCodes as HTTPStatusCodes} from 'http-status-codes';
 import type {ErrorBiDiCommandResponse, Class} from '@appium/types';
@@ -22,13 +21,13 @@ class BaseError extends Error {
 
   private _formatStack(): void {
     // eslint-disable-next-line no-prototype-builtins
-    if (Error.hasOwnProperty('captureStackTrace') && _.isEmpty(this.stack)) {
+    if (Error.hasOwnProperty('captureStackTrace') && util.isEmpty(this.stack)) {
       Error.captureStackTrace(this, this.constructor);
     }
-    if (!_.isString(this.cause?.stack)) {
+    if (typeof this.cause?.stack !== 'string') {
       return;
     }
-    if (_.isEmpty(this.stack)) {
+    if (util.isEmpty(this.stack)) {
       this.stack = this.cause.stack;
       return;
     }
@@ -77,7 +76,7 @@ export class ProtocolError extends BaseError {
   bidiErrObject(id: string | number): ErrorBiDiCommandResponse {
     // if we don't have an id, the client didn't send one, so we have nothing to send back.
     // send back zero rather than making something up
-    const intId = (_.isInteger(id) ? id : (parseInt(`${id}`, 10) || 0)) as number;
+    const intId = (Number.isInteger(id) ? id : (parseInt(`${id}`, 10) || 0)) as number;
     return {
       id: intId,
       type: 'error',
@@ -957,30 +956,30 @@ export class ProxyRequestError extends BaseError {
   ) {
     const [responseErrorObj, originalMessage] = ProxyRequestError._parseHttpResponse(httpResponseData);
     super(
-      _.isEmpty(message)
+      util.isEmpty(message)
         ? `Proxy request unsuccessful.${originalMessage ? (' ' + originalMessage) : ''}`
         : message,
       cause,
     );
 
     // If the response error is an object and value is an object, it's a W3C error (for JSONWP value is a string)
-    if (_.isPlainObject(responseErrorObj.value) && _.has(responseErrorObj.value, 'error')) {
-      this._w3cError = responseErrorObj.value;
+    if (util.isPlainObject(responseErrorObj.value) && Object.hasOwn(responseErrorObj.value, 'error')) {
+      this._w3cError = responseErrorObj.value as unknown as typeof this._w3cError;
       this._w3cErrorStatus = httpStatus;
-    } else if (_.has(responseErrorObj, 'status')) {
-      this._jwpError = responseErrorObj;
+    } else if (Object.hasOwn(responseErrorObj, 'status')) {
+      this._jwpError = responseErrorObj as typeof this._jwpError;
     }
   }
 
   private static _parseHttpResponse(data: any): [Record<string, any>, string] {
     let responseErrorObj: Record<string, any> = util.safeJsonParse(data);
-    if (!_.isPlainObject(responseErrorObj)) {
+    if (!util.isPlainObject(responseErrorObj)) {
       responseErrorObj = {};
     }
-    let errorMessage: string = _.isString(data) ? data : '';
-    if (_.isString(responseErrorObj.value)) {
+    let errorMessage: string = typeof data === 'string' ? data : '';
+    if (typeof responseErrorObj.value === 'string') {
       errorMessage = responseErrorObj.value;
-    } else if (_.isString(responseErrorObj.value?.message)) {
+    } else if (typeof responseErrorObj.value?.message === 'string') {
       errorMessage = responseErrorObj.value.message;
     }
     return [responseErrorObj, errorMessage];
@@ -991,7 +990,7 @@ export class ProxyRequestError extends BaseError {
       // If it's MJSONWP error, returns actual error cause for request failure based on `jsonwp.status`
       return errorFromMJSONWPStatusCode(this._jwpError.status, this._jwpError.value);
     }
-    if (util.hasValue(this._w3cError) && _.isNumber(this._w3cErrorStatus) && this._w3cErrorStatus >= 300) {
+    if (util.hasValue(this._w3cError) && typeof this._w3cErrorStatus === 'number' && this._w3cErrorStatus >= 300) {
       return errorFromW3CJsonCode(
         this._w3cError.error,
         this._w3cError.message || this.message,
@@ -1007,10 +1006,10 @@ function generateBadParametersMessage(
   paramNames: string[]
 ): string {
   const toArray = function <T> (x: T | T[]): T[] {
-    if (_.isUndefined(x)) {
+    if (x === undefined) {
       return [];
     }
-    if (_.isArray(x)) {
+    if (Array.isArray(x)) {
       return x;
     }
     return [x];
@@ -1018,26 +1017,28 @@ function generateBadParametersMessage(
 
   const requiredParamNames = toArray(paramRequirements.required);
   const actualParamNames = toArray(paramNames);
-  const missingRequiredParamNames = _.difference(requiredParamNames, actualParamNames);
+  const missingRequiredParamNames = requiredParamNames.filter((name) => !actualParamNames.includes(name));
   const resultLines: string[] = [];
   resultLines.push(
-    _.isEmpty(missingRequiredParamNames)
+    util.isEmpty(missingRequiredParamNames)
       ? // This should not happen
         'Some of the provided parameters are not known'
       : `The following required parameter${
           missingRequiredParamNames.length === 1 ? ' is' : 's are'
         } missing: ${JSON.stringify(missingRequiredParamNames)}`,
   );
-  if (!_.isEmpty(requiredParamNames)) {
+  if (!util.isEmpty(requiredParamNames)) {
     resultLines.push(`Known required parameters are: ${JSON.stringify(requiredParamNames)}`);
   }
-  const optionalParamNames = _.difference(toArray(paramRequirements.optional), ['sessionId', 'id']);
-  if (!_.isEmpty(optionalParamNames)) {
+  const optionalParamNames = toArray(paramRequirements.optional).filter(
+    (name): name is string => typeof name === 'string' && !['sessionId', 'id'].includes(name)
+  );
+  if (!util.isEmpty(optionalParamNames)) {
     resultLines.push(`Known optional parameters are: ${JSON.stringify(optionalParamNames)}`);
   }
   resultLines.push(
     `You have provided${
-      _.isEmpty(actualParamNames) ? ' none' : ': ' + JSON.stringify(paramNames)
+      util.isEmpty(actualParamNames) ? ' none' : ': ' + JSON.stringify(paramNames)
     }`,
   );
   return resultLines.join('\n');
@@ -1087,7 +1088,7 @@ export const errors = {
   ProxyRequestError,
 } as const;
 
-const jsonwpErrorCodeMap: Record<string, Class<ProtocolError>> = _.values(errors)
+const jsonwpErrorCodeMap: Record<string, Class<ProtocolError>> = Object.values(errors)
   .reduce((acc: Record<string, Class<ProtocolError>>, ErrorClass: any) => {
     if ('code' in ErrorClass) {
       acc[ErrorClass.code()] = ErrorClass;
@@ -1095,7 +1096,7 @@ const jsonwpErrorCodeMap: Record<string, Class<ProtocolError>> = _.values(errors
     return acc;
   }, {});
 
-const w3cErrorCodeMap: Record<string, Class<ProtocolError>> = _.values(errors)
+const w3cErrorCodeMap: Record<string, Class<ProtocolError>> = Object.values(errors)
   .reduce((acc: Record<string, Class<ProtocolError>>, ErrorClass: any) => {
     if ('error' in ErrorClass) {
       acc[ErrorClass.error()] = ErrorClass;
@@ -1151,7 +1152,7 @@ export function errorFromMJSONWPStatusCode(code: number, value: string | {messag
  * @return The error that is associated with the W3C error string
  */
 export function errorFromW3CJsonCode(signature: string, message: string, stacktrace?: string): ProtocolError {
-  const ErrorClass = w3cErrorCodeMap[_.toLower(signature)] ?? UnknownError;
+  const ErrorClass = w3cErrorCodeMap[signature.toLowerCase()] ?? UnknownError;
   w3cLog.debug(`Matched W3C error code '${signature}' to ${ErrorClass.name}`);
   const resultError = new ErrorClass(message);
   resultError.stacktrace = stacktrace;
@@ -1177,12 +1178,12 @@ export function getResponseForW3CError(err: any): [number, { value: W3CError }] 
   ];
 
   // err is ProtocolError
-  if (['error', 'w3cStatus'].every((prop) => _.has(err, prop))) {
+  if (['error', 'w3cStatus'].every((prop) => Object.hasOwn(err, prop))) {
     return protocolErrorToResponse(err);
   }
 
   // err is ProxyRequestError
-  if (_.has(err, 'getActualError') && _.isFunction(err.getActualError)) {
+  if (Object.hasOwn(err, 'getActualError') && typeof err.getActualError === 'function') {
     return protocolErrorToResponse(err.getActualError());
   }
 

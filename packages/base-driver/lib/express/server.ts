@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import path from 'node:path';
 import express from 'express';
 import type {Express, RequestHandler} from 'express';
@@ -236,7 +235,7 @@ export function configureServer({
  * @returns Normalized base path
  */
 export function normalizeBasePath(basePath: string): string {
-  if (!_.isString(basePath)) {
+  if (typeof basePath !== 'string') {
     throw new Error(`Invalid path prefix ${basePath}`);
   }
 
@@ -267,12 +266,11 @@ async function createServer(
   }
 
   const certKey = [sslCertificatePath, sslKeyPath];
-  const zipped = _.zip(
-    await Promise.all(certKey.map((p) => fs.exists(p))),
-    ['certificate', 'key'],
-    certKey
-  ) as [boolean, string, string][];
-  for (const [exists, desc, p] of zipped) {
+  const [certExists, keyExists] = await Promise.all(certKey.map((p) => fs.exists(p)));
+  for (const [exists, desc, p] of [
+    [certExists, 'certificate', sslCertificatePath],
+    [keyExists, 'key', sslKeyPath],
+  ]) {
     if (!exists) {
       throw new Error(
         `The provided SSL ${desc} at '${p}' does not exist or is not accessible`
@@ -332,7 +330,7 @@ function configureHttp({
   if (hasShouldUpgradeCallback(httpServer)) {
     // shouldUpgradeCallback only returns a boolean to indicate if the upgrade should proceed
     (appiumServer as unknown as {shouldUpgradeCallback?: (req: http.IncomingMessage) => boolean}).shouldUpgradeCallback = (req) =>
-      _.toLower(req.headers?.upgrade) === 'websocket';
+      String(req.headers?.upgrade ?? '').toLowerCase() === 'websocket';
     appiumServer.on('upgrade', (req, socket, head) => {
       if (!tryHandleWebSocketUpgrade(req, socket, head, appiumServer.webSocketsMapping)) {
         socket.destroy();
@@ -418,7 +416,7 @@ async function startServer({
     httpServer.listen(port, hostname);
   });
   httpServer.keepAliveTimeout = keepAliveTimeout;
-  if (_.isInteger(requestTimeout)) {
+  if (Number.isInteger(requestTimeout)) {
     httpServer.requestTimeout = Number(requestTimeout);
   }
   // headers timeout must be greater than keepAliveTimeout

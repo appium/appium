@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import {util} from '@appium/support';
 import {duplicateKeys} from '../basedriver/helpers';
 import {MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY} from '../constants';
 
@@ -11,7 +11,7 @@ import {MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY} from '../constants';
  * @returns Either modified value or the same one if nothing has been modified
  */
 export function formatResponseValue(resValue: object | undefined): object | null {
-  if (_.isUndefined(resValue)) {
+  if (resValue === undefined) {
     // convert undefined to null
     return null;
   }
@@ -30,7 +30,11 @@ export function formatResponseValue(resValue: object | undefined): object | null
  * @returns The fixed response body
  */
 export function ensureW3cResponse(responseBody: Record<string, unknown>): Record<string, unknown> {
-  return _.isPlainObject(responseBody)
-    ? (_.omit(responseBody, ['status', 'sessionId']) as Record<string, unknown>)
-    : responseBody;
+  if (!util.isPlainObject(responseBody)) {
+    return responseBody;
+  }
+  const result = {...responseBody};
+  delete result.status;
+  delete result.sessionId;
+  return result;
 }

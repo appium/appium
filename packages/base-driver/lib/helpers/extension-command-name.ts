@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import {util} from '@appium/support';
 import type {Constraints, Driver, DriverClass} from '@appium/types';
 import type {BaseDriver} from '../basedriver/driver';
 
@@ -16,7 +16,7 @@ export function resolveExecuteExtensionName<C extends Constraints>(
   const Driver = this.constructor as DriverClass<Driver<C>>;
   const methodMap = Driver.executeMethodMap;
 
-  if (methodMap && _.isPlainObject(methodMap) && commandName in methodMap) {
+  if (methodMap && util.isPlainObject(methodMap) && commandName in methodMap) {
     const command = methodMap[commandName]?.command;
     if (typeof command === 'string') {
       return command;

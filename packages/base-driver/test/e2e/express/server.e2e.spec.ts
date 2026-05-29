@@ -6,7 +6,6 @@ import {server} from '../../../lib';
 import axios from 'axios';
 import {createSandbox} from 'sinon';
 import {sleep} from 'asyncbox';
-import _ from 'lodash';
 import {exec} from 'teen_process';
 import https from 'node:https';
 import {TEST_HOST, getTestPort} from '@appium/driver-test-support';
@@ -110,14 +109,14 @@ describe('server', function () {
     this.timeout(60000);
     await expect(
       server({
-        routeConfiguringFunction: _.noop,
+        routeConfiguringFunction: () => {},
         port,
         hostname: 'lolcathost',
       })
     ).to.be.rejectedWith(/ENOTFOUND|EADDRNOTAVAIL|EAI_AGAIN/);
     await expect(
       server({
-        routeConfiguringFunction: _.noop,
+        routeConfiguringFunction: () => {},
         port,
         hostname: '1.1.1.1',
       })
@@ -214,7 +213,7 @@ describe('server plugins', function () {
 
   it('should allow one or more plugins to update the server', async function () {
     hwServer = (await server({
-      routeConfiguringFunction: _.noop,
+      routeConfiguringFunction: () => {},
       port,
       serverUpdaters: [
         updaterWithGetRoute('plugin1', 'res from plugin1 route'),
@@ -231,7 +230,7 @@ describe('server plugins', function () {
   it('should pass on errors from the plugin updateServer method', async function () {
     await expect(
       server({
-        routeConfiguringFunction: _.noop,
+        routeConfiguringFunction: () => {},
         port,
         serverUpdaters: [
           () => {

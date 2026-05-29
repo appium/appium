@@ -1,6 +1,5 @@
-import _ from 'lodash';
+import {util, node} from '@appium/support';
 import {log} from './logger';
-import {node, util} from '@appium/support';
 import {errors} from '../protocol/errors';
 import type {StringRecord, IDeviceSettings, SettingsUpdateListener} from '@appium/types';
 
@@ -36,7 +35,7 @@ export class DeviceSettings<T extends StringRecord = StringRecord> implements ID
    * @param newSettings - New settings to merge (must be plain object; total size remains bounded).
    */
   async update(newSettings: T): Promise<void> {
-    if (!_.isPlainObject(newSettings)) {
+    if (!util.isPlainObject(newSettings)) {
       throw new errors.InvalidArgumentError(
         `Settings update should be called with valid JSON. Got ` +
           `${JSON.stringify(newSettings)} instead`
@@ -51,7 +50,7 @@ export class DeviceSettings<T extends StringRecord = StringRecord> implements ID
     }
 
     for (const prop in newSettings) {
-      if (!_.isUndefined(this._settings[prop])) {
+      if (this._settings[prop] !== undefined) {
         if (this._settings[prop] === newSettings[prop]) {
           log.debug(`The value of '${prop}' setting did not change. Skipping the update for it`);
           continue;

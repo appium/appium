@@ -241,6 +241,7 @@ export function escapeSpecialChars(
 /**
  * Returns the first non-internal IPv4 address of the machine, if any.
  *
+ * @deprecated This helper is slated for removal. Consider implementing this functionality on your side.
  * @returns The local IPv4 address, or `undefined` if none found
  */
 export function localIp(): string | undefined {
@@ -261,10 +262,10 @@ export function localIp(): string | undefined {
 /**
  * Creates a promise that resolves after a delay and can be cancelled via `.cancel()`.
  *
+ * @deprecated This helper is slated for removal. Please migrate callers away from Bluebird.
  * @param ms - Delay in milliseconds before the promise resolves
  * @returns A Bluebird promise with a `cancel()` method; cancel rejects with CancellationError
  */
-// TODO: replace with a native implementation in Appium 4
 export function cancellableDelay(ms: number): B<void> & {cancel: () => void} {
   let timer: NodeJS.Timeout;
   let resolve: () => void;
@@ -286,6 +287,7 @@ export function cancellableDelay(ms: number): B<void> & {cancel: () => void} {
 /**
  * Resolves each root path with the given path segments, returning an array of absolute paths.
  *
+ * @deprecated This helper is slated for removal. Consider implementing this functionality on your side.
  * @param roots - Base directory paths to resolve against
  * @param args - Path segments to join with each root (e.g. 'foo', 'bar' → root/foo/bar)
  * @returns Array of absolute paths, one per root

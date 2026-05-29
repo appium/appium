@@ -9,7 +9,6 @@
 import {getLogger} from '../logger';
 
 import {fs} from '@appium/support';
-import _ from 'lodash';
 import {readPackageSync} from 'read-pkg';
 import {hideBin} from 'yargs/helpers';
 import yargs from 'yargs/yargs';
@@ -46,7 +45,7 @@ export async function main(argv = hideBin(process.argv)) {
         choices: ['debug', 'info', 'warn', 'error', 'silent'],
         describe: 'Sets the log level',
         default: DEFAULT_LOG_LEVEL,
-        coerce: _.identity as (x: string) => keyof typeof LogLevelMap,
+        coerce: ((x: string) => x) as (x: string) => keyof typeof LogLevelMap,
       },
       config: {
         alias: 'c',

@@ -4,9 +4,9 @@
  */
 
 import {fs, util} from '@appium/support';
-import _ from 'lodash';
 import type {Options} from 'yargs';
 import {getLogger} from '../logger';
+import {kebabCase} from '../util';
 
 const log = getLogger('check');
 
@@ -41,17 +41,17 @@ export async function checkMissingPaths<T extends Record<string, Options>>(
   group: string,
   argv: Record<string, unknown>
 ): Promise<true | string> {
-  const argsToCheck = _.keys(
-    _.pickBy(opts, (opt: Options, id: string) => opt?.group === group && id in argv) as Partial<T>
+  const argsToCheck = Object.keys(opts).filter(
+    (id) => opts[id]?.group === group && id in argv
   );
 
   // yargs is pretty loose about allowing CLI args multiple times, and the value could potentially
   // be a `string[]` instead of `string`; we don't want to allow more than one path per arg.
-  if (!argsToCheck.every((id) => _.isString(argv[id]))) {
+  if (!argsToCheck.every((id) => typeof argv[id] === 'string')) {
     return 'Paths may only be provided once each';
   }
 
-  const pathsToCheck: MissingFileData[] = _.map(argsToCheck, (id) => ({
+  const pathsToCheck: MissingFileData[] = argsToCheck.map((id) => ({
     id,
     path: String(argv[id]), // this must be a string per the above check
   }));
@@ -59,7 +59,7 @@ export async function checkMissingPaths<T extends Record<string, Options>>(
   log.debug(
     'Checking for existence of %s: %s',
     util.pluralize('path', pathsToCheck.length),
-    _.map(pathsToCheck, 'path')
+    pathsToCheck.map(({path}) => path)
   );
 
   const missingPaths = await filterMissing(pathsToCheck);
@@ -68,7 +68,7 @@ export async function checkMissingPaths<T extends Record<string, Options>>(
     return missingPaths
       .map(
         ({id, path}) =>
-          `Default or specified path via --${_.kebabCase(id)} (${path}) does not exist`
+          `Default or specified path via --${kebabCase(id)} (${path}) does not exist`
       )
       .join('\n');
   }
@@ -85,6 +85,7 @@ async function filterMissing(paths: MissingFileData[]): Promise<MissingFileData[
   const exists = await Promise.all(
     paths.map(async ({id, path}) => ({id, path, exists: await fs.exists(path)}))
   );
-  const results = _.reject(exists, 'exists');
-  return _.map(results, (result) => _.omit(result, 'exists'));
+  return exists
+    .filter((result) => !result.exists)
+    .map(({id, path}) => ({id, path}));
 }

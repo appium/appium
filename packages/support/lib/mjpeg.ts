@@ -33,6 +33,7 @@ const noop = () => {};
 
 /**
  * @deprecated MJPEG stream helpers in @appium/support are deprecated and will be removed in a future major version.
+ * Consumers are expected to implement MJpegStream class on their side.
  * Class which stores the last bit of data streamed into it.
  */
 export class MJpegStream extends Writable {

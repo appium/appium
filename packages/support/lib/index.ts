@@ -8,7 +8,6 @@ import {mkdirp} from './mkdirp';
 import * as logger from './logging';
 import * as process from './process';
 import * as zip from './zip';
-/** @deprecated Sharp-backed image helpers are deprecated and will be removed in a future major version. */
 import * as imageUtil from './image-util';
 import * as mjpeg from './mjpeg';
 import * as node from './node';

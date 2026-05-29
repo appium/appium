@@ -44,7 +44,6 @@
     "chai": "6.2.2",
     "chai-as-promised": "8.0.2",
     "get-port": "7.2.0",
-    "lodash": "4.18.1",
     "sinon": "22.0.0",
     "type-fest": "5.6.0"
   },

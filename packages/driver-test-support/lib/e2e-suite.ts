@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {server, routeConfiguringFunction, DeviceSettings} from 'appium/driver';
 import axios, {type RawAxiosRequestConfig} from 'axios';
 import {sleep} from 'asyncbox';
@@ -6,7 +5,7 @@ import {TEST_HOST, getTestPort, createAppiumURL} from './helpers';
 import sinon from 'sinon';
 import {Agent} from 'node:http';
 import type {BaseNSCapabilities, Driver, DriverClass, SingularSessionData} from '@appium/types';
-import type {NewSessionResponse, SessionHelpers} from './types';
+import type {NewSessionData, NewSessionResponse, SessionHelpers} from './types';
 
 /**
  * Creates some helper functions for E2E tests to manage sessions.
@@ -28,7 +27,7 @@ export function createSessionHelpers<CommandData = unknown, ResponseData = any>(
       return response.data?.value;
     },
     getCommand: async (sessionIdOrCmdName, cmdNameOrConfig, config = {}) => {
-      if (!_.isString(cmdNameOrConfig)) {
+      if (typeof cmdNameOrConfig !== 'string') {
         config = cmdNameOrConfig as RawAxiosRequestConfig;
         cmdNameOrConfig = sessionIdOrCmdName;
         sessionIdOrCmdName = '';
@@ -41,12 +40,7 @@ export function createSessionHelpers<CommandData = unknown, ResponseData = any>(
       return response.data?.value;
     },
     startSession: async (data, config = {}) => {
-      data = _.defaultsDeep(data, {
-        capabilities: {
-          alwaysMatch: {},
-          firstMatch: [{}],
-        },
-      });
+      applyNewSessionDefaults(data);
       const response = await axios.post(newSessionURL, data, config);
       return response.data?.value;
     },
@@ -141,7 +135,7 @@ export function driverE2ETestSuite(
           sessionIds.push(sessionId);
           times++;
         } while (times < 2);
-        expect(_.uniq(sessionIds)).to.have.lengthOf(1);
+        expect([...new Set(sessionIds)]).to.have.lengthOf(1);
 
         const {status, data} = await endSession(sessionIds[0]);
         expect(status).to.equal(200);
@@ -177,8 +171,8 @@ export function driverE2ETestSuite(
           );
           times++;
         } while (times < 2);
-        const sessionIds = _.map(await Promise.all(reqs), 'sessionId');
-        expect(_.uniq(sessionIds)).to.have.lengthOf(1);
+        const sessionIds = (await Promise.all(reqs)).map((r) => r.sessionId);
+        expect([...new Set(sessionIds)]).to.have.lengthOf(1);
 
         const {status, data} = await endSession(sessionIds[0]);
         expect(status).to.equal(200);
@@ -212,7 +206,7 @@ export function driverE2ETestSuite(
       let originalFindElements: typeof d.findElements;
 
       async function startTimeoutSession(timeout?: number) {
-        const caps = _.cloneDeep(defaultCaps);
+        const caps = structuredClone(defaultCaps);
         (caps as any)['appium:newCommandTimeout'] = timeout;
         return await startSession({capabilities: {alwaysMatch: caps}});
       }
@@ -408,4 +402,10 @@ export function driverE2ETestSuite(
       });
     });
   });
+}
+
+function applyNewSessionDefaults(data: NewSessionData): void {
+  data.capabilities ??= {alwaysMatch: {}, firstMatch: [{}]};
+  data.capabilities.alwaysMatch ??= {};
+  data.capabilities.firstMatch ??= [{}];
 }

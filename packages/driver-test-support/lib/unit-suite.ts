@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {sleep} from 'asyncbox';
 import {createSandbox} from 'sinon';
 import type {
@@ -70,15 +69,15 @@ export function driverUnitTestSuite<C extends Constraints>(
     });
 
     it('should not be able to start two sessions without closing the first', async function () {
-      await d.createSession(_.cloneDeep(w3cCaps));
-      await expect(d.createSession(_.cloneDeep(w3cCaps))).to.be.rejectedWith('session');
+      await d.createSession(structuredClone(w3cCaps));
+      await expect(d.createSession(structuredClone(w3cCaps))).to.be.rejectedWith('session');
     });
 
     it('should be able to delete a session', async function () {
-      const sessionId1 = await d.createSession(_.cloneDeep(w3cCaps));
+      const sessionId1 = await d.createSession(structuredClone(w3cCaps));
       await d.deleteSession();
       expect(d.sessionId).to.equal(null);
-      const sessionId2 = await d.createSession(_.cloneDeep(w3cCaps));
+      const sessionId2 = await d.createSession(structuredClone(w3cCaps));
       expect(sessionId1).to.not.eql(sessionId2);
     });
 
@@ -140,7 +139,7 @@ export function driverUnitTestSuite<C extends Constraints>(
         DriverClass.prototype.deleteSession.call(this);
       });
 
-      await d.createSession(_.cloneDeep(w3cCaps));
+      await d.createSession(structuredClone(w3cCaps));
       const p = new Promise<void>((resolve, reject) => {
         setTimeout(
           () =>
@@ -159,7 +158,7 @@ export function driverUnitTestSuite<C extends Constraints>(
       await expect(d.executeCommand('getSession')).to.be.rejectedWith(/shut down/);
       await sleep(500);
 
-      await d.executeCommand('createSession', null, null, _.cloneDeep(w3cCaps));
+      await d.executeCommand('createSession', null, null, structuredClone(w3cCaps));
       await d.deleteSession();
     });
 
@@ -179,7 +178,7 @@ export function driverUnitTestSuite<C extends Constraints>(
     describe('protocol detection', function () {
       it('should use W3C if only W3C caps are provided', async function () {
         await d.createSession({
-          alwaysMatch: _.clone(defaultCaps) as object,
+          alwaysMatch: {...defaultCaps} as object,
           firstMatch: [{}],
         });
         expect(d.protocol).to.equal('W3C');
@@ -506,7 +505,7 @@ export function driverUnitTestSuite<C extends Constraints>(
           let res = await d.getSession();
           expect(res.events).to.not.exist;
 
-          _.set(d, 'caps.eventTimings', true);
+          (d.caps as Record<string, unknown>).eventTimings = true;
           res = await d.getSession();
           expect(res.events).to.exist;
           expect(res.events?.newSessionRequested).to.exist;

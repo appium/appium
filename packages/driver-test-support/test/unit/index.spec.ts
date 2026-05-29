@@ -1,5 +1,4 @@
 import {TEST_HOST, getTestPort, createAppiumURL} from '../../lib';
-import _ from 'lodash';
 
 describe('TEST_HOST', function () {
   let expect: Chai.ExpectStatic;
@@ -32,32 +31,30 @@ describe('getTestPort()', function () {
 
 describe('createAppiumURL()', function () {
   let expect: Chai.ExpectStatic;
+  let urlFor: (session: string, pathname: string) => string;
 
   before(async function () {
     const chai = await import('chai');
     (chai as any).should();
     expect = (chai as any).expect;
+    urlFor = createAppiumURL(TEST_HOST, 31337);
   });
 
   it('should create a "new session" URL', function () {
-    const actual = createAppiumURL(TEST_HOST, 31337, '', 'session');
-    const expected = `http://${TEST_HOST}:31337/session`;
-    expect(actual).to.equal(expected);
+    expect(urlFor('', 'session')).to.equal(`http://${TEST_HOST}:31337/session`);
   });
 
   it('should create a URL to get an existing session', function () {
     const sessionId = '12345';
-    const createGetSessionURL = createAppiumURL(TEST_HOST, 31337, _, 'session');
-    const actual = createGetSessionURL(sessionId);
-    const expected = `http://${TEST_HOST}:31337/session/${sessionId}/session`;
-    expect(actual).to.equal(expected);
+    expect(urlFor(sessionId, 'session')).to.equal(
+      `http://${TEST_HOST}:31337/session/${sessionId}/session`
+    );
   });
 
   it('should create a URL for a command using an existing session', function () {
     const sessionId = '12345';
-    const createURLWithPath = createAppiumURL('127.0.0.1', 31337, sessionId);
-    const actual = createURLWithPath('moocow');
-    const expected = `http://${TEST_HOST}:31337/session/${sessionId}/moocow`;
-    expect(actual).to.equal(expected);
+    expect(urlFor(sessionId, 'moocow')).to.equal(
+      `http://${TEST_HOST}:31337/session/${sessionId}/moocow`
+    );
   });
 });

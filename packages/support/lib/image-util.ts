@@ -3,6 +3,8 @@ import type sharp from 'sharp';
 let _sharp: typeof sharp | undefined;
 
 /**
+ * @deprecated Sharp-backed image helpers are deprecated and will be removed in a future major version.
+ * Consumers are expected to implement this functionality on their side.
  * @returns The sharp module for image processing
  */
 export function requireSharp(): typeof sharp {
@@ -23,6 +25,8 @@ export function requireSharp(): typeof sharp {
 }
 
 /**
+ * @deprecated Sharp-backed image helpers are deprecated and will be removed in a future major version.
+ * Consumers are expected to implement this functionality on their side.
  * Crop the image by given rectangle (use base64 string as input and output)
  *
  * @param base64Image The string with base64 encoded image.

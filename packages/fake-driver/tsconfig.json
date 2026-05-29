@@ -7,6 +7,7 @@
     "rootDir": ".",
     "outDir": "build",
     "checkJs": true,
+    "strict": true,
     "types": ["mocha", "chai", "chai-as-promised", "node"],
     "paths": {
       "@appium/types": ["../types"],

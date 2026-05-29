@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {errors} from 'appium/driver';
 import type {FakeDriver} from '../driver';
 import type {Position, Rect, Size} from '@appium/types';
@@ -7,7 +6,7 @@ import type {FakeElement} from '../fake-element';
 /** Resolve element ids to FakeElements; throws StaleElementReferenceError if any id is missing. */
 export function getElements(this: FakeDriver, elementIds: string[]): FakeElement[] {
   for (const elId of elementIds) {
-    if (!_.has(this.elMap, elId)) {
+    if (!(elId in this.elMap)) {
       throw new errors.StaleElementReferenceError();
     }
   }
@@ -49,7 +48,7 @@ export async function setValue(
   keys: string | string[],
   elementId: string
 ): Promise<void> {
-  const value = _.isArray(keys) ? keys.join('') : keys;
+  const value = Array.isArray(keys) ? keys.join('') : keys;
   const el = this.getElement(elementId);
   // Only MockInputField supports value in the fake app XML.
   if (el.type !== 'MockInputField') {

@@ -1,5 +1,6 @@
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import type {ActionSequence} from '@appium/types';
 import {initSession, deleteSession, W3C_PREFIXED_CAPS} from '../helpers';
 
 chai.use(chaiAsPromised);
@@ -102,7 +103,7 @@ export function generalTests() {
         },
       ];
       await driver.performActions(actions);
-      const [res] = await driver.getLogs('actions');
+      const [res] = (await driver.getLogs('actions')) as ActionSequence[][];
       expect(res[0].type).to.eql('pointer');
       expect(res[0].actions).to.have.length(2);
     });

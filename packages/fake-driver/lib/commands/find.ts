@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import type {Element} from '@appium/types';
 import {errors} from 'appium/driver';
 import {FakeElement, type XmlNodeLike} from '../fake-element';
@@ -12,7 +11,7 @@ export function getExistingElementForNode(
   this: FakeDriver,
   node: FakeElement
 ): string | null {
-  for (const [id, el] of _.toPairs(this.elMap)) {
+  for (const [id, el] of Object.entries(this.elMap)) {
     if (el.node === node.node) {
       return id;
     }
@@ -25,18 +24,16 @@ export function wrapNewEl(
   this: FakeDriver,
   obj: FakeElement | XmlNodeLike
 ): Element {
-  const node: XmlNodeLike = _.has(obj, 'node') && (obj as FakeElement).node
-      ? (obj as FakeElement).node
-      : (obj as XmlNodeLike);
+  const node: XmlNodeLike = obj instanceof FakeElement ? obj.node : obj;
 
-  if (_.has(obj, 'node')) {
-    const existingElId = this.getExistingElementForNode(obj as FakeElement);
+  if (obj instanceof FakeElement) {
+    const existingElId = this.getExistingElementForNode(obj);
     if (existingElId) {
       return {ELEMENT: existingElId, [W3C_WEB_ELEMENT_IDENTIFIER]: existingElId};
     }
   } else {
     // raw node: reuse id if we already have an element for this node
-    for (const [id, el] of _.toPairs(this.elMap)) {
+    for (const [id, el] of Object.entries(this.elMap)) {
       if (el.node === node) {
         return {ELEMENT: id, [W3C_WEB_ELEMENT_IDENTIFIER]: id};
       }
@@ -82,7 +79,7 @@ async function findElOrElsImpl<Ctx = unknown>(
     'tag name': 'classQuery',
     'css selector': 'cssQuery',
   };
-  if (!_.includes(_.keys(qMap), strategy)) {
+  if (!(strategy in qMap)) {
     throw new errors.UnknownCommandError();
   }
   if (selector === 'badsel') {
@@ -94,7 +91,12 @@ async function findElOrElsImpl<Ctx = unknown>(
     selector,
     context
   );
-  const els = _.isArray(raw) ? raw : raw ? [raw] : [];
+  let els: unknown[] = [];
+  if (Array.isArray(raw)) {
+    els = raw;
+  } else if (raw) {
+    els = [raw];
+  }
 
   if (els.length) {
     if (mult) {

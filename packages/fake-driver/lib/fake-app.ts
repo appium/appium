@@ -4,7 +4,6 @@ import path from 'node:path';
 import XMLDom from '@xmldom/xmldom';
 import * as xpath from 'xpath';
 import {log} from './logger';
-import _ from 'lodash';
 import {FakeElement, type XmlNodeLike} from './fake-element';
 import type {ActionSequence, Location, Orientation} from '@appium/types';
 import type {Document as XMLDocument, Node as XMLNode} from '@xmldom/xmldom';
@@ -47,7 +46,7 @@ export class FakeApp {
 
   get title(): string {
     const nodes = this.xpathQuery('//title');
-    if (!_.isArray(nodes) || nodes.length < 1) {
+    if (!Array.isArray(nodes) || nodes.length < 1) {
       throw new Error('No title!');
     }
     const node = nodes[0];
@@ -109,7 +108,7 @@ export class FakeApp {
 
   getWebviews(): FakeWebView[] {
     const nodes = this.xpathQuery('//MockWebView/*[1]');
-    return _.isArray(nodes) ? nodes.map((n) => new FakeWebViewImpl(n as unknown as XmlNodeLike)) : [];
+    return Array.isArray(nodes) ? nodes.map((n) => new FakeWebViewImpl(n as unknown as XmlNodeLike)) : [];
   }
 
   activateWebview(wv: FakeWebView): void {
@@ -185,7 +184,7 @@ export class FakeApp {
 
   showAlert(alertId: string): void {
     const nodes = this.xpathQuery(`//alert[@id="${alertId}"]`);
-    if (!_.isArray(nodes) || _.isEmpty(nodes)) {
+    if (!Array.isArray(nodes) || nodes.length === 0) {
       throw new Error(`Alert ${alertId} doesn't exist!`);
     }
     this.activeAlert = new FakeElement(nodes[0] as unknown as XmlNodeLike, this);
@@ -215,7 +214,7 @@ export class FakeApp {
 
   private setDims(): void {
     const nodes = this.xpathQuery('//app');
-    if (!_.isArray(nodes)) {
+    if (!Array.isArray(nodes)) {
       throw new Error(
         'Cannot fetch app dimensions because no corresponding node has been found in the source'
       );

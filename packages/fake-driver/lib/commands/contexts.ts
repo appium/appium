@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import type {Document as XMLDocument} from '@xmldom/xmldom';
 import type {FakeDriver} from '../driver';
 import type {FakeWebView} from '../fake-app';
@@ -28,7 +27,7 @@ export async function getCurrentContext(this: FakeDriver): Promise<string> {
 
 /** getContexts. */
 export async function getContexts(this: FakeDriver): Promise<string[]> {
-  return _.keys(this.getRawContexts());
+  return Object.keys(this.getRawContexts());
 }
 
 /** setContext. */
@@ -57,7 +56,7 @@ export async function setFrame(this: FakeDriver, frameId: number | null): Promis
     this.appModel.deactivateFrame();
   } else {
     const nodes = this.appModel.xpathQuery(`//iframe[@id="${frameId}"]`);
-    if (!_.isArray(nodes) || _.isEmpty(nodes)) {
+    if (!Array.isArray(nodes) || nodes.length === 0) {
       throw new errors.NoSuchFrameError();
     }
     this.appModel.activateFrame(nodes[0] as XMLDocument);

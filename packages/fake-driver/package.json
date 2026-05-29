@@ -42,7 +42,6 @@
   "dependencies": {
     "@xmldom/xmldom": "0.9.10",
     "asyncbox": "6.3.0",
-    "lodash": "4.18.1",
     "xpath": "0.0.34"
   },
   "peerDependencies": {

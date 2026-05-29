@@ -5,7 +5,6 @@
  */
 
 import {fs, util} from '@appium/support';
-import _ from 'lodash';
 import {EventEmitter} from 'node:events';
 import {exec} from 'teen_process';
 import {
@@ -184,7 +183,7 @@ export class DocutilsValidator extends EventEmitter {
    * @returns
    */
   protected fail(err: DocutilsError | string) {
-    const dErr = _.isString(err) ? new DocutilsError(err) : err;
+    const dErr = typeof err === 'string' ? new DocutilsError(err) : err;
     if (!this.emittedErrors.has(dErr.message)) {
       this.emit(DocutilsValidator.FAILURE, dErr);
     }
@@ -265,7 +264,7 @@ export class DocutilsValidator extends EventEmitter {
     }
     const version = match[1];
     const reqs = await this.parseRequirementsTxt();
-    const mkDocsPipPkg = _.find(reqs, {name: NAME_MKDOCS});
+    const mkDocsPipPkg = reqs.find((pkg) => pkg.name === NAME_MKDOCS);
     if (!mkDocsPipPkg) {
       throw new DocutilsError(
         `No ${NAME_MKDOCS} package in ${REQUIREMENTS_TXT_PATH}. This is a bug`,
@@ -350,7 +349,7 @@ export class DocutilsValidator extends EventEmitter {
       return this.fail(`Could not parse output of "${NAME_PIP} list" as JSON: ${pipListOutput}`);
     }
 
-    const pkgsByName = _.mapValues(_.keyBy(installedPkgs, 'name'), 'version');
+    const pkgsByName = Object.fromEntries(installedPkgs.map((pkg) => [pkg.name, pkg.version]));
     log.debug('Installed Python packages: %O', pkgsByName);
 
     const requiredPackages = await this.parseRequirementsTxt();

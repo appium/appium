@@ -5,7 +5,6 @@
 
 import type {Loader} from 'lilconfig';
 import {lilconfig} from 'lilconfig';
-import _ from 'lodash';
 import path from 'node:path';
 import * as YAML from 'yaml';
 import parser from 'yargs-parser';
@@ -20,7 +19,7 @@ const log = getLogger('config');
 /**
  * `lilconfig` loader for YAML
  */
-const loadYaml: Loader = _.rearg(YAML.parse, [2, 0, 1]);
+const loadYaml: Loader = (_filepath, content) => YAML.parse(content);
 
 /**
  * Controls how we load/find a config file.

@@ -3,8 +3,7 @@
  * @module
  */
 
-import {fs} from '@appium/support';
-import _ from 'lodash';
+import {fs, util} from '@appium/support';
 import path from 'node:path';
 import {packageDirectory} from 'package-directory';
 import type {NormalizedPackageJson, PackageJson} from 'read-pkg';
@@ -23,6 +22,7 @@ import {DocutilsError} from './error';
 import {getLogger} from './logger';
 import type {MkDocsYml} from './model';
 import {exec} from 'teen_process';
+import {mergeDefaultsDeep} from './util';
 
 const log = getLogger('fs');
 
@@ -31,34 +31,27 @@ const log = getLogger('fs');
  *
  * Caches result
  */
-const findPkgDir = _.memoize(packageDirectory, (opts) => opts?.cwd);
+const findPkgDir = util.memoize(packageDirectory, (opts) => opts?.cwd);
 
 /**
  * Stringifies a thing into a YAML
  * @param value Something to yamlify
  * @returns Some nice YAML 4 u
  */
-export const stringifyYaml: (value: JsonValue) => string = _.partialRight(
-  YAML.stringify,
-  {indent: 2},
-  undefined,
-);
+export const stringifyYaml = (value: JsonValue): string =>
+  YAML.stringify(value, undefined, {indent: 2});
 
 /**
  * Pretty-stringifies a JSON value
  * @param value Something to stringify
  * @returns JSON string
  */
-export const stringifyJson: (value: JsonValue) => string = _.partialRight(
-  JSON.stringify,
-  2,
-  undefined,
-);
+export const stringifyJson = (value: JsonValue): string => JSON.stringify(value, undefined, 2);
 
 /**
  * Reads a YAML file, parses it and caches the result
  */
-const readYaml = _.memoize(async (filepath: string) =>
+const readYaml = util.memoize(async (filepath: string) =>
   YAML.parse(await fs.readFile(filepath, 'utf8'), {
     prettyErrors: false,
     logLevel: 'silent',
@@ -90,7 +83,9 @@ export async function findInPkgDir(
  * @param cwd - Current working directory
  * @returns Path to `mkdocs.yml`
  */
-export const findMkDocsYml = _.memoize(_.partial(findInPkgDir, NAME_MKDOCS_YML));
+export const findMkDocsYml = util.memoize(
+  async (cwd = process.cwd()) => await findInPkgDir(NAME_MKDOCS_YML, cwd)
+);
 
 /**
  * Given a directory path, finds closest `package.json` and reads it.
@@ -130,12 +125,12 @@ async function _readPkgJson(
 /**
  * Given a directory to start from, reads a `package.json` file and returns its path and contents
  */
-export const readPackageJson = _.memoize(_readPkgJson);
+export const readPackageJson = util.memoize(_readPkgJson);
 
 /**
  * Reads a JSON file and parses it
  */
-export const readJson = _.memoize(
+export const readJson = util.memoize(
   async <T extends JsonValue>(filepath: string): Promise<T> =>
     JSON.parse(await fs.readFile(filepath, 'utf8')),
 );
@@ -148,7 +143,7 @@ type WhichFunction = (cmd: string, opts?: {nothrow: boolean}) => Promise<string 
  * @param content - File contents
  */
 export function writeFileString(filepath: string, content: JsonValue) {
-  const data: string = _.isString(content) ? content : JSON.stringify(content, undefined, 2);
+  const data: string = typeof content === 'string' ? content : JSON.stringify(content, undefined, 2);
   return fs.writeFile(filepath, data, {
     encoding: 'utf8',
   });
@@ -157,22 +152,22 @@ export function writeFileString(filepath: string, content: JsonValue) {
 /**
  * `which` with memoization
  */
-const cachedWhich = _.memoize(fs.which as WhichFunction);
+const cachedWhich = util.memoize(fs.which as WhichFunction);
 
 /**
  * Finds `python` executable
  */
-const whichPython = _.partial(cachedWhich, NAME_PYTHON, {nothrow: true});
+const whichPython = async () => await cachedWhich(NAME_PYTHON, {nothrow: true});
 
 /**
  * Finds `python3` executable
  */
-const whichPython3 = _.partial(cachedWhich, `${NAME_PYTHON}3`, {nothrow: true});
+const whichPython3 = async () => await cachedWhich(`${NAME_PYTHON}3`, {nothrow: true});
 
 /**
  * Check if `mkdocs` is installed
  */
-export const isMkDocsInstalled = _.memoize(async (): Promise<boolean> => {
+export const isMkDocsInstalled = util.memoize(async (): Promise<boolean> => {
   // see if it's in PATH
   const mkDocsPath = await cachedWhich(NAME_MKDOCS, {nothrow: true});
   if (mkDocsPath) {
@@ -194,7 +189,7 @@ export const isMkDocsInstalled = _.memoize(async (): Promise<boolean> => {
 /**
  * `mike` cannot be invoked via `python -m`, so we need to find the script.
  */
-export const findMike = _.partial(async () => {
+export const findMike = async () => {
   // see if it's in PATH
   let mikePath = await cachedWhich(NAME_MIKE, {nothrow: true});
   if (mikePath) {
@@ -216,14 +211,14 @@ export const findMike = _.partial(async () => {
       }
     }
   } catch {}
-});
+};
 
 /**
  * Finds the `python3` or `python` executable in the user's `PATH`.
  *
  * `python3` is preferred over `python`, since the latter could be Python 2.
  */
-export const findPython = _.memoize(
+export const findPython = util.memoize(
   async (): Promise<string | null> => (await whichPython3()) ?? (await whichPython()),
 );
 
@@ -246,7 +241,7 @@ export async function requirePython(pythonPath?: string): Promise<string> {
  * @param filepath Patgh to an `mkdocs.yml` file
  * @returns Parsed `mkdocs.yml` file
  */
-export const readMkDocsYml = _.memoize(
+export const readMkDocsYml: (filepath: string, cwd?: string) => Promise<MkDocsYml> = util.memoize(
   async (filepath: string, cwd = process.cwd()): Promise<MkDocsYml> => {
     let mkDocsYml = (await readYaml(filepath)) as MkDocsYml;
     if (mkDocsYml.site_dir) {
@@ -264,7 +259,7 @@ export const readMkDocsYml = _.memoize(
           inheritYml.docs_dir = path.resolve(path.dirname(inheritPath), inheritYml.docs_dir);
           log.debug('Resolved docs_dir to %s', inheritYml.docs_dir);
         }
-        mkDocsYml = _.defaultsDeep(mkDocsYml, inheritYml);
+        mkDocsYml = mergeDefaultsDeep(mkDocsYml, inheritYml);
         inheritPath = inheritYml.INHERIT
           ? path.resolve(path.dirname(inheritPath), inheritYml.INHERIT)
           : undefined;

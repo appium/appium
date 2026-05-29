@@ -9,7 +9,6 @@
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const {ConsolaInstance, createConsola, LogLevel} = require('consola');
-import _ from 'lodash';
 import {DEFAULT_LOG_LEVEL, LogLevelMap} from './constants';
 
 /**
@@ -72,7 +71,12 @@ export function getLogger(tag: string, parent = rootLogger) {
  *
  * @remarks Child loggers seem to inherit the "paused" state of the parent, so when this is called, we must resume all of them.
  */
-export const initLogger = _.once((level: keyof typeof LogLevelMap | typeof LogLevel) => {
+let hasInitializedLogger = false;
+export const initLogger = (level: keyof typeof LogLevelMap | typeof LogLevel) => {
+  if (hasInitializedLogger) {
+    return;
+  }
+  hasInitializedLogger = true;
   globalLevel = isLogLevelString(level) ? LogLevelMap[level] : level;
   rootLogger.level = globalLevel;
   rootLogger.resumeLogs();
@@ -83,4 +87,4 @@ export const initLogger = _.once((level: keyof typeof LogLevelMap | typeof LogLe
       logger.resumeLogs();
     }
   }
-});
+};

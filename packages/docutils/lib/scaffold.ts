@@ -3,15 +3,14 @@
  * @module
  */
 
-import {fs} from '@appium/support';
+import {fs, util} from '@appium/support';
 import {getLogger} from './logger';
 import path from 'node:path';
 import {createPatch} from 'diff';
 import type {NormalizedPackageJson} from 'read-pkg';
 import type {JsonValue, JsonObject} from 'type-fest';
 import {DocutilsError} from './error';
-import {relative} from './util';
-import _ from 'lodash';
+import {mergeDefaultsDeep, relative} from './util';
 import {stringifyJson, readPackageJson, writeFileString} from './fs';
 import {NAME_ERR_ENOENT} from './constants';
 
@@ -127,7 +126,7 @@ export function createScaffoldTask<Opts extends ScaffoldTaskOptions, T extends J
   defaultContent: T,
   description: string,
   {
-    transform = _.identity,
+    transform = (content) => content,
     deserialize = JSON.parse,
     serialize = stringifyJson,
   }: CreateScaffoldTaskOptions<Opts, T> = {}
@@ -168,9 +167,9 @@ export function createScaffoldTask<Opts extends ScaffoldTaskOptions, T extends J
     }
 
     const defaults: T = transform(defaultContent, opts, pkg);
-    const finalDestContent: T = _.defaultsDeep({}, destContent, defaults);
+    const finalDestContent: T = mergeDefaultsDeep(destContent, defaults);
 
-    destChangesNeeded = destChangesNeeded || !_.isEqual(destContent, finalDestContent);
+    destChangesNeeded = destChangesNeeded || !util.isEqual(destContent, finalDestContent);
 
     if (destChangesNeeded) {
       log.info('Changes needed in %s', relativeDest);
@@ -225,7 +224,7 @@ function makePatch<T extends JsonValue>(
 ) {
   return createPatch(
     filename,
-    _.isString(oldData) ? oldData : serializer(oldData),
-    _.isString(newData) ? newData : serializer(newData)
+    typeof oldData === 'string' ? oldData : serializer(oldData),
+    typeof newData === 'string' ? newData : serializer(newData)
   );
 }

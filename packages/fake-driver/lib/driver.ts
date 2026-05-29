@@ -157,7 +157,7 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
   }
 
   async onIpcInit(): Promise<void> {
-    const fakeMathSub = this.ipcSubscribe('pluginMath');
+    const fakeMathSub = this.ipcSubscribe<number>('pluginMath');
     fakeMathSub.on('message', (message: IpcMessage<number>) => {
       this.log.info(`A connected plugin did some math with result ${message.data}`);
       this.lastPluginMath = {pluginName: message.publisher, result: message.data};

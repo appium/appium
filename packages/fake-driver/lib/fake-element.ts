@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import XMLDom from '@xmldom/xmldom';
 import type {Document as XMLDocument, Node as XMLNode} from '@xmldom/xmldom';
 import type {FakeApp} from './fake-app';
@@ -28,7 +27,7 @@ export class FakeElement {
     const attrs = this.node.attributes as unknown as Array<{
       name?: string; nodeName?: string; value?: string; nodeValue?: string
     }>;
-    for (const attr of _.values(attrs)) {
+    for (const attr of Object.values(attrs)) {
       const name = attr.name ?? attr.nodeName ?? '';
       const value = attr.value ?? attr.nodeValue ?? '';
       if (name) {
@@ -108,7 +107,7 @@ export class FakeElement {
   }
 
   getCss(prop: string): string | null {
-    if (_.has(this.css, prop)) {
+    if (prop in this.css) {
       return this.css[prop];
     }
     return null;

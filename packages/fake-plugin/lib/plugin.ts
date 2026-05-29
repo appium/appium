@@ -75,7 +75,7 @@ export class FakePlugin extends BasePlugin {
   private readonly fakeThing: string;
   private pluginThing: unknown = null;
   private fakeDriverClockIsRunning: boolean = false;
-  private ipcPluginMath: IIpcSubscription<number>;
+  private ipcPluginMath?: IIpcSubscription<number>;
 
   constructor(name: string, cliArgs: Record<string, unknown> = {}) {
     super(name, cliArgs);

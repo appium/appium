@@ -16,46 +16,55 @@ const LOGGER_COMMON_FIELDS_TO_COPY = ['author', 'bugs', 'homepage'];
 
 const KEYWORD_EXCLUDED_PACKAGES = new Set(['eslint-config-appium-ts', 'types']);
 // Package names in this set will not receive the LICENSE file from the root,
-// as they have their own license terms (e.g., Apache 2.0 for logger).
+// as they have their own license terms (e.g., ISC for logger).
 const LICENSE_EXCLUDED_PACKAGES = new Set(['logger']);
 
+/**
+ * Read a JSON file and parse its contents.
+ * @param {string} filepath
+ * @returns {Promise<Object>}
+ */
 async function readJson(filepath) {
   return JSON.parse(await fs.readFile(filepath, 'utf8'));
 }
 
+/**
+ * Stringify an object and write it to a JSON file.
+ * @param {string} filepath
+ * @param {Object} data
+ * @returns {Promise<void>}
+ */
 async function writeJson(filepath, data) {
   await fs.writeFile(filepath, `${JSON.stringify(data, null, 2)}\n`);
 }
 
+/**
+ * Get the directories of all packages in the monorepo by looking for package.json files.
+ * @returns {Promise<string[]>} An array of package directory paths.
+ */
 async function getPackageDirs() {
-  const entries = await fs.readdir(ROOT_PACKAGES_DIR, {withFileTypes: true});
-  const packageDirs = [];
-
-  for (const entry of entries) {
-    if (!entry.isDirectory()) {
-      continue;
-    }
-
-    const dir = path.join(ROOT_PACKAGES_DIR, entry.name);
-
-    try {
-      await fs.readFile(path.join(dir, 'package.json'));
-    } catch {
-      continue;
-    }
-
-    packageDirs.push(dir);
-  }
-
-  return packageDirs.sort();
+  return (await fs.glob('*/package.json', {cwd: ROOT_PACKAGES_DIR}))
+    .map((packageJsonPath) => path.join(ROOT_PACKAGES_DIR, path.dirname(packageJsonPath)))
+    .sort();
 }
 
+/**
+ * Copy specified fields from the source object to the destination object.
+ * @param {Object} source
+ * @param {Object} destination
+ * @param {string[]} fields
+ */
 function copyFields(source, destination, fields) {
   for (const field of fields) {
     destination[field] = source[field];
   }
 }
 
+/**
+ * Synchronize specific fields from the root package.json to a package's package.json.
+ * @param {Object} rootPackageJson
+ * @param {string} packageDir
+ */
 async function syncPackageJsonFields(rootPackageJson, packageDir) {
   const packageJsonPath = path.join(packageDir, 'package.json');
   const packageJson = await readJson(packageJsonPath);
@@ -84,18 +93,21 @@ async function main() {
   const packageDirs = await getPackageDirs();
   log.debug(`Found ${packageDirs.length} package directories`);
 
-  await Promise.all(
-    packageDirs.map((packageDir) => syncPackageJsonFields(rootPackageJson, packageDir)),
+  const syncPackageJsonFieldsPromises = packageDirs.map(
+    (packageDir) => syncPackageJsonFields(rootPackageJson, packageDir)
   );
-  await Promise.all(
-    packageDirs
-      .filter((packageDir) => !LICENSE_EXCLUDED_PACKAGES.has(path.basename(packageDir)))
-      .map((packageDir) => {
-        const licensePath = path.join(packageDir, 'LICENSE');
-        log.debug(`Copying LICENSE to ${licensePath}`);
-        return fs.copyFile(ROOT_LICENSE, licensePath);
-      }),
-  );
+  const licenseCopyPromises = packageDirs
+    .filter((packageDir) => !LICENSE_EXCLUDED_PACKAGES.has(path.basename(packageDir)))
+    .map((packageDir) => {
+      const licensePath = path.join(packageDir, 'LICENSE');
+      log.debug(`Copying LICENSE to ${licensePath}`);
+      return fs.copyFile(ROOT_LICENSE, licensePath);
+    });
+
+  await Promise.all([
+    ...syncPackageJsonFieldsPromises,
+    ...licenseCopyPromises,
+  ]);
   log.debug(`Copying README to ${APPIUM_PACKAGE_README}`);
   await fs.copyFile(ROOT_README, APPIUM_PACKAGE_README);
 }

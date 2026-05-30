@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import {util} from '@appium/support';
 import type {AppiumServer, WSServer} from '@appium/types';
 
 export const DEFAULT_WS_PATHNAME_PREFIX = '/ws';
@@ -23,9 +23,9 @@ export async function getWebSocketHandlers(
   this: AppiumServer,
   keysFilter: string | null = null
 ): Promise<Record<string, WSServer>> {
-  return _.toPairs(this.webSocketsMapping).reduce<Record<string, WSServer>>(
+  return Object.entries(this.webSocketsMapping).reduce<Record<string, WSServer>>(
     (acc, [pathname, wsServer]) => {
-      if (!_.isString(keysFilter) || pathname.includes(keysFilter)) {
+      if (typeof keysFilter !== 'string' || pathname.includes(keysFilter)) {
         acc[pathname] = wsServer;
       }
       return acc;
@@ -66,15 +66,14 @@ export async function removeWebSocketHandler(
  * @see AppiumServerExtension.removeAllWebSocketHandlers
  */
 export async function removeAllWebSocketHandlers(this: AppiumServer): Promise<boolean> {
-  if (_.isEmpty(this.webSocketsMapping)) {
+  if (util.isEmpty(this.webSocketsMapping)) {
     return false;
   }
 
-  return _.some(
-    await Promise.all(
-      _.keys(this.webSocketsMapping).map((pathname) =>
-        this.removeWebSocketHandler(pathname)
-      )
+  const results = await Promise.all(
+    Object.keys(this.webSocketsMapping).map((pathname) =>
+      this.removeWebSocketHandler(pathname)
     )
   );
+  return results.some(Boolean);
 }

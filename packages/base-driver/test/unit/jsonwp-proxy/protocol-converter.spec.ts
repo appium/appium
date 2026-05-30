@@ -1,6 +1,5 @@
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import _ from 'lodash';
 import {PROTOCOLS} from '../../../lib/constants';
 import {
   COMMAND_URLS_CONFLICTS,
@@ -24,7 +23,7 @@ describe('Protocol Converter', function () {
   describe('getTimeoutRequestObjects', function () {
     let converter: ProtocolConverter;
     before(function () {
-      converter = new ProtocolConverter(_.noop as any);
+      converter = new ProtocolConverter((() => {}) as any);
     });
     it('should take W3C inputs and produce MJSONWP compatible objects', function () {
       converter.downstreamProtocol = MJSONWP;

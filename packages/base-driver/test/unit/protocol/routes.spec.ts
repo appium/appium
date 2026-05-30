@@ -1,7 +1,6 @@
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {HTTPMethod} from '@appium/types';
-import _ from 'lodash';
 import {METHOD_MAP, routeToCommandName} from '../../../lib/protocol';
 import crypto from 'node:crypto';
 
@@ -13,18 +12,18 @@ describe('Routes', function () {
     // protocol
     it('should not change protocol between patch versions', function () {
       const shasum = crypto.createHash('sha1');
-      for (const [url, urlMapping] of _.toPairs(METHOD_MAP)) {
+      for (const [url, urlMapping] of Object.entries(METHOD_MAP)) {
         shasum.update(url);
-        for (const [method, methodMapping] of _.toPairs(urlMapping as Record<string, {command?: string; payloadParams?: {required?: any[]; optional?: any[]; wrap?: string}}>)) {
+        for (const [method, methodMapping] of Object.entries(urlMapping as Record<string, {command?: string; payloadParams?: {required?: any[]; optional?: any[]; wrap?: string}}>)) {
           shasum.update(method);
           if (methodMapping.command) {
             shasum.update(methodMapping.command);
           }
           if (methodMapping.payloadParams) {
-            let allParams = _.flatten(methodMapping.payloadParams.required ?? []);
+            let allParams = (methodMapping.payloadParams.required ?? []).flat();
             if (methodMapping.payloadParams.optional) {
               allParams = allParams.concat(
-                _.flatten(methodMapping.payloadParams.optional)
+                (methodMapping.payloadParams.optional ?? []).flat()
               );
             }
             for (const param of allParams) {

@@ -1,5 +1,4 @@
 import type {AppiumLogger, HTTPBody, ProxyResponse} from '@appium/types';
-import _ from 'lodash';
 import {logger, util} from '@appium/support';
 import {duplicateKeys} from '../basedriver/helpers';
 import {MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY, PROTOCOLS} from '../constants';
@@ -138,12 +137,12 @@ export class ProtocolConverter {
    * provided in the request, we need to do 3 proxies and combine the result.
    */
   private getTimeoutRequestObjects(body: HTTPBody): Record<string, unknown>[] {
-    if (_.isNil(body)) {
+    if (body == null) {
       return [];
     }
 
     const bodyObj = (util.safeJsonParse(body) as Record<string, unknown>) ?? {};
-    if (this.downstreamProtocol === W3C && _.has(bodyObj, 'ms') && _.has(bodyObj, 'type')) {
+    if (this.downstreamProtocol === W3C && Object.hasOwn(bodyObj, 'ms') && Object.hasOwn(bodyObj, 'type')) {
       const typeToW3C = (x: string) => (x === 'page load' ? 'pageLoad' : x);
       return [
         {
@@ -152,9 +151,9 @@ export class ProtocolConverter {
       ];
     }
 
-    if (this.downstreamProtocol === MJSONWP && (!_.has(bodyObj, 'ms') || !_.has(bodyObj, 'type'))) {
+    if (this.downstreamProtocol === MJSONWP && (!Object.hasOwn(bodyObj, 'ms') || !Object.hasOwn(bodyObj, 'type'))) {
       const typeToJSONWP = (x: string) => (x === 'pageLoad' ? 'page load' : x);
-      return _.toPairs(bodyObj)
+      return Object.entries(bodyObj)
         // Only transform the entry if ms value is a valid positive float number
         .filter((pair) => /^\d+(?:[.,]\d*?)?$/.test(`${pair[1]}`))
         .map((pair) => ({
@@ -206,16 +205,16 @@ export class ProtocolConverter {
     body: HTTPBody
   ): Promise<[ProxyResponse, HTTPBody]> {
     const bodyObj = util.safeJsonParse(body);
-    if (_.isPlainObject(bodyObj)) {
+    if (util.isPlainObject(bodyObj)) {
       const obj = bodyObj as Record<string, unknown>;
-      if (this.downstreamProtocol === W3C && _.has(bodyObj, 'name') && !_.has(bodyObj, 'handle')) {
+      if (this.downstreamProtocol === W3C && Object.hasOwn(bodyObj, 'name') && !Object.hasOwn(bodyObj, 'handle')) {
         this.log.debug(`Copied 'name' value '${obj.name}' to 'handle' as per W3C spec`);
         return await this.proxyFunc(url, method, {...obj, handle: obj.name});
       }
       if (
         this.downstreamProtocol === MJSONWP &&
-        _.has(bodyObj, 'handle') &&
-        !_.has(bodyObj, 'name')
+        Object.hasOwn(bodyObj, 'handle') &&
+        !Object.hasOwn(bodyObj, 'name')
       ) {
         this.log.debug(`Copied 'handle' value '${obj.handle}' to 'name' as per JSONWP spec`);
         return await this.proxyFunc(url, method, {...obj, name: obj.handle});
@@ -230,13 +229,13 @@ export class ProtocolConverter {
     body: HTTPBody
   ): Promise<[ProxyResponse, HTTPBody]> {
     const bodyObj = util.safeJsonParse(body) as Record<string, unknown> | undefined;
-    if (_.isPlainObject(bodyObj) && (util.hasValue(bodyObj?.text) || util.hasValue(bodyObj?.value))) {
+    if (util.isPlainObject(bodyObj) && (util.hasValue(bodyObj?.text) || util.hasValue(bodyObj?.value))) {
       let {text, value} = bodyObj;
       if (util.hasValue(text) && !util.hasValue(value)) {
-        value = _.isString(text) ? [...text] : _.isArray(text) ? text : [];
+        value = typeof text === 'string' ? [...text] : Array.isArray(text) ? text : [];
         this.log.debug(`Added 'value' property to 'setValue' request body`);
       } else if (!util.hasValue(text) && util.hasValue(value)) {
-        text = _.isArray(value) ? value.join('') : _.isString(value) ? value : '';
+        text = Array.isArray(value) ? value.join('') : typeof value === 'string' ? value : '';
         this.log.debug(`Added 'text' property to 'setValue' request body`);
       }
       return await this.proxyFunc(url, method, {...bodyObj, text, value});
@@ -250,10 +249,10 @@ export class ProtocolConverter {
     body: HTTPBody
   ): Promise<[ProxyResponse, HTTPBody]> {
     const bodyObj = util.safeJsonParse(body);
-    if (_.has(bodyObj, 'id') && _.isPlainObject(bodyObj.id)) {
+    if (Object.hasOwn(bodyObj ?? {}, 'id') && util.isPlainObject((bodyObj as Record<string, unknown>).id)) {
       return await this.proxyFunc(url, method, {
         ...(bodyObj as object),
-        id: duplicateKeys(bodyObj.id as object, MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY),
+        id: duplicateKeys((bodyObj as Record<string, unknown>).id as object, MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY),
       });
     }
     return await this.proxyFunc(url, method, body);
@@ -265,7 +264,7 @@ export class ProtocolConverter {
     body: HTTPBody
   ): Promise<[ProxyResponse, HTTPBody]> {
     const bodyObj = util.safeJsonParse(body);
-    if (_.isPlainObject(bodyObj)) {
+    if (util.isPlainObject(bodyObj)) {
       return await this.proxyFunc(
         url,
         method,

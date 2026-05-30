@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {util, logger} from '@appium/support';
 import {validators} from './validators';
 import {
@@ -14,6 +13,7 @@ import {formatResponseValue, ensureW3cResponse} from './helpers';
 import {MAX_LOG_BODY_LENGTH, PROTOCOLS, DEFAULT_BASE_PATH} from '../constants';
 import {isW3cCaps} from '../helpers/capabilities';
 import {log} from '../basedriver/logger';
+import {omitKeys} from '../utils';
 import {generateDriverLogPrefix} from '../basedriver/helpers';
 import type {Core, AppiumLogger, PayloadParams, MethodMap, Driver, DriverMethodDef} from '@appium/types';
 import type {BaseDriver} from '../basedriver/driver';
@@ -34,7 +34,7 @@ export const deprecatedCommandsLogged: Set<string> = new Set();
  * @param createSessionArgs - Arguments passed to the createSession command
  */
 export function determineProtocol(createSessionArgs: any[]): keyof typeof PROTOCOLS {
-  return _.some(createSessionArgs, isW3cCaps) ? PROTOCOLS.W3C : PROTOCOLS.MJSONWP;
+  return createSessionArgs.some(isW3cCaps) ? PROTOCOLS.W3C : PROTOCOLS.MJSONWP;
 }
 
 /**
@@ -71,7 +71,7 @@ export function getSessionId(driver: Core<any>, req: Request): string | undefine
  * @returns Whether the command requires a session id in the URL
  */
 export function isSessionCommand(command: string): boolean {
-  return !_.includes(NO_SESSION_ID_COMMANDS, command);
+  return !NO_SESSION_ID_COMMANDS.includes(command);
 }
 
 /**
@@ -87,12 +87,12 @@ export function checkParams(
 ): Record<string, any> {
   let requiredParams: string[][] = [];
   let optionalParams: string[] = [];
-  const actualParamNames: string[] = _.keys(args);
+  const actualParamNames: string[] = Object.keys(args);
 
   if (paramSpec.required) {
     // we might have an array of parameters,
     // or an array of arrays of parameters, so standardize
-    requiredParams = _.cloneDeep(
+    requiredParams = structuredClone(
       (hasMultipleRequiredParamSets(paramSpec.required)
         ? paramSpec.required
         : [paramSpec.required]
@@ -101,7 +101,7 @@ export function checkParams(
   }
   // optional parameters are just an array
   if (paramSpec.optional) {
-    optionalParams = _.cloneDeep(paramSpec.optional as string[]);
+    optionalParams = structuredClone(paramSpec.optional as string[]);
   }
 
   // If a function was provided as the 'validate' key, it will here be called with
@@ -111,41 +111,41 @@ export function checkParams(
   if (paramSpec.validate) {
     const message = paramSpec.validate(args, protocol ?? PROTOCOLS.W3C);
     if (message) {
-      throw new errors.InvalidArgumentError(_.isString(message) ? message : undefined);
+      throw new errors.InvalidArgumentError(typeof message === 'string' ? message : undefined);
     }
   }
 
   // some clients pass in the session id in the params
-  if (!_.includes(optionalParams, 'sessionId')) {
+  if (!optionalParams.includes('sessionId')) {
     optionalParams.push('sessionId');
   }
   // some clients pass in an element id in the params
-  if (!_.includes(optionalParams, 'id')) {
+  if (!optionalParams.includes('id')) {
     optionalParams.push('id');
   }
 
-  if (_.isEmpty(requiredParams)) {
+  if (util.isEmpty(requiredParams)) {
     // if we don't have any required parameters, then just filter out unknown ones
-    return pickKnownParams(args, _.difference(actualParamNames, optionalParams));
+    return pickKnownParams(args, actualParamNames.filter((name) => !optionalParams.includes(name)));
   }
 
   // go through the required parameters and check against our arguments
   let matchedReqParamSet: string[] = [];
   for (const requiredParamsSet of requiredParams) {
-    if (!_.isArray(requiredParamsSet)) {
+    if (!Array.isArray(requiredParamsSet)) {
       throw new Error(
         `The required parameter set item ${JSON.stringify(requiredParamsSet)} ` +
         `in ${JSON.stringify(paramSpec)} is not an array. ` +
         `This is a bug in the method map definition.`
       );
     }
-    if (_.isEmpty(_.difference(requiredParamsSet, actualParamNames))) {
+    if (requiredParamsSet.every((name) => actualParamNames.includes(name))) {
       return pickKnownParams(
         args,
-        _.difference(actualParamNames, requiredParamsSet, optionalParams)
+        actualParamNames.filter((name) => !requiredParamsSet.includes(name) && !optionalParams.includes(name))
       );
     }
-    if (!_.isEmpty(requiredParamsSet) && _.isEmpty(matchedReqParamSet)) {
+    if (!util.isEmpty(requiredParamsSet) && util.isEmpty(matchedReqParamSet)) {
       matchedReqParamSet = requiredParamsSet;
     }
   }
@@ -167,7 +167,7 @@ export function makeArgs(requestParams: PayloadParams, jsonObj: any, payloadPara
   // since the command will sometimes want to ignore, say, the sessionId.
   // This has the effect of putting sessionId last, which means in JS we can
   // omit it from the function signature if we're not going to use it.
-  const urlParams = _.keys(requestParams).reverse();
+  const urlParams = Object.keys(requestParams).reverse();
 
   // In the simple case, the required parameters are a basic array in
   // payloadParams.required, so start there. It's possible that there are
@@ -179,9 +179,9 @@ export function makeArgs(requestParams: PayloadParams, jsonObj: any, payloadPara
     // array of arrays in payloadParams.required, so loop through each set and
     // pick the one that matches which JSON params were actually sent. We've
     // already been through validation so we're guaranteed to find a match.
-    const keys = _.keys(jsonObj);
+    const keys = Object.keys(jsonObj);
     for (const params of payloadParams.required) {
-      if (_.without(params, ...keys).length === 0) {
+      if (params.filter((p) => !keys.includes(p)).length === 0) {
         requiredParams = params;
         break;
       }
@@ -190,7 +190,7 @@ export function makeArgs(requestParams: PayloadParams, jsonObj: any, payloadPara
 
   // Now we construct our list of arguments which will be passed to the command
   let args;
-  if (_.isFunction(payloadParams.makeArgs)) {
+  if (typeof payloadParams.makeArgs === 'function') {
     // In the route spec, a particular route might define a 'makeArgs' function
     // if it wants full control over how to turn JSON parameters into command
     // arguments. So we pass it the JSON parameters and it returns an array
@@ -201,9 +201,9 @@ export function makeArgs(requestParams: PayloadParams, jsonObj: any, payloadPara
   } else {
     // Otherwise, collect all the required and optional params and flatten them
     // into an argument array
-    args = _.flatten(requiredParams).map((p) => jsonObj[p]);
+    args = (requiredParams ?? []).flat().map((p) => jsonObj[p]);
     if (payloadParams.optional) {
-      args = args.concat(_.flatten(payloadParams.optional).map((p) => jsonObj[p]));
+      args = args.concat((payloadParams.optional ?? []).flat().map((p) => jsonObj[p]));
     }
   }
   // Finally, get our url params (session id, element id, etc...) on the end of
@@ -221,14 +221,14 @@ export function validateExecuteMethodParams(params: any[], paramSpec?: PayloadPa
   // the w3c protocol will give us an array of arguments to apply to a javascript function.
   // that's not what we're doing. we're going to look for a JS object as the first arg, so we
   // can perform validation on it. we'll ignore everything else.
-  if (!params || !_.isArray(params) || params.length > 1) {
+  if (!params || !Array.isArray(params) || params.length > 1) {
     throw new errors.InvalidArgumentError(
       `Did not get correct format of arguments for execute method. Expected zero or one ` +
         `arguments to execute script and instead received: ${JSON.stringify(params)}`
     );
   }
   const args: Record<string, any> = params[0] ?? {};
-  if (!_.isPlainObject(args)) {
+  if (!util.isPlainObject(args)) {
     throw new errors.InvalidArgumentError(
       `Did not receive an appropriate execute method parameters object. It needs to be ` +
         `deserializable as a plain JS object`
@@ -264,8 +264,8 @@ export function routeConfiguringFunction(driver: Core<any>): RouteConfiguringFun
     driver.basePath = basePath;
 
     const allMethods: MethodMap<Driver> = {...METHOD_MAP, ...extraMethodMap};
-    for (const [path, methods] of _.toPairs(allMethods)) {
-      for (const [method, spec] of _.toPairs(methods)) {
+    for (const [path, methods] of Object.entries(allMethods)) {
+      for (const [method, spec] of Object.entries(methods)) {
         const isSessCommand = spec.command ? isSessionCommand(spec.command) : false;
         // set up the express route handler
         buildHandler(
@@ -310,7 +310,7 @@ export function driverShouldDoJwpProxy(driver: Core<any>, req: Request, command:
 }
 
 function extractProtocol(driver: Core<any>, sessionId: string | null = null): keyof typeof PROTOCOLS {
-  const dstDriver = _.isFunction(driver.driverForSession) && sessionId
+  const dstDriver = typeof driver.driverForSession === 'function' && sessionId
     ? driver.driverForSession(sessionId)
     : driver;
   if (dstDriver === driver) {
@@ -326,10 +326,10 @@ function extractProtocol(driver: Core<any>, sessionId: string | null = null): ke
 
 function getLogger(driver: Core<any>, sessionId: string | null = null): AppiumLogger {
   const dstDriver =
-    sessionId && _.isFunction(driver.driverForSession)
+    sessionId && typeof driver.driverForSession === 'function'
       ? driver.driverForSession(sessionId) ?? driver
       : driver;
-  if (_.isFunction(dstDriver.log?.info)) {
+  if (typeof dstDriver.log?.info === 'function') {
     return dstDriver.log;
   }
 
@@ -344,7 +344,7 @@ function wrapParams<T>(paramSets, jsonObj: T): T | Record<string, T> {
    * The wrap option in the spec enforce wrapping before validation, so that all params are wrapped at
    * the time they are validated and later passed to the commands.
    */
-  return (_.isArray(jsonObj) || !_.isObject(jsonObj)) && paramSets.wrap
+  return (Array.isArray(jsonObj) || typeof jsonObj !== 'object' || jsonObj === null) && paramSets.wrap
     ? {[paramSets.wrap]: jsonObj}
     : jsonObj;
 }
@@ -353,7 +353,7 @@ function unwrapParams<T>(paramSets: PayloadParams, jsonObj: T): T | Record<strin
   /* There are commands like setNetworkConnection which send parameters wrapped inside a key such as
    * "parameters". This function unwraps them (eg. {"parameters": {"type": 1}} becomes {"type": 1}).
    */
-  return _.isObject(jsonObj) && paramSets.unwrap && jsonObj[paramSets.unwrap]
+  return typeof jsonObj === 'object' && jsonObj !== null && paramSets.unwrap && jsonObj[paramSets.unwrap]
     ? jsonObj[paramSets.unwrap]
     : jsonObj;
 }
@@ -362,16 +362,15 @@ function unwrapParams<T>(paramSets: PayloadParams, jsonObj: T): T | Record<strin
 function hasMultipleRequiredParamSets(
   required: ReadonlyArray<string> | MultidimensionalReadonlyArray<string, 2> | undefined
 ): required is MultidimensionalReadonlyArray<string, 2> {
-  //@ts-expect-error Needed to convince lodash typechecks
-  return Boolean(required && _.isArray(_.first(required)));
+  return Boolean(required && Array.isArray(required?.[0]));
 }
 
 function pickKnownParams(args: Record<string, any>, unknownNames: string[]): Record<string, any> {
-  if (_.isEmpty(unknownNames)) {
+  if (util.isEmpty(unknownNames)) {
     return args;
   }
   log.info(`The following arguments are not known and will be ignored: ${unknownNames}`);
-  return _.pickBy(args, (v, k) => !unknownNames.includes(k));
+  return omitKeys(args, unknownNames);
 }
 
 function buildHandler(
@@ -418,7 +417,7 @@ function buildHandler(
       let didPluginOverrideProxy = false;
       if (isSessCmd && !spec.neverProxy && spec.command && driverShouldDoJwpProxy(driver, req, spec.command)) {
         if (
-          !('pluginsToHandleCmd' in driver) || !_.isFunction(driver.pluginsToHandleCmd) ||
+          !('pluginsToHandleCmd' in driver) || typeof driver.pluginsToHandleCmd !== 'function' ||
           driver.pluginsToHandleCmd(spec.command, sessionId).length === 0
         ) {
           await doJwpProxy(driver as BaseDriver<any>, req, res);
@@ -474,7 +473,7 @@ function buildHandler(
       getLogger(driver, sessionId).debug(
         `Calling %s.%s() with args: %s`,
         driver.constructor.name, spec.command,
-        logger.markSensitive(_.truncate(JSON.stringify(args), {length: MAX_LOG_BODY_LENGTH}))
+        logger.markSensitive(util.truncateString(JSON.stringify(args), {length: MAX_LOG_BODY_LENGTH}))
       );
 
       if (didPluginOverrideProxy) {
@@ -491,8 +490,8 @@ function buildHandler(
 
       // If `executeCommand` was overridden and the method returns an object
       // with a protocol and value/error property, re-assign the protocol
-      if (_.isPlainObject(driverRes) && _.has(driverRes, 'protocol')) {
-        currentProtocol = driverRes.protocol || currentProtocol;
+      if (util.isPlainObject(driverRes) && Object.hasOwn(driverRes, 'protocol')) {
+        currentProtocol = (driverRes as {protocol?: keyof typeof PROTOCOLS}).protocol || currentProtocol;
         if (driverRes.error) {
           throw driverRes.error;
         }
@@ -519,7 +518,7 @@ function buildHandler(
       // delete should not return anything even if successful
       if (spec.command === DELETE_SESSION_COMMAND) {
         getLogger(driver, sessionId).debug(
-          `Received response: ${_.truncate(JSON.stringify(driverRes), {
+          `Received response: ${util.truncateString(JSON.stringify(driverRes), {
             length: MAX_LOG_BODY_LENGTH,
           })}`
         );
@@ -535,7 +534,7 @@ function buildHandler(
           parseInt(driverRes.status, 10) !== 0
         ) {
           throw errorFromMJSONWPStatusCode(driverRes.status, driverRes.value);
-        } else if (_.isPlainObject(driverRes.value) && driverRes.value.error) {
+        } else if (util.isPlainObject(driverRes.value) && driverRes.value.error) {
           throw errorFromW3CJsonCode(
             driverRes.value.error,
             driverRes.value.message,
@@ -547,7 +546,7 @@ function buildHandler(
       httpResBody.value = driverRes;
       getLogger(driver, sessionId || newSessionId).debug(
         `Responding ` +
-          `to client with driver.${spec.command}() result: ${_.truncate(JSON.stringify(driverRes), {
+          `to client with driver.${spec.command}() result: ${util.truncateString(JSON.stringify(driverRes), {
             length: MAX_LOG_BODY_LENGTH,
           })}`
       );
@@ -555,7 +554,7 @@ function buildHandler(
       // if anything goes wrong, figure out what our response should be
       // based on the type of error that we encountered
       let actualErr;
-      if (err instanceof Error || (_.has(err, 'stack') && _.has(err, 'message'))) {
+      if (err instanceof Error || (Object.hasOwn(err, 'stack') && Object.hasOwn(err, 'message'))) {
         actualErr = err;
       } else {
         getLogger(driver, sessionId || newSessionId).warn(
@@ -569,7 +568,7 @@ function buildHandler(
         currentProtocol || extractProtocol(driver, sessionId || newSessionId);
 
       let errMsg = err.stacktrace || err.stack;
-      if (!_.includes(errMsg, err.message)) {
+      if (!errMsg.includes(err.message)) {
         // if the message has more information, add it. but often the message
         // is the first part of the stack trace
         errMsg = `${err.message}${errMsg ? '\n' + errMsg : ''}`;
@@ -586,7 +585,7 @@ function buildHandler(
     }
 
     // decode the response, which is either a string or json
-    if (_.isString(httpResBody)) {
+    if (typeof httpResBody === 'string') {
       res.status(httpStatus)
         .setHeader('content-type', 'application/json; charset=utf-8')
         .send(httpResBody);

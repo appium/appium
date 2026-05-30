@@ -1,6 +1,6 @@
 import {log} from './logger';
 import {LRUCache} from 'lru-cache';
-import _ from 'lodash';
+import {util} from '@appium/support';
 import {EventEmitter} from 'node:events';
 import type {Request, Response, NextFunction} from 'express';
 
@@ -34,12 +34,12 @@ export async function handleIdempotency(
   next: NextFunction
 ): Promise<void> {
   const keyOrArr = req.headers[IDEMPOTENCY_KEY_HEADER];
-  if (_.isEmpty(keyOrArr) || !keyOrArr) {
+  if (util.isEmpty(keyOrArr) || !keyOrArr) {
     next();
     return;
   }
 
-  const key = _.isArray(keyOrArr) ? keyOrArr[0] : keyOrArr;
+  const key = Array.isArray(keyOrArr) ? keyOrArr[0] : keyOrArr;
 
   log.updateAsyncContext({idempotencyKey: key});
 

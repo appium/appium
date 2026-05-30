@@ -1,7 +1,6 @@
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {InitialOpts} from '@appium/types';
-import _ from 'lodash';
 import {BaseDriver} from '../../../../lib';
 
 chai.use(chaiAsPromised);
@@ -11,7 +10,7 @@ describe('logging custom events', function () {
     const d = new BaseDriver({} as InitialOpts);
     expect((d as any)._eventHistory).to.eql({commands: []});
     await d.logCustomEvent('myorg', 'myevent');
-    expect(_.keys((d as any)._eventHistory)).to.eql(['commands', 'myorg:myevent']);
+    expect(Object.keys((d as any)._eventHistory)).to.eql(['commands', 'myorg:myevent']);
   });
   it('should get all events including custom ones', async function () {
     const d = new BaseDriver({} as InitialOpts);
@@ -19,7 +18,7 @@ describe('logging custom events', function () {
     d.logEvent('appiumEvent');
     await d.logCustomEvent('myorg', 'myevent');
     const events = await d.getLogEvents();
-    expect(_.keys(events)).to.eql(['commands', 'appiumEvent', 'myorg:myevent']);
+    expect(Object.keys(events)).to.eql(['commands', 'appiumEvent', 'myorg:myevent']);
   });
 });
 

@@ -1,6 +1,5 @@
 import type {StringRecord} from '@appium/types';
 import {distance} from 'fastest-levenshtein';
-import _ from 'lodash';
 
 /**
  * Inclusive maximum Levenshtein edit distance for offering a "did you mean" hint.
@@ -39,10 +38,8 @@ export function rankLevenshteinCandidates(
       }
       return acc;
     }, {});
-  const sortedDistanceKeys = _.keys(matchesMap).sort((a, b) => parseInt(a, 10) - parseInt(b, 10));
-  const sorted = _.flatten(
-    sortedDistanceKeys.map((k) => (matchesMap[k] ?? []).sort()),
-  );
+  const sortedDistanceKeys = Object.keys(matchesMap).sort((a, b) => parseInt(a, 10) - parseInt(b, 10));
+  const sorted = sortedDistanceKeys.flatMap((k) => (matchesMap[k] ?? []).sort());
 
   const best = sorted[0];
   const firstDistanceKey = sortedDistanceKeys[0];

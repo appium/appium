@@ -17,7 +17,6 @@ import {
   type SingularSessionData,
   type SessionCapabilities,
 } from '@appium/types';
-import _ from 'lodash';
 import {fixCaps, isW3cCaps} from '../helpers/capabilities';
 import {getLevenshteinSuggestion} from '../helpers/levenshtein-match';
 import {calcSignature} from '../helpers/session';
@@ -26,6 +25,7 @@ import {processCapabilities, validateCaps} from './capabilities';
 import {DriverCore} from './core';
 import * as helpers from './helpers';
 import {resolveExecuteExtensionName} from '../helpers/extension-command-name';
+import {mergePlainObjects} from '../utils';
 
 const EVENT_SESSION_INIT = 'newSessionRequested';
 const EVENT_SESSION_START = 'newSessionStarted';
@@ -68,7 +68,9 @@ export class BaseDriver<
    * @see {@link https://github.com/appium/appium/issues/new}
    */
   protected get _desiredCapConstraints(): Readonly<BaseDriverCapConstraints & C> {
-    return Object.freeze(_.merge({}, BASE_DESIRED_CAP_CONSTRAINTS, this.desiredCapConstraints));
+    return Object.freeze(
+      mergePlainObjects({}, BASE_DESIRED_CAP_CONSTRAINTS, this.desiredCapConstraints) as BaseDriverCapConstraints & C
+    );
   }
 
   /**
@@ -179,7 +181,7 @@ export class BaseDriver<
   clarifyCommandName(cmd: string, args: string[]): string {
     if (cmd === 'execute') {
       const firstArg = args?.[0];
-      if (_.isString(firstArg) && firstArg.trim().length > 0) {
+      if (typeof firstArg === 'string' && firstArg.trim().length > 0) {
         return resolveExecuteExtensionName.call(this, firstArg);
       }
     }
@@ -256,7 +258,7 @@ export class BaseDriver<
       await this.createSession(this.originalCaps);
     } finally {
       // always restore state.
-      for (const [key, value] of _.toPairs(currentConfig)) {
+      for (const [key, value] of Object.entries(currentConfig)) {
         this[key] = value;
       }
     }
@@ -285,7 +287,7 @@ export class BaseDriver<
 
     this.log.debug();
 
-    const originalCaps = _.cloneDeep(
+    const originalCaps = structuredClone(
       [w3cCapabilities, w3cCapabilities1, w3cCapabilities2].find(isW3cCaps),
     );
     if (!originalCaps) {
@@ -320,7 +322,7 @@ export class BaseDriver<
     this.sessionCreationTimestampMs = Date.now();
     this.caps = caps;
     // merge caps onto opts so we don't need to worry about what's where
-    this.opts = {..._.cloneDeep(this.initialOpts), ...this.caps};
+    this.opts = {...structuredClone(this.initialOpts), ...this.caps};
 
     // deal with resets
     // some people like to do weird things by setting noReset and fullReset
@@ -346,7 +348,7 @@ export class BaseDriver<
       delete this.opts.app;
     }
 
-    if (!_.isUndefined(this.caps.newCommandTimeout)) {
+    if (this.caps.newCommandTimeout !== undefined) {
       this.newCommandTimeoutMs = (this.caps.newCommandTimeout as number) * 1000;
     }
 
@@ -387,7 +389,7 @@ export class BaseDriver<
       // simple hack to release pending commands if they exist
       // @ts-expect-error private API
       const queues = this.commandsQueueGuard.queues;
-      for (const key of _.keys(queues)) {
+      for (const key of Object.keys(queues)) {
         queues[key] = [];
       }
     }
@@ -395,8 +397,9 @@ export class BaseDriver<
   }
 
   logExtraCaps(caps: Capabilities<C>) {
-    const knownCaps = _.keys(this._desiredCapConstraints);
-    const extraCaps = _.difference(_.keys(caps), knownCaps);
+    const knownCaps = Object.keys(this._desiredCapConstraints);
+    const knownCapsSet = new Set(knownCaps);
+    const extraCaps = Object.keys(caps).filter((cap) => !knownCapsSet.has(cap));
     if (extraCaps.length) {
       this.log.warn(`The following provided capabilities were not recognized by this driver:`);
       for (const cap of extraCaps) {

@@ -1,7 +1,6 @@
 import {expect} from 'chai';
 import type {InitialOpts} from '@appium/types';
 import {createSandbox} from 'sinon';
-import _ from 'lodash';
 import {BaseDriver} from '../../../../lib';
 
 const FIRST_LOGS = ['first', 'logs'];
@@ -9,11 +8,11 @@ const SECOND_LOGS = ['second', 'logs'];
 const SUPPORTED_LOG_TYPES = {
   one: {
     description: 'First logs',
-    getter: () => _.clone(FIRST_LOGS),
+    getter: () => structuredClone(FIRST_LOGS),
   },
   two: {
     description: 'Seconds logs',
-    getter: () => _.clone(SECOND_LOGS),
+    getter: () => structuredClone(SECOND_LOGS),
   },
 };
 
@@ -26,7 +25,7 @@ describe('log commands -', function () {
     driver = new BaseDriver({} as InitialOpts);
     driver.supportedLogTypes = {};
     (driver as any)._log = {
-      debug: _.noop,
+      debug: () => {},
     } as any;
   });
 

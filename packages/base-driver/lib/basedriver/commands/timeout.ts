@@ -1,5 +1,4 @@
 import {waitForCondition} from 'asyncbox';
-import _ from 'lodash';
 import {util} from '@appium/support';
 import {errors} from '../../protocol';
 import type {BaseDriver} from '../driver';
@@ -15,7 +14,7 @@ const MIN_TIMEOUT = 0;
 
 const TimeoutCommands: ITimeoutCommands = {
   async timeouts<C extends Constraints>(this: BaseDriver<C>, type, ms, script, pageLoad, implicit) {
-    if (type && _.isString(type) && util.hasValue(ms)) {
+    if (type && typeof type === 'string' && util.hasValue(ms)) {
       // legacy stuff with some Appium-specific additions
       this.log.debug(`Timeout arguments: ${JSON.stringify({type, ms})}}`);
       switch (type) {
@@ -33,7 +32,7 @@ const TimeoutCommands: ITimeoutCommands = {
     }
 
     this.log.debug(`W3C timeout argument: ${JSON.stringify({script, pageLoad, implicit})}}`);
-    if ([script, pageLoad, implicit].every(_.isNil)) {
+    if ([script, pageLoad, implicit].every((value) => value == null)) {
       throw new errors.InvalidArgumentError('W3C protocol expects any of script, pageLoad or implicit to be set');
     }
     if (util.hasValue(script)) {
@@ -82,7 +81,7 @@ const TimeoutCommands: ITimeoutCommands = {
     if (this.managedDrivers?.length) {
       this.log.debug('Setting implicit wait on managed drivers');
       for (const driver of this.managedDrivers) {
-        if (_.isFunction(driver.setImplicitWait)) {
+        if (typeof driver.setImplicitWait === 'function') {
           driver.setImplicitWait(ms);
         }
       }
@@ -95,7 +94,7 @@ const TimeoutCommands: ITimeoutCommands = {
     if (this.managedDrivers?.length) {
       this.log.debug('Setting new command timeout on managed drivers');
       for (const driver of this.managedDrivers) {
-        if (_.isFunction(driver.setNewCommandTimeout)) {
+        if (typeof driver.setNewCommandTimeout === 'function') {
           driver.setNewCommandTimeout(ms);
         }
       }
@@ -122,7 +121,7 @@ const TimeoutCommands: ITimeoutCommands = {
 
   parseTimeoutArgument<C extends Constraints>(this: BaseDriver<C>, ms: number | string) {
     const duration = parseInt(String(ms), 10);
-    if (_.isNaN(duration) || duration < MIN_TIMEOUT) {
+    if (Number.isNaN(duration) || duration < MIN_TIMEOUT) {
       throw new errors.UnknownError(`Invalid timeout value '${ms}'`);
     }
     return duration;

@@ -11,7 +11,6 @@ import {
   promoteAppiumOptions,
   stripAppiumPrefixes,
 } from '../../../lib/basedriver/capabilities';
-import _ from 'lodash';
 import type {Capabilities, Constraints, W3CCapabilities} from '@appium/types';
 import {BASE_DESIRED_CAP_CONSTRAINTS} from '@appium/types';
 import {isW3cCaps} from '../../../lib/helpers/capabilities';
@@ -430,7 +429,7 @@ describe('caps', function () {
 
       it('should validate when alwaysMatch and firstMatch[0] have the proper caps when merged together', function () {
         caps = {
-          alwaysMatch: _.omit(matchingCaps, ['appium:deviceName']),
+          alwaysMatch: Object.fromEntries(Object.entries(matchingCaps).filter(([key]) => key !== 'appium:deviceName')),
           firstMatch: [{'appium:deviceName': 'Fake'}],
         };
         expect(processCapabilities(caps as TestW3CCaps, constraints)).to.deep.equal(expectedMatchingCaps);
@@ -438,10 +437,10 @@ describe('caps', function () {
 
       it('should validate when automationName is omitted', function () {
         caps = {
-          alwaysMatch: _.omit(matchingCaps, ['appium:automationName']),
+          alwaysMatch: Object.fromEntries(Object.entries(matchingCaps).filter(([key]) => key !== 'appium:automationName')),
         };
         expect(processCapabilities(caps as TestW3CCaps, constraints)).to.deep.equal(
-          _.omit(expectedMatchingCaps, 'automationName')
+          Object.fromEntries(Object.entries(expectedMatchingCaps).filter(([key]) => key !== 'automationName'))
         );
       });
 
@@ -569,9 +568,8 @@ describe('caps', function () {
       app: '/foo/bar.app.zip',
       automationName: 'XCUITest',
     };
-    const appiumCaps = _.mapKeys(
-      nonPrefixedAppiumCaps,
-      (value, key) => `${APPIUM_VENDOR_PREFIX}${key}`
+    const appiumCaps = Object.fromEntries(
+      Object.entries(nonPrefixedAppiumCaps).map(([key, value]) => [`${APPIUM_VENDOR_PREFIX}${key}`, value])
     );
     const standardCaps = {
       platformName: 'iOS',

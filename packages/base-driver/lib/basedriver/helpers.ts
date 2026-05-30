@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import path from 'node:path';
 import {log as logger} from './logger';
 import {tempDir, fs, util, timing, node} from '@appium/support';
@@ -101,27 +100,27 @@ export async function configureApp(
   app: string,
   options: string | string[] | ConfigureAppOptions = {} as ConfigureAppOptions
 ): Promise<string> {
-  if (!_.isString(app)) {
+  if (typeof app !== 'string') {
     // immediately shortcircuit if not given an app
     return '';
   }
 
   let supportedAppExtensions: string[];
-  const opts = !_.isString(options) && !_.isArray(options) ? options : undefined;
+  const opts = typeof options !== 'string' && !Array.isArray(options) ? options : undefined;
   const onPostProcess = opts?.onPostProcess;
   const onDownload = opts?.onDownload;
 
-  if (_.isString(options)) {
+  if (typeof options === 'string') {
     supportedAppExtensions = [options];
-  } else if (_.isArray(options)) {
+  } else if (Array.isArray(options)) {
     supportedAppExtensions = options;
-  } else if (_.isPlainObject(options)) {
+  } else if (util.isPlainObject(options)) {
     supportedAppExtensions = options.supportedExtensions ?? [];
   } else {
     supportedAppExtensions = [];
   }
 
-  if (_.isEmpty(supportedAppExtensions)) {
+  if (util.isEmpty(supportedAppExtensions)) {
     throw new Error(`One or more supported app extensions must be provided`);
   }
 
@@ -169,7 +168,7 @@ export async function configureApp(
       let {stream, status} = result;
       logger.debug(`Response status: ${status}`);
       try {
-        if (!_.isEmpty(headers)) {
+        if (!util.isEmpty(headers)) {
           if (headers.etag) {
             logger.debug(`Etag: ${headers.etag}`);
             remoteAppProps.etag = headers.etag;
@@ -211,7 +210,7 @@ export async function configureApp(
         if (onDownload) {
           newApp = await onDownload({
             url: originalAppLink,
-            headers: _.clone(headers) as HTTPHeaders,
+            headers: structuredClone(headers) as HTTPHeaders,
             stream,
           });
         } else {
@@ -232,7 +231,7 @@ export async function configureApp(
     } else {
       let errorMessage = `The application at '${newApp}' does not exist or is not accessible`;
       // protocol value for 'C:\\temp' is 'c:', so we check the length as well
-      if (_.isString(protocol) && protocol.length > 2) {
+      if (typeof protocol === 'string' && protocol.length > 2) {
         errorMessage =
           `The protocol '${protocol}' used in '${newApp}' is not supported. ` +
           `Only http: and https: protocols are supported`;
@@ -266,12 +265,12 @@ export async function configureApp(
       return appPathToCache;
     };
 
-    if (_.isFunction(onPostProcess)) {
+    if (typeof onPostProcess === 'function') {
       const postProcessArg: PostProcessOptions = {
-        cachedAppInfo: _.clone(cachedAppInfo) as CachedAppInfo | undefined,
+        cachedAppInfo: structuredClone(cachedAppInfo) as CachedAppInfo | undefined,
         isUrl,
         originalAppLink,
-        headers: _.clone(headers) as HTTPHeaders,
+        headers: structuredClone(headers) as HTTPHeaders,
         appPath: newApp,
       };
       const result = await onPostProcess(postProcessArg);
@@ -281,7 +280,7 @@ export async function configureApp(
     }
 
     verifyAppExtension(newApp, supportedAppExtensions);
-    return appCacheKey !== toCacheKey(newApp) && (packageHash || _.values(remoteAppProps).some(Boolean))
+    return appCacheKey !== toCacheKey(newApp) && (packageHash || Object.values(remoteAppProps).some(Boolean))
       ? await storeAppInCache(newApp)
       : newApp;
   });
@@ -309,14 +308,14 @@ export function isPackageOrBundle(app: string): boolean {
  */
 export function duplicateKeys<T>(input: T, firstKey: string, secondKey: string): T {
   // If array provided, recursively call on all elements
-  if (_.isArray(input)) {
+  if (Array.isArray(input)) {
     return input.map((item) => duplicateKeys(item, firstKey, secondKey)) as T;
   }
 
   // If object, create duplicates for keys and then recursively call on values
-  if (_.isPlainObject(input)) {
+  if (util.isPlainObject(input)) {
     const resultObj: Record<string, unknown> = {};
-    for (const [key, value] of _.toPairs(input as Record<string, unknown>)) {
+    for (const [key, value] of Object.entries(input as Record<string, unknown>)) {
       const recursivelyCalledValue = duplicateKeys(value, firstKey, secondKey);
       if (key === firstKey) {
         resultObj[secondKey] = recursivelyCalledValue;
@@ -341,23 +340,23 @@ export function duplicateKeys<T>(input: T, firstKey: string, secondKey: string):
  * @throws {TypeError} If value is not a string/array or JSON parsing fails for array-like input.
  */
 export function parseCapsArray(capValue: string | string[]): string[] {
-  if (_.isArray(capValue)) {
+  if (Array.isArray(capValue)) {
     return capValue;
   }
 
   try {
     const parsed = JSON.parse(capValue);
-    if (_.isArray(parsed)) {
+    if (Array.isArray(parsed)) {
       return parsed;
     }
   } catch (e) {
     const message = `Failed to parse capability as JSON array: ${(e as Error).message}`;
-    if (_.isString(capValue) && _.startsWith(_.trimStart(capValue), '[')) {
+    if (typeof capValue === 'string' && capValue.trimStart().startsWith('[')) {
       throw new TypeError(message, {cause: e});
     }
     logger.warn(message);
   }
-  if (_.isString(capValue)) {
+  if (typeof capValue === 'string') {
     return [capValue];
   }
   throw new TypeError(`Expected a string or a valid JSON array; received '${capValue}'`);
@@ -391,10 +390,10 @@ function parseAppLink(appLink: string): URL | {protocol?: string; pathname?: str
 
 function isEnvOptionEnabled(optionName: string, defaultValue: boolean | null = null): boolean {
   const value = process.env[optionName];
-  if (!_.isNull(defaultValue) && _.isEmpty(value)) {
+  if (defaultValue !== null && util.isEmpty(value)) {
     return defaultValue;
   }
-  return !_.isEmpty(value) && !['0', 'false', 'no'].includes(_.toLower(value));
+  return !util.isEmpty(value) && !['0', 'false', 'no'].includes(String(value).toLowerCase());
 }
 
 function isSupportedUrl(app: string): boolean {
@@ -514,18 +513,18 @@ function determineFilename(
     ? basename.substring(0, basename.length - extname.length)
     : DEFAULT_BASENAME;
   let resultingExt = extname;
-  if (!supportedAppExtensions.map(_.toLower).includes(_.toLower(resultingExt))) {
+  if (!supportedAppExtensions.map((ext) => ext.toLowerCase()).includes(resultingExt.toLowerCase())) {
     logger.info(
       `The current file extension '${resultingExt}' is not supported. ` +
-        `Defaulting to '${_.first(supportedAppExtensions)}'`
+        `Defaulting to '${supportedAppExtensions[0]}'`
     );
-    resultingExt = _.first(supportedAppExtensions) as string;
+    resultingExt = supportedAppExtensions[0] as string;
   }
   return `${resultingName}${resultingExt}`;
 }
 
 function verifyAppExtension(app: string, supportedAppExtensions: string[]): string {
-  if (supportedAppExtensions.map(_.toLower).includes(_.toLower(path.extname(app)))) {
+  if (supportedAppExtensions.map((ext) => ext.toLowerCase()).includes(path.extname(app).toLowerCase())) {
     return app;
   }
   throw new Error(
@@ -564,7 +563,7 @@ async function isAppIntegrityOk(
 }
 
 function toNaturalNumber(defaultValue: number, envVarName?: string): number {
-  if (!envVarName || _.isUndefined(process.env[envVarName])) {
+  if (!envVarName || process.env[envVarName] === undefined) {
     return defaultValue;
   }
   const num = parseInt(`${process.env[envVarName]}`, 10);

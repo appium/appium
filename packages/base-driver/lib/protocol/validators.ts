@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 export const validators = {
   setUrl: (url: any) => {
     // either an `xyz://`, `about:`, or `data:` scheme is allowed
@@ -15,5 +13,5 @@ export const validators = {
 };
 
 function isNumber(o: any): o is number {
-  return _.isNumber(o) || !_.isNaN(parseInt(o, 10)) || !_.isNaN(parseFloat(o));
+  return typeof o === 'number' || !Number.isNaN(parseInt(o, 10)) || !Number.isNaN(parseFloat(o));
 }

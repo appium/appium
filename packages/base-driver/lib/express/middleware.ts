@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import {util} from '@appium/support';
 import type {NextFunction, Request, RequestHandler, Response} from 'express';
 import type {IncomingMessage} from 'node:http';
 import type {Duplex} from 'node:stream';
@@ -6,7 +6,6 @@ import {log} from './logger';
 import {errors} from '../protocol';
 export {handleIdempotency} from './idempotency';
 import {match} from 'path-to-regexp';
-import {util} from '@appium/support';
 import {calcSignature} from '../helpers/session';
 import {getResponseForW3CError} from '../protocol/errors';
 import type {StringRecord, WSServer} from '@appium/types';
@@ -46,7 +45,7 @@ export function allowCrossDomainAsyncExecute(basePath: string): RequestHandler {
     next: NextFunction
   ): void {
     const receiveAsyncResponseRegExp = new RegExp(
-      `${_.escapeRegExp(basePath)}/session/[a-f0-9-]+/(appium/)?receive_async_response`
+      `${util.escapeRegExp(basePath)}/session/[a-f0-9-]+/(appium/)?receive_async_response`
     );
     if (!receiveAsyncResponseRegExp.test(req.url)) {
       next();
@@ -73,7 +72,7 @@ export function handleLogContext(req: Request, _res: Response, next: NextFunctio
     {
       requestId,
       ...sessionInfo,
-      isSensitive: ['true', '1', 'yes'].includes(_.toLower(isSensitiveHeaderValue)),
+      isSensitive: ['true', '1', 'yes'].includes(String(isSensitiveHeaderValue ?? '').toLowerCase()),
     },
     true
   );
@@ -110,7 +109,7 @@ export function tryHandleWebSocketUpgrade(
   head: Buffer,
   webSocketsMapping: StringRecord<WSServer>
 ): boolean {
-  if (_.toLower(req.headers?.upgrade) !== 'websocket') {
+  if (String(req.headers?.upgrade ?? '').toLowerCase() !== 'websocket') {
     return false;
   }
 
@@ -120,7 +119,7 @@ export function tryHandleWebSocketUpgrade(
   } catch {
     currentPathname = req.url ?? '';
   }
-  for (const [pathname, wsServer] of _.toPairs(webSocketsMapping)) {
+  for (const [pathname, wsServer] of Object.entries(webSocketsMapping)) {
     if (match(pathname)(currentPathname)) {
       wsServer.handleUpgrade(req, socket, head, (ws) => {
         wsServer.emit('connection', ws, req);
@@ -182,6 +181,5 @@ export function catch404Handler(req: Request, res: Response): void {
 
 function fetchHeaderValue(req: Request, name: string): string | undefined {
   const value = req.headers[name];
-  return _.isArray(value) ? value[0] : (value as string | undefined);
+  return Array.isArray(value) ? value[0] : (value as string | undefined);
 }
-

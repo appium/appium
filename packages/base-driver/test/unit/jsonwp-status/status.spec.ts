@@ -1,6 +1,5 @@
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import _ from 'lodash';
 import {statusCodes, getSummaryByCode} from '../../../lib';
 
 chai.use(chaiAsPromised);
@@ -8,7 +7,7 @@ chai.use(chaiAsPromised);
 describe('jsonwp-status', function () {
   describe('codes', function () {
     it('should export code numbers and summaries', function () {
-      for (const obj of _.values(statusCodes)) {
+      for (const obj of Object.values(statusCodes)) {
         expect(obj).to.have.property('code');
         expect(obj.code).to.be.a('number');
         expect(obj).to.have.property('summary');

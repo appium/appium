@@ -1,6 +1,5 @@
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import _ from 'lodash';
 import {server, routeConfiguringFunction, DEFAULT_WS_PATHNAME_PREFIX} from '../../../lib';
 import {FakeDriver} from '../protocol/fake-driver';
 import WebSocket from 'ws';
@@ -42,7 +41,7 @@ describe('Websockets (e2e)', function () {
       const endpoint = `${DEFAULT_WS_PATHNAME_PREFIX}/hello`;
       const timeout = 5000;
       await baseServer.addWebSocketHandler(endpoint, wss);
-      expect(_.keys(await baseServer.getWebSocketHandlers()).length).to.eql(1);
+      expect(Object.keys(await baseServer.getWebSocketHandlers()).length).to.eql(1);
       await new Promise<void>((resolve, reject) => {
         const client = new WebSocket(`ws://${TEST_HOST}:${port}${endpoint}`);
         client.once('upgrade', (res) => {
@@ -53,7 +52,7 @@ describe('Websockets (e2e)', function () {
           }
         });
         client.once('message', (data) => {
-          const dataStr = _.isString(data) ? data : data.toString();
+          const dataStr = typeof data === 'string' ? data : data.toString();
           expect(dataStr).to.eql(WS_DATA);
           resolve();
         });
@@ -65,7 +64,7 @@ describe('Websockets (e2e)', function () {
       });
 
       expect(await baseServer.removeWebSocketHandler(endpoint)).to.be.true;
-      expect(_.keys(await baseServer.getWebSocketHandlers()).length).to.eql(0);
+      expect(Object.keys(await baseServer.getWebSocketHandlers()).length).to.eql(0);
       await new Promise<void>((resolve, reject) => {
         const client = new WebSocket(`ws://${TEST_HOST}:${port}${endpoint}`);
         client.on('message', (data) =>

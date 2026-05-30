@@ -1,10 +1,9 @@
-import _ from 'lodash';
+import {util, logger} from '@appium/support';
 import '@colors/colors';
 import morgan from 'morgan';
 import type {Request, RequestHandler, Response} from 'express';
 import {log} from './logger';
 import {MAX_LOG_BODY_LENGTH} from '../constants';
-import {logger} from '@appium/support';
 
 /**
  * Morgan middleware that logs when the HTTP response finishes.
@@ -32,8 +31,8 @@ function startLogFormatterHandler(tokens: unknown, req: Request, res: Response):
   let reqBody = '';
   if (req.body) {
     try {
-      reqBody = _.truncate(
-        _.isString(req.body) ? req.body : JSON.stringify(req.body),
+      reqBody = util.truncateString(
+        typeof req.body === 'string' ? req.body : JSON.stringify(req.body),
         {length: MAX_LOG_BODY_LENGTH}
       );
     } catch {

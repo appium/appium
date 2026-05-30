@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import {util} from '@appium/support';
 import {errors, validateExecuteMethodParams} from '../../protocol';
 import type {
   Constraints,
@@ -26,8 +26,8 @@ const ExecuteCommands: IExecuteCommands = {
     const Driver = this.constructor as DriverClass<Driver<C>>;
     const commandMetadata = {...Driver.executeMethodMap?.[script]};
     if (!commandMetadata.command) {
-      const availableScripts = _.keys(Driver.executeMethodMap);
-      if (_.isEmpty(availableScripts)) {
+      const availableScripts = Object.keys(Driver.executeMethodMap ?? {});
+      if (util.isEmpty(availableScripts)) {
         throw new errors.UnsupportedOperationError(
           `Unsupported execute method '${script}'. ` +
           `Make sure the installed ${Driver.name} is up-to-date. ` +

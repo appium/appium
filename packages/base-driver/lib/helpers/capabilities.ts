@@ -1,28 +1,28 @@
 import type {Constraints, W3CCapabilities, Capabilities, AppiumLogger} from '@appium/types';
-import _ from 'lodash';
+import {util} from '@appium/support';
 
 /**
  * Determine whether the given argument is valid
  * W3C capabilities instance.
  */
 export function isW3cCaps(caps: unknown): caps is W3CCapabilities<Constraints> {
-  if (!_.isPlainObject(caps)) {
+  if (!util.isPlainObject(caps)) {
     return false;
   }
 
   const c = caps as Record<string, unknown>;
   const isFirstMatchValid = () =>
-    _.isArray(c.firstMatch) &&
-    !_.isEmpty(c.firstMatch) &&
-    _.every(c.firstMatch, _.isPlainObject);
-  const isAlwaysMatchValid = () => _.isPlainObject(c.alwaysMatch);
-  if (_.has(c, 'firstMatch') && _.has(c, 'alwaysMatch')) {
+    Array.isArray(c.firstMatch) &&
+    !util.isEmpty(c.firstMatch) &&
+    c.firstMatch.every((item) => util.isPlainObject(item));
+  const isAlwaysMatchValid = () => util.isPlainObject(c.alwaysMatch);
+  if (Object.hasOwn(c, 'firstMatch') && Object.hasOwn(c, 'alwaysMatch')) {
     return isFirstMatchValid() && isAlwaysMatchValid();
   }
-  if (_.has(c, 'firstMatch')) {
+  if (Object.hasOwn(c, 'firstMatch')) {
     return isFirstMatchValid();
   }
-  if (_.has(c, 'alwaysMatch')) {
+  if (Object.hasOwn(c, 'alwaysMatch')) {
     return isAlwaysMatchValid();
   }
   return false;
@@ -36,16 +36,18 @@ export function fixCaps<C extends Constraints>(
   desiredCapConstraints: C,
   log: AppiumLogger
 ): Capabilities<C> {
-  const caps = _.clone(oldCaps) as Record<string, unknown>;
+  const caps = {...oldCaps} as Record<string, unknown>;
 
   const logCastWarning = (prefix: string) => log.warn(`${prefix}. This may cause unexpected behavior`);
 
   // boolean capabilities can be passed in as strings 'false' and 'true'
   // which we want to translate into boolean values
-  const booleanCaps = _.keys(_.pickBy(desiredCapConstraints, (k) => k.isBoolean === true));
+  const booleanCaps = Object.keys(desiredCapConstraints).filter(
+    (key) => desiredCapConstraints[key as keyof C]?.isBoolean === true
+  );
   for (const cap of booleanCaps) {
     const value = oldCaps[cap];
-    if (!_.isString(value)) {
+    if (typeof value !== 'string') {
       continue;
     }
 
@@ -59,10 +61,12 @@ export function fixCaps<C extends Constraints>(
   }
 
   // int capabilities are often sent in as strings by frameworks
-  const intCaps = _.keys(_.pickBy(desiredCapConstraints, (k) => k.isNumber === true));
+  const intCaps = Object.keys(desiredCapConstraints).filter(
+    (key) => desiredCapConstraints[key as keyof C]?.isNumber === true
+  );
   for (const cap of intCaps) {
     const value = oldCaps[cap];
-    if (!_.isString(value)) {
+    if (typeof value !== 'string') {
       continue;
     }
 

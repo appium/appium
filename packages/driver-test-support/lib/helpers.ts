@@ -1,5 +1,4 @@
 import getPort from 'get-port';
-import _ from 'lodash';
 
 /**
  * Default test host
@@ -25,20 +24,46 @@ export async function getTestPort(force = false): Promise<number> {
 }
 
 /**
- * Build an Appium URL from components.
+ * Build Appium server URLs for tests.
  *
- * **All** parameters are required.  Provide an empty string (`''`) if you don't need one.
- * To rearrange arguments (if needed), use the placeholder from Lodash (`_`).
+ * Call with `(address, port)` to get `(session, pathname) => url`, or pass all four
+ * arguments at once. Use `''` when session or pathname is omitted.
  */
-export const createAppiumURL = _.curry(
-  (address: string, port: string | number, session: string | null, pathname: string): string => {
-    if (!/^https?:\/\//.test(address)) {
-      address = `http://${address}`;
-    }
-    let path = session ? `session/${session}` : '';
-    if (pathname) {
-      path = `${path}/${pathname}`;
-    }
-    return new URL(path, `${address}:${port}`).href;
+export function createAppiumURL(
+  address: string,
+  port: string | number
+): (session: string, pathname: string) => string;
+export function createAppiumURL(
+  address: string,
+  port: string | number,
+  session: string,
+  pathname: string
+): string;
+export function createAppiumURL(
+  address: string,
+  port: string | number,
+  session?: string,
+  pathname?: string
+): string | ((session: string, pathname: string) => string) {
+  const urlFor = (sess: string, path: string) => buildAppiumURL(address, port, sess, path);
+  if (arguments.length === 2) {
+    return urlFor;
   }
-);
+  return urlFor(session!, pathname!);
+}
+function buildAppiumURL(
+  address: string,
+  port: string | number,
+  session: string,
+  pathname: string
+): string {
+  let base = address;
+  if (!/^https?:\/\//.test(base)) {
+    base = `http://${base}`;
+  }
+  let path = session ? `session/${session}` : '';
+  if (pathname) {
+    path = `${path}/${pathname}`;
+  }
+  return new URL(path, `${base}:${port}`).href;
+}

@@ -59,7 +59,6 @@ These are just some helpers (mainly for E2E tests):
 ```js
 import {TEST_HOST, getTestPort, createAppiumURL} from '@appium/driver-test-support';
 import assert from 'node:assert';
-import _ from 'lodash';
 
 describe('TEST_HOST', function() {
   it('should be localhost', function() {
@@ -75,26 +74,18 @@ describe('getTestPort()', function() {
 });
 
 describe('createAppiumURL()', function() {
+  const urlFor = createAppiumURL(TEST_HOST, 31337);
+
   it('should create a "new session" URL', function() {
-    const actual = createAppiumURL(TEST_HOST, 31337, '', 'session');
-    const expected = `http://${TEST_HOST}:31337/session`;
-    assert.strictEqual(actual, expected);
+    assert.strictEqual(urlFor('', 'session'), `http://${TEST_HOST}:31337/session`);
   });
-  
-  it('should create a URL to get an existing session', function() {
+
+  it('should create a URL for a session command', function() {
     const sessionId = '12345';
-    const createGetSessionURL = createAppiumURL(TEST_HOST, 31337, _, 'session');
-    const actual = createGetSessionURL(sessionId);
-    const expected = `http://${TEST_HOST}:31337/session/${sessionId}/session`;
-    assert.strictEqual(actual, expected);
-  });
-  
-  it('should create a URL for a command using an existing session', function() {
-    const sessionId = '12345';
-    const createURLWithPath = createAppiumURL('127.0.0.1', 31337, sessionId);
-    const actual = createURLWithPath('moocow');
-    const expected = `http://${TEST_HOST}:31337/session/${sessionId}/moocow`;
-    assert.strictEqual(actual, expected);
+    assert.strictEqual(
+      urlFor(sessionId, 'moocow'),
+      `http://${TEST_HOST}:31337/session/${sessionId}/moocow`
+    );
   });
 });
 ```

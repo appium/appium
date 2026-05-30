@@ -3523,6 +3523,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#send-messages-to-the-driver-or-other-plugins-running-on-the-same-session" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Send messages to the driver or other plugins running on the same session
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -4179,6 +4190,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#send-messages-to-the-driver-or-other-plugins-running-on-the-same-session" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Send messages to the driver or other plugins running on the same session
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -4440,13 +4462,13 @@ upstream server. In this case, we might run into a problem, because the plugin n
 handle that command! The way Appium handles this is as follows:</p>
 <ol>
 <li>When a command comes in, before deciding whether to proxy the command, the main protocol handler
-  checks to see whether a plugin would handle the command.</li>
+   checks to see whether a plugin would handle the command.</li>
 <li>If a plugin would <em>not</em> handle the command--all proceeds as normal, and the request is either
-  proxied or not, based on the driver's proxy mode.</li>
+   proxied or not, based on the driver's proxy mode.</li>
 <li>If a plugin <em>would</em> handle the command, then the proxy behavior is skipped for the time being,
-  and wrapped up as the <code>next</code> function sent to the plugin. So if you have a command handler in
-  your plugin, and you want to be sure that the default driver proxying <em>does</em> take place, then
-  simply <code>await next()</code> instead of (or in addition to) whatever your plugin handler is doing.</li>
+   and wrapped up as the <code>next</code> function sent to the plugin. So if you have a command handler in
+   your plugin, and you want to be sure that the default driver proxying <em>does</em> take place, then
+   simply <code>await next()</code> instead of (or in addition to) whatever your plugin handler is doing.</li>
 </ol>
 <h3 id="throw-webdriver-specific-errors">Throw WebDriver-specific errors<a class="headerlink" href="#throw-webdriver-specific-errors" title="Permanent link">&para;</a></h3>
 <p>The WebDriver spec defines a set of error
@@ -4512,7 +4534,7 @@ drivers, you can create new commands in one of two ways, just as is possible for
 <li>Extending the WebDriver protocol and creating client-side plugins to access the extensions</li>
 <li>Extending the WebDriver BiDi protocol with new modules and methods, accessed from a client via the BiDi interface</li>
 <li>Overloading the Execute Script command by defining Execute
-  Methods</li>
+   Methods</li>
 </ol>
 <h4 id="extending-the-http-protocol">Extending the HTTP Protocol<a class="headerlink" href="#extending-the-http-protocol" title="Permanent link">&para;</a></h4>
 <p>If you want to follow the first path, you can direct Appium to recognize new methods and add them
@@ -4617,10 +4639,10 @@ inside the plugin class:</p>
 <ol>
 <li>The <code>executeMethodMap</code>, defined in just the same way as for drivers</li>
 <li>The implementation of the command method as defined in <code>executeMethodMap</code> (in this case,
-  <code>plugMeIn</code>)</li>
+   <code>plugMeIn</code>)</li>
 <li>The overriding/handling of the <code>execute</code> command. Just like any plugin command handlers, the
-  first two arguments are <code>next</code> and <code>driver</code>, followed by the script name and args. <code>BasePlugin</code>
-  implements a helper method which we can simply call with all of these arguments.</li>
+   first two arguments are <code>next</code> and <code>driver</code>, followed by the script name and args. <code>BasePlugin</code>
+   implements a helper method which we can simply call with all of these arguments.</li>
 </ol>
 <p>Overriding Execute Methods from drivers works as you'd expect: if your plugin defines an Execute
 Method with the same name as that of a driver, your command (in this case <code>plugMeIn</code>) will be
@@ -4667,6 +4689,13 @@ keeping in mind that the function is not <code>await</code>ed you could implemen
 </span><span id="__span-19-6"><a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a><span class="w">  </span><span class="p">}</span>
 </span><span id="__span-19-7"><a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a><span class="p">}</span>
 </span></code></pre></div>
+<h3 id="send-messages-to-the-driver-or-other-plugins-running-on-the-same-session">Send messages to the driver or other plugins running on the same session<a class="headerlink" href="#send-messages-to-the-driver-or-other-plugins-running-on-the-same-session" title="Permanent link">&para;</a></h3>
+<p>Even though drivers and plugins don't know anything about each other, it's possible for them to
+send messages that other drivers or plugins can listen for, within the context of the same session,
+using an IPC channel. Given that the developer instructions for this feature are the same for
+drivers and plugins, please head over to the IPC development docs for
+drivers at the driver
+development guide.</p>
 
 
 
@@ -4687,7 +4716,7 @@ keeping in mind that the function is not <code>await</code>ed you could implemen
     <span class="md-icon" title="最終更新日">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="2026年5月7日 18:32:52 UTC"><span class="timeago" datetime="2026-05-07T18:32:52+00:00" locale="ja"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="2026年5月7日 18:32:52 UTC">2026-05-07</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="2026年5月29日 16:58:32 UTC"><span class="timeago" datetime="2026-05-29T16:58:32+00:00" locale="ja"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="2026年5月29日 16:58:32 UTC">2026-05-29</span>
   </span>
 
     

@@ -367,7 +367,7 @@ describe('util', function () {
     describe('with function predicate', function () {
       it('should filter elements', function () {
         const obj = {a: 'a', b: 'b', c: 'c'};
-        expect(util.filterObject(obj, (v) => v === 'a' || v === 'c')).to.eql({a: 'a', c: 'c'});
+        expect(util.filterObject(obj, (v: unknown) => v === 'a' || v === 'c')).to.eql({a: 'a', c: 'c'});
       });
     });
   });

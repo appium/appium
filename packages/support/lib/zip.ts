@@ -1,5 +1,6 @@
 import {promisify} from 'node:util';
 import * as yauzl from 'yauzl';
+// @ts-ignore - archiver 8.0 types are not available; 7.x types don't match
 import {ZipArchive} from 'archiver';
 import {createWriteStream} from 'node:fs';
 import path from 'node:path';

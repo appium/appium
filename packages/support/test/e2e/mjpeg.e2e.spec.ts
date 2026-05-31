@@ -2,6 +2,7 @@ import {sleep} from 'asyncbox';
 import http from 'node:http';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+// @ts-ignore - mjpeg-server has no types
 import mJpegServer from 'mjpeg-server';
 import getPort from 'get-port';
 import {mjpeg} from '../../lib';

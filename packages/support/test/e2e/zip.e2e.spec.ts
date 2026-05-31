@@ -239,7 +239,8 @@ describe('#zip', function () {
           entry = {
             fileName: path.resolve(destDir, 'temp', 'file'),
           };
-          mockZipStream.pipe = (writeStream: NodeJS.WritableStream & NodeJS.EventEmitter) => {
+          mockZipStream.pipe = (dest?: unknown) => {
+            const writeStream = dest as NodeJS.WritableStream & NodeJS.EventEmitter;
             writeStream.emit('error', new Error('write stream error'));
             mockZipStream.end();
             writeStream.end();

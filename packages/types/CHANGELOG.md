@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.5.0](https://github.com/appium/appium/compare/@appium/types@1.4.0...@appium/types@1.5.0) (2026-05-31)
+
+
+### Features
+
+* add IPC channels per session for drivers and plugins to communicate ([#22211](https://github.com/appium/appium/issues/22211)) ([97c879c](https://github.com/appium/appium/commit/97c879cdd02e6fcccaaea45a8d1a7088bed4ae66)), closes [#22206](https://github.com/appium/appium/issues/22206)
+* Limit the maximum count of topics per session and make it configurable ([#22279](https://github.com/appium/appium/issues/22279)) ([0264775](https://github.com/appium/appium/commit/0264775ecb8ecaca9dac2eae47784da02a653255))
+* make assignIpc internal ([#22278](https://github.com/appium/appium/issues/22278)) ([25d922b](https://github.com/appium/appium/commit/25d922b7d3062c306c1631d6f5c227600ddd226a))
+
+
+
 ## [1.4.0](https://github.com/appium/appium/compare/@appium/types@1.3.1...@appium/types@1.4.0) (2026-05-06)
 
 

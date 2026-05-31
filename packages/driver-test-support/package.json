@@ -1,6 +1,6 @@
 {
   "name": "@appium/driver-test-support",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Test utilities for Appium drivers",
   "keywords": [
     "automation",
@@ -48,7 +48,7 @@
     "type-fest": "5.6.0"
   },
   "devDependencies": {
-    "@appium/types": "1.4.0"
+    "@appium/types": "1.5.0"
   },
   "peerDependencies": {
     "appium": "^3.0.0-beta.0",

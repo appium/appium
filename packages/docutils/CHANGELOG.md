@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.4.3](https://github.com/appium/appium/compare/@appium/docutils@2.4.2...@appium/docutils@2.4.3) (2026-05-31)
+
+**Note:** Version bump only for package @appium/docutils
+
+
+
+
+
 ## [2.4.2](https://github.com/appium/appium/compare/@appium/docutils@2.4.1...@appium/docutils@2.4.2) (2026-05-07)
 
 **Note:** Version bump only for package @appium/docutils

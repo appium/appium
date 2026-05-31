@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.3.0](https://github.com/appium/appium/compare/@appium/fake-plugin@4.2.4...@appium/fake-plugin@4.3.0) (2026-05-31)
+
+
+### Features
+
+* add IPC channels per session for drivers and plugins to communicate ([#22211](https://github.com/appium/appium/issues/22211)) ([97c879c](https://github.com/appium/appium/commit/97c879cdd02e6fcccaaea45a8d1a7088bed4ae66)), closes [#22206](https://github.com/appium/appium/issues/22206)
+
+
+
 ## [4.2.4](https://github.com/appium/appium/compare/@appium/fake-plugin@4.2.3...@appium/fake-plugin@4.2.4) (2026-05-07)
 
 **Note:** Version bump only for package @appium/fake-plugin

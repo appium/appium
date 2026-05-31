@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.6.0](https://github.com/appium/appium/compare/@appium/base-driver@10.5.2...@appium/base-driver@10.6.0) (2026-05-31)
+
+
+### Features
+
+* add IPC channels per session for drivers and plugins to communicate ([#22211](https://github.com/appium/appium/issues/22211)) ([97c879c](https://github.com/appium/appium/commit/97c879cdd02e6fcccaaea45a8d1a7088bed4ae66)), closes [#22206](https://github.com/appium/appium/issues/22206)
+* **base-driver:** Ditch bluebird ([#22293](https://github.com/appium/appium/issues/22293)) ([c9b7eac](https://github.com/appium/appium/commit/c9b7eac3653027245cdcde1a5880c0ca2c1c9ed1))
+* **base-driver:** Ditch lodash ([#22324](https://github.com/appium/appium/issues/22324)) ([cf79b32](https://github.com/appium/appium/commit/cf79b3283a85ad0bc38359c345ac33669867e853))
+* Limit the maximum count of topics per session and make it configurable ([#22279](https://github.com/appium/appium/issues/22279)) ([0264775](https://github.com/appium/appium/commit/0264775ecb8ecaca9dac2eae47784da02a653255))
+* make assignIpc internal ([#22278](https://github.com/appium/appium/issues/22278)) ([25d922b](https://github.com/appium/appium/commit/25d922b7d3062c306c1631d6f5c227600ddd226a))
+
+
+
 ## [10.5.2](https://github.com/appium/appium/compare/@appium/base-driver@10.5.1...@appium/base-driver@10.5.2) (2026-05-07)
 
 **Note:** Version bump only for package @appium/base-driver

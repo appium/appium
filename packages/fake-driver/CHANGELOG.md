@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.2.0](https://github.com/appium/appium/compare/@appium/fake-driver@6.1.3...@appium/fake-driver@6.2.0) (2026-05-31)
+
+
+### Features
+
+* add IPC channels per session for drivers and plugins to communicate ([#22211](https://github.com/appium/appium/issues/22211)) ([97c879c](https://github.com/appium/appium/commit/97c879cdd02e6fcccaaea45a8d1a7088bed4ae66)), closes [#22206](https://github.com/appium/appium/issues/22206)
+
+
+
 ## [6.1.3](https://github.com/appium/appium/compare/@appium/fake-driver@6.1.2...@appium/fake-driver@6.1.3) (2026-05-06)
 
 **Note:** Version bump only for package @appium/fake-driver

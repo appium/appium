@@ -43,8 +43,8 @@ async function writeJson(filepath, data) {
  * @returns {Promise<string[]>} An array of package directory paths.
  */
 async function getPackageDirs() {
-  return (await fs.glob('*/package.json', {cwd: ROOT_PACKAGES_DIR}))
-    .map((packageJsonPath) => path.join(ROOT_PACKAGES_DIR, path.dirname(packageJsonPath)))
+  return (await fs.glob('*/package.json', {cwd: ROOT_PACKAGES_DIR, absolute: true}))
+    .map((pkgJsonPath) => path.dirname(pkgJsonPath))
     .sort();
 }
 
@@ -104,12 +104,14 @@ async function main() {
       return fs.copyFile(ROOT_LICENSE, licensePath);
     });
 
+  log.debug(`Copying README to ${APPIUM_PACKAGE_README}`);
+  const copyingReadmePromise = fs.copyFile(ROOT_README, APPIUM_PACKAGE_README);
+
   await Promise.all([
     ...syncPackageJsonFieldsPromises,
     ...licenseCopyPromises,
+    copyingReadmePromise,
   ]);
-  log.debug(`Copying README to ${APPIUM_PACKAGE_README}`);
-  await fs.copyFile(ROOT_README, APPIUM_PACKAGE_README);
 }
 
 await main();

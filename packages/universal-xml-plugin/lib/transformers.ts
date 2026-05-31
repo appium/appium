@@ -26,7 +26,7 @@ export function android(nodeObj: any, metadata: TransformMetadata): void {
   if (nodeObj[`${ATTR_PREFIX}bounds`]) {
     const boundsArray = nodeObj[`${ATTR_PREFIX}bounds`]
       .split(/\[|\]|,/)
-      .filter((str) => str !== '');
+      .filter((str: string) => str !== '');
     const [x, y, x2, y2] = boundsArray;
     const width = parseInt(x2, 10) - parseInt(x, 10);
     const height = parseInt(y2, 10) - parseInt(y, 10);

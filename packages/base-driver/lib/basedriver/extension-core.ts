@@ -125,8 +125,11 @@ export class ExtensionCore {
       command
     ];
     const response =
-      next && driver ? await commandHandler(next, driver, ...args) : await commandHandler(...args);
-    const finalResponse: BiDiResultData = response === undefined || response === null ? {} : response;
+      next && driver
+        ? await commandHandler.call(this, next, driver, ...args)
+        : await commandHandler.call(this, ...args);
+    const finalResponse: BiDiResultData =
+      response === undefined ? {} : (response as BiDiResultData);
     this.log.debug(
       `Responding to bidi command '${bidiCmd}' with ` +
       `${util.truncateString(JSON.stringify(finalResponse), {length: MAX_LOG_BODY_LENGTH})}`

@@ -61,7 +61,8 @@ async function findElOrElsWithProcessing<C extends Constraints>(
   } catch (err) {
     if (this.opts.printPageSourceOnFindFailure) {
       const src = await this.getPageSource();
-      this.log.debug(`Error finding element${mult ? 's' : ''}: ${err.message}`);
+      const message = err instanceof Error ? err.message : String(err);
+      this.log.debug(`Error finding element${mult ? 's' : ''}: ${message}`);
       this.log.debug(`Page source requested through 'printPageSourceOnFindFailure':`);
       this.log.debug(src);
     }
@@ -71,11 +72,11 @@ async function findElOrElsWithProcessing<C extends Constraints>(
 }
 
 const FindCommands: IFindCommands = {
-  async findElement<C extends Constraints>(this: BaseDriver<C>, strategy, selector) {
+  async findElement<C extends Constraints>(this: BaseDriver<C>, strategy: string, selector: string) {
     return await this.findElOrElsWithProcessing(strategy, selector, false);
   },
 
-  async findElements<C extends Constraints>(this: BaseDriver<C>, strategy, selector) {
+  async findElements<C extends Constraints>(this: BaseDriver<C>, strategy: string, selector: string) {
     return await this.findElOrElsWithProcessing(strategy, selector, true);
   },
 

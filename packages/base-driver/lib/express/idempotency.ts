@@ -122,7 +122,7 @@ function cacheResponse(key: string, req: Request, res: Response): void {
       return originalSocketWriter(
         chunk as string | Buffer | Uint8Array,
         encoding as BufferEncoding,
-        next as (err?: Error) => void
+        next as (err?: Error | null) => void
       );
     }
 
@@ -139,7 +139,7 @@ function cacheResponse(key: string, req: Request, res: Response): void {
     return originalSocketWriter(
       chunk as string | Buffer | Uint8Array,
       encoding as BufferEncoding,
-      next as (err?: Error) => void
+      next as (err?: Error | null) => void
     );
   };
   socket.write = patchedWriter as typeof socket.write;

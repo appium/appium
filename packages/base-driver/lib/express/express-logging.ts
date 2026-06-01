@@ -23,11 +23,12 @@ export const startLogFormatter: RequestHandler = morgan(startLogFormatterHandler
 type MorganTokens = unknown;
 type FormatFn = (tokens: MorganTokens, req: Request, res: Response) => string;
 
-function endLogFormatterHandler(tokens: MorganTokens, req: Request, res: Response): void {
+function endLogFormatterHandler(tokens: MorganTokens, req: Request, res: Response): undefined {
   log.info(requestEndLoggingFormat(tokens, req, res));
+  return undefined;
 }
 
-function startLogFormatterHandler(tokens: unknown, req: Request, res: Response): void {
+function startLogFormatterHandler(tokens: unknown, req: Request, res: Response): undefined {
   let reqBody = '';
   if (req.body) {
     try {
@@ -43,6 +44,7 @@ function startLogFormatterHandler(tokens: unknown, req: Request, res: Response):
     requestStartLoggingFormat(tokens, req, res),
     logger.markSensitive(reqBody.grey)
   );
+  return undefined;
 }
 
 // Copied the morgan compile function over so that cooler formats may be configured

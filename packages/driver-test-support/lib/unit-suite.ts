@@ -113,7 +113,7 @@ export function driverUnitTestSuite<C extends Constraints>(
     it('should not allow commands in middle of unexpected shutdown', async function () {
       sandbox.stub(d, 'deleteSession').callsFake(async function (this: InstanceType<typeof DriverClass>) {
         await sleep(100);
-        DriverClass.prototype.deleteSession.call(this);
+        await DriverClass.prototype.deleteSession.call(this);
       });
       await d.createSession(w3cCaps);
       const p = new Promise<void>((resolve, reject) => {
@@ -136,7 +136,7 @@ export function driverUnitTestSuite<C extends Constraints>(
     it('should allow new commands after done shutting down', async function () {
       sandbox.stub(d, 'deleteSession').callsFake(async function (this: InstanceType<typeof DriverClass>) {
         await sleep(100);
-        DriverClass.prototype.deleteSession.call(this);
+        await DriverClass.prototype.deleteSession.call(this);
       });
 
       await d.createSession(structuredClone(w3cCaps));

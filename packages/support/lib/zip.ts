@@ -25,8 +25,6 @@ const IFMT = 0b1111000000000000;
 const IFDIR = 0b0100000000000000;
 const IFLNK = 0b1010000000000000;
 
-// Internal extraction helpers are defined near the end of the file.
-
 export interface ExtractAllOptions {
   /**
    * The encoding to use for extracted file names.
@@ -97,9 +95,12 @@ interface ZipExtractorOptions {
   defaultFileMode?: string;
 }
 
+type OpenReadStreamFn = (entry: yauzl.Entry) => Promise<NodeJS.ReadableStream>;
+
 // This class is mostly copied from https://github.com/maxogden/extract-zip/blob/master/index.js
 class ZipExtractor {
   zipfile!: yauzl.ZipFile;
+  private openReadStream!: OpenReadStreamFn;
   private readonly zipPath: string;
   private readonly opts: ZipExtractorOptions;
   private canceled = false;
@@ -110,77 +111,54 @@ class ZipExtractor {
   }
 
   async extract(): Promise<void> {
-    const {dir, fileNamesEncoding} = this.opts;
+    const {fileNamesEncoding} = this.opts;
     this.zipfile = await openZip(this.zipPath, {
       lazyEntries: true,
       // https://github.com/thejoshwolfe/yauzl/commit/cc7455ac789ba84973184e5ebde0581cdc4c3b39#diff-04c6e90faac2675aa89e2176d2eec7d8R95
       decodeStrings: !fileNamesEncoding,
     });
+    this.openReadStream = createOpenReadStream(this.zipfile);
     this.canceled = false;
 
-    return new Promise<void>((resolve, reject) => {
-      this.zipfile.on('error', (err: Error) => {
-        this.canceled = true;
-        reject(err);
-      });
-      this.zipfile.readEntry();
+    const {dir} = this.opts;
 
-      this.zipfile.on('close', () => {
-        if (!this.canceled) {
-          resolve();
-        }
-      });
-
-      this.zipfile.on('entry', async (entry: yauzl.Entry) => {
+    try {
+      await processYauzlEntriesSequentially(this.zipfile, async (entry) => {
         if (this.canceled) {
-          return;
+          return false;
         }
 
         const fileName = this.extractFileName(entry);
         if (fileName.startsWith('__MACOSX/')) {
-          this.zipfile.readEntry();
           return;
         }
 
-        const destDir = path.dirname(path.join(dir, fileName));
-        try {
-          await fs.mkdir(destDir, {recursive: true});
-
-          const canonicalDestDir = await fs.realpath(destDir);
-          const relativeDestDir = path.relative(dir, canonicalDestDir);
-
-          if (relativeDestDir.split(path.sep).includes('..')) {
-            throw new Error(
-              `Out of bound path "${canonicalDestDir}" found while processing file ${fileName}`
-            );
-          }
-
-          await this.extractEntry(entry);
-          this.zipfile.readEntry();
-        } catch (err) {
-          this.canceled = true;
-          this.zipfile.close();
-          reject(err);
+        const dest = path.join(dir, fileName);
+        if (!isSubPath(dest, dir)) {
+          throw new Error(
+            `Out of bound path "${dest}" found while processing file ${fileName}`
+          );
         }
+
+        await fs.mkdir(path.dirname(dest), {recursive: true});
+        await this.extractEntry(entry, fileName);
       });
-    });
+    } catch (err) {
+      this.canceled = true;
+      throw err;
+    }
   }
 
   private extractFileName(entry: yauzl.Entry): string {
-    if (Buffer.isBuffer(entry.fileName)) {
-      return entry.fileName.toString(this.opts.fileNamesEncoding);
-    }
-    return entry.fileName;
+    return toEntryFileName(entry, this.opts.fileNamesEncoding);
   }
 
-  private async extractEntry(entry: yauzl.Entry): Promise<void> {
+  private async extractEntry(entry: yauzl.Entry, fileName: string): Promise<void> {
     if (this.canceled) {
       return;
     }
 
     const {dir} = this.opts;
-
-    const fileName = this.extractFileName(entry);
     const dest = path.join(dir, fileName);
 
     // convert external file attr int into a fs stat mode int
@@ -206,10 +184,7 @@ class ZipExtractor {
       return;
     }
 
-    const openReadStream = promisify(
-      this.zipfile.openReadStream.bind(this.zipfile)
-    ) as (entry: yauzl.Entry) => Promise<NodeJS.ReadableStream>;
-    const readStream = await openReadStream(entry);
+    const readStream = await this.openReadStream(entry);
     if (isSymlink) {
       const link = await getStream(readStream);
       await fs.symlink(link, dest);
@@ -287,48 +262,30 @@ export async function extractAllTo(
  * @param zipFile The source ZIP stream
  * @param entry The entry instance
  * @param destDir The full path to the destination folder
+ * @param openReadStream Reused bound opener (one per archive)
  */
 export async function _extractEntryTo(
   zipFile: yauzl.ZipFile,
   entry: yauzl.Entry,
-  destDir: string
+  destDir: string,
+  openReadStream: OpenReadStreamFn = createOpenReadStream(zipFile)
 ): Promise<void> {
-  const dstPath = path.resolve(destDir, entry.fileName);
+  const fileName = toEntryFileName(entry);
+  const dstPath = path.resolve(destDir, fileName);
   if (!isSubPath(dstPath, destDir)) {
-    throw new Error(
-      `Out of bound path "${dstPath}" found while processing file ${entry.fileName}`
-    );
+    throw new Error(`Out of bound path "${dstPath}" found while processing file ${fileName}`);
   }
 
-  // Create dest directory if doesn't exist already
-  if (entry.fileName.endsWith('/')) {
+  if (fileName.endsWith('/')) {
     if (!(await fs.exists(dstPath))) {
       await fs.mkdirp(dstPath);
     }
     return;
-  } else if (!(await fs.exists(path.dirname(dstPath)))) {
-    await fs.mkdirp(path.dirname(dstPath));
   }
+  await fs.mkdirp(path.dirname(dstPath));
 
-  // Create a write stream
-  const writeStream = createWriteStream(dstPath, {flags: 'w'});
-  const writeStreamPromise = new Promise<void>((resolve, reject) => {
-    writeStream.once('finish', resolve);
-    writeStream.once('error', reject);
-  });
-
-  const openReadStream = promisify(zipFile.openReadStream.bind(zipFile)) as (
-    entry: yauzl.Entry
-  ) => Promise<NodeJS.ReadableStream>;
-  const zipReadStream = await openReadStream(entry);
-  const zipReadStreamPromise = new Promise<void>((resolve, reject) => {
-    zipReadStream.once('end', resolve);
-    zipReadStream.once('error', reject);
-  });
-  zipReadStream.pipe(writeStream);
-
-  // Wait for the zipReadStream and writeStream to end before returning
-  await Promise.all([zipReadStreamPromise, writeStreamPromise]);
+  const readStream = await openReadStream(entry);
+  await pipeline(readStream, createWriteStream(dstPath, {flags: 'w'}));
 }
 
 /**
@@ -344,28 +301,17 @@ export async function readEntries(
   zipFilePath: string,
   onEntry: (entry: ZipEntry) => boolean | void | Promise<boolean | void>
 ): Promise<void> {
-  // Open a zip file and start reading entries
   const zipfile = await openZip(zipFilePath, {lazyEntries: true});
-  const zipReadStreamPromise = new Promise<void>((resolve, reject) => {
-    zipfile.once('end', resolve);
-    zipfile.once('error', reject);
+  const openReadStream = createOpenReadStream(zipfile);
 
-    // On each entry, call 'onEntry' and then read the next entry
-    zipfile.on('entry', async (entry: yauzl.Entry) => {
-      const res = await onEntry({
-        entry,
-        extractEntryTo: async (destDir: string) => await _extractEntryTo(zipfile, entry, destDir),
-      });
-      if (res === false) {
-        return zipfile.emit('end');
-      }
-      zipfile.readEntry();
+  await processYauzlEntriesSequentially(zipfile, async (entry) => {
+    const res = await onEntry({
+      entry,
+      extractEntryTo: async (destDir: string) =>
+        await _extractEntryTo(zipfile, entry, destDir, openReadStream),
     });
+    return res === false ? false : undefined;
   });
-  zipfile.readEntry();
-
-  // Wait for the entries to finish being iterated through
-  await zipReadStreamPromise;
 }
 
 /**
@@ -540,6 +486,82 @@ export async function toArchive(
   });
 }
 
+function createOpenReadStream(zipfile: yauzl.ZipFile): OpenReadStreamFn {
+  return promisify(zipfile.openReadStream.bind(zipfile)) as OpenReadStreamFn;
+}
+
+function toEntryFileName(entry: yauzl.Entry, encoding?: BufferEncoding): string {
+  if (Buffer.isBuffer(entry.fileName)) {
+    return entry.fileName.toString(encoding ?? 'utf8');
+  }
+  return entry.fileName;
+}
+
+/**
+ * Walk zip entries sequentially (yauzl `lazyEntries` contract).
+ */
+async function processYauzlEntriesSequentially(
+  zipfile: yauzl.ZipFile,
+  onEntry: (entry: yauzl.Entry) => Promise<boolean | void>
+): Promise<void> {
+  let queue: Promise<void> = Promise.resolve();
+  let stopped = false;
+
+
+  await new Promise<void>((resolve, reject) => {
+    let settled = false;
+
+    const settleError = (err: unknown) => {
+      if (!settled) {
+        settled = true;
+        reject(err);
+      }
+    };
+
+    const settleSuccess = async () => {
+      try {
+        await queue;
+        if (!settled) {
+          settled = true;
+          resolve();
+        }
+      } catch (err) {
+        settleError(err);
+      }
+    };
+
+    zipfile.on('error', settleError);
+    zipfile.on('end', () => void settleSuccess());
+    zipfile.on('close', () => void settleSuccess());
+
+    zipfile.on('entry', (entry: yauzl.Entry) => {
+      queue = queue
+        .then(async () => {
+          if (stopped) {
+            return undefined;
+          }
+          const shouldContinue = await onEntry(entry);
+          if (shouldContinue === false) {
+            stopped = true;
+            zipfile.close();
+            return undefined;
+          }
+          zipfile.readEntry();
+          return undefined;
+        })
+        .catch((err: unknown) => {
+          stopped = true;
+          zipfile.close();
+          settleError(err);
+          return undefined;
+        });
+    });
+
+    zipfile.readEntry();
+  });
+
+}
+
 /**
  * Executes system unzip (e.g., `/usr/bin/unzip`). If available, it is
  * significantly faster than the JS implementation.
@@ -599,4 +621,3 @@ export default {
   assertValidZip,
   toArchive,
 };
-

@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 
 /**
- * @template {Record<string,any>} Mocks
+ * @template {Record<string, any>} [Mocks=Record<string, any>]
  * @extends {Mocks}
  * @deprecated Use `sinon.createSandbox()` and `sandbox.mock()` directly instead.
  */
@@ -35,7 +35,7 @@ export class MockStore {
     }
     this.sandbox = this.sandbox ?? sinon.createSandbox();
     for (const [key, value] of Object.entries(mockDefs)) {
-      this[key] = this.sandbox.mock(value);
+      Reflect.set(this, key, this.sandbox.mock(value));
     }
     this.#mocks = mockDefs;
     return this;
@@ -55,7 +55,7 @@ export class MockStore {
 
   reset() {
     for (const key of Object.keys(this.#mocks ?? {})) {
-      delete this[key];
+      Reflect.deleteProperty(this, key);
     }
     this.sandbox?.restore();
     this.#mocks = undefined;
@@ -72,7 +72,7 @@ export class MockStore {
  *
  * @deprecated Use `sinon.createSandbox()` directly with Mocha `beforeEach`/`afterEach` hooks instead.
  * @param {Record<string|symbol,any>} mockDefs
- * @param {(mocks: MockStore) => void} fn
+ * @param {(mocks: MockStore<Record<string, any>>) => void} fn
  * @returns {() => void}
  */
 export function withMocks(mockDefs, fn) {
@@ -93,7 +93,7 @@ export function withMocks(mockDefs, fn) {
 /**
  * Convenience function for calling `mocks.verify()`.
  * @deprecated Call `sandbox.verify()` directly on your sinon sandbox instead.
- * @param {MockStore} mocks - Returned by callback from {@linkcode withMocks}
+ * @param {MockStore<Record<string, any>>} mocks - Returned by callback from {@linkcode withMocks}
  */
 export function verifyMocks(mocks) {
   mocks.verify();

@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "strict": true,
     "rootDir": ".",
     "outDir": "build",
     "checkJs": true,

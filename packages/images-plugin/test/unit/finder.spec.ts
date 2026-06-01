@@ -105,8 +105,8 @@ describe('finding elements by image', function () {
     it('should find image elements happypath', async function () {
       compareStub.resolves([{rect, score}]);
       const els = await f.findByImage(template, d as any, {multiple: true});
-      expect(els).to.have.length(1);
-      basicImgElVerify(els[0], f);
+      expect(els).to.be.an('array').with.length(1);
+      basicImgElVerify((els as unknown as ImageElement[])[0], f);
     });
     it('should fail if driver does not support getWindowRect', async function () {
       (d as any).getWindowRect = null;

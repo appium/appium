@@ -638,16 +638,15 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
       loadChecksPromises.push(promise);
     }
     const isDoctorCheck = (x: unknown): x is IDoctorCheck =>
-      _.isPlainObject(x) &&
       ['diagnose', 'fix', 'hasAutofix', 'isOptional'].every((method) =>
-        _.isFunction((x as IDoctorCheck)[method as keyof IDoctorCheck])
+        _.isFunction((x as IDoctorCheck)?.[method as keyof IDoctorCheck])
       );
     const checks: IDoctorCheck[] = _.flatMap(
-      (await Promise.all(loadChecksPromises))
-        .filter((mod): mod is object => Boolean(mod))
-        .map((mod) => _.toPairs(mod)),
-      ([, value]) => value
-    ).filter(isDoctorCheck);
+      (await Promise.all(loadChecksPromises)).filter((mod): mod is object => Boolean(mod)),
+      _.toPairs
+    )
+      .map(([, value]) => value)
+      .filter(isDoctorCheck);
     if (_.isEmpty(checks)) {
       this.log.info(`The ${this.type} "${installSpec}" exports no valid doctor checks`);
       return 0;

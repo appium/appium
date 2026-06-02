@@ -18,7 +18,7 @@ const CAPS_FIXTURE = resolveFixture('caps.json');
 const LOG_FILTERS_FIXTURE = resolveFixture('log-filters.json');
 
 describe('parser', function () {
-  let p;
+  let p: ArgParser;
 
   describe('Main Parser', function () {
     beforeEach(async function () {
@@ -112,7 +112,7 @@ describe('parser', function () {
       });
 
       it('should parse --allow-insecure correctly', function () {
-        expect(p.parseArgs([])).to.satisfy((obj) => obj.allowInsecure === undefined);
+        expect(p.parseArgs([])).to.satisfy((obj: {allowInsecure?: unknown}) => obj.allowInsecure === undefined);
         expect(p.parseArgs(['--allow-insecure', '']).allowInsecure).to.eql([]);
         expect(p.parseArgs(['--allow-insecure', '*:foo']).allowInsecure).to.eql(['*:foo']);
         expect(p.parseArgs(['--allow-insecure', '*:foo,*:bar']).allowInsecure).to.eql(['*:foo', '*:bar']);
@@ -132,7 +132,7 @@ describe('parser', function () {
       });
 
       it('should parse --deny-insecure correctly', function () {
-        expect(p.parseArgs([])).to.satisfy((obj) => obj.denyInsecure === undefined);
+        expect(p.parseArgs([])).to.satisfy((obj: {denyInsecure?: unknown}) => obj.denyInsecure === undefined);
         expect(p.parseArgs(['--deny-insecure', '']).denyInsecure).to.eql([]);
         expect(p.parseArgs(['--deny-insecure', '*:foo']).denyInsecure).to.eql(['*:foo']);
         expect(p.parseArgs(['--deny-insecure', '*:foo,*:bar']).denyInsecure).to.eql(['*:foo', '*:bar']);
@@ -207,7 +207,7 @@ describe('parser', function () {
         };
         const args = p.parseArgs([
           '--driver-fake-silly-web-server-port',
-          fakeDriverArgs.fake.sillyWebServerPort,
+          String(fakeDriverArgs.fake.sillyWebServerPort),
           '--driver-fake-silly-web-server-host',
           fakeDriverArgs.fake.sillyWebServerHost,
         ]);
@@ -256,7 +256,7 @@ describe('parser', function () {
   });
 
   describe('Driver Parser', function () {
-    let p;
+    let p: ArgParser;
     beforeEach(async function () {
       p = await getParser(true);
     });
@@ -402,7 +402,7 @@ describe('parser', function () {
   });
 
   describe('Setup Parser', function () {
-    let p;
+    let p: ArgParser;
     beforeEach(async function () {
       p = await getParser(true);
     });

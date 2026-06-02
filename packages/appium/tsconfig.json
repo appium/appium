@@ -3,6 +3,7 @@
   "compilerOptions": {
     "rootDir": ".",
     "outDir": "build",
+    "strict": true,
     "paths": {
       "@appium/support": ["../support"],
       "@appium/base-driver": ["../base-driver"],

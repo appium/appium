@@ -40,6 +40,11 @@ const shouldStartServer = process.env.USE_RUNNING_SERVER !== '0';
 /** Cast for webdriverio capabilities typing (RequestedStandaloneCapabilities) */
 const caps = W3C_PREFIXED_CAPS as any;
 
+type AppiumTestBrowser = Browser & {
+  listCommands(): Promise<any>;
+  listExtensions(): Promise<any>;
+};
+
 const wdOpts: { hostname: string; port?: number; connectionRetryCount?: number; capabilities?: object; path?: string; protocol?: string; strictSSL?: boolean } = {
   hostname: TEST_HOST,
   connectionRetryCount: 0,
@@ -194,15 +199,15 @@ describe('FakeDriver via HTTP', function () {
 
   describe('inspector commands', function () {
     withServer();
-    let driver;
+    let driver: AppiumTestBrowser;
 
     beforeEach(async function () {
-      driver = await wdio({...wdOpts, capabilities: caps});
+      driver = await wdio({...wdOpts, capabilities: caps}) as AppiumTestBrowser;
     });
     afterEach(async function () {
       if (driver) {
         await driver.deleteSession();
-        driver = null;
+        driver = null as unknown as AppiumTestBrowser;
       }
     });
 
@@ -530,7 +535,7 @@ describe('FakeDriver via HTTP', function () {
       };
       const createSessionStub = sandbox
         .stub(FakeDriver.prototype, 'createSession')
-        .callsFake(async function (caps) {
+        .callsFake(async function (this: InstanceType<DriverClass>, caps) {
           const res = await BaseDriver.prototype.createSession.call(this, caps);
           expect(this.protocol).to.equal('W3C');
           return res;
@@ -565,10 +570,10 @@ describe('FakeDriver via HTTP', function () {
   describe('Bidi protocol', function () {
     withServer();
     const capabilities = {...caps, webSocketUrl: true, 'appium:runClock': true};
-    let driver;
+    let driver: AppiumTestBrowser;
 
     beforeEach(async function () {
-      driver = await wdio({...wdOpts, capabilities});
+      driver = await wdio({...wdOpts, capabilities}) as AppiumTestBrowser;
     });
 
     afterEach(async function () {
@@ -616,10 +621,19 @@ describe('FakeDriver via HTTP', function () {
     });
 
     it('should allow custom bidi commands', async function () {
-      let {result} = await driver.send({method: 'appium:fake.getFakeThing', params: {}});
+      let {result} = await driver.send({
+        method: 'appium:fake.getFakeThing',
+        params: {},
+      } as any);
       expect(result);
-      await driver.send({method: 'appium:fake.setFakeThing', params: {thing: 'this is from bidi'}});
-      ({result} = await driver.send({method: 'appium:fake.getFakeThing', params: {}}));
+      await driver.send({
+        method: 'appium:fake.setFakeThing',
+        params: {thing: 'this is from bidi'},
+      } as any);
+      ({result} = await driver.send({
+        method: 'appium:fake.getFakeThing',
+        params: {},
+      } as any));
       expect(result).to.eql('this is from bidi');
     });
   });
@@ -628,10 +642,10 @@ describe('FakeDriver via HTTP', function () {
     const basePath = '/wd/hub';
     withServer({basePath});
     const capabilities = {...caps, webSocketUrl: true, 'appium:runClock': true};
-    let driver;
+    let driver: AppiumTestBrowser;
 
     beforeEach(async function () {
-      driver = await wdio({...wdOpts, path: basePath, capabilities});
+      driver = await wdio({...wdOpts, path: basePath, capabilities}) as AppiumTestBrowser;
     });
 
     afterEach(async function () {

@@ -224,7 +224,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
           'appium:newCommandTimeout': 1,
         };
         const driver = await wdio(newOpts as any);
-        let shutdownErr;
+        let shutdownErr: Error | undefined;
         try {
           let res = await axios.get(`http://${TEST_HOST}:${port}/unexpected`);
           expect(res.data).to.not.exist;
@@ -234,7 +234,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
           expect(res.data).to.match(/timeout/);
           await driver.deleteSession();
         } catch (e) {
-          shutdownErr = e;
+          shutdownErr = e instanceof Error ? e : new Error(String(e));
         }
         expect(shutdownErr).to.exist;
         expect(shutdownErr!.message).to.match(/either terminated or not started/);

@@ -101,7 +101,7 @@ describe('AppiumDriver', function () {
   });
 
   describe('instance method', function () {
-    let fakeDriver;
+    let fakeDriver: FakeDriver;
 
     function getDriverAndFakeDriver(
       appiumArgs: any = {},
@@ -289,8 +289,8 @@ describe('AppiumDriver', function () {
       });
     });
     describe('deleteSession', function () {
-      let appium;
-      let mockFakeDriver;
+      let appium: InstanceType<typeof AppiumModule.AppiumDriver>;
+      let mockFakeDriver: SinonMock;
       beforeEach(function () {
         [appium, mockFakeDriver] = getDriverAndFakeDriver(SESSION_DISCOVERY_ENABLED);
       });
@@ -308,7 +308,7 @@ describe('AppiumDriver', function () {
       });
       it("should call inner driver's deleteSession method", async function () {
         const [sessionId] = (await appium.createSession(null as any, null as any, W3C_CAPS)).value!;
-        mockFakeDriver.expects('deleteSession').once().withExactArgs(sessionId, []).returns();
+        mockFakeDriver.expects('deleteSession').once().withExactArgs(sessionId, []).returns(undefined);
         await appium.deleteSession(sessionId);
         mockFakeDriver.verify();
 
@@ -373,8 +373,9 @@ describe('AppiumDriver', function () {
       });
     });
     describe('getAppiumSessions', function () {
-      let appium, mockFakeDriver;
-      let sessions;
+      let appium: InstanceType<typeof AppiumModule.AppiumDriver>;
+      let mockFakeDriver: SinonMock;
+      let sessions: Awaited<ReturnType<InstanceType<typeof AppiumModule.AppiumDriver>['getAppiumSessions']>>;
       before(function () {
         [appium, mockFakeDriver] = getDriverAndFakeDriver(SESSION_DISCOVERY_ENABLED);
         appium.configureGlobalFeatures();
@@ -401,12 +402,12 @@ describe('AppiumDriver', function () {
           .expects('createSession')
           .once()
           .returns(['fake-session-id-1', removeAppiumPrefixes(caps1.alwaysMatch as NSCapabilities<Constraints>)]);
-        const [session1Id, session1Caps] = (await appium.createSession(null as any, null as any, caps1)).value!;
+        const [session1Id, session1Caps] = (await appium.createSession(null as any, null as any, caps1 as any)).value!;
         mockFakeDriver
           .expects('createSession')
           .once()
           .returns(['fake-session-id-2', removeAppiumPrefixes(caps2.alwaysMatch as NSCapabilities<Constraints>)]);
-        const [session2Id, session2Caps] = (await appium.createSession(null as any, null as any, caps2)).value!;
+        const [session2Id, session2Caps] = (await appium.createSession(null as any, null as any, caps2 as any)).value!;
 
         sessions = await appium.getAppiumSessions();
         expect(sessions).to.be.an('array');
@@ -420,7 +421,7 @@ describe('AppiumDriver', function () {
       });
     });
     describe('getStatus', function () {
-      let appium;
+      let appium: InstanceType<typeof AppiumModule.AppiumDriver>;
       before(function () {
         appium = new AppiumDriver({} as any);
       });

@@ -60,13 +60,18 @@ async function run(
     };
   } catch (err) {
     const {stdout = '', stderr = ''} = err as ExecError & {stdout?: string; stderr?: string};
-    const runErr = Object.assign(err, {
-      originalMessage: (err as Error).message,
-      message: `${(stdout as string).trim()}\n\n${(stderr as string).trim()}`,
+    const execErr = err as ExecError;
+    const baseErr = err instanceof Error ? err : new Error(String(err));
+    const runErr = Object.assign(baseErr, {
+      originalMessage: baseErr.message,
+      message: `${stdout.trim()}\n\n${stderr.trim()}`,
       command: `${process.execPath} ${EXECUTABLE} ${args.join(' ')}`,
       env,
       cwd,
-    }) as AppiumRunError;
+      stdout,
+      stderr,
+      code: execErr.code ?? 1,
+    }) as unknown as AppiumRunError;
     throw runErr;
   }
 }

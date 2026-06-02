@@ -107,8 +107,8 @@ export default class DriverCliCommand extends ExtensionCliCommand<'driver'> {
    * @param installSpec - install spec from CLI
    */
   override validateExtensionFields(driverMetadata: ExtMetadata<'driver'>, installSpec: string): void {
-    const missingFields = REQ_DRIVER_FIELDS.reduce(
-      (acc, field) => (driverMetadata[field] ? acc : [...acc, field]),
+    const missingFields = REQ_DRIVER_FIELDS.reduce<string[]>(
+      (acc, field) => (driverMetadata[field as keyof typeof driverMetadata] ? acc : [...acc, field]),
       []
     );
 

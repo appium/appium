@@ -4,8 +4,21 @@ import {sleep} from 'asyncbox';
 import {TEST_HOST, getTestPort, createAppiumURL} from './helpers';
 import sinon from 'sinon';
 import {Agent} from 'node:http';
-import type {BaseNSCapabilities, Driver, DriverClass, SingularSessionData} from '@appium/types';
+import type {
+  BaseNSCapabilities,
+  Driver,
+  DriverClass,
+  Element,
+  SingularSessionData,
+} from '@appium/types';
 import type {NewSessionData, NewSessionResponse, SessionHelpers} from './types';
+
+/** Driver E2E caps may include server options beyond {@linkcode BaseNSCapabilities}. */
+type DriverE2EDefaultCaps = Partial<BaseNSCapabilities> & {
+  'appium:address'?: string;
+  'appium:port'?: number;
+  'appium:deviceName'?: string;
+};
 
 /**
  * Creates some helper functions for E2E tests to manage sessions.
@@ -63,10 +76,10 @@ export function createSessionHelpers<CommandData = unknown, ResponseData = any>(
  */
 export function driverE2ETestSuite(
   DriverClass: DriverClass<Driver>,
-  defaultCaps: Partial<BaseNSCapabilities> = {}
+  defaultCaps: DriverE2EDefaultCaps = {}
 ): void {
-  const address = (defaultCaps as BaseNSCapabilities)['appium:address'] ?? TEST_HOST;
-  let port: number | undefined = (defaultCaps as BaseNSCapabilities)['appium:port'];
+  const address = defaultCaps['appium:address'] ?? TEST_HOST;
+  let port: number | undefined = defaultCaps['appium:port'];
   const className = DriverClass.name || '(unknown driver)';
 
   describe(`BaseDriver E2E (as ${className})`, function () {
@@ -189,9 +202,7 @@ export function driverE2ETestSuite(
         expect(status).to.equal(200);
         expect(data.value.sessionId).to.exist;
         expect(data.value.capabilities.platformName).to.equal(defaultCaps.platformName);
-        expect(data.value.capabilities.deviceName).to.equal(
-          (defaultCaps as BaseNSCapabilities)['appium:deviceName']
-        );
+        expect(data.value.capabilities.deviceName).to.equal(defaultCaps['appium:deviceName']);
 
         ({status, data} = await endSession(d.sessionId!));
 
@@ -220,7 +231,7 @@ export function driverE2ETestSuite(
         originalFindElements = d.findElements;
         d.findElements = async function () {
           await sleep(200);
-          return ['foo'];
+          return ['foo' as unknown as Element];
         }.bind(d);
       });
 

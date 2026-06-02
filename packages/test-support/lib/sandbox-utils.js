@@ -3,11 +3,11 @@ import sinon from 'sinon';
 import {MockStore} from './mock-utils';
 
 /**
- * @template {Record<string,any>} Mocks
+ * @template {Record<string, any>} [Mocks=Record<string, any>]
  * @deprecated Use `sinon.createSandbox()` directly instead.
  */
 export class SandboxStore {
-  /** @type {MockStore<Record<string,any>>} */
+  /** @type {MockStore<Record<string, any>>|undefined} */
   mocks;
 
   /** @type {SinonSandbox|undefined} */
@@ -51,7 +51,7 @@ export class SandboxStore {
  * @template {Record<string,any>|{mocks: Record<string,any>}} Mocks
  * @deprecated Use `sinon.createSandbox()` directly with Mocha `beforeEach`/`afterEach` hooks instead.
  * @param {Mocks} mockDefs
- * @param {(sandboxStore: SandboxStore) => void} fn
+ * @param {(sandboxStore: SandboxStore<Record<string, any>>) => void} fn
  * @returns {() => void}
  */
 export function withSandbox(mockDefs, fn) {
@@ -60,7 +60,7 @@ export function withSandbox(mockDefs, fn) {
     mockDefs = mockDefs.mocks;
   }
   return () => {
-    /** @type {SandboxStore} */
+    /** @type {SandboxStore<Record<string, any>>} */
     const sbx = new SandboxStore();
     // eslint-disable-next-line mocha/no-top-level-hooks
     beforeEach(function beforeEach() {
@@ -77,7 +77,7 @@ export function withSandbox(mockDefs, fn) {
 /**
  * Convenience function for calling {@linkcode SandboxStore.verify}.
  * @deprecated Call `sandbox.verify()` directly on your sinon sandbox instead.
- * @param {SandboxStore|MockStore} sbxOrMocks
+ * @param {SandboxStore<Record<string, any>>|MockStore<Record<string, any>>} sbxOrMocks
  */
 export function verifySandbox(sbxOrMocks) {
   sbxOrMocks.verify();

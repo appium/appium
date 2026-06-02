@@ -92,7 +92,14 @@ export class JWProxy {
       timeout: number;
     };
     options.scheme = options.scheme.toLowerCase();
-    Object.assign(this, options);
+    this.scheme = options.scheme;
+    this.server = options.server;
+    this.port = options.port;
+    this.base = options.base;
+    this.reqBasePath = options.reqBasePath;
+    this.sessionId = options.sessionId;
+    this.timeout = options.timeout;
+    this.headers = options.headers;
 
     this._activeRequests = [];
     this._downstreamProtocol = null;

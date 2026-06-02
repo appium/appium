@@ -41,7 +41,7 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
 
   sessionId: string | null;
 
-  sessionCreationTimestampMs: number;
+  sessionCreationTimestampMs!: number;
 
   opts: DriverOpts<C>;
 
@@ -284,8 +284,10 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
       ];
     };
     const parseFullNames = (fullNames: string[]) => fullNames.map(parseFullName);
-    const matches = ([automationName, featureName]: [string, string]) =>
-      [currentAutomationName, ALL_DRIVERS_MATCH].includes(automationName) && featureName === name;
+    const matches = (pair: string[]) => {
+      const [automationName, featureName] = pair;
+      return [currentAutomationName, ALL_DRIVERS_MATCH].includes(automationName) && featureName === name;
+    };
 
     // if we have explicitly denied this feature, return false immediately
     if (!util.isEmpty(this.denyInsecure) && parseFullNames(this.denyInsecure).some(matches)) {

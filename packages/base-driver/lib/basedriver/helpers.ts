@@ -20,7 +20,7 @@ export const {version: BASEDRIVER_VER} = fs.readPackageJsonFrom(__dirname);
 const CACHED_APPS_MAX_AGE_MS = 1000 * 60 * toNaturalNumber(60 * 24, 'APPIUM_APPS_CACHE_MAX_AGE');
 const MAX_CACHED_APPS = toNaturalNumber(1024, 'APPIUM_APPS_CACHE_MAX_ITEMS');
 const HTTP_STATUS_NOT_MODIFIED = 304;
-const DEFAULT_REQ_HEADERS = Object.freeze({
+const DEFAULT_REQ_HEADERS: RawAxiosRequestHeaders = Object.freeze({
   'user-agent': `Appium (BaseDriver v${BASEDRIVER_VER})`,
 });
 const AVG_DOWNLOAD_SPEED_MEASUREMENT_THRESHOLD_SEC = 2;

@@ -37,7 +37,7 @@ export function rankLevenshteinCandidates(
         acc[key] = [name];
       }
       return acc;
-    }, {});
+    }, {} as StringRecord<string[]>);
   const sortedDistanceKeys = Object.keys(matchesMap).sort((a, b) => parseInt(a, 10) - parseInt(b, 10));
   const sorted = sortedDistanceKeys.flatMap((k) => (matchesMap[k] ?? []).sort());
 

@@ -162,7 +162,11 @@ export function checkParams(
  * @param jsonObj - Parsed JSON request body
  * @param payloadParams - Route payload definition (required/optional/makeArgs)
  */
-export function makeArgs(requestParams: PayloadParams, jsonObj: any, payloadParams: PayloadParams): any[] {
+export function makeArgs(
+  requestParams: Record<string, string | string[] | undefined>,
+  jsonObj: any,
+  payloadParams: PayloadParams
+): any[] {
   // We want to pass the "url" parameters to the commands in reverse order
   // since the command will sometimes want to ignore, say, the sessionId.
   // This has the effect of putting sessionId last, which means in JS we can
@@ -337,7 +341,7 @@ function getLogger(driver: Core<any>, sessionId: string | null = null): AppiumLo
   return logger.getLogger(logPrefix);
 }
 
-function wrapParams<T>(paramSets, jsonObj: T): T | Record<string, T> {
+function wrapParams<T>(paramSets: PayloadParams, jsonObj: T): T | Record<string, T> {
   /* There are commands like performTouch which take a single parameter (primitive type or array).
    * Some drivers choose to pass this parameter as a value (eg. [action1, action2...]) while others to
    * wrap it within an object(eg' {gesture:  [action1, action2...]}), which makes it hard to validate.
@@ -353,9 +357,11 @@ function unwrapParams<T>(paramSets: PayloadParams, jsonObj: T): T | Record<strin
   /* There are commands like setNetworkConnection which send parameters wrapped inside a key such as
    * "parameters". This function unwraps them (eg. {"parameters": {"type": 1}} becomes {"type": 1}).
    */
-  return typeof jsonObj === 'object' && jsonObj !== null && paramSets.unwrap && jsonObj[paramSets.unwrap]
-    ? jsonObj[paramSets.unwrap]
-    : jsonObj;
+  const unwrapped =
+    typeof jsonObj === 'object' && jsonObj !== null && paramSets.unwrap
+      ? (jsonObj as Record<string, T>)[paramSets.unwrap]
+      : undefined;
+  return unwrapped !== undefined ? unwrapped : jsonObj;
 }
 
 
@@ -465,8 +471,11 @@ function buildHandler(
       const args = makeArgs(req.params, jsonObj, spec.payloadParams || {});
       let driverRes: any;
       // validate command args according to MJSONWP
-      if (validators[spec.command]) {
-        validators[spec.command](...args);
+      const validator = (validators as Record<string, ((...validatorArgs: any[]) => void) | undefined>)[
+        spec.command
+      ];
+      if (validator) {
+        validator(...args);
       }
 
       // run the driver command wrapped inside the argument validators
@@ -553,9 +562,16 @@ function buildHandler(
     } catch (err) {
       // if anything goes wrong, figure out what our response should be
       // based on the type of error that we encountered
-      let actualErr;
-      if (err instanceof Error || (Object.hasOwn(err, 'stack') && Object.hasOwn(err, 'message'))) {
+      let actualErr: Error;
+      if (err instanceof Error) {
         actualErr = err;
+      } else if (
+        typeof err === 'object' &&
+        err !== null &&
+        Object.hasOwn(err, 'stack') &&
+        Object.hasOwn(err, 'message')
+      ) {
+        actualErr = err as Error;
       } else {
         getLogger(driver, sessionId || newSessionId).warn(
           'The thrown error object does not seem to be a valid instance of the Error class. This ' +
@@ -567,11 +583,12 @@ function buildHandler(
       currentProtocol =
         currentProtocol || extractProtocol(driver, sessionId || newSessionId);
 
-      let errMsg = err.stacktrace || err.stack;
-      if (!errMsg.includes(err.message)) {
+      const stacktrace = (err as {stacktrace?: string}).stacktrace;
+      let errMsg = stacktrace || actualErr.stack || '';
+      if (!errMsg.includes(actualErr.message)) {
         // if the message has more information, add it. but often the message
         // is the first part of the stack trace
-        errMsg = `${err.message}${errMsg ? '\n' + errMsg : ''}`;
+        errMsg = `${actualErr.message}${errMsg ? '\n' + errMsg : ''}`;
       }
       if (isErrorType(err, errors.ProxyRequestError)) {
         actualErr = err.getActualError();
@@ -597,7 +614,10 @@ function buildHandler(
     }
   };
   // add the method to the app
-  app[method.toLowerCase()](path, (req, res) => {
+  const registerRoute = (
+    app as Application & Record<string, (routePath: string, ...handlers: any[]) => void>
+  )[method.toLowerCase()].bind(app);
+  registerRoute(path, (req: Request, res: Response) => {
     void asyncHandler(req, res);
   });
 }
@@ -617,8 +637,10 @@ async function doJwpProxy(driver: BaseDriver<any>, req: Request, res: Response):
   } catch (err) {
     if (isErrorType(err, errors.ProxyRequestError)) {
       throw err;
-    } else {
+    }
+    if (err instanceof Error) {
       throw new Error(`Could not proxy. Proxy error: ${err.message}`, {cause: err});
     }
+    throw new Error(`Could not proxy. Proxy error: ${String(err)}`, {cause: err});
   }
 }

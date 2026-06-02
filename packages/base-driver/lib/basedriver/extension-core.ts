@@ -22,7 +22,7 @@ export class ExtensionCore {
   _logPrefix?: string;
   // used to handle driver events
   readonly eventEmitter: NodeJS.EventEmitter;
-  protected _log: AppiumLogger;
+  protected _log!: AppiumLogger;
   private ipc?: IAppiumIpc;
 
 
@@ -85,7 +85,8 @@ export class ExtensionCore {
     }
 
     // If the driver doesn't have this command, it must not be implemented
-    if (!this[command]) {
+    const handler = (this as ExtensionCore & Record<string, unknown>)[command];
+    if (typeof handler !== 'function') {
       throw new errors.NotYetImplementedError();
     }
   }
@@ -120,8 +121,15 @@ export class ExtensionCore {
         `method '${command}'`,
     );
     // call the handler with the signature appropriate to extension type (plugin or driver)
-    const response = (next && driver) ? await this[command](next, driver, ...args) : await this[command](...args);
-    const finalResponse = response === undefined ? {} : response;
+    const commandHandler = (this as unknown as Record<string, (...handlerArgs: any[]) => Promise<unknown>>)[
+      command
+    ];
+    const response =
+      next && driver
+        ? await commandHandler.call(this, next, driver, ...args)
+        : await commandHandler.call(this, ...args);
+    const finalResponse: BiDiResultData =
+      response === undefined ? {} : (response as BiDiResultData);
     this.log.debug(
       `Responding to bidi command '${bidiCmd}' with ` +
       `${util.truncateString(JSON.stringify(finalResponse), {length: MAX_LOG_BODY_LENGTH})}`

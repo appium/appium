@@ -97,6 +97,7 @@
     "@types/lodash": "4.17.24",
     "@types/method-override": "3.0.0",
     "@types/mocha": "10.0.10",
+    "@types/morgan": "1.9.10",
     "@types/mv": "2.1.4",
     "@types/ncp": "2.0.8",
     "@types/node": "24.12.4",

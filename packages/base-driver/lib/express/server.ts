@@ -340,7 +340,9 @@ function configureHttp({
 
   // http.Server.close() only stops new connections, but we need to wait until
   // all connections are closed and the `close` event is emitted
-  const originalClose = appiumServer.close.bind(appiumServer);
+  const originalClose = appiumServer.close.bind(appiumServer) as (
+    callback?: (err?: Error | null) => void
+  ) => void;
   appiumServer.close = async () =>
     await new Promise<void>((_resolve, _reject) => {
       log.info('Closing Appium HTTP server');
@@ -364,7 +366,7 @@ function configureHttp({
         _resolve();
       };
       httpServer.once('close', onClose);
-      originalClose((err?: Error) => {
+      originalClose((err?: Error | null) => {
         if (err) {
           clearTimeout(onTimeout);
           httpServer.removeListener('close', onClose);

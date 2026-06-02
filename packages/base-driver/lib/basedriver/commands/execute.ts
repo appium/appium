@@ -17,7 +17,7 @@ declare module '../driver' {
   interface BaseDriver<C extends Constraints> extends IExecuteCommands {}
 }
 
-const ExecuteCommands: IExecuteCommands = {
+const ExecuteCommands = {
   async executeMethod<C extends Constraints>(
     this: BaseDriver<C>,
     script: string,
@@ -49,6 +49,6 @@ const ExecuteCommands: IExecuteCommands = {
     const command = this[commandName] as DriverCommand;
     return await command.call(this, ...args);
   },
-};
+} as IExecuteCommands;
 
 mixin(ExecuteCommands);

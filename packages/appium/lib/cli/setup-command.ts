@@ -49,7 +49,9 @@ type CliExtArgs = Args<CliExtensionCommand, CliExtensionSubcommand>;
 /**
  * Return a list of drivers available for current host platform.
  */
-export function getPresetDrivers(presetName: CliCommandSetupSubcommand): string[] {
+export function getPresetDrivers(
+  presetName: Exclude<CliCommandSetupSubcommand, 'reset'>
+): string[] {
   return _.filter(PRESET_PAIRS[presetName], (driver) => {
     if (_.includes(DRIVERS_ONLY_MACOS, driver)) {
       return system.isMac();
@@ -125,7 +127,7 @@ async function resetAllExtensions(driverConfig: DriverConfig, pluginConfig: Plug
       } catch (e) {
         log.warn(
           `${extensionName} ${command} cannot be uninstalled. Will delete the manifest anyway. ` +
-          `Original error: ${e.stack}`
+          `Original error: ${e instanceof Error ? e.stack : String(e)}`
         );
       }
     }
@@ -168,7 +170,10 @@ async function setupDesktopAppDrivers(driverConfig: DriverConfig): Promise<void>
 /**
  * Install the given driver name. It skips the installation if the given driver name was already installed.
  */
-async function installDrivers(subcommand: CliCommandSetupSubcommand, driverConfig: DriverConfig): Promise<void> {
+async function installDrivers(
+  subcommand: Exclude<CliCommandSetupSubcommand, 'reset'>,
+  driverConfig: DriverConfig
+): Promise<void> {
   for (const driverName of getPresetDrivers(subcommand)) {
     await installExtension(driverName, extensionCommandArgs('driver', driverName, 'install'), driverConfig);
   }

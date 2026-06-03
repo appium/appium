@@ -177,7 +177,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
   /**
    * {@linkcode Record} of official plugins or drivers.
    */
-  protected knownExtensions: Record<string, string>;
+  protected knownExtensions!: Record<string, string>;
 
   /**
    * If `true`, command output has been requested as JSON.
@@ -210,12 +210,12 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
    * @returns result of the executed extension subcommand
    */
   async execute(args: Record<string, any>): Promise<unknown> {
-    const cmd = args[`${this.type}Command`];
-    if (!_.isFunction(this[cmd])) {
+    const cmd = args[`${this.type}Command`] as string;
+    const handler = (this as Record<string, unknown>)[cmd];
+    if (!_.isFunction(handler)) {
       throw this._createFatalError(`Cannot handle ${this.type} command ${cmd}`);
     }
-    const executeCmd = this[cmd].bind(this);
-    return await executeCmd(args);
+    return await handler.call(this, args);
   }
 
   /**
@@ -366,7 +366,10 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
 
     // this _should_ be the same as `probablyExtName` as the one derived above unless
     // install type is local.
-    const extName = receipt[`${this.type}Name`];
+    const extName =
+      this.type === 'driver'
+        ? (receipt as ExtInstallReceipt<'driver'>).driverName
+        : (receipt as ExtInstallReceipt<'plugin'>).pluginName;
 
     // check _a second time_ with the more-accurate extName
     if (this.config.isInstalled(extName)) {
@@ -511,7 +514,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
         }
         updates[e] = {from: update.current, to: updateVer};
       } catch (err) {
-        errors[e] = err;
+        errors[e] = err instanceof Error ? err : new Error(String(err));
       }
     }
 
@@ -592,8 +595,9 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
     try {
       doctorSpec = JSON.parse(await fs.readFile(packageJsonPath, 'utf8')).appium?.doctor;
     } catch (e) {
+      const message = e instanceof Error ? e.message : String(e);
       throw this._createFatalError(
-        `The manifest at '${packageJsonPath}' cannot be parsed: ${e.message}`
+        `The manifest at '${packageJsonPath}' cannot be parsed: ${message}`
       );
     }
     if (!doctorSpec) {
@@ -627,16 +631,22 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
         try {
           return await import(scriptPath);
         } catch (e) {
-          this.log.warn(`Unable to load doctor checks from '${p}': ${e.message}`);
+          const message = e instanceof Error ? e.message : String(e);
+          this.log.warn(`Unable to load doctor checks from '${p}': ${message}`);
         }
       })();
       loadChecksPromises.push(promise);
     }
-    const isDoctorCheck = (x) =>
-      ['diagnose', 'fix', 'hasAutofix', 'isOptional'].every((method) => _.isFunction(x?.[method]));
-    const checks: IDoctorCheck[] = _.flatMap((await Promise.all(loadChecksPromises)).filter(Boolean).map(_.toPairs))
+    const isDoctorCheck = (x: unknown): x is IDoctorCheck =>
+      ['diagnose', 'fix', 'hasAutofix', 'isOptional'].every((method) =>
+        _.isFunction((x as IDoctorCheck)?.[method as keyof IDoctorCheck])
+      );
+    const checks: IDoctorCheck[] = _.flatMap(
+      (await Promise.all(loadChecksPromises)).filter((mod): mod is object => Boolean(mod)),
+      _.toPairs
+    )
       .map(([, value]) => value)
-      .filter(isDoctorCheck) as IDoctorCheck[];
+      .filter(isDoctorCheck);
     if (_.isEmpty(checks)) {
       this.log.info(`The ${this.type} "${installSpec}" exports no valid doctor checks`);
       return 0;
@@ -741,7 +751,8 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
         this.log.ok(`${scriptName} successfully ran`.green);
         return {output: output.getBuff()};
       } catch (err) {
-        const message = `Encountered an error when running '${scriptName}': ${err.message}`;
+        const errMessage = err instanceof Error ? err.message : String(err);
+        const message = `Encountered an error when running '${scriptName}': ${errMessage}`;
         throw this._createFatalError(message);
       }
     }
@@ -766,7 +777,8 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
       this.log.ok(`${scriptName} successfully ran`.green);
       return {};
     } catch (err) {
-      const message = `Encountered an error when running '${scriptName}': ${err.message}`;
+      const errMessage = err instanceof Error ? err.message : String(err);
+      const message = `Encountered an error when running '${scriptName}': ${errMessage}`;
       throw this._createFatalError(message);
     }
   }
@@ -774,7 +786,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
   private _buildListData(showInstalled: boolean): ExtensionList {
     const installedNames = Object.keys(this.config.installedExtensions);
     const knownNames = Object.keys(this.knownExtensions);
-    return [...installedNames, ...knownNames].reduce((acc, name) => {
+    return [...installedNames, ...knownNames].reduce<ExtensionList>((acc, name) => {
       if (!acc[name]) {
         if (installedNames.includes(name)) {
           acc[name] = {
@@ -827,7 +839,8 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
         installSpec,
       });
     } catch (err) {
-      throw this._createFatalError(`Encountered an error when installing package: ${err.message}`);
+      const message = err instanceof Error ? err.message : String(err);
+      throw this._createFatalError(`Encountered an error when installing package: ${message}`);
     }
   }
 
@@ -848,8 +861,11 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
       pkgVer: version,
     });
 
-    delete extData[`${this.type}Name`];
-    await this.config.updateExtension(installSpec, extData as any);
+    const extManifest =
+      this.type === 'driver'
+        ? _.omit(extData as ExtInstallReceipt<'driver'>, 'driverName')
+        : _.omit(extData as ExtInstallReceipt<'plugin'>, 'pluginName');
+    await this.config.updateExtension(installSpec, extManifest as any);
   }
 
   /**
@@ -1266,7 +1282,7 @@ async function injectAppiumSymlink(dstFolder: string, logger: AppiumLogger): Pro
     // This error is not fatal, we may still doing just fine if the module being loaded is a CJS one
     logger.info(
       `Cannot create a symlink to the appium module '${appiumModuleRoot}' in '${dstFolder}'. ` +
-      `Original error: ${error.message}`
+      `Original error: ${error instanceof Error ? error.message : String(error)}`
     );
   }
 }

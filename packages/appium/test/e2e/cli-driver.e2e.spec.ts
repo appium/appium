@@ -72,7 +72,7 @@ describe('Driver CLI', function () {
 
     it('should list available drivers in json format', async function () {
       const driverData = await runList();
-      for (const d of Object.keys(KNOWN_DRIVERS)) {
+      for (const d of Object.keys(KNOWN_DRIVERS) as (keyof typeof KNOWN_DRIVERS)[]) {
         expect(driverData[d]).to.have.property('installed', false);
         expect(driverData[d]).to.have.property('pkgName', KNOWN_DRIVERS[d]);
         if (driverData[d].repositoryUrl) {

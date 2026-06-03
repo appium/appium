@@ -61,7 +61,9 @@ describe('helpers/capability', function () {
           'appium:foo': 'bar2',
         }
       );
-      expect(res.processedW3CCapabilities!.alwaysMatch!['appium:foo']).to.eql('bar2');
+      expect(
+        (res.processedW3CCapabilities!.alwaysMatch as Record<string, unknown>)['appium:foo']
+      ).to.eql('bar2');
     });
     it('should not allow invalid default capabilities', function () {
       const res = parseCapsForInnerDriver(

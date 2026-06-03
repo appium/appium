@@ -85,7 +85,7 @@ describe('ExtensionConfig', function () {
       });
 
       describe('when the extension data is missing a "pkgName" field', function () {
-        let pkgName;
+        let pkgName: string;
         beforeEach(function () {
           ({pkgName} = extData);
           delete extData.pkgName;
@@ -215,7 +215,7 @@ describe('ExtensionConfig', function () {
         });
 
         describe('when an upgrade is available', function () {
-          let updateVersion;
+          let updateVersion: string;
 
           beforeEach(function () {
             updateVersion = '1.1.0';
@@ -239,7 +239,7 @@ describe('ExtensionConfig', function () {
         });
 
         describe('when an upgrade is available', function () {
-          let updateVersion;
+          let updateVersion: string;
 
           beforeEach(function () {
             updateVersion = '1.1.0';

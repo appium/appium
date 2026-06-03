@@ -1,3 +1,4 @@
+import type AsyncLock from 'async-lock';
 import {util} from '@appium/support';
 import {
   BASE_DESIRED_CAP_CONSTRAINTS,
@@ -24,8 +25,11 @@ import {DELETE_SESSION_COMMAND, determineProtocol, errors} from '../protocol';
 import {processCapabilities, validateCaps} from './capabilities';
 import {DriverCore} from './core';
 import * as helpers from './helpers';
-import {resolveExecuteExtensionName} from '../helpers/extension-command-name';
 import {mergePlainObjects} from '../utils';
+import {resolveExecuteExtensionName} from '../helpers/extension-command-name';
+
+type CommandInvoker<C extends Constraints> = BaseDriver<C> &
+  Record<string, ((...args: any[]) => any) | undefined>;
 
 const EVENT_SESSION_INIT = 'newSessionRequested';
 const EVENT_SESSION_START = 'newSessionStarted';
@@ -46,8 +50,8 @@ export class BaseDriver<
 {
   cliArgs: CArgs & ServerArgs;
   caps: DriverCaps<C>;
-  originalCaps: W3CDriverCaps<C>;
-  desiredCapConstraints: C;
+  originalCaps!: W3CDriverCaps<C>;
+  desiredCapConstraints!: C;
   server?: AppiumServer;
   serverHost?: string;
   serverPort?: number;
@@ -99,8 +103,10 @@ export class BaseDriver<
       throw new errors.NoSuchDriverError('The driver was unexpectedly shut down!');
     }
 
+    const invoker = this as unknown as CommandInvoker<C>;
+    const command = invoker[cmd];
     // If we don't have this command, it must not be implemented
-    if (!this[cmd]) {
+    if (!command) {
       await this.startNewCommandTimeout();
       throw new errors.NotYetImplementedError();
     }
@@ -115,7 +121,7 @@ export class BaseDriver<
       };
       try {
         return await Promise.race([
-          this[cmd](...args),
+          command.call(this, ...args),
           // This promise is needed to monitor if the session has been
           // shut down unexpectedly while the command was running
           new Promise((resolve, reject) => {
@@ -147,8 +153,10 @@ export class BaseDriver<
     };
 
     const synchronizationKey = BaseDriver.name;
-    // eslint-disable-next-line dot-notation
-    const commandsQueueLen: number = this.commandsQueueGuard['queues']?.[synchronizationKey]?.length ?? 0;
+    const commandsQueueGuard = this.commandsQueueGuard as AsyncLock & {
+      queues?: Record<string, unknown[]>;
+    };
+    const commandsQueueLen: number = commandsQueueGuard.queues?.[synchronizationKey]?.length ?? 0;
     if (this.isCommandsQueueEnabled && commandsQueueLen > 0) {
       this.log.debug(
         `Scheduling the '${cmd}' command to the ${this.constructor.name} commands queue. ` +
@@ -182,7 +190,7 @@ export class BaseDriver<
     if (cmd === 'execute') {
       const firstArg = args?.[0];
       if (typeof firstArg === 'string' && firstArg.trim().length > 0) {
-        return resolveExecuteExtensionName.call(this, firstArg);
+        return resolveExecuteExtensionName.call(this as BaseDriver<Constraints>, firstArg);
       }
     }
 
@@ -240,15 +248,12 @@ export class BaseDriver<
     this.log.debug('Running generic full reset');
 
     // preserving state
-    const currentConfig = {};
-    for (const property of [
-      'implicitWaitMs',
-      'newCommandTimeoutMs',
-      'sessionId',
-      'resetOnUnexpectedShutdown',
-    ]) {
-      currentConfig[property] = this[property];
-    }
+    const currentConfig = {
+      implicitWaitMs: this.implicitWaitMs,
+      newCommandTimeoutMs: this.newCommandTimeoutMs,
+      sessionId: this.sessionId,
+      shutdownUnexpectedly: this.shutdownUnexpectedly,
+    };
 
     try {
       if (this.sessionId !== null) {
@@ -258,9 +263,7 @@ export class BaseDriver<
       await this.createSession(this.originalCaps);
     } finally {
       // always restore state.
-      for (const [key, value] of Object.entries(currentConfig)) {
-        this[key] = value;
-      }
+      Object.assign(this, currentConfig);
     }
     await this.clearNewCommandTimeout();
   }
@@ -313,7 +316,8 @@ export class BaseDriver<
       ) as DriverCaps<C>;
       caps = fixCaps(caps, this._desiredCapConstraints, this.log) as DriverCaps<C>;
     } catch (e) {
-      throw new errors.SessionNotCreatedError(e.message);
+      const message = e instanceof Error ? e.message : String(e);
+      throw new errors.SessionNotCreatedError(message);
     }
 
     this.validateDesiredCaps(caps);
@@ -421,10 +425,12 @@ export class BaseDriver<
     try {
       validateCaps(caps, this._desiredCapConstraints);
     } catch (e) {
+      const capError = e instanceof Error ? e : new Error(String(e));
       throw this.log.errorWithException(
         new errors.SessionNotCreatedError(
           `Session capabilities were not valid for the ` +
-          `following reason(s): ${e.message}`, e
+          `following reason(s): ${capError.message}`,
+          capError
         )
       );
     }

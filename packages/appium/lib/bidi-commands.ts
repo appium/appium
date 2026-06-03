@@ -116,8 +116,9 @@ export async function onBidiMessage(
     try {
       ({id, method, params} = JSON.parse(data.toString('utf8')));
     } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
       throw new errors.InvalidArgumentError(
-        `Could not parse Bidi command '${dataTruncated}': ${err.message}`,
+        `Could not parse Bidi command '${dataTruncated}': ${message}`,
       );
     }
     driverLog.info(`--> BIDI message #${id}`);
@@ -139,15 +140,21 @@ export async function onBidiMessage(
       result,
     };
   } catch (err) {
-    resMessage = _.has(err, 'bidiErrObject')
-      ? err.bidiErrObject(id)
-      : {
+    if (
+      _.isObject(err) &&
+      'bidiErrObject' in err &&
+      typeof (err as {bidiErrObject: unknown}).bidiErrObject === 'function'
+    ) {
+      resMessage = (err as {bidiErrObject: (msgId: number) => ErrorBiDiCommandResponse}).bidiErrObject(id);
+    } else {
+      resMessage = {
         id,
         type: 'error',
         error: errors.UnknownError.error(),
-        message: (err as Error).message,
-        stacktrace: (err as Error).stack,
+        message: err instanceof Error ? err.message : String(err),
+        stacktrace: err instanceof Error ? err.stack : undefined,
       };
+    }
   }
   driverLog.info(`<-- BIDI message #${id}`);
   return resMessage;
@@ -293,7 +300,7 @@ function initBidiSocket(this: AppiumDriver, ws: WebSocket, req: IncomingMessage)
         await assertIsOpen(socket);
         await socketSend(data);
       } catch (err) {
-        logSocketErr(err);
+        logSocketErr(err instanceof Error ? err : new Error(String(err)));
       }
     };
   };
@@ -444,7 +451,15 @@ function initBidiEventListeners(
   const eventLogCounts: Record<string, number> = BIDI_EVENTS_MAP.get(bidiHandlerDriver) ?? {};
   BIDI_EVENTS_MAP.set(bidiHandlerDriver, eventLogCounts);
   const eventListenerFactory = (extType: 'driver' | 'plugin', ext: ExtensionCore) => {
-    const eventListener = async ({context, method, params = {}}) => {
+    const eventListener = async ({
+      context,
+      method,
+      params = {},
+    }: {
+      context?: string;
+      method: string;
+      params?: StringRecord;
+    }) => {
       // if the driver didn't specify a context, use the empty context
       if (!context) {
         context = '';

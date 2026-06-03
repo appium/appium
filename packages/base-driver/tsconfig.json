@@ -7,6 +7,7 @@
     }
   },
   "compilerOptions": {
+    "strict": true,
     "outDir": "build",
     "paths": {
       "@appium/support": ["../support"],

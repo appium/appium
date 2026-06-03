@@ -602,9 +602,10 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
   pluginsToHandleCmd(cmd: string, sessionId: string | null = null): Plugin[] {
     // to handle a given command, a plugin should either implement that command as a plugin
     // instance method or it should implement a generic 'handle' method
-    return this.pluginsForSession(sessionId).filter(
-      (p) => _.isFunction(p[cmd]) || _.isFunction(p.handle),
-    );
+    return this.pluginsForSession(sessionId).filter((p) => {
+      const pluginMethod = (p as Plugin & Record<string, unknown>)[cmd];
+      return _.isFunction(pluginMethod) || _.isFunction(p.handle);
+    });
   }
 
   /**

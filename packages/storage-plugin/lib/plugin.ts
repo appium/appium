@@ -48,8 +48,11 @@ export class StoragePlugin extends BasePlugin {
 }
 
 STORAGE_HANDLERS.addStorageItem = async function addStorageItem(
-  req: Request, httpServer: AppiumServer
+  req: Request, httpServer?: AppiumServer
 ): Promise<AddRequestResult> {
+  if (!httpServer) {
+    throw new Error('httpServer is required to add a storage item');
+  }
   const itemOptions = requireValidItemOptions(
     parseRequestArgs(req, ['name', 'sha1']) as ItemOptions
   );

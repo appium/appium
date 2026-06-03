@@ -117,8 +117,9 @@ export class Storage {
       itemNames = nativeFs.readdirSync(this._root)
         .filter((name) => !name.startsWith('.'));
     } catch (e) {
+      const message = e instanceof Error ? e.message : String(e);
       this._log.warn(
-        `Cannot list the '${this._root}' server storage folder. Original error: ${e.message}. ` +
+        `Cannot list the '${this._root}' server storage folder. Original error: ${message}. ` +
         `Skipping the cleanup.`
       );
       return;

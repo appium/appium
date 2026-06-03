@@ -105,10 +105,10 @@ function toRestCommandParams(params: PayloadParams | undefined): RestCommandItem
 function methodMapToRestCommandsInfo (mm: MethodMap<any>): Record<string, RestMethodsToCommandsMap> {
   const res: Record<string, RestMethodsToCommandsMap> = {};
   for (const [uriPath, methods] of _.toPairs(mm)) {
-    const methodsMap = {};
+    const methodsMap: RestMethodsToCommandsMap = {};
     for (const [method, spec] of _.toPairs(methods)) {
-      methodsMap[method] = {
-        command: spec.command,
+      methodsMap[String(method)] = {
+        command: spec.command as string,
         deprecated: spec.deprecated,
         info: spec.info,
         params: toRestCommandParams(spec.payloadParams),
@@ -173,7 +173,7 @@ function toBiDiCommandsMap(
   const moduleMapToBiDiCommandsInfo = (mm: BidiModuleMap): Record<string, BiDiCommandNamesToInfosMap> => {
     const res: Record<string, BiDiCommandNamesToInfosMap> = {};
     for (const [domain, commands] of _.toPairs(mm)) {
-      const commandsMap = {};
+      const commandsMap: BiDiCommandNamesToInfosMap = {};
       for (const [name, spec] of _.toPairs(commands)) {
         commandsMap[name] = {
           command: spec.command,

@@ -13,19 +13,26 @@ declare module '../driver' {
 const MIN_TIMEOUT = 0;
 
 const TimeoutCommands: ITimeoutCommands = {
-  async timeouts<C extends Constraints>(this: BaseDriver<C>, type, ms, script, pageLoad, implicit) {
+  async timeouts<C extends Constraints>(
+    this: BaseDriver<C>,
+    type?: string,
+    ms?: number | string,
+    script?: number,
+    pageLoad?: number,
+    implicit?: number
+  ) {
     if (type && typeof type === 'string' && util.hasValue(ms)) {
       // legacy stuff with some Appium-specific additions
       this.log.debug(`Timeout arguments: ${JSON.stringify({type, ms})}}`);
       switch (type) {
         case 'command':
-          return void (await this.newCommandTimeout(ms));
+          return void (await this.newCommandTimeout(this.parseTimeoutArgument(ms)));
         case 'implicit':
-          return void (await this.implicitWaitW3C(ms));
+          return void (await this.implicitWaitW3C(this.parseTimeoutArgument(ms)));
         case 'page load':
-          return void (await this.pageLoadTimeoutW3C(ms));
+          return void (await this.pageLoadTimeoutW3C(this.parseTimeoutArgument(ms)));
         case 'script':
-          return void (await this.scriptTimeoutW3C(ms));
+          return void (await this.scriptTimeoutW3C(this.parseTimeoutArgument(ms)));
         default:
           throw new Error(`'${type}' type is not supported for the timeout API`);
       }
@@ -46,7 +53,7 @@ const TimeoutCommands: ITimeoutCommands = {
     }
   },
 
-  async getTimeouts() {
+  async getTimeouts<C extends Constraints>(this: BaseDriver<C>) {
     return {
       command: this.newCommandTimeoutMs,
       implicit: this.implicitWaitMs,

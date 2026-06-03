@@ -133,7 +133,7 @@ export class ArgParser {
   ): TransformedArgsMap {
     const result = _.reduce(
       args,
-      (unpacked, value, key) => {
+      (unpacked: LooseArgsMap, value, key) => {
         const spec = hasArgSpec(key) ? getArgSpec(key) : undefined;
         if (!_.isUndefined(value) && spec) {
           const {dest} = spec;
@@ -144,7 +144,7 @@ export class ArgParser {
         }
         return unpacked;
       },
-      {}
+      {} as LooseArgsMap
     );
     result[EXTRA_ARGS] = unknownArgs;
     return result as TransformedArgsMap;
@@ -348,7 +348,7 @@ export class ArgParser {
         // eslint-disable-next-line no-console
         console.error(); // need an extra space since argparse prints usage.
         // eslint-disable-next-line no-console
-        console.error(err.message);
+        console.error(err instanceof Error ? err.message : String(err));
         process.exit(1);
       }
     }

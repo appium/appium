@@ -85,7 +85,10 @@ export async function init(args: ParsedArgs): Promise<void> {
         .join('');
       msg = `${finalPrefix} ${msg}`;
     }
-    const winstonLevel = TO_WINSTON_LEVELS_MAP[level] || 'info';
+    const winstonLevel =
+      level in TO_WINSTON_LEVELS_MAP
+        ? TO_WINSTON_LEVELS_MAP[level as keyof typeof TO_WINSTON_LEVELS_MAP]
+        : 'info';
     try {
       (log as Logger)[winstonLevel as keyof Logger](msg);
       if (_.isFunction(args.logHandler)) {

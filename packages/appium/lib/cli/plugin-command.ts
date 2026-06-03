@@ -102,8 +102,8 @@ export default class PluginCliCommand extends ExtensionCliCommand<'plugin'> {
    * @param installSpec - install spec from CLI
    */
   override validateExtensionFields(pluginMetadata: ExtMetadata<'plugin'>, installSpec: string): void {
-    const missingFields = REQ_PLUGIN_FIELDS.reduce(
-      (acc, field) => (pluginMetadata[field] ? acc : [...acc, field]),
+    const missingFields = REQ_PLUGIN_FIELDS.reduce<string[]>(
+      (acc, field) => (pluginMetadata[field as keyof typeof pluginMetadata] ? acc : [...acc, field]),
       []
     );
 

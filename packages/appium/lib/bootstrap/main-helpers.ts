@@ -25,16 +25,15 @@ const isStdoutTTY = process.stdout.isTTY;
 /**
  * Logs a value to the console using the info logger (with util.inspect formatting).
  */
-export const inspect = _.flow(
-  _.partialRight(dump as (object: unknown, options: InspectOptions) => string, {
-    colors: true,
-    depth: null,
-    compact: !isStdoutTTY,
-  }),
-  (...args: unknown[]) => {
-    logger.info(...args);
-  },
-);
+export function inspect(value: unknown): void {
+  logger.info(
+    dump(value, {
+      colors: true,
+      depth: null,
+      compact: !isStdoutTTY,
+    } satisfies InspectOptions)
+  );
+}
 
 /**
  * Prints the current build info JSON to stdout.

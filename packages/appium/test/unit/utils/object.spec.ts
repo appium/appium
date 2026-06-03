@@ -129,6 +129,22 @@ describe('utils/object', function () {
       setPath(obj, 'a.b.c', 1);
       expect(obj).to.eql({a: {b: {c: 1}}});
     });
+
+    it('should no-op on unsafe path segments', function () {
+      const obj: Record<string, unknown> = {};
+      const sentinel = 'polluted';
+      for (const path of ['__proto__.x', 'a.__proto__.x', 'constructor.x', 'prototype.x']) {
+        setPath(obj, path, sentinel);
+      }
+      expect(obj).to.eql({});
+      expect(({} as Record<string, unknown>)[sentinel]).to.be.undefined;
+    });
+
+    it('should no-op on paths with empty segments', function () {
+      const obj: Record<string, unknown> = {};
+      setPath(obj, 'a..b', 1);
+      expect(obj).to.eql({});
+    });
   });
 
   describe('bindAll()', function () {
@@ -231,6 +247,23 @@ describe('utils/object', function () {
       const source = {nested: {y: 2}} as Record<string, unknown>;
       defaultsDeep({nested: {x: 1}} as Record<string, unknown>, source);
       expect(source).to.eql({nested: {y: 2}});
+    });
+
+    it('should copy functions by reference when filling undefined keys', function () {
+      const logHandler = () => {};
+      const result = defaultsDeep({} as Record<string, unknown>, {logHandler} as Record<string, unknown>);
+      expect(result.logHandler).to.equal(logHandler);
+    });
+
+    it('should merge later sources when earlier sources include functions', function () {
+      const logHandler = () => {};
+      const result = defaultsDeep(
+        {} as Record<string, unknown>,
+        {logHandler} as Record<string, unknown>,
+        {port: 4723} as Record<string, unknown>
+      );
+      expect(result.logHandler).to.equal(logHandler);
+      expect(result.port).to.equal(4723);
     });
   });
 });

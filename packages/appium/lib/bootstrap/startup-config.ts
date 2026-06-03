@@ -3,7 +3,7 @@ import {util} from '@appium/support';
 import {getDefaultsForSchema, getAllArgSpecs} from '../schema/schema';
 import type {Args} from 'appium/types';
 import type {ReadConfigFileResult} from './config-file';
-import {difference, pickBy, setPath} from '../utils';
+import {difference, getPath, pickBy, setPath} from '../utils';
 
 interface FlattenedArg {
   value: unknown;
@@ -24,8 +24,9 @@ export function getNonDefaultServerArgs(parsedArgs: Args): Args {
     const argSpecs = getAllArgSpecs();
     const flattened = [...argSpecs.values()].reduce<Record<string, FlattenedArg>>(
       (acc, argSpec: {dest: string}) => {
-        if (argSpec.dest in args) {
-          acc[argSpec.dest] = {value: (args as Record<string, unknown>)[argSpec.dest], argSpec};
+        const value = getPath(args, argSpec.dest);
+        if (value !== undefined) {
+          acc[argSpec.dest] = {value, argSpec};
         }
         return acc;
       },

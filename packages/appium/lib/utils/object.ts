@@ -1,5 +1,7 @@
 import {util} from '@appium/support';
 
+const UNSAFE_PATH_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
+
 /**
  * Converts a string to kebab-case (for Appium CLI and schema property names).
  *
@@ -136,12 +138,18 @@ export function getPath(obj: unknown, path: string, defaultValue?: unknown): unk
 /**
  * Assigns `value` at a dot-separated path on `obj`, creating plain object segments as needed.
  *
+ * No-ops when the path contains empty segments or keys that could trigger prototype pollution
+ * (`__proto__`, `constructor`, `prototype`).
+ *
  * @param obj - Object to mutate
  * @param path - Dot-separated property path
  * @param value - Value to assign at the path
  */
 export function setPath(obj: Record<string, unknown>, path: string, value: unknown): void {
   const parts = path.split('.');
+  if (!parts.every(isSafePathKey)) {
+    return;
+  }
   let current = obj;
   for (let i = 0; i < parts.length - 1; i++) {
     const part = parts[i];
@@ -240,6 +248,28 @@ export function defaultsDeep<T extends Record<string, unknown>>(
   return result as T;
 }
 
+function isSafePathKey(key: string): boolean {
+  return key.length > 0 && !UNSAFE_PATH_KEYS.has(key);
+}
+
+/**
+ * Copies a value for {@link defaultsDeep}: plain objects are copied recursively;
+ * other values (including functions) are reused by reference.
+ *
+ * @param value - Value to copy
+ * @returns Copy safe for further defaults merging
+ */
+function copyForDefaultsDeep(value: unknown): unknown {
+  if (!util.isPlainObject(value)) {
+    return value;
+  }
+  const out: Record<string, unknown> = {};
+  for (const [key, val] of Object.entries(value)) {
+    out[key] = copyForDefaultsDeep(val);
+  }
+  return out;
+}
+
 /**
  * Fills `undefined` keys in a clone of `target` from `source` (recursive for plain objects).
  *
@@ -251,7 +281,7 @@ function fillUndefinedDeep(
   target: Record<string, unknown>,
   source: Record<string, unknown>
 ): Record<string, unknown> {
-  const out = structuredClone(target);
+  const out = copyForDefaultsDeep(target) as Record<string, unknown>;
   const stack: Array<{dest: Record<string, unknown>; src: Record<string, unknown>}> = [
     {dest: out, src: source},
   ];
@@ -264,7 +294,7 @@ function fillUndefinedDeep(
     for (const [key, srcVal] of Object.entries(src)) {
       const destVal = dest[key];
       if (destVal === undefined) {
-        dest[key] = structuredClone(srcVal);
+        dest[key] = copyForDefaultsDeep(srcVal);
         continue;
       }
       if (util.isPlainObject(destVal) && util.isPlainObject(srcVal)) {

@@ -26,7 +26,8 @@ import {spawn} from 'node:child_process';
 import {inspect} from 'node:util';
 import {pathToFileURL} from 'node:url';
 import {Doctor, EXIT_CODE as DOCTOR_EXIT_CODE} from '../doctor/doctor';
-import {compact, getAppiumModuleRoot, npmPackage} from '../utils';
+import {compact, npmPackage} from '../utils';
+import {getAppiumModuleRoot} from '../utils/module';
 import * as semver from 'semver';
 
 const UPDATE_ALL = 'installed';

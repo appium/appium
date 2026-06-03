@@ -10,7 +10,7 @@ import sinonChai from 'sinon-chai';
 import {FAKE_DRIVER_DIR} from '../../helpers';
 import {Manifest} from '../../../lib/extension/manifest';
 import {fs, system} from '@appium/support';
-import * as utils from '../../../lib/utils';
+import * as moduleUtils from '../../../lib/utils/module';
 import {expect} from 'chai';
 import * as chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
@@ -92,7 +92,7 @@ describe('ExtensionCommand', function () {
       sandbox = sinon.createSandbox();
       fsExistsStub = sandbox.stub(fs, 'exists');
       fsSymlinkStub = sandbox.stub(fs, 'symlink');
-      getAppiumModuleRootStub = sandbox.stub(utils, 'getAppiumModuleRoot');
+      getAppiumModuleRootStub = sandbox.stub(moduleUtils, 'getAppiumModuleRoot');
       isWindowsStub = sandbox.stub(system, 'isWindows');
       logger = {
         info: sandbox.stub(),

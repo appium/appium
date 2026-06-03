@@ -1,7 +1,6 @@
 import axios from 'axios';
 import {fs} from '@appium/support';
 import type {StringRecord} from '@appium/types';
-import {hasIn} from '../object-utils';
 import {log as logger} from '../logger';
 
 /**
@@ -153,11 +152,11 @@ function postRequest(
   basePath?: string
 ): void {
   // Move Selenium Grid 3 (flat) configuration properties into `configuration`
-  if (!hasIn(configHolder, 'configuration')) {
+  if (!(configHolder != null && typeof configHolder === 'object' && 'configuration' in configHolder)) {
     const configuration: StringRecord = {};
     const holder = configHolder as StringRecord;
     for (const property in holder) {
-      if (hasIn(holder, property) && property !== 'capabilities') {
+      if (holder != null && typeof holder === 'object' && property in holder && property !== 'capabilities') {
         configuration[property] = holder[property];
         delete holder[property];
       }

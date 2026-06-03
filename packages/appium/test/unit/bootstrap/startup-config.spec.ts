@@ -1,4 +1,4 @@
-import {setPath} from '../../../lib/object-utils';
+import {setPath} from '../../../lib/utils';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {SinonSandbox, SinonSpy} from 'sinon';

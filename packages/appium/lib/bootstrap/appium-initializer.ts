@@ -2,7 +2,7 @@ import {init as logsinkInit} from '../logsink';
 import {log as logger} from '../logger';
 import {util, env} from '@appium/support';
 import type {DriverOpts} from '@appium/types';
-import {defaultsDeep} from '../object-utils';
+import {defaultsDeep} from '../utils';
 import {AppiumDriver, type AppiumDriverConstraints} from '../appium';
 import {runExtensionCommand} from '../cli/extension';
 import {runSetupCommand} from '../cli/setup-command';

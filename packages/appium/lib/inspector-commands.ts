@@ -1,4 +1,4 @@
-import {fromPairs, mapValues} from './object-utils';
+import {mapValues} from './utils';
 import {
   METHOD_MAP as BASE_METHOD_MAP,
   BIDI_COMMANDS as BASE_BIDI_COMMANDS,
@@ -35,8 +35,12 @@ export async function listCommands(this: AppiumDriver, sessionId?: string): Prom
     driverBiDiCommands = driverClass?.newBidiCommands ?? {};
     const pluginClasses = this.pluginsForSession(sessionId)
       .map((p) => p.constructor as PluginClass);
-    pluginRestMethodMaps = fromPairs(pluginClasses.map((c) => [c.name, c.newMethodMap ?? {}]));
-    pluginBiDiCommands = fromPairs(pluginClasses.map((c) => [c.name, c.newBidiCommands ?? {}]));
+    pluginRestMethodMaps = Object.fromEntries(
+      pluginClasses.map((c) => [c.name, c.newMethodMap ?? {}])
+    );
+    pluginBiDiCommands = Object.fromEntries(
+      pluginClasses.map((c) => [c.name, c.newBidiCommands ?? {}])
+    );
   }
   return {
     rest: {
@@ -59,7 +63,9 @@ export async function listExtensions(this: AppiumDriver, sessionId?: string): Pr
     driverExecuteMethodMap = driverClass?.executeMethodMap ?? {};
     const pluginClasses = this.pluginsForSession(sessionId)
       .map((p) => p.constructor as PluginClass);
-    pluginExecuteMethodMaps = fromPairs(pluginClasses.map((c) => [c.name, c.executeMethodMap ?? {}]));
+    pluginExecuteMethodMaps = Object.fromEntries(
+      pluginClasses.map((c) => [c.name, c.executeMethodMap ?? {}])
+    );
   }
   return {
     rest: {

@@ -6,7 +6,7 @@ import {USE_ALL_PLUGINS} from '../constants';
 import {log} from '../logger';
 import {DriverConfig} from './driver-config';
 import {Manifest} from './manifest';
-import {zip} from '../object-utils';
+import {zip} from '../utils';
 import {PluginConfig} from './plugin-config';
 
 export type ExtensionConfigs = {

@@ -13,7 +13,7 @@ import {
   errors,
   isW3cCaps,
 } from '@appium/base-driver';
-import {mapKeys} from '../object-utils';
+import {mapKeys} from '../utils';
 
 const W3C_APPIUM_PREFIX = 'appium';
 const STANDARD_CAPS_LOWERCASE = new Set([...STANDARD_CAPS].map((cap) => cap.toLowerCase()));

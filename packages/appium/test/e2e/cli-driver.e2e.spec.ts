@@ -1,4 +1,4 @@
-import {omitKeys} from '../../lib/object-utils';
+import {omitKeys} from '../../lib/utils';
 import {exec} from 'teen_process';
 import {fs, system, tempDir, util} from '@appium/support';
 import path from 'node:path';

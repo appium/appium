@@ -1,5 +1,5 @@
 import type {ExtensionType} from '@appium/types';
-import {camelCase, kebabCase} from '../object-utils';
+import {camelCase, kebabCase} from '../utils';
 
 /**
  * The original ID of the Appium config schema.

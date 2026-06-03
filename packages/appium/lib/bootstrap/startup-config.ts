@@ -3,15 +3,7 @@ import {util} from '@appium/support';
 import {getDefaultsForSchema, getAllArgSpecs} from '../schema/schema';
 import type {Args} from 'appium/types';
 import type {ReadConfigFileResult} from './config-file';
-import {
-  difference,
-  negate,
-  omitBy,
-  overEvery,
-  overSome,
-  pickBy,
-  setPath,
-} from '../object-utils';
+import {difference, pickBy, setPath} from '../utils';
 
 interface FlattenedArg {
   value: unknown;
@@ -60,13 +52,11 @@ export function getNonDefaultServerArgs(parsedArgs: Args): Args {
 
   const defaultIsDefined = (dest: string): boolean => defaultsFromSchema[dest] !== undefined;
 
-  // note that `overEvery` is like an "AND", and `overSome` is like an "OR"
-  const argValueNotArrayOrArraysDiffer = overSome(negate(argsValueIsArray), arraysDiffer);
+  const argValueNotArrayOrArraysDiffer = (dest: string) =>
+    !argsValueIsArray(dest) || arraysDiffer(dest);
 
-  const defaultValueNotArrayAndValuesDiffer = overEvery(
-    negate(defaultValueIsArray),
-    valuesDiffer
-  );
+  const defaultValueNotArrayAndValuesDiffer = (dest: string) =>
+    !defaultValueIsArray(dest) && valuesDiffer(dest);
 
   /**
    * This used to be a hideous conditional, but it's broken up into a hideous function instead.
@@ -79,14 +69,11 @@ export function getNonDefaultServerArgs(parsedArgs: Args): Args {
    *   - ensures the args value is an array
    *   - ensures the args values do not differ from the default values
    */
-  const isNotDefault = overEvery(
-    defaultIsDefined,
-    overSome(
-      typesDiffer,
-      overEvery(defaultValueIsArray, argValueNotArrayOrArraysDiffer),
-      defaultValueNotArrayAndValuesDiffer
-    )
-  );
+  const isNotDefault = (dest: string) =>
+    defaultIsDefined(dest) &&
+    (typesDiffer(dest) ||
+      (defaultValueIsArray(dest) && argValueNotArrayOrArraysDiffer(dest)) ||
+      defaultValueNotArrayAndValuesDiffer(dest));
 
   const defaultsFromSchema = getDefaultsForSchema(true) as Record<string, unknown>;
 
@@ -148,11 +135,11 @@ export function showConfig(
  * Does not operate recursively.
  */
 function compactConfig<T extends Record<string, unknown>>(obj: T): Partial<T> {
-  return omitBy(
+  return pickBy(
     obj,
     (value, key) =>
-      key === 'subcommand' ||
-      value === undefined ||
-      (value !== null && typeof value === 'object' && util.isEmpty(value))
+      key !== 'subcommand' &&
+      value !== undefined &&
+      !(value !== null && typeof value === 'object' && util.isEmpty(value))
   );
 }

@@ -2,7 +2,7 @@ import {fs} from '@appium/support';
 import {ArgumentParser} from 'argparse';
 import type {SubArgumentParserOptions, SubParser} from 'argparse';
 import path from 'node:path';
-import {setPath} from '../object-utils';
+import {setPath} from '../utils';
 import type {DriverType, PluginType} from '@appium/types';
 import type {CliExtensionSubcommand} from 'appium/types';
 import {

@@ -3,7 +3,7 @@ import type {ExtClass, ExtManifest, ExtName, ExtRecord, InstallType} from 'appiu
 import type {SchemaObject} from 'ajv';
 import {util, fs, system} from '@appium/support';
 import path from 'node:path';
-import {capitalize} from '../object-utils';
+import {capitalize} from '../utils';
 import {pathToFileURL} from 'node:url';
 import resolveFrom from 'resolve-from';
 import {satisfies} from 'semver';

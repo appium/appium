@@ -47,7 +47,7 @@ import * as insecureFeatures from './insecure-features';
 import * as inspectorCommands from './inspector-commands';
 import type {DriverConfig} from './extension/driver-config';
 import {AppiumIpc} from '@appium/base-driver';
-import {compact, omitBy, pull} from './object-utils';
+import {compact, pickBy, pull} from './utils';
 
 const desiredCapabilityConstraints = {
   automationName: {
@@ -262,8 +262,8 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
     const defaults = getDefaultsForExtension(DRIVER_TYPE, extName);
     const cliArgs = util.isEmpty(defaults)
       ? allCliArgsForExt
-      : omitBy(allCliArgsForExt as Record<string, unknown>, (value, key) =>
-          util.isEqual(defaults[key as string], value)
+      : pickBy(allCliArgsForExt as Record<string, unknown>, (value, key) =>
+          !util.isEqual(defaults[key as string], value)
         );
     return util.isEmpty(cliArgs) ? undefined : (cliArgs as StringRecord);
   }

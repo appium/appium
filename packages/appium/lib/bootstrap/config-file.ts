@@ -3,7 +3,7 @@ import type {ErrorObject, SchemaObject} from 'ajv';
 import {lilconfig, type LoaderSync, type LilconfigResult} from 'lilconfig';
 import {util} from '@appium/support';
 import * as yaml from 'yaml';
-import {camelCase, getPath, mapKeys, mapValues} from '../object-utils';
+import {camelCase, getPath, mapKeys, mapValues} from '../utils';
 import type {AppiumConfig, NormalizedAppiumConfig} from '@appium/types';
 import {getSchema, validate} from '../schema/schema';
 import {formatErrors} from '../schema/format-errors';

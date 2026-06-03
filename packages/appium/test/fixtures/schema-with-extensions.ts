@@ -1,7 +1,7 @@
 /**
  * This fixture combines the base config schema and the fake-driver schema, as would happen in a real use case.
  */
-import {setPath} from '../../lib/object-utils';
+import {setPath} from '../../lib/utils';
 import {AppiumConfigJsonSchema} from '@appium/schema';
 
 const {default: fakeDriverSchema} = require('@appium/fake-driver/build/lib/fake-driver-schema');

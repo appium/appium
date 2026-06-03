@@ -1,6 +1,6 @@
 import {util} from '@appium/support';
 import {promisify} from 'node:util';
-import {capitalize} from './object-utils';
+import {capitalize} from './utils';
 import type {ExtensionCore} from '@appium/base-driver';
 import {errors} from '@appium/base-driver';
 import {BIDI_BASE_PATH, BIDI_EVENT_NAME} from './constants';

@@ -38,16 +38,6 @@ export function camelCase(value: string): string {
 }
 
 /**
- * Converts a string to snake_case.
- *
- * @param value - Input string
- * @returns snake_cased string
- */
-export function snakeCase(value: string): string {
-  return kebabCase(value).replace(/-/g, '_');
-}
-
-/**
  * Uppercases the first character of a string.
  *
  * @param value - Input string
@@ -76,17 +66,6 @@ export function omitKeys<T extends Record<string, unknown>>(
 }
 
 /**
- * Returns a shallow copy of `obj` without the given keys.
- *
- * @param obj - Source object
- * @param keys - Property names to omit
- * @returns Shallow copy without the listed keys
- */
-export function omit<T extends Record<string, unknown>>(obj: T, ...keys: string[]): T {
-  return omitKeys(obj, keys);
-}
-
-/**
  * Returns a shallow copy of `obj` whose entries pass `predicate`.
  *
  * @param obj - Source object
@@ -100,20 +79,6 @@ export function pickBy<T extends Record<string, unknown>>(
   return Object.fromEntries(
     Object.entries(obj).filter(([key, value]) => predicate(value as T[keyof T], key as keyof T))
   ) as Partial<T>;
-}
-
-/**
- * Returns a shallow copy of `obj` without entries for which `predicate` returns true.
- *
- * @param obj - Source object
- * @param predicate - Filter invoked with each value and key
- * @returns Shallow copy excluding rejected entries
- */
-export function omitBy<T extends Record<string, unknown>>(
-  obj: T,
-  predicate: (value: T[keyof T], key: keyof T) => boolean
-): Partial<T> {
-  return pickBy(obj, (value, key) => !predicate(value, key));
 }
 
 /**
@@ -146,16 +111,6 @@ export function mapKeys<T extends Record<string, unknown>>(
   return Object.fromEntries(
     Object.entries(obj).map(([key, value]) => [fn(value as T[keyof T], key as keyof T), value])
   );
-}
-
-/**
- * Builds an object from an iterable of `[key, value]` pairs.
- *
- * @param pairs - Key/value pairs
- * @returns Object built from the pairs
- */
-export function fromPairs<K extends string | number | symbol, V>(pairs: Iterable<[K, V]>): Record<K, V> {
-  return Object.fromEntries(pairs) as Record<K, V>;
 }
 
 /**
@@ -200,31 +155,6 @@ export function setPath(obj: Record<string, unknown>, path: string, value: unkno
 }
 
 /**
- * Returns whether `obj` has an own property named `key` (not a nested path).
- *
- * @param obj - Value to inspect
- * @param key - Property name
- * @returns `true` when the own property exists
- */
-export function hasPath(obj: unknown, key: string): boolean {
-  if (obj == null || (typeof obj !== 'object' && typeof obj !== 'function')) {
-    return false;
-  }
-  return Object.prototype.hasOwnProperty.call(obj, key);
-}
-
-/**
- * Returns whether `key` exists on `obj` (own or inherited).
- *
- * @param obj - Value to inspect
- * @param key - Property name
- * @returns `true` when `key in obj`
- */
-export function hasIn(obj: unknown, key: string): boolean {
-  return obj != null && typeof obj === 'object' && key in obj;
-}
-
-/**
  * Binds listed methods on `obj` so they keep the correct `this` when passed as callbacks.
  *
  * @param obj - Target object
@@ -239,36 +169,6 @@ export function bindAll<T extends object>(obj: T, methodNames: readonly string[]
     }
   }
   return obj;
-}
-
-/**
- * Returns a predicate that is true when any of the given predicates is true.
- *
- * @param fns - Predicates to combine with logical OR
- * @returns Combined predicate
- */
-export function overSome<T>(...fns: Array<(x: T) => boolean>): (x: T) => boolean {
-  return (x) => fns.some((fn) => fn(x));
-}
-
-/**
- * Returns a predicate that is true only when every given predicate is true.
- *
- * @param fns - Predicates to combine with logical AND
- * @returns Combined predicate
- */
-export function overEvery<T>(...fns: Array<(x: T) => boolean>): (x: T) => boolean {
-  return (x) => fns.every((fn) => fn(x));
-}
-
-/**
- * Returns a predicate that negates `fn`.
- *
- * @param fn - Predicate to negate
- * @returns Negated predicate
- */
-export function negate<T extends unknown[]>(fn: (...args: T) => boolean): (...args: T) => boolean {
-  return (...args) => !fn(...args);
 }
 
 /**
@@ -310,16 +210,6 @@ export function zip<A, B>(a: readonly A[], b: readonly B[]): Array<[A, B | undef
 }
 
 /**
- * Returns a duplicate-free copy of `arr` preserving first-seen order.
- *
- * @param arr - Input array
- * @returns Array with unique values
- */
-export function uniq<T>(arr: readonly T[]): T[] {
-  return [...new Set(arr)];
-}
-
-/**
  * Returns elements in `a` that are not present in `b`.
  *
  * @param a - Source array
@@ -330,24 +220,6 @@ export function difference<T>(a: readonly T[], b: readonly T[]): T[] {
   const bSet = new Set(b);
   return a.filter((x) => !bSet.has(x));
 }
-
-/**
- * Composes unary functions left-to-right.
- *
- * @param fns - Functions to apply in order
- * @returns Composed function
- */
-export function flow<A>(...fns: Array<(arg: A) => A>): (arg: A) => A {
-  return (arg) => fns.reduce((v, fn) => fn(v), arg);
-}
-
-/**
- * Returns its argument unchanged.
- *
- * @param value - Input value
- * @returns The same value
- */
-export const identity = <T>(value: T): T => value;
 
 /**
  * Deep-defaults merge: each source fills only `undefined` properties in the result (recursive for plain objects).

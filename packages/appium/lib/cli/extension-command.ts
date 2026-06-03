@@ -1,7 +1,6 @@
 import {asyncfilter, asyncmap} from 'asyncbox';
 import path from 'node:path';
 import {util, npm, env, console, fs, system} from '@appium/support';
-import {compact} from '../object-utils';
 import type {AppiumLogger, ExtensionType, IDoctorCheck} from '@appium/types';
 import type {
   ExtInstallReceipt as AppiumExtInstallReceipt,
@@ -27,7 +26,7 @@ import {spawn} from 'node:child_process';
 import {inspect} from 'node:util';
 import {pathToFileURL} from 'node:url';
 import {Doctor, EXIT_CODE as DOCTOR_EXIT_CODE} from '../doctor/doctor';
-import {getAppiumModuleRoot, npmPackage} from '../utils';
+import {compact, getAppiumModuleRoot, npmPackage} from '../utils';
 import * as semver from 'semver';
 
 const UPDATE_ALL = 'installed';

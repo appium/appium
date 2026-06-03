@@ -2,7 +2,7 @@ import Ajv, {type ErrorObject, type SchemaObject, type ValidateFunction} from 'a
 import addFormats from 'ajv-formats';
 import {util} from '@appium/support';
 import path from 'node:path';
-import {bindAll, kebabCase, omitKeys, setPath} from '../object-utils';
+import {bindAll, kebabCase, omitKeys, setPath} from '../utils';
 import {AppiumConfigJsonSchema} from '@appium/schema';
 import type {ExtensionType} from '@appium/types';
 import {DRIVER_TYPE, PLUGIN_TYPE} from '../constants';

@@ -1,7 +1,7 @@
 import {ArgumentTypeError, type ArgumentOptions} from 'argparse';
 import {util} from '@appium/support';
 import type {JSONSchema7, JSONSchema7TypeName} from 'json-schema';
-import {flow, identity, kebabCase, snakeCase} from '../object-utils';
+import {kebabCase} from '../utils';
 import {formatErrors} from './format-errors';
 import {flattenSchema, validate} from './schema';
 import {transformers, parseCsvLine} from './cli-transformers';
@@ -50,14 +50,14 @@ function aliasToFlag(argSpec: ArgSpec, alias?: string): string {
   return isShort ? `-${arg}` : `--${kebabCase(arg)}`;
 }
 
-const screamingSnakeCase = flow(snakeCase, (s: string) => s.toUpperCase());
+const screamingSnakeCase = (s: string) => kebabCase(s).replace(/-/g, '_').toUpperCase();
 
 /**
  * Given an argument spec, return a validator/coercer function backed by schema validation.
  */
 function getSchemaValidator<Coerced>(
   {ref: schemaId}: ArgSpec,
-  coerce: (value: string) => Coerced = identity as (value: string) => Coerced
+  coerce: (value: string) => Coerced = (value) => value as Coerced
 ): (value: string) => Coerced {
   return (value) => {
     const coerced = coerce(value);
@@ -149,7 +149,7 @@ function subSchemaToArgDef(subSchema: AppiumJSONSchema, argSpec: ArgSpec): ArgDe
         csvTransformer(val)
           .flatMap((item) => transformers[appiumCliTransformer as AppiumCliTransformerName](item));
     } else {
-      const baseFn = argTypeFunction ?? identity;
+      const baseFn = argTypeFunction ?? ((value: string) => value);
       const transformer = transformers[appiumCliTransformer as AppiumCliTransformerName];
       argTypeFunction = (value: string) => transformer(baseFn(value) as string);
     }

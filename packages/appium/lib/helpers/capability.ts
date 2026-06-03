@@ -68,8 +68,7 @@ export function parseCapsForInnerDriver<C extends Constraints = BaseDriverCapCon
       for (const firstMatchEntry of w3cCapabilities.firstMatch ?? []) {
         if (
           util.isPlainObject(firstMatchEntry) &&
-          removeAppiumPrefix(defaultCapKey) in
-            removeAppiumPrefixes(firstMatchEntry as NSCapabilities<C>)
+          hasOwnCapability(firstMatchEntry as Record<string, unknown>, defaultCapKey)
         ) {
           isCapAlreadySet = true;
           break;
@@ -78,8 +77,7 @@ export function parseCapsForInnerDriver<C extends Constraints = BaseDriverCapCon
       isCapAlreadySet =
         isCapAlreadySet ||
         (util.isPlainObject(w3cCapabilities.alwaysMatch) &&
-          removeAppiumPrefix(defaultCapKey) in
-            removeAppiumPrefixes(w3cCapabilities.alwaysMatch));
+          hasOwnCapability(w3cCapabilities.alwaysMatch as Record<string, unknown>, defaultCapKey));
       if (isCapAlreadySet) {
         continue;
       }
@@ -168,4 +166,10 @@ export function pullSettings(caps: Record<string, unknown> | null | undefined): 
 function removeAppiumPrefix(key: string): string {
   const prefix = `${W3C_APPIUM_PREFIX}:`;
   return key.startsWith(prefix) ? key.substring(prefix.length) : key;
+}
+
+/** True when `caps` has an own property matching `capKey` (with or without `appium:` prefix). */
+function hasOwnCapability(caps: Record<string, unknown>, capKey: string): boolean {
+  const targetKey = removeAppiumPrefix(capKey);
+  return Object.keys(caps).some((key) => removeAppiumPrefix(key) === targetKey);
 }

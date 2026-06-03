@@ -24,6 +24,12 @@ describe('utils/object', function () {
       expect(kebabCase('foo_bar')).to.equal('foo-bar');
       expect(kebabCase('Foo Bar')).to.equal('foo-bar');
     });
+
+    it('should split acronym boundaries like lodash', function () {
+      expect(kebabCase('someXMLParser')).to.equal('some-xml-parser');
+      expect(kebabCase('getHTTPResponse')).to.equal('get-http-response');
+      expect(kebabCase('XMLHttpRequest')).to.equal('xml-http-request');
+    });
   });
 
   describe('camelCase()', function () {
@@ -155,9 +161,14 @@ describe('utils/object', function () {
           return this.value;
         },
       };
-      const extracted = target.getValue;
+      const unbound = target.getValue;
+      expect(unbound.call({value: 99})).to.equal(99);
+
       bindAll(target, ['getValue']);
-      expect(extracted.call({value: 99})).to.equal(99);
+
+      const extracted = target.getValue;
+      expect(extracted()).to.equal(1);
+      expect(extracted.call({value: 99})).to.equal(1);
       expect(target.getValue()).to.equal(1);
     });
 

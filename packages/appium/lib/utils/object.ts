@@ -9,10 +9,7 @@ const UNSAFE_PATH_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
  * @returns Kebab-cased string
  */
 export function kebabCase(value: string): string {
-  return value
-    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
-    .replace(/[_\s]+/g, '-')
-    .toLowerCase();
+  return splitWords(value).join('-').toLowerCase();
 }
 
 /**
@@ -22,11 +19,7 @@ export function kebabCase(value: string): string {
  * @returns camelCased string
  */
 export function camelCase(value: string): string {
-  const words = value
-    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
-    .replace(/[-_\s]+/g, ' ')
-    .trim()
-    .split(/\s+/);
+  const words = splitWords(value);
   if (words.length === 0) {
     return '';
   }
@@ -246,6 +239,22 @@ export function defaultsDeep<T extends Record<string, unknown>>(
     result = fillUndefinedDeep(result, source as Record<string, unknown>);
   }
   return result as T;
+}
+
+/**
+ * Splits a string into words (lodash-compatible), including acronym boundaries.
+ *
+ * @param value - Input string
+ * @returns Word tokens
+ */
+function splitWords(value: string): string[] {
+  return value
+    .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
+    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+    .replace(/[-_\s]+/g, ' ')
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
 }
 
 function isSafePathKey(key: string): boolean {

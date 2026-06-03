@@ -153,6 +153,24 @@ describe('bootstrap/grid-v3-register', function () {
         await registerNode({my: 'config'});
         expect(parseSpy.called).to.be.false;
       });
+
+      it('should not hoist inherited properties into configuration', async function () {
+        const clock = sandbox.useFakeTimers();
+        const config = Object.create({
+          hubHost: 'evil.example.com',
+          hubPort: 4444,
+          hubProtocol: 'http',
+        }) as Record<string, unknown>;
+        config.capabilities = [];
+        config.register = true;
+        config.registerCycle = 100;
+        await registerNode(config as Parameters<typeof registerNodeType>[0], '127.0.0.1', 4723, '');
+        await clock.tickAsync(100);
+        expect(mocks.axios.calledOnce).to.be.true;
+        const hubCfg = mocks.axios.firstCall.args[0].data.configuration;
+        expect(hubCfg).to.not.have.property('hubHost', 'evil.example.com');
+        expect(hubCfg.url).to.equal('http://127.0.0.1:4723');
+      });
     });
   });
 });

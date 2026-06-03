@@ -81,11 +81,9 @@ async function run(
   opts: {env?: Record<string, string>; FORCE_COLOR?: string} = {}
 ): Promise<{stdout: string; stderr: string}> {
   const cwd = APPIUM_ROOT;
-  const env = {
-    APPIUM_HOME: appiumHome,
-    PATH: process.env.PATH,
-    ...opts.env,
-  };
+  const env: Record<string, string | undefined> = {...opts.env};
+  env.APPIUM_HOME ??= appiumHome;
+  env.PATH ??= process.env.PATH;
   try {
     const fullArgs = [...process.execArgv, '--', EXECUTABLE, ...args];
     if (process.env._FORCE_LOGS) {

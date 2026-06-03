@@ -152,11 +152,15 @@ function postRequest(
   basePath?: string
 ): void {
   // Move Selenium Grid 3 (flat) configuration properties into `configuration`
-  if (!(configHolder != null && typeof configHolder === 'object' && 'configuration' in configHolder)) {
+  if (
+    configHolder != null &&
+    typeof configHolder === 'object' &&
+    !Object.hasOwn(configHolder, 'configuration')
+  ) {
     const configuration: StringRecord = {};
     const holder = configHolder as StringRecord;
-    for (const property in holder) {
-      if (holder != null && typeof holder === 'object' && property in holder && property !== 'capabilities') {
+    for (const property of Object.keys(holder)) {
+      if (property !== 'capabilities') {
         configuration[property] = holder[property];
         delete holder[property];
       }

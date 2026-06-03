@@ -13,7 +13,6 @@ import {FakeDriver} from '@appium/fake-driver';
 import {sleep} from 'asyncbox';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import _ from 'lodash';
 import {createSandbox} from 'sinon';
 import {finalizeSchema, registerSchema, resetSchema} from '../../lib/schema/schema';
 import {insertAppiumPrefixes, removeAppiumPrefixes} from '../../lib/helpers/capability';
@@ -213,7 +212,7 @@ describe('AppiumDriver', function () {
 
         // mock three sessions that should be removed when the new one is created
         const fakeDrivers = [new FakeDriver(), new FakeDriver(), new FakeDriver()];
-        const mockFakeDrivers = _.map(fakeDrivers, (fd) => sandbox.mock(fd));
+        const mockFakeDrivers = fakeDrivers.map((fd) => sandbox.mock(fd));
         mockFakeDrivers[0].expects('deleteSession').once();
         mockFakeDrivers[1]
           .expects('deleteSession')
@@ -445,20 +444,20 @@ describe('AppiumDriver', function () {
       });
 
       it('should remove session if inner driver unexpectedly exits with an error', async function () {
-        const [sessionId] = (await appium.createSession(null as any, null as any, _.clone(W3C_CAPS))).value!;
-        expect(_.keys(appium.sessions)).to.contain(sessionId);
+        const [sessionId] = (await appium.createSession(null as any, null as any, structuredClone(W3C_CAPS))).value!;
+        expect(Object.keys(appium.sessions)).to.contain(sessionId);
         appium.sessions[sessionId].eventEmitter.emit('onUnexpectedShutdown', new Error('Oops'));
         // let event loop spin so rejection is handled
         await sleep(1);
-        expect(_.keys(appium.sessions)).to.not.contain(sessionId);
+        expect(Object.keys(appium.sessions)).to.not.contain(sessionId);
       });
       it('should remove session if inner driver unexpectedly exits with no error', async function () {
-        const [sessionId] = (await appium.createSession(null as any, null as any, _.clone(W3C_CAPS))).value!;
-        expect(_.keys(appium.sessions)).to.contain(sessionId);
+        const [sessionId] = (await appium.createSession(null as any, null as any, structuredClone(W3C_CAPS))).value!;
+        expect(Object.keys(appium.sessions)).to.contain(sessionId);
         appium.sessions[sessionId].eventEmitter.emit('onUnexpectedShutdown');
         // let event loop spin so rejection is handled
         await sleep(1);
-        expect(_.keys(appium.sessions)).to.not.contain(sessionId);
+        expect(Object.keys(appium.sessions)).to.not.contain(sessionId);
       });
     });
     describe('createPluginInstances', function () {
@@ -551,7 +550,7 @@ describe('AppiumDriver', function () {
         it('should add cliArgs to the plugin', function () {
           const appium = new AppiumDriver({plugin: {args: {randomArg: 1234}}} as any);
           setPluginClassesForTest(appium, new Map<any, string>([[ArgsPlugin, 'args']]));
-          const plugin = _.first(appium.createPluginInstances()) as BasePlugin;
+          const plugin = appium.createPluginInstances()[0] as BasePlugin;
           expect(plugin.cliArgs).to.eql({randomArg: 1234});
         });
       });

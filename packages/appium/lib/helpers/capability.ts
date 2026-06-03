@@ -5,7 +5,7 @@ import type {
   NSCapabilities,
   W3CCapabilities,
 } from '@appium/types';
-import _ from 'lodash';
+import {util} from '@appium/support';
 import {log as logger} from '../logger';
 import {
   processCapabilities,
@@ -13,6 +13,7 @@ import {
   errors,
   isW3cCaps,
 } from '@appium/base-driver';
+import {mapKeys} from '../object-utils';
 
 const W3C_APPIUM_PREFIX = 'appium';
 const STANDARD_CAPS_LOWERCASE = new Set([...STANDARD_CAPS].map((cap) => cap.toLowerCase()));
@@ -58,16 +59,17 @@ export function parseCapsForInnerDriver<C extends Constraints = BaseDriverCapCon
   // eslint-disable-next-line prefer-const -- assigned in success path after try
   let processedW3CCapabilities: W3CCapabilities<C> | undefined;
 
-  w3cCapabilities = _.cloneDeep(w3cCapabilities);
-  defaultCapabilities = _.cloneDeep(defaultCapabilities);
+  w3cCapabilities = structuredClone(w3cCapabilities);
+  defaultCapabilities = structuredClone(defaultCapabilities);
 
-  if (!_.isEmpty(defaultCapabilities)) {
-    for (const [defaultCapKey, defaultCapValue] of _.toPairs(defaultCapabilities)) {
+  if (!util.isEmpty(defaultCapabilities)) {
+    for (const [defaultCapKey, defaultCapValue] of Object.entries(defaultCapabilities)) {
       let isCapAlreadySet = false;
       for (const firstMatchEntry of w3cCapabilities.firstMatch ?? []) {
         if (
-          _.isPlainObject(firstMatchEntry) &&
-          _.has(removeAppiumPrefixes(firstMatchEntry as NSCapabilities<C>), removeAppiumPrefix(defaultCapKey))
+          util.isPlainObject(firstMatchEntry) &&
+          removeAppiumPrefix(defaultCapKey) in
+            removeAppiumPrefixes(firstMatchEntry as NSCapabilities<C>)
         ) {
           isCapAlreadySet = true;
           break;
@@ -75,16 +77,14 @@ export function parseCapsForInnerDriver<C extends Constraints = BaseDriverCapCon
       }
       isCapAlreadySet =
         isCapAlreadySet ||
-        (_.isPlainObject(w3cCapabilities.alwaysMatch) &&
-          _.has(
-            removeAppiumPrefixes(w3cCapabilities.alwaysMatch),
-            removeAppiumPrefix(defaultCapKey)
-          ));
+        (util.isPlainObject(w3cCapabilities.alwaysMatch) &&
+          removeAppiumPrefix(defaultCapKey) in
+            removeAppiumPrefixes(w3cCapabilities.alwaysMatch));
       if (isCapAlreadySet) {
         continue;
       }
 
-      if (_.isEmpty(w3cCapabilities.firstMatch)) {
+      if (util.isEmpty(w3cCapabilities.firstMatch)) {
         w3cCapabilities.firstMatch = [{[defaultCapKey]: defaultCapValue}] as W3CCapabilities<C>['firstMatch'];
       } else {
         (w3cCapabilities.firstMatch[0] as Record<string, unknown>)[defaultCapKey] = defaultCapValue;
@@ -120,9 +120,9 @@ export function parseCapsForInnerDriver<C extends Constraints = BaseDriverCapCon
 export function insertAppiumPrefixes<C extends Constraints = BaseDriverCapConstraints>(
   caps: Capabilities<C>
 ): NSCapabilities<C> {
-  return _.mapKeys(caps, (_, key) =>
-    STANDARD_CAPS_LOWERCASE.has(key.toLowerCase()) || key.includes(':')
-      ? key
+  return mapKeys(caps as Record<string, unknown>, (_, key) =>
+    STANDARD_CAPS_LOWERCASE.has(String(key).toLowerCase()) || String(key).includes(':')
+      ? String(key)
       : `${W3C_APPIUM_PREFIX}:${key}`
   ) as NSCapabilities<C>;
 }
@@ -133,7 +133,7 @@ export function insertAppiumPrefixes<C extends Constraints = BaseDriverCapConstr
 export function removeAppiumPrefixes<C extends Constraints = BaseDriverCapConstraints>(
   caps: NSCapabilities<C>
 ): Capabilities<C> {
-  return _.mapKeys(caps, (_, key) => removeAppiumPrefix(key)) as Capabilities<C>;
+  return mapKeys(caps as Record<string, unknown>, (_, key) => removeAppiumPrefix(String(key))) as Capabilities<C>;
 }
 
 /**
@@ -143,15 +143,15 @@ export function removeAppiumPrefixes<C extends Constraints = BaseDriverCapConstr
  * @returns Parsed settings object; empty if none found.
  */
 export function pullSettings(caps: Record<string, unknown> | null | undefined): Record<string, unknown> {
-  if (!_.isPlainObject(caps) || _.isEmpty(caps)) {
+  if (!util.isPlainObject(caps) || util.isEmpty(caps)) {
     return {};
   }
 
   const result: Record<string, unknown> = {};
   const singleSettings: Record<string, unknown> = {};
-  for (const [key, value] of _.toPairs(caps)) {
+  for (const [key, value] of Object.entries(caps)) {
     let match: RegExpExecArray | null;
-    if (/^(s|appium:s)ettings$/.test(key) && _.isPlainObject(value)) {
+    if (/^(s|appium:s)ettings$/.test(key) && util.isPlainObject(value)) {
       Object.assign(result, value);
       delete caps[key];
     } else if ((match = /^(s|appium:s)ettings\[(\S+)\]$/.exec(key))) {
@@ -159,7 +159,7 @@ export function pullSettings(caps: Record<string, unknown> | null | undefined): 
       delete caps[key];
     }
   }
-  if (!_.isEmpty(singleSettings)) {
+  if (!util.isEmpty(singleSettings)) {
     Object.assign(result, singleSettings);
   }
   return result;
@@ -167,5 +167,5 @@ export function pullSettings(caps: Record<string, unknown> | null | undefined): 
 
 function removeAppiumPrefix(key: string): string {
   const prefix = `${W3C_APPIUM_PREFIX}:`;
-  return _.startsWith(key, prefix) ? key.substring(prefix.length) : key;
+  return key.startsWith(prefix) ? key.substring(prefix.length) : key;
 }

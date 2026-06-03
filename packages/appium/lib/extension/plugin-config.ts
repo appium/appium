@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import {util} from '@appium/support';
 import type {PluginType} from '@appium/types';
 import type {ExtManifest, ExtName, ExtRecord} from 'appium/types';
 import {PLUGIN_TYPE} from '../constants';
@@ -42,7 +42,7 @@ export class PluginConfig extends ExtensionConfig<PluginType> {
   override print(activeNames: ExtName<PluginType>[] = []): void {
     const pluginNames = Object.keys(this.installedExtensions);
 
-    if (_.isEmpty(pluginNames)) {
+    if (util.isEmpty(pluginNames)) {
       log.info(
         `No plugins have been installed. Use the "appium plugin" ` + 'command to install the one(s) you want to use.'
       );
@@ -50,12 +50,12 @@ export class PluginConfig extends ExtensionConfig<PluginType> {
     }
 
     log.info(`Available plugins:`);
-    for (const [pluginName, pluginData] of _.toPairs(this.installedExtensions)) {
-      const activeTxt = _.includes(activeNames, pluginName as ExtName<PluginType>) ? ' (ACTIVE)' : '';
+    for (const [pluginName, pluginData] of Object.entries(this.installedExtensions)) {
+      const activeTxt = activeNames.includes(pluginName as ExtName<PluginType>) ? ' (ACTIVE)' : '';
       log.info(`  - ${this.extensionDesc(pluginName as ExtName<PluginType>, pluginData)}${activeTxt}`);
     }
 
-    if (_.isEmpty(activeNames)) {
+    if (util.isEmpty(activeNames)) {
       log.info('No plugins activated. Use the --use-plugins flag with names of plugins to activate');
     }
   }

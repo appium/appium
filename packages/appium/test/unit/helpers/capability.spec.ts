@@ -12,7 +12,6 @@ import {
   removeAppiumPrefixes,
 } from '../../../lib/helpers/capability';
 import {BASE_CAPS, W3C_CAPS} from '../../helpers';
-import _ from 'lodash';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
@@ -86,7 +85,7 @@ describe('helpers/capability', function () {
       );
       const err = (res as {error?: Error}).error;
       expect(err!.message).to.match(/required/);
-      expect(_.isError(err)).to.be.true;
+      expect(err).to.be.instanceOf(Error);
     });
     it('should only accept W3C caps that have passing constraints', function () {
       const w3cCaps = {

@@ -8,7 +8,6 @@ import axios from 'axios';
 import {sleep} from 'asyncbox';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import _ from 'lodash';
 import {createSandbox} from 'sinon';
 import type {SinonSandbox} from 'sinon';
 import {remote as wdio} from 'webdriverio';
@@ -61,7 +60,7 @@ async function initFakeDriver(appiumHome: string) {
     },
     driverConfig,
   );
-  if (!_.has(driverList, 'fake')) {
+  if (!('fake' in driverList)) {
     await runExtensionCommand(
       {
         driverCommand: 'install',
@@ -225,7 +224,7 @@ describe('FakeDriver via HTTP', function () {
         JSON.stringify({POST: {command: 'setFrame', params: [
           {name: 'id', required: true}
         ]}}));
-      expect(_.size(commands.rest.driver)).to.be.greaterThan(1);
+      expect(Object.keys(commands.rest.driver).length).to.be.greaterThan(1);
 
       expect(JSON.stringify(commands.bidi.base.session.subscribe)).to.eql(
         JSON.stringify({
@@ -242,8 +241,8 @@ describe('FakeDriver via HTTP', function () {
           ]
         })
       );
-      expect(_.size(commands.bidi.base)).to.be.greaterThan(1);
-      expect(_.size(commands.bidi.driver)).to.be.greaterThan(0);
+      expect(Object.keys(commands.bidi.base).length).to.be.greaterThan(1);
+      expect(Object.keys(commands.bidi.driver).length).to.be.greaterThan(0);
     });
 
     it('should list available driver extensions', async function () {
@@ -264,7 +263,7 @@ describe('FakeDriver via HTTP', function () {
           }]
         })
       );
-      expect(_.size(extensions.rest.driver)).to.be.greaterThan(1);
+      expect(Object.keys(extensions.rest.driver).length).to.be.greaterThan(1);
     });
   });
 
@@ -292,7 +291,7 @@ describe('FakeDriver via HTTP', function () {
     });
 
     it('should not be able to run two FakeDriver sessions simultaneously when one is unique', async function () {
-      const uniqueCaps = _.clone(caps);
+      const uniqueCaps = structuredClone(caps);
       uniqueCaps['appium:uniqueApp'] = true;
       const driver1 = await wdio({...wdOpts, capabilities: uniqueCaps});
       expect(driver1.sessionId).to.exist;

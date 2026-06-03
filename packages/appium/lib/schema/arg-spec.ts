@@ -1,5 +1,5 @@
-import _ from 'lodash';
 import type {ExtensionType} from '@appium/types';
+import {camelCase, kebabCase} from '../object-utils';
 
 /**
  * The original ID of the Appium config schema.
@@ -45,7 +45,7 @@ export class ArgSpec<D = unknown> {
   constructor(name: string, {extType, extName, dest, defaultValue}: ArgSpecOptions<D> = {}) {
     const arg = ArgSpec.toArg(name, extType, extName);
     const ref = ArgSpec.toSchemaRef(name, extType, extName);
-    const rawDest = _.camelCase(dest ?? name);
+    const rawDest = camelCase(dest ?? name);
     const destKeypath = extType && extName ? [extType, extName, rawDest].join('.') : rawDest;
 
     this.defaultValue = defaultValue;
@@ -83,9 +83,9 @@ export class ArgSpec<D = unknown> {
    * Return the unique CLI argument key for the argument.
    */
   static toArg(name: string, extType?: ExtensionType, extName?: string): string {
-    const properName = _.kebabCase(name.replace(/^--?/, ''));
+    const properName = kebabCase(name.replace(/^--?/, ''));
     if (extType && extName) {
-      return [extType, _.kebabCase(extName), properName].join('-');
+      return [extType, kebabCase(extName), properName].join('-');
     }
     return properName;
   }
@@ -94,7 +94,7 @@ export class ArgSpec<D = unknown> {
    * Normalizes a raw extension name (not including type).
    */
   static toNormalizedExtName(extName: string): string {
-    return _.kebabCase(extName);
+    return kebabCase(extName);
   }
 
   /**

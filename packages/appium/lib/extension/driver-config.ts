@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import {util} from '@appium/support';
 import type {DriverClass, DriverType, StringRecord} from '@appium/types';
 import type {ExtManifest, ExtName, ExtRecord} from 'appium/types';
 import {DRIVER_TYPE} from '../constants';
@@ -52,11 +52,11 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
     automationName,
     platformName,
   }: C): Promise<MatchedDriver> {
-    if (!_.isString(platformName)) {
+    if (typeof platformName !== 'string') {
       throw new Error('You must include a platformName capability');
     }
 
-    if (!_.isString(automationName)) {
+    if (typeof automationName !== 'string') {
       throw new Error('You must include an automationName capability');
     }
 
@@ -95,19 +95,19 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
     const problems: ExtManifestProblem[] = [];
     const {platformNames, automationName} = extManifest;
 
-    if (!_.isArray(platformNames)) {
+    if (!Array.isArray(platformNames)) {
       problems.push({
         err: 'Missing or incorrect supported platformNames list.',
         val: platformNames,
       });
-    } else if (_.isEmpty(platformNames)) {
+    } else if (util.isEmpty(platformNames)) {
       problems.push({
         err: 'Empty platformNames list.',
         val: platformNames,
       });
     } else {
       for (const pName of platformNames) {
-        if (!_.isString(pName)) {
+        if (typeof pName !== 'string') {
           problems.push({
             err: 'Incorrectly formatted platformName.',
             val: pName,
@@ -116,7 +116,7 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
       }
     }
 
-    if (!_.isString(automationName)) {
+    if (typeof automationName !== 'string') {
       problems.push({
         err: 'Missing or incorrect automationName',
         val: automationName,
@@ -140,10 +140,12 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
     matchPlatformName: string
   ): ExtManifest<DriverType> & {driverName: string} {
     const drivers = this.installedExtensions;
-    for (const [driverName, driverData] of _.toPairs(drivers)) {
+    for (const [driverName, driverData] of Object.entries(drivers)) {
       const {automationName, platformNames} = driverData;
       const aNameMatches = automationName.toLowerCase() === matchAutomationName.toLowerCase();
-      const pNameMatches = _.includes(platformNames.map((p) => _.toLower(p)), matchPlatformName.toLowerCase());
+      const pNameMatches = platformNames
+        .map((p) => p.toLowerCase())
+        .includes(matchPlatformName.toLowerCase());
 
       if (aNameMatches && pNameMatches) {
         return {driverName, ...driverData};

@@ -1,5 +1,4 @@
-import {env, fs} from '@appium/support';
-import _ from 'lodash';
+import {env, fs, util} from '@appium/support';
 import path from 'node:path';
 import * as YAML from 'yaml';
 import type {DriverType, ExtensionType, PluginType} from '@appium/types';
@@ -29,7 +28,7 @@ export class Manifest {
    *
    * @param appiumHome - `APPIUM_HOME` path used as the cache key
    */
-  static getInstance = _.memoize((appiumHome: string): Manifest => new Manifest(appiumHome));
+  static getInstance = util.memoize((appiumHome: string): Manifest => new Manifest(appiumHome));
 
   #data!: ManifestData;
   readonly #appiumHome: string;
@@ -39,7 +38,7 @@ export class Manifest {
 
   private constructor(appiumHome: string) {
     this.#appiumHome = appiumHome;
-    this.#data = _.cloneDeep(INITIAL_MANIFEST_DATA) as ManifestData;
+    this.#data = structuredClone(INITIAL_MANIFEST_DATA) as ManifestData;
   }
 
   /** `APPIUM_HOME` directory this manifest is tied to. */
@@ -110,7 +109,7 @@ export class Manifest {
         data = YAML.parse(yaml) as ManifestData;
       } catch (err: any) {
         if (err.code === 'ENOENT') {
-          data = _.cloneDeep(INITIAL_MANIFEST_DATA) as ManifestData;
+          data = structuredClone(INITIAL_MANIFEST_DATA) as ManifestData;
           shouldWrite = true;
         } else {
           throw new Error(
@@ -254,24 +253,24 @@ export class Manifest {
     };
 
     if (isDriver(pkgJson)) {
-      const driverName = pkgJson.appium.driverName;
+      const {driverName, ...appiumDriverMeta} = pkgJson.appium;
       const value = {
-        ..._.omit(pkgJson.appium, 'driverName'),
+        ...appiumDriverMeta,
         ...internal,
       };
-      if (!_.isEqual(value, this.#data.drivers[driverName])) {
+      if (!util.isEqual(value, this.#data.drivers[driverName])) {
         this.setExtension(DRIVER_TYPE, driverName, value);
         return true;
       }
       return false;
     }
     if (isPlugin(pkgJson)) {
-      const pluginName = pkgJson.appium.pluginName;
+      const {pluginName, ...appiumPluginMeta} = pkgJson.appium;
       const value = {
-        ..._.omit(pkgJson.appium, 'pluginName'),
+        ...appiumPluginMeta,
         ...internal,
       };
-      if (!_.isEqual(value, this.#data.plugins[pluginName])) {
+      if (!util.isEqual(value, this.#data.plugins[pluginName])) {
         this.setExtension(PLUGIN_TYPE, pluginName, value);
         return true;
       }
@@ -295,7 +294,7 @@ export class Manifest {
     extName: string,
     extData: ExtManifest<ExtType>
   ): ExtManifest<ExtType> {
-    const data = _.cloneDeep(extData) as ExtManifest<ExtType>;
+    const data = structuredClone(extData) as ExtManifest<ExtType>;
     if (extType === DRIVER_TYPE) {
       this.#data.drivers[extName] = data as unknown as ExtManifest<DriverType>;
     } else {
@@ -347,10 +346,10 @@ export class Manifest {
 
 function isExtension(value: unknown): value is ExtPackageJson<ExtensionType> {
   return (
-    _.isPlainObject(value) &&
-    _.isPlainObject((value as {appium?: unknown}).appium) &&
-    _.isString((value as {name?: unknown}).name) &&
-    _.isString((value as {version?: unknown}).version)
+    util.isPlainObject(value) &&
+    util.isPlainObject((value as {appium?: unknown}).appium) &&
+    typeof (value as {name?: unknown}).name === 'string' &&
+    typeof (value as {version?: unknown}).version === 'string'
   );
 }
 
@@ -358,7 +357,7 @@ function isDriver(value: unknown): value is ExtPackageJson<DriverType> {
   return (
     isExtension(value) &&
     'driverName' in value.appium &&
-    _.isString((value.appium as {driverName?: unknown}).driverName)
+    typeof (value.appium as {driverName?: unknown}).driverName === 'string'
   );
 }
 
@@ -366,6 +365,6 @@ function isPlugin(value: unknown): value is ExtPackageJson<PluginType> {
   return (
     isExtension(value) &&
     'pluginName' in value.appium &&
-    _.isString((value.appium as {pluginName?: unknown}).pluginName)
+    typeof (value.appium as {pluginName?: unknown}).pluginName === 'string'
   );
 }

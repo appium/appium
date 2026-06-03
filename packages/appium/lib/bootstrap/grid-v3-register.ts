@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {fs} from '@appium/support';
 import type {StringRecord} from '@appium/types';
-import _ from 'lodash';
+import {hasIn} from '../object-utils';
 import {log as logger} from '../logger';
 
 /**
@@ -88,7 +88,7 @@ export default async function registerNode(
   }
 
   let configHolder: Grid3NodeConfig;
-  if (_.isString(data)) {
+  if (typeof data === 'string') {
     const configFilePath = data;
     let fileContent: string;
     try {
@@ -153,11 +153,11 @@ function postRequest(
   basePath?: string
 ): void {
   // Move Selenium Grid 3 (flat) configuration properties into `configuration`
-  if (!_.has(configHolder, 'configuration')) {
+  if (!hasIn(configHolder, 'configuration')) {
     const configuration: StringRecord = {};
     const holder = configHolder as StringRecord;
     for (const property in holder) {
-      if (_.has(holder, property) && property !== 'capabilities') {
+      if (hasIn(holder, property) && property !== 'capabilities') {
         configuration[property] = holder[property];
         delete holder[property];
       }

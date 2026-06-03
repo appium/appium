@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import type {
   Args,
   CliCommandSetup,
@@ -29,9 +28,9 @@ export const SUBCOMMAND_RESET = 'reset';
  * Driver names listed in KNOWN_DRIVERS to install by default
  */
 const PRESET_PAIRS = Object.freeze({
-  mobile: _.keys(MOBILE_DRIVERS),
-  desktop: _.keys(DESKTOP_DRIVERS),
-  browser: _.keys(DESKTOP_BROWSERS),
+  mobile: Object.keys(MOBILE_DRIVERS),
+  desktop: Object.keys(DESKTOP_DRIVERS),
+  browser: Object.keys(DESKTOP_BROWSERS),
 } as const);
 const DRIVERS_ONLY_MACOS = ['xcuitest', 'safari', 'mac2'];
 
@@ -52,12 +51,12 @@ type CliExtArgs = Args<CliExtensionCommand, CliExtensionSubcommand>;
 export function getPresetDrivers(
   presetName: Exclude<CliCommandSetupSubcommand, 'reset'>
 ): string[] {
-  return _.filter(PRESET_PAIRS[presetName], (driver) => {
-    if (_.includes(DRIVERS_ONLY_MACOS, driver)) {
+  return PRESET_PAIRS[presetName].filter((driver) => {
+    if (DRIVERS_ONLY_MACOS.includes(driver)) {
       return system.isMac();
     }
 
-    if (_.includes(DRIVERS_ONLY_WINDOWS, driver)) {
+    if (DRIVERS_ONLY_WINDOWS.includes(driver)) {
       return system.isWindows();
     }
 
@@ -117,7 +116,7 @@ async function resetAllExtensions(driverConfig: DriverConfig, pluginConfig: Plug
     ['plugin', pluginConfig],
   ];
   for (const [command, config] of commandConfigs) {
-    for (const extensionName of _.keys(config.installedExtensions)) {
+    for (const extensionName of Object.keys(config.installedExtensions)) {
       try {
         await uninstallExtension(
           extensionName,
@@ -196,7 +195,7 @@ async function installExtension(
   extensionConfigArgs: CliExtArgs,
   extensionConfig: DriverConfig | PluginConfig
 ): Promise<void> {
-  if (_.keys(extensionConfig.installedExtensions).includes(extensionName)) {
+  if (Object.keys(extensionConfig.installedExtensions).includes(extensionName)) {
     log.info(`${extensionName} (${extensionConfig.installedExtensions[extensionName].version}) is already installed. ` +
       `Skipping the installation.`);
     return;
@@ -212,7 +211,7 @@ async function uninstallExtension(
   extensionConfigArgs: CliExtArgs,
   extensionConfig: DriverConfig | PluginConfig
 ): Promise<void> {
-  if (!_.keys(extensionConfig.installedExtensions).includes(extensionName)) {
+  if (!Object.keys(extensionConfig.installedExtensions).includes(extensionName)) {
     log.info(`${extensionName} (${extensionConfig.installedExtensions[extensionName].version}) is not installed. ` +
       `Skipping its uninstall.`);
     return;

@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import {util} from '@appium/support';
 import {log as logger} from './logger';
 
 import type {AppiumDriver} from './appium';
@@ -20,20 +20,20 @@ export function configureGlobalFeatures(this: AppiumDriver) {
         `enabled unless explicitly disabled by --deny-insecure`,
     );
     this.relaxedSecurityEnabled = true;
-  } else if (!_.isEmpty(this.args.allowInsecure)) {
+  } else if (!util.isEmpty(this.args.allowInsecure)) {
     this.allowInsecure = validateFeatures(this.args.allowInsecure);
     const globalAllowedFeatures = filterInsecureFeatures(this.allowInsecure);
-    if (!_.isEmpty(globalAllowedFeatures)) {
+    if (!util.isEmpty(globalAllowedFeatures)) {
       logger.info('Explicitly enabling insecure features:');
       globalAllowedFeatures.forEach((a) => logger.info(`    ${a}`));
     }
   }
-  if (_.isEmpty(this.args.denyInsecure)) {
+  if (util.isEmpty(this.args.denyInsecure)) {
     return;
   }
   this.denyInsecure = validateFeatures(this.args.denyInsecure);
   const globalDeniedFeatures = filterInsecureFeatures(this.denyInsecure);
-  if (_.isEmpty(globalDeniedFeatures)) {
+  if (util.isEmpty(globalDeniedFeatures)) {
     return;
   }
   logger.info('Explicitly disabling insecure features:');
@@ -60,7 +60,7 @@ export function configureDriverFeatures(
     driver.relaxedSecurityEnabled = true;
   }
   const allowedDriverFeatures = filterInsecureFeatures(this.allowInsecure, driverName);
-  if (!_.isEmpty(allowedDriverFeatures)) {
+  if (!util.isEmpty(allowedDriverFeatures)) {
     this.log.info('Explicitly enabling insecure features for this session ' +
       'as per the server configuration:',
     );
@@ -68,7 +68,7 @@ export function configureDriverFeatures(
     driver.allowInsecure = allowedDriverFeatures;
   }
   const deniedDriverFeatures = filterInsecureFeatures(this.denyInsecure, driverName);
-  if (_.isEmpty(deniedDriverFeatures)) {
+  if (util.isEmpty(deniedDriverFeatures)) {
     return;
   }
   this.log.info('Explicitly disabling insecure features for this session ' +

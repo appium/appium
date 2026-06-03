@@ -1,5 +1,6 @@
-import _ from 'lodash';
+import {util} from '@appium/support';
 import {promisify} from 'node:util';
+import {capitalize} from './object-utils';
 import type {ExtensionCore} from '@appium/base-driver';
 import {errors} from '@appium/base-driver';
 import {BIDI_BASE_PATH, BIDI_EVENT_NAME} from './constants';
@@ -109,7 +110,7 @@ export async function onBidiMessage(
   let resMessage: SuccessBiDiCommandResponse | ErrorBiDiCommandResponse;
   let id: number = 0;
   const driverLog = driver.log;
-  const dataTruncated = _.truncate(data.toString(), {length: MAX_LOGGED_DATA_LENGTH});
+  const dataTruncated = util.truncateString(data.toString(), {length: MAX_LOGGED_DATA_LENGTH});
   try {
     let method: string;
     let params: StringRecord;
@@ -141,7 +142,8 @@ export async function onBidiMessage(
     };
   } catch (err) {
     if (
-      _.isObject(err) &&
+      err !== null &&
+      typeof err === 'object' &&
       'bidiErrObject' in err &&
       typeof (err as {bidiErrObject: unknown}).bidiErrObject === 'function'
     ) {
@@ -345,8 +347,8 @@ function initBidiProxyHandlers(
       `Upstream bidi socket closed connection (code ${code}, reason: '${reason}'). ` +
         `Closing proxy connection to client`,
     );
-    const intCode: number = _.isNumber(code) ? (code as number) : parseInt(code, 10);
-    if (_.isNaN(intCode) || intCode < MIN_WS_CODE_VAL || intCode > MAX_WS_CODE_VAL) {
+    const intCode: number = typeof code === 'number' ? (code as number) : parseInt(code, 10);
+    if (Number.isNaN(intCode) || intCode < MIN_WS_CODE_VAL || intCode > MAX_WS_CODE_VAL) {
       driverLog.warn(
         `Received code ${code} from upstream socket, but this is not a valid ` +
           `websocket code. Rewriting to ${WS_FALLBACK_CODE} for ws compatibility`,
@@ -424,7 +426,7 @@ function initBidiSocketHandlers(
     }
 
     const eventLogCounts = BIDI_EVENTS_MAP.get(bidiHandlerDriver);
-    if (!_.isEmpty(eventLogCounts)) {
+    if (!util.isEmpty(eventLogCounts)) {
       driverLog.debug(`BiDi events statistics: ${JSON.stringify(eventLogCounts, null, 2)}`);
     }
   });
@@ -466,8 +468,8 @@ function initBidiEventListeners(
       }
       if (!method || !params) {
         ext.log?.warn( // some old plugins might not have the `log` property
-          `${_.capitalize(extType)} emitted a bidi event that was malformed. Require method and params keys ` +
-            `(with optional context). But instead received: ${_.truncate(JSON.stringify({
+          `${capitalize(extType)} emitted a bidi event that was malformed. Require method and params keys ` +
+            `(with optional context). But instead received: ${util.truncateString(JSON.stringify({
               context,
               method,
               params,
@@ -487,13 +489,13 @@ function initBidiEventListeners(
       }
 
       const eventSubs = bidiHandlerDriver.bidiEventSubs[method];
-      if (_.isArray(eventSubs) && eventSubs.includes(context)) {
+      if (Array.isArray(eventSubs) && eventSubs.includes(context)) {
         if (method in eventLogCounts) {
           ++eventLogCounts[method];
         } else {
           ext.log?.debug( // some old plugins might not have the `log` property
             `<-- BIDI EVENT ${method} (context: '${context}', ` +
-            `params: ${_.truncate(JSON.stringify(params), {length: MAX_LOGGED_DATA_LENGTH})}). ` +
+            `params: ${util.truncateString(JSON.stringify(params), {length: MAX_LOGGED_DATA_LENGTH})}). ` +
             `All further similar events won't be logged.`,
           );
           eventLogCounts[method] = 1;

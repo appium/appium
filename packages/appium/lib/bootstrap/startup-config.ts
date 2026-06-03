@@ -1,8 +1,17 @@
 /* eslint-disable no-console */
-import _ from 'lodash';
+import {util} from '@appium/support';
 import {getDefaultsForSchema, getAllArgSpecs} from '../schema/schema';
 import type {Args} from 'appium/types';
 import type {ReadConfigFileResult} from './config-file';
+import {
+  difference,
+  negate,
+  omitBy,
+  overEvery,
+  overSome,
+  pickBy,
+  setPath,
+} from '../object-utils';
 
 interface FlattenedArg {
   value: unknown;
@@ -21,11 +30,10 @@ export function getNonDefaultServerArgs(parsedArgs: Args): Args {
    */
   const flatten = (args: Args): Record<string, FlattenedArg> => {
     const argSpecs = getAllArgSpecs();
-    const flattened = _.reduce(
-      [...argSpecs.values()],
-      (acc: Record<string, FlattenedArg>, argSpec: {dest: string}) => {
-        if (_.has(args, argSpec.dest)) {
-          acc[argSpec.dest] = {value: _.get(args, argSpec.dest), argSpec};
+    const flattened = [...argSpecs.values()].reduce<Record<string, FlattenedArg>>(
+      (acc, argSpec: {dest: string}) => {
+        if (argSpec.dest in args) {
+          acc[argSpec.dest] = {value: (args as Record<string, unknown>)[argSpec.dest], argSpec};
         }
         return acc;
       },
@@ -41,24 +49,24 @@ export function getNonDefaultServerArgs(parsedArgs: Args): Args {
   const typesDiffer = (dest: string): boolean =>
     typeof args[dest].value !== typeof defaultsFromSchema[dest];
 
-  const defaultValueIsArray = (dest: string): boolean => _.isArray(defaultsFromSchema[dest]);
+  const defaultValueIsArray = (dest: string): boolean => Array.isArray(defaultsFromSchema[dest]);
 
-  const argsValueIsArray = (dest: string): boolean => _.isArray(args[dest].value);
+  const argsValueIsArray = (dest: string): boolean => Array.isArray(args[dest].value);
 
   const arraysDiffer = (dest: string): boolean =>
-    _.gt(_.size(_.difference(args[dest].value as any[], defaultsFromSchema[dest] as any[])), 0);
+    difference(args[dest].value as unknown[], defaultsFromSchema[dest] as unknown[]).length > 0;
 
   const valuesDiffer = (dest: string): boolean => args[dest].value !== defaultsFromSchema[dest];
 
-  const defaultIsDefined = (dest: string): boolean => !_.isUndefined(defaultsFromSchema[dest]);
+  const defaultIsDefined = (dest: string): boolean => defaultsFromSchema[dest] !== undefined;
 
-  // note that `_.overEvery` is like an "AND", and `_.overSome` is like an "OR"
-  const argValueNotArrayOrArraysDiffer = _.overSome([_.negate(argsValueIsArray), arraysDiffer]);
+  // note that `overEvery` is like an "AND", and `overSome` is like an "OR"
+  const argValueNotArrayOrArraysDiffer = overSome(negate(argsValueIsArray), arraysDiffer);
 
-  const defaultValueNotArrayAndValuesDiffer = _.overEvery([
-    _.negate(defaultValueIsArray),
-    valuesDiffer,
-  ]);
+  const defaultValueNotArrayAndValuesDiffer = overEvery(
+    negate(defaultValueIsArray),
+    valuesDiffer
+  );
 
   /**
    * This used to be a hideous conditional, but it's broken up into a hideous function instead.
@@ -71,23 +79,27 @@ export function getNonDefaultServerArgs(parsedArgs: Args): Args {
    *   - ensures the args value is an array
    *   - ensures the args values do not differ from the default values
    */
-  const isNotDefault = _.overEvery([
+  const isNotDefault = overEvery(
     defaultIsDefined,
-    _.overSome([
+    overSome(
       typesDiffer,
-      _.overEvery([defaultValueIsArray, argValueNotArrayOrArraysDiffer]),
-      defaultValueNotArrayAndValuesDiffer,
-    ]),
-  ]);
+      overEvery(defaultValueIsArray, argValueNotArrayOrArraysDiffer),
+      defaultValueNotArrayAndValuesDiffer
+    )
+  );
 
   const defaultsFromSchema = getDefaultsForSchema(true) as Record<string, unknown>;
 
-  return _.reduce(
-    _.pickBy(args, (_v, key) => isNotDefault(key)),
-    // explodes the flattened object back into nested one
-    (acc: Args, {value, argSpec}: FlattenedArg) => _.set(acc, argSpec.dest, value),
-    {} as Args
-  );
+  const nonDefault = pickBy(args, (_v, key) => isNotDefault(String(key)));
+  const result = {} as Args;
+  for (const entry of Object.values(nonDefault)) {
+    if (!entry) {
+      continue;
+    }
+    const {value, argSpec} = entry;
+    setPath(result as Record<string, unknown>, argSpec.dest, value);
+  }
+  return result;
 }
 
 /**
@@ -118,7 +130,7 @@ export function showConfig(
     console.log(`\n(no configuration file loaded)`);
   }
   const compactedNonDefaultPreConfigArgs = compactConfig(nonDefaultPreConfigParsedArgs);
-  if (_.isEmpty(compactedNonDefaultPreConfigArgs)) {
+  if (util.isEmpty(compactedNonDefaultPreConfigArgs)) {
     console.log(`\n(no CLI parameters provided)`);
   } else {
     console.log('\nvia CLI or function call:\n');
@@ -135,9 +147,12 @@ export function showConfig(
  * 3. Removes empty objects (but not `false` values)
  * Does not operate recursively.
  */
-const compactConfig = _.partial(
-  _.omitBy,
-  _,
-  (value: unknown, key: string) =>
-    key === 'subcommand' || _.isUndefined(value) || (_.isObject(value) && _.isEmpty(value))
-);
+function compactConfig<T extends Record<string, unknown>>(obj: T): Partial<T> {
+  return omitBy(
+    obj,
+    (value, key) =>
+      key === 'subcommand' ||
+      value === undefined ||
+      (value !== null && typeof value === 'object' && util.isEmpty(value))
+  );
+}

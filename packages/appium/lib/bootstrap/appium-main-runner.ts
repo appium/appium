@@ -1,5 +1,5 @@
 import {log as logger} from '../logger';
-import _ from 'lodash';
+import {util} from '@appium/support';
 import type {AppiumServer} from '@appium/types';
 import {getActivePlugins, getActiveDrivers} from '../extension';
 import registerNode from './grid-v3-register';
@@ -38,7 +38,7 @@ export class AppiumMainRunner {
     Cmd extends CliCommand = CliCommandServer,
     SubCmd extends CliExtensionSubcommand | CliCommandSetupSubcommand | void = void,
   >(initResult: InitResult<Cmd>, args?: Args<Cmd, SubCmd>): Promise<Cmd extends CliCommandServer ? AppiumServer : void> {
-    if (_.isEmpty(initResult)) {
+    if (util.isEmpty(initResult)) {
       return undefined as Cmd extends CliCommandServer ? AppiumServer : void;
     }
 

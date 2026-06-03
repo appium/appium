@@ -6,7 +6,7 @@ import {
   server as baseServer,
   type ServerOpts,
 } from '@appium/base-driver';
-import _ from 'lodash';
+import {util} from '@appium/support';
 import type {AppiumServer, Driver, MethodMap, UpdateServerCallback} from '@appium/types';
 import {WebSocketServer} from 'ws';
 import type {NetworkInterfaceInfo} from 'node:os';
@@ -51,7 +51,7 @@ export async function showBuildInfo(): Promise<void> {
  * Human-readable label for where Appium resolved `APPIUM_HOME` from (CLI, env, or autodetect).
  */
 export function determineAppiumHomeSource(appiumHomeFromArgs?: string | null): string {
-  if (!_.isNil(appiumHomeFromArgs)) {
+  if (util.hasValue(appiumHomeFromArgs)) {
     return 'appiumHome config value';
   }
   if (process.env.APPIUM_HOME) {
@@ -130,10 +130,10 @@ export async function logStartupInfo(args: ParsedArgs<CliCommandServer>): Promis
   logger.info(welcome);
 
   const showArgs = getNonDefaultServerArgs(args);
-  if (_.size(showArgs)) {
+  if (Object.keys(showArgs).length) {
     logNonDefaultArgsWarning(showArgs);
   }
-  if (!_.isEmpty(args.defaultCapabilities)) {
+  if (!util.isEmpty(args.defaultCapabilities)) {
     logDefaultCapabilitiesWarning(args.defaultCapabilities);
   }
 }
@@ -145,7 +145,9 @@ export function getServerUpdaters(
   driverClasses: DriverNameMap,
   pluginClasses: PluginNameMap,
 ): UpdateServerCallback[] {
-  return _.compact(_.map([...driverClasses.keys(), ...pluginClasses.keys()], 'updateServer'));
+  return [...driverClasses.keys(), ...pluginClasses.keys()]
+    .map((klass) => klass.updateServer)
+    .filter(Boolean) as UpdateServerCallback[];
 }
 
 /**
@@ -183,7 +185,7 @@ export function buildServerOpts(
   };
   const normalizedBasePath = normalizeBasePath(parsedArgs.basePath);
   for (const timeoutArgName of ['keepAliveTimeout', 'requestTimeout'] as const) {
-    if (_.isInteger(parsedArgs[timeoutArgName])) {
+    if (Number.isInteger(parsedArgs[timeoutArgName])) {
       serverOpts[timeoutArgName] = parsedArgs[timeoutArgName] * 1000;
     }
   }

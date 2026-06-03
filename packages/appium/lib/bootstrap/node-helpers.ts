@@ -1,5 +1,4 @@
 /* eslint-disable no-console */
-import _ from 'lodash';
 import path from 'node:path';
 import os from 'node:os';
 import * as semver from 'semver';
@@ -73,7 +72,7 @@ export function adjustNodePath(): void {
   if (refreshRequirePaths()) {
     process.env.APPIUM_OMIT_PEER_DEPS = '1';
   } else {
-    process.env.NODE_PATH = _.without(nodePathParts, appiumModuleSearchRoot).join(path.delimiter);
+    process.env.NODE_PATH = nodePathParts.filter((p) => p !== appiumModuleSearchRoot).join(path.delimiter);
   }
 }
 
@@ -84,7 +83,7 @@ export function adjustNodePath(): void {
 export async function showDebugInfo({driverConfig, pluginConfig, appiumHome}: DebugInfoInput): Promise<void> {
   const getNpmVersion = async (): Promise<string> => {
     const {stdout} = await npm.exec('--version', [], {cwd: process.cwd()});
-    return _.trim(stdout);
+    return stdout.trim();
   };
   const findNpmLocation = async (): Promise<string> =>
     await fs.which(system.isWindows() ? 'npm.cmd' : 'npm');

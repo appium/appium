@@ -217,7 +217,6 @@ export interface ServerConfig {
   "drivers-import-chunk-size"?: DriversImportChunkSizeConfig;
   "long-stacktrace"?: LongStacktraceConfig;
   "no-perms-check"?: NoPermsCheckConfig;
-  nodeconfig?: NodeconfigConfig;
   plugin?: PluginConfig;
   port?: PortConfig;
   "relaxed-security"?: RelaxedSecurityConfig;
@@ -264,12 +263,6 @@ export interface LogFilterRegex {
    * Regex pattern to match
    */
   pattern: string;
-  [k: string]: unknown;
-}
-/**
- * Path to configuration JSON file to register Appium as a node with Selenium Grid 3; otherwise the configuration itself
- */
-export interface NodeconfigConfig {
   [k: string]: unknown;
 }
 /**

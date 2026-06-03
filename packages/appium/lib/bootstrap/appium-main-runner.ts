@@ -2,7 +2,6 @@ import {log as logger} from '../logger';
 import _ from 'lodash';
 import type {AppiumServer} from '@appium/types';
 import {getActivePlugins, getActiveDrivers} from '../extension';
-import registerNode from './grid-v3-register';
 import {
   determineAppiumHomeSource,
   logStartupInfo,
@@ -24,11 +23,11 @@ import net from 'node:net';
 const MAX_SERVER_PROCESS_LISTENERS = 100;
 
 /**
- * Starts the Appium HTTP server after {@link AppiumInitializer.init}: loads drivers/plugins, binds, grid register, signals.
+ * Starts the Appium HTTP server after {@link AppiumInitializer.init}: loads drivers/plugins, binds, and attaches signal handlers.
  */
 export class AppiumMainRunner {
   /**
-   * For server init: builds listeners, registers with Grid 3 if configured, and returns the server.
+   * For server init: builds listeners and returns the server.
    * For non-server commands, `initResult` is empty and this resolves to `undefined`.
    *
    * @param initResult - Output of {@link AppiumInitializer.init}
@@ -79,8 +78,6 @@ export class AppiumMainRunner {
 
     this.warnIfCorsEnabled(parsedArgs);
     appiumDriver.server = server;
-
-    await this.registerGridOrClose(server, parsedArgs, normalizedBasePath);
     this.attachSignalHandlers(appiumDriver, server);
     this.logListeningUrl(server, parsedArgs, normalizedBasePath);
 
@@ -117,26 +114,6 @@ export class AppiumMainRunner {
           'to visit sites which could maliciously try to start Appium ' +
           'sessions on your machine',
       );
-    }
-  }
-
-  private async registerGridOrClose(
-    server: AppiumServer,
-    parsedArgs: ServerInitData['parsedArgs'],
-    normalizedBasePath: string,
-  ): Promise<void> {
-    try {
-      if (parsedArgs.nodeconfig) {
-        await registerNode(
-          parsedArgs.nodeconfig,
-          parsedArgs.address,
-          parsedArgs.port,
-          normalizedBasePath,
-        );
-      }
-    } catch (err: unknown) {
-      await server.close();
-      throw err;
     }
   }
 

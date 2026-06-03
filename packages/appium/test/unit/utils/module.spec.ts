@@ -1,11 +1,9 @@
 import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {createSandbox, type SinonSandbox} from 'sinon';
 import {node} from '@appium/support';
-import {adler32, getAppiumModuleRoot, npmPackage} from '../../lib/utils';
+import {getAppiumModuleRoot, npmPackage} from '../../../lib/utils/module';
 
 const {expect} = chai;
-chai.use(chaiAsPromised);
 
 type MemoizedWithCache = (() => string) & {
   cache: {
@@ -13,7 +11,7 @@ type MemoizedWithCache = (() => string) & {
   };
 };
 
-describe('utils', function () {
+describe('utils/module', function () {
   let sandbox: SinonSandbox;
 
   beforeEach(function () {
@@ -47,19 +45,6 @@ describe('utils', function () {
     it('should throw when module root cannot be determined', function () {
       sandbox.stub(node, 'getModuleRootSync').returns(null);
       expect(getAppiumModuleRoot).to.throw(/Cannot find the appium module root/);
-    });
-  });
-
-  describe('adler32()', function () {
-    it('should compute checksum for known inputs', function () {
-      expect(adler32('')).to.equal(1);
-      expect(adler32('hello')).to.equal(103547413);
-      expect(adler32('😀')).to.equal(122749608);
-    });
-
-    it('should support checksum seeding', function () {
-      const seed = adler32('hello');
-      expect(adler32(' world', seed)).to.equal(adler32('hello world'));
     });
   });
 });

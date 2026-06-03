@@ -108,7 +108,9 @@ export function normalizeConfig(config: AppiumConfig): NormalizedAppiumConfig {
       : (getPath(rootConfig, section, rootConfig) as Record<string, unknown>);
 
     const mappedObj = mapKeys(obj as Record<string, unknown>, (_v, prop) =>
-      String(getPath(schema, `properties.server.properties[${prop}].appiumCliDest`, camelCase(String(prop))))
+      String(
+        getPath(schema, `properties.server.properties.${prop}.appiumCliDest`, camelCase(String(prop)))
+      )
     );
 
     return mapValues(mappedObj, (value, property) => {

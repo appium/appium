@@ -98,6 +98,23 @@ describe('utils/object', function () {
     it('should return defaultValue when the resolved value is undefined', function () {
       expect(getPath({a: undefined}, 'a', 'default')).to.equal('default');
     });
+
+    it('should read paths with hyphenated property segments', function () {
+      const schema = {
+        properties: {
+          server: {
+            properties: {
+              'allow-cors': {appiumCliDest: 'allowCors'},
+              log: {appiumCliDest: 'logFile'},
+            },
+          },
+        },
+      };
+      expect(getPath(schema, 'properties.server.properties.log.appiumCliDest')).to.equal('logFile');
+      expect(getPath(schema, 'properties.server.properties.allow-cors.appiumCliDest')).to.equal(
+        'allowCors'
+      );
+    });
   });
 
   describe('setPath()', function () {

@@ -45,7 +45,7 @@
     "chai-as-promised": "8.0.2",
     "get-port": "7.2.0",
     "sinon": "22.0.0",
-    "type-fest": "5.6.0"
+    "type-fest": "5.7.0"
   },
   "devDependencies": {
     "@appium/types": "1.5.0"

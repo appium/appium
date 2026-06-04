@@ -72,7 +72,7 @@
     "type-fest": "5.7.0",
     "uuid": "14.0.0",
     "which": "6.0.1",
-    "yauzl": "3.3.1"
+    "yauzl": "3.3.2"
   },
   "optionalDependencies": {
     "sharp": "0.34.5"

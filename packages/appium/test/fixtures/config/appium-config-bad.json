@@ -18,7 +18,6 @@
     "log-timestamp": false,
     "long-stacktrace": false,
     "no-perms-check": false,
-    "nodeconfig": {},
     "port": "31337",
     "relaxed-security": false,
     "session-override": false,

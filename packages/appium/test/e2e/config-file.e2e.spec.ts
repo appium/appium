@@ -15,7 +15,6 @@ const resolveConfigFixture = _.partial(resolveFixture, 'config');
 
 describe('config file behavior', function () {
   const GOOD_FILEPATH = resolveConfigFixture('appium-config-good.json');
-  const BAD_NODECONFIG_FILEPATH = resolveConfigFixture('appium-config-bad-nodeconfig.json');
   const BAD_FILEPATH = resolveConfigFixture('appium-config-bad.json');
   const INVALID_JSON_FILEPATH = resolveConfigFixture('appium-config-invalid.json');
   const SECURITY_ARRAY_FILEPATH = resolveConfigFixture('appium-config-security-array.json');
@@ -57,9 +56,6 @@ describe('config file behavior', function () {
               logTimestamp: false,
               longStacktrace: false,
               noPermsCheck: false,
-              nodeconfig: {
-                foo: 'bar',
-              },
               port: 31337,
               relaxedSecurityEnabled: true,
               sessionOverride: false,
@@ -73,22 +69,6 @@ describe('config file behavior', function () {
           },
           filepath: GOOD_FILEPATH,
           errors: [],
-        });
-      });
-
-      describe('`server.nodeconfig` behavior', function () {
-        describe('when a string', function () {
-          it('should return errors', async function () {
-            const result = await readConfigFile(BAD_NODECONFIG_FILEPATH);
-            expect(result.errors?.[0]).to.have.property('instancePath', '/server/nodeconfig');
-          });
-        });
-
-        describe('when an object', function () {
-          it('should return a valid config object', async function () {
-            const result = await readConfigFile(GOOD_FILEPATH);
-            expect(result).to.have.property('errors').that.is.empty;
-          });
         });
       });
 
@@ -168,7 +148,6 @@ describe('config file behavior', function () {
               logTimestamp: false,
               longStacktrace: false,
               noPermsCheck: false,
-              nodeconfig: {},
               port: '31337',
               relaxedSecurityEnabled: false,
               sessionOverride: false,

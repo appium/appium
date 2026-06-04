@@ -33,7 +33,7 @@
     "@eslint/js": "10.0.1",
     "@stylistic/eslint-plugin": "5.10.0",
     "eslint-config-prettier": "10.1.8",
-    "eslint-import-resolver-typescript": "4.4.4",
+    "eslint-import-resolver-typescript": "4.4.5",
     "eslint-plugin-import-x": "4.16.2",
     "eslint-plugin-jsdoc": "63.0.0",
     "eslint-plugin-mocha": "11.3.0",

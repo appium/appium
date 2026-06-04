@@ -1,7 +1,7 @@
 import {isWindows} from './system';
 import log from './logger';
 import {exec} from 'teen_process';
-import {randomUUID} from 'node:crypto'
+import {randomUUID} from 'node:crypto';
 import path from 'node:path';
 import _fs from 'node:fs';
 

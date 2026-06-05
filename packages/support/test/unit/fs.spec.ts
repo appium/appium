@@ -84,7 +84,7 @@ describe('fs', function () {
       await writeFile(path.join(srcDir, 'skip.txt'), 'skip');
 
       await fs.copyFile(srcDir, destDir, {
-        filter: (filename) => filename.endsWith('keep.txt'),
+        filter: (filename) => !filename.endsWith('skip.txt'),
       });
 
       expect(await fs.exists(path.join(destDir, 'keep.txt'))).to.be.true;

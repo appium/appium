@@ -8,7 +8,6 @@ const testFileConfigItems = appiumConfig.filter(
   (item) => typeof item?.name === 'string' && item.name.startsWith('Test Files'),
 );
 const testSupportFiles = [
-  'packages/test-support/lib/**',
   'packages/driver-test-support/lib/**',
   'packages/plugin-test-support/lib/**',
 ];

@@ -36,9 +36,6 @@
       "path": "packages/base-plugin"
     },
     {
-      "path": "packages/test-support"
-    },
-    {
       "path": "packages/fake-plugin"
     },
     {

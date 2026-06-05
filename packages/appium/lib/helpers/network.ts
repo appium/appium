@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import os from 'node:os';
 
 export const V4_BROADCAST_IP = '0.0.0.0';
@@ -16,8 +15,8 @@ export function fetchInterfaces(family: 4 | 6 | null = null): os.NetworkInterfac
   } else if (family === 6) {
     familyValue = [6, 'IPv6'];
   }
-  const ifaces = _.values(os.networkInterfaces()).filter(Boolean) as os.NetworkInterfaceInfo[][];
-  return _.flatMap(ifaces).filter(
+  const ifaces = Object.values(os.networkInterfaces()).filter(Boolean) as os.NetworkInterfaceInfo[][];
+  return ifaces.flat().filter(
     (info) => !familyValue || familyValue.includes(info.family as 4 | 6 | string)
   );
 }

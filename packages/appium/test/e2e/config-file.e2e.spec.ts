@@ -3,15 +3,14 @@ import {readConfigFile} from '../../lib/bootstrap/config-file';
 import {finalizeSchema, registerSchema, resetSchema} from '../../lib/schema/schema';
 import extSchema from '../fixtures/driver-schema';
 import {resolveFixture} from '../helpers';
-import _ from 'lodash';
+import {system, util} from '@appium/support';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {system} from '@appium/support';
 
 const {expect} = chai;
 chai.use(chaiAsPromised);
 
-const resolveConfigFixture = _.partial(resolveFixture, 'config');
+const resolveConfigFixture = (name: string) => resolveFixture('config', name);
 
 describe('config file behavior', function () {
   const GOOD_FILEPATH = resolveConfigFixture('appium-config-good.json');
@@ -240,7 +239,7 @@ describe('config file behavior', function () {
           return this.skip();
         }
         await expect(readConfigFile(INVALID_JSON_FILEPATH)).to.be.rejectedWith(
-          new RegExp(`${_.escapeRegExp(INVALID_JSON_FILEPATH)}`)
+          new RegExp(`${util.escapeRegExp(INVALID_JSON_FILEPATH)}`)
         );
       });
     });

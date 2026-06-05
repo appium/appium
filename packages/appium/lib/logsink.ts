@@ -4,8 +4,7 @@ import type {Logger, Logform} from 'winston';
 import type Transport from 'winston-transport';
 import globalLog from '@appium/logger';
 import {createLogger, format, transports} from 'winston';
-import {fs} from '@appium/support';
-import _ from 'lodash';
+import {fs, util} from '@appium/support';
 import {adler32} from './utils';
 import {LRUCache} from 'lru-cache';
 
@@ -78,7 +77,7 @@ export async function init(args: ParsedArgs): Promise<void> {
       prefixes.push(prefix);
     }
     let msg = message;
-    if (!_.isEmpty(prefixes)) {
+    if (!util.isEmpty(prefixes)) {
       const finalPrefix = prefixes
         .map(toDecoratedPrefix)
         .map((pfx) => (isLogColorEnabled(args) ? colorizePrefix(pfx) : pfx))
@@ -91,7 +90,7 @@ export async function init(args: ParsedArgs): Promise<void> {
         : 'info';
     try {
       (log as Logger)[winstonLevel as keyof Logger](msg);
-      if (_.isFunction(args.logHandler)) {
+      if (typeof args.logHandler === 'function') {
         args.logHandler(level, msg);
       }
     } catch (e) {
@@ -99,7 +98,7 @@ export async function init(args: ParsedArgs): Promise<void> {
       if (!reportedLoggerErrors.has(err.message) && process.stderr.writable) {
         // eslint-disable-next-line no-console
         console.error(
-          `The log message '${_.truncate(msg, {length: 30})}' cannot be written into ` +
+          `The log message '${util.truncateString(msg, {length: 30})}' cannot be written into ` +
             `one or more requested destinations: ${[...transportNames].join(', ')}. ` +
             `Original error: ${err.message}`
         );
@@ -263,7 +262,7 @@ function formatLog(args: ParsedArgs, targetConsole: boolean): Logform.Format {
           delete infoCopy.timestamp;
         }
 
-        if (!_.isEmpty(contextInfo)) {
+        if (!util.isEmpty(contextInfo)) {
           infoCopy.context = {...contextInfo};
         }
 
@@ -315,7 +314,7 @@ const stripColorFormat = format(function stripColor(info: {level: string; messag
   return {
     ...info,
     level: stripColorCodes(info.level),
-    message: _.isString(info.message) ? stripColorCodes(info.message) : info.message,
+    message: typeof info.message === 'string' ? stripColorCodes(info.message) : info.message,
   };
 })();
 

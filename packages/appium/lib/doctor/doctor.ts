@@ -1,5 +1,4 @@
 import '@colors/colors';
-import _ from 'lodash';
 import {util, doctor, logger} from '@appium/support';
 import type {AppiumLogger, DoctorCheckResult, IDoctorCheck} from '@appium/types';
 
@@ -35,7 +34,7 @@ export class Doctor {
     this.log = logger.getLogger('Doctor');
     this.checks = checks;
     this.checks
-      .filter((c) => _.isNil(c.log))
+      .filter((c) => !util.hasValue(c.log))
       .forEach((c) => {
         c.log = this.log;
       });
@@ -88,11 +87,11 @@ export class Doctor {
   }
 
   private async reportManualIssues(): Promise<boolean> {
-    const manualIssues = _.filter(this.issuesRequiredToFix, (f) => !f.check.hasAutofix());
-    const manualIssuesOptional = _.filter(this.issuesOptionalToFix, (f) => !f.check.hasAutofix());
+    const manualIssues = this.issuesRequiredToFix.filter((f) => !f.check.hasAutofix());
+    const manualIssuesOptional = this.issuesOptionalToFix.filter((f) => !f.check.hasAutofix());
 
     const handleIssues = async (headerLogs: string[], issues: DoctorIssue[]): Promise<void> => {
-      if (_.isEmpty(issues)) {
+      if (util.isEmpty(issues)) {
         return;
       }
 
@@ -111,7 +110,7 @@ export class Doctor {
           fixMessages.push(message);
         }
       }
-      for (const m of _.uniq(fixMessages)) {
+      for (const m of util.uniq(fixMessages)) {
         this.log.warn(` \u279C ${m}`);
       }
       this.log.info('');
@@ -169,12 +168,12 @@ export class Doctor {
   }
 
   private async runAutoFixes(): Promise<boolean> {
-    const autoFixes = _.filter(this.foundIssues, (f) => f.check.hasAutofix());
+    const autoFixes = this.foundIssues.filter((f) => f.check.hasAutofix());
     for (const f of autoFixes) {
       await this.runAutoFix(f);
       this.log.info('');
     }
-    if (_.find(autoFixes, (f) => !f.fixed)) {
+    if (autoFixes.find((f) => !f.fixed)) {
       // a few issues remain.
       this.log.info('Bye! A few issues remain, fix manually and/or rerun doctor!');
       this.log.info('');

@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {DRIVER_TYPE, PLUGIN_TYPE, SETUP_SUBCOMMAND} from '../../lib/constants';
@@ -360,7 +359,7 @@ describe('parser', function () {
         expect(args.subcommand).to.eql(DRIVER_TYPE);
         expect(args.driverCommand).to.eql('run');
         expect(args.driver).to.eql('foo');
-        expect(_.isNull(args.scriptName)).to.be.true;
+        expect(args.scriptName).to.be.null;
         expect(args.json).to.eql(false);
       });
       it('should take a driverName and scriptName to run', function () {
@@ -383,7 +382,7 @@ describe('parser', function () {
         expect(args.subcommand).to.eql(PLUGIN_TYPE);
         expect(args.pluginCommand).to.eql('run');
         expect(args.plugin).to.eql('foo');
-        expect(_.isNull(args.scriptName)).to.be.true;
+        expect(args.scriptName).to.be.null;
         expect(args.json).to.eql(false);
       });
       it('should take a pluginName and scriptName to run', function () {

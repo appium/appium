@@ -1,6 +1,5 @@
 import type {ExtensionType} from '@appium/types';
 import type {ArgumentOptions} from 'argparse';
-import _ from 'lodash';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {PLUGIN_TYPE} from '../../../lib/constants';
@@ -28,7 +27,7 @@ describe('cli-args', function () {
       await registerSchema(extType as ExtensionType, extName, schema as Parameters<typeof registerSchema>[2]);
     }
     await finalizeSchema();
-    return _.fromPairs([...toParserArgs()]) as ParserArgsMap;
+    return Object.fromEntries([...toParserArgs()]) as ParserArgsMap;
   }
 
   beforeEach(resetSchema);

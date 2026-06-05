@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import {util, timing} from '@appium/support';
 import {asyncmap} from 'asyncbox';
 import type {DriverClass, ExtensionType, PluginClass} from '@appium/types';
 import type {ExtClass} from 'appium/types';
@@ -6,7 +6,7 @@ import {USE_ALL_PLUGINS} from '../constants';
 import {log} from '../logger';
 import {DriverConfig} from './driver-config';
 import {Manifest} from './manifest';
-import {timing} from '@appium/support';
+import {zip} from '../utils';
 import {PluginConfig} from './plugin-config';
 
 export type ExtensionConfigs = {
@@ -47,13 +47,13 @@ export async function getActivePlugins(
   maxParallelImports: number,
   usePlugins: string[] = []
 ): Promise<PluginNameMap> {
-  if (_.isEmpty(usePlugins)) {
+  if (util.isEmpty(usePlugins)) {
     return new Map();
   }
 
   let filteredPluginNames: string[] = [];
   if (usePlugins.length === 1 && usePlugins[0] === USE_ALL_PLUGINS) {
-    filteredPluginNames = _.keys(pluginConfig.installedExtensions);
+    filteredPluginNames = Object.keys(pluginConfig.installedExtensions);
   } else {
     for (const pluginName of usePlugins) {
       if (pluginName in pluginConfig.installedExtensions) {
@@ -61,10 +61,10 @@ export async function getActivePlugins(
       } else if (pluginName === USE_ALL_PLUGINS) {
         throw new Error(`The reserved plugin name '${pluginName}' cannot be combined with other names.`);
       } else {
-        const suffix = _.isEmpty(pluginConfig.installedExtensions)
+        const suffix = util.isEmpty(pluginConfig.installedExtensions)
           ? `You don't have any plugins installed yet.`
-          : `Only the following ${_.size(pluginConfig.installedExtensions) === 1 ? `plugin is` : `plugins are`} ` +
-            `available: ${_.keys(pluginConfig.installedExtensions)}`;
+          : `Only the following ${Object.keys(pluginConfig.installedExtensions).length === 1 ? `plugin is` : `plugins are`} ` +
+            `available: ${Object.keys(pluginConfig.installedExtensions)}`;
         throw new Error(`Could not load the plugin '${pluginName}' because it is not installed. ${suffix}`);
       }
     }
@@ -84,17 +84,17 @@ export async function getActiveDrivers(
   useDrivers: string[] = []
 ): Promise<DriverNameMap> {
   let filteredDriverNames: string[] = [];
-  if (_.isEmpty(useDrivers)) {
-    filteredDriverNames = _.keys(driverConfig.installedExtensions);
+  if (util.isEmpty(useDrivers)) {
+    filteredDriverNames = Object.keys(driverConfig.installedExtensions);
   } else {
     for (const driverName of useDrivers) {
       if (driverName in driverConfig.installedExtensions) {
         filteredDriverNames.push(driverName);
       } else {
-        const suffix = _.isEmpty(driverConfig.installedExtensions)
+        const suffix = util.isEmpty(driverConfig.installedExtensions)
           ? `You don't have any drivers installed yet.`
-          : `Only the following ${_.size(driverConfig.installedExtensions) === 1 ? `driver is` : `drivers are`} ` +
-            `available: ${_.keys(driverConfig.installedExtensions)}`;
+          : `Only the following ${Object.keys(driverConfig.installedExtensions).length === 1 ? `driver is` : `drivers are`} ` +
+            `available: ${Object.keys(driverConfig.installedExtensions)}`;
         throw new Error(`Could not load the driver '${driverName}' because it is not installed. ${suffix}`);
       }
     }
@@ -129,7 +129,7 @@ async function importExtensions(
     },
     {concurrency: asyncImportChunkSize}
   );
-  return _.zip(extClasses, extNames).filter(([extClass]) => Boolean(extClass)) as Array<
+  return zip(extClasses, extNames).filter(([extClass]) => Boolean(extClass)) as Array<
     [ExtClass<ExtensionType>, string]
   >;
 }

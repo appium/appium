@@ -1,7 +1,6 @@
-import _ from 'lodash';
 import axios from 'axios';
 import {exec} from 'teen_process';
-import {system, fs} from '@appium/support';
+import {system, fs, util} from '@appium/support';
 import type {BuildInfo} from 'appium/types';
 import {npmPackage} from '../utils';
 
@@ -11,7 +10,7 @@ export const rootDir = fs.findRoot(__dirname);
 const GIT_BINARY = `git${system.isWindows() ? '.exe' : ''}`;
 const GITHUB_API = 'https://api.github.com/repos/appium/appium';
 
-const getFullGitPath = _.memoize(async function getFullGitPath(): Promise<string | null> {
+const getFullGitPath = util.memoize(async function getFullGitPath(): Promise<string | null> {
   try {
     return await fs.which(GIT_BINARY);
   } catch {

@@ -2,8 +2,8 @@ import type {ExtensionType} from '@appium/types';
 import type {ExtClass, ExtManifest, ExtName, ExtRecord, InstallType} from 'appium/types';
 import type {SchemaObject} from 'ajv';
 import {util, fs, system} from '@appium/support';
-import _ from 'lodash';
 import path from 'node:path';
+import {capitalize} from '../utils';
 import {pathToFileURL} from 'node:url';
 import resolveFrom from 'resolve-from';
 import {satisfies} from 'semver';
@@ -102,7 +102,10 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
   static extDataHasSchema<E extends ExtensionType>(
     extManifest: ExtManifest<E>
   ): extManifest is ExtManifestWithSchema<E> {
-    return _.isString(extManifest?.schema) || _.isObject(extManifest?.schema);
+    return (
+      typeof extManifest?.schema === 'string' ||
+      (extManifest?.schema !== null && typeof extManifest?.schema === 'object')
+    );
   }
 
   private static async _readExtensionSchema<E extends ExtensionType>(
@@ -118,7 +121,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
       );
     }
     let moduleObject: any;
-    if (_.isString(argSchemaPath)) {
+    if (typeof argSchemaPath === 'string') {
       const schemaPath = resolveFrom(appiumHome, path.join(pkgName, argSchemaPath));
       moduleObject = require(schemaPath);
     } else {
@@ -172,7 +175,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
   ): {errorSummaries: string[]; warningSummaries: string[]} {
     const errorSummaries: string[] = [];
     for (const [extName, problems] of errorMap.entries()) {
-      if (_.isEmpty(problems)) {
+      if (util.isEmpty(problems)) {
         continue;
       }
       // remove this extension from the list since it's not valid
@@ -190,10 +193,10 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     }
     const warningSummaries: string[] = [];
     for (const [extName, warnings] of warningMap.entries()) {
-      if (_.isEmpty(warnings)) {
+      if (util.isEmpty(warnings)) {
         continue;
       }
-      const extTypeText = _.capitalize(this.extensionType);
+      const extTypeText = capitalize(this.extensionType);
       const problemEnumerationText = util.pluralize('potential problem', warnings.length, true);
       warningSummaries.push(`${extTypeText} "${extName}" has ${problemEnumerationText}: `);
       for (const warning of warnings) {
@@ -268,7 +271,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
    */
   print(_activeNames?: ExtName<ExtType>[]): void {
     void _activeNames;
-    if (_.isEmpty(this.installedExtensions)) {
+    if (util.isEmpty(this.installedExtensions)) {
       log.info(
         `No ${this.extensionType}s have been installed in ${this.appiumHome}. Use the "appium ${this.extensionType}" ` +
           'command to install the one(s) you want to use.'
@@ -277,7 +280,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     }
 
     log.info(`Available ${this.extensionType}s:`);
-    for (const [extName, extManifest] of _.toPairs(this.installedExtensions) as Array<
+    for (const [extName, extManifest] of Object.entries(this.installedExtensions) as Array<
       [string, ExtManifest<ExtType>]
     >) {
       log.info(`  - ${this.extensionDesc(extName, extManifest)}`);
@@ -357,7 +360,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     const errorMap = new Map<string, ExtManifestProblem[]>();
     const warningMap = new Map<string, string[]>();
 
-    for (const [extName, extManifest] of _.toPairs(exts)) {
+    for (const [extName, extManifest] of Object.entries(exts)) {
       const [errors, warnings] = await Promise.all([
         this.getProblems(extName, extManifest),
         this.getWarnings(extName, extManifest),
@@ -374,7 +377,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
       warningMap
     );
 
-    if (!_.isEmpty(errorSummaries)) {
+    if (!util.isEmpty(errorSummaries)) {
       log.error(
         `Appium encountered ${util.pluralize('error', errorMap.size, true)} while validating ${
           this.extensionType
@@ -383,7 +386,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
       for (const summary of errorSummaries) {
         log.error(summary);
       }
-    } else if (!_.isEmpty(warningSummaries)) {
+    } else if (!util.isEmpty(warningSummaries)) {
       // only display warnings if there are no errors!
       log.warn(
         `Appium encountered ${util.pluralize(
@@ -424,7 +427,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     const warnings: string[] = [];
 
     const invalidFields: string[] = [];
-    if (!_.isString(installSpec)) {
+    if (typeof installSpec !== 'string') {
       invalidFields.push('installSpec');
     }
 
@@ -432,7 +435,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
       invalidFields.push('installType');
     }
 
-    const extTypeText = _.capitalize(this.extensionType);
+    const extTypeText = capitalize(this.extensionType);
 
     if (invalidFields.length) {
       const invalidFieldsEnumerationText = util.pluralize(
@@ -452,7 +455,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     const createPeerWarning = (reason: string): string =>
       `${extTypeText} "${extName}" (package \`${pkgName}\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to ${reason}`;
 
-    if (_.isString(appiumVersion) && !satisfies(APPIUM_VER, appiumVersion)) {
+    if (typeof appiumVersion === 'string' && !satisfies(APPIUM_VER, appiumVersion)) {
       const listData = await this.getListData();
       const extListData = listData[extName] as ExtensionListData<ExtType> | undefined;
       if (extListData?.installed) {
@@ -466,12 +469,12 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
         } else {
           warnings.push(
             createPeerWarning(
-              `its peer dependency on Appium ${appiumVersion}. Please install a compatible version of the ${_.toLower(extTypeText)}.`
+              `its peer dependency on Appium ${appiumVersion}. Please install a compatible version of the ${extTypeText.toLowerCase()}.`
             )
           );
         }
       }
-    } else if (!_.isString(appiumVersion)) {
+    } else if (typeof appiumVersion !== 'string') {
       const listData = await this.getListData();
       const extListData = listData[extName] as InstalledExtensionListData<ExtType> | undefined;
       if (!extListData?.upToDate && extListData?.updateVersion) {
@@ -501,7 +504,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     const problems: ExtManifestProblem[] = [];
     const {schema: argSchemaPath} = extManifest;
     if (ExtensionConfig.extDataHasSchema(extManifest)) {
-      if (_.isString(argSchemaPath)) {
+      if (typeof argSchemaPath === 'string') {
         if (isAllowedSchemaFileExtension(argSchemaPath)) {
           try {
             await this.readExtensionSchema(extName, extManifest);
@@ -519,7 +522,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
             val: argSchemaPath,
           });
         }
-      } else if (_.isPlainObject(argSchemaPath)) {
+      } else if (util.isPlainObject(argSchemaPath)) {
         try {
           await this.readExtensionSchema(extName, extManifest);
         } catch (err: any) {
@@ -547,21 +550,21 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     const {version, pkgName, mainClass} = extManifest;
     const problems: ExtManifestProblem[] = [];
 
-    if (!_.isString(version)) {
+    if (typeof version !== 'string') {
       problems.push({
         err: `Invalid or missing \`version\` field in my \`package.json\` and/or \`extensions.yaml\` (must be a string)`,
         val: version,
       });
     }
 
-    if (!_.isString(pkgName)) {
+    if (typeof pkgName !== 'string') {
       problems.push({
         err: `Invalid or missing \`name\` field in my \`package.json\` and/or \`extensions.yaml\` (must be a string)`,
         val: pkgName,
       });
     }
 
-    if (!_.isString(mainClass)) {
+    if (typeof mainClass !== 'string') {
       problems.push({
         err: `Invalid or missing \`appium.mainClass\` field in my \`package.json\` and/or \`mainClass\` field in \`extensions.yaml\` (must be a string)`,
         val: mainClass,
@@ -637,10 +640,10 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
  * @param exportsValue - `package.json` `exports` value or nested fragment
  */
 export function resolveEsmEntryPoint(exportsValue: unknown): string | undefined {
-  if (_.isString(exportsValue) && exportsValue) {
+  if (typeof exportsValue === 'string' && exportsValue) {
     return exportsValue;
   }
-  if (!_.isPlainObject(exportsValue)) {
+  if (!util.isPlainObject(exportsValue)) {
     return;
   }
 

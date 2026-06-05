@@ -1,6 +1,6 @@
 import {asyncfilter, asyncmap} from 'asyncbox';
-import _ from 'lodash';
 import path from 'node:path';
+import {util, npm, env, console, fs, system} from '@appium/support';
 import type {AppiumLogger, ExtensionType, IDoctorCheck} from '@appium/types';
 import type {
   ExtInstallReceipt as AppiumExtInstallReceipt,
@@ -12,7 +12,6 @@ import type {
 } from 'appium/types';
 import type {PackageJson} from 'type-fest';
 import type {ExtensionConfig as BaseExtensionConfig} from '../extension/extension-config';
-import {npm, util, env, console, fs, system} from '@appium/support';
 import {spinWith, RingBuffer} from './utils';
 import {
   INSTALL_TYPE_NPM,
@@ -27,7 +26,8 @@ import {spawn} from 'node:child_process';
 import {inspect} from 'node:util';
 import {pathToFileURL} from 'node:url';
 import {Doctor, EXIT_CODE as DOCTOR_EXIT_CODE} from '../doctor/doctor';
-import {getAppiumModuleRoot, npmPackage} from '../utils';
+import {compact, npmPackage} from '../utils';
+import {getAppiumModuleRoot} from '../utils/module';
 import * as semver from 'semver';
 
 const UPDATE_ALL = 'installed';
@@ -212,7 +212,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
   async execute(args: Record<string, any>): Promise<unknown> {
     const cmd = args[`${this.type}Command`] as string;
     const handler = (this as Record<string, unknown>)[cmd];
-    if (!_.isFunction(handler)) {
+    if (typeof handler !== 'function') {
       throw this._createFatalError(`Cannot handle ${this.type} command ${cmd}`);
     }
     return await handler.call(this, args);
@@ -335,7 +335,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
           // dereference the actual npm package ('appiupm-xcuitest-driver'), so
           // check it exists and get the correct package
           const knownNames = Object.keys(this.knownExtensions);
-          if (!_.includes(knownNames, name)) {
+          if (!knownNames.includes(name)) {
             const msg =
               `Could not resolve ${this.type}; are you sure it's in the list ` +
               `of supported ${this.type}s? ${JSON.stringify(knownNames)}`;
@@ -395,12 +395,12 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
       warningMap
     );
 
-    if (!_.isEmpty(errorSummaries)) {
+    if (!util.isEmpty(errorSummaries)) {
       throw this._createFatalError(errorSummaries.join('\n'));
     }
 
     // note that we won't show any warnings if there were errors.
-    if (!_.isEmpty(warningSummaries)) {
+    if (!util.isEmpty(warningSummaries)) {
       this.log.warn(warningSummaries.join('\n'));
     }
 
@@ -520,11 +520,11 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
 
     this.log.info('Update report:');
 
-    for (const [e, update] of _.toPairs(updates)) {
+    for (const [e, update] of Object.entries(updates)) {
       this.log.ok(`  - ${this.type} ${e} updated: ${update.from} => ${update.to}`.green);
     }
 
-    for (const [e, err] of _.toPairs(errors)) {
+    for (const [e, err] of Object.entries(errors)) {
       if (err instanceof NotUpdatableError) {
         this.log.warn(
           `  - '${e}' was not installed via npm, so we could not check ` + `for updates`.yellow
@@ -604,7 +604,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
       this.log.info(`The ${this.type} "${installSpec}" does not export any doctor checks`);
       return 0;
     }
-    if (!_.isPlainObject(doctorSpec) || !_.isArray(doctorSpec.checks)) {
+    if (!util.isPlainObject(doctorSpec) || !Array.isArray(doctorSpec.checks)) {
       throw this._createFatalError(
         `The 'doctor' entry in the package manifest '${packageJsonPath}' must be a proper object ` +
         `containing the 'checks' key with the array of script paths`
@@ -639,15 +639,13 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
     }
     const isDoctorCheck = (x: unknown): x is IDoctorCheck =>
       ['diagnose', 'fix', 'hasAutofix', 'isOptional'].every((method) =>
-        _.isFunction((x as IDoctorCheck)?.[method as keyof IDoctorCheck])
+        typeof (x as IDoctorCheck)?.[method as keyof IDoctorCheck] === 'function'
       );
-    const checks: IDoctorCheck[] = _.flatMap(
-      (await Promise.all(loadChecksPromises)).filter((mod): mod is object => Boolean(mod)),
-      _.toPairs
-    )
-      .map(([, value]) => value)
+    const checks: IDoctorCheck[] = (await Promise.all(loadChecksPromises))
+      .filter((mod): mod is object => Boolean(mod))
+      .flatMap((mod) => Object.values(mod))
       .filter(isDoctorCheck);
-    if (_.isEmpty(checks)) {
+    if (util.isEmpty(checks)) {
       this.log.info(`The ${this.type} "${installSpec}" exports no valid doctor checks`);
       return 0;
     }
@@ -693,20 +691,20 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
 
     const extScripts = extConfig.scripts;
 
-    if (!extScripts || !_.isPlainObject(extScripts)) {
+    if (!extScripts || !util.isPlainObject(extScripts)) {
       throw this._createFatalError(
         `The ${this.type} named '${installSpec}' "scripts" field must be a plain object`
       );
     }
 
     if (!scriptName) {
-      const allScripts = _.toPairs(extScripts as Record<string, string>);
+      const allScripts = Object.entries(extScripts as Record<string, string>);
       const root = this.config.getInstallPath(installSpec);
       const existingScripts = await asyncfilter(
         allScripts,
         async ([, p]) => await fs.exists(path.join(root, p))
       );
-      if (_.isEmpty(existingScripts)) {
+      if (util.isEmpty(existingScripts)) {
         this.log.info(`The ${this.type} named '${installSpec}' does not contain any scripts`);
       } else {
         this.log.info(`The ${this.type} named '${installSpec}' contains ` +
@@ -863,8 +861,14 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
 
     const extManifest =
       this.type === 'driver'
-        ? _.omit(extData as ExtInstallReceipt<'driver'>, 'driverName')
-        : _.omit(extData as ExtInstallReceipt<'plugin'>, 'pluginName');
+        ? (({driverName, ...rest}) => {
+            void driverName;
+            return rest;
+          })(extData as ExtInstallReceipt<'driver'>)
+        : (({pluginName, ...rest}) => {
+            void pluginName;
+            return rest;
+          })(extData as ExtInstallReceipt<'plugin'>);
     await this.config.updateExtension(installSpec, extManifest as any);
   }
 
@@ -969,7 +973,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
       }
 
       // Filter to only extensions that need update checks (installed npm packages)
-      const extensionsToCheck = _.toPairs(listData as Record<string, any>).filter(
+      const extensionsToCheck = Object.entries(listData as Record<string, any>).filter(
         ([, data]) => data.installed && data.installType === INSTALL_TYPE_NPM
       );
 
@@ -997,7 +1001,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
   private async _addRepositoryUrlsToListData(listData: ExtensionList): Promise<void> {
     await spinWith(this.isJsonOutput, 'Fetching repository information', async () => {
       await asyncmap(
-        _.values(listData),
+        Object.values(listData),
         async (data) => {
           const repoUrl = await this._getRepositoryUrl(data);
           if (repoUrl) {
@@ -1017,7 +1021,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
     listData: ExtensionList,
     showUpdates: boolean
   ): Promise<ExtensionList> {
-    for (const [name, data] of _.toPairs(listData)) {
+    for (const [name, data] of Object.entries(listData)) {
       const line = await this._formatExtensionLine(name, data, showUpdates);
       this.log.log(line);
     }
@@ -1222,7 +1226,7 @@ export async function injectAppiumSymlinks(
     ...Object.values(pluginConfig.installedExtensions || {}),
   ] as InstalledExtensionLike[];
 
-  const installPaths = _.compact(installedExtensions
+  const installPaths = compact(installedExtensions
     .filter((details): details is InstalledExtensionLike => Boolean(details))
     .filter(isNpmInstalledExtension)
     .map((details) => details.installPath));
@@ -1242,7 +1246,14 @@ export async function injectAppiumSymlinks(
 function receiptToManifest<ExtType extends ExtensionType>(
   receipt: ExtInstallReceipt<ExtType>
 ): ExtManifest<ExtType> {
-  return _.omit(receipt, 'driverName', 'pluginName') as ExtManifest<ExtType>;
+  if ('driverName' in receipt) {
+    const {driverName, ...manifest} = receipt as ExtInstallReceipt<'driver'>;
+    void driverName;
+    return manifest as unknown as ExtManifest<ExtType>;
+  }
+  const {pluginName, ...manifest} = receipt as ExtInstallReceipt<'plugin'>;
+  void pluginName;
+  return manifest as unknown as ExtManifest<ExtType>;
 }
 
 /**
@@ -1259,9 +1270,10 @@ async function getRemoteExtensionVersionReq(
     `${pkgName}${pkgVer ? `@${pkgVer}` : ``}`,
     ['peerDependencies', 'dependencies']
   );
-  const requiredVersionPair = _.flatMap(_.values(allDeps).map(_.toPairs))
+  const requiredVersionPair = Object.values(allDeps)
+    .flatMap((dep) => Object.entries(dep ?? {}))
     .find(([name]) => name === 'appium');
-  return [npmPackage.version, requiredVersionPair ? requiredVersionPair[1] : null];
+  return [npmPackage.version, requiredVersionPair ? (requiredVersionPair[1] as string | null) : null];
 }
 
 /**

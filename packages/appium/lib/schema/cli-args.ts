@@ -1,6 +1,7 @@
 import {ArgumentTypeError, type ArgumentOptions} from 'argparse';
-import _ from 'lodash';
+import {util} from '@appium/support';
 import type {JSONSchema7, JSONSchema7TypeName} from 'json-schema';
+import {kebabCase} from '../utils';
 import {formatErrors} from './format-errors';
 import {flattenSchema, validate} from './schema';
 import {transformers, parseCsvLine} from './cli-transformers';
@@ -30,7 +31,7 @@ const SHORT_ARG_CUTOFF = 3;
 export function toParserArgs(): ArgumentDefinitions {
   const flattened = flattenSchema().filter(({schema}) => !schema.appiumCliIgnored);
   return new Map(
-    _.map(flattened, ({schema, argSpec}) => subSchemaToArgDef(schema as AppiumJSONSchema, argSpec))
+    flattened.map(({schema, argSpec}) => subSchemaToArgDef(schema as AppiumJSONSchema, argSpec))
   );
 }
 
@@ -43,25 +44,25 @@ function aliasToFlag(argSpec: ArgSpec, alias?: string): string {
   const isShort = arg.length < SHORT_ARG_CUTOFF;
   if (extType && extName) {
     return isShort
-      ? `--${extType}-${_.kebabCase(extName)}-${arg}`
-      : `--${extType}-${_.kebabCase(extName)}-${_.kebabCase(arg)}`;
+      ? `--${extType}-${kebabCase(extName)}-${arg}`
+      : `--${extType}-${kebabCase(extName)}-${kebabCase(arg)}`;
   }
-  return isShort ? `-${arg}` : `--${_.kebabCase(arg)}`;
+  return isShort ? `-${arg}` : `--${kebabCase(arg)}`;
 }
 
-const screamingSnakeCase = _.flow(_.snakeCase, _.toUpper);
+const screamingSnakeCase = (s: string) => kebabCase(s).replace(/-/g, '_').toUpperCase();
 
 /**
  * Given an argument spec, return a validator/coercer function backed by schema validation.
  */
 function getSchemaValidator<Coerced>(
   {ref: schemaId}: ArgSpec,
-  coerce: (value: string) => Coerced = _.identity as (value: string) => Coerced
+  coerce: (value: string) => Coerced = (value) => value as Coerced
 ): (value: string) => Coerced {
   return (value) => {
     const coerced = coerce(value);
     const errors = validate(coerced, schemaId);
-    if (_.isEmpty(errors)) {
+    if (util.isEmpty(errors)) {
       return coerced;
     }
     throw new ArgumentTypeError('\n\n' + formatErrors(errors, value, {schemaId}));
@@ -104,12 +105,15 @@ function subSchemaToArgDef(subSchema: AppiumJSONSchema, argSpec: ArgSpec): ArgDe
       break;
     }
     case TYPENAMES.OBJECT: {
-      argTypeFunction = _.flow(transformers.json, (o) => {
-        if (!_.isPlainObject(o)) {
-          throw new ArgumentTypeError(`'${_.truncate(String(o), {length: 100})}' must be a plain object`);
+      argTypeFunction = (value: string) => {
+        const o = transformers.json(value);
+        if (!util.isPlainObject(o)) {
+          throw new ArgumentTypeError(
+            `'${util.truncateString(String(o), {length: 100})}' must be a plain object`
+          );
         }
         return o;
-      });
+      };
       break;
     }
     case TYPENAMES.ARRAY: {
@@ -121,7 +125,7 @@ function subSchemaToArgDef(subSchema: AppiumJSONSchema, argSpec: ArgSpec): ArgDe
       break;
     }
     case TYPENAMES.INTEGER: {
-      argTypeFunction = getSchemaValidator(argSpec, _.parseInt);
+      argTypeFunction = getSchemaValidator(argSpec, (v) => parseInt(v, 10));
       break;
     }
     case TYPENAMES.STRING: {
@@ -142,12 +146,12 @@ function subSchemaToArgDef(subSchema: AppiumJSONSchema, argSpec: ArgSpec): ArgDe
     if (type === TYPENAMES.ARRAY) {
       const csvTransformer = argTypeFunction as (x: string) => string[];
       argTypeFunction = (val) =>
-        _.flatMap(csvTransformer(val).map(transformers[appiumCliTransformer as AppiumCliTransformerName]));
+        csvTransformer(val)
+          .flatMap((item) => transformers[appiumCliTransformer as AppiumCliTransformerName](item));
     } else {
-      argTypeFunction = _.flow(
-        argTypeFunction ?? _.identity,
-        transformers[appiumCliTransformer as AppiumCliTransformerName]
-      ) as (value: string) => unknown;
+      const baseFn = argTypeFunction ?? ((value: string) => value);
+      const transformer = transformers[appiumCliTransformer as AppiumCliTransformerName];
+      argTypeFunction = (value: string) => transformer(baseFn(value) as string);
     }
   }
 
@@ -155,7 +159,7 @@ function subSchemaToArgDef(subSchema: AppiumJSONSchema, argSpec: ArgSpec): ArgDe
     argOpts.type = argTypeFunction;
   }
 
-  if (enumValues && !_.isEmpty(enumValues)) {
+  if (enumValues && !util.isEmpty(enumValues)) {
     if (type === TYPENAMES.STRING) {
       argOpts.choices = enumValues.map(String);
     } else {

@@ -6,8 +6,7 @@ import {EventEmitter} from 'node:events';
 import path from 'node:path';
 import {createRequire} from 'node:module';
 import {createSandbox, type SinonSandbox, type SinonStub} from 'sinon';
-import pluralize from 'pluralize';
-import {console as supportConsole} from '@appium/support';
+import {console as supportConsole, util as supportUtil} from '@appium/support';
 
 declare const __filename: string;
 const requireMod = createRequire(__filename);
@@ -47,10 +46,9 @@ export interface MockAppiumSupportNpm {
   getLatestSafeUpgradeVersion: SinonStub;
 }
 
-export interface MockAppiumSupportUtil {
+export type MockAppiumSupportUtil = typeof supportUtil & {
   compareVersions: SinonStub;
-  pluralize: typeof pluralize;
-}
+};
 
 export interface MockAppiumSupportConsole {
   CliConsole: SinonStub;
@@ -143,8 +141,8 @@ export function initMocks(sandbox = createSandbox()): InitMocksResult {
       getLatestSafeUpgradeVersion: sandbox.stub().resolves('1.1.0'),
     },
     util: {
+      ...supportUtil,
       compareVersions: sandbox.stub().returns(true),
-      pluralize,
     },
     console: {
       CliConsole: sandbox

@@ -1,8 +1,8 @@
 import {fs} from '@appium/support';
 import {ArgumentParser} from 'argparse';
 import type {SubArgumentParserOptions, SubParser} from 'argparse';
-import _ from 'lodash';
 import path from 'node:path';
+import {setPath} from '../utils';
 import type {DriverType, PluginType} from '@appium/types';
 import type {CliExtensionSubcommand} from 'appium/types';
 import {
@@ -131,15 +131,14 @@ export class ArgParser {
     args: LooseArgsMap,
     unknownArgs: string[] = []
   ): TransformedArgsMap {
-    const result = _.reduce(
-      args,
-      (unpacked: LooseArgsMap, value, key) => {
+    const result = Object.entries(args).reduce(
+      (unpacked: LooseArgsMap, [key, value]) => {
         const spec = hasArgSpec(key) ? getArgSpec(key) : undefined;
-        if (!_.isUndefined(value) && spec) {
+        if (value !== undefined && spec) {
           const {dest} = spec;
-          _.set(unpacked, dest, value);
+          setPath(unpacked as Record<string, unknown>, dest, value);
         } else {
-          // this could be anything that _isn't_ a server arg
+          // this could be anything that isn't a server arg
           unpacked[key] = value;
         }
         return unpacked;
@@ -281,19 +280,19 @@ export class ArgParser {
         command: SUBCOMMAND_MOBILE,
         help:
           `The preset for mobile devices ` +
-          `(drivers: ${_.join(getPresetDrivers(SUBCOMMAND_MOBILE), ',')}; plugins: ${DEFAULT_PLUGINS})`
+          `(drivers: ${getPresetDrivers(SUBCOMMAND_MOBILE).join(',')}; plugins: ${DEFAULT_PLUGINS})`
       },
       {
         command: SUBCOMMAND_BROWSER,
         help:
           `The preset for desktop browsers ` +
-          `(drivers: ${_.join(getPresetDrivers(SUBCOMMAND_BROWSER), ',')}; plugins: ${DEFAULT_PLUGINS})`
+          `(drivers: ${getPresetDrivers(SUBCOMMAND_BROWSER).join(',')}; plugins: ${DEFAULT_PLUGINS})`
       },
       {
         command: SUBCOMMAND_DESKTOP,
         help:
           `The preset for desktop applications ` +
-          `(drivers: ${_.join(getPresetDrivers(SUBCOMMAND_DESKTOP), ',')}; plugins: ${DEFAULT_PLUGINS})`
+          `(drivers: ${getPresetDrivers(SUBCOMMAND_DESKTOP).join(',')}; plugins: ${DEFAULT_PLUGINS})`
       },
       {
         command: SUBCOMMAND_RESET,

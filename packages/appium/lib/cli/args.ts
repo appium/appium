@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import {util} from '@appium/support';
 import type {ArgumentOptions} from 'argparse';
 import type {ExtensionType} from '@appium/types';
 import type {CliExtensionSubcommand} from 'appium/types';
@@ -49,7 +49,7 @@ const globalExtensionArgs: ArgumentDefinitions = new Map([
  *
  * The result is memoized because parser setup is static across process lifetime.
  */
-export const getExtensionArgs = _.memoize(function getExtensionArgs(): Record<
+export const getExtensionArgs = util.memoize(function getExtensionArgs(): Record<
   ExtensionType,
   Record<CliExtensionSubcommand, ArgumentDefinitions>
 > {

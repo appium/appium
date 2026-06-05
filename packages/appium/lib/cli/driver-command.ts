@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import {util} from '@appium/support';
 import type {ExtMetadata, ExtRecord, InstallType} from 'appium/types';
 import ExtensionCliCommand from './extension-command';
 import type {
@@ -112,7 +112,7 @@ export default class DriverCliCommand extends ExtensionCliCommand<'driver'> {
       []
     );
 
-    if (!_.isEmpty(missingFields)) {
+    if (!util.isEmpty(missingFields)) {
       throw new Error(
         `Driver "${installSpec}" did not expose correct fields for compatibility ` +
           `with Appium. Missing fields: ${JSON.stringify(missingFields)}`

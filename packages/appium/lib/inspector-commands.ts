@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import {mapValues} from './utils';
 import {
   METHOD_MAP as BASE_METHOD_MAP,
   BIDI_COMMANDS as BASE_BIDI_COMMANDS,
@@ -35,14 +35,18 @@ export async function listCommands(this: AppiumDriver, sessionId?: string): Prom
     driverBiDiCommands = driverClass?.newBidiCommands ?? {};
     const pluginClasses = this.pluginsForSession(sessionId)
       .map((p) => p.constructor as PluginClass);
-    pluginRestMethodMaps = _.fromPairs(pluginClasses.map((c) => [c.name, c.newMethodMap ?? {}]));
-    pluginBiDiCommands = _.fromPairs(pluginClasses.map((c) => [c.name, c.newBidiCommands ?? {}]));
+    pluginRestMethodMaps = Object.fromEntries(
+      pluginClasses.map((c) => [c.name, c.newMethodMap ?? {}])
+    );
+    pluginBiDiCommands = Object.fromEntries(
+      pluginClasses.map((c) => [c.name, c.newBidiCommands ?? {}])
+    );
   }
   return {
     rest: {
       base: methodMapToRestCommandsInfo(BASE_METHOD_MAP),
       driver: methodMapToRestCommandsInfo(driverRestMethodMap),
-      plugins: pluginRestMethodMaps ? _.mapValues(pluginRestMethodMaps, methodMapToRestCommandsInfo) : undefined,
+      plugins: pluginRestMethodMaps ? mapValues(pluginRestMethodMaps, methodMapToRestCommandsInfo) : undefined,
     },
     bidi: toBiDiCommandsMap(BASE_BIDI_COMMANDS, driverBiDiCommands, pluginBiDiCommands),
   };
@@ -59,12 +63,14 @@ export async function listExtensions(this: AppiumDriver, sessionId?: string): Pr
     driverExecuteMethodMap = driverClass?.executeMethodMap ?? {};
     const pluginClasses = this.pluginsForSession(sessionId)
       .map((p) => p.constructor as PluginClass);
-    pluginExecuteMethodMaps = _.fromPairs(pluginClasses.map((c) => [c.name, c.executeMethodMap ?? {}]));
+    pluginExecuteMethodMaps = Object.fromEntries(
+      pluginClasses.map((c) => [c.name, c.executeMethodMap ?? {}])
+    );
   }
   return {
     rest: {
       driver: executeMethodMapToCommandsInfo(driverExecuteMethodMap),
-      plugins: pluginExecuteMethodMaps ? _.mapValues(pluginExecuteMethodMaps, executeMethodMapToCommandsInfo) : undefined,
+      plugins: pluginExecuteMethodMaps ? mapValues(pluginExecuteMethodMaps, executeMethodMapToCommandsInfo) : undefined,
     },
   };
 }
@@ -75,9 +81,9 @@ function toRestCommandParams(params: PayloadParams | undefined): RestCommandItem
   }
 
   const toRestCommandItemParam = (x: any, isRequired: boolean): RestCommandItemParam | undefined => {
-    const isNameAnArray = _.isArray(x);
+    const isNameAnArray = Array.isArray(x);
     const name = isNameAnArray ? x[0] : x;
-    if (!_.isString(name)) {
+    if (typeof name !== 'string') {
       return;
     }
 
@@ -93,10 +99,10 @@ function toRestCommandParams(params: PayloadParams | undefined): RestCommandItem
 
   const requiredParams: RestCommandItemParam[] = (params.required ?? [])
     .map((name: any) => toRestCommandItemParam(name, true))
-    .filter((x) => !_.isUndefined(x));
+    .filter((x): x is RestCommandItemParam => x !== undefined);
   const optionalParams: RestCommandItemParam[] = (params.optional ?? [])
     .map((name: any) => toRestCommandItemParam(name, false))
-    .filter((x) => !_.isUndefined(x));
+    .filter((x): x is RestCommandItemParam => x !== undefined);
   return requiredParams.length || optionalParams.length
     ? [...requiredParams, ...optionalParams]
     : undefined;
@@ -104,9 +110,9 @@ function toRestCommandParams(params: PayloadParams | undefined): RestCommandItem
 
 function methodMapToRestCommandsInfo (mm: MethodMap<any>): Record<string, RestMethodsToCommandsMap> {
   const res: Record<string, RestMethodsToCommandsMap> = {};
-  for (const [uriPath, methods] of _.toPairs(mm)) {
+  for (const [uriPath, methods] of Object.entries(mm)) {
     const methodsMap: RestMethodsToCommandsMap = {};
-    for (const [method, spec] of _.toPairs(methods)) {
+    for (const [method, spec] of Object.entries(methods)) {
       methodsMap[String(method)] = {
         command: spec.command as string,
         deprecated: spec.deprecated,
@@ -121,7 +127,7 @@ function methodMapToRestCommandsInfo (mm: MethodMap<any>): Record<string, RestMe
 
 function executeMethodMapToCommandsInfo(emm: ExecuteMethodMap<any>): RestMethodsToCommandsMap {
   const result: RestMethodsToCommandsMap = {};
-  for (const [name, info] of _.toPairs(emm)) {
+  for (const [name, info] of Object.entries(emm)) {
     result[name] = {
       command: info.command as string,
       deprecated: info.deprecated,
@@ -143,9 +149,9 @@ function toBiDiCommandsMap(
     }
 
     const toBiDiCommandItemParam = (x: any, isRequired: boolean): BiDiCommandItemParam | undefined => {
-      const isNameAnArray = _.isArray(x);
+      const isNameAnArray = Array.isArray(x);
       const name = isNameAnArray ? x[0] : x;
-      if (!_.isString(name)) {
+      if (typeof name !== 'string') {
         return;
       }
 
@@ -161,10 +167,10 @@ function toBiDiCommandsMap(
 
     const requiredParams: BiDiCommandItemParam[] = (params.required ?? [])
       .map((name) => toBiDiCommandItemParam(name, true))
-      .filter((x) => !_.isUndefined(x));
+      .filter((x): x is BiDiCommandItemParam => x !== undefined);
     const optionalParams: BiDiCommandItemParam[] = (params.optional ?? [])
       .map((name) => toBiDiCommandItemParam(name, false))
-      .filter((x) => !_.isUndefined(x));
+      .filter((x): x is BiDiCommandItemParam => x !== undefined);
     return requiredParams.length || optionalParams.length
       ? [...requiredParams, ...optionalParams]
       : undefined;
@@ -172,9 +178,9 @@ function toBiDiCommandsMap(
 
   const moduleMapToBiDiCommandsInfo = (mm: BidiModuleMap): Record<string, BiDiCommandNamesToInfosMap> => {
     const res: Record<string, BiDiCommandNamesToInfosMap> = {};
-    for (const [domain, commands] of _.toPairs(mm)) {
+    for (const [domain, commands] of Object.entries(mm)) {
       const commandsMap: BiDiCommandNamesToInfosMap = {};
-      for (const [name, spec] of _.toPairs(commands)) {
+      for (const [name, spec] of Object.entries(commands)) {
         commandsMap[name] = {
           command: spec.command,
           deprecated: spec.deprecated,
@@ -190,6 +196,6 @@ function toBiDiCommandsMap(
   return {
     base: moduleMapToBiDiCommandsInfo(baseModuleMap),
     driver: moduleMapToBiDiCommandsInfo(driverModuleMap),
-    plugins: pluginModuleMaps ? _.mapValues(pluginModuleMaps, moduleMapToBiDiCommandsInfo) : undefined,
+    plugins: pluginModuleMaps ? mapValues(pluginModuleMaps, moduleMapToBiDiCommandsInfo) : undefined,
   };
 }

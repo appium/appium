@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {createSandbox} from 'sinon';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
@@ -337,7 +336,7 @@ describe('schema', function () {
         type ServerDriverSchema = {
           properties: {server: {properties: {driver: {properties: Record<string, unknown>}}}};
         };
-        const baseSchemaWithRefs = _.cloneDeep(
+        const baseSchemaWithRefs = structuredClone(
           AppiumConfigJsonSchema as ServerDriverSchema
         );
         baseSchemaWithRefs.properties.server.properties.driver.properties.stuff = {

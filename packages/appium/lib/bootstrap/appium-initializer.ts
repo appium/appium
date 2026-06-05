@@ -1,8 +1,8 @@
 import {init as logsinkInit} from '../logsink';
 import {log as logger} from '../logger';
 import {util, env} from '@appium/support';
-import _ from 'lodash';
 import type {DriverOpts} from '@appium/types';
+import {defaultsDeep} from '../utils';
 import {AppiumDriver, type AppiumDriverConstraints} from '../appium';
 import {runExtensionCommand} from '../cli/extension';
 import {runSetupCommand} from '../cli/setup-command';
@@ -106,7 +106,7 @@ export class AppiumInitializer {
   }
 
   private assertConfigFileOk(configResult: Awaited<ReturnType<typeof readConfigFile>>): void {
-    if (!_.isEmpty(configResult.errors)) {
+    if (!util.isEmpty(configResult.errors)) {
       throw new Error(
         `Errors in config file ${configResult.filepath}:\n ${configResult.reason ?? configResult.errors}`,
       );
@@ -122,12 +122,12 @@ export class AppiumInitializer {
     appiumHomeSourceName: string,
   ): Promise<InitResult<Cmd>> {
     const defaults = getDefaultsForSchema(false);
-    const serverArgs = _.defaultsDeep(
+    const serverArgs = defaultsDeep(
       {},
-      preConfigArgs,
-      configResult.config?.server,
-      defaults,
-    ) as ParsedArgs<CliCommandServer>;
+      preConfigArgs as Record<string, unknown>,
+      configResult.config?.server as Record<string, unknown> | undefined,
+      defaults as Record<string, unknown>,
+    ) as unknown as ParsedArgs<CliCommandServer>;
 
     if (preConfigArgs.showConfig) {
       showConfig(getNonDefaultServerArgs(preConfigArgs as Args), configResult, defaults, serverArgs);
@@ -168,15 +168,13 @@ export class AppiumInitializer {
       return;
     }
     const {issues, rules} = await logger.unwrap().loadSecureValuesPreprocessingRules(serverArgs.logFilters);
-    const argToLog = _.truncate(JSON.stringify(serverArgs.logFilters), {
-      length: 150,
-    });
-    if (!_.isEmpty(issues)) {
+    const argToLog = util.truncateString(JSON.stringify(serverArgs.logFilters), {length: 150});
+    if (!util.isEmpty(issues)) {
       throw new Error(
         `The log filtering rules config ${argToLog} has issues: ` + JSON.stringify(issues, null, 2),
       );
     }
-    if (_.isEmpty(rules)) {
+    if (util.isEmpty(rules)) {
       logger.warn(
         `Found no log filtering rules in the ${argToLog} config. ` + `Is that expected?`,
       );

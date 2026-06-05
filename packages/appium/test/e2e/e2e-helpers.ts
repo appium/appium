@@ -3,7 +3,6 @@
  */
 import {console as supportConsole, fs} from '@appium/support';
 import '@colors/colors';
-import _ from 'lodash';
 import path from 'node:path';
 import {exec} from 'teen_process';
 import type {ExecError} from 'teen_process';
@@ -35,16 +34,56 @@ export type AppiumRunError = Error &
   AppiumRunErrorProps &
   ExecError & {stdout: string; stderr: string};
 
+function curry2<A, B, R>(
+  fn: (a: A, b: B) => R
+): {
+  (a: A): (b: B) => R;
+  (a: A, b: B): R;
+} {
+  function curried(a: A, b?: B): R | ((b2: B) => R) {
+    if (arguments.length >= 2) {
+      return fn(a, b as B);
+    }
+    return (b2: B) => fn(a, b2);
+  }
+  return curried as {
+    (a: A): (b: B) => R;
+    (a: A, b: B): R;
+  };
+}
+
+function curry3<A, B, C, R>(
+  fn: (a: A, b: B, c: C) => R
+): {
+  (a: A): (b: B) => (c: C) => R;
+  (a: A, b: B): (c: C) => R;
+  (a: A, b: B, c: C): R;
+} {
+  function curried(a: A, b?: B, c?: C): unknown {
+    if (arguments.length >= 3) {
+      return fn(a, b as B, c as C);
+    }
+    if (arguments.length === 2) {
+      return (c2: C) => fn(a, b as B, c2);
+    }
+    return (b2: B) => (c2: C) => fn(a, b2, c2);
+  }
+  return curried as {
+    (a: A): (b: B) => (c: C) => R;
+    (a: A, b: B): (c: C) => R;
+    (a: A, b: B, c: C): R;
+  };
+}
+
 async function run(
   appiumHome: string,
   args: CliExtArgs | CliArgs,
   opts: {env?: Record<string, string>; FORCE_COLOR?: string} = {}
 ): Promise<{stdout: string; stderr: string}> {
   const cwd = APPIUM_ROOT;
-  const env = _.defaults(opts.env ?? {}, {
-    APPIUM_HOME: appiumHome,
-    PATH: process.env.PATH,
-  });
+  const env: Record<string, string | undefined> = {...opts.env};
+  env.APPIUM_HOME ??= appiumHome;
+  env.PATH ??= process.env.PATH;
   try {
     const fullArgs = [...process.execArgv, '--', EXECUTABLE, ...args];
     if (process.env._FORCE_LOGS) {
@@ -84,7 +123,7 @@ async function _runAppium(
   return stdout;
 }
 
-export const runAppium = _.curry(_runAppium);
+export const runAppium = curry2(_runAppium);
 
 async function _runAppiumRaw(
   appiumHome: string,
@@ -98,7 +137,7 @@ async function _runAppiumRaw(
   }
 }
 
-export const runAppiumRaw = _.curry(_runAppiumRaw);
+export const runAppiumRaw = curry3(_runAppiumRaw);
 
 type RunAppiumJsonCurried = {
   (appiumHome: string): (args: CliExtArgs | CliArgs) => Promise<unknown>;
@@ -118,7 +157,7 @@ async function _runAppiumJson(
     throw err;
   }
 }
-export const runAppiumJson: RunAppiumJsonCurried = _.curry(_runAppiumJson) as RunAppiumJsonCurried;
+export const runAppiumJson: RunAppiumJsonCurried = curry2(_runAppiumJson) as RunAppiumJsonCurried;
 
 export async function installLocalExtension<ExtType extends DriverType | PluginType>(
   appiumHome: string,

@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import {setPath} from '../../../lib/utils';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {SinonSandbox, SinonSpy} from 'sinon';
@@ -132,9 +132,11 @@ describe('bootstrap/startup-config', function () {
       });
 
       it('should catch a non-default argument', function () {
-        args['plugin.crypto-fiend.elite'] = false;
+        setPath(args, 'plugin.crypto-fiend.elite', false);
         const nonDefaultArgs = getNonDefaultServerArgs(args);
-        expect(nonDefaultArgs).to.eql(_.set({}, 'plugin.crypto-fiend.elite', false));
+        const expected: Record<string, unknown> = {};
+        setPath(expected, 'plugin.crypto-fiend.elite', false);
+        expect(nonDefaultArgs).to.eql(expected);
       });
     });
   });

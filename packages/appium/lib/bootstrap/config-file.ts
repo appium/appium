@@ -1,8 +1,9 @@
 import type {IOutputError} from '@sidvind/better-ajv-errors';
 import type {ErrorObject, SchemaObject} from 'ajv';
 import {lilconfig, type LoaderSync, type LilconfigResult} from 'lilconfig';
-import _ from 'lodash';
+import {util} from '@appium/support';
 import * as yaml from 'yaml';
+import {camelCase, getPath, mapKeys, mapValues} from '../utils';
 import type {AppiumConfig, NormalizedAppiumConfig} from '@appium/types';
 import {getSchema, validate} from '../schema/schema';
 import {formatErrors} from '../schema/format-errors';
@@ -67,7 +68,7 @@ export async function readConfigFile(
     try {
       let configResult: ReadConfigFileResult;
       const errors = validate(result.config) as ErrorObject[];
-      if (_.isEmpty(errors)) {
+      if (util.isEmpty(errors)) {
         configResult = {...result, errors};
       } else {
         const reason = formatErrors(errors, result.config as Record<string, unknown>, {
@@ -102,15 +103,17 @@ export function normalizeConfig(config: AppiumConfig): NormalizedAppiumConfig {
     Boolean((schemaObj as SchemaObject | undefined)?.properties || (schemaObj as SchemaObject | undefined)?.type === 'object');
 
   const normalize = (rootConfig: AppiumConfig, section?: string): Record<string, unknown> => {
-    const obj = _.isUndefined(section)
+    const obj = section === undefined
       ? rootConfig
-      : (_.get(rootConfig, section, rootConfig) as Record<string, unknown>);
+      : (getPath(rootConfig, section, rootConfig) as Record<string, unknown>);
 
-    const mappedObj = _.mapKeys(obj, (_v, prop) =>
-      _.get(schema, `properties.server.properties[${prop}].appiumCliDest`, _.camelCase(prop))
+    const mappedObj = mapKeys(obj as Record<string, unknown>, (_v, prop) =>
+      String(
+        getPath(schema, `properties.server.properties.${prop}.appiumCliDest`, camelCase(String(prop)))
+      )
     );
 
-    return _.mapValues(mappedObj, (value, property) => {
+    return mapValues(mappedObj, (value, property) => {
       const nextSection = section ? `${section}.${property}` : property;
       return isSchemaTypeObject((schema as any).properties?.[property])
         ? normalize(rootConfig, nextSection)

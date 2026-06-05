@@ -37,10 +37,15 @@
     "test:types": "tsd"
   },
   "dependencies": {
-    "@appium/logger": "2.0.8",
     "@appium/schema": "1.2.0",
-    "@appium/tsconfig": "1.1.2",
     "type-fest": "5.7.0"
+  },
+  "devDependencies": {
+    "@appium/logger": "2.0.8",
+    "@appium/tsconfig": "1.1.2"
+  },
+  "peerDependencies": {
+    "@appium/logger": "^2.0.0"
   },
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0",

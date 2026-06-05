@@ -39,9 +39,11 @@
     "test:smoke": "node ./build/lib/index.js",
     "test:unit": "mocha \"./test/unit/**/*.spec.ts\""
   },
+  "devDependencies": {
+    "@appium/tsconfig": "1.1.2"
+  },
   "dependencies": {
     "@appium/logger": "2.0.8",
-    "@appium/tsconfig": "1.1.2",
     "@appium/types": "1.5.0",
     "@colors/colors": "1.6.0",
     "archiver": "8.0.0",

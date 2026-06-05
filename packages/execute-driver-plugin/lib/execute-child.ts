@@ -32,7 +32,11 @@ async function runScript(eventParams: DriverScriptMessageEvent): Promise<RunScri
     warn: [],
     log: [],
   };
-  const consoleFns: {error: (...args: any[]) => void; warn: (...args: any[]) => void; log: (...args: any[]) => void} = {
+  const consoleFns: {
+    error: (...args: any[]) => void;
+    warn: (...args: any[]) => void;
+    log: (...args: any[]) => void;
+  } = {
     error: wrapHostBindingForVmContext((...logMsgs) => logs.error.push(...logMsgs)),
     warn: wrapHostBindingForVmContext((...logMsgs) => logs.warn.push(...logMsgs)),
     log: wrapHostBindingForVmContext((...logMsgs) => logs.log.push(...logMsgs)),
@@ -61,7 +65,7 @@ async function runScript(eventParams: DriverScriptMessageEvent): Promise<RunScri
       setTimeout: sandboxSetTimeout,
       clearTimeout: sandboxClearTimeout,
     },
-    {timeout: timeoutMs, breakOnSigint: true}
+    {timeout: timeoutMs, breakOnSigint: true},
   );
 
   result = coerceScriptResult(result);
@@ -86,7 +90,7 @@ function coerceScriptResult(obj: any): any {
   } catch {
     log.warn(
       'Could not convert executeDriverScript to safe response!' +
-        `Result was: ${JSON.stringify(obj)}. Will make it null`
+        `Result was: ${JSON.stringify(obj)}. Will make it null`,
     );
     return null;
   }

@@ -25,7 +25,10 @@ export class FakeElement {
     this.css = {};
     // Support both DOM Attr (name/value) and nodeName/nodeValue (e.g. @xmldom/xmldom).
     const attrs = this.node.attributes as unknown as Array<{
-      name?: string; nodeName?: string; value?: string; nodeValue?: string
+      name?: string;
+      nodeName?: string;
+      value?: string;
+      nodeValue?: string;
     }>;
     for (const attr of Object.values(attrs)) {
       const name = attr.name ?? attr.nodeName ?? '';
@@ -42,13 +45,8 @@ export class FakeElement {
   }
 
   get xmlFragment(): XMLDocument {
-    const frag = new XMLDom.XMLSerializer().serializeToString(
-      this.node as unknown as XMLNode
-    );
-    return new XMLDom.DOMParser().parseFromString(
-      frag,
-      XMLDom.MIME_TYPE.XML_TEXT
-    ) as XMLDocument;
+    const frag = new XMLDom.XMLSerializer().serializeToString(this.node as unknown as XMLNode);
+    return new XMLDom.DOMParser().parseFromString(frag, XMLDom.MIME_TYPE.XML_TEXT) as XMLDocument;
   }
 
   setAttr(k: string, v: string): void {

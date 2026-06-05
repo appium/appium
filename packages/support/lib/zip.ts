@@ -17,7 +17,7 @@ import {exec} from 'teen_process';
 
 const openZip = promisify(yauzl.open) as (
   zipPath: string,
-  options?: yauzl.Options
+  options?: yauzl.Options,
 ) => Promise<yauzl.ZipFile>;
 
 const ZIP_MAGIC = 'PK';
@@ -135,9 +135,7 @@ class ZipExtractor {
 
         const dest = path.join(dir, fileName);
         if (!isSubPath(dest, dir)) {
-          throw new Error(
-            `Out of bound path "${dest}" found while processing file ${fileName}`
-          );
+          throw new Error(`Out of bound path "${dest}" found while processing file ${fileName}`);
         }
 
         await fs.mkdir(path.dirname(dest), {recursive: true});
@@ -232,7 +230,7 @@ class ZipExtractor {
 export async function extractAllTo(
   zipFilePath: string,
   destDir: string,
-  opts: ExtractAllOptions = {}
+  opts: ExtractAllOptions = {},
 ): Promise<void> {
   if (!path.isAbsolute(destDir)) {
     throw new Error(`Target path '${destDir}' is expected to be absolute`);
@@ -268,7 +266,7 @@ export async function _extractEntryTo(
   zipFile: yauzl.ZipFile,
   entry: yauzl.Entry,
   destDir: string,
-  openReadStream: OpenReadStreamFn = createOpenReadStream(zipFile)
+  openReadStream: OpenReadStreamFn = createOpenReadStream(zipFile),
 ): Promise<void> {
   const fileName = toEntryFileName(entry);
   const dstPath = path.resolve(destDir, fileName);
@@ -299,7 +297,7 @@ export async function _extractEntryTo(
  */
 export async function readEntries(
   zipFilePath: string,
-  onEntry: (entry: ZipEntry) => boolean | void | Promise<boolean | void>
+  onEntry: (entry: ZipEntry) => boolean | void | Promise<boolean | void>,
 ): Promise<void> {
   const zipfile = await openZip(zipFilePath, {lazyEntries: true});
   const openReadStream = createOpenReadStream(zipfile);
@@ -324,10 +322,7 @@ export async function readEntries(
  * @throws {Error} if there was an error while reading the source
  * or the source is too big
  */
-export async function toInMemoryZip(
-  srcPath: string,
-  opts: ZipOptions = {}
-): Promise<Buffer> {
+export async function toInMemoryZip(srcPath: string, opts: ZipOptions = {}): Promise<Buffer> {
   if (!(await fs.exists(srcPath))) {
     throw new Error(`No such file or folder: ${srcPath}`);
   }
@@ -345,8 +340,8 @@ export async function toInMemoryZip(
           'error',
           new Error(
             `The size of the resulting ` +
-              `archive must not be greater than ${toReadableSizeString(maxSize)}`
-          )
+              `archive must not be greater than ${toReadableSizeString(maxSize)}`,
+          ),
         );
       }
       next();
@@ -379,7 +374,7 @@ export async function toInMemoryZip(
   const archiveStreamPromise = new Promise<void>((resolve, reject) => {
     archive.once('finish', resolve);
     archive.once('error', (e: Error) =>
-      reject(new Error(`Failed to archive '${srcPath}': ${e.message}`))
+      reject(new Error(`Failed to archive '${srcPath}': ${e.message}`)),
     );
   });
   const timer = isMetered ? new Timer().start() : null;
@@ -405,7 +400,7 @@ export async function toInMemoryZip(
         `'${path.basename(srcPath)}' ` +
         (srcSize ? `(${toReadableSizeString(srcSize)}) ` : '') +
         `in ${timer.getDuration().asSeconds.toFixed(3)}s ` +
-        `(compression level: ${level})`
+        `(compression level: ${level})`,
     );
   }
   // Return the array of zip buffers concatenated into one buffer
@@ -435,7 +430,7 @@ export async function assertValidZip(filePath: string): Promise<boolean> {
     if (signature !== ZIP_MAGIC) {
       throw new Error(
         `The file signature '${signature}' of '${filePath}' ` +
-          `is not equal to the expected ZIP archive signature '${ZIP_MAGIC}'`
+          `is not equal to the expected ZIP archive signature '${ZIP_MAGIC}'`,
       );
     }
     return true;
@@ -455,7 +450,7 @@ export async function assertValidZip(filePath: string): Promise<boolean> {
 export async function toArchive(
   dstPath: string,
   src: ZipSourceOptions = {},
-  opts: ZipCompressionOptions = {}
+  opts: ZipCompressionOptions = {},
 ): Promise<void> {
   const {level = 9} = opts;
   const {pattern = '**/*', cwd = path.dirname(dstPath), ignore = []} = src;
@@ -502,11 +497,10 @@ function toEntryFileName(entry: yauzl.Entry, encoding?: BufferEncoding): string 
  */
 async function processYauzlEntriesSequentially(
   zipfile: yauzl.ZipFile,
-  onEntry: (entry: yauzl.Entry) => Promise<boolean | void>
+  onEntry: (entry: yauzl.Entry) => Promise<boolean | void>,
 ): Promise<void> {
   let queue: Promise<void> = Promise.resolve();
   let stopped = false;
-
 
   await new Promise<void>((resolve, reject) => {
     let settled = false;
@@ -559,7 +553,6 @@ async function processYauzlEntriesSequentially(
 
     zipfile.readEntry();
   });
-
 }
 
 /**
@@ -611,7 +604,7 @@ const getExecutablePath = memoize(
     const fullPath = await fs.which(binaryName);
     log.debug(`Found '${binaryName}' at '${fullPath}'`);
     return fullPath;
-  }
+  },
 );
 
 export default {

@@ -31,7 +31,7 @@ const MAX_CACHED_PAYLOAD_SIZE_BYTES = 1 * 1024 * 1024; // 1 MiB
 export async function handleIdempotency(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> {
   const keyOrArr = req.headers[IDEMPOTENCY_KEY_HEADER];
   if (util.isEmpty(keyOrArr) || !keyOrArr) {
@@ -114,7 +114,7 @@ function cacheResponse(key: string, req: Request, res: Response): void {
   const patchedWriter = (
     chunk: unknown,
     encoding: BufferEncoding | (() => void),
-    next?: (() => void) | ((err?: Error) => void)
+    next?: (() => void) | ((err?: Error) => void),
   ): boolean => {
     if (errorMessage || !responseRef.deref()) {
       responseChunks = [];
@@ -122,7 +122,7 @@ function cacheResponse(key: string, req: Request, res: Response): void {
       return originalSocketWriter(
         chunk as string | Buffer | Uint8Array,
         encoding as BufferEncoding,
-        next as (err?: Error | null) => void
+        next as (err?: Error | null) => void,
       );
     }
 
@@ -139,7 +139,7 @@ function cacheResponse(key: string, req: Request, res: Response): void {
     return originalSocketWriter(
       chunk as string | Buffer | Uint8Array,
       encoding as BufferEncoding,
-      next as (err?: Error | null) => void
+      next as (err?: Error | null) => void,
     );
   };
   socket.write = patchedWriter as typeof socket.write;
@@ -153,7 +153,7 @@ function cacheResponse(key: string, req: Request, res: Response): void {
     if (!IDEMPOTENT_RESPONSES.has(key)) {
       log.info(
         `Could not cache the response identified by '${key}'. ` +
-          `Cache consistency has been damaged`
+          `Cache consistency has been damaged`,
       );
     } else {
       log.info(`Could not cache the response identified by '${key}': ${errorMessage}`);
@@ -175,7 +175,7 @@ function cacheResponse(key: string, req: Request, res: Response): void {
     if (!IDEMPOTENT_RESPONSES.has(key)) {
       log.info(
         `Could not cache the response identified by '${key}'. ` +
-          `Cache consistency has been damaged`
+          `Cache consistency has been damaged`,
       );
     } else if (errorMessage) {
       log.info(`Could not cache the response identified by '${key}': ${errorMessage}`);

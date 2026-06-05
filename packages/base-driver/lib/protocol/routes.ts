@@ -14,7 +14,6 @@ const COMMAND_NAMES_CACHE = new LRUCache<string, string>({
  * `optional`.
  */
 export const METHOD_MAP = {
-
   // #region W3C WebDriver
   // https://www.w3.org/TR/webdriver2/
   '/session': {
@@ -244,8 +243,8 @@ export const METHOD_MAP = {
           'shrinkToFit',
           'pageRanges',
         ],
-      }
-    }
+      },
+    },
   },
   // #endregion
 
@@ -274,7 +273,7 @@ export const METHOD_MAP = {
     GET: {command: 'getOrientation'},
     POST: {
       command: 'setOrientation',
-      payloadParams: {required: ['orientation']}
+      payloadParams: {required: ['orientation']},
     },
   },
   '/session/:sessionId/location': {
@@ -318,7 +317,7 @@ export const METHOD_MAP = {
     GET: {command: 'getAppiumSessions'},
   },
   '/session/:sessionId/appium/capabilities': {
-    GET: {command: 'getAppiumSessionCapabilities'}
+    GET: {command: 'getAppiumSessionCapabilities'},
   },
   '/session/:sessionId/appium/settings': {
     POST: {command: 'updateSettings', payloadParams: {required: ['settings']}},
@@ -592,7 +591,7 @@ export const ALL_COMMANDS = Object.values(METHOD_MAP)
 export function routeToCommandName(
   endpoint: string,
   method?: HTTPMethod,
-  basePath?: string
+  basePath?: string,
 ): string | undefined {
   const resolvedBasePath = basePath ?? DEFAULT_BASE_PATH;
   let normalizedEndpoint = resolvedBasePath
@@ -624,9 +623,10 @@ export function routeToCommandName(
     const routeMatcher = match(routePath);
     if (possiblePathnames.some((pp) => routeMatcher(pp))) {
       const spec = routeSpec as Record<string, DriverMethodDef<Driver>>;
-      const commandForAnyMethod = () =>
-        Object.keys(spec).map((key) => spec[key]?.command)[0];
-      const commandName = normalizedMethod ? spec[normalizedMethod]?.command : commandForAnyMethod();
+      const commandForAnyMethod = () => Object.keys(spec).map((key) => spec[key]?.command)[0];
+      const commandName = normalizedMethod
+        ? spec[normalizedMethod]?.command
+        : commandForAnyMethod();
       if (commandName) {
         COMMAND_NAMES_CACHE.set(cacheKey, commandName);
         return commandName;

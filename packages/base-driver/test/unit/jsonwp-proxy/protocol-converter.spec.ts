@@ -27,7 +27,9 @@ describe('Protocol Converter', function () {
     });
     it('should take W3C inputs and produce MJSONWP compatible objects', function () {
       converter.downstreamProtocol = MJSONWP;
-      const timeoutObjects = (converter as unknown as ProtocolConverterTest).getTimeoutRequestObjects({
+      const timeoutObjects = (
+        converter as unknown as ProtocolConverterTest
+      ).getTimeoutRequestObjects({
         script: 100,
       });
       expect(timeoutObjects.length).to.equal(1);
@@ -35,7 +37,9 @@ describe('Protocol Converter', function () {
     });
     it('should ignore invalid entries while converting from W3C', function () {
       converter.downstreamProtocol = MJSONWP;
-      const timeoutObjects = (converter as unknown as ProtocolConverterTest).getTimeoutRequestObjects({
+      const timeoutObjects = (
+        converter as unknown as ProtocolConverterTest
+      ).getTimeoutRequestObjects({
         script: 100,
         sessionId: '5432a4f3-cd89-4781-8905-ea9d3150840c',
         bar: -1,
@@ -49,10 +53,10 @@ describe('Protocol Converter', function () {
       const [scriptTimeout, pageLoadTimeout, implicitTimeout] = (
         converter as unknown as ProtocolConverterTest
       ).getTimeoutRequestObjects({
-          script: 100,
-          pageLoad: 200,
-          implicit: 300,
-        });
+        script: 100,
+        pageLoad: 200,
+        implicit: 300,
+      });
       expect(scriptTimeout).to.eql({
         type: 'script',
         ms: 100,
@@ -68,7 +72,9 @@ describe('Protocol Converter', function () {
     });
     it('should take MJSONWP input and produce W3C compatible object', function () {
       converter.downstreamProtocol = W3C;
-      const timeoutObjects = (converter as unknown as ProtocolConverterTest).getTimeoutRequestObjects({
+      const timeoutObjects = (
+        converter as unknown as ProtocolConverterTest
+      ).getTimeoutRequestObjects({
         type: 'implicit',
         ms: 300,
       });
@@ -77,7 +83,9 @@ describe('Protocol Converter', function () {
     });
     it('should not change the input if protocol name is unknown', function () {
       converter.downstreamProtocol = null as any;
-      const timeoutObjects = (converter as unknown as ProtocolConverterTest).getTimeoutRequestObjects({
+      const timeoutObjects = (
+        converter as unknown as ProtocolConverterTest
+      ).getTimeoutRequestObjects({
         type: 'implicit',
         ms: 300,
       });
@@ -86,7 +94,9 @@ describe('Protocol Converter', function () {
     });
     it('should not change the input if protocol name is unchanged', function () {
       converter.downstreamProtocol = MJSONWP;
-      const timeoutObjects = (converter as unknown as ProtocolConverterTest).getTimeoutRequestObjects({
+      const timeoutObjects = (
+        converter as unknown as ProtocolConverterTest
+      ).getTimeoutRequestObjects({
         type: 'implicit',
         ms: 300,
       });
@@ -150,21 +160,21 @@ describe('Protocol Converter', function () {
     });
     it('should convert "property/value" to "attribute/value"', function () {
       expect(jsonwpConverter('/session/123/element/456/property/value')).to.equal(
-        '/session/123/element/456/attribute/value'
+        '/session/123/element/456/attribute/value',
       );
     });
     it('should convert "property/:somePropName" to "attribute/:somePropName"', function () {
-      expect(
-        jsonwpConverter('/session/123/element/456/property/somePropName')
-      ).to.equal('/session/123/element/456/attribute/somePropName');
+      expect(jsonwpConverter('/session/123/element/456/property/somePropName')).to.equal(
+        '/session/123/element/456/attribute/somePropName',
+      );
     });
     it('should not convert from JSONWP to W3C', function () {
-      expect(
-        w3cConverter('/session/123/element/456/attribute/someAttr')
-      ).to.equal('/session/123/element/456/attribute/someAttr');
-      expect(
-        w3cConverter('/session/123/element/456/property/someProp')
-      ).to.equal('/session/123/element/456/property/someProp');
+      expect(w3cConverter('/session/123/element/456/attribute/someAttr')).to.equal(
+        '/session/123/element/456/attribute/someAttr',
+      );
+      expect(w3cConverter('/session/123/element/456/property/someProp')).to.equal(
+        '/session/123/element/456/property/someProp',
+      );
     });
   });
 });

@@ -32,15 +32,8 @@ export async function welcome(req: Request, res: Response): Promise<void> {
   res.send(template(params));
 }
 
-async function guineaPigTemplate(
-  req: Request,
-  res: Response,
-  page: string
-): Promise<void> {
-  const delay = parseInt(
-    String(req.params.delay ?? (req.query?.delay ?? 0)),
-    10
-  );
+async function guineaPigTemplate(req: Request, res: Response, page: string): Promise<void> {
+  const delay = parseInt(String(req.params.delay ?? req.query?.delay ?? 0), 10);
   const throwError = String(req.params.throwError ?? req.query?.throwError ?? '');
   const params: TemplateParams = {
     throwError,
@@ -67,9 +60,7 @@ async function guineaPigTemplate(
   res.send(template(params));
 }
 
-async function getTemplate(
-  templateName: string
-): Promise<(params: TemplateParams) => string> {
+async function getTemplate(templateName: string): Promise<(params: TemplateParams) => string> {
   const content = await fs.readFile(path.resolve(STATIC_DIR, 'test', templateName));
   return compileLodashTemplate(content.toString());
 }

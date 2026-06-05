@@ -5,13 +5,13 @@
  * and generated from a `.js` file in the `appium` package.
  */
 
-import { compileFromFile } from 'json-schema-to-typescript';
+import {compileFromFile} from 'json-schema-to-typescript';
 import path from 'node:path';
-import { promises as fs } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import {promises as fs} from 'node:fs';
+import {fileURLToPath} from 'node:url';
 import logSymbols from 'log-symbols';
 
-const { error, info, success } = logSymbols;
+const {error, info, success} = logSymbols;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -48,16 +48,15 @@ async function main() {
     } catch (err) {
       throw new Error(
         `${error} Could not convert Appium schema JSON to TypeScript: ${err.message}. Does it exist?`,
-        {cause: err}
+        {cause: err},
       );
     }
     try {
       await fs.writeFile(OUTPUT_PATH, ts);
     } catch (err) {
-      throw new Error(
-        `${error} Could not write Appium schema declaration file: ${err.message}`,
-        {cause: err}
-      );
+      throw new Error(`${error} Could not write Appium schema declaration file: ${err.message}`, {
+        cause: err,
+      });
     }
     console.log(`${info} Wrote %s`, OUTPUT_PATH);
     console.log(`${success} Done.`);

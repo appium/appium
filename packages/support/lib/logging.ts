@@ -1,7 +1,4 @@
-import globalLog, {
-  markSensitive as _markSensitive,
-  type Logger,
-} from '@appium/logger';
+import globalLog, {markSensitive as _markSensitive, type Logger} from '@appium/logger';
 import type {
   AppiumLogger,
   AppiumLoggerContext,
@@ -31,8 +28,7 @@ const noop = () => {};
 // mock log object is used in testing mode to silence the output
 const MOCK_LOG = {
   unwrap: () => ({
-    loadSecureValuesPreprocessingRules: () =>
-      Promise.resolve({issues: [], rules: []}),
+    loadSecureValuesPreprocessingRules: () => Promise.resolve({issues: [], rules: []}),
     level: 'verbose',
     prefix: '',
     log: noop,
@@ -82,24 +78,12 @@ export function getLogger(prefix: AppiumLoggerPrefix | null = null): AppiumLogge
   const isDebugTimestampLoggingEnabled = process.env._LOG_TIMESTAMP === '1';
 
   for (const level of LEVELS) {
-    wrappedLogger[level] = function (
-      this: typeof wrappedLogger,
-      ...args: any[]
-    ) {
-      const finalPrefix = getFinalPrefix(
-        this.prefix,
-        isDebugTimestampLoggingEnabled
-      );
+    wrappedLogger[level] = function (this: typeof wrappedLogger, ...args: any[]) {
+      const finalPrefix = getFinalPrefix(this.prefix, isDebugTimestampLoggingEnabled);
       if (args.length) {
-        (logger as Record<string, (...a: any[]) => void>)[level](
-          finalPrefix,
-          ...args
-        );
+        (logger as Record<string, (...a: any[]) => void>)[level](finalPrefix, ...args);
       } else {
-        (logger as Record<string, (...a: any[]) => void>)[level](
-          finalPrefix,
-          ''
-        );
+        (logger as Record<string, (...a: any[]) => void>)[level](finalPrefix, '');
       }
     };
   }
@@ -130,9 +114,8 @@ function _getLogger(): {logger: Logger; defaultToVerbose: boolean} {
   const testingMode = process.env._TESTING === '1';
   const forceLogMode = process.env._FORCE_LOGS === '1';
   const defaultToVerbose = !globalWithNpmlog._global_npmlog;
-  const logger: Logger = testingMode && !forceLogMode
-    ? MOCK_LOG
-    : (globalWithNpmlog._global_npmlog ?? globalLog);
+  const logger: Logger =
+    testingMode && !forceLogMode ? MOCK_LOG : (globalWithNpmlog._global_npmlog ?? globalLog);
   if (!testingMode && !globalWithNpmlog._global_npmlog && logger === globalLog) {
     globalWithNpmlog._global_npmlog = globalLog;
     logger.maxRecordSize = MAX_LOG_RECORDS_COUNT;
@@ -142,7 +125,7 @@ function _getLogger(): {logger: Logger; defaultToVerbose: boolean} {
 
 function getFinalPrefix(
   prefix: AppiumLoggerPrefix | null | undefined,
-  shouldLogTimestamp = false
+  shouldLogTimestamp = false,
 ): string {
   const result = (typeof prefix === 'function' ? prefix() : prefix) ?? '';
   if (!shouldLogTimestamp) {

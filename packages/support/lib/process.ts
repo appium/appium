@@ -28,10 +28,9 @@ export async function getProcessIds(appName: string): Promise<number[]> {
   } catch (err) {
     const code = (err as ExecError).code;
     if (code !== 1) {
-      throw new Error(
-        `Error getting process ids for app '${appName}': ${(err as Error).message}`,
-        {cause: err}
-      );
+      throw new Error(`Error getting process ids for app '${appName}': ${(err as Error).message}`, {
+        cause: err,
+      });
     }
     pids = [];
   }
@@ -59,10 +58,9 @@ export async function killProcess(appName: string, force = false): Promise<void>
   } catch (err) {
     const code = (err as ExecError).code;
     if (code !== 1) {
-      throw new Error(
-        `Error killing app '${appName}' with pkill: ${(err as Error).message}`,
-        {cause: err}
-      );
+      throw new Error(`Error killing app '${appName}' with pkill: ${(err as Error).message}`, {
+        cause: err,
+      });
     }
   }
 }

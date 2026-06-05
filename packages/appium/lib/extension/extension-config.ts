@@ -100,7 +100,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
    * @param extManifest - Parsed extension metadata
    */
   static extDataHasSchema<E extends ExtensionType>(
-    extManifest: ExtManifest<E>
+    extManifest: ExtManifest<E>,
   ): extManifest is ExtManifestWithSchema<E> {
     return (
       typeof extManifest?.schema === 'string' ||
@@ -112,12 +112,12 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     appiumHome: string,
     extType: E,
     extName: string,
-    extManifest: ExtManifestWithSchema<E>
+    extManifest: ExtManifestWithSchema<E>,
   ): Promise<SchemaObject | undefined> {
     const {pkgName, schema: argSchemaPath} = extManifest;
     if (!argSchemaPath) {
       throw new TypeError(
-        `No \`schema\` property found in config for ${extType} ${pkgName} -- why is this function being called?`
+        `No \`schema\` property found in config for ${extType} ${pkgName} -- why is this function being called?`,
       );
     }
     let moduleObject: any;
@@ -139,7 +139,10 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
    * @param extName - Extension key as stored in the manifest
    * @param extManifest - Manifest entry for that extension
    */
-  async getProblems(extName: string, extManifest: ExtManifest<ExtType>): Promise<ExtManifestProblem[]> {
+  async getProblems(
+    extName: string,
+    extManifest: ExtManifest<ExtType>,
+  ): Promise<ExtManifestProblem[]> {
     return [
       ...this.getGenericConfigProblems(extManifest, extName),
       ...this.getConfigProblems(extManifest, extName),
@@ -171,7 +174,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
    */
   getValidationResultSummaries(
     errorMap: Map<string, ExtManifestProblem[]> = new Map(),
-    warningMap: Map<string, string[]> = new Map()
+    warningMap: Map<string, string[]> = new Map(),
   ): {errorSummaries: string[]; warningSummaries: string[]} {
     const errorSummaries: string[] = [];
     for (const [extName, problems] of errorMap.entries()) {
@@ -182,12 +185,12 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
       errorSummaries.push(
         `${this.extensionType} "${extName}" had ${util.pluralize(
           'error',
-          problems.length
-        )} and will not be available:`
+          problems.length,
+        )} and will not be available:`,
       );
       for (const problem of problems) {
         errorSummaries.push(
-          `  - ${problem.err} (Actual value: ` + `${JSON.stringify(problem.val)})`
+          `  - ${problem.err} (Actual value: ` + `${JSON.stringify(problem.val)})`,
         );
       }
     }
@@ -218,7 +221,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
   async addExtension(
     extName: string,
     extManifest: ExtManifest<ExtType>,
-    {write = true}: ExtensionConfigMutationOpts = {}
+    {write = true}: ExtensionConfigMutationOpts = {},
   ): Promise<void> {
     this.manifest.setExtension(this.extensionType, extName, extManifest);
     if (write) {
@@ -237,7 +240,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
   async updateExtension(
     extName: ExtName<ExtType>,
     extManifest: ExtManifest<ExtType>,
-    {write = true}: ExtensionConfigMutationOpts = {}
+    {write = true}: ExtensionConfigMutationOpts = {},
   ): Promise<void> {
     const existing = this.installedExtensions[extName];
     this.manifest.setExtension(this.extensionType, extName as string, {
@@ -258,7 +261,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
    */
   async removeExtension(
     extName: ExtName<ExtType>,
-    {write = true}: ExtensionConfigMutationOpts = {}
+    {write = true}: ExtensionConfigMutationOpts = {},
   ): Promise<void> {
     this.manifest.deleteExtension(this.extensionType, extName);
     if (write) {
@@ -274,7 +277,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     if (util.isEmpty(this.installedExtensions)) {
       log.info(
         `No ${this.extensionType}s have been installed in ${this.appiumHome}. Use the "appium ${this.extensionType}" ` +
-          'command to install the one(s) you want to use.'
+          'command to install the one(s) you want to use.',
       );
       return;
     }
@@ -313,7 +316,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     const MainClass = mod[mainClass];
     if (!MainClass) {
       throw new ReferenceError(
-        `Could not find a class named "${mainClass}" exported by ${this.extensionType} "${extName}"`
+        `Could not find a class named "${mainClass}" exported by ${this.extensionType} "${extName}"`,
       );
     }
     return MainClass;
@@ -332,20 +335,20 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
    */
   async readExtensionSchema(
     extName: string,
-    extManifest: ExtManifestWithSchema<ExtType>
+    extManifest: ExtManifestWithSchema<ExtType>,
   ): Promise<SchemaObject | undefined> {
     return await ExtensionConfig._readExtensionSchema(
       this.appiumHome,
       this.extensionType,
       extName,
-      extManifest
+      extManifest,
     );
   }
 
   /** Optional async warnings for this extension kind; override in subclasses when needed. */
   protected async getConfigWarnings(
     _extManifest: ExtManifest<ExtType>,
-    _extName: string
+    _extName: string,
   ): Promise<string[]> {
     void _extManifest;
     void _extName;
@@ -374,14 +377,14 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
 
     const {errorSummaries, warningSummaries} = this.getValidationResultSummaries(
       errorMap,
-      warningMap
+      warningMap,
     );
 
     if (!util.isEmpty(errorSummaries)) {
       log.error(
         `Appium encountered ${util.pluralize('error', errorMap.size, true)} while validating ${
           this.extensionType
-        }s found in manifest ${this.manifestPath}`
+        }s found in manifest ${this.manifestPath}`,
       );
       for (const summary of errorSummaries) {
         log.error(summary);
@@ -392,8 +395,8 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
         `Appium encountered ${util.pluralize(
           'warning',
           warningMap.size,
-          true
-        )} while validating ${this.extensionType}s found in manifest ${this.manifestPath}`
+          true,
+        )} while validating ${this.extensionType}s found in manifest ${this.manifestPath}`,
       );
       for (const summary of warningSummaries) {
         log.warn(summary);
@@ -421,7 +424,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
    */
   protected async getGenericConfigWarnings(
     extManifest: ExtManifest<ExtType>,
-    extName: string
+    extName: string,
   ): Promise<string[]> {
     const {appiumVersion, installSpec, installType, pkgName} = extManifest;
     const warnings: string[] = [];
@@ -441,14 +444,14 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
       const invalidFieldsEnumerationText = util.pluralize(
         'invalid or missing field',
         invalidFields.length,
-        true
+        true,
       );
       const invalidFieldsText = invalidFields.map((field) => `"${field}"`).join(', ');
 
       warnings.push(
         `${extTypeText} "${extName}" (package \`${pkgName}\`) has ${invalidFieldsEnumerationText} (${invalidFieldsText}) in \`extensions.yaml\`; ` +
-        `this may cause upgrades done via the \`appium\` CLI tool to fail. Please reinstall with \`appium ${this.extensionType} uninstall ` +
-        `${extName}\` and \`appium ${this.extensionType} install ${extName}\` to attempt a fix.`
+          `this may cause upgrades done via the \`appium\` CLI tool to fail. Please reinstall with \`appium ${this.extensionType} uninstall ` +
+          `${extName}\` and \`appium ${this.extensionType} install ${extName}\` to attempt a fix.`,
       );
     }
 
@@ -463,14 +466,14 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
         if (!upToDate && updateVersion) {
           warnings.push(
             createPeerWarning(
-              `its peer dependency on Appium ${appiumVersion}. Try to upgrade \`${pkgName}\` to v${updateVersion} or newer.`
-            )
+              `its peer dependency on Appium ${appiumVersion}. Try to upgrade \`${pkgName}\` to v${updateVersion} or newer.`,
+            ),
           );
         } else {
           warnings.push(
             createPeerWarning(
-              `its peer dependency on Appium ${appiumVersion}. Please install a compatible version of the ${extTypeText.toLowerCase()}.`
-            )
+              `its peer dependency on Appium ${appiumVersion}. Please install a compatible version of the ${extTypeText.toLowerCase()}.`,
+            ),
           );
         }
       }
@@ -481,15 +484,15 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
         warnings.push(
           createPeerWarning(
             `an invalid or missing peer dependency on Appium. A newer version of \`${pkgName}\` is available; ` +
-            `please attempt to upgrade "${extName}" to v${extListData.updateVersion} or newer.`
-          )
+              `please attempt to upgrade "${extName}" to v${extListData.updateVersion} or newer.`,
+          ),
         );
       } else {
         warnings.push(
           createPeerWarning(
             `an invalid or missing peer dependency on Appium. ` +
-            `Please ask the developer of \`${pkgName}\` to add a peer dependency on \`^appium@${APPIUM_VER}\`.`
-          )
+              `Please ask the developer of \`${pkgName}\` to add a peer dependency on \`^appium@${APPIUM_VER}\`.`,
+          ),
         );
       }
     }
@@ -499,7 +502,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
   /** Validates and registers extension CLI/config schema when the manifest defines a `schema` field. */
   protected async getSchemaProblems(
     extManifest: ExtManifest<ExtType>,
-    extName: string
+    extName: string,
   ): Promise<ExtManifestProblem[]> {
     const problems: ExtManifestProblem[] = [];
     const {schema: argSchemaPath} = extManifest;
@@ -544,7 +547,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
   /** Blocking issues for required manifest fields shared by all extensions (version, package name, main class). */
   protected getGenericConfigProblems(
     extManifest: ExtManifest<ExtType>,
-    extName: string
+    extName: string,
   ): ExtManifestProblem[] {
     void extName;
     const {version, pkgName, mainClass} = extManifest;
@@ -577,7 +580,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
   /** Driver- or plugin-specific blocking validation; override in subclasses when needed. */
   protected getConfigProblems(
     _extManifest: ExtManifest<ExtType>,
-    _extName: string
+    _extName: string,
   ): ExtManifestProblem[] {
     void _extManifest;
     void _extName;
@@ -594,7 +597,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     } catch (e: any) {
       throw new ReferenceError(
         `Could not read the ${this.extensionType} manifest at ${packageJsonPath}: ${e.message}`,
-        {cause: e}
+        {cause: e},
       );
     }
     let entryPointRelativePath: string | undefined;
@@ -602,18 +605,19 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
       if (extensionManifest.type === 'module' && extensionManifest.exports) {
         entryPointRelativePath = resolveEsmEntryPoint(extensionManifest.exports);
       }
-      entryPointRelativePath = entryPointRelativePath ?? extensionManifest.main ?? DEFAULT_ENTRY_POINT;
+      entryPointRelativePath =
+        entryPointRelativePath ?? extensionManifest.main ?? DEFAULT_ENTRY_POINT;
     } catch (e: any) {
       throw new ReferenceError(
         `Could not find the ${this.extensionType} installed at ${moduleRoot}: ${e.message}`,
-        {cause: e}
+        {cause: e},
       );
     }
     const entryPointFullPath = path.resolve(moduleRoot, entryPointRelativePath as string);
-    if (!await fs.exists(entryPointFullPath)) {
+    if (!(await fs.exists(entryPointFullPath))) {
       throw new ReferenceError(
         `Cannot find a valid ${this.extensionType} main entry point in '${packageJsonPath}'. ` +
-        `Assumed entry point: '${entryPointFullPath}'`
+          `Assumed entry point: '${entryPointFullPath}'`,
       );
     }
     // note: this will only reload the entry point
@@ -630,8 +634,10 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
    * @param extName - Manifest key
    * @param extManifest - Entry used for version and kind-specific labels
    */
-  public abstract extensionDesc(extName: ExtName<ExtType>, extManifest: ExtManifest<ExtType>): string;
-
+  public abstract extensionDesc(
+    extName: ExtName<ExtType>,
+    extManifest: ExtManifest<ExtType>,
+  ): string;
 }
 
 /**

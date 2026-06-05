@@ -14,10 +14,7 @@ import type {
 import AsyncLock from 'async-lock';
 import {util} from '@appium/support';
 import os from 'node:os';
-import {
-  DEFAULT_BASE_PATH,
-  PROTOCOLS,
-} from '../constants';
+import {DEFAULT_BASE_PATH, PROTOCOLS} from '../constants';
 import {errors} from '../protocol';
 import {DeviceSettings} from './device-settings';
 import * as helpers from './helpers';
@@ -31,7 +28,8 @@ const ALL_DRIVERS_MATCH = '*';
 const FEATURE_NAME_SEPARATOR = ':';
 
 export class DriverCore<const C extends Constraints, Settings extends StringRecord = StringRecord>
-  extends ExtensionCore implements Core<C, Settings>
+  extends ExtensionCore
+  implements Core<C, Settings>
 {
   /**
    * Make the basedriver version available so for any driver which inherits from this package, we
@@ -103,7 +101,6 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
   constructor(opts: InitialOpts = <InitialOpts>{}, shouldValidateCaps = true) {
     super();
     this._log = this.log; // TODO: remove references to this._log and use this.log instead
-
 
     // setup state
     this.opts = opts as DriverOpts<C>;
@@ -273,20 +270,22 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
         // but better be safe than sorry
         throw new Error(
           `The full feature name must include both the automation name ` +
-          `'${this.opts.automationName}' or the '${ALL_DRIVERS_MATCH}' ` +
-          `wildcard to apply the feature to all installed drivers, and ` +
-          `the feature name split by a colon. Got '${fullName}' instead`
+            `'${this.opts.automationName}' or the '${ALL_DRIVERS_MATCH}' ` +
+            `wildcard to apply the feature to all installed drivers, and ` +
+            `the feature name split by a colon. Got '${fullName}' instead`,
         );
       }
       return [
         fullName.substring(0, separatorPos).toLowerCase(),
-        fullName.substring(separatorPos + 1)
+        fullName.substring(separatorPos + 1),
       ];
     };
     const parseFullNames = (fullNames: string[]) => fullNames.map(parseFullName);
     const matches = (pair: string[]) => {
       const [automationName, featureName] = pair;
-      return [currentAutomationName, ALL_DRIVERS_MATCH].includes(automationName) && featureName === name;
+      return (
+        [currentAutomationName, ALL_DRIVERS_MATCH].includes(automationName) && featureName === name
+      );
     };
 
     // if we have explicitly denied this feature, return false immediately
@@ -408,5 +407,4 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
       this.noCommandTimer = null;
     }
   }
-
 }

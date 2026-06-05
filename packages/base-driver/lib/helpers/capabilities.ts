@@ -34,16 +34,17 @@ export function isW3cCaps(caps: unknown): caps is W3CCapabilities<Constraints> {
 export function fixCaps<C extends Constraints>(
   oldCaps: Record<string, unknown>,
   desiredCapConstraints: C,
-  log: AppiumLogger
+  log: AppiumLogger,
 ): Capabilities<C> {
   const caps = {...oldCaps} as Record<string, unknown>;
 
-  const logCastWarning = (prefix: string) => log.warn(`${prefix}. This may cause unexpected behavior`);
+  const logCastWarning = (prefix: string) =>
+    log.warn(`${prefix}. This may cause unexpected behavior`);
 
   // boolean capabilities can be passed in as strings 'false' and 'true'
   // which we want to translate into boolean values
   const booleanCaps = Object.keys(desiredCapConstraints).filter(
-    (key) => desiredCapConstraints[key as keyof C]?.isBoolean === true
+    (key) => desiredCapConstraints[key as keyof C]?.isBoolean === true,
   );
   for (const cap of booleanCaps) {
     const value = oldCaps[cap];
@@ -62,7 +63,7 @@ export function fixCaps<C extends Constraints>(
 
   // int capabilities are often sent in as strings by frameworks
   const intCaps = Object.keys(desiredCapConstraints).filter(
-    (key) => desiredCapConstraints[key as keyof C]?.isNumber === true
+    (key) => desiredCapConstraints[key as keyof C]?.isNumber === true,
   );
   for (const cap of intCaps) {
     const value = oldCaps[cap];

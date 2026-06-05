@@ -19,7 +19,7 @@ const TEST_FAKE_APP = path.join(
   'fake-driver',
   'test',
   'fixtures',
-  'app.xml'
+  'app.xml',
 );
 const TEST_CAPS = {
   platformName: 'Fake',
@@ -45,20 +45,19 @@ describe('StoragePlugin', function () {
     driver.addCommand(
       'addStorageItem',
       async (name: string, sha1: string) =>
-        (await axios.post(`${baseUrl}/add`, {name, sha1})).data.value
+        (await axios.post(`${baseUrl}/add`, {name, sha1})).data.value,
     );
     driver.addCommand(
       'listStorageItems',
-      async () => (await axios.get(`${baseUrl}/list`)).data.value
+      async () => (await axios.get(`${baseUrl}/list`)).data.value,
     );
     driver.addCommand(
       'resetStorageItems',
-      async () => (await axios.post(`${baseUrl}/reset`)).data.value
+      async () => (await axios.post(`${baseUrl}/reset`)).data.value,
     );
     driver.addCommand(
       'deleteStorageItem',
-      async (name: string) =>
-        (await axios.post(`${baseUrl}/delete`, {name})).data.value
+      async (name: string) => (await axios.post(`${baseUrl}/delete`, {name})).data.value,
     );
   });
 
@@ -93,14 +92,11 @@ describe('StoragePlugin', function () {
     const name1 = path.basename('foo1.bar');
     const name2 = path.basename('foo2.bar');
     const pkgPath = path.join(__dirname, '..', '..', 'package.json');
-    await Promise.all([
-      addFileToStorage(TEST_FAKE_APP, name1),
-      addFileToStorage(pkgPath, name2),
-    ]);
+    await Promise.all([addFileToStorage(TEST_FAKE_APP, name1), addFileToStorage(pkgPath, name2)]);
     items = await driver.listStorageItems();
     expect(items.length).to.eql(2);
     expect(new Set(items.map(({name}: {name: string}) => name))).to.deep.equal(
-      new Set([name1, name2])
+      new Set([name1, name2]),
     );
     const isDeleted = await driver.deleteStorageItem(name1);
     expect(isDeleted).to.be.true;
@@ -112,10 +108,7 @@ describe('StoragePlugin', function () {
     expect(items.length).to.eql(0);
   });
 
-  async function addFileToStorage(
-    sourcePath: string,
-    name: string
-  ): Promise<void> {
+  async function addFileToStorage(sourcePath: string, name: string): Promise<void> {
     const hash = await fs.hash(sourcePath);
     const {size} = await fs.stat(sourcePath);
     const {

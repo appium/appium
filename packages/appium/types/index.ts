@@ -16,5 +16,5 @@ export interface AppiumEnv extends NodeJS.ProcessEnv {
 export type ExtClass<ExtType extends ExtensionType> = ExtType extends DriverType
   ? DriverClass
   : ExtType extends PluginType
-  ? PluginClass
-  : never;
+    ? PluginClass
+    : never;

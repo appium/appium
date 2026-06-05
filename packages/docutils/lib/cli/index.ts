@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-
 /**
  * Main CLI entry point for `@appium/docutils`
  * @module
@@ -67,7 +66,7 @@ export async function main(argv = hideBin(process.argv)) {
        */
       () => {
         log.info(`${pkg.name} @ v${pkg.version} (Node.js ${process.version})`);
-      }
+      },
     )
     .epilog(`Please report bugs at ${pkg.bugs?.url}`)
     .fail(
@@ -89,7 +88,7 @@ export async function main(argv = hideBin(process.argv)) {
           }
           const [, arg, missingArg] = match;
           log.error(
-            `Argument "--${arg}" requires "--${missingArg}"; note that "--${arg}" may be enabled by default`
+            `Argument "--${arg}" requires "--${missingArg}"; note that "--${arg}" may be enabled by default`,
           );
           return true;
         };
@@ -105,7 +104,7 @@ export async function main(argv = hideBin(process.argv)) {
           }
         }
         y.exit(1, error);
-      }
+      },
     )
     .config(config)
     // at least one command is required (but not for --version or --help)

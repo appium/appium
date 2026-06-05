@@ -45,7 +45,7 @@ describe('env', function () {
 
       it('should return a path relative to the default APPIUM_HOME', async function () {
         expect(await env.resolveManifestPath()).to.equal(
-          path.join(env.DEFAULT_APPIUM_HOME, env.MANIFEST_RELATIVE_PATH)
+          path.join(env.DEFAULT_APPIUM_HOME, env.MANIFEST_RELATIVE_PATH),
         );
       });
     });
@@ -54,7 +54,7 @@ describe('env', function () {
       describe('when a manifest file exists there', function () {
         it('it should return the existing path', async function () {
           expect(await env.resolveManifestPath('/somewhere/over/the/rainbow')).to.equal(
-            path.join('/somewhere/over/the/rainbow', env.MANIFEST_RELATIVE_PATH)
+            path.join('/somewhere/over/the/rainbow', env.MANIFEST_RELATIVE_PATH),
           );
         });
       });
@@ -85,7 +85,7 @@ describe('env', function () {
         });
         it('should resolve to an absolute path', async function () {
           await expect(env.resolveAppiumHome()).to.eventually.equal(
-            path.join(process.cwd(), process.env.APPIUM_HOME as string)
+            path.join(process.cwd(), process.env.APPIUM_HOME as string),
           );
         });
       });
@@ -101,7 +101,7 @@ describe('env', function () {
 
           it('should resolve with DEFAULT_APPIUM_HOME', async function () {
             await expect(env.resolveAppiumHome('/somewhere')).to.eventually.equal(
-              env.DEFAULT_APPIUM_HOME
+              env.DEFAULT_APPIUM_HOME,
             );
           });
         });
@@ -125,7 +125,7 @@ describe('env', function () {
             });
             it('should resolve with DEFAULT_APPIUM_HOME', async function () {
               await expect(env.resolveAppiumHome(appiumHome)).to.eventually.equal(
-                env.DEFAULT_APPIUM_HOME
+                env.DEFAULT_APPIUM_HOME,
               );
             });
           });
@@ -137,7 +137,7 @@ describe('env', function () {
 
             it('should resolve with DEFAULT_APPIUM_HOME', async function () {
               await expect(env.resolveAppiumHome(appiumHome)).to.eventually.equal(
-                env.DEFAULT_APPIUM_HOME
+                env.DEFAULT_APPIUM_HOME,
               );
             });
           });
@@ -152,7 +152,7 @@ describe('env', function () {
 
         it('should resolve with DEFAULT_APPIUM_HOME', async function () {
           await expect(env.resolveAppiumHome('/somewhere')).to.eventually.equal(
-            env.DEFAULT_APPIUM_HOME
+            env.DEFAULT_APPIUM_HOME,
           );
         });
       });
@@ -164,7 +164,7 @@ describe('env', function () {
 
         it('should resolve with DEFAULT_APPIUM_HOME', async function () {
           await expect(env.resolveAppiumHome('/somewhere')).to.eventually.equal(
-            env.DEFAULT_APPIUM_HOME
+            env.DEFAULT_APPIUM_HOME,
           );
         });
       });
@@ -178,7 +178,7 @@ describe('env', function () {
         MockReadPkg.readPackage.calledWithExactly({
           cwd: '/somewhere',
           normalize: true,
-        })
+        }),
       ).to.be.true;
     });
   });

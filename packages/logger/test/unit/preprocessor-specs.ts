@@ -22,7 +22,7 @@ describe('Log Internals', function () {
     expect(preprocessor.rules.length).to.eql(2);
     const replacer = preprocessor.rules[0].replacer;
     expect(preprocessor.preprocess(':yolo" yo Yolo yyolo')).to.eql(
-      `:${replacer}" ${replacer} Yolo yyolo`
+      `:${replacer}" ${replacer} Yolo yyolo`,
     );
   });
 
@@ -36,7 +36,7 @@ describe('Log Internals', function () {
     expect(preprocessor.rules.length).to.eql(2);
     const replacer = preprocessor.rules[0].replacer;
     expect(preprocessor.preprocess(':yolo" yo Yolo yyolo')).to.eql(
-      `${replacer2}${replacer}" yo ${replacer} yyolo`
+      `${replacer2}${replacer}" yo ${replacer} yyolo`,
     );
   });
 
@@ -46,7 +46,7 @@ describe('Log Internals', function () {
     expect(issues.length).to.eql(0);
     expect(preprocessor.rules.length).to.eql(1);
     expect(preprocessor.preprocess(':yolo" yo Yolo yyolo')).to.eql(
-      `${replacer}yolo" yo Yolo yyolo`
+      `${replacer}yolo" yo Yolo yyolo`,
     );
   });
 
@@ -60,7 +60,7 @@ describe('Log Internals', function () {
     expect(preprocessor.rules.length).to.eql(1);
     const replacer = preprocessor.rules[0].replacer;
     expect(preprocessor.preprocess(':yolo" yo Yolo yyolo')).to.eql(
-      `:${replacer}" yo ${replacer} yyolo`
+      `:${replacer}" yo ${replacer} yyolo`,
     );
   });
 

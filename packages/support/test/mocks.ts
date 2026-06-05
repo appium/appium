@@ -49,9 +49,9 @@ export interface InitMocksResult {
 }
 
 export function initMocks(sandbox = createSandbox()): InitMocksResult {
-  const MockResolveFrom = sandbox.stub().callsFake((cwd: string, id: string) =>
-    path.join(cwd, id)
-  ) as MockResolveFrom;
+  const MockResolveFrom = sandbox
+    .stub()
+    .callsFake((cwd: string, id: string) => path.join(cwd, id)) as MockResolveFrom;
 
   const MockPkgDir = sandbox.stub().resolvesArg(0) as MockPkgDir;
 

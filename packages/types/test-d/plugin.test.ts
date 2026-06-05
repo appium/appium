@@ -22,7 +22,10 @@ class TestPlugin implements Plugin {
 
   public logger: AppiumLogger = {} as AppiumLogger;
 
-  constructor(public readonly name: string, public readonly cliArgs: StringRecord<unknown> = {}) {}
+  constructor(
+    public readonly name: string,
+    public readonly cliArgs: StringRecord<unknown> = {},
+  ) {}
 
   public getPageSource: DriverCommandToPluginCommand<
     ExternalDriver['getPageSource'],
@@ -55,5 +58,5 @@ expectAssignable<PluginCommand>(instance.getPageSource);
 // like any other `DriverCommand`; it returns a `Promise`!
 expectAssignable<DriverCommand>(instance.getPageSource);
 expectAssignable<PluginCommand<ExternalDriver, [flag: boolean], string | Buffer>>(
-  TestPlugin.prototype.getPageSource
+  TestPlugin.prototype.getPageSource,
 );

@@ -103,7 +103,7 @@ export async function initOpenCv(): Promise<void> {
 export async function getImagesMatches(
   img1Data: Buffer,
   img2Data: Buffer,
-  options: MatchingOptions = {}
+  options: MatchingOptions = {},
 ): Promise<MatchingResult> {
   await initOpenCv();
 
@@ -122,13 +122,13 @@ export async function getImagesMatches(
     if (!(detectorName in AVAILABLE_DETECTORS)) {
       throw new Error(
         `'${detectorName}' detector is unknown. ` +
-          `Only ${JSON.stringify(Object.keys(AVAILABLE_DETECTORS))} detectors are supported.`
+          `Only ${JSON.stringify(Object.keys(AVAILABLE_DETECTORS))} detectors are supported.`,
       );
     }
     if (!(matchFunc in AVAILABLE_MATCHING_FUNCTIONS)) {
       throw new Error(
         `'${matchFunc}' matching function is unknown. ` +
-          `Only ${JSON.stringify(Object.keys(AVAILABLE_MATCHING_FUNCTIONS))} matching functions are supported.`
+          `Only ${JSON.stringify(Object.keys(AVAILABLE_MATCHING_FUNCTIONS))} matching functions are supported.`,
       );
     }
 
@@ -151,7 +151,7 @@ export async function getImagesMatches(
     if (totalCount < 1) {
       throw new Error(
         `Could not find any matches between images. Double-check orientation, ` +
-          `resolution, or use another detector or matching function.`
+          `resolution, or use another detector or matching function.`,
       );
     }
     let matches: any[] = [];
@@ -170,7 +170,7 @@ export async function getImagesMatches(
         const maxDistance = distances.length ? Math.max(...distances) : undefined;
         if (minDistance !== undefined && maxDistance !== undefined) {
           matches = matches.filter((match: any) =>
-            goodMatchesFactor(match.distance, minDistance, maxDistance)
+            goodMatchesFactor(match.distance, minDistance, maxDistance),
           );
         }
       } else if (typeof goodMatchesFactor === 'number' && matches.length > goodMatchesFactor) {
@@ -212,7 +212,7 @@ export async function getImagesMatches(
         result2.keyPoints,
         goodMatchesVec,
         visualization,
-        color
+        color,
       );
       highlightRegion(visualization, rect1);
       highlightRegion(visualization, {
@@ -257,7 +257,7 @@ export async function getImagesMatches(
 export async function getImagesSimilarity(
   img1Data: Buffer,
   img2Data: Buffer,
-  options: SimilarityOptions = {}
+  options: SimilarityOptions = {},
 ): Promise<SimilarityResult> {
   await initOpenCv();
 
@@ -277,7 +277,7 @@ export async function getImagesSimilarity(
     if (template.rows !== reference.rows || template.cols !== reference.cols) {
       throw new Error(
         'Both images are expected to have the same size in order to ' +
-          'calculate the similarity score.'
+          'calculate the similarity score.',
       );
     }
     template.convertTo(template, cv.CV_8UC3);
@@ -350,7 +350,7 @@ export async function getImagesSimilarity(
 export async function getImageOccurrence(
   fullImgData: Buffer,
   partialImgData: Buffer,
-  options: OccurrenceOptions = {}
+  options: OccurrenceOptions = {},
 ): Promise<OccurrenceResult> {
   await initOpenCv();
 
@@ -421,7 +421,7 @@ export async function getImageOccurrence(
       if (results.length === 0) {
         // Below error message, `Cannot find any occurrences` is referenced in find by image
         throw new Error(
-          `Match threshold: ${threshold}. Highest match value found was ${minMax.maxVal}`
+          `Match threshold: ${threshold}. Highest match value found was ${minMax.maxVal}`,
         );
       }
     } catch (e: any) {
@@ -429,7 +429,7 @@ export async function getImageOccurrence(
       throw new Error(
         `Cannot find any occurrences of the partial image in the full image. ` +
           `Original error: ${e?.message || String(e)}`,
-        {cause: e}
+        {cause: e},
       );
     }
 
@@ -473,7 +473,7 @@ function toMatchingMethod(name: string): number {
   if (!MATCHING_METHODS.includes(name as TemplateMatchingMethod)) {
     throw new Error(
       `The matching method '${name}' is unknown. ` +
-        `Only the following matching methods are supported: ${MATCHING_METHODS}`
+        `Only the following matching methods are supported: ${MATCHING_METHODS}`,
     );
   }
   if (!cv) {
@@ -575,10 +575,7 @@ async function cvMatFromImage(img: Buffer): Promise<any> {
   if (!cv) {
     throw new Error('OpenCV is not initialized. Call initOpenCv() first.');
   }
-  const {data, info} = await sharp(img)
-    .ensureAlpha()
-    .raw()
-    .toBuffer({resolveWithObject: true});
+  const {data, info} = await sharp(img).ensureAlpha().raw().toBuffer({resolveWithObject: true});
   const {width, height} = info;
   return cv.matFromImageData({data, width, height});
 }

@@ -110,7 +110,7 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
   bidiNavigate = generalCommands.bidiNavigate;
   getLastPluginMath = generalCommands.getLastPluginMath;
 
-  protected lastPluginMath: {pluginName: string, result: number} | null;
+  protected lastPluginMath: {pluginName: string; result: number} | null;
 
   /** If set, Bidi connections are proxied to this URL instead of handling locally. */
   private _bidiProxyUrl: string | null;
@@ -148,7 +148,7 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
   static async updateServer(
     expressApp: Express,
     _httpServer: HttpServer,
-    cliArgs: Record<string, unknown>
+    cliArgs: Record<string, unknown>,
   ): Promise<void> {
     expressApp.all('/fakedriver', FakeDriver.fakeRoute);
     expressApp.all('/fakedriverCliArgs', (_req: Request, res: Response) => {
@@ -198,23 +198,23 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
     w3cCapabilities1: W3CFakeDriverCaps,
     w3cCapabilities2?: W3CFakeDriverCaps,
     w3cCapabilities3?: W3CFakeDriverCaps,
-    driverData: DriverData[] = []
+    driverData: DriverData[] = [],
   ): Promise<[string, FakeDriverCaps]> {
     for (const d of driverData) {
       if (d.isUnique) {
         throw new errors.SessionNotCreatedError(
           'Cannot start session; another ' +
-            'unique session is in progress that requires all resources'
+            'unique session is in progress that requires all resources',
         );
       }
     }
 
-    const [sessionId, caps] = await super.createSession(
+    const [sessionId, caps] = (await super.createSession(
       w3cCapabilities1,
       w3cCapabilities2,
       w3cCapabilities3,
-      driverData
-    ) as [string, FakeDriverCaps];
+      driverData,
+    )) as [string, FakeDriverCaps];
     this.caps = caps;
     await this.appModel.loadApp(caps.app);
     if (this.caps.runClock) {
@@ -246,7 +246,7 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
     this.fakeThing = thing;
     if (this.ipcFakeThing) {
       await this.ipcFakeThing.publish(thing);
-    };
+    }
     return null;
   }
 

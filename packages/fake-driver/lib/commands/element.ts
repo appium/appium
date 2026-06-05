@@ -46,7 +46,7 @@ export async function elementSelected(this: FakeDriver, elementId: string): Prom
 export async function setValue(
   this: FakeDriver,
   keys: string | string[],
-  elementId: string
+  elementId: string,
 ): Promise<void> {
   const value = Array.isArray(keys) ? keys.join('') : keys;
   const el = this.getElement(elementId);
@@ -83,7 +83,7 @@ export async function click(this: FakeDriver, elementId: string): Promise<void> 
 export async function getAttribute(
   this: FakeDriver,
   attributeName: string,
-  elementId: string
+  elementId: string,
 ): Promise<string> {
   const el = this.getElement(elementId);
   return el.getAttr(attributeName);
@@ -105,7 +105,7 @@ export async function getSize(this: FakeDriver, elementId: string): Promise<Size
 export async function equalsElement(
   this: FakeDriver,
   elementIdA: string,
-  elementIdB: string
+  elementIdB: string,
 ): Promise<boolean> {
   const el1 = this.getElement(elementIdA);
   const el2 = this.getElement(elementIdB);
@@ -116,7 +116,7 @@ export async function equalsElement(
 export async function getCssProperty(
   this: FakeDriver,
   propertyName: string,
-  elementId: string
+  elementId: string,
 ): Promise<string> {
   this.assertWebviewContext();
   const el = this.getElement(elementId);
@@ -130,9 +130,6 @@ export async function getLocation(this: FakeDriver, elementId: string): Promise<
 }
 
 /** getLocationInView. */
-export async function getLocationInView(
-  this: FakeDriver,
-  elementId: string
-): Promise<Position> {
+export async function getLocationInView(this: FakeDriver, elementId: string): Promise<Position> {
   return this.getLocation(elementId);
 }

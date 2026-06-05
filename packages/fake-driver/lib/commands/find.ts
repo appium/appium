@@ -7,10 +7,7 @@ import {util} from 'appium/support';
 const {W3C_WEB_ELEMENT_IDENTIFIER} = util;
 
 /** Find an existing element id in elMap for the same underlying node (reference equality). */
-export function getExistingElementForNode(
-  this: FakeDriver,
-  node: FakeElement
-): string | null {
+export function getExistingElementForNode(this: FakeDriver, node: FakeElement): string | null {
   for (const [id, el] of Object.entries(this.elMap)) {
     if (el.node === node.node) {
       return id;
@@ -20,10 +17,7 @@ export function getExistingElementForNode(
 }
 
 /** Accepts either a FakeElement (reuse existing id) or a raw XmlNodeLike from xpath. */
-export function wrapNewEl(
-  this: FakeDriver,
-  obj: FakeElement | XmlNodeLike
-): Element {
+export function wrapNewEl(this: FakeDriver, obj: FakeElement | XmlNodeLike): Element {
   const node: XmlNodeLike = obj instanceof FakeElement ? obj.node : obj;
 
   if (obj instanceof FakeElement) {
@@ -52,7 +46,7 @@ async function findElOrElsImpl<Ctx = unknown>(
   strategy: string,
   selector: string,
   mult: true,
-  context?: Ctx
+  context?: Ctx,
 ): Promise<Element[]>;
 /** findElOrElsImpl. */
 async function findElOrElsImpl<Ctx = unknown>(
@@ -60,7 +54,7 @@ async function findElOrElsImpl<Ctx = unknown>(
   strategy: string,
   selector: string,
   mult: false,
-  context?: Ctx
+  context?: Ctx,
 ): Promise<Element>;
 /** findElOrElsImpl. */
 async function findElOrElsImpl<Ctx = unknown>(
@@ -68,7 +62,7 @@ async function findElOrElsImpl<Ctx = unknown>(
   strategy: string,
   selector: string,
   mult: boolean,
-  context?: Ctx
+  context?: Ctx,
 ): Promise<Element | Element[]> {
   // Map WebDriver locator strategy to FakeApp query method name.
   const qMap: Record<string, 'xpathQuery' | 'idQuery' | 'classQuery' | 'cssQuery'> = {
@@ -89,7 +83,7 @@ async function findElOrElsImpl<Ctx = unknown>(
   const raw = (this.appModel[methodName] as (sel: string, ctx?: unknown) => unknown).call(
     this.appModel,
     selector,
-    context
+    context,
   );
   let els: unknown[] = [];
   if (Array.isArray(raw)) {
@@ -116,7 +110,7 @@ export const findElOrEls = findElOrElsImpl;
 export async function findElement(
   this: FakeDriver,
   strategy: string,
-  selector: string
+  selector: string,
 ): Promise<Element> {
   return this.findElOrEls(strategy, selector, false);
 }
@@ -127,7 +121,7 @@ export async function findElement(
 export async function findElements(
   this: FakeDriver,
   strategy: string,
-  selector: string
+  selector: string,
 ): Promise<Element[]> {
   return this.findElOrEls(strategy, selector, true);
 }
@@ -137,7 +131,7 @@ export async function findElementFromElement(
   this: FakeDriver,
   strategy: string,
   selector: string,
-  elementId: string
+  elementId: string,
 ): Promise<Element> {
   const el = this.getElement(elementId);
   return this.findElOrEls(strategy, selector, false, el.xmlFragment);
@@ -148,7 +142,7 @@ export async function findElementsFromElement(
   this: FakeDriver,
   strategy: string,
   selector: string,
-  elementId: string
+  elementId: string,
 ): Promise<Element[]> {
   const el = this.getElement(elementId);
   return this.findElOrEls(strategy, selector, true, el.xmlFragment);

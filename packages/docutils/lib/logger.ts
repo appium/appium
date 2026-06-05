@@ -6,7 +6,6 @@
  * @module
  */
 
-
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const {ConsolaInstance, createConsola, LogLevel} = require('consola');
 import {DEFAULT_LOG_LEVEL, LogLevelMap} from './constants';

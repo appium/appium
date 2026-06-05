@@ -37,7 +37,7 @@ export class BaseItem<T extends Value, U extends Strongbox = Strongbox> implemen
   constructor(
     public readonly name: string,
     parent: U,
-    public readonly encoding: ItemEncoding = 'utf8'
+    public readonly encoding: ItemEncoding = 'utf8',
   ) {
     this.container = parent.container;
     this.id = BaseItem.toFilePath(this.container, name);

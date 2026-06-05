@@ -259,11 +259,12 @@ describe('ImageElement', function () {
 
     it('should reject executions for unsupported commands', async function () {
       await expect(ImageElement.execute(driver as any, imgEl, 'foobar')).to.be.rejectedWith(
-        /not yet been implemented/
+        /not yet been implemented/,
       );
     });
     it('should get displayed status of element', async function () {
-      await expect(ImageElement.execute(driver as any, imgEl, 'elementDisplayed')).to.eventually.be.true;
+      await expect(ImageElement.execute(driver as any, imgEl, 'elementDisplayed')).to.eventually.be
+        .true;
     });
     it('should get size of element', async function () {
       await expect(ImageElement.execute(driver as any, imgEl, 'getSize')).to.eventually.eql({
@@ -284,15 +285,19 @@ describe('ImageElement', function () {
       });
     });
     it('should get rect of element', async function () {
-      await expect(ImageElement.execute(driver as any, imgEl, 'getElementRect')).to.eventually.eql(defRect);
+      await expect(ImageElement.execute(driver as any, imgEl, 'getElementRect')).to.eventually.eql(
+        defRect,
+      );
     });
     it('should get score of element', async function () {
-      await expect(ImageElement.execute(driver as any, imgEl, 'getAttribute', 'score')).to.eventually.eql(0);
+      await expect(
+        ImageElement.execute(driver as any, imgEl, 'getAttribute', 'score'),
+      ).to.eventually.eql(0);
     });
     it('should get visual of element', async function () {
-      await expect(ImageElement.execute(driver as any, imgEl, 'getAttribute', 'visual')).to.eventually.eql(
-        'aGFwcHkgdGVzdGluZw=='
-      );
+      await expect(
+        ImageElement.execute(driver as any, imgEl, 'getAttribute', 'visual'),
+      ).to.eventually.eql('aGFwcHkgdGVzdGluZw==');
     });
     it('should get null as visual of element by default', async function () {
       const imgElement = new ImageElement({
@@ -301,22 +306,12 @@ describe('ImageElement', function () {
         score: 1.0,
       });
       await expect(
-        ImageElement.execute(
-          driver as any,
-          imgElement,
-          'getAttribute',
-          'visual'
-        )
+        ImageElement.execute(driver as any, imgElement, 'getAttribute', 'visual'),
       ).to.eventually.eql(null);
     });
     it('should not get other attribute', async function () {
       await expect(
-        ImageElement.execute(
-          driver as any,
-          imgEl,
-          'getAttribute',
-          'content-desc'
-        )
+        ImageElement.execute(driver as any, imgEl, 'getAttribute', 'content-desc'),
       ).to.eventually.rejectedWith('Method has not yet been implemented');
     });
     it('should click element', async function () {

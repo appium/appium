@@ -76,7 +76,7 @@ describe('bootstrap/node-helpers', function () {
   describe('requireDir()', function () {
     it('should fail to use a dir with incorrect permissions', async function () {
       await expect(requireDir('/private/if_you_run_with_sudo_this_wont_fail')).to.be.rejectedWith(
-        /must exist/
+        /must exist/,
       );
     });
 

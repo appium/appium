@@ -47,7 +47,7 @@ export class MockStore {
   verify() {
     if (!this.sandbox) {
       throw new ReferenceError(
-        'Cannot verify mocks before they are created; call `createMocks()` first'
+        'Cannot verify mocks before they are created; call `createMocks()` first',
       );
     }
     this.sandbox.verify();

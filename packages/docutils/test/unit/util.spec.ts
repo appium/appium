@@ -24,8 +24,8 @@ describe('argify', function () {
         Object.fromEntries(
           Object.entries(mikeOpts).filter(
             ([key, value]) =>
-              !['port', 'host'].includes(key) && (typeof value === 'number' || Boolean(value))
-          )
+              !['port', 'host'].includes(key) && (typeof value === 'number' || Boolean(value)),
+          ),
         ),
       ),
       version,
@@ -46,4 +46,3 @@ describe('argify', function () {
     ]);
   });
 });
-

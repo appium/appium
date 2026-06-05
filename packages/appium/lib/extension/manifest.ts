@@ -2,7 +2,13 @@ import {env, fs, util} from '@appium/support';
 import path from 'node:path';
 import * as YAML from 'yaml';
 import type {DriverType, ExtensionType, PluginType} from '@appium/types';
-import type {ExtManifest, ExtPackageJson, ExtRecord, InternalMetadata, ManifestData} from 'appium/types';
+import type {
+  ExtManifest,
+  ExtPackageJson,
+  ExtRecord,
+  InternalMetadata,
+  ManifestData,
+} from 'appium/types';
 import {CURRENT_SCHEMA_REV, DRIVER_TYPE, PLUGIN_TYPE} from '../constants';
 import {INSTALL_TYPE_DEV, INSTALL_TYPE_NPM} from './extension-config';
 import {packageDidChange} from './package-changed';
@@ -117,7 +123,7 @@ export class Manifest {
               `cache file (${manifestPathResolved}). It may be invalid YAML. Specific error: ${
                 err.message
               }`,
-            {cause: err}
+            {cause: err},
           );
         }
       }
@@ -164,9 +170,9 @@ export class Manifest {
       } catch (err: any) {
         throw new Error(
           `Appium could not create the directory for the manifest file: ${path.dirname(
-            manifestPathResolved
+            manifestPathResolved,
           )}. Original error: ${err.message}`,
-          {cause: err}
+          {cause: err},
         );
       }
       try {
@@ -177,7 +183,7 @@ export class Manifest {
           `Appium could not write to manifest at ${manifestPathResolved} using APPIUM_HOME ${
             this.#appiumHome
           }. Please ensure it is writable. Original error: ${err.message}`,
-          {cause: err}
+          {cause: err},
         );
       }
     })();
@@ -210,9 +216,7 @@ export class Manifest {
       }
     };
 
-    const queue: Promise<void>[] = [
-      onMatch(path.join(this.#appiumHome, 'package.json'), true),
-    ];
+    const queue: Promise<void>[] = [onMatch(path.join(this.#appiumHome, 'package.json'), true)];
 
     const filepaths = await fs.glob('node_modules/{*,@*/*}/package.json', {
       cwd: this.#appiumHome,
@@ -239,7 +243,7 @@ export class Manifest {
   addExtensionFromPackage(
     pkgJson: ExtPackageJson<ExtensionType>,
     pkgPath: string,
-    installType: typeof INSTALL_TYPE_NPM | typeof INSTALL_TYPE_DEV = INSTALL_TYPE_NPM
+    installType: typeof INSTALL_TYPE_NPM | typeof INSTALL_TYPE_DEV = INSTALL_TYPE_NPM,
   ): boolean {
     const extensionPath = path.dirname(pkgPath);
 
@@ -277,7 +281,7 @@ export class Manifest {
       return false;
     }
     throw new TypeError(
-      `The extension in ${extensionPath} is neither a valid ${DRIVER_TYPE} nor a valid ${PLUGIN_TYPE}.`
+      `The extension in ${extensionPath} is neither a valid ${DRIVER_TYPE} nor a valid ${PLUGIN_TYPE}.`,
     );
   }
 
@@ -292,7 +296,7 @@ export class Manifest {
   setExtension<ExtType extends ExtensionType>(
     extType: ExtType,
     extName: string,
-    extData: ExtManifest<ExtType>
+    extData: ExtManifest<ExtType>,
   ): ExtManifest<ExtType> {
     const data = structuredClone(extData) as ExtManifest<ExtType>;
     if (extType === DRIVER_TYPE) {
@@ -335,7 +339,7 @@ export class Manifest {
         throw new Error(
           `Mismatch between location of APPIUM_HOME and manifest file. APPIUM_HOME: ${
             this.appiumHome
-          }, manifest file: ${resolved}`
+          }, manifest file: ${resolved}`,
         );
       }
     }

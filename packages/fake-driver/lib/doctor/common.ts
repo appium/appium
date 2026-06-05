@@ -7,9 +7,7 @@ export class EnvVarAndPathCheck implements IDoctorCheck {
   constructor(private readonly varName: string) {}
 
   async diagnose(): Promise<DoctorCheckResult> {
-    return doctor.ok(
-      `${this.varName} environment variable is always set because it's fake`
-    );
+    return doctor.ok(`${this.varName} environment variable is always set because it's fake`);
   }
 
   async fix(): Promise<string> {

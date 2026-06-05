@@ -77,8 +77,8 @@ describe('manifest handling', function () {
         await fs.writeFile(manifestPath, YAML.stringify(tmpManifest));
         tmpManifest = await readManifest();
         expect(tmpManifest.schemaRev).to.equal(2);
-        expect((tmpManifest.drivers as Record<string, {installPath?: string}>)?.fake?.installPath).to
-          .not.exist;
+        expect((tmpManifest.drivers as Record<string, {installPath?: string}>)?.fake?.installPath)
+          .to.not.exist;
         await runList();
         manifest = await readManifest();
       });

@@ -18,7 +18,7 @@ export interface AppiumServerExtension {
   addWebSocketHandler(
     this: AppiumServer,
     handlerPathname: string,
-    handlerServer: WSServer
+    handlerServer: WSServer,
   ): Promise<void>;
   /**
    * Removes existing WebSocket handler from the server instance.
@@ -41,7 +41,7 @@ export interface AppiumServerExtension {
    */
   getWebSocketHandlers(
     this: AppiumServer,
-    keysFilter?: string | null
+    keysFilter?: string | null,
   ): Promise<Record<string, WSServer>>;
   webSocketsMapping: Record<string, WSServer>;
   /** Returns true if the server operates via HTTPS protocol */
@@ -66,5 +66,5 @@ export type {WSServer};
 export type UpdateServerCallback = (
   expressApp: Express,
   httpServer: AppiumServer,
-  cliArgs: Partial<ServerArgs>
+  cliArgs: Partial<ServerArgs>,
 ) => Promise<void>;

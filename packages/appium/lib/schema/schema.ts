@@ -41,7 +41,7 @@ export class RoachHotelMap<K, V> extends Map<K, V> {
 }
 
 export const ALLOWED_SCHEMA_EXTENSIONS = Object.freeze(
-  new Set<AllowedSchemaExtension>(['.json', '.js', '.cjs'])
+  new Set<AllowedSchemaExtension>(['.json', '.js', '.cjs']),
 );
 
 const SCHEMA_KEY = '$schema';
@@ -108,7 +108,7 @@ class AppiumSchema {
       new Ajv({
         // without this not much validation actually happens
         allErrors: true,
-      })
+      }),
     );
     for (const keyword of Object.values(keywords)) {
       ajv.addKeyword(keyword);
@@ -151,7 +151,7 @@ class AppiumSchema {
     const addArgSpecs = (
       schema: Record<string, any>,
       extType?: ExtensionType,
-      extName?: string
+      extName?: string,
     ): void => {
       for (const [propName, propSchema] of Object.entries(schema)) {
         const argSpec = ArgSpec.create(propName, {
@@ -164,9 +164,7 @@ class AppiumSchema {
       }
     };
 
-    addArgSpecs(
-      omitKeys(baseSchema.properties.server.properties, [DRIVER_TYPE, PLUGIN_TYPE])
-    );
+    addArgSpecs(omitKeys(baseSchema.properties.server.properties, [DRIVER_TYPE, PLUGIN_TYPE]));
 
     const finalizedSchemas: Record<string, StrictSchemaObject> = {};
 
@@ -177,7 +175,10 @@ class AppiumSchema {
         const $ref = ArgSpec.toSchemaBaseRef(extType, extName);
         (schema as any).$id = $ref;
         (schema as any).additionalProperties = false;
-        baseSchema.properties.server.properties[extType].properties[extName] = {$ref, $comment: extName};
+        baseSchema.properties.server.properties[extType].properties[extName] = {
+          $ref,
+          $comment: extName,
+        };
         await ajv.validateSchema(schema, true);
         addArgSpecs((schema as any).properties, extType, extName);
         ajv.addSchema(schema, $ref);
@@ -210,7 +211,11 @@ class AppiumSchema {
   /**
    * Registers an extension schema.
    */
-  async registerSchema(extType: ExtensionType, extName: string, schema: SchemaObject): Promise<void> {
+  async registerSchema(
+    extType: ExtensionType,
+    extName: string,
+    schema: SchemaObject,
+  ): Promise<void> {
     if (!(extType && extName) || schema === undefined) {
       throw new TypeError('Expected extension type, extension name, and a defined schema');
     }
@@ -246,7 +251,7 @@ class AppiumSchema {
    * Returns default values for all args, flattened or nested.
    */
   getDefaults<Flattened extends boolean | undefined = true>(
-    flatten = true as Flattened
+    flatten = true as Flattened,
   ): DefaultValues<Flattened> {
     if (!this.isFinalized()) {
       throw new SchemaFinalizationError();
@@ -275,20 +280,23 @@ class AppiumSchema {
    */
   getDefaultsForExtension(
     extType: ExtensionType,
-    extName: string
+    extName: string,
   ): Record<string, ArgSpecDefaultValue> {
     if (!this.isFinalized()) {
       throw new SchemaFinalizationError();
     }
     const specs = [...this.#argSpecs.values()].filter(
-      (spec) => spec.extType === extType && spec.extName === extName
+      (spec) => spec.extType === extType && spec.extName === extName,
     );
-    return specs.reduce((defaults, {defaultValue, rawDest}) => {
-      if (defaultValue !== undefined) {
-        defaults[rawDest] = defaultValue;
-      }
-      return defaults;
-    }, {} as Record<string, ArgSpecDefaultValue>);
+    return specs.reduce(
+      (defaults, {defaultValue, rawDest}) => {
+        if (defaultValue !== undefined) {
+          defaults[rawDest] = defaultValue;
+        }
+        return defaults;
+      },
+      {} as Record<string, ArgSpecDefaultValue>,
+    );
   }
 
   /**
@@ -320,16 +328,19 @@ class AppiumSchema {
           const {normalizedExtName} = ArgSpec.extensionInfoFromRootSchemaId($ref);
           if (!normalizedExtName) {
             throw new ReferenceError(
-              `Could not determine extension name from schema ID ${$ref}. This is a bug.`
+              `Could not determine extension name from schema ID ${$ref}. This is a bug.`,
             );
           }
-          stack.push({properties: refSchema.properties, prefix: [...prefix, key, normalizedExtName]});
+          stack.push({
+            properties: refSchema.properties,
+            prefix: [...prefix, key, normalizedExtName],
+          });
         } else if (key !== DRIVER_TYPE && key !== PLUGIN_TYPE) {
           const [extType, extName] = prefix;
           const argSpec = this.getArgSpec(key, extType as ExtensionType, extName);
           if (!argSpec) {
             throw new ReferenceError(
-              `Unknown argument with key ${key}, extType ${extType} and extName ${extName}. This is a bug.`
+              `Unknown argument with key ${key}, extType ${extType} and extName ${extName}. This is a bug.`,
             );
           }
           flattened.push({schema: structuredClone(value as SchemaObject), argSpec});
@@ -420,12 +431,12 @@ export class SchemaUnsupportedSchemaError extends TypeError {
           }
           throw new TypeError(
             `schema IS supported; this error should not be thrown (this is a bug). value of schema: ${JSON.stringify(
-              schema
-            )}`
+              schema,
+            )}`,
           );
         }
         return `${msg} schema must be a plain object without a true "$async" property`;
-      })()
+      })(),
     );
     this.data = {schema, extType, extName};
   }

@@ -93,8 +93,8 @@ async function main() {
   const packageDirs = await getPackageDirs();
   log.debug(`Found ${packageDirs.length} package directories`);
 
-  const syncPackageJsonFieldsPromises = packageDirs.map(
-    (packageDir) => syncPackageJsonFields(rootPackageJson, packageDir)
+  const syncPackageJsonFieldsPromises = packageDirs.map((packageDir) =>
+    syncPackageJsonFields(rootPackageJson, packageDir),
   );
   const licenseCopyPromises = packageDirs
     .filter((packageDir) => !LICENSE_EXCLUDED_PACKAGES.has(path.basename(packageDir)))

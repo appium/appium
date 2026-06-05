@@ -59,7 +59,7 @@ export function generalTests() {
     });
     it('should not set invalid implicit wait timeout', async function () {
       await expect(driver.setTimeout({implicit: 'foo' as any})).to.be.rejectedWith(
-        /values are not valid/
+        /values are not valid/,
       );
     });
 
@@ -69,7 +69,7 @@ export function generalTests() {
     });
     it.skip('should not set invalid async script timeout', async function () {
       await expect(driver.setTimeout({script: 'foo' as any})).to.be.rejectedWith(
-        /values are not valid/
+        /values are not valid/,
       );
     });
 
@@ -78,7 +78,7 @@ export function generalTests() {
     });
     it.skip('should not set page load script timeout', async function () {
       await expect(driver.setTimeout({pageLoad: 'foo' as any})).to.be.rejectedWith(
-        /values are not valid/
+        /values are not valid/,
       );
     });
 
@@ -117,35 +117,35 @@ export function generalTests() {
     });
 
     it('should add 2 numbers via execute overloads', async function () {
+      await expect(driver.executeScript('fake: addition', [{num1: 2, num2: 3}])).to.eventually.eql(
+        5,
+      );
       await expect(
-        driver.executeScript('fake: addition', [{num1: 2, num2: 3}])
-      ).to.eventually.eql(5);
-      await expect(
-        driver.executeScript('fake: addition', [{num1: 2, num2: 3, num3: 4}])
+        driver.executeScript('fake: addition', [{num1: 2, num2: 3, num3: 4}]),
       ).to.eventually.eql(9);
     });
 
     it('should throw not implemented if an execute overload isnt supported', async function () {
       await expect(driver.executeScript('fake: blarg', [])).to.be.rejectedWith(
-        /Unsupported execute method/
+        /Unsupported execute method/,
       );
     });
 
     it('should throw an error if a required overload param is missing', async function () {
-      await expect(
-        driver.executeScript('fake: addition', [{num3: 4}])
-      ).to.be.rejectedWith(/required parameters are missing/);
+      await expect(driver.executeScript('fake: addition', [{num3: 4}])).to.be.rejectedWith(
+        /required parameters are missing/,
+      );
     });
 
     it('should throw an error if sending in wrong types of params', async function () {
       await expect(driver.executeScript('fake: addition', [4, 5])).to.be.rejectedWith(
-        /correct format of arg/
+        /correct format of arg/,
       );
       await expect(driver.executeScript('fake: addition', [4])).to.be.rejectedWith(
-        /not receive an appropriate execute/
+        /not receive an appropriate execute/,
       );
       await expect(
-        driver.executeScript('fake: addition', [{num1: 2}, {extra: 'bad'}])
+        driver.executeScript('fake: addition', [{num1: 2}, {extra: 'bad'}]),
       ).to.be.rejectedWith(/correct format of arg/);
     });
   });

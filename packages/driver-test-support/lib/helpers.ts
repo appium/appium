@@ -31,19 +31,19 @@ export async function getTestPort(force = false): Promise<number> {
  */
 export function createAppiumURL(
   address: string,
-  port: string | number
+  port: string | number,
 ): (session: string, pathname: string) => string;
 export function createAppiumURL(
   address: string,
   port: string | number,
   session: string,
-  pathname: string
+  pathname: string,
 ): string;
 export function createAppiumURL(
   address: string,
   port: string | number,
   session?: string,
-  pathname?: string
+  pathname?: string,
 ): string | ((session: string, pathname: string) => string) {
   const urlFor = (sess: string, path: string) => buildAppiumURL(address, port, sess, path);
   if (arguments.length === 2) {
@@ -55,7 +55,7 @@ function buildAppiumURL(
   address: string,
   port: string | number,
   session: string,
-  pathname: string
+  pathname: string,
 ): string {
   let base = address;
   if (!/^https?:\/\//.test(base)) {

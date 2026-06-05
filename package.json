@@ -47,6 +47,8 @@
     "docs:publish": "npm run -w packages/appium publish:docs",
     "doctor": "node ./scripts/doctor-stub.mjs",
     "install-docs-deps": "npm run -w packages/appium install-docs-deps",
+    "format": "prettier -w ./packages ./scripts",
+    "format:check": "prettier --check ./packages ./scripts",
     "lint": "eslint .",
     "lint:ci": "eslint --quiet .",
     "lint:fix": "run-s \"lint -- --fix\"",

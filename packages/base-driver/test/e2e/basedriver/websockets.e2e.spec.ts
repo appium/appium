@@ -59,7 +59,7 @@ describe('Websockets (e2e)', function () {
         client.once('error', reject);
         setTimeout(
           () => reject(new Error('No websocket messages have been received after the timeout')),
-          timeout
+          timeout,
         );
       });
 
@@ -71,9 +71,9 @@ describe('Websockets (e2e)', function () {
           reject(
             new Error(
               `No websocket messages are expected after the handler ` +
-                `has been removed. '${data}' is received instead. `
-            )
-          )
+                `has been removed. '${data}' is received instead. `,
+            ),
+          ),
         );
         client.on('error', resolve);
         setTimeout(resolve, timeout);

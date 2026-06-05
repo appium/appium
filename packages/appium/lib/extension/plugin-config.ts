@@ -17,7 +17,7 @@ export class PluginConfig extends ExtensionConfig<PluginType> {
     const instance = new PluginConfig(manifest);
     if (PluginConfig.getInstance(manifest)) {
       throw new Error(
-        `Manifest with APPIUM_HOME ${manifest.appiumHome} already has a PluginConfig; use PluginConfig.getInstance() to retrieve it.`
+        `Manifest with APPIUM_HOME ${manifest.appiumHome} already has a PluginConfig; use PluginConfig.getInstance() to retrieve it.`,
       );
     }
     PluginConfig._instances.set(manifest, instance);
@@ -34,7 +34,7 @@ export class PluginConfig extends ExtensionConfig<PluginType> {
 
   public override extensionDesc(
     pluginName: ExtName<PluginType>,
-    {version}: ExtManifest<PluginType>
+    {version}: ExtManifest<PluginType>,
   ): string {
     return `${String(pluginName)}@${version}`;
   }
@@ -44,7 +44,8 @@ export class PluginConfig extends ExtensionConfig<PluginType> {
 
     if (util.isEmpty(pluginNames)) {
       log.info(
-        `No plugins have been installed. Use the "appium plugin" ` + 'command to install the one(s) you want to use.'
+        `No plugins have been installed. Use the "appium plugin" ` +
+          'command to install the one(s) you want to use.',
       );
       return;
     }
@@ -52,11 +53,15 @@ export class PluginConfig extends ExtensionConfig<PluginType> {
     log.info(`Available plugins:`);
     for (const [pluginName, pluginData] of Object.entries(this.installedExtensions)) {
       const activeTxt = activeNames.includes(pluginName as ExtName<PluginType>) ? ' (ACTIVE)' : '';
-      log.info(`  - ${this.extensionDesc(pluginName as ExtName<PluginType>, pluginData)}${activeTxt}`);
+      log.info(
+        `  - ${this.extensionDesc(pluginName as ExtName<PluginType>, pluginData)}${activeTxt}`,
+      );
     }
 
     if (util.isEmpty(activeNames)) {
-      log.info('No plugins activated. Use the --use-plugins flag with names of plugins to activate');
+      log.info(
+        'No plugins activated. Use the --use-plugins flag with names of plugins to activate',
+      );
     }
   }
 }

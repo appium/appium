@@ -1,14 +1,8 @@
 import path from 'node:path';
 import rewiremock from 'rewiremock/node';
 import type {Strongbox as TStrongbox, StrongboxOpts, Item, Value} from '../../lib';
-import type {
-  SinonSandbox,
-  SinonStubbedMember,
-  SinonStub
-} from 'sinon';
-import {
-  createSandbox
-} from 'sinon';
+import type {SinonSandbox, SinonStubbedMember, SinonStub} from 'sinon';
+import {createSandbox} from 'sinon';
 import type fs from 'node:fs/promises';
 
 type MockFs = {
@@ -44,7 +38,7 @@ describe('Strongbox', function () {
           })
           .dynamic(), // this allows us to change the mock behavior on-the-fly
         'env-paths': sandbox.stub().returns({data: DATA_DIR}),
-      })
+      }),
     ));
   });
 
@@ -68,7 +62,7 @@ describe('Strongbox', function () {
 
           expect(() => strongbox('test', {container})).to.throw(
             TypeError,
-            `container slug ${container} must be an absolute path`
+            `container slug ${container} must be an absolute path`,
           );
         });
       });
@@ -138,11 +132,13 @@ describe('Strongbox', function () {
             const item = await box.createItem('test');
             await item.write('boo bah');
 
-            expect(MockFs.writeFile.calledWith(
-              path.resolve(DATA_DIR, DEFAULT_SUFFIX, 'test'),
-              'boo bah',
-              'utf8'
-            )).to.be.true;
+            expect(
+              MockFs.writeFile.calledWith(
+                path.resolve(DATA_DIR, DEFAULT_SUFFIX, 'test'),
+                'boo bah',
+                'utf8',
+              ),
+            ).to.be.true;
           });
 
           it('should update the underlying value', async function () {
@@ -158,7 +154,7 @@ describe('Strongbox', function () {
           await box.createItem('test');
           await expect(box.createItem('test')).to.be.rejectedWith(
             Error,
-            `Item with id "${path.resolve(DATA_DIR, 'strongbox', 'test')}" already exists`
+            `Item with id "${path.resolve(DATA_DIR, 'strongbox', 'test')}" already exists`,
           );
         });
       });
@@ -203,12 +199,8 @@ describe('Strongbox', function () {
 
       it('should write the value to disk', async function () {
         await box.createItemWithValue('test', 'value');
-        expect(
-          MockFs.writeFile.calledWith(
-            path.resolve(DATA_DIR, DEFAULT_SUFFIX, 'test'),
-            'value'
-          )
-        ).to.be.true;
+        expect(MockFs.writeFile.calledWith(path.resolve(DATA_DIR, DEFAULT_SUFFIX, 'test'), 'value'))
+          .to.be.true;
       });
 
       describe('when the third parameter is a valid encoding', function () {

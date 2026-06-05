@@ -28,7 +28,7 @@ describe('ImageElementPlugin#handle', function () {
         MATCH_FEATURES_MODE,
         TEST_IMG_1_B64,
         TEST_IMG_2_B64,
-        {}
+        {},
       );
       expect(res).to.have.property('count');
       expect((res as any).count).to.eql(0);
@@ -40,7 +40,7 @@ describe('ImageElementPlugin#handle', function () {
         GET_SIMILARITY_MODE,
         Buffer.from(TEST_IMG_1_B64, 'base64'),
         Buffer.from(TEST_IMG_2_B64, 'base64'),
-        {}
+        {},
       );
       expect(res).to.have.property('score');
       expect((res as any).score).to.be.above(0.2);
@@ -52,7 +52,7 @@ describe('ImageElementPlugin#handle', function () {
         MATCH_TEMPLATE_MODE,
         TEST_IMG_1_B64,
         TEST_IMG_2_B64,
-        {}
+        {},
       );
       expect(res).to.have.property('rect');
       expect((res as any).rect.height).to.be.above(0);
@@ -61,7 +61,7 @@ describe('ImageElementPlugin#handle', function () {
     });
     it('should throw an error if comparison mode is not supported', async function () {
       await expect(
-        p.compareImages(next, driver as any, 'some mode', '', '')
+        p.compareImages(next, driver as any, 'some mode', '', ''),
       ).to.eventually.be.rejectedWith(/comparison mode is unknown/);
     });
     it('should throw an error if image template is broken', async function () {
@@ -71,13 +71,13 @@ describe('ImageElementPlugin#handle', function () {
           driver as any,
           MATCH_TEMPLATE_MODE,
           Buffer.from('d1423423424'),
-          Buffer.from('d1423423424')
-        )
+          Buffer.from('d1423423424'),
+        ),
       ).to.eventually.be.rejected;
     });
     it('should throw an error if image template is empty', async function () {
       await expect(
-        p.compareImages(next, driver as any, MATCH_TEMPLATE_MODE, Buffer.from(''), Buffer.from(''))
+        p.compareImages(next, driver as any, MATCH_TEMPLATE_MODE, Buffer.from(''), Buffer.from('')),
       ).to.eventually.be.rejected;
     });
   });
@@ -93,8 +93,12 @@ describe('ImageElementPlugin#handle', function () {
     });
     it('should defer execution to regular command if it is a find command but a different strategy', async function () {
       const next = async () => true;
-      await expect(p.findElement(next, driver as any, 'xpath', '//foo/bar')).to.eventually.become(true);
-      await expect(p.findElements(next, driver as any, 'xpath', '//foo/bar')).to.eventually.become(true);
+      await expect(p.findElement(next, driver as any, 'xpath', '//foo/bar')).to.eventually.become(
+        true,
+      );
+      await expect(p.findElements(next, driver as any, 'xpath', '//foo/bar')).to.eventually.become(
+        true,
+      );
     });
     it('should find an image element inside a screenshot', async function () {
       const el = await p.findElement(next, driver as any, IMAGE_STRATEGY, TEST_IMG_2_PART_B64);
@@ -161,7 +165,9 @@ describe('ImageElementPlugin#handle', function () {
       });
     });
     it('should return the match score as the score attr', async function () {
-      await expect(p.handle(next, driver as any, 'getAttribute', 'score', elId)).to.eventually.be.above(0.7);
+      await expect(
+        p.handle(next, driver as any, 'getAttribute', 'score', elId),
+      ).to.eventually.be.above(0.7);
     });
     it('should return the match visualization as the visual attr', async function () {
       (driver as any).settings = {
@@ -172,12 +178,12 @@ describe('ImageElementPlugin#handle', function () {
       const el = await p.findElement(next, driver as any, IMAGE_STRATEGY, TEST_IMG_2_PART_B64);
       elId = util.unwrapElement(el);
       await expect(
-        p.handle(next, driver as any, 'getAttribute', 'visual', elId)
+        p.handle(next, driver as any, 'getAttribute', 'visual', elId),
       ).to.eventually.include('iVBOR');
     });
     it('should not allow any other attrs', async function () {
       await expect(
-        p.handle(next, driver as any, 'getAttribute', 'rando', elId)
+        p.handle(next, driver as any, 'getAttribute', 'rando', elId),
       ).to.eventually.be.rejectedWith(/not yet/i);
     });
   });
@@ -203,9 +209,7 @@ describe('ImageElementPlugin#handle', function () {
         {
           type: 'wheel',
           id: 'wheel',
-          actions: [
-            {type: 'scroll', x: 1, y: 0, deltaX: 1, deltaY: 2, origin: imageEl},
-          ],
+          actions: [{type: 'scroll', x: 1, y: 0, deltaX: 1, deltaY: 2, origin: imageEl}],
         },
       ];
       await p.performActions(next, driver as any, actionSequences);
@@ -222,9 +226,7 @@ describe('ImageElementPlugin#handle', function () {
         {
           type: 'wheel',
           id: 'wheel',
-          actions: [
-            {type: 'scroll', x: 25, y: 40, deltaX: 1, deltaY: 2},
-          ],
+          actions: [{type: 'scroll', x: 25, y: 40, deltaX: 1, deltaY: 2}],
         },
       ]);
     });

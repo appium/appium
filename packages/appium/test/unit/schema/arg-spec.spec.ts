@@ -14,7 +14,7 @@ describe('ArgSpec', function () {
       describe('when provided no extension information', function () {
         it('should return a schema ID for a specific argument', function () {
           expect(ArgSpec.toSchemaRef('foo')).to.equal(
-            'appium.json#/properties/server/properties/foo'
+            'appium.json#/properties/server/properties/foo',
           );
         });
       });
@@ -22,7 +22,7 @@ describe('ArgSpec', function () {
       describe('when provided extension information', function () {
         it('should return a schema ID for a specific argument within an extension schema', function () {
           expect(ArgSpec.toSchemaRef('bar', DRIVER_TYPE, 'stuff')).to.equal(
-            'driver-stuff.json#/properties/bar'
+            'driver-stuff.json#/properties/bar',
           );
         });
       });
@@ -37,9 +37,7 @@ describe('ArgSpec', function () {
 
       describe('when provided extension information', function () {
         it('should return a schema ID for an extension', function () {
-          expect(ArgSpec.toSchemaBaseRef(DRIVER_TYPE, 'stuff')).to.equal(
-            'driver-stuff.json'
-          );
+          expect(ArgSpec.toSchemaBaseRef(DRIVER_TYPE, 'stuff')).to.equal('driver-stuff.json');
         });
       });
     });
@@ -54,7 +52,7 @@ describe('ArgSpec', function () {
       describe('when provided extension information', function () {
         it('should return an extension-specific arg name', function () {
           expect(ArgSpec.toArg('no-oats', DRIVER_TYPE, 'bad-donkey')).to.equal(
-            'driver-bad-donkey-no-oats'
+            'driver-bad-donkey-no-oats',
           );
         });
       });

@@ -143,7 +143,7 @@ describe('Protocol', function () {
           url: `${baseUrl}/session/foo/url`,
           method: 'POST',
           data: 'oh hello',
-        })
+        }),
       ).to.be.rejected;
 
       const {data} = await axios({
@@ -161,7 +161,7 @@ describe('Protocol', function () {
       await expect(
         axios({
           url: `${baseUrl}/blargimarg`,
-        })
+        }),
       ).to.be.rejectedWith(/404/);
     });
 
@@ -206,7 +206,7 @@ describe('Protocol', function () {
           url: `${baseUrl}/session/foo/url`,
           method: 'POST',
           data: {},
-        })
+        }),
       ).to.be.rejectedWith(/400/);
     });
 
@@ -222,7 +222,7 @@ describe('Protocol', function () {
           url: `${baseUrl}/session/foo/element/bar/value`,
           method: 'POST',
           data: {id: 'baz'},
-        })
+        }),
       ).to.be.rejectedWith(/400/);
 
       // make sure adding the optional 'id' doesn't clobber a route where we
@@ -359,7 +359,7 @@ describe('Protocol', function () {
             url: `${baseUrl}/session`,
             method: 'POST',
             data: {},
-          })
+          }),
         ).to.be.rejectedWith(/400/);
       });
       it('should allow create session with capabilities (W3C)', async function () {
@@ -396,7 +396,7 @@ describe('Protocol', function () {
                   firstMatch: [{}],
                 },
               },
-            })
+            }),
           ).to.be.rejectedWith(/500/);
         } finally {
           createSessionStub.restore();
@@ -752,7 +752,7 @@ describe('Protocol', function () {
       expect(data.value.error).to.eql('unknown error');
       expect(data.value.message).to.eql(
         'An unknown server-side error occurred while processing ' +
-          'the command. Original error: Too Fresh!'
+          'the command. Original error: Too Fresh!',
       );
       expect(data.sessionId).to.eql('foo');
     });
@@ -854,7 +854,7 @@ describe('Protocol', function () {
       expect(data.value.error).to.eql('unknown error');
       expect(data.value.message).to.eql(
         'An unknown server-side error occurred while processing ' +
-          'the command. Original error: Too Fresh!'
+          'the command. Original error: Too Fresh!',
       );
       expect(data.sessionId).to.eql('Vader Sessions');
     });
@@ -916,13 +916,12 @@ describe('Protocol', function () {
       expect(data.value.message).to.eql(
         'An unknown server-side error occurred while processing ' +
           'the command. Original error: Trying to proxy to a ' +
-          'server but the driver is unable to proxy'
+          'server but the driver is unable to proxy',
       );
       expect(data.sessionId).to.eql('foo');
     });
 
     it('should pass on any errors in proxying', async function () {
-
       driver.proxyReqRes = async function () {
         throw new Error('foo');
       };
@@ -937,13 +936,12 @@ describe('Protocol', function () {
       expect(data.value.error).to.eql('unknown error');
       expect(data.value.message).to.eql(
         'An unknown server-side error occurred while processing ' +
-          'the command. Original error: Could not proxy. Proxy error: foo'
+          'the command. Original error: Could not proxy. Proxy error: foo',
       );
       expect(data.sessionId).to.eql('foo');
     });
 
     it('should able to throw ProxyRequestError in proxying', async function () {
-
       driver.proxyReqRes = async function () {
         const jsonwp = {
           status: 35,
@@ -966,7 +964,6 @@ describe('Protocol', function () {
     });
 
     it('should let the proxy handle req/res', async function () {
-
       driver.proxyReqRes = async function (req, res) {
         res.status(200).json({custom: 'data'});
       };

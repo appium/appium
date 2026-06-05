@@ -9,9 +9,7 @@ import type {
   IpcData,
   StringRecord,
 } from '@appium/types';
-import {
-  MAX_LOG_BODY_LENGTH,
-} from '../constants';
+import {MAX_LOG_BODY_LENGTH} from '../constants';
 import {errors} from '../protocol';
 import {BIDI_COMMANDS} from '../protocol/bidi-commands';
 import {generateDriverLogPrefix} from './helpers';
@@ -24,7 +22,6 @@ export class ExtensionCore {
   readonly eventEmitter: NodeJS.EventEmitter;
   protected _log!: AppiumLogger;
   private ipc?: IAppiumIpc;
-
 
   constructor(logPrefix?: string) {
     this._logPrefix = logPrefix;
@@ -46,7 +43,9 @@ export class ExtensionCore {
   updateBidiCommands(cmds: BidiModuleMap): void {
     const overlappingKeys = Object.keys(cmds).filter((key) => key in this.bidiCommands);
     if (overlappingKeys.length) {
-      this.log.warn(`Overwriting existing bidi modules: ${JSON.stringify(overlappingKeys)}. This may not be intended!`);
+      this.log.warn(
+        `Overwriting existing bidi modules: ${JSON.stringify(overlappingKeys)}. This may not be intended!`,
+      );
     }
     this.bidiCommands = {
       ...this.bidiCommands,
@@ -74,7 +73,7 @@ export class ExtensionCore {
     }
 
     // if the command module or method isn't part of our spec, reject
-    if (!(this.bidiCommands[moduleName]?.[methodName])) {
+    if (!this.bidiCommands[moduleName]?.[methodName]) {
       throw new errors.UnknownCommandError();
     }
 
@@ -91,8 +90,13 @@ export class ExtensionCore {
     }
   }
 
-  async executeBidiCommand(bidiCmd: string, bidiParams: StringRecord, next?: () => Promise<any>, driver?: ExtensionCore): Promise<BiDiResultData> {
-    const handlerType = (next && driver) ? 'plugin' : 'driver';
+  async executeBidiCommand(
+    bidiCmd: string,
+    bidiParams: StringRecord,
+    next?: () => Promise<any>,
+    driver?: ExtensionCore,
+  ): Promise<BiDiResultData> {
+    const handlerType = next && driver ? 'plugin' : 'driver';
     const [moduleName, methodName] = bidiCmd.split('.');
     this.ensureBidiCommandExists(moduleName, methodName);
     const {command, params} = this.bidiCommands[moduleName][methodName];
@@ -115,15 +119,17 @@ export class ExtensionCore {
         args.push(bidiParams[optionalParam]);
       }
     }
-    const logParams = util.truncateString(JSON.stringify(bidiParams), {length: MAX_LOG_BODY_LENGTH});
+    const logParams = util.truncateString(JSON.stringify(bidiParams), {
+      length: MAX_LOG_BODY_LENGTH,
+    });
     this.log.debug(
       `Executing bidi command '${bidiCmd}' with params ${logParams} by passing to ${handlerType} ` +
         `method '${command}'`,
     );
     // call the handler with the signature appropriate to extension type (plugin or driver)
-    const commandHandler = (this as unknown as Record<string, (...handlerArgs: any[]) => Promise<unknown>>)[
-      command
-    ];
+    const commandHandler = (
+      this as unknown as Record<string, (...handlerArgs: any[]) => Promise<unknown>>
+    )[command];
     const response =
       next && driver
         ? await commandHandler.call(this, next, driver, ...args)
@@ -132,7 +138,7 @@ export class ExtensionCore {
       response === undefined ? {} : (response as BiDiResultData);
     this.log.debug(
       `Responding to bidi command '${bidiCmd}' with ` +
-      `${util.truncateString(JSON.stringify(finalResponse), {length: MAX_LOG_BODY_LENGTH})}`
+        `${util.truncateString(JSON.stringify(finalResponse), {length: MAX_LOG_BODY_LENGTH})}`,
     );
     return finalResponse;
   }
@@ -153,9 +159,11 @@ export class ExtensionCore {
 
   ipcSubscribe<T extends IpcData>(topic: string): IIpcSubscription<T> {
     if (!this.ipc) {
-      throw new Error(`Cannot subscribe to an IPC topic without an IPC object assigned. ` +
-                      `This is likely a programming error. ipcSubscribe should be called in the ` +
-                      `onIpcInit handler or after you are certain that createSession has completed successfully.`);
+      throw new Error(
+        `Cannot subscribe to an IPC topic without an IPC object assigned. ` +
+          `This is likely a programming error. ipcSubscribe should be called in the ` +
+          `onIpcInit handler or after you are certain that createSession has completed successfully.`,
+      );
     }
     return this.ipc.subscribe<T>(topic, generateDriverLogPrefix(this));
   }

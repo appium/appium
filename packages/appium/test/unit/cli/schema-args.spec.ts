@@ -1,9 +1,5 @@
 import {createSandbox} from 'sinon';
-import {
-  finalizeSchema,
-  resetSchema,
-  SchemaFinalizationError,
-} from '../../../lib/schema/schema';
+import {finalizeSchema, resetSchema, SchemaFinalizationError} from '../../../lib/schema/schema';
 import {rewiremock} from '../../helpers';
 import {expect} from 'chai';
 
@@ -26,25 +22,21 @@ describe('cli/schema-args', function () {
       afterEach(resetSchema);
 
       it('should return a Map', function () {
-        expect(toParserArgs())
-          .to.be.an.instanceof(Map)
-          .and.have.property('size')
-          .that.is.above(0);
+        expect(toParserArgs()).to.be.an.instanceof(Map).and.have.property('size').that.is.above(0);
       });
 
       it('should generate metavars in SCREAMING_SNAKE_CASE', function () {
         const argDefs = toParserArgs();
         const argDefsWithMetavar = [...argDefs].filter(
-          (arg: [string, unknown]) => (arg[1] as {metavar?: string}).metavar
+          (arg: [string, unknown]) => (arg[1] as {metavar?: string}).metavar,
         );
         expect(argDefsWithMetavar).not.to.be.empty;
         type ArgEntry = [string, {metavar?: string}];
         expect(
           (argDefsWithMetavar as ArgEntry[]).every((arg: ArgEntry) =>
-            /[A-Z_]+/.test(arg[1].metavar ?? '')
-          )
-        ).to
-          .be.true;
+            /[A-Z_]+/.test(arg[1].metavar ?? ''),
+          ),
+        ).to.be.true;
       });
     });
 

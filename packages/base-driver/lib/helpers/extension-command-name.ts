@@ -11,7 +11,7 @@ import type {BaseDriver} from '../basedriver/driver';
  */
 export function resolveExecuteExtensionName<C extends Constraints>(
   this: BaseDriver<C>,
-  commandName: string
+  commandName: string,
 ): string {
   const Driver = this.constructor as DriverClass<Driver<C>>;
   const methodMap = Driver.executeMethodMap;

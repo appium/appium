@@ -14,7 +14,7 @@ export function setupWriters() {
 export function getDynamicLogger(
   testingMode: boolean,
   forceLogs: boolean,
-  prefix: string | (() => string) | null = null
+  prefix: string | (() => string) | null = null,
 ) {
   process.env._TESTING = testingMode ? '1' : '0';
   process.env._FORCE_LOGS = forceLogs ? '1' : '0';
@@ -33,7 +33,10 @@ export function assertOutputContains(writers: ReturnType<typeof setupWriters>, o
   }
 }
 
-export function assertOutputDoesntContain(writers: ReturnType<typeof setupWriters>, output: string) {
+export function assertOutputDoesntContain(
+  writers: ReturnType<typeof setupWriters>,
+  output: string,
+) {
   if (someoneHadOutput(writers, output)) {
     throw new Error(`Expected nothing to have been called with: '${output}'`);
   }

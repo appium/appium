@@ -36,7 +36,7 @@ describe('Desired Capabilities', function () {
       d.createSession({
         alwaysMatch: {},
         firstMatch: [{}],
-      })
+      }),
     ).to.be.rejectedWith(errors.SessionNotCreatedError, /platformName/);
   });
 
@@ -45,7 +45,7 @@ describe('Desired Capabilities', function () {
       d.createSession({
         alwaysMatch: {},
         firstMatch: [{}],
-      })
+      }),
     ).to.be.rejectedWith(errors.SessionNotCreatedError, /platformName/);
   });
 
@@ -56,7 +56,7 @@ describe('Desired Capabilities', function () {
           platformName: 'iOS',
         },
         firstMatch: [{}],
-      })
+      }),
     ).to.be.fulfilled;
   });
 
@@ -76,7 +76,7 @@ describe('Desired Capabilities', function () {
           platformName: 'iOS',
         },
         firstMatch: [{}],
-      })
+      }),
     ).to.be.rejectedWith(errors.SessionNotCreatedError, /necessary.*proper/);
   });
 
@@ -96,7 +96,7 @@ describe('Desired Capabilities', function () {
           'appium:necessary': 'yup',
         },
         firstMatch: [{}],
-      })
+      }),
     ).to.be.rejectedWith(errors.SessionNotCreatedError, /platformName/);
   });
 
@@ -109,7 +109,7 @@ describe('Desired Capabilities', function () {
           'appium:hold the': 'sauce',
         },
         firstMatch: [{}],
-      })
+      }),
     ).to.be.fulfilled;
   });
 
@@ -139,9 +139,7 @@ describe('Desired Capabilities', function () {
       firstMatch: [{}],
     } as unknown as TestW3CCaps);
 
-    expect(
-      logWarnSpy.calledWith(`  noReest (did you mean 'noReset'?)`),
-    ).to.be.true;
+    expect(logWarnSpy.calledWith(`  noReest (did you mean 'noReset'?)`)).to.be.true;
   });
 
   it('should not suggest a capability name when the closest match exceeds the edit-distance threshold', async function () {
@@ -164,7 +162,7 @@ describe('Desired Capabilities', function () {
       d.createSession({
         alwaysMatch: {platformname: 'iOS'},
         firstMatch: [{}],
-      } as unknown as TestW3CCaps)
+      } as unknown as TestW3CCaps),
     ).to.be.rejectedWith(errors.SessionNotCreatedError, /platformName/);
   });
 
@@ -245,7 +243,7 @@ describe('Desired Capabilities', function () {
           platformName: {a: 'iOS'},
         } as any,
         firstMatch: [{}],
-      })
+      }),
     ).to.be.rejectedWith(errors.SessionNotCreatedError, /platformName/i);
   });
 
@@ -306,7 +304,7 @@ describe('Desired Capabilities', function () {
           'appium:foo': 1,
         },
         firstMatch: [{}],
-      })
+      }),
     ).to.be.rejectedWith(/'foo' must be of type string/);
 
     try {
@@ -339,7 +337,7 @@ describe('Desired Capabilities', function () {
         d.createSession({
           alwaysMatch: {platformName: 'iOS', 'appium:foo': capValue},
           firstMatch: [{}],
-        } as unknown as TestW3CCaps)
+        } as unknown as TestW3CCaps),
       ).to.be.rejectedWith(/(blank|required)/);
     });
   }
@@ -362,8 +360,8 @@ describe('Desired Capabilities', function () {
       const testValues = [true, 'string', [], 100];
       await asyncmap(testValues, (val) =>
         expect(d.createSession(val as unknown as TestW3CCaps)).to.be.rejectedWith(
-          errors.SessionNotCreatedError
-        )
+          errors.SessionNotCreatedError,
+        ),
       );
     });
   });

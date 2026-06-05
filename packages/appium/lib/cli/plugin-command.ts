@@ -28,7 +28,11 @@ export default class PluginCliCommand extends ExtensionCliCommand<'plugin'> {
    *
    * @param opts - install options
    */
-  async install({plugin, installType, packageName}: PluginInstallOpts): Promise<ExtRecord<'plugin'>> {
+  async install({
+    plugin,
+    installType,
+    packageName,
+  }: PluginInstallOpts): Promise<ExtRecord<'plugin'>> {
     return await super._install({
       installSpec: plugin,
       installType,
@@ -101,16 +105,20 @@ export default class PluginCliCommand extends ExtensionCliCommand<'plugin'> {
    * @param pluginMetadata - `appium` metadata from extension package
    * @param installSpec - install spec from CLI
    */
-  override validateExtensionFields(pluginMetadata: ExtMetadata<'plugin'>, installSpec: string): void {
+  override validateExtensionFields(
+    pluginMetadata: ExtMetadata<'plugin'>,
+    installSpec: string,
+  ): void {
     const missingFields = REQ_PLUGIN_FIELDS.reduce<string[]>(
-      (acc, field) => (pluginMetadata[field as keyof typeof pluginMetadata] ? acc : [...acc, field]),
-      []
+      (acc, field) =>
+        pluginMetadata[field as keyof typeof pluginMetadata] ? acc : [...acc, field],
+      [],
     );
 
     if (!util.isEmpty(missingFields)) {
       throw new Error(
         `Installed plugin "${installSpec}" did not expose correct fields for compatibility ` +
-          `with Appium. Missing fields: ${JSON.stringify(missingFields)}`
+          `with Appium. Missing fields: ${JSON.stringify(missingFields)}`,
       );
     }
   }

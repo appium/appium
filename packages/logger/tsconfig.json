@@ -8,9 +8,5 @@
     "types": ["node", "mocha"],
     "checkJs": true
   },
-  "include": [
-    "index.ts",
-    "lib",
-    "test"
-  ]
+  "include": ["index.ts", "lib", "test"]
 }

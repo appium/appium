@@ -83,7 +83,7 @@ describe('server', function () {
       server({
         routeConfiguringFunction() {},
         port,
-      })
+      }),
     ).to.be.rejectedWith(/EADDRINUSE/);
   });
   it('should not wait for the server close connections before finishing closing', async function () {
@@ -112,14 +112,14 @@ describe('server', function () {
         routeConfiguringFunction: () => {},
         port,
         hostname: 'lolcathost',
-      })
+      }),
     ).to.be.rejectedWith(/ENOTFOUND|EADDRNOTAVAIL|EAI_AGAIN/);
     await expect(
       server({
         routeConfiguringFunction: () => {},
         port,
         hostname: '1.1.1.1',
-      })
+      }),
     ).to.be.rejectedWith(/EADDRNOTAVAIL/);
   });
 });
@@ -237,7 +237,7 @@ describe('server plugins', function () {
             throw new Error('ugh');
           },
         ],
-      })
+      }),
     ).to.eventually.be.rejectedWith(/ugh/);
   });
 });

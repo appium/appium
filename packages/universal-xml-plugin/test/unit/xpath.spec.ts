@@ -17,7 +17,7 @@ describe('xpath functions', function () {
     it('should transform a query into a single new query', async function () {
       const {xml} = await transformSourceXml(XML_IOS, 'ios', {addIndexPath: true});
       expect(transformQuery('//TextInput', xml, false)).to.eql(
-        '/*[1]/*[1]/*[1]/*[1]/*[2]/*[1]/*[1]/*[1]/*[1]/*[1]/*[1]/*[2]/*[1]/*[1]/*[1]'
+        '/*[1]/*[1]/*[1]/*[1]/*[2]/*[1]/*[1]/*[1]/*[1]/*[1]/*[1]/*[2]/*[1]/*[1]/*[1]',
       );
     });
     it('should transform a query into a multiple new queries if asked', async function () {

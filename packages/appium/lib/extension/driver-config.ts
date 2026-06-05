@@ -25,7 +25,7 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
     const instance = new DriverConfig(manifest);
     if (DriverConfig.getInstance(manifest)) {
       throw new Error(
-        `Manifest with APPIUM_HOME ${manifest.appiumHome} already has a DriverConfig; use DriverConfig.getInstance() to retrieve it.`
+        `Manifest with APPIUM_HOME ${manifest.appiumHome} already has a DriverConfig; use DriverConfig.getInstance() to retrieve it.`,
       );
     }
     DriverConfig._instances.set(manifest, instance);
@@ -43,7 +43,7 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
 
   public override extensionDesc(
     driverName: ExtName<DriverType>,
-    {version, automationName}: ExtManifest<DriverType>
+    {version, automationName}: ExtManifest<DriverType>,
   ): string {
     return `${String(driverName)}@${version} (automationName '${automationName}')`;
   }
@@ -62,17 +62,20 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
 
     log.info(
       `Attempting to find matching driver for automationName ` +
-        `'${automationName}' and platformName '${platformName}'`
+        `'${automationName}' and platformName '${platformName}'`,
     );
 
     try {
-      const {driverName, mainClass, version} = this._getDriverBySupport(automationName, platformName);
+      const {driverName, mainClass, version} = this._getDriverBySupport(
+        automationName,
+        platformName,
+      );
       log.info(`The '${driverName}' driver was installed and matched caps.`);
       log.info(`Will require it at ${this.getInstallPath(driverName)}`);
       const driver = await this.requireAsync(driverName as ExtName<DriverType>);
       if (!driver) {
         throw new Error(
-          `Driver '${driverName}' did not export a class with name '${mainClass}'. Contact the author of the driver!`
+          `Driver '${driverName}' did not export a class with name '${mainClass}'. Contact the author of the driver!`,
         );
       }
       return {driver, version, driverName};
@@ -89,7 +92,7 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
 
   protected override getConfigProblems(
     extManifest: ExtManifest<DriverType>,
-    extName: string
+    extName: string,
   ): ExtManifestProblem[] {
     void extName;
     const problems: ExtManifestProblem[] = [];
@@ -137,7 +140,7 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
 
   private _getDriverBySupport(
     matchAutomationName: string,
-    matchPlatformName: string
+    matchPlatformName: string,
   ): ExtManifest<DriverType> & {driverName: string} {
     const drivers = this.installedExtensions;
     for (const [driverName, driverData] of Object.entries(drivers)) {
@@ -157,7 +160,7 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
             `'${automationName}', but Appium could not find ` +
             `support for platformName '${matchPlatformName}'. Supported ` +
             `platformNames are: ` +
-            JSON.stringify(platformNames)
+            JSON.stringify(platformNames),
         );
       }
     }

@@ -45,7 +45,7 @@ export async function loadExtensions(appiumHome: string): Promise<ExtensionConfi
 export async function getActivePlugins(
   pluginConfig: PluginConfig,
   maxParallelImports: number,
-  usePlugins: string[] = []
+  usePlugins: string[] = [],
 ): Promise<PluginNameMap> {
   if (util.isEmpty(usePlugins)) {
     return new Map();
@@ -59,17 +59,26 @@ export async function getActivePlugins(
       if (pluginName in pluginConfig.installedExtensions) {
         filteredPluginNames.push(pluginName);
       } else if (pluginName === USE_ALL_PLUGINS) {
-        throw new Error(`The reserved plugin name '${pluginName}' cannot be combined with other names.`);
+        throw new Error(
+          `The reserved plugin name '${pluginName}' cannot be combined with other names.`,
+        );
       } else {
         const suffix = util.isEmpty(pluginConfig.installedExtensions)
           ? `You don't have any plugins installed yet.`
           : `Only the following ${Object.keys(pluginConfig.installedExtensions).length === 1 ? `plugin is` : `plugins are`} ` +
             `available: ${Object.keys(pluginConfig.installedExtensions)}`;
-        throw new Error(`Could not load the plugin '${pluginName}' because it is not installed. ${suffix}`);
+        throw new Error(
+          `Could not load the plugin '${pluginName}' because it is not installed. ${suffix}`,
+        );
       }
     }
   }
-  const pairs = await importExtensions('plugin', pluginConfig, filteredPluginNames, maxParallelImports);
+  const pairs = await importExtensions(
+    'plugin',
+    pluginConfig,
+    filteredPluginNames,
+    maxParallelImports,
+  );
   return new Map(pairs as Array<[PluginClass, string]>);
 }
 
@@ -81,7 +90,7 @@ export async function getActivePlugins(
 export async function getActiveDrivers(
   driverConfig: DriverConfig,
   maxParallelImports: number,
-  useDrivers: string[] = []
+  useDrivers: string[] = [],
 ): Promise<DriverNameMap> {
   let filteredDriverNames: string[] = [];
   if (util.isEmpty(useDrivers)) {
@@ -95,20 +104,26 @@ export async function getActiveDrivers(
           ? `You don't have any drivers installed yet.`
           : `Only the following ${Object.keys(driverConfig.installedExtensions).length === 1 ? `driver is` : `drivers are`} ` +
             `available: ${Object.keys(driverConfig.installedExtensions)}`;
-        throw new Error(`Could not load the driver '${driverName}' because it is not installed. ${suffix}`);
+        throw new Error(
+          `Could not load the driver '${driverName}' because it is not installed. ${suffix}`,
+        );
       }
     }
   }
-  const pairs = await importExtensions('driver', driverConfig, filteredDriverNames, maxParallelImports);
+  const pairs = await importExtensions(
+    'driver',
+    driverConfig,
+    filteredDriverNames,
+    maxParallelImports,
+  );
   return new Map(pairs as Array<[DriverClass, string]>);
 }
-
 
 async function importExtensions(
   extType: 'driver' | 'plugin',
   config: DriverConfig | PluginConfig,
   extNames: string[],
-  asyncImportChunkSize: number
+  asyncImportChunkSize: number,
 ): Promise<Array<[ExtClass<ExtensionType>, string]>> {
   const extClasses = await asyncmap(
     extNames,
@@ -117,17 +132,19 @@ async function importExtensions(
       const timer = new timing.Timer().start();
       try {
         const extClass = await config.requireAsync(extName as never);
-        log.debug(`${extClass.name} has been successfully loaded in ${timer.getDuration().asSeconds.toFixed(3)}s`);
+        log.debug(
+          `${extClass.name} has been successfully loaded in ${timer.getDuration().asSeconds.toFixed(3)}s`,
+        );
         return extClass as ExtClass<ExtensionType>;
       } catch (err: any) {
         log.error(
           `Could not load ${extType} '${extName}', so it will not be available. Error ` +
-            `in loading the ${extType} was: ${err.message}`
+            `in loading the ${extType} was: ${err.message}`,
         );
         log.debug(err.stack);
       }
     },
-    {concurrency: asyncImportChunkSize}
+    {concurrency: asyncImportChunkSize},
   );
   return zip(extClasses, extNames).filter(([extClass]) => Boolean(extClass)) as Array<
     [ExtClass<ExtensionType>, string]

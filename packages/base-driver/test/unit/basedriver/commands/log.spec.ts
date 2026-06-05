@@ -65,7 +65,7 @@ describe('log commands -', function () {
       }
       expect(err).to.exist;
       expect(err!.message).to.eql(
-        `Unsupported log type 'three'. Supported types: {"one":"First logs","two":"Seconds logs"}`
+        `Unsupported log type 'three'. Supported types: {"one":"First logs","two":"Seconds logs"}`,
       );
       expect(one.called).to.be.false;
       expect(two.called).to.be.false;

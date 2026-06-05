@@ -76,7 +76,7 @@ describe('FakeDriver - via HTTP', function () {
       await expect(
         axios.post(`http://${TEST_HOST}:${TEST_PORT}/session`, {
           desiredCapabilities: W3C_PREFIXED_CAPS,
-        })
+        }),
       ).to.eventually.be.rejectedWith(/500/);
     });
   });

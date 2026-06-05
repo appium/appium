@@ -1,20 +1,21 @@
-import { BasePlugin } from 'appium/plugin';
-import { requireValidItemOptions, Storage, StorageArgumentError } from './storage';
-import { tempDir, fs, logger, util } from '@appium/support';
+import {BasePlugin} from 'appium/plugin';
+import {requireValidItemOptions, Storage, StorageArgumentError} from './storage';
+import {tempDir, fs, logger, util} from '@appium/support';
 import type {AddRequestResult, ItemOptions, StorageItem} from './types';
 import type {Express, Request, Response} from 'express';
 import type {AppiumServer} from '@appium/types';
-import { LRUCache } from 'lru-cache';
+import {LRUCache} from 'lru-cache';
 import WebSocket from 'ws';
-import { EventEmitter } from 'node:stream';
-import { getResponseForW3CError } from 'appium/driver';
+import {EventEmitter} from 'node:stream';
+import {getResponseForW3CError} from 'appium/driver';
 
 const log = logger.getLogger('StoragePlugin');
 
 let SHARED_STORAGE: Storage | null = null;
 const STORAGE_PREFIX = '/storage';
 const WS_TTL_MS = 5 * 60 * 1000;
-const STORAGE_HANDLERS: Record<string, (req: Request, httpServer?: AppiumServer) => Promise<any>> = {};
+const STORAGE_HANDLERS: Record<string, (req: Request, httpServer?: AppiumServer) => Promise<any>> =
+  {};
 const STORAGE_ADDITIONS_CACHE: LRUCache<string, () => any> = new LRUCache({
   max: 20,
   ttl: WS_TTL_MS,
@@ -22,7 +23,6 @@ const STORAGE_ADDITIONS_CACHE: LRUCache<string, () => any> = new LRUCache({
 });
 
 export class StoragePlugin extends BasePlugin {
-
   static async updateServer(expressApp: Express, httpServer: AppiumServer): Promise<void> {
     const buildHandler = (methodName: string) => async (req: Request, res: Response) => {
       let status = 200;
@@ -34,7 +34,7 @@ export class StoragePlugin extends BasePlugin {
         [status, body] = getResponseForW3CError(e);
       }
       log.debug(
-        `Responding to ${methodName} with ${util.truncateString(JSON.stringify(body.value), {length: 200})}`
+        `Responding to ${methodName} with ${util.truncateString(JSON.stringify(body.value), {length: 200})}`,
       );
       res.set('content-type', 'application/json; charset=utf-8');
       res.status(status).send(body);
@@ -43,18 +43,22 @@ export class StoragePlugin extends BasePlugin {
     expressApp.post(`${STORAGE_PREFIX}/add`, buildHandler(STORAGE_HANDLERS.addStorageItem.name));
     expressApp.get(`${STORAGE_PREFIX}/list`, buildHandler(STORAGE_HANDLERS.listStorageItems.name));
     expressApp.post(`${STORAGE_PREFIX}/reset`, buildHandler(STORAGE_HANDLERS.resetStorage.name));
-    expressApp.post(`${STORAGE_PREFIX}/delete`, buildHandler(STORAGE_HANDLERS.deleteStorageItem.name));
+    expressApp.post(
+      `${STORAGE_PREFIX}/delete`,
+      buildHandler(STORAGE_HANDLERS.deleteStorageItem.name),
+    );
   }
 }
 
 STORAGE_HANDLERS.addStorageItem = async function addStorageItem(
-  req: Request, httpServer?: AppiumServer
+  req: Request,
+  httpServer?: AppiumServer,
 ): Promise<AddRequestResult> {
   if (!httpServer) {
     throw new Error('httpServer is required to add a storage item');
   }
   const itemOptions = requireValidItemOptions(
-    parseRequestArgs(req, ['name', 'sha1']) as ItemOptions
+    parseRequestArgs(req, ['name', 'sha1']) as ItemOptions,
   );
   const [stream, events] = await prepareWebSockets(httpServer, itemOptions);
   return {
@@ -67,21 +71,19 @@ STORAGE_HANDLERS.addStorageItem = async function addStorageItem(
 };
 
 STORAGE_HANDLERS.listStorageItems = async function listStorageItems(): Promise<StorageItem[]> {
-  return await executeStorageMethod(
-    async (storage: Storage) => await storage.list()
-  );
+  return await executeStorageMethod(async (storage: Storage) => await storage.list());
 };
 
-STORAGE_HANDLERS.deleteStorageItem = async function deleteStorageItem(req: Request): Promise<boolean> {
+STORAGE_HANDLERS.deleteStorageItem = async function deleteStorageItem(
+  req: Request,
+): Promise<boolean> {
   return await executeStorageMethod(
-    async (storage: Storage) => await storage.delete(parseRequestArgs(req, ['name']).name)
+    async (storage: Storage) => await storage.delete(parseRequestArgs(req, ['name']).name),
   );
 };
 
 STORAGE_HANDLERS.resetStorage = async function resetStorage(): Promise<void> {
-  await executeStorageMethod(
-    async (storage: Storage) => await storage.reset()
-  );
+  await executeStorageMethod(async (storage: Storage) => await storage.reset());
 };
 
 async function executeStorageMethod<T>(method: (storage: Storage) => Promise<T>): Promise<T> {
@@ -96,14 +98,17 @@ function parseRequestArgs(req: Request, requiredKeys: string[]): Record<string, 
   for (const key of requiredKeys) {
     if (!Object.hasOwn(req.body, key)) {
       throw new StorageArgumentError(
-        `The required argument '${key}' is missing (expected ${JSON.stringify(requiredKeys)})`
+        `The required argument '${key}' is missing (expected ${JSON.stringify(requiredKeys)})`,
       );
     }
   }
   return req.body;
 }
 
-async function prepareWebSockets(httpServer: AppiumServer, itemOptions: ItemOptions): Promise<[string, string]> {
+async function prepareWebSockets(
+  httpServer: AppiumServer,
+  itemOptions: ItemOptions,
+): Promise<[string, string]> {
   const commonPathname = `${STORAGE_PREFIX}/add/${itemOptions.sha1}`;
   const streamPathname = `${commonPathname}/stream`;
   const eventsPathname = `${commonPathname}/events`;
@@ -144,13 +149,17 @@ async function prepareWebSockets(httpServer: AppiumServer, itemOptions: ItemOpti
         value: {
           success: true,
           ...itemOptions,
-        }
+        },
       };
-      log.debug(`Notifying about the successful addition of '${itemOptions.name}' to the server storage`);
+      log.debug(
+        `Notifying about the successful addition of '${itemOptions.name}' to the server storage`,
+      );
       signaler.emit('status', successEvent);
       STORAGE_ADDITIONS_CACHE.delete(itemOptions.sha1);
     } catch (e) {
-      log.debug(`Notifying about a failure while adding '${itemOptions.name}' to the server storage`);
+      log.debug(
+        `Notifying about a failure while adding '${itemOptions.name}' to the server storage`,
+      );
       // in case of a failure we do not want to close the server yet
       // in anticipation of a retry
       log.error(e);
@@ -183,7 +192,7 @@ const getStorageSingleton = util.memoize(async () => {
   }
   if (process.env.APPIUM_STORAGE_KEEP_ALL) {
     shouldPreserveFiles = ['true', '1', 'yes'].includes(
-      (process.env.APPIUM_STORAGE_KEEP_ALL ?? '').toLowerCase()
+      (process.env.APPIUM_STORAGE_KEEP_ALL ?? '').toLowerCase(),
     );
   }
   if (shouldPreserveFiles) {
@@ -191,15 +200,10 @@ const getStorageSingleton = util.memoize(async () => {
   } else {
     log.info(
       `All server storage items will be cleaned up automatically from '${storageRoot}' after ` +
-      `Appium server termination`
+        `Appium server termination`,
     );
   }
-  SHARED_STORAGE = new Storage(
-    storageRoot,
-    shouldPreserveRoot,
-    shouldPreserveFiles,
-    log,
-  );
+  SHARED_STORAGE = new Storage(storageRoot, shouldPreserveRoot, shouldPreserveFiles, log);
   await SHARED_STORAGE.reset();
   return SHARED_STORAGE;
 });

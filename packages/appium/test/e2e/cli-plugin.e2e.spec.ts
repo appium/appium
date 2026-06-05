@@ -15,7 +15,8 @@ describe('Plugin CLI', function () {
   before(async function () {
     appiumHome = await tempDir.openDir();
     const run = runAppiumJson(appiumHome);
-    runRun = (args) => run([PLUGIN_TYPE, RUN, ...args]) as Promise<{output: string; error?: string}>;
+    runRun = (args) =>
+      run([PLUGIN_TYPE, RUN, ...args]) as Promise<{output: string; error?: string}>;
   });
 
   after(async function () {

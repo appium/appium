@@ -34,11 +34,11 @@ import {memoize, pluralize} from './util';
 const ncpAsync = promisify(ncp) as (
   source: string,
   dest: string,
-  opts?: ncp.Options
+  opts?: ncp.Options,
 ) => Promise<void>;
 const findRootCached = memoize(
   packageDirectorySync,
-  (opts: {cwd?: string} | undefined) => opts?.cwd
+  (opts: {cwd?: string} | undefined) => opts?.cwd,
 );
 
 /** Options for {@linkcode fs.mv} */
@@ -57,7 +57,7 @@ export interface MvOptions {
  */
 export type WalkDirCallback = (
   itemPath: string,
-  isDirectory: boolean
+  isDirectory: boolean,
 ) => boolean | void | Promise<boolean | void>;
 
 /**
@@ -70,7 +70,7 @@ export type ReadFn<TBuffer extends NodeJS.ArrayBufferView = NodeJS.ArrayBufferVi
   buffer: TBuffer | ReadAsyncOptions<TBuffer>,
   offset?: number,
   length?: number,
-  position?: number | null
+  position?: number | null,
 ) => B<{bytesRead: number; buffer: TBuffer}>;
 
 function isErrnoException(err: unknown): err is NodeJS.ErrnoException {
@@ -136,7 +136,7 @@ export const fs = {
    */
   async mkdir(
     filepath: string | Buffer | URL,
-    opts: MakeDirectoryOptions = {}
+    opts: MakeDirectoryOptions = {},
   ): Promise<string | undefined> {
     try {
       return await fsPromises.mkdir(filepath, opts);
@@ -151,11 +151,7 @@ export const fs = {
    * Copies files and entire directories.
    * @see https://npm.im/ncp
    */
-  async copyFile(
-    source: string,
-    destination: string,
-    opts: ncp.Options = {}
-  ): Promise<void> {
+  async copyFile(source: string, destination: string, opts: ncp.Options = {}): Promise<void> {
     if (!(await fs.hasAccess(source))) {
       throw new Error(`The file at '${source}' does not exist or is not accessible`);
     }
@@ -170,11 +166,7 @@ export const fs = {
   /**
    * Move a file or a folder.
    */
-  async mv(
-    from: string,
-    to: string,
-    opts: MvOptions = {}
-  ): Promise<void> {
+  async mv(from: string, to: string, opts: MvOptions = {}): Promise<void> {
     const ensureDestination = async (p: PathLike): Promise<boolean> => {
       if (opts?.mkdirp && !(await this.exists(p))) {
         await fsPromises.mkdir(p, {recursive: true});
@@ -185,11 +177,13 @@ export const fs = {
     const renameFile = async (
       src: PathLike,
       dst: PathLike,
-      skipExistenceCheck: boolean
+      skipExistenceCheck: boolean,
     ): Promise<void> => {
       if (!skipExistenceCheck && (await this.exists(dst))) {
         if (opts?.clobber === false) {
-          const err = new Error(`The destination path '${dst}' already exists`) as NodeJS.ErrnoException;
+          const err = new Error(
+            `The destination path '${dst}' already exists`,
+          ) as NodeJS.ErrnoException;
           err.code = 'EEXIST';
           throw err;
         }
@@ -212,10 +206,9 @@ export const fs = {
       fromStat = await fsPromises.stat(from);
     } catch (err) {
       if (isErrnoException(err) && err.code === 'ENOENT') {
-        throw new Error(
-          `The source path '${from}' does not exist or is not accessible`,
-          {cause: err}
-        );
+        throw new Error(`The source path '${from}' does not exist or is not accessible`, {
+          cause: err,
+        });
       }
       throw err;
     }
@@ -249,9 +242,7 @@ export const fs = {
    * @see https://github.com/isaacs/node-glob
    */
   glob(pattern: string, options?: GlobOptions): Promise<string[]> {
-    return Promise.resolve(
-      (options ? glob(pattern, options) : glob(pattern)) as Promise<string[]>
-    );
+    return Promise.resolve((options ? glob(pattern, options) : glob(pattern)) as Promise<string[]>);
   },
 
   /** Sanitize a filename. @see https://github.com/parshap/node-sanitize-filename */
@@ -265,9 +256,9 @@ export const fs = {
       readStream.on('error', (e: Error) =>
         reject(
           new Error(
-            `Cannot calculate ${algorithm} hash for '${filePath}'. Original error: ${e.message}`
-          )
-        )
+            `Cannot calculate ${algorithm} hash for '${filePath}'. Original error: ${e.message}`,
+          ),
+        ),
       );
       readStream.on('data', (chunk: Buffer | string) => fileHash.update(chunk));
       readStream.on('end', () => resolve(fileHash.digest('hex')));
@@ -298,7 +289,7 @@ export const fs = {
   async walkDir(
     dir: string,
     recursive: boolean,
-    callback: WalkDirCallback
+    callback: WalkDirCallback,
   ): Promise<string | null> {
     let isValidRoot = false;
     let errMsg: string | null = null;
@@ -309,8 +300,7 @@ export const fs = {
     }
     if (!isValidRoot) {
       throw new Error(
-        `'${dir}' is not a valid root directory` +
-          (errMsg ? `. Original error: ${errMsg}` : '')
+        `'${dir}' is not a valid root directory` + (errMsg ? `. Original error: ${errMsg}` : ''),
       );
     }
 
@@ -370,7 +360,7 @@ export const fs = {
       log.debug(
         `Traversed ${pluralize('directory', directoryCount, true)} ` +
           `and ${pluralize('file', fileCount, true)} ` +
-          `in ${timer.getDuration().asMilliSeconds.toFixed(0)}ms`
+          `in ${timer.getDuration().asMilliSeconds.toFixed(0)}ms`,
       );
       if (walker) {
         walker.destroy();
@@ -385,14 +375,15 @@ export const fs = {
    */
   readPackageJsonFrom(
     dir: string,
-    opts: NormalizeOptions & {cwd?: string} = {}
+    opts: NormalizeOptions & {cwd?: string} = {},
   ): NormalizedPackageJson {
     const cwd = fs.findRoot(dir);
     try {
       return readPackageSync({normalize: true, ...opts, cwd});
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
-      (err as Error).message = `Failed to read a \`package.json\` from dir \`${dir}\`:\n\n${message}`;
+      (err as Error).message =
+        `Failed to read a \`package.json\` from dir \`${dir}\`:\n\n${message}`;
       throw err;
     }
   },

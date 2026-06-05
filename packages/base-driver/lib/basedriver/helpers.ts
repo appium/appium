@@ -31,7 +31,7 @@ const APPLICATIONS_CACHE = new LRUCache<string, CachedAppInfoEntry>({
   dispose: ({fullPath}, app) => {
     logger.info(
       `The application '${app}' cached at '${fullPath}' has ` +
-        `expired after ${CACHED_APPS_MAX_AGE_MS}ms`
+        `expired after ${CACHED_APPS_MAX_AGE_MS}ms`,
     );
     if (fullPath) {
       void fs.rimraf(fullPath);
@@ -51,7 +51,7 @@ process.on('exit', () => {
 
   const appPaths = [...APPLICATIONS_CACHE.values()].map(({fullPath}) => fullPath);
   logger.debug(
-    `Performing cleanup of ${util.pluralize('cached application', appPaths.length, true)}`
+    `Performing cleanup of ${util.pluralize('cached application', appPaths.length, true)}`,
   );
   for (const appPath of appPaths) {
     if (!appPath) {
@@ -98,7 +98,7 @@ interface CachedAppInfoEntry extends Omit<CachedAppInfo, 'packageHash'> {
  */
 export async function configureApp(
   app: string,
-  options: string | string[] | ConfigureAppOptions = {} as ConfigureAppOptions
+  options: string | string[] | ConfigureAppOptions = {} as ConfigureAppOptions,
 ): Promise<string> {
   if (typeof app !== 'string') {
     // immediately shortcircuit if not given an app
@@ -140,7 +140,7 @@ export async function configureApp(
     newApp = path.resolve(process.cwd(), newApp);
     logger.warn(
       `The current application path '${app}' is not absolute ` +
-      `and has been rewritten to '${newApp}'. Consider using absolute paths rather than relative`
+        `and has been rewritten to '${newApp}'. Consider using absolute paths rather than relative`,
     );
     app = newApp;
   }
@@ -194,7 +194,7 @@ export async function configureApp(
           }
           logger.info(
             `The application at '${cachedAppInfo.fullPath}' does not exist anymore ` +
-              `or its integrity has been damaged. Deleting it from the internal cache`
+              `or its integrity has been damaged. Deleting it from the internal cache`,
           );
           APPLICATIONS_CACHE.delete(appCacheKey);
 
@@ -215,10 +215,13 @@ export async function configureApp(
           });
         } else {
           const fileName = determineFilename(headers, pathname ?? '', supportedAppExtensions);
-          newApp = await fetchApp(stream, await tempDir.path({
-            prefix: fileName,
-            suffix: '',
-          }));
+          newApp = await fetchApp(
+            stream,
+            await tempDir.path({
+              prefix: fileName,
+              suffix: '',
+            }),
+          );
         }
       } finally {
         if (!stream.closed) {
@@ -280,7 +283,8 @@ export async function configureApp(
     }
 
     verifyAppExtension(newApp, supportedAppExtensions);
-    return appCacheKey !== toCacheKey(newApp) && (packageHash || Object.values(remoteAppProps).some(Boolean))
+    return appCacheKey !== toCacheKey(newApp) &&
+      (packageHash || Object.values(remoteAppProps).some(Boolean))
       ? await storeAppInCache(newApp)
       : newApp;
   });
@@ -380,7 +384,9 @@ export function generateDriverLogPrefix(obj: object | null, _sessionId?: string 
 
 // #region Private helpers
 
-function parseAppLink(appLink: string): URL | {protocol?: string; pathname?: string; href?: string; search?: string} {
+function parseAppLink(
+  appLink: string,
+): URL | {protocol?: string; pathname?: string; href?: string; search?: string} {
   try {
     return new URL(appLink);
   } catch {
@@ -430,7 +436,10 @@ function toCacheKey(app: string): string {
   return app;
 }
 
-async function queryAppLink(appLink: string, reqHeaders: RawAxiosRequestHeaders): Promise<RemoteAppData> {
+async function queryAppLink(
+  appLink: string,
+  reqHeaders: RawAxiosRequestHeaders,
+): Promise<RemoteAppData> {
   const url = new URL(appLink);
   // Extract credentials, then remove them from the URL for axios
   const {username, password} = url;
@@ -451,10 +460,9 @@ async function queryAppLink(appLink: string, reqHeaders: RawAxiosRequestHeaders)
     const {data: stream, headers, status} = await axios(requestOpts);
     return {stream, headers, status};
   } catch (err) {
-    throw new Error(
-      `Cannot download the app from ${axiosUrl}: ${(err as Error).message}`,
-      {cause: err}
-    );
+    throw new Error(`Cannot download the app from ${axiosUrl}: ${(err as Error).message}`, {
+      cause: err,
+    });
   }
 }
 
@@ -480,7 +488,7 @@ async function fetchApp(srcStream: Readable, dstPath: string): Promise<string> {
   const {size} = await fs.stat(dstPath);
   logger.debug(
     `The application (${util.toReadableSizeString(size)}) ` +
-      `has been downloaded to '${dstPath}' in ${secondsElapsed.toFixed(3)}s`
+      `has been downloaded to '${dstPath}' in ${secondsElapsed.toFixed(3)}s`,
   );
   // it does not make much sense to approximate the speed for short downloads
   if (secondsElapsed >= AVG_DOWNLOAD_SPEED_MEASUREMENT_THRESHOLD_SEC) {
@@ -494,13 +502,16 @@ async function fetchApp(srcStream: Readable, dstPath: string): Promise<string> {
 function determineFilename(
   headers: AxiosResponseHeaders | RawAxiosRequestHeaders,
   pathname: string,
-  supportedAppExtensions: string[]
+  supportedAppExtensions: string[],
 ): string {
   const basename = fs.sanitizeName(path.basename(decodeURIComponent(pathname ?? '')), {
     replacement: SANITIZE_REPLACEMENT,
   });
   const extname = path.extname(basename);
-  if (headers['content-disposition'] && /^attachment/i.test(String(headers['content-disposition']))) {
+  if (
+    headers['content-disposition'] &&
+    /^attachment/i.test(String(headers['content-disposition']))
+  ) {
     logger.debug(`Content-Disposition: ${headers['content-disposition']}`);
     const match = /filename="([^"]+)/i.exec(String(headers['content-disposition']));
     if (match) {
@@ -513,10 +524,12 @@ function determineFilename(
     ? basename.substring(0, basename.length - extname.length)
     : DEFAULT_BASENAME;
   let resultingExt = extname;
-  if (!supportedAppExtensions.map((ext) => ext.toLowerCase()).includes(resultingExt.toLowerCase())) {
+  if (
+    !supportedAppExtensions.map((ext) => ext.toLowerCase()).includes(resultingExt.toLowerCase())
+  ) {
     logger.info(
       `The current file extension '${resultingExt}' is not supported. ` +
-        `Defaulting to '${supportedAppExtensions[0]}'`
+        `Defaulting to '${supportedAppExtensions[0]}'`,
     );
     resultingExt = supportedAppExtensions[0] as string;
   }
@@ -524,13 +537,15 @@ function determineFilename(
 }
 
 function verifyAppExtension(app: string, supportedAppExtensions: string[]): string {
-  if (supportedAppExtensions.map((ext) => ext.toLowerCase()).includes(path.extname(app).toLowerCase())) {
+  if (
+    supportedAppExtensions.map((ext) => ext.toLowerCase()).includes(path.extname(app).toLowerCase())
+  ) {
     return app;
   }
   throw new Error(
     `New app path '${app}' did not have ` +
       `${util.pluralize('extension', supportedAppExtensions.length, false)}: ` +
-      supportedAppExtensions
+      supportedAppExtensions,
   );
 }
 
@@ -544,7 +559,7 @@ async function calculateFileIntegrity(filePath: string): Promise<string> {
 
 async function isAppIntegrityOk(
   currentPath: string,
-  expectedIntegrity: {file?: string; folder?: number} = {}
+  expectedIntegrity: {file?: string; folder?: number} = {},
 ): Promise<boolean> {
   if (!(await fs.exists(currentPath))) {
     return false;

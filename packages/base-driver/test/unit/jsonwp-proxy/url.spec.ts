@@ -41,9 +41,7 @@ describe('JWProxy', function () {
       const incomingUrl = PROXY_STATUS_URL;
       const j = createJWProxy({scheme: 'HTTPS'});
       const proxyUrl = j.getUrlForProxy(incomingUrl);
-      expect(proxyUrl).to.equal(
-        createAppiumURL(`https://${TEST_HOST}`, port, '', 'status')
-      );
+      expect(proxyUrl).to.equal(createAppiumURL(`https://${TEST_HOST}`, port, '', 'status'));
     });
     it('should translate the base', function () {
       const incomingUrl = PROXY_STATUS_URL;
@@ -89,8 +87,7 @@ describe('JWProxy', function () {
       expect(() => j.getUrlForProxy(incomingUrl, 'POST')).to.throw('not set');
     });
     it('should proxy session commands based off ', function () {
-      const incomingUrl =
-        '/session/3d001db2-7987-42a7-975d-8d5d5304083f/timeouts/implicit_wait';
+      const incomingUrl = '/session/3d001db2-7987-42a7-975d-8d5d5304083f/timeouts/implicit_wait';
       const j = createJWProxy({sessionId: '123'});
       const proxyUrl = j.getUrlForProxy(incomingUrl, 'POST');
       expect(proxyUrl).to.equal(createTestURL('123', 'timeouts/implicit_wait'));
@@ -114,18 +111,14 @@ describe('JWProxy', function () {
         '/session/82a9b7da-faaf-4a1d-8ef3-5e4fb5812200/cookie/session-something-or-other';
       const j = createJWProxy({sessionId: 'barbaz'});
       const proxyUrl = j.getUrlForProxy(incomingUrl, 'POST');
-      expect(proxyUrl).to.equal(
-        createTestURL('barbaz', 'cookie/session-something-or-other')
-      );
+      expect(proxyUrl).to.equal(createTestURL('barbaz', 'cookie/session-something-or-other'));
     });
     it(`should proxy session commands when '/session' is in the url and not base on the original url`, function () {
       const incomingUrl =
         '/session/82a9b7da-faaf-4a1d-8ef3-5e4fb5812200/cookie/session-something-or-other';
       const j = createJWProxy({sessionId: 'barbaz'});
       const proxyUrl = j.getUrlForProxy(incomingUrl, 'POST');
-      expect(proxyUrl).to.equal(
-        createTestURL('barbaz', 'cookie/session-something-or-other')
-      );
+      expect(proxyUrl).to.equal(createTestURL('barbaz', 'cookie/session-something-or-other'));
     });
     it('should error session commands without /session without session id', function () {
       const incomingUrl = '/element';

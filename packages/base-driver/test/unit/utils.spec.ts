@@ -12,11 +12,7 @@ describe('utils', function () {
   describe('mergePlainObjects', function () {
     it('should deep-merge plain objects without mutating the target', function () {
       const target: Record<string, unknown> = {a: 1, nested: {x: 1, y: 2}};
-      const result = mergePlainObjects(
-        target,
-        {b: 2, nested: {y: 3, z: 4}},
-        undefined
-      );
+      const result = mergePlainObjects(target, {b: 2, nested: {y: 3, z: 4}}, undefined);
 
       expect(result).to.eql({a: 1, b: 2, nested: {x: 1, y: 3, z: 4}});
       expect(target).to.eql({a: 1, nested: {x: 1, y: 2}});

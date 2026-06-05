@@ -17,7 +17,7 @@ describe('node utilities', function () {
     });
     it('should fail to find uninstalled package', async function () {
       await expect(node.requirePackage('appium-foo-driver')).to.eventually.be.rejectedWith(
-        /Unable to load package/
+        /Unable to load package/,
       );
     });
   });

@@ -108,7 +108,7 @@ describe('server configuration', function () {
       server({
         routeConfiguringFunction: configureRoutes,
         port,
-      })
+      }),
     ).to.be.rejectedWith('MeeSeeks');
   });
 

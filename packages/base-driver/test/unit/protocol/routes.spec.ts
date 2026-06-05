@@ -14,7 +14,12 @@ describe('Routes', function () {
       const shasum = crypto.createHash('sha1');
       for (const [url, urlMapping] of Object.entries(METHOD_MAP)) {
         shasum.update(url);
-        for (const [method, methodMapping] of Object.entries(urlMapping as Record<string, {command?: string; payloadParams?: {required?: any[]; optional?: any[]; wrap?: string}}>)) {
+        for (const [method, methodMapping] of Object.entries(
+          urlMapping as Record<
+            string,
+            {command?: string; payloadParams?: {required?: any[]; optional?: any[]; wrap?: string}}
+          >,
+        )) {
           shasum.update(method);
           if (methodMapping.command) {
             shasum.update(methodMapping.command);
@@ -22,9 +27,7 @@ describe('Routes', function () {
           if (methodMapping.payloadParams) {
             let allParams = (methodMapping.payloadParams.required ?? []).flat();
             if (methodMapping.payloadParams.optional) {
-              allParams = allParams.concat(
-                (methodMapping.payloadParams.optional ?? []).flat()
-              );
+              allParams = allParams.concat((methodMapping.payloadParams.optional ?? []).flat());
             }
             for (const param of allParams) {
               shasum.update(String(param));

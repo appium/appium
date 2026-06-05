@@ -8,12 +8,10 @@ import DriverCliCommand from './driver-command';
 import PluginCliCommand from './plugin-command';
 import {errAndQuit, JSON_SPACES} from './utils';
 
-export const commandClasses = Object.freeze(
-  {
-    [DRIVER_TYPE]: DriverCliCommand,
-    [PLUGIN_TYPE]: PluginCliCommand,
-  } as const
-);
+export const commandClasses = Object.freeze({
+  [DRIVER_TYPE]: DriverCliCommand,
+  [PLUGIN_TYPE]: PluginCliCommand,
+} as const);
 
 export type ExtCommand<ExtType extends ExtensionType> = ExtType extends DriverType
   ? Class<DriverCliCommand>

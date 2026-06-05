@@ -21,7 +21,7 @@ export function allowCrossDomain(req: Request, res: Response, next: NextFunction
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, OPTIONS, DELETE');
   res.header(
     'Access-Control-Allow-Headers',
-    'Cache-Control, Pragma, Origin, X-Requested-With, Content-Type, Accept, User-Agent'
+    'Cache-Control, Pragma, Origin, X-Requested-With, Content-Type, Accept, User-Agent',
   );
 
   if (req.method === 'OPTIONS') {
@@ -42,10 +42,10 @@ export function allowCrossDomainAsyncExecute(basePath: string): RequestHandler {
   function allowCrossDomainAsyncExecuteHandler(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): void {
     const receiveAsyncResponseRegExp = new RegExp(
-      `${util.escapeRegExp(basePath)}/session/[a-f0-9-]+/(appium/)?receive_async_response`
+      `${util.escapeRegExp(basePath)}/session/[a-f0-9-]+/(appium/)?receive_async_response`,
     );
     if (!receiveAsyncResponseRegExp.test(req.url)) {
       next();
@@ -72,9 +72,11 @@ export function handleLogContext(req: Request, _res: Response, next: NextFunctio
     {
       requestId,
       ...sessionInfo,
-      isSensitive: ['true', '1', 'yes'].includes(String(isSensitiveHeaderValue ?? '').toLowerCase()),
+      isSensitive: ['true', '1', 'yes'].includes(
+        String(isSensitiveHeaderValue ?? '').toLowerCase(),
+      ),
     },
-    true
+    true,
   );
 
   next();
@@ -83,11 +85,7 @@ export function handleLogContext(req: Request, _res: Response, next: NextFunctio
 /**
  * Ensures requests default to JSON content-type when none is provided.
  */
-export function defaultToJSONContentType(
-  req: Request,
-  _res: Response,
-  next: NextFunction
-): void {
+export function defaultToJSONContentType(req: Request, _res: Response, next: NextFunction): void {
   if (!req.headers['content-type']) {
     req.headers['content-type'] = 'application/json; charset=utf-8';
   }
@@ -107,7 +105,7 @@ export function tryHandleWebSocketUpgrade(
   req: IncomingMessage,
   socket: Duplex,
   head: Buffer,
-  webSocketsMapping: StringRecord<WSServer>
+  webSocketsMapping: StringRecord<WSServer>,
 ): boolean {
   if (String(req.headers?.upgrade ?? '').toLowerCase() !== 'websocket') {
     return false;
@@ -157,7 +155,7 @@ export function catchAllHandler(
   err: Error,
   _req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): void {
   if (res.headersSent) {
     next(err);

@@ -14,8 +14,9 @@ export class RelaxedCapsPlugin extends BasePlugin {
     caps3?: W3CCapsLike | null,
     ...restArgs: unknown[]
   ): Promise<unknown> {
-    const patchedCaps = [caps1, caps2, caps3]
-      .map((c) => isPlainObject(c) ? this.fixCapsIfW3C(c) : c);
+    const patchedCaps = [caps1, caps2, caps3].map((c) =>
+      isPlainObject(c) ? this.fixCapsIfW3C(c) : c,
+    );
     return await driver.createSession(...patchedCaps, ...restArgs);
   }
 
@@ -26,9 +27,7 @@ export class RelaxedCapsPlugin extends BasePlugin {
 
     const w3c = structuredClone(caps) as W3CCapsLike;
     if (Array.isArray(w3c.firstMatch)) {
-      w3c.firstMatch = w3c.firstMatch.map((c) =>
-        this.addVendorPrefix(c as CapsRecord)
-      );
+      w3c.firstMatch = w3c.firstMatch.map((c) => this.addVendorPrefix(c as CapsRecord));
     }
     if (isPlainObject(w3c.alwaysMatch)) {
       w3c.alwaysMatch = this.addVendorPrefix(w3c.alwaysMatch as CapsRecord);
@@ -45,8 +44,7 @@ export class RelaxedCapsPlugin extends BasePlugin {
       const firstMatch = (caps as W3CCapsLike).firstMatch;
       return Array.isArray(firstMatch) && firstMatch.length > 0 && firstMatch.every(isPlainObject);
     };
-    const isAlwaysMatchValid = () =>
-      isPlainObject((caps as W3CCapsLike).alwaysMatch);
+    const isAlwaysMatchValid = () => isPlainObject((caps as W3CCapsLike).alwaysMatch);
     if (Object.hasOwn(caps, 'firstMatch') && Object.hasOwn(caps, 'alwaysMatch')) {
       return isFirstMatchValid() && isAlwaysMatchValid();
     }
@@ -78,7 +76,7 @@ export class RelaxedCapsPlugin extends BasePlugin {
     if (adjustedKeys.length) {
       this.log.info(
         `Adjusted keys to conform to capability prefix requirements: ` +
-          JSON.stringify(adjustedKeys)
+          JSON.stringify(adjustedKeys),
       );
     }
     return newCaps;

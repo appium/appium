@@ -118,7 +118,7 @@ describe('utils/object', function () {
       };
       expect(getPath(schema, 'properties.server.properties.log.appiumCliDest')).to.equal('logFile');
       expect(getPath(schema, 'properties.server.properties.allow-cors.appiumCliDest')).to.equal(
-        'allowCors'
+        'allowCors',
       );
     });
   });
@@ -218,7 +218,7 @@ describe('utils/object', function () {
     it('should fill only undefined properties recursively for plain objects', function () {
       const result = defaultsDeep(
         {a: 1, nested: {x: 1}} as Record<string, unknown>,
-        {b: 2, nested: {y: 2, z: 3}} as Record<string, unknown>
+        {b: 2, nested: {y: 2, z: 3}} as Record<string, unknown>,
       );
       expect(result).to.eql({a: 1, b: 2, nested: {x: 1, y: 2, z: 3}});
     });
@@ -226,21 +226,24 @@ describe('utils/object', function () {
     it('should not overwrite defined nested values with defaults', function () {
       const result = defaultsDeep(
         {nested: {x: 1, y: 2}} as Record<string, unknown>,
-        {nested: {x: 9, z: 3}} as Record<string, unknown>
+        {nested: {x: 9, z: 3}} as Record<string, unknown>,
       );
       expect(result).to.eql({nested: {x: 1, y: 2, z: 3}});
     });
 
     it('should skip null and undefined sources', function () {
       expect(
-        defaultsDeep({a: 1} as Record<string, unknown>, undefined, {b: 2} as Record<string, unknown>)
+        defaultsDeep({a: 1} as Record<string, unknown>, undefined, {b: 2} as Record<
+          string,
+          unknown
+        >),
       ).to.eql({a: 1, b: 2});
       expect(
         defaultsDeep(
           {a: 1} as Record<string, unknown>,
           null as unknown as Record<string, unknown>,
-          {b: 2} as Record<string, unknown>
-        )
+          {b: 2} as Record<string, unknown>,
+        ),
       ).to.eql({a: 1, b: 2});
     });
 
@@ -249,8 +252,8 @@ describe('utils/object', function () {
         defaultsDeep(
           {} as Record<string, unknown>,
           {a: 1} as Record<string, unknown>,
-          {b: 2} as Record<string, unknown>
-        )
+          {b: 2} as Record<string, unknown>,
+        ),
       ).to.eql({a: 1, b: 2});
     });
 
@@ -262,7 +265,10 @@ describe('utils/object', function () {
 
     it('should copy functions by reference when filling undefined keys', function () {
       const logHandler = () => {};
-      const result = defaultsDeep({} as Record<string, unknown>, {logHandler} as Record<string, unknown>);
+      const result = defaultsDeep(
+        {} as Record<string, unknown>,
+        {logHandler} as Record<string, unknown>,
+      );
       expect(result.logHandler).to.equal(logHandler);
     });
 
@@ -271,7 +277,7 @@ describe('utils/object', function () {
       const result = defaultsDeep(
         {} as Record<string, unknown>,
         {logHandler} as Record<string, unknown>,
-        {port: 4723} as Record<string, unknown>
+        {port: 4723} as Record<string, unknown>,
       );
       expect(result.logHandler).to.equal(logHandler);
       expect(result.port).to.equal(4723);

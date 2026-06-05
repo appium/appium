@@ -27,10 +27,7 @@ export interface OpenedAffixes {
  * @param defaultPrefix - Default prefix when rawAffixes is omitted.
  * @returns A path to the temporary directory.
  */
-export async function path(
-  rawAffixes?: string | Affixes,
-  defaultPrefix?: string
-): Promise<string> {
+export async function path(rawAffixes?: string | Affixes, defaultPrefix?: string): Promise<string> {
   const affixes = parseAffixes(rawAffixes, defaultPrefix);
   const name = `${affixes.prefix ?? ''}${affixes.suffix ?? ''}`;
   const tempDirectory = await tempDir();
@@ -61,7 +58,7 @@ export const openDir = tempDir;
  *
  * @returns The same temp directory path on every call.
  */
-export const staticDir = memoize(async function staticDir (): Promise<string> {
+export const staticDir = memoize(async function staticDir(): Promise<string> {
   return tempDir();
 });
 
@@ -82,7 +79,7 @@ async function tempDir(): Promise<string> {
       process.pid,
       '-',
       (Math.random() * 0x100000000 + 1).toString(36),
-    ].join('')
+    ].join(''),
   );
 
   await fs.mkdir(filePath, {recursive: true});
@@ -90,10 +87,7 @@ async function tempDir(): Promise<string> {
   return filePath;
 }
 
-function parseAffixes(
-  rawAffixes?: string | Affixes,
-  defaultPrefix?: string
-): Affixes {
+function parseAffixes(rawAffixes?: string | Affixes, defaultPrefix?: string): Affixes {
   let affixes: Affixes = {};
   if (rawAffixes !== undefined && rawAffixes !== null) {
     switch (typeof rawAffixes) {

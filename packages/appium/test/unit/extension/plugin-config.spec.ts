@@ -42,7 +42,7 @@ describe('PluginConfig', function () {
     MockAppiumSupport.fs.readFile.resolves(yamlFixture);
     ({PluginConfig} = rewiremock.proxy(
       () => require('../../../lib/extension/plugin-config'),
-      overrides
+      overrides,
     ));
     resetSchema();
   });
@@ -75,8 +75,8 @@ describe('PluginConfig', function () {
             Error,
             new RegExp(
               `Manifest with APPIUM_HOME ${manifest.appiumHome} already has a PluginConfig`,
-              'i'
-            )
+              'i',
+            ),
           );
         });
       });
@@ -113,7 +113,7 @@ describe('PluginConfig', function () {
             pkgName: 'herrbbbff',
             installType: 'npm',
             installSpec: 'herrbbbff',
-          } as any)
+          } as any),
         ).to.equal(`foo@1.0`);
       });
     });
@@ -149,8 +149,8 @@ describe('PluginConfig', function () {
                 pkgName: 'yodel',
                 version: '-1',
               },
-              'foo'
-            )
+              'foo',
+            ),
           ).to.deep.include({
             err: 'Incorrectly formatted schema field; must be a path to a schema file or a schema object.',
             val: [],
@@ -171,8 +171,8 @@ describe('PluginConfig', function () {
                   installType: 'npm',
                   installSpec: 'yodel',
                 },
-                'foo'
-              )
+                'foo',
+              ),
             ).to.deep.include({
               err: 'Schema file has unsupported extension. Allowed: .json, .js, .cjs',
               val: 'selenium.java',
@@ -190,11 +190,9 @@ describe('PluginConfig', function () {
                   mainClass: 'Yankovic',
                   version: '1.0.0',
                 },
-                'foo'
+                'foo',
               );
-              expect(
-                problems
-              )
+              expect(problems)
                 .with.nested.property('[0].err')
                 .to.match(/Unable to register schema at path herp\.json/i);
             });
@@ -214,8 +212,8 @@ describe('PluginConfig', function () {
                     mainClass: 'Yankovic',
                     version: '1.0.0',
                   },
-                  'foo'
-                )
+                  'foo',
+                ),
               ).to.eventually.be.empty;
             });
           });
@@ -238,7 +236,8 @@ describe('PluginConfig', function () {
           });
 
           it('should return an empty array', async function () {
-            await expect(pluginConfig.getSchemaProblems(externalManifest, 'foo')).to.eventually.be.empty;
+            await expect(pluginConfig.getSchemaProblems(externalManifest, 'foo')).to.eventually.be
+              .empty;
           });
         });
 
@@ -291,7 +290,7 @@ describe('PluginConfig', function () {
           delete (extData as {schema?: string}).schema;
           await expect(pluginConfig.readExtensionSchema(extName, extData)).to.be.rejectedWith(
             TypeError,
-            /why is this function being called/i
+            /why is this function being called/i,
           );
         });
       });
@@ -309,7 +308,7 @@ describe('PluginConfig', function () {
             await pluginConfig.readExtensionSchema(extName, extData);
             MockResolveFrom.returns(resolveFixture('driver-schema.js'));
             await expect(pluginConfig.readExtensionSchema(extName, extData)).to.be.rejectedWith(
-              /conflicts with an existing schema/i
+              /conflicts with an existing schema/i,
             );
           });
         });

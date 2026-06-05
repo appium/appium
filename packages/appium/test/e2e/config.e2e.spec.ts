@@ -36,7 +36,7 @@ describe('Config', function () {
 
     async function verifyBuildInfoUpdate(
       useLocalGit: boolean,
-      opts: {sha?: string; built?: string} = {}
+      opts: {sha?: string; built?: string} = {},
     ) {
       const buildInfo = getBuildInfo();
       const {sha, built} = opts;

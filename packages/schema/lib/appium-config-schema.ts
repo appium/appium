@@ -265,7 +265,8 @@ export const AppiumConfigJsonSchema = {
         },
         'shutdown-timeout': {
           default: 5000,
-          description: 'For how long the server should delay its shutdown before force-closing all open connections to it. ' +
+          description:
+            'For how long the server should delay its shutdown before force-closing all open connections to it. ' +
             'Setting its value to zero should close the server without waiting for active connections.',
           title: 'Graceful server shutdown timeout in milliseconds',
           type: 'integer',
@@ -347,7 +348,8 @@ export const AppiumConfigJsonSchema = {
           type: 'string',
         },
         'max-ipc-data-size': {
-          appiumCliDescription: 'The maximum size in bytes allowed for message objects sent on IPC topics.',
+          appiumCliDescription:
+            'The maximum size in bytes allowed for message objects sent on IPC topics.',
           description: 'Maximum size in bytes for IPC messages',
           type: 'integer',
           minimum: 1,

@@ -32,7 +32,7 @@ class NullWritable extends Writable {
   override _write(
     chunk: unknown,
     encoding: BufferEncoding,
-    callback: (error?: Error | null) => void
+    callback: (error?: Error | null) => void,
   ): void {
     setImmediate(callback);
   }
@@ -62,10 +62,7 @@ export class CliConsole {
 
   constructor(opts: ConsoleOpts = {}) {
     const {jsonMode = false, useSymbols = true, useColor} = opts;
-    this.#console = new NodeConsole(
-      process.stdout,
-      jsonMode ? new NullWritable() : process.stderr
-    );
+    this.#console = new NodeConsole(process.stdout, jsonMode ? new NullWritable() : process.stderr);
     this.#useSymbols = Boolean(useSymbols);
     this.#useColor = Boolean(useColor ?? createSupportsColor(process.stderr));
   }

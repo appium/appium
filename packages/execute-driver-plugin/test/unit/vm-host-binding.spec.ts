@@ -21,8 +21,8 @@ describe('wrapHostBindingForVmContext', function () {
       vm.runInNewContext(
         `const func = d.constructor.constructor; func('return typeof process')()`,
         {d},
-        {timeout: 500}
-      )
+        {timeout: 500},
+      ),
     ).to.throw();
   });
 
@@ -34,8 +34,8 @@ describe('wrapHostBindingForVmContext', function () {
          const func = p.constructor.constructor;
          func('return typeof process')()`,
         {d},
-        {timeout: 500}
-      )
+        {timeout: 500},
+      ),
     ).to.throw();
   });
 
@@ -47,8 +47,8 @@ describe('wrapHostBindingForVmContext', function () {
          const func = p.constructor.constructor;
          func('return typeof process')()`,
         {d},
-        {timeout: 500}
-      )
+        {timeout: 500},
+      ),
     ).to.throw();
   });
 
@@ -60,8 +60,8 @@ describe('wrapHostBindingForVmContext', function () {
         `const func = setTimeout.constructor.constructor;
          func('return typeof process')()`,
         {setTimeout: st, clearTimeout: ct},
-        {timeout: 500}
-      )
+        {timeout: 500},
+      ),
     ).to.throw();
   });
 
@@ -71,7 +71,7 @@ describe('wrapHostBindingForVmContext', function () {
     const waited = vm.runInNewContext(
       `new Promise((resolve) => setTimeout(() => resolve(true), 10))`,
       {setTimeout: st, clearTimeout: ct},
-      {timeout: 500}
+      {timeout: 500},
     ) as Promise<boolean>;
     expect(await waited).to.equal(true);
   });
@@ -87,8 +87,8 @@ describe('wrapHostBindingForVmContext', function () {
         `const func = console.log.constructor.constructor;
          func('return typeof process')()`,
         {console: sandboxConsole},
-        {timeout: 500}
-      )
+        {timeout: 500},
+      ),
     ).to.throw();
   });
 
@@ -101,8 +101,8 @@ describe('wrapHostBindingForVmContext', function () {
         `const func = console.constructor.constructor;
          func('return typeof process')()`,
         {console: consoleFns},
-        {timeout: 500}
-      )
+        {timeout: 500},
+      ),
     ).to.throw();
   });
 
@@ -116,8 +116,8 @@ describe('wrapHostBindingForVmContext', function () {
          const func = m.constructor.constructor;
          func('return typeof process')()`,
         {d},
-        {timeout: 500}
-      )
+        {timeout: 500},
+      ),
     ).to.throw();
   });
 
@@ -140,8 +140,8 @@ describe('wrapHostBindingForVmContext', function () {
          const func = m.constructor.constructor;
          func('return typeof process')();`,
         {d},
-        {timeout: 500}
-      )
+        {timeout: 500},
+      ),
     ).to.throw();
   });
 
@@ -155,8 +155,8 @@ describe('wrapHostBindingForVmContext', function () {
          const func = b.constructor.constructor;
          func('return typeof process')()`,
         {d},
-        {timeout: 500}
-      )
+        {timeout: 500},
+      ),
     ).to.throw();
   });
 
@@ -178,8 +178,8 @@ describe('wrapHostBindingForVmContext', function () {
          const func = desc.value.constructor.constructor;
          func('return typeof process')()`,
         {d},
-        {timeout: 500}
-      )
+        {timeout: 500},
+      ),
     ).to.throw();
   });
 
@@ -206,7 +206,7 @@ describe('wrapHostBindingForVmContext', function () {
       `const value = d.provide();
        d.consume(value);`,
       {d},
-      {timeout: 500}
+      {timeout: 500},
     );
     expect(roundTripsAsOriginal).to.equal(true);
   });
@@ -233,7 +233,7 @@ describe('wrapHostBindingForVmContext', function () {
        const box = new d.Box(value);
        d.isOriginal(box.arg);`,
       {d},
-      {timeout: 500}
+      {timeout: 500},
     );
     expect(ctorArgRoundTripsAsOriginal).to.equal(true);
   });
@@ -251,7 +251,11 @@ describe('wrapHostBindingForVmContext', function () {
     const host = Object.create(Object.prototype);
     host.p = () => Promise.resolve(7);
     const d = wrapHostBindingForVmContext(host);
-    const v = vm.runInNewContext(`(async () => await d.p())()`, {d}, {timeout: 500}) as Promise<number>;
+    const v = vm.runInNewContext(
+      `(async () => await d.p())()`,
+      {d},
+      {timeout: 500},
+    ) as Promise<number>;
     expect(await v).to.equal(7);
   });
 
@@ -267,8 +271,8 @@ describe('wrapHostBindingForVmContext', function () {
           func('return typeof process')();
         })()`,
         {d},
-        {timeout: 500}
-      )
+        {timeout: 500},
+      ),
     ).to.eventually.be.rejected;
   });
 });

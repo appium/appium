@@ -55,7 +55,7 @@ describe('OpenCV helpers', function () {
           visualize: true,
           matchFunc: 'BruteForceHamming',
           goodMatchesFactor: 40,
-        }
+        },
       );
       expect(visualization).to.not.be.empty;
       expect(points1.length).to.be.above(4);
@@ -99,12 +99,14 @@ describe('OpenCV helpers', function () {
       await expect(
         getImageOccurrence(fullImage!, partialImage!, {
           threshold: 1.0,
-        })
+        }),
       ).to.eventually.be.rejectedWith(/threshold/);
     });
 
     it('should visualize the partial image position in the full image', async function () {
-      const {visualization} = await getImageOccurrence(fullImage!, partialImage!, {visualize: true});
+      const {visualization} = await getImageOccurrence(fullImage!, partialImage!, {
+        visualize: true,
+      });
       expect(visualization).to.not.be.empty;
     });
 

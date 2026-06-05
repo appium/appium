@@ -100,7 +100,7 @@ export async function init(args: ParsedArgs): Promise<void> {
         console.error(
           `The log message '${util.truncateString(msg, {length: 30})}' cannot be written into ` +
             `one or more requested destinations: ${[...transportNames].join(', ')}. ` +
-            `Original error: ${err.message}`
+            `Original error: ${err.message}`,
         );
         reportedLoggerErrors.add(err.message);
       }
@@ -123,7 +123,7 @@ export function clear(): void {
 
 function createConsoleTransport(
   args: ParsedArgs,
-  logLvl: string
+  logLvl: string,
 ): transports.ConsoleTransportInstance {
   const opt: transports.ConsoleTransportOptions = {
     level: logLvl,
@@ -137,27 +137,17 @@ function createConsoleTransport(
   return new transports.Console(opt);
 }
 
-function createFileTransport(
-  args: ParsedArgs,
-  logLvl: string
-): transports.FileTransportInstance {
+function createFileTransport(args: ParsedArgs, logLvl: string): transports.FileTransportInstance {
   const opt: transports.FileTransportOptions = {
     filename: args.logFile,
     maxFiles: 1,
     level: logLvl,
-    format: format.combine(
-      stripColorFormat,
-      formatTimestamp(args),
-      formatLog(args, false),
-    ),
+    format: format.combine(stripColorFormat, formatTimestamp(args), formatLog(args, false)),
   };
   return new transports.File(opt);
 }
 
-function createHttpTransport(
-  args: ParsedArgs,
-  logLvl: string
-): transports.HttpTransportInstance {
+function createHttpTransport(args: ParsedArgs, logLvl: string): transports.HttpTransportInstance {
   let host = '127.0.0.1';
   let port = 9003;
 
@@ -211,7 +201,7 @@ async function createTransports(args: ParsedArgs): Promise<Transport[]> {
       // eslint-disable-next-line no-console
       console.log(
         `Tried to attach logging to file '${args.logFile}' but an error ` +
-          `occurred: ${err.message}`
+          `occurred: ${err.message}`,
       );
     }
   }
@@ -224,7 +214,7 @@ async function createTransports(args: ParsedArgs): Promise<Transport[]> {
       // eslint-disable-next-line no-console
       console.log(
         `Tried to attach logging to Http at ${args.webhook} but ` +
-          `an error occurred: ${err.message}`
+          `an error occurred: ${err.message}`,
       );
     }
   }
@@ -310,7 +300,11 @@ export function stripColorCodes(text: string): string {
 }
 
 // Strip the color marking within messages (depends on stripColorCodes)
-const stripColorFormat = format(function stripColor(info: {level: string; message: unknown; [key: string]: unknown}) {
+const stripColorFormat = format(function stripColor(info: {
+  level: string;
+  message: unknown;
+  [key: string]: unknown;
+}) {
   return {
     ...info,
     level: stripColorCodes(info.level),

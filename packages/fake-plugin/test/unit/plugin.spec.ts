@@ -45,15 +45,13 @@ describe('fake plugin', function () {
     const app = new FakeExpress();
     await expect(app.get('/fake')).to.be.rejected;
     await FakePlugin.updateServer(app as any, {} as any, {});
-    await expect(app.get('/fake')).to.eventually.eql(
-      JSON.stringify({fake: 'fakeResponse'})
-    );
+    await expect(app.get('/fake')).to.eventually.eql(JSON.stringify({fake: 'fakeResponse'}));
   });
 
   it('should wrap find element', async function () {
     const p = new FakePlugin('fake');
     await expect(
-      p.findElement(() => Promise.resolve({el: 'fakeEl'}), {} as DriverLike, 'arg1', 'arg2')
+      p.findElement(() => Promise.resolve({el: 'fakeEl'}), {} as DriverLike, 'arg1', 'arg2'),
     ).to.eventually.eql({
       el: 'fakeEl',
       fake: true,
@@ -63,27 +61,28 @@ describe('fake plugin', function () {
   it('should handle page source', async function () {
     const p = new FakePlugin('fake');
     await expect(
-      p.getPageSource(() => Promise.resolve(''), {} as DriverLike, 'arg1', 'arg2')
+      p.getPageSource(() => Promise.resolve(''), {} as DriverLike, 'arg1', 'arg2'),
     ).to.eventually.eql('<Fake>["arg1","arg2"]</Fake>');
   });
 
   it('should handle getFakeSessionData', async function () {
     const p = new FakePlugin('fake');
     await expect(
-      p.getFakeSessionData(() => Promise.resolve(null), {fakeSessionData: 'hi'} as DriverLike)
+      p.getFakeSessionData(() => Promise.resolve(null), {fakeSessionData: 'hi'} as DriverLike),
     ).to.eventually.eql('hi');
-    await expect(p.getFakeSessionData(() => Promise.resolve(null), {} as DriverLike)).to
-      .eventually.eql(null);
+    await expect(
+      p.getFakeSessionData(() => Promise.resolve(null), {} as DriverLike),
+    ).to.eventually.eql(null);
   });
 
   it('should handle setFakeSessionData', async function () {
     const p = new FakePlugin('fake');
     const driver = {} as DriverLike;
     await expect(
-      p.setFakeSessionData(() => Promise.resolve(null), driver, 'foobar')
+      p.setFakeSessionData(() => Promise.resolve(null), driver, 'foobar'),
     ).to.eventually.eql(null);
-    await expect(
-      p.getFakeSessionData(() => Promise.resolve(null), driver)
-    ).to.eventually.eql('foobar');
+    await expect(p.getFakeSessionData(() => Promise.resolve(null), driver)).to.eventually.eql(
+      'foobar',
+    );
   });
 });

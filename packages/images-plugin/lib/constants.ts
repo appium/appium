@@ -6,7 +6,10 @@ export const IMAGE_STRATEGY = '-image';
 export const IMAGE_ELEMENT_PREFIX = 'appium-image-element-';
 export const IMAGE_EL_TAP_STRATEGY_W3C = 'w3cActions';
 export const IMAGE_EL_TAP_STRATEGY_MJSONWP = 'touchActions';
-export const IMAGE_TAP_STRATEGIES = [IMAGE_EL_TAP_STRATEGY_MJSONWP, IMAGE_EL_TAP_STRATEGY_W3C] as const;
+export const IMAGE_TAP_STRATEGIES = [
+  IMAGE_EL_TAP_STRATEGY_MJSONWP,
+  IMAGE_EL_TAP_STRATEGY_W3C,
+] as const;
 export const DEFAULT_TEMPLATE_IMAGE_SCALE = 1.0;
 
 export const MATCH_FEATURES_MODE = 'matchFeatures';

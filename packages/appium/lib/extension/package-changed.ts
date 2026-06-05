@@ -21,7 +21,7 @@ export async function packageDidChange(appiumHome: string): Promise<boolean> {
   } catch (err: any) {
     throw new Error(
       `Appium could not create the directory for hash file: ${hashFilenameDir}. Original error: ${err.message}`,
-      {cause: err}
+      {cause: err},
     );
   }
 
@@ -43,12 +43,12 @@ export async function packageDidChange(appiumHome: string): Promise<boolean> {
     try {
       writeHash();
       log.debug(
-        `Updated hash of ${appiumHome}/package.json from: ${oldHash ?? '(none)'} to: ${hash}`
+        `Updated hash of ${appiumHome}/package.json from: ${oldHash ?? '(none)'} to: ${hash}`,
       );
     } catch (err: any) {
       throw new Error(
         `Appium could not write hash file: ${hashFilenameDir}. Original error: ${err.message}`,
-        {cause: err}
+        {cause: err},
       );
     }
   }

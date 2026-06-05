@@ -113,9 +113,9 @@ async function main() {
     spinner.succeed('No drivers or plugins to automatically install.');
     log(
       'If desired, provide the argument "--drivers=<driver_name>[,<driver_name>...]" and/or ' +
-      '"--plugins=<plugin_name>[,<plugin_name>...]" to the "npm install appium" command. ' +
-      'The specified extensions will be installed automatically alongside Appium. ' +
-      'For a list of known extensions, run "appium <driver|plugin> list".'
+        '"--plugins=<plugin_name>[,<plugin_name>...]" to the "npm install appium" command. ' +
+        'The specified extensions will be installed automatically alongside Appium. ' +
+        'For a list of known extensions, run "appium <driver|plugin> list".',
     );
     return;
   }
@@ -165,11 +165,11 @@ async function main() {
   spinner.succeed(
     `Done. ${installedStats[DRIVER_TYPE]} ${util.pluralize(
       'driver',
-      installedStats[DRIVER_TYPE]
+      installedStats[DRIVER_TYPE],
     )} and ${installedStats[PLUGIN_TYPE]} ${util.pluralize(
       'plugin',
-      installedStats[PLUGIN_TYPE]
-    )} are installed.`
+      installedStats[PLUGIN_TYPE],
+    )} are installed.`,
   );
 }
 
@@ -196,7 +196,7 @@ async function checkAndInstallExtension({
       showInstalled: true,
       suppressOutput: true,
     },
-    type === DRIVER_TYPE ? driverConfig : pluginConfig
+    type === DRIVER_TYPE ? driverConfig : pluginConfig,
   );
   if (extList[ext]) {
     spinner.info(`The ${type} "${ext}" is already installed.`);
@@ -212,7 +212,7 @@ async function checkAndInstallExtension({
       suppressOutput: true,
       [type]: ext,
     },
-    type === DRIVER_TYPE ? driverConfig : pluginConfig
+    type === DRIVER_TYPE ? driverConfig : pluginConfig,
   );
   spinner.succeed(`Installed ${type} "${ext}".`);
 }

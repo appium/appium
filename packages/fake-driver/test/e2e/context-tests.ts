@@ -17,16 +17,10 @@ export function contextTests() {
       await expect(driver.getContext()).to.eventually.become('NATIVE_APP');
     });
     it('should get contexts', async function () {
-      await expect(driver.getContexts()).to.eventually.become([
-        'NATIVE_APP',
-        'PROXY',
-        'WEBVIEW_1',
-      ]);
+      await expect(driver.getContexts()).to.eventually.become(['NATIVE_APP', 'PROXY', 'WEBVIEW_1']);
     });
     it('should not set context that is not there', async function () {
-      await expect(driver.switchContext('WEBVIEW_FOO')).to.be.rejectedWith(
-        /No such context found/
-      );
+      await expect(driver.switchContext('WEBVIEW_FOO')).to.be.rejectedWith(/No such context found/);
     });
     it('should set context', async function () {
       await driver.switchContext('WEBVIEW_1');
@@ -53,7 +47,7 @@ export function contextTests() {
     it('should not set a frame in a native context', async function () {
       await driver.switchContext('NATIVE_APP');
       await expect(driver.switchToFrame(1)).to.be.rejectedWith(
-        /could not be executed in the current context/
+        /could not be executed in the current context/,
       );
     });
   });

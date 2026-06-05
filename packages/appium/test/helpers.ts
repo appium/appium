@@ -5,12 +5,8 @@ import {insertAppiumPrefixes} from '../lib/helpers/capability';
 
 const TEST_HOST = '127.0.0.1';
 
-const FAKE_DRIVER_DIR = path.dirname(
-  require.resolve('@appium/fake-driver/package.json')
-);
-const FAKE_PLUGIN_DIR = path.dirname(
-  require.resolve('@appium/fake-plugin/package.json')
-);
+const FAKE_DRIVER_DIR = path.dirname(require.resolve('@appium/fake-driver/package.json'));
+const FAKE_PLUGIN_DIR = path.dirname(require.resolve('@appium/fake-plugin/package.json'));
 
 /** This is the monorepo root. */
 const PROJECT_ROOT = path.join(FAKE_DRIVER_DIR, '..', '..');

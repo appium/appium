@@ -35,16 +35,24 @@ export class ImageElementPlugin extends BasePlugin {
     mode: string,
     firstImage: string | Buffer,
     secondImage: string | Buffer,
-    options?: MatchingOptions | SimilarityOptions | OccurrenceOptions
+    options?: MatchingOptions | SimilarityOptions | OccurrenceOptions,
   ): Promise<any> {
     return await compareImages(mode, firstImage, secondImage, options);
   }
 
-  async findElement(next: () => Promise<any>, driver: ExternalDriver, ...args: any[]): Promise<any> {
+  async findElement(
+    next: () => Promise<any>,
+    driver: ExternalDriver,
+    ...args: any[]
+  ): Promise<any> {
     return await this._find(false, next, driver, ...args);
   }
 
-  async findElements(next: () => Promise<any>, driver: ExternalDriver, ...args: any[]): Promise<any> {
+  async findElements(
+    next: () => Promise<any>,
+    driver: ExternalDriver,
+    ...args: any[]
+  ): Promise<any> {
     return await this._find(true, next, driver, ...args);
   }
 
@@ -76,7 +84,7 @@ export class ImageElementPlugin extends BasePlugin {
   async performActions(
     next: () => Promise<any>,
     driver: ExternalDriver,
-    actionSequences: ActionSequence[]
+    actionSequences: ActionSequence[],
   ): Promise<any> {
     // Replace with coordinates when ActionSequence includes image elements.
     for (const actionSequence of actionSequences) {

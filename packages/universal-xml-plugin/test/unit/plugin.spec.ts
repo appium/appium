@@ -46,7 +46,12 @@ describe('UniversalXMLPlugin', function () {
         const nodes = runQuery(selector, XML_IOS.replace(/<\/?AppiumAUT>/g, ''));
         return nodes[0];
       };
-      const node = await p.findElement(next, driver as any, 'xpath', '//TextInput[@axId="username"]');
+      const node = await p.findElement(
+        next,
+        driver as any,
+        'xpath',
+        '//TextInput[@axId="username"]',
+      );
       expect(getNodeAttrVal(node as any, 'value')).to.eql('alice');
       expect((node as any).nodeName).to.eql('XCUIElementTypeTextField');
     });
@@ -60,7 +65,12 @@ describe('UniversalXMLPlugin', function () {
         const nodes = runQuery(selector, XML_ANDROID);
         return nodes[0];
       };
-      const node = await p.findElement(next, driver as any, 'xpath', '//TextInput[@axId="username"]');
+      const node = await p.findElement(
+        next,
+        driver as any,
+        'xpath',
+        '//TextInput[@axId="username"]',
+      );
       expect(getNodeAttrVal(node as any, 'content-desc')).to.eql('username');
       expect((node as any).nodeName).to.eql('android.widget.EditText');
     });

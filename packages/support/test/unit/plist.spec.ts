@@ -14,7 +14,7 @@ describe('plist', function () {
   it('should parse plist file as binary', async function () {
     const content = await plist.parsePlistFile(binaryPlistPath);
     expect(content).to.have.property(
-      'com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework'
+      'com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework',
     );
   });
 
@@ -42,7 +42,7 @@ describe('plist', function () {
     const content = await fs.readFile(binaryPlistPath);
     const object = plist.parsePlist(content);
     expect(object).to.have.property(
-      'com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework'
+      'com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework',
     );
   });
 
@@ -50,7 +50,7 @@ describe('plist', function () {
     const content = await fs.readFile(textPlistPath);
     const object = plist.parsePlist(content);
     expect(object).to.have.property(
-      'com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework'
+      'com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework',
     );
   });
 
@@ -58,7 +58,7 @@ describe('plist', function () {
     const content = await fs.readFile(textPlistPath);
     const object = plist.parsePlist(new Uint8Array(content));
     expect(object).to.have.property(
-      'com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework'
+      'com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework',
     );
   });
 
@@ -66,15 +66,17 @@ describe('plist', function () {
     const content = await fs.readFile(binaryPlistPath);
     const object = plist.parsePlist(new Uint8Array(content));
     expect(object).to.have.property(
-      'com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework'
+      'com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework',
     );
   });
 
   it('should read binary plist from ArrayBuffer', async function () {
     const content = await fs.readFile(binaryPlistPath);
-    const object = plist.parsePlist(content.buffer.slice(content.byteOffset, content.byteOffset + content.byteLength));
+    const object = plist.parsePlist(
+      content.buffer.slice(content.byteOffset, content.byteOffset + content.byteLength),
+    );
     expect(object).to.have.property(
-      'com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework'
+      'com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework',
     );
   });
 

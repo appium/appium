@@ -1,10 +1,6 @@
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {
-  isPackageOrBundle,
-  duplicateKeys,
-  parseCapsArray,
-} from '../../../lib/basedriver/helpers';
+import {isPackageOrBundle, duplicateKeys, parseCapsArray} from '../../../lib/basedriver/helpers';
 
 chai.use(chaiAsPromised);
 
@@ -34,7 +30,7 @@ describe('helpers', function () {
     });
     it('should translate key in an object with an array', function () {
       expect(
-        duplicateKeys([{key: {foo: 'hello world'}}, {foo: 'HELLO WORLD'}], 'foo', 'bar')
+        duplicateKeys([{key: {foo: 'hello world'}}, {foo: 'HELLO WORLD'}], 'foo', 'bar'),
       ).to.eql([
         {key: {foo: 'hello world', bar: 'hello world'}},
         {foo: 'HELLO WORLD', bar: 'HELLO WORLD'},
@@ -52,8 +48,8 @@ describe('helpers', function () {
             },
           },
           'foo',
-          'bar'
-        )
+          'bar',
+        ),
       ).to.eql({
         keyOne: {
           foo: 'hello world',

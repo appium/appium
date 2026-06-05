@@ -31,7 +31,9 @@ export const transformers = {
       try {
         csv = readFileSync(csvOrPath, 'utf8');
       } catch (err) {
-        throw new ArgumentTypeError(`Could not read file '${csvOrPath}': ${(err as Error).message}`);
+        throw new ArgumentTypeError(
+          `Could not read file '${csvOrPath}': ${(err as Error).message}`,
+        );
       }
       loadedFromFile = true;
     }
@@ -56,7 +58,9 @@ export const transformers = {
         // Intentionally sync: argparse type hooks are synchronous.
         json = readFileSync(jsonOrPath, 'utf8');
       } catch (err) {
-        throw new ArgumentTypeError(`Could not read file '${jsonOrPath}': ${(err as Error).message}`);
+        throw new ArgumentTypeError(
+          `Could not read file '${jsonOrPath}': ${(err as Error).message}`,
+        );
       }
       loadedFromFile = true;
     }

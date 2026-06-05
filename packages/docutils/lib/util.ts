@@ -40,7 +40,7 @@ stopwatch.cache = new Map<string, number>();
  */
 export type TupleToObject<
   T extends readonly any[],
-  M extends Record<Exclude<keyof T, keyof any[]>, PropertyKey>
+  M extends Record<Exclude<keyof T, keyof any[]>, PropertyKey>,
 > = {[K in Exclude<keyof T, keyof any[]> as M[K]]: T[K]};
 
 /**
@@ -154,7 +154,9 @@ export async function execWithErrorHandling(
     return await exec(cmd, args, opts);
   } catch (err) {
     const execErr = err as ExecError;
-    execErr.message = execErr.stderr ? `${execErr.message}\nCommand error:\n${execErr.stderr}` : execErr.message;
+    execErr.message = execErr.stderr
+      ? `${execErr.message}\nCommand error:\n${execErr.stderr}`
+      : execErr.message;
     throw execErr;
   }
 }

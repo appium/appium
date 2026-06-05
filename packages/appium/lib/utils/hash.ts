@@ -9,7 +9,8 @@ export function adler32(str: string, seed: number | null = null): number {
     a = seed & 0xffff;
     b = seed >>> 16;
   }
-  for (let i = 0; i < L;) {
+  let i = 0;
+  while (i < L) {
     let M = Math.min(L - i, 2918);
     while (M > 0) {
       let c = str.charCodeAt(i++);

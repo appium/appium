@@ -50,12 +50,12 @@ describe('#zip', function () {
           await expect(
             fs.readFile(path.resolve(assetsPath, 'unzipped', 'test-dir', 'a.txt'), {
               encoding: 'utf8',
-            })
+            }),
           ).to.eventually.equal('Hello World');
           await expect(
             fs.readFile(path.resolve(assetsPath, 'unzipped', 'test-dir', 'b.txt'), {
               encoding: 'utf8',
-            })
+            }),
           ).to.eventually.equal('Foo Bar');
         });
       });
@@ -69,7 +69,7 @@ describe('#zip', function () {
         });
         it('should throw an error if the file is invalid', async function () {
           await expect(
-            zip.assertValidZip(path.resolve(assetsPath, 'unzipped', 'test-dir', 'a.txt'))
+            zip.assertValidZip(path.resolve(assetsPath, 'unzipped', 'test-dir', 'a.txt')),
           ).to.eventually.be.rejected;
         });
       });
@@ -94,7 +94,7 @@ describe('#zip', function () {
                 fs.readFile(path.resolve(tmpRoot, entry.fileName), {
                   flag: 'r',
                   encoding: 'utf8',
-                })
+                }),
               ).to.eventually.equal(expectedEntries[i].contents);
             }
             i++;
@@ -114,7 +114,7 @@ describe('#zip', function () {
         it('should be rejected if it uses a non-zip file', async function () {
           const promise = zip.readEntries(
             path.resolve(assetsPath, 'unzipped', 'test-dir', 'a.txt'),
-            async () => {}
+            async () => {},
           );
           await expect(promise).to.eventually.be.rejected;
         });
@@ -136,17 +136,17 @@ describe('#zip', function () {
             path.resolve(tmpRoot, 'output'),
             {
               fileNamesEncoding: 'utf8',
-            }
+            },
           );
           await expect(
             fs.readFile(path.resolve(tmpRoot, 'output', 'test-dir', 'a.txt'), {
               encoding: 'utf8',
-            })
+            }),
           ).to.eventually.equal('Hello World');
           await expect(
             fs.readFile(path.resolve(tmpRoot, 'output', 'test-dir', 'b.txt'), {
               encoding: 'utf8',
-            })
+            }),
           ).to.eventually.equal('Foo Bar');
         });
 
@@ -158,30 +158,30 @@ describe('#zip', function () {
 
           await fs.writeFile(
             path.resolve(tmpRoot, 'test.zip'),
-            Buffer.from(buffer.toString(), 'base64')
+            Buffer.from(buffer.toString(), 'base64'),
           );
 
           // Unzip the file and test that it has the same contents as the directory that was zipped.
           await zip.extractAllTo(
             path.resolve(tmpRoot, 'test.zip'),
-            path.resolve(tmpRoot, 'output')
+            path.resolve(tmpRoot, 'output'),
           );
           await expect(
             fs.readFile(path.resolve(tmpRoot, 'output', 'test-dir', 'a.txt'), {
               encoding: 'utf8',
-            })
+            }),
           ).to.eventually.equal('Hello World');
           await expect(
             fs.readFile(path.resolve(tmpRoot, 'output', 'test-dir', 'b.txt'), {
               encoding: 'utf8',
-            })
+            }),
           ).to.eventually.equal('Foo Bar');
         });
 
         it('should be rejected if use a bad path', async function () {
-          await expect(
-            zip.toInMemoryZip(path.resolve(assetsPath, 'bad_path'))
-          ).to.be.rejectedWith(/no such/i);
+          await expect(zip.toInMemoryZip(path.resolve(assetsPath, 'bad_path'))).to.be.rejectedWith(
+            /no such/i,
+          );
         });
 
         it('should be rejected if max size is exceeded', async function () {
@@ -189,7 +189,7 @@ describe('#zip', function () {
           await expect(
             zip.toInMemoryZip(testFolder, {
               maxSize: 1,
-            })
+            }),
           ).to.be.rejectedWith(/must not be greater/);
         });
       });
@@ -197,7 +197,12 @@ describe('#zip', function () {
       describe('_extractEntryTo()', function () {
         let entry: {fileName: string};
         let destDir: string;
-        let mockZipFile: {openReadStream: (e: typeof entry, cb: (err: null, s: MockReadWriteStream) => void) => void};
+        let mockZipFile: {
+          openReadStream: (
+            e: typeof entry,
+            cb: (err: null, s: MockReadWriteStream) => void,
+          ) => void;
+        };
         let mockZipStream: MockReadWriteStream & {pipe?: (dest?: unknown) => void};
 
         beforeEach(async function () {
@@ -219,7 +224,7 @@ describe('#zip', function () {
             fileName: path.resolve(destDir, '..', 'temp', 'file'),
           };
           await expect(
-            zip._extractEntryTo(mockZipFile as any, entry as any, destDir)
+            zip._extractEntryTo(mockZipFile as any, entry as any, destDir),
           ).to.be.rejectedWith('Out of bound path');
         });
 
@@ -231,7 +236,7 @@ describe('#zip', function () {
             mockZipStream.emit('error', new Error('zip stream error'));
           };
           await expect(
-            zip._extractEntryTo(mockZipFile as any, entry as any, destDir)
+            zip._extractEntryTo(mockZipFile as any, entry as any, destDir),
           ).to.be.rejectedWith('zip stream error');
         });
 
@@ -246,7 +251,7 @@ describe('#zip', function () {
             writeStream.end();
           };
           await expect(
-            zip._extractEntryTo(mockZipFile as any, entry as any, destDir)
+            zip._extractEntryTo(mockZipFile as any, entry as any, destDir),
           ).to.be.rejectedWith('write stream error');
         });
       });
@@ -264,12 +269,12 @@ describe('#zip', function () {
           await expect(
             fs.readFile(path.resolve(tmpRoot, 'output', 'test-dir', 'a.txt'), {
               encoding: 'utf8',
-            })
+            }),
           ).to.eventually.equal('Hello World');
           await expect(
             fs.readFile(path.resolve(tmpRoot, 'output', 'test-dir', 'b.txt'), {
               encoding: 'utf8',
-            })
+            }),
           ).to.eventually.equal('Foo Bar');
         });
       });

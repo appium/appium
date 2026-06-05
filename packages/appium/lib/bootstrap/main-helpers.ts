@@ -31,7 +31,7 @@ export function inspect(value: unknown): void {
       colors: true,
       depth: null,
       compact: !isStdoutTTY,
-    } satisfies InspectOptions)
+    } satisfies InspectOptions),
   );
 }
 
@@ -153,7 +153,10 @@ export function getServerUpdaters(
 /**
  * Merges `newMethodMap` contributions from all active drivers and plugins into one method map.
  */
-export function getExtraMethodMap(driverClasses: DriverNameMap, pluginClasses: PluginNameMap): MethodMap<Driver> {
+export function getExtraMethodMap(
+  driverClasses: DriverNameMap,
+  pluginClasses: PluginNameMap,
+): MethodMap<Driver> {
   return [...driverClasses.keys(), ...pluginClasses.keys()].reduce<MethodMap<Driver>>(
     (map, klass) => ({
       ...map,
@@ -215,7 +218,9 @@ function logNonDefaultArgsWarning(args: Args): void {
   inspect(args);
 }
 
-function logDefaultCapabilitiesWarning(caps: ParsedArgs<CliCommandServer>['defaultCapabilities']): void {
+function logDefaultCapabilitiesWarning(
+  caps: ParsedArgs<CliCommandServer>['defaultCapabilities'],
+): void {
   logger.info(
     'Default capabilities, which will be added to each request ' +
       'unless overridden by desired capabilities:',

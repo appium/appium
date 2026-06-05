@@ -15,7 +15,7 @@ import {
   EXT_SUBCOMMAND_UPDATE,
   PLUGIN_TYPE,
   SERVER_SUBCOMMAND,
-  SETUP_SUBCOMMAND
+  SETUP_SUBCOMMAND,
 } from '../constants';
 import {finalizeSchema, getAllArgSpecs, getArgSpec, hasArgSpec} from '../schema';
 import {rootDir} from '../helpers/build';
@@ -28,7 +28,7 @@ import {
   SUBCOMMAND_BROWSER,
   SUBCOMMAND_RESET,
   getPresetDrivers,
-  determinePlatformName
+  determinePlatformName,
 } from './setup-command';
 
 export const EXTRA_ARGS = 'extraArgs';
@@ -38,7 +38,16 @@ export const EXTRA_ARGS = 'extraArgs';
  * will automatically inject the `server` subcommand.
  */
 const NON_SERVER_ARGS = Object.freeze(
-  new Set([SETUP_SUBCOMMAND, DRIVER_TYPE, PLUGIN_TYPE, SERVER_SUBCOMMAND, '-h', '--help', '-v', '--version'])
+  new Set([
+    SETUP_SUBCOMMAND,
+    DRIVER_TYPE,
+    PLUGIN_TYPE,
+    SERVER_SUBCOMMAND,
+    '-h',
+    '--help',
+    '-v',
+    '--version',
+  ]),
 );
 
 const version = fs.readPackageJsonFrom(rootDir).version;
@@ -129,22 +138,19 @@ export class ArgParser {
    */
   private static _transformParsedArgs(
     args: LooseArgsMap,
-    unknownArgs: string[] = []
+    unknownArgs: string[] = [],
   ): TransformedArgsMap {
-    const result = Object.entries(args).reduce(
-      (unpacked: LooseArgsMap, [key, value]) => {
-        const spec = hasArgSpec(key) ? getArgSpec(key) : undefined;
-        if (value !== undefined && spec) {
-          const {dest} = spec;
-          setPath(unpacked as Record<string, unknown>, dest, value);
-        } else {
-          // this could be anything that isn't a server arg
-          unpacked[key] = value;
-        }
-        return unpacked;
-      },
-      {} as LooseArgsMap
-    );
+    const result = Object.entries(args).reduce((unpacked: LooseArgsMap, [key, value]) => {
+      const spec = hasArgSpec(key) ? getArgSpec(key) : undefined;
+      if (value !== undefined && spec) {
+        const {dest} = spec;
+        setPath(unpacked as Record<string, unknown>, dest, value);
+      } else {
+        // this could be anything that isn't a server arg
+        unpacked[key] = value;
+      }
+      return unpacked;
+    }, {} as LooseArgsMap);
     result[EXTRA_ARGS] = unknownArgs;
     return result as TransformedArgsMap;
   }
@@ -269,7 +275,6 @@ export class ArgParser {
         `drivers and plugins, and remove their related manifest files.`,
     });
 
-
     ArgParser._patchExit(setupParser);
     const extSubParsers = setupParser.add_subparsers({
       dest: `setupCommand`,
@@ -280,23 +285,23 @@ export class ArgParser {
         command: SUBCOMMAND_MOBILE,
         help:
           `The preset for mobile devices ` +
-          `(drivers: ${getPresetDrivers(SUBCOMMAND_MOBILE).join(',')}; plugins: ${DEFAULT_PLUGINS})`
+          `(drivers: ${getPresetDrivers(SUBCOMMAND_MOBILE).join(',')}; plugins: ${DEFAULT_PLUGINS})`,
       },
       {
         command: SUBCOMMAND_BROWSER,
         help:
           `The preset for desktop browsers ` +
-          `(drivers: ${getPresetDrivers(SUBCOMMAND_BROWSER).join(',')}; plugins: ${DEFAULT_PLUGINS})`
+          `(drivers: ${getPresetDrivers(SUBCOMMAND_BROWSER).join(',')}; plugins: ${DEFAULT_PLUGINS})`,
       },
       {
         command: SUBCOMMAND_DESKTOP,
         help:
           `The preset for desktop applications ` +
-          `(drivers: ${getPresetDrivers(SUBCOMMAND_DESKTOP).join(',')}; plugins: ${DEFAULT_PLUGINS})`
+          `(drivers: ${getPresetDrivers(SUBCOMMAND_DESKTOP).join(',')}; plugins: ${DEFAULT_PLUGINS})`,
       },
       {
         command: SUBCOMMAND_RESET,
-        help: 'Remove all installed drivers and plugins'
+        help: 'Remove all installed drivers and plugins',
       },
     ];
 

@@ -52,7 +52,7 @@ export type DriverCommandToPluginCommand<
   DC extends DriverCommand,
   TArgs extends readonly any[] = Parameters<DC>,
   TReturn = AsyncReturnType<DC>,
-  NextRetval = unknown
+  NextRetval = unknown,
 > = PluginCommand<ExternalDriver, TArgs, TReturn, NextRetval>;
 
 /**
@@ -111,7 +111,7 @@ export type PluginCommand<
   D extends ExternalDriver = ExternalDriver,
   TArgs extends readonly any[] = any[],
   TReturn = unknown,
-  NextReturn = unknown
+  NextReturn = unknown,
 > = (next: NextPluginCallback<NextReturn>, driver: D, ...args: TArgs) => Promise<TReturn>;
 
 /**

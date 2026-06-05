@@ -19,13 +19,7 @@ import {
   catch404Handler,
   handleLogContext,
 } from './middleware';
-import {
-  guineaPig,
-  guineaPigScrollable,
-  guineaPigAppBanner,
-  welcome,
-  STATIC_DIR,
-} from './static';
+import {guineaPig, guineaPigScrollable, guineaPigAppBanner, welcome, STATIC_DIR} from './static';
 import {produceError, produceCrash} from './crash';
 import {
   addWebSocketHandler,
@@ -53,10 +47,7 @@ export interface RouteConfiguringFunctionOpts {
 }
 
 /** A function which configures routes */
-export type RouteConfiguringFunction = (
-  app: Express,
-  opts?: RouteConfiguringFunctionOpts
-) => void;
+export type RouteConfiguringFunction = (app: Express, opts?: RouteConfiguringFunctionOpts) => void;
 
 /** Options for {@linkcode server} */
 export interface ServerOpts {
@@ -251,18 +242,13 @@ export function normalizeBasePath(basePath: string): string {
   return basePath;
 }
 
-async function createServer(
-  app: Express,
-  cliArgs?: Partial<ServerArgs>
-): Promise<HttpServer> {
+async function createServer(app: Express, cliArgs?: Partial<ServerArgs>): Promise<HttpServer> {
   const {sslCertificatePath, sslKeyPath} = cliArgs ?? {};
   if (!sslCertificatePath && !sslKeyPath) {
     return http.createServer(app);
   }
   if (!sslCertificatePath || !sslKeyPath) {
-    throw new Error(
-      `Both certificate path and key path must be provided to enable TLS`
-    );
+    throw new Error(`Both certificate path and key path must be provided to enable TLS`);
   }
 
   const certKey = [sslCertificatePath, sslKeyPath];
@@ -272,20 +258,19 @@ async function createServer(
     [keyExists, 'key', sslKeyPath],
   ]) {
     if (!exists) {
-      throw new Error(
-        `The provided SSL ${desc} at '${p}' does not exist or is not accessible`
-      );
+      throw new Error(`The provided SSL ${desc} at '${p}' does not exist or is not accessible`);
     }
   }
-  const [cert, key] = await Promise.all(
-    certKey.map((p) => fs.readFile(p, 'utf8'))
-  ) as [string, string];
+  const [cert, key] = (await Promise.all(certKey.map((p) => fs.readFile(p, 'utf8')))) as [
+    string,
+    string,
+  ];
   log.debug('Enabling TLS/SPDY on the server using the provided certificate');
 
   const spdy = require('spdy') as {
     createServer: (
       options: {cert: string; key: string; spdy: {plain: boolean; ssl: boolean}},
-      requestListener: RequestHandler
+      requestListener: RequestHandler,
     ) => HttpServer;
   };
   return spdy.createServer(
@@ -297,7 +282,7 @@ async function createServer(
         ssl: true,
       },
     },
-    app
+    app,
   );
 }
 
@@ -329,7 +314,9 @@ function configureHttp({
   // See: https://github.com/nodejs/node/pull/59824
   if (hasShouldUpgradeCallback(httpServer)) {
     // shouldUpgradeCallback only returns a boolean to indicate if the upgrade should proceed
-    (appiumServer as unknown as {shouldUpgradeCallback?: (req: http.IncomingMessage) => boolean}).shouldUpgradeCallback = (req) =>
+    (
+      appiumServer as unknown as {shouldUpgradeCallback?: (req: http.IncomingMessage) => boolean}
+    ).shouldUpgradeCallback = (req) =>
       String(req.headers?.upgrade ?? '').toLowerCase() === 'websocket';
     appiumServer.on('upgrade', (req, socket, head) => {
       if (!tryHandleWebSocketUpgrade(req, socket, head, appiumServer.webSocketsMapping)) {
@@ -341,7 +328,7 @@ function configureHttp({
   // http.Server.close() only stops new connections, but we need to wait until
   // all connections are closed and the `close` event is emitted
   const originalClose = appiumServer.close.bind(appiumServer) as (
-    callback?: (err?: Error | null) => void
+    callback?: (err?: Error | null) => void,
   ) => void;
   appiumServer.close = async () =>
     await new Promise<void>((_resolve, _reject) => {
@@ -352,7 +339,7 @@ function configureHttp({
           log.info(
             `Not all active connections have been closed within ${gracefulShutdownTimeout}ms. ` +
               `This timeout might be customized by the --shutdown-timeout command line ` +
-              `argument. Closing the server anyway.`
+              `argument. Closing the server anyway.`,
           );
         }
         process.exit(process.exitCode ?? 0);
@@ -360,7 +347,7 @@ function configureHttp({
       const onClose = () => {
         log.info(
           `Appium HTTP server has been successfully closed after ` +
-            `${timer.getDuration().asMilliSeconds.toFixed(0)}ms`
+            `${timer.getDuration().asMilliSeconds.toFixed(0)}ms`,
         );
         clearTimeout(onTimeout);
         _resolve();
@@ -378,14 +365,13 @@ function configureHttp({
   appiumServer.once('error', (err: NodeJS.ErrnoException) => {
     if (err.code === 'EADDRNOTAVAIL') {
       log.error(
-        'Could not start REST http interface listener. ' +
-          'Requested address is not available.'
+        'Could not start REST http interface listener. ' + 'Requested address is not available.',
       );
     } else {
       log.error(
         'Could not start REST http interface listener. The requested ' +
           'port may already be in use. Please make sure there is no ' +
-          'other instance of this server running already.'
+          'other instance of this server running already.',
       );
     }
     reject(err);

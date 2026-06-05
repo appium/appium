@@ -1,9 +1,9 @@
 import {isWindows} from './system';
 import log from './logger';
 import {exec} from 'teen_process';
+import {randomUUID} from 'node:crypto';
 import path from 'node:path';
 import _fs from 'node:fs';
-import {v4 as uuidV4} from 'uuid';
 
 const OBJECTS_MAPPING = new WeakMap<object, string>();
 
@@ -70,7 +70,7 @@ export function getObjectId(object: object): string {
   if (existing !== undefined) {
     return existing;
   }
-  const id = uuidV4();
+  const id = randomUUID();
   OBJECTS_MAPPING.set(object, id);
   return id;
 }

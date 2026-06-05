@@ -38,7 +38,7 @@
     "test:smoke": "node ./build/lib/index.js --smoke-test",
     "test": "exit 0"
   },
-  "dependencies": {
+  "devDependencies": {
     "json-schema": "0.4.0"
   },
   "engines": {

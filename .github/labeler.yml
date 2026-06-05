@@ -128,11 +128,6 @@ labels:
     matcher:
       files: ['packages/strongbox/**']
 
-  - label: '@appium/test-support'
-    sync: true
-    matcher:
-      files: ['packages/test-support/**']
-
   - label: '@appium/tsconfig'
     sync: true
     matcher:

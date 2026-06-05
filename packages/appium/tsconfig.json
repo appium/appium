@@ -29,7 +29,6 @@
     {"path": "../support"},
     {"path": "../base-driver"},
     {"path": "../base-plugin"},
-    {"path": "../fake-driver"},
-    {"path": "../test-support"}
+    {"path": "../fake-driver"}
   ]
 }

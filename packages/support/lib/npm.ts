@@ -292,17 +292,9 @@ export class NPM {
  * @param fromDirectory - Directory to resolve from (typically a project or `APPIUM_HOME` root)
  * @param moduleId - Module id or path to resolve (e.g. `semver/package.json`)
  * @returns Absolute path to the resolved module
- * @throws `TypeError` if either argument is not a string
  * @throws `Error` if Node cannot resolve `moduleId` from `fromDirectory`
  */
 export async function resolveFrom(fromDirectory: string, moduleId: string): Promise<string> {
-  if (typeof fromDirectory !== 'string') {
-    throw new TypeError(`Expected \`fromDir\` to be of type \`string\`, got \`${typeof fromDirectory}\``);
-  }
-  if (typeof moduleId !== 'string') {
-    throw new TypeError(`Expected \`moduleId\` to be of type \`string\`, got \`${typeof moduleId}\``);
-  }
-
   let resolvedFromDirectory: string;
   try {
     resolvedFromDirectory = await fs.realpath(fromDirectory);
@@ -317,7 +309,10 @@ export async function resolveFrom(fromDirectory: string, moduleId: string): Prom
 
   const fromFile = path.join(resolvedFromDirectory, 'noop.js');
   const nodeModule = Module as typeof Module & {
-    _resolveFilename: (id: string, parent: {id: string; filename: string; paths: string[]}) => string;
+    _resolveFilename: (
+      id: string,
+      parent: {id: string; filename: string; paths: string[]},
+    ) => string;
     _nodeModulePaths: (from: string) => string[];
   };
   return nodeModule._resolveFilename(moduleId, {

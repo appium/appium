@@ -16,22 +16,9 @@ describe('npm', function () {
       expect(resolved).to.match(/semver[/\\]package\.json$/);
     });
 
-    it('should reject invalid fromDirectory type', async function () {
-      await expect(resolveFrom(1 as unknown as string, 'semver/package.json')).to.eventually.be.rejectedWith(
-        TypeError,
-      );
-    });
-
-    it('should reject invalid moduleId type', async function () {
-      await expect(resolveFrom(supportRoot, 1 as unknown as string)).to.eventually.be.rejectedWith(
-        TypeError,
-      );
-    });
-
     it('should reject when the module cannot be resolved', async function () {
-      await expect(
-        resolveFrom(supportRoot, 'nonexistent-appium-package-xyz/package.json'),
-      ).to.eventually.be.rejected;
+      await expect(resolveFrom(supportRoot, 'nonexistent-appium-package-xyz/package.json')).to
+        .eventually.be.rejected;
     });
   });
 

@@ -20,13 +20,10 @@ describe('package-changed', function () {
 
   beforeEach(function () {
     ({MockPackageChanged, MockAppiumSupport, sandbox} = initMocks());
-    ({packageDidChange} = rewiremock.proxy(
-      () => require('../../../lib/utils/package-changed'),
-      {
-        '../../../lib/utils/is-package-changed': MockPackageChanged,
-        '@appium/support': MockAppiumSupport,
-      },
-    ));
+    ({packageDidChange} = rewiremock.proxy(() => require('../../../lib/utils/package-changed'), {
+      '../../../lib/utils/is-package-changed': MockPackageChanged,
+      '@appium/support': MockAppiumSupport,
+    }));
   });
 
   afterEach(function () {

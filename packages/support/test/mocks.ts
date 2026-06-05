@@ -2,13 +2,8 @@
  * A collection of mocks reused across unit tests.
  */
 
-import path from 'node:path';
 import {createSandbox, type SinonSandbox, type SinonStub} from 'sinon';
 import type {NormalizedPackageJson} from 'read-pkg';
-
-export interface MockResolveFrom extends SinonStub {
-  (cwd: string, id: string): string;
-}
 
 export interface MockPkgDir extends SinonStub {
   (...args: any[]): Promise<string | undefined>;
@@ -31,7 +26,6 @@ export interface MockTeenProcess {
 }
 
 export interface Overrides {
-  'resolve-from': MockResolveFrom;
   'read-pkg': MockReadPkg;
   'package-directory': MockPkgDir;
   teen_process: MockTeenProcess;
@@ -39,7 +33,6 @@ export interface Overrides {
 }
 
 export interface InitMocksResult {
-  MockResolveFrom: MockResolveFrom;
   MockPkgDir: MockPkgDir;
   MockReadPkg: MockReadPkg;
   MockFs: MockFs;
@@ -49,10 +42,6 @@ export interface InitMocksResult {
 }
 
 export function initMocks(sandbox = createSandbox()): InitMocksResult {
-  const MockResolveFrom = sandbox
-    .stub()
-    .callsFake((cwd: string, id: string) => path.join(cwd, id)) as MockResolveFrom;
-
   const MockPkgDir = sandbox.stub().resolvesArg(0) as MockPkgDir;
 
   const MockReadPkg: MockReadPkg = {
@@ -81,7 +70,6 @@ export function initMocks(sandbox = createSandbox()): InitMocksResult {
   };
 
   const overrides: Overrides = {
-    'resolve-from': MockResolveFrom,
     'read-pkg': MockReadPkg,
     'package-directory': MockPkgDir,
     teen_process: MockTeenProcess,
@@ -89,7 +77,6 @@ export function initMocks(sandbox = createSandbox()): InitMocksResult {
   };
 
   return {
-    MockResolveFrom,
     MockPkgDir,
     MockReadPkg,
     MockFs,

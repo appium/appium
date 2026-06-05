@@ -1,8 +1,7 @@
-import {omitKeys} from '../../lib/utils';
+import {omitKeys, resolveFrom} from '../../lib/utils';
 import {exec} from 'teen_process';
 import {fs, system, tempDir, util} from '@appium/support';
 import path from 'node:path';
-import resolveFrom from 'resolve-from';
 import {
   DRIVER_TYPE,
   EXT_SUBCOMMAND_INSTALL as INSTALL,
@@ -184,8 +183,8 @@ describe('Driver CLI', function () {
       const list = await runList(['--installed']);
       expect(list.fake).to.exist;
       expect(list.test).to.exist;
-      expect(() => resolveFrom(appiumHome, '@appium/fake-driver/package.json')).not.to.throw();
-      expect(() => resolveFrom(appiumHome, '@appium/test-driver/package.json')).not.to.throw();
+      await resolveFrom(appiumHome, '@appium/fake-driver/package.json');
+      await resolveFrom(appiumHome, '@appium/test-driver/package.json');
     });
 
     it('should install _two_ drivers from npm', async function () {
@@ -194,10 +193,8 @@ describe('Driver CLI', function () {
       const list = await runList(['--installed']);
       expect(list.fake).to.exist;
       expect(list.uiautomator2).to.exist;
-      expect(() => resolveFrom(appiumHome, '@appium/fake-driver/package.json')).not.to.throw();
-      expect(() =>
-        resolveFrom(appiumHome, 'appium-uiautomator2-driver/package.json'),
-      ).not.to.throw();
+      await resolveFrom(appiumHome, '@appium/fake-driver/package.json');
+      await resolveFrom(appiumHome, 'appium-uiautomator2-driver/package.json');
     });
 
     it('should install a driver from npm with a specific version/tag', async function () {
@@ -333,7 +330,7 @@ describe('Driver CLI', function () {
       await resetAppiumHome();
       installResult = await installLocalExtension(appiumHome, DRIVER_TYPE, FAKE_DRIVER_DIR);
       listResult = await runList(['--installed']);
-      installPath = resolveFrom(appiumHome, '@appium/fake-driver');
+      installPath = await resolveFrom(appiumHome, '@appium/fake-driver');
     });
 
     it('should install a driver from a local npm module', function () {

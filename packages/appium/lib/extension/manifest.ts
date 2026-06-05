@@ -11,7 +11,7 @@ import type {
 } from 'appium/types';
 import {CURRENT_SCHEMA_REV, DRIVER_TYPE, PLUGIN_TYPE} from '../constants';
 import {INSTALL_TYPE_DEV, INSTALL_TYPE_NPM} from './extension-config';
-import {packageDidChange} from './package-changed';
+import {packageDidChange} from '../utils';
 import {migrate} from './manifest-migrations';
 
 const CONFIG_DATA_DRIVER_KEY = `${DRIVER_TYPE}s` as const;

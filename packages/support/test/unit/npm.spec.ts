@@ -1,7 +1,40 @@
-import {expect} from 'chai';
-import {NPM} from '../../lib/npm';
+import path from 'node:path';
+import {expect, use} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import {NPM, resolveFrom} from '../../lib/npm';
 
 describe('npm', function () {
+  before(function () {
+    use(chaiAsPromised);
+  });
+
+  describe('resolveFrom()', function () {
+    const supportRoot = path.join(__dirname, '..', '..');
+
+    it('should resolve a package path from a directory', async function () {
+      const resolved = await resolveFrom(supportRoot, 'semver/package.json');
+      expect(resolved).to.match(/semver[/\\]package\.json$/);
+    });
+
+    it('should reject invalid fromDirectory type', async function () {
+      await expect(resolveFrom(1 as unknown as string, 'semver/package.json')).to.eventually.be.rejectedWith(
+        TypeError,
+      );
+    });
+
+    it('should reject invalid moduleId type', async function () {
+      await expect(resolveFrom(supportRoot, 1 as unknown as string)).to.eventually.be.rejectedWith(
+        TypeError,
+      );
+    });
+
+    it('should reject when the module cannot be resolved', async function () {
+      await expect(
+        resolveFrom(supportRoot, 'nonexistent-appium-package-xyz/package.json'),
+      ).to.eventually.be.rejected;
+    });
+  });
+
   describe('getLatestSafeUpgradeFromVersions()', function () {
     const versions1 = [
       '0.1.0',

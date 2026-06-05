@@ -21,9 +21,9 @@ describe('package-changed', function () {
   beforeEach(function () {
     ({MockPackageChanged, MockAppiumSupport, sandbox} = initMocks());
     ({packageDidChange} = rewiremock.proxy(
-      () => require('../../../lib/extension/package-changed'),
+      () => require('../../../lib/utils/package-changed'),
       {
-        'package-changed': MockPackageChanged,
+        '../../../lib/utils/is-package-changed': MockPackageChanged,
         '@appium/support': MockAppiumSupport,
       },
     ));
@@ -51,7 +51,7 @@ describe('package-changed', function () {
       ).to.be.true;
     });
 
-    it('should call `package-changed` with a cwd and relative path to hash file', async function () {
+    it('should call `isPackageChanged` with a cwd and relative path to hash file', async function () {
       await packageDidChange('/some/path');
       expect(
         MockPackageChanged.isPackageChanged.calledWith({
@@ -71,7 +71,7 @@ describe('package-changed', function () {
       });
     });
 
-    describe('when the package has not changed per `package-changed`', function () {
+    describe('when the package has not changed per `isPackageChanged`', function () {
       beforeEach(function () {
         MockPackageChanged.isPackageChanged.resolves({
           isChanged: false,
@@ -91,7 +91,7 @@ describe('package-changed', function () {
       });
     });
 
-    describe('when the package has changed per `package-changed`', function () {
+    describe('when the package has changed per `isPackageChanged`', function () {
       it('should write the hash file', async function () {
         await packageDidChange('/some/where');
         expect(MockPackageChanged.__writeHash.calledOnce).to.be.true;

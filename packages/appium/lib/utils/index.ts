@@ -1,5 +1,9 @@
 export {adler32} from './hash';
+export {isPackageChanged} from './is-package-changed';
+export type {IsPackageChangedOptions, IsPackageChangedResult} from './is-package-changed';
 export {getAppiumModuleRoot, npmPackage} from './module';
+export {packageDidChange} from './package-changed';
+export {resolveFrom} from './resolve-from';
 export {
   bindAll,
   camelCase,

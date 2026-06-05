@@ -21,12 +21,11 @@ import {
   INSTALL_TYPE_DEV,
 } from '../extension/extension-config';
 import {SubProcess} from 'teen_process';
-import {packageDidChange} from '../extension/package-changed';
 import {spawn} from 'node:child_process';
 import {inspect} from 'node:util';
 import {pathToFileURL} from 'node:url';
 import {Doctor, EXIT_CODE as DOCTOR_EXIT_CODE} from '../doctor/doctor';
-import {compact, npmPackage} from '../utils';
+import {compact, npmPackage, packageDidChange} from '../utils';
 import {getAppiumModuleRoot} from '../utils/module';
 import * as semver from 'semver';
 

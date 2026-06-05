@@ -79,8 +79,8 @@ export interface MockGlob extends SinonStub {
 
 export interface Overrides {
   '@appium/support': MockAppiumSupport;
-  'resolve-from': MockResolveFrom;
-  'package-changed': MockPackageChanged;
+  '../../../lib/utils/resolve-from': {resolveFrom: MockResolveFrom};
+  '../../../lib/utils/is-package-changed': MockPackageChanged;
   glob: MockGlob;
 }
 
@@ -161,7 +161,7 @@ export function initMocks(sandbox = createSandbox()): InitMocksResult {
 
   const MockResolveFrom = sandbox
     .stub()
-    .callsFake((cwd: string, id: string) => path.join(cwd, id)) as unknown as MockResolveFrom;
+    .callsFake(async (cwd: string, id: string) => path.join(cwd, id)) as unknown as MockResolveFrom;
 
   const MockGlob = sandbox
     .stub()
@@ -178,8 +178,8 @@ export function initMocks(sandbox = createSandbox()): InitMocksResult {
 
   const overrides: Overrides = {
     '@appium/support': MockAppiumSupport,
-    'resolve-from': MockResolveFrom,
-    'package-changed': MockPackageChanged,
+    '../../../lib/utils/resolve-from': {resolveFrom: MockResolveFrom},
+    '../../../lib/utils/is-package-changed': MockPackageChanged,
     glob: MockGlob,
   };
 

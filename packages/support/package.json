@@ -62,7 +62,6 @@
     "plist": "4.0.0",
     "pluralize": "8.0.0",
     "read-pkg": "10.1.0",
-    "resolve-from": "5.0.0",
     "sanitize-filename": "1.6.4",
     "semver": "7.8.1",
     "shell-quote": "1.8.4",

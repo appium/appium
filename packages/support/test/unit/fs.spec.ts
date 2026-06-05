@@ -2,6 +2,7 @@ import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {fs, system, tempDir} from '../../lib';
 import path from 'node:path';
+import {mkdir, writeFile} from 'node:fs/promises';
 import {createSandbox} from 'sinon';
 import {exec} from 'teen_process';
 
@@ -73,6 +74,21 @@ describe('fs', function () {
 
     it('should throw an error if the source does not exist', async function () {
       await expect(fs.copyFile('/sdfsdfsdfsdf', '/tmp/bla')).to.eventually.be.rejected;
+    });
+
+    it('should honor filter when copying a directory', async function () {
+      const srcDir = path.resolve(await tempDir.openDir(), 'copy-src');
+      const destDir = path.resolve(await tempDir.openDir(), 'copy-dest');
+      await mkdir(srcDir);
+      await writeFile(path.join(srcDir, 'keep.txt'), 'keep');
+      await writeFile(path.join(srcDir, 'skip.txt'), 'skip');
+
+      await fs.copyFile(srcDir, destDir, {
+        filter: (filename) => !filename.endsWith('skip.txt'),
+      });
+
+      expect(await fs.exists(path.join(destDir, 'keep.txt'))).to.be.true;
+      expect(await fs.exists(path.join(destDir, 'skip.txt'))).to.be.false;
     });
   });
 

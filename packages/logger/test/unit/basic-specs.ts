@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 import {expect} from 'chai';
 import {Log, markSensitive} from '../../lib/log';
-import {unleakString} from '../../lib/utils';
 import {Stream} from 'node:stream';
 import type {Log as LogType} from '../../lib/log';
 
@@ -298,20 +297,6 @@ describe('basic', function () {
       log.enableColor();
       const o = (log as any)._format('test message', {inverse: true});
       expect(o).to.include('\u001b[7mtest message\u001b[0m');
-    });
-  });
-
-  describe('unleakString', function () {
-    it('should unleak a string', function () {
-      expect(unleakString('yolo')).to.eql('yolo');
-    });
-    it('should unleak a multiline string', function () {
-      expect(unleakString(' yolo\nbolo ')).to.eql(' yolo\nbolo ');
-    });
-    it('should convert an object to a string', function () {
-      for (const obj of [{}, null, undefined, [], 0]) {
-        expect(unleakString(obj as any)).to.eql(`${obj}`);
-      }
     });
   });
 });

@@ -1,4 +1,3 @@
-import getPort from 'get-port';
 import {tempDir, fs} from '@appium/support';
 import {exec} from 'teen_process';
 import chai from 'chai';
@@ -9,7 +8,7 @@ import {
   EXECUTABLE,
   runAppiumRaw,
 } from './e2e-helpers';
-import {APPIUM_ROOT} from '../helpers';
+import {APPIUM_ROOT, getTestPort} from '../helpers';
 import {stripColorCodes} from '../../lib/logsink';
 
 const {expect} = chai;
@@ -48,7 +47,7 @@ describe('argument parsing', function () {
               '--relaxed-security',
               `--default-capabilities=${capsArg}`,
               '--port',
-              String(await getPort()),
+              String(await getTestPort()),
             ],
             {
               env: {APPIUM_HOME: appiumHome, PATH: process.env.PATH},

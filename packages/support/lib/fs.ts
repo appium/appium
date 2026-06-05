@@ -10,6 +10,7 @@ import {
   write,
   rmSync,
   open,
+  type CopyOptions,
   type PathLike,
   type MakeDirectoryOptions,
   type ReadAsyncOptions,
@@ -20,7 +21,6 @@ import {glob} from 'glob';
 import type {GlobOptions} from 'glob';
 import klaw from 'klaw';
 import type {Walker} from 'klaw';
-import ncp from 'ncp';
 import {packageDirectorySync} from 'package-directory';
 import path from 'node:path';
 import {readPackageSync, type NormalizeOptions, type NormalizedPackageJson} from 'read-pkg';
@@ -31,15 +31,57 @@ import {Timer} from './timing';
 import {isWindows} from './system';
 import {memoize, pluralize} from './util';
 
-const ncpAsync = promisify(ncp) as (
-  source: string,
-  dest: string,
-  opts?: ncp.Options,
-) => Promise<void>;
 const findRootCached = memoize(
   packageDirectorySync,
   (opts: {cwd?: string} | undefined) => opts?.cwd,
 );
+
+/**
+ * File metadata shape used by legacy `ncp` transform callbacks.
+ * @deprecated
+ * @see https://www.npmjs.com/package/@types/ncp
+ */
+export interface CopyFileDescriptor {
+  name: string;
+  mode: number;
+  /** Accessed time */
+  atime: Date;
+  /** Modified time */
+  mtime: Date;
+}
+
+/**
+ * Options for {@linkcode fs.copyFile}.
+ *
+ * Compatible with legacy `ncp.Options`. Supported fields are forwarded to
+ * `fs.cp` ({@link https://nodejs.org/api/fs.html#fscpsrc-dest-options-callback CopyOptions}).
+ */
+export interface CopyFileOptions {
+  /**
+   * Set to false to throw if the destination already exists.
+   * Maps to `force` / `errorOnExist`.
+   */
+  clobber?: boolean;
+  /**
+   * Include only matching paths when copying directories.
+   * Maps to `filter`; `RegExp` and single-argument functions receive the source path only (ncp semantics).
+   */
+  filter?: RegExp | ((filename: string) => boolean);
+  /** Follow symlinks instead of copying them. Maps to `dereference`. */
+  dereference?: boolean;
+  /** @deprecated Ignored. No `fs.cp` equivalent (per-file stream transform). */
+  transform?: (
+    read: NodeJS.ReadableStream,
+    write: NodeJS.WritableStream,
+    file: CopyFileDescriptor,
+  ) => void;
+  /** @deprecated Ignored. No `fs.cp` equivalent (fail-fast vs collect errors). */
+  stopOnErr?: boolean;
+  /** @deprecated Ignored. No `fs.cp` equivalent (error log sink). */
+  errs?: PathLike;
+  /** @deprecated Ignored. No `fs.cp` equivalent (concurrency limit). */
+  limit?: number;
+}
 
 /** Options for {@linkcode fs.mv} */
 export interface MvOptions {
@@ -72,6 +114,25 @@ export type ReadFn<TBuffer extends NodeJS.ArrayBufferView = NodeJS.ArrayBufferVi
   length?: number,
   position?: number | null,
 ) => B<{bytesRead: number; buffer: TBuffer}>;
+
+/**
+ * Maps {@link CopyFileOptions} (including legacy `ncp` fields) to `fs.cp` options.
+ */
+export function toCpOptions(opts: CopyFileOptions = {}): CopyOptions {
+  const {clobber = true, dereference, filter} = opts;
+  let cpFilter: CopyOptions['filter'];
+  if (filter !== undefined) {
+    cpFilter =
+      filter instanceof RegExp ? (source) => filter.test(source) : (source) => filter(source);
+  }
+  return {
+    recursive: true,
+    force: clobber,
+    errorOnExist: !clobber,
+    ...(dereference !== undefined && {dereference}),
+    ...(cpFilter !== undefined && {filter: cpFilter}),
+  };
+}
 
 function isErrnoException(err: unknown): err is NodeJS.ErrnoException {
   return err instanceof Error && 'code' in err;
@@ -149,13 +210,12 @@ export const fs = {
 
   /**
    * Copies files and entire directories.
-   * @see https://npm.im/ncp
    */
-  async copyFile(source: string, destination: string, opts: ncp.Options = {}): Promise<void> {
+  async copyFile(source: string, destination: string, opts: CopyFileOptions = {}): Promise<void> {
     if (!(await fs.hasAccess(source))) {
       throw new Error(`The file at '${source}' does not exist or is not accessible`);
     }
-    return await ncpAsync(source, destination, opts);
+    await fsPromises.cp(source, destination, toCpOptions(opts));
   },
 
   /** Create an MD5 hash of a file. */

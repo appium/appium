@@ -28,9 +28,7 @@
     "test:unit": "mocha --exit --timeout 1m \"./test/unit/**/*-specs.ts\""
   },
   "dependencies": {
-    "console-control-strings": "1.1.0",
-    "lru-cache": "11.5.1",
-    "set-blocking": "2.0.0"
+    "lru-cache": "11.5.1"
   },
   "license": "ISC",
   "engines": {

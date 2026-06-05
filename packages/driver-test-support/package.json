@@ -43,7 +43,6 @@
     "axios": "1.16.1",
     "chai": "6.2.2",
     "chai-as-promised": "8.0.2",
-    "get-port": "7.2.0",
     "sinon": "22.0.0",
     "type-fest": "5.7.0"
   },

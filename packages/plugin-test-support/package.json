@@ -38,13 +38,11 @@
     "test:smoke": "node ./build/lib/index.js --smoke-test",
     "test:unit": "exit 0"
   },
+  "dependencies": {
+    "teen_process": "4.1.3"
+  },
   "devDependencies": {
     "@appium/types": "1.5.0"
-  },
-  "dependencies": {
-    "get-port": "7.2.0",
-    "log-symbols": "7.0.1",
-    "teen_process": "4.1.3"
   },
   "peerDependencies": {
     "appium": "^3.0.0-beta.0",

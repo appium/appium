@@ -1,9 +1,24 @@
-import getPort from 'get-port';
+import net from 'node:net';
 
 /**
  * Default test host
  */
 export const TEST_HOST = '127.0.0.1';
+
+async function getPort(): Promise<number> {
+  const server = net.createServer();
+  return await new Promise((resolve, reject) => {
+    server.once('error', reject);
+    server.listen(0, () => {
+      const address = server.address();
+      if (!address || typeof address === 'string') {
+        server.close(() => reject(new Error('Could not resolve a free port')));
+        return;
+      }
+      server.close((err) => (err ? reject(err) : resolve(address.port)));
+    });
+  });
+}
 
 let testPort: number | undefined;
 

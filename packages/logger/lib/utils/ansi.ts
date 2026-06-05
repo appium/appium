@@ -23,7 +23,7 @@ const CODES: Record<string, number> = {
   bgYellow: 43,
 };
 
-/** Wraps text in ANSI SGR escape codes for the given styles. */
+/** Returns an ANSI SGR escape sequence for the given style names (e.g. `\x1b[31m`). */
 export function ansiColor(...styles: string[]): string {
   const codes = styles.map((style) => {
     const code = CODES[style];

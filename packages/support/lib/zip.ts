@@ -5,6 +5,7 @@ import {ZipArchive} from 'archiver';
 import {createWriteStream} from 'node:fs';
 import path from 'node:path';
 import stream from 'node:stream';
+import {text} from 'node:stream/consumers';
 import {pipeline} from 'node:stream/promises';
 import {fs} from './fs';
 import {isWindows} from './system';
@@ -12,7 +13,6 @@ import {Base64Encode} from 'base64-stream';
 import {isSubPath, memoize, toReadableSizeString, GiB} from './util';
 import {Timer} from './timing';
 import log from './logger';
-import getStream from 'get-stream';
 import {exec} from 'teen_process';
 
 const openZip = promisify(yauzl.open) as (
@@ -184,7 +184,7 @@ class ZipExtractor {
 
     const readStream = await this.openReadStream(entry);
     if (isSymlink) {
-      const link = await getStream(readStream);
+      const link = await text(readStream);
       await fs.symlink(link, dest);
     } else {
       await pipeline(readStream, fs.createWriteStream(dest, {mode: procMode}));

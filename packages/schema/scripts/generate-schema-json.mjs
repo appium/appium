@@ -11,9 +11,9 @@ import path from 'node:path';
 import {writeFile, mkdir} from 'node:fs/promises';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 import {createRequire} from 'node:module';
-import logSymbols from 'log-symbols';
-
-const {error, info, success} = logSymbols;
+const info = 'ℹ';
+const success = '✔';
+const error = '✖';
 
 /**
  * `@appium/schema` package root.

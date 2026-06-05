@@ -9,9 +9,9 @@ import {compileFromFile} from 'json-schema-to-typescript';
 import path from 'node:path';
 import {promises as fs} from 'node:fs';
 import {fileURLToPath} from 'node:url';
-import logSymbols from 'log-symbols';
-
-const {error, info, success} = logSymbols;
+const info = 'ℹ';
+const success = '✔';
+const error = '✖';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

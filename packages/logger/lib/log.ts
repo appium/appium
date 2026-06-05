@@ -1,8 +1,4 @@
 import {EventEmitter} from 'node:events';
-// @ts-ignore This module does not provide type definitions
-import setBlocking from 'set-blocking';
-// @ts-ignore This module does not provide type definitions
-import consoleControl from 'console-control-strings';
 import * as util from 'node:util';
 import type {
   MessageObject,
@@ -14,7 +10,7 @@ import type {
 } from './types';
 import type {Writable} from 'node:stream';
 import {AsyncLocalStorage} from 'node:async_hooks';
-import {isPlainObject, unleakString} from './utils';
+import {ansiBeep, ansiColor, isPlainObject, setBlocking, unleakString} from './utils';
 import {DEFAULT_SECURE_REPLACER, SecureValuesPreprocessor} from './secure-values-preprocessor';
 import {LRUCache} from 'lru-cache';
 
@@ -352,15 +348,15 @@ export class Log extends EventEmitter implements Logger {
         settings.push('inverse');
       }
       if (settings.length) {
-        output += consoleControl.color(settings);
+        output += ansiColor(...settings);
       }
       if (style.bell) {
-        output += consoleControl.beep();
+        output += ansiBeep();
       }
     }
     output += msg;
     if (this.useColor()) {
-      output += consoleControl.color('reset');
+      output += ansiColor('reset');
     }
     return output;
   }

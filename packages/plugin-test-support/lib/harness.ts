@@ -1,16 +1,37 @@
 /* eslint-disable no-console */
+import net from 'node:net';
 import {createRequire} from 'node:module';
+import {exec} from 'teen_process';
 import {fs} from 'appium/support';
 import {main as appiumServer} from 'appium';
-import getPort from 'get-port';
-import logSymbols from 'log-symbols';
-import {exec} from 'teen_process';
 import type {AppiumServer} from '@appium/types';
 import type {E2ESetupOpts, AppiumEnv} from './types';
 
 declare const __filename: string;
 const _require = createRequire(__filename);
 const APPIUM_BIN = _require.resolve('appium') as string;
+
+async function getPort(): Promise<number> {
+  const server = net.createServer();
+  return await new Promise((resolve, reject) => {
+    server.once('error', reject);
+    server.listen(0, '127.0.0.1', () => {
+      const address = server.address();
+      if (!address || typeof address === 'string') {
+        server.close(() => reject(new Error('Could not resolve a free port')));
+        return;
+      }
+      server.close((err) => (err ? reject(err) : resolve(address.port)));
+    });
+  });
+}
+
+const logSymbols = {
+  info: 'ℹ',
+  success: '✔',
+  warning: '⚠',
+  error: '✖',
+} as const;
 
 /**
  * Creates hooks to install a driver and a plugin and starts an Appium server w/ the given extensions.
@@ -98,7 +119,7 @@ export function pluginE2EHarness(opts: E2ESetupOpts): void {
       console.log(`${logSymbols.success} Installed plugin "${pluginName}"`);
     };
 
-    const createServer = async (): Promise<void> => {
+    const startAppiumServer = async (): Promise<void> => {
       const resolvedPort = port ?? (await getPort());
       console.log(`${logSymbols.info} Will use port ${resolvedPort} for Appium server`);
       (this as Mocha.Context & {port?: number}).port = resolvedPort;
@@ -117,7 +138,7 @@ export function pluginE2EHarness(opts: E2ESetupOpts): void {
     const env = await setupAppiumHome();
     await installDriver(env);
     await installPlugin(env);
-    await createServer();
+    await startAppiumServer();
   });
 
   after(async function () {

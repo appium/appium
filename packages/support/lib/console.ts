@@ -2,10 +2,33 @@ import {createSupportsColor} from 'supports-color';
 import {Console as NodeConsole} from 'node:console';
 import type {Color} from '@colors/colors';
 import '@colors/colors';
-import symbols from 'log-symbols';
 import {Writable} from 'node:stream';
 import type {InspectOptions} from 'node:util';
 import type {JsonValue} from 'type-fest';
+
+function isUnicodeSupported(): boolean {
+  if (process.env.TERM === 'dumb') {
+    return false;
+  }
+  if (process.platform === 'win32') {
+    return Boolean(
+      process.env.CI ||
+      process.env.WT_SESSION ||
+      process.env.TERMINAL_EMULATOR === 'JetBrains-JediTerm' ||
+      process.env.TERM_PROGRAM === 'vscode',
+    );
+  }
+  return true;
+}
+
+const UNICODE = isUnicodeSupported();
+
+const logSymbols = {
+  info: UNICODE ? 'ℹ' : 'i',
+  success: UNICODE ? '✔' : '√',
+  warning: UNICODE ? '⚠' : '‼',
+  error: UNICODE ? '✖' : '×',
+} as const;
 
 /**
  * Options for {@linkcode CliConsole}.
@@ -21,8 +44,8 @@ export interface ConsoleOpts {
   useColor?: boolean;
 }
 
-/** Symbol keys from log-symbols used for decoration */
-type SymbolKey = keyof typeof symbols;
+/** Symbol keys used for decoration */
+type SymbolKey = keyof typeof logSymbols;
 
 /**
  * Stream to nowhere. Used when we want to disable any output other than JSON output.
@@ -77,7 +100,7 @@ export class CliConsole {
       return msg;
     }
 
-    let newMsg = `${symbols[symbol]} ${msg}`;
+    let newMsg = `${logSymbols[symbol]} ${msg}`;
     if (this.#useColor) {
       const color = CliConsole.symbolToColor[symbol];
       // @colors/colors extends String with color getters (e.g. .green, .red)
@@ -132,4 +155,4 @@ export class CliConsole {
 }
 
 export const console = new CliConsole();
-export {symbols};
+export {logSymbols, logSymbols as symbols};

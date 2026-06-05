@@ -15,7 +15,7 @@ async function getPort(): Promise<number> {
   const server = net.createServer();
   return await new Promise((resolve, reject) => {
     server.once('error', reject);
-    server.listen(0, '127.0.0.1', () => {
+    server.listen(0, () => {
       const address = server.address();
       if (!address || typeof address === 'string') {
         server.close(() => reject(new Error('Could not resolve a free port')));

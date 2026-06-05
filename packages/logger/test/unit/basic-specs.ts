@@ -9,9 +9,20 @@ describe('basic', function () {
   let log: LogType;
 
   describe('logging', function () {
-    let s: InstanceType<typeof Stream> & {write: (m: string) => void; writable: boolean; isTTY: boolean; end: () => void};
+    let s: InstanceType<typeof Stream> & {
+      write: (m: string) => void;
+      writable: boolean;
+      isTTY: boolean;
+      end: () => void;
+    };
     let result: string[] = [];
-    let logEvents: Array<{id: number; level: string; prefix: string; message: string; timestamp?: unknown}> = [];
+    let logEvents: Array<{
+      id: number;
+      level: string;
+      prefix: string;
+      message: string;
+      timestamp?: unknown;
+    }> = [];
     let logInfoEvents: typeof logEvents = [];
     let logPrefixEvents: typeof logEvents = [];
     const resultExpect = [
@@ -71,7 +82,12 @@ describe('basic', function () {
       {id: 24, level: 'warn', prefix: 'warn prefix', message: 'x = {"foo":{"bar":"baz"}}'},
       {id: 25, level: 'error', prefix: 'error prefix', message: 'x = {"foo":{"bar":"baz"}}'},
       {id: 26, level: 'silent', prefix: 'silent prefix', message: 'x = {"foo":{"bar":"baz"}}'},
-      {id: 27, level: 'error', prefix: '404', message: 'This is a longer\nmessage, with some details\nand maybe a stack.\n'},
+      {
+        id: 27,
+        level: 'error',
+        prefix: '404',
+        message: 'This is a longer\nmessage, with some details\nand maybe a stack.\n',
+      },
       {id: 28, level: 'noise', prefix: '', message: 'LOUD NOISES'},
       {id: 29, level: 'noise', prefix: 'error', message: 'erroring'},
     ];

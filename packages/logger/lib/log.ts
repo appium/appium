@@ -10,16 +10,13 @@ import type {
   Logger,
   LogLevel,
   PreprocessingRulesLoadResult,
-  LogFiltersConfig
+  LogFiltersConfig,
 } from './types';
 import type {Writable} from 'node:stream';
 import {AsyncLocalStorage} from 'node:async_hooks';
 import {isPlainObject, unleakString} from './utils';
-import {
-  DEFAULT_SECURE_REPLACER,
-  SecureValuesPreprocessor
-} from './secure-values-preprocessor';
-import { LRUCache } from 'lru-cache';
+import {DEFAULT_SECURE_REPLACER, SecureValuesPreprocessor} from './secure-values-preprocessor';
+import {LRUCache} from 'lru-cache';
 
 const DEFAULT_LOG_LEVELS = [
   ['silly', -Infinity, {inverse: true}, 'sill'],
@@ -276,7 +273,7 @@ export class Log extends EventEmitter implements Logger {
    * @returns {Promise<PreprocessingRulesLoadResult>}
    */
   async loadSecureValuesPreprocessingRules(
-    rulesJsonPath: string | string[] | LogFiltersConfig
+    rulesJsonPath: string | string[] | LogFiltersConfig,
   ): Promise<PreprocessingRulesLoadResult> {
     const issues = await this._secureValuesPreprocessor.loadRules(rulesJsonPath);
     return {
@@ -399,7 +396,7 @@ export class Log extends EventEmitter implements Logger {
       typeof result.arg === 'object' &&
       Object.hasOwn(result.arg, SENSITIVE_MESSAGE_KEY)
     ) {
-      const { isSensitive } = this._asyncStorage.getStore() ?? {};
+      const {isSensitive} = this._asyncStorage.getStore() ?? {};
       result.arg = isSensitive ? DEFAULT_SECURE_REPLACER : result.arg[SENSITIVE_MESSAGE_KEY];
     }
 
@@ -433,7 +430,7 @@ export function markSensitive<T = any>(logMessage: T): {[SENSITIVE_MESSAGE_KEY]:
 // Unique key for the process-wide logger on globalThis (avoids collisions with other globals).
 const GLOBAL_NPMLOG_KEY = 'appium-logger-global-8f4a1c2b-5e6d-4a9b-8c3f-7d2e1b0a9c6e';
 
-type GlobalWithLogger = typeof globalThis & { [K in typeof GLOBAL_NPMLOG_KEY]: Log | undefined };
+type GlobalWithLogger = typeof globalThis & {[K in typeof GLOBAL_NPMLOG_KEY]: Log | undefined};
 
 // Reuse process-wide logger so multiple loads of this module use the same Log instance.
 const g = globalThis as GlobalWithLogger;

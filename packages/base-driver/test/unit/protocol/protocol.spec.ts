@@ -35,7 +35,7 @@ describe('Protocol', function () {
           foo: 'foo',
           bar: 'bar',
           baz: 'baz',
-        }
+        },
       );
       expect(args).to.eql({});
     });
@@ -49,7 +49,7 @@ describe('Protocol', function () {
           sessionId: 'sessionId',
           id: 'id',
           bar: 'bar',
-        }
+        },
       );
       expect(args).to.eql({
         sessionId: 'sessionId',
@@ -67,7 +67,7 @@ describe('Protocol', function () {
           foo: 'foo',
           bar: 'bar',
           baz: 'baz',
-        }
+        },
       );
       expect(args).to.eql({
         bar: 'bar',
@@ -85,7 +85,7 @@ describe('Protocol', function () {
           foo: 'foo',
           bar: 'bar',
           baz: 'baz',
-        }
+        },
       );
       expect(args).to.eql({
         foo: 'foo',
@@ -103,7 +103,7 @@ describe('Protocol', function () {
           {
             bar: 'bar',
             baz: 'baz',
-          }
+          },
         );
       }).to.throw();
     });
@@ -118,7 +118,7 @@ describe('Protocol', function () {
           foo: 'foo',
           bar: 'bar',
           baz: 'baz',
-        }
+        },
       );
       expect(args).to.eql({
         foo: 'foo',

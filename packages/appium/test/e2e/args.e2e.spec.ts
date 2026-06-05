@@ -54,8 +54,8 @@ describe('argument parsing', function () {
               env: {APPIUM_HOME: appiumHome, PATH: process.env.PATH},
               cwd: APPIUM_ROOT,
               timeout: 5000,
-            }
-          )
+            },
+          ),
         ).to.be.rejectedWith(Error, /timed out/);
       });
     });

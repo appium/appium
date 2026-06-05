@@ -129,8 +129,8 @@ export function initMocks(sandbox = createSandbox()): InitMocksResult {
       __logger: sandbox.stub(
         new (global as typeof globalThis & {console: typeof console}).console.Console(
           process.stdout,
-          process.stderr
-        )
+          process.stderr,
+        ),
       ) as unknown as SinonStub,
     },
     system: {
@@ -145,9 +145,7 @@ export function initMocks(sandbox = createSandbox()): InitMocksResult {
       compareVersions: sandbox.stub().returns(true),
     },
     console: {
-      CliConsole: sandbox
-        .stub()
-        .returns(sandbox.createStubInstance(supportConsole.CliConsole)),
+      CliConsole: sandbox.stub().returns(sandbox.createStubInstance(supportConsole.CliConsole)),
     },
   };
 
@@ -161,20 +159,22 @@ export function initMocks(sandbox = createSandbox()): InitMocksResult {
     __writeHash: sandbox.stub(),
   };
 
-  const MockResolveFrom = sandbox.stub().callsFake((cwd: string, id: string) =>
-    path.join(cwd, id)
-  ) as unknown as MockResolveFrom;
+  const MockResolveFrom = sandbox
+    .stub()
+    .callsFake((cwd: string, id: string) => path.join(cwd, id)) as unknown as MockResolveFrom;
 
-  const MockGlob = sandbox.stub().callsFake((spec: string, opts: {cwd: string}, done: () => void) => {
-    const ee = new EventEmitter();
-    setTimeout(() => {
-      ee.emit('match', path.join(opts.cwd, 'package.json'));
+  const MockGlob = sandbox
+    .stub()
+    .callsFake((spec: string, opts: {cwd: string}, done: () => void) => {
+      const ee = new EventEmitter();
       setTimeout(() => {
-        done();
+        ee.emit('match', path.join(opts.cwd, 'package.json'));
+        setTimeout(() => {
+          done();
+        });
       });
-    });
-    return ee;
-  }) as unknown as MockGlob;
+      return ee;
+    }) as unknown as MockGlob;
 
   const overrides: Overrides = {
     '@appium/support': MockAppiumSupport,

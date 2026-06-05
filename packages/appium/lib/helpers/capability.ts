@@ -7,12 +7,7 @@ import type {
 } from '@appium/types';
 import {util} from '@appium/support';
 import {log as logger} from '../logger';
-import {
-  processCapabilities,
-  STANDARD_CAPS,
-  errors,
-  isW3cCaps,
-} from '@appium/base-driver';
+import {processCapabilities, STANDARD_CAPS, errors, isW3cCaps} from '@appium/base-driver';
 import {mapKeys} from '../utils';
 
 const W3C_APPIUM_PREFIX = 'appium';
@@ -37,7 +32,7 @@ export interface InvalidCaps<C extends Constraints = BaseDriverCapConstraints> {
 export function makeNonW3cCapsError(): Error {
   return new errors.SessionNotCreatedError(
     'Session capabilities format must comply to the W3C standard. Make sure your client is up to date. ' +
-      'See https://www.w3.org/TR/webdriver/#new-session for more details.'
+      'See https://www.w3.org/TR/webdriver/#new-session for more details.',
   );
 }
 
@@ -49,7 +44,7 @@ export function makeNonW3cCapsError(): Error {
 export function parseCapsForInnerDriver<C extends Constraints = BaseDriverCapConstraints>(
   w3cCapabilities: W3CCapabilities<C>,
   constraints: C = {} as C,
-  defaultCapabilities: NSCapabilities<C> = {}
+  defaultCapabilities: NSCapabilities<C> = {},
 ): ParsedDriverCaps<C> | InvalidCaps<C> {
   if (!isW3cCaps(w3cCapabilities)) {
     return {error: makeNonW3cCapsError()};
@@ -83,7 +78,9 @@ export function parseCapsForInnerDriver<C extends Constraints = BaseDriverCapCon
       }
 
       if (util.isEmpty(w3cCapabilities.firstMatch)) {
-        w3cCapabilities.firstMatch = [{[defaultCapKey]: defaultCapValue}] as W3CCapabilities<C>['firstMatch'];
+        w3cCapabilities.firstMatch = [
+          {[defaultCapKey]: defaultCapValue},
+        ] as W3CCapabilities<C>['firstMatch'];
       } else {
         (w3cCapabilities.firstMatch[0] as Record<string, unknown>)[defaultCapKey] = defaultCapValue;
       }
@@ -116,12 +113,12 @@ export function parseCapsForInnerDriver<C extends Constraints = BaseDriverCapCon
  * Prefixes capability keys with `appium:` where appropriate.
  */
 export function insertAppiumPrefixes<C extends Constraints = BaseDriverCapConstraints>(
-  caps: Capabilities<C>
+  caps: Capabilities<C>,
 ): NSCapabilities<C> {
   return mapKeys(caps as Record<string, unknown>, (_, key) =>
     STANDARD_CAPS_LOWERCASE.has(String(key).toLowerCase()) || String(key).includes(':')
       ? String(key)
-      : `${W3C_APPIUM_PREFIX}:${key}`
+      : `${W3C_APPIUM_PREFIX}:${key}`,
   ) as NSCapabilities<C>;
 }
 
@@ -129,9 +126,11 @@ export function insertAppiumPrefixes<C extends Constraints = BaseDriverCapConstr
  * Removes `appium:` prefix from capability keys.
  */
 export function removeAppiumPrefixes<C extends Constraints = BaseDriverCapConstraints>(
-  caps: NSCapabilities<C>
+  caps: NSCapabilities<C>,
 ): Capabilities<C> {
-  return mapKeys(caps as Record<string, unknown>, (_, key) => removeAppiumPrefix(String(key))) as Capabilities<C>;
+  return mapKeys(caps as Record<string, unknown>, (_, key) =>
+    removeAppiumPrefix(String(key)),
+  ) as Capabilities<C>;
 }
 
 /**
@@ -140,7 +139,9 @@ export function removeAppiumPrefixes<C extends Constraints = BaseDriverCapConstr
  *
  * @returns Parsed settings object; empty if none found.
  */
-export function pullSettings(caps: Record<string, unknown> | null | undefined): Record<string, unknown> {
+export function pullSettings(
+  caps: Record<string, unknown> | null | undefined,
+): Record<string, unknown> {
   if (!util.isPlainObject(caps) || util.isEmpty(caps)) {
     return {};
   }

@@ -68,7 +68,7 @@ export class NPM {
     cmd: string,
     args: string[],
     opts: ExecOpts,
-    execOpts: Omit<TeenProcessExecOptions, 'cwd'> = {}
+    execOpts: Omit<TeenProcessExecOptions, 'cwd'> = {},
   ): Promise<NpmExecResult> {
     const {cwd, json, lockFile} = opts;
 
@@ -105,7 +105,7 @@ export class NPM {
       const {stdout = '', stderr = '', code = null} = e as ExecError;
       throw new Error(
         `npm command '${argsCopy.join(' ')}' failed with code ${code}.\n\nSTDOUT:\n${stdout.trim()}\n\nSTDERR:\n${stderr.trim()}`,
-        {cause: e}
+        {cause: e},
       );
     }
     return ret;
@@ -144,7 +144,7 @@ export class NPM {
   async getLatestSafeUpgradeVersion(
     cwd: string,
     pkg: string,
-    curVersion: string
+    curVersion: string,
   ): Promise<string | null> {
     try {
       const result = await this.exec('view', [pkg, 'versions'], {json: true, cwd});
@@ -173,10 +173,7 @@ export class NPM {
    * the highest safely-upgradable version (meaning not crossing any major revision boundaries, and
    * not including any alpha/beta/rc versions)
    */
-  getLatestSafeUpgradeFromVersions(
-    curVersion: string,
-    allVersions: string[]
-  ): string | null {
+  getLatestSafeUpgradeFromVersions(curVersion: string, allVersions: string[]): string | null {
     let safeUpgradeVer: semver.SemVer | null = null;
     const curSemver = semver.parse(curVersion) ?? semver.parse(semver.coerce(curVersion));
     if (curSemver === null) {
@@ -205,7 +202,7 @@ export class NPM {
   async installPackage(
     cwd: string,
     installStr: string,
-    opts: InstallPackageOpts
+    opts: InstallPackageOpts,
   ): Promise<NpmInstallReceipt> {
     const {pkgName, installType} = opts;
     let dummyPkgJson: Record<string, unknown>;
@@ -251,7 +248,7 @@ export class NPM {
         'The package was not downloaded correctly; its package.json ' +
           'did not exist or was unreadable. We looked for it at ' +
           pkgJsonPath,
-        {cause: e}
+        {cause: e},
       );
     }
   }

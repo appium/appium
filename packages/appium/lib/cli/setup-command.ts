@@ -5,13 +5,9 @@ import type {
   CliExtensionCommand,
   CliExtensionSubcommand,
 } from 'appium/types';
-import {
-  DESKTOP_BROWSERS,
-  DESKTOP_DRIVERS,
-  MOBILE_DRIVERS
-} from '../constants';
+import {DESKTOP_BROWSERS, DESKTOP_DRIVERS, MOBILE_DRIVERS} from '../constants';
 import {runExtensionCommand} from './extension';
-import { system, fs } from '@appium/support';
+import {system, fs} from '@appium/support';
 import {log} from '../logger';
 import type {ExtensionConfig} from '../extension/extension-config';
 
@@ -49,7 +45,7 @@ type CliExtArgs = Args<CliExtensionCommand, CliExtensionSubcommand>;
  * Return a list of drivers available for current host platform.
  */
 export function getPresetDrivers(
-  presetName: Exclude<CliCommandSetupSubcommand, 'reset'>
+  presetName: Exclude<CliCommandSetupSubcommand, 'reset'>,
 ): string[] {
   return PRESET_PAIRS[presetName].filter((driver) => {
     if (DRIVERS_ONLY_MACOS.includes(driver)) {
@@ -62,7 +58,6 @@ export function getPresetDrivers(
 
     return true;
   });
-
 }
 
 /**
@@ -86,7 +81,7 @@ export function determinePlatformName(): string {
 export async function runSetupCommand(
   preConfigArgs: Args<CliCommandSetup>,
   driverConfig: DriverConfig,
-  pluginConfig: PluginConfig
+  pluginConfig: PluginConfig,
 ): Promise<void> {
   switch (preConfigArgs.setupCommand) {
     case SUBCOMMAND_DESKTOP:
@@ -105,12 +100,15 @@ export async function runSetupCommand(
       await setupDefaultPlugins(pluginConfig);
       break;
   }
-};
+}
 
 /**
  * Resets all installed drivers and extensions
  */
-async function resetAllExtensions(driverConfig: DriverConfig, pluginConfig: PluginConfig): Promise<void> {
+async function resetAllExtensions(
+  driverConfig: DriverConfig,
+  pluginConfig: PluginConfig,
+): Promise<void> {
   const commandConfigs: [CliExtensionCommand, DriverConfig | PluginConfig][] = [
     ['driver', driverConfig],
     ['plugin', pluginConfig],
@@ -121,24 +119,26 @@ async function resetAllExtensions(driverConfig: DriverConfig, pluginConfig: Plug
         await uninstallExtension(
           extensionName,
           extensionCommandArgs(command, extensionName, 'uninstall'),
-          config
+          config,
         );
       } catch (e) {
         log.warn(
           `${extensionName} ${command} cannot be uninstalled. Will delete the manifest anyway. ` +
-          `Original error: ${e instanceof Error ? e.stack : String(e)}`
+            `Original error: ${e instanceof Error ? e.stack : String(e)}`,
         );
       }
     }
 
     const manifestPath = config.manifestPath;
-    if (!manifestPath || !await fs.exists(manifestPath)) {
+    if (!manifestPath || !(await fs.exists(manifestPath))) {
       continue;
     }
 
     await fs.rimraf(manifestPath);
     if (await fs.exists(manifestPath)) {
-      throw new Error(`${command} manifest at '${manifestPath}' cannot be deleted. Is it accessible?`);
+      throw new Error(
+        `${command} manifest at '${manifestPath}' cannot be deleted. Is it accessible?`,
+      );
     } else {
       log.info(`Successfully deleted ${command} manifest at '${manifestPath}'`);
     }
@@ -171,10 +171,14 @@ async function setupDesktopAppDrivers(driverConfig: DriverConfig): Promise<void>
  */
 async function installDrivers(
   subcommand: Exclude<CliCommandSetupSubcommand, 'reset'>,
-  driverConfig: DriverConfig
+  driverConfig: DriverConfig,
 ): Promise<void> {
   for (const driverName of getPresetDrivers(subcommand)) {
-    await installExtension(driverName, extensionCommandArgs('driver', driverName, 'install'), driverConfig);
+    await installExtension(
+      driverName,
+      extensionCommandArgs('driver', driverName, 'install'),
+      driverConfig,
+    );
   }
 }
 
@@ -183,7 +187,11 @@ async function installDrivers(
  */
 async function setupDefaultPlugins(pluginConfig: PluginConfig): Promise<void> {
   for (const pluginName of DEFAULT_PLUGINS) {
-    await installExtension(pluginName, extensionCommandArgs('plugin', pluginName, 'install'), pluginConfig);
+    await installExtension(
+      pluginName,
+      extensionCommandArgs('plugin', pluginName, 'install'),
+      pluginConfig,
+    );
   }
 }
 
@@ -193,11 +201,13 @@ async function setupDefaultPlugins(pluginConfig: PluginConfig): Promise<void> {
 async function installExtension(
   extensionName: string,
   extensionConfigArgs: CliExtArgs,
-  extensionConfig: DriverConfig | PluginConfig
+  extensionConfig: DriverConfig | PluginConfig,
 ): Promise<void> {
   if (Object.keys(extensionConfig.installedExtensions).includes(extensionName)) {
-    log.info(`${extensionName} (${extensionConfig.installedExtensions[extensionName].version}) is already installed. ` +
-      `Skipping the installation.`);
+    log.info(
+      `${extensionName} (${extensionConfig.installedExtensions[extensionName].version}) is already installed. ` +
+        `Skipping the installation.`,
+    );
     return;
   }
   await runExtensionCommand(extensionConfigArgs, extensionConfig);
@@ -209,11 +219,13 @@ async function installExtension(
 async function uninstallExtension(
   extensionName: string,
   extensionConfigArgs: CliExtArgs,
-  extensionConfig: DriverConfig | PluginConfig
+  extensionConfig: DriverConfig | PluginConfig,
 ): Promise<void> {
   if (!Object.keys(extensionConfig.installedExtensions).includes(extensionName)) {
-    log.info(`${extensionName} (${extensionConfig.installedExtensions[extensionName].version}) is not installed. ` +
-      `Skipping its uninstall.`);
+    log.info(
+      `${extensionName} (${extensionConfig.installedExtensions[extensionName].version}) is not installed. ` +
+        `Skipping its uninstall.`,
+    );
     return;
   }
   await runExtensionCommand(extensionConfigArgs, extensionConfig);
@@ -225,10 +237,9 @@ async function uninstallExtension(
 function extensionCommandArgs(
   extensionCommand: CliExtensionCommand,
   extensionName: string,
-  command: CliExtensionSubcommand
+  command: CliExtensionSubcommand,
 ): CliExtArgs {
-  return (extensionCommand === 'plugin')
-    ? {'subcommand': 'plugin', 'pluginCommand': command, 'plugin': extensionName}
-    : {'subcommand': 'driver', 'driverCommand': command, 'driver': extensionName};
+  return extensionCommand === 'plugin'
+    ? {subcommand: 'plugin', pluginCommand: command, plugin: extensionName}
+    : {subcommand: 'driver', driverCommand: command, driver: extensionName};
 }
-

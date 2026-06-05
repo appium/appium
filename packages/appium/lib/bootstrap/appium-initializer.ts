@@ -88,7 +88,9 @@ export class AppiumInitializer {
   private async parsePreConfigArgs<
     Cmd extends CliCommand,
     SubCmd extends CliExtensionSubcommand | CliCommandSetupSubcommand | void,
-  >(args?: Args<Cmd, SubCmd>): Promise<{preConfigArgs: PreConfigArgs; throwInsteadOfExit: boolean}> {
+  >(
+    args?: Args<Cmd, SubCmd>,
+  ): Promise<{preConfigArgs: PreConfigArgs; throwInsteadOfExit: boolean}> {
     const parser = await getParser();
     let throwInsteadOfExit = false;
 
@@ -97,7 +99,10 @@ export class AppiumInitializer {
         throwInsteadOfExit = true;
         delete args.throwInsteadOfExit;
       }
-      const preConfigArgs = {...args, subcommand: args.subcommand ?? SERVER_SUBCOMMAND} as PreConfigArgs;
+      const preConfigArgs = {
+        ...args,
+        subcommand: args.subcommand ?? SERVER_SUBCOMMAND,
+      } as PreConfigArgs;
       ArgParser.normalizeServerArgs(preConfigArgs);
       return {preConfigArgs, throwInsteadOfExit};
     }
@@ -130,7 +135,12 @@ export class AppiumInitializer {
     ) as unknown as ParsedArgs<CliCommandServer>;
 
     if (preConfigArgs.showConfig) {
-      showConfig(getNonDefaultServerArgs(preConfigArgs as Args), configResult, defaults, serverArgs);
+      showConfig(
+        getNonDefaultServerArgs(preConfigArgs as Args),
+        configResult,
+        defaults,
+        serverArgs,
+      );
       return {} as InitResult<Cmd>;
     }
 
@@ -167,7 +177,9 @@ export class AppiumInitializer {
     if (!serverArgs.logFilters) {
       return;
     }
-    const {issues, rules} = await logger.unwrap().loadSecureValuesPreprocessingRules(serverArgs.logFilters);
+    const {issues, rules} = await logger
+      .unwrap()
+      .loadSecureValuesPreprocessingRules(serverArgs.logFilters);
     const argToLog = util.truncateString(JSON.stringify(serverArgs.logFilters), {length: 150});
     if (!util.isEmpty(issues)) {
       throw new Error(
@@ -175,9 +187,7 @@ export class AppiumInitializer {
       );
     }
     if (util.isEmpty(rules)) {
-      logger.warn(
-        `Found no log filtering rules in the ${argToLog} config. ` + `Is that expected?`,
-      );
+      logger.warn(`Found no log filtering rules in the ${argToLog} config. ` + `Is that expected?`);
     } else {
       logger.info(`Loaded ${util.pluralize('filtering rule', rules.length, true)}`);
     }

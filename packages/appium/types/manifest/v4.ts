@@ -103,8 +103,8 @@ export interface PluginMetadata {
 export type ExtMetadata<ExtType extends ExtensionType> = (ExtType extends DriverType
   ? DriverMetadata
   : ExtType extends PluginType
-  ? PluginMetadata
-  : never) &
+    ? PluginMetadata
+    : never) &
   CommonExtMetadata;
 
 /**

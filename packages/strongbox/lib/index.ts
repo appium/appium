@@ -98,7 +98,7 @@ export const DEFAULT_SUFFIX = 'strongbox';
 export type ItemCtor<
   T extends Value,
   U extends StrongboxOpts = StrongboxOpts,
-  V extends Strongbox<U> = Strongbox<U>
+  V extends Strongbox<U> = Strongbox<U>,
 > = new (name: string, parent: V, encoding?: ItemEncoding) => Item<T>;
 
 /**
@@ -132,7 +132,9 @@ export interface StrongboxOpts {
  *
  * Manages multiple {@linkcode Item}s.
  */
-export class Strongbox<Options extends StrongboxOpts = StrongboxOpts> implements AsyncIterable<Item<any>> {
+export class Strongbox<Options extends StrongboxOpts = StrongboxOpts> implements AsyncIterable<
+  Item<any>
+> {
   /**
    * Override the directory of this container.
    *
@@ -163,7 +165,10 @@ export class Strongbox<Options extends StrongboxOpts = StrongboxOpts> implements
    * @param name Name of instance
    * @param opts Options
    */
-  protected constructor(public readonly name: string, opts: Partial<Options> = {}) {
+  protected constructor(
+    public readonly name: string,
+    opts: Partial<Options> = {},
+  ) {
     this.id = slugify(name);
 
     let newOpts = this.setDefaultOptions(opts);
@@ -183,7 +188,7 @@ export class Strongbox<Options extends StrongboxOpts = StrongboxOpts> implements
    */
   public static create<Options extends StrongboxOpts = StrongboxOpts>(
     name: string,
-    opts?: Partial<Options>
+    opts?: Partial<Options>,
   ) {
     return new Strongbox(name, opts);
   }
@@ -213,13 +218,13 @@ export class Strongbox<Options extends StrongboxOpts = StrongboxOpts> implements
   async createItem<T extends Value>(
     name: string,
     ctor?: ItemCtor<T>,
-    encoding?: ItemEncoding
+    encoding?: ItemEncoding,
   ): Promise<Item<T>>;
   async createItem<T extends Value>(name: string, encoding?: ItemEncoding): Promise<Item<T>>;
   async createItem<T extends Value>(
     name: string,
     encodingOrCtor?: ItemEncoding | ItemCtor<T>,
-    encoding?: ItemEncoding
+    encoding?: ItemEncoding,
   ): Promise<Item<T>> {
     if (isEncoding(encodingOrCtor)) {
       encoding = encodingOrCtor;
@@ -228,7 +233,7 @@ export class Strongbox<Options extends StrongboxOpts = StrongboxOpts> implements
     const item = new (encodingOrCtor ?? (this.defaultItemCtor as ItemCtor<T>))(
       name,
       this,
-      encoding
+      encoding,
     );
     if (this.getLiveItem(item.id)) {
       throw new ReferenceError(`Item with id "${item.id}" already exists`);
@@ -258,18 +263,18 @@ export class Strongbox<Options extends StrongboxOpts = StrongboxOpts> implements
     name: string,
     value: T,
     ctor: ItemCtor<T>,
-    encoding?: ItemEncoding
+    encoding?: ItemEncoding,
   ): Promise<Item<T>>;
   async createItemWithValue<T extends Value>(
     name: string,
     value: T,
-    encoding?: ItemEncoding
+    encoding?: ItemEncoding,
   ): Promise<Item<T>>;
   async createItemWithValue<T extends Value>(
     name: string,
     value: T,
     encodingOrCtor?: ItemEncoding | ItemCtor<T>,
-    encoding?: ItemEncoding
+    encoding?: ItemEncoding,
   ): Promise<Item<T>> {
     const item = isEncoding(encodingOrCtor)
       ? await this.createItem<T>(name, encodingOrCtor)

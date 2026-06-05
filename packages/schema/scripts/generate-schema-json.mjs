@@ -52,7 +52,7 @@ async function write() {
   } catch (e) {
     throw new Error(
       `${error} Failed to read ${SCHEMA_SRC}; did you execute \`npm run build\` first?`,
-      {cause: e}
+      {cause: e},
     );
   }
 
@@ -63,10 +63,9 @@ async function write() {
     await writeFile(OUTPUT_PATH, json);
     console.log(`${info} Wrote JSON schema to ${OUTPUT_PATH}`);
   } catch (err) {
-    throw new Error(
-      `${error} Failed to write JSON schema to ${OUTPUT_PATH}: ${err.message}`,
-      {cause: err}
-    );
+    throw new Error(`${error} Failed to write JSON schema to ${OUTPUT_PATH}: ${err.message}`, {
+      cause: err,
+    });
   }
 }
 

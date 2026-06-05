@@ -25,7 +25,7 @@ type DriverE2EDefaultCaps = Partial<BaseNSCapabilities> & {
  */
 export function createSessionHelpers<CommandData = unknown, ResponseData = any>(
   port: number,
-  address: string = TEST_HOST
+  address: string = TEST_HOST,
 ): SessionHelpers<CommandData, ResponseData> {
   const createAppiumTestURL = createAppiumURL(address, port);
   const createSessionURL = (sessionId: string) => createAppiumTestURL(sessionId, '');
@@ -76,7 +76,7 @@ export function createSessionHelpers<CommandData = unknown, ResponseData = any>(
  */
 export function driverE2ETestSuite(
   DriverClass: DriverClass<Driver>,
-  defaultCaps: DriverE2EDefaultCaps = {}
+  defaultCaps: DriverE2EDefaultCaps = {},
 ): void {
   const address = defaultCaps['appium:address'] ?? TEST_HOST;
   let port: number | undefined = defaultCaps['appium:port'];
@@ -142,7 +142,7 @@ export function driverE2ETestSuite(
                 'X-Idempotency-Key': '123456',
               },
               httpAgent,
-            }
+            },
           );
 
           sessionIds.push(sessionId);
@@ -179,8 +179,8 @@ export function driverE2ETestSuite(
                   'X-Idempotency-Key': '12345',
                 },
                 httpAgent,
-              }
-            )
+              },
+            ),
           );
           times++;
         } while (times < 2);
@@ -327,9 +327,7 @@ export function driverE2ETestSuite(
         await expect(d.settings.update({ignoreUnimportantViews: true})).to.not.be.rejected;
       });
       it('should reject for invalid update object', async function () {
-        await expect(
-          (d.settings as any).update('invalid json')
-        ).to.be.rejectedWith('JSON');
+        await expect((d.settings as any).update('invalid json')).to.be.rejectedWith('JSON');
       });
     });
 
@@ -354,10 +352,10 @@ export function driverE2ETestSuite(
             () =>
               reject(
                 new Error(
-                  'onUnexpectedShutdown event is expected to be fired within 5 seconds timeout'
-                )
+                  'onUnexpectedShutdown event is expected to be fired within 5 seconds timeout',
+                ),
               ),
-            5000
+            5000,
           );
           d.onUnexpectedShutdown(resolve);
         });

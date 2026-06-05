@@ -44,21 +44,21 @@ export class SecureValuesPreprocessor {
       if (isLogFilterRegex(rule)) {
         if (typeof rule.pattern !== 'string' || rule.pattern.length === 0) {
           throw new Error(
-            `${JSON.stringify(rule)} -> The value of 'pattern' must be a valid non-empty string`
+            `${JSON.stringify(rule)} -> The value of 'pattern' must be a valid non-empty string`,
           );
         }
         pattern = rule.pattern;
       } else if (Object.hasOwn(rule, 'text')) {
         if (typeof rule.text !== 'string' || rule.text.length === 0) {
           throw new Error(
-            `${JSON.stringify(rule)} -> The value of 'text' must be a valid non-empty string`
+            `${JSON.stringify(rule)} -> The value of 'text' must be a valid non-empty string`,
           );
         }
         pattern = `\\b${escapeRegExp(rule.text)}\\b`;
       }
       if (!pattern) {
         throw new Error(
-          `${JSON.stringify(rule)} -> Must either have a field named 'pattern' or 'text'`
+          `${JSON.stringify(rule)} -> Must either have a field named 'pattern' or 'text'`,
         );
       }
 
@@ -98,7 +98,7 @@ export class SecureValuesPreprocessor {
   async loadRules(filters: string | string[] | LogFiltersConfig): Promise<string[]> {
     const issues: string[] = [];
     const rawRules: (LogFilter | string)[] = [];
-    for (const source of (Array.isArray(filters) ? filters : [filters])) {
+    for (const source of Array.isArray(filters) ? filters : [filters]) {
       if (isPlainObject(source)) {
         rawRules.push(source as LogFilter);
       } else if (typeof source === 'string') {

@@ -28,8 +28,8 @@ export type BaseW3CCapabilities = W3CCapabilities<BaseDriverCapConstraints>;
 export type ConstraintChoice<C extends Constraint, T> = C['inclusionCaseInsensitive'] extends T[]
   ? AnyCase<C['inclusionCaseInsensitive'][number]>
   : C['inclusion'] extends ReadonlyArray<T>
-  ? C['inclusion'][number]
-  : T;
+    ? C['inclusion'][number]
+    : T;
 
 /**
  * Given {@linkcode Constraint} `C`, determine the associated type of the capability.
@@ -43,14 +43,14 @@ export type ConstraintChoice<C extends Constraint, T> = C['inclusionCaseInsensit
 export type ConstraintToCapKind<C extends Constraint> = C['isString'] extends true
   ? ConstraintChoice<C, string>
   : C['isNumber'] extends true
-  ? ConstraintChoice<C, number>
-  : C['isBoolean'] extends true
-  ? boolean
-  : C['isArray'] extends true
-  ? string[]
-  : C['isObject'] extends true
-  ? StringRecord
-  : unknown;
+    ? ConstraintChoice<C, number>
+    : C['isBoolean'] extends true
+      ? boolean
+      : C['isArray'] extends true
+        ? string[]
+        : C['isObject'] extends true
+          ? StringRecord
+          : unknown;
 
 /**
  * Given {@linkcode Constraint} `C`, determine if it is required or optional.
@@ -80,7 +80,7 @@ export type CapsToNSCaps<T extends StringRecord, NS extends string = W3C_APPIUM_
  */
 export type NamespacedString<
   S extends string,
-  NS extends string = W3C_APPIUM_PREFIX
+  NS extends string = W3C_APPIUM_PREFIX,
 > = `${NS}:${S}`;
 
 /**

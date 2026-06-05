@@ -1,19 +1,13 @@
 import {sleep} from 'asyncbox';
 import {createSandbox} from 'sinon';
-import type {
-  Constraints,
-  Driver,
-  DriverClass,
-  NSDriverCaps,
-  W3CDriverCaps,
-} from '@appium/types';
+import type {Constraints, Driver, DriverClass, NSDriverCaps, W3CDriverCaps} from '@appium/types';
 
 /**
  * Creates unit test suites for a driver.
  */
 export function driverUnitTestSuite<C extends Constraints>(
   DriverClass: DriverClass<Driver<C>>,
-  defaultCaps: NSDriverCaps<C> = {} as NSDriverCaps<C>
+  defaultCaps: NSDriverCaps<C> = {} as NSDriverCaps<C>,
 ): void {
   const className = DriverClass.name ?? '(unknown driver)';
 
@@ -98,10 +92,10 @@ export function driverUnitTestSuite<C extends Constraints>(
           () =>
             reject(
               new Error(
-                'onUnexpectedShutdown event is expected to be fired within 5 seconds timeout'
-              )
+                'onUnexpectedShutdown event is expected to be fired within 5 seconds timeout',
+              ),
             ),
-          5000
+          5000,
         );
         d.onUnexpectedShutdown(resolve);
       });
@@ -111,7 +105,9 @@ export function driverUnitTestSuite<C extends Constraints>(
     });
 
     it('should not allow commands in middle of unexpected shutdown', async function () {
-      sandbox.stub(d, 'deleteSession').callsFake(async function (this: InstanceType<typeof DriverClass>) {
+      sandbox.stub(d, 'deleteSession').callsFake(async function (
+        this: InstanceType<typeof DriverClass>,
+      ) {
         await sleep(100);
         await DriverClass.prototype.deleteSession.call(this);
       });
@@ -121,10 +117,10 @@ export function driverUnitTestSuite<C extends Constraints>(
           () =>
             reject(
               new Error(
-                'onUnexpectedShutdown event is expected to be fired within 5 seconds timeout'
-              )
+                'onUnexpectedShutdown event is expected to be fired within 5 seconds timeout',
+              ),
             ),
-          5000
+          5000,
         );
         d.onUnexpectedShutdown(resolve);
       });
@@ -134,7 +130,9 @@ export function driverUnitTestSuite<C extends Constraints>(
     });
 
     it('should allow new commands after done shutting down', async function () {
-      sandbox.stub(d, 'deleteSession').callsFake(async function (this: InstanceType<typeof DriverClass>) {
+      sandbox.stub(d, 'deleteSession').callsFake(async function (
+        this: InstanceType<typeof DriverClass>,
+      ) {
         await sleep(100);
         await DriverClass.prototype.deleteSession.call(this);
       });
@@ -145,10 +143,10 @@ export function driverUnitTestSuite<C extends Constraints>(
           () =>
             reject(
               new Error(
-                'onUnexpectedShutdown event is expected to be fired within 5 seconds timeout'
-              )
+                'onUnexpectedShutdown event is expected to be fired within 5 seconds timeout',
+              ),
             ),
-          5000
+          5000,
         );
         d.onUnexpectedShutdown(resolve);
       });
@@ -216,7 +214,7 @@ export function driverUnitTestSuite<C extends Constraints>(
         for (let i = 0; i < numCmds; i++) {
           cmds.push(d.executeCommand('getStatus'));
         }
-        const results = await Promise.all(cmds) as number[];
+        const results = (await Promise.all(cmds)) as number[];
         for (let i = 1; i < numCmds; i++) {
           if (results[i] <= results[i - 1]) {
             throw new Error('Got result out of order');
@@ -263,12 +261,12 @@ export function driverUnitTestSuite<C extends Constraints>(
         for (let i = 0; i < numCmds; i++) {
           cmds.push(d.executeCommand('getStatus'));
         }
-        await Promise.all(cmds) as number[];
+        (await Promise.all(cmds)) as number[];
         cmds = [];
         for (let i = 0; i < numCmds; i++) {
           cmds.push(d.executeCommand('getStatus'));
         }
-        const results = await Promise.all(cmds) as number[];
+        const results = (await Promise.all(cmds)) as number[];
         for (let i = 1; i < numCmds; i++) {
           if (results[i] <= results[i - 1]) {
             throw new Error('Got result out of order');

@@ -70,7 +70,7 @@ type AuthLike = AuthCredentials | AxiosBasicCredentials;
 export async function uploadFile(
   localPath: string,
   remoteUri: string,
-  uploadOptions: HttpUploadOptions | FtpUploadOptions = {}
+  uploadOptions: HttpUploadOptions | FtpUploadOptions = {},
 ): Promise<void> {
   if (!(await fs.exists(localPath))) {
     throw new Error(`'${localPath}' does not exist or is not accessible`);
@@ -97,13 +97,13 @@ export async function uploadFile(
     throw new Error(
       `Cannot upload the file at '${localPath}' to '${remoteUri}'. ` +
         `Unsupported remote protocol '${url.protocol}'. ` +
-        `Only http/https and ftp/ftps protocols are supported.`
+        `Only http/https and ftp/ftps protocols are supported.`,
     );
   }
   if (isMetered) {
     log.info(
       `Uploaded '${localPath}' of ${toReadableSizeString(size)} size in ` +
-        `${timer.getDuration().asSeconds.toFixed(3)}s`
+        `${timer.getDuration().asSeconds.toFixed(3)}s`,
     );
   }
 }
@@ -118,7 +118,7 @@ export async function uploadFile(
 export async function downloadFile(
   remoteUrl: string,
   dstPath: string,
-  downloadOptions: DownloadOptions = {}
+  downloadOptions: DownloadOptions = {},
 ): Promise<void> {
   const {isMetered = true, auth, timeout = DEFAULT_TIMEOUT_MS, headers} = downloadOptions;
 
@@ -161,14 +161,14 @@ export async function downloadFile(
     await fs.rimraf(dstPath);
     throw new Error(
       `The size of the file downloaded from ${remoteUrl} (${size} bytes) ` +
-        `differs from the one in Content-Length response header (${responseLength} bytes)`
+        `differs from the one in Content-Length response header (${responseLength} bytes)`,
     );
   }
   if (isMetered) {
     const secondsElapsed = timer.getDuration().asSeconds;
     log.debug(
       `${remoteUrl} (${toReadableSizeString(size)}) ` +
-        `has been downloaded to '${dstPath}' in ${secondsElapsed.toFixed(3)}s`
+        `has been downloaded to '${dstPath}' in ${secondsElapsed.toFixed(3)}s`,
     );
     if (secondsElapsed >= 2) {
       const bytesPerSec = Math.floor(size / secondsElapsed);
@@ -193,7 +193,7 @@ function toAxiosAuth(auth: AuthLike | undefined): AxiosBasicCredentials | null {
 async function uploadFileToHttp(
   localFileStream: NodeJS.ReadableStream,
   parsedUri: URL,
-  uploadOptions: HttpUploadOptions = {}
+  uploadOptions: HttpUploadOptions = {},
 ): Promise<void> {
   const {
     method = 'POST',
@@ -246,11 +246,13 @@ async function uploadFileToHttp(
   }
   log.debug(
     `Performing ${method} to ${href} with options (excluding data): ` +
-      JSON.stringify((() => {
-        const requestOptsWithoutData = {...requestOpts} as Record<string, unknown>;
-        delete requestOptsWithoutData.data;
-        return requestOptsWithoutData;
-      })())
+      JSON.stringify(
+        (() => {
+          const requestOptsWithoutData = {...requestOpts} as Record<string, unknown>;
+          delete requestOptsWithoutData.data;
+          return requestOptsWithoutData;
+        })(),
+      ),
   );
 
   const {status, statusText} = await axios(requestOpts);
@@ -260,7 +262,7 @@ async function uploadFileToHttp(
 async function uploadFileToFtp(
   localFileStream: string | Buffer | NodeJS.ReadableStream,
   parsedUri: URL,
-  uploadOptions: FtpUploadOptions = {}
+  uploadOptions: FtpUploadOptions = {},
 ): Promise<void> {
   const {auth} = uploadOptions;
   const {protocol, hostname, port, pathname} = parsedUri;
@@ -287,7 +289,7 @@ async function uploadFileToFtp(
 
 function isHttpUploadOptions(
   opts: HttpUploadOptions | FtpUploadOptions,
-  url: URL
+  url: URL,
 ): opts is HttpUploadOptions {
   try {
     return url.protocol === 'http:' || url.protocol === 'https:';
@@ -299,7 +301,7 @@ function isHttpUploadOptions(
 /** Returns true if the URL is FTP, i.e. the options are for FTP upload. */
 function isFtpUploadOptions(
   opts: HttpUploadOptions | FtpUploadOptions,
-  url: URL
+  url: URL,
 ): opts is FtpUploadOptions {
   try {
     return url.protocol === 'ftp:';

@@ -5,10 +5,7 @@ import type {
   W3CCapabilities,
   StandardCapabilities,
 } from '@appium/types';
-import type {
-  KeyAsString,
-  MergeExclusive,
-} from 'type-fest';
+import type {KeyAsString, MergeExclusive} from 'type-fest';
 import {validator} from './validation';
 import {util} from '@appium/support';
 import {omit, pickBy} from '../utils';
@@ -39,22 +36,22 @@ export function mergeCaps<
   T extends Constraints,
   U extends Constraints,
   Primary extends Capabilities<T>,
-  Secondary extends Capabilities<U>
+  Secondary extends Capabilities<U>,
 >(
   primary: Primary | undefined = {} as Primary,
-  secondary: Secondary | undefined = {} as Secondary
+  secondary: Secondary | undefined = {} as Secondary,
 ): MergeExclusive<Primary, Secondary> {
-  const result = ({
+  const result = {
     ...primary,
-  }) as MergeExclusive<Primary, Secondary>;
+  } as MergeExclusive<Primary, Secondary>;
 
   for (const [name, value] of Object.entries(secondary)) {
     // Overwriting is not allowed. Primary and secondary must have different properties (w3c rule 4.4)
     if (primary[name] !== undefined) {
       throw new errors.InvalidArgumentError(
         `property '${name}' should not exist on both primary (${JSON.stringify(
-          primary
-        )}) and secondary (${JSON.stringify(secondary)}) object`
+          primary,
+        )}) and secondary (${JSON.stringify(secondary)}) object`,
       );
     }
     result[name as keyof typeof result] = value;
@@ -69,7 +66,7 @@ export function mergeCaps<
 export function validateCaps<C extends Constraints>(
   caps: Capabilities<C>,
   constraints: C | undefined = {} as C,
-  opts: ValidateCapsOpts | undefined = {}
+  opts: ValidateCapsOpts | undefined = {},
 ): Capabilities<C> {
   const {skipPresenceConstraint} = opts;
 
@@ -84,21 +81,27 @@ export function validateCaps<C extends Constraints>(
         return [key, omit(constraint as Record<string, unknown>, 'presence')];
       }
       if ((constraint as {presence?: unknown}).presence === true) {
-        return [key, {...omit(constraint as Record<string, unknown>, 'presence'), presence: {allowEmpty: false}}];
+        return [
+          key,
+          {
+            ...omit(constraint as Record<string, unknown>, 'presence'),
+            presence: {allowEmpty: false},
+          },
+        ];
       }
       return [key, constraint];
-    })
+    }),
   ) as C;
 
   const validationErrors = validator.validate(
     pickBy(caps, (value) => util.hasValue(value)),
-    constraints
+    constraints,
   );
 
   if (validationErrors) {
     const message: string[] = [];
     for (const [attribute, reasons] of Object.entries(validationErrors)) {
-      for (const reason of (reasons as string[])) {
+      for (const reason of reasons as string[]) {
         message.push(`'${attribute}' ${reason}`);
       }
     }
@@ -114,22 +117,20 @@ export function validateCaps<C extends Constraints>(
  * @see https://www.w3.org/TR/webdriver2/#dfn-table-of-standard-capabilities)
  */
 export const STANDARD_CAPS = Object.freeze(
-  new Set(
-    ([
-      'browserName',
-      'browserVersion',
-      'platformName',
-      'acceptInsecureCerts',
-      'pageLoadStrategy',
-      'proxy',
-      'setWindowRect',
-      'timeouts',
-      'strictFileInteractability',
-      'unhandledPromptBehavior',
-      'userAgent',
-      'webSocketUrl',
-    ]) as KeyAsString<StandardCapabilities>[]
-  )
+  new Set([
+    'browserName',
+    'browserVersion',
+    'platformName',
+    'acceptInsecureCerts',
+    'pageLoadStrategy',
+    'proxy',
+    'setWindowRect',
+    'timeouts',
+    'strictFileInteractability',
+    'unhandledPromptBehavior',
+    'userAgent',
+    'webSocketUrl',
+  ] as KeyAsString<StandardCapabilities>[]),
 );
 
 const STANDARD_CAPS_LOWER = new Set([...STANDARD_CAPS].map((cap) => cap.toLowerCase()));
@@ -147,7 +148,9 @@ export function isStandardCap(cap: string): boolean {
  * @see https://www.w3.org/TR/webdriver/#dfn-extension-capabilities
  * @internal
  */
-export function stripAppiumPrefixes<C extends Constraints>(caps: NSCapabilities<C>): Capabilities<C> {
+export function stripAppiumPrefixes<C extends Constraints>(
+  caps: NSCapabilities<C>,
+): Capabilities<C> {
   // split into prefixed and non-prefixed.
   // non-prefixed should be standard caps at this point
   const capKeys = Object.keys(caps);
@@ -156,13 +159,15 @@ export function stripAppiumPrefixes<C extends Constraints>(caps: NSCapabilities<
 
   // initialize this with the k/v pairs of the non-prefixed caps
   const strippedCaps: Record<string, unknown> = Object.fromEntries(
-    nonPrefixedCaps.map((cap) => [cap, caps[cap as keyof typeof caps]])
+    nonPrefixedCaps.map((cap) => [cap, caps[cap as keyof typeof caps]]),
   ) as Capabilities<C>;
   const badPrefixedCaps: string[] = [];
 
   // Strip out the 'appium:' prefix
   for (const prefixedCap of prefixedCaps) {
-    const strippedCapName = prefixedCap.substring(APPIUM_VENDOR_PREFIX.length) as KeyAsString<Capabilities<C>>;
+    const strippedCapName = prefixedCap.substring(APPIUM_VENDOR_PREFIX.length) as KeyAsString<
+      Capabilities<C>
+    >;
 
     // If it's standard capability that was prefixed, add it to an array of incorrectly prefixed capabilities
     if (isStandardCap(strippedCapName)) {
@@ -172,7 +177,7 @@ export function stripAppiumPrefixes<C extends Constraints>(caps: NSCapabilities<
       } else {
         log.warn(
           `Ignoring capability '${prefixedCap}=${caps[prefixedCap as keyof typeof caps]}' and ` +
-            `using capability '${strippedCapName}=${strippedCaps[strippedCapName]}'`
+            `using capability '${strippedCapName}=${strippedCaps[strippedCapName]}'`,
         );
       }
     } else {
@@ -184,8 +189,8 @@ export function stripAppiumPrefixes<C extends Constraints>(caps: NSCapabilities<
   if (badPrefixedCaps.length > 0) {
     log.warn(
       `The capabilities ${JSON.stringify(
-        badPrefixedCaps
-      )} are standard capabilities and do not require "appium:" prefix`
+        badPrefixedCaps,
+      )} are standard capabilities and do not require "appium:" prefix`,
     );
   }
   return strippedCaps as Capabilities<C>;
@@ -194,20 +199,18 @@ export function stripAppiumPrefixes<C extends Constraints>(caps: NSCapabilities<
 /**
  * Get an array of all the unprefixed caps that are being used in 'alwaysMatch' and all of the 'firstMatch' object
  */
-export function findNonPrefixedCaps<C extends Constraints>(
-  {
-    alwaysMatch = {},
-    firstMatch = []
-  }: W3CCapabilities<C>
-): string[] {
+export function findNonPrefixedCaps<C extends Constraints>({
+  alwaysMatch = {},
+  firstMatch = [],
+}: W3CCapabilities<C>): string[] {
   return util.uniq(
     [alwaysMatch, ...firstMatch].reduce<string[]>(
       (unprefixedCaps, caps) => [
         ...unprefixedCaps,
         ...Object.keys(caps).filter((cap) => !cap.includes(':') && !isStandardCap(cap)),
       ],
-      []
-    )
+      [],
+    ),
   );
 }
 
@@ -218,12 +221,12 @@ export function findNonPrefixedCaps<C extends Constraints>(
 export function parseCaps<C extends Constraints>(
   caps: W3CCapabilities<C>,
   constraints: C | undefined = {} as C,
-  shouldValidateCaps: boolean | undefined = true
+  shouldValidateCaps: boolean | undefined = true,
 ): ParsedCaps<C> {
   // If capabilities request is not an object, return error (#1.1)
   if (!util.isPlainObject(caps)) {
     throw new errors.InvalidArgumentError(
-      'The capabilities argument was not valid for the following reason(s): "capabilities" must be a JSON object.'
+      'The capabilities argument was not valid for the following reason(s): "capabilities" must be a JSON object.',
     );
   }
 
@@ -237,7 +240,7 @@ export function parseCaps<C extends Constraints>(
   // Reject 'firstMatch' argument if it's not an array (#3.2)
   if (!Array.isArray(allFirstMatchCaps)) {
     throw new errors.InvalidArgumentError(
-      'The capabilities.firstMatch argument was not valid for the following reason(s): "capabilities.firstMatch" must be a JSON array or undefined'
+      'The capabilities.firstMatch argument was not valid for the following reason(s): "capabilities.firstMatch" must be a JSON array or undefined',
     );
   }
 
@@ -246,7 +249,7 @@ export function parseCaps<C extends Constraints>(
   if (allFirstMatchCaps.length === 0) {
     log.warn(
       `The firstMatch array in the given capabilities has no entries. Adding an empty entry for now, ` +
-        `but it will require one or more entries as W3C spec.`
+        `but it will require one or more entries as W3C spec.`,
     );
     allFirstMatchCaps.push({});
   }
@@ -255,7 +258,7 @@ export function parseCaps<C extends Constraints>(
   const nonPrefixedCaps = findNonPrefixedCaps(caps);
   if (!util.isEmpty(nonPrefixedCaps)) {
     throw new errors.InvalidArgumentError(
-      `All non-standard capabilities should have a vendor prefix. The following capabilities did not have one: ${nonPrefixedCaps}`
+      `All non-standard capabilities should have a vendor prefix. The following capabilities did not have one: ${nonPrefixedCaps}`,
     );
   }
 
@@ -272,7 +275,7 @@ export function parseCaps<C extends Constraints>(
   // Remove the 'presence' constraint for any keys that are already present in 'requiredCaps'
   // since we know that this constraint has already passed
   const filteredConstraints = Object.fromEntries(
-    Object.entries(constraints ?? {}).filter(([key]) => !(key in strippedRequiredCaps))
+    Object.entries(constraints ?? {}).filter(([key]) => !(key in strippedRequiredCaps)),
   ) as C;
 
   // Validate all of the first match capabilities and return an array with only the valid caps (see spec #5)
@@ -320,13 +323,10 @@ export function parseCaps<C extends Constraints>(
 /**
  * Calls parseCaps and just returns the matchedCaps variable
  */
-export function processCapabilities<
-  C extends Constraints,
-  W3CCaps extends W3CCapabilities<C>
->(
+export function processCapabilities<C extends Constraints, W3CCaps extends W3CCapabilities<C>>(
   w3cCaps: W3CCaps,
   constraints: C | undefined = {} as C,
-  shouldValidateCaps: boolean | undefined = true
+  shouldValidateCaps: boolean | undefined = true,
 ): Capabilities<C> {
   const {matchedCaps, validationErrors} = parseCaps(w3cCaps, constraints, shouldValidateCaps);
 
@@ -336,8 +336,8 @@ export function processCapabilities<
       // If there was more than one 'firstMatch' cap, indicate that we couldn't find a matching capabilities set and show all the errors
       throw new errors.InvalidArgumentError(
         `Could not find matching capabilities from ${JSON.stringify(
-          w3cCaps
-        )}:\n ${validationErrors.join('\n')}`
+          w3cCaps,
+        )}:\n ${validationErrors.join('\n')}`,
       );
     } else {
       // Otherwise, just show the singular error message
@@ -352,7 +352,9 @@ export function processCapabilities<
  * Return a copy of a "bare" (single-level, non-W3C) capabilities object which has taken everything
  * within the 'appium:options' capability and promoted it to the top level.
  */
-export function promoteAppiumOptionsForObject<C extends Constraints>(obj: NSCapabilities<C>): NSCapabilities<C> {
+export function promoteAppiumOptionsForObject<C extends Constraints>(
+  obj: NSCapabilities<C>,
+): NSCapabilities<C> {
   const appiumOptions = obj[PREFIXED_APPIUM_OPTS_CAP];
   if (!appiumOptions) {
     return obj;
@@ -360,7 +362,7 @@ export function promoteAppiumOptionsForObject<C extends Constraints>(obj: NSCapa
 
   if (!util.isPlainObject(appiumOptions)) {
     throw new errors.SessionNotCreatedError(
-      `The ${PREFIXED_APPIUM_OPTS_CAP} capability must be an object`
+      `The ${PREFIXED_APPIUM_OPTS_CAP} capability must be an object`,
     );
   }
   if (util.isEmpty(appiumOptions)) {
@@ -368,7 +370,7 @@ export function promoteAppiumOptionsForObject<C extends Constraints>(obj: NSCapa
   }
 
   log.debug(
-    `Found ${PREFIXED_APPIUM_OPTS_CAP} capability present; will promote items inside to caps`
+    `Found ${PREFIXED_APPIUM_OPTS_CAP} capability present; will promote items inside to caps`,
   );
 
   /**
@@ -378,12 +380,12 @@ export function promoteAppiumOptionsForObject<C extends Constraints>(obj: NSCapa
   const verifyIfAcceptable = (capName: string) => {
     if (typeof capName !== 'string') {
       throw new errors.SessionNotCreatedError(
-        `Capability names in ${PREFIXED_APPIUM_OPTS_CAP} must be strings. '${capName}' is unexpected`
+        `Capability names in ${PREFIXED_APPIUM_OPTS_CAP} must be strings. '${capName}' is unexpected`,
       );
     }
     if (isStandardCap(capName)) {
       throw new errors.SessionNotCreatedError(
-        `${PREFIXED_APPIUM_OPTS_CAP} must only contain vendor-specific capabilities. '${capName}' is unexpected`
+        `${PREFIXED_APPIUM_OPTS_CAP} must only contain vendor-specific capabilities. '${capName}' is unexpected`,
       );
     }
     return capName;
@@ -391,7 +393,9 @@ export function promoteAppiumOptionsForObject<C extends Constraints>(obj: NSCapa
   const preprocessedOptions: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(appiumOptions as Record<string, unknown>)) {
     const verifiedKey = verifyIfAcceptable(key);
-    const finalKey = shouldAddVendorPrefix(verifiedKey) ? `${APPIUM_VENDOR_PREFIX}${verifiedKey}` : verifiedKey;
+    const finalKey = shouldAddVendorPrefix(verifiedKey)
+      ? `${APPIUM_VENDOR_PREFIX}${verifiedKey}`
+      : verifiedKey;
     preprocessedOptions[finalKey] = value;
   }
   // warn if we are going to overwrite any keys on the base caps object
@@ -399,7 +403,7 @@ export function promoteAppiumOptionsForObject<C extends Constraints>(obj: NSCapa
   if (overwrittenKeys.length > 0) {
     log.warn(
       `Found capabilities inside ${PREFIXED_APPIUM_OPTS_CAP} that will overwrite ` +
-        `capabilities at the top level: ${JSON.stringify(overwrittenKeys)}`
+        `capabilities at the top level: ${JSON.stringify(overwrittenKeys)}`,
     );
   }
   const restObj = omit(obj, PREFIXED_APPIUM_OPTS_CAP) as NSCapabilities<C>;
@@ -413,7 +417,9 @@ export function promoteAppiumOptionsForObject<C extends Constraints>(obj: NSCapa
  * Return a copy of a capabilities object which has taken everything within the 'options'
  * capability and promoted it to the top level.
  */
-export function promoteAppiumOptions<C extends Constraints>(originalCaps: W3CCapabilities<C>): W3CCapabilities<C> {
+export function promoteAppiumOptions<C extends Constraints>(
+  originalCaps: W3CCapabilities<C>,
+): W3CCapabilities<C> {
   const result = {} as W3CCapabilities<C>;
   const {alwaysMatch, firstMatch} = originalCaps;
   if (util.isPlainObject(alwaysMatch)) {

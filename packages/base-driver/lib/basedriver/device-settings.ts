@@ -23,7 +23,7 @@ export class DeviceSettings<T extends StringRecord = StringRecord> implements ID
    */
   constructor(
     defaultSettings: T = {} as T,
-    onSettingsUpdate: SettingsUpdateListener<T> = async () => {}
+    onSettingsUpdate: SettingsUpdateListener<T> = async () => {},
   ) {
     this._settings = {...defaultSettings};
     this._onSettingsUpdate = onSettingsUpdate;
@@ -38,14 +38,14 @@ export class DeviceSettings<T extends StringRecord = StringRecord> implements ID
     if (!util.isPlainObject(newSettings)) {
       throw new errors.InvalidArgumentError(
         `Settings update should be called with valid JSON. Got ` +
-          `${JSON.stringify(newSettings)} instead`
+          `${JSON.stringify(newSettings)} instead`,
       );
     }
 
     if (node.getObjectSize({...this._settings, ...newSettings}) >= MAX_SETTINGS_SIZE) {
       throw new errors.InvalidArgumentError(
         `New settings cannot be applied, because the overall ` +
-          `object size exceeds the allowed limit of ${util.toReadableSizeString(MAX_SETTINGS_SIZE)}`
+          `object size exceeds the allowed limit of ${util.toReadableSizeString(MAX_SETTINGS_SIZE)}`,
       );
     }
 
@@ -56,11 +56,7 @@ export class DeviceSettings<T extends StringRecord = StringRecord> implements ID
           continue;
         }
       }
-      await this._onSettingsUpdate(
-        prop as keyof T,
-        newSettings[prop],
-        this._settings[prop]
-      );
+      await this._onSettingsUpdate(prop as keyof T, newSettings[prop], this._settings[prop]);
       this._settings[prop] = newSettings[prop];
     }
   }

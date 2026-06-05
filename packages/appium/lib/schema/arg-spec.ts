@@ -100,9 +100,10 @@ export class ArgSpec<D = unknown> {
   /**
    * Parse root schema ID (`<extType>-<normalizedExtName>.json`) to extension info.
    */
-  static extensionInfoFromRootSchemaId(
-    schemaId: string
-  ): {extType?: ExtensionType; normalizedExtName?: string} {
+  static extensionInfoFromRootSchemaId(schemaId: string): {
+    extType?: ExtensionType;
+    normalizedExtName?: string;
+  } {
     const matches = schemaId.match(SCHEMA_ID_REGEXP);
     if (matches?.groups) {
       const {extType, normalizedExtName} = matches.groups as {

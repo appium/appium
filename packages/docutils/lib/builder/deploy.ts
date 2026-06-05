@@ -170,8 +170,10 @@ export async function deploy({
     const mikeArgs = [
       ...argify(
         Object.fromEntries(
-          Object.entries(mikeOpts).filter(([, value]) => typeof value === 'number' || Boolean(value))
-        )
+          Object.entries(mikeOpts).filter(
+            ([, value]) => typeof value === 'number' || Boolean(value),
+          ),
+        ),
       ),
     ];
     stop(); // discard
@@ -184,8 +186,8 @@ export async function deploy({
         Object.fromEntries(
           Object.entries(mikeOpts).filter(
             ([key, value]) =>
-              !['port', 'host'].includes(key) && (typeof value === 'number' || Boolean(value))
-          )
+              !['port', 'host'].includes(key) && (typeof value === 'number' || Boolean(value)),
+          ),
         ),
       ),
     ];

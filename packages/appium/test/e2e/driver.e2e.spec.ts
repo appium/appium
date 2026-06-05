@@ -44,7 +44,15 @@ type AppiumTestBrowser = Browser & {
   listExtensions(): Promise<any>;
 };
 
-const wdOpts: { hostname: string; port?: number; connectionRetryCount?: number; capabilities?: object; path?: string; protocol?: string; strictSSL?: boolean } = {
+const wdOpts: {
+  hostname: string;
+  port?: number;
+  connectionRetryCount?: number;
+  capabilities?: object;
+  path?: string;
+  protocol?: string;
+  strictSSL?: boolean;
+} = {
   hostname: TEST_HOST,
   connectionRetryCount: 0,
 };
@@ -83,7 +91,6 @@ describe('FakeDriver via HTTP', function () {
   let sandbox: SinonSandbox;
 
   before(async function () {
-
     sandbox = createSandbox();
     appiumHome = await tempDir.openDir();
     wdOpts.port = port = await getTestPort();
@@ -122,10 +129,9 @@ describe('FakeDriver via HTTP', function () {
     it('should update the server with cliArgs', async function () {
       // we don't need to check the entire object, since it's large, but we can ensure an
       // arg got through.
-      expect((await axios.post(`http://${TEST_HOST}:${port}/fakedriverCliArgs`)).data).to.have.property(
-        'appiumHome',
-        appiumHome,
-      );
+      expect(
+        (await axios.post(`http://${TEST_HOST}:${port}/fakedriverCliArgs`)).data,
+      ).to.have.property('appiumHome', appiumHome);
     });
   });
 
@@ -201,7 +207,7 @@ describe('FakeDriver via HTTP', function () {
     let driver: AppiumTestBrowser;
 
     beforeEach(async function () {
-      driver = await wdio({...wdOpts, capabilities: caps}) as AppiumTestBrowser;
+      driver = (await wdio({...wdOpts, capabilities: caps})) as AppiumTestBrowser;
     });
     afterEach(async function () {
       if (driver) {
@@ -213,33 +219,32 @@ describe('FakeDriver via HTTP', function () {
     it('should list available driver commands', async function () {
       driver.addCommand(
         'listCommands',
-        async () => (await axios.get(
-          `${testServerBaseSessionUrl}/${driver.sessionId}/appium/commands`
-        )).data.value
+        async () =>
+          (await axios.get(`${testServerBaseSessionUrl}/${driver.sessionId}/appium/commands`)).data
+            .value,
       );
 
       const commands = await driver.listCommands();
 
       expect(JSON.stringify(commands.rest.base['/session/:sessionId/frame'])).to.eql(
-        JSON.stringify({POST: {command: 'setFrame', params: [
-          {name: 'id', required: true}
-        ]}}));
+        JSON.stringify({POST: {command: 'setFrame', params: [{name: 'id', required: true}]}}),
+      );
       expect(Object.keys(commands.rest.driver).length).to.be.greaterThan(1);
 
       expect(JSON.stringify(commands.bidi.base.session.subscribe)).to.eql(
         JSON.stringify({
           command: 'bidiSubscribe',
-          'params': [
+          params: [
             {
               name: 'events',
-              required: true
+              required: true,
             },
             {
               name: 'contexts',
-              required: false
-            }
-          ]
-        })
+              required: false,
+            },
+          ],
+        }),
       );
       expect(Object.keys(commands.bidi.base).length).to.be.greaterThan(1);
       expect(Object.keys(commands.bidi.driver).length).to.be.greaterThan(0);
@@ -248,20 +253,22 @@ describe('FakeDriver via HTTP', function () {
     it('should list available driver extensions', async function () {
       driver.addCommand(
         'listExtensions',
-        async () => (await axios.get(
-          `${testServerBaseSessionUrl}/${driver.sessionId}/appium/extensions`
-        )).data.value
+        async () =>
+          (await axios.get(`${testServerBaseSessionUrl}/${driver.sessionId}/appium/extensions`))
+            .data.value,
       );
 
       const extensions = await driver.listExtensions();
       expect(JSON.stringify(extensions.rest.driver['fake: setThing'])).to.eql(
         JSON.stringify({
           command: 'setFakeThing',
-          params: [{
-            name: 'thing',
-            required: true
-          }]
-        })
+          params: [
+            {
+              name: 'thing',
+              required: true,
+            },
+          ],
+        }),
       );
       expect(Object.keys(extensions.rest.driver).length).to.be.greaterThan(1);
     });
@@ -321,7 +328,7 @@ describe('FakeDriver via HTTP', function () {
       expect(driver.sessionId).to.exist;
       driver.addCommand(
         'getStatus',
-        async () => (await axios.get(`${testServerBaseUrl}/status`)).data.value
+        async () => (await axios.get(`${testServerBaseUrl}/status`)).data.value,
       );
 
       // get the session list 6 times over 300ms. each request will be below the new command
@@ -370,7 +377,7 @@ describe('FakeDriver via HTTP', function () {
           axios.post(`${testServerBaseSessionUrl}/${value.sessionId}/execute/async`, {
             script: '',
             args: ['a'],
-          })
+          }),
         ).to.eventually.be.rejectedWith(/405/);
       } finally {
         // End session
@@ -423,9 +430,9 @@ describe('FakeDriver via HTTP', function () {
         },
       };
 
-      await expect(
-        axios.post(testServerBaseSessionUrl, badW3Ccaps)
-      ).to.eventually.be.rejectedWith(/400/);
+      await expect(axios.post(testServerBaseSessionUrl, badW3Ccaps)).to.eventually.be.rejectedWith(
+        /400/,
+      );
     });
 
     it('should accept a combo of W3C and JSONWP capabilities but completely ignore JSONWP', async function () {
@@ -469,7 +476,9 @@ describe('FakeDriver via HTTP', function () {
           },
         },
       };
-      await expect(axios.post(testServerBaseSessionUrl, w3cCaps)).to.eventually.be.rejectedWith(/500/);
+      await expect(axios.post(testServerBaseSessionUrl, w3cCaps)).to.eventually.be.rejectedWith(
+        /500/,
+      );
     });
 
     it('should accept capabilities that are provided in the firstMatch array', async function () {
@@ -558,7 +567,7 @@ describe('FakeDriver via HTTP', function () {
           thing: {yes: 'lolno'},
         });
         expect(
-          (await axios.get(`${testServerBaseSessionUrl}/${sessionId}/fakedriver`)).data.value
+          (await axios.get(`${testServerBaseSessionUrl}/${sessionId}/fakedriver`)).data.value,
         ).to.eql({yes: 'lolno'});
       } finally {
         await driver.deleteSession();
@@ -572,7 +581,7 @@ describe('FakeDriver via HTTP', function () {
     let driver: AppiumTestBrowser;
 
     beforeEach(async function () {
-      driver = await wdio({...wdOpts, capabilities}) as AppiumTestBrowser;
+      driver = (await wdio({...wdOpts, capabilities})) as AppiumTestBrowser;
     });
 
     afterEach(async function () {
@@ -644,7 +653,7 @@ describe('FakeDriver via HTTP', function () {
     let driver: AppiumTestBrowser;
 
     beforeEach(async function () {
-      driver = await wdio({...wdOpts, path: basePath, capabilities}) as AppiumTestBrowser;
+      driver = (await wdio({...wdOpts, path: basePath, capabilities})) as AppiumTestBrowser;
     });
 
     afterEach(async function () {

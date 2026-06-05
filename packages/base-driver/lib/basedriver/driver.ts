@@ -38,13 +38,13 @@ const EVENT_SESSION_QUIT_DONE = 'quitSessionFinished';
 const ON_UNEXPECTED_SHUTDOWN_EVENT = 'onUnexpectedShutdown';
 
 export class BaseDriver<
-    const C extends Constraints,
-    CArgs extends StringRecord = StringRecord,
-    Settings extends StringRecord = StringRecord,
-    CreateResult = DefaultCreateSessionResult<C>,
-    DeleteResult = DefaultDeleteSessionResult,
-    SessionData extends StringRecord = StringRecord,
-  >
+  const C extends Constraints,
+  CArgs extends StringRecord = StringRecord,
+  Settings extends StringRecord = StringRecord,
+  CreateResult = DefaultCreateSessionResult<C>,
+  DeleteResult = DefaultDeleteSessionResult,
+  SessionData extends StringRecord = StringRecord,
+>
   extends DriverCore<C, Settings>
   implements Driver<C, CArgs, Settings, CreateResult, DeleteResult, SessionData>
 {
@@ -73,7 +73,11 @@ export class BaseDriver<
    */
   protected get _desiredCapConstraints(): Readonly<BaseDriverCapConstraints & C> {
     return Object.freeze(
-      mergePlainObjects({}, BASE_DESIRED_CAP_CONSTRAINTS, this.desiredCapConstraints) as BaseDriverCapConstraints & C
+      mergePlainObjects(
+        {},
+        BASE_DESIRED_CAP_CONSTRAINTS,
+        this.desiredCapConstraints,
+      ) as BaseDriverCapConstraints & C,
     );
   }
 
@@ -128,7 +132,7 @@ export class BaseDriver<
             unexpectedShutdownResolver = resolve;
             unexpectedShutdownRejecter = reject;
             this.eventEmitter.once(ON_UNEXPECTED_SHUTDOWN_EVENT, onUnexpectedShutdown);
-          })
+          }),
         ]);
       } finally {
         if (unexpectedShutdownRejecter && unexpectedShutdownResolver) {
@@ -145,7 +149,11 @@ export class BaseDriver<
         // automatic session deletion in this.onCommandTimeout. Of course we don't
         // want to trigger the timer when the user is shutting down the session
         // intentionally
-        if (!wasSessionShutdownUnexpectedly && this.isCommandsQueueEnabled && cmd !== DELETE_SESSION_COMMAND) {
+        if (
+          !wasSessionShutdownUnexpectedly &&
+          this.isCommandsQueueEnabled &&
+          cmd !== DELETE_SESSION_COMMAND
+        ) {
           // resetting existing timeout
           await this.startNewCommandTimeout();
         }
@@ -160,8 +168,8 @@ export class BaseDriver<
     if (this.isCommandsQueueEnabled && commandsQueueLen > 0) {
       this.log.debug(
         `Scheduling the '${cmd}' command to the ${this.constructor.name} commands queue. ` +
-        `${util.pluralize('queue item', commandsQueueLen, true)} ${commandsQueueLen === 1 ? 'is' : 'are'} ` +
-        `already waiting for execution.`
+          `${util.pluralize('queue item', commandsQueueLen, true)} ${commandsQueueLen === 1 ? 'is' : 'are'} ` +
+          `already waiting for execution.`,
       );
     }
 
@@ -408,11 +416,7 @@ export class BaseDriver<
       this.log.warn(`The following provided capabilities were not recognized by this driver:`);
       for (const cap of extraCaps) {
         const suggestion = getLevenshteinSuggestion(cap, knownCaps);
-        this.log.warn(
-          suggestion
-            ? `  ${cap} (did you mean '${suggestion}'?)`
-            : `  ${cap}`,
-        );
+        this.log.warn(suggestion ? `  ${cap} (did you mean '${suggestion}'?)` : `  ${cap}`);
       }
     }
   }
@@ -429,9 +433,9 @@ export class BaseDriver<
       throw this.log.errorWithException(
         new errors.SessionNotCreatedError(
           `Session capabilities were not valid for the ` +
-          `following reason(s): ${capError.message}`,
-          capError
-        )
+            `following reason(s): ${capError.message}`,
+          capError,
+        ),
       );
     }
 

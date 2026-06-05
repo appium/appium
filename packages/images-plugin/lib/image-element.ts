@@ -92,7 +92,12 @@ export class ImageElement {
    *
    * @returns the result of running a command
    */
-  static async execute(driver: ExternalDriver, imgEl: ImageElement, cmd: string, ...args: any[]): Promise<any> {
+  static async execute(
+    driver: ExternalDriver,
+    imgEl: ImageElement,
+    cmd: string,
+    ...args: any[]
+  ): Promise<any> {
     switch (cmd) {
       case 'click':
         return await imgEl.click(driver);
@@ -171,7 +176,7 @@ export class ImageElement {
       throw new Error(
         `Incorrect imageElementTapStrategy setting ` +
           `'${imageElementTapStrategy}'. Must be one of ` +
-          JSON.stringify(IMAGE_TAP_STRATEGIES)
+          JSON.stringify(IMAGE_TAP_STRATEGIES),
       );
     }
 
@@ -198,7 +203,7 @@ export class ImageElement {
           `When trying to click on an image element, the image changed ` +
             `position from where it was originally found. It is now at ` +
             `${JSON.stringify(newImgEl.rect)} and was originally at ` +
-            `${JSON.stringify(this.rect)}.`
+            `${JSON.stringify(this.rect)}.`,
         );
         if (updatePos) {
           log.warn('Click will proceed at new coordinates');
@@ -208,7 +213,7 @@ export class ImageElement {
             'Click will take place at original coordinates. If you ' +
               'would like Appium to automatically click the new ' +
               "coordinates, set the 'autoUpdateImageElementPosition' " +
-              'setting to true'
+              'setting to true',
           );
         }
       }
@@ -256,7 +261,7 @@ export class ImageElement {
     throw new Error(
       "Driver did not implement the 'performTouch' command. " +
         'For drivers to support finding image elements, they ' +
-        "should support 'performTouch' and 'performActions'"
+        "should support 'performTouch' and 'performActions'",
     );
   }
 
@@ -268,10 +273,16 @@ export class ImageElement {
    * @param args - Rest of arguments for executeScripts
    * @returns WebDriver element with a special id prefix
    */
-  async find(multiple: boolean, driver: ExternalDriver, ...args: any[]): Promise<Element | Element[] | ImageElement> {
+  async find(
+    multiple: boolean,
+    driver: ExternalDriver,
+    ...args: any[]
+  ): Promise<Element | Element[] | ImageElement> {
     const [strategy, selector] = args;
     if (strategy !== IMAGE_STRATEGY) {
-      throw new errors.InvalidSelectorError(`Lookup strategies other than '${IMAGE_STRATEGY}' are not supported`);
+      throw new errors.InvalidSelectorError(
+        `Lookup strategies other than '${IMAGE_STRATEGY}' are not supported`,
+      );
     }
     if (!this.finder) {
       throw new Error('Finder is not available');
@@ -281,5 +292,4 @@ export class ImageElement {
       containerRect: this.rect,
     });
   }
-
 }

@@ -21,7 +21,7 @@ describe('fs', function () {
 
     afterEach(async function () {
       await Promise.all(
-        [srcRoot, dstRoot].filter((p): p is string => p != null).map((p) => fs.rimraf(p))
+        [srcRoot, dstRoot].filter((p): p is string => p != null).map((p) => fs.rimraf(p)),
       );
       srcRoot = dstRoot = undefined;
     });
@@ -40,17 +40,14 @@ describe('fs', function () {
       await fs.mkdirp(path.dirname(srcPath));
       await fs.writeFile(srcPath, Buffer.from('bar'));
       await fs.mv(srcRoot!, dstRoot!, {mkdirp: true});
-      expect(
-        await fs.exists(path.join(dstRoot!, path.basename(path.dirname(srcPath))))
-      ).to.be.true;
+      expect(await fs.exists(path.join(dstRoot!, path.basename(path.dirname(srcPath))))).to.be.true;
       expect(
         await fs.exists(
-          path.join(dstRoot!, path.basename(path.dirname(srcPath)), path.basename(srcPath))
-        )
+          path.join(dstRoot!, path.basename(path.dirname(srcPath)), path.basename(srcPath)),
+        ),
       ).to.be.true;
-      expect(
-        await fs.exists(path.join(srcRoot!, path.basename(path.dirname(srcPath))))
-      ).to.be.false;
+      expect(await fs.exists(path.join(srcRoot!, path.basename(path.dirname(srcPath))))).to.be
+        .false;
     });
 
     it('should fail if source path does not exist', async function () {

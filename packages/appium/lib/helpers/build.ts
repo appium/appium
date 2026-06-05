@@ -53,7 +53,10 @@ export async function getGitRev(useGithubApiFallback = false): Promise<string | 
   return null;
 }
 
-async function getGitTimestamp(commitSha: string, useGithubApiFallback = false): Promise<string | null> {
+async function getGitTimestamp(
+  commitSha: string,
+  useGithubApiFallback = false,
+): Promise<string | null> {
   const fullGitPath = await getFullGitPath();
   if (fullGitPath) {
     try {

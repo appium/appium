@@ -17,7 +17,7 @@ export function requireSharp(): typeof sharp {
         `Cannot load the 'sharp' module needed for images processing. ` +
           `Consider visiting https://sharp.pixelplumbing.com/install ` +
           `for troubleshooting. Original error: ${message}`,
-        {cause: err}
+        {cause: err},
       );
     }
   }
@@ -34,12 +34,7 @@ export function requireSharp(): typeof sharp {
  * @param rect The selected region of image
  * @returns base64 encoded string of cropped image
  */
-export async function cropBase64Image(
-  base64Image: string,
-  rect: sharp.Region
-): Promise<string> {
-  const buf = await requireSharp()(Buffer.from(base64Image, 'base64'))
-    .extract(rect)
-    .toBuffer();
+export async function cropBase64Image(base64Image: string, rect: sharp.Region): Promise<string> {
+  const buf = await requireSharp()(Buffer.from(base64Image, 'base64')).extract(rect).toBuffer();
   return buf.toString('base64');
 }

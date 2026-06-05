@@ -44,7 +44,7 @@ export interface IIpcSubscription<T extends IpcData> extends EventEmitter<IpcEve
   publish(data: T): Promise<void>;
   getMessage(): IpcMessage<T> | undefined;
   [Symbol.asyncIterator](): AsyncGenerator<IpcMessage<T>>;
-};
+}
 
 /**
  * An IPC message, consisting of a publisher name and the message object itself.
@@ -52,10 +52,10 @@ export interface IIpcSubscription<T extends IpcData> extends EventEmitter<IpcEve
  * @typeparam T - the type of the expected message
  */
 export type IpcMessage<T extends IpcData> = {
-  readonly publisher: string,
-  readonly timestampMs: number,
-  readonly topic: string,
-  readonly data: T,
+  readonly publisher: string;
+  readonly timestampMs: number;
+  readonly topic: string;
+  readonly data: T;
 };
 
 /**

@@ -63,7 +63,7 @@ describe('bootstrap/grid-v3-register', function () {
 
       ({default: registerNode} = rewiremock.proxy(
         () => require('../../../lib/bootstrap/grid-v3-register'),
-        mocks
+        mocks,
       ) as {default: typeof registerNodeType});
     });
 
@@ -71,22 +71,27 @@ describe('bootstrap/grid-v3-register', function () {
       const binding = {addr: '127.0.0.1', port: 4723, basePath: '' as string};
 
       it('should read the config file', async function () {
-        await registerNode('/path/to/config-file.json', binding.addr, binding.port, binding.basePath);
+        await registerNode(
+          '/path/to/config-file.json',
+          binding.addr,
+          binding.port,
+          binding.basePath,
+        );
         expect(
-          mocks['@appium/support'].fs.readFile.calledOnceWith(
-            '/path/to/config-file.json',
-            'utf-8'
-          )
+          mocks['@appium/support'].fs.readFile.calledOnceWith('/path/to/config-file.json', 'utf-8'),
         ).to.be.true;
       });
 
       it('should parse the config file as JSON', async function () {
         const parseSpy = sandbox.spy(JSON, 'parse');
-        await registerNode('/path/to/config-file.json', binding.addr, binding.port, binding.basePath);
+        await registerNode(
+          '/path/to/config-file.json',
+          binding.addr,
+          binding.port,
+          binding.basePath,
+        );
         expect(
-          parseSpy.calledOnceWith(
-            await mocks['@appium/support'].fs.readFile.firstCall.returnValue
-          )
+          parseSpy.calledOnceWith(await mocks['@appium/support'].fs.readFile.firstCall.returnValue),
         ).to.be.true;
       });
 
@@ -96,7 +101,7 @@ describe('bootstrap/grid-v3-register', function () {
         });
         it('should reject with a JSON parse error from the config file', async function () {
           await expect(
-            registerNode('/path/to/config-file.json', binding.addr, binding.port, binding.basePath)
+            registerNode('/path/to/config-file.json', binding.addr, binding.port, binding.basePath),
           ).to.be.rejectedWith(Error, /Syntax error in Selenium Grid 3 node configuration file/);
           expect(stubLog.errorWithException.calledOnce).to.be.true;
         });
@@ -105,37 +110,47 @@ describe('bootstrap/grid-v3-register', function () {
       describe('when address, port, or basePath are omitted', function () {
         it('should reject when addr is missing', async function () {
           await expect(
-            registerNode('/path/to/config-file.json', undefined as unknown as string, 4723, '')
+            registerNode('/path/to/config-file.json', undefined as unknown as string, 4723, ''),
           ).to.be.rejectedWith(
             Error,
-            /address, port, and basePath are required \(e\.g\. match your Appium `--address`/
+            /address, port, and basePath are required \(e\.g\. match your Appium `--address`/,
           );
           expect(stubLog.errorWithException.calledOnce).to.be.true;
         });
 
         it('should reject when port is missing', async function () {
           await expect(
-            registerNode('/path/to/config-file.json', '127.0.0.1', undefined as unknown as number, '')
+            registerNode(
+              '/path/to/config-file.json',
+              '127.0.0.1',
+              undefined as unknown as number,
+              '',
+            ),
           ).to.be.rejectedWith(
             Error,
-            /address, port, and basePath are required \(e\.g\. match your Appium `--address`/
+            /address, port, and basePath are required \(e\.g\. match your Appium `--address`/,
           );
           expect(stubLog.errorWithException.calledOnce).to.be.true;
         });
 
         it('should reject when basePath is missing', async function () {
           await expect(
-            registerNode('/path/to/config-file.json', '127.0.0.1', 4723, undefined as unknown as string)
+            registerNode(
+              '/path/to/config-file.json',
+              '127.0.0.1',
+              4723,
+              undefined as unknown as string,
+            ),
           ).to.be.rejectedWith(
             Error,
-            /address, port, and basePath are required \(e\.g\. match your Appium `--address`/
+            /address, port, and basePath are required \(e\.g\. match your Appium `--address`/,
           );
           expect(stubLog.errorWithException.calledOnce).to.be.true;
         });
 
         it('should reject when port is not a finite number', async function () {
           await expect(
-            registerNode('/path/to/config-file.json', '127.0.0.1', Number.NaN, '')
+            registerNode('/path/to/config-file.json', '127.0.0.1', Number.NaN, ''),
           ).to.be.rejectedWith(Error, /port must be a finite number/);
           expect(stubLog.errorWithException.calledOnce).to.be.true;
         });

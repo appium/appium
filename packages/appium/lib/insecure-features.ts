@@ -61,8 +61,9 @@ export function configureDriverFeatures(
   }
   const allowedDriverFeatures = filterInsecureFeatures(this.allowInsecure, driverName);
   if (!util.isEmpty(allowedDriverFeatures)) {
-    this.log.info('Explicitly enabling insecure features for this session ' +
-      'as per the server configuration:',
+    this.log.info(
+      'Explicitly enabling insecure features for this session ' +
+        'as per the server configuration:',
     );
     allowedDriverFeatures.forEach((a) => this.log.info(`    ${a}`));
     driver.allowInsecure = allowedDriverFeatures;
@@ -71,8 +72,8 @@ export function configureDriverFeatures(
   if (util.isEmpty(deniedDriverFeatures)) {
     return;
   }
-  this.log.info('Explicitly disabling insecure features for this session ' +
-    'as per the server configuration:',
+  this.log.info(
+    'Explicitly disabling insecure features for this session ' + 'as per the server configuration:',
   );
   deniedDriverFeatures.forEach((a) => this.log.info(`    ${a}`));
   driver.denyInsecure = deniedDriverFeatures;
@@ -85,7 +86,8 @@ export function configureDriverFeatures(
  */
 function validateFeatures(features: string[]): string[] {
   const validator = (fullName: string) => {
-    const errMsg = `The full feature name must include both the destination automation name or the ` +
+    const errMsg =
+      `The full feature name must include both the destination automation name or the ` +
       `'${ALL_DRIVERS_MATCH}' wildcard to apply the feature to all installed drivers, and ` +
       `the feature name split by a colon. Got '${fullName}' instead`;
 
@@ -95,7 +97,7 @@ function validateFeatures(features: string[]): string[] {
     }
     const [automationName, featureName] = [
       fullName.substring(0, separatorPos),
-      fullName.substring(separatorPos + 1)
+      fullName.substring(separatorPos + 1),
     ];
     if (!automationName || !featureName) {
       throw new Error(errMsg);
@@ -115,7 +117,7 @@ function validateFeatures(features: string[]): string[] {
  */
 function filterInsecureFeatures(
   features: string[],
-  driverName: string = ALL_DRIVERS_MATCH
+  driverName: string = ALL_DRIVERS_MATCH,
 ): string[] {
   const filterFn = (fullName: string) => {
     const separatorPos = fullName.indexOf(FEATURE_NAME_SEPARATOR);

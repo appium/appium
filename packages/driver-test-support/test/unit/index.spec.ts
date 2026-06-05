@@ -47,14 +47,14 @@ describe('createAppiumURL()', function () {
   it('should create a URL to get an existing session', function () {
     const sessionId = '12345';
     expect(urlFor(sessionId, 'session')).to.equal(
-      `http://${TEST_HOST}:31337/session/${sessionId}/session`
+      `http://${TEST_HOST}:31337/session/${sessionId}/session`,
     );
   });
 
   it('should create a URL for a command using an existing session', function () {
     const sessionId = '12345';
     expect(urlFor(sessionId, 'moocow')).to.equal(
-      `http://${TEST_HOST}:31337/session/${sessionId}/moocow`
+      `http://${TEST_HOST}:31337/session/${sessionId}/moocow`,
     );
   });
 });

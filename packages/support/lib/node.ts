@@ -29,7 +29,7 @@ export async function requirePackage(packageName: string): Promise<unknown> {
       process.env.npm_config_prefix ?? '',
       'lib',
       'node_modules',
-      packageName
+      packageName,
     );
     log.debug(`Loading global package '${globalPackageName}'`);
     return require(globalPackageName);
@@ -43,7 +43,7 @@ export async function requirePackage(packageName: string): Promise<unknown> {
     return require(packageName);
   } catch (err) {
     throw log.errorWithException(
-      `Unable to load package '${packageName}': ${(err as Error).message}`
+      `Unable to load package '${packageName}': ${(err as Error).message}`,
     );
   }
 }

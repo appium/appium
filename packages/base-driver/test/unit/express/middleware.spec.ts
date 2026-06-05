@@ -69,7 +69,7 @@ describe('middleware', function () {
       expect(updateAsyncContextStub.calledOnce).to.be.true;
       expect(updateAsyncContextStub.firstCall.args[0]).to.have.property('requestId');
       expect(updateAsyncContextStub.firstCall.args[0].requestId).to.match(
-        /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+        /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
       );
       expect(next.calledOnce).to.be.true;
     });

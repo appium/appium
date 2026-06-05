@@ -49,7 +49,7 @@ type LilconfigAsyncSearcher = ReturnType<typeof lilconfig>;
  */
 export async function readConfigFile(
   filepath?: string,
-  opts: ReadConfigFileOptions = {}
+  opts: ReadConfigFileOptions = {},
 ): Promise<ReadConfigFileResult> {
   const lc = lilconfig('appium', {
     loaders: {
@@ -99,18 +99,28 @@ export async function readConfigFile(
 export function normalizeConfig(config: AppiumConfig): NormalizedAppiumConfig {
   const schema = getSchema();
 
-  const isSchemaTypeObject = (schemaObj: SchemaObject | Record<string, unknown> | undefined): boolean =>
-    Boolean((schemaObj as SchemaObject | undefined)?.properties || (schemaObj as SchemaObject | undefined)?.type === 'object');
+  const isSchemaTypeObject = (
+    schemaObj: SchemaObject | Record<string, unknown> | undefined,
+  ): boolean =>
+    Boolean(
+      (schemaObj as SchemaObject | undefined)?.properties ||
+      (schemaObj as SchemaObject | undefined)?.type === 'object',
+    );
 
   const normalize = (rootConfig: AppiumConfig, section?: string): Record<string, unknown> => {
-    const obj = section === undefined
-      ? rootConfig
-      : (getPath(rootConfig, section, rootConfig) as Record<string, unknown>);
+    const obj =
+      section === undefined
+        ? rootConfig
+        : (getPath(rootConfig, section, rootConfig) as Record<string, unknown>);
 
     const mappedObj = mapKeys(obj as Record<string, unknown>, (_v, prop) =>
       String(
-        getPath(schema, `properties.server.properties.${prop}.appiumCliDest`, camelCase(String(prop)))
-      )
+        getPath(
+          schema,
+          `properties.server.properties.${prop}.appiumCliDest`,
+          camelCase(String(prop)),
+        ),
+      ),
     );
 
     return mapValues(mappedObj, (value, property) => {
@@ -133,7 +143,7 @@ function yamlLoader(filepath: string, content: string): unknown {
   } catch (e) {
     throw new Error(
       `The YAML config at '${filepath}' cannot be loaded. Original error: ${(e as Error).message}`,
-      {cause: e}
+      {cause: e},
     );
   }
 }
@@ -150,7 +160,7 @@ function jsonLoader(filepath: string, content: string): unknown {
     rawConfig.delete(filepath);
     throw new Error(
       `The JSON config at '${filepath}' cannot be loaded. Original error: ${(e as Error).message}`,
-      {cause: e}
+      {cause: e},
     );
   }
 }
@@ -158,13 +168,17 @@ function jsonLoader(filepath: string, content: string): unknown {
 /**
  * Loads a config file from an explicit path
  */
-async function loadConfigFile(lc: LilconfigAsyncSearcher, filepath: string): Promise<LilconfigResult> {
+async function loadConfigFile(
+  lc: LilconfigAsyncSearcher,
+  filepath: string,
+): Promise<LilconfigResult> {
   try {
     // removing "await" will cause any rejection to _not_ be caught in this block!
     return await lc.load(filepath);
   } catch (err) {
     if ((err as NodeJS.ErrnoException).code === 'ENOENT') {
-      (err as NodeJS.ErrnoException).message = `Config file not found at user-provided path: ${filepath}`;
+      (err as NodeJS.ErrnoException).message =
+        `Config file not found at user-provided path: ${filepath}`;
       throw err;
     } else if (err instanceof SyntaxError) {
       // generally invalid JSON

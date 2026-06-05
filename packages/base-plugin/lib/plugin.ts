@@ -36,11 +36,7 @@ export class BasePlugin extends ExtensionCore implements Plugin {
    */
   declare logger: AppiumLogger;
 
-  constructor(
-    name: string,
-    cliArgs: Record<string, unknown> = {},
-    driverId: string | null = null
-  ) {
+  constructor(name: string, cliArgs: Record<string, unknown> = {}, driverId: string | null = null) {
     super();
     if (driverId) {
       this.updateLogPrefix(`${generateDriverLogPrefix(this)} <${driverId}>`);
@@ -58,25 +54,20 @@ export class BasePlugin extends ExtensionCore implements Plugin {
     next: NextPluginCallback,
     driver: Driver<C>,
     script: string,
-    protoArgs: readonly [StringRecord<unknown>] | readonly unknown[]
+    protoArgs: readonly [StringRecord<unknown>] | readonly unknown[],
   ): Promise<unknown> {
     const PluginClass = this.constructor as typeof BasePlugin;
     const commandMetadata = {...PluginClass.executeMethodMap?.[script]};
 
     if (!commandMetadata.command || !(commandMetadata.command in this)) {
       this.log.info(
-        `Plugin did not know how to handle method '${script}'. Passing control to next`
+        `Plugin did not know how to handle method '${script}'. Passing control to next`,
       );
       return await next();
     }
 
-    const command = this[
-      commandMetadata.command as keyof this
-    ] as PluginCommand<ExternalDriver<C>>;
-    const args = validateExecuteMethodParams(
-      protoArgs as unknown[],
-      commandMetadata.params
-    );
+    const command = this[commandMetadata.command as keyof this] as PluginCommand<ExternalDriver<C>>;
+    const args = validateExecuteMethodParams(protoArgs as unknown[], commandMetadata.params);
     return await command.call(this, next, driver, ...args);
   }
 }

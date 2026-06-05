@@ -70,10 +70,7 @@ describe('when Appium is a dependency of the current project', function () {
 
     describe('without drivers installed', function () {
       it('should list no drivers', async function () {
-        const res = (await runJson([DRIVER_TYPE, LIST])) as Record<
-          string,
-          {installed?: boolean}
-        >;
+        const res = (await runJson([DRIVER_TYPE, LIST])) as Record<string, {installed?: boolean}>;
         expect(Object.values(res).every(({installed}) => !installed)).to.be.true;
       });
     });
@@ -138,8 +135,12 @@ describe('when Appium is a dependency of the current project', function () {
 
           it('should actually install both drivers', function () {
             // Resolve package.json to assert the package is present (resolving the main entry can fail in CI)
-            expect(() => resolveFrom(appiumHome, '@appium/fake-driver/package.json')).not.to.throw();
-            expect(() => resolveFrom(appiumHome, '@appium/test-driver/package.json')).not.to.throw();
+            expect(() =>
+              resolveFrom(appiumHome, '@appium/fake-driver/package.json'),
+            ).not.to.throw();
+            expect(() =>
+              resolveFrom(appiumHome, '@appium/test-driver/package.json'),
+            ).not.to.throw();
           });
         });
       });

@@ -90,9 +90,9 @@ export function hasValue<T>(val: T): val is NonNullable<T> {
  */
 export function memoize<Fn extends (...args: any[]) => any>(
   fn: Fn,
-  resolver?: (...args: Parameters<Fn>) => unknown
+  resolver?: (...args: Parameters<Fn>) => unknown,
 ): Fn & {cache: Map<unknown, ReturnType<Fn>>} {
-  const memoizedFn = (function (this: unknown, ...args: Parameters<Fn>) {
+  const memoizedFn = function (this: unknown, ...args: Parameters<Fn>) {
     const key = resolver ? resolver.apply(this, args) : args[0];
     if (memoizedFn.cache.has(key)) {
       return memoizedFn.cache.get(key) as ReturnType<Fn>;
@@ -100,7 +100,7 @@ export function memoize<Fn extends (...args: any[]) => any>(
     const result = fn.apply(this, args);
     memoizedFn.cache.set(key, result);
     return result;
-  }) as unknown as Fn & {cache: Map<unknown, ReturnType<Fn>>};
+  } as unknown as Fn & {cache: Map<unknown, ReturnType<Fn>>};
   memoizedFn.cache = new Map<unknown, ReturnType<Fn>>();
   return memoizedFn;
 }
@@ -179,7 +179,10 @@ export function uniq<T>(values: readonly T[]): T[] {
  * @param options - Truncation options or max length
  * @returns Truncated string
  */
-export function truncateString(value: string, options: TruncateStringOptions | number = {}): string {
+export function truncateString(
+  value: string,
+  options: TruncateStringOptions | number = {},
+): string {
   const normalizedOptions = typeof options === 'number' ? {length: options} : options;
   const {length, omission = '…'} = normalizedOptions;
   const stringValue =
@@ -215,7 +218,7 @@ export function escapeSpace(str: string): string {
  */
 export function escapeSpecialChars(
   str: string | unknown,
-  quoteEscape?: string | false
+  quoteEscape?: string | false,
 ): string | unknown {
   if (typeof str !== 'string') {
     return str;
@@ -321,7 +324,7 @@ export function safeJsonParse<T>(obj: unknown): T {
 export function jsonStringify(
   obj: unknown,
   replacer: ((key: string, value: unknown) => unknown) | null = null,
-  space: number | string = 2
+  space: number | string = 2,
 ): string {
   const replacerFunc = typeof replacer === 'function' ? replacer : (_k: string, v: unknown) => v;
 
@@ -334,7 +337,7 @@ export function jsonStringify(
         const updatedValue = Buffer.isBuffer(value) ? value.toString('utf8') : value;
         return replacerFunc(key, updatedValue);
       },
-      space
+      space,
     );
   } finally {
     (Buffer.prototype as Record<string, unknown>).toJSON = bufferToJSON;
@@ -383,7 +386,7 @@ export function wrapElement(elementId: string): Element {
  */
 export function filterObject<T extends Record<string, unknown>>(
   obj: T,
-  predicate?: ((value: unknown, obj: T) => boolean) | unknown
+  predicate?: ((value: unknown, obj: T) => boolean) | unknown,
 ): Partial<T> {
   const newObj = {...obj} as Record<string, unknown>;
   let pred: (v: unknown, o: T) => boolean;
@@ -437,7 +440,7 @@ export function toReadableSizeString(bytes: number | string): string {
 export function isSubPath(
   originalPath: string,
   root: string,
-  forcePosix: boolean | null = null
+  forcePosix: boolean | null = null,
 ): boolean {
   const pathObj = forcePosix ? path.posix : path;
   for (const p of [originalPath, root]) {
@@ -544,15 +547,11 @@ type LockFileGuard<T> = LockFileGuardFn<T> & {check: () => Promise<boolean>};
  * @returns `true` if ver1 operator ver2 holds (e.g. "2.0.0" >= "1.0.0")
  * @throws {Error} If operator is unsupported or either version cannot be coerced
  */
-export function compareVersions(
-  ver1: string,
-  operator: string,
-  ver2: string
-): boolean {
+export function compareVersions(ver1: string, operator: string, ver2: string): boolean {
   if (!SUPPORTED_OPERATORS.includes(operator)) {
     throw new Error(
       `The '${operator}' comparison operator is not supported. ` +
-        `Only '${JSON.stringify(SUPPORTED_OPERATORS)}' operators are supported`
+        `Only '${JSON.stringify(SUPPORTED_OPERATORS)}' operators are supported`,
     );
   }
 
@@ -584,7 +583,7 @@ export function quote(args: string | string[]): string {
 export function pluralize(
   word: string,
   count: number,
-  options: PluralizeOptions | boolean = {}
+  options: PluralizeOptions | boolean = {},
 ): string {
   let inclusive = false;
   if (typeof options === 'boolean') {
@@ -605,7 +604,7 @@ export function pluralize(
  */
 export async function toInMemoryBase64(
   srcPath: string,
-  opts: EncodingOptions = {}
+  opts: EncodingOptions = {},
 ): Promise<Buffer> {
   if (!(await fs.exists(srcPath)) || (await fs.stat(srcPath)).isDirectory()) {
     throw new Error(`No such file: ${srcPath}`);
@@ -622,8 +621,8 @@ export async function toInMemoryBase64(
         resultWriteStream.emit(
           'error',
           new Error(
-            `The size of the resulting buffer must not be greater than ${toReadableSizeString(maxSize)}`
-          )
+            `The size of the resulting buffer must not be greater than ${toReadableSizeString(maxSize)}`,
+          ),
         );
       }
       next();
@@ -646,7 +645,7 @@ export async function toInMemoryBase64(
   const readStreamPromise = new Promise<void>((resolve, reject) => {
     readerStream.once('close', () => resolve());
     readerStream.once('error', (e: Error) =>
-      reject(new Error(`Failed to read '${srcPath}': ${e.message}`))
+      reject(new Error(`Failed to read '${srcPath}': ${e.message}`)),
     );
   });
   readerStream.pipe(encoderWritable);
@@ -667,13 +666,13 @@ export async function toInMemoryBase64(
  */
 export function getLockFileGuard<T>(
   lockFile: string,
-  opts: LockFileOptions = {}
+  opts: LockFileOptions = {},
 ): LockFileGuard<T> {
   const {timeout = 120, tryRecovery = false} = opts;
 
   const lock = promisify(_lockfile.lock) as (
     lockfile: string,
-    opts: {wait: number}
+    opts: {wait: number},
   ) => Promise<void>;
   const checkLock = promisify(_lockfile.check) as (lockfile: string) => Promise<boolean>;
   const unlock = promisify(_lockfile.unlock) as (lockfile: string) => Promise<void>;
@@ -699,7 +698,7 @@ export function getLockFileGuard<T>(
             throw new Error(
               `Could not acquire lock on '${lockFile}' after ${timeout}s. ` +
                 `Original error: ${err.message}`,
-              {cause: e}
+              {cause: e},
             );
           }
         }
@@ -710,7 +709,7 @@ export function getLockFileGuard<T>(
         await unlock(lockFile);
       }
     },
-    {check: () => checkLock(lockFile)}
+    {check: () => checkLock(lockFile)},
   );
 
   return guard;

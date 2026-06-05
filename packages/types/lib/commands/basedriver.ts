@@ -9,8 +9,8 @@ export interface IBidiCommands {
 }
 
 export interface DriverStatus {
-  ready: boolean,
-  message: string,
+  ready: boolean;
+  message: string;
   [key: string]: any;
 }
 
@@ -466,11 +466,11 @@ export type IImplementedCommands<
   CreateResult = DefaultCreateSessionResult<C>,
   DeleteResult = DefaultDeleteSessionResult,
   SessionData extends StringRecord = StringRecord,
-> = IBidiCommands
-  & ILogCommands
-  & IFindCommands
-  & ISettingsCommands<Settings>
-  & ITimeoutCommands
-  & IEventCommands
-  & IExecuteCommands
-  & ISessionHandler<C, CreateResult, DeleteResult, SessionData>;
+> = IBidiCommands &
+  ILogCommands &
+  IFindCommands &
+  ISettingsCommands<Settings> &
+  ITimeoutCommands &
+  IEventCommands &
+  IExecuteCommands &
+  ISessionHandler<C, CreateResult, DeleteResult, SessionData>;

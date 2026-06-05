@@ -1,5 +1,5 @@
-import { fs, timing, util } from '@appium/support';
-import { asyncmap } from 'asyncbox';
+import {fs, timing, util} from '@appium/support';
+import {asyncmap} from 'asyncbox';
 import type {Path} from 'path-scurry';
 import path from 'node:path';
 import nativeFs from 'node:fs';
@@ -8,14 +8,13 @@ import AsyncLock from 'async-lock';
 import type {AppiumLogger} from '@appium/types';
 import type Stream from 'node:stream';
 import type WebSocket from 'ws';
-import { createHash } from 'node:crypto';
+import {createHash} from 'node:crypto';
 
 const MAX_TASKS = 5;
 const TMP_EXT = '.filepart';
 const ADDITION_LOCK = new AsyncLock();
 const WS_SERVER_ERROR = 1011;
 const SHA1_HASH_LEN = 40;
-
 
 export class Storage {
   private readonly _root: string;
@@ -36,17 +35,14 @@ export class Storage {
   }
 
   async list(): Promise<StorageItem[]> {
-    const items = (await this._listFiles())
-      .filter((p) => !p.fullpath().endsWith(TMP_EXT));
+    const items = (await this._listFiles()).filter((p) => !p.fullpath().endsWith(TMP_EXT));
     if (util.isEmpty(items)) {
       return [];
     }
 
-    const stats = await asyncmap(
-      items,
-      (item) => fs.stat(item.fullpath()),
-      {concurrency: MAX_TASKS}
-    );
+    const stats = await asyncmap(items, (item) => fs.stat(item.fullpath()), {
+      concurrency: MAX_TASKS,
+    });
     return items.map((item, index) => ({
       name: path.basename(item.fullpath()),
       path: item.fullpath(),
@@ -71,7 +67,7 @@ export class Storage {
       return false;
     }
     const destinationPath = path.join(this._root, name);
-    if (!await fs.exists(destinationPath)) {
+    if (!(await fs.exists(destinationPath))) {
       return false;
     }
     await fs.rimraf(destinationPath);
@@ -83,7 +79,7 @@ export class Storage {
       await fs.rimraf(this._root);
     }
 
-    if (!await fs.exists(this._root)) {
+    if (!(await fs.exists(this._root))) {
       await fs.mkdirp(this._root);
       return;
     }
@@ -91,17 +87,14 @@ export class Storage {
     const files = (await this._listFiles())
       .map((p) => p.fullpath())
       .filter(
-        (fullPath) => !this._shouldPreserveFiles || path.basename(fullPath).toLowerCase().endsWith(TMP_EXT)
+        (fullPath) =>
+          !this._shouldPreserveFiles || path.basename(fullPath).toLowerCase().endsWith(TMP_EXT),
       );
     if (util.isEmpty(files)) {
       return;
     }
 
-    await asyncmap(
-      files,
-      (fullPath) => fs.rimraf(fullPath),
-      {concurrency: MAX_TASKS}
-    );
+    await asyncmap(files, (fullPath) => fs.rimraf(fullPath), {concurrency: MAX_TASKS});
   }
 
   cleanupSync(): void {
@@ -114,13 +107,12 @@ export class Storage {
 
     let itemNames: string[];
     try {
-      itemNames = nativeFs.readdirSync(this._root)
-        .filter((name) => !name.startsWith('.'));
+      itemNames = nativeFs.readdirSync(this._root).filter((name) => !name.startsWith('.'));
     } catch (e) {
       const message = e instanceof Error ? e.message : String(e);
       this._log.warn(
         `Cannot list the '${this._root}' server storage folder. Original error: ${message}. ` +
-        `Skipping the cleanup.`
+          `Skipping the cleanup.`,
       );
       return;
     }
@@ -132,7 +124,7 @@ export class Storage {
     }
 
     const matchedNames = itemNames.filter(
-      (name) => !this._shouldPreserveFiles || name.toLowerCase().endsWith(TMP_EXT)
+      (name) => !this._shouldPreserveFiles || name.toLowerCase().endsWith(TMP_EXT),
     );
     for (const matchedName of matchedNames) {
       fs.rimrafSync(path.join(this._root, matchedName));
@@ -223,12 +215,12 @@ export class Storage {
     const {name, sha1} = opts;
     this._log.info(
       `'${name}' has been added to the server storage within ` +
-      `${timer.getDuration().asMilliSeconds}ms. Verifying hashes.`
+        `${timer.getDuration().asMilliSeconds}ms. Verifying hashes.`,
     );
     if (actualHashDigest.toLowerCase() !== sha1.toLowerCase()) {
       throw new StorageArgumentError(
         `The actual SHA1 hash value '${actualHashDigest}' must be equal ` +
-        `to the expected hash value of '${sha1}' for '${name}'`
+          `to the expected hash value of '${sha1}' for '${name}'`,
       );
     }
     await fs.mv(fullPath, path.join(this._root, name));
@@ -251,13 +243,13 @@ export function requireValidItemOptions(opts: ItemOptions): ItemOptions {
   if (opts.name !== sanitizedName) {
     throw new StorageArgumentError(
       `The provided name value '${opts.name}' must be a valid file name. ` +
-      `Did you mean '${sanitizedName}'?`
+        `Did you mean '${sanitizedName}'?`,
     );
   }
   if (opts.sha1?.length !== SHA1_HASH_LEN) {
     throw new StorageArgumentError(
       `The provided hash value '${opts.sha1}' must be a valid SHA1 string, for ` +
-      `example 'ccc963411b2621335657963322890305ebe96186'`
+        `example 'ccc963411b2621335657963322890305ebe96186'`,
     );
   }
   return opts;

@@ -49,10 +49,7 @@ export function capitalize(value: string): string {
  * @param keys - Property names to omit
  * @returns Shallow copy without the listed keys
  */
-export function omitKeys<T extends Record<string, unknown>>(
-  obj: T,
-  keys: readonly string[]
-): T {
+export function omitKeys<T extends Record<string, unknown>>(obj: T, keys: readonly string[]): T {
   if (!util.isPlainObject(obj) || keys.length === 0) {
     return obj;
   }
@@ -69,10 +66,10 @@ export function omitKeys<T extends Record<string, unknown>>(
  */
 export function pickBy<T extends Record<string, unknown>>(
   obj: T,
-  predicate: (value: T[keyof T], key: keyof T) => boolean
+  predicate: (value: T[keyof T], key: keyof T) => boolean,
 ): Partial<T> {
   return Object.fromEntries(
-    Object.entries(obj).filter(([key, value]) => predicate(value as T[keyof T], key as keyof T))
+    Object.entries(obj).filter(([key, value]) => predicate(value as T[keyof T], key as keyof T)),
   ) as Partial<T>;
 }
 
@@ -85,10 +82,10 @@ export function pickBy<T extends Record<string, unknown>>(
  */
 export function mapValues<T extends Record<string, unknown>, R>(
   obj: T,
-  fn: (value: T[keyof T], key: keyof T) => R
+  fn: (value: T[keyof T], key: keyof T) => R,
 ): Record<string, R> {
   return Object.fromEntries(
-    Object.entries(obj).map(([key, value]) => [key, fn(value as T[keyof T], key as keyof T)])
+    Object.entries(obj).map(([key, value]) => [key, fn(value as T[keyof T], key as keyof T)]),
   );
 }
 
@@ -101,10 +98,10 @@ export function mapValues<T extends Record<string, unknown>, R>(
  */
 export function mapKeys<T extends Record<string, unknown>>(
   obj: T,
-  fn: (value: T[keyof T], key: keyof T) => string
+  fn: (value: T[keyof T], key: keyof T) => string,
 ): Record<string, unknown> {
   return Object.fromEntries(
-    Object.entries(obj).map(([key, value]) => [fn(value as T[keyof T], key as keyof T), value])
+    Object.entries(obj).map(([key, value]) => [fn(value as T[keyof T], key as keyof T), value]),
   );
 }
 
@@ -288,7 +285,7 @@ function copyForDefaultsDeep(value: unknown): unknown {
  */
 function fillUndefinedDeep(
   target: Record<string, unknown>,
-  source: Record<string, unknown>
+  source: Record<string, unknown>,
 ): Record<string, unknown> {
   const out = copyForDefaultsDeep(target) as Record<string, unknown>;
   const stack: Array<{dest: Record<string, unknown>; src: Record<string, unknown>}> = [

@@ -35,7 +35,7 @@ export type AppiumRunError = Error &
   ExecError & {stdout: string; stderr: string};
 
 function curry2<A, B, R>(
-  fn: (a: A, b: B) => R
+  fn: (a: A, b: B) => R,
 ): {
   (a: A): (b: B) => R;
   (a: A, b: B): R;
@@ -53,7 +53,7 @@ function curry2<A, B, R>(
 }
 
 function curry3<A, B, C, R>(
-  fn: (a: A, b: B, c: C) => R
+  fn: (a: A, b: B, c: C) => R,
 ): {
   (a: A): (b: B) => (c: C) => R;
   (a: A, b: B): (c: C) => R;
@@ -78,7 +78,7 @@ function curry3<A, B, C, R>(
 async function run(
   appiumHome: string,
   args: CliExtArgs | CliArgs,
-  opts: {env?: Record<string, string>; FORCE_COLOR?: string} = {}
+  opts: {env?: Record<string, string>; FORCE_COLOR?: string} = {},
 ): Promise<{stdout: string; stderr: string}> {
   const cwd = APPIUM_ROOT;
   const env: Record<string, string | undefined> = {...opts.env};
@@ -92,7 +92,7 @@ async function run(
     }
     const retval = await exec(process.execPath, fullArgs, {...opts, cwd, env});
     const strip = (s: string) =>
-      opts.env?.FORCE_COLOR ? s : (s as unknown as {stripColors: string}).stripColors ?? s;
+      opts.env?.FORCE_COLOR ? s : ((s as unknown as {stripColors: string}).stripColors ?? s);
     return {
       stdout: strip(retval.stdout),
       stderr: strip(retval.stderr),
@@ -115,10 +115,7 @@ async function run(
   }
 }
 
-async function _runAppium(
-  appiumHome: string,
-  args: CliExtArgs | CliArgs
-): Promise<string> {
+async function _runAppium(appiumHome: string, args: CliExtArgs | CliArgs): Promise<string> {
   const {stdout} = await run(appiumHome, args);
   return stdout;
 }
@@ -128,7 +125,7 @@ export const runAppium = curry2(_runAppium);
 async function _runAppiumRaw(
   appiumHome: string,
   args: CliExtArgs | CliArgs,
-  opts: {env?: Record<string, string>}
+  opts: {env?: Record<string, string>},
 ): Promise<{stdout: string; stderr: string} | AppiumRunError> {
   try {
     return await run(appiumHome, args, opts);
@@ -144,10 +141,7 @@ type RunAppiumJsonCurried = {
   (appiumHome: string, args: CliExtArgs | CliArgs): Promise<unknown>;
 };
 
-async function _runAppiumJson(
-  appiumHome: string,
-  args: CliExtArgs | CliArgs
-): Promise<unknown> {
+async function _runAppiumJson(appiumHome: string, args: CliExtArgs | CliArgs): Promise<unknown> {
   const a = args.includes('--json') ? args : ([...args, '--json'] as CliExtArgs | CliArgs);
   const stdout = await runAppium(appiumHome, a);
   try {
@@ -162,7 +156,7 @@ export const runAppiumJson: RunAppiumJsonCurried = curry2(_runAppiumJson) as Run
 export async function installLocalExtension<ExtType extends DriverType | PluginType>(
   appiumHome: string,
   type: ExtType,
-  pathToExtension: string
+  pathToExtension: string,
 ): Promise<ExtRecord<ExtType>> {
   return runAppiumJson(appiumHome, [
     type,

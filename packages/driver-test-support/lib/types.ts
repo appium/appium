@@ -18,19 +18,19 @@ export interface SessionHelpers<CommandData = unknown, ResponseData = any> {
     sessionId: string,
     cmdName: string,
     data?: CommandData,
-    config?: RawAxiosRequestConfig
+    config?: RawAxiosRequestConfig,
   ) => Promise<ResponseData>;
   getCommand: (
     sessionIdOrCmdName: string,
     cmdNameOrConfig: string | RawAxiosRequestConfig,
-    config?: RawAxiosRequestConfig
+    config?: RawAxiosRequestConfig,
   ) => Promise<ResponseData>;
   startSession: (
     data: NewSessionData,
-    config?: RawAxiosRequestConfig
+    config?: RawAxiosRequestConfig,
   ) => Promise<NewSessionResponse>;
   endSession: (
-    sessionId: string
+    sessionId: string,
   ) => Promise<AxiosResponse<{value: {error?: string} | null}, {validateStatus: null}>>;
   getSession: (sessionId: string) => Promise<SingularSessionData>;
 }

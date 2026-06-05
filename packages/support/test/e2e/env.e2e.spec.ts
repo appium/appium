@@ -111,11 +111,11 @@ describe('environment', function () {
           beforeEach(async function () {
             await fs.copyFile(
               path.join(__dirname, 'fixture', 'appium-v2-dependency.package.json'),
-              path.join(cwd, 'package.json')
+              path.join(cwd, 'package.json'),
             );
             await fs.copyFile(
               path.join(__dirname, 'fixture', 'appium-v2-package'),
-              path.join(cwd, 'node_modules', 'appium')
+              path.join(cwd, 'node_modules', 'appium'),
             );
           });
 
@@ -131,11 +131,11 @@ describe('environment', function () {
           beforeEach(async function () {
             await fs.copyFile(
               path.join(__dirname, 'fixture', 'appium-v1-dependency.package.json'),
-              path.join(cwd, 'package.json')
+              path.join(cwd, 'package.json'),
             );
             await fs.copyFile(
               path.join(__dirname, 'fixture', 'appium-v1-package'),
-              path.join(cwd, 'node_modules', 'appium')
+              path.join(cwd, 'node_modules', 'appium'),
             );
           });
 
@@ -154,7 +154,7 @@ describe('environment', function () {
           before(async function () {
             await fs.copyFile(
               path.join(__dirname, 'fixture', 'appium-v2-dependency.package.json'),
-              path.join(cwd, 'package.json')
+              path.join(cwd, 'package.json'),
             );
           });
 
@@ -170,7 +170,7 @@ describe('environment', function () {
           before(async function () {
             await fs.copyFile(
               path.join(__dirname, 'fixture', 'appium-v1-dependency.package.json'),
-              path.join(cwd, 'package.json')
+              path.join(cwd, 'package.json'),
             );
           });
 

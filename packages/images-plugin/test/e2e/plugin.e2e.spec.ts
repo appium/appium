@@ -22,7 +22,7 @@ const TEST_FAKE_APP = path.join(
   'fake-driver',
   'test',
   'fixtures',
-  'app.xml'
+  'app.xml',
 );
 const TEST_CAPS = {
   platformName: 'Fake',
@@ -69,14 +69,14 @@ describe('ImageElementPlugin', function () {
       MATCH_FEATURES_MODE,
       TEST_IMG_1_B64,
       TEST_IMG_2_B64,
-      {}
+      {},
     );
     expect(comparison.count).to.eql(0);
     comparison = await driver.compareImages(
       GET_SIMILARITY_MODE,
       TEST_IMG_1_B64,
       TEST_IMG_2_B64,
-      {}
+      {},
     );
     expect(comparison.score).to.be.above(0.2);
   });
@@ -114,15 +114,13 @@ describe('ImageElementPlugin', function () {
       await imageEl.saveScreenshot(screenshotPath);
       const tmpImgPath = path.join(tmpRoot, 'region.png');
       await sharp(screenshotPath)
-      .extract(
-        {
+        .extract({
           left: parseInt((width / 4).toString(), 10),
           top: parseInt((height / 4).toString(), 10),
           width: parseInt((width / 2).toString(), 10),
           height: parseInt((height / 2).toString(), 10),
-        }
-      )
-      .toFile(tmpImgPath);
+        })
+        .toFile(tmpImgPath);
       const subEl = await imageEl.$(tmpImgPath);
       expect(subEl).to.not.be.null;
     } finally {

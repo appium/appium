@@ -80,7 +80,7 @@ export function log(json: boolean, msg: string): void {
 export async function spinWith<T>(
   json: boolean,
   msg: string,
-  fn: () => T | Promise<T>
+  fn: () => T | Promise<T>,
 ): Promise<T> {
   if (json) {
     return await fn();

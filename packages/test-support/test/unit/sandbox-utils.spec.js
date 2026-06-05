@@ -44,6 +44,6 @@ describe('sandbox-utils', function () {
         funcs.abc().should.equal('efg');
         verifySandbox(S);
       });
-    })
+    }),
   );
 });

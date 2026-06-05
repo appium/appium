@@ -31,7 +31,7 @@ export type TaskSpecificOpts<Opts extends ScaffoldTaskOptions> = Omit<
  * @see {@linkcode createScaffoldTask}
  */
 export type ScaffoldTask<Opts extends ScaffoldTaskOptions, T extends JsonObject> = (
-  opts: Opts
+  opts: Opts,
 ) => Promise<ScaffoldTaskResult<T>>;
 
 /**
@@ -41,7 +41,7 @@ export type ScaffoldTask<Opts extends ScaffoldTaskOptions, T extends JsonObject>
 export type ScaffoldTaskTransformer<Opts extends ScaffoldTaskOptions, T extends JsonValue> = (
   content: Readonly<T>,
   opts: TaskSpecificOpts<Opts>,
-  pkg: Readonly<NormalizedPackageJson>
+  pkg: Readonly<NormalizedPackageJson>,
 ) => T;
 
 /**
@@ -129,7 +129,7 @@ export function createScaffoldTask<Opts extends ScaffoldTaskOptions, T extends J
     transform = (content) => content,
     deserialize = JSON.parse,
     serialize = stringifyJson,
-  }: CreateScaffoldTaskOptions<Opts, T> = {}
+  }: CreateScaffoldTaskOptions<Opts, T> = {},
 ): ScaffoldTask<Opts, T> {
   return async ({
     overwrite = false,
@@ -142,7 +142,7 @@ export function createScaffoldTask<Opts extends ScaffoldTaskOptions, T extends J
     const relativePath = relative(cwd);
     const {pkgPath, pkg} = await readPackageJson(
       packageJsonPath ? path.dirname(packageJsonPath) : cwd,
-      true
+      true,
     );
     const pkgDir = path.dirname(pkgPath);
     dest = dest ?? path.join(pkgDir, defaultFilename);
@@ -184,7 +184,10 @@ export function createScaffoldTask<Opts extends ScaffoldTaskOptions, T extends J
       }
 
       if (!isNew && !overwrite) {
-        log.info('File %s already exists, continuing (enable overwrite with "--force")', relativeDest);
+        log.info(
+          'File %s already exists, continuing (enable overwrite with "--force")',
+          relativeDest,
+        );
         log.debug('Tried to apply patch:\n\n%s', patch);
       } else {
         try {
@@ -220,11 +223,11 @@ function makePatch<T extends JsonValue>(
   filename: string,
   oldData: T | string,
   newData: T | string,
-  serializer: ScaffoldTaskSerializer<T> = stringifyJson
+  serializer: ScaffoldTaskSerializer<T> = stringifyJson,
 ) {
   return createPatch(
     filename,
     typeof oldData === 'string' ? oldData : serializer(oldData),
-    typeof newData === 'string' ? newData : serializer(newData)
+    typeof newData === 'string' ? newData : serializer(newData),
   );
 }

@@ -30,7 +30,7 @@ export function getNonDefaultServerArgs(parsedArgs: Args): Args {
         }
         return acc;
       },
-      {}
+      {},
     );
 
     return flattened;
@@ -106,7 +106,7 @@ export function showConfig(
   nonDefaultPreConfigParsedArgs: Partial<Args>,
   configResult: ReadConfigFileResult,
   defaults: Partial<Args>,
-  parsedArgs: Args
+  parsedArgs: Args,
 ): void {
   console.log('Appium Configuration\n');
   console.log('from defaults:\n');
@@ -141,6 +141,6 @@ function compactConfig<T extends Record<string, unknown>>(obj: T): Partial<T> {
     (value, key) =>
       key !== 'subcommand' &&
       value !== undefined &&
-      !(value !== null && typeof value === 'object' && util.isEmpty(value))
+      !(value !== null && typeof value === 'object' && util.isEmpty(value)),
   );
 }

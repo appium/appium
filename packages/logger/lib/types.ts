@@ -37,7 +37,7 @@ export interface Logger extends EventEmitter {
   silent(prefix: string, message: any, ...args: any[]): void;
 
   loadSecureValuesPreprocessingRules(
-    rulesJsonPath: string | string[] | LogFiltersConfig
+    rulesJsonPath: string | string[] | LogFiltersConfig,
   ): Promise<PreprocessingRulesLoadResult>;
 
   enableColor(): void;

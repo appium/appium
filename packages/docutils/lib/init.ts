@@ -30,58 +30,56 @@ const dryRunLog = getLogger('dry-run', log);
 /**
  * Function which scaffolds an `mkdocs.yml` file
  */
-export const initMkDocs: ScaffoldTask<InitMkDocsOptions, MkDocsYml> = createScaffoldTask<InitMkDocsOptions, MkDocsYml>(
-  NAME_MKDOCS_YML,
-  BASE_MKDOCS_YML,
-  'MkDocs configuration',
-  {
-    deserialize: YAML.parse,
-    serialize: stringifyYaml,
-    transform: (content, opts, pkg) => {
-      let siteName = opts.siteName ?? content.site_name;
-      if (!siteName) {
-        siteName = pkg.name ?? '(no name)';
-        if (siteName) {
-          log.info('Using site name from package.json: %s', siteName);
-        }
+export const initMkDocs: ScaffoldTask<InitMkDocsOptions, MkDocsYml> = createScaffoldTask<
+  InitMkDocsOptions,
+  MkDocsYml
+>(NAME_MKDOCS_YML, BASE_MKDOCS_YML, 'MkDocs configuration', {
+  deserialize: YAML.parse,
+  serialize: stringifyYaml,
+  transform: (content, opts, pkg) => {
+    let siteName = opts.siteName ?? content.site_name;
+    if (!siteName) {
+      siteName = pkg.name ?? '(no name)';
+      if (siteName) {
+        log.info('Using site name from package.json: %s', siteName);
       }
-      let repoUrl: string | undefined = opts.repoUrl ?? content.repo_url;
-      if (!repoUrl) {
-        repoUrl = pkg.repository?.url;
-        if (repoUrl) {
-          log.info('Using repo URL from package.json: %s', repoUrl);
-        }
+    }
+    let repoUrl: string | undefined = opts.repoUrl ?? content.repo_url;
+    if (!repoUrl) {
+      repoUrl = pkg.repository?.url;
+      if (repoUrl) {
+        log.info('Using repo URL from package.json: %s', repoUrl);
       }
-      let repoName = opts.repoName ?? content.repo_name;
-      if (repoUrl && !repoName) {
-        let {pathname} = new URL(repoUrl);
-        pathname = pathname.slice(1);
-        const pathparts = pathname.split('/');
-        const owner = pathparts[0];
-        let repo = pathparts[1];
-        repo = repo.replace(/\.git$/, '');
-        repoName = [owner, repo].join('/');
-        if (repoName) {
-          log.info('Using repo name from package.json: %s', repoName);
-        }
+    }
+    let repoName = opts.repoName ?? content.repo_name;
+    if (repoUrl && !repoName) {
+      let {pathname} = new URL(repoUrl);
+      pathname = pathname.slice(1);
+      const pathparts = pathname.split('/');
+      const owner = pathparts[0];
+      let repo = pathparts[1];
+      repo = repo.replace(/\.git$/, '');
+      repoName = [owner, repo].join('/');
+      if (repoName) {
+        log.info('Using repo name from package.json: %s', repoName);
       }
-      let siteDescription = opts.siteDescription ?? content.site_description;
-      if (!siteDescription) {
-        siteDescription = pkg.description;
-        if (siteDescription) {
-          log.info('Using site description URL from package.json: %s', siteDescription);
-        }
+    }
+    let siteDescription = opts.siteDescription ?? content.site_description;
+    if (!siteDescription) {
+      siteDescription = pkg.description;
+      if (siteDescription) {
+        log.info('Using site description URL from package.json: %s', siteDescription);
       }
-      return {
-        ...content,
-        site_name: siteName,
-        repo_url: repoUrl,
-        repo_name: repoName,
-        site_description: siteDescription,
-      };
-    },
+    }
+    return {
+      ...content,
+      site_name: siteName,
+      repo_url: repoUrl,
+      repo_name: repoName,
+      site_description: siteDescription,
+    };
   },
-);
+});
 
 /**
  * Options for {@linkcode initMkDocs}
@@ -160,7 +158,8 @@ export async function initPython({
       PIP_ENV_VARS,
     );
   } else {
-    log.debug('Executing command: %s %s (environment variables: %s)',
+    log.debug(
+      'Executing command: %s %s (environment variables: %s)',
       foundPythonPath,
       args.join(' '),
       PIP_ENV_VARS,

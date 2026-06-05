@@ -14,9 +14,7 @@
       "description": "Configuration when running Appium as a server",
       "properties": {
         "address": {
-          "appiumCliAliases": [
-            "a"
-          ],
+          "appiumCliAliases": ["a"],
           "default": "0.0.0.0",
           "description": "IPv4/IPv6 address or a hostname to listen on",
           "title": "address config",
@@ -50,26 +48,20 @@
           "uniqueItems": true
         },
         "base-path": {
-          "appiumCliAliases": [
-            "pa"
-          ],
+          "appiumCliAliases": ["pa"],
           "default": "",
           "description": "Base path to use as the prefix for all webdriver routes running on the server",
           "title": "base-path config",
           "type": "string"
         },
         "callback-address": {
-          "appiumCliAliases": [
-            "ca"
-          ],
+          "appiumCliAliases": ["ca"],
           "description": "Callback IP address (default: same as \"address\")",
           "title": "callback-address config",
           "type": "string"
         },
         "callback-port": {
-          "appiumCliAliases": [
-            "cp"
-          ],
+          "appiumCliAliases": ["cp"],
           "default": 4723,
           "description": "Callback port (default: same as \"port\")",
           "maximum": 65535,
@@ -85,9 +77,7 @@
         },
         "default-capabilities": {
           "$comment": "TODO",
-          "appiumCliAliases": [
-            "dc"
-          ],
+          "appiumCliAliases": ["dc"],
           "description": "Set the default desired capabilities, which will be set on each session unless overridden by received capabilities. If a string, a path to a JSON file containing the capabilities, or raw JSON.",
           "title": "default-capabilities config",
           "type": "object"
@@ -111,9 +101,7 @@
           "type": "object"
         },
         "keep-alive-timeout": {
-          "appiumCliAliases": [
-            "ka"
-          ],
+          "appiumCliAliases": ["ka"],
           "default": 600,
           "description": "Number of seconds the Appium server should apply as both the keep-alive timeout and the connection timeout for all requests. A value of 0 disables the timeout.",
           "minimum": 0,
@@ -134,9 +122,7 @@
           "type": "boolean"
         },
         "log": {
-          "appiumCliAliases": [
-            "g"
-          ],
+          "appiumCliAliases": ["g"],
           "appiumCliDest": "logFile",
           "description": "Also send log output to this file",
           "title": "log config",
@@ -184,11 +170,7 @@
           "appiumCliDest": "logFormat",
           "default": "text",
           "description": "Log format (text|json|pretty_json)",
-          "enum": [
-            "text",
-            "json",
-            "pretty_json"
-          ],
+          "enum": ["text", "json", "pretty_json"],
           "title": "log-format config",
           "type": "string"
         },
@@ -241,9 +223,7 @@
           "type": "object"
         },
         "port": {
-          "appiumCliAliases": [
-            "p"
-          ],
+          "appiumCliAliases": ["p"],
           "default": 4723,
           "description": "Port to listen on",
           "maximum": 65535,
@@ -324,9 +304,7 @@
         },
         "webhook": {
           "$comment": "This should probably use a uri-template format to restrict the protocol to http/https",
-          "appiumCliAliases": [
-            "G"
-          ],
+          "appiumCliAliases": ["G"],
           "description": "Also send log output to this http listener",
           "format": "uri",
           "title": "webhook config",
@@ -365,13 +343,9 @@
           "type": "string"
         }
       },
-      "required": [
-        "text"
-      ],
+      "required": ["text"],
       "not": {
-        "required": [
-          "pattern"
-        ]
+        "required": ["pattern"]
       }
     },
     "logFilterRegex": {
@@ -384,13 +358,9 @@
           "format": "regex"
         }
       },
-      "required": [
-        "pattern"
-      ],
+      "required": ["pattern"],
       "not": {
-        "required": [
-          "text"
-        ]
+        "required": ["text"]
       }
     },
     "logFilter": {

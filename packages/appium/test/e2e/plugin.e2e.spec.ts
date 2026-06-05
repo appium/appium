@@ -57,7 +57,6 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
   let port: number;
   let testServerBaseSessionUrl: string;
   before(async function () {
-
     resetSchema();
     appiumHome = await tempDir.openDir();
     wdOpts.port = port = await getTestPort();
@@ -154,7 +153,9 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
         const res = usePlugins;
         // we don't need to check the entire object, since it's large, but we can ensure an
         // arg got through.
-        expect((await axios.post(`http://${TEST_HOST}:${port}/cliArgs`)).data.usePlugins).to.eql(res);
+        expect((await axios.post(`http://${TEST_HOST}:${port}/cliArgs`)).data.usePlugins).to.eql(
+          res,
+        );
       });
       it('should modify the method map with new commands', async function () {
         const driver = await wdio(wdOpts as any);
@@ -164,7 +165,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
             data: {fake: 'data'},
           });
           expect(
-            (await axios.get(`${testServerBaseSessionUrl}/${sessionId}/fake_data`)).data.value
+            (await axios.get(`${testServerBaseSessionUrl}/${sessionId}/fake_data`)).data.value,
           ).to.eql({fake: 'data'});
         } finally {
           await driver.deleteSession();
@@ -176,7 +177,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
         const {sessionId} = driver;
         try {
           await expect(driver.getPageSource()).to.eventually.eql(
-            `<Fake>${JSON.stringify([sessionId])}</Fake>`
+            `<Fake>${JSON.stringify([sessionId])}</Fake>`,
           );
         } finally {
           await driver.deleteSession();
@@ -206,8 +207,8 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
           await axios.post(`${testServerBaseSessionUrl}/${sessionId}/context`, {
             name: 'PROXY',
           });
-          const handle = (await axios.get(`${testServerBaseSessionUrl}/${sessionId}/window`))
-            .data.value;
+          const handle = (await axios.get(`${testServerBaseSessionUrl}/${sessionId}/window`)).data
+            .value;
           expect(handle).to.eql('<<proxied via proxyCommand>>');
         } finally {
           await axios.post(`${testServerBaseSessionUrl}/${sessionId}/context`, {
@@ -257,7 +258,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
           // prove that we went beyond the new command timeout as a result of sending commands
           expect(Date.now() - start).to.be.above(2500);
           await expect(driver.getPageSource()).to.eventually.eql(
-            `<Fake>${JSON.stringify([sessionId])}</Fake>`
+            `<Fake>${JSON.stringify([sessionId])}</Fake>`,
           );
         } finally {
           await driver.deleteSession();
@@ -358,7 +359,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
   });
 
   describe('BiDi support', function () {
-    describe('with a single plugin', function() {
+    describe('with a single plugin', function () {
       let driver: Browser;
 
       // this 'after' block needs to come before 'serverSetup' so that the delete session happens
@@ -382,7 +383,10 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
           params: {},
         });
         expect(result).to.not.exist;
-        await (driver as any).send({method: 'appium:fake.setPluginThing', params: {thing: 'plugin bidi'}});
+        await (driver as any).send({
+          method: 'appium:fake.setPluginThing',
+          params: {thing: 'plugin bidi'},
+        });
         ({result} = await (driver as any).send({method: 'appium:fake.getPluginThing', params: {}}));
         expect(result).to.eql('plugin bidi');
       });
@@ -482,6 +486,5 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
       expect(lastMath.result).to.eql(6);
       expect(lastMath.pluginName).to.have.string('FakePlugin');
     });
-
   });
 });

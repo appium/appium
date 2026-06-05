@@ -77,7 +77,7 @@ export class Validator {
       if (value !== undefined && options) {
         log.warn(
           `The '${key}' capability has been deprecated and must not be used anymore. ` +
-          `Please check the driver documentation for possible alternatives.`
+            `Please check the driver documentation for possible alternatives.`,
         );
       }
       return null;
@@ -108,15 +108,19 @@ export class Validator {
       }
       if (
         !options?.allowEmpty &&
-        ((value !== undefined && util.isEmpty(value)) || (typeof value === 'string' && !value.trim()))
+        ((value !== undefined && util.isEmpty(value)) ||
+          (typeof value === 'string' && !value.trim()))
       ) {
         return 'must not be empty or blank';
       }
       return null;
-    }
+    },
   };
 
-  validate(values: Record<string, any>, constraints: Record<string, Constraint>): Record<string, string[]> | null {
+  validate(
+    values: Record<string, any>,
+    constraints: Record<string, Constraint>,
+  ): Record<string, string[]> | null {
     const result: Record<string, string[]> = {};
     for (const [key, constraint] of Object.entries(constraints)) {
       const value = values[key];
@@ -125,7 +129,11 @@ export class Validator {
           continue;
         }
 
-        const validationError = this._validators[validatorName as keyof Constraint](value, options, key);
+        const validationError = this._validators[validatorName as keyof Constraint](
+          value,
+          options,
+          key,
+        );
         if (validationError == null) {
           continue;
         }
@@ -139,7 +147,6 @@ export class Validator {
     }
     return util.isEmpty(result) ? null : result;
   }
-
 }
 
 export const validator = new Validator();

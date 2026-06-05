@@ -50,7 +50,7 @@ describe('AppiumIpc', function () {
       const ipc = new AppiumIpc({maxTopics: 1});
       ipc.subscribe('topic1', 'sub1');
       expect(() => ipc.subscribe('topic2', 'sub2')).to.throw(
-        /Cannot create new IPC topic 'topic2': maximum of 1 topics per session reached\. Adjust with the --max-ipc-topics server arg\./
+        /Cannot create new IPC topic 'topic2': maximum of 1 topics per session reached\. Adjust with the --max-ipc-topics server arg\./,
       );
     });
   });
@@ -81,8 +81,8 @@ describe('AppiumIpc', function () {
       let sub2Res: IpcMessage<typeof payload>;
       const sub1 = ipc.subscribe('foo', 'bar');
       const sub2 = ipc.subscribe('foo', 'baz');
-      sub1.on(EVT_MESSAGE, (message) => sub1Res = message);
-      sub2.on(EVT_MESSAGE, (message) => sub2Res = message);
+      sub1.on(EVT_MESSAGE, (message) => (sub1Res = message));
+      sub2.on(EVT_MESSAGE, (message) => (sub2Res = message));
       await ipc.publish('foo', 'zowee', payload);
 
       expect(sub1Res!.data).to.eql(payload);
@@ -105,8 +105,8 @@ describe('AppiumIpc', function () {
       let sub2Res: IpcMessage<typeof payload>;
       const sub1 = ipc.subscribe('foo', 'bar');
       const sub2 = ipc.subscribe('foo', 'baz');
-      sub1.on(EVT_MESSAGE, (message) => sub1Res = message);
-      sub2.on(EVT_MESSAGE, (message) => sub2Res = message);
+      sub1.on(EVT_MESSAGE, (message) => (sub1Res = message));
+      sub2.on(EVT_MESSAGE, (message) => (sub2Res = message));
       await ipc.publish('foo', 'baz', payload);
 
       expect(sub2Res!).to.not.exist;
@@ -120,7 +120,7 @@ describe('AppiumIpc', function () {
       let sub1Res: IpcMessage<typeof payload>;
       const sub1 = ipc.subscribe('foo', 'bar');
       const sub2 = ipc.subscribe('foo', 'baz');
-      sub1.on(EVT_MESSAGE, (message) => sub1Res = message);
+      sub1.on(EVT_MESSAGE, (message) => (sub1Res = message));
       await sub2.publish(payload);
 
       expect(sub1Res!.data).to.eql(payload);
@@ -133,7 +133,7 @@ describe('AppiumIpc', function () {
       const ipc = new AppiumIpc();
       const sub1 = ipc.subscribe<boolean>('foo', 'bar');
       let sub1Res: boolean = false;
-      sub1.on(EVT_MESSAGE, (message) => sub1Res = message.data);
+      sub1.on(EVT_MESSAGE, (message) => (sub1Res = message.data));
       sub1.unsubscribe();
       await ipc.publish<boolean>('foo', 'baz', true);
       expect(sub1Res).to.be.false;
@@ -150,7 +150,7 @@ describe('AppiumIpc', function () {
       const ipc = new AppiumIpc();
       const payload = {some: {cool: 'obj'}};
       let rcvdCount = 0;
-      const sub1 = ipc.subscribe<typeof payload>('foo', 'bar',);
+      const sub1 = ipc.subscribe<typeof payload>('foo', 'bar');
       sub1.on(EVT_MESSAGE, () => {
         rcvdCount++;
       });
@@ -169,7 +169,7 @@ describe('AppiumIpc', function () {
       const payload = {some: {cool: 'obj'}};
       let sub1Res: IpcMessage<typeof payload>;
       let sub1Res2: IpcMessage<typeof payload> | undefined;
-      const sub1 = ipc.subscribe('foo', 'bar',);
+      const sub1 = ipc.subscribe('foo', 'bar');
       sub1.on(EVT_MESSAGE, async (message) => {
         sub1Res = message;
         sub1Res2 = ipc.getMessage<typeof payload>('foo');
@@ -202,7 +202,7 @@ describe('AppiumIpc', function () {
       await ipc.publish('topic1', 'pub', true);
       ipc.subscribe('topic2', 'sub');
       await expect(ipc.publish('topic3', 'pub', true)).to.eventually.be.rejectedWith(
-        /--max-ipc-topics/
+        /--max-ipc-topics/,
       );
     });
 
@@ -229,7 +229,6 @@ describe('AppiumIpc', function () {
       // changing original object should not change what was published
       payload.foo = 'new';
       expect(sub1.getMessage()!.data).to.eql({foo: 'bar'});
-
     });
   });
 
@@ -241,7 +240,7 @@ describe('AppiumIpc', function () {
       await ipc.publish('foo', 'bar', payload1);
       await ipc.publish('foo', 'baz', payload2);
       await ipc.publish('other', 'bar', 5); // should not get message published on other topic
-      expect((ipc.getMessage('foo'))!.data).to.eql(payload2);
+      expect(ipc.getMessage('foo')!.data).to.eql(payload2);
     });
 
     it('should get the message from the subscription object', async function () {

@@ -68,83 +68,73 @@ describe('proxy', function () {
       expect(
         mockProxy({sessionId: '123'}).getUrlForProxy(
           'http://host.com:1234/session/456/element/200/value',
-          'POST'
-        )
+          'POST',
+        ),
       ).to.eql(`http://${TEST_HOST}:${port}/session/123/element/200/value`);
     });
     it('should prepend scheme, host and port if not provided', function () {
       const j = mockProxy({sessionId: '123'});
       expect(j.getUrlForProxy('/session/456/element/200/value', 'POST')).to.eql(
-        `http://${TEST_HOST}:${port}/session/123/element/200/value`
+        `http://${TEST_HOST}:${port}/session/123/element/200/value`,
       );
       expect(j.getUrlForProxy('/session/456/appium/settings', 'POST')).to.eql(
-        `http://${TEST_HOST}:${port}/session/123/appium/settings`
+        `http://${TEST_HOST}:${port}/session/123/appium/settings`,
       );
     });
     it('should prepend scheme, host, port and session if not provided', function () {
-      expect(
-        mockProxy({sessionId: '123'}).getUrlForProxy('/element/200/value', 'POST')
-      ).to.eql(`http://${TEST_HOST}:${port}/session/123/element/200/value`);
+      expect(mockProxy({sessionId: '123'}).getUrlForProxy('/element/200/value', 'POST')).to.eql(
+        `http://${TEST_HOST}:${port}/session/123/element/200/value`,
+      );
     });
     it('should keep query parameters', function () {
       expect(
-        mockProxy({sessionId: '123'}).getUrlForProxy(
-          '/element/200/value?foo=1&bar=2',
-          'POST'
-        )
-      ).to.eql(
-        `http://${TEST_HOST}:${port}/session/123/element/200/value?foo=1&bar=2`
-      );
+        mockProxy({sessionId: '123'}).getUrlForProxy('/element/200/value?foo=1&bar=2', 'POST'),
+      ).to.eql(`http://${TEST_HOST}:${port}/session/123/element/200/value?foo=1&bar=2`);
     });
     it('should fix legacy proxy urls if reqBasePath is unset', function () {
       const j = mockProxy({sessionId: '123', reqBasePath: ''});
       expect(j.getUrlForProxy('/wd/hub/session/456/element/200/value', 'POST')).to.eql(
-        `http://${TEST_HOST}:${port}/session/123/element/200/value`
+        `http://${TEST_HOST}:${port}/session/123/element/200/value`,
       );
       expect(j.getUrlForProxy('/yolo/session/456/element/200/value', 'POST')).to.eql(
-        `http://${TEST_HOST}:${port}/session/123/element/200/value`
+        `http://${TEST_HOST}:${port}/session/123/element/200/value`,
       );
     });
     it('should respect nonstandard incoming request base path', function () {
       expect(
         mockProxy({sessionId: '123', reqBasePath: ''}).getUrlForProxy(
           '/session/456/element/200/value',
-          'POST'
-        )
+          'POST',
+        ),
       ).to.eql(`http://${TEST_HOST}:${port}/session/123/element/200/value`);
 
       expect(
         mockProxy({sessionId: '123', reqBasePath: '/my/base/path'}).getUrlForProxy(
           '/my/base/path/session/456/element/200/value',
-          'POST'
-        )
+          'POST',
+        ),
       ).to.eql(`http://${TEST_HOST}:${port}/session/123/element/200/value`);
 
       expect(
         mockProxy({sessionId: '123', reqBasePath: '/wd/hub'}).getUrlForProxy(
           '/wd/hub/session/456',
-          'GET'
-        )
+          'GET',
+        ),
       ).to.eql(`http://${TEST_HOST}:${port}/session/123`);
 
       expect(
-        mockProxy({reqBasePath: '/my/base/path'}).getUrlForProxy(
-          '/my/base/path/session',
-          'POST'
-        )
+        mockProxy({reqBasePath: '/my/base/path'}).getUrlForProxy('/my/base/path/session', 'POST'),
       ).to.eql(`http://${TEST_HOST}:${port}/session`);
     });
     it('should work with urls which do not have session ids', function () {
       const j = mockProxy({sessionId: '123'});
       expect(j.getUrlForProxy('http://host.com:1234/session', 'POST')).to.eql(
-        `http://${TEST_HOST}:${port}/session`
+        `http://${TEST_HOST}:${port}/session`,
       );
 
-      expect(j.getUrlForProxy('/session', 'POST')).to.eql(
-        `http://${TEST_HOST}:${port}/session`
-      );
+      expect(j.getUrlForProxy('/session', 'POST')).to.eql(`http://${TEST_HOST}:${port}/session`);
       expect(j.getUrlForProxy('/appium/sessions', 'GET')).to.eql(
-        `http://${TEST_HOST}:${port}/appium/sessions`
+        `http://${TEST_HOST}:${port}/appium/sessions`,
       );
     });
     it('should throw an error if url requires a sessionId but its null', function () {
@@ -182,12 +172,9 @@ describe('proxy', function () {
       expect(capturedConfig.headers).to.have.property('user-agent', 'my-appium-client');
       expect(capturedConfig.headers).to.have.property(
         'content-type',
-        'application/json; charset=utf-8'
+        'application/json; charset=utf-8',
       );
-      expect(capturedConfig.headers).to.have.property(
-        'accept',
-        'application/json, */*'
-      );
+      expect(capturedConfig.headers).to.have.property('accept', 'application/json, */*');
     });
     it('should pass along request errors', function () {
       const j = mockProxy({sessionId: '123'});
@@ -214,9 +201,7 @@ describe('proxy', function () {
     });
     it('should throw when a command fails', async function () {
       const j = mockProxy({sessionId: '123'});
-      await expect(j.command('/element/bad/text', 'GET')).to.be.rejectedWith(
-        /Invisible element/
-      );
+      await expect(j.command('/element/bad/text', 'GET')).to.be.rejectedWith(/Invisible element/);
     });
     it('should throw when a command fails with a 200 because the status is not 0', async function () {
       const j = mockProxy({sessionId: '123'});

@@ -31,7 +31,7 @@ const SHORT_ARG_CUTOFF = 3;
 export function toParserArgs(): ArgumentDefinitions {
   const flattened = flattenSchema().filter(({schema}) => !schema.appiumCliIgnored);
   return new Map(
-    flattened.map(({schema, argSpec}) => subSchemaToArgDef(schema as AppiumJSONSchema, argSpec))
+    flattened.map(({schema, argSpec}) => subSchemaToArgDef(schema as AppiumJSONSchema, argSpec)),
   );
 }
 
@@ -57,7 +57,7 @@ const screamingSnakeCase = (s: string) => kebabCase(s).replace(/-/g, '_').toUppe
  */
 function getSchemaValidator<Coerced>(
   {ref: schemaId}: ArgSpec,
-  coerce: (value: string) => Coerced = (value) => value as Coerced
+  coerce: (value: string) => Coerced = (value) => value as Coerced,
 ): (value: string) => Coerced {
   return (value) => {
     const coerced = coerce(value);
@@ -109,7 +109,7 @@ function subSchemaToArgDef(subSchema: AppiumJSONSchema, argSpec: ArgSpec): ArgDe
         const o = transformers.json(value);
         if (!util.isPlainObject(o)) {
           throw new ArgumentTypeError(
-            `'${util.truncateString(String(o), {length: 100})}' must be a plain object`
+            `'${util.truncateString(String(o), {length: 100})}' must be a plain object`,
           );
         }
         return o;
@@ -146,8 +146,9 @@ function subSchemaToArgDef(subSchema: AppiumJSONSchema, argSpec: ArgSpec): ArgDe
     if (type === TYPENAMES.ARRAY) {
       const csvTransformer = argTypeFunction as (x: string) => string[];
       argTypeFunction = (val) =>
-        csvTransformer(val)
-          .flatMap((item) => transformers[appiumCliTransformer as AppiumCliTransformerName](item));
+        csvTransformer(val).flatMap((item) =>
+          transformers[appiumCliTransformer as AppiumCliTransformerName](item),
+        );
     } else {
       const baseFn = argTypeFunction ?? ((value: string) => value);
       const transformer = transformers[appiumCliTransformer as AppiumCliTransformerName];
@@ -164,7 +165,7 @@ function subSchemaToArgDef(subSchema: AppiumJSONSchema, argSpec: ArgSpec): ArgDe
       argOpts.choices = enumValues.map(String);
     } else {
       throw new TypeError(
-        `Problem with schema for ${arg}; \`enum\` is only supported for \`type: 'string'\``
+        `Problem with schema for ${arg}; \`enum\` is only supported for \`type: 'string'\``,
       );
     }
   }
@@ -172,4 +173,3 @@ function subSchemaToArgDef(subSchema: AppiumJSONSchema, argSpec: ArgSpec): ArgDe
   const finalAliases = aliases as [string] | [string, string];
   return [finalAliases, argOpts];
 }
-

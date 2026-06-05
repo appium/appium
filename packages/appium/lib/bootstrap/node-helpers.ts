@@ -25,7 +25,9 @@ interface DebugInfoInput {
 export function checkNodeOk(): void {
   const version = getNodeVersion();
   if (!semver.satisfies(version, MIN_NODE_VERSION)) {
-    throw new Error(`Node version must be at least ${MIN_NODE_VERSION}; current is ${version.version}`);
+    throw new Error(
+      `Node version must be at least ${MIN_NODE_VERSION}; current is ${version.version}`,
+    );
   }
 }
 
@@ -72,7 +74,9 @@ export function adjustNodePath(): void {
   if (refreshRequirePaths()) {
     process.env.APPIUM_OMIT_PEER_DEPS = '1';
   } else {
-    process.env.NODE_PATH = nodePathParts.filter((p) => p !== appiumModuleSearchRoot).join(path.delimiter);
+    process.env.NODE_PATH = nodePathParts
+      .filter((p) => p !== appiumModuleSearchRoot)
+      .join(path.delimiter);
   }
 }
 
@@ -80,7 +84,11 @@ export function adjustNodePath(): void {
  * Prints JSON debug info (OS, Node/npm, Appium build, installed drivers/plugins) to stdout.
  * Input combines extension config snapshots with the resolved Appium home path.
  */
-export async function showDebugInfo({driverConfig, pluginConfig, appiumHome}: DebugInfoInput): Promise<void> {
+export async function showDebugInfo({
+  driverConfig,
+  pluginConfig,
+  appiumHome,
+}: DebugInfoInput): Promise<void> {
   const getNpmVersion = async (): Promise<string> => {
     const {stdout} = await npm.exec('--version', [], {cwd: process.cwd()});
     return stdout.trim();
@@ -133,7 +141,7 @@ export async function showDebugInfo({driverConfig, pluginConfig, appiumHome}: De
 export async function requireDir(
   root: string,
   requireWriteable = true,
-  displayName = 'folder path'
+  displayName = 'folder path',
 ): Promise<void> {
   let stat;
   try {
@@ -145,10 +153,7 @@ export async function requireDir(
         return;
       } catch {}
     }
-    throw new Error(
-      `The ${displayName} '${root}' must exist and be a valid directory`,
-      {cause: e}
-    );
+    throw new Error(`The ${displayName} '${root}' must exist and be a valid directory`, {cause: e});
   }
   if (stat && !stat.isDirectory()) {
     throw new Error(`The ${displayName} '${root}' must be a valid directory`);
@@ -159,7 +164,7 @@ export async function requireDir(
     } catch (e) {
       throw new Error(
         `The ${displayName} '${root}' must be writeable for the current user account '${os.userInfo().username}'`,
-        {cause: e}
+        {cause: e},
       );
     }
   }

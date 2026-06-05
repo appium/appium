@@ -86,7 +86,7 @@ describe('bootstrap/config-file', function () {
     // searching for config files, and it increases the likelihood that we'd load the wrong file.
     ({readConfigFile, normalizeConfig} = rewiremock.proxy(
       () => require('../../../lib/bootstrap/config-file'),
-      mocks
+      mocks,
     ));
 
     // just want to be extra-sure `validate()` happens
@@ -219,7 +219,7 @@ describe('bootstrap/config-file', function () {
 
         it('should reject with user-friendly message', async function () {
           await expect(readConfigFile('appium.json')).to.be.rejectedWith(
-            /not found at user-provided path/
+            /not found at user-provided path/,
           );
         });
       });
@@ -231,7 +231,7 @@ describe('bootstrap/config-file', function () {
 
         it('should reject with user-friendly message', async function () {
           await expect(readConfigFile('appium.json')).to.be.rejectedWith(
-            /Config file at user-provided path appium.json is invalid/
+            /Config file at user-provided path appium.json is invalid/,
           );
         });
       });

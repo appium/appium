@@ -47,7 +47,7 @@ describe('bootstrap/startup-config', function () {
             },
           },
           {port: 1234},
-          {allowCors: false}
+          {allowCors: false},
         );
         expect(log.calledWith('Appium Configuration\n')).to.be.true;
       });
@@ -58,7 +58,7 @@ describe('bootstrap/startup-config', function () {
           {foo: 'bar', cows: {}, pigs: [], sheep: 0, ducks: false},
           {config: {server: {address: 'quux'}}},
           {spam: 'food'},
-          {}
+          {},
         );
         expect(dir.calledWith({foo: 'bar', sheep: 0, ducks: false})).to.be.true;
       });
@@ -71,7 +71,7 @@ describe('bootstrap/startup-config', function () {
           {foo: 'bar', cows: {}, pigs: [], sheep: 0, ducks: false},
           {},
           {spam: 'food'},
-          {}
+          {},
         );
         expect(log.calledWith('\n(no configuration file loaded)')).to.be.true;
       });

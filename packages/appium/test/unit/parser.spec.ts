@@ -111,11 +111,19 @@ describe('parser', function () {
       });
 
       it('should parse --allow-insecure correctly', function () {
-        expect(p.parseArgs([])).to.satisfy((obj: {allowInsecure?: unknown}) => obj.allowInsecure === undefined);
+        expect(p.parseArgs([])).to.satisfy(
+          (obj: {allowInsecure?: unknown}) => obj.allowInsecure === undefined,
+        );
         expect(p.parseArgs(['--allow-insecure', '']).allowInsecure).to.eql([]);
         expect(p.parseArgs(['--allow-insecure', '*:foo']).allowInsecure).to.eql(['*:foo']);
-        expect(p.parseArgs(['--allow-insecure', '*:foo,*:bar']).allowInsecure).to.eql(['*:foo', '*:bar']);
-        expect(p.parseArgs(['--allow-insecure', '*:foo ,*:bar']).allowInsecure).to.eql(['*:foo', '*:bar']);
+        expect(p.parseArgs(['--allow-insecure', '*:foo,*:bar']).allowInsecure).to.eql([
+          '*:foo',
+          '*:bar',
+        ]);
+        expect(p.parseArgs(['--allow-insecure', '*:foo ,*:bar']).allowInsecure).to.eql([
+          '*:foo',
+          '*:bar',
+        ]);
       });
 
       it('should parse --address correctly', function () {
@@ -126,16 +134,24 @@ describe('parser', function () {
         expect(p.parseArgs(['--address', '::']).address).to.eql('::');
         expect(p.parseArgs(['--address', '::1']).address).to.eql('::1');
         expect(p.parseArgs(['--address', '2a02:8888:9a80:158:2418:a474:43c6:1b78']).address).to.eql(
-          '2a02:8888:9a80:158:2418:a474:43c6:1b78'
+          '2a02:8888:9a80:158:2418:a474:43c6:1b78',
         );
       });
 
       it('should parse --deny-insecure correctly', function () {
-        expect(p.parseArgs([])).to.satisfy((obj: {denyInsecure?: unknown}) => obj.denyInsecure === undefined);
+        expect(p.parseArgs([])).to.satisfy(
+          (obj: {denyInsecure?: unknown}) => obj.denyInsecure === undefined,
+        );
         expect(p.parseArgs(['--deny-insecure', '']).denyInsecure).to.eql([]);
         expect(p.parseArgs(['--deny-insecure', '*:foo']).denyInsecure).to.eql(['*:foo']);
-        expect(p.parseArgs(['--deny-insecure', '*:foo,*:bar']).denyInsecure).to.eql(['*:foo', '*:bar']);
-        expect(p.parseArgs(['--deny-insecure', '*:foo ,*:bar']).denyInsecure).to.eql(['*:foo', '*:bar']);
+        expect(p.parseArgs(['--deny-insecure', '*:foo,*:bar']).denyInsecure).to.eql([
+          '*:foo',
+          '*:bar',
+        ]);
+        expect(p.parseArgs(['--deny-insecure', '*:foo ,*:bar']).denyInsecure).to.eql([
+          '*:foo',
+          '*:bar',
+        ]);
       });
 
       it('should parse --allow-insecure & --deny-insecure from files', function () {
@@ -158,7 +174,10 @@ describe('parser', function () {
       });
 
       it('should respect --relaxed-security', function () {
-        expect(p.parseArgs(['--relaxed-security'])).to.have.property('relaxedSecurityEnabled', true);
+        expect(p.parseArgs(['--relaxed-security'])).to.have.property(
+          'relaxedSecurityEnabled',
+          true,
+        );
       });
 
       it('should recognize --log-level', function () {
@@ -187,7 +206,7 @@ describe('parser', function () {
         await schema.registerSchema(
           DRIVER_TYPE,
           'fake',
-          require('@appium/fake-driver/build/lib/fake-driver-schema').default
+          require('@appium/fake-driver/build/lib/fake-driver-schema').default,
         );
         await schema.finalizeSchema();
         p = await getParser(true);
@@ -199,7 +218,7 @@ describe('parser', function () {
         // the command-line flags are derived also from the schema.
         // the result should be that the parsed args should match the config file.
         const {config} = await readConfigFile(
-          resolveFixture('config', 'appium-config-driver-fake.json')
+          resolveFixture('config', 'appium-config-driver-fake.json'),
         );
         const fakeDriverArgs = {
           fake: {sillyWebServerPort: 1234, sillyWebServerHost: 'hey'},
@@ -235,20 +254,20 @@ describe('parser', function () {
       describe('when user supplies invalid args', function () {
         it('should error out', function () {
           expect(() => p.parseArgs(['--driver-fake-silly-web-server-port', 'foo'])).to.throw(
-            /must be integer/i
+            /must be integer/i,
           );
         });
       });
 
       it('should not support --driver-args', function () {
         expect(() => p.parseArgs(['--driver-args', '/some/file.json'])).to.throw(
-          /unrecognized arguments/i
+          /unrecognized arguments/i,
         );
       });
 
       it('should not support --plugin-args', function () {
         expect(() => p.parseArgs(['--plugin-args', '/some/file.json'])).to.throw(
-          /unrecognized arguments/i
+          /unrecognized arguments/i,
         );
       });
     });

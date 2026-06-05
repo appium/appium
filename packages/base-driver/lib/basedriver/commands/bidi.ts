@@ -45,7 +45,7 @@ const BidiCommands: IBidiCommands = {
           ? (base.message as string)
           : `${this.constructor.name} is ready to accept commands`,
     };
-  }
+  },
 };
 
 mixin(BidiCommands);

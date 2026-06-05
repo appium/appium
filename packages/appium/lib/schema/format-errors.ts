@@ -31,7 +31,7 @@ export interface FormatConfigErrorsOptions {
 export function formatErrors(
   errors: ErrorObject[] = [],
   config: NormalizedAppiumConfig | Record<string, unknown> | string | undefined = {},
-  opts: FormatConfigErrorsOptions = {}
+  opts: FormatConfigErrorsOptions = {},
 ): string | IOutputError[] {
   if (errors && !errors.length) {
     throw new TypeError('Array of errors must be non-empty');

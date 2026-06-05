@@ -25,7 +25,7 @@ describe('package-changed', function () {
       {
         'package-changed': MockPackageChanged,
         '@appium/support': MockAppiumSupport,
-      }
+      },
     ));
   });
 
@@ -37,7 +37,7 @@ describe('package-changed', function () {
     describe('when called without an `appiumHome`', function () {
       it('should reject', async function () {
         await expect(packageDidChange()).to.be.rejectedWith(
-          TypeError // from passing `undefined` to `path.join()`
+          TypeError, // from passing `undefined` to `path.join()`
         );
       });
     });
@@ -46,8 +46,8 @@ describe('package-changed', function () {
       await packageDidChange('/some/path');
       expect(
         MockAppiumSupport.fs.mkdirp.calledWith(
-          path.dirname(path.join('/some/path', PKG_HASHFILE_RELATIVE_PATH))
-        )
+          path.dirname(path.join('/some/path', PKG_HASHFILE_RELATIVE_PATH)),
+        ),
       ).to.be.true;
     });
 
@@ -57,7 +57,7 @@ describe('package-changed', function () {
         MockPackageChanged.isPackageChanged.calledWith({
           cwd: '/some/path',
           hashFilename: PKG_HASHFILE_RELATIVE_PATH,
-        })
+        }),
       ).to.be.true;
     });
 
@@ -66,7 +66,7 @@ describe('package-changed', function () {
         MockAppiumSupport.fs.mkdirp.rejects(new Error('some error'));
         await expect(packageDidChange('/some/path')).to.be.rejectedWith(
           Error,
-          /could not create the directory/i
+          /could not create the directory/i,
         );
       });
     });
@@ -108,7 +108,7 @@ describe('package-changed', function () {
         it('should reject', async function () {
           await expect(packageDidChange('/some/where')).to.be.rejectedWith(
             Error,
-            /could not write hash file/i
+            /could not write hash file/i,
           );
         });
       });

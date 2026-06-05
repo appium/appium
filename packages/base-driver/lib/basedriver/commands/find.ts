@@ -5,7 +5,6 @@ import type {BaseDriver} from '../driver';
 import {mixin} from './mixin';
 
 declare module '../driver' {
-
   interface BaseDriver<C extends Constraints> extends IFindCommands {}
 }
 
@@ -14,21 +13,21 @@ async function findElOrEls<C extends Constraints>(
   strategy: string,
   selector: string,
   mult: true,
-  context?: any
+  context?: any,
 ): Promise<Element[]>;
 async function findElOrEls<C extends Constraints>(
   this: BaseDriver<C>,
   strategy: string,
   selector: string,
   mult: false,
-  context?: any
+  context?: any,
 ): Promise<Element>;
 async function findElOrEls<C extends Constraints>(
   this: BaseDriver<C>,
   strategy: string,
   selector: string,
   mult: boolean,
-  context?: any
+  context?: any,
 ): Promise<Element[] | Element> {
   throw new errors.NotImplementedError('Not implemented yet for find.');
 }
@@ -38,21 +37,21 @@ async function findElOrElsWithProcessing<C extends Constraints>(
   strategy: string,
   selector: string,
   mult: true,
-  context?: any
+  context?: any,
 ): Promise<Element[]>;
 async function findElOrElsWithProcessing<C extends Constraints>(
   this: BaseDriver<C>,
   strategy: string,
   selector: string,
   mult: false,
-  context?: any
+  context?: any,
 ): Promise<Element>;
 async function findElOrElsWithProcessing<C extends Constraints>(
   this: BaseDriver<C>,
   strategy: string,
   selector: string,
   mult: boolean,
-  context?: any
+  context?: any,
 ): Promise<Element[] | Element> {
   this.validateLocatorStrategy(strategy);
   try {
@@ -72,11 +71,19 @@ async function findElOrElsWithProcessing<C extends Constraints>(
 }
 
 const FindCommands: IFindCommands = {
-  async findElement<C extends Constraints>(this: BaseDriver<C>, strategy: string, selector: string) {
+  async findElement<C extends Constraints>(
+    this: BaseDriver<C>,
+    strategy: string,
+    selector: string,
+  ) {
     return await this.findElOrElsWithProcessing(strategy, selector, false);
   },
 
-  async findElements<C extends Constraints>(this: BaseDriver<C>, strategy: string, selector: string) {
+  async findElements<C extends Constraints>(
+    this: BaseDriver<C>,
+    strategy: string,
+    selector: string,
+  ) {
     return await this.findElOrElsWithProcessing(strategy, selector, true);
   },
 
@@ -84,7 +91,7 @@ const FindCommands: IFindCommands = {
     this: BaseDriver<C>,
     strategy: string,
     selector: string,
-    elementId: string
+    elementId: string,
   ) {
     return await this.findElOrElsWithProcessing(strategy, selector, false, elementId);
   },
@@ -93,7 +100,7 @@ const FindCommands: IFindCommands = {
     this: BaseDriver<C>,
     strategy: string,
     selector: string,
-    elementId: string
+    elementId: string,
   ) {
     return await this.findElOrElsWithProcessing(strategy, selector, true, elementId);
   },

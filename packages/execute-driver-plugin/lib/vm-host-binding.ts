@@ -88,7 +88,11 @@ export function wrapHostBindingForVmContext<T extends HostTarget>(hostValue: T):
  * Includes both object proxies and function proxies.
  */
 function isOurProxy(value: unknown): value is HostTarget {
-  return value !== null && (typeof value === 'object' || typeof value === 'function') && proxyToTarget.has(value);
+  return (
+    value !== null &&
+    (typeof value === 'object' || typeof value === 'function') &&
+    proxyToTarget.has(value)
+  );
 }
 
 /**
@@ -131,11 +135,13 @@ function wrapPromiseAsThenable(p: Promise<unknown>): unknown {
         then(onFulfilled?: unknown, onRejected?: unknown) {
           const adaptFulfill =
             onFulfilled != null && typeof onFulfilled === 'function'
-              ? (v: unknown) => Reflect.apply(onFulfilled as HostCallable, undefined, [wrapIfNeeded(v)])
+              ? (v: unknown) =>
+                  Reflect.apply(onFulfilled as HostCallable, undefined, [wrapIfNeeded(v)])
               : (v: unknown) => wrapIfNeeded(v);
           const adaptReject =
             onRejected != null && typeof onRejected === 'function'
-              ? (e: unknown) => Reflect.apply(onRejected as HostCallable, undefined, [wrapIfNeeded(e)])
+              ? (e: unknown) =>
+                  Reflect.apply(onRejected as HostCallable, undefined, [wrapIfNeeded(e)])
               : undefined;
           return wrapIfNeeded(p.then(adaptFulfill, adaptReject));
         },
@@ -144,8 +150,8 @@ function wrapPromiseAsThenable(p: Promise<unknown>): unknown {
             p.catch((e: unknown) =>
               onRejected != null && typeof onRejected === 'function'
                 ? Reflect.apply(onRejected as HostCallable, undefined, [wrapIfNeeded(e)])
-                : Promise.reject(wrapIfNeeded(e))
-            )
+                : Promise.reject(wrapIfNeeded(e)),
+            ),
           );
         },
         finally(onFinally?: unknown) {
@@ -267,7 +273,7 @@ function createDeepHandler(): ProxyHandler<HostTarget> {
     defineProperty(
       target: HostTarget,
       prop: string | symbol,
-      descriptor: PropertyDescriptor
+      descriptor: PropertyDescriptor,
     ): boolean {
       return Reflect.defineProperty(target, prop, mapDescriptorForHost(descriptor));
     },
@@ -282,7 +288,7 @@ function createDeepHandler(): ProxyHandler<HostTarget> {
 
     getOwnPropertyDescriptor(
       target: HostTarget,
-      prop: string | symbol
+      prop: string | symbol,
     ): PropertyDescriptor | undefined {
       if (isBlockedPrototypeKey(prop)) {
         return {

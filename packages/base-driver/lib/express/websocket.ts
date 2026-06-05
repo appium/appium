@@ -10,7 +10,7 @@ export const DEFAULT_WS_PATHNAME_PREFIX = '/ws';
 export async function addWebSocketHandler(
   this: AppiumServer,
   handlerPathname: string,
-  handlerServer: WSServer
+  handlerServer: WSServer,
 ): Promise<void> {
   this.webSocketsMapping[handlerPathname] = handlerServer;
 }
@@ -21,7 +21,7 @@ export async function addWebSocketHandler(
  */
 export async function getWebSocketHandlers(
   this: AppiumServer,
-  keysFilter: string | null = null
+  keysFilter: string | null = null,
 ): Promise<Record<string, WSServer>> {
   return Object.entries(this.webSocketsMapping).reduce<Record<string, WSServer>>(
     (acc, [pathname, wsServer]) => {
@@ -30,7 +30,7 @@ export async function getWebSocketHandlers(
       }
       return acc;
     },
-    {}
+    {},
   );
 }
 
@@ -40,7 +40,7 @@ export async function getWebSocketHandlers(
  */
 export async function removeWebSocketHandler(
   this: AppiumServer,
-  handlerPathname: string
+  handlerPathname: string,
 ): Promise<boolean> {
   const wsServer = this.webSocketsMapping?.[handlerPathname];
   if (!wsServer) {
@@ -71,9 +71,7 @@ export async function removeAllWebSocketHandlers(this: AppiumServer): Promise<bo
   }
 
   const results = await Promise.all(
-    Object.keys(this.webSocketsMapping).map((pathname) =>
-      this.removeWebSocketHandler(pathname)
-    )
+    Object.keys(this.webSocketsMapping).map((pathname) => this.removeWebSocketHandler(pathname)),
   );
   return results.some(Boolean);
 }

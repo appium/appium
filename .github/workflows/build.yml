@@ -197,3 +197,5 @@ jobs:
           run-build: 'false'
       - name: ESLint
         run: npm run lint:ci
+      - name: Prettier
+        run: npm run format:check

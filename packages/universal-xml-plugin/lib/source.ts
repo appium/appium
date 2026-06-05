@@ -31,7 +31,7 @@ const isNode = (k: string): boolean => !isAttr(k);
 export async function transformSourceXml(
   xmlStr: string,
   platform: string,
-  {metadata = {} as TransformMetadata, addIndexPath = false}: TransformSourceXmlOptions = {}
+  {metadata = {} as TransformMetadata, addIndexPath = false}: TransformSourceXmlOptions = {},
 ): Promise<{xml: string; unknowns: NodesAndAttributes}> {
   // first thing we want to do is modify the ios source root node, because it doesn't include the
   // necessary index attribute, so we add it if it's not there
@@ -80,7 +80,7 @@ export function getUniversalAttrName(attrName: string, platform: string): string
 export function transformNode(
   nodeObj: any,
   platform: string,
-  {metadata, addIndexPath, parentPath}: TransformNodeOptions
+  {metadata, addIndexPath, parentPath}: TransformNodeOptions,
 ): NodesAndAttributes {
   const unknownNodes: string[] = [];
   const unknownAttrs: string[] = [];
@@ -141,7 +141,7 @@ export function transformChildNodes(
   nodeObj: any,
   childNodeNames: string[],
   platform: string,
-  {metadata, addIndexPath, parentPath}: TransformNodeOptions
+  {metadata, addIndexPath, parentPath}: TransformNodeOptions,
 ): NodesAndAttributes {
   const unknownNodes: string[] = [];
   const unknownAttrs: string[] = [];
@@ -232,7 +232,7 @@ export function transformAttrs(nodeObj: any, attrs: string[], platform: string):
 function getUniversalName(
   nameMap: UniversalNameMap | Readonly<UniversalNameMap>,
   name: string,
-  platform: string
+  platform: string,
 ): string | null {
   for (const translatedName of Object.keys(nameMap)) {
     const sourceNodes = nameMap[translatedName]?.[platform];

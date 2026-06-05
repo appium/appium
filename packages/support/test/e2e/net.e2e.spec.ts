@@ -24,7 +24,7 @@ describe('#net', function () {
       const dstPath = path.join(tmpRoot, 'download.tmp');
       await downloadFile(
         'https://appium.io/docs/en/2.0/assets/images/appium-logo-white.png',
-        dstPath
+        dstPath,
       );
       await expect(fs.exists(dstPath)).to.eventually.be.true;
     });

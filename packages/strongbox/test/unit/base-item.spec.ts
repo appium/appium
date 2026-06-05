@@ -20,7 +20,7 @@ describe('Strongbox', function () {
 
   before(async function () {
     const chai = await import('chai');
-    const chaiAsPromised = await import ('chai-as-promised');
+    const chaiAsPromised = await import('chai-as-promised');
     chai.use(chaiAsPromised.default);
     chai.should();
     expect = chai.expect;
@@ -39,7 +39,7 @@ describe('Strongbox', function () {
           })
           .dynamic(), // this allows us to change the mock behavior on-the-fly
         'env-paths': sandbox.stub().returns({data: DATA_DIR}),
-      })
+      }),
     ));
   });
 

@@ -2,7 +2,6 @@
  * Interface for all WebDriver extension commands from other protocols proxied to the external driver.
  */
 export interface IOtherProtocolCommands {
-
   /**
    * Chromium DevTools
    */
@@ -152,7 +151,10 @@ export interface IOtherProtocolCommands {
    * @param sensorType - the virtual pressure source type
    * @param sample - the pressure state
    */
-  updateVirtualPressureSource?(pressureSourceType: string, sample: PressureSourceState): Promise<void>;
+  updateVirtualPressureSource?(
+    pressureSourceType: string,
+    sample: PressureSourceState,
+  ): Promise<void>;
 
   /**
    * Delete a virtual pressure source
@@ -383,7 +385,11 @@ export type RPHRegistrationMode = 'autoAccept' | 'autoReject' | 'none';
 
 // Secure Payment Confirmation
 
-export type SPCTransactionMode = 'autoAccept' | 'autoChooseToAuthAnotherWay' | 'autoReject' | 'autoOptOut';
+export type SPCTransactionMode =
+  | 'autoAccept'
+  | 'autoChooseToAuthAnotherWay'
+  | 'autoReject'
+  | 'autoOptOut';
 
 // Compute Pressure
 

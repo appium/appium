@@ -37,14 +37,12 @@ describe('timeout', function () {
         await expect(driver.timeouts('random timeout', 42)).to.be.rejected;
       });
       it('should throw an error if something random is sent to scriptDuration', async function () {
-        await expect(
-          driver.timeouts(undefined, undefined, 123, undefined, undefined)
-        ).to.be.rejected;
+        await expect(driver.timeouts(undefined, undefined, 123, undefined, undefined)).to.be
+          .rejected;
       });
       it('should throw an error if something random is sent to pageLoadDuration', async function () {
-        await expect(
-          driver.timeouts(undefined, undefined, undefined, 123, undefined)
-        ).to.be.rejected;
+        await expect(driver.timeouts(undefined, undefined, undefined, 123, undefined)).to.be
+          .rejected;
       });
     });
     describe('implicit wait', function () {

@@ -29,7 +29,11 @@ export default class DriverCliCommand extends ExtensionCliCommand<'driver'> {
    *
    * @param opts - install options
    */
-  async install({driver, installType, packageName}: DriverInstallOpts): Promise<ExtRecord<'driver'>> {
+  async install({
+    driver,
+    installType,
+    packageName,
+  }: DriverInstallOpts): Promise<ExtRecord<'driver'>> {
     return await super._install({
       installSpec: driver,
       installType,
@@ -106,16 +110,20 @@ export default class DriverCliCommand extends ExtensionCliCommand<'driver'> {
    * @param driverMetadata - `appium` metadata from extension package
    * @param installSpec - install spec from CLI
    */
-  override validateExtensionFields(driverMetadata: ExtMetadata<'driver'>, installSpec: string): void {
+  override validateExtensionFields(
+    driverMetadata: ExtMetadata<'driver'>,
+    installSpec: string,
+  ): void {
     const missingFields = REQ_DRIVER_FIELDS.reduce<string[]>(
-      (acc, field) => (driverMetadata[field as keyof typeof driverMetadata] ? acc : [...acc, field]),
-      []
+      (acc, field) =>
+        driverMetadata[field as keyof typeof driverMetadata] ? acc : [...acc, field],
+      [],
     );
 
     if (!util.isEmpty(missingFields)) {
       throw new Error(
         `Driver "${installSpec}" did not expose correct fields for compatibility ` +
-          `with Appium. Missing fields: ${JSON.stringify(missingFields)}`
+          `with Appium. Missing fields: ${JSON.stringify(missingFields)}`,
       );
     }
   }

@@ -39,14 +39,14 @@ export class ExecuteDriverPlugin extends BasePlugin {
     driver: ExternalDriver,
     script: string,
     scriptType: string = 'webdriverio',
-    timeoutMs: number = DEFAULT_SCRIPT_TIMEOUT_MS
+    timeoutMs: number = DEFAULT_SCRIPT_TIMEOUT_MS,
   ) => {
     if (!driver.isFeatureEnabled(FEAT_FLAG)) {
       throw new Error(
         `Execute driver script functionality is not available ` +
           `unless server is started with --allow-insecure including ` +
           `the '${FEAT_FLAG}' flag, e.g., ` +
-          `--allow-insecure=${driver.opts.automationName ?? '*'}:${FEAT_FLAG}`
+          `--allow-insecure=${driver.opts.automationName ?? '*'}:${FEAT_FLAG}`,
       );
     }
 
@@ -57,7 +57,7 @@ export class ExecuteDriverPlugin extends BasePlugin {
     if (!driver.serverHost || !driver.serverPort) {
       throw new Error(
         'Address or port of running server were not defined; this ' +
-          'is required. This is probably a programming error in the driver'
+          'is required. This is probably a programming error in the driver',
       );
     }
 
@@ -80,7 +80,7 @@ export class ExecuteDriverPlugin extends BasePlugin {
       capabilities: driver.caps,
     };
     this.log.info(
-      `Constructed webdriverio driver options; W3C mode is ${driverOpts.isW3C ? 'on' : 'off'}`
+      `Constructed webdriverio driver options; W3C mode is ${driverOpts.isW3C ? 'on' : 'off'}`,
     );
 
     // fork the execution script as a child process
@@ -102,9 +102,7 @@ export class ExecuteDriverPlugin extends BasePlugin {
           scriptProc.once('message', resolve); // this is node IPC
         });
 
-        this.log.info(
-          'Received execute driver script result from child process, shutting it down'
-        );
+        this.log.info('Received execute driver script result from child process, shutting it down');
 
         if (res.error) {
           throw new Error(res.error.message);
@@ -127,7 +125,7 @@ export class ExecuteDriverPlugin extends BasePlugin {
 
         throw new Error(
           `Execute driver script timed out after ${timeoutMs}ms. ` +
-            `You can adjust this with the 'timeout' parameter.`
+            `You can adjust this with the 'timeout' parameter.`,
         );
       };
 

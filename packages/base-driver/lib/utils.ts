@@ -48,7 +48,7 @@ export function omitKeys<T extends Record<string, unknown>>(obj: T, keys: readon
 /** Return a shallow copy of `obj` containing only listed keys. */
 export function pick<T extends Record<string, unknown>>(
   obj: T,
-  keys: readonly string[]
+  keys: readonly string[],
 ): Partial<T> {
   const keysToPick = new Set(keys);
   return Object.fromEntries(Object.entries(obj).filter(([k]) => keysToPick.has(k))) as Partial<T>;
@@ -57,18 +57,16 @@ export function pick<T extends Record<string, unknown>>(
 /** Return a shallow copy of `obj` whose entries pass `predicate`. */
 export function pickBy<T extends Record<string, unknown>>(
   obj: T,
-  predicate: (value: T[keyof T], key: keyof T) => boolean
+  predicate: (value: T[keyof T], key: keyof T) => boolean,
 ): Partial<T> {
   return Object.fromEntries(
-    Object.entries(obj).filter(([key, value]) =>
-      predicate(value as T[keyof T], key as keyof T)
-    )
+    Object.entries(obj).filter(([key, value]) => predicate(value as T[keyof T], key as keyof T)),
   ) as Partial<T>;
 }
 
 /** Compile a lodash-style template string (`<%= expression %>`) into a render function. */
 export function compileLodashTemplate(
-  template: string
+  template: string,
 ): (params: Record<string, unknown>) => string {
   const parts: string[] = [];
   let lastIndex = 0;

@@ -9,6 +9,7 @@ package.json
 **/*.html
 **/generated/**
 # generated
+packages/schema/lib/appium-config.schema.json
 packages/types/lib/appium-config.ts
 **/*.hbs
 

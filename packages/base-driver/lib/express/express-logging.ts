@@ -34,16 +34,13 @@ function startLogFormatterHandler(tokens: unknown, req: Request, res: Response):
     try {
       reqBody = util.truncateString(
         typeof req.body === 'string' ? req.body : JSON.stringify(req.body),
-        {length: MAX_LOG_BODY_LENGTH}
+        {length: MAX_LOG_BODY_LENGTH},
       );
     } catch {
       // ignore
     }
   }
-  log.info(
-    requestStartLoggingFormat(tokens, req, res),
-    logger.markSensitive(reqBody.grey)
-  );
+  log.info(requestStartLoggingFormat(tokens, req, res), logger.markSensitive(reqBody.grey));
   return undefined;
 }
 
@@ -57,11 +54,7 @@ function compile(fmt: string): FormatFn {
   return new Function('tokens', 'req', 'res', js) as FormatFn;
 }
 
-function requestEndLoggingFormat(
-  tokens: MorganTokens,
-  req: Request,
-  res: Response
-): string {
+function requestEndLoggingFormat(tokens: MorganTokens, req: Request, res: Response): string {
   const status = res.statusCode;
   let statusStr = ':status';
   if (status >= 500) {
@@ -74,12 +67,10 @@ function requestEndLoggingFormat(
     statusStr = statusStr.green;
   }
   const fn = compile(
-    `${'<-- :method :url '.white}${statusStr} ${':response-time ms - :res[content-length]'.grey}`
+    `${'<-- :method :url '.white}${statusStr} ${':response-time ms - :res[content-length]'.grey}`,
   );
   return fn(tokens, req, res);
 }
 
-const requestStartLoggingFormat = compile(
-  `${'-->'.white} ${':method'.white} ${':url'.white}`
-);
+const requestStartLoggingFormat = compile(`${'-->'.white} ${':method'.white} ${':url'.white}`);
 // #endregion

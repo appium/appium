@@ -84,7 +84,7 @@ export async function findInPkgDir(
  * @returns Path to `mkdocs.yml`
  */
 export const findMkDocsYml = util.memoize(
-  async (cwd = process.cwd()) => await findInPkgDir(NAME_MKDOCS_YML, cwd)
+  async (cwd = process.cwd()) => await findInPkgDir(NAME_MKDOCS_YML, cwd),
 );
 
 /**
@@ -143,7 +143,8 @@ type WhichFunction = (cmd: string, opts?: {nothrow: boolean}) => Promise<string 
  * @param content - File contents
  */
 export function writeFileString(filepath: string, content: JsonValue) {
-  const data: string = typeof content === 'string' ? content : JSON.stringify(content, undefined, 2);
+  const data: string =
+    typeof content === 'string' ? content : JSON.stringify(content, undefined, 2);
   return fs.writeFile(filepath, data, {
     encoding: 'utf8',
   });

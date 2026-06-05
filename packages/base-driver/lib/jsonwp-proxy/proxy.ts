@@ -31,7 +31,7 @@ import type {AxiosError, AxiosResponse, RawAxiosRequestConfig} from 'axios';
 const DEFAULT_LOG = logger.getLogger('WD Proxy');
 const DEFAULT_REQUEST_TIMEOUT = 240000;
 const COMMAND_WITH_SESSION_ID_MATCHER = pathToRegexMatch(
-  '{/*prefix}/session/:sessionId{/*command}'
+  '{/*prefix}/session/:sessionId{/*command}',
 );
 
 const {MJSONWP, W3C} = PROTOCOLS;
@@ -71,7 +71,7 @@ export class JWProxy {
   constructor(opts: ProxyOptions = {}) {
     const filteredOptsWithoutLog = omit(
       pick(opts as Record<string, unknown>, ALLOWED_OPTS),
-      'log'
+      'log',
     ) as Omit<ProxyOptions, 'log'>;
     const options = {
       scheme: 'http',
@@ -158,11 +158,8 @@ export class JWProxy {
   getUrlForProxy(url: string, method?: HTTPMethod): string {
     const parsedUrl = this._parseUrl(url);
     const normalizedPathname = this._toNormalizedPathname(parsedUrl);
-    const commandName = normalizedPathname
-      ? routeToCommandName(normalizedPathname, method)
-      : '';
-    const requiresSessionId =
-      !commandName || (commandName && isSessionCommand(commandName));
+    const commandName = normalizedPathname ? routeToCommandName(normalizedPathname, method) : '';
+    const requiresSessionId = !commandName || (commandName && isSessionCommand(commandName));
     const proxyPrefix = `${this.scheme}://${this.server}:${this.port}${this.base}`;
     let proxySuffix = normalizedPathname ? `/${normalizedPathname.replace(/^\/+/, '')}` : '';
     if (parsedUrl.search) {
@@ -172,9 +169,7 @@ export class JWProxy {
       return `${proxyPrefix}${proxySuffix}`;
     }
     if (!this.sessionId) {
-      throw new ReferenceError(
-        `Session ID is not set, but saw a URL that requires it (${url})`
-      );
+      throw new ReferenceError(`Session ID is not set, but saw a URL that requires it (${url})`);
     }
     return `${proxyPrefix}/session/${this.sessionId}${proxySuffix}`;
   }
@@ -185,7 +180,7 @@ export class JWProxy {
   async proxy(
     url: string,
     method: string,
-    body: HTTPBody = null
+    body: HTTPBody = null,
   ): Promise<[ProxyResponse, HTTPBody]> {
     method = method.toUpperCase();
     const newUrl = this.getUrlForProxy(url, method as HTTPMethod);
@@ -217,11 +212,11 @@ export class JWProxy {
           this.log.warn(
             'Invalid body payload (%s): %s',
             (error as Error).message,
-            logger.markSensitive(truncateBody(body))
+            logger.markSensitive(truncateBody(body)),
           );
           throw new Error(
             'Cannot interpret the request body as valid JSON. Check the server log for more details.',
-            {cause: error}
+            {cause: error},
           );
         }
       } else {
@@ -235,7 +230,7 @@ export class JWProxy {
       url || '/',
       method,
       newUrl,
-      reqOpts.data ? logger.markSensitive(truncateBody(reqOpts.data)) : 'no'
+      reqOpts.data ? logger.markSensitive(truncateBody(reqOpts.data)) : 'no',
     );
 
     const throwProxyError = (error: unknown): never => {
@@ -265,8 +260,7 @@ export class JWProxy {
         if (status === 200) {
           const value = data.value as Record<string, unknown> | undefined;
           const raw = data.sessionId ?? value?.sessionId;
-          this.sessionId =
-            typeof raw === 'string' ? raw : raw != null ? String(raw) : null;
+          this.sessionId = typeof raw === 'string' ? raw : raw != null ? String(raw) : null;
         }
         this.downstreamProtocol = this.getProtocolFromResBody(data) ?? this.downstreamProtocol;
         this.log.info(`Determined the downstream protocol as '${this.downstreamProtocol}'`);
@@ -291,18 +285,14 @@ export class JWProxy {
           this.log.info(
             util.hasValue(err.response.status)
               ? `Got response with status ${err.response.status}: ${error}`
-              : `Got response with unknown status: ${error}`
+              : `Got response with unknown status: ${error}`,
           );
         }
       } else {
         proxyErrorMsg = `Could not proxy command to the remote server. Original error: ${err.message}`;
         this.log.info(err.message);
       }
-      throw new errors.ProxyRequestError(
-        proxyErrorMsg,
-        err.response?.data,
-        err.response?.status
-      );
+      throw new errors.ProxyRequestError(proxyErrorMsg, err.response?.data, err.response?.status);
     }
   }
 
@@ -324,13 +314,11 @@ export class JWProxy {
   async proxyCommand(
     url: string,
     method: HTTPMethod,
-    body: HTTPBody = null
+    body: HTTPBody = null,
   ): Promise<[ProxyResponse, HTTPBody]> {
     const parsedUrl = this._parseUrl(url);
     const normalizedPathname = this._toNormalizedPathname(parsedUrl);
-    const commandName = normalizedPathname
-      ? routeToCommandName(normalizedPathname, method)
-      : '';
+    const commandName = normalizedPathname ? routeToCommandName(normalizedPathname, method) : '';
     if (!commandName) {
       return await this.proxy(url, method, body);
     }
@@ -342,11 +330,7 @@ export class JWProxy {
   /**
    * Executes a WebDriver command and returns the unwrapped `value` field (or throws).
    */
-  async command(
-    url: string,
-    method: HTTPMethod,
-    body: HTTPBody = null
-  ): Promise<HTTPBody> {
+  async command(url: string, method: HTTPMethod, body: HTTPBody = null): Promise<HTTPBody> {
     let response: ProxyResponse;
     let resBodyObj: HTTPBody;
     try {
@@ -369,9 +353,12 @@ export class JWProxy {
         if (util.isPlainObject(message) && Object.hasOwn(message, 'message')) {
           message = (message as Record<string, unknown>).message;
         }
-        throw errorFromMJSONWPStatusCode(status, util.isEmpty(message)
-          ? getSummaryByCode(status)
-          : (message as string | {message: string}));
+        throw errorFromMJSONWPStatusCode(
+          status,
+          util.isEmpty(message)
+            ? getSummaryByCode(status)
+            : (message as string | {message: string}),
+        );
       }
     } else if (protocol === W3C) {
       if (response.statusCode < 300) {
@@ -382,7 +369,7 @@ export class JWProxy {
         throw errorFromW3CJsonCode(
           value.error as string,
           (value.message as string) ?? '',
-          value.stacktrace as string | undefined
+          value.stacktrace as string | undefined,
         );
       }
     } else if (response.statusCode === 200) {
@@ -392,7 +379,7 @@ export class JWProxy {
       `Did not know what to do with response code '${response.statusCode}' ` +
         `and response body '${util.truncateString(JSON.stringify(resBodyObj), {
           length: 300,
-        })}'`
+        })}'`,
     );
   }
 
@@ -417,20 +404,22 @@ export class JWProxy {
       const [response, body] = await this.proxyCommand(
         req.originalUrl,
         req.method as HTTPMethod,
-        req.body
+        req.body,
       );
       statusCode = response.statusCode;
       resBodyObj = body;
     } catch (err: unknown) {
       [statusCode, resBodyObj] = getResponseForW3CError(
-        isErrorType(err, errors.ProxyRequestError) ? (err as InstanceType<typeof errors.ProxyRequestError>).getActualError() : err
+        isErrorType(err, errors.ProxyRequestError)
+          ? (err as InstanceType<typeof errors.ProxyRequestError>).getActualError()
+          : err,
       );
     }
     res.setHeader('content-type', 'application/json; charset=utf-8');
     if (!util.isPlainObject(resBodyObj)) {
       const error = new errors.UnknownError(
         `The downstream server response with the status code ${statusCode} is not a valid JSON object: ` +
-          util.truncateString(`${resBodyObj}`, {length: 300})
+          util.truncateString(`${resBodyObj}`, {length: 300}),
       );
       [statusCode, resBodyObj] = getResponseForW3CError(error);
     }
@@ -494,10 +483,14 @@ export class JWProxy {
     // This is needed for the backward compatibility
     // if drivers don't set reqBasePath properly
     if (!this.reqBasePath) {
-      if (match && match.params && Array.isArray((match.params as Record<string, unknown>).prefix)) {
+      if (
+        match &&
+        match.params &&
+        Array.isArray((match.params as Record<string, unknown>).prefix)
+      ) {
         pathname = pathname.replace(
           `/${((match.params as Record<string, unknown>).prefix as string[]).join('/')}`,
-          ''
+          '',
         );
       } else if (pathname.startsWith('/wd/hub')) {
         pathname = pathname.replace('/wd/hub', '');

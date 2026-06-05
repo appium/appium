@@ -40,7 +40,7 @@ export default defineConfig([
       n: nodePlugin,
       perfectionist,
       promise: pluginPromise,
-      unicorn
+      unicorn,
     },
     extends: [
       'js/recommended',
@@ -55,7 +55,7 @@ export default defineConfig([
           project: ['tsconfig.json', './packages/*/tsconfig.json'],
           // TODO: remove this once we have single tsconfig with references
           noWarnOnMultipleProjects: true,
-        })
+        }),
       ],
       jsdoc: {
         mode: 'typescript',
@@ -163,14 +163,14 @@ export default defineConfig([
       'promise/param-names': 'warn',
 
       'arrow-body-style': 'warn',
-      'curly': 'error',
+      curly: 'error',
       'dot-notation': 'error',
-      'eqeqeq': ['error', 'smart'],
+      eqeqeq: ['error', 'smart'],
       'no-console': 'error',
       'no-empty': 'off',
       'no-prototype-builtins': 'warn',
       'object-shorthand': 'error',
-      'radix': 'error',
+      radix: 'error',
       'require-atomic-updates': 'off',
       /**
        * Allow `async` functions without `await`.
@@ -216,7 +216,7 @@ export default defineConfig([
           },
         },
       ],
-    }
+    },
   },
 
   {
@@ -278,11 +278,5 @@ export default defineConfig([
     },
   },
   fs.existsSync(gitignorePath) ? includeIgnoreFile(gitignorePath) : {},
-  globalIgnores([
-    '**/.*',
-    '**/*-d.ts',
-    '**/*.min.js',
-    '**/build/**',
-    '**/coverage/**',
-  ]),
+  globalIgnores(['**/.*', '**/*-d.ts', '**/*.min.js', '**/build/**', '**/coverage/**']),
 ]);

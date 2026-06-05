@@ -50,7 +50,7 @@ describe('schema', function () {
       validate,
     } = rewiremock.proxy(
       () => require('../../../lib/schema/schema') as typeof SchemaModule,
-      mocks
+      mocks,
     ) as typeof SchemaModule);
     resetSchema();
   });
@@ -65,7 +65,7 @@ describe('schema', function () {
         it('should throw a TypeError', async function () {
           await expect((registerSchema as (...args: unknown[]) => unknown)()).to.be.rejectedWith(
             TypeError,
-            /expected extension type/i
+            /expected extension type/i,
           );
         });
       });
@@ -73,7 +73,7 @@ describe('schema', function () {
       describe('when provided `type` and `name`, but not `schema`', function () {
         it('should throw a TypeError', async function () {
           await expect(
-            (registerSchema as (...args: unknown[]) => unknown)(DRIVER_TYPE, 'whoopeee')
+            (registerSchema as (...args: unknown[]) => unknown)(DRIVER_TYPE, 'whoopeee'),
           ).to.be.rejectedWith(TypeError, /expected extension type/i);
         });
       });
@@ -83,7 +83,7 @@ describe('schema', function () {
           await expect(
             (registerSchema as (...args: unknown[]) => unknown)(DRIVER_TYPE, undefined, {
               title: 'whoopeee',
-            })
+            }),
           ).to.be.rejectedWith(TypeError, /expected extension type/i);
         });
       });
@@ -92,7 +92,7 @@ describe('schema', function () {
         describe('when schema is an object but not a plain object', function () {
           it('should throw', async function () {
             await expect(
-              (registerSchema as (...args: unknown[]) => unknown)(DRIVER_TYPE, 'whoopeee', [45])
+              (registerSchema as (...args: unknown[]) => unknown)(DRIVER_TYPE, 'whoopeee', [45]),
             ).to.be.rejectedWith(SchemaUnsupportedSchemaError, /must be a plain object/i);
           });
         });
@@ -102,7 +102,7 @@ describe('schema', function () {
             await expect(
               (registerSchema as (...args: unknown[]) => unknown)(DRIVER_TYPE, 'whoopee', {
                 $async: true,
-              })
+              }),
             ).to.be.rejectedWith(SchemaUnsupportedSchemaError, /cannot be an async schema/i);
           });
         });
@@ -110,7 +110,7 @@ describe('schema', function () {
         describe('when the schema is boolean', function () {
           it('should throw', async function () {
             await expect(
-              (registerSchema as (...args: unknown[]) => unknown)(DRIVER_TYPE, 'whoopee', true)
+              (registerSchema as (...args: unknown[]) => unknown)(DRIVER_TYPE, 'whoopee', true),
             ).to.be.rejectedWith(SchemaUnsupportedSchemaError);
           });
         });
@@ -132,7 +132,7 @@ describe('schema', function () {
             await expect(
               registerSchema(DRIVER_TYPE, 'whoopee', {
                 title: 'cushion?',
-              })
+              }),
             ).to.be.rejectedWith(Error, /conflicts with an existing schema/);
           });
         });
@@ -187,15 +187,14 @@ describe('schema', function () {
       describe('when the schema ID is a reference', function () {
         it('should return the schema for the reference', function () {
           expect(
-            getSchema(`${APPIUM_CONFIG_SCHEMA_ID}#/properties/server/properties/address`)
-          )
-            .to.exist.and.to.eql(
-              (
-                AppiumConfigJsonSchema as {
-                  properties: {server: {properties: {address: unknown}}};
-                }
-              ).properties.server.properties.address
-            );
+            getSchema(`${APPIUM_CONFIG_SCHEMA_ID}#/properties/server/properties/address`),
+          ).to.exist.and.to.eql(
+            (
+              AppiumConfigJsonSchema as {
+                properties: {server: {properties: {address: unknown}}};
+              }
+            ).properties.server.properties.address,
+          );
         });
       });
 
@@ -268,7 +267,7 @@ describe('schema', function () {
         await registerSchema(
           DRIVER_TYPE,
           'fake',
-          require('@appium/fake-driver/build/lib/fake-driver-schema').default
+          require('@appium/fake-driver/build/lib/fake-driver-schema').default,
         );
         await finalizeSchema();
 
@@ -336,9 +335,7 @@ describe('schema', function () {
         type ServerDriverSchema = {
           properties: {server: {properties: {driver: {properties: Record<string, unknown>}}}};
         };
-        const baseSchemaWithRefs = structuredClone(
-          AppiumConfigJsonSchema as ServerDriverSchema
-        );
+        const baseSchemaWithRefs = structuredClone(AppiumConfigJsonSchema as ServerDriverSchema);
         baseSchemaWithRefs.properties.server.properties.driver.properties.stuff = {
           $ref: 'driver-stuff.json',
           $comment: 'stuff',
@@ -403,7 +400,7 @@ describe('schema', function () {
         describe('when provided a valid value', function () {
           it('should return an empty array of no errors', function () {
             expect(
-              validate('127.0.0.1', 'appium.json#/properties/server/properties/address')
+              validate('127.0.0.1', 'appium.json#/properties/server/properties/address'),
             ).to.eql([]);
           });
         });
@@ -411,7 +408,7 @@ describe('schema', function () {
         describe('when provided an invalid value', function () {
           it('should return an array containing errors', function () {
             expect(
-              validate('127.0.0.1', 'appium.json#/properties/server/properties/port')
+              validate('127.0.0.1', 'appium.json#/properties/server/properties/port'),
             ).to.be.an('array').and.to.not.be.empty;
           });
         });
@@ -439,9 +436,8 @@ describe('schema', function () {
 
         describe('when provided an invalid value', function () {
           it('should return an array containing errors', function () {
-            expect(validate({server: {driver: {stuff: {answer: 101}}}}))
-              .to.be.an('array')
-              .and.to.not.be.empty;
+            expect(validate({server: {driver: {stuff: {answer: 101}}}})).to.be.an('array').and.to
+              .not.be.empty;
           });
         });
       });
@@ -455,9 +451,8 @@ describe('schema', function () {
 
         describe('when provided an invalid value', function () {
           it('should return an array containing errors', function () {
-            expect(validate(101, 'driver-stuff.json#/properties/answer'))
-              .to.be.an('array')
-              .and.to.not.be.empty;
+            expect(validate(101, 'driver-stuff.json#/properties/answer')).to.be.an('array').and.to
+              .not.be.empty;
           });
         });
       });

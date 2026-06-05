@@ -220,8 +220,7 @@ function makeUpdateArgs(type: ExtensionType): ArgumentDefinitions {
         required: false,
         default: false,
         action: 'store_true',
-        help:
-          'Include any available major revision updates, which may have breaking changes',
+        help: 'Include any available major revision updates, which may have breaking changes',
       },
     ],
   ]);

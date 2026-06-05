@@ -52,11 +52,8 @@ describe('DeviceSettings', function () {
         it('should reject with an InvalidArgumentError', async function () {
           const deviceSettings = new DeviceSettings();
           await expect(
-            (deviceSettings.update as (newSettings?: Record<string, unknown>) => Promise<void>)()
-          ).to.be.rejectedWith(
-            InvalidArgumentError,
-            /with valid JSON/i
-          );
+            (deviceSettings.update as (newSettings?: Record<string, unknown>) => Promise<void>)(),
+          ).to.be.rejectedWith(InvalidArgumentError, /with valid JSON/i);
         });
       });
 
@@ -64,11 +61,8 @@ describe('DeviceSettings', function () {
         it('should reject with an InvalidArgumentError', async function () {
           const deviceSettings = new DeviceSettings();
           await expect(
-            deviceSettings.update(null as unknown as Record<string, unknown>)
-          ).to.be.rejectedWith(
-            InvalidArgumentError,
-            /with valid JSON/i
-          );
+            deviceSettings.update(null as unknown as Record<string, unknown>),
+          ).to.be.rejectedWith(InvalidArgumentError, /with valid JSON/i);
         });
       });
 
@@ -81,7 +75,7 @@ describe('DeviceSettings', function () {
           const deviceSettings = new DeviceSettings();
           await expect(deviceSettings.update({stuff: 'things'})).to.be.rejectedWith(
             InvalidArgumentError,
-            /object size exceeds/i
+            /object size exceeds/i,
           );
         });
       });
@@ -97,7 +91,7 @@ describe('DeviceSettings', function () {
           it('should not call the `_onSettingsUpdate` listener', async function () {
             const deviceSettings = new DeviceSettings(
               {stuff: 'things'},
-              onSettingsUpdate as SettingsUpdateListener<Record<string, unknown>>
+              onSettingsUpdate as SettingsUpdateListener<Record<string, unknown>>,
             );
             await deviceSettings.update({stuff: 'things'});
             expect(onSettingsUpdate.called).to.be.false;
@@ -108,12 +102,10 @@ describe('DeviceSettings', function () {
           it('should call the `_onSettingsUpdate` listener', async function () {
             const deviceSettings = new DeviceSettings(
               {},
-              onSettingsUpdate as SettingsUpdateListener<Record<string, unknown>>
+              onSettingsUpdate as SettingsUpdateListener<Record<string, unknown>>,
             );
             await deviceSettings.update({stuff: 'things'});
-            expect(
-              onSettingsUpdate.calledOnceWithExactly('stuff', 'things', undefined)
-            ).to.be.true;
+            expect(onSettingsUpdate.calledOnceWithExactly('stuff', 'things', undefined)).to.be.true;
           });
         });
       });

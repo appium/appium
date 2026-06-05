@@ -13,8 +13,8 @@ describe('npm module', function () {
         await expect(
           npm.getLatestVersion(
             process.cwd(),
-            'crusher-brush-resize-disfigure-props-desktop-blatancy-prologue'
-          )
+            'crusher-brush-resize-disfigure-props-desktop-blatancy-prologue',
+          ),
         ).to.not.be.rejected;
       });
 
@@ -22,8 +22,8 @@ describe('npm module', function () {
         await expect(
           npm.getLatestVersion(
             process.cwd(),
-            'crusher-brush-resize-disfigure-props-desktop-blatancy-prologue'
-          )
+            'crusher-brush-resize-disfigure-props-desktop-blatancy-prologue',
+          ),
         ).to.eventually.be.null;
       });
     });
@@ -36,8 +36,8 @@ describe('npm module', function () {
           npm.getLatestSafeUpgradeVersion(
             process.cwd(),
             'crusher-brush-resize-disfigure-props-desktop-blatancy-prologue',
-            '1.0.0'
-          )
+            '1.0.0',
+          ),
         ).to.eventually.be.null;
       });
 
@@ -46,8 +46,8 @@ describe('npm module', function () {
           npm.getLatestSafeUpgradeVersion(
             process.cwd(),
             'crusher-brush-resize-disfigure-props-desktop-blatancy-prologue',
-            '1.0.0'
-          )
+            '1.0.0',
+          ),
         ).to.eventually.be.null;
       });
     });

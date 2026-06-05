@@ -200,7 +200,11 @@ describe('config file behavior', function () {
 
         beforeEach(async function () {
           resetSchema();
-          await registerSchema(DRIVER_TYPE, 'fake', extSchema as Parameters<typeof registerSchema>[2]);
+          await registerSchema(
+            DRIVER_TYPE,
+            'fake',
+            extSchema as Parameters<typeof registerSchema>[2],
+          );
           await finalizeSchema();
         });
 
@@ -239,7 +243,7 @@ describe('config file behavior', function () {
           return this.skip();
         }
         await expect(readConfigFile(INVALID_JSON_FILEPATH)).to.be.rejectedWith(
-          new RegExp(`${util.escapeRegExp(INVALID_JSON_FILEPATH)}`)
+          new RegExp(`${util.escapeRegExp(INVALID_JSON_FILEPATH)}`),
         );
       });
     });

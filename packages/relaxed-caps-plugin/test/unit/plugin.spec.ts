@@ -65,9 +65,10 @@ describe('relaxed caps plugin', function () {
       expect(rcp['fixCapsIfW3C']({alwaysMatch: MIXED_CAPS})).to.eql({alwaysMatch: ADJUSTED_CAPS});
     });
     it('should not transform already prefixed caps', function () {
-      expect(
-        rcp['fixCapsIfW3C']({firstMatch: [VENDOR_CAPS], alwaysMatch: VENDOR_CAPS})
-      ).to.eql({firstMatch: [ADJUSTED_VENDOR_CAPS], alwaysMatch: ADJUSTED_VENDOR_CAPS});
+      expect(rcp['fixCapsIfW3C']({firstMatch: [VENDOR_CAPS], alwaysMatch: VENDOR_CAPS})).to.eql({
+        firstMatch: [ADJUSTED_VENDOR_CAPS],
+        alwaysMatch: ADJUSTED_VENDOR_CAPS,
+      });
     });
     it('should not transform non-W3C caps', function () {
       expect(rcp['fixCapsIfW3C']({desiredCapabilities: VENDOR_CAPS})).to.eql({

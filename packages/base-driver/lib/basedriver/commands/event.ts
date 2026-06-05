@@ -16,7 +16,11 @@ const EventCommands: IEventCommands = {
    * separation
    * @param event - the event name
    */
-  async logCustomEvent<C extends Constraints>(this: BaseDriver<C>, vendor: string, event: string): Promise<void> {
+  async logCustomEvent<C extends Constraints>(
+    this: BaseDriver<C>,
+    vendor: string,
+    event: string,
+  ): Promise<void> {
     this.logEvent(`${vendor}:${event}`);
   },
 
@@ -26,9 +30,10 @@ const EventCommands: IEventCommands = {
    * It returns all events if the type is not provided or empty string/array.
    * @returns the event history log object
    */
-  async getLogEvents<C extends Constraints>(this: BaseDriver<C>, type: string | string[]): Promise<
-    Partial<EventHistory>
-  > {
+  async getLogEvents<C extends Constraints>(
+    this: BaseDriver<C>,
+    type: string | string[],
+  ): Promise<Partial<EventHistory>> {
     if (util.isEmpty(type)) {
       return this.eventHistory;
     }
@@ -42,7 +47,7 @@ const EventCommands: IEventCommands = {
         }
         return acc;
       },
-      {}
+      {},
     ) as Record<string, number>;
   },
 };

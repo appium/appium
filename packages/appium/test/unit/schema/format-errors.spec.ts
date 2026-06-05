@@ -31,9 +31,9 @@ describe('schema/format-errors', function () {
 
   describe('formatErrors()', function () {
     /** Minimal placeholder; tests only assert wiring to better-ajv-errors, not real AJV shapes. */
-    const oneError = [{keyword: 'test', instancePath: '', schemaPath: '#', params: {}}] as Parameters<
-      typeof formatErrors
-    >[0];
+    const oneError = [
+      {keyword: 'test', instancePath: '', schemaPath: '#', params: {}},
+    ] as Parameters<typeof formatErrors>[0];
 
     describe('when provided `errors` as an empty array', function () {
       it('should throw', function () {
@@ -57,7 +57,10 @@ describe('schema/format-errors', function () {
       it('should call `betterAjvErrors()` with non-CLI output format', function () {
         formatErrors(oneError, {}, {pretty: false});
         expect(
-          betterAjvMock.calledWith(schema.getSchema(), {}, oneError, {format: 'js', json: undefined})
+          betterAjvMock.calledWith(schema.getSchema(), {}, oneError, {
+            format: 'js',
+            json: undefined,
+          }),
         ).to.be.true;
       });
     });
@@ -69,7 +72,7 @@ describe('schema/format-errors', function () {
           betterAjvMock.calledWith(schema.getSchema(), {}, oneError, {
             format: 'cli',
             json: '{"foo": "bar"}',
-          })
+          }),
         ).to.be.true;
       });
     });

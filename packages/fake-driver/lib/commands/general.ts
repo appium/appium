@@ -11,10 +11,7 @@ export async function title(this: FakeDriver): Promise<string> {
 }
 
 /** keys. */
-export async function keys(
-  this: FakeDriver,
-  value: string | string[]
-): Promise<void> {
+export async function keys(this: FakeDriver, value: string | string[]): Promise<void> {
   if (!this.focusedElId) {
     throw new errors.InvalidElementStateError();
   }
@@ -22,10 +19,7 @@ export async function keys(
 }
 
 /** setGeoLocation. */
-export async function setGeoLocation(
-  this: FakeDriver,
-  location: Location
-): Promise<Location> {
+export async function setGeoLocation(this: FakeDriver, location: Location): Promise<Location> {
   this.appModel.lat = location.latitude;
   this.appModel.long = location.longitude;
   return location;
@@ -47,10 +41,7 @@ export async function getOrientation(this: FakeDriver): Promise<string> {
 }
 
 /** setOrientation. */
-export async function setOrientation(
-  this: FakeDriver,
-  o: Orientation
-): Promise<void> {
+export async function setOrientation(this: FakeDriver, o: Orientation): Promise<void> {
   if (!ORIENTATIONS.has(o)) {
     throw new errors.UnknownError('Orientation must be LANDSCAPE or PORTRAIT');
   }
@@ -73,10 +64,7 @@ export async function getWindowRect(this: FakeDriver): Promise<Rect> {
 }
 
 /** performActions. */
-export async function performActions(
-  this: FakeDriver,
-  actions: ActionSequence[]
-): Promise<void> {
+export async function performActions(this: FakeDriver, actions: ActionSequence[]): Promise<void> {
   this.appModel.actionLog.push(actions);
 }
 
@@ -84,10 +72,7 @@ export async function performActions(
 export async function releaseActions(this: FakeDriver): Promise<void> {}
 
 /** Supported log types: 'actions'. TODO: add more log types if needed for tests. */
-export async function getLog(
-  this: FakeDriver,
-  type: string
-): Promise<ActionSequence[][]> {
+export async function getLog(this: FakeDriver, type: string): Promise<ActionSequence[][]> {
   switch (type) {
     case 'actions':
       return this.appModel.actionLog;
@@ -105,11 +90,7 @@ export async function mobileShake(this: FakeDriver): Promise<void> {
 export async function doubleClick(this: FakeDriver): Promise<void> {}
 
 /** execute. */
-export async function execute(
-  this: FakeDriver,
-  script: string,
-  args: any[]
-): Promise<any> {
+export async function execute(this: FakeDriver, script: string, args: any[]): Promise<any> {
   return await this.executeMethod(script, args);
 }
 
@@ -118,7 +99,7 @@ export async function fakeAddition(
   this: FakeDriver,
   num1: number,
   num2: number,
-  num3 = 0
+  num3 = 0,
 ): Promise<number> {
   return num1 + num2 + (num3 ?? 0);
 }
@@ -129,15 +110,13 @@ export async function getUrl(this: FakeDriver): Promise<string> {
 }
 
 /** Set current URL (used by Bidi browsingContext.navigate). */
-export async function bidiNavigate(
-  this: FakeDriver,
-  context: string,
-  url: string
-): Promise<void> {
+export async function bidiNavigate(this: FakeDriver, context: string, url: string): Promise<void> {
   this.url = url;
 }
 
 /** Return the last math result detected by a plugin that publishes it */
-export async function getLastPluginMath(this: FakeDriver): Promise<{pluginName: string, result: number} | null> {
+export async function getLastPluginMath(
+  this: FakeDriver,
+): Promise<{pluginName: string; result: number} | null> {
   return this.lastPluginMath;
 }

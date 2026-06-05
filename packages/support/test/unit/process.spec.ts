@@ -51,7 +51,7 @@ describe('process', function () {
     });
     it('should throw an error if pgrep fails', async function () {
       (sandbox.stub(teenProcess, 'exec') as any).get(() =>
-        sandbox.stub().throws({message: 'Oops', code: 2})
+        sandbox.stub().throws({message: 'Oops', code: 2}),
       );
       await expect(process.getProcessIds('tail')).to.eventually.be.rejectedWith(/Oops/);
     });
@@ -88,12 +88,12 @@ describe('process', function () {
       await expect(
         retryInterval(10, 100, async () => {
           expect(proc.isRunning).to.be.false;
-        })
+        }),
       ).to.eventually.be.rejected;
     });
     it('should throw an error if pgrep fails', async function () {
       (sandbox.stub(teenProcess, 'exec') as any).get(() =>
-        sandbox.stub().throws({message: 'Oops', code: 2})
+        sandbox.stub().throws({message: 'Oops', code: 2}),
       );
       await expect(process.killProcess('tail')).to.eventually.be.rejectedWith(/Oops/);
     });

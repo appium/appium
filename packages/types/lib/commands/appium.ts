@@ -2,7 +2,7 @@
  * Interface for all Appium extension commands proxied to the external driver.
  */
 export interface IAppiumCommands {
-    /**
+  /**
    * Get the current time on the device under timeouts
    *
    * @param format - the date/time format you would like the response into

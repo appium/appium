@@ -27,8 +27,7 @@ describe('helpers/capability', function () {
       expect((res as {error: {message: string}}).error.message).to.match(/W3C/);
     });
     it('should return W3C caps unchanged if only W3C caps were provided', function () {
-      const {desiredCaps, processedW3CCapabilities} =
-        parseCapsForInnerDriver(W3C_CAPS);
+      const {desiredCaps, processedW3CCapabilities} = parseCapsForInnerDriver(W3C_CAPS);
       expect(desiredCaps).to.deep.equal(BASE_CAPS);
       expect(processedW3CCapabilities).to.deep.equal(W3C_CAPS);
     });
@@ -41,8 +40,11 @@ describe('helpers/capability', function () {
         foo: 'bar',
         baz: 'bla',
       };
-      const {desiredCaps, processedW3CCapabilities} =
-        parseCapsForInnerDriver(W3C_CAPS, {}, defaultW3CCaps);
+      const {desiredCaps, processedW3CCapabilities} = parseCapsForInnerDriver(
+        W3C_CAPS,
+        {},
+        defaultW3CCaps,
+      );
       expect(desiredCaps).to.deep.equal({
         ...expectedDefaultCaps,
         ...BASE_CAPS,
@@ -58,10 +60,10 @@ describe('helpers/capability', function () {
         {},
         {
           'appium:foo': 'bar2',
-        }
+        },
       );
       expect(
-        (res.processedW3CCapabilities!.alwaysMatch as Record<string, unknown>)['appium:foo']
+        (res.processedW3CCapabilities!.alwaysMatch as Record<string, unknown>)['appium:foo'],
       ).to.eql('bar2');
     });
     it('should not allow invalid default capabilities', function () {
@@ -71,18 +73,19 @@ describe('helpers/capability', function () {
         {
           foo: 'bar',
           'appium:foo2': 'bar2',
-        }
+        },
       );
-      const errRes = res as unknown as {error: {jsonwpCode: number; error: string; w3cStatus: number}};
+      const errRes = res as unknown as {
+        error: {jsonwpCode: number; error: string; w3cStatus: number};
+      };
       expect(errRes.error.jsonwpCode).to.eql(61);
       expect(errRes.error.error).to.eql('invalid argument');
       expect(errRes.error.w3cStatus).to.eql(400);
     });
     it('should reject if W3C caps are not passing constraints', function () {
-      const res = parseCapsForInnerDriver(
-        W3C_CAPS as W3CCapabilities<{hello: {presence: true}}>,
-        {hello: {presence: true}}
-      );
+      const res = parseCapsForInnerDriver(W3C_CAPS as W3CCapabilities<{hello: {presence: true}}>, {
+        hello: {presence: true},
+      });
       const err = (res as {error?: Error}).error;
       expect(err!.message).to.match(/required/);
       expect(err).to.be.instanceOf(Error);
@@ -117,7 +120,7 @@ describe('helpers/capability', function () {
           'appium:cap1': 'value1',
           'ms:cap2': 'value2',
           someCap: 'someCap',
-        } as NSCapabilities<BaseDriverCapConstraints>)
+        } as NSCapabilities<BaseDriverCapConstraints>),
       ).to.eql({
         cap1: 'value1',
         'ms:cap2': 'value2',
@@ -129,7 +132,9 @@ describe('helpers/capability', function () {
   describe('insertAppiumPrefixes()', function () {
     it('should apply prefixes to non-standard capabilities', function () {
       expect(
-        insertAppiumPrefixes({someCap: 'someCap'} as unknown as Capabilities<BaseDriverCapConstraints>)
+        insertAppiumPrefixes({
+          someCap: 'someCap',
+        } as unknown as Capabilities<BaseDriverCapConstraints>),
       ).to.deep.equal({
         'appium:someCap': 'someCap',
       });
@@ -139,7 +144,7 @@ describe('helpers/capability', function () {
         insertAppiumPrefixes({
           browserName: 'BrowserName',
           platformName: 'PlatformName',
-        } as unknown as Capabilities<BaseDriverCapConstraints>)
+        } as unknown as Capabilities<BaseDriverCapConstraints>),
       ).to.deep.equal({
         browserName: 'BrowserName',
         platformName: 'PlatformName',
@@ -150,7 +155,7 @@ describe('helpers/capability', function () {
         insertAppiumPrefixes({
           'appium:someCap': 'someCap',
           'moz:someOtherCap': 'someOtherCap',
-        } as unknown as Capabilities<BaseDriverCapConstraints>)
+        } as unknown as Capabilities<BaseDriverCapConstraints>),
       ).to.deep.equal({
         'appium:someCap': 'someCap',
         'moz:someOtherCap': 'someOtherCap',
@@ -165,7 +170,7 @@ describe('helpers/capability', function () {
           platformName: 'PlatformName',
           someOtherCap: 'someOtherCap',
           yetAnotherCap: 'yetAnotherCap',
-        } as unknown as Capabilities<BaseDriverCapConstraints>)
+        } as unknown as Capabilities<BaseDriverCapConstraints>),
       ).to.deep.equal({
         'appium:someCap': 'someCap',
         'moz:someOtherCap': 'someOtherCap',

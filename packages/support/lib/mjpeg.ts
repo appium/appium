@@ -21,7 +21,7 @@ async function initMJpegConsumer(): Promise<MJpegConsumerConstructor> {
       throw new Error(
         'mjpeg-consumer module is required to use MJPEG-over-HTTP features. ' +
           'Please install it first (npm i -g mjpeg-consumer) and restart Appium.',
-        {cause: e}
+        {cause: e},
       );
     }
   }
@@ -56,7 +56,7 @@ export class MJpegStream extends Writable {
   constructor(
     mJpegUrl: string,
     errorHandler: (err: Error) => void = noop,
-    options: WritableOptions = {}
+    options: WritableOptions = {},
   ) {
     super(options);
     this.errorHandler = errorHandler;
@@ -122,10 +122,9 @@ export class MJpegStream extends Writable {
       } else {
         message = String(e);
       }
-      throw new Error(
-        `Cannot connect to the MJPEG stream at ${url}. Original error: ${message}`,
-        {cause: e}
-      );
+      throw new Error(`Cannot connect to the MJPEG stream at ${url}. Original error: ${message}`, {
+        cause: e,
+      });
     }
 
     const onErr = (err: Error) => {
@@ -147,7 +146,7 @@ export class MJpegStream extends Writable {
       this.registerStartFailure = rej;
     }).timeout(
       serverTimeout,
-      `Waited ${serverTimeout}ms but the MJPEG server never sent any images`
+      `Waited ${serverTimeout}ms but the MJPEG server never sent any images`,
     );
 
     (this.responseStream as Readable & {pipe<T extends Writable>(dest: T): T})
@@ -177,7 +176,7 @@ export class MJpegStream extends Writable {
   override write(
     data: Buffer | string | Uint8Array,
     encoding?: BufferEncoding | ((error: Error | null) => void),
-    callback?: (error: Error | null) => void
+    callback?: (error: Error | null) => void,
   ): boolean {
     /* eslint-enable @typescript-eslint/no-unused-vars */
     /* eslint-enable promise/prefer-await-to-callbacks */

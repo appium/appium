@@ -12,7 +12,6 @@ export type AppiumLoggerPrefix = string | (() => string);
  */
 export type AppiumLoggerLevel = 'silly' | 'verbose' | 'debug' | 'info' | 'http' | 'warn' | 'error';
 
-
 /**
  * Async Context information to be stored in AsyncLocalStorage.
  * Only the sessionSignature value is used as the prefix of the log message,
@@ -23,7 +22,7 @@ export type AppiumLoggerContext = {
   requestId?: string;
   sessionId?: string;
   sessionSignature?: string;
-  [key: string]: any
+  [key: string]: any;
 };
 
 /**

@@ -95,7 +95,7 @@ export class FakePlugin extends BasePlugin {
   static async updateServer(
     expressApp: Application,
     _httpServer: AppiumServer,
-    cliArgs: Record<string, unknown>
+    cliArgs: Record<string, unknown>,
   ): Promise<void> {
     expressApp.all('/fake', FakePlugin.fakeRoute);
     expressApp.all('/unexpected', FakePlugin.unexpectedData);
@@ -132,7 +132,7 @@ export class FakePlugin extends BasePlugin {
     next: () => Promise<number>,
     _driver: DriverLike,
     num1: number,
-    num2: number
+    num2: number,
   ): Promise<number> {
     const sum = await next();
     return num1 * num2 + sum;
@@ -142,7 +142,7 @@ export class FakePlugin extends BasePlugin {
     _next: () => Promise<unknown>,
     _driver: DriverLike,
     num1: number,
-    num2: number
+    num2: number,
   ): Promise<number> {
     await sleep(1);
     const result = num1 * num2;
@@ -168,7 +168,7 @@ export class FakePlugin extends BasePlugin {
   async setPluginThing(
     _next: () => Promise<unknown>,
     _driver: DriverLike,
-    thing: unknown
+    thing: unknown,
   ): Promise<void> {
     this.pluginThing = thing;
   }
@@ -176,7 +176,7 @@ export class FakePlugin extends BasePlugin {
   async plugMeIn(
     _next: () => Promise<unknown>,
     _driver: DriverLike,
-    socket: string
+    socket: string,
   ): Promise<string> {
     await sleep(1);
     return `Plugged in to ${socket}`;
@@ -241,7 +241,7 @@ export class FakePlugin extends BasePlugin {
     next: () => Promise<unknown>,
     driver: DriverLike,
     script: string,
-    args: unknown[]
+    args: unknown[],
   ): Promise<unknown> {
     return await this.executeMethod(next, driver as any, script, args);
   }

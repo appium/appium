@@ -49,7 +49,7 @@ describe('DriverCommand', function () {
     function setupDriverUpdate(
       curVersion: string,
       latestVersion: string,
-      latestSafeVersion: string | null
+      latestSafeVersion: string | null,
     ) {
       npmMock
         .expects('getLatestVersion')

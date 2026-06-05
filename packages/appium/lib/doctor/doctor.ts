@@ -121,14 +121,14 @@ export class Doctor {
         '### Manual Fixes Needed ###',
         'The configuration cannot be automatically fixed, please do the following first:',
       ],
-      manualIssues
+      manualIssues,
     );
     await handleIssues(
       [
         '### Optional Manual Fixes ###',
         'To fix these optional issues, please do the following manually:',
       ],
-      manualIssuesOptional
+      manualIssuesOptional,
     );
 
     if (manualIssues.length > 0) {

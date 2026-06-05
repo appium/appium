@@ -37,12 +37,16 @@ export class AppiumMainRunner {
   async run<
     Cmd extends CliCommand = CliCommandServer,
     SubCmd extends CliExtensionSubcommand | CliCommandSetupSubcommand | void = void,
-  >(initResult: InitResult<Cmd>, args?: Args<Cmd, SubCmd>): Promise<Cmd extends CliCommandServer ? AppiumServer : void> {
+  >(
+    initResult: InitResult<Cmd>,
+    args?: Args<Cmd, SubCmd>,
+  ): Promise<Cmd extends CliCommandServer ? AppiumServer : void> {
     if (util.isEmpty(initResult)) {
       return undefined as Cmd extends CliCommandServer ? AppiumServer : void;
     }
 
-    const {appiumDriver, pluginConfig, driverConfig, parsedArgs, appiumHome} = initResult as ServerInitData;
+    const {appiumDriver, pluginConfig, driverConfig, parsedArgs, appiumHome} =
+      initResult as ServerInitData;
 
     const pluginClasses = await getActivePlugins(
       pluginConfig,

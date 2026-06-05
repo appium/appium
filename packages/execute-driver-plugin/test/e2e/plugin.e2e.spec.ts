@@ -20,7 +20,7 @@ const TEST_FAKE_APP = path.join(
   'fake-driver',
   'test',
   'fixtures',
-  'app.xml'
+  'app.xml',
 );
 
 const TEST_CAPS = {
@@ -65,7 +65,7 @@ describe('ExecuteDriverPlugin', function () {
     it('should not work unless the allowInsecure feature flag is set', async function () {
       driver = await wdio({...WDIO_OPTS, port: this.port});
       await expect(driver.executeDriverScript(basicScript)).to.eventually.be.rejectedWith(
-        /allow-insecure.+execute_driver_script/i
+        /allow-insecure.+execute_driver_script/i,
       );
     });
   });
@@ -98,7 +98,9 @@ describe('ExecuteDriverPlugin', function () {
 
     it('should fail with any script type other than webdriverio currently', async function () {
       const script = `return 'foo'`;
-      await expect(driver.executeDriverScript(script, 'wd')).to.eventually.be.rejectedWith(/webdriverio/);
+      await expect(driver.executeDriverScript(script, 'wd')).to.eventually.be.rejectedWith(
+        /webdriverio/,
+      );
     });
 
     it('should execute a webdriverio script that returns elements correctly', async function () {
@@ -162,7 +164,7 @@ describe('ExecuteDriverPlugin', function () {
         return {;
       `;
       await expect(driver.executeDriverScript(script)).to.eventually.be.rejectedWith(
-        /Could not execute driver script.+Unexpected token/
+        /Could not execute driver script.+Unexpected token/,
       );
     });
 
@@ -171,9 +173,9 @@ describe('ExecuteDriverPlugin', function () {
         await new Promise((resolve) => setTimeout(resolve, 1000));
         return true;
       `;
-      await expect(driver.executeDriverScript(script, 'webdriverio', 50)).to.eventually.be.rejectedWith(
-        /.+50.+timeout.+/
-      );
+      await expect(
+        driver.executeDriverScript(script, 'webdriverio', 50),
+      ).to.eventually.be.rejectedWith(/.+50.+timeout.+/);
     });
   });
 });

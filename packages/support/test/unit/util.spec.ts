@@ -367,7 +367,10 @@ describe('util', function () {
     describe('with function predicate', function () {
       it('should filter elements', function () {
         const obj = {a: 'a', b: 'b', c: 'c'};
-        expect(util.filterObject(obj, (v: unknown) => v === 'a' || v === 'c')).to.eql({a: 'a', c: 'c'});
+        expect(util.filterObject(obj, (v: unknown) => v === 'a' || v === 'c')).to.eql({
+          a: 'a',
+          c: 'c',
+        });
       });
     });
   });
@@ -409,8 +412,8 @@ describe('util', function () {
       expect(
         await util.isSameDestination(
           path1,
-          path.resolve(tmpDir, '..', path.basename(tmpDir), path.basename(path1))
-        )
+          path.resolve(tmpDir, '..', path.basename(tmpDir), path.basename(path1)),
+        ),
       ).to.be.true;
     });
     it('should not match paths if they point to non existing items', async function () {
@@ -444,9 +447,7 @@ describe('util', function () {
       expect(util.quote(['a', 'b', 'c d'])).to.eql("a b 'c d'");
     });
     it('should escape double quotes', function () {
-      expect(util.quote(['a', 'b', `it's a "neat thing"`])).to.eql(
-        `a b "it's a \\"neat thing\\""`
-      );
+      expect(util.quote(['a', 'b', `it's a "neat thing"`])).to.eql(`a b "it's a \\"neat thing\\""`);
     });
     it("should escape $ ` and '", function () {
       expect(util.quote(['$', '`', `'`])).to.eql('\\$ \\` "\'"');
@@ -507,7 +508,7 @@ describe('util', function () {
           callCount += 1;
           return a + b;
         },
-        (_a, b) => b
+        (_a, b) => b,
       );
       expect(fn(1, 2)).to.equal(3);
       expect(fn(999, 2)).to.equal(3);
@@ -521,7 +522,7 @@ describe('util', function () {
           callCount += 1;
           return value * 10;
         },
-        (value) => value % 2
+        (value) => value % 2,
       );
       expect(fn(2)).to.equal(20);
       expect(fn(4)).to.equal(20);
@@ -541,7 +542,7 @@ describe('util', function () {
           },
           function (this: {prefix: string}, value: number) {
             return `${this.prefix}-${value}`;
-          }
+          },
         ),
       };
 
@@ -655,7 +656,7 @@ describe('util', function () {
   describe('escapeRegExp', function () {
     it('should escape regexp metacharacters', function () {
       expect(util.escapeRegExp('a+b*c?.(x)[y]{z}|^$\\')).to.equal(
-        'a\\+b\\*c\\?\\.\\(x\\)\\[y\\]\\{z\\}\\|\\^\\$\\\\'
+        'a\\+b\\*c\\?\\.\\(x\\)\\[y\\]\\{z\\}\\|\\^\\$\\\\',
       );
     });
   });
@@ -681,9 +682,9 @@ describe('util', function () {
     });
 
     it('should support custom omission', function () {
-      expect(util.truncateString('abcdefghijklmnopqrstuvwxyz', {length: 10, omission: '..'})).to.equal(
-        'abcdefgh..'
-      );
+      expect(
+        util.truncateString('abcdefghijklmnopqrstuvwxyz', {length: 10, omission: '..'}),
+      ).to.equal('abcdefgh..');
     });
 
     it('should handle non-string values safely', function () {

@@ -38,7 +38,7 @@ export async function compareImages(
   mode: string,
   firstImage: string | Buffer,
   secondImage: string | Buffer,
-  options: MatchingOptions | SimilarityOptions | OccurrenceOptions = {}
+  options: MatchingOptions | SimilarityOptions | OccurrenceOptions = {},
 ): Promise<ComparisonResult> {
   const img1 = Buffer.isBuffer(firstImage) ? firstImage : Buffer.from(firstImage, 'base64');
   const img2 = Buffer.isBuffer(secondImage) ? secondImage : Buffer.from(secondImage, 'base64');
@@ -74,7 +74,7 @@ export async function compareImages(
             MATCH_FEATURES_MODE,
             GET_SIMILARITY_MODE,
             MATCH_TEMPLATE_MODE,
-          ])} modes are supported.`
+          ])} modes are supported.`,
       );
   }
   return convertVisualizationToBase64(result);
@@ -87,9 +87,7 @@ export async function compareImages(
  * @param element - occurrence result
  * @returns result with base64-encoded visualization
  **/
-function convertVisualizationToBase64(
-  element: Partial<{visualization: Buffer | null}>
-): any {
+function convertVisualizationToBase64(element: Partial<{visualization: Buffer | null}>): any {
   return Buffer.isBuffer(element.visualization)
     ? {
         ...element,

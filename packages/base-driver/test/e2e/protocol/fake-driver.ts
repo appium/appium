@@ -34,14 +34,15 @@ class FakeDriver extends BaseDriver<Constraints> {
     return sessionId === this.sessionId;
   }
 
-  driverForSession(_sessionId: string): FakeDriver | null { // eslint-disable-line @typescript-eslint/no-unused-vars
+  driverForSession(sessionId: string): FakeDriver | null {
+    void sessionId;
     return this;
   }
 
   async createSession(
     desiredCapabilities: W3CDriverCaps<Constraints>,
     requiredCapabilities: W3CDriverCaps<Constraints>,
-    capabilities: W3CDriverCaps<Constraints>
+    capabilities: W3CDriverCaps<Constraints>,
   ): Promise<DefaultCreateSessionResult<Constraints>> {
     this.sessionId = `fakeSession_${util.uuidV4()}`;
     return [this.sessionId, capabilities] as unknown as DefaultCreateSessionResult<Constraints>;
@@ -133,15 +134,18 @@ class FakeDriver extends BaseDriver<Constraints> {
     return {status: 13, value: 'Mishandled Driver Error'};
   }
 
-  proxyActive(_sessionId?: string): boolean { // eslint-disable-line @typescript-eslint/no-unused-vars
+  proxyActive(sessionId?: string): boolean {
+    void sessionId;
     return false;
   }
 
-  getProxyAvoidList(_sessionId: string): RouteMatcher[] { // eslint-disable-line @typescript-eslint/no-unused-vars
+  getProxyAvoidList(sessionId: string): RouteMatcher[] {
+    void sessionId;
     return [];
   }
 
-  canProxy(_sessionId?: string): boolean { // eslint-disable-line @typescript-eslint/no-unused-vars
+  canProxy(sessionId?: string): boolean {
+    void sessionId;
     return false;
   }
 

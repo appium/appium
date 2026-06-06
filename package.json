@@ -86,7 +86,6 @@
     "@tsconfig/node20": "20.1.9",
     "@types/argparse": "2.0.17",
     "@types/async-lock": "1.4.2",
-    "@types/base64-stream": "1.0.5",
     "@types/bluebird": "3.5.42",
     "@types/chai": "5.2.3",
     "@types/chai-as-promised": "8.0.2",

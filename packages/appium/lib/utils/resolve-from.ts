@@ -3,11 +3,12 @@ import Module from 'node:module';
 import path from 'node:path';
 
 /**
- * Resolves an absolute path to `moduleId` using Node's module resolution from `fromDirectory`.
+ * Resolves `moduleId` using Node's module resolution from `fromDirectory`.
  *
  * @param fromDirectory - Directory to resolve from (typically a project or `APPIUM_HOME` root)
  * @param moduleId - Module id or path to resolve (e.g. `semver/package.json`)
- * @returns Absolute path to the resolved module
+ * @returns Resolved module id. Package paths are typically absolute filesystem paths; built-in
+ *   modules may resolve to non-absolute ids (e.g. `node:fs`, `fs`).
  * @throws `Error` if Node cannot resolve `moduleId` from `fromDirectory`
  */
 export async function resolveFrom(fromDirectory: string, moduleId: string): Promise<string> {

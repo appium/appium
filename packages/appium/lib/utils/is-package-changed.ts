@@ -24,7 +24,7 @@ export async function isPackageChanged(
   const {hashFilename = '.packagehash', cwd = process.cwd()} = options;
   const packagePath = await findPackageJson(cwd);
   if (!packagePath) {
-    throw new Error('Cannot find package.json. Travelling up from current working directory.');
+    throw new Error(`Cannot find package.json travelling up from "${cwd}".`);
   }
 
   const packageHashPath = path.join(cwd, hashFilename);

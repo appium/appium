@@ -69,8 +69,8 @@ export interface MockPackageChanged {
   __writeHash: SinonStub;
 }
 
-export interface MockResolveFrom extends SinonStub {
-  (cwd: string, id: string): string;
+export interface MockResolveFrom extends SinonStub<[cwd: string, id: string], Promise<string>> {
+  (cwd: string, id: string): Promise<string>;
 }
 
 export interface MockGlob extends SinonStub {
@@ -159,9 +159,9 @@ export function initMocks(sandbox = createSandbox()): InitMocksResult {
     __writeHash: sandbox.stub(),
   };
 
-  const MockResolveFrom = sandbox
-    .stub()
-    .callsFake(async (cwd: string, id: string) => path.join(cwd, id)) as unknown as MockResolveFrom;
+  const MockResolveFrom: MockResolveFrom = sandbox
+    .stub<[cwd: string, id: string], Promise<string>>()
+    .callsFake(async (cwd, id) => path.join(cwd, id));
 
   const MockGlob = sandbox
     .stub()

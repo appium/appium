@@ -200,7 +200,7 @@ describe('PluginConfig', function () {
 
           describe('when the property as a path is found', function () {
             beforeEach(function () {
-              MockResolveFrom.returns(resolveFixture('plugin-schema'));
+              MockResolveFrom.resolves(resolveFixture('plugin-schema'));
             });
 
             it('should return an empty array', async function () {
@@ -281,7 +281,7 @@ describe('PluginConfig', function () {
           installType: 'npm',
           installSpec: 'some-pkg',
         } as unknown as ExtManifestWithSchema<PluginType>;
-        MockResolveFrom.returns(resolveFixture('plugin-schema.js'));
+        MockResolveFrom.resolves(resolveFixture('plugin-schema.js'));
         pluginConfig = PluginConfig.create(manifest);
       });
 
@@ -306,7 +306,7 @@ describe('PluginConfig', function () {
         describe('when the schema differs (presumably a different extension)', function () {
           it('should throw', async function () {
             await pluginConfig.readExtensionSchema(extName, extData);
-            MockResolveFrom.returns(resolveFixture('driver-schema.js'));
+            MockResolveFrom.resolves(resolveFixture('driver-schema.js'));
             await expect(pluginConfig.readExtensionSchema(extName, extData)).to.be.rejectedWith(
               /conflicts with an existing schema/i,
             );

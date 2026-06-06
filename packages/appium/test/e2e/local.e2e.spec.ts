@@ -1,6 +1,6 @@
 import {env, fs, npm, tempDir} from '@appium/support';
 import path from 'node:path';
-import resolveFrom from 'resolve-from';
+import {resolveFrom} from '../../lib/utils';
 import * as YAML from 'yaml';
 import {
   DRIVER_TYPE,
@@ -85,8 +85,8 @@ describe('when Appium is a dependency of the current project', function () {
         expect(res).to.have.property('fake');
       });
 
-      it('should be resolvable from the local directory', function () {
-        expect(() => resolveFrom(appiumHome, '@appium/fake-driver/package.json')).not.to.throw();
+      it('should be resolvable from the local directory', async function () {
+        await resolveFrom(appiumHome, '@appium/fake-driver/package.json');
       });
     });
 
@@ -133,14 +133,10 @@ describe('when Appium is a dependency of the current project', function () {
             expect(manifestParsed).to.have.nested.property('drivers.fake');
           });
 
-          it('should actually install both drivers', function () {
+          it('should actually install both drivers', async function () {
             // Resolve package.json to assert the package is present (resolving the main entry can fail in CI)
-            expect(() =>
-              resolveFrom(appiumHome, '@appium/fake-driver/package.json'),
-            ).not.to.throw();
-            expect(() =>
-              resolveFrom(appiumHome, '@appium/test-driver/package.json'),
-            ).not.to.throw();
+            await resolveFrom(appiumHome, '@appium/fake-driver/package.json');
+            await resolveFrom(appiumHome, '@appium/test-driver/package.json');
           });
         });
       });

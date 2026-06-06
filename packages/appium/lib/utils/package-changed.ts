@@ -1,15 +1,14 @@
 import {fs} from '@appium/support';
-import {isPackageChanged} from 'package-changed';
 import path from 'node:path';
 import {PKG_HASHFILE_RELATIVE_PATH} from '../constants';
 import {log} from '../logger';
+import {isPackageChanged} from './is-package-changed';
 
 /**
  * Determines if extensions have changed, and updates a hash the `package.json` in `appiumHome` if so.
  *
  * If they have, we need to sync them with the `extensions.yaml` manifest.
  *
- * _Warning: this makes a blocking call to `writeFileSync`._
  */
 export async function packageDidChange(appiumHome: string): Promise<boolean> {
   const hashFilename = path.join(appiumHome, PKG_HASHFILE_RELATIVE_PATH);
@@ -26,7 +25,7 @@ export async function packageDidChange(appiumHome: string): Promise<boolean> {
   }
 
   let isChanged: boolean;
-  let writeHash: () => void;
+  let writeHash: () => Promise<void>;
   let oldHash: string | undefined;
   let hash: string;
   try {
@@ -41,7 +40,7 @@ export async function packageDidChange(appiumHome: string): Promise<boolean> {
 
   if (isChanged) {
     try {
-      writeHash();
+      await writeHash();
       log.debug(
         `Updated hash of ${appiumHome}/package.json from: ${oldHash ?? '(none)'} to: ${hash}`,
       );

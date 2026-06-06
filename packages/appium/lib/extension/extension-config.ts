@@ -3,9 +3,8 @@ import type {ExtClass, ExtManifest, ExtName, ExtRecord, InstallType} from 'appiu
 import type {SchemaObject} from 'ajv';
 import {util, fs, system} from '@appium/support';
 import path from 'node:path';
-import {capitalize} from '../utils';
+import {capitalize, resolveFrom} from '../utils';
 import {pathToFileURL} from 'node:url';
-import resolveFrom from 'resolve-from';
 import {satisfies} from 'semver';
 import {commandClasses} from '../cli/extension';
 import type {
@@ -122,7 +121,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     }
     let moduleObject: any;
     if (typeof argSchemaPath === 'string') {
-      const schemaPath = resolveFrom(appiumHome, path.join(pkgName, argSchemaPath));
+      const schemaPath = await resolveFrom(appiumHome, path.join(pkgName, argSchemaPath));
       moduleObject = require(schemaPath);
     } else {
       moduleObject = argSchemaPath;

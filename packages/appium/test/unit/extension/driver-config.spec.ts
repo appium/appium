@@ -231,7 +231,7 @@ describe('DriverConfig', function () {
 
           describe('when the property as a path is found', function () {
             beforeEach(function () {
-              MockResolveFrom.returns(resolveFixture('driver-schema.js'));
+              MockResolveFrom.resolves(resolveFixture('driver-schema.js'));
             });
 
             it('should return an empty array', async function () {
@@ -268,7 +268,7 @@ describe('DriverConfig', function () {
           installType: 'npm',
           installPath: '/somewhere',
         };
-        MockResolveFrom.returns(resolveFixture('driver-schema.js'));
+        MockResolveFrom.resolves(resolveFixture('driver-schema.js'));
         driverConfig = DriverConfig.create(manifest);
       });
 

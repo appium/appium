@@ -31,7 +31,6 @@ describe('schema', function () {
   beforeEach(function () {
     sandbox = createSandbox();
     mocks = {
-      'resolve-from': sandbox.stub(),
       '@sidvind/better-ajv-errors': sandbox.stub(),
     };
 

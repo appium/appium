@@ -1075,13 +1075,16 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
   private _formatInstallText(data: ExtensionListData): string {
     const {installType, installSpec, version} = data;
     let typeTxt;
+    let isTypeTextStyled = false;
     switch (installType) {
       case INSTALL_TYPE_GIT:
       case INSTALL_TYPE_GITHUB:
         typeTxt = console.styleText('yellow', `(cloned from ${installSpec})`);
+        isTypeTextStyled = true;
         break;
       case INSTALL_TYPE_LOCAL:
         typeTxt = console.styleText('magenta', `(linked from ${installSpec})`);
+        isTypeTextStyled = true;
         break;
       case INSTALL_TYPE_DEV:
         typeTxt = '(dev mode)';
@@ -1089,7 +1092,10 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
       default:
         typeTxt = '(npm)';
     }
-    return `${console.styleText('yellow', `@${String(version)}`)} ${console.styleText('green', `[installed ${typeTxt}]`)}`;
+    const installLabelStart = console.styleText('green', '[installed ');
+    const installLabelEnd = console.styleText('green', ']');
+    const installTypeText = isTypeTextStyled ? typeTxt : console.styleText('green', typeTxt);
+    return `${console.styleText('yellow', `@${String(version)}`)} ${installLabelStart}${installTypeText}${installLabelEnd}`;
   }
 
   /**

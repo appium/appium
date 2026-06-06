@@ -57,7 +57,7 @@
     "http-status-codes": "2.3.0",
     "lru-cache": "11.5.1",
     "method-override": "3.0.0",
-    "morgan": "1.10.1",
+    "morgan": "1.11.0",
     "path-to-regexp": "8.4.2",
     "serve-favicon": "2.5.1",
     "type-fest": "5.7.0"

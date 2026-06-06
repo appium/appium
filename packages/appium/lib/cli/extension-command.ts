@@ -1074,7 +1074,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
    */
   private _formatInstallText(data: ExtensionListData): string {
     const {installType, installSpec, version} = data;
-    let typeTxt;
+    let typeTxt: string;
     let isTypeTextStyled = false;
     switch (installType) {
       case INSTALL_TYPE_GIT:

@@ -2,7 +2,6 @@
  * Helper functions for E2E tests to spawn an `appium` subprocess.
  */
 import {console as supportConsole, fs} from '@appium/support';
-import '@colors/colors';
 import path from 'node:path';
 import {exec} from 'teen_process';
 import type {ExecError} from 'teen_process';
@@ -91,8 +90,7 @@ async function run(
       log.debug(`Running: ${process.execPath} ${fullArgs.join(' ')}`);
     }
     const retval = await exec(process.execPath, fullArgs, {...opts, cwd, env});
-    const strip = (s: string) =>
-      opts.env?.FORCE_COLOR ? s : ((s as unknown as {stripColors: string}).stripColors ?? s);
+    const strip = (s: string) => (opts.env?.FORCE_COLOR ? s : supportConsole.stripColors(s));
     return {
       stdout: strip(retval.stdout),
       stderr: strip(retval.stderr),

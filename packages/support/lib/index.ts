@@ -62,6 +62,7 @@ export default {
 };
 
 export type {ConsoleOpts} from './console';
+export type {TextStyle} from './console';
 export type {CopyFileOptions, ReadFn, WalkDirCallback} from './fs';
 export type {
   NetOptions,

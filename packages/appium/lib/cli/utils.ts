@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 
+import {console as supportConsole} from '@appium/support';
 import ora from 'ora';
 
 export const JSON_SPACES = 4;
@@ -49,9 +50,9 @@ export function errAndQuit(json: boolean, msg: unknown): never {
   if (json) {
     console.log(JSON.stringify({error: String(msg)}, null, JSON_SPACES));
   } else {
-    console.error((String(msg) as any).red);
+    console.error(supportConsole.styleText('red', String(msg)));
     if ((msg as ErrorLike)?.stderr) {
-      console.error((String((msg as ErrorLike).stderr) as any).red);
+      console.error(supportConsole.styleText('red', String((msg as ErrorLike).stderr)));
     }
   }
   process.exit(1);

@@ -1,4 +1,4 @@
-import {util} from '@appium/support';
+import {console, util} from '@appium/support';
 import type {ExtMetadata, ExtRecord, InstallType} from 'appium/types';
 import ExtensionCliCommand from './extension-command';
 import type {
@@ -93,7 +93,10 @@ export default class PluginCliCommand extends ExtensionCliCommand<'plugin'> {
    * @returns formatted success text
    */
   override getPostInstallText({extName, extData}: ExtensionArgs<'plugin'>): PostInstallText {
-    return `Plugin ${extName}@${extData.version} successfully installed`.green;
+    return console.styleText(
+      'green',
+      `Plugin ${extName}@${extData.version} successfully installed`,
+    );
   }
 
   /**

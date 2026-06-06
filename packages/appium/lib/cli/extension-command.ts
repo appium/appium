@@ -1,6 +1,6 @@
 import {asyncfilter, asyncmap} from 'asyncbox';
 import path from 'node:path';
-import {util, npm, env, console, fs, system} from '@appium/support';
+import {console, env, fs, npm, system, util} from '@appium/support';
 import type {AppiumLogger, ExtensionType, IDoctorCheck} from '@appium/types';
 import type {
   ExtInstallReceipt as AppiumExtInstallReceipt,
@@ -452,7 +452,9 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
       await npm.uninstallPackage(this.config.appiumHome, pkgName);
     });
     await this.config.removeExtension(installSpec);
-    this.log.ok(`Successfully uninstalled ${this.type} '${installSpec}'`.green);
+    this.log.ok(
+      console.styleText('green', `Successfully uninstalled ${this.type} '${installSpec}'`),
+    );
     return this.config.installedExtensions;
   }
 
@@ -522,7 +524,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
             `A newer major version ${update.unsafeUpdate} ` +
             `is available for ${this.type} '${e}', which could include breaking changes. ` +
             `If you want to apply this update, re-run with --unsafe`;
-          this.log.info(newMajorUpdateMsg.yellow);
+          this.log.info(console.styleText('yellow', newMajorUpdateMsg));
         }
         updates[e] = {from: update.current, to: updateVer};
       } catch (err) {
@@ -533,19 +535,24 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
     this.log.info('Update report:');
 
     for (const [e, update] of Object.entries(updates)) {
-      this.log.ok(`  - ${this.type} ${e} updated: ${update.from} => ${update.to}`.green);
+      this.log.ok(
+        console.styleText('green', `  - ${this.type} ${e} updated: ${update.from} => ${update.to}`),
+      );
     }
 
     for (const [e, err] of Object.entries(errors)) {
       if (err instanceof NotUpdatableError) {
         this.log.warn(
-          `  - '${e}' was not installed via npm, so we could not check ` + `for updates`.yellow,
+          console.styleText(
+            'yellow',
+            `  - '${e}' was not installed via npm, so we could not check for updates`,
+          ),
         );
       } else if (err instanceof NoUpdatesAvailableError) {
-        this.log.info(`  - '${e}' had no updates available`.yellow);
+        this.log.info(console.styleText('yellow', `  - '${e}' had no updates available`));
       } else {
         // otherwise, make it pop with red!
-        this.log.error(`  - '${e}' failed to update: ${err}`.red);
+        this.log.error(console.styleText('red', `  - '${e}' failed to update: ${err}`));
       }
     }
     return {updates, errors};
@@ -725,7 +732,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
         );
         existingScripts.forEach(([name]) => this.log.info(`  - ${name}`));
       }
-      this.log.ok(`Successfully retrieved the list of scripts`.green);
+      this.log.ok(console.styleText('green', 'Successfully retrieved the list of scripts'));
       return {};
     }
 
@@ -760,7 +767,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
 
       try {
         await runner.join();
-        this.log.ok(`${scriptName} successfully ran`.green);
+        this.log.ok(console.styleText('green', `${scriptName} successfully ran`));
         return {output: output.getBuff()};
       } catch (err) {
         const errMessage = err instanceof Error ? err.message : String(err);
@@ -786,7 +793,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
             }
           });
       });
-      this.log.ok(`${scriptName} successfully ran`.green);
+      this.log.ok(console.styleText('green', `${scriptName} successfully ran`));
       return {};
     } catch (err) {
       const errMessage = err instanceof Error ? err.message : String(err);
@@ -1055,10 +1062,10 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
     if (data.installed) {
       const installTxt = this._formatInstallText(data);
       const updateTxt = showUpdates ? this._formatUpdateText(data) : '';
-      return `- ${name.yellow}${installTxt}${updateTxt}`;
+      return `- ${console.styleText('yellow', name)}${installTxt}${updateTxt}`;
     }
-    const installTxt = ' [not installed]'.grey;
-    return `- ${name.yellow}${installTxt}`;
+    const installTxt = console.styleText('grey', ' [not installed]');
+    return `- ${console.styleText('yellow', name)}${installTxt}`;
   }
 
   /**
@@ -1071,10 +1078,10 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
     switch (installType) {
       case INSTALL_TYPE_GIT:
       case INSTALL_TYPE_GITHUB:
-        typeTxt = `(cloned from ${installSpec})`.yellow;
+        typeTxt = console.styleText('yellow', `(cloned from ${installSpec})`);
         break;
       case INSTALL_TYPE_LOCAL:
-        typeTxt = `(linked from ${installSpec})`.magenta;
+        typeTxt = console.styleText('magenta', `(linked from ${installSpec})`);
         break;
       case INSTALL_TYPE_DEV:
         typeTxt = '(dev mode)';
@@ -1082,7 +1089,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
       default:
         typeTxt = '(npm)';
     }
-    return `@${String(version).yellow} ${('[installed ' + typeTxt + ']').green}`;
+    return `${console.styleText('yellow', `@${String(version)}`)} ${console.styleText('green', `[installed ${typeTxt}]`)}`;
   }
 
   /**
@@ -1092,17 +1099,17 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
   private _formatUpdateText(data: ExtensionListData): string {
     const {updateVersion, unsafeUpdateVersion, upToDate, updateError} = data;
     if (updateError) {
-      return ` [Cannot check for updates: ${updateError}]`.red;
+      return console.styleText('red', ` [Cannot check for updates: ${updateError}]`);
     }
     let txt = '';
     if (updateVersion) {
-      txt += ` [${updateVersion} available]`.magenta;
+      txt += console.styleText('magenta', ` [${updateVersion} available]`);
     }
     if (upToDate) {
-      txt += ` [Up to date]`.green;
+      txt += console.styleText('green', ' [Up to date]');
     }
     if (unsafeUpdateVersion) {
-      txt += ` [${unsafeUpdateVersion} available (potentially unsafe)]`.cyan;
+      txt += console.styleText('cyan', ` [${unsafeUpdateVersion} available (potentially unsafe)]`);
     }
     return txt;
   }

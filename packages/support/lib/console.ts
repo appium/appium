@@ -1,10 +1,62 @@
 import {createSupportsColor} from 'supports-color';
 import {Console as NodeConsole} from 'node:console';
-import type {Color} from '@colors/colors';
-import '@colors/colors';
 import {Writable} from 'node:stream';
-import type {InspectOptions} from 'node:util';
+import {styleText as nodeStyleText, type InspectOptions} from 'node:util';
 import type {JsonValue} from 'type-fest';
+
+/** ANSI styles supported by Node's `util.styleText`. `grey` is accepted as an alias for `gray`. */
+export type TextStyle =
+  | 'reset'
+  | 'bold'
+  | 'dim'
+  | 'italic'
+  | 'underline'
+  | 'blink'
+  | 'inverse'
+  | 'hidden'
+  | 'strikethrough'
+  | 'doubleunderline'
+  | 'black'
+  | 'red'
+  | 'green'
+  | 'yellow'
+  | 'blue'
+  | 'magenta'
+  | 'cyan'
+  | 'white'
+  | 'gray'
+  | 'grey'
+  | 'bgBlack'
+  | 'bgRed'
+  | 'bgGreen'
+  | 'bgYellow'
+  | 'bgBlue'
+  | 'bgMagenta'
+  | 'bgCyan'
+  | 'bgWhite'
+  | 'framed'
+  | 'overlined'
+  | 'redBright'
+  | 'greenBright'
+  | 'yellowBright'
+  | 'blueBright'
+  | 'magentaBright'
+  | 'cyanBright'
+  | 'whiteBright';
+
+const ANSI_RE = // eslint-disable-next-line no-control-regex
+  /\x1b\[[0-9;]*m/g;
+
+/** Applies terminal styling via Node's `util.styleText`. */
+export function styleText(style: TextStyle, text: string): string {
+  const format = style === 'grey' ? 'gray' : style;
+  return nodeStyleText(format, text);
+}
+
+/** Removes ANSI color/style sequences from a string. */
+export function stripColors(text: string): string {
+  return text.replace(ANSI_RE, '');
+}
 
 function isUnicodeSupported(): boolean {
   if (process.env.TERM === 'dumb') {
@@ -72,7 +124,7 @@ class NullWritable extends Writable {
  * DO NOT extend this to do anything other than what it already does. Download a library or something.
  */
 export class CliConsole {
-  static readonly symbolToColor: Record<SymbolKey, keyof Color> = {
+  static readonly symbolToColor: Record<SymbolKey, TextStyle> = {
     success: 'green',
     info: 'cyan',
     warning: 'yellow',
@@ -102,9 +154,7 @@ export class CliConsole {
 
     let newMsg = `${logSymbols[symbol]} ${msg}`;
     if (this.#useColor) {
-      const color = CliConsole.symbolToColor[symbol];
-      // @colors/colors extends String with color getters (e.g. .green, .red)
-      newMsg = (newMsg as unknown as Record<string, string>)[color] ?? newMsg;
+      newMsg = styleText(CliConsole.symbolToColor[symbol], newMsg);
     }
     return newMsg;
   }

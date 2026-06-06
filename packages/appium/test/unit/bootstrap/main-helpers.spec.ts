@@ -2,7 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {SinonSandbox, SinonSpy} from 'sinon';
 import {createSandbox} from 'sinon';
-import {stripColors} from '@colors/colors';
+import {console as supportConsole} from '@appium/support';
 import {getBuildInfo} from '../../../lib/helpers/build';
 import {inspect, showBuildInfo} from '../../../lib/bootstrap/main-helpers';
 import {log as logger} from '../../../lib/logger';
@@ -40,7 +40,9 @@ describe('bootstrap/main-helpers', function () {
     it('should log the result of inspecting a value', function () {
       const infoLog = sandbox.spy(logger, 'info');
       inspect({foo: 'bar'});
-      expect(stripColors(infoLog.firstCall.firstArg)).to.match(/\{\s*\n*foo:\s'bar'\s*\n*\}/);
+      expect(supportConsole.stripColors(infoLog.firstCall.firstArg)).to.match(
+        /\{\s*\n*foo:\s'bar'\s*\n*\}/,
+      );
     });
   });
 });

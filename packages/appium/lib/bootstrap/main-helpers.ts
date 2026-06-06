@@ -6,7 +6,7 @@ import {
   server as baseServer,
   type ServerOpts,
 } from '@appium/base-driver';
-import {util} from '@appium/support';
+import {console as supportConsole, util} from '@appium/support';
 import type {AppiumServer, Driver, MethodMap, UpdateServerCallback} from '@appium/types';
 import {WebSocketServer} from 'ws';
 import type {NetworkInterfaceInfo} from 'node:os';
@@ -109,7 +109,7 @@ export async function preflightChecks(
     }
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);
-    logger.error((message as string & {red: string}).red);
+    logger.error(supportConsole.styleText('red', message));
     if (throwInsteadOfExit) {
       throw err;
     }

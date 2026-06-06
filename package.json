@@ -81,7 +81,6 @@
     "singleQuote": true
   },
   "devDependencies": {
-    "@colors/colors": "1.6.0",
     "@eslint/js": "10.0.1",
     "@stylistic/eslint-plugin": "5.10.0",
     "@tsconfig/node20": "20.1.9",

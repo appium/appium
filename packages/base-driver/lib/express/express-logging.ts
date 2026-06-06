@@ -1,5 +1,4 @@
-import {util, logger} from '@appium/support';
-import '@colors/colors';
+import {console, logger, util} from '@appium/support';
 import morgan from 'morgan';
 import type {Request, RequestHandler, Response} from 'express';
 import {log} from './logger';
@@ -40,7 +39,10 @@ function startLogFormatterHandler(tokens: unknown, req: Request, res: Response):
       // ignore
     }
   }
-  log.info(requestStartLoggingFormat(tokens, req, res), logger.markSensitive(reqBody.grey));
+  log.info(
+    requestStartLoggingFormat(tokens, req, res),
+    logger.markSensitive(console.styleText('grey', reqBody)),
+  );
   return undefined;
 }
 
@@ -58,19 +60,21 @@ function requestEndLoggingFormat(tokens: MorganTokens, req: Request, res: Respon
   const status = res.statusCode;
   let statusStr = ':status';
   if (status >= 500) {
-    statusStr = statusStr.red;
+    statusStr = console.styleText('red', statusStr);
   } else if (status >= 400) {
-    statusStr = statusStr.yellow;
+    statusStr = console.styleText('yellow', statusStr);
   } else if (status >= 300) {
-    statusStr = statusStr.cyan;
+    statusStr = console.styleText('cyan', statusStr);
   } else {
-    statusStr = statusStr.green;
+    statusStr = console.styleText('green', statusStr);
   }
   const fn = compile(
-    `${'<-- :method :url '.white}${statusStr} ${':response-time ms - :res[content-length]'.grey}`,
+    `${console.styleText('white', '<-- :method :url ')}${statusStr} ${console.styleText('grey', ':response-time ms - :res[content-length]')}`,
   );
   return fn(tokens, req, res);
 }
 
-const requestStartLoggingFormat = compile(`${'-->'.white} ${':method'.white} ${':url'.white}`);
+const requestStartLoggingFormat = compile(
+  `${console.styleText('white', '-->')} ${console.styleText('white', ':method')} ${console.styleText('white', ':url')}`,
+);
 // #endregion

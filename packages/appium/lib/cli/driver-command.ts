@@ -1,4 +1,4 @@
-import {util} from '@appium/support';
+import {console, util} from '@appium/support';
 import type {ExtMetadata, ExtRecord, InstallType} from 'appium/types';
 import ExtensionCliCommand from './extension-command';
 import type {
@@ -9,8 +9,6 @@ import type {
   RunOutput,
 } from './extension-command';
 import {KNOWN_DRIVERS} from '../constants';
-import '@colors/colors';
-
 const REQ_DRIVER_FIELDS = ['driverName', 'automationName', 'platformNames', 'mainClass'];
 type DriverInstallOpts = {driver: string; installType: InstallType; packageName?: string};
 type DriverUninstallOpts = {driver: string};
@@ -95,9 +93,9 @@ export default class DriverCliCommand extends ExtensionCliCommand<'driver'> {
    */
   override getPostInstallText({extName, extData}: ExtensionArgs<'driver'>): PostInstallText {
     return (
-      `Driver ${extName}@${extData.version} successfully installed\n`.green +
-      `- automationName: ${extData.automationName.green}\n` +
-      `- platformNames: ${JSON.stringify(extData.platformNames).green}`
+      `${console.styleText('green', `Driver ${extName}@${extData.version} successfully installed`)}\n` +
+      `- automationName: ${console.styleText('green', extData.automationName)}\n` +
+      `- platformNames: ${console.styleText('green', JSON.stringify(extData.platformNames))}`
     );
   }
 

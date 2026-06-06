@@ -1,5 +1,4 @@
-import '@colors/colors';
-import {util, doctor, logger} from '@appium/support';
+import {console, doctor, logger, util} from '@appium/support';
 import type {AppiumLogger, DoctorCheckResult, IDoctorCheck} from '@appium/types';
 
 /**
@@ -159,10 +158,10 @@ export class Doctor {
     const res = await f.check.diagnose();
     if (res.ok) {
       f.fixed = true;
-      this.log.info(` ${'\u2714'.green} ${res.message}`);
+      this.log.info(` ${console.styleText('green', '\u2714')} ${res.message}`);
       this.log.info(`### Fix was successfully applied ###`);
     } else {
-      this.log.info(` ${'\u2716'.red} ${res.message}`);
+      this.log.info(` ${console.styleText('red', '\u2716')} ${res.message}`);
       this.log.info(`### Fix was applied but issue remains ###`);
     }
   }
@@ -187,13 +186,13 @@ export class Doctor {
 
   private toIssue(result: DoctorCheckResult, check: IDoctorCheck): DoctorIssue | null {
     if (result.ok) {
-      this.log.info(` ${'\u2714'.green} ${result.message}`);
+      this.log.info(` ${console.styleText('green', '\u2714')} ${result.message}`);
       return null;
     }
 
     const errorMessage = result.optional
-      ? ` ${'\u2716'.yellow} ${result.message}`
-      : ` ${'\u2716'.red} ${result.message}`;
+      ? ` ${console.styleText('yellow', '\u2716')} ${result.message}`
+      : ` ${console.styleText('red', '\u2716')} ${result.message}`;
     this.log.warn(errorMessage);
     return {
       error: errorMessage,

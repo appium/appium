@@ -46,6 +46,30 @@ describe('console', function () {
         const decorated = cli.decorate('done', 'success')!;
         expect(stripColors(decorated)).to.match(/^.\s+done$/);
       });
+
+      describe('when useColor is defaulted from the environment', function () {
+        const originalEnv = {...process.env};
+
+        afterEach(function () {
+          process.env = {...originalEnv};
+        });
+
+        it('should not colorize when NO_COLOR is set', function () {
+          process.env.NO_COLOR = '1';
+          delete process.env.FORCE_COLOR;
+          const cli = new CliConsole();
+          const decorated = cli.decorate('done', 'success')!;
+          expect(decorated).to.equal(stripColors(decorated));
+        });
+
+        it('should colorize when FORCE_COLOR is set', function () {
+          delete process.env.NO_COLOR;
+          process.env.FORCE_COLOR = '1';
+          const cli = new CliConsole({useColor: undefined});
+          const decorated = cli.decorate('done', 'success')!;
+          expect(stripColors(decorated)).to.match(/^.\s+done$/);
+        });
+      });
     });
 
     it('should map symbols to the expected colors', function () {

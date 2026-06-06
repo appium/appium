@@ -1,4 +1,3 @@
-import {createSupportsColor} from 'supports-color';
 import {Console as NodeConsole} from 'node:console';
 import {Writable} from 'node:stream';
 import {styleText as nodeStyleText, type InspectOptions} from 'node:util';
@@ -75,6 +74,25 @@ function isUnicodeSupported(): boolean {
 
 const UNICODE = isUnicodeSupported();
 
+/** Returns whether stderr should use ANSI color by default. */
+function stderrSupportsColor(stream: {isTTY?: boolean} = process.stderr): boolean {
+  const {env} = process;
+  if (env.NO_COLOR !== undefined || env.NODE_DISABLE_COLORS !== undefined) {
+    return false;
+  }
+  const {FORCE_COLOR: forceColor} = env;
+  if (forceColor !== undefined) {
+    return forceColor !== '0' && forceColor !== 'false';
+  }
+  if (env.TERM === 'dumb') {
+    return false;
+  }
+  if (!stream.isTTY) {
+    return false;
+  }
+  return true;
+}
+
 const logSymbols = {
   info: UNICODE ? 'ℹ' : 'i',
   success: UNICODE ? '✔' : '√',
@@ -82,17 +100,13 @@ const logSymbols = {
   error: UNICODE ? '✖' : '×',
 } as const;
 
-/**
- * Options for {@linkcode CliConsole}.
- *
- * @see https://npm.im/supports-color
- */
+/** Options for {@linkcode CliConsole}. */
 export interface ConsoleOpts {
   /** If _truthy_, suppress all output except JSON (use {@linkcode CliConsole#json}), which writes to `STDOUT`. */
   jsonMode?: boolean;
   /** If _falsy_, do not use fancy symbols. */
   useSymbols?: boolean;
-  /** If _falsy_, do not use color output. If _truthy_, forces color output. By default, checks terminal/TTY for support via pkg `supports-color`. Ignored if `useSymbols` is `false`. */
+  /** If _falsy_, do not use color output. If _truthy_, forces color output. By default, checks `NO_COLOR`, `FORCE_COLOR`, `TERM`, and stderr TTY. Ignored if `useSymbols` is `false`. */
   useColor?: boolean;
 }
 
@@ -139,7 +153,7 @@ export class CliConsole {
     const {jsonMode = false, useSymbols = true, useColor} = opts;
     this.#console = new NodeConsole(process.stdout, jsonMode ? new NullWritable() : process.stderr);
     this.#useSymbols = Boolean(useSymbols);
-    this.#useColor = Boolean(useColor ?? createSupportsColor(process.stderr));
+    this.#useColor = Boolean(useColor ?? stderrSupportsColor(process.stderr));
   }
 
   /**

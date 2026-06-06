@@ -21,6 +21,11 @@ describe('console', function () {
     it('should leave plain text unchanged when stripping', function () {
       expect(stripColors('plain')).to.equal('plain');
     });
+
+    it('should strip non-SGR CSI sequences', function () {
+      expect(stripColors('hello\x1b[2Kworld')).to.equal('helloworld');
+      expect(stripColors('before\x1b[1Gafter')).to.equal('beforeafter');
+    });
   });
 
   describe('CliConsole', function () {
@@ -57,6 +62,14 @@ describe('console', function () {
         it('should not colorize when NO_COLOR is set', function () {
           process.env.NO_COLOR = '1';
           delete process.env.FORCE_COLOR;
+          const cli = new CliConsole();
+          const decorated = cli.decorate('done', 'success')!;
+          expect(decorated).to.equal(stripColors(decorated));
+        });
+
+        it('should not colorize when FORCE_COLOR is false regardless of case', function () {
+          delete process.env.NO_COLOR;
+          process.env.FORCE_COLOR = 'FALSE';
           const cli = new CliConsole();
           const decorated = cli.decorate('done', 'success')!;
           expect(decorated).to.equal(stripColors(decorated));

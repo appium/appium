@@ -43,8 +43,11 @@ export type TextStyle =
   | 'cyanBright'
   | 'whiteBright';
 
-const ANSI_RE = // eslint-disable-next-line no-control-regex
-  /\x1b\[[0-9;]*m/g;
+// CSI (Control Sequence Introducer) and OSC (Operating System Command) per ECMA-48.
+const ANSI_CSI_RE = // eslint-disable-next-line no-control-regex
+  /\x1b\[[0-?]*[ -/]*[@-~]/g;
+const ANSI_OSC_RE = // eslint-disable-next-line no-control-regex
+  /\x1b\][^\x07]*(?:\x07|\x1b\\)/g;
 
 /** Applies terminal styling via Node's `util.styleText`. */
 export function styleText(style: TextStyle, text: string): string {
@@ -52,9 +55,9 @@ export function styleText(style: TextStyle, text: string): string {
   return nodeStyleText(format, text);
 }
 
-/** Removes ANSI color/style sequences from a string. */
+/** Removes ANSI escape sequences (CSI and OSC) from a string. */
 export function stripColors(text: string): string {
-  return text.replace(ANSI_RE, '');
+  return text.replace(ANSI_OSC_RE, '').replace(ANSI_CSI_RE, '');
 }
 
 function isUnicodeSupported(): boolean {
@@ -82,7 +85,8 @@ function stderrSupportsColor(stream: {isTTY?: boolean} = process.stderr): boolea
   }
   const {FORCE_COLOR: forceColor} = env;
   if (forceColor !== undefined) {
-    return forceColor !== '0' && forceColor !== 'false';
+    const normalized = forceColor.toLowerCase();
+    return normalized !== '0' && normalized !== 'false';
   }
   if (env.TERM === 'dumb') {
     return false;

@@ -94,8 +94,8 @@ export default class DriverCliCommand extends ExtensionCliCommand<'driver'> {
   override getPostInstallText({extName, extData}: ExtensionArgs<'driver'>): PostInstallText {
     return (
       `${console.styleText('green', `Driver ${extName}@${extData.version} successfully installed`)}\n` +
-      `${console.styleText('green', `- automationName: ${extData.automationName}`)}\n` +
-      console.styleText('green', `- platformNames: ${JSON.stringify(extData.platformNames)}`)
+      `- automationName: ${console.styleText('green', extData.automationName)}\n` +
+      `- platformNames: ${console.styleText('green', JSON.stringify(extData.platformNames))}`
     );
   }
 

@@ -51,7 +51,9 @@ export function readPackageSync(options: ReadPackageOptions = {}): NormalizedPac
 }
 
 /** Reads and parses `package.json` from `cwd`. */
-export async function readPackage(options: ReadPackageOptions = {}): Promise<NormalizedPackageJson> {
+export async function readPackage(
+  options: ReadPackageOptions = {},
+): Promise<NormalizedPackageJson> {
   const {cwd, normalize = true} = options;
   const contents = await fsPromises.readFile(getPackagePath(cwd), 'utf8');
   return parsePackageJson(contents, normalize) as NormalizedPackageJson;

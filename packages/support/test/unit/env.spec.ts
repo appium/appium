@@ -105,7 +105,9 @@ describe('env', function () {
 
           describe('when `appium` is a dependency which does not resolve to a file path`', function () {
             beforeEach(function () {
-              MockReadPackage.readPackage.resolves({devDependencies: {appium: '2.0.0-beta.25'}} as any);
+              MockReadPackage.readPackage.resolves({
+                devDependencies: {appium: '2.0.0-beta.25'},
+              } as any);
             });
 
             it('should resolve with the identity', async function () {

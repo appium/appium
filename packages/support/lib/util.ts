@@ -5,12 +5,12 @@ import path from 'node:path';
 import stream from 'node:stream';
 import {isDeepStrictEqual, promisify} from 'node:util';
 import {asyncmap} from 'asyncbox';
+import {createBase64EncodeStream} from './internal';
+import pluralizeLib from 'pluralize';
 import {fs} from './fs';
 import * as semver from 'semver';
 import {quote as shellQuote, parse as shellParse} from 'shell-quote';
 export {shellParse};
-import pluralizeLib from 'pluralize';
-import {Base64Encode} from 'base64-stream';
 import {v1 as uuidV1Lib, v3 as uuidV3Lib, v5 as uuidV5Lib} from 'uuid';
 import * as _lockfile from 'lockfile';
 import type {Element} from '@appium/types';
@@ -630,13 +630,11 @@ export async function toInMemoryBase64(
   });
 
   const readerStream = fs.createReadStream(srcPath);
-  const base64EncoderStream = new Base64Encode();
-  const encoderWritable = base64EncoderStream as NodeJS.WritableStream;
-  const encoderReadable = base64EncoderStream as NodeJS.ReadableStream;
+  const base64EncoderStream = createBase64EncodeStream();
   const resultWriteStreamPromise = new Promise<void>((resolve, reject) => {
     resultWriteStream.once('error', (e: Error) => {
-      readerStream.unpipe(encoderWritable);
-      encoderReadable.unpipe(resultWriteStream);
+      readerStream.unpipe(base64EncoderStream);
+      base64EncoderStream.unpipe(resultWriteStream);
       readerStream.destroy();
       reject(e);
     });
@@ -648,8 +646,8 @@ export async function toInMemoryBase64(
       reject(new Error(`Failed to read '${srcPath}': ${e.message}`)),
     );
   });
-  readerStream.pipe(encoderWritable);
-  encoderReadable.pipe(resultWriteStream);
+  readerStream.pipe(base64EncoderStream);
+  base64EncoderStream.pipe(resultWriteStream);
 
   await Promise.all([readStreamPromise, resultWriteStreamPromise]);
   return Buffer.concat(resultBuffers);

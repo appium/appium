@@ -9,8 +9,8 @@ import {text} from 'node:stream/consumers';
 import {pipeline} from 'node:stream/promises';
 import {fs} from './fs';
 import {isWindows} from './system';
-import {Base64Encode} from 'base64-stream';
-import {isSubPath, memoize, toReadableSizeString, GiB} from './util';
+import {createBase64EncodeStream} from './internal';
+import {GiB, isSubPath, memoize, toReadableSizeString} from './util';
 import {Timer} from './timing';
 import log from './logger';
 import {exec} from 'teen_process';
@@ -353,7 +353,7 @@ export async function toInMemoryZip(srcPath: string, opts: ZipOptions = {}): Pro
     zlib: {level},
   });
   let srcSize: number | null = null;
-  const base64EncoderStream = encodeToBase64 ? new Base64Encode() : null;
+  const base64EncoderStream = encodeToBase64 ? createBase64EncodeStream() : null;
   const resultWriteStreamPromise = new Promise<void>((resolve, reject) => {
     resultWriteStream.once('error', (e: Error) => {
       if (base64EncoderStream) {

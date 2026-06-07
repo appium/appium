@@ -26,6 +26,19 @@ function encodeChunks(chunks: Buffer[]): Promise<string> {
 }
 
 describe('createBase64EncodeStream()', function () {
+  it('should emit Buffer chunks', async function () {
+    const encoder = createBase64EncodeStream();
+    const chunks: unknown[] = [];
+
+    encoder.on('data', (chunk) => chunks.push(chunk));
+    encoder.end(Buffer.from('hello'));
+
+    await new Promise<void>((resolve) => encoder.on('finish', () => resolve()));
+
+    expect(chunks.length).to.be.greaterThan(0);
+    expect(chunks.every((chunk) => Buffer.isBuffer(chunk))).to.equal(true);
+  });
+
   it('should encode an empty stream', async function () {
     expect(await encodeChunks([])).to.equal('');
   });

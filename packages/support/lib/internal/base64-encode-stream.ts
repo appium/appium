@@ -15,15 +15,19 @@ export function createBase64EncodeStream(): stream.Transform {
       }
       const encodable = input.subarray(0, completeByteLength);
       remainder = input.subarray(completeByteLength);
-      callback(null, encodable.toString('base64'));
+      callback(null, toBase64Buffer(encodable));
     },
     flush(callback) {
       if (remainder.length) {
-        callback(null, remainder.toString('base64'));
+        callback(null, toBase64Buffer(remainder));
       } else {
         callback();
       }
     },
   });
   /* eslint-enable promise/prefer-await-to-callbacks */
+}
+
+function toBase64Buffer(data: Buffer): Buffer {
+  return Buffer.from(data.toString('base64'), 'latin1');
 }

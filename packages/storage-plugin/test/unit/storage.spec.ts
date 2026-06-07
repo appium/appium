@@ -1,4 +1,4 @@
-import {Storage} from '../../lib/storage';
+import {Storage, StorageArgumentError, validateStorageItemName} from '../../lib/storage';
 import {tempDir, fs, logger} from '@appium/support';
 import path from 'node:path';
 import {expect, use} from 'chai';
@@ -107,6 +107,20 @@ describe('storage', function () {
     const files = await storage.list();
     expect(files).not.to.be.empty;
     expect(await fs.exists(storageRoot!)).to.be.true;
+  });
+
+  describe('validateStorageItemName', function () {
+    it('should accept valid file names', function () {
+      expect(() => validateStorageItemName('foo.bar')).not.to.throw();
+      expect(() => validateStorageItemName('foo-bar_baz')).not.to.throw();
+    });
+
+    it('should reject names that must be sanitized', function () {
+      expect(() => validateStorageItemName('foo/bar')).to.throw(
+        StorageArgumentError,
+        "The provided name value 'foo/bar' must be a valid file name. Did you mean 'foo_bar'?",
+      );
+    });
   });
 
   async function addFileToStorage(name: string, size: number): Promise<string> {

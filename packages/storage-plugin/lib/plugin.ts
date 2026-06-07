@@ -1,5 +1,5 @@
 import {BasePlugin} from 'appium/plugin';
-import {requireValidItemOptions, Storage, StorageArgumentError} from './storage';
+import {requireValidItemOptions, Storage, StorageArgumentError, validateStorageItemName} from './storage';
 import {tempDir, fs, logger, util} from '@appium/support';
 import type {AddRequestResult, ItemOptions, StorageItem} from './types';
 import type {Express, Request, Response} from 'express';
@@ -77,8 +77,10 @@ STORAGE_HANDLERS.listStorageItems = async function listStorageItems(): Promise<S
 STORAGE_HANDLERS.deleteStorageItem = async function deleteStorageItem(
   req: Request,
 ): Promise<boolean> {
+  const {name} = parseRequestArgs(req, ['name']);
+  validateStorageItemName(name);
   return await executeStorageMethod(
-    async (storage: Storage) => await storage.delete(parseRequestArgs(req, ['name']).name),
+    async (storage: Storage) => await storage.delete(name),
   );
 };
 

@@ -3,14 +3,12 @@
  */
 
 import {createSandbox, type SinonSandbox, type SinonStub} from 'sinon';
-import type {NormalizedPackageJson} from 'read-pkg';
+import type {NormalizedPackageJson} from '../lib/internal/read-package';
 
-export interface MockPkgDir extends SinonStub {
-  (...args: any[]): Promise<string | undefined>;
-}
-
-export interface MockReadPkg {
+export interface MockReadPackage {
   readPackage: SinonStub;
+  readPackageSync: SinonStub;
+  packageDirectorySync: SinonStub;
   __pkg: NormalizedPackageJson;
 }
 
@@ -26,15 +24,13 @@ export interface MockTeenProcess {
 }
 
 export interface Overrides {
-  'read-pkg': MockReadPkg;
-  'package-directory': MockPkgDir;
+  '../../lib/internal/read-package': MockReadPackage;
   teen_process: MockTeenProcess;
   fs: MockFs;
 }
 
 export interface InitMocksResult {
-  MockPkgDir: MockPkgDir;
-  MockReadPkg: MockReadPkg;
+  MockReadPackage: MockReadPackage;
   MockFs: MockFs;
   MockTeenProcess: MockTeenProcess;
   sandbox: SinonSandbox;
@@ -42,16 +38,17 @@ export interface InitMocksResult {
 }
 
 export function initMocks(sandbox = createSandbox()): InitMocksResult {
-  const MockPkgDir = sandbox.stub().resolvesArg(0) as MockPkgDir;
-
-  const MockReadPkg: MockReadPkg = {
-    readPackage: sandbox.stub().callsFake(async () => MockReadPkg.__pkg),
-    __pkg: {
-      name: 'mock-package',
-      version: '1.0.0',
-      readme: '# Mock Package!!',
-      _id: 'mock-package',
-    },
+  const mockPkg: NormalizedPackageJson = {
+    name: 'mock-package',
+    version: '1.0.0',
+    readme: '# Mock Package!!',
+    _id: 'mock-package',
+  };
+  const MockReadPackage: MockReadPackage = {
+    readPackage: sandbox.stub().callsFake(async () => mockPkg),
+    readPackageSync: sandbox.stub().returns(mockPkg),
+    packageDirectorySync: sandbox.stub().callsFake(({cwd}: {cwd?: string} = {}) => cwd),
+    __pkg: mockPkg,
   };
 
   const MockFs: MockFs = {
@@ -70,15 +67,13 @@ export function initMocks(sandbox = createSandbox()): InitMocksResult {
   };
 
   const overrides: Overrides = {
-    'read-pkg': MockReadPkg,
-    'package-directory': MockPkgDir,
+    '../../lib/internal/read-package': MockReadPackage,
     teen_process: MockTeenProcess,
     fs: MockFs,
   };
 
   return {
-    MockPkgDir,
-    MockReadPkg,
+    MockReadPackage,
     MockFs,
     MockTeenProcess,
     sandbox,

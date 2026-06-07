@@ -21,9 +21,13 @@ import {glob} from 'glob';
 import type {GlobOptions} from 'glob';
 import klaw from 'klaw';
 import type {Walker} from 'klaw';
-import {packageDirectorySync} from 'package-directory';
 import path from 'node:path';
-import {readPackageSync, type NormalizeOptions, type NormalizedPackageJson} from 'read-pkg';
+import {
+  packageDirectorySync,
+  readPackageSync,
+  type NormalizeOptions,
+  type NormalizedPackageJson,
+} from './internal';
 import sanitize from 'sanitize-filename';
 import which from 'which';
 import log from './logger';

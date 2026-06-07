@@ -1,6 +1,6 @@
 import {homedir} from 'node:os';
 import path from 'node:path';
-import {readPackage, type NormalizedPackageJson} from 'read-pkg';
+import {readPackage, type NormalizedPackageJson} from './internal';
 import * as semver from 'semver';
 import {memoize} from './util';
 

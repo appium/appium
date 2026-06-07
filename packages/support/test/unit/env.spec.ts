@@ -4,13 +4,12 @@ import chaiAsPromised from 'chai-as-promised';
 import type {SinonSandbox} from 'sinon';
 import type {TeenProcessExecResult} from 'teen_process';
 import {rewiremock} from '../helpers';
-import {initMocks, type MockPkgDir, type MockReadPkg, type MockTeenProcess} from '../mocks';
+import {initMocks, type MockReadPackage, type MockTeenProcess} from '../mocks';
 
 describe('env', function () {
   let env: any;
   let sandbox: SinonSandbox;
-  let MockPkgDir: MockPkgDir;
-  let MockReadPkg: MockReadPkg;
+  let MockReadPackage: MockReadPackage;
   let MockTeenProcess: MockTeenProcess;
   let envAppiumHome: string | undefined;
 
@@ -20,8 +19,7 @@ describe('env', function () {
 
   beforeEach(function () {
     const result = initMocks();
-    MockPkgDir = result.MockPkgDir;
-    MockReadPkg = result.MockReadPkg;
+    MockReadPackage = result.MockReadPackage;
     MockTeenProcess = result.MockTeenProcess;
     sandbox = result.sandbox;
     const overrides = result.overrides;
@@ -39,10 +37,6 @@ describe('env', function () {
 
   describe('resolveManifestPath()', function () {
     describe('when appium is not resolvable from cwd', function () {
-      beforeEach(function () {
-        MockPkgDir.throws();
-      });
-
       it('should return a path relative to the default APPIUM_HOME', async function () {
         expect(await env.resolveManifestPath()).to.equal(
           path.join(env.DEFAULT_APPIUM_HOME, env.MANIFEST_RELATIVE_PATH),
@@ -96,7 +90,7 @@ describe('env', function () {
         describe('when `appium` is not a dependency of the package in the cwd', function () {
           beforeEach(function () {
             // This is needed because the default behavior is `resolvesArg(0)`; `.resolves()` does not override this behavior! I don't know why!
-            MockReadPkg.readPackage.resolves(undefined as any);
+            MockReadPackage.readPackage.resolves(undefined as any);
           });
 
           it('should resolve with DEFAULT_APPIUM_HOME', async function () {
@@ -111,7 +105,7 @@ describe('env', function () {
 
           describe('when `appium` is a dependency which does not resolve to a file path`', function () {
             beforeEach(function () {
-              MockReadPkg.readPackage.resolves({devDependencies: {appium: '2.0.0-beta.25'}} as any);
+              MockReadPackage.readPackage.resolves({devDependencies: {appium: '2.0.0-beta.25'}} as any);
             });
 
             it('should resolve with the identity', async function () {
@@ -121,7 +115,7 @@ describe('env', function () {
 
           describe('when `appium` is a dependency for version 0.x', function () {
             beforeEach(function () {
-              MockReadPkg.readPackage.resolves({devDependencies: {appium: '0.9.0'}} as any);
+              MockReadPackage.readPackage.resolves({devDependencies: {appium: '0.9.0'}} as any);
             });
             it('should resolve with DEFAULT_APPIUM_HOME', async function () {
               await expect(env.resolveAppiumHome(appiumHome)).to.eventually.equal(
@@ -132,7 +126,7 @@ describe('env', function () {
 
           describe('when `appium` is a dependency for version 1.x', function () {
             beforeEach(function () {
-              MockReadPkg.readPackage.resolves({devDependencies: {appium: '1.2.3'}} as any);
+              MockReadPackage.readPackage.resolves({devDependencies: {appium: '1.2.3'}} as any);
             });
 
             it('should resolve with DEFAULT_APPIUM_HOME', async function () {
@@ -147,7 +141,7 @@ describe('env', function () {
       describe('when reading `package.json` causes an exception', function () {
         beforeEach(function () {
           // Unclear if this is even possible.
-          MockReadPkg.readPackage.rejects(new Error('on the fritz'));
+          MockReadPackage.readPackage.rejects(new Error('on the fritz'));
         });
 
         it('should resolve with DEFAULT_APPIUM_HOME', async function () {
@@ -159,7 +153,7 @@ describe('env', function () {
 
       describe('when `package.json` not found', function () {
         beforeEach(function () {
-          MockPkgDir.resolves(undefined);
+          MockReadPackage.readPackage.rejects(new Error('ENOENT'));
         });
 
         it('should resolve with DEFAULT_APPIUM_HOME', async function () {
@@ -172,10 +166,10 @@ describe('env', function () {
   });
 
   describe('readPackageInDir()', function () {
-    it('should delegate to `read-pkg`', async function () {
+    it('should read package.json from the given directory', async function () {
       await env.readPackageInDir('/somewhere');
       expect(
-        MockReadPkg.readPackage.calledWithExactly({
+        MockReadPackage.readPackage.calledWithExactly({
           cwd: '/somewhere',
           normalize: true,
         }),
@@ -188,8 +182,7 @@ describe('env', function () {
       describe('when `appium` is not a dependency of the local package', function () {
         beforeEach(function () {
           // This is needed because the default behavior is `resolvesArg(0)`; `.resolves()` does not override this behavior! I don't know why!
-          MockPkgDir.resetBehavior();
-          MockPkgDir.resolves(undefined);
+          MockReadPackage.readPackage.rejects(new Error('ENOENT'));
         });
 
         it('should resolve `false`', async function () {
@@ -230,7 +223,7 @@ describe('env', function () {
 
           describe('when `appium` dep is current`', function () {
             beforeEach(function () {
-              MockReadPkg.readPackage.resolves({devDependencies: {appium: '2.0.0'}} as any);
+              MockReadPackage.readPackage.resolves({devDependencies: {appium: '2.0.0'}} as any);
             });
 
             it('should resolve `true`', async function () {
@@ -240,7 +233,7 @@ describe('env', function () {
 
           describe('when `appium` dep is v1.x', function () {
             beforeEach(function () {
-              MockReadPkg.readPackage.resolves({optionalDependencies: {appium: '1.x'}} as any);
+              MockReadPackage.readPackage.resolves({optionalDependencies: {appium: '1.x'}} as any);
             });
             it('should resolve `false`', async function () {
               await expect(env.hasAppiumDependency('/somewhere')).to.eventually.equal(false);
@@ -249,7 +242,7 @@ describe('env', function () {
 
           describe('when `appium` dep is v0.x', function () {
             beforeEach(function () {
-              MockReadPkg.readPackage.resolves({dependencies: {appium: '0.x'}} as any);
+              MockReadPackage.readPackage.resolves({dependencies: {appium: '0.x'}} as any);
             });
 
             it('should resolve `false`', async function () {

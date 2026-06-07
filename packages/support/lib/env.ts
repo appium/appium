@@ -1,6 +1,6 @@
 import {homedir} from 'node:os';
 import path from 'node:path';
-import {readPackage, type NormalizedPackageJson} from 'read-pkg';
+import {readPackage, type NormalizedPackageJson} from './internal';
 import * as semver from 'semver';
 import {memoize} from './util';
 
@@ -41,13 +41,19 @@ export const findAppiumDependencyPackage = memoize(async function findAppiumDepe
   acceptableVersionRange: string | semver.Range = '>=2.0.0-beta',
 ): Promise<string | undefined> {
   const readPkg = async (root: string): Promise<string | undefined> => {
+    let pkg: NormalizedPackageJson | undefined;
     try {
-      const pkg = await readPackageInDir(root);
+      pkg = await readPackageInDir(root);
+    } catch {
+      return undefined;
+    }
+    if (!pkg) {
+      return undefined;
+    }
+    try {
       const version = semver.minVersion(
         String(
-          pkg?.dependencies?.appium ??
-            pkg?.devDependencies?.appium ??
-            pkg?.peerDependencies?.appium,
+          pkg.dependencies?.appium ?? pkg.devDependencies?.appium ?? pkg.peerDependencies?.appium,
         ),
       );
       return version && semver.satisfies(version, acceptableVersionRange) ? root : undefined;
@@ -70,13 +76,27 @@ export const findAppiumDependencyPackage = memoize(async function findAppiumDepe
 });
 
 /**
- * Read a `package.json` in dir `cwd`.  If none found, return `undefined`.
+ * Read a `package.json` in dir `cwd`. If none is found, resolves with `undefined`.
+ * @deprecated Package.json helpers in `@appium/support` are deprecated and will be removed in the next major version.
+ * Read `package.json` locally instead (for example with `node:fs` and `JSON.parse`).
+ * @returns Parsed package data, or `undefined` when `package.json` is missing in `cwd`
  */
 export const readPackageInDir = memoize(async function _readPackageInDir(
   cwd: string,
-): Promise<NormalizedPackageJson> {
-  return await readPackage({cwd, normalize: true});
+): Promise<NormalizedPackageJson | undefined> {
+  try {
+    return await readPackage({cwd, normalize: true});
+  } catch (err) {
+    if (isMissingPackageJsonError(err)) {
+      return undefined;
+    }
+    throw err;
+  }
 });
+
+function isMissingPackageJsonError(err: unknown): boolean {
+  return err instanceof Error && 'code' in err && (err as NodeJS.ErrnoException).code === 'ENOENT';
+}
 
 /**
  * Determines location of Appium's "home" dir

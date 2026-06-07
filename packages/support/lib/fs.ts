@@ -21,9 +21,13 @@ import {glob} from 'glob';
 import type {GlobOptions} from 'glob';
 import klaw from 'klaw';
 import type {Walker} from 'klaw';
-import {packageDirectorySync} from 'package-directory';
 import path from 'node:path';
-import {readPackageSync, type NormalizeOptions, type NormalizedPackageJson} from 'read-pkg';
+import {
+  packageDirectorySync,
+  readPackageSync,
+  type NormalizeOptions,
+  type NormalizedPackageJson,
+} from './internal';
 import sanitize from 'sanitize-filename';
 import which from 'which';
 import log from './logger';
@@ -431,6 +435,8 @@ export const fs = {
 
   /**
    * Reads the closest `package.json` from absolute path `dir`.
+   * @deprecated Package.json helpers in `@appium/support` are deprecated and will be removed in the next major version.
+   * Read `package.json` locally instead (for example with `node:fs` and `JSON.parse`).
    * @throws If there were problems finding or reading `package.json`
    */
   readPackageJsonFrom(
@@ -450,6 +456,8 @@ export const fs = {
 
   /**
    * Finds the project root directory from `dir`.
+   * @deprecated Package.json helpers in `@appium/support` are deprecated and will be removed in the next major version.
+   * Locate `package.json` locally instead.
    * @throws TypeError If `dir` is not a non-empty absolute path
    * @throws Error If project root could not be found
    */

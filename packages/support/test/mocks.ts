@@ -3,16 +3,20 @@
  */
 
 import {createSandbox, type SinonSandbox, type SinonStub} from 'sinon';
-import type {NormalizedPackageJson} from 'read-pkg';
 
-export interface MockPkgDir extends SinonStub {
-  (...args: any[]): Promise<string | undefined>;
-}
+/** Override key for rewiremock from `test/unit/*.spec.ts` → `lib/internal` (env imports `./internal`). */
+export const INTERNAL_MODULE_OVERRIDE_KEY = '../../lib/internal' as const;
+import type {NormalizedPackageJson} from '../lib/internal/read-package';
 
-export interface MockReadPkg {
+export interface MockInternal {
   readPackage: SinonStub;
+  readPackageSync: SinonStub;
+  packageDirectorySync: SinonStub;
   __pkg: NormalizedPackageJson;
 }
+
+/** @deprecated Use {@link MockInternal} */
+export type MockReadPackage = MockInternal;
 
 export interface MockFs {
   access: SinonStub;
@@ -26,15 +30,15 @@ export interface MockTeenProcess {
 }
 
 export interface Overrides {
-  'read-pkg': MockReadPkg;
-  'package-directory': MockPkgDir;
+  [INTERNAL_MODULE_OVERRIDE_KEY]: MockInternal;
   teen_process: MockTeenProcess;
   fs: MockFs;
 }
 
 export interface InitMocksResult {
-  MockPkgDir: MockPkgDir;
-  MockReadPkg: MockReadPkg;
+  MockInternal: MockInternal;
+  /** @deprecated Use {@link MockInternal} */
+  MockReadPackage: MockInternal;
   MockFs: MockFs;
   MockTeenProcess: MockTeenProcess;
   sandbox: SinonSandbox;
@@ -42,16 +46,17 @@ export interface InitMocksResult {
 }
 
 export function initMocks(sandbox = createSandbox()): InitMocksResult {
-  const MockPkgDir = sandbox.stub().resolvesArg(0) as MockPkgDir;
-
-  const MockReadPkg: MockReadPkg = {
-    readPackage: sandbox.stub().callsFake(async () => MockReadPkg.__pkg),
-    __pkg: {
-      name: 'mock-package',
-      version: '1.0.0',
-      readme: '# Mock Package!!',
-      _id: 'mock-package',
-    },
+  const mockPkg: NormalizedPackageJson = {
+    name: 'mock-package',
+    version: '1.0.0',
+    readme: '# Mock Package!!',
+    _id: 'mock-package',
+  };
+  const MockInternal: MockInternal = {
+    readPackage: sandbox.stub().callsFake(async () => mockPkg),
+    readPackageSync: sandbox.stub().returns(mockPkg),
+    packageDirectorySync: sandbox.stub().callsFake(({cwd}: {cwd?: string} = {}) => cwd),
+    __pkg: mockPkg,
   };
 
   const MockFs: MockFs = {
@@ -70,15 +75,14 @@ export function initMocks(sandbox = createSandbox()): InitMocksResult {
   };
 
   const overrides: Overrides = {
-    'read-pkg': MockReadPkg,
-    'package-directory': MockPkgDir,
+    [INTERNAL_MODULE_OVERRIDE_KEY]: MockInternal,
     teen_process: MockTeenProcess,
     fs: MockFs,
   };
 
   return {
-    MockPkgDir,
-    MockReadPkg,
+    MockInternal,
+    MockReadPackage: MockInternal,
     MockFs,
     MockTeenProcess,
     sandbox,

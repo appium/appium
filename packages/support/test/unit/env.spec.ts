@@ -95,7 +95,7 @@ describe('env', function () {
       describe('when Appium is not resolvable from cwd', function () {
         describe('when `appium` is not a dependency of the package in the cwd', function () {
           beforeEach(function () {
-            // This is needed because the default behavior is `resolvesArg(0)`; `.resolves()` does not override this behavior! I don't know why!
+            // Override the default mock behavior (which returns a package object) to simulate no local `package.json`/dependency info.
             MockReadPackage.readPackage.resolves(undefined as any);
           });
 
@@ -109,7 +109,7 @@ describe('env', function () {
         describe('when `appium` is a dependency of the package in the cwd', function () {
           const appiumHome = path.resolve(path.sep, 'somewhere');
 
-          describe('when `appium` is a dependency which does not resolve to a file path`', function () {
+          describe('when `appium` is a dependency which does not resolve to a file path', function () {
             beforeEach(function () {
               MockReadPackage.readPackage.resolves({
                 devDependencies: {appium: '2.0.0-beta.25'},
@@ -199,7 +199,7 @@ describe('env', function () {
     describe('when Appium is not resolvable from cwd', function () {
       describe('when `appium` is not a dependency of the local package', function () {
         beforeEach(function () {
-          // This is needed because the default behavior is `resolvesArg(0)`; `.resolves()` does not override this behavior! I don't know why!
+          // Override the default mock behavior (which returns a package object) to simulate missing `package.json`.
           MockReadPackage.readPackage.rejects(missingPackageJsonError());
         });
 
@@ -239,7 +239,7 @@ describe('env', function () {
             MockTeenProcess.exec.rejects(new Error());
           });
 
-          describe('when `appium` dep is current`', function () {
+          describe('when `appium` dep is current', function () {
             beforeEach(function () {
               MockReadPackage.readPackage.resolves({devDependencies: {appium: '2.0.0'}} as any);
             });

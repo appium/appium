@@ -1,4 +1,3 @@
-import {fs} from '@appium/support';
 import {ArgumentParser} from 'argparse';
 import type {SubArgumentParserOptions, SubParser} from 'argparse';
 import path from 'node:path';
@@ -18,7 +17,7 @@ import {
   SETUP_SUBCOMMAND,
 } from '../constants';
 import {finalizeSchema, getAllArgSpecs, getArgSpec, hasArgSpec} from '../schema';
-import {rootDir} from '../helpers/build';
+import {APPIUM_VER} from '../helpers/build';
 import {getExtensionArgs, getServerArgs} from './args';
 import type {ArgumentDefinitions} from './args';
 import {
@@ -50,7 +49,7 @@ const NON_SERVER_ARGS = Object.freeze(
   ]),
 );
 
-const version = fs.readPackageJsonFrom(rootDir).version;
+const version = APPIUM_VER;
 type LooseArgsMap = {[key: string]: any};
 type TransformedArgsMap = LooseArgsMap & {[EXTRA_ARGS]: string[]};
 

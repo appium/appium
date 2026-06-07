@@ -3,9 +3,8 @@ import path from 'node:path';
 import os from 'node:os';
 import * as semver from 'semver';
 import {system, fs, npm} from '@appium/support';
-import {log as logger} from '../logger';
-import {getAppiumModuleRoot, npmPackage} from '../utils';
-import {rootDir, updateBuildInfo, getBuildInfo} from '../helpers/build';
+import {appiumPackageRoot, npmPackage} from '../utils';
+import {updateBuildInfo, getBuildInfo} from '../helpers/build';
 
 const MIN_NODE_VERSION = (npmPackage.engines as Record<string, string>).node;
 
@@ -35,13 +34,7 @@ export function checkNodeOk(): void {
  * Adjusts NODE_PATH so CJS drivers/plugins can load peer deps. Does not work with ESM.
  */
 export function adjustNodePath(): void {
-  let appiumModuleSearchRoot: string;
-  try {
-    appiumModuleSearchRoot = path.dirname(getAppiumModuleRoot());
-  } catch (error) {
-    logger.warn((error as Error).message);
-    return;
-  }
+  const appiumModuleSearchRoot = path.dirname(appiumPackageRoot);
 
   const refreshRequirePaths = (): boolean => {
     try {
@@ -121,7 +114,7 @@ export async function showDebugInfo({
       },
     },
     appium: {
-      location: rootDir,
+      location: appiumPackageRoot,
       homedir: appiumHome,
       build: getBuildInfo(),
       drivers: driverConfig.installedExtensions,

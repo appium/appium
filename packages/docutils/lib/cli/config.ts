@@ -12,7 +12,7 @@ import {hideBin} from 'yargs/helpers';
 import type {LogLevelMap} from '../constants';
 import {DEFAULT_LOG_LEVEL, NAME_BIN} from '../constants';
 import {getLogger, initLogger, isLogLevelString} from '../logger';
-import {relative} from '../util';
+import {relative} from '../utils';
 
 const log = getLogger('config');
 

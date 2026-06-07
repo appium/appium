@@ -26,7 +26,7 @@ import {inspect} from 'node:util';
 import {pathToFileURL} from 'node:url';
 import {Doctor, EXIT_CODE as DOCTOR_EXIT_CODE} from '../doctor/doctor';
 import {compact, npmPackage, packageDidChange} from '../utils';
-import {getAppiumModuleRoot} from '../utils/module';
+import {appiumPackageRoot} from '../utils/package-json';
 import * as semver from 'semver';
 
 const UPDATE_ALL = 'installed';
@@ -1324,17 +1324,15 @@ async function getRemoteExtensionVersionReq(
  * @param dstFolder The destination folder where the symlink should be created
  */
 async function injectAppiumSymlink(dstFolder: string, logger: AppiumLogger): Promise<void> {
-  let appiumModuleRoot = '';
   try {
-    appiumModuleRoot = getAppiumModuleRoot();
-    const symlinkPath = path.join(dstFolder, path.basename(appiumModuleRoot));
+    const symlinkPath = path.join(dstFolder, path.basename(appiumPackageRoot));
     if ((await fs.exists(dstFolder)) && !(await fs.exists(symlinkPath))) {
-      await fs.symlink(appiumModuleRoot, symlinkPath, system.isWindows() ? 'junction' : 'dir');
+      await fs.symlink(appiumPackageRoot, symlinkPath, system.isWindows() ? 'junction' : 'dir');
     }
   } catch (error) {
     // This error is not fatal, we may still doing just fine if the module being loaded is a CJS one
     logger.info(
-      `Cannot create a symlink to the appium module '${appiumModuleRoot}' in '${dstFolder}'. ` +
+      `Cannot create a symlink to the appium module '${appiumPackageRoot}' in '${dstFolder}'. ` +
         `Original error: ${error instanceof Error ? error.message : String(error)}`,
     );
   }

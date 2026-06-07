@@ -6,7 +6,7 @@
 import type {CommandModule, InferredOptionTypes, Options} from 'yargs';
 import {init} from '../../init';
 import {getLogger} from '../../logger';
-import {stopwatch} from '../../util';
+import {stopwatch} from '../../utils';
 import {checkMissingPaths} from '../check';
 
 const log = getLogger('init');

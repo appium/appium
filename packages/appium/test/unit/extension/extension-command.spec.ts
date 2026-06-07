@@ -10,7 +10,7 @@ import sinonChai from 'sinon-chai';
 import {FAKE_DRIVER_DIR} from '../../helpers';
 import {Manifest} from '../../../lib/extension/manifest';
 import {fs, system} from '@appium/support';
-import * as moduleUtils from '../../../lib/utils/module';
+import {appiumPackageRoot} from '../../../lib/utils/package-json';
 import {expect} from 'chai';
 import * as chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
@@ -84,7 +84,6 @@ describe('ExtensionCommand', function () {
   describe('injectAppiumSymlinks', function () {
     let fsExistsStub: SinonStub;
     let fsSymlinkStub: SinonStub;
-    let getAppiumModuleRootStub: SinonStub;
     let isWindowsStub: SinonStub;
     let logger: AppiumLogger;
 
@@ -92,7 +91,6 @@ describe('ExtensionCommand', function () {
       sandbox = sinon.createSandbox();
       fsExistsStub = sandbox.stub(fs, 'exists');
       fsSymlinkStub = sandbox.stub(fs, 'symlink');
-      getAppiumModuleRootStub = sandbox.stub(moduleUtils, 'getAppiumModuleRoot');
       isWindowsStub = sandbox.stub(system, 'isWindows');
       logger = {
         info: sandbox.stub(),
@@ -101,7 +99,6 @@ describe('ExtensionCommand', function () {
         debug: sandbox.stub(),
       } as unknown as AppiumLogger;
 
-      getAppiumModuleRootStub.returns('/path/to/appium');
       isWindowsStub.returns(false);
     });
 
@@ -152,7 +149,7 @@ describe('ExtensionCommand', function () {
         );
         expect(fsSymlinkStub).to.have.been.calledOnce;
         expect(fsSymlinkStub).to.have.been.calledWith(
-          '/path/to/appium',
+          appiumPackageRoot,
           '/path/to/driver-for-test/node_modules/appium',
           'dir',
         );
@@ -180,7 +177,7 @@ describe('ExtensionCommand', function () {
         );
 
         expect(fsSymlinkStub).to.have.been.calledWith(
-          '/path/to/appium',
+          appiumPackageRoot,
           '/path/to/driver-for-test/node_modules/appium',
           'junction',
         );
@@ -254,7 +251,7 @@ describe('ExtensionCommand', function () {
 
         expect(fsSymlinkStub).to.have.been.calledOnce;
         expect(fsSymlinkStub).to.have.been.calledWith(
-          '/path/to/appium',
+          appiumPackageRoot,
           '/path/to/plugin-for-test/node_modules/appium',
           'dir',
         );
@@ -368,7 +365,7 @@ describe('ExtensionCommand', function () {
 
         expect(fsSymlinkStub).to.have.been.calledOnce;
         expect(fsSymlinkStub).to.have.been.calledWith(
-          '/path/to/appium',
+          appiumPackageRoot,
           '/path/to/npm-driver/node_modules/appium',
           'dir',
         );
@@ -402,32 +399,6 @@ describe('ExtensionCommand', function () {
         expect(logger.info.args[0][0]).to.match(/Cannot create a symlink/);
         // @ts-ignore
         expect(logger.info.args[0][0]).to.match(/Permission denied/);
-      });
-
-      it('should not throw when getAppiumModuleRoot fails', async function () {
-        const driverConfig = {
-          installedExtensions: {
-            'driver-for-test': {
-              installType: 'npm',
-              installPath: '/path/to/driver-for-test',
-            },
-          },
-        };
-        const pluginConfig = {installedExtensions: {}};
-
-        getAppiumModuleRootStub.throws(new Error('Module not found'));
-        fsExistsStub.resolves(true);
-        fsExistsStub.withArgs('/path/to/driver-for-test/node_modules/appium').resolves(false);
-
-        await injectAppiumSymlinks(
-          asExtensionConfig(driverConfig),
-          asExtensionConfig(pluginConfig),
-          logger,
-        );
-
-        expect(logger.info).to.have.been.calledOnce;
-        // @ts-ignore
-        expect(logger.info.args[0][0]).to.match(/Cannot create a symlink/);
       });
     });
 

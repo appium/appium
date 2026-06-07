@@ -1,3 +1,4 @@
+import nodeFs from 'node:fs';
 import path from 'node:path';
 import {log as logger} from './logger';
 import {tempDir, fs, util, timing, node} from '@appium/support';
@@ -13,9 +14,15 @@ import type {
 } from '@appium/types';
 import type {AxiosResponseHeaders, RawAxiosRequestHeaders} from 'axios';
 import type {Readable} from 'node:stream';
+import type {PackageJson} from 'type-fest';
+
+type BaseDriverPackageJson = PackageJson & {
+  name: string;
+  version: string;
+};
 
 // for compat with running tests transpiled and in-place
-export const {version: BASEDRIVER_VER} = fs.readPackageJsonFrom(__dirname);
+export const BASEDRIVER_VER = readPackageJsonSync().version;
 
 const CACHED_APPS_MAX_AGE_MS = 1000 * 60 * toNaturalNumber(60 * 24, 'APPIUM_APPS_CACHE_MAX_AGE');
 const MAX_CACHED_APPS = toNaturalNumber(1024, 'APPIUM_APPS_CACHE_MAX_ITEMS');
@@ -583,6 +590,29 @@ function toNaturalNumber(defaultValue: number, envVarName?: string): number {
   }
   const num = parseInt(`${process.env[envVarName]}`, 10);
   return num > 0 ? num : defaultValue;
+}
+
+function readPackageJsonSync(): BaseDriverPackageJson {
+  let current = path.resolve(__dirname);
+  const root = path.parse(current).root;
+  let pkgRoot: string | undefined;
+  while (true) {
+    if (nodeFs.existsSync(path.join(current, 'package.json'))) {
+      pkgRoot = current;
+      break;
+    }
+    if (current === root) {
+      throw new Error(`Could not find \`package.json\` from ${__dirname}`);
+    }
+    current = path.dirname(current);
+  }
+  const pkg = JSON.parse(
+    nodeFs.readFileSync(path.join(pkgRoot, 'package.json'), 'utf8'),
+  ) as PackageJson;
+  if (typeof pkg.name !== 'string' || typeof pkg.version !== 'string') {
+    throw new Error(`Invalid \`package.json\` near ${__dirname}`);
+  }
+  return pkg as BaseDriverPackageJson;
 }
 
 export default {

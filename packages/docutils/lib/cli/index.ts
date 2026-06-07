@@ -7,17 +7,15 @@
 
 import {getLogger} from '../logger';
 
-import {fs} from '@appium/support';
-import {readPackageSync} from 'read-pkg';
 import {hideBin} from 'yargs/helpers';
 import yargs from 'yargs/yargs';
 import type {LogLevelMap} from '../constants';
-import {DEFAULT_LOG_LEVEL, NAME_BIN} from '../constants';
+import {DEFAULT_LOG_LEVEL, NAME_BIN, PKG_ROOT_DIR} from '../constants';
+import {readPackage} from '../utils';
 import {DocutilsError} from '../error';
 import {build, init, validate} from './command';
 import {findConfig} from './config';
 
-const pkg = readPackageSync({cwd: fs.findRoot(__dirname)});
 const log = getLogger('cli');
 const IMPLICATIONS_FAILED_REGEX = /implications\s+failed:\n\s*(.+)\s->\s(.+)$/i;
 
@@ -26,7 +24,7 @@ const IMPLICATIONS_FAILED_REGEX = /implications\s+failed:\n\s*(.+)\s->\s(.+)$/i;
  * @param argv Raw argv values (without node/bin by default).
  */
 export async function main(argv = hideBin(process.argv)) {
-  const config = await findConfig(argv);
+  const [config, pkg] = await Promise.all([findConfig(argv), readPackage({cwd: PKG_ROOT_DIR})]);
 
   const y = yargs(argv);
   return await y

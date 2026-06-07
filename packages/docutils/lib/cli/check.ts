@@ -6,7 +6,7 @@
 import {fs, util} from '@appium/support';
 import type {Options} from 'yargs';
 import {getLogger} from '../logger';
-import {kebabCase} from '../util';
+import {kebabCase} from '../utils';
 
 const log = getLogger('check');
 

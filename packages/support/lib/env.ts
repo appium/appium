@@ -71,6 +71,8 @@ export const findAppiumDependencyPackage = memoize(async function findAppiumDepe
 
 /**
  * Read a `package.json` in dir `cwd`.  If none found, return `undefined`.
+ * @deprecated Package.json helpers in `@appium/support` are deprecated and will be removed in the next major version.
+ * Read `package.json` locally instead (for example with `node:fs` and `JSON.parse`).
  */
 export const readPackageInDir = memoize(async function _readPackageInDir(
   cwd: string,

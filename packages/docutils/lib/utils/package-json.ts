@@ -1,6 +1,5 @@
 import {fs} from '@appium/support';
 import nodeFs from 'node:fs';
-import fsPromises from 'node:fs/promises';
 import path from 'node:path';
 import normalizePackageData from 'normalize-package-data';
 import type {PackageJson as TypeFestPackageJson} from 'type-fest';
@@ -66,7 +65,7 @@ export async function readPackage(
   options: ReadPackageOptions = {},
 ): Promise<PackageJson | NormalizedPackageJson> {
   const {cwd, normalize = true} = options;
-  const contents = await fsPromises.readFile(getPackagePath(cwd), 'utf8');
+  const contents = await fs.readFile(getPackagePath(cwd), 'utf8');
   return parsePackageJson(contents, normalize);
 }
 

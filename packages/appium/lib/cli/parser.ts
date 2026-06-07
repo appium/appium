@@ -49,7 +49,6 @@ const NON_SERVER_ARGS = Object.freeze(
   ]),
 );
 
-const version = APPIUM_VER;
 type LooseArgsMap = {[key: string]: any};
 type TransformedArgsMap = LooseArgsMap & {[EXTRA_ARGS]: string[]};
 
@@ -90,7 +89,7 @@ export class ArgParser {
 
     parser.add_argument('-v', '--version', {
       action: 'version',
-      version,
+      version: APPIUM_VER,
     });
 
     const subParsers = parser.add_subparsers({dest: 'subcommand'});

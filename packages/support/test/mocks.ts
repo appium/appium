@@ -3,14 +3,20 @@
  */
 
 import {createSandbox, type SinonSandbox, type SinonStub} from 'sinon';
+
+/** Override key for rewiremock from `test/unit/*.spec.ts` → `lib/internal` (env imports `./internal`). */
+export const INTERNAL_MODULE_OVERRIDE_KEY = '../../lib/internal' as const;
 import type {NormalizedPackageJson} from '../lib/internal/read-package';
 
-export interface MockReadPackage {
+export interface MockInternal {
   readPackage: SinonStub;
   readPackageSync: SinonStub;
   packageDirectorySync: SinonStub;
   __pkg: NormalizedPackageJson;
 }
+
+/** @deprecated Use {@link MockInternal} */
+export type MockReadPackage = MockInternal;
 
 export interface MockFs {
   access: SinonStub;
@@ -24,13 +30,15 @@ export interface MockTeenProcess {
 }
 
 export interface Overrides {
-  '../../lib/internal/read-package': MockReadPackage;
+  [INTERNAL_MODULE_OVERRIDE_KEY]: MockInternal;
   teen_process: MockTeenProcess;
   fs: MockFs;
 }
 
 export interface InitMocksResult {
-  MockReadPackage: MockReadPackage;
+  MockInternal: MockInternal;
+  /** @deprecated Use {@link MockInternal} */
+  MockReadPackage: MockInternal;
   MockFs: MockFs;
   MockTeenProcess: MockTeenProcess;
   sandbox: SinonSandbox;
@@ -44,7 +52,7 @@ export function initMocks(sandbox = createSandbox()): InitMocksResult {
     readme: '# Mock Package!!',
     _id: 'mock-package',
   };
-  const MockReadPackage: MockReadPackage = {
+  const MockInternal: MockInternal = {
     readPackage: sandbox.stub().callsFake(async () => mockPkg),
     readPackageSync: sandbox.stub().returns(mockPkg),
     packageDirectorySync: sandbox.stub().callsFake(({cwd}: {cwd?: string} = {}) => cwd),
@@ -67,13 +75,14 @@ export function initMocks(sandbox = createSandbox()): InitMocksResult {
   };
 
   const overrides: Overrides = {
-    '../../lib/internal/read-package': MockReadPackage,
+    [INTERNAL_MODULE_OVERRIDE_KEY]: MockInternal,
     teen_process: MockTeenProcess,
     fs: MockFs,
   };
 
   return {
-    MockReadPackage,
+    MockInternal,
+    MockReadPackage: MockInternal,
     MockFs,
     MockTeenProcess,
     sandbox,

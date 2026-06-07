@@ -6,6 +6,12 @@ import type {TeenProcessExecResult} from 'teen_process';
 import {rewiremock} from '../helpers';
 import {initMocks, type MockReadPackage, type MockTeenProcess} from '../mocks';
 
+function missingPackageJsonError(): NodeJS.ErrnoException {
+  const err = new Error('ENOENT') as NodeJS.ErrnoException;
+  err.code = 'ENOENT';
+  return err;
+}
+
 describe('env', function () {
   let env: any;
   let sandbox: SinonSandbox;
@@ -155,7 +161,7 @@ describe('env', function () {
 
       describe('when `package.json` not found', function () {
         beforeEach(function () {
-          MockReadPackage.readPackage.rejects(new Error('ENOENT'));
+          MockReadPackage.readPackage.rejects(missingPackageJsonError());
         });
 
         it('should resolve with DEFAULT_APPIUM_HOME', async function () {
@@ -177,6 +183,16 @@ describe('env', function () {
         }),
       ).to.be.true;
     });
+
+    it('should resolve with undefined when package.json is missing', async function () {
+      MockReadPackage.readPackage.rejects(missingPackageJsonError());
+      await expect(env.readPackageInDir('/somewhere')).to.eventually.be.undefined;
+    });
+
+    it('should reject when reading package.json fails for reasons other than ENOENT', async function () {
+      MockReadPackage.readPackage.rejects(new Error('on the fritz'));
+      await expect(env.readPackageInDir('/somewhere')).to.be.rejectedWith('on the fritz');
+    });
   });
 
   describe('hasAppiumDependency()', function () {
@@ -184,7 +200,7 @@ describe('env', function () {
       describe('when `appium` is not a dependency of the local package', function () {
         beforeEach(function () {
           // This is needed because the default behavior is `resolvesArg(0)`; `.resolves()` does not override this behavior! I don't know why!
-          MockReadPackage.readPackage.rejects(new Error('ENOENT'));
+          MockReadPackage.readPackage.rejects(missingPackageJsonError());
         });
 
         it('should resolve `false`', async function () {

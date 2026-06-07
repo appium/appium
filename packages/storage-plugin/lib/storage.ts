@@ -234,9 +234,6 @@ export class StorageArgumentError extends Error {}
  * @param opts Candidate item options.
  */
 export function requireValidItemOptions(opts: ItemOptions): ItemOptions {
-  if (util.isEmpty(opts.name)) {
-    throw new StorageArgumentError(`The provided file name '${opts.name}' must not be empty`);
-  }
   validateStorageItemName(opts.name);
   if (opts.sha1?.length !== SHA1_HASH_LEN) {
     throw new StorageArgumentError(
@@ -252,6 +249,10 @@ export function requireValidItemOptions(opts: ItemOptions): ItemOptions {
  * @param name The name to validate.
  */
 export function validateStorageItemName(name: string): void {
+  if (util.isEmpty(name)) {
+    throw new StorageArgumentError(`The provided file name '${name}' must not be empty`);
+  }
+
   const sanitizedName = fs.sanitizeName(name, {
     replacement: '_',
   });

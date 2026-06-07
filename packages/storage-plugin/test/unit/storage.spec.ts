@@ -121,6 +121,13 @@ describe('storage', function () {
         "The provided name value 'foo/bar' must be a valid file name. Did you mean 'foo_bar'?",
       );
     });
+
+    it('should reject empty file names', function () {
+      expect(() => validateStorageItemName('')).to.throw(
+        StorageArgumentError,
+        "The provided file name '' must not be empty",
+      );
+    });
   });
 
   async function addFileToStorage(name: string, size: number): Promise<string> {

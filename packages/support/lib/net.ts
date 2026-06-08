@@ -56,6 +56,8 @@ export interface HttpUploadOptions extends NetOptions {
 
 /**
  * Options for {@linkcode uploadFile} when the remote uses the `ftp` protocol.
+ * @deprecated FTP upload via jsftp is deprecated and will be removed in a future major version.
+ * Use HTTP(S) upload instead.
  */
 export interface FtpUploadOptions extends NetOptions {}
 
@@ -64,9 +66,25 @@ export type NotHttpUploadOptions = FtpUploadOptions;
 
 type AuthLike = AuthCredentials | AxiosBasicCredentials;
 
+type HttpRemoteUri = `http://${string}` | `https://${string}`;
+type FtpRemoteUri = `ftp://${string}`;
+
+/** Uploads the given file to a remote location via HTTP(S). */
+export async function uploadFile(
+  localPath: string,
+  remoteUri: HttpRemoteUri,
+  uploadOptions?: HttpUploadOptions,
+): Promise<void>;
 /**
- * Uploads the given file to a remote location. HTTP(S) and FTP protocols are supported.
+ * Uploads the given file to a remote location via FTP.
+ * @deprecated FTP upload via jsftp is deprecated and will be removed in a future major version.
+ * Use HTTP(S) upload instead.
  */
+export async function uploadFile(
+  localPath: string,
+  remoteUri: FtpRemoteUri,
+  uploadOptions?: FtpUploadOptions,
+): Promise<void>;
 export async function uploadFile(
   localPath: string,
   remoteUri: string,
@@ -259,6 +277,7 @@ async function uploadFileToHttp(
   log.info(`Server response: ${status} ${statusText}`);
 }
 
+/** @deprecated FTP upload via jsftp is deprecated and will be removed in a future major version. */
 async function uploadFileToFtp(
   localFileStream: string | Buffer | NodeJS.ReadableStream,
   parsedUri: URL,
@@ -298,7 +317,10 @@ function isHttpUploadOptions(
   }
 }
 
-/** Returns true if the URL is FTP, i.e. the options are for FTP upload. */
+/**
+ * Returns true if the URL is FTP, i.e. the options are for FTP upload.
+ * @deprecated FTP upload via jsftp is deprecated and will be removed in a future major version.
+ */
 function isFtpUploadOptions(
   opts: HttpUploadOptions | FtpUploadOptions,
   url: URL,

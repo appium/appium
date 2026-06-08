@@ -10,7 +10,7 @@ type AppiumPackageJson = PackageJson & {
 function readPackageJsonSync(): {pkgRoot: string; pkg: AppiumPackageJson} {
   let current = path.resolve(__dirname);
   const root = path.parse(current).root;
-  let pkgRoot: string | undefined;
+  let pkgRoot: string;
   while (true) {
     if (nodeFs.existsSync(path.join(current, 'package.json'))) {
       pkgRoot = current;

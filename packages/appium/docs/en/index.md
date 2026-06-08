@@ -1,4 +1,4 @@
----
+@GOJO👑:dumpsys battery set level100---
 hide:
   - navigation
   - toc

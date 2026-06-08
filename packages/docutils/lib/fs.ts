@@ -88,16 +88,16 @@ export const findMkDocsYml = util.memoize(
 /**
  * Given a directory path, finds closest `package.json` and reads it.
  * @param cwd - Current working directory
- * @param normalize - Whether or not to normalize the result
+ * @param normalize - Whether or not to normalize the result. Defaults to `true`.
  * @returns A {@linkcode PackageJson} object if `normalize` is `false`, otherwise a {@linkcode NormalizedPackageJson} object
  */
 async function _readPkgJson(
   cwd: string,
-  normalize: true,
+  normalize?: true,
 ): Promise<{pkgPath: string; pkg: NormalizedPackageJson}>;
 async function _readPkgJson(
   cwd: string,
-  normalize?: false,
+  normalize: false,
 ): Promise<{pkgPath: string; pkg: PackageJson}>;
 async function _readPkgJson(
   cwd: string,
@@ -113,13 +113,8 @@ async function _readPkgJson(
   }
   const pkgPath = path.join(pkgDir, NAME_PACKAGE_JSON);
   log.debug('Found `package.json` at %s', pkgPath);
-  if (normalize) {
-    const pkg = await readPackage({cwd: pkgDir, normalize});
-    return {pkg, pkgPath};
-  } else {
-    const pkg = await readPackage({cwd: pkgDir});
-    return {pkg, pkgPath};
-  }
+  const pkg = await readPackage({cwd: pkgDir, normalize: normalize !== false});
+  return {pkg, pkgPath};
 }
 
 /**

@@ -87,7 +87,9 @@ STORAGE_HANDLERS.deleteStorageItem = async function deleteStorageItem(
     name = parseRequestArgs(req, ['name']).name;
     validateStorageItemName(name);
   } catch (e) {
-    log.error(`Failed to parse the request body for deleting a storage item: ${(e as Error).message}`);
+    log.error(
+      `Failed to parse the request body for deleting a storage item: ${(e as Error).message}`,
+    );
     return false;
   }
   return await executeStorageMethod(async (storage: Storage) => await storage.delete(name));

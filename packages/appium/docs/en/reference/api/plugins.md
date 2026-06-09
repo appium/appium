@@ -222,7 +222,7 @@ Deletes a file in the storage.
 #### Response
 
 `boolean` - `true` upon successful file deletion, or `false` if the file does not exist in
-the storage 
+the storage, or if the delete request is invalid.
 
 ### listStorageItems
 

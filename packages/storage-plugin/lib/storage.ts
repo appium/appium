@@ -234,18 +234,7 @@ export class StorageArgumentError extends Error {}
  * @param opts Candidate item options.
  */
 export function requireValidItemOptions(opts: ItemOptions): ItemOptions {
-  if (util.isEmpty(opts.name)) {
-    throw new StorageArgumentError(`The provided file name '${opts.name}' must not be empty`);
-  }
-  const sanitizedName = fs.sanitizeName(opts.name, {
-    replacement: '_',
-  });
-  if (opts.name !== sanitizedName) {
-    throw new StorageArgumentError(
-      `The provided name value '${opts.name}' must be a valid file name. ` +
-        `Did you mean '${sanitizedName}'?`,
-    );
-  }
+  validateStorageItemName(opts.name);
   if (opts.sha1?.length !== SHA1_HASH_LEN) {
     throw new StorageArgumentError(
       `The provided hash value '${opts.sha1}' must be a valid SHA1 string, for ` +
@@ -253,6 +242,26 @@ export function requireValidItemOptions(opts: ItemOptions): ItemOptions {
     );
   }
   return opts;
+}
+
+/**
+ * Validate storage item name and throw if it is invalid.
+ * @param name The name to validate.
+ */
+export function validateStorageItemName(name: string): void {
+  if (util.isEmpty(name)) {
+    throw new StorageArgumentError(`The provided file name '${name}' must not be empty`);
+  }
+
+  const sanitizedName = fs.sanitizeName(name, {
+    replacement: '_',
+  });
+  if (name !== sanitizedName) {
+    throw new StorageArgumentError(
+      `The provided name value '${name}' must be a valid file name. ` +
+        `Did you mean '${sanitizedName}'?`,
+    );
+  }
 }
 
 function toTempName(origName: string): string {

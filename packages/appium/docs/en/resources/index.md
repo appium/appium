@@ -26,3 +26,4 @@ maintainers, Jonathan Lipps, with lots of useful guides
 - [AppiumConf 2021](https://www.youtube.com/playlist?list=PL9Z-JgiTsOYRCcJhDfmKAah9XmAp2b903)
 - [AppiumConf 2024](https://www.youtube.com/playlist?list=PL9Z-JgiTsOYQaU5i5LJtAWlh5WVZPi3If)
 - [SeleniumConf & AppiumConf 2025](https://www.youtube.com/playlist?list=PLRdSclUtJDYV2R92TLbmwxws6clruuTjH)
+- [SeleniumConf & AppiumConf 2026](https://www.youtube.com/playlist?list=PLRdSclUtJDYVgVqdKnSyBLBmFdA0KE_Dk)

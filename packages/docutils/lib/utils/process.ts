@@ -23,12 +23,12 @@ export async function spawnBackgroundProcess(
   return new Promise<void>((resolve, reject) => {
     spawn(command, args, {...opts, stdio: 'inherit'})
       .on('error', reject)
-      .on('close', (code) => {
-        // can be null or number
-        if (code) {
-          return reject(new Error(`${command} exited with code ${code}`));
+      .on('close', (code, signal) => {
+        if (code === 0) {
+          return resolve();
         }
-        resolve();
+        const reason = code === null ? `signal ${signal ?? 'unknown'}` : `code ${code}`;
+        reject(new Error(`${command} exited with ${reason}`));
       });
   });
 }

@@ -26,7 +26,7 @@ export type NormalizeOptions = ReadPackageOptions & {normalize?: true};
 
 /** Finds the directory containing the nearest `package.json` by walking upward from `dir`. */
 export async function findPackageRoot(dir: string): Promise<string> {
-  assertAbsoluteDir(dir, 'findPackageRoot');
+  assertNonEmptyDir(dir, 'findPackageRoot');
   let current = path.resolve(dir);
   const fsRoot = path.parse(current).root;
 
@@ -43,7 +43,7 @@ export async function findPackageRoot(dir: string): Promise<string> {
 
 /** Finds the project root directory from `dir`. */
 export function findPackageRootSync(dir: string): string {
-  assertAbsoluteDir(dir, 'findPackageRootSync');
+  assertNonEmptyDir(dir, 'findPackageRootSync');
   let current = path.resolve(dir);
   const fsRoot = path.parse(current).root;
 
@@ -69,9 +69,9 @@ export async function readPackage(
   return parsePackageJson(contents, normalize);
 }
 
-function assertAbsoluteDir(dir: string, fnName: string): void {
-  if (!dir || !path.isAbsolute(dir)) {
-    throw new TypeError(`\`${fnName}()\` must be provided a non-empty, absolute path`);
+function assertNonEmptyDir(dir: string, fnName: string): void {
+  if (!dir) {
+    throw new TypeError(`\`${fnName}()\` must be provided a non-empty path`);
   }
 }
 

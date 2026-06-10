@@ -26,8 +26,6 @@ describe('ExtensionConfig', function () {
       overrides,
     ));
     ({Manifest} = rewiremock.proxy(() => require('../../../lib/extension/manifest'), overrides));
-
-    MockAppiumSupport.fs.readPackageJsonFrom.returns({version: '2.0.0'});
   });
 
   afterEach(function () {

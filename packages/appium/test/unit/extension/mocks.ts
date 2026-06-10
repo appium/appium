@@ -4,14 +4,8 @@
 
 import {EventEmitter} from 'node:events';
 import path from 'node:path';
-import {createRequire} from 'node:module';
 import {createSandbox, type SinonSandbox, type SinonStub} from 'sinon';
 import {console as supportConsole, util as supportUtil} from '@appium/support';
-
-declare const __filename: string;
-const requireMod = createRequire(__filename);
-
-const {version: APPIUM_VER} = requireMod('../../../package.json') as {version: string};
 
 export interface MockAppiumSupportFs {
   readFile: SinonStub;
@@ -19,8 +13,6 @@ export interface MockAppiumSupportFs {
   walk: SinonStub;
   glob: SinonStub;
   mkdirp: SinonStub;
-  readPackageJsonFrom: SinonStub;
-  findRoot: SinonStub;
   exists: SinonStub;
 }
 
@@ -105,11 +97,6 @@ export function initMocks(sandbox = createSandbox()): InitMocksResult {
       }),
       glob: sandbox.stub().resolves([]),
       mkdirp: sandbox.stub().resolves(),
-      readPackageJsonFrom: sandbox.stub().returns({
-        version: APPIUM_VER,
-        engines: {node: '>=12'},
-      }),
-      findRoot: sandbox.stub().returns(path.join(__dirname, '..', '..', '..')),
       exists: sandbox.stub().resolves(true),
     },
     env: {

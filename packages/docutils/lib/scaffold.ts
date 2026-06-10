@@ -7,10 +7,10 @@ import {fs, util} from '@appium/support';
 import {getLogger} from './logger';
 import path from 'node:path';
 import {createPatch} from 'diff';
-import type {NormalizedPackageJson} from 'read-pkg';
+import type {NormalizedPackageJson} from './utils';
 import type {JsonValue, JsonObject} from 'type-fest';
 import {DocutilsError} from './error';
-import {mergeDefaultsDeep, relative} from './util';
+import {mergeDefaultsDeep, relative} from './utils';
 import {stringifyJson, readPackageJson, writeFileString} from './fs';
 import {NAME_ERR_ENOENT} from './constants';
 

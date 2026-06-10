@@ -5,9 +5,7 @@
 
 import {fs, util} from '@appium/support';
 import path from 'node:path';
-import {packageDirectory} from 'package-directory';
-import type {NormalizedPackageJson, PackageJson} from 'read-pkg';
-import {readPackage} from 'read-pkg';
+import {findPackageRoot, readPackage, type NormalizedPackageJson, type PackageJson} from './utils';
 import type {JsonValue} from 'type-fest';
 import * as YAML from 'yaml';
 import {
@@ -22,7 +20,7 @@ import {DocutilsError} from './error';
 import {getLogger} from './logger';
 import type {MkDocsYml} from './model';
 import {exec} from 'teen_process';
-import {mergeDefaultsDeep} from './util';
+import {mergeDefaultsDeep} from './utils';
 
 const log = getLogger('fs');
 
@@ -31,7 +29,7 @@ const log = getLogger('fs');
  *
  * Caches result
  */
-const findPkgDir = util.memoize(packageDirectory, (opts) => opts?.cwd);
+const findPkgDir = util.memoize(findPackageRoot);
 
 /**
  * Stringifies a thing into a YAML
@@ -69,11 +67,11 @@ export async function findInPkgDir(
   filename: string,
   cwd = process.cwd(),
 ): Promise<string | undefined> {
-  const pkgDir = await findPkgDir({cwd});
-  if (!pkgDir) {
-    return;
+  try {
+    return path.join(await findPkgDir(cwd), filename);
+  } catch {
+    return undefined;
   }
-  return path.join(pkgDir, filename);
 }
 
 /**
@@ -90,36 +88,33 @@ export const findMkDocsYml = util.memoize(
 /**
  * Given a directory path, finds closest `package.json` and reads it.
  * @param cwd - Current working directory
- * @param normalize - Whether or not to normalize the result
+ * @param normalize - Whether or not to normalize the result. Defaults to `true`.
  * @returns A {@linkcode PackageJson} object if `normalize` is `false`, otherwise a {@linkcode NormalizedPackageJson} object
  */
 async function _readPkgJson(
   cwd: string,
-  normalize: true,
+  normalize?: true,
 ): Promise<{pkgPath: string; pkg: NormalizedPackageJson}>;
 async function _readPkgJson(
   cwd: string,
-  normalize?: false,
+  normalize: false,
 ): Promise<{pkgPath: string; pkg: PackageJson}>;
 async function _readPkgJson(
   cwd: string,
   normalize?: boolean,
 ): Promise<{pkgPath: string; pkg: PackageJson | NormalizedPackageJson}> {
-  const pkgDir = await findPkgDir({cwd});
-  if (!pkgDir) {
+  let pkgDir: string;
+  try {
+    pkgDir = await findPkgDir(cwd);
+  } catch {
     throw new DocutilsError(
       `Could not find a ${NAME_PACKAGE_JSON} near ${cwd}; please create it before using this utility`,
     );
   }
   const pkgPath = path.join(pkgDir, NAME_PACKAGE_JSON);
   log.debug('Found `package.json` at %s', pkgPath);
-  if (normalize) {
-    const pkg = await readPackage({cwd: pkgDir, normalize});
-    return {pkg, pkgPath};
-  } else {
-    const pkg = await readPackage({cwd: pkgDir});
-    return {pkg, pkgPath};
-  }
+  const pkg = await readPackage({cwd: pkgDir, normalize: normalize !== false});
+  return {pkg, pkgPath};
 }
 
 /**

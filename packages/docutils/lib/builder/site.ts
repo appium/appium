@@ -11,8 +11,8 @@ import {DEFAULT_SITE_DIR, NAME_BIN, NAME_MKDOCS, NAME_MKDOCS_YML} from '../const
 import {DocutilsError} from '../error';
 import {findMkDocsYml, isMkDocsInstalled, readMkDocsYml, requirePython} from '../fs';
 import {getLogger} from '../logger';
-import type {SpawnBackgroundProcessOpts} from '../util';
-import {execWithErrorHandling, relative, spawnBackgroundProcess, stopwatch} from '../util';
+import type {SpawnBackgroundProcessOpts} from '../utils';
+import {execWithErrorHandling, relative, spawnBackgroundProcess, stopwatch} from '../utils';
 
 const log = getLogger('mkdocs');
 

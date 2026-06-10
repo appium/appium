@@ -4,8 +4,8 @@
  */
 
 const {LogLevels} = require('consola');
-import {fs} from '@appium/support';
 import path from 'node:path';
+import {findPackageRootSync} from './utils';
 
 /**
  * CLI executable name
@@ -69,7 +69,7 @@ export const DEFAULT_LOG_LEVEL = 'info';
 /**
  * Blocking I/O
  */
-export const PKG_ROOT_DIR = fs.findRoot(__dirname);
+export const PKG_ROOT_DIR = findPackageRootSync(__dirname);
 
 /**
  * Path to the `requirements.txt` file (in this package)

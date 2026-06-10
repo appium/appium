@@ -5,7 +5,6 @@ import type {BuildInfo} from 'appium/types';
 import {npmPackage} from '../utils';
 
 export const APPIUM_VER = npmPackage.version;
-export const rootDir = fs.findRoot(__dirname);
 
 const GIT_BINARY = `git${system.isWindows() ? '.exe' : ''}`;
 const GITHUB_API = 'https://api.github.com/repos/appium/appium';

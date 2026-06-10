@@ -19,8 +19,8 @@ import {
 import {DocutilsError} from '../error';
 import {findMike, findMkDocsYml, isMkDocsInstalled, readPackageJson, requirePython} from '../fs';
 import {getLogger} from '../logger';
-import type {SpawnBackgroundProcessOpts} from '../util';
-import {argify, execWithErrorHandling, spawnBackgroundProcess, stopwatch} from '../util';
+import type {SpawnBackgroundProcessOpts} from '../utils';
+import {argify, execWithErrorHandling, spawnBackgroundProcess, stopwatch} from '../utils';
 
 const log = getLogger('builder:deploy');
 

@@ -98,5 +98,5 @@ The above configuration corresponds to the `--driver-xcuitest-webkit-debug-proxy
 ```
 
 All properties are case-sensitive and will be in
-[kebab-case](https://en.wikipedia.org/wiki/Naming_convention_\(programming\)#Delimiter-separated_words).
+[kebab-case](https://en.wikipedia.org/wiki/Naming_convention_(programming)#Delimiter-separated_words).
 For example, `callback-port` is allowed, but `callbackPort` is not.

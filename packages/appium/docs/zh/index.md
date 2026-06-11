@@ -1,6 +1,6 @@
 ---
 hide:
-  - 导航栏
+  - navigation
   - toc
 
 title: 欢迎使用

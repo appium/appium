@@ -245,7 +245,7 @@ async function doDeploy(mikePath: string, args: string[] = [], opts: TeenProcess
  * @param usePrefixedMajorVersion Whether to extract a v-prefixed major version
  * @param cwd Current working directory
  */
-async function findDeployVersion(
+export async function findDeployVersion(
   packageJsonPath?: string,
   usePrefixedMajorVersion?: boolean,
   cwd = process.cwd(),

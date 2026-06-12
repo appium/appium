@@ -74,9 +74,16 @@ export interface DeployOpts {
    */
   message?: string;
   /**
-   * Version (dir) to deploy build to
+   * Version (dir) to deploy build to. If omitted, the version number is extracted from the
+   * `package.json` file.
    */
   deployVersion?: string;
+  /**
+   * If `true`, when extracting the deployment version from `package.json`, always use a
+   * v-prefixed major version number (e.g. `6.3.2` -> `v6`).
+   * Ignored if `deployVersion` is specified.
+   */
+  usePrefixedMajorDeployVersion?: boolean;
   /**
    * Alias for the build (e.g., `latest`); triggers alias update
    */
@@ -115,6 +122,7 @@ export async function deploy({
   mkdocsYml: mkDocsYmlPath,
   packageJson: packageJsonPath,
   deployVersion: version,
+  usePrefixedMajorDeployVersion: usePrefixedMajorVersion,
   cwd = process.cwd(),
   serve = false,
   push = false,
@@ -144,7 +152,7 @@ export async function deploy({
       `Could not find ${NAME_MKDOCS_YML} from ${cwd}; please run "${NAME_BIN} init"`,
     );
   }
-  version = version ?? (await findDeployVersion(packageJsonPath, cwd));
+  version = version ?? (await findDeployVersion(packageJsonPath, usePrefixedMajorVersion, cwd));
 
   // substitute %s in message with version
   message = message?.replace('%s', version);
@@ -234,9 +242,14 @@ async function doDeploy(mikePath: string, args: string[] = [], opts: TeenProcess
 /**
  * Derives a deployment version from `package.json`
  * @param packageJsonPath Path to `package.json` if known
+ * @param usePrefixedMajorVersion Whether to extract a v-prefixed major version
  * @param cwd Current working directory
  */
-async function findDeployVersion(packageJsonPath?: string, cwd = process.cwd()): Promise<string> {
+export async function findDeployVersion(
+  packageJsonPath?: string,
+  usePrefixedMajorVersion?: boolean,
+  cwd = process.cwd(),
+): Promise<string> {
   const {pkg} = await readPackageJson(packageJsonPath ? path.dirname(packageJsonPath) : cwd, true);
   const version = pkg.version;
   if (!version) {
@@ -245,11 +258,11 @@ async function findDeployVersion(packageJsonPath?: string, cwd = process.cwd()):
     );
   }
 
-  // return MAJOR.MINOR as the version by default, if that is a thing we can extract, otherwise
-  // just return the version as is
+  // If a minor version can be extracted, use MAJOR.MINOR as the deploy version, otherwise use MAJOR.
+  // If usePrefixedMajorVersion is true, always use vMAJOR
   const versionParts = version.split('.');
   if (versionParts.length === 1) {
-    return version;
+    return usePrefixedMajorVersion ? `v${version}` : version;
   }
-  return `${versionParts[0]}.${versionParts[1]}`;
+  return usePrefixedMajorVersion ? `v${versionParts[0]}` : `${versionParts[0]}.${versionParts[1]}`;
 }

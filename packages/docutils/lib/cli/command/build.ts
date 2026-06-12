@@ -117,6 +117,12 @@ const opts = {
     requiresArg: true,
     defaultDescription: '(derived from package.json)',
   },
+  'use-prefixed-major-deploy-version': {
+    describe: 'Deploy using a v-prefixed major version',
+    implies: 'deploy',
+    group: BuildCommandGroup.Deploy,
+    type: 'boolean',
+  },
   alias: {
     describe: 'Alias for the build (e.g., "latest"); triggers alias update',
     implies: 'deploy',

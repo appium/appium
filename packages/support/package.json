@@ -69,7 +69,7 @@
     "yauzl": "3.4.0"
   },
   "optionalDependencies": {
-    "sharp": "0.34.5"
+    "sharp": "0.35.1"
   },
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0",

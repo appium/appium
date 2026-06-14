@@ -99,7 +99,7 @@
     "@types/mocha": "10.0.10",
     "@types/morgan": "1.9.10",
     "@types/mv": "2.1.4",
-    "@types/node": "24.13.1",
+    "@types/node": "24.13.2",
     "@types/plist": "3.0.5",
     "@types/pluralize": "0.0.33",
     "@types/semver": "7.7.1",

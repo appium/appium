@@ -143,7 +143,7 @@
     "tsd": "0.33.0",
     "typescript": "6.0.3",
     "typescript-eslint": "8.61.0",
-    "webdriverio": "9.27.2",
+    "webdriverio": "9.28.0",
     "ws": "8.21.0"
   },
   "engines": {

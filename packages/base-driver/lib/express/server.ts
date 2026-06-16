@@ -18,7 +18,7 @@ import {
   catch404Handler,
   handleLogContext,
 } from './middleware';
-import {isLegacyTestPagesEnabled} from '../test-pages/env';
+import {isLegacyTestPagesEnabled} from '../test-pages';
 import {
   addWebSocketHandler,
   removeWebSocketHandler,
@@ -132,7 +132,7 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
         let registerTestPages: ConfigureServerInternalOpts['registerTestPages'];
         if (isLegacyTestPagesEnabled()) {
           const require = createRequire(__filename);
-          registerTestPages = require('../test-pages/index').registerTestPages;
+          registerTestPages = require('../test-pages').registerTestPages;
         }
         configureServer({
           app,

@@ -15,7 +15,7 @@ export {errorFromMJSONWPStatusCode as errorFromCode} from './protocol';
 
 // Express exports
 /** @deprecated Removed in Appium 4. Use hard-copied test fixtures in driver CI instead. */
-export {TEST_FIXTURES_DIR as STATIC_DIR} from './test-pages/static-dir';
+export {TEST_FIXTURES_DIR as STATIC_DIR} from './test-pages';
 export {server, normalizeBasePath} from './express/server';
 
 // jsonwp-proxy exports

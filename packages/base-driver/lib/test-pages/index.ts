@@ -42,6 +42,5 @@ export function registerTestPages(app: Express, {basePath}: RegisterTestPagesOpt
   app.all('/test/guinea-pig-app-banner', guineaPigAppBanner);
 }
 
-export {welcome, guineaPig, guineaPigScrollable, guineaPigAppBanner} from './handlers';
 export {TEST_FIXTURES_DIR} from './static-dir';
-export {isLegacyTestPagesEnabled, LEGACY_TEST_PAGES_ENV} from './env';
+export {isLegacyTestPagesEnabled} from './env';

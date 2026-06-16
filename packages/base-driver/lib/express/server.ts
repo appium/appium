@@ -1,9 +1,8 @@
-import path from 'node:path';
 import express from 'express';
 import type {Express, RequestHandler} from 'express';
 import http from 'node:http';
 import type {Server as HttpServer} from 'node:http';
-import favicon from 'serve-favicon';
+import {createRequire} from 'node:module';
 import bodyParser from 'body-parser';
 import methodOverride from 'method-override';
 import {log} from './logger';
@@ -19,8 +18,7 @@ import {
   catch404Handler,
   handleLogContext,
 } from './middleware';
-import {guineaPig, guineaPigScrollable, guineaPigAppBanner, welcome, STATIC_DIR} from './static';
-import {produceError, produceCrash} from './crash';
+import {isLegacyTestPagesEnabled} from '../test-pages/env';
 import {
   addWebSocketHandler,
   removeWebSocketHandler,
@@ -74,6 +72,12 @@ export interface ConfigureServerOpts {
   useLegacyUpgradeHandler?: boolean;
 }
 
+/** @internal */
+export interface ConfigureServerInternalOpts extends ConfigureServerOpts {
+  /** @deprecated Appium 4 */
+  registerTestPages?: (app: Express, opts: {basePath: string}) => void;
+}
+
 /** Options for {@linkcode configureHttp} */
 export interface ConfigureHttpOpts {
   httpServer: HttpServer;
@@ -125,6 +129,11 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
           gracefulShutdownTimeout: cliArgs.shutdownTimeout,
         });
         const useLegacyUpgradeHandler = !hasShouldUpgradeCallback(httpServer);
+        let registerTestPages: ConfigureServerInternalOpts['registerTestPages'];
+        if (isLegacyTestPagesEnabled()) {
+          const require = createRequire(__filename);
+          registerTestPages = require('../test-pages/index').registerTestPages;
+        }
         configureServer({
           app,
           addRoutes: routeConfiguringFunction,
@@ -133,7 +142,8 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
           extraMethodMap,
           webSocketsMapping: appiumServer.webSocketsMapping,
           useLegacyUpgradeHandler,
-        });
+          registerTestPages,
+        } as ConfigureServerInternalOpts);
         // allow extensions to update the app and http server objects
         for (const updater of serverUpdaters) {
           await updater(app, appiumServer, cliArgs);
@@ -165,27 +175,25 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
  *
  * @param opts - Configuration options
  */
-export function configureServer({
-  app,
-  addRoutes,
-  allowCors = true,
-  basePath = DEFAULT_BASE_PATH,
-  extraMethodMap = {},
-  webSocketsMapping = {},
-  useLegacyUpgradeHandler = true,
-}: ConfigureServerOpts): void {
-  basePath = normalizeBasePath(basePath);
+export function configureServer(opts: ConfigureServerOpts): void {
+  const {
+    app,
+    addRoutes,
+    allowCors = true,
+    basePath: rawBasePath = DEFAULT_BASE_PATH,
+    extraMethodMap = {},
+    webSocketsMapping = {},
+    useLegacyUpgradeHandler = true,
+  } = opts;
+  const {registerTestPages} = opts as ConfigureServerInternalOpts;
+  const basePath = normalizeBasePath(rawBasePath);
 
   app.use(endLogFormatter);
   app.use(handleLogContext);
 
-  // set up static assets
-  app.use(favicon(path.resolve(STATIC_DIR, 'favicon.ico')));
-  app.use(express.static(STATIC_DIR));
-
-  // crash routes, for testing
-  app.use(`${basePath}/produce_error`, produceError);
-  app.use(`${basePath}/crash`, produceCrash);
+  if (registerTestPages) {
+    registerTestPages(app, {basePath});
+  }
 
   // Only use legacy Express middleware for WebSocket upgrades if shouldUpgradeCallback is not available.
   // When shouldUpgradeCallback is available, upgrades are handled directly on the HTTP server
@@ -211,12 +219,6 @@ export function configureServer({
   app.use(startLogFormatter);
 
   addRoutes(app, {basePath, extraMethodMap});
-
-  // dynamic routes for testing, etc.
-  app.all('/welcome', welcome);
-  app.all('/test/guinea-pig', guineaPig);
-  app.all('/test/guinea-pig-scrollable', guineaPigScrollable);
-  app.all('/test/guinea-pig-app-banner', guineaPigAppBanner);
 }
 
 /**

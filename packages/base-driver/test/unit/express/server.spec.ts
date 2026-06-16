@@ -1,8 +1,9 @@
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {Driver, MethodMap} from '@appium/types';
-import {server, routeConfiguringFunction} from '../../../lib';
-import {configureServer, normalizeBasePath} from '../../../lib/express/server';
+import {server, configureServer, normalizeBasePath} from '../../../lib/express/server';
+import {routeConfiguringFunction} from '../../../lib/protocol/protocol';
+import {registerTestPages} from '../../../lib/test-pages';
 import {createSandbox} from 'sinon';
 import {getTestPort} from '@appium/driver-test-support';
 
@@ -61,6 +62,14 @@ describe('server configuration', function () {
     const app = fakeApp() as any;
     const configureRoutes = () => {};
     configureServer({app, addRoutes: configureRoutes});
+    expect(app.use.callCount).to.equal(11);
+    expect(app.all.callCount).to.equal(0);
+  });
+
+  it('should mount legacy test pages when registerTestPages is provided', function () {
+    const app = fakeApp() as any;
+    const configureRoutes = () => {};
+    configureServer({app, addRoutes: configureRoutes, registerTestPages});
     expect(app.use.callCount).to.equal(15);
     expect(app.all.callCount).to.equal(4);
   });

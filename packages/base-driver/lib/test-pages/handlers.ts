@@ -1,11 +1,10 @@
 import path from 'node:path';
-import {log} from './logger';
+import {log} from '../express/logger';
 import {fs} from '@appium/support';
 import {sleep} from 'asyncbox';
 import type {Request, Response} from 'express';
-import {compileLodashTemplate} from '../utils';
-
-export const STATIC_DIR = resolveStaticDir();
+import {compileLodashTemplate} from './template';
+import {TEST_FIXTURES_DIR} from './static-dir';
 
 type TemplateParams = Record<string, unknown>;
 
@@ -61,16 +60,6 @@ async function guineaPigTemplate(req: Request, res: Response, page: string): Pro
 }
 
 async function getTemplate(templateName: string): Promise<(params: TemplateParams) => string> {
-  const content = await fs.readFile(path.resolve(STATIC_DIR, 'test', templateName));
+  const content = await fs.readFile(path.resolve(TEST_FIXTURES_DIR, 'test', templateName));
   return compileLodashTemplate(content.toString());
-}
-
-function resolveStaticDir(): string {
-  const fromDir = __dirname;
-  const parts = path.resolve(fromDir).split(path.sep);
-  const baseDriverIndex = parts.indexOf('base-driver');
-  if (baseDriverIndex < 0) {
-    throw new Error(`Could not find the module root folder in the path: ${fromDir}`);
-  }
-  return path.join(parts.slice(0, baseDriverIndex + 1).join(path.sep), 'static');
 }

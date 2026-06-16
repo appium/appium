@@ -31,7 +31,7 @@
     "index.js",
     "index.d.ts",
     "lib",
-    "static",
+    "test-fixtures",
     "build",
     "tsconfig.json",
     "!build/tsconfig.tsbuildinfo",

@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 import type {Request, Response} from 'express';
-import {welcome} from '../../../lib/express/static';
+import {welcome} from '../../../lib/test-pages/handlers';
 import {createSandbox} from 'sinon';
 
 describe('welcome', function () {

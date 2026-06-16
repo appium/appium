@@ -2,7 +2,6 @@ import path from 'node:path';
 import express from 'express';
 import type {Express} from 'express';
 import favicon from 'serve-favicon';
-import {log} from '../express/logger';
 import {guineaPig, guineaPigScrollable, guineaPigAppBanner, welcome} from './handlers';
 import {produceError, produceCrash} from './crash';
 import {TEST_FIXTURES_DIR} from './static-dir';
@@ -10,8 +9,6 @@ import {TEST_FIXTURES_DIR} from './static-dir';
 export interface RegisterTestPagesOpts {
   basePath: string;
 }
-
-let hasLoggedDeprecationWarning = false;
 
 /**
  * Mount deprecated built-in test pages and crash routes on an Express app.
@@ -21,15 +18,6 @@ let hasLoggedDeprecationWarning = false;
  * @internal
  */
 export function registerTestPages(app: Express, {basePath}: RegisterTestPagesOpts): void {
-  if (!hasLoggedDeprecationWarning) {
-    hasLoggedDeprecationWarning = true;
-    log.warn(
-      'APPIUM_ENABLE_LEGACY_TEST_PAGES is enabled. Built-in test pages are deprecated and ' +
-        'will be removed in Appium 4. Driver CI should hard-copy needed fixtures and run a ' +
-        'local test HTTP server.',
-    );
-  }
-
   app.use(favicon(path.resolve(TEST_FIXTURES_DIR, 'favicon.ico')));
   app.use(express.static(TEST_FIXTURES_DIR));
 

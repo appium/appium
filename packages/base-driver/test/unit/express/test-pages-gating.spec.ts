@@ -1,11 +1,8 @@
-import chai, {expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
+import {expect} from 'chai';
 import axios from 'axios';
 import {server} from '../../../lib/express/server';
 import {LEGACY_TEST_PAGES_ENV} from '../../../lib/test-pages/env';
 import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
-
-chai.use(chaiAsPromised);
 
 describe('legacy test pages gating', function () {
   let previousEnv: string | undefined;
@@ -30,7 +27,10 @@ describe('legacy test pages gating', function () {
       port,
     });
     try {
-      await expect(axios.get(`http://${TEST_HOST}:${port}/test/guinea-pig`)).to.be.rejected;
+      const {status} = await axios.get(`http://${TEST_HOST}:${port}/test/guinea-pig`, {
+        validateStatus: null,
+      });
+      expect(status).to.equal(404);
     } finally {
       await hwServer.close();
     }

@@ -18,7 +18,9 @@ import {
   catch404Handler,
   handleLogContext,
 } from './middleware';
-import {isLegacyTestPagesEnabled} from '../test-pages';
+// Import env helper directly — not from the test-pages barrel — so Express handlers and
+// fixture code stay unloaded unless APPIUM_ENABLE_LEGACY_TEST_PAGES is set.
+import {isLegacyTestPagesEnabled} from '../test-pages/env';
 import {
   addWebSocketHandler,
   removeWebSocketHandler,

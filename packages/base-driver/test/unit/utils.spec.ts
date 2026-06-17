@@ -1,12 +1,5 @@
 import {expect} from 'chai';
-import {
-  compileLodashTemplate,
-  mergePlainObjects,
-  omit,
-  omitKeys,
-  pick,
-  pickBy,
-} from '../../lib/utils';
+import {mergePlainObjects, omit, omitKeys, pick, pickBy} from '../../lib/utils';
 
 describe('utils', function () {
   describe('mergePlainObjects', function () {
@@ -67,28 +60,6 @@ describe('utils', function () {
   describe('pickBy', function () {
     it('should keep entries that pass the predicate', function () {
       expect(pickBy({a: 1, b: '', c: 3}, (value) => value !== '')).to.eql({a: 1, c: 3});
-    });
-  });
-
-  describe('compileLodashTemplate', function () {
-    it('should render static text', function () {
-      const render = compileLodashTemplate('hello');
-      expect(render({})).to.equal('hello');
-    });
-
-    it('should interpolate template parameters', function () {
-      const render = compileLodashTemplate('Hello <%= message %>!');
-      expect(render({message: 'world'})).to.equal('Hello world!');
-    });
-
-    it('should evaluate javascript expressions in templates', function () {
-      const render = compileLodashTemplate('<%= one + two %>');
-      expect(render({one: 1, two: 2})).to.equal('3');
-    });
-
-    it('should render multiple interpolations', function () {
-      const render = compileLodashTemplate('<%= a %>-<%= b %>');
-      expect(render({a: 'x', b: 'y'})).to.equal('x-y');
     });
   });
 });

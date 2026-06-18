@@ -24,11 +24,20 @@ capability requirements since Appium 2.
 appium plugin install relaxed-caps
 ```
 
-The plugin must be explicitly activated when launching the Appium server:
+## Usage
+
+Like all plugins, this plugin must be explicitly activated when launching the Appium server:
 
 ```
 appium --use-plugins=relaxed-caps
 ```
+
+Once the plugin is running, all unprefixed non-standard capabilities provided in any new session
+will automatically be prefixed with `appium:`.
+
+## API
+
+[Refer to the Appium documentation](https://appium.io/docs/en/latest/reference/api/plugins/#relaxed-caps-plugin).
 
 ## License
 

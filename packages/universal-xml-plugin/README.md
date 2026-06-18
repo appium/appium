@@ -6,8 +6,7 @@
 [![Downloads](http://img.shields.io/npm/dm/@appium/universal-xml-plugin.svg)](https://npmjs.org/package/@appium/universal-xml-plugin)
 
 This plugin takes the XML page source retrieved using an iOS or Android driver, and changes various
-node and attribute names to use common terminology that can apply to both platforms. This is
-achieved by altering the behavior of the `getPageSource` and `findElement` methods.
+node and attribute names to use common terminology that can apply to both platforms.
 
 ## Motivation
 
@@ -19,11 +18,20 @@ Having compatibility between iOS and Android XML sources can simplify creation o
 appium plugin install universal-xml
 ```
 
-The plugin must be explicitly activated when launching the Appium server:
+## Usage
+
+Like all plugins, this plugin must be explicitly activated when launching the Appium server:
 
 ```
 appium --use-plugins=universal-xml
 ```
+
+Once the plugin is running, it will intercept and transform the app source retrieved by the Get Page
+Source command, as well as element node/attribute names provided in Find Element-related commands.
+
+## API
+
+[Refer to the Appium documentation](https://appium.io/docs/en/latest/reference/api/plugins/#universal-xml-plugin).
 
 ## Examples
 

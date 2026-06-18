@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.6](https://github.com/appium/appium/compare/@appium/opencv@4.1.5...@appium/opencv@4.1.6) (2026-06-18)
+
+**Note:** Version bump only for package @appium/opencv
+
+
+
+
+
 ## [4.1.5](https://github.com/appium/appium/compare/@appium/opencv@4.1.4...@appium/opencv@4.1.5) (2026-05-31)
 
 **Note:** Version bump only for package @appium/opencv

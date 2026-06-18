@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.6](https://github.com/appium/appium/compare/@appium/storage-plugin@1.1.5...@appium/storage-plugin@1.1.6) (2026-06-18)
+
+
+### Bug Fixes
+
+* **storage-plugin:** add fs.sanitizeName for the delete request as well ([#22362](https://github.com/appium/appium/issues/22362)) ([5fee017](https://github.com/appium/appium/commit/5fee01752f2782e96fbe64fd13520b433d4a7535))
+
+
+
 ## [1.1.5](https://github.com/appium/appium/compare/@appium/storage-plugin@1.1.4...@appium/storage-plugin@1.1.5) (2026-05-31)
 
 **Note:** Version bump only for package @appium/storage-plugin

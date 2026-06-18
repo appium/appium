@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.5.1](https://github.com/appium/appium/compare/appium@3.5.0...appium@3.5.1) (2026-06-18)
+
+
+### Bug Fixes
+
+* **storage-plugin:** add fs.sanitizeName for the delete request as well ([#22362](https://github.com/appium/appium/issues/22362)) ([5fee017](https://github.com/appium/appium/commit/5fee01752f2782e96fbe64fd13520b433d4a7535))
+
+
+
 ## [3.5.0](https://github.com/appium/appium/compare/appium@3.4.2...appium@3.5.0) (2026-05-31)
 
 

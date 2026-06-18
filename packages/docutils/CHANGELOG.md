@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.5.0](https://github.com/appium/appium/compare/@appium/docutils@2.4.3...@appium/docutils@2.5.0) (2026-06-18)
+
+
+### Features
+
+* **docutils:** add option to only use major version when deploying ([#22374](https://github.com/appium/appium/issues/22374)) ([e4faa69](https://github.com/appium/appium/commit/e4faa6919b1d3e67a78b226ee74321e522918e4a))
+
+
+
 ## [2.4.3](https://github.com/appium/appium/compare/@appium/docutils@2.4.2...@appium/docutils@2.4.3) (2026-05-31)
 
 **Note:** Version bump only for package @appium/docutils

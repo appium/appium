@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.9](https://github.com/appium/appium/compare/@appium/logger@2.0.8...@appium/logger@2.0.9) (2026-06-18)
+
+**Note:** Version bump only for package @appium/logger
+
+
+
+
+
 ## [2.0.8](https://github.com/appium/appium/compare/@appium/logger@2.0.7...@appium/logger@2.0.8) (2026-05-31)
 
 **Note:** Version bump only for package @appium/logger

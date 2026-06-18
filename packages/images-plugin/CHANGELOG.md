@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.2.6](https://github.com/appium/appium/compare/@appium/images-plugin@4.2.5...@appium/images-plugin@4.2.6) (2026-06-18)
+
+**Note:** Version bump only for package @appium/images-plugin
+
+
+
+
+
 ## [4.2.5](https://github.com/appium/appium/compare/@appium/images-plugin@4.2.4...@appium/images-plugin@4.2.5) (2026-05-31)
 
 **Note:** Version bump only for package @appium/images-plugin

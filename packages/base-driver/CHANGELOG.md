@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.7.0](https://github.com/appium/appium/compare/@appium/base-driver@10.6.0...@appium/base-driver@10.7.0) (2026-06-18)
+
+
+### Features
+
+* **base-driver:** Isolate test endpoints ([#22394](https://github.com/appium/appium/issues/22394)) ([d94a40a](https://github.com/appium/appium/commit/d94a40af9f8040191ee7888571a1c9d5aec59f89))
+
+
+
 ## [10.6.0](https://github.com/appium/appium/compare/@appium/base-driver@10.5.2...@appium/base-driver@10.6.0) (2026-05-31)
 
 

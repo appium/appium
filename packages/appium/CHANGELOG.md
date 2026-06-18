@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.5.2](https://github.com/appium/appium/compare/appium@3.5.1...appium@3.5.2) (2026-06-18)
+
+**Note:** Version bump only for package appium
+
+
+
+
+
 ## [3.5.1](https://github.com/appium/appium/compare/appium@3.5.0...appium@3.5.1) (2026-06-18)
 
 

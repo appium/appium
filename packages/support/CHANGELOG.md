@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.2.5](https://github.com/appium/appium/compare/@appium/support@7.2.4...@appium/support@7.2.5) (2026-06-18)
+
+
+### Bug Fixes
+
+* **support:** uploadFile overload ([#22400](https://github.com/appium/appium/issues/22400)) ([779a3a0](https://github.com/appium/appium/commit/779a3a048f50d5c860402fca6023828c2ccdf1be))
+
+
+
 ## [7.2.4](https://github.com/appium/appium/compare/@appium/support@7.2.3...@appium/support@7.2.4) (2026-06-18)
 
 **Note:** Version bump only for package @appium/support

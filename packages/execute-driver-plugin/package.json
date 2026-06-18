@@ -1,6 +1,6 @@
 {
   "name": "@appium/execute-driver-plugin",
-  "version": "6.0.5",
+  "version": "6.0.6",
   "description": "Plugin for batching and executing Appium driver commands",
   "keywords": [
     "automation",
@@ -39,7 +39,7 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.ts\""
   },
   "dependencies": {
-    "@appium/support": "7.2.4",
+    "@appium/support": "7.2.5",
     "webdriverio": "9.28.0"
   },
   "peerDependencies": {

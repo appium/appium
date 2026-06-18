@@ -1,6 +1,6 @@
 {
   "name": "@appium/support",
-  "version": "7.2.4",
+  "version": "7.2.5",
   "description": "Support libs used across Appium packages",
   "keywords": [
     "automation",

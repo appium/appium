@@ -88,6 +88,11 @@ export async function uploadFile(
 export async function uploadFile(
   localPath: string,
   remoteUri: string,
+  uploadOptions?: HttpUploadOptions,
+): Promise<void>;
+export async function uploadFile(
+  localPath: string,
+  remoteUri: string,
   uploadOptions: HttpUploadOptions | FtpUploadOptions = {},
 ): Promise<void> {
   if (!(await fs.exists(localPath))) {

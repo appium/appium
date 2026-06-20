@@ -51,7 +51,7 @@ title: 安装 UiAutomator2 驱动程序
 像所有 Appium 驱动程序一样，UiAutomator 2 驱动程序通过 [Appium 扩展 CLI](../reference/cli/extensions.md) 安装。
 由于 UiAutomator 2 由核心 Appium 团队维护，它有一个“官方”驱动程序名称（`uiautomator2`），这使得安装更简单。
 
-在安装之前，确保您的 Appium 服务器_未_运行（如果正在运行，请用 _Ctrl-C_ 退出）。
+在安装之前，确保您的 Appium 服务&#x5668;_&#x672A;_&#x8FD0;行（如果正在运行，请用 _Ctrl-C_ 退出）。
 然后运行以下命令：
 
 ```bash

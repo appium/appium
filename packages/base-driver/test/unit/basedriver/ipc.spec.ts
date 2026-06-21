@@ -140,11 +140,13 @@ describe('AppiumIpc', function () {
       expect(sub1Res).to.be.false;
     });
 
-    it('should not allow publish from subscription object after unsubscribing', function () {
+    it('should not allow publish from subscription object after unsubscribing', async function () {
       const ipc = new AppiumIpc();
       const sub1 = ipc.subscribe<boolean>('foo', 'bar');
       sub1.unsubscribe();
-      expect(sub1.publish(true)).to.eventually.throw();
+      await expect(sub1.publish(true)).to.eventually.be.rejectedWith(
+        /Cannot publish data to topic from subscription after unsubscribing/,
+      );
     });
 
     it('should be no race conditions with publishing and unsubscribing', async function () {

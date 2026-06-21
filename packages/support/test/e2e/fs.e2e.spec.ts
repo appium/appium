@@ -1,3 +1,4 @@
+import {describe, it, before, beforeEach, afterEach} from 'node:test';
 import path from 'node:path';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
@@ -106,13 +107,7 @@ describe('fs', function () {
       });
     });
 
-    describe('when the path exists', function () {
-      beforeEach(function () {
-        if (isWindows()) {
-          return this.skip();
-        }
-      });
-
+    describe('when the path exists', {skip: isWindows()}, function () {
       describe('when the path is not executable', function () {
         it('should return `false`', async function () {
           await expect(fs.isExecutable(__filename)).to.eventually.be.false;

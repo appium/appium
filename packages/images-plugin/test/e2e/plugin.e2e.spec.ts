@@ -1,3 +1,4 @@
+import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
 import path from 'node:path';
 import {remote as wdio} from 'webdriverio';
 import {MATCH_FEATURES_MODE, GET_SIMILARITY_MODE} from '../../lib/constants';

@@ -1,3 +1,4 @@
+import {describe, it} from 'node:test';
 import {runQuery, transformQuery, getNodeAttrVal} from '../../lib/xpath';
 import {transformSourceXml} from '../../lib/source';
 import {XML_IOS} from '../fixtures';

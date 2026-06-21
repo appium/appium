@@ -15,7 +15,6 @@ on:
       - 'package*.json'
       - 'lerna.json'
       - '.npmrc'
-      - '.mocharc.js'
       - '.github/workflows/build.yml' # this file
       - '.eslintrc'
       - '.eslintignore'
@@ -35,7 +34,6 @@ on:
       - 'package*.json'
       - 'lerna.json'
       - '.npmrc'
-      - '.mocharc.js'
       - '.github/workflows/build.yml' # this file
       - '.eslintrc'
       - '.eslintignore'

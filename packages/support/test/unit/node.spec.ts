@@ -1,3 +1,4 @@
+import {describe, it} from 'node:test';
 import {expect} from 'chai';
 import {node} from '../../lib';
 import path from 'node:path';

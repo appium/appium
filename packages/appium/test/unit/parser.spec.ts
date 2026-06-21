@@ -1,3 +1,4 @@
+import {describe, it, before, after, beforeEach} from 'node:test';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {DRIVER_TYPE, PLUGIN_TYPE, SETUP_SUBCOMMAND} from '../../lib/constants';

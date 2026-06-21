@@ -1,3 +1,4 @@
+import {describe, it, before} from 'node:test';
 import {TEST_HOST, getTestPort, createAppiumURL} from '../../lib';
 
 describe('TEST_HOST', function () {

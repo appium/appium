@@ -1,3 +1,4 @@
+import {describe, it, before, after} from 'node:test';
 import type {AppiumServer} from '@appium/types';
 import type {ParsedArgs} from 'appium/types';
 import type {Browser} from 'webdriverio';

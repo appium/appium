@@ -1,3 +1,4 @@
+import {describe, it, before, after} from 'node:test';
 import {tempDir, fs} from '@appium/support';
 import {exec} from 'teen_process';
 import chai from 'chai';
@@ -27,8 +28,7 @@ describe('argument parsing', function () {
 
   describe('when the user provides a very long string for an arg accepting a blob or filename', function () {
     describe('when the very long string is a JSON blob', function () {
-      it('should not throw an ENAMETOOLONG exception', async function () {
-        this.timeout(10000);
+      it('should not throw an ENAMETOOLONG exception', {timeout: 10000}, async function () {
         const capsArg = JSON.stringify({
           'appium:platformName': 'ANDROID',
           'appium:platformVersion': '11',

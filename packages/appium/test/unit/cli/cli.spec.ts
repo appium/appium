@@ -1,9 +1,13 @@
+import {describe, it, beforeEach, afterEach} from 'node:test';
 import {tempDir, fs, npm} from '@appium/support';
 import {loadExtensions} from '../../../lib/extension';
 import {Manifest} from '../../../lib/extension/manifest';
 import DriverCommand from '../../../lib/cli/driver-command';
 import {createSandbox} from 'sinon';
-import {expect} from 'chai';
+import {expect, use} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+
+use(chaiAsPromised);
 
 describe('DriverCommand', function () {
   let appiumHome: string;

@@ -1,3 +1,4 @@
+import {describe, it, before} from 'node:test';
 import path from 'node:path';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';

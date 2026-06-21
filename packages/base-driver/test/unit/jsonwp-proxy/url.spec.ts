@@ -1,3 +1,4 @@
+import {describe, it, before} from 'node:test';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {JWProxy} from '../../../lib';

@@ -30,12 +30,13 @@
   "files": [
     "build/lib",
     "lib",
-    "tsconfig.json"
+    "tsconfig.json",
+    "!build/test"
   ],
   "scripts": {
     "test": "npm run test:unit",
     "test:smoke": "node ./build/lib/index.js",
-    "test:unit": "mocha \"test/unit/**/*.spec.ts\""
+    "test:unit": "node --test --test-timeout=5000 \"./build/test/unit/**/*.spec.js\""
   },
   "types": "./build/lib/index.d.ts",
   "dependencies": {
@@ -50,8 +51,7 @@
     "@appium/types": "1.5.1"
   },
   "peerDependencies": {
-    "appium": "^3.0.0-beta.0",
-    "mocha": "*"
+    "appium": "^3.0.0-beta.0"
   },
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0",

@@ -1,3 +1,4 @@
+import {describe, it, before, after} from 'node:test';
 import path from 'node:path';
 import {fs} from '@appium/support';
 

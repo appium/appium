@@ -1,3 +1,4 @@
+import {describe, it} from 'node:test';
 import {ExecuteDriverPlugin} from '../../lib/plugin';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';

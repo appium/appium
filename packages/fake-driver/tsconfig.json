@@ -1,26 +1,46 @@
 {
   "extends": "@appium/tsconfig/tsconfig.json",
-  "ts-node": {
-    "transpileOnly": true
-  },
   "compilerOptions": {
     "rootDir": ".",
     "outDir": "build",
     "checkJs": true,
     "strict": true,
-    "types": ["mocha", "chai", "chai-as-promised", "node"],
+    "types": [
+      "chai",
+      "chai-as-promised",
+      "node"
+    ],
     "paths": {
-      "@appium/types": ["../types"],
-      "appium/support": ["../appium/support"],
-      "appium/driver": ["../appium/driver"],
-      "@appium/driver-test-support": ["../driver-test-support"]
+      "@appium/types": [
+        "../types"
+      ],
+      "appium/support": [
+        "../appium/support"
+      ],
+      "appium/driver": [
+        "../appium/driver"
+      ],
+      "@appium/driver-test-support": [
+        "../driver-test-support"
+      ]
     }
   },
-  "include": ["lib", "test"],
+  "include": [
+    "lib",
+    "test"
+  ],
   "references": [
-    {"path": "../types"},
-    {"path": "../support"},
-    {"path": "../driver-test-support"},
-    {"path": "../base-driver"}
+    {
+      "path": "../types"
+    },
+    {
+      "path": "../support"
+    },
+    {
+      "path": "../driver-test-support"
+    },
+    {
+      "path": "../base-driver"
+    }
   ]
 }

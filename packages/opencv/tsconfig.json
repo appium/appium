@@ -5,7 +5,14 @@
     "rootDir": ".",
     "outDir": "build",
     "checkJs": true,
-    "types": ["mocha", "chai", "chai-as-promised"]
+    "types": [
+      "node",
+      "chai",
+      "chai-as-promised"
+    ]
   },
-  "include": ["lib", "test"]
+  "include": [
+    "lib",
+    "test"
+  ]
 }

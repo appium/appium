@@ -56,7 +56,7 @@ export function pluginE2EHarness(opts: E2ESetupOpts): void {
 
   let server: AppiumServer | undefined;
 
-  before(async function (this: Mocha.Context) {
+  before(async function () {
     // Lazy-load chai so smoke test (node ./build/lib/index.js --smoke-test) does not require it
     const chai = await import('chai');
     const chaiAsPromised = (await import('chai-as-promised')).default;
@@ -122,7 +122,7 @@ export function pluginE2EHarness(opts: E2ESetupOpts): void {
     const startAppiumServer = async (): Promise<void> => {
       const resolvedPort = port ?? (await getPort());
       console.log(`${logSymbols.info} Will use port ${resolvedPort} for Appium server`);
-      (this as Mocha.Context & {port?: number}).port = resolvedPort;
+      opts.port = resolvedPort;
 
       const args = {
         port: resolvedPort,

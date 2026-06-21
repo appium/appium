@@ -1,3 +1,4 @@
+import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
 import type {AppiumServer, DriverClass} from '@appium/types';
 import type {ParsedArgs} from 'appium/types';
 import type {Browser} from 'webdriverio';
@@ -90,7 +91,7 @@ describe('FakeDriver via HTTP', function () {
   let testServerBaseSessionUrl: string;
   let sandbox: SinonSandbox;
 
-  before(async function () {
+  before(async function (t) {
     sandbox = createSandbox();
     appiumHome = await tempDir.openDir();
     wdOpts.port = port = await getTestPort();
@@ -679,7 +680,10 @@ describe('FakeDriver via HTTP', function () {
   });
 });
 
-describe('Bidi over SSL', function () {
+describe(
+  'Bidi over SSL',
+  {skip: parseInt(process.version.slice(1).split('.')[0], 10) >= 24},
+  function () {
   async function generateCertificate(certPath: string, keyPath: string) {
     await exec('openssl', [
       'req',
@@ -705,20 +709,17 @@ describe('Bidi over SSL', function () {
   const capabilities = {...caps, webSocketUrl: true};
   let previousEnvValue: string | undefined;
 
-  before(async function () {
-    // Skip on Node.js 24+ due to spdy package incompatibility (http_parser removed)
-    const nodeMajorVersion = parseInt(process.version.slice(1).split('.')[0], 10);
-    if (nodeMajorVersion >= 24) {
-      return this.skip();
-    }
-
+  before(async function (t) {
     try {
       await generateCertificate(certPath, keyPath);
     } catch (e) {
       if (process.env.CI) {
         throw e;
       }
-      return this.skip();
+      if ('skip' in t) {
+        return t.skip();
+      }
+      return;
     }
     appiumHome = await tempDir.openDir();
     wdOpts.port = port = await getTestPort();
@@ -763,7 +764,8 @@ describe('Bidi over SSL', function () {
     });
     await expect(driver.getUrl()).to.eventually.eql('https://appium.io');
   });
-});
+  },
+);
 
 // TODO this test only works if the log has not previously been initialized in the same process.
 describe.skip('Logsink', function () {

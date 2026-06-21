@@ -1,3 +1,5 @@
+import type {after, before} from 'node:test';
+
 /**
  * Known environment variables concerning Appium
  */
@@ -11,10 +13,10 @@ export interface AppiumEnv extends NodeJS.ProcessEnv {
 export interface E2ESetupOpts {
   /** Path to Appium home directory */
   appiumHome?: string;
-  /** Mocha "before all" hook function */
-  before: (fn: (this: Mocha.Context) => Promise<void>) => void;
-  /** Mocha "after all" hook function */
-  after: (fn: (this: Mocha.Context) => Promise<void>) => void;
+  /** Node test "before all" hook function */
+  before: typeof before;
+  /** Node test "after all" hook function */
+  after: typeof after;
   /** Arguments to pass to Appium server */
   serverArgs?: Record<string, unknown>;
   /** Source of driver to install (e.g. 'local', 'npm') */

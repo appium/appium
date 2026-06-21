@@ -1,3 +1,4 @@
+import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {Application, Request, Response} from 'express';
@@ -105,8 +106,7 @@ describe('server', function () {
 
     await bodyPromise;
   });
-  it('should error if we try to start on a bad hostname', async function () {
-    this.timeout(60000);
+  it('should error if we try to start on a bad hostname', {timeout: 60000}, async function () {
     await expect(
       server({
         routeConfiguringFunction: () => {},
@@ -135,14 +135,17 @@ describe('tls server', function () {
     }),
   });
 
-  before(async function () {
+  before(async function (t) {
     try {
       await generateCertificate(certPath, keyPath);
     } catch (e) {
       if (process.env.CI) {
         throw e;
       }
-      return this.skip();
+      if ('skip' in t) {
+        return t.skip();
+      }
+      return;
     }
 
     port = await getTestPort(true);

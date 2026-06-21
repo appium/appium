@@ -1,3 +1,4 @@
+import {describe, it, before, after, beforeEach} from 'node:test';
 import {env, fs, npm, tempDir} from '@appium/support';
 import path from 'node:path';
 import {resolveFrom} from '../../lib/utils';

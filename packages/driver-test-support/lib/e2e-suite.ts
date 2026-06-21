@@ -1,3 +1,4 @@
+import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
 import {server, routeConfiguringFunction, DeviceSettings} from 'appium/driver';
 import axios, {type RawAxiosRequestConfig} from 'axios';
 import {sleep} from 'asyncbox';
@@ -121,10 +122,10 @@ export function driverE2ETestSuite(
     });
 
     describe('session handling', function () {
-      it('should handle idempotency while creating sessions', async function () {
+      it('should handle idempotency while creating sessions', async function (t) {
         // TODO: Fix this test for Node 24+
         if (parseInt(process.versions.node.split('.')[0], 10) >= 24) {
-          this.skip();
+          t.skip();
         }
 
         // workaround for https://github.com/node-fetch/node-fetch/issues/1735
@@ -155,10 +156,10 @@ export function driverE2ETestSuite(
         expect(data.value).to.be.null;
       });
 
-      it('should handle idempotency while creating parallel sessions', async function () {
+      it('should handle idempotency while creating parallel sessions', async function (t) {
         // TODO: Fix this test for Node 24+
         if (parseInt(process.versions.node.split('.')[0], 10) >= 24) {
-          this.skip();
+          t.skip();
         }
 
         // workaround for https://github.com/node-fetch/node-fetch/issues/1735

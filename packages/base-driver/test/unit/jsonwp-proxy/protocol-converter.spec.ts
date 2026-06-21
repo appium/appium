@@ -1,3 +1,4 @@
+import {describe, it, before, beforeEach} from 'node:test';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {PROTOCOLS} from '../../../lib/constants';

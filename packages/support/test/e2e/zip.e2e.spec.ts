@@ -1,3 +1,4 @@
+import {describe, it, before, beforeEach, afterEach} from 'node:test';
 import path from 'node:path';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
@@ -281,16 +282,12 @@ describe('#zip', function () {
     });
   });
 
-  describe('unicode filename handling', function () {
+  describe('unicode filename handling', {skip: isWindows()}, function () {
     let zippedFilePath: string;
     let assetsPath: string;
     let tmpRoot: string;
 
     beforeEach(async function () {
-      // XXX: I don't know enough about unicode handling in the windows FS to attempt a fix here.
-      if (isWindows()) {
-        return this.skip();
-      }
       assetsPath = await tempDir.openDir();
       tmpRoot = await tempDir.openDir();
 

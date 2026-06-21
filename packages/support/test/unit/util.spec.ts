@@ -1,3 +1,4 @@
+import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {util, fs, tempDir} from '../../lib';

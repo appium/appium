@@ -1,3 +1,4 @@
+import {describe, it, beforeEach, afterEach} from 'node:test';
 import {DRIVER_TYPE} from '../../lib/constants';
 import {readConfigFile} from '../../lib/bootstrap/config-file';
 import {finalizeSchema, registerSchema, resetSchema} from '../../lib/schema/schema';
@@ -238,9 +239,9 @@ describe('config file behavior', function () {
     });
 
     describe('when the config file is invalid JSON', function () {
-      it('should reject with a user-friendly error message', async function () {
+      it('should reject with a user-friendly error message', async function (t) {
         if (system.isWindows()) {
-          return this.skip();
+          return t.skip();
         }
         await expect(readConfigFile(INVALID_JSON_FILEPATH)).to.be.rejectedWith(
           new RegExp(`${util.escapeRegExp(INVALID_JSON_FILEPATH)}`),

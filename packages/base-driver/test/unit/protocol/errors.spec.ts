@@ -1,3 +1,4 @@
+import {describe, it, before} from 'node:test';
 import {expect} from 'chai';
 import {errors, errorFromMJSONWPStatusCode, errorFromW3CJsonCode, isErrorType} from '../../../lib';
 import {BadParametersError, getResponseForW3CError} from '../../../lib/protocol/errors';

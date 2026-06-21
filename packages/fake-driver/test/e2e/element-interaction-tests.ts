@@ -1,3 +1,4 @@
+import {describe, it, before, after} from 'node:test';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {initSession, deleteSession, W3C_PREFIXED_CAPS} from '../helpers';

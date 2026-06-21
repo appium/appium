@@ -1,3 +1,4 @@
+import {describe, it, beforeEach, afterEach} from 'node:test';
 import {expect} from 'chai';
 import type {InitialOpts} from '@appium/types';
 import {createSandbox} from 'sinon';

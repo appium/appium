@@ -1,3 +1,4 @@
+import {describe, it} from 'node:test';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {FakePlugin as _FakePlugin, type DriverLike} from '../../lib/plugin';

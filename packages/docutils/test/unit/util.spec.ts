@@ -1,3 +1,4 @@
+import {describe, it} from 'node:test';
 import {argify} from '../../lib/utils';
 import * as chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';

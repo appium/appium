@@ -1,6 +1,7 @@
+import {describe, it, before, after} from 'node:test';
 import path from 'node:path';
 
-import {pluginE2EHarness} from '@appium/plugin-test-support';
+import {pluginE2EHarness, type E2ESetupOpts} from '@appium/plugin-test-support';
 import {remote as wdio} from 'webdriverio';
 import {W3C_ELEMENT_KEY, MJSONWP_ELEMENT_KEY} from '../../lib/execute-child';
 import {fs} from '@appium/support';
@@ -39,7 +40,7 @@ describe('ExecuteDriverPlugin', function () {
   let driver: any;
 
   const basicScript = `return 'foo'`;
-  const e2eSetupOpts = {
+  const e2eSetupOpts: E2ESetupOpts = {
     before,
     after,
     host: TEST_HOST,
@@ -57,13 +58,14 @@ describe('ExecuteDriverPlugin', function () {
   });
 
   describe('without --allow-insecure set', function () {
+    const setupOpts = {...e2eSetupOpts};
     after(async function () {
       driver && (await driver.deleteSession());
     });
-    pluginE2EHarness({...e2eSetupOpts});
+    pluginE2EHarness(setupOpts);
 
     it('should not work unless the allowInsecure feature flag is set', async function () {
-      driver = await wdio({...WDIO_OPTS, port: this.port});
+      driver = await wdio({...WDIO_OPTS, port: setupOpts.port});
       await expect(driver.executeDriverScript(basicScript)).to.eventually.be.rejectedWith(
         /allow-insecure.+execute_driver_script/i,
       );
@@ -71,15 +73,16 @@ describe('ExecuteDriverPlugin', function () {
   });
 
   describe('with --allow-insecure set', function () {
+    const setupOpts = {
+      ...e2eSetupOpts,
+      serverArgs: {allowInsecure: ['*:execute_driver_script']},
+    };
     after(async function () {
       driver && (await driver.deleteSession());
     });
-    pluginE2EHarness({
-      ...e2eSetupOpts,
-      serverArgs: {allowInsecure: ['*:execute_driver_script']},
-    });
+    pluginE2EHarness(setupOpts);
     before(async function () {
-      driver = await wdio({...WDIO_OPTS, port: this.port});
+      driver = await wdio({...WDIO_OPTS, port: setupOpts.port});
     });
 
     it('should execute a webdriverio script in the context of session', async function () {

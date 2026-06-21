@@ -6,12 +6,22 @@
     "esModuleInterop": true,
     "strict": true,
     "paths": {
-      "@appium/opencv": ["../opencv"]
+      "@appium/opencv": [
+        "../opencv"
+      ]
     },
-    "types": ["mocha", "chai", "sinon", "chai-as-promised"]
+    "types": [
+      "node",
+      "chai",
+      "sinon",
+      "chai-as-promised"
+    ]
   },
   "extends": "@appium/tsconfig/tsconfig.plugin.json",
-  "include": ["lib", "test"],
+  "include": [
+    "lib",
+    "test"
+  ],
   "references": [
     {
       "path": "../opencv"

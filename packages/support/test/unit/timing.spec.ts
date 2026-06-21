@@ -1,3 +1,4 @@
+import {describe, it, before, beforeEach, afterEach} from 'node:test';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {createSandbox} from 'sinon';
@@ -22,11 +23,8 @@ describe('timing', function () {
     sandbox.restore();
   });
 
-  describe('bigint', function () {
+  describe('bigint', {skip: typeof process.hrtime.bigint !== 'function'}, function () {
     beforeEach(function () {
-      if (typeof process.hrtime.bigint !== 'function') {
-        return this.skip();
-      }
       processMock = sandbox.mock(process.hrtime);
     });
 

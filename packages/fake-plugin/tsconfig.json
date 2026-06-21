@@ -3,9 +3,20 @@
     "rootDir": ".",
     "outDir": "build",
     "strict": true,
-    "types": ["mocha", "chai", "chai-as-promised"]
+    "types": [
+      "node",
+      "chai",
+      "chai-as-promised"
+    ]
   },
   "extends": "@appium/tsconfig/tsconfig.plugin.json",
-  "include": ["lib", "test"],
-  "references": [{"path": "../base-plugin"}]
+  "include": [
+    "lib",
+    "test"
+  ],
+  "references": [
+    {
+      "path": "../base-plugin"
+    }
+  ]
 }

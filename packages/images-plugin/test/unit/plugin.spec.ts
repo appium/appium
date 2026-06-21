@@ -1,3 +1,4 @@
+import {describe, it, before} from 'node:test';
 import {ImageElementPlugin} from '../../lib/plugin';
 import {
   MATCH_FEATURES_MODE,
@@ -19,8 +20,7 @@ describe('ImageElementPlugin#handle', function () {
   const driver = new BaseDriver<Constraints>({} as any);
   const p = new ImageElementPlugin('test');
 
-  describe('compareImages', function () {
-    this.timeout(6000);
+  describe('compareImages', {timeout: 6000}, function () {
     it('should compare images via match features mode', async function () {
       const res = await p.compareImages(
         next,

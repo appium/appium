@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import {describe, it, beforeEach} from 'node:test';
 import {expect} from 'chai';
 import {Log, markSensitive} from '../../lib/log';
 import {Stream} from 'node:stream';

@@ -1,3 +1,4 @@
+import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import * as teenProcess from 'teen_process';
@@ -23,12 +24,9 @@ describe('process', function () {
     sandbox.restore();
   });
 
-  describe('getProcessIds', function () {
+  describe('getProcessIds', {skip: system.isWindows()}, function () {
     let proc: InstanceType<typeof SubProcess> | undefined;
     before(async function () {
-      if (system.isWindows()) {
-        return this.skip();
-      }
       proc = new SubProcess('tail', ['-f', __filename]);
       await proc.start();
     });
@@ -57,13 +55,8 @@ describe('process', function () {
     });
   });
 
-  describe('killProcess', function () {
+  describe('killProcess', {skip: system.isWindows()}, function () {
     let proc: InstanceType<typeof SubProcess>;
-    before(function () {
-      if (system.isWindows()) {
-        return this.skip();
-      }
-    });
     beforeEach(async function () {
       proc = new SubProcess('tail', ['-f', __filename]);
       await proc.start();

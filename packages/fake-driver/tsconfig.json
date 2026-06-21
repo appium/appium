@@ -5,30 +5,15 @@
     "outDir": "build",
     "checkJs": true,
     "strict": true,
-    "types": [
-      "chai",
-      "chai-as-promised",
-      "node"
-    ],
+    "types": ["chai", "chai-as-promised", "node"],
     "paths": {
-      "@appium/types": [
-        "../types"
-      ],
-      "appium/support": [
-        "../appium/support"
-      ],
-      "appium/driver": [
-        "../appium/driver"
-      ],
-      "@appium/driver-test-support": [
-        "../driver-test-support"
-      ]
+      "@appium/types": ["../types"],
+      "appium/support": ["../appium/support"],
+      "appium/driver": ["../appium/driver"],
+      "@appium/driver-test-support": ["../driver-test-support"]
     }
   },
-  "include": [
-    "lib",
-    "test"
-  ],
+  "include": ["lib", "test"],
   "references": [
     {
       "path": "../types"

@@ -5,20 +5,11 @@
     "outDir": "build",
     "strict": true,
     "paths": {
-      "@appium/types": [
-        "../types"
-      ]
+      "@appium/types": ["../types"]
     },
-    "types": [
-      "chai",
-      "chai-as-promised",
-      "node"
-    ]
+    "types": ["chai", "chai-as-promised", "node"]
   },
-  "include": [
-    "lib",
-    "test"
-  ],
+  "include": ["lib", "test"],
   "references": [
     {
       "path": "../types"

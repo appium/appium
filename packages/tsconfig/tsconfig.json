@@ -13,8 +13,6 @@
     "sourceMap": true,
     "removeComments": false,
     "strict": false,
-    "types": [
-      "node"
-    ]
+    "types": ["node"]
   }
 }

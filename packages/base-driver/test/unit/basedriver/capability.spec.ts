@@ -127,31 +127,35 @@ describe('Desired Capabilities', function () {
     expect(logWarnSpy.called).to.be.true;
   });
 
-  it('should suggest a close known capability name for unknown caps', {timeout: 500}, async function () {
-    await d.createSession({
-      alwaysMatch: {
-        platformName: 'iOS',
-        'appium:noReest': true,
-      },
-      firstMatch: [{}],
-    } as unknown as TestW3CCaps);
+  it(
+    'should suggest a close known capability name for unknown caps',
+    {timeout: 500},
+    async function () {
+      await d.createSession({
+        alwaysMatch: {
+          platformName: 'iOS',
+          'appium:noReest': true,
+        },
+        firstMatch: [{}],
+      } as unknown as TestW3CCaps);
 
-    expect(logWarnSpy.calledWith(`  noReest (did you mean 'noReset'?)`)).to.be.true;
-  });
+      expect(logWarnSpy.calledWith(`  noReest (did you mean 'noReset'?)`)).to.be.true;
+    },
+  );
 
   it(
     'should not suggest a capability name when the closest match exceeds the edit-distance threshold',
     {timeout: 500},
     async function () {
-    await d.createSession({
-      alwaysMatch: {
-        platformName: 'iOS',
-        'appium:qqqqqq': true,
-      },
-      firstMatch: [{}],
-    } as unknown as TestW3CCaps);
+      await d.createSession({
+        alwaysMatch: {
+          platformName: 'iOS',
+          'appium:qqqqqq': true,
+        },
+        firstMatch: [{}],
+      } as unknown as TestW3CCaps);
 
-    expect(logWarnSpy.calledWith(`  qqqqqq (did you mean`)).to.be.false;
+      expect(logWarnSpy.calledWith(`  qqqqqq (did you mean`)).to.be.false;
       expect(logWarnSpy.calledWith(`  qqqqqq`)).to.be.true;
     },
   );

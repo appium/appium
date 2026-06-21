@@ -5,26 +5,13 @@
     "rootDir": ".",
     "outDir": "build",
     "paths": {
-      "@appium/types": [
-        "../types"
-      ],
-      "appium/support": [
-        "../support"
-      ],
-      "appium": [
-        "../appium"
-      ]
+      "@appium/types": ["../types"],
+      "appium/support": ["../support"],
+      "appium": ["../appium"]
     },
-    "types": [
-      "chai",
-      "sinon",
-      "chai-as-promised",
-      "node"
-    ]
+    "types": ["chai", "sinon", "chai-as-promised", "node"]
   },
-  "include": [
-    "./lib"
-  ],
+  "include": ["./lib"],
   "references": [
     {
       "path": "../types"

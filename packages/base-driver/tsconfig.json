@@ -4,27 +4,15 @@
     "strict": true,
     "outDir": "build",
     "paths": {
-      "@appium/support": [
-        "../support"
-      ],
-      "@appium/types": [
-        "../types"
-      ],
-      "@appium/driver-test-support": [
-        "../driver-test-support"
-      ]
+      "@appium/support": ["../support"],
+      "@appium/types": ["../types"],
+      "@appium/driver-test-support": ["../driver-test-support"]
     },
     "checkJs": true,
-    "types": [
-      "node"
-    ]
+    "types": ["node"]
   },
-  "include": [
-    "lib"
-  ],
-  "exclude": [
-    "build"
-  ],
+  "include": ["lib"],
+  "exclude": ["build"],
   "references": [
     {
       "path": "../support"

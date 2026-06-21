@@ -65,10 +65,7 @@ async function createDocsFile(
 /**
  * Helper function to ensure Python dependencies are installed
  */
-async function ensurePythonDeps(
-  projectDir: string,
-  context: {skip: () => void},
-): Promise<void> {
+async function ensurePythonDeps(projectDir: string, context: {skip: () => void}): Promise<void> {
   try {
     await initPython({cwd: projectDir});
   } catch {

@@ -5,40 +5,18 @@
     "outDir": "build",
     "strict": true,
     "paths": {
-      "@appium/support": [
-        "../support"
-      ],
-      "@appium/base-driver": [
-        "../base-driver"
-      ],
-      "@appium/base-plugin": [
-        "../base-plugin"
-      ],
-      "@appium/fake-driver": [
-        "../fake-driver"
-      ],
-      "@appium/types": [
-        "../types"
-      ],
-      "@appium/schema": [
-        "../schema"
-      ],
-      "appium": [
-        "."
-      ]
+      "@appium/support": ["../support"],
+      "@appium/base-driver": ["../base-driver"],
+      "@appium/base-plugin": ["../base-plugin"],
+      "@appium/fake-driver": ["../fake-driver"],
+      "@appium/types": ["../types"],
+      "@appium/schema": ["../schema"],
+      "appium": ["."]
     },
     "checkJs": true,
-    "types": [
-      "chai",
-      "chai-as-promised",
-      "node"
-    ]
+    "types": ["chai", "chai-as-promised", "node"]
   },
-  "include": [
-    "lib",
-    "types",
-    "test"
-  ],
+  "include": ["lib", "types", "test"],
   "references": [
     {
       "path": "../schema"

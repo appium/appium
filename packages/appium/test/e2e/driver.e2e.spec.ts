@@ -684,86 +684,86 @@ describe(
   'Bidi over SSL',
   {skip: parseInt(process.version.slice(1).split('.')[0], 10) >= 24},
   function () {
-  async function generateCertificate(certPath: string, keyPath: string) {
-    await exec('openssl', [
-      'req',
-      '-nodes',
-      '-new',
-      '-x509',
-      '-keyout',
-      keyPath,
-      '-out',
-      certPath,
-      '-subj',
-      '/C=US/ST=State/L=City/O=company/OU=Com/CN=www.testserver.local',
-    ]);
-  }
+    async function generateCertificate(certPath: string, keyPath: string) {
+      await exec('openssl', [
+        'req',
+        '-nodes',
+        '-new',
+        '-x509',
+        '-keyout',
+        keyPath,
+        '-out',
+        certPath,
+        '-subj',
+        '/C=US/ST=State/L=City/O=company/OU=Com/CN=www.testserver.local',
+      ]);
+    }
 
-  let server: AppiumServer;
-  let appiumHome: string;
-  let driver: Browser;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let FakeDriver: DriverClass;
-  const certPath = 'certificate.cert';
-  const keyPath = 'certificate.key';
-  const capabilities = {...caps, webSocketUrl: true};
-  let previousEnvValue: string | undefined;
+    let server: AppiumServer;
+    let appiumHome: string;
+    let driver: Browser;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    let FakeDriver: DriverClass;
+    const certPath = 'certificate.cert';
+    const keyPath = 'certificate.key';
+    const capabilities = {...caps, webSocketUrl: true};
+    let previousEnvValue: string | undefined;
 
-  before(async function (t) {
-    try {
-      await generateCertificate(certPath, keyPath);
-    } catch (e) {
-      if (process.env.CI) {
-        throw e;
+    before(async function (t) {
+      try {
+        await generateCertificate(certPath, keyPath);
+      } catch (e) {
+        if (process.env.CI) {
+          throw e;
+        }
+        if ('skip' in t) {
+          return t.skip();
+        }
+        return;
       }
-      if ('skip' in t) {
-        return t.skip();
+      appiumHome = await tempDir.openDir();
+      wdOpts.port = port = await getTestPort();
+      testServerBaseUrl = `https://${TEST_HOST}:${port}`;
+      FakeDriver = await initFakeDriver(appiumHome);
+      server = await appiumServer({
+        address: TEST_HOST,
+        port,
+        appiumHome,
+        sslCertificatePath: certPath,
+        sslKeyPath: keyPath,
+      });
+    });
+
+    after(async function () {
+      if (server) {
+        await fs.rimraf(appiumHome);
+        await server.close();
       }
-      return;
-    }
-    appiumHome = await tempDir.openDir();
-    wdOpts.port = port = await getTestPort();
-    testServerBaseUrl = `https://${TEST_HOST}:${port}`;
-    FakeDriver = await initFakeDriver(appiumHome);
-    server = await appiumServer({
-      address: TEST_HOST,
-      port,
-      appiumHome,
-      sslCertificatePath: certPath,
-      sslKeyPath: keyPath,
     });
-  });
 
-  after(async function () {
-    if (server) {
-      await fs.rimraf(appiumHome);
-      await server.close();
-    }
-  });
-
-  beforeEach(async function () {
-    previousEnvValue = process.env.NODE_TLS_REJECT_UNAUTHORIZED;
-    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-    driver = await wdio({...wdOpts, protocol: 'https', strictSSL: false, capabilities});
-  });
-
-  afterEach(async function () {
-    process.env.NODE_TLS_REJECT_UNAUTHORIZED = previousEnvValue;
-    if (driver) {
-      await driver.deleteSession();
-    }
-  });
-
-  it('should still run bidi over ssl', async function () {
-    expect(await driver.getUrl()).to.not.be.ok;
-
-    await driver.browsingContextNavigate({
-      context: 'foo',
-      url: 'https://appium.io',
-      wait: 'complete',
+    beforeEach(async function () {
+      previousEnvValue = process.env.NODE_TLS_REJECT_UNAUTHORIZED;
+      process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+      driver = await wdio({...wdOpts, protocol: 'https', strictSSL: false, capabilities});
     });
-    await expect(driver.getUrl()).to.eventually.eql('https://appium.io');
-  });
+
+    afterEach(async function () {
+      process.env.NODE_TLS_REJECT_UNAUTHORIZED = previousEnvValue;
+      if (driver) {
+        await driver.deleteSession();
+      }
+    });
+
+    it('should still run bidi over ssl', async function () {
+      expect(await driver.getUrl()).to.not.be.ok;
+
+      await driver.browsingContextNavigate({
+        context: 'foo',
+        url: 'https://appium.io',
+        wait: 'complete',
+      });
+      await expect(driver.getUrl()).to.eventually.eql('https://appium.io');
+    });
   },
 );
 

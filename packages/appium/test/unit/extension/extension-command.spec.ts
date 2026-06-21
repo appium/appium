@@ -1,4 +1,4 @@
-import {describe, it, after, beforeEach, afterEach} from 'node:test';
+import {describe, it, beforeEach, afterEach} from 'node:test';
 import type {ChildProcess} from 'node:child_process';
 import type {Writable} from 'node:stream';
 import type {AppiumLogger} from '@appium/types';

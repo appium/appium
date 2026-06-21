@@ -91,7 +91,7 @@ describe('FakeDriver via HTTP', function () {
   let testServerBaseSessionUrl: string;
   let sandbox: SinonSandbox;
 
-  before(async function (t) {
+  before(async function () {
     sandbox = createSandbox();
     appiumHome = await tempDir.openDir();
     wdOpts.port = port = await getTestPort();
@@ -106,14 +106,12 @@ describe('FakeDriver via HTTP', function () {
   });
 
   function withServer(args: Partial<ParsedArgs> = {}) {
-    // eslint-disable-next-line mocha/no-sibling-hooks
     before(async function () {
       const merged = {...args, appiumHome, port, address: TEST_HOST};
       if (shouldStartServer) {
         server = await appiumServer(merged);
       }
     });
-    // eslint-disable-next-line mocha/no-sibling-hooks
     after(async function () {
       if (server) {
         await server.close();
@@ -708,17 +706,16 @@ describe(
     const keyPath = 'certificate.key';
     const capabilities = {...caps, webSocketUrl: true};
     let previousEnvValue: string | undefined;
+    let skip = false;
 
-    before(async function (t) {
+    before(async function () {
       try {
         await generateCertificate(certPath, keyPath);
       } catch (e) {
         if (process.env.CI) {
           throw e;
         }
-        if ('skip' in t) {
-          return t.skip();
-        }
+        skip = true;
         return;
       }
       appiumHome = await tempDir.openDir();
@@ -754,7 +751,7 @@ describe(
       }
     });
 
-    it('should still run bidi over ssl', async function () {
+    it('should still run bidi over ssl', {skip}, async function () {
       expect(await driver.getUrl()).to.not.be.ok;
 
       await driver.browsingContextNavigate({

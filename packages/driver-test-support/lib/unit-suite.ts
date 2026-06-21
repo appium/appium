@@ -1,4 +1,5 @@
-import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
+/* eslint-disable @typescript-eslint/no-floating-promises */
+import {describe, it, before, beforeEach, afterEach} from 'node:test';
 import {sleep} from 'asyncbox';
 import {createSandbox} from 'sinon';
 import type {Constraints, Driver, DriverClass, NSDriverCaps, W3CDriverCaps} from '@appium/types';

@@ -1,4 +1,4 @@
-import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
+import {describe, it, before, beforeEach, afterEach} from 'node:test';
 import type {DriverType, PluginType} from '@appium/types';
 import type {ExtManifest, ExtPackageJson, ManifestData} from 'appium/types';
 import chai from 'chai';

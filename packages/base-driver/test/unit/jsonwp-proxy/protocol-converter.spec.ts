@@ -111,7 +111,7 @@ describe('Protocol Converter', function () {
     let responseBody: any;
     before(function () {
       responseBody = null;
-      converter = new ProtocolConverter(((url, method, body) => {
+      converter = new ProtocolConverter(((url: string, method: string, body: any) => {
         responseBody = body;
       }) as any);
     });

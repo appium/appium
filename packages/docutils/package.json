@@ -36,8 +36,7 @@
     "lib",
     "build/lib",
     "tsconfig.json",
-    "requirements.txt",
-    "!build/test"
+    "requirements.txt"
   ],
   "scripts": {
     "test": "npm run test:unit",

@@ -13,10 +13,8 @@
   "files": [
     "index.ts",
     "lib",
-    "build",
+    "build/lib",
     "tsconfig.json",
-    "!build/tsconfig.tsbuildinfo",
-    "!build/test",
     "CHANGELOG.md"
   ],
   "directories": {

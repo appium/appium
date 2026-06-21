@@ -1,3 +1,4 @@
+// @ts-nocheck
 module.exports = {
   find: function (driver, logger, selector, multiple) { // eslint-disable-line object-shorthand
     if (!driver || !driver.opts) {

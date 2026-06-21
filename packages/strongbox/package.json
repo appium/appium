@@ -31,8 +31,7 @@
   "files": [
     "build/lib",
     "lib",
-    "tsconfig.json",
-    "!build/test"
+    "tsconfig.json"
   ],
   "scripts": {
     "test": "run-p test:unit test:types",

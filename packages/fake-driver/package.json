@@ -29,8 +29,7 @@
   "files": [
     "lib",
     "build/lib",
-    "tsconfig.json",
-    "!build/test"
+    "tsconfig.json"
   ],
   "scripts": {
     "build": "cpy lib/screen.png build",

@@ -26,12 +26,10 @@
   "main": "./build/lib/index.js",
   "types": "./build/lib/index.d.ts",
   "files": [
-    "build",
+    "build/lib",
     "docs",
     "lib",
-    "tsconfig.json",
-    "!build/tsconfig.tsbuildinfo",
-    "!build/test"
+    "tsconfig.json"
   ],
   "scripts": {
     "test": "npm run test:unit",

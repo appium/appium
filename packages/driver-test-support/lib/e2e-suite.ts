@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-floating-promises */
 import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
 import {server, routeConfiguringFunction, DeviceSettings} from 'appium/driver';
 import axios, {type RawAxiosRequestConfig} from 'axios';

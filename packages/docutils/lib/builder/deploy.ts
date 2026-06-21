@@ -212,34 +212,6 @@ export async function deploy({
 }
 
 /**
- * Runs `mike serve`
- * @param mikePath Path to `mike` executable
- * @param args Extra args to `mike build`
- * @param opts Extra options for `teen_process.Subprocess.start`
- */
-async function doServe(
-  mikePath: string,
-  args: string[] = [],
-  opts: SpawnBackgroundProcessOpts = {},
-) {
-  const finalArgs = ['serve', ...args];
-  log.debug('Executing %s via: %s %O', NAME_MIKE, mikePath, finalArgs);
-  return spawnBackgroundProcess(mikePath, finalArgs, opts);
-}
-
-/**
- * Runs `mike build`
- * @param mikePath Path to `mike` executable
- * @param args Extra args to `mike build`
- * @param opts Extra options to `teen_process.exec`
- */
-async function doDeploy(mikePath: string, args: string[] = [], opts: TeenProcessExecOptions = {}) {
-  const finalArgs = ['deploy', ...args];
-  log.debug('Executing %s via: %s %O', NAME_MIKE, mikePath, finalArgs);
-  return await execWithErrorHandling(mikePath, finalArgs, opts);
-}
-
-/**
  * Derives a deployment version from `package.json`
  * @param packageJsonPath Path to `package.json` if known
  * @param usePrefixedMajorVersion Whether to extract a v-prefixed major version
@@ -265,4 +237,32 @@ export async function findDeployVersion(
     return usePrefixedMajorVersion ? `v${version}` : version;
   }
   return usePrefixedMajorVersion ? `v${versionParts[0]}` : `${versionParts[0]}.${versionParts[1]}`;
+}
+
+/**
+ * Runs `mike serve`
+ * @param mikePath Path to `mike` executable
+ * @param args Extra args to `mike build`
+ * @param opts Extra options for `teen_process.Subprocess.start`
+ */
+async function doServe(
+  mikePath: string,
+  args: string[] = [],
+  opts: SpawnBackgroundProcessOpts = {},
+) {
+  const finalArgs = ['serve', ...args];
+  log.debug('Executing %s via: %s %O', NAME_MIKE, mikePath, finalArgs);
+  return spawnBackgroundProcess(mikePath, finalArgs, opts);
+}
+
+/**
+ * Runs `mike build`
+ * @param mikePath Path to `mike` executable
+ * @param args Extra args to `mike build`
+ * @param opts Extra options to `teen_process.exec`
+ */
+async function doDeploy(mikePath: string, args: string[] = [], opts: TeenProcessExecOptions = {}) {
+  const finalArgs = ['deploy', ...args];
+  log.debug('Executing %s via: %s %O', NAME_MIKE, mikePath, finalArgs);
+  return await execWithErrorHandling(mikePath, finalArgs, opts);
 }

@@ -14,17 +14,17 @@ describe('Protocol', function () {
 
     it('should pick up the first value as the session id', function () {
       const req = {params: {sessionId: [sessionId]}} as unknown as Request;
-      expect(getSessionId(fakeDriver, req)).to.eql(sessionId);
+      expect(getSessionId(fakeDriver as any, req)).to.eql(sessionId);
     });
 
     it('should get session id', function () {
       const req = {params: {sessionId}} as unknown as Request;
-      expect(getSessionId(fakeDriver, req)).to.eql(sessionId);
+      expect(getSessionId(fakeDriver as any, req)).to.eql(sessionId);
     });
 
     it('should be undefined', function () {
       const req = {params: {sessionId: undefined}} as unknown as Request;
-      expect(getSessionId(fakeDriver, req)).to.eql(undefined);
+      expect(getSessionId(fakeDriver as any, req)).to.eql(undefined);
     });
   });
 

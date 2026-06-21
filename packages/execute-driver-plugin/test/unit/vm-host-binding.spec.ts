@@ -1,4 +1,4 @@
-import {describe, it, before} from 'node:test';
+import {describe, it} from 'node:test';
 import vm from 'node:vm';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';

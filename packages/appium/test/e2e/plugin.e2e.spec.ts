@@ -40,7 +40,6 @@ let baseServerArgs: Partial<ParsedArgs>;
 function serverSetup(args: Record<string, unknown>) {
   let server: Awaited<ReturnType<typeof appiumServer>> | null = null;
 
-  /* eslint-disable mocha/no-top-level-hooks -- hooks are intentionally in a helper */
   before(async function () {
     server = await appiumServer({...baseServerArgs, ...args});
   });
@@ -49,7 +48,6 @@ function serverSetup(args: Record<string, unknown>) {
       await server.close();
     }
   });
-  /* eslint-enable mocha/no-top-level-hooks */
 }
 
 describe('FakePlugin w/ FakeDriver via HTTP', function () {

@@ -9,6 +9,8 @@ import {StatusCodes as HTTPStatusCodes} from 'http-status-codes';
 import {createProxyServer} from './helpers';
 import {MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY} from '../../../lib/constants';
 import {TEST_HOST, getTestPort} from '@appium/driver-test-support';
+import type {Application, Request, Response} from 'express';
+import type {AppiumServer, RouteMatcher} from '@appium/types';
 
 chai.use(chaiAsPromised);
 
@@ -42,8 +44,8 @@ describe('Protocol', function () {
   });
 
   describe('via express router', function () {
-    let mjsonwpServer;
-    let driver;
+    let mjsonwpServer: any;
+    let driver: FakeDriver;
 
     before(async function () {
       driver = new FakeDriver();
@@ -334,7 +336,7 @@ describe('Protocol', function () {
     });
 
     describe('create sessions via HTTP endpoint', function () {
-      let sessionId;
+      let sessionId: string | null;
 
       beforeEach(function () {
         sessionId = null;
@@ -405,7 +407,7 @@ describe('Protocol', function () {
       });
 
       describe('w3c endpoints', function () {
-        let sessionUrl;
+        let sessionUrl: string;
 
         beforeEach(async function () {
           // Start a W3C session
@@ -466,7 +468,7 @@ describe('Protocol', function () {
         });
 
         it(`should throw 500 Unknown Error if the command throws an unexpected exception`, async function () {
-          driver.performActions = () => {
+          (driver as any).performActions = () => {
             throw new Error(`Didn't work`);
           };
           const {status, data} = await axios({
@@ -485,7 +487,7 @@ describe('Protocol', function () {
           expect(w3cError).to.equal(errors.UnknownError.error());
           expect(message).to.match(/Didn't work/);
 
-          delete driver.performActions;
+          delete (driver as any).performActions;
         });
 
         it(`should translate element format from MJSONWP to W3C`, async function () {
@@ -518,7 +520,7 @@ describe('Protocol', function () {
           ];
 
           const findElementsBackup = driver.findElements;
-          driver.findElements = () => retValue;
+          driver.findElements = () => Promise.resolve(retValue as any);
           const {data} = await axios.post(`${sessionUrl}/elements`, {
             using: 'whatever',
             value: 'whatever',
@@ -551,7 +553,7 @@ describe('Protocol', function () {
         });
 
         it(`should pass with 200 HTTP status code if the command returns a value`, async function () {
-          driver.performActions = (actions) => 'It works ' + actions.join('');
+          (driver as any).performActions = (actions: object[]) => 'It works ' + actions.join('');
           const {status, value, sessionId} = (
             await axios.post(`${sessionUrl}/actions`, {
               actions: ['a', 'b', 'c'],
@@ -560,12 +562,14 @@ describe('Protocol', function () {
           expect(sessionId).to.not.exist;
           expect(status).to.not.exist;
           expect(value).to.equal('It works abc');
-          delete driver.performActions;
+          delete (driver as any).performActions;
         });
 
         describe('jwproxy', function () {
-          let port;
-          let server, jwproxy, app;
+          let port: number;
+          let server: ReturnType<Application['listen']>;
+          let jwproxy: JWProxy;
+          let app: Application;
 
           before(async function () {
             port = await getTestPort(true);
@@ -577,12 +581,12 @@ describe('Protocol', function () {
             app = res.app;
             jwproxy = new JWProxy({server: TEST_HOST, port});
             jwproxy.sessionId = sessionId;
-            driver.performActions = async (actions) =>
+            (driver as any).performActions = async (actions: object[]) =>
               await jwproxy.command('/perform-actions', 'POST', actions);
           });
 
           afterEach(async function () {
-            delete driver.performActions;
+            delete (driver as any).performActions;
             await server.close();
           });
 
@@ -628,7 +632,7 @@ describe('Protocol', function () {
           it('should return W3C error if a proxied request returns a W3C error response', async function () {
             const error = new Error(`Some error occurred`) as Error & {w3cStatus?: number};
             error.w3cStatus = 414;
-            const executeCommandStub = sandbox.stub(driver, 'executeCommand').returns({
+            const executeCommandStub = sandbox.stub(driver, 'executeCommand').resolves({
               protocol: 'W3C',
               error,
             });
@@ -773,7 +777,7 @@ describe('Protocol', function () {
 
   describe('session Ids', function () {
     const driver = new FakeDriver();
-    let mjsonwpServer;
+    let mjsonwpServer: AppiumServer;
 
     before(async function () {
       mjsonwpServer = await server({
@@ -882,9 +886,9 @@ describe('Protocol', function () {
   });
 
   describe('via drivers jsonwp proxy', function () {
-    let driver;
+    let driver: FakeDriver;
     const sessionId = 'foo';
-    let mjsonwpServer;
+    let mjsonwpServer: AppiumServer;
 
     beforeEach(async function () {
       driver = new FakeDriver();
@@ -904,7 +908,7 @@ describe('Protocol', function () {
     });
 
     it('should give a nice error if proxying is set but no proxy function exists', async function () {
-      driver.canProxy = () => false;
+      (driver as any).canProxy = () => false;
       const {status, data} = await axios({
         url: `${baseUrl}/session/${sessionId}/url`,
         method: 'POST',
@@ -923,7 +927,7 @@ describe('Protocol', function () {
     });
 
     it('should pass on any errors in proxying', async function () {
-      driver.proxyReqRes = async function () {
+      (driver as any).proxyReqRes = async function () {
         throw new Error('foo');
       };
       const {status, data} = await axios({
@@ -943,7 +947,7 @@ describe('Protocol', function () {
     });
 
     it('should able to throw ProxyRequestError in proxying', async function () {
-      driver.proxyReqRes = async function () {
+      (driver as any).proxyReqRes = async function () {
         const jsonwp = {
           status: 35,
           value: 'No such context found.',
@@ -965,7 +969,7 @@ describe('Protocol', function () {
     });
 
     it('should let the proxy handle req/res', async function () {
-      driver.proxyReqRes = async function (req, res) {
+      (driver as any).proxyReqRes = async function (req: Request, res: Response) {
         res.status(200).json({custom: 'data'});
       };
       const {status, data} = await axios({
@@ -994,7 +998,7 @@ describe('Protocol', function () {
     });
 
     it('should fail if avoid proxy list is malformed in some way', async function () {
-      async function badProxyAvoidanceList(list) {
+      async function badProxyAvoidanceList(list: RouteMatcher[]) {
         driver.getProxyAvoidList = () => list;
         const {status, data} = await axios({
           url: `${baseUrl}/session/${sessionId}/url`,
@@ -1008,7 +1012,7 @@ describe('Protocol', function () {
       }
       const lists = ['foo', [['foo']], [['BAR', /lol/]], [['GET', 'foo']]];
       for (const list of lists) {
-        await badProxyAvoidanceList(list);
+        await badProxyAvoidanceList(list as RouteMatcher[]);
       }
     });
 

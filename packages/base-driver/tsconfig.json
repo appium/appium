@@ -11,7 +11,7 @@
     "checkJs": true,
     "types": ["node"]
   },
-  "include": ["lib"],
+  "include": ["lib", "test"],
   "exclude": ["build"],
   "references": [
     {

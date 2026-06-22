@@ -85,11 +85,28 @@ async function initFakeDriver(appiumHome: string) {
 }
 
 describe('FakeDriver via HTTP', function () {
-  let server: AppiumServer | void;
   let appiumHome: string;
   let FakeDriver: DriverClass;
   let testServerBaseSessionUrl: string;
   let sandbox: SinonSandbox;
+
+  function createServer(args: Partial<ParsedArgs> = {}): {
+    setup: () => Promise<void>,
+    teardown: () => Promise<void>
+  } {
+    let server: AppiumServer | void;
+
+    const setup = async function setup () {
+      const merged = {...args, appiumHome, port, address: TEST_HOST};
+      if (shouldStartServer) {
+        server = await appiumServer(merged);
+      }
+    };
+    const teardown = async function teardown () {
+      await server?.close();
+    };
+    return {setup, teardown};
+  }
 
   before(async function () {
     sandbox = createSandbox();
@@ -105,22 +122,15 @@ describe('FakeDriver via HTTP', function () {
     sandbox.restore();
   });
 
-  function withServer(args: Partial<ParsedArgs> = {}) {
+  describe('server updating', function () {
+    const {setup, teardown} = createServer();
     before(async function () {
-      const merged = {...args, appiumHome, port, address: TEST_HOST};
-      if (shouldStartServer) {
-        server = await appiumServer(merged);
-      }
+      await setup();
     });
     after(async function () {
-      if (server) {
-        await server.close();
-      }
+      await teardown();
     });
-  }
 
-  describe('server updating', function () {
-    withServer();
     it('should allow drivers to update the server in arbitrary ways', async function () {
       const {data} = await axios.get(`${testServerBaseUrl}/fakedriver`);
       expect(data).to.eql({fakedriver: 'fakeResponse'});
@@ -135,7 +145,14 @@ describe('FakeDriver via HTTP', function () {
   });
 
   describe('cli args handling for empty args', function () {
-    withServer();
+    const {setup, teardown} = createServer();
+    before(async function () {
+      await setup();
+    });
+    after(async function () {
+      await teardown();
+    });
+
     it('should not receive user cli args if none passed in', async function () {
       const driver = await wdio({...wdOpts, capabilities: caps});
       const {sessionId} = driver;
@@ -150,7 +167,14 @@ describe('FakeDriver via HTTP', function () {
   });
 
   describe('cli args handling for passed in args', function () {
-    withServer(FAKE_DRIVER_ARGS);
+    const {setup, teardown} = createServer(FAKE_DRIVER_ARGS);
+    before(async function () {
+      await setup();
+    });
+    after(async function () {
+      await teardown();
+    });
+
     it('should receive user cli args from a driver if arguments were passed in', async function () {
       const driver = await wdio({...wdOpts, capabilities: caps});
       const {sessionId} = driver;
@@ -165,7 +189,7 @@ describe('FakeDriver via HTTP', function () {
   });
 
   describe('default capabilities via cli', function () {
-    withServer({
+    const {setup, teardown} = createServer({
       defaultCapabilities: {
         'appium:options': {
           automationName: 'Fake',
@@ -175,6 +199,13 @@ describe('FakeDriver via HTTP', function () {
         platformName: 'Fake',
       },
     });
+    before(async function () {
+      await setup();
+    });
+    after(async function () {
+      await teardown();
+    });
+
     it('should allow appium-prefixed caps sent via appium:options through --default-capabilities', async function () {
       const appiumOptsCaps = {
         capabilities: {
@@ -202,7 +233,14 @@ describe('FakeDriver via HTTP', function () {
   });
 
   describe('inspector commands', function () {
-    withServer();
+    const {setup, teardown} = createServer();
+    before(async function () {
+      await setup();
+    });
+    after(async function () {
+      await teardown();
+    });
+
     let driver: AppiumTestBrowser;
 
     beforeEach(async function () {
@@ -274,7 +312,13 @@ describe('FakeDriver via HTTP', function () {
   });
 
   describe('session handling', function () {
-    withServer();
+    const {setup, teardown} = createServer();
+    before(async function () {
+      await setup();
+    });
+    after(async function () {
+      await teardown();
+    });
 
     it('should start and stop a session and not allow commands after session stopped', async function () {
       const driver = await wdio({...wdOpts, capabilities: caps});
@@ -575,7 +619,14 @@ describe('FakeDriver via HTTP', function () {
   });
 
   describe('Bidi protocol', function () {
-    withServer();
+    const {setup, teardown} = createServer();
+    before(async function () {
+      await setup();
+    });
+    after(async function () {
+      await teardown();
+    });
+
     const capabilities = {...caps, webSocketUrl: true, 'appium:runClock': true};
     let driver: AppiumTestBrowser;
 
@@ -647,7 +698,14 @@ describe('FakeDriver via HTTP', function () {
 
   describe('Bidi protocol with base path', function () {
     const basePath = '/wd/hub';
-    withServer({basePath});
+    const {setup, teardown} = createServer({basePath});
+    before(async function () {
+      await setup();
+    });
+    after(async function () {
+      await teardown();
+    });
+
     const capabilities = {...caps, webSocketUrl: true, 'appium:runClock': true};
     let driver: AppiumTestBrowser;
 

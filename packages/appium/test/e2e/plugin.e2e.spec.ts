@@ -40,7 +40,7 @@ const wdOpts: {
 
 let baseServerArgs: Partial<ParsedArgs>;
 
-function serverSetup(args: Record<string, unknown>): {
+function createServer(args: Record<string, unknown>): {
   setup: () => Promise<void>;
   teardown: () => Promise<void>;
 } {
@@ -150,7 +150,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
   for (const registrationType of ['explicit', 'all']) {
     describe(`with plugin registered via type ${registrationType}`, function () {
       const usePlugins = registrationType === 'explicit' ? ['fake'] : ['all'];
-      const {setup, teardown} = serverSetup({usePlugins});
+      const {setup, teardown} = createServer({usePlugins});
       before(async function () {
         await setup();
       });
@@ -375,20 +375,22 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
     describe('with a single plugin', function () {
       let driver: Browser;
 
-      const {setup, teardown} = serverSetup({});
-      after(async function () {
-        await teardown();
-      });
-
+      const {setup, teardown} = createServer({});
       before(async function () {
         await setup();
         const caps = {
           ...wdOpts.capabilities,
           webSocketUrl: true,
           'appium:runClock': true,
-          'wdio:enforceWebDriverClassic': true,
         };
         driver = await wdio({...wdOpts, capabilities: caps} as any);
+      });
+      after(async function () {
+        try {
+          await driver?.deleteSession();
+        } finally {
+          await teardown();
+        }
       });
 
       it('should handle custom bidi commands if registered', async function () {
@@ -465,24 +467,22 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
   describe('IPC Support', function () {
     let driver: Browser;
 
-    const {setup, teardown} = serverSetup({});
-    after(async function () {
-      try {
-        await driver?.deleteSession();
-      } finally {
-        await teardown();
-      }
-    });
-
+    const {setup, teardown} = createServer({});
     before(async function () {
       await setup();
       const caps = {
         ...wdOpts.capabilities,
         webSocketUrl: true,
         'appium:runClock': true,
-        'wdio:enforceWebDriverClassic': true,
       };
       driver = await wdio({...wdOpts, capabilities: caps} as any);
+    });
+    after(async function () {
+      try {
+        await driver?.deleteSession();
+      } finally {
+        await teardown();
+      }
     });
 
     it('should allow driver to publish to plugin', async function () {

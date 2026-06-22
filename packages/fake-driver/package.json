@@ -35,7 +35,7 @@
     "build": "cpy lib/screen.png build",
     "clean": "npx rimraf build/lib/screen.png",
     "test": "npm run test:unit",
-    "test:e2e": "node --test --test-force-exit --test-timeout=20000 \"./build/test/e2e/**/*.spec.js\"",
+    "test:e2e": "node --test --test-force-exit --test-concurrency=1 --test-timeout=20000 \"./build/test/e2e/**/*.spec.js\"",
     "test:smoke": "node ./build/lib/index.js",
     "test:unit": "node --test --test-force-exit --test-timeout=10000 \"./build/test/unit/**/*.spec.js\""
   },

@@ -5,14 +5,11 @@
     "rootDir": ".",
     "outDir": "build",
     "paths": {
-      "@appium/types": ["../types"]
+      "@appium/types": ["../types"],
+      "appium/driver": ["../base-driver"]
     },
-    "types": ["chai", "chai-as-promised", "node"]
+    "types": ["mocha", "chai", "chai-as-promised", "node"]
   },
   "include": ["lib", "test"],
-  "references": [
-    {
-      "path": "../types"
-    }
-  ]
+  "references": [{"path": "../types"}, {"path": "../base-driver"}]
 }

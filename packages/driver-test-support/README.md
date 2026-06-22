@@ -1,5 +1,8 @@
 # @appium/driver-test-support
 
+> [!WARNING]
+> This package has been deprecated and will be removed.
+
 > Testing utilities for [Appium](https://appium.io) drivers
 
 This package is for driver authors to help test their drivers.

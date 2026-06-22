@@ -1,12 +1,6 @@
-/* eslint-disable @typescript-eslint/no-floating-promises */
-import {describe, it, before, beforeEach, afterEach} from 'node:test';
 import {sleep} from 'asyncbox';
 import {createSandbox} from 'sinon';
 import type {Constraints, Driver, DriverClass, NSDriverCaps, W3CDriverCaps} from '@appium/types';
-import chai, {expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
-
-chai.use(chaiAsPromised);
 
 /**
  * Creates unit test suites for a driver.
@@ -17,10 +11,19 @@ export function driverUnitTestSuite<C extends Constraints>(
 ): void {
   const className = DriverClass.name ?? '(unknown driver)';
 
-  describe(`${className} unit suite`, function () {
+  describe(`BaseDriver unit suite (as ${className})`, function () {
     let d: InstanceType<typeof DriverClass>;
     let w3cCaps: W3CDriverCaps<C>;
     let sandbox: ReturnType<typeof createSandbox>;
+    let expect: Chai.ExpectStatic;
+
+    before(async function () {
+      const chai = await import('chai');
+      const chaiAsPromised = await import('chai-as-promised');
+      (chai as any).use((chaiAsPromised as any).default);
+      expect = (chai as any).expect;
+      (chai as any).should(); // for client code that may use should style
+    });
 
     beforeEach(function () {
       sandbox = createSandbox();
@@ -512,6 +515,13 @@ export function driverUnitTestSuite<C extends Constraints>(
 
   describe('.isFeatureEnabled', function () {
     let d: InstanceType<typeof DriverClass>;
+    let expect: Chai.ExpectStatic;
+
+    before(async function () {
+      const chai = await import('chai');
+      expect = (chai as any).expect;
+      (chai as any).should(); // for client code that may use should style
+    });
 
     beforeEach(function () {
       d = new DriverClass() as InstanceType<typeof DriverClass>;

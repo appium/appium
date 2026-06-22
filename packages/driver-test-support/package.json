@@ -1,6 +1,6 @@
 {
   "name": "@appium/driver-test-support",
-  "version": "2.0.0",
+  "version": "1.2.5",
   "description": "Test utilities for Appium drivers",
   "keywords": [
     "automation",
@@ -35,7 +35,7 @@
   "scripts": {
     "test": "npm run test:unit",
     "test:smoke": "node ./build/lib/index.js",
-    "test:unit": "node --test --test-timeout=5000 \"./build/test/unit/**/*.spec.js\""
+    "test:unit": "mocha \"test/unit/**/*.spec.ts\""
   },
   "types": "./build/lib/index.d.ts",
   "dependencies": {
@@ -50,7 +50,8 @@
     "@appium/types": "1.5.1"
   },
   "peerDependencies": {
-    "appium": "^3.0.0-beta.0"
+    "appium": "^3.0.0-beta.0",
+    "mocha": "*"
   },
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0",

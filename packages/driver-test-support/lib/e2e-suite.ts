@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-floating-promises */
-import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
 import {server, routeConfiguringFunction, DeviceSettings} from 'appium/driver';
 import axios, {type RawAxiosRequestConfig} from 'axios';
 import {sleep} from 'asyncbox';
@@ -14,10 +12,6 @@ import type {
   SingularSessionData,
 } from '@appium/types';
 import type {NewSessionData, NewSessionResponse, SessionHelpers} from './types';
-import chai, {expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
-
-chai.use(chaiAsPromised);
 
 /** Driver E2E caps may include server options beyond {@linkcode BaseNSCapabilities}. */
 type DriverE2EDefaultCaps = Partial<BaseNSCapabilities> & {
@@ -88,7 +82,7 @@ export function driverE2ETestSuite(
   let port: number | undefined = defaultCaps['appium:port'];
   const className = DriverClass.name || '(unknown driver)';
 
-  describe(`${className} E2E suite`, function () {
+  describe(`BaseDriver E2E (as ${className})`, function () {
     let baseServer: Awaited<ReturnType<typeof server>>;
     let d: InstanceType<typeof DriverClass>;
     let newSessionURL: string;
@@ -97,8 +91,14 @@ export function driverE2ETestSuite(
     let endSession: SessionHelpers['endSession'];
     let getCommand: SessionHelpers['getCommand'];
     let postCommand: SessionHelpers['postCommand'];
+    let expect: Chai.ExpectStatic;
 
     before(async function () {
+      const chai = await import('chai');
+      const chaiAsPromised = await import('chai-as-promised');
+      (chai as any).use((chaiAsPromised as any).default);
+      expect = (chai as any).expect;
+
       port = port ?? (await getTestPort());
       defaultCaps = {...defaultCaps};
       d = new DriverClass({port, address}) as InstanceType<typeof DriverClass>;
@@ -121,10 +121,10 @@ export function driverE2ETestSuite(
     });
 
     describe('session handling', function () {
-      it('should handle idempotency while creating sessions', async function (t) {
+      it('should handle idempotency while creating sessions', async function () {
         // TODO: Fix this test for Node 24+
         if (parseInt(process.versions.node.split('.')[0], 10) >= 24) {
-          t.skip();
+          this.skip();
         }
 
         // workaround for https://github.com/node-fetch/node-fetch/issues/1735
@@ -155,10 +155,10 @@ export function driverE2ETestSuite(
         expect(data.value).to.be.null;
       });
 
-      it('should handle idempotency while creating parallel sessions', async function (t) {
+      it('should handle idempotency while creating parallel sessions', async function () {
         // TODO: Fix this test for Node 24+
         if (parseInt(process.versions.node.split('.')[0], 10) >= 24) {
-          t.skip();
+          this.skip();
         }
 
         // workaround for https://github.com/node-fetch/node-fetch/issues/1735

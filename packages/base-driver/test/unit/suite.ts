@@ -50,7 +50,7 @@ export function driverUnitTestSuite<C extends Constraints>(
     });
 
     it('should return a sessionId from createSession', async function () {
-      const [sessId] = await d.createSession(w3cCaps) as [string];
+      const [sessId] = (await d.createSession(w3cCaps)) as [string];
       expect(sessId).to.exist;
       expect(sessId).to.be.a('string');
       expect(sessId.length).to.be.above(5);
@@ -70,7 +70,7 @@ export function driverUnitTestSuite<C extends Constraints>(
     });
 
     it('should get the current session', async function () {
-      const [, caps] = await d.createSession(w3cCaps) as [string, DriverCaps<C>];
+      const [, caps] = (await d.createSession(w3cCaps)) as [string, DriverCaps<C>];
       expect(caps).to.equal(await d.getSession());
     });
 
@@ -178,7 +178,7 @@ export function driverUnitTestSuite<C extends Constraints>(
     });
 
     it('should have a method to get driver for a session', async function () {
-      const [sessId] = await d.createSession(w3cCaps) as [string];
+      const [sessId] = (await d.createSession(w3cCaps)) as [string];
       expect(d.driverForSession(sessId)).to.eql(d);
     });
 
@@ -335,7 +335,7 @@ export function driverUnitTestSuite<C extends Constraints>(
     describe('proxying', function () {
       let sessId: string;
       beforeEach(async function () {
-        [sessId] = await d.createSession(w3cCaps) as [string];
+        [sessId] = (await d.createSession(w3cCaps)) as [string];
       });
       describe('#proxyActive', function () {
         it('should exist', function () {

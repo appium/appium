@@ -5,11 +5,7 @@ import {sleep} from 'asyncbox';
 import {TEST_HOST, getTestPort, createAppiumURL} from '../helpers';
 import sinon from 'sinon';
 import {Agent} from 'node:http';
-import type {
-  BaseNSCapabilities,
-  Element,
-  SingularSessionData,
-} from '@appium/types';
+import type {BaseNSCapabilities, Element, SingularSessionData} from '@appium/types';
 import type {NewSessionData, NewSessionResponse, SessionHelpers} from '../helpers';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
@@ -77,9 +73,7 @@ export function createSessionHelpers<CommandData = unknown, ResponseData = any>(
 /**
  * Creates E2E test suites for a driver.
  */
-export function driverE2ETestSuite(
-  defaultCaps: DriverE2EDefaultCaps = {},
-): void {
+export function driverE2ETestSuite(defaultCaps: DriverE2EDefaultCaps = {}): void {
   const address = defaultCaps['appium:address'] ?? TEST_HOST;
   let port: number | undefined = defaultCaps['appium:port'];
 
@@ -339,7 +333,7 @@ export function driverE2ETestSuite(
       it('should reject a current command when the driver crashes', async function () {
         sandbox.stub(d, 'getStatus').callsFake(async function () {
           await sleep(5000);
-          return {status: 200, data: {value: 'I\'m fine'}};
+          return {status: 200, data: {value: "I'm fine"}};
         });
         const reqPromise = getCommand('status', {validateStatus: null});
         await sleep(100);

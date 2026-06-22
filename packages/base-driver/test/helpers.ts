@@ -1,8 +1,18 @@
 import net from 'node:net';
 import type {AxiosResponse, RawAxiosRequestConfig} from 'axios';
-import type {Capabilities, Constraints, SingularSessionData, W3CCapabilities} from '@appium/types';
+import type {
+  Capabilities,
+  Constraints,
+  MethodMap,
+  SingularSessionData,
+  W3CCapabilities,
+  AppiumServer,
+  Driver,
+  ServerArgs,
+} from '@appium/types';
 import type {RequireAtLeastOne} from 'type-fest';
 import AsyncLock from 'async-lock';
+import {server, routeConfiguringFunction} from '../lib';
 
 const portLock = new AsyncLock();
 
@@ -59,6 +69,38 @@ export async function getTestPort(): Promise<number> {
       });
     });
   });
+}
+
+export async function createServer<T extends Driver<Constraints>>(
+  driver: T,
+  options: {
+    extraMethodMap?: MethodMap<T>;
+    hostname?: string;
+    cliArgs?: Partial<ServerArgs>;
+    port?: number;
+  } = {},
+): Promise<{
+  port: number;
+  baseUrl: string;
+  setup: () => Promise<void>;
+  teardown: () => Promise<void>;
+}> {
+  const port = options.port ?? (await getTestPort());
+  const baseUrl = `http://${TEST_HOST}:${port}`;
+  let appiumServer: AppiumServer | undefined;
+  const setup = async () => {
+    appiumServer = await server({
+      routeConfiguringFunction: routeConfiguringFunction(driver),
+      port,
+      extraMethodMap: options.extraMethodMap,
+      hostname: options.hostname,
+      cliArgs: options.cliArgs,
+    });
+  };
+  const teardown = async () => {
+    await appiumServer?.close();
+  };
+  return {port, baseUrl, setup, teardown};
 }
 
 /**

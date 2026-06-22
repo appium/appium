@@ -1,24 +1,28 @@
-import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
+import {describe, it, before, after, afterEach} from 'node:test';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {JWProxy, server, routeConfiguringFunction} from '../../../lib';
 import {FakeDriver} from '../protocol/fake-driver';
+import {getTestPort, TEST_HOST} from '../../helpers';
+import type {AppiumServer} from '@appium/types';
 
 chai.use(chaiAsPromised);
 
 describe('proxy', function () {
-  const jwproxy = new JWProxy();
-  let baseServer: Awaited<ReturnType<typeof server>>;
+  let jwproxy: JWProxy;
+  let baseServer: AppiumServer;
 
   before(async function () {
+    const port = await getTestPort();
     baseServer = await server({
       routeConfiguringFunction: routeConfiguringFunction(new FakeDriver()),
-      port: 4444,
+      port,
     });
+    jwproxy = new JWProxy({server: TEST_HOST, port});
   });
 
   after(async function () {
-    await baseServer.close();
+    await baseServer?.close();
   });
 
   it('should proxy status straight', async function () {
@@ -44,10 +48,10 @@ describe('proxy', function () {
     });
   });
   describe('delete session', function () {
-    beforeEach(async function () {
-      await jwproxy.command('/session', 'POST', {desiredCapabilities: {}});
-    });
     it('should quit a session', async function () {
+      await jwproxy.command('/session', 'POST', {
+        capabilities: {alwaysMatch: {browserName: 'fake'}},
+      });
       const res = await jwproxy.command('', 'DELETE');
       expect(res).to.not.exist;
     });

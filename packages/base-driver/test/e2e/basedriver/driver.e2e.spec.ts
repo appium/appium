@@ -6,6 +6,7 @@ import type {
   Element,
   SingularSessionData,
   StringRecord,
+  Driver,
 } from '@appium/types';
 import {FakeDriver} from '../protocol/fake-driver';
 import axios, {type RawAxiosRequestConfig} from 'axios';
@@ -22,14 +23,12 @@ import {
 } from '../../helpers';
 import sinon from 'sinon';
 import {Agent} from 'node:http';
+import {createServer} from '../../helpers';
 
 chai.use(chaiAsPromised);
 
 describe('BaseDriver E2E suite', function () {
-  const address = TEST_HOST;
   let defaultCaps: StringRecord;
-  let port: number | undefined;
-  let baseServer: Awaited<ReturnType<typeof server>>;
   let d: InstanceType<typeof BaseDriver>;
   let newSessionURL: string;
   let startSession: SessionHelpers['startSession'];
@@ -37,21 +36,21 @@ describe('BaseDriver E2E suite', function () {
   let endSession: SessionHelpers['endSession'];
   let getCommand: SessionHelpers['getCommand'];
   let postCommand: SessionHelpers['postCommand'];
+  let teardown: () => Promise<void> | undefined;
 
   before(async function () {
-    port = port ?? (await getTestPort());
     defaultCaps = {
       platformName: 'iOS',
       'appium:deviceName': 'Delorean',
     };
-    d = new BaseDriver({port, address} as any);
-    baseServer = await server({
-      routeConfiguringFunction: routeConfiguringFunction(d),
-      port: port!,
-      hostname: address,
-      cliArgs: {} as any,
+    const port = await getTestPort();
+    d = new BaseDriver({port, address: TEST_HOST} as any);
+    const {setup, teardown: teardownFn} = await createServer(d as unknown as Driver<Constraints>, {
+      port,
     });
-    const helpers = createSessionHelpers(port, address);
+    teardown = teardownFn;
+    await setup();
+    const helpers = createSessionHelpers(port, TEST_HOST);
     startSession = helpers.startSession;
     getSession = helpers.getSession;
     endSession = helpers.endSession;
@@ -60,7 +59,7 @@ describe('BaseDriver E2E suite', function () {
     newSessionURL = helpers.newSessionURL;
   });
   after(async function () {
-    await baseServer?.close();
+    await teardown?.();
   });
 
   describe('session handling', function () {
@@ -362,30 +361,27 @@ describe('BaseDriver', function () {
     'appium:automationNAme': 'fake',
   };
 
-  let port: number;
-  let baseUrl: string;
-
-  before(async function () {
-    port = await getTestPort();
-    baseUrl = `http://${TEST_HOST}:${port}`;
-  });
-
   describe('get appium capabilities', function () {
     let driver: FakeDriver;
     const sessionId = 'foo';
-    let mjsonwpServer: Awaited<ReturnType<typeof server>>;
+    let teardown: () => Promise<void> | undefined;
+    let baseUrl: string;
 
     before(async function () {
       driver = new FakeDriver();
       driver.sessionId = sessionId;
-      mjsonwpServer = await server({
-        routeConfiguringFunction: routeConfiguringFunction(driver),
-        port,
-      });
+      const {
+        setup,
+        teardown: teardownFn,
+        baseUrl: baseUrlStr,
+      } = await createServer(driver as unknown as Driver<Constraints>);
+      baseUrl = baseUrlStr;
+      teardown = teardownFn;
+      await setup();
     });
 
     after(async function () {
-      await mjsonwpServer.close();
+      await teardown?.();
     });
 
     it('should return capabilities', async function () {

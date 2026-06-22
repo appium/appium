@@ -276,12 +276,13 @@ describe('Protocol', function () {
 
       it('should not allow create session with desired caps (MJSONWP)', async function () {
         const desiredCapabilities = {a: 'b'};
-        const {data} = await axios({
-          url: `${baseUrl}/session`,
-          method: 'POST',
-          data: {desiredCapabilities},
-        });
-        expect(data.value).to.equal(null);
+        await expect(
+          axios({
+            url: `${baseUrl}/session`,
+            method: 'POST',
+            data: {desiredCapabilities},
+          }),
+        ).to.be.rejectedWith(/500/);
       });
       it('should allow create session with capabilities (W3C)', async function () {
         const w3cCapabilities = {alwaysMatch: {'appium:e': 'f'}};

@@ -630,11 +630,14 @@ describe('Protocol', function () {
           });
 
           it('should return W3C error if a proxied request returns a W3C error response', async function () {
-            const error = new Error(`Some error occurred`) as Error & {w3cStatus?: number};
-            error.w3cStatus = 414;
-            const executeCommandStub = sandbox.stub(driver, 'executeCommand').resolves({
-              protocol: 'W3C',
-              error,
+            app.post('/session/:sessionId/perform-actions', (req, res) => {
+              res.status(500).json({
+                value: {
+                  error: 'unknown error',
+                  message: 'Some error occurred',
+                  stacktrace: 'Some error occurred',
+                },
+              });
             });
             const {status, data} = await axios({
               url: `${sessionUrl}/actions`,
@@ -642,12 +645,11 @@ describe('Protocol', function () {
               validateStatus: null,
               data: {actions: [1, 2, 3]},
             });
-            expect(status).to.equal(414);
+            expect(status).to.equal(500);
             const {error: w3cError, message: errMessage, stacktrace} = data.value;
             expect(w3cError).to.equal('unknown error');
             expect(stacktrace).to.match(/Some error occurred/);
             expect(errMessage).to.equal('Some error occurred');
-            executeCommandStub.restore();
           });
 
           it('should return error if a proxied request returns a MJSONWP error response but HTTP status code is 200', async function () {

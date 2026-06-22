@@ -1,5 +1,3 @@
-import type {after, before} from 'node:test';
-
 /**
  * Known environment variables concerning Appium
  */

@@ -127,7 +127,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
         address: TEST_HOST,
         usePlugins: ['other1', 'other2'],
       };
-      await expect(appiumServer(args)).to.eventually.be.rejected;
+      await expect(appiumServer(args)).to.eventually.be.rejectedWith(Error);
     });
     it('should reject server creation if reserved plugin name is provided with other names', async function () {
       const args = {
@@ -136,7 +136,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
         address: TEST_HOST,
         usePlugins: ['fake', 'all'],
       };
-      await expect(appiumServer(args)).to.eventually.be.rejected;
+      await expect(appiumServer(args)).to.eventually.be.rejectedWith(Error);
     });
   });
 
@@ -175,7 +175,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
         const driver = await wdio(wdOpts as any);
         const {sessionId} = driver;
         try {
-          await expect(driver.getPageSource()).to.eventually.eql(
+          expect(await driver.getPageSource()).to.eql(
             `<Fake>${JSON.stringify([sessionId])}</Fake>`,
           );
         } finally {

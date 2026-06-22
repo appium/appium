@@ -13,10 +13,6 @@ export interface AppiumEnv extends NodeJS.ProcessEnv {
 export interface E2ESetupOpts {
   /** Path to Appium home directory */
   appiumHome?: string;
-  /** Node test "before all" hook function */
-  before: typeof before;
-  /** Node test "after all" hook function */
-  after: typeof after;
   /** Arguments to pass to Appium server */
   serverArgs?: Record<string, unknown>;
   /** Source of driver to install (e.g. 'local', 'npm') */
@@ -40,3 +36,6 @@ export interface E2ESetupOpts {
   /** Host to use for Appium server */
   host?: string;
 }
+
+export type PluginSetup = () => Promise<void>;
+export type PluginTeardown = () => Promise<void>;

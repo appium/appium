@@ -73,9 +73,7 @@ describe('StoragePlugin', function () {
     }
   });
 
-  pluginE2EHarness({
-    before,
-    after,
+  const {setup, teardown} = pluginE2EHarness({
     port: TEST_PORT,
     host: TEST_HOST,
     appiumHome: APPIUM_HOME,
@@ -85,6 +83,13 @@ describe('StoragePlugin', function () {
     pluginName: 'storage',
     pluginSource: 'local',
     pluginSpec: THIS_PLUGIN_DIR,
+  });
+
+  before(async function () {
+    await setup();
+  });
+  after(async function () {
+    await teardown();
   });
 
   it('should manage storage files', async function () {

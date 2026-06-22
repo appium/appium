@@ -65,18 +65,16 @@
     "start": "appium",
     "sync-pkgs": "node ./scripts/sync-monorepo-packages.mjs",
     "test": "run-s test:quick",
-    "test:ci": "run-s build test:smoke test:unit:run test:types test:e2e:run",
-    "test:e2e": "run-s build test:e2e:run",
+    "test:ci": "run-s test:smoke test:unit test:types test:e2e",
+    "test:e2e": "lerna run test:e2e",
     "test:quick": "run-s lint test:unit test:types",
     "test:slow": "run-s test:quick test:smoke test:e2e",
     "test:smoke": "lerna run test:smoke",
     "test:types": "lerna run test:types",
-    "test:unit": "run-s build test:unit:run",
+    "test:unit": "lerna run test",
     "upload": "gulp github-upload",
     "zip": "zip -qr ./appium.zip ./packages/appium",
-    "zip-and-upload": "run-s zip upload",
-    "test:e2e:run": "lerna run test:e2e",
-    "test:unit:run": "lerna run test"
+    "zip-and-upload": "run-s zip upload"
   },
   "prettier": {
     "bracketSpacing": false,

@@ -34,7 +34,7 @@ describe('server', function () {
   let sandbox: sinon.SinonSandbox;
 
   before(async function () {
-    port = await getTestPort(true);
+    port = await getTestPort();
 
     function configureRoutes(app: Application) {
       app.get('/', (_req: Request, res: Response) => {
@@ -147,7 +147,7 @@ describe('tls server', function () {
       return;
     }
 
-    port = await getTestPort(true);
+    port = await getTestPort();
 
     function configureRoutes(app: Application) {
       app.get('/', (_req: Request, res: Response) => {
@@ -192,7 +192,7 @@ describe('server plugins', function () {
   let port: number;
 
   before(async function () {
-    port = await getTestPort(true);
+    port = await getTestPort();
   });
 
   afterEach(async function () {

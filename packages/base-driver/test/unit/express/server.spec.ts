@@ -31,7 +31,7 @@ describe('server configuration', function () {
   let sandbox: sinon.SinonSandbox;
 
   before(async function () {
-    port = await getTestPort(true);
+    port = await getTestPort();
   });
 
   function fakeApp() {

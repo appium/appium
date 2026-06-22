@@ -47,7 +47,7 @@ describe('app download and configuration', function () {
       let serverUrl: string;
 
       before(async function () {
-        port = await getTestPort(true);
+        port = await getTestPort();
         serverUrl = `http://${TEST_HOST}:${port}`;
       });
 

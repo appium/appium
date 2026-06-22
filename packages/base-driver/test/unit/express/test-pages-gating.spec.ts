@@ -22,7 +22,7 @@ describe('legacy test pages gating', function () {
   });
 
   it('should not serve guinea-pig pages by default', async function () {
-    const port = await getTestPort(true);
+    const port = await getTestPort();
     const hwServer = await server({
       routeConfiguringFunction: () => {},
       port,
@@ -39,7 +39,7 @@ describe('legacy test pages gating', function () {
 
   it('should serve guinea-pig pages when APPIUM_ENABLE_LEGACY_TEST_PAGES is set', async function () {
     process.env[LEGACY_TEST_PAGES_ENV] = '1';
-    const port = await getTestPort(true);
+    const port = await getTestPort();
     const hwServer = await server({
       routeConfiguringFunction: () => {},
       port,

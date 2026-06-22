@@ -2,6 +2,9 @@ import net from 'node:net';
 import type {AxiosResponse, RawAxiosRequestConfig} from 'axios';
 import type {Capabilities, Constraints, SingularSessionData, W3CCapabilities} from '@appium/types';
 import type {RequireAtLeastOne} from 'type-fest';
+import AsyncLock from 'async-lock';
+
+const portLock = new AsyncLock();
 
 export interface NewSessionData<C extends Constraints = Constraints> {
   capabilities: RequireAtLeastOne<W3CCapabilities<C>, 'firstMatch' | 'alwaysMatch'>;
@@ -41,37 +44,21 @@ export interface SessionHelpers<CommandData = unknown, ResponseData = any> {
  */
 export const TEST_HOST = '127.0.0.1';
 
-async function getPort(): Promise<number> {
-  const server = net.createServer();
-  return await new Promise((resolve, reject) => {
-    server.once('error', reject);
-    server.listen(0, () => {
-      const address = server.address();
-      if (!address || typeof address === 'string') {
-        server.close(() => reject(new Error('Could not resolve a free port')));
-        return;
-      }
-      server.close((err) => (err ? reject(err) : resolve(address.port)));
+export async function getTestPort(): Promise<number> {
+  return await portLock.acquire('getTestPort', async () => {
+    const server = net.createServer();
+    return await new Promise<number>((resolve, reject) => {
+      server.once('error', reject);
+      server.listen(0, () => {
+        const address = server.address();
+        if (!address || typeof address === 'string') {
+          server.close(() => reject(new Error('Could not resolve a free port')));
+          return;
+        }
+        server.close((err) => (err ? reject(err) : resolve(address.port)));
+      });
     });
   });
-}
-
-let testPort: number | undefined;
-
-/**
- * Returns a free port; one per process
- * @param force - If true, do not reuse the port (if it already exists)
- * @returns a free port
- */
-export async function getTestPort(force = false): Promise<number> {
-  if (force || !testPort) {
-    const port = await getPort();
-    if (!testPort) {
-      testPort = port;
-    }
-    return port;
-  }
-  return testPort;
 }
 
 /**

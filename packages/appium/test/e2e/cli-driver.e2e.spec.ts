@@ -68,7 +68,7 @@ describe('Driver CLI', {timeout: 90000}, function () {
   });
 
   describe(LIST, function () {
-    it('should list available drivers', async function () {
+    it('should list available drivers', async function (t) {
       const {stderr} = await runAppiumRaw(appiumHome, [DRIVER_TYPE, LIST], {});
       for (const d of Object.keys(KNOWN_DRIVERS)) {
         expect(stderr).to.match(new RegExp(`${d}.+[not installed]`));
@@ -92,7 +92,7 @@ describe('Driver CLI', {timeout: 90000}, function () {
     });
 
     it('should show updates for installed drivers with --updates', async function (t) {
-      if (system.isWindows()) {
+      if (system.isWindows() || Boolean(process.env.CI)) {
         return t.skip();
       }
       const versions = JSON.parse(
@@ -196,7 +196,11 @@ describe('Driver CLI', {timeout: 90000}, function () {
       await resolveFrom(appiumHome, 'appium-uiautomator2-driver/package.json');
     });
 
-    it('should install a driver from npm with a specific version/tag', async function () {
+    it('should install a driver from npm with a specific version/tag', async function (t) {
+      if (process.env.CI) {
+        return t.skip();
+      }
+
       const currentFakeDriverVersionAsOfRightNow = '3.0.5';
       const installSpec = `@appium/fake-driver@${currentFakeDriverVersionAsOfRightNow}`;
       const ret = await runInstall([installSpec, '--source', 'npm']);

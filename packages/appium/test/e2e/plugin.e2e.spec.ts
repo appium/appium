@@ -40,17 +40,21 @@ const wdOpts: {
 
 let baseServerArgs: Partial<ParsedArgs>;
 
-function serverSetup(args: Record<string, unknown>) {
+function serverSetup(args: Record<string, unknown>): {
+  setup: () => Promise<void>;
+  teardown: () => Promise<void>;
+} {
   let server: Awaited<ReturnType<typeof appiumServer>> | null = null;
 
-  before(async function () {
+  const setup = async function setup() {
     server = await appiumServer({...baseServerArgs, ...args});
-  });
-  after(async function () {
-    if (server) {
-      await server.close();
-    }
-  });
+  };
+
+  const teardown = async function teardown() {
+    await server?.close();
+  };
+
+  return {setup, teardown};
 }
 
 describe('FakePlugin w/ FakeDriver via HTTP', function () {
@@ -146,7 +150,14 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
   for (const registrationType of ['explicit', 'all']) {
     describe(`with plugin registered via type ${registrationType}`, function () {
       const usePlugins = registrationType === 'explicit' ? ['fake'] : ['all'];
-      serverSetup({usePlugins});
+      const {setup, teardown} = serverSetup({usePlugins});
+      before(async function () {
+        await setup();
+      });
+      after(async function () {
+        await teardown();
+      });
+
       it('should update the server', async function () {
         const res = {fake: 'fakeResponse'};
         expect((await axios.post(`http://${TEST_HOST}:${port}/fake`)).data).to.eql(res);
@@ -364,18 +375,19 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
     describe('with a single plugin', function () {
       let driver: Browser;
 
-      // this 'after' block needs to come before 'serverSetup' so that the delete session happens
-      // before the server shutdown
+      const {setup, teardown} = serverSetup({});
       after(async function () {
-        if (driver) {
-          await driver.deleteSession();
-        }
+        await teardown();
       });
 
-      serverSetup({});
-
       before(async function () {
-        const caps = {...wdOpts.capabilities, webSocketUrl: true, 'appium:runClock': true};
+        await setup();
+        const caps = {
+          ...wdOpts.capabilities,
+          webSocketUrl: true,
+          'appium:runClock': true,
+          'wdio:enforceWebDriverClassic': true,
+        };
         driver = await wdio({...wdOpts, capabilities: caps} as any);
       });
 
@@ -453,18 +465,23 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
   describe('IPC Support', function () {
     let driver: Browser;
 
-    // this 'after' block needs to come before 'serverSetup' so that the delete session happens
-    // before the server shutdown
+    const {setup, teardown} = serverSetup({});
     after(async function () {
-      if (driver) {
-        await driver.deleteSession();
+      try {
+        await driver?.deleteSession();
+      } finally {
+        await teardown();
       }
     });
 
-    serverSetup({});
-
     before(async function () {
-      const caps = {...wdOpts.capabilities, webSocketUrl: true, 'appium:runClock': true};
+      await setup();
+      const caps = {
+        ...wdOpts.capabilities,
+        webSocketUrl: true,
+        'appium:runClock': true,
+        'wdio:enforceWebDriverClassic': true,
+      };
       driver = await wdio({...wdOpts, capabilities: caps} as any);
     });
 

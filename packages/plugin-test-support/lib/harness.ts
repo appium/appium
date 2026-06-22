@@ -36,7 +36,10 @@ const logSymbols = {
 /**
  * Creates a setup/teardown pair to install a driver and a plugin and starts an Appium server w/ the given extensions.
  */
-export function pluginE2EHarness(opts: E2ESetupOpts): {setup: PluginSetup, teardown: PluginTeardown} {
+export function pluginE2EHarness(opts: E2ESetupOpts): {
+  setup: PluginSetup;
+  teardown: PluginTeardown;
+} {
   const {
     appiumHome,
     serverArgs = {},
@@ -54,7 +57,7 @@ export function pluginE2EHarness(opts: E2ESetupOpts): {setup: PluginSetup, teard
 
   let server: AppiumServer | undefined;
 
-  const setup = async function setup () {
+  const setup = async function setup() {
     const setupAppiumHome = async (): Promise<AppiumEnv> => {
       const env: AppiumEnv = {...process.env};
 
@@ -134,7 +137,7 @@ export function pluginE2EHarness(opts: E2ESetupOpts): {setup: PluginSetup, teard
     await startAppiumServer();
   };
 
-  const teardown = async function teardown () {
+  const teardown = async function teardown() {
     if (server) {
       await server.close();
     }

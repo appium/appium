@@ -9,8 +9,7 @@
     "paths": {
       "@appium/types": ["../types"],
       "appium/support": ["../appium/support"],
-      "appium/driver": ["../appium/driver"],
-      "@appium/driver-test-support": ["../driver-test-support"]
+      "appium/driver": ["../appium/driver"]
     }
   },
   "include": ["lib", "test"],
@@ -20,9 +19,6 @@
     },
     {
       "path": "../support"
-    },
-    {
-      "path": "../driver-test-support"
     },
     {
       "path": "../base-driver"

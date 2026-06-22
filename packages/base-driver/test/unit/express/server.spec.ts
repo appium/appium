@@ -6,7 +6,7 @@ import {server, configureServer, normalizeBasePath} from '../../../lib/express/s
 import {routeConfiguringFunction} from '../../../lib/protocol/protocol';
 import {registerTestPages} from '../../../lib/test-pages';
 import {createSandbox} from 'sinon';
-import {getTestPort} from '@appium/driver-test-support';
+import {getTestPort} from '../../helpers';
 
 chai.use(chaiAsPromised);
 

@@ -9,7 +9,7 @@ import {createSandbox} from 'sinon';
 import {sleep} from 'asyncbox';
 import {exec} from 'teen_process';
 import https from 'node:https';
-import {TEST_HOST, getTestPort} from '@appium/driver-test-support';
+import {TEST_HOST, getTestPort} from '../../helpers';
 
 chai.use(chaiAsPromised);
 

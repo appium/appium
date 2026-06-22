@@ -1,5 +1,5 @@
 import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
-import {server, routeConfiguringFunction, DeviceSettings} from '../../lib/index';
+import {server, routeConfiguringFunction, DeviceSettings, BaseDriver} from '../../lib/index';
 import axios, {type RawAxiosRequestConfig} from 'axios';
 import {sleep} from 'asyncbox';
 import {TEST_HOST, getTestPort, createAppiumURL} from '../helpers';
@@ -7,8 +7,6 @@ import sinon from 'sinon';
 import {Agent} from 'node:http';
 import type {
   BaseNSCapabilities,
-  Driver,
-  DriverClass,
   Element,
   SingularSessionData,
 } from '@appium/types';
@@ -80,16 +78,14 @@ export function createSessionHelpers<CommandData = unknown, ResponseData = any>(
  * Creates E2E test suites for a driver.
  */
 export function driverE2ETestSuite(
-  DriverClass: DriverClass<Driver>,
   defaultCaps: DriverE2EDefaultCaps = {},
 ): void {
   const address = defaultCaps['appium:address'] ?? TEST_HOST;
   let port: number | undefined = defaultCaps['appium:port'];
-  const className = DriverClass.name || '(unknown driver)';
 
-  describe(`BaseDriver E2E (as ${className})`, function () {
+  describe('BaseDriver E2E suite', function () {
     let baseServer: Awaited<ReturnType<typeof server>>;
-    let d: InstanceType<typeof DriverClass>;
+    let d: InstanceType<typeof BaseDriver>;
     let newSessionURL: string;
     let startSession: SessionHelpers['startSession'];
     let getSession: SessionHelpers['getSession'];
@@ -100,7 +96,7 @@ export function driverE2ETestSuite(
     before(async function () {
       port = port ?? (await getTestPort());
       defaultCaps = {...defaultCaps};
-      d = new DriverClass({port, address}) as InstanceType<typeof DriverClass>;
+      d = new BaseDriver({port, address} as any);
       baseServer = await server({
         routeConfiguringFunction: routeConfiguringFunction(d),
         port: port!,
@@ -343,6 +339,7 @@ export function driverE2ETestSuite(
       it('should reject a current command when the driver crashes', async function () {
         sandbox.stub(d, 'getStatus').callsFake(async function () {
           await sleep(5000);
+          return {status: 200, data: {value: 'I\'m fine'}};
         });
         const reqPromise = getCommand('status', {validateStatus: null});
         await sleep(100);

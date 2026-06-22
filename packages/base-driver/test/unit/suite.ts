@@ -1,9 +1,10 @@
 import {describe, it, before, beforeEach, afterEach} from 'node:test';
 import {sleep} from 'asyncbox';
 import {createSandbox} from 'sinon';
-import type {Constraints, Driver, DriverClass, NSDriverCaps, W3CDriverCaps} from '@appium/types';
+import type {Constraints, DriverCaps, NSDriverCaps, W3CDriverCaps} from '@appium/types';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {BaseDriver} from '../../lib/index';
 
 chai.use(chaiAsPromised);
 
@@ -11,17 +12,16 @@ chai.use(chaiAsPromised);
  * Creates unit test suites for a driver.
  */
 export function driverUnitTestSuite<C extends Constraints>(
-  DriverClass: DriverClass<Driver<C>>,
   defaultCaps: NSDriverCaps<C> = {} as NSDriverCaps<C>,
 ): void {
   describe(`BaseDriver unit suite`, function () {
-    let d: InstanceType<typeof DriverClass>;
+    let d: InstanceType<typeof BaseDriver>;
     let w3cCaps: W3CDriverCaps<C>;
     let sandbox: ReturnType<typeof createSandbox>;
 
     beforeEach(function () {
       sandbox = createSandbox();
-      d = new DriverClass() as InstanceType<typeof DriverClass>;
+      d = new BaseDriver({} as any);
       w3cCaps = {
         alwaysMatch: {
           ...defaultCaps,
@@ -39,7 +39,7 @@ export function driverUnitTestSuite<C extends Constraints>(
     describe('static property', function () {
       describe('baseVersion', function () {
         it('should exist', function () {
-          expect(DriverClass.baseVersion).to.exist;
+          expect(BaseDriver.baseVersion).to.exist;
         });
       });
     });
@@ -50,7 +50,7 @@ export function driverUnitTestSuite<C extends Constraints>(
     });
 
     it('should return a sessionId from createSession', async function () {
-      const [sessId] = await d.createSession(w3cCaps);
+      const [sessId] = await d.createSession(w3cCaps) as [string];
       expect(sessId).to.exist;
       expect(sessId).to.be.a('string');
       expect(sessId.length).to.be.above(5);
@@ -70,7 +70,7 @@ export function driverUnitTestSuite<C extends Constraints>(
     });
 
     it('should get the current session', async function () {
-      const [, caps] = await d.createSession(w3cCaps);
+      const [, caps] = await d.createSession(w3cCaps) as [string, DriverCaps<C>];
       expect(caps).to.equal(await d.getSession());
     });
 
@@ -100,10 +100,10 @@ export function driverUnitTestSuite<C extends Constraints>(
 
     it('should not allow commands in middle of unexpected shutdown', async function () {
       sandbox.stub(d, 'deleteSession').callsFake(async function (
-        this: InstanceType<typeof DriverClass>,
+        this: InstanceType<typeof BaseDriver>,
       ) {
         await sleep(100);
-        await DriverClass.prototype.deleteSession.call(this);
+        await BaseDriver.prototype.deleteSession.call(this);
       });
       await d.createSession(w3cCaps);
       const p = new Promise<void>((resolve, reject) => {
@@ -125,10 +125,10 @@ export function driverUnitTestSuite<C extends Constraints>(
 
     it('should allow new commands after done shutting down', async function () {
       sandbox.stub(d, 'deleteSession').callsFake(async function (
-        this: InstanceType<typeof DriverClass>,
+        this: InstanceType<typeof BaseDriver>,
       ) {
         await sleep(100);
-        await DriverClass.prototype.deleteSession.call(this);
+        await BaseDriver.prototype.deleteSession.call(this);
       });
 
       await d.createSession(structuredClone(w3cCaps));
@@ -178,16 +178,16 @@ export function driverUnitTestSuite<C extends Constraints>(
     });
 
     it('should have a method to get driver for a session', async function () {
-      const [sessId] = await d.createSession(w3cCaps);
+      const [sessId] = await d.createSession(w3cCaps) as [string];
       expect(d.driverForSession(sessId)).to.eql(d);
     });
 
     describe('command queue', function () {
-      let d: InstanceType<typeof DriverClass>;
+      let d: InstanceType<typeof BaseDriver>;
       const waitMs = 10;
 
       beforeEach(function () {
-        d = new DriverClass() as InstanceType<typeof DriverClass>;
+        d = new BaseDriver({} as any);
         sandbox.stub(d, 'getStatus').callsFake(async () => {
           await sleep(waitMs);
           return Date.now();
@@ -335,7 +335,7 @@ export function driverUnitTestSuite<C extends Constraints>(
     describe('proxying', function () {
       let sessId: string;
       beforeEach(async function () {
-        [sessId] = await d.createSession(w3cCaps);
+        [sessId] = await d.createSession(w3cCaps) as [string];
       });
       describe('#proxyActive', function () {
         it('should exist', function () {
@@ -508,10 +508,10 @@ export function driverUnitTestSuite<C extends Constraints>(
   });
 
   describe('.isFeatureEnabled', function () {
-    let d: InstanceType<typeof DriverClass>;
+    let d: InstanceType<typeof BaseDriver>;
 
     beforeEach(function () {
-      d = new DriverClass() as InstanceType<typeof DriverClass>;
+      d = new BaseDriver({} as any);
     });
 
     it('should throw if feature name is invalid', function () {

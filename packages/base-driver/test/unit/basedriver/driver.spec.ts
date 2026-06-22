@@ -4,7 +4,7 @@ import type {InitialOpts} from '@appium/types';
 import {BaseDriver} from '../../../lib';
 import {driverUnitTestSuite} from '../suite';
 
-driverUnitTestSuite(BaseDriver as any, {
+driverUnitTestSuite({
   platformName: 'iOS',
   'appium:deviceName': 'Delorean',
 });

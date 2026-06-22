@@ -15,8 +15,7 @@ const DEFAULT_CAPS = {
   'appium:automationNAme': 'fake',
 };
 
-// @ts-expect-error BaseDriver constructor opts differ from DriverClass expectation
-driverE2ETestSuite(BaseDriver, {
+driverE2ETestSuite({
   platformName: 'iOS',
   'appium:deviceName': 'Delorean',
 });

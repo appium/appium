@@ -2,7 +2,7 @@ import {describe, it, before} from 'node:test';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {JWProxy} from '../../../lib';
-import {getTestPort, TEST_HOST, createAppiumURL} from '@appium/driver-test-support';
+import {getTestPort, TEST_HOST, createAppiumURL} from '../../helpers';
 
 chai.use(chaiAsPromised);
 

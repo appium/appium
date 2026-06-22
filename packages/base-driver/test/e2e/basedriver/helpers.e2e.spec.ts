@@ -10,7 +10,7 @@ import contentDisposition from 'content-disposition';
 import {sleep} from 'asyncbox';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {TEST_HOST, getTestPort} from '@appium/driver-test-support';
+import {TEST_HOST, getTestPort} from '../../helpers';
 
 chai.use(chaiAsPromised);
 

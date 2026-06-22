@@ -4,7 +4,7 @@ import chaiAsPromised from 'chai-as-promised';
 import {server, routeConfiguringFunction} from '../../../lib';
 import axios from 'axios';
 import {createSandbox} from 'sinon';
-import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
+import {getTestPort, TEST_HOST} from '../../helpers';
 import {MockExecuteDriver} from '../protocol/mock-execute-driver';
 import type {EventHistoryCommand} from '@appium/types';
 

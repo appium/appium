@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-floating-promises */
 import {describe, it, before, beforeEach, afterEach} from 'node:test';
 import {sleep} from 'asyncbox';
 import {createSandbox} from 'sinon';
@@ -15,9 +14,7 @@ export function driverUnitTestSuite<C extends Constraints>(
   DriverClass: DriverClass<Driver<C>>,
   defaultCaps: NSDriverCaps<C> = {} as NSDriverCaps<C>,
 ): void {
-  const className = DriverClass.name ?? '(unknown driver)';
-
-  describe(`${className} unit suite`, function () {
+  describe(`BaseDriver unit suite`, function () {
     let d: InstanceType<typeof DriverClass>;
     let w3cCaps: W3CDriverCaps<C>;
     let sandbox: ReturnType<typeof createSandbox>;

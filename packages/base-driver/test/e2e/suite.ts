@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-floating-promises */
 import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
-import {server, routeConfiguringFunction, DeviceSettings} from 'appium/driver';
+import {server, routeConfiguringFunction, DeviceSettings} from '../../lib/index';
 import axios, {type RawAxiosRequestConfig} from 'axios';
 import {sleep} from 'asyncbox';
-import {TEST_HOST, getTestPort, createAppiumURL} from './helpers';
+import {TEST_HOST, getTestPort, createAppiumURL} from '../helpers';
 import sinon from 'sinon';
 import {Agent} from 'node:http';
 import type {
@@ -13,7 +12,7 @@ import type {
   Element,
   SingularSessionData,
 } from '@appium/types';
-import type {NewSessionData, NewSessionResponse, SessionHelpers} from './types';
+import type {NewSessionData, NewSessionResponse, SessionHelpers} from '../helpers';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
@@ -88,7 +87,7 @@ export function driverE2ETestSuite(
   let port: number | undefined = defaultCaps['appium:port'];
   const className = DriverClass.name || '(unknown driver)';
 
-  describe(`${className} E2E suite`, function () {
+  describe(`BaseDriver E2E (as ${className})`, function () {
     let baseServer: Awaited<ReturnType<typeof server>>;
     let d: InstanceType<typeof DriverClass>;
     let newSessionURL: string;

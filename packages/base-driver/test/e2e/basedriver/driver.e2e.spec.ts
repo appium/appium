@@ -5,7 +5,8 @@ import type {Constraints, DriverCaps} from '@appium/types';
 import {BaseDriver, server, routeConfiguringFunction} from '../../../lib';
 import {FakeDriver} from '../protocol/fake-driver';
 import axios from 'axios';
-import {TEST_HOST, getTestPort, driverE2ETestSuite} from '@appium/driver-test-support';
+import {TEST_HOST, getTestPort} from '../../helpers';
+import {driverE2ETestSuite} from '../suite';
 
 chai.use(chaiAsPromised);
 

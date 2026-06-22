@@ -5,8 +5,7 @@
     "outDir": "build",
     "paths": {
       "@appium/support": ["../support"],
-      "@appium/types": ["../types"],
-      "@appium/driver-test-support": ["../driver-test-support"]
+      "@appium/types": ["../types"]
     },
     "checkJs": true,
     "types": ["node"]

@@ -3,7 +3,7 @@ import {expect} from 'chai';
 import axios from 'axios';
 import {server} from '../../../lib/express/server';
 import {LEGACY_TEST_PAGES_ENV} from '../../../lib/test-pages/env';
-import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
+import {getTestPort, TEST_HOST} from '../../helpers';
 
 describe('legacy test pages gating', function () {
   let previousEnv: string | undefined;

@@ -2,7 +2,7 @@ import {describe, it} from 'node:test';
 import {expect} from 'chai';
 import type {InitialOpts} from '@appium/types';
 import {BaseDriver} from '../../../lib';
-import {driverUnitTestSuite} from '@appium/driver-test-support';
+import {driverUnitTestSuite} from '../suite';
 
 driverUnitTestSuite(BaseDriver as any, {
   platformName: 'iOS',

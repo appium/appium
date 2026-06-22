@@ -12,9 +12,6 @@
       "path": "packages/appium"
     },
     {
-      "path": "packages/driver-test-support"
-    },
-    {
       "path": "packages/plugin-test-support"
     },
     {

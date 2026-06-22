@@ -2,13 +2,13 @@ import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
 import path from 'node:path';
 import {remote as wdio} from 'webdriverio';
 import {pluginE2EHarness} from '@appium/plugin-test-support';
-import {tempDir, fs} from '@appium/support';
+import {tempDir, fs, node} from '@appium/support';
 import axios from 'axios';
 import {WebSocket} from 'ws';
 import {expect} from 'chai';
 
 const BUFFER_SIZE = 0xffff;
-const THIS_PLUGIN_DIR = path.join(__dirname, '..', '..');
+const THIS_PLUGIN_DIR = node.getModuleRootSync('@appium/storage-plugin', __filename) as string;
 const APPIUM_HOME = path.join(THIS_PLUGIN_DIR, 'local_appium_home');
 const FAKE_DRIVER_DIR = path.join(THIS_PLUGIN_DIR, '..', 'fake-driver');
 const TEST_HOST = '127.0.0.1';
@@ -92,7 +92,7 @@ describe('StoragePlugin', function () {
     expect(items).to.be.empty;
     const name1 = path.basename('foo1.bar');
     const name2 = path.basename('foo2.bar');
-    const pkgPath = path.join(__dirname, '..', '..', 'package.json');
+    const pkgPath = path.join(THIS_PLUGIN_DIR, 'package.json');
     await Promise.all([addFileToStorage(TEST_FAKE_APP, name1), addFileToStorage(pkgPath, name2)]);
     items = await driver.listStorageItems();
     expect(items.length).to.eql(2);

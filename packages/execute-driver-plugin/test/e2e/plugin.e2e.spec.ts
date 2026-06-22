@@ -4,13 +4,16 @@ import path from 'node:path';
 import {pluginE2EHarness, type E2ESetupOpts} from '@appium/plugin-test-support';
 import {remote as wdio} from 'webdriverio';
 import {W3C_ELEMENT_KEY, MJSONWP_ELEMENT_KEY} from '../../lib/execute-child';
-import {fs} from '@appium/support';
+import {fs, node} from '@appium/support';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
 use(chaiAsPromised);
 
-const THIS_PLUGIN_DIR = path.join(__dirname, '..', '..');
+const THIS_PLUGIN_DIR = node.getModuleRootSync(
+  '@appium/execute-driver-plugin',
+  __filename,
+) as string;
 const APPIUM_HOME = path.join(THIS_PLUGIN_DIR, 'local_appium_home');
 const FAKE_DRIVER_DIR = path.join(THIS_PLUGIN_DIR, '..', 'fake-driver');
 const TEST_HOST = 'localhost';

@@ -1,9 +1,12 @@
-import {expect} from 'chai';
+import chai, {expect} from 'chai';
 import {BaseDriver} from '../../../lib';
 import {describe, it, before, beforeEach, afterEach} from 'node:test';
 import {sleep} from 'asyncbox';
 import {createSandbox} from 'sinon';
 import type {DriverCaps, W3CDriverCaps, InitialOpts, StringRecord} from '@appium/types';
+import chaiAsPromised from 'chai-as-promised';
+
+chai.use(chaiAsPromised);
 
 describe(`BaseDriver unit suite`, function () {
   let defaultCaps: StringRecord;

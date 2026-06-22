@@ -91,18 +91,18 @@ describe('FakeDriver via HTTP', function () {
   let sandbox: SinonSandbox;
 
   function createServer(args: Partial<ParsedArgs> = {}): {
-    setup: () => Promise<void>,
-    teardown: () => Promise<void>
+    setup: () => Promise<void>;
+    teardown: () => Promise<void>;
   } {
     let server: AppiumServer | void;
 
-    const setup = async function setup () {
+    const setup = async function setup() {
       const merged = {...args, appiumHome, port, address: TEST_HOST};
       if (shouldStartServer) {
         server = await appiumServer(merged);
       }
     };
-    const teardown = async function teardown () {
+    const teardown = async function teardown() {
       await server?.close();
     };
     return {setup, teardown};
@@ -584,10 +584,12 @@ describe('FakeDriver via HTTP', function () {
           },
         },
       };
+      let sessionId = null;
       const createSessionStub = sandbox
         .stub(FakeDriver.prototype, 'createSession')
         .callsFake(async function (this: InstanceType<DriverClass>, caps) {
           const res = await BaseDriver.prototype.createSession.call(this, caps);
+          sessionId = res[0];
           expect(this.protocol).to.equal('W3C');
           return res;
         });
@@ -598,6 +600,9 @@ describe('FakeDriver via HTTP', function () {
         const {status} = res;
         expect(status).to.eql(200);
       } finally {
+        if (sessionId) {
+          await axios.delete(`${testServerBaseSessionUrl}/${sessionId}`);
+        }
         createSessionStub.restore();
       }
     });
@@ -635,9 +640,7 @@ describe('FakeDriver via HTTP', function () {
     });
 
     afterEach(async function () {
-      if (driver) {
-        await driver.deleteSession();
-      }
+      await driver?.deleteSession();
     });
 
     it('should respond with bidi specific capability when a driver supports it', async function () {

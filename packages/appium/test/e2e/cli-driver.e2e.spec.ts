@@ -68,7 +68,7 @@ describe('Driver CLI', {timeout: 90000}, function () {
   });
 
   describe(LIST, function () {
-    it('should list available drivers', async function (t) {
+    it('should list available drivers', async function () {
       const {stderr} = await runAppiumRaw(appiumHome, [DRIVER_TYPE, LIST], {});
       for (const d of Object.keys(KNOWN_DRIVERS)) {
         expect(stderr).to.match(new RegExp(`${d}.+[not installed]`));

@@ -11,7 +11,7 @@ import type {
 import {FakeDriver} from '../protocol/fake-driver';
 import axios, {type RawAxiosRequestConfig} from 'axios';
 import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
-import {server, routeConfiguringFunction, DeviceSettings, BaseDriver} from '../../../lib/index';
+import {DeviceSettings, BaseDriver} from '../../../lib/index';
 import {sleep} from 'asyncbox';
 import {
   TEST_HOST,

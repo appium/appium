@@ -5,13 +5,13 @@ import {tempDir, fs} from '@appium/support';
 import axios from 'axios';
 import {WebSocket} from 'ws';
 import {expect} from 'chai';
+import type {AddressInfo} from 'node:net';
 
 const BUFFER_SIZE = 0xffff;
 const THIS_PLUGIN_DIR = path.join(__dirname, '..', '..');
 const APPIUM_HOME = path.join(THIS_PLUGIN_DIR, 'local_appium_home');
 const FAKE_DRIVER_DIR = path.join(THIS_PLUGIN_DIR, '..', 'fake-driver');
 const TEST_HOST = '127.0.0.1';
-const TEST_PORT = 4725;
 const TEST_FAKE_APP = path.join(
   APPIUM_HOME,
   'node_modules',
@@ -27,9 +27,9 @@ const TEST_CAPS = {
   'appium:deviceName': 'Fake',
   'appium:app': TEST_FAKE_APP,
 };
-const WDIO_OPTS = {
+type WebdriverIOConfig = Parameters<typeof wdio>[0];
+const WDIO_OPTS: WebdriverIOConfig = {
   hostname: TEST_HOST,
-  port: TEST_PORT,
   connectionRetryCount: 0,
   capabilities: TEST_CAPS,
 };
@@ -37,11 +37,29 @@ const WDIO_OPTS = {
 describe('StoragePlugin', function () {
   let driver: any;
   let storageRoot: string | undefined;
+  const {setup, teardown} = pluginE2EHarness({
+    host: TEST_HOST,
+    appiumHome: APPIUM_HOME,
+    driverName: 'fake',
+    driverSource: 'local',
+    driverSpec: FAKE_DRIVER_DIR,
+    pluginName: 'storage',
+    pluginSource: 'local',
+    pluginSpec: THIS_PLUGIN_DIR,
+  });
+  before(async function () {
+    const {server} = await setup();
+    const address = server.address();
+    WDIO_OPTS.port = (address as AddressInfo).port;
+  });
+  after(async function () {
+    await teardown();
+  });
 
   beforeEach(async function () {
     storageRoot = await tempDir.openDir();
     driver = await wdio(WDIO_OPTS);
-    const baseUrl = `http://${TEST_HOST}:${TEST_PORT}/storage`;
+    const baseUrl = `http://${TEST_HOST}:${WDIO_OPTS.port}/storage`;
     driver.addCommand(
       'addStorageItem',
       async (name: string, sha1: string) =>
@@ -72,20 +90,6 @@ describe('StoragePlugin', function () {
     }
   });
 
-  pluginE2EHarness({
-    before,
-    after,
-    port: TEST_PORT,
-    host: TEST_HOST,
-    appiumHome: APPIUM_HOME,
-    driverName: 'fake',
-    driverSource: 'local',
-    driverSpec: FAKE_DRIVER_DIR,
-    pluginName: 'storage',
-    pluginSource: 'local',
-    pluginSpec: THIS_PLUGIN_DIR,
-  });
-
   it('should manage storage files', async function () {
     let items = await driver.listStorageItems();
     expect(items).to.be.empty;
@@ -114,8 +118,8 @@ describe('StoragePlugin', function () {
     const {
       ws: {events, stream},
     } = await driver.addStorageItem(name, hash, sourcePath);
-    const streamWs = new WebSocket(`ws://${TEST_HOST}:${TEST_PORT}${stream}`);
-    const eventsWs = new WebSocket(`ws://${TEST_HOST}:${TEST_PORT}${events}`);
+    const streamWs = new WebSocket(`ws://${TEST_HOST}:${WDIO_OPTS.port}${stream}`);
+    const eventsWs = new WebSocket(`ws://${TEST_HOST}:${WDIO_OPTS.port}${events}`);
     try {
       await new Promise<void>((resolve, reject) => {
         streamWs.once('error', reject);

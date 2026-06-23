@@ -7,6 +7,7 @@ import {tempDir, fs} from '@appium/support';
 import sharp from 'sharp';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import type {AddressInfo} from 'node:net';
 
 use(chaiAsPromised);
 
@@ -14,7 +15,6 @@ const THIS_PLUGIN_DIR = path.join(__dirname, '..', '..');
 const APPIUM_HOME = path.join(THIS_PLUGIN_DIR, 'local_appium_home');
 const FAKE_DRIVER_DIR = path.join(THIS_PLUGIN_DIR, '..', 'fake-driver');
 const TEST_HOST = '127.0.0.1';
-const TEST_PORT = 4723;
 const TEST_FAKE_APP = path.join(
   APPIUM_HOME,
   'node_modules',
@@ -30,18 +30,15 @@ const TEST_CAPS = {
   'appium:deviceName': 'Fake',
   'appium:app': TEST_FAKE_APP,
 };
-const WDIO_OPTS = {
+type WebdriverIOConfig = Parameters<typeof wdio>[0];
+const WDIO_OPTS: WebdriverIOConfig = {
   hostname: TEST_HOST,
-  port: TEST_PORT,
   connectionRetryCount: 0,
   capabilities: TEST_CAPS,
 };
 
 describe('ImageElementPlugin', function () {
-  pluginE2EHarness({
-    before,
-    after,
-    port: TEST_PORT,
+  const {setup, teardown} = pluginE2EHarness({
     host: TEST_HOST,
     appiumHome: APPIUM_HOME,
     driverName: 'fake',
@@ -51,8 +48,16 @@ describe('ImageElementPlugin', function () {
     pluginSource: 'local',
     pluginSpec: THIS_PLUGIN_DIR,
   });
-
   let driver: any;
+
+  before(async function () {
+    const {server} = await setup();
+    const address = server.address();
+    WDIO_OPTS.port = (address as AddressInfo).port;
+  });
+  after(async function () {
+    await teardown();
+  });
 
   beforeEach(async function () {
     driver = await wdio(WDIO_OPTS);

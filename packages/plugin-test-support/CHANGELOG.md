@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.0]
+
+### ⚠ BREAKING CHANGES
+
+* Update the interface `E2ESetupOpts`. It does not accept `before` and `after` arguments anymore,
+  as well as it does not do any assumptions about the used test framework anymore.
+* Update the returned result of `pluginE2EHarness`. Instead of implicitly adding `before` and `after`
+  mocha callbacks it returns `setup` and `teardown` callbacks, that could be explicitly invoked at appropriate
+  test/suite stages.
+* Remove dependencies on mocha.
+
+
+
+
+
 ## [1.2.4](https://github.com/appium/appium/compare/@appium/plugin-test-support@1.2.3...@appium/plugin-test-support@1.2.4) (2026-06-18)
 
 **Note:** Version bump only for package @appium/plugin-test-support

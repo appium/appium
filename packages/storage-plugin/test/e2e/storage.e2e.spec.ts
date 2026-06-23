@@ -1,14 +1,14 @@
 import path from 'node:path';
 import {remote as wdio} from 'webdriverio';
 import {pluginE2EHarness} from '@appium/plugin-test-support';
-import {tempDir, fs} from '@appium/support';
+import {tempDir, fs, node} from '@appium/support';
 import axios from 'axios';
 import {WebSocket} from 'ws';
 import {expect} from 'chai';
 import type {AddressInfo} from 'node:net';
 
 const BUFFER_SIZE = 0xffff;
-const THIS_PLUGIN_DIR = path.join(__dirname, '..', '..');
+const THIS_PLUGIN_DIR = node.getModuleRootSync('@appium/storage-plugin', __filename)!;
 const APPIUM_HOME = path.join(THIS_PLUGIN_DIR, 'local_appium_home');
 const FAKE_DRIVER_DIR = path.join(THIS_PLUGIN_DIR, '..', 'fake-driver');
 const TEST_HOST = '127.0.0.1';

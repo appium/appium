@@ -46,10 +46,8 @@ describe('createAppiumURL()', function() {
 
 ## Installation
 
-`appium` is peer dependency.
-
 ```bash
-npm install appium @appium/driver-test-support --save-dev
+npm install @appium/driver-test-support --save-dev
 ```
 
 ## License

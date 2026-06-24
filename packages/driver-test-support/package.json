@@ -35,9 +35,6 @@
   "devDependencies": {
     "@appium/types": "1.5.1"
   },
-  "peerDependencies": {
-    "appium": "^3.0.0-beta.0"
-  },
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
     "npm": ">=10"

@@ -462,7 +462,7 @@ export interface IWDClassicCommands {
     page?: PrintPageSize,
     margin?: PrintPageMargins,
     shrinkToFit?: boolean,
-    pageRanges?: (number | string)[]
+    pageRanges?: (number | string)[],
   ): Promise<string>;
 }
 

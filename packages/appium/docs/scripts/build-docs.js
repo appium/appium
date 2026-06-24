@@ -31,6 +31,9 @@ const preview = Boolean(process.env.APPIUM_DOCS_PREVIEW);
 
 const push = Boolean(process.env.APPIUM_DOCS_PUBLISH);
 
+/**
+ * Builds and optionally deploys docs for each supported language.
+ */
 async function main() {
   log.info(`Building Appium docs and committing to ${DOCS_BRANCH}`);
 

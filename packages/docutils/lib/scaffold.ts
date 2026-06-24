@@ -3,40 +3,19 @@
  * @module
  */
 
-import {fs} from '@appium/support';
+import {fs, util} from '@appium/support';
 import {getLogger} from './logger';
 import path from 'node:path';
 import {createPatch} from 'diff';
-import {NormalizedPackageJson} from 'read-pkg';
-import {JsonValue, JsonObject} from 'type-fest';
+import type {NormalizedPackageJson} from './utils';
+import type {JsonValue, JsonObject} from 'type-fest';
 import {DocutilsError} from './error';
-import {relative} from './util';
-import _ from 'lodash';
+import {mergeDefaultsDeep, relative} from './utils';
 import {stringifyJson, readPackageJson, writeFileString} from './fs';
 import {NAME_ERR_ENOENT} from './constants';
 
 const log = getLogger('init');
 const dryRunLog = getLogger('dry-run', log);
-
-/**
- * Creates a unified patch for display in "dry run" mode
- * @param filename - File name to use
- * @param oldData - Old data
- * @param newData - New Data
- * @returns Patch string
- */
-function makePatch<T extends JsonValue>(
-  filename: string,
-  oldData: T | string,
-  newData: T | string,
-  serializer: ScaffoldTaskSerializer<T> = stringifyJson
-) {
-  return createPatch(
-    filename,
-    _.isString(oldData) ? oldData : serializer(oldData),
-    _.isString(newData) ? newData : serializer(newData)
-  );
-}
 
 /**
  * Options for a task which are not the {@link ScaffoldTaskOptions base options}
@@ -52,105 +31,8 @@ export type TaskSpecificOpts<Opts extends ScaffoldTaskOptions> = Omit<
  * @see {@linkcode createScaffoldTask}
  */
 export type ScaffoldTask<Opts extends ScaffoldTaskOptions, T extends JsonObject> = (
-  opts: Opts
+  opts: Opts,
 ) => Promise<ScaffoldTaskResult<T>>;
-
-/**
- * Factory for a {@linkcode ScaffoldTask}.
- *
- * @param defaultFilename Default file to create
- * @param defaultContent Default content to use
- * @param description Description of task
- * @param opts Options
- * @returns A scaffold task
- */
-export function createScaffoldTask<Opts extends ScaffoldTaskOptions, T extends JsonObject>(
-  defaultFilename: string,
-  defaultContent: T,
-  description: string,
-  {
-    transform = _.identity,
-    deserialize = JSON.parse,
-    serialize = stringifyJson,
-  }: CreateScaffoldTaskOptions<Opts, T> = {}
-): ScaffoldTask<Opts, T> {
-  return async ({
-    overwrite = false,
-    cwd = process.cwd(),
-    packageJson: packageJsonPath,
-    dest,
-    dryRun = false,
-    ...opts
-  }: Opts): Promise<ScaffoldTaskResult<T>> => {
-    const relativePath = relative(cwd);
-    const {pkgPath, pkg} = await readPackageJson(
-      packageJsonPath ? path.dirname(packageJsonPath) : cwd,
-      true
-    );
-    const pkgDir = path.dirname(pkgPath);
-    dest = dest ?? path.join(pkgDir, defaultFilename);
-    const relativeDest = relativePath(dest);
-    log.debug('Initializing %s', relativeDest);
-    let destChangesNeeded = false;
-    let isNew = false;
-    let destContent: T;
-    let result: ScaffoldTaskResult<T>;
-    try {
-      destContent = deserialize(await fs.readFile(dest, 'utf8'));
-      log.debug('Found existing file %s', relativeDest);
-    } catch (e) {
-      const err = e as NodeJS.ErrnoException;
-      if (err.code !== NAME_ERR_ENOENT) {
-        throw err;
-      }
-      destChangesNeeded = true;
-      log.debug('Creating new file %s', relativeDest);
-      destContent = {} as T;
-      isNew = true;
-    }
-
-    const defaults: T = transform(defaultContent, opts, pkg);
-    const finalDestContent: T = _.defaultsDeep({}, destContent, defaults);
-
-    destChangesNeeded = destChangesNeeded || !_.isEqual(destContent, finalDestContent);
-
-    if (destChangesNeeded) {
-      log.info('Changes needed in %s', relativeDest);
-      log.debug('Original %s: %O', relativeDest, destContent);
-      log.debug('Final %s: %O', relativeDest, finalDestContent);
-      const patch = makePatch(dest, destContent, finalDestContent, serialize);
-
-      if (dryRun) {
-        dryRunLog.info('Would apply the following patch: \n\n%s', patch);
-        result = {path: dest, content: finalDestContent};
-        return result;
-      }
-
-      if (!isNew && !overwrite) {
-        log.info('File %s already exists, continuing (enable overwrite with "--force")', relativeDest);
-        log.debug('Tried to apply patch:\n\n%s', patch);
-      } else {
-        try {
-          await writeFileString(dest, finalDestContent);
-          if (isNew) {
-            log.success('Initialized %s', description);
-          } else {
-            log.success('Updated %s', description);
-          }
-        } catch (e) {
-          const err = e as NodeJS.ErrnoException;
-          throw new DocutilsError(`Could not write to ${relativeDest}. Reason: ${err.message}`, {
-            cause: err,
-          });
-        }
-      }
-    } else {
-      log.info('No changes necessary for %s', relativeDest);
-    }
-    log.success(`${description}: done`);
-    return {path: dest, content: finalDestContent};
-  };
-}
 
 /**
  * Optional function which can be used to post-process the content of a file. Usually used to merge
@@ -159,7 +41,7 @@ export function createScaffoldTask<Opts extends ScaffoldTaskOptions, T extends J
 export type ScaffoldTaskTransformer<Opts extends ScaffoldTaskOptions, T extends JsonValue> = (
   content: Readonly<T>,
   opts: TaskSpecificOpts<Opts>,
-  pkg: Readonly<NormalizedPackageJson>
+  pkg: Readonly<NormalizedPackageJson>,
 ) => T;
 
 /**
@@ -228,4 +110,124 @@ export interface ScaffoldTaskResult<T> {
    * The filepath of whatever it wrote or would write
    */
   path: string;
+}
+
+/**
+ * Factory for a {@linkcode ScaffoldTask}.
+ *
+ * @param defaultFilename Default file to create
+ * @param defaultContent Default content to use
+ * @param description Description of task
+ * @param opts Options
+ * @returns A scaffold task
+ */
+export function createScaffoldTask<Opts extends ScaffoldTaskOptions, T extends JsonObject>(
+  defaultFilename: string,
+  defaultContent: T,
+  description: string,
+  {
+    transform = (content) => content,
+    deserialize = JSON.parse,
+    serialize = stringifyJson,
+  }: CreateScaffoldTaskOptions<Opts, T> = {},
+): ScaffoldTask<Opts, T> {
+  return async ({
+    overwrite = false,
+    cwd = process.cwd(),
+    packageJson: packageJsonPath,
+    dest,
+    dryRun = false,
+    ...opts
+  }: Opts): Promise<ScaffoldTaskResult<T>> => {
+    const relativePath = relative(cwd);
+    const {pkgPath, pkg} = await readPackageJson(
+      packageJsonPath ? path.dirname(packageJsonPath) : cwd,
+      true,
+    );
+    const pkgDir = path.dirname(pkgPath);
+    dest = dest ?? path.join(pkgDir, defaultFilename);
+    const relativeDest = relativePath(dest);
+    log.debug('Initializing %s', relativeDest);
+    let destChangesNeeded = false;
+    let isNew = false;
+    let destContent: T;
+    let result: ScaffoldTaskResult<T>;
+    try {
+      destContent = deserialize(await fs.readFile(dest, 'utf8'));
+      log.debug('Found existing file %s', relativeDest);
+    } catch (e) {
+      const err = e as NodeJS.ErrnoException;
+      if (err.code !== NAME_ERR_ENOENT) {
+        throw err;
+      }
+      destChangesNeeded = true;
+      log.debug('Creating new file %s', relativeDest);
+      destContent = {} as T;
+      isNew = true;
+    }
+
+    const defaults: T = transform(defaultContent, opts, pkg);
+    const finalDestContent: T = mergeDefaultsDeep(destContent, defaults);
+
+    destChangesNeeded = destChangesNeeded || !util.isEqual(destContent, finalDestContent);
+
+    if (destChangesNeeded) {
+      log.info('Changes needed in %s', relativeDest);
+      log.debug('Original %s: %O', relativeDest, destContent);
+      log.debug('Final %s: %O', relativeDest, finalDestContent);
+      const patch = makePatch(dest, destContent, finalDestContent, serialize);
+
+      if (dryRun) {
+        dryRunLog.info('Would apply the following patch: \n\n%s', patch);
+        result = {path: dest, content: finalDestContent};
+        return result;
+      }
+
+      if (!isNew && !overwrite) {
+        log.info(
+          'File %s already exists, continuing (enable overwrite with "--force")',
+          relativeDest,
+        );
+        log.debug('Tried to apply patch:\n\n%s', patch);
+      } else {
+        try {
+          await writeFileString(dest, finalDestContent);
+          if (isNew) {
+            log.success('Initialized %s', description);
+          } else {
+            log.success('Updated %s', description);
+          }
+        } catch (e) {
+          const err = e as NodeJS.ErrnoException;
+          throw new DocutilsError(`Could not write to ${relativeDest}. Reason: ${err.message}`, {
+            cause: err,
+          });
+        }
+      }
+    } else {
+      log.info('No changes necessary for %s', relativeDest);
+    }
+    log.success(`${description}: done`);
+    return {path: dest, content: finalDestContent};
+  };
+}
+
+/**
+ * Creates a unified patch for display in "dry run" mode
+ * @param filename - File name to use
+ * @param oldData - Old data
+ * @param newData - New Data
+ * @returns Patch string
+ */
+function makePatch<T extends JsonValue>(
+  filename: string,
+  oldData: T | string,
+  newData: T | string,
+  serializer: ScaffoldTaskSerializer<T> = stringifyJson,
+) {
+  return createPatch(
+    filename,
+    typeof oldData === 'string' ? oldData : serializer(oldData),
+    typeof newData === 'string' ? newData : serializer(newData),
+  );
 }

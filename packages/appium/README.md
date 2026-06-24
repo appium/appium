@@ -199,11 +199,11 @@ contribution of project development and leadership!
 </p>
 
 <p align="center">
-  <a href="https://lambdatest.com/?utm_source=appium.io&utm_medium=organic&utm_campaign=june_25&utm_term=sk&utm_content=webpage">
+  <a href="https://www.testmuai.com">
     <picture>
-      <source srcset="packages/appium/docs/overrides/assets/images/sponsor-logo-lambdatest-dark.png" media="(prefers-color-scheme: dark)"/>
-      <source srcset="packages/appium/docs/overrides/assets/images/sponsor-logo-lambdatest-light.png" media="(prefers-color-scheme: light)"/>
-      <img src="packages/appium/docs/overrides/assets/images/sponsor-logo-lambdatest-dark.png" width="300" alt="LambdaTest"/>
+      <source srcset="packages/appium/docs/overrides/assets/images/sponsor-logo-testmuai-dark.png" media="(prefers-color-scheme: dark)"/>
+      <source srcset="packages/appium/docs/overrides/assets/images/sponsor-logo-testmuai-light.png" media="(prefers-color-scheme: light)"/>
+      <img src="packages/appium/docs/overrides/assets/images/sponsor-logo-testmuai-dark.png" width="300" alt="TestMu AI (formerly LambdaTest)"/>
     </picture>
   </a>
 </p>

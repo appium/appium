@@ -1,12 +1,7 @@
 import type {EventEmitter} from 'node:events';
 import type {Merge} from 'type-fest';
 import type {Capabilities, DriverCaps, W3CCapabilities} from './capabilities';
-import type {
-  BidiModuleMap,
-  BiDiResultData,
-  ExecuteMethodMap,
-  MethodMap,
-} from './command-maps';
+import type {BidiModuleMap, BiDiResultData, ExecuteMethodMap, MethodMap} from './command-maps';
 import type {
   DefaultCreateSessionResult,
   DefaultDeleteSessionResult,
@@ -26,7 +21,6 @@ import type {AppiumLogger} from './logger';
 import type {AppiumServer, UpdateServerCallback} from './server';
 import type {Class, StringRecord} from './util';
 import type internal from 'node:stream';
-
 /**
  * Interface implemented by the `DeviceSettings` class in `@appium/base-driver`
  */
@@ -149,16 +143,52 @@ export interface Driver<
   CreateResult = DefaultCreateSessionResult<C>,
   DeleteResult = DefaultDeleteSessionResult,
   SessionData extends StringRecord = StringRecord,
-> extends IImplementedCommands<C, Settings, CreateResult, DeleteResult, SessionData>,
+>
+  extends
+    IImplementedCommands<C, Settings, CreateResult, DeleteResult, SessionData>,
     Core<C, Settings> {
   /**
-   * The set of command line arguments set for this driver
+   * The set of command line arguments set for this driver.
+   *
+   * These are derived from the Appium server configuration for this
+   * particular driver (CLI flags and/or config files). They are **not**
+   * user capabilities and cannot be influenced by test code.
    */
   cliArgs: CArgs;
-  // The following properties are assigned by appium */
+  /**
+   * The underlying HTTP server instance hosting this driver.
+   *
+   * This is assigned by the Appium server when a session is created.
+   * It is primarily useful for advanced integrations (for example,
+   * when a driver or plugin needs direct access to the web server).
+   */
   server?: AppiumServer;
+  /**
+   * The hostname or IP address on which the Appium server is listening.
+   *
+   * This is assigned by the Appium server when a session is created,
+   * based on the `--address` (or equivalent config) used to start the
+   * server. It can be used by drivers which need to construct URLs that
+   * point back to the Appium server.
+   */
   serverHost?: string;
+  /**
+   * The TCP port on which the Appium server is listening.
+   *
+   * This is assigned by the Appium server when a session is created,
+   * based on the `--port` (or equivalent config) used to start the
+   * server. It is often used together with {@link Driver.serverHost}
+   * and {@link Driver.serverPath} to build callback or proxy URLs.
+   */
   serverPort?: number;
+  /**
+   * The base path under which WebDriver routes are exposed.
+   *
+   * This is assigned by the Appium server when a session is created,
+   * based on the `--base-path` (or equivalent config) used to start the
+   * server. For example, this might be an empty string (`''`) or
+   * `'/wd/hub'`.
+   */
   serverPath?: string;
 
   // The following methods are implemented by `BaseDriver`.
@@ -172,7 +202,6 @@ export interface Driver<
    * @returns The result of running the command
    */
   executeCommand(cmd: string, ...args: any[]): Promise<any>;
-
 
   /**
    * A helper method to modify the command name before it's logged.
@@ -265,7 +294,9 @@ export interface ExternalDriver<
   CreateResult = DefaultCreateSessionResult<C>,
   DeleteResult = DefaultDeleteSessionResult,
   SessionData extends StringRecord = StringRecord,
-> extends Driver<C, CArgs, Settings, CreateResult, DeleteResult, SessionData>,
+>
+  extends
+    Driver<C, CArgs, Settings, CreateResult, DeleteResult, SessionData>,
     IWDClassicCommands,
     IAppiumCommands,
     IJSONWPCommands,
@@ -299,21 +330,21 @@ export interface DriverStatic<T extends Driver> {
   updateServer?: UpdateServerCallback;
   newMethodMap?: MethodMap<T>;
   /**
-    * Drivers can define new custom bidi commands and map them to driver methods. The format must
-    * be the same as that used by Appium's bidi-commands.js file, for example:
-    * @example
-    * {
-    *   myNewBidiModule: {
-    *     myNewBidiCommand: {
-    *       command: 'driverMethodThatWillBeCalled',
-    *       params: {
-    *         required: ['requiredParam'],
-    *         optional: ['optionalParam'],
-    *       }
-    *     }
-    *   }
-    * }
-    */
+   * Drivers can define new custom bidi commands and map them to driver methods. The format must
+   * be the same as that used by Appium's bidi-commands.js file, for example:
+   * @example
+   * {
+   *   myNewBidiModule: {
+   *     myNewBidiCommand: {
+   *       command: 'driverMethodThatWillBeCalled',
+   *       params: {
+   *         required: ['requiredParam'],
+   *         optional: ['optionalParam'],
+   *       }
+   *     }
+   *   }
+   * }
+   */
   newBidiCommands?: BidiModuleMap;
   executeMethodMap?: ExecuteMethodMap<T>;
 }
@@ -478,8 +509,6 @@ export interface ConfigureAppOptions {
    *
    * @returns The full path to the downloaded app
    */
-  onDownload?: (
-    obj: DownloadAppOptions,
-  ) => Promise<string>;
+  onDownload?: (obj: DownloadAppOptions) => Promise<string>;
   supportedExtensions: string[];
 }

@@ -16,7 +16,7 @@ jobs:
     steps:
     - name: Select all current LTS versions of Node.js
       id: generate-matrix
-      uses: msimerson/node-lts-versions@v1
+      uses: msimerson/node-lts-versions@v2.0.2
 
   check:
     needs:
@@ -29,7 +29,7 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v6.4.0
         with:
           node-version: ${{ matrix.node-version }}
       - name: Install Appium

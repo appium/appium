@@ -12,12 +12,9 @@ import type {
   StringRecord,
 } from '@appium/types';
 import AsyncLock from 'async-lock';
-import _ from 'lodash';
+import {util} from '@appium/support';
 import os from 'node:os';
-import {
-  DEFAULT_BASE_PATH,
-  PROTOCOLS,
-} from '../constants';
+import {DEFAULT_BASE_PATH, PROTOCOLS} from '../constants';
 import {errors} from '../protocol';
 import {DeviceSettings} from './device-settings';
 import * as helpers from './helpers';
@@ -31,7 +28,8 @@ const ALL_DRIVERS_MATCH = '*';
 const FEATURE_NAME_SEPARATOR = ':';
 
 export class DriverCore<const C extends Constraints, Settings extends StringRecord = StringRecord>
-  extends ExtensionCore implements Core<C, Settings>
+  extends ExtensionCore
+  implements Core<C, Settings>
 {
   /**
    * Make the basedriver version available so for any driver which inherits from this package, we
@@ -41,7 +39,7 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
 
   sessionId: string | null;
 
-  sessionCreationTimestampMs: number;
+  sessionCreationTimestampMs!: number;
 
   opts: DriverOpts<C>;
 
@@ -77,18 +75,9 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
 
   noCommandTimer: NodeJS.Timeout | null;
 
-  protected _eventHistory: EventHistory;
-
-  /**
-   * TODO: remove this._log and use this.log instead
-   */
-  protected _log: AppiumLogger;
-
   shutdownUnexpectedly: boolean;
 
   shouldValidateCaps: boolean;
-
-  protected commandsQueueGuard: AsyncLock;
 
   /**
    * settings should be instantiated by drivers which extend BaseDriver, but
@@ -100,10 +89,18 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
 
   protocol?: Protocol;
 
+  protected _eventHistory: EventHistory;
+
+  /**
+   * TODO: remove this._log and use this.log instead
+   */
+  protected _log: AppiumLogger;
+
+  protected commandsQueueGuard: AsyncLock;
+
   constructor(opts: InitialOpts = <InitialOpts>{}, shouldValidateCaps = true) {
     super();
     this._log = this.log; // TODO: remove references to this._log and use this.log instead
-
 
     // setup state
     this.opts = opts as DriverOpts<C>;
@@ -116,7 +113,7 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
     this.shouldValidateCaps = shouldValidateCaps;
 
     // keeping track of initial opts
-    this.initialOpts = _.cloneDeep(opts);
+    this.initialOpts = structuredClone(opts);
 
     this.sessionId = null;
     this.helpers = helpers;
@@ -134,19 +131,6 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
     this.shutdownUnexpectedly = false;
     this.commandsQueueGuard = new AsyncLock();
     this.settings = new DeviceSettings();
-  }
-
-  /**
-   * Set a callback handler if needed to execute a custom piece of code
-   * when the driver is shut down unexpectedly. Multiple calls to this method
-   * will cause the handler to be executed multiple times
-   *
-   * @param handler The code to be executed on unexpected shutdown.
-   * The function may accept one argument, which is the actual error instance, which
-   * caused the driver to shut down.
-   */
-  onUnexpectedShutdown(handler: (...args: any[]) => void) {
-    this.eventEmitter.on(ON_UNEXPECTED_SHUTDOWN_EVENT, handler);
   }
 
   /**
@@ -179,7 +163,32 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
    * inadvertently change data outside of logEvent
    */
   get eventHistory() {
-    return _.cloneDeep(this._eventHistory);
+    return structuredClone(this._eventHistory);
+  }
+
+  /**
+   * If this driver has requested proxying of bidi connections to an upstream bidi endpoint, this
+   * method should be overridden to return the URL of that websocket, to indicate that bidi
+   * proxying is enabled. Otherwise, a null return will indicate that bidi proxying should not be
+   * active and bidi commands will be handled by this driver.
+   *
+   * @returns {string | null}
+   */
+  get bidiProxyUrl(): string | null {
+    return null;
+  }
+
+  /**
+   * Set a callback handler if needed to execute a custom piece of code
+   * when the driver is shut down unexpectedly. Multiple calls to this method
+   * will cause the handler to be executed multiple times
+   *
+   * @param handler The code to be executed on unexpected shutdown.
+   * The function may accept one argument, which is the actual error instance, which
+   * caused the driver to shut down.
+   */
+  onUnexpectedShutdown(handler: (...args: any[]) => void) {
+    this.eventEmitter.on(ON_UNEXPECTED_SHUTDOWN_EVENT, handler);
   }
 
   /**
@@ -251,7 +260,7 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
   isFeatureEnabled(name: string): boolean {
     // automationName comparison is case-insensitive,
     // while feature name is case-sensitive
-    const currentAutomationName = _.toLower(this.opts.automationName);
+    const currentAutomationName = String(this.opts.automationName).toLowerCase();
 
     const parseFullName = (fullName: string) => {
       const separatorPos = fullName.indexOf(FEATURE_NAME_SEPARATOR);
@@ -261,27 +270,31 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
         // but better be safe than sorry
         throw new Error(
           `The full feature name must include both the automation name ` +
-          `'${this.opts.automationName}' or the '${ALL_DRIVERS_MATCH}' ` +
-          `wildcard to apply the feature to all installed drivers, and ` +
-          `the feature name split by a colon. Got '${fullName}' instead`
+            `'${this.opts.automationName}' or the '${ALL_DRIVERS_MATCH}' ` +
+            `wildcard to apply the feature to all installed drivers, and ` +
+            `the feature name split by a colon. Got '${fullName}' instead`,
         );
       }
       return [
-        _.toLower(fullName.substring(0, separatorPos)),
-        fullName.substring(separatorPos + 1)
+        fullName.substring(0, separatorPos).toLowerCase(),
+        fullName.substring(separatorPos + 1),
       ];
     };
     const parseFullNames = (fullNames: string[]) => fullNames.map(parseFullName);
-    const matches = ([automationName, featureName]: [string, string]) =>
-      [currentAutomationName, ALL_DRIVERS_MATCH].includes(automationName) && featureName === name;
+    const matches = (pair: string[]) => {
+      const [automationName, featureName] = pair;
+      return (
+        [currentAutomationName, ALL_DRIVERS_MATCH].includes(automationName) && featureName === name
+      );
+    };
 
     // if we have explicitly denied this feature, return false immediately
-    if (!_.isEmpty(this.denyInsecure) && parseFullNames(this.denyInsecure).some(matches)) {
+    if (!util.isEmpty(this.denyInsecure) && parseFullNames(this.denyInsecure).some(matches)) {
       return false;
     }
 
     // if we specifically have allowed the feature, return true
-    if (!_.isEmpty(this.allowInsecure) && parseFullNames(this.allowInsecure).some(matches)) {
+    if (!util.isEmpty(this.allowInsecure) && parseFullNames(this.allowInsecure).some(matches)) {
       return true;
     }
 
@@ -320,23 +333,11 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
       validStrategies = validStrategies.concat(this.webLocatorStrategies);
     }
 
-    if (!_.includes(validStrategies, strategy)) {
+    if (!validStrategies.includes(strategy)) {
       throw new errors.InvalidSelectorError(
         `Locator Strategy '${strategy}' is not supported for this session`,
       );
     }
-  }
-
-  /**
-   * If this driver has requested proxying of bidi connections to an upstream bidi endpoint, this
-   * method should be overridden to return the URL of that websocket, to indicate that bidi
-   * proxying is enabled. Otherwise, a null return will indicate that bidi proxying should not be
-   * active and bidi commands will be handled by this driver.
-   *
-   * @returns {string | null}
-   */
-  get bidiProxyUrl(): string | null {
-    return null;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -370,17 +371,17 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   proxyRouteIsAvoided(sessionId: string, method: HTTPMethod, url: string, body?: any): boolean {
     for (const avoidSchema of this.getProxyAvoidList(sessionId)) {
-      if (!_.isArray(avoidSchema) || avoidSchema.length !== 2) {
+      if (!Array.isArray(avoidSchema) || avoidSchema.length !== 2) {
         throw new Error('Proxy avoidance must be a list of pairs');
       }
       const [avoidMethod, avoidPathRegex] = avoidSchema;
-      if (!_.includes(['GET', 'POST', 'DELETE'], avoidMethod)) {
+      if (!['GET', 'POST', 'DELETE'].includes(avoidMethod)) {
         throw new Error(`Unrecognized proxy avoidance method '${avoidMethod}'`);
       }
-      if (!_.isRegExp(avoidPathRegex)) {
+      if (!(avoidPathRegex instanceof RegExp)) {
         throw new Error('Proxy avoidance path must be a regular expression');
       }
-      const normalizedUrl = url.replace(new RegExp(`^${_.escapeRegExp(this.basePath)}`), '');
+      const normalizedUrl = url.replace(new RegExp(`^${util.escapeRegExp(this.basePath)}`), '');
       if (avoidMethod === method && avoidPathRegex.test(normalizedUrl)) {
         return true;
       }
@@ -406,5 +407,4 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
       this.noCommandTimer = null;
     }
   }
-
 }

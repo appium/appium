@@ -1,7 +1,6 @@
-import _ from 'lodash';
 import {util, logger} from '@appium/support';
 import {StatusCodes as HTTPStatusCodes} from 'http-status-codes';
-import type { ErrorBiDiCommandResponse, Class } from '@appium/types';
+import type {ErrorBiDiCommandResponse, Class} from '@appium/types';
 
 const mjsonwpLog = logger.getLogger('MJSONWP');
 const w3cLog = logger.getLogger('W3C');
@@ -22,13 +21,13 @@ class BaseError extends Error {
 
   private _formatStack(): void {
     // eslint-disable-next-line no-prototype-builtins
-    if (Error.hasOwnProperty('captureStackTrace') && _.isEmpty(this.stack)) {
+    if (Error.hasOwnProperty('captureStackTrace') && util.isEmpty(this.stack)) {
       Error.captureStackTrace(this, this.constructor);
     }
-    if (!_.isString(this.cause?.stack)) {
+    if (typeof this.cause?.stack !== 'string') {
       return;
     }
-    if (_.isEmpty(this.stack)) {
+    if (util.isEmpty(this.stack)) {
       this.stack = this.cause.stack;
       return;
     }
@@ -41,10 +40,10 @@ class BaseError extends Error {
 
 // base error class for all of our errors
 export class ProtocolError extends BaseError {
-  protected _stacktrace: string | undefined;
   public jsonwpCode: number;
   public error: string;
   public w3cStatus: number;
+  protected _stacktrace: string | undefined;
 
   constructor(
     msg: string,
@@ -77,7 +76,7 @@ export class ProtocolError extends BaseError {
   bidiErrObject(id: string | number): ErrorBiDiCommandResponse {
     // if we don't have an id, the client didn't send one, so we have nothing to send back.
     // send back zero rather than making something up
-    const intId = (_.isInteger(id) ? id : (parseInt(`${id}`, 10) || 0)) as number;
+    const intId = (Number.isInteger(id) ? id : parseInt(`${id}`, 10) || 0) as number;
     return {
       id: intId,
       type: 'error',
@@ -93,6 +92,16 @@ export class ProtocolError extends BaseError {
 // https://w3c.github.io/webdriver/webdriver-spec.html#dfn-error-code
 
 export class NoSuchDriverError extends ProtocolError {
+  constructor(message: string = '', cause?: Error) {
+    super(
+      message || 'A session is either terminated or not started',
+      NoSuchDriverError.code(),
+      NoSuchDriverError.w3cStatus(),
+      NoSuchDriverError.error(),
+      cause,
+    );
+  }
+
   static code() {
     return 6;
   }
@@ -103,29 +112,9 @@ export class NoSuchDriverError extends ProtocolError {
   static error() {
     return 'invalid session id';
   }
-
-  constructor(message: string = '', cause?: Error) {
-    super(
-      message || 'A session is either terminated or not started',
-      NoSuchDriverError.code(),
-      NoSuchDriverError.w3cStatus(),
-      NoSuchDriverError.error(),
-      cause,
-    );
-  }
 }
 
 export class NoSuchElementError extends ProtocolError {
-  static code() {
-    return 7;
-  }
-  static w3cStatus() {
-    return HTTPStatusCodes.NOT_FOUND;
-  }
-  static error() {
-    return 'no such element';
-  }
-
   constructor(message: string = '', cause?: Error) {
     super(
       message ||
@@ -136,19 +125,50 @@ export class NoSuchElementError extends ProtocolError {
       cause,
     );
   }
-}
 
-export class NoSuchFrameError extends ProtocolError {
   static code() {
-    return 8;
-  }
-  static error() {
-    return 'no such frame';
+    return 7;
   }
   static w3cStatus() {
     return HTTPStatusCodes.NOT_FOUND;
   }
+  static error() {
+    return 'no such element';
+  }
+}
 
+/**
+ * W3C WebDriver "no such shadow root" error. Issued when a command
+ * targets an element's shadow root that does not exist (or has been
+ * detached). Previously this was mis-classified as UnknownError — see
+ * https://github.com/appium/appium/issues/22209.
+ */
+export class NoSuchShadowRootError extends ProtocolError {
+  constructor(message: string = '', cause?: Error) {
+    super(
+      message || 'The element does not have a shadow root attached.',
+      NoSuchShadowRootError.code(),
+      NoSuchShadowRootError.w3cStatus(),
+      NoSuchShadowRootError.error(),
+      cause,
+    );
+  }
+
+  // W3C-only error. No historical JSONWP code is assigned to
+  // "no such shadow root"; keep a placeholder so the super call
+  // typechecks (other errors in this file follow the same shape).
+  static code() {
+    return 65;
+  }
+  static error() {
+    return 'no such shadow root';
+  }
+  static w3cStatus() {
+    return HTTPStatusCodes.NOT_FOUND;
+  }
+}
+
+export class NoSuchFrameError extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
     super(
       message ||
@@ -160,19 +180,19 @@ export class NoSuchFrameError extends ProtocolError {
       cause,
     );
   }
-}
 
-export class UnknownCommandError extends ProtocolError {
   static code() {
-    return 9;
+    return 8;
+  }
+  static error() {
+    return 'no such frame';
   }
   static w3cStatus() {
     return HTTPStatusCodes.NOT_FOUND;
   }
-  static error() {
-    return 'unknown command';
-  }
+}
 
+export class UnknownCommandError extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
     super(
       message ||
@@ -185,19 +205,19 @@ export class UnknownCommandError extends ProtocolError {
       cause,
     );
   }
-}
 
-export class StaleElementReferenceError extends ProtocolError {
   static code() {
-    return 10;
+    return 9;
   }
   static w3cStatus() {
     return HTTPStatusCodes.NOT_FOUND;
   }
   static error() {
-    return 'stale element reference';
+    return 'unknown command';
   }
+}
 
+export class StaleElementReferenceError extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
     super(
       message ||
@@ -209,19 +229,19 @@ export class StaleElementReferenceError extends ProtocolError {
       cause,
     );
   }
+
+  static code() {
+    return 10;
+  }
+  static w3cStatus() {
+    return HTTPStatusCodes.NOT_FOUND;
+  }
+  static error() {
+    return 'stale element reference';
+  }
 }
 
 export class ElementNotVisibleError extends ProtocolError {
-  static code() {
-    return 11;
-  }
-  static w3cStatus() {
-    return HTTPStatusCodes.BAD_REQUEST;
-  }
-  static error() {
-    return 'element not visible';
-  }
-
   constructor(message: string = '', cause?: Error) {
     super(
       message ||
@@ -233,19 +253,19 @@ export class ElementNotVisibleError extends ProtocolError {
       cause,
     );
   }
-}
 
-export class InvalidElementStateError extends ProtocolError {
   static code() {
-    return 12;
+    return 11;
   }
   static w3cStatus() {
     return HTTPStatusCodes.BAD_REQUEST;
   }
   static error() {
-    return 'invalid element state';
+    return 'element not visible';
   }
+}
 
+export class InvalidElementStateError extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
     super(
       message ||
@@ -257,19 +277,19 @@ export class InvalidElementStateError extends ProtocolError {
       cause,
     );
   }
+
+  static code() {
+    return 12;
+  }
+  static w3cStatus() {
+    return HTTPStatusCodes.BAD_REQUEST;
+  }
+  static error() {
+    return 'invalid element state';
+  }
 }
 
 export class UnknownError extends ProtocolError {
-  static code() {
-    return 13;
-  }
-  static w3cStatus() {
-    return HTTPStatusCodes.INTERNAL_SERVER_ERROR;
-  }
-  static error() {
-    return 'unknown error';
-  }
-
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'An unknown server-side error occurred while processing the command.',
@@ -279,19 +299,19 @@ export class UnknownError extends ProtocolError {
       cause,
     );
   }
+
+  static code() {
+    return 13;
+  }
+  static w3cStatus() {
+    return HTTPStatusCodes.INTERNAL_SERVER_ERROR;
+  }
+  static error() {
+    return 'unknown error';
+  }
 }
 
 export class UnknownMethodError extends ProtocolError {
-  static code() {
-    return 405;
-  }
-  static w3cStatus() {
-    return HTTPStatusCodes.METHOD_NOT_ALLOWED;
-  }
-  static error() {
-    return 'unknown method';
-  }
-
   constructor(message: string = '', cause?: Error) {
     super(
       message ||
@@ -302,19 +322,19 @@ export class UnknownMethodError extends ProtocolError {
       cause,
     );
   }
-}
 
-export class UnsupportedOperationError extends ProtocolError {
   static code() {
     return 405;
   }
   static w3cStatus() {
-    return HTTPStatusCodes.INTERNAL_SERVER_ERROR;
+    return HTTPStatusCodes.METHOD_NOT_ALLOWED;
   }
   static error() {
-    return 'unsupported operation';
+    return 'unknown method';
   }
+}
 
+export class UnsupportedOperationError extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'A server-side error occurred. Command cannot be supported.',
@@ -324,19 +344,19 @@ export class UnsupportedOperationError extends ProtocolError {
       cause,
     );
   }
+
+  static code() {
+    return 405;
+  }
+  static w3cStatus() {
+    return HTTPStatusCodes.INTERNAL_SERVER_ERROR;
+  }
+  static error() {
+    return 'unsupported operation';
+  }
 }
 
 export class ElementIsNotSelectableError extends ProtocolError {
-  static code() {
-    return 15;
-  }
-  static error() {
-    return 'element not selectable';
-  }
-  static w3cStatus() {
-    return HTTPStatusCodes.BAD_REQUEST;
-  }
-
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'An attempt was made to select an element that cannot be selected.',
@@ -346,19 +366,19 @@ export class ElementIsNotSelectableError extends ProtocolError {
       cause,
     );
   }
-}
 
-export class ElementClickInterceptedError extends ProtocolError {
   static code() {
-    return 64;
+    return 15;
   }
   static error() {
-    return 'element click intercepted';
+    return 'element not selectable';
   }
   static w3cStatus() {
     return HTTPStatusCodes.BAD_REQUEST;
   }
+}
 
+export class ElementClickInterceptedError extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
     super(
       message ||
@@ -370,19 +390,19 @@ export class ElementClickInterceptedError extends ProtocolError {
       cause,
     );
   }
-}
 
-export class ElementNotInteractableError extends ProtocolError {
   static code() {
-    return 60;
+    return 64;
   }
   static error() {
-    return 'element not interactable';
+    return 'element click intercepted';
   }
   static w3cStatus() {
     return HTTPStatusCodes.BAD_REQUEST;
   }
+}
 
+export class ElementNotInteractableError extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
     super(
       message ||
@@ -393,16 +413,19 @@ export class ElementNotInteractableError extends ProtocolError {
       cause,
     );
   }
-}
 
-export class InsecureCertificateError extends ProtocolError {
+  static code() {
+    return 60;
+  }
   static error() {
-    return 'insecure certificate';
+    return 'element not interactable';
   }
   static w3cStatus() {
     return HTTPStatusCodes.BAD_REQUEST;
   }
+}
 
+export class InsecureCertificateError extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
     super(
       message ||
@@ -413,19 +436,16 @@ export class InsecureCertificateError extends ProtocolError {
       cause,
     );
   }
+
+  static error() {
+    return 'insecure certificate';
+  }
+  static w3cStatus() {
+    return HTTPStatusCodes.BAD_REQUEST;
+  }
 }
 
 export class JavaScriptError extends ProtocolError {
-  static code() {
-    return 17;
-  }
-  static w3cStatus() {
-    return HTTPStatusCodes.INTERNAL_SERVER_ERROR;
-  }
-  static error() {
-    return 'javascript error';
-  }
-
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'An error occurred while executing user supplied JavaScript.',
@@ -435,19 +455,19 @@ export class JavaScriptError extends ProtocolError {
       cause,
     );
   }
+
+  static code() {
+    return 17;
+  }
+  static w3cStatus() {
+    return HTTPStatusCodes.INTERNAL_SERVER_ERROR;
+  }
+  static error() {
+    return 'javascript error';
+  }
 }
 
 export class XPathLookupError extends ProtocolError {
-  static code() {
-    return 19;
-  }
-  static w3cStatus() {
-    return HTTPStatusCodes.BAD_REQUEST;
-  }
-  static error() {
-    return 'invalid selector';
-  }
-
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'An error occurred while searching for an element by XPath.',
@@ -457,19 +477,19 @@ export class XPathLookupError extends ProtocolError {
       cause,
     );
   }
+
+  static code() {
+    return 19;
+  }
+  static w3cStatus() {
+    return HTTPStatusCodes.BAD_REQUEST;
+  }
+  static error() {
+    return 'invalid selector';
+  }
 }
 
 export class TimeoutError extends ProtocolError {
-  static code() {
-    return 21;
-  }
-  static w3cStatus() {
-    return HTTPStatusCodes.REQUEST_TIMEOUT;
-  }
-  static error() {
-    return 'timeout';
-  }
-
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'An operation did not complete before its timeout expired.',
@@ -479,19 +499,19 @@ export class TimeoutError extends ProtocolError {
       cause,
     );
   }
+
+  static code() {
+    return 21;
+  }
+  static w3cStatus() {
+    return HTTPStatusCodes.REQUEST_TIMEOUT;
+  }
+  static error() {
+    return 'timeout';
+  }
 }
 
 export class NoSuchWindowError extends ProtocolError {
-  static code() {
-    return 23;
-  }
-  static error() {
-    return 'no such window';
-  }
-  static w3cStatus() {
-    return HTTPStatusCodes.NOT_FOUND;
-  }
-
   constructor(message: string = '', cause?: Error) {
     super(
       message ||
@@ -503,19 +523,19 @@ export class NoSuchWindowError extends ProtocolError {
       cause,
     );
   }
+
+  static code() {
+    return 23;
+  }
+  static error() {
+    return 'no such window';
+  }
+  static w3cStatus() {
+    return HTTPStatusCodes.NOT_FOUND;
+  }
 }
 
 export class InvalidArgumentError extends ProtocolError {
-  static code() {
-    return 61;
-  }
-  static error() {
-    return 'invalid argument';
-  }
-  static w3cStatus() {
-    return HTTPStatusCodes.BAD_REQUEST;
-  }
-
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'The arguments passed to the command are either invalid or malformed',
@@ -525,19 +545,19 @@ export class InvalidArgumentError extends ProtocolError {
       cause,
     );
   }
-}
 
-export class InvalidCookieDomainError extends ProtocolError {
   static code() {
-    return 24;
+    return 61;
   }
   static error() {
-    return 'invalid cookie domain';
+    return 'invalid argument';
   }
   static w3cStatus() {
     return HTTPStatusCodes.BAD_REQUEST;
   }
+}
 
+export class InvalidCookieDomainError extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
     super(
       message ||
@@ -549,19 +569,19 @@ export class InvalidCookieDomainError extends ProtocolError {
       cause,
     );
   }
+
+  static code() {
+    return 24;
+  }
+  static error() {
+    return 'invalid cookie domain';
+  }
+  static w3cStatus() {
+    return HTTPStatusCodes.BAD_REQUEST;
+  }
 }
 
 export class NoSuchCookieError extends ProtocolError {
-  static code() {
-    return 62;
-  }
-  static w3cStatus() {
-    return HTTPStatusCodes.NOT_FOUND;
-  }
-  static error() {
-    return 'no such cookie';
-  }
-
   constructor(message: string = '', cause?: Error) {
     super(
       message ||
@@ -572,19 +592,19 @@ export class NoSuchCookieError extends ProtocolError {
       cause,
     );
   }
+
+  static code() {
+    return 62;
+  }
+  static w3cStatus() {
+    return HTTPStatusCodes.NOT_FOUND;
+  }
+  static error() {
+    return 'no such cookie';
+  }
 }
 
 export class UnableToSetCookieError extends ProtocolError {
-  static code() {
-    return 25;
-  }
-  static w3cStatus() {
-    return HTTPStatusCodes.INTERNAL_SERVER_ERROR;
-  }
-  static error() {
-    return 'unable to set cookie';
-  }
-
   constructor(message: string = '', cause?: Error) {
     super(
       message || "A request to set a cookie's value could not be satisfied.",
@@ -594,18 +614,19 @@ export class UnableToSetCookieError extends ProtocolError {
       cause,
     );
   }
-}
 
-export class UnexpectedAlertOpenError extends ProtocolError {
   static code() {
-    return 26;
+    return 25;
   }
   static w3cStatus() {
     return HTTPStatusCodes.INTERNAL_SERVER_ERROR;
   }
   static error() {
-    return 'unexpected alert open';
+    return 'unable to set cookie';
   }
+}
+
+export class UnexpectedAlertOpenError extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'A modal dialog was open, blocking this operation',
@@ -615,19 +636,19 @@ export class UnexpectedAlertOpenError extends ProtocolError {
       cause,
     );
   }
+
+  static code() {
+    return 26;
+  }
+  static w3cStatus() {
+    return HTTPStatusCodes.INTERNAL_SERVER_ERROR;
+  }
+  static error() {
+    return 'unexpected alert open';
+  }
 }
 
 export class NoAlertOpenError extends ProtocolError {
-  static code() {
-    return 27;
-  }
-  static w3cStatus() {
-    return HTTPStatusCodes.NOT_FOUND;
-  }
-  static error() {
-    return 'no such alert';
-  }
-
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'An attempt was made to operate on a modal dialog when one was not open.',
@@ -637,21 +658,21 @@ export class NoAlertOpenError extends ProtocolError {
       cause,
     );
   }
+
+  static code() {
+    return 27;
+  }
+  static w3cStatus() {
+    return HTTPStatusCodes.NOT_FOUND;
+  }
+  static error() {
+    return 'no such alert';
+  }
 }
 
 export class NoSuchAlertError extends NoAlertOpenError {}
 
 export class ScriptTimeoutError extends ProtocolError {
-  static code() {
-    return 28;
-  }
-  static w3cStatus() {
-    return HTTPStatusCodes.REQUEST_TIMEOUT;
-  }
-  static error() {
-    return 'script timeout';
-  }
-
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'A script did not complete before its timeout expired.',
@@ -661,19 +682,19 @@ export class ScriptTimeoutError extends ProtocolError {
       cause,
     );
   }
+
+  static code() {
+    return 28;
+  }
+  static w3cStatus() {
+    return HTTPStatusCodes.REQUEST_TIMEOUT;
+  }
+  static error() {
+    return 'script timeout';
+  }
 }
 
 export class InvalidElementCoordinatesError extends ProtocolError {
-  static code() {
-    return 29;
-  }
-  static w3cStatus() {
-    return HTTPStatusCodes.BAD_REQUEST;
-  }
-  static error() {
-    return 'invalid coordinates';
-  }
-
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'The coordinates provided to an interactions operation are invalid.',
@@ -683,21 +704,21 @@ export class InvalidElementCoordinatesError extends ProtocolError {
       cause,
     );
   }
+
+  static code() {
+    return 29;
+  }
+  static w3cStatus() {
+    return HTTPStatusCodes.BAD_REQUEST;
+  }
+  static error() {
+    return 'invalid coordinates';
+  }
 }
 
 export class InvalidCoordinatesError extends InvalidElementCoordinatesError {}
 
 export class IMENotAvailableError extends ProtocolError {
-  static code() {
-    return 30;
-  }
-  static w3cStatus() {
-    return HTTPStatusCodes.INTERNAL_SERVER_ERROR;
-  }
-  static error() {
-    return 'unsupported operation';
-  }
-
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'IME was not available.',
@@ -707,11 +728,9 @@ export class IMENotAvailableError extends ProtocolError {
       cause,
     );
   }
-}
 
-export class IMEEngineActivationFailedError extends ProtocolError {
   static code() {
-    return 31;
+    return 30;
   }
   static w3cStatus() {
     return HTTPStatusCodes.INTERNAL_SERVER_ERROR;
@@ -719,7 +738,9 @@ export class IMEEngineActivationFailedError extends ProtocolError {
   static error() {
     return 'unsupported operation';
   }
+}
 
+export class IMEEngineActivationFailedError extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'An IME engine could not be started.',
@@ -729,19 +750,19 @@ export class IMEEngineActivationFailedError extends ProtocolError {
       cause,
     );
   }
+
+  static code() {
+    return 31;
+  }
+  static w3cStatus() {
+    return HTTPStatusCodes.INTERNAL_SERVER_ERROR;
+  }
+  static error() {
+    return 'unsupported operation';
+  }
 }
 
 export class InvalidSelectorError extends ProtocolError {
-  static code() {
-    return 32;
-  }
-  static w3cStatus() {
-    return HTTPStatusCodes.BAD_REQUEST;
-  }
-  static error() {
-    return 'invalid selector';
-  }
-
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'Argument was an invalid selector (e.g. XPath/CSS).',
@@ -751,9 +772,29 @@ export class InvalidSelectorError extends ProtocolError {
       cause,
     );
   }
+
+  static code() {
+    return 32;
+  }
+  static w3cStatus() {
+    return HTTPStatusCodes.BAD_REQUEST;
+  }
+  static error() {
+    return 'invalid selector';
+  }
 }
 
 export class SessionNotCreatedError extends ProtocolError {
+  constructor(message: string = '', cause?: Error) {
+    super(
+      `A new session could not be created.${message ? ' Details: ' + message : ''}`,
+      SessionNotCreatedError.code(),
+      SessionNotCreatedError.w3cStatus(),
+      SessionNotCreatedError.error(),
+      cause,
+    );
+  }
+
   static code() {
     return 33;
   }
@@ -763,29 +804,9 @@ export class SessionNotCreatedError extends ProtocolError {
   static error() {
     return 'session not created';
   }
-
-  constructor(message: string = '', cause?: Error) {
-    super(
-      `A new session could not be created.${message ? (' Details: ' + message) : ''}`,
-      SessionNotCreatedError.code(),
-      SessionNotCreatedError.w3cStatus(),
-      SessionNotCreatedError.error(),
-      cause,
-    );
-  }
 }
 
 export class MoveTargetOutOfBoundsError extends ProtocolError {
-  static code() {
-    return 34;
-  }
-  static w3cStatus() {
-    return HTTPStatusCodes.INTERNAL_SERVER_ERROR;
-  }
-  static error() {
-    return 'move target out of bounds';
-  }
-
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'Target provided for a move action is out of bounds.',
@@ -795,13 +816,19 @@ export class MoveTargetOutOfBoundsError extends ProtocolError {
       cause,
     );
   }
+
+  static code() {
+    return 34;
+  }
+  static w3cStatus() {
+    return HTTPStatusCodes.INTERNAL_SERVER_ERROR;
+  }
+  static error() {
+    return 'move target out of bounds';
+  }
 }
 
 export class NoSuchContextError extends ProtocolError {
-  static code() {
-    return 35;
-  }
-
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'No such context found.',
@@ -811,13 +838,13 @@ export class NoSuchContextError extends ProtocolError {
       cause,
     );
   }
+
+  static code() {
+    return 35;
+  }
 }
 
 export class InvalidContextError extends ProtocolError {
-  static code() {
-    return 36;
-  }
-
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'That command could not be executed in the current context.',
@@ -826,6 +853,10 @@ export class InvalidContextError extends ProtocolError {
       UnknownError.error(),
       cause,
     );
+  }
+
+  static code() {
+    return 36;
   }
 }
 
@@ -842,16 +873,6 @@ export class NotImplementedError extends UnknownMethodError {
 }
 
 export class UnableToCaptureScreen extends ProtocolError {
-  static code() {
-    return 63;
-  }
-  static w3cStatus() {
-    return HTTPStatusCodes.INTERNAL_SERVER_ERROR;
-  }
-  static error() {
-    return 'unable to capture screen';
-  }
-
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'A screen capture was made impossible',
@@ -861,47 +882,16 @@ export class UnableToCaptureScreen extends ProtocolError {
       cause,
     );
   }
-}
 
-function generateBadParametersMessage(
-  paramRequirements: ParameterRequirements,
-  paramNames: string[]
-): string {
-  const toArray = function <T> (x: T | T[]): T[] {
-    if (_.isUndefined(x)) {
-      return [];
-    }
-    if (_.isArray(x)) {
-      return x;
-    }
-    return [x];
-  };
-
-  const requiredParamNames = toArray(paramRequirements.required);
-  const actualParamNames = toArray(paramNames);
-  const missingRequiredParamNames = _.difference(requiredParamNames, actualParamNames);
-  const resultLines: string[] = [];
-  resultLines.push(
-    _.isEmpty(missingRequiredParamNames)
-      ? // This should not happen
-        'Some of the provided parameters are not known'
-      : `The following required parameter${
-          missingRequiredParamNames.length === 1 ? ' is' : 's are'
-        } missing: ${JSON.stringify(missingRequiredParamNames)}`,
-  );
-  if (!_.isEmpty(requiredParamNames)) {
-    resultLines.push(`Known required parameters are: ${JSON.stringify(requiredParamNames)}`);
+  static code() {
+    return 63;
   }
-  const optionalParamNames = _.difference(toArray(paramRequirements.optional), ['sessionId', 'id']);
-  if (!_.isEmpty(optionalParamNames)) {
-    resultLines.push(`Known optional parameters are: ${JSON.stringify(optionalParamNames)}`);
+  static w3cStatus() {
+    return HTTPStatusCodes.INTERNAL_SERVER_ERROR;
   }
-  resultLines.push(
-    `You have provided${
-      _.isEmpty(actualParamNames) ? ' none' : ': ' + JSON.stringify(paramNames)
-    }`,
-  );
-  return resultLines.join('\n');
+  static error() {
+    return 'unable to capture screen';
+  }
 }
 
 // Equivalent to W3C InvalidArgumentError
@@ -922,27 +912,40 @@ export class ProxyRequestError extends BaseError {
   private readonly _w3cErrorStatus?: number;
   private readonly _jwpError?: MJSONWPError;
 
-  constructor(
-    message: string,
-    httpResponseData: any,
-    httpStatus?: number,
-    cause?: Error,
-  ) {
-    const [responseErrorObj, originalMessage] = ProxyRequestError._parseHttpResponse(httpResponseData);
+  constructor(message: string, httpResponseData: any, httpStatus?: number, cause?: Error) {
+    const [responseErrorObj, originalMessage] =
+      ProxyRequestError._parseHttpResponse(httpResponseData);
     super(
-      _.isEmpty(message)
-        ? `Proxy request unsuccessful.${originalMessage ? (' ' + originalMessage) : ''}`
+      util.isEmpty(message)
+        ? `Proxy request unsuccessful.${originalMessage ? ' ' + originalMessage : ''}`
         : message,
       cause,
     );
 
     // If the response error is an object and value is an object, it's a W3C error (for JSONWP value is a string)
-    if (_.isPlainObject(responseErrorObj.value) && _.has(responseErrorObj.value, 'error')) {
-      this._w3cError = responseErrorObj.value;
+    if (
+      util.isPlainObject(responseErrorObj.value) &&
+      Object.hasOwn(responseErrorObj.value, 'error')
+    ) {
+      this._w3cError = responseErrorObj.value as unknown as typeof this._w3cError;
       this._w3cErrorStatus = httpStatus;
-    } else if (_.has(responseErrorObj, 'status')) {
-      this._jwpError = responseErrorObj;
+    } else if (Object.hasOwn(responseErrorObj, 'status')) {
+      this._jwpError = responseErrorObj as typeof this._jwpError;
     }
+  }
+
+  private static _parseHttpResponse(data: any): [Record<string, any>, string] {
+    let responseErrorObj: Record<string, any> = util.safeJsonParse(data);
+    if (!util.isPlainObject(responseErrorObj)) {
+      responseErrorObj = {};
+    }
+    let errorMessage: string = typeof data === 'string' ? data : '';
+    if (typeof responseErrorObj.value === 'string') {
+      errorMessage = responseErrorObj.value;
+    } else if (typeof responseErrorObj.value?.message === 'string') {
+      errorMessage = responseErrorObj.value.message;
+    }
+    return [responseErrorObj, errorMessage];
   }
 
   getActualError(): ProtocolError {
@@ -950,7 +953,11 @@ export class ProxyRequestError extends BaseError {
       // If it's MJSONWP error, returns actual error cause for request failure based on `jsonwp.status`
       return errorFromMJSONWPStatusCode(this._jwpError.status, this._jwpError.value);
     }
-    if (util.hasValue(this._w3cError) && _.isNumber(this._w3cErrorStatus) && this._w3cErrorStatus >= 300) {
+    if (
+      util.hasValue(this._w3cError) &&
+      typeof this._w3cErrorStatus === 'number' &&
+      this._w3cErrorStatus >= 300
+    ) {
       return errorFromW3CJsonCode(
         this._w3cError.error,
         this._w3cError.message || this.message,
@@ -959,20 +966,51 @@ export class ProxyRequestError extends BaseError {
     }
     return new UnknownError(this.message, this.cause);
   }
+}
 
-  private static _parseHttpResponse(data: any): [Record<string, any>, string] {
-    let responseErrorObj: Record<string, any> = util.safeJsonParse(data);
-    if (!_.isPlainObject(responseErrorObj)) {
-      responseErrorObj = {};
+function generateBadParametersMessage(
+  paramRequirements: ParameterRequirements,
+  paramNames: string[],
+): string {
+  const toArray = function <T>(x: T | T[]): T[] {
+    if (x === undefined) {
+      return [];
     }
-    let errorMessage: string = _.isString(data) ? data : '';
-    if (_.isString(responseErrorObj.value)) {
-      errorMessage = responseErrorObj.value;
-    } else if (_.isString(responseErrorObj.value?.message)) {
-      errorMessage = responseErrorObj.value.message;
+    if (Array.isArray(x)) {
+      return x;
     }
-    return [responseErrorObj, errorMessage];
+    return [x];
+  };
+
+  const requiredParamNames = toArray(paramRequirements.required);
+  const actualParamNames = toArray(paramNames);
+  const missingRequiredParamNames = requiredParamNames.filter(
+    (name) => !actualParamNames.includes(name),
+  );
+  const resultLines: string[] = [];
+  resultLines.push(
+    util.isEmpty(missingRequiredParamNames)
+      ? // This should not happen
+        'Some of the provided parameters are not known'
+      : `The following required parameter${
+          missingRequiredParamNames.length === 1 ? ' is' : 's are'
+        } missing: ${JSON.stringify(missingRequiredParamNames)}`,
+  );
+  if (!util.isEmpty(requiredParamNames)) {
+    resultLines.push(`Known required parameters are: ${JSON.stringify(requiredParamNames)}`);
   }
+  const optionalParamNames = toArray(paramRequirements.optional).filter(
+    (name): name is string => typeof name === 'string' && !['sessionId', 'id'].includes(name),
+  );
+  if (!util.isEmpty(optionalParamNames)) {
+    resultLines.push(`Known optional parameters are: ${JSON.stringify(optionalParamNames)}`);
+  }
+  resultLines.push(
+    `You have provided${
+      util.isEmpty(actualParamNames) ? ' none' : ': ' + JSON.stringify(paramNames)
+    }`,
+  );
+  return resultLines.join('\n');
 }
 
 // map of error class name to error class
@@ -1012,96 +1050,32 @@ export const errors = {
   NoSuchContextError,
   InvalidContextError,
   NoSuchFrameError,
+  NoSuchShadowRootError,
   UnableToCaptureScreen,
   UnknownMethodError,
   UnsupportedOperationError,
   ProxyRequestError,
 } as const;
 
-const jsonwpErrorCodeMap: Record<string, Class<ProtocolError>> = _.values(errors)
-  .reduce((acc: Record<string, Class<ProtocolError>>, ErrorClass: any) => {
+const jsonwpErrorCodeMap: Record<string, Class<ProtocolError>> = Object.values(errors).reduce(
+  (acc: Record<string, Class<ProtocolError>>, ErrorClass: any) => {
     if ('code' in ErrorClass) {
       acc[ErrorClass.code()] = ErrorClass;
     }
     return acc;
-  }, {});
+  },
+  {},
+);
 
-const w3cErrorCodeMap: Record<string, Class<ProtocolError>> = _.values(errors)
-  .reduce((acc: Record<string, Class<ProtocolError>>, ErrorClass: any) => {
+const w3cErrorCodeMap: Record<string, Class<ProtocolError>> = Object.values(errors).reduce(
+  (acc: Record<string, Class<ProtocolError>>, ErrorClass: any) => {
     if ('error' in ErrorClass) {
       acc[ErrorClass.error()] = ErrorClass;
     }
     return acc;
-  }, {});
-
-
-/**
- * Type guard to check if an Error is of a specific type
- */
-export function isErrorType<T>(err: any, type: Class<T>): err is T {
-  return err.constructor?.name === type.name;
-}
-
-/**
- * Retrieve an error derived from MJSONWP status
- * @param code JSONWP status code
- * @param value The error message, or an object with a `message` property
- * @return The error that is associated with provided JSONWP status code
- */
-export function errorFromMJSONWPStatusCode(code: number, value: string | {message: string} = ''): ProtocolError {
-  const ErrorClass = jsonwpErrorCodeMap[code] ?? UnknownError;
-  mjsonwpLog.debug(`Matched JSONWP error code ${code} to ${ErrorClass.name}`);
-  // if `value` is an object, pull message from it, otherwise use the plain
-  // value, or default to an empty string, if null
-  const message = ((value || {}) as any).message || value || '';
-  return new ErrorClass(message);
-}
-
-/**
- * Retrieve an error derived from W3C JSON Code
- * @param signature W3C error string (see https://www.w3.org/TR/webdriver/#handling-errors `JSON Error Code` column)
- * @param message the error message
- * @param stacktrace an optional error stacktrace
- * @return The error that is associated with the W3C error string
- */
-export function errorFromW3CJsonCode(signature: string, message: string, stacktrace?: string): ProtocolError {
-  const ErrorClass = w3cErrorCodeMap[_.toLower(signature)] ?? UnknownError;
-  w3cLog.debug(`Matched W3C error code '${signature}' to ${ErrorClass.name}`);
-  const resultError = new ErrorClass(message);
-  resultError.stacktrace = stacktrace;
-  return resultError;
-}
-
-/**
- * Convert an Appium error to proper W3C HTTP response
- *
- * @param err The error that needs to be translated
- */
-export function getResponseForW3CError(err: any): [number, { value: W3CError }] {
-  const protocolErrorToResponse: (e: ProtocolError) => [number, { value: W3CError }] =
-  (e: ProtocolError) => [
-    e.w3cStatus,
-    {
-      value: {
-        error: e.error,
-        message: e.message,
-        stacktrace: e.stacktrace || e.stack,
-      }
-    }
-  ];
-
-  // err is ProtocolError
-  if (['error', 'w3cStatus'].every((prop) => _.has(err, prop))) {
-    return protocolErrorToResponse(err);
-  }
-
-  // err is ProxyRequestError
-  if (_.has(err, 'getActualError') && _.isFunction(err.getActualError)) {
-    return protocolErrorToResponse(err.getActualError());
-  }
-
-  return protocolErrorToResponse(new UnknownError(err.message, err));
-}
+  },
+  {},
+);
 
 interface MJSONWPError {
   status: number;
@@ -1118,4 +1092,80 @@ interface W3CError {
 interface ParameterRequirements {
   required: string[] | string;
   optional?: string[] | string;
+}
+
+/**
+ * Type guard to check if an Error is of a specific type
+ */
+export function isErrorType<T>(err: any, type: Class<T>): err is T {
+  return err.constructor?.name === type.name;
+}
+
+/**
+ * Retrieve an error derived from MJSONWP status
+ * @param code JSONWP status code
+ * @param value The error message, or an object with a `message` property
+ * @return The error that is associated with provided JSONWP status code
+ */
+export function errorFromMJSONWPStatusCode(
+  code: number,
+  value: string | {message: string} = '',
+): ProtocolError {
+  const ErrorClass = jsonwpErrorCodeMap[code] ?? UnknownError;
+  mjsonwpLog.debug(`Matched JSONWP error code ${code} to ${ErrorClass.name}`);
+  // if `value` is an object, pull message from it, otherwise use the plain
+  // value, or default to an empty string, if null
+  const message = ((value || {}) as any).message || value || '';
+  return new ErrorClass(message);
+}
+
+/**
+ * Retrieve an error derived from W3C JSON Code
+ * @param signature W3C error string (see https://www.w3.org/TR/webdriver/#handling-errors `JSON Error Code` column)
+ * @param message the error message
+ * @param stacktrace an optional error stacktrace
+ * @return The error that is associated with the W3C error string
+ */
+export function errorFromW3CJsonCode(
+  signature: string,
+  message: string,
+  stacktrace?: string,
+): ProtocolError {
+  const ErrorClass = w3cErrorCodeMap[signature.toLowerCase()] ?? UnknownError;
+  w3cLog.debug(`Matched W3C error code '${signature}' to ${ErrorClass.name}`);
+  const resultError = new ErrorClass(message);
+  resultError.stacktrace = stacktrace;
+  return resultError;
+}
+
+/**
+ * Convert an Appium error to proper W3C HTTP response
+ *
+ * @param err The error that needs to be translated
+ */
+export function getResponseForW3CError(err: any): [number, {value: W3CError}] {
+  const protocolErrorToResponse: (e: ProtocolError) => [number, {value: W3CError}] = (
+    e: ProtocolError,
+  ) => [
+    e.w3cStatus,
+    {
+      value: {
+        error: e.error,
+        message: e.message,
+        stacktrace: e.stacktrace || e.stack,
+      },
+    },
+  ];
+
+  // err is ProtocolError
+  if (['error', 'w3cStatus'].every((prop) => Object.hasOwn(err, prop))) {
+    return protocolErrorToResponse(err);
+  }
+
+  // err is ProxyRequestError
+  if (Object.hasOwn(err, 'getActualError') && typeof err.getActualError === 'function') {
+    return protocolErrorToResponse(err.getActualError());
+  }
+
+  return protocolErrorToResponse(new UnknownError(err.message, err));
 }

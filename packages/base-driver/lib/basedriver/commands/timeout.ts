@@ -1,9 +1,8 @@
 import {waitForCondition} from 'asyncbox';
-import _ from 'lodash';
 import {util} from '@appium/support';
 import {errors} from '../../protocol';
-import {BaseDriver} from '../driver';
-import {Constraints, ITimeoutCommands} from '@appium/types';
+import type {BaseDriver} from '../driver';
+import type {Constraints, ITimeoutCommands} from '@appium/types';
 import {mixin} from './mixin';
 
 declare module '../driver' {
@@ -14,27 +13,36 @@ declare module '../driver' {
 const MIN_TIMEOUT = 0;
 
 const TimeoutCommands: ITimeoutCommands = {
-  async timeouts<C extends Constraints>(this: BaseDriver<C>, type, ms, script, pageLoad, implicit) {
-    if (type && _.isString(type) && util.hasValue(ms)) {
+  async timeouts<C extends Constraints>(
+    this: BaseDriver<C>,
+    type?: string,
+    ms?: number | string,
+    script?: number,
+    pageLoad?: number,
+    implicit?: number,
+  ) {
+    if (type && typeof type === 'string' && util.hasValue(ms)) {
       // legacy stuff with some Appium-specific additions
       this.log.debug(`Timeout arguments: ${JSON.stringify({type, ms})}}`);
       switch (type) {
         case 'command':
-          return void (await this.newCommandTimeout(ms));
+          return void (await this.newCommandTimeout(this.parseTimeoutArgument(ms)));
         case 'implicit':
-          return void (await this.implicitWaitW3C(ms));
+          return void (await this.implicitWaitW3C(this.parseTimeoutArgument(ms)));
         case 'page load':
-          return void (await this.pageLoadTimeoutW3C(ms));
+          return void (await this.pageLoadTimeoutW3C(this.parseTimeoutArgument(ms)));
         case 'script':
-          return void (await this.scriptTimeoutW3C(ms));
+          return void (await this.scriptTimeoutW3C(this.parseTimeoutArgument(ms)));
         default:
           throw new Error(`'${type}' type is not supported for the timeout API`);
       }
     }
 
     this.log.debug(`W3C timeout argument: ${JSON.stringify({script, pageLoad, implicit})}}`);
-    if ([script, pageLoad, implicit].every(_.isNil)) {
-      throw new errors.InvalidArgumentError('W3C protocol expects any of script, pageLoad or implicit to be set');
+    if ([script, pageLoad, implicit].every((value) => value == null)) {
+      throw new errors.InvalidArgumentError(
+        'W3C protocol expects any of script, pageLoad or implicit to be set',
+      );
     }
     if (util.hasValue(script)) {
       await this.scriptTimeoutW3C(script);
@@ -47,7 +55,7 @@ const TimeoutCommands: ITimeoutCommands = {
     }
   },
 
-  async getTimeouts() {
+  async getTimeouts<C extends Constraints>(this: BaseDriver<C>) {
     return {
       command: this.newCommandTimeoutMs,
       implicit: this.implicitWaitMs,
@@ -82,7 +90,7 @@ const TimeoutCommands: ITimeoutCommands = {
     if (this.managedDrivers?.length) {
       this.log.debug('Setting implicit wait on managed drivers');
       for (const driver of this.managedDrivers) {
-        if (_.isFunction(driver.setImplicitWait)) {
+        if (typeof driver.setImplicitWait === 'function') {
           driver.setImplicitWait(ms);
         }
       }
@@ -95,7 +103,7 @@ const TimeoutCommands: ITimeoutCommands = {
     if (this.managedDrivers?.length) {
       this.log.debug('Setting new command timeout on managed drivers');
       for (const driver of this.managedDrivers) {
-        if (_.isFunction(driver.setNewCommandTimeout)) {
+        if (typeof driver.setNewCommandTimeout === 'function') {
           driver.setNewCommandTimeout(ms);
         }
       }
@@ -104,7 +112,7 @@ const TimeoutCommands: ITimeoutCommands = {
 
   async implicitWaitForCondition<C extends Constraints>(
     this: BaseDriver<C>,
-    condFn: (...args: any[]) => Promise<any>
+    condFn: (...args: any[]) => Promise<any>,
   ) {
     this.log.debug(`Waiting up to ${this.implicitWaitMs} ms for condition`);
     const wrappedCondFn = async (...args: any[]) => {
@@ -122,7 +130,7 @@ const TimeoutCommands: ITimeoutCommands = {
 
   parseTimeoutArgument<C extends Constraints>(this: BaseDriver<C>, ms: number | string) {
     const duration = parseInt(String(ms), 10);
-    if (_.isNaN(duration) || duration < MIN_TIMEOUT) {
+    if (Number.isNaN(duration) || duration < MIN_TIMEOUT) {
       throw new errors.UnknownError(`Invalid timeout value '${ms}'`);
     }
     return duration;

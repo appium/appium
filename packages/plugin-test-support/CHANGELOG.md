@@ -3,6 +3,84 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.0]
+
+### ⚠ BREAKING CHANGES
+
+* Update the interface `E2ESetupOpts`. It does not accept `before` and `after` arguments anymore,
+  as well as it does not do any assumptions about the used test framework anymore.
+* Update the returned result of `pluginE2EHarness`. Instead of implicitly adding `before` and `after`
+  mocha callbacks it returns `setup` and `teardown` callbacks, that could be explicitly invoked at appropriate
+  test/suite stages.
+* Remove dependencies on mocha.
+
+
+
+
+
+## [1.2.4](https://github.com/appium/appium/compare/@appium/plugin-test-support@1.2.3...@appium/plugin-test-support@1.2.4) (2026-06-18)
+
+**Note:** Version bump only for package @appium/plugin-test-support
+
+
+
+
+
+## [1.2.3](https://github.com/appium/appium/compare/@appium/plugin-test-support@1.2.2...@appium/plugin-test-support@1.2.3) (2026-05-31)
+
+**Note:** Version bump only for package @appium/plugin-test-support
+
+
+
+
+
+## [1.2.2](https://github.com/appium/appium/compare/@appium/plugin-test-support@1.2.1...@appium/plugin-test-support@1.2.2) (2026-05-06)
+
+**Note:** Version bump only for package @appium/plugin-test-support
+
+
+
+
+
+## [1.2.1](https://github.com/appium/appium/compare/@appium/plugin-test-support@1.2.0...@appium/plugin-test-support@1.2.1) (2026-04-23)
+
+**Note:** Version bump only for package @appium/plugin-test-support
+
+
+
+
+
+## [1.2.0](https://github.com/appium/appium/compare/@appium/plugin-test-support@1.1.0...@appium/plugin-test-support@1.2.0) (2026-04-09)
+
+
+### Features
+
+* use exact version for dependencies in monorepo packages instead of ^ ([#22090](https://github.com/appium/appium/issues/22090)) ([86c8f23](https://github.com/appium/appium/commit/86c8f23a670d0bbc2d359a8235828606bd36e6aa))
+
+
+
+## [1.1.0](https://github.com/appium/appium/compare/@appium/plugin-test-support@1.0.5...@appium/plugin-test-support@1.1.0) (2026-03-08)
+
+
+### Features
+
+* **plugin-test-support:** Migrate to typescript ([#21911](https://github.com/appium/appium/issues/21911)) ([27e7e5a](https://github.com/appium/appium/commit/27e7e5a4e2a95320aa681ed6fe106f71d2211e27))
+
+
+### Bug Fixes
+
+* Move @appium/types to dev dependencies for various packages ([#21920](https://github.com/appium/appium/issues/21920)) ([2615935](https://github.com/appium/appium/commit/261593593947bc59e7a937e518fc6f019cafda7a))
+
+
+
+## [1.0.5](https://github.com/appium/appium/compare/@appium/plugin-test-support@1.0.4...@appium/plugin-test-support@1.0.5) (2026-01-26)
+
+**Note:** Version bump only for package @appium/plugin-test-support
+
+
+
+
+
 ## [1.0.4](https://github.com/appium/appium/compare/@appium/plugin-test-support@1.0.3...@appium/plugin-test-support@1.0.4) (2025-12-04)
 
 **Note:** Version bump only for package @appium/plugin-test-support

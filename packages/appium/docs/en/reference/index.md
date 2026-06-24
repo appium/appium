@@ -5,8 +5,8 @@ hide:
 title: Reference
 ---
 
-This section of the Appium documentation provides a reference to the two main interfaces within the
-Appium server: the command-line executable, and the supported API endpoints.
+This section of the Appium documentation provides a reference to the core interfaces supported within the
+Appium server:
 
 <div class="grid cards" markdown>
 
@@ -16,10 +16,16 @@ Appium server: the command-line executable, and the supported API endpoints.
 
     Learn how to use the Appium command-line executable
 
+-   :material-lan-connect: [__Session Properties__](./session/index.md)
+
+    ---
+
+    See the values of global Appium session properties 
+
 -   :material-cloud-braces: [__API Endpoints__](./api/index.md)
 
     ---
 
-    View endpoints supported by the Appium server
+    View endpoints supported by the core Appium server
 
 </div>

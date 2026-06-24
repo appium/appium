@@ -2,9 +2,14 @@
 title: Session Capabilities
 ---
 
-「Capabilities」は、Appiumセッションを開始するために使用されるパラメータセットに付けられた名前です。 セット内の情報は、セッションにどのような「Capabilities」を持たせたいかを表します。たとえば、特定のモバイルオペレーティングシステムや特定のデバイスバージョンなどです。 Capabilities はキーと値のペアとして表され、値には他のオブジェクトを含む任意の有効な JSON 型を使用できます。
+Capabilities are the core parameters used to start an Appium session. They describe various
+features that you want your session to have, for example, a certain mobile operating system or a
+certain version of a device. Capabilities are represented as key-value pairs, with values allowed
+to be any valid JSON type, including other objects. Most importantly, they cannot be changed
+during the lifecycle of the session.
 
-W3C WebDriver 仕様の [Capabilities に関するセクション](https://w3c.github.io/webdriver/#capabilities) では、以下の機能を含む 10 個の標準機能のセットが定義されています：
+The capabilities used in Appium follow [the W3C WebDriver specification of the same name](https://w3c.github.io/webdriver/#capabilities).
+The WebDriver spec defines a small set of standard capabilities, including the following:
 
 | Capability 名     | 型        | 説明                    |
 | ---------------- | -------- | --------------------- |
@@ -12,51 +17,64 @@ W3C WebDriver 仕様の [Capabilities に関するセクション](https://w3c.g
 | `browserVersion` | `string` | ブラウザのバージョン            |
 | `platformName`   | `string` | ブラウザをホストするプラットフォームの種類 |
 
+While the above capabilities are commonly used by Appium drivers, they are not sufficient for
+describing Appium-specific features, such as the name of the driver to use, or the name of the app
+to launch. In order to achieve this, Appium defines its own [extension capabilities](https://w3c.github.io/webdriver/#dfn-extension-capability).
+
 ## 一般的なAppiumのCapabilities
 
-Appium はこれらのブラウザに焦点を当てた capabilities を理解しますが、いくつかの capabilities も追加導入しています。 WebDriver 仕様によれば、非標準の「拡張 capabilities」には、capabilities を導入したベンダーを示す名前空間となる接頭辞（末尾に「:」）を含める必要があります。 Appium の接頭辞は「appium:」であるため、Appium 固有の capabilities には必ずこの接頭辞を含める必要があります。 使用しているクライアントによっては接頭辞が自動的に追加される場合もあれば、特定のインターフェースと組み合わせて追加される場合もありますが、明確にするために明示的に追加することをお勧めします。
+According to the WebDriver spec, extension capabilities must include a namespace prefix (signifying
+the vendor introducing the capability), and the namespace must end a colon (`:`). Appium's vendor
+prefix is `appium:`, and so any Appium-specific capabilities must include this prefix. Depending on
+your Appium client, the prefix may be added automatically or in conjunction with certain interfaces,
+but it is always a good practice to explicitly include it for clarity.
 
-以下は様々なドライバーで認識される Appium の capabilities の一覧です：
+Here are a few commonly (but not universally!) used Appium-specific capabilities:
 
-!!! info
+| Capability 名            | 型        | Description                                                     |
+| ----------------------- | -------- | --------------------------------------------------------------- |
+| `appium:automationName` | `string` | 使用するAppiumドライバの名前                                               |
+| `appium:udid`           | `string` | The unique device identifier of a particular device to automate |
+| `appium:app`            | `string` | インストール可能なアプリケーションへのパス                                           |
 
-```
-個々のドライバやプラグインは独自の capabilities をサポートしている場合があるため、具体的な capability 名のリストについては、それぞれのドキュメントを参照してください。また、一部のドライバはこれらの capabilities をすべてサポートしていない場合があります
-```
+All capabilities recognized by the Appium base driver (inherited by all drivers) can be found in the
+[Capabilities Reference document](../reference/session/caps.md). While this common capability set
+is fairly small, it can be greatly extended by Appium drivers and plugins, who can (and should)
+define their own capabilities. Make sure to reference their documentation to learn more about the
+capabilities they support. You can find a list of known drivers in the [Ecosystem Drivers](../ecosystem/drivers.md) document.
 
-| <div style="width:12em">Capability 名</div> | 型         | 必須か | 説明                                                                                                                        |
-| ------------------------------------------ | --------- | --- | ------------------------------------------------------------------------------------------------------------------------- |
-| `platformName`                             | `string`  | はい  | アプリまたはブラウザをホストするプラットフォームの種類                                                                                               |
-| `appium:automationName`                    | `string`  | はい  | 使用するAppiumドライバの名前                                                                                                         |
-| `browserName`                              | `string`  | いいえ | ドライバーが特別なケースとしてWebブラウザーをサポートしている場合、起動して自動化するブラウザーの名前                                                                      |
-| `appium:app`                               | `string`  | いいえ | インストール可能なアプリケーションへのパス                                                                                                     |
-| `appium:deviceName`                        | `string`  | いいえ | 自動化する特定のデバイスの名前、例：`iPhone 14`（現在のところ、iOS シミュレーターを指定する場合にのみ役立ちます。他の状況では通常、`appium:udid` 機能を使用して特定のデバイス Id を使用することをお勧めします）。 |
-| `appium:platformVersion`                   | `string`  | いいえ | プラットフォームのバージョン（例：iOS の場合は `16.0`）                                                                                         |
-| `appium:newCommandTimeout`                 | `number`  | いいえ | クライアントがこれ以上コマンドを送信してこないと判断しセッションを終了する前に、Appium サーバーがクライアントからのコマンド送信を待機する秒数。 デフォルトは `60` 秒。 ゼロに設定するとタイマーが無効になります。          |
-| `appium:noReset`                           | `boolean` | いいえ | true の場合、セッションの開始とクリーンアップ中に通常のリセット処理を回避するように Appium ドライバーに指示します (デフォルトは `false`)                       |
-| `appium:fullReset`                         | `boolean` | いいえ | true の場合、Appium ドライバーに通常のリセット処理に追加の手順を追加して、環境の再現性を最大限に高めるように指示します (デフォルトは `false`)                     |
-| `appium:eventTimings`                      | `boolean` | いいえ | true の場合、Appium ドライバーに [Event Timings](./event-timing.md) を収集するように指示します (デフォルトは `false`)               |
-| `appium:printPageSourceOnFindFailure`      | `boolean` | いいえ | true の場合、要素の検索リクエストが失敗するたびにページソースを収集し、Appium ログに出力します (デフォルトは `false`)                                 |
+Drivers are also able to place more complex constraints on capabilities as a group. For example,
+the XCUITest driver recommends that at least one of `browserName`, `appium:app`, or `appium:bundleId`
+is included in the capabilities, otherwise it will not be able to auto-install or auto-launch any
+application. Each driver will document how it interprets these capabilities and any other
+platform-specific requirements.
 
-ドライバーの中には、capabilitiesのより複雑な制約をグループとして設定しているものもあります。 たとえば、`appium:app` および `browserName`  capabilities は上記では必須ではないと記載していますが、特定のアプリでセッションを開始する場合、XCUITest ドライバーは、`appium:app`、`browserName`、または `appium:bundleId` の少なくとも1 つが capabilities に含まれていることが必要です (含まれていない場合、どのアプリをインストールまたは起動すればよいか判断できないため、ホーム画面からセッションが開かれます)。 各ドライバーは、これらの capabilities やその他のプラットフォーム固有の要件をどのように解釈するかを記述しています。
+The way to construct capabilities and start a session will likely differ depending on your Appium
+client. For examples of doing this in each client library, head to the [Ecosystem Clients](../ecosystem/clients.md)
+page and click through to the appropriate client documentation.
 
 !!! note
 
 ```
-Capabilitiesは、セッション開始時に使用されるパラメータのようなものです。Capabilitiesが送信され、セッションが開始された後変更できません。ドライバーがセッション中に動作の一部を更新する場合、capabilitiesの代わりに、またはcapabilitiesに加えて、[Settings](./settings.md)も利用可能です。
+Once your capabilities are sent to the server and the session is started, they cannot be
+changed. If a driver supports updating its behaviour during a session, it will use the
+[Settings API](./settings.md) for this purpose.
 ```
-
-各 Appium クライアントには、capabilities を構築し、セッションを開始する独自の方法があります。 各クライアントライブラリでこれを行う例については、[エコシステム](../ecosystem/index.md) ページにアクセスし、適切なクライアントドキュメントをクリックしてください。
 
 ## BiDi プロトコルのサポート
 
-Appiumは、base-driver 9.5.0以降で[WebDriver BiDi](https://w3c.github.io/webdriver-bidi/)プロトコルをサポートしています。
-実際の動作は個々のドライバーによって異なりますが、Appium と base-driver はプロトコルをサポートしています。
-ドライバーが BiDi プロトコルをサポートしているかどうか、また、どのようなコマンド/イベントをサポートしているかはドキュメントで確認してください。
+In addition to the standard WebDriver protocol (now known as WebDriver Classic), Appium supports the
+[WebDriver BiDi](https://w3c.github.io/webdriver-bidi/) protocol. Support for this protocol is
+opt-in, and requires the use of the standard `webSocketUrl` capability.
 
-| Capability 名   | 型         | 説明                        |
-| -------------- | --------- | ------------------------- |
-| `webSocketUrl` | `boolean` | セッションで BiDi プロトコルを有効にします。 |
+| Capability Name | 型         | 説明                                              |
+| --------------- | --------- | ----------------------------------------------- |
+| `webSocketUrl`  | `boolean` | Whether BiDi protocol is enabled in the session |
+
+All BiDi commands supported by the Appium base driver (inherited by all drivers) can be found in the
+[BiDi Protocol API Reference document](../reference/api/bidi.md). Similarly to WebDriver Classic
+commands, individual Appium drivers and plugins can define their own supported standard and custom
+BiDi commands, so make sure to reference their documentation.
 
 ## `appium:options` を使用して機能をグループ化する
 
@@ -99,8 +117,7 @@ creates in response to a new session request. This is through the concept of "al
 !!! note
 
 ```
-Check out the [spec itself](https://w3c.github.io/webdriver/#processing-capabilities) or
-a [summarized version](https://github.com/jlipps/simple-wd-spec#processing-capabilities) for
+Check out the [spec itself](https://w3c.github.io/webdriver/#processing-capabilities) for
 a more in-depth description of how capabilities are processed.
 ```
 

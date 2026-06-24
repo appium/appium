@@ -3,6 +3,72 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.2.1](https://github.com/appium/appium/compare/@appium/fake-driver@6.2.0...@appium/fake-driver@6.2.1) (2026-06-18)
+
+**Note:** Version bump only for package @appium/fake-driver
+
+
+
+
+
+## [6.2.0](https://github.com/appium/appium/compare/@appium/fake-driver@6.1.3...@appium/fake-driver@6.2.0) (2026-05-31)
+
+
+### Features
+
+* add IPC channels per session for drivers and plugins to communicate ([#22211](https://github.com/appium/appium/issues/22211)) ([97c879c](https://github.com/appium/appium/commit/97c879cdd02e6fcccaaea45a8d1a7088bed4ae66)), closes [#22206](https://github.com/appium/appium/issues/22206)
+
+
+
+## [6.1.3](https://github.com/appium/appium/compare/@appium/fake-driver@6.1.2...@appium/fake-driver@6.1.3) (2026-05-06)
+
+**Note:** Version bump only for package @appium/fake-driver
+
+
+
+
+
+## [6.1.2](https://github.com/appium/appium/compare/@appium/fake-driver@6.1.1...@appium/fake-driver@6.1.2) (2026-04-23)
+
+
+### Bug Fixes
+
+* **fake-driver:** linter warnings ([#22177](https://github.com/appium/appium/issues/22177)) ([62c7132](https://github.com/appium/appium/commit/62c7132476958bf617506430aca63dd27740bc87))
+
+
+
+## [6.1.1](https://github.com/appium/appium/compare/@appium/fake-driver@6.1.0...@appium/fake-driver@6.1.1) (2026-04-09)
+
+**Note:** Version bump only for package @appium/fake-driver
+
+
+
+
+
+## [6.1.0](https://github.com/appium/appium/compare/@appium/fake-driver@6.0.2...@appium/fake-driver@6.1.0) (2026-03-08)
+
+
+### Features
+
+* **fake-driver:** Migrate doctor scripts to typescript ([#21946](https://github.com/appium/appium/issues/21946)) ([1707cc1](https://github.com/appium/appium/commit/1707cc1f851d439f00798d2135db44e95a18e681))
+* **fake-driver:** Migrate to typescript ([#21935](https://github.com/appium/appium/issues/21935)) ([0515ae5](https://github.com/appium/appium/commit/0515ae5c499319a846bfd4a57a0fc2a703e70613))
+
+
+### Bug Fixes
+
+* Type imports ([#22025](https://github.com/appium/appium/issues/22025)) ([2f27425](https://github.com/appium/appium/commit/2f27425ea300ca1af1c1da6e4be68d48e7a94346))
+
+
+
+## [6.0.2](https://github.com/appium/appium/compare/@appium/fake-driver@6.0.1...@appium/fake-driver@6.0.2) (2026-01-26)
+
+
+### Bug Fixes
+
+* apply npm run lint:fix ([#21867](https://github.com/appium/appium/issues/21867)) ([5e28714](https://github.com/appium/appium/commit/5e28714442cf59ee35b085e01e82c3f5483891fd))
+
+
+
 ## [6.0.1](https://github.com/appium/appium/compare/@appium/fake-driver@6.0.0...@appium/fake-driver@6.0.1) (2025-10-08)
 
 **Note:** Version bump only for package @appium/fake-driver

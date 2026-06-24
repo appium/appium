@@ -1,7 +1,7 @@
-import {ConditionalPick, MultidimensionalReadonlyArray} from 'type-fest';
-import {Driver, DriverCommand} from './driver';
-import {Plugin, PluginCommand} from './plugin';
-import {StringRecord} from './util';
+import type {ConditionalPick, MultidimensionalReadonlyArray} from 'type-fest';
+import type {Driver, DriverCommand} from './driver';
+import type {Plugin, PluginCommand} from './plugin';
+import type {StringRecord} from './util';
 
 /**
  * Defines the shape of a payload for a {@linkcode MethodDef}.
@@ -33,8 +33,8 @@ export interface PayloadParams {
 export type MethodMap<T extends Plugin | Driver> = T extends Plugin
   ? Readonly<PluginMethodMap<T>>
   : T extends Driver
-  ? Readonly<DriverMethodMap<T>>
-  : never;
+    ? Readonly<DriverMethodMap<T>>
+    : never;
 
 /**
  * A {@linkcode MethodMap} for a {@linkcode Driver}.
@@ -72,8 +72,10 @@ export interface BaseMethodDef {
 /**
  * A definition of an exposed API command in a {@linkcode Driver}.
  */
-export interface DriverMethodDef<T extends Driver, D extends boolean = boolean>
-  extends BaseMethodDef {
+export interface DriverMethodDef<
+  T extends Driver,
+  D extends boolean = boolean,
+> extends BaseMethodDef {
   /**
    * Name of the command.
    */
@@ -87,7 +89,7 @@ export interface PluginMethodDef<T extends Plugin> extends BaseMethodDef {
   /**
    * Name of the command.
    */
-  readonly command?: keyof ConditionalPick<Required<T>, DriverCommand>;
+  readonly command?: keyof ConditionalPick<Required<T>, PluginCommand>;
 }
 
 /**
@@ -148,13 +150,13 @@ export interface PluginExecuteMethodDef<T extends Plugin> extends BaseExecuteMet
 export type ExecuteMethodMap<T extends Plugin | Driver> = T extends Plugin
   ? Readonly<StringRecord<PluginExecuteMethodDef<T>>>
   : T extends Driver
-  ? Readonly<StringRecord<DriverExecuteMethodDef<T>>>
-  : never;
+    ? Readonly<StringRecord<DriverExecuteMethodDef<T>>>
+    : never;
 
 export interface BidiMethodParams {
   required?: readonly string[];
   optional?: readonly string[];
-};
+}
 
 export interface BidiMethodDef extends BaseExecuteMethodDef {
   command: string;

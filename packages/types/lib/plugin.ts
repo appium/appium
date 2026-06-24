@@ -1,10 +1,9 @@
-import {AsyncReturnType} from 'type-fest';
-import {BidiModuleMap, ExecuteMethodMap, MethodMap} from './command-maps';
-import {DriverCommand, ExternalDriver} from './driver';
-import {AppiumLogger} from './logger';
-import {UpdateServerCallback} from './server';
-import {Class, StringRecord} from './util';
-
+import type {AsyncReturnType} from 'type-fest';
+import type {BidiModuleMap, ExecuteMethodMap, MethodMap} from './command-maps';
+import type {DriverCommand, ExternalDriver} from './driver';
+import type {AppiumLogger} from './logger';
+import type {UpdateServerCallback} from './server';
+import type {Class, StringRecord} from './util';
 /**
  * The interface describing the constructor and static properties of a Plugin.
  */
@@ -53,7 +52,7 @@ export type DriverCommandToPluginCommand<
   DC extends DriverCommand,
   TArgs extends readonly any[] = Parameters<DC>,
   TReturn = AsyncReturnType<DC>,
-  NextRetval = unknown
+  NextRetval = unknown,
 > = PluginCommand<ExternalDriver, TArgs, TReturn, NextRetval>;
 
 /**
@@ -112,7 +111,7 @@ export type PluginCommand<
   D extends ExternalDriver = ExternalDriver,
   TArgs extends readonly any[] = any[],
   TReturn = unknown,
-  NextReturn = unknown
+  NextReturn = unknown,
 > = (next: NextPluginCallback<NextReturn>, driver: D, ...args: TArgs) => Promise<TReturn>;
 
 /**

@@ -1,12 +1,8 @@
 import path from 'node:path';
 import rewiremock from 'rewiremock/node';
 import type {Strongbox as TStrongbox, StrongboxOpts, Item, Value} from '../../lib';
-import {
-  createSandbox,
-  SinonSandbox,
-  SinonStubbedMember,
-  SinonStub
-} from 'sinon';
+import type {SinonSandbox, SinonStubbedMember, SinonStub} from 'sinon';
+import {createSandbox} from 'sinon';
 import type fs from 'node:fs/promises';
 
 type MockFs = {
@@ -42,7 +38,7 @@ describe('Strongbox', function () {
           })
           .dynamic(), // this allows us to change the mock behavior on-the-fly
         'env-paths': sandbox.stub().returns({data: DATA_DIR}),
-      })
+      }),
     ));
   });
 
@@ -66,7 +62,7 @@ describe('Strongbox', function () {
 
           expect(() => strongbox('test', {container})).to.throw(
             TypeError,
-            `container slug ${container} must be an absolute path`
+            `container slug ${container} must be an absolute path`,
           );
         });
       });
@@ -136,11 +132,13 @@ describe('Strongbox', function () {
             const item = await box.createItem('test');
             await item.write('boo bah');
 
-            expect(MockFs.writeFile.calledWith(
-              path.resolve(DATA_DIR, DEFAULT_SUFFIX, 'test'),
-              'boo bah',
-              'utf8'
-            )).to.be.true;
+            expect(
+              MockFs.writeFile.calledWith(
+                path.resolve(DATA_DIR, DEFAULT_SUFFIX, 'test'),
+                'boo bah',
+                'utf8',
+              ),
+            ).to.be.true;
           });
 
           it('should update the underlying value', async function () {
@@ -156,7 +154,7 @@ describe('Strongbox', function () {
           await box.createItem('test');
           await expect(box.createItem('test')).to.be.rejectedWith(
             Error,
-            `Item with id "${path.resolve(DATA_DIR, 'strongbox', 'test')}" already exists`
+            `Item with id "${path.resolve(DATA_DIR, 'strongbox', 'test')}" already exists`,
           );
         });
       });
@@ -201,12 +199,8 @@ describe('Strongbox', function () {
 
       it('should write the value to disk', async function () {
         await box.createItemWithValue('test', 'value');
-        expect(
-          MockFs.writeFile.calledWith(
-            path.resolve(DATA_DIR, DEFAULT_SUFFIX, 'test'),
-            'value'
-          )
-        ).to.be.true;
+        expect(MockFs.writeFile.calledWith(path.resolve(DATA_DIR, DEFAULT_SUFFIX, 'test'), 'value'))
+          .to.be.true;
       });
 
       describe('when the third parameter is a valid encoding', function () {
@@ -229,6 +223,101 @@ describe('Strongbox', function () {
           const item = await box.createItem('test');
           expect(box.getItem(item.id)).to.equal(item);
         });
+      });
+    });
+
+    describe('listItems()', function () {
+      function dirent(name: string, file = true) {
+        return {
+          name,
+          isFile: () => file,
+          isDirectory: () => !file,
+        };
+      }
+
+      function mockOpendir(entries: any[]) {
+        MockFs.opendir.resolves({
+          async *[Symbol.asyncIterator]() {
+            for (const e of entries) {
+              yield e;
+            }
+          },
+          close: sandbox.stub().resolves(),
+        } as any);
+      }
+
+      it('should return Items for each file in opendir iteration order', async function () {
+        mockOpendir([dirent('zebra'), dirent('alpha'), dirent('nested', false)]);
+        const items = await box.listItems();
+        expect(items.map((i) => i.name)).to.eql(['zebra', 'alpha']);
+        expect(MockFs.opendir.calledWith(box.container)).to.be.true;
+      });
+
+      it('should return an empty array when the container does not exist', async function () {
+        const err = Object.assign(new Error('ENOENT'), {code: 'ENOENT'});
+        MockFs.opendir.rejects(err);
+        await expect(box.listItems()).to.eventually.eql([]);
+      });
+
+      it('should rethrow non-ENOENT errors', async function () {
+        MockFs.opendir.rejects(new Error('EACCES'));
+        await expect(box.listItems()).to.be.rejectedWith('EACCES');
+      });
+
+      it('should reuse an Item already registered on this instance', async function () {
+        const existing = await box.createItem('alpha');
+        mockOpendir([dirent('alpha'), dirent('zebra')]);
+        const items = await box.listItems();
+        expect(items[0]).to.equal(existing);
+        expect(items.map((i) => i.name)).to.eql(['alpha', 'zebra']);
+      });
+    });
+
+    describe('Symbol.asyncIterator', function () {
+      function dirent(name: string, file = true) {
+        return {
+          name,
+          isFile: () => file,
+          isDirectory: () => !file,
+        };
+      }
+
+      function mockOpendir(entries: any[]) {
+        MockFs.opendir.resolves({
+          async *[Symbol.asyncIterator]() {
+            for (const e of entries) {
+              yield e;
+            }
+          },
+          close: sandbox.stub().resolves(),
+        } as any);
+      }
+
+      it('should yield the same Items in the same order as listItems()', async function () {
+        mockOpendir([dirent('zebra'), dirent('alpha'), dirent('nested', false)]);
+        const fromList = await box.listItems();
+        const fromIter: typeof fromList = [];
+        for await (const item of box) {
+          fromIter.push(item);
+        }
+        expect(fromIter.map((i) => i.name)).to.eql(fromList.map((i) => i.name));
+        expect(fromIter).to.eql(fromList);
+      });
+
+      it('should yield nothing when the container does not exist', async function () {
+        const err = Object.assign(new Error('ENOENT'), {code: 'ENOENT'});
+        MockFs.opendir.rejects(err);
+        const out: any[] = [];
+        for await (const item of box) {
+          out.push(item);
+        }
+        expect(out).to.eql([]);
+      });
+
+      it('should rethrow non-ENOENT errors', async function () {
+        MockFs.opendir.rejects(new Error('EACCES'));
+        const gen = box[Symbol.asyncIterator]();
+        await expect(gen.next()).to.be.rejectedWith('EACCES');
       });
     });
   });

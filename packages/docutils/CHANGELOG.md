@@ -3,6 +3,96 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.5.1](https://github.com/appium/appium/compare/@appium/docutils@2.5.0...@appium/docutils@2.5.1) (2026-06-18)
+
+**Note:** Version bump only for package @appium/docutils
+
+
+
+
+
+## [2.5.0](https://github.com/appium/appium/compare/@appium/docutils@2.4.3...@appium/docutils@2.5.0) (2026-06-18)
+
+
+### Features
+
+* **docutils:** add option to only use major version when deploying ([#22374](https://github.com/appium/appium/issues/22374)) ([e4faa69](https://github.com/appium/appium/commit/e4faa6919b1d3e67a78b226ee74321e522918e4a))
+
+
+
+## [2.4.3](https://github.com/appium/appium/compare/@appium/docutils@2.4.2...@appium/docutils@2.4.3) (2026-05-31)
+
+**Note:** Version bump only for package @appium/docutils
+
+
+
+
+
+## [2.4.2](https://github.com/appium/appium/compare/@appium/docutils@2.4.1...@appium/docutils@2.4.2) (2026-05-07)
+
+**Note:** Version bump only for package @appium/docutils
+
+
+
+
+
+## [2.4.1](https://github.com/appium/appium/compare/@appium/docutils@2.4.0...@appium/docutils@2.4.1) (2026-05-06)
+
+**Note:** Version bump only for package @appium/docutils
+
+
+
+
+
+## [2.4.0](https://github.com/appium/appium/compare/@appium/docutils@2.3.1...@appium/docutils@2.4.0) (2026-05-06)
+
+
+### Features
+
+* **docutils:** add mermaid diagram support ([#22227](https://github.com/appium/appium/issues/22227)) ([08493df](https://github.com/appium/appium/commit/08493df3d12c78c1234c1efdc993c58e42d0abdb))
+
+
+
+## [2.3.1](https://github.com/appium/appium/compare/@appium/docutils@2.3.0...@appium/docutils@2.3.1) (2026-04-23)
+
+
+### Bug Fixes
+
+* All the rest of linter warnings ([#22183](https://github.com/appium/appium/issues/22183)) ([efe167f](https://github.com/appium/appium/commit/efe167f59a0a19515b78a53346e5d0b3fc4c744c))
+
+
+
+## [2.3.0](https://github.com/appium/appium/compare/@appium/docutils@2.2.2...@appium/docutils@2.3.0) (2026-04-09)
+
+
+### Features
+
+* use exact version for dependencies in monorepo packages instead of ^ ([#22090](https://github.com/appium/appium/issues/22090)) ([86c8f23](https://github.com/appium/appium/commit/86c8f23a670d0bbc2d359a8235828606bd36e6aa))
+
+
+### Bug Fixes
+
+* **docutils:** do not silence errors when building without serve ([#22118](https://github.com/appium/appium/issues/22118)) ([5cd7076](https://github.com/appium/appium/commit/5cd7076fd65e9e53f5a401c37402eabe7163ae3a))
+
+
+
+## [2.2.2](https://github.com/appium/appium/compare/@appium/docutils@2.2.1...@appium/docutils@2.2.2) (2026-03-08)
+
+
+### Bug Fixes
+
+* Type imports ([#22025](https://github.com/appium/appium/issues/22025)) ([2f27425](https://github.com/appium/appium/commit/2f27425ea300ca1af1c1da6e4be68d48e7a94346))
+
+
+
+## [2.2.1](https://github.com/appium/appium/compare/@appium/docutils@2.2.0...@appium/docutils@2.2.1) (2026-01-26)
+
+**Note:** Version bump only for package @appium/docutils
+
+
+
+
+
 ## [2.2.0](https://github.com/appium/appium/compare/@appium/docutils@2.1.2...@appium/docutils@2.2.0) (2025-12-04)
 
 

@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {util, logger} from '@appium/support';
 import {validators} from './validators';
 import {
@@ -10,17 +9,24 @@ import {
   BadParametersError,
 } from './errors';
 import {METHOD_MAP, NO_SESSION_ID_COMMANDS} from './routes';
-import B from 'bluebird';
 import {formatResponseValue, ensureW3cResponse} from './helpers';
 import {MAX_LOG_BODY_LENGTH, PROTOCOLS, DEFAULT_BASE_PATH} from '../constants';
 import {isW3cCaps} from '../helpers/capabilities';
-import log from '../basedriver/logger';
-import { generateDriverLogPrefix } from '../basedriver/helpers';
-import type { Core, AppiumLogger, PayloadParams, MethodMap, Driver, DriverMethodDef } from '@appium/types';
-import type { BaseDriver } from '../basedriver/driver';
-import type { Request, Response, Application } from 'express';
-import type { MultidimensionalReadonlyArray } from 'type-fest';
-import type { RouteConfiguringFunction } from '../express/server';
+import {log} from '../basedriver/logger';
+import {omitKeys} from '../utils';
+import {generateDriverLogPrefix} from '../basedriver/helpers';
+import type {
+  Core,
+  AppiumLogger,
+  PayloadParams,
+  MethodMap,
+  Driver,
+  DriverMethodDef,
+} from '@appium/types';
+import type {BaseDriver} from '../basedriver/driver';
+import type {Request, Response, Application} from 'express';
+import type {MultidimensionalReadonlyArray} from 'type-fest';
+import type {RouteConfiguringFunction} from '../express/server';
 
 export const CREATE_SESSION_COMMAND = 'createSession';
 export const DELETE_SESSION_COMMAND = 'deleteSession';
@@ -30,101 +36,78 @@ export const LIST_DRIVER_EXTENSIONS_COMMAND = 'listExtensions';
 
 export const deprecatedCommandsLogged: Set<string> = new Set();
 
+/**
+ * Infer W3C vs MJSONWP from new-session capability payloads.
+ * @param createSessionArgs - Arguments passed to the createSession command
+ */
 export function determineProtocol(createSessionArgs: any[]): keyof typeof PROTOCOLS {
-  return _.some(createSessionArgs, isW3cCaps) ? PROTOCOLS.W3C : PROTOCOLS.MJSONWP;
+  return createSessionArgs.some(isW3cCaps) ? PROTOCOLS.W3C : PROTOCOLS.MJSONWP;
 }
 
-
-function extractProtocol(driver: Core<any>, sessionId: string | null = null): keyof typeof PROTOCOLS {
-  const dstDriver = _.isFunction(driver.driverForSession) && sessionId
-    ? driver.driverForSession(sessionId)
-    : driver;
-  if (dstDriver === driver) {
-    // Shortcircuit if the driver instance is not an umbrella driver
-    // or it is Fake driver instance, where `driver.driverForSession`
-    // always returns self instance
-    return driver.protocol ?? PROTOCOLS.W3C;
+/**
+ * Extract and validate the sessionId from the Express route parameter.
+ * Express may return route params as string | string[] | undefined.
+ * Appium uses standard routes (e.g., /session/:sessionId) which should always be strings.
+ * Only `*` such as `/session/*sessionId` can return `string[]`.
+ * Then, this method will return the first element as the session id.
+ * It may break existing appium routing handling also, thus this method will log
+ * received parameters as well to help debugging.
+ * @param driver Running driver
+ * @param req The request in Express
+ * @returns The normalized sessionId (string or undefined)
+ */
+export function getSessionId(driver: Core<any>, req: Request): string | undefined {
+  if (Array.isArray(req.params.sessionId)) {
+    const sessionId = req.params.sessionId[0];
+    getLogger(driver, sessionId).warn(
+      `Received malformed sessionId as array from the route: ${req.originalUrl}. ` +
+        `This indicates the route definition issue. The route should start with '/session/:sessionId' (named parameter) ` +
+        `instead of '/session/*sessionId' (wildcard). ` +
+        `Using the first element as session id: ${sessionId}. ` +
+        `Please fix the route definition to prevent this error.`,
+    );
+    // This is to not log the message multiple times.
+    req.params.sessionId = sessionId;
+    return sessionId;
   }
-
-  // Extract the protocol for the current session if the given driver is the umbrella one
-  return dstDriver?.protocol ?? PROTOCOLS.W3C;
+  return req.params.sessionId;
 }
 
+/**
+ * @param command - Driver command name
+ * @returns Whether the command requires a session id in the URL
+ */
 export function isSessionCommand(command: string): boolean {
-  return !_.includes(NO_SESSION_ID_COMMANDS, command);
+  return !NO_SESSION_ID_COMMANDS.includes(command);
 }
 
-function getLogger(driver: Core<any>, sessionId: string | null = null): AppiumLogger {
-  const dstDriver =
-    sessionId && _.isFunction(driver.driverForSession)
-      ? driver.driverForSession(sessionId) ?? driver
-      : driver;
-  if (_.isFunction(dstDriver.log?.info)) {
-    return dstDriver.log;
-  }
-
-  const logPrefix = generateDriverLogPrefix(dstDriver);
-  return logger.getLogger(logPrefix);
-}
-
-function wrapParams<T>(paramSets, jsonObj: T): T | Record<string, T> {
-  /* There are commands like performTouch which take a single parameter (primitive type or array).
-   * Some drivers choose to pass this parameter as a value (eg. [action1, action2...]) while others to
-   * wrap it within an object(eg' {gesture:  [action1, action2...]}), which makes it hard to validate.
-   * The wrap option in the spec enforce wrapping before validation, so that all params are wrapped at
-   * the time they are validated and later passed to the commands.
-   */
-  return (_.isArray(jsonObj) || !_.isObject(jsonObj)) && paramSets.wrap
-    ? {[paramSets.wrap]: jsonObj}
-    : jsonObj;
-}
-
-function unwrapParams<T>(paramSets: PayloadParams, jsonObj: T): T | Record<string, T> {
-  /* There are commands like setNetworkConnection which send parameters wrapped inside a key such as
-   * "parameters". This function unwraps them (eg. {"parameters": {"type": 1}} becomes {"type": 1}).
-   */
-  return _.isObject(jsonObj) && paramSets.unwrap && jsonObj[paramSets.unwrap]
-    ? jsonObj[paramSets.unwrap]
-    : jsonObj;
-}
-
-function hasMultipleRequiredParamSets(
-  required: ReadonlyArray<string> | MultidimensionalReadonlyArray<string, 2> | undefined
-): required is MultidimensionalReadonlyArray<string, 2> {
-  //@ts-expect-error Needed to convince lodash typechecks
-  return Boolean(required && _.isArray(_.first(required)));
-}
-
-function pickKnownParams(args: Record<string, any>, unknownNames: string[]): Record<string, any> {
-  if (_.isEmpty(unknownNames)) {
-    return args;
-  }
-  log.info(`The following arguments are not known and will be ignored: ${unknownNames}`);
-  return _.pickBy(args, (v, k) => !unknownNames.includes(k));
-}
-
+/**
+ * Validate request arguments against a route payload spec and return filtered params.
+ * @param paramSpec - Required/optional parameter definition from the method map
+ * @param args - Raw arguments (e.g. JSON body)
+ * @param protocol - Active protocol, used when a custom validate function is present
+ */
 export function checkParams(
   paramSpec: PayloadParams,
   args: Record<string, any>,
-  protocol?: keyof typeof PROTOCOLS
+  protocol?: keyof typeof PROTOCOLS,
 ): Record<string, any> {
   let requiredParams: string[][] = [];
   let optionalParams: string[] = [];
-  const actualParamNames: string[] = _.keys(args);
+  const actualParamNames: string[] = Object.keys(args);
 
   if (paramSpec.required) {
     // we might have an array of parameters,
     // or an array of arrays of parameters, so standardize
-    requiredParams = _.cloneDeep(
+    requiredParams = structuredClone(
       (hasMultipleRequiredParamSets(paramSpec.required)
         ? paramSpec.required
-        : [paramSpec.required]
-      ) as string[][]
+        : [paramSpec.required]) as string[][],
     );
   }
   // optional parameters are just an array
   if (paramSpec.optional) {
-    optionalParams = _.cloneDeep(paramSpec.optional as string[]);
+    optionalParams = structuredClone(paramSpec.optional as string[]);
   }
 
   // If a function was provided as the 'validate' key, it will here be called with
@@ -134,64 +117,75 @@ export function checkParams(
   if (paramSpec.validate) {
     const message = paramSpec.validate(args, protocol ?? PROTOCOLS.W3C);
     if (message) {
-      throw new errors.InvalidArgumentError(_.isString(message) ? message : undefined);
+      throw new errors.InvalidArgumentError(typeof message === 'string' ? message : undefined);
     }
   }
 
   // some clients pass in the session id in the params
-  if (!_.includes(optionalParams, 'sessionId')) {
+  if (!optionalParams.includes('sessionId')) {
     optionalParams.push('sessionId');
   }
   // some clients pass in an element id in the params
-  if (!_.includes(optionalParams, 'id')) {
+  if (!optionalParams.includes('id')) {
     optionalParams.push('id');
   }
 
-  if (_.isEmpty(requiredParams)) {
+  if (util.isEmpty(requiredParams)) {
     // if we don't have any required parameters, then just filter out unknown ones
-    return pickKnownParams(args, _.difference(actualParamNames, optionalParams));
+    return pickKnownParams(
+      args,
+      actualParamNames.filter((name) => !optionalParams.includes(name)),
+    );
   }
 
   // go through the required parameters and check against our arguments
   let matchedReqParamSet: string[] = [];
   for (const requiredParamsSet of requiredParams) {
-    if (!_.isArray(requiredParamsSet)) {
+    if (!Array.isArray(requiredParamsSet)) {
       throw new Error(
         `The required parameter set item ${JSON.stringify(requiredParamsSet)} ` +
-        `in ${JSON.stringify(paramSpec)} is not an array. ` +
-        `This is a bug in the method map definition.`
+          `in ${JSON.stringify(paramSpec)} is not an array. ` +
+          `This is a bug in the method map definition.`,
       );
     }
-    if (_.isEmpty(_.difference(requiredParamsSet, actualParamNames))) {
+    if (requiredParamsSet.every((name) => actualParamNames.includes(name))) {
       return pickKnownParams(
         args,
-        _.difference(actualParamNames, requiredParamsSet, optionalParams)
+        actualParamNames.filter(
+          (name) => !requiredParamsSet.includes(name) && !optionalParams.includes(name),
+        ),
       );
     }
-    if (!_.isEmpty(requiredParamsSet) && _.isEmpty(matchedReqParamSet)) {
+    if (!util.isEmpty(requiredParamsSet) && util.isEmpty(matchedReqParamSet)) {
       matchedReqParamSet = requiredParamsSet;
     }
   }
-  throw new BadParametersError({
-    ...paramSpec,
-    required: matchedReqParamSet,
-    optional: optionalParams,
-  }, actualParamNames);
+  throw new BadParametersError(
+    {
+      ...paramSpec,
+      required: matchedReqParamSet,
+      optional: optionalParams,
+    },
+    actualParamNames,
+  );
 }
 
-/*
- * This method takes 3 pieces of data: request parameters ('requestParams'),
- * a request JSON body ('jsonObj'), and 'payloadParams', which is the section
- * from the route definition for a particular endpoint which has instructions
- * on handling parameters. This method returns an array of arguments which will
- * be applied to a command.
+/**
+ * Build the ordered argument list for a driver command from URL params, JSON body, and route spec.
+ * @param requestParams - Express route parameters (e.g. sessionId, element id)
+ * @param jsonObj - Parsed JSON request body
+ * @param payloadParams - Route payload definition (required/optional/makeArgs)
  */
-export function makeArgs(requestParams: PayloadParams, jsonObj: any, payloadParams: PayloadParams): any[] {
+export function makeArgs(
+  requestParams: Record<string, string | string[] | undefined>,
+  jsonObj: any,
+  payloadParams: PayloadParams,
+): any[] {
   // We want to pass the "url" parameters to the commands in reverse order
   // since the command will sometimes want to ignore, say, the sessionId.
   // This has the effect of putting sessionId last, which means in JS we can
   // omit it from the function signature if we're not going to use it.
-  const urlParams = _.keys(requestParams).reverse();
+  const urlParams = Object.keys(requestParams).reverse();
 
   // In the simple case, the required parameters are a basic array in
   // payloadParams.required, so start there. It's possible that there are
@@ -203,9 +197,9 @@ export function makeArgs(requestParams: PayloadParams, jsonObj: any, payloadPara
     // array of arrays in payloadParams.required, so loop through each set and
     // pick the one that matches which JSON params were actually sent. We've
     // already been through validation so we're guaranteed to find a match.
-    const keys = _.keys(jsonObj);
+    const keys = Object.keys(jsonObj);
     for (const params of payloadParams.required) {
-      if (_.without(params, ...keys).length === 0) {
+      if (params.filter((p) => !keys.includes(p)).length === 0) {
         requiredParams = params;
         break;
       }
@@ -214,7 +208,7 @@ export function makeArgs(requestParams: PayloadParams, jsonObj: any, payloadPara
 
   // Now we construct our list of arguments which will be passed to the command
   let args;
-  if (_.isFunction(payloadParams.makeArgs)) {
+  if (typeof payloadParams.makeArgs === 'function') {
     // In the route spec, a particular route might define a 'makeArgs' function
     // if it wants full control over how to turn JSON parameters into command
     // arguments. So we pass it the JSON parameters and it returns an array
@@ -225,9 +219,9 @@ export function makeArgs(requestParams: PayloadParams, jsonObj: any, payloadPara
   } else {
     // Otherwise, collect all the required and optional params and flatten them
     // into an argument array
-    args = _.flatten(requiredParams).map((p) => jsonObj[p]);
+    args = (requiredParams ?? []).flat().map((p) => jsonObj[p]);
     if (payloadParams.optional) {
-      args = args.concat(_.flatten(payloadParams.optional).map((p) => jsonObj[p]));
+      args = args.concat((payloadParams.optional ?? []).flat().map((p) => jsonObj[p]));
     }
   }
   // Finally, get our url params (session id, element id, etc...) on the end of
@@ -236,21 +230,26 @@ export function makeArgs(requestParams: PayloadParams, jsonObj: any, payloadPara
   return args;
 }
 
+/**
+ * Validate parameters for execute/executeAsync script endpoints.
+ * @param params - Raw execute command arguments from the client
+ * @param paramSpec - Optional payload spec for additional validation
+ */
 export function validateExecuteMethodParams(params: any[], paramSpec?: PayloadParams): any[] {
   // the w3c protocol will give us an array of arguments to apply to a javascript function.
   // that's not what we're doing. we're going to look for a JS object as the first arg, so we
   // can perform validation on it. we'll ignore everything else.
-  if (!params || !_.isArray(params) || params.length > 1) {
+  if (!params || !Array.isArray(params) || params.length > 1) {
     throw new errors.InvalidArgumentError(
       `Did not get correct format of arguments for execute method. Expected zero or one ` +
-        `arguments to execute script and instead received: ${JSON.stringify(params)}`
+        `arguments to execute script and instead received: ${JSON.stringify(params)}`,
     );
   }
   const args: Record<string, any> = params[0] ?? {};
-  if (!_.isPlainObject(args)) {
+  if (!util.isPlainObject(args)) {
     throw new errors.InvalidArgumentError(
       `Did not receive an appropriate execute method parameters object. It needs to be ` +
-        `deserializable as a plain JS object`
+        `deserializable as a plain JS object`,
     );
   }
   const specToUse = {
@@ -262,7 +261,10 @@ export function validateExecuteMethodParams(params: any[], paramSpec?: PayloadPa
   return makeArgs({}, filteredArgs, specToUse);
 }
 
-
+/**
+ * Returns a function that registers default (and plugin) HTTP routes on an Express app for a driver.
+ * @param driver - Driver instance used to execute commands
+ */
 export function routeConfiguringFunction(driver: Core<any>): RouteConfiguringFunction {
   if (!driver.sessionExists) {
     throw new Error('Drivers must implement `sessionExists` property');
@@ -280,21 +282,112 @@ export function routeConfiguringFunction(driver: Core<any>): RouteConfiguringFun
     driver.basePath = basePath;
 
     const allMethods: MethodMap<Driver> = {...METHOD_MAP, ...extraMethodMap};
-    for (const [path, methods] of _.toPairs(allMethods)) {
-      for (const [method, spec] of _.toPairs(methods)) {
+    for (const [path, methods] of Object.entries(allMethods)) {
+      for (const [method, spec] of Object.entries(methods)) {
         const isSessCommand = spec.command ? isSessionCommand(spec.command) : false;
         // set up the express route handler
-        buildHandler(
-          app,
-          method,
-          `${basePath}${path}`,
-          spec,
-          driver,
-          isSessCommand
-        );
+        buildHandler(app, method, `${basePath}${path}`, spec, driver, isSessCommand);
       }
     }
   };
+}
+
+/**
+ * Whether an incoming request should be forwarded to the driver's JWProxy for the given command.
+ * @param driver - Active driver
+ * @param req - Incoming HTTP request
+ * @param command - Resolved driver command name
+ */
+export function driverShouldDoJwpProxy(driver: Core<any>, req: Request, command: string): boolean {
+  const sessionId = getSessionId(driver, req);
+  // drivers need to explicitly say when the proxy is active
+  if (!driver.proxyActive(sessionId)) {
+    return false;
+  }
+
+  // we should never proxy deleteSession because we need to give the containing
+  // driver an opportunity to clean itself up
+  if (command === DELETE_SESSION_COMMAND) {
+    return false;
+  }
+
+  // validate avoidance schema, and say we shouldn't proxy if anything in the
+  // avoid list matches our req
+  if (driver.proxyRouteIsAvoided(sessionId as string, req.method, req.originalUrl, req.body)) {
+    return false;
+  }
+
+  return true;
+}
+
+function extractProtocol(
+  driver: Core<any>,
+  sessionId: string | null = null,
+): keyof typeof PROTOCOLS {
+  const dstDriver =
+    typeof driver.driverForSession === 'function' && sessionId
+      ? driver.driverForSession(sessionId)
+      : driver;
+  if (dstDriver === driver) {
+    // Shortcircuit if the driver instance is not an umbrella driver
+    // or it is Fake driver instance, where `driver.driverForSession`
+    // always returns self instance
+    return driver.protocol ?? PROTOCOLS.W3C;
+  }
+
+  // Extract the protocol for the current session if the given driver is the umbrella one
+  return dstDriver?.protocol ?? PROTOCOLS.W3C;
+}
+
+function getLogger(driver: Core<any>, sessionId: string | null = null): AppiumLogger {
+  const dstDriver =
+    sessionId && typeof driver.driverForSession === 'function'
+      ? (driver.driverForSession(sessionId) ?? driver)
+      : driver;
+  if (typeof dstDriver.log?.info === 'function') {
+    return dstDriver.log;
+  }
+
+  const logPrefix = generateDriverLogPrefix(dstDriver);
+  return logger.getLogger(logPrefix);
+}
+
+function wrapParams<T>(paramSets: PayloadParams, jsonObj: T): T | Record<string, T> {
+  /* There are commands like performTouch which take a single parameter (primitive type or array).
+   * Some drivers choose to pass this parameter as a value (eg. [action1, action2...]) while others to
+   * wrap it within an object(eg' {gesture:  [action1, action2...]}), which makes it hard to validate.
+   * The wrap option in the spec enforce wrapping before validation, so that all params are wrapped at
+   * the time they are validated and later passed to the commands.
+   */
+  return (Array.isArray(jsonObj) || typeof jsonObj !== 'object' || jsonObj === null) &&
+    paramSets.wrap
+    ? {[paramSets.wrap]: jsonObj}
+    : jsonObj;
+}
+
+function unwrapParams<T>(paramSets: PayloadParams, jsonObj: T): T | Record<string, T> {
+  /* There are commands like setNetworkConnection which send parameters wrapped inside a key such as
+   * "parameters". This function unwraps them (eg. {"parameters": {"type": 1}} becomes {"type": 1}).
+   */
+  const unwrapped =
+    typeof jsonObj === 'object' && jsonObj !== null && paramSets.unwrap
+      ? (jsonObj as Record<string, T>)[paramSets.unwrap]
+      : undefined;
+  return unwrapped !== undefined ? unwrapped : jsonObj;
+}
+
+function hasMultipleRequiredParamSets(
+  required: ReadonlyArray<string> | MultidimensionalReadonlyArray<string, 2> | undefined,
+): required is MultidimensionalReadonlyArray<string, 2> {
+  return Boolean(required && Array.isArray(required?.[0]));
+}
+
+function pickKnownParams(args: Record<string, any>, unknownNames: string[]): Record<string, any> {
+  if (util.isEmpty(unknownNames)) {
+    return args;
+  }
+  log.info(`The following arguments are not known and will be ignored: ${unknownNames}`);
+  return omitKeys(args, unknownNames);
 }
 
 function buildHandler(
@@ -303,29 +396,30 @@ function buildHandler(
   path: string,
   spec: DriverMethodDef<Driver>,
   driver: Core<any>,
-  isSessCmd: boolean
+  isSessCmd: boolean,
 ): void {
   const asyncHandler = async (req: Request, res: Response) => {
     let jsonObj = req.body;
     let httpResBody = {} as any;
     let httpStatus = 200;
     let newSessionId: string | undefined;
-    let currentProtocol = extractProtocol(driver, req.params.sessionId);
+    const sessionId = getSessionId(driver, req);
+    let currentProtocol = extractProtocol(driver, sessionId);
 
     try {
       // if the route accessed is deprecated, log a warning
       if (spec.deprecated && spec.command && !deprecatedCommandsLogged.has(spec.command)) {
         deprecatedCommandsLogged.add(spec.command);
-        getLogger(driver, req.params.sessionId).warn(
+        getLogger(driver, sessionId).warn(
           `The ${method} ${path} endpoint has been deprecated and will be removed in a future ` +
             `version of Appium or your driver/plugin. Please use a different endpoint or contact the ` +
-            `driver/plugin author to add explicit support for the endpoint before it is removed`
+            `driver/plugin author to add explicit support for the endpoint before it is removed`,
         );
       }
 
       // if this is a session command but we don't have a session,
       // error out early (especially before proxying)
-      if (isSessCmd && !driver.sessionExists(req.params.sessionId)) {
+      if (isSessCmd && !driver.sessionExists(sessionId)) {
         throw new errors.NoSuchDriverError();
       }
 
@@ -338,18 +432,24 @@ function buildHandler(
       // commands and generally would not want that command to be proxied instead of handled by the
       // plugin)
       let didPluginOverrideProxy = false;
-      if (isSessCmd && !spec.neverProxy && spec.command && driverShouldDoJwpProxy(driver, req, spec.command)) {
+      if (
+        isSessCmd &&
+        !spec.neverProxy &&
+        spec.command &&
+        driverShouldDoJwpProxy(driver, req, spec.command)
+      ) {
         if (
-          !('pluginsToHandleCmd' in driver) || !_.isFunction(driver.pluginsToHandleCmd) ||
-          driver.pluginsToHandleCmd(spec.command, req.params.sessionId).length === 0
+          !('pluginsToHandleCmd' in driver) ||
+          typeof driver.pluginsToHandleCmd !== 'function' ||
+          driver.pluginsToHandleCmd(spec.command, sessionId).length === 0
         ) {
           await doJwpProxy(driver as BaseDriver<any>, req, res);
           return;
         }
-        getLogger(driver, req.params.sessionId).debug(
+        getLogger(driver, sessionId).debug(
           `Would have proxied ` +
             `command directly, but a plugin exists which might require its value, so will let ` +
-            `its value be collected internally and made part of plugin chain`
+            `its value be collected internally and made part of plugin chain`,
         );
         didPluginOverrideProxy = true;
       }
@@ -374,7 +474,7 @@ function buildHandler(
         // try to determine protocol by session creation args, so we can throw a
         // properly formatted error if arguments validation fails
         currentProtocol = determineProtocol(
-          makeArgs(req.params, jsonObj, spec.payloadParams || {})
+          makeArgs(req.params, jsonObj, spec.payloadParams || {}),
         );
       }
 
@@ -388,15 +488,21 @@ function buildHandler(
       const args = makeArgs(req.params, jsonObj, spec.payloadParams || {});
       let driverRes: any;
       // validate command args according to MJSONWP
-      if (validators[spec.command]) {
-        validators[spec.command](...args);
+      const validator = (
+        validators as Record<string, ((...validatorArgs: any[]) => void) | undefined>
+      )[spec.command];
+      if (validator) {
+        validator(...args);
       }
 
       // run the driver command wrapped inside the argument validators
-      getLogger(driver, req.params.sessionId).debug(
+      getLogger(driver, sessionId).debug(
         `Calling %s.%s() with args: %s`,
-        driver.constructor.name, spec.command,
-        logger.markSensitive(_.truncate(JSON.stringify(args), {length: MAX_LOG_BODY_LENGTH}))
+        driver.constructor.name,
+        spec.command,
+        logger.markSensitive(
+          util.truncateString(JSON.stringify(args), {length: MAX_LOG_BODY_LENGTH}),
+        ),
       );
 
       if (didPluginOverrideProxy) {
@@ -409,12 +515,13 @@ function buildHandler(
       driverRes = await (driver as BaseDriver<any>).executeCommand(spec.command, ...args);
 
       // Get the protocol after executeCommand
-      currentProtocol = extractProtocol(driver, req.params.sessionId) || currentProtocol;
+      currentProtocol = extractProtocol(driver, sessionId) || currentProtocol;
 
       // If `executeCommand` was overridden and the method returns an object
       // with a protocol and value/error property, re-assign the protocol
-      if (_.isPlainObject(driverRes) && _.has(driverRes, 'protocol')) {
-        currentProtocol = driverRes.protocol || currentProtocol;
+      if (util.isPlainObject(driverRes) && Object.hasOwn(driverRes, 'protocol')) {
+        currentProtocol =
+          (driverRes as {protocol?: keyof typeof PROTOCOLS}).protocol || currentProtocol;
         if (driverRes.error) {
           throw driverRes.error;
         }
@@ -425,7 +532,7 @@ function buildHandler(
       if (spec.command === CREATE_SESSION_COMMAND) {
         newSessionId = driverRes[0];
         getLogger(driver, newSessionId).debug(
-          `Cached the protocol value '${currentProtocol}' for the new session ${newSessionId}`
+          `Cached the protocol value '${currentProtocol}' for the new session ${newSessionId}`,
         );
         if (currentProtocol === PROTOCOLS.MJSONWP) {
           driverRes = driverRes[1];
@@ -440,12 +547,12 @@ function buildHandler(
 
       // delete should not return anything even if successful
       if (spec.command === DELETE_SESSION_COMMAND) {
-        getLogger(driver, req.params.sessionId).debug(
-          `Received response: ${_.truncate(JSON.stringify(driverRes), {
+        getLogger(driver, sessionId).debug(
+          `Received response: ${util.truncateString(JSON.stringify(driverRes), {
             length: MAX_LOG_BODY_LENGTH,
-          })}`
+          })}`,
         );
-        getLogger(driver, req.params.sessionId).debug('But deleting session, so not returning');
+        getLogger(driver, sessionId).debug('But deleting session, so not returning');
         driverRes = null;
       }
 
@@ -457,50 +564,60 @@ function buildHandler(
           parseInt(driverRes.status, 10) !== 0
         ) {
           throw errorFromMJSONWPStatusCode(driverRes.status, driverRes.value);
-        } else if (_.isPlainObject(driverRes.value) && driverRes.value.error) {
+        } else if (util.isPlainObject(driverRes.value) && driverRes.value.error) {
           throw errorFromW3CJsonCode(
             driverRes.value.error,
             driverRes.value.message,
-            driverRes.value.stacktrace
+            driverRes.value.stacktrace,
           );
         }
       }
 
       httpResBody.value = driverRes;
-      getLogger(driver, req.params.sessionId || newSessionId).debug(
+      getLogger(driver, sessionId || newSessionId).debug(
         `Responding ` +
-          `to client with driver.${spec.command}() result: ${_.truncate(JSON.stringify(driverRes), {
-            length: MAX_LOG_BODY_LENGTH,
-          })}`
+          `to client with driver.${spec.command}() result: ${util.truncateString(
+            JSON.stringify(driverRes),
+            {
+              length: MAX_LOG_BODY_LENGTH,
+            },
+          )}`,
       );
     } catch (err) {
       // if anything goes wrong, figure out what our response should be
       // based on the type of error that we encountered
-      let actualErr;
-      if (err instanceof Error || (_.has(err, 'stack') && _.has(err, 'message'))) {
+      let actualErr: Error;
+      if (err instanceof Error) {
         actualErr = err;
+      } else if (
+        typeof err === 'object' &&
+        err !== null &&
+        Object.hasOwn(err, 'stack') &&
+        Object.hasOwn(err, 'message')
+      ) {
+        actualErr = err as Error;
       } else {
-        getLogger(driver, req.params.sessionId || newSessionId).warn(
+        getLogger(driver, sessionId || newSessionId).warn(
           'The thrown error object does not seem to be a valid instance of the Error class. This ' +
-            'might be a genuine bug of a driver or a plugin.'
+            'might be a genuine bug of a driver or a plugin.',
         );
         actualErr = new Error(`${err ?? 'unknown'}`);
       }
 
-      currentProtocol =
-        currentProtocol || extractProtocol(driver, req.params.sessionId || newSessionId);
+      currentProtocol = currentProtocol || extractProtocol(driver, sessionId || newSessionId);
 
-      let errMsg = err.stacktrace || err.stack;
-      if (!_.includes(errMsg, err.message)) {
+      const stacktrace = (err as {stacktrace?: string}).stacktrace;
+      let errMsg = stacktrace || actualErr.stack || '';
+      if (!errMsg.includes(actualErr.message)) {
         // if the message has more information, add it. but often the message
         // is the first part of the stack trace
-        errMsg = `${err.message}${errMsg ? '\n' + errMsg : ''}`;
+        errMsg = `${actualErr.message}${errMsg ? '\n' + errMsg : ''}`;
       }
       if (isErrorType(err, errors.ProxyRequestError)) {
         actualErr = err.getActualError();
       } else {
-        getLogger(driver, req.params.sessionId || newSessionId).debug(
-          `Encountered internal error running command: ${errMsg}`
+        getLogger(driver, sessionId || newSessionId).debug(
+          `Encountered internal error running command: ${errMsg}`,
         );
       }
 
@@ -508,8 +625,9 @@ function buildHandler(
     }
 
     // decode the response, which is either a string or json
-    if (_.isString(httpResBody)) {
-      res.status(httpStatus)
+    if (typeof httpResBody === 'string') {
+      res
+        .status(httpStatus)
         .setHeader('content-type', 'application/json; charset=utf-8')
         .send(httpResBody);
     } else {
@@ -520,48 +638,31 @@ function buildHandler(
     }
   };
   // add the method to the app
-  app[method.toLowerCase()](path, (req, res) => {
-    B.resolve(asyncHandler(req, res)).done();
+  const registerRoute = (
+    app as Application & Record<string, (routePath: string, ...handlers: any[]) => void>
+  )[method.toLowerCase()].bind(app);
+  registerRoute(path, (req: Request, res: Response) => {
+    void asyncHandler(req, res);
   });
 }
 
-export function driverShouldDoJwpProxy(driver: Core<any>, req: import('express').Request, command: string): boolean {
-  // drivers need to explicitly say when the proxy is active
-  if (!driver.proxyActive(req.params.sessionId)) {
-    return false;
-  }
-
-  // we should never proxy deleteSession because we need to give the containing
-  // driver an opportunity to clean itself up
-  if (command === DELETE_SESSION_COMMAND) {
-    return false;
-  }
-
-  // validate avoidance schema, and say we shouldn't proxy if anything in the
-  // avoid list matches our req
-  if (driver.proxyRouteIsAvoided(req.params.sessionId, req.method, req.originalUrl, req.body)) {
-    return false;
-  }
-
-  return true;
-}
-
 async function doJwpProxy(driver: BaseDriver<any>, req: Request, res: Response): Promise<void> {
-  getLogger(driver, req.params.sessionId).info(
-    'Driver proxy active, passing request on via HTTP proxy'
-  );
+  const sessionId = getSessionId(driver, req) as string;
+  getLogger(driver, sessionId).info('Driver proxy active, passing request on via HTTP proxy');
 
   // check that the inner driver has a proxy function
-  if (!driver.canProxy(req.params.sessionId)) {
+  if (!driver.canProxy(sessionId)) {
     throw new Error('Trying to proxy to a server but the driver is unable to proxy');
   }
   try {
-    await driver.executeCommand('proxyReqRes', req, res, req.params.sessionId);
+    await driver.executeCommand('proxyReqRes', req, res, sessionId);
   } catch (err) {
     if (isErrorType(err, errors.ProxyRequestError)) {
       throw err;
-    } else {
-      throw new Error(`Could not proxy. Proxy error: ${err.message}`);
     }
+    if (err instanceof Error) {
+      throw new Error(`Could not proxy. Proxy error: ${err.message}`, {cause: err});
+    }
+    throw new Error(`Could not proxy. Proxy error: ${String(err)}`, {cause: err});
   }
 }

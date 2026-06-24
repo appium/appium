@@ -12,6 +12,9 @@ const DOC_PATH = path.resolve(__dirname, '..', 'en', 'cli', 'args.md');
 const START_TAG = `<!-- AUTOGEN-START -->`;
 const STOP_TAG = `<!-- AUTOGEN-STOP -->`;
 
+/**
+ * Regenerates the CLI arguments table in docs.
+ */
 async function main() {
   console.log(`Gathering current cli doc file contents...`);
   const [preStart, postEnd] = await getDocParts();

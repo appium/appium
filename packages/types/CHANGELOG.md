@@ -3,6 +3,76 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.5.1](https://github.com/appium/appium/compare/@appium/types@1.5.0...@appium/types@1.5.1) (2026-06-18)
+
+**Note:** Version bump only for package @appium/types
+
+
+
+
+
+## [1.5.0](https://github.com/appium/appium/compare/@appium/types@1.4.0...@appium/types@1.5.0) (2026-05-31)
+
+
+### Features
+
+* add IPC channels per session for drivers and plugins to communicate ([#22211](https://github.com/appium/appium/issues/22211)) ([97c879c](https://github.com/appium/appium/commit/97c879cdd02e6fcccaaea45a8d1a7088bed4ae66)), closes [#22206](https://github.com/appium/appium/issues/22206)
+* Limit the maximum count of topics per session and make it configurable ([#22279](https://github.com/appium/appium/issues/22279)) ([0264775](https://github.com/appium/appium/commit/0264775ecb8ecaca9dac2eae47784da02a653255))
+* make assignIpc internal ([#22278](https://github.com/appium/appium/issues/22278)) ([25d922b](https://github.com/appium/appium/commit/25d922b7d3062c306c1631d6f5c227600ddd226a))
+
+
+
+## [1.4.0](https://github.com/appium/appium/compare/@appium/types@1.3.1...@appium/types@1.4.0) (2026-05-06)
+
+
+### Features
+
+* add 3 WebDriver extension endpoints ([#22237](https://github.com/appium/appium/issues/22237)) ([787571d](https://github.com/appium/appium/commit/787571d33836c06bb1332d7bc6cc2f9800bbdd82))
+
+
+
+## [1.3.1](https://github.com/appium/appium/compare/@appium/types@1.3.0...@appium/types@1.3.1) (2026-04-23)
+
+
+### Bug Fixes
+
+* All the rest of linter warnings ([#22183](https://github.com/appium/appium/issues/22183)) ([efe167f](https://github.com/appium/appium/commit/efe167f59a0a19515b78a53346e5d0b3fc4c744c))
+
+
+
+## [1.3.0](https://github.com/appium/appium/compare/@appium/types@1.2.1...@appium/types@1.3.0) (2026-04-09)
+
+
+### Features
+
+* use exact version for dependencies in monorepo packages instead of ^ ([#22090](https://github.com/appium/appium/issues/22090)) ([86c8f23](https://github.com/appium/appium/commit/86c8f23a670d0bbc2d359a8235828606bd36e6aa))
+
+
+
+## [1.2.1](https://github.com/appium/appium/compare/@appium/types@1.2.0...@appium/types@1.2.1) (2026-03-08)
+
+
+### Bug Fixes
+
+* Type imports ([#22025](https://github.com/appium/appium/issues/22025)) ([2f27425](https://github.com/appium/appium/commit/2f27425ea300ca1af1c1da6e4be68d48e7a94346))
+
+
+
+## [1.2.0](https://github.com/appium/appium/compare/@appium/types@1.1.2...@appium/types@1.2.0) (2026-01-26)
+
+
+### Features
+
+* **base-driver:** add ability to supply custom headers for proxy ([#21790](https://github.com/appium/appium/issues/21790)) ([a4b47c0](https://github.com/appium/appium/commit/a4b47c02c6e72381fa9d191d2a0bced106999705))
+
+
+### Bug Fixes
+
+* apply npm run lint:fix ([#21867](https://github.com/appium/appium/issues/21867)) ([5e28714](https://github.com/appium/appium/commit/5e28714442cf59ee35b085e01e82c3f5483891fd))
+* **scripts:** properly import log-symbols in scripts ([#21819](https://github.com/appium/appium/issues/21819)) ([e9a6e54](https://github.com/appium/appium/commit/e9a6e5425cfd7f148ac2258a69884b4c3f2dbce3))
+
+
+
 ## [1.1.2](https://github.com/appium/appium/compare/@appium/types@1.1.1...@appium/types@1.1.2) (2025-12-04)
 
 **Note:** Version bump only for package @appium/types

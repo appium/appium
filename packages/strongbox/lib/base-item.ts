@@ -11,11 +11,6 @@ import {slugify} from './util';
  */
 export class BaseItem<T extends Value, U extends Strongbox = Strongbox> implements Item<T> {
   /**
-   * {@inheritdoc Item.value}
-   */
-  protected _value?: T;
-
-  /**
    * Parent Strongbox instance
    */
   public readonly container: string;
@@ -29,6 +24,11 @@ export class BaseItem<T extends Value, U extends Strongbox = Strongbox> implemen
   public readonly value: T | undefined;
 
   /**
+   * {@inheritdoc Item.value}
+   */
+  protected _value?: T;
+
+  /**
    * Slugifies the name
    * @param name Name of instance
    * @param parent Parent Strongbox
@@ -37,10 +37,10 @@ export class BaseItem<T extends Value, U extends Strongbox = Strongbox> implemen
   constructor(
     public readonly name: string,
     parent: U,
-    public readonly encoding: ItemEncoding = 'utf8'
+    public readonly encoding: ItemEncoding = 'utf8',
   ) {
     this.container = parent.container;
-    this.id = path.join(this.container, slugify(name));
+    this.id = BaseItem.toFilePath(this.container, name);
     Object.defineProperties(this, {
       value: {
         get() {
@@ -53,6 +53,14 @@ export class BaseItem<T extends Value, U extends Strongbox = Strongbox> implemen
         writable: true,
       },
     });
+  }
+
+  /**
+   * Absolute filesystem path of the file backing an item: `container` + slugified `name`.
+   * Also used to convert a `name` to an `id`.
+   */
+  public static toFilePath(container: string, name: string): string {
+    return path.join(container, slugify(name));
   }
 
   /**

@@ -8,7 +8,7 @@ import type {CommandModule, InferredOptionTypes, Options} from 'yargs';
 import {buildSite, deploy} from '../../builder';
 import {NAME_BIN} from '../../constants';
 import {getLogger} from '../../logger';
-import {stopwatch} from '../../util';
+import {stopwatch} from '../../utils';
 import {checkMissingPaths} from '../check';
 
 const log = getLogger('build');
@@ -116,6 +116,12 @@ const opts = {
     nargs: 1,
     requiresArg: true,
     defaultDescription: '(derived from package.json)',
+  },
+  'use-prefixed-major-deploy-version': {
+    describe: 'Deploy using a v-prefixed major version',
+    implies: 'deploy',
+    group: BuildCommandGroup.Deploy,
+    type: 'boolean',
   },
   alias: {
     describe: 'Alias for the build (e.g., "latest"); triggers alias update',

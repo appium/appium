@@ -1,6 +1,6 @@
-import {Constraints, IEventCommands} from '@appium/types';
-import _ from 'lodash';
-import {BaseDriver} from '../driver';
+import type {Constraints, EventHistory, IEventCommands} from '@appium/types';
+import {util} from '@appium/support';
+import type {BaseDriver} from '../driver';
 import {mixin} from './mixin';
 
 declare module '../driver' {
@@ -16,7 +16,11 @@ const EventCommands: IEventCommands = {
    * separation
    * @param event - the event name
    */
-  async logCustomEvent<C extends Constraints>(this: BaseDriver<C>, vendor: string, event: string) {
+  async logCustomEvent<C extends Constraints>(
+    this: BaseDriver<C>,
+    vendor: string,
+    event: string,
+  ): Promise<void> {
     this.logEvent(`${vendor}:${event}`);
   },
 
@@ -26,23 +30,25 @@ const EventCommands: IEventCommands = {
    * It returns all events if the type is not provided or empty string/array.
    * @returns the event history log object
    */
-  async getLogEvents<C extends Constraints>(this: BaseDriver<C>, type: string | string[]) {
-    if (_.isEmpty(type)) {
+  async getLogEvents<C extends Constraints>(
+    this: BaseDriver<C>,
+    type: string | string[],
+  ): Promise<Partial<EventHistory>> {
+    if (util.isEmpty(type)) {
       return this.eventHistory;
     }
 
-    const typeList = _.castArray(type);
+    const typeList = Array.isArray(type) ? type : [type];
 
-    return _.reduce(
-      this.eventHistory,
-      (acc, eventTimes, eventType) => {
+    return Object.entries(this.eventHistory).reduce<Partial<EventHistory>>(
+      (acc, [eventType, eventTimes]) => {
         if (typeList.includes(eventType)) {
           acc[eventType] = eventTimes;
         }
         return acc;
       },
-      {}
-    );
+      {},
+    ) as Record<string, number>;
   },
 };
 

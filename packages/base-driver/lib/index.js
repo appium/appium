@@ -1,19 +1,9 @@
-import B from 'bluebird';
-
-try {
-  B.config({
-    cancellation: true,
-  });
-} catch {
-  // sometimes during testing this somehow gets required twice and results in an error about
-  // cancellation not being able to be enabled after promise has been configured
-}
-
 // BaseDriver exports
 export {ExtensionCore} from './basedriver/extension-core';
 import {BaseDriver} from './basedriver/driver';
 export {DriverCore} from './basedriver/core';
 export {DeviceSettings} from './basedriver/device-settings';
+export {AppiumIpc} from './basedriver/ipc';
 
 export {BaseDriver};
 export default BaseDriver;
@@ -24,7 +14,8 @@ export * from './protocol';
 export {errorFromMJSONWPStatusCode as errorFromCode} from './protocol';
 
 // Express exports
-export {STATIC_DIR} from './express/static';
+/** @deprecated Removed in Appium 4. Use hard-copied test fixtures in driver CI instead. */
+export {TEST_FIXTURES_DIR as STATIC_DIR} from './test-pages';
 export {server, normalizeBasePath} from './express/server';
 
 // jsonwp-proxy exports

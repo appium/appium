@@ -5,7 +5,6 @@
  */
 
 import {fs, util} from '@appium/support';
-import _ from 'lodash';
 import {EventEmitter} from 'node:events';
 import {exec} from 'teen_process';
 import {
@@ -22,7 +21,7 @@ import {
 import {DocutilsError} from './error';
 import {findMkDocsYml, isMkDocsInstalled, readMkDocsYml, findPython} from './fs';
 import {getLogger} from './logger';
-import {MkDocsYml, PipPackage} from './model';
+import type {MkDocsYml, PipPackage} from './model';
 
 /**
  * Matches the Python version string from `python --version`
@@ -41,6 +40,29 @@ const log = getLogger('validate');
  */
 export type ValidationKind = typeof NAME_PYTHON | typeof NAME_MKDOCS;
 
+export interface DocutilsValidatorOpts {
+  /**
+   * Current working directory
+   */
+  cwd?: string;
+  /**
+   * Path to `mkdocs.yml`
+   */
+  mkdocsYml?: string;
+  /**
+   * If `true`, run Python validation
+   */
+  python?: boolean;
+  /**
+   * Path to `python` executable
+   */
+  pythonPath?: string;
+  /**
+   * If `true`, run MkDocs validation
+   */
+  mkdocs?: boolean;
+}
+
 /**
  * This class is designed to run _all_ validation checks (as requested by the user), and emit events for
  * each failure encountered.
@@ -51,6 +73,30 @@ export type ValidationKind = typeof NAME_PYTHON | typeof NAME_MKDOCS;
  * @todo Use [`strict-event-emitter-types`](https://npm.im/strict-event-emitter-types)
  */
 export class DocutilsValidator extends EventEmitter {
+  /**
+   * Emitted when validation begins with a list of validation kinds to be performed
+   * @event
+   */
+  public static readonly BEGIN = 'begin';
+
+  /**
+   * Emitted when validation ends with an error count
+   * @event
+   */
+  public static readonly END = 'end';
+
+  /**
+   * Emitted when a validation fails, with the associated {@linkcode DocutilsError}
+   * @event
+   */
+  public static readonly FAILURE = 'fail';
+
+  /**
+   * Emitted when a validation succeeds
+   * @event
+   */
+  public static readonly SUCCESS = 'ok';
+
   /**
    * Current working directory. Defaults to `process.cwd()`
    * @todo This cannot yet be overridden by user
@@ -81,30 +127,6 @@ export class DocutilsValidator extends EventEmitter {
    * Path to `mkdocs.yml`.  If not provided, will be lazily resolved.
    */
   protected mkDocsYmlPath?: string;
-
-  /**
-   * Emitted when validation begins with a list of validation kinds to be performed
-   * @event
-   */
-  public static readonly BEGIN = 'begin';
-
-  /**
-   * Emitted when validation ends with an error count
-   * @event
-   */
-  public static readonly END = 'end';
-
-  /**
-   * Emitted when a validation fails, with the associated {@linkcode DocutilsError}
-   * @event
-   */
-  public static readonly FAILURE = 'fail';
-
-  /**
-   * Emitted when a validation succeeds
-   * @event
-   */
-  public static readonly SUCCESS = 'ok';
 
   private requirementsTxt: PipPackage[] | undefined;
 
@@ -161,7 +183,7 @@ export class DocutilsValidator extends EventEmitter {
    * @returns
    */
   protected fail(err: DocutilsError | string) {
-    const dErr = _.isString(err) ? new DocutilsError(err) : err;
+    const dErr = typeof err === 'string' ? new DocutilsError(err) : err;
     if (!this.emittedErrors.has(dErr.message)) {
       this.emit(DocutilsValidator.FAILURE, dErr);
     }
@@ -197,8 +219,8 @@ export class DocutilsValidator extends EventEmitter {
         requiredPackages.push({name, version});
       }
       log.debug('Parsed %s: %O', NAME_REQUIREMENTS_TXT, requiredPackages);
-    } catch {
-      throw new DocutilsError(`Could not find ${REQUIREMENTS_TXT_PATH}. This is a bug`);
+    } catch (e) {
+      throw new DocutilsError(`Could not find ${REQUIREMENTS_TXT_PATH}. This is a bug`, {cause: e});
     }
 
     return (this.requirementsTxt = requiredPackages);
@@ -239,7 +261,7 @@ export class DocutilsValidator extends EventEmitter {
     }
     const version = match[1];
     const reqs = await this.parseRequirementsTxt();
-    const mkDocsPipPkg = _.find(reqs, {name: NAME_MKDOCS});
+    const mkDocsPipPkg = reqs.find((pkg) => pkg.name === NAME_MKDOCS);
     if (!mkDocsPipPkg) {
       throw new DocutilsError(
         `No ${NAME_MKDOCS} package in ${REQUIREMENTS_TXT_PATH}. This is a bug`,
@@ -324,7 +346,7 @@ export class DocutilsValidator extends EventEmitter {
       return this.fail(`Could not parse output of "${NAME_PIP} list" as JSON: ${pipListOutput}`);
     }
 
-    const pkgsByName = _.mapValues(_.keyBy(installedPkgs, 'name'), 'version');
+    const pkgsByName = Object.fromEntries(installedPkgs.map((pkg) => [pkg.name, pkg.version]));
     log.debug('Installed Python packages: %O', pkgsByName);
 
     const requiredPackages = await this.parseRequirementsTxt();
@@ -391,31 +413,4 @@ export class DocutilsValidator extends EventEmitter {
     }
     this.ok('Python version OK');
   }
-}
-
-/**
- * Options for {@linkcode DocutilsValidator} constructor
- */
-
-export interface DocutilsValidatorOpts {
-  /**
-   * Current working directory
-   */
-  cwd?: string;
-  /**
-   * Path to `mkdocs.yml`
-   */
-  mkdocsYml?: string;
-  /**
-   * If `true`, run Python validation
-   */
-  python?: boolean;
-  /**
-   * Path to `python` executable
-   */
-  pythonPath?: string;
-  /**
-   * If `true`, run MkDocs validation
-   */
-  mkdocs?: boolean;
 }

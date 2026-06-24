@@ -1,24 +1,20 @@
-import { fs, timing } from '@appium/support';
-import _ from 'lodash';
-import B from 'bluebird';
-import type { Path } from 'path-scurry';
+import {fs, timing, util} from '@appium/support';
+import {asyncmap} from 'asyncbox';
+import type {Path} from 'path-scurry';
 import path from 'node:path';
-import type { Stats } from 'node:fs';
 import nativeFs from 'node:fs';
-import { rimrafSync } from 'rimraf';
-import { ItemOptions, StorageItem } from './types';
+import type {ItemOptions, StorageItem} from './types';
 import AsyncLock from 'async-lock';
-import type { AppiumLogger } from '@appium/types';
+import type {AppiumLogger} from '@appium/types';
 import type Stream from 'node:stream';
 import type WebSocket from 'ws';
-import { createHash } from 'node:crypto';
+import {createHash} from 'node:crypto';
 
 const MAX_TASKS = 5;
 const TMP_EXT = '.filepart';
 const ADDITION_LOCK = new AsyncLock();
 const WS_SERVER_ERROR = 1011;
 const SHA1_HASH_LEN = 40;
-
 
 export class Storage {
   private readonly _root: string;
@@ -39,36 +35,26 @@ export class Storage {
   }
 
   async list(): Promise<StorageItem[]> {
-    const items = (await this._listFiles())
-      .filter((p) => !p.fullpath().endsWith(TMP_EXT));
-    if (_.isEmpty(items)) {
+    const items = (await this._listFiles()).filter((p) => !p.fullpath().endsWith(TMP_EXT));
+    if (util.isEmpty(items)) {
       return [];
     }
 
-    const statPromises: B<Stats>[] = [];
-    for (const item of items) {
-      const pending = statPromises.filter((p) => p.isPending());
-      if (pending.length >= MAX_TASKS) {
-        await B.any(pending);
-      }
-      statPromises.push(B.resolve(fs.stat(item.fullpath())));
-    }
-    return _.zip(
-      items.map((f) => f.fullpath()),
-      await B.all(statPromises)
-    )
-    .map(([fullpath, stat]) => ({
-      name: path.basename(fullpath as string),
-      path: fullpath as string,
-      size: (stat as Stats).size,
+    const stats = await asyncmap(items, (item) => fs.stat(item.fullpath()), {
+      concurrency: MAX_TASKS,
+    });
+    return items.map((item, index) => ({
+      name: path.basename(item.fullpath()),
+      path: item.fullpath(),
+      size: stats[index].size,
     }));
   }
 
   async add(opts: ItemOptions, source: Stream | WebSocket): Promise<void> {
     const {name} = requireValidItemOptions(opts);
-    // _.toLower is needed for case-insensitive server filesystems
-    await ADDITION_LOCK.acquire(_.toLower(name), async () => {
-      if (_.isFunction((source as any).pipe)) {
+    // toLowerCase is needed for case-insensitive server filesystems
+    await ADDITION_LOCK.acquire(name.toLowerCase(), async () => {
+      if (typeof (source as any).pipe === 'function') {
         await this._addFromStream(opts, source as Stream);
       } else {
         await this._addFromWebSocket(opts, source as WebSocket);
@@ -77,11 +63,11 @@ export class Storage {
   }
 
   async delete(name: string): Promise<boolean> {
-    if (_.toLower(name).endsWith(TMP_EXT)) {
+    if (name.toLowerCase().endsWith(TMP_EXT)) {
       return false;
     }
     const destinationPath = path.join(this._root, name);
-    if (!await fs.exists(destinationPath)) {
+    if (!(await fs.exists(destinationPath))) {
       return false;
     }
     await fs.rimraf(destinationPath);
@@ -93,7 +79,7 @@ export class Storage {
       await fs.rimraf(this._root);
     }
 
-    if (!await fs.exists(this._root)) {
+    if (!(await fs.exists(this._root))) {
       await fs.mkdirp(this._root);
       return;
     }
@@ -101,57 +87,51 @@ export class Storage {
     const files = (await this._listFiles())
       .map((p) => p.fullpath())
       .filter(
-        (fullPath) => !this._shouldPreserveFiles || _.toLower(path.basename(fullPath)).endsWith(TMP_EXT)
+        (fullPath) =>
+          !this._shouldPreserveFiles || path.basename(fullPath).toLowerCase().endsWith(TMP_EXT),
       );
-    if (_.isEmpty(files)) {
+    if (util.isEmpty(files)) {
       return;
     }
 
-    const promises: B<any>[] = [];
-    for (const fullPath of files) {
-      const pending = promises.filter((p) => p.isPending());
-      if (pending.length >= MAX_TASKS) {
-        await B.any(pending);
-      }
-      promises.push(B.resolve(fs.rimraf(fullPath)));
-    }
-    await B.all(promises);
+    await asyncmap(files, (fullPath) => fs.rimraf(fullPath), {concurrency: MAX_TASKS});
   }
 
   cleanupSync(): void {
     this._log.debug(`Cleaning up the '${this._root}' server storage folder`);
 
     if (!this._shouldPreserveRoot && !this._shouldPreserveFiles) {
-      rimrafSync(this._root);
+      fs.rimrafSync(this._root);
       return;
     }
 
     let itemNames: string[];
     try {
-      itemNames = nativeFs.readdirSync(this._root)
-        .filter((name) => !_.startsWith(name, '.'));
+      itemNames = nativeFs.readdirSync(this._root).filter((name) => !name.startsWith('.'));
     } catch (e) {
+      const message = e instanceof Error ? e.message : String(e);
       this._log.warn(
-        `Cannot list the '${this._root}' server storage folder. Original error: ${e.message}. ` +
-        `Skipping the cleanup.`
+        `Cannot list the '${this._root}' server storage folder. Original error: ${message}. ` +
+          `Skipping the cleanup.`,
       );
       return;
     }
-    if (_.isEmpty(itemNames)) {
+    if (util.isEmpty(itemNames)) {
       if (!this._shouldPreserveRoot) {
-        rimrafSync(this._root);
+        fs.rimrafSync(this._root);
       }
       return;
     }
 
     const matchedNames = itemNames.filter(
-      (name) => !this._shouldPreserveFiles || _.toLower(name).endsWith(TMP_EXT)
+      (name) => !this._shouldPreserveFiles || name.toLowerCase().endsWith(TMP_EXT),
     );
     for (const matchedName of matchedNames) {
-      rimrafSync(path.join(this._root, matchedName));
+      fs.rimrafSync(path.join(this._root, matchedName));
     }
-    if (!this._shouldPreserveRoot && _.isEmpty(_.without(itemNames, ...matchedNames))) {
-      rimrafSync(this._root);
+    const remainingNames = itemNames.filter((name) => !matchedNames.includes(name));
+    if (!this._shouldPreserveRoot && util.isEmpty(remainingNames)) {
+      fs.rimrafSync(this._root);
     }
   }
 
@@ -205,7 +185,7 @@ export class Storage {
           });
           sha1sum.update(data as any);
           recentDigest = sha1sum.copy().digest('hex');
-          if (_.toLower(recentDigest) === _.toLower(sha1)) {
+          if (recentDigest.toLowerCase() === sha1.toLowerCase()) {
             didDigestMatch = true;
             destination.close(() => resolve(true));
           }
@@ -235,42 +215,55 @@ export class Storage {
     const {name, sha1} = opts;
     this._log.info(
       `'${name}' has been added to the server storage within ` +
-      `${timer.getDuration().asMilliSeconds}ms. Verifying hashes.`
+        `${timer.getDuration().asMilliSeconds}ms. Verifying hashes.`,
     );
-    if (_.toLower(actualHashDigest) !== _.toLower(sha1)) {
+    if (actualHashDigest.toLowerCase() !== sha1.toLowerCase()) {
       throw new StorageArgumentError(
         `The actual SHA1 hash value '${actualHashDigest}' must be equal ` +
-        `to the expected hash value of '${sha1}' for '${name}'`
+          `to the expected hash value of '${sha1}' for '${name}'`,
       );
     }
     await fs.mv(fullPath, path.join(this._root, name));
   }
 }
 
-function toTempName(origName: string): string {
-  return `${origName}${TMP_EXT}`;
-}
+export class StorageArgumentError extends Error {}
 
+/**
+ * Validates storage item options and returns the same object when valid.
+ * @param opts Candidate item options.
+ */
 export function requireValidItemOptions(opts: ItemOptions): ItemOptions {
-  if (_.isEmpty(opts.name)) {
-    throw new StorageArgumentError(`The provided file name '${opts.name}' must not be empty`);
-  }
-  const sanitizedName = fs.sanitizeName(opts.name, {
-    replacement: '_',
-  });
-  if (opts.name !== sanitizedName) {
-    throw new StorageArgumentError(
-      `The provided name value '${opts.name}' must be a valid file name. ` +
-      `Did you mean '${sanitizedName}'?`
-    );
-  }
-  if (!_.isString(opts.sha1) || opts.sha1.length !== SHA1_HASH_LEN) {
+  validateStorageItemName(opts.name);
+  if (opts.sha1?.length !== SHA1_HASH_LEN) {
     throw new StorageArgumentError(
       `The provided hash value '${opts.sha1}' must be a valid SHA1 string, for ` +
-      `example 'ccc963411b2621335657963322890305ebe96186'`
+        `example 'ccc963411b2621335657963322890305ebe96186'`,
     );
   }
   return opts;
 }
 
-export class StorageArgumentError extends Error {}
+/**
+ * Validate storage item name and throw if it is invalid.
+ * @param name The name to validate.
+ */
+export function validateStorageItemName(name: string): void {
+  if (util.isEmpty(name)) {
+    throw new StorageArgumentError(`The provided file name '${name}' must not be empty`);
+  }
+
+  const sanitizedName = fs.sanitizeName(name, {
+    replacement: '_',
+  });
+  if (name !== sanitizedName) {
+    throw new StorageArgumentError(
+      `The provided name value '${name}' must be a valid file name. ` +
+        `Did you mean '${sanitizedName}'?`,
+    );
+  }
+}
+
+function toTempName(origName: string): string {
+  return `${origName}${TMP_EXT}`;
+}

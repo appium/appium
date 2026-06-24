@@ -3,6 +3,119 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.7.1](https://github.com/appium/appium/compare/@appium/base-driver@10.7.0...@appium/base-driver@10.7.1) (2026-06-18)
+
+**Note:** Version bump only for package @appium/base-driver
+
+
+
+
+
+## [10.7.0](https://github.com/appium/appium/compare/@appium/base-driver@10.6.0...@appium/base-driver@10.7.0) (2026-06-18)
+
+
+### Features
+
+* **base-driver:** Isolate test endpoints ([#22394](https://github.com/appium/appium/issues/22394)) ([d94a40a](https://github.com/appium/appium/commit/d94a40af9f8040191ee7888571a1c9d5aec59f89))
+
+
+
+## [10.6.0](https://github.com/appium/appium/compare/@appium/base-driver@10.5.2...@appium/base-driver@10.6.0) (2026-05-31)
+
+
+### Features
+
+* add IPC channels per session for drivers and plugins to communicate ([#22211](https://github.com/appium/appium/issues/22211)) ([97c879c](https://github.com/appium/appium/commit/97c879cdd02e6fcccaaea45a8d1a7088bed4ae66)), closes [#22206](https://github.com/appium/appium/issues/22206)
+* **base-driver:** Ditch bluebird ([#22293](https://github.com/appium/appium/issues/22293)) ([c9b7eac](https://github.com/appium/appium/commit/c9b7eac3653027245cdcde1a5880c0ca2c1c9ed1))
+* **base-driver:** Ditch lodash ([#22324](https://github.com/appium/appium/issues/22324)) ([cf79b32](https://github.com/appium/appium/commit/cf79b3283a85ad0bc38359c345ac33669867e853))
+* Limit the maximum count of topics per session and make it configurable ([#22279](https://github.com/appium/appium/issues/22279)) ([0264775](https://github.com/appium/appium/commit/0264775ecb8ecaca9dac2eae47784da02a653255))
+* make assignIpc internal ([#22278](https://github.com/appium/appium/issues/22278)) ([25d922b](https://github.com/appium/appium/commit/25d922b7d3062c306c1631d6f5c227600ddd226a))
+
+
+
+## [10.5.2](https://github.com/appium/appium/compare/@appium/base-driver@10.5.1...@appium/base-driver@10.5.2) (2026-05-07)
+
+**Note:** Version bump only for package @appium/base-driver
+
+
+
+
+
+## [10.5.1](https://github.com/appium/appium/compare/@appium/base-driver@10.5.0...@appium/base-driver@10.5.1) (2026-05-06)
+
+**Note:** Version bump only for package @appium/base-driver
+
+
+
+
+
+## [10.5.0](https://github.com/appium/appium/compare/@appium/base-driver@10.4.0...@appium/base-driver@10.5.0) (2026-05-06)
+
+
+### Features
+
+* add 3 WebDriver extension endpoints ([#22237](https://github.com/appium/appium/issues/22237)) ([787571d](https://github.com/appium/appium/commit/787571d33836c06bb1332d7bc6cc2f9800bbdd82))
+* **base-driver:** map W3C 'no such shadow root' to NoSuchShadowRootError ([#22210](https://github.com/appium/appium/issues/22210)) ([fa1e875](https://github.com/appium/appium/commit/fa1e87535be36647983b70362f00533ef7843b40)), closes [#22209](https://github.com/appium/appium/issues/22209)
+
+
+
+## [10.4.0](https://github.com/appium/appium/compare/@appium/base-driver@10.3.0...@appium/base-driver@10.4.0) (2026-04-23)
+
+
+### Features
+
+* **base-driver:** Show known capability name matches for typos ([#22193](https://github.com/appium/appium/issues/22193)) ([4c4e8d8](https://github.com/appium/appium/commit/4c4e8d89110975fbcf71fceaf99c5a76636d211f))
+
+
+### Bug Fixes
+
+* **base-driver:** lint warnings ([#22174](https://github.com/appium/appium/issues/22174)) ([943866b](https://github.com/appium/appium/commit/943866bcf3c823c7d57b001ccb345cde4f4d2c4d))
+* **base-driver:** Make proxy timeout mutable again ([#22154](https://github.com/appium/appium/issues/22154)) ([dfe8bde](https://github.com/appium/appium/commit/dfe8bde6877b5233a7cba48b319045e29dde3c98))
+
+
+
+## [10.3.0](https://github.com/appium/appium/compare/@appium/base-driver@10.2.2...@appium/base-driver@10.3.0) (2026-04-09)
+
+
+### Features
+
+* use exact version for dependencies in monorepo packages instead of ^ ([#22090](https://github.com/appium/appium/issues/22090)) ([86c8f23](https://github.com/appium/appium/commit/86c8f23a670d0bbc2d359a8235828606bd36e6aa))
+
+
+
+## [10.2.2](https://github.com/appium/appium/compare/@appium/base-driver@10.2.1...@appium/base-driver@10.2.2) (2026-03-09)
+
+**Note:** Version bump only for package @appium/base-driver
+
+
+
+
+
+## [10.2.1](https://github.com/appium/appium/compare/@appium/base-driver@10.2.0...@appium/base-driver@10.2.1) (2026-03-08)
+
+
+### Bug Fixes
+
+* Avoid attaching plugins to a non-existing session ([#21964](https://github.com/appium/appium/issues/21964)) ([9f5faf5](https://github.com/appium/appium/commit/9f5faf5bedffe6196742c09c6793a6450af48ac9))
+* **base-driver:** fix session id handling more ([#21962](https://github.com/appium/appium/issues/21962)) ([d734b4c](https://github.com/appium/appium/commit/d734b4c200ac2e4416a0a61074c2f48897b6529d))
+* Type imports ([#22025](https://github.com/appium/appium/issues/22025)) ([2f27425](https://github.com/appium/appium/commit/2f27425ea300ca1af1c1da6e4be68d48e7a94346))
+
+
+
+## [10.2.0](https://github.com/appium/appium/compare/@appium/base-driver@10.1.2...@appium/base-driver@10.2.0) (2026-01-26)
+
+
+### Features
+
+* **base-driver:** add ability to supply custom headers for proxy ([#21790](https://github.com/appium/appium/issues/21790)) ([a4b47c0](https://github.com/appium/appium/commit/a4b47c02c6e72381fa9d191d2a0bced106999705))
+
+
+### Bug Fixes
+
+* apply npm run lint:fix ([#21867](https://github.com/appium/appium/issues/21867)) ([5e28714](https://github.com/appium/appium/commit/5e28714442cf59ee35b085e01e82c3f5483891fd))
+
+
+
 ## [10.1.2](https://github.com/appium/appium/compare/@appium/base-driver@10.1.1...@appium/base-driver@10.1.2) (2025-12-04)
 
 **Note:** Version bump only for package @appium/base-driver

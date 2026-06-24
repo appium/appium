@@ -3,6 +3,95 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.2.7](https://github.com/appium/appium/compare/@appium/images-plugin@4.2.6...@appium/images-plugin@4.2.7) (2026-06-18)
+
+**Note:** Version bump only for package @appium/images-plugin
+
+
+
+
+
+## [4.2.6](https://github.com/appium/appium/compare/@appium/images-plugin@4.2.5...@appium/images-plugin@4.2.6) (2026-06-18)
+
+**Note:** Version bump only for package @appium/images-plugin
+
+
+
+
+
+## [4.2.5](https://github.com/appium/appium/compare/@appium/images-plugin@4.2.4...@appium/images-plugin@4.2.5) (2026-05-31)
+
+**Note:** Version bump only for package @appium/images-plugin
+
+
+
+
+
+## [4.2.4](https://github.com/appium/appium/compare/@appium/images-plugin@4.2.3...@appium/images-plugin@4.2.4) (2026-05-07)
+
+**Note:** Version bump only for package @appium/images-plugin
+
+
+
+
+
+## [4.2.3](https://github.com/appium/appium/compare/@appium/images-plugin@4.2.2...@appium/images-plugin@4.2.3) (2026-05-06)
+
+**Note:** Version bump only for package @appium/images-plugin
+
+
+
+
+
+## [4.2.2](https://github.com/appium/appium/compare/@appium/images-plugin@4.2.1...@appium/images-plugin@4.2.2) (2026-05-06)
+
+**Note:** Version bump only for package @appium/images-plugin
+
+
+
+
+
+## [4.2.1](https://github.com/appium/appium/compare/@appium/images-plugin@4.2.0...@appium/images-plugin@4.2.1) (2026-04-23)
+
+
+### Bug Fixes
+
+* All the rest of linter warnings ([#22183](https://github.com/appium/appium/issues/22183)) ([efe167f](https://github.com/appium/appium/commit/efe167f59a0a19515b78a53346e5d0b3fc4c744c))
+
+
+
+## [4.2.0](https://github.com/appium/appium/compare/@appium/images-plugin@4.1.1...@appium/images-plugin@4.2.0) (2026-04-09)
+
+
+### Features
+
+* use exact version for dependencies in monorepo packages instead of ^ ([#22090](https://github.com/appium/appium/issues/22090)) ([86c8f23](https://github.com/appium/appium/commit/86c8f23a670d0bbc2d359a8235828606bd36e6aa))
+
+
+
+## [4.1.1](https://github.com/appium/appium/compare/@appium/images-plugin@4.1.0...@appium/images-plugin@4.1.1) (2026-03-08)
+
+
+### Bug Fixes
+
+* Type imports ([#22025](https://github.com/appium/appium/issues/22025)) ([2f27425](https://github.com/appium/appium/commit/2f27425ea300ca1af1c1da6e4be68d48e7a94346))
+
+
+
+## [4.1.0](https://github.com/appium/appium/compare/@appium/images-plugin@4.0.4...@appium/images-plugin@4.1.0) (2026-01-26)
+
+
+### Features
+
+* **images-plugin:** Migrate to typescript ([#21865](https://github.com/appium/appium/issues/21865)) ([1450737](https://github.com/appium/appium/commit/14507371f7cb3c5e468f58ebc3b303109dcff3d7))
+
+
+### Bug Fixes
+
+* apply npm run lint:fix ([#21867](https://github.com/appium/appium/issues/21867)) ([5e28714](https://github.com/appium/appium/commit/5e28714442cf59ee35b085e01e82c3f5483891fd))
+
+
+
 ## [4.0.4](https://github.com/appium/appium/compare/@appium/images-plugin@4.0.3...@appium/images-plugin@4.0.4) (2025-12-04)
 
 **Note:** Version bump only for package @appium/images-plugin

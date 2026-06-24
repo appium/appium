@@ -1,15 +1,17 @@
 {
   "compilerOptions": {
+    "rootDir": ".",
     "outDir": "build",
     "checkJs": true,
     "esModuleInterop": true,
-    "strict": false,
+    "strict": true,
     "paths": {
       "@appium/opencv": ["../opencv"]
-    }
+    },
+    "types": ["mocha", "chai", "sinon", "chai-as-promised"]
   },
   "extends": "@appium/tsconfig/tsconfig.plugin.json",
-  "include": ["lib"],
+  "include": ["lib", "test"],
   "references": [
     {
       "path": "../opencv"

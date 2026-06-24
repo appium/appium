@@ -1,5 +1,4 @@
 import type {Constraints, Driver, ILogCommands} from '@appium/types';
-import _ from 'lodash';
 import type {BaseDriver} from '../driver';
 import {mixin} from './mixin';
 
@@ -20,10 +19,12 @@ const LogCommands: ILogCommands = {
     this.log.debug(`Retrieving '${String(logType)}' logs`);
 
     if (!(logType in this.supportedLogTypes)) {
-      const logsTypesWithDescriptions = _.mapValues(this.supportedLogTypes, 'description');
+      const logsTypesWithDescriptions = Object.fromEntries(
+        Object.entries(this.supportedLogTypes).map(([key, value]) => [key, value.description]),
+      );
       throw new Error(
         `Unsupported log type '${String(logType)}'. ` +
-          `Supported types: ${JSON.stringify(logsTypesWithDescriptions)}`
+          `Supported types: ${JSON.stringify(logsTypesWithDescriptions)}`,
       );
     }
 

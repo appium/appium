@@ -20,12 +20,12 @@ runs:
   using: composite
   steps:
     - name: Use Node.js ${{ inputs.node-version }}
-      uses: actions/setup-node@v6
+      uses: actions/setup-node@v6.4.0
       with:
         node-version: ${{ inputs.node-version }}
         cache: npm
     - name: SocketDev Security Check
-      uses: SocketDev/action@v1
+      uses: SocketDev/action@v1.3.2
       with:
         mode: firewall-free
     - name: Install dependencies

@@ -396,6 +396,45 @@ Deletes the virtual sensor with the type identified by `:sensorType`.
 
 `null`
 
+## Global Privacy Control Protocol
+
+The [Global Privacy Control protocol](https://www.w3.org/TR/gpc) (GPC) is an extension of the W3C
+WebDriver protocol.
+
+### setGlobalPrivacyControl
+
+```
+POST /session/:sessionId/privacy
+```
+
+> GPC documentation: [Set Global Privacy Control](https://www.w3.org/TR/gpc/#set-global-privacy-control)
+
+Sets the value of the do-not-sell-or-share preference for the current session.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`gpc`|Whether the browser should perform do-not-sell-or-share interactions|boolean|
+
+#### Response
+
+`null`
+
+### getGlobalPrivacyControl
+
+```
+GET /session/:sessionId/privacy
+```
+
+> GPC documentation: [Get Global Privacy Control](https://www.w3.org/TR/gpc/#get-global-privacy-control)
+
+Retrieves the value of the do-not-sell-or-share preference for the current session.
+
+#### Response
+
+`boolean` - the preference value
+
 ## Permissions Protocol
 
 The [Permissions protocol](https://www.w3.org/TR/permissions/) is an extension of the W3C WebDriver
@@ -522,6 +561,32 @@ Retrieves the available log types that can be used to call the [`getLog`](#getlo
 #### Response
 
 `string[]` - an array of log types
+
+## Storage Access Protocol
+
+The [Storage Access protocol](https://privacycg.github.io/storage-access/) is an extension of the
+W3C WebDriver protocol.
+
+### setStorageAccess
+
+```
+POST /session/:sessionId/storageaccess
+```
+
+> Storage Access documentation: [Set Storage Access](https://privacycg.github.io/storage-access/#set-storage-access-command)
+
+Sets the storage access policy of the current browsing context.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`blocked`|Whether storage access should be blocked (`true`) or allowed (`false`)|boolean|
+|`origin`|The origin to which the policy should be applied. Must be either a valid URL, or an asterisk (`*`) if the policy should apply to all origins.|string|
+
+#### Response
+
+`null`
 
 ## Web Authentication Protocol
 

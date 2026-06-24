@@ -30,8 +30,6 @@ targets:
     - type: npm
       path: ./packages/support
     - type: npm
-      path: ./packages/test-support
-    - type: npm
       path: ./packages/types
     - type: npm
       path: ./packages/schema

@@ -1,9 +1,4 @@
-import _ from 'lodash';
 import {EventEmitter} from 'node:events';
-// @ts-ignore This module does not provide type definitions
-import setBlocking from 'set-blocking';
-// @ts-ignore This module does not provide type definitions
-import consoleControl from 'console-control-strings';
 import * as util from 'node:util';
 import type {
   MessageObject,
@@ -11,16 +6,13 @@ import type {
   Logger,
   LogLevel,
   PreprocessingRulesLoadResult,
-  LogFiltersConfig
+  LogFiltersConfig,
 } from './types';
 import type {Writable} from 'node:stream';
 import {AsyncLocalStorage} from 'node:async_hooks';
-import { unleakString } from './utils';
-import {
-  DEFAULT_SECURE_REPLACER,
-  SecureValuesPreprocessor
-} from './secure-values-preprocessor';
-import { LRUCache } from 'lru-cache';
+import {ansiBeep, ansiColor, isPlainObject, setBlocking, unleakString} from './utils';
+import {DEFAULT_SECURE_REPLACER, SecureValuesPreprocessor} from './secure-values-preprocessor';
+import {LRUCache} from 'lru-cache';
 
 const DEFAULT_LOG_LEVELS = [
   ['silly', -Infinity, {inverse: true}, 'sill'],
@@ -39,12 +31,17 @@ const SENSITIVE_MESSAGE_KEY = 'f2b06625-35a2-4ed3-939a-b0b0a4abc750';
 
 setBlocking(true);
 
+interface ArgumentFormatResult {
+  arg: any;
+  stack: string | undefined;
+}
+
 export class Log extends EventEmitter implements Logger {
   level: LogLevel | string;
   prefixStyle: StyleObject;
   headingStyle: StyleObject;
   heading: string;
-  stream: Writable; // Defaults to process.stderr
+  stream: Writable | null; // Defaults to process.stderr; set to null when using custom output (e.g. Winston)
 
   _asyncStorage: AsyncLocalStorage<Record<string, any>>;
   _colorEnabled?: boolean;
@@ -88,6 +85,10 @@ export class Log extends EventEmitter implements Logger {
     return [...this._history.rvalues()] as MessageObject[];
   }
 
+  get asyncStorage(): AsyncLocalStorage<Record<string, any>> {
+    return this._asyncStorage;
+  }
+
   get maxRecordSize(): number {
     return this._maxRecordSize;
   }
@@ -105,19 +106,8 @@ export class Log extends EventEmitter implements Logger {
     this._history = newHistory;
   }
 
-  private useColor(): boolean {
-    // by default, decide based on tty-ness.
-    return (
-      this._colorEnabled ?? Boolean(this.stream && 'isTTY' in this.stream && this.stream.isTTY)
-    );
-  }
-
-  get asyncStorage(): AsyncLocalStorage<Record<string, any>> {
-    return this._asyncStorage;
-  }
-
   updateAsyncStorage(contextInfo: Record<string, any>, replace: boolean): void {
-    if (!_.isPlainObject(contextInfo)) {
+    if (!isPlainObject(contextInfo)) {
       return;
     }
     if (replace) {
@@ -279,13 +269,20 @@ export class Log extends EventEmitter implements Logger {
    * @returns {Promise<PreprocessingRulesLoadResult>}
    */
   async loadSecureValuesPreprocessingRules(
-    rulesJsonPath: string | string[] | LogFiltersConfig
+    rulesJsonPath: string | string[] | LogFiltersConfig,
   ): Promise<PreprocessingRulesLoadResult> {
     const issues = await this._secureValuesPreprocessor.loadRules(rulesJsonPath);
     return {
       issues,
-      rules: _.cloneDeep(this._secureValuesPreprocessor.rules),
+      rules: structuredClone(this._secureValuesPreprocessor.rules),
     };
+  }
+
+  private useColor(): boolean {
+    // by default, decide based on tty-ness.
+    return (
+      this._colorEnabled ?? Boolean(this.stream && 'isTTY' in this.stream && this.stream.isTTY)
+    );
   }
 
   private emitLog(m: MessageObject): void {
@@ -351,15 +348,15 @@ export class Log extends EventEmitter implements Logger {
         settings.push('inverse');
       }
       if (settings.length) {
-        output += consoleControl.color(settings);
+        output += ansiColor(...settings);
       }
       if (style.bell) {
-        output += consoleControl.beep();
+        output += ansiBeep();
       }
     }
     output += msg;
     if (this.useColor()) {
-      output += consoleControl.color('reset');
+      output += ansiColor('reset');
     }
     return output;
   }
@@ -390,13 +387,17 @@ export class Log extends EventEmitter implements Logger {
     };
 
     // mask sensitive data
-    if (_.has(result.arg, SENSITIVE_MESSAGE_KEY)) {
-      const { isSensitive } = this._asyncStorage.getStore() ?? {};
+    if (
+      result.arg != null &&
+      typeof result.arg === 'object' &&
+      Object.hasOwn(result.arg, SENSITIVE_MESSAGE_KEY)
+    ) {
+      const {isSensitive} = this._asyncStorage.getStore() ?? {};
       result.arg = isSensitive ? DEFAULT_SECURE_REPLACER : result.arg[SENSITIVE_MESSAGE_KEY];
     }
 
     // resolve stack traces to a plain string
-    if (_.isError(result.arg) && result.arg.stack) {
+    if (result.arg instanceof Error && result.arg.stack) {
       result.stack = result.arg.stack + '';
       Object.defineProperty(result.arg, 'stack', {
         value: result.stack,
@@ -413,14 +414,27 @@ export class Log extends EventEmitter implements Logger {
   private showProgress(): void {}
 }
 
-export function markSensitive<T=any>(logMessage: T): {[SENSITIVE_MESSAGE_KEY]: T} {
+/**
+ * Wraps a log message so it can be redacted when async storage marks the context as sensitive.
+ * @param logMessage - Value to log; may be wrapped for secure display.
+ * @returns An object keyed with an internal marker containing the message.
+ */
+export function markSensitive<T = any>(logMessage: T): {[SENSITIVE_MESSAGE_KEY]: T} {
   return {[SENSITIVE_MESSAGE_KEY]: logMessage};
 }
 
-interface ArgumentFormatResult {
-  arg: any,
-  stack: string | undefined,
-}
+// Unique key for the process-wide logger on globalThis (avoids collisions with other globals).
+const GLOBAL_NPMLOG_KEY = 'appium-logger-global-8f4a1c2b-5e6d-4a9b-8c3f-7d2e1b0a9c6e';
 
-export const GLOBAL_LOG = new Log();
+type GlobalWithLogger = typeof globalThis & {[K in typeof GLOBAL_NPMLOG_KEY]: Log | undefined};
+
+// Reuse process-wide logger so multiple loads of this module use the same Log instance.
+const g = globalThis as GlobalWithLogger;
+export const GLOBAL_LOG =
+  g[GLOBAL_NPMLOG_KEY] ??
+  (() => {
+    const log = new Log();
+    g[GLOBAL_NPMLOG_KEY] = log;
+    return log;
+  })();
 export default GLOBAL_LOG;

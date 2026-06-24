@@ -1,6 +1,6 @@
 {
   "name": "@appium/plugin-test-support",
-  "version": "1.0.4",
+  "version": "2.0.0",
   "description": "Testing utilities for Appium plugins",
   "keywords": [
     "automation",
@@ -23,32 +23,30 @@
   },
   "license": "Apache-2.0",
   "author": "https://github.com/appium",
-  "main": "index.js",
-  "types": "build/lib/harness.d.ts",
+  "main": "./build/lib/index.js",
+  "types": "./build/lib/index.d.ts",
   "directories": {
     "lib": "lib"
   },
   "files": [
+    "build/lib",
     "lib",
-    "index.js",
-    "build",
-    "tsconfig.json",
-    "!build/tsconfig.tsbuildinfo"
+    "tsconfig.json"
   ],
   "scripts": {
     "test": "npm run test:unit",
-    "test:smoke": "node ./index.js",
+    "test:smoke": "node ./build/lib/index.js --smoke-test",
     "test:unit": "exit 0"
   },
   "dependencies": {
-    "@appium/types": "^1.1.2",
-    "get-port": "7.1.0",
-    "log-symbols": "7.0.1",
-    "teen_process": "4.0.7"
+    "async-lock": "1.4.1",
+    "teen_process": "4.1.5"
+  },
+  "devDependencies": {
+    "@appium/types": "1.5.1"
   },
   "peerDependencies": {
-    "appium": "^3.0.0-beta.0",
-    "mocha": "*"
+    "appium": "^3.0.0-beta.0"
   },
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
@@ -57,5 +55,5 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "8480a85ce2fa466360e0fb1a7f66628331907f02"
+  "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8"
 }

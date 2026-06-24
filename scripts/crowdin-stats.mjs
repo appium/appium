@@ -171,7 +171,7 @@ async function getProjectInfo() {
  * @returns {object} Slack message payload with blocks
  */
 function formatSlackMessage(stats, projectName, from, to, generatedAt) {
-  const monthName = new Date(from).toLocaleString('en-US', { month: 'long', year: 'numeric' });
+  const monthName = new Date(from).toLocaleString('en-US', {month: 'long', year: 'numeric'});
   // Format dates as YYYY-MM-DD for display
   const fromDate = from.split('T')[0];
   const toDate = to.split('T')[0];
@@ -211,7 +211,7 @@ function formatSlackMessage(stats, projectName, from, to, generatedAt) {
     for (const [language, users] of Object.entries(stats)) {
       const userEntries = Object.entries(users)
         .filter(([, counts]) => counts.translated > 0 || counts.approved > 0)
-        .sort(([, a], [, b]) => (b.translated + b.approved) - (a.translated + a.approved));
+        .sort(([, a], [, b]) => b.translated + b.approved - (a.translated + a.approved));
 
       if (userEntries.length === 0) {
         continue;
@@ -222,7 +222,10 @@ function formatSlackMessage(stats, projectName, from, to, generatedAt) {
       const header = `*${language}* (Total: ${totalTranslated} translated, ${totalApproved} approved)`;
 
       // Build bullet lines
-      const lines = userEntries.map(([user, counts]) => `• *${user}*: ${counts.translated} translated, ${counts.approved} approved`);
+      const lines = userEntries.map(
+        ([user, counts]) =>
+          `• *${user}*: ${counts.translated} translated, ${counts.approved} approved`,
+      );
 
       // Chunk lines so each section stays under limit
       let current = header;
@@ -239,7 +242,9 @@ function formatSlackMessage(stats, projectName, from, to, generatedAt) {
       };
 
       for (const line of lines) {
-        const tentative = buf.length ? `${current}\n${buf.join('\n')}\n${line}` : `${current}\n${line}`;
+        const tentative = buf.length
+          ? `${current}\n${buf.join('\n')}\n${line}`
+          : `${current}\n${line}`;
         if (tentative.length > MAX_SECTION_CHARS) {
           flush();
         }
@@ -289,7 +294,7 @@ async function main() {
     projectInfo.name,
     dateRange.from,
     dateRange.to,
-    generatedAt
+    generatedAt,
   );
 
   // eslint-disable-next-line no-console

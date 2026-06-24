@@ -106,7 +106,7 @@ function getLastMonthDateRange() {
 async function makeGitHubRequest(endpoint, token) {
   const url = `${GITHUB_API_BASE}${endpoint}`;
   const headers = {
-    'Accept': 'application/vnd.github.v3+json',
+    Accept: 'application/vnd.github.v3+json',
     'User-Agent': 'appium-contrib-stats',
   };
 
@@ -115,13 +115,13 @@ async function makeGitHubRequest(endpoint, token) {
     headers.Authorization = `token ${token}`;
   }
 
-    const response = await axios({
-      method: 'GET',
-      url,
-      headers,
-    });
+  const response = await axios({
+    method: 'GET',
+    url,
+    headers,
+  });
 
-    return {data: response.data, headers: response.headers};
+  return {data: response.data, headers: response.headers};
 }
 
 /**
@@ -155,17 +155,19 @@ async function getMergedPullRequestsFromSearch(dateRange, token) {
     }
 
     // Process the search results (pull requests)
-    pullRequests.push(...data.items.map((pr) => ({
-      sha: pr.merge_commit_sha,
-      author: pr.user,
-      created_at: pr.created_at,
-      merged_at: pr.merged_at || pr.closed_at, // Use closed_at as fallback if merged_at is null
-      commit: {
-        message: pr.title, // Use PR title as the commit message
-      },
-      html_url: pr.html_url,
-      repository: pr.repository_url.split('/').pop(), // Extract repo name from URL
-    })));
+    pullRequests.push(
+      ...data.items.map((pr) => ({
+        sha: pr.merge_commit_sha,
+        author: pr.user,
+        created_at: pr.created_at,
+        merged_at: pr.merged_at || pr.closed_at, // Use closed_at as fallback if merged_at is null
+        commit: {
+          message: pr.title, // Use PR title as the commit message
+        },
+        html_url: pr.html_url,
+        repository: pr.repository_url.split('/').pop(), // Extract repo name from URL
+      })),
+    );
 
     page++;
     // Safety check
@@ -178,7 +180,6 @@ async function getMergedPullRequestsFromSearch(dateRange, token) {
   return pullRequests;
 }
 
-
 /**
  * Format GitHub pull request data as Slack message blocks
  * @param {GitHubPullRequest[]} pullRequests - Array of pull request objects
@@ -188,7 +189,7 @@ async function getMergedPullRequestsFromSearch(dateRange, token) {
  * @returns {object} Slack message payload with blocks
  */
 function formatSlackMessage(pullRequests, from, to, generatedAt) {
-  const monthName = new Date(from).toLocaleString('en-US', { month: 'long', year: 'numeric' });
+  const monthName = new Date(from).toLocaleString('en-US', {month: 'long', year: 'numeric'});
   const fromDate = extractDatePart(from);
   const toDate = extractDatePart(to);
 
@@ -227,13 +228,13 @@ function formatSlackMessage(pullRequests, from, to, generatedAt) {
       // Format created date (when PR was created)
       const createdDate = new Date(pr.created_at).toLocaleDateString('en-US', {
         month: 'short',
-        day: 'numeric'
+        day: 'numeric',
       });
 
       // Format merged date (when PR was merged)
       const mergedDate = new Date(pr.merged_at).toLocaleDateString('en-US', {
         month: 'short',
-        day: 'numeric'
+        day: 'numeric',
       });
 
       const authorName = pr.author?.login || 'Unknown';
@@ -323,7 +324,7 @@ async function main() {
     sortedPullRequests,
     dateRange.from,
     dateRange.to,
-    generatedAt
+    generatedAt,
   );
 
   // eslint-disable-next-line no-console

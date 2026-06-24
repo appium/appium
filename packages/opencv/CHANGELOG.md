@@ -3,6 +3,68 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.6](https://github.com/appium/appium/compare/@appium/opencv@4.1.5...@appium/opencv@4.1.6) (2026-06-18)
+
+**Note:** Version bump only for package @appium/opencv
+
+
+
+
+
+## [4.1.5](https://github.com/appium/appium/compare/@appium/opencv@4.1.4...@appium/opencv@4.1.5) (2026-05-31)
+
+**Note:** Version bump only for package @appium/opencv
+
+
+
+
+
+## [4.1.4](https://github.com/appium/appium/compare/@appium/opencv@4.1.3...@appium/opencv@4.1.4) (2026-05-06)
+
+**Note:** Version bump only for package @appium/opencv
+
+
+
+
+
+## [4.1.3](https://github.com/appium/appium/compare/@appium/opencv@4.1.2...@appium/opencv@4.1.3) (2026-04-23)
+
+**Note:** Version bump only for package @appium/opencv
+
+
+
+
+
+## [4.1.2](https://github.com/appium/appium/compare/@appium/opencv@4.1.1...@appium/opencv@4.1.2) (2026-04-09)
+
+**Note:** Version bump only for package @appium/opencv
+
+
+
+
+
+## [4.1.1](https://github.com/appium/appium/compare/@appium/opencv@4.1.0...@appium/opencv@4.1.1) (2026-03-08)
+
+**Note:** Version bump only for package @appium/opencv
+
+
+
+
+
+## [4.1.0](https://github.com/appium/appium/compare/@appium/opencv@4.0.3...@appium/opencv@4.1.0) (2026-01-26)
+
+
+### Features
+
+* **opencv:** Migrate to typescript ([#21881](https://github.com/appium/appium/issues/21881)) ([fec5f3a](https://github.com/appium/appium/commit/fec5f3a377de4804920f5e8293ae5f198a7d4473))
+
+
+### Bug Fixes
+
+* apply npm run lint:fix ([#21867](https://github.com/appium/appium/issues/21867)) ([5e28714](https://github.com/appium/appium/commit/5e28714442cf59ee35b085e01e82c3f5483891fd))
+
+
+
 ## [4.0.3](https://github.com/appium/appium/compare/@appium/opencv@4.0.2...@appium/opencv@4.0.3) (2025-11-12)
 
 **Note:** Version bump only for package @appium/opencv

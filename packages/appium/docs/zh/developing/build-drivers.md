@@ -570,6 +570,33 @@ capability), and then to set an internal field to that value, so that it can be 
 bidiProxyUrl`. Once all this is in place, Appium will proxy BiDi commands from the client straight
 to the upstream connection.
 
+### Understand server-assigned driver properties and security flags
+
+When your driver is running under the main Appium server, Appium assigns a small set of
+server-related properties on your driver instance when a session is created:
+
+- `cliArgs`: Driver-specific configuration derived from the Appium server’s CLI flags and/or
+  configuration files (for example via the `server.driver.<your-driver-name>` section). These
+  options are **not** user capabilities and cannot be influenced directly by test code.
+- `server`, `serverHost`, `serverPort`, `serverPath`: Information about the HTTP server that is
+  hosting your driver. These values reflect how the Appium server was started (for example the
+  `--address`, `--port`, and `--base-path` flags) and are useful when your driver needs to construct
+  URLs that point back to the Appium server itself (for example when setting up proxies, webhooks,
+  or other callbacks).
+
+`BaseDriver` and `AppiumDriver` also cooperate to expose security-related flags on your driver
+instance:
+
+- `relaxedSecurityEnabled`: Indicates whether the server is running with relaxed security enabled
+  (for example via `--relaxed-security`).
+- `allowInsecure`: A list of insecure features which are explicitly allowed for this driver (derived
+  from server-level options like `--allow-insecure`).
+- `denyInsecure`: A list of insecure features which are explicitly disabled for this driver (derived
+  from server-level options like `--deny-insecure`).
+
+See [Hide behaviour behind security flags](#hide-behaviour-behind-security-flags) for how to use
+these flags in your driver (e.g. via `isFeatureEnabled` and `assertFeatureEnabled`).
+
 ### Extend the existing protocol with new commands
 
 You may find that the existing commands don't cut it for your driver. If you want to expose
@@ -864,3 +891,120 @@ this.onUnexpectedShutdown(handler)
 
 `handler` should be a function which receives an error object (representing the reason for the
 unexpected shutdown).
+
+### Send messages to plugins running on the same session
+
+Appium's driver and plugin architecture means that a single driver and any number of plugins can be
+running together for a current session. The driver and plugins don't really know anything about
+each other though, which can make coordination potentially difficult. Without creating any kind of
+tight coupling between drivers or plugins, it's possible for drivers and plugins to communicate
+along a pub/sub style message bus. With Appium's IPC feature, "message" means a combination of
+"data" (the data intended to be published or received), and metadata (timestamp, the name of the
+publisher, etc...).
+
+Drivers and plugins can implement an instance method called `async onIpcInit`, in which they will
+know that the IPC channel for the session is now active. At this point, they have access to the
+following methods:
+
+#### `ipcSubscribe<T>(topic: string): IIpcSubscription`
+
+This method allows a driver or plugin to subscribe to a topic on the IPC channel for the session.
+Topics are simply strings. To coordinate effectively, drivers or plugins would use the same topic
+string (so this would be something advertised in the driver/plugin documentation).
+
+The result of this call is an `IpcSubscription` object that allows:
+
+- Looping through messages on the topic via an async generator
+- Hooking up an event handler for new messages
+- Getting the last message sent on the topic
+- Publishing a message to the topic
+- Unsubscribing from the topic
+
+#### `IpcSubscription` object
+
+Here is an example of how subscribing and use of these subscription methods might work:
+
+```ts
+async onIpcInit() {
+  // we know at this point in our driver/plugin lifecycle that we can use IPC methods
+  type MyMessageData = {myData: string}; // let's say the message data for this channel has this shape
+
+  const subscription = this.ipcSubscribe<MyMessageData>('coolTopic');
+
+  // listen for new messages on topic
+  subscription.on('message', (message) => {
+    console.log(message.data); // {myData: 'something'}
+  });
+
+  // publish data to the topic; might throw if the data is larger than configured max size, or we
+  // are no longer subscribed
+  await subscription.publish({myData: 'hi'});
+
+  // get last message sent to topic
+  const {data} = subscription.getMessage() ?? {data: null};
+  // data = {myData: 'hi'}
+
+  // unsubscribe
+  subscription.unsubscribe(); // returns true if we unsubscribed and false if no subscription existed
+}
+```
+
+With a subscription object, we can also iterate async over it to receive new messages:
+
+```ts
+for await (const message of subscription) {
+  // here we have a message and can unwrap its data
+}
+```
+
+Note that the iteration will stop when the subscription ends (i.e., when `unsubscribe` is called).
+
+You can also check whether the subscription is still active (if your subscribe and unsubscribe
+logic is not locally connected):
+
+```ts
+if (subscription.isActive) {
+  // we know we have not yet unsubscribed
+}
+```
+
+If the subscription is not active, attempts to call `subscription.publish` will throw an error.
+
+#### `IpcMessage` object
+
+When you get a message on a topic, it has the following shape:
+
+```ts
+export type IpcMessage<T> = {
+  publisher: string,   // the id of the publishing object (typically of the form <ClassName>@<uniqueObjectId>)
+  timestampMs: number, // when the message was published, in ms since epoch
+  topic: string,       // the topic the message was published on
+  data: T,             // the arbitrary message data. Must be serializable and a valid argument to 'structuredClone()'
+};
+```
+
+#### IPC Notes
+
+There are some important things to keep in mind when using Appium's IPC feature:
+
+- IPC is only available once `onIpcInit` has been called, at the end of the `createSession` flow.
+  It cannot be used statically or in `createSession` hooks
+- In sum, IPC is only for use during a session (this is also to prevent drivers/plugins from
+  accessing or reading data sent on IPC channels in other sessions.)
+- The default max size of an IPC message is 1MB. This can be configured by the server-admin by
+  using the `--max-ipc-data-size` arg (value is a number in bytes).
+- If a message exceeds the configured size, any call to `publish` methods will throw, so be
+  sure to cover this case in your error handling.
+- The default max number of IPC topics per session is 1000. This can be configured by the
+  server-admin using the `--max-ipc-topics` arg.
+- If the topic limit is reached, calls to `subscribe` or `publish` on a new topic will throw, so
+  be sure to cover this case in your error handling.
+- Topic names exist within a global namespace per session. So if you don't want to clash with other
+  drivers or plugins, make sure you prefix your topic names with something unique, akin to vendor
+  prefixes in the WebDriver standard (for example: `fake-driver:some-topic`). We recommend the
+  format `<namespace>:<topic>`.
+
+To see examples of IPC in action, check out Appium's own
+[FakeDriver](https://github.com/appium/appium/blob/master/packages/fake-driver/lib/driver.ts) and
+[FakePlugin](https://github.com/appium/appium/blob/master/packages/fake-plugin/lib/plugin.ts)
+extensions, which showcase several ways of using IPC messages.

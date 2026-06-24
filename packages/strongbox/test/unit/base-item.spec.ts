@@ -1,12 +1,10 @@
 import path from 'node:path';
 import rewiremock from 'rewiremock/node';
-import {
-  createSandbox,
-  SinonSandbox,
-  SinonStubbedMember
-} from 'sinon';
+import type {BaseItem as TBaseItem} from '../../lib/base-item';
+import type {SinonSandbox, SinonStubbedMember} from 'sinon';
+import {createSandbox} from 'sinon';
 import type fs from 'node:fs/promises';
-import {Item, Strongbox} from '../../lib';
+import type {Item, Strongbox} from '../../lib';
 
 type MockFs = {
   [K in keyof typeof fs]: SinonStubbedMember<(typeof fs)[K]>;
@@ -17,12 +15,12 @@ describe('Strongbox', function () {
   let MockFs: MockFs = {} as any;
   const DATA_DIR = path.resolve(path.sep, 'some', 'dir');
   // note to self: looks like this is safe to do before the rewiremock.proxy call
-  let BaseItem: typeof import('../../lib/base-item').BaseItem;
+  let BaseItem: typeof TBaseItem;
   let expect: any;
 
   before(async function () {
     const chai = await import('chai');
-    const chaiAsPromised = await import ('chai-as-promised');
+    const chaiAsPromised = await import('chai-as-promised');
     chai.use(chaiAsPromised.default);
     chai.should();
     expect = chai.expect;
@@ -41,7 +39,7 @@ describe('Strongbox', function () {
           })
           .dynamic(), // this allows us to change the mock behavior on-the-fly
         'env-paths': sandbox.stub().returns({data: DATA_DIR}),
-      })
+      }),
     ));
   });
 

@@ -10,7 +10,7 @@ maintenance, and support from companies and volunteers. As such, we welcome cont
 
 There are a lot of different ways to help the project - see below for everything you can do and the
 processes to follow for each contribution method. Note that no matter how you contribute, your
-participation is governed by our [Code of Conduct](https://github.com/appium/appium/blob/master/CONDUCT.md).
+participation is governed by our [Code of Conduct](https://github.com/appium/.github/blob/master/CODE_OF_CONDUCT.md).
 
 ## Join the Discussion Forum
 

@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {Constraints, Element, IFindCommands} from '@appium/types';
+import type {Constraints, Element, IFindCommands} from '@appium/types';
 import {errors} from '../../protocol';
-import {BaseDriver} from '../driver';
+import type {BaseDriver} from '../driver';
 import {mixin} from './mixin';
 
 declare module '../driver' {
-
   interface BaseDriver<C extends Constraints> extends IFindCommands {}
 }
 
@@ -14,21 +13,21 @@ async function findElOrEls<C extends Constraints>(
   strategy: string,
   selector: string,
   mult: true,
-  context?: any
+  context?: any,
 ): Promise<Element[]>;
 async function findElOrEls<C extends Constraints>(
   this: BaseDriver<C>,
   strategy: string,
   selector: string,
   mult: false,
-  context?: any
+  context?: any,
 ): Promise<Element>;
 async function findElOrEls<C extends Constraints>(
   this: BaseDriver<C>,
   strategy: string,
   selector: string,
   mult: boolean,
-  context?: any
+  context?: any,
 ): Promise<Element[] | Element> {
   throw new errors.NotImplementedError('Not implemented yet for find.');
 }
@@ -38,21 +37,21 @@ async function findElOrElsWithProcessing<C extends Constraints>(
   strategy: string,
   selector: string,
   mult: true,
-  context?: any
+  context?: any,
 ): Promise<Element[]>;
 async function findElOrElsWithProcessing<C extends Constraints>(
   this: BaseDriver<C>,
   strategy: string,
   selector: string,
   mult: false,
-  context?: any
+  context?: any,
 ): Promise<Element>;
 async function findElOrElsWithProcessing<C extends Constraints>(
   this: BaseDriver<C>,
   strategy: string,
   selector: string,
   mult: boolean,
-  context?: any
+  context?: any,
 ): Promise<Element[] | Element> {
   this.validateLocatorStrategy(strategy);
   try {
@@ -61,7 +60,8 @@ async function findElOrElsWithProcessing<C extends Constraints>(
   } catch (err) {
     if (this.opts.printPageSourceOnFindFailure) {
       const src = await this.getPageSource();
-      this.log.debug(`Error finding element${mult ? 's' : ''}: ${err.message}`);
+      const message = err instanceof Error ? err.message : String(err);
+      this.log.debug(`Error finding element${mult ? 's' : ''}: ${message}`);
       this.log.debug(`Page source requested through 'printPageSourceOnFindFailure':`);
       this.log.debug(src);
     }
@@ -71,11 +71,19 @@ async function findElOrElsWithProcessing<C extends Constraints>(
 }
 
 const FindCommands: IFindCommands = {
-  async findElement<C extends Constraints>(this: BaseDriver<C>, strategy, selector) {
+  async findElement<C extends Constraints>(
+    this: BaseDriver<C>,
+    strategy: string,
+    selector: string,
+  ) {
     return await this.findElOrElsWithProcessing(strategy, selector, false);
   },
 
-  async findElements<C extends Constraints>(this: BaseDriver<C>, strategy, selector) {
+  async findElements<C extends Constraints>(
+    this: BaseDriver<C>,
+    strategy: string,
+    selector: string,
+  ) {
     return await this.findElOrElsWithProcessing(strategy, selector, true);
   },
 
@@ -83,7 +91,7 @@ const FindCommands: IFindCommands = {
     this: BaseDriver<C>,
     strategy: string,
     selector: string,
-    elementId: string
+    elementId: string,
   ) {
     return await this.findElOrElsWithProcessing(strategy, selector, false, elementId);
   },
@@ -92,7 +100,7 @@ const FindCommands: IFindCommands = {
     this: BaseDriver<C>,
     strategy: string,
     selector: string,
-    elementId: string
+    elementId: string,
   ) {
     return await this.findElOrElsWithProcessing(strategy, selector, true, elementId);
   },

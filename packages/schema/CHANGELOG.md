@@ -3,6 +3,51 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.1](https://github.com/appium/appium/compare/@appium/schema@1.2.0...@appium/schema@1.2.1) (2026-06-18)
+
+**Note:** Version bump only for package @appium/schema
+
+
+
+
+
+## [1.2.0](https://github.com/appium/appium/compare/@appium/schema@1.1.1...@appium/schema@1.2.0) (2026-05-31)
+
+
+### Features
+
+* add IPC channels per session for drivers and plugins to communicate ([#22211](https://github.com/appium/appium/issues/22211)) ([97c879c](https://github.com/appium/appium/commit/97c879cdd02e6fcccaaea45a8d1a7088bed4ae66)), closes [#22206](https://github.com/appium/appium/issues/22206)
+* Limit the maximum count of topics per session and make it configurable ([#22279](https://github.com/appium/appium/issues/22279)) ([0264775](https://github.com/appium/appium/commit/0264775ecb8ecaca9dac2eae47784da02a653255))
+
+
+
+## [1.1.1](https://github.com/appium/appium/compare/@appium/schema@1.1.0...@appium/schema@1.1.1) (2026-05-06)
+
+**Note:** Version bump only for package @appium/schema
+
+
+
+
+
+## [1.1.0](https://github.com/appium/appium/compare/@appium/schema@1.0.1...@appium/schema@1.1.0) (2026-03-08)
+
+
+### Features
+
+* **schema:** Migrate to typescript ([#21900](https://github.com/appium/appium/issues/21900)) ([d43f749](https://github.com/appium/appium/commit/d43f749fc7fb5e8578c5f80c04e4373d1096e0d4))
+
+
+
+## [1.0.1](https://github.com/appium/appium/compare/@appium/schema@1.0.0...@appium/schema@1.0.1) (2026-01-26)
+
+
+### Bug Fixes
+
+* apply npm run lint:fix ([#21867](https://github.com/appium/appium/issues/21867)) ([5e28714](https://github.com/appium/appium/commit/5e28714442cf59ee35b085e01e82c3f5483891fd))
+* **scripts:** properly import log-symbols in scripts ([#21819](https://github.com/appium/appium/issues/21819)) ([e9a6e54](https://github.com/appium/appium/commit/e9a6e5425cfd7f148ac2258a69884b4c3f2dbce3))
+
+
+
 ## [1.0.0](https://github.com/appium/appium/compare/@appium/schema@1.0.0-rc.1...@appium/schema@1.0.0) (2025-08-18)
 
 **Note:** Version bump only for package @appium/schema

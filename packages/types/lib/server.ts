@@ -1,7 +1,7 @@
 import type {Express} from 'express';
 import type {Server as WSServer} from 'ws';
 import type {Server as HTTPServer} from 'node:http';
-import {ServerArgs} from './config';
+import type {ServerArgs} from './config';
 
 /**
  * Appium's slightly-modified {@linkcode HTTPServer http.Server}.
@@ -18,7 +18,7 @@ export interface AppiumServerExtension {
   addWebSocketHandler(
     this: AppiumServer,
     handlerPathname: string,
-    handlerServer: WSServer
+    handlerServer: WSServer,
   ): Promise<void>;
   /**
    * Removes existing WebSocket handler from the server instance.
@@ -41,14 +41,14 @@ export interface AppiumServerExtension {
    */
   getWebSocketHandlers(
     this: AppiumServer,
-    keysFilter?: string | null
+    keysFilter?: string | null,
   ): Promise<Record<string, WSServer>>;
   webSocketsMapping: Record<string, WSServer>;
   /** Returns true if the server operates via HTTPS protocol */
   isSecure(): boolean;
 }
 
-export {WSServer};
+export type {WSServer};
 
 /**
  * Optionally updates an Appium express app and http server, by calling
@@ -66,5 +66,5 @@ export {WSServer};
 export type UpdateServerCallback = (
   expressApp: Express,
   httpServer: AppiumServer,
-  cliArgs: Partial<ServerArgs>
+  cliArgs: Partial<ServerArgs>,
 ) => Promise<void>;

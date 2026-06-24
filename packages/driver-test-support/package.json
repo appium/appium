@@ -1,6 +1,6 @@
 {
   "name": "@appium/driver-test-support",
-  "version": "1.0.5",
+  "version": "1.2.5",
   "description": "Test utilities for Appium drivers",
   "keywords": [
     "automation",
@@ -23,33 +23,31 @@
   },
   "license": "Apache-2.0",
   "author": "https://github.com/appium",
-  "main": "index.js",
+  "main": "./build/lib/index.js",
   "directories": {
-    "lib": "lib"
+    "lib": "./lib"
   },
   "files": [
-    "index.js",
+    "build/lib",
     "lib",
-    "build",
-    "tsconfig.json",
-    "!build/tsconfig.tsbuildinfo"
+    "tsconfig.json"
   ],
   "scripts": {
     "test": "npm run test:unit",
-    "test:smoke": "node ./index.js",
-    "test:unit": "mocha \"test/unit/**/*.spec.js\""
+    "test:smoke": "node ./build/lib/index.js",
+    "test:unit": "mocha \"test/unit/**/*.spec.ts\""
   },
   "types": "./build/lib/index.d.ts",
   "dependencies": {
-    "@appium/types": "^1.1.2",
-    "axios": "1.13.2",
-    "bluebird": "3.7.2",
+    "asyncbox": "6.3.0",
+    "axios": "1.18.0",
     "chai": "6.2.2",
     "chai-as-promised": "8.0.2",
-    "get-port": "7.1.0",
-    "lodash": "4.17.21",
-    "sinon": "21.0.1",
-    "type-fest": "5.4.1"
+    "sinon": "22.0.0",
+    "type-fest": "5.7.0"
+  },
+  "devDependencies": {
+    "@appium/types": "1.5.1"
   },
   "peerDependencies": {
     "appium": "^3.0.0-beta.0",
@@ -62,5 +60,5 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "8480a85ce2fa466360e0fb1a7f66628331907f02"
+  "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8"
 }

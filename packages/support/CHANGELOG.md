@@ -3,6 +3,98 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.2.5](https://github.com/appium/appium/compare/@appium/support@7.2.4...@appium/support@7.2.5) (2026-06-18)
+
+
+### Bug Fixes
+
+* **support:** uploadFile overload ([#22400](https://github.com/appium/appium/issues/22400)) ([779a3a0](https://github.com/appium/appium/commit/779a3a048f50d5c860402fca6023828c2ccdf1be))
+
+
+
+## [7.2.4](https://github.com/appium/appium/compare/@appium/support@7.2.3...@appium/support@7.2.4) (2026-06-18)
+
+**Note:** Version bump only for package @appium/support
+
+
+
+
+
+## [7.2.3](https://github.com/appium/appium/compare/@appium/support@7.2.2...@appium/support@7.2.3) (2026-05-31)
+
+**Note:** Version bump only for package @appium/support
+
+
+
+
+
+## [7.2.2](https://github.com/appium/appium/compare/@appium/support@7.2.1...@appium/support@7.2.2) (2026-05-07)
+
+
+### Bug Fixes
+
+* **support:** accept Uint8Array/ArrayBuffer in plist parse path ([#22256](https://github.com/appium/appium/issues/22256)) ([8c6c199](https://github.com/appium/appium/commit/8c6c19982e97eded690da51e745c69e4ccc1e6bd))
+
+
+
+## [7.2.1](https://github.com/appium/appium/compare/@appium/support@7.2.0...@appium/support@7.2.1) (2026-05-06)
+
+
+### Bug Fixes
+
+* **support:** Avoid exceptions in unwrapElement ([#22250](https://github.com/appium/appium/issues/22250)) ([3229e74](https://github.com/appium/appium/commit/3229e74d3d9c1c5bc32d63751901c299133539a8))
+
+
+
+## [7.2.0](https://github.com/appium/appium/compare/@appium/support@7.1.1...@appium/support@7.2.0) (2026-05-06)
+
+
+### Features
+
+* **support:** Add various helper utils ([#22213](https://github.com/appium/appium/issues/22213)) ([2c0fb7a](https://github.com/appium/appium/commit/2c0fb7a2e4a8652e51ce010e8832153c49801a9d))
+* **support:** Replace lodash with native alternatives ([#22225](https://github.com/appium/appium/issues/22225)) ([63218cd](https://github.com/appium/appium/commit/63218cdac639c3a15584e5f815f15a8c9f2db049))
+
+
+
+## [7.1.1](https://github.com/appium/appium/compare/@appium/support@7.1.0...@appium/support@7.1.1) (2026-04-23)
+
+
+### Bug Fixes
+
+* **support:** lint warnings ([#22175](https://github.com/appium/appium/issues/22175)) ([4da7da0](https://github.com/appium/appium/commit/4da7da0a1458a513fa1f765a38b821a2d5b36302))
+
+
+
+## [7.1.0](https://github.com/appium/appium/compare/@appium/support@7.0.6...@appium/support@7.1.0) (2026-04-09)
+
+
+### Features
+
+* use exact version for dependencies in monorepo packages instead of ^ ([#22090](https://github.com/appium/appium/issues/22090)) ([86c8f23](https://github.com/appium/appium/commit/86c8f23a670d0bbc2d359a8235828606bd36e6aa))
+
+
+
+## [7.0.6](https://github.com/appium/appium/compare/@appium/support@7.0.5...@appium/support@7.0.6) (2026-03-08)
+
+
+### Bug Fixes
+
+* **logger:** Make sure we always have single logger instance per process ([#21991](https://github.com/appium/appium/issues/21991)) ([4daaa14](https://github.com/appium/appium/commit/4daaa14c29bed129d329d0881a93ecdb9de77676))
+* **support:** add path traversal check in `_extractEntryTo` ([#22042](https://github.com/appium/appium/issues/22042)) ([eee4c05](https://github.com/appium/appium/commit/eee4c05844f9ac9bab1e1f1e36a20f81d1cd837f))
+* **support:** fix missing throw for Error ([#22014](https://github.com/appium/appium/issues/22014)) ([98d2497](https://github.com/appium/appium/commit/98d2497b490103bfee929120eb884aca57234562))
+* **support:** Make staticDir call lazy ([#22008](https://github.com/appium/appium/issues/22008)) ([dcc6a00](https://github.com/appium/appium/commit/dcc6a00d102400f537cbc15db09ad033813de6d4))
+
+
+
+## [7.0.5](https://github.com/appium/appium/compare/@appium/support@7.0.4...@appium/support@7.0.5) (2026-01-26)
+
+
+### Bug Fixes
+
+* apply npm run lint:fix ([#21867](https://github.com/appium/appium/issues/21867)) ([5e28714](https://github.com/appium/appium/commit/5e28714442cf59ee35b085e01e82c3f5483891fd))
+
+
+
 ## [7.0.4](https://github.com/appium/appium/compare/@appium/support@7.0.3...@appium/support@7.0.4) (2025-12-04)
 
 **Note:** Version bump only for package @appium/support

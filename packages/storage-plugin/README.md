@@ -2,6 +2,9 @@
 
 > Appium plugin for server-side file storage
 
+[![NPM version](http://img.shields.io/npm/v/@appium/storage-plugin.svg)](https://npmjs.org/package/@appium/storage-plugin)
+[![Downloads](http://img.shields.io/npm/dm/@appium/storage-plugin.svg)](https://npmjs.org/package/@appium/storage-plugin)
+
 This plugin adds the ability to create a dedicated storage space on the server side,
 which can be managed from the client side. This can be useful for files like application packages.
 Only one storage may exist per server process, shared by all testing sessions.
@@ -13,21 +16,22 @@ Only one storage may exist per server process, shared by all testing sessions.
 
 ## Installation
 
-```bash
+```
 appium plugin install storage
 ```
 
 ## Usage
 
-Add the plugin name to the list of plugins to use upon server startup:
+Like all plugins, this plugin must be explicitly activated when launching the Appium server:
 
-```bash
+```
 appium --use-plugins=storage
 ```
 
-By default, the plugin creates a new temporary folder where it manages uploaded files.
+Once the plugin is running, you can call its endpoints (see API section) to manage the storage
+space. These endpoints can be invoked even without an active Appium session.
 
-[Refer to the Appium documentation for the endpoints supported by this plugin.](https://appium.io/docs/en/latest/reference/api/storage-plugin/)
+By default, the plugin creates a new temporary folder where it manages uploaded files.
 
 ### Storing a File
 
@@ -55,23 +59,11 @@ Only flat files hierarchies are supported in the storage, no subfolders are allo
 If a file with the same name already exists in the storage, it will be overridden with the new one.
 If a folder with the same name already exists in the storage, an error will be thrown.
 
-### Environment Variables
+## API
 
-#### APPIUM_STORAGE_ROOT
+[Refer to the Appium documentation](https://appium.io/docs/en/latest/reference/api/plugins/#storage-plugin).
 
-It is also possible to customize the repository root folder path by assigning a custom path to the
-`APPIUM_STORAGE_ROOT` environment variable upon server startup. The plugin automatically deletes the
-root folder recursively upon server process termination, unless the server is
-killed forcefully. If `APPIUM_STORAGE_ROOT` points to an existing folder,
-then all files there are going to be preserved by default unless a different behavior is
-requested by [APPIUM_STORAGE_KEEP_ALL](#appium_storage_keep_all) environment variable value.
-
-#### APPIUM_STORAGE_KEEP_ALL
-
-If this environment variable is set to `true`, `1` or `yes` then the plugin will always keep
-storage files after the server process is terminated. All other
-values of this variable enforce the plugin to always delete all files
-from the storage folder.
+The plugin also supports [several environment variables](https://appium.io/docs/en/latest/reference/cli/env-vars/) for further customization.
 
 ## Examples
 

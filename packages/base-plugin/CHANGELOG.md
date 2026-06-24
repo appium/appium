@@ -3,6 +3,98 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.3.2](https://github.com/appium/appium/compare/@appium/base-plugin@3.3.1...@appium/base-plugin@3.3.2) (2026-06-18)
+
+**Note:** Version bump only for package @appium/base-plugin
+
+
+
+
+
+## [3.3.1](https://github.com/appium/appium/compare/@appium/base-plugin@3.3.0...@appium/base-plugin@3.3.1) (2026-06-18)
+
+**Note:** Version bump only for package @appium/base-plugin
+
+
+
+
+
+## [3.3.0](https://github.com/appium/appium/compare/@appium/base-plugin@3.2.4...@appium/base-plugin@3.3.0) (2026-05-31)
+
+
+### Features
+
+* add IPC channels per session for drivers and plugins to communicate ([#22211](https://github.com/appium/appium/issues/22211)) ([97c879c](https://github.com/appium/appium/commit/97c879cdd02e6fcccaaea45a8d1a7088bed4ae66)), closes [#22206](https://github.com/appium/appium/issues/22206)
+
+
+
+## [3.2.4](https://github.com/appium/appium/compare/@appium/base-plugin@3.2.3...@appium/base-plugin@3.2.4) (2026-05-07)
+
+**Note:** Version bump only for package @appium/base-plugin
+
+
+
+
+
+## [3.2.3](https://github.com/appium/appium/compare/@appium/base-plugin@3.2.2...@appium/base-plugin@3.2.3) (2026-05-06)
+
+**Note:** Version bump only for package @appium/base-plugin
+
+
+
+
+
+## [3.2.2](https://github.com/appium/appium/compare/@appium/base-plugin@3.2.1...@appium/base-plugin@3.2.2) (2026-05-06)
+
+**Note:** Version bump only for package @appium/base-plugin
+
+
+
+
+
+## [3.2.1](https://github.com/appium/appium/compare/@appium/base-plugin@3.2.0...@appium/base-plugin@3.2.1) (2026-04-23)
+
+
+### Bug Fixes
+
+* All the rest of linter warnings ([#22183](https://github.com/appium/appium/issues/22183)) ([efe167f](https://github.com/appium/appium/commit/efe167f59a0a19515b78a53346e5d0b3fc4c744c))
+
+
+
+## [3.2.0](https://github.com/appium/appium/compare/@appium/base-plugin@3.1.1...@appium/base-plugin@3.2.0) (2026-04-09)
+
+
+### Features
+
+* use exact version for dependencies in monorepo packages instead of ^ ([#22090](https://github.com/appium/appium/issues/22090)) ([86c8f23](https://github.com/appium/appium/commit/86c8f23a670d0bbc2d359a8235828606bd36e6aa))
+
+
+
+## [3.1.1](https://github.com/appium/appium/compare/@appium/base-plugin@3.1.0...@appium/base-plugin@3.1.1) (2026-03-09)
+
+**Note:** Version bump only for package @appium/base-plugin
+
+
+
+
+
+## [3.1.0](https://github.com/appium/appium/compare/@appium/base-plugin@3.0.6...@appium/base-plugin@3.1.0) (2026-03-08)
+
+
+### Features
+
+* **base-plugin:** Migrate to typescript ([#21918](https://github.com/appium/appium/issues/21918)) ([07b573d](https://github.com/appium/appium/commit/07b573df270273d26691f77ee80cd415402b1508))
+
+
+
+## [3.0.6](https://github.com/appium/appium/compare/@appium/base-plugin@3.0.5...@appium/base-plugin@3.0.6) (2026-01-26)
+
+**Note:** Version bump only for package @appium/base-plugin
+
+
+
+
+
 ## [3.0.5](https://github.com/appium/appium/compare/@appium/base-plugin@3.0.4...@appium/base-plugin@3.0.5) (2025-12-04)
 
 **Note:** Version bump only for package @appium/base-plugin

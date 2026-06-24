@@ -3,6 +3,103 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.3.2](https://github.com/appium/appium/compare/@appium/fake-plugin@4.3.1...@appium/fake-plugin@4.3.2) (2026-06-18)
+
+**Note:** Version bump only for package @appium/fake-plugin
+
+
+
+
+
+## [4.3.1](https://github.com/appium/appium/compare/@appium/fake-plugin@4.3.0...@appium/fake-plugin@4.3.1) (2026-06-18)
+
+**Note:** Version bump only for package @appium/fake-plugin
+
+
+
+
+
+## [4.3.0](https://github.com/appium/appium/compare/@appium/fake-plugin@4.2.4...@appium/fake-plugin@4.3.0) (2026-05-31)
+
+
+### Features
+
+* add IPC channels per session for drivers and plugins to communicate ([#22211](https://github.com/appium/appium/issues/22211)) ([97c879c](https://github.com/appium/appium/commit/97c879cdd02e6fcccaaea45a8d1a7088bed4ae66)), closes [#22206](https://github.com/appium/appium/issues/22206)
+
+
+
+## [4.2.4](https://github.com/appium/appium/compare/@appium/fake-plugin@4.2.3...@appium/fake-plugin@4.2.4) (2026-05-07)
+
+**Note:** Version bump only for package @appium/fake-plugin
+
+
+
+
+
+## [4.2.3](https://github.com/appium/appium/compare/@appium/fake-plugin@4.2.2...@appium/fake-plugin@4.2.3) (2026-05-06)
+
+**Note:** Version bump only for package @appium/fake-plugin
+
+
+
+
+
+## [4.2.2](https://github.com/appium/appium/compare/@appium/fake-plugin@4.2.1...@appium/fake-plugin@4.2.2) (2026-05-06)
+
+**Note:** Version bump only for package @appium/fake-plugin
+
+
+
+
+
+## [4.2.1](https://github.com/appium/appium/compare/@appium/fake-plugin@4.2.0...@appium/fake-plugin@4.2.1) (2026-04-23)
+
+
+### Bug Fixes
+
+* All the rest of linter warnings ([#22183](https://github.com/appium/appium/issues/22183)) ([efe167f](https://github.com/appium/appium/commit/efe167f59a0a19515b78a53346e5d0b3fc4c744c))
+
+
+
+## [4.2.0](https://github.com/appium/appium/compare/@appium/fake-plugin@4.1.1...@appium/fake-plugin@4.2.0) (2026-04-09)
+
+
+### Features
+
+* use exact version for dependencies in monorepo packages instead of ^ ([#22090](https://github.com/appium/appium/issues/22090)) ([86c8f23](https://github.com/appium/appium/commit/86c8f23a670d0bbc2d359a8235828606bd36e6aa))
+
+
+
+## [4.1.1](https://github.com/appium/appium/compare/@appium/fake-plugin@4.1.0...@appium/fake-plugin@4.1.1) (2026-03-09)
+
+**Note:** Version bump only for package @appium/fake-plugin
+
+
+
+
+
+## [4.1.0](https://github.com/appium/appium/compare/@appium/fake-plugin@4.0.6...@appium/fake-plugin@4.1.0) (2026-03-08)
+
+
+### Features
+
+* **fake-plugin:** Migrate to typescript ([#21913](https://github.com/appium/appium/issues/21913)) ([7b139d7](https://github.com/appium/appium/commit/7b139d7e3543381c67191abf253314eb4630b0ac))
+
+
+### Bug Fixes
+
+* Move @appium/types to dev dependencies for various packages ([#21920](https://github.com/appium/appium/issues/21920)) ([2615935](https://github.com/appium/appium/commit/261593593947bc59e7a937e518fc6f019cafda7a))
+
+
+
+## [4.0.6](https://github.com/appium/appium/compare/@appium/fake-plugin@4.0.5...@appium/fake-plugin@4.0.6) (2026-01-26)
+
+**Note:** Version bump only for package @appium/fake-plugin
+
+
+
+
+
 ## [4.0.5](https://github.com/appium/appium/compare/@appium/fake-plugin@4.0.4...@appium/fake-plugin@4.0.5) (2025-12-04)
 
 **Note:** Version bump only for package @appium/fake-plugin

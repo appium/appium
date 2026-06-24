@@ -3,6 +3,78 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.5](https://github.com/appium/appium/compare/@appium/driver-test-support@1.2.4...@appium/driver-test-support@1.2.5) (2026-06-18)
+
+**Note:** Version bump only for package @appium/driver-test-support
+
+
+
+
+
+## [1.2.4](https://github.com/appium/appium/compare/@appium/driver-test-support@1.2.3...@appium/driver-test-support@1.2.4) (2026-06-18)
+
+**Note:** Version bump only for package @appium/driver-test-support
+
+
+
+
+
+## [1.2.3](https://github.com/appium/appium/compare/@appium/driver-test-support@1.2.2...@appium/driver-test-support@1.2.3) (2026-05-31)
+
+**Note:** Version bump only for package @appium/driver-test-support
+
+
+
+
+
+## [1.2.2](https://github.com/appium/appium/compare/@appium/driver-test-support@1.2.1...@appium/driver-test-support@1.2.2) (2026-05-06)
+
+**Note:** Version bump only for package @appium/driver-test-support
+
+
+
+
+
+## [1.2.1](https://github.com/appium/appium/compare/@appium/driver-test-support@1.2.0...@appium/driver-test-support@1.2.1) (2026-04-23)
+
+
+### Bug Fixes
+
+* All the rest of linter warnings ([#22183](https://github.com/appium/appium/issues/22183)) ([efe167f](https://github.com/appium/appium/commit/efe167f59a0a19515b78a53346e5d0b3fc4c744c))
+
+
+
+## [1.2.0](https://github.com/appium/appium/compare/@appium/driver-test-support@1.1.0...@appium/driver-test-support@1.2.0) (2026-04-09)
+
+
+### Features
+
+* use exact version for dependencies in monorepo packages instead of ^ ([#22090](https://github.com/appium/appium/issues/22090)) ([86c8f23](https://github.com/appium/appium/commit/86c8f23a670d0bbc2d359a8235828606bd36e6aa))
+
+
+
+## [1.1.0](https://github.com/appium/appium/compare/@appium/driver-test-support@1.0.6...@appium/driver-test-support@1.1.0) (2026-03-08)
+
+
+### Features
+
+* **driver-test-support:** Migrate to typescript ([#21922](https://github.com/appium/appium/issues/21922)) ([e33ad95](https://github.com/appium/appium/commit/e33ad958518b3a5da9300a8d54c79d1858655f5c))
+
+
+### Bug Fixes
+
+* Move @appium/types to dev dependencies for various packages ([#21920](https://github.com/appium/appium/issues/21920)) ([2615935](https://github.com/appium/appium/commit/261593593947bc59e7a937e518fc6f019cafda7a))
+
+
+
+## [1.0.6](https://github.com/appium/appium/compare/@appium/driver-test-support@1.0.5...@appium/driver-test-support@1.0.6) (2026-01-26)
+
+**Note:** Version bump only for package @appium/driver-test-support
+
+
+
+
+
 ## [1.0.5](https://github.com/appium/appium/compare/@appium/driver-test-support@1.0.4...@appium/driver-test-support@1.0.5) (2025-12-04)
 
 **Note:** Version bump only for package @appium/driver-test-support

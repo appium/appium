@@ -1,3 +1,4 @@
+import type AsyncLock from 'async-lock';
 import {util} from '@appium/support';
 import {
   BASE_DESIRED_CAP_CONSTRAINTS,
@@ -17,15 +18,18 @@ import {
   type SingularSessionData,
   type SessionCapabilities,
 } from '@appium/types';
-import B from 'bluebird';
-import _ from 'lodash';
 import {fixCaps, isW3cCaps} from '../helpers/capabilities';
+import {getLevenshteinSuggestion} from '../helpers/levenshtein-match';
 import {calcSignature} from '../helpers/session';
 import {DELETE_SESSION_COMMAND, determineProtocol, errors} from '../protocol';
 import {processCapabilities, validateCaps} from './capabilities';
 import {DriverCore} from './core';
 import * as helpers from './helpers';
+import {mergePlainObjects} from '../utils';
 import {resolveExecuteExtensionName} from '../helpers/extension-command-name';
+
+type CommandInvoker<C extends Constraints> = BaseDriver<C> &
+  Record<string, ((...args: any[]) => any) | undefined>;
 
 const EVENT_SESSION_INIT = 'newSessionRequested';
 const EVENT_SESSION_START = 'newSessionStarted';
@@ -34,20 +38,20 @@ const EVENT_SESSION_QUIT_DONE = 'quitSessionFinished';
 const ON_UNEXPECTED_SHUTDOWN_EVENT = 'onUnexpectedShutdown';
 
 export class BaseDriver<
-    const C extends Constraints,
-    CArgs extends StringRecord = StringRecord,
-    Settings extends StringRecord = StringRecord,
-    CreateResult = DefaultCreateSessionResult<C>,
-    DeleteResult = DefaultDeleteSessionResult,
-    SessionData extends StringRecord = StringRecord,
-  >
+  const C extends Constraints,
+  CArgs extends StringRecord = StringRecord,
+  Settings extends StringRecord = StringRecord,
+  CreateResult = DefaultCreateSessionResult<C>,
+  DeleteResult = DefaultDeleteSessionResult,
+  SessionData extends StringRecord = StringRecord,
+>
   extends DriverCore<C, Settings>
   implements Driver<C, CArgs, Settings, CreateResult, DeleteResult, SessionData>
 {
   cliArgs: CArgs & ServerArgs;
   caps: DriverCaps<C>;
-  originalCaps: W3CDriverCaps<C>;
-  desiredCapConstraints: C;
+  originalCaps!: W3CDriverCaps<C>;
+  desiredCapConstraints!: C;
   server?: AppiumServer;
   serverHost?: string;
   serverPort?: number;
@@ -68,7 +72,13 @@ export class BaseDriver<
    * @see {@link https://github.com/appium/appium/issues/new}
    */
   protected get _desiredCapConstraints(): Readonly<BaseDriverCapConstraints & C> {
-    return Object.freeze(_.merge({}, BASE_DESIRED_CAP_CONSTRAINTS, this.desiredCapConstraints));
+    return Object.freeze(
+      mergePlainObjects(
+        {},
+        BASE_DESIRED_CAP_CONSTRAINTS,
+        this.desiredCapConstraints,
+      ) as BaseDriverCapConstraints & C,
+    );
   }
 
   /**
@@ -97,8 +107,10 @@ export class BaseDriver<
       throw new errors.NoSuchDriverError('The driver was unexpectedly shut down!');
     }
 
+    const invoker = this as unknown as CommandInvoker<C>;
+    const command = invoker[cmd];
     // If we don't have this command, it must not be implemented
-    if (!this[cmd]) {
+    if (!command) {
       await this.startNewCommandTimeout();
       throw new errors.NotYetImplementedError();
     }
@@ -112,15 +124,15 @@ export class BaseDriver<
         unexpectedShutdownRejecter?.(e);
       };
       try {
-        return await B.race([
-          this[cmd](...args),
+        return await Promise.race([
+          command.call(this, ...args),
           // This promise is needed to monitor if the session has been
           // shut down unexpectedly while the command was running
-          new B((resolve, reject) => {
+          new Promise((resolve, reject) => {
             unexpectedShutdownResolver = resolve;
             unexpectedShutdownRejecter = reject;
             this.eventEmitter.once(ON_UNEXPECTED_SHUTDOWN_EVENT, onUnexpectedShutdown);
-          })
+          }),
         ]);
       } finally {
         if (unexpectedShutdownRejecter && unexpectedShutdownResolver) {
@@ -129,7 +141,6 @@ export class BaseDriver<
           unexpectedShutdownRejecter = null;
           // @ts-ignore typescript cannot understand this
           unexpectedShutdownResolver?.();
-          unexpectedShutdownResolver = null;
         }
 
         // if we have set a new command timeout (which is the default), start a
@@ -138,7 +149,11 @@ export class BaseDriver<
         // automatic session deletion in this.onCommandTimeout. Of course we don't
         // want to trigger the timer when the user is shutting down the session
         // intentionally
-        if (!wasSessionShutdownUnexpectedly && this.isCommandsQueueEnabled && cmd !== DELETE_SESSION_COMMAND) {
+        if (
+          !wasSessionShutdownUnexpectedly &&
+          this.isCommandsQueueEnabled &&
+          cmd !== DELETE_SESSION_COMMAND
+        ) {
           // resetting existing timeout
           await this.startNewCommandTimeout();
         }
@@ -146,13 +161,15 @@ export class BaseDriver<
     };
 
     const synchronizationKey = BaseDriver.name;
-    // eslint-disable-next-line dot-notation
-    const commandsQueueLen: number = this.commandsQueueGuard['queues']?.[synchronizationKey]?.length ?? 0;
+    const commandsQueueGuard = this.commandsQueueGuard as AsyncLock & {
+      queues?: Record<string, unknown[]>;
+    };
+    const commandsQueueLen: number = commandsQueueGuard.queues?.[synchronizationKey]?.length ?? 0;
     if (this.isCommandsQueueEnabled && commandsQueueLen > 0) {
       this.log.debug(
         `Scheduling the '${cmd}' command to the ${this.constructor.name} commands queue. ` +
-        `${util.pluralize('queue item', commandsQueueLen, true)} ${commandsQueueLen === 1 ? 'is' : 'are'} ` +
-        `already waiting for execution.`
+          `${util.pluralize('queue item', commandsQueueLen, true)} ${commandsQueueLen === 1 ? 'is' : 'are'} ` +
+          `already waiting for execution.`,
       );
     }
 
@@ -180,8 +197,8 @@ export class BaseDriver<
   clarifyCommandName(cmd: string, args: string[]): string {
     if (cmd === 'execute') {
       const firstArg = args?.[0];
-      if (_.isString(firstArg) && firstArg.trim().length > 0) {
-        return resolveExecuteExtensionName.call(this, firstArg);
+      if (typeof firstArg === 'string' && firstArg.trim().length > 0) {
+        return resolveExecuteExtensionName.call(this as BaseDriver<Constraints>, firstArg);
       }
     }
 
@@ -239,15 +256,12 @@ export class BaseDriver<
     this.log.debug('Running generic full reset');
 
     // preserving state
-    const currentConfig = {};
-    for (const property of [
-      'implicitWaitMs',
-      'newCommandTimeoutMs',
-      'sessionId',
-      'resetOnUnexpectedShutdown',
-    ]) {
-      currentConfig[property] = this[property];
-    }
+    const currentConfig = {
+      implicitWaitMs: this.implicitWaitMs,
+      newCommandTimeoutMs: this.newCommandTimeoutMs,
+      sessionId: this.sessionId,
+      shutdownUnexpectedly: this.shutdownUnexpectedly,
+    };
 
     try {
       if (this.sessionId !== null) {
@@ -257,9 +271,7 @@ export class BaseDriver<
       await this.createSession(this.originalCaps);
     } finally {
       // always restore state.
-      for (const [key, value] of _.toPairs(currentConfig)) {
-        this[key] = value;
-      }
+      Object.assign(this, currentConfig);
     }
     await this.clearNewCommandTimeout();
   }
@@ -286,7 +298,7 @@ export class BaseDriver<
 
     this.log.debug();
 
-    const originalCaps = _.cloneDeep(
+    const originalCaps = structuredClone(
       [w3cCapabilities, w3cCapabilities1, w3cCapabilities2].find(isW3cCaps),
     );
     if (!originalCaps) {
@@ -312,7 +324,8 @@ export class BaseDriver<
       ) as DriverCaps<C>;
       caps = fixCaps(caps, this._desiredCapConstraints, this.log) as DriverCaps<C>;
     } catch (e) {
-      throw new errors.SessionNotCreatedError(e.message);
+      const message = e instanceof Error ? e.message : String(e);
+      throw new errors.SessionNotCreatedError(message);
     }
 
     this.validateDesiredCaps(caps);
@@ -321,7 +334,7 @@ export class BaseDriver<
     this.sessionCreationTimestampMs = Date.now();
     this.caps = caps;
     // merge caps onto opts so we don't need to worry about what's where
-    this.opts = {..._.cloneDeep(this.initialOpts), ...this.caps};
+    this.opts = {...structuredClone(this.initialOpts), ...this.caps};
 
     // deal with resets
     // some people like to do weird things by setting noReset and fullReset
@@ -347,7 +360,7 @@ export class BaseDriver<
       delete this.opts.app;
     }
 
-    if (!_.isUndefined(this.caps.newCommandTimeout)) {
+    if (this.caps.newCommandTimeout !== undefined) {
       this.newCommandTimeoutMs = (this.caps.newCommandTimeout as number) * 1000;
     }
 
@@ -388,7 +401,7 @@ export class BaseDriver<
       // simple hack to release pending commands if they exist
       // @ts-expect-error private API
       const queues = this.commandsQueueGuard.queues;
-      for (const key of _.keys(queues)) {
+      for (const key of Object.keys(queues)) {
         queues[key] = [];
       }
     }
@@ -396,11 +409,14 @@ export class BaseDriver<
   }
 
   logExtraCaps(caps: Capabilities<C>) {
-    const extraCaps = _.difference(_.keys(caps), _.keys(this._desiredCapConstraints));
+    const knownCaps = Object.keys(this._desiredCapConstraints);
+    const knownCapsSet = new Set(knownCaps);
+    const extraCaps = Object.keys(caps).filter((cap) => !knownCapsSet.has(cap));
     if (extraCaps.length) {
       this.log.warn(`The following provided capabilities were not recognized by this driver:`);
       for (const cap of extraCaps) {
-        this.log.warn(`  ${cap}`);
+        const suggestion = getLevenshteinSuggestion(cap, knownCaps);
+        this.log.warn(suggestion ? `  ${cap} (did you mean '${suggestion}'?)` : `  ${cap}`);
       }
     }
   }
@@ -413,11 +429,13 @@ export class BaseDriver<
     try {
       validateCaps(caps, this._desiredCapConstraints);
     } catch (e) {
+      const capError = e instanceof Error ? e : new Error(String(e));
       throw this.log.errorWithException(
         new errors.SessionNotCreatedError(
           `Session capabilities were not valid for the ` +
-          `following reason(s): ${e.message}`, e
-        )
+            `following reason(s): ${capError.message}`,
+          capError,
+        ),
       );
     }
 

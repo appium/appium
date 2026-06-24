@@ -1,7 +1,7 @@
 {
   "name": "@appium/eslint-config-appium-ts",
   "type": "module",
-  "version": "2.0.5",
+  "version": "3.2.3",
   "description": "Shared ESLint config for Appium projects (TypeScript version)",
   "keywords": [
     "eslint",
@@ -29,20 +29,22 @@
     "test:smoke": "exit 0"
   },
   "dependencies": {
-    "@eslint/compat": "2.0.1",
-    "@eslint/js": "9.39.2",
-    "@stylistic/eslint-plugin": "5.7.0",
+    "@eslint/compat": "2.1.0",
+    "@eslint/js": "10.0.1",
+    "@stylistic/eslint-plugin": "5.10.0",
     "eslint-config-prettier": "10.1.8",
-    "eslint-import-resolver-typescript": "4.4.4",
-    "eslint-plugin-import-x": "4.16.1",
-    "eslint-plugin-mocha": "11.2.0",
-    "eslint-plugin-n": "17.23.2",
-    "eslint-plugin-promise": "7.2.1",
-    "eslint-plugin-unicorn": "62.0.0",
-    "typescript-eslint": "8.53.0"
+    "eslint-import-resolver-typescript": "4.4.5",
+    "eslint-plugin-import-x": "4.16.2",
+    "eslint-plugin-jsdoc": "63.0.6",
+    "eslint-plugin-mocha": "11.3.0",
+    "eslint-plugin-n": "18.1.0",
+    "eslint-plugin-perfectionist": "5.9.1",
+    "eslint-plugin-promise": "7.3.0",
+    "eslint-plugin-unicorn": "68.0.0",
+    "typescript-eslint": "8.61.1"
   },
   "peerDependencies": {
-    "eslint": "^9.0.0"
+    "eslint": "^9.0.0 || ^10.0.0"
   },
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
@@ -51,5 +53,5 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "8480a85ce2fa466360e0fb1a7f66628331907f02"
+  "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8"
 }

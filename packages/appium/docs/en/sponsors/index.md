@@ -22,9 +22,9 @@ Hub](https://opencollective.com/appium).
 We are very grateful for the support of our Development Partners, who donate Appium development and
 maintenance as part of their employees' core job duties!
 
-<a href="https://lambdatest.com/?utm_source=appium.io&utm_medium=organic&utm_campaign=june_25&utm_term=sk&utm_content=webpage">
-  <img src="/docs/en/latest/assets/images/sponsor-logo-lambdatest-dark.png#only-dark" width="250" alt="LambdaTest" />
-  <img src="/docs/en/latest/assets/images/sponsor-logo-lambdatest-light.png#only-light" width="250" alt="LambdaTest" />
+<a href="https://www.testmuai.com">
+  <img src="/docs/en/latest/assets/images/sponsor-logo-testmuai-dark.png#only-dark" width="250" alt="TestMu AI (formerly LambdaTest)" />
+  <img src="/docs/en/latest/assets/images/sponsor-logo-testmuai-light.png#only-light" width="250" alt="TestMu AI (formerly LambdaTest)" />
 </a>
 
 ## Strategic Partners
@@ -38,9 +38,9 @@ contributors!
   <img src="/docs/en/latest/assets/images/sponsor-logo-browserstack-light.png#only-light" width="250" alt="BrowserStack" />
 </a>
 
-<a href="https://lambdatest.com/?utm_source=appium.io&utm_medium=organic&utm_campaign=june_25&utm_term=sk&utm_content=webpage">
-  <img src="/docs/en/latest/assets/images/sponsor-logo-lambdatest-dark.png#only-dark" width="250" alt="LambdaTest" />
-  <img src="/docs/en/latest/assets/images/sponsor-logo-lambdatest-light.png#only-light" width="250" alt="LambdaTest" />
+<a href="https://www.testmuai.com">
+  <img src="/docs/en/latest/assets/images/sponsor-logo-testmuai-dark.png#only-dark" width="250" alt="TestMu AI (formerly LambdaTest)" />
+  <img src="/docs/en/latest/assets/images/sponsor-logo-testmuai-light.png#only-light" width="250" alt="TestMu AI (formerly LambdaTest)" />
 </a>
 
 ## Gold Sponsors

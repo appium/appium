@@ -2,14 +2,14 @@
 title: Session Capabilities
 ---
 
-"Capabilities" is the name given to the set of parameters used to start an Appium session. The
-information in the set describes what sort of "capabilities" you want your session to have, for
-example, a certain mobile operating system or a certain version of a device. Capabilities are
-represented as key-value pairs, with values allowed to be any valid JSON type, including
-other objects.
+Capabilities are the core parameters used to start an Appium session. They describe various
+features that you want your session to have, for example, a certain mobile operating system or a
+certain version of a device. Capabilities are represented as key-value pairs, with values allowed
+to be any valid JSON type, including other objects. Most importantly, they cannot be changed
+during the lifecycle of the session.
 
-The W3C WebDriver spec's [section on Capabilities](https://w3c.github.io/webdriver/#capabilities)
-identifies a small set of 10 standard capabilities, including the following:
+The capabilities used in Appium follow [the W3C WebDriver specification of the same name](https://w3c.github.io/webdriver/#capabilities).
+The WebDriver spec defines a small set of standard capabilities, including the following:
 
 | Capability Name  | Type     | Description                                    |
 | ---------------- | -------- | ---------------------------------------------- |
@@ -17,68 +17,64 @@ identifies a small set of 10 standard capabilities, including the following:
 | `browserVersion` | `string` | The specific version of the browser            |
 | `platformName`   | `string` | The type of platform hosting the browser       |
 
+While the above capabilities are commonly used by Appium drivers, they are not sufficient for
+describing Appium-specific features, such as the name of the driver to use, or the name of the app
+to launch. In order to achieve this, Appium defines its own [extension capabilities](https://w3c.github.io/webdriver/#dfn-extension-capability).
+
 ## Common Appium Capabilities
 
-Appium understands these browser-focused capabilities, but introduces a number of additional
-capabilities. According to the WebDriver spec, any
-non-standard "extension capabilities" must include a namespace prefix (signifying the vendor
-introducing the capability), ending in a `:`. Appium's vendor prefix is
-`appium:`, and so any Appium-specific capabilities must include this prefix. Depending on which
-client you are using, the prefix may be added automatically or in conjunction with certain
-interfaces, but it is always a good practice to explicitly include it for clarity.
+According to the WebDriver spec, extension capabilities must include a namespace prefix (signifying
+the vendor introducing the capability), and the namespace must end a colon (`:`). Appium's vendor
+prefix is `appium:`, and so any Appium-specific capabilities must include this prefix. Depending on
+your Appium client, the prefix may be added automatically or in conjunction with certain interfaces,
+but it is always a good practice to explicitly include it for clarity.
 
-Here is a list of all the globally-recognized Appium capabilities:
+Here are a few commonly (but not universally!) used Appium-specific capabilities:
 
-!!! info
+| Capability Name         | Type     | Description                                                     |
+| ----------------------- | -------- | --------------------------------------------------------------- |
+| `appium:automationName` | `string` | The name of the Appium driver to use                            |
+| `appium:udid`           | `string` | The unique device identifier of a particular device to automate |
+| `appium:app`            | `string` | The path to an installable application                          |
 
-```
-Individual drivers and plugins can support other capabilities, so refer to their documentation
-for lists of specific capability names. Some drivers may also not support all of these capabilities
-```
+All capabilities recognized by the Appium base driver (inherited by all drivers) can be found in the
+[Capabilities Reference document](../reference/session/caps.md). While this common capability set
+is fairly small, it can be greatly extended by Appium drivers and plugins, who can (and should)
+define their own capabilities. Make sure to reference their documentation to learn more about the
+capabilities they support. You can find a list of known drivers in the [Ecosystem Drivers](../ecosystem/drivers.md) document.
 
-| <div style="width:12em">Capability</div> | Type      | Required? | Description                                                                                                                                                                                                                                                                                                          |
-| ---------------------------------------- | --------- | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `platformName`                           | `string`  | yes       | The type of platform hosting the app or browser                                                                                                                                                                                                                                                                      |
-| `appium:automationName`                  | `string`  | yes       | The name of the Appium driver to use                                                                                                                                                                                                                                                                                 |
-| `browserName`                            | `string`  | no        | The name of the browser to launch and automate, if the driver supports web browsers as a special case                                                                                                                                                                                                                |
-| `appium:app`                             | `string`  | no        | The path to an installable application                                                                                                                                                                                                                                                                               |
-| `appium:deviceName`                      | `string`  | no        | The name of a particular device to automate, e.g., `iPhone 14` (currently only actually useful for specifying iOS simulators, since in other situations it's typically recommended to use a specific device id via the `appium:udid` capability). |
-| `appium:platformVersion`                 | `string`  | no        | The version of a platform, e.g., for iOS, `16.0`                                                                                                                                                                                                                                     |
-| `appium:newCommandTimeout`               | `number`  | no        | The number of seconds the Appium server should wait for clients to send commands before deciding that the client has gone away and the session should shut down. `60` seconds by default. Setting it to zero disables the timer.                                     |
-| `appium:noReset`                         | `boolean` | no        | If true, instruct an Appium driver to avoid its usual reset logic during session start and cleanup (default `false`)                                                                                                                                                                              |
-| `appium:fullReset`                       | `boolean` | no        | If true, instruct an Appium driver to augment its usual reset logic with additional steps to ensure maximum environmental reproducibility (default `false`)                                                                                                                                       |
-| `appium:eventTimings`                    | `boolean` | no        | If true, instruct an Appium driver to collect [Event Timings](./event-timing.md) (default `false`)                                                                                                                                                                                                |
-| `appium:printPageSourceOnFindFailure`    | `boolean` | no        | If true, collect the page source and print it to the Appium log whenever a request to find an element fails (default `false`)                                                                                                                                                                     |
+Drivers are also able to place more complex constraints on capabilities as a group. For example,
+the XCUITest driver recommends that at least one of `browserName`, `appium:app`, or `appium:bundleId`
+is included in the capabilities, otherwise it will not be able to auto-install or auto-launch any
+application. Each driver will document how it interprets these capabilities and any other
+platform-specific requirements.
 
-Some drivers place more complex constraints on capabilities as a group. For example, while the
-`appium:app` and `browserName` capabilities are listed above as optional, if you want to launch
-a session with a specific app, the XCUITest driver requires that at least one of `appium:app`,
-`browserName`, or `appium:bundleId` are included in the capabilities (otherwise it will not know
-what app to install and/or launch and will simply open a session on the home screen). Each driver
-will document how it interprets these capabilities and any other platform-specific requirements.
+The way to construct capabilities and start a session will likely differ depending on your Appium
+client. For examples of doing this in each client library, head to the [Ecosystem Clients](../ecosystem/clients.md)
+page and click through to the appropriate client documentation.
 
 !!! note
 
 ```
-Capabilities are like parameters used when starting a session. After the capabilities are sent
-and the session is started, they cannot be changed. If a driver supports updating aspects of
-its behaviour in the course of a session, it will provide a [Setting](./settings.md) for this
-purpose instead of, or in addition to, a capability.
+Once your capabilities are sent to the server and the session is started, they cannot be
+changed. If a driver supports updating its behaviour during a session, it will use the
+[Settings API](./settings.md) for this purpose.
 ```
-
-Each Appium client has its own way of constructing capabilities and starting a session. For
-examples of doing this in each client library, head to the [Ecosystem](../ecosystem/index.md) page
-and click through to the appropriate client documentation.
 
 ## BiDi Protocol Support
 
-Appium supports [WebDriver BiDi](https://w3c.github.io/webdriver-bidi/) protocol since base–driver 9.5.0.
-The actual behavior depends on individual drivers while the Appium and the baseｰdriver support the protocol.
-Please make sure if a driver supports the protocol and what kind of commands/events it supports in the documentation.
+In addition to the standard WebDriver protocol (now known as WebDriver Classic), Appium supports the
+[WebDriver BiDi](https://w3c.github.io/webdriver-bidi/) protocol. Support for this protocol is
+opt-in, and requires the use of the standard `webSocketUrl` capability.
 
-| Capability Name | Type      | Description                                             |
-| --------------- | --------- | ------------------------------------------------------- |
-| `webSocketUrl`  | `boolean` | To enable BiDi protocol in the session. |
+| Capability Name | Type      | Description                                     |
+| --------------- | --------- | ----------------------------------------------- |
+| `webSocketUrl`  | `boolean` | Whether BiDi protocol is enabled in the session |
+
+All BiDi commands supported by the Appium base driver (inherited by all drivers) can be found in the
+[BiDi Protocol API Reference document](../reference/api/bidi.md). Similarly to WebDriver Classic
+commands, individual Appium drivers and plugins can define their own supported standard and custom
+BiDi commands, so make sure to reference their documentation.
 
 ## Using `appium:options` to Group Capabilities
 
@@ -124,8 +120,7 @@ creates in response to a new session request. This is through the concept of "al
 !!! note
 
 ```
-Check out the [spec itself](https://w3c.github.io/webdriver/#processing-capabilities) or
-a [summarized version](https://github.com/jlipps/simple-wd-spec#processing-capabilities) for
+Check out the [spec itself](https://w3c.github.io/webdriver/#processing-capabilities) for
 a more in-depth description of how capabilities are processed.
 ```
 

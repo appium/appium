@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import {escapeRegExp, isPlainObject} from './utils';
 import type {
   SecureValuePreprocessingRule,
   LogFilterRegex,
@@ -7,15 +7,6 @@ import type {
 } from './types';
 
 export const DEFAULT_SECURE_REPLACER = '**SECURE**';
-
-/**
- * Type guard for log filter type
- * @param {object} value
- * @returns {value is LogFilterRegex}
- */
-function isLogFilterRegex(value: object): value is LogFilterRegex {
-  return 'pattern' in value;
-}
 
 export class SecureValuesPreprocessor {
   _rules: SecureValuePreprocessingRule[];
@@ -44,44 +35,44 @@ export class SecureValuesPreprocessor {
     let pattern: string | undefined;
     let replacer = DEFAULT_SECURE_REPLACER;
     let flags = ['g'];
-    if (_.isString(rule)) {
+    if (typeof rule === 'string') {
       if (rule.length === 0) {
         throw new Error(`${JSON.stringify(rule)} -> The value must not be empty`);
       }
-      pattern = `\\b${_.escapeRegExp(rule)}\\b`;
-    } else if (_.isPlainObject(rule)) {
+      pattern = `\\b${escapeRegExp(rule)}\\b`;
+    } else if (isPlainObject(rule)) {
       if (isLogFilterRegex(rule)) {
-        if (!_.isString(rule.pattern) || rule.pattern.length === 0) {
+        if (typeof rule.pattern !== 'string' || rule.pattern.length === 0) {
           throw new Error(
-            `${JSON.stringify(rule)} -> The value of 'pattern' must be a valid non-empty string`
+            `${JSON.stringify(rule)} -> The value of 'pattern' must be a valid non-empty string`,
           );
         }
         pattern = rule.pattern;
-      } else if (_.has(rule, 'text')) {
-        if (!_.isString(rule.text) || rule.text.length === 0) {
+      } else if (Object.hasOwn(rule, 'text')) {
+        if (typeof rule.text !== 'string' || rule.text.length === 0) {
           throw new Error(
-            `${JSON.stringify(rule)} -> The value of 'text' must be a valid non-empty string`
+            `${JSON.stringify(rule)} -> The value of 'text' must be a valid non-empty string`,
           );
         }
-        pattern = `\\b${_.escapeRegExp(rule.text)}\\b`;
+        pattern = `\\b${escapeRegExp(rule.text)}\\b`;
       }
       if (!pattern) {
         throw new Error(
-          `${JSON.stringify(rule)} -> Must either have a field named 'pattern' or 'text'`
+          `${JSON.stringify(rule)} -> Must either have a field named 'pattern' or 'text'`,
         );
       }
 
-      if (_.has(rule, 'flags')) {
+      if (Object.hasOwn(rule, 'flags') && rule.flags != null) {
         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#Advanced_searching_with_flags_2
         for (const flag of ['i', 'g', 'm', 's', 'u', 'y']) {
-          if (_.includes(rule.flags, flag)) {
+          if (rule.flags?.includes(flag)) {
             flags.push(flag);
           }
         }
-        flags = _.uniq(flags);
+        flags = [...new Set(flags)];
       }
 
-      if (_.isString(rule.replacer)) {
+      if (typeof rule.replacer === 'string') {
         replacer = rule.replacer;
       }
     } else {
@@ -107,10 +98,10 @@ export class SecureValuesPreprocessor {
   async loadRules(filters: string | string[] | LogFiltersConfig): Promise<string[]> {
     const issues: string[] = [];
     const rawRules: (LogFilter | string)[] = [];
-    for (const source of (_.isArray(filters) ? filters : [filters])) {
-      if (_.isPlainObject(source)) {
+    for (const source of Array.isArray(filters) ? filters : [filters]) {
+      if (isPlainObject(source)) {
         rawRules.push(source as LogFilter);
-      } else if (_.isString(source)) {
+      } else if (typeof source === 'string') {
         rawRules.push(String(source));
       } else {
         issues.push(`'${source}' must be a valid log filtering rule`);
@@ -136,7 +127,7 @@ export class SecureValuesPreprocessor {
    * @returns {string} The string with replacements made
    */
   preprocess(str: string): string {
-    if (this._rules.length === 0 || !str || !_.isString(str)) {
+    if (this._rules.length === 0 || !str || typeof str !== 'string') {
       return str;
     }
 
@@ -146,4 +137,13 @@ export class SecureValuesPreprocessor {
     }
     return result;
   }
+}
+
+/**
+ * Type guard for log filter type
+ * @param {object} value
+ * @returns {value is LogFilterRegex}
+ */
+function isLogFilterRegex(value: object): value is LogFilterRegex {
+  return 'pattern' in value;
 }

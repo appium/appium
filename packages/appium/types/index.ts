@@ -1,4 +1,4 @@
-import {ExtensionType, DriverType, DriverClass, PluginType, PluginClass} from '@appium/types';
+import type {ExtensionType, DriverType, DriverClass, PluginType, PluginClass} from '@appium/types';
 
 export * from './manifest';
 export * from './cli';
@@ -16,5 +16,5 @@ export interface AppiumEnv extends NodeJS.ProcessEnv {
 export type ExtClass<ExtType extends ExtensionType> = ExtType extends DriverType
   ? DriverClass
   : ExtType extends PluginType
-  ? PluginClass
-  : never;
+    ? PluginClass
+    : never;

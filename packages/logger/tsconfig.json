@@ -1,14 +1,12 @@
 {
   "extends": "@appium/tsconfig/tsconfig.json",
   "compilerOptions": {
+    "rootDir": ".",
     "esModuleInterop": true,
-    "strict": false,
+    "strict": true,
     "outDir": "build",
-    "types": ["node"],
+    "types": ["node", "mocha"],
     "checkJs": true
   },
-  "include": [
-    "index.ts",
-    "lib"
-  ]
+  "include": ["index.ts", "lib", "test"]
 }

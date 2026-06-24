@@ -3,6 +3,56 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.9](https://github.com/appium/appium/compare/@appium/logger@2.0.8...@appium/logger@2.0.9) (2026-06-18)
+
+**Note:** Version bump only for package @appium/logger
+
+
+
+
+
+## [2.0.8](https://github.com/appium/appium/compare/@appium/logger@2.0.7...@appium/logger@2.0.8) (2026-05-31)
+
+**Note:** Version bump only for package @appium/logger
+
+
+
+
+
+## [2.0.7](https://github.com/appium/appium/compare/@appium/logger@2.0.6...@appium/logger@2.0.7) (2026-04-23)
+
+
+### Bug Fixes
+
+* **logger:** linter errors ([#22182](https://github.com/appium/appium/issues/22182)) ([5484e9a](https://github.com/appium/appium/commit/5484e9a4ff9eccd6bd1bb5d22d6297ad1b343a3c))
+
+
+
+## [2.0.6](https://github.com/appium/appium/compare/@appium/logger@2.0.5...@appium/logger@2.0.6) (2026-04-09)
+
+**Note:** Version bump only for package @appium/logger
+
+
+
+
+
+## [2.0.5](https://github.com/appium/appium/compare/@appium/logger@2.0.4...@appium/logger@2.0.5) (2026-03-08)
+
+
+### Bug Fixes
+
+* **logger:** Make sure we always have single logger instance per process ([#21991](https://github.com/appium/appium/issues/21991)) ([4daaa14](https://github.com/appium/appium/commit/4daaa14c29bed129d329d0881a93ecdb9de77676))
+
+
+
+## [2.0.4](https://github.com/appium/appium/compare/@appium/logger@2.0.3...@appium/logger@2.0.4) (2026-01-26)
+
+**Note:** Version bump only for package @appium/logger
+
+
+
+
+
 ## [2.0.3](https://github.com/appium/appium/compare/@appium/logger@2.0.2...@appium/logger@2.0.3) (2025-12-04)
 
 **Note:** Version bump only for package @appium/logger

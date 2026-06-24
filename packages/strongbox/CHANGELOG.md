@@ -3,6 +3,49 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.2](https://github.com/appium/appium/compare/@appium/strongbox@1.1.1...@appium/strongbox@1.1.2) (2026-06-18)
+
+**Note:** Version bump only for package @appium/strongbox
+
+
+
+
+
+## [1.1.1](https://github.com/appium/appium/compare/@appium/strongbox@1.1.0...@appium/strongbox@1.1.1) (2026-04-23)
+
+
+### Bug Fixes
+
+* All the rest of linter warnings ([#22183](https://github.com/appium/appium/issues/22183)) ([efe167f](https://github.com/appium/appium/commit/efe167f59a0a19515b78a53346e5d0b3fc4c744c))
+
+
+
+## [1.1.0](https://github.com/appium/appium/compare/@appium/strongbox@1.0.2...@appium/strongbox@1.1.0) (2026-04-09)
+
+
+### Features
+
+* **strongbox:** Add a possibility to list strongbox items ([#22091](https://github.com/appium/appium/issues/22091)) ([73b7820](https://github.com/appium/appium/commit/73b7820df57d6d4a3f345230b4ae406615e3f951))
+
+
+
+## [1.0.2](https://github.com/appium/appium/compare/@appium/strongbox@1.0.1...@appium/strongbox@1.0.2) (2026-03-08)
+
+
+### Bug Fixes
+
+* Type imports ([#22025](https://github.com/appium/appium/issues/22025)) ([2f27425](https://github.com/appium/appium/commit/2f27425ea300ca1af1c1da6e4be68d48e7a94346))
+
+
+
+## [1.0.1](https://github.com/appium/appium/compare/@appium/strongbox@1.0.0...@appium/strongbox@1.0.1) (2026-01-26)
+
+**Note:** Version bump only for package @appium/strongbox
+
+
+
+
+
 ## [1.0.0](https://github.com/appium/appium/compare/@appium/strongbox@1.0.0-rc.1...@appium/strongbox@1.0.0) (2025-08-18)
 
 **Note:** Version bump only for package @appium/strongbox

@@ -21,9 +21,9 @@ jobs:
             project_name: appium-inspector
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7.0.0
       - name: Use Node.js LTS
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v6.4.0
         with:
           node-version: lts/*
           cache: 'npm'
@@ -36,7 +36,7 @@ jobs:
           CROWDIN_PROJECT_ID: ${{ vars[matrix.project_id_var] }}
           CROWDIN_TOKEN: ${{ secrets.CROWDIN_DOCS_TOKEN }}
       - name: Post to Slack for ${{ matrix.project_name }}
-        uses: slackapi/slack-github-action@v2.1.1
+        uses: slackapi/slack-github-action@v3.0.3
         with:
           errors: true
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}

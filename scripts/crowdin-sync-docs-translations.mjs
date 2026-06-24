@@ -79,7 +79,9 @@ async function downloadTranslations(buildId, dstPath) {
  * @returns {Promise<void>}
  */
 async function syncTranslatedDocuments(srcDir, dstDir) {
-  const srcTranslatedDocs = (await walk(srcDir, DOCUMENTS_EXT)).map((p) => path.relative(srcDir, p));
+  const srcTranslatedDocs = (await walk(srcDir, DOCUMENTS_EXT)).map((p) =>
+    path.relative(srcDir, p),
+  );
   if (srcTranslatedDocs.length === 0) {
     return;
   }
@@ -87,11 +89,7 @@ async function syncTranslatedDocuments(srcDir, dstDir) {
   let count = 0;
   for (const relativePath of srcTranslatedDocs) {
     log.info(`Synchronizing '${relativePath}' (${++count} of ${srcTranslatedDocs.length})`);
-    await fs.mv(
-      path.join(srcDir, relativePath),
-      path.join(dstDir, relativePath),
-      {mkdirp: true}
-    );
+    await fs.mv(path.join(srcDir, relativePath), path.join(dstDir, relativePath), {mkdirp: true});
   }
 
   const dstDocs = (await walk(dstDir, DOCUMENTS_EXT)).map((p) => path.relative(dstDir, p));
@@ -124,7 +122,9 @@ async function validateYaml(yamlPath) {
           log.info(`'${yamlPath}' is a valid YAML file`);
           resolve(true);
         } else {
-          reject(new Error(`'${yamlPath}' is not valid YAML file. Was it corrupted during translation?`));
+          reject(
+            new Error(`'${yamlPath}' is not valid YAML file. Was it corrupted during translation?`),
+          );
         }
       });
       validatorProcess.once('error', (e) => {
@@ -151,11 +151,11 @@ async function validateYaml(yamlPath) {
  */
 async function syncTranslatedConfig(srcDir, dstDir, dstLanguage) {
   const srcPath = path.join(srcDir, CROWIN_MKDOCS_CONFIG);
-  if (!await fs.exists(srcPath)) {
+  if (!(await fs.exists(srcPath))) {
     throw new Error(`Did not find the translated MkDocs config at '${srcPath}'`);
   }
   const configFileName = ORIGINAL_MKDOCS_CONFIG(dstLanguage);
-  if (!await validateYaml(srcPath)) {
+  if (!(await validateYaml(srcPath))) {
     log.warn(`Skipping the corrupted translated MkDocs config '${configFileName}'`);
     return;
   }
@@ -193,7 +193,7 @@ async function main() {
         await syncTranslatedConfig(currentPath, RESOURCES_ROOT, dstLanguageName);
         log.info(
           `Successfully updated resources for the '${dstLanguageName}' ` +
-          `('${name}' in Crowdin) language (${++count} of ${Object.keys(CROWDIN_TO_FS_LANGUAGES_MAP).length})`
+            `('${name}' in Crowdin) language (${++count} of ${Object.keys(CROWDIN_TO_FS_LANGUAGES_MAP).length})`,
         );
       }
     } finally {

@@ -62,17 +62,25 @@ export default {
 };
 
 export type {ConsoleOpts} from './console';
-export type {ReadFn, WalkDirCallback} from './fs';
+export type {TextStyle} from './console';
+export type {CopyFileOptions, ReadFn, WalkDirCallback} from './fs';
 export type {
   NetOptions,
   DownloadOptions,
   AuthCredentials,
+  FtpUploadOptions,
   NotHttpUploadOptions,
   HttpUploadOptions,
 } from './net';
 export type {InstallPackageOpts, ExecOpts, NpmInstallReceipt} from './npm';
 export type {Affixes, OpenedAffixes} from './tempdir';
-export type {PluralizeOptions, EncodingOptions, LockFileOptions, NonEmptyString} from './util';
+export type {
+  PluralizeOptions,
+  EncodingOptions,
+  LockFileOptions,
+  TruncateStringOptions,
+  NonEmptyString,
+} from './util';
 export type {
   ExtractAllOptions,
   ZipEntry,

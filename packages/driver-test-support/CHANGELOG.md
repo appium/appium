@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.0]
+
+### ⚠ BREAKING CHANGES
+
+* No longer exports the following methods and types: `createSessionHelpers`, `driverE2ETestSuite`,
+  `driverUnitTestSuite`, `NewSessionData`, `NewSessionResponse`, `SessionHelpers`.
+
+
+
+
+
 ## [1.2.5](https://github.com/appium/appium/compare/@appium/driver-test-support@1.2.4...@appium/driver-test-support@1.2.5) (2026-06-18)
 
 **Note:** Version bump only for package @appium/driver-test-support

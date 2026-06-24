@@ -167,11 +167,13 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
     await this.publishClockStatus();
   }
 
-  proxyActive(): boolean {
+  proxyActive(sessionId?: string): boolean {
+    void sessionId;
     return this._proxyActive;
   }
 
-  canProxy(): boolean {
+  canProxy(sessionId?: string): boolean {
+    void sessionId;
     return true;
   }
 

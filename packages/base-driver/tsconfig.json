@@ -8,6 +8,7 @@
   },
   "compilerOptions": {
     "strict": true,
+    "rootDir": ".",
     "outDir": "build",
     "paths": {
       "@appium/support": ["../support"],
@@ -19,5 +20,5 @@
   },
   "include": ["lib"],
   "exclude": ["build"],
-  "references": [{"path": "../support"}, {"path": "../types"}]
+  "references": [{"path": "../support"}, {"path": "../types"}, {"path": "../driver-test-support"}]
 }

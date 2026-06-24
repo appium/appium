@@ -4,11 +4,11 @@ import {initSession, deleteSession, W3C_PREFIXED_CAPS} from '../helpers';
 
 chai.use(chaiAsPromised);
 
-export function contextTests() {
+export function contextTests(context: {port: number}) {
   describe('contexts, webviews, frames', function () {
     let driver: Awaited<ReturnType<typeof initSession>>;
     before(async function () {
-      driver = await initSession(W3C_PREFIXED_CAPS);
+      driver = await initSession(W3C_PREFIXED_CAPS, {port: context.port});
     });
     after(async function () {
       return await deleteSession(driver);

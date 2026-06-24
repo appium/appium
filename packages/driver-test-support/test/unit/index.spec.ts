@@ -1,28 +1,13 @@
 import {TEST_HOST, getTestPort, createAppiumURL} from '../../lib';
+import {expect} from 'chai';
 
 describe('TEST_HOST', function () {
-  let expect: Chai.ExpectStatic;
-
-  before(async function () {
-    const chai = await import('chai');
-    (chai as any).should();
-    expect = (chai as any).expect;
-  });
-
   it('should be localhost', function () {
     expect(TEST_HOST).to.equal('127.0.0.1');
   });
 });
 
 describe('getTestPort()', function () {
-  let expect: Chai.ExpectStatic;
-
-  before(async function () {
-    const chai = await import('chai');
-    (chai as any).should();
-    expect = (chai as any).expect;
-  });
-
   it('should get a free test port', async function () {
     const port = await getTestPort();
     expect(port).to.be.a('number');
@@ -30,13 +15,9 @@ describe('getTestPort()', function () {
 });
 
 describe('createAppiumURL()', function () {
-  let expect: Chai.ExpectStatic;
   let urlFor: (session: string, pathname: string) => string;
 
   before(async function () {
-    const chai = await import('chai');
-    (chai as any).should();
-    expect = (chai as any).expect;
     urlFor = createAppiumURL(TEST_HOST, 31337);
   });
 

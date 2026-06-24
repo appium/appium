@@ -6,25 +6,12 @@ import {fs} from 'appium/support';
 import {main as appiumServer} from 'appium';
 import type {AppiumServer} from '@appium/types';
 import type {E2ESetupOpts, AppiumEnv} from './types';
+import AsyncLock from 'async-lock';
 
 declare const __filename: string;
 const _require = createRequire(__filename);
 const APPIUM_BIN = _require.resolve('appium') as string;
-
-async function getPort(): Promise<number> {
-  const server = net.createServer();
-  return await new Promise((resolve, reject) => {
-    server.once('error', reject);
-    server.listen(0, () => {
-      const address = server.address();
-      if (!address || typeof address === 'string') {
-        server.close(() => reject(new Error('Could not resolve a free port')));
-        return;
-      }
-      server.close((err) => (err ? reject(err) : resolve(address.port)));
-    });
-  });
-}
+const lock = new AsyncLock();
 
 const logSymbols = {
   info: 'ℹ',
@@ -35,12 +22,22 @@ const logSymbols = {
 
 /**
  * Creates hooks to install a driver and a plugin and starts an Appium server w/ the given extensions.
+ *
+ * @param opts - Options for the plugin E2E harness
+ * @returns An object with `setup` and `teardown` callbacks
+ * @throws {Error} If a free port could not be found
+ * @throws {Error} If the Appium server could not be started
+ * @throws {Error} If the driver could not be installed
+ * @throws {Error} If the plugin could not be installed
  */
-export function pluginE2EHarness(opts: E2ESetupOpts): void {
+export function pluginE2EHarness(opts: E2ESetupOpts): {
+  setup: () => Promise<{
+    server: AppiumServer;
+  }>;
+  teardown: () => Promise<void>;
+} {
   const {
     appiumHome,
-    before,
-    after,
     serverArgs = {},
     driverSource,
     driverPackage,
@@ -56,12 +53,7 @@ export function pluginE2EHarness(opts: E2ESetupOpts): void {
 
   let server: AppiumServer | undefined;
 
-  before(async function (this: Mocha.Context) {
-    // Lazy-load chai so smoke test (node ./build/lib/index.js --smoke-test) does not require it
-    const chai = await import('chai');
-    const chaiAsPromised = (await import('chai-as-promised')).default;
-    chai.use(chaiAsPromised);
-
+  const setup = async function setup() {
     const setupAppiumHome = async (): Promise<AppiumEnv> => {
       const env: AppiumEnv = {...process.env};
 
@@ -122,7 +114,6 @@ export function pluginE2EHarness(opts: E2ESetupOpts): void {
     const startAppiumServer = async (): Promise<void> => {
       const resolvedPort = port ?? (await getPort());
       console.log(`${logSymbols.info} Will use port ${resolvedPort} for Appium server`);
-      (this as Mocha.Context & {port?: number}).port = resolvedPort;
 
       const args = {
         port: resolvedPort,
@@ -139,11 +130,39 @@ export function pluginE2EHarness(opts: E2ESetupOpts): void {
     await installDriver(env);
     await installPlugin(env);
     await startAppiumServer();
-  });
+    return {server: server as AppiumServer};
+  };
 
-  after(async function () {
-    if (server) {
-      await server.close();
-    }
+  const teardown = async function teardown() {
+    await server?.close();
+  };
+
+  return {
+    setup,
+    teardown,
+  };
+}
+
+/**
+ * Returns a first available free port number on the local machine.
+ * The function call is race-free and thread-safe.
+ *
+ * @returns Port number
+ * @throws {Error} If a free port could not be found
+ */
+export async function getPort(): Promise<number> {
+  return await lock.acquire('getPort', async () => {
+    const server = net.createServer();
+    return await new Promise<number>((resolve, reject) => {
+      server.once('error', reject);
+      server.listen(0, () => {
+        const address = server.address();
+        if (!address || typeof address === 'string') {
+          server.close(() => reject(new Error('Could not resolve a free port')));
+          return;
+        }
+        server.close((err) => (err ? reject(err) : resolve(address.port)));
+      });
+    });
   });
 }

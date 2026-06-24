@@ -9,6 +9,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 * No longer exports the following methods and types: `createSessionHelpers`, `driverE2ETestSuite`,
   `driverUnitTestSuite`, `NewSessionData`, `NewSessionResponse`, `SessionHelpers`.
+* `getTestPort` no longer accepts arguments.
 
 
 

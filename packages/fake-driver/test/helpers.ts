@@ -28,7 +28,10 @@ const WD_OPTS: Partial<Parameters<typeof wdio>[0]> = {
   logLevel: 'error',
 };
 
-async function initSession(w3cPrefixedCaps: StringRecord, wdioOpts: Partial<Parameters<typeof wdio>[0]> = {}) {
+async function initSession(
+  w3cPrefixedCaps: StringRecord,
+  wdioOpts: Partial<Parameters<typeof wdio>[0]> = {},
+) {
   return await wdio({...WD_OPTS, ...wdioOpts, capabilities: w3cPrefixedCaps});
 }
 
@@ -40,12 +43,4 @@ async function deleteSession(driver: Awaited<ReturnType<typeof wdio>>) {
   }
 }
 
-export {
-  initSession,
-  deleteSession,
-  TEST_APP,
-  TEST_HOST,
-  BASE_CAPS,
-  W3C_CAPS,
-  W3C_PREFIXED_CAPS,
-};
+export {initSession, deleteSession, TEST_APP, TEST_HOST, BASE_CAPS, W3C_CAPS, W3C_PREFIXED_CAPS};

@@ -9,7 +9,7 @@
       "appium/support": ["../support"],
       "appium": ["../appium"]
     },
-    "types": ["chai", "sinon", "chai-as-promised", "node"]
+    "types": ["node"]
   },
   "include": ["./lib"],
   "references": [{"path": "../types"}, {"path": "../support"}]

@@ -1,6 +1,5 @@
 import {expectAssignable} from 'tsd';
-// NOTE: this pulls in the distfiles
-import {BaseDriver} from '.../../..';
+import {BaseDriver} from '.../../../lib/basedriver/driver';
 import {BaseDriverCapConstraints, ExternalDriver, Driver, DriverOpts} from '@appium/types';
 
 expectAssignable<Driver<BaseDriverCapConstraints>>(

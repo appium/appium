@@ -1,9 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "@tsconfig/node20/tsconfig.json",
-  "ts-node": {
-    "transpileOnly": true
-  },
   "compilerOptions": {
     "allowJs": true,
     "allowSyntheticDefaultImports": true,

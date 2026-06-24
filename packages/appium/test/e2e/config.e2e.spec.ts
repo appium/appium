@@ -1,3 +1,4 @@
+import {describe, it, beforeEach, afterEach} from 'node:test';
 import {createSandbox, type SinonSandbox} from 'sinon';
 import {getBuildInfo, getGitRev, updateBuildInfo, APPIUM_VER} from '../../lib/helpers/build';
 import axios from 'axios';

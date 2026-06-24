@@ -5,7 +5,7 @@
     "outDir": "build",
     "strict": true,
     "checkJs": true,
-    "types": ["node", "mocha", "chai", "chai-as-promised"]
+    "types": ["node", "chai", "chai-as-promised"]
   },
   "include": ["lib", "test"],
   "exclude": ["**/*.test-d.ts"]

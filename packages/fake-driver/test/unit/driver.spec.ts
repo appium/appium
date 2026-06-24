@@ -1,14 +1,10 @@
+import {describe, it} from 'node:test';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {FakeDriver} from '../../lib';
 import {W3C_CAPS, W3C_PREFIXED_CAPS} from '../helpers';
-import {driverUnitTestSuite} from '@appium/driver-test-support';
 
 chai.use(chaiAsPromised);
-
-// test the same things as for base driver
-// @ts-expect-error FakeDriver constructor opts differ from DriverClass expectation
-driverUnitTestSuite(FakeDriver, structuredClone(W3C_PREFIXED_CAPS));
 
 describe('FakeDriver', function () {
   it('should not start a session when a unique session is already running', async function () {

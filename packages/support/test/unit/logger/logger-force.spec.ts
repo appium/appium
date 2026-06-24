@@ -1,3 +1,4 @@
+import {describe, it, before, after} from 'node:test';
 import {expect} from 'chai';
 import {getDynamicLogger, restoreWriters, setupWriters, assertOutputContains} from './helpers';
 

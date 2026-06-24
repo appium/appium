@@ -1,3 +1,4 @@
+import {describe, it} from 'node:test';
 import type {ExtManifest} from 'appium/types';
 import {Manifest} from '../../../lib/extension/manifest';
 import {migrate} from '../../../lib/extension/manifest-migrations';

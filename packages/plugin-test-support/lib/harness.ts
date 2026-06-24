@@ -5,7 +5,7 @@ import {exec} from 'teen_process';
 import {fs} from 'appium/support';
 import {main as appiumServer} from 'appium';
 import type {AppiumServer} from '@appium/types';
-import type {E2ESetupOpts, AppiumEnv} from './types';
+import type {E2ESetupOpts, AppiumEnv, PluginSetup, PluginTeardown} from './types';
 
 declare const __filename: string;
 const _require = createRequire(__filename);
@@ -34,13 +34,14 @@ const logSymbols = {
 } as const;
 
 /**
- * Creates hooks to install a driver and a plugin and starts an Appium server w/ the given extensions.
+ * Creates a setup/teardown pair to install a driver and a plugin and starts an Appium server w/ the given extensions.
  */
-export function pluginE2EHarness(opts: E2ESetupOpts): void {
+export function pluginE2EHarness(opts: E2ESetupOpts): {
+  setup: PluginSetup;
+  teardown: PluginTeardown;
+} {
   const {
     appiumHome,
-    before,
-    after,
     serverArgs = {},
     driverSource,
     driverPackage,
@@ -56,12 +57,7 @@ export function pluginE2EHarness(opts: E2ESetupOpts): void {
 
   let server: AppiumServer | undefined;
 
-  before(async function (this: Mocha.Context) {
-    // Lazy-load chai so smoke test (node ./build/lib/index.js --smoke-test) does not require it
-    const chai = await import('chai');
-    const chaiAsPromised = (await import('chai-as-promised')).default;
-    chai.use(chaiAsPromised);
-
+  const setup = async function setup() {
     const setupAppiumHome = async (): Promise<AppiumEnv> => {
       const env: AppiumEnv = {...process.env};
 
@@ -122,7 +118,7 @@ export function pluginE2EHarness(opts: E2ESetupOpts): void {
     const startAppiumServer = async (): Promise<void> => {
       const resolvedPort = port ?? (await getPort());
       console.log(`${logSymbols.info} Will use port ${resolvedPort} for Appium server`);
-      (this as Mocha.Context & {port?: number}).port = resolvedPort;
+      opts.port = resolvedPort;
 
       const args = {
         port: resolvedPort,
@@ -139,11 +135,13 @@ export function pluginE2EHarness(opts: E2ESetupOpts): void {
     await installDriver(env);
     await installPlugin(env);
     await startAppiumServer();
-  });
+  };
 
-  after(async function () {
+  const teardown = async function teardown() {
     if (server) {
       await server.close();
     }
-  });
+  };
+
+  return {setup, teardown};
 }

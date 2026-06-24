@@ -1,3 +1,4 @@
+import {describe, it, before, beforeEach} from 'node:test';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {PROTOCOLS} from '../../../lib/constants';
@@ -110,7 +111,7 @@ describe('Protocol Converter', function () {
     let responseBody: any;
     before(function () {
       responseBody = null;
-      converter = new ProtocolConverter(((url, method, body) => {
+      converter = new ProtocolConverter(((url: string, method: string, body: any) => {
         responseBody = body;
       }) as any);
     });

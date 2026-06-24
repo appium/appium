@@ -1,7 +1,11 @@
-import {expect} from 'chai';
+import {describe, it, beforeEach, afterEach} from 'node:test';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import type {InitialOpts} from '@appium/types';
 import {createSandbox} from 'sinon';
 import {BaseDriver} from '../../../../lib';
+
+chai.use(chaiAsPromised);
 
 const FIRST_LOGS = ['first', 'logs'];
 const SECOND_LOGS = ['second', 'logs'];

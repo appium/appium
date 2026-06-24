@@ -1,3 +1,4 @@
+import {describe, it, before, after} from 'node:test';
 import path from 'node:path';
 import {fs} from '@appium/support';
 
@@ -9,7 +10,7 @@ import contentDisposition from 'content-disposition';
 import {sleep} from 'asyncbox';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {TEST_HOST, getTestPort} from '@appium/driver-test-support';
+import {TEST_HOST, getTestPort} from '../../helpers';
 
 chai.use(chaiAsPromised);
 
@@ -46,7 +47,7 @@ describe('app download and configuration', function () {
       let serverUrl: string;
 
       before(async function () {
-        port = await getTestPort(true);
+        port = await getTestPort();
         serverUrl = `http://${TEST_HOST}:${port}`;
       });
 

@@ -1,3 +1,4 @@
+import {describe, it, beforeEach} from 'node:test';
 import type {
   BaseDriverCapConstraints,
   Capabilities,

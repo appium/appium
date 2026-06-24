@@ -1,3 +1,4 @@
+import {describe, it} from 'node:test';
 import {UniversalXMLPlugin} from '../../lib/plugin';
 import {BaseDriver} from 'appium/driver';
 import {

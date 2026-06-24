@@ -1,3 +1,4 @@
+import {describe, it, before, after} from 'node:test';
 import {fs, tempDir} from '@appium/support';
 import path from 'node:path';
 import chai from 'chai';

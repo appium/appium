@@ -1,3 +1,4 @@
+import {describe, it, before, beforeEach, afterEach} from 'node:test';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {system, util} from '../../lib';
@@ -135,7 +136,7 @@ describe('system', function () {
     });
   });
 
-  it('should know architecture', function () {
-    return system.arch();
+  it('should know architecture', async function () {
+    await system.arch();
   });
 });

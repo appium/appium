@@ -1,3 +1,4 @@
+import {describe, it} from 'node:test';
 import chai from 'chai';
 import {BasePlugin} from '../../lib/plugin';
 

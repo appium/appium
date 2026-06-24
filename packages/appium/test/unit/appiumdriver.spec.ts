@@ -1,5 +1,6 @@
 // @ts-check
 
+import {describe, it, before, beforeEach, afterEach} from 'node:test';
 import type {Capabilities, Constraints, NSCapabilities, W3CCapabilities} from '@appium/types';
 import type {SinonSandbox, SinonMock, SinonStubbedMember} from 'sinon';
 import {PLUGIN_TYPE, SESSION_DISCOVERY_FEATURE} from '../../lib/constants';

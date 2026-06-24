@@ -1,3 +1,4 @@
+import {describe, it, beforeEach} from 'node:test';
 import {expect} from 'chai';
 import {SecureValuesPreprocessor} from '../../lib/secure-values-preprocessor';
 

@@ -1,16 +1,17 @@
+import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
 import path from 'node:path';
 import {remote as wdio} from 'webdriverio';
 import {MATCH_FEATURES_MODE, GET_SIMILARITY_MODE} from '../../lib/constants';
 import {TEST_IMG_1_B64, TEST_IMG_2_B64, APPSTORE_IMG_PATH} from '../fixtures/index.cjs';
 import {pluginE2EHarness} from '@appium/plugin-test-support';
-import {tempDir, fs} from '@appium/support';
+import {tempDir, fs, node} from '@appium/support';
 import sharp from 'sharp';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
 use(chaiAsPromised);
 
-const THIS_PLUGIN_DIR = path.join(__dirname, '..', '..');
+const THIS_PLUGIN_DIR = node.getModuleRootSync('@appium/images-plugin', __filename) as string;
 const APPIUM_HOME = path.join(THIS_PLUGIN_DIR, 'local_appium_home');
 const FAKE_DRIVER_DIR = path.join(THIS_PLUGIN_DIR, '..', 'fake-driver');
 const TEST_HOST = '127.0.0.1';
@@ -38,9 +39,7 @@ const WDIO_OPTS = {
 };
 
 describe('ImageElementPlugin', function () {
-  pluginE2EHarness({
-    before,
-    after,
+  const {setup, teardown} = pluginE2EHarness({
     port: TEST_PORT,
     host: TEST_HOST,
     appiumHome: APPIUM_HOME,
@@ -50,6 +49,13 @@ describe('ImageElementPlugin', function () {
     pluginName: 'images',
     pluginSource: 'local',
     pluginSpec: THIS_PLUGIN_DIR,
+  });
+
+  before(async function () {
+    await setup();
+  });
+  after(async function () {
+    await teardown();
   });
 
   let driver: any;

@@ -1,15 +1,19 @@
+import {describe, it, before, after} from 'node:test';
 import path from 'node:path';
 
-import {pluginE2EHarness} from '@appium/plugin-test-support';
+import {pluginE2EHarness, type E2ESetupOpts} from '@appium/plugin-test-support';
 import {remote as wdio} from 'webdriverio';
 import {W3C_ELEMENT_KEY, MJSONWP_ELEMENT_KEY} from '../../lib/execute-child';
-import {fs} from '@appium/support';
+import {fs, node} from '@appium/support';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
 use(chaiAsPromised);
 
-const THIS_PLUGIN_DIR = path.join(__dirname, '..', '..');
+const THIS_PLUGIN_DIR = node.getModuleRootSync(
+  '@appium/execute-driver-plugin',
+  __filename,
+) as string;
 const APPIUM_HOME = path.join(THIS_PLUGIN_DIR, 'local_appium_home');
 const FAKE_DRIVER_DIR = path.join(THIS_PLUGIN_DIR, '..', 'fake-driver');
 const TEST_HOST = 'localhost';
@@ -39,9 +43,7 @@ describe('ExecuteDriverPlugin', function () {
   let driver: any;
 
   const basicScript = `return 'foo'`;
-  const e2eSetupOpts = {
-    before,
-    after,
+  const e2eSetupOpts: E2ESetupOpts = {
     host: TEST_HOST,
     driverName: 'fake',
     driverSource: 'local' as const,
@@ -57,13 +59,21 @@ describe('ExecuteDriverPlugin', function () {
   });
 
   describe('without --allow-insecure set', function () {
-    after(async function () {
-      driver && (await driver.deleteSession());
+    const setupOpts = {...e2eSetupOpts};
+    const {setup, teardown} = pluginE2EHarness(setupOpts);
+    before(async function () {
+      await setup();
     });
-    pluginE2EHarness({...e2eSetupOpts});
+    after(async function () {
+      try {
+        driver && (await driver.deleteSession());
+      } finally {
+        await teardown();
+      }
+    });
 
     it('should not work unless the allowInsecure feature flag is set', async function () {
-      driver = await wdio({...WDIO_OPTS, port: this.port});
+      driver = await wdio({...WDIO_OPTS, port: setupOpts.port});
       await expect(driver.executeDriverScript(basicScript)).to.eventually.be.rejectedWith(
         /allow-insecure.+execute_driver_script/i,
       );
@@ -71,15 +81,22 @@ describe('ExecuteDriverPlugin', function () {
   });
 
   describe('with --allow-insecure set', function () {
-    after(async function () {
-      driver && (await driver.deleteSession());
-    });
-    pluginE2EHarness({
+    const setupOpts = {
       ...e2eSetupOpts,
       serverArgs: {allowInsecure: ['*:execute_driver_script']},
-    });
+    };
+    const {setup, teardown} = pluginE2EHarness(setupOpts);
+
     before(async function () {
-      driver = await wdio({...WDIO_OPTS, port: this.port});
+      await setup();
+      driver = await wdio({...WDIO_OPTS, port: setupOpts.port});
+    });
+    after(async function () {
+      try {
+        driver && (await driver.deleteSession());
+      } finally {
+        await teardown();
+      }
     });
 
     it('should execute a webdriverio script in the context of session', async function () {

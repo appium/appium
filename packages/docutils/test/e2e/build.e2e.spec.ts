@@ -3,6 +3,7 @@
  * @module
  */
 
+import {describe, it, before, after} from 'node:test';
 import path from 'node:path';
 import * as chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
@@ -64,7 +65,7 @@ async function createDocsFile(
 /**
  * Helper function to ensure Python dependencies are installed
  */
-async function ensurePythonDeps(projectDir: string, context: Mocha.Context): Promise<void> {
+async function ensurePythonDeps(projectDir: string, context: {skip: () => void}): Promise<void> {
   try {
     await initPython({cwd: projectDir});
   } catch {
@@ -112,7 +113,7 @@ describe('@appium/docutils build e2e', function () {
   });
 
   describe('buildSite', function () {
-    it('should build a site with mkdocs', async function () {
+    it('should build a site with mkdocs', async function (t) {
       const projectDir = await createProjectDir(testDir, 'test1', {
         name: 'test-docs',
         version: '1.0.0',
@@ -136,7 +137,7 @@ describe('@appium/docutils build e2e', function () {
         'index.md',
         '# Test Documentation\n\nThis is a test page.\n',
       );
-      await ensurePythonDeps(projectDir, this as Mocha.Context);
+      await ensurePythonDeps(projectDir, t);
 
       // Build the site
       await buildSite({
@@ -148,7 +149,7 @@ describe('@appium/docutils build e2e', function () {
       await verifySiteBuilt(path.join(projectDir, DEFAULT_SITE_DIR), 'Test Documentation');
     });
 
-    it('should build a site with custom site-dir', async function () {
+    it('should build a site with custom site-dir', async function (t) {
       const customSiteDir = 'custom-site';
       const projectDir = await createProjectDir(testDir, 'test2', {
         name: 'test-docs-2',
@@ -173,7 +174,7 @@ describe('@appium/docutils build e2e', function () {
         'index.md',
         '# Test Documentation 2\n\nThis is another test page.\n',
       );
-      await ensurePythonDeps(projectDir, this as Mocha.Context);
+      await ensurePythonDeps(projectDir, t);
 
       // Build the site with custom site-dir
       const customSiteDirPath = path.join(projectDir, customSiteDir);

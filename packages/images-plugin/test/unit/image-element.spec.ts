@@ -1,3 +1,4 @@
+import {describe, it, before, beforeEach, afterEach} from 'node:test';
 import {BaseDriver} from 'appium/driver';
 import {util} from 'appium/support';
 import {ImageElementFinder} from '../../lib/finder';

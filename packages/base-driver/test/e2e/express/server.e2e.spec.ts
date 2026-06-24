@@ -1,14 +1,15 @@
+import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {Application, Request, Response} from 'express';
-import type {ServerArgs} from '@appium/types';
+import type {ServerArgs, AppiumServer} from '@appium/types';
 import {server} from '../../../lib';
 import axios from 'axios';
 import {createSandbox} from 'sinon';
 import {sleep} from 'asyncbox';
 import {exec} from 'teen_process';
 import https from 'node:https';
-import {TEST_HOST, getTestPort} from '@appium/driver-test-support';
+import {TEST_HOST, getTestPort} from '../../helpers';
 
 chai.use(chaiAsPromised);
 
@@ -33,11 +34,11 @@ describe('server', function () {
   let sandbox: sinon.SinonSandbox;
 
   before(async function () {
-    port = await getTestPort(true);
+    port = await getTestPort();
 
     function configureRoutes(app: Application) {
       app.get('/', (_req: Request, res: Response) => {
-        res.header['content-type'] = 'text/html';
+        res.header('content-type', 'text/html');
         res.status(200).send('Hello World!');
       });
       app.get('/python', (req: Request, res: Response) => {
@@ -47,7 +48,7 @@ describe('server', function () {
         throw new Error('hahaha');
       });
       app.get('/pause', async (_req: Request, res: Response) => {
-        res.header['content-type'] = 'text/html';
+        res.header('content-type', 'text/html');
         await sleep(1000);
         res.status(200).send('We have waited!');
       });
@@ -105,8 +106,7 @@ describe('server', function () {
 
     await bodyPromise;
   });
-  it('should error if we try to start on a bad hostname', async function () {
-    this.timeout(60000);
+  it('should error if we try to start on a bad hostname', {timeout: 60000}, async function () {
     await expect(
       server({
         routeConfiguringFunction: () => {},
@@ -125,7 +125,7 @@ describe('server', function () {
 });
 
 describe('tls server', function () {
-  let hwServer: Awaited<ReturnType<typeof server>>;
+  let hwServer: AppiumServer;
   let port: number;
   const certPath = 'certificate.cert';
   const keyPath = 'certificate.key';
@@ -134,6 +134,7 @@ describe('tls server', function () {
       rejectUnauthorized: false,
     }),
   });
+  let skip = false;
 
   before(async function () {
     try {
@@ -142,14 +143,15 @@ describe('tls server', function () {
       if (process.env.CI) {
         throw e;
       }
-      return this.skip();
+      skip = true;
+      return;
     }
 
-    port = await getTestPort(true);
+    port = await getTestPort();
 
     function configureRoutes(app: Application) {
       app.get('/', (_req: Request, res: Response) => {
-        res.header['content-type'] = 'text/html';
+        res.header('content-type', 'text/html');
         res.status(200).send('Hello World!');
       });
     }
@@ -165,17 +167,17 @@ describe('tls server', function () {
   });
 
   after(async function () {
-    await hwServer.close();
+    await hwServer?.close();
   });
 
-  it('should start up with our middleware', async function () {
+  it('should start up with our middleware', {skip}, async function () {
     const {data} = await looseClient.get(`https://${TEST_HOST}:${port}/`);
     expect(data).to.eql('Hello World!');
   });
-  it('should throw if untrusted', async function () {
+  it('should throw if untrusted', {skip}, async function () {
     await expect(axios.get(`https://${TEST_HOST}:${port}/`)).to.eventually.be.rejected;
   });
-  it('should throw if not secure', async function () {
+  it('should throw if not secure', {skip}, async function () {
     await expect(axios.get(`http://${TEST_HOST}:${port}/`)).to.eventually.be.rejected;
   });
 });
@@ -190,7 +192,7 @@ describe('server plugins', function () {
   let port: number;
 
   before(async function () {
-    port = await getTestPort(true);
+    port = await getTestPort();
   });
 
   afterEach(async function () {
@@ -204,7 +206,7 @@ describe('server plugins', function () {
   function updaterWithGetRoute(route: string, reply: string) {
     return async (app: Application, httpServer: ServerWithPlugins) => {
       app.get(`/${route}`, (_req: Request, res: Response) => {
-        res.header['content-type'] = 'text/html';
+        res.header('content-type', 'text/html');
         res.status(200).send(reply);
       });
       (httpServer as ServerWithPlugins & Record<string, boolean>)[`_updated_${route}`] = true;

@@ -1,3 +1,4 @@
+import {describe, it} from 'node:test';
 import {expect} from 'chai';
 import {uploadFile} from '../../lib/net';
 

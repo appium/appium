@@ -1,3 +1,4 @@
+import {describe, it} from 'node:test';
 import {
   XML_IOS,
   XML_IOS_TRANSFORMED,

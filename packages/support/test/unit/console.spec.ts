@@ -1,3 +1,4 @@
+import {describe, it, afterEach} from 'node:test';
 import {expect} from 'chai';
 import * as consoleModule from '../../lib/console';
 

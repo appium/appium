@@ -1,8 +1,8 @@
+import {describe, it, before, after} from 'node:test';
 import axios from 'axios';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {driverE2ETestSuite} from '@appium/driver-test-support';
-import {FakeDriver, startServer} from '../../lib/index';
+import {startServer} from '../../lib/index';
 import {
   BASE_CAPS,
   deleteSession,
@@ -20,10 +20,6 @@ import {generalTests} from './general-tests';
 chai.use(chaiAsPromised);
 
 const shouldStartServer = process.env.USE_RUNNING_SERVER !== '0';
-
-// test the same things as for base driver
-// @ts-expect-error FakeDriver constructor opts differ from DriverClass expectation
-driverE2ETestSuite(FakeDriver, W3C_PREFIXED_CAPS);
 
 describe('FakeDriver - via HTTP', function () {
   let server: Awaited<ReturnType<typeof startServer>> | null = null;

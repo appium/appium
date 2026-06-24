@@ -1,3 +1,4 @@
+import {describe, it} from 'node:test';
 import {expect} from 'chai';
 import {createBase64EncodeStream} from '../../../lib/internal/base64-encode-stream';
 

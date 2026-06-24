@@ -21,26 +21,22 @@
     },
     {
       "args": [
-        "--colors",
-        "--no-timeout",
         "${file}"
       ],
       "autoAttachChildProcesses": true,
       "console": "integratedTerminal",
       "cwd": "${workspaceFolder}",
       "internalConsoleOptions": "openOnSessionStart",
-      "name": "Test Current File w/ Mocha",
-      "program": "${workspaceFolder}/node_modules/.bin/mocha",
+      "name": "Test Current Built File",
       "request": "launch",
       "runtimeArgs": [
-        "--require",
-        "ts-node/register"
+        "--test",
+        "--test-timeout=0"
       ],
+      "runtimeExecutable": "${execPath}",
       "skipFiles": [
         "<node_internals>/**",
-        "**/node_modules/mocha/**",
-        "**/node_modules/lodash/**",
-        "**/node_modules/ts-node/**"
+        "**/node_modules/lodash/**"
       ],
       "sourceMaps": true,
       "type": "node"

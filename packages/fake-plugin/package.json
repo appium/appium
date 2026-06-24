@@ -36,7 +36,7 @@
   "scripts": {
     "test": "npm run test:unit",
     "test:smoke": "node ./build/lib/index.js --smoke-test",
-    "test:unit": "mocha \"./test/unit/**/*.spec.*ts\""
+    "test:unit": "node --test --test-timeout=5000 \"./build/test/unit/**/*.spec.*js\""
   },
   "dependencies": {
     "@appium/base-plugin": "3.3.2",

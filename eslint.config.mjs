@@ -1,26 +1,10 @@
 import appiumConfig from '@appium/eslint-config-appium-ts';
 import {defineConfig, globalIgnores} from 'eslint/config';
 
-// Create a modified config subset for test support files:
-// Extract the test file related configs (Mocha plugin and custom rules),
-// then override their 'files' property (match by name — resilient to new config entries).
-const testFileConfigItems = appiumConfig.filter(
-  (item) => typeof item?.name === 'string' && item.name.startsWith('Test Files'),
-);
-const testSupportFiles = [
-  'packages/driver-test-support/lib/**',
-  'packages/plugin-test-support/lib/**',
-];
-const testSupportConfig = testFileConfigItems.map((item) => ({...item, files: testSupportFiles}));
-
 export default defineConfig([
   {
     name: 'Base Config',
     extends: [appiumConfig],
-  },
-  {
-    name: 'Test Support',
-    extends: [testSupportConfig],
   },
   {
     name: 'Consistent type-only imports (all packages)',

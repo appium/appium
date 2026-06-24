@@ -1,3 +1,4 @@
+import {describe, it, beforeEach, afterEach} from 'node:test';
 import {createSandbox} from 'sinon';
 import {system} from '@appium/support';
 import {getPresetDrivers} from '../../../lib/cli/setup-command';

@@ -1,3 +1,4 @@
+import {describe, it, before, beforeEach, afterEach} from 'node:test';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {Driver, MethodMap} from '@appium/types';
@@ -5,7 +6,7 @@ import {server, configureServer, normalizeBasePath} from '../../../lib/express/s
 import {routeConfiguringFunction} from '../../../lib/protocol/protocol';
 import {registerTestPages} from '../../../lib/test-pages';
 import {createSandbox} from 'sinon';
-import {getTestPort} from '@appium/driver-test-support';
+import {getTestPort} from '../../helpers';
 
 chai.use(chaiAsPromised);
 
@@ -30,7 +31,7 @@ describe('server configuration', function () {
   let sandbox: sinon.SinonSandbox;
 
   before(async function () {
-    port = await getTestPort(true);
+    port = await getTestPort();
   });
 
   function fakeApp() {
@@ -69,6 +70,7 @@ describe('server configuration', function () {
   it('should mount legacy test pages when registerTestPages is provided', function () {
     const app = fakeApp() as any;
     const configureRoutes = () => {};
+    // @ts-expect-error registerTestPages is not normally used in this way
     configureServer({app, addRoutes: configureRoutes, registerTestPages});
     expect(app.use.callCount).to.equal(15);
     expect(app.all.callCount).to.equal(4);

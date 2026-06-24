@@ -1,3 +1,4 @@
+import {describe, it, beforeEach, afterEach} from 'node:test';
 import sinon from 'sinon';
 import {expect} from 'chai';
 import {RelaxedCapsPlugin} from '../../lib/plugin';

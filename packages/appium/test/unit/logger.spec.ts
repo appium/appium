@@ -1,3 +1,4 @@
+import {describe, it, after, beforeEach, afterEach} from 'node:test';
 import {init as logsinkInit, clear as logsinkClear} from '../../lib/logsink';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';

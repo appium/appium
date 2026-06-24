@@ -1,3 +1,4 @@
+import {describe, it, before} from 'node:test';
 import {getImagesMatches, getImagesSimilarity, getImageOccurrence} from '../../lib';
 import path from 'node:path';
 import {fs} from '@appium/support';
@@ -8,10 +9,8 @@ use(chaiAsPromised);
 
 const FIXTURES_ROOT = path.resolve(__dirname, 'images');
 
-describe('OpenCV helpers', function () {
+describe('OpenCV helpers', {timeout: 120000}, function () {
   // OpenCV needs several seconds for initialization
-  this.timeout(120000);
-
   let imgFixture: Buffer | null = null;
   let fullImage: Buffer | null = null;
   let partialImage: Buffer | null = null;

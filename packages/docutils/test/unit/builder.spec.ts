@@ -1,3 +1,4 @@
+import {describe, it, before, after} from 'node:test';
 import path from 'node:path';
 import {fs, tempDir} from '@appium/support';
 import {findDeployVersion} from '../../lib/builder/deploy';

@@ -1,3 +1,4 @@
+import {describe, it, beforeEach, afterEach} from 'node:test';
 import {createSandbox} from 'sinon';
 import {finalizeSchema, resetSchema, SchemaFinalizationError} from '../../../lib/schema/schema';
 import {rewiremock} from '../../helpers';

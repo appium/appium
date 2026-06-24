@@ -2,9 +2,6 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "@tsconfig/node20/tsconfig.json",
   "files": [],
-  "ts-node": {
-    "transpileOnly": true
-  },
   "compilerOptions": {
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
@@ -13,9 +10,6 @@
   "references": [
     {
       "path": "packages/appium"
-    },
-    {
-      "path": "packages/driver-test-support"
     },
     {
       "path": "packages/plugin-test-support"

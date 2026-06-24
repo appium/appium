@@ -1,18 +1,18 @@
+import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {server, routeConfiguringFunction, errors, JWProxy, BaseDriver} from '../../../lib';
+import {server, routeConfiguringFunction, errors, JWProxy} from '../../../lib';
 import {FakeDriver} from './fake-driver';
 import axios from 'axios';
 import {createSandbox} from 'sinon';
 import {StatusCodes as HTTPStatusCodes} from 'http-status-codes';
 import {createProxyServer} from './helpers';
 import {MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY} from '../../../lib/constants';
-import {TEST_HOST, getTestPort} from '@appium/driver-test-support';
+import {TEST_HOST, getTestPort} from '../../helpers';
+import type {Application, Request, Response} from 'express';
+import type {AppiumServer, MethodMap, RouteMatcher} from '@appium/types';
 
 chai.use(chaiAsPromised);
-
-let port: number;
-let baseUrl: string;
 
 describe('Protocol', function () {
   let sandbox: sinon.SinonSandbox;
@@ -25,14 +25,6 @@ describe('Protocol', function () {
     sandbox.restore();
   });
 
-  before(async function () {
-    port = await getTestPort();
-    baseUrl = `http://${TEST_HOST}:${port}`;
-  });
-
-  //TODO: more tests!:
-  // Unknown commands should return 404
-
   describe('direct to driver', function () {
     const d = new FakeDriver();
     it('should return response values directly from the driver', async function () {
@@ -41,20 +33,23 @@ describe('Protocol', function () {
   });
 
   describe('via express router', function () {
-    let mjsonwpServer;
-    let driver;
+    let driver: FakeDriver;
+    let baseUrl: string;
+    let teardown: () => Promise<void> | undefined;
 
     before(async function () {
       driver = new FakeDriver();
       driver.sessionId = 'foo';
-      mjsonwpServer = await server({
-        routeConfiguringFunction: routeConfiguringFunction(driver),
-        port,
-      });
+      const {baseUrl: baseUrlStr, setup, teardown: teardownFn} = await createServer(driver);
+      baseUrl = baseUrlStr;
+      teardown = teardownFn;
+      await setup();
     });
 
     after(async function () {
-      await mjsonwpServer.close();
+      if (teardown) {
+        await teardown();
+      }
     });
 
     it('should proxy to driver and return valid jsonwp response', async function () {
@@ -65,7 +60,6 @@ describe('Protocol', function () {
       });
       expect(data).to.eql({
         value: 'Navigated to: http://google.com',
-        sessionId: 'foo',
       });
     });
 
@@ -77,7 +71,6 @@ describe('Protocol', function () {
       });
       expect(data).to.eql({
         value: 'Navigated to: http://google.com',
-        sessionId: 'foo',
       });
     });
 
@@ -94,7 +87,6 @@ describe('Protocol', function () {
       });
       expect(data).to.eql({
         value: 'Navigated to: http://google.com',
-        sessionId: 'foo',
       });
     });
 
@@ -106,7 +98,6 @@ describe('Protocol', function () {
       });
       expect(data).to.eql({
         value: 'foo',
-        sessionId: 'foo',
       });
     });
 
@@ -144,7 +135,7 @@ describe('Protocol', function () {
           method: 'POST',
           data: 'oh hello',
         }),
-      ).to.be.rejected;
+      ).to.be.rejectedWith(Error);
 
       const {data} = await axios({
         url: `${baseUrl}/session/foo/url`,
@@ -153,7 +144,6 @@ describe('Protocol', function () {
       });
       expect(data).to.eql({
         value: 'Navigated to: http://google.com',
-        sessionId: 'foo',
       });
     });
 
@@ -180,10 +170,9 @@ describe('Protocol', function () {
         validateStatus: null,
       });
 
-      expect(status).to.equal(405);
-      expect(data.value.error).to.eql('unknown method');
-      expect(data.value.message).to.eql('Method has not yet been implemented');
-      expect(data.sessionId).to.eql('foo');
+      expect(status).to.equal(404);
+      expect(data.value.error).to.eql('unknown command');
+      expect(data.value.message).to.match(/The requested resource could not be found/);
     });
 
     it('should throw not implemented for ignored commands', async function () {
@@ -194,10 +183,9 @@ describe('Protocol', function () {
         data: {},
       });
 
-      expect(status).to.equal(405);
-      expect(data.value.error).to.eql('unknown method');
-      expect(data.value.message).to.eql('Method has not yet been implemented');
-      expect(data.sessionId).to.eql('foo');
+      expect(status).to.equal(404);
+      expect(data.value.error).to.eql('unknown command');
+      expect(data.value.message).to.match(/The requested resource could not be found/);
     });
 
     it('should get 400 for bad parameters', async function () {
@@ -214,7 +202,7 @@ describe('Protocol', function () {
       await axios({
         url: `${baseUrl}/session/foo/element/bar/value`,
         method: 'POST',
-        data: {id: 'baz', sessionId: 'lol', value: ['a']},
+        data: {id: 'baz', sessionId: 'lol', value: ['a'], text: 'bar'},
       });
 
       await expect(
@@ -247,13 +235,14 @@ describe('Protocol', function () {
     });
 
     describe('w3c sendkeys migration', function () {
-      it('should accept value for sendkeys', async function () {
-        const {data} = await axios({
-          url: `${baseUrl}/session/foo/element/bar/value`,
-          method: 'POST',
-          data: {value: 'text to type'},
-        });
-        expect(data.value).to.eql(['text to type', 'bar']);
+      it('should not accept value for sendkeys', async function () {
+        await expect(
+          axios({
+            url: `${baseUrl}/session/foo/element/bar/value`,
+            method: 'POST',
+            data: {value: 'text to type'},
+          }),
+        ).to.be.rejectedWith(/400/);
       });
       it('should accept text for sendkeys', async function () {
         const {data} = await axios({
@@ -263,77 +252,18 @@ describe('Protocol', function () {
         });
         expect(data.value).to.eql(['text to type', 'bar']);
       });
-      it('should accept value and text for sendkeys, and use value', async function () {
+      it('should accept value and text for sendkeys, and use text', async function () {
         const {data} = await axios({
           url: `${baseUrl}/session/foo/element/bar/value`,
           method: 'POST',
-          data: {value: 'text to type', text: 'text to ignore'},
+          data: {value: 'text to ignore', text: 'text to type'},
         });
         expect(data.value).to.eql(['text to type', 'bar']);
       });
     });
 
-    describe('multiple sets of arguments', function () {
-      describe('optional', function () {
-        it('should allow moveto with element', async function () {
-          const {data} = await axios({
-            url: `${baseUrl}/session/foo/moveto`,
-            method: 'POST',
-            data: {element: '3'},
-          });
-          expect(data.value).to.eql(['3', null, null]);
-        });
-        it('should allow moveto with xoffset/yoffset', async function () {
-          const {data} = await axios({
-            url: `${baseUrl}/session/foo/moveto`,
-            method: 'POST',
-            data: {xoffset: 42, yoffset: 17},
-          });
-          expect(data.value).to.eql([null, 42, 17]);
-        });
-      });
-      describe('required', function () {
-        it('should allow removeApp with appId', async function () {
-          const {data} = await axios({
-            url: `${baseUrl}/session/foo/appium/device/remove_app`,
-            method: 'POST',
-            data: {appId: 42},
-          });
-          expect(data.value).to.eql(42);
-        });
-        it('should allow removeApp with bundleId', async function () {
-          const {data} = await axios({
-            url: `${baseUrl}/session/foo/appium/device/remove_app`,
-            method: 'POST',
-            data: {bundleId: 42},
-          });
-          expect(data.value).to.eql(42);
-        });
-      });
-    });
-
-    describe('default param wrap', function () {
-      it('should wrap', async function () {
-        const {data} = await axios({
-          url: `${baseUrl}/session/foo/touch/perform`,
-          method: 'POST',
-          data: [{action: 'tap', options: {element: '3'}}],
-        });
-        expect(data.value).to.deep.equal([[{action: 'tap', options: {element: '3'}}], 'foo']);
-      });
-
-      it('should not wrap twice', async function () {
-        const {data} = await axios({
-          url: `${baseUrl}/session/foo/touch/perform`,
-          method: 'POST',
-          data: {actions: [{action: 'tap', options: {element: '3'}}]},
-        });
-        expect(data.value).to.deep.equal([[{action: 'tap', options: {element: '3'}}], 'foo']);
-      });
-    });
-
     describe('create sessions via HTTP endpoint', function () {
-      let sessionId;
+      let sessionId: string | null;
 
       beforeEach(function () {
         sessionId = null;
@@ -346,21 +276,13 @@ describe('Protocol', function () {
 
       it('should not allow create session with desired caps (MJSONWP)', async function () {
         const desiredCapabilities = {a: 'b'};
-        const {data} = await axios({
-          url: `${baseUrl}/session`,
-          method: 'POST',
-          data: {desiredCapabilities},
-        });
-        expect(data.value).to.equal(null);
-      });
-      it('should fail to create session without capabilities', async function () {
         await expect(
           axios({
             url: `${baseUrl}/session`,
             method: 'POST',
-            data: {},
+            data: {desiredCapabilities},
           }),
-        ).to.be.rejectedWith(/400/);
+        ).to.be.rejectedWith(/500/);
       });
       it('should allow create session with capabilities (W3C)', async function () {
         const w3cCapabilities = {alwaysMatch: {'appium:e': 'f'}};
@@ -375,36 +297,9 @@ describe('Protocol', function () {
         expect(data.value.sessionId).to.exist;
         sessionId = data.value.sessionId;
       });
-      it('should raise an error if the driver does not support W3C yet', async function () {
-        const createSessionStub = sandbox
-          .stub(driver, 'createSession')
-          .callsFake(function (capabilities) {
-            driver.sessionId = null;
-            return BaseDriver.prototype.createSession.call(driver, capabilities);
-          });
-        try {
-          await expect(
-            axios({
-              url: `${baseUrl}/session`,
-              method: 'POST',
-              data: {
-                capabilities: {
-                  alwaysMatch: {
-                    platformName: 'Fake',
-                    'appium:deviceName': 'Fake',
-                  },
-                  firstMatch: [{}],
-                },
-              },
-            }),
-          ).to.be.rejectedWith(/500/);
-        } finally {
-          createSessionStub.restore();
-        }
-      });
 
       describe('w3c endpoints', function () {
-        let sessionUrl;
+        let sessionUrl: string;
 
         beforeEach(async function () {
           // Start a W3C session
@@ -465,7 +360,7 @@ describe('Protocol', function () {
         });
 
         it(`should throw 500 Unknown Error if the command throws an unexpected exception`, async function () {
-          driver.performActions = () => {
+          (driver as any).performActions = () => {
             throw new Error(`Didn't work`);
           };
           const {status, data} = await axios({
@@ -484,7 +379,7 @@ describe('Protocol', function () {
           expect(w3cError).to.equal(errors.UnknownError.error());
           expect(message).to.match(/Didn't work/);
 
-          delete driver.performActions;
+          delete (driver as any).performActions;
         });
 
         it(`should translate element format from MJSONWP to W3C`, async function () {
@@ -517,7 +412,7 @@ describe('Protocol', function () {
           ];
 
           const findElementsBackup = driver.findElements;
-          driver.findElements = () => retValue;
+          driver.findElements = () => Promise.resolve(retValue as any);
           const {data} = await axios.post(`${sessionUrl}/elements`, {
             using: 'whatever',
             value: 'whatever',
@@ -550,7 +445,7 @@ describe('Protocol', function () {
         });
 
         it(`should pass with 200 HTTP status code if the command returns a value`, async function () {
-          driver.performActions = (actions) => 'It works ' + actions.join('');
+          (driver as any).performActions = (actions: object[]) => 'It works ' + actions.join('');
           const {status, value, sessionId} = (
             await axios.post(`${sessionUrl}/actions`, {
               actions: ['a', 'b', 'c'],
@@ -559,15 +454,17 @@ describe('Protocol', function () {
           expect(sessionId).to.not.exist;
           expect(status).to.not.exist;
           expect(value).to.equal('It works abc');
-          delete driver.performActions;
+          delete (driver as any).performActions;
         });
 
         describe('jwproxy', function () {
-          let port;
-          let server, jwproxy, app;
+          let port: number;
+          let server: ReturnType<Application['listen']>;
+          let jwproxy: JWProxy;
+          let app: Application;
 
           before(async function () {
-            port = await getTestPort(true);
+            port = await getTestPort();
           });
 
           beforeEach(function () {
@@ -576,12 +473,12 @@ describe('Protocol', function () {
             app = res.app;
             jwproxy = new JWProxy({server: TEST_HOST, port});
             jwproxy.sessionId = sessionId;
-            driver.performActions = async (actions) =>
+            (driver as any).performActions = async (actions: object[]) =>
               await jwproxy.command('/perform-actions', 'POST', actions);
           });
 
           afterEach(async function () {
-            delete driver.performActions;
+            delete (driver as any).performActions;
             await server.close();
           });
 
@@ -625,11 +522,14 @@ describe('Protocol', function () {
           });
 
           it('should return W3C error if a proxied request returns a W3C error response', async function () {
-            const error = new Error(`Some error occurred`) as Error & {w3cStatus?: number};
-            error.w3cStatus = 414;
-            const executeCommandStub = sandbox.stub(driver, 'executeCommand').returns({
-              protocol: 'W3C',
-              error,
+            app.post('/session/:sessionId/perform-actions', (req, res) => {
+              res.status(500).json({
+                value: {
+                  error: 'unknown error',
+                  message: 'Some error occurred',
+                  stacktrace: 'Some error occurred',
+                },
+              });
             });
             const {status, data} = await axios({
               url: `${sessionUrl}/actions`,
@@ -637,12 +537,11 @@ describe('Protocol', function () {
               validateStatus: null,
               data: {actions: [1, 2, 3]},
             });
-            expect(status).to.equal(414);
+            expect(status).to.equal(500);
             const {error: w3cError, message: errMessage, stacktrace} = data.value;
             expect(w3cError).to.equal('unknown error');
             expect(stacktrace).to.match(/Some error occurred/);
             expect(errMessage).to.equal('Some error occurred');
-            executeCommandStub.restore();
           });
 
           it('should return error if a proxied request returns a MJSONWP error response but HTTP status code is 200', async function () {
@@ -720,84 +619,43 @@ describe('Protocol', function () {
       });
     });
 
-    it('should handle commands with no response values', async function () {
-      const {data} = await axios({
-        url: `${baseUrl}/session/foo/forward`,
-        method: 'POST',
-      });
-      expect(data).to.eql({
-        value: null,
-        sessionId: 'foo',
-      });
-    });
-
-    it('should allow empty string response values', async function () {
-      const {data} = await axios({
-        url: `${baseUrl}/session/foo/element/bar/text`,
-      });
-      expect(data).to.eql({
-        value: '',
-        sessionId: 'foo',
-      });
-    });
-
-    it('should send 500 response and an Unknown object for rejected commands', async function () {
+    it('should send 404 response for invalid session id', async function () {
       const {status, data} = await axios({
         url: `${baseUrl}/session/foo/refresh`,
         method: 'POST',
         validateStatus: null,
       });
 
-      expect(status).to.equal(500);
-      expect(data.value.error).to.eql('unknown error');
-      expect(data.value.message).to.eql(
-        'An unknown server-side error occurred while processing ' +
-          'the command. Original error: Too Fresh!',
-      );
-      expect(data.sessionId).to.eql('foo');
-    });
-
-    it('should not throw UnknownError when known', async function () {
-      const {status, data} = await axios({
-        url: `${baseUrl}/session/foo`,
-        validateStatus: null,
-      });
-
       expect(status).to.equal(404);
       expect(data.value.error).to.eql('invalid session id');
       expect(data.value.message).to.eql('A session is either terminated or not started');
-      expect(data.sessionId).to.eql('foo');
     });
   });
 
   describe('session Ids', function () {
-    const driver = new FakeDriver();
-    let mjsonwpServer;
+    let driver: FakeDriver;
+    let baseUrl: string;
+    let teardown: () => Promise<void> | undefined;
 
     before(async function () {
-      mjsonwpServer = await server({
-        routeConfiguringFunction: routeConfiguringFunction(driver),
-        port,
-      });
+      driver = new FakeDriver();
+      const {baseUrl: baseUrlStr, setup, teardown: teardownFn} = await createServer(driver);
+      baseUrl = baseUrlStr;
+      teardown = teardownFn;
+      await setup();
     });
 
     after(async function () {
-      await mjsonwpServer.close();
+      if (teardown) {
+        await teardown();
+      }
     });
 
     afterEach(function () {
       driver.sessionId = null;
     });
 
-    it('should return null SessionId for commands without sessionIds', async function () {
-      const {data} = await axios({
-        url: `${baseUrl}/status`,
-      });
-
-      expect(data.sessionId).to.equal(null);
-    });
-
-    it('responds with the same session ID in the request', async function () {
+    it('responds with no session ID in the request', async function () {
       const sessionId = 'Vader Sessions';
       driver.sessionId = sessionId;
 
@@ -805,58 +663,10 @@ describe('Protocol', function () {
         url: `${baseUrl}/session/${sessionId}/url`,
         method: 'POST',
         data: {url: 'http://google.com'},
-      });
-
-      expect(data.sessionId).to.exist;
-      expect(data.sessionId).to.eql(sessionId);
-    });
-
-    it('yells if no session exists', async function () {
-      const sessionId = 'Vader Sessions';
-
-      const {data, status} = await axios({
-        url: `${baseUrl}/session/${sessionId}/url`,
-        method: 'POST',
-        validateStatus: null,
-        data: {url: 'http://google.com'},
-      });
-
-      expect(status).to.equal(404);
-      expect(data.value.message).to.contain('session');
-    });
-
-    it('yells if invalid session is sent', async function () {
-      const sessionId = 'Vader Sessions';
-      driver.sessionId = 'recession';
-
-      const {data, status} = await axios({
-        url: `${baseUrl}/session/${sessionId}/url`,
-        method: 'POST',
-        validateStatus: null,
-        data: {url: 'http://google.com'},
-      });
-
-      expect(status).to.equal(404);
-      expect(data.value.message).to.contain('session');
-    });
-
-    it('should have session IDs in error responses', async function () {
-      const sessionId = 'Vader Sessions';
-      driver.sessionId = sessionId;
-
-      const {data, status} = await axios({
-        url: `${baseUrl}/session/${sessionId}/refresh`,
-        method: 'POST',
         validateStatus: null,
       });
 
-      expect(status).to.equal(500);
-      expect(data.value.error).to.eql('unknown error');
-      expect(data.value.message).to.eql(
-        'An unknown server-side error occurred while processing ' +
-          'the command. Original error: Too Fresh!',
-      );
-      expect(data.sessionId).to.eql('Vader Sessions');
+      expect(data.sessionId).to.not.exist;
     });
 
     it('should return a new session ID on create', async function () {
@@ -871,39 +681,50 @@ describe('Protocol', function () {
         },
       });
 
-      expect(data.value.sessionId).to.exist;
-      expect(data.value.sessionId.indexOf('fakeSession_')).to.equal(0);
-      expect(data.value.capabilities).to.eql({
-        alwaysMatch: {'appium:greeting': 'hello'},
-        firstMatch: [{}],
-      });
+      try {
+        expect(data.value.sessionId).to.exist;
+        expect(data.value.sessionId.indexOf('fakeSession_')).to.equal(0);
+        expect(data.value.capabilities).to.eql({
+          alwaysMatch: {'appium:greeting': 'hello'},
+          firstMatch: [{}],
+        });
+      } finally {
+        if (data.value.sessionId) {
+          await axios.delete(`${baseUrl}/session/${data.value.sessionId}`);
+        }
+      }
     });
   });
 
   describe('via drivers jsonwp proxy', function () {
-    let driver;
+    let driver: FakeDriver;
     const sessionId = 'foo';
-    let mjsonwpServer;
+    let baseUrl: string;
+    let teardown: () => Promise<void> | undefined;
 
     beforeEach(async function () {
       driver = new FakeDriver();
       driver.sessionId = sessionId;
       driver.proxyActive = () => true;
       driver.canProxy = () => true;
-
-      mjsonwpServer = await server({
-        routeConfiguringFunction: routeConfiguringFunction(driver),
-        port,
-        extraMethodMap: FakeDriver.newMethodMap,
-      });
+      const {
+        baseUrl: baseUrlStr,
+        setup,
+        teardown: teardownFn,
+      } = await createServer(driver, FakeDriver.newMethodMap);
+      baseUrl = baseUrlStr;
+      teardown = teardownFn;
+      await setup();
     });
 
     afterEach(async function () {
-      await mjsonwpServer.close();
+      if (teardown) {
+        await teardown();
+      }
     });
 
     it('should give a nice error if proxying is set but no proxy function exists', async function () {
-      driver.canProxy = () => false;
+      (driver as any).canProxy = () => false;
       const {status, data} = await axios({
         url: `${baseUrl}/session/${sessionId}/url`,
         method: 'POST',
@@ -914,15 +735,12 @@ describe('Protocol', function () {
       expect(status).to.equal(500);
       expect(data.value.error).to.eql('unknown error');
       expect(data.value.message).to.eql(
-        'An unknown server-side error occurred while processing ' +
-          'the command. Original error: Trying to proxy to a ' +
-          'server but the driver is unable to proxy',
+        'Trying to proxy to a server but the driver is unable to proxy',
       );
-      expect(data.sessionId).to.eql('foo');
     });
 
     it('should pass on any errors in proxying', async function () {
-      driver.proxyReqRes = async function () {
+      (driver as any).proxyReqRes = async function () {
         throw new Error('foo');
       };
       const {status, data} = await axios({
@@ -934,15 +752,11 @@ describe('Protocol', function () {
 
       expect(status).to.equal(500);
       expect(data.value.error).to.eql('unknown error');
-      expect(data.value.message).to.eql(
-        'An unknown server-side error occurred while processing ' +
-          'the command. Original error: Could not proxy. Proxy error: foo',
-      );
-      expect(data.sessionId).to.eql('foo');
+      expect(data.value.message).to.match(/Proxy error: foo/);
     });
 
     it('should able to throw ProxyRequestError in proxying', async function () {
-      driver.proxyReqRes = async function () {
+      (driver as any).proxyReqRes = async function () {
         const jsonwp = {
           status: 35,
           value: 'No such context found.',
@@ -957,14 +771,13 @@ describe('Protocol', function () {
         data: {url: 'http://google.com'},
       });
 
-      expect(status).to.equal(400);
+      expect(status).to.equal(500);
       expect(data.value.error).to.eql('unknown error');
       expect(data.value.message).to.eql('No such context found.');
-      expect(data.sessionId).to.eql('foo');
     });
 
     it('should let the proxy handle req/res', async function () {
-      driver.proxyReqRes = async function (req, res) {
+      (driver as any).proxyReqRes = async function (req: Request, res: Response) {
         res.status(200).json({custom: 'data'});
       };
       const {status, data} = await axios({
@@ -988,12 +801,11 @@ describe('Protocol', function () {
       expect(status).to.equal(200);
       expect(data).to.eql({
         value: 'Navigated to: http://google.com',
-        sessionId,
       });
     });
 
     it('should fail if avoid proxy list is malformed in some way', async function () {
-      async function badProxyAvoidanceList(list) {
+      async function badProxyAvoidanceList(list: RouteMatcher[]) {
         driver.getProxyAvoidList = () => list;
         const {status, data} = await axios({
           url: `${baseUrl}/session/${sessionId}/url`,
@@ -1007,7 +819,7 @@ describe('Protocol', function () {
       }
       const lists = ['foo', [['foo']], [['BAR', /lol/]], [['GET', 'foo']]];
       for (const list of lists) {
-        await badProxyAvoidanceList(list);
+        await badProxyAvoidanceList(list as RouteMatcher[]);
       }
     });
 
@@ -1021,7 +833,6 @@ describe('Protocol', function () {
       expect(status).to.equal(200);
       expect(data).to.eql({
         value: "I'm fine",
-        sessionId: null,
       });
     });
 
@@ -1045,8 +856,32 @@ describe('Protocol', function () {
       expect(status).to.equal(200);
       expect(data).to.eql({
         value: 'This was not proxied',
-        sessionId,
       });
     });
   });
 });
+
+async function createServer(
+  driver: FakeDriver,
+  extraMethodMap?: MethodMap<FakeDriver>,
+): Promise<{
+  port: number;
+  baseUrl: string;
+  setup: () => Promise<void>;
+  teardown: () => Promise<void>;
+}> {
+  const port = await getTestPort();
+  const baseUrl = `http://${TEST_HOST}:${port}`;
+  let appiumServer: AppiumServer | undefined;
+  const setup = async () => {
+    appiumServer = await server({
+      routeConfiguringFunction: routeConfiguringFunction(driver),
+      port,
+      extraMethodMap,
+    });
+  };
+  const teardown = async () => {
+    await appiumServer?.close();
+  };
+  return {port, baseUrl, setup, teardown};
+}

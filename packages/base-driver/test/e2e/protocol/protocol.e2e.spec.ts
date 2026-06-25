@@ -519,7 +519,8 @@ describe('Protocol', function () {
           ];
 
           const findElementsBackup = driver.findElements;
-          driver.findElements = () => Promise.resolve(retValue) as unknown as Promise<Element<string>[]>;
+          driver.findElements = () =>
+            Promise.resolve(retValue) as unknown as Promise<Element<string>[]>;
           const {data} = await axios.post(`${sessionUrl}/elements`, {
             using: 'whatever',
             value: 'whatever',

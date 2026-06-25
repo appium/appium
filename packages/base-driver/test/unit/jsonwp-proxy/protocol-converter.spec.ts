@@ -107,10 +107,10 @@ describe('Protocol Converter', function () {
 
   describe('setValue', function () {
     let converter: ProtocolConverter;
-    let responseBody: any;
+    let responseBody: unknown;
     before(function () {
       responseBody = null;
-      converter = new ProtocolConverter(((url, method, body) => {
+      converter = new ProtocolConverter(((url: string, method: string, body: unknown) => {
         responseBody = body;
       }) as any);
     });

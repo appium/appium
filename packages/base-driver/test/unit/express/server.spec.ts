@@ -30,7 +30,7 @@ describe('server configuration', function () {
   let sandbox: sinon.SinonSandbox;
 
   before(async function () {
-    port = await getTestPort(true);
+    port = await getTestPort();
   });
 
   function fakeApp() {
@@ -69,6 +69,7 @@ describe('server configuration', function () {
   it('should mount legacy test pages when registerTestPages is provided', function () {
     const app = fakeApp() as any;
     const configureRoutes = () => {};
+    /** @ts-ignore */
     configureServer({app, addRoutes: configureRoutes, registerTestPages});
     expect(app.use.callCount).to.equal(15);
     expect(app.all.callCount).to.equal(4);

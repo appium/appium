@@ -5,6 +5,7 @@ import axios from 'axios';
 import {createSandbox} from 'sinon';
 import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
 import {MockExecuteDriver} from '../protocol/mock-execute-driver';
+import type {EventHistoryCommand} from '@appium/types';
 
 chai.use(chaiAsPromised);
 
@@ -47,7 +48,7 @@ describe('Execute Command Test', function () {
     expect(res.data.value).to.deep.equal({executed: script, args});
 
     const events = await driver.getLogEvents();
-    const command = events.commands[0];
+    const command = (events?.commands as EventHistoryCommand[])[0];
 
     expect(command).to.have.property('cmd', 'mobileActivateApp');
   });

@@ -81,8 +81,8 @@ describe('AppiumIpc', function () {
       let sub2Res: IpcMessage<typeof payload>;
       const sub1 = ipc.subscribe('foo', 'bar');
       const sub2 = ipc.subscribe('foo', 'baz');
-      sub1.on(EVT_MESSAGE, (message) => (sub1Res = message));
-      sub2.on(EVT_MESSAGE, (message) => (sub2Res = message));
+      sub1.on(EVT_MESSAGE, (message) => (sub1Res = message as IpcMessage<typeof payload>));
+      sub2.on(EVT_MESSAGE, (message) => (sub2Res = message as IpcMessage<typeof payload>));
       await ipc.publish('foo', 'zowee', payload);
 
       expect(sub1Res!.data).to.eql(payload);
@@ -105,8 +105,8 @@ describe('AppiumIpc', function () {
       let sub2Res: IpcMessage<typeof payload>;
       const sub1 = ipc.subscribe('foo', 'bar');
       const sub2 = ipc.subscribe('foo', 'baz');
-      sub1.on(EVT_MESSAGE, (message) => (sub1Res = message));
-      sub2.on(EVT_MESSAGE, (message) => (sub2Res = message));
+      sub1.on(EVT_MESSAGE, (message) => (sub1Res = message as IpcMessage<typeof payload>));
+      sub2.on(EVT_MESSAGE, (message) => (sub2Res = message as IpcMessage<typeof payload>));
       await ipc.publish('foo', 'baz', payload);
 
       expect(sub2Res!).to.not.exist;
@@ -120,7 +120,7 @@ describe('AppiumIpc', function () {
       let sub1Res: IpcMessage<typeof payload>;
       const sub1 = ipc.subscribe('foo', 'bar');
       const sub2 = ipc.subscribe('foo', 'baz');
-      sub1.on(EVT_MESSAGE, (message) => (sub1Res = message));
+      sub1.on(EVT_MESSAGE, (message) => (sub1Res = message as IpcMessage<typeof payload>));
       await sub2.publish(payload);
 
       expect(sub1Res!.data).to.eql(payload);
@@ -171,7 +171,7 @@ describe('AppiumIpc', function () {
       let sub1Res2: IpcMessage<typeof payload> | undefined;
       const sub1 = ipc.subscribe('foo', 'bar');
       sub1.on(EVT_MESSAGE, async (message) => {
-        sub1Res = message;
+        sub1Res = message as IpcMessage<typeof payload>;
         sub1Res2 = ipc.getMessage<typeof payload>('foo');
       });
       await ipc.publish('foo', 'baz', payload);

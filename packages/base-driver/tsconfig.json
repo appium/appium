@@ -18,7 +18,7 @@
     "checkJs": true,
     "types": ["node", "mocha"]
   },
-  "include": ["lib"],
-  "exclude": ["build"],
+  "include": ["lib", "test/e2e", "test/unit"],
+  "exclude": ["build", "test/e2e/fixtures"],
   "references": [{"path": "../support"}, {"path": "../types"}, {"path": "../driver-test-support"}]
 }

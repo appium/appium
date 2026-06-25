@@ -33,11 +33,11 @@ describe('server', function () {
   let sandbox: sinon.SinonSandbox;
 
   before(async function () {
-    port = await getTestPort(true);
+    port = await getTestPort();
 
     function configureRoutes(app: Application) {
       app.get('/', (_req: Request, res: Response) => {
-        res.header['content-type'] = 'text/html';
+        res.header('content-type', 'text/html');
         res.status(200).send('Hello World!');
       });
       app.get('/python', (req: Request, res: Response) => {
@@ -47,7 +47,7 @@ describe('server', function () {
         throw new Error('hahaha');
       });
       app.get('/pause', async (_req: Request, res: Response) => {
-        res.header['content-type'] = 'text/html';
+        res.header('content-type', 'text/html');
         await sleep(1000);
         res.status(200).send('We have waited!');
       });
@@ -145,11 +145,11 @@ describe('tls server', function () {
       return this.skip();
     }
 
-    port = await getTestPort(true);
+    port = await getTestPort();
 
     function configureRoutes(app: Application) {
       app.get('/', (_req: Request, res: Response) => {
-        res.header['content-type'] = 'text/html';
+        res.header('content-type', 'text/html');
         res.status(200).send('Hello World!');
       });
     }
@@ -190,7 +190,7 @@ describe('server plugins', function () {
   let port: number;
 
   before(async function () {
-    port = await getTestPort(true);
+    port = await getTestPort();
   });
 
   afterEach(async function () {
@@ -204,7 +204,7 @@ describe('server plugins', function () {
   function updaterWithGetRoute(route: string, reply: string) {
     return async (app: Application, httpServer: ServerWithPlugins) => {
       app.get(`/${route}`, (_req: Request, res: Response) => {
-        res.header['content-type'] = 'text/html';
+        res.header('content-type', 'text/html');
         res.status(200).send(reply);
       });
       (httpServer as ServerWithPlugins & Record<string, boolean>)[`_updated_${route}`] = true;

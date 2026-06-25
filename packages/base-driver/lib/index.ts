@@ -47,6 +47,4 @@ export {generateDriverLogPrefix} from './basedriver/helpers';
 
 export {isW3cCaps} from './helpers/capabilities';
 
-/**
- * @typedef {import('./express/server').ServerOpts} ServerOpts
- */
+export type {ServerOpts} from './express/server';

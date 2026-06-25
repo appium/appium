@@ -6,6 +6,8 @@ import axios from 'axios';
 import {WebSocket} from 'ws';
 import {expect} from 'chai';
 import type {AddressInfo} from 'node:net';
+import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
+import {exec} from 'teen_process';
 
 const BUFFER_SIZE = 0xffff;
 const THIS_PLUGIN_DIR = node.getModuleRootSync('@appium/storage-plugin', __filename)!;
@@ -48,6 +50,9 @@ describe('StoragePlugin', function () {
     pluginSpec: THIS_PLUGIN_DIR,
   });
   before(async function () {
+    // workaround for https://github.com/nodejs/node/issues/64061
+    await exec(process.execPath, ['--version']);
+
     const {server} = await setup();
     const address = server.address();
     WDIO_OPTS.port = (address as AddressInfo).port;
@@ -95,7 +100,7 @@ describe('StoragePlugin', function () {
     expect(items).to.be.empty;
     const name1 = path.basename('foo1.bar');
     const name2 = path.basename('foo2.bar');
-    const pkgPath = path.join(__dirname, '..', '..', 'package.json');
+    const pkgPath = path.join(THIS_PLUGIN_DIR, 'package.json');
     await Promise.all([addFileToStorage(TEST_FAKE_APP, name1), addFileToStorage(pkgPath, name2)]);
     items = await driver.listStorageItems();
     expect(items.length).to.eql(2);

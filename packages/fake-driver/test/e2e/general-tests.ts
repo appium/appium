@@ -5,12 +5,12 @@ import {initSession, deleteSession, W3C_PREFIXED_CAPS} from '../helpers';
 
 chai.use(chaiAsPromised);
 
-export function generalTests() {
+export function generalTests(context: {port: number}) {
   describe('generic actions', function () {
     let driver: Awaited<ReturnType<typeof initSession>>;
 
     before(async function () {
-      driver = await initSession(W3C_PREFIXED_CAPS);
+      driver = await initSession(W3C_PREFIXED_CAPS, {port: context.port});
     });
 
     after(async function () {

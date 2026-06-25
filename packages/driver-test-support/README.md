@@ -4,53 +4,7 @@
 
 This package is for driver authors to help test their drivers.
 
-[Mocha](https://mochajs.org) is the supported test framework.
-
 ## Usage
-
-### For E2E Tests
-
-The `driverE2ETestSuite` method creates a Mocha test suite which makes HTTP requests to an in-memory server leveraging your driver.
-
-Note that this method must be run within a _suite callback_—not a _test callback_.
-
-```js
-import {driverE2ETestSuite} from '@appium/driver-test-support';
-
-const defaultW3CCapabilities = {
-  // some capabilities
-};
-
-describe('MyDriverClass', function() {
-  driverE2ETestSuite(MyDriverClass, defaultW3CCapabilities);
-
-  describe('more tests', function() {
-    // ...
-  });
-});
-```
-
-### For Unit Tests
-
-The `driverUnitTestSuite` method creates a Mocha test suite which performs assertions on an isolated instance of your driver.
-
-Note that this method must be run within a _suite callback_—not a _test callback_.
-
-```js
-import {driverUnitTestSuite} from '@appium/driver-test-support';
-
-const defaultW3CCapabilities = {
-  // some capabilities
-};
-
-describe('MyDriverClass', function() {
-  driverUnitTestSuite(MyDriverClass, defaultW3CCapabilities);
-
-  describe('more tests', function() {
-    // ...
-  });
-});
-```
 
 ### Helpers
 
@@ -92,10 +46,8 @@ describe('createAppiumURL()', function() {
 
 ## Installation
 
-`appium` and `mocha` are peer dependencies.
-
 ```bash
-npm install appium mocha @appium/driver-test-support --save-dev
+npm install @appium/driver-test-support --save-dev
 ```
 
 ## License

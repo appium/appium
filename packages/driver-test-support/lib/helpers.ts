@@ -5,9 +5,28 @@ import net from 'node:net';
  */
 export const TEST_HOST = '127.0.0.1';
 
-async function getPort(): Promise<number> {
-  const server = net.createServer();
-  return await new Promise((resolve, reject) => {
+let portFetchingPromise: Promise<number> | undefined;
+
+/**
+ * Returns a free port.
+ * The function call is race-free and thread-safe.
+ *
+ * @returns A free port
+ */
+export async function getTestPort(): Promise<number> {
+  // make sure we are not racing
+  if (portFetchingPromise) {
+    try {
+      await portFetchingPromise;
+    } catch {
+      // ignore
+    } finally {
+      portFetchingPromise = undefined;
+    }
+  }
+
+  portFetchingPromise = new Promise<number>((resolve, reject) => {
+    const server = net.createServer();
     server.once('error', reject);
     server.listen(0, () => {
       const address = server.address();
@@ -15,27 +34,11 @@ async function getPort(): Promise<number> {
         server.close(() => reject(new Error('Could not resolve a free port')));
         return;
       }
-      server.close((err) => (err ? reject(err) : resolve(address.port)));
+      const cb = (err?: Error) => (err ? reject(err) : resolve(Number(address.port)));
+      server.close(cb);
     });
   });
-}
-
-let testPort: number | undefined;
-
-/**
- * Returns a free port; one per process
- * @param force - If true, do not reuse the port (if it already exists)
- * @returns a free port
- */
-export async function getTestPort(force = false): Promise<number> {
-  if (force || !testPort) {
-    const port = await getPort();
-    if (!testPort) {
-      testPort = port;
-    }
-    return port;
-  }
-  return testPort;
+  return portFetchingPromise;
 }
 
 /**

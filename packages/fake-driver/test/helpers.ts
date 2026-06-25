@@ -1,41 +1,38 @@
 import path from 'node:path';
 import {remote as wdio} from 'webdriverio';
-
-const TEST_HOST = '127.0.0.1';
-const TEST_PORT = 4774;
+import {TEST_HOST} from '@appium/driver-test-support';
+import type {Constraints, StringRecord, W3CCapabilities} from '@appium/types';
 
 const TEST_APP = path.join(__dirname, 'fixtures', 'app.xml');
 
-const BASE_CAPS = {
+const BASE_CAPS: StringRecord = {
   platformName: 'Fake',
   deviceName: 'Commodore 64',
   app: TEST_APP,
-  address: TEST_HOST,
-  port: 8181,
 };
 
-const W3C_PREFIXED_CAPS = {
+const W3C_PREFIXED_CAPS: StringRecord = {
   'appium:deviceName': BASE_CAPS.deviceName,
   'appium:app': BASE_CAPS.app,
-  'appium:address': BASE_CAPS.address,
-  'appium:port': BASE_CAPS.port,
   platformName: BASE_CAPS.platformName,
 };
 
-const W3C_CAPS = {
+const W3C_CAPS: W3CCapabilities<Constraints> = {
   alwaysMatch: {...W3C_PREFIXED_CAPS},
   firstMatch: [{}],
 };
 
-const WD_OPTS = {
+const WD_OPTS: Partial<Parameters<typeof wdio>[0]> = {
   hostname: TEST_HOST,
-  port: TEST_PORT,
   connectionRetryCount: 0,
-  logLevel: 'error' as const,
+  logLevel: 'error',
 };
 
-async function initSession(w3cPrefixedCaps: object) {
-  return await wdio({...WD_OPTS, capabilities: w3cPrefixedCaps});
+async function initSession(
+  w3cPrefixedCaps: StringRecord,
+  wdioOpts: Partial<Parameters<typeof wdio>[0]> = {},
+) {
+  return await wdio({...WD_OPTS, ...wdioOpts, capabilities: w3cPrefixedCaps});
 }
 
 async function deleteSession(driver: Awaited<ReturnType<typeof wdio>>) {
@@ -46,14 +43,4 @@ async function deleteSession(driver: Awaited<ReturnType<typeof wdio>>) {
   }
 }
 
-export {
-  initSession,
-  deleteSession,
-  TEST_APP,
-  TEST_HOST,
-  TEST_PORT,
-  BASE_CAPS,
-  W3C_CAPS,
-  W3C_PREFIXED_CAPS,
-  WD_OPTS,
-};
+export {initSession, deleteSession, TEST_APP, TEST_HOST, BASE_CAPS, W3C_CAPS, W3C_PREFIXED_CAPS};

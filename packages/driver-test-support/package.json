@@ -1,16 +1,10 @@
 {
   "name": "@appium/driver-test-support",
-  "version": "1.2.5",
+  "version": "2.0.0",
   "description": "Test utilities for Appium drivers",
   "keywords": [
     "automation",
-    "javascript",
-    "selenium",
-    "webdriver",
-    "ios",
-    "android",
-    "firefoxos",
-    "testing"
+    "appium"
   ],
   "homepage": "https://appium.io",
   "bugs": {
@@ -38,20 +32,8 @@
     "test:unit": "mocha \"test/unit/**/*.spec.ts\""
   },
   "types": "./build/lib/index.d.ts",
-  "dependencies": {
-    "asyncbox": "6.3.0",
-    "axios": "1.18.0",
-    "chai": "6.2.2",
-    "chai-as-promised": "8.0.2",
-    "sinon": "22.0.0",
-    "type-fest": "5.7.0"
-  },
   "devDependencies": {
     "@appium/types": "1.5.1"
-  },
-  "peerDependencies": {
-    "appium": "^3.0.0-beta.0",
-    "mocha": "*"
   },
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0",

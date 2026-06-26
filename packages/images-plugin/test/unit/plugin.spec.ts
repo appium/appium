@@ -30,9 +30,11 @@ describe('ImageElementPlugin#handle', function () {
   let testImg2PartB64: string;
 
   before(async function () {
-    testImg1B64 = await fs.readFile(TEST_IMG_1_PATH, 'base64');
-    testImg2B64 = await fs.readFile(TEST_IMG_2_PATH, 'base64');
-    testImg2PartB64 = await fs.readFile(TEST_IMG_2_PART_PATH, 'base64');
+    [testImg1B64, testImg2B64, testImg2PartB64] = await Promise.all([
+      fs.readFile(TEST_IMG_1_PATH, 'base64'),
+      fs.readFile(TEST_IMG_2_PATH, 'base64'),
+      fs.readFile(TEST_IMG_2_PART_PATH, 'base64'),
+    ]);
   });
 
   describe('compareImages', {timeout: 6000}, function () {

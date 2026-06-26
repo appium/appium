@@ -5,16 +5,29 @@ import {IMAGE_STRATEGY} from '../../lib/constants';
 import {ImageElementFinder} from '../../lib/finder';
 import {ImageElement} from '../../lib/image-element';
 import {createSandbox, type SinonSandbox} from 'sinon';
-import {TINY_PNG, TiNY_PNG_BUF, TINY_PNG_DIMS} from '../fixtures/index.cjs';
 import sharp from 'sharp';
 import * as compareModule from '../../lib/compare';
 import type {Constraints} from '@appium/types';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {describe, it, beforeEach, afterEach} from 'node:test';
 
 use(chaiAsPromised);
 
 const plugin = new ImageElementPlugin('test');
+const TINY_PNG =
+  'iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAIAAAAmkwkpAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyhpVFh0WE1MOmNvbS5hZG9' +
+  'iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iI' +
+  'Hg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTQwIDc5LjE2MDQ1MSwgMjAxNy8wNS8wNi0wMTowODoyMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8' +
+  'vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL' +
+  '3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHl' +
+  'wZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTggKE1hY2ludG9zaCkiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6N0NDM' +
+  'DM4MDM4N0U2MTFFOEEzMzhGMTRFNUUwNzIwNUIiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6N0NDMDM4MDQ4N0U2MTFFOEEzMzhGMTRFNUUwNzIwNUIiPiA8eG1wTU06RGV' +
+  'yaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo3Q0MwMzgwMTg3RTYxMUU4QTMzOEYxNEU1RTA3MjA1QiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo3Q0MwM' +
+  'zgwMjg3RTYxMUU4QTMzOEYxNEU1RTA3MjA1QiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PpdvJjQAAAA' +
+  'lSURBVHjaJInBEQAACIKw/Xe2Ul5wYBtwmJqkk4+zfvUQVoABAEg0EfrZwc0hAAAAAElFTkSuQmCC';
+const TINY_PNG_BUF = Buffer.from(TINY_PNG, 'base64');
+const TINY_PNG_DIMS = [4, 4];
 
 class PluginDriver extends BaseDriver<Constraints> {
   constructor() {
@@ -185,7 +198,7 @@ describe('finding elements by image', function () {
     const basicTemplate = 'iVBORbaz';
     const basicTemplateBuf = Buffer.from(basicTemplate, 'base64');
 
-    beforeEach(function () {
+    beforeEach(async function () {
       f = new ImageElementFinder();
     });
 
@@ -209,73 +222,73 @@ describe('finding elements by image', function () {
 
     it('should fix template size scale', async function () {
       await expect(
-        f.fixImageTemplateScale(TiNY_PNG_BUF, {
+        f.fixImageTemplateScale(TINY_PNG_BUF, {
           fixImageTemplateScale: true,
           xScale: 1.5,
           yScale: 1.5,
         }),
-      ).to.eventually.not.eql(TiNY_PNG_BUF);
+      ).to.eventually.not.eql(TINY_PNG_BUF);
     });
 
     it('should not fix template size scale because of fixImageTemplateScale being false', async function () {
       await expect(
-        f.fixImageTemplateScale(TiNY_PNG_BUF, {
+        f.fixImageTemplateScale(TINY_PNG_BUF, {
           fixImageTemplateScale: false,
           xScale: 1.5,
           yScale: 1.5,
         }),
-      ).to.eventually.eql(TiNY_PNG_BUF);
+      ).to.eventually.eql(TINY_PNG_BUF);
     });
 
     it('should fix template size scale with default scale', async function () {
       await expect(
-        f.fixImageTemplateScale(TiNY_PNG_BUF, {
+        f.fixImageTemplateScale(TINY_PNG_BUF, {
           defaultImageTemplateScale: 4.0,
         }),
-      ).to.eventually.not.eql(TiNY_PNG_BUF);
+      ).to.eventually.not.eql(TINY_PNG_BUF);
     });
 
     it('should fix template size scale with default scale and image scale', async function () {
       await expect(
-        f.fixImageTemplateScale(TiNY_PNG_BUF, {
+        f.fixImageTemplateScale(TINY_PNG_BUF, {
           defaultImageTemplateScale: 4.0,
           fixImageTemplateScale: true,
           xScale: 1.5,
           yScale: 1.5,
         }),
-      ).to.eventually.not.eql(TiNY_PNG_BUF);
+      ).to.eventually.not.eql(TINY_PNG_BUF);
     });
 
     it('should not fix template size scale with default scale and image scale', async function () {
       await expect(
-        f.fixImageTemplateScale(TiNY_PNG_BUF, {
+        f.fixImageTemplateScale(TINY_PNG_BUF, {
           defaultImageTemplateScale: 4.0,
           fixImageTemplateScale: false,
           xScale: 1.5,
           yScale: 1.5,
         }),
-      ).to.eventually.not.eql(TiNY_PNG_BUF);
+      ).to.eventually.not.eql(TINY_PNG_BUF);
     });
 
     it('should not fix template size scale because of ignoreDefaultImageTemplateScale', async function () {
       await expect(
-        f.fixImageTemplateScale(TiNY_PNG_BUF, {
+        f.fixImageTemplateScale(TINY_PNG_BUF, {
           defaultImageTemplateScale: 4.0,
           ignoreDefaultImageTemplateScale: true,
         }),
-      ).to.eventually.eql(TiNY_PNG_BUF);
+      ).to.eventually.eql(TINY_PNG_BUF);
     });
 
     it('should ignore defaultImageTemplateScale to fix template size scale because of ignoreDefaultImageTemplateScale', async function () {
       await expect(
-        f.fixImageTemplateScale(TiNY_PNG_BUF, {
+        f.fixImageTemplateScale(TINY_PNG_BUF, {
           defaultImageTemplateScale: 4.0,
           ignoreDefaultImageTemplateScale: true,
           fixImageTemplateScale: true,
           xScale: 1.5,
           yScale: 1.5,
         }),
-      ).to.eventually.not.eql(TiNY_PNG_BUF);
+      ).to.eventually.not.eql(TINY_PNG_BUF);
     });
   });
 
@@ -284,21 +297,21 @@ describe('finding elements by image', function () {
 
     it('should not resize the template if it is smaller than the screen', async function () {
       const [width, height] = TINY_PNG_DIMS.map((n) => n * 2);
-      await expect(f.ensureTemplateSize(TiNY_PNG_BUF, {width, height})).to.eventually.eql(
-        TiNY_PNG_BUF,
+      await expect(f.ensureTemplateSize(TINY_PNG_BUF, {width, height})).to.eventually.eql(
+        TINY_PNG_BUF,
       );
     });
     it('should not resize the template if it is the same size as the screen', async function () {
       const [width, height] = TINY_PNG_DIMS;
-      await expect(f.ensureTemplateSize(TiNY_PNG_BUF, {width, height})).to.eventually.eql(
-        TiNY_PNG_BUF,
+      await expect(f.ensureTemplateSize(TINY_PNG_BUF, {width, height})).to.eventually.eql(
+        TINY_PNG_BUF,
       );
     });
     it('should resize the template if it is bigger than the screen', async function () {
       const [width, height] = TINY_PNG_DIMS.map((n) => n / 2);
-      const newTemplateBuf = await f.ensureTemplateSize(TiNY_PNG_BUF, {width, height});
-      expect(newTemplateBuf).to.not.eql(TiNY_PNG_BUF);
-      expect(newTemplateBuf.length).to.be.below(TiNY_PNG_BUF.length);
+      const newTemplateBuf = await f.ensureTemplateSize(TINY_PNG_BUF, {width, height});
+      expect(newTemplateBuf).to.not.eql(TINY_PNG_BUF);
+      expect(newTemplateBuf.length).to.be.below(TINY_PNG_BUF.length);
     });
   });
 
@@ -327,7 +340,7 @@ describe('finding elements by image', function () {
         d as any,
         {width, height} as any,
       );
-      expect(screenshot).to.eql(TiNY_PNG_BUF);
+      expect(screenshot).to.eql(TINY_PNG_BUF);
       expect(scale).to.equal(undefined);
     });
     it('should return screenshot without adjustment if it matches screen size', async function () {
@@ -336,7 +349,7 @@ describe('finding elements by image', function () {
         d as any,
         {width, height} as any,
       );
-      expect(screenshot).to.eql(TiNY_PNG_BUF);
+      expect(screenshot).to.eql(TINY_PNG_BUF);
       expect(scale).to.equal(undefined);
     });
     it('should return scaled screenshot with same aspect ratio if matching screen aspect ratio', async function () {
@@ -345,7 +358,7 @@ describe('finding elements by image', function () {
         d as any,
         {width, height} as any,
       );
-      expect(screenshot).to.not.eql(TiNY_PNG_BUF);
+      expect(screenshot).to.not.eql(TINY_PNG_BUF);
       const screenshotObj = sharp(screenshot);
       const {width: screenWidth, height: screenHeight} = await screenshotObj.metadata();
       expect(screenWidth).to.eql(width);
@@ -361,7 +374,7 @@ describe('finding elements by image', function () {
         d as any,
         {width, height} as any,
       );
-      expect(screenshot).to.not.eql(TiNY_PNG_BUF);
+      expect(screenshot).to.not.eql(TINY_PNG_BUF);
       let screenshotObj = sharp(screenshot);
       let {width: screenWidth, height: screenHeight} = await screenshotObj.metadata();
       expect(screenWidth).to.eql(width);
@@ -377,7 +390,7 @@ describe('finding elements by image', function () {
         d as any,
         {width, height} as any,
       );
-      expect(newScreen).to.not.eql(TiNY_PNG_BUF);
+      expect(newScreen).to.not.eql(TINY_PNG_BUF);
       screenshotObj = sharp(newScreen);
       ({width: screenWidth, height: screenHeight} = await screenshotObj.metadata());
       expect(screenWidth).to.eql(width);
@@ -395,7 +408,7 @@ describe('finding elements by image', function () {
         d as any,
         {width, height} as any,
       );
-      expect(screenshot).to.not.eql(TiNY_PNG_BUF);
+      expect(screenshot).to.not.eql(TINY_PNG_BUF);
       let screenshotObj = sharp(screenshot);
       let {width: screenWidth, height: screenHeight} = await screenshotObj.metadata();
       expect(screenWidth).to.eql(width);
@@ -409,7 +422,7 @@ describe('finding elements by image', function () {
           xScale: scale!.xScale,
           yScale: scale!.yScale,
         }),
-      ).to.eventually.not.eql(TiNY_PNG_BUF);
+      ).to.eventually.not.eql(TINY_PNG_BUF);
 
       // then with landscape screen, screen = 12 x 8
       [width, height] = [TINY_PNG_DIMS[0] * 3, TINY_PNG_DIMS[1] * 2];
@@ -419,7 +432,7 @@ describe('finding elements by image', function () {
         d as any,
         {width, height} as any,
       );
-      expect(newScreen).to.not.eql(TiNY_PNG_BUF);
+      expect(newScreen).to.not.eql(TINY_PNG_BUF);
       screenshotObj = sharp(newScreen);
       ({width: screenWidth, height: screenHeight} = await screenshotObj.metadata());
       expect(screenWidth).to.eql(width);
@@ -433,7 +446,7 @@ describe('finding elements by image', function () {
           xScale: newScale!.xScale,
           yScale: newScale!.yScale,
         }),
-      ).to.eventually.not.eql(TiNY_PNG_BUF);
+      ).to.eventually.not.eql(TINY_PNG_BUF);
     });
   });
 });

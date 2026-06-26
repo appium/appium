@@ -1,19 +1,24 @@
 import path from 'node:path';
 import {remote as wdio} from 'webdriverio';
 import {MATCH_FEATURES_MODE, GET_SIMILARITY_MODE} from '../../lib/constants';
-import {TEST_IMG_1_B64, TEST_IMG_2_B64, APPSTORE_IMG_PATH} from '../fixtures/index.cjs';
 import {pluginE2EHarness} from '@appium/plugin-test-support';
 import {tempDir, fs, node} from '@appium/support';
 import sharp from 'sharp';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {AddressInfo} from 'node:net';
+import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
+import {exec} from 'teen_process';
 
 use(chaiAsPromised);
 
 const THIS_PLUGIN_DIR = node.getModuleRootSync('@appium/images-plugin', __filename)!;
 const APPIUM_HOME = path.join(THIS_PLUGIN_DIR, 'local_appium_home');
 const FAKE_DRIVER_DIR = path.join(THIS_PLUGIN_DIR, '..', 'fake-driver');
+const FIXTURES_DIR = path.join(THIS_PLUGIN_DIR, 'test', 'fixtures');
+const TEST_IMG_1_PATH = path.join(FIXTURES_DIR, 'img1.png');
+const TEST_IMG_2_PATH = path.join(FIXTURES_DIR, 'img2.png');
+const APPSTORE_IMG_PATH = path.join(FIXTURES_DIR, 'appstore.png');
 const TEST_HOST = '127.0.0.1';
 const TEST_FAKE_APP = path.join(
   APPIUM_HOME,
@@ -51,6 +56,9 @@ describe('ImageElementPlugin', function () {
   let driver: any;
 
   before(async function () {
+    // workaround for https://github.com/nodejs/node/issues/64061
+    await exec(process.execPath, ['--version']);
+
     const {server} = await setup();
     const address = server.address();
     WDIO_OPTS.port = (address as AddressInfo).port;
@@ -70,19 +78,13 @@ describe('ImageElementPlugin', function () {
   });
 
   it('should add the compareImages route', async function () {
-    let comparison = await driver.compareImages(
-      MATCH_FEATURES_MODE,
-      TEST_IMG_1_B64,
-      TEST_IMG_2_B64,
-      {},
-    );
+    const [testImg1b64, testImg2b64] = await Promise.all([
+      fs.readFile(TEST_IMG_1_PATH, 'base64'),
+      fs.readFile(TEST_IMG_2_PATH, 'base64'),
+    ]);
+    let comparison = await driver.compareImages(MATCH_FEATURES_MODE, testImg1b64, testImg2b64, {});
     expect(comparison.count).to.eql(0);
-    comparison = await driver.compareImages(
-      GET_SIMILARITY_MODE,
-      TEST_IMG_1_B64,
-      TEST_IMG_2_B64,
-      {},
-    );
+    comparison = await driver.compareImages(GET_SIMILARITY_MODE, testImg1b64, testImg2b64, {});
     expect(comparison.score).to.be.above(0.2);
   });
 

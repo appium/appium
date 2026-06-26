@@ -8,6 +8,7 @@ import {IMAGE_ELEMENT_PREFIX} from '../../lib/constants';
 import type {Constraints} from '@appium/types';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {describe, it, before, beforeEach, afterEach} from 'node:test';
 
 use(chaiAsPromised);
 

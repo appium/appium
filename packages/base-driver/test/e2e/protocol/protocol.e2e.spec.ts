@@ -163,7 +163,7 @@ describe('Protocol', function () {
       expect(headers['content-type']).to.include('application/json');
     });
 
-    it('should throw not yet implemented for unfilledout commands', async function () {
+    it('should return unknown command for routes without a command mapping', async function () {
       const {status, data} = await axios({
         url: `${baseUrl}/session/foo/element/bar/location`,
         validateStatus: null,
@@ -174,7 +174,7 @@ describe('Protocol', function () {
       expect(data.value.message).to.match(/The requested resource could not be found/);
     });
 
-    it('should throw not implemented for ignored commands', async function () {
+    it('should return unknown command for ignored legacy routes', async function () {
       const {status, data} = await axios({
         url: `${baseUrl}/session/foo/buttonup`,
         method: 'POST',

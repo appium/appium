@@ -46,7 +46,7 @@
     "@appium/types": "1.5.1",
     "async-lock": "1.4.1",
     "asyncbox": "6.3.0",
-    "axios": "1.18.0",
+    "axios": "1.18.1",
     "body-parser": "2.3.0",
     "express": "5.2.1",
     "fastest-levenshtein": "1.0.16",

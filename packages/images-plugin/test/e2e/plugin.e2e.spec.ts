@@ -9,7 +9,7 @@ import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {AddressInfo} from 'node:net';
 import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
-import { exec } from 'teen_process';
+import {exec} from 'teen_process';
 
 use(chaiAsPromised);
 

@@ -8,6 +8,8 @@ import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {AddressInfo} from 'node:net';
 import type {Browser} from 'webdriverio';
+import {describe, it, before, after} from 'node:test';
+import {exec} from 'teen_process';
 
 use(chaiAsPromised);
 
@@ -62,6 +64,9 @@ describe('ExecuteDriverPlugin', function () {
     const {setup, teardown} = pluginE2EHarness({...e2eSetupOpts});
 
     before(async function () {
+      // workaround for https://github.com/nodejs/node/issues/64061
+      await exec(process.execPath, ['--version']);
+
       const {server} = await setup();
       const address = server.address();
       port = (address as AddressInfo).port;

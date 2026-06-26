@@ -1,5 +1,6 @@
+import {describe, it, before, after} from 'node:test';
 import path from 'node:path';
-import {fs} from '@appium/support';
+import {fs, node} from '@appium/support';
 
 import {configureApp} from '../../../lib/basedriver/helpers';
 import http from 'node:http';
@@ -13,8 +14,15 @@ import {TEST_HOST, getTestPort} from '@appium/driver-test-support';
 
 chai.use(chaiAsPromised);
 
+const FIXTURE_ROOT = path.resolve(
+  node.getModuleRootSync('@appium/base-driver', __filename)!,
+  'test',
+  'e2e',
+  'fixtures',
+);
+
 function getFixture(file: string): string {
-  return path.resolve(__dirname, '..', 'fixtures', file);
+  return path.resolve(FIXTURE_ROOT, file);
 }
 
 describe('app download and configuration', function () {
@@ -63,8 +71,7 @@ describe('app download and configuration', function () {
         let server: HttpServerWithAsyncClose;
 
         before(function () {
-          const dir = path.resolve(__dirname, '..', 'fixtures');
-          const serve = serveStatic(dir, {
+          const serve = serveStatic(FIXTURE_ROOT, {
             index: false,
             setHeaders: (res, filePath) => {
               res.setHeader('Content-Disposition', contentDisposition(filePath));

@@ -1,43 +1,40 @@
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import type {Constraints, DriverCaps} from '@appium/types';
-import {server, routeConfiguringFunction} from '../../../lib';
+import type {Constraints, DriverCaps, Driver} from '@appium/types';
 import {FakeDriver} from '../protocol/fake-driver';
 import axios from 'axios';
-import {TEST_HOST, getTestPort} from '@appium/driver-test-support';
+import {describe, it, before, after} from 'node:test';
+import {createServer} from '../../helpers';
 
 chai.use(chaiAsPromised);
 
-const DEFAULT_CAPS = {
-  platformName: 'fake',
-  'appium:automationNAme': 'fake',
-};
-
 describe('BaseDriver', function () {
-  let port: number;
-  let baseUrl: string;
-
-  before(async function () {
-    port = await getTestPort();
-    baseUrl = `http://${TEST_HOST}:${port}`;
-  });
+  const DEFAULT_CAPS = {
+    platformName: 'fake',
+    'appium:automationNAme': 'fake',
+  };
 
   describe('get appium capabilities', function () {
     let driver: FakeDriver;
     const sessionId = 'foo';
-    let mjsonwpServer: Awaited<ReturnType<typeof server>>;
+    let teardown: () => Promise<void> | undefined;
+    let baseUrl: string;
 
     before(async function () {
       driver = new FakeDriver();
       driver.sessionId = sessionId;
-      mjsonwpServer = await server({
-        routeConfiguringFunction: routeConfiguringFunction(driver),
-        port,
-      });
+      const {
+        setup,
+        teardown: teardownFn,
+        baseUrl: baseUrlStr,
+      } = await createServer(driver as unknown as Driver<Constraints>);
+      baseUrl = baseUrlStr;
+      teardown = teardownFn;
+      await setup();
     });
 
     after(async function () {
-      await mjsonwpServer.close();
+      await teardown?.();
     });
 
     it('should return capabilities', async function () {

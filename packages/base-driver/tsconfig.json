@@ -1,14 +1,7 @@
 {
   "extends": "@appium/tsconfig/tsconfig.json",
-  "ts-node": {
-    "transpileOnly": true,
-    "compilerOptions": {
-      "rootDir": "."
-    }
-  },
   "compilerOptions": {
     "strict": true,
-    "rootDir": ".",
     "outDir": "build",
     "paths": {
       "@appium/support": ["../support"],
@@ -16,9 +9,19 @@
       "@appium/driver-test-support": ["../driver-test-support"]
     },
     "checkJs": true,
-    "types": ["node", "mocha"]
+    "types": ["node"]
   },
-  "include": ["lib", "test/e2e", "test/unit"],
-  "exclude": ["build", "test/e2e/fixtures"],
-  "references": [{"path": "../support"}, {"path": "../types"}, {"path": "../driver-test-support"}]
+  "include": ["lib", "test"],
+  "exclude": ["build"],
+  "references": [
+    {
+      "path": "../support"
+    },
+    {
+      "path": "../types"
+    },
+    {
+      "path": "../driver-test-support"
+    }
+  ]
 }

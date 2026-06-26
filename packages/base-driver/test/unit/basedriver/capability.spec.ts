@@ -1,3 +1,4 @@
+import {describe, it, beforeEach, afterEach} from 'node:test';
 import {asyncmap} from 'asyncbox';
 import type {Constraints, InitialOpts, W3CCapabilities} from '@appium/types';
 import {BaseDriver, errors} from '../../../lib/index';
@@ -113,9 +114,7 @@ describe('Desired Capabilities', function () {
     ).to.be.fulfilled;
   });
 
-  it('should log the use of extra caps', async function () {
-    this.timeout(500);
-
+  it('should log the use of extra caps', {timeout: 500}, async function () {
     await d.createSession({
       alwaysMatch: {
         platformName: 'iOS',
@@ -128,34 +127,38 @@ describe('Desired Capabilities', function () {
     expect(logWarnSpy.called).to.be.true;
   });
 
-  it('should suggest a close known capability name for unknown caps', async function () {
-    this.timeout(500);
+  it(
+    'should suggest a close known capability name for unknown caps',
+    {timeout: 500},
+    async function () {
+      await d.createSession({
+        alwaysMatch: {
+          platformName: 'iOS',
+          'appium:noReest': true,
+        },
+        firstMatch: [{}],
+      } as unknown as TestW3CCaps);
 
-    await d.createSession({
-      alwaysMatch: {
-        platformName: 'iOS',
-        'appium:noReest': true,
-      },
-      firstMatch: [{}],
-    } as unknown as TestW3CCaps);
+      expect(logWarnSpy.calledWith(`  noReest (did you mean 'noReset'?)`)).to.be.true;
+    },
+  );
 
-    expect(logWarnSpy.calledWith(`  noReest (did you mean 'noReset'?)`)).to.be.true;
-  });
+  it(
+    'should not suggest a capability name when the closest match exceeds the edit-distance threshold',
+    {timeout: 500},
+    async function () {
+      await d.createSession({
+        alwaysMatch: {
+          platformName: 'iOS',
+          'appium:qqqqqq': true,
+        },
+        firstMatch: [{}],
+      } as unknown as TestW3CCaps);
 
-  it('should not suggest a capability name when the closest match exceeds the edit-distance threshold', async function () {
-    this.timeout(500);
-
-    await d.createSession({
-      alwaysMatch: {
-        platformName: 'iOS',
-        'appium:qqqqqq': true,
-      },
-      firstMatch: [{}],
-    } as unknown as TestW3CCaps);
-
-    expect(logWarnSpy.calledWith(`  qqqqqq (did you mean`)).to.be.false;
-    expect(logWarnSpy.calledWith(`  qqqqqq`)).to.be.true;
-  });
+      expect(logWarnSpy.calledWith(`  qqqqqq (did you mean`)).to.be.false;
+      expect(logWarnSpy.calledWith(`  qqqqqq`)).to.be.true;
+    },
+  );
 
   it('should be sensitive to the case of caps', async function () {
     await expect(
@@ -247,9 +250,7 @@ describe('Desired Capabilities', function () {
     ).to.be.rejectedWith(errors.SessionNotCreatedError, /platformName/i);
   });
 
-  it('should check for deprecated caps', async function () {
-    this.timeout(500);
-
+  it('should check for deprecated caps', {timeout: 500}, async function () {
     d.desiredCapConstraints = {
       'lynx-version': {
         deprecated: true,
@@ -267,9 +268,7 @@ describe('Desired Capabilities', function () {
     expect(deprecatedStub.calledWith(5, true, 'lynx-version')).to.be.true;
   });
 
-  it('should not warn if deprecated=false', async function () {
-    this.timeout(500);
-
+  it('should not warn if deprecated=false', {timeout: 500}, async function () {
     d.desiredCapConstraints = {
       'lynx-version': {deprecated: false},
     } as Constraints;

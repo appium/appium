@@ -1,3 +1,4 @@
+import {describe, it} from 'node:test';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {isPackageOrBundle, duplicateKeys, parseCapsArray} from '../../../lib/basedriver/helpers';

@@ -1,3 +1,4 @@
+import {describe, it, beforeEach, afterEach} from 'node:test';
 import {expect} from 'chai';
 import {match} from 'path-to-regexp';
 import sinon from 'sinon';

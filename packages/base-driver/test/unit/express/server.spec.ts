@@ -1,3 +1,4 @@
+import {describe, it, before, beforeEach, afterEach} from 'node:test';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {Driver, MethodMap} from '@appium/types';
@@ -69,7 +70,7 @@ describe('server configuration', function () {
   it('should mount legacy test pages when registerTestPages is provided', function () {
     const app = fakeApp() as any;
     const configureRoutes = () => {};
-    /** @ts-ignore */
+    // @ts-expect-error registerTestPages is not normally used in this way
     configureServer({app, addRoutes: configureRoutes, registerTestPages});
     expect(app.use.callCount).to.equal(15);
     expect(app.all.callCount).to.equal(4);

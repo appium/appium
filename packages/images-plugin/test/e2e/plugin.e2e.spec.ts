@@ -8,6 +8,8 @@ import sharp from 'sharp';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {AddressInfo} from 'node:net';
+import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
+import { exec } from 'teen_process';
 
 use(chaiAsPromised);
 
@@ -51,6 +53,9 @@ describe('ImageElementPlugin', function () {
   let driver: any;
 
   before(async function () {
+    // workaround for https://github.com/nodejs/node/issues/64061
+    await exec(process.execPath, ['--version']);
+
     const {server} = await setup();
     const address = server.address();
     WDIO_OPTS.port = (address as AddressInfo).port;

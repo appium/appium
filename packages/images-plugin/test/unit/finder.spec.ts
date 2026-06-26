@@ -11,6 +11,7 @@ import * as compareModule from '../../lib/compare';
 import type {Constraints} from '@appium/types';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {describe, it, beforeEach, afterEach} from 'node:test';
 
 use(chaiAsPromised);
 

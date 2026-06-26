@@ -171,7 +171,11 @@ class ZipExtractor {
     const procMode = this.getExtractedMode(mode, isDir) & 0o777;
     // always ensure folders are created
     const destDir = isDir ? dest : path.dirname(dest);
-    const realDestDir = await this.ensureDirWithinRoot(destDir, fileName, isDir ? procMode : undefined);
+    const realDestDir = await this.ensureDirWithinRoot(
+      destDir,
+      fileName,
+      isDir ? procMode : undefined,
+    );
     if (isDir) {
       return;
     }
@@ -211,7 +215,10 @@ class ZipExtractor {
     for (const segment of relativePath.split(path.sep)) {
       currentPath = path.join(currentPath, segment);
       try {
-        const [stats, realPath] = await Promise.all([fs.lstat(currentPath), fs.realpath(currentPath)]);
+        const [stats, realPath] = await Promise.all([
+          fs.lstat(currentPath),
+          fs.realpath(currentPath),
+        ]);
         if (!isContainedPath(realPath, dir)) {
           throw new Error(
             `Out of bound path "${currentPath}" found while processing file ${fileName}`,

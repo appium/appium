@@ -424,7 +424,10 @@ async function createStoredZip(dstPath: string, entries: StoredZipEntry[]): Prom
     [20, 0, 2],
   ]);
 
-  await fs.writeFile(dstPath, Buffer.concat([fileData, centralDirectoryData, endOfCentralDirectory]));
+  await fs.writeFile(
+    dstPath,
+    Buffer.concat([fileData, centralDirectoryData, endOfCentralDirectory]),
+  );
 }
 
 function createZipHeader(

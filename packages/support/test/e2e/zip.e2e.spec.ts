@@ -58,6 +58,37 @@ describe('#zip', function () {
             }),
           ).to.eventually.equal('Foo Bar');
         });
+
+        it('should reject files written through symlinks that point outside the destination', async function () {
+          if (isWindows()) {
+            return this.skip();
+          }
+
+          const outputPath = path.resolve(tmpRoot, 'output');
+          const escapePath = path.resolve(tmpRoot, 'escape');
+          const dstPath = path.resolve(tmpRoot, 'symlink-bypass.zip');
+          await fs.mkdir(escapePath);
+          await createStoredZip(dstPath, [
+            {
+              name: 'pwn',
+              contents: escapePath,
+              mode: 0o120777,
+            },
+            {
+              name: 'pwn/owned.txt',
+              contents: 'PWNED via symlink Zip Slip\n',
+              mode: 0o100644,
+            },
+          ]);
+
+          await expect(zip.extractAllTo(dstPath, outputPath, options)).to.be.rejectedWith(
+            /Out of bound/,
+          );
+          if (!options.useSystemUnzip) {
+            await expect(fs.exists(path.resolve(outputPath, 'pwn'))).to.eventually.be.false;
+          }
+          await expect(fs.exists(path.resolve(escapePath, 'owned.txt'))).to.eventually.be.false;
+        });
       });
 
       describe('assertValidZip', function () {
@@ -321,3 +352,103 @@ describe('#zip', function () {
     });
   });
 });
+
+interface StoredZipEntry {
+  name: string;
+  contents: string;
+  mode: number;
+}
+
+async function createStoredZip(dstPath: string, entries: StoredZipEntry[]): Promise<void> {
+  const chunks: Buffer[] = [];
+  const centralDirectory: Buffer[] = [];
+
+  for (const entry of entries) {
+    const localHeaderOffset = Buffer.concat(chunks).length;
+    const name = Buffer.from(entry.name);
+    const contents = Buffer.from(entry.contents);
+    const crc = crc32(contents);
+
+    chunks.push(
+      createZipHeader(30, [
+        [0, 0x04034b50, 4],
+        [4, 20, 2],
+        [6, 0, 2],
+        [8, 0, 2],
+        [10, 0, 2],
+        [12, 0, 2],
+        [14, crc, 4],
+        [18, contents.length, 4],
+        [22, contents.length, 4],
+        [26, name.length, 2],
+        [28, 0, 2],
+      ]),
+      name,
+      contents,
+    );
+
+    centralDirectory.push(
+      createZipHeader(46, [
+        [0, 0x02014b50, 4],
+        [4, (3 << 8) | 20, 2],
+        [6, 20, 2],
+        [8, 0, 2],
+        [10, 0, 2],
+        [12, 0, 2],
+        [14, 0, 2],
+        [16, crc, 4],
+        [20, contents.length, 4],
+        [24, contents.length, 4],
+        [28, name.length, 2],
+        [30, 0, 2],
+        [32, 0, 2],
+        [34, 0, 2],
+        [36, 0, 2],
+        [38, ((entry.mode & 0xffff) << 16) >>> 0, 4],
+        [42, localHeaderOffset, 4],
+      ]),
+      name,
+    );
+  }
+
+  const fileData = Buffer.concat(chunks);
+  const centralDirectoryData = Buffer.concat(centralDirectory);
+  const endOfCentralDirectory = createZipHeader(22, [
+    [0, 0x06054b50, 4],
+    [4, 0, 2],
+    [6, 0, 2],
+    [8, entries.length, 2],
+    [10, entries.length, 2],
+    [12, centralDirectoryData.length, 4],
+    [16, fileData.length, 4],
+    [20, 0, 2],
+  ]);
+
+  await fs.writeFile(dstPath, Buffer.concat([fileData, centralDirectoryData, endOfCentralDirectory]));
+}
+
+function createZipHeader(
+  size: number,
+  fields: Array<[offset: number, value: number, byteLength: 2 | 4]>,
+): Buffer {
+  const header = Buffer.alloc(size);
+  for (const [offset, value, byteLength] of fields) {
+    if (byteLength === 2) {
+      header.writeUInt16LE(value, offset);
+    } else {
+      header.writeUInt32LE(value, offset);
+    }
+  }
+  return header;
+}
+
+function crc32(contents: Buffer): number {
+  let crc = 0xffffffff;
+  for (const byte of contents) {
+    crc ^= byte;
+    for (let bit = 0; bit < 8; bit++) {
+      crc = crc & 1 ? (crc >>> 1) ^ 0xedb88320 : crc >>> 1;
+    }
+  }
+  return (crc ^ 0xffffffff) >>> 0;
+}

@@ -6,19 +6,34 @@ import {
   IMAGE_STRATEGY,
 } from '../../lib/constants';
 import {BaseDriver} from 'appium/driver';
-import {TEST_IMG_1_B64, TEST_IMG_2_B64, TEST_IMG_2_PART_B64} from '../fixtures/index.cjs';
-import {util} from '@appium/support';
+import {util, fs, node} from 'appium/support';
 import type {ActionSequence, Constraints} from '@appium/types';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {describe, it, before} from 'node:test';
+import path from 'node:path';
 
 use(chaiAsPromised);
+
+const THIS_PLUGIN_DIR = node.getModuleRootSync('@appium/images-plugin', __filename)!;
+const FIXTURES_DIR = path.join(THIS_PLUGIN_DIR, 'test', 'fixtures');
+const TEST_IMG_1_PATH = path.join(FIXTURES_DIR, 'img1.png');
+const TEST_IMG_2_PATH = path.join(FIXTURES_DIR, 'img2.png');
+const TEST_IMG_2_PART_PATH = path.join(FIXTURES_DIR, 'img2_part.png');
 
 describe('ImageElementPlugin#handle', function () {
   const next = async () => {};
   const driver = new BaseDriver<Constraints>({} as any);
   const p = new ImageElementPlugin('test');
+  let testImg1B64: string;
+  let testImg2B64: string;
+  let testImg2PartB64: string;
+
+  before(async function () {
+    testImg1B64 = await fs.readFile(TEST_IMG_1_PATH, 'base64');
+    testImg2B64 = await fs.readFile(TEST_IMG_2_PATH, 'base64');
+    testImg2PartB64 = await fs.readFile(TEST_IMG_2_PART_PATH, 'base64');
+  });
 
   describe('compareImages', {timeout: 6000}, function () {
     it('should compare images via match features mode', async function () {
@@ -26,8 +41,8 @@ describe('ImageElementPlugin#handle', function () {
         next,
         driver as any,
         MATCH_FEATURES_MODE,
-        TEST_IMG_1_B64,
-        TEST_IMG_2_B64,
+        testImg1B64,
+        testImg2B64,
         {},
       );
       expect(res).to.have.property('count');
@@ -38,8 +53,8 @@ describe('ImageElementPlugin#handle', function () {
         next,
         driver as any,
         GET_SIMILARITY_MODE,
-        Buffer.from(TEST_IMG_1_B64, 'base64'),
-        Buffer.from(TEST_IMG_2_B64, 'base64'),
+        Buffer.from(testImg1B64, 'base64'),
+        Buffer.from(testImg2B64, 'base64'),
         {},
       );
       expect(res).to.have.property('score');
@@ -50,8 +65,8 @@ describe('ImageElementPlugin#handle', function () {
         next,
         driver as any,
         MATCH_TEMPLATE_MODE,
-        TEST_IMG_1_B64,
-        TEST_IMG_2_B64,
+        testImg1B64,
+        testImg2B64,
         {},
       );
       expect(res).to.have.property('rect');
@@ -85,7 +100,7 @@ describe('ImageElementPlugin#handle', function () {
   describe('findElement(s)', function () {
     (driver as any).settings = {getSettings: () => ({})};
     (driver as any).isW3CProtocol = () => true;
-    (driver as any).getScreenshot = () => TEST_IMG_2_B64;
+    (driver as any).getScreenshot = () => testImg2B64;
     (driver as any).getWindowRect = () => ({x: 0, y: 0, width: 64, height: 64});
     it('should defer execution to regular command if not a find command', async function () {
       const next = async () => true;
@@ -101,11 +116,11 @@ describe('ImageElementPlugin#handle', function () {
       );
     });
     it('should find an image element inside a screenshot', async function () {
-      const el = await p.findElement(next, driver as any, IMAGE_STRATEGY, TEST_IMG_2_PART_B64);
+      const el = await p.findElement(next, driver as any, IMAGE_STRATEGY, testImg2PartB64);
       expect(util.unwrapElement(el)).to.include('appium-image-element');
     });
     it('should find image elements inside a screenshot', async function () {
-      const els = await p.findElements(next, driver as any, IMAGE_STRATEGY, TEST_IMG_2_PART_B64);
+      const els = await p.findElements(next, driver as any, IMAGE_STRATEGY, testImg2PartB64);
       expect(els).to.have.length(1);
       expect(util.unwrapElement(els[0])).to.include('appium-image-element');
     });
@@ -116,9 +131,9 @@ describe('ImageElementPlugin#handle', function () {
     before(async function () {
       (driver as any).settings = {getSettings: () => ({})};
       (driver as any).isW3CProtocol = () => true;
-      (driver as any).getScreenshot = () => TEST_IMG_2_B64;
+      (driver as any).getScreenshot = () => testImg2B64;
       (driver as any).getWindowRect = () => ({x: 0, y: 0, width: 64, height: 64});
-      const el = await p.findElement(next, driver as any, IMAGE_STRATEGY, TEST_IMG_2_PART_B64);
+      const el = await p.findElement(next, driver as any, IMAGE_STRATEGY, testImg2PartB64);
       elId = util.unwrapElement(el);
     });
     it('should click on the screen coords of the middle of the element', async function () {
@@ -175,7 +190,7 @@ describe('ImageElementPlugin#handle', function () {
           getMatchedImageResult: true,
         }),
       };
-      const el = await p.findElement(next, driver as any, IMAGE_STRATEGY, TEST_IMG_2_PART_B64);
+      const el = await p.findElement(next, driver as any, IMAGE_STRATEGY, testImg2PartB64);
       elId = util.unwrapElement(el);
       await expect(
         p.handle(next, driver as any, 'getAttribute', 'visual', elId),
@@ -192,7 +207,7 @@ describe('ImageElementPlugin#handle', function () {
     let imageEl: any;
     let nativeEl: any;
     before(async function () {
-      imageEl = await p.findElement(next, driver as any, IMAGE_STRATEGY, TEST_IMG_2_PART_B64);
+      imageEl = await p.findElement(next, driver as any, IMAGE_STRATEGY, testImg2PartB64);
       nativeEl = util.wrapElement('dummy-native-element-id');
     });
     it('should replace with coords of the image elements in pointerMove, scroll actions', async function () {

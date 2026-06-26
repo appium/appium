@@ -3,6 +3,7 @@ import {tempDir, fs, logger} from '@appium/support';
 import path from 'node:path';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
 
 use(chaiAsPromised);
 

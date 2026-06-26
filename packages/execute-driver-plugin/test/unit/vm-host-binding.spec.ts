@@ -2,6 +2,7 @@ import vm from 'node:vm';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {wrapHostBindingForVmContext} from '../../lib/vm-host-binding';
+import {describe, it} from 'node:test';
 
 use(chaiAsPromised);
 

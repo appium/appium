@@ -645,9 +645,7 @@ describe('Protocol', function () {
     });
 
     after(async function () {
-      if (teardown) {
-        await teardown();
-      }
+      await teardown?.();
     });
 
     afterEach(function () {

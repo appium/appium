@@ -1,19 +1,17 @@
 import {runQuery, transformQuery, getNodeAttrVal} from '../../lib/xpath';
 import {transformSourceXml} from '../../lib/source';
 import {FIXTURES, readFixture} from '../fixtures';
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
+import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
-
-use(chaiAsPromised);
 
 describe('xpath functions', function () {
   describe('runQuery', function () {
     it('should run an xpath query on an XML string and return nodes', async function () {
-      expect(runQuery('//*', await readFixture(FIXTURES.XML_IOS))).to.have.length(31);
-      expect(
-        runQuery('//XCUIElementTypeTextField', await readFixture(FIXTURES.XML_IOS)),
-      ).to.have.length(1);
+      assert.equal(runQuery('//*', await readFixture(FIXTURES.XML_IOS)).length, 31);
+      assert.equal(
+        runQuery('//XCUIElementTypeTextField', await readFixture(FIXTURES.XML_IOS)).length,
+        1,
+      );
     });
   });
   describe('transformQuery', function () {
@@ -21,7 +19,8 @@ describe('xpath functions', function () {
       const {xml} = await transformSourceXml(await readFixture(FIXTURES.XML_IOS), 'ios', {
         addIndexPath: true,
       });
-      expect(transformQuery('//TextInput', xml, false)).to.eql(
+      assert.equal(
+        transformQuery('//TextInput', xml, false),
         '/*[1]/*[1]/*[1]/*[1]/*[2]/*[1]/*[1]/*[1]/*[1]/*[1]/*[1]/*[2]/*[1]/*[1]/*[1]',
       );
     });
@@ -29,23 +28,23 @@ describe('xpath functions', function () {
       const {xml} = await transformSourceXml(await readFixture(FIXTURES.XML_IOS), 'ios', {
         addIndexPath: true,
       });
-      expect(transformQuery('//Window', xml, true)?.split('|')).to.have.length(2);
+      assert.equal(transformQuery('//Window', xml, true)?.split('|').length, 2);
     });
     it('should return null for queries that dont find anything', async function () {
       const {xml} = await transformSourceXml(await readFixture(FIXTURES.XML_IOS), 'ios', {
         addIndexPath: true,
       });
-      expect(transformQuery('//blah', xml, false)).to.be.null;
+      assert.equal(transformQuery('//blah', xml, false), null);
     });
   });
   describe('getNodeAttrVal', function () {
     it('should get the attribute for a node', async function () {
       const node = runQuery('//XCUIElementTypeTextField', await readFixture(FIXTURES.XML_IOS))[0];
-      expect(getNodeAttrVal(node, 'name')).to.eql('username');
+      assert.equal(getNodeAttrVal(node, 'name'), 'username');
     });
     it('should throw an error if the attr does not exist', async function () {
       const node = runQuery('//XCUIElementTypeTextField', await readFixture(FIXTURES.XML_IOS))[0];
-      expect(() => getNodeAttrVal(node, 'foo')).to.throw();
+      assert.throws(() => getNodeAttrVal(node, 'foo'));
     });
   });
 });

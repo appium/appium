@@ -3,11 +3,8 @@ import {BaseDriver} from 'appium/driver';
 import {FIXTURES, readFixture} from '../fixtures';
 import {runQuery, getNodeAttrVal} from '../../lib/xpath';
 import type {Constraints} from '@appium/types';
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
+import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
-
-use(chaiAsPromised);
 
 describe('UniversalXMLPlugin', function () {
   let next: () => Promise<any>;
@@ -19,7 +16,8 @@ describe('UniversalXMLPlugin', function () {
       (driver as any).getCurrentContext = () => 'NATIVE_APP';
       next = (driver as any).getPageSource = () => readFixture(FIXTURES.XML_IOS);
       (driver as any).caps = {platformName: 'iOS'};
-      await expect(p.getPageSource(next, driver as any)).to.eventually.eql(
+      assert.equal(
+        await p.getPageSource(next, driver as any),
         await readFixture(FIXTURES.XML_IOS_TRANSFORMED),
       );
     });
@@ -28,7 +26,8 @@ describe('UniversalXMLPlugin', function () {
       next = (driver as any).getPageSource = () => readFixture(FIXTURES.XML_ANDROID);
       (driver as any).caps = {platformName: 'Android'};
       (driver as any).opts = {appPackage: 'io.cloudgrey.the_app'};
-      await expect(p.getPageSource(next, driver as any)).to.eventually.eql(
+      assert.equal(
+        await p.getPageSource(next, driver as any),
         await readFixture(FIXTURES.XML_ANDROID_TRANSFORMED),
       );
     });
@@ -54,8 +53,8 @@ describe('UniversalXMLPlugin', function () {
         'xpath',
         '//TextInput[@axId="username"]',
       );
-      expect(getNodeAttrVal(node as any, 'value')).to.eql('alice');
-      expect((node as any).nodeName).to.eql('XCUIElementTypeTextField');
+      assert.equal(getNodeAttrVal(node as any, 'value'), 'alice');
+      assert.equal((node as any).nodeName, 'XCUIElementTypeTextField');
     });
 
     it('should turn an xpath query into another query run on the original android source', async function () {
@@ -76,8 +75,8 @@ describe('UniversalXMLPlugin', function () {
         'xpath',
         '//TextInput[@axId="username"]',
       );
-      expect(getNodeAttrVal(node as any, 'content-desc')).to.eql('username');
-      expect((node as any).nodeName).to.eql('android.widget.EditText');
+      assert.equal(getNodeAttrVal(node as any, 'content-desc'), 'username');
+      assert.equal((node as any).nodeName, 'android.widget.EditText');
     });
 
     it('should not modify the xpath query and proxy the call to underlying driver', async function () {
@@ -94,8 +93,8 @@ describe('UniversalXMLPlugin', function () {
         return Promise.resolve(nodes[0]);
       };
       const node = await p.findElement(next, driver as any, 'xpath', selector);
-      expect(getNodeAttrVal(node as any, 'id')).to.eql('section-1');
-      expect((node as any).nodeName).to.eql('div');
+      assert.equal(getNodeAttrVal(node as any, 'id'), 'section-1');
+      assert.equal((node as any).nodeName, 'div');
     });
   });
 });

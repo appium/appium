@@ -1,8 +1,6 @@
-import chai from 'chai';
+import {expect} from 'chai';
 import {describe, it} from 'node:test';
 import {BasePlugin} from '../../lib/plugin';
-
-const {expect} = chai;
 
 describe('base plugin', function () {
   it('should exist', function () {

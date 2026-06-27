@@ -44,6 +44,9 @@ class FakeDriver extends BaseDriver<Constraints> {
     requiredCapabilities: W3CDriverCaps<Constraints>,
     capabilities: W3CDriverCaps<Constraints>,
   ): Promise<DefaultCreateSessionResult<Constraints>> {
+    if ([desiredCapabilities, requiredCapabilities, capabilities].every((c) => util.isEmpty(c))) {
+      throw new errors.SessionNotCreatedError('No capabilities provided');
+    }
     this.sessionId = `fakeSession_${util.uuidV4()}`;
     return [this.sessionId, capabilities] as unknown as DefaultCreateSessionResult<Constraints>;
   }

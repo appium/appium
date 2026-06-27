@@ -1,3 +1,4 @@
+import {describe, it, before, after} from 'node:test';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {server, routeConfiguringFunction, DEFAULT_WS_PATHNAME_PREFIX} from '../../../lib';

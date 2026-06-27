@@ -26,16 +26,14 @@
   "main": "./build/lib/index.js",
   "types": "./build/lib/index.d.ts",
   "files": [
-    "build",
+    "build/lib",
     "lib",
-    "tsconfig.json",
-    "!build/tsconfig.tsbuildinfo",
-    "!build/test"
+    "tsconfig.json"
   ],
   "scripts": {
     "test": "npm run test:unit",
     "test:smoke": "node ./build/lib/index.js --smoke-test",
-    "test:unit": "mocha \"./test/unit/**/*.spec.*ts\""
+    "test:unit": "node --test \"./build/test/unit/**/*.spec.js\""
   },
   "dependencies": {
     "@appium/support": "7.2.5",

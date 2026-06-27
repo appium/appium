@@ -1,15 +1,7 @@
-import {
-  XML_IOS,
-  XML_IOS_TRANSFORMED,
-  XML_IOS_TRANSFORMED_INDEX_PATH,
-  XML_IOS_EDGE,
-  XML_IOS_EDGE_TRANSFORMED,
-} from '../fixtures';
+import {FIXTURES, readFixture} from '../fixtures';
 import {transformAttrs, transformChildNodes, transformSourceXml} from '../../lib/source';
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
-
-use(chaiAsPromised);
+import assert from 'node:assert/strict';
+import {describe, it} from 'node:test';
 
 describe('source functions', function () {
   describe('transformSourceXml', function () {
@@ -17,28 +9,30 @@ describe('source functions', function () {
       const {
         xml,
         unknowns: {nodes, attrs},
-      } = await transformSourceXml(XML_IOS, 'ios');
-      expect(xml).to.eql(XML_IOS_TRANSFORMED);
-      expect(nodes).to.eql([]);
-      expect(attrs).to.eql([]);
+      } = await transformSourceXml(await readFixture(FIXTURES.XML_IOS), 'ios');
+      assert.equal(xml, await readFixture(FIXTURES.XML_IOS_TRANSFORMED));
+      assert.deepEqual(nodes, []);
+      assert.deepEqual(attrs, []);
     });
     it('should transform an xml doc and include index path', async function () {
       const {
         xml,
         unknowns: {nodes, attrs},
-      } = await transformSourceXml(XML_IOS, 'ios', {addIndexPath: true});
-      expect(xml).to.eql(XML_IOS_TRANSFORMED_INDEX_PATH);
-      expect(nodes).to.eql([]);
-      expect(attrs).to.eql([]);
+      } = await transformSourceXml(await readFixture(FIXTURES.XML_IOS), 'ios', {
+        addIndexPath: true,
+      });
+      assert.equal(xml, await readFixture(FIXTURES.XML_IOS_TRANSFORMED_INDEX_PATH));
+      assert.deepEqual(nodes, []);
+      assert.deepEqual(attrs, []);
     });
     it('should transform an xml doc and return any unknown nodes or attrs', async function () {
       const {
         xml,
         unknowns: {nodes, attrs},
-      } = await transformSourceXml(XML_IOS_EDGE, 'ios');
-      expect(xml).to.eql(XML_IOS_EDGE_TRANSFORMED);
-      expect(nodes).to.eql(['SomeRandoElement']);
-      expect(attrs).to.eql(['oddAttribute']);
+      } = await transformSourceXml(await readFixture(FIXTURES.XML_IOS_EDGE), 'ios');
+      assert.equal(xml, await readFixture(FIXTURES.XML_IOS_EDGE_TRANSFORMED));
+      assert.deepEqual(nodes, ['SomeRandoElement']);
+      assert.deepEqual(attrs, ['oddAttribute']);
     });
   });
   describe('transformChildNodes', function () {
@@ -49,11 +43,11 @@ describe('source functions', function () {
         XCUIElementTypeTab: [{}],
       };
       const metadata = {};
-      expect(transformChildNodes(node, Object.keys(node), 'ios', metadata)).to.eql({
+      assert.deepEqual(transformChildNodes(node, Object.keys(node), 'ios', metadata), {
         nodes: [],
         attrs: [],
       });
-      expect(node).to.eql({Button: [{}, {}], Icon: [{}]});
+      assert.deepEqual(node, {Button: [{}, {}], Icon: [{}]});
     });
     it('should leave unknown nodes intact and add them to unknowns list', function () {
       const node = {
@@ -62,11 +56,11 @@ describe('source functions', function () {
         XCUIElementTypeTab: [{}],
       };
       const metadata = {};
-      expect(transformChildNodes(node, Object.keys(node), 'ios', metadata)).to.eql({
+      assert.deepEqual(transformChildNodes(node, Object.keys(node), 'ios', metadata), {
         nodes: ['UnknownThingo'],
         attrs: [],
       });
-      expect(node).to.eql({Button: [{}], UnknownThingo: [{}], Icon: [{}]});
+      assert.deepEqual(node, {Button: [{}], UnknownThingo: [{}], Icon: [{}]});
     });
     it('should leave nodes for other platforms intact and add them to unknowns list', function () {
       const node = {
@@ -75,11 +69,11 @@ describe('source functions', function () {
         XCUIElementTypeTab: [{}],
       };
       const metadata = {};
-      expect(transformChildNodes(node, Object.keys(node), 'ios', metadata)).to.eql({
+      assert.deepEqual(transformChildNodes(node, Object.keys(node), 'ios', metadata), {
         nodes: ['android.widget.EditText'],
         attrs: [],
       });
-      expect(node).to.eql({
+      assert.deepEqual(node, {
         Button: [{}],
         'android.widget.EditText': [{}],
         Icon: [{}],
@@ -91,15 +85,15 @@ describe('source functions', function () {
       const obj: any = {'@_type': 'foo', '@_package': 'yes', '@_class': 'lol'};
       const attrs = Object.keys(obj);
       const unknowns = transformAttrs(obj, attrs, 'ios');
-      expect(obj).to.eql({});
-      expect(unknowns).to.eql([]);
+      assert.deepEqual(obj, {});
+      assert.deepEqual(unknowns, []);
     });
     it('should translate attributes for the platform', function () {
       const obj: any = {'@_type': 'foo', '@_resource-id': 'someId'};
       const attrs = Object.keys(obj);
       const unknowns = transformAttrs(obj, attrs, 'android');
-      expect(obj).to.eql({'@_id': 'someId'});
-      expect(unknowns).to.eql([]);
+      assert.deepEqual(obj, {'@_id': 'someId'});
+      assert.deepEqual(unknowns, []);
     });
     it('should not translate unknown attributes and return them in the unknowns list', function () {
       const obj: any = {
@@ -109,15 +103,15 @@ describe('source functions', function () {
       };
       const attrs = Object.keys(obj);
       const unknowns = transformAttrs(obj, attrs, 'android');
-      expect(obj).to.eql({'@_id': 'someId', '@_rando': 'lorian'});
-      expect(unknowns).to.eql(['rando']);
+      assert.deepEqual(obj, {'@_id': 'someId', '@_rando': 'lorian'});
+      assert.deepEqual(unknowns, ['rando']);
     });
     it('should not translate attributes for a different platform', function () {
       const obj: any = {'@_type': 'foo', '@_resource-id': 'someId'};
       const attrs = Object.keys(obj);
       const unknowns = transformAttrs(obj, attrs, 'ios');
-      expect(obj).to.eql({'@_resource-id': 'someId'});
-      expect(unknowns).to.eql(['resource-id']);
+      assert.deepEqual(obj, {'@_resource-id': 'someId'});
+      assert.deepEqual(unknowns, ['resource-id']);
     });
   });
 });

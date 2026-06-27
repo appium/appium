@@ -3,7 +3,7 @@
     "strict": true,
     "rootDir": ".",
     "outDir": "build",
-    "types": ["mocha", "chai"]
+    "types": ["node"]
   },
   "extends": "@appium/tsconfig/tsconfig.plugin.json",
   "include": ["lib", "test"]

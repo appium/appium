@@ -63,10 +63,7 @@ describe('UniversalXMLPlugin', function () {
       (driver as any).caps = {platformName: 'Android'};
       (driver as any).opts = {appPackage: 'io.cloudgrey.the_app'};
       (driver as any).findElement = async (strategy: string, selector: string) => {
-        const nodes = runQuery(
-          selector,
-          (await readFixture(FIXTURES.XML_ANDROID)).replace(/<\/?AppiumAUT>/g, ''),
-        );
+        const nodes = runQuery(selector, await readFixture(FIXTURES.XML_ANDROID));
         return nodes[0];
       };
       const node = await p.findElement(
@@ -86,10 +83,7 @@ describe('UniversalXMLPlugin', function () {
       (driver as any).opts = {appPackage: 'io.cloudgrey.the_app'};
       const selector = '//div[@id="section-1"]';
       next = async () => {
-        const nodes = runQuery(
-          selector,
-          (await readFixture(FIXTURES.XML_WEBVIEW)).replace(/<\/?AppiumAUT>/g, ''),
-        );
+        const nodes = runQuery(selector, await readFixture(FIXTURES.XML_WEBVIEW));
         return Promise.resolve(nodes[0]);
       };
       const node = await p.findElement(next, driver as any, 'xpath', selector);

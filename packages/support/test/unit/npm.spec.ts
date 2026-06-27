@@ -1,13 +1,12 @@
 import path from 'node:path';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {describe, it} from 'node:test';
 import {NPM, resolveFrom} from '../../lib/npm';
 
-describe('npm', function () {
-  before(function () {
-    use(chaiAsPromised);
-  });
+use(chaiAsPromised);
 
+describe('npm', function () {
   describe('resolveFrom()', function () {
     const supportRoot = path.join(__dirname, '..', '..');
 

@@ -1,15 +1,14 @@
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {afterEach, beforeEach, describe, it} from 'node:test';
 import {createSandbox} from 'sinon';
 import {timing} from '../../lib';
+
+use(chaiAsPromised);
 
 describe('timing', function () {
   let processMock: ReturnType<ReturnType<typeof createSandbox>['mock']>;
   let sandbox: ReturnType<typeof createSandbox>;
-
-  before(function () {
-    use(chaiAsPromised);
-  });
 
   beforeEach(function () {
     sandbox = createSandbox();
@@ -22,11 +21,8 @@ describe('timing', function () {
     sandbox.restore();
   });
 
-  describe('bigint', function () {
+  describe('bigint', {skip: typeof process.hrtime.bigint !== 'function'}, function () {
     beforeEach(function () {
-      if (typeof process.hrtime.bigint !== 'function') {
-        return this.skip();
-      }
       processMock = sandbox.mock(process.hrtime);
     });
 

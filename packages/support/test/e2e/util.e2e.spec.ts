@@ -2,17 +2,16 @@ import {sleep} from 'asyncbox';
 import path from 'node:path';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {afterEach, beforeEach, describe, it} from 'node:test';
 import * as util from '../../lib/util';
 import {tempDir, fs} from '../../lib/index';
+
+use(chaiAsPromised);
 
 describe('#util', function () {
   let tmpRoot: string | null = null;
   let tmpFile: string;
   const content = 'YOLO';
-
-  before(async function () {
-    use(chaiAsPromised);
-  });
 
   beforeEach(async function () {
     tmpRoot = await tempDir.openDir();
@@ -115,8 +114,7 @@ describe('#util', function () {
       expect(ret2).to.eql('world');
     });
 
-    it('should time out if the lock is not released', async function () {
-      this.timeout(5000);
+    it('should time out if the lock is not released', {timeout: 5000}, async function () {
       const guard = util.getLockFileGuard(lockFile, {timeout: 0.5});
       const p1 = guard(async () => await guardedBehavior('hello', 1200));
       const p2 = guard(async () => await guardedBehavior('world', 10));
@@ -124,8 +122,7 @@ describe('#util', function () {
       await expect(p1).to.eventually.eql('hello');
     });
 
-    it('should still release lock if guarded behavior fails', async function () {
-      this.timeout(5000);
+    it('should still release lock if guarded behavior fails', {timeout: 5000}, async function () {
       const guard = util.getLockFileGuard(lockFile);
       const p1 = guard(async () => {
         await sleep(500);

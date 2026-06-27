@@ -1,7 +1,8 @@
 import path from 'node:path';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {fs, tempDir} from '../../lib';
+import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
+import {fs, node, tempDir} from '../../lib';
 import {
   DEFAULT_APPIUM_HOME,
   readPackageInDir,
@@ -10,12 +11,20 @@ import {
   findAppiumDependencyPackage,
 } from '../../lib/env';
 
+use(chaiAsPromised);
+
+const FIXTURES_ROOT = path.join(
+  node.getModuleRootSync('@appium/support', __filename)!,
+  'test',
+  'e2e',
+  'fixture',
+);
+
 describe('environment', function () {
   let cwd: string;
   let oldEnvAppiumHome: string | undefined;
 
   before(async function () {
-    use(chaiAsPromised);
     cwd = await tempDir.openDir();
   });
 
@@ -110,11 +119,11 @@ describe('environment', function () {
         describe('when `appium` is at the current version', function () {
           beforeEach(async function () {
             await fs.copyFile(
-              path.join(__dirname, 'fixture', 'appium-v2-dependency.package.json'),
+              path.join(FIXTURES_ROOT, 'appium-v2-dependency.package.json'),
               path.join(cwd, 'package.json'),
             );
             await fs.copyFile(
-              path.join(__dirname, 'fixture', 'appium-v2-package'),
+              path.join(FIXTURES_ROOT, 'appium-v2-package'),
               path.join(cwd, 'node_modules', 'appium'),
             );
           });
@@ -130,11 +139,11 @@ describe('environment', function () {
         describe('when `appium` is an old version', function () {
           beforeEach(async function () {
             await fs.copyFile(
-              path.join(__dirname, 'fixture', 'appium-v1-dependency.package.json'),
+              path.join(FIXTURES_ROOT, 'appium-v1-dependency.package.json'),
               path.join(cwd, 'package.json'),
             );
             await fs.copyFile(
-              path.join(__dirname, 'fixture', 'appium-v1-package'),
+              path.join(FIXTURES_ROOT, 'appium-v1-package'),
               path.join(cwd, 'node_modules', 'appium'),
             );
           });
@@ -153,7 +162,7 @@ describe('environment', function () {
         describe('when `appium` dep requested is current version', function () {
           before(async function () {
             await fs.copyFile(
-              path.join(__dirname, 'fixture', 'appium-v2-dependency.package.json'),
+              path.join(FIXTURES_ROOT, 'appium-v2-dependency.package.json'),
               path.join(cwd, 'package.json'),
             );
           });
@@ -169,7 +178,7 @@ describe('environment', function () {
         describe('when `appium` dep requested is an old version', function () {
           before(async function () {
             await fs.copyFile(
-              path.join(__dirname, 'fixture', 'appium-v1-dependency.package.json'),
+              path.join(FIXTURES_ROOT, 'appium-v1-dependency.package.json'),
               path.join(cwd, 'package.json'),
             );
           });

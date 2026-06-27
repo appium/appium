@@ -1,20 +1,19 @@
 import path from 'node:path';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {afterEach, beforeEach, describe, it} from 'node:test';
 import * as zip from '../../lib/zip';
 import {tempDir, fs} from '../../lib/index';
 import {MockReadWriteStream} from '../helpers';
 import {isWindows} from '../../lib/system';
+
+use(chaiAsPromised);
 
 describe('#zip', function () {
   const optionMap = new Map<string, Record<string, boolean | undefined>>([
     ['native JS unzip', {}],
     ['system unzip', {useSystemUnzip: true}],
   ]);
-
-  before(async function () {
-    use(chaiAsPromised);
-  });
 
   optionMap.forEach((options, desc) => {
     describe(desc, function () {
@@ -59,36 +58,36 @@ describe('#zip', function () {
           ).to.eventually.equal('Foo Bar');
         });
 
-        it('should reject files written through symlinks that point outside the destination', async function () {
-          if (isWindows()) {
-            return this.skip();
-          }
+        it(
+          'should reject files written through symlinks that point outside the destination',
+          {skip: isWindows()},
+          async function () {
+            const outputPath = path.resolve(tmpRoot, 'output');
+            const escapePath = path.resolve(tmpRoot, 'escape');
+            const dstPath = path.resolve(tmpRoot, 'symlink-bypass.zip');
+            await fs.mkdir(escapePath);
+            await createStoredZip(dstPath, [
+              {
+                name: 'pwn',
+                contents: escapePath,
+                mode: 0o120777,
+              },
+              {
+                name: 'pwn/owned.txt',
+                contents: 'PWNED via symlink Zip Slip\n',
+                mode: 0o100644,
+              },
+            ]);
 
-          const outputPath = path.resolve(tmpRoot, 'output');
-          const escapePath = path.resolve(tmpRoot, 'escape');
-          const dstPath = path.resolve(tmpRoot, 'symlink-bypass.zip');
-          await fs.mkdir(escapePath);
-          await createStoredZip(dstPath, [
-            {
-              name: 'pwn',
-              contents: escapePath,
-              mode: 0o120777,
-            },
-            {
-              name: 'pwn/owned.txt',
-              contents: 'PWNED via symlink Zip Slip\n',
-              mode: 0o100644,
-            },
-          ]);
-
-          await expect(zip.extractAllTo(dstPath, outputPath, options)).to.be.rejectedWith(
-            /Out of bound/,
-          );
-          if (!options.useSystemUnzip) {
-            await expect(fs.exists(path.resolve(outputPath, 'pwn'))).to.eventually.be.false;
-          }
-          await expect(fs.exists(path.resolve(escapePath, 'owned.txt'))).to.eventually.be.false;
-        });
+            await expect(zip.extractAllTo(dstPath, outputPath, options)).to.be.rejectedWith(
+              /Out of bound/,
+            );
+            if (!options.useSystemUnzip) {
+              await expect(fs.exists(path.resolve(outputPath, 'pwn'))).to.eventually.be.false;
+            }
+            await expect(fs.exists(path.resolve(escapePath, 'owned.txt'))).to.eventually.be.false;
+          },
+        );
       });
 
       describe('assertValidZip', function () {
@@ -312,16 +311,12 @@ describe('#zip', function () {
     });
   });
 
-  describe('unicode filename handling', function () {
+  describe('unicode filename handling', {skip: isWindows()}, function () {
     let zippedFilePath: string;
     let assetsPath: string;
     let tmpRoot: string;
 
     beforeEach(async function () {
-      // XXX: I don't know enough about unicode handling in the windows FS to attempt a fix here.
-      if (isWindows()) {
-        return this.skip();
-      }
       assetsPath = await tempDir.openDir();
       tmpRoot = await tempDir.openDir();
 

@@ -1,6 +1,7 @@
 import {expect} from 'chai';
 import {node} from '../../lib';
 import path from 'node:path';
+import {describe, it} from 'node:test';
 
 describe('node utilities', function () {
   describe('getObjectSize', function () {

@@ -1,15 +1,14 @@
 import path from 'node:path';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {afterEach, beforeEach, describe, it} from 'node:test';
 import {downloadFile} from '../../lib/net';
 import {tempDir, fs} from '../../lib/index';
 
+use(chaiAsPromised);
+
 describe('#net', function () {
   let tmpRoot: string;
-
-  before(async function () {
-    use(chaiAsPromised);
-  });
 
   beforeEach(async function () {
     tmpRoot = await tempDir.openDir();

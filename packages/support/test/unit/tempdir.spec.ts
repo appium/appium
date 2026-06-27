@@ -1,12 +1,11 @@
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {afterEach, describe, it} from 'node:test';
 import {tempDir, fs} from '../../lib';
 
-describe('tempdir', function () {
-  before(function () {
-    use(chaiAsPromised);
-  });
+use(chaiAsPromised);
 
+describe('tempdir', function () {
   afterEach(function () {
     delete process.env.APPIUM_TMP_DIR;
   });

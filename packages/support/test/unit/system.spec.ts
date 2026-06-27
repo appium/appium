@@ -1,9 +1,12 @@
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {afterEach, beforeEach, describe, it} from 'node:test';
 import {system, util} from '../../lib';
 import os from 'node:os';
 import {createSandbox} from 'sinon';
 import * as teen_process from 'teen_process';
+
+use(chaiAsPromised);
 
 const SANDBOX = Symbol();
 const libs = {os, system};
@@ -14,10 +17,6 @@ describe('system', function () {
     ? R
     : never;
   let mocks: Record<string | symbol, any>;
-
-  before(function () {
-    use(chaiAsPromised);
-  });
 
   beforeEach(function () {
     sandbox = createSandbox();
@@ -135,7 +134,7 @@ describe('system', function () {
     });
   });
 
-  it('should know architecture', function () {
-    return system.arch();
+  it('should know architecture', async function () {
+    await system.arch();
   });
 });

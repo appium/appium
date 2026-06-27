@@ -1,4 +1,5 @@
 import {expect} from 'chai';
+import {after, before, describe, it} from 'node:test';
 import {getDynamicLogger, restoreWriters, setupWriters, assertOutputContains} from './helpers';
 
 describe('logger with force log', function () {

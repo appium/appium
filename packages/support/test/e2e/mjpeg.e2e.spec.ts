@@ -2,10 +2,13 @@ import {sleep} from 'asyncbox';
 import http from 'node:http';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {after, before, describe, it} from 'node:test';
 // @ts-ignore - mjpeg-server has no types
 import mJpegServer from 'mjpeg-server';
 import net from 'node:net';
 import {mjpeg} from '../../lib';
+
+use(chaiAsPromised);
 
 const MJPEG_HOST = '127.0.0.1';
 
@@ -60,8 +63,6 @@ describe('MJpeg Stream (e2e)', function () {
   let port: number;
 
   before(async function () {
-    use(chaiAsPromised);
-
     port = await getPort();
     serverUrl = `http://${MJPEG_HOST}:${port}`;
     mJpegServer = initMJpegServer(port);

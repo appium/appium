@@ -1,36 +1,22 @@
-import fs from 'node:fs';
 import path from 'node:path';
+import {node, fs, util} from '@appium/support';
 
-const XML_IOS = fs.readFileSync(path.resolve(__dirname, 'ios.xml'), 'utf8').trim();
-const XML_IOS_TRANSFORMED = fs.readFileSync(path.resolve(__dirname, 'ios-transformed.xml'), 'utf8').trim();
-const XML_IOS_TRANSFORMED_INDEX_PATH = fs.readFileSync(
-  path.resolve(__dirname, 'ios-transformed-path.xml'),
-  'utf8'
-).trim();
-const XML_IOS_EDGE = fs.readFileSync(path.resolve(__dirname, 'ios-edge.xml'), 'utf8').trim();
-const XML_IOS_EDGE_TRANSFORMED = fs.readFileSync(
-  path.resolve(__dirname, 'ios-transformed-edge.xml'),
-  'utf8'
-).trim();
-const XML_ANDROID = fs.readFileSync(path.resolve(__dirname, 'android.xml'), 'utf8').trim();
-const XML_ANDROID_TRANSFORMED = fs.readFileSync(
-  path.resolve(__dirname, 'android-transformed.xml'),
-  'utf8'
-).trim();
-const XML_ANDROID_TRANSFORMED_INDEX_PATH = fs.readFileSync(
-  path.resolve(__dirname, 'android-transformed-path.xml'),
-  'utf8'
-).trim();
-const XML_WEBVIEW = fs.readFileSync(path.resolve(__dirname, 'web-view.xml'), 'utf8').trim();
+const THIS_PLUGIN_DIR = node.getModuleRootSync('@appium/universal-xml-plugin', __filename)!;
+const FIXTURES_DIR = path.join(THIS_PLUGIN_DIR, 'test', 'fixtures');
 
-export {
-  XML_IOS,
-  XML_ANDROID,
-  XML_IOS_TRANSFORMED,
-  XML_ANDROID_TRANSFORMED,
-  XML_IOS_TRANSFORMED_INDEX_PATH,
-  XML_ANDROID_TRANSFORMED_INDEX_PATH,
-  XML_IOS_EDGE,
-  XML_IOS_EDGE_TRANSFORMED,
-  XML_WEBVIEW,
-};
+export const FIXTURES = {
+  XML_IOS: 'ios.xml',
+  XML_IOS_TRANSFORMED: 'ios-transformed.xml',
+  XML_IOS_TRANSFORMED_INDEX_PATH: 'ios-transformed-path.xml',
+  XML_IOS_EDGE: 'ios-edge.xml',
+  XML_IOS_EDGE_TRANSFORMED: 'ios-transformed-edge.xml',
+  XML_ANDROID: 'android.xml',
+  XML_ANDROID_TRANSFORMED: 'android-transformed.xml',
+  XML_ANDROID_TRANSFORMED_INDEX_PATH: 'android-transformed-path.xml',
+  XML_WEBVIEW: 'web-view.xml',
+} as const;
+
+export const readFixture = util.memoize(
+  async (name: (typeof FIXTURES)[keyof typeof FIXTURES]): Promise<string> =>
+    (await fs.readFile(path.resolve(FIXTURES_DIR, name), 'utf8')).trim(),
+);

@@ -1,13 +1,8 @@
-import {
-  XML_IOS,
-  XML_IOS_TRANSFORMED,
-  XML_IOS_TRANSFORMED_INDEX_PATH,
-  XML_IOS_EDGE,
-  XML_IOS_EDGE_TRANSFORMED,
-} from '../fixtures';
+import {FIXTURES, readFixture} from '../fixtures';
 import {transformAttrs, transformChildNodes, transformSourceXml} from '../../lib/source';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {describe, it} from 'node:test';
 
 use(chaiAsPromised);
 
@@ -17,8 +12,8 @@ describe('source functions', function () {
       const {
         xml,
         unknowns: {nodes, attrs},
-      } = await transformSourceXml(XML_IOS, 'ios');
-      expect(xml).to.eql(XML_IOS_TRANSFORMED);
+      } = await transformSourceXml(await readFixture(FIXTURES.XML_IOS), 'ios');
+      expect(xml).to.eql(await readFixture(FIXTURES.XML_IOS_TRANSFORMED));
       expect(nodes).to.eql([]);
       expect(attrs).to.eql([]);
     });
@@ -26,8 +21,10 @@ describe('source functions', function () {
       const {
         xml,
         unknowns: {nodes, attrs},
-      } = await transformSourceXml(XML_IOS, 'ios', {addIndexPath: true});
-      expect(xml).to.eql(XML_IOS_TRANSFORMED_INDEX_PATH);
+      } = await transformSourceXml(await readFixture(FIXTURES.XML_IOS), 'ios', {
+        addIndexPath: true,
+      });
+      expect(xml).to.eql(await readFixture(FIXTURES.XML_IOS_TRANSFORMED_INDEX_PATH));
       expect(nodes).to.eql([]);
       expect(attrs).to.eql([]);
     });
@@ -35,8 +32,8 @@ describe('source functions', function () {
       const {
         xml,
         unknowns: {nodes, attrs},
-      } = await transformSourceXml(XML_IOS_EDGE, 'ios');
-      expect(xml).to.eql(XML_IOS_EDGE_TRANSFORMED);
+      } = await transformSourceXml(await readFixture(FIXTURES.XML_IOS_EDGE), 'ios');
+      expect(xml).to.eql(await readFixture(FIXTURES.XML_IOS_EDGE_TRANSFORMED));
       expect(nodes).to.eql(['SomeRandoElement']);
       expect(attrs).to.eql(['oddAttribute']);
     });

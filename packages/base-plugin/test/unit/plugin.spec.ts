@@ -1,23 +1,23 @@
-import {expect} from 'chai';
+import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 import {BasePlugin} from '../../lib/plugin';
 
 describe('base plugin', function () {
   it('should exist', function () {
-    expect(BasePlugin).to.exist;
+    assert.ok(BasePlugin);
   });
 
   it('should define its name', function () {
     const p = new BasePlugin('foo');
-    expect(p.name).to.eql('foo');
+    assert.equal(p.name, 'foo');
   });
 
   it('should create a logger', function () {
     const p = new BasePlugin('foo');
-    expect(p.log).to.exist;
+    assert.ok(p.log);
   });
 
   it('should define a default list of no new methods', function () {
-    expect(BasePlugin.newMethodMap).to.eql({});
+    assert.deepEqual(BasePlugin.newMethodMap, {});
   });
 });

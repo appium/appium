@@ -1,4 +1,5 @@
 import chai from 'chai';
+import {describe, it} from 'node:test';
 import {BasePlugin} from '../../lib/plugin';
 
 const {expect} = chai;

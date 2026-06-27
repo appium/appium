@@ -1,84 +1,66 @@
 ---
-title: Building Documentation
+title: 构建文档
 ---
 
-Once you've [built a driver](./build-drivers.md) or [built a plugin](./build-plugins.md) for Appium,
-you will hopefully want to document how that extension works for your users. The most basic way of
-doing this is to write up a quick `README.md` and keep it in the root of your project's repository.
-However, this can involve a lot of effort.
+一旦你为 Appium 构建了 [驱动](./build-drivers.md) 或 [插件](./build-plugins.md)，通常也会希望为用户说明这个扩展是如何工作的。 最基础的方式就是编写一个简短的 `README.md`，并将它放在项目仓库的根目录中。
+不过，这样做可能会耗费不少精力。
 
-The Appium project has built tools to help with this, and we've packaged up these tools so our
-ecosystem developers building drivers and plugins can _also_ use them. The best way to get going
-with these tools is probably to look at an existing Appium driver repo to see how it's done, for
-example the [XCUITest driver repo](https://github.com/appium/appium-xcuitest-driver). But this guide
-will outline the basic approach.
+Appium 项目已经提供了辅助工具，并且我们把这些工具打包好了，以便生态系统中的驱动和插件开发者也能使用。 这些工具最好的入门方式是查看一个现有的 Appium 驱动仓库，看看它是如何组织文档的，例如 [XCUITest 驱动仓库](https://github.com/appium/appium-xcuitest-driver)。 不过，本指南会先介绍基本的实现思路。
 
-### Conceptual architecture
+### 概念架构
 
-Appium settled on [MkDocs](https://www.mkdocs.org/) as a Markdown-based documentation site
-generator. It uses a Python toolchain (and not Node.js), but it turned out to be the best option
-for our purposes. You can adjust this, but by default Appium's utilities also assume that you'll be
-using the [mkdocs-material](https://squidfunk.github.io/mkdocs-material/) theme/extension for
-MkDocs.
+Appium 采用 [MkDocs](https://www.mkdocs.org/) 作为基于 Markdown 的文档站点的生成工具。 它使用 Python 工具链（而不是 Node.js），但这恰好是我们当前需求下最合适的选择。 你可以自行调整，不过默认情况下，Appium 的工具链也会假设你使用 [mkdocs-material](https://squidfunk.github.io/mkdocs-material/) 主题与扩展来搭建 MkDocs。
 
-In order to make different versions of your docs available (one for each minor release of your
-extension, typically), we also bundle [Mike](https://github.com/jimporter/mike).
+为了让你的文档能够支持不同版本（通常是每个小版本一个），我们还会捆绑 [Mike](https://github.com/jimporter/mike)。
 
-From here, building a basic docs site is as easy as collecting your Markdown files together and
-defining how you want them to be organized.
+从这里开始，构建一个基础文档站点其实很简单：把 Markdown 文件收集起来，再定义你希望它们如何组织即可。
 
-### Prerequisites
+### 前置条件
 
-To take advantage of Appium's documentation utilities, you'll need to install:
+要使用 Appium 的文档工具，你需要安装以下内容：
 
 - [Python v3+](https://www.python.org/downloads/)
-- [pip](https://pip.pypa.io/en/stable/installation/) (this may be installed automatically with Python)
-- The `@appium/docutils` package:
+- [pip](https://pip.pypa.io/en/stable/installation/)（通常 Python 会自动附带安装）
+- `@appium/docutils` 包：
 
   ```bash
   npm install --save-dev @appium/docutils
   ```
 
-### Initializing an Extension for Building Docs
+### 初始化用于构建文档的扩展
 
-To prepare your extension for generating documentation, run the following command:
+要为你的扩展准备文档生成环境，请运行下面的命令：
 
 ```bash
 npx appium-docs init
 ```
 
-This will:
+这一步会：
 
-1. Create a `tsconfig.json` if one does not already exist. This is necessary even if your extension
-   is not written in TypeScript.
-2. Create a `mkdocs.yml` with the necessary configuration for MkDocs.
+1. 创建一个 `tsconfig.json`（如果当前还没有的话）。 即使你的扩展并不是 TypeScript 编写的，这也是必需的。
+2. 创建一个 `mkdocs.yml`，其中包含 MkDocs 所需的配置。
 
-### Documenting Your Extension
+### 为你的扩展编写文档
 
-At this point, you can begin documenting your extension. By default, MkDocs will look for Markdown
-files in the `docs` directory. You can therefore create your Markdown documentation files, place
-them in `docs`, and add links to these files in `mkdocs.yml`.
+此时你就可以开始为扩展编写文档了。 默认情况下，MkDocs 会在 `docs` 目录中查找 Markdown 文件。 因此，你可以创建文档文件并放入 `docs`，然后在 `mkdocs.yml` 里添加相应链接。
 
-Refer to the [MkDocs documentation](https://www.mkdocs.org/user-guide/writing-your-docs/) for
-information on how to organize and structure your documentation.
+请参考 [MkDocs 文档](https://www.mkdocs.org/user-guide/writing-your-docs/) 来了解如何组织与构建你的文档结构。
 
-### Building the Docs
+### 构建文档
 
-At this point, you can use the `appium-docs` CLI tool. Run this tool with no arguments to get the
-full help output and see all the available subcommands and parameters. Here are a few usage
-examples:
+在这个阶段，你可以使用 `appium-docs` CLI 工具。 运行这个工具时不传任何参数，可以看到完整的帮助信息，以及所有可用的子命令与参数。 下面是几个常见用法示例：
 
 ```bash
-# Generate reference and build the mkdocs site into the site dir
+# 生成参考文档并将 mkdocs 站点构建到 site 目录
 npx appium-docs build
 
-# Same as build, but host the docs on a local dev server
-# and watch for changes and rebuild when files change
+# 与 build 相同，但会在本地启动开发服务器
+# 并监听文件变化，在内容变更时自动重建
 npx appium-docs build --serve
 
-# Build the docs and deploy them with mike versioning to the docs-site branch
-# using the included commit message.
-# This is particularly useful for pushing content to a GitHub pages branch!
+# 构建文档并使用 mike 进行版本化部署到 docs-site 分支
+# 其中包含内置提交信息。
+# 这对于把内容推送到 GitHub Pages 分支特别有用！
 npx appium-docs build \
   --deploy \
   -b docs-site \

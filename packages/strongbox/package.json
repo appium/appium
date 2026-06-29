@@ -36,9 +36,9 @@
   "scripts": {
     "test": "run-p test:unit test:types",
     "test:smoke": "node .",
-    "test:unit": "mocha \"test/unit/**/*.spec.ts\"",
+    "test:unit": "node --test --test-timeout=5000 \"./build/test/unit/**/*.spec.js\"",
     "test:types": "tsd",
-    "test:e2e": "mocha --exit -t 20s \"test/e2e/**/*.e2e.spec.ts\""
+    "test:e2e": "node --test --test-force-exit --test-concurrency=1 --test-timeout=20000 \"./build/test/e2e/**/*.e2e.spec.js\""
   },
   "dependencies": {
     "env-paths": "4.0.0"

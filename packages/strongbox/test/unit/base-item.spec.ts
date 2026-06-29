@@ -4,7 +4,12 @@ import type {BaseItem as TBaseItem} from '../../lib/base-item';
 import type {SinonSandbox, SinonStubbedMember} from 'sinon';
 import {createSandbox} from 'sinon';
 import type fs from 'node:fs/promises';
+import {describe, it, beforeEach} from 'node:test';
+import {expect, use} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import type {Item, Strongbox} from '../../lib';
+
+use(chaiAsPromised);
 
 type MockFs = {
   [K in keyof typeof fs]: SinonStubbedMember<(typeof fs)[K]>;
@@ -16,15 +21,6 @@ describe('Strongbox', function () {
   const DATA_DIR = path.resolve(path.sep, 'some', 'dir');
   // note to self: looks like this is safe to do before the rewiremock.proxy call
   let BaseItem: typeof TBaseItem;
-  let expect: any;
-
-  before(async function () {
-    const chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-    chai.use(chaiAsPromised.default);
-    chai.should();
-    expect = chai.expect;
-  });
 
   beforeEach(function () {
     sandbox = createSandbox();

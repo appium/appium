@@ -1,4 +1,5 @@
 import {expect} from 'chai';
+import {describe, it} from 'node:test';
 import {uploadFile} from '../../lib/net';
 
 describe('net', function () {

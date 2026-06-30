@@ -1,12 +1,11 @@
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {describe, it} from 'node:test';
 import {npm} from '../../lib/npm';
 
-describe('npm module', function () {
-  before(async function () {
-    use(chaiAsPromised);
-  });
+use(chaiAsPromised);
 
+describe('npm module', function () {
   describe('getLatestVersion()', function () {
     describe('when the package is not published to the public registry', function () {
       it('should not throw', async function () {

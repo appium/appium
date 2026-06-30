@@ -1,5 +1,6 @@
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {afterEach, beforeEach, describe, it} from 'node:test';
 import {mkdir, writeFile} from 'node:fs/promises';
 import path from 'node:path';
 import {fs, tempDir} from '../../../lib';
@@ -9,12 +10,10 @@ import {
   readPackageSync,
 } from '../../../lib/internal/read-package';
 
+use(chaiAsPromised);
+
 describe('internal/read-package', function () {
   let fixtureRoot: string;
-
-  before(function () {
-    use(chaiAsPromised);
-  });
 
   beforeEach(async function () {
     fixtureRoot = await tempDir.openDir();

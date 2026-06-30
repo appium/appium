@@ -1,24 +1,19 @@
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
 import {fs, system, tempDir} from '../../lib';
 import path from 'node:path';
 import {mkdir, writeFile} from 'node:fs/promises';
 import {createSandbox} from 'sinon';
 import {exec} from 'teen_process';
 
-// TODO: normalize test organization
+use(chaiAsPromised);
 
-const MOCHA_TIMEOUT = 10000;
+const TEST_TIMEOUT = 10000;
 
-describe('fs', function () {
-  this.timeout(MOCHA_TIMEOUT);
-
+describe('fs', {timeout: TEST_TIMEOUT}, function () {
   const existingPath = __filename;
   let sandbox: ReturnType<typeof createSandbox>;
-
-  before(function () {
-    use(chaiAsPromised);
-  });
 
   beforeEach(function () {
     sandbox = createSandbox();
@@ -116,8 +111,7 @@ describe('fs', function () {
     expect(await fs.exists(newPath)).to.be.false;
   });
 
-  describe('md5()', function () {
-    this.timeout(1200000);
+  describe('md5()', {timeout: 1200000}, function () {
     let smallFilePath: string;
     let bigFilePath: string;
     before(async function () {
@@ -159,12 +153,7 @@ describe('fs', function () {
     const stat = await fs.stat(existingPath);
     expect(stat).to.have.property('atime');
   });
-  describe('which()', function () {
-    before(function () {
-      if (system.isWindows()) {
-        return this.skip();
-      }
-    });
+  describe('which()', {skip: system.isWindows()}, function () {
     it('should find correct executable', async function () {
       const systemNpmPath = (await exec('which', ['npm'])).stdout.trim();
       const npmPath = await fs.which('npm');
@@ -175,7 +164,7 @@ describe('fs', function () {
     });
   });
   it('glob()', async function () {
-    const glob = '*.spec.ts';
+    const glob = '*.spec.js';
     const tests = await fs.glob(glob, {cwd: __dirname});
     expect(tests).to.be.an('array');
     expect(tests.length).to.be.above(2);
@@ -184,7 +173,7 @@ describe('fs', function () {
   describe('walkDir()', function () {
     it('walkDir recursive', async function () {
       await expect(
-        fs.walkDir(__dirname, true, (item) => item.endsWith(`logger${path.sep}helpers.ts`)),
+        fs.walkDir(__dirname, true, (item) => item.endsWith(`logger${path.sep}helpers.js`)),
       ).to.eventually.not.be.null;
     });
     it('should walk all elements recursive', async function () {

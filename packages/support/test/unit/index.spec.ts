@@ -1,4 +1,5 @@
 import {expect} from 'chai';
+import {describe, it} from 'node:test';
 import AppiumSupport from '../../lib/';
 
 const {system, tempDir, util} = AppiumSupport;

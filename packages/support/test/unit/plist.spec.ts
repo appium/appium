@@ -1,16 +1,16 @@
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {describe, it} from 'node:test';
 import path from 'node:path';
-import {plist, tempDir, fs} from '../../lib';
+import {node, plist, tempDir, fs} from '../../lib';
 
-const binaryPlistPath = path.join(__dirname, 'assets', 'sample_binary.plist');
-const textPlistPath = path.join(__dirname, 'assets', 'sample_text.plist');
+use(chaiAsPromised);
+
+const SUPPORT_ROOT = node.getModuleRootSync('@appium/support', __filename)!;
+const binaryPlistPath = path.join(SUPPORT_ROOT, 'test', 'unit', 'assets', 'sample_binary.plist');
+const textPlistPath = path.join(SUPPORT_ROOT, 'test', 'unit', 'assets', 'sample_text.plist');
 
 describe('plist', function () {
-  before(function () {
-    use(chaiAsPromised);
-  });
-
   it('should parse plist file as binary', async function () {
     const content = await plist.parsePlistFile(binaryPlistPath);
     expect(content).to.have.property(

@@ -1,19 +1,18 @@
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
 import {util, fs, tempDir} from '../../lib';
 import {sleep} from 'asyncbox';
 import {createSandbox} from 'sinon';
 import os from 'node:os';
 import path from 'node:path';
 
+use(chaiAsPromised);
+
 const {W3C_WEB_ELEMENT_IDENTIFIER} = util;
 
 describe('util', function () {
   let sandbox: ReturnType<typeof createSandbox>;
-
-  before(function () {
-    use(chaiAsPromised);
-  });
 
   beforeEach(function () {
     sandbox = createSandbox();

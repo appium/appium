@@ -1,15 +1,14 @@
 import path from 'node:path';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {afterEach, beforeEach, describe, it} from 'node:test';
 import {fs} from '../../lib/fs';
 import {openDir} from '../../lib/tempdir';
 import {isWindows} from '../../lib/system';
 
-describe('fs', function () {
-  before(async function () {
-    use(chaiAsPromised);
-  });
+use(chaiAsPromised);
 
+describe('fs', function () {
   describe('mv()', function () {
     let srcRoot: string | undefined;
     let dstRoot: string | undefined;
@@ -106,13 +105,7 @@ describe('fs', function () {
       });
     });
 
-    describe('when the path exists', function () {
-      beforeEach(function () {
-        if (isWindows()) {
-          return this.skip();
-        }
-      });
-
+    describe('when the path exists', {skip: isWindows()}, function () {
       describe('when the path is not executable', function () {
         it('should return `false`', async function () {
           await expect(fs.isExecutable(__filename)).to.eventually.be.false;

@@ -1,12 +1,11 @@
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {describe, it} from 'node:test';
 import {node} from '../../lib';
 
-describe('node utilities', function () {
-  before(function () {
-    use(chaiAsPromised);
-  });
+use(chaiAsPromised);
 
+describe('node utilities', function () {
   describe('requirePackage', function () {
     it('should be able to require a local package', async function () {
       await expect(node.requirePackage('sinon')).to.not.be.rejected;

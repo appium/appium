@@ -1,4 +1,5 @@
 import {expect} from 'chai';
+import {afterEach, describe, it} from 'node:test';
 import * as consoleModule from '../../lib/console';
 
 const {CliConsole, stripColors, styleText} = consoleModule;

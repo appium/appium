@@ -1,10 +1,13 @@
 import path from 'node:path';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {afterEach, beforeEach, describe, it} from 'node:test';
 import type {SinonSandbox} from 'sinon';
 import type {TeenProcessExecResult} from 'teen_process';
 import {rewiremock} from '../helpers';
 import {initMocks, type MockReadPackage, type MockTeenProcess} from '../mocks';
+
+use(chaiAsPromised);
 
 function missingPackageJsonError(): NodeJS.ErrnoException {
   const err = new Error('ENOENT') as NodeJS.ErrnoException;
@@ -18,10 +21,6 @@ describe('env', function () {
   let MockReadPackage: MockReadPackage;
   let MockTeenProcess: MockTeenProcess;
   let envAppiumHome: string | undefined;
-
-  before(function () {
-    use(chaiAsPromised);
-  });
 
   beforeEach(function () {
     const result = initMocks();

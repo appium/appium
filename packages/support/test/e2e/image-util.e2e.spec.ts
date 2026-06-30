@@ -1,11 +1,20 @@
 import path from 'node:path';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {before, describe, it} from 'node:test';
 import sharp from 'sharp';
 import {cropBase64Image} from '../../lib/image-util';
-import {fs} from '../../lib';
+import {fs, node} from '../../lib';
 
-const FIXTURES_ROOT = path.resolve(__dirname, 'fixture', 'images');
+use(chaiAsPromised);
+
+const FIXTURES_ROOT = path.resolve(
+  node.getModuleRootSync('@appium/support', __filename)!,
+  'test',
+  'e2e',
+  'fixture',
+  'images',
+);
 
 async function getImage(name: string): Promise<string> {
   const imagePath = path.resolve(FIXTURES_ROOT, name);
@@ -13,10 +22,6 @@ async function getImage(name: string): Promise<string> {
 }
 
 describe('image-util', function () {
-  before(async function () {
-    use(chaiAsPromised);
-  });
-
   describe('cropBase64Image', function () {
     let originalImageB64: string | null = null;
 

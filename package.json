@@ -47,8 +47,8 @@
     "docs:publish": "npm run -w packages/appium publish:docs",
     "doctor": "node ./scripts/doctor-stub.mjs",
     "install-docs-deps": "npm run -w packages/appium install-docs-deps",
-    "format": "prettier -w ./packages ./scripts",
-    "format:check": "prettier --check ./packages ./scripts",
+    "format": "dprint fmt \"./packages/**/*\" \"./scripts/**/*\"",
+    "format:check": "dprint check \"./packages/**/*\" \"./scripts/**/*\"",
     "lint": "eslint .",
     "lint:ci": "eslint --quiet .",
     "lint:fix": "run-s \"lint -- --fix\"",
@@ -74,11 +74,6 @@
     "upload": "gulp github-upload",
     "zip": "zip -qr ./appium.zip ./packages/appium",
     "zip-and-upload": "run-s zip upload"
-  },
-  "prettier": {
-    "bracketSpacing": false,
-    "printWidth": 100,
-    "singleQuote": true
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
@@ -119,6 +114,7 @@
     "conventional-changelog-conventionalcommits": "7.0.2",
     "cpy-cli": "7.0.0",
     "cross-env": "10.1.0",
+    "dprint": "0.55.1",
     "eslint": "10.5.0",
     "eslint-config-prettier": "10.1.8",
     "eslint-import-resolver-typescript": "4.4.5",
@@ -133,7 +129,6 @@
     "mjpeg-server": "0.3.1",
     "mocha": "11.7.6",
     "npm-run-all2": "9.0.2",
-    "prettier": "3.8.4",
     "rewiremock": "3.14.6",
     "rimraf": "6.1.3",
     "serve-static": "2.2.1",

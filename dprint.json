@@ -1,0 +1,44 @@
+{
+  "lineWidth": 120,
+  "indentWidth": 2,
+  "useTabs": false,
+  "newLineKind": "lf",
+
+  "typescript": {
+    "semiColons": "always",
+    "quoteStyle": "alwaysSingle",
+    "quoteProps": "asNeeded",
+    "trailingCommas": "onlyMultiLine"
+  },
+  "json": {
+  },
+  "toml": {
+  },
+  "yaml": {
+  },
+  "excludes": [
+    "**/node_modules",
+    "**/*-lock.json",
+    "**/build/**",
+    "**/fixtures/**",
+    "**/*.min.*",
+    "**/*.md",
+    "packages/appium/docs/**",
+    "package-lock.json",
+    "package.json",
+    "**/.vscode/**",
+    "**/*.html",
+    "**/generated/**",
+    "packages/schema/lib/appium-config.schema.json",
+    "packages/types/lib/appium-config.ts",
+    "**/*.hbs",
+    ".nx/**",
+    "packages/docutils/**/*.{yml,yaml}"
+  ],
+  "plugins": [
+    "https://plugins.dprint.dev/typescript-0.96.1.wasm",
+    "https://plugins.dprint.dev/json-0.22.0.wasm",
+    "https://plugins.dprint.dev/toml-0.7.0.wasm",
+    "https://plugins.dprint.dev/g-plane/pretty_yaml-v0.6.0.wasm"
+  ]
+}

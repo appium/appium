@@ -1,6 +1,6 @@
-import {log} from './logger';
-import {server as baseServer, routeConfiguringFunction} from 'appium/driver';
-import {FakeDriver} from './driver';
+import { routeConfiguringFunction, server as baseServer } from 'appium/driver';
+import { FakeDriver } from './driver';
+import { log } from './logger';
 
 /** Start HTTP server with FakeDriver and default WebDriver routes. */
 export async function startServer(port: number, hostname: string) {

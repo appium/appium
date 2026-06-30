@@ -1,10 +1,5 @@
-import globalLog, {markSensitive as _markSensitive, type Logger} from '@appium/logger';
-import type {
-  AppiumLogger,
-  AppiumLoggerContext,
-  AppiumLoggerLevel,
-  AppiumLoggerPrefix,
-} from '@appium/types';
+import globalLog, { type Logger, markSensitive as _markSensitive } from '@appium/logger';
+import type { AppiumLogger, AppiumLoggerContext, AppiumLoggerLevel, AppiumLoggerPrefix } from '@appium/types';
 
 export const LEVELS: readonly AppiumLoggerLevel[] = [
   'silly',
@@ -28,7 +23,7 @@ const noop = () => {};
 // mock log object is used in testing mode to silence the output
 const MOCK_LOG = {
   unwrap: () => ({
-    loadSecureValuesPreprocessingRules: () => Promise.resolve({issues: [], rules: []}),
+    loadSecureValuesPreprocessingRules: () => Promise.resolve({ issues: [], rules: [] }),
     level: 'verbose',
     prefix: '',
     log: noop,
@@ -46,7 +41,7 @@ export const log = getLogger();
  * @returns A wrapped Appium logger instance
  */
 export function getLogger(prefix: AppiumLoggerPrefix | null = null): AppiumLogger {
-  const {logger, defaultToVerbose} = _getLogger();
+  const { logger, defaultToVerbose } = _getLogger();
 
   const wrappedLogger = {
     unwrap: () => logger,
@@ -78,7 +73,7 @@ export function getLogger(prefix: AppiumLoggerPrefix | null = null): AppiumLogge
   const isDebugTimestampLoggingEnabled = process.env._LOG_TIMESTAMP === '1';
 
   for (const level of LEVELS) {
-    wrappedLogger[level] = function (this: typeof wrappedLogger, ...args: any[]) {
+    wrappedLogger[level] = function(this: typeof wrappedLogger, ...args: any[]) {
       const finalPrefix = getFinalPrefix(this.prefix, isDebugTimestampLoggingEnabled);
       if (args.length) {
         (logger as Record<string, (...a: any[]) => void>)[level](finalPrefix, ...args);
@@ -106,21 +101,20 @@ export function getLogger(prefix: AppiumLoggerPrefix | null = null): AppiumLogge
  * in response to the `X-Appium-Is-Sensitive` request header
  * being set to 'true'.
  */
-export function markSensitive<T>(logMessage: T): {[k: string]: T} {
+export function markSensitive<T>(logMessage: T): { [k: string]: T; } {
   return _markSensitive(logMessage);
 }
 
-function _getLogger(): {logger: Logger; defaultToVerbose: boolean} {
+function _getLogger(): { logger: Logger; defaultToVerbose: boolean; } {
   const testingMode = process.env._TESTING === '1';
   const forceLogMode = process.env._FORCE_LOGS === '1';
   const defaultToVerbose = !globalWithNpmlog._global_npmlog;
-  const logger: Logger =
-    testingMode && !forceLogMode ? MOCK_LOG : (globalWithNpmlog._global_npmlog ?? globalLog);
+  const logger: Logger = testingMode && !forceLogMode ? MOCK_LOG : (globalWithNpmlog._global_npmlog ?? globalLog);
   if (!testingMode && !globalWithNpmlog._global_npmlog && logger === globalLog) {
     globalWithNpmlog._global_npmlog = globalLog;
     logger.maxRecordSize = MAX_LOG_RECORDS_COUNT;
   }
-  return {logger, defaultToVerbose};
+  return { logger, defaultToVerbose };
 }
 
 function getFinalPrefix(
@@ -133,7 +127,9 @@ function getFinalPrefix(
   }
   const now = new Date();
   const pad = (n: number, z = 2) => String(n).padStart(z, '0');
-  const formattedTimestamp = `[${pad(now.getHours())}-${pad(now.getMinutes())}-${pad(now.getSeconds())}:${pad(now.getMilliseconds(), 3)}]`;
+  const formattedTimestamp = `[${pad(now.getHours())}-${pad(now.getMinutes())}-${pad(now.getSeconds())}:${
+    pad(now.getMilliseconds(), 3)
+  }]`;
   return result ? `${formattedTimestamp} ${result}` : formattedTimestamp;
 }
 

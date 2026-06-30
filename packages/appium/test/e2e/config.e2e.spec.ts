@@ -1,27 +1,27 @@
-import {createSandbox, type SinonSandbox} from 'sinon';
-import {getBuildInfo, getGitRev, updateBuildInfo, APPIUM_VER} from '../../lib/helpers/build';
 import axios from 'axios';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import { createSandbox, type SinonSandbox } from 'sinon';
 import * as teenProcess from 'teen_process';
+import { APPIUM_VER, getBuildInfo, getGitRev, updateBuildInfo } from '../../lib/helpers/build';
 
-const {expect} = chai;
+const { expect } = chai;
 chai.use(chaiAsPromised);
 
-describe('Config', function () {
+describe('Config', function() {
   let sandbox: SinonSandbox;
 
-  beforeEach(function () {
+  beforeEach(function() {
     sandbox = createSandbox();
   });
 
-  afterEach(function () {
+  afterEach(function() {
     sandbox.verify();
     sandbox.restore();
   });
 
-  describe('getGitRev', function () {
-    it('should get a reasonable git revision', async function () {
+  describe('getGitRev', function() {
+    it('should get a reasonable git revision', async function() {
       const rev = await getGitRev();
       expect(rev).to.be.a('string');
       expect(rev).to.not.be.null;
@@ -30,16 +30,16 @@ describe('Config', function () {
     });
   });
 
-  describe('getBuildInfo', function () {
+  describe('getBuildInfo', function() {
     const SHA = 'a7404fddd50ee1c6ff1aac3d2f259abab0d3291a';
     const DATE = '2022-06-04T02:08:17Z';
 
     async function verifyBuildInfoUpdate(
       useLocalGit: boolean,
-      opts: {sha?: string; built?: string} = {},
+      opts: { sha?: string; built?: string; } = {},
     ) {
       const buildInfo = getBuildInfo();
-      const {sha, built} = opts;
+      const { sha, built } = opts;
 
       const innerExecStub = sandbox.stub().throws();
       if (!useLocalGit) {
@@ -67,18 +67,18 @@ describe('Config', function () {
     }
 
     let getStub: ReturnType<SinonSandbox['stub']>;
-    beforeEach(function () {
+    beforeEach(function() {
       getStub = sandbox.stub(axios, 'get');
     });
-    afterEach(function () {
+    afterEach(function() {
       getStub.restore();
     });
 
-    it('should get a configuration object if the local git metadata is present', async function () {
+    it('should get a configuration object if the local git metadata is present', async function() {
       await verifyBuildInfoUpdate(true);
     });
 
-    it('should get a configuration object if the local git metadata is not present', async function () {
+    it('should get a configuration object if the local git metadata is not present', async function() {
       getStub.onCall(0).returns({
         data: {
           ref: `refs/tags/appium@${APPIUM_VER}`,
@@ -116,7 +116,7 @@ describe('Config', function () {
           },
         },
       });
-      await verifyBuildInfoUpdate(false, {sha: SHA, built: DATE});
+      await verifyBuildInfoUpdate(false, { sha: SHA, built: DATE });
     });
   });
 });

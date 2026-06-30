@@ -1,8 +1,8 @@
-import type {Constraint, Constraints, BaseDriverCapConstraints} from './constraints';
-import type {StandardCapabilities} from './standard-caps';
-import type {AnyCase, StringRecord} from './util';
+import type { BaseDriverCapConstraints, Constraint, Constraints } from './constraints';
+import type { StandardCapabilities } from './standard-caps';
+import type { AnyCase, StringRecord } from './util';
 
-export type {StandardCapabilities};
+export type { StandardCapabilities };
 
 export type W3C_APPIUM_PREFIX = 'appium';
 
@@ -27,9 +27,8 @@ export type BaseW3CCapabilities = W3CCapabilities<BaseDriverCapConstraints>;
  */
 export type ConstraintChoice<C extends Constraint, T> = C['inclusionCaseInsensitive'] extends T[]
   ? AnyCase<C['inclusionCaseInsensitive'][number]>
-  : C['inclusion'] extends ReadonlyArray<T>
-    ? C['inclusion'][number]
-    : T;
+  : C['inclusion'] extends ReadonlyArray<T> ? C['inclusion'][number]
+  : T;
 
 /**
  * Given {@linkcode Constraint} `C`, determine the associated type of the capability.
@@ -40,17 +39,12 @@ export type ConstraintChoice<C extends Constraint, T> = C['inclusionCaseInsensit
  * - If `isArray` is `true`, the type is always of type `string[]`. If this is incorrect, then it will be `any[]`.
  * - There is no way to express the shape of an object if `ifObject` is `true`.
  */
-export type ConstraintToCapKind<C extends Constraint> = C['isString'] extends true
-  ? ConstraintChoice<C, string>
-  : C['isNumber'] extends true
-    ? ConstraintChoice<C, number>
-    : C['isBoolean'] extends true
-      ? boolean
-      : C['isArray'] extends true
-        ? string[]
-        : C['isObject'] extends true
-          ? StringRecord
-          : unknown;
+export type ConstraintToCapKind<C extends Constraint> = C['isString'] extends true ? ConstraintChoice<C, string>
+  : C['isNumber'] extends true ? ConstraintChoice<C, number>
+  : C['isBoolean'] extends true ? boolean
+  : C['isArray'] extends true ? string[]
+  : C['isObject'] extends true ? StringRecord
+  : unknown;
 
 /**
  * Given {@linkcode Constraint} `C`, determine if it is required or optional.
@@ -59,8 +53,7 @@ export type ConstraintToCapKind<C extends Constraint> = C['isString'] extends tr
  */
 export type ConstraintToCap<C extends Constraint> = C['presence'] extends
   | true
-  | {allowEmpty: boolean}
-  ? ConstraintToCapKind<C>
+  | { allowEmpty: boolean; } ? ConstraintToCapKind<C>
   : ConstraintToCapKind<C> | undefined;
 
 /**
@@ -69,9 +62,10 @@ export type ConstraintToCap<C extends Constraint> = C['presence'] extends
  * If `T` is already namespaced, well, it'll get _double_-namespaced.
  */
 export type CapsToNSCaps<T extends StringRecord, NS extends string = W3C_APPIUM_PREFIX> = {
-  [K in keyof T as K extends keyof StandardCapabilities
-    ? K
-    : NamespacedString<K & string, NS>]: T[K];
+  [
+    K in keyof T as K extends keyof StandardCapabilities ? K
+      : NamespacedString<K & string, NS>
+  ]: T[K];
 };
 
 /**
@@ -156,13 +150,15 @@ export type DriverCaps<C extends Constraints = Constraints> = BaseCapabilities &
  * }
  * ```
  */
-export type W3CDriverCaps<C extends Constraints = Constraints> = BaseW3CCapabilities &
-  W3CCapabilities<C>;
+export type W3CDriverCaps<C extends Constraints = Constraints> =
+  & BaseW3CCapabilities
+  & W3CCapabilities<C>;
 
 /**
  * Namespaced capabilities for drivers extending `BaseDriver`.
  *
  * Includes {@linkcode BaseNSCapabilities}.
  */
-export type NSDriverCaps<C extends Constraints = Constraints> = BaseNSCapabilities &
-  NSCapabilities<C>;
+export type NSDriverCaps<C extends Constraints = Constraints> =
+  & BaseNSCapabilities
+  & NSCapabilities<C>;

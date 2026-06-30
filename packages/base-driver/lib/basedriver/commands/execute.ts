@@ -1,16 +1,9 @@
-import {util} from '@appium/support';
-import {errors, validateExecuteMethodParams} from '../../protocol';
-import type {
-  Constraints,
-  Driver,
-  DriverClass,
-  DriverCommand,
-  IExecuteCommands,
-  StringRecord,
-} from '@appium/types';
-import {rankLevenshteinCandidates} from '../../helpers/levenshtein-match';
-import {mixin} from './mixin';
-import type {BaseDriver} from '../driver';
+import { util } from '@appium/support';
+import type { Constraints, Driver, DriverClass, DriverCommand, IExecuteCommands, StringRecord } from '@appium/types';
+import { rankLevenshteinCandidates } from '../../helpers/levenshtein-match';
+import { errors, validateExecuteMethodParams } from '../../protocol';
+import type { BaseDriver } from '../driver';
+import { mixin } from './mixin';
 
 declare module '../driver' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -24,27 +17,27 @@ const ExecuteCommands = {
     protoArgs: readonly [StringRecord<unknown>] | readonly unknown[],
   ) {
     const Driver = this.constructor as DriverClass<Driver<C>>;
-    const commandMetadata = {...Driver.executeMethodMap?.[script]};
+    const commandMetadata = { ...Driver.executeMethodMap?.[script] };
     if (!commandMetadata.command) {
       const availableScripts = Object.keys(Driver.executeMethodMap ?? {});
       if (util.isEmpty(availableScripts)) {
         throw new errors.UnsupportedOperationError(
-          `Unsupported execute method '${script}'. ` +
-            `Make sure the installed ${Driver.name} is up-to-date. ` +
-            `The current driver version does not define any execute methods.`,
+          `Unsupported execute method '${script}'. `
+            + `Make sure the installed ${Driver.name} is up-to-date. `
+            + `The current driver version does not define any execute methods.`,
         );
       }
-      const {sorted: sortedMatches, suggestion} = rankLevenshteinCandidates(
+      const { sorted: sortedMatches, suggestion } = rankLevenshteinCandidates(
         script,
         availableScripts,
       );
       throw new errors.UnsupportedOperationError(
         (suggestion
           ? `Unsupported execute method '${script}', did you mean '${suggestion}'? `
-          : `Unsupported execute method '${script}'. `) +
-          `Make sure the installed ${Driver.name} is up-to-date. ` +
-          `Execute methods available in the current driver version are: ` +
-          sortedMatches.join(', '),
+          : `Unsupported execute method '${script}'. `)
+          + `Make sure the installed ${Driver.name} is up-to-date. `
+          + `Execute methods available in the current driver version are: `
+          + sortedMatches.join(', '),
       );
     }
     const args = validateExecuteMethodParams(protoArgs as any[], commandMetadata.params);

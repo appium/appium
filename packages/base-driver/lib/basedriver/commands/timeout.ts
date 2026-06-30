@@ -1,9 +1,9 @@
-import {waitForCondition} from 'asyncbox';
-import {util} from '@appium/support';
-import {errors} from '../../protocol';
-import type {BaseDriver} from '../driver';
-import type {Constraints, ITimeoutCommands} from '@appium/types';
-import {mixin} from './mixin';
+import { util } from '@appium/support';
+import type { Constraints, ITimeoutCommands } from '@appium/types';
+import { waitForCondition } from 'asyncbox';
+import { errors } from '../../protocol';
+import type { BaseDriver } from '../driver';
+import { mixin } from './mixin';
 
 declare module '../driver' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -23,7 +23,7 @@ const TimeoutCommands: ITimeoutCommands = {
   ) {
     if (type && typeof type === 'string' && util.hasValue(ms)) {
       // legacy stuff with some Appium-specific additions
-      this.log.debug(`Timeout arguments: ${JSON.stringify({type, ms})}}`);
+      this.log.debug(`Timeout arguments: ${JSON.stringify({ type, ms })}}`);
       switch (type) {
         case 'command':
           return void (await this.newCommandTimeout(this.parseTimeoutArgument(ms)));
@@ -38,7 +38,7 @@ const TimeoutCommands: ITimeoutCommands = {
       }
     }
 
-    this.log.debug(`W3C timeout argument: ${JSON.stringify({script, pageLoad, implicit})}}`);
+    this.log.debug(`W3C timeout argument: ${JSON.stringify({ script, pageLoad, implicit })}}`);
     if ([script, pageLoad, implicit].every((value) => value == null)) {
       throw new errors.InvalidArgumentError(
         'W3C protocol expects any of script, pageLoad or implicit to be set',

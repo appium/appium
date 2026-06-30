@@ -1,10 +1,10 @@
-import type {Element} from '@appium/types';
-import {errors} from 'appium/driver';
-import {FakeElement, type XmlNodeLike} from '../fake-element';
-import type {FakeDriver} from '../driver';
-import {util} from 'appium/support';
+import type { Element } from '@appium/types';
+import { errors } from 'appium/driver';
+import { util } from 'appium/support';
+import type { FakeDriver } from '../driver';
+import { FakeElement, type XmlNodeLike } from '../fake-element';
 
-const {W3C_WEB_ELEMENT_IDENTIFIER} = util;
+const { W3C_WEB_ELEMENT_IDENTIFIER } = util;
 
 /** Find an existing element id in elMap for the same underlying node (reference equality). */
 export function getExistingElementForNode(this: FakeDriver, node: FakeElement): string | null {
@@ -23,13 +23,13 @@ export function wrapNewEl(this: FakeDriver, obj: FakeElement | XmlNodeLike): Ele
   if (obj instanceof FakeElement) {
     const existingElId = this.getExistingElementForNode(obj);
     if (existingElId) {
-      return {ELEMENT: existingElId, [W3C_WEB_ELEMENT_IDENTIFIER]: existingElId};
+      return { ELEMENT: existingElId, [W3C_WEB_ELEMENT_IDENTIFIER]: existingElId };
     }
   } else {
     // raw node: reuse id if we already have an element for this node
     for (const [id, el] of Object.entries(this.elMap)) {
       if (el.node === node) {
-        return {ELEMENT: id, [W3C_WEB_ELEMENT_IDENTIFIER]: id};
+        return { ELEMENT: id, [W3C_WEB_ELEMENT_IDENTIFIER]: id };
       }
     }
   }
@@ -37,7 +37,7 @@ export function wrapNewEl(this: FakeDriver, obj: FakeElement | XmlNodeLike): Ele
   this.maxElId++;
   const maxElId = this.maxElId.toString();
   this.elMap[maxElId] = new FakeElement(node, this.appModel);
-  return {ELEMENT: maxElId, [W3C_WEB_ELEMENT_IDENTIFIER]: maxElId};
+  return { ELEMENT: maxElId, [W3C_WEB_ELEMENT_IDENTIFIER]: maxElId };
 }
 
 /** findElOrElsImpl. */

@@ -1,5 +1,4 @@
-import {logger, util} from '@appium/support';
-import {EventEmitter} from 'node:events';
+import { logger, util } from '@appium/support';
 import type {
   AppiumLogger,
   BidiModuleMap,
@@ -9,10 +8,11 @@ import type {
   IpcData,
   StringRecord,
 } from '@appium/types';
-import {MAX_LOG_BODY_LENGTH} from '../constants';
-import {errors} from '../protocol';
-import {BIDI_COMMANDS} from '../protocol/bidi-commands';
-import {generateDriverLogPrefix} from './helpers';
+import { EventEmitter } from 'node:events';
+import { MAX_LOG_BODY_LENGTH } from '../constants';
+import { errors } from '../protocol';
+import { BIDI_COMMANDS } from '../protocol/bidi-commands';
+import { generateDriverLogPrefix } from './helpers';
 
 export class ExtensionCore {
   bidiEventSubs: Record<string, string[]>;
@@ -66,9 +66,9 @@ export class ExtensionCore {
     // if we don't get a valid format for bidi command name, reject
     if (!moduleName || !methodName) {
       throw new errors.UnknownCommandError(
-        `Did not receive a valid BiDi module and method name ` +
-          `of the form moduleName.methodName. Instead received ` +
-          `'${moduleName}.${methodName}'`,
+        `Did not receive a valid BiDi module and method name `
+          + `of the form moduleName.methodName. Instead received `
+          + `'${moduleName}.${methodName}'`,
       );
     }
 
@@ -77,7 +77,7 @@ export class ExtensionCore {
       throw new errors.UnknownCommandError();
     }
 
-    const {command} = this.bidiCommands[moduleName][methodName];
+    const { command } = this.bidiCommands[moduleName][methodName];
     // if the command method isn't part of our spec, also reject
     if (!command) {
       throw new errors.UnknownCommandError();
@@ -99,7 +99,7 @@ export class ExtensionCore {
     const handlerType = next && driver ? 'plugin' : 'driver';
     const [moduleName, methodName] = bidiCmd.split('.');
     this.ensureBidiCommandExists(moduleName, methodName);
-    const {command, params} = this.bidiCommands[moduleName][methodName];
+    const { command, params } = this.bidiCommands[moduleName][methodName];
 
     // TODO improve param parsing and error messages along the lines of what we have in the http
     // handlers
@@ -123,22 +123,20 @@ export class ExtensionCore {
       length: MAX_LOG_BODY_LENGTH,
     });
     this.log.debug(
-      `Executing bidi command '${bidiCmd}' with params ${logParams} by passing to ${handlerType} ` +
-        `method '${command}'`,
+      `Executing bidi command '${bidiCmd}' with params ${logParams} by passing to ${handlerType} `
+        + `method '${command}'`,
     );
     // call the handler with the signature appropriate to extension type (plugin or driver)
     const commandHandler = (
       this as unknown as Record<string, (...handlerArgs: any[]) => Promise<unknown>>
     )[command];
-    const response =
-      next && driver
-        ? await commandHandler.call(this, next, driver, ...args)
-        : await commandHandler.call(this, ...args);
-    const finalResponse: BiDiResultData =
-      response === undefined ? {} : (response as BiDiResultData);
+    const response = next && driver
+      ? await commandHandler.call(this, next, driver, ...args)
+      : await commandHandler.call(this, ...args);
+    const finalResponse: BiDiResultData = response === undefined ? {} : (response as BiDiResultData);
     this.log.debug(
-      `Responding to bidi command '${bidiCmd}' with ` +
-        `${util.truncateString(JSON.stringify(finalResponse), {length: MAX_LOG_BODY_LENGTH})}`,
+      `Responding to bidi command '${bidiCmd}' with `
+        + `${util.truncateString(JSON.stringify(finalResponse), { length: MAX_LOG_BODY_LENGTH })}`,
     );
     return finalResponse;
   }
@@ -160,9 +158,9 @@ export class ExtensionCore {
   ipcSubscribe<T extends IpcData>(topic: string): IIpcSubscription<T> {
     if (!this.ipc) {
       throw new Error(
-        `Cannot subscribe to an IPC topic without an IPC object assigned. ` +
-          `This is likely a programming error. ipcSubscribe should be called in the ` +
-          `onIpcInit handler or after you are certain that createSession has completed successfully.`,
+        `Cannot subscribe to an IPC topic without an IPC object assigned. `
+          + `This is likely a programming error. ipcSubscribe should be called in the `
+          + `onIpcInit handler or after you are certain that createSession has completed successfully.`,
       );
     }
     return this.ipc.subscribe<T>(topic, generateDriverLogPrefix(this));

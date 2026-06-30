@@ -1,18 +1,18 @@
+import { fs, net, tempDir, zip } from '@appium/support';
+import { waitForCondition } from 'asyncbox';
+import _ from 'lodash';
+import { spawn } from 'node:child_process';
 import path from 'node:path';
-import {fs, net, tempDir, zip} from '@appium/support';
-import {waitForCondition} from 'asyncbox';
-import {spawn} from 'node:child_process';
 import {
-  log,
-  walk,
+  CROWIN_MKDOCS_CONFIG,
   DEFAULT_LANGUAGE,
+  DOCUMENTS_EXT,
+  log,
+  ORIGINAL_MKDOCS_CONFIG,
   performApiRequest,
   RESOURCES_ROOT,
-  DOCUMENTS_EXT,
-  ORIGINAL_MKDOCS_CONFIG,
-  CROWIN_MKDOCS_CONFIG,
+  walk,
 } from './crowdin-common.mjs';
-import _ from 'lodash';
 
 const BUILD_TIMEOUT_MS = 1000 * 60 * 10;
 const BUILD_STATUS = {
@@ -30,19 +30,17 @@ const CROWDIN_TO_FS_LANGUAGES_MAP = {
 };
 
 /**
- *
  * @returns {Promise<number>}
  */
 async function buildTranslations() {
   log.info('Building project translations');
-  const {data: buildData} = await performApiRequest('/translations/builds', {
+  const { data: buildData } = await performApiRequest('/translations/builds', {
     method: 'POST',
   });
   return buildData.id;
 }
 
 /**
- *
  * @param {number} buildId
  * @param {string} dstPath
  * @returns {Promise<void>}
@@ -51,7 +49,7 @@ async function downloadTranslations(buildId, dstPath) {
   log.info(`Waiting up to ${BUILD_TIMEOUT_MS / 1000}s for the build #${buildId} to finish`);
   await waitForCondition(
     async () => {
-      const {data: buildData} = await performApiRequest(`/translations/builds/${buildId}`);
+      const { data: buildData } = await performApiRequest(`/translations/builds/${buildId}`);
       switch (buildData.status) {
         case BUILD_STATUS.finished:
           return true;
@@ -67,21 +65,18 @@ async function downloadTranslations(buildId, dstPath) {
       intervalMs: 1000,
     },
   );
-  const {data: downloadData} = await performApiRequest(`/translations/builds/${buildId}/download`);
+  const { data: downloadData } = await performApiRequest(`/translations/builds/${buildId}/download`);
   log.info(`Downloading translations to '${dstPath}'`);
   await net.downloadFile(downloadData.url, dstPath);
 }
 
 /**
- *
  * @param {string} srcDir
  * @param {string} dstDir
  * @returns {Promise<void>}
  */
 async function syncTranslatedDocuments(srcDir, dstDir) {
-  const srcTranslatedDocs = (await walk(srcDir, DOCUMENTS_EXT)).map((p) =>
-    path.relative(srcDir, p),
-  );
+  const srcTranslatedDocs = (await walk(srcDir, DOCUMENTS_EXT)).map((p) => path.relative(srcDir, p));
   if (srcTranslatedDocs.length === 0) {
     return;
   }
@@ -89,7 +84,7 @@ async function syncTranslatedDocuments(srcDir, dstDir) {
   let count = 0;
   for (const relativePath of srcTranslatedDocs) {
     log.info(`Synchronizing '${relativePath}' (${++count} of ${srcTranslatedDocs.length})`);
-    await fs.mv(path.join(srcDir, relativePath), path.join(dstDir, relativePath), {mkdirp: true});
+    await fs.mv(path.join(srcDir, relativePath), path.join(dstDir, relativePath), { mkdirp: true });
   }
 
   const dstDocs = (await walk(dstDir, DOCUMENTS_EXT)).map((p) => path.relative(dstDir, p));
@@ -101,7 +96,6 @@ async function syncTranslatedDocuments(srcDir, dstDir) {
 }
 
 /**
- *
  * @param {string} yamlPath
  * @returns {Promise<boolean>}
  */
@@ -143,7 +137,6 @@ async function validateYaml(yamlPath) {
 }
 
 /**
- *
  * @param {string} srcDir
  * @param {string} dstDir
  * @param {string} dstLanguage
@@ -167,7 +160,7 @@ async function syncTranslatedConfig(srcDir, dstDir, dstLanguage) {
 
 async function main() {
   const buildId = await buildTranslations();
-  const zipPath = await tempDir.path({prefix: 'translations', suffix: '.zip'});
+  const zipPath = await tempDir.path({ prefix: 'translations', suffix: '.zip' });
   try {
     await downloadTranslations(buildId, zipPath);
     const tmpRoot = await tempDir.openDir();
@@ -192,8 +185,8 @@ async function main() {
         await syncTranslatedDocuments(currentPath, path.join(RESOURCES_ROOT, dstLanguageName));
         await syncTranslatedConfig(currentPath, RESOURCES_ROOT, dstLanguageName);
         log.info(
-          `Successfully updated resources for the '${dstLanguageName}' ` +
-            `('${name}' in Crowdin) language (${++count} of ${Object.keys(CROWDIN_TO_FS_LANGUAGES_MAP).length})`,
+          `Successfully updated resources for the '${dstLanguageName}' `
+            + `('${name}' in Crowdin) language (${++count} of ${Object.keys(CROWDIN_TO_FS_LANGUAGES_MAP).length})`,
         );
       }
     } finally {

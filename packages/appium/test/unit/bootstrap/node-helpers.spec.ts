@@ -1,26 +1,26 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {promises as fs} from 'node:fs';
+import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import {adjustNodePath, checkNodeOk, requireDir} from '../../../lib/bootstrap/node-helpers';
+import { adjustNodePath, checkNodeOk, requireDir } from '../../../lib/bootstrap/node-helpers';
 
-const {expect} = chai;
+const { expect } = chai;
 chai.use(chaiAsPromised);
 
-describe('bootstrap/node-helpers', function () {
-  describe('checkNodeOk()', function () {
+describe('bootstrap/node-helpers', function() {
+  describe('checkNodeOk()', function() {
     const _process = process;
 
-    before(function () {
-      process = {...process}; // eslint-disable-line no-global-assign
+    before(function() {
+      process = { ...process }; // eslint-disable-line no-global-assign
     });
 
-    after(function () {
+    after(function() {
       process = _process; // eslint-disable-line no-global-assign
     });
 
-    describe('unsupported nodes', function () {
+    describe('unsupported nodes', function() {
       const unsupportedVersions = [
         'v0.1',
         'v0.9.12',
@@ -44,7 +44,7 @@ describe('bootstrap/node-helpers', function () {
       ];
 
       for (const version of unsupportedVersions) {
-        it(`should fail if node is ${version}`, function () {
+        it(`should fail if node is ${version}`, function() {
           // @ts-expect-error
           process.version = version;
           expect(checkNodeOk).to.throw();
@@ -52,8 +52,8 @@ describe('bootstrap/node-helpers', function () {
       }
     });
 
-    describe('supported nodes', function () {
-      it('should succeed if node is ^20.19.0', function () {
+    describe('supported nodes', function() {
+      it('should succeed if node is ^20.19.0', function() {
         // @ts-expect-error
         process.version = 'v20.19.0';
         expect(checkNodeOk).to.not.throw();
@@ -62,7 +62,7 @@ describe('bootstrap/node-helpers', function () {
         expect(checkNodeOk).to.not.throw();
       });
 
-      it('should succeed if node is 22.12+', function () {
+      it('should succeed if node is 22.12+', function() {
         // @ts-expect-error
         process.version = 'v22.12.0';
         expect(checkNodeOk).to.not.throw();
@@ -73,19 +73,19 @@ describe('bootstrap/node-helpers', function () {
     });
   });
 
-  describe('requireDir()', function () {
-    it('should fail to use a dir with incorrect permissions', async function () {
+  describe('requireDir()', function() {
+    it('should fail to use a dir with incorrect permissions', async function() {
       await expect(requireDir('/private/if_you_run_with_sudo_this_wont_fail')).to.be.rejectedWith(
         /must exist/,
       );
     });
 
-    it('should fail to use an undefined dir', async function () {
+    it('should fail to use an undefined dir', async function() {
       // @ts-expect-error
       await expect(requireDir()).to.be.rejectedWith(/must exist/);
     });
 
-    it('should fail to use a non-writeable dir', async function () {
+    it('should fail to use a non-writeable dir', async function() {
       const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'appium-requireDir-test-'));
       try {
         await fs.chmod(tempDir, 0o444);
@@ -96,27 +96,27 @@ describe('bootstrap/node-helpers', function () {
       }
     });
 
-    it('should be able to use a dir with correct permissions', async function () {
+    it('should be able to use a dir with correct permissions', async function() {
       await expect(requireDir('/tmp/test_tmp_dir/with/any/number/of/levels')).to.not.be.rejected;
     });
   });
 
-  describe('adjustNodePath()', function () {
+  describe('adjustNodePath()', function() {
     const prevValue = process.env.NODE_PATH;
 
-    beforeEach(function () {
+    beforeEach(function() {
       if (process.env.NODE_PATH) {
         delete process.env.NODE_PATH;
       }
     });
 
-    afterEach(function () {
+    afterEach(function() {
       if (prevValue) {
         process.env.NODE_PATH = prevValue;
       }
     });
 
-    it('should adjust NODE_PATH', async function () {
+    it('should adjust NODE_PATH', async function() {
       adjustNodePath();
       await expect(fs.access(process.env.NODE_PATH!)).to.not.be.rejected;
     });

@@ -1,34 +1,34 @@
+import { console as supportConsole } from '@appium/support';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import type {SinonSandbox, SinonSpy} from 'sinon';
-import {createSandbox} from 'sinon';
-import {console as supportConsole} from '@appium/support';
-import {getBuildInfo} from '../../../lib/helpers/build';
-import {inspect, showBuildInfo} from '../../../lib/bootstrap/main-helpers';
-import {log as logger} from '../../../lib/logger';
+import type { SinonSandbox, SinonSpy } from 'sinon';
+import { createSandbox } from 'sinon';
+import { inspect, showBuildInfo } from '../../../lib/bootstrap/main-helpers';
+import { getBuildInfo } from '../../../lib/helpers/build';
+import { log as logger } from '../../../lib/logger';
 
-const {expect} = chai;
+const { expect } = chai;
 chai.use(chaiAsPromised);
 
-describe('bootstrap/main-helpers', function () {
+describe('bootstrap/main-helpers', function() {
   let sandbox: SinonSandbox;
 
-  beforeEach(function () {
+  beforeEach(function() {
     sandbox = createSandbox();
   });
 
-  afterEach(function () {
+  afterEach(function() {
     sandbox.restore();
   });
 
-  describe('showBuildInfo()', function () {
+  describe('showBuildInfo()', function() {
     let log: SinonSpy;
 
-    beforeEach(function () {
+    beforeEach(function() {
       log = sandbox.spy(console, 'log');
     });
 
-    it('should log build info to console', async function () {
+    it('should log build info to console', async function() {
       const config = getBuildInfo();
       await showBuildInfo();
       expect(log.calledOnce).to.be.true;
@@ -36,10 +36,10 @@ describe('bootstrap/main-helpers', function () {
     });
   });
 
-  describe('inspect()', function () {
-    it('should log the result of inspecting a value', function () {
+  describe('inspect()', function() {
+    it('should log the result of inspecting a value', function() {
       const infoLog = sandbox.spy(logger, 'info');
-      inspect({foo: 'bar'});
+      inspect({ foo: 'bar' });
       expect(supportConsole.stripColors(infoLog.firstCall.firstArg)).to.match(
         /\{\s*\n*foo:\s'bar'\s*\n*\}/,
       );

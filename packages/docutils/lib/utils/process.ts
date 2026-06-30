@@ -1,7 +1,7 @@
-import type {SpawnOptions} from 'node:child_process';
-import {spawn} from 'node:child_process';
-import type {ExecError, TeenProcessExecOptions} from 'teen_process';
-import {exec} from 'teen_process';
+import type { SpawnOptions } from 'node:child_process';
+import { spawn } from 'node:child_process';
+import type { ExecError, TeenProcessExecOptions } from 'teen_process';
+import { exec } from 'teen_process';
 
 export type SpawnBackgroundProcessOpts = Omit<SpawnOptions, 'stdio'>;
 
@@ -21,7 +21,7 @@ export async function spawnBackgroundProcess(
   opts: SpawnBackgroundProcessOpts = {},
 ) {
   return new Promise<void>((resolve, reject) => {
-    spawn(command, args, {...opts, stdio: 'inherit'})
+    spawn(command, args, { ...opts, stdio: 'inherit' })
       .on('error', reject)
       .on('close', (code, signal) => {
         if (code === 0) {

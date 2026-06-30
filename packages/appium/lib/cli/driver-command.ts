@@ -1,5 +1,6 @@
-import {console, util} from '@appium/support';
-import type {ExtMetadata, ExtRecord, InstallType} from 'appium/types';
+import { console, util } from '@appium/support';
+import type { ExtMetadata, ExtRecord, InstallType } from 'appium/types';
+import { KNOWN_DRIVERS } from '../constants';
 import ExtensionCliCommand from './extension-command';
 import type {
   ExtensionArgs,
@@ -8,17 +9,16 @@ import type {
   PostInstallText,
   RunOutput,
 } from './extension-command';
-import {KNOWN_DRIVERS} from '../constants';
 const REQ_DRIVER_FIELDS = ['driverName', 'automationName', 'platformNames', 'mainClass'];
-type DriverInstallOpts = {driver: string; installType: InstallType; packageName?: string};
-type DriverUninstallOpts = {driver: string};
-type DriverUpdateOpts = {driver: string; unsafe: boolean};
-type DriverRunOptions = {driver: string; scriptName: string; extraArgs?: string[]};
-type DriverDoctorOptions = {driver: string};
+type DriverInstallOpts = { driver: string; installType: InstallType; packageName?: string; };
+type DriverUninstallOpts = { driver: string; };
+type DriverUpdateOpts = { driver: string; unsafe: boolean; };
+type DriverRunOptions = { driver: string; scriptName: string; extraArgs?: string[]; };
+type DriverDoctorOptions = { driver: string; };
 
 export default class DriverCliCommand extends ExtensionCliCommand<'driver'> {
-  constructor({config, json}: ExtensionCommandOptions<'driver'>) {
-    super({config, json});
+  constructor({ config, json }: ExtensionCommandOptions<'driver'>) {
+    super({ config, json });
     this.knownExtensions = KNOWN_DRIVERS;
   }
 
@@ -44,8 +44,8 @@ export default class DriverCliCommand extends ExtensionCliCommand<'driver'> {
    *
    * @param opts - uninstall options
    */
-  async uninstall({driver}: DriverUninstallOpts): Promise<ExtRecord<'driver'>> {
-    return await super._uninstall({installSpec: driver});
+  async uninstall({ driver }: DriverUninstallOpts): Promise<ExtRecord<'driver'>> {
+    return await super._uninstall({ installSpec: driver });
   }
 
   /**
@@ -53,8 +53,8 @@ export default class DriverCliCommand extends ExtensionCliCommand<'driver'> {
    *
    * @param opts - update options
    */
-  async update({driver, unsafe}: DriverUpdateOpts): Promise<ExtensionUpdateResult> {
-    return await super._update({installSpec: driver, unsafe});
+  async update({ driver, unsafe }: DriverUpdateOpts): Promise<ExtensionUpdateResult> {
+    return await super._update({ installSpec: driver, unsafe });
   }
 
   /**
@@ -63,7 +63,7 @@ export default class DriverCliCommand extends ExtensionCliCommand<'driver'> {
    * @param opts - script execution options
    * @throws {Error} if the script fails to run
    */
-  async run({driver, scriptName, extraArgs}: DriverRunOptions): Promise<RunOutput> {
+  async run({ driver, scriptName, extraArgs }: DriverRunOptions): Promise<RunOutput> {
     return await super._run({
       installSpec: driver,
       scriptName,
@@ -79,7 +79,7 @@ export default class DriverCliCommand extends ExtensionCliCommand<'driver'> {
    * @returns The amount of executed doctor checks.
    * @throws {Error} If any of the mandatory Doctor checks fails.
    */
-  async doctor({driver}: DriverDoctorOptions): Promise<number> {
+  async doctor({ driver }: DriverDoctorOptions): Promise<number> {
     return await super._doctor({
       installSpec: driver,
     });
@@ -91,11 +91,11 @@ export default class DriverCliCommand extends ExtensionCliCommand<'driver'> {
    * @param args - installed extension name and metadata
    * @returns formatted success text
    */
-  override getPostInstallText({extName, extData}: ExtensionArgs<'driver'>): PostInstallText {
+  override getPostInstallText({ extName, extData }: ExtensionArgs<'driver'>): PostInstallText {
     return (
-      `${console.styleText('green', `Driver ${extName}@${extData.version} successfully installed`)}\n` +
-      `- automationName: ${console.styleText('green', extData.automationName)}\n` +
-      `- platformNames: ${console.styleText('green', JSON.stringify(extData.platformNames))}`
+      `${console.styleText('green', `Driver ${extName}@${extData.version} successfully installed`)}\n`
+      + `- automationName: ${console.styleText('green', extData.automationName)}\n`
+      + `- platformNames: ${console.styleText('green', JSON.stringify(extData.platformNames))}`
     );
   }
 
@@ -113,15 +113,14 @@ export default class DriverCliCommand extends ExtensionCliCommand<'driver'> {
     installSpec: string,
   ): void {
     const missingFields = REQ_DRIVER_FIELDS.reduce<string[]>(
-      (acc, field) =>
-        driverMetadata[field as keyof typeof driverMetadata] ? acc : [...acc, field],
+      (acc, field) => driverMetadata[field as keyof typeof driverMetadata] ? acc : [...acc, field],
       [],
     );
 
     if (!util.isEmpty(missingFields)) {
       throw new Error(
-        `Driver "${installSpec}" did not expose correct fields for compatibility ` +
-          `with Appium. Missing fields: ${JSON.stringify(missingFields)}`,
+        `Driver "${installSpec}" did not expose correct fields for compatibility `
+          + `with Appium. Missing fields: ${JSON.stringify(missingFields)}`,
       );
     }
   }

@@ -1,18 +1,18 @@
-import {DRIVER_TYPE} from '../../lib/constants';
-import {readConfigFile} from '../../lib/bootstrap/config-file';
-import {finalizeSchema, registerSchema, resetSchema} from '../../lib/schema/schema';
-import extSchema from '../fixtures/driver-schema';
-import {resolveFixture} from '../helpers';
-import {system, util} from '@appium/support';
+import { system, util } from '@appium/support';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import { readConfigFile } from '../../lib/bootstrap/config-file';
+import { DRIVER_TYPE } from '../../lib/constants';
+import { finalizeSchema, registerSchema, resetSchema } from '../../lib/schema/schema';
+import extSchema from '../fixtures/driver-schema';
+import { resolveFixture } from '../helpers';
 
-const {expect} = chai;
+const { expect } = chai;
 chai.use(chaiAsPromised);
 
 const resolveConfigFixture = (name: string) => resolveFixture('config', name);
 
-describe('config file behavior', function () {
+describe('config file behavior', function() {
   const GOOD_FILEPATH = resolveConfigFixture('appium-config-good.json');
   const BAD_NODECONFIG_FILEPATH = resolveConfigFixture('appium-config-bad-nodeconfig.json');
   const BAD_FILEPATH = resolveConfigFixture('appium-config-bad.json');
@@ -24,17 +24,17 @@ describe('config file behavior', function () {
   const EXT_PROPS_FILEPATH = resolveConfigFixture('appium-config-ext-good.json');
   const LOG_FILTERS_FILEPATH = resolveConfigFixture('appium-config-log-filters.json');
 
-  beforeEach(async function () {
+  beforeEach(async function() {
     await finalizeSchema();
   });
 
-  afterEach(function () {
+  afterEach(function() {
     resetSchema();
   });
 
-  describe('when provided a path to a config file', function () {
-    describe('when the config file is valid per the schema', function () {
-      it('should return a valid config object', async function () {
+  describe('when provided a path to a config file', function() {
+    describe('when the config file is valid per the schema', function() {
+      it('should return a valid config object', async function() {
         const result = await readConfigFile(GOOD_FILEPATH);
         expect(result).to.deep.equal({
           config: {
@@ -75,39 +75,39 @@ describe('config file behavior', function () {
         });
       });
 
-      describe('`server.nodeconfig` behavior', function () {
-        describe('when a string', function () {
-          it('should return errors', async function () {
+      describe('`server.nodeconfig` behavior', function() {
+        describe('when a string', function() {
+          it('should return errors', async function() {
             const result = await readConfigFile(BAD_NODECONFIG_FILEPATH);
             expect(result.errors?.[0]).to.have.property('instancePath', '/server/nodeconfig');
           });
         });
 
-        describe('when an object', function () {
-          it('should return a valid config object', async function () {
+        describe('when an object', function() {
+          it('should return a valid config object', async function() {
             const result = await readConfigFile(GOOD_FILEPATH);
             expect(result).to.have.property('errors').that.is.empty;
           });
         });
       });
 
-      describe('`server.allow-insecure` behavior', function () {
-        describe('when a string path', function () {
-          it('should return errors', async function () {
+      describe('`server.allow-insecure` behavior', function() {
+        describe('when a string path', function() {
+          it('should return errors', async function() {
             const result = await readConfigFile(SECURITY_PATH_FILEPATH);
             expect(result.errors?.[0]).to.have.property('instancePath', '/server/allow-insecure');
           });
         });
 
-        describe('when a comma-delimited string', function () {
-          it('should return errors', async function () {
+        describe('when a comma-delimited string', function() {
+          it('should return errors', async function() {
             const result = await readConfigFile(SECURITY_DELIMITED_FILEPATH);
             expect(result.errors?.[0]).to.have.property('instancePath', '/server/allow-insecure');
           });
         });
 
-        describe('when an array', function () {
-          it('should return a valid config object', async function () {
+        describe('when an array', function() {
+          it('should return a valid config object', async function() {
             const result = await readConfigFile(SECURITY_ARRAY_FILEPATH);
             expect(result).to.deep.equal({
               config: {
@@ -122,16 +122,16 @@ describe('config file behavior', function () {
         });
       });
 
-      describe('`server.log-filters` behavior', function () {
-        describe('when the log filters are valid', function () {
-          it('should return a valid config object', async function () {
+      describe('`server.log-filters` behavior', function() {
+        describe('when the log filters are valid', function() {
+          it('should return a valid config object', async function() {
             const result = await readConfigFile(LOG_FILTERS_FILEPATH);
             expect(result).to.deep.equal({
               config: {
                 server: {
                   logFilters: [
-                    {text: 'foo', replacer: 'bar'},
-                    {pattern: '/foo/', flags: 'i'},
+                    { text: 'foo', replacer: 'bar' },
+                    { pattern: '/foo/', flags: 'i' },
                   ],
                 },
               },
@@ -143,9 +143,9 @@ describe('config file behavior', function () {
       });
     });
 
-    describe('when the config file is invalid per the schema', function () {
-      describe('without extensions', function () {
-        it('should return an object containing errors', async function () {
+    describe('when the config file is invalid per the schema', function() {
+      describe('without extensions', function() {
+        it('should return an object containing errors', async function() {
           const result = await readConfigFile(BAD_FILEPATH);
           expect(result).to.have.deep.property('config', {
             appiumHome: 'foo',
@@ -195,10 +195,10 @@ describe('config file behavior', function () {
         });
       });
 
-      describe('with extensions', function () {
+      describe('with extensions', function() {
         let result: Awaited<ReturnType<typeof readConfigFile>>;
 
-        beforeEach(async function () {
+        beforeEach(async function() {
           resetSchema();
           await registerSchema(
             DRIVER_TYPE,
@@ -208,17 +208,17 @@ describe('config file behavior', function () {
           await finalizeSchema();
         });
 
-        describe('when provided a config file with unknown properties', function () {
-          beforeEach(async function () {
+        describe('when provided a config file with unknown properties', function() {
+          beforeEach(async function() {
             result = await readConfigFile(UNKNOWN_PROPS_FILEPATH);
           });
-          it('should return an object containing errors', function () {
+          it('should return an object containing errors', function() {
             expect(result).to.have.deep.property('errors', [
               {
                 instancePath: '/server/driver/fake',
                 schemaPath: 'driver-fake.json/additionalProperties',
                 keyword: 'additionalProperties',
-                params: {additionalProperty: 'bubb'},
+                params: { additionalProperty: 'bubb' },
                 message: 'must NOT have additional properties',
                 isIdentifierLocation: true,
               },
@@ -226,19 +226,19 @@ describe('config file behavior', function () {
           });
         });
 
-        describe('when provided a config file with valid properties', function () {
-          beforeEach(async function () {
+        describe('when provided a config file with valid properties', function() {
+          beforeEach(async function() {
             result = await readConfigFile(EXT_PROPS_FILEPATH);
           });
-          it('should return an object containing no errors', function () {
+          it('should return an object containing no errors', function() {
             expect(result).to.have.deep.property('errors', []);
           });
         });
       });
     });
 
-    describe('when the config file is invalid JSON', function () {
-      it('should reject with a user-friendly error message', async function () {
+    describe('when the config file is invalid JSON', function() {
+      it('should reject with a user-friendly error message', async function() {
         if (system.isWindows()) {
           return this.skip();
         }

@@ -1,28 +1,28 @@
-import {expect, use} from 'chai';
+import { expect, use } from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {afterEach, beforeEach, describe, it} from 'node:test';
-import {createSandbox} from 'sinon';
-import {timing} from '../../lib';
+import { afterEach, beforeEach, describe, it } from 'node:test';
+import { createSandbox } from 'sinon';
+import { timing } from '../../lib';
 
 use(chaiAsPromised);
 
-describe('timing', function () {
+describe('timing', function() {
   let processMock: ReturnType<ReturnType<typeof createSandbox>['mock']>;
   let sandbox: ReturnType<typeof createSandbox>;
 
-  beforeEach(function () {
+  beforeEach(function() {
     sandbox = createSandbox();
   });
 
-  afterEach(function () {
+  afterEach(function() {
     if (processMock) {
       processMock.verify();
     }
     sandbox.restore();
   });
 
-  describe('bigint', {skip: typeof process.hrtime.bigint !== 'function'}, function () {
-    beforeEach(function () {
+  describe('bigint', { skip: typeof process.hrtime.bigint !== 'function' }, function() {
+    beforeEach(function() {
       processMock = sandbox.mock(process.hrtime);
     });
 
@@ -40,39 +40,39 @@ describe('timing', function () {
       }
     }
 
-    it('should get a duration', function () {
+    it('should get a duration', function() {
       setupMocks();
 
       const timer = new timing.Timer().start();
       const duration = timer.getDuration();
       expect(duration.nanos).to.be.a('number');
     });
-    it('should get correct seconds', function () {
+    it('should get correct seconds', function() {
       setupMocks();
 
       const timer = new timing.Timer().start();
       const duration = timer.getDuration();
       expect(duration.asSeconds).to.eql(10.011483102);
     });
-    it('should get correct milliseconds', function () {
+    it('should get correct milliseconds', function() {
       setupMocks();
 
       const timer = new timing.Timer().start();
       const duration = timer.getDuration();
       expect(duration.asMilliSeconds).to.eql(10011.483102);
     });
-    it('should get correct nanoseconds', function () {
+    it('should get correct nanoseconds', function() {
       setupMocks();
 
       const timer = new timing.Timer().start();
       const duration = timer.getDuration();
       expect(duration.asNanoSeconds).to.eql(10011483102);
     });
-    it('should error if the timer was not started', function () {
+    it('should error if the timer was not started', function() {
       const timer = new timing.Timer();
       expect(() => timer.getDuration()).to.throw('Unable to get duration');
     });
-    it('should error if passing in a non-bigint', function () {
+    it('should error if passing in a non-bigint', function() {
       const timer = new timing.Timer();
       (timer as any)._startTime = 12345;
       expect(() => timer.getDuration()).to.throw('Unable to get duration');

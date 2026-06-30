@@ -21,9 +21,9 @@
   },
   "include": ["lib", "test"],
   "references": [
-    {"path": "../types"},
-    {"path": "../support"},
-    {"path": "../driver-test-support"},
-    {"path": "../base-driver"}
+    { "path": "../types" },
+    { "path": "../support" },
+    { "path": "../driver-test-support" },
+    { "path": "../base-driver" }
   ]
 }

@@ -1,7 +1,7 @@
-import {util, node} from '@appium/support';
-import {log} from './logger';
-import {errors} from '../protocol/errors';
-import type {StringRecord, IDeviceSettings, SettingsUpdateListener} from '@appium/types';
+import { node, util } from '@appium/support';
+import type { IDeviceSettings, SettingsUpdateListener, StringRecord } from '@appium/types';
+import { errors } from '../protocol/errors';
+import { log } from './logger';
 
 /**
  * Maximum size (in bytes) of a given driver's settings object (which is internal to {@linkcode DeviceSettings}).
@@ -25,7 +25,7 @@ export class DeviceSettings<T extends StringRecord = StringRecord> implements ID
     defaultSettings: T = {} as T,
     onSettingsUpdate: SettingsUpdateListener<T> = async () => {},
   ) {
-    this._settings = {...defaultSettings};
+    this._settings = { ...defaultSettings };
     this._onSettingsUpdate = onSettingsUpdate;
   }
 
@@ -37,15 +37,15 @@ export class DeviceSettings<T extends StringRecord = StringRecord> implements ID
   async update(newSettings: T): Promise<void> {
     if (!util.isPlainObject(newSettings)) {
       throw new errors.InvalidArgumentError(
-        `Settings update should be called with valid JSON. Got ` +
-          `${JSON.stringify(newSettings)} instead`,
+        `Settings update should be called with valid JSON. Got `
+          + `${JSON.stringify(newSettings)} instead`,
       );
     }
 
-    if (node.getObjectSize({...this._settings, ...newSettings}) >= MAX_SETTINGS_SIZE) {
+    if (node.getObjectSize({ ...this._settings, ...newSettings }) >= MAX_SETTINGS_SIZE) {
       throw new errors.InvalidArgumentError(
-        `New settings cannot be applied, because the overall ` +
-          `object size exceeds the allowed limit of ${util.toReadableSizeString(MAX_SETTINGS_SIZE)}`,
+        `New settings cannot be applied, because the overall `
+          + `object size exceeds the allowed limit of ${util.toReadableSizeString(MAX_SETTINGS_SIZE)}`,
       );
     }
 

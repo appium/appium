@@ -1,26 +1,5 @@
-import {init as logsinkInit} from '../logsink';
-import {log as logger} from '../logger';
-import {util, env} from '@appium/support';
-import type {DriverOpts} from '@appium/types';
-import {defaultsDeep} from '../utils';
-import {AppiumDriver, type AppiumDriverConstraints} from '../appium';
-import {runExtensionCommand} from '../cli/extension';
-import {runSetupCommand} from '../cli/setup-command';
-import {getParser, ArgParser} from '../cli/parser';
-import {readConfigFile} from './config-file';
-import {getNonDefaultServerArgs, showConfig} from './startup-config';
-import {adjustNodePath, requireDir, showDebugInfo} from './node-helpers';
-import {loadExtensions, type ExtensionConfigs} from '../extension';
-import {SERVER_SUBCOMMAND} from '../constants';
-import {injectAppiumSymlinks} from '../cli/extension-command';
-import {getDefaultsForSchema} from '../schema/schema';
-import {
-  isDriverCommandArgs,
-  isExtensionCommandArgs,
-  isPluginCommandArgs,
-  isServerCommandArgs,
-  isSetupCommandArgs,
-} from '../schema/cli-args-guards';
+import { env, util } from '@appium/support';
+import type { DriverOpts } from '@appium/types';
 import type {
   Args,
   CliCommand,
@@ -29,8 +8,29 @@ import type {
   CliExtensionSubcommand,
   ParsedArgs,
 } from 'appium/types';
-import {determineAppiumHomeSource, preflightChecks} from './main-helpers';
-import type {InitResult, PreConfigArgs} from './init-types';
+import { AppiumDriver, type AppiumDriverConstraints } from '../appium';
+import { runExtensionCommand } from '../cli/extension';
+import { injectAppiumSymlinks } from '../cli/extension-command';
+import { ArgParser, getParser } from '../cli/parser';
+import { runSetupCommand } from '../cli/setup-command';
+import { SERVER_SUBCOMMAND } from '../constants';
+import { type ExtensionConfigs, loadExtensions } from '../extension';
+import { log as logger } from '../logger';
+import { init as logsinkInit } from '../logsink';
+import {
+  isDriverCommandArgs,
+  isExtensionCommandArgs,
+  isPluginCommandArgs,
+  isServerCommandArgs,
+  isSetupCommandArgs,
+} from '../schema/cli-args-guards';
+import { getDefaultsForSchema } from '../schema/schema';
+import { defaultsDeep } from '../utils';
+import { readConfigFile } from './config-file';
+import type { InitResult, PreConfigArgs } from './init-types';
+import { determineAppiumHomeSource, preflightChecks } from './main-helpers';
+import { adjustNodePath, requireDir, showDebugInfo } from './node-helpers';
+import { getNonDefaultServerArgs, showConfig } from './startup-config';
 
 /**
  * Parses CLI/programmatic args, loads config and extensions, and returns server-ready state or runs extension/setup flows.
@@ -56,9 +56,9 @@ export class AppiumInitializer {
 
     adjustNodePath();
 
-    const {driverConfig, pluginConfig} = await loadExtensions(appiumHome);
+    const { driverConfig, pluginConfig } = await loadExtensions(appiumHome);
 
-    const {preConfigArgs, throwInsteadOfExit} = await this.parsePreConfigArgs(args);
+    const { preConfigArgs, throwInsteadOfExit } = await this.parsePreConfigArgs(args);
     this.throwInsteadOfExit = throwInsteadOfExit;
 
     const configResult = await readConfigFile(preConfigArgs.configFile);
@@ -90,7 +90,7 @@ export class AppiumInitializer {
     SubCmd extends CliExtensionSubcommand | CliCommandSetupSubcommand | void,
   >(
     args?: Args<Cmd, SubCmd>,
-  ): Promise<{preConfigArgs: PreConfigArgs; throwInsteadOfExit: boolean}> {
+  ): Promise<{ preConfigArgs: PreConfigArgs; throwInsteadOfExit: boolean; }> {
     const parser = await getParser();
     let throwInsteadOfExit = false;
 
@@ -104,10 +104,10 @@ export class AppiumInitializer {
         subcommand: args.subcommand ?? SERVER_SUBCOMMAND,
       } as PreConfigArgs;
       ArgParser.normalizeServerArgs(preConfigArgs);
-      return {preConfigArgs, throwInsteadOfExit};
+      return { preConfigArgs, throwInsteadOfExit };
     }
 
-    return {preConfigArgs: parser.parseArgs() as PreConfigArgs, throwInsteadOfExit};
+    return { preConfigArgs: parser.parseArgs() as PreConfigArgs, throwInsteadOfExit };
   }
 
   private assertConfigFileOk(configResult: Awaited<ReturnType<typeof readConfigFile>>): void {
@@ -177,10 +177,10 @@ export class AppiumInitializer {
     if (!serverArgs.logFilters) {
       return;
     }
-    const {issues, rules} = await logger
+    const { issues, rules } = await logger
       .unwrap()
       .loadSecureValuesPreprocessingRules(serverArgs.logFilters);
-    const argToLog = util.truncateString(JSON.stringify(serverArgs.logFilters), {length: 150});
+    const argToLog = util.truncateString(JSON.stringify(serverArgs.logFilters), { length: 150 });
     if (!util.isEmpty(issues)) {
       throw new Error(
         `The log filtering rules config ${argToLog} has issues: ` + JSON.stringify(issues, null, 2),

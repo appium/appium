@@ -1,5 +1,6 @@
-import {console, util} from '@appium/support';
-import type {ExtMetadata, ExtRecord, InstallType} from 'appium/types';
+import { console, util } from '@appium/support';
+import type { ExtMetadata, ExtRecord, InstallType } from 'appium/types';
+import { KNOWN_PLUGINS } from '../constants';
 import ExtensionCliCommand from './extension-command';
 import type {
   ExtensionArgs,
@@ -8,18 +9,17 @@ import type {
   PostInstallText,
   RunOutput,
 } from './extension-command';
-import {KNOWN_PLUGINS} from '../constants';
 
 const REQ_PLUGIN_FIELDS = ['pluginName', 'mainClass'];
-type PluginInstallOpts = {plugin: string; installType: InstallType; packageName?: string};
-type PluginUninstallOpts = {plugin: string};
-type PluginUpdateOpts = {plugin: string; unsafe: boolean};
-type PluginRunOptions = {plugin: string; scriptName: string; extraArgs?: string[]};
-type PluginDoctorOptions = {plugin: string};
+type PluginInstallOpts = { plugin: string; installType: InstallType; packageName?: string; };
+type PluginUninstallOpts = { plugin: string; };
+type PluginUpdateOpts = { plugin: string; unsafe: boolean; };
+type PluginRunOptions = { plugin: string; scriptName: string; extraArgs?: string[]; };
+type PluginDoctorOptions = { plugin: string; };
 
 export default class PluginCliCommand extends ExtensionCliCommand<'plugin'> {
-  constructor({config, json}: ExtensionCommandOptions<'plugin'>) {
-    super({config, json});
+  constructor({ config, json }: ExtensionCommandOptions<'plugin'>) {
+    super({ config, json });
     this.knownExtensions = KNOWN_PLUGINS;
   }
 
@@ -45,8 +45,8 @@ export default class PluginCliCommand extends ExtensionCliCommand<'plugin'> {
    *
    * @param opts - uninstall options
    */
-  async uninstall({plugin}: PluginUninstallOpts): Promise<ExtRecord<'plugin'>> {
-    return await super._uninstall({installSpec: plugin});
+  async uninstall({ plugin }: PluginUninstallOpts): Promise<ExtRecord<'plugin'>> {
+    return await super._uninstall({ installSpec: plugin });
   }
 
   /**
@@ -54,8 +54,8 @@ export default class PluginCliCommand extends ExtensionCliCommand<'plugin'> {
    *
    * @param opts - update options
    */
-  async update({plugin, unsafe}: PluginUpdateOpts): Promise<ExtensionUpdateResult> {
-    return await super._update({installSpec: plugin, unsafe});
+  async update({ plugin, unsafe }: PluginUpdateOpts): Promise<ExtensionUpdateResult> {
+    return await super._update({ installSpec: plugin, unsafe });
   }
 
   /**
@@ -64,7 +64,7 @@ export default class PluginCliCommand extends ExtensionCliCommand<'plugin'> {
    * @param opts - script execution options
    * @throws {Error} if the script fails to run
    */
-  async run({plugin, scriptName, extraArgs}: PluginRunOptions): Promise<RunOutput> {
+  async run({ plugin, scriptName, extraArgs }: PluginRunOptions): Promise<RunOutput> {
     return await super._run({
       installSpec: plugin,
       scriptName,
@@ -80,7 +80,7 @@ export default class PluginCliCommand extends ExtensionCliCommand<'plugin'> {
    * @returns The amount of executed doctor checks.
    * @throws {Error} If any of the mandatory Doctor checks fails.
    */
-  async doctor({plugin}: PluginDoctorOptions): Promise<number> {
+  async doctor({ plugin }: PluginDoctorOptions): Promise<number> {
     return await super._doctor({
       installSpec: plugin,
     });
@@ -92,7 +92,7 @@ export default class PluginCliCommand extends ExtensionCliCommand<'plugin'> {
    * @param args - installed extension name and metadata
    * @returns formatted success text
    */
-  override getPostInstallText({extName, extData}: ExtensionArgs<'plugin'>): PostInstallText {
+  override getPostInstallText({ extName, extData }: ExtensionArgs<'plugin'>): PostInstallText {
     return console.styleText(
       'green',
       `Plugin ${extName}@${extData.version} successfully installed`,
@@ -113,15 +113,14 @@ export default class PluginCliCommand extends ExtensionCliCommand<'plugin'> {
     installSpec: string,
   ): void {
     const missingFields = REQ_PLUGIN_FIELDS.reduce<string[]>(
-      (acc, field) =>
-        pluginMetadata[field as keyof typeof pluginMetadata] ? acc : [...acc, field],
+      (acc, field) => pluginMetadata[field as keyof typeof pluginMetadata] ? acc : [...acc, field],
       [],
     );
 
     if (!util.isEmpty(missingFields)) {
       throw new Error(
-        `Installed plugin "${installSpec}" did not expose correct fields for compatibility ` +
-          `with Appium. Missing fields: ${JSON.stringify(missingFields)}`,
+        `Installed plugin "${installSpec}" did not expose correct fields for compatibility `
+          + `with Appium. Missing fields: ${JSON.stringify(missingFields)}`,
       );
     }
   }

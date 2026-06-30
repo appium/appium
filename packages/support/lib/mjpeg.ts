@@ -1,12 +1,12 @@
-import log from './logger';
-import B from 'bluebird';
-import {requireSharp} from './image-util';
-import {Writable, type WritableOptions, type Readable} from 'node:stream';
-import {requirePackage} from './node';
 import axios from 'axios';
+import B from 'bluebird';
+import { type Readable, Writable, type WritableOptions } from 'node:stream';
+import { requireSharp } from './image-util';
+import log from './logger';
+import { requirePackage } from './node';
 
 /** Constructor for mjpeg-consumer (lazy-loaded) */
-type MJpegConsumerConstructor = new () => NodeJS.ReadWriteStream;
+type MJpegConsumerConstructor = new() => NodeJS.ReadWriteStream;
 
 let MJpegConsumer: MJpegConsumerConstructor | null = null;
 
@@ -19,9 +19,9 @@ async function initMJpegConsumer(): Promise<MJpegConsumerConstructor> {
       MJpegConsumer = (await requirePackage('mjpeg-consumer')) as MJpegConsumerConstructor;
     } catch (e) {
       throw new Error(
-        'mjpeg-consumer module is required to use MJPEG-over-HTTP features. ' +
-          'Please install it first (npm i -g mjpeg-consumer) and restart Appium.',
-        {cause: e},
+        'mjpeg-consumer module is required to use MJPEG-over-HTTP features. '
+          + 'Please install it first (npm i -g mjpeg-consumer) and restart Appium.',
+        { cause: e },
       );
     }
   }
@@ -116,7 +116,7 @@ export class MJpegStream extends Writable {
     } catch (e) {
       let message: string;
       if (e && typeof e === 'object' && 'response' in e) {
-        message = JSON.stringify((e as {response: unknown}).response);
+        message = JSON.stringify((e as { response: unknown; }).response);
       } else if (e instanceof Error) {
         message = e.message;
       } else {
@@ -149,7 +149,7 @@ export class MJpegStream extends Writable {
       `Waited ${serverTimeout}ms but the MJPEG server never sent any images`,
     );
 
-    (this.responseStream as Readable & {pipe<T extends Writable>(dest: T): T})
+    (this.responseStream as Readable & { pipe<T extends Writable>(dest: T): T; })
       .once('close', onClose)
       .on('error', onErr)
       .pipe(this.consumer as unknown as Writable)

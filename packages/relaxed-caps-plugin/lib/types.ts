@@ -1,4 +1,4 @@
-import type {Constraints, StringRecord, W3CCapabilities} from '@appium/types';
+import type { Constraints, StringRecord, W3CCapabilities } from '@appium/types';
 
 /** Plain capabilities object (key-value). */
 export type CapsRecord = StringRecord<unknown>;

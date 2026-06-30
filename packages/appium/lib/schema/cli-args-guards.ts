@@ -5,11 +5,11 @@ import type {
   CliCommandPlugin,
   CliCommandServer,
   CliCommandSetup,
+  CliCommandSetupSubcommand,
   CliExtensionCommand,
   CliExtensionSubcommand,
-  CliCommandSetupSubcommand,
 } from 'appium/types';
-import {SERVER_SUBCOMMAND, DRIVER_TYPE, PLUGIN_TYPE, SETUP_SUBCOMMAND} from '../constants';
+import { DRIVER_TYPE, PLUGIN_TYPE, SERVER_SUBCOMMAND, SETUP_SUBCOMMAND } from '../constants';
 
 type AnyArgs = Args<CliCommand, CliExtensionSubcommand | CliCommandSetupSubcommand | void>;
 

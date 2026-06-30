@@ -1,3 +1,4 @@
+import { util } from '@appium/support';
 import type {
   AppiumLogger,
   Constraints,
@@ -12,13 +13,12 @@ import type {
   StringRecord,
 } from '@appium/types';
 import AsyncLock from 'async-lock';
-import {util} from '@appium/support';
 import os from 'node:os';
-import {DEFAULT_BASE_PATH, PROTOCOLS} from '../constants';
-import {errors} from '../protocol';
-import {DeviceSettings} from './device-settings';
+import { DEFAULT_BASE_PATH, PROTOCOLS } from '../constants';
+import { errors } from '../protocol';
+import { DeviceSettings } from './device-settings';
+import { ExtensionCore } from './extension-core';
 import * as helpers from './helpers';
-import {ExtensionCore} from './extension-core';
 
 const NEW_COMMAND_TIMEOUT_MS = 60 * 1000;
 
@@ -27,8 +27,7 @@ const ON_UNEXPECTED_SHUTDOWN_EVENT = 'onUnexpectedShutdown';
 const ALL_DRIVERS_MATCH = '*';
 const FEATURE_NAME_SEPARATOR = ':';
 
-export class DriverCore<const C extends Constraints, Settings extends StringRecord = StringRecord>
-  extends ExtensionCore
+export class DriverCore<const C extends Constraints, Settings extends StringRecord = StringRecord> extends ExtensionCore
   implements Core<C, Settings>
 {
   /**
@@ -98,7 +97,7 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
 
   protected commandsQueueGuard: AsyncLock;
 
-  constructor(opts: InitialOpts = <InitialOpts>{}, shouldValidateCaps = true) {
+  constructor(opts: InitialOpts = <InitialOpts> {}, shouldValidateCaps = true) {
     super();
     this._log = this.log; // TODO: remove references to this._log and use this.log instead
 
@@ -127,7 +126,7 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
     this.webLocatorStrategies = [];
     this.managedDrivers = [];
     this.noCommandTimer = null;
-    this._eventHistory = {commands: []};
+    this._eventHistory = { commands: [] };
     this.shutdownUnexpectedly = false;
     this.commandsQueueGuard = new AsyncLock();
     this.settings = new DeviceSettings();
@@ -269,10 +268,10 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
         // arguments are validated upon server startup,
         // but better be safe than sorry
         throw new Error(
-          `The full feature name must include both the automation name ` +
-            `'${this.opts.automationName}' or the '${ALL_DRIVERS_MATCH}' ` +
-            `wildcard to apply the feature to all installed drivers, and ` +
-            `the feature name split by a colon. Got '${fullName}' instead`,
+          `The full feature name must include both the automation name `
+            + `'${this.opts.automationName}' or the '${ALL_DRIVERS_MATCH}' `
+            + `wildcard to apply the feature to all installed drivers, and `
+            + `the feature name split by a colon. Got '${fullName}' instead`,
         );
       }
       return [
@@ -317,10 +316,10 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
   assertFeatureEnabled(name: string) {
     if (!this.isFeatureEnabled(name)) {
       throw new Error(
-        `Potentially insecure feature '${name}' has not been ` +
-          `enabled. If you want to enable this feature and accept ` +
-          `the security ramifications, please do so by following ` +
-          `the documented instructions at http://appium.io/docs/en/latest/guides/security/`,
+        `Potentially insecure feature '${name}' has not been `
+          + `enabled. If you want to enable this feature and accept `
+          + `the security ramifications, please do so by following `
+          + `the documented instructions at http://appium.io/docs/en/latest/guides/security/`,
       );
     }
   }
@@ -390,7 +389,6 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
   }
 
   /**
-   *
    * @param {Driver} driver
    */
   addManagedDriver(driver: Driver) {

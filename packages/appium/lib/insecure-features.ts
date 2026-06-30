@@ -1,8 +1,8 @@
-import {util} from '@appium/support';
-import {log as logger} from './logger';
+import { util } from '@appium/support';
+import { log as logger } from './logger';
 
-import type {AppiumDriver} from './appium';
-import type {ExternalDriver} from '@appium/types';
+import type { ExternalDriver } from '@appium/types';
+import type { AppiumDriver } from './appium';
 
 const ALL_DRIVERS_MATCH = '*';
 const FEATURE_NAME_SEPARATOR = ':';
@@ -16,8 +16,8 @@ const FEATURE_NAME_SEPARATOR = ':';
 export function configureGlobalFeatures(this: AppiumDriver) {
   if (this.args.relaxedSecurityEnabled) {
     logger.info(
-      `Enabling relaxed security. All insecure features will be ` +
-        `enabled unless explicitly disabled by --deny-insecure`,
+      `Enabling relaxed security. All insecure features will be `
+        + `enabled unless explicitly disabled by --deny-insecure`,
     );
     this.relaxedSecurityEnabled = true;
   } else if (!util.isEmpty(this.args.allowInsecure)) {
@@ -54,16 +54,16 @@ export function configureDriverFeatures(
 ) {
   if (this.relaxedSecurityEnabled) {
     this.log.info(
-      `Enabling relaxed security for this session as per the server configuration. ` +
-        `All insecure features will be enabled unless explicitly disabled by --deny-insecure`,
+      `Enabling relaxed security for this session as per the server configuration. `
+        + `All insecure features will be enabled unless explicitly disabled by --deny-insecure`,
     );
     driver.relaxedSecurityEnabled = true;
   }
   const allowedDriverFeatures = filterInsecureFeatures(this.allowInsecure, driverName);
   if (!util.isEmpty(allowedDriverFeatures)) {
     this.log.info(
-      'Explicitly enabling insecure features for this session ' +
-        'as per the server configuration:',
+      'Explicitly enabling insecure features for this session '
+        + 'as per the server configuration:',
     );
     allowedDriverFeatures.forEach((a) => this.log.info(`    ${a}`));
     driver.allowInsecure = allowedDriverFeatures;
@@ -86,10 +86,9 @@ export function configureDriverFeatures(
  */
 function validateFeatures(features: string[]): string[] {
   const validator = (fullName: string) => {
-    const errMsg =
-      `The full feature name must include both the destination automation name or the ` +
-      `'${ALL_DRIVERS_MATCH}' wildcard to apply the feature to all installed drivers, and ` +
-      `the feature name split by a colon. Got '${fullName}' instead`;
+    const errMsg = `The full feature name must include both the destination automation name or the `
+      + `'${ALL_DRIVERS_MATCH}' wildcard to apply the feature to all installed drivers, and `
+      + `the feature name split by a colon. Got '${fullName}' instead`;
 
     const separatorPos = fullName.indexOf(FEATURE_NAME_SEPARATOR);
     if (separatorPos < 0) {

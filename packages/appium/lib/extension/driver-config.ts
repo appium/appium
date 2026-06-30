@@ -1,11 +1,11 @@
-import {util} from '@appium/support';
-import type {DriverClass, DriverType, StringRecord} from '@appium/types';
-import type {ExtManifest, ExtName, ExtRecord} from 'appium/types';
-import {DRIVER_TYPE} from '../constants';
-import {log} from '../logger';
-import type {ExtManifestProblem} from './extension-config';
-import {ExtensionConfig} from './extension-config';
-import type {Manifest} from './manifest';
+import { util } from '@appium/support';
+import type { DriverClass, DriverType, StringRecord } from '@appium/types';
+import type { ExtManifest, ExtName, ExtRecord } from 'appium/types';
+import { DRIVER_TYPE } from '../constants';
+import { log } from '../logger';
+import type { ExtManifestProblem } from './extension-config';
+import { ExtensionConfig } from './extension-config';
+import type { Manifest } from './manifest';
 
 export type MatchedDriver = {
   driver: DriverClass;
@@ -43,7 +43,7 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
 
   public override extensionDesc(
     driverName: ExtName<DriverType>,
-    {version, automationName}: ExtManifest<DriverType>,
+    { version, automationName }: ExtManifest<DriverType>,
   ): string {
     return `${String(driverName)}@${version} (automationName '${automationName}')`;
   }
@@ -61,12 +61,12 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
     }
 
     log.info(
-      `Attempting to find matching driver for automationName ` +
-        `'${automationName}' and platformName '${platformName}'`,
+      `Attempting to find matching driver for automationName `
+        + `'${automationName}' and platformName '${platformName}'`,
     );
 
     try {
-      const {driverName, mainClass, version} = this._getDriverBySupport(
+      const { driverName, mainClass, version } = this._getDriverBySupport(
         automationName,
         platformName,
       );
@@ -78,15 +78,14 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
           `Driver '${driverName}' did not export a class with name '${mainClass}'. Contact the author of the driver!`,
         );
       }
-      return {driver, version, driverName};
+      return { driver, version, driverName };
     } catch (err: any) {
-      const msg =
-        `Could not find a driver for automationName ` +
-        `'${automationName}' and platformName '${platformName}'. ` +
-        `Have you installed a driver that supports those ` +
-        `capabilities? Run 'appium driver list --installed' to see. ` +
-        `(Lower-level error: ${err.message})`;
-      throw new Error(msg, {cause: err});
+      const msg = `Could not find a driver for automationName `
+        + `'${automationName}' and platformName '${platformName}'. `
+        + `Have you installed a driver that supports those `
+        + `capabilities? Run 'appium driver list --installed' to see. `
+        + `(Lower-level error: ${err.message})`;
+      throw new Error(msg, { cause: err });
     }
   }
 
@@ -96,7 +95,7 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
   ): ExtManifestProblem[] {
     void extName;
     const problems: ExtManifestProblem[] = [];
-    const {platformNames, automationName} = extManifest;
+    const { platformNames, automationName } = extManifest;
 
     if (!Array.isArray(platformNames)) {
       problems.push({
@@ -141,26 +140,26 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
   private _getDriverBySupport(
     matchAutomationName: string,
     matchPlatformName: string,
-  ): ExtManifest<DriverType> & {driverName: string} {
+  ): ExtManifest<DriverType> & { driverName: string; } {
     const drivers = this.installedExtensions;
     for (const [driverName, driverData] of Object.entries(drivers)) {
-      const {automationName, platformNames} = driverData;
+      const { automationName, platformNames } = driverData;
       const aNameMatches = automationName.toLowerCase() === matchAutomationName.toLowerCase();
       const pNameMatches = platformNames
         .map((p) => p.toLowerCase())
         .includes(matchPlatformName.toLowerCase());
 
       if (aNameMatches && pNameMatches) {
-        return {driverName, ...driverData};
+        return { driverName, ...driverData };
       }
 
       if (aNameMatches) {
         throw new Error(
-          `Driver '${driverName}' supports automationName ` +
-            `'${automationName}', but Appium could not find ` +
-            `support for platformName '${matchPlatformName}'. Supported ` +
-            `platformNames are: ` +
-            JSON.stringify(platformNames),
+          `Driver '${driverName}' supports automationName `
+            + `'${automationName}', but Appium could not find `
+            + `support for platformName '${matchPlatformName}'. Supported `
+            + `platformNames are: `
+            + JSON.stringify(platformNames),
         );
       }
     }

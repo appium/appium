@@ -1,5 +1,5 @@
-import {ATTR_PREFIX} from './source';
-import type {TransformMetadata} from './types';
+import { ATTR_PREFIX } from './source';
+import type { TransformMetadata } from './types';
 
 /**
  * No-op transformer for iOS source XML.

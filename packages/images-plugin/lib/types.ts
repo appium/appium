@@ -1,7 +1,7 @@
-import type {Rect} from '@appium/types';
-import type {ImageElementFinder} from './finder';
-import type {MatchingResult, OccurrenceResult, SimilarityResult} from '@appium/opencv';
-import type {IMAGE_EL_TAP_STRATEGY_W3C, IMAGE_EL_TAP_STRATEGY_MJSONWP} from './constants';
+import type { MatchingResult, OccurrenceResult, SimilarityResult } from '@appium/opencv';
+import type { Rect } from '@appium/types';
+import type { IMAGE_EL_TAP_STRATEGY_MJSONWP, IMAGE_EL_TAP_STRATEGY_W3C } from './constants';
+import type { ImageElementFinder } from './finder';
 
 /**
  * Image settings interface for device settings

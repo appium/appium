@@ -1,5 +1,5 @@
-import type {Constraints, W3CCapabilities, Capabilities, AppiumLogger} from '@appium/types';
-import {util} from '@appium/support';
+import { util } from '@appium/support';
+import type { AppiumLogger, Capabilities, Constraints, W3CCapabilities } from '@appium/types';
 
 /**
  * Determine whether the given argument is valid
@@ -12,9 +12,9 @@ export function isW3cCaps(caps: unknown): caps is W3CCapabilities<Constraints> {
 
   const c = caps as Record<string, unknown>;
   const isFirstMatchValid = () =>
-    Array.isArray(c.firstMatch) &&
-    !util.isEmpty(c.firstMatch) &&
-    c.firstMatch.every((item) => util.isPlainObject(item));
+    Array.isArray(c.firstMatch)
+    && !util.isEmpty(c.firstMatch)
+    && c.firstMatch.every((item) => util.isPlainObject(item));
   const isAlwaysMatchValid = () => util.isPlainObject(c.alwaysMatch);
   if (Object.hasOwn(c, 'firstMatch') && Object.hasOwn(c, 'alwaysMatch')) {
     return isFirstMatchValid() && isAlwaysMatchValid();
@@ -36,10 +36,9 @@ export function fixCaps<C extends Constraints>(
   desiredCapConstraints: C,
   log: AppiumLogger,
 ): Capabilities<C> {
-  const caps = {...oldCaps} as Record<string, unknown>;
+  const caps = { ...oldCaps } as Record<string, unknown>;
 
-  const logCastWarning = (prefix: string) =>
-    log.warn(`${prefix}. This may cause unexpected behavior`);
+  const logCastWarning = (prefix: string) => log.warn(`${prefix}. This may cause unexpected behavior`);
 
   // boolean capabilities can be passed in as strings 'false' and 'true'
   // which we want to translate into boolean values

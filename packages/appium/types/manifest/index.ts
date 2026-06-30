@@ -11,7 +11,7 @@ import * as ManifestV4 from './v4';
 export * from './v4';
 // replace above line with `export * from './v<new-version>';`
 
-export {ManifestV2, ManifestV3, ManifestV4};
+export { ManifestV2, ManifestV3, ManifestV4 };
 
 export interface ManifestDataVersions {
   2: ManifestV2.ManifestData;

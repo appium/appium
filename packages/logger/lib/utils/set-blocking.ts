@@ -1,5 +1,5 @@
 type BlockingStream = NodeJS.WriteStream & {
-  _handle?: {setBlocking?: (value: boolean) => void};
+  _handle?: { setBlocking?: (value: boolean) => void; };
 };
 
 const DEFAULT_STREAMS: BlockingStream[] = [process.stdout, process.stderr];

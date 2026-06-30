@@ -1,14 +1,14 @@
-import {util} from '@appium/support';
-import {XMLBuilder, XMLParser} from 'fast-xml-parser';
+import { util } from '@appium/support';
+import { XMLBuilder, XMLParser } from 'fast-xml-parser';
+import { ATTR_MAP, REMOVE_ATTRS } from './attr-map';
 import NODE_MAP from './node-map';
-import {ATTR_MAP, REMOVE_ATTRS} from './attr-map';
 import * as TRANSFORMS from './transformers';
 import type {
   NodesAndAttributes,
-  TransformSourceXmlOptions,
-  TransformNodeOptions,
-  UniversalNameMap,
   TransformMetadata,
+  TransformNodeOptions,
+  TransformSourceXmlOptions,
+  UniversalNameMap,
 } from './types';
 
 export const ATTR_PREFIX = '@_';
@@ -31,8 +31,8 @@ const isNode = (k: string): boolean => !isAttr(k);
 export async function transformSourceXml(
   xmlStr: string,
   platform: string,
-  {metadata = {} as TransformMetadata, addIndexPath = false}: TransformSourceXmlOptions = {},
-): Promise<{xml: string; unknowns: NodesAndAttributes}> {
+  { metadata = {} as TransformMetadata, addIndexPath = false }: TransformSourceXmlOptions = {},
+): Promise<{ xml: string; unknowns: NodesAndAttributes; }> {
   // first thing we want to do is modify the ios source root node, because it doesn't include the
   // necessary index attribute, so we add it if it's not there
   xmlStr = xmlStr.replace('<AppiumAUT>', '<AppiumAUT index="0">');
@@ -44,7 +44,7 @@ export async function transformSourceXml(
   });
   let transformedXml = singletonXmlBuilder().build(xmlObj).trim();
   transformedXml = `<?xml version="1.0" encoding="UTF-8"?>\n${transformedXml}`;
-  return {xml: transformedXml, unknowns};
+  return { xml: transformedXml, unknowns };
 }
 
 /**
@@ -80,7 +80,7 @@ export function getUniversalAttrName(attrName: string, platform: string): string
 export function transformNode(
   nodeObj: any,
   platform: string,
-  {metadata, addIndexPath, parentPath}: TransformNodeOptions,
+  { metadata, addIndexPath, parentPath }: TransformNodeOptions,
 ): NodesAndAttributes {
   const unknownNodes: string[] = [];
   const unknownAttrs: string[] = [];
@@ -113,7 +113,7 @@ export function transformNode(
     unknownNodes.push(...unknowns.nodes);
   } else if (Array.isArray(nodeObj)) {
     for (const childObj of nodeObj) {
-      const {nodes, attrs} = transformNode(childObj, platform, {
+      const { nodes, attrs } = transformNode(childObj, platform, {
         metadata,
         addIndexPath,
         parentPath: parentPath || '',
@@ -141,13 +141,13 @@ export function transformChildNodes(
   nodeObj: any,
   childNodeNames: string[],
   platform: string,
-  {metadata, addIndexPath, parentPath}: TransformNodeOptions,
+  { metadata, addIndexPath, parentPath }: TransformNodeOptions,
 ): NodesAndAttributes {
   const unknownNodes: string[] = [];
   const unknownAttrs: string[] = [];
   for (const nodeName of childNodeNames) {
     // before modifying the name of this child node, recurse down and modify the subtree
-    const {nodes, attrs} = transformNode(nodeObj[nodeName], platform, {
+    const { nodes, attrs } = transformNode(nodeObj[nodeName], platform, {
       metadata,
       addIndexPath,
       parentPath: parentPath || '',
@@ -188,7 +188,7 @@ export function transformChildNodes(
     }
     delete nodeObj[nodeName];
   }
-  return {nodes: unknownNodes, attrs: unknownAttrs};
+  return { nodes: unknownNodes, attrs: unknownAttrs };
 }
 
 /**

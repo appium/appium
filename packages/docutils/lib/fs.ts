@@ -3,10 +3,10 @@
  * @module
  */
 
-import {fs, util} from '@appium/support';
+import { fs, util } from '@appium/support';
 import path from 'node:path';
-import {findPackageRoot, readPackage, type NormalizedPackageJson, type PackageJson} from './utils';
-import type {JsonValue} from 'type-fest';
+import { exec } from 'teen_process';
+import type { JsonValue } from 'type-fest';
 import * as YAML from 'yaml';
 import {
   MESSAGE_PYTHON_MISSING,
@@ -16,11 +16,11 @@ import {
   NAME_PACKAGE_JSON,
   NAME_PYTHON,
 } from './constants';
-import {DocutilsError} from './error';
-import {getLogger} from './logger';
-import type {MkDocsYml} from './model';
-import {exec} from 'teen_process';
-import {mergeDefaultsDeep} from './utils';
+import { DocutilsError } from './error';
+import { getLogger } from './logger';
+import type { MkDocsYml } from './model';
+import { findPackageRoot, type NormalizedPackageJson, type PackageJson, readPackage } from './utils';
+import { mergeDefaultsDeep } from './utils';
 
 const log = getLogger('fs');
 
@@ -36,8 +36,7 @@ const findPkgDir = util.memoize(findPackageRoot);
  * @param value Something to yamlify
  * @returns Some nice YAML 4 u
  */
-export const stringifyYaml = (value: JsonValue): string =>
-  YAML.stringify(value, undefined, {indent: 2});
+export const stringifyYaml = (value: JsonValue): string => YAML.stringify(value, undefined, { indent: 2 });
 
 /**
  * Pretty-stringifies a JSON value
@@ -53,7 +52,7 @@ const readYaml = util.memoize(async (filepath: string) =>
   YAML.parse(await fs.readFile(filepath, 'utf8'), {
     prettyErrors: false,
     logLevel: 'silent',
-  }),
+  })
 );
 
 /**
@@ -94,15 +93,15 @@ export const findMkDocsYml = util.memoize(
 async function _readPkgJson(
   cwd: string,
   normalize?: true,
-): Promise<{pkgPath: string; pkg: NormalizedPackageJson}>;
+): Promise<{ pkgPath: string; pkg: NormalizedPackageJson; }>;
 async function _readPkgJson(
   cwd: string,
   normalize: false,
-): Promise<{pkgPath: string; pkg: PackageJson}>;
+): Promise<{ pkgPath: string; pkg: PackageJson; }>;
 async function _readPkgJson(
   cwd: string,
   normalize?: boolean,
-): Promise<{pkgPath: string; pkg: PackageJson | NormalizedPackageJson}> {
+): Promise<{ pkgPath: string; pkg: PackageJson | NormalizedPackageJson; }> {
   let pkgDir: string;
   try {
     pkgDir = await findPkgDir(cwd);
@@ -113,8 +112,8 @@ async function _readPkgJson(
   }
   const pkgPath = path.join(pkgDir, NAME_PACKAGE_JSON);
   log.debug('Found `package.json` at %s', pkgPath);
-  const pkg = await readPackage({cwd: pkgDir, normalize: normalize !== false});
-  return {pkg, pkgPath};
+  const pkg = await readPackage({ cwd: pkgDir, normalize: normalize !== false });
+  return { pkg, pkgPath };
 }
 
 /**
@@ -126,11 +125,10 @@ export const readPackageJson = util.memoize(_readPkgJson);
  * Reads a JSON file and parses it
  */
 export const readJson = util.memoize(
-  async <T extends JsonValue>(filepath: string): Promise<T> =>
-    JSON.parse(await fs.readFile(filepath, 'utf8')),
+  async <T extends JsonValue>(filepath: string): Promise<T> => JSON.parse(await fs.readFile(filepath, 'utf8')),
 );
 
-type WhichFunction = (cmd: string, opts?: {nothrow: boolean}) => Promise<string | null>;
+type WhichFunction = (cmd: string, opts?: { nothrow: boolean; }) => Promise<string | null>;
 
 /**
  * Writes contents to a file. Any JSON objects are stringified
@@ -138,8 +136,7 @@ type WhichFunction = (cmd: string, opts?: {nothrow: boolean}) => Promise<string 
  * @param content - File contents
  */
 export function writeFileString(filepath: string, content: JsonValue) {
-  const data: string =
-    typeof content === 'string' ? content : JSON.stringify(content, undefined, 2);
+  const data: string = typeof content === 'string' ? content : JSON.stringify(content, undefined, 2);
   return fs.writeFile(filepath, data, {
     encoding: 'utf8',
   });
@@ -153,19 +150,19 @@ const cachedWhich = util.memoize(fs.which as WhichFunction);
 /**
  * Finds `python` executable
  */
-const whichPython = async () => await cachedWhich(NAME_PYTHON, {nothrow: true});
+const whichPython = async () => await cachedWhich(NAME_PYTHON, { nothrow: true });
 
 /**
  * Finds `python3` executable
  */
-const whichPython3 = async () => await cachedWhich(`${NAME_PYTHON}3`, {nothrow: true});
+const whichPython3 = async () => await cachedWhich(`${NAME_PYTHON}3`, { nothrow: true });
 
 /**
  * Check if `mkdocs` is installed
  */
 export const isMkDocsInstalled = util.memoize(async (): Promise<boolean> => {
   // see if it's in PATH
-  const mkDocsPath = await cachedWhich(NAME_MKDOCS, {nothrow: true});
+  const mkDocsPath = await cachedWhich(NAME_MKDOCS, { nothrow: true });
   if (mkDocsPath) {
     return true;
   }
@@ -187,7 +184,7 @@ export const isMkDocsInstalled = util.memoize(async (): Promise<boolean> => {
  */
 export const findMike = async () => {
   // see if it's in PATH
-  let mikePath = await cachedWhich(NAME_MIKE, {nothrow: true});
+  let mikePath = await cachedWhich(NAME_MIKE, { nothrow: true });
   if (mikePath) {
     return mikePath;
   }
@@ -199,7 +196,7 @@ export const findMike = async () => {
   try {
     // the user dir can be found this way.
     // usually it's something like ~/.local
-    const {stdout} = await exec(pythonPath, ['-m', 'site', '--user-base']);
+    const { stdout } = await exec(pythonPath, ['-m', 'site', '--user-base']);
     if (stdout) {
       mikePath = path.join(stdout.trim(), 'bin', 'mike');
       if (await fs.isExecutable(mikePath)) {

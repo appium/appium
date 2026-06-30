@@ -1,19 +1,19 @@
-import {Buffer} from 'node:buffer';
+import { Buffer } from 'node:buffer';
 import sharp from 'sharp';
-import {OpenCvAutoreleasePool} from './autorelease-pool';
+import { OpenCvAutoreleasePool } from './autorelease-pool';
 import type {
-  Point,
-  Rect,
   Match,
   MatchComputationResult,
   MatchingOptions,
   MatchingResult,
-  SimilarityOptions,
-  SimilarityResult,
   OccurrenceOptions,
   OccurrenceResult,
-  TemplateMatchingMethod,
   OpenCVBindings,
+  Point,
+  Rect,
+  SimilarityOptions,
+  SimilarityResult,
+  TemplateMatchingMethod,
 } from './types';
 
 let cv: OpenCVBindings | undefined;
@@ -121,14 +121,14 @@ export async function getImagesMatches(
     } = options;
     if (!(detectorName in AVAILABLE_DETECTORS)) {
       throw new Error(
-        `'${detectorName}' detector is unknown. ` +
-          `Only ${JSON.stringify(Object.keys(AVAILABLE_DETECTORS))} detectors are supported.`,
+        `'${detectorName}' detector is unknown. `
+          + `Only ${JSON.stringify(Object.keys(AVAILABLE_DETECTORS))} detectors are supported.`,
       );
     }
     if (!(matchFunc in AVAILABLE_MATCHING_FUNCTIONS)) {
       throw new Error(
-        `'${matchFunc}' matching function is unknown. ` +
-          `Only ${JSON.stringify(Object.keys(AVAILABLE_MATCHING_FUNCTIONS))} matching functions are supported.`,
+        `'${matchFunc}' matching function is unknown. `
+          + `Only ${JSON.stringify(Object.keys(AVAILABLE_MATCHING_FUNCTIONS))} matching functions are supported.`,
       );
     }
 
@@ -150,8 +150,8 @@ export async function getImagesMatches(
     const totalCount = matchesVec.size();
     if (totalCount < 1) {
       throw new Error(
-        `Could not find any matches between images. Double-check orientation, ` +
-          `resolution, or use another detector or matching function.`,
+        `Could not find any matches between images. Double-check orientation, `
+          + `resolution, or use another detector or matching function.`,
       );
     }
     let matches: any[] = [];
@@ -159,9 +159,8 @@ export async function getImagesMatches(
       matches.push(matchesVec.get(i));
     }
 
-    const hasGoodMatchesFactor =
-      typeof goodMatchesFactor === 'function' ||
-      (typeof goodMatchesFactor === 'number' && !Number.isNaN(goodMatchesFactor));
+    const hasGoodMatchesFactor = typeof goodMatchesFactor === 'function'
+      || (typeof goodMatchesFactor === 'number' && !Number.isNaN(goodMatchesFactor));
 
     if (hasGoodMatchesFactor) {
       if (typeof goodMatchesFactor === 'function') {
@@ -169,9 +168,7 @@ export async function getImagesMatches(
         const minDistance = distances.length ? Math.min(...distances) : undefined;
         const maxDistance = distances.length ? Math.max(...distances) : undefined;
         if (minDistance !== undefined && maxDistance !== undefined) {
-          matches = matches.filter((match: any) =>
-            goodMatchesFactor(match.distance, minDistance, maxDistance),
-          );
+          matches = matches.filter((match: any) => goodMatchesFactor(match.distance, minDistance, maxDistance));
         }
       } else if (typeof goodMatchesFactor === 'number' && matches.length > goodMatchesFactor) {
         matches = matches
@@ -181,7 +178,7 @@ export async function getImagesMatches(
     }
 
     const extractPoint = (keyPoints: any, indexPropertyName: string) => (match: any) => {
-      const {pt, point} = keyPoints.get(match[indexPropertyName]);
+      const { pt, point } = keyPoints.get(match[indexPropertyName]);
       // https://github.com/justadudewhohacks/opencv4nodejs/issues/584
       return pt || point;
     };
@@ -265,7 +262,7 @@ export async function getImagesSimilarity(
     throw new Error('OpenCV is not initialized.');
   }
 
-  const {method = DEFAULT_MATCHING_METHOD, visualize = false} = options;
+  const { method = DEFAULT_MATCHING_METHOD, visualize = false } = options;
 
   const pool = new OpenCvAutoreleasePool();
   try {
@@ -276,8 +273,8 @@ export async function getImagesSimilarity(
     const reference = pool.add(referenceRaw);
     if (template.rows !== reference.rows || template.cols !== reference.cols) {
       throw new Error(
-        'Both images are expected to have the same size in order to ' +
-          'calculate the similarity score.',
+        'Both images are expected to have the same size in order to '
+          + 'calculate the similarity score.',
       );
     }
     template.convertTo(template, cv.CV_8UC3);
@@ -374,7 +371,7 @@ export async function getImageOccurrence(
     const fullImg = pool.add(fullImgRaw);
     const partialImg = pool.add(partialImgRaw);
     const matched = pool.add(new cv.Mat());
-    const results: Array<{score: number; rect: Rect; visualization?: Buffer}> = [];
+    const results: Array<{ score: number; rect: Rect; visualization?: Buffer; }> = [];
     let visualization: Buffer | null = null;
 
     try {
@@ -387,14 +384,14 @@ export async function getImageOccurrence(
           for (let col = 0; col < matched.cols; col++) {
             const score = matched.floatAt(row, col);
             if (score >= threshold) {
-              matches.push({score, x: col, y: row});
+              matches.push({ score, x: col, y: row });
             }
           }
         }
 
         const nearMatches = filterNearMatches(matches, matchNeighbourThreshold);
 
-        for (const {x, y, score} of nearMatches) {
+        for (const { x, y, score } of nearMatches) {
           results.push({
             score,
             rect: {
@@ -406,7 +403,7 @@ export async function getImageOccurrence(
           });
         }
       } else if (minMax.maxVal >= threshold) {
-        const {x, y} = method.includes('SQDIFF') ? minMax.minLoc : minMax.maxLoc;
+        const { x, y } = method.includes('SQDIFF') ? minMax.minLoc : minMax.maxLoc;
         results.push({
           score: minMax.maxVal,
           rect: {
@@ -427,9 +424,9 @@ export async function getImageOccurrence(
     } catch (e: any) {
       // Below error message, `Cannot find any occurrences` is referenced in find by image
       throw new Error(
-        `Cannot find any occurrences of the partial image in the full image. ` +
-          `Original error: ${e?.message || String(e)}`,
-        {cause: e},
+        `Cannot find any occurrences of the partial image in the full image. `
+          + `Original error: ${e?.message || String(e)}`,
+        { cause: e },
       );
     }
 
@@ -472,8 +469,8 @@ export async function getImageOccurrence(
 function toMatchingMethod(name: string): number {
   if (!MATCHING_METHODS.includes(name as TemplateMatchingMethod)) {
     throw new Error(
-      `The matching method '${name}' is unknown. ` +
-        `Only the following matching methods are supported: ${MATCHING_METHODS}`,
+      `The matching method '${name}' is unknown. `
+        + `Only the following matching methods are supported: ${MATCHING_METHODS}`,
     );
   }
   if (!cv) {
@@ -575,9 +572,9 @@ async function cvMatFromImage(img: Buffer): Promise<any> {
   if (!cv) {
     throw new Error('OpenCV is not initialized. Call initOpenCv() first.');
   }
-  const {data, info} = await sharp(img).ensureAlpha().raw().toBuffer({resolveWithObject: true});
-  const {width, height} = info;
-  return cv.matFromImageData({data, width, height});
+  const { data, info } = await sharp(img).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+  const { width, height } = info;
+  return cv.matFromImageData({ data, width, height });
 }
 
 function filterNearMatches(nonZeroMatchResults: Match[], matchNeighbourThreshold: number): Match[] {
@@ -599,8 +596,8 @@ function distance(point1: Point, point2: Point): number {
 export type {
   MatchingOptions,
   MatchingResult,
-  SimilarityOptions,
-  SimilarityResult,
   OccurrenceOptions,
   OccurrenceResult,
+  SimilarityOptions,
+  SimilarityResult,
 };

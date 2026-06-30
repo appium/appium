@@ -1,26 +1,26 @@
-import type {EventEmitter} from 'node:events';
-import type {Merge} from 'type-fest';
-import type {Capabilities, DriverCaps, W3CCapabilities} from './capabilities';
-import type {BidiModuleMap, BiDiResultData, ExecuteMethodMap, MethodMap} from './command-maps';
+import type { EventEmitter } from 'node:events';
+import type internal from 'node:stream';
+import type { Merge } from 'type-fest';
+import type { Capabilities, DriverCaps, W3CCapabilities } from './capabilities';
+import type { BidiModuleMap, BiDiResultData, ExecuteMethodMap, MethodMap } from './command-maps';
 import type {
   DefaultCreateSessionResult,
   DefaultDeleteSessionResult,
   DriverData,
   EventHistory,
-  IImplementedCommands,
-  IWDClassicCommands,
   IAppiumCommands,
+  IImplementedCommands,
   IJSONWPCommands,
   IMJSONWPCommands,
   IOtherProtocolCommands,
+  IWDClassicCommands,
 } from './commands';
-import type {Constraints} from './constraints';
-import type {ServerArgs} from './config';
-import type {HTTPHeaders, HTTPMethod} from './http';
-import type {AppiumLogger} from './logger';
-import type {AppiumServer, UpdateServerCallback} from './server';
-import type {Class, StringRecord} from './util';
-import type internal from 'node:stream';
+import type { ServerArgs } from './config';
+import type { Constraints } from './constraints';
+import type { HTTPHeaders, HTTPMethod } from './http';
+import type { AppiumLogger } from './logger';
+import type { AppiumServer, UpdateServerCallback } from './server';
+import type { Class, StringRecord } from './util';
 /**
  * Interface implemented by the `DeviceSettings` class in `@appium/base-driver`
  */
@@ -143,10 +143,7 @@ export interface Driver<
   CreateResult = DefaultCreateSessionResult<C>,
   DeleteResult = DefaultDeleteSessionResult,
   SessionData extends StringRecord = StringRecord,
->
-  extends
-    IImplementedCommands<C, Settings, CreateResult, DeleteResult, SessionData>,
-    Core<C, Settings> {
+> extends IImplementedCommands<C, Settings, CreateResult, DeleteResult, SessionData>, Core<C, Settings> {
   /**
    * The set of command line arguments set for this driver.
    *
@@ -294,14 +291,14 @@ export interface ExternalDriver<
   CreateResult = DefaultCreateSessionResult<C>,
   DeleteResult = DefaultDeleteSessionResult,
   SessionData extends StringRecord = StringRecord,
->
-  extends
-    Driver<C, CArgs, Settings, CreateResult, DeleteResult, SessionData>,
-    IWDClassicCommands,
-    IAppiumCommands,
-    IJSONWPCommands,
-    IMJSONWPCommands<Ctx>,
-    IOtherProtocolCommands {
+> extends
+  Driver<C, CArgs, Settings, CreateResult, DeleteResult, SessionData>,
+  IWDClassicCommands,
+  IAppiumCommands,
+  IJSONWPCommands,
+  IMJSONWPCommands<Ctx>,
+  IOtherProtocolCommands
+{
   /**
    * Proxy a command to a connected WebDriver server
    *
@@ -432,7 +429,7 @@ export interface CachedAppInfo {
    * An object containing either `file` property with SHA1 hash of the file or `folder` property
    * with total amount of cached files and subfolders
    */
-  integrity?: {file?: string} | {folder?: number};
+  integrity?: { file?: string; } | { folder?: number; };
   /**
    * The full path to the cached app
    */
@@ -487,7 +484,6 @@ export interface DownloadAppOptions<Headers = HTTPHeaders> {
 
 export interface ConfigureAppOptions {
   /**
-   *
    * Optional function, which should be applied to the application after it is
    * downloaded/preprocessed.
    *

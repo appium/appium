@@ -1,13 +1,13 @@
 /* eslint-disable no-console */
-import {util} from '@appium/support';
-import {getDefaultsForSchema, getAllArgSpecs} from '../schema/schema';
-import type {Args} from 'appium/types';
-import type {ReadConfigFileResult} from './config-file';
-import {difference, getPath, pickBy, setPath} from '../utils';
+import { util } from '@appium/support';
+import type { Args } from 'appium/types';
+import { getAllArgSpecs, getDefaultsForSchema } from '../schema/schema';
+import { difference, getPath, pickBy, setPath } from '../utils';
+import type { ReadConfigFileResult } from './config-file';
 
 interface FlattenedArg {
   value: unknown;
-  argSpec: {dest: string};
+  argSpec: { dest: string; };
 }
 
 /**
@@ -23,10 +23,10 @@ export function getNonDefaultServerArgs(parsedArgs: Args): Args {
   const flatten = (args: Args): Record<string, FlattenedArg> => {
     const argSpecs = getAllArgSpecs();
     const flattened = [...argSpecs.values()].reduce<Record<string, FlattenedArg>>(
-      (acc, argSpec: {dest: string}) => {
+      (acc, argSpec: { dest: string; }) => {
         const value = getPath(args, argSpec.dest);
         if (value !== undefined) {
-          acc[argSpec.dest] = {value, argSpec};
+          acc[argSpec.dest] = { value, argSpec };
         }
         return acc;
       },
@@ -39,8 +39,7 @@ export function getNonDefaultServerArgs(parsedArgs: Args): Args {
   const args = flatten(parsedArgs);
 
   // hopefully these function names are descriptive enough
-  const typesDiffer = (dest: string): boolean =>
-    typeof args[dest].value !== typeof defaultsFromSchema[dest];
+  const typesDiffer = (dest: string): boolean => typeof args[dest].value !== typeof defaultsFromSchema[dest];
 
   const defaultValueIsArray = (dest: string): boolean => Array.isArray(defaultsFromSchema[dest]);
 
@@ -53,11 +52,9 @@ export function getNonDefaultServerArgs(parsedArgs: Args): Args {
 
   const defaultIsDefined = (dest: string): boolean => defaultsFromSchema[dest] !== undefined;
 
-  const argValueNotArrayOrArraysDiffer = (dest: string) =>
-    !argsValueIsArray(dest) || arraysDiffer(dest);
+  const argValueNotArrayOrArraysDiffer = (dest: string) => !argsValueIsArray(dest) || arraysDiffer(dest);
 
-  const defaultValueNotArrayAndValuesDiffer = (dest: string) =>
-    !defaultValueIsArray(dest) && valuesDiffer(dest);
+  const defaultValueNotArrayAndValuesDiffer = (dest: string) => !defaultValueIsArray(dest) && valuesDiffer(dest);
 
   /**
    * This used to be a hideous conditional, but it's broken up into a hideous function instead.
@@ -71,10 +68,10 @@ export function getNonDefaultServerArgs(parsedArgs: Args): Args {
    *   - ensures the args values do not differ from the default values
    */
   const isNotDefault = (dest: string) =>
-    defaultIsDefined(dest) &&
-    (typesDiffer(dest) ||
-      (defaultValueIsArray(dest) && argValueNotArrayOrArraysDiffer(dest)) ||
-      defaultValueNotArrayAndValuesDiffer(dest));
+    defaultIsDefined(dest)
+    && (typesDiffer(dest)
+      || (defaultValueIsArray(dest) && argValueNotArrayOrArraysDiffer(dest))
+      || defaultValueNotArrayAndValuesDiffer(dest));
 
   const defaultsFromSchema = getDefaultsForSchema(true) as Record<string, unknown>;
 
@@ -84,7 +81,7 @@ export function getNonDefaultServerArgs(parsedArgs: Args): Args {
     if (!entry) {
       continue;
     }
-    const {value, argSpec} = entry;
+    const { value, argSpec } = entry;
     setPath(result as Record<string, unknown>, argSpec.dest, value);
   }
   return result;
@@ -139,8 +136,8 @@ function compactConfig<T extends Record<string, unknown>>(obj: T): Partial<T> {
   return pickBy(
     obj,
     (value, key) =>
-      key !== 'subcommand' &&
-      value !== undefined &&
-      !(value !== null && typeof value === 'object' && util.isEmpty(value)),
+      key !== 'subcommand'
+      && value !== undefined
+      && !(value !== null && typeof value === 'object' && util.isEmpty(value)),
   );
 }

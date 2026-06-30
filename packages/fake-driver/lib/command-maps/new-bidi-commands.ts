@@ -1,4 +1,4 @@
-import type {BidiModuleMap} from '@appium/types';
+import type { BidiModuleMap } from '@appium/types';
 
 export const NEW_BIDI_COMMANDS = {
   'appium:fake': {

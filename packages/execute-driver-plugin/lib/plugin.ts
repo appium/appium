@@ -1,7 +1,7 @@
-import {BasePlugin} from 'appium/plugin';
+import { timing } from '@appium/support';
+import type { ExternalDriver, MethodMap, NextPluginCallback, PluginCommand } from '@appium/types';
+import { BasePlugin } from 'appium/plugin';
 import cp from 'node:child_process';
-import {timing} from '@appium/support';
-import type {ExternalDriver, NextPluginCallback, MethodMap, PluginCommand} from '@appium/types';
 
 const FEAT_FLAG = 'execute_driver_script';
 const DEFAULT_SCRIPT_TIMEOUT_MS = 1000 * 60 * 60; // default to 1 hour timeout
@@ -12,7 +12,7 @@ export class ExecuteDriverPlugin extends BasePlugin {
     '/session/:sessionId/appium/execute_driver': {
       POST: {
         command: 'executeDriverScript',
-        payloadParams: {required: ['script'], optional: ['type', 'timeout']},
+        payloadParams: { required: ['script'], optional: ['type', 'timeout'] },
       },
     },
   } as const;
@@ -43,10 +43,10 @@ export class ExecuteDriverPlugin extends BasePlugin {
   ) => {
     if (!driver.isFeatureEnabled(FEAT_FLAG)) {
       throw new Error(
-        `Execute driver script functionality is not available ` +
-          `unless server is started with --allow-insecure including ` +
-          `the '${FEAT_FLAG}' flag, e.g., ` +
-          `--allow-insecure=${driver.opts.automationName ?? '*'}:${FEAT_FLAG}`,
+        `Execute driver script functionality is not available `
+          + `unless server is started with --allow-insecure including `
+          + `the '${FEAT_FLAG}' flag, e.g., `
+          + `--allow-insecure=${driver.opts.automationName ?? '*'}:${FEAT_FLAG}`,
       );
     }
 
@@ -56,8 +56,8 @@ export class ExecuteDriverPlugin extends BasePlugin {
 
     if (!driver.serverHost || !driver.serverPort) {
       throw new Error(
-        'Address or port of running server were not defined; this ' +
-          'is required. This is probably a programming error in the driver',
+        'Address or port of running server were not defined; this '
+          + 'is required. This is probably a programming error in the driver',
       );
     }
 
@@ -98,7 +98,7 @@ export class ExecuteDriverPlugin extends BasePlugin {
 
       // promise that deals with the result from the child process
       const waitForResult = async () => {
-        const res = await new Promise<{error?: {message: string}; success?: any}>((resolve) => {
+        const res = await new Promise<{ error?: { message: string; }; success?: any; }>((resolve) => {
           scriptProc.once('message', resolve); // this is node IPC
         });
 
@@ -124,20 +124,20 @@ export class ExecuteDriverPlugin extends BasePlugin {
         }
 
         throw new Error(
-          `Execute driver script timed out after ${timeoutMs}ms. ` +
-            `You can adjust this with the 'timeout' parameter.`,
+          `Execute driver script timed out after ${timeoutMs}ms. `
+            + `You can adjust this with the 'timeout' parameter.`,
         );
       };
 
       // now that the child script is alive, send it the data it needs to start
       // running the driver script
       this.log.info('Sending driver and script data to child');
-      scriptProc.send({driverOpts, script, timeoutMs});
+      scriptProc.send({ driverOpts, script, timeoutMs });
 
       // and set up a race between the response from the child and the timeout
       return await Promise.race([waitForResult(), waitForTimeout()]);
     } catch (err: any) {
-      throw new Error(`Could not execute driver script. Original error was: ${err}`, {cause: err});
+      throw new Error(`Could not execute driver script. Original error was: ${err}`, { cause: err });
     } finally {
       // ensure we always cancel the timeout so that the timeout promise stops
       // spinning and allows this process to die gracefully

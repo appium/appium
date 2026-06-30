@@ -1,42 +1,42 @@
-import express from 'express';
-import type {Express, RequestHandler} from 'express';
-import http from 'node:http';
-import type {Server as HttpServer} from 'node:http';
-import {createRequire} from 'node:module';
 import bodyParser from 'body-parser';
+import express from 'express';
+import type { Express, RequestHandler } from 'express';
 import methodOverride from 'method-override';
-import {log} from './logger';
-import {startLogFormatter, endLogFormatter} from './express-logging';
+import http from 'node:http';
+import type { Server as HttpServer } from 'node:http';
+import { createRequire } from 'node:module';
+import { endLogFormatter, startLogFormatter } from './express-logging';
+import { log } from './logger';
 import {
   allowCrossDomain,
-  defaultToJSONContentType,
-  catchAllHandler,
   allowCrossDomainAsyncExecute,
+  catch404Handler,
+  catchAllHandler,
+  defaultToJSONContentType,
   handleIdempotency,
+  handleLogContext,
   handleUpgrade,
   tryHandleWebSocketUpgrade,
-  catch404Handler,
-  handleLogContext,
 } from './middleware';
 // Import env helper directly — not from the test-pages barrel — so Express handlers and
 // fixture code stay unloaded unless APPIUM_ENABLE_LEGACY_TEST_PAGES is set.
-import {isLegacyTestPagesEnabled} from '../test-pages/env';
-import {
-  addWebSocketHandler,
-  removeWebSocketHandler,
-  removeAllWebSocketHandlers,
-  getWebSocketHandlers,
-} from './websocket';
-import {DEFAULT_BASE_PATH} from '../constants';
-import {fs, timing} from '@appium/support';
+import { fs, timing } from '@appium/support';
 import type {
   AppiumServer,
-  ServerArgs,
-  UpdateServerCallback,
-  MethodMap,
   ExternalDriver,
+  MethodMap,
+  ServerArgs,
   StringRecord,
+  UpdateServerCallback,
 } from '@appium/types';
+import { DEFAULT_BASE_PATH } from '../constants';
+import { isLegacyTestPagesEnabled } from '../test-pages/env';
+import {
+  addWebSocketHandler,
+  getWebSocketHandlers,
+  removeAllWebSocketHandlers,
+  removeWebSocketHandler,
+} from './websocket';
 
 const KEEP_ALIVE_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes
 
@@ -77,7 +77,7 @@ export interface ConfigureServerOpts {
 /** @internal */
 export interface ConfigureServerInternalOpts extends ConfigureServerOpts {
   /** @deprecated Appium 4 */
-  registerTestPages?: (app: Express, opts: {basePath: string}) => void;
+  registerTestPages?: (app: Express, opts: { basePath: string; }) => void;
 }
 
 /** Options for {@linkcode configureHttp} */
@@ -187,14 +187,14 @@ export function configureServer(opts: ConfigureServerOpts): void {
     webSocketsMapping = {},
     useLegacyUpgradeHandler = true,
   } = opts;
-  const {registerTestPages} = opts as ConfigureServerInternalOpts;
+  const { registerTestPages } = opts as ConfigureServerInternalOpts;
   const basePath = normalizeBasePath(rawBasePath);
 
   app.use(endLogFormatter);
   app.use(handleLogContext);
 
   if (registerTestPages) {
-    registerTestPages(app, {basePath});
+    registerTestPages(app, { basePath });
   }
 
   // Only use legacy Express middleware for WebSocket upgrades if shouldUpgradeCallback is not available.
@@ -210,17 +210,17 @@ export function configureServer(opts: ConfigureServerOpts): void {
   }
   app.use(handleIdempotency);
   app.use(defaultToJSONContentType);
-  app.use(bodyParser.urlencoded({extended: true}));
+  app.use(bodyParser.urlencoded({ extended: true }));
   app.use(methodOverride());
   app.use(catchAllHandler);
 
   // make sure appium never fails because of a file size upload limit
-  app.use(bodyParser.json({limit: '1gb'}));
+  app.use(bodyParser.json({ limit: '1gb' }));
 
   // set up start logging (which depends on bodyParser doing its thing)
   app.use(startLogFormatter);
 
-  addRoutes(app, {basePath, extraMethodMap});
+  addRoutes(app, { basePath, extraMethodMap });
 }
 
 /**
@@ -247,7 +247,7 @@ export function normalizeBasePath(basePath: string): string {
 }
 
 async function createServer(app: Express, cliArgs?: Partial<ServerArgs>): Promise<HttpServer> {
-  const {sslCertificatePath, sslKeyPath} = cliArgs ?? {};
+  const { sslCertificatePath, sslKeyPath } = cliArgs ?? {};
   if (!sslCertificatePath && !sslKeyPath) {
     return http.createServer(app);
   }
@@ -257,10 +257,12 @@ async function createServer(app: Express, cliArgs?: Partial<ServerArgs>): Promis
 
   const certKey = [sslCertificatePath, sslKeyPath];
   const [certExists, keyExists] = await Promise.all(certKey.map((p) => fs.exists(p)));
-  for (const [exists, desc, p] of [
-    [certExists, 'certificate', sslCertificatePath],
-    [keyExists, 'key', sslKeyPath],
-  ]) {
+  for (
+    const [exists, desc, p] of [
+      [certExists, 'certificate', sslCertificatePath],
+      [keyExists, 'key', sslKeyPath],
+    ]
+  ) {
     if (!exists) {
       throw new Error(`The provided SSL ${desc} at '${p}' does not exist or is not accessible`);
     }
@@ -273,7 +275,7 @@ async function createServer(app: Express, cliArgs?: Partial<ServerArgs>): Promis
 
   const spdy = require('spdy') as {
     createServer: (
-      options: {cert: string; key: string; spdy: {plain: boolean; ssl: boolean}},
+      options: { cert: string; key: string; spdy: { plain: boolean; ssl: boolean; }; },
       requestListener: RequestHandler,
     ) => HttpServer;
   };
@@ -310,7 +312,7 @@ function configureHttp({
   appiumServer.removeAllWebSocketHandlers = removeAllWebSocketHandlers;
   appiumServer.getWebSocketHandlers = getWebSocketHandlers;
   appiumServer.isSecure = function isSecure() {
-    return Boolean((this as unknown as {_spdyState?: {secure?: boolean}})._spdyState?.secure);
+    return Boolean((this as unknown as { _spdyState?: { secure?: boolean; }; })._spdyState?.secure);
   };
 
   // This avoids Express middleware timeout issues with long-lived WebSocket connections
@@ -319,9 +321,8 @@ function configureHttp({
   if (hasShouldUpgradeCallback(httpServer)) {
     // shouldUpgradeCallback only returns a boolean to indicate if the upgrade should proceed
     (
-      appiumServer as unknown as {shouldUpgradeCallback?: (req: http.IncomingMessage) => boolean}
-    ).shouldUpgradeCallback = (req) =>
-      String(req.headers?.upgrade ?? '').toLowerCase() === 'websocket';
+      appiumServer as unknown as { shouldUpgradeCallback?: (req: http.IncomingMessage) => boolean; }
+    ).shouldUpgradeCallback = (req) => String(req.headers?.upgrade ?? '').toLowerCase() === 'websocket';
     appiumServer.on('upgrade', (req, socket, head) => {
       if (!tryHandleWebSocketUpgrade(req, socket, head, appiumServer.webSocketsMapping)) {
         socket.destroy();
@@ -341,17 +342,17 @@ function configureHttp({
       const onTimeout = setTimeout(() => {
         if ((gracefulShutdownTimeout ?? 0) > 0) {
           log.info(
-            `Not all active connections have been closed within ${gracefulShutdownTimeout}ms. ` +
-              `This timeout might be customized by the --shutdown-timeout command line ` +
-              `argument. Closing the server anyway.`,
+            `Not all active connections have been closed within ${gracefulShutdownTimeout}ms. `
+              + `This timeout might be customized by the --shutdown-timeout command line `
+              + `argument. Closing the server anyway.`,
           );
         }
         process.exit(process.exitCode ?? 0);
       }, gracefulShutdownTimeout ?? 0);
       const onClose = () => {
         log.info(
-          `Appium HTTP server has been successfully closed after ` +
-            `${timer.getDuration().asMilliSeconds.toFixed(0)}ms`,
+          `Appium HTTP server has been successfully closed after `
+            + `${timer.getDuration().asMilliSeconds.toFixed(0)}ms`,
         );
         clearTimeout(onTimeout);
         _resolve();
@@ -373,9 +374,9 @@ function configureHttp({
       );
     } else {
       log.error(
-        'Could not start REST http interface listener. The requested ' +
-          'port may already be in use. Please make sure there is no ' +
-          'other instance of this server running already.',
+        'Could not start REST http interface listener. The requested '
+          + 'port may already be in use. Please make sure there is no '
+          + 'other instance of this server running already.',
       );
     }
     reject(err);
@@ -427,8 +428,8 @@ function hasShouldUpgradeCallback(server: HttpServer): boolean {
   // This is a runtime check that works regardless of TypeScript types
   try {
     return (
-      typeof (server as unknown as {shouldUpgradeCallback?: unknown}).shouldUpgradeCallback !==
-      'undefined'
+      typeof (server as unknown as { shouldUpgradeCallback?: unknown; }).shouldUpgradeCallback
+        !== 'undefined'
     );
   } catch {
     return false;

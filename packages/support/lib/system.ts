@@ -1,5 +1,5 @@
-import {exec} from 'teen_process';
 import os from 'node:os';
+import { exec } from 'teen_process';
 
 const VERSION_PATTERN = /^(\d+\.\d+)/m;
 
@@ -42,7 +42,7 @@ export async function macOsxVersion(): Promise<string> {
   try {
     stdout = (await exec('sw_vers', ['-productVersion'])).stdout.trim();
   } catch (err) {
-    throw new Error(`Could not detect Mac OS X Version: ${err}`, {cause: err});
+    throw new Error(`Could not detect Mac OS X Version: ${err}`, { cause: err });
   }
 
   const versionMatch = VERSION_PATTERN.exec(stdout);
@@ -83,7 +83,7 @@ interface System {
 
 async function archImpl(this: System): Promise<string> {
   if (this.isLinux() || this.isMac()) {
-    const {stdout} = await exec('uname', ['-m']);
+    const { stdout } = await exec('uname', ['-m']);
     return stdout.trim() === 'i686' ? '32' : '64';
   } else if (this.isWindows()) {
     return this.isOSWin64() ? '64' : '32';

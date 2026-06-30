@@ -1,20 +1,20 @@
 /* eslint-disable no-console */
-import path from 'node:path';
+import { fs, npm, system } from '@appium/support';
 import os from 'node:os';
+import path from 'node:path';
 import * as semver from 'semver';
-import {system, fs, npm} from '@appium/support';
-import {appiumPackageRoot, npmPackage} from '../utils';
-import {updateBuildInfo, getBuildInfo} from '../helpers/build';
+import { getBuildInfo, updateBuildInfo } from '../helpers/build';
+import { appiumPackageRoot, npmPackage } from '../utils';
 
 const MIN_NODE_VERSION = (npmPackage.engines as Record<string, string>).node;
 
 interface NodeModuleWithInitPaths {
-  Module: {_initPaths(): void};
+  Module: { _initPaths(): void; };
 }
 
 interface DebugInfoInput {
-  driverConfig: {installedExtensions: unknown};
-  pluginConfig: {installedExtensions: unknown};
+  driverConfig: { installedExtensions: unknown; };
+  pluginConfig: { installedExtensions: unknown; };
   appiumHome: string;
 }
 
@@ -83,11 +83,10 @@ export async function showDebugInfo({
   appiumHome,
 }: DebugInfoInput): Promise<void> {
   const getNpmVersion = async (): Promise<string> => {
-    const {stdout} = await npm.exec('--version', [], {cwd: process.cwd()});
+    const { stdout } = await npm.exec('--version', [], { cwd: process.cwd() });
     return stdout.trim();
   };
-  const findNpmLocation = async (): Promise<string> =>
-    await fs.which(system.isWindows() ? 'npm.cmd' : 'npm');
+  const findNpmLocation = async (): Promise<string> => await fs.which(system.isWindows() ? 'npm.cmd' : 'npm');
 
   const [npmVersion, npmLocation] = await Promise.all([
     ...[getNpmVersion, findNpmLocation].map((f) => getSafeResult(f, 'unknown')),
@@ -142,11 +141,11 @@ export async function requireDir(
   } catch (e) {
     if ((e as NodeJS.ErrnoException).code === 'ENOENT') {
       try {
-        await fs.mkdir(root, {recursive: true});
+        await fs.mkdir(root, { recursive: true });
         return;
       } catch {}
     }
-    throw new Error(`The ${displayName} '${root}' must exist and be a valid directory`, {cause: e});
+    throw new Error(`The ${displayName} '${root}' must exist and be a valid directory`, { cause: e });
   }
   if (stat && !stat.isDirectory()) {
     throw new Error(`The ${displayName} '${root}' must be a valid directory`);
@@ -157,7 +156,7 @@ export async function requireDir(
     } catch (e) {
       throw new Error(
         `The ${displayName} '${root}' must be writeable for the current user account '${os.userInfo().username}'`,
-        {cause: e},
+        { cause: e },
       );
     }
   }

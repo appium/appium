@@ -1,6 +1,6 @@
-import type {DriverType, ExtensionType, PluginType} from '@appium/types';
-import type {SchemaObject} from 'ajv';
-import type {PackageJson, SetRequired} from 'type-fest';
+import type { DriverType, ExtensionType, PluginType } from '@appium/types';
+import type { SchemaObject } from 'ajv';
+import type { PackageJson, SetRequired } from 'type-fest';
 
 /**
  * One of the possible extension installation stratgies
@@ -39,7 +39,7 @@ export interface InternalMetadata {
 /**
  * Shape of the `appium.schema` property in an extension's `package.json` (if it exists)
  */
-export type ExtSchemaMetadata = string | (SchemaObject & {[key: number]: never});
+export type ExtSchemaMetadata = string | (SchemaObject & { [key: number]: never; });
 
 /**
  * Manifest data shared by all extensions, as contained in `package.json`
@@ -97,22 +97,22 @@ export interface PluginMetadata {
 /**
  * Generic extension metadata as stored in the `appium` prop of an extension's `package.json`.
  */
-export type ExtMetadata<ExtType extends ExtensionType> = (ExtType extends DriverType
-  ? DriverMetadata
-  : ExtType extends PluginType
-    ? PluginMetadata
-    : never) &
-  CommonExtMetadata;
+export type ExtMetadata<ExtType extends ExtensionType> =
+  & (ExtType extends DriverType ? DriverMetadata
+    : ExtType extends PluginType ? PluginMetadata
+    : never)
+  & CommonExtMetadata;
 
 /**
  * Combination of external + internal extension data with `driverName`/`pluginName` removed (it becomes a key in an {@linkcode ExtRecord} object).
  * Part of `extensions.yaml`.
  */
-export type ExtManifest<ExtType extends ExtensionType> = Omit<
-  ExtMetadata<ExtType>,
-  'driverName' | 'pluginName'
-> &
-  InternalMetadata;
+export type ExtManifest<ExtType extends ExtensionType> =
+  & Omit<
+    ExtMetadata<ExtType>,
+    'driverName' | 'pluginName'
+  >
+  & InternalMetadata;
 
 /**
  * Lookup of extension name to {@linkcode ExtManifest}.
@@ -143,16 +143,19 @@ export type ExtName<ExtType extends ExtensionType> = keyof ExtRecord<ExtType>;
  * - `appium`: the metadata for the extension
  * - `peerDependencies.appium`: the maximum compatible version of Appium
  */
-export type ExtPackageJson<ExtType extends ExtensionType> = SetRequired<
-  PackageJson,
-  'name' | 'version'
-> & {
-  appium: ExtMetadata<ExtType>;
-  peerDependencies: {appium: string; [key: string]: string};
-};
+export type ExtPackageJson<ExtType extends ExtensionType> =
+  & SetRequired<
+    PackageJson,
+    'name' | 'version'
+  >
+  & {
+    appium: ExtMetadata<ExtType>;
+    peerDependencies: { appium: string; [key: string]: string; };
+  };
 
 /**
  * A transient format between installation and insertion of extension metadata into the manifest.
  */
-export type ExtInstallReceipt<ExtType extends ExtensionType> = ExtMetadata<ExtType> &
-  InternalMetadata;
+export type ExtInstallReceipt<ExtType extends ExtensionType> =
+  & ExtMetadata<ExtType>
+  & InternalMetadata;

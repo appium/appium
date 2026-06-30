@@ -13,8 +13,7 @@ export const codes = {
   },
   NoSuchFrame: {
     code: 8,
-    summary:
-      'A request to switch to a frame could not be satisfied because the frame could not be found.',
+    summary: 'A request to switch to a frame could not be satisfied because the frame could not be found.',
   },
   UnknownCommand: {
     code: 9,
@@ -23,13 +22,11 @@ export const codes = {
   },
   StaleElementReference: {
     code: 10,
-    summary:
-      'An element command failed because the referenced element is no longer attached to the DOM.',
+    summary: 'An element command failed because the referenced element is no longer attached to the DOM.',
   },
   ElementNotVisible: {
     code: 11,
-    summary:
-      'An element command could not be completed because the element is not visible on the page.',
+    summary: 'An element command could not be completed because the element is not visible on the page.',
   },
   InvalidElementState: {
     code: 12,
@@ -58,17 +55,15 @@ export const codes = {
   },
   NoSuchWindow: {
     code: 23,
-    summary:
-      'A request to switch to a different window could not be satisfied because the window could not be found.',
+    summary: 'A request to switch to a different window could not be satisfied because the window could not be found.',
   },
   InvalidCookieDomain: {
     code: 24,
-    summary:
-      'An illegal attempt was made to set a cookie under a different domain than the current page.',
+    summary: 'An illegal attempt was made to set a cookie under a different domain than the current page.',
   },
   UnableToSetCookie: {
     code: 25,
-    summary: "A request to set a cookie's value could not be satisfied.",
+    summary: 'A request to set a cookie\'s value could not be satisfied.',
   },
   UnexpectedAlertOpen: {
     code: 26,

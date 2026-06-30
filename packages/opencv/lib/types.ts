@@ -1,4 +1,4 @@
-import type {Rect as AppiumRect} from '@appium/types';
+import type { Rect as AppiumRect } from '@appium/types';
 
 export interface Point {
   x: number;
@@ -141,10 +141,10 @@ export interface OpenCVBindings {
   Mat: any;
   KeyPointVector: any;
   FeatureDetector: any;
-  Scalar: new (...args: number[]) => any;
-  Point: new (x: number, y: number) => any;
-  DescriptorMatcher: new (matchFunc: string) => any;
-  DMatchVector: new () => any;
-  MatVector: new () => any;
+  Scalar: new(...args: number[]) => any;
+  Point: new(x: number, y: number) => any;
+  DescriptorMatcher: new(matchFunc: string) => any;
+  DMatchVector: new() => any;
+  MatVector: new() => any;
   [key: string]: any;
 }

@@ -22,7 +22,7 @@
  */
 
 const path = require('node:path');
-const {realpath} = require('node:fs/promises');
+const { realpath } = require('node:fs/promises');
 
 /** @type {typeof import('../lib/cli/extension').runExtensionCommand} */
 let runExtensionCommand;
@@ -57,9 +57,9 @@ function log(message) {
  */
 async function isDevEnvironment() {
   return (
-    process.env.npm_config_local_prefix &&
-    path.join(process.env.npm_config_local_prefix, 'packages', 'appium') ===
-      (await realpath(path.join(__dirname, '..')))
+    process.env.npm_config_local_prefix
+    && path.join(process.env.npm_config_local_prefix, 'packages', 'appium')
+      === (await realpath(path.join(__dirname, '..')))
   );
 }
 
@@ -73,12 +73,12 @@ async function init() {
     return false;
   }
   try {
-    ({env, util, logger} = require('@appium/support'));
+    ({ env, util, logger } = require('@appium/support'));
     // @ts-ignore This is OK
-    ({runExtensionCommand} = require('../build/lib/cli/extension'));
-    ({DRIVER_TYPE, PLUGIN_TYPE} = require('../build/lib/constants'));
+    ({ runExtensionCommand } = require('../build/lib/cli/extension'));
+    ({ DRIVER_TYPE, PLUGIN_TYPE } = require('../build/lib/constants'));
     // @ts-ignore This is OK
-    ({loadExtensions} = require('../build/lib/extension'));
+    ({ loadExtensions } = require('../build/lib/extension'));
     logger.getLogger('Appium').level = 'error';
 
     // if we're doing `npm install -g appium` then we will assume we don't have a local appium.
@@ -112,10 +112,10 @@ async function main() {
   if (!driverEnv && !pluginEnv) {
     spinner.succeed('No drivers or plugins to automatically install.');
     log(
-      'If desired, provide the argument "--drivers=<driver_name>[,<driver_name>...]" and/or ' +
-        '"--plugins=<plugin_name>[,<plugin_name>...]" to the "npm install appium" command. ' +
-        'The specified extensions will be installed automatically alongside Appium. ' +
-        'For a list of known extensions, run "appium <driver|plugin> list".',
+      'If desired, provide the argument "--drivers=<driver_name>[,<driver_name>...]" and/or '
+        + '"--plugins=<plugin_name>[,<plugin_name>...]" to the "npm install appium" command. '
+        + 'The specified extensions will be installed automatically alongside Appium. '
+        + 'For a list of known extensions, run "appium <driver|plugin> list".',
     );
     return;
   }
@@ -133,10 +133,10 @@ async function main() {
   spinner.succeed(`Found Appium home: ${appiumHome}`);
 
   spinner.start('Loading extension data...');
-  const {driverConfig, pluginConfig} = await loadExtensions(appiumHome);
+  const { driverConfig, pluginConfig } = await loadExtensions(appiumHome);
   spinner.succeed('Loaded extension data.');
 
-  const installedStats = {[DRIVER_TYPE]: 0, [PLUGIN_TYPE]: 0};
+  const installedStats = { [DRIVER_TYPE]: 0, [PLUGIN_TYPE]: 0 };
   for (const [type, extEnv] of specs) {
     if (extEnv) {
       for await (let ext of extEnv.split(',')) {
@@ -163,13 +163,17 @@ async function main() {
     }
   }
   spinner.succeed(
-    `Done. ${installedStats[DRIVER_TYPE]} ${util.pluralize(
-      'driver',
-      installedStats[DRIVER_TYPE],
-    )} and ${installedStats[PLUGIN_TYPE]} ${util.pluralize(
-      'plugin',
-      installedStats[PLUGIN_TYPE],
-    )} are installed.`,
+    `Done. ${installedStats[DRIVER_TYPE]} ${
+      util.pluralize(
+        'driver',
+        installedStats[DRIVER_TYPE],
+      )
+    } and ${installedStats[PLUGIN_TYPE]} ${
+      util.pluralize(
+        'plugin',
+        installedStats[PLUGIN_TYPE],
+      )
+    } are installed.`,
   );
 }
 

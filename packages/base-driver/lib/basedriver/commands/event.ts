@@ -1,7 +1,7 @@
-import type {Constraints, EventHistory, IEventCommands} from '@appium/types';
-import {util} from '@appium/support';
-import type {BaseDriver} from '../driver';
-import {mixin} from './mixin';
+import { util } from '@appium/support';
+import type { Constraints, EventHistory, IEventCommands } from '@appium/types';
+import type { BaseDriver } from '../driver';
+import { mixin } from './mixin';
 
 declare module '../driver' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

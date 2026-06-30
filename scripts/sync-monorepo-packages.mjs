@@ -1,6 +1,6 @@
+import { fs, logger } from '@appium/support';
 import path from 'node:path';
-import {fileURLToPath} from 'node:url';
-import {logger, fs} from '@appium/support';
+import { fileURLToPath } from 'node:url';
 
 export const log = logger.getLogger('SYNC-MONOREPO-PACKAGES');
 
@@ -43,7 +43,7 @@ async function writeJson(filepath, data) {
  * @returns {Promise<string[]>} An array of package directory paths.
  */
 async function getPackageDirs() {
-  return (await fs.glob('*/package.json', {cwd: ROOT_PACKAGES_DIR, absolute: true}))
+  return (await fs.glob('*/package.json', { cwd: ROOT_PACKAGES_DIR, absolute: true }))
     .map((pkgJsonPath) => path.dirname(pkgJsonPath))
     .sort();
 }
@@ -81,7 +81,9 @@ async function syncPackageJsonFields(rootPackageJson, packageDir) {
   }
 
   log.debug(
-    `Updating package.json for ${packageName} at ${packageJsonPath} with fields: ${JSON.stringify(Object.keys(packageJson))}`,
+    `Updating package.json for ${packageName} at ${packageJsonPath} with fields: ${
+      JSON.stringify(Object.keys(packageJson))
+    }`,
   );
 
   await writeJson(packageJsonPath, packageJson);
@@ -94,7 +96,7 @@ async function main() {
   log.debug(`Found ${packageDirs.length} package directories`);
 
   const syncPackageJsonFieldsPromises = packageDirs.map((packageDir) =>
-    syncPackageJsonFields(rootPackageJson, packageDir),
+    syncPackageJsonFields(rootPackageJson, packageDir)
   );
   const licenseCopyPromises = packageDirs
     .filter((packageDir) => !LICENSE_EXCLUDED_PACKAGES.has(path.basename(packageDir)))

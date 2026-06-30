@@ -1,8 +1,8 @@
-export {UniversalXMLPlugin} from './plugin';
-export {transformSourceXml} from './source';
+export { UniversalXMLPlugin } from './plugin';
+export { transformSourceXml } from './source';
 import fs from 'node:fs/promises';
-import {transformSourceXml} from './source';
-import {UniversalXMLPlugin} from './plugin';
+import { UniversalXMLPlugin } from './plugin';
+import { transformSourceXml } from './source';
 
 export default UniversalXMLPlugin;
 
@@ -25,7 +25,7 @@ export async function main(): Promise<void> {
 
   const xmlData = await fs.readFile(xmlDataPath, 'utf8');
   const opts = optsJson ? JSON.parse(optsJson) : {};
-  const {xml, unknowns} = await transformSourceXml(xmlData, platform, opts);
+  const { xml, unknowns } = await transformSourceXml(xmlData, platform, opts);
   console.log(xml); // eslint-disable-line no-console
   if (unknowns.nodes.length || unknowns.attrs.length) {
     console.error(unknowns); // eslint-disable-line no-console

@@ -1,1 +1,1 @@
-export {TEST_HOST, getTestPort, createAppiumURL} from './helpers';
+export { createAppiumURL, getTestPort, TEST_HOST } from './helpers';

@@ -1,16 +1,16 @@
-import Ajv, {type ErrorObject, type SchemaObject, type ValidateFunction} from 'ajv';
+import { AppiumConfigJsonSchema } from '@appium/schema';
+import { util } from '@appium/support';
+import type { ExtensionType } from '@appium/types';
+import Ajv, { type ErrorObject, type SchemaObject, type ValidateFunction } from 'ajv';
 import addFormats from 'ajv-formats';
-import {util} from '@appium/support';
 import path from 'node:path';
-import {bindAll, kebabCase, omitKeys, setPath} from '../utils';
-import {AppiumConfigJsonSchema} from '@appium/schema';
-import type {ExtensionType} from '@appium/types';
-import {DRIVER_TYPE, PLUGIN_TYPE} from '../constants';
-import {APPIUM_CONFIG_SCHEMA_ID, ArgSpec, SERVER_PROP_NAME} from './arg-spec';
-import {keywords} from './keywords';
+import { DRIVER_TYPE, PLUGIN_TYPE } from '../constants';
+import { bindAll, kebabCase, omitKeys, setPath } from '../utils';
+import { APPIUM_CONFIG_SCHEMA_ID, ArgSpec, SERVER_PROP_NAME } from './arg-spec';
+import { keywords } from './keywords';
 
-type StrictSchemaObject = SchemaObject & {additionalProperties: false};
-type FlattenedSchema = {schema: SchemaObject; argSpec: ArgSpec}[];
+type StrictSchemaObject = SchemaObject & { additionalProperties: false; };
+type FlattenedSchema = { schema: SchemaObject; argSpec: ArgSpec; }[];
 type ArgSpecDefaultValue = ArgSpec['defaultValue'];
 type NestedArgSpecDefaultValue = Record<string, Record<string, ArgSpecDefaultValue>>;
 type DefaultValues<Flattened extends boolean | undefined> = Record<
@@ -168,9 +168,11 @@ class AppiumSchema {
 
     const finalizedSchemas: Record<string, StrictSchemaObject> = {};
 
-    for (const [extType, extensionSchemas] of Object.entries(this.#registeredSchemas) as Array<
-      [ExtensionType, Map<string, SchemaObject>]
-    >) {
+    for (
+      const [extType, extensionSchemas] of Object.entries(this.#registeredSchemas) as Array<
+        [ExtensionType, Map<string, SchemaObject>]
+      >
+    ) {
       for (const [extName, schema] of extensionSchemas.entries()) {
         const $ref = ArgSpec.toSchemaBaseRef(extType, extName);
         (schema as any).$id = $ref;
@@ -203,7 +205,7 @@ class AppiumSchema {
       this.#ajv.removeSchema(schemaId);
     }
     this.#argSpecs = new RoachHotelMap();
-    this.#registeredSchemas = {[DRIVER_TYPE]: new Map(), [PLUGIN_TYPE]: new Map()};
+    this.#registeredSchemas = { [DRIVER_TYPE]: new Map(), [PLUGIN_TYPE]: new Map() };
     this.#finalizedSchemas = null;
     this.#ajv = AppiumSchema._instantiateAjv();
   }
@@ -258,18 +260,18 @@ class AppiumSchema {
     }
 
     const reducer = flatten
-      ? (defaults: any, {defaultValue, dest}: ArgSpec) => {
-          if (defaultValue !== undefined) {
-            defaults[dest] = defaultValue;
-          }
-          return defaults;
+      ? (defaults: any, { defaultValue, dest }: ArgSpec) => {
+        if (defaultValue !== undefined) {
+          defaults[dest] = defaultValue;
         }
-      : (defaults: any, {defaultValue, dest}: ArgSpec) => {
-          if (defaultValue !== undefined) {
-            setPath(defaults as Record<string, unknown>, dest, defaultValue);
-          }
-          return defaults;
-        };
+        return defaults;
+      }
+      : (defaults: any, { defaultValue, dest }: ArgSpec) => {
+        if (defaultValue !== undefined) {
+          setPath(defaults as Record<string, unknown>, dest, defaultValue);
+        }
+        return defaults;
+      };
 
     const retval = {} as DefaultValues<Flattened>;
     return [...this.#argSpecs.values()].reduce(reducer, retval);
@@ -289,7 +291,7 @@ class AppiumSchema {
       (spec) => spec.extType === extType && spec.extName === extName,
     );
     return specs.reduce(
-      (defaults, {defaultValue, rawDest}) => {
+      (defaults, { defaultValue, rawDest }) => {
         if (defaultValue !== undefined) {
           defaults[rawDest] = defaultValue;
         }
@@ -304,20 +306,20 @@ class AppiumSchema {
    */
   flatten(): FlattenedSchema {
     const schema = this.getSchema() as any;
-    const stack: {properties: Record<string, any>; prefix: string[]}[] = [
-      {properties: schema.properties, prefix: []},
+    const stack: { properties: Record<string, any>; prefix: string[]; }[] = [
+      { properties: schema.properties, prefix: [] },
     ];
     const flattened: FlattenedSchema = [];
 
-    for (const {properties, prefix} of stack) {
+    for (const { properties, prefix } of stack) {
       const pairs = Object.entries(properties);
       for (const [key, value] of pairs) {
         if (key === SCHEMA_KEY) {
           continue;
         }
-        const {properties, $ref} = value as any;
+        const { properties, $ref } = value as any;
         if (properties) {
-          stack.push({properties, prefix: key === SERVER_PROP_NAME ? [] : [...prefix, key]});
+          stack.push({ properties, prefix: key === SERVER_PROP_NAME ? [] : [...prefix, key] });
         } else if ($ref) {
           let refSchema: any;
           try {
@@ -325,7 +327,7 @@ class AppiumSchema {
           } catch {
             throw new SchemaUnknownSchemaError($ref);
           }
-          const {normalizedExtName} = ArgSpec.extensionInfoFromRootSchemaId($ref);
+          const { normalizedExtName } = ArgSpec.extensionInfoFromRootSchemaId($ref);
           if (!normalizedExtName) {
             throw new ReferenceError(
               `Could not determine extension name from schema ID ${$ref}. This is a bug.`,
@@ -343,7 +345,7 @@ class AppiumSchema {
               `Unknown argument with key ${key}, extType ${extType} and extName ${extName}. This is a bug.`,
             );
           }
-          flattened.push({schema: structuredClone(value as SchemaObject), argSpec});
+          flattened.push({ schema: structuredClone(value as SchemaObject), argSpec });
         }
       }
     }
@@ -392,10 +394,10 @@ export class SchemaFinalizationError extends Error {
  */
 export class SchemaNameConflictError extends Error {
   readonly code = 'APPIUMERR_SCHEMA_NAME_CONFLICT' as const;
-  readonly data: Readonly<{extType: ExtensionType; extName: string}>;
+  readonly data: Readonly<{ extType: ExtensionType; extName: string; }>;
   constructor(extType: ExtensionType, extName: string) {
     super(`Name for ${extType} schema "${extName}" conflicts with an existing schema`);
-    this.data = {extType, extName};
+    this.data = { extType, extName };
   }
 }
 
@@ -404,10 +406,10 @@ export class SchemaNameConflictError extends Error {
  */
 export class SchemaUnknownSchemaError extends ReferenceError {
   readonly code = 'APPIUMERR_SCHEMA_UNKNOWN_SCHEMA' as const;
-  readonly data: Readonly<{schemaId: string}>;
+  readonly data: Readonly<{ schemaId: string; }>;
   constructor(schemaId: string) {
     super(`Unknown schema: "${schemaId}"`);
-    this.data = {schemaId};
+    this.data = { schemaId };
   }
 }
 
@@ -416,7 +418,7 @@ export class SchemaUnknownSchemaError extends ReferenceError {
  */
 export class SchemaUnsupportedSchemaError extends TypeError {
   readonly code = 'APPIUMERR_SCHEMA_UNSUPPORTED_SCHEMA' as const;
-  readonly data: Readonly<{schema: any; extType: ExtensionType; extName: string}>;
+  readonly data: Readonly<{ schema: any; extType: ExtensionType; extName: string; }>;
 
   constructor(schema: any, extType: ExtensionType, extName: string) {
     super(
@@ -430,15 +432,17 @@ export class SchemaUnsupportedSchemaError extends TypeError {
             return `${msg} schema cannot be an async schema`;
           }
           throw new TypeError(
-            `schema IS supported; this error should not be thrown (this is a bug). value of schema: ${JSON.stringify(
-              schema,
-            )}`,
+            `schema IS supported; this error should not be thrown (this is a bug). value of schema: ${
+              JSON.stringify(
+                schema,
+              )
+            }`,
           );
         }
         return `${msg} schema must be a plain object without a true "$async" property`;
       })(),
     );
-    this.data = {schema, extType, extName};
+    this.data = { schema, extType, extName };
   }
 }
 
@@ -459,4 +463,4 @@ export const {
   getDefaultsForExtension,
 } = appiumSchema;
 
-export const {isAllowedSchemaFileExtension} = AppiumSchema;
+export const { isAllowedSchemaFileExtension } = AppiumSchema;

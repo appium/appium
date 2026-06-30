@@ -1,7 +1,7 @@
-import type {AppiumLogger, HTTPBody, ProxyResponse} from '@appium/types';
-import {logger, util} from '@appium/support';
-import {duplicateKeys} from '../basedriver/helpers';
-import {MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY, PROTOCOLS} from '../constants';
+import { logger, util } from '@appium/support';
+import type { AppiumLogger, HTTPBody, ProxyResponse } from '@appium/types';
+import { duplicateKeys } from '../basedriver/helpers';
+import { MJSONWP_ELEMENT_KEY, PROTOCOLS, W3C_ELEMENT_KEY } from '../constants';
 
 export type ProxyFunction = (
   url: string,
@@ -12,15 +12,13 @@ export type ProxyFunction = (
 export const COMMAND_URLS_CONFLICTS = [
   {
     commandNames: ['execute', 'executeAsync'],
-    jsonwpConverter: (url: string) =>
-      url.replace(/\/execute.*/, url.includes('async') ? '/execute_async' : '/execute'),
+    jsonwpConverter: (url: string) => url.replace(/\/execute.*/, url.includes('async') ? '/execute_async' : '/execute'),
     w3cConverter: (url: string) =>
       url.replace(/\/execute.*/, url.includes('async') ? '/execute/async' : '/execute/sync'),
   },
   {
     commandNames: ['getElementScreenshot'],
-    jsonwpConverter: (url: string) =>
-      url.replace(/\/element\/([^/]+)\/screenshot$/, '/screenshot/$1'),
+    jsonwpConverter: (url: string) => url.replace(/\/element\/([^/]+)\/screenshot$/, '/screenshot/$1'),
     w3cConverter: (url: string) => url.replace(/\/screenshot\/([^/]+)/, '/element/$1/screenshot'),
   },
   {
@@ -47,7 +45,7 @@ export const COMMAND_URLS_CONFLICTS = [
   },
 ] as const;
 
-const {MJSONWP, W3C} = PROTOCOLS;
+const { MJSONWP, W3C } = PROTOCOLS;
 const DEFAULT_LOG = logger.getLogger('Protocol Converter');
 
 export class ProtocolConverter {
@@ -110,12 +108,11 @@ export class ProtocolConverter {
     }
 
     // Same arguments, but different URLs
-    for (const {commandNames, jsonwpConverter, w3cConverter} of COMMAND_URLS_CONFLICTS) {
+    for (const { commandNames, jsonwpConverter, w3cConverter } of COMMAND_URLS_CONFLICTS) {
       if (!(commandNames as readonly string[]).includes(commandName)) {
         continue;
       }
-      const rewrittenUrl =
-        this.downstreamProtocol === MJSONWP ? jsonwpConverter(url) : w3cConverter(url);
+      const rewrittenUrl = this.downstreamProtocol === MJSONWP ? jsonwpConverter(url) : w3cConverter(url);
       if (rewrittenUrl === url) {
         this.log.debug(
           `Did not know how to rewrite the original URL '${url}' for ${this.downstreamProtocol} protocol`,
@@ -144,9 +141,9 @@ export class ProtocolConverter {
 
     const bodyObj = (util.safeJsonParse(body) as Record<string, unknown>) ?? {};
     if (
-      this.downstreamProtocol === W3C &&
-      Object.hasOwn(bodyObj, 'ms') &&
-      Object.hasOwn(bodyObj, 'type')
+      this.downstreamProtocol === W3C
+      && Object.hasOwn(bodyObj, 'ms')
+      && Object.hasOwn(bodyObj, 'type')
     ) {
       const typeToW3C = (x: string) => (x === 'page load' ? 'pageLoad' : x);
       return [
@@ -157,8 +154,8 @@ export class ProtocolConverter {
     }
 
     if (
-      this.downstreamProtocol === MJSONWP &&
-      (!Object.hasOwn(bodyObj, 'ms') || !Object.hasOwn(bodyObj, 'type'))
+      this.downstreamProtocol === MJSONWP
+      && (!Object.hasOwn(bodyObj, 'ms') || !Object.hasOwn(bodyObj, 'type'))
     ) {
       const typeToJSONWP = (x: string) => (x === 'pageLoad' ? 'page load' : x);
       return (
@@ -218,20 +215,20 @@ export class ProtocolConverter {
     if (util.isPlainObject(bodyObj)) {
       const obj = bodyObj as Record<string, unknown>;
       if (
-        this.downstreamProtocol === W3C &&
-        Object.hasOwn(bodyObj, 'name') &&
-        !Object.hasOwn(bodyObj, 'handle')
+        this.downstreamProtocol === W3C
+        && Object.hasOwn(bodyObj, 'name')
+        && !Object.hasOwn(bodyObj, 'handle')
       ) {
         this.log.debug(`Copied 'name' value '${obj.name}' to 'handle' as per W3C spec`);
-        return await this.proxyFunc(url, method, {...obj, handle: obj.name});
+        return await this.proxyFunc(url, method, { ...obj, handle: obj.name });
       }
       if (
-        this.downstreamProtocol === MJSONWP &&
-        Object.hasOwn(bodyObj, 'handle') &&
-        !Object.hasOwn(bodyObj, 'name')
+        this.downstreamProtocol === MJSONWP
+        && Object.hasOwn(bodyObj, 'handle')
+        && !Object.hasOwn(bodyObj, 'name')
       ) {
         this.log.debug(`Copied 'handle' value '${obj.handle}' to 'name' as per JSONWP spec`);
-        return await this.proxyFunc(url, method, {...obj, name: obj.handle});
+        return await this.proxyFunc(url, method, { ...obj, name: obj.handle });
       }
     }
     return await this.proxyFunc(url, method, body);
@@ -244,10 +241,10 @@ export class ProtocolConverter {
   ): Promise<[ProxyResponse, HTTPBody]> {
     const bodyObj = util.safeJsonParse(body) as Record<string, unknown> | undefined;
     if (
-      util.isPlainObject(bodyObj) &&
-      (util.hasValue(bodyObj?.text) || util.hasValue(bodyObj?.value))
+      util.isPlainObject(bodyObj)
+      && (util.hasValue(bodyObj?.text) || util.hasValue(bodyObj?.value))
     ) {
-      let {text, value} = bodyObj;
+      let { text, value } = bodyObj;
       if (util.hasValue(text) && !util.hasValue(value)) {
         value = typeof text === 'string' ? [...text] : Array.isArray(text) ? text : [];
         this.log.debug(`Added 'value' property to 'setValue' request body`);
@@ -255,7 +252,7 @@ export class ProtocolConverter {
         text = Array.isArray(value) ? value.join('') : typeof value === 'string' ? value : '';
         this.log.debug(`Added 'text' property to 'setValue' request body`);
       }
-      return await this.proxyFunc(url, method, {...bodyObj, text, value});
+      return await this.proxyFunc(url, method, { ...bodyObj, text, value });
     }
     return await this.proxyFunc(url, method, body);
   }
@@ -267,8 +264,8 @@ export class ProtocolConverter {
   ): Promise<[ProxyResponse, HTTPBody]> {
     const bodyObj = util.safeJsonParse(body);
     if (
-      Object.hasOwn(bodyObj ?? {}, 'id') &&
-      util.isPlainObject((bodyObj as Record<string, unknown>).id)
+      Object.hasOwn(bodyObj ?? {}, 'id')
+      && util.isPlainObject((bodyObj as Record<string, unknown>).id)
     ) {
       return await this.proxyFunc(url, method, {
         ...(bodyObj as object),

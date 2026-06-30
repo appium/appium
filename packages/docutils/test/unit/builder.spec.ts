@@ -1,12 +1,12 @@
-import path from 'node:path';
-import {fs, tempDir} from '@appium/support';
-import {findDeployVersion} from '../../lib/builder/deploy';
-import {NAME_PACKAGE_JSON} from '../../lib/constants';
+import { fs, tempDir } from '@appium/support';
 import * as chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import path from 'node:path';
+import { findDeployVersion } from '../../lib/builder/deploy';
+import { NAME_PACKAGE_JSON } from '../../lib/constants';
 
 chai.use(chaiAsPromised);
-const {expect} = chai;
+const { expect } = chai;
 
 /**
  * Helper function to create a project directory with package.json
@@ -21,32 +21,32 @@ async function createPackageJson(
   return packageJsonPath;
 }
 
-describe('findDeployVersion', function () {
+describe('findDeployVersion', function() {
   let testDir: string;
   let packageJsonPath: string;
 
-  before(async function () {
+  before(async function() {
     testDir = await tempDir.openDir();
     packageJsonPath = await createPackageJson(testDir, {
       version: '2.3.8',
     });
   });
 
-  after(async function () {
+  after(async function() {
     if (testDir) {
       await fs.rimraf(testDir);
     }
   });
 
-  it('should use MAJOR.MINOR version by default', async function () {
+  it('should use MAJOR.MINOR version by default', async function() {
     expect(await findDeployVersion(packageJsonPath)).to.equal('2.3');
   });
 
-  it('should use prefixed MAJOR version if usePrefixedMajorVersion is used', async function () {
+  it('should use prefixed MAJOR version if usePrefixedMajorVersion is used', async function() {
     expect(await findDeployVersion(packageJsonPath, true)).to.equal('v2');
   });
 
-  it('should support custom working directory', async function () {
+  it('should support custom working directory', async function() {
     expect(await findDeployVersion(undefined, false, testDir)).to.equal('2.3');
   });
 });

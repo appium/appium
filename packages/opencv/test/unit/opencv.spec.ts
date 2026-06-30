@@ -1,11 +1,11 @@
-import {initOpenCv} from '../../lib';
-import {expect, use} from 'chai';
+import { expect, use } from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import { initOpenCv } from '../../lib';
 
 use(chaiAsPromised);
 
-describe('OpenCV', function () {
-  it('should initialize opencv library', async function () {
+describe('OpenCV', function() {
+  it('should initialize opencv library', async function() {
     this.timeout('10s');
     await initOpenCv();
     const buildInfo = require('opencv-bindings').getBuildInformation();

@@ -12,5 +12,5 @@
     "strict": true
   },
   "include": ["./lib/**/*", "./test/**/*"],
-  "references": [{"path": "../types"}, {"path": "../support"}]
+  "references": [{ "path": "../types" }, { "path": "../support" }]
 }

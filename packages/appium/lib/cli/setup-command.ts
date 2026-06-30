@@ -1,3 +1,4 @@
+import { fs, system } from '@appium/support';
 import type {
   Args,
   CliCommandSetup,
@@ -5,11 +6,10 @@ import type {
   CliExtensionCommand,
   CliExtensionSubcommand,
 } from 'appium/types';
-import {DESKTOP_BROWSERS, DESKTOP_DRIVERS, MOBILE_DRIVERS} from '../constants';
-import {runExtensionCommand} from './extension';
-import {system, fs} from '@appium/support';
-import {log} from '../logger';
-import type {ExtensionConfig} from '../extension/extension-config';
+import { DESKTOP_BROWSERS, DESKTOP_DRIVERS, MOBILE_DRIVERS } from '../constants';
+import type { ExtensionConfig } from '../extension/extension-config';
+import { log } from '../logger';
+import { runExtensionCommand } from './extension';
 
 /**
  * Subcommands of preset for setup
@@ -23,11 +23,13 @@ export const SUBCOMMAND_RESET = 'reset';
  * Pairs of preset subcommand and driver candidates.
  * Driver names listed in KNOWN_DRIVERS to install by default
  */
-const PRESET_PAIRS = Object.freeze({
-  mobile: Object.keys(MOBILE_DRIVERS),
-  desktop: Object.keys(DESKTOP_DRIVERS),
-  browser: Object.keys(DESKTOP_BROWSERS),
-} as const);
+const PRESET_PAIRS = Object.freeze(
+  {
+    mobile: Object.keys(MOBILE_DRIVERS),
+    desktop: Object.keys(DESKTOP_DRIVERS),
+    browser: Object.keys(DESKTOP_BROWSERS),
+  } as const,
+);
 const DRIVERS_ONLY_MACOS = ['xcuitest', 'safari', 'mac2'];
 
 const DRIVERS_ONLY_WINDOWS = ['windows'];
@@ -123,8 +125,8 @@ async function resetAllExtensions(
         );
       } catch (e) {
         log.warn(
-          `${extensionName} ${command} cannot be uninstalled. Will delete the manifest anyway. ` +
-            `Original error: ${e instanceof Error ? e.stack : String(e)}`,
+          `${extensionName} ${command} cannot be uninstalled. Will delete the manifest anyway. `
+            + `Original error: ${e instanceof Error ? e.stack : String(e)}`,
         );
       }
     }
@@ -205,8 +207,8 @@ async function installExtension(
 ): Promise<void> {
   if (Object.keys(extensionConfig.installedExtensions).includes(extensionName)) {
     log.info(
-      `${extensionName} (${extensionConfig.installedExtensions[extensionName].version}) is already installed. ` +
-        `Skipping the installation.`,
+      `${extensionName} (${extensionConfig.installedExtensions[extensionName].version}) is already installed. `
+        + `Skipping the installation.`,
     );
     return;
   }
@@ -223,8 +225,8 @@ async function uninstallExtension(
 ): Promise<void> {
   if (!Object.keys(extensionConfig.installedExtensions).includes(extensionName)) {
     log.info(
-      `${extensionName} (${extensionConfig.installedExtensions[extensionName].version}) is not installed. ` +
-        `Skipping its uninstall.`,
+      `${extensionName} (${extensionConfig.installedExtensions[extensionName].version}) is not installed. `
+        + `Skipping its uninstall.`,
     );
     return;
   }
@@ -240,6 +242,6 @@ function extensionCommandArgs(
   command: CliExtensionSubcommand,
 ): CliExtArgs {
   return extensionCommand === 'plugin'
-    ? {subcommand: 'plugin', pluginCommand: command, plugin: extensionName}
-    : {subcommand: 'driver', driverCommand: command, driver: extensionName};
+    ? { subcommand: 'plugin', pluginCommand: command, plugin: extensionName }
+    : { subcommand: 'driver', driverCommand: command, driver: extensionName };
 }

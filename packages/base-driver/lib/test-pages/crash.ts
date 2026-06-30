@@ -1,4 +1,4 @@
-import {errors} from '../protocol';
+import { errors } from '../protocol';
 
 /**
  * Route handler that throws {@link errors.UnknownCommandError} for testing.

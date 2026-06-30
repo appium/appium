@@ -1,6 +1,6 @@
-import type {ActionSequence, Location, Rect, Size, Orientation} from '@appium/types';
-import {errors} from 'appium/driver';
-import type {FakeDriver} from '../driver';
+import type { ActionSequence, Location, Orientation, Rect, Size } from '@appium/types';
+import { errors } from 'appium/driver';
+import type { FakeDriver } from '../driver';
 
 const ORIENTATIONS = new Set<string>(['LANDSCAPE', 'PORTRAIT']);
 
@@ -55,12 +55,12 @@ export async function getScreenshot(this: FakeDriver): Promise<string> {
 
 /** getWindowSize. */
 export async function getWindowSize(this: FakeDriver): Promise<Size> {
-  return {width: this.appModel.width, height: this.appModel.height};
+  return { width: this.appModel.width, height: this.appModel.height };
 }
 
 /** getWindowRect. */
 export async function getWindowRect(this: FakeDriver): Promise<Rect> {
-  return {width: this.appModel.width, height: this.appModel.height, x: 0, y: 0};
+  return { width: this.appModel.width, height: this.appModel.height, x: 0, y: 0 };
 }
 
 /** performActions. */
@@ -117,6 +117,6 @@ export async function bidiNavigate(this: FakeDriver, context: string, url: strin
 /** Return the last math result detected by a plugin that publishes it */
 export async function getLastPluginMath(
   this: FakeDriver,
-): Promise<{pluginName: string; result: number} | null> {
+): Promise<{ pluginName: string; result: number; } | null> {
   return this.lastPluginMath;
 }

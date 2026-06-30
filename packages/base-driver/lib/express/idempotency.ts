@@ -1,8 +1,8 @@
-import {log} from './logger';
-import {LRUCache} from 'lru-cache';
-import {util} from '@appium/support';
-import {EventEmitter} from 'node:events';
-import type {Request, Response, NextFunction} from 'express';
+import { util } from '@appium/support';
+import type { NextFunction, Request, Response } from 'express';
+import { LRUCache } from 'lru-cache';
+import { EventEmitter } from 'node:events';
+import { log } from './logger';
 
 interface CachedResponse {
   method: string;
@@ -16,7 +16,7 @@ const IDEMPOTENT_RESPONSES = new LRUCache<string, CachedResponse>({
   ttl: 30 * 60 * 1000,
   updateAgeOnGet: true,
   updateAgeOnHas: true,
-  dispose: ({responseStateListener}) => {
+  dispose: ({ responseStateListener }) => {
     responseStateListener?.removeAllListeners();
   },
 });
@@ -41,7 +41,7 @@ export async function handleIdempotency(
 
   const key = Array.isArray(keyOrArr) ? keyOrArr[0] : keyOrArr;
 
-  log.updateAsyncContext({idempotencyKey: key});
+  log.updateAsyncContext({ idempotencyKey: key });
 
   if (!MONITORED_METHODS.includes(req.method)) {
     next();
@@ -60,7 +60,7 @@ export async function handleIdempotency(
     next();
     return;
   }
-  const {method, path, response, responseStateListener} = cached;
+  const { method, path, response, responseStateListener } = cached;
   if (req.method !== method || req.path !== path) {
     log.warn(`Got two different requests with the same idempotency key '${key}'`);
     log.warn('Is the client generating idempotency keys properly?');
@@ -132,9 +132,8 @@ function cacheResponse(key: string, req: Request, res: Response): void {
     responseChunks.push(buf);
     responseSize += buf.length;
     if (responseSize > MAX_CACHED_PAYLOAD_SIZE_BYTES) {
-      errorMessage =
-        `The actual response size exceeds ` +
-        `the maximum allowed limit of ${MAX_CACHED_PAYLOAD_SIZE_BYTES} bytes`;
+      errorMessage = `The actual response size exceeds `
+        + `the maximum allowed limit of ${MAX_CACHED_PAYLOAD_SIZE_BYTES} bytes`;
     }
     return originalSocketWriter(
       chunk as string | Buffer | Uint8Array,
@@ -152,8 +151,8 @@ function cacheResponse(key: string, req: Request, res: Response): void {
 
     if (!IDEMPOTENT_RESPONSES.has(key)) {
       log.info(
-        `Could not cache the response identified by '${key}'. ` +
-          `Cache consistency has been damaged`,
+        `Could not cache the response identified by '${key}'. `
+          + `Cache consistency has been damaged`,
       );
     } else {
       log.info(`Could not cache the response identified by '${key}': ${errorMessage}`);
@@ -174,8 +173,8 @@ function cacheResponse(key: string, req: Request, res: Response): void {
 
     if (!IDEMPOTENT_RESPONSES.has(key)) {
       log.info(
-        `Could not cache the response identified by '${key}'. ` +
-          `Cache consistency has been damaged`,
+        `Could not cache the response identified by '${key}'. `
+          + `Cache consistency has been damaged`,
       );
     } else if (errorMessage) {
       log.info(`Could not cache the response identified by '${key}': ${errorMessage}`);

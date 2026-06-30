@@ -1,13 +1,13 @@
-import {util, timing} from '@appium/support';
-import {asyncmap} from 'asyncbox';
-import type {DriverClass, ExtensionType, PluginClass} from '@appium/types';
-import type {ExtClass} from 'appium/types';
-import {USE_ALL_PLUGINS} from '../constants';
-import {log} from '../logger';
-import {DriverConfig} from './driver-config';
-import {Manifest} from './manifest';
-import {zip} from '../utils';
-import {PluginConfig} from './plugin-config';
+import { timing, util } from '@appium/support';
+import type { DriverClass, ExtensionType, PluginClass } from '@appium/types';
+import type { ExtClass } from 'appium/types';
+import { asyncmap } from 'asyncbox';
+import { USE_ALL_PLUGINS } from '../constants';
+import { log } from '../logger';
+import { zip } from '../utils';
+import { DriverConfig } from './driver-config';
+import { Manifest } from './manifest';
+import { PluginConfig } from './plugin-config';
 
 export type ExtensionConfigs = {
   driverConfig: DriverConfig;
@@ -33,7 +33,7 @@ export async function loadExtensions(appiumHome: string): Promise<ExtensionConfi
   const pluginConfig = PluginConfig.getInstance(manifest) ?? PluginConfig.create(manifest);
 
   await Promise.all([driverConfig.validate(), pluginConfig.validate()]);
-  return {driverConfig, pluginConfig};
+  return { driverConfig, pluginConfig };
 }
 
 /**
@@ -65,8 +65,10 @@ export async function getActivePlugins(
       } else {
         const suffix = util.isEmpty(pluginConfig.installedExtensions)
           ? `You don't have any plugins installed yet.`
-          : `Only the following ${Object.keys(pluginConfig.installedExtensions).length === 1 ? `plugin is` : `plugins are`} ` +
-            `available: ${Object.keys(pluginConfig.installedExtensions)}`;
+          : `Only the following ${
+            Object.keys(pluginConfig.installedExtensions).length === 1 ? `plugin is` : `plugins are`
+          } `
+            + `available: ${Object.keys(pluginConfig.installedExtensions)}`;
         throw new Error(
           `Could not load the plugin '${pluginName}' because it is not installed. ${suffix}`,
         );
@@ -102,8 +104,10 @@ export async function getActiveDrivers(
       } else {
         const suffix = util.isEmpty(driverConfig.installedExtensions)
           ? `You don't have any drivers installed yet.`
-          : `Only the following ${Object.keys(driverConfig.installedExtensions).length === 1 ? `driver is` : `drivers are`} ` +
-            `available: ${Object.keys(driverConfig.installedExtensions)}`;
+          : `Only the following ${
+            Object.keys(driverConfig.installedExtensions).length === 1 ? `driver is` : `drivers are`
+          } `
+            + `available: ${Object.keys(driverConfig.installedExtensions)}`;
         throw new Error(
           `Could not load the driver '${driverName}' because it is not installed. ${suffix}`,
         );
@@ -138,13 +142,13 @@ async function importExtensions(
         return extClass as ExtClass<ExtensionType>;
       } catch (err: any) {
         log.error(
-          `Could not load ${extType} '${extName}', so it will not be available. Error ` +
-            `in loading the ${extType} was: ${err.message}`,
+          `Could not load ${extType} '${extName}', so it will not be available. Error `
+            + `in loading the ${extType} was: ${err.message}`,
         );
         log.debug(err.stack);
       }
     },
-    {concurrency: asyncImportChunkSize},
+    { concurrency: asyncImportChunkSize },
   );
   return zip(extClasses, extNames).filter(([extClass]) => Boolean(extClass)) as Array<
     [ExtClass<ExtensionType>, string]

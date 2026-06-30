@@ -1,57 +1,57 @@
-import {BaseDriver} from 'appium/driver';
-import {util} from 'appium/support';
-import {ImageElementFinder} from '../../lib/finder';
-import {getImgElFromArgs} from '../../lib/plugin';
-import {ImageElement} from '../../lib/image-element';
-import {createSandbox, type SinonSandbox} from 'sinon';
-import {IMAGE_ELEMENT_PREFIX} from '../../lib/constants';
-import type {Constraints} from '@appium/types';
-import {expect, use} from 'chai';
+import type { Constraints } from '@appium/types';
+import { BaseDriver } from 'appium/driver';
+import { util } from 'appium/support';
+import { expect, use } from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {describe, it, before, beforeEach, afterEach} from 'node:test';
+import { afterEach, before, beforeEach, describe, it } from 'node:test';
+import { createSandbox, type SinonSandbox } from 'sinon';
+import { IMAGE_ELEMENT_PREFIX } from '../../lib/constants';
+import { ImageElementFinder } from '../../lib/finder';
+import { ImageElement } from '../../lib/image-element';
+import { getImgElFromArgs } from '../../lib/plugin';
 
 use(chaiAsPromised);
 
-const defRect = {x: 100, y: 110, width: 50, height: 25};
+const defRect = { x: 100, y: 110, width: 50, height: 25 };
 const defTemplate = Buffer.from('iVBORasdf', 'base64');
 
-describe('ImageElement', function () {
+describe('ImageElement', function() {
   const driver = new BaseDriver<Constraints>({} as any);
 
   let sandbox: SinonSandbox;
 
-  beforeEach(function () {
+  beforeEach(function() {
     sandbox = createSandbox();
   });
 
-  afterEach(function () {
+  afterEach(function() {
     sandbox.restore();
   });
 
-  describe('.size', function () {
-    it('should return the width and height of the image el', function () {
+  describe('.size', function() {
+    it('should return the width and height of the image el', function() {
       const el = new ImageElement({
         template: defTemplate,
         rect: defRect,
         score: 1.0,
       });
-      expect(el.size).to.eql({width: defRect.width, height: defRect.height});
+      expect(el.size).to.eql({ width: defRect.width, height: defRect.height });
     });
   });
 
-  describe('.location', function () {
-    it('should return the location of the image el', function () {
+  describe('.location', function() {
+    it('should return the location of the image el', function() {
       const el = new ImageElement({
         template: defTemplate,
         rect: defRect,
         score: 1.0,
       });
-      expect(el.location).to.eql({x: defRect.x, y: defRect.y});
+      expect(el.location).to.eql({ x: defRect.x, y: defRect.y });
     });
   });
 
-  describe('.center', function () {
-    it('should return the center location of the image el', function () {
+  describe('.center', function() {
+    it('should return the center location of the image el', function() {
       const el = new ImageElement({
         template: defTemplate,
         rect: defRect,
@@ -64,8 +64,8 @@ describe('ImageElement', function () {
     });
   });
 
-  describe('.asElement', function () {
-    it('should get the webdriver object representation of the element', function () {
+  describe('.asElement', function() {
+    it('should get the webdriver object representation of the element', function() {
       const el = new ImageElement({
         template: defTemplate,
         rect: defRect,
@@ -75,8 +75,8 @@ describe('ImageElement', function () {
     });
   });
 
-  describe('.equals', function () {
-    it('should say two image elements with same rect are equal', function () {
+  describe('.equals', function() {
+    it('should say two image elements with same rect are equal', function() {
       const el1 = new ImageElement({
         template: Buffer.from('foo'),
         rect: defRect,
@@ -90,10 +90,10 @@ describe('ImageElement', function () {
       expect(el1.equals(el2)).to.be.true;
       expect(el2.equals(el1)).to.be.true;
     });
-    it('should say two image elements with different rect are not equal', function () {
+    it('should say two image elements with different rect are not equal', function() {
       const el1 = new ImageElement({
         template: defTemplate,
-        rect: {...defRect, x: 0},
+        rect: { ...defRect, x: 0 },
         score: 1.0,
       });
       const el2 = new ImageElement({
@@ -106,18 +106,18 @@ describe('ImageElement', function () {
     });
   });
 
-  describe('.click', function () {
-    it('should reject an invalid tap strategy', async function () {
+  describe('.click', function() {
+    it('should reject an invalid tap strategy', async function() {
       const d = new BaseDriver<Constraints>({} as any);
       const el = new ImageElement({
         template: defTemplate,
         rect: defRect,
         score: 1.0,
       });
-      await d.settings.update({imageElementTapStrategy: 'bad'});
+      await d.settings.update({ imageElementTapStrategy: 'bad' });
       await expect(el.click(d as any)).to.be.rejectedWith(/Incorrect imageElementTapStrategy/);
     });
-    it('should try to check for image element staleness, and throw if stale', async function () {
+    it('should try to check for image element staleness, and throw if stale', async function() {
       const d = new BaseDriver<Constraints>({} as any);
       const f = new ImageElementFinder();
       sandbox.stub(f, 'findByImage').throws();
@@ -141,7 +141,7 @@ describe('ImageElement', function () {
       });
       await expect(el.click(d as any)).to.be.rejectedWith(/no longer attached/);
     });
-    it('should auto-update element position if requested', async function () {
+    it('should auto-update element position if requested', async function() {
       const d = new BaseDriver<Constraints>({} as any);
       (d as any).performActions = () => {};
       sandbox.stub(d as any, 'performActions');
@@ -152,7 +152,7 @@ describe('ImageElement', function () {
         score: 1.0,
         finder: f,
       });
-      const newRect = {...defRect, x: defRect.x + 10, y: defRect.y + 5};
+      const newRect = { ...defRect, x: defRect.x + 10, y: defRect.y + 5 };
       const elPos2 = new ImageElement({
         template: defTemplate,
         rect: newRect,
@@ -167,7 +167,7 @@ describe('ImageElement', function () {
       await el.click(d as any);
       expect(el.rect).to.eql(newRect);
     });
-    it('should tap the center of an element using w3c actions by default', async function () {
+    it('should tap the center of an element using w3c actions by default', async function() {
       const d = new BaseDriver<Constraints>({} as any);
       (d as any).performActions = () => {};
       const actionStub = sandbox.stub(d as any, 'performActions');
@@ -185,7 +185,7 @@ describe('ImageElement', function () {
       expect(pointerMoveAction.x).to.equal(el.center.x);
       expect(pointerMoveAction.y).to.equal(el.center.y);
     });
-    it('should fall back to touchactions if w3c actions do not exist on driver', async function () {
+    it('should fall back to touchactions if w3c actions do not exist on driver', async function() {
       const d = new BaseDriver<Constraints>({} as any);
       (d as any).performTouch = () => {};
       const actionStub = sandbox.stub(d as any, 'performTouch');
@@ -203,7 +203,7 @@ describe('ImageElement', function () {
       expect(action.x).to.equal(el.center.x);
       expect(action.y).to.equal(el.center.y);
     });
-    it('should use touchactions if requested', async function () {
+    it('should use touchactions if requested', async function() {
       const d = new BaseDriver<Constraints>({} as any);
       (d as any).performActions = () => {};
       const w3cStub = sandbox.stub(d as any, 'performActions');
@@ -225,7 +225,7 @@ describe('ImageElement', function () {
       expect(action.y).to.equal(el.center.y);
       expect(w3cStub.callCount).to.eql(0);
     });
-    it('should throw if driver does not implement any type of action', async function () {
+    it('should throw if driver does not implement any type of action', async function() {
       const d = new BaseDriver<Constraints>({} as any);
       const el = new ImageElement({
         template: defTemplate,
@@ -240,7 +240,7 @@ describe('ImageElement', function () {
     });
   });
 
-  describe('#execute', function () {
+  describe('#execute', function() {
     // aGFwcHkgdGVzdGluZw== is 'happy testing'
     const f = new ImageElementFinder();
     const imgEl = new ImageElement({
@@ -252,55 +252,55 @@ describe('ImageElement', function () {
     });
     let clickStub: sinon.SinonStub;
 
-    before(function () {
+    before(function() {
       clickStub = sandbox.stub(imgEl, 'click');
       f.registerImageElement(imgEl);
       clickStub.returns(true);
     });
 
-    it('should reject executions for unsupported commands', async function () {
+    it('should reject executions for unsupported commands', async function() {
       await expect(ImageElement.execute(driver as any, imgEl, 'foobar')).to.be.rejectedWith(
         /not yet been implemented/,
       );
     });
-    it('should get displayed status of element', async function () {
+    it('should get displayed status of element', async function() {
       await expect(ImageElement.execute(driver as any, imgEl, 'elementDisplayed')).to.eventually.be
         .true;
     });
-    it('should get size of element', async function () {
+    it('should get size of element', async function() {
       await expect(ImageElement.execute(driver as any, imgEl, 'getSize')).to.eventually.eql({
         width: defRect.width,
         height: defRect.height,
       });
     });
-    it('should get location of element', async function () {
+    it('should get location of element', async function() {
       await expect(ImageElement.execute(driver as any, imgEl, 'getLocation')).to.eventually.eql({
         x: defRect.x,
         y: defRect.y,
       });
     });
-    it('should get location in view of element', async function () {
+    it('should get location in view of element', async function() {
       await expect(ImageElement.execute(driver as any, imgEl, 'getLocation')).to.eventually.eql({
         x: defRect.x,
         y: defRect.y,
       });
     });
-    it('should get rect of element', async function () {
+    it('should get rect of element', async function() {
       await expect(ImageElement.execute(driver as any, imgEl, 'getElementRect')).to.eventually.eql(
         defRect,
       );
     });
-    it('should get score of element', async function () {
+    it('should get score of element', async function() {
       await expect(
         ImageElement.execute(driver as any, imgEl, 'getAttribute', 'score'),
       ).to.eventually.eql(0);
     });
-    it('should get visual of element', async function () {
+    it('should get visual of element', async function() {
       await expect(
         ImageElement.execute(driver as any, imgEl, 'getAttribute', 'visual'),
       ).to.eventually.eql('aGFwcHkgdGVzdGluZw==');
     });
-    it('should get null as visual of element by default', async function () {
+    it('should get null as visual of element by default', async function() {
       const imgElement = new ImageElement({
         template: defTemplate,
         rect: defRect,
@@ -310,19 +310,19 @@ describe('ImageElement', function () {
         ImageElement.execute(driver as any, imgElement, 'getAttribute', 'visual'),
       ).to.eventually.eql(null);
     });
-    it('should not get other attribute', async function () {
+    it('should not get other attribute', async function() {
       await expect(
         ImageElement.execute(driver as any, imgEl, 'getAttribute', 'content-desc'),
       ).to.eventually.rejectedWith('Method has not yet been implemented');
     });
-    it('should click element', async function () {
+    it('should click element', async function() {
       await expect(ImageElement.execute(driver as any, imgEl, 'click')).to.eventually.be.true;
     });
   });
 });
 
-describe('image element LRU cache', function () {
-  it('should accept and cache image elements', function () {
+describe('image element LRU cache', function() {
+  it('should accept and cache image elements', function() {
     const el1 = new ImageElement({
       template: defTemplate,
       rect: defRect,
@@ -338,7 +338,7 @@ describe('image element LRU cache', function () {
     expect(el1.equals(finder.getImageElement(el1.id)!)).to.be.true;
     expect(finder.getImageElement(el2.id)).to.be.undefined;
   });
-  it('once cache reaches max size, should eject image elements', function () {
+  it('once cache reaches max size, should eject image elements', function() {
     const el1 = new ImageElement({
       template: defTemplate,
       rect: defRect,
@@ -358,17 +358,17 @@ describe('image element LRU cache', function () {
   });
 });
 
-describe('getImgElFromArgs', function () {
-  it('should return the image element id from json obj in args', function () {
+describe('getImgElFromArgs', function() {
+  it('should return the image element id from json obj in args', function() {
     const imgEl = `${IMAGE_ELEMENT_PREFIX}foo`;
     const args = [1, 'foo', imgEl];
     expect(getImgElFromArgs(args)).to.eql(imgEl);
   });
-  it('should not return anything if image element id not in args', function () {
+  it('should not return anything if image element id not in args', function() {
     const args = [1, 'foo'];
     expect(getImgElFromArgs(args)).to.be.undefined;
   });
-  it('should not find image element id in anything but prefix', function () {
+  it('should not find image element id in anything but prefix', function() {
     const notImgEl = `foo${IMAGE_ELEMENT_PREFIX}`;
     const args = [1, 'foo', notImgEl];
     expect(getImgElFromArgs(args)).to.be.undefined;

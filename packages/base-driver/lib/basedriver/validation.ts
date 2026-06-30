@@ -1,6 +1,6 @@
-import type {Constraint} from '@appium/types';
-import {util} from '@appium/support';
-import {log} from './logger';
+import { util } from '@appium/support';
+import type { Constraint } from '@appium/types';
+import { log } from './logger';
 
 export class Validator {
   private readonly _validators: Record<
@@ -76,8 +76,8 @@ export class Validator {
     deprecated: (value: any, options?: any, key?: string): string | null => {
       if (value !== undefined && options) {
         log.warn(
-          `The '${key}' capability has been deprecated and must not be used anymore. ` +
-            `Please check the driver documentation for possible alternatives.`,
+          `The '${key}' capability has been deprecated and must not be used anymore. `
+            + `Please check the driver documentation for possible alternatives.`,
         );
       }
       return null;
@@ -107,9 +107,9 @@ export class Validator {
         return 'is required to be present';
       }
       if (
-        !options?.allowEmpty &&
-        ((value !== undefined && util.isEmpty(value)) ||
-          (typeof value === 'string' && !value.trim()))
+        !options?.allowEmpty
+        && ((value !== undefined && util.isEmpty(value))
+          || (typeof value === 'string' && !value.trim()))
       ) {
         return 'must not be empty or blank';
       }

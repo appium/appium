@@ -1,6 +1,6 @@
-import type {DriverCaps, W3CDriverCaps} from '../capabilities';
-import type {Constraints} from '../constraints';
-import type {Element, StringRecord} from '../util';
+import type { DriverCaps, W3CDriverCaps } from '../capabilities';
+import type { Constraints } from '../constraints';
+import type { Element, StringRecord } from '../util';
 
 export interface IBidiCommands {
   bidiSubscribe(events: string[], contexts: string[]): Promise<void>;
@@ -466,11 +466,12 @@ export type IImplementedCommands<
   CreateResult = DefaultCreateSessionResult<C>,
   DeleteResult = DefaultDeleteSessionResult,
   SessionData extends StringRecord = StringRecord,
-> = IBidiCommands &
-  ILogCommands &
-  IFindCommands &
-  ISettingsCommands<Settings> &
-  ITimeoutCommands &
-  IEventCommands &
-  IExecuteCommands &
-  ISessionHandler<C, CreateResult, DeleteResult, SessionData>;
+> =
+  & IBidiCommands
+  & ILogCommands
+  & IFindCommands
+  & ISettingsCommands<Settings>
+  & ITimeoutCommands
+  & IEventCommands
+  & IExecuteCommands
+  & ISessionHandler<C, CreateResult, DeleteResult, SessionData>;

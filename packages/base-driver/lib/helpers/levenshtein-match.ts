@@ -1,5 +1,5 @@
-import type {StringRecord} from '@appium/types';
-import {distance} from 'fastest-levenshtein';
+import type { StringRecord } from '@appium/types';
+import { distance } from 'fastest-levenshtein';
 
 /**
  * Inclusive maximum Levenshtein edit distance for offering a "did you mean" hint.
@@ -24,7 +24,7 @@ export function rankLevenshteinCandidates(
   maxEditDistance: number = LEVENSHTEIN_SUGGESTION_MAX_EDIT_DISTANCE,
 ): LevenshteinRankResult {
   if (!candidates.length) {
-    return {sorted: [], suggestion: undefined};
+    return { sorted: [], suggestion: undefined };
   }
 
   const matchesMap: StringRecord<string[]> = candidates
@@ -49,14 +49,13 @@ export function rankLevenshteinCandidates(
   const best = sorted[0];
   const firstDistanceKey = sortedDistanceKeys[0];
   const minDist = firstDistanceKey !== undefined ? parseInt(firstDistanceKey, 10) : NaN;
-  const suggestion =
-    maxEditDistance >= 0 &&
-    best !== undefined &&
-    !Number.isNaN(minDist) &&
-    minDist <= maxEditDistance
-      ? best
-      : undefined;
-  return {sorted, suggestion};
+  const suggestion = maxEditDistance >= 0
+      && best !== undefined
+      && !Number.isNaN(minDist)
+      && minDist <= maxEditDistance
+    ? best
+    : undefined;
+  return { sorted, suggestion };
 }
 
 /**

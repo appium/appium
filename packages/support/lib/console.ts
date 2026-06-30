@@ -1,7 +1,7 @@
-import {Console as NodeConsole} from 'node:console';
-import {Writable} from 'node:stream';
-import {styleText as nodeStyleText, type InspectOptions} from 'node:util';
-import type {JsonValue} from 'type-fest';
+import { Console as NodeConsole } from 'node:console';
+import { Writable } from 'node:stream';
+import { type InspectOptions, styleText as nodeStyleText } from 'node:util';
+import type { JsonValue } from 'type-fest';
 
 /** ANSI styles supported by Node's `util.styleText`. `grey` is accepted as an alias for `gray`. */
 export type TextStyle =
@@ -66,10 +66,10 @@ function isUnicodeSupported(): boolean {
   }
   if (process.platform === 'win32') {
     return Boolean(
-      process.env.CI ||
-      process.env.WT_SESSION ||
-      process.env.TERMINAL_EMULATOR === 'JetBrains-JediTerm' ||
-      process.env.TERM_PROGRAM === 'vscode',
+      process.env.CI
+        || process.env.WT_SESSION
+        || process.env.TERMINAL_EMULATOR === 'JetBrains-JediTerm'
+        || process.env.TERM_PROGRAM === 'vscode',
     );
   }
   return true;
@@ -78,12 +78,12 @@ function isUnicodeSupported(): boolean {
 const UNICODE = isUnicodeSupported();
 
 /** Returns whether stderr should use ANSI color by default. */
-function stderrSupportsColor(stream: {isTTY?: boolean} = process.stderr): boolean {
-  const {env} = process;
+function stderrSupportsColor(stream: { isTTY?: boolean; } = process.stderr): boolean {
+  const { env } = process;
   if (env.NO_COLOR !== undefined || env.NODE_DISABLE_COLORS !== undefined) {
     return false;
   }
-  const {FORCE_COLOR: forceColor} = env;
+  const { FORCE_COLOR: forceColor } = env;
   if (forceColor !== undefined) {
     const normalized = forceColor.toLowerCase();
     return normalized !== '0' && normalized !== 'false';
@@ -154,7 +154,7 @@ export class CliConsole {
   readonly #useColor: boolean;
 
   constructor(opts: ConsoleOpts = {}) {
-    const {jsonMode = false, useSymbols = true, useColor} = opts;
+    const { jsonMode = false, useSymbols = true, useColor } = opts;
     this.#console = new NodeConsole(process.stdout, jsonMode ? new NullWritable() : process.stderr);
     this.#useSymbols = Boolean(useSymbols);
     this.#useColor = Boolean(useColor ?? stderrSupportsColor(process.stderr));
@@ -223,4 +223,4 @@ export class CliConsole {
 }
 
 export const console = new CliConsole();
-export {logSymbols, logSymbols as symbols};
+export { logSymbols, logSymbols as symbols };

@@ -1,6 +1,6 @@
-import type {AppiumConfigJsonSchema} from '@appium/schema';
-import type {AppiumConfiguration, ServerConfig} from './appium-config';
-import type {Associated, KebabToCamel} from './util';
+import type { AppiumConfigJsonSchema } from '@appium/schema';
+import type { AppiumConfiguration, ServerConfig } from './appium-config';
+import type { Associated, KebabToCamel } from './util';
 
 /**
  * The Appium configuration as it would be in a user-provided configuration file.
@@ -11,9 +11,11 @@ export type AppiumConfig = Partial<AppiumConfiguration>;
  * Camel-cased server config. _Not_ flattened.
  */
 export type NormalizedServerConfig = {
-  [Prop in keyof ServerConfigMapping as AppiumServerJsonSchema[Prop] extends WithDest
-    ? AppiumServerJsonSchema[Prop]['appiumCliDest']
-    : KebabToCamel<Prop>]: ServerConfig[Prop];
+  [
+    Prop in keyof ServerConfigMapping as AppiumServerJsonSchema[Prop] extends WithDest
+      ? AppiumServerJsonSchema[Prop]['appiumCliDest']
+      : KebabToCamel<Prop>
+  ]: ServerConfig[Prop];
 };
 
 /**
@@ -48,20 +50,18 @@ type ServerConfigMapping = Associated<ServerConfig, AppiumServerJsonSchema>;
  * {@linkcode WithDest}, and uses the _value_ of that property for the key name;
  * otherwise uses the camel-cased value of the key name.
  */
-type SetKeyForProp<Prop extends keyof ServerConfigMapping> =
-  AppiumServerJsonSchema[Prop] extends WithDest
-    ? AppiumServerJsonSchema[Prop]['appiumCliDest']
-    : KebabToCamel<Prop>;
+type SetKeyForProp<Prop extends keyof ServerConfigMapping> = AppiumServerJsonSchema[Prop] extends WithDest
+  ? AppiumServerJsonSchema[Prop]['appiumCliDest']
+  : KebabToCamel<Prop>;
 
 /**
  * Checks for the existence of default values, and ensures those properties will
  * always be defined (eliminates `| undefined` from the type).
  * If no default value, just a type.
  */
-type KeyOrDefaultForProp<Prop extends keyof ServerConfigMapping> =
-  AppiumServerJsonSchema[Prop] extends WithDefault
-    ? NonNullable<ServerConfig[Prop]>
-    : ServerConfig[Prop];
+type KeyOrDefaultForProp<Prop extends keyof ServerConfigMapping> = AppiumServerJsonSchema[Prop] extends WithDefault
+  ? NonNullable<ServerConfig[Prop]>
+  : ServerConfig[Prop];
 
 // begin conditionals
 

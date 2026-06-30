@@ -106,4 +106,4 @@ export class Timer {
   }
 }
 
-export {Timer as default};
+export { Timer as default };

@@ -1,19 +1,19 @@
-import {describe, it, beforeEach, afterEach} from 'node:test';
-import {expect} from 'chai';
+import { getTestPort, TEST_HOST } from '@appium/driver-test-support';
 import axios from 'axios';
-import {server} from '../../../lib/express/server';
-import {LEGACY_TEST_PAGES_ENV} from '../../../lib/test-pages/env';
-import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
+import { expect } from 'chai';
+import { afterEach, beforeEach, describe, it } from 'node:test';
+import { server } from '../../../lib/express/server';
+import { LEGACY_TEST_PAGES_ENV } from '../../../lib/test-pages/env';
 
-describe('legacy test pages gating', function () {
+describe('legacy test pages gating', function() {
   let previousEnv: string | undefined;
 
-  beforeEach(function () {
+  beforeEach(function() {
     previousEnv = process.env[LEGACY_TEST_PAGES_ENV];
     delete process.env[LEGACY_TEST_PAGES_ENV];
   });
 
-  afterEach(function () {
+  afterEach(function() {
     if (previousEnv === undefined) {
       delete process.env[LEGACY_TEST_PAGES_ENV];
     } else {
@@ -21,14 +21,14 @@ describe('legacy test pages gating', function () {
     }
   });
 
-  it('should not serve guinea-pig pages by default', async function () {
+  it('should not serve guinea-pig pages by default', async function() {
     const port = await getTestPort();
     const hwServer = await server({
       routeConfiguringFunction: () => {},
       port,
     });
     try {
-      const {status} = await axios.get(`http://${TEST_HOST}:${port}/test/guinea-pig`, {
+      const { status } = await axios.get(`http://${TEST_HOST}:${port}/test/guinea-pig`, {
         validateStatus: null,
       });
       expect(status).to.equal(404);
@@ -37,7 +37,7 @@ describe('legacy test pages gating', function () {
     }
   });
 
-  it('should serve guinea-pig pages when APPIUM_ENABLE_LEGACY_TEST_PAGES is set', async function () {
+  it('should serve guinea-pig pages when APPIUM_ENABLE_LEGACY_TEST_PAGES is set', async function() {
     process.env[LEGACY_TEST_PAGES_ENV] = '1';
     const port = await getTestPort();
     const hwServer = await server({
@@ -45,7 +45,7 @@ describe('legacy test pages gating', function () {
       port,
     });
     try {
-      const {data, status} = await axios.get(`http://${TEST_HOST}:${port}/test/guinea-pig`);
+      const { data, status } = await axios.get(`http://${TEST_HOST}:${port}/test/guinea-pig`);
       expect(status).to.equal(200);
       expect(data).to.include('I am some page content');
     } finally {

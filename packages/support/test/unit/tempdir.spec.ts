@@ -1,33 +1,33 @@
-import {expect, use} from 'chai';
+import { expect, use } from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {afterEach, describe, it} from 'node:test';
-import {tempDir, fs} from '../../lib';
+import { afterEach, describe, it } from 'node:test';
+import { fs, tempDir } from '../../lib';
 
 use(chaiAsPromised);
 
-describe('tempdir', function () {
-  afterEach(function () {
+describe('tempdir', function() {
+  afterEach(function() {
     delete process.env.APPIUM_TMP_DIR;
   });
 
-  it('should be able to generate a path', async function () {
-    const path = await tempDir.path({prefix: 'myfile', suffix: '.tmp'});
+  it('should be able to generate a path', async function() {
+    const path = await tempDir.path({ prefix: 'myfile', suffix: '.tmp' });
     expect(path).to.exist;
     expect(path).to.include('myfile.tmp');
   });
 
-  it('should be able to generate a path with process.env.APPIUM_TMP_DIR', async function () {
+  it('should be able to generate a path with process.env.APPIUM_TMP_DIR', async function() {
     const preRootDirPath = await tempDir.openDir();
     process.env.APPIUM_TMP_DIR = preRootDirPath;
 
-    const path = await tempDir.path({prefix: 'myfile', suffix: '.tmp'});
+    const path = await tempDir.path({ prefix: 'myfile', suffix: '.tmp' });
     expect(path).to.exist;
     expect(path).to.include(preRootDirPath);
     expect(path).to.include('myfile.tmp');
   });
 
-  it('should be able to create a temp file', async function () {
-    const res = await tempDir.open({prefix: 'my-test-file', suffix: '.zip'});
+  it('should be able to create a temp file', async function() {
+    const res = await tempDir.open({ prefix: 'my-test-file', suffix: '.zip' });
     expect(res).to.exist;
     expect(res.path).to.exist;
     expect(res.path).to.include('my-test-file.zip');
@@ -35,11 +35,11 @@ describe('tempdir', function () {
     await expect(fs.exists(res.path)).to.eventually.be.ok;
   });
 
-  it('should be able to create a temp file with process.env.APPIUM_TMP_DIR', async function () {
+  it('should be able to create a temp file with process.env.APPIUM_TMP_DIR', async function() {
     const preRootDirPath = await tempDir.openDir();
     process.env.APPIUM_TMP_DIR = preRootDirPath;
 
-    const res = await tempDir.open({prefix: 'my-test-file', suffix: '.zip'});
+    const res = await tempDir.open({ prefix: 'my-test-file', suffix: '.zip' });
     expect(res).to.exist;
     expect(res.path).to.exist;
     expect(res.path).to.include(preRootDirPath);
@@ -48,7 +48,7 @@ describe('tempdir', function () {
     await expect(fs.exists(res.path)).to.eventually.be.ok;
   });
 
-  it('should generate a random temp dir', async function () {
+  it('should generate a random temp dir', async function() {
     const res = await tempDir.openDir();
     expect(res).to.be.a('string');
     await expect(fs.exists(res)).to.eventually.be.ok;
@@ -57,7 +57,7 @@ describe('tempdir', function () {
     expect(res).to.not.equal(res2);
   });
 
-  it('should generate a random temp dir, but the same with process.env.APPIUM_TMP_DIR', async function () {
+  it('should generate a random temp dir, but the same with process.env.APPIUM_TMP_DIR', async function() {
     const preRootDirPath = await tempDir.openDir();
     process.env.APPIUM_TMP_DIR = preRootDirPath;
 
@@ -71,7 +71,7 @@ describe('tempdir', function () {
     expect(res).to.not.equal(res2);
   });
 
-  it('should generate one temp dir used for the life of the process', async function () {
+  it('should generate one temp dir used for the life of the process', async function() {
     const res = await tempDir.staticDir();
     expect(res).to.be.a('string');
     await expect(fs.exists(res)).to.eventually.be.ok;

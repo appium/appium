@@ -1,9 +1,9 @@
-import {describe, it} from 'node:test';
-import {expect} from 'chai';
-import {errors, errorFromMJSONWPStatusCode, errorFromW3CJsonCode, isErrorType} from '../../../lib';
-import {BadParametersError, getResponseForW3CError} from '../../../lib/protocol/errors';
-import {StatusCodes as HTTPStatusCodes} from 'http-status-codes';
+import { expect } from 'chai';
+import { StatusCodes as HTTPStatusCodes } from 'http-status-codes';
 import path from 'node:path';
+import { describe, it } from 'node:test';
+import { errorFromMJSONWPStatusCode, errorFromW3CJsonCode, errors, isErrorType } from '../../../lib';
+import { BadParametersError, getResponseForW3CError } from '../../../lib/protocol/errors';
 
 const basename = path.basename(__filename);
 
@@ -31,8 +31,7 @@ const errorsList: ErrorListItem[] = [
   },
   {
     errorName: 'ElementNotInteractableError',
-    errorMsg:
-      'A command could not be completed because the element is not pointer- or keyboard interactable',
+    errorMsg: 'A command could not be completed because the element is not pointer- or keyboard interactable',
     error: 'element not interactable',
   },
   {
@@ -54,8 +53,7 @@ const errorsList: ErrorListItem[] = [
   },
   {
     errorName: 'NoSuchFrameError',
-    errorMsg:
-      'A request to switch to a frame could not be satisfied because the frame could not be found.',
+    errorMsg: 'A request to switch to a frame could not be satisfied because the frame could not be found.',
     error: 'no such frame',
     errorCode: 8,
   },
@@ -74,15 +72,13 @@ const errorsList: ErrorListItem[] = [
   },
   {
     errorName: 'StaleElementReferenceError',
-    errorMsg:
-      'An element command failed because the referenced element is no longer attached to the DOM.',
+    errorMsg: 'An element command failed because the referenced element is no longer attached to the DOM.',
     error: 'stale element reference',
     errorCode: 10,
   },
   {
     errorName: 'ElementNotVisibleError',
-    errorMsg:
-      'An element command could not be completed because the element is not visible on the page.',
+    errorMsg: 'An element command could not be completed because the element is not visible on the page.',
     errorCode: 11,
   },
   {
@@ -123,15 +119,13 @@ const errorsList: ErrorListItem[] = [
   },
   {
     errorName: 'NoSuchWindowError',
-    errorMsg:
-      'A request to switch to a different window could not be satisfied because the window could not be found.',
+    errorMsg: 'A request to switch to a different window could not be satisfied because the window could not be found.',
     error: 'no such window',
     errorCode: 23,
   },
   {
     errorName: 'InvalidCookieDomainError',
-    errorMsg:
-      'An illegal attempt was made to set a cookie under a different domain than the current page.',
+    errorMsg: 'An illegal attempt was made to set a cookie under a different domain than the current page.',
     error: 'invalid cookie domain',
     errorCode: 24,
   },
@@ -168,7 +162,7 @@ const errorsList: ErrorListItem[] = [
     errorMsg: 'The coordinates provided to an interactions operation are invalid.',
     errorCode: 29,
   },
-  {errorName: 'IMENotAvailableError', errorMsg: 'IME was not available.', errorCode: 30},
+  { errorName: 'IMENotAvailableError', errorMsg: 'IME was not available.', errorCode: 30 },
   {
     errorName: 'IMEEngineActivationFailedError',
     errorMsg: 'An IME engine could not be started.',
@@ -227,9 +221,9 @@ const errorsList: ErrorListItem[] = [
   },
 ];
 
-describe('errors', function () {
+describe('errors', function() {
   for (const error of errorsList) {
-    it(error.errorName + ' should have a JSONWP code or W3C code and message', function () {
+    it(error.errorName + ' should have a JSONWP code or W3C code and message', function() {
       const ErrClass = (errors as any)[error.errorName];
       const errInstance = new ErrClass();
       if (error.errorCode) {
@@ -242,10 +236,10 @@ describe('errors', function () {
   }
 });
 
-describe('errorFromMJSONWPStatusCode', function () {
+describe('errorFromMJSONWPStatusCode', function() {
   for (const error of errorsList) {
     if (error.errorName !== 'NotYetImplementedError') {
-      it((error.errorCode ?? error.errorName) + ' should return correct error', function () {
+      it((error.errorCode ?? error.errorName) + ' should return correct error', function() {
         if (error.errorCode) {
           expect(errorFromMJSONWPStatusCode(error.errorCode)).to.have.property(
             'jsonwpCode',
@@ -273,7 +267,7 @@ describe('errorFromMJSONWPStatusCode', function () {
       });
     }
   }
-  it('should throw unknown error for unknown code', function () {
+  it('should throw unknown error for unknown code', function() {
     expect(errorFromMJSONWPStatusCode(99)).to.have.property('jsonwpCode', 13);
     expect(errorFromMJSONWPStatusCode(99)).to.have.property(
       'message',
@@ -282,10 +276,10 @@ describe('errorFromMJSONWPStatusCode', function () {
   });
 });
 
-describe('errorFromW3CJsonCode', function () {
+describe('errorFromW3CJsonCode', function() {
   for (const error of errorsList) {
     if (error.errorName !== 'NotYetImplementedError') {
-      it(error.errorName + ' should return correct error', function () {
+      it(error.errorName + ' should return correct error', function() {
         const w3cError = error.error;
         if (w3cError) {
           const err = errorFromW3CJsonCode(w3cError, error.errorMsg);
@@ -302,7 +296,7 @@ describe('errorFromW3CJsonCode', function () {
       });
     }
   }
-  it('should parse unknown errors', function () {
+  it('should parse unknown errors', function() {
     const msg = 'An unknown server-side error occurred while processing the command.';
     expect(isErrorType(errorFromW3CJsonCode('not a real error code', msg), errors.UnknownError)).to
       .be.true;
@@ -313,8 +307,8 @@ describe('errorFromW3CJsonCode', function () {
   });
 });
 
-describe('w3c Status Codes', function () {
-  it('should match the correct error codes', function () {
+describe('w3c Status Codes', function() {
+  it('should match the correct error codes', function() {
     const non400Errors: [string, number][] = [
       ['NoSuchDriverError', 404],
       ['NoSuchFrameError', 404],
@@ -346,14 +340,14 @@ describe('w3c Status Codes', function () {
   });
 });
 
-describe('.getResponseForW3CError', function () {
-  it('should return an error, message and stacktrace for just a generic exception', function () {
+describe('.getResponseForW3CError', function() {
+  it('should return an error, message and stacktrace for just a generic exception', function() {
     try {
       throw new Error('Some random error');
     } catch (e) {
       const [httpStatus, httpResponseBody] = getResponseForW3CError(e as Error);
       expect(httpStatus).to.equal(500);
-      const {error, message, stacktrace} = httpResponseBody.value;
+      const { error, message, stacktrace } = httpResponseBody.value;
       expect(message).to.match(/Some random error/);
       expect(error).to.equal('unknown error');
       expect(stacktrace).to.match(/caused by/);
@@ -361,61 +355,61 @@ describe('.getResponseForW3CError', function () {
       expect(stacktrace).to.contain(basename);
     }
   });
-  it('should return an error, message and stacktrace for a NoSuchElementError', function () {
+  it('should return an error, message and stacktrace for a NoSuchElementError', function() {
     const noSuchElementError = new errors.NoSuchElementError('specific error message');
     const [httpStatus, httpResponseBody] = getResponseForW3CError(noSuchElementError);
     expect(httpStatus).to.equal(404);
-    const {error, message, stacktrace} = httpResponseBody.value;
+    const { error, message, stacktrace } = httpResponseBody.value;
     expect(error).to.equal('no such element');
     expect(message).to.match(/specific error message/);
     expect(stacktrace).to.contain(basename);
   });
-  it('should handle BadParametersError', function () {
-    const badParamsError = new BadParametersError({required: ['foo']}, ['bar']);
+  it('should handle BadParametersError', function() {
+    const badParamsError = new BadParametersError({ required: ['foo'] }, ['bar']);
     const [httpStatus, httpResponseBody] = getResponseForW3CError(badParamsError);
     expect(httpStatus).to.equal(400);
-    const {error, message, stacktrace} = httpResponseBody.value;
+    const { error, message, stacktrace } = httpResponseBody.value;
     expect(error).to.equal('invalid argument');
     expect(message).to.match(/foo/);
     expect(message).to.match(/bar/);
     expect(stacktrace).to.contain(basename);
   });
-  it('should translate JSONWP errors', function () {
+  it('should translate JSONWP errors', function() {
     const [httpStatus, httpResponseBody] = getResponseForW3CError(
       new errors.NoSuchElementError('My custom message'),
     );
     expect(httpStatus).to.equal(404);
-    const {error, message, stacktrace} = httpResponseBody.value;
+    const { error, message, stacktrace } = httpResponseBody.value;
     expect(message).to.equal('My custom message');
     expect(error).to.equal('no such element');
     expect(stacktrace).to.exist;
   });
 });
 
-describe('.getActualError', function () {
-  describe('MJSONWP', function () {
-    it('should map a status code 7 no such element error as a NoSuchElementError', function () {
+describe('.getActualError', function() {
+  describe('MJSONWP', function() {
+    it('should map a status code 7 no such element error as a NoSuchElementError', function() {
       const actualError = new errors.ProxyRequestError('Error message does not matter', {
         value: 'does not matter',
         status: 7,
       }).getActualError();
       expect(isErrorType(actualError, errors.NoSuchElementError)).to.be.true;
     });
-    it('should map a status code 10, StaleElementReferenceError', function () {
+    it('should map a status code 10, StaleElementReferenceError', function() {
       const actualError = new errors.ProxyRequestError('Error message does not matter', {
         value: 'Does not matter',
         status: 10,
       }).getActualError();
       expect(isErrorType(actualError, errors.StaleElementReferenceError)).to.be.true;
     });
-    it('should map an unknown error to UnknownError', function () {
+    it('should map an unknown error to UnknownError', function() {
       const actualError = new errors.ProxyRequestError('Error message does not matter', {
         value: 'Does not matter',
         status: -100,
       }).getActualError();
       expect(isErrorType(actualError, errors.UnknownError)).to.be.true;
     });
-    it('should parse a JSON string', function () {
+    it('should parse a JSON string', function() {
       const actualError = new errors.ProxyRequestError(
         'Error message does not matter',
         JSON.stringify({
@@ -427,8 +421,8 @@ describe('.getActualError', function () {
     });
   });
 
-  describe('W3C', function () {
-    it('should map a 404 no such element error as a NoSuchElementError', function () {
+  describe('W3C', function() {
+    it('should map a 404 no such element error as a NoSuchElementError', function() {
       const actualError = new errors.ProxyRequestError(
         'Error message does not matter',
         {
@@ -440,7 +434,7 @@ describe('.getActualError', function () {
       ).getActualError();
       expect(isErrorType(actualError, errors.NoSuchElementError)).to.be.true;
     });
-    it('should map a 400 StaleElementReferenceError', function () {
+    it('should map a 400 StaleElementReferenceError', function() {
       const actualError = new errors.ProxyRequestError(
         'Error message does not matter',
         {
@@ -452,7 +446,7 @@ describe('.getActualError', function () {
       ).getActualError();
       expect(isErrorType(actualError, errors.StaleElementReferenceError)).to.be.true;
     });
-    it('should map an unknown error to UnknownError', function () {
+    it('should map an unknown error to UnknownError', function() {
       const actualError = new errors.ProxyRequestError(
         'Error message does not matter',
         {
@@ -464,7 +458,7 @@ describe('.getActualError', function () {
       ).getActualError();
       expect(isErrorType(actualError, errors.UnknownError)).to.be.true;
     });
-    it('should parse a JSON string', function () {
+    it('should parse a JSON string', function() {
       const actualError = new errors.ProxyRequestError(
         'Error message does not matter',
         JSON.stringify({

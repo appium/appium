@@ -3,16 +3,16 @@
  * @module
  */
 
-import {fs, util} from '@appium/support';
-import {getLogger} from './logger';
+import { fs, util } from '@appium/support';
+import { createPatch } from 'diff';
 import path from 'node:path';
-import {createPatch} from 'diff';
-import type {NormalizedPackageJson} from './utils';
-import type {JsonValue, JsonObject} from 'type-fest';
-import {DocutilsError} from './error';
-import {mergeDefaultsDeep, relative} from './utils';
-import {stringifyJson, readPackageJson, writeFileString} from './fs';
-import {NAME_ERR_ENOENT} from './constants';
+import type { JsonObject, JsonValue } from 'type-fest';
+import { NAME_ERR_ENOENT } from './constants';
+import { DocutilsError } from './error';
+import { readPackageJson, stringifyJson, writeFileString } from './fs';
+import { getLogger } from './logger';
+import type { NormalizedPackageJson } from './utils';
+import { mergeDefaultsDeep, relative } from './utils';
 
 const log = getLogger('init');
 const dryRunLog = getLogger('dry-run', log);
@@ -140,7 +140,7 @@ export function createScaffoldTask<Opts extends ScaffoldTaskOptions, T extends J
     ...opts
   }: Opts): Promise<ScaffoldTaskResult<T>> => {
     const relativePath = relative(cwd);
-    const {pkgPath, pkg} = await readPackageJson(
+    const { pkgPath, pkg } = await readPackageJson(
       packageJsonPath ? path.dirname(packageJsonPath) : cwd,
       true,
     );
@@ -179,7 +179,7 @@ export function createScaffoldTask<Opts extends ScaffoldTaskOptions, T extends J
 
       if (dryRun) {
         dryRunLog.info('Would apply the following patch: \n\n%s', patch);
-        result = {path: dest, content: finalDestContent};
+        result = { path: dest, content: finalDestContent };
         return result;
       }
 
@@ -208,7 +208,7 @@ export function createScaffoldTask<Opts extends ScaffoldTaskOptions, T extends J
       log.info('No changes necessary for %s', relativeDest);
     }
     log.success(`${description}: done`);
-    return {path: dest, content: finalDestContent};
+    return { path: dest, content: finalDestContent };
   };
 }
 

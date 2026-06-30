@@ -1,14 +1,14 @@
-import path from 'node:path';
-import {remote as wdio} from 'webdriverio';
-import {MATCH_FEATURES_MODE, GET_SIMILARITY_MODE} from '../../lib/constants';
-import {pluginE2EHarness} from '@appium/plugin-test-support';
-import {tempDir, fs, node} from '@appium/support';
-import sharp from 'sharp';
-import {expect, use} from 'chai';
+import { pluginE2EHarness } from '@appium/plugin-test-support';
+import { fs, node, tempDir } from '@appium/support';
+import { expect, use } from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import type {AddressInfo} from 'node:net';
-import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
-import {exec} from 'teen_process';
+import type { AddressInfo } from 'node:net';
+import path from 'node:path';
+import { after, afterEach, before, beforeEach, describe, it } from 'node:test';
+import sharp from 'sharp';
+import { exec } from 'teen_process';
+import { remote as wdio } from 'webdriverio';
+import { GET_SIMILARITY_MODE, MATCH_FEATURES_MODE } from '../../lib/constants';
 
 use(chaiAsPromised);
 
@@ -42,8 +42,8 @@ const WDIO_OPTS: WebdriverIOConfig = {
   capabilities: TEST_CAPS,
 };
 
-describe('ImageElementPlugin', function () {
-  const {setup, teardown} = pluginE2EHarness({
+describe('ImageElementPlugin', function() {
+  const { setup, teardown } = pluginE2EHarness({
     host: TEST_HOST,
     appiumHome: APPIUM_HOME,
     driverName: 'fake',
@@ -55,29 +55,29 @@ describe('ImageElementPlugin', function () {
   });
   let driver: any;
 
-  before(async function () {
+  before(async function() {
     // workaround for https://github.com/nodejs/node/issues/64061
     await exec(process.execPath, ['--version']);
 
-    const {server} = await setup();
+    const { server } = await setup();
     const address = server.address();
     WDIO_OPTS.port = (address as AddressInfo).port;
   });
-  after(async function () {
+  after(async function() {
     await teardown();
   });
 
-  beforeEach(async function () {
+  beforeEach(async function() {
     driver = await wdio(WDIO_OPTS);
   });
 
-  afterEach(async function () {
+  afterEach(async function() {
     if (driver) {
       await driver.deleteSession();
     }
   });
 
-  it('should add the compareImages route', async function () {
+  it('should add the compareImages route', async function() {
     const [testImg1b64, testImg2b64] = await Promise.all([
       fs.readFile(TEST_IMG_1_PATH, 'base64'),
       fs.readFile(TEST_IMG_2_PATH, 'base64'),
@@ -88,10 +88,10 @@ describe('ImageElementPlugin', function () {
     expect(comparison.score).to.be.above(0.2);
   });
 
-  it('should find and interact with image elements', async function () {
+  it('should find and interact with image elements', async function() {
     const imageEl = await driver.$(APPSTORE_IMG_PATH);
-    const {x, y} = await imageEl.getLocation();
-    const {width, height} = await imageEl.getSize();
+    const { x, y } = await imageEl.getLocation();
+    const { width, height } = await imageEl.getSize();
     expect(x).to.eql(28);
     expect(y).to.eql(72);
     expect(width).to.eql(80);
@@ -101,20 +101,20 @@ describe('ImageElementPlugin', function () {
     const actionSequence = {
       type: 'pointer',
       id: 'mouse',
-      parameters: {pointerType: 'touch'},
+      parameters: { pointerType: 'touch' },
       actions: [
-        {type: 'pointerMove', x: 0, y: 0, duration: 0, origin: imageEl},
-        {type: 'pointerDown', button: 0},
-        {type: 'pause', duration: 125},
-        {type: 'pointerUp', button: 0},
+        { type: 'pointerMove', x: 0, y: 0, duration: 0, origin: imageEl },
+        { type: 'pointerDown', button: 0 },
+        { type: 'pause', duration: 125 },
+        { type: 'pointerUp', button: 0 },
       ],
     };
     await driver.performActions([actionSequence]);
   });
 
-  it('should find subelements', async function () {
+  it('should find subelements', async function() {
     const imageEl = await driver.$(APPSTORE_IMG_PATH);
-    const {width, height} = await imageEl.getSize();
+    const { width, height } = await imageEl.getSize();
     const tmpRoot = await tempDir.openDir();
     try {
       const screenshotPath = path.join(tmpRoot, 'element.png');

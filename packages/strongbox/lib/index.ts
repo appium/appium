@@ -1,8 +1,8 @@
 import envPaths from 'env-paths';
-import {opendir, rm} from 'node:fs/promises';
+import { opendir, rm } from 'node:fs/promises';
 import path from 'node:path';
-import {BaseItem} from './base-item';
-import {slugify} from './util';
+import { BaseItem } from './base-item';
+import { slugify } from './util';
 
 /**
  * Valid file encodings.
@@ -99,7 +99,7 @@ export type ItemCtor<
   T extends Value,
   U extends StrongboxOpts = StrongboxOpts,
   V extends Strongbox<U> = Strongbox<U>,
-> = new (name: string, parent: V, encoding?: ItemEncoding) => Item<T>;
+> = new(name: string, parent: V, encoding?: ItemEncoding) => Item<T>;
 
 /**
  * Options for {@linkcode strongbox}
@@ -132,9 +132,11 @@ export interface StrongboxOpts {
  *
  * Manages multiple {@linkcode Item}s.
  */
-export class Strongbox<Options extends StrongboxOpts = StrongboxOpts> implements AsyncIterable<
-  Item<any>
-> {
+export class Strongbox<Options extends StrongboxOpts = StrongboxOpts> implements
+  AsyncIterable<
+    Item<any>
+  >
+{
   /**
    * Override the directory of this container.
    *
@@ -202,7 +204,7 @@ export class Strongbox<Options extends StrongboxOpts = StrongboxOpts> implements
     const items = [...this.items.values()].map((ref) => ref.deref()).filter(Boolean) as Item<any>[];
     await Promise.all(items.map((item) => item.clear()));
     if (force) {
-      await rm(this.container, {recursive: true});
+      await rm(this.container, { recursive: true });
     }
   }
 
@@ -431,4 +433,4 @@ export const strongbox = Strongbox.create;
 /**
  * This can be subclassed if needed.
  */
-export {BaseItem};
+export { BaseItem };

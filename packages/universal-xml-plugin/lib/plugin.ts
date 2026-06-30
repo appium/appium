@@ -1,9 +1,9 @@
-import {BasePlugin} from 'appium/plugin';
-import {errors} from 'appium/driver';
-import {transformSourceXml} from './source';
-import {transformQuery} from './xpath';
-import type {ExternalDriver, NextPluginCallback, Element} from '@appium/types';
-import type {TransformMetadata} from './types';
+import type { Element, ExternalDriver, NextPluginCallback } from '@appium/types';
+import { errors } from 'appium/driver';
+import { BasePlugin } from 'appium/plugin';
+import { transformSourceXml } from './source';
+import type { TransformMetadata } from './types';
+import { transformQuery } from './xpath';
 
 export class UniversalXMLPlugin extends BasePlugin {
   async getPageSource(
@@ -19,24 +19,24 @@ export class UniversalXMLPlugin extends BasePlugin {
     if (platformName.toLowerCase() === 'android') {
       metadata.appPackage = (driver.opts as Record<string, unknown>)?.appPackage as string;
     }
-    const {xml, unknowns} = await transformSourceXml(source, platformName.toLowerCase(), {
+    const { xml, unknowns } = await transformSourceXml(source, platformName.toLowerCase(), {
       metadata,
       addIndexPath,
     });
     if (unknowns.nodes.length) {
       this.log.warn(
-        `The XML mapper found ${unknowns.nodes.length} node(s) / ` +
-          `tag name(s) that it didn't know about. These should be ` +
-          `reported to improve the quality of the plugin: ` +
-          unknowns.nodes.join(', '),
+        `The XML mapper found ${unknowns.nodes.length} node(s) / `
+          + `tag name(s) that it didn't know about. These should be `
+          + `reported to improve the quality of the plugin: `
+          + unknowns.nodes.join(', '),
       );
     }
     if (unknowns.attrs.length) {
       this.log.warn(
-        `The XML mapper found ${unknowns.attrs.length} attributes ` +
-          `that it didn't know about. These should be reported to ` +
-          `improve the quality of the plugin: ` +
-          unknowns.attrs.join(', '),
+        `The XML mapper found ${unknowns.attrs.length} attributes `
+          + `that it didn't know about. These should be reported to `
+          + `improve the quality of the plugin: `
+          + unknowns.attrs.join(', '),
       );
     }
     return xml;
@@ -83,9 +83,9 @@ export class UniversalXMLPlugin extends BasePlugin {
   ): Promise<Element | Element[]> {
     const platformName = getPlatformName(driver);
     if (
-      strategy.toLowerCase() !== 'xpath' ||
-      !driver.getCurrentContext ||
-      (await driver.getCurrentContext()) !== 'NATIVE_APP'
+      strategy.toLowerCase() !== 'xpath'
+      || !driver.getCurrentContext
+      || (await driver.getCurrentContext()) !== 'NATIVE_APP'
     ) {
       return (await next()) as Element | Element[];
     }
@@ -96,8 +96,8 @@ export class UniversalXMLPlugin extends BasePlugin {
     // matched, so do the appropriate thing based on element vs elements
     if (newSelector === null) {
       this.log.warn(
-        `Selector was not able to be translated to underlying XML. Either the requested ` +
-          `element does not exist or there was an error in translation`,
+        `Selector was not able to be translated to underlying XML. Either the requested `
+          + `element does not exist or there was an error in translation`,
       );
       if (multiple) {
         return [];

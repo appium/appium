@@ -1,5 +1,5 @@
+import { logger } from '@appium/support';
 import axios from 'axios';
-import {logger} from '@appium/support';
 
 const log = logger.getLogger('Contributions');
 
@@ -121,7 +121,7 @@ async function makeGitHubRequest(endpoint, token) {
     headers,
   });
 
-  return {data: response.data, headers: response.headers};
+  return { data: response.data, headers: response.headers };
 }
 
 /**
@@ -149,7 +149,7 @@ async function getMergedPullRequestsFromSearch(dateRange, token) {
   while (true) {
     // Rely on local sorting; omit API-side sort/order for simplicity
     const endpoint = `/search/issues?q=${encodeURIComponent(searchQuery)}&page=${page}&per_page=${perPage}`;
-    const {data} = await makeGitHubRequest(endpoint, token);
+    const { data } = await makeGitHubRequest(endpoint, token);
     if (!data.items?.length) {
       break;
     }
@@ -189,7 +189,7 @@ async function getMergedPullRequestsFromSearch(dateRange, token) {
  * @returns {object} Slack message payload with blocks
  */
 function formatSlackMessage(pullRequests, from, to, generatedAt) {
-  const monthName = new Date(from).toLocaleString('en-US', {month: 'long', year: 'numeric'});
+  const monthName = new Date(from).toLocaleString('en-US', { month: 'long', year: 'numeric' });
   const fromDate = extractDatePart(from);
   const toDate = extractDatePart(to);
 
@@ -206,7 +206,8 @@ function formatSlackMessage(pullRequests, from, to, generatedAt) {
       type: 'section',
       text: {
         type: 'mrkdwn',
-        text: `*Organization:* @${GITHUB_ORG}\n*Period:* ${fromDate} to ${toDate}\n*Total Merged Pull Requests:* ${pullRequests.length}`,
+        text:
+          `*Organization:* @${GITHUB_ORG}\n*Period:* ${fromDate} to ${toDate}\n*Total Merged Pull Requests:* ${pullRequests.length}`,
       },
     },
     {
@@ -251,7 +252,9 @@ function formatSlackMessage(pullRequests, from, to, generatedAt) {
 
       // Format as simple markdown row with Slack-formatted links
       // Column order changed to: index • author • title • URL for the PR • repo • dates
-      return `${index + 1} • <${authorUrl}|${authorName}> • <${pr.html_url}|${prTitle}> • ${pr.html_url} • <${repoUrl}|${pr.repository}> • Created: ${createdDate} • Merged: ${mergedDate}`;
+      return `${
+        index + 1
+      } • <${authorUrl}|${authorName}> • <${pr.html_url}|${prTitle}> • ${pr.html_url} • <${repoUrl}|${pr.repository}> • Created: ${createdDate} • Merged: ${mergedDate}`;
     });
 
     // Slack section text has a 3000 character limit. Keep under ~2900 to be safe.
@@ -266,7 +269,7 @@ function formatSlackMessage(pullRequests, from, to, generatedAt) {
       const content = currentLines.join('\n');
       blocks.push({
         type: 'section',
-        text: {type: 'mrkdwn', text: content},
+        text: { type: 'mrkdwn', text: content },
       });
       currentLines = [];
       currentLen = 0;
@@ -298,7 +301,7 @@ function formatSlackMessage(pullRequests, from, to, generatedAt) {
     },
   );
 
-  return {blocks};
+  return { blocks };
 }
 
 async function main() {

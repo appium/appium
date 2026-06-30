@@ -1,8 +1,8 @@
-import {console, logger, util} from '@appium/support';
+import { console, logger, util } from '@appium/support';
+import type { Request, RequestHandler, Response } from 'express';
 import morgan from 'morgan';
-import type {Request, RequestHandler, Response} from 'express';
-import {log} from './logger';
-import {MAX_LOG_BODY_LENGTH} from '../constants';
+import { MAX_LOG_BODY_LENGTH } from '../constants';
+import { log } from './logger';
 
 /**
  * Morgan middleware that logs when the HTTP response finishes.
@@ -33,7 +33,7 @@ function startLogFormatterHandler(tokens: unknown, req: Request, res: Response):
     try {
       reqBody = util.truncateString(
         typeof req.body === 'string' ? req.body : JSON.stringify(req.body),
-        {length: MAX_LOG_BODY_LENGTH},
+        { length: MAX_LOG_BODY_LENGTH },
       );
     } catch {
       // ignore
@@ -69,7 +69,9 @@ function requestEndLoggingFormat(tokens: MorganTokens, req: Request, res: Respon
     statusStr = console.styleText('green', statusStr);
   }
   const fn = compile(
-    `${console.styleText('white', '<-- :method :url ')}${statusStr} ${console.styleText('grey', ':response-time ms - :res[content-length]')}`,
+    `${console.styleText('white', '<-- :method :url ')}${statusStr} ${
+      console.styleText('grey', ':response-time ms - :res[content-length]')
+    }`,
   );
   return fn(tokens, req, res);
 }

@@ -1,33 +1,28 @@
-import {tempDir, fs} from '@appium/support';
-import {exec} from 'teen_process';
+import { fs, tempDir } from '@appium/support';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {
-  readAppiumArgErrorFixture,
-  formatAppiumArgErrorOutput,
-  EXECUTABLE,
-  runAppiumRaw,
-} from './e2e-helpers';
-import {APPIUM_ROOT, getTestPort} from '../helpers';
-import {stripColorCodes} from '../../lib/logsink';
+import { exec } from 'teen_process';
+import { stripColorCodes } from '../../lib/logsink';
+import { APPIUM_ROOT, getTestPort } from '../helpers';
+import { EXECUTABLE, formatAppiumArgErrorOutput, readAppiumArgErrorFixture, runAppiumRaw } from './e2e-helpers';
 
-const {expect} = chai;
+const { expect } = chai;
 chai.use(chaiAsPromised);
 
-describe('argument parsing', function () {
+describe('argument parsing', function() {
   let appiumHome: string;
 
-  before(async function () {
+  before(async function() {
     appiumHome = await tempDir.openDir();
   });
 
-  after(async function () {
+  after(async function() {
     await fs.rimraf(appiumHome);
   });
 
-  describe('when the user provides a very long string for an arg accepting a blob or filename', function () {
-    describe('when the very long string is a JSON blob', function () {
-      it('should not throw an ENAMETOOLONG exception', async function () {
+  describe('when the user provides a very long string for an arg accepting a blob or filename', function() {
+    describe('when the very long string is a JSON blob', function() {
+      it('should not throw an ENAMETOOLONG exception', async function() {
         this.timeout(10000);
         const capsArg = JSON.stringify({
           'appium:platformName': 'ANDROID',
@@ -50,7 +45,7 @@ describe('argument parsing', function () {
               String(await getTestPort()),
             ],
             {
-              env: {APPIUM_HOME: appiumHome, PATH: process.env.PATH},
+              env: { APPIUM_HOME: appiumHome, PATH: process.env.PATH },
               cwd: APPIUM_ROOT,
               timeout: 5000,
             },
@@ -60,19 +55,19 @@ describe('argument parsing', function () {
     });
   });
 
-  describe('when the user provides an string where a number was expected', function () {
-    describe('when color output is supported', function () {
-      it('should output a fancy error message', async function () {
+  describe('when the user provides an string where a number was expected', function() {
+    describe('when color output is supported', function() {
+      it('should output a fancy error message', async function() {
         const result = await runAppiumRaw(appiumHome, ['--port=sheep'], {
-          env: {FORCE_COLOR: '1'},
+          env: { FORCE_COLOR: '1' },
         });
         const actual = 'stderr' in result ? result.stderr : '';
         expect(stripColorCodes(actual)).to.not.equal(actual);
       });
     });
 
-    describe('when color output is unsupported', function () {
-      it('should output a colorless yet fancy error message', async function () {
+    describe('when color output is unsupported', function() {
+      it('should output a colorless yet fancy error message', async function() {
         const result = await runAppiumRaw(appiumHome, ['--port=sheep'], {});
         const actual = 'stderr' in result ? result.stderr : '';
         expect(stripColorCodes(actual)).to.equal(actual);
@@ -80,8 +75,8 @@ describe('argument parsing', function () {
     });
   });
 
-  describe('when the user provides a value for a boolean argument', function () {
-    it('should output a basic error message', async function () {
+  describe('when the user provides a value for a boolean argument', function() {
+    it('should output a basic error message', async function() {
       const [runResult, expected] = await Promise.all([
         runAppiumRaw(appiumHome, ['--relaxed-security=sheep'], {}),
         readAppiumArgErrorFixture('cli/cli-error-output-boolean.txt'),
@@ -91,8 +86,8 @@ describe('argument parsing', function () {
     });
   });
 
-  describe('when the user provides an unknown argument', function () {
-    it('should output a basic error message', async function () {
+  describe('when the user provides an unknown argument', function() {
+    it('should output a basic error message', async function() {
       const [runResult, expected] = await Promise.all([
         runAppiumRaw(appiumHome, ['--pigs=sheep'], {}),
         readAppiumArgErrorFixture('cli/cli-error-output-unknown.txt'),

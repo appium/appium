@@ -1,17 +1,17 @@
-import path from 'node:path';
+import { fs } from '@appium/support';
 import crypto from 'node:crypto';
+import path from 'node:path';
 import {
-  log,
-  walk,
+  CROWIN_MKDOCS_CONFIG,
   DEFAULT_LANGUAGE,
+  DOCUMENTS_EXT,
+  log,
+  MKDOCS_CONTENT_TYPE,
+  ORIGINAL_MKDOCS_CONFIG,
   performApiRequest,
   RESOURCES_ROOT,
-  DOCUMENTS_EXT,
-  ORIGINAL_MKDOCS_CONFIG,
-  CROWIN_MKDOCS_CONFIG,
-  MKDOCS_CONTENT_TYPE,
+  walk,
 } from './crowdin-common.mjs';
-import {fs} from '@appium/support';
 
 const LANGUAGE_ROOT = path.resolve(RESOURCES_ROOT, DEFAULT_LANGUAGE);
 // Max supported value is 500
@@ -19,7 +19,6 @@ const MAX_ITEMS_PER_PAGE = 300;
 const DOCUMENT_CONTENT_TYPE = 'text/markdown';
 
 /**
- *
  * @param {string} str
  * @returns {string}
  */
@@ -28,7 +27,6 @@ function toHash(str) {
 }
 
 /**
- *
  * @param {string} fullPath
  * @returns {string}
  */
@@ -43,13 +41,12 @@ function toCrowdinPath(fullPath) {
 }
 
 /**
- *
  * @param {string} name
  * @param {string|null|undefined} [parentId]
  * @returns {Promise<number>}
  */
 async function addDirectory(name, parentId) {
-  const {data: directoryData} = await performApiRequest('/directories', {
+  const { data: directoryData } = await performApiRequest('/directories', {
     method: 'POST',
     payload: {
       name,
@@ -60,14 +57,13 @@ async function addDirectory(name, parentId) {
 }
 
 /**
- *
  * @param {string} name
  * @param {number} storageId
  * @param {string|null|undefined} [parentDirectoryId]
  * @returns {Promise<number>}
  */
 async function addFile(name, storageId, parentDirectoryId) {
-  const {data: fileData} = await performApiRequest('/files', {
+  const { data: fileData } = await performApiRequest('/files', {
     method: 'POST',
     payload: {
       name,
@@ -82,17 +78,16 @@ async function addFile(name, storageId, parentDirectoryId) {
  * @returns {Promise<Record<string, any>[]>}
  */
 async function listFiles() {
-  const {data: filesData} = await performApiRequest('/files', {
+  const { data: filesData } = await performApiRequest('/files', {
     method: 'GET',
     params: {
       limit: MAX_ITEMS_PER_PAGE,
     },
   });
-  return filesData.map(({data}) => data);
+  return filesData.map(({ data }) => data);
 }
 
 /**
- *
  * @param {number} fileId
  * @returns {Promise<void>}
  */
@@ -103,13 +98,12 @@ async function deleteFile(fileId) {
 }
 
 /**
- *
  * @param {number} [parentDirectoryId]
  * @param {number} [recursion]
  * @return {Promise<Record<string, any>[]>}
  */
 async function listDirectories(parentDirectoryId) {
-  const {data: directoriesData} = await performApiRequest('/directories', {
+  const { data: directoriesData } = await performApiRequest('/directories', {
     method: 'GET',
     params: {
       limit: MAX_ITEMS_PER_PAGE,
@@ -117,18 +111,17 @@ async function listDirectories(parentDirectoryId) {
       recursion: parentDirectoryId ? 10 : undefined,
     },
   });
-  return directoriesData.map(({data}) => data);
+  return directoriesData.map(({ data }) => data);
 }
 
 /**
- *
  * @param {string} name Should be properly url-encoded
  * @param {string} fullPath
  * @param {string} contentType Should be one of https://www.iana.org/assignments/media-types/media-types.xhtml
  * @returns {Promise<Record<string, any>>}
  */
 async function addStorage(name, fullPath, contentType) {
-  const {data: storageData} = await performApiRequest('/storages', {
+  const { data: storageData } = await performApiRequest('/storages', {
     method: 'POST',
     headers: {
       'Crowdin-API-FileName': name,
@@ -141,7 +134,6 @@ async function addStorage(name, fullPath, contentType) {
 }
 
 /**
- *
  * @param {string[]} matchedFiles
  * @returns {Promise<Record<string, string>>}
  */
@@ -162,7 +154,6 @@ async function uploadDocumentsToStorage(matchedFiles) {
 }
 
 /**
- *
  * @param {string[]} matchedFiles
  * @returns {Promise<Record<string, number>>}
  */
@@ -188,8 +179,7 @@ async function ensureDirectoryStructure(matchedFiles) {
       const pathInCrowdin = `/${splitPath.slice(0, level + 1).join('/')}`;
       const parentPathInCrowdin = path.dirname(pathInCrowdin);
       const parentDirectoryId = level === 0 ? undefined : result[parentPathInCrowdin];
-      const subDirectories =
-        level === 0 ? topDirectories : await listDirectories(parentDirectoryId);
+      const subDirectories = level === 0 ? topDirectories : await listDirectories(parentDirectoryId);
       const existingDirectoryData = subDirectories.find((data) => data.path === pathInCrowdin);
       if (existingDirectoryData) {
         log.info(`Crowdin directory '${pathInCrowdin}' already exists`);
@@ -204,7 +194,6 @@ async function ensureDirectoryStructure(matchedFiles) {
 }
 
 /**
- *
  * @param {Record<string, number>} storageMapping
  * @param {Record<string, number>} directoriesMapping
  * @param {Record<string, number>[]} existingFilesData
@@ -257,8 +246,8 @@ async function cleanupObsoleteDocuments() {
   let count = 0;
   for (const existingFileData of existingFilesData) {
     if (
-      matchedFilePaths.has(existingFileData.path) ||
-      !existingFileData.name.endsWith(DOCUMENTS_EXT)
+      matchedFilePaths.has(existingFileData.path)
+      || !existingFileData.name.endsWith(DOCUMENTS_EXT)
     ) {
       continue;
     }
@@ -272,7 +261,6 @@ async function cleanupObsoleteDocuments() {
 }
 
 /**
- *
  * @param {Record<string, number>} filesMapping
  * @param {Record<string, number>} storageMapping
  * @returns {Promise<void>}
@@ -293,7 +281,6 @@ async function updateFiles(filesMapping, storageMapping) {
 }
 
 /**
- *
  * @returns {Promise<void>}
  */
 async function updateDocuments() {
@@ -332,7 +319,7 @@ async function updateMkDocsConfig() {
     matchedFilePath,
     MKDOCS_CONTENT_TYPE,
   );
-  const storageMapping = {[matchedFilePath]: storageData.id};
+  const storageMapping = { [matchedFilePath]: storageData.id };
   const existingFilesData = await listFiles();
   const filesMapping = await ensureFileStructure(storageMapping, {}, existingFilesData);
   await updateFiles(filesMapping, storageMapping);

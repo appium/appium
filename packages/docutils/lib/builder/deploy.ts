@@ -5,7 +5,7 @@
  */
 
 import path from 'node:path';
-import type {TeenProcessExecOptions} from 'teen_process';
+import type { TeenProcessExecOptions } from 'teen_process';
 import {
   DEFAULT_DEPLOY_ALIAS_TYPE,
   DEFAULT_DEPLOY_BRANCH,
@@ -16,11 +16,11 @@ import {
   NAME_MIKE,
   NAME_MKDOCS_YML,
 } from '../constants';
-import {DocutilsError} from '../error';
-import {findMike, findMkDocsYml, isMkDocsInstalled, readPackageJson, requirePython} from '../fs';
-import {getLogger} from '../logger';
-import type {SpawnBackgroundProcessOpts} from '../utils';
-import {argify, execWithErrorHandling, spawnBackgroundProcess, stopwatch} from '../utils';
+import { DocutilsError } from '../error';
+import { findMike, findMkDocsYml, isMkDocsInstalled, readPackageJson, requirePython } from '../fs';
+import { getLogger } from '../logger';
+import type { SpawnBackgroundProcessOpts } from '../utils';
+import { argify, execWithErrorHandling, spawnBackgroundProcess, stopwatch } from '../utils';
 
 const log = getLogger('builder:deploy');
 
@@ -193,8 +193,7 @@ export async function deploy({
       ...argify(
         Object.fromEntries(
           Object.entries(mikeOpts).filter(
-            ([key, value]) =>
-              !['port', 'host'].includes(key) && (typeof value === 'number' || Boolean(value)),
+            ([key, value]) => !['port', 'host'].includes(key) && (typeof value === 'number' || Boolean(value)),
           ),
         ),
       ),
@@ -209,6 +208,34 @@ export async function deploy({
 
     log.success('Finished deployment into branch %s (%dms)', branch, stop());
   }
+}
+
+/**
+ * Derives a deployment version from `package.json`
+ * @param packageJsonPath Path to `package.json` if known
+ * @param usePrefixedMajorVersion Whether to extract a v-prefixed major version
+ * @param cwd Current working directory
+ */
+export async function findDeployVersion(
+  packageJsonPath?: string,
+  usePrefixedMajorVersion?: boolean,
+  cwd = process.cwd(),
+): Promise<string> {
+  const { pkg } = await readPackageJson(packageJsonPath ? path.dirname(packageJsonPath) : cwd, true);
+  const version = pkg.version;
+  if (!version) {
+    throw new DocutilsError(
+      'No "version" field found in package.json; please add one or specify a version to deploy',
+    );
+  }
+
+  // If a minor version can be extracted, use MAJOR.MINOR as the deploy version, otherwise use MAJOR.
+  // If usePrefixedMajorVersion is true, always use vMAJOR
+  const versionParts = version.split('.');
+  if (versionParts.length === 1) {
+    return usePrefixedMajorVersion ? `v${version}` : version;
+  }
+  return usePrefixedMajorVersion ? `v${versionParts[0]}` : `${versionParts[0]}.${versionParts[1]}`;
 }
 
 /**
@@ -237,32 +264,4 @@ async function doDeploy(mikePath: string, args: string[] = [], opts: TeenProcess
   const finalArgs = ['deploy', ...args];
   log.debug('Executing %s via: %s %O', NAME_MIKE, mikePath, finalArgs);
   return await execWithErrorHandling(mikePath, finalArgs, opts);
-}
-
-/**
- * Derives a deployment version from `package.json`
- * @param packageJsonPath Path to `package.json` if known
- * @param usePrefixedMajorVersion Whether to extract a v-prefixed major version
- * @param cwd Current working directory
- */
-export async function findDeployVersion(
-  packageJsonPath?: string,
-  usePrefixedMajorVersion?: boolean,
-  cwd = process.cwd(),
-): Promise<string> {
-  const {pkg} = await readPackageJson(packageJsonPath ? path.dirname(packageJsonPath) : cwd, true);
-  const version = pkg.version;
-  if (!version) {
-    throw new DocutilsError(
-      'No "version" field found in package.json; please add one or specify a version to deploy',
-    );
-  }
-
-  // If a minor version can be extracted, use MAJOR.MINOR as the deploy version, otherwise use MAJOR.
-  // If usePrefixedMajorVersion is true, always use vMAJOR
-  const versionParts = version.split('.');
-  if (versionParts.length === 1) {
-    return usePrefixedMajorVersion ? `v${version}` : version;
-  }
-  return usePrefixedMajorVersion ? `v${versionParts[0]}` : `${versionParts[0]}.${versionParts[1]}`;
 }

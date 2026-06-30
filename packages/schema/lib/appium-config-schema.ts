@@ -1,4 +1,4 @@
-import type {JSONSchema7} from 'json-schema';
+import type { JSONSchema7 } from 'json-schema';
 
 /**
  * The single-source-of-truth of the Appium server configuration.
@@ -13,8 +13,7 @@ export const AppiumConfigJsonSchema = {
   properties: {
     $schema: {
       description: 'The JSON schema for this file',
-      default:
-        'https://raw.githubusercontent.com/appium/appium/master/packages/schema/lib/appium-config.schema.json',
+      default: 'https://raw.githubusercontent.com/appium/appium/master/packages/schema/lib/appium-config.schema.json',
       type: 'string',
       format: 'uri',
     },
@@ -40,8 +39,7 @@ export const AppiumConfigJsonSchema = {
           ],
         },
         'allow-cors': {
-          description:
-            'Whether the Appium server should allow web browser connections from any host',
+          description: 'Whether the Appium server should allow web browser connections from any host',
           title: 'allow-cors config',
           type: 'boolean',
           default: false,
@@ -61,8 +59,7 @@ export const AppiumConfigJsonSchema = {
         'base-path': {
           appiumCliAliases: ['pa'],
           default: '',
-          description:
-            'Base path to use as the prefix for all webdriver routes running on the server',
+          description: 'Base path to use as the prefix for all webdriver routes running on the server',
           title: 'base-path config',
           type: 'string',
         },
@@ -109,8 +106,7 @@ export const AppiumConfigJsonSchema = {
           uniqueItems: true,
         },
         driver: {
-          description:
-            'Driver-specific configuration. Keys should correspond to driver package names',
+          description: 'Driver-specific configuration. Keys should correspond to driver package names',
           properties: {} as Record<string, JSONSchema7>,
           title: 'driver config',
           type: 'object',
@@ -119,8 +115,8 @@ export const AppiumConfigJsonSchema = {
           appiumCliAliases: ['ka'],
           default: 600,
           description:
-            'Number of seconds the Appium server should apply as both the keep-alive timeout and the connection timeout ' +
-            'for all requests. A value of 0 disables the timeout.',
+            'Number of seconds the Appium server should apply as both the keep-alive timeout and the connection timeout '
+            + 'for all requests. A value of 0 disables the timeout.',
           minimum: 0,
           title: 'keep-alive-timeout config',
           type: 'integer',
@@ -128,10 +124,10 @@ export const AppiumConfigJsonSchema = {
         'request-timeout': {
           default: 3600,
           description:
-            'Number of seconds the Appium server should apply for receiving the entire HTTP request from the client. ' +
-            'A value of 0 disables the timeout. Set it to a non-zero value to protect against ' +
-            'potential Denial-of-Service attacks in case the server is deployed without a reverse proxy in front. ' +
-            'HTTP requests that are running longer than allowed by this timeout would be rejected with the status code 408.',
+            'Number of seconds the Appium server should apply for receiving the entire HTTP request from the client. '
+            + 'A value of 0 disables the timeout. Set it to a non-zero value to protect against '
+            + 'potential Denial-of-Service attacks in case the server is deployed without a reverse proxy in front. '
+            + 'HTTP requests that are running longer than allowed by this timeout would be rejected with the status code 408.',
           minimum: 0,
           title: 'request-timeout config',
           type: 'integer',
@@ -153,7 +149,7 @@ export const AppiumConfigJsonSchema = {
           description: 'One or more log filtering rules',
           title: 'log-filters config',
           type: 'array',
-          items: {$ref: '#/$defs/logFilter'},
+          items: { $ref: '#/$defs/logFilter' },
           appiumCliTransformer: 'json',
         },
         'log-level': {
@@ -207,15 +203,13 @@ export const AppiumConfigJsonSchema = {
         },
         'plugins-import-chunk-size': {
           default: 7,
-          description:
-            'The maximum amount of plugins that could be imported in parallel on server startup',
+          description: 'The maximum amount of plugins that could be imported in parallel on server startup',
           title: 'plugins-import-chunk-size config',
           type: 'number',
         },
         'drivers-import-chunk-size': {
           default: 3,
-          description:
-            'The maximum amount of drivers that could be imported in parallel on server startup',
+          description: 'The maximum amount of drivers that could be imported in parallel on server startup',
           title: 'drivers-import-chunk-size config',
           type: 'number',
         },
@@ -232,16 +226,14 @@ export const AppiumConfigJsonSchema = {
           type: 'boolean',
         },
         nodeconfig: {
-          $comment:
-            'Selenium Grid 3 is unmaintained and Selenium Grid 4 no longer supports this file.',
+          $comment: 'Selenium Grid 3 is unmaintained and Selenium Grid 4 no longer supports this file.',
           description:
             'Path to configuration JSON file to register Appium as a node with Selenium Grid 3; otherwise the configuration itself',
           title: 'nodeconfig config',
           type: 'object',
         },
         plugin: {
-          description:
-            'Plugin-specific configuration. Keys should correspond to plugin package names',
+          description: 'Plugin-specific configuration. Keys should correspond to plugin package names',
           properties: {} as Record<string, JSONSchema7>,
           title: 'plugin config',
           type: 'object',
@@ -266,8 +258,8 @@ export const AppiumConfigJsonSchema = {
         'shutdown-timeout': {
           default: 5000,
           description:
-            'For how long the server should delay its shutdown before force-closing all open connections to it. ' +
-            'Setting its value to zero should close the server without waiting for active connections.',
+            'For how long the server should delay its shutdown before force-closing all open connections to it. '
+            + 'Setting its value to zero should close the server without waiting for active connections.',
           title: 'Graceful server shutdown timeout in milliseconds',
           type: 'integer',
           minimum: 0,
@@ -279,15 +271,13 @@ export const AppiumConfigJsonSchema = {
           type: 'boolean',
         },
         'ssl-cert-path': {
-          description:
-            'Full path to the .cert file if TLS is used. Must be provided together with "ssl-key-path"',
+          description: 'Full path to the .cert file if TLS is used. Must be provided together with "ssl-key-path"',
           title: '.cert file path',
           appiumCliDest: 'sslCertificatePath',
           type: 'string',
         },
         'ssl-key-path': {
-          description:
-            'Full path to the .key file if TLS is used. Must be provided together with "ssl-cert-path"',
+          description: 'Full path to the .key file if TLS is used. Must be provided together with "ssl-cert-path"',
           title: '.key file path',
           appiumCliDest: 'sslKeyPath',
           type: 'string',
@@ -316,8 +306,7 @@ export const AppiumConfigJsonSchema = {
           appiumCliDescription:
             'A list of drivers to activate. Can be a comma-delimited string or path to CSV file. By default, all installed drivers will be activated. Windows environments may require wrapping the comma-delimited string with quotes to escape the comma.',
           default: [],
-          description:
-            'A list of drivers to activate. By default, all installed drivers will be activated.',
+          description: 'A list of drivers to activate. By default, all installed drivers will be activated.',
           items: {
             type: 'string',
           },
@@ -339,8 +328,7 @@ export const AppiumConfigJsonSchema = {
           uniqueItems: true,
         },
         webhook: {
-          $comment:
-            'This should probably use a uri-template format to restrict the protocol to http/https',
+          $comment: 'This should probably use a uri-template format to restrict the protocol to http/https',
           appiumCliAliases: ['G'],
           description: 'Also send log output to this http listener',
           format: 'uri',
@@ -348,8 +336,7 @@ export const AppiumConfigJsonSchema = {
           type: 'string',
         },
         'max-ipc-data-size': {
-          appiumCliDescription:
-            'The maximum size in bytes allowed for message objects sent on IPC topics.',
+          appiumCliDescription: 'The maximum size in bytes allowed for message objects sent on IPC topics.',
           description: 'Maximum size in bytes for IPC messages',
           type: 'integer',
           minimum: 1,
@@ -422,7 +409,7 @@ export const AppiumConfigJsonSchema = {
           },
         },
         {
-          anyOf: [{$ref: '#/$defs/logFilterText'}, {$ref: '#/$defs/logFilterRegex'}],
+          anyOf: [{ $ref: '#/$defs/logFilterText' }, { $ref: '#/$defs/logFilterRegex' }],
         },
       ],
     },

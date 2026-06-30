@@ -1,18 +1,18 @@
-import {createSandbox} from 'sinon';
+import { AppiumConfigJsonSchema } from '@appium/schema';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {DRIVER_TYPE, PLUGIN_TYPE} from '../../../lib/constants';
-import {AppiumConfigJsonSchema} from '@appium/schema';
-import {APPIUM_CONFIG_SCHEMA_ID} from '../../../lib/schema/arg-spec';
+import { createSandbox } from 'sinon';
+import { DRIVER_TYPE, PLUGIN_TYPE } from '../../../lib/constants';
+import { APPIUM_CONFIG_SCHEMA_ID } from '../../../lib/schema/arg-spec';
+import type * as SchemaModule from '../../../lib/schema/schema';
 import defaultArgsFixture from '../../fixtures/default-args';
 import DRIVER_SCHEMA_FIXTURE from '../../fixtures/driver-schema';
 import flattenedSchemaFixture from '../../fixtures/flattened-schema';
-import {rewiremock} from '../../helpers';
-import type * as SchemaModule from '../../../lib/schema/schema';
-const {expect} = chai;
+import { rewiremock } from '../../helpers';
+const { expect } = chai;
 chai.use(chaiAsPromised);
 
-describe('schema', function () {
+describe('schema', function() {
   let sandbox: ReturnType<typeof createSandbox>;
   let SchemaFinalizationError: typeof SchemaModule.SchemaFinalizationError;
   let SchemaUnknownSchemaError: typeof SchemaModule.SchemaUnknownSchemaError;
@@ -28,7 +28,7 @@ describe('schema', function () {
   let RoachHotelMap: typeof SchemaModule.RoachHotelMap;
   let mocks: Record<string, ReturnType<ReturnType<typeof createSandbox>['stub']>>;
 
-  beforeEach(function () {
+  beforeEach(function() {
     sandbox = createSandbox();
     mocks = {
       '@sidvind/better-ajv-errors': sandbox.stub(),
@@ -54,14 +54,14 @@ describe('schema', function () {
     resetSchema();
   });
 
-  afterEach(function () {
+  afterEach(function() {
     sandbox.restore();
   });
 
-  describe('registerSchema()', function () {
-    describe('error conditions', function () {
-      describe('when provided no parameters', function () {
-        it('should throw a TypeError', async function () {
+  describe('registerSchema()', function() {
+    describe('error conditions', function() {
+      describe('when provided no parameters', function() {
+        it('should throw a TypeError', async function() {
           await expect((registerSchema as (...args: unknown[]) => unknown)()).to.be.rejectedWith(
             TypeError,
             /expected extension type/i,
@@ -69,16 +69,16 @@ describe('schema', function () {
         });
       });
 
-      describe('when provided `type` and `name`, but not `schema`', function () {
-        it('should throw a TypeError', async function () {
+      describe('when provided `type` and `name`, but not `schema`', function() {
+        it('should throw a TypeError', async function() {
           await expect(
             (registerSchema as (...args: unknown[]) => unknown)(DRIVER_TYPE, 'whoopeee'),
           ).to.be.rejectedWith(TypeError, /expected extension type/i);
         });
       });
 
-      describe('when provided `type` and nonempty `schema`, but no `name`', function () {
-        it('should throw a TypeError', async function () {
+      describe('when provided `type` and nonempty `schema`, but no `name`', function() {
+        it('should throw a TypeError', async function() {
           await expect(
             (registerSchema as (...args: unknown[]) => unknown)(DRIVER_TYPE, undefined, {
               title: 'whoopeee',
@@ -87,17 +87,17 @@ describe('schema', function () {
         });
       });
 
-      describe('when the schema is of an unsupported type', function () {
-        describe('when schema is an object but not a plain object', function () {
-          it('should throw', async function () {
+      describe('when the schema is of an unsupported type', function() {
+        describe('when schema is an object but not a plain object', function() {
+          it('should throw', async function() {
             await expect(
               (registerSchema as (...args: unknown[]) => unknown)(DRIVER_TYPE, 'whoopeee', [45]),
             ).to.be.rejectedWith(SchemaUnsupportedSchemaError, /must be a plain object/i);
           });
         });
 
-        describe('when the schema is async', function () {
-          it('should throw', async function () {
+        describe('when the schema is async', function() {
+          it('should throw', async function() {
             await expect(
               (registerSchema as (...args: unknown[]) => unknown)(DRIVER_TYPE, 'whoopee', {
                 $async: true,
@@ -106,8 +106,8 @@ describe('schema', function () {
           });
         });
 
-        describe('when the schema is boolean', function () {
-          it('should throw', async function () {
+        describe('when the schema is boolean', function() {
+          it('should throw', async function() {
             await expect(
               (registerSchema as (...args: unknown[]) => unknown)(DRIVER_TYPE, 'whoopee', true),
             ).to.be.rejectedWith(SchemaUnsupportedSchemaError);
@@ -115,18 +115,18 @@ describe('schema', function () {
         });
       });
 
-      describe('when schema previously registered', function () {
-        describe('when the schema is identical', function () {
-          it('should not throw', async function () {
-            const schemaObject = {title: 'whoopee'};
+      describe('when schema previously registered', function() {
+        describe('when the schema is identical', function() {
+          it('should not throw', async function() {
+            const schemaObject = { title: 'whoopee' };
             await registerSchema(DRIVER_TYPE, 'whoopee', schemaObject);
             await expect(registerSchema(DRIVER_TYPE, 'whoopee', schemaObject)).to.be.fulfilled;
           });
         });
 
-        describe('when the schema is different', function () {
-          it('should throw', async function () {
-            const schemaObject = {title: 'whoopee'};
+        describe('when the schema is different', function() {
+          it('should throw', async function() {
+            const schemaObject = { title: 'whoopee' };
             await registerSchema(DRIVER_TYPE, 'whoopee', schemaObject);
             await expect(
               registerSchema(DRIVER_TYPE, 'whoopee', {
@@ -138,16 +138,16 @@ describe('schema', function () {
       });
     });
 
-    describe('when provided a nonempty `type`, `schema` and `name`', function () {
-      it('should register the schema', async function () {
-        const schemaObject = {title: 'whoopee'};
+    describe('when provided a nonempty `type`, `schema` and `name`', function() {
+      it('should register the schema', async function() {
+        const schemaObject = { title: 'whoopee' };
         await expect(registerSchema(DRIVER_TYPE, 'whoopee', schemaObject)).to.be.fulfilled;
       });
 
-      describe('when the `name` is not unique but `type` is', function () {
-        it('should register both', async function () {
-          const schema1 = {title: 'pro-skub'};
-          const schema2 = {title: 'anti-skub'};
+      describe('when the `name` is not unique but `type` is', function() {
+        it('should register both', async function() {
+          const schema1 = { title: 'pro-skub' };
+          const schema2 = { title: 'anti-skub' };
           await registerSchema(DRIVER_TYPE, 'skub', schema1);
           await expect(registerSchema(PLUGIN_TYPE, 'skub', schema2)).to.be.fulfilled;
         });
@@ -155,83 +155,83 @@ describe('schema', function () {
     });
   });
 
-  describe('getSchema()', function () {
-    describe('when schema not yet compiled', function () {
-      it('should throw', function () {
+  describe('getSchema()', function() {
+    describe('when schema not yet compiled', function() {
+      it('should throw', function() {
         expect(() => getSchema()).to.throw(SchemaFinalizationError);
       });
     });
 
-    describe('when schema already compiled', function () {
-      beforeEach(async function () {
+    describe('when schema already compiled', function() {
+      beforeEach(async function() {
         await finalizeSchema();
       });
 
-      it('should return a schema', function () {
+      it('should return a schema', function() {
         expect(getSchema()).to.eql(AppiumConfigJsonSchema);
       });
     });
 
-    describe('when schema already compiled and provided a schema ID', function () {
-      beforeEach(async function () {
+    describe('when schema already compiled and provided a schema ID', function() {
+      beforeEach(async function() {
         await finalizeSchema();
       });
 
-      describe('when schema ID is the base schema ID', function () {
-        it('should return the base schema', function () {
+      describe('when schema ID is the base schema ID', function() {
+        it('should return the base schema', function() {
           expect(getSchema(APPIUM_CONFIG_SCHEMA_ID)).to.eql(AppiumConfigJsonSchema);
         });
       });
 
-      describe('when the schema ID is a reference', function () {
-        it('should return the schema for the reference', function () {
+      describe('when the schema ID is a reference', function() {
+        it('should return the schema for the reference', function() {
           expect(
             getSchema(`${APPIUM_CONFIG_SCHEMA_ID}#/properties/server/properties/address`),
           ).to.exist.and.to.eql(
             (
               AppiumConfigJsonSchema as {
-                properties: {server: {properties: {address: unknown}}};
+                properties: { server: { properties: { address: unknown; }; }; };
               }
             ).properties.server.properties.address,
           );
         });
       });
 
-      describe('when schema ID is invalid', function () {
-        it('should throw', function () {
+      describe('when schema ID is invalid', function() {
+        it('should throw', function() {
           expect(() => getSchema('schema-the-clown')).to.throw(SchemaUnknownSchemaError);
         });
       });
     });
 
-    describe('when schema already compiled including an extension', function () {
-      beforeEach(async function () {
+    describe('when schema already compiled including an extension', function() {
+      beforeEach(async function() {
         await registerSchema(DRIVER_TYPE, 'stuff', DRIVER_SCHEMA_FIXTURE);
         await finalizeSchema();
       });
 
-      it('should return the extension schema', function () {
+      it('should return the extension schema', function() {
         expect(getSchema('driver-stuff.json')).to.eql(DRIVER_SCHEMA_FIXTURE);
       });
     });
   });
 
-  describe('getDefaultsForSchema()', function () {
-    describe('when schema not yet compiled', function () {
-      it('should throw', function () {
+  describe('getDefaultsForSchema()', function() {
+    describe('when schema not yet compiled', function() {
+      it('should throw', function() {
         expect(() => getDefaultsForSchema()).to.throw(SchemaFinalizationError);
       });
     });
 
-    describe('when schema already compiled', function () {
-      it('should return a Record object with only defined default values', async function () {
+    describe('when schema already compiled', function() {
+      it('should return a Record object with only defined default values', async function() {
         await finalizeSchema();
         const defaults = getDefaultsForSchema();
         expect(defaults).to.eql(defaultArgsFixture);
       });
 
-      describe('when extension schemas include defaults', function () {
-        it('should return a Record object containing defaults for the extensions', async function () {
+      describe('when extension schemas include defaults', function() {
+        it('should return a Record object containing defaults for the extensions', async function() {
           await registerSchema(DRIVER_TYPE, 'stuff', DRIVER_SCHEMA_FIXTURE);
           await finalizeSchema();
           const defaults = getDefaultsForSchema();
@@ -241,28 +241,28 @@ describe('schema', function () {
     });
   });
 
-  describe('flattenSchema()', function () {
-    describe('when schema not yet compiled', function () {
-      it('should throw', function () {
+  describe('flattenSchema()', function() {
+    describe('when schema not yet compiled', function() {
+      it('should throw', function() {
         expect(() => flattenSchema()).to.throw(SchemaFinalizationError);
       });
     });
 
-    describe('when schema compiled', function () {
-      beforeEach(async function () {
+    describe('when schema compiled', function() {
+      beforeEach(async function() {
         resetSchema();
         await finalizeSchema();
       });
 
-      it('should flatten a schema', function () {
+      it('should flatten a schema', function() {
         expect(flattenSchema().length).to.be.greaterThanOrEqual(flattenedSchemaFixture.length);
       });
     });
 
-    describe('when extensions provide schemas', function () {
-      let expected: Array<{schema: object; argSpec: object}>;
+    describe('when extensions provide schemas', function() {
+      let expected: Array<{ schema: object; argSpec: object; }>;
 
-      beforeEach(async function () {
+      beforeEach(async function() {
         await registerSchema(
           DRIVER_TYPE,
           'fake',
@@ -310,29 +310,29 @@ describe('schema', function () {
         ];
       });
 
-      it('should flatten a schema', function () {
+      it('should flatten a schema', function() {
         expect(flattenSchema().length).to.be.greaterThanOrEqual(expected.length);
       });
     });
   });
 
-  describe('finalizeSchema()', function () {
-    describe('when no extensions registered schemas', function () {
-      it('should return a Record containing the single base schema', async function () {
+  describe('finalizeSchema()', function() {
+    describe('when no extensions registered schemas', function() {
+      it('should return a Record containing the single base schema', async function() {
         expect(await finalizeSchema()).to.eql({
           [APPIUM_CONFIG_SCHEMA_ID]: AppiumConfigJsonSchema,
         });
       });
     });
 
-    describe('when extensions register schemas', function () {
-      beforeEach(async function () {
+    describe('when extensions register schemas', function() {
+      beforeEach(async function() {
         await registerSchema(DRIVER_TYPE, 'stuff', DRIVER_SCHEMA_FIXTURE);
       });
 
-      it('should return a Record containing all extension schemas and the base schema', async function () {
+      it('should return a Record containing all extension schemas and the base schema', async function() {
         type ServerDriverSchema = {
-          properties: {server: {properties: {driver: {properties: Record<string, unknown>}}}};
+          properties: { server: { properties: { driver: { properties: Record<string, unknown>; }; }; }; };
         };
         const baseSchemaWithRefs = structuredClone(AppiumConfigJsonSchema as ServerDriverSchema);
         baseSchemaWithRefs.properties.server.properties.driver.properties.stuff = {
@@ -347,65 +347,65 @@ describe('schema', function () {
     });
   });
 
-  describe('isFinalized()', function () {
-    describe('when the schema is finalized', function () {
-      it('should return true', async function () {
+  describe('isFinalized()', function() {
+    describe('when the schema is finalized', function() {
+      it('should return true', async function() {
         await finalizeSchema();
         expect(isFinalized()).to.be.true;
       });
     });
 
-    describe('when the schema is not finalized', function () {
-      it('should return false', function () {
+    describe('when the schema is not finalized', function() {
+      it('should return false', function() {
         resetSchema();
         expect(isFinalized()).to.be.false;
       });
     });
   });
 
-  describe('validate()', function () {
-    describe('when schema not yet compiled', function () {
-      it('should throw', function () {
+  describe('validate()', function() {
+    describe('when schema not yet compiled', function() {
+      it('should throw', function() {
         expect(() => validate('foo')).to.throw(SchemaFinalizationError);
       });
     });
 
-    describe('when schema already compiled, with no extensions', function () {
-      beforeEach(async function () {
+    describe('when schema already compiled, with no extensions', function() {
+      beforeEach(async function() {
         await finalizeSchema();
       });
 
-      describe('when provided an invalid schema ID ref', function () {
-        it('should throw', function () {
+      describe('when provided an invalid schema ID ref', function() {
+        it('should throw', function() {
           expect(() => validate('foo', 'bar')).to.throw(SchemaUnknownSchemaError);
         });
       });
 
-      describe('when not provided a schema ID ref', function () {
-        describe('when provided a valid value', function () {
-          it('should return an empty array of no errors', function () {
-            expect(validate({server: {address: '127.0.0.1'}})).to.eql([]);
+      describe('when not provided a schema ID ref', function() {
+        describe('when provided a valid value', function() {
+          it('should return an empty array of no errors', function() {
+            expect(validate({ server: { address: '127.0.0.1' } })).to.eql([]);
           });
         });
 
-        describe('when provided an invalid value', function () {
-          it('should return an array containing errors', function () {
-            expect(validate({address: '127.0.0.1'})).to.be.an('array').and.to.not.be.empty;
+        describe('when provided an invalid value', function() {
+          it('should return an array containing errors', function() {
+            expect(validate({ address: '127.0.0.1' })).to.be.an('array').and.to.not.be.empty;
           });
         });
       });
 
-      describe('when provided a schema ID ref', function () {
-        describe('when provided a valid value', function () {
-          it('should return an empty array of no errors', function () {
+      describe('when provided a schema ID ref', function() {
+        describe('when provided a valid value', function() {
+          it('should return an empty array of no errors', function() {
             expect(
               validate('127.0.0.1', 'appium.json#/properties/server/properties/address'),
             ).to.eql([]);
           });
         });
 
-        describe('when provided an invalid value', function () {
-          it('should return an array containing errors', function () {
+        describe('when provided an invalid value', function() {
+          it('should return an array containing errors', function() {
             expect(
               validate('127.0.0.1', 'appium.json#/properties/server/properties/port'),
             ).to.be.an('array').and.to.not.be.empty;
@@ -414,42 +414,42 @@ describe('schema', function () {
       });
     });
 
-    describe('when schema already compiled, with extensions', function () {
-      beforeEach(async function () {
+    describe('when schema already compiled, with extensions', function() {
+      beforeEach(async function() {
         await registerSchema(DRIVER_TYPE, 'stuff', DRIVER_SCHEMA_FIXTURE);
         await finalizeSchema();
       });
 
-      describe('when provided an invalid schema ID ref', function () {
-        it('should throw', function () {
+      describe('when provided an invalid schema ID ref', function() {
+        it('should throw', function() {
           expect(() => validate('foo', 'bar')).to.throw(SchemaUnknownSchemaError);
         });
       });
 
-      describe('when not provided a schema ID ref', function () {
-        describe('when provided a valid value', function () {
-          it('should return an empty array of no errors', function () {
-            expect(validate({server: {driver: {stuff: {answer: 99}}}})).to.eql([]);
+      describe('when not provided a schema ID ref', function() {
+        describe('when provided a valid value', function() {
+          it('should return an empty array of no errors', function() {
+            expect(validate({ server: { driver: { stuff: { answer: 99 } } } })).to.eql([]);
           });
         });
 
-        describe('when provided an invalid value', function () {
-          it('should return an array containing errors', function () {
-            expect(validate({server: {driver: {stuff: {answer: 101}}}})).to.be.an('array').and.to
+        describe('when provided an invalid value', function() {
+          it('should return an array containing errors', function() {
+            expect(validate({ server: { driver: { stuff: { answer: 101 } } } })).to.be.an('array').and.to
               .not.be.empty;
           });
         });
       });
 
-      describe('when provided a schema ID ref', function () {
-        describe('when provided a valid value', function () {
-          it('should return an empty array of no errors', function () {
+      describe('when provided a schema ID ref', function() {
+        describe('when provided a valid value', function() {
+          it('should return an empty array of no errors', function() {
             expect(validate(99, 'driver-stuff.json#/properties/answer')).to.eql([]);
           });
         });
 
-        describe('when provided an invalid value', function () {
-          it('should return an array containing errors', function () {
+        describe('when provided an invalid value', function() {
+          it('should return an array containing errors', function() {
             expect(validate(101, 'driver-stuff.json#/properties/answer')).to.be.an('array').and.to
               .not.be.empty;
           });
@@ -458,28 +458,28 @@ describe('schema', function () {
     });
   });
 
-  describe('RoachHotelMap', function () {
-    it('should allow writing', function () {
+  describe('RoachHotelMap', function() {
+    it('should allow writing', function() {
       const map = new RoachHotelMap();
       expect(() => map.set('foo', 'bar')).not.to.throw();
     });
 
-    it('should allow reading', function () {
+    it('should allow reading', function() {
       const map = new RoachHotelMap([['foo', 'bar']]);
       expect(() => map.get('foo')).not.to.throw();
     });
 
-    it('should not allow deletion', function () {
+    it('should not allow deletion', function() {
       const map = new RoachHotelMap([['foo', 'bar']]);
       expect(map.delete('foo')).to.be.false;
     });
 
-    it('should not allow clearing', function () {
+    it('should not allow clearing', function() {
       const map = new RoachHotelMap([['foo', 'bar']]);
       expect(() => map.clear()).to.throw();
     });
 
-    it('should not allow updating', function () {
+    it('should not allow updating', function() {
       const map = new RoachHotelMap([['foo', 'bar']]);
       expect(() => map.set('foo', 'baz')).to.throw();
     });

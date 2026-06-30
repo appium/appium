@@ -1,13 +1,13 @@
-import path from 'node:path';
-import {remote as wdio} from 'webdriverio';
-import {pluginE2EHarness} from '@appium/plugin-test-support';
-import {tempDir, fs, node} from '@appium/support';
+import { pluginE2EHarness } from '@appium/plugin-test-support';
+import { fs, node, tempDir } from '@appium/support';
 import axios from 'axios';
-import {WebSocket} from 'ws';
-import {expect} from 'chai';
-import type {AddressInfo} from 'node:net';
-import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
-import {exec} from 'teen_process';
+import { expect } from 'chai';
+import type { AddressInfo } from 'node:net';
+import path from 'node:path';
+import { after, afterEach, before, beforeEach, describe, it } from 'node:test';
+import { exec } from 'teen_process';
+import { remote as wdio } from 'webdriverio';
+import { WebSocket } from 'ws';
 
 const BUFFER_SIZE = 0xffff;
 const THIS_PLUGIN_DIR = node.getModuleRootSync('@appium/storage-plugin', __filename)!;
@@ -36,10 +36,10 @@ const WDIO_OPTS: WebdriverIOConfig = {
   capabilities: TEST_CAPS,
 };
 
-describe('StoragePlugin', function () {
+describe('StoragePlugin', function() {
   let driver: any;
   let storageRoot: string | undefined;
-  const {setup, teardown} = pluginE2EHarness({
+  const { setup, teardown } = pluginE2EHarness({
     host: TEST_HOST,
     appiumHome: APPIUM_HOME,
     driverName: 'fake',
@@ -49,26 +49,25 @@ describe('StoragePlugin', function () {
     pluginSource: 'local',
     pluginSpec: THIS_PLUGIN_DIR,
   });
-  before(async function () {
+  before(async function() {
     // workaround for https://github.com/nodejs/node/issues/64061
     await exec(process.execPath, ['--version']);
 
-    const {server} = await setup();
+    const { server } = await setup();
     const address = server.address();
     WDIO_OPTS.port = (address as AddressInfo).port;
   });
-  after(async function () {
+  after(async function() {
     await teardown();
   });
 
-  beforeEach(async function () {
+  beforeEach(async function() {
     storageRoot = await tempDir.openDir();
     driver = await wdio(WDIO_OPTS);
     const baseUrl = `http://${TEST_HOST}:${WDIO_OPTS.port}/storage`;
     driver.addCommand(
       'addStorageItem',
-      async (name: string, sha1: string) =>
-        (await axios.post(`${baseUrl}/add`, {name, sha1})).data.value,
+      async (name: string, sha1: string) => (await axios.post(`${baseUrl}/add`, { name, sha1 })).data.value,
     );
     driver.addCommand(
       'listStorageItems',
@@ -80,11 +79,11 @@ describe('StoragePlugin', function () {
     );
     driver.addCommand(
       'deleteStorageItem',
-      async (name: string) => (await axios.post(`${baseUrl}/delete`, {name})).data.value,
+      async (name: string) => (await axios.post(`${baseUrl}/delete`, { name })).data.value,
     );
   });
 
-  afterEach(async function () {
+  afterEach(async function() {
     if (driver) {
       await driver.deleteSession();
       driver = null;
@@ -95,7 +94,7 @@ describe('StoragePlugin', function () {
     }
   });
 
-  it('should manage storage files', async function () {
+  it('should manage storage files', async function() {
     let items = await driver.listStorageItems();
     expect(items).to.be.empty;
     const name1 = path.basename('foo1.bar');
@@ -104,7 +103,7 @@ describe('StoragePlugin', function () {
     await Promise.all([addFileToStorage(TEST_FAKE_APP, name1), addFileToStorage(pkgPath, name2)]);
     items = await driver.listStorageItems();
     expect(items.length).to.eql(2);
-    expect(new Set(items.map(({name}: {name: string}) => name))).to.deep.equal(
+    expect(new Set(items.map(({ name }: { name: string; }) => name))).to.deep.equal(
       new Set([name1, name2]),
     );
     const isDeleted = await driver.deleteStorageItem(name1);
@@ -119,9 +118,9 @@ describe('StoragePlugin', function () {
 
   async function addFileToStorage(sourcePath: string, name: string): Promise<void> {
     const hash = await fs.hash(sourcePath);
-    const {size} = await fs.stat(sourcePath);
+    const { size } = await fs.stat(sourcePath);
     const {
-      ws: {events, stream},
+      ws: { events, stream },
     } = await driver.addStorageItem(name, hash, sourcePath);
     const streamWs = new WebSocket(`ws://${TEST_HOST}:${WDIO_OPTS.port}${stream}`);
     const eventsWs = new WebSocket(`ws://${TEST_HOST}:${WDIO_OPTS.port}${events}`);
@@ -139,7 +138,7 @@ describe('StoragePlugin', function () {
             return;
           }
           try {
-            const {value} = JSON.parse(strData);
+            const { value } = JSON.parse(strData);
             if (value?.success) {
               resolve();
             } else {

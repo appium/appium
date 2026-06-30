@@ -1,16 +1,16 @@
-import type {ExtManifest} from 'appium/types';
-import {Manifest} from '../../../lib/extension/manifest';
-import {migrate} from '../../../lib/extension/manifest-migrations';
-import {DRIVER_TYPE} from '../../../lib/constants';
+import type { ExtManifest } from 'appium/types';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import { DRIVER_TYPE } from '../../../lib/constants';
+import { Manifest } from '../../../lib/extension/manifest';
+import { migrate } from '../../../lib/extension/manifest-migrations';
 
-const {expect} = chai;
+const { expect } = chai;
 chai.use(chaiAsPromised);
 
-describe('manifest-migrations', function () {
-  describe('when no installPath property present in manifest', function () {
-    it('should trigger refresh', async function () {
+describe('manifest-migrations', function() {
+  describe('when no installPath property present in manifest', function() {
+    it('should trigger refresh', async function() {
       const manifest = Manifest.getInstance(process.cwd());
       // do not explicitly set the schema rev lower here, since that will trigger
       manifest.setExtension(DRIVER_TYPE, 'derp', {
@@ -28,8 +28,8 @@ describe('manifest-migrations', function () {
     });
   });
 
-  describe('when installPath property present in manifest', function () {
-    it('should not trigger refresh', async function () {
+  describe('when installPath property present in manifest', function() {
+    it('should not trigger refresh', async function() {
       const manifest = Manifest.getInstance(process.cwd());
       // do not explicitly set the schema rev lower here, since that will trigger
       manifest.setExtension(DRIVER_TYPE, 'derp', {
@@ -48,8 +48,8 @@ describe('manifest-migrations', function () {
     });
   });
 
-  describe('when an installType is "npm" and the rev is old', function () {
-    it('should trigger refresh', async function () {
+  describe('when an installType is "npm" and the rev is old', function() {
+    it('should trigger refresh', async function() {
       const manifest = Manifest.getInstance(process.cwd());
       manifest.setSchemaRev(3); // this will trigger a refresh, but there's no way to tell _why_, which may be bad. YAGNI?
       manifest.setExtension(DRIVER_TYPE, 'derp', {
@@ -68,8 +68,8 @@ describe('manifest-migrations', function () {
     });
   });
 
-  describe('when no installType is "npm"', function () {
-    it('should not trigger refresh', async function () {
+  describe('when no installType is "npm"', function() {
+    it('should not trigger refresh', async function() {
       const manifest = Manifest.getInstance(process.cwd());
       // do not explicitly set the schema rev lower here, since that will trigger
       manifest.setExtension(DRIVER_TYPE, 'derp', {

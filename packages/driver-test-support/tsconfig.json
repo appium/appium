@@ -16,5 +16,5 @@
     "types": ["mocha", "chai", "node"]
   },
   "include": ["lib", "test"],
-  "references": [{"path": "../types"}]
+  "references": [{ "path": "../types" }]
 }

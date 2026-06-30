@@ -1,8 +1,4 @@
-import {
-  ExtensionCore,
-  generateDriverLogPrefix,
-  validateExecuteMethodParams,
-} from '@appium/base-driver';
+import { ExtensionCore, generateDriverLogPrefix, validateExecuteMethodParams } from '@appium/base-driver';
 import type {
   AppiumLogger,
   Constraints,
@@ -57,7 +53,7 @@ export class BasePlugin extends ExtensionCore implements Plugin {
     protoArgs: readonly [StringRecord<unknown>] | readonly unknown[],
   ): Promise<unknown> {
     const PluginClass = this.constructor as typeof BasePlugin;
-    const commandMetadata = {...PluginClass.executeMethodMap?.[script]};
+    const commandMetadata = { ...PluginClass.executeMethodMap?.[script] };
 
     if (!commandMetadata.command || !(commandMetadata.command in this)) {
       this.log.info(

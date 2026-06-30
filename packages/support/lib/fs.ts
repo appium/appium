@@ -1,43 +1,38 @@
 import B from 'bluebird';
+import { glob } from 'glob';
+import type { GlobOptions } from 'glob';
+import klaw from 'klaw';
+import type { Walker } from 'klaw';
 import crypto from 'node:crypto';
 import {
   close,
   constants,
+  type CopyOptions,
   createReadStream,
   createWriteStream,
+  type MakeDirectoryOptions,
+  open,
+  type PathLike,
   promises as fsPromises,
   read,
-  write,
-  rmSync,
-  open,
-  type CopyOptions,
-  type PathLike,
-  type MakeDirectoryOptions,
   type ReadAsyncOptions,
+  rmSync,
   type Stats,
+  write,
 } from 'node:fs';
-import {promisify} from 'node:util';
-import {glob} from 'glob';
-import type {GlobOptions} from 'glob';
-import klaw from 'klaw';
-import type {Walker} from 'klaw';
 import path from 'node:path';
-import {
-  packageDirectorySync,
-  readPackageSync,
-  type NormalizeOptions,
-  type NormalizedPackageJson,
-} from './internal';
+import { promisify } from 'node:util';
 import sanitize from 'sanitize-filename';
 import which from 'which';
+import { type NormalizedPackageJson, type NormalizeOptions, packageDirectorySync, readPackageSync } from './internal';
 import log from './logger';
-import {Timer} from './timing';
-import {isWindows} from './system';
-import {memoize, pluralize} from './util';
+import { isWindows } from './system';
+import { Timer } from './timing';
+import { memoize, pluralize } from './util';
 
 const findRootCached = memoize(
   packageDirectorySync,
-  (opts: {cwd?: string} | undefined) => opts?.cwd,
+  (opts: { cwd?: string; } | undefined) => opts?.cwd,
 );
 
 /**
@@ -117,24 +112,23 @@ export type ReadFn<TBuffer extends NodeJS.ArrayBufferView = NodeJS.ArrayBufferVi
   offset?: number,
   length?: number,
   position?: number | null,
-) => B<{bytesRead: number; buffer: TBuffer}>;
+) => B<{ bytesRead: number; buffer: TBuffer; }>;
 
 /**
  * Maps {@link CopyFileOptions} (including legacy `ncp` fields) to `fs.cp` options.
  */
 export function toCpOptions(opts: CopyFileOptions = {}): CopyOptions {
-  const {clobber = true, dereference, filter} = opts;
+  const { clobber = true, dereference, filter } = opts;
   let cpFilter: CopyOptions['filter'];
   if (filter !== undefined) {
-    cpFilter =
-      filter instanceof RegExp ? (source) => filter.test(source) : (source) => filter(source);
+    cpFilter = filter instanceof RegExp ? (source) => filter.test(source) : (source) => filter(source);
   }
   return {
     recursive: true,
     force: clobber,
     errorOnExist: !clobber,
-    ...(dereference !== undefined && {dereference}),
-    ...(cpFilter !== undefined && {filter: cpFilter}),
+    ...(dereference !== undefined && { dereference }),
+    ...(cpFilter !== undefined && { filter: cpFilter }),
   };
 }
 
@@ -184,7 +178,7 @@ export const fs = {
    * @see https://nodejs.org/api/fs.html#fspromisesrmpath-options
    */
   async rimraf(filepath: PathLike): Promise<void> {
-    return await fsPromises.rm(filepath, {recursive: true, force: true});
+    return await fsPromises.rm(filepath, { recursive: true, force: true });
   },
 
   /**
@@ -192,7 +186,7 @@ export const fs = {
    * @see https://nodejs.org/api/fs.html#fsrmsyncpath-options
    */
   rimrafSync(filepath: PathLike): void {
-    return rmSync(filepath, {recursive: true, force: true});
+    return rmSync(filepath, { recursive: true, force: true });
   },
 
   /**
@@ -233,7 +227,7 @@ export const fs = {
   async mv(from: string, to: string, opts: MvOptions = {}): Promise<void> {
     const ensureDestination = async (p: PathLike): Promise<boolean> => {
       if (opts?.mkdirp && !(await this.exists(p))) {
-        await fsPromises.mkdir(p, {recursive: true});
+        await fsPromises.mkdir(p, { recursive: true });
         return true;
       }
       return false;
@@ -281,7 +275,7 @@ export const fs = {
       await renameFile(from, to, dstRootWasCreated);
     } else if (fromStat.isDirectory()) {
       const dstRootWasCreated = await ensureDestination(to);
-      const items = await fsPromises.readdir(from, {withFileTypes: true});
+      const items = await fsPromises.readdir(from, { withFileTypes: true });
       for (const item of items) {
         const srcPath = path.join(from, item.name);
         const destPath = path.join(to, item.name);
@@ -322,8 +316,7 @@ export const fs = {
           new Error(
             `Cannot calculate ${algorithm} hash for '${filePath}'. Original error: ${e.message}`,
           ),
-        ),
-      );
+        ));
       readStream.on('data', (chunk: Buffer | string) => fileHash.update(chunk));
       readStream.on('end', () => resolve(fileHash.digest('hex')));
     });
@@ -339,7 +332,7 @@ export const fs = {
 
   /** Recursively create a directory. */
   async mkdirp(dir: PathLike): Promise<string | undefined> {
-    return await fs.mkdir(dir, {recursive: true});
+    return await fs.mkdir(dir, { recursive: true });
   },
 
   /**
@@ -372,13 +365,13 @@ export const fs = {
     let fileCount = 0;
     let directoryCount = 0;
     const timer = new Timer().start();
-    return await new Promise<string | null>(function (resolve, reject) {
+    return await new Promise<string | null>(function(resolve, reject) {
       let lastFileProcessed: Promise<string | undefined> = Promise.resolve(undefined);
       walker = klaw(dir, {
         depthLimit: recursive ? -1 : 0,
       });
       walker
-        .on('data', function (item: klaw.Item) {
+        .on('data', function(item: klaw.Item) {
           if (walker) {
             walker.pause();
           }
@@ -404,14 +397,14 @@ export const fs = {
             }
           })();
         })
-        .on('error', function (err: Error, item?: {path: string}) {
+        .on('error', function(err: Error, item?: { path: string; }) {
           log.warn(`Got an error while walking '${item?.path ?? 'unknown'}': ${err.message}`);
           if (isErrnoException(err) && err.code === 'ENOENT') {
             log.warn('All files may not have been accessed');
             reject(err);
           }
         })
-        .on('end', async function () {
+        .on('end', async function() {
           try {
             const file = await lastFileProcessed;
             resolve(file ?? null);
@@ -420,11 +413,11 @@ export const fs = {
             reject(err);
           }
         });
-    }).finally(function () {
+    }).finally(function() {
       log.debug(
-        `Traversed ${pluralize('directory', directoryCount, true)} ` +
-          `and ${pluralize('file', fileCount, true)} ` +
-          `in ${timer.getDuration().asMilliSeconds.toFixed(0)}ms`,
+        `Traversed ${pluralize('directory', directoryCount, true)} `
+          + `and ${pluralize('file', fileCount, true)} `
+          + `in ${timer.getDuration().asMilliSeconds.toFixed(0)}ms`,
       );
       if (walker) {
         walker.destroy();
@@ -441,15 +434,14 @@ export const fs = {
    */
   readPackageJsonFrom(
     dir: string,
-    opts: NormalizeOptions & {cwd?: string} = {},
+    opts: NormalizeOptions & { cwd?: string; } = {},
   ): NormalizedPackageJson {
     const cwd = fs.findRoot(dir);
     try {
-      return readPackageSync({normalize: true, ...opts, cwd});
+      return readPackageSync({ normalize: true, ...opts, cwd });
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
-      (err as Error).message =
-        `Failed to read a \`package.json\` from dir \`${dir}\`:\n\n${message}`;
+      (err as Error).message = `Failed to read a \`package.json\` from dir \`${dir}\`:\n\n${message}`;
       throw err;
     }
   },
@@ -465,7 +457,7 @@ export const fs = {
     if (!dir || !path.isAbsolute(dir)) {
       throw new TypeError('`findRoot()` must be provided a non-empty, absolute path');
     }
-    const result = findRootCached({cwd: dir});
+    const result = findRootCached({ cwd: dir });
     if (!result) {
       throw new Error(`\`findRoot()\` could not find \`package.json\` from ${dir}`);
     }

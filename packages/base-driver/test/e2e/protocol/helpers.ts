@@ -1,5 +1,5 @@
-import Express from 'express';
 import bodyParser from 'body-parser';
+import Express from 'express';
 
 export function createProxyServer(port: number): {
   app: Express.Application;
@@ -8,5 +8,5 @@ export function createProxyServer(port: number): {
   const app = Express();
   app.use(bodyParser.json());
   const server = app.listen(port);
-  return {app, server};
+  return { app, server };
 }

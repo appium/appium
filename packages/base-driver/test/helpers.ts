@@ -1,6 +1,6 @@
-import type {Constraints, MethodMap, AppiumServer, Driver, ServerArgs} from '@appium/types';
-import {server, routeConfiguringFunction} from '../lib';
-import {TEST_HOST, getTestPort} from '@appium/driver-test-support';
+import { getTestPort, TEST_HOST } from '@appium/driver-test-support';
+import type { AppiumServer, Constraints, Driver, MethodMap, ServerArgs } from '@appium/types';
+import { routeConfiguringFunction, server } from '../lib';
 
 export async function createServer<T extends Driver<Constraints>>(
   driver: T,
@@ -31,7 +31,7 @@ export async function createServer<T extends Driver<Constraints>>(
   const teardown = async () => {
     await appiumServer?.close();
   };
-  return {port, baseUrl, setup, teardown};
+  return { port, baseUrl, setup, teardown };
 }
 
 /**

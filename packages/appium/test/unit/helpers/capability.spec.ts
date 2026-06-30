@@ -5,33 +5,33 @@ import type {
   NSCapabilities,
   W3CCapabilities,
 } from '@appium/types';
+import { expect, use } from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import {
-  parseCapsForInnerDriver,
   insertAppiumPrefixes,
+  parseCapsForInnerDriver,
   pullSettings,
   removeAppiumPrefixes,
 } from '../../../lib/helpers/capability';
-import {BASE_CAPS, W3C_CAPS} from '../../helpers';
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
+import { BASE_CAPS, W3C_CAPS } from '../../helpers';
 
-describe('helpers/capability', function () {
-  beforeEach(async function () {
+describe('helpers/capability', function() {
+  beforeEach(async function() {
     use(chaiAsPromised);
   });
 
-  describe('parseCapsForInnerDriver()', function () {
-    it('should return an error if only JSONWP provided', function () {
+  describe('parseCapsForInnerDriver()', function() {
+    it('should return an error if only JSONWP provided', function() {
       const res = parseCapsForInnerDriver(BASE_CAPS as unknown as W3CCapabilities<Constraints>);
       expect('error' in res && res.error).to.be.ok;
-      expect((res as {error: {message: string}}).error.message).to.match(/W3C/);
+      expect((res as { error: { message: string; }; }).error.message).to.match(/W3C/);
     });
-    it('should return W3C caps unchanged if only W3C caps were provided', function () {
-      const {desiredCaps, processedW3CCapabilities} = parseCapsForInnerDriver(W3C_CAPS);
+    it('should return W3C caps unchanged if only W3C caps were provided', function() {
+      const { desiredCaps, processedW3CCapabilities } = parseCapsForInnerDriver(W3C_CAPS);
       expect(desiredCaps).to.deep.equal(BASE_CAPS);
       expect(processedW3CCapabilities).to.deep.equal(W3C_CAPS);
     });
-    it('should include default capabilities in results', function () {
+    it('should include default capabilities in results', function() {
       const defaultW3CCaps = {
         'appium:foo': 'bar',
         'appium:baz': 'bla',
@@ -40,7 +40,7 @@ describe('helpers/capability', function () {
         foo: 'bar',
         baz: 'bla',
       };
-      const {desiredCaps, processedW3CCapabilities} = parseCapsForInnerDriver(
+      const { desiredCaps, processedW3CCapabilities } = parseCapsForInnerDriver(
         W3C_CAPS,
         {},
         defaultW3CCaps,
@@ -54,7 +54,7 @@ describe('helpers/capability', function () {
         ...insertAppiumPrefixes(BASE_CAPS),
       });
     });
-    it('should allow valid default capabilities', function () {
+    it('should allow valid default capabilities', function() {
       const res = parseCapsForInnerDriver(
         W3C_CAPS,
         {},
@@ -66,7 +66,7 @@ describe('helpers/capability', function () {
         (res.processedW3CCapabilities!.alwaysMatch as Record<string, unknown>)['appium:foo'],
       ).to.eql('bar2');
     });
-    it('should not allow invalid default capabilities', function () {
+    it('should not allow invalid default capabilities', function() {
       const res = parseCapsForInnerDriver(
         W3C_CAPS,
         {},
@@ -76,32 +76,32 @@ describe('helpers/capability', function () {
         },
       );
       const errRes = res as unknown as {
-        error: {jsonwpCode: number; error: string; w3cStatus: number};
+        error: { jsonwpCode: number; error: string; w3cStatus: number; };
       };
       expect(errRes.error.jsonwpCode).to.eql(61);
       expect(errRes.error.error).to.eql('invalid argument');
       expect(errRes.error.w3cStatus).to.eql(400);
     });
-    it('should reject if W3C caps are not passing constraints', function () {
-      const res = parseCapsForInnerDriver(W3C_CAPS as W3CCapabilities<{hello: {presence: true}}>, {
-        hello: {presence: true},
+    it('should reject if W3C caps are not passing constraints', function() {
+      const res = parseCapsForInnerDriver(W3C_CAPS as W3CCapabilities<{ hello: { presence: true; }; }>, {
+        hello: { presence: true },
       });
-      const err = (res as {error?: Error}).error;
+      const err = (res as { error?: Error; }).error;
       expect(err!.message).to.match(/required/);
       expect(err).to.be.instanceOf(Error);
     });
-    it('should only accept W3C caps that have passing constraints', function () {
+    it('should only accept W3C caps that have passing constraints', function() {
       const w3cCaps = {
         ...W3C_CAPS,
-        firstMatch: [{foo: 'bar'}, {'appium:hello': 'world'}],
-      } as W3CCapabilities<{hello: {presence: true}}>;
-      const res = parseCapsForInnerDriver(w3cCaps, {hello: {presence: true}});
-      const error = (res as {error?: {jsonwpCode: number; error: string; w3cStatus: number}}).error;
+        firstMatch: [{ foo: 'bar' }, { 'appium:hello': 'world' }],
+      } as W3CCapabilities<{ hello: { presence: true; }; }>;
+      const res = parseCapsForInnerDriver(w3cCaps, { hello: { presence: true } });
+      const error = (res as { error?: { jsonwpCode: number; error: string; w3cStatus: number; }; }).error;
       expect(error!.jsonwpCode).to.eql(61);
       expect(error!.error).to.eql('invalid argument');
       expect(error!.w3cStatus).to.eql(400);
     });
-    it('should add appium prefixes to W3C caps that are not standard in W3C', function () {
+    it('should add appium prefixes to W3C caps that are not standard in W3C', function() {
       const res = parseCapsForInnerDriver({
         alwaysMatch: {
           platformName: 'Fake',
@@ -109,12 +109,12 @@ describe('helpers/capability', function () {
         },
         firstMatch: [{}],
       } as unknown as W3CCapabilities<Constraints>);
-      expect((res as {error?: {error: string}}).error!.error).to.includes('invalid argument');
+      expect((res as { error?: { error: string; }; }).error!.error).to.includes('invalid argument');
     });
   });
 
-  describe('removeAppiumPrefixes()', function () {
-    it('should remove appium prefixes from cap names', function () {
+  describe('removeAppiumPrefixes()', function() {
+    it('should remove appium prefixes from cap names', function() {
       expect(
         removeAppiumPrefixes({
           'appium:cap1': 'value1',
@@ -129,8 +129,8 @@ describe('helpers/capability', function () {
     });
   });
 
-  describe('insertAppiumPrefixes()', function () {
-    it('should apply prefixes to non-standard capabilities', function () {
+  describe('insertAppiumPrefixes()', function() {
+    it('should apply prefixes to non-standard capabilities', function() {
       expect(
         insertAppiumPrefixes({
           someCap: 'someCap',
@@ -139,7 +139,7 @@ describe('helpers/capability', function () {
         'appium:someCap': 'someCap',
       });
     });
-    it('should not apply prefixes to standard capabilities', function () {
+    it('should not apply prefixes to standard capabilities', function() {
       expect(
         insertAppiumPrefixes({
           browserName: 'BrowserName',
@@ -150,7 +150,7 @@ describe('helpers/capability', function () {
         platformName: 'PlatformName',
       });
     });
-    it('should not apply prefixes to capabilities that already have a prefix', function () {
+    it('should not apply prefixes to capabilities that already have a prefix', function() {
       expect(
         insertAppiumPrefixes({
           'appium:someCap': 'someCap',
@@ -161,7 +161,7 @@ describe('helpers/capability', function () {
         'moz:someOtherCap': 'someOtherCap',
       });
     });
-    it('should apply prefixes to non-prefixed, non-standard capabilities; should not apply prefixes to any other capabilities', function () {
+    it('should apply prefixes to non-prefixed, non-standard capabilities; should not apply prefixes to any other capabilities', function() {
       expect(
         insertAppiumPrefixes({
           'appium:someCap': 'someCap',
@@ -182,8 +182,8 @@ describe('helpers/capability', function () {
     });
   });
 
-  describe('pullSettings()', function () {
-    it('should pull settings from caps', function () {
+  describe('pullSettings()', function() {
+    it('should pull settings from caps', function() {
       const caps = {
         platformName: 'foo',
         browserName: 'bar',
@@ -200,22 +200,22 @@ describe('helpers/capability', function () {
         browserName: 'bar',
       });
     });
-    it('should pull settings dict if object values are present in caps', function () {
+    it('should pull settings dict if object values are present in caps', function() {
       const caps = {
         platformName: 'foo',
         browserName: 'bar',
-        'settings[settingName]': {key: 'baz'},
+        'settings[settingName]': { key: 'baz' },
       };
       const settings = pullSettings(caps);
       expect(settings).to.eql({
-        settingName: {key: 'baz'},
+        settingName: { key: 'baz' },
       });
       expect(caps).to.eql({
         platformName: 'foo',
         browserName: 'bar',
       });
     });
-    it('should pull empty dict if no settings are present in caps', function () {
+    it('should pull empty dict if no settings are present in caps', function() {
       const caps = {
         platformName: 'foo',
         browserName: 'bar',
@@ -229,13 +229,13 @@ describe('helpers/capability', function () {
         'setting[settingName]': 'baz',
       });
     });
-    it('should pull empty dict if caps are empty', function () {
+    it('should pull empty dict if caps are empty', function() {
       const caps = {};
       const settings = pullSettings(caps);
       expect(settings).to.eql({});
       expect(caps).to.eql({});
     });
-    it('should pull combined settings', function () {
+    it('should pull combined settings', function() {
       const caps = {
         platformName: 'foo',
         browserName: 'bar',

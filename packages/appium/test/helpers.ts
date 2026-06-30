@@ -1,7 +1,7 @@
 import net from 'node:net';
 import path from 'node:path';
-import rewiremock, {addPlugin, overrideEntryPoint, plugins} from 'rewiremock';
-import {insertAppiumPrefixes} from '../lib/helpers/capability';
+import rewiremock, { addPlugin, overrideEntryPoint, plugins } from 'rewiremock';
+import { insertAppiumPrefixes } from '../lib/helpers/capability';
 
 const TEST_HOST = '127.0.0.1';
 
@@ -24,10 +24,10 @@ const BASE_CAPS = {
   app: TEST_FAKE_APP,
 };
 
-const W3C_PREFIXED_CAPS = {...insertAppiumPrefixes(BASE_CAPS)};
+const W3C_PREFIXED_CAPS = { ...insertAppiumPrefixes(BASE_CAPS) };
 
 const W3C_CAPS = {
-  alwaysMatch: {...W3C_PREFIXED_CAPS},
+  alwaysMatch: { ...W3C_PREFIXED_CAPS },
   firstMatch: [{}],
 };
 
@@ -60,16 +60,16 @@ overrideEntryPoint(module);
 addPlugin(plugins.nodejs);
 
 export {
-  TEST_FAKE_APP,
-  TEST_HOST,
+  APPIUM_ROOT,
   BASE_CAPS,
-  W3C_PREFIXED_CAPS,
-  W3C_CAPS,
-  PROJECT_ROOT,
-  getTestPort,
-  rewiremock,
-  resolveFixture,
   FAKE_DRIVER_DIR,
   FAKE_PLUGIN_DIR,
-  APPIUM_ROOT,
+  getTestPort,
+  PROJECT_ROOT,
+  resolveFixture,
+  rewiremock,
+  TEST_FAKE_APP,
+  TEST_HOST,
+  W3C_CAPS,
+  W3C_PREFIXED_CAPS,
 };

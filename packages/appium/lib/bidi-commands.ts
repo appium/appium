@@ -1,22 +1,22 @@
-import {util} from '@appium/support';
-import {promisify} from 'node:util';
-import {capitalize} from './utils';
-import type {ExtensionCore} from '@appium/base-driver';
-import {errors} from '@appium/base-driver';
-import {BIDI_BASE_PATH, BIDI_EVENT_NAME} from './constants';
-import WebSocket from 'ws';
-import os from 'node:os';
-import {isBroadcastIp, fetchInterfaces, V4_BROADCAST_IP} from './helpers/network';
-import type {IncomingMessage} from 'node:http';
-import type {AppiumDriver} from './appium';
+import type { ExtensionCore } from '@appium/base-driver';
+import { errors } from '@appium/base-driver';
+import { util } from '@appium/support';
 import type {
-  ErrorBiDiCommandResponse,
-  SuccessBiDiCommandResponse,
-  ExternalDriver,
-  StringRecord,
-  Plugin,
   BiDiResultData,
+  ErrorBiDiCommandResponse,
+  ExternalDriver,
+  Plugin,
+  StringRecord,
+  SuccessBiDiCommandResponse,
 } from '@appium/types';
+import type { IncomingMessage } from 'node:http';
+import os from 'node:os';
+import { promisify } from 'node:util';
+import WebSocket from 'ws';
+import type { AppiumDriver } from './appium';
+import { BIDI_BASE_PATH, BIDI_EVENT_NAME } from './constants';
+import { fetchInterfaces, isBroadcastIp, V4_BROADCAST_IP } from './helpers/network';
+import { capitalize } from './utils';
 
 type ExtensionPlugin = Plugin & ExtensionCore;
 type AnyDriver = ExternalDriver | AppiumDriver;
@@ -64,11 +64,14 @@ export function determineBiDiHost(address: string): string {
 export function onBidiConnection(this: AppiumDriver, ws: WebSocket, req: IncomingMessage): void {
   try {
     const initBiDiSocketFunc: OmitThisParameter<typeof initBidiSocket> = initBidiSocket.bind(this);
-    const {bidiHandlerDriver, bidiHandlerPlugins, proxyClient, send, sendToProxy, logSocketErr} =
-      initBiDiSocketFunc(ws, req);
+    const { bidiHandlerDriver, bidiHandlerPlugins, proxyClient, send, sendToProxy, logSocketErr } = initBiDiSocketFunc(
+      ws,
+      req,
+    );
 
-    const initBidiSocketHandlersFunc: OmitThisParameter<typeof initBidiSocketHandlers> =
-      initBidiSocketHandlers.bind(this);
+    const initBidiSocketHandlersFunc: OmitThisParameter<typeof initBidiSocketHandlers> = initBidiSocketHandlers.bind(
+      this,
+    );
     initBidiSocketHandlersFunc(
       ws,
       proxyClient,
@@ -79,12 +82,14 @@ export function onBidiConnection(this: AppiumDriver, ws: WebSocket, req: Incomin
       logSocketErr,
     );
     if (proxyClient) {
-      const initBidiProxyHandlersFunc: OmitThisParameter<typeof initBidiProxyHandlers> =
-        initBidiProxyHandlers.bind(bidiHandlerDriver);
+      const initBidiProxyHandlersFunc: OmitThisParameter<typeof initBidiProxyHandlers> = initBidiProxyHandlers.bind(
+        bidiHandlerDriver,
+      );
       initBidiProxyHandlersFunc(proxyClient, ws, send);
     }
-    const initBidiEventListenersFunc: OmitThisParameter<typeof initBidiEventListeners> =
-      initBidiEventListeners.bind(this);
+    const initBidiEventListenersFunc: OmitThisParameter<typeof initBidiEventListeners> = initBidiEventListeners.bind(
+      this,
+    );
     initBidiEventListenersFunc(ws, bidiHandlerDriver, bidiHandlerPlugins, send);
   } catch (err) {
     this.log.error(err);
@@ -108,12 +113,12 @@ export async function onBidiMessage(
   let resMessage: SuccessBiDiCommandResponse | ErrorBiDiCommandResponse;
   let id: number = 0;
   const driverLog = driver.log;
-  const dataTruncated = util.truncateString(data.toString(), {length: MAX_LOGGED_DATA_LENGTH});
+  const dataTruncated = util.truncateString(data.toString(), { length: MAX_LOGGED_DATA_LENGTH });
   try {
     let method: string;
     let params: StringRecord;
     try {
-      ({id, method, params} = JSON.parse(data.toString('utf8')));
+      ({ id, method, params } = JSON.parse(data.toString('utf8')));
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       throw new errors.InvalidArgumentError(
@@ -145,13 +150,13 @@ export async function onBidiMessage(
     };
   } catch (err) {
     if (
-      err !== null &&
-      typeof err === 'object' &&
-      'bidiErrObject' in err &&
-      typeof (err as {bidiErrObject: unknown}).bidiErrObject === 'function'
+      err !== null
+      && typeof err === 'object'
+      && 'bidiErrObject' in err
+      && typeof (err as { bidiErrObject: unknown; }).bidiErrObject === 'function'
     ) {
       resMessage = (
-        err as {bidiErrObject: (msgId: number) => ErrorBiDiCommandResponse}
+        err as { bidiErrObject: (msgId: number) => ErrorBiDiCommandResponse; }
       ).bidiErrObject(id);
     } else {
       resMessage = {
@@ -215,8 +220,7 @@ function wrapCommandWithPlugins(
   let next = async () => await driver.executeBidiCommand(method, params);
   for (const plugin of plugins.filter((p) => p.doesBidiCommandExist(moduleName, methodName))) {
     next = (
-      (_next) => async () =>
-        await plugin.executeBidiCommand(method, params, _next, driver)
+      (_next) => async () => await plugin.executeBidiCommand(method, params, _next, driver)
     )(next);
   }
   return next;
@@ -245,8 +249,8 @@ function initBidiSocket(
 
   if (!sessionMatch && !noSessionMatch) {
     throw new Error(
-      `Got websocket connection for path ${pathname} but didn't know what to do with it. ` +
-        `Ignoring and will close the connection`,
+      `Got websocket connection for path ${pathname} but didn't know what to do with it. `
+        + `Ignoring and will close the connection`,
     );
   }
 
@@ -265,8 +269,8 @@ function initBidiSocket(
       // The session ID sent in doesn't match an active session; just ignore this socket
       // connection in that case
       throw new Error(
-        `Got bidi connection request for session with id ${sessionId} which is closed ` +
-          `or does not exist. Closing the socket connection.`,
+        `Got bidi connection request for session with id ${sessionId} which is closed `
+          + `or does not exist. Closing the socket connection.`,
       );
     }
     const driverName = bidiHandlerDriver.constructor.name;
@@ -284,14 +288,14 @@ function initBidiSocket(
         new URL(bidiProxyUrl);
       } catch (e) {
         throw new Error(
-          `Got request for ${driverName} to proxy bidi connections to upstream socket with ` +
-            `url ${bidiProxyUrl}, but this was not a valid url`,
-          {cause: e},
+          `Got request for ${driverName} to proxy bidi connections to upstream socket with `
+            + `url ${bidiProxyUrl}, but this was not a valid url`,
+          { cause: e },
         );
       }
       this.log.info(
-        `Bidi connection for ${driverName} will be proxied to ${bidiProxyUrl}. ` +
-          `Plugins will not handle bidi commands`,
+        `Bidi connection for ${driverName} will be proxied to ${bidiProxyUrl}. `
+          + `Plugins will not handle bidi commands`,
       );
       proxyClient = new WebSocket(bidiProxyUrl);
       this.bidiProxyClients[sessionId] = proxyClient;
@@ -335,7 +339,7 @@ function initBidiSocket(
   // bidi socket server (e.g. on a browser)
   const sendToProxy: SendData | null = proxyClient ? sendFactory(proxyClient) : null;
 
-  return {bidiHandlerDriver, bidiHandlerPlugins, proxyClient, send, sendToProxy, logSocketErr};
+  return { bidiHandlerDriver, bidiHandlerPlugins, proxyClient, send, sendToProxy, logSocketErr };
 }
 
 /**
@@ -365,14 +369,14 @@ function initBidiProxyHandlers(
   // client as well
   proxyClient.on('close', (code, reason) => {
     driverLog.debug(
-      `Upstream bidi socket closed connection (code ${code}, reason: '${reason}'). ` +
-        `Closing proxy connection to client`,
+      `Upstream bidi socket closed connection (code ${code}, reason: '${reason}'). `
+        + `Closing proxy connection to client`,
     );
     const intCode: number = typeof code === 'number' ? (code as number) : parseInt(code, 10);
     if (Number.isNaN(intCode) || intCode < MIN_WS_CODE_VAL || intCode > MAX_WS_CODE_VAL) {
       driverLog.warn(
-        `Received code ${code} from upstream socket, but this is not a valid ` +
-          `websocket code. Rewriting to ${WS_FALLBACK_CODE} for ws compatibility`,
+        `Received code ${code} from upstream socket, but this is not a valid `
+          + `websocket code. Rewriting to ${WS_FALLBACK_CODE} for ws compatibility`,
       );
       code = WS_FALLBACK_CODE;
     }
@@ -490,15 +494,17 @@ function initBidiEventListeners(
       if (!method || !params) {
         ext.log?.warn(
           // some old plugins might not have the `log` property
-          `${capitalize(extType)} emitted a bidi event that was malformed. Require method and params keys ` +
-            `(with optional context). But instead received: ${util.truncateString(
-              JSON.stringify({
-                context,
-                method,
-                params,
-              }),
-              {length: MAX_LOGGED_DATA_LENGTH},
-            )}`,
+          `${capitalize(extType)} emitted a bidi event that was malformed. Require method and params keys `
+            + `(with optional context). But instead received: ${
+              util.truncateString(
+                JSON.stringify({
+                  context,
+                  method,
+                  params,
+                }),
+                { length: MAX_LOGGED_DATA_LENGTH },
+              )
+            }`,
         );
         return;
       }
@@ -520,14 +526,14 @@ function initBidiEventListeners(
         } else {
           ext.log?.debug(
             // some old plugins might not have the `log` property
-            `<-- BIDI EVENT ${method} (context: '${context}', ` +
-              `params: ${util.truncateString(JSON.stringify(params), {length: MAX_LOGGED_DATA_LENGTH})}). ` +
-              `All further similar events won't be logged.`,
+            `<-- BIDI EVENT ${method} (context: '${context}', `
+              + `params: ${util.truncateString(JSON.stringify(params), { length: MAX_LOGGED_DATA_LENGTH })}). `
+              + `All further similar events won't be logged.`,
           );
           eventLogCounts[method] = 1;
         }
         // now we can send the event onto the socket
-        const ev = {type: 'event', context, method, params};
+        const ev = { type: 'event', context, method, params };
         await send(JSON.stringify(ev));
       }
     };

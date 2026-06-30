@@ -1,16 +1,16 @@
-import {errors} from 'appium/driver';
-import {util} from '@appium/support';
-import {log} from './logger';
+import { util } from '@appium/support';
+import type { ActionSequence, Element, ExternalDriver, Rect } from '@appium/types';
+import { errors } from 'appium/driver';
 import {
-  IMAGE_STRATEGY,
   DEFAULT_SETTINGS,
-  IMAGE_TAP_STRATEGIES,
-  IMAGE_ELEMENT_PREFIX,
   IMAGE_EL_TAP_STRATEGY_W3C,
+  IMAGE_ELEMENT_PREFIX,
+  IMAGE_STRATEGY,
+  IMAGE_TAP_STRATEGIES,
 } from './constants';
-import type {Rect, Element, ExternalDriver, ActionSequence} from '@appium/types';
-import type {ImageElementFinder} from './finder';
-import type {ImageSettings, Dimension, Position, ImageElementOpts} from './types';
+import type { ImageElementFinder } from './finder';
+import { log } from './logger';
+import type { Dimension, ImageElementOpts, ImageSettings, Position } from './types';
 
 const TAP_DURATION_MS = 125;
 
@@ -48,14 +48,14 @@ export class ImageElement {
    * @returns dimension of element
    */
   get size(): Dimension {
-    return {width: this.rect.width, height: this.rect.height};
+    return { width: this.rect.width, height: this.rect.height };
   }
 
   /**
    * @returns coordinates of top-left corner of element
    */
   get location(): Position {
-    return {x: this.rect.x, y: this.rect.y};
+    return { x: this.rect.x, y: this.rect.y };
   }
 
   /**
@@ -134,7 +134,6 @@ export class ImageElement {
   }
 
   /**
-   *
    * @returns this image element as a WebElement
    */
   asElement(): Element {
@@ -148,10 +147,10 @@ export class ImageElement {
    */
   equals(other: ImageElement): boolean {
     return (
-      this.rect.x === other.rect.x &&
-      this.rect.y === other.rect.y &&
-      this.rect.width === other.rect.width &&
-      this.rect.height === other.rect.height
+      this.rect.x === other.rect.x
+      && this.rect.y === other.rect.y
+      && this.rect.width === other.rect.width
+      && this.rect.height === other.rect.height
     );
   }
 
@@ -164,7 +163,7 @@ export class ImageElement {
   async click(driver: ExternalDriver): Promise<void> {
     // before we click we need to make sure the element is actually still there
     // where we expect it to be
-    const settings: ImageSettings = {...DEFAULT_SETTINGS, ...driver.settings.getSettings()};
+    const settings: ImageSettings = { ...DEFAULT_SETTINGS, ...driver.settings.getSettings() };
     const {
       autoUpdateImageElementPosition: updatePos,
       checkForImageElementStaleness,
@@ -174,9 +173,9 @@ export class ImageElement {
     // validate tap strategy
     if (!IMAGE_TAP_STRATEGIES.includes(imageElementTapStrategy)) {
       throw new Error(
-        `Incorrect imageElementTapStrategy setting ` +
-          `'${imageElementTapStrategy}'. Must be one of ` +
-          JSON.stringify(IMAGE_TAP_STRATEGIES),
+        `Incorrect imageElementTapStrategy setting `
+          + `'${imageElementTapStrategy}'. Must be one of `
+          + JSON.stringify(IMAGE_TAP_STRATEGIES),
       );
     }
 
@@ -200,26 +199,26 @@ export class ImageElement {
 
       if (!this.equals(newImgEl)) {
         log.warn(
-          `When trying to click on an image element, the image changed ` +
-            `position from where it was originally found. It is now at ` +
-            `${JSON.stringify(newImgEl.rect)} and was originally at ` +
-            `${JSON.stringify(this.rect)}.`,
+          `When trying to click on an image element, the image changed `
+            + `position from where it was originally found. It is now at `
+            + `${JSON.stringify(newImgEl.rect)} and was originally at `
+            + `${JSON.stringify(this.rect)}.`,
         );
         if (updatePos) {
           log.warn('Click will proceed at new coordinates');
-          this.rect = {...newImgEl.rect};
+          this.rect = { ...newImgEl.rect };
         } else {
           log.warn(
-            'Click will take place at original coordinates. If you ' +
-              'would like Appium to automatically click the new ' +
-              "coordinates, set the 'autoUpdateImageElementPosition' " +
-              'setting to true',
+            'Click will take place at original coordinates. If you '
+              + 'would like Appium to automatically click the new '
+              + 'coordinates, set the \'autoUpdateImageElementPosition\' '
+              + 'setting to true',
           );
         }
       }
     }
 
-    const {x, y} = this.center;
+    const { x, y } = this.center;
     log.info(`Will tap on image element at coordinate [${x}, ${y}]`);
 
     if (imageElementTapStrategy === IMAGE_EL_TAP_STRATEGY_W3C) {
@@ -228,12 +227,12 @@ export class ImageElement {
       const action: ActionSequence = {
         type: 'pointer',
         id: 'mouse',
-        parameters: {pointerType: 'touch'},
+        parameters: { pointerType: 'touch' },
         actions: [
-          {type: 'pointerMove', x, y, duration: 0},
-          {type: 'pointerDown', button: 0},
-          {type: 'pause', duration: TAP_DURATION_MS},
-          {type: 'pointerUp', button: 0},
+          { type: 'pointerMove', x, y, duration: 0 },
+          { type: 'pointerDown', button: 0 },
+          { type: 'pause', duration: TAP_DURATION_MS },
+          { type: 'pointerUp', button: 0 },
         ],
       };
 
@@ -251,7 +250,7 @@ export class ImageElement {
     log.info('Will tap using MJSONWP TouchActions');
     const action = {
       action: 'tap',
-      options: {x, y},
+      options: { x, y },
     };
 
     if ('performTouch' in driver && typeof driver.performTouch === 'function') {
@@ -259,9 +258,9 @@ export class ImageElement {
     }
 
     throw new Error(
-      "Driver did not implement the 'performTouch' command. " +
-        'For drivers to support finding image elements, they ' +
-        "should support 'performTouch' and 'performActions'",
+      'Driver did not implement the \'performTouch\' command. '
+        + 'For drivers to support finding image elements, they '
+        + 'should support \'performTouch\' and \'performActions\'',
     );
   }
 

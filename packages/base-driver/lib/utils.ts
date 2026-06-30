@@ -1,4 +1,4 @@
-import {util} from '@appium/support';
+import { util } from '@appium/support';
 
 /**
  * Deep-merge plain objects into a clone of `target`. Skips null/undefined sources.

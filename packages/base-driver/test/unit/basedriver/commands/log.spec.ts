@@ -1,9 +1,9 @@
-import {describe, it, beforeEach, afterEach} from 'node:test';
-import chai, {expect} from 'chai';
+import type { InitialOpts } from '@appium/types';
+import chai, { expect } from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import type {InitialOpts} from '@appium/types';
-import {createSandbox} from 'sinon';
-import {BaseDriver} from '../../../../lib';
+import { afterEach, beforeEach, describe, it } from 'node:test';
+import { createSandbox } from 'sinon';
+import { BaseDriver } from '../../../../lib';
 
 chai.use(chaiAsPromised);
 
@@ -20,11 +20,11 @@ const SUPPORTED_LOG_TYPES = {
   },
 };
 
-describe('log commands -', function () {
+describe('log commands -', function() {
   let sandbox: sinon.SinonSandbox;
   let driver: BaseDriver<any, any, any, any, any, any>;
 
-  beforeEach(function () {
+  beforeEach(function() {
     sandbox = createSandbox();
     driver = new BaseDriver({} as InitialOpts);
     driver.supportedLogTypes = {};
@@ -33,33 +33,33 @@ describe('log commands -', function () {
     } as any;
   });
 
-  afterEach(function () {
+  afterEach(function() {
     sandbox.restore();
   });
 
-  describe('getLogTypes', function () {
-    it('should return empty array when no supported log types', async function () {
+  describe('getLogTypes', function() {
+    it('should return empty array when no supported log types', async function() {
       expect(await driver.getLogTypes()).to.eql([]);
     });
-    it('should return keys to log type object', async function () {
+    it('should return keys to log type object', async function() {
       driver.supportedLogTypes = SUPPORTED_LOG_TYPES as any;
       expect(await driver.getLogTypes()).to.eql(['one', 'two']);
     });
   });
 
-  describe('getLog', function () {
+  describe('getLog', function() {
     let one: sinon.SinonSpy;
     let two: sinon.SinonSpy;
-    beforeEach(function () {
+    beforeEach(function() {
       one = sandbox.spy(SUPPORTED_LOG_TYPES.one, 'getter');
       two = sandbox.spy(SUPPORTED_LOG_TYPES.two, 'getter');
     });
-    it('should throw error if log type not supported', async function () {
+    it('should throw error if log type not supported', async function() {
       await expect(driver.getLog('one')).to.be.rejected;
       expect(one.called).to.be.false;
       expect(two.called).to.be.false;
     });
-    it('should throw an error with available log types if log type not supported', async function () {
+    it('should throw an error with available log types if log type not supported', async function() {
       driver.supportedLogTypes = SUPPORTED_LOG_TYPES as any;
       let err: Error | undefined;
       try {
@@ -74,7 +74,7 @@ describe('log commands -', function () {
       expect(one.called).to.be.false;
       expect(two.called).to.be.false;
     });
-    it('should call getter on appropriate log when found', async function () {
+    it('should call getter on appropriate log when found', async function() {
       driver.supportedLogTypes = SUPPORTED_LOG_TYPES as any;
       const logs = await driver.getLog('one');
       expect(logs).to.eql(FIRST_LOGS);

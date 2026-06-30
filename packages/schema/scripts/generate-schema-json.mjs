@@ -7,10 +7,10 @@
  * then outputs the result.
  */
 
+import { mkdir, writeFile } from 'node:fs/promises';
+import { createRequire } from 'node:module';
 import path from 'node:path';
-import {writeFile, mkdir} from 'node:fs/promises';
-import {fileURLToPath, pathToFileURL} from 'node:url';
-import {createRequire} from 'node:module';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 const info = 'ℹ';
 const success = '✔';
 const error = '✖';
@@ -48,18 +48,18 @@ async function write() {
   try {
     // Use createRequire to require CommonJS module from ESM
     const require = createRequire(import.meta.url);
-    ({AppiumConfigJsonSchema: schema} = require(SCHEMA_SRC));
+    ({ AppiumConfigJsonSchema: schema } = require(SCHEMA_SRC));
   } catch (e) {
     throw new Error(
       `${error} Failed to read ${SCHEMA_SRC}; did you execute \`npm run build\` first?`,
-      {cause: e},
+      { cause: e },
     );
   }
 
   const json = JSON.stringify(schema, null, 2);
 
   try {
-    await mkdir(OUTPUT_DIR, {recursive: true});
+    await mkdir(OUTPUT_DIR, { recursive: true });
     await writeFile(OUTPUT_PATH, json);
     console.log(`${info} Wrote JSON schema to ${OUTPUT_PATH}`);
   } catch (err) {

@@ -7,8 +7,8 @@
  */
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const {ConsolaInstance, createConsola, LogLevel} = require('consola');
-import {DEFAULT_LOG_LEVEL, LogLevelMap} from './constants';
+const { ConsolaInstance, createConsola, LogLevel } = require('consola');
+import { DEFAULT_LOG_LEVEL, LogLevelMap } from './constants';
 
 /**
  * The global log level
@@ -29,7 +29,7 @@ export function isLogLevelString(level: any): level is keyof typeof LogLevelMap 
  * The logger from which all loggers are created. This one uses a unique tag.
  */
 const rootLogger = createConsola({
-  defaults: {tag: 'docutils'},
+  defaults: { tag: 'docutils' },
   fancy: true,
   level: globalLevel,
   formatOptions: {

@@ -3,9 +3,9 @@
  * @module
  */
 
-const {LogLevels} = require('consola');
+const { LogLevels } = require('consola');
 import path from 'node:path';
-import {findPackageRootSync} from './utils';
+import { findPackageRootSync } from './utils';
 
 /**
  * CLI executable name
@@ -124,7 +124,7 @@ export const DEFAULT_SITE_DIR = 'site';
  * unless the --break-system-packages flag is passed.
  * To ensure backwards compatibility, its environment variable version is used
  */
-export const PIP_ENV_VARS = {PIP_BREAK_SYSTEM_PACKAGES: '1'};
+export const PIP_ENV_VARS = { PIP_BREAK_SYSTEM_PACKAGES: '1' };
 
 /**
  * Error message emitted when the path to Python was not found

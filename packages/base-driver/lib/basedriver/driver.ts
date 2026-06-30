@@ -1,35 +1,36 @@
-import type AsyncLock from 'async-lock';
-import {util} from '@appium/support';
+import { util } from '@appium/support';
 import {
-  BASE_DESIRED_CAP_CONSTRAINTS,
   type AppiumServer,
+  BASE_DESIRED_CAP_CONSTRAINTS,
   type BaseDriverCapConstraints,
   type Capabilities,
   type Constraints,
   type DefaultCreateSessionResult,
+  type DefaultDeleteSessionResult,
   type Driver,
   type DriverCaps,
   type DriverData,
+  type InitialOpts,
   type ServerArgs,
+  type SessionCapabilities,
+  type SingularSessionData,
   type StringRecord,
   type W3CDriverCaps,
-  type InitialOpts,
-  type DefaultDeleteSessionResult,
-  type SingularSessionData,
-  type SessionCapabilities,
 } from '@appium/types';
-import {fixCaps, isW3cCaps} from '../helpers/capabilities';
-import {getLevenshteinSuggestion} from '../helpers/levenshtein-match';
-import {calcSignature} from '../helpers/session';
-import {DELETE_SESSION_COMMAND, determineProtocol, errors} from '../protocol';
-import {processCapabilities, validateCaps} from './capabilities';
-import {DriverCore} from './core';
+import type AsyncLock from 'async-lock';
+import { fixCaps, isW3cCaps } from '../helpers/capabilities';
+import { resolveExecuteExtensionName } from '../helpers/extension-command-name';
+import { getLevenshteinSuggestion } from '../helpers/levenshtein-match';
+import { calcSignature } from '../helpers/session';
+import { DELETE_SESSION_COMMAND, determineProtocol, errors } from '../protocol';
+import { mergePlainObjects } from '../utils';
+import { processCapabilities, validateCaps } from './capabilities';
+import { DriverCore } from './core';
 import * as helpers from './helpers';
-import {mergePlainObjects} from '../utils';
-import {resolveExecuteExtensionName} from '../helpers/extension-command-name';
 
-type CommandInvoker<C extends Constraints> = BaseDriver<C> &
-  Record<string, ((...args: any[]) => any) | undefined>;
+type CommandInvoker<C extends Constraints> =
+  & BaseDriver<C>
+  & Record<string, ((...args: any[]) => any) | undefined>;
 
 const EVENT_SESSION_INIT = 'newSessionRequested';
 const EVENT_SESSION_START = 'newSessionStarted';
@@ -44,10 +45,7 @@ export class BaseDriver<
   CreateResult = DefaultCreateSessionResult<C>,
   DeleteResult = DefaultDeleteSessionResult,
   SessionData extends StringRecord = StringRecord,
->
-  extends DriverCore<C, Settings>
-  implements Driver<C, CArgs, Settings, CreateResult, DeleteResult, SessionData>
-{
+> extends DriverCore<C, Settings> implements Driver<C, CArgs, Settings, CreateResult, DeleteResult, SessionData> {
   cliArgs: CArgs & ServerArgs;
   caps: DriverCaps<C>;
   originalCaps!: W3CDriverCaps<C>;
@@ -150,9 +148,9 @@ export class BaseDriver<
         // want to trigger the timer when the user is shutting down the session
         // intentionally
         if (
-          !wasSessionShutdownUnexpectedly &&
-          this.isCommandsQueueEnabled &&
-          cmd !== DELETE_SESSION_COMMAND
+          !wasSessionShutdownUnexpectedly
+          && this.isCommandsQueueEnabled
+          && cmd !== DELETE_SESSION_COMMAND
         ) {
           // resetting existing timeout
           await this.startNewCommandTimeout();
@@ -167,9 +165,9 @@ export class BaseDriver<
     const commandsQueueLen: number = commandsQueueGuard.queues?.[synchronizationKey]?.length ?? 0;
     if (this.isCommandsQueueEnabled && commandsQueueLen > 0) {
       this.log.debug(
-        `Scheduling the '${cmd}' command to the ${this.constructor.name} commands queue. ` +
-          `${util.pluralize('queue item', commandsQueueLen, true)} ${commandsQueueLen === 1 ? 'is' : 'are'} ` +
-          `already waiting for execution.`,
+        `Scheduling the '${cmd}' command to the ${this.constructor.name} commands queue. `
+          + `${util.pluralize('queue item', commandsQueueLen, true)} ${commandsQueueLen === 1 ? 'is' : 'are'} `
+          + `already waiting for execution.`,
       );
     }
 
@@ -184,7 +182,7 @@ export class BaseDriver<
       cmd = this.clarifyCommandName(cmd, args);
     }
 
-    this._eventHistory.commands.push({cmd, startTime, endTime});
+    this._eventHistory.commands.push({ cmd, startTime, endTime });
     if (cmd === 'createSession') {
       this.logEvent(EVENT_SESSION_START);
     } else if (cmd === DELETE_SESSION_COMMAND) {
@@ -228,14 +226,13 @@ export class BaseDriver<
 
     this.noCommandTimer = setTimeout(async () => {
       this.log.warn(
-        `Shutting down because we waited ` +
-          `${this.newCommandTimeoutMs / 1000.0} seconds for a command`,
+        `Shutting down because we waited `
+          + `${this.newCommandTimeoutMs / 1000.0} seconds for a command`,
       );
-      const errorMessage =
-        `New Command Timeout of ` +
-        `${this.newCommandTimeoutMs / 1000.0} seconds ` +
-        `expired. Try customizing the timeout using the ` +
-        `'newCommandTimeout' desired capability`;
+      const errorMessage = `New Command Timeout of `
+        + `${this.newCommandTimeoutMs / 1000.0} seconds `
+        + `expired. Try customizing the timeout using the `
+        + `'newCommandTimeout' desired capability`;
       await this.startUnexpectedShutdown(new Error(errorMessage));
     }, this.newCommandTimeoutMs);
   }
@@ -277,7 +274,6 @@ export class BaseDriver<
   }
 
   /**
-   *
    * Historically the first two arguments were reserved for JSONWP capabilities.
    * Appium 2 has dropped the support of these, so now we only accept capability
    * objects in W3C format and thus allow any of the three arguments to represent
@@ -303,8 +299,8 @@ export class BaseDriver<
     );
     if (!originalCaps) {
       throw new errors.SessionNotCreatedError(
-        'Appium only supports W3C-style capability objects. ' +
-          'Your client is sending an older capabilities format. Please update your client library.',
+        'Appium only supports W3C-style capability objects. '
+          + 'Your client is sending an older capabilities format. Please update your client library.',
       );
     }
 
@@ -334,16 +330,16 @@ export class BaseDriver<
     this.sessionCreationTimestampMs = Date.now();
     this.caps = caps;
     // merge caps onto opts so we don't need to worry about what's where
-    this.opts = {...structuredClone(this.initialOpts), ...this.caps};
+    this.opts = { ...structuredClone(this.initialOpts), ...this.caps };
 
     // deal with resets
     // some people like to do weird things by setting noReset and fullReset
     // both to true, but this is misguided and strange, so error here instead
     if (this.opts.noReset && this.opts.fullReset) {
       throw new Error(
-        "The 'noReset' and 'fullReset' capabilities are mutually " +
-          'exclusive and should not both be set to true. You ' +
-          "probably meant to just use 'fullReset' on its own",
+        'The \'noReset\' and \'fullReset\' capabilities are mutually '
+          + 'exclusive and should not both be set to true. You '
+          + 'probably meant to just use \'fullReset\' on its own',
       );
     }
     if (this.opts.noReset === true) {
@@ -383,7 +379,7 @@ export class BaseDriver<
    */
   async getSession() {
     return (
-      this.caps.eventTimings ? {...this.caps, events: this.eventHistory} : this.caps
+      this.caps.eventTimings ? { ...this.caps, events: this.eventHistory } : this.caps
     ) as SingularSessionData<C, SessionData>;
   }
 
@@ -391,7 +387,7 @@ export class BaseDriver<
    * Returns capabilities for the session
    */
   async getAppiumSessionCapabilities(): Promise<SessionCapabilities<C>> {
-    return {capabilities: this.caps};
+    return { capabilities: this.caps };
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -432,8 +428,8 @@ export class BaseDriver<
       const capError = e instanceof Error ? e : new Error(String(e));
       throw this.log.errorWithException(
         new errors.SessionNotCreatedError(
-          `Session capabilities were not valid for the ` +
-            `following reason(s): ${capError.message}`,
+          `Session capabilities were not valid for the `
+            + `following reason(s): ${capError.message}`,
           capError,
         ),
       );

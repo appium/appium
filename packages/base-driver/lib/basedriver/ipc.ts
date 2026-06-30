@@ -1,16 +1,16 @@
-import {log} from './logger';
+import { node } from '@appium/support';
 import type {
-  StringRecord,
-  IIpcSubscription,
-  IAppiumIpc,
-  IpcMessage,
-  IpcEvent,
   AppiumLogger,
+  IAppiumIpc,
+  IIpcSubscription,
   IpcData,
+  IpcEvent,
+  IpcMessage,
+  StringRecord,
 } from '@appium/types';
+import { sleep } from 'asyncbox';
 import EventEmitter from 'node:events';
-import {sleep} from 'asyncbox';
-import {node} from '@appium/support';
+import { log } from './logger';
 
 const DEF_MAX_OBJ_SIZE_BYTES = 1024 * 1024; // 1mb seems like plenty for any plugin to pass a message
 const DEF_MAX_TOPICS = 1000;
@@ -26,10 +26,7 @@ export type AppiumIpcOpts = {
 
 const ASYNC_ITERATOR_STOP = Symbol('asyncIteratorStop');
 
-export class IpcSubscription<T extends IpcData>
-  extends EventEmitter<IpcEvent<T>>
-  implements IIpcSubscription<T>
-{
+export class IpcSubscription<T extends IpcData> extends EventEmitter<IpcEvent<T>> implements IIpcSubscription<T> {
   constructor(
     public readonly subscriber: string,
     public readonly topic: string,
@@ -102,8 +99,8 @@ export class AppiumIpc implements IAppiumIpc {
     this.maxTopics = opts.maxTopics ?? DEF_MAX_TOPICS;
     this.log = opts.log ?? log;
     this.log.debug(
-      `Initialized new IPC object with max object size of ${this.maxObjSize} bytes ` +
-        `and max topics of ${this.maxTopics}`,
+      `Initialized new IPC object with max object size of ${this.maxObjSize} bytes `
+        + `and max topics of ${this.maxTopics}`,
     );
   }
 
@@ -139,8 +136,8 @@ export class AppiumIpc implements IAppiumIpc {
     const messageSize = node.getObjectSize(data);
     if (messageSize > this.maxObjSize) {
       throw new Error(
-        `Error when ${publisher} is publishing to topic '${topic}': ` +
-          `Message with size ${messageSize} bytes is bigger than max size of ${this.maxObjSize} bytes`,
+        `Error when ${publisher} is publishing to topic '${topic}': `
+          + `Message with size ${messageSize} bytes is bigger than max size of ${this.maxObjSize} bytes`,
       );
     }
 
@@ -153,7 +150,7 @@ export class AppiumIpc implements IAppiumIpc {
       });
     }
 
-    const message: IpcMessage<T> = {publisher, data: clonedData, topic, timestampMs: Date.now()};
+    const message: IpcMessage<T> = { publisher, data: clonedData, topic, timestampMs: Date.now() };
 
     this.messageByTopic[topic] = message;
 
@@ -188,9 +185,9 @@ export class AppiumIpc implements IAppiumIpc {
     }
     if (this.topics.size >= this.maxTopics) {
       throw new Error(
-        `Cannot create new IPC topic '${topic}': ` +
-          `maximum of ${this.maxTopics} topics per session reached. ` +
-          `Adjust with the --max-ipc-topics server arg.`,
+        `Cannot create new IPC topic '${topic}': `
+          + `maximum of ${this.maxTopics} topics per session reached. `
+          + `Adjust with the --max-ipc-topics server arg.`,
       );
     }
     this.topics.add(topic);

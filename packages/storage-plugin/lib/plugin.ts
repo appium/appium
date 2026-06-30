@@ -1,26 +1,20 @@
-import {BasePlugin} from 'appium/plugin';
-import {
-  requireValidItemOptions,
-  Storage,
-  StorageArgumentError,
-  validateStorageItemName,
-} from './storage';
-import {tempDir, fs, logger, util} from '@appium/support';
-import type {AddRequestResult, ItemOptions, StorageItem} from './types';
-import type {Express, Request, Response} from 'express';
-import type {AppiumServer} from '@appium/types';
-import {LRUCache} from 'lru-cache';
+import { fs, logger, tempDir, util } from '@appium/support';
+import type { AppiumServer } from '@appium/types';
+import { getResponseForW3CError } from 'appium/driver';
+import { BasePlugin } from 'appium/plugin';
+import type { Express, Request, Response } from 'express';
+import { LRUCache } from 'lru-cache';
+import { EventEmitter } from 'node:stream';
 import WebSocket from 'ws';
-import {EventEmitter} from 'node:stream';
-import {getResponseForW3CError} from 'appium/driver';
+import { requireValidItemOptions, Storage, StorageArgumentError, validateStorageItemName } from './storage';
+import type { AddRequestResult, ItemOptions, StorageItem } from './types';
 
 const log = logger.getLogger('StoragePlugin');
 
 let SHARED_STORAGE: Storage | null = null;
 const STORAGE_PREFIX = '/storage';
 const WS_TTL_MS = 5 * 60 * 1000;
-const STORAGE_HANDLERS: Record<string, (req: Request, httpServer?: AppiumServer) => Promise<any>> =
-  {};
+const STORAGE_HANDLERS: Record<string, (req: Request, httpServer?: AppiumServer) => Promise<any>> = {};
 const STORAGE_ADDITIONS_CACHE: LRUCache<string, () => any> = new LRUCache({
   max: 20,
   ttl: WS_TTL_MS,
@@ -34,12 +28,12 @@ export class StoragePlugin extends BasePlugin {
       let body: any;
       try {
         const value = await STORAGE_HANDLERS[methodName](req, httpServer);
-        body = {value: value ?? null};
+        body = { value: value ?? null };
       } catch (e) {
         [status, body] = getResponseForW3CError(e);
       }
       log.debug(
-        `Responding to ${methodName} with ${util.truncateString(JSON.stringify(body.value), {length: 200})}`,
+        `Responding to ${methodName} with ${util.truncateString(JSON.stringify(body.value), { length: 200 })}`,
       );
       res.set('content-type', 'application/json; charset=utf-8');
       res.status(status).send(body);
@@ -212,8 +206,8 @@ const getStorageSingleton = util.memoize(async () => {
     log.info(`All server storage items will be always preserved unless deleted explicitly`);
   } else {
     log.info(
-      `All server storage items will be cleaned up automatically from '${storageRoot}' after ` +
-        `Appium server termination`,
+      `All server storage items will be cleaned up automatically from '${storageRoot}' after `
+        + `Appium server termination`,
     );
   }
   SHARED_STORAGE = new Storage(storageRoot, shouldPreserveRoot, shouldPreserveFiles, log);

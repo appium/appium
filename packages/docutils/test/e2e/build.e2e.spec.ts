@@ -3,25 +3,21 @@
  * @module
  */
 
-import path from 'node:path';
+import { fs, tempDir } from '@appium/support';
 import * as chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import path from 'node:path';
 import * as YAML from 'yaml';
 import yargs from 'yargs/yargs';
-import {fs, tempDir} from '@appium/support';
-import {buildSite} from '../../lib/builder';
-import {init, initPython} from '../../lib/init';
-import {stringifyYaml} from '../../lib/fs';
-import type {MkDocsYml} from '../../lib/model';
-import {NAME_MKDOCS_YML, DEFAULT_SITE_DIR, NAME_PACKAGE_JSON, NAME_BIN} from '../../lib/constants';
-import {
-  build as buildCommand,
-  init as initCommand,
-  validate as validateCommand,
-} from '../../lib/cli/command';
+import { buildSite } from '../../lib/builder';
+import { build as buildCommand, init as initCommand, validate as validateCommand } from '../../lib/cli/command';
+import { DEFAULT_SITE_DIR, NAME_BIN, NAME_MKDOCS_YML, NAME_PACKAGE_JSON } from '../../lib/constants';
+import { stringifyYaml } from '../../lib/fs';
+import { init, initPython } from '../../lib/init';
+import type { MkDocsYml } from '../../lib/model';
 
 chai.use(chaiAsPromised);
-const {expect} = chai;
+const { expect } = chai;
 
 /**
  * Helper function to create a project directory with package.json
@@ -66,7 +62,7 @@ async function createDocsFile(
  */
 async function ensurePythonDeps(projectDir: string, context: Mocha.Context): Promise<void> {
   try {
-    await initPython({cwd: projectDir});
+    await initPython({ cwd: projectDir });
   } catch {
     context.skip();
   }
@@ -96,23 +92,23 @@ async function readMkdocsYml(projectDir: string): Promise<MkDocsYml> {
   return YAML.parse(mkdocsYmlContent) as MkDocsYml;
 }
 
-describe('@appium/docutils build e2e', function () {
+describe('@appium/docutils build e2e', function() {
   let testDir: string;
 
-  before(async function () {
+  before(async function() {
     // Create a temporary directory for the test
     testDir = await tempDir.openDir();
   });
 
-  after(async function () {
+  after(async function() {
     // Clean up the temporary directory
     if (testDir) {
       await fs.rimraf(testDir);
     }
   });
 
-  describe('buildSite', function () {
-    it('should build a site with mkdocs', async function () {
+  describe('buildSite', function() {
+    it('should build a site with mkdocs', async function() {
       const projectDir = await createProjectDir(testDir, 'test1', {
         name: 'test-docs',
         version: '1.0.0',
@@ -148,7 +144,7 @@ describe('@appium/docutils build e2e', function () {
       await verifySiteBuilt(path.join(projectDir, DEFAULT_SITE_DIR), 'Test Documentation');
     });
 
-    it('should build a site with custom site-dir', async function () {
+    it('should build a site with custom site-dir', async function() {
       const customSiteDir = 'custom-site';
       const projectDir = await createProjectDir(testDir, 'test2', {
         name: 'test-docs-2',
@@ -188,8 +184,8 @@ describe('@appium/docutils build e2e', function () {
     });
   });
 
-  describe('init', function () {
-    it('should scaffold mkdocs.yml file', async function () {
+  describe('init', function() {
+    it('should scaffold mkdocs.yml file', async function() {
       const projectDir = await createProjectDir(testDir, 'init-test', {
         name: 'test-package',
         version: '1.0.0',
@@ -225,7 +221,7 @@ describe('@appium/docutils build e2e', function () {
       expect(mkdocsYml.repo_name).to.equal('testuser/test-package');
     });
 
-    it('should scaffold mkdocs.yml with custom options', async function () {
+    it('should scaffold mkdocs.yml with custom options', async function() {
       const projectDir = await createProjectDir(testDir, 'init-custom-test', {
         name: 'custom-package',
         version: '2.0.0',
@@ -260,8 +256,8 @@ describe('@appium/docutils build e2e', function () {
     });
   });
 
-  describe('CLI help', function () {
-    it('should print help when --help is passed', async function () {
+  describe('CLI help', function() {
+    it('should print help when --help is passed', async function() {
       let helpOutput = '';
 
       // Create yargs instance similar to CLI

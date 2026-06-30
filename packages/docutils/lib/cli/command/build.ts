@@ -4,12 +4,12 @@
  */
 
 import path from 'node:path';
-import type {CommandModule, InferredOptionTypes, Options} from 'yargs';
-import {buildSite, deploy} from '../../builder';
-import {NAME_BIN} from '../../constants';
-import {getLogger} from '../../logger';
-import {stopwatch} from '../../utils';
-import {checkMissingPaths} from '../check';
+import type { CommandModule, InferredOptionTypes, Options } from 'yargs';
+import { buildSite, deploy } from '../../builder';
+import { NAME_BIN } from '../../constants';
+import { getLogger } from '../../logger';
+import { stopwatch } from '../../utils';
+import { checkMissingPaths } from '../check';
 
 const log = getLogger('build');
 

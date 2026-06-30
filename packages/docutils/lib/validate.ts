@@ -4,9 +4,9 @@
  * @module
  */
 
-import {fs, util} from '@appium/support';
-import {EventEmitter} from 'node:events';
-import {exec} from 'teen_process';
+import { fs, util } from '@appium/support';
+import { EventEmitter } from 'node:events';
+import { exec } from 'teen_process';
 import {
   MESSAGE_PYTHON_MISSING,
   NAME_BIN,
@@ -18,10 +18,10 @@ import {
   NAME_REQUIREMENTS_TXT,
   REQUIREMENTS_TXT_PATH,
 } from './constants';
-import {DocutilsError} from './error';
-import {findMkDocsYml, isMkDocsInstalled, readMkDocsYml, findPython} from './fs';
-import {getLogger} from './logger';
-import type {MkDocsYml, PipPackage} from './model';
+import { DocutilsError } from './error';
+import { findMkDocsYml, findPython, isMkDocsInstalled, readMkDocsYml } from './fs';
+import { getLogger } from './logger';
+import type { MkDocsYml, PipPackage } from './model';
 
 /**
  * Matches the Python version string from `python --version`
@@ -216,11 +216,11 @@ export class DocutilsValidator extends EventEmitter {
       log.debug('Raw %s: %s', NAME_REQUIREMENTS_TXT, requirementsTxt);
       for (const line of requirementsTxt.split(/\r?\n/)) {
         const [name, version] = line.trim().split('==');
-        requiredPackages.push({name, version});
+        requiredPackages.push({ name, version });
       }
       log.debug('Parsed %s: %O', NAME_REQUIREMENTS_TXT, requiredPackages);
     } catch (e) {
-      throw new DocutilsError(`Could not find ${REQUIREMENTS_TXT_PATH}. This is a bug`, {cause: e});
+      throw new DocutilsError(`Could not find ${REQUIREMENTS_TXT_PATH}. This is a bug`, { cause: e });
     }
 
     return (this.requirementsTxt = requiredPackages);
@@ -251,7 +251,7 @@ export class DocutilsValidator extends EventEmitter {
 
     let rawMkDocsVersion: string | undefined;
     try {
-      ({stdout: rawMkDocsVersion} = await exec(pythonPath, ['-m', NAME_MKDOCS, '--version']));
+      ({ stdout: rawMkDocsVersion } = await exec(pythonPath, ['-m', NAME_MKDOCS, '--version']));
     } catch (err) {
       return this.fail(`Failed to get MkDocs version: ${err}`);
     }
@@ -267,7 +267,7 @@ export class DocutilsValidator extends EventEmitter {
         `No ${NAME_MKDOCS} package in ${REQUIREMENTS_TXT_PATH}. This is a bug`,
       );
     }
-    const {version: mkDocsReqdVersion} = mkDocsPipPkg;
+    const { version: mkDocsReqdVersion } = mkDocsPipPkg;
     if (version !== mkDocsReqdVersion) {
       return this.fail(`MkDocs v${version} is installed, but v${mkDocsReqdVersion} is required`);
     }
@@ -326,7 +326,7 @@ export class DocutilsValidator extends EventEmitter {
 
     let pipListOutput: string;
     try {
-      ({stdout: pipListOutput} = await exec(pythonPath, [
+      ({ stdout: pipListOutput } = await exec(pythonPath, [
         '-m',
         NAME_PIP,
         'list',
@@ -357,32 +357,39 @@ export class DocutilsValidator extends EventEmitter {
       if (!version) {
         missingPackages.push(reqdPkg);
       } else if (version !== reqdPkg.version) {
-        invalidVersionPackages.push([reqdPkg, {name: reqdPkg.name, version}]);
+        invalidVersionPackages.push([reqdPkg, { name: reqdPkg.name, version }]);
       }
     }
 
     const msgParts = [];
     if (missingPackages.length) {
       msgParts.push(
-        `The following required ${util.pluralize(
-          'package',
-          missingPackages.length,
-        )} could not be found:\n${missingPackages
-          .map((p) => `- ${p.name} @ ${p.version}`)
-          .join('\n')}`,
+        `The following required ${
+          util.pluralize(
+            'package',
+            missingPackages.length,
+          )
+        } could not be found:\n${
+          missingPackages
+            .map((p) => `- ${p.name} @ ${p.version}`)
+            .join('\n')
+        }`,
       );
     }
     if (invalidVersionPackages.length) {
       msgParts.push(
-        `The following required ${util.pluralize(
-          'package',
-          invalidVersionPackages.length,
-        )} are installed, but at the wrong version:\n${invalidVersionPackages
-          .map(
-            ([expected, actual]) =>
-              `- ${expected.name} @ ${expected.version} (found ${actual.version})`,
+        `The following required ${
+          util.pluralize(
+            'package',
+            invalidVersionPackages.length,
           )
-          .join('\n')}`,
+        } are installed, but at the wrong version:\n${
+          invalidVersionPackages
+            .map(
+              ([expected, actual]) => `- ${expected.name} @ ${expected.version} (found ${actual.version})`,
+            )
+            .join('\n')
+        }`,
       );
     }
     if (msgParts.length) {
@@ -404,7 +411,7 @@ export class DocutilsValidator extends EventEmitter {
     }
 
     try {
-      const {stdout} = await exec(pythonPath, ['--version']);
+      const { stdout } = await exec(pythonPath, ['--version']);
       if (!stdout.includes(PYTHON_VER_STR)) {
         return this.fail(`Could not find Python 3.x in PATH; found ${stdout}`);
       }

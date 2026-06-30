@@ -1,29 +1,29 @@
-import {EventEmitter} from 'node:events';
+import { LRUCache } from 'lru-cache';
+import { AsyncLocalStorage } from 'node:async_hooks';
+import { EventEmitter } from 'node:events';
+import type { Writable } from 'node:stream';
 import * as util from 'node:util';
+import { DEFAULT_SECURE_REPLACER, SecureValuesPreprocessor } from './secure-values-preprocessor';
 import type {
-  MessageObject,
-  StyleObject,
+  LogFiltersConfig,
   Logger,
   LogLevel,
+  MessageObject,
   PreprocessingRulesLoadResult,
-  LogFiltersConfig,
+  StyleObject,
 } from './types';
-import type {Writable} from 'node:stream';
-import {AsyncLocalStorage} from 'node:async_hooks';
-import {ansiBeep, ansiColor, isPlainObject, setBlocking, unleakString} from './utils';
-import {DEFAULT_SECURE_REPLACER, SecureValuesPreprocessor} from './secure-values-preprocessor';
-import {LRUCache} from 'lru-cache';
+import { ansiBeep, ansiColor, isPlainObject, setBlocking, unleakString } from './utils';
 
 const DEFAULT_LOG_LEVELS = [
-  ['silly', -Infinity, {inverse: true}, 'sill'],
-  ['verbose', 1000, {fg: 'cyan', bg: 'black'}, 'verb'],
-  ['debug', 1500, {fg: 'cyan', bg: 'black'}, 'dbug'],
-  ['info', 2000, {fg: 'green'}],
-  ['timing', 2500, {fg: 'green', bg: 'black'}],
-  ['http', 3000, {fg: 'green', bg: 'black'}],
-  ['notice', 3500, {fg: 'cyan', bg: 'black'}],
-  ['warn', 4000, {fg: 'black', bg: 'yellow'}, 'WARN'],
-  ['error', 5000, {fg: 'red', bg: 'black'}, 'ERR!'],
+  ['silly', -Infinity, { inverse: true }, 'sill'],
+  ['verbose', 1000, { fg: 'cyan', bg: 'black' }, 'verb'],
+  ['debug', 1500, { fg: 'cyan', bg: 'black' }, 'dbug'],
+  ['info', 2000, { fg: 'green' }],
+  ['timing', 2500, { fg: 'green', bg: 'black' }],
+  ['http', 3000, { fg: 'green', bg: 'black' }],
+  ['notice', 3500, { fg: 'cyan', bg: 'black' }],
+  ['warn', 4000, { fg: 'black', bg: 'yellow' }, 'WARN'],
+  ['error', 5000, { fg: 'red', bg: 'black' }, 'ERR!'],
   ['silent', Infinity],
 ] as const;
 const DEFAULT_HISTORY_SIZE = 10000;
@@ -62,11 +62,11 @@ export class Log extends EventEmitter implements Logger {
     this.level = 'info';
     this._buffer = [];
     this._maxRecordSize = DEFAULT_HISTORY_SIZE;
-    this._history = new LRUCache({max: this.maxRecordSize});
+    this._history = new LRUCache({ max: this.maxRecordSize });
     this.stream = process.stderr;
     this.heading = '';
-    this.prefixStyle = {fg: 'magenta'};
-    this.headingStyle = {fg: 'white', bg: 'black'};
+    this.prefixStyle = { fg: 'magenta' };
+    this.headingStyle = { fg: 'white', bg: 'black' };
     this._id = 0;
     this._paused = false;
     this._asyncStorage = new AsyncLocalStorage();
@@ -99,7 +99,7 @@ export class Log extends EventEmitter implements Logger {
     }
 
     this._maxRecordSize = value;
-    const newHistory = new LRUCache<number, MessageObject>({max: value});
+    const newHistory = new LRUCache<number, MessageObject>({ max: value });
     for (const [key, value] of this._history.rentries() as Generator<[number, MessageObject]>) {
       newHistory.set(key, value);
     }
@@ -111,7 +111,7 @@ export class Log extends EventEmitter implements Logger {
       return;
     }
     if (replace) {
-      this._asyncStorage.enterWith({...contextInfo});
+      this._asyncStorage.enterWith({ ...contextInfo });
     } else {
       const store = this._asyncStorage.getStore() ?? {};
       Object.assign(store, contextInfo);
@@ -388,11 +388,11 @@ export class Log extends EventEmitter implements Logger {
 
     // mask sensitive data
     if (
-      result.arg != null &&
-      typeof result.arg === 'object' &&
-      Object.hasOwn(result.arg, SENSITIVE_MESSAGE_KEY)
+      result.arg != null
+      && typeof result.arg === 'object'
+      && Object.hasOwn(result.arg, SENSITIVE_MESSAGE_KEY)
     ) {
-      const {isSensitive} = this._asyncStorage.getStore() ?? {};
+      const { isSensitive } = this._asyncStorage.getStore() ?? {};
       result.arg = isSensitive ? DEFAULT_SECURE_REPLACER : result.arg[SENSITIVE_MESSAGE_KEY];
     }
 
@@ -419,20 +419,19 @@ export class Log extends EventEmitter implements Logger {
  * @param logMessage - Value to log; may be wrapped for secure display.
  * @returns An object keyed with an internal marker containing the message.
  */
-export function markSensitive<T = any>(logMessage: T): {[SENSITIVE_MESSAGE_KEY]: T} {
-  return {[SENSITIVE_MESSAGE_KEY]: logMessage};
+export function markSensitive<T = any>(logMessage: T): { [SENSITIVE_MESSAGE_KEY]: T; } {
+  return { [SENSITIVE_MESSAGE_KEY]: logMessage };
 }
 
 // Unique key for the process-wide logger on globalThis (avoids collisions with other globals).
 const GLOBAL_NPMLOG_KEY = 'appium-logger-global-8f4a1c2b-5e6d-4a9b-8c3f-7d2e1b0a9c6e';
 
-type GlobalWithLogger = typeof globalThis & {[K in typeof GLOBAL_NPMLOG_KEY]: Log | undefined};
+type GlobalWithLogger = typeof globalThis & { [K in typeof GLOBAL_NPMLOG_KEY]: Log | undefined; };
 
 // Reuse process-wide logger so multiple loads of this module use the same Log instance.
 const g = globalThis as GlobalWithLogger;
-export const GLOBAL_LOG =
-  g[GLOBAL_NPMLOG_KEY] ??
-  (() => {
+export const GLOBAL_LOG = g[GLOBAL_NPMLOG_KEY]
+  ?? (() => {
     const log = new Log();
     g[GLOBAL_NPMLOG_KEY] = log;
     return log;

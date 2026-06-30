@@ -1,5 +1,5 @@
-import {node} from 'appium/support';
-import type {ImageSettings} from './types';
+import { node } from 'appium/support';
+import type { ImageSettings } from './types';
 
 export const IMAGE_STRATEGY = '-image';
 

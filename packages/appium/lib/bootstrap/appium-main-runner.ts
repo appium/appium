@@ -1,16 +1,6 @@
-import {log as logger} from '../logger';
-import {util} from '@appium/support';
-import type {AppiumServer} from '@appium/types';
-import {getActivePlugins, getActiveDrivers} from '../extension';
-import registerNode from './grid-v3-register';
-import {
-  determineAppiumHomeSource,
-  logStartupInfo,
-  buildServerOpts,
-  createAppiumServer,
-  logServerAddress,
-} from './main-helpers';
-import type {InitResult, ServerInitData} from './init-types';
+import type { ServerOpts } from '@appium/base-driver';
+import { util } from '@appium/support';
+import type { AppiumServer } from '@appium/types';
 import type {
   Args,
   CliCommand,
@@ -18,8 +8,18 @@ import type {
   CliCommandSetupSubcommand,
   CliExtensionSubcommand,
 } from 'appium/types';
-import type {ServerOpts} from '@appium/base-driver';
 import net from 'node:net';
+import { getActiveDrivers, getActivePlugins } from '../extension';
+import { log as logger } from '../logger';
+import registerNode from './grid-v3-register';
+import type { InitResult, ServerInitData } from './init-types';
+import {
+  buildServerOpts,
+  createAppiumServer,
+  determineAppiumHomeSource,
+  logServerAddress,
+  logStartupInfo,
+} from './main-helpers';
 
 const MAX_SERVER_PROCESS_LISTENERS = 100;
 
@@ -45,8 +45,7 @@ export class AppiumMainRunner {
       return undefined as Cmd extends CliCommandServer ? AppiumServer : void;
     }
 
-    const {appiumDriver, pluginConfig, driverConfig, parsedArgs, appiumHome} =
-      initResult as ServerInitData;
+    const { appiumDriver, pluginConfig, driverConfig, parsedArgs, appiumHome } = initResult as ServerInitData;
 
     const pluginClasses = await getActivePlugins(
       pluginConfig,
@@ -69,7 +68,7 @@ export class AppiumMainRunner {
       parsedArgs.driversImportChunkSize,
       parsedArgs.useDrivers,
     );
-    const {serverOpts, normalizedBasePath} = buildServerOpts(
+    const { serverOpts, normalizedBasePath } = buildServerOpts(
       appiumDriver,
       parsedArgs,
       driverClasses,
@@ -105,8 +104,8 @@ export class AppiumMainRunner {
       const message = err instanceof Error ? err.message : String(err);
       const stack = err instanceof Error ? err.stack : undefined;
       logger.error(
-        `Could not configure Appium server. It's possible that a driver or plugin tried ` +
-          `to update the server and failed. Original error: ${message}`,
+        `Could not configure Appium server. It's possible that a driver or plugin tried `
+          + `to update the server and failed. Original error: ${message}`,
       );
       logger.debug(stack);
       process.exit(1);
@@ -117,9 +116,9 @@ export class AppiumMainRunner {
   private warnIfCorsEnabled(parsedArgs: ServerInitData['parsedArgs']): void {
     if (parsedArgs.allowCors) {
       logger.warn(
-        'You have enabled CORS requests from any host. Be careful not ' +
-          'to visit sites which could maliciously try to start Appium ' +
-          'sessions on your machine',
+        'You have enabled CORS requests from any host. Be careful not '
+          + 'to visit sites which could maliciously try to start Appium '
+          + 'sessions on your machine',
       );
     }
   }

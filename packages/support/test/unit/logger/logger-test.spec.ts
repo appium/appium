@@ -1,31 +1,31 @@
-import {expect} from 'chai';
-import {after, before, describe, it} from 'node:test';
-import {getDynamicLogger, restoreWriters, setupWriters, assertOutputDoesntContain} from './helpers';
+import { expect } from 'chai';
+import { after, before, describe, it } from 'node:test';
+import { assertOutputDoesntContain, getDynamicLogger, restoreWriters, setupWriters } from './helpers';
 
-describe('test logger', function () {
+describe('test logger', function() {
   let writers: ReturnType<typeof setupWriters>;
   let log: ReturnType<typeof getDynamicLogger>;
 
-  before(function () {
+  before(function() {
     writers = setupWriters();
     log = getDynamicLogger(true, false);
   });
 
-  after(function () {
+  after(function() {
     restoreWriters(writers);
   });
 
-  it('should contains levels', function () {
+  it('should contains levels', function() {
     expect(log.levels).to.have.length.above(3);
     expect(log.levels[2]).to.equal('debug');
   });
 
-  it('should unwrap', function () {
+  it('should unwrap', function() {
     expect(log.unwrap).to.exist;
     expect(log.unwrap()).to.exist;
   });
 
-  it('should rewrite npmlog levels during testing', function () {
+  it('should rewrite npmlog levels during testing', function() {
     const text = 'hi';
     log.silly(text);
     log.verbose(text);

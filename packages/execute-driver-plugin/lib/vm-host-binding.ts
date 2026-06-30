@@ -56,7 +56,7 @@ const SAFE_LOOKUP_TARGET: object = Object.freeze(Object.create(null));
  */
 type HostCallable = (...args: unknown[]) => unknown;
 type HostTarget = object | HostCallable;
-type HostConstructor = new (...args: unknown[]) => object;
+type HostConstructor = new(...args: unknown[]) => object;
 
 /** Host target → single deep proxy (stable identity, cycle-safe). */
 const targetToProxy = new WeakMap<HostTarget, object>();
@@ -89,9 +89,9 @@ export function wrapHostBindingForVmContext<T extends HostTarget>(hostValue: T):
  */
 function isOurProxy(value: unknown): value is HostTarget {
   return (
-    value !== null &&
-    (typeof value === 'object' || typeof value === 'function') &&
-    proxyToTarget.has(value)
+    value !== null
+    && (typeof value === 'object' || typeof value === 'function')
+    && proxyToTarget.has(value)
   );
 }
 
@@ -127,22 +127,17 @@ function isNativePromise(value: object): value is Promise<unknown> {
  */
 function wrapPromiseAsThenable(p: Promise<unknown>): unknown {
   const cached = promiseToThenableHost.get(p);
-  const hostObj: object =
-    cached ??
-    (() => {
+  const hostObj: object = cached
+    ?? (() => {
       /* eslint-disable promise/prefer-await-to-then -- thenable facade over a host Promise */
       const o = Object.assign(Object.create(null), {
         then(onFulfilled?: unknown, onRejected?: unknown) {
-          const adaptFulfill =
-            onFulfilled != null && typeof onFulfilled === 'function'
-              ? (v: unknown) =>
-                  Reflect.apply(onFulfilled as HostCallable, undefined, [wrapIfNeeded(v)])
-              : (v: unknown) => wrapIfNeeded(v);
-          const adaptReject =
-            onRejected != null && typeof onRejected === 'function'
-              ? (e: unknown) =>
-                  Reflect.apply(onRejected as HostCallable, undefined, [wrapIfNeeded(e)])
-              : undefined;
+          const adaptFulfill = onFulfilled != null && typeof onFulfilled === 'function'
+            ? (v: unknown) => Reflect.apply(onFulfilled as HostCallable, undefined, [wrapIfNeeded(v)])
+            : (v: unknown) => wrapIfNeeded(v);
+          const adaptReject = onRejected != null && typeof onRejected === 'function'
+            ? (e: unknown) => Reflect.apply(onRejected as HostCallable, undefined, [wrapIfNeeded(e)])
+            : undefined;
           return wrapIfNeeded(p.then(adaptFulfill, adaptReject));
         },
         catch(onRejected?: unknown) {
@@ -150,7 +145,7 @@ function wrapPromiseAsThenable(p: Promise<unknown>): unknown {
             p.catch((e: unknown) =>
               onRejected != null && typeof onRejected === 'function'
                 ? Reflect.apply(onRejected as HostCallable, undefined, [wrapIfNeeded(e)])
-                : Promise.reject(wrapIfNeeded(e)),
+                : Promise.reject(wrapIfNeeded(e))
             ),
           );
         },
@@ -207,7 +202,7 @@ function mapDescriptorForHost(descriptor: PropertyDescriptor): PropertyDescripto
     mapped.writable = descriptor.writable;
   }
   if ('value' in descriptor) {
-    mapped.value = unwrapIfProxy((descriptor as {value: unknown}).value);
+    mapped.value = unwrapIfProxy((descriptor as { value: unknown; }).value);
   }
   if ('get' in descriptor) {
     mapped.get = unwrapIfProxy(descriptor.get) as (() => unknown) | undefined;

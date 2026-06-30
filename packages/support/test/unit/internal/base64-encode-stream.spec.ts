@@ -1,6 +1,6 @@
-import {expect} from 'chai';
-import {describe, it} from 'node:test';
-import {createBase64EncodeStream} from '../../../lib/internal/base64-encode-stream';
+import { expect } from 'chai';
+import { describe, it } from 'node:test';
+import { createBase64EncodeStream } from '../../../lib/internal/base64-encode-stream';
 
 function splitIntoChunks(data: Buffer, chunkSize: number): Buffer[] {
   const chunks: Buffer[] = [];
@@ -26,9 +26,9 @@ function encodeChunks(chunks: Buffer[]): Promise<string> {
   });
 }
 
-describe('internal/base64-encode-stream', function () {
-  describe('createBase64EncodeStream()', function () {
-    it('should emit Buffer chunks', async function () {
+describe('internal/base64-encode-stream', function() {
+  describe('createBase64EncodeStream()', function() {
+    it('should emit Buffer chunks', async function() {
       const encoder = createBase64EncodeStream();
       const chunks: unknown[] = [];
 
@@ -41,22 +41,22 @@ describe('internal/base64-encode-stream', function () {
       expect(chunks.every((chunk) => Buffer.isBuffer(chunk))).to.equal(true);
     });
 
-    it('should encode an empty stream', async function () {
+    it('should encode an empty stream', async function() {
       expect(await encodeChunks([])).to.equal('');
     });
 
-    it('should encode a single chunk', async function () {
+    it('should encode a single chunk', async function() {
       const input = Buffer.from('hello world');
       expect(await encodeChunks([input])).to.equal(input.toString('base64'));
     });
 
-    it('should encode input split into single-byte chunks', async function () {
+    it('should encode input split into single-byte chunks', async function() {
       const input = Buffer.from('The quick brown fox jumps over the lazy dog');
       const encoded = await encodeChunks(splitIntoChunks(input, 1));
       expect(encoded).to.equal(input.toString('base64'));
     });
 
-    it('should encode input split into chunks that are not multiples of three bytes', async function () {
+    it('should encode input split into chunks that are not multiples of three bytes', async function() {
       const input = Buffer.from([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
       for (const chunkSize of [1, 2, 4, 5, 7]) {
         const encoded = await encodeChunks(splitIntoChunks(input, chunkSize));
@@ -64,7 +64,7 @@ describe('internal/base64-encode-stream', function () {
       }
     });
 
-    it('should flush trailing bytes that do not complete a base64 triplet', async function () {
+    it('should flush trailing bytes that do not complete a base64 triplet', async function() {
       const oneByte = Buffer.from('a');
       const twoBytes = Buffer.from('ab');
 
@@ -75,7 +75,7 @@ describe('internal/base64-encode-stream', function () {
       );
     });
 
-    it('should match Buffer base64 encoding for varied payload lengths', async function () {
+    it('should match Buffer base64 encoding for varied payload lengths', async function() {
       const payloads = [
         Buffer.alloc(0),
         Buffer.from('x'),

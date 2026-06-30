@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import {logger} from '../../../lib';
+import { logger } from '../../../lib';
 
 let sandbox: sinon.SinonSandbox;
 
@@ -44,7 +44,7 @@ export function assertOutputDoesntContain(
 
 function someoneHadOutput(writers: ReturnType<typeof setupWriters>, output: string) {
   let hadOutput = false;
-  const matchOutput = sinon.match(function (value: string) {
+  const matchOutput = sinon.match(function(value: string) {
     return !!(value && value.indexOf(output) >= 0);
   }, 'matchOutput');
 

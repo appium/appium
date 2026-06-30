@@ -1,6 +1,6 @@
-import {BasePlugin} from 'appium/plugin';
-import {isStandardCap} from 'appium/driver';
-import type {CapsRecord, W3CCapsLike} from './types';
+import { isStandardCap } from 'appium/driver';
+import { BasePlugin } from 'appium/plugin';
+import type { CapsRecord, W3CCapsLike } from './types';
 
 const VENDOR_PREFIX = 'appium';
 const HAS_VENDOR_PREFIX_RE = /^.+:/;
@@ -8,15 +8,13 @@ const HAS_VENDOR_PREFIX_RE = /^.+:/;
 export class RelaxedCapsPlugin extends BasePlugin {
   async createSession(
     next: () => Promise<unknown>,
-    driver: {createSession: (...args: unknown[]) => Promise<unknown>},
+    driver: { createSession: (...args: unknown[]) => Promise<unknown>; },
     caps1: W3CCapsLike | null,
     caps2?: W3CCapsLike | null,
     caps3?: W3CCapsLike | null,
     ...restArgs: unknown[]
   ): Promise<unknown> {
-    const patchedCaps = [caps1, caps2, caps3].map((c) =>
-      isPlainObject(c) ? this.fixCapsIfW3C(c) : c,
-    );
+    const patchedCaps = [caps1, caps2, caps3].map((c) => isPlainObject(c) ? this.fixCapsIfW3C(c) : c);
     return await driver.createSession(...patchedCaps, ...restArgs);
   }
 
@@ -75,8 +73,8 @@ export class RelaxedCapsPlugin extends BasePlugin {
     }
     if (adjustedKeys.length) {
       this.log.info(
-        `Adjusted keys to conform to capability prefix requirements: ` +
-          JSON.stringify(adjustedKeys),
+        `Adjusted keys to conform to capability prefix requirements: `
+          + JSON.stringify(adjustedKeys),
       );
     }
     return newCaps;

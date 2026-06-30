@@ -1,14 +1,14 @@
-import {expect, use} from 'chai';
+import { expect, use } from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {describe, it} from 'node:test';
-import {npm} from '../../lib/npm';
+import { describe, it } from 'node:test';
+import { npm } from '../../lib/npm';
 
 use(chaiAsPromised);
 
-describe('npm module', function () {
-  describe('getLatestVersion()', function () {
-    describe('when the package is not published to the public registry', function () {
-      it('should not throw', async function () {
+describe('npm module', function() {
+  describe('getLatestVersion()', function() {
+    describe('when the package is not published to the public registry', function() {
+      it('should not throw', async function() {
         await expect(
           npm.getLatestVersion(
             process.cwd(),
@@ -17,7 +17,7 @@ describe('npm module', function () {
         ).to.not.be.rejected;
       });
 
-      it('should resolve with "null"', async function () {
+      it('should resolve with "null"', async function() {
         await expect(
           npm.getLatestVersion(
             process.cwd(),
@@ -28,9 +28,9 @@ describe('npm module', function () {
     });
   });
 
-  describe('getLatestSafeUpgradeVersion()', function () {
-    describe('when the package is not published to the public registry', function () {
-      it('should not throw', async function () {
+  describe('getLatestSafeUpgradeVersion()', function() {
+    describe('when the package is not published to the public registry', function() {
+      it('should not throw', async function() {
         await expect(
           npm.getLatestSafeUpgradeVersion(
             process.cwd(),
@@ -40,7 +40,7 @@ describe('npm module', function () {
         ).to.eventually.be.null;
       });
 
-      it('should resolve with "null"', async function () {
+      it('should resolve with "null"', async function() {
         await expect(
           npm.getLatestSafeUpgradeVersion(
             process.cwd(),

@@ -1,4 +1,4 @@
-import type {EventEmitter} from 'node:events';
+import type { EventEmitter } from 'node:events';
 
 /**
  * This is the type of data that can be validly cloned and sent over the Ipc channel
@@ -19,7 +19,7 @@ export type IpcData =
   | ReadonlyArray<IpcData>
   | ReadonlyMap<IpcData, IpcData>
   | ReadonlySet<IpcData>
-  | {[key: string]: IpcData};
+  | { [key: string]: IpcData; };
 
 /**
  * A representation of the (only) event allowed on the IpcSubscription EventEmitter object

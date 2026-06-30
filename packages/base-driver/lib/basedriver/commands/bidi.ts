@@ -1,7 +1,7 @@
-import {util} from '@appium/support';
-import type {Constraints, DriverStatus, IBidiCommands} from '@appium/types';
-import type {BaseDriver} from '../driver';
-import {mixin} from './mixin';
+import { util } from '@appium/support';
+import type { Constraints, DriverStatus, IBidiCommands } from '@appium/types';
+import type { BaseDriver } from '../driver';
+import { mixin } from './mixin';
 
 declare module '../driver' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -36,14 +36,13 @@ const BidiCommands: IBidiCommands = {
 
   async bidiStatus<C extends Constraints>(this: BaseDriver<C>): Promise<DriverStatus> {
     const result = await this.getStatus();
-    const base: Record<string, unknown> = util.isPlainObject(result) ? {...result} : {};
+    const base: Record<string, unknown> = util.isPlainObject(result) ? { ...result } : {};
     return {
       ...base,
       ready: 'ready' in base ? (base.ready as boolean) : true,
-      message:
-        'message' in base
-          ? (base.message as string)
-          : `${this.constructor.name} is ready to accept commands`,
+      message: 'message' in base
+        ? (base.message as string)
+        : `${this.constructor.name} is ready to accept commands`,
     };
   },
 };

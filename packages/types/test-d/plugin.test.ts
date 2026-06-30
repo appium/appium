@@ -1,17 +1,17 @@
-import {expectAssignable} from 'tsd';
+import { expectAssignable } from 'tsd';
 import type {
   AppiumLogger,
+  DriverCommand,
   DriverCommandToPluginCommand,
-  ExternalDriver,
-  Plugin,
-  StringRecord,
   ExecuteMethodMap,
+  ExternalDriver,
+  NextPluginCallback,
+  Plugin,
   PluginClass,
+  PluginCommand,
   PluginExecuteMethodDef,
   PluginStatic,
-  NextPluginCallback,
-  PluginCommand,
-  DriverCommand,
+  StringRecord,
 } from '..';
 class TestPlugin implements Plugin {
   static executeMethodMap = {
@@ -31,7 +31,7 @@ class TestPlugin implements Plugin {
     ExternalDriver['getPageSource'],
     [flag: boolean],
     string | Buffer
-  > = async function (next, driver, flag) {
+  > = async function(next, driver, flag) {
     const source = await next();
     if (typeof source === 'string') {
       return flag ? source : Buffer.from(source);

@@ -1,21 +1,21 @@
-import {describe, it, before, after} from 'node:test';
-import chai, {expect} from 'chai';
+import { getTestPort, TEST_HOST } from '@appium/driver-test-support';
+import chai, { expect } from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {server, routeConfiguringFunction, DEFAULT_WS_PATHNAME_PREFIX} from '../../../lib';
-import {FakeDriver} from '../protocol/fake-driver';
+import { after, before, describe, it } from 'node:test';
 import WebSocket from 'ws';
-import {TEST_HOST, getTestPort} from '@appium/driver-test-support';
+import { DEFAULT_WS_PATHNAME_PREFIX, routeConfiguringFunction, server } from '../../../lib';
+import { FakeDriver } from '../protocol/fake-driver';
 
 chai.use(chaiAsPromised);
 
-describe('Websockets (e2e)', function () {
+describe('Websockets (e2e)', function() {
   let baseServer: Awaited<ReturnType<typeof server>>;
   let driver: FakeDriver;
   let port: number;
   const SESSION_ID = 'foo';
   const WS_DATA = 'Hello';
 
-  before(async function () {
+  before(async function() {
     driver = new FakeDriver();
     driver.sessionId = SESSION_ID;
     port = await getTestPort();
@@ -25,12 +25,12 @@ describe('Websockets (e2e)', function () {
     });
   });
 
-  after(async function () {
+  after(async function() {
     await baseServer.close();
   });
 
-  describe('web sockets support', function () {
-    it('should be able to add websocket handler and remove it', async function () {
+  describe('web sockets support', function() {
+    it('should be able to add websocket handler and remove it', async function() {
       const wss = new WebSocket.Server({
         noServer: true,
       });
@@ -71,11 +71,10 @@ describe('Websockets (e2e)', function () {
         client.on('message', (data) =>
           reject(
             new Error(
-              `No websocket messages are expected after the handler ` +
-                `has been removed. '${data}' is received instead. `,
+              `No websocket messages are expected after the handler `
+                + `has been removed. '${data}' is received instead. `,
             ),
-          ),
-        );
+          ));
         client.on('error', resolve);
         setTimeout(resolve, timeout);
       });

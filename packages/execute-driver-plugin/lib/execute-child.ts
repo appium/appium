@@ -1,8 +1,8 @@
+import { logger, util } from '@appium/support';
+import { promisify } from 'node:util';
 import vm from 'node:vm';
-import {promisify} from 'node:util';
-import {logger, util} from '@appium/support';
-import type {DriverScriptMessageEvent, ScriptResult, RunScriptResult} from './types';
-import {wrapHostBindingForVmContext} from './vm-host-binding';
+import type { DriverScriptMessageEvent, RunScriptResult, ScriptResult } from './types';
+import { wrapHostBindingForVmContext } from './vm-host-binding';
 
 const log = logger.getLogger('ExecuteDriver Child');
 let send: (res: ScriptResult) => Promise<void>;
@@ -19,7 +19,7 @@ export const MJSONWP_ELEMENT_KEY = 'ELEMENT';
  * @throws {TypeError}
  */
 async function runScript(eventParams: DriverScriptMessageEvent): Promise<RunScriptResult> {
-  const {driverOpts, script, timeoutMs} = eventParams;
+  const { driverOpts, script, timeoutMs } = eventParams;
   if (typeof timeoutMs !== 'number' || Number.isNaN(timeoutMs)) {
     throw new TypeError('Timeout parameter must be a number');
   }
@@ -27,7 +27,7 @@ async function runScript(eventParams: DriverScriptMessageEvent): Promise<RunScri
   /**
    * set up fake logger
    */
-  const logs: {error: any[]; warn: any[]; log: any[]} = {
+  const logs: { error: any[]; warn: any[]; log: any[]; } = {
     error: [],
     warn: [],
     log: [],
@@ -42,7 +42,7 @@ async function runScript(eventParams: DriverScriptMessageEvent): Promise<RunScri
     log: wrapHostBindingForVmContext((...logMsgs) => logs.log.push(...logMsgs)),
   };
 
-  const {attach} = await import('webdriverio');
+  const { attach } = await import('webdriverio');
 
   const driver = await attach(driverOpts);
   const sandboxDriver = wrapHostBindingForVmContext(driver);
@@ -65,12 +65,12 @@ async function runScript(eventParams: DriverScriptMessageEvent): Promise<RunScri
       setTimeout: sandboxSetTimeout,
       clearTimeout: sandboxClearTimeout,
     },
-    {timeout: timeoutMs, breakOnSigint: true},
+    { timeout: timeoutMs, breakOnSigint: true },
   );
 
   result = coerceScriptResult(result);
   log.info('Successfully ensured driver script result is appropriate type for return');
-  return {result, logs};
+  return { result, logs };
 }
 
 /**
@@ -89,8 +89,8 @@ function coerceScriptResult(obj: any): any {
     obj = JSON.parse(JSON.stringify(obj));
   } catch {
     log.warn(
-      'Could not convert executeDriverScript to safe response!' +
-        `Result was: ${JSON.stringify(obj)}. Will make it null`,
+      'Could not convert executeDriverScript to safe response!'
+        + `Result was: ${JSON.stringify(obj)}. Will make it null`,
     );
     return null;
   }
@@ -147,11 +147,11 @@ async function main(eventParams: DriverScriptMessageEvent): Promise<void> {
   let res: ScriptResult;
   log.info('Parameters received from parent process');
   try {
-    res = {success: await runScript(eventParams)};
+    res = { success: await runScript(eventParams) };
     log.info('runScript success');
   } catch (error: any) {
     log.info('runScript error');
-    res = {error: {message: error.message, stack: error.stack}};
+    res = { error: { message: error.message, stack: error.stack } };
   }
   await send(res);
 }

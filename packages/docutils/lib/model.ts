@@ -4,7 +4,7 @@
  * @module
  */
 
-import type {Jsonify, JsonValue} from 'type-fest';
+import type { Jsonify, JsonValue } from 'type-fest';
 
 /**
  * The `nav` prop of an `mkdocs.yml` file
@@ -50,11 +50,11 @@ export type MkDocsYml = Jsonify<{
 export type MkDocsYmlTheme =
   | string
   | ({
-      name: string;
-      locale?: string;
-      custom_dir?: string;
-      static_templates?: string[];
-    } & Record<string, JsonValue>);
+    name: string;
+    locale?: string;
+    custom_dir?: string;
+    static_templates?: string[];
+  } & Record<string, JsonValue>);
 
 /**
  * The data parsed from a `requirements.txt` file, or the output of `pip list --json`

@@ -1,7 +1,7 @@
-import {errors} from 'appium/driver';
-import type {FakeDriver} from '../driver';
-import type {Position, Rect, Size} from '@appium/types';
-import type {FakeElement} from '../fake-element';
+import type { Position, Rect, Size } from '@appium/types';
+import { errors } from 'appium/driver';
+import type { FakeDriver } from '../driver';
+import type { FakeElement } from '../fake-element';
 
 /** Resolve element ids to FakeElements; throws StaleElementReferenceError if any id is missing. */
 export function getElements(this: FakeDriver, elementIds: string[]): FakeElement[] {

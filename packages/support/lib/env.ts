@@ -1,8 +1,8 @@
-import {homedir} from 'node:os';
+import { homedir } from 'node:os';
 import path from 'node:path';
-import {readPackage, type NormalizedPackageJson} from './internal';
 import * as semver from 'semver';
-import {memoize} from './util';
+import { type NormalizedPackageJson, readPackage } from './internal';
+import { memoize } from './util';
 
 /**
  * Path to the default `APPIUM_HOME` dir (`~/.appium`).
@@ -85,7 +85,7 @@ export const readPackageInDir = memoize(async function _readPackageInDir(
   cwd: string,
 ): Promise<NormalizedPackageJson | undefined> {
   try {
-    return await readPackage({cwd, normalize: true});
+    return await readPackage({ cwd, normalize: true });
   } catch (err) {
     if (isMissingPackageJsonError(err)) {
       return undefined;

@@ -1,4 +1,4 @@
-import {fs} from '@appium/support';
+import { fs } from '@appium/support';
 import crypto from 'node:crypto';
 import path from 'node:path';
 
@@ -21,7 +21,7 @@ export interface IsPackageChangedResult {
 export async function isPackageChanged(
   options: IsPackageChangedOptions = {},
 ): Promise<IsPackageChangedResult> {
-  const {hashFilename = '.packagehash', cwd = process.cwd()} = options;
+  const { hashFilename = '.packagehash', cwd = process.cwd() } = options;
   const packagePath = await findPackageJson(cwd);
   if (!packagePath) {
     throw new Error(`Cannot find package.json travelling up from "${cwd}".`);

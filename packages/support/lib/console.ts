@@ -66,10 +66,10 @@ function isUnicodeSupported(): boolean {
   }
   if (process.platform === 'win32') {
     return Boolean(
-      process.env.CI
-        || process.env.WT_SESSION
-        || process.env.TERMINAL_EMULATOR === 'JetBrains-JediTerm'
-        || process.env.TERM_PROGRAM === 'vscode',
+      process.env.CI ||
+      process.env.WT_SESSION ||
+      process.env.TERMINAL_EMULATOR === 'JetBrains-JediTerm' ||
+      process.env.TERM_PROGRAM === 'vscode',
     );
   }
   return true;
@@ -78,7 +78,7 @@ function isUnicodeSupported(): boolean {
 const UNICODE = isUnicodeSupported();
 
 /** Returns whether stderr should use ANSI color by default. */
-function stderrSupportsColor(stream: { isTTY?: boolean; } = process.stderr): boolean {
+function stderrSupportsColor(stream: { isTTY?: boolean } = process.stderr): boolean {
   const { env } = process;
   if (env.NO_COLOR !== undefined || env.NODE_DISABLE_COLORS !== undefined) {
     return false;
@@ -122,11 +122,7 @@ type SymbolKey = keyof typeof logSymbols;
  */
 class NullWritable extends Writable {
   /* eslint-disable promise/prefer-await-to-callbacks -- Node stream callback API */
-  override _write(
-    chunk: unknown,
-    encoding: BufferEncoding,
-    callback: (error?: Error | null) => void,
-  ): void {
+  override _write(chunk: unknown, encoding: BufferEncoding, callback: (error?: Error | null) => void): void {
     setImmediate(callback);
   }
   /* eslint-enable promise/prefer-await-to-callbacks */

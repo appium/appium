@@ -27,7 +27,8 @@ const ON_UNEXPECTED_SHUTDOWN_EVENT = 'onUnexpectedShutdown';
 const ALL_DRIVERS_MATCH = '*';
 const FEATURE_NAME_SEPARATOR = ':';
 
-export class DriverCore<const C extends Constraints, Settings extends StringRecord = StringRecord> extends ExtensionCore
+export class DriverCore<const C extends Constraints, Settings extends StringRecord = StringRecord>
+  extends ExtensionCore
   implements Core<C, Settings>
 {
   /**
@@ -97,7 +98,7 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
 
   protected commandsQueueGuard: AsyncLock;
 
-  constructor(opts: InitialOpts = <InitialOpts> {}, shouldValidateCaps = true) {
+  constructor(opts: InitialOpts = <InitialOpts>{}, shouldValidateCaps = true) {
     super();
     this._log = this.log; // TODO: remove references to this._log and use this.log instead
 
@@ -268,23 +269,18 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
         // arguments are validated upon server startup,
         // but better be safe than sorry
         throw new Error(
-          `The full feature name must include both the automation name `
-            + `'${this.opts.automationName}' or the '${ALL_DRIVERS_MATCH}' `
-            + `wildcard to apply the feature to all installed drivers, and `
-            + `the feature name split by a colon. Got '${fullName}' instead`,
+          `The full feature name must include both the automation name ` +
+            `'${this.opts.automationName}' or the '${ALL_DRIVERS_MATCH}' ` +
+            `wildcard to apply the feature to all installed drivers, and ` +
+            `the feature name split by a colon. Got '${fullName}' instead`,
         );
       }
-      return [
-        fullName.substring(0, separatorPos).toLowerCase(),
-        fullName.substring(separatorPos + 1),
-      ];
+      return [fullName.substring(0, separatorPos).toLowerCase(), fullName.substring(separatorPos + 1)];
     };
     const parseFullNames = (fullNames: string[]) => fullNames.map(parseFullName);
     const matches = (pair: string[]) => {
       const [automationName, featureName] = pair;
-      return (
-        [currentAutomationName, ALL_DRIVERS_MATCH].includes(automationName) && featureName === name
-      );
+      return [currentAutomationName, ALL_DRIVERS_MATCH].includes(automationName) && featureName === name;
     };
 
     // if we have explicitly denied this feature, return false immediately
@@ -316,10 +312,10 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
   assertFeatureEnabled(name: string) {
     if (!this.isFeatureEnabled(name)) {
       throw new Error(
-        `Potentially insecure feature '${name}' has not been `
-          + `enabled. If you want to enable this feature and accept `
-          + `the security ramifications, please do so by following `
-          + `the documented instructions at http://appium.io/docs/en/latest/guides/security/`,
+        `Potentially insecure feature '${name}' has not been ` +
+          `enabled. If you want to enable this feature and accept ` +
+          `the security ramifications, please do so by following ` +
+          `the documented instructions at http://appium.io/docs/en/latest/guides/security/`,
       );
     }
   }
@@ -333,9 +329,7 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
     }
 
     if (!validStrategies.includes(strategy)) {
-      throw new errors.InvalidSelectorError(
-        `Locator Strategy '${strategy}' is not supported for this session`,
-      );
+      throw new errors.InvalidSelectorError(`Locator Strategy '${strategy}' is not supported for this session`);
     }
   }
 

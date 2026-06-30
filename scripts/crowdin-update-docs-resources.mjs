@@ -144,9 +144,7 @@ async function uploadDocumentsToStorage(matchedFiles) {
     const crowdinPath = toCrowdinPath(matchedFilePath);
     // Hashing is used to make sure we always create the same storage for the same file path in Crowdin
     const storageName = toHash(crowdinPath);
-    log.info(
-      `Uploading '${crowdinPath}' to Crowdin storage (${++count} of ${matchedFiles.length})`,
-    );
+    log.info(`Uploading '${crowdinPath}' to Crowdin storage (${++count} of ${matchedFiles.length})`);
     const storageData = await addStorage(storageName, matchedFilePath, DOCUMENT_CONTENT_TYPE);
     resultMap[matchedFilePath] = storageData.id;
   }
@@ -204,20 +202,14 @@ async function ensureFileStructure(storageMapping, directoriesMapping, existingF
   let count = 0;
   for (const [fullPath, storageId] of Object.entries(storageMapping)) {
     const pathInCrowdin = toCrowdinPath(fullPath);
-    log.info(
-      `Synchronizing '${pathInCrowdin}' (${++count} of ${Object.keys(storageMapping).length})`,
-    );
+    log.info(`Synchronizing '${pathInCrowdin}' (${++count} of ${Object.keys(storageMapping).length})`);
     const fileData = existingFilesData.find((data) => data.path === pathInCrowdin);
     if (fileData) {
       result[fullPath] = fileData.id;
     } else {
       const parentFolderId = directoriesMapping[path.dirname(pathInCrowdin)];
       try {
-        const fileId = await addFile(
-          encodeURIComponent(path.basename(pathInCrowdin)),
-          storageId,
-          parentFolderId,
-        );
+        const fileId = await addFile(encodeURIComponent(path.basename(pathInCrowdin)), storageId, parentFolderId);
         result[fullPath] = fileId;
       } catch (e) {
         log.warn(`Cannot add '${pathInCrowdin}'. Skipping it`);
@@ -238,17 +230,11 @@ async function ensureFileStructure(storageMapping, directoriesMapping, existingF
  * @returns {Promise<void>}
  */
 async function cleanupObsoleteDocuments() {
-  const [existingFilesData, matchedFiles] = await Promise.all([
-    listFiles(),
-    walk(LANGUAGE_ROOT, DOCUMENTS_EXT),
-  ]);
+  const [existingFilesData, matchedFiles] = await Promise.all([listFiles(), walk(LANGUAGE_ROOT, DOCUMENTS_EXT)]);
   const matchedFilePaths = new Set(matchedFiles.map(toCrowdinPath));
   let count = 0;
   for (const existingFileData of existingFilesData) {
-    if (
-      matchedFilePaths.has(existingFileData.path)
-      || !existingFileData.name.endsWith(DOCUMENTS_EXT)
-    ) {
+    if (matchedFilePaths.has(existingFileData.path) || !existingFileData.name.endsWith(DOCUMENTS_EXT)) {
       continue;
     }
     log.info(`Deleting the obsolete document '${existingFileData.path}'`);
@@ -268,9 +254,7 @@ async function cleanupObsoleteDocuments() {
 async function updateFiles(filesMapping, storageMapping) {
   let count = 0;
   for (const [fullPath, fileId] of Object.entries(filesMapping)) {
-    log.info(
-      `Updating '${toCrowdinPath(fullPath)}' (${++count} of ${Object.keys(filesMapping).length})`,
-    );
+    log.info(`Updating '${toCrowdinPath(fullPath)}' (${++count} of ${Object.keys(filesMapping).length})`);
     await performApiRequest(`/files/${fileId}`, {
       method: 'PUT',
       payload: {
@@ -286,9 +270,7 @@ async function updateFiles(filesMapping, storageMapping) {
 async function updateDocuments() {
   const matchedFiles = await walk(LANGUAGE_ROOT, DOCUMENTS_EXT);
   if (matchedFiles.length === 0) {
-    throw new Error(
-      `Did not find any files matching the '*${DOCUMENTS_EXT}' extension in '${LANGUAGE_ROOT}'`,
-    );
+    throw new Error(`Did not find any files matching the '*${DOCUMENTS_EXT}' extension in '${LANGUAGE_ROOT}'`);
   }
   log.info(`Matched ${matchedFiles.length} files from '${LANGUAGE_ROOT}' for upload...`);
 
@@ -297,11 +279,7 @@ async function updateDocuments() {
     ensureDirectoryStructure(matchedFiles),
   ]);
   const existingFilesData = await listFiles();
-  const filesMapping = await ensureFileStructure(
-    storageMapping,
-    directoriesMapping,
-    existingFilesData,
-  );
+  const filesMapping = await ensureFileStructure(storageMapping, directoriesMapping, existingFilesData);
   await updateFiles(filesMapping, storageMapping);
 }
 
@@ -314,11 +292,7 @@ async function updateMkDocsConfig() {
   if (!(await fs.exists(matchedFilePath))) {
     throw new Error(`Did not find the MkDocs config at '${matchedFilePath}'`);
   }
-  const storageData = await addStorage(
-    encodeURIComponent(CROWIN_MKDOCS_CONFIG),
-    matchedFilePath,
-    MKDOCS_CONTENT_TYPE,
-  );
+  const storageData = await addStorage(encodeURIComponent(CROWIN_MKDOCS_CONFIG), matchedFilePath, MKDOCS_CONTENT_TYPE);
   const storageMapping = { [matchedFilePath]: storageData.id };
   const existingFilesData = await listFiles();
   const filesMapping = await ensureFileStructure(storageMapping, {}, existingFilesData);

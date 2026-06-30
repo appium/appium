@@ -27,9 +27,7 @@ export function isServerCommandArgs(args: AnyArgs): args is Args<CliCommandServe
  *
  * @param args - Parsed args before full subcommand-specific narrowing
  */
-export function isSetupCommandArgs(
-  args: AnyArgs,
-): args is Args<CliCommandSetup, CliCommandSetupSubcommand> {
+export function isSetupCommandArgs(args: AnyArgs): args is Args<CliCommandSetup, CliCommandSetupSubcommand> {
   return args.subcommand === SETUP_SUBCOMMAND;
 }
 
@@ -38,9 +36,7 @@ export function isSetupCommandArgs(
  *
  * @param args - Parsed args before full subcommand-specific narrowing
  */
-export function isExtensionCommandArgs(
-  args: AnyArgs,
-): args is Args<CliExtensionCommand, CliExtensionSubcommand> {
+export function isExtensionCommandArgs(args: AnyArgs): args is Args<CliExtensionCommand, CliExtensionSubcommand> {
   return args.subcommand === DRIVER_TYPE || args.subcommand === PLUGIN_TYPE;
 }
 
@@ -49,9 +45,7 @@ export function isExtensionCommandArgs(
  *
  * @param args - Parsed args before full subcommand-specific narrowing
  */
-export function isDriverCommandArgs(
-  args: AnyArgs,
-): args is Args<CliCommandDriver, CliExtensionSubcommand> {
+export function isDriverCommandArgs(args: AnyArgs): args is Args<CliCommandDriver, CliExtensionSubcommand> {
   return args.subcommand === DRIVER_TYPE;
 }
 
@@ -60,8 +54,6 @@ export function isDriverCommandArgs(
  *
  * @param args - Parsed args before full subcommand-specific narrowing
  */
-export function isPluginCommandArgs(
-  args: AnyArgs,
-): args is Args<CliCommandPlugin, CliExtensionSubcommand> {
+export function isPluginCommandArgs(args: AnyArgs): args is Args<CliCommandPlugin, CliExtensionSubcommand> {
   return args.subcommand === PLUGIN_TYPE;
 }

@@ -113,8 +113,8 @@ export class Manifest {
           shouldWrite = true;
         } else {
           throw new Error(
-            `Appium had trouble loading the extension installation `
-              + `cache file (${manifestPathResolved}). It may be invalid YAML. Specific error: ${err.message}`,
+            `Appium had trouble loading the extension installation ` +
+              `cache file (${manifestPathResolved}). It may be invalid YAML. Specific error: ${err.message}`,
             { cause: err },
           );
         }
@@ -161,11 +161,9 @@ export class Manifest {
         await fs.mkdirp(path.dirname(manifestPathResolved));
       } catch (err: any) {
         throw new Error(
-          `Appium could not create the directory for the manifest file: ${
-            path.dirname(
-              manifestPathResolved,
-            )
-          }. Original error: ${err.message}`,
+          `Appium could not create the directory for the manifest file: ${path.dirname(
+            manifestPathResolved,
+          )}. Original error: ${err.message}`,
           { cause: err },
         );
       }
@@ -340,25 +338,25 @@ export class Manifest {
 
 function isExtension(value: unknown): value is ExtPackageJson<ExtensionType> {
   return (
-    util.isPlainObject(value)
-    && util.isPlainObject((value as { appium?: unknown; }).appium)
-    && typeof (value as { name?: unknown; }).name === 'string'
-    && typeof (value as { version?: unknown; }).version === 'string'
+    util.isPlainObject(value) &&
+    util.isPlainObject((value as { appium?: unknown }).appium) &&
+    typeof (value as { name?: unknown }).name === 'string' &&
+    typeof (value as { version?: unknown }).version === 'string'
   );
 }
 
 function isDriver(value: unknown): value is ExtPackageJson<DriverType> {
   return (
-    isExtension(value)
-    && 'driverName' in value.appium
-    && typeof (value.appium as { driverName?: unknown; }).driverName === 'string'
+    isExtension(value) &&
+    'driverName' in value.appium &&
+    typeof (value.appium as { driverName?: unknown }).driverName === 'string'
   );
 }
 
 function isPlugin(value: unknown): value is ExtPackageJson<PluginType> {
   return (
-    isExtension(value)
-    && 'pluginName' in value.appium
-    && typeof (value.appium as { pluginName?: unknown; }).pluginName === 'string'
+    isExtension(value) &&
+    'pluginName' in value.appium &&
+    typeof (value.appium as { pluginName?: unknown }).pluginName === 'string'
   );
 }

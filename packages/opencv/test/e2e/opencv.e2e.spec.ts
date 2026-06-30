@@ -8,7 +8,7 @@ use(chaiAsPromised);
 
 const FIXTURES_ROOT = path.resolve(__dirname, 'images');
 
-describe('OpenCV helpers', function() {
+describe('OpenCV helpers', function () {
   // OpenCV needs several seconds for initialization
   this.timeout(120000);
 
@@ -20,7 +20,7 @@ describe('OpenCV helpers', function() {
   let rotatedImage: Buffer | null = null;
   let numberImage: Buffer | null = null;
 
-  before(async function() {
+  before(async function () {
     const imagePath = path.resolve(FIXTURES_ROOT, 'full-image.b64');
     imgFixture = Buffer.from(await fs.readFile(imagePath, 'binary'), 'base64');
     fullImage = await fs.readFile(path.resolve(FIXTURES_ROOT, 'findwaldo.jpg'));
@@ -31,8 +31,8 @@ describe('OpenCV helpers', function() {
     rotatedImage = await fs.readFile(path.resolve(FIXTURES_ROOT, 'cc_rotated.png'));
   });
 
-  describe('getImagesMatches', function() {
-    it('should calculate the number of matches between two images', async function() {
+  describe('getImagesMatches', function () {
+    it('should calculate the number of matches between two images', async function () {
       for (const detectorName of ['AKAZE', 'ORB'] as const) {
         const { count, totalCount } = await getImagesMatches(fullImage!, fullImage!, { detectorName });
         expect(count).to.be.above(0);
@@ -40,23 +40,19 @@ describe('OpenCV helpers', function() {
       }
     });
 
-    it('should visualize matches between two images', async function() {
+    it('should visualize matches between two images', async function () {
       const { visualization } = await getImagesMatches(fullImage!, fullImage!, {
         visualize: true,
       });
       expect(visualization).to.not.be.empty;
     });
 
-    it('should visualize matches between two images and apply goodMatchesFactor', async function() {
-      const { visualization, points1, rect1, points2, rect2 } = await getImagesMatches(
-        rotatedImage!,
-        originalImage!,
-        {
-          visualize: true,
-          matchFunc: 'BruteForceHamming',
-          goodMatchesFactor: 40,
-        },
-      );
+    it('should visualize matches between two images and apply goodMatchesFactor', async function () {
+      const { visualization, points1, rect1, points2, rect2 } = await getImagesMatches(rotatedImage!, originalImage!, {
+        visualize: true,
+        matchFunc: 'BruteForceHamming',
+        goodMatchesFactor: 40,
+      });
       expect(visualization).to.not.be.empty;
       expect(points1.length).to.be.above(4);
       expect(rect1.x).to.be.above(0);
@@ -71,13 +67,13 @@ describe('OpenCV helpers', function() {
     });
   });
 
-  describe('getImagesSimilarity', function() {
-    it('should calculate the similarity score between two images', async function() {
+  describe('getImagesSimilarity', function () {
+    it('should calculate the similarity score between two images', async function () {
       const { score } = await getImagesSimilarity(imgFixture!, imgFixture!);
       expect(score).to.be.above(0);
     });
 
-    it('should visualize the similarity between two images', async function() {
+    it('should visualize the similarity between two images', async function () {
       const { visualization } = await getImagesSimilarity(originalImage!, changedImage!, {
         visualize: true,
       });
@@ -85,8 +81,8 @@ describe('OpenCV helpers', function() {
     });
   });
 
-  describe('getImageOccurrence', function() {
-    it('should calculate the partial image position in the full image', async function() {
+  describe('getImageOccurrence', function () {
+    it('should calculate the partial image position in the full image', async function () {
       const { rect, score } = await getImageOccurrence(fullImage!, partialImage!);
       expect(rect.x).to.be.above(0);
       expect(rect.y).to.be.above(0);
@@ -95,7 +91,7 @@ describe('OpenCV helpers', function() {
       expect(score).to.be.above(0);
     });
 
-    it('should reject matches that fall below a threshold', async function() {
+    it('should reject matches that fall below a threshold', async function () {
       await expect(
         getImageOccurrence(fullImage!, partialImage!, {
           threshold: 1.0,
@@ -103,15 +99,15 @@ describe('OpenCV helpers', function() {
       ).to.eventually.be.rejectedWith(/threshold/);
     });
 
-    it('should visualize the partial image position in the full image', async function() {
+    it('should visualize the partial image position in the full image', async function () {
       const { visualization } = await getImageOccurrence(fullImage!, partialImage!, {
         visualize: true,
       });
       expect(visualization).to.not.be.empty;
     });
 
-    describe('multiple', function() {
-      it('should return matches in the full image', async function() {
+    describe('multiple', function () {
+      it('should return matches in the full image', async function () {
         const { multiple } = await getImageOccurrence(originalImage!, numberImage!, {
           threshold: 0.8,
           multiple: true,
@@ -127,7 +123,7 @@ describe('OpenCV helpers', function() {
         }
       });
 
-      it('should reject matches that fall below a threshold', async function() {
+      it('should reject matches that fall below a threshold', async function () {
         const { multiple } = await getImageOccurrence(originalImage!, numberImage!, {
           threshold: 1.0,
           multiple: true,
@@ -135,7 +131,7 @@ describe('OpenCV helpers', function() {
         expect(multiple).to.have.length(1);
       });
 
-      it('should visualize the partial image position in the full image', async function() {
+      it('should visualize the partial image position in the full image', async function () {
         const { multiple } = await getImageOccurrence(originalImage!, numberImage!, {
           visualize: true,
           multiple: true,

@@ -64,9 +64,7 @@ export interface MatchingOptions {
    * 3 arguments: the current distance, minimal distance, maximum distance and returns true or false
    * to include or exclude the match.
    */
-  goodMatchesFactor?:
-    | number
-    | ((distance: number, minDistance: number, maxDistance: number) => boolean);
+  goodMatchesFactor?: number | ((distance: number, minDistance: number, maxDistance: number) => boolean);
   /**
    * Whether to return the resulting visualization as an image buffer (useful for debugging purposes).
    * Defaults to `false`.
@@ -141,10 +139,10 @@ export interface OpenCVBindings {
   Mat: any;
   KeyPointVector: any;
   FeatureDetector: any;
-  Scalar: new(...args: number[]) => any;
-  Point: new(x: number, y: number) => any;
-  DescriptorMatcher: new(matchFunc: string) => any;
-  DMatchVector: new() => any;
-  MatVector: new() => any;
+  Scalar: new (...args: number[]) => any;
+  Point: new (x: number, y: number) => any;
+  DescriptorMatcher: new (matchFunc: string) => any;
+  DMatchVector: new () => any;
+  MatVector: new () => any;
   [key: string]: any;
 }

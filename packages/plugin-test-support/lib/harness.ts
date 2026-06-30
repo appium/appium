@@ -73,7 +73,7 @@ export function pluginE2EHarness(opts: E2ESetupOpts): {
       const { stdout: driverListJson } = await exec(process.execPath, driverListArgs, {
         env,
       });
-      const installedDrivers = JSON.parse(driverListJson) as Record<string, { installed?: boolean; }>;
+      const installedDrivers = JSON.parse(driverListJson) as Record<string, { installed?: boolean }>;
 
       if (!installedDrivers[driverName]?.installed) {
         console.log(`${logSymbols.warning} Driver "${driverName}" not installed; installing...`);
@@ -95,7 +95,7 @@ export function pluginE2EHarness(opts: E2ESetupOpts): {
       const { stdout: pluginListJson } = await exec(process.execPath, pluginListArgs, {
         env,
       });
-      const installedPlugins = JSON.parse(pluginListJson) as Record<string, { installed?: boolean; }>;
+      const installedPlugins = JSON.parse(pluginListJson) as Record<string, { installed?: boolean }>;
 
       if (!installedPlugins[pluginName]?.installed) {
         console.log(`${logSymbols.warning} Plugin "${pluginName}" not installed; installing...`);

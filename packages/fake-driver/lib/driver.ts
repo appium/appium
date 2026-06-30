@@ -19,7 +19,7 @@ import type { FakeDriverCaps, W3CFakeDriverCaps } from './types';
 
 export type { FakeDriverConstraints };
 export type { Orientation } from '@appium/types';
-export type ClockStatus = { running: boolean; };
+export type ClockStatus = { running: boolean };
 
 /** Driver supporting a generic "fake thing" value (getFakeThing / setFakeThing). */
 export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDriverConstraints> {
@@ -110,7 +110,7 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
   bidiNavigate = generalCommands.bidiNavigate;
   getLastPluginMath = generalCommands.getLastPluginMath;
 
-  protected lastPluginMath: { pluginName: string; result: number; } | null;
+  protected lastPluginMath: { pluginName: string; result: number } | null;
 
   /** If set, Bidi connections are proxied to this URL instead of handling locally. */
   private _bidiProxyUrl: string | null;
@@ -135,7 +135,7 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
     return this._bidiProxyUrl;
   }
 
-  override get driverData(): { isUnique: boolean; } {
+  override get driverData(): { isUnique: boolean } {
     return {
       isUnique: !!this.caps.uniqueApp,
     };
@@ -179,7 +179,7 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
 
   proxyReqRes(req: Request, res: Response): void {
     res.set('content-type', 'application/json');
-    const resBodyObj: { value: string; sessionId: string | null; } = {
+    const resBodyObj: { value: string; sessionId: string | null } = {
       value: 'proxied via proxyReqRes',
       sessionId: null,
     };
@@ -205,8 +205,7 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
     for (const d of driverData) {
       if (d.isUnique) {
         throw new errors.SessionNotCreatedError(
-          'Cannot start session; another '
-            + 'unique session is in progress that requires all resources',
+          'Cannot start session; another ' + 'unique session is in progress that requires all resources',
         );
       }
     }

@@ -20,15 +20,7 @@ const TEST_IMG_1_PATH = path.join(FIXTURES_DIR, 'img1.png');
 const TEST_IMG_2_PATH = path.join(FIXTURES_DIR, 'img2.png');
 const APPSTORE_IMG_PATH = path.join(FIXTURES_DIR, 'appstore.png');
 const TEST_HOST = '127.0.0.1';
-const TEST_FAKE_APP = path.join(
-  APPIUM_HOME,
-  'node_modules',
-  '@appium',
-  'fake-driver',
-  'test',
-  'fixtures',
-  'app.xml',
-);
+const TEST_FAKE_APP = path.join(APPIUM_HOME, 'node_modules', '@appium', 'fake-driver', 'test', 'fixtures', 'app.xml');
 const TEST_CAPS = {
   platformName: 'Fake',
   'appium:automationName': 'Fake',
@@ -42,7 +34,7 @@ const WDIO_OPTS: WebdriverIOConfig = {
   capabilities: TEST_CAPS,
 };
 
-describe('ImageElementPlugin', function() {
+describe('ImageElementPlugin', function () {
   const { setup, teardown } = pluginE2EHarness({
     host: TEST_HOST,
     appiumHome: APPIUM_HOME,
@@ -55,7 +47,7 @@ describe('ImageElementPlugin', function() {
   });
   let driver: any;
 
-  before(async function() {
+  before(async function () {
     // workaround for https://github.com/nodejs/node/issues/64061
     await exec(process.execPath, ['--version']);
 
@@ -63,21 +55,21 @@ describe('ImageElementPlugin', function() {
     const address = server.address();
     WDIO_OPTS.port = (address as AddressInfo).port;
   });
-  after(async function() {
+  after(async function () {
     await teardown();
   });
 
-  beforeEach(async function() {
+  beforeEach(async function () {
     driver = await wdio(WDIO_OPTS);
   });
 
-  afterEach(async function() {
+  afterEach(async function () {
     if (driver) {
       await driver.deleteSession();
     }
   });
 
-  it('should add the compareImages route', async function() {
+  it('should add the compareImages route', async function () {
     const [testImg1b64, testImg2b64] = await Promise.all([
       fs.readFile(TEST_IMG_1_PATH, 'base64'),
       fs.readFile(TEST_IMG_2_PATH, 'base64'),
@@ -88,7 +80,7 @@ describe('ImageElementPlugin', function() {
     expect(comparison.score).to.be.above(0.2);
   });
 
-  it('should find and interact with image elements', async function() {
+  it('should find and interact with image elements', async function () {
     const imageEl = await driver.$(APPSTORE_IMG_PATH);
     const { x, y } = await imageEl.getLocation();
     const { width, height } = await imageEl.getSize();
@@ -112,7 +104,7 @@ describe('ImageElementPlugin', function() {
     await driver.performActions([actionSequence]);
   });
 
-  it('should find subelements', async function() {
+  it('should find subelements', async function () {
     const imageEl = await driver.$(APPSTORE_IMG_PATH);
     const { width, height } = await imageEl.getSize();
     const tmpRoot = await tempDir.openDir();

@@ -57,9 +57,9 @@ function log(message) {
  */
 async function isDevEnvironment() {
   return (
-    process.env.npm_config_local_prefix
-    && path.join(process.env.npm_config_local_prefix, 'packages', 'appium')
-      === (await realpath(path.join(__dirname, '..')))
+    process.env.npm_config_local_prefix &&
+    path.join(process.env.npm_config_local_prefix, 'packages', 'appium') ===
+      (await realpath(path.join(__dirname, '..')))
   );
 }
 
@@ -112,10 +112,10 @@ async function main() {
   if (!driverEnv && !pluginEnv) {
     spinner.succeed('No drivers or plugins to automatically install.');
     log(
-      'If desired, provide the argument "--drivers=<driver_name>[,<driver_name>...]" and/or '
-        + '"--plugins=<plugin_name>[,<plugin_name>...]" to the "npm install appium" command. '
-        + 'The specified extensions will be installed automatically alongside Appium. '
-        + 'For a list of known extensions, run "appium <driver|plugin> list".',
+      'If desired, provide the argument "--drivers=<driver_name>[,<driver_name>...]" and/or ' +
+        '"--plugins=<plugin_name>[,<plugin_name>...]" to the "npm install appium" command. ' +
+        'The specified extensions will be installed automatically alongside Appium. ' +
+        'For a list of known extensions, run "appium <driver|plugin> list".',
     );
     return;
   }
@@ -163,17 +163,10 @@ async function main() {
     }
   }
   spinner.succeed(
-    `Done. ${installedStats[DRIVER_TYPE]} ${
-      util.pluralize(
-        'driver',
-        installedStats[DRIVER_TYPE],
-      )
-    } and ${installedStats[PLUGIN_TYPE]} ${
-      util.pluralize(
-        'plugin',
-        installedStats[PLUGIN_TYPE],
-      )
-    } are installed.`,
+    `Done. ${installedStats[DRIVER_TYPE]} ${util.pluralize(
+      'driver',
+      installedStats[DRIVER_TYPE],
+    )} and ${installedStats[PLUGIN_TYPE]} ${util.pluralize('plugin', installedStats[PLUGIN_TYPE])} are installed.`,
   );
 }
 

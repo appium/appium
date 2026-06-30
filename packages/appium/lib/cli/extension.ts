@@ -8,16 +8,16 @@ import DriverCliCommand from './driver-command';
 import PluginCliCommand from './plugin-command';
 import { errAndQuit, JSON_SPACES } from './utils';
 
-export const commandClasses = Object.freeze(
-  {
-    [DRIVER_TYPE]: DriverCliCommand,
-    [PLUGIN_TYPE]: PluginCliCommand,
-  } as const,
-);
+export const commandClasses = Object.freeze({
+  [DRIVER_TYPE]: DriverCliCommand,
+  [PLUGIN_TYPE]: PluginCliCommand,
+} as const);
 
-export type ExtCommand<ExtType extends ExtensionType> = ExtType extends DriverType ? Class<DriverCliCommand>
-  : ExtType extends PluginType ? Class<PluginCliCommand>
-  : never;
+export type ExtCommand<ExtType extends ExtensionType> = ExtType extends DriverType
+  ? Class<DriverCliCommand>
+  : ExtType extends PluginType
+    ? Class<PluginCliCommand>
+    : never;
 
 /**
  * Executes a driver/plugin extension subcommand and returns the command result.
@@ -25,10 +25,10 @@ export type ExtCommand<ExtType extends ExtensionType> = ExtType extends DriverTy
  * When JSON output is enabled, this also prints the serialized command result
  * unless output was suppressed by the caller.
  */
-export async function runExtensionCommand<
-  Cmd extends CliExtensionCommand,
-  SubCmd extends CliExtensionSubcommand,
->(args: Args<Cmd, SubCmd>, config: ExtensionConfig<Cmd>) {
+export async function runExtensionCommand<Cmd extends CliExtensionCommand, SubCmd extends CliExtensionSubcommand>(
+  args: Args<Cmd, SubCmd>,
+  config: ExtensionConfig<Cmd>,
+) {
   // TODO driver config file should be locked while any of these commands are
   // running to prevent weird situations
   let jsonResult: Record<string, unknown> = {};

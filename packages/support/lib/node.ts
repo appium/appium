@@ -25,12 +25,7 @@ export async function requirePackage(packageName: string): Promise<unknown> {
   }
 
   try {
-    const globalPackageName = path.resolve(
-      process.env.npm_config_prefix ?? '',
-      'lib',
-      'node_modules',
-      packageName,
-    );
+    const globalPackageName = path.resolve(process.env.npm_config_prefix ?? '', 'lib', 'node_modules', packageName);
     log.debug(`Loading global package '${globalPackageName}'`);
     return require(globalPackageName);
   } catch (err) {
@@ -42,9 +37,7 @@ export async function requirePackage(packageName: string): Promise<unknown> {
     log.debug(`Retrying load of linked package '${packageName}'`);
     return require(packageName);
   } catch (err) {
-    throw log.errorWithException(
-      `Unable to load package '${packageName}': ${(err as Error).message}`,
-    );
+    throw log.errorWithException(`Unable to load package '${packageName}': ${(err as Error).message}`);
   }
 }
 
@@ -119,8 +112,8 @@ export function getModuleRootSync(moduleName: string, filePath: string): string 
     const manifestPath = path.join(currentDir, 'package.json');
     try {
       if (
-        _fs.existsSync(manifestPath)
-        && (JSON.parse(_fs.readFileSync(manifestPath, 'utf8')) as { name?: string; }).name === moduleName
+        _fs.existsSync(manifestPath) &&
+        (JSON.parse(_fs.readFileSync(manifestPath, 'utf8')) as { name?: string }).name === moduleName
       ) {
         return currentDir;
       }
@@ -149,7 +142,7 @@ async function linkGlobalPackage(packageName: string): Promise<void> {
     const cmd = isWindows() ? 'npm.cmd' : 'npm';
     await exec(cmd, ['link', packageName], { timeout: 20000 });
   } catch (err) {
-    const e = err as Error & { stderr?: string; };
+    const e = err as Error & { stderr?: string };
     const msg = `Unable to load package '${packageName}', linking failed: ${e.message}`;
     log.debug(msg);
     if (e.stderr) {

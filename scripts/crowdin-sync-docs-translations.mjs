@@ -116,9 +116,7 @@ async function validateYaml(yamlPath) {
           log.info(`'${yamlPath}' is a valid YAML file`);
           resolve(true);
         } else {
-          reject(
-            new Error(`'${yamlPath}' is not valid YAML file. Was it corrupted during translation?`),
-          );
+          reject(new Error(`'${yamlPath}' is not valid YAML file. Was it corrupted during translation?`));
         }
       });
       validatorProcess.once('error', (e) => {
@@ -185,8 +183,8 @@ async function main() {
         await syncTranslatedDocuments(currentPath, path.join(RESOURCES_ROOT, dstLanguageName));
         await syncTranslatedConfig(currentPath, RESOURCES_ROOT, dstLanguageName);
         log.info(
-          `Successfully updated resources for the '${dstLanguageName}' `
-            + `('${name}' in Crowdin) language (${++count} of ${Object.keys(CROWDIN_TO_FS_LANGUAGES_MAP).length})`,
+          `Successfully updated resources for the '${dstLanguageName}' ` +
+            `('${name}' in Crowdin) language (${++count} of ${Object.keys(CROWDIN_TO_FS_LANGUAGES_MAP).length})`,
         );
       }
     } finally {

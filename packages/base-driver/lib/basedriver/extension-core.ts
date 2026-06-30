@@ -43,9 +43,7 @@ export class ExtensionCore {
   updateBidiCommands(cmds: BidiModuleMap): void {
     const overlappingKeys = Object.keys(cmds).filter((key) => key in this.bidiCommands);
     if (overlappingKeys.length) {
-      this.log.warn(
-        `Overwriting existing bidi modules: ${JSON.stringify(overlappingKeys)}. This may not be intended!`,
-      );
+      this.log.warn(`Overwriting existing bidi modules: ${JSON.stringify(overlappingKeys)}. This may not be intended!`);
     }
     this.bidiCommands = {
       ...this.bidiCommands,
@@ -66,9 +64,9 @@ export class ExtensionCore {
     // if we don't get a valid format for bidi command name, reject
     if (!moduleName || !methodName) {
       throw new errors.UnknownCommandError(
-        `Did not receive a valid BiDi module and method name `
-          + `of the form moduleName.methodName. Instead received `
-          + `'${moduleName}.${methodName}'`,
+        `Did not receive a valid BiDi module and method name ` +
+          `of the form moduleName.methodName. Instead received ` +
+          `'${moduleName}.${methodName}'`,
       );
     }
 
@@ -107,9 +105,7 @@ export class ExtensionCore {
     if (params?.required?.length) {
       for (const requiredParam of params.required) {
         if (bidiParams[requiredParam] === undefined) {
-          throw new errors.InvalidArgumentError(
-            `The ${requiredParam} parameter was required but you omitted it`,
-          );
+          throw new errors.InvalidArgumentError(`The ${requiredParam} parameter was required but you omitted it`);
         }
         args.push(bidiParams[requiredParam]);
       }
@@ -123,20 +119,19 @@ export class ExtensionCore {
       length: MAX_LOG_BODY_LENGTH,
     });
     this.log.debug(
-      `Executing bidi command '${bidiCmd}' with params ${logParams} by passing to ${handlerType} `
-        + `method '${command}'`,
+      `Executing bidi command '${bidiCmd}' with params ${logParams} by passing to ${handlerType} ` +
+        `method '${command}'`,
     );
     // call the handler with the signature appropriate to extension type (plugin or driver)
-    const commandHandler = (
-      this as unknown as Record<string, (...handlerArgs: any[]) => Promise<unknown>>
-    )[command];
-    const response = next && driver
-      ? await commandHandler.call(this, next, driver, ...args)
-      : await commandHandler.call(this, ...args);
+    const commandHandler = (this as unknown as Record<string, (...handlerArgs: any[]) => Promise<unknown>>)[command];
+    const response =
+      next && driver
+        ? await commandHandler.call(this, next, driver, ...args)
+        : await commandHandler.call(this, ...args);
     const finalResponse: BiDiResultData = response === undefined ? {} : (response as BiDiResultData);
     this.log.debug(
-      `Responding to bidi command '${bidiCmd}' with `
-        + `${util.truncateString(JSON.stringify(finalResponse), { length: MAX_LOG_BODY_LENGTH })}`,
+      `Responding to bidi command '${bidiCmd}' with ` +
+        `${util.truncateString(JSON.stringify(finalResponse), { length: MAX_LOG_BODY_LENGTH })}`,
     );
     return finalResponse;
   }
@@ -158,9 +153,9 @@ export class ExtensionCore {
   ipcSubscribe<T extends IpcData>(topic: string): IIpcSubscription<T> {
     if (!this.ipc) {
       throw new Error(
-        `Cannot subscribe to an IPC topic without an IPC object assigned. `
-          + `This is likely a programming error. ipcSubscribe should be called in the `
-          + `onIpcInit handler or after you are certain that createSession has completed successfully.`,
+        `Cannot subscribe to an IPC topic without an IPC object assigned. ` +
+          `This is likely a programming error. ipcSubscribe should be called in the ` +
+          `onIpcInit handler or after you are certain that createSession has completed successfully.`,
       );
     }
     return this.ipc.subscribe<T>(topic, generateDriverLogPrefix(this));

@@ -77,7 +77,7 @@ export interface ConfigureServerOpts {
 /** @internal */
 export interface ConfigureServerInternalOpts extends ConfigureServerOpts {
   /** @deprecated Appium 4 */
-  registerTestPages?: (app: Express, opts: { basePath: string; }) => void;
+  registerTestPages?: (app: Express, opts: { basePath: string }) => void;
 }
 
 /** Options for {@linkcode configureHttp} */
@@ -257,25 +257,20 @@ async function createServer(app: Express, cliArgs?: Partial<ServerArgs>): Promis
 
   const certKey = [sslCertificatePath, sslKeyPath];
   const [certExists, keyExists] = await Promise.all(certKey.map((p) => fs.exists(p)));
-  for (
-    const [exists, desc, p] of [
-      [certExists, 'certificate', sslCertificatePath],
-      [keyExists, 'key', sslKeyPath],
-    ]
-  ) {
+  for (const [exists, desc, p] of [
+    [certExists, 'certificate', sslCertificatePath],
+    [keyExists, 'key', sslKeyPath],
+  ]) {
     if (!exists) {
       throw new Error(`The provided SSL ${desc} at '${p}' does not exist or is not accessible`);
     }
   }
-  const [cert, key] = (await Promise.all(certKey.map((p) => fs.readFile(p, 'utf8')))) as [
-    string,
-    string,
-  ];
+  const [cert, key] = (await Promise.all(certKey.map((p) => fs.readFile(p, 'utf8')))) as [string, string];
   log.debug('Enabling TLS/SPDY on the server using the provided certificate');
 
   const spdy = require('spdy') as {
     createServer: (
-      options: { cert: string; key: string; spdy: { plain: boolean; ssl: boolean; }; },
+      options: { cert: string; key: string; spdy: { plain: boolean; ssl: boolean } },
       requestListener: RequestHandler,
     ) => HttpServer;
   };
@@ -312,7 +307,7 @@ function configureHttp({
   appiumServer.removeAllWebSocketHandlers = removeAllWebSocketHandlers;
   appiumServer.getWebSocketHandlers = getWebSocketHandlers;
   appiumServer.isSecure = function isSecure() {
-    return Boolean((this as unknown as { _spdyState?: { secure?: boolean; }; })._spdyState?.secure);
+    return Boolean((this as unknown as { _spdyState?: { secure?: boolean } })._spdyState?.secure);
   };
 
   // This avoids Express middleware timeout issues with long-lived WebSocket connections
@@ -321,7 +316,7 @@ function configureHttp({
   if (hasShouldUpgradeCallback(httpServer)) {
     // shouldUpgradeCallback only returns a boolean to indicate if the upgrade should proceed
     (
-      appiumServer as unknown as { shouldUpgradeCallback?: (req: http.IncomingMessage) => boolean; }
+      appiumServer as unknown as { shouldUpgradeCallback?: (req: http.IncomingMessage) => boolean }
     ).shouldUpgradeCallback = (req) => String(req.headers?.upgrade ?? '').toLowerCase() === 'websocket';
     appiumServer.on('upgrade', (req, socket, head) => {
       if (!tryHandleWebSocketUpgrade(req, socket, head, appiumServer.webSocketsMapping)) {
@@ -332,9 +327,7 @@ function configureHttp({
 
   // http.Server.close() only stops new connections, but we need to wait until
   // all connections are closed and the `close` event is emitted
-  const originalClose = appiumServer.close.bind(appiumServer) as (
-    callback?: (err?: Error | null) => void,
-  ) => void;
+  const originalClose = appiumServer.close.bind(appiumServer) as (callback?: (err?: Error | null) => void) => void;
   appiumServer.close = async () =>
     await new Promise<void>((_resolve, _reject) => {
       log.info('Closing Appium HTTP server');
@@ -342,17 +335,17 @@ function configureHttp({
       const onTimeout = setTimeout(() => {
         if ((gracefulShutdownTimeout ?? 0) > 0) {
           log.info(
-            `Not all active connections have been closed within ${gracefulShutdownTimeout}ms. `
-              + `This timeout might be customized by the --shutdown-timeout command line `
-              + `argument. Closing the server anyway.`,
+            `Not all active connections have been closed within ${gracefulShutdownTimeout}ms. ` +
+              `This timeout might be customized by the --shutdown-timeout command line ` +
+              `argument. Closing the server anyway.`,
           );
         }
         process.exit(process.exitCode ?? 0);
       }, gracefulShutdownTimeout ?? 0);
       const onClose = () => {
         log.info(
-          `Appium HTTP server has been successfully closed after `
-            + `${timer.getDuration().asMilliSeconds.toFixed(0)}ms`,
+          `Appium HTTP server has been successfully closed after ` +
+            `${timer.getDuration().asMilliSeconds.toFixed(0)}ms`,
         );
         clearTimeout(onTimeout);
         _resolve();
@@ -369,14 +362,12 @@ function configureHttp({
 
   appiumServer.once('error', (err: NodeJS.ErrnoException) => {
     if (err.code === 'EADDRNOTAVAIL') {
-      log.error(
-        'Could not start REST http interface listener. ' + 'Requested address is not available.',
-      );
+      log.error('Could not start REST http interface listener. ' + 'Requested address is not available.');
     } else {
       log.error(
-        'Could not start REST http interface listener. The requested '
-          + 'port may already be in use. Please make sure there is no '
-          + 'other instance of this server running already.',
+        'Could not start REST http interface listener. The requested ' +
+          'port may already be in use. Please make sure there is no ' +
+          'other instance of this server running already.',
       );
     }
     reject(err);
@@ -427,10 +418,7 @@ function hasShouldUpgradeCallback(server: HttpServer): boolean {
   // Check if shouldUpgradeCallback is available on http.Server
   // This is a runtime check that works regardless of TypeScript types
   try {
-    return (
-      typeof (server as unknown as { shouldUpgradeCallback?: unknown; }).shouldUpgradeCallback
-        !== 'undefined'
-    );
+    return typeof (server as unknown as { shouldUpgradeCallback?: unknown }).shouldUpgradeCallback !== 'undefined';
   } catch {
     return false;
   }

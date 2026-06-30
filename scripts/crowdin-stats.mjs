@@ -241,9 +241,7 @@ function formatSlackMessage(stats, projectName, from, to, generatedAt) {
       };
 
       for (const line of lines) {
-        const tentative = buf.length
-          ? `${current}\n${buf.join('\n')}\n${line}`
-          : `${current}\n${line}`;
+        const tentative = buf.length ? `${current}\n${buf.join('\n')}\n${line}` : `${current}\n${line}`;
         if (tentative.length > MAX_SECTION_CHARS) {
           flush();
         }
@@ -288,13 +286,7 @@ async function main() {
   const generatedAt = new Date().toISOString();
 
   // Output Slack-formatted message to stdout
-  const slackMessage = formatSlackMessage(
-    stats,
-    projectInfo.name,
-    dateRange.from,
-    dateRange.to,
-    generatedAt,
-  );
+  const slackMessage = formatSlackMessage(stats, projectInfo.name, dateRange.from, dateRange.to, generatedAt);
 
   // eslint-disable-next-line no-console
   console.log(JSON.stringify(slackMessage, null, 2));

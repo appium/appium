@@ -39,12 +39,7 @@ interface Grid3ProxyApiResponse {
   msg?: string;
 }
 
-export default async function registerNode(
-  data: string,
-  addr: string,
-  port: number,
-  basePath: string,
-): Promise<void>;
+export default async function registerNode(data: string, addr: string, port: number, basePath: string): Promise<void>;
 export default async function registerNode(
   data: Grid3NodeConfig,
   addr?: string,
@@ -75,14 +70,12 @@ export default async function registerNode(
   if (typeof data === 'string') {
     if (addr === undefined || port === undefined || basePath === undefined) {
       throw logger.errorWithException(
-        'When the first argument is a Selenium Grid 3 node config file path, address, port, and basePath '
-          + 'are required (e.g. match your Appium `--address`, `--port`, and base path).',
+        'When the first argument is a Selenium Grid 3 node config file path, address, port, and basePath ' +
+          'are required (e.g. match your Appium `--address`, `--port`, and base path).',
       );
     }
     if (typeof port !== 'number' || !Number.isFinite(port)) {
-      throw logger.errorWithException(
-        'When registering from a node config file path, port must be a finite number.',
-      );
+      throw logger.errorWithException('When registering from a node config file path, port must be a finite number.');
     }
   }
 
@@ -94,8 +87,8 @@ export default async function registerNode(
       fileContent = await fs.readFile(data, 'utf-8');
     } catch (err) {
       logger.error(
-        `Unable to load Selenium Grid 3 node configuration file ${configFilePath} to `
-          + `register with the hub: ${(err as Error).message}`,
+        `Unable to load Selenium Grid 3 node configuration file ${configFilePath} to ` +
+          `register with the hub: ${(err as Error).message}`,
       );
       return;
     }
@@ -103,8 +96,7 @@ export default async function registerNode(
       configHolder = JSON.parse(fileContent) as Grid3NodeConfig;
     } catch (err) {
       throw logger.errorWithException(
-        `Syntax error in Selenium Grid 3 node configuration file ${configFilePath}: `
-          + (err as Error).message,
+        `Syntax error in Selenium Grid 3 node configuration file ${configFilePath}: ` + (err as Error).message,
       );
     }
   } else {
@@ -122,7 +114,7 @@ function hubUri(config: Grid3HubConfiguration): string {
 
 /** POST registration payload to the Selenium Grid 3 hub. */
 async function registerToGrid(
-  postOptions: { url: string; method: string; data: Grid3NodeConfig; },
+  postOptions: { url: string; method: string; data: Grid3NodeConfig },
   configHolder: Grid3NodeConfig,
 ): Promise<void> {
   const hubCfg = configHolder.configuration;
@@ -134,29 +126,15 @@ async function registerToGrid(
     if (status !== 200) {
       throw new Error(`Request failed with code ${status}`);
     }
-    logger.debug(
-      `Appium successfully registered with the Selenium Grid 3 hub at ` + hubUri(hubCfg),
-    );
+    logger.debug(`Appium successfully registered with the Selenium Grid 3 hub at ` + hubUri(hubCfg));
   } catch (err) {
-    logger.error(
-      `An attempt to register with the Selenium Grid 3 hub was unsuccessful: `
-        + (err as Error).message,
-    );
+    logger.error(`An attempt to register with the Selenium Grid 3 hub was unsuccessful: ` + (err as Error).message);
   }
 }
 
-function postRequest(
-  configHolder: Grid3NodeConfig,
-  addr?: string,
-  port?: number,
-  basePath?: string,
-): void {
+function postRequest(configHolder: Grid3NodeConfig, addr?: string, port?: number, basePath?: string): void {
   // Move Selenium Grid 3 (flat) configuration properties into `configuration`
-  if (
-    configHolder != null
-    && typeof configHolder === 'object'
-    && !Object.hasOwn(configHolder, 'configuration')
-  ) {
+  if (configHolder != null && typeof configHolder === 'object' && !Object.hasOwn(configHolder, 'configuration')) {
     const configuration: StringRecord = {};
     const holder = configHolder as StringRecord;
     for (const property of Object.keys(holder)) {
@@ -201,22 +179,17 @@ function postRequest(
   }
 
   const registerCycleInterval = cfg.registerCycle;
-  if (
-    registerCycleInterval === undefined
-    || isNaN(registerCycleInterval)
-    || registerCycleInterval <= 0
-  ) {
+  if (registerCycleInterval === undefined || isNaN(registerCycleInterval) || registerCycleInterval <= 0) {
     logger.warn(
-      `'registerCycle' is not a valid positive number. `
-        + `No registration request will be sent to the Selenium Grid 3 hub.`,
+      `'registerCycle' is not a valid positive number. ` +
+        `No registration request will be sent to the Selenium Grid 3 hub.`,
     );
     return;
   }
   // initiate a new Thread
   let first = true;
   logger.debug(
-    `Starting auto-register thread for Selenium Grid 3. `
-      + `Will try to register every ${registerCycleInterval} ms.`,
+    `Starting auto-register thread for Selenium Grid 3. ` + `Will try to register every ${registerCycleInterval} ms.`,
   );
   setInterval(async function registerRetry() {
     if (first) {

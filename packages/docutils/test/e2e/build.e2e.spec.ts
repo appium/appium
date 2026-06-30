@@ -22,18 +22,10 @@ const { expect } = chai;
 /**
  * Helper function to create a project directory with package.json
  */
-async function createProjectDir(
-  testDir: string,
-  subdir: string,
-  packageJson: Record<string, any>,
-): Promise<string> {
+async function createProjectDir(testDir: string, subdir: string, packageJson: Record<string, any>): Promise<string> {
   const projectDir = path.join(testDir, subdir);
   await fs.mkdirp(projectDir);
-  await fs.writeFile(
-    path.join(projectDir, NAME_PACKAGE_JSON),
-    JSON.stringify(packageJson, null, 2),
-    'utf8',
-  );
+  await fs.writeFile(path.join(projectDir, NAME_PACKAGE_JSON), JSON.stringify(packageJson, null, 2), 'utf8');
   return projectDir;
 }
 
@@ -47,11 +39,7 @@ async function createMkdocsYml(projectDir: string, mkdocsYml: MkDocsYml): Promis
 /**
  * Helper function to create a docs directory with a markdown file
  */
-async function createDocsFile(
-  projectDir: string,
-  filename: string,
-  content: string,
-): Promise<void> {
+async function createDocsFile(projectDir: string, filename: string, content: string): Promise<void> {
   const docsDir = path.join(projectDir, 'docs');
   await fs.mkdirp(docsDir);
   await fs.writeFile(path.join(docsDir, filename), content, 'utf8');
@@ -92,23 +80,23 @@ async function readMkdocsYml(projectDir: string): Promise<MkDocsYml> {
   return YAML.parse(mkdocsYmlContent) as MkDocsYml;
 }
 
-describe('@appium/docutils build e2e', function() {
+describe('@appium/docutils build e2e', function () {
   let testDir: string;
 
-  before(async function() {
+  before(async function () {
     // Create a temporary directory for the test
     testDir = await tempDir.openDir();
   });
 
-  after(async function() {
+  after(async function () {
     // Clean up the temporary directory
     if (testDir) {
       await fs.rimraf(testDir);
     }
   });
 
-  describe('buildSite', function() {
-    it('should build a site with mkdocs', async function() {
+  describe('buildSite', function () {
+    it('should build a site with mkdocs', async function () {
       const projectDir = await createProjectDir(testDir, 'test1', {
         name: 'test-docs',
         version: '1.0.0',
@@ -127,11 +115,7 @@ describe('@appium/docutils build e2e', function() {
         plugins: ['search'],
       });
 
-      await createDocsFile(
-        projectDir,
-        'index.md',
-        '# Test Documentation\n\nThis is a test page.\n',
-      );
+      await createDocsFile(projectDir, 'index.md', '# Test Documentation\n\nThis is a test page.\n');
       await ensurePythonDeps(projectDir, this as Mocha.Context);
 
       // Build the site
@@ -144,7 +128,7 @@ describe('@appium/docutils build e2e', function() {
       await verifySiteBuilt(path.join(projectDir, DEFAULT_SITE_DIR), 'Test Documentation');
     });
 
-    it('should build a site with custom site-dir', async function() {
+    it('should build a site with custom site-dir', async function () {
       const customSiteDir = 'custom-site';
       const projectDir = await createProjectDir(testDir, 'test2', {
         name: 'test-docs-2',
@@ -164,11 +148,7 @@ describe('@appium/docutils build e2e', function() {
         plugins: ['search'],
       });
 
-      await createDocsFile(
-        projectDir,
-        'index.md',
-        '# Test Documentation 2\n\nThis is another test page.\n',
-      );
+      await createDocsFile(projectDir, 'index.md', '# Test Documentation 2\n\nThis is another test page.\n');
       await ensurePythonDeps(projectDir, this as Mocha.Context);
 
       // Build the site with custom site-dir
@@ -184,8 +164,8 @@ describe('@appium/docutils build e2e', function() {
     });
   });
 
-  describe('init', function() {
-    it('should scaffold mkdocs.yml file', async function() {
+  describe('init', function () {
+    it('should scaffold mkdocs.yml file', async function () {
       const projectDir = await createProjectDir(testDir, 'init-test', {
         name: 'test-package',
         version: '1.0.0',
@@ -221,7 +201,7 @@ describe('@appium/docutils build e2e', function() {
       expect(mkdocsYml.repo_name).to.equal('testuser/test-package');
     });
 
-    it('should scaffold mkdocs.yml with custom options', async function() {
+    it('should scaffold mkdocs.yml with custom options', async function () {
       const projectDir = await createProjectDir(testDir, 'init-custom-test', {
         name: 'custom-package',
         version: '2.0.0',
@@ -256,8 +236,8 @@ describe('@appium/docutils build e2e', function() {
     });
   });
 
-  describe('CLI help', function() {
-    it('should print help when --help is passed', async function() {
+  describe('CLI help', function () {
+    it('should print help when --help is passed', async function () {
       let helpOutput = '';
 
       // Create yargs instance similar to CLI

@@ -7,74 +7,74 @@ import { strongbox } from '../../lib';
 
 use(chaiAsPromised);
 
-describe('@appium/strongbox', function() {
-  describe('default behavior', function() {
+describe('@appium/strongbox', function () {
+  describe('default behavior', function () {
     let box: Strongbox;
 
-    beforeEach(function() {
+    beforeEach(function () {
       box = strongbox('test');
     });
 
-    afterEach(async function() {
+    afterEach(async function () {
       await rm(box.container, { recursive: true, force: true });
     });
 
-    describe('when creating an Item with a value', function() {
+    describe('when creating an Item with a value', function () {
       let item: Item<string>;
 
-      beforeEach(async function() {
+      beforeEach(async function () {
         item = await box.createItemWithValue('test', 'value');
       });
 
-      it('should write the value to the filesystem', async function() {
+      it('should write the value to the filesystem', async function () {
         await expect(readFile(item.id, 'utf8')).to.eventually.equal('value');
       });
 
-      it('should set the value property', async function() {
+      it('should set the value property', async function () {
         expect(item.value).to.equal('value');
       });
 
-      describe('when writing a new value', function() {
-        beforeEach(async function() {
+      describe('when writing a new value', function () {
+        beforeEach(async function () {
           await item.write('new value');
         });
 
-        it('should write the value to the filesystem', async function() {
+        it('should write the value to the filesystem', async function () {
           await expect(readFile(item.id, 'utf8')).to.eventually.equal('new value');
         });
 
-        it('should set the value property', async function() {
+        it('should set the value property', async function () {
           expect(item.value).to.equal('new value');
         });
       });
 
-      describe('when clearing the item', function() {
-        beforeEach(async function() {
+      describe('when clearing the item', function () {
+        beforeEach(async function () {
           await item.clear();
         });
 
-        it('should remove the item from the filesystem', async function() {
+        it('should remove the item from the filesystem', async function () {
           await expect(readFile(item.id, 'utf8')).to.be.rejectedWith('ENOENT');
         });
 
-        it('should set the value property to undefined', async function() {
+        it('should set the value property to undefined', async function () {
           expect(item.value).to.be.undefined;
         });
 
-        describe('when attempting to read it again', function() {
-          it('should resolve w/ undefined', async function() {
+        describe('when attempting to read it again', function () {
+          it('should resolve w/ undefined', async function () {
             await expect(item.read()).to.eventually.be.undefined;
           });
 
-          it('should set the value property to undefined', async function() {
+          it('should set the value property to undefined', async function () {
             expect(item.value).to.be.undefined;
           });
         });
       });
     });
 
-    describe('listItems()', function() {
-      it('should return an Item for each persisted file with readable contents', async function() {
+    describe('listItems()', function () {
+      it('should return an Item for each persisted file with readable contents', async function () {
         await box.createItemWithValue('first', 'a');
         await box.createItemWithValue('second item', 'b');
         const items = await box.listItems();
@@ -84,7 +84,7 @@ describe('@appium/strongbox', function() {
         await expect(byName['second item'].read()).to.eventually.equal('b');
       });
 
-      it('should not load persisted contents until read', async function() {
+      it('should not load persisted contents until read', async function () {
         const name = 'e2e-lazy-list';
         const writer = strongbox(name);
         await rm(writer.container, { recursive: true, force: true });
@@ -98,8 +98,8 @@ describe('@appium/strongbox', function() {
       });
     });
 
-    describe('Symbol.asyncIterator', function() {
-      it('should yield the same Items in the same order as listItems()', async function() {
+    describe('Symbol.asyncIterator', function () {
+      it('should yield the same Items in the same order as listItems()', async function () {
         await box.createItemWithValue('first', 'a');
         await box.createItemWithValue('second item', 'b');
         const listed = await box.listItems();
@@ -112,18 +112,18 @@ describe('@appium/strongbox', function() {
       });
     });
 
-    describe('persistence across Strongbox instances', function() {
+    describe('persistence across Strongbox instances', function () {
       const NAME = 'e2e-persistence-instance';
 
-      beforeEach(async function() {
+      beforeEach(async function () {
         await rm(strongbox(NAME).container, { recursive: true, force: true });
       });
 
-      afterEach(async function() {
+      afterEach(async function () {
         await rm(strongbox(NAME).container, { recursive: true, force: true });
       });
 
-      it('should expose persisted items from a second instance with the same identifier', async function() {
+      it('should expose persisted items from a second instance with the same identifier', async function () {
         const first = strongbox(NAME);
         await first.createItemWithValue('item-a', 'hello');
         await first.createItemWithValue('item-b', 'world');

@@ -213,8 +213,4 @@ export type WheelActionSequence = {
 /**
  * @group Actions
  */
-export type ActionSequence =
-  | NullActionSequence
-  | KeyActionSequence
-  | PointerActionSequence
-  | WheelActionSequence;
+export type ActionSequence = NullActionSequence | KeyActionSequence | PointerActionSequence | WheelActionSequence;

@@ -34,10 +34,10 @@ function serverSetup(args: Record<string, unknown>) {
   let server: Awaited<ReturnType<typeof appiumServer>> | null = null;
 
   /* eslint-disable mocha/no-top-level-hooks -- hooks are intentionally in a helper */
-  before(async function() {
+  before(async function () {
     server = await appiumServer({ ...baseServerArgs, ...args });
   });
-  after(async function() {
+  after(async function () {
     if (server) {
       await server.close();
     }
@@ -45,12 +45,12 @@ function serverSetup(args: Record<string, unknown>) {
   /* eslint-enable mocha/no-top-level-hooks */
 }
 
-describe('FakePlugin w/ FakeDriver via HTTP', function() {
+describe('FakePlugin w/ FakeDriver via HTTP', function () {
   let appiumHome: string;
   let testServerBaseUrl: string;
   let port: number;
   let testServerBaseSessionUrl: string;
-  before(async function() {
+  before(async function () {
     resetSchema();
     appiumHome = await tempDir.openDir();
     wdOpts.port = port = await getTestPort();
@@ -110,12 +110,12 @@ describe('FakePlugin w/ FakeDriver via HTTP', function() {
     };
   });
 
-  after(async function() {
+  after(async function () {
     await fs.rimraf(appiumHome);
   });
 
-  describe('without plugin registered', function() {
-    it('should reject server creation if plugin is not activated', async function() {
+  describe('without plugin registered', function () {
+    it('should reject server creation if plugin is not activated', async function () {
       const args = {
         appiumHome,
         port,
@@ -124,7 +124,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function() {
       };
       await expect(appiumServer(args)).to.eventually.be.rejected;
     });
-    it('should reject server creation if reserved plugin name is provided with other names', async function() {
+    it('should reject server creation if reserved plugin name is provided with other names', async function () {
       const args = {
         appiumHome,
         port,
@@ -136,49 +136,45 @@ describe('FakePlugin w/ FakeDriver via HTTP', function() {
   });
 
   for (const registrationType of ['explicit', 'all']) {
-    describe(`with plugin registered via type ${registrationType}`, function() {
+    describe(`with plugin registered via type ${registrationType}`, function () {
       const usePlugins = registrationType === 'explicit' ? ['fake'] : ['all'];
       serverSetup({ usePlugins });
-      it('should update the server', async function() {
+      it('should update the server', async function () {
         const res = { fake: 'fakeResponse' };
         expect((await axios.post(`http://${TEST_HOST}:${port}/fake`)).data).to.eql(res);
       });
-      it('should update the server with cliArgs', async function() {
+      it('should update the server with cliArgs', async function () {
         const res = usePlugins;
         // we don't need to check the entire object, since it's large, but we can ensure an
         // arg got through.
-        expect((await axios.post(`http://${TEST_HOST}:${port}/cliArgs`)).data.usePlugins).to.eql(
-          res,
-        );
+        expect((await axios.post(`http://${TEST_HOST}:${port}/cliArgs`)).data.usePlugins).to.eql(res);
       });
-      it('should modify the method map with new commands', async function() {
+      it('should modify the method map with new commands', async function () {
         const driver = await wdio(wdOpts as any);
         const { sessionId } = driver;
         try {
           await axios.post(`${testServerBaseSessionUrl}/${sessionId}/fake_data`, {
             data: { fake: 'data' },
           });
-          expect(
-            (await axios.get(`${testServerBaseSessionUrl}/${sessionId}/fake_data`)).data.value,
-          ).to.eql({ fake: 'data' });
+          expect((await axios.get(`${testServerBaseSessionUrl}/${sessionId}/fake_data`)).data.value).to.eql({
+            fake: 'data',
+          });
         } finally {
           await driver.deleteSession();
         }
       });
 
-      it('should handle commands and not call the original', async function() {
+      it('should handle commands and not call the original', async function () {
         const driver = await wdio(wdOpts as any);
         const { sessionId } = driver;
         try {
-          await expect(driver.getPageSource()).to.eventually.eql(
-            `<Fake>${JSON.stringify([sessionId])}</Fake>`,
-          );
+          await expect(driver.getPageSource()).to.eventually.eql(`<Fake>${JSON.stringify([sessionId])}</Fake>`);
         } finally {
           await driver.deleteSession();
         }
       });
 
-      it('should handle commands and call the original if designed', async function() {
+      it('should handle commands and call the original if designed', async function () {
         const driver = await wdio(wdOpts as any);
         const { sessionId } = driver;
         try {
@@ -194,15 +190,14 @@ describe('FakePlugin w/ FakeDriver via HTTP', function() {
         }
       });
 
-      it('should allow original command to be proxied if supported', async function() {
+      it('should allow original command to be proxied if supported', async function () {
         const driver = await wdio(wdOpts as any);
         const { sessionId } = driver;
         try {
           await axios.post(`${testServerBaseSessionUrl}/${sessionId}/context`, {
             name: 'PROXY',
           });
-          const handle = (await axios.get(`${testServerBaseSessionUrl}/${sessionId}/window`)).data
-            .value;
+          const handle = (await axios.get(`${testServerBaseSessionUrl}/${sessionId}/window`)).data.value;
           expect(handle).to.eql('<<proxied via proxyCommand>>');
         } finally {
           await axios.post(`${testServerBaseSessionUrl}/${sessionId}/context`, {
@@ -212,7 +207,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function() {
         }
       });
 
-      it('should handle unexpected driver shutdown', async function() {
+      it('should handle unexpected driver shutdown', async function () {
         const newOpts = { ...wdOpts };
         newOpts.capabilities = {
           ...(newOpts.capabilities ?? {}),
@@ -235,7 +230,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function() {
         expect(shutdownErr!.message).to.match(/either terminated or not started/);
       });
 
-      it('should allow plugin handled commands to reset newCommandTimeout', async function() {
+      it('should allow plugin handled commands to reset newCommandTimeout', async function () {
         const newOpts = { ...wdOpts };
         newOpts.capabilities = {
           ...(newOpts.capabilities ?? {}),
@@ -251,29 +246,27 @@ describe('FakePlugin w/ FakeDriver via HTTP', function() {
           }
           // prove that we went beyond the new command timeout as a result of sending commands
           expect(Date.now() - start).to.be.above(2500);
-          await expect(driver.getPageSource()).to.eventually.eql(
-            `<Fake>${JSON.stringify([sessionId])}</Fake>`,
-          );
+          await expect(driver.getPageSource()).to.eventually.eql(`<Fake>${JSON.stringify([sessionId])}</Fake>`);
         } finally {
           await driver.deleteSession();
         }
       });
     });
   }
-  describe('cli args handling for plugin args', function() {
+  describe('cli args handling for plugin args', function () {
     let server: AppiumServer | void;
-    before(async function() {
+    before(async function () {
       // then start server if we need to
       const args = { ...baseServerArgs, plugin: FAKE_PLUGIN_ARGS };
       server = await appiumServer(args);
     });
-    after(async function() {
+    after(async function () {
       if (server) {
         await server.close();
       }
     });
 
-    it('should receive user cli args for plugin if passed in', async function() {
+    it('should receive user cli args for plugin if passed in', async function () {
       const driver = await wdio(wdOpts as any);
       const { sessionId } = driver;
       try {
@@ -284,20 +277,20 @@ describe('FakePlugin w/ FakeDriver via HTTP', function() {
       }
     });
   });
-  describe('cli args handling for empty plugin args', function() {
+  describe('cli args handling for empty plugin args', function () {
     let server: AppiumServer | void;
-    before(async function() {
+    before(async function () {
       // then start server if we need to
       server = await appiumServer(baseServerArgs);
     });
-    after(async function() {
+    after(async function () {
       if (server) {
         await server.close();
       }
     });
 
-    describe('when no cli args provided by user', function() {
-      it('should receive an empty `cliArgs` object', async function() {
+    describe('when no cli args provided by user', function () {
+      it('should receive an empty `cliArgs` object', async function () {
         const driver = await wdio(wdOpts as any);
         const { sessionId } = driver;
         try {
@@ -310,12 +303,12 @@ describe('FakePlugin w/ FakeDriver via HTTP', function() {
     });
   });
 
-  describe('Execute Methods', function() {
+  describe('Execute Methods', function () {
     let server: AppiumServer;
 
     let driver: Browser;
 
-    before(async function() {
+    before(async function () {
       // then start server if we need to
       const args = {
         appiumHome,
@@ -327,7 +320,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function() {
       server = await appiumServer(args);
       driver = await wdio(wdOpts as any);
     });
-    after(async function() {
+    after(async function () {
       if (driver) {
         await driver.deleteSession();
       }
@@ -336,29 +329,29 @@ describe('FakePlugin w/ FakeDriver via HTTP', function() {
       }
     });
 
-    it('should handle execute methods using executeMethodMap', async function() {
+    it('should handle execute methods using executeMethodMap', async function () {
       const res = await driver.executeScript('fake: plugMeIn', [{ socket: 'electrical' }]);
       expect(res).to.eql('Plugged in to electrical');
     });
 
-    it('should handle execute methods overridden on the driver', async function() {
+    it('should handle execute methods overridden on the driver', async function () {
       const res = await driver.executeScript('fake: getThing', []);
       expect(res).to.eql('PLUGIN_FAKE_THING');
     });
 
-    it('should let driver handle unknown execute methods', async function() {
+    it('should let driver handle unknown execute methods', async function () {
       const sum = await driver.executeScript('fake: addition', [{ num1: 2, num2: 3 }]);
       expect(sum).to.eql(5);
     });
   });
 
-  describe('BiDi support', function() {
-    describe('with a single plugin', function() {
+  describe('BiDi support', function () {
+    describe('with a single plugin', function () {
       let driver: Browser;
 
       // this 'after' block needs to come before 'serverSetup' so that the delete session happens
       // before the server shutdown
-      after(async function() {
+      after(async function () {
         if (driver) {
           await driver.deleteSession();
         }
@@ -366,12 +359,12 @@ describe('FakePlugin w/ FakeDriver via HTTP', function() {
 
       serverSetup({});
 
-      before(async function() {
+      before(async function () {
         const caps = { ...wdOpts.capabilities, webSocketUrl: true, 'appium:runClock': true };
         driver = await wdio({ ...wdOpts, capabilities: caps } as any);
       });
 
-      it('should handle custom bidi commands if registered', async function() {
+      it('should handle custom bidi commands if registered', async function () {
         let { result } = await (driver as any).send({
           method: 'appium:fake.getPluginThing',
           params: {},
@@ -385,7 +378,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function() {
         expect(result).to.eql('plugin bidi');
       });
 
-      it('should subscribe and unsubscribe to/from custom bidi events', async function() {
+      it('should subscribe and unsubscribe to/from custom bidi events', async function () {
         let retrievals = 0;
         (driver as any).on('appium:fake.pluginThingRetrieved', () => {
           retrievals++;
@@ -405,9 +398,9 @@ describe('FakePlugin w/ FakeDriver via HTTP', function() {
         expect(retrievals).to.eql(2);
       });
 
-      it('should subscribe and unsubscribe to/from custom bidi events and merge with driver', async function() {
+      it('should subscribe and unsubscribe to/from custom bidi events and merge with driver', async function () {
         const collectedEvents: number[] = [];
-        (driver as any).on('appium:clock.currentTime', (ev: { time: number; }) => {
+        (driver as any).on('appium:clock.currentTime', (ev: { time: number }) => {
           collectedEvents.push(ev.time);
         });
 
@@ -424,7 +417,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function() {
         expect(collectedEvents).to.be.empty;
       });
 
-      it('should call underlying driver bidi method if next is called', async function() {
+      it('should call underlying driver bidi method if next is called', async function () {
         const { result } = await (driver as any).send({
           method: 'appium:fake.doSomeMath',
           params: { num1: 2, num2: 3 },
@@ -432,7 +425,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function() {
         expect(result).to.eql(11);
       });
 
-      it('should override and not call underlying driver bidi method if next is not called', async function() {
+      it('should override and not call underlying driver bidi method if next is not called', async function () {
         const { result } = await (driver as any).send({
           method: 'appium:fake.doSomeMath2',
           params: { num1: 2, num2: 3 },
@@ -442,12 +435,12 @@ describe('FakePlugin w/ FakeDriver via HTTP', function() {
     });
   });
 
-  describe('IPC Support', function() {
+  describe('IPC Support', function () {
     let driver: Browser;
 
     // this 'after' block needs to come before 'serverSetup' so that the delete session happens
     // before the server shutdown
-    after(async function() {
+    after(async function () {
       if (driver) {
         await driver.deleteSession();
       }
@@ -455,12 +448,12 @@ describe('FakePlugin w/ FakeDriver via HTTP', function() {
 
     serverSetup({});
 
-    before(async function() {
+    before(async function () {
       const caps = { ...wdOpts.capabilities, webSocketUrl: true, 'appium:runClock': true };
       driver = await wdio({ ...wdOpts, capabilities: caps } as any);
     });
 
-    it('should allow driver to publish to plugin', async function() {
+    it('should allow driver to publish to plugin', async function () {
       let running = await driver.executeScript('fake: getFakeDriverClockStatus', []);
       expect(running).to.be.true;
       await driver.executeScript('fake: stopClock', []);
@@ -468,7 +461,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function() {
       expect(running).to.be.false;
     });
 
-    it('should allow plugin to publish to driver', async function() {
+    it('should allow plugin to publish to driver', async function () {
       let lastMath = await driver.executeScript('fake: getLastPluginMath', []);
       expect(lastMath).to.eql(null);
       const { result } = await (driver as any).send({

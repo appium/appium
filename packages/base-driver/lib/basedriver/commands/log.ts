@@ -23,8 +23,7 @@ const LogCommands: ILogCommands = {
         Object.entries(this.supportedLogTypes).map(([key, value]) => [key, value.description]),
       );
       throw new Error(
-        `Unsupported log type '${String(logType)}'. `
-          + `Supported types: ${JSON.stringify(logsTypesWithDescriptions)}`,
+        `Unsupported log type '${String(logType)}'. ` + `Supported types: ${JSON.stringify(logsTypesWithDescriptions)}`,
       );
     }
 

@@ -18,9 +18,7 @@ export interface IsPackageChangedResult {
  * Detects whether `package.json` dependencies changed since the last hash write.
  * Inlined from the `package-changed` package (lockfile support omitted; unused by Appium).
  */
-export async function isPackageChanged(
-  options: IsPackageChangedOptions = {},
-): Promise<IsPackageChangedResult> {
+export async function isPackageChanged(options: IsPackageChangedOptions = {}): Promise<IsPackageChangedResult> {
   const { hashFilename = '.packagehash', cwd = process.cwd() } = options;
   const packagePath = await findPackageJson(cwd);
   if (!packagePath) {
@@ -30,9 +28,7 @@ export async function isPackageChanged(
   const packageHashPath = path.join(cwd, hashFilename);
   const packageHashPathExists = await fs.exists(packageHashPath);
   const recentDigest = await getPackageHash(packagePath);
-  const previousDigest = packageHashPathExists
-    ? await fs.readFile(packageHashPath, 'utf-8')
-    : undefined;
+  const previousDigest = packageHashPathExists ? await fs.readFile(packageHashPath, 'utf-8') : undefined;
   const isChanged = !packageHashPathExists || previousDigest !== recentDigest;
 
   const writeHash = async () => {

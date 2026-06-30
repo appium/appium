@@ -6,14 +6,14 @@ import { BaseDriver } from '../../../../lib';
 
 chai.use(chaiAsPromised);
 
-describe('logging custom events', function() {
-  it('should allow logging of events', async function() {
+describe('logging custom events', function () {
+  it('should allow logging of events', async function () {
     const d = new BaseDriver({} as InitialOpts);
     expect((d as any)._eventHistory).to.eql({ commands: [] });
     await d.logCustomEvent('myorg', 'myevent');
     expect(Object.keys((d as any)._eventHistory)).to.eql(['commands', 'myorg:myevent']);
   });
-  it('should get all events including custom ones', async function() {
+  it('should get all events including custom ones', async function () {
     const d = new BaseDriver({} as InitialOpts);
     expect((d as any)._eventHistory).to.eql({ commands: [] });
     d.logEvent('appiumEvent');
@@ -23,8 +23,8 @@ describe('logging custom events', function() {
   });
 });
 
-describe('#getLogEvents', function() {
-  it('should allow to get all events', async function() {
+describe('#getLogEvents', function () {
+  it('should allow to get all events', async function () {
     const d = new BaseDriver({} as InitialOpts);
     expect((d as any)._eventHistory).to.eql({ commands: [] });
     (d as any)._eventHistory.testCommand = ['1', '2', '3'];
@@ -34,7 +34,7 @@ describe('#getLogEvents', function() {
     });
   });
 
-  it('should filter with testCommand', async function() {
+  it('should filter with testCommand', async function () {
     const d = new BaseDriver({} as InitialOpts);
     expect((d as any)._eventHistory).to.eql({ commands: [] });
     (d as any)._eventHistory.testCommand = ['1', '2', '3'];
@@ -43,14 +43,14 @@ describe('#getLogEvents', function() {
     });
   });
 
-  it('should not filter with wrong but can be a part of the event name', async function() {
+  it('should not filter with wrong but can be a part of the event name', async function () {
     const d = new BaseDriver({} as InitialOpts);
     expect((d as any)._eventHistory).to.eql({ commands: [] });
     (d as any)._eventHistory.testCommand = ['1', '2', '3'];
     expect(await d.getLogEvents('testCommandDummy')).to.eql({});
   });
 
-  it('should filter with multiple event keys', async function() {
+  it('should filter with multiple event keys', async function () {
     const d = new BaseDriver({} as InitialOpts);
     expect((d as any)._eventHistory).to.eql({ commands: [] });
     (d as any)._eventHistory.testCommand = ['1', '2', '3'];
@@ -61,7 +61,7 @@ describe('#getLogEvents', function() {
     });
   });
 
-  it('should filter with custom events', async function() {
+  it('should filter with custom events', async function () {
     const d = new BaseDriver({} as InitialOpts);
     expect((d as any)._eventHistory).to.eql({ commands: [] });
     (d as any)._eventHistory['custom:appiumEvent'] = ['1', '2', '3'];
@@ -70,7 +70,7 @@ describe('#getLogEvents', function() {
     });
   });
 
-  it('should not filter with no existed event name', async function() {
+  it('should not filter with no existed event name', async function () {
     const d = new BaseDriver({} as InitialOpts);
     expect((d as any)._eventHistory).to.eql({ commands: [] });
     (d as any)._eventHistory.testCommand = ['1', '2', '3'];

@@ -95,12 +95,7 @@ export async function execute(this: FakeDriver, script: string, args: any[]): Pr
 }
 
 /** fakeAddition. */
-export async function fakeAddition(
-  this: FakeDriver,
-  num1: number,
-  num2: number,
-  num3 = 0,
-): Promise<number> {
+export async function fakeAddition(this: FakeDriver, num1: number, num2: number, num3 = 0): Promise<number> {
   return num1 + num2 + (num3 ?? 0);
 }
 
@@ -115,8 +110,6 @@ export async function bidiNavigate(this: FakeDriver, context: string, url: strin
 }
 
 /** Return the last math result detected by a plugin that publishes it */
-export async function getLastPluginMath(
-  this: FakeDriver,
-): Promise<{ pluginName: string; result: number; } | null> {
+export async function getLastPluginMath(this: FakeDriver): Promise<{ pluginName: string; result: number } | null> {
   return this.lastPluginMath;
 }

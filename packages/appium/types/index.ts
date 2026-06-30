@@ -13,6 +13,8 @@ export interface AppiumEnv extends NodeJS.ProcessEnv {
 /**
  * Generic to get at the class of an extension.
  */
-export type ExtClass<ExtType extends ExtensionType> = ExtType extends DriverType ? DriverClass
-  : ExtType extends PluginType ? PluginClass
-  : never;
+export type ExtClass<ExtType extends ExtensionType> = ExtType extends DriverType
+  ? DriverClass
+  : ExtType extends PluginType
+    ? PluginClass
+    : never;

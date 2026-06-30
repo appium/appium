@@ -25,18 +25,18 @@ export class UniversalXMLPlugin extends BasePlugin {
     });
     if (unknowns.nodes.length) {
       this.log.warn(
-        `The XML mapper found ${unknowns.nodes.length} node(s) / `
-          + `tag name(s) that it didn't know about. These should be `
-          + `reported to improve the quality of the plugin: `
-          + unknowns.nodes.join(', '),
+        `The XML mapper found ${unknowns.nodes.length} node(s) / ` +
+          `tag name(s) that it didn't know about. These should be ` +
+          `reported to improve the quality of the plugin: ` +
+          unknowns.nodes.join(', '),
       );
     }
     if (unknowns.attrs.length) {
       this.log.warn(
-        `The XML mapper found ${unknowns.attrs.length} attributes `
-          + `that it didn't know about. These should be reported to `
-          + `improve the quality of the plugin: `
-          + unknowns.attrs.join(', '),
+        `The XML mapper found ${unknowns.attrs.length} attributes ` +
+          `that it didn't know about. These should be reported to ` +
+          `improve the quality of the plugin: ` +
+          unknowns.attrs.join(', '),
       );
     }
     return xml;
@@ -83,9 +83,9 @@ export class UniversalXMLPlugin extends BasePlugin {
   ): Promise<Element | Element[]> {
     const platformName = getPlatformName(driver);
     if (
-      strategy.toLowerCase() !== 'xpath'
-      || !driver.getCurrentContext
-      || (await driver.getCurrentContext()) !== 'NATIVE_APP'
+      strategy.toLowerCase() !== 'xpath' ||
+      !driver.getCurrentContext ||
+      (await driver.getCurrentContext()) !== 'NATIVE_APP'
     ) {
       return (await next()) as Element | Element[];
     }
@@ -96,8 +96,8 @@ export class UniversalXMLPlugin extends BasePlugin {
     // matched, so do the appropriate thing based on element vs elements
     if (newSelector === null) {
       this.log.warn(
-        `Selector was not able to be translated to underlying XML. Either the requested `
-          + `element does not exist or there was an error in translation`,
+        `Selector was not able to be translated to underlying XML. Either the requested ` +
+          `element does not exist or there was an error in translation`,
       );
       if (multiple) {
         return [];

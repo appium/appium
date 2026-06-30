@@ -4,12 +4,10 @@ import type { AppiumLogger, DoctorCheckResult, IDoctorCheck } from '@appium/type
 /**
  * Process exit codes returned by {@link Doctor.run}.
  */
-export const EXIT_CODE = Object.freeze(
-  {
-    SUCCESS: 0,
-    HAS_MAJOR_ISSUES: 127,
-  } as const,
-);
+export const EXIT_CODE = Object.freeze({
+  SUCCESS: 0,
+  HAS_MAJOR_ISSUES: 127,
+} as const);
 
 /** Exit code values produced by {@link Doctor.run}. */
 export type DoctorExitCode = (typeof EXIT_CODE)[keyof typeof EXIT_CODE];
@@ -125,10 +123,7 @@ export class Doctor {
       manualIssues,
     );
     await handleIssues(
-      [
-        '### Optional Manual Fixes ###',
-        'To fix these optional issues, please do the following manually:',
-      ],
+      ['### Optional Manual Fixes ###', 'To fix these optional issues, please do the following manually:'],
       manualIssuesOptional,
     );
 
@@ -204,8 +199,8 @@ export class Doctor {
 
   private buildFixMessage(): string {
     return (
-      `${util.pluralize('required fix', this.issuesRequiredToFix.length, true)} needed, `
-      + `${util.pluralize('optional fix', this.issuesOptionalToFix.length, true)} possible`
+      `${util.pluralize('required fix', this.issuesRequiredToFix.length, true)} needed, ` +
+      `${util.pluralize('optional fix', this.issuesOptionalToFix.length, true)} possible`
     );
   }
 

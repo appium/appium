@@ -37,20 +37,11 @@ export const EXTRA_ARGS = 'extraArgs';
  * will automatically inject the `server` subcommand.
  */
 const NON_SERVER_ARGS = Object.freeze(
-  new Set([
-    SETUP_SUBCOMMAND,
-    DRIVER_TYPE,
-    PLUGIN_TYPE,
-    SERVER_SUBCOMMAND,
-    '-h',
-    '--help',
-    '-v',
-    '--version',
-  ]),
+  new Set([SETUP_SUBCOMMAND, DRIVER_TYPE, PLUGIN_TYPE, SERVER_SUBCOMMAND, '-h', '--help', '-v', '--version']),
 );
 
-type LooseArgsMap = { [key: string]: any; };
-type TransformedArgsMap = LooseArgsMap & { [EXTRA_ARGS]: string[]; };
+type LooseArgsMap = { [key: string]: any };
+type TransformedArgsMap = LooseArgsMap & { [EXTRA_ARGS]: string[] };
 
 /**
  * A wrapper around `argparse`
@@ -73,8 +64,9 @@ export class ArgParser {
     const prog = process.argv[1] ? path.basename(process.argv[1]) : 'appium';
     const parser = new ArgumentParser({
       add_help: true,
-      description: 'A webdriver-compatible server that facilitates automation of web, mobile, and other '
-        + 'types of apps across various platforms.',
+      description:
+        'A webdriver-compatible server that facilitates automation of web, mobile, and other ' +
+        'types of apps across various platforms.',
       prog,
     });
 
@@ -133,10 +125,7 @@ export class ArgParser {
    *
    * E.g., `{'driver-foo-bar': baz}` becomes `{driver: {foo: {bar: 'baz'}}}`
    */
-  private static _transformParsedArgs(
-    args: LooseArgsMap,
-    unknownArgs: string[] = [],
-  ): TransformedArgsMap {
+  private static _transformParsedArgs(args: LooseArgsMap, unknownArgs: string[] = []): TransformedArgsMap {
     const result = Object.entries(args).reduce((unpacked: LooseArgsMap, [key, value]) => {
       const spec = hasArgSpec(key) ? getArgSpec(key) : undefined;
       if (value !== undefined && spec) {
@@ -265,10 +254,11 @@ export class ArgParser {
     const setupParser = subParser.add_parser('setup', {
       add_help: true,
       help: 'Batch install or uninstall Appium drivers and plugins',
-      description: `Install a preset of official drivers/plugins compatible with the current host platform `
-        + `(${determinePlatformName()}). Existing drivers/plugins will remain. The default preset `
-        + `is "mobile". Providing the special "reset" subcommand will instead uninstall all `
-        + `drivers and plugins, and remove their related manifest files.`,
+      description:
+        `Install a preset of official drivers/plugins compatible with the current host platform ` +
+        `(${determinePlatformName()}). Existing drivers/plugins will remain. The default preset ` +
+        `is "mobile". Providing the special "reset" subcommand will instead uninstall all ` +
+        `drivers and plugins, and remove their related manifest files.`,
     });
 
     ArgParser._patchExit(setupParser);
@@ -279,18 +269,21 @@ export class ArgParser {
     const parserSpecs = [
       {
         command: SUBCOMMAND_MOBILE,
-        help: `The preset for mobile devices `
-          + `(drivers: ${getPresetDrivers(SUBCOMMAND_MOBILE).join(',')}; plugins: ${DEFAULT_PLUGINS})`,
+        help:
+          `The preset for mobile devices ` +
+          `(drivers: ${getPresetDrivers(SUBCOMMAND_MOBILE).join(',')}; plugins: ${DEFAULT_PLUGINS})`,
       },
       {
         command: SUBCOMMAND_BROWSER,
-        help: `The preset for desktop browsers `
-          + `(drivers: ${getPresetDrivers(SUBCOMMAND_BROWSER).join(',')}; plugins: ${DEFAULT_PLUGINS})`,
+        help:
+          `The preset for desktop browsers ` +
+          `(drivers: ${getPresetDrivers(SUBCOMMAND_BROWSER).join(',')}; plugins: ${DEFAULT_PLUGINS})`,
       },
       {
         command: SUBCOMMAND_DESKTOP,
-        help: `The preset for desktop applications `
-          + `(drivers: ${getPresetDrivers(SUBCOMMAND_DESKTOP).join(',')}; plugins: ${DEFAULT_PLUGINS})`,
+        help:
+          `The preset for desktop applications ` +
+          `(drivers: ${getPresetDrivers(SUBCOMMAND_DESKTOP).join(',')}; plugins: ${DEFAULT_PLUGINS})`,
       },
       {
         command: SUBCOMMAND_RESET,
@@ -325,10 +318,7 @@ export class ArgParser {
       } else if (knownArgs?.pluginCommand === 'ls') {
         knownArgs.pluginCommand = 'list';
       }
-      if (
-        unknownArgs?.length
-        && (knownArgs.driverCommand === 'run' || knownArgs.pluginCommand === 'run')
-      ) {
+      if (unknownArgs?.length && (knownArgs.driverCommand === 'run' || knownArgs.pluginCommand === 'run')) {
         return ArgParser._transformParsedArgs(knownArgs, unknownArgs);
       } else if (unknownArgs?.length) {
         throw new Error(`[ERROR] Unrecognized arguments: ${unknownArgs.join(' ')}`);

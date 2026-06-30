@@ -11,42 +11,39 @@ const { expect } = chai;
 /**
  * Helper function to create a project directory with package.json
  */
-async function createPackageJson(
-  testDir: string,
-  packageJson: Record<string, any>,
-): Promise<string> {
+async function createPackageJson(testDir: string, packageJson: Record<string, any>): Promise<string> {
   await fs.mkdirp(testDir);
   const packageJsonPath = path.join(testDir, NAME_PACKAGE_JSON);
   await fs.writeFile(packageJsonPath, JSON.stringify(packageJson, null, 2), 'utf8');
   return packageJsonPath;
 }
 
-describe('findDeployVersion', function() {
+describe('findDeployVersion', function () {
   let testDir: string;
   let packageJsonPath: string;
 
-  before(async function() {
+  before(async function () {
     testDir = await tempDir.openDir();
     packageJsonPath = await createPackageJson(testDir, {
       version: '2.3.8',
     });
   });
 
-  after(async function() {
+  after(async function () {
     if (testDir) {
       await fs.rimraf(testDir);
     }
   });
 
-  it('should use MAJOR.MINOR version by default', async function() {
+  it('should use MAJOR.MINOR version by default', async function () {
     expect(await findDeployVersion(packageJsonPath)).to.equal('2.3');
   });
 
-  it('should use prefixed MAJOR version if usePrefixedMajorVersion is used', async function() {
+  it('should use prefixed MAJOR version if usePrefixedMajorVersion is used', async function () {
     expect(await findDeployVersion(packageJsonPath, true)).to.equal('v2');
   });
 
-  it('should support custom working directory', async function() {
+  it('should support custom working directory', async function () {
     expect(await findDeployVersion(undefined, false, testDir)).to.equal('2.3');
   });
 });

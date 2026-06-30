@@ -17,12 +17,7 @@ export const MANIFEST_BASENAME = 'extensions.yaml';
 /**
  * Relative path to extension manifest file from `APPIUM_HOME`.
  */
-export const MANIFEST_RELATIVE_PATH = path.join(
-  'node_modules',
-  '.cache',
-  'appium',
-  MANIFEST_BASENAME,
-);
+export const MANIFEST_RELATIVE_PATH = path.join('node_modules', '.cache', 'appium', MANIFEST_BASENAME);
 
 /**
  * Resolves `true` if an `appium` dependency can be found somewhere in the given `cwd`.
@@ -52,9 +47,7 @@ export const findAppiumDependencyPackage = memoize(async function findAppiumDepe
     }
     try {
       const version = semver.minVersion(
-        String(
-          pkg.dependencies?.appium ?? pkg.devDependencies?.appium ?? pkg.peerDependencies?.appium,
-        ),
+        String(pkg.dependencies?.appium ?? pkg.devDependencies?.appium ?? pkg.peerDependencies?.appium),
       );
       return version && semver.satisfies(version, acceptableVersionRange) ? root : undefined;
     } catch {
@@ -126,8 +119,6 @@ export const resolveAppiumHome = memoize(async function _resolveAppiumHome(
  * The assumption is that, if `appiumHome` has been provided, it was resolved via {@link resolveAppiumHome `resolveAppiumHome()`}!  If unsure,
  * don't pass a parameter and let `resolveAppiumHome()` handle it.
  */
-export const resolveManifestPath = memoize(async function _resolveManifestPath(
-  appiumHome?: string,
-): Promise<string> {
+export const resolveManifestPath = memoize(async function _resolveManifestPath(appiumHome?: string): Promise<string> {
   return path.join(appiumHome ?? (await resolveAppiumHome()), MANIFEST_RELATIVE_PATH);
 });

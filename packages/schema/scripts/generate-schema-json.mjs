@@ -50,10 +50,7 @@ async function write() {
     const require = createRequire(import.meta.url);
     ({ AppiumConfigJsonSchema: schema } = require(SCHEMA_SRC));
   } catch (e) {
-    throw new Error(
-      `${error} Failed to read ${SCHEMA_SRC}; did you execute \`npm run build\` first?`,
-      { cause: e },
-    );
+    throw new Error(`${error} Failed to read ${SCHEMA_SRC}; did you execute \`npm run build\` first?`, { cause: e });
   }
 
   const json = JSON.stringify(schema, null, 2);

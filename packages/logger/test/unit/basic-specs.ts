@@ -4,10 +4,10 @@ import { Stream } from 'node:stream';
 import { Log, markSensitive } from '../../lib/log';
 import type { Log as LogType } from '../../lib/log';
 
-describe('basic', function() {
+describe('basic', function () {
   let log: LogType;
 
-  describe('logging', function() {
+  describe('logging', function () {
     let s: InstanceType<typeof Stream> & {
       write: (m: string) => void;
       writable: boolean;
@@ -91,7 +91,7 @@ describe('basic', function() {
       { id: 29, level: 'noise', prefix: 'error', message: 'erroring' },
     ];
 
-    beforeEach(function() {
+    beforeEach(function () {
       result = [];
       logEvents = [];
       logInfoEvents = [];
@@ -108,7 +108,7 @@ describe('basic', function() {
       log.heading = 'npm';
     });
 
-    it('should work', function() {
+    it('should work', function () {
       expect(log.stream).to.equal(s);
       log.on('log', logEvents.push.bind(logEvents) as any);
       log.on('log.info', logInfoEvents.push.bind(logInfoEvents) as any);
@@ -169,18 +169,18 @@ describe('basic', function() {
     });
   });
 
-  describe('utils', function() {
-    it('enableColor', function() {
+  describe('utils', function () {
+    it('enableColor', function () {
       log.enableColor();
       expect((log as any)._format('x', { fg: 'red' })).to.include('\u001b');
     });
 
-    it('disableColor', function() {
+    it('disableColor', function () {
       log.disableColor();
       expect((log as any)._format('x', { fg: 'red' })).to.equal('x');
     });
 
-    it('_buffer while paused', function() {
+    it('_buffer while paused', function () {
       log.pause();
       log.log('verbose', 'test', 'test log');
       expect(log._buffer.length).to.equal(1);
@@ -189,12 +189,12 @@ describe('basic', function() {
     });
   });
 
-  describe('log.log', function() {
-    beforeEach(function() {
+  describe('log.log', function () {
+    beforeEach(function () {
       log = new Log();
     });
 
-    it('emits error on bad loglevel', async function() {
+    it('emits error on bad loglevel', async function () {
       await new Promise<void>((resolve, reject) => {
         log.once('error', (err: Error) => {
           expect(/Undefined log level: "asdf"/.test(String(err))).to.be.true;
@@ -205,9 +205,9 @@ describe('basic', function() {
       });
     });
 
-    it('resolves stack traces to a plain string', async function() {
+    it('resolves stack traces to a plain string', async function () {
       await new Promise<void>((resolve, reject) => {
-        log.once('log', (m: { message: string; }) => {
+        log.once('log', (m: { message: string }) => {
           expect(/Error: with a stack trace/.test(m.message)).to.be.true;
           expect(/at Test/.test(m.message)).to.be.true;
           resolve();
@@ -218,7 +218,7 @@ describe('basic', function() {
       });
     });
 
-    it('replaces sensitive messages', async function() {
+    it('replaces sensitive messages', async function () {
       log.updateAsyncStorage({ isSensitive: true }, true);
       log.log('verbose', 'test', markSensitive('log 1'));
       expect(log.record.at(-1)!.message).to.eql('**SECURE**');
@@ -227,7 +227,7 @@ describe('basic', function() {
       expect(log.record.at(-1)!.message).to.eql('log 1');
     });
 
-    it('max record size', function() {
+    it('max record size', function () {
       log.maxRecordSize = 3;
       log.log('verbose', 'test', 'log 1');
       log.log('verbose', 'test', 'log 2');
@@ -243,57 +243,57 @@ describe('basic', function() {
     });
   });
 
-  describe('stream', function() {
-    beforeEach(function() {
+  describe('stream', function () {
+    beforeEach(function () {
       log = new Log();
     });
 
-    it('write with no stream', function() {
+    it('write with no stream', function () {
       log.stream = null as any;
       (log as any).write('message');
     });
   });
 
-  describe('emitLog', function() {
-    beforeEach(function() {
+  describe('emitLog', function () {
+    beforeEach(function () {
       log = new Log();
     });
 
-    it('to nonexistent level', function() {
+    it('to nonexistent level', function () {
       (log as any).emitLog({ prefix: 'test', level: 'asdf' });
     });
   });
 
-  describe('format', function() {
-    beforeEach(function() {
+  describe('format', function () {
+    beforeEach(function () {
       log = new Log();
     });
 
-    it('with nonexistent stream', function() {
+    it('with nonexistent stream', function () {
       log.stream = null as any;
       expect((log as any)._format('message')).to.equal(undefined);
     });
-    it('fg', function() {
+    it('fg', function () {
       log.enableColor();
       const o = (log as any)._format('test message', { bg: 'blue' });
       expect(o).to.include('\u001b[44mtest message\u001b[0m');
     });
-    it('bg', function() {
+    it('bg', function () {
       log.enableColor();
       const o = (log as any)._format('test message', { bg: 'white' });
       expect(o).to.include('\u001b[47mtest message\u001b[0m');
     });
-    it('bold', function() {
+    it('bold', function () {
       log.enableColor();
       const o = (log as any)._format('test message', { bold: true });
       expect(o).to.include('\u001b[1mtest message\u001b[0m');
     });
-    it('underline', function() {
+    it('underline', function () {
       log.enableColor();
       const o = (log as any)._format('test message', { underline: true });
       expect(o).to.include('\u001b[4mtest message\u001b[0m');
     });
-    it('inverse', function() {
+    it('inverse', function () {
       log.enableColor();
       const o = (log as any)._format('test message', { inverse: true });
       expect(o).to.include('\u001b[7mtest message\u001b[0m');

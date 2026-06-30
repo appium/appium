@@ -23,9 +23,7 @@ import { ProxyRequest } from './proxy-request';
 
 const DEFAULT_LOG = logger.getLogger('WD Proxy');
 const DEFAULT_REQUEST_TIMEOUT = 240000;
-const COMMAND_WITH_SESSION_ID_MATCHER = pathToRegexMatch(
-  '{/*prefix}/session/:sessionId{/*command}',
-);
+const COMMAND_WITH_SESSION_ID_MATCHER = pathToRegexMatch('{/*prefix}/session/:sessionId{/*command}');
 
 const { MJSONWP, W3C } = PROTOCOLS;
 
@@ -62,10 +60,10 @@ export class JWProxy {
   private readonly _log: AppiumLogger | undefined;
 
   constructor(opts: ProxyOptions = {}) {
-    const filteredOptsWithoutLog = omit(
-      pick(opts as Record<string, unknown>, ALLOWED_OPTS),
-      'log',
-    ) as Omit<ProxyOptions, 'log'>;
+    const filteredOptsWithoutLog = omit(pick(opts as Record<string, unknown>, ALLOWED_OPTS), 'log') as Omit<
+      ProxyOptions,
+      'log'
+    >;
     const options = {
       scheme: 'http',
       server: 'localhost',
@@ -170,11 +168,7 @@ export class JWProxy {
   /**
    * Proxies a raw WebDriver command to the downstream server.
    */
-  async proxy(
-    url: string,
-    method: string,
-    body: HTTPBody = null,
-  ): Promise<[ProxyResponse, HTTPBody]> {
+  async proxy(url: string, method: string, body: HTTPBody = null): Promise<[ProxyResponse, HTTPBody]> {
     method = method.toUpperCase();
     const newUrl = this.getUrlForProxy(url, method as HTTPMethod);
     const truncateBody = (content: unknown): string =>
@@ -207,10 +201,9 @@ export class JWProxy {
             (error as Error).message,
             logger.markSensitive(truncateBody(body)),
           );
-          throw new Error(
-            'Cannot interpret the request body as valid JSON. Check the server log for more details.',
-            { cause: error },
-          );
+          throw new Error('Cannot interpret the request body as valid JSON. Check the server log for more details.', {
+            cause: error,
+          });
         }
       } else {
         reqOpts.data = body;
@@ -228,7 +221,7 @@ export class JWProxy {
 
     const throwProxyError = (error: unknown): never => {
       const err = new Error(`The request to ${url} has failed`) as Error & {
-        response: { data: unknown; status: number; };
+        response: { data: unknown; status: number };
       };
       err.response = {
         data: error,
@@ -270,7 +263,7 @@ export class JWProxy {
         data,
       ];
     } catch (e: unknown) {
-      const err = e as AxiosError<unknown> & { message: string; };
+      const err = e as AxiosError<unknown> & { message: string };
       let proxyErrorMsg = err.message;
       if (util.hasValue(err.response)) {
         if (!isResponseLogged) {
@@ -304,11 +297,7 @@ export class JWProxy {
   /**
    * Proxies a command identified by its HTTP method and URL to the downstream server.
    */
-  async proxyCommand(
-    url: string,
-    method: HTTPMethod,
-    body: HTTPBody = null,
-  ): Promise<[ProxyResponse, HTTPBody]> {
+  async proxyCommand(url: string, method: HTTPMethod, body: HTTPBody = null): Promise<[ProxyResponse, HTTPBody]> {
     const parsedUrl = this._parseUrl(url);
     const normalizedPathname = this._toNormalizedPathname(parsedUrl);
     const commandName = normalizedPathname ? routeToCommandName(normalizedPathname, method) : '';
@@ -348,9 +337,7 @@ export class JWProxy {
         }
         throw errorFromMJSONWPStatusCode(
           status,
-          util.isEmpty(message)
-            ? getSummaryByCode(status)
-            : (message as string | { message: string; }),
+          util.isEmpty(message) ? getSummaryByCode(status) : (message as string | { message: string }),
         );
       }
     } else if (protocol === W3C) {
@@ -369,12 +356,10 @@ export class JWProxy {
       return resBodyObj;
     }
     throw new errors.UnknownError(
-      `Did not know what to do with response code '${response.statusCode}' `
-        + `and response body '${
-          util.truncateString(JSON.stringify(resBodyObj), {
-            length: 300,
-          })
-        }'`,
+      `Did not know what to do with response code '${response.statusCode}' ` +
+        `and response body '${util.truncateString(JSON.stringify(resBodyObj), {
+          length: 300,
+        })}'`,
     );
   }
 
@@ -396,11 +381,7 @@ export class JWProxy {
     let statusCode: number;
     let resBodyObj: HTTPBody;
     try {
-      const [response, body] = await this.proxyCommand(
-        req.originalUrl,
-        req.method as HTTPMethod,
-        req.body,
-      );
+      const [response, body] = await this.proxyCommand(req.originalUrl, req.method as HTTPMethod, req.body);
       statusCode = response.statusCode;
       resBodyObj = body;
     } catch (err: unknown) {
@@ -413,8 +394,8 @@ export class JWProxy {
     res.setHeader('content-type', 'application/json; charset=utf-8');
     if (!util.isPlainObject(resBodyObj)) {
       const error = new errors.UnknownError(
-        `The downstream server response with the status code ${statusCode} is not a valid JSON object: `
-          + util.truncateString(`${resBodyObj}`, { length: 300 }),
+        `The downstream server response with the status code ${statusCode} is not a valid JSON object: ` +
+          util.truncateString(`${resBodyObj}`, { length: 300 }),
       );
       [statusCode, resBodyObj] = getResponseForW3CError(error);
     }
@@ -457,9 +438,9 @@ export class JWProxy {
     // eslint-disable-next-line n/no-deprecated-api -- we need relative URL support
     const parsedUrl = nodeUrl.parse(url || '/');
     if (
-      parsedUrl.href == null
-      || parsedUrl.pathname == null
-      || (parsedUrl.protocol && !['http:', 'https:'].includes(parsedUrl.protocol))
+      parsedUrl.href == null ||
+      parsedUrl.pathname == null ||
+      (parsedUrl.protocol && !['http:', 'https:'].includes(parsedUrl.protocol))
     ) {
       throw new Error(`Did not know how to proxy the url '${url}'`);
     }
@@ -470,22 +451,16 @@ export class JWProxy {
     if (typeof parsedUrl.pathname !== 'string') {
       return '';
     }
-    let pathname = this.reqBasePath && parsedUrl.pathname.startsWith(this.reqBasePath)
-      ? parsedUrl.pathname.replace(this.reqBasePath, '')
-      : parsedUrl.pathname;
+    let pathname =
+      this.reqBasePath && parsedUrl.pathname.startsWith(this.reqBasePath)
+        ? parsedUrl.pathname.replace(this.reqBasePath, '')
+        : parsedUrl.pathname;
     const match = COMMAND_WITH_SESSION_ID_MATCHER(pathname);
     // This is needed for the backward compatibility
     // if drivers don't set reqBasePath properly
     if (!this.reqBasePath) {
-      if (
-        match
-        && match.params
-        && Array.isArray((match.params as Record<string, unknown>).prefix)
-      ) {
-        pathname = pathname.replace(
-          `/${((match.params as Record<string, unknown>).prefix as string[]).join('/')}`,
-          '',
-        );
+      if (match && match.params && Array.isArray((match.params as Record<string, unknown>).prefix)) {
+        pathname = pathname.replace(`/${((match.params as Record<string, unknown>).prefix as string[]).join('/')}`, '');
       } else if (pathname.startsWith('/wd/hub')) {
         pathname = pathname.replace('/wd/hub', '');
       }

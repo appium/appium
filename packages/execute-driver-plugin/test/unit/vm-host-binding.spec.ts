@@ -6,28 +6,28 @@ import { wrapHostBindingForVmContext } from '../../lib/vm-host-binding';
 
 use(chaiAsPromised);
 
-describe('wrapHostBindingForVmContext', function() {
+describe('wrapHostBindingForVmContext', function () {
   const hostishDriver = Object.create(Object.prototype);
   hostishDriver.sessionId = 'fake';
 
-  it('should still expose ordinary properties on objects to the VM', function() {
+  it('should still expose ordinary properties on objects to the VM', function () {
     const d = wrapHostBindingForVmContext(hostishDriver);
     const sessionId = vm.runInNewContext(`d.sessionId`, { d }, { timeout: 500 });
     expect(sessionId).to.equal('fake');
   });
 
-  it('should block constructor chaining on objects to the host Function', function() {
+  it('should block constructor chaining on objects to the host Function', function () {
     const d = wrapHostBindingForVmContext(hostishDriver);
     expect(() =>
       vm.runInNewContext(
         `const func = d.constructor.constructor; func('return typeof process')()`,
         { d },
         { timeout: 500 },
-      )
+      ),
     ).to.throw();
   });
 
-  it('should block Object.getPrototypeOf constructor chaining on objects', function() {
+  it('should block Object.getPrototypeOf constructor chaining on objects', function () {
     const d = wrapHostBindingForVmContext(hostishDriver);
     expect(() =>
       vm.runInNewContext(
@@ -36,11 +36,11 @@ describe('wrapHostBindingForVmContext', function() {
          func('return typeof process')()`,
         { d },
         { timeout: 500 },
-      )
+      ),
     ).to.throw();
   });
 
-  it('should block __proto__ constructor chaining on objects', function() {
+  it('should block __proto__ constructor chaining on objects', function () {
     const d = wrapHostBindingForVmContext(hostishDriver);
     expect(() =>
       vm.runInNewContext(
@@ -49,11 +49,11 @@ describe('wrapHostBindingForVmContext', function() {
          func('return typeof process')()`,
         { d },
         { timeout: 500 },
-      )
+      ),
     ).to.throw();
   });
 
-  it('should block constructor chaining on injected timers', function() {
+  it('should block constructor chaining on injected timers', function () {
     const st = wrapHostBindingForVmContext(setTimeout);
     const ct = wrapHostBindingForVmContext(clearTimeout);
     expect(() =>
@@ -62,11 +62,11 @@ describe('wrapHostBindingForVmContext', function() {
          func('return typeof process')()`,
         { setTimeout: st, clearTimeout: ct },
         { timeout: 500 },
-      )
+      ),
     ).to.throw();
   });
 
-  it('should still allow setTimeout to schedule callbacks', async function() {
+  it('should still allow setTimeout to schedule callbacks', async function () {
     const st = wrapHostBindingForVmContext(setTimeout);
     const ct = wrapHostBindingForVmContext(clearTimeout);
     const waited = vm.runInNewContext(
@@ -77,7 +77,7 @@ describe('wrapHostBindingForVmContext', function() {
     expect(await waited).to.equal(true);
   });
 
-  it('should block constructor chaining on console method functions', function() {
+  it('should block constructor chaining on console method functions', function () {
     const logs: unknown[] = [];
     const consoleFns = {
       log: wrapHostBindingForVmContext((...m: unknown[]) => logs.push(...m)),
@@ -89,11 +89,11 @@ describe('wrapHostBindingForVmContext', function() {
          func('return typeof process')()`,
         { console: sandboxConsole },
         { timeout: 500 },
-      )
+      ),
     ).to.throw();
   });
 
-  it('should block constructor chaining on the console aggregate object', function() {
+  it('should block constructor chaining on the console aggregate object', function () {
     const consoleFns = wrapHostBindingForVmContext({
       log: wrapHostBindingForVmContext(() => {}),
     });
@@ -103,11 +103,11 @@ describe('wrapHostBindingForVmContext', function() {
          func('return typeof process')()`,
         { console: consoleFns },
         { timeout: 500 },
-      )
+      ),
     ).to.throw();
   });
 
-  it('should block constructor chaining on nested methods (e.g. driver.deleteSession)', function() {
+  it('should block constructor chaining on nested methods (e.g. driver.deleteSession)', function () {
     const host = Object.create(Object.prototype);
     host.deleteSession = () => {};
     const d = wrapHostBindingForVmContext(host);
@@ -118,11 +118,11 @@ describe('wrapHostBindingForVmContext', function() {
          func('return typeof process')()`,
         { d },
         { timeout: 500 },
-      )
+      ),
     ).to.throw();
   });
 
-  it('should block host Function escape when reading a configurable function-valued property (someMethod)', function() {
+  it('should block host Function escape when reading a configurable function-valued property (someMethod)', function () {
     const host = Object.create(null);
     function someMethod() {
       return 1;
@@ -142,11 +142,11 @@ describe('wrapHostBindingForVmContext', function() {
          func('return typeof process')();`,
         { d },
         { timeout: 500 },
-      )
+      ),
     ).to.throw();
   });
 
-  it('should block constructor chaining on .bind() results', function() {
+  it('should block constructor chaining on .bind() results', function () {
     const host = Object.create(Object.prototype);
     host.fn = (x: unknown) => x;
     const d = wrapHostBindingForVmContext(host);
@@ -157,11 +157,11 @@ describe('wrapHostBindingForVmContext', function() {
          func('return typeof process')()`,
         { d },
         { timeout: 500 },
-      )
+      ),
     ).to.throw();
   });
 
-  it('should wrap descriptor values from getOwnPropertyDescriptor', function() {
+  it('should wrap descriptor values from getOwnPropertyDescriptor', function () {
     const host = Object.create(null);
     Object.defineProperty(host, 'm', {
       value: () => {},
@@ -180,11 +180,11 @@ describe('wrapHostBindingForVmContext', function() {
          func('return typeof process')()`,
         { d },
         { timeout: 500 },
-      )
+      ),
     ).to.throw();
   });
 
-  it('should preserve identity for repeated reads of the same nested method', function() {
+  it('should preserve identity for repeated reads of the same nested method', function () {
     const host = Object.create(Object.prototype);
     host.m = () => {};
     const d = wrapHostBindingForVmContext(host);
@@ -192,7 +192,7 @@ describe('wrapHostBindingForVmContext', function() {
     expect(same).to.equal(true);
   });
 
-  it('should unwrap proxied arguments before invoking host functions', function() {
+  it('should unwrap proxied arguments before invoking host functions', function () {
     const original = { id: 'host-object' };
     const host = {
       provide() {
@@ -212,7 +212,7 @@ describe('wrapHostBindingForVmContext', function() {
     expect(roundTripsAsOriginal).to.equal(true);
   });
 
-  it('should unwrap proxied arguments before invoking host constructors via new', function() {
+  it('should unwrap proxied arguments before invoking host constructors via new', function () {
     const original = { id: 'ctor-arg' };
     const host = {
       Box: class Box {
@@ -239,7 +239,7 @@ describe('wrapHostBindingForVmContext', function() {
     expect(ctorArgRoundTripsAsOriginal).to.equal(true);
   });
 
-  it('should not double-wrap function proxies', function() {
+  it('should not double-wrap function proxies', function () {
     const fn = function hostFn() {
       return 1;
     };
@@ -248,19 +248,15 @@ describe('wrapHostBindingForVmContext', function() {
     expect(wrappedAgain).to.equal(wrapped);
   });
 
-  it('should still await Promise results from wrapped methods', async function() {
+  it('should still await Promise results from wrapped methods', async function () {
     const host = Object.create(Object.prototype);
     host.p = () => Promise.resolve(7);
     const d = wrapHostBindingForVmContext(host);
-    const v = vm.runInNewContext(
-      `(async () => await d.p())()`,
-      { d },
-      { timeout: 500 },
-    ) as Promise<number>;
+    const v = vm.runInNewContext(`(async () => await d.p())()`, { d }, { timeout: 500 }) as Promise<number>;
     expect(await v).to.equal(7);
   });
 
-  it('should block constructor chaining on values fulfilled from wrapped Promises', async function() {
+  it('should block constructor chaining on values fulfilled from wrapped Promises', async function () {
     const host = Object.create(Object.prototype);
     host.p = () => Promise.resolve({ x: 1 });
     const d = wrapHostBindingForVmContext(host);

@@ -1,15 +1,7 @@
 import globalLog, { type Logger, markSensitive as _markSensitive } from '@appium/logger';
 import type { AppiumLogger, AppiumLoggerContext, AppiumLoggerLevel, AppiumLoggerPrefix } from '@appium/types';
 
-export const LEVELS: readonly AppiumLoggerLevel[] = [
-  'silly',
-  'verbose',
-  'debug',
-  'info',
-  'http',
-  'warn',
-  'error',
-];
+export const LEVELS: readonly AppiumLoggerLevel[] = ['silly', 'verbose', 'debug', 'info', 'http', 'warn', 'error'];
 
 const MAX_LOG_RECORDS_COUNT = 3000;
 
@@ -28,10 +20,7 @@ const MOCK_LOG = {
     prefix: '',
     log: noop,
   }),
-  ...(Object.fromEntries(LEVELS.map((l) => [l, noop])) as Record<
-    AppiumLoggerLevel,
-    (...args: any[]) => void
-  >),
+  ...(Object.fromEntries(LEVELS.map((l) => [l, noop])) as Record<AppiumLoggerLevel, (...args: any[]) => void>),
 } as unknown as Logger;
 
 export const log = getLogger();
@@ -73,7 +62,7 @@ export function getLogger(prefix: AppiumLoggerPrefix | null = null): AppiumLogge
   const isDebugTimestampLoggingEnabled = process.env._LOG_TIMESTAMP === '1';
 
   for (const level of LEVELS) {
-    wrappedLogger[level] = function(this: typeof wrappedLogger, ...args: any[]) {
+    wrappedLogger[level] = function (this: typeof wrappedLogger, ...args: any[]) {
       const finalPrefix = getFinalPrefix(this.prefix, isDebugTimestampLoggingEnabled);
       if (args.length) {
         (logger as Record<string, (...a: any[]) => void>)[level](finalPrefix, ...args);
@@ -101,11 +90,11 @@ export function getLogger(prefix: AppiumLoggerPrefix | null = null): AppiumLogge
  * in response to the `X-Appium-Is-Sensitive` request header
  * being set to 'true'.
  */
-export function markSensitive<T>(logMessage: T): { [k: string]: T; } {
+export function markSensitive<T>(logMessage: T): { [k: string]: T } {
   return _markSensitive(logMessage);
 }
 
-function _getLogger(): { logger: Logger; defaultToVerbose: boolean; } {
+function _getLogger(): { logger: Logger; defaultToVerbose: boolean } {
   const testingMode = process.env._TESTING === '1';
   const forceLogMode = process.env._FORCE_LOGS === '1';
   const defaultToVerbose = !globalWithNpmlog._global_npmlog;
@@ -117,19 +106,17 @@ function _getLogger(): { logger: Logger; defaultToVerbose: boolean; } {
   return { logger, defaultToVerbose };
 }
 
-function getFinalPrefix(
-  prefix: AppiumLoggerPrefix | null | undefined,
-  shouldLogTimestamp = false,
-): string {
+function getFinalPrefix(prefix: AppiumLoggerPrefix | null | undefined, shouldLogTimestamp = false): string {
   const result = (typeof prefix === 'function' ? prefix() : prefix) ?? '';
   if (!shouldLogTimestamp) {
     return result;
   }
   const now = new Date();
   const pad = (n: number, z = 2) => String(n).padStart(z, '0');
-  const formattedTimestamp = `[${pad(now.getHours())}-${pad(now.getMinutes())}-${pad(now.getSeconds())}:${
-    pad(now.getMilliseconds(), 3)
-  }]`;
+  const formattedTimestamp = `[${pad(now.getHours())}-${pad(now.getMinutes())}-${pad(now.getSeconds())}:${pad(
+    now.getMilliseconds(),
+    3,
+  )}]`;
   return result ? `${formattedTimestamp} ${result}` : formattedTimestamp;
 }
 

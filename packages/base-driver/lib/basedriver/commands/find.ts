@@ -71,19 +71,11 @@ async function findElOrElsWithProcessing<C extends Constraints>(
 }
 
 const FindCommands: IFindCommands = {
-  async findElement<C extends Constraints>(
-    this: BaseDriver<C>,
-    strategy: string,
-    selector: string,
-  ) {
+  async findElement<C extends Constraints>(this: BaseDriver<C>, strategy: string, selector: string) {
     return await this.findElOrElsWithProcessing(strategy, selector, false);
   },
 
-  async findElements<C extends Constraints>(
-    this: BaseDriver<C>,
-    strategy: string,
-    selector: string,
-  ) {
+  async findElements<C extends Constraints>(this: BaseDriver<C>, strategy: string, selector: string) {
     return await this.findElOrElsWithProcessing(strategy, selector, true);
   },
 

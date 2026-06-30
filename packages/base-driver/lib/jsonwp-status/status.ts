@@ -63,7 +63,7 @@ export const codes = {
   },
   UnableToSetCookie: {
     code: 25,
-    summary: 'A request to set a cookie\'s value could not be satisfied.',
+    summary: "A request to set a cookie's value could not be satisfied.",
   },
   UnexpectedAlertOpen: {
     code: 26,

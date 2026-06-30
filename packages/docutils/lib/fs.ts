@@ -52,7 +52,7 @@ const readYaml = util.memoize(async (filepath: string) =>
   YAML.parse(await fs.readFile(filepath, 'utf8'), {
     prettyErrors: false,
     logLevel: 'silent',
-  })
+  }),
 );
 
 /**
@@ -62,10 +62,7 @@ const readYaml = util.memoize(async (filepath: string) =>
  * @param cwd Dir it should be in
  * @returns
  */
-export async function findInPkgDir(
-  filename: string,
-  cwd = process.cwd(),
-): Promise<string | undefined> {
+export async function findInPkgDir(filename: string, cwd = process.cwd()): Promise<string | undefined> {
   try {
     return path.join(await findPkgDir(cwd), filename);
   } catch {
@@ -80,9 +77,7 @@ export async function findInPkgDir(
  * @param cwd - Current working directory
  * @returns Path to `mkdocs.yml`
  */
-export const findMkDocsYml = util.memoize(
-  async (cwd = process.cwd()) => await findInPkgDir(NAME_MKDOCS_YML, cwd),
-);
+export const findMkDocsYml = util.memoize(async (cwd = process.cwd()) => await findInPkgDir(NAME_MKDOCS_YML, cwd));
 
 /**
  * Given a directory path, finds closest `package.json` and reads it.
@@ -90,18 +85,12 @@ export const findMkDocsYml = util.memoize(
  * @param normalize - Whether or not to normalize the result. Defaults to `true`.
  * @returns A {@linkcode PackageJson} object if `normalize` is `false`, otherwise a {@linkcode NormalizedPackageJson} object
  */
-async function _readPkgJson(
-  cwd: string,
-  normalize?: true,
-): Promise<{ pkgPath: string; pkg: NormalizedPackageJson; }>;
-async function _readPkgJson(
-  cwd: string,
-  normalize: false,
-): Promise<{ pkgPath: string; pkg: PackageJson; }>;
+async function _readPkgJson(cwd: string, normalize?: true): Promise<{ pkgPath: string; pkg: NormalizedPackageJson }>;
+async function _readPkgJson(cwd: string, normalize: false): Promise<{ pkgPath: string; pkg: PackageJson }>;
 async function _readPkgJson(
   cwd: string,
   normalize?: boolean,
-): Promise<{ pkgPath: string; pkg: PackageJson | NormalizedPackageJson; }> {
+): Promise<{ pkgPath: string; pkg: PackageJson | NormalizedPackageJson }> {
   let pkgDir: string;
   try {
     pkgDir = await findPkgDir(cwd);
@@ -128,7 +117,7 @@ export const readJson = util.memoize(
   async <T extends JsonValue>(filepath: string): Promise<T> => JSON.parse(await fs.readFile(filepath, 'utf8')),
 );
 
-type WhichFunction = (cmd: string, opts?: { nothrow: boolean; }) => Promise<string | null>;
+type WhichFunction = (cmd: string, opts?: { nothrow: boolean }) => Promise<string | null>;
 
 /**
  * Writes contents to a file. Any JSON objects are stringified
@@ -253,9 +242,7 @@ export const readMkDocsYml: (filepath: string, cwd?: string) => Promise<MkDocsYm
           log.debug('Resolved docs_dir to %s', inheritYml.docs_dir);
         }
         mkDocsYml = mergeDefaultsDeep(mkDocsYml, inheritYml);
-        inheritPath = inheritYml.INHERIT
-          ? path.resolve(path.dirname(inheritPath), inheritYml.INHERIT)
-          : undefined;
+        inheritPath = inheritYml.INHERIT ? path.resolve(path.dirname(inheritPath), inheritYml.INHERIT) : undefined;
       }
     }
     return mkDocsYml;

@@ -73,12 +73,7 @@ export interface IAppiumCommands {
    *
    * @returns Whether the keyboard was successfully hidden. May never return `false` on some platforms
    */
-  hideKeyboard?(
-    strategy?: string,
-    key?: string,
-    keyCode?: string,
-    keyName?: string,
-  ): Promise<boolean>;
+  hideKeyboard?(strategy?: string, key?: string, keyCode?: string, keyName?: string): Promise<boolean>;
 
   /**
    * Determine whether the keyboard is shown

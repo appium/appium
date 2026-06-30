@@ -3,9 +3,9 @@ import path from 'node:path';
 import { describe, it } from 'node:test';
 import { node } from '../../lib';
 
-describe('node utilities', function() {
-  describe('getObjectSize', function() {
-    it('should be able to calculate size of different object types', function() {
+describe('node utilities', function () {
+  describe('getObjectSize', function () {
+    it('should be able to calculate size of different object types', function () {
       expect(node.getObjectSize(1)).to.eql(8);
       expect(node.getObjectSize(true)).to.eql(4);
       expect(node.getObjectSize('yolo')).to.eql(8);
@@ -24,20 +24,18 @@ describe('node utilities', function() {
     });
   });
 
-  describe('getModuleRootSync', function() {
-    it('should be able to find current module\'s root', function() {
-      expect(path.resolve(__dirname)).to.contain(
-        node.getModuleRootSync('@appium/support', __filename)!,
-      );
+  describe('getModuleRootSync', function () {
+    it("should be able to find current module's root", function () {
+      expect(path.resolve(__dirname)).to.contain(node.getModuleRootSync('@appium/support', __filename)!);
     });
 
-    it('should return null if no root is found', function() {
+    it('should return null if no root is found', function () {
       expect(node.getModuleRootSync('yolo', __filename)).to.be.null;
     });
   });
 
-  describe('getObjectId', function() {
-    it('should be able to calculate object identifiers', function() {
+  describe('getObjectId', function () {
+    it('should be able to calculate object identifiers', function () {
       const obj1 = {};
       const obj2 = {};
       expect(node.getObjectId({})).to.not.eql(node.getObjectId(obj1));
@@ -48,8 +46,8 @@ describe('node utilities', function() {
     });
   });
 
-  describe('deepFreeze', function() {
-    it('should be able to deep freeze objects', function() {
+  describe('deepFreeze', function () {
+    it('should be able to deep freeze objects', function () {
       const obj1 = {};
       expect(node.deepFreeze(obj1)).to.eql(obj1);
       const obj2 = node.deepFreeze({ a: { b: 'c' } });

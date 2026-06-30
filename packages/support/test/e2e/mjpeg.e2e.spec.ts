@@ -40,7 +40,7 @@ const TEST_IMG_JPG =
  */
 function initMJpegServer(port: number, intMs = 300, times = 20): http.Server {
   const server = http
-    .createServer(async function(req, res) {
+    .createServer(async function (req, res) {
       const mJpegReqHandler = mJpegServer.createReqHandler(req, res);
       const jpg = Buffer.from(TEST_IMG_JPG, 'base64');
 
@@ -56,19 +56,19 @@ function initMJpegServer(port: number, intMs = 300, times = 20): http.Server {
   return server;
 }
 
-describe('MJpeg Stream (e2e)', function() {
+describe('MJpeg Stream (e2e)', function () {
   let mJpegServer: http.Server | null = null;
   let stream: InstanceType<typeof MJpegStream>;
   let serverUrl: string;
   let port: number;
 
-  before(async function() {
+  before(async function () {
     port = await getPort();
     serverUrl = `http://${MJPEG_HOST}:${port}`;
     mJpegServer = initMJpegServer(port);
   });
 
-  after(function() {
+  after(function () {
     if (mJpegServer) {
       mJpegServer.close();
     }
@@ -77,7 +77,7 @@ describe('MJpeg Stream (e2e)', function() {
     }
   });
 
-  it('should update mjpeg stream based on new data from mjpeg server', async function() {
+  it('should update mjpeg stream based on new data from mjpeg server', async function () {
     stream = new MJpegStream(serverUrl, () => undefined);
     /* eslint-disable dot-notation -- access private lastChunk/updateCount for assertion */
     expect(stream['lastChunk']).to.not.exist;
@@ -109,7 +109,7 @@ describe('MJpeg Stream (e2e)', function() {
     /* eslint-enable dot-notation */
   });
 
-  it('should error out if the server cannot be connected', async function() {
+  it('should error out if the server cannot be connected', async function () {
     stream = new MJpegStream('http://localhost', () => undefined);
     await expect(stream.start()).to.eventually.be.rejected;
   });

@@ -9,26 +9,26 @@ use(chaiAsPromised);
 
 const log = logger.getLogger();
 
-describe('storage', function() {
+describe('storage', function () {
   let tmpRoot: string | undefined;
   let storage: Storage | null;
   let storageRoot: string | undefined;
 
-  before(async function() {
+  before(async function () {
     tmpRoot = await tempDir.openDir();
   });
 
-  after(async function() {
+  after(async function () {
     if (tmpRoot && (await fs.exists(tmpRoot))) {
       await fs.rimraf(tmpRoot);
     }
   });
 
-  beforeEach(async function() {
+  beforeEach(async function () {
     storageRoot = await tempDir.openDir();
   });
 
-  afterEach(async function() {
+  afterEach(async function () {
     if (storage) {
       await storage.reset();
       storage = null;
@@ -39,14 +39,14 @@ describe('storage', function() {
     }
   });
 
-  it('should be initially empty', async function() {
+  it('should be initially empty', async function () {
     storage = new Storage(storageRoot!, false, false, log);
     const files = await storage.list();
     expect(files).to.be.empty;
     expect(await storage.delete('foo')).to.be.false;
   });
 
-  it('should reset all files if shouldPreserveFiles is not requested', async function() {
+  it('should reset all files if shouldPreserveFiles is not requested', async function () {
     const name = 'foo.bar';
     const tmpName = 'bar.baz.filepart';
     await fs.writeFile(path.join(storageRoot!, name), Buffer.alloc(1));
@@ -59,7 +59,7 @@ describe('storage', function() {
     expect(await fs.exists(path.join(storageRoot!, tmpName))).to.be.false;
   });
 
-  it('should only reset partial files if shouldPreserveFiles requested', async function() {
+  it('should only reset partial files if shouldPreserveFiles requested', async function () {
     const name = 'foo.bar';
     const tmpName = 'bar.baz.filepart';
     await fs.writeFile(path.join(storageRoot!, name), Buffer.alloc(1));
@@ -73,7 +73,7 @@ describe('storage', function() {
     expect(await fs.exists(path.join(storageRoot!, tmpName))).to.be.false;
   });
 
-  it('should perform basic operations', async function() {
+  it('should perform basic operations', async function () {
     storage = new Storage(storageRoot!, false, false, log);
     const name = 'foo.bar';
     const size = 1 * 1024 * 1024;
@@ -88,7 +88,7 @@ describe('storage', function() {
     expect(files).to.be.empty;
   });
 
-  it('should be reset and preserve the root', async function() {
+  it('should be reset and preserve the root', async function () {
     storage = new Storage(storageRoot!, true, false, log);
     const name = 'foo.bar';
     const size = 1 * 1024 * 1024;
@@ -99,7 +99,7 @@ describe('storage', function() {
     expect(await fs.exists(storageRoot!)).to.be.true;
   });
 
-  it('should be reset and preserve items', async function() {
+  it('should be reset and preserve items', async function () {
     storage = new Storage(storageRoot!, false, true, log);
     const name = 'foo.bar';
     const size = 1 * 1024 * 1024;
@@ -110,23 +110,23 @@ describe('storage', function() {
     expect(await fs.exists(storageRoot!)).to.be.true;
   });
 
-  describe('validateStorageItemName', function() {
-    it('should accept valid file names', function() {
+  describe('validateStorageItemName', function () {
+    it('should accept valid file names', function () {
       expect(() => validateStorageItemName('foo.bar')).not.to.throw();
       expect(() => validateStorageItemName('foo-bar_baz')).not.to.throw();
     });
 
-    it('should reject names that must be sanitized', function() {
+    it('should reject names that must be sanitized', function () {
       expect(() => validateStorageItemName('foo/bar')).to.throw(
         StorageArgumentError,
-        'The provided name value \'foo/bar\' must be a valid file name. Did you mean \'foo_bar\'?',
+        "The provided name value 'foo/bar' must be a valid file name. Did you mean 'foo_bar'?",
       );
     });
 
-    it('should reject empty file names', function() {
+    it('should reject empty file names', function () {
       expect(() => validateStorageItemName('')).to.throw(
         StorageArgumentError,
-        'The provided file name \'\' must not be empty',
+        "The provided file name '' must not be empty",
       );
     });
   });

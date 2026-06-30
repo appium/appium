@@ -40,14 +40,11 @@ export async function packageDidChange(appiumHome: string): Promise<boolean> {
   if (isChanged) {
     try {
       await writeHash();
-      log.debug(
-        `Updated hash of ${appiumHome}/package.json from: ${oldHash ?? '(none)'} to: ${hash}`,
-      );
+      log.debug(`Updated hash of ${appiumHome}/package.json from: ${oldHash ?? '(none)'} to: ${hash}`);
     } catch (err: any) {
-      throw new Error(
-        `Appium could not write hash file: ${hashFilenameDir}. Original error: ${err.message}`,
-        { cause: err },
-      );
+      throw new Error(`Appium could not write hash file: ${hashFilenameDir}. Original error: ${err.message}`, {
+        cause: err,
+      });
     }
   }
 

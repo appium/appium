@@ -11,28 +11,28 @@ import { setPath } from '../../../lib/utils';
 const { expect } = chai;
 chai.use(chaiAsPromised);
 
-describe('bootstrap/startup-config', function() {
+describe('bootstrap/startup-config', function () {
   let sandbox: SinonSandbox;
 
-  beforeEach(function() {
+  beforeEach(function () {
     sandbox = createSandbox();
   });
 
-  afterEach(function() {
+  afterEach(function () {
     sandbox.restore();
   });
 
-  describe('showConfig()', function() {
+  describe('showConfig()', function () {
     let log: SinonSpy;
     let dir: SinonSpy;
 
-    beforeEach(function() {
+    beforeEach(function () {
       log = sandbox.spy(console, 'log');
       dir = sandbox.spy(console, 'dir');
     });
 
-    describe('when a config file is present', function() {
-      it('should dump the current Appium config', function() {
+    describe('when a config file is present', function () {
+      it('should dump the current Appium config', function () {
         showConfig(
           { address: 'bar' },
           {
@@ -47,7 +47,7 @@ describe('bootstrap/startup-config', function() {
         expect(log.calledWith('Appium Configuration\n')).to.be.true;
       });
 
-      it('should skip empty objects', function() {
+      it('should skip empty objects', function () {
         showConfig(
           // @ts-expect-error
           { foo: 'bar', cows: {}, pigs: [], sheep: 0, ducks: false },
@@ -59,8 +59,8 @@ describe('bootstrap/startup-config', function() {
       });
     });
 
-    describe('when a config file is not present', function() {
-      it('should dump the current Appium config (sans config file contents)', function() {
+    describe('when a config file is not present', function () {
+      it('should dump the current Appium config (sans config file contents)', function () {
         showConfig(
           // @ts-expect-error
           { foo: 'bar', cows: {}, pigs: [], sheep: 0, ducks: false },
@@ -72,45 +72,45 @@ describe('bootstrap/startup-config', function() {
       });
     });
 
-    describe('when no CLI arguments (other than --show-config) provided', function() {
-      it('should not dump CLI args', function() {
+    describe('when no CLI arguments (other than --show-config) provided', function () {
+      it('should not dump CLI args', function () {
         showConfig({}, {}, {}, {});
         expect(log.calledWith('\n(no CLI parameters provided)')).to.be.true;
       });
     });
   });
 
-  describe('getNonDefaultServerArgs()', function() {
+  describe('getNonDefaultServerArgs()', function () {
     let args: Record<string, unknown>;
 
-    describe('without extension schemas', function() {
-      beforeEach(async function() {
+    describe('without extension schemas', function () {
+      beforeEach(async function () {
         resetSchema();
         await getParser(true);
         args = getDefaultsForSchema();
       });
 
-      it('should show none if we have all the defaults', function() {
+      it('should show none if we have all the defaults', function () {
         const nonDefaultArgs = getNonDefaultServerArgs(args);
         expect(nonDefaultArgs).to.be.empty;
       });
 
-      it('should catch a non-default argument', function() {
+      it('should catch a non-default argument', function () {
         args.allowCors = true;
         const nonDefaultArgs = getNonDefaultServerArgs(args);
         expect(nonDefaultArgs).to.eql({ allowCors: true });
       });
 
-      describe('when arg is an array', function() {
-        it('should return the arg as an array', function() {
+      describe('when arg is an array', function () {
+        it('should return the arg as an array', function () {
           args.usePlugins = ['all'];
           expect(getNonDefaultServerArgs(args)).to.eql({ usePlugins: ['all'] });
         });
       });
     });
 
-    describe('with extension schemas', function() {
-      beforeEach(async function() {
+    describe('with extension schemas', function () {
+      beforeEach(async function () {
         resetSchema();
         await registerSchema(PLUGIN_TYPE, 'crypto-fiend', {
           type: 'object',
@@ -121,12 +121,12 @@ describe('bootstrap/startup-config', function() {
         args = getDefaultsForSchema();
       });
 
-      it('should take extension schemas into account', function() {
+      it('should take extension schemas into account', function () {
         const nonDefaultArgs = getNonDefaultServerArgs(args);
         expect(nonDefaultArgs).to.be.empty;
       });
 
-      it('should catch a non-default argument', function() {
+      it('should catch a non-default argument', function () {
         setPath(args, 'plugin.crypto-fiend.elite', false);
         const nonDefaultArgs = getNonDefaultServerArgs(args);
         const expected: Record<string, unknown> = {};

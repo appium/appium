@@ -54,9 +54,7 @@ export async function walk(dir, ext) {
  */
 export async function performApiRequest(suffix = '', opts = {}) {
   const { method = 'GET', payload, headers, params, isProjectSpecific = true } = opts;
-  const url = isProjectSpecific
-    ? `${API_ROOT}/projects/${PROJECT_ID}${suffix}`
-    : `${API_ROOT}${suffix}`;
+  const url = isProjectSpecific ? `${API_ROOT}/projects/${PROJECT_ID}${suffix}` : `${API_ROOT}${suffix}`;
   log.debug(`Sending ${method} request to ${url}`);
   if (_.isPlainObject(payload)) {
     log.debug(`Request payload: ${JSON.stringify(payload)}`);

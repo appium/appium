@@ -113,22 +113,17 @@ export async function getImagesMatches(
 
   const pool = new OpenCvAutoreleasePool();
   try {
-    const {
-      detectorName = 'ORB',
-      visualize = false,
-      goodMatchesFactor,
-      matchFunc = 'BruteForce',
-    } = options;
+    const { detectorName = 'ORB', visualize = false, goodMatchesFactor, matchFunc = 'BruteForce' } = options;
     if (!(detectorName in AVAILABLE_DETECTORS)) {
       throw new Error(
-        `'${detectorName}' detector is unknown. `
-          + `Only ${JSON.stringify(Object.keys(AVAILABLE_DETECTORS))} detectors are supported.`,
+        `'${detectorName}' detector is unknown. ` +
+          `Only ${JSON.stringify(Object.keys(AVAILABLE_DETECTORS))} detectors are supported.`,
       );
     }
     if (!(matchFunc in AVAILABLE_MATCHING_FUNCTIONS)) {
       throw new Error(
-        `'${matchFunc}' matching function is unknown. `
-          + `Only ${JSON.stringify(Object.keys(AVAILABLE_MATCHING_FUNCTIONS))} matching functions are supported.`,
+        `'${matchFunc}' matching function is unknown. ` +
+          `Only ${JSON.stringify(Object.keys(AVAILABLE_MATCHING_FUNCTIONS))} matching functions are supported.`,
       );
     }
 
@@ -150,8 +145,8 @@ export async function getImagesMatches(
     const totalCount = matchesVec.size();
     if (totalCount < 1) {
       throw new Error(
-        `Could not find any matches between images. Double-check orientation, `
-          + `resolution, or use another detector or matching function.`,
+        `Could not find any matches between images. Double-check orientation, ` +
+          `resolution, or use another detector or matching function.`,
       );
     }
     let matches: any[] = [];
@@ -159,8 +154,9 @@ export async function getImagesMatches(
       matches.push(matchesVec.get(i));
     }
 
-    const hasGoodMatchesFactor = typeof goodMatchesFactor === 'function'
-      || (typeof goodMatchesFactor === 'number' && !Number.isNaN(goodMatchesFactor));
+    const hasGoodMatchesFactor =
+      typeof goodMatchesFactor === 'function' ||
+      (typeof goodMatchesFactor === 'number' && !Number.isNaN(goodMatchesFactor));
 
     if (hasGoodMatchesFactor) {
       if (typeof goodMatchesFactor === 'function') {
@@ -202,15 +198,7 @@ export async function getImagesMatches(
       }
       const visualization = pool.add(new cv.Mat());
       const color = pool.add(new cv.Scalar(0, 255, 0, 255));
-      cv.drawMatches(
-        img1,
-        result1.keyPoints,
-        img2,
-        result2.keyPoints,
-        goodMatchesVec,
-        visualization,
-        color,
-      );
+      cv.drawMatches(img1, result1.keyPoints, img2, result2.keyPoints, goodMatchesVec, visualization, color);
       highlightRegion(visualization, rect1);
       highlightRegion(visualization, {
         x: img1.cols + rect2.x,
@@ -273,8 +261,7 @@ export async function getImagesSimilarity(
     const reference = pool.add(referenceRaw);
     if (template.rows !== reference.rows || template.cols !== reference.cols) {
       throw new Error(
-        'Both images are expected to have the same size in order to '
-          + 'calculate the similarity score.',
+        'Both images are expected to have the same size in order to ' + 'calculate the similarity score.',
       );
     }
     template.convertTo(template, cv.CV_8UC3);
@@ -371,7 +358,7 @@ export async function getImageOccurrence(
     const fullImg = pool.add(fullImgRaw);
     const partialImg = pool.add(partialImgRaw);
     const matched = pool.add(new cv.Mat());
-    const results: Array<{ score: number; rect: Rect; visualization?: Buffer; }> = [];
+    const results: Array<{ score: number; rect: Rect; visualization?: Buffer }> = [];
     let visualization: Buffer | null = null;
 
     try {
@@ -417,15 +404,13 @@ export async function getImageOccurrence(
 
       if (results.length === 0) {
         // Below error message, `Cannot find any occurrences` is referenced in find by image
-        throw new Error(
-          `Match threshold: ${threshold}. Highest match value found was ${minMax.maxVal}`,
-        );
+        throw new Error(`Match threshold: ${threshold}. Highest match value found was ${minMax.maxVal}`);
       }
     } catch (e: any) {
       // Below error message, `Cannot find any occurrences` is referenced in find by image
       throw new Error(
-        `Cannot find any occurrences of the partial image in the full image. `
-          + `Original error: ${e?.message || String(e)}`,
+        `Cannot find any occurrences of the partial image in the full image. ` +
+          `Original error: ${e?.message || String(e)}`,
         { cause: e },
       );
     }
@@ -442,10 +427,7 @@ export async function getImageOccurrence(
         visualizePromises.push(cvMatToPng(singleHighlightedImage));
       }
       let restPngBuffers: Buffer[] = [];
-      [visualization, ...restPngBuffers] = await Promise.all([
-        cvMatToPng(fullHighlightedImage),
-        ...visualizePromises,
-      ]);
+      [visualization, ...restPngBuffers] = await Promise.all([cvMatToPng(fullHighlightedImage), ...visualizePromises]);
       for (let i = 0; i < results.length; i++) {
         const pngBuffer = restPngBuffers[i];
         if (pngBuffer) {
@@ -469,8 +451,8 @@ export async function getImageOccurrence(
 function toMatchingMethod(name: string): number {
   if (!MATCHING_METHODS.includes(name as TemplateMatchingMethod)) {
     throw new Error(
-      `The matching method '${name}' is unknown. `
-        + `Only the following matching methods are supported: ${MATCHING_METHODS}`,
+      `The matching method '${name}' is unknown. ` +
+        `Only the following matching methods are supported: ${MATCHING_METHODS}`,
     );
   }
   if (!cv) {

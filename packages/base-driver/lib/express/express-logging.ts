@@ -31,18 +31,14 @@ function startLogFormatterHandler(tokens: unknown, req: Request, res: Response):
   let reqBody = '';
   if (req.body) {
     try {
-      reqBody = util.truncateString(
-        typeof req.body === 'string' ? req.body : JSON.stringify(req.body),
-        { length: MAX_LOG_BODY_LENGTH },
-      );
+      reqBody = util.truncateString(typeof req.body === 'string' ? req.body : JSON.stringify(req.body), {
+        length: MAX_LOG_BODY_LENGTH,
+      });
     } catch {
       // ignore
     }
   }
-  log.info(
-    requestStartLoggingFormat(tokens, req, res),
-    logger.markSensitive(console.styleText('grey', reqBody)),
-  );
+  log.info(requestStartLoggingFormat(tokens, req, res), logger.markSensitive(console.styleText('grey', reqBody)));
   return undefined;
 }
 
@@ -69,9 +65,10 @@ function requestEndLoggingFormat(tokens: MorganTokens, req: Request, res: Respon
     statusStr = console.styleText('green', statusStr);
   }
   const fn = compile(
-    `${console.styleText('white', '<-- :method :url ')}${statusStr} ${
-      console.styleText('grey', ':response-time ms - :res[content-length]')
-    }`,
+    `${console.styleText('white', '<-- :method :url ')}${statusStr} ${console.styleText(
+      'grey',
+      ':response-time ms - :res[content-length]',
+    )}`,
   );
   return fn(tokens, req, res);
 }

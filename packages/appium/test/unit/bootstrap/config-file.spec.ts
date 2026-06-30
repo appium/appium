@@ -5,7 +5,7 @@ import { createSandbox, type SinonSandbox, type SinonSpy, type SinonStubbedMembe
 import * as YAML from 'yaml';
 import * as schema from '../../../lib/schema/schema';
 import { resolveFixture, rewiremock } from '../../helpers';
-type LilconfigResult = { config: unknown; filepath: string; isEmpty?: boolean; };
+type LilconfigResult = { config: unknown; filepath: string; isEmpty?: boolean };
 type AsyncSearcherLoadStub = SinonStubbedMember<() => Promise<LilconfigResult>>;
 type AsyncSearcherSearchStub = SinonStubbedMember<() => Promise<LilconfigResult>>;
 
@@ -23,7 +23,7 @@ type NormalizeConfigFn = (config: unknown) => unknown;
 const { expect } = chai;
 chai.use(chaiAsPromised);
 
-describe('bootstrap/config-file', function() {
+describe('bootstrap/config-file', function () {
   const GOOD_YAML_CONFIG_FILEPATH = resolveFixture('config', 'appium-config-good.yaml');
   const GOOD_JSON_CONFIG_FILEPATH = resolveFixture('config', 'appium-config-good.json');
   const GOOD_JS_CONFIG_FILEPATH = resolveFixture('config', 'appium-config-good.ts');
@@ -35,10 +35,10 @@ describe('bootstrap/config-file', function() {
   let sandbox: SinonSandbox;
   let readConfigFile: ReadConfigFileFn;
   let normalizeConfig: NormalizeConfigFn;
-  let lc: { load: AsyncSearcherLoadStub; search: AsyncSearcherSearchStub; };
+  let lc: { load: AsyncSearcherLoadStub; search: AsyncSearcherSearchStub };
   let validateSpy: SinonSpy;
 
-  before(async function() {
+  before(async function () {
     // generally called via the CLI parser, this needs to be done manually in tests.
     // we don't need to do this before _each_ test, because we're not changing the schema.
     // if we did change the schema, this would need to be in `beforeEach()` and `afterEach()`
@@ -46,7 +46,7 @@ describe('bootstrap/config-file', function() {
     await schema.finalizeSchema();
   });
 
-  beforeEach(function() {
+  beforeEach(function () {
     sandbox = createSandbox();
 
     // we have to manually type this (and `search()`) because we'd only get the real type
@@ -94,61 +94,61 @@ describe('bootstrap/config-file', function() {
     validateSpy = schema.validate as unknown as SinonSpy;
   });
 
-  afterEach(function() {
+  afterEach(function () {
     sandbox.restore();
   });
 
-  describe('readConfigFile()', function() {
+  describe('readConfigFile()', function () {
     let result: ReadConfigFileResult;
 
-    it('should support yaml', async function() {
+    it('should support yaml', async function () {
       const { config } = await readConfigFile(GOOD_YAML_CONFIG_FILEPATH);
       expect(config).to.eql(normalizeConfig(GOOD_JSON_CONFIG));
       expect(validateSpy.calledOnce).to.be.true;
     });
 
-    it('should support json', async function() {
+    it('should support json', async function () {
       const { config } = await readConfigFile(GOOD_JSON_CONFIG_FILEPATH);
       expect(config).to.eql(normalizeConfig(GOOD_JSON_CONFIG));
       expect(validateSpy.calledOnce).to.be.true;
     });
 
-    it('should support js', async function() {
+    it('should support js', async function () {
       const { config } = await readConfigFile(GOOD_JS_CONFIG_FILEPATH);
       expect(config).to.eql(normalizeConfig(GOOD_JSON_CONFIG));
       expect(validateSpy.calledOnce).to.be.true;
     });
 
-    describe('when no filepath provided', function() {
-      beforeEach(async function() {
+    describe('when no filepath provided', function () {
+      beforeEach(async function () {
         result = await readConfigFile();
       });
 
-      it('should search for a config file', function() {
+      it('should search for a config file', function () {
         expect(lc.search.calledOnce).to.be.true;
         expect(validateSpy.calledOnce).to.be.true;
       });
 
-      it('should not try to load a config file directly', function() {
+      it('should not try to load a config file directly', function () {
         expect(lc.load.called).to.be.false;
       });
 
-      describe('when no config file is found', function() {
-        beforeEach(async function() {
+      describe('when no config file is found', function () {
+        beforeEach(async function () {
           (lc.search as any).resolves();
           validateSpy.resetHistory();
           result = await readConfigFile();
         });
 
-        it('should resolve with an empty object', function() {
+        it('should resolve with an empty object', function () {
           expect(result).to.be.an('object').that.is.empty;
           expect(validateSpy.calledOnce).to.be.false;
         });
       });
 
-      describe('when a config file is found', function() {
-        describe('when the config file is empty', function() {
-          beforeEach(async function() {
+      describe('when a config file is found', function () {
+        describe('when the config file is empty', function () {
+          beforeEach(async function () {
             (lc.search as any).resolves({
               isEmpty: true,
               filepath: '/path/to/file.json',
@@ -158,22 +158,22 @@ describe('bootstrap/config-file', function() {
             result = await readConfigFile();
           });
 
-          it('should resolve with an object with an `isEmpty` property', function() {
+          it('should resolve with an object with an `isEmpty` property', function () {
             expect(result).to.have.property('isEmpty', true);
           });
         });
 
-        describe('when the config file is not empty', function() {
-          it('should validate the config against a schema', function() {
+        describe('when the config file is not empty', function () {
+          it('should validate the config against a schema', function () {
             expect(validateSpy.calledOnceWith(GOOD_JSON_CONFIG)).to.be.true;
           });
 
-          describe('when the config file is valid', function() {
-            beforeEach(async function() {
+          describe('when the config file is valid', function () {
+            beforeEach(async function () {
               result = await readConfigFile();
             });
 
-            it('should resolve with an object having `config` property and empty array of errors', function() {
+            it('should resolve with an object having `config` property and empty array of errors', function () {
               expect(result).to.deep.equal({
                 config: normalizeConfig(GOOD_JSON_CONFIG),
                 errors: [],
@@ -182,8 +182,8 @@ describe('bootstrap/config-file', function() {
             });
           });
 
-          describe('when the config file is invalid', function() {
-            beforeEach(async function() {
+          describe('when the config file is invalid', function () {
+            beforeEach(async function () {
               (lc.search as any).resolves({
                 config: { foo: 'bar' },
                 filepath: '/path/to/file.json',
@@ -191,7 +191,7 @@ describe('bootstrap/config-file', function() {
               result = await readConfigFile();
             });
 
-            it('should resolve with an object having a nonempty array of errors', function() {
+            it('should resolve with an object having a nonempty array of errors', function () {
               expect(result).to.have.property('errors').that.is.not.empty;
             });
           });
@@ -199,56 +199,54 @@ describe('bootstrap/config-file', function() {
       });
     });
 
-    describe('when filepath provided', function() {
-      beforeEach(async function() {
+    describe('when filepath provided', function () {
+      beforeEach(async function () {
         result = await readConfigFile('appium.json');
       });
 
-      it('should not attempt to find a config file', function() {
+      it('should not attempt to find a config file', function () {
         expect(lc.search.called).to.be.false;
       });
 
-      it('should try to load a config file directly', function() {
+      it('should try to load a config file directly', function () {
         expect(lc.load.calledOnce).to.be.true;
       });
 
-      describe('when no config file exists at path', function() {
-        beforeEach(function() {
+      describe('when no config file exists at path', function () {
+        beforeEach(function () {
           lc.load.rejects(Object.assign(new Error(), { code: 'ENOENT' }));
         });
 
-        it('should reject with user-friendly message', async function() {
-          await expect(readConfigFile('appium.json')).to.be.rejectedWith(
-            /not found at user-provided path/,
-          );
+        it('should reject with user-friendly message', async function () {
+          await expect(readConfigFile('appium.json')).to.be.rejectedWith(/not found at user-provided path/);
         });
       });
 
-      describe('when the config file is invalid JSON', function() {
-        beforeEach(function() {
+      describe('when the config file is invalid JSON', function () {
+        beforeEach(function () {
           lc.load.rejects(new SyntaxError());
         });
 
-        it('should reject with user-friendly message', async function() {
+        it('should reject with user-friendly message', async function () {
           await expect(readConfigFile('appium.json')).to.be.rejectedWith(
             /Config file at user-provided path appium.json is invalid/,
           );
         });
       });
 
-      describe('when something else is wrong with loading the config file', function() {
-        beforeEach(function() {
+      describe('when something else is wrong with loading the config file', function () {
+        beforeEach(function () {
           lc.load.rejects(new Error('guru meditation'));
         });
 
-        it('should pass error through', async function() {
+        it('should pass error through', async function () {
           await expect(readConfigFile('appium.json')).to.be.rejectedWith(/guru meditation/);
         });
       });
 
-      describe('when a config file is found', function() {
-        describe('when the config file is empty', function() {
-          beforeEach(async function() {
+      describe('when a config file is found', function () {
+        describe('when the config file is empty', function () {
+          beforeEach(async function () {
             (lc.search as any).resolves({
               isEmpty: true,
               filepath: '/path/to/file.json',
@@ -257,22 +255,22 @@ describe('bootstrap/config-file', function() {
             result = await readConfigFile();
           });
 
-          it('should resolve with an object with an `isEmpty` property', function() {
+          it('should resolve with an object with an `isEmpty` property', function () {
             expect(result).to.have.property('isEmpty', true);
           });
         });
 
-        describe('when the config file is not empty', function() {
-          it('should validate the config against a schema', function() {
+        describe('when the config file is not empty', function () {
+          it('should validate the config against a schema', function () {
             expect(validateSpy.calledOnceWith(GOOD_JSON_CONFIG)).to.be.true;
           });
 
-          describe('when the config file is valid', function() {
-            beforeEach(async function() {
+          describe('when the config file is valid', function () {
+            beforeEach(async function () {
               result = await readConfigFile();
             });
 
-            it('should resolve with an object having `config` property and empty array of errors', function() {
+            it('should resolve with an object having `config` property and empty array of errors', function () {
               expect(result).to.deep.equal({
                 errors: [],
                 config: normalizeConfig(GOOD_JSON_CONFIG),
@@ -281,12 +279,12 @@ describe('bootstrap/config-file', function() {
             });
           });
 
-          describe('when the config file is invalid', function() {
-            beforeEach(async function() {
+          describe('when the config file is invalid', function () {
+            beforeEach(async function () {
               result = await readConfigFile(BAD_JSON_CONFIG_FILEPATH);
             });
 
-            it('should resolve with an object having a nonempty array of errors', function() {
+            it('should resolve with an object having a nonempty array of errors', function () {
               expect(result).to.have.property('errors').that.is.not.empty;
             });
           });

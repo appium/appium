@@ -17,10 +17,7 @@ import { toParserArgs } from '../schema/cli-args';
 const DRIVER_EXAMPLE = 'xcuitest';
 const PLUGIN_EXAMPLE = 'images';
 
-export type ArgumentDefinitions = Map<
-  [name: string] | [name: string, alias: string],
-  ArgumentOptions
->;
+export type ArgumentDefinitions = Map<[name: string] | [name: string, alias: string], ArgumentOptions>;
 
 /**
  * This is necessary because we pass the array into `argparse`. `argparse` is bad and mutates things. We don't want that.
@@ -53,10 +50,7 @@ export const getExtensionArgs = util.memoize(function getExtensionArgs(): Record
   ExtensionType,
   Record<CliExtensionSubcommand, ArgumentDefinitions>
 > {
-  const extensionArgs = {} as Record<
-    ExtensionType,
-    Record<CliExtensionSubcommand, ArgumentDefinitions>
-  >;
+  const extensionArgs = {} as Record<ExtensionType, Record<CliExtensionSubcommand, ArgumentDefinitions>>;
   for (const type of EXTENSION_TYPES) {
     extensionArgs[type] = {
       [EXT_SUBCOMMAND_LIST]: makeListArgs(type),
@@ -129,8 +123,8 @@ function makeInstallArgs(type: ExtensionType): ArgumentDefinitions {
       [type],
       {
         type: 'str',
-        help: `Name of the ${type} to install, for example: `
-          + (type === DRIVER_TYPE ? DRIVER_EXAMPLE : PLUGIN_EXAMPLE),
+        help:
+          `Name of the ${type} to install, for example: ` + (type === DRIVER_TYPE ? DRIVER_EXAMPLE : PLUGIN_EXAMPLE),
       },
     ],
     [
@@ -139,8 +133,9 @@ function makeInstallArgs(type: ExtensionType): ArgumentDefinitions {
         required: false,
         default: null,
         choices: INSTALL_TYPES_ARRAY,
-        help: `Where to look for the ${type} if it is not one of Appium's official `
-          + `${type}s. Possible values: ${INSTALL_TYPES_ARRAY.join(', ')}`,
+        help:
+          `Where to look for the ${type} if it is not one of Appium's official ` +
+          `${type}s. Possible values: ${INSTALL_TYPES_ARRAY.join(', ')}`,
         dest: 'installType',
       },
     ],
@@ -150,8 +145,7 @@ function makeInstallArgs(type: ExtensionType): ArgumentDefinitions {
         required: false,
         default: null,
         type: 'str',
-        help: `The Node.js package name of the ${type}. `
-          + `Required if "source" is set to "git" or "github".`,
+        help: `The Node.js package name of the ${type}. ` + `Required if "source" is set to "git" or "github".`,
         dest: 'packageName',
       },
     ],
@@ -168,8 +162,8 @@ function makeUninstallArgs(type: ExtensionType): ArgumentDefinitions {
       [type],
       {
         type: 'str',
-        help: `Name of the ${type} to uninstall, for example: `
-          + (type === DRIVER_TYPE ? DRIVER_EXAMPLE : PLUGIN_EXAMPLE),
+        help:
+          `Name of the ${type} to uninstall, for example: ` + (type === DRIVER_TYPE ? DRIVER_EXAMPLE : PLUGIN_EXAMPLE),
       },
     ],
   ]);
@@ -185,8 +179,9 @@ function makeDoctorArgs(type: ExtensionType): ArgumentDefinitions {
       [type],
       {
         type: 'str',
-        help: `Name of the ${type} to run doctor checks for, for example: `
-          + (type === DRIVER_TYPE ? DRIVER_EXAMPLE : PLUGIN_EXAMPLE),
+        help:
+          `Name of the ${type} to run doctor checks for, for example: ` +
+          (type === DRIVER_TYPE ? DRIVER_EXAMPLE : PLUGIN_EXAMPLE),
       },
     ],
   ]);
@@ -202,10 +197,11 @@ function makeUpdateArgs(type: ExtensionType): ArgumentDefinitions {
       [type],
       {
         type: 'str',
-        help: `Name of the ${type} to update, or "installed" to update all installed ${type}s. `
-          + `To see available ${type} updates, run "appium ${type} list --installed --updates". `
-          + 'For example: '
-          + (type === DRIVER_TYPE ? DRIVER_EXAMPLE : PLUGIN_EXAMPLE),
+        help:
+          `Name of the ${type} to update, or "installed" to update all installed ${type}s. ` +
+          `To see available ${type} updates, run "appium ${type} list --installed --updates". ` +
+          'For example: ' +
+          (type === DRIVER_TYPE ? DRIVER_EXAMPLE : PLUGIN_EXAMPLE),
       },
     ],
     [
@@ -230,8 +226,9 @@ function makeRunArgs(type: ExtensionType): ArgumentDefinitions {
       [type],
       {
         type: 'str',
-        help: `Name of the ${type} to run a script from, for example: `
-          + (type === DRIVER_TYPE ? DRIVER_EXAMPLE : PLUGIN_EXAMPLE),
+        help:
+          `Name of the ${type} to run a script from, for example: ` +
+          (type === DRIVER_TYPE ? DRIVER_EXAMPLE : PLUGIN_EXAMPLE),
       },
     ],
     [
@@ -240,8 +237,9 @@ function makeRunArgs(type: ExtensionType): ArgumentDefinitions {
         default: null,
         nargs: '?',
         type: 'str',
-        help: `Name of the ${type} script to run. If not provided, return a list `
-          + `of available scripts for this ${type}.`,
+        help:
+          `Name of the ${type} script to run. If not provided, return a list ` +
+          `of available scripts for this ${type}.`,
       },
     ],
   ]);

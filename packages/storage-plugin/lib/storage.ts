@@ -22,12 +22,7 @@ export class Storage {
   private readonly _shouldPreserveRoot: boolean;
   private readonly _shouldPreserveFiles: boolean;
 
-  constructor(
-    root: string,
-    shouldPreserveRoot: boolean,
-    shouldPreserveFiles: boolean,
-    log: AppiumLogger,
-  ) {
+  constructor(root: string, shouldPreserveRoot: boolean, shouldPreserveFiles: boolean, log: AppiumLogger) {
     this._root = root;
     this._log = log;
     this._shouldPreserveRoot = shouldPreserveRoot;
@@ -86,9 +81,7 @@ export class Storage {
 
     const files = (await this._listFiles())
       .map((p) => p.fullpath())
-      .filter(
-        (fullPath) => !this._shouldPreserveFiles || path.basename(fullPath).toLowerCase().endsWith(TMP_EXT),
-      );
+      .filter((fullPath) => !this._shouldPreserveFiles || path.basename(fullPath).toLowerCase().endsWith(TMP_EXT));
     if (util.isEmpty(files)) {
       return;
     }
@@ -110,8 +103,7 @@ export class Storage {
     } catch (e) {
       const message = e instanceof Error ? e.message : String(e);
       this._log.warn(
-        `Cannot list the '${this._root}' server storage folder. Original error: ${message}. `
-          + `Skipping the cleanup.`,
+        `Cannot list the '${this._root}' server storage folder. Original error: ${message}. ` + `Skipping the cleanup.`,
       );
       return;
     }
@@ -122,9 +114,7 @@ export class Storage {
       return;
     }
 
-    const matchedNames = itemNames.filter(
-      (name) => !this._shouldPreserveFiles || name.toLowerCase().endsWith(TMP_EXT),
-    );
+    const matchedNames = itemNames.filter((name) => !this._shouldPreserveFiles || name.toLowerCase().endsWith(TMP_EXT));
     for (const matchedName of matchedNames) {
       fs.rimrafSync(path.join(this._root, matchedName));
     }
@@ -213,13 +203,13 @@ export class Storage {
   ): Promise<void> {
     const { name, sha1 } = opts;
     this._log.info(
-      `'${name}' has been added to the server storage within `
-        + `${timer.getDuration().asMilliSeconds}ms. Verifying hashes.`,
+      `'${name}' has been added to the server storage within ` +
+        `${timer.getDuration().asMilliSeconds}ms. Verifying hashes.`,
     );
     if (actualHashDigest.toLowerCase() !== sha1.toLowerCase()) {
       throw new StorageArgumentError(
-        `The actual SHA1 hash value '${actualHashDigest}' must be equal `
-          + `to the expected hash value of '${sha1}' for '${name}'`,
+        `The actual SHA1 hash value '${actualHashDigest}' must be equal ` +
+          `to the expected hash value of '${sha1}' for '${name}'`,
       );
     }
     await fs.mv(fullPath, path.join(this._root, name));
@@ -236,8 +226,8 @@ export function requireValidItemOptions(opts: ItemOptions): ItemOptions {
   validateStorageItemName(opts.name);
   if (opts.sha1?.length !== SHA1_HASH_LEN) {
     throw new StorageArgumentError(
-      `The provided hash value '${opts.sha1}' must be a valid SHA1 string, for `
-        + `example 'ccc963411b2621335657963322890305ebe96186'`,
+      `The provided hash value '${opts.sha1}' must be a valid SHA1 string, for ` +
+        `example 'ccc963411b2621335657963322890305ebe96186'`,
     );
   }
   return opts;
@@ -257,8 +247,7 @@ export function validateStorageItemName(name: string): void {
   });
   if (name !== sanitizedName) {
     throw new StorageArgumentError(
-      `The provided name value '${name}' must be a valid file name. `
-        + `Did you mean '${sanitizedName}'?`,
+      `The provided name value '${name}' must be a valid file name. ` + `Did you mean '${sanitizedName}'?`,
     );
   }
 }

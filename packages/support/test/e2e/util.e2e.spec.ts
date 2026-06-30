@@ -8,33 +8,33 @@ import * as util from '../../lib/util';
 
 use(chaiAsPromised);
 
-describe('#util', function() {
+describe('#util', function () {
   let tmpRoot: string | null = null;
   let tmpFile: string;
   const content = 'YOLO';
 
-  beforeEach(async function() {
+  beforeEach(async function () {
     tmpRoot = await tempDir.openDir();
     tmpFile = path.resolve(tmpRoot, 'example.txt');
     await fs.writeFile(tmpFile, content, 'utf8');
   });
 
-  afterEach(async function() {
+  afterEach(async function () {
     if (tmpRoot) {
       await fs.rimraf(tmpRoot);
     }
     tmpRoot = null;
   });
 
-  describe('toInMemoryBase64()', function() {
-    it('should convert a file to base64 encoding', async function() {
+  describe('toInMemoryBase64()', function () {
+    it('should convert a file to base64 encoding', async function () {
       const data = await util.toInMemoryBase64(tmpFile);
       const fileContent = await fs.readFile(tmpFile);
       expect(data.toString()).to.eql(fileContent.toString('base64'));
     });
   });
 
-  describe('getLockFileGuard()', function() {
+  describe('getLockFileGuard()', function () {
     let lockFile: string;
     let testFile: string;
     let guardTmpRoot: string;
@@ -49,14 +49,14 @@ describe('#util', function() {
       return (await fs.readFile(testFile)).toString('utf8');
     }
 
-    beforeEach(async function() {
+    beforeEach(async function () {
       guardTmpRoot = await tempDir.openDir();
       lockFile = path.resolve(guardTmpRoot, 'test.lock');
       testFile = path.resolve(guardTmpRoot, 'test');
       await fs.writeFile(testFile, 'a', 'utf8');
     });
 
-    afterEach(async function() {
+    afterEach(async function () {
       try {
         await Promise.all([lockFile, testFile].map((p) => fs.unlink(p)));
       } catch {
@@ -64,7 +64,7 @@ describe('#util', function() {
       }
     });
 
-    it('should lock a file during the given behavior', async function() {
+    it('should lock a file during the given behavior', async function () {
       const guard = util.getLockFileGuard(lockFile);
       await expect(guard.check()).to.eventually.be.false;
       const guardPromise = guard(async () => await guardedBehavior('b', 500));
@@ -75,7 +75,7 @@ describe('#util', function() {
       await expect(testFileContents()).to.eventually.eql('ab');
     });
 
-    it('should recover a broken lock file', async function() {
+    it('should recover a broken lock file', async function () {
       await fs.writeFile(lockFile, 'dummy', 'utf8');
       const guard = util.getLockFileGuard(lockFile, {
         timeout: 3,
@@ -86,7 +86,7 @@ describe('#util', function() {
       await expect(testFileContents()).to.eventually.eql('ab');
     });
 
-    it('should block other behavior until the lock is released', async function() {
+    it('should block other behavior until the lock is released', async function () {
       // First prove that without a lock, we get races.
       await expect(testFileContents()).to.eventually.eql('a');
       const unguardedPromise1 = guardedBehavior('b', 500);
@@ -104,7 +104,7 @@ describe('#util', function() {
       await expect(testFileContents()).to.eventually.eql('acbbc');
     });
 
-    it('should return the result of the guarded behavior', async function() {
+    it('should return the result of the guarded behavior', async function () {
       const guard = util.getLockFileGuard(lockFile);
       const guardPromise1 = guard(async () => await guardedBehavior('hello', 500));
       const guardPromise2 = guard(async () => await guardedBehavior('world', 100));
@@ -114,7 +114,7 @@ describe('#util', function() {
       expect(ret2).to.eql('world');
     });
 
-    it('should time out if the lock is not released', { timeout: 5000 }, async function() {
+    it('should time out if the lock is not released', { timeout: 5000 }, async function () {
       const guard = util.getLockFileGuard(lockFile, { timeout: 0.5 });
       const p1 = guard(async () => await guardedBehavior('hello', 1200));
       const p2 = guard(async () => await guardedBehavior('world', 10));
@@ -122,7 +122,7 @@ describe('#util', function() {
       await expect(p1).to.eventually.eql('hello');
     });
 
-    it('should still release lock if guarded behavior fails', { timeout: 5000 }, async function() {
+    it('should still release lock if guarded behavior fails', { timeout: 5000 }, async function () {
       const guard = util.getLockFileGuard(lockFile);
       const p1 = guard(async () => {
         await sleep(500);

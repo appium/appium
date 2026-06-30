@@ -9,21 +9,13 @@ declare module '../driver' {
 }
 
 const BidiCommands: IBidiCommands = {
-  async bidiSubscribe<C extends Constraints>(
-    this: BaseDriver<C>,
-    events: string[],
-    contexts: string[] = [''],
-  ) {
+  async bidiSubscribe<C extends Constraints>(this: BaseDriver<C>, events: string[], contexts: string[] = ['']) {
     for (const event of events) {
       this.bidiEventSubs[event] = contexts;
     }
   },
 
-  async bidiUnsubscribe<C extends Constraints>(
-    this: BaseDriver<C>,
-    events: string[],
-    contexts: string[] = [''],
-  ) {
+  async bidiUnsubscribe<C extends Constraints>(this: BaseDriver<C>, events: string[], contexts: string[] = ['']) {
     for (const event of events) {
       if (this.bidiEventSubs[event]) {
         this.bidiEventSubs[event] = this.bidiEventSubs[event].filter((c) => !contexts.includes(c));
@@ -40,9 +32,7 @@ const BidiCommands: IBidiCommands = {
     return {
       ...base,
       ready: 'ready' in base ? (base.ready as boolean) : true,
-      message: 'message' in base
-        ? (base.message as string)
-        : `${this.constructor.name} is ready to accept commands`,
+      message: 'message' in base ? (base.message as string) : `${this.constructor.name} is ready to accept commands`,
     };
   },
 };

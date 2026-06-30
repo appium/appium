@@ -5,7 +5,7 @@ import ora from 'ora';
 
 export const JSON_SPACES = 4;
 
-type ErrorLike = Error & { stderr?: unknown; };
+type ErrorLike = Error & { stderr?: unknown };
 
 export class RingBuffer<T = any> {
   private readonly size: number;
@@ -78,11 +78,7 @@ export function log(json: boolean, msg: string): void {
  * @param fn - function to wrap with spinning
  * @returns result of `fn`
  */
-export async function spinWith<T>(
-  json: boolean,
-  msg: string,
-  fn: () => T | Promise<T>,
-): Promise<T> {
+export async function spinWith<T>(json: boolean, msg: string, fn: () => T | Promise<T>): Promise<T> {
   if (json) {
     return await fn();
   }

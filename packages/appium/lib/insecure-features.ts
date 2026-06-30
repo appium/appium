@@ -16,8 +16,8 @@ const FEATURE_NAME_SEPARATOR = ':';
 export function configureGlobalFeatures(this: AppiumDriver) {
   if (this.args.relaxedSecurityEnabled) {
     logger.info(
-      `Enabling relaxed security. All insecure features will be `
-        + `enabled unless explicitly disabled by --deny-insecure`,
+      `Enabling relaxed security. All insecure features will be ` +
+        `enabled unless explicitly disabled by --deny-insecure`,
     );
     this.relaxedSecurityEnabled = true;
   } else if (!util.isEmpty(this.args.allowInsecure)) {
@@ -47,24 +47,17 @@ export function configureGlobalFeatures(this: AppiumDriver) {
  * @param driver
  * @param driverName
  */
-export function configureDriverFeatures(
-  this: AppiumDriver,
-  driver: ExternalDriver,
-  driverName: string,
-) {
+export function configureDriverFeatures(this: AppiumDriver, driver: ExternalDriver, driverName: string) {
   if (this.relaxedSecurityEnabled) {
     this.log.info(
-      `Enabling relaxed security for this session as per the server configuration. `
-        + `All insecure features will be enabled unless explicitly disabled by --deny-insecure`,
+      `Enabling relaxed security for this session as per the server configuration. ` +
+        `All insecure features will be enabled unless explicitly disabled by --deny-insecure`,
     );
     driver.relaxedSecurityEnabled = true;
   }
   const allowedDriverFeatures = filterInsecureFeatures(this.allowInsecure, driverName);
   if (!util.isEmpty(allowedDriverFeatures)) {
-    this.log.info(
-      'Explicitly enabling insecure features for this session '
-        + 'as per the server configuration:',
-    );
+    this.log.info('Explicitly enabling insecure features for this session ' + 'as per the server configuration:');
     allowedDriverFeatures.forEach((a) => this.log.info(`    ${a}`));
     driver.allowInsecure = allowedDriverFeatures;
   }
@@ -72,9 +65,7 @@ export function configureDriverFeatures(
   if (util.isEmpty(deniedDriverFeatures)) {
     return;
   }
-  this.log.info(
-    'Explicitly disabling insecure features for this session ' + 'as per the server configuration:',
-  );
+  this.log.info('Explicitly disabling insecure features for this session ' + 'as per the server configuration:');
   deniedDriverFeatures.forEach((a) => this.log.info(`    ${a}`));
   driver.denyInsecure = deniedDriverFeatures;
 }
@@ -86,18 +77,16 @@ export function configureDriverFeatures(
  */
 function validateFeatures(features: string[]): string[] {
   const validator = (fullName: string) => {
-    const errMsg = `The full feature name must include both the destination automation name or the `
-      + `'${ALL_DRIVERS_MATCH}' wildcard to apply the feature to all installed drivers, and `
-      + `the feature name split by a colon. Got '${fullName}' instead`;
+    const errMsg =
+      `The full feature name must include both the destination automation name or the ` +
+      `'${ALL_DRIVERS_MATCH}' wildcard to apply the feature to all installed drivers, and ` +
+      `the feature name split by a colon. Got '${fullName}' instead`;
 
     const separatorPos = fullName.indexOf(FEATURE_NAME_SEPARATOR);
     if (separatorPos < 0) {
       throw new Error(errMsg);
     }
-    const [automationName, featureName] = [
-      fullName.substring(0, separatorPos),
-      fullName.substring(separatorPos + 1),
-    ];
+    const [automationName, featureName] = [fullName.substring(0, separatorPos), fullName.substring(separatorPos + 1)];
     if (!automationName || !featureName) {
       throw new Error(errMsg);
     }
@@ -114,10 +103,7 @@ function validateFeatures(features: string[]): string[] {
  * @param features
  * @param driverName
  */
-function filterInsecureFeatures(
-  features: string[],
-  driverName: string = ALL_DRIVERS_MATCH,
-): string[] {
+function filterInsecureFeatures(features: string[], driverName: string = ALL_DRIVERS_MATCH): string[] {
   const filterFn = (fullName: string) => {
     const separatorPos = fullName.indexOf(FEATURE_NAME_SEPARATOR);
     if (separatorPos <= 0) {

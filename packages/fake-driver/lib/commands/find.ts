@@ -107,22 +107,14 @@ async function findElOrElsImpl<Ctx = unknown>(
 export const findElOrEls = findElOrElsImpl;
 
 /** findElement. */
-export async function findElement(
-  this: FakeDriver,
-  strategy: string,
-  selector: string,
-): Promise<Element> {
+export async function findElement(this: FakeDriver, strategy: string, selector: string): Promise<Element> {
   return this.findElOrEls(strategy, selector, false);
 }
 
 // Protocol passes (strategy, selector, elementId) for find-from-element routes.
 
 /** findElements. */
-export async function findElements(
-  this: FakeDriver,
-  strategy: string,
-  selector: string,
-): Promise<Element[]> {
+export async function findElements(this: FakeDriver, strategy: string, selector: string): Promise<Element[]> {
   return this.findElOrEls(strategy, selector, true);
 }
 

@@ -25,7 +25,7 @@ export async function guineaPigAppBanner(req: Request, res: Response): Promise<v
 
 /** Dynamic page mapped to /welcome */
 export async function welcome(req: Request, res: Response): Promise<void> {
-  const params: TemplateParams = { message: 'Let\'s browse!' };
+  const params: TemplateParams = { message: "Let's browse!" };
   log.debug(`Sending welcome response with params: ${JSON.stringify(params)}`);
   const template = await getTemplate('welcome.html');
   res.send(template(params));
@@ -41,7 +41,7 @@ async function guineaPigTemplate(req: Request, res: Response, page: string): Pro
     comment: 'None',
   };
   if (req.method === 'POST' && req.body && typeof req.body === 'object' && 'comments' in req.body) {
-    params.comment = String((req.body as { comments?: string; }).comments ?? params.comment);
+    params.comment = String((req.body as { comments?: string }).comments ?? params.comment);
   }
   log.debug(`Sending guinea pig response with params: ${JSON.stringify(params)}`);
   if (delay) {

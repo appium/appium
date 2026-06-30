@@ -35,10 +35,10 @@ const MAX_CACHE_AGE_MS = 24 * 60 * 60 * 1000;
  */
 function containsRect(templateRect: Rect, rect: Rect): boolean {
   return (
-    templateRect.x <= rect.x
-    && templateRect.y <= rect.y
-    && rect.width <= templateRect.x + templateRect.width - rect.x
-    && rect.height <= templateRect.y + templateRect.height - rect.y
+    templateRect.x <= rect.x &&
+    templateRect.y <= rect.y &&
+    rect.width <= templateRect.x + templateRect.width - rect.x &&
+    rect.height <= templateRect.y + templateRect.height - rect.y
   );
 }
 
@@ -101,7 +101,7 @@ export class ImageElementFinder {
 
     log.info(`Finding image element with match threshold ${threshold}`);
     if (!driver.getWindowRect && !Object.hasOwn(driver, 'getWindowSize')) {
-      throw new Error('This driver does not support the required \'getWindowRect\' command');
+      throw new Error("This driver does not support the required 'getWindowRect' command");
     }
     let screenSize: Size;
     if (driver.getWindowRect) {
@@ -162,8 +162,8 @@ export class ImageElementFinder {
           };
           if (containerRect && !containsRect(containerRect, result.rect)) {
             log.debug(
-              `The matched element rectangle ${JSON.stringify(result.rect)} is not located `
-                + `inside of the bounding rectangle ${JSON.stringify(containerRect)}, thus rejected`,
+              `The matched element rectangle ${JSON.stringify(result.rect)} is not located ` +
+                `inside of the bounding rectangle ${JSON.stringify(containerRect)}, thus rejected`,
             );
             return false;
           }
@@ -171,12 +171,7 @@ export class ImageElementFinder {
           return true;
         };
 
-        const elOrEls = await compareImages(
-          MATCH_TEMPLATE_MODE,
-          screenshot,
-          template,
-          comparisonOpts,
-        );
+        const elOrEls = await compareImages(MATCH_TEMPLATE_MODE, screenshot, template, comparisonOpts);
         return (Array.isArray(elOrEls) ? elOrEls : [elOrEls]).some(pushIfOk);
       } catch (err: any) {
         // if compareImages fails, we'll get a specific error, but we should
@@ -259,8 +254,8 @@ export class ImageElementFinder {
     }
 
     log.info(
-      `Scaling template image from ${tplWidth}x${tplHeight} to match `
-        + `the bounding rectangle at ${maxSize.width}x${maxSize.height}`,
+      `Scaling template image from ${tplWidth}x${tplHeight} to match ` +
+        `the bounding rectangle at ${maxSize.width}x${maxSize.height}`,
     );
     // otherwise, scale it to fit inside the bounding rectangle dimensions:
     // https://sharp.pixelplumbing.com/api-resize
@@ -285,9 +280,9 @@ export class ImageElementFinder {
   async getScreenshotForImageFind(
     driver: ExternalDriver,
     screenSize: Size,
-  ): Promise<Screenshot & { scale?: ScreenshotScale; }> {
+  ): Promise<Screenshot & { scale?: ScreenshotScale }> {
     if (!driver.getScreenshot) {
-      throw new Error('This driver does not support the required \'getScreenshot\' command');
+      throw new Error("This driver does not support the required 'getScreenshot' command");
     }
     const settings: ImageSettings = { ...DEFAULT_SETTINGS, ...driver.settings.getSettings() };
     const { fixImageFindScreenshotDims } = settings;
@@ -303,8 +298,8 @@ export class ImageElementFinder {
 
     if (screenSize.width < 1 || screenSize.height < 1) {
       log.warn(
-        `The retrieved screen size ${screenSize.width}x${screenSize.height} does `
-          + `not seem to be valid. No changes will be applied to the screenshot`,
+        `The retrieved screen size ${screenSize.width}x${screenSize.height} does ` +
+          `not seem to be valid. No changes will be applied to the screenshot`,
       );
       return { screenshot };
     }
@@ -318,8 +313,8 @@ export class ImageElementFinder {
 
     if (!shotWidth || shotWidth < 1 || !shotHeight || shotHeight < 1) {
       log.warn(
-        `The retrieved screenshot size ${shotWidth}x${shotHeight} does `
-          + `not seem to be valid. No changes will be applied to the screenshot`,
+        `The retrieved screenshot size ${shotWidth}x${shotHeight} does ` +
+          `not seem to be valid. No changes will be applied to the screenshot`,
       );
       return { screenshot };
     }
@@ -343,15 +338,15 @@ export class ImageElementFinder {
     const shotAR = shotWidth / shotHeight;
     if (Math.round(screenAR * FLOAT_PRECISION) === Math.round(shotAR * FLOAT_PRECISION)) {
       log.info(
-        `Screenshot aspect ratio '${shotAR}' (${shotWidth}x${shotHeight}) matched `
-          + `screen aspect ratio '${screenAR}' (${screenSize.width}x${screenSize.height})`,
+        `Screenshot aspect ratio '${shotAR}' (${shotWidth}x${shotHeight}) matched ` +
+          `screen aspect ratio '${screenAR}' (${screenSize.width}x${screenSize.height})`,
       );
     } else {
       log.warn(
-        `When trying to find an element, determined that the screen `
-          + `aspect ratio and screenshot aspect ratio are different. Screen `
-          + `is ${screenSize.width}x${screenSize.height} whereas screenshot is `
-          + `${shotWidth}x${shotHeight}.`,
+        `When trying to find an element, determined that the screen ` +
+          `aspect ratio and screenshot aspect ratio are different. Screen ` +
+          `is ${screenSize.width}x${screenSize.height} whereas screenshot is ` +
+          `${shotWidth}x${shotHeight}.`,
       );
 
       // In the case where the x-scale and y-scale are different, we need to decide
@@ -368,14 +363,12 @@ export class ImageElementFinder {
       const xScale = (1.0 * shotWidth) / screenSize.width;
       const yScale = (1.0 * shotHeight) / screenSize.height;
       const scaleFactor = Math.min(xScale, yScale);
-      const [newWidth, newHeight] = [shotWidth * scaleFactor, shotHeight * scaleFactor].map(
-        Math.trunc,
-      );
+      const [newWidth, newHeight] = [shotWidth * scaleFactor, shotHeight * scaleFactor].map(Math.trunc);
 
       log.warn(
-        `Resizing screenshot to ${newWidth}x${newHeight} to match `
-          + `screen aspect ratio so that image element coordinates have a `
-          + `greater chance of being correct.`,
+        `Resizing screenshot to ${newWidth}x${newHeight} to match ` +
+          `screen aspect ratio so that image element coordinates have a ` +
+          `greater chance of being correct.`,
       );
       imgObj = imgObj.resize({
         width: newWidth,
@@ -395,8 +388,8 @@ export class ImageElementFinder {
     // `"deviceScreenSize"=>"1080x1920"`
     if (screenSize.width !== shotWidth && screenSize.height !== shotHeight) {
       log.info(
-        `Scaling screenshot from ${shotWidth}x${shotHeight} to match `
-          + `screen at ${screenSize.width}x${screenSize.height}`,
+        `Scaling screenshot from ${shotWidth}x${shotHeight} to match ` +
+          `screen at ${screenSize.width}x${screenSize.height}`,
       );
       imgObj = imgObj.resize({
         width: Math.trunc(screenSize.width),
@@ -464,14 +457,8 @@ export class ImageElementFinder {
 
     // Return if the scale is default, 1, value
     if (
-      Math.round(xScale * FLOAT_PRECISION)
-        === Math.round(DEFAULT_FIX_IMAGE_TEMPLATE_SCALE * FLOAT_PRECISION)
-      && Math.round(
-        Number(
-          yScale * FLOAT_PRECISION
-            === Math.round(DEFAULT_FIX_IMAGE_TEMPLATE_SCALE * FLOAT_PRECISION),
-        ),
-      )
+      Math.round(xScale * FLOAT_PRECISION) === Math.round(DEFAULT_FIX_IMAGE_TEMPLATE_SCALE * FLOAT_PRECISION) &&
+      Math.round(Number(yScale * FLOAT_PRECISION === Math.round(DEFAULT_FIX_IMAGE_TEMPLATE_SCALE * FLOAT_PRECISION)))
     ) {
       return template;
     }
@@ -484,9 +471,7 @@ export class ImageElementFinder {
 
     const scaledWidth = baseTempWidth * xScale;
     const scaledHeight = baseTempHeigh * yScale;
-    log.info(
-      `Scaling template image from ${baseTempWidth}x${baseTempHeigh} to ${scaledWidth}x${scaledHeight}`,
-    );
+    log.info(`Scaling template image from ${baseTempWidth}x${baseTempHeigh} to ${scaledWidth}x${scaledHeight}`);
     log.info(`The ratio is ${xScale} and ${yScale}`);
     imgObj = imgObj.resize({
       width: Math.trunc(scaledWidth),

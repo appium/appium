@@ -85,9 +85,7 @@ export async function main(argv = hideBin(process.argv)) {
             return false;
           }
           const [, arg, missingArg] = match;
-          log.error(
-            `Argument "--${arg}" requires "--${missingArg}"; note that "--${arg}" may be enabled by default`,
-          );
+          log.error(`Argument "--${arg}" requires "--${missingArg}"; note that "--${arg}" may be enabled by default`);
           return true;
         };
 

@@ -7,39 +7,39 @@ import { AppiumIpc, EVT_MESSAGE } from '../../../lib/basedriver/ipc';
 
 chai.use(chaiAsPromised);
 
-describe('AppiumIpc', function() {
-  describe('subscriptionExists', function() {
-    it('should return false when no topic exists', function() {
+describe('AppiumIpc', function () {
+  describe('subscriptionExists', function () {
+    it('should return false when no topic exists', function () {
       const ipc = new AppiumIpc();
       expect(ipc.subscriptionExists('foo', 'bar')).to.eql(false);
     });
-    it('should return false when topic exists but no subscriber', function() {
+    it('should return false when topic exists but no subscriber', function () {
       const ipc = new AppiumIpc();
       ipc.subscribe('foo', 'bar');
       expect(ipc.subscriptionExists('foo', 'baz')).to.eql(false);
     });
-    it('should return true when subscriber is subscribed', function() {
+    it('should return true when subscriber is subscribed', function () {
       const ipc = new AppiumIpc();
       ipc.subscribe('foo', 'bar');
       expect(ipc.subscriptionExists('foo', 'bar')).to.eql(true);
     });
   });
 
-  describe('subscribe', function() {
-    it('should throw if subscription already exists', function() {
+  describe('subscribe', function () {
+    it('should throw if subscription already exists', function () {
       const ipc = new AppiumIpc();
       ipc.subscribe('foo', 'bar');
       expect(() => ipc.subscribe('foo', 'bar')).to.throw;
     });
 
-    it('should throw when subscribing to a new topic beyond the limit', function() {
+    it('should throw when subscribing to a new topic beyond the limit', function () {
       const ipc = new AppiumIpc({ maxTopics: 2 });
       ipc.subscribe('topic1', 'sub1');
       ipc.subscribe('topic2', 'sub2');
       expect(() => ipc.subscribe('topic3', 'sub3')).to.throw(/2/);
     });
 
-    it('should allow multiple subscribers on the same topic without counting extra topics', function() {
+    it('should allow multiple subscribers on the same topic without counting extra topics', function () {
       const ipc = new AppiumIpc({ maxTopics: 2 });
       ipc.subscribe('topic1', 'sub1');
       ipc.subscribe('topic1', 'sub2');
@@ -47,7 +47,7 @@ describe('AppiumIpc', function() {
       expect(() => ipc.subscribe('topic3', 'sub4')).to.throw(/2/);
     });
 
-    it('should mention --max-ipc-topics in the error when the topic limit is reached', function() {
+    it('should mention --max-ipc-topics in the error when the topic limit is reached', function () {
       const ipc = new AppiumIpc({ maxTopics: 1 });
       ipc.subscribe('topic1', 'sub1');
       expect(() => ipc.subscribe('topic2', 'sub2')).to.throw(
@@ -56,8 +56,8 @@ describe('AppiumIpc', function() {
     });
   });
 
-  describe('unsubscribe', function() {
-    it('should remove from list of subscriptions', function() {
+  describe('unsubscribe', function () {
+    it('should remove from list of subscriptions', function () {
       const ipc = new AppiumIpc();
       ipc.subscribe('foo', 'bar');
       expect(ipc.subscriptionExists('foo', 'bar')).to.be.true;
@@ -65,7 +65,7 @@ describe('AppiumIpc', function() {
       expect(ipc.subscriptionExists('foo', 'bar')).to.be.false;
     });
 
-    it('should unsubscribe via subscription object', function() {
+    it('should unsubscribe via subscription object', function () {
       const ipc = new AppiumIpc();
       const sub = ipc.subscribe('foo', 'bar');
       expect(ipc.subscriptionExists('foo', 'bar')).to.be.true;
@@ -74,8 +74,8 @@ describe('AppiumIpc', function() {
     });
   });
 
-  describe('publish', function() {
-    it('should publish messages to all subscribers', async function() {
+  describe('publish', function () {
+    it('should publish messages to all subscribers', async function () {
       const ipc = new AppiumIpc();
       const payload = { some: { cool: 'obj' } };
       let sub1Res: IpcMessage<typeof payload>;
@@ -99,7 +99,7 @@ describe('AppiumIpc', function() {
       expect(sub2Res!).to.have.property('timestampMs');
     });
 
-    it('should not publish messages to the publisher', async function() {
+    it('should not publish messages to the publisher', async function () {
       const ipc = new AppiumIpc();
       const payload = { some: { cool: 'obj' } };
       let sub1Res: IpcMessage<typeof payload>;
@@ -115,7 +115,7 @@ describe('AppiumIpc', function() {
       expect(sub1Res!.publisher).to.eql('baz');
     });
 
-    it('should publish using subscription object', async function() {
+    it('should publish using subscription object', async function () {
       const ipc = new AppiumIpc();
       const payload = { some: { cool: 'obj' } };
       let sub1Res: IpcMessage<typeof payload>;
@@ -130,7 +130,7 @@ describe('AppiumIpc', function() {
       expect(sub1Res!).to.have.property('timestampMs');
     });
 
-    it('should not publish to unsubscribed subscribers', async function() {
+    it('should not publish to unsubscribed subscribers', async function () {
       const ipc = new AppiumIpc();
       const sub1 = ipc.subscribe<boolean>('foo', 'bar');
       let sub1Res: boolean = false;
@@ -140,7 +140,7 @@ describe('AppiumIpc', function() {
       expect(sub1Res).to.be.false;
     });
 
-    it('should not allow publish from subscription object after unsubscribing', async function() {
+    it('should not allow publish from subscription object after unsubscribing', async function () {
       const ipc = new AppiumIpc();
       const sub1 = ipc.subscribe<boolean>('foo', 'bar');
       sub1.unsubscribe();
@@ -149,7 +149,7 @@ describe('AppiumIpc', function() {
       );
     });
 
-    it('should be no race conditions with publishing and unsubscribing', async function() {
+    it('should be no race conditions with publishing and unsubscribing', async function () {
       const ipc = new AppiumIpc();
       const payload = { some: { cool: 'obj' } };
       let rcvdCount = 0;
@@ -167,7 +167,7 @@ describe('AppiumIpc', function() {
       await Promise.all(promises);
     });
 
-    it('should allow running ipc commands in publish event callback', async function() {
+    it('should allow running ipc commands in publish event callback', async function () {
       const ipc = new AppiumIpc();
       const payload = { some: { cool: 'obj' } };
       let sub1Res: IpcMessage<typeof payload>;
@@ -185,7 +185,7 @@ describe('AppiumIpc', function() {
       expect(sub1Res2!.publisher).to.eql('baz');
     });
 
-    it('should throw an error when trying to publish a large message', async function() {
+    it('should throw an error when trying to publish a large message', async function () {
       const ipc = new AppiumIpc({ maxObjSize: 20 }); // very small message size
       const payload1 = 'hi'; // not so many bytes
       const payload2 = 'helloworld!'.repeat(100); // lotsa bytes
@@ -193,23 +193,21 @@ describe('AppiumIpc', function() {
       await expect(ipc.publish('foo', 'bar', payload2)).to.eventually.be.rejectedWith(/20/);
     });
 
-    it('should throw an error when publishing to a new topic beyond the limit', async function() {
+    it('should throw an error when publishing to a new topic beyond the limit', async function () {
       const ipc = new AppiumIpc({ maxTopics: 2 });
       await ipc.publish('topic1', 'pub', true);
       await ipc.publish('topic2', 'pub', true);
       await expect(ipc.publish('topic3', 'pub', true)).to.eventually.be.rejectedWith(/2/);
     });
 
-    it('should count publish-only topics toward the limit without a prior subscribe', async function() {
+    it('should count publish-only topics toward the limit without a prior subscribe', async function () {
       const ipc = new AppiumIpc({ maxTopics: 2 });
       await ipc.publish('topic1', 'pub', true);
       ipc.subscribe('topic2', 'sub');
-      await expect(ipc.publish('topic3', 'pub', true)).to.eventually.be.rejectedWith(
-        /--max-ipc-topics/,
-      );
+      await expect(ipc.publish('topic3', 'pub', true)).to.eventually.be.rejectedWith(/--max-ipc-topics/);
     });
 
-    it('should not allow sharing actual published object, only copies', async function() {
+    it('should not allow sharing actual published object, only copies', async function () {
       const ipc = new AppiumIpc();
       const payload = { foo: 'bar' };
       type MsgType = typeof payload;
@@ -235,8 +233,8 @@ describe('AppiumIpc', function() {
     });
   });
 
-  describe('getMessage', function() {
-    it('should get the message previously published, even if previously retrieved', async function() {
+  describe('getMessage', function () {
+    it('should get the message previously published, even if previously retrieved', async function () {
       const ipc = new AppiumIpc();
       const payload1 = { hello: 'world' };
       const payload2 = 3;
@@ -246,7 +244,7 @@ describe('AppiumIpc', function() {
       expect(ipc.getMessage('foo')!.data).to.eql(payload2);
     });
 
-    it('should get the message from the subscription object', async function() {
+    it('should get the message from the subscription object', async function () {
       const ipc = new AppiumIpc();
       const payload1 = { hello: 'world' };
       type PayloadType = typeof payload1;
@@ -256,7 +254,7 @@ describe('AppiumIpc', function() {
       expect(sub2.getMessage()!.data).to.eql(payload1);
     });
 
-    it('should be no race conditions with publishing', async function() {
+    it('should be no race conditions with publishing', async function () {
       const ipc = new AppiumIpc();
       const p = ipc.publish('foo', 'bar', true); // intentionally avoid waiting
       const msg = ipc.getMessage('foo');
@@ -264,19 +262,19 @@ describe('AppiumIpc', function() {
       await p; // just make sure promise is done
     });
 
-    it('should not allow getting message from subscription object after unsubscribing', function() {
+    it('should not allow getting message from subscription object after unsubscribing', function () {
       const ipc = new AppiumIpc();
       const sub1 = ipc.subscribe<boolean>('foo', 'bar');
       sub1.unsubscribe();
       expect(() => sub1.getMessage()).to.throw;
     });
 
-    it('should get messages from the async iterator of the subscription object', async function() {
+    it('should get messages from the async iterator of the subscription object', async function () {
       const ipc = new AppiumIpc();
       const payload1 = { hello: 'world' };
       const payload2 = { hello: 'goodbye' };
       const payload3 = { hello: 'everyone' };
-      type PayloadType = { hello: string; };
+      type PayloadType = { hello: string };
       const received: PayloadType[] = [];
       const sub1 = ipc.subscribe<PayloadType>('foo', 'bar');
       const sub2 = ipc.subscribe<PayloadType>('foo', 'baz');
@@ -305,12 +303,12 @@ describe('AppiumIpc', function() {
       expect(received).to.eql([payload1, payload2, payload3]);
     });
 
-    it('should stop async iterator after unsubscribe', async function() {
+    it('should stop async iterator after unsubscribe', async function () {
       const ipc = new AppiumIpc();
       const payload1 = { hello: 'world' };
       const payload2 = { hello: 'goodbye' };
       const payload3 = { hello: 'everyone' };
-      type PayloadType = { hello: string; };
+      type PayloadType = { hello: string };
       const received: PayloadType[] = [];
       const sub1 = ipc.subscribe<PayloadType>('foo', 'bar');
       const sub2 = ipc.subscribe<PayloadType>('foo', 'baz');
@@ -337,8 +335,8 @@ describe('AppiumIpc', function() {
     });
   });
 
-  describe('isActive', function() {
-    it('should tell the truth about subscription status', function() {
+  describe('isActive', function () {
+    it('should tell the truth about subscription status', function () {
       const ipc = new AppiumIpc();
       const sub1 = ipc.subscribe<boolean>('foo', 'bar');
       expect(sub1.isActive).to.be.true;

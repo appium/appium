@@ -2,21 +2,21 @@ import { expect } from 'chai';
 import { after, before, describe, it } from 'node:test';
 import { assertOutputContains, getDynamicLogger, restoreWriters, setupWriters } from './helpers';
 
-describe('logger with force log', function() {
+describe('logger with force log', function () {
   let writers: ReturnType<typeof setupWriters>;
   let log: ReturnType<typeof getDynamicLogger>;
 
-  before(function() {
+  before(function () {
     writers = setupWriters();
     log = getDynamicLogger(true, true);
     log.level = 'silly';
   });
 
-  after(function() {
+  after(function () {
     restoreWriters(writers);
   });
 
-  it('should not rewrite log levels even during testing', function() {
+  it('should not rewrite log levels even during testing', function () {
     log.silly('silly');
     assertOutputContains(writers, 'silly');
     log.verbose('verbose');

@@ -221,9 +221,9 @@ const errorsList: ErrorListItem[] = [
   },
 ];
 
-describe('errors', function() {
+describe('errors', function () {
   for (const error of errorsList) {
-    it(error.errorName + ' should have a JSONWP code or W3C code and message', function() {
+    it(error.errorName + ' should have a JSONWP code or W3C code and message', function () {
       const ErrClass = (errors as any)[error.errorName];
       const errInstance = new ErrClass();
       if (error.errorCode) {
@@ -236,38 +236,24 @@ describe('errors', function() {
   }
 });
 
-describe('errorFromMJSONWPStatusCode', function() {
+describe('errorFromMJSONWPStatusCode', function () {
   for (const error of errorsList) {
     if (error.errorName !== 'NotYetImplementedError') {
-      it((error.errorCode ?? error.errorName) + ' should return correct error', function() {
+      it((error.errorCode ?? error.errorName) + ' should return correct error', function () {
         if (error.errorCode) {
-          expect(errorFromMJSONWPStatusCode(error.errorCode)).to.have.property(
-            'jsonwpCode',
-            error.errorCode,
-          );
-          expect(errorFromMJSONWPStatusCode(error.errorCode)).to.have.property(
-            'message',
-            error.errorMsg,
-          );
+          expect(errorFromMJSONWPStatusCode(error.errorCode)).to.have.property('jsonwpCode', error.errorCode);
+          expect(errorFromMJSONWPStatusCode(error.errorCode)).to.have.property('message', error.errorMsg);
           if (![13, 33].includes(error.errorCode)) {
-            expect(errorFromMJSONWPStatusCode(error.errorCode, 'abcd')).to.have.property(
-              'jsonwpCode',
-              error.errorCode,
-            );
-            expect(errorFromMJSONWPStatusCode(error.errorCode, 'abcd')).to.have.property(
-              'message',
-              'abcd',
-            );
+            expect(errorFromMJSONWPStatusCode(error.errorCode, 'abcd')).to.have.property('jsonwpCode', error.errorCode);
+            expect(errorFromMJSONWPStatusCode(error.errorCode, 'abcd')).to.have.property('message', 'abcd');
           }
         } else {
-          expect(
-            isErrorType(errorFromMJSONWPStatusCode((error as any).errorCode), errors.UnknownError),
-          ).to.be.true;
+          expect(isErrorType(errorFromMJSONWPStatusCode((error as any).errorCode), errors.UnknownError)).to.be.true;
         }
       });
     }
   }
-  it('should throw unknown error for unknown code', function() {
+  it('should throw unknown error for unknown code', function () {
     expect(errorFromMJSONWPStatusCode(99)).to.have.property('jsonwpCode', 13);
     expect(errorFromMJSONWPStatusCode(99)).to.have.property(
       'message',
@@ -276,30 +262,25 @@ describe('errorFromMJSONWPStatusCode', function() {
   });
 });
 
-describe('errorFromW3CJsonCode', function() {
+describe('errorFromW3CJsonCode', function () {
   for (const error of errorsList) {
     if (error.errorName !== 'NotYetImplementedError') {
-      it(error.errorName + ' should return correct error', function() {
+      it(error.errorName + ' should return correct error', function () {
         const w3cError = error.error;
         if (w3cError) {
           const err = errorFromW3CJsonCode(w3cError, error.errorMsg);
           expect(err.error).to.equal(error.error);
           expect(err.message).to.include(error.errorMsg);
         } else {
-          expect(
-            isErrorType(
-              errorFromW3CJsonCode(error.error ?? 'unknown error', error.errorMsg),
-              errors.UnknownError,
-            ),
-          ).to.be.true;
+          expect(isErrorType(errorFromW3CJsonCode(error.error ?? 'unknown error', error.errorMsg), errors.UnknownError))
+            .to.be.true;
         }
       });
     }
   }
-  it('should parse unknown errors', function() {
+  it('should parse unknown errors', function () {
     const msg = 'An unknown server-side error occurred while processing the command.';
-    expect(isErrorType(errorFromW3CJsonCode('not a real error code', msg), errors.UnknownError)).to
-      .be.true;
+    expect(isErrorType(errorFromW3CJsonCode('not a real error code', msg), errors.UnknownError)).to.be.true;
     expect(errorFromW3CJsonCode('not a real error code', msg).message).to.match(
       /An unknown server-side error occurred/,
     );
@@ -307,8 +288,8 @@ describe('errorFromW3CJsonCode', function() {
   });
 });
 
-describe('w3c Status Codes', function() {
-  it('should match the correct error codes', function() {
+describe('w3c Status Codes', function () {
+  it('should match the correct error codes', function () {
     const non400Errors: [string, number][] = [
       ['NoSuchDriverError', 404],
       ['NoSuchFrameError', 404],
@@ -340,8 +321,8 @@ describe('w3c Status Codes', function() {
   });
 });
 
-describe('.getResponseForW3CError', function() {
-  it('should return an error, message and stacktrace for just a generic exception', function() {
+describe('.getResponseForW3CError', function () {
+  it('should return an error, message and stacktrace for just a generic exception', function () {
     try {
       throw new Error('Some random error');
     } catch (e) {
@@ -355,7 +336,7 @@ describe('.getResponseForW3CError', function() {
       expect(stacktrace).to.contain(basename);
     }
   });
-  it('should return an error, message and stacktrace for a NoSuchElementError', function() {
+  it('should return an error, message and stacktrace for a NoSuchElementError', function () {
     const noSuchElementError = new errors.NoSuchElementError('specific error message');
     const [httpStatus, httpResponseBody] = getResponseForW3CError(noSuchElementError);
     expect(httpStatus).to.equal(404);
@@ -364,7 +345,7 @@ describe('.getResponseForW3CError', function() {
     expect(message).to.match(/specific error message/);
     expect(stacktrace).to.contain(basename);
   });
-  it('should handle BadParametersError', function() {
+  it('should handle BadParametersError', function () {
     const badParamsError = new BadParametersError({ required: ['foo'] }, ['bar']);
     const [httpStatus, httpResponseBody] = getResponseForW3CError(badParamsError);
     expect(httpStatus).to.equal(400);
@@ -374,10 +355,8 @@ describe('.getResponseForW3CError', function() {
     expect(message).to.match(/bar/);
     expect(stacktrace).to.contain(basename);
   });
-  it('should translate JSONWP errors', function() {
-    const [httpStatus, httpResponseBody] = getResponseForW3CError(
-      new errors.NoSuchElementError('My custom message'),
-    );
+  it('should translate JSONWP errors', function () {
+    const [httpStatus, httpResponseBody] = getResponseForW3CError(new errors.NoSuchElementError('My custom message'));
     expect(httpStatus).to.equal(404);
     const { error, message, stacktrace } = httpResponseBody.value;
     expect(message).to.equal('My custom message');
@@ -386,30 +365,30 @@ describe('.getResponseForW3CError', function() {
   });
 });
 
-describe('.getActualError', function() {
-  describe('MJSONWP', function() {
-    it('should map a status code 7 no such element error as a NoSuchElementError', function() {
+describe('.getActualError', function () {
+  describe('MJSONWP', function () {
+    it('should map a status code 7 no such element error as a NoSuchElementError', function () {
       const actualError = new errors.ProxyRequestError('Error message does not matter', {
         value: 'does not matter',
         status: 7,
       }).getActualError();
       expect(isErrorType(actualError, errors.NoSuchElementError)).to.be.true;
     });
-    it('should map a status code 10, StaleElementReferenceError', function() {
+    it('should map a status code 10, StaleElementReferenceError', function () {
       const actualError = new errors.ProxyRequestError('Error message does not matter', {
         value: 'Does not matter',
         status: 10,
       }).getActualError();
       expect(isErrorType(actualError, errors.StaleElementReferenceError)).to.be.true;
     });
-    it('should map an unknown error to UnknownError', function() {
+    it('should map an unknown error to UnknownError', function () {
       const actualError = new errors.ProxyRequestError('Error message does not matter', {
         value: 'Does not matter',
         status: -100,
       }).getActualError();
       expect(isErrorType(actualError, errors.UnknownError)).to.be.true;
     });
-    it('should parse a JSON string', function() {
+    it('should parse a JSON string', function () {
       const actualError = new errors.ProxyRequestError(
         'Error message does not matter',
         JSON.stringify({
@@ -421,8 +400,8 @@ describe('.getActualError', function() {
     });
   });
 
-  describe('W3C', function() {
-    it('should map a 404 no such element error as a NoSuchElementError', function() {
+  describe('W3C', function () {
+    it('should map a 404 no such element error as a NoSuchElementError', function () {
       const actualError = new errors.ProxyRequestError(
         'Error message does not matter',
         {
@@ -434,7 +413,7 @@ describe('.getActualError', function() {
       ).getActualError();
       expect(isErrorType(actualError, errors.NoSuchElementError)).to.be.true;
     });
-    it('should map a 400 StaleElementReferenceError', function() {
+    it('should map a 400 StaleElementReferenceError', function () {
       const actualError = new errors.ProxyRequestError(
         'Error message does not matter',
         {
@@ -446,7 +425,7 @@ describe('.getActualError', function() {
       ).getActualError();
       expect(isErrorType(actualError, errors.StaleElementReferenceError)).to.be.true;
     });
-    it('should map an unknown error to UnknownError', function() {
+    it('should map an unknown error to UnknownError', function () {
       const actualError = new errors.ProxyRequestError(
         'Error message does not matter',
         {
@@ -458,7 +437,7 @@ describe('.getActualError', function() {
       ).getActualError();
       expect(isErrorType(actualError, errors.UnknownError)).to.be.true;
     });
-    it('should parse a JSON string', function() {
+    it('should parse a JSON string', function () {
       const actualError = new errors.ProxyRequestError(
         'Error message does not matter',
         JSON.stringify({

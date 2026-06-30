@@ -84,9 +84,8 @@ export async function init(args: ParsedArgs): Promise<void> {
         .join('');
       msg = `${finalPrefix} ${msg}`;
     }
-    const winstonLevel = level in TO_WINSTON_LEVELS_MAP
-      ? TO_WINSTON_LEVELS_MAP[level as keyof typeof TO_WINSTON_LEVELS_MAP]
-      : 'info';
+    const winstonLevel =
+      level in TO_WINSTON_LEVELS_MAP ? TO_WINSTON_LEVELS_MAP[level as keyof typeof TO_WINSTON_LEVELS_MAP] : 'info';
     try {
       (log as Logger)[winstonLevel as keyof Logger](msg);
       if (typeof args.logHandler === 'function') {
@@ -97,9 +96,9 @@ export async function init(args: ParsedArgs): Promise<void> {
       if (!reportedLoggerErrors.has(err.message) && process.stderr.writable) {
         // eslint-disable-next-line no-console
         console.error(
-          `The log message '${util.truncateString(msg, { length: 30 })}' cannot be written into `
-            + `one or more requested destinations: ${[...transportNames].join(', ')}. `
-            + `Original error: ${err.message}`,
+          `The log message '${util.truncateString(msg, { length: 30 })}' cannot be written into ` +
+            `one or more requested destinations: ${[...transportNames].join(', ')}. ` +
+            `Original error: ${err.message}`,
         );
         reportedLoggerErrors.add(err.message);
       }
@@ -120,10 +119,7 @@ export function clear(): void {
 
 // #region private helpers
 
-function createConsoleTransport(
-  args: ParsedArgs,
-  logLvl: string,
-): transports.ConsoleTransportInstance {
+function createConsoleTransport(args: ParsedArgs, logLvl: string): transports.ConsoleTransportInstance {
   const opt: transports.ConsoleTransportOptions = {
     level: logLvl,
     stderrLevels: ['error'],
@@ -198,10 +194,7 @@ async function createTransports(args: ParsedArgs): Promise<Transport[]> {
     } catch (e) {
       const err = e as Error;
       // eslint-disable-next-line no-console
-      console.log(
-        `Tried to attach logging to file '${args.logFile}' but an error `
-          + `occurred: ${err.message}`,
-      );
+      console.log(`Tried to attach logging to file '${args.logFile}' but an error ` + `occurred: ${err.message}`);
     }
   }
 
@@ -211,10 +204,7 @@ async function createTransports(args: ParsedArgs): Promise<Transport[]> {
     } catch (e) {
       const err = e as Error;
       // eslint-disable-next-line no-console
-      console.log(
-        `Tried to attach logging to Http at ${args.webhook} but `
-          + `an error occurred: ${err.message}`,
-      );
+      console.log(`Tried to attach logging to Http at ${args.webhook} but ` + `an error occurred: ${err.message}`);
     }
   }
 
@@ -261,7 +251,7 @@ function formatLog(args: ParsedArgs, targetConsole: boolean): Logform.Format {
     );
   }
 
-  return format.printf((info: { timestamp?: string; message?: unknown; }) => {
+  return format.printf((info: { timestamp?: string; message?: unknown }) => {
     if (targetConsole) {
       return `${args.logTimestamp ? `${info.timestamp} - ` : ''}${info.message}`;
     }
@@ -299,11 +289,7 @@ export function stripColorCodes(text: string): string {
 }
 
 // Strip the color marking within messages (depends on stripColorCodes)
-const stripColorFormat = format(function stripColor(info: {
-  level: string;
-  message: unknown;
-  [key: string]: unknown;
-}) {
+const stripColorFormat = format(function stripColor(info: { level: string; message: unknown; [key: string]: unknown }) {
   return {
     ...info,
     level: stripColorCodes(info.level),

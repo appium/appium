@@ -28,12 +28,12 @@ async function generateCertificate(certPath: string, keyPath: string): Promise<v
   ]);
 }
 
-describe('server', function() {
+describe('server', function () {
   let hwServer: Awaited<ReturnType<typeof server>>;
   let port: number;
   let sandbox: sinon.SinonSandbox;
 
-  before(async function() {
+  before(async function () {
     port = await getTestPort();
 
     function configureRoutes(app: Application) {
@@ -59,27 +59,27 @@ describe('server', function() {
     });
   });
 
-  beforeEach(function() {
+  beforeEach(function () {
     sandbox = createSandbox();
     sandbox.stub(console, 'error');
   });
 
-  after(async function() {
+  after(async function () {
     await hwServer.close();
   });
 
-  afterEach(function() {
+  afterEach(function () {
     sandbox.restore();
   });
 
-  it('should start up with our middleware', async function() {
+  it('should start up with our middleware', async function () {
     const { data } = await axios.get(`http://${TEST_HOST}:${port}/`);
     expect(data).to.eql('Hello World!');
   });
-  it('should catch errors in the catchall', async function() {
+  it('should catch errors in the catchall', async function () {
     await expect(axios.get(`http://${TEST_HOST}:${port}/error`)).to.be.rejected;
   });
-  it('should error if we try to start again on a port that is used', async function() {
+  it('should error if we try to start again on a port that is used', async function () {
     await expect(
       server({
         routeConfiguringFunction() {},
@@ -87,7 +87,7 @@ describe('server', function() {
       }),
     ).to.be.rejectedWith(/EADDRINUSE/);
   });
-  it('should not wait for the server close connections before finishing closing', async function() {
+  it('should not wait for the server close connections before finishing closing', async function () {
     const bodyPromise = (async () => {
       try {
         return await axios.get(`http://${TEST_HOST}:${port}/pause`);
@@ -106,7 +106,7 @@ describe('server', function() {
 
     await bodyPromise;
   });
-  it('should error if we try to start on a bad hostname', { timeout: 60000 }, async function() {
+  it('should error if we try to start on a bad hostname', { timeout: 60000 }, async function () {
     await expect(
       server({
         routeConfiguringFunction: () => {},
@@ -124,7 +124,7 @@ describe('server', function() {
   });
 });
 
-describe('tls server', function() {
+describe('tls server', function () {
   let hwServer: AppiumServer;
   let port: number;
   const certPath = 'certificate.cert';
@@ -136,7 +136,7 @@ describe('tls server', function() {
   });
   let skip = false;
 
-  before(async function() {
+  before(async function () {
     try {
       await generateCertificate(certPath, keyPath);
     } catch (e) {
@@ -166,18 +166,18 @@ describe('tls server', function() {
     });
   });
 
-  after(async function() {
+  after(async function () {
     await hwServer?.close();
   });
 
-  it('should start up with our middleware', { skip }, async function() {
+  it('should start up with our middleware', { skip }, async function () {
     const { data } = await looseClient.get(`https://${TEST_HOST}:${port}/`);
     expect(data).to.eql('Hello World!');
   });
-  it('should throw if untrusted', { skip }, async function() {
+  it('should throw if untrusted', { skip }, async function () {
     await expect(axios.get(`https://${TEST_HOST}:${port}/`)).to.eventually.be.rejected;
   });
-  it('should throw if not secure', { skip }, async function() {
+  it('should throw if not secure', { skip }, async function () {
     await expect(axios.get(`http://${TEST_HOST}:${port}/`)).to.eventually.be.rejected;
   });
 });
@@ -187,15 +187,15 @@ type ServerWithPlugins = Awaited<ReturnType<typeof server>> & {
   _updated_plugin2?: boolean;
 };
 
-describe('server plugins', function() {
+describe('server plugins', function () {
   let hwServer: ServerWithPlugins;
   let port: number;
 
-  before(async function() {
+  before(async function () {
     port = await getTestPort();
   });
 
-  afterEach(async function() {
+  afterEach(async function () {
     try {
       await hwServer?.close();
     } catch {
@@ -213,7 +213,7 @@ describe('server plugins', function() {
     };
   }
 
-  it('should allow one or more plugins to update the server', async function() {
+  it('should allow one or more plugins to update the server', async function () {
     hwServer = (await server({
       routeConfiguringFunction: () => {},
       port,
@@ -229,7 +229,7 @@ describe('server plugins', function() {
     expect(hwServer._updated_plugin1).to.be.true;
     expect(hwServer._updated_plugin2).to.be.true;
   });
-  it('should pass on errors from the plugin updateServer method', async function() {
+  it('should pass on errors from the plugin updateServer method', async function () {
     await expect(
       server({
         routeConfiguringFunction: () => {},

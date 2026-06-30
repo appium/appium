@@ -21,10 +21,7 @@ export class DeviceSettings<T extends StringRecord = StringRecord> implements ID
    * @param defaultSettings - Initial settings (shallow-copied).
    * @param onSettingsUpdate - Called when a setting is changed; receives (prop, newValue, curValue).
    */
-  constructor(
-    defaultSettings: T = {} as T,
-    onSettingsUpdate: SettingsUpdateListener<T> = async () => {},
-  ) {
+  constructor(defaultSettings: T = {} as T, onSettingsUpdate: SettingsUpdateListener<T> = async () => {}) {
     this._settings = { ...defaultSettings };
     this._onSettingsUpdate = onSettingsUpdate;
   }
@@ -37,15 +34,14 @@ export class DeviceSettings<T extends StringRecord = StringRecord> implements ID
   async update(newSettings: T): Promise<void> {
     if (!util.isPlainObject(newSettings)) {
       throw new errors.InvalidArgumentError(
-        `Settings update should be called with valid JSON. Got `
-          + `${JSON.stringify(newSettings)} instead`,
+        `Settings update should be called with valid JSON. Got ` + `${JSON.stringify(newSettings)} instead`,
       );
     }
 
     if (node.getObjectSize({ ...this._settings, ...newSettings }) >= MAX_SETTINGS_SIZE) {
       throw new errors.InvalidArgumentError(
-        `New settings cannot be applied, because the overall `
-          + `object size exceeds the allowed limit of ${util.toReadableSizeString(MAX_SETTINGS_SIZE)}`,
+        `New settings cannot be applied, because the overall ` +
+          `object size exceeds the allowed limit of ${util.toReadableSizeString(MAX_SETTINGS_SIZE)}`,
       );
     }
 

@@ -36,19 +36,19 @@ class FakeExpress {
   }
 }
 
-describe('fake plugin', function() {
-  it('should exist', function() {
+describe('fake plugin', function () {
+  it('should exist', function () {
     expect(FakePlugin).to.exist;
   });
 
-  it('should update an express app with a fake route', async function() {
+  it('should update an express app with a fake route', async function () {
     const app = new FakeExpress();
     await expect(app.get('/fake')).to.be.rejected;
     await FakePlugin.updateServer(app as any, {} as any, {});
     await expect(app.get('/fake')).to.eventually.eql(JSON.stringify({ fake: 'fakeResponse' }));
   });
 
-  it('should wrap find element', async function() {
+  it('should wrap find element', async function () {
     const p = new FakePlugin('fake');
     await expect(
       p.findElement(() => Promise.resolve({ el: 'fakeEl' }), {} as DriverLike, 'arg1', 'arg2'),
@@ -58,31 +58,25 @@ describe('fake plugin', function() {
     });
   });
 
-  it('should handle page source', async function() {
+  it('should handle page source', async function () {
     const p = new FakePlugin('fake');
-    await expect(
-      p.getPageSource(() => Promise.resolve(''), {} as DriverLike, 'arg1', 'arg2'),
-    ).to.eventually.eql('<Fake>["arg1","arg2"]</Fake>');
+    await expect(p.getPageSource(() => Promise.resolve(''), {} as DriverLike, 'arg1', 'arg2')).to.eventually.eql(
+      '<Fake>["arg1","arg2"]</Fake>',
+    );
   });
 
-  it('should handle getFakeSessionData', async function() {
+  it('should handle getFakeSessionData', async function () {
     const p = new FakePlugin('fake');
     await expect(
       p.getFakeSessionData(() => Promise.resolve(null), { fakeSessionData: 'hi' } as DriverLike),
     ).to.eventually.eql('hi');
-    await expect(
-      p.getFakeSessionData(() => Promise.resolve(null), {} as DriverLike),
-    ).to.eventually.eql(null);
+    await expect(p.getFakeSessionData(() => Promise.resolve(null), {} as DriverLike)).to.eventually.eql(null);
   });
 
-  it('should handle setFakeSessionData', async function() {
+  it('should handle setFakeSessionData', async function () {
     const p = new FakePlugin('fake');
     const driver = {} as DriverLike;
-    await expect(
-      p.setFakeSessionData(() => Promise.resolve(null), driver, 'foobar'),
-    ).to.eventually.eql(null);
-    await expect(p.getFakeSessionData(() => Promise.resolve(null), driver)).to.eventually.eql(
-      'foobar',
-    );
+    await expect(p.setFakeSessionData(() => Promise.resolve(null), driver, 'foobar')).to.eventually.eql(null);
+    await expect(p.getFakeSessionData(() => Promise.resolve(null), driver)).to.eventually.eql('foobar');
   });
 });

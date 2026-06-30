@@ -27,7 +27,7 @@ async function runScript(eventParams: DriverScriptMessageEvent): Promise<RunScri
   /**
    * set up fake logger
    */
-  const logs: { error: any[]; warn: any[]; log: any[]; } = {
+  const logs: { error: any[]; warn: any[]; log: any[] } = {
     error: [],
     warn: [],
     log: [],
@@ -89,8 +89,8 @@ function coerceScriptResult(obj: any): any {
     obj = JSON.parse(JSON.stringify(obj));
   } catch {
     log.warn(
-      'Could not convert executeDriverScript to safe response!'
-        + `Result was: ${JSON.stringify(obj)}. Will make it null`,
+      'Could not convert executeDriverScript to safe response!' +
+        `Result was: ${JSON.stringify(obj)}. Will make it null`,
     );
     return null;
   }

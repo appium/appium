@@ -19,7 +19,7 @@ export type IpcData =
   | ReadonlyArray<IpcData>
   | ReadonlyMap<IpcData, IpcData>
   | ReadonlySet<IpcData>
-  | { [key: string]: IpcData; };
+  | { [key: string]: IpcData };
 
 /**
  * A representation of the (only) event allowed on the IpcSubscription EventEmitter object

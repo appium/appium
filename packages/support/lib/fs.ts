@@ -30,10 +30,7 @@ import { isWindows } from './system';
 import { Timer } from './timing';
 import { memoize, pluralize } from './util';
 
-const findRootCached = memoize(
-  packageDirectorySync,
-  (opts: { cwd?: string; } | undefined) => opts?.cwd,
-);
+const findRootCached = memoize(packageDirectorySync, (opts: { cwd?: string } | undefined) => opts?.cwd);
 
 /**
  * File metadata shape used by legacy `ncp` transform callbacks.
@@ -69,11 +66,7 @@ export interface CopyFileOptions {
   /** Follow symlinks instead of copying them. Maps to `dereference`. */
   dereference?: boolean;
   /** @deprecated Ignored. No `fs.cp` equivalent (per-file stream transform). */
-  transform?: (
-    read: NodeJS.ReadableStream,
-    write: NodeJS.WritableStream,
-    file: CopyFileDescriptor,
-  ) => void;
+  transform?: (read: NodeJS.ReadableStream, write: NodeJS.WritableStream, file: CopyFileDescriptor) => void;
   /** @deprecated Ignored. No `fs.cp` equivalent (fail-fast vs collect errors). */
   stopOnErr?: boolean;
   /** @deprecated Ignored. No `fs.cp` equivalent (error log sink). */
@@ -96,10 +89,7 @@ export interface MvOptions {
  * Callback used during directory walking in {@linkcode fs.walkDir}.
  * Return true to stop walking.
  */
-export type WalkDirCallback = (
-  itemPath: string,
-  isDirectory: boolean,
-) => boolean | void | Promise<boolean | void>;
+export type WalkDirCallback = (itemPath: string, isDirectory: boolean) => boolean | void | Promise<boolean | void>;
 
 /**
  * Promisified fs.read signature.
@@ -112,7 +102,7 @@ export type ReadFn<TBuffer extends NodeJS.ArrayBufferView = NodeJS.ArrayBufferVi
   offset?: number,
   length?: number,
   position?: number | null,
-) => B<{ bytesRead: number; buffer: TBuffer; }>;
+) => B<{ bytesRead: number; buffer: TBuffer }>;
 
 /**
  * Maps {@link CopyFileOptions} (including legacy `ncp` fields) to `fs.cp` options.
@@ -193,10 +183,7 @@ export const fs = {
    * Like Node.js `fsPromises.mkdir()`, but will not reject if the directory already exists.
    * @see https://nodejs.org/api/fs.html#fspromisesmkdirpath-options
    */
-  async mkdir(
-    filepath: string | Buffer | URL,
-    opts: MakeDirectoryOptions = {},
-  ): Promise<string | undefined> {
+  async mkdir(filepath: string | Buffer | URL, opts: MakeDirectoryOptions = {}): Promise<string | undefined> {
     try {
       return await fsPromises.mkdir(filepath, opts);
     } catch (err) {
@@ -232,16 +219,10 @@ export const fs = {
       }
       return false;
     };
-    const renameFile = async (
-      src: PathLike,
-      dst: PathLike,
-      skipExistenceCheck: boolean,
-    ): Promise<void> => {
+    const renameFile = async (src: PathLike, dst: PathLike, skipExistenceCheck: boolean): Promise<void> => {
       if (!skipExistenceCheck && (await this.exists(dst))) {
         if (opts?.clobber === false) {
-          const err = new Error(
-            `The destination path '${dst}' already exists`,
-          ) as NodeJS.ErrnoException;
+          const err = new Error(`The destination path '${dst}' already exists`) as NodeJS.ErrnoException;
           err.code = 'EEXIST';
           throw err;
         }
@@ -312,11 +293,8 @@ export const fs = {
       const fileHash = crypto.createHash(algorithm);
       const readStream = createReadStream(filePath);
       readStream.on('error', (e: Error) =>
-        reject(
-          new Error(
-            `Cannot calculate ${algorithm} hash for '${filePath}'. Original error: ${e.message}`,
-          ),
-        ));
+        reject(new Error(`Cannot calculate ${algorithm} hash for '${filePath}'. Original error: ${e.message}`)),
+      );
       readStream.on('data', (chunk: Buffer | string) => fileHash.update(chunk));
       readStream.on('end', () => resolve(fileHash.digest('hex')));
     });
@@ -343,11 +321,7 @@ export const fs = {
    * @returns The found path or null if not found
    */
   /* eslint-disable promise/prefer-await-to-callbacks -- walkDir uses callback + stream .on() + Promise executor */
-  async walkDir(
-    dir: string,
-    recursive: boolean,
-    callback: WalkDirCallback,
-  ): Promise<string | null> {
+  async walkDir(dir: string, recursive: boolean, callback: WalkDirCallback): Promise<string | null> {
     let isValidRoot = false;
     let errMsg: string | null = null;
     try {
@@ -356,22 +330,20 @@ export const fs = {
       errMsg = e instanceof Error ? e.message : String(e);
     }
     if (!isValidRoot) {
-      throw new Error(
-        `'${dir}' is not a valid root directory` + (errMsg ? `. Original error: ${errMsg}` : ''),
-      );
+      throw new Error(`'${dir}' is not a valid root directory` + (errMsg ? `. Original error: ${errMsg}` : ''));
     }
 
     let walker: Walker | undefined;
     let fileCount = 0;
     let directoryCount = 0;
     const timer = new Timer().start();
-    return await new Promise<string | null>(function(resolve, reject) {
+    return await new Promise<string | null>(function (resolve, reject) {
       let lastFileProcessed: Promise<string | undefined> = Promise.resolve(undefined);
       walker = klaw(dir, {
         depthLimit: recursive ? -1 : 0,
       });
       walker
-        .on('data', function(item: klaw.Item) {
+        .on('data', function (item: klaw.Item) {
           if (walker) {
             walker.pause();
           }
@@ -397,14 +369,14 @@ export const fs = {
             }
           })();
         })
-        .on('error', function(err: Error, item?: { path: string; }) {
+        .on('error', function (err: Error, item?: { path: string }) {
           log.warn(`Got an error while walking '${item?.path ?? 'unknown'}': ${err.message}`);
           if (isErrnoException(err) && err.code === 'ENOENT') {
             log.warn('All files may not have been accessed');
             reject(err);
           }
         })
-        .on('end', async function() {
+        .on('end', async function () {
           try {
             const file = await lastFileProcessed;
             resolve(file ?? null);
@@ -413,11 +385,11 @@ export const fs = {
             reject(err);
           }
         });
-    }).finally(function() {
+    }).finally(function () {
       log.debug(
-        `Traversed ${pluralize('directory', directoryCount, true)} `
-          + `and ${pluralize('file', fileCount, true)} `
-          + `in ${timer.getDuration().asMilliSeconds.toFixed(0)}ms`,
+        `Traversed ${pluralize('directory', directoryCount, true)} ` +
+          `and ${pluralize('file', fileCount, true)} ` +
+          `in ${timer.getDuration().asMilliSeconds.toFixed(0)}ms`,
       );
       if (walker) {
         walker.destroy();
@@ -432,10 +404,7 @@ export const fs = {
    * Read `package.json` locally instead (for example with `node:fs` and `JSON.parse`).
    * @throws If there were problems finding or reading `package.json`
    */
-  readPackageJsonFrom(
-    dir: string,
-    opts: NormalizeOptions & { cwd?: string; } = {},
-  ): NormalizedPackageJson {
+  readPackageJsonFrom(dir: string, opts: NormalizeOptions & { cwd?: string } = {}): NormalizedPackageJson {
     const cwd = fs.findRoot(dir);
     try {
       return readPackageSync({ normalize: true, ...opts, cwd });

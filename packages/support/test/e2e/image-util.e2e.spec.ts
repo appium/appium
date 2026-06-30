@@ -21,15 +21,15 @@ async function getImage(name: string): Promise<string> {
   return await fs.readFile(imagePath, 'utf8');
 }
 
-describe('image-util', function() {
-  describe('cropBase64Image', function() {
+describe('image-util', function () {
+  describe('cropBase64Image', function () {
     let originalImageB64: string | null = null;
 
-    before(async function() {
+    before(async function () {
       originalImageB64 = await getImage('full-image.b64');
     });
 
-    it('should verify that an image is cropped correctly', async function() {
+    it('should verify that an image is cropped correctly', async function () {
       const croppedImageB64 = await cropBase64Image(originalImageB64!, {
         left: 35,
         top: 107,

@@ -28,10 +28,7 @@ const WD_OPTS: Partial<Parameters<typeof wdio>[0]> = {
   logLevel: 'error',
 };
 
-async function initSession(
-  w3cPrefixedCaps: StringRecord,
-  wdioOpts: Partial<Parameters<typeof wdio>[0]> = {},
-) {
+async function initSession(w3cPrefixedCaps: StringRecord, wdioOpts: Partial<Parameters<typeof wdio>[0]> = {}) {
   return await wdio({ ...WD_OPTS, ...wdioOpts, capabilities: w3cPrefixedCaps });
 }
 

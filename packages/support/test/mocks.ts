@@ -55,7 +55,7 @@ export function initMocks(sandbox = createSandbox()): InitMocksResult {
   const MockInternal: MockInternal = {
     readPackage: sandbox.stub().callsFake(async () => mockPkg),
     readPackageSync: sandbox.stub().returns(mockPkg),
-    packageDirectorySync: sandbox.stub().callsFake(({ cwd }: { cwd?: string; } = {}) => cwd),
+    packageDirectorySync: sandbox.stub().callsFake(({ cwd }: { cwd?: string } = {}) => cwd),
     __pkg: mockPkg,
   };
 

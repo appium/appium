@@ -51,17 +51,14 @@ interface SessionHelpers<CommandData = unknown, ResponseData = any> {
     cmdNameOrConfig: string | RawAxiosRequestConfig,
     config?: RawAxiosRequestConfig,
   ) => Promise<ResponseData>;
-  startSession: (
-    data: NewSessionData,
-    config?: RawAxiosRequestConfig,
-  ) => Promise<NewSessionResponse>;
+  startSession: (data: NewSessionData, config?: RawAxiosRequestConfig) => Promise<NewSessionResponse>;
   endSession: (
     sessionId: string,
-  ) => Promise<AxiosResponse<{ value: { error?: string; } | null; }, { validateStatus: null; }>>;
+  ) => Promise<AxiosResponse<{ value: { error?: string } | null }, { validateStatus: null }>>;
   getSession: (sessionId: string) => Promise<SingularSessionData>;
 }
 
-describe(`FakeDriver E2E`, function() {
+describe(`FakeDriver E2E`, function () {
   let baseServer: AppiumServer;
   let d: FakeDriver;
   let newSessionURL: string;
@@ -74,7 +71,7 @@ describe(`FakeDriver E2E`, function() {
   const address = TEST_HOST;
   let port: number | undefined;
 
-  before(async function() {
+  before(async function () {
     port = await getTestPort();
     d = new FakeDriver({ port, address } as any);
     baseServer = await server({
@@ -91,12 +88,12 @@ describe(`FakeDriver E2E`, function() {
     postCommand = helpers.postCommand;
     newSessionURL = helpers.newSessionURL;
   });
-  after(async function() {
+  after(async function () {
     await baseServer?.close();
   });
 
-  describe('session handling', function() {
-    it('should handle idempotency while creating sessions', async function() {
+  describe('session handling', function () {
+    it('should handle idempotency while creating sessions', async function () {
       // TODO: Fix this test for Node 24+
       if (parseInt(process.versions.node.split('.')[0], 10) >= 24) {
         this.skip();
@@ -130,7 +127,7 @@ describe(`FakeDriver E2E`, function() {
       expect(data.value).to.be.null;
     });
 
-    it('should handle idempotency while creating parallel sessions', async function() {
+    it('should handle idempotency while creating parallel sessions', async function () {
       // TODO: Fix this test for Node 24+
       if (parseInt(process.versions.node.split('.')[0], 10) >= 24) {
         this.skip();
@@ -167,7 +164,7 @@ describe(`FakeDriver E2E`, function() {
       expect(data.value).to.be.null;
     });
 
-    it('should create session and retrieve a session id, then delete it', async function() {
+    it('should create session and retrieve a session id, then delete it', async function () {
       let { status, data } = await axios.post(newSessionURL, {
         capabilities: {
           alwaysMatch: defaultCaps,
@@ -187,7 +184,7 @@ describe(`FakeDriver E2E`, function() {
     });
   });
 
-  describe('command timeouts', function() {
+  describe('command timeouts', function () {
     let originalFindElement: typeof d.findElement;
     let originalFindElements: typeof d.findElements;
 
@@ -197,31 +194,31 @@ describe(`FakeDriver E2E`, function() {
       return await startSession({ capabilities: { alwaysMatch: caps } });
     }
 
-    before(function() {
+    before(function () {
       originalFindElement = d.findElement;
-      d.findElement = function() {
+      d.findElement = function () {
         return 'foo' as any;
       }.bind(d);
 
       originalFindElements = d.findElements;
-      d.findElements = async function() {
+      d.findElements = async function () {
         await sleep(200);
         return ['foo' as unknown as Element];
       }.bind(d) as any;
     });
 
-    after(function() {
+    after(function () {
       d.findElement = originalFindElement;
       d.findElements = originalFindElements;
     });
 
-    it('should set a default commandTimeout', async function() {
+    it('should set a default commandTimeout', async function () {
       const newSession = await startTimeoutSession();
       expect(d.newCommandTimeoutMs).to.be.above(0);
       await endSession(newSession.sessionId);
     });
 
-    it('should timeout on commands using commandTimeout cap', async function() {
+    it('should timeout on commands using commandTimeout cap', async function () {
       const newSession = await startTimeoutSession(0.25);
       const sessionId = d.sessionId!;
       await postCommand(sessionId, 'element', {
@@ -236,7 +233,7 @@ describe(`FakeDriver E2E`, function() {
       expect(resp?.error).to.equal('invalid session id');
     });
 
-    it('should not timeout with commandTimeout of false', async function() {
+    it('should not timeout with commandTimeout of false', async function () {
       const newSession = await startTimeoutSession(0.1);
       const start = Date.now();
       const value = await postCommand(d.sessionId!, 'elements', {
@@ -248,7 +245,7 @@ describe(`FakeDriver E2E`, function() {
       await endSession(newSession.sessionId);
     });
 
-    it('should not timeout with commandTimeout of 0', async function() {
+    it('should not timeout with commandTimeout of 0', async function () {
       d.newCommandTimeoutMs = 2;
       const newSession = await startTimeoutSession(0);
 
@@ -265,7 +262,7 @@ describe(`FakeDriver E2E`, function() {
       d.newCommandTimeoutMs = 60 * 1000;
     });
 
-    it('should not timeout if its just the command taking awhile', async function() {
+    it('should not timeout if its just the command taking awhile', async function () {
       const newSession = await startTimeoutSession(0.25);
       const { sessionId } = d;
 
@@ -277,11 +274,11 @@ describe(`FakeDriver E2E`, function() {
       const value = await getSession(sessionId!);
       expect((value as any).error).to.equal('invalid session id');
       expect(d.sessionId).to.be.null;
-      const resp = (await endSession(newSession.sessionId)).data.value as { error?: string; };
+      const resp = (await endSession(newSession.sessionId)).data.value as { error?: string };
       expect(resp?.error).to.equal('invalid session id');
     });
 
-    it('should not have a timer running before or after a session', async function() {
+    it('should not have a timer running before or after a session', async function () {
       expect((d as any).noCommandTimer).to.be.null;
       const newSession = await startTimeoutSession(0.25);
       expect(newSession.sessionId).to.equal(d.sessionId);
@@ -291,33 +288,33 @@ describe(`FakeDriver E2E`, function() {
     });
   });
 
-  describe('settings api', function() {
-    before(function() {
+  describe('settings api', function () {
+    before(function () {
       d.settings = new DeviceSettings({ ignoreUnimportantViews: false });
     });
-    it('should be able to get settings object', function() {
+    it('should be able to get settings object', function () {
       expect(d.settings.getSettings().ignoreUnimportantViews).to.be.false;
     });
-    it('should not reject when `updateSettings` method is not provided', async function() {
+    it('should not reject when `updateSettings` method is not provided', async function () {
       await expect(d.settings.update({ ignoreUnimportantViews: true })).to.not.be.rejected;
     });
-    it('should reject for invalid update object', async function() {
+    it('should reject for invalid update object', async function () {
       await expect((d.settings as any).update('invalid json')).to.be.rejectedWith('JSON');
     });
   });
 
-  describe('unexpected exits', function() {
+  describe('unexpected exits', function () {
     let sandbox: ReturnType<typeof sinon.createSandbox>;
-    beforeEach(function() {
+    beforeEach(function () {
       sandbox = sinon.createSandbox();
     });
 
-    afterEach(function() {
+    afterEach(function () {
       sandbox.restore();
     });
 
-    it('should reject a current command when the driver crashes', async function() {
-      sandbox.stub(d, 'getStatus').callsFake(async function() {
+    it('should reject a current command when the driver crashes', async function () {
+      sandbox.stub(d, 'getStatus').callsFake(async function () {
         await sleep(5000);
         return {};
       });
@@ -325,12 +322,7 @@ describe(`FakeDriver E2E`, function() {
       await sleep(100);
       const shutdownEventPromise = new Promise<void>((resolve, reject) => {
         setTimeout(
-          () =>
-            reject(
-              new Error(
-                'onUnexpectedShutdown event is expected to be fired within 5 seconds timeout',
-              ),
-            ),
+          () => reject(new Error('onUnexpectedShutdown event is expected to be fired within 5 seconds timeout')),
           5000,
         );
         d.onUnexpectedShutdown(resolve);
@@ -342,72 +334,72 @@ describe(`FakeDriver E2E`, function() {
     });
   });
 
-  describe('event timings', function() {
+  describe('event timings', function () {
     let session: NewSessionResponse | undefined;
     let res: SingularSessionData;
 
-    describe('when not provided the eventTimings cap', function() {
-      before(async function() {
+    describe('when not provided the eventTimings cap', function () {
+      before(async function () {
         session = await startSession({ capabilities: { alwaysMatch: defaultCaps } });
         res = await getSession(session.sessionId);
       });
 
-      after(async function() {
+      after(async function () {
         if (session) {
           await endSession(session.sessionId);
         }
       });
 
-      it('should not respond with events', function() {
+      it('should not respond with events', function () {
         expect(res.events).to.be.undefined;
       });
     });
 
-    describe('when provided the eventTimings cap', function() {
-      before(async function() {
+    describe('when provided the eventTimings cap', function () {
+      before(async function () {
         session = await startSession({
           capabilities: { alwaysMatch: { ...defaultCaps, 'appium:eventTimings': true } },
         });
         res = await getSession(session.sessionId);
       });
 
-      after(async function() {
+      after(async function () {
         if (session) {
           await endSession(session.sessionId);
         }
       });
 
-      it('should add a newSessionRequested event', function() {
+      it('should add a newSessionRequested event', function () {
         expect(res.events?.newSessionRequested?.[0]).to.be.a('number');
       });
 
-      it('should add a newSessionStarted event', function() {
+      it('should add a newSessionStarted event', function () {
         expect(res.events?.newSessionRequested?.[0]).to.be.a('number');
       });
     });
   });
 });
 
-describe('FakeDriver - via HTTP', function() {
+describe('FakeDriver - via HTTP', function () {
   let server: Awaited<ReturnType<typeof startServer>> | null = null;
   let port: number;
-  const context: { port: number; } = { port: 0 };
+  const context: { port: number } = { port: 0 };
 
-  before(async function() {
+  before(async function () {
     port = await getTestPort();
     context.port = port;
     if (shouldStartServer) {
       server = await startServer(port, TEST_HOST);
     }
   });
-  after(function() {
+  after(function () {
     if (server) {
       server.close();
     }
   });
 
-  describe('session handling', function() {
-    it('should start and stop a session', async function() {
+  describe('session handling', function () {
+    it('should start and stop a session', async function () {
       const driver = await initSession(W3C_PREFIXED_CAPS, { port });
       try {
         expect(driver.sessionId).to.exist;
@@ -419,7 +411,7 @@ describe('FakeDriver - via HTTP', function() {
     });
   });
 
-  describe('session-based tests', function() {
+  describe('session-based tests', function () {
     contextTests(context);
     findElementTests(context);
     elementInteractionTests(context);
@@ -427,8 +419,8 @@ describe('FakeDriver - via HTTP', function() {
     generalTests(context);
   });
 
-  describe('w3c', function() {
-    it('should return value.capabilities object for W3C', async function() {
+  describe('w3c', function () {
+    it('should return value.capabilities object for W3C', async function () {
       const res = await axios.post(`http://${TEST_HOST}:${port}/session`, {
         capabilities: {
           alwaysMatch: W3C_PREFIXED_CAPS,
@@ -442,7 +434,7 @@ describe('FakeDriver - via HTTP', function() {
       await axios.delete(`http://${TEST_HOST}:${port}/session/${value.sessionId}`);
     });
 
-    it('should fail if given unsupported desiredCapabilities', async function() {
+    it('should fail if given unsupported desiredCapabilities', async function () {
       await expect(
         axios.post(`http://${TEST_HOST}:${port}/session`, {
           desiredCapabilities: W3C_PREFIXED_CAPS,

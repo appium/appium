@@ -74,9 +74,7 @@ export async function loadConfig(filepath?: string, cwd = process.cwd()): Promis
     },
   });
 
-  const result = filepath
-    ? await searcher.load(path.normalize(filepath))
-    : await searcher.search(cwd);
+  const result = filepath ? await searcher.load(path.normalize(filepath)) : await searcher.search(cwd);
   if (result === null) {
     log.debug('No config found');
     return {};

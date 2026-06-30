@@ -1,0 +1,33 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+
+  "printWidth": 120,
+  "tabWidth": 2,
+  "useTabs": false,
+  "endOfLine": "lf",
+
+  "semi": true,
+  "singleQuote": true,
+  "quoteProps": "as-needed",
+  "trailingComma": "all",
+
+  "ignorePatterns": [
+    "**/node_modules",
+    "**/*-lock.json",
+    "**/build/**",
+    "**/fixtures/**",
+    "**/*.min.*",
+    "**/*.md",
+    "packages/appium/docs/**",
+    "package-lock.json",
+    "package.json",
+    "**/.vscode/**",
+    "**/*.html",
+    "**/generated/**",
+    "packages/schema/lib/appium-config.schema.json",
+    "packages/types/lib/appium-config.ts",
+    "**/*.hbs",
+    ".nx/**",
+    "packages/docutils/**/*.{yml,yaml}"
+  ]
+}

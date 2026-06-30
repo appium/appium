@@ -31,7 +31,7 @@ class TestPlugin implements Plugin {
     ExternalDriver['getPageSource'],
     [flag: boolean],
     string | Buffer
-  > = async function(next, driver, flag) {
+  > = async function (next, driver, flag) {
     const source = await next();
     if (typeof source === 'string') {
       return flag ? source : Buffer.from(source);
@@ -57,6 +57,4 @@ expectAssignable<PluginCommand>(instance.getPageSource);
 // DriverCommand does not know anything about the driver in which it lives, so `getPageSource` looks
 // like any other `DriverCommand`; it returns a `Promise`!
 expectAssignable<DriverCommand>(instance.getPageSource);
-expectAssignable<PluginCommand<ExternalDriver, [flag: boolean], string | Buffer>>(
-  TestPlugin.prototype.getPageSource,
-);
+expectAssignable<PluginCommand<ExternalDriver, [flag: boolean], string | Buffer>>(TestPlugin.prototype.getPageSource);

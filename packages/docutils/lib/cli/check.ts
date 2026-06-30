@@ -64,9 +64,7 @@ export async function checkMissingPaths<T extends Record<string, Options>>(
 
   if (missingPaths.length) {
     return missingPaths
-      .map(
-        ({ id, path }) => `Default or specified path via --${kebabCase(id)} (${path}) does not exist`,
-      )
+      .map(({ id, path }) => `Default or specified path via --${kebabCase(id)} (${path}) does not exist`)
       .join('\n');
   }
 
@@ -79,8 +77,6 @@ export async function checkMissingPaths<T extends Record<string, Options>>(
  * @returns Missing files
  */
 async function filterMissing(paths: MissingFileData[]): Promise<MissingFileData[]> {
-  const exists = await Promise.all(
-    paths.map(async ({ id, path }) => ({ id, path, exists: await fs.exists(path) })),
-  );
+  const exists = await Promise.all(paths.map(async ({ id, path }) => ({ id, path, exists: await fs.exists(path) })));
   return exists.filter((result) => !result.exists).map(({ id, path }) => ({ id, path }));
 }

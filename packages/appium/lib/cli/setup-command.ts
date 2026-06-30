@@ -23,13 +23,11 @@ export const SUBCOMMAND_RESET = 'reset';
  * Pairs of preset subcommand and driver candidates.
  * Driver names listed in KNOWN_DRIVERS to install by default
  */
-const PRESET_PAIRS = Object.freeze(
-  {
-    mobile: Object.keys(MOBILE_DRIVERS),
-    desktop: Object.keys(DESKTOP_DRIVERS),
-    browser: Object.keys(DESKTOP_BROWSERS),
-  } as const,
-);
+const PRESET_PAIRS = Object.freeze({
+  mobile: Object.keys(MOBILE_DRIVERS),
+  desktop: Object.keys(DESKTOP_DRIVERS),
+  browser: Object.keys(DESKTOP_BROWSERS),
+} as const);
 const DRIVERS_ONLY_MACOS = ['xcuitest', 'safari', 'mac2'];
 
 const DRIVERS_ONLY_WINDOWS = ['windows'];
@@ -46,9 +44,7 @@ type CliExtArgs = Args<CliExtensionCommand, CliExtensionSubcommand>;
 /**
  * Return a list of drivers available for current host platform.
  */
-export function getPresetDrivers(
-  presetName: Exclude<CliCommandSetupSubcommand, 'reset'>,
-): string[] {
+export function getPresetDrivers(presetName: Exclude<CliCommandSetupSubcommand, 'reset'>): string[] {
   return PRESET_PAIRS[presetName].filter((driver) => {
     if (DRIVERS_ONLY_MACOS.includes(driver)) {
       return system.isMac();
@@ -107,10 +103,7 @@ export async function runSetupCommand(
 /**
  * Resets all installed drivers and extensions
  */
-async function resetAllExtensions(
-  driverConfig: DriverConfig,
-  pluginConfig: PluginConfig,
-): Promise<void> {
+async function resetAllExtensions(driverConfig: DriverConfig, pluginConfig: PluginConfig): Promise<void> {
   const commandConfigs: [CliExtensionCommand, DriverConfig | PluginConfig][] = [
     ['driver', driverConfig],
     ['plugin', pluginConfig],
@@ -118,15 +111,11 @@ async function resetAllExtensions(
   for (const [command, config] of commandConfigs) {
     for (const extensionName of Object.keys(config.installedExtensions)) {
       try {
-        await uninstallExtension(
-          extensionName,
-          extensionCommandArgs(command, extensionName, 'uninstall'),
-          config,
-        );
+        await uninstallExtension(extensionName, extensionCommandArgs(command, extensionName, 'uninstall'), config);
       } catch (e) {
         log.warn(
-          `${extensionName} ${command} cannot be uninstalled. Will delete the manifest anyway. `
-            + `Original error: ${e instanceof Error ? e.stack : String(e)}`,
+          `${extensionName} ${command} cannot be uninstalled. Will delete the manifest anyway. ` +
+            `Original error: ${e instanceof Error ? e.stack : String(e)}`,
         );
       }
     }
@@ -138,9 +127,7 @@ async function resetAllExtensions(
 
     await fs.rimraf(manifestPath);
     if (await fs.exists(manifestPath)) {
-      throw new Error(
-        `${command} manifest at '${manifestPath}' cannot be deleted. Is it accessible?`,
-      );
+      throw new Error(`${command} manifest at '${manifestPath}' cannot be deleted. Is it accessible?`);
     } else {
       log.info(`Successfully deleted ${command} manifest at '${manifestPath}'`);
     }
@@ -176,11 +163,7 @@ async function installDrivers(
   driverConfig: DriverConfig,
 ): Promise<void> {
   for (const driverName of getPresetDrivers(subcommand)) {
-    await installExtension(
-      driverName,
-      extensionCommandArgs('driver', driverName, 'install'),
-      driverConfig,
-    );
+    await installExtension(driverName, extensionCommandArgs('driver', driverName, 'install'), driverConfig);
   }
 }
 
@@ -189,11 +172,7 @@ async function installDrivers(
  */
 async function setupDefaultPlugins(pluginConfig: PluginConfig): Promise<void> {
   for (const pluginName of DEFAULT_PLUGINS) {
-    await installExtension(
-      pluginName,
-      extensionCommandArgs('plugin', pluginName, 'install'),
-      pluginConfig,
-    );
+    await installExtension(pluginName, extensionCommandArgs('plugin', pluginName, 'install'), pluginConfig);
   }
 }
 
@@ -207,8 +186,8 @@ async function installExtension(
 ): Promise<void> {
   if (Object.keys(extensionConfig.installedExtensions).includes(extensionName)) {
     log.info(
-      `${extensionName} (${extensionConfig.installedExtensions[extensionName].version}) is already installed. `
-        + `Skipping the installation.`,
+      `${extensionName} (${extensionConfig.installedExtensions[extensionName].version}) is already installed. ` +
+        `Skipping the installation.`,
     );
     return;
   }
@@ -225,8 +204,8 @@ async function uninstallExtension(
 ): Promise<void> {
   if (!Object.keys(extensionConfig.installedExtensions).includes(extensionName)) {
     log.info(
-      `${extensionName} (${extensionConfig.installedExtensions[extensionName].version}) is not installed. `
-        + `Skipping its uninstall.`,
+      `${extensionName} (${extensionConfig.installedExtensions[extensionName].version}) is not installed. ` +
+        `Skipping its uninstall.`,
     );
     return;
   }

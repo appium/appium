@@ -7,7 +7,7 @@ type AppiumPackageJson = PackageJson & {
   version: string;
 };
 
-function readPackageJsonSync(): { pkgRoot: string; pkg: AppiumPackageJson; } {
+function readPackageJsonSync(): { pkgRoot: string; pkg: AppiumPackageJson } {
   let current = path.resolve(__dirname);
   const root = path.parse(current).root;
   let pkgRoot: string;
@@ -21,9 +21,7 @@ function readPackageJsonSync(): { pkgRoot: string; pkg: AppiumPackageJson; } {
     }
     current = path.dirname(current);
   }
-  const pkg = JSON.parse(
-    nodeFs.readFileSync(path.join(pkgRoot, 'package.json'), 'utf8'),
-  ) as PackageJson;
+  const pkg = JSON.parse(nodeFs.readFileSync(path.join(pkgRoot, 'package.json'), 'utf8')) as PackageJson;
   if (typeof pkg.name !== 'string' || typeof pkg.version !== 'string') {
     throw new Error(`Invalid \`package.json\` near ${__dirname}`);
   }

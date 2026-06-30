@@ -12,9 +12,9 @@ export function isW3cCaps(caps: unknown): caps is W3CCapabilities<Constraints> {
 
   const c = caps as Record<string, unknown>;
   const isFirstMatchValid = () =>
-    Array.isArray(c.firstMatch)
-    && !util.isEmpty(c.firstMatch)
-    && c.firstMatch.every((item) => util.isPlainObject(item));
+    Array.isArray(c.firstMatch) &&
+    !util.isEmpty(c.firstMatch) &&
+    c.firstMatch.every((item) => util.isPlainObject(item));
   const isAlwaysMatchValid = () => util.isPlainObject(c.alwaysMatch);
   if (Object.hasOwn(c, 'firstMatch') && Object.hasOwn(c, 'alwaysMatch')) {
     return isFirstMatchValid() && isAlwaysMatchValid();

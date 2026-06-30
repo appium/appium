@@ -206,8 +206,7 @@ function formatSlackMessage(pullRequests, from, to, generatedAt) {
       type: 'section',
       text: {
         type: 'mrkdwn',
-        text:
-          `*Organization:* @${GITHUB_ORG}\n*Period:* ${fromDate} to ${toDate}\n*Total Merged Pull Requests:* ${pullRequests.length}`,
+        text: `*Organization:* @${GITHUB_ORG}\n*Period:* ${fromDate} to ${toDate}\n*Total Merged Pull Requests:* ${pullRequests.length}`,
       },
     },
     {
@@ -323,12 +322,7 @@ async function main() {
   const sortedPullRequests = sortPullRequests(allPullRequests);
 
   // Output Slack-formatted message to stdout
-  const slackMessage = formatSlackMessage(
-    sortedPullRequests,
-    dateRange.from,
-    dateRange.to,
-    generatedAt,
-  );
+  const slackMessage = formatSlackMessage(sortedPullRequests, dateRange.from, dateRange.to, generatedAt);
 
   // eslint-disable-next-line no-console
   console.log(JSON.stringify(slackMessage, null, 2));

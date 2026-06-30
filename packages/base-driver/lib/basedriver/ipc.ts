@@ -99,17 +99,15 @@ export class AppiumIpc implements IAppiumIpc {
     this.maxTopics = opts.maxTopics ?? DEF_MAX_TOPICS;
     this.log = opts.log ?? log;
     this.log.debug(
-      `Initialized new IPC object with max object size of ${this.maxObjSize} bytes `
-        + `and max topics of ${this.maxTopics}`,
+      `Initialized new IPC object with max object size of ${this.maxObjSize} bytes ` +
+        `and max topics of ${this.maxTopics}`,
     );
   }
 
   subscribe<T extends IpcData>(topic: string, subscriber: string): IpcSubscription<T> {
     this.log.info(`Subscribing ${subscriber} to topic '${topic}'`);
     if (this.subscriptionExists(topic, subscriber)) {
-      throw new Error(
-        `Subscription already exists for topic "${topic}" and subscriber "${subscriber}"`,
-      );
+      throw new Error(`Subscription already exists for topic "${topic}" and subscriber "${subscriber}"`);
     }
 
     this.ensureTopic(topic);
@@ -136,8 +134,8 @@ export class AppiumIpc implements IAppiumIpc {
     const messageSize = node.getObjectSize(data);
     if (messageSize > this.maxObjSize) {
       throw new Error(
-        `Error when ${publisher} is publishing to topic '${topic}': `
-          + `Message with size ${messageSize} bytes is bigger than max size of ${this.maxObjSize} bytes`,
+        `Error when ${publisher} is publishing to topic '${topic}': ` +
+          `Message with size ${messageSize} bytes is bigger than max size of ${this.maxObjSize} bytes`,
       );
     }
 
@@ -154,9 +152,7 @@ export class AppiumIpc implements IAppiumIpc {
 
     this.messageByTopic[topic] = message;
 
-    const subs = this.subs[topic]
-      ? this.subs[topic].filter((sub) => sub.subscriber !== publisher)
-      : [];
+    const subs = this.subs[topic] ? this.subs[topic].filter((sub) => sub.subscriber !== publisher) : [];
 
     for (const sub of subs) {
       sub.emit(EVT_MESSAGE, structuredClone(message));
@@ -185,9 +181,9 @@ export class AppiumIpc implements IAppiumIpc {
     }
     if (this.topics.size >= this.maxTopics) {
       throw new Error(
-        `Cannot create new IPC topic '${topic}': `
-          + `maximum of ${this.maxTopics} topics per session reached. `
-          + `Adjust with the --max-ipc-topics server arg.`,
+        `Cannot create new IPC topic '${topic}': ` +
+          `maximum of ${this.maxTopics} topics per session reached. ` +
+          `Adjust with the --max-ipc-topics server arg.`,
       );
     }
     this.topics.add(topic);

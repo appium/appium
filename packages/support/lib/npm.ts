@@ -82,7 +82,7 @@ export class NPM {
       argsCopy.push('--json');
     }
     const npmCmd = system.isWindows() ? 'npm.cmd' : 'npm';
-    type ExecRunnerResult = { stdout: string; stderr: string; code: number | null; };
+    type ExecRunnerResult = { stdout: string; stderr: string; code: number | null };
     let runner = async (): Promise<ExecRunnerResult> => await exec(npmCmd, argsCopy, teenProcessExecOpts);
     if (lockFile) {
       const acquireLock = util.getLockFileGuard(lockFile);
@@ -102,9 +102,9 @@ export class NPM {
     } catch (e) {
       const { stdout = '', stderr = '', code = null } = e as ExecError;
       throw new Error(
-        `npm command '${
-          argsCopy.join(' ')
-        }' failed with code ${code}.\n\nSTDOUT:\n${stdout.trim()}\n\nSTDERR:\n${stderr.trim()}`,
+        `npm command '${argsCopy.join(
+          ' ',
+        )}' failed with code ${code}.\n\nSTDOUT:\n${stdout.trim()}\n\nSTDERR:\n${stderr.trim()}`,
         { cause: e },
       );
     }
@@ -121,7 +121,7 @@ export class NPM {
   async getLatestVersion(cwd: string, pkg: string): Promise<string | null> {
     try {
       const result = await this.exec('view', [pkg, 'dist-tags'], { json: true, cwd });
-      const json = result.json as { latest?: string; } | undefined;
+      const json = result.json as { latest?: string } | undefined;
       return json?.latest ?? null;
     } catch (err) {
       if (!(err instanceof Error) || !err.message.includes('E404')) {
@@ -141,11 +141,7 @@ export class NPM {
    * @param curVersion - Current installed version
    * @returns Latest safe upgrade version string, or `null` if none or package not found
    */
-  async getLatestSafeUpgradeVersion(
-    cwd: string,
-    pkg: string,
-    curVersion: string,
-  ): Promise<string | null> {
+  async getLatestSafeUpgradeVersion(cwd: string, pkg: string, curVersion: string): Promise<string | null> {
     try {
       const result = await this.exec('view', [pkg, 'versions'], { json: true, cwd });
       const allVersions = result.json;
@@ -182,10 +178,10 @@ export class NPM {
     for (const testVer of allVersions) {
       const testSemver = semver.parse(testVer) ?? semver.parse(semver.coerce(testVer));
       if (
-        testSemver === null
-        || testSemver.prerelease.length > 0
-        || curSemver.compare(testSemver) === 1
-        || testSemver.major > curSemver.major
+        testSemver === null ||
+        testSemver.prerelease.length > 0 ||
+        curSemver.compare(testSemver) === 1 ||
+        testSemver.major > curSemver.major
       ) {
         continue;
       }
@@ -199,11 +195,7 @@ export class NPM {
   /**
    * Installs a package w/ `npm`
    */
-  async installPackage(
-    cwd: string,
-    installStr: string,
-    opts: InstallPackageOpts,
-  ): Promise<NpmInstallReceipt> {
+  async installPackage(cwd: string, installStr: string, opts: InstallPackageOpts): Promise<NpmInstallReceipt> {
     const { pkgName, installType } = opts;
     let dummyPkgJson: Record<string, unknown>;
     const dummyPkgPath = path.join(cwd, 'package.json');
@@ -235,7 +227,7 @@ export class NPM {
     });
 
     if (res.json && typeof res.json === 'object' && 'error' in res.json && res.json.error) {
-      throw new Error(String((res.json as { error: unknown; }).error));
+      throw new Error(String((res.json as { error: unknown }).error));
     }
 
     const pkgJsonPath = await resolveFrom(cwd, `${pkgName}/package.json`);
@@ -245,9 +237,9 @@ export class NPM {
       return { installPath: path.dirname(pkgJsonPath), pkg };
     } catch (e) {
       throw new Error(
-        'The package was not downloaded correctly; its package.json '
-          + 'did not exist or was unreadable. We looked for it at '
-          + pkgJsonPath,
+        'The package was not downloaded correctly; its package.json ' +
+          'did not exist or was unreadable. We looked for it at ' +
+          pkgJsonPath,
         { cause: e },
       );
     }
@@ -311,10 +303,7 @@ export async function resolveFrom(fromDirectory: string, moduleId: string): Prom
 
   const fromFile = path.join(resolvedFromDirectory, 'noop.js');
   const nodeModule = Module as typeof Module & {
-    _resolveFilename: (
-      id: string,
-      parent: { id: string; filename: string; paths: string[]; },
-    ) => string;
+    _resolveFilename: (id: string, parent: { id: string; filename: string; paths: string[] }) => string;
     _nodeModulePaths: (from: string) => string[];
   };
   return nodeModule._resolveFilename(moduleId, {

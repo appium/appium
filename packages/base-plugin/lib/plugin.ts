@@ -56,9 +56,7 @@ export class BasePlugin extends ExtensionCore implements Plugin {
     const commandMetadata = { ...PluginClass.executeMethodMap?.[script] };
 
     if (!commandMetadata.command || !(commandMetadata.command in this)) {
-      this.log.info(
-        `Plugin did not know how to handle method '${script}'. Passing control to next`,
-      );
+      this.log.info(`Plugin did not know how to handle method '${script}'. Passing control to next`);
       return await next();
     }
 

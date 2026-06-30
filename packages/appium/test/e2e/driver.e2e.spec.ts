@@ -77,14 +77,14 @@ async function initFakeDriver(appiumHome: string) {
   return await driverConfig.requireAsync('fake');
 }
 
-describe('FakeDriver via HTTP', function() {
+describe('FakeDriver via HTTP', function () {
   let server: AppiumServer | void;
   let appiumHome: string;
   let FakeDriver: DriverClass;
   let testServerBaseSessionUrl: string;
   let sandbox: SinonSandbox;
 
-  before(async function() {
+  before(async function () {
     sandbox = createSandbox();
     appiumHome = await tempDir.openDir();
     wdOpts.port = port = await getTestPort();
@@ -93,45 +93,46 @@ describe('FakeDriver via HTTP', function() {
     FakeDriver = await initFakeDriver(appiumHome);
   });
 
-  after(async function() {
+  after(async function () {
     await fs.rimraf(appiumHome);
     sandbox.restore();
   });
 
   function withServer(args: Partial<ParsedArgs> = {}) {
     // eslint-disable-next-line mocha/no-sibling-hooks
-    before(async function() {
+    before(async function () {
       const merged = { ...args, appiumHome, port, address: TEST_HOST };
       if (shouldStartServer) {
         server = await appiumServer(merged);
       }
     });
     // eslint-disable-next-line mocha/no-sibling-hooks
-    after(async function() {
+    after(async function () {
       if (server) {
         await server.close();
       }
     });
   }
 
-  describe('server updating', function() {
+  describe('server updating', function () {
     withServer();
-    it('should allow drivers to update the server in arbitrary ways', async function() {
+    it('should allow drivers to update the server in arbitrary ways', async function () {
       const { data } = await axios.get(`${testServerBaseUrl}/fakedriver`);
       expect(data).to.eql({ fakedriver: 'fakeResponse' });
     });
-    it('should update the server with cliArgs', async function() {
+    it('should update the server with cliArgs', async function () {
       // we don't need to check the entire object, since it's large, but we can ensure an
       // arg got through.
-      expect(
-        (await axios.post(`http://${TEST_HOST}:${port}/fakedriverCliArgs`)).data,
-      ).to.have.property('appiumHome', appiumHome);
+      expect((await axios.post(`http://${TEST_HOST}:${port}/fakedriverCliArgs`)).data).to.have.property(
+        'appiumHome',
+        appiumHome,
+      );
     });
   });
 
-  describe('cli args handling for empty args', function() {
+  describe('cli args handling for empty args', function () {
     withServer();
-    it('should not receive user cli args if none passed in', async function() {
+    it('should not receive user cli args if none passed in', async function () {
       const driver = await wdio({ ...wdOpts, capabilities: caps });
       const { sessionId } = driver;
       try {
@@ -144,9 +145,9 @@ describe('FakeDriver via HTTP', function() {
     });
   });
 
-  describe('cli args handling for passed in args', function() {
+  describe('cli args handling for passed in args', function () {
     withServer(FAKE_DRIVER_ARGS);
-    it('should receive user cli args from a driver if arguments were passed in', async function() {
+    it('should receive user cli args from a driver if arguments were passed in', async function () {
       const driver = await wdio({ ...wdOpts, capabilities: caps });
       const { sessionId } = driver;
       try {
@@ -159,7 +160,7 @@ describe('FakeDriver via HTTP', function() {
     });
   });
 
-  describe('default capabilities via cli', function() {
+  describe('default capabilities via cli', function () {
     withServer({
       defaultCapabilities: {
         'appium:options': {
@@ -170,7 +171,7 @@ describe('FakeDriver via HTTP', function() {
         platformName: 'Fake',
       },
     });
-    it('should allow appium-prefixed caps sent via appium:options through --default-capabilities', async function() {
+    it('should allow appium-prefixed caps sent via appium:options through --default-capabilities', async function () {
       const appiumOptsCaps = {
         capabilities: {
           alwaysMatch: {},
@@ -196,26 +197,24 @@ describe('FakeDriver via HTTP', function() {
     });
   });
 
-  describe('inspector commands', function() {
+  describe('inspector commands', function () {
     withServer();
     let driver: AppiumTestBrowser;
 
-    beforeEach(async function() {
+    beforeEach(async function () {
       driver = (await wdio({ ...wdOpts, capabilities: caps })) as AppiumTestBrowser;
     });
-    afterEach(async function() {
+    afterEach(async function () {
       if (driver) {
         await driver.deleteSession();
         driver = null as unknown as AppiumTestBrowser;
       }
     });
 
-    it('should list available driver commands', async function() {
+    it('should list available driver commands', async function () {
       driver.addCommand(
         'listCommands',
-        async () =>
-          (await axios.get(`${testServerBaseSessionUrl}/${driver.sessionId}/appium/commands`)).data
-            .value,
+        async () => (await axios.get(`${testServerBaseSessionUrl}/${driver.sessionId}/appium/commands`)).data.value,
       );
 
       const commands = await driver.listCommands();
@@ -244,12 +243,10 @@ describe('FakeDriver via HTTP', function() {
       expect(Object.keys(commands.bidi.driver).length).to.be.greaterThan(0);
     });
 
-    it('should list available driver extensions', async function() {
+    it('should list available driver extensions', async function () {
       driver.addCommand(
         'listExtensions',
-        async () =>
-          (await axios.get(`${testServerBaseSessionUrl}/${driver.sessionId}/appium/extensions`))
-            .data.value,
+        async () => (await axios.get(`${testServerBaseSessionUrl}/${driver.sessionId}/appium/extensions`)).data.value,
       );
 
       const extensions = await driver.listExtensions();
@@ -268,10 +265,10 @@ describe('FakeDriver via HTTP', function() {
     });
   });
 
-  describe('session handling', function() {
+  describe('session handling', function () {
     withServer();
 
-    it('should start and stop a session and not allow commands after session stopped', async function() {
+    it('should start and stop a session and not allow commands after session stopped', async function () {
       const driver = await wdio({ ...wdOpts, capabilities: caps });
       expect(driver.sessionId).to.exist;
       expect(driver.sessionId).to.be.a('string');
@@ -279,7 +276,7 @@ describe('FakeDriver via HTTP', function() {
       await expect(driver.getTitle()).to.eventually.be.rejected;
     });
 
-    it('should be able to run two FakeDriver sessions simultaneously', async function() {
+    it('should be able to run two FakeDriver sessions simultaneously', async function () {
       const driver1 = await wdio({ ...wdOpts, capabilities: caps });
       expect(driver1.sessionId).to.exist;
       expect(driver1.sessionId).to.be.a('string');
@@ -291,7 +288,7 @@ describe('FakeDriver via HTTP', function() {
       await driver2.deleteSession();
     });
 
-    it('should not be able to run two FakeDriver sessions simultaneously when one is unique', async function() {
+    it('should not be able to run two FakeDriver sessions simultaneously when one is unique', async function () {
       const uniqueCaps = structuredClone(caps);
       uniqueCaps['appium:uniqueApp'] = true;
       const driver1 = await wdio({ ...wdOpts, capabilities: uniqueCaps });
@@ -301,7 +298,7 @@ describe('FakeDriver via HTTP', function() {
       await driver1.deleteSession();
     });
 
-    it('should use the newCommandTimeout of the inner Driver on session creation', async function() {
+    it('should use the newCommandTimeout of the inner Driver on session creation', async function () {
       const localCaps = {
         'appium:newCommandTimeout': 0.25,
         ...caps,
@@ -313,17 +310,14 @@ describe('FakeDriver via HTTP', function() {
       await expect(driver.getPageSource()).to.eventually.be.rejectedWith(/terminated/);
     });
 
-    it('should not allow umbrella commands to prevent newCommandTimeout on inner driver', async function() {
+    it('should not allow umbrella commands to prevent newCommandTimeout on inner driver', async function () {
       const localCaps = {
         'appium:newCommandTimeout': 0.25,
         ...caps,
       };
       const driver = await wdio({ ...wdOpts, capabilities: localCaps });
       expect(driver.sessionId).to.exist;
-      driver.addCommand(
-        'getStatus',
-        async () => (await axios.get(`${testServerBaseUrl}/status`)).data.value,
-      );
+      driver.addCommand('getStatus', async () => (await axios.get(`${testServerBaseUrl}/status`)).data.value);
 
       // get the session list 6 times over 300ms. each request will be below the new command
       // timeout but since they are not received by the driver the session should still time out
@@ -334,7 +328,7 @@ describe('FakeDriver via HTTP', function() {
       await expect(driver.getPageSource()).to.eventually.be.rejectedWith(/terminated/);
     });
 
-    it('should accept valid W3C capabilities and start a W3C session', async function() {
+    it('should accept valid W3C capabilities and start a W3C session', async function () {
       // Try with valid capabilities and check that it returns a session ID
       const w3cCaps = {
         capabilities: {
@@ -379,7 +373,7 @@ describe('FakeDriver via HTTP', function() {
       }
     });
 
-    it('should allow appium-prefixed caps sent via appium:options', async function() {
+    it('should allow appium-prefixed caps sent via appium:options', async function () {
       // Try with valid capabilities and check that it returns a session ID
       const appiumOptsCaps = {
         capabilities: {
@@ -396,9 +390,7 @@ describe('FakeDriver via HTTP', function() {
       };
 
       // Create the session
-      const { status, value, sessionId } = (
-        await axios.post(testServerBaseSessionUrl, appiumOptsCaps)
-      ).data;
+      const { status, value, sessionId } = (await axios.post(testServerBaseSessionUrl, appiumOptsCaps)).data;
       try {
         expect(status).to.not.exist; // Test that it's a W3C session
         expect(sessionId).to.not.exist;
@@ -416,7 +408,7 @@ describe('FakeDriver via HTTP', function() {
       }
     });
 
-    it('should reject invalid W3C capabilities and respond with a 400 Bad Parameters error', async function() {
+    it('should reject invalid W3C capabilities and respond with a 400 Bad Parameters error', async function () {
       const badW3Ccaps = {
         capabilities: {
           alwaysMatch: {},
@@ -424,12 +416,10 @@ describe('FakeDriver via HTTP', function() {
         },
       };
 
-      await expect(axios.post(testServerBaseSessionUrl, badW3Ccaps)).to.eventually.be.rejectedWith(
-        /400/,
-      );
+      await expect(axios.post(testServerBaseSessionUrl, badW3Ccaps)).to.eventually.be.rejectedWith(/400/);
     });
 
-    it('should accept a combo of W3C and JSONWP capabilities but completely ignore JSONWP', async function() {
+    it('should accept a combo of W3C and JSONWP capabilities but completely ignore JSONWP', async function () {
       const combinedCaps = {
         desiredCapabilities: {
           ...caps,
@@ -445,8 +435,7 @@ describe('FakeDriver via HTTP', function() {
         },
       };
 
-      const { status, value, sessionId } = (await axios.post(testServerBaseSessionUrl, combinedCaps))
-        .data;
+      const { status, value, sessionId } = (await axios.post(testServerBaseSessionUrl, combinedCaps)).data;
       try {
         expect(status).to.not.exist;
         expect(sessionId).to.not.exist;
@@ -461,7 +450,7 @@ describe('FakeDriver via HTTP', function() {
       }
     });
 
-    it('should reject bad automation name with an appropriate error', async function() {
+    it('should reject bad automation name with an appropriate error', async function () {
       const w3cCaps = {
         capabilities: {
           alwaysMatch: {
@@ -470,12 +459,10 @@ describe('FakeDriver via HTTP', function() {
           },
         },
       };
-      await expect(axios.post(testServerBaseSessionUrl, w3cCaps)).to.eventually.be.rejectedWith(
-        /500/,
-      );
+      await expect(axios.post(testServerBaseSessionUrl, w3cCaps)).to.eventually.be.rejectedWith(/500/);
     });
 
-    it('should accept capabilities that are provided in the firstMatch array', async function() {
+    it('should accept capabilities that are provided in the firstMatch array', async function () {
       const w3cCaps = {
         capabilities: {
           alwaysMatch: {},
@@ -498,7 +485,7 @@ describe('FakeDriver via HTTP', function() {
       }
     });
 
-    it('should not fall back to MJSONWP if w3c caps are invalid', async function() {
+    it('should not fall back to MJSONWP if w3c caps are invalid', async function () {
       const combinedCaps = {
         desiredCapabilities: {
           ...caps,
@@ -523,7 +510,7 @@ describe('FakeDriver via HTTP', function() {
       expect(res.data.value.error).to.match(/invalid argument/);
     });
 
-    it('should not fall back to MJSONWP even if Inner Driver is not ready for W3C', async function() {
+    it('should not fall back to MJSONWP even if Inner Driver is not ready for W3C', async function () {
       const combinedCaps = {
         desiredCapabilities: {
           ...caps,
@@ -537,7 +524,7 @@ describe('FakeDriver via HTTP', function() {
       };
       const createSessionStub = sandbox
         .stub(FakeDriver.prototype, 'createSession')
-        .callsFake(async function(this: InstanceType<DriverClass>, caps) {
+        .callsFake(async function (this: InstanceType<DriverClass>, caps) {
           const res = await BaseDriver.prototype.createSession.call(this, caps);
           expect(this.protocol).to.equal('W3C');
           return res;
@@ -553,42 +540,42 @@ describe('FakeDriver via HTTP', function() {
       }
     });
 
-    it('should allow drivers to update the method map with new routes and commands', async function() {
+    it('should allow drivers to update the method map with new routes and commands', async function () {
       const driver = await wdio({ ...wdOpts, capabilities: caps });
       const { sessionId } = driver;
       try {
         await axios.post(`${testServerBaseSessionUrl}/${sessionId}/fakedriver`, {
           thing: { yes: 'lolno' },
         });
-        expect(
-          (await axios.get(`${testServerBaseSessionUrl}/${sessionId}/fakedriver`)).data.value,
-        ).to.eql({ yes: 'lolno' });
+        expect((await axios.get(`${testServerBaseSessionUrl}/${sessionId}/fakedriver`)).data.value).to.eql({
+          yes: 'lolno',
+        });
       } finally {
         await driver.deleteSession();
       }
     });
   });
 
-  describe('Bidi protocol', function() {
+  describe('Bidi protocol', function () {
     withServer();
     const capabilities = { ...caps, webSocketUrl: true, 'appium:runClock': true };
     let driver: AppiumTestBrowser;
 
-    beforeEach(async function() {
+    beforeEach(async function () {
       driver = (await wdio({ ...wdOpts, capabilities })) as AppiumTestBrowser;
     });
 
-    afterEach(async function() {
+    afterEach(async function () {
       if (driver) {
         await driver.deleteSession();
       }
     });
 
-    it('should respond with bidi specific capability when a driver supports it', async function() {
+    it('should respond with bidi specific capability when a driver supports it', async function () {
       expect(driver.capabilities.webSocketUrl);
     });
 
-    it('should interpret the bidi protocol and let the driver handle it by command', async function() {
+    it('should interpret the bidi protocol and let the driver handle it by command', async function () {
       expect(await driver.getUrl()).to.not.be.ok;
 
       await driver.browsingContextNavigate({
@@ -599,9 +586,9 @@ describe('FakeDriver via HTTP', function() {
       await expect(driver.getUrl()).to.eventually.eql('https://appium.io');
     });
 
-    it('should be able to subscribe and unsubscribe to bidi events', async function() {
+    it('should be able to subscribe and unsubscribe to bidi events', async function () {
       const collectedEvents: number[] = [];
-      (driver as any).on('appium:clock.currentTime', (ev: { time: number; }) => {
+      (driver as any).on('appium:clock.currentTime', (ev: { time: number }) => {
         collectedEvents.push(ev.time);
       });
 
@@ -622,7 +609,7 @@ describe('FakeDriver via HTTP', function() {
       expect(collectedEvents).to.be.empty;
     });
 
-    it('should allow custom bidi commands', async function() {
+    it('should allow custom bidi commands', async function () {
       let { result } = await driver.send({
         method: 'appium:fake.getFakeThing',
         params: {},
@@ -640,27 +627,27 @@ describe('FakeDriver via HTTP', function() {
     });
   });
 
-  describe('Bidi protocol with base path', function() {
+  describe('Bidi protocol with base path', function () {
     const basePath = '/wd/hub';
     withServer({ basePath });
     const capabilities = { ...caps, webSocketUrl: true, 'appium:runClock': true };
     let driver: AppiumTestBrowser;
 
-    beforeEach(async function() {
+    beforeEach(async function () {
       driver = (await wdio({ ...wdOpts, path: basePath, capabilities })) as AppiumTestBrowser;
     });
 
-    afterEach(async function() {
+    afterEach(async function () {
       if (driver) {
         await driver.deleteSession();
       }
     });
 
-    it('should respond with bidi specific capability when a driver supports it', async function() {
+    it('should respond with bidi specific capability when a driver supports it', async function () {
       expect(driver.capabilities.webSocketUrl);
     });
 
-    it('should interpret the bidi protocol and let the driver handle it by command', async function() {
+    it('should interpret the bidi protocol and let the driver handle it by command', async function () {
       expect(await driver.getUrl()).to.not.be.ok;
 
       await driver.browsingContextNavigate({
@@ -673,7 +660,7 @@ describe('FakeDriver via HTTP', function() {
   });
 });
 
-describe('Bidi over SSL', function() {
+describe('Bidi over SSL', function () {
   async function generateCertificate(certPath: string, keyPath: string) {
     await exec('openssl', [
       'req',
@@ -699,7 +686,7 @@ describe('Bidi over SSL', function() {
   const capabilities = { ...caps, webSocketUrl: true };
   let previousEnvValue: string | undefined;
 
-  before(async function() {
+  before(async function () {
     // Skip on Node.js 24+ due to spdy package incompatibility (http_parser removed)
     const nodeMajorVersion = parseInt(process.version.slice(1).split('.')[0], 10);
     if (nodeMajorVersion >= 24) {
@@ -727,27 +714,27 @@ describe('Bidi over SSL', function() {
     });
   });
 
-  after(async function() {
+  after(async function () {
     if (server) {
       await fs.rimraf(appiumHome);
       await server.close();
     }
   });
 
-  beforeEach(async function() {
+  beforeEach(async function () {
     previousEnvValue = process.env.NODE_TLS_REJECT_UNAUTHORIZED;
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
     driver = await wdio({ ...wdOpts, protocol: 'https', strictSSL: false, capabilities });
   });
 
-  afterEach(async function() {
+  afterEach(async function () {
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = previousEnvValue;
     if (driver) {
       await driver.deleteSession();
     }
   });
 
-  it('should still run bidi over ssl', async function() {
+  it('should still run bidi over ssl', async function () {
     expect(await driver.getUrl()).to.not.be.ok;
 
     await driver.browsingContextNavigate({
@@ -760,10 +747,10 @@ describe('Bidi over SSL', function() {
 });
 
 // TODO this test only works if the log has not previously been initialized in the same process.
-describe.skip('Logsink', function() {
+describe.skip('Logsink', function () {
   let server: Awaited<ReturnType<typeof appiumServer>> | null = null;
   const logs: [string, string][] = [];
-  const logHandler = function(level: string, message: string) {
+  const logHandler = function (level: string, message: string) {
     logs.push([level, message]);
   };
   const args = {
@@ -772,17 +759,17 @@ describe.skip('Logsink', function() {
     logHandler,
   };
 
-  before(async function() {
+  before(async function () {
     server = await appiumServer(args);
   });
 
-  after(async function() {
+  after(async function () {
     if (server) {
       await server.close();
     }
   });
 
-  it('should send logs to a logHandler passed in by a parent package', function() {
+  it('should send logs to a logHandler passed in by a parent package', function () {
     expect(logs.length).to.be.above(1);
     const welcomeIndex = logs[0][1].includes('versions of node') ? 1 : 0;
     expect(logs[welcomeIndex].length).to.equal(2);

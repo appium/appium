@@ -9,13 +9,13 @@ import { MockExecuteDriver } from '../protocol/mock-execute-driver';
 
 chai.use(chaiAsPromised);
 
-describe('Execute Command Test', function() {
+describe('Execute Command Test', function () {
   let sandbox: sinon.SinonSandbox;
   let driver: MockExecuteDriver;
   let baseUrl: string;
   let teardown: () => Promise<void> | undefined;
 
-  beforeEach(async function() {
+  beforeEach(async function () {
     sandbox = createSandbox();
     driver = new MockExecuteDriver();
     driver.sessionId = 'foo';
@@ -30,12 +30,12 @@ describe('Execute Command Test', function() {
     await setup();
   });
 
-  afterEach(async function() {
+  afterEach(async function () {
     sandbox.restore();
     await teardown?.();
   });
 
-  it('should rename extended command and log it in event history', async function() {
+  it('should rename extended command and log it in event history', async function () {
     const script = 'mobile: activateApp';
     const args = [{ appId: 'io.appium.TestApp' }];
 

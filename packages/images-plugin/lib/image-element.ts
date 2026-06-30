@@ -27,14 +27,7 @@ export class ImageElement {
   readonly finder: ImageElementFinder | null;
   readonly containerRect: Rect | null;
 
-  constructor({
-    template,
-    rect,
-    score,
-    match = null,
-    finder = null,
-    containerRect = null,
-  }: ImageElementOpts) {
+  constructor({ template, rect, score, match = null, finder = null, containerRect = null }: ImageElementOpts) {
     this.template = template;
     this.rect = rect;
     this.id = `${IMAGE_ELEMENT_PREFIX}${util.uuidV4()}`;
@@ -92,12 +85,7 @@ export class ImageElement {
    *
    * @returns the result of running a command
    */
-  static async execute(
-    driver: ExternalDriver,
-    imgEl: ImageElement,
-    cmd: string,
-    ...args: any[]
-  ): Promise<any> {
+  static async execute(driver: ExternalDriver, imgEl: ImageElement, cmd: string, ...args: any[]): Promise<any> {
     switch (cmd) {
       case 'click':
         return await imgEl.click(driver);
@@ -147,10 +135,10 @@ export class ImageElement {
    */
   equals(other: ImageElement): boolean {
     return (
-      this.rect.x === other.rect.x
-      && this.rect.y === other.rect.y
-      && this.rect.width === other.rect.width
-      && this.rect.height === other.rect.height
+      this.rect.x === other.rect.x &&
+      this.rect.y === other.rect.y &&
+      this.rect.width === other.rect.width &&
+      this.rect.height === other.rect.height
     );
   }
 
@@ -173,9 +161,9 @@ export class ImageElement {
     // validate tap strategy
     if (!IMAGE_TAP_STRATEGIES.includes(imageElementTapStrategy)) {
       throw new Error(
-        `Incorrect imageElementTapStrategy setting `
-          + `'${imageElementTapStrategy}'. Must be one of `
-          + JSON.stringify(IMAGE_TAP_STRATEGIES),
+        `Incorrect imageElementTapStrategy setting ` +
+          `'${imageElementTapStrategy}'. Must be one of ` +
+          JSON.stringify(IMAGE_TAP_STRATEGIES),
       );
     }
 
@@ -199,20 +187,20 @@ export class ImageElement {
 
       if (!this.equals(newImgEl)) {
         log.warn(
-          `When trying to click on an image element, the image changed `
-            + `position from where it was originally found. It is now at `
-            + `${JSON.stringify(newImgEl.rect)} and was originally at `
-            + `${JSON.stringify(this.rect)}.`,
+          `When trying to click on an image element, the image changed ` +
+            `position from where it was originally found. It is now at ` +
+            `${JSON.stringify(newImgEl.rect)} and was originally at ` +
+            `${JSON.stringify(this.rect)}.`,
         );
         if (updatePos) {
           log.warn('Click will proceed at new coordinates');
           this.rect = { ...newImgEl.rect };
         } else {
           log.warn(
-            'Click will take place at original coordinates. If you '
-              + 'would like Appium to automatically click the new '
-              + 'coordinates, set the \'autoUpdateImageElementPosition\' '
-              + 'setting to true',
+            'Click will take place at original coordinates. If you ' +
+              'would like Appium to automatically click the new ' +
+              "coordinates, set the 'autoUpdateImageElementPosition' " +
+              'setting to true',
           );
         }
       }
@@ -258,9 +246,9 @@ export class ImageElement {
     }
 
     throw new Error(
-      'Driver did not implement the \'performTouch\' command. '
-        + 'For drivers to support finding image elements, they '
-        + 'should support \'performTouch\' and \'performActions\'',
+      "Driver did not implement the 'performTouch' command. " +
+        'For drivers to support finding image elements, they ' +
+        "should support 'performTouch' and 'performActions'",
     );
   }
 
@@ -272,16 +260,10 @@ export class ImageElement {
    * @param args - Rest of arguments for executeScripts
    * @returns WebDriver element with a special id prefix
    */
-  async find(
-    multiple: boolean,
-    driver: ExternalDriver,
-    ...args: any[]
-  ): Promise<Element | Element[] | ImageElement> {
+  async find(multiple: boolean, driver: ExternalDriver, ...args: any[]): Promise<Element | Element[] | ImageElement> {
     const [strategy, selector] = args;
     if (strategy !== IMAGE_STRATEGY) {
-      throw new errors.InvalidSelectorError(
-        `Lookup strategies other than '${IMAGE_STRATEGY}' are not supported`,
-      );
+      throw new errors.InvalidSelectorError(`Lookup strategies other than '${IMAGE_STRATEGY}' are not supported`);
     }
     if (!this.finder) {
       throw new Error('Finder is not available');

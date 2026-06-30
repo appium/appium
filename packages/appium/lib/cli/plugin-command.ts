@@ -11,11 +11,11 @@ import type {
 } from './extension-command';
 
 const REQ_PLUGIN_FIELDS = ['pluginName', 'mainClass'];
-type PluginInstallOpts = { plugin: string; installType: InstallType; packageName?: string; };
-type PluginUninstallOpts = { plugin: string; };
-type PluginUpdateOpts = { plugin: string; unsafe: boolean; };
-type PluginRunOptions = { plugin: string; scriptName: string; extraArgs?: string[]; };
-type PluginDoctorOptions = { plugin: string; };
+type PluginInstallOpts = { plugin: string; installType: InstallType; packageName?: string };
+type PluginUninstallOpts = { plugin: string };
+type PluginUpdateOpts = { plugin: string; unsafe: boolean };
+type PluginRunOptions = { plugin: string; scriptName: string; extraArgs?: string[] };
+type PluginDoctorOptions = { plugin: string };
 
 export default class PluginCliCommand extends ExtensionCliCommand<'plugin'> {
   constructor({ config, json }: ExtensionCommandOptions<'plugin'>) {
@@ -28,11 +28,7 @@ export default class PluginCliCommand extends ExtensionCliCommand<'plugin'> {
    *
    * @param opts - install options
    */
-  async install({
-    plugin,
-    installType,
-    packageName,
-  }: PluginInstallOpts): Promise<ExtRecord<'plugin'>> {
+  async install({ plugin, installType, packageName }: PluginInstallOpts): Promise<ExtRecord<'plugin'>> {
     return await super._install({
       installSpec: plugin,
       installType,
@@ -93,10 +89,7 @@ export default class PluginCliCommand extends ExtensionCliCommand<'plugin'> {
    * @returns formatted success text
    */
   override getPostInstallText({ extName, extData }: ExtensionArgs<'plugin'>): PostInstallText {
-    return console.styleText(
-      'green',
-      `Plugin ${extName}@${extData.version} successfully installed`,
-    );
+    return console.styleText('green', `Plugin ${extName}@${extData.version} successfully installed`);
   }
 
   /**
@@ -108,19 +101,16 @@ export default class PluginCliCommand extends ExtensionCliCommand<'plugin'> {
    * @param pluginMetadata - `appium` metadata from extension package
    * @param installSpec - install spec from CLI
    */
-  override validateExtensionFields(
-    pluginMetadata: ExtMetadata<'plugin'>,
-    installSpec: string,
-  ): void {
+  override validateExtensionFields(pluginMetadata: ExtMetadata<'plugin'>, installSpec: string): void {
     const missingFields = REQ_PLUGIN_FIELDS.reduce<string[]>(
-      (acc, field) => pluginMetadata[field as keyof typeof pluginMetadata] ? acc : [...acc, field],
+      (acc, field) => (pluginMetadata[field as keyof typeof pluginMetadata] ? acc : [...acc, field]),
       [],
     );
 
     if (!util.isEmpty(missingFields)) {
       throw new Error(
-        `Installed plugin "${installSpec}" did not expose correct fields for compatibility `
-          + `with Appium. Missing fields: ${JSON.stringify(missingFields)}`,
+        `Installed plugin "${installSpec}" did not expose correct fields for compatibility ` +
+          `with Appium. Missing fields: ${JSON.stringify(missingFields)}`,
       );
     }
   }

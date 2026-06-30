@@ -15,11 +15,7 @@ export interface AppiumServerExtension {
    * @param handlerPathname - Web socket endpoint path starting with a single slash character. It is recommended to always prepend `/ws` to all web socket pathnames.
    * @param handlerServer - WebSocket server instance. See https://github.com/websockets/ws/pull/885 for more details on how to configure the handler properly.
    */
-  addWebSocketHandler(
-    this: AppiumServer,
-    handlerPathname: string,
-    handlerServer: WSServer,
-  ): Promise<void>;
+  addWebSocketHandler(this: AppiumServer, handlerPathname: string, handlerServer: WSServer): Promise<void>;
   /**
    * Removes existing WebSocket handler from the server instance.
    *
@@ -39,10 +35,7 @@ export interface AppiumServerExtension {
    * @param keysFilter - Only include pathnames with given value if set. All pairs will be included by default.
    * @returns Pathnames to WS server instances mapping matching the search criteria, if any found.
    */
-  getWebSocketHandlers(
-    this: AppiumServer,
-    keysFilter?: string | null,
-  ): Promise<Record<string, WSServer>>;
+  getWebSocketHandlers(this: AppiumServer, keysFilter?: string | null): Promise<Record<string, WSServer>>;
   webSocketsMapping: Record<string, WSServer>;
   /** Returns true if the server operates via HTTPS protocol */
   isSecure(): boolean;

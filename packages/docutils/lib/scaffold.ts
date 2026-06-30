@@ -20,10 +20,7 @@ const dryRunLog = getLogger('dry-run', log);
 /**
  * Options for a task which are not the {@link ScaffoldTaskOptions base options}
  */
-export type TaskSpecificOpts<Opts extends ScaffoldTaskOptions> = Omit<
-  Opts,
-  keyof ScaffoldTaskOptions
->;
+export type TaskSpecificOpts<Opts extends ScaffoldTaskOptions> = Omit<Opts, keyof ScaffoldTaskOptions>;
 
 /**
  * A function which performs some scaffolding task.
@@ -140,10 +137,7 @@ export function createScaffoldTask<Opts extends ScaffoldTaskOptions, T extends J
     ...opts
   }: Opts): Promise<ScaffoldTaskResult<T>> => {
     const relativePath = relative(cwd);
-    const { pkgPath, pkg } = await readPackageJson(
-      packageJsonPath ? path.dirname(packageJsonPath) : cwd,
-      true,
-    );
+    const { pkgPath, pkg } = await readPackageJson(packageJsonPath ? path.dirname(packageJsonPath) : cwd, true);
     const pkgDir = path.dirname(pkgPath);
     dest = dest ?? path.join(pkgDir, defaultFilename);
     const relativeDest = relativePath(dest);
@@ -184,10 +178,7 @@ export function createScaffoldTask<Opts extends ScaffoldTaskOptions, T extends J
       }
 
       if (!isNew && !overwrite) {
-        log.info(
-          'File %s already exists, continuing (enable overwrite with "--force")',
-          relativeDest,
-        );
+        log.info('File %s already exists, continuing (enable overwrite with "--force")', relativeDest);
         log.debug('Tried to apply patch:\n\n%s', patch);
       } else {
         try {

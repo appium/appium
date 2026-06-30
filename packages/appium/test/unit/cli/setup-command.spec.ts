@@ -3,19 +3,19 @@ import { expect } from 'chai';
 import { createSandbox } from 'sinon';
 import { getPresetDrivers } from '../../../lib/cli/setup-command';
 
-describe('SetupCommand', function() {
+describe('SetupCommand', function () {
   let sandbox: ReturnType<typeof createSandbox>;
 
-  beforeEach(function() {
+  beforeEach(function () {
     sandbox = createSandbox();
   });
 
-  afterEach(function() {
+  afterEach(function () {
     sandbox.restore();
   });
 
-  describe('getPresetDrivers', function() {
-    it('for drivers on macOS environment', function() {
+  describe('getPresetDrivers', function () {
+    it('for drivers on macOS environment', function () {
       sandbox.stub(system, 'isMac').returns(true);
       sandbox.stub(system, 'isWindows').returns(false);
       expect(getPresetDrivers('mobile')).to.eql(['uiautomator2', 'xcuitest', 'espresso']);
@@ -23,7 +23,7 @@ describe('SetupCommand', function() {
       expect(getPresetDrivers('desktop')).to.eql(['mac2']);
     });
 
-    it('for drivers on Windows environment', function() {
+    it('for drivers on Windows environment', function () {
       sandbox.stub(system, 'isMac').returns(false);
       sandbox.stub(system, 'isWindows').returns(true);
       expect(getPresetDrivers('mobile')).to.eql(['uiautomator2', 'espresso']);
@@ -31,7 +31,7 @@ describe('SetupCommand', function() {
       expect(getPresetDrivers('desktop')).to.eql(['windows']);
     });
 
-    it('for drivers on Linux environment', function() {
+    it('for drivers on Linux environment', function () {
       sandbox.stub(system, 'isMac').returns(false);
       sandbox.stub(system, 'isWindows').returns(false);
       expect(getPresetDrivers('mobile')).to.eql(['uiautomator2', 'espresso']);

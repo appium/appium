@@ -14,7 +14,7 @@ import type { MockAppiumSupport, MockGlob, MockPackageChanged } from './mocks';
 const { expect } = chai;
 chai.use(chaiAsPromised);
 
-describe('Manifest', function() {
+describe('Manifest', function () {
   let sandbox: SinonSandbox;
   let yamlFixture: string;
   let MockPackageChanged: MockPackageChanged;
@@ -22,11 +22,11 @@ describe('Manifest', function() {
   let MockGlob: MockGlob;
   let Manifest: any;
 
-  before(async function() {
+  before(async function () {
     yamlFixture = await fs.readFile(resolveFixture('manifest', 'v3.yaml'), 'utf8');
   });
 
-  beforeEach(function() {
+  beforeEach(function () {
     let overrides: ReturnType<typeof initMocks>['overrides'];
     ({ MockPackageChanged, MockAppiumSupport, MockGlob, overrides, sandbox } = initMocks());
     MockAppiumSupport.fs.readFile.resolves(yamlFixture);
@@ -38,22 +38,22 @@ describe('Manifest', function() {
     Manifest.getInstance.cache = new Map();
   });
 
-  afterEach(function() {
+  afterEach(function () {
     sandbox.restore();
   });
 
-  describe('class method', function() {
-    describe('getInstance()', function() {
-      describe('when called twice with the same `appiumHome` value', function() {
-        it('should return the same object both times', function() {
+  describe('class method', function () {
+    describe('getInstance()', function () {
+      describe('when called twice with the same `appiumHome` value', function () {
+        it('should return the same object both times', function () {
           const firstInstance = Manifest.getInstance('/some/path');
           const secondInstance = Manifest.getInstance('/some/path');
           expect(firstInstance).to.equal(secondInstance);
         });
       });
 
-      describe('when called twice with different `appiumHome` values', function() {
-        it('should return different objects', function() {
+      describe('when called twice with different `appiumHome` values', function () {
+        it('should return different objects', function () {
           const firstInstance = Manifest.getInstance('/some/path');
           const secondInstance = Manifest.getInstance('/some/other/path');
           expect(firstInstance).to.not.equal(secondInstance);
@@ -62,13 +62,13 @@ describe('Manifest', function() {
     });
   });
 
-  describe('property', function() {
-    describe('appiumHome', function() {
-      it('should return the `appiumHome` path', function() {
+  describe('property', function () {
+    describe('appiumHome', function () {
+      it('should return the `appiumHome` path', function () {
         expect(Manifest.getInstance('/some/path').appiumHome).to.equal('/some/path');
       });
 
-      it('should not be writable', function() {
+      it('should not be writable', function () {
         const instance = Manifest.getInstance('/some/path');
         expect(() => {
           (instance as any).appiumHome = '/some/other/path';
@@ -76,29 +76,27 @@ describe('Manifest', function() {
       });
     });
 
-    describe('manifestPath', function() {
-      describe('before `read()` has been called', function() {
-        it('should be undefined', function() {
+    describe('manifestPath', function () {
+      describe('before `read()` has been called', function () {
+        it('should be undefined', function () {
           expect(Manifest.getInstance('/some/path').manifestPath).to.be.undefined;
         });
       });
 
-      describe('after `read()` has been called', function() {
+      describe('after `read()` has been called', function () {
         let manifest;
-        beforeEach(async function() {
+        beforeEach(async function () {
           manifest = Manifest.getInstance('/some/path');
           await manifest.read();
         });
 
-        it('should return the manifest file path', function() {
+        it('should return the manifest file path', function () {
           // this path is not the actual path; it's mocked in `MockAppiumSupport.env.resolveManifestPath`.
-          expect(Manifest.getInstance('/some/path').manifestPath).to.equal(
-            '/some/path/extensions.yaml',
-          );
+          expect(Manifest.getInstance('/some/path').manifestPath).to.equal('/some/path/extensions.yaml');
         });
       });
 
-      it('should not be writable', function() {
+      it('should not be writable', function () {
         const instance = Manifest.getInstance('/some/path');
         expect(() => {
           (instance as any).manifestPath = '/some/other/path';
@@ -107,37 +105,37 @@ describe('Manifest', function() {
     });
   });
 
-  describe('instance method', function() {
+  describe('instance method', function () {
     let manifest: any;
 
-    beforeEach(function() {
+    beforeEach(function () {
       Manifest.getInstance.cache = new Map();
       manifest = Manifest.getInstance('/some/path');
     });
 
-    describe('read()', function() {
-      beforeEach(function() {
+    describe('read()', function () {
+      beforeEach(function () {
         sandbox.stub(manifest, 'syncWithInstalledExtensions').resolves();
       });
 
-      describe('when the file does not yet exist', function() {
-        beforeEach(async function() {
+      describe('when the file does not yet exist', function () {
+        beforeEach(async function () {
           const err = new Error() as NodeJS.ErrnoException;
           err.code = 'ENOENT';
           MockAppiumSupport.fs.readFile.rejects(err);
           await manifest.read();
         });
 
-        it('should create a new file', function() {
+        it('should create a new file', function () {
           expect(MockAppiumSupport.fs.writeFile.calledOnce).to.be.true;
         });
       });
 
-      describe('when the file is invalid YAML', function() {
-        beforeEach(function() {
+      describe('when the file is invalid YAML', function () {
+        beforeEach(function () {
           MockAppiumSupport.fs.readFile.resolves('{');
         });
-        it('should reject', async function() {
+        it('should reject', async function () {
           await expect(manifest.read()).to.be.rejectedWith(
             Error,
             /trouble loading the extension installation cache file/i,
@@ -145,50 +143,43 @@ describe('Manifest', function() {
         });
       });
 
-      describe('when the manifest path cannot be determined', function() {
-        beforeEach(function() {
-          MockAppiumSupport.env.resolveManifestPath.rejects(
-            new Error('Could not determine manifest path'),
-          );
+      describe('when the manifest path cannot be determined', function () {
+        beforeEach(function () {
+          MockAppiumSupport.env.resolveManifestPath.rejects(new Error('Could not determine manifest path'));
         });
 
-        it('should reject', async function() {
-          await expect(manifest.read()).to.be.rejectedWith(
-            Error,
-            /could not determine manifest path/i,
-          );
+        it('should reject', async function () {
+          await expect(manifest.read()).to.be.rejectedWith(Error, /could not determine manifest path/i);
         });
       });
 
-      describe('when called again before the first call resolves', function() {
-        beforeEach(async function() {
+      describe('when called again before the first call resolves', function () {
+        beforeEach(async function () {
           await Promise.all([manifest.read(), manifest.read()]);
         });
-        it('should not read the file twice', function() {
-          expect(MockAppiumSupport.fs.readFile.calledOnceWith('/some/path/extensions.yaml', 'utf8'))
-            .to.be.true;
+        it('should not read the file twice', function () {
+          expect(MockAppiumSupport.fs.readFile.calledOnceWith('/some/path/extensions.yaml', 'utf8')).to.be.true;
         });
       });
 
-      describe('when the file already exists', function() {
-        beforeEach(async function() {
+      describe('when the file already exists', function () {
+        beforeEach(async function () {
           sandbox.spy(manifest, 'write');
           await manifest.read();
         });
 
-        it('should attempt to read the file at `filepath`', function() {
-          expect(MockAppiumSupport.fs.readFile.calledOnceWith('/some/path/extensions.yaml', 'utf8'))
-            .to.be.true;
+        it('should attempt to read the file at `filepath`', function () {
+          expect(MockAppiumSupport.fs.readFile.calledOnceWith('/some/path/extensions.yaml', 'utf8')).to.be.true;
         });
 
-        describe('when the data has not changed', function() {
-          it('should not write the data', function() {
+        describe('when the data has not changed', function () {
+          it('should not write the data', function () {
             expect(manifest.write.called).to.be.false;
           });
         });
 
-        describe('when a local `appium` is installed', function() {
-          beforeEach(function() {
+        describe('when a local `appium` is installed', function () {
+          beforeEach(function () {
             MockAppiumSupport.env.hasAppiumDependency.resolves(true);
             MockPackageChanged.isPackageChanged.resolves({
               isChanged: true,
@@ -198,12 +189,12 @@ describe('Manifest', function() {
             });
           });
 
-          it('should synchronize manifest with installed extensions', async function() {
+          it('should synchronize manifest with installed extensions', async function () {
             await manifest.read();
             expect(manifest.syncWithInstalledExtensions.calledOnce).to.be.true;
           });
 
-          it('should check if the `package.json` has changed', async function() {
+          it('should check if the `package.json` has changed', async function () {
             await manifest.read();
             expect(MockPackageChanged.isPackageChanged.calledOnce).to.be.true;
           });
@@ -211,12 +202,12 @@ describe('Manifest', function() {
       });
     });
 
-    describe('write()', function() {
-      beforeEach(function() {
+    describe('write()', function () {
+      beforeEach(function () {
         sandbox.stub(manifest, 'syncWithInstalledExtensions').resolves();
       });
 
-      describe('when called after `read()`', function() {
+      describe('when called after `read()`', function () {
         let data: ManifestData;
         const extData: ExtManifest<DriverType> = {
           version: '1.0.0',
@@ -230,43 +221,40 @@ describe('Manifest', function() {
           appiumVersion: '2.0.0',
         };
 
-        beforeEach(async function() {
+        beforeEach(async function () {
           data = await manifest.read();
         });
 
-        describe('when called again before the first call resolves', function() {
-          it('should not write the file twice', async function() {
+        describe('when called again before the first call resolves', function () {
+          it('should not write the file twice', async function () {
             await Promise.all([manifest.write(), manifest.write()]);
             expect(MockAppiumSupport.fs.writeFile.calledOnce).to.be.true;
           });
         });
 
-        describe('when the manifest file was successfully written to', function() {
-          it('should return `true`', async function() {
+        describe('when the manifest file was successfully written to', function () {
+          it('should return `true`', async function () {
             expect(await manifest.write()).to.be.true;
           });
         });
 
-        describe('when the manifest file could not be written', function() {
-          beforeEach(function() {
+        describe('when the manifest file could not be written', function () {
+          beforeEach(function () {
             MockAppiumSupport.fs.writeFile.rejects();
             data.drivers.foo = extData;
           });
 
-          it('should reject', async function() {
-            await expect(manifest.write()).to.be.rejectedWith(
-              Error,
-              /Appium could not write to manifest/i,
-            );
+          it('should reject', async function () {
+            await expect(manifest.write()).to.be.rejectedWith(Error, /Appium could not write to manifest/i);
           });
         });
 
-        describe('when the manifest directory could not be created', function() {
-          beforeEach(function() {
+        describe('when the manifest directory could not be created', function () {
+          beforeEach(function () {
             MockAppiumSupport.fs.mkdirp.rejects();
           });
 
-          it('should reject', async function() {
+          it('should reject', async function () {
             await expect(manifest.write()).to.be.rejectedWith(
               Error,
               /could not create the directory for the manifest file/i,
@@ -276,7 +264,7 @@ describe('Manifest', function() {
       });
     });
 
-    describe('setExtension()', function() {
+    describe('setExtension()', function () {
       const extData: ExtManifest<DriverType> = {
         automationName: 'derp',
         version: '1.0.0',
@@ -289,19 +277,17 @@ describe('Manifest', function() {
         appiumVersion: '2.0.0',
       };
 
-      it('should add a clone of the extension manifest to the internal data object', function() {
+      it('should add a clone of the extension manifest to the internal data object', function () {
         manifest.setExtension(DRIVER_TYPE, 'foo', extData);
-        expect(manifest.getExtensionData(DRIVER_TYPE).foo)
-          .to.eql(extData)
-          .and.not.to.equal(extData);
+        expect(manifest.getExtensionData(DRIVER_TYPE).foo).to.eql(extData).and.not.to.equal(extData);
       });
 
-      describe('when existing extension added', function() {
-        beforeEach(function() {
+      describe('when existing extension added', function () {
+        beforeEach(function () {
           manifest.setExtension(DRIVER_TYPE, 'foo', extData);
         });
 
-        it('should rewrite', function() {
+        it('should rewrite', function () {
           const expected = {
             ...extData,
             automationName: 'BLAAHAH',
@@ -311,19 +297,19 @@ describe('Manifest', function() {
         });
       });
 
-      describe('when the extension has no peer dependency on `appium`', function() {
-        beforeEach(function() {
-          delete (extData as { appiumVersion?: string; }).appiumVersion;
+      describe('when the extension has no peer dependency on `appium`', function () {
+        beforeEach(function () {
+          delete (extData as { appiumVersion?: string }).appiumVersion;
         });
 
-        it('should work anyway', function() {
+        it('should work anyway', function () {
           manifest.setExtension(DRIVER_TYPE, 'foo', extData);
           expect(manifest.getExtensionData(DRIVER_TYPE).foo).to.not.have.property('appiumVersion');
         });
       });
     });
 
-    describe('getExtensionData()', function() {
+    describe('getExtensionData()', function () {
       const extData: ExtManifest<DriverType> = {
         version: '1.0.0',
         automationName: 'Derp',
@@ -336,19 +322,19 @@ describe('Manifest', function() {
         appiumVersion: '2.0.0',
       };
 
-      beforeEach(function() {
+      beforeEach(function () {
         manifest.setExtension(DRIVER_TYPE, 'foo', extData);
       });
 
-      it('should return all extension data for an extension type', function() {
+      it('should return all extension data for an extension type', function () {
         expect(manifest.getExtensionData(DRIVER_TYPE)).to.eql({ foo: extData });
       });
     });
-    describe('addExtensionFromPackage()', function() {
-      describe('when provided a valid package.json for a driver and its path', function() {
+    describe('addExtensionFromPackage()', function () {
+      describe('when provided a valid package.json for a driver and its path', function () {
         let packageJson: ExtPackageJson<DriverType>;
 
-        beforeEach(function() {
+        beforeEach(function () {
           packageJson = {
             name: 'derp',
             version: '1.0.0',
@@ -364,7 +350,7 @@ describe('Manifest', function() {
           };
         });
 
-        it('should add an extension to the internal data', function() {
+        it('should add an extension to the internal data', function () {
           manifest.addExtensionFromPackage(packageJson, '/some/path/to/package.json');
           expect(manifest.getExtensionData(DRIVER_TYPE)).to.deep.equal({
             myDriver: {
@@ -381,26 +367,24 @@ describe('Manifest', function() {
           });
         });
 
-        it('should return `true`', function() {
-          expect(manifest.addExtensionFromPackage(packageJson, '/some/path/to/package.json')).to.be
-            .true;
+        it('should return `true`', function () {
+          expect(manifest.addExtensionFromPackage(packageJson, '/some/path/to/package.json')).to.be.true;
         });
 
-        describe('when the driver has already been registered', function() {
-          beforeEach(function() {
+        describe('when the driver has already been registered', function () {
+          beforeEach(function () {
             manifest.addExtensionFromPackage(packageJson, '/some/path/to/package.json');
           });
 
-          it('should return `false`', function() {
-            expect(manifest.addExtensionFromPackage(packageJson, '/some/path/to/package.json')).to
-              .be.false;
+          it('should return `false`', function () {
+            expect(manifest.addExtensionFromPackage(packageJson, '/some/path/to/package.json')).to.be.false;
           });
         });
       });
 
-      describe('when provided a valid package.json for a plugin and its path', function() {
+      describe('when provided a valid package.json for a plugin and its path', function () {
         let packageJson: ExtPackageJson<PluginType>;
-        beforeEach(function() {
+        beforeEach(function () {
           packageJson = {
             name: 'derp',
             version: '1.0.0',
@@ -414,7 +398,7 @@ describe('Manifest', function() {
           };
         });
 
-        it('should add an extension to the internal data', function() {
+        it('should add an extension to the internal data', function () {
           manifest.addExtensionFromPackage(packageJson, '/some/path/to/package.json');
           expect(manifest.getExtensionData(PLUGIN_TYPE)).to.deep.equal({
             myPlugin: {
@@ -429,34 +413,33 @@ describe('Manifest', function() {
           });
         });
 
-        it('should return `true`', function() {
-          expect(manifest.addExtensionFromPackage(packageJson, '/some/path/to/package.json')).to.be
-            .true;
+        it('should return `true`', function () {
+          expect(manifest.addExtensionFromPackage(packageJson, '/some/path/to/package.json')).to.be.true;
         });
 
-        describe('when the plugin has already been registered', function() {
-          beforeEach(function() {
+        describe('when the plugin has already been registered', function () {
+          beforeEach(function () {
             manifest.addExtensionFromPackage(packageJson, '/some/path/to/package.json');
           });
 
-          it('should return `false`', function() {
-            expect(manifest.addExtensionFromPackage(packageJson, '/some/path/to/package.json')).to
-              .be.false;
+          it('should return `false`', function () {
+            expect(manifest.addExtensionFromPackage(packageJson, '/some/path/to/package.json')).to.be.false;
           });
         });
       });
 
-      describe('when provided a non-extension', function() {
-        it('should throw', function() {
-          expect(() => manifest.addExtensionFromPackage({ herp: 'derp' } as any, '/some/path/to/package.json')).to
-            .throw(/neither a valid driver nor a valid plugin/);
+      describe('when provided a non-extension', function () {
+        it('should throw', function () {
+          expect(() =>
+            manifest.addExtensionFromPackage({ herp: 'derp' } as any, '/some/path/to/package.json'),
+          ).to.throw(/neither a valid driver nor a valid plugin/);
         });
       });
 
-      describe('when the extension has an appium peer dependency beginning with `file:..`', function() {
+      describe('when the extension has an appium peer dependency beginning with `file:..`', function () {
         let packageJson: ExtPackageJson<DriverType>;
 
-        beforeEach(function() {
+        beforeEach(function () {
           packageJson = {
             name: 'derp',
             version: '1.0.0',
@@ -472,17 +455,15 @@ describe('Manifest', function() {
           };
         });
 
-        it('should set the appiumVersion to the current Appium version', function() {
+        it('should set the appiumVersion to the current Appium version', function () {
           manifest.addExtensionFromPackage(packageJson, '/some/path/to/package.json');
-          expect(manifest.getExtensionData(DRIVER_TYPE).myDriver.appiumVersion).to.equal(
-            APPIUM_VER,
-          );
+          expect(manifest.getExtensionData(DRIVER_TYPE).myDriver.appiumVersion).to.equal(APPIUM_VER);
         });
       });
     });
 
-    describe('syncWithInstalledExtensions()', function() {
-      beforeEach(function() {
+    describe('syncWithInstalledExtensions()', function () {
+      beforeEach(function () {
         MockAppiumSupport.fs.readFile.resolves(
           JSON.stringify({
             name: 'foo',
@@ -503,13 +484,13 @@ describe('Manifest', function() {
         );
       });
 
-      it('should add a found extension', async function() {
+      it('should add a found extension', async function () {
         await manifest.syncWithInstalledExtensions();
         expect(manifest.getExtensionData(DRIVER_TYPE)).to.have.property('myDriver');
       });
 
-      describe('when the underlying implementation emits "error"', function() {
-        beforeEach(function() {
+      describe('when the underlying implementation emits "error"', function () {
+        beforeEach(function () {
           (MockGlob as any).callsFake(() => {
             const ee = new EventEmitter();
             setTimeout(() => {
@@ -518,13 +499,13 @@ describe('Manifest', function() {
             return ee;
           });
         });
-        it('should reject', function() {
+        it('should reject', function () {
           expect(manifest.syncWithInstalledExtensions()).to.be.rejectedWith(Error, 'bogus');
         });
       });
 
-      describe('when the underlying implementation completes with an error', function() {
-        beforeEach(function() {
+      describe('when the underlying implementation completes with an error', function () {
+        beforeEach(function () {
           (MockGlob as any).callsFake((...args: any[]) => {
             const done = args[2] as (err: Error) => void;
             const ee = new EventEmitter();
@@ -534,43 +515,43 @@ describe('Manifest', function() {
             return ee;
           });
         });
-        it('should reject', function() {
+        it('should reject', function () {
           expect(manifest.syncWithInstalledExtensions()).to.be.rejectedWith(Error, 'wack');
         });
       });
     });
 
-    describe('hasDriver()', function() {
-      describe('when the driver is registered', function() {
-        beforeEach(function() {
+    describe('hasDriver()', function () {
+      describe('when the driver is registered', function () {
+        beforeEach(function () {
           manifest.setExtension(DRIVER_TYPE, 'foo', {} as any);
         });
 
-        it('should return `true`', function() {
+        it('should return `true`', function () {
           expect(manifest.hasDriver('foo')).to.be.true;
         });
       });
 
-      describe('when the driver is not registered', function() {
-        it('should return `false`', function() {
+      describe('when the driver is not registered', function () {
+        it('should return `false`', function () {
           expect(manifest.hasDriver('foo')).to.be.false;
         });
       });
     });
 
-    describe('hasPlugin()', function() {
-      describe('when the plugin is registered', function() {
-        beforeEach(function() {
+    describe('hasPlugin()', function () {
+      describe('when the plugin is registered', function () {
+        beforeEach(function () {
           manifest.setExtension(PLUGIN_TYPE, 'foo', {} as any);
         });
 
-        it('should return `true`', function() {
+        it('should return `true`', function () {
           expect(manifest.hasPlugin('foo')).to.be.true;
         });
       });
 
-      describe('when the plugin is not registered', function() {
-        it('should return `false`', function() {
+      describe('when the plugin is not registered', function () {
+        it('should return `false`', function () {
           expect(manifest.hasPlugin('foo')).to.be.false;
         });
       });

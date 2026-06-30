@@ -26,10 +26,7 @@ export async function resolveFrom(fromDirectory: string, moduleId: string): Prom
 
   const fromFile = path.join(resolvedFromDirectory, 'noop.js');
   const nodeModule = Module as typeof Module & {
-    _resolveFilename: (
-      id: string,
-      parent: { id: string; filename: string; paths: string[]; },
-    ) => string;
+    _resolveFilename: (id: string, parent: { id: string; filename: string; paths: string[] }) => string;
     _nodeModulePaths: (from: string) => string[];
   };
   return nodeModule._resolveFilename(moduleId, {

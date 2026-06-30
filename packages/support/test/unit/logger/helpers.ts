@@ -33,10 +33,7 @@ export function assertOutputContains(writers: ReturnType<typeof setupWriters>, o
   }
 }
 
-export function assertOutputDoesntContain(
-  writers: ReturnType<typeof setupWriters>,
-  output: string,
-) {
+export function assertOutputDoesntContain(writers: ReturnType<typeof setupWriters>, output: string) {
   if (someoneHadOutput(writers, output)) {
     throw new Error(`Expected nothing to have been called with: '${output}'`);
   }
@@ -44,7 +41,7 @@ export function assertOutputDoesntContain(
 
 function someoneHadOutput(writers: ReturnType<typeof setupWriters>, output: string) {
   let hadOutput = false;
-  const matchOutput = sinon.match(function(value: string) {
+  const matchOutput = sinon.match(function (value: string) {
     return !!(value && value.indexOf(output) >= 0);
   }, 'matchOutput');
 

@@ -4,7 +4,7 @@ import type { FakeApp } from './fake-app';
 
 export interface XmlNodeLike {
   tagName: string;
-  attributes: { name: string; value: string; }[];
+  attributes: { name: string; value: string }[];
 }
 
 /** Wrapper around an XML node from the fake app DOM; supports attrs, css, visibility, click, alerts. */
@@ -69,18 +69,18 @@ export class FakeElement {
     return this.nodeAttrs.selected === 'true';
   }
 
-  getLocation(): { x: number; y: number; } {
+  getLocation(): { x: number; y: number } {
     return {
       x: parseFloat(this.nodeAttrs.left || '0'),
       y: parseFloat(this.nodeAttrs.top || '0'),
     };
   }
 
-  getElementRect(): { x: number; y: number; width: number; height: number; } {
+  getElementRect(): { x: number; y: number; width: number; height: number } {
     return { ...this.getLocation(), ...this.getSize() };
   }
 
-  getSize(): { width: number; height: number; } {
+  getSize(): { width: number; height: number } {
     return {
       width: parseFloat(this.nodeAttrs.width || '0'),
       height: parseFloat(this.nodeAttrs.height || '0'),

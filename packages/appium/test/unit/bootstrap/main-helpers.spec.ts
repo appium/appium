@@ -10,25 +10,25 @@ import { log as logger } from '../../../lib/logger';
 const { expect } = chai;
 chai.use(chaiAsPromised);
 
-describe('bootstrap/main-helpers', function() {
+describe('bootstrap/main-helpers', function () {
   let sandbox: SinonSandbox;
 
-  beforeEach(function() {
+  beforeEach(function () {
     sandbox = createSandbox();
   });
 
-  afterEach(function() {
+  afterEach(function () {
     sandbox.restore();
   });
 
-  describe('showBuildInfo()', function() {
+  describe('showBuildInfo()', function () {
     let log: SinonSpy;
 
-    beforeEach(function() {
+    beforeEach(function () {
       log = sandbox.spy(console, 'log');
     });
 
-    it('should log build info to console', async function() {
+    it('should log build info to console', async function () {
       const config = getBuildInfo();
       await showBuildInfo();
       expect(log.calledOnce).to.be.true;
@@ -36,13 +36,11 @@ describe('bootstrap/main-helpers', function() {
     });
   });
 
-  describe('inspect()', function() {
-    it('should log the result of inspecting a value', function() {
+  describe('inspect()', function () {
+    it('should log the result of inspecting a value', function () {
       const infoLog = sandbox.spy(logger, 'info');
       inspect({ foo: 'bar' });
-      expect(supportConsole.stripColors(infoLog.firstCall.firstArg)).to.match(
-        /\{\s*\n*foo:\s'bar'\s*\n*\}/,
-      );
+      expect(supportConsole.stripColors(infoLog.firstCall.firstArg)).to.match(/\{\s*\n*foo:\s'bar'\s*\n*\}/);
     });
   });
 });

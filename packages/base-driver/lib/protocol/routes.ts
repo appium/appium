@@ -234,15 +234,7 @@ export const METHOD_MAP = {
     POST: {
       command: 'printPage',
       payloadParams: {
-        optional: [
-          'orientation',
-          'scale',
-          'background',
-          'page',
-          'margin',
-          'shrinkToFit',
-          'pageRanges',
-        ],
+        optional: ['orientation', 'scale', 'background', 'page', 'margin', 'shrinkToFit', 'pageRanges'],
       },
     },
   },
@@ -579,7 +571,7 @@ export const METHOD_MAP = {
 
 // driver command names
 export const ALL_COMMANDS = Object.values(METHOD_MAP)
-  .flatMap((methods) => Object.values(methods) as Array<{ command?: string; }>)
+  .flatMap((methods) => Object.values(methods) as Array<{ command?: string }>)
   .flatMap((m) => (m.command ? [m.command] : []));
 
 /**
@@ -588,11 +580,7 @@ export const ALL_COMMANDS = Object.values(METHOD_MAP)
  * @param method - HTTP method (used when one path maps to multiple commands)
  * @param basePath - Optional base path prefix to strip before matching
  */
-export function routeToCommandName(
-  endpoint: string,
-  method?: HTTPMethod,
-  basePath?: string,
-): string | undefined {
+export function routeToCommandName(endpoint: string, method?: HTTPMethod, basePath?: string): string | undefined {
   const resolvedBasePath = basePath ?? DEFAULT_BASE_PATH;
   let normalizedEndpoint = resolvedBasePath
     ? endpoint.replace(new RegExp(`^${util.escapeRegExp(resolvedBasePath)}`), '')
@@ -624,9 +612,7 @@ export function routeToCommandName(
     if (possiblePathnames.some((pp) => routeMatcher(pp))) {
       const spec = routeSpec as Record<string, DriverMethodDef<Driver>>;
       const commandForAnyMethod = () => Object.keys(spec).map((key) => spec[key]?.command)[0];
-      const commandName = normalizedMethod
-        ? spec[normalizedMethod]?.command
-        : commandForAnyMethod();
+      const commandName = normalizedMethod ? spec[normalizedMethod]?.command : commandForAnyMethod();
       if (commandName) {
         COMMAND_NAMES_CACHE.set(cacheKey, commandName);
         return commandName;

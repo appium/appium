@@ -280,9 +280,7 @@ export class Log extends EventEmitter implements Logger {
 
   private useColor(): boolean {
     // by default, decide based on tty-ness.
-    return (
-      this._colorEnabled ?? Boolean(this.stream && 'isTTY' in this.stream && this.stream.isTTY)
-    );
+    return this._colorEnabled ?? Boolean(this.stream && 'isTTY' in this.stream && this.stream.isTTY);
   }
 
   private emitLog(m: MessageObject): void {
@@ -387,11 +385,7 @@ export class Log extends EventEmitter implements Logger {
     };
 
     // mask sensitive data
-    if (
-      result.arg != null
-      && typeof result.arg === 'object'
-      && Object.hasOwn(result.arg, SENSITIVE_MESSAGE_KEY)
-    ) {
+    if (result.arg != null && typeof result.arg === 'object' && Object.hasOwn(result.arg, SENSITIVE_MESSAGE_KEY)) {
       const { isSensitive } = this._asyncStorage.getStore() ?? {};
       result.arg = isSensitive ? DEFAULT_SECURE_REPLACER : result.arg[SENSITIVE_MESSAGE_KEY];
     }
@@ -419,19 +413,20 @@ export class Log extends EventEmitter implements Logger {
  * @param logMessage - Value to log; may be wrapped for secure display.
  * @returns An object keyed with an internal marker containing the message.
  */
-export function markSensitive<T = any>(logMessage: T): { [SENSITIVE_MESSAGE_KEY]: T; } {
+export function markSensitive<T = any>(logMessage: T): { [SENSITIVE_MESSAGE_KEY]: T } {
   return { [SENSITIVE_MESSAGE_KEY]: logMessage };
 }
 
 // Unique key for the process-wide logger on globalThis (avoids collisions with other globals).
 const GLOBAL_NPMLOG_KEY = 'appium-logger-global-8f4a1c2b-5e6d-4a9b-8c3f-7d2e1b0a9c6e';
 
-type GlobalWithLogger = typeof globalThis & { [K in typeof GLOBAL_NPMLOG_KEY]: Log | undefined; };
+type GlobalWithLogger = typeof globalThis & { [K in typeof GLOBAL_NPMLOG_KEY]: Log | undefined };
 
 // Reuse process-wide logger so multiple loads of this module use the same Log instance.
 const g = globalThis as GlobalWithLogger;
-export const GLOBAL_LOG = g[GLOBAL_NPMLOG_KEY]
-  ?? (() => {
+export const GLOBAL_LOG =
+  g[GLOBAL_NPMLOG_KEY] ??
+  (() => {
     const log = new Log();
     g[GLOBAL_NPMLOG_KEY] = log;
     return log;

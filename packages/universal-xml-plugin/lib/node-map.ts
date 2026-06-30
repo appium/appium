@@ -94,11 +94,7 @@ const NODE_MAP: UniversalNameMap = {
     android: [],
   },
   List: {
-    android: [
-      'android.widget.ListView',
-      'android.widget.ExpandableListView',
-      'android.widget.Gallery',
-    ],
+    android: ['android.widget.ListView', 'android.widget.ExpandableListView', 'android.widget.Gallery'],
     ios: ['XCUIElementTypeCollectionView'],
   },
   Map: {
@@ -122,11 +118,7 @@ const NODE_MAP: UniversalNameMap = {
   },
   PickerInput: {
     ios: 'XCUIElementTypePickerWheel',
-    android: [
-      'android.widget.NumberPicker',
-      'android.widget.TimePicker',
-      'android.widget.CalendarView',
-    ],
+    android: ['android.widget.NumberPicker', 'android.widget.TimePicker', 'android.widget.CalendarView'],
   },
   RadioInput: {
     ios: 'XCUIElementTypeRadioGroup',

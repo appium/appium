@@ -50,7 +50,7 @@ export class FakeApp {
       throw new Error('No title!');
     }
     const node = nodes[0];
-    const firstChild = node.firstChild as unknown as { data: string; } | null;
+    const firstChild = node.firstChild as unknown as { data: string } | null;
     return firstChild?.data ?? '';
   }
 
@@ -99,27 +99,19 @@ export class FakeApp {
     this.rawXml = this.rawXml.replace('<app ', '<AppiumAUT><app ');
     this.rawXml = this.rawXml.replace('<app>', '<AppiumAUT><app>');
     this.rawXml = this.rawXml.replace('</app>', '</app></AppiumAUT>');
-    this.dom = new XMLDom.DOMParser().parseFromString(
-      this.rawXml,
-      XMLDom.MIME_TYPE.XML_TEXT,
-    ) as XMLDocument;
+    this.dom = new XMLDom.DOMParser().parseFromString(this.rawXml, XMLDom.MIME_TYPE.XML_TEXT) as XMLDocument;
     this.activeDom = this.dom;
   }
 
   getWebviews(): FakeWebView[] {
     const nodes = this.xpathQuery('//MockWebView/*[1]');
-    return Array.isArray(nodes)
-      ? nodes.map((n) => new FakeWebViewImpl(n as unknown as XmlNodeLike))
-      : [];
+    return Array.isArray(nodes) ? nodes.map((n) => new FakeWebViewImpl(n as unknown as XmlNodeLike)) : [];
   }
 
   activateWebview(wv: FakeWebView): void {
     this.activeWebview = wv;
     const fragment = new XMLDom.XMLSerializer().serializeToString(wv.node as unknown as XMLNode);
-    this.activeDom = new XMLDom.DOMParser().parseFromString(
-      fragment,
-      XMLDom.MIME_TYPE.XML_TEXT,
-    ) as XMLDocument;
+    this.activeDom = new XMLDom.DOMParser().parseFromString(fragment, XMLDom.MIME_TYPE.XML_TEXT) as XMLDocument;
   }
 
   deactivateWebview(): void {
@@ -130,10 +122,7 @@ export class FakeApp {
   activateFrame(frame: XMLDocument): void {
     this.activeFrame = frame;
     const fragment = new XMLDom.XMLSerializer().serializeToString(frame as unknown as XMLNode);
-    this.activeDom = new XMLDom.DOMParser().parseFromString(
-      fragment,
-      XMLDom.MIME_TYPE.XML_TEXT,
-    ) as XMLDocument;
+    this.activeDom = new XMLDom.DOMParser().parseFromString(fragment, XMLDom.MIME_TYPE.XML_TEXT) as XMLDocument;
   }
 
   deactivateFrame(): void {
@@ -195,7 +184,7 @@ export class FakeApp {
     if (fromAttrs) {
       return fromAttrs;
     }
-    const node = this.activeAlert?.node as { getAttribute?(name: string): string | null; } | undefined;
+    const node = this.activeAlert?.node as { getAttribute?(name: string): string | null } | undefined;
     return node?.getAttribute?.('text') ?? '';
   }
 
@@ -210,9 +199,7 @@ export class FakeApp {
   private setDims(): void {
     const nodes = this.xpathQuery('//app');
     if (!Array.isArray(nodes)) {
-      throw new Error(
-        'Cannot fetch app dimensions because no corresponding node has been found in the source',
-      );
+      throw new Error('Cannot fetch app dimensions because no corresponding node has been found in the source');
     }
     const app = new FakeElement(nodes[0] as unknown as XmlNodeLike, this);
     this._width = parseInt(app.nodeAttrs.width, 10);

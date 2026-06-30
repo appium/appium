@@ -148,9 +148,7 @@ export async function deploy({
 
   mkDocsYmlPath = mkDocsYmlPath ?? (await findMkDocsYml(cwd));
   if (!mkDocsYmlPath) {
-    throw new DocutilsError(
-      `Could not find ${NAME_MKDOCS_YML} from ${cwd}; please run "${NAME_BIN} init"`,
-    );
+    throw new DocutilsError(`Could not find ${NAME_MKDOCS_YML} from ${cwd}; please run "${NAME_BIN} init"`);
   }
   version = version ?? (await findDeployVersion(packageJsonPath, usePrefixedMajorVersion, cwd));
 
@@ -170,18 +168,12 @@ export async function deploy({
 
   const mikePath = await findMike();
   if (!mikePath) {
-    throw new DocutilsError(
-      `Could not find ${NAME_MIKE} executable; please run "${NAME_BIN} init"`,
-    );
+    throw new DocutilsError(`Could not find ${NAME_MIKE} executable; please run "${NAME_BIN} init"`);
   }
   if (serve) {
     const mikeArgs = [
       ...argify(
-        Object.fromEntries(
-          Object.entries(mikeOpts).filter(
-            ([, value]) => typeof value === 'number' || Boolean(value),
-          ),
-        ),
+        Object.fromEntries(Object.entries(mikeOpts).filter(([, value]) => typeof value === 'number' || Boolean(value))),
       ),
     ];
     stop(); // discard
@@ -224,9 +216,7 @@ export async function findDeployVersion(
   const { pkg } = await readPackageJson(packageJsonPath ? path.dirname(packageJsonPath) : cwd, true);
   const version = pkg.version;
   if (!version) {
-    throw new DocutilsError(
-      'No "version" field found in package.json; please add one or specify a version to deploy',
-    );
+    throw new DocutilsError('No "version" field found in package.json; please add one or specify a version to deploy');
   }
 
   // If a minor version can be extracted, use MAJOR.MINOR as the deploy version, otherwise use MAJOR.
@@ -244,11 +234,7 @@ export async function findDeployVersion(
  * @param args Extra args to `mike build`
  * @param opts Extra options for `teen_process.Subprocess.start`
  */
-async function doServe(
-  mikePath: string,
-  args: string[] = [],
-  opts: SpawnBackgroundProcessOpts = {},
-) {
+async function doServe(mikePath: string, args: string[] = [], opts: SpawnBackgroundProcessOpts = {}) {
   const finalArgs = ['serve', ...args];
   log.debug('Executing %s via: %s %O', NAME_MIKE, mikePath, finalArgs);
   return spawnBackgroundProcess(mikePath, finalArgs, opts);

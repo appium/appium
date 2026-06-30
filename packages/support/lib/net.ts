@@ -118,15 +118,15 @@ export async function uploadFile(
     await uploadFileToFtp(fs.createReadStream(localPath), url, uploadOptions);
   } else {
     throw new Error(
-      `Cannot upload the file at '${localPath}' to '${remoteUri}'. `
-        + `Unsupported remote protocol '${url.protocol}'. `
-        + `Only http/https and ftp/ftps protocols are supported.`,
+      `Cannot upload the file at '${localPath}' to '${remoteUri}'. ` +
+        `Unsupported remote protocol '${url.protocol}'. ` +
+        `Only http/https and ftp/ftps protocols are supported.`,
     );
   }
   if (isMetered) {
     log.info(
-      `Uploaded '${localPath}' of ${toReadableSizeString(size)} size in `
-        + `${timer.getDuration().asSeconds.toFixed(3)}s`,
+      `Uploaded '${localPath}' of ${toReadableSizeString(size)} size in ` +
+        `${timer.getDuration().asSeconds.toFixed(3)}s`,
     );
   }
 }
@@ -183,15 +183,15 @@ export async function downloadFile(
   if (responseLength && size !== responseLength) {
     await fs.rimraf(dstPath);
     throw new Error(
-      `The size of the file downloaded from ${remoteUrl} (${size} bytes) `
-        + `differs from the one in Content-Length response header (${responseLength} bytes)`,
+      `The size of the file downloaded from ${remoteUrl} (${size} bytes) ` +
+        `differs from the one in Content-Length response header (${responseLength} bytes)`,
     );
   }
   if (isMetered) {
     const secondsElapsed = timer.getDuration().asSeconds;
     log.debug(
-      `${remoteUrl} (${toReadableSizeString(size)}) `
-        + `has been downloaded to '${dstPath}' in ${secondsElapsed.toFixed(3)}s`,
+      `${remoteUrl} (${toReadableSizeString(size)}) ` +
+        `has been downloaded to '${dstPath}' in ${secondsElapsed.toFixed(3)}s`,
     );
     if (secondsElapsed >= 2) {
       const bytesPerSec = Math.floor(size / secondsElapsed);
@@ -268,8 +268,8 @@ async function uploadFileToHttp(
     requestOpts.data = localFileStream;
   }
   log.debug(
-    `Performing ${method} to ${href} with options (excluding data): `
-      + JSON.stringify(
+    `Performing ${method} to ${href} with options (excluding data): ` +
+      JSON.stringify(
         (() => {
           const requestOptsWithoutData = { ...requestOpts } as Record<string, unknown>;
           delete requestOptsWithoutData.data;
@@ -291,7 +291,7 @@ async function uploadFileToFtp(
   const { auth } = uploadOptions;
   const { protocol, hostname, port, pathname } = parsedUri;
 
-  const ftpOpts: { host: string; port: number; user?: string; pass?: string; } = {
+  const ftpOpts: { host: string; port: number; user?: string; pass?: string } = {
     host: hostname ?? '',
     port: port !== undefined && port !== '' ? Number.parseInt(port, 10) : 21,
   };
@@ -311,10 +311,7 @@ async function uploadFileToFtp(
   });
 }
 
-function isHttpUploadOptions(
-  opts: HttpUploadOptions | FtpUploadOptions,
-  url: URL,
-): opts is HttpUploadOptions {
+function isHttpUploadOptions(opts: HttpUploadOptions | FtpUploadOptions, url: URL): opts is HttpUploadOptions {
   try {
     return url.protocol === 'http:' || url.protocol === 'https:';
   } catch {
@@ -326,10 +323,7 @@ function isHttpUploadOptions(
  * Returns true if the URL is FTP, i.e. the options are for FTP upload.
  * @deprecated FTP upload via jsftp is deprecated and will be removed in a future major version.
  */
-function isFtpUploadOptions(
-  opts: HttpUploadOptions | FtpUploadOptions,
-  url: URL,
-): opts is FtpUploadOptions {
+function isFtpUploadOptions(opts: HttpUploadOptions | FtpUploadOptions, url: URL): opts is FtpUploadOptions {
   try {
     return url.protocol === 'ftp:';
   } catch {

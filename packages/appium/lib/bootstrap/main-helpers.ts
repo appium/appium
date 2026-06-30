@@ -27,14 +27,11 @@ const isStdoutTTY = process.stdout.isTTY;
  */
 export function inspect(value: unknown): void {
   logger.info(
-    dump(
-      value,
-      {
-        colors: true,
-        depth: null,
-        compact: !isStdoutTTY,
-      } satisfies InspectOptions,
-    ),
+    dump(value, {
+      colors: true,
+      depth: null,
+      compact: !isStdoutTTY,
+    } satisfies InspectOptions),
   );
 }
 
@@ -79,9 +76,9 @@ export function logServerAddress(url: string): void {
     return iface.internal ? `${href} (only accessible from the same host)` : href;
   };
   logger.info(
-    `You can provide the following ${interfaces.length === 1 ? 'URL' : 'URLs'} `
-      + `in your client code to connect to this server:\n`
-      + interfaces.map((iface) => `\t${toLabel(iface)}`).join('\n'),
+    `You can provide the following ${interfaces.length === 1 ? 'URL' : 'URLs'} ` +
+      `in your client code to connect to this server:\n` +
+      interfaces.map((iface) => `\t${toLabel(iface)}`).join('\n'),
   );
 }
 
@@ -91,10 +88,7 @@ export function logServerAddress(url: string): void {
  * @param args - Parsed server CLI args
  * @param throwInsteadOfExit - When true, rethrows failures instead of calling `process.exit(1)`
  */
-export async function preflightChecks(
-  args: ParsedArgs<CliCommandServer>,
-  throwInsteadOfExit = false,
-): Promise<void> {
+export async function preflightChecks(args: ParsedArgs<CliCommandServer>, throwInsteadOfExit = false): Promise<void> {
   try {
     checkNodeOk();
     if (args.longStacktrace) {
@@ -144,10 +138,7 @@ export async function logStartupInfo(args: ParsedArgs<CliCommandServer>): Promis
 /**
  * Collects `updateServer` hooks from active driver and plugin classes for HTTP server customization.
  */
-export function getServerUpdaters(
-  driverClasses: DriverNameMap,
-  pluginClasses: PluginNameMap,
-): UpdateServerCallback[] {
+export function getServerUpdaters(driverClasses: DriverNameMap, pluginClasses: PluginNameMap): UpdateServerCallback[] {
   return [...driverClasses.keys(), ...pluginClasses.keys()]
     .map((klass) => klass.updateServer)
     .filter(Boolean) as UpdateServerCallback[];
@@ -156,10 +147,7 @@ export function getServerUpdaters(
 /**
  * Merges `newMethodMap` contributions from all active drivers and plugins into one method map.
  */
-export function getExtraMethodMap(
-  driverClasses: DriverNameMap,
-  pluginClasses: PluginNameMap,
-): MethodMap<Driver> {
+export function getExtraMethodMap(driverClasses: DriverNameMap, pluginClasses: PluginNameMap): MethodMap<Driver> {
   return [...driverClasses.keys(), ...pluginClasses.keys()].reduce<MethodMap<Driver>>(
     (map, klass) => ({
       ...map,
@@ -177,7 +165,7 @@ export function buildServerOpts(
   parsedArgs: ParsedArgs<CliCommandServer>,
   driverClasses: DriverNameMap,
   pluginClasses: PluginNameMap,
-): { serverOpts: ServerOpts; normalizedBasePath: string; } {
+): { serverOpts: ServerOpts; normalizedBasePath: string } {
   const routeConfiguringFunction = makeRouter(appiumDriver);
   const serverOpts: ServerOpts = {
     routeConfiguringFunction,
@@ -221,12 +209,9 @@ function logNonDefaultArgsWarning(args: Args): void {
   inspect(args);
 }
 
-function logDefaultCapabilitiesWarning(
-  caps: ParsedArgs<CliCommandServer>['defaultCapabilities'],
-): void {
+function logDefaultCapabilitiesWarning(caps: ParsedArgs<CliCommandServer>['defaultCapabilities']): void {
   logger.info(
-    'Default capabilities, which will be added to each request '
-      + 'unless overridden by desired capabilities:',
+    'Default capabilities, which will be added to each request ' + 'unless overridden by desired capabilities:',
   );
   inspect(caps);
 }

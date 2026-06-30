@@ -69,14 +69,8 @@ export async function compareImages(
     }
     default:
       throw new errors.InvalidArgumentError(
-        `'${mode}' images comparison mode is unknown. `
-          + `Only ${
-            JSON.stringify([
-              MATCH_FEATURES_MODE,
-              GET_SIMILARITY_MODE,
-              MATCH_TEMPLATE_MODE,
-            ])
-          } modes are supported.`,
+        `'${mode}' images comparison mode is unknown. ` +
+          `Only ${JSON.stringify([MATCH_FEATURES_MODE, GET_SIMILARITY_MODE, MATCH_TEMPLATE_MODE])} modes are supported.`,
       );
   }
   return convertVisualizationToBase64(result);
@@ -89,11 +83,11 @@ export async function compareImages(
  * @param element - occurrence result
  * @returns result with base64-encoded visualization
  */
-function convertVisualizationToBase64(element: Partial<{ visualization: Buffer | null; }>): any {
+function convertVisualizationToBase64(element: Partial<{ visualization: Buffer | null }>): any {
   return Buffer.isBuffer(element.visualization)
     ? {
-      ...element,
-      visualization: element.visualization.toString('base64'),
-    }
+        ...element,
+        visualization: element.visualization.toString('base64'),
+      }
     : element;
 }

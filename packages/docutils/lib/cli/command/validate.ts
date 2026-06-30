@@ -83,9 +83,7 @@ export default {
     await validator.validate();
 
     if (errorCount) {
-      throw new DocutilsError(
-        `Validation failed with ${errorCount} ${util.pluralize('error', errorCount)}`,
-      );
+      throw new DocutilsError(`Validation failed with ${errorCount} ${util.pluralize('error', errorCount)}`);
     }
   },
 } as CommandModule<object, ValidateOptions>;

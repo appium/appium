@@ -88,9 +88,7 @@ export class AppiumInitializer {
   private async parsePreConfigArgs<
     Cmd extends CliCommand,
     SubCmd extends CliExtensionSubcommand | CliCommandSetupSubcommand | void,
-  >(
-    args?: Args<Cmd, SubCmd>,
-  ): Promise<{ preConfigArgs: PreConfigArgs; throwInsteadOfExit: boolean; }> {
+  >(args?: Args<Cmd, SubCmd>): Promise<{ preConfigArgs: PreConfigArgs; throwInsteadOfExit: boolean }> {
     const parser = await getParser();
     let throwInsteadOfExit = false;
 
@@ -135,12 +133,7 @@ export class AppiumInitializer {
     ) as unknown as ParsedArgs<CliCommandServer>;
 
     if (preConfigArgs.showConfig) {
-      showConfig(
-        getNonDefaultServerArgs(preConfigArgs as Args),
-        configResult,
-        defaults,
-        serverArgs,
-      );
+      showConfig(getNonDefaultServerArgs(preConfigArgs as Args), configResult, defaults, serverArgs);
       return {} as InitResult<Cmd>;
     }
 
@@ -177,14 +170,10 @@ export class AppiumInitializer {
     if (!serverArgs.logFilters) {
       return;
     }
-    const { issues, rules } = await logger
-      .unwrap()
-      .loadSecureValuesPreprocessingRules(serverArgs.logFilters);
+    const { issues, rules } = await logger.unwrap().loadSecureValuesPreprocessingRules(serverArgs.logFilters);
     const argToLog = util.truncateString(JSON.stringify(serverArgs.logFilters), { length: 150 });
     if (!util.isEmpty(issues)) {
-      throw new Error(
-        `The log filtering rules config ${argToLog} has issues: ` + JSON.stringify(issues, null, 2),
-      );
+      throw new Error(`The log filtering rules config ${argToLog} has issues: ` + JSON.stringify(issues, null, 2));
     }
     if (util.isEmpty(rules)) {
       logger.warn(`Found no log filtering rules in the ${argToLog} config. ` + `Is that expected?`);
@@ -209,9 +198,7 @@ export class AppiumInitializer {
     }
 
     if (isDriverCommandArgs(preConfigArgs) || isPluginCommandArgs(preConfigArgs)) {
-      const cmd = isDriverCommandArgs(preConfigArgs)
-        ? preConfigArgs.driverCommand
-        : preConfigArgs.pluginCommand;
+      const cmd = isDriverCommandArgs(preConfigArgs) ? preConfigArgs.driverCommand : preConfigArgs.pluginCommand;
       if (cmd === 'install') {
         await injectAppiumSymlinks(driverConfig, pluginConfig, logger);
       }

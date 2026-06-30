@@ -21,7 +21,7 @@ export interface MockAppiumSupportEnv {
   resolveManifestPath: SinonStub;
   hasAppiumDependency: SinonStub;
   readPackageInDir: SinonStub;
-  __pkg: { name: string; version: string; readme: string; _id: string; };
+  __pkg: { name: string; version: string; readme: string; _id: string };
 }
 
 export interface MockAppiumSupportLogger {
@@ -66,12 +66,12 @@ export interface MockResolveFrom extends SinonStub<[cwd: string, id: string], Pr
 }
 
 export interface MockGlob extends SinonStub {
-  (spec: string, opts: { cwd: string; }, done: () => void): EventEmitter;
+  (spec: string, opts: { cwd: string }, done: () => void): EventEmitter;
 }
 
 export interface Overrides {
   '@appium/support': MockAppiumSupport;
-  '../../../lib/utils/resolve-from': { resolveFrom: MockResolveFrom; };
+  '../../../lib/utils/resolve-from': { resolveFrom: MockResolveFrom };
   '../../../lib/utils/is-package-changed': MockPackageChanged;
   glob: MockGlob;
 }
@@ -91,9 +91,7 @@ export function initMocks(sandbox = createSandbox()): InitMocksResult {
       readFile: sandbox.stub().resolves('{}'),
       writeFile: sandbox.stub().resolves(true),
       walk: sandbox.stub().returns({
-        [Symbol.asyncIterator]: sandbox
-          .stub()
-          .returns({ next: sandbox.stub().resolves({ done: true }) }),
+        [Symbol.asyncIterator]: sandbox.stub().returns({ next: sandbox.stub().resolves({ done: true }) }),
       }),
       glob: sandbox.stub().resolves([]),
       mkdirp: sandbox.stub().resolves(),
@@ -114,10 +112,7 @@ export function initMocks(sandbox = createSandbox()): InitMocksResult {
     logger: {
       getLogger: sandbox.stub().callsFake(() => MockAppiumSupport.logger.__logger),
       __logger: sandbox.stub(
-        new (global as typeof globalThis & { console: typeof console; }).console.Console(
-          process.stdout,
-          process.stderr,
-        ),
+        new (global as typeof globalThis & { console: typeof console }).console.Console(process.stdout, process.stderr),
       ) as unknown as SinonStub,
     },
     system: {
@@ -150,18 +145,16 @@ export function initMocks(sandbox = createSandbox()): InitMocksResult {
     .stub<[cwd: string, id: string], Promise<string>>()
     .callsFake(async (cwd, id) => path.join(cwd, id));
 
-  const MockGlob = sandbox
-    .stub()
-    .callsFake((spec: string, opts: { cwd: string; }, done: () => void) => {
-      const ee = new EventEmitter();
+  const MockGlob = sandbox.stub().callsFake((spec: string, opts: { cwd: string }, done: () => void) => {
+    const ee = new EventEmitter();
+    setTimeout(() => {
+      ee.emit('match', path.join(opts.cwd, 'package.json'));
       setTimeout(() => {
-        ee.emit('match', path.join(opts.cwd, 'package.json'));
-        setTimeout(() => {
-          done();
-        });
+        done();
       });
-      return ee;
-    }) as unknown as MockGlob;
+    });
+    return ee;
+  }) as unknown as MockGlob;
 
   const overrides: Overrides = {
     '@appium/support': MockAppiumSupport,

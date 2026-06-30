@@ -8,16 +8,16 @@ import { rewiremock } from '../../helpers';
 const { expect } = chai;
 chai.use(chaiAsPromised);
 
-describe('schema/format-errors', function() {
+describe('schema/format-errors', function () {
   let sandbox: SinonSandbox;
   let formatErrors: typeof FormatErrorsFn;
   let betterAjvMock: SinonStub;
 
-  before(async function() {
+  before(async function () {
     await schema.finalizeSchema();
   });
 
-  beforeEach(function() {
+  beforeEach(function () {
     sandbox = createSandbox();
     betterAjvMock = sandbox.stub().returns('');
     ({ formatErrors } = rewiremock.proxy(() => require('../../../lib/schema/format-errors'), {
@@ -25,36 +25,36 @@ describe('schema/format-errors', function() {
     }));
   });
 
-  afterEach(function() {
+  afterEach(function () {
     sandbox.restore();
   });
 
-  describe('formatErrors()', function() {
+  describe('formatErrors()', function () {
     /** Minimal placeholder; tests only assert wiring to better-ajv-errors, not real AJV shapes. */
-    const oneError = [
-      { keyword: 'test', instancePath: '', schemaPath: '#', params: {} },
-    ] as Parameters<typeof formatErrors>[0];
+    const oneError = [{ keyword: 'test', instancePath: '', schemaPath: '#', params: {} }] as Parameters<
+      typeof formatErrors
+    >[0];
 
-    describe('when provided `errors` as an empty array', function() {
-      it('should throw', function() {
+    describe('when provided `errors` as an empty array', function () {
+      it('should throw', function () {
         expect(() => formatErrors([])).to.throw(TypeError, 'Array of errors must be non-empty');
       });
     });
 
-    describe('when provided `errors` as `undefined`', function() {
-      it('should throw', function() {
+    describe('when provided `errors` as `undefined`', function () {
+      it('should throw', function () {
         expect(() => formatErrors()).to.throw(TypeError, 'Array of errors must be non-empty');
       });
     });
 
-    describe('when provided `errors` as a non-empty array', function() {
-      it('should return a string', function() {
+    describe('when provided `errors` as a non-empty array', function () {
+      it('should return a string', function () {
         expect(formatErrors(oneError)).to.be.a('string');
       });
     });
 
-    describe('when `opts.pretty` is false', function() {
-      it('should call `betterAjvErrors()` with non-CLI output format', function() {
+    describe('when `opts.pretty` is false', function () {
+      it('should call `betterAjvErrors()` with non-CLI output format', function () {
         formatErrors(oneError, {}, { pretty: false });
         expect(
           betterAjvMock.calledWith(schema.getSchema(), {}, oneError, {
@@ -65,8 +65,8 @@ describe('schema/format-errors', function() {
       });
     });
 
-    describe('when `opts.json` is a string', function() {
-      it('should call `betterAjvErrors()` with option `json: opts.json`', function() {
+    describe('when `opts.json` is a string', function () {
+      it('should call `betterAjvErrors()` with option `json: opts.json`', function () {
         formatErrors(oneError, {}, { json: '{"foo": "bar"}' });
         expect(
           betterAjvMock.calledWith(schema.getSchema(), {}, oneError, {

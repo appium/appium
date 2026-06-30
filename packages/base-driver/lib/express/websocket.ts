@@ -23,25 +23,19 @@ export async function getWebSocketHandlers(
   this: AppiumServer,
   keysFilter: string | null = null,
 ): Promise<Record<string, WSServer>> {
-  return Object.entries(this.webSocketsMapping).reduce<Record<string, WSServer>>(
-    (acc, [pathname, wsServer]) => {
-      if (typeof keysFilter !== 'string' || pathname.includes(keysFilter)) {
-        acc[pathname] = wsServer;
-      }
-      return acc;
-    },
-    {},
-  );
+  return Object.entries(this.webSocketsMapping).reduce<Record<string, WSServer>>((acc, [pathname, wsServer]) => {
+    if (typeof keysFilter !== 'string' || pathname.includes(keysFilter)) {
+      acc[pathname] = wsServer;
+    }
+    return acc;
+  }, {});
 }
 
 /**
  * Removes a WebSocket handler by pathname.
  * @see AppiumServerExtension.removeWebSocketHandler
  */
-export async function removeWebSocketHandler(
-  this: AppiumServer,
-  handlerPathname: string,
-): Promise<boolean> {
+export async function removeWebSocketHandler(this: AppiumServer, handlerPathname: string): Promise<boolean> {
   const wsServer = this.webSocketsMapping?.[handlerPathname];
   if (!wsServer) {
     return false;

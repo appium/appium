@@ -31,8 +31,8 @@ export interface InvalidCaps<C extends Constraints = BaseDriverCapConstraints> {
  */
 export function makeNonW3cCapsError(): Error {
   return new errors.SessionNotCreatedError(
-    'Session capabilities format must comply to the W3C standard. Make sure your client is up to date. '
-      + 'See https://www.w3.org/TR/webdriver/#new-session for more details.',
+    'Session capabilities format must comply to the W3C standard. Make sure your client is up to date. ' +
+      'See https://www.w3.org/TR/webdriver/#new-session for more details.',
   );
 }
 
@@ -62,24 +62,23 @@ export function parseCapsForInnerDriver<C extends Constraints = BaseDriverCapCon
       let isCapAlreadySet = false;
       for (const firstMatchEntry of w3cCapabilities.firstMatch ?? []) {
         if (
-          util.isPlainObject(firstMatchEntry)
-          && hasOwnCapability(firstMatchEntry as Record<string, unknown>, defaultCapKey)
+          util.isPlainObject(firstMatchEntry) &&
+          hasOwnCapability(firstMatchEntry as Record<string, unknown>, defaultCapKey)
         ) {
           isCapAlreadySet = true;
           break;
         }
       }
-      isCapAlreadySet = isCapAlreadySet
-        || (util.isPlainObject(w3cCapabilities.alwaysMatch)
-          && hasOwnCapability(w3cCapabilities.alwaysMatch as Record<string, unknown>, defaultCapKey));
+      isCapAlreadySet =
+        isCapAlreadySet ||
+        (util.isPlainObject(w3cCapabilities.alwaysMatch) &&
+          hasOwnCapability(w3cCapabilities.alwaysMatch as Record<string, unknown>, defaultCapKey));
       if (isCapAlreadySet) {
         continue;
       }
 
       if (util.isEmpty(w3cCapabilities.firstMatch)) {
-        w3cCapabilities.firstMatch = [
-          { [defaultCapKey]: defaultCapValue },
-        ] as W3CCapabilities<C>['firstMatch'];
+        w3cCapabilities.firstMatch = [{ [defaultCapKey]: defaultCapValue }] as W3CCapabilities<C>['firstMatch'];
       } else {
         (w3cCapabilities.firstMatch[0] as Record<string, unknown>)[defaultCapKey] = defaultCapValue;
       }
@@ -114,12 +113,10 @@ export function parseCapsForInnerDriver<C extends Constraints = BaseDriverCapCon
 export function insertAppiumPrefixes<C extends Constraints = BaseDriverCapConstraints>(
   caps: Capabilities<C>,
 ): NSCapabilities<C> {
-  return mapKeys(
-    caps as Record<string, unknown>,
-    (_, key) =>
-      STANDARD_CAPS_LOWERCASE.has(String(key).toLowerCase()) || String(key).includes(':')
-        ? String(key)
-        : `${W3C_APPIUM_PREFIX}:${key}`,
+  return mapKeys(caps as Record<string, unknown>, (_, key) =>
+    STANDARD_CAPS_LOWERCASE.has(String(key).toLowerCase()) || String(key).includes(':')
+      ? String(key)
+      : `${W3C_APPIUM_PREFIX}:${key}`,
   ) as NSCapabilities<C>;
 }
 
@@ -138,9 +135,7 @@ export function removeAppiumPrefixes<C extends Constraints = BaseDriverCapConstr
  *
  * @returns Parsed settings object; empty if none found.
  */
-export function pullSettings(
-  caps: Record<string, unknown> | null | undefined,
-): Record<string, unknown> {
+export function pullSettings(caps: Record<string, unknown> | null | undefined): Record<string, unknown> {
   if (!util.isPlainObject(caps) || util.isEmpty(caps)) {
     return {};
   }

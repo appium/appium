@@ -38,39 +38,39 @@ const ADJUSTED_VENDOR_CAPS = {
   'appium:platformVersion': 3,
 };
 
-describe('relaxed caps plugin', function() {
+describe('relaxed caps plugin', function () {
   let sandbox: sinon.SinonSandbox;
 
-  beforeEach(function() {
+  beforeEach(function () {
     sandbox = sinon.createSandbox();
   });
 
-  afterEach(function() {
+  afterEach(function () {
     sandbox.restore();
   });
 
   const rcp = new RelaxedCapsPlugin('relaxed-caps');
 
-  it('should export the name', function() {
+  it('should export the name', function () {
     expect(RelaxedCapsPlugin).to.exist;
   });
 
-  describe('#fixCapsIfW3C', function() {
+  describe('#fixCapsIfW3C', function () {
     // Bracket notation required to call private method in tests
     /* eslint-disable dot-notation */
-    it('should not transform standard caps', function() {
+    it('should not transform standard caps', function () {
       expect(rcp['fixCapsIfW3C']({ alwaysMatch: STD_CAPS })).to.eql({ alwaysMatch: STD_CAPS });
     });
-    it('should transform non-standard caps', function() {
+    it('should transform non-standard caps', function () {
       expect(rcp['fixCapsIfW3C']({ alwaysMatch: MIXED_CAPS })).to.eql({ alwaysMatch: ADJUSTED_CAPS });
     });
-    it('should not transform already prefixed caps', function() {
+    it('should not transform already prefixed caps', function () {
       expect(rcp['fixCapsIfW3C']({ firstMatch: [VENDOR_CAPS], alwaysMatch: VENDOR_CAPS })).to.eql({
         firstMatch: [ADJUSTED_VENDOR_CAPS],
         alwaysMatch: ADJUSTED_VENDOR_CAPS,
       });
     });
-    it('should not transform non-W3C caps', function() {
+    it('should not transform non-W3C caps', function () {
       expect(rcp['fixCapsIfW3C']({ desiredCapabilities: VENDOR_CAPS })).to.eql({
         desiredCapabilities: VENDOR_CAPS,
       });
@@ -78,11 +78,11 @@ describe('relaxed caps plugin', function() {
     /* eslint-enable dot-notation */
   });
 
-  describe('#createSession', function() {
+  describe('#createSession', function () {
     const next = () => Promise.resolve();
     const driver = { createSession: () => Promise.resolve() };
 
-    it('should work with W3C style caps format', async function() {
+    it('should work with W3C style caps format', async function () {
       const mock = sandbox.mock(driver);
       const w3c = { firstMatch: [MIXED_CAPS] };
       const w3cAdjusted = { firstMatch: [ADJUSTED_CAPS] };
@@ -91,7 +91,7 @@ describe('relaxed caps plugin', function() {
       mock.verify();
     });
 
-    it('should work with any argument', async function() {
+    it('should work with any argument', async function () {
       const mock = sandbox.mock(driver);
       const w3c = { firstMatch: [MIXED_CAPS] };
       const w3cAdjusted = { firstMatch: [ADJUSTED_CAPS] };
@@ -100,7 +100,7 @@ describe('relaxed caps plugin', function() {
       mock.verify();
     });
 
-    it('should work with multiple firstMatch', async function() {
+    it('should work with multiple firstMatch', async function () {
       const mock = sandbox.mock(driver);
       const w3c = { firstMatch: [MIXED_CAPS, STD_CAPS, MIXED_CAPS] };
       const w3cAdjusted = {
@@ -111,7 +111,7 @@ describe('relaxed caps plugin', function() {
       mock.verify();
     });
 
-    it('should work with alwaysMatch', async function() {
+    it('should work with alwaysMatch', async function () {
       const mock = sandbox.mock(driver);
       const w3c = { alwaysMatch: MIXED_CAPS };
       const w3cAdjusted = { alwaysMatch: ADJUSTED_CAPS };
@@ -120,7 +120,7 @@ describe('relaxed caps plugin', function() {
       mock.verify();
     });
 
-    it('should work with alwaysMatch and firstMatch', async function() {
+    it('should work with alwaysMatch and firstMatch', async function () {
       const mock = sandbox.mock(driver);
       const w3c = { alwaysMatch: MIXED_CAPS, firstMatch: [MIXED_CAPS] };
       const w3cAdjusted = {

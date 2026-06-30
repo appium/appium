@@ -4,13 +4,13 @@ import { deleteSession, initSession, W3C_PREFIXED_CAPS } from '../helpers';
 
 chai.use(chaiAsPromised);
 
-export function alertTests(context: { port: number; }) {
-  describe('alerts', function() {
+export function alertTests(context: { port: number }) {
+  describe('alerts', function () {
     let driver: Awaited<ReturnType<typeof initSession>>;
-    before(async function() {
+    before(async function () {
       driver = await initSession(W3C_PREFIXED_CAPS, { port: context.port });
     });
-    after(async function() {
+    after(async function () {
       return await deleteSession(driver);
     });
 
@@ -22,21 +22,21 @@ export function alertTests(context: { port: number; }) {
       ['dismissAlert', () => driver.dismissAlert()],
     ];
     for (const [name, fn] of noAlertCases) {
-      it(`should reject ${name} when no alert is present`, async function() {
+      it(`should reject ${name} when no alert is present`, async function () {
         const e: unknown = await fn().catch((err: Error) => err);
         expect(e).to.be.an('error');
         expect((e as Error).message).to.include(noAlertMessage);
       });
     }
-    it('should get text of an alert', async function() {
+    it('should get text of an alert', async function () {
       await (await driver.$('#AlertButton')).click();
       expect(await driver.getAlertText()).to.equal('Fake Alert');
     });
-    it('should set the text of an alert', async function() {
+    it('should set the text of an alert', async function () {
       await driver.sendAlertText('foo');
       expect(await driver.getAlertText()).to.equal('foo');
     });
-    it('should not do other things while an alert is there', async function() {
+    it('should not do other things while an alert is there', async function () {
       try {
         await (await driver.$('#AlertButton')).click();
         await (await driver.$('#nav')).click();
@@ -46,13 +46,13 @@ export function alertTests(context: { port: number; }) {
         expect((err as Error).message).to.include('modal dialog was open, blocking this operation');
       }
     });
-    it.skip('should accept an alert', function() {
+    it.skip('should accept an alert', function () {
       (driver.acceptAlert() as any).$('nav').click().nodeify();
     });
-    it.skip('should not set the text of the wrong kind of alert', function() {
+    it.skip('should not set the text of the wrong kind of alert', function () {
       (driver.$('AlertButton2') as any).click().alertText().nodeify();
     });
-    it.skip('should dismiss an alert', function() {
+    it.skip('should dismiss an alert', function () {
       (driver.acceptAlert() as any).$('nav').click().nodeify();
     });
   });

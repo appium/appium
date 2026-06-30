@@ -91,8 +91,8 @@ export function hasValue<T>(val: T): val is NonNullable<T> {
 export function memoize<Fn extends (...args: any[]) => any>(
   fn: Fn,
   resolver?: (...args: Parameters<Fn>) => unknown,
-): Fn & { cache: Map<unknown, ReturnType<Fn>>; } {
-  const memoizedFn = function(this: unknown, ...args: Parameters<Fn>) {
+): Fn & { cache: Map<unknown, ReturnType<Fn>> } {
+  const memoizedFn = function (this: unknown, ...args: Parameters<Fn>) {
     const key = resolver ? resolver.apply(this, args) : args[0];
     if (memoizedFn.cache.has(key)) {
       return memoizedFn.cache.get(key) as ReturnType<Fn>;
@@ -100,7 +100,7 @@ export function memoize<Fn extends (...args: any[]) => any>(
     const result = fn.apply(this, args);
     memoizedFn.cache.set(key, result);
     return result;
-  } as unknown as Fn & { cache: Map<unknown, ReturnType<Fn>>; };
+  } as unknown as Fn & { cache: Map<unknown, ReturnType<Fn>> };
   memoizedFn.cache = new Map<unknown, ReturnType<Fn>>();
   return memoizedFn;
 }
@@ -179,10 +179,7 @@ export function uniq<T>(values: readonly T[]): T[] {
  * @param options - Truncation options or max length
  * @returns Truncated string
  */
-export function truncateString(
-  value: string,
-  options: TruncateStringOptions | number = {},
-): string {
+export function truncateString(value: string, options: TruncateStringOptions | number = {}): string {
   const normalizedOptions = typeof options === 'number' ? { length: options } : options;
   const { length, omission = '…' } = normalizedOptions;
   const stringValue = value == null ? '' : typeof value === 'number' && Object.is(value, -0) ? '-0' : String(value);
@@ -215,10 +212,7 @@ export function escapeSpace(str: string): string {
  * @param quoteEscape - Optional character to escape, or `false` to skip
  * @returns Escaped string, or original value if `str` is not a string
  */
-export function escapeSpecialChars(
-  str: string | unknown,
-  quoteEscape?: string | false,
-): string | unknown {
+export function escapeSpecialChars(str: string | unknown, quoteEscape?: string | false): string | unknown {
   if (typeof str !== 'string') {
     return str;
   }
@@ -232,7 +226,7 @@ export function escapeSpecialChars(
     .replace(/[\r]/g, '\\r')
     .replace(/[\t]/g, '\\t')
     .replace(/["]/g, '\\"')
-    .replace(/\\'/g, '\\\'');
+    .replace(/\\'/g, "\\'");
   if (!quoteEscape) {
     return result;
   }
@@ -268,7 +262,7 @@ export function localIp(): string | undefined {
  * @param ms - Delay in milliseconds before the promise resolves
  * @returns A Bluebird promise with a `cancel()` method; cancel rejects with CancellationError
  */
-export function cancellableDelay(ms: number): B<void> & { cancel: () => void; } {
+export function cancellableDelay(ms: number): B<void> & { cancel: () => void } {
   let timer: NodeJS.Timeout;
   let resolve: () => void;
   let reject: (err: Error) => void;
@@ -279,11 +273,11 @@ export function cancellableDelay(ms: number): B<void> & { cancel: () => void; } 
     timer = setTimeout(() => resolve(), ms);
   });
 
-  (delay as B<void> & { cancel: () => void; }).cancel = function() {
+  (delay as B<void> & { cancel: () => void }).cancel = function () {
     clearTimeout(timer);
     reject(new B.CancellationError());
   };
-  return delay as B<void> & { cancel: () => void; };
+  return delay as B<void> & { cancel: () => void };
 }
 
 /**
@@ -436,11 +430,7 @@ export function toReadableSizeString(bytes: number | string): string {
  * @returns `true` if `originalPath` is under `root`
  * @throws {Error} If either path is not absolute
  */
-export function isSubPath(
-  originalPath: string,
-  root: string,
-  forcePosix: boolean | null = null,
-): boolean {
+export function isSubPath(originalPath: string, root: string, forcePosix: boolean | null = null): boolean {
   const pathObj = forcePosix ? path.posix : path;
   for (const p of [originalPath, root]) {
     if (!pathObj.isAbsolute(p)) {
@@ -461,11 +451,7 @@ export function isSubPath(
  * @param pathN - Additional paths to compare
  * @returns `true` if all paths resolve to the same file/directory
  */
-export async function isSameDestination(
-  path1: string,
-  path2: string,
-  ...pathN: string[]
-): Promise<boolean> {
+export async function isSameDestination(path1: string, path2: string, ...pathN: string[]): Promise<boolean> {
   const allPaths = [path1, path2, ...pathN];
   if (!(await asyncmap(allPaths, async (p) => fs.exists(p))).every(Boolean)) {
     return false;
@@ -535,7 +521,7 @@ export interface TruncateStringOptions {
 type LockFileGuardFn<T> = (behavior: () => Promise<T> | T) => Promise<T>;
 
 /** Return type of getLockFileGuard: guard function with a .check() method. */
-type LockFileGuard<T> = LockFileGuardFn<T> & { check: () => Promise<boolean>; };
+type LockFileGuard<T> = LockFileGuardFn<T> & { check: () => Promise<boolean> };
 
 /**
  * Compares two version strings using the given operator.
@@ -549,8 +535,8 @@ type LockFileGuard<T> = LockFileGuardFn<T> & { check: () => Promise<boolean>; };
 export function compareVersions(ver1: string, operator: string, ver2: string): boolean {
   if (!SUPPORTED_OPERATORS.includes(operator)) {
     throw new Error(
-      `The '${operator}' comparison operator is not supported. `
-        + `Only '${JSON.stringify(SUPPORTED_OPERATORS)}' operators are supported`,
+      `The '${operator}' comparison operator is not supported. ` +
+        `Only '${JSON.stringify(SUPPORTED_OPERATORS)}' operators are supported`,
     );
   }
 
@@ -579,11 +565,7 @@ export function quote(args: string | string[]): string {
  * @param options - Options object or boolean: use `inclusive: true` (or `true`) to prefix with the number (e.g. "3 ducks")
  * @returns The correctly inflected word, optionally prefixed with the count
  */
-export function pluralize(
-  word: string,
-  count: number,
-  options: PluralizeOptions | boolean = {},
-): string {
+export function pluralize(word: string, count: number, options: PluralizeOptions | boolean = {}): string {
   let inclusive = false;
   if (typeof options === 'boolean') {
     inclusive = options;
@@ -601,10 +583,7 @@ export function pluralize(
  * @returns Buffer containing the base64-encoded file content
  * @throws {Error} If the file does not exist, is a directory, cannot be read, or exceeds maxSize
  */
-export async function toInMemoryBase64(
-  srcPath: string,
-  opts: EncodingOptions = {},
-): Promise<Buffer> {
+export async function toInMemoryBase64(srcPath: string, opts: EncodingOptions = {}): Promise<Buffer> {
   if (!(await fs.exists(srcPath)) || (await fs.stat(srcPath)).isDirectory()) {
     throw new Error(`No such file: ${srcPath}`);
   }
@@ -619,9 +598,7 @@ export async function toInMemoryBase64(
       if (maxSize > 0 && resultBuffersSize > maxSize) {
         resultWriteStream.emit(
           'error',
-          new Error(
-            `The size of the resulting buffer must not be greater than ${toReadableSizeString(maxSize)}`,
-          ),
+          new Error(`The size of the resulting buffer must not be greater than ${toReadableSizeString(maxSize)}`),
         );
       }
       next();
@@ -659,16 +636,10 @@ export async function toInMemoryBase64(
  * @param opts - Options (see {@link LockFileOptions})
  * @returns Async function that accepts a callback to run under the lock, plus a `.check()` method
  */
-export function getLockFileGuard<T>(
-  lockFile: string,
-  opts: LockFileOptions = {},
-): LockFileGuard<T> {
+export function getLockFileGuard<T>(lockFile: string, opts: LockFileOptions = {}): LockFileGuard<T> {
   const { timeout = 120, tryRecovery = false } = opts;
 
-  const lock = promisify(_lockfile.lock) as (
-    lockfile: string,
-    opts: { wait: number; },
-  ) => Promise<void>;
+  const lock = promisify(_lockfile.lock) as (lockfile: string, opts: { wait: number }) => Promise<void>;
   const checkLock = promisify(_lockfile.check) as (lockfile: string) => Promise<boolean>;
   const unlock = promisify(_lockfile.unlock) as (lockfile: string) => Promise<void>;
 
@@ -691,8 +662,7 @@ export function getLockFileGuard<T>(
             triedRecovery = true;
           } else {
             throw new Error(
-              `Could not acquire lock on '${lockFile}' after ${timeout}s. `
-                + `Original error: ${err.message}`,
+              `Could not acquire lock on '${lockFile}' after ${timeout}s. ` + `Original error: ${err.message}`,
               { cause: e },
             );
           }

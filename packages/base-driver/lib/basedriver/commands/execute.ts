@@ -22,22 +22,19 @@ const ExecuteCommands = {
       const availableScripts = Object.keys(Driver.executeMethodMap ?? {});
       if (util.isEmpty(availableScripts)) {
         throw new errors.UnsupportedOperationError(
-          `Unsupported execute method '${script}'. `
-            + `Make sure the installed ${Driver.name} is up-to-date. `
-            + `The current driver version does not define any execute methods.`,
+          `Unsupported execute method '${script}'. ` +
+            `Make sure the installed ${Driver.name} is up-to-date. ` +
+            `The current driver version does not define any execute methods.`,
         );
       }
-      const { sorted: sortedMatches, suggestion } = rankLevenshteinCandidates(
-        script,
-        availableScripts,
-      );
+      const { sorted: sortedMatches, suggestion } = rankLevenshteinCandidates(script, availableScripts);
       throw new errors.UnsupportedOperationError(
         (suggestion
           ? `Unsupported execute method '${script}', did you mean '${suggestion}'? `
-          : `Unsupported execute method '${script}'. `)
-          + `Make sure the installed ${Driver.name} is up-to-date. `
-          + `Execute methods available in the current driver version are: `
-          + sortedMatches.join(', '),
+          : `Unsupported execute method '${script}'. `) +
+          `Make sure the installed ${Driver.name} is up-to-date. ` +
+          `Execute methods available in the current driver version are: ` +
+          sortedMatches.join(', '),
       );
     }
     const args = validateExecuteMethodParams(protoArgs as any[], commandMetadata.params);

@@ -46,10 +46,9 @@ async function main() {
     try {
       ts = await compileFromFile(JSON_SCHEMA_PATH);
     } catch (err) {
-      throw new Error(
-        `${error} Could not convert Appium schema JSON to TypeScript: ${err.message}. Does it exist?`,
-        { cause: err },
-      );
+      throw new Error(`${error} Could not convert Appium schema JSON to TypeScript: ${err.message}. Does it exist?`, {
+        cause: err,
+      });
     }
     try {
       await fs.writeFile(OUTPUT_PATH, ts);

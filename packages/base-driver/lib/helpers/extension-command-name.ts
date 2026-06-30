@@ -9,10 +9,7 @@ import type { BaseDriver } from '../basedriver/driver';
  * @param commandName - The command name to resolve.
  * @returns The resolved extension command name if a mapping exists. Otherwise, the original command name.
  */
-export function resolveExecuteExtensionName<C extends Constraints>(
-  this: BaseDriver<C>,
-  commandName: string,
-): string {
+export function resolveExecuteExtensionName<C extends Constraints>(this: BaseDriver<C>, commandName: string): string {
   const Driver = this.constructor as DriverClass<Driver<C>>;
   const methodMap = Driver.executeMethodMap;
 

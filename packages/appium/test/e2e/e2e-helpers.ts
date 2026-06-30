@@ -29,11 +29,7 @@ export interface AppiumRunErrorProps {
   cwd: string;
 }
 
-export type AppiumRunError =
-  & Error
-  & AppiumRunErrorProps
-  & ExecError
-  & { stdout: string; stderr: string; };
+export type AppiumRunError = Error & AppiumRunErrorProps & ExecError & { stdout: string; stderr: string };
 
 function curry2<A, B, R>(
   fn: (a: A, b: B) => R,
@@ -79,8 +75,8 @@ function curry3<A, B, C, R>(
 async function run(
   appiumHome: string,
   args: CliExtArgs | CliArgs,
-  opts: { env?: Record<string, string>; FORCE_COLOR?: string; } = {},
-): Promise<{ stdout: string; stderr: string; }> {
+  opts: { env?: Record<string, string>; FORCE_COLOR?: string } = {},
+): Promise<{ stdout: string; stderr: string }> {
   const cwd = APPIUM_ROOT;
   const env: Record<string, string | undefined> = { ...opts.env };
   env.APPIUM_HOME ??= appiumHome;
@@ -98,7 +94,7 @@ async function run(
       stderr: strip(retval.stderr),
     };
   } catch (err) {
-    const { stdout = '', stderr = '' } = err as ExecError & { stdout?: string; stderr?: string; };
+    const { stdout = '', stderr = '' } = err as ExecError & { stdout?: string; stderr?: string };
     const execErr = err as ExecError;
     const baseErr = err instanceof Error ? err : new Error(String(err));
     const runErr = Object.assign(baseErr, {
@@ -125,8 +121,8 @@ export const runAppium = curry2(_runAppium);
 async function _runAppiumRaw(
   appiumHome: string,
   args: CliExtArgs | CliArgs,
-  opts: { env?: Record<string, string>; },
-): Promise<{ stdout: string; stderr: string; } | AppiumRunError> {
+  opts: { env?: Record<string, string> },
+): Promise<{ stdout: string; stderr: string } | AppiumRunError> {
   try {
     return await run(appiumHome, args, opts);
   } catch (err) {
@@ -158,13 +154,9 @@ export async function installLocalExtension<ExtType extends DriverType | PluginT
   type: ExtType,
   pathToExtension: string,
 ): Promise<ExtRecord<ExtType>> {
-  return runAppiumJson(appiumHome, [
-    type,
-    'install',
-    '--source',
-    'local',
-    pathToExtension,
-  ]) as Promise<ExtRecord<ExtType>>;
+  return runAppiumJson(appiumHome, [type, 'install', '--source', 'local', pathToExtension]) as Promise<
+    ExtRecord<ExtType>
+  >;
 }
 
 export async function readAppiumArgErrorFixture(name: string): Promise<string> {

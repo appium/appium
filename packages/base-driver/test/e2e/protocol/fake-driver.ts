@@ -68,7 +68,7 @@ class FakeDriver extends BaseDriver<Constraints> {
   }
 
   async getStatus(): Promise<string> {
-    return 'I\'m fine';
+    return "I'm fine";
   }
 
   async setUrl(url: string): Promise<string> {
@@ -133,7 +133,7 @@ class FakeDriver extends BaseDriver<Constraints> {
     return app;
   }
 
-  async getSettings(): Promise<{ status: number; value: string; }> {
+  async getSettings(): Promise<{ status: number; value: string }> {
     return { status: 13, value: 'Mishandled Driver Error' };
   }
 

@@ -32,7 +32,7 @@ export async function transformSourceXml(
   xmlStr: string,
   platform: string,
   { metadata = {} as TransformMetadata, addIndexPath = false }: TransformSourceXmlOptions = {},
-): Promise<{ xml: string; unknowns: NodesAndAttributes; }> {
+): Promise<{ xml: string; unknowns: NodesAndAttributes }> {
   // first thing we want to do is modify the ios source root node, because it doesn't include the
   // necessary index attribute, so we add it if it's not there
   xmlStr = xmlStr.replace('<AppiumAUT>', '<AppiumAUT index="0">');

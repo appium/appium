@@ -43,11 +43,7 @@ export async function elementSelected(this: FakeDriver, elementId: string): Prom
 }
 
 /** setValue. */
-export async function setValue(
-  this: FakeDriver,
-  keys: string | string[],
-  elementId: string,
-): Promise<void> {
+export async function setValue(this: FakeDriver, keys: string | string[], elementId: string): Promise<void> {
   const value = Array.isArray(keys) ? keys.join('') : keys;
   const el = this.getElement(elementId);
   // Only MockInputField supports value in the fake app XML.
@@ -80,11 +76,7 @@ export async function click(this: FakeDriver, elementId: string): Promise<void> 
 }
 
 /** Protocol order: attribute name, then element id (from route /attribute/:name). */
-export async function getAttribute(
-  this: FakeDriver,
-  attributeName: string,
-  elementId: string,
-): Promise<string> {
+export async function getAttribute(this: FakeDriver, attributeName: string, elementId: string): Promise<string> {
   const el = this.getElement(elementId);
   return el.getAttr(attributeName);
 }
@@ -102,22 +94,14 @@ export async function getSize(this: FakeDriver, elementId: string): Promise<Size
 }
 
 /** equalsElement. */
-export async function equalsElement(
-  this: FakeDriver,
-  elementIdA: string,
-  elementIdB: string,
-): Promise<boolean> {
+export async function equalsElement(this: FakeDriver, elementIdA: string, elementIdB: string): Promise<boolean> {
   const el1 = this.getElement(elementIdA);
   const el2 = this.getElement(elementIdB);
   return el1.equals(el2);
 }
 
 /** Protocol order: property name, then element id. Requires webview context. */
-export async function getCssProperty(
-  this: FakeDriver,
-  propertyName: string,
-  elementId: string,
-): Promise<string> {
+export async function getCssProperty(this: FakeDriver, propertyName: string, elementId: string): Promise<string> {
   this.assertWebviewContext();
   const el = this.getElement(elementId);
   return el.getCss(propertyName) ?? '';

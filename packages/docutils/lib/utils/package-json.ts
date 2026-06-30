@@ -11,8 +11,8 @@ export type NormalizedPackageJson = PackageJson & {
   version: string;
   readme: string;
   _id: string;
-  bugs?: { url: string; };
-  repository?: { type: string; url: string; directory?: string; };
+  bugs?: { url: string };
+  repository?: { type: string; url: string; directory?: string };
 };
 
 export type ReadPackageOptions = {
@@ -22,7 +22,7 @@ export type ReadPackageOptions = {
   normalize?: boolean;
 };
 
-export type NormalizeOptions = ReadPackageOptions & { normalize?: true; };
+export type NormalizeOptions = ReadPackageOptions & { normalize?: true };
 
 /** Finds the directory containing the nearest `package.json` by walking upward from `dir`. */
 export async function findPackageRoot(dir: string): Promise<string> {
@@ -61,9 +61,7 @@ export function findPackageRootSync(dir: string): string {
 /** Reads and parses `package.json` from `cwd`. */
 export async function readPackage(options?: NormalizeOptions): Promise<NormalizedPackageJson>;
 export async function readPackage(options: ReadPackageOptions): Promise<PackageJson>;
-export async function readPackage(
-  options: ReadPackageOptions = {},
-): Promise<PackageJson | NormalizedPackageJson> {
+export async function readPackage(options: ReadPackageOptions = {}): Promise<PackageJson | NormalizedPackageJson> {
   const { cwd, normalize = true } = options;
   const contents = await fs.readFile(getPackagePath(cwd), 'utf8');
   return parsePackageJson(contents, normalize);
@@ -85,10 +83,7 @@ function getPackagePath(cwd?: string): string {
 
 function parsePackageJson(contents: string, normalize: true): NormalizedPackageJson;
 function parsePackageJson(contents: string, normalize: false): PackageJson;
-function parsePackageJson(
-  contents: string,
-  normalize?: boolean,
-): PackageJson | NormalizedPackageJson;
+function parsePackageJson(contents: string, normalize?: boolean): PackageJson | NormalizedPackageJson;
 function parsePackageJson(contents: string, normalize = true): PackageJson | NormalizedPackageJson {
   const json = JSON.parse(contents) as PackageJson;
   if (normalize === false) {

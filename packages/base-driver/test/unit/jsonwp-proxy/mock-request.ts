@@ -45,5 +45,5 @@ function resFixture(url: string, method: string): [number, ResFixtureBody] {
   if (/\/nochrome$/.test(url)) {
     return [100, { status: 0, value: { message: 'chrome not reachable' } }];
   }
-  throw new Error('Can\'t handle url ' + url);
+  throw new Error("Can't handle url " + url);
 }

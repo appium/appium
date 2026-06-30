@@ -20,11 +20,9 @@ export type ServerInitData = ExtensionConfigs & {
 };
 
 /** Discriminated by CLI command: server subcommand yields {@link ServerInitData}; otherwise {@link ExtCommandInitResult}. */
-export type InitResult<Cmd extends CliCommand = CliCommandServer> = Cmd extends CliCommandServer ? ServerInitData
+export type InitResult<Cmd extends CliCommand = CliCommandServer> = Cmd extends CliCommandServer
+  ? ServerInitData
   : ExtCommandInitResult;
 
 /** CLI + programmatic args before `init` narrows by `subcommand`. */
-export type PreConfigArgs = Args<
-  CliCommand,
-  CliExtensionSubcommand | CliCommandSetupSubcommand | void
->;
+export type PreConfigArgs = Args<CliCommand, CliExtensionSubcommand | CliCommandSetupSubcommand | void>;

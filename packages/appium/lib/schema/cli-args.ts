@@ -30,9 +30,7 @@ const SHORT_ARG_CUTOFF = 3;
  */
 export function toParserArgs(): ArgumentDefinitions {
   const flattened = flattenSchema().filter(({ schema }) => !schema.appiumCliIgnored);
-  return new Map(
-    flattened.map(({ schema, argSpec }) => subSchemaToArgDef(schema as AppiumJSONSchema, argSpec)),
-  );
+  return new Map(flattened.map(({ schema, argSpec }) => subSchemaToArgDef(schema as AppiumJSONSchema, argSpec)));
 }
 
 /**
@@ -108,9 +106,7 @@ function subSchemaToArgDef(subSchema: AppiumJSONSchema, argSpec: ArgSpec): ArgDe
       argTypeFunction = (value: string) => {
         const o = transformers.json(value);
         if (!util.isPlainObject(o)) {
-          throw new ArgumentTypeError(
-            `'${util.truncateString(String(o), { length: 100 })}' must be a plain object`,
-          );
+          throw new ArgumentTypeError(`'${util.truncateString(String(o), { length: 100 })}' must be a plain object`);
         }
         return o;
       };
@@ -162,9 +158,7 @@ function subSchemaToArgDef(subSchema: AppiumJSONSchema, argSpec: ArgSpec): ArgDe
     if (type === TYPENAMES.STRING) {
       argOpts.choices = enumValues.map(String);
     } else {
-      throw new TypeError(
-        `Problem with schema for ${arg}; \`enum\` is only supported for \`type: 'string'\``,
-      );
+      throw new TypeError(`Problem with schema for ${arg}; \`enum\` is only supported for \`type: 'string'\``);
     }
   }
 

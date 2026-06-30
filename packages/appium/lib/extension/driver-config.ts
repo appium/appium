@@ -48,10 +48,7 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
     return `${String(driverName)}@${version} (automationName '${automationName}')`;
   }
 
-  async findMatchingDriver<C extends StringRecord>({
-    automationName,
-    platformName,
-  }: C): Promise<MatchedDriver> {
+  async findMatchingDriver<C extends StringRecord>({ automationName, platformName }: C): Promise<MatchedDriver> {
     if (typeof platformName !== 'string') {
       throw new Error('You must include a platformName capability');
     }
@@ -61,15 +58,12 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
     }
 
     log.info(
-      `Attempting to find matching driver for automationName `
-        + `'${automationName}' and platformName '${platformName}'`,
+      `Attempting to find matching driver for automationName ` +
+        `'${automationName}' and platformName '${platformName}'`,
     );
 
     try {
-      const { driverName, mainClass, version } = this._getDriverBySupport(
-        automationName,
-        platformName,
-      );
+      const { driverName, mainClass, version } = this._getDriverBySupport(automationName, platformName);
       log.info(`The '${driverName}' driver was installed and matched caps.`);
       log.info(`Will require it at ${this.getInstallPath(driverName)}`);
       const driver = await this.requireAsync(driverName as ExtName<DriverType>);
@@ -80,19 +74,17 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
       }
       return { driver, version, driverName };
     } catch (err: any) {
-      const msg = `Could not find a driver for automationName `
-        + `'${automationName}' and platformName '${platformName}'. `
-        + `Have you installed a driver that supports those `
-        + `capabilities? Run 'appium driver list --installed' to see. `
-        + `(Lower-level error: ${err.message})`;
+      const msg =
+        `Could not find a driver for automationName ` +
+        `'${automationName}' and platformName '${platformName}'. ` +
+        `Have you installed a driver that supports those ` +
+        `capabilities? Run 'appium driver list --installed' to see. ` +
+        `(Lower-level error: ${err.message})`;
       throw new Error(msg, { cause: err });
     }
   }
 
-  protected override getConfigProblems(
-    extManifest: ExtManifest<DriverType>,
-    extName: string,
-  ): ExtManifestProblem[] {
+  protected override getConfigProblems(extManifest: ExtManifest<DriverType>, extName: string): ExtManifestProblem[] {
     void extName;
     const problems: ExtManifestProblem[] = [];
     const { platformNames, automationName } = extManifest;
@@ -140,14 +132,12 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
   private _getDriverBySupport(
     matchAutomationName: string,
     matchPlatformName: string,
-  ): ExtManifest<DriverType> & { driverName: string; } {
+  ): ExtManifest<DriverType> & { driverName: string } {
     const drivers = this.installedExtensions;
     for (const [driverName, driverData] of Object.entries(drivers)) {
       const { automationName, platformNames } = driverData;
       const aNameMatches = automationName.toLowerCase() === matchAutomationName.toLowerCase();
-      const pNameMatches = platformNames
-        .map((p) => p.toLowerCase())
-        .includes(matchPlatformName.toLowerCase());
+      const pNameMatches = platformNames.map((p) => p.toLowerCase()).includes(matchPlatformName.toLowerCase());
 
       if (aNameMatches && pNameMatches) {
         return { driverName, ...driverData };
@@ -155,11 +145,11 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
 
       if (aNameMatches) {
         throw new Error(
-          `Driver '${driverName}' supports automationName `
-            + `'${automationName}', but Appium could not find `
-            + `support for platformName '${matchPlatformName}'. Supported `
-            + `platformNames are: `
-            + JSON.stringify(platformNames),
+          `Driver '${driverName}' supports automationName ` +
+            `'${automationName}', but Appium could not find ` +
+            `support for platformName '${matchPlatformName}'. Supported ` +
+            `platformNames are: ` +
+            JSON.stringify(platformNames),
         );
       }
     }

@@ -5,7 +5,7 @@ import DriverCommand from '../../../lib/cli/driver-command';
 import { loadExtensions } from '../../../lib/extension';
 import { Manifest } from '../../../lib/extension/manifest';
 
-describe('DriverCommand', function() {
+describe('DriverCommand', function () {
   let appiumHome: string;
   let config: Awaited<ReturnType<typeof loadExtensions>>['driverConfig'];
   const driver = 'fake';
@@ -13,7 +13,7 @@ describe('DriverCommand', function() {
   let dc: DriverCommand;
   let sandbox: ReturnType<typeof createSandbox>;
 
-  beforeEach(async function() {
+  beforeEach(async function () {
     sandbox = createSandbox();
     appiumHome = await tempDir.openDir();
     Manifest.getInstance.cache = new Map();
@@ -34,28 +34,20 @@ describe('DriverCommand', function() {
     dc = new DriverCommand({ config, json: true });
   });
 
-  afterEach(async function() {
+  afterEach(async function () {
     await fs.rimraf(appiumHome);
     sandbox.restore();
   });
 
-  describe('#checkForExtensionUpdate', function() {
+  describe('#checkForExtensionUpdate', function () {
     let npmMock: ReturnType<ReturnType<typeof createSandbox>['mock']>;
 
-    beforeEach(function() {
+    beforeEach(function () {
       npmMock = sandbox.mock(npm);
     });
 
-    function setupDriverUpdate(
-      curVersion: string,
-      latestVersion: string,
-      latestSafeVersion: string | null,
-    ) {
-      npmMock
-        .expects('getLatestVersion')
-        .once()
-        .withExactArgs(appiumHome, pkgName)
-        .returns(latestVersion);
+    function setupDriverUpdate(curVersion: string, latestVersion: string, latestSafeVersion: string | null) {
+      npmMock.expects('getLatestVersion').once().withExactArgs(appiumHome, pkgName).returns(latestVersion);
       npmMock
         .expects('getLatestSafeUpgradeVersion')
         .once()
@@ -63,7 +55,7 @@ describe('DriverCommand', function() {
         .returns(latestSafeVersion);
     }
 
-    it('should not return an unsafe update if it is same as safe update', async function() {
+    it('should not return an unsafe update if it is same as safe update', async function () {
       setupDriverUpdate('1.0.0', '1.1.0', '1.1.0');
       await expect((dc as any).checkForExtensionUpdate('fake')).to.eventually.eql({
         current: '1.0.0',
@@ -73,7 +65,7 @@ describe('DriverCommand', function() {
       npmMock.verify();
     });
 
-    it('should not return a safe update if there is not one', async function() {
+    it('should not return a safe update if there is not one', async function () {
       setupDriverUpdate('1.0.0', '2.0.0', null);
       await expect((dc as any).checkForExtensionUpdate('fake')).to.eventually.eql({
         current: '1.0.0',
@@ -83,7 +75,7 @@ describe('DriverCommand', function() {
       npmMock.verify();
     });
 
-    it('should return both safe and unsafe update', async function() {
+    it('should return both safe and unsafe update', async function () {
       setupDriverUpdate('1.0.0', '2.0.0', '1.5.3');
       await expect((dc as any).checkForExtensionUpdate('fake')).to.eventually.eql({
         current: '1.0.0',

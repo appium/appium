@@ -8,12 +8,12 @@ const forceLogs = process.env._FORCE_LOGS;
 process.env._FORCE_LOGS = '1';
 const log = logger.getLogger('Appium');
 
-describe('logging', function() {
+describe('logging', function () {
   let sandbox: SinonSandbox;
   let stderrSpy: SinonSpy;
   let stdoutSpy: SinonSpy;
 
-  beforeEach(async function() {
+  beforeEach(async function () {
     use(chaiAsPromised);
 
     sandbox = createSandbox();
@@ -22,11 +22,11 @@ describe('logging', function() {
     logsinkClear();
   });
 
-  afterEach(function() {
+  afterEach(function () {
     sandbox.restore();
   });
 
-  after(function() {
+  after(function () {
     process.env._FORCE_LOGS = forceLogs;
   });
 
@@ -40,7 +40,7 @@ describe('logging', function() {
     log.debug(debugMsg);
   }
 
-  it('should send error, info and debug when loglevel is debug', async function() {
+  it('should send error, info and debug when loglevel is debug', async function () {
     await logsinkInit({ loglevel: 'debug' } as Parameters<typeof logsinkInit>[0]);
 
     doLogging();
@@ -53,7 +53,7 @@ describe('logging', function() {
     expect(stdoutSpy.args[1][0]).to.include(debugMsg);
   });
 
-  it('should send error and info when loglevel is info', async function() {
+  it('should send error and info when loglevel is info', async function () {
     await logsinkInit({ loglevel: 'info' } as Parameters<typeof logsinkInit>[0]);
 
     doLogging();
@@ -65,7 +65,7 @@ describe('logging', function() {
     expect(stdoutSpy.args[0][0]).to.include(warnMsg);
   });
 
-  it('should send error when loglevel is error', async function() {
+  it('should send error when loglevel is error', async function () {
     await logsinkInit({ loglevel: 'error' } as Parameters<typeof logsinkInit>[0]);
 
     doLogging();

@@ -68,12 +68,7 @@ export class AppiumMainRunner {
       parsedArgs.driversImportChunkSize,
       parsedArgs.useDrivers,
     );
-    const { serverOpts, normalizedBasePath } = buildServerOpts(
-      appiumDriver,
-      parsedArgs,
-      driverClasses,
-      pluginClasses,
-    );
+    const { serverOpts, normalizedBasePath } = buildServerOpts(appiumDriver, parsedArgs, driverClasses, pluginClasses);
 
     const server = await this.startHttpServer(serverOpts, appiumDriver, normalizedBasePath);
     if (!server) {
@@ -104,8 +99,8 @@ export class AppiumMainRunner {
       const message = err instanceof Error ? err.message : String(err);
       const stack = err instanceof Error ? err.stack : undefined;
       logger.error(
-        `Could not configure Appium server. It's possible that a driver or plugin tried `
-          + `to update the server and failed. Original error: ${message}`,
+        `Could not configure Appium server. It's possible that a driver or plugin tried ` +
+          `to update the server and failed. Original error: ${message}`,
       );
       logger.debug(stack);
       process.exit(1);
@@ -116,9 +111,9 @@ export class AppiumMainRunner {
   private warnIfCorsEnabled(parsedArgs: ServerInitData['parsedArgs']): void {
     if (parsedArgs.allowCors) {
       logger.warn(
-        'You have enabled CORS requests from any host. Be careful not '
-          + 'to visit sites which could maliciously try to start Appium '
-          + 'sessions on your machine',
+        'You have enabled CORS requests from any host. Be careful not ' +
+          'to visit sites which could maliciously try to start Appium ' +
+          'sessions on your machine',
       );
     }
   }
@@ -130,12 +125,7 @@ export class AppiumMainRunner {
   ): Promise<void> {
     try {
       if (parsedArgs.nodeconfig) {
-        await registerNode(
-          parsedArgs.nodeconfig,
-          parsedArgs.address,
-          parsedArgs.port,
-          normalizedBasePath,
-        );
+        await registerNode(parsedArgs.nodeconfig, parsedArgs.address, parsedArgs.port, normalizedBasePath);
       }
     } catch (err: unknown) {
       await server.close();
@@ -143,10 +133,7 @@ export class AppiumMainRunner {
     }
   }
 
-  private attachSignalHandlers(
-    appiumDriver: ServerInitData['appiumDriver'],
-    server: AppiumServer,
-  ): void {
+  private attachSignalHandlers(appiumDriver: ServerInitData['appiumDriver'], server: AppiumServer): void {
     process.setMaxListeners(MAX_SERVER_PROCESS_LISTENERS);
     for (const signal of ['SIGINT', 'SIGTERM'] as const) {
       process.once(signal, async function onSignal() {

@@ -81,9 +81,9 @@ async function syncPackageJsonFields(rootPackageJson, packageDir) {
   }
 
   log.debug(
-    `Updating package.json for ${packageName} at ${packageJsonPath} with fields: ${
-      JSON.stringify(Object.keys(packageJson))
-    }`,
+    `Updating package.json for ${packageName} at ${packageJsonPath} with fields: ${JSON.stringify(
+      Object.keys(packageJson),
+    )}`,
   );
 
   await writeJson(packageJsonPath, packageJson);
@@ -96,7 +96,7 @@ async function main() {
   log.debug(`Found ${packageDirs.length} package directories`);
 
   const syncPackageJsonFieldsPromises = packageDirs.map((packageDir) =>
-    syncPackageJsonFields(rootPackageJson, packageDir)
+    syncPackageJsonFields(rootPackageJson, packageDir),
   );
   const licenseCopyPromises = packageDirs
     .filter((packageDir) => !LICENSE_EXCLUDED_PACKAGES.has(path.basename(packageDir)))
@@ -109,11 +109,7 @@ async function main() {
   log.debug(`Copying README to ${APPIUM_PACKAGE_README}`);
   const copyingReadmePromise = fs.copyFile(ROOT_README, APPIUM_PACKAGE_README);
 
-  await Promise.all([
-    ...syncPackageJsonFieldsPromises,
-    ...licenseCopyPromises,
-    copyingReadmePromise,
-  ]);
+  await Promise.all([...syncPackageJsonFieldsPromises, ...licenseCopyPromises, copyingReadmePromise]);
 }
 
 await main();

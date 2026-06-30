@@ -30,10 +30,7 @@ export interface IDeviceSettings<T extends StringRecord> {
 }
 
 export interface DriverHelpers {
-  configureApp: (
-    app: string,
-    supportedAppExtensions?: string | string[] | ConfigureAppOptions,
-  ) => Promise<string>;
+  configureApp: (app: string, supportedAppExtensions?: string | string[] | ConfigureAppOptions) => Promise<string>;
   isPackageOrBundle: (app: string) => boolean;
   duplicateKeys: <T>(input: T, firstKey: string, secondKey: string) => T;
   parseCapsArray: (cap: string | string[]) => string[];
@@ -143,7 +140,8 @@ export interface Driver<
   CreateResult = DefaultCreateSessionResult<C>,
   DeleteResult = DefaultDeleteSessionResult,
   SessionData extends StringRecord = StringRecord,
-> extends IImplementedCommands<C, Settings, CreateResult, DeleteResult, SessionData>, Core<C, Settings> {
+>
+  extends IImplementedCommands<C, Settings, CreateResult, DeleteResult, SessionData>, Core<C, Settings> {
   /**
    * The set of command line arguments set for this driver.
    *
@@ -291,14 +289,14 @@ export interface ExternalDriver<
   CreateResult = DefaultCreateSessionResult<C>,
   DeleteResult = DefaultDeleteSessionResult,
   SessionData extends StringRecord = StringRecord,
-> extends
-  Driver<C, CArgs, Settings, CreateResult, DeleteResult, SessionData>,
-  IWDClassicCommands,
-  IAppiumCommands,
-  IJSONWPCommands,
-  IMJSONWPCommands<Ctx>,
-  IOtherProtocolCommands
-{
+>
+  extends
+    Driver<C, CArgs, Settings, CreateResult, DeleteResult, SessionData>,
+    IWDClassicCommands,
+    IAppiumCommands,
+    IJSONWPCommands,
+    IMJSONWPCommands<Ctx>,
+    IOtherProtocolCommands {
   /**
    * Proxy a command to a connected WebDriver server
    *
@@ -310,11 +308,7 @@ export interface ExternalDriver<
    *
    * @returns The return value of the proxied command
    */
-  proxyCommand?<TReq = any, TRes = unknown>(
-    url: string,
-    method: HTTPMethod,
-    body?: TReq,
-  ): Promise<TRes>;
+  proxyCommand?<TReq = any, TRes = unknown>(url: string, method: HTTPMethod, body?: TReq): Promise<TRes>;
 }
 
 /**
@@ -429,7 +423,7 @@ export interface CachedAppInfo {
    * An object containing either `file` property with SHA1 hash of the file or `folder` property
    * with total amount of cached files and subfolders
    */
-  integrity?: { file?: string; } | { folder?: number; };
+  integrity?: { file?: string } | { folder?: number };
   /**
    * The full path to the cached app
    */
@@ -493,9 +487,7 @@ export interface ConfigureAppOptions {
    * `appPath` property, then the integrity of it will be verified and stored into the cache.
    * @returns
    */
-  onPostProcess?: (
-    obj: PostProcessOptions,
-  ) => Promise<PostProcessResult | undefined> | PostProcessResult | undefined;
+  onPostProcess?: (obj: PostProcessOptions) => Promise<PostProcessResult | undefined> | PostProcessResult | undefined;
   /**
    * Optional function, which should be applied to the application upon download
    * progress initialization instead of the standard download handler.

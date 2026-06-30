@@ -18,7 +18,7 @@ class MockExecuteDriver extends BaseDriver<Constraints> {
     this.jwpProxyActive = false;
   }
 
-  async execute(script: string, args: unknown[]): Promise<{ executed: string; args: unknown[]; }> {
+  async execute(script: string, args: unknown[]): Promise<{ executed: string; args: unknown[] }> {
     return { executed: script, args };
   }
 }

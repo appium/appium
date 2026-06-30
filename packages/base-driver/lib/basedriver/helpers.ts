@@ -25,10 +25,7 @@ const APPLICATIONS_CACHE = new LRUCache<string, CachedAppInfoEntry>({
   ttl: CACHED_APPS_MAX_AGE_MS, // expire after 24 hours
   updateAgeOnGet: true,
   dispose: ({ fullPath }, app) => {
-    logger.info(
-      `The application '${app}' cached at '${fullPath}' has `
-        + `expired after ${CACHED_APPS_MAX_AGE_MS}ms`,
-    );
+    logger.info(`The application '${app}' cached at '${fullPath}' has ` + `expired after ${CACHED_APPS_MAX_AGE_MS}ms`);
     if (fullPath) {
       void fs.rimraf(fullPath);
     }
@@ -46,9 +43,7 @@ process.on('exit', () => {
   }
 
   const appPaths = [...APPLICATIONS_CACHE.values()].map(({ fullPath }) => fullPath);
-  logger.debug(
-    `Performing cleanup of ${util.pluralize('cached application', appPaths.length, true)}`,
-  );
+  logger.debug(`Performing cleanup of ${util.pluralize('cached application', appPaths.length, true)}`);
   for (const appPath of appPaths) {
     if (!appPath) {
       continue;
@@ -135,8 +130,8 @@ export async function configureApp(
   if (!isUrl && !path.isAbsolute(newApp)) {
     newApp = path.resolve(process.cwd(), newApp);
     logger.warn(
-      `The current application path '${app}' is not absolute `
-        + `and has been rewritten to '${newApp}'. Consider using absolute paths rather than relative`,
+      `The current application path '${app}' is not absolute ` +
+        `and has been rewritten to '${newApp}'. Consider using absolute paths rather than relative`,
     );
     app = newApp;
   }
@@ -189,8 +184,8 @@ export async function configureApp(
             return verifyAppExtension(cachedPath, supportedAppExtensions);
           }
           logger.info(
-            `The application at '${cachedAppInfo.fullPath}' does not exist anymore `
-              + `or its integrity has been damaged. Deleting it from the internal cache`,
+            `The application at '${cachedAppInfo.fullPath}' does not exist anymore ` +
+              `or its integrity has been damaged. Deleting it from the internal cache`,
           );
           APPLICATIONS_CACHE.delete(appCacheKey);
 
@@ -231,8 +226,9 @@ export async function configureApp(
       let errorMessage = `The application at '${newApp}' does not exist or is not accessible`;
       // protocol value for 'C:\\temp' is 'c:', so we check the length as well
       if (typeof protocol === 'string' && protocol.length > 2) {
-        errorMessage = `The protocol '${protocol}' used in '${newApp}' is not supported. `
-          + `Only http: and https: protocols are supported`;
+        errorMessage =
+          `The protocol '${protocol}' used in '${newApp}' is not supported. ` +
+          `Only http: and https: protocols are supported`;
       }
       throw new Error(errorMessage);
     }
@@ -247,7 +243,7 @@ export async function configureApp(
       if (cachedFullPath && cachedFullPath !== appPathToCache) {
         await fs.rimraf(cachedFullPath);
       }
-      const integrity: { file?: string; folder?: number; } = {};
+      const integrity: { file?: string; folder?: number } = {};
       if ((await fs.stat(appPathToCache)).isDirectory()) {
         integrity.folder = await calculateFolderIntegrity(appPathToCache);
       } else {
@@ -278,8 +274,7 @@ export async function configureApp(
     }
 
     verifyAppExtension(newApp, supportedAppExtensions);
-    return appCacheKey !== toCacheKey(newApp)
-        && (packageHash || Object.values(remoteAppProps).some(Boolean))
+    return appCacheKey !== toCacheKey(newApp) && (packageHash || Object.values(remoteAppProps).some(Boolean))
       ? await storeAppInCache(newApp)
       : newApp;
   });
@@ -379,9 +374,7 @@ export function generateDriverLogPrefix(obj: object | null, _sessionId?: string 
 
 // #region Private helpers
 
-function parseAppLink(
-  appLink: string,
-): URL | { protocol?: string; pathname?: string; href?: string; search?: string; } {
+function parseAppLink(appLink: string): URL | { protocol?: string; pathname?: string; href?: string; search?: string } {
   try {
     return new URL(appLink);
   } catch {
@@ -431,10 +424,7 @@ function toCacheKey(app: string): string {
   return app;
 }
 
-async function queryAppLink(
-  appLink: string,
-  reqHeaders: RawAxiosRequestHeaders,
-): Promise<RemoteAppData> {
+async function queryAppLink(appLink: string, reqHeaders: RawAxiosRequestHeaders): Promise<RemoteAppData> {
   const url = new URL(appLink);
   // Extract credentials, then remove them from the URL for axios
   const { username, password } = url;
@@ -481,8 +471,8 @@ async function fetchApp(srcStream: Readable, dstPath: string): Promise<string> {
   const secondsElapsed = timer.getDuration().asSeconds;
   const { size } = await fs.stat(dstPath);
   logger.debug(
-    `The application (${util.toReadableSizeString(size)}) `
-      + `has been downloaded to '${dstPath}' in ${secondsElapsed.toFixed(3)}s`,
+    `The application (${util.toReadableSizeString(size)}) ` +
+      `has been downloaded to '${dstPath}' in ${secondsElapsed.toFixed(3)}s`,
   );
   // it does not make much sense to approximate the speed for short downloads
   if (secondsElapsed >= AVG_DOWNLOAD_SPEED_MEASUREMENT_THRESHOLD_SEC) {
@@ -502,10 +492,7 @@ function determineFilename(
     replacement: SANITIZE_REPLACEMENT,
   });
   const extname = path.extname(basename);
-  if (
-    headers['content-disposition']
-    && /^attachment/i.test(String(headers['content-disposition']))
-  ) {
+  if (headers['content-disposition'] && /^attachment/i.test(String(headers['content-disposition']))) {
     logger.debug(`Content-Disposition: ${headers['content-disposition']}`);
     const match = /filename="([^"]+)/i.exec(String(headers['content-disposition']));
     if (match) {
@@ -514,16 +501,12 @@ function determineFilename(
   }
 
   // assign the default file name and the extension if none has been detected
-  const resultingName = basename
-    ? basename.substring(0, basename.length - extname.length)
-    : DEFAULT_BASENAME;
+  const resultingName = basename ? basename.substring(0, basename.length - extname.length) : DEFAULT_BASENAME;
   let resultingExt = extname;
-  if (
-    !supportedAppExtensions.map((ext) => ext.toLowerCase()).includes(resultingExt.toLowerCase())
-  ) {
+  if (!supportedAppExtensions.map((ext) => ext.toLowerCase()).includes(resultingExt.toLowerCase())) {
     logger.info(
-      `The current file extension '${resultingExt}' is not supported. `
-        + `Defaulting to '${supportedAppExtensions[0]}'`,
+      `The current file extension '${resultingExt}' is not supported. ` +
+        `Defaulting to '${supportedAppExtensions[0]}'`,
     );
     resultingExt = supportedAppExtensions[0] as string;
   }
@@ -531,15 +514,13 @@ function determineFilename(
 }
 
 function verifyAppExtension(app: string, supportedAppExtensions: string[]): string {
-  if (
-    supportedAppExtensions.map((ext) => ext.toLowerCase()).includes(path.extname(app).toLowerCase())
-  ) {
+  if (supportedAppExtensions.map((ext) => ext.toLowerCase()).includes(path.extname(app).toLowerCase())) {
     return app;
   }
   throw new Error(
-    `New app path '${app}' did not have `
-      + `${util.pluralize('extension', supportedAppExtensions.length, false)}: `
-      + supportedAppExtensions,
+    `New app path '${app}' did not have ` +
+      `${util.pluralize('extension', supportedAppExtensions.length, false)}: ` +
+      supportedAppExtensions,
   );
 }
 
@@ -553,7 +534,7 @@ async function calculateFileIntegrity(filePath: string): Promise<string> {
 
 async function isAppIntegrityOk(
   currentPath: string,
-  expectedIntegrity: { file?: string; folder?: number; } = {},
+  expectedIntegrity: { file?: string; folder?: number } = {},
 ): Promise<boolean> {
   if (!(await fs.exists(currentPath))) {
     return false;
@@ -584,9 +565,7 @@ function readBaseDriverVersion(): string {
   if (!pkgRoot) {
     throw new Error('Cannot find the @appium/base-driver package root');
   }
-  const pkg = JSON.parse(
-    nodeFs.readFileSync(path.join(pkgRoot, 'package.json'), 'utf8'),
-  ) as PackageJson;
+  const pkg = JSON.parse(nodeFs.readFileSync(path.join(pkgRoot, 'package.json'), 'utf8')) as PackageJson;
   if (typeof pkg.version !== 'string') {
     throw new Error('Invalid `package.json` for @appium/base-driver');
   }

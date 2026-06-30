@@ -7,7 +7,7 @@ import type { ReadConfigFileResult } from './config-file';
 
 interface FlattenedArg {
   value: unknown;
-  argSpec: { dest: string; };
+  argSpec: { dest: string };
 }
 
 /**
@@ -22,16 +22,13 @@ export function getNonDefaultServerArgs(parsedArgs: Args): Args {
    */
   const flatten = (args: Args): Record<string, FlattenedArg> => {
     const argSpecs = getAllArgSpecs();
-    const flattened = [...argSpecs.values()].reduce<Record<string, FlattenedArg>>(
-      (acc, argSpec: { dest: string; }) => {
-        const value = getPath(args, argSpec.dest);
-        if (value !== undefined) {
-          acc[argSpec.dest] = { value, argSpec };
-        }
-        return acc;
-      },
-      {},
-    );
+    const flattened = [...argSpecs.values()].reduce<Record<string, FlattenedArg>>((acc, argSpec: { dest: string }) => {
+      const value = getPath(args, argSpec.dest);
+      if (value !== undefined) {
+        acc[argSpec.dest] = { value, argSpec };
+      }
+      return acc;
+    }, {});
 
     return flattened;
   };
@@ -68,10 +65,10 @@ export function getNonDefaultServerArgs(parsedArgs: Args): Args {
    *   - ensures the args values do not differ from the default values
    */
   const isNotDefault = (dest: string) =>
-    defaultIsDefined(dest)
-    && (typesDiffer(dest)
-      || (defaultValueIsArray(dest) && argValueNotArrayOrArraysDiffer(dest))
-      || defaultValueNotArrayAndValuesDiffer(dest));
+    defaultIsDefined(dest) &&
+    (typesDiffer(dest) ||
+      (defaultValueIsArray(dest) && argValueNotArrayOrArraysDiffer(dest)) ||
+      defaultValueNotArrayAndValuesDiffer(dest));
 
   const defaultsFromSchema = getDefaultsForSchema(true) as Record<string, unknown>;
 
@@ -136,8 +133,8 @@ function compactConfig<T extends Record<string, unknown>>(obj: T): Partial<T> {
   return pickBy(
     obj,
     (value, key) =>
-      key !== 'subcommand'
-      && value !== undefined
-      && !(value !== null && typeof value === 'object' && util.isEmpty(value)),
+      key !== 'subcommand' &&
+      value !== undefined &&
+      !(value !== null && typeof value === 'object' && util.isEmpty(value)),
   );
 }

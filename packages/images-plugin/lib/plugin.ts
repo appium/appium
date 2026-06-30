@@ -40,28 +40,15 @@ export class ImageElementPlugin extends BasePlugin {
     return await compareImages(mode, firstImage, secondImage, options);
   }
 
-  async findElement(
-    next: () => Promise<any>,
-    driver: ExternalDriver,
-    ...args: any[]
-  ): Promise<any> {
+  async findElement(next: () => Promise<any>, driver: ExternalDriver, ...args: any[]): Promise<any> {
     return await this._find(false, next, driver, ...args);
   }
 
-  async findElements(
-    next: () => Promise<any>,
-    driver: ExternalDriver,
-    ...args: any[]
-  ): Promise<any> {
+  async findElements(next: () => Promise<any>, driver: ExternalDriver, ...args: any[]): Promise<any> {
     return await this._find(true, next, driver, ...args);
   }
 
-  async handle(
-    next: () => Promise<any>,
-    driver: ExternalDriver,
-    cmdName: string,
-    ...args: any[]
-  ): Promise<any> {
+  async handle(next: () => Promise<any>, driver: ExternalDriver, cmdName: string, ...args: any[]): Promise<any> {
     // if we have a command that involves an image element id, attempt to find the image element
     // and execute the command on it
     const imgElId = getImgElFromArgs(args);

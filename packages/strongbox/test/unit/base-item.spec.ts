@@ -15,14 +15,14 @@ type MockFs = {
   [K in keyof typeof fs]: SinonStubbedMember<(typeof fs)[K]>;
 };
 
-describe('Strongbox', function() {
+describe('Strongbox', function () {
   let sandbox: SinonSandbox;
   let MockFs: MockFs = {} as any;
   const DATA_DIR = path.resolve(path.sep, 'some', 'dir');
   // note to self: looks like this is safe to do before the rewiremock.proxy call
   let BaseItem: typeof TBaseItem;
 
-  beforeEach(function() {
+  beforeEach(function () {
     sandbox = createSandbox();
     ({ BaseItem } = rewiremock.proxy(
       () => require('../../lib'),
@@ -39,69 +39,69 @@ describe('Strongbox', function() {
     ));
   });
 
-  describe('BaseItem', function() {
-    describe('constructor', function() {
-      it('should set the id property based on the parent container', function() {
+  describe('BaseItem', function () {
+    describe('constructor', function () {
+      it('should set the id property based on the parent container', function () {
         const item = new BaseItem('foo', { container: DATA_DIR } as Strongbox);
         expect(item.id).to.equal(path.join(DATA_DIR, 'foo'));
       });
     });
 
-    describe('method', function() {
+    describe('method', function () {
       let item: Item<string>;
 
-      beforeEach(function() {
+      beforeEach(function () {
         item = new BaseItem('foo', { container: DATA_DIR } as Strongbox);
       });
-      describe('clear()', function() {
-        it('should remove the item from the filesystem', async function() {
+      describe('clear()', function () {
+        it('should remove the item from the filesystem', async function () {
           await item.clear();
           expect(MockFs.unlink.calledWith(item.id)).to.be.true;
         });
 
-        describe('if the item does not exist', function() {
-          beforeEach(function() {
+        describe('if the item does not exist', function () {
+          beforeEach(function () {
             MockFs.unlink.rejects({ code: 'ENOENT' });
           });
-          it('should not reject', async function() {
+          it('should not reject', async function () {
             await expect(item.clear()).to.not.be.rejected;
           });
         });
 
-        describe('if something else goes wrong', function() {
-          beforeEach(function() {
+        describe('if something else goes wrong', function () {
+          beforeEach(function () {
             MockFs.unlink.rejects(new Error('ugh'));
           });
-          it('should reject', async function() {
+          it('should reject', async function () {
             await expect(item.clear()).to.be.rejectedWith(Error, 'ugh');
           });
         });
       });
 
-      describe('read()', function() {
-        beforeEach(function() {
+      describe('read()', function () {
+        beforeEach(function () {
           MockFs.readFile.resolves('skunk');
         });
-        it('should read the item from the fileystem', function() {
+        it('should read the item from the fileystem', function () {
           expect(item.read()).to.eventually.equal('skunk');
         });
 
-        it('should set the item value to the read value', async function() {
+        it('should set the item value to the read value', async function () {
           await item.read();
           expect(item.value).to.equal('skunk');
         });
       });
 
-      describe('write()', function() {
-        beforeEach(async function() {
+      describe('write()', function () {
+        beforeEach(async function () {
           await item.write('bar');
         });
 
-        it('should write the new item value to the filesystem', async function() {
+        it('should write the new item value to the filesystem', async function () {
           expect(MockFs.writeFile.calledWith(item.id, 'bar')).to.be.true;
         });
 
-        it('should create the container', function() {
+        it('should create the container', function () {
           expect(MockFs.mkdir.calledWith(path.dirname(item.id), { recursive: true })).to.be.true;
         });
       });

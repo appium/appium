@@ -1,3 +1,6 @@
+import type {NetworkInterfaceInfo} from 'node:os';
+import {inspect as dump, type InspectOptions} from 'node:util';
+
 import {
   normalizeBasePath,
   routeConfiguringFunction as makeRouter,
@@ -7,9 +10,8 @@ import {
 import {console as supportConsole, util} from '@appium/support';
 import type {AppiumServer, Driver, MethodMap, UpdateServerCallback} from '@appium/types';
 import type {Args, CliCommandServer, ParsedArgs} from 'appium/types';
-import type {NetworkInterfaceInfo} from 'node:os';
-import {inspect as dump, type InspectOptions} from 'node:util';
 import {WebSocketServer} from 'ws';
+
 import type {AppiumDriver} from '../appium';
 import {BIDI_BASE_PATH, LONG_STACKTRACE_LIMIT} from '../constants';
 import type {DriverNameMap, PluginNameMap} from '../extension';

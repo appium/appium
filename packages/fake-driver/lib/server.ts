@@ -1,4 +1,5 @@
 import {routeConfiguringFunction, server as baseServer} from 'appium/driver';
+
 import {FakeDriver} from './driver';
 import {log} from './logger';
 

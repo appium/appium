@@ -1,10 +1,12 @@
-import type {StringRecord} from '@appium/types';
 import Module from 'node:module';
 import path from 'node:path';
+
+import type {StringRecord} from '@appium/types';
 import * as semver from 'semver';
 import {exec} from 'teen_process';
 import type {ExecError, TeenProcessExecOptions} from 'teen_process';
 import type {PackageJson} from 'type-fest';
+
 import {hasAppiumDependency} from './env';
 import {fs} from './fs';
 import * as system from './system';

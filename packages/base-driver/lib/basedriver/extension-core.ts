@@ -1,3 +1,5 @@
+import {EventEmitter} from 'node:events';
+
 import {logger, util} from '@appium/support';
 import type {
   AppiumLogger,
@@ -8,7 +10,7 @@ import type {
   IpcData,
   StringRecord,
 } from '@appium/types';
-import {EventEmitter} from 'node:events';
+
 import {MAX_LOG_BODY_LENGTH} from '../constants';
 import {errors} from '../protocol';
 import {BIDI_COMMANDS} from '../protocol/bidi-commands';

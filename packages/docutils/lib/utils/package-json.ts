@@ -1,6 +1,7 @@
-import {fs} from '@appium/support';
 import nodeFs from 'node:fs';
 import path from 'node:path';
+
+import {fs} from '@appium/support';
 import normalizePackageData from 'normalize-package-data';
 import type {PackageJson as TypeFestPackageJson} from 'type-fest';
 

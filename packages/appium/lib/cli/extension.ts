@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import type {Class, DriverType, ExtensionType, PluginType} from '@appium/types';
 import type {Args, CliExtensionCommand, CliExtensionSubcommand} from 'appium/types';
+
 import {DRIVER_TYPE, PLUGIN_TYPE} from '../constants';
 import type {ExtensionConfig} from '../extension/extension-config';
 import {isExtensionCommandArgs} from '../schema/cli-args-guards';

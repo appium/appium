@@ -1,6 +1,7 @@
+import path from 'node:path';
+
 import {TEST_HOST} from '@appium/driver-test-support';
 import type {Constraints, StringRecord, W3CCapabilities} from '@appium/types';
-import path from 'node:path';
 import {remote as wdio} from 'webdriverio';
 
 const TEST_APP = path.join(__dirname, 'fixtures', 'app.xml');

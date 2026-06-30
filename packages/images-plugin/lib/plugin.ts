@@ -3,6 +3,7 @@ import {util} from '@appium/support';
 import type {ActionSequence, Element, ExternalDriver, MethodMap} from '@appium/types';
 import {errors} from 'appium/driver';
 import {BasePlugin} from 'appium/plugin';
+
 import {compareImages} from './compare';
 import {IMAGE_ELEMENT_PREFIX, IMAGE_STRATEGY} from './constants';
 import {ImageElementFinder} from './finder';

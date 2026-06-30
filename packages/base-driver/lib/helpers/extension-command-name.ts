@@ -1,5 +1,6 @@
 import {util} from '@appium/support';
 import type {Constraints, Driver, DriverClass} from '@appium/types';
+
 import type {BaseDriver} from '../basedriver/driver';
 
 /**

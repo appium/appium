@@ -1,7 +1,9 @@
-import {expect} from 'chai';
-import {StatusCodes as HTTPStatusCodes} from 'http-status-codes';
 import path from 'node:path';
 import {describe, it} from 'node:test';
+
+import {expect} from 'chai';
+import {StatusCodes as HTTPStatusCodes} from 'http-status-codes';
+
 import {errorFromMJSONWPStatusCode, errorFromW3CJsonCode, errors, isErrorType} from '../../../lib';
 import {BadParametersError, getResponseForW3CError} from '../../../lib/protocol/errors';
 

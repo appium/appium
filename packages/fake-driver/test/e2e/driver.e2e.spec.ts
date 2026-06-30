@@ -1,3 +1,5 @@
+import {Agent} from 'node:http';
+
 import {createAppiumURL, getTestPort} from '@appium/driver-test-support';
 import type {
   AppiumServer,
@@ -13,9 +15,9 @@ import axios from 'axios';
 import type {AxiosResponse, RawAxiosRequestConfig} from 'axios';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {Agent} from 'node:http';
 import sinon from 'sinon';
 import type {RequireAtLeastOne} from 'type-fest';
+
 import {FakeDriver, startServer} from '../../lib/index';
 import {BASE_CAPS, deleteSession, initSession, TEST_HOST, W3C_PREFIXED_CAPS} from '../helpers';
 import {alertTests} from './alert-tests';

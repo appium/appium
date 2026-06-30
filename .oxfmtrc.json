@@ -11,6 +11,7 @@
   "quoteProps": "as-needed",
   "trailingComma": "all",
   "bracketSpacing": false,
+  "sortImports": true,
 
   "ignorePatterns": [
     "**/node_modules",

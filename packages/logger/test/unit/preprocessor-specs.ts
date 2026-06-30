@@ -1,4 +1,5 @@
 import {expect} from 'chai';
+
 import {SecureValuesPreprocessor} from '../../lib/secure-values-preprocessor';
 
 describe('Log Internals', function () {

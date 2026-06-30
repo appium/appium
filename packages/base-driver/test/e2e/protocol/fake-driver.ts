@@ -8,6 +8,7 @@ import type {
   StringRecord,
   W3CDriverCaps,
 } from '@appium/types';
+
 import {BaseDriver, determineProtocol, errors} from '../../../lib';
 import {PROTOCOLS} from '../../../lib/constants';
 

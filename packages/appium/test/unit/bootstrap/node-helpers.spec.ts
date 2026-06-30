@@ -1,8 +1,10 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {promises as fs} from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+
 import {adjustNodePath, checkNodeOk, requireDir} from '../../../lib/bootstrap/node-helpers';
 
 const {expect} = chai;

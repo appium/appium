@@ -5,13 +5,13 @@
  * @module
  */
 
-import {getLogger} from '../logger';
-
 import {hideBin} from 'yargs/helpers';
 import yargs from 'yargs/yargs';
+
 import type {LogLevelMap} from '../constants';
 import {DEFAULT_LOG_LEVEL, NAME_BIN, PKG_ROOT_DIR} from '../constants';
 import {DocutilsError} from '../error';
+import {getLogger} from '../logger';
 import {readPackage} from '../utils';
 import {build, init, validate} from './command';
 import {findConfig} from './config';

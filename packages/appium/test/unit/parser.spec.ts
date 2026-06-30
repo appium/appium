@@ -1,5 +1,6 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+
 import {readConfigFile} from '../../lib/bootstrap/config-file';
 import {ArgParser, getParser} from '../../lib/cli/parser';
 import {DRIVER_TYPE, PLUGIN_TYPE, SETUP_SUBCOMMAND} from '../../lib/constants';

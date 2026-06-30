@@ -1,8 +1,3 @@
-import B from 'bluebird';
-import {glob} from 'glob';
-import type {GlobOptions} from 'glob';
-import klaw from 'klaw';
-import type {Walker} from 'klaw';
 import crypto from 'node:crypto';
 import {
   close,
@@ -22,8 +17,15 @@ import {
 } from 'node:fs';
 import path from 'node:path';
 import {promisify} from 'node:util';
+
+import B from 'bluebird';
+import {glob} from 'glob';
+import type {GlobOptions} from 'glob';
+import klaw from 'klaw';
+import type {Walker} from 'klaw';
 import sanitize from 'sanitize-filename';
 import which from 'which';
+
 import {type NormalizedPackageJson, type NormalizeOptions, packageDirectorySync, readPackageSync} from './internal';
 import log from './logger';
 import {isWindows} from './system';

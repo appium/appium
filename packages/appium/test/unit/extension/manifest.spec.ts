@@ -1,10 +1,12 @@
+import EventEmitter from 'node:events';
+import {promises as fs} from 'node:fs';
+
 import type {DriverType, PluginType} from '@appium/types';
 import type {ExtManifest, ExtPackageJson, ManifestData} from 'appium/types';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import EventEmitter from 'node:events';
-import {promises as fs} from 'node:fs';
 import type {SinonSandbox} from 'sinon';
+
 import {DRIVER_TYPE, PLUGIN_TYPE} from '../../../lib/constants';
 import {APPIUM_VER} from '../../../lib/helpers/build';
 import {resolveFixture, rewiremock} from '../../helpers';

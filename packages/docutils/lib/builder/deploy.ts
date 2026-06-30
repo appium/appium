@@ -5,7 +5,9 @@
  */
 
 import path from 'node:path';
+
 import type {TeenProcessExecOptions} from 'teen_process';
+
 import {
   DEFAULT_DEPLOY_ALIAS_TYPE,
   DEFAULT_DEPLOY_BRANCH,

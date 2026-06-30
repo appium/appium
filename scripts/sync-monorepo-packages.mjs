@@ -1,6 +1,7 @@
-import {fs, logger} from '@appium/support';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
+
+import {fs, logger} from '@appium/support';
 
 export const log = logger.getLogger('SYNC-MONOREPO-PACKAGES');
 

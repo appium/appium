@@ -1,10 +1,12 @@
+import path from 'node:path';
+import {pathToFileURL} from 'node:url';
+
 import {fs, system, util} from '@appium/support';
 import type {ExtensionType} from '@appium/types';
 import type {SchemaObject} from 'ajv';
 import type {ExtClass, ExtManifest, ExtName, ExtRecord, InstallType} from 'appium/types';
-import path from 'node:path';
-import {pathToFileURL} from 'node:url';
 import {satisfies} from 'semver';
+
 import {commandClasses} from '../cli/extension';
 import type {ExtCommand} from '../cli/extension';
 import type {ExtensionList, ExtensionListData, InstalledExtensionListData} from '../cli/extension-command';

@@ -1,6 +1,7 @@
 import {util} from '@appium/support';
 import type {PluginType} from '@appium/types';
 import type {ExtManifest, ExtName, ExtRecord} from 'appium/types';
+
 import {PLUGIN_TYPE} from '../constants';
 import {log} from '../logger';
 import {ExtensionConfig} from './extension-config';

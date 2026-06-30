@@ -2,6 +2,7 @@ import {fs, tempDir} from '@appium/support';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {exec} from 'teen_process';
+
 import {stripColorCodes} from '../../lib/logsink';
 import {APPIUM_ROOT, getTestPort} from '../helpers';
 import {EXECUTABLE, formatAppiumArgErrorOutput, readAppiumArgErrorFixture, runAppiumRaw} from './e2e-helpers';

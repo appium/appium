@@ -1,6 +1,8 @@
 import type {EventEmitter} from 'node:events';
 import type internal from 'node:stream';
+
 import type {Merge} from 'type-fest';
+
 import type {Capabilities, DriverCaps, W3CCapabilities} from './capabilities';
 import type {BidiModuleMap, BiDiResultData, ExecuteMethodMap, MethodMap} from './command-maps';
 import type {

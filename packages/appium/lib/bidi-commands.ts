@@ -1,3 +1,7 @@
+import type {IncomingMessage} from 'node:http';
+import os from 'node:os';
+import {promisify} from 'node:util';
+
 import type {ExtensionCore} from '@appium/base-driver';
 import {errors} from '@appium/base-driver';
 import {util} from '@appium/support';
@@ -9,10 +13,8 @@ import type {
   StringRecord,
   SuccessBiDiCommandResponse,
 } from '@appium/types';
-import type {IncomingMessage} from 'node:http';
-import os from 'node:os';
-import {promisify} from 'node:util';
 import WebSocket from 'ws';
+
 import type {AppiumDriver} from './appium';
 import {BIDI_BASE_PATH, BIDI_EVENT_NAME} from './constants';
 import {fetchInterfaces, isBroadcastIp, V4_BROADCAST_IP} from './helpers/network';

@@ -2,6 +2,7 @@ import {util} from '@appium/support';
 import type {Driver, DriverMethodDef, HTTPMethod, MethodMap} from '@appium/types';
 import {LRUCache} from 'lru-cache';
 import {match} from 'path-to-regexp';
+
 import {DEFAULT_BASE_PATH} from '../constants';
 
 const COMMAND_NAMES_CACHE = new LRUCache<string, string>({

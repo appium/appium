@@ -5,6 +5,7 @@
 
 import {util} from '@appium/support';
 import type {CommandModule, InferredOptionTypes, Options} from 'yargs';
+
 import {DocutilsError} from '../../error';
 import {getLogger} from '../../logger';
 import type {ValidationKind} from '../../validate';

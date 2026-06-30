@@ -1,5 +1,6 @@
 import {logger, util} from '@appium/support';
 import type {AppiumLogger, HTTPBody, ProxyResponse} from '@appium/types';
+
 import {duplicateKeys} from '../basedriver/helpers';
 import {MJSONWP_ELEMENT_KEY, PROTOCOLS, W3C_ELEMENT_KEY} from '../constants';
 

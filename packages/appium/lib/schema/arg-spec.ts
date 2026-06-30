@@ -1,4 +1,5 @@
 import type {ExtensionType} from '@appium/types';
+
 import {camelCase, kebabCase} from '../utils';
 
 /**

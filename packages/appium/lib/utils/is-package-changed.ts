@@ -1,6 +1,7 @@
-import {fs} from '@appium/support';
 import crypto from 'node:crypto';
 import path from 'node:path';
+
+import {fs} from '@appium/support';
 
 export interface IsPackageChangedOptions {
   cwd?: string;

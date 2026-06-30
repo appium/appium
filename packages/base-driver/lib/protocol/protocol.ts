@@ -2,6 +2,7 @@ import {logger, util} from '@appium/support';
 import type {AppiumLogger, Core, Driver, DriverMethodDef, MethodMap, PayloadParams} from '@appium/types';
 import type {Application, Request, Response} from 'express';
 import type {MultidimensionalReadonlyArray} from 'type-fest';
+
 import type {BaseDriver} from '../basedriver/driver';
 import {generateDriverLogPrefix} from '../basedriver/helpers';
 import {log} from '../basedriver/logger';

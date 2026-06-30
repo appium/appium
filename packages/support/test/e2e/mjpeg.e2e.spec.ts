@@ -1,11 +1,13 @@
+import http from 'node:http';
+import net from 'node:net';
+import {after, before, describe, it} from 'node:test';
+
 import {sleep} from 'asyncbox';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import http from 'node:http';
-import {after, before, describe, it} from 'node:test';
 // @ts-ignore - mjpeg-server has no types
 import mJpegServer from 'mjpeg-server';
-import net from 'node:net';
+
 import {mjpeg} from '../../lib';
 
 use(chaiAsPromised);

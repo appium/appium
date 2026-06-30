@@ -1,4 +1,5 @@
 import {expect} from 'chai';
+
 import {createAppiumURL, getTestPort, TEST_HOST} from '../../lib';
 
 describe('TEST_HOST', function () {

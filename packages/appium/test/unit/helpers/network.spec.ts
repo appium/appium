@@ -1,5 +1,6 @@
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+
 import {fetchInterfaces} from '../../../lib/helpers/network';
 
 describe('helpers/network', function () {

@@ -1,13 +1,15 @@
-import {promisify} from 'node:util';
-import * as yauzl from 'yauzl';
-// @ts-ignore - archiver 8.0 types are not available; 7.x types don't match
-import {ZipArchive} from 'archiver';
 import {createWriteStream} from 'node:fs';
 import path from 'node:path';
 import stream from 'node:stream';
 import {text} from 'node:stream/consumers';
 import {pipeline} from 'node:stream/promises';
+import {promisify} from 'node:util';
+
+// @ts-ignore - archiver 8.0 types are not available; 7.x types don't match
+import {ZipArchive} from 'archiver';
 import {exec} from 'teen_process';
+import * as yauzl from 'yauzl';
+
 import {fs} from './fs';
 import {createBase64EncodeStream} from './internal';
 import log from './logger';

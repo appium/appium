@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import {util} from '@appium/support';
 import type {Args} from 'appium/types';
+
 import {getAllArgSpecs, getDefaultsForSchema} from '../schema/schema';
 import {difference, getPath, pickBy, setPath} from '../utils';
 import type {ReadConfigFileResult} from './config-file';

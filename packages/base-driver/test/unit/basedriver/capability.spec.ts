@@ -1,9 +1,11 @@
+import {afterEach, beforeEach, describe, it} from 'node:test';
+
 import type {Constraints, InitialOpts, W3CCapabilities} from '@appium/types';
 import {asyncmap} from 'asyncbox';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {afterEach, beforeEach, describe, it} from 'node:test';
 import {createSandbox} from 'sinon';
+
 import {validator} from '../../../lib/basedriver/validation';
 import {BaseDriver, errors} from '../../../lib/index';
 

@@ -1,7 +1,9 @@
+import path from 'node:path';
+
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import path from 'node:path';
 import type {SinonSandbox} from 'sinon';
+
 import {PKG_HASHFILE_RELATIVE_PATH} from '../../../lib/constants';
 import {rewiremock} from '../../helpers';
 import {initMocks} from './mocks';

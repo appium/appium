@@ -1,6 +1,7 @@
 import {console, logger, util} from '@appium/support';
 import type {Request, RequestHandler, Response} from 'express';
 import morgan from 'morgan';
+
 import {MAX_LOG_BODY_LENGTH} from '../constants';
 import {log} from './logger';
 

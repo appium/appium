@@ -1,5 +1,6 @@
 import {isStandardCap} from 'appium/driver';
 import {BasePlugin} from 'appium/plugin';
+
 import type {CapsRecord, W3CCapsLike} from './types';
 
 const VENDOR_PREFIX = 'appium';

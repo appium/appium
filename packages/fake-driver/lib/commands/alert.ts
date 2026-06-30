@@ -1,4 +1,5 @@
 import {errors} from 'appium/driver';
+
 import type {FakeDriver} from '../driver';
 
 /** Throw if an alert is currently open (blocks other commands). */

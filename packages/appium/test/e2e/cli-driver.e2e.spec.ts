@@ -1,10 +1,12 @@
+import path from 'node:path';
+
 import {fs, system, tempDir, util} from '@appium/support';
 import type {DriverType} from '@appium/types';
 import type {ExtRecord} from 'appium/types';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import path from 'node:path';
 import {exec} from 'teen_process';
+
 import {
   DRIVER_TYPE,
   EXT_SUBCOMMAND_DOCTOR as DOCTOR,

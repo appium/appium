@@ -1,13 +1,15 @@
+import nodeFs from 'node:fs';
+import path from 'node:path';
+import type {Readable} from 'node:stream';
+
 import {fs, node, tempDir, timing, util} from '@appium/support';
 import type {CachedAppInfo, ConfigureAppOptions, DriverHelpers, HTTPHeaders, PostProcessOptions} from '@appium/types';
 import AsyncLock from 'async-lock';
 import axios from 'axios';
 import type {AxiosResponseHeaders, RawAxiosRequestHeaders} from 'axios';
 import {LRUCache} from 'lru-cache';
-import nodeFs from 'node:fs';
-import path from 'node:path';
-import type {Readable} from 'node:stream';
 import type {PackageJson} from 'type-fest';
+
 import {log as logger} from './logger';
 
 // for compat with running tests transpiled and in-place

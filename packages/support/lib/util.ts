@@ -1,13 +1,15 @@
-import {asyncmap} from 'asyncbox';
-import B from 'bluebird';
 import {randomUUID} from 'node:crypto';
 import os from 'node:os';
 import path from 'node:path';
 import stream from 'node:stream';
 import {isDeepStrictEqual, promisify} from 'node:util';
+
+import {asyncmap} from 'asyncbox';
+import B from 'bluebird';
 import pluralizeLib from 'pluralize';
 import * as semver from 'semver';
 import {parse as shellParse, quote as shellQuote} from 'shell-quote';
+
 import {fs} from './fs';
 import {createBase64EncodeStream} from './internal';
 export {shellParse};

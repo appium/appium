@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import fsPromises from 'node:fs/promises';
 import path from 'node:path';
+
 import normalizePackageData from 'normalize-package-data';
 import type {PackageJson as TypeFestPackageJson} from 'type-fest';
 

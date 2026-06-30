@@ -1,6 +1,8 @@
-import {expect} from 'chai';
 import path from 'node:path';
 import {describe, it} from 'node:test';
+
+import {expect} from 'chai';
+
 import {node} from '../../lib';
 
 describe('node utilities', function () {

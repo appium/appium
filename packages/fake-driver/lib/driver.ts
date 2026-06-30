@@ -1,8 +1,10 @@
+import type {Server as HttpServer} from 'node:http';
+
 import type {DriverData, IIpcSubscription, InitialOpts, IpcData, IpcMessage} from '@appium/types';
 import {BaseDriver, errors} from 'appium/driver';
 import {sleep} from 'asyncbox';
 import type {Express, Request, Response} from 'express';
-import type {Server as HttpServer} from 'node:http';
+
 import {EXECUTE_METHOD_MAP} from './command-maps/execute-method-map';
 import {NEW_BIDI_COMMANDS} from './command-maps/new-bidi-commands';
 import {NEW_METHOD_MAP} from './command-maps/new-method-map';

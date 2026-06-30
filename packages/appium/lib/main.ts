@@ -5,6 +5,7 @@ import './logger'; // load Appium logger immediately after logsink (order matter
 import {env} from '@appium/support';
 import type {AppiumServer} from '@appium/types';
 import type {Args, CliCommand, CliCommandServer, CliCommandSetupSubcommand, CliExtensionSubcommand} from 'appium/types';
+
 import {AppiumInitializer} from './bootstrap/appium-initializer';
 import {AppiumMainRunner} from './bootstrap/appium-main-runner';
 import type {ExtCommandInitResult, InitResult, ServerInitData} from './bootstrap/init-types';

@@ -1,5 +1,6 @@
 import type {Position, Rect, Size} from '@appium/types';
 import {errors} from 'appium/driver';
+
 import type {FakeDriver} from '../driver';
 import type {FakeElement} from '../fake-element';
 

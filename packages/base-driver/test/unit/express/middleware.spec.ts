@@ -1,7 +1,9 @@
-import {expect} from 'chai';
 import {afterEach, beforeEach, describe, it} from 'node:test';
+
+import {expect} from 'chai';
 import {match} from 'path-to-regexp';
 import sinon from 'sinon';
+
 import {log} from '../../../lib/express/logger';
 import {handleLogContext} from '../../../lib/express/middleware';
 

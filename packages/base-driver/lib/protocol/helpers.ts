@@ -1,4 +1,5 @@
 import {util} from '@appium/support';
+
 import {duplicateKeys} from '../basedriver/helpers';
 import {MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY} from '../constants';
 

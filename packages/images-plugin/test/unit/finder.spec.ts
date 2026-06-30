@@ -1,11 +1,13 @@
+import {afterEach, beforeEach, describe, it} from 'node:test';
+
 import type {Constraints} from '@appium/types';
 import {BaseDriver} from 'appium/driver';
 import {util} from 'appium/support';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {afterEach, beforeEach, describe, it} from 'node:test';
 import sharp from 'sharp';
 import {createSandbox, type SinonSandbox} from 'sinon';
+
 import * as compareModule from '../../lib/compare';
 import {IMAGE_STRATEGY} from '../../lib/constants';
 import {ImageElementFinder} from '../../lib/finder';

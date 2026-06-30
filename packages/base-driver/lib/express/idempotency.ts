@@ -1,7 +1,9 @@
+import {EventEmitter} from 'node:events';
+
 import {util} from '@appium/support';
 import type {NextFunction, Request, Response} from 'express';
 import {LRUCache} from 'lru-cache';
-import {EventEmitter} from 'node:events';
+
 import {log} from './logger';
 
 interface CachedResponse {

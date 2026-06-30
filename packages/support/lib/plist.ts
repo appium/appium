@@ -1,6 +1,7 @@
 import bplistCreate from 'bplist-creator';
 import {parseBuffer} from 'bplist-parser';
 import {build as plistBuild, parse as plistParse, type PlistValue} from 'plist';
+
 import {fs} from './fs';
 import log from './logger';
 import {truncateString} from './util';

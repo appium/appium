@@ -1,5 +1,6 @@
 import type {Document as XMLDocument} from '@xmldom/xmldom';
 import {errors} from 'appium/driver';
+
 import type {FakeDriver} from '../driver';
 import type {FakeWebView} from '../fake-app';
 

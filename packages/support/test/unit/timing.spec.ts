@@ -1,7 +1,9 @@
+import {afterEach, beforeEach, describe, it} from 'node:test';
+
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {afterEach, beforeEach, describe, it} from 'node:test';
 import {createSandbox} from 'sinon';
+
 import {timing} from '../../lib';
 
 use(chaiAsPromised);

@@ -1,7 +1,9 @@
+import {after, afterEach, before, describe, it} from 'node:test';
+
 import {TEST_HOST} from '@appium/driver-test-support';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {after, afterEach, before, describe, it} from 'node:test';
+
 import {JWProxy} from '../../../lib';
 import {createServer} from '../../helpers';
 import {FakeDriver} from '../protocol/fake-driver';

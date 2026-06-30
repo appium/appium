@@ -1,6 +1,8 @@
+import {before, beforeEach, describe, it} from 'node:test';
+
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {before, beforeEach, describe, it} from 'node:test';
+
 import {PROTOCOLS} from '../../../lib/constants';
 import {COMMAND_URLS_CONFLICTS, ProtocolConverter} from '../../../lib/jsonwp-proxy/protocol-converter';
 

@@ -1,5 +1,7 @@
-import {expect} from 'chai';
 import {describe, it} from 'node:test';
+
+import {expect} from 'chai';
+
 import {compileLodashTemplate} from '../../../lib/test-pages/template';
 
 describe('compileLodashTemplate', function () {

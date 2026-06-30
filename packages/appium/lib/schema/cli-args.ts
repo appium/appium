@@ -1,6 +1,7 @@
 import {util} from '@appium/support';
 import {type ArgumentOptions, ArgumentTypeError} from 'argparse';
 import type {JSONSchema7, JSONSchema7TypeName} from 'json-schema';
+
 import type {ArgumentDefinitions} from '../cli/args';
 import {kebabCase} from '../utils';
 import type {ArgSpec} from './arg-spec';

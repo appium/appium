@@ -1,6 +1,7 @@
 import {system, util} from '@appium/support';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+
 import {readConfigFile} from '../../lib/bootstrap/config-file';
 import {DRIVER_TYPE} from '../../lib/constants';
 import {finalizeSchema, registerSchema, resetSchema} from '../../lib/schema/schema';

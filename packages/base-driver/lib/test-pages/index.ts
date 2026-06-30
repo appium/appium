@@ -1,7 +1,9 @@
+import path from 'node:path';
+
 import express from 'express';
 import type {Express} from 'express';
-import path from 'node:path';
 import favicon from 'serve-favicon';
+
 import {produceCrash, produceError} from './crash';
 import {guineaPig, guineaPigAppBanner, guineaPigScrollable, welcome} from './handlers';
 import {TEST_FIXTURES_DIR} from './static-dir';

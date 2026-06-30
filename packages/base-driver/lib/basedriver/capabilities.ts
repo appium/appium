@@ -1,6 +1,7 @@
 import {util} from '@appium/support';
 import type {Capabilities, Constraints, NSCapabilities, StandardCapabilities, W3CCapabilities} from '@appium/types';
 import type {KeyAsString, MergeExclusive} from 'type-fest';
+
 import {errors} from '../protocol/errors';
 import {omit, pickBy} from '../utils';
 import {log} from './logger';

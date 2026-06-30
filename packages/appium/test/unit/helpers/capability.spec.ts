@@ -1,6 +1,7 @@
 import type {BaseDriverCapConstraints, Capabilities, Constraints, NSCapabilities, W3CCapabilities} from '@appium/types';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+
 import {
   insertAppiumPrefixes,
   parseCapsForInnerDriver,

@@ -1,9 +1,11 @@
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import os from 'node:os';
 import {afterEach, beforeEach, describe, it} from 'node:test';
+
+import {expect, use} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import {createSandbox} from 'sinon';
 import * as teen_process from 'teen_process';
+
 import {system, util} from '../../lib';
 
 use(chaiAsPromised);

@@ -1,11 +1,13 @@
+import {createRequire} from 'node:module';
+import net from 'node:net';
+
 /* eslint-disable no-console */
 import type {AppiumServer} from '@appium/types';
 import {main as appiumServer} from 'appium';
 import {fs} from 'appium/support';
 import AsyncLock from 'async-lock';
-import {createRequire} from 'node:module';
-import net from 'node:net';
 import {exec} from 'teen_process';
+
 import type {AppiumEnv, E2ESetupOpts} from './types';
 
 declare const __filename: string;

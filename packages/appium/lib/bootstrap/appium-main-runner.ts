@@ -1,8 +1,10 @@
+import net from 'node:net';
+
 import type {ServerOpts} from '@appium/base-driver';
 import {util} from '@appium/support';
 import type {AppiumServer} from '@appium/types';
 import type {Args, CliCommand, CliCommandServer, CliCommandSetupSubcommand, CliExtensionSubcommand} from 'appium/types';
-import net from 'node:net';
+
 import {getActiveDrivers, getActivePlugins} from '../extension';
 import {log as logger} from '../logger';
 import registerNode from './grid-v3-register';

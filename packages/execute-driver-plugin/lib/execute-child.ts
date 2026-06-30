@@ -1,6 +1,8 @@
-import {logger, util} from '@appium/support';
 import {promisify} from 'node:util';
 import vm from 'node:vm';
+
+import {logger, util} from '@appium/support';
+
 import type {DriverScriptMessageEvent, RunScriptResult, ScriptResult} from './types';
 import {wrapHostBindingForVmContext} from './vm-host-binding';
 

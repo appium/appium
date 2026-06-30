@@ -1,5 +1,6 @@
 import {util} from '@appium/support';
 import type {Constraints, DriverStatus, IBidiCommands} from '@appium/types';
+
 import type {BaseDriver} from '../driver';
 import {mixin} from './mixin';
 

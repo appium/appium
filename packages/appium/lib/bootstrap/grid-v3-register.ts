@@ -1,6 +1,7 @@
 import {fs} from '@appium/support';
 import type {StringRecord} from '@appium/types';
 import axios from 'axios';
+
 import {log as logger} from '../logger';
 
 /**

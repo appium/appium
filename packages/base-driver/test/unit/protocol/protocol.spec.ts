@@ -1,8 +1,10 @@
+import {describe, it} from 'node:test';
+
 import type {InitialOpts} from '@appium/types';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {Request} from 'express';
-import {describe, it} from 'node:test';
+
 import {BaseDriver} from '../../../lib/basedriver/driver';
 import {checkParams, getSessionId} from '../../../lib/protocol/protocol';
 

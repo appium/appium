@@ -1,3 +1,5 @@
+import os from 'node:os';
+
 import {util} from '@appium/support';
 import type {
   AppiumLogger,
@@ -13,7 +15,7 @@ import type {
   StringRecord,
 } from '@appium/types';
 import AsyncLock from 'async-lock';
-import os from 'node:os';
+
 import {DEFAULT_BASE_PATH, PROTOCOLS} from '../constants';
 import {errors} from '../protocol';
 import {DeviceSettings} from './device-settings';

@@ -1,5 +1,7 @@
 import {Buffer} from 'node:buffer';
+
 import sharp from 'sharp';
+
 import {OpenCvAutoreleasePool} from './autorelease-pool';
 import type {
   Match,

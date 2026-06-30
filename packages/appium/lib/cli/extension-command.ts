@@ -1,3 +1,8 @@
+import {spawn} from 'node:child_process';
+import path from 'node:path';
+import {pathToFileURL} from 'node:url';
+import {inspect} from 'node:util';
+
 import {console, env, fs, npm, system, util} from '@appium/support';
 import type {AppiumLogger, ExtensionType, IDoctorCheck} from '@appium/types';
 import type {
@@ -9,13 +14,10 @@ import type {
   InstallType,
 } from 'appium/types';
 import {asyncfilter, asyncmap} from 'asyncbox';
-import {spawn} from 'node:child_process';
-import path from 'node:path';
-import {pathToFileURL} from 'node:url';
-import {inspect} from 'node:util';
 import * as semver from 'semver';
 import {SubProcess} from 'teen_process';
 import type {PackageJson} from 'type-fest';
+
 import {Doctor, EXIT_CODE as DOCTOR_EXIT_CODE} from '../doctor/doctor';
 import type {ExtensionConfig as BaseExtensionConfig} from '../extension/extension-config';
 import {

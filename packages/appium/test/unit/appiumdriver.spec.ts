@@ -9,6 +9,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {SinonMock, SinonSandbox, SinonStubbedMember} from 'sinon';
 import {createSandbox} from 'sinon';
+
 import type * as AppiumModule from '../../lib/appium';
 import {PLUGIN_TYPE, SESSION_DISCOVERY_FEATURE} from '../../lib/constants';
 import * as buildInfoModule from '../../lib/helpers/build';

@@ -1,13 +1,15 @@
-import {fs, timing, util} from '@appium/support';
-import type {AppiumLogger} from '@appium/types';
-import AsyncLock from 'async-lock';
-import {asyncmap} from 'asyncbox';
 import {createHash} from 'node:crypto';
 import nativeFs from 'node:fs';
 import path from 'node:path';
 import type Stream from 'node:stream';
+
+import {fs, timing, util} from '@appium/support';
+import type {AppiumLogger} from '@appium/types';
+import AsyncLock from 'async-lock';
+import {asyncmap} from 'asyncbox';
 import type {Path} from 'path-scurry';
 import type WebSocket from 'ws';
+
 import type {ItemOptions, StorageItem} from './types';
 
 const MAX_TASKS = 5;

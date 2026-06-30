@@ -1,13 +1,15 @@
+import type {AddressInfo} from 'node:net';
+import path from 'node:path';
+import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
+
 import {pluginE2EHarness} from '@appium/plugin-test-support';
 import {fs, node, tempDir} from '@appium/support';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import type {AddressInfo} from 'node:net';
-import path from 'node:path';
-import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
 import sharp from 'sharp';
 import {exec} from 'teen_process';
 import {remote as wdio} from 'webdriverio';
+
 import {GET_SIMILARITY_MODE, MATCH_FEATURES_MODE} from '../../lib/constants';
 
 use(chaiAsPromised);

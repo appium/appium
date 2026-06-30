@@ -1,5 +1,6 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+
 import {type DriverLike, FakePlugin as _FakePlugin} from '../../lib/plugin';
 
 const {expect} = chai;

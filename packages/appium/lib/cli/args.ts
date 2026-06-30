@@ -2,6 +2,7 @@ import {util} from '@appium/support';
 import type {ExtensionType} from '@appium/types';
 import type {CliExtensionSubcommand} from 'appium/types';
 import type {ArgumentOptions} from 'argparse';
+
 import {
   DRIVER_TYPE,
   EXT_SUBCOMMAND_DOCTOR,

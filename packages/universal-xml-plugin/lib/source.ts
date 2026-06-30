@@ -1,5 +1,6 @@
 import {util} from '@appium/support';
 import {XMLBuilder, XMLParser} from 'fast-xml-parser';
+
 import {ATTR_MAP, REMOVE_ATTRS} from './attr-map';
 import NODE_MAP from './node-map';
 import * as TRANSFORMS from './transformers';

@@ -2,6 +2,7 @@ import type {Element, ExternalDriver, Rect, Size} from '@appium/types';
 import {errors} from 'appium/driver';
 import {LRUCache} from 'lru-cache';
 import sharp from 'sharp';
+
 import {compareImages} from './compare';
 import {
   DEFAULT_FIX_IMAGE_TEMPLATE_SCALE,

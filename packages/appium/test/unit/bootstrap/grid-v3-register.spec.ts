@@ -1,6 +1,7 @@
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {createSandbox, type SinonSandbox, type SinonStub} from 'sinon';
+
 import type registerNodeType from '../../../lib/bootstrap/grid-v3-register';
 import {rewiremock} from '../../helpers';
 

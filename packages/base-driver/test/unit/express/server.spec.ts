@@ -1,9 +1,11 @@
+import {afterEach, before, beforeEach, describe, it} from 'node:test';
+
 import {getTestPort} from '@appium/driver-test-support';
 import type {Driver, MethodMap} from '@appium/types';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {afterEach, before, beforeEach, describe, it} from 'node:test';
 import {createSandbox} from 'sinon';
+
 import {configureServer, normalizeBasePath, server} from '../../../lib/express/server';
 import {routeConfiguringFunction} from '../../../lib/protocol/protocol';
 import {registerTestPages} from '../../../lib/test-pages';

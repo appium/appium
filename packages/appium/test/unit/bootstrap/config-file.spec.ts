@@ -1,8 +1,10 @@
+import fs from 'node:fs';
+
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import fs from 'node:fs';
 import {createSandbox, type SinonSandbox, type SinonSpy, type SinonStubbedMember} from 'sinon';
 import * as YAML from 'yaml';
+
 import * as schema from '../../../lib/schema/schema';
 import {resolveFixture, rewiremock} from '../../helpers';
 type LilconfigResult = {config: unknown; filepath: string; isEmpty?: boolean};

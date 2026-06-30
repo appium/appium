@@ -1,5 +1,6 @@
 import {util} from '@appium/support';
 import type {Constraints, Driver, DriverClass, DriverCommand, IExecuteCommands, StringRecord} from '@appium/types';
+
 import {rankLevenshteinCandidates} from '../../helpers/levenshtein-match';
 import {errors, validateExecuteMethodParams} from '../../protocol';
 import type {BaseDriver} from '../driver';

@@ -1,7 +1,9 @@
+import path from 'node:path';
+
 import {fs} from '@appium/support';
 import {sleep} from 'asyncbox';
 import type {Request, Response} from 'express';
-import path from 'node:path';
+
 import {log} from '../express/logger';
 import {TEST_FIXTURES_DIR} from './static-dir';
 import {compileLodashTemplate} from './template';

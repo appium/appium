@@ -1,9 +1,11 @@
+import path from 'node:path';
+
 import {fs, tempDir} from '@appium/support';
 import type {AnyManifestDataVersion} from 'appium/types';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import path from 'node:path';
 import * as YAML from 'yaml';
+
 import {
   CACHE_DIR_RELATIVE_PATH,
   CURRENT_SCHEMA_REV,

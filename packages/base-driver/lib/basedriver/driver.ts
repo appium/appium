@@ -18,6 +18,7 @@ import {
   type W3CDriverCaps,
 } from '@appium/types';
 import type AsyncLock from 'async-lock';
+
 import {fixCaps, isW3cCaps} from '../helpers/capabilities';
 import {resolveExecuteExtensionName} from '../helpers/extension-command-name';
 import {getLevenshteinSuggestion} from '../helpers/levenshtein-match';

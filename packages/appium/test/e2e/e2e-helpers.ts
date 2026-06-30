@@ -1,12 +1,14 @@
+import path from 'node:path';
+
 /**
  * Helper functions for E2E tests to spawn an `appium` subprocess.
  */
 import {console as supportConsole, fs} from '@appium/support';
 import type {DriverType, PluginType} from '@appium/types';
 import type {CliExtensionSubcommand, ExtRecord} from 'appium/types';
-import path from 'node:path';
 import {exec} from 'teen_process';
 import type {ExecError} from 'teen_process';
+
 import {APPIUM_ROOT, resolveFixture} from '../helpers';
 
 export const EXECUTABLE = path.join(APPIUM_ROOT, 'build', 'lib', 'main.js');

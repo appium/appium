@@ -1,8 +1,10 @@
-import {LRUCache} from 'lru-cache';
 import {AsyncLocalStorage} from 'node:async_hooks';
 import {EventEmitter} from 'node:events';
 import type {Writable} from 'node:stream';
 import * as util from 'node:util';
+
+import {LRUCache} from 'lru-cache';
+
 import {DEFAULT_SECURE_REPLACER, SecureValuesPreprocessor} from './secure-values-preprocessor';
 import type {
   LogFiltersConfig,

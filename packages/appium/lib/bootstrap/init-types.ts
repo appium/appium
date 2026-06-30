@@ -6,6 +6,7 @@ import type {
   CliExtensionSubcommand,
   ParsedArgs,
 } from 'appium/types';
+
 import type {AppiumDriver} from '../appium';
 import type {ExtensionConfigs} from '../extension';
 

@@ -1,7 +1,9 @@
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import path from 'node:path';
 import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
+
+import {expect, use} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+
 import {fs, node, tempDir} from '../../lib';
 import {
   DEFAULT_APPIUM_HOME,

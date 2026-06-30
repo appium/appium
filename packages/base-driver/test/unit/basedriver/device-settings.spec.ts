@@ -1,9 +1,11 @@
+import {afterEach, beforeEach, describe, it} from 'node:test';
+
 import {node} from '@appium/support';
 import type {SettingsUpdateListener} from '@appium/types';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {afterEach, beforeEach, describe, it} from 'node:test';
 import sinon from 'sinon';
+
 import {DeviceSettings, MAX_SETTINGS_SIZE} from '../../../lib/basedriver/device-settings';
 import {InvalidArgumentError} from '../../../lib/protocol/errors';
 

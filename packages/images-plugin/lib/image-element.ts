@@ -1,6 +1,7 @@
 import {util} from '@appium/support';
 import type {ActionSequence, Element, ExternalDriver, Rect} from '@appium/types';
 import {errors} from 'appium/driver';
+
 import {
   DEFAULT_SETTINGS,
   IMAGE_EL_TAP_STRATEGY_W3C,

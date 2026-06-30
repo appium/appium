@@ -3,10 +3,12 @@
  * @module
  */
 
+import path from 'node:path';
+
 import {fs, util} from '@appium/support';
 import {createPatch} from 'diff';
-import path from 'node:path';
 import type {JsonObject, JsonValue} from 'type-fest';
+
 import {NAME_ERR_ENOENT} from './constants';
 import {DocutilsError} from './error';
 import {readPackageJson, stringifyJson, writeFileString} from './fs';

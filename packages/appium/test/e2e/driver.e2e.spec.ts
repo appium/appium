@@ -11,6 +11,7 @@ import type {SinonSandbox} from 'sinon';
 import {exec} from 'teen_process';
 import type {Browser} from 'webdriverio';
 import {remote as wdio} from 'webdriverio';
+
 import {runExtensionCommand} from '../../lib/cli/extension';
 import {DRIVER_TYPE} from '../../lib/constants';
 import {loadExtensions} from '../../lib/extension';

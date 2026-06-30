@@ -2,6 +2,7 @@ import type {ExtensionType} from '@appium/types';
 import type {ArgumentOptions} from 'argparse';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+
 import {PLUGIN_TYPE} from '../../../lib/constants';
 import {finalizeSchema, registerSchema, resetSchema} from '../../../lib/schema';
 import {toParserArgs} from '../../../lib/schema/cli-args';

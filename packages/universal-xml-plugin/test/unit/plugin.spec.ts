@@ -1,7 +1,9 @@
-import type {Constraints} from '@appium/types';
-import {BaseDriver} from 'appium/driver';
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
+
+import type {Constraints} from '@appium/types';
+import {BaseDriver} from 'appium/driver';
+
 import {UniversalXMLPlugin} from '../../lib/plugin';
 import {getNodeAttrVal, runQuery} from '../../lib/xpath';
 import {FIXTURES, readFixture} from '../fixtures';

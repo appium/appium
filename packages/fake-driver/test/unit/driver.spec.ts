@@ -3,6 +3,7 @@ import {sleep} from 'asyncbox';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {createSandbox} from 'sinon';
+
 import {FakeDriver} from '../../lib';
 import {W3C_CAPS, W3C_PREFIXED_CAPS} from '../helpers';
 

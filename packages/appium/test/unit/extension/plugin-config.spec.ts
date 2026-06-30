@@ -1,9 +1,11 @@
+import {promises as fs} from 'node:fs';
+
 import type {ExtensionType, PluginType} from '@appium/types';
 import type {ExtManifest} from 'appium/types';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {promises as fs} from 'node:fs';
 import type {SinonSandbox} from 'sinon';
+
 import {Manifest} from '../../../lib/extension/manifest';
 import type {PluginConfig as PluginConfigInstance} from '../../../lib/extension/plugin-config';
 import {resetSchema} from '../../../lib/schema';

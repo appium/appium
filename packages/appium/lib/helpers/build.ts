@@ -2,6 +2,7 @@ import {fs, system, util} from '@appium/support';
 import type {BuildInfo} from 'appium/types';
 import axios from 'axios';
 import {exec} from 'teen_process';
+
 import {npmPackage} from '../utils';
 
 export const APPIUM_VER = npmPackage.version;

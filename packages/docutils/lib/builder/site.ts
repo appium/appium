@@ -6,7 +6,9 @@
  */
 
 import path from 'node:path';
+
 import type {TeenProcessExecOptions} from 'teen_process';
+
 import {DEFAULT_SITE_DIR, NAME_BIN, NAME_MKDOCS, NAME_MKDOCS_YML} from '../constants';
 import {DocutilsError} from '../error';
 import {findMkDocsYml, isMkDocsInstalled, readMkDocsYml, requirePython} from '../fs';

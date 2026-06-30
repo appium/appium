@@ -1,8 +1,10 @@
+import {beforeEach, describe, it} from 'node:test';
+
 import type {Capabilities, Constraints, W3CCapabilities} from '@appium/types';
 import {BASE_DESIRED_CAP_CONSTRAINTS} from '@appium/types';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {beforeEach, describe, it} from 'node:test';
+
 import {
   APPIUM_VENDOR_PREFIX,
   findNonPrefixedCaps,

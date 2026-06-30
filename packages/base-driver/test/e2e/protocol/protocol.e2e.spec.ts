@@ -1,3 +1,5 @@
+import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
+
 import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
 import type {RouteMatcher} from '@appium/types';
 import axios from 'axios';
@@ -5,8 +7,8 @@ import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {Application, Request, Response} from 'express';
 import {StatusCodes as HTTPStatusCodes} from 'http-status-codes';
-import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
 import {createSandbox} from 'sinon';
+
 import {errors, JWProxy} from '../../../lib';
 import {MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY} from '../../../lib/constants';
 import {createServer} from '../../helpers';

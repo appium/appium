@@ -1,8 +1,10 @@
-/* eslint-disable no-console */
-import {fs, npm, system} from '@appium/support';
 import os from 'node:os';
 import path from 'node:path';
+
+/* eslint-disable no-console */
+import {fs, npm, system} from '@appium/support';
 import * as semver from 'semver';
+
 import {getBuildInfo, updateBuildInfo} from '../helpers/build';
 import {appiumPackageRoot, npmPackage} from '../utils';
 

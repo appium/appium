@@ -1,7 +1,9 @@
+import path from 'node:path';
+
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import path from 'node:path';
 import type {SinonSandbox} from 'sinon';
+
 import {DRIVER_TYPE} from '../../../lib/constants';
 import {resolveEsmEntryPoint} from '../../../lib/extension/extension-config';
 import {APPIUM_VER} from '../../../lib/helpers/build';

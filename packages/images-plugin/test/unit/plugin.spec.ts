@@ -1,10 +1,12 @@
+import path from 'node:path';
+import {before, describe, it} from 'node:test';
+
 import type {ActionSequence, Constraints} from '@appium/types';
 import {BaseDriver} from 'appium/driver';
 import {fs, node, util} from 'appium/support';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import path from 'node:path';
-import {before, describe, it} from 'node:test';
+
 import {GET_SIMILARITY_MODE, IMAGE_STRATEGY, MATCH_FEATURES_MODE, MATCH_TEMPLATE_MODE} from '../../lib/constants';
 import {ImageElementPlugin} from '../../lib/plugin';
 

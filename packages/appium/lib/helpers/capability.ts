@@ -1,6 +1,7 @@
 import {errors, isW3cCaps, processCapabilities, STANDARD_CAPS} from '@appium/base-driver';
 import {util} from '@appium/support';
 import type {BaseDriverCapConstraints, Capabilities, Constraints, NSCapabilities, W3CCapabilities} from '@appium/types';
+
 import {log as logger} from '../logger';
 import {mapKeys} from '../utils';
 

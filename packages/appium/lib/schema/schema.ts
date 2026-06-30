@@ -1,9 +1,11 @@
+import path from 'node:path';
+
 import {AppiumConfigJsonSchema} from '@appium/schema';
 import {util} from '@appium/support';
 import type {ExtensionType} from '@appium/types';
 import Ajv, {type ErrorObject, type SchemaObject, type ValidateFunction} from 'ajv';
 import addFormats from 'ajv-formats';
-import path from 'node:path';
+
 import {DRIVER_TYPE, PLUGIN_TYPE} from '../constants';
 import {bindAll, kebabCase, omitKeys, setPath} from '../utils';
 import {APPIUM_CONFIG_SCHEMA_ID, ArgSpec, SERVER_PROP_NAME} from './arg-spec';

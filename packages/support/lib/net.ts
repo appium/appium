@@ -2,6 +2,7 @@ import type {HTTPHeaders} from '@appium/types';
 import axios, {type AxiosBasicCredentials, type Method, type RawAxiosRequestConfig} from 'axios';
 import FormData from 'form-data';
 import Ftp from 'jsftp';
+
 import {fs} from './fs';
 import log from './logger';
 import {Timer} from './timing';

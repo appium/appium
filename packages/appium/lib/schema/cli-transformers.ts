@@ -1,5 +1,6 @@
-import {ArgumentTypeError} from 'argparse';
 import {existsSync, readFileSync} from 'node:fs';
+
+import {ArgumentTypeError} from 'argparse';
 
 /**
  * This module provides transformer functions for CLI arguments.

@@ -2,6 +2,7 @@ import {timing, util} from '@appium/support';
 import type {DriverClass, ExtensionType, PluginClass} from '@appium/types';
 import type {ExtClass} from 'appium/types';
 import {asyncmap} from 'asyncbox';
+
 import {USE_ALL_PLUGINS} from '../constants';
 import {log} from '../logger';
 import {zip} from '../utils';

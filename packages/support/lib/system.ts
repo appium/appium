@@ -1,4 +1,5 @@
 import os from 'node:os';
+
 import {exec} from 'teen_process';
 
 const VERSION_PATTERN = /^(\d+\.\d+)/m;

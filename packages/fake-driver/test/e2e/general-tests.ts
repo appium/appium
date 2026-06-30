@@ -1,6 +1,7 @@
 import type {ActionSequence} from '@appium/types';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+
 import {deleteSession, initSession, W3C_PREFIXED_CAPS} from '../helpers';
 
 chai.use(chaiAsPromised);

@@ -1,15 +1,16 @@
-import {fs, node} from '@appium/support';
+import http from 'node:http';
 import path from 'node:path';
 import {after, before, describe, it} from 'node:test';
 
 import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
+import {fs, node} from '@appium/support';
 import {sleep} from 'asyncbox';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import contentDisposition from 'content-disposition';
 import finalhandler from 'finalhandler';
-import http from 'node:http';
 import serveStatic from 'serve-static';
+
 import {configureApp} from '../../../lib/basedriver/helpers';
 
 chai.use(chaiAsPromised);

@@ -1,10 +1,25 @@
+import http from 'node:http';
+import type {Server as HttpServer} from 'node:http';
+import {createRequire} from 'node:module';
+
+// Import env helper directly — not from the test-pages barrel — so Express handlers and
+// fixture code stay unloaded unless APPIUM_ENABLE_LEGACY_TEST_PAGES is set.
+import {fs, timing} from '@appium/support';
+import type {
+  AppiumServer,
+  ExternalDriver,
+  MethodMap,
+  ServerArgs,
+  StringRecord,
+  UpdateServerCallback,
+} from '@appium/types';
 import bodyParser from 'body-parser';
 import express from 'express';
 import type {Express, RequestHandler} from 'express';
 import methodOverride from 'method-override';
-import http from 'node:http';
-import type {Server as HttpServer} from 'node:http';
-import {createRequire} from 'node:module';
+
+import {DEFAULT_BASE_PATH} from '../constants';
+import {isLegacyTestPagesEnabled} from '../test-pages/env';
 import {endLogFormatter, startLogFormatter} from './express-logging';
 import {log} from './logger';
 import {
@@ -18,19 +33,6 @@ import {
   handleUpgrade,
   tryHandleWebSocketUpgrade,
 } from './middleware';
-// Import env helper directly — not from the test-pages barrel — so Express handlers and
-// fixture code stay unloaded unless APPIUM_ENABLE_LEGACY_TEST_PAGES is set.
-import {fs, timing} from '@appium/support';
-import type {
-  AppiumServer,
-  ExternalDriver,
-  MethodMap,
-  ServerArgs,
-  StringRecord,
-  UpdateServerCallback,
-} from '@appium/types';
-import {DEFAULT_BASE_PATH} from '../constants';
-import {isLegacyTestPagesEnabled} from '../test-pages/env';
 import {
   addWebSocketHandler,
   getWebSocketHandlers,

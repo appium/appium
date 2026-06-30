@@ -1,7 +1,9 @@
+import {describe, it} from 'node:test';
+
 import type {InitialOpts} from '@appium/types';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {describe, it} from 'node:test';
+
 import {BaseDriver} from '../../../../lib';
 
 chai.use(chaiAsPromised);

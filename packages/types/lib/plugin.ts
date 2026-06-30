@@ -1,4 +1,5 @@
 import type {AsyncReturnType} from 'type-fest';
+
 import type {BidiModuleMap, ExecuteMethodMap, MethodMap} from './command-maps';
 import type {DriverCommand, ExternalDriver} from './driver';
 import type {AppiumLogger} from './logger';

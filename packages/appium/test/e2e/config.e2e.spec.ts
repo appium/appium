@@ -3,6 +3,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {createSandbox, type SinonSandbox} from 'sinon';
 import * as teenProcess from 'teen_process';
+
 import {APPIUM_VER, getBuildInfo, getGitRev, updateBuildInfo} from '../../lib/helpers/build';
 
 const {expect} = chai;

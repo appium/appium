@@ -1,9 +1,11 @@
+import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
+
 import {retryInterval} from 'asyncbox';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
 import {createSandbox} from 'sinon';
 import * as teenProcess from 'teen_process';
+
 import {process, system} from '../../lib';
 
 use(chaiAsPromised);

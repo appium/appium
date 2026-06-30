@@ -1,7 +1,9 @@
+import {before, describe, it} from 'node:test';
+
 import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {before, describe, it} from 'node:test';
+
 import {JWProxy} from '../../../lib';
 import {errors, isErrorType} from '../../../lib/protocol/errors';
 import {type MockRequestOpts, request} from './mock-request';

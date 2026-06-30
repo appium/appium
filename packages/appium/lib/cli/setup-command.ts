@@ -6,6 +6,7 @@ import type {
   CliExtensionCommand,
   CliExtensionSubcommand,
 } from 'appium/types';
+
 import {DESKTOP_BROWSERS, DESKTOP_DRIVERS, MOBILE_DRIVERS} from '../constants';
 import type {ExtensionConfig} from '../extension/extension-config';
 import {log} from '../logger';

@@ -6,6 +6,7 @@ import axios from 'axios';
 import {expect} from 'chai';
 import type {Browser} from 'webdriverio';
 import {remote as wdio} from 'webdriverio';
+
 import {runExtensionCommand} from '../../lib/cli/extension';
 import {DRIVER_TYPE, PLUGIN_TYPE} from '../../lib/constants';
 import {loadExtensions} from '../../lib/extension';

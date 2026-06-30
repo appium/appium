@@ -1,8 +1,10 @@
+import {describe, it} from 'node:test';
+
 import type {IpcMessage} from '@appium/types';
 import {sleep} from 'asyncbox';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {describe, it} from 'node:test';
+
 import {AppiumIpc, EVT_MESSAGE} from '../../../lib/basedriver/ipc';
 
 chai.use(chaiAsPromised);

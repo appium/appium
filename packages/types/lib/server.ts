@@ -1,6 +1,8 @@
-import type {Express} from 'express';
 import type {Server as HTTPServer} from 'node:http';
+
+import type {Express} from 'express';
 import type {Server as WSServer} from 'ws';
+
 import type {ServerArgs} from './config';
 
 /**

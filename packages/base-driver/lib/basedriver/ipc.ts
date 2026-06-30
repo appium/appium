@@ -1,3 +1,5 @@
+import EventEmitter from 'node:events';
+
 import {node} from '@appium/support';
 import type {
   AppiumLogger,
@@ -9,7 +11,7 @@ import type {
   StringRecord,
 } from '@appium/types';
 import {sleep} from 'asyncbox';
-import EventEmitter from 'node:events';
+
 import {log} from './logger';
 
 const DEF_MAX_OBJ_SIZE_BYTES = 1024 * 1024; // 1mb seems like plenty for any plugin to pass a message

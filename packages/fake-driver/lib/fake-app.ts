@@ -1,10 +1,12 @@
+import {readFileSync} from 'node:fs';
+import path from 'node:path';
+
 import type {ActionSequence, Location, Orientation} from '@appium/types';
 import XMLDom from '@xmldom/xmldom';
 import type {Document as XMLDocument, Node as XMLNode} from '@xmldom/xmldom';
 import {fs} from 'appium/support';
-import {readFileSync} from 'node:fs';
-import path from 'node:path';
 import * as xpath from 'xpath';
+
 import {FakeElement, type XmlNodeLike} from './fake-element';
 import {log} from './logger';
 

@@ -2,9 +2,10 @@
  * A collection of mocks reused across unit tests.
  */
 
-import {console as supportConsole, util as supportUtil} from '@appium/support';
 import {EventEmitter} from 'node:events';
 import path from 'node:path';
+
+import {console as supportConsole, util as supportUtil} from '@appium/support';
 import {createSandbox, type SinonSandbox, type SinonStub} from 'sinon';
 
 export interface MockAppiumSupportFs {

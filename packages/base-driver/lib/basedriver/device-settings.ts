@@ -1,5 +1,6 @@
 import {node, util} from '@appium/support';
 import type {IDeviceSettings, SettingsUpdateListener, StringRecord} from '@appium/types';
+
 import {errors} from '../protocol/errors';
 import {log} from './logger';
 

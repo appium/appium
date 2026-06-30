@@ -2,6 +2,7 @@ import {logger} from '@appium/support';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {createSandbox, type SinonSandbox, type SinonSpy} from 'sinon';
+
 import {clear as logsinkClear, init as logsinkInit} from '../../lib/logsink';
 
 const forceLogs = process.env._FORCE_LOGS;

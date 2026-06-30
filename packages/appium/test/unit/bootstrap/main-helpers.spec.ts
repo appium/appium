@@ -3,6 +3,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {SinonSandbox, SinonSpy} from 'sinon';
 import {createSandbox} from 'sinon';
+
 import {inspect, showBuildInfo} from '../../../lib/bootstrap/main-helpers';
 import {getBuildInfo} from '../../../lib/helpers/build';
 import {log as logger} from '../../../lib/logger';

@@ -1,5 +1,6 @@
 import {util} from '@appium/support';
 import type {Constraint} from '@appium/types';
+
 import {log} from './logger';
 
 export class Validator {

@@ -3,11 +3,13 @@
  * @module
  */
 
-import {fs, util} from '@appium/support';
 import path from 'node:path';
+
+import {fs, util} from '@appium/support';
 import {exec} from 'teen_process';
 import type {JsonValue} from 'type-fest';
 import * as YAML from 'yaml';
+
 import {
   MESSAGE_PYTHON_MISSING,
   NAME_MIKE,

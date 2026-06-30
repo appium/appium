@@ -1,7 +1,9 @@
+import path from 'node:path';
+
 import {fs, tempDir} from '@appium/support';
 import * as chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import path from 'node:path';
+
 import {findDeployVersion} from '../../lib/builder/deploy';
 import {NAME_PACKAGE_JSON} from '../../lib/constants';
 

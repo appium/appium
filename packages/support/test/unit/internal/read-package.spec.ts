@@ -1,8 +1,10 @@
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {mkdir, writeFile} from 'node:fs/promises';
 import path from 'node:path';
 import {afterEach, beforeEach, describe, it} from 'node:test';
+
+import {expect, use} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+
 import {fs, tempDir} from '../../../lib';
 import {packageDirectorySync, readPackage, readPackageSync} from '../../../lib/internal/read-package';
 

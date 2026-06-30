@@ -1,10 +1,12 @@
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {mkdir, writeFile} from 'node:fs/promises';
 import path from 'node:path';
 import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
+
+import {expect, use} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import {createSandbox} from 'sinon';
 import {exec} from 'teen_process';
+
 import {fs, system, tempDir} from '../../lib';
 
 use(chaiAsPromised);

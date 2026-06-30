@@ -1,8 +1,10 @@
+import path from 'node:path';
+import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
+
 import {fs, logger, tempDir} from '@appium/support';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import path from 'node:path';
-import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
+
 import {Storage, StorageArgumentError, validateStorageItemName} from '../../lib/storage';
 
 use(chaiAsPromised);

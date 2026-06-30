@@ -1,6 +1,7 @@
 import type {Element} from '@appium/types';
 import {errors} from 'appium/driver';
 import {util} from 'appium/support';
+
 import type {FakeDriver} from '../driver';
 import {FakeElement, type XmlNodeLike} from '../fake-element';
 

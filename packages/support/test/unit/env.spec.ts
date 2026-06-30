@@ -1,9 +1,11 @@
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import path from 'node:path';
 import {afterEach, beforeEach, describe, it} from 'node:test';
+
+import {expect, use} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import type {SinonSandbox} from 'sinon';
 import type {TeenProcessExecResult} from 'teen_process';
+
 import {rewiremock} from '../helpers';
 import {initMocks, type MockReadPackage, type MockTeenProcess} from '../mocks';
 

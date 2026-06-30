@@ -1,13 +1,15 @@
+import type {ChildProcess} from 'node:child_process';
+import type {Writable} from 'node:stream';
+
 import {fs, system} from '@appium/support';
 import type {AppiumLogger} from '@appium/types';
 import {expect} from 'chai';
 import * as chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import type {ChildProcess} from 'node:child_process';
-import type {Writable} from 'node:stream';
 import type {SinonSandbox, SinonStub} from 'sinon';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
+
 import {ExtensionCommand, injectAppiumSymlinks} from '../../../lib/cli/extension-command';
 import type {ExtensionConfig} from '../../../lib/cli/extension-command';
 import {DriverConfig} from '../../../lib/extension/driver-config';

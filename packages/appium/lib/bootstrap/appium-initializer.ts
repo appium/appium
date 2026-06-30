@@ -8,6 +8,7 @@ import type {
   CliExtensionSubcommand,
   ParsedArgs,
 } from 'appium/types';
+
 import {AppiumDriver, type AppiumDriverConstraints} from '../appium';
 import {runExtensionCommand} from '../cli/extension';
 import {injectAppiumSymlinks} from '../cli/extension-command';

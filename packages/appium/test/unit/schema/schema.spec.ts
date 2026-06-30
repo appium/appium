@@ -2,6 +2,7 @@ import {AppiumConfigJsonSchema} from '@appium/schema';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {createSandbox} from 'sinon';
+
 import {DRIVER_TYPE, PLUGIN_TYPE} from '../../../lib/constants';
 import {APPIUM_CONFIG_SCHEMA_ID} from '../../../lib/schema/arg-spec';
 import type * as SchemaModule from '../../../lib/schema/schema';

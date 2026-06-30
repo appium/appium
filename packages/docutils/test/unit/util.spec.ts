@@ -1,5 +1,6 @@
 import * as chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+
 import {argify} from '../../lib/utils';
 
 chai.use(chaiAsPromised);

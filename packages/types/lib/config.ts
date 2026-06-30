@@ -1,4 +1,5 @@
 import type {AppiumConfigJsonSchema} from '@appium/schema';
+
 import type {AppiumConfiguration, ServerConfig} from './appium-config';
 import type {Associated, KebabToCamel} from './util';
 

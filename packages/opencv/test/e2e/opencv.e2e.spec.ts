@@ -1,7 +1,9 @@
+import path from 'node:path';
+
 import {fs} from '@appium/support';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import path from 'node:path';
+
 import {getImageOccurrence, getImagesMatches, getImagesSimilarity} from '../../lib';
 
 use(chaiAsPromised);

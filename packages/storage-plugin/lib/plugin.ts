@@ -1,11 +1,13 @@
+import {EventEmitter} from 'node:stream';
+
 import {fs, logger, tempDir, util} from '@appium/support';
 import type {AppiumServer} from '@appium/types';
 import {getResponseForW3CError} from 'appium/driver';
 import {BasePlugin} from 'appium/plugin';
 import type {Express, Request, Response} from 'express';
 import {LRUCache} from 'lru-cache';
-import {EventEmitter} from 'node:stream';
 import WebSocket from 'ws';
+
 import {requireValidItemOptions, Storage, StorageArgumentError, validateStorageItemName} from './storage';
 import type {AddRequestResult, ItemOptions, StorageItem} from './types';
 

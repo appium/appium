@@ -1,8 +1,10 @@
+import {spawn} from 'node:child_process';
+import path from 'node:path';
+
 import {fs, net, tempDir, zip} from '@appium/support';
 import {waitForCondition} from 'asyncbox';
 import _ from 'lodash';
-import {spawn} from 'node:child_process';
-import path from 'node:path';
+
 import {
   CROWIN_MKDOCS_CONFIG,
   DEFAULT_LANGUAGE,

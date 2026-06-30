@@ -34,6 +34,7 @@ import type {
   W3CDriverCaps,
 } from '@appium/types';
 import type WebSocket from 'ws';
+
 import * as bidiCommands from './bidi-commands';
 import {BIDI_BASE_PATH, DRIVER_TYPE, SESSION_DISCOVERY_FEATURE} from './constants';
 import type {DriverConfig} from './extension/driver-config';

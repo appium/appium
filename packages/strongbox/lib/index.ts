@@ -1,6 +1,8 @@
-import envPaths from 'env-paths';
 import {opendir, rm} from 'node:fs/promises';
 import path from 'node:path';
+
+import envPaths from 'env-paths';
+
 import {BaseItem} from './base-item';
 import {slugify} from './util';
 

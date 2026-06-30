@@ -1,11 +1,13 @@
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import type fs from 'node:fs/promises';
 import path from 'node:path';
 import {afterEach, beforeEach, describe, it} from 'node:test';
+
+import {expect, use} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import rewiremock from 'rewiremock/node';
 import type {SinonSandbox, SinonStub, SinonStubbedMember} from 'sinon';
 import {createSandbox} from 'sinon';
+
 import type {Item, Strongbox as TStrongbox, StrongboxOpts, Value} from '../../lib';
 
 use(chaiAsPromised);

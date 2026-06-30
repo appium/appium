@@ -1,5 +1,6 @@
 import {console, util} from '@appium/support';
 import type {ExtMetadata, ExtRecord, InstallType} from 'appium/types';
+
 import {KNOWN_DRIVERS} from '../constants';
 import ExtensionCliCommand from './extension-command';
 import type {

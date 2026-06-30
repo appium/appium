@@ -3,12 +3,14 @@
  * @module
  */
 
+import path from 'node:path';
+
 import {fs, tempDir} from '@appium/support';
 import * as chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import path from 'node:path';
 import * as YAML from 'yaml';
 import yargs from 'yargs/yargs';
+
 import {buildSite} from '../../lib/builder';
 import {build as buildCommand, init as initCommand, validate as validateCommand} from '../../lib/cli/command';
 import {DEFAULT_SITE_DIR, NAME_BIN, NAME_MKDOCS_YML, NAME_PACKAGE_JSON} from '../../lib/constants';

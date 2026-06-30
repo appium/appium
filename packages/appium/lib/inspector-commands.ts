@@ -15,6 +15,7 @@ import type {
   RestCommandItemParam,
   RestMethodsToCommandsMap,
 } from '@appium/types';
+
 import type {AppiumDriver} from './appium';
 import {mapValues} from './utils';
 

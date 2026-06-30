@@ -1,11 +1,13 @@
+import http from 'node:http';
+import https from 'node:https';
+import nodeUrl from 'node:url';
+
 import {logger, util} from '@appium/support';
 import type {AppiumLogger, HTTPBody, HTTPHeaders, HTTPMethod, ProxyOptions, ProxyResponse} from '@appium/types';
 import type {AxiosError, AxiosResponse, RawAxiosRequestConfig} from 'axios';
 import type {Request, Response} from 'express';
-import http from 'node:http';
-import https from 'node:https';
-import nodeUrl from 'node:url';
 import {match as pathToRegexMatch} from 'path-to-regexp';
+
 import {DEFAULT_BASE_PATH, MAX_LOG_BODY_LENGTH, PROTOCOLS} from '../constants';
 import {getSummaryByCode} from '../jsonwp-status/status';
 import {isSessionCommand, routeToCommandName} from '../protocol';

@@ -1,8 +1,10 @@
+import path from 'node:path';
+
 import type {DriverType, PluginType} from '@appium/types';
 import type {CliExtensionSubcommand} from 'appium/types';
 import {ArgumentParser} from 'argparse';
 import type {SubArgumentParserOptions, SubParser} from 'argparse';
-import path from 'node:path';
+
 import {
   DRIVER_TYPE,
   EXT_SUBCOMMAND_DOCTOR,

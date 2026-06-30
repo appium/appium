@@ -1,5 +1,6 @@
 import {expect} from 'chai';
 import sinon from 'sinon';
+
 import {RelaxedCapsPlugin} from '../../lib/plugin';
 
 const STD_CAPS = {

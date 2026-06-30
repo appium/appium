@@ -4,9 +4,11 @@
  * @module
  */
 
-import {fs, util} from '@appium/support';
 import {EventEmitter} from 'node:events';
+
+import {fs, util} from '@appium/support';
 import {exec} from 'teen_process';
+
 import {
   MESSAGE_PYTHON_MISSING,
   NAME_BIN,

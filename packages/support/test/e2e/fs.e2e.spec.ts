@@ -1,7 +1,9 @@
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import path from 'node:path';
 import {afterEach, beforeEach, describe, it} from 'node:test';
+
+import {expect, use} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+
 import {fs} from '../../lib/fs';
 import {isWindows} from '../../lib/system';
 import {openDir} from '../../lib/tempdir';

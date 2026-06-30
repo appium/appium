@@ -1,6 +1,8 @@
 import net from 'node:net';
 import path from 'node:path';
+
 import rewiremock, {addPlugin, overrideEntryPoint, plugins} from 'rewiremock';
+
 import {insertAppiumPrefixes} from '../lib/helpers/capability';
 
 const TEST_HOST = '127.0.0.1';

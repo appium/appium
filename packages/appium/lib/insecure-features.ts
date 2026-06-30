@@ -1,8 +1,8 @@
 import {util} from '@appium/support';
-import {log as logger} from './logger';
-
 import type {ExternalDriver} from '@appium/types';
+
 import type {AppiumDriver} from './appium';
+import {log as logger} from './logger';
 
 const ALL_DRIVERS_MATCH = '*';
 const FEATURE_NAME_SEPARATOR = ':';

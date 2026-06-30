@@ -1,6 +1,8 @@
+import {type Readable, Writable, type WritableOptions} from 'node:stream';
+
 import axios from 'axios';
 import B from 'bluebird';
-import {type Readable, Writable, type WritableOptions} from 'node:stream';
+
 import {requireSharp} from './image-util';
 import log from './logger';
 import {requirePackage} from './node';

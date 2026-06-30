@@ -1,9 +1,11 @@
+import path from 'node:path';
+
 import {env, fs, npm, tempDir} from '@appium/support';
 import type {ManifestData} from 'appium/types';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import path from 'node:path';
 import * as YAML from 'yaml';
+
 import {
   DRIVER_TYPE,
   EXT_SUBCOMMAND_INSTALL as INSTALL,

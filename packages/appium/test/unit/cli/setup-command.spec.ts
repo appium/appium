@@ -1,7 +1,7 @@
-import { system } from '@appium/support';
-import { expect } from 'chai';
-import { createSandbox } from 'sinon';
-import { getPresetDrivers } from '../../../lib/cli/setup-command';
+import {system} from '@appium/support';
+import {expect} from 'chai';
+import {createSandbox} from 'sinon';
+import {getPresetDrivers} from '../../../lib/cli/setup-command';
 
 describe('SetupCommand', function () {
   let sandbox: ReturnType<typeof createSandbox>;

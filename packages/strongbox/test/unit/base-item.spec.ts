@@ -1,13 +1,13 @@
-import { expect, use } from 'chai';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type fs from 'node:fs/promises';
 import path from 'node:path';
-import { beforeEach, describe, it } from 'node:test';
+import {beforeEach, describe, it} from 'node:test';
 import rewiremock from 'rewiremock/node';
-import type { SinonSandbox, SinonStubbedMember } from 'sinon';
-import { createSandbox } from 'sinon';
-import type { Item, Strongbox } from '../../lib';
-import type { BaseItem as TBaseItem } from '../../lib/base-item';
+import type {SinonSandbox, SinonStubbedMember} from 'sinon';
+import {createSandbox} from 'sinon';
+import type {Item, Strongbox} from '../../lib';
+import type {BaseItem as TBaseItem} from '../../lib/base-item';
 
 use(chaiAsPromised);
 
@@ -24,17 +24,17 @@ describe('Strongbox', function () {
 
   beforeEach(function () {
     sandbox = createSandbox();
-    ({ BaseItem } = rewiremock.proxy(
+    ({BaseItem} = rewiremock.proxy(
       () => require('../../lib'),
       (r) => ({
         // all of these props are async functions
         'node:fs/promises': r
           .mockThrough((prop) => {
-            MockFs = { ...MockFs, [prop]: sandbox.stub().resolves() };
+            MockFs = {...MockFs, [prop]: sandbox.stub().resolves()};
             return MockFs[prop as keyof typeof fs];
           })
           .dynamic(), // this allows us to change the mock behavior on-the-fly
-        'env-paths': sandbox.stub().returns({ data: DATA_DIR }),
+        'env-paths': sandbox.stub().returns({data: DATA_DIR}),
       }),
     ));
   });
@@ -42,7 +42,7 @@ describe('Strongbox', function () {
   describe('BaseItem', function () {
     describe('constructor', function () {
       it('should set the id property based on the parent container', function () {
-        const item = new BaseItem('foo', { container: DATA_DIR } as Strongbox);
+        const item = new BaseItem('foo', {container: DATA_DIR} as Strongbox);
         expect(item.id).to.equal(path.join(DATA_DIR, 'foo'));
       });
     });
@@ -51,7 +51,7 @@ describe('Strongbox', function () {
       let item: Item<string>;
 
       beforeEach(function () {
-        item = new BaseItem('foo', { container: DATA_DIR } as Strongbox);
+        item = new BaseItem('foo', {container: DATA_DIR} as Strongbox);
       });
       describe('clear()', function () {
         it('should remove the item from the filesystem', async function () {
@@ -61,7 +61,7 @@ describe('Strongbox', function () {
 
         describe('if the item does not exist', function () {
           beforeEach(function () {
-            MockFs.unlink.rejects({ code: 'ENOENT' });
+            MockFs.unlink.rejects({code: 'ENOENT'});
           });
           it('should not reject', async function () {
             await expect(item.clear()).to.not.be.rejected;
@@ -102,7 +102,7 @@ describe('Strongbox', function () {
         });
 
         it('should create the container', function () {
-          expect(MockFs.mkdir.calledWith(path.dirname(item.id), { recursive: true })).to.be.true;
+          expect(MockFs.mkdir.calledWith(path.dirname(item.id), {recursive: true})).to.be.true;
         });
       });
     });

@@ -1,9 +1,9 @@
-import { expect } from 'chai';
-import { afterEach, beforeEach, describe, it } from 'node:test';
-import { match } from 'path-to-regexp';
+import {expect} from 'chai';
+import {afterEach, beforeEach, describe, it} from 'node:test';
+import {match} from 'path-to-regexp';
 import sinon from 'sinon';
-import { log } from '../../../lib/express/logger';
-import { handleLogContext } from '../../../lib/express/middleware';
+import {log} from '../../../lib/express/logger';
+import {handleLogContext} from '../../../lib/express/middleware';
 
 describe('middleware', function () {
   describe('match', function () {

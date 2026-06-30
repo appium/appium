@@ -8,5 +8,5 @@ export function createProxyServer(port: number): {
   const app = Express();
   app.use(bodyParser.json());
   const server = app.listen(port);
-  return { app, server };
+  return {app, server};
 }

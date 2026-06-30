@@ -1,15 +1,15 @@
-import { AppiumConfigJsonSchema } from '@appium/schema';
+import {AppiumConfigJsonSchema} from '@appium/schema';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { createSandbox } from 'sinon';
-import { DRIVER_TYPE, PLUGIN_TYPE } from '../../../lib/constants';
-import { APPIUM_CONFIG_SCHEMA_ID } from '../../../lib/schema/arg-spec';
+import {createSandbox} from 'sinon';
+import {DRIVER_TYPE, PLUGIN_TYPE} from '../../../lib/constants';
+import {APPIUM_CONFIG_SCHEMA_ID} from '../../../lib/schema/arg-spec';
 import type * as SchemaModule from '../../../lib/schema/schema';
 import defaultArgsFixture from '../../fixtures/default-args';
 import DRIVER_SCHEMA_FIXTURE from '../../fixtures/driver-schema';
 import flattenedSchemaFixture from '../../fixtures/flattened-schema';
-import { rewiremock } from '../../helpers';
-const { expect } = chai;
+import {rewiremock} from '../../helpers';
+const {expect} = chai;
 chai.use(chaiAsPromised);
 
 describe('schema', function () {
@@ -119,7 +119,7 @@ describe('schema', function () {
       describe('when schema previously registered', function () {
         describe('when the schema is identical', function () {
           it('should not throw', async function () {
-            const schemaObject = { title: 'whoopee' };
+            const schemaObject = {title: 'whoopee'};
             await registerSchema(DRIVER_TYPE, 'whoopee', schemaObject);
             await expect(registerSchema(DRIVER_TYPE, 'whoopee', schemaObject)).to.be.fulfilled;
           });
@@ -127,7 +127,7 @@ describe('schema', function () {
 
         describe('when the schema is different', function () {
           it('should throw', async function () {
-            const schemaObject = { title: 'whoopee' };
+            const schemaObject = {title: 'whoopee'};
             await registerSchema(DRIVER_TYPE, 'whoopee', schemaObject);
             await expect(
               registerSchema(DRIVER_TYPE, 'whoopee', {
@@ -141,14 +141,14 @@ describe('schema', function () {
 
     describe('when provided a nonempty `type`, `schema` and `name`', function () {
       it('should register the schema', async function () {
-        const schemaObject = { title: 'whoopee' };
+        const schemaObject = {title: 'whoopee'};
         await expect(registerSchema(DRIVER_TYPE, 'whoopee', schemaObject)).to.be.fulfilled;
       });
 
       describe('when the `name` is not unique but `type` is', function () {
         it('should register both', async function () {
-          const schema1 = { title: 'pro-skub' };
-          const schema2 = { title: 'anti-skub' };
+          const schema1 = {title: 'pro-skub'};
+          const schema2 = {title: 'anti-skub'};
           await registerSchema(DRIVER_TYPE, 'skub', schema1);
           await expect(registerSchema(PLUGIN_TYPE, 'skub', schema2)).to.be.fulfilled;
         });
@@ -189,7 +189,7 @@ describe('schema', function () {
           expect(getSchema(`${APPIUM_CONFIG_SCHEMA_ID}#/properties/server/properties/address`)).to.exist.and.to.eql(
             (
               AppiumConfigJsonSchema as {
-                properties: { server: { properties: { address: unknown } } };
+                properties: {server: {properties: {address: unknown}}};
               }
             ).properties.server.properties.address,
           );
@@ -259,7 +259,7 @@ describe('schema', function () {
     });
 
     describe('when extensions provide schemas', function () {
-      let expected: Array<{ schema: object; argSpec: object }>;
+      let expected: Array<{schema: object; argSpec: object}>;
 
       beforeEach(async function () {
         await registerSchema(DRIVER_TYPE, 'fake', require('@appium/fake-driver/build/lib/fake-driver-schema').default);
@@ -327,7 +327,7 @@ describe('schema', function () {
 
       it('should return a Record containing all extension schemas and the base schema', async function () {
         type ServerDriverSchema = {
-          properties: { server: { properties: { driver: { properties: Record<string, unknown> } } } };
+          properties: {server: {properties: {driver: {properties: Record<string, unknown>}}}};
         };
         const baseSchemaWithRefs = structuredClone(AppiumConfigJsonSchema as ServerDriverSchema);
         baseSchemaWithRefs.properties.server.properties.driver.properties.stuff = {
@@ -379,13 +379,13 @@ describe('schema', function () {
       describe('when not provided a schema ID ref', function () {
         describe('when provided a valid value', function () {
           it('should return an empty array of no errors', function () {
-            expect(validate({ server: { address: '127.0.0.1' } })).to.eql([]);
+            expect(validate({server: {address: '127.0.0.1'}})).to.eql([]);
           });
         });
 
         describe('when provided an invalid value', function () {
           it('should return an array containing errors', function () {
-            expect(validate({ address: '127.0.0.1' })).to.be.an('array').and.to.not.be.empty;
+            expect(validate({address: '127.0.0.1'})).to.be.an('array').and.to.not.be.empty;
           });
         });
       });
@@ -421,13 +421,13 @@ describe('schema', function () {
       describe('when not provided a schema ID ref', function () {
         describe('when provided a valid value', function () {
           it('should return an empty array of no errors', function () {
-            expect(validate({ server: { driver: { stuff: { answer: 99 } } } })).to.eql([]);
+            expect(validate({server: {driver: {stuff: {answer: 99}}}})).to.eql([]);
           });
         });
 
         describe('when provided an invalid value', function () {
           it('should return an array containing errors', function () {
-            expect(validate({ server: { driver: { stuff: { answer: 101 } } } })).to.be.an('array').and.to.not.be.empty;
+            expect(validate({server: {driver: {stuff: {answer: 101}}}})).to.be.an('array').and.to.not.be.empty;
           });
         });
       });

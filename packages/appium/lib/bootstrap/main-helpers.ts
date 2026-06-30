@@ -4,21 +4,21 @@ import {
   server as baseServer,
   type ServerOpts,
 } from '@appium/base-driver';
-import { console as supportConsole, util } from '@appium/support';
-import type { AppiumServer, Driver, MethodMap, UpdateServerCallback } from '@appium/types';
-import type { Args, CliCommandServer, ParsedArgs } from 'appium/types';
-import type { NetworkInterfaceInfo } from 'node:os';
-import { inspect as dump, type InspectOptions } from 'node:util';
-import { WebSocketServer } from 'ws';
-import type { AppiumDriver } from '../appium';
-import { BIDI_BASE_PATH, LONG_STACKTRACE_LIMIT } from '../constants';
-import type { DriverNameMap, PluginNameMap } from '../extension';
-import { APPIUM_VER, getBuildInfo, getGitRev, updateBuildInfo } from '../helpers/build';
-import { fetchInterfaces, isBroadcastIp, V4_BROADCAST_IP } from '../helpers/network';
-import { log as logger } from '../logger';
-import { validate as validateSchema } from '../schema/schema';
-import { checkNodeOk, requireDir } from './node-helpers';
-import { getNonDefaultServerArgs } from './startup-config';
+import {console as supportConsole, util} from '@appium/support';
+import type {AppiumServer, Driver, MethodMap, UpdateServerCallback} from '@appium/types';
+import type {Args, CliCommandServer, ParsedArgs} from 'appium/types';
+import type {NetworkInterfaceInfo} from 'node:os';
+import {inspect as dump, type InspectOptions} from 'node:util';
+import {WebSocketServer} from 'ws';
+import type {AppiumDriver} from '../appium';
+import {BIDI_BASE_PATH, LONG_STACKTRACE_LIMIT} from '../constants';
+import type {DriverNameMap, PluginNameMap} from '../extension';
+import {APPIUM_VER, getBuildInfo, getGitRev, updateBuildInfo} from '../helpers/build';
+import {fetchInterfaces, isBroadcastIp, V4_BROADCAST_IP} from '../helpers/network';
+import {log as logger} from '../logger';
+import {validate as validateSchema} from '../schema/schema';
+import {checkNodeOk, requireDir} from './node-helpers';
+import {getNonDefaultServerArgs} from './startup-config';
 
 const isStdoutTTY = process.stdout.isTTY;
 
@@ -165,7 +165,7 @@ export function buildServerOpts(
   parsedArgs: ParsedArgs<CliCommandServer>,
   driverClasses: DriverNameMap,
   pluginClasses: PluginNameMap,
-): { serverOpts: ServerOpts; normalizedBasePath: string } {
+): {serverOpts: ServerOpts; normalizedBasePath: string} {
   const routeConfiguringFunction = makeRouter(appiumDriver);
   const serverOpts: ServerOpts = {
     routeConfiguringFunction,
@@ -183,7 +183,7 @@ export function buildServerOpts(
       serverOpts[timeoutArgName] = parsedArgs[timeoutArgName] * 1000;
     }
   }
-  return { serverOpts, normalizedBasePath };
+  return {serverOpts, normalizedBasePath};
 }
 
 /**
@@ -194,7 +194,7 @@ export async function createAppiumServer(
   appiumDriver: AppiumDriver,
   normalizedBasePath: string,
 ): Promise<AppiumServer> {
-  const bidiServer = new WebSocketServer({ noServer: true });
+  const bidiServer = new WebSocketServer({noServer: true});
   bidiServer.on('connection', appiumDriver.onBidiConnection.bind(appiumDriver));
   bidiServer.on('error', appiumDriver.onBidiServerError.bind(appiumDriver));
   const server = await baseServer(serverOpts);

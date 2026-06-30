@@ -1,11 +1,11 @@
-import { expect, use } from 'chai';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import path from 'node:path';
-import { afterEach, beforeEach, describe, it } from 'node:test';
-import type { SinonSandbox } from 'sinon';
-import type { TeenProcessExecResult } from 'teen_process';
-import { rewiremock } from '../helpers';
-import { initMocks, type MockReadPackage, type MockTeenProcess } from '../mocks';
+import {afterEach, beforeEach, describe, it} from 'node:test';
+import type {SinonSandbox} from 'sinon';
+import type {TeenProcessExecResult} from 'teen_process';
+import {rewiremock} from '../helpers';
+import {initMocks, type MockReadPackage, type MockTeenProcess} from '../mocks';
 
 use(chaiAsPromised);
 
@@ -109,7 +109,7 @@ describe('env', function () {
           describe('when `appium` is a dependency which does not resolve to a file path', function () {
             beforeEach(function () {
               MockReadPackage.readPackage.resolves({
-                devDependencies: { appium: '2.0.0-beta.25' },
+                devDependencies: {appium: '2.0.0-beta.25'},
               } as any);
             });
 
@@ -120,7 +120,7 @@ describe('env', function () {
 
           describe('when `appium` is a dependency for version 0.x', function () {
             beforeEach(function () {
-              MockReadPackage.readPackage.resolves({ devDependencies: { appium: '0.9.0' } } as any);
+              MockReadPackage.readPackage.resolves({devDependencies: {appium: '0.9.0'}} as any);
             });
             it('should resolve with DEFAULT_APPIUM_HOME', async function () {
               await expect(env.resolveAppiumHome(appiumHome)).to.eventually.equal(env.DEFAULT_APPIUM_HOME);
@@ -129,7 +129,7 @@ describe('env', function () {
 
           describe('when `appium` is a dependency for version 1.x', function () {
             beforeEach(function () {
-              MockReadPackage.readPackage.resolves({ devDependencies: { appium: '1.2.3' } } as any);
+              MockReadPackage.readPackage.resolves({devDependencies: {appium: '1.2.3'}} as any);
             });
 
             it('should resolve with DEFAULT_APPIUM_HOME', async function () {
@@ -230,7 +230,7 @@ describe('env', function () {
 
           describe('when `appium` dep is current', function () {
             beforeEach(function () {
-              MockReadPackage.readPackage.resolves({ devDependencies: { appium: '2.0.0' } } as any);
+              MockReadPackage.readPackage.resolves({devDependencies: {appium: '2.0.0'}} as any);
             });
 
             it('should resolve `true`', async function () {
@@ -240,7 +240,7 @@ describe('env', function () {
 
           describe('when `appium` dep is v1.x', function () {
             beforeEach(function () {
-              MockReadPackage.readPackage.resolves({ optionalDependencies: { appium: '1.x' } } as any);
+              MockReadPackage.readPackage.resolves({optionalDependencies: {appium: '1.x'}} as any);
             });
             it('should resolve `false`', async function () {
               await expect(env.hasAppiumDependency('/somewhere')).to.eventually.equal(false);
@@ -249,7 +249,7 @@ describe('env', function () {
 
           describe('when `appium` dep is v0.x', function () {
             beforeEach(function () {
-              MockReadPackage.readPackage.resolves({ dependencies: { appium: '0.x' } } as any);
+              MockReadPackage.readPackage.resolves({dependencies: {appium: '0.x'}} as any);
             });
 
             it('should resolve `false`', async function () {

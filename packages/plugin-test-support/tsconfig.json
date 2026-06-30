@@ -12,5 +12,5 @@
     "types": ["node"]
   },
   "include": ["./lib"],
-  "references": [{ "path": "../types" }, { "path": "../support" }]
+  "references": [{"path": "../types"}, {"path": "../support"}]
 }

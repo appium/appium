@@ -1,6 +1,6 @@
-import { fs, net, tempDir } from '@appium/support';
-import { waitForCondition } from 'asyncbox';
-import { log, performApiRequest } from './crowdin-common.mjs';
+import {fs, net, tempDir} from '@appium/support';
+import {waitForCondition} from 'asyncbox';
+import {log, performApiRequest} from './crowdin-common.mjs';
 
 const REPORT_TIMEOUT_MS = 1000 * 60 * 5; // 5 minutes
 const REPORT_STATUS = {
@@ -35,7 +35,7 @@ function getLastMonthDateRange() {
 async function generateReport(from, to) {
   log.info(`Generating translation report for ${from} to ${to}`);
 
-  const { data: reportData } = await performApiRequest('/reports', {
+  const {data: reportData} = await performApiRequest('/reports', {
     method: 'POST',
     payload: {
       name: 'top-members',
@@ -57,7 +57,7 @@ async function generateReport(from, to) {
  * @returns {Promise<{status: string, progress: number}>}
  */
 async function checkReportStatus(reportId) {
-  const { data: statusData } = await performApiRequest(`/reports/${reportId}`);
+  const {data: statusData} = await performApiRequest(`/reports/${reportId}`);
   return {
     status: statusData.status,
     progress: statusData.progress,
@@ -74,7 +74,7 @@ async function downloadReport(reportId) {
 
   await waitForCondition(
     async () => {
-      const { status, progress } = await checkReportStatus(reportId);
+      const {status, progress} = await checkReportStatus(reportId);
       log.debug(`Report status: ${status}, progress: ${progress}%`);
 
       switch (status) {
@@ -93,13 +93,13 @@ async function downloadReport(reportId) {
     },
   );
 
-  const { data: downloadData } = await performApiRequest(`/reports/${reportId}/download`);
+  const {data: downloadData} = await performApiRequest(`/reports/${reportId}/download`);
   log.info('Downloading report data');
 
   // Download the report file
-  const tmpFile = await tempDir.path({ prefix: 'crowdin-report', suffix: '.json' });
+  const tmpFile = await tempDir.path({prefix: 'crowdin-report', suffix: '.json'});
   try {
-    await net.downloadFile(downloadData.url, tmpFile, { isMetered: false });
+    await net.downloadFile(downloadData.url, tmpFile, {isMetered: false});
     const content = await fs.readFile(tmpFile, 'utf8');
     return JSON.parse(content);
   } finally {
@@ -125,7 +125,7 @@ function processReportData(reportData) {
       const languages = record.languages || [];
       if (languages.length === 0) {
         // If no languages specified, use "Unknown"
-        languages.push({ name: 'Unknown' });
+        languages.push({name: 'Unknown'});
       }
 
       // Add this user's stats to each language they contributed to
@@ -136,7 +136,7 @@ function processReportData(reportData) {
           stats[languageName] = {};
         }
         if (!stats[languageName][user]) {
-          stats[languageName][user] = { translated: 0, approved: 0 };
+          stats[languageName][user] = {translated: 0, approved: 0};
         }
         stats[languageName][user].translated += translated;
         stats[languageName][user].approved += approved;
@@ -152,7 +152,7 @@ function processReportData(reportData) {
  * @returns {Promise<{name: string, id: number}>}
  */
 async function getProjectInfo() {
-  const { data: projectData } = await performApiRequest('', {
+  const {data: projectData} = await performApiRequest('', {
     method: 'GET',
   });
   return {
@@ -171,7 +171,7 @@ async function getProjectInfo() {
  * @returns {object} Slack message payload with blocks
  */
 function formatSlackMessage(stats, projectName, from, to, generatedAt) {
-  const monthName = new Date(from).toLocaleString('en-US', { month: 'long', year: 'numeric' });
+  const monthName = new Date(from).toLocaleString('en-US', {month: 'long', year: 'numeric'});
   // Format dates as YYYY-MM-DD for display
   const fromDate = from.split('T')[0];
   const toDate = to.split('T')[0];
@@ -234,7 +234,7 @@ function formatSlackMessage(stats, projectName, from, to, generatedAt) {
         const text = buf.length ? `${current}\n${buf.join('\n')}` : current;
         blocks.push({
           type: 'section',
-          text: { type: 'mrkdwn', text },
+          text: {type: 'mrkdwn', text},
         });
         buf = [];
         current = header; // next chunk keeps the same header for clarity
@@ -266,7 +266,7 @@ function formatSlackMessage(stats, projectName, from, to, generatedAt) {
     },
   );
 
-  return { blocks };
+  return {blocks};
 }
 
 async function main() {

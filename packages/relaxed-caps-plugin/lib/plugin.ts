@@ -1,6 +1,6 @@
-import { isStandardCap } from 'appium/driver';
-import { BasePlugin } from 'appium/plugin';
-import type { CapsRecord, W3CCapsLike } from './types';
+import {isStandardCap} from 'appium/driver';
+import {BasePlugin} from 'appium/plugin';
+import type {CapsRecord, W3CCapsLike} from './types';
 
 const VENDOR_PREFIX = 'appium';
 const HAS_VENDOR_PREFIX_RE = /^.+:/;
@@ -8,7 +8,7 @@ const HAS_VENDOR_PREFIX_RE = /^.+:/;
 export class RelaxedCapsPlugin extends BasePlugin {
   async createSession(
     next: () => Promise<unknown>,
-    driver: { createSession: (...args: unknown[]) => Promise<unknown> },
+    driver: {createSession: (...args: unknown[]) => Promise<unknown>},
     caps1: W3CCapsLike | null,
     caps2?: W3CCapsLike | null,
     caps3?: W3CCapsLike | null,

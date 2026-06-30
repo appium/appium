@@ -1,5 +1,5 @@
-import { util } from '@appium/support';
-import type { AppiumServer, WSServer } from '@appium/types';
+import {util} from '@appium/support';
+import type {AppiumServer, WSServer} from '@appium/types';
 
 export const DEFAULT_WS_PATHNAME_PREFIX = '/ws';
 

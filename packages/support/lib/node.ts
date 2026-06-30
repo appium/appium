@@ -1,9 +1,9 @@
-import { randomUUID } from 'node:crypto';
+import {randomUUID} from 'node:crypto';
 import _fs from 'node:fs';
 import path from 'node:path';
-import { exec } from 'teen_process';
+import {exec} from 'teen_process';
 import log from './logger';
-import { isWindows } from './system';
+import {isWindows} from './system';
 
 const OBJECTS_MAPPING = new WeakMap<object, string>();
 
@@ -113,7 +113,7 @@ export function getModuleRootSync(moduleName: string, filePath: string): string 
     try {
       if (
         _fs.existsSync(manifestPath) &&
-        (JSON.parse(_fs.readFileSync(manifestPath, 'utf8')) as { name?: string }).name === moduleName
+        (JSON.parse(_fs.readFileSync(manifestPath, 'utf8')) as {name?: string}).name === moduleName
       ) {
         return currentDir;
       }
@@ -140,15 +140,15 @@ async function linkGlobalPackage(packageName: string): Promise<void> {
   try {
     log.debug(`Linking package '${packageName}'`);
     const cmd = isWindows() ? 'npm.cmd' : 'npm';
-    await exec(cmd, ['link', packageName], { timeout: 20000 });
+    await exec(cmd, ['link', packageName], {timeout: 20000});
   } catch (err) {
-    const e = err as Error & { stderr?: string };
+    const e = err as Error & {stderr?: string};
     const msg = `Unable to load package '${packageName}', linking failed: ${e.message}`;
     log.debug(msg);
     if (e.stderr) {
       log.debug(e.stderr);
     }
-    throw new Error(msg, { cause: err });
+    throw new Error(msg, {cause: err});
   }
 }
 

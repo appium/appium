@@ -1,15 +1,15 @@
-import { expect, use } from 'chai';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import os from 'node:os';
-import { afterEach, beforeEach, describe, it } from 'node:test';
-import { createSandbox } from 'sinon';
+import {afterEach, beforeEach, describe, it} from 'node:test';
+import {createSandbox} from 'sinon';
 import * as teen_process from 'teen_process';
-import { system, util } from '../../lib';
+import {system, util} from '../../lib';
 
 use(chaiAsPromised);
 
 const SANDBOX = Symbol();
-const libs = { os, system };
+const libs = {os, system};
 
 describe('system', function () {
   let sandbox: ReturnType<typeof createSandbox>;
@@ -53,21 +53,21 @@ describe('system', function () {
   describe('mac OSX version', function () {
     it('should return correct version for 10.10.5', async function () {
       (sandbox.stub(teen_process, 'exec') as any).get(() =>
-        sandbox.stub().withArgs('sw_vers', ['-productVersion']).returns({ stdout: '10.10.5' }),
+        sandbox.stub().withArgs('sw_vers', ['-productVersion']).returns({stdout: '10.10.5'}),
       );
       await expect(system.macOsxVersion()).to.eventually.equal('10.10');
     });
 
     it('should return correct version for 10.12', async function () {
       (sandbox.stub(teen_process, 'exec') as any).get(() =>
-        sandbox.stub().withArgs('sw_vers', ['-productVersion']).returns({ stdout: '10.12.0' }),
+        sandbox.stub().withArgs('sw_vers', ['-productVersion']).returns({stdout: '10.12.0'}),
       );
       await expect(system.macOsxVersion()).to.eventually.equal('10.12');
     });
 
     it('should return correct version for 10.12 with newline', async function () {
       (sandbox.stub(teen_process, 'exec') as any).get(() =>
-        sandbox.stub().withArgs('sw_vers', ['-productVersion']).returns({ stdout: '10.12   \n' }),
+        sandbox.stub().withArgs('sw_vers', ['-productVersion']).returns({stdout: '10.12   \n'}),
       );
       await expect(system.macOsxVersion()).to.eventually.equal('10.12');
     });
@@ -75,7 +75,7 @@ describe('system', function () {
     it("should throw an error if OSX version can't be determined", async function () {
       const invalidOsx = 'error getting operation system version blabla';
       (sandbox.stub(teen_process, 'exec') as any).get(() =>
-        sandbox.stub().withArgs('sw_vers', ['-productVersion']).returns({ stdout: invalidOsx }),
+        sandbox.stub().withArgs('sw_vers', ['-productVersion']).returns({stdout: invalidOsx}),
       );
       await expect(system.macOsxVersion()).to.eventually.be.rejectedWith(new RegExp(util.escapeRegExp(invalidOsx)));
     });
@@ -96,7 +96,7 @@ describe('system', function () {
     it('should return correct architecture if it is a 64 bit Mac/Linux', async function () {
       mocks.os.expects('type').thrice().returns('Darwin');
       (sandbox.stub(teen_process, 'exec') as any).get(() =>
-        sandbox.stub().withArgs('uname', ['-m']).returns({ stdout: 'x86_64' }),
+        sandbox.stub().withArgs('uname', ['-m']).returns({stdout: 'x86_64'}),
       );
       const arch = await system.arch();
       expect(arch).to.equal('64');
@@ -106,7 +106,7 @@ describe('system', function () {
     it('should return correct architecture if it is a 32 bit Mac/Linux', async function () {
       mocks.os.expects('type').twice().returns('Linux');
       (sandbox.stub(teen_process, 'exec') as any).get(() =>
-        sandbox.stub().withArgs('uname', ['-m']).returns({ stdout: 'i686' }),
+        sandbox.stub().withArgs('uname', ['-m']).returns({stdout: 'i686'}),
       );
       const arch = await system.arch();
       expect(arch).to.equal('32');

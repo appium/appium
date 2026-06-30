@@ -1,9 +1,9 @@
-import { expect, use } from 'chai';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { readFile, rm } from 'node:fs/promises';
-import { afterEach, beforeEach, describe, it } from 'node:test';
-import type { Item, Strongbox } from '../../lib';
-import { strongbox } from '../../lib';
+import {readFile, rm} from 'node:fs/promises';
+import {afterEach, beforeEach, describe, it} from 'node:test';
+import type {Item, Strongbox} from '../../lib';
+import {strongbox} from '../../lib';
 
 use(chaiAsPromised);
 
@@ -16,7 +16,7 @@ describe('@appium/strongbox', function () {
     });
 
     afterEach(async function () {
-      await rm(box.container, { recursive: true, force: true });
+      await rm(box.container, {recursive: true, force: true});
     });
 
     describe('when creating an Item with a value', function () {
@@ -87,14 +87,14 @@ describe('@appium/strongbox', function () {
       it('should not load persisted contents until read', async function () {
         const name = 'e2e-lazy-list';
         const writer = strongbox(name);
-        await rm(writer.container, { recursive: true, force: true });
+        await rm(writer.container, {recursive: true, force: true});
         await writer.createItemWithValue('key', 'payload');
         const reader = strongbox(name);
         const items = await reader.listItems();
         expect(items).to.have.length(1);
         expect(items[0].value).to.be.undefined;
         await expect(items[0].read()).to.eventually.equal('payload');
-        await rm(writer.container, { recursive: true, force: true });
+        await rm(writer.container, {recursive: true, force: true});
       });
     });
 
@@ -116,11 +116,11 @@ describe('@appium/strongbox', function () {
       const NAME = 'e2e-persistence-instance';
 
       beforeEach(async function () {
-        await rm(strongbox(NAME).container, { recursive: true, force: true });
+        await rm(strongbox(NAME).container, {recursive: true, force: true});
       });
 
       afterEach(async function () {
-        await rm(strongbox(NAME).container, { recursive: true, force: true });
+        await rm(strongbox(NAME).container, {recursive: true, force: true});
       });
 
       it('should expose persisted items from a second instance with the same identifier', async function () {

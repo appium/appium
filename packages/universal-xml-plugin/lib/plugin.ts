@@ -1,9 +1,9 @@
-import type { Element, ExternalDriver, NextPluginCallback } from '@appium/types';
-import { errors } from 'appium/driver';
-import { BasePlugin } from 'appium/plugin';
-import { transformSourceXml } from './source';
-import type { TransformMetadata } from './types';
-import { transformQuery } from './xpath';
+import type {Element, ExternalDriver, NextPluginCallback} from '@appium/types';
+import {errors} from 'appium/driver';
+import {BasePlugin} from 'appium/plugin';
+import {transformSourceXml} from './source';
+import type {TransformMetadata} from './types';
+import {transformQuery} from './xpath';
 
 export class UniversalXMLPlugin extends BasePlugin {
   async getPageSource(
@@ -19,7 +19,7 @@ export class UniversalXMLPlugin extends BasePlugin {
     if (platformName.toLowerCase() === 'android') {
       metadata.appPackage = (driver.opts as Record<string, unknown>)?.appPackage as string;
     }
-    const { xml, unknowns } = await transformSourceXml(source, platformName.toLowerCase(), {
+    const {xml, unknowns} = await transformSourceXml(source, platformName.toLowerCase(), {
       metadata,
       addIndexPath,
     });

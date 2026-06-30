@@ -1,8 +1,8 @@
-import { expect, use } from 'chai';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { createSandbox, type SinonSandbox, type SinonStub } from 'sinon';
+import {createSandbox, type SinonSandbox, type SinonStub} from 'sinon';
 import type registerNodeType from '../../../lib/bootstrap/grid-v3-register';
-import { rewiremock } from '../../helpers';
+import {rewiremock} from '../../helpers';
 
 /** Mimics `@appium/support` logger so `throw logger.errorWithException(msg)` throws a real `Error`. */
 function createStubAppiumLogger(sandbox: SinonSandbox) {
@@ -40,8 +40,8 @@ describe('bootstrap/grid-v3-register', function () {
     let registerNode: typeof registerNodeType;
     let mocks: {
       '@appium/support': {
-        fs: { readFile: SinonStub };
-        logger: { getLogger: SinonStub };
+        fs: {readFile: SinonStub};
+        logger: {getLogger: SinonStub};
       };
       axios: SinonStub;
     };
@@ -58,17 +58,16 @@ describe('bootstrap/grid-v3-register', function () {
             getLogger: sandbox.stub().returns(stubLog),
           },
         },
-        axios: sandbox.stub().resolves({ data: '', status: 200 }),
+        axios: sandbox.stub().resolves({data: '', status: 200}),
       };
 
-      ({ default: registerNode } = rewiremock.proxy(
-        () => require('../../../lib/bootstrap/grid-v3-register'),
-        mocks,
-      ) as { default: typeof registerNodeType });
+      ({default: registerNode} = rewiremock.proxy(() => require('../../../lib/bootstrap/grid-v3-register'), mocks) as {
+        default: typeof registerNodeType;
+      });
     });
 
     describe('when provided a path to a config file', function () {
-      const binding = { addr: '127.0.0.1', port: 4723, basePath: '' as string };
+      const binding = {addr: '127.0.0.1', port: 4723, basePath: '' as string};
 
       it('should read the config file', async function () {
         await registerNode('/path/to/config-file.json', binding.addr, binding.port, binding.basePath);
@@ -136,13 +135,13 @@ describe('bootstrap/grid-v3-register', function () {
 
     describe('when provided a config object', function () {
       it('should not attempt to read the object as a config file', async function () {
-        await registerNode({ my: 'config' });
+        await registerNode({my: 'config'});
         expect(mocks['@appium/support'].fs.readFile.called).to.be.false;
       });
 
       it('should not attempt to parse any JSON', async function () {
         const parseSpy = sandbox.spy(JSON, 'parse');
-        await registerNode({ my: 'config' });
+        await registerNode({my: 'config'});
         expect(parseSpy.called).to.be.false;
       });
 

@@ -1,8 +1,8 @@
-import { fs } from '@appium/support';
+import {fs} from '@appium/support';
 import nodeFs from 'node:fs';
 import path from 'node:path';
 import normalizePackageData from 'normalize-package-data';
-import type { PackageJson as TypeFestPackageJson } from 'type-fest';
+import type {PackageJson as TypeFestPackageJson} from 'type-fest';
 
 export type PackageJson = TypeFestPackageJson;
 
@@ -11,8 +11,8 @@ export type NormalizedPackageJson = PackageJson & {
   version: string;
   readme: string;
   _id: string;
-  bugs?: { url: string };
-  repository?: { type: string; url: string; directory?: string };
+  bugs?: {url: string};
+  repository?: {type: string; url: string; directory?: string};
 };
 
 export type ReadPackageOptions = {
@@ -22,7 +22,7 @@ export type ReadPackageOptions = {
   normalize?: boolean;
 };
 
-export type NormalizeOptions = ReadPackageOptions & { normalize?: true };
+export type NormalizeOptions = ReadPackageOptions & {normalize?: true};
 
 /** Finds the directory containing the nearest `package.json` by walking upward from `dir`. */
 export async function findPackageRoot(dir: string): Promise<string> {
@@ -62,7 +62,7 @@ export function findPackageRootSync(dir: string): string {
 export async function readPackage(options?: NormalizeOptions): Promise<NormalizedPackageJson>;
 export async function readPackage(options: ReadPackageOptions): Promise<PackageJson>;
 export async function readPackage(options: ReadPackageOptions = {}): Promise<PackageJson | NormalizedPackageJson> {
-  const { cwd, normalize = true } = options;
+  const {cwd, normalize = true} = options;
   const contents = await fs.readFile(getPackagePath(cwd), 'utf8');
   return parsePackageJson(contents, normalize);
 }

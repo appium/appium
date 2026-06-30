@@ -1,7 +1,7 @@
-import type { InitialOpts } from '@appium/types';
-import { expect } from 'chai';
-import { describe, it } from 'node:test';
-import { BaseDriver } from '../../../lib';
+import type {InitialOpts} from '@appium/types';
+import {expect} from 'chai';
+import {describe, it} from 'node:test';
+import {BaseDriver} from '../../../lib';
 
 describe('BaseDriver', function () {
   describe('constructor', function () {

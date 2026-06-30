@@ -1,8 +1,8 @@
-import { fs } from '@appium/support';
+import {fs} from '@appium/support';
 import path from 'node:path';
-import { PKG_HASHFILE_RELATIVE_PATH } from '../constants';
-import { log } from '../logger';
-import { isPackageChanged } from './is-package-changed';
+import {PKG_HASHFILE_RELATIVE_PATH} from '../constants';
+import {log} from '../logger';
+import {isPackageChanged} from './is-package-changed';
 
 /**
  * Determines if extensions have changed, and updates a hash the `package.json` in `appiumHome` if so.
@@ -19,7 +19,7 @@ export async function packageDidChange(appiumHome: string): Promise<boolean> {
   } catch (err: any) {
     throw new Error(
       `Appium could not create the directory for hash file: ${hashFilenameDir}. Original error: ${err.message}`,
-      { cause: err },
+      {cause: err},
     );
   }
 
@@ -28,7 +28,7 @@ export async function packageDidChange(appiumHome: string): Promise<boolean> {
   let oldHash: string | undefined;
   let hash: string;
   try {
-    ({ isChanged, writeHash, oldHash, hash } = await isPackageChanged({
+    ({isChanged, writeHash, oldHash, hash} = await isPackageChanged({
       cwd: appiumHome,
       hashFilename: PKG_HASHFILE_RELATIVE_PATH,
     }));

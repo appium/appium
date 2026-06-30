@@ -1,10 +1,10 @@
-import { fs } from '@appium/support';
-import { sleep } from 'asyncbox';
-import type { Request, Response } from 'express';
+import {fs} from '@appium/support';
+import {sleep} from 'asyncbox';
+import type {Request, Response} from 'express';
 import path from 'node:path';
-import { log } from '../express/logger';
-import { TEST_FIXTURES_DIR } from './static-dir';
-import { compileLodashTemplate } from './template';
+import {log} from '../express/logger';
+import {TEST_FIXTURES_DIR} from './static-dir';
+import {compileLodashTemplate} from './template';
 
 type TemplateParams = Record<string, unknown>;
 
@@ -25,7 +25,7 @@ export async function guineaPigAppBanner(req: Request, res: Response): Promise<v
 
 /** Dynamic page mapped to /welcome */
 export async function welcome(req: Request, res: Response): Promise<void> {
-  const params: TemplateParams = { message: "Let's browse!" };
+  const params: TemplateParams = {message: "Let's browse!"};
   log.debug(`Sending welcome response with params: ${JSON.stringify(params)}`);
   const template = await getTemplate('welcome.html');
   res.send(template(params));
@@ -41,7 +41,7 @@ async function guineaPigTemplate(req: Request, res: Response, page: string): Pro
     comment: 'None',
   };
   if (req.method === 'POST' && req.body && typeof req.body === 'object' && 'comments' in req.body) {
-    params.comment = String((req.body as { comments?: string }).comments ?? params.comment);
+    params.comment = String((req.body as {comments?: string}).comments ?? params.comment);
   }
   log.debug(`Sending guinea pig response with params: ${JSON.stringify(params)}`);
   if (delay) {
@@ -49,8 +49,8 @@ async function guineaPigTemplate(req: Request, res: Response, page: string): Pro
     await sleep(delay);
   }
   res.set('content-type', 'text/html');
-  res.cookie('guineacookie1', 'i am a cookie value', { path: '/' });
-  res.cookie('guineacookie2', 'cookié2', { path: '/' });
+  res.cookie('guineacookie1', 'i am a cookie value', {path: '/'});
+  res.cookie('guineacookie2', 'cookié2', {path: '/'});
   res.cookie('guineacookie3', 'cant access this', {
     domain: '.blargimarg.com',
     path: '/',

@@ -1,8 +1,8 @@
-import type { EventEmitter } from 'node:events';
+import type {EventEmitter} from 'node:events';
 import type internal from 'node:stream';
-import type { Merge } from 'type-fest';
-import type { Capabilities, DriverCaps, W3CCapabilities } from './capabilities';
-import type { BidiModuleMap, BiDiResultData, ExecuteMethodMap, MethodMap } from './command-maps';
+import type {Merge} from 'type-fest';
+import type {Capabilities, DriverCaps, W3CCapabilities} from './capabilities';
+import type {BidiModuleMap, BiDiResultData, ExecuteMethodMap, MethodMap} from './command-maps';
 import type {
   DefaultCreateSessionResult,
   DefaultDeleteSessionResult,
@@ -15,12 +15,12 @@ import type {
   IOtherProtocolCommands,
   IWDClassicCommands,
 } from './commands';
-import type { ServerArgs } from './config';
-import type { Constraints } from './constraints';
-import type { HTTPHeaders, HTTPMethod } from './http';
-import type { AppiumLogger } from './logger';
-import type { AppiumServer, UpdateServerCallback } from './server';
-import type { Class, StringRecord } from './util';
+import type {ServerArgs} from './config';
+import type {Constraints} from './constraints';
+import type {HTTPHeaders, HTTPMethod} from './http';
+import type {AppiumLogger} from './logger';
+import type {AppiumServer, UpdateServerCallback} from './server';
+import type {Class, StringRecord} from './util';
 /**
  * Interface implemented by the `DeviceSettings` class in `@appium/base-driver`
  */
@@ -423,7 +423,7 @@ export interface CachedAppInfo {
    * An object containing either `file` property with SHA1 hash of the file or `folder` property
    * with total amount of cached files and subfolders
    */
-  integrity?: { file?: string } | { folder?: number };
+  integrity?: {file?: string} | {folder?: number};
   /**
    * The full path to the cached app
    */

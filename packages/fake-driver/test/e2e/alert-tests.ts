@@ -1,14 +1,14 @@
-import chai, { expect } from 'chai';
+import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { deleteSession, initSession, W3C_PREFIXED_CAPS } from '../helpers';
+import {deleteSession, initSession, W3C_PREFIXED_CAPS} from '../helpers';
 
 chai.use(chaiAsPromised);
 
-export function alertTests(context: { port: number }) {
+export function alertTests(context: {port: number}) {
   describe('alerts', function () {
     let driver: Awaited<ReturnType<typeof initSession>>;
     before(async function () {
-      driver = await initSession(W3C_PREFIXED_CAPS, { port: context.port });
+      driver = await initSession(W3C_PREFIXED_CAPS, {port: context.port});
     });
     after(async function () {
       return await deleteSession(driver);

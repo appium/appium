@@ -3,10 +3,10 @@
  * @module
  */
 
-import { fs, util } from '@appium/support';
-import type { Options } from 'yargs';
-import { getLogger } from '../logger';
-import { kebabCase } from '../utils';
+import {fs, util} from '@appium/support';
+import type {Options} from 'yargs';
+import {getLogger} from '../logger';
+import {kebabCase} from '../utils';
 
 const log = getLogger('check');
 
@@ -57,14 +57,14 @@ export async function checkMissingPaths<T extends Record<string, Options>>(
   log.debug(
     'Checking for existence of %s: %s',
     util.pluralize('path', pathsToCheck.length),
-    pathsToCheck.map(({ path }) => path),
+    pathsToCheck.map(({path}) => path),
   );
 
   const missingPaths = await filterMissing(pathsToCheck);
 
   if (missingPaths.length) {
     return missingPaths
-      .map(({ id, path }) => `Default or specified path via --${kebabCase(id)} (${path}) does not exist`)
+      .map(({id, path}) => `Default or specified path via --${kebabCase(id)} (${path}) does not exist`)
       .join('\n');
   }
 
@@ -77,6 +77,6 @@ export async function checkMissingPaths<T extends Record<string, Options>>(
  * @returns Missing files
  */
 async function filterMissing(paths: MissingFileData[]): Promise<MissingFileData[]> {
-  const exists = await Promise.all(paths.map(async ({ id, path }) => ({ id, path, exists: await fs.exists(path) })));
-  return exists.filter((result) => !result.exists).map(({ id, path }) => ({ id, path }));
+  const exists = await Promise.all(paths.map(async ({id, path}) => ({id, path, exists: await fs.exists(path)})));
+  return exists.filter((result) => !result.exists).map(({id, path}) => ({id, path}));
 }

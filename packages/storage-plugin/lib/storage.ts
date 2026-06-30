@@ -1,14 +1,14 @@
-import { fs, timing, util } from '@appium/support';
-import type { AppiumLogger } from '@appium/types';
+import {fs, timing, util} from '@appium/support';
+import type {AppiumLogger} from '@appium/types';
 import AsyncLock from 'async-lock';
-import { asyncmap } from 'asyncbox';
-import { createHash } from 'node:crypto';
+import {asyncmap} from 'asyncbox';
+import {createHash} from 'node:crypto';
 import nativeFs from 'node:fs';
 import path from 'node:path';
 import type Stream from 'node:stream';
-import type { Path } from 'path-scurry';
+import type {Path} from 'path-scurry';
 import type WebSocket from 'ws';
-import type { ItemOptions, StorageItem } from './types';
+import type {ItemOptions, StorageItem} from './types';
 
 const MAX_TASKS = 5;
 const TMP_EXT = '.filepart';
@@ -46,7 +46,7 @@ export class Storage {
   }
 
   async add(opts: ItemOptions, source: Stream | WebSocket): Promise<void> {
-    const { name } = requireValidItemOptions(opts);
+    const {name} = requireValidItemOptions(opts);
     // toLowerCase is needed for case-insensitive server filesystems
     await ADDITION_LOCK.acquire(name.toLowerCase(), async () => {
       if (typeof (source as any).pipe === 'function') {
@@ -86,7 +86,7 @@ export class Storage {
       return;
     }
 
-    await asyncmap(files, (fullPath) => fs.rimraf(fullPath), { concurrency: MAX_TASKS });
+    await asyncmap(files, (fullPath) => fs.rimraf(fullPath), {concurrency: MAX_TASKS});
   }
 
   cleanupSync(): void {
@@ -133,7 +133,7 @@ export class Storage {
   }
 
   private async _addFromStream(opts: ItemOptions, source: Stream): Promise<void> {
-    const { name } = opts;
+    const {name} = opts;
     const fullPath = path.join(this._root, toTempName(name));
     const timer = new timing.Timer().start();
     const destination = fs.createWriteStream(fullPath);
@@ -152,7 +152,7 @@ export class Storage {
   }
 
   private async _addFromWebSocket(opts: ItemOptions, source: WebSocket): Promise<void> {
-    const { name, sha1 } = opts;
+    const {name, sha1} = opts;
     const fullPath = path.join(this._root, toTempName(name));
     const timer = new timing.Timer().start();
     const destination = fs.createWriteStream(fullPath);
@@ -201,7 +201,7 @@ export class Storage {
     fullPath: string,
     actualHashDigest: string,
   ): Promise<void> {
-    const { name, sha1 } = opts;
+    const {name, sha1} = opts;
     this._log.info(
       `'${name}' has been added to the server storage within ` +
         `${timer.getDuration().asMilliSeconds}ms. Verifying hashes.`,

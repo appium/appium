@@ -1,17 +1,17 @@
-import { getTestPort, TEST_HOST } from '@appium/driver-test-support';
-import type { RouteMatcher } from '@appium/types';
+import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
+import type {RouteMatcher} from '@appium/types';
 import axios from 'axios';
-import chai, { expect } from 'chai';
+import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import type { Application, Request, Response } from 'express';
-import { StatusCodes as HTTPStatusCodes } from 'http-status-codes';
-import { after, afterEach, before, beforeEach, describe, it } from 'node:test';
-import { createSandbox } from 'sinon';
-import { errors, JWProxy } from '../../../lib';
-import { MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY } from '../../../lib/constants';
-import { createServer } from '../../helpers';
-import { FakeDriver } from './fake-driver';
-import { createProxyServer } from './helpers';
+import type {Application, Request, Response} from 'express';
+import {StatusCodes as HTTPStatusCodes} from 'http-status-codes';
+import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
+import {createSandbox} from 'sinon';
+import {errors, JWProxy} from '../../../lib';
+import {MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY} from '../../../lib/constants';
+import {createServer} from '../../helpers';
+import {FakeDriver} from './fake-driver';
+import {createProxyServer} from './helpers';
 
 chai.use(chaiAsPromised);
 
@@ -41,7 +41,7 @@ describe('Protocol', function () {
     before(async function () {
       driver = new FakeDriver();
       driver.sessionId = 'foo';
-      const { baseUrl: baseUrlStr, setup, teardown: teardownFn } = await createServer(driver);
+      const {baseUrl: baseUrlStr, setup, teardown: teardownFn} = await createServer(driver);
       baseUrl = baseUrlStr;
       teardown = teardownFn;
       await setup();
@@ -52,10 +52,10 @@ describe('Protocol', function () {
     });
 
     it('should proxy to driver and return valid jsonwp response', async function () {
-      const { data } = await axios({
+      const {data} = await axios({
         url: `${baseUrl}/session/foo/url`,
         method: 'POST',
-        data: { url: 'http://google.com' },
+        data: {url: 'http://google.com'},
       });
       expect(data).to.eql({
         value: 'Navigated to: http://google.com',
@@ -63,10 +63,10 @@ describe('Protocol', function () {
     });
 
     it('should assume requests without a Content-Type are json requests', async function () {
-      const { data } = await axios({
+      const {data} = await axios({
         url: `${baseUrl}/session/foo/url`,
         method: 'POST',
-        data: { url: 'http://google.com' },
+        data: {url: 'http://google.com'},
       });
       expect(data).to.eql({
         value: 'Navigated to: http://google.com',
@@ -76,7 +76,7 @@ describe('Protocol', function () {
     it('should respond to x-www-form-urlencoded as well as json requests', async function () {
       const reqData = new URLSearchParams();
       reqData.set('url', 'http://google.com');
-      const { data } = await axios({
+      const {data} = await axios({
         url: `${baseUrl}/session/foo/url`,
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -90,7 +90,7 @@ describe('Protocol', function () {
     });
 
     it('should include url request parameters for methods to use - sessionid', async function () {
-      const { data } = await axios({
+      const {data} = await axios({
         url: `${baseUrl}/session/foo/back`,
         method: 'POST',
         data: {},
@@ -101,7 +101,7 @@ describe('Protocol', function () {
     });
 
     it('should include url request parameters for methods to use - elementid', async function () {
-      const { data } = await axios({
+      const {data} = await axios({
         url: `${baseUrl}/session/foo/element/bar/click`,
         method: 'POST',
         data: {},
@@ -110,14 +110,14 @@ describe('Protocol', function () {
     });
 
     it('should include url req params in the order: custom, element, session', async function () {
-      const { data } = await axios({
+      const {data} = await axios({
         url: `${baseUrl}/session/foo/element/bar/attribute/baz`,
       });
       expect(data.value).to.eql(['baz', 'bar', 'foo']);
     });
 
     it('should respond with 400 Bad Request if parameters missing', async function () {
-      const { data, status } = await axios({
+      const {data, status} = await axios({
         url: `${baseUrl}/session/foo/url`,
         method: 'POST',
         data: {},
@@ -136,10 +136,10 @@ describe('Protocol', function () {
         }),
       ).to.be.rejectedWith(Error);
 
-      const { data } = await axios({
+      const {data} = await axios({
         url: `${baseUrl}/session/foo/url`,
         method: 'POST',
-        data: { url: 'http://google.com' },
+        data: {url: 'http://google.com'},
       });
       expect(data).to.eql({
         value: 'Navigated to: http://google.com',
@@ -155,7 +155,7 @@ describe('Protocol', function () {
     });
 
     it('4xx responses should have content-type of application/json', async function () {
-      const { headers } = await axios({
+      const {headers} = await axios({
         url: `${baseUrl}/blargimargarita`,
         validateStatus: null,
       });
@@ -164,7 +164,7 @@ describe('Protocol', function () {
     });
 
     it('should return unknown command for routes without a command mapping', async function () {
-      const { status, data } = await axios({
+      const {status, data} = await axios({
         url: `${baseUrl}/session/foo/element/bar/location`,
         validateStatus: null,
       });
@@ -175,7 +175,7 @@ describe('Protocol', function () {
     });
 
     it('should return unknown command for ignored legacy routes', async function () {
-      const { status, data } = await axios({
+      const {status, data} = await axios({
         url: `${baseUrl}/session/foo/buttonup`,
         method: 'POST',
         validateStatus: null,
@@ -201,14 +201,14 @@ describe('Protocol', function () {
       await axios({
         url: `${baseUrl}/session/foo/element/bar/value`,
         method: 'POST',
-        data: { id: 'baz', sessionId: 'lol', value: ['a'], text: 'bar' },
+        data: {id: 'baz', sessionId: 'lol', value: ['a'], text: 'bar'},
       });
 
       await expect(
         axios({
           url: `${baseUrl}/session/foo/element/bar/value`,
           method: 'POST',
-          data: { id: 'baz' },
+          data: {id: 'baz'},
         }),
       ).to.be.rejectedWith(/400/);
 
@@ -217,12 +217,12 @@ describe('Protocol', function () {
       await axios({
         url: `${baseUrl}/session/foo/frame`,
         method: 'POST',
-        data: { id: 'baz' },
+        data: {id: 'baz'},
       });
     });
 
     it('should return the correct error even if driver does not throw', async function () {
-      const { status, data } = await axios({
+      const {status, data} = await axios({
         url: `${baseUrl}/session/foo/appium/settings`,
         method: 'GET',
         validateStatus: null,
@@ -239,23 +239,23 @@ describe('Protocol', function () {
           axios({
             url: `${baseUrl}/session/foo/element/bar/value`,
             method: 'POST',
-            data: { value: 'text to type' },
+            data: {value: 'text to type'},
           }),
         ).to.be.rejectedWith(/400/);
       });
       it('should accept text for sendkeys', async function () {
-        const { data } = await axios({
+        const {data} = await axios({
           url: `${baseUrl}/session/foo/element/bar/value`,
           method: 'POST',
-          data: { text: 'text to type' },
+          data: {text: 'text to type'},
         });
         expect(data.value).to.eql(['text to type', 'bar']);
       });
       it('should accept value and text for sendkeys, and use text', async function () {
-        const { data } = await axios({
+        const {data} = await axios({
           url: `${baseUrl}/session/foo/element/bar/value`,
           method: 'POST',
-          data: { value: 'text to ignore', text: 'text to type' },
+          data: {value: 'text to ignore', text: 'text to type'},
         });
         expect(data.value).to.eql(['text to type', 'bar']);
       });
@@ -274,21 +274,21 @@ describe('Protocol', function () {
       });
 
       it('should not allow create session with desired caps (MJSONWP)', async function () {
-        const desiredCapabilities = { a: 'b' };
+        const desiredCapabilities = {a: 'b'};
         await expect(
           axios({
             url: `${baseUrl}/session`,
             method: 'POST',
-            data: { desiredCapabilities },
+            data: {desiredCapabilities},
           }),
         ).to.be.rejectedWith(/500/);
       });
       it('should allow create session with capabilities (W3C)', async function () {
-        const w3cCapabilities = { alwaysMatch: { 'appium:e': 'f' } };
-        const { data } = await axios({
+        const w3cCapabilities = {alwaysMatch: {'appium:e': 'f'}};
+        const {data} = await axios({
           url: `${baseUrl}/session`,
           method: 'POST',
-          data: { capabilities: w3cCapabilities },
+          data: {capabilities: w3cCapabilities},
         });
         expect(data.status).to.not.exist;
         expect(data.sessionId).to.not.exist;
@@ -302,7 +302,7 @@ describe('Protocol', function () {
 
         beforeEach(async function () {
           // Start a W3C session
-          const { value } = (
+          const {value} = (
             await axios({
               url: `${baseUrl}/session`,
               method: 'POST',
@@ -322,7 +322,7 @@ describe('Protocol', function () {
         });
 
         it('should throw 400 Bad Parameters exception if the parameters are bad', async function () {
-          const { status, data } = await axios({
+          const {status, data} = await axios({
             url: `${sessionUrl}/actions`,
             method: 'POST',
             validateStatus: null,
@@ -332,7 +332,7 @@ describe('Protocol', function () {
           });
           expect(status).to.equal(400);
 
-          const { error: w3cError, message, stacktrace } = data.value;
+          const {error: w3cError, message, stacktrace} = data.value;
           expect(message).to.match(/following required parameter/);
           expect(stacktrace).to.match(/protocol.js/);
           expect(w3cError).to.be.a('string');
@@ -340,7 +340,7 @@ describe('Protocol', function () {
         });
 
         it(`should throw 405 exception if the command hasn't been implemented yet`, async function () {
-          const { status, data } = await axios({
+          const {status, data} = await axios({
             url: `${sessionUrl}/actions`,
             method: 'POST',
             validateStatus: null,
@@ -350,7 +350,7 @@ describe('Protocol', function () {
           });
           expect(status).to.equal(405);
 
-          const { error: w3cError, message, stacktrace } = data.value;
+          const {error: w3cError, message, stacktrace} = data.value;
           expect(message).to.match(/Method has not yet been implemented/);
           expect(stacktrace).to.match(/protocol.js/);
           expect(w3cError).to.be.a('string');
@@ -362,7 +362,7 @@ describe('Protocol', function () {
           (driver as any).performActions = () => {
             throw new Error(`Didn't work`);
           };
-          const { status, data } = await axios({
+          const {status, data} = await axios({
             url: `${sessionUrl}/actions`,
             method: 'POST',
             validateStatus: null,
@@ -372,7 +372,7 @@ describe('Protocol', function () {
           });
           expect(status).to.equal(500);
 
-          const { error: w3cError, message, stacktrace } = data.value;
+          const {error: w3cError, message, stacktrace} = data.value;
           expect(stacktrace).to.match(/protocol.js/);
           expect(w3cError).to.be.a('string');
           expect(w3cError).to.equal(errors.UnknownError.error());
@@ -412,7 +412,7 @@ describe('Protocol', function () {
 
           const findElementsBackup = driver.findElements;
           driver.findElements = () => Promise.resolve(retValue as any);
-          const { data } = await axios.post(`${sessionUrl}/elements`, {
+          const {data} = await axios.post(`${sessionUrl}/elements`, {
             using: 'whatever',
             value: 'whatever',
           });
@@ -424,7 +424,7 @@ describe('Protocol', function () {
           const setUrlStub = sandbox.stub(driver, 'setUrl').callsFake(function () {
             throw new errors.TimeoutError();
           });
-          const { status, data } = await axios({
+          const {status, data} = await axios({
             url: `${sessionUrl}/url`,
             method: 'POST',
             validateStatus: null,
@@ -434,7 +434,7 @@ describe('Protocol', function () {
           });
           expect(status).to.equal(408);
 
-          const { error: w3cError, message, stacktrace } = data.value;
+          const {error: w3cError, message, stacktrace} = data.value;
           expect(stacktrace).to.match(/protocol.js/);
           expect(w3cError).to.be.a('string');
           expect(w3cError).to.equal(errors.TimeoutError.error());
@@ -445,7 +445,7 @@ describe('Protocol', function () {
 
         it(`should pass with 200 HTTP status code if the command returns a value`, async function () {
           (driver as any).performActions = (actions: object[]) => 'It works ' + actions.join('');
-          const { status, value, sessionId } = (
+          const {status, value, sessionId} = (
             await axios.post(`${sessionUrl}/actions`, {
               actions: ['a', 'b', 'c'],
             })
@@ -470,7 +470,7 @@ describe('Protocol', function () {
             const res = createProxyServer(port);
             server = res.server;
             app = res.app;
-            jwproxy = new JWProxy({ server: TEST_HOST, port });
+            jwproxy = new JWProxy({server: TEST_HOST, port});
             jwproxy.sessionId = sessionId;
             (driver as any).performActions = async (actions: object[]) =>
               await jwproxy.command('/perform-actions', 'POST', actions);
@@ -490,7 +490,7 @@ describe('Protocol', function () {
               });
             });
 
-            const { status, value, sessionId } = (
+            const {status, value, sessionId} = (
               await axios.post(`${sessionUrl}/actions`, {
                 actions: [1, 2, 3],
               })
@@ -508,7 +508,7 @@ describe('Protocol', function () {
                 value: 'A problem occurred',
               });
             });
-            const { status, data } = await axios({
+            const {status, data} = await axios({
               url: `${sessionUrl}/actions`,
               method: 'POST',
               validateStatus: null,
@@ -530,14 +530,14 @@ describe('Protocol', function () {
                 },
               });
             });
-            const { status, data } = await axios({
+            const {status, data} = await axios({
               url: `${sessionUrl}/actions`,
               method: 'POST',
               validateStatus: null,
-              data: { actions: [1, 2, 3] },
+              data: {actions: [1, 2, 3]},
             });
             expect(status).to.equal(500);
-            const { error: w3cError, message: errMessage, stacktrace } = data.value;
+            const {error: w3cError, message: errMessage, stacktrace} = data.value;
             expect(w3cError).to.equal('unknown error');
             expect(stacktrace).to.match(/Some error occurred/);
             expect(errMessage).to.equal('Some error occurred');
@@ -551,7 +551,7 @@ describe('Protocol', function () {
                 value: 'A problem occurred',
               });
             });
-            const { status, data } = await axios({
+            const {status, data} = await axios({
               url: `${sessionUrl}/actions`,
               method: 'POST',
               validateStatus: null,
@@ -560,7 +560,7 @@ describe('Protocol', function () {
               },
             });
             expect(status).to.equal(HTTPStatusCodes.NOT_FOUND);
-            const { error: w3cError, message: errMessage, stacktrace } = data.value;
+            const {error: w3cError, message: errMessage, stacktrace} = data.value;
             expect(w3cError).to.equal('no such element');
             expect(errMessage).to.match(/A problem occurred/);
             expect(stacktrace).to.exist;
@@ -576,7 +576,7 @@ describe('Protocol', function () {
                 },
               });
             });
-            const { status, data } = await axios({
+            const {status, data} = await axios({
               url: `${sessionUrl}/actions`,
               method: 'POST',
               validateStatus: null,
@@ -585,7 +585,7 @@ describe('Protocol', function () {
               },
             });
             expect(status).to.equal(HTTPStatusCodes.NOT_FOUND);
-            const { error: w3cError, stacktrace } = data.value;
+            const {error: w3cError, stacktrace} = data.value;
             expect(w3cError).to.equal('no such element');
             expect(stacktrace).to.match(/arbitrary stacktrace/);
           });
@@ -601,7 +601,7 @@ describe('Protocol', function () {
                 },
               });
             });
-            const { status, data } = await axios({
+            const {status, data} = await axios({
               url: `${sessionUrl}/actions`,
               method: 'POST',
               validateStatus: null,
@@ -610,7 +610,7 @@ describe('Protocol', function () {
               },
             });
             expect(status).to.equal(HTTPStatusCodes.INTERNAL_SERVER_ERROR);
-            const { error: w3cError, stacktrace } = data.value;
+            const {error: w3cError, stacktrace} = data.value;
             expect(w3cError).to.equal('unknown error');
             expect(stacktrace).to.match(/arbitrary stacktrace/);
           });
@@ -619,7 +619,7 @@ describe('Protocol', function () {
     });
 
     it('should send 404 response for invalid session id', async function () {
-      const { status, data } = await axios({
+      const {status, data} = await axios({
         url: `${baseUrl}/session/foo/refresh`,
         method: 'POST',
         validateStatus: null,
@@ -638,7 +638,7 @@ describe('Protocol', function () {
 
     before(async function () {
       driver = new FakeDriver();
-      const { baseUrl: baseUrlStr, setup, teardown: teardownFn } = await createServer(driver);
+      const {baseUrl: baseUrlStr, setup, teardown: teardownFn} = await createServer(driver);
       baseUrl = baseUrlStr;
       teardown = teardownFn;
       await setup();
@@ -656,10 +656,10 @@ describe('Protocol', function () {
       const sessionId = 'Vader Sessions';
       driver.sessionId = sessionId;
 
-      const { data } = await axios({
+      const {data} = await axios({
         url: `${baseUrl}/session/${sessionId}/url`,
         method: 'POST',
-        data: { url: 'http://google.com' },
+        data: {url: 'http://google.com'},
         validateStatus: null,
       });
 
@@ -667,12 +667,12 @@ describe('Protocol', function () {
     });
 
     it('should return a new session ID on create', async function () {
-      const { data } = await axios({
+      const {data} = await axios({
         url: `${baseUrl}/session`,
         method: 'POST',
         data: {
           capabilities: {
-            alwaysMatch: { 'appium:greeting': 'hello' },
+            alwaysMatch: {'appium:greeting': 'hello'},
             firstMatch: [{}],
           },
         },
@@ -682,7 +682,7 @@ describe('Protocol', function () {
         expect(data.value.sessionId).to.exist;
         expect(data.value.sessionId.indexOf('fakeSession_')).to.equal(0);
         expect(data.value.capabilities).to.eql({
-          alwaysMatch: { 'appium:greeting': 'hello' },
+          alwaysMatch: {'appium:greeting': 'hello'},
           firstMatch: [{}],
         });
       } finally {
@@ -708,7 +708,7 @@ describe('Protocol', function () {
         baseUrl: baseUrlStr,
         setup,
         teardown: teardownFn,
-      } = await createServer(driver, { extraMethodMap: FakeDriver.newMethodMap });
+      } = await createServer(driver, {extraMethodMap: FakeDriver.newMethodMap});
       baseUrl = baseUrlStr;
       teardown = teardownFn;
       await setup();
@@ -720,11 +720,11 @@ describe('Protocol', function () {
 
     it('should give a nice error if proxying is set but no proxy function exists', async function () {
       (driver as any).canProxy = () => false;
-      const { status, data } = await axios({
+      const {status, data} = await axios({
         url: `${baseUrl}/session/${sessionId}/url`,
         method: 'POST',
         validateStatus: null,
-        data: { url: 'http://google.com' },
+        data: {url: 'http://google.com'},
       });
 
       expect(status).to.equal(500);
@@ -736,11 +736,11 @@ describe('Protocol', function () {
       (driver as any).proxyReqRes = async function () {
         throw new Error('foo');
       };
-      const { status, data } = await axios({
+      const {status, data} = await axios({
         url: `${baseUrl}/session/${sessionId}/url`,
         method: 'POST',
         validateStatus: null,
-        data: { url: 'http://google.com' },
+        data: {url: 'http://google.com'},
       });
 
       expect(status).to.equal(500);
@@ -757,11 +757,11 @@ describe('Protocol', function () {
         };
         throw new errors.ProxyRequestError(`Could not proxy command to remote server. `, jsonwp);
       };
-      const { status, data } = await axios({
+      const {status, data} = await axios({
         url: `${baseUrl}/session/${sessionId}/url`,
         method: 'POST',
         validateStatus: null,
-        data: { url: 'http://google.com' },
+        data: {url: 'http://google.com'},
       });
 
       expect(status).to.equal(500);
@@ -771,24 +771,24 @@ describe('Protocol', function () {
 
     it('should let the proxy handle req/res', async function () {
       (driver as any).proxyReqRes = async function (req: Request, res: Response) {
-        res.status(200).json({ custom: 'data' });
+        res.status(200).json({custom: 'data'});
       };
-      const { status, data } = await axios({
+      const {status, data} = await axios({
         url: `${baseUrl}/session/${sessionId}/url`,
         method: 'POST',
-        data: { url: 'http://google.com' },
+        data: {url: 'http://google.com'},
       });
 
       expect(status).to.equal(200);
-      expect(data).to.eql({ custom: 'data' });
+      expect(data).to.eql({custom: 'data'});
     });
 
     it('should avoid jsonwp proxying when path matches avoidance list', async function () {
       driver.getProxyAvoidList = () => [['POST', new RegExp('^/session/[^/]+/url$')]];
-      const { status, data } = await axios({
+      const {status, data} = await axios({
         url: `${baseUrl}/session/${sessionId}/url`,
         method: 'POST',
-        data: { url: 'http://google.com' },
+        data: {url: 'http://google.com'},
       });
 
       expect(status).to.equal(200);
@@ -800,11 +800,11 @@ describe('Protocol', function () {
     it('should fail if avoid proxy list is malformed in some way', async function () {
       async function badProxyAvoidanceList(list: RouteMatcher[]) {
         driver.getProxyAvoidList = () => list;
-        const { status, data } = await axios({
+        const {status, data} = await axios({
           url: `${baseUrl}/session/${sessionId}/url`,
           method: 'POST',
           validateStatus: null,
-          data: { url: 'http://google.com' },
+          data: {url: 'http://google.com'},
         });
 
         expect(status).to.equal(500);
@@ -819,7 +819,7 @@ describe('Protocol', function () {
     it('should avoid proxying non-session commands even if not in the list', async function () {
       driver.getProxyAvoidList = () => [['POST', new RegExp('')]];
 
-      const { status, data } = await axios({
+      const {status, data} = await axios({
         url: `${baseUrl}/status`,
       });
 
@@ -833,7 +833,7 @@ describe('Protocol', function () {
       driver.getProxyAvoidList = () => [['POST', new RegExp('')]];
 
       expect(driver.sessionId).to.equal(sessionId);
-      const { status } = await axios.delete(`${baseUrl}/session/${sessionId}`);
+      const {status} = await axios.delete(`${baseUrl}/session/${sessionId}`);
 
       expect(status).to.equal(200);
       expect(driver.sessionId).to.not.exist;
@@ -841,7 +841,7 @@ describe('Protocol', function () {
     });
 
     it('should avoid proxying when command spec specifies neverProxy', async function () {
-      const { status, data } = await axios({
+      const {status, data} = await axios({
         url: `${baseUrl}/session/${sessionId}/noproxy`,
         method: 'GET',
       });

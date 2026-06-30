@@ -1,5 +1,5 @@
-import { expect } from 'chai';
-import { SecureValuesPreprocessor } from '../../lib/secure-values-preprocessor';
+import {expect} from 'chai';
+import {SecureValuesPreprocessor} from '../../lib/secure-values-preprocessor';
 
 describe('Log Internals', function () {
   let preprocessor: SecureValuesPreprocessor;
@@ -27,8 +27,8 @@ describe('Log Internals', function () {
   it('should preprocess a string and make replacements with multiple complex rules', async function () {
     const replacer2 = '***';
     const issues = await preprocessor.loadRules([
-      { text: 'yolo', flags: 'i' },
-      { pattern: '^:', replacer: replacer2 },
+      {text: 'yolo', flags: 'i'},
+      {pattern: '^:', replacer: replacer2},
     ]);
     expect(issues.length).to.eql(0);
     expect(preprocessor.rules.length).to.eql(2);
@@ -38,7 +38,7 @@ describe('Log Internals', function () {
 
   it(`should preprocess a string and apply a rule where 'pattern' has priority over 'text'`, async function () {
     const replacer = '***';
-    const issues = await preprocessor.loadRules([{ pattern: '^:', text: 'yo', replacer }]);
+    const issues = await preprocessor.loadRules([{pattern: '^:', text: 'yo', replacer}]);
     expect(issues.length).to.eql(0);
     expect(preprocessor.rules.length).to.eql(1);
     expect(preprocessor.preprocess(':yolo" yo Yolo yyolo')).to.eql(`${replacer}yolo" yo Yolo yyolo`);
@@ -47,8 +47,8 @@ describe('Log Internals', function () {
   it('should preprocess a string and make replacements with multiple complex rules and issues', async function () {
     const replacer2 = '***';
     const issues = await preprocessor.loadRules([
-      { text: 'yolo', flags: 'i' },
-      { pattern: '^:(', replacer: replacer2 },
+      {text: 'yolo', flags: 'i'},
+      {pattern: '^:(', replacer: replacer2},
     ]);
     expect(issues.length).to.eql(1);
     expect(preprocessor.rules.length).to.eql(1);
@@ -58,7 +58,7 @@ describe('Log Internals', function () {
 
   it('should leave the string unchanged if all rules have issues', async function () {
     const replacer2 = '***';
-    const issues = await preprocessor.loadRules([null, { flags: 'i' }, { pattern: '^:(', replacer: replacer2 }] as any);
+    const issues = await preprocessor.loadRules([null, {flags: 'i'}, {pattern: '^:(', replacer: replacer2}] as any);
     expect(issues.length).to.eql(3);
     expect(preprocessor.rules.length).to.eql(0);
     expect(preprocessor.preprocess(':yolo" yo Yolo yyolo')).to.eql(':yolo" yo Yolo yyolo');

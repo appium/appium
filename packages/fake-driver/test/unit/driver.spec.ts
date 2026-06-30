@@ -1,10 +1,10 @@
-import type { Constraints, W3CDriverCaps } from '@appium/types';
-import { sleep } from 'asyncbox';
-import chai, { expect } from 'chai';
+import type {Constraints, W3CDriverCaps} from '@appium/types';
+import {sleep} from 'asyncbox';
+import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { createSandbox } from 'sinon';
-import { FakeDriver } from '../../lib';
-import { W3C_CAPS, W3C_PREFIXED_CAPS } from '../helpers';
+import {createSandbox} from 'sinon';
+import {FakeDriver} from '../../lib';
+import {W3C_CAPS, W3C_PREFIXED_CAPS} from '../helpers';
 
 chai.use(chaiAsPromised);
 
@@ -146,7 +146,7 @@ describe('FakeDriver unit suite', function () {
   describe('protocol detection', function () {
     it('should use W3C if only W3C caps are provided', async function () {
       await d.createSession({
-        alwaysMatch: { ...defaultCaps } as object,
+        alwaysMatch: {...defaultCaps} as object,
         firstMatch: [{}],
       });
       expect(d.protocol).to.equal('W3C');
@@ -415,7 +415,7 @@ describe('FakeDriver unit suite', function () {
       beforeStartTime = Date.now();
       d.shouldValidateCaps = false;
       await d.executeCommand('createSession', null, null, {
-        alwaysMatch: { ...defaultCaps },
+        alwaysMatch: {...defaultCaps},
         firstMatch: [{}],
       });
     });
@@ -426,7 +426,7 @@ describe('FakeDriver unit suite', function () {
       });
 
       it('should have a session start timing after session start', function () {
-        const { newSessionRequested, newSessionStarted } = d.eventHistory;
+        const {newSessionRequested, newSessionStarted} = d.eventHistory;
         expect(newSessionRequested).to.have.length(1);
         expect(newSessionStarted).to.have.length(1);
         expect(newSessionRequested[0]).to.be.a('number');

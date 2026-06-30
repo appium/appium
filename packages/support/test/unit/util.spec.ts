@@ -1,15 +1,15 @@
-import { sleep } from 'asyncbox';
-import { expect, use } from 'chai';
+import {sleep} from 'asyncbox';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import os from 'node:os';
 import path from 'node:path';
-import { after, afterEach, before, beforeEach, describe, it } from 'node:test';
-import { createSandbox } from 'sinon';
-import { fs, tempDir, util } from '../../lib';
+import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
+import {createSandbox} from 'sinon';
+import {fs, tempDir, util} from '../../lib';
 
 use(chaiAsPromised);
 
-const { W3C_WEB_ELEMENT_IDENTIFIER } = util;
+const {W3C_WEB_ELEMENT_IDENTIFIER} = util;
 
 describe('util', function () {
   let sandbox: ReturnType<typeof createSandbox>;
@@ -204,11 +204,11 @@ describe('util', function () {
 
   describe('safeJsonParse', function () {
     it('should pass object through', function () {
-      const obj = { a: 'a', b: 'b' };
+      const obj = {a: 'a', b: 'b'};
       expect(util.safeJsonParse(obj)).to.equal(obj);
     });
     it('should correctly parse json string', function () {
-      const obj = { a: 'a', b: 'b' };
+      const obj = {a: 'a', b: 'b'};
       expect(util.safeJsonParse(JSON.stringify(obj))).to.eql(obj);
     });
     it('should pass an array through', function () {
@@ -239,7 +239,7 @@ describe('util', function () {
 
   describe('jsonStringify', function () {
     it('should use JSON.stringify if no Buffer involved', function () {
-      const obj = { k1: 'v1', k2: 'v2', k3: 'v3' };
+      const obj = {k1: 'v1', k2: 'v2', k3: 'v3'};
       const jsonString = JSON.stringify(obj, null, 2);
       expect(util.jsonStringify(obj)).to.eql(jsonString);
     });
@@ -252,7 +252,7 @@ describe('util', function () {
       expect(util.jsonStringify(obj)).to.include('hi how are you today');
     });
     it('should use the replacer function on non-buffer values', function () {
-      const obj = { k1: 'v1', k2: 'v2', k3: 'v3' };
+      const obj = {k1: 'v1', k2: 'v2', k3: 'v3'};
       function replacer(_key: string, value: any) {
         return typeof value === 'string' ? value.toUpperCase() : value;
       }
@@ -280,7 +280,7 @@ describe('util', function () {
         k1: 'v1',
         k2: 'v2',
         k3: Buffer.from('hi how are you today'),
-        k4: { k5: 'v5' },
+        k4: {k5: 'v5'},
       };
       function replacer(_key: string, value: any) {
         return typeof value === 'string' ? value.toUpperCase() : value;
@@ -302,19 +302,19 @@ describe('util', function () {
       expect(util.unwrapElement(null as any)).to.equal(null);
     });
     it('should pass through an element that is an object', function () {
-      const el = { RANDOM: 4 };
+      const el = {RANDOM: 4};
       expect(util.unwrapElement(el as any)).to.equal(el);
     });
     it('should unwrap a wrapped element', function () {
-      const el = { ELEMENT: 4 };
+      const el = {ELEMENT: 4};
       expect(util.unwrapElement(el as any)).to.eql(4);
     });
     it('should unwrap a wrapped element that uses W3C element identifier', function () {
-      const el = { [W3C_WEB_ELEMENT_IDENTIFIER]: 5 };
+      const el = {[W3C_WEB_ELEMENT_IDENTIFIER]: 5};
       expect(util.unwrapElement(el as any)).to.eql(5);
     });
     it('should unwrap a wrapped element and prioritize W3C element identifier', function () {
-      const el = { ELEMENT: 7, [W3C_WEB_ELEMENT_IDENTIFIER]: 6 };
+      const el = {ELEMENT: 7, [W3C_WEB_ELEMENT_IDENTIFIER]: 6};
       expect(util.unwrapElement(el as any)).to.eql(6);
     });
   });
@@ -349,23 +349,23 @@ describe('util', function () {
   describe('filterObject', function () {
     describe('with undefined predicate', function () {
       it('should filter out undefineds', function () {
-        const obj = { a: 'a', b: 'b', c: undefined };
-        expect(util.filterObject(obj)).to.eql({ a: 'a', b: 'b' });
+        const obj = {a: 'a', b: 'b', c: undefined};
+        expect(util.filterObject(obj)).to.eql({a: 'a', b: 'b'});
       });
       it('should leave nulls alone', function () {
-        const obj = { a: 'a', b: 'b', c: null };
-        expect(util.filterObject(obj)).to.eql({ a: 'a', b: 'b', c: null });
+        const obj = {a: 'a', b: 'b', c: null};
+        expect(util.filterObject(obj)).to.eql({a: 'a', b: 'b', c: null});
       });
     });
     describe('with value predicate', function () {
       it('should filter elements by their value', function () {
-        const obj = { a: 'a', b: 'b', c: 'c', d: 'a' };
-        expect(util.filterObject(obj, 'a')).to.eql({ a: 'a', d: 'a' });
+        const obj = {a: 'a', b: 'b', c: 'c', d: 'a'};
+        expect(util.filterObject(obj, 'a')).to.eql({a: 'a', d: 'a'});
       });
     });
     describe('with function predicate', function () {
       it('should filter elements', function () {
-        const obj = { a: 'a', b: 'b', c: 'c' };
+        const obj = {a: 'a', b: 'b', c: 'c'};
         expect(util.filterObject(obj, (v: unknown) => v === 'a' || v === 'c')).to.eql({
           a: 'a',
           c: 'c',
@@ -470,7 +470,7 @@ describe('util', function () {
       expect(util.pluralize('word', 2, true)).to.eql('2 words');
     });
     it('should pluralize a string and prepend the number through options', function () {
-      expect(util.pluralize('word', 2, { inclusive: true })).to.eql('2 words');
+      expect(util.pluralize('word', 2, {inclusive: true})).to.eql('2 words');
     });
   });
 
@@ -532,11 +532,11 @@ describe('util', function () {
         prefix: 'ctx',
         calls: 0,
         fn: util.memoize(
-          function (this: { prefix: string; calls: number }, value: number) {
+          function (this: {prefix: string; calls: number}, value: number) {
             this.calls += 1;
             return `${this.prefix}:${value}`;
           },
-          function (this: { prefix: string }, value: number) {
+          function (this: {prefix: string}, value: number) {
             return `${this.prefix}-${value}`;
           },
         ),
@@ -561,13 +561,13 @@ describe('util', function () {
     });
 
     it('should match lodash behavior for edge cases', function () {
-      const spoofed = { a: 1, [Symbol.toStringTag]: 'Custom' };
+      const spoofed = {a: 1, [Symbol.toStringTag]: 'Custom'};
       expect(util.isPlainObject(spoofed)).to.be.true;
 
       function CustomCtor(this: any) {
         this.a = 1;
       }
-      const withCustomCtorOnProto = Object.create({ constructor: CustomCtor });
+      const withCustomCtorOnProto = Object.create({constructor: CustomCtor});
       expect(util.isPlainObject(withCustomCtorOnProto)).to.be.false;
     });
   });
@@ -582,7 +582,7 @@ describe('util', function () {
 
     it('should handle objects and collections', function () {
       expect(util.isEmpty({})).to.be.true;
-      expect(util.isEmpty({ a: 1 })).to.be.false;
+      expect(util.isEmpty({a: 1})).to.be.false;
       expect(util.isEmpty(new Map())).to.be.true;
       expect(util.isEmpty(new Set([1]))).to.be.false;
     });
@@ -591,20 +591,20 @@ describe('util', function () {
       class Thing {}
       const emptyInstance = new Thing();
       const nonEmptyInstance = new Thing();
-      (nonEmptyInstance as unknown as { a?: number }).a = 1;
+      (nonEmptyInstance as unknown as {a?: number}).a = 1;
       expect(util.isEmpty(emptyInstance)).to.be.true;
       expect(util.isEmpty(nonEmptyInstance)).to.be.false;
 
       const fn = () => undefined;
-      (fn as unknown as { x?: number }).x = 1;
+      (fn as unknown as {x?: number}).x = 1;
       expect(util.isEmpty(fn)).to.be.false;
     });
   });
 
   describe('isEqual', function () {
     it('should deeply compare nested objects', function () {
-      expect(util.isEqual({ a: [1, { b: 'c' }] }, { a: [1, { b: 'c' }] })).to.be.true;
-      expect(util.isEqual({ a: [1, { b: 'c' }] }, { a: [1, { b: 'd' }] })).to.be.false;
+      expect(util.isEqual({a: [1, {b: 'c'}]}, {a: [1, {b: 'c'}]})).to.be.true;
+      expect(util.isEqual({a: [1, {b: 'c'}]}, {a: [1, {b: 'd'}]})).to.be.false;
     });
 
     it('should compare special values and typed objects', function () {
@@ -615,9 +615,9 @@ describe('util', function () {
     });
 
     it('should compare maps and sets', function () {
-      const entries: Array<[string, number | { c: number }]> = [
+      const entries: Array<[string, number | {c: number}]> = [
         ['a', 1],
-        ['b', { c: 2 }],
+        ['b', {c: 2}],
       ];
       expect(util.isEqual(new Map(entries), new Map(entries))).to.be.true;
       expect(util.isEqual(new Set([1, 2]), new Set([2, 1]))).to.be.true;
@@ -634,10 +634,10 @@ describe('util', function () {
     });
 
     it('should ignore non-enumerable own properties', function () {
-      const left: Record<string, unknown> = { a: 1 };
-      const right: Record<string, unknown> = { a: 1 };
-      Object.defineProperty(left, 'hidden', { value: 1, enumerable: false });
-      Object.defineProperty(right, 'hidden', { value: 2, enumerable: false });
+      const left: Record<string, unknown> = {a: 1};
+      const right: Record<string, unknown> = {a: 1};
+      Object.defineProperty(left, 'hidden', {value: 1, enumerable: false});
+      Object.defineProperty(right, 'hidden', {value: 2, enumerable: false});
       expect(util.isEqual(left, right)).to.be.true;
     });
 
@@ -676,7 +676,7 @@ describe('util', function () {
     });
 
     it('should support custom omission', function () {
-      expect(util.truncateString('abcdefghijklmnopqrstuvwxyz', { length: 10, omission: '..' })).to.equal('abcdefgh..');
+      expect(util.truncateString('abcdefghijklmnopqrstuvwxyz', {length: 10, omission: '..'})).to.equal('abcdefgh..');
     });
 
     it('should handle non-string values safely', function () {
@@ -685,7 +685,7 @@ describe('util', function () {
       expect(util.truncateString(undefined as any)).to.equal('');
       expect(util.truncateString(null as any)).to.equal('');
       expect(util.truncateString(123456 as any, 5)).to.equal('1234…');
-      expect(util.truncateString({ a: 1 } as any, 8)).to.equal('[object…');
+      expect(util.truncateString({a: 1} as any, 8)).to.equal('[object…');
       expect(util.truncateString(-0 as any)).to.equal('-0');
     });
 

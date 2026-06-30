@@ -1,13 +1,13 @@
 /**
  * Helper functions for E2E tests to spawn an `appium` subprocess.
  */
-import { console as supportConsole, fs } from '@appium/support';
-import type { DriverType, PluginType } from '@appium/types';
-import type { CliExtensionSubcommand, ExtRecord } from 'appium/types';
+import {console as supportConsole, fs} from '@appium/support';
+import type {DriverType, PluginType} from '@appium/types';
+import type {CliExtensionSubcommand, ExtRecord} from 'appium/types';
 import path from 'node:path';
-import { exec } from 'teen_process';
-import type { ExecError } from 'teen_process';
-import { APPIUM_ROOT, resolveFixture } from '../helpers';
+import {exec} from 'teen_process';
+import type {ExecError} from 'teen_process';
+import {APPIUM_ROOT, resolveFixture} from '../helpers';
 
 export const EXECUTABLE = path.join(APPIUM_ROOT, 'build', 'lib', 'main.js');
 
@@ -29,7 +29,7 @@ export interface AppiumRunErrorProps {
   cwd: string;
 }
 
-export type AppiumRunError = Error & AppiumRunErrorProps & ExecError & { stdout: string; stderr: string };
+export type AppiumRunError = Error & AppiumRunErrorProps & ExecError & {stdout: string; stderr: string};
 
 function curry2<A, B, R>(
   fn: (a: A, b: B) => R,
@@ -75,10 +75,10 @@ function curry3<A, B, C, R>(
 async function run(
   appiumHome: string,
   args: CliExtArgs | CliArgs,
-  opts: { env?: Record<string, string>; FORCE_COLOR?: string } = {},
-): Promise<{ stdout: string; stderr: string }> {
+  opts: {env?: Record<string, string>; FORCE_COLOR?: string} = {},
+): Promise<{stdout: string; stderr: string}> {
   const cwd = APPIUM_ROOT;
-  const env: Record<string, string | undefined> = { ...opts.env };
+  const env: Record<string, string | undefined> = {...opts.env};
   env.APPIUM_HOME ??= appiumHome;
   env.PATH ??= process.env.PATH;
   try {
@@ -87,14 +87,14 @@ async function run(
       log.debug('APPIUM_HOME: %s', env.APPIUM_HOME);
       log.debug(`Running: ${process.execPath} ${fullArgs.join(' ')}`);
     }
-    const retval = await exec(process.execPath, fullArgs, { ...opts, cwd, env });
+    const retval = await exec(process.execPath, fullArgs, {...opts, cwd, env});
     const strip = (s: string) => (opts.env?.FORCE_COLOR ? s : supportConsole.stripColors(s));
     return {
       stdout: strip(retval.stdout),
       stderr: strip(retval.stderr),
     };
   } catch (err) {
-    const { stdout = '', stderr = '' } = err as ExecError & { stdout?: string; stderr?: string };
+    const {stdout = '', stderr = ''} = err as ExecError & {stdout?: string; stderr?: string};
     const execErr = err as ExecError;
     const baseErr = err instanceof Error ? err : new Error(String(err));
     const runErr = Object.assign(baseErr, {
@@ -112,7 +112,7 @@ async function run(
 }
 
 async function _runAppium(appiumHome: string, args: CliExtArgs | CliArgs): Promise<string> {
-  const { stdout } = await run(appiumHome, args);
+  const {stdout} = await run(appiumHome, args);
   return stdout;
 }
 
@@ -121,8 +121,8 @@ export const runAppium = curry2(_runAppium);
 async function _runAppiumRaw(
   appiumHome: string,
   args: CliExtArgs | CliArgs,
-  opts: { env?: Record<string, string> },
-): Promise<{ stdout: string; stderr: string } | AppiumRunError> {
+  opts: {env?: Record<string, string>},
+): Promise<{stdout: string; stderr: string} | AppiumRunError> {
   try {
     return await run(appiumHome, args, opts);
   } catch (err) {

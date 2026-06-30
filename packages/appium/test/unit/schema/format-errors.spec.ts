@@ -1,11 +1,11 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { createSandbox, type SinonSandbox, type SinonStub } from 'sinon';
-import type { formatErrors as FormatErrorsFn } from '../../../lib/schema/format-errors';
+import {createSandbox, type SinonSandbox, type SinonStub} from 'sinon';
+import type {formatErrors as FormatErrorsFn} from '../../../lib/schema/format-errors';
 import * as schema from '../../../lib/schema/schema';
-import { rewiremock } from '../../helpers';
+import {rewiremock} from '../../helpers';
 
-const { expect } = chai;
+const {expect} = chai;
 chai.use(chaiAsPromised);
 
 describe('schema/format-errors', function () {
@@ -20,7 +20,7 @@ describe('schema/format-errors', function () {
   beforeEach(function () {
     sandbox = createSandbox();
     betterAjvMock = sandbox.stub().returns('');
-    ({ formatErrors } = rewiremock.proxy(() => require('../../../lib/schema/format-errors'), {
+    ({formatErrors} = rewiremock.proxy(() => require('../../../lib/schema/format-errors'), {
       '@sidvind/better-ajv-errors': betterAjvMock,
     }));
   });
@@ -31,7 +31,7 @@ describe('schema/format-errors', function () {
 
   describe('formatErrors()', function () {
     /** Minimal placeholder; tests only assert wiring to better-ajv-errors, not real AJV shapes. */
-    const oneError = [{ keyword: 'test', instancePath: '', schemaPath: '#', params: {} }] as Parameters<
+    const oneError = [{keyword: 'test', instancePath: '', schemaPath: '#', params: {}}] as Parameters<
       typeof formatErrors
     >[0];
 
@@ -55,7 +55,7 @@ describe('schema/format-errors', function () {
 
     describe('when `opts.pretty` is false', function () {
       it('should call `betterAjvErrors()` with non-CLI output format', function () {
-        formatErrors(oneError, {}, { pretty: false });
+        formatErrors(oneError, {}, {pretty: false});
         expect(
           betterAjvMock.calledWith(schema.getSchema(), {}, oneError, {
             format: 'js',
@@ -67,7 +67,7 @@ describe('schema/format-errors', function () {
 
     describe('when `opts.json` is a string', function () {
       it('should call `betterAjvErrors()` with option `json: opts.json`', function () {
-        formatErrors(oneError, {}, { json: '{"foo": "bar"}' });
+        formatErrors(oneError, {}, {json: '{"foo": "bar"}'});
         expect(
           betterAjvMock.calledWith(schema.getSchema(), {}, oneError, {
             format: 'cli',

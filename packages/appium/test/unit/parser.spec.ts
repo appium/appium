@@ -1,13 +1,13 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { readConfigFile } from '../../lib/bootstrap/config-file';
-import { ArgParser, getParser } from '../../lib/cli/parser';
-import { DRIVER_TYPE, PLUGIN_TYPE, SETUP_SUBCOMMAND } from '../../lib/constants';
-import { INSTALL_TYPES } from '../../lib/extension/extension-config';
+import {readConfigFile} from '../../lib/bootstrap/config-file';
+import {ArgParser, getParser} from '../../lib/cli/parser';
+import {DRIVER_TYPE, PLUGIN_TYPE, SETUP_SUBCOMMAND} from '../../lib/constants';
+import {INSTALL_TYPES} from '../../lib/extension/extension-config';
 import * as schema from '../../lib/schema/schema';
-import { resolveFixture } from '../helpers';
+import {resolveFixture} from '../helpers';
 
-const { expect } = chai;
+const {expect} = chai;
 chai.use(chaiAsPromised);
 
 // these paths should not make assumptions about the current working directory
@@ -92,13 +92,13 @@ describe('parser', function () {
       });
 
       it('should parse default capabilities correctly from a string', function () {
-        const defaultCapabilities = { a: 'b' };
+        const defaultCapabilities = {a: 'b'};
         const args = p.parseArgs(['--default-capabilities', JSON.stringify(defaultCapabilities)]);
         expect(args.defaultCapabilities).to.eql(defaultCapabilities);
       });
 
       it('should parse default capabilities correctly from a file', function () {
-        const defaultCapabilities = { a: 'b' };
+        const defaultCapabilities = {a: 'b'};
         const args = p.parseArgs(['--default-capabilities', CAPS_FIXTURE]);
         expect(args.defaultCapabilities).to.eql(defaultCapabilities);
       });
@@ -111,7 +111,7 @@ describe('parser', function () {
       });
 
       it('should parse --allow-insecure correctly', function () {
-        expect(p.parseArgs([])).to.satisfy((obj: { allowInsecure?: unknown }) => obj.allowInsecure === undefined);
+        expect(p.parseArgs([])).to.satisfy((obj: {allowInsecure?: unknown}) => obj.allowInsecure === undefined);
         expect(p.parseArgs(['--allow-insecure', '']).allowInsecure).to.eql([]);
         expect(p.parseArgs(['--allow-insecure', '*:foo']).allowInsecure).to.eql(['*:foo']);
         expect(p.parseArgs(['--allow-insecure', '*:foo,*:bar']).allowInsecure).to.eql(['*:foo', '*:bar']);
@@ -131,7 +131,7 @@ describe('parser', function () {
       });
 
       it('should parse --deny-insecure correctly', function () {
-        expect(p.parseArgs([])).to.satisfy((obj: { denyInsecure?: unknown }) => obj.denyInsecure === undefined);
+        expect(p.parseArgs([])).to.satisfy((obj: {denyInsecure?: unknown}) => obj.denyInsecure === undefined);
         expect(p.parseArgs(['--deny-insecure', '']).denyInsecure).to.eql([]);
         expect(p.parseArgs(['--deny-insecure', '*:foo']).denyInsecure).to.eql(['*:foo']);
         expect(p.parseArgs(['--deny-insecure', '*:foo,*:bar']).denyInsecure).to.eql(['*:foo', '*:bar']);
@@ -161,7 +161,7 @@ describe('parser', function () {
       });
 
       it('should normalize hyphenated server args to dest form (normalizeServerArgs)', function () {
-        const obj = { 'log-level': 'error', port: 4723 };
+        const obj = {'log-level': 'error', port: 4723};
         ArgParser.normalizeServerArgs(obj);
         expect(obj).to.have.property('loglevel', 'error');
         expect(obj).not.to.have.property('log-level');
@@ -193,9 +193,9 @@ describe('parser', function () {
         // the config file corresponds to that schema.
         // the command-line flags are derived also from the schema.
         // the result should be that the parsed args should match the config file.
-        const { config } = await readConfigFile(resolveFixture('config', 'appium-config-driver-fake.json'));
+        const {config} = await readConfigFile(resolveFixture('config', 'appium-config-driver-fake.json'));
         const fakeDriverArgs = {
-          fake: { sillyWebServerPort: 1234, sillyWebServerHost: 'hey' },
+          fake: {sillyWebServerPort: 1234, sillyWebServerHost: 'hey'},
         };
         const args = p.parseArgs([
           '--driver-fake-silly-web-server-port',
@@ -216,7 +216,7 @@ describe('parser', function () {
         schema.resetSchema();
         await schema.registerSchema(PLUGIN_TYPE, 'crypto-fiend', {
           type: 'object',
-          properties: { elite: { type: 'boolean' } },
+          properties: {elite: {type: 'boolean'}},
         });
         await schema.finalizeSchema();
         p = await getParser(true);

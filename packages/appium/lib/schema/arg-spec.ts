@@ -1,5 +1,5 @@
-import type { ExtensionType } from '@appium/types';
-import { camelCase, kebabCase } from '../utils';
+import type {ExtensionType} from '@appium/types';
+import {camelCase, kebabCase} from '../utils';
 
 /**
  * The original ID of the Appium config schema.
@@ -42,7 +42,7 @@ export class ArgSpec<D = unknown> {
    * Builds computed fields and assigns them to the instance.
    * Use {@link ArgSpec.create} instead of `new ArgSpec()`.
    */
-  constructor(name: string, { extType, extName, dest, defaultValue }: ArgSpecOptions<D> = {}) {
+  constructor(name: string, {extType, extName, dest, defaultValue}: ArgSpecOptions<D> = {}) {
     const arg = ArgSpec.toArg(name, extType, extName);
     const ref = ArgSpec.toSchemaRef(name, extType, extName);
     const rawDest = camelCase(dest ?? name);
@@ -106,11 +106,11 @@ export class ArgSpec<D = unknown> {
   } {
     const matches = schemaId.match(SCHEMA_ID_REGEXP);
     if (matches?.groups) {
-      const { extType, normalizedExtName } = matches.groups as {
+      const {extType, normalizedExtName} = matches.groups as {
         extType: ExtensionType;
         normalizedExtName: string;
       };
-      return { extType, normalizedExtName };
+      return {extType, normalizedExtName};
     }
     return {};
   }

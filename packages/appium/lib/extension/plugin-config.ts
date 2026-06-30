@@ -1,10 +1,10 @@
-import { util } from '@appium/support';
-import type { PluginType } from '@appium/types';
-import type { ExtManifest, ExtName, ExtRecord } from 'appium/types';
-import { PLUGIN_TYPE } from '../constants';
-import { log } from '../logger';
-import { ExtensionConfig } from './extension-config';
-import type { Manifest } from './manifest';
+import {util} from '@appium/support';
+import type {PluginType} from '@appium/types';
+import type {ExtManifest, ExtName, ExtRecord} from 'appium/types';
+import {PLUGIN_TYPE} from '../constants';
+import {log} from '../logger';
+import {ExtensionConfig} from './extension-config';
+import type {Manifest} from './manifest';
 
 export class PluginConfig extends ExtensionConfig<PluginType> {
   private static readonly _instances = new WeakMap<Manifest, PluginConfig>();
@@ -32,7 +32,7 @@ export class PluginConfig extends ExtensionConfig<PluginType> {
     return await super._validate(this.manifest.getExtensionData(PLUGIN_TYPE));
   }
 
-  public override extensionDesc(pluginName: ExtName<PluginType>, { version }: ExtManifest<PluginType>): string {
+  public override extensionDesc(pluginName: ExtName<PluginType>, {version}: ExtManifest<PluginType>): string {
     return `${String(pluginName)}@${version}`;
   }
 

@@ -1,15 +1,15 @@
-import { getTestPort, TEST_HOST } from '@appium/driver-test-support';
-import type { AppiumServer, ServerArgs } from '@appium/types';
-import { sleep } from 'asyncbox';
+import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
+import type {AppiumServer, ServerArgs} from '@appium/types';
+import {sleep} from 'asyncbox';
 import axios from 'axios';
-import chai, { expect } from 'chai';
+import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import type { Application, Request, Response } from 'express';
+import type {Application, Request, Response} from 'express';
 import https from 'node:https';
-import { after, afterEach, before, beforeEach, describe, it } from 'node:test';
-import { createSandbox } from 'sinon';
-import { exec } from 'teen_process';
-import { server } from '../../../lib';
+import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
+import {createSandbox} from 'sinon';
+import {exec} from 'teen_process';
+import {server} from '../../../lib';
 
 chai.use(chaiAsPromised);
 
@@ -73,7 +73,7 @@ describe('server', function () {
   });
 
   it('should start up with our middleware', async function () {
-    const { data } = await axios.get(`http://${TEST_HOST}:${port}/`);
+    const {data} = await axios.get(`http://${TEST_HOST}:${port}/`);
     expect(data).to.eql('Hello World!');
   });
   it('should catch errors in the catchall', async function () {
@@ -106,7 +106,7 @@ describe('server', function () {
 
     await bodyPromise;
   });
-  it('should error if we try to start on a bad hostname', { timeout: 60000 }, async function () {
+  it('should error if we try to start on a bad hostname', {timeout: 60000}, async function () {
     await expect(
       server({
         routeConfiguringFunction: () => {},
@@ -170,14 +170,14 @@ describe('tls server', function () {
     await hwServer?.close();
   });
 
-  it('should start up with our middleware', { skip }, async function () {
-    const { data } = await looseClient.get(`https://${TEST_HOST}:${port}/`);
+  it('should start up with our middleware', {skip}, async function () {
+    const {data} = await looseClient.get(`https://${TEST_HOST}:${port}/`);
     expect(data).to.eql('Hello World!');
   });
-  it('should throw if untrusted', { skip }, async function () {
+  it('should throw if untrusted', {skip}, async function () {
     await expect(axios.get(`https://${TEST_HOST}:${port}/`)).to.eventually.be.rejected;
   });
-  it('should throw if not secure', { skip }, async function () {
+  it('should throw if not secure', {skip}, async function () {
     await expect(axios.get(`http://${TEST_HOST}:${port}/`)).to.eventually.be.rejected;
   });
 });
@@ -222,9 +222,9 @@ describe('server plugins', function () {
         updaterWithGetRoute('plugin2', 'res from plugin2 route'),
       ],
     })) as ServerWithPlugins;
-    let { data } = await axios.get(`http://${TEST_HOST}:${port}/plugin1`);
+    let {data} = await axios.get(`http://${TEST_HOST}:${port}/plugin1`);
     expect(data).to.eql('res from plugin1 route');
-    ({ data } = await axios.get(`http://${TEST_HOST}:${port}/plugin2`));
+    ({data} = await axios.get(`http://${TEST_HOST}:${port}/plugin2`));
     expect(data).to.eql('res from plugin2 route');
     expect(hwServer._updated_plugin1).to.be.true;
     expect(hwServer._updated_plugin2).to.be.true;

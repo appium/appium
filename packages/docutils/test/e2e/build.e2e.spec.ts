@@ -3,21 +3,21 @@
  * @module
  */
 
-import { fs, tempDir } from '@appium/support';
+import {fs, tempDir} from '@appium/support';
 import * as chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import path from 'node:path';
 import * as YAML from 'yaml';
 import yargs from 'yargs/yargs';
-import { buildSite } from '../../lib/builder';
-import { build as buildCommand, init as initCommand, validate as validateCommand } from '../../lib/cli/command';
-import { DEFAULT_SITE_DIR, NAME_BIN, NAME_MKDOCS_YML, NAME_PACKAGE_JSON } from '../../lib/constants';
-import { stringifyYaml } from '../../lib/fs';
-import { init, initPython } from '../../lib/init';
-import type { MkDocsYml } from '../../lib/model';
+import {buildSite} from '../../lib/builder';
+import {build as buildCommand, init as initCommand, validate as validateCommand} from '../../lib/cli/command';
+import {DEFAULT_SITE_DIR, NAME_BIN, NAME_MKDOCS_YML, NAME_PACKAGE_JSON} from '../../lib/constants';
+import {stringifyYaml} from '../../lib/fs';
+import {init, initPython} from '../../lib/init';
+import type {MkDocsYml} from '../../lib/model';
 
 chai.use(chaiAsPromised);
-const { expect } = chai;
+const {expect} = chai;
 
 /**
  * Helper function to create a project directory with package.json
@@ -50,7 +50,7 @@ async function createDocsFile(projectDir: string, filename: string, content: str
  */
 async function ensurePythonDeps(projectDir: string, context: Mocha.Context): Promise<void> {
   try {
-    await initPython({ cwd: projectDir });
+    await initPython({cwd: projectDir});
   } catch {
     context.skip();
   }

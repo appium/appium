@@ -1,4 +1,4 @@
-import type { Constraints } from '@appium/types';
+import type {Constraints} from '@appium/types';
 
 export const desiredCapConstraints = {
   app: {

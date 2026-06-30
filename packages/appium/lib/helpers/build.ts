@@ -1,8 +1,8 @@
-import { fs, system, util } from '@appium/support';
-import type { BuildInfo } from 'appium/types';
+import {fs, system, util} from '@appium/support';
+import type {BuildInfo} from 'appium/types';
 import axios from 'axios';
-import { exec } from 'teen_process';
-import { npmPackage } from '../utils';
+import {exec} from 'teen_process';
+import {npmPackage} from '../utils';
 
 export const APPIUM_VER = npmPackage.version;
 
@@ -27,7 +27,7 @@ export async function getGitRev(useGithubApiFallback = false): Promise<string | 
   const fullGitPath = await getFullGitPath();
   if (fullGitPath) {
     try {
-      const { stdout } = await exec(fullGitPath, ['rev-parse', 'HEAD'], {
+      const {stdout} = await exec(fullGitPath, ['rev-parse', 'HEAD'], {
         cwd: __dirname,
       });
       return stdout.trim();
@@ -56,7 +56,7 @@ async function getGitTimestamp(commitSha: string, useGithubApiFallback = false):
   const fullGitPath = await getFullGitPath();
   if (fullGitPath) {
     try {
-      const { stdout } = await exec(fullGitPath, ['show', '-s', '--format=%ci', commitSha], {
+      const {stdout} = await exec(fullGitPath, ['show', '-s', '--format=%ci', commitSha], {
         cwd: __dirname,
       });
       return stdout.trim();

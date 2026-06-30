@@ -1,16 +1,16 @@
-import { fs, node } from '@appium/support';
+import {fs, node} from '@appium/support';
 import path from 'node:path';
-import { after, before, describe, it } from 'node:test';
+import {after, before, describe, it} from 'node:test';
 
-import { getTestPort, TEST_HOST } from '@appium/driver-test-support';
-import { sleep } from 'asyncbox';
-import chai, { expect } from 'chai';
+import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
+import {sleep} from 'asyncbox';
+import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import contentDisposition from 'content-disposition';
 import finalhandler from 'finalhandler';
 import http from 'node:http';
 import serveStatic from 'serve-static';
-import { configureApp } from '../../../lib/basedriver/helpers';
+import {configureApp} from '../../../lib/basedriver/helpers';
 
 chai.use(chaiAsPromised);
 
@@ -65,7 +65,7 @@ describe('app download and configuration', function () {
       });
       describe('server available', function () {
         // use a local server so there is no dependency on the internet
-        type HttpServerWithAsyncClose = http.Server & { close(): Promise<void> };
+        type HttpServerWithAsyncClose = http.Server & {close(): Promise<void>};
         let server: HttpServerWithAsyncClose;
 
         before(function () {

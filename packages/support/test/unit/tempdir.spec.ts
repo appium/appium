@@ -1,7 +1,7 @@
-import { expect, use } from 'chai';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { afterEach, describe, it } from 'node:test';
-import { fs, tempDir } from '../../lib';
+import {afterEach, describe, it} from 'node:test';
+import {fs, tempDir} from '../../lib';
 
 use(chaiAsPromised);
 
@@ -11,7 +11,7 @@ describe('tempdir', function () {
   });
 
   it('should be able to generate a path', async function () {
-    const path = await tempDir.path({ prefix: 'myfile', suffix: '.tmp' });
+    const path = await tempDir.path({prefix: 'myfile', suffix: '.tmp'});
     expect(path).to.exist;
     expect(path).to.include('myfile.tmp');
   });
@@ -20,14 +20,14 @@ describe('tempdir', function () {
     const preRootDirPath = await tempDir.openDir();
     process.env.APPIUM_TMP_DIR = preRootDirPath;
 
-    const path = await tempDir.path({ prefix: 'myfile', suffix: '.tmp' });
+    const path = await tempDir.path({prefix: 'myfile', suffix: '.tmp'});
     expect(path).to.exist;
     expect(path).to.include(preRootDirPath);
     expect(path).to.include('myfile.tmp');
   });
 
   it('should be able to create a temp file', async function () {
-    const res = await tempDir.open({ prefix: 'my-test-file', suffix: '.zip' });
+    const res = await tempDir.open({prefix: 'my-test-file', suffix: '.zip'});
     expect(res).to.exist;
     expect(res.path).to.exist;
     expect(res.path).to.include('my-test-file.zip');
@@ -39,7 +39,7 @@ describe('tempdir', function () {
     const preRootDirPath = await tempDir.openDir();
     process.env.APPIUM_TMP_DIR = preRootDirPath;
 
-    const res = await tempDir.open({ prefix: 'my-test-file', suffix: '.zip' });
+    const res = await tempDir.open({prefix: 'my-test-file', suffix: '.zip'});
     expect(res).to.exist;
     expect(res.path).to.exist;
     expect(res.path).to.include(preRootDirPath);

@@ -1,7 +1,7 @@
 import chai from 'chai';
-import { npmPackage } from '../../../lib/utils/package-json';
+import {npmPackage} from '../../../lib/utils/package-json';
 
-const { expect } = chai;
+const {expect} = chai;
 
 describe('utils/package-json', function () {
   describe('npmPackage', function () {

@@ -6,13 +6,13 @@
  */
 
 import path from 'node:path';
-import type { TeenProcessExecOptions } from 'teen_process';
-import { DEFAULT_SITE_DIR, NAME_BIN, NAME_MKDOCS, NAME_MKDOCS_YML } from '../constants';
-import { DocutilsError } from '../error';
-import { findMkDocsYml, isMkDocsInstalled, readMkDocsYml, requirePython } from '../fs';
-import { getLogger } from '../logger';
-import type { SpawnBackgroundProcessOpts } from '../utils';
-import { execWithErrorHandling, relative, spawnBackgroundProcess, stopwatch } from '../utils';
+import type {TeenProcessExecOptions} from 'teen_process';
+import {DEFAULT_SITE_DIR, NAME_BIN, NAME_MKDOCS, NAME_MKDOCS_YML} from '../constants';
+import {DocutilsError} from '../error';
+import {findMkDocsYml, isMkDocsInstalled, readMkDocsYml, requirePython} from '../fs';
+import {getLogger} from '../logger';
+import type {SpawnBackgroundProcessOpts} from '../utils';
+import {execWithErrorHandling, relative, spawnBackgroundProcess, stopwatch} from '../utils';
 
 const log = getLogger('mkdocs');
 
@@ -104,7 +104,7 @@ export async function buildSite({
     if (siteDir) {
       relSiteDir = relative(cwd, siteDir);
     } else {
-      ({ site_dir: siteDir } = await readMkDocsYml(mkDocsYmlPath));
+      ({site_dir: siteDir} = await readMkDocsYml(mkDocsYmlPath));
       if (siteDir) {
         log.debug('Found site_dir %s', siteDir);
         relSiteDir = relative(path.dirname(mkDocsYmlPath), siteDir);

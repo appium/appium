@@ -1,5 +1,5 @@
-import { console, doctor, logger, util } from '@appium/support';
-import type { AppiumLogger, DoctorCheckResult, IDoctorCheck } from '@appium/types';
+import {console, doctor, logger, util} from '@appium/support';
+import type {AppiumLogger, DoctorCheckResult, IDoctorCheck} from '@appium/types';
 
 /**
  * Process exit codes returned by {@link Doctor.run}.

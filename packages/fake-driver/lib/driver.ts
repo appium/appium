@@ -1,25 +1,25 @@
-import type { DriverData, IIpcSubscription, InitialOpts, IpcData, IpcMessage } from '@appium/types';
-import { BaseDriver, errors } from 'appium/driver';
-import { sleep } from 'asyncbox';
-import type { Express, Request, Response } from 'express';
-import type { Server as HttpServer } from 'node:http';
-import { EXECUTE_METHOD_MAP } from './command-maps/execute-method-map';
-import { NEW_BIDI_COMMANDS } from './command-maps/new-bidi-commands';
-import { NEW_METHOD_MAP } from './command-maps/new-method-map';
+import type {DriverData, IIpcSubscription, InitialOpts, IpcData, IpcMessage} from '@appium/types';
+import {BaseDriver, errors} from 'appium/driver';
+import {sleep} from 'asyncbox';
+import type {Express, Request, Response} from 'express';
+import type {Server as HttpServer} from 'node:http';
+import {EXECUTE_METHOD_MAP} from './command-maps/execute-method-map';
+import {NEW_BIDI_COMMANDS} from './command-maps/new-bidi-commands';
+import {NEW_METHOD_MAP} from './command-maps/new-method-map';
 import * as alertCommands from './commands/alert';
 import * as contextsCommands from './commands/contexts';
 import * as elementCommands from './commands/element';
 import * as findCommands from './commands/find';
 import * as generalCommands from './commands/general';
-import { desiredCapConstraints } from './desired-caps';
-import type { FakeDriverConstraints } from './desired-caps';
-import { FakeApp } from './fake-app';
-import type { FakeElement } from './fake-element';
-import type { FakeDriverCaps, W3CFakeDriverCaps } from './types';
+import {desiredCapConstraints} from './desired-caps';
+import type {FakeDriverConstraints} from './desired-caps';
+import {FakeApp} from './fake-app';
+import type {FakeElement} from './fake-element';
+import type {FakeDriverCaps, W3CFakeDriverCaps} from './types';
 
-export type { FakeDriverConstraints };
-export type { Orientation } from '@appium/types';
-export type ClockStatus = { running: boolean };
+export type {FakeDriverConstraints};
+export type {Orientation} from '@appium/types';
+export type ClockStatus = {running: boolean};
 
 /** Driver supporting a generic "fake thing" value (getFakeThing / setFakeThing). */
 export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDriverConstraints> {
@@ -110,7 +110,7 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
   bidiNavigate = generalCommands.bidiNavigate;
   getLastPluginMath = generalCommands.getLastPluginMath;
 
-  protected lastPluginMath: { pluginName: string; result: number } | null;
+  protected lastPluginMath: {pluginName: string; result: number} | null;
 
   /** If set, Bidi connections are proxied to this URL instead of handling locally. */
   private _bidiProxyUrl: string | null;
@@ -135,14 +135,14 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
     return this._bidiProxyUrl;
   }
 
-  override get driverData(): { isUnique: boolean } {
+  override get driverData(): {isUnique: boolean} {
     return {
       isUnique: !!this.caps.uniqueApp,
     };
   }
 
   static fakeRoute(_req: Request, res: Response): void {
-    res.send(JSON.stringify({ fakedriver: 'fakeResponse' }));
+    res.send(JSON.stringify({fakedriver: 'fakeResponse'}));
   }
 
   static async updateServer(
@@ -160,7 +160,7 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
     const fakeMathSub = this.ipcSubscribe<number>('pluginMath');
     fakeMathSub.on('message', (message: IpcMessage<number>) => {
       this.log.info(`A connected plugin did some math with result ${message.data}`);
-      this.lastPluginMath = { pluginName: message.publisher, result: message.data };
+      this.lastPluginMath = {pluginName: message.publisher, result: message.data};
     });
     this.ipcFakeThing = this.ipcSubscribe('fakeThing');
     this.ipcClock = this.ipcSubscribe('clockLifecycle');
@@ -179,7 +179,7 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
 
   proxyReqRes(req: Request, res: Response): void {
     res.set('content-type', 'application/json');
-    const resBodyObj: { value: string; sessionId: string | null } = {
+    const resBodyObj: {value: string; sessionId: string | null} = {
       value: 'proxied via proxyReqRes',
       sessionId: null,
     };
@@ -296,7 +296,7 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
       try {
         this.eventEmitter.emit('bidiEvent', {
           method: 'appium:clock.currentTime',
-          params: { time: Date.now() },
+          params: {time: Date.now()},
         });
       } catch (e) {
         this.log.error(e);
@@ -313,6 +313,6 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
     if (!this.ipcClock) {
       return;
     }
-    await this.ipcClock.publish({ running: this._clockRunning });
+    await this.ipcClock.publish({running: this._clockRunning});
   }
 }

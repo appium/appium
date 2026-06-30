@@ -1,19 +1,19 @@
-import { promisify } from 'node:util';
+import {promisify} from 'node:util';
 import * as yauzl from 'yauzl';
 // @ts-ignore - archiver 8.0 types are not available; 7.x types don't match
-import { ZipArchive } from 'archiver';
-import { createWriteStream } from 'node:fs';
+import {ZipArchive} from 'archiver';
+import {createWriteStream} from 'node:fs';
 import path from 'node:path';
 import stream from 'node:stream';
-import { text } from 'node:stream/consumers';
-import { pipeline } from 'node:stream/promises';
-import { exec } from 'teen_process';
-import { fs } from './fs';
-import { createBase64EncodeStream } from './internal';
+import {text} from 'node:stream/consumers';
+import {pipeline} from 'node:stream/promises';
+import {exec} from 'teen_process';
+import {fs} from './fs';
+import {createBase64EncodeStream} from './internal';
 import log from './logger';
-import { isWindows } from './system';
-import { Timer } from './timing';
-import { GiB, memoize, toReadableSizeString } from './util';
+import {isWindows} from './system';
+import {Timer} from './timing';
+import {GiB, memoize, toReadableSizeString} from './util';
 
 const openZip = promisify(yauzl.open) as (zipPath: string, options?: yauzl.Options) => Promise<yauzl.ZipFile>;
 
@@ -108,7 +108,7 @@ class ZipExtractor {
   }
 
   async extract(): Promise<void> {
-    const { fileNamesEncoding } = this.opts;
+    const {fileNamesEncoding} = this.opts;
     this.zipfile = await openZip(this.zipPath, {
       lazyEntries: true,
       // https://github.com/thejoshwolfe/yauzl/commit/cc7455ac789ba84973184e5ebde0581cdc4c3b39#diff-04c6e90faac2675aa89e2176d2eec7d8R95
@@ -117,7 +117,7 @@ class ZipExtractor {
     this.openReadStream = createOpenReadStream(this.zipfile);
     this.canceled = false;
 
-    const { dir } = this.opts;
+    const {dir} = this.opts;
 
     try {
       await processYauzlEntriesSequentially(this.zipfile, async (entry) => {
@@ -152,7 +152,7 @@ class ZipExtractor {
       return;
     }
 
-    const { dir } = this.opts;
+    const {dir} = this.opts;
 
     // convert external file attr int into a fs stat mode int
     const mode = (entry.externalFileAttributes >> 16) & 0xffff;
@@ -183,12 +183,12 @@ class ZipExtractor {
       await fs.symlink(link, dest);
     } else {
       await this.assertFileDestinationWithinRoot(dest, realDestDir, fileName);
-      await pipeline(readStream, fs.createWriteStream(dest, { mode: procMode }));
+      await pipeline(readStream, fs.createWriteStream(dest, {mode: procMode}));
     }
   }
 
   private async ensureDirWithinRoot(dirPath: string, fileName: string, mode?: number): Promise<string> {
-    const { dir } = this.opts;
+    const {dir} = this.opts;
     if (!isContainedPath(dirPath, dir)) {
       throw new Error(`Out of bound path "${dirPath}" found while processing file ${fileName}`);
     }
@@ -213,7 +213,7 @@ class ZipExtractor {
         if (err.code !== 'ENOENT') {
           throw err;
         }
-        await fs.mkdir(currentPath, { mode });
+        await fs.mkdir(currentPath, {mode});
       }
     }
 
@@ -225,7 +225,7 @@ class ZipExtractor {
   }
 
   private async assertFileDestinationWithinRoot(dest: string, realDestDir: string, fileName: string): Promise<void> {
-    const { dir } = this.opts;
+    const {dir} = this.opts;
     let realDest: string | null = null;
     try {
       realDest = await fs.realpath(dest);
@@ -242,7 +242,7 @@ class ZipExtractor {
   }
 
   private getExtractedMode(entryMode: number, isDir: boolean): number {
-    const { defaultDirMode, defaultFileMode } = this.opts;
+    const {defaultDirMode, defaultFileMode} = this.opts;
 
     let mode = entryMode;
     // Set defaults, if necessary
@@ -282,7 +282,7 @@ export async function extractAllTo(zipFilePath: string, destDir: string, opts: E
     throw new Error(`Target path '${destDir}' is expected to be absolute`);
   }
 
-  await fs.mkdir(destDir, { recursive: true });
+  await fs.mkdir(destDir, {recursive: true});
   const dir = await fs.realpath(destDir);
   if (opts.useSystemUnzip) {
     try {
@@ -329,7 +329,7 @@ export async function _extractEntryTo(
   await fs.mkdirp(path.dirname(dstPath));
 
   const readStream = await openReadStream(entry);
-  await pipeline(readStream, createWriteStream(dstPath, { flags: 'w' }));
+  await pipeline(readStream, createWriteStream(dstPath, {flags: 'w'}));
 }
 
 /**
@@ -345,7 +345,7 @@ export async function readEntries(
   zipFilePath: string,
   onEntry: (entry: ZipEntry) => boolean | void | Promise<boolean | void>,
 ): Promise<void> {
-  const zipfile = await openZip(zipFilePath, { lazyEntries: true });
+  const zipfile = await openZip(zipFilePath, {lazyEntries: true});
   const openReadStream = createOpenReadStream(zipfile);
 
   await processYauzlEntriesSequentially(zipfile, async (entry) => {
@@ -372,7 +372,7 @@ export async function toInMemoryZip(srcPath: string, opts: ZipOptions = {}): Pro
     throw new Error(`No such file or folder: ${srcPath}`);
   }
 
-  const { isMetered = true, encodeToBase64 = false, maxSize = 1 * GiB, level = 9 } = opts;
+  const {isMetered = true, encodeToBase64 = false, maxSize = 1 * GiB, level = 9} = opts;
   const resultBuffers: Buffer[] = [];
   let resultBuffersSize = 0;
   // Create a writable stream that zip buffers will be streamed to
@@ -392,7 +392,7 @@ export async function toInMemoryZip(srcPath: string, opts: ZipOptions = {}): Pro
 
   // Zip 'srcDir' and stream it to the above writable stream
   const archive = new ZipArchive({
-    zlib: { level },
+    zlib: {level},
   });
   let srcSize: number | null = null;
   const base64EncoderStream = encodeToBase64 ? createBase64EncodeStream() : null;
@@ -458,7 +458,7 @@ export async function assertValidZip(filePath: string): Promise<boolean> {
     throw new Error(`The file at '${filePath}' does not exist`);
   }
 
-  const { size } = await fs.stat(filePath);
+  const {size} = await fs.stat(filePath);
   if (size < 4) {
     throw new Error(`The file at '${filePath}' is too small to be a ZIP archive`);
   }
@@ -492,9 +492,9 @@ export async function toArchive(
   src: ZipSourceOptions = {},
   opts: ZipCompressionOptions = {},
 ): Promise<void> {
-  const { level = 9 } = opts;
-  const { pattern = '**/*', cwd = path.dirname(dstPath), ignore = [] } = src;
-  const archive = new ZipArchive({ zlib: { level } });
+  const {level = 9} = opts;
+  const {pattern = '**/*', cwd = path.dirname(dstPath), ignore = []} = src;
+  const archive = new ZipArchive({zlib: {level}});
   const outStream = fs.createWriteStream(dstPath);
   await new Promise<void>((resolve, reject) => {
     const outFinished = new Promise<void>((_resolve, _reject) => {
@@ -610,7 +610,7 @@ async function extractWithSystemUnzip(zipFilePath: string, destDir: string): Pro
   try {
     executablePath = await getExecutablePath(isWindowsHost ? 'powershell.exe' : 'unzip');
   } catch (e) {
-    throw new Error('Could not find system unzip', { cause: e });
+    throw new Error('Could not find system unzip', {cause: e});
   }
 
   if (isWindowsHost) {

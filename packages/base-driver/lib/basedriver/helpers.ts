@@ -1,14 +1,14 @@
-import { fs, node, tempDir, timing, util } from '@appium/support';
-import type { CachedAppInfo, ConfigureAppOptions, DriverHelpers, HTTPHeaders, PostProcessOptions } from '@appium/types';
+import {fs, node, tempDir, timing, util} from '@appium/support';
+import type {CachedAppInfo, ConfigureAppOptions, DriverHelpers, HTTPHeaders, PostProcessOptions} from '@appium/types';
 import AsyncLock from 'async-lock';
 import axios from 'axios';
-import type { AxiosResponseHeaders, RawAxiosRequestHeaders } from 'axios';
-import { LRUCache } from 'lru-cache';
+import type {AxiosResponseHeaders, RawAxiosRequestHeaders} from 'axios';
+import {LRUCache} from 'lru-cache';
 import nodeFs from 'node:fs';
 import path from 'node:path';
-import type { Readable } from 'node:stream';
-import type { PackageJson } from 'type-fest';
-import { log as logger } from './logger';
+import type {Readable} from 'node:stream';
+import type {PackageJson} from 'type-fest';
+import {log as logger} from './logger';
 
 // for compat with running tests transpiled and in-place
 export const BASEDRIVER_VER = readBaseDriverVersion();
@@ -24,7 +24,7 @@ const APPLICATIONS_CACHE = new LRUCache<string, CachedAppInfoEntry>({
   max: MAX_CACHED_APPS,
   ttl: CACHED_APPS_MAX_AGE_MS, // expire after 24 hours
   updateAgeOnGet: true,
-  dispose: ({ fullPath }, app) => {
+  dispose: ({fullPath}, app) => {
     logger.info(`The application '${app}' cached at '${fullPath}' has ` + `expired after ${CACHED_APPS_MAX_AGE_MS}ms`);
     if (fullPath) {
       void fs.rimraf(fullPath);
@@ -42,7 +42,7 @@ process.on('exit', () => {
     return;
   }
 
-  const appPaths = [...APPLICATIONS_CACHE.values()].map(({ fullPath }) => fullPath);
+  const appPaths = [...APPLICATIONS_CACHE.values()].map(({fullPath}) => fullPath);
   logger.debug(`Performing cleanup of ${util.pluralize('cached application', appPaths.length, true)}`);
   for (const appPath of appPaths) {
     if (!appPath) {
@@ -125,7 +125,7 @@ export async function configureApp(
     maxAge: null,
     etag: null,
   };
-  const { protocol, pathname } = parseAppLink(app);
+  const {protocol, pathname} = parseAppLink(app);
   const isUrl = isSupportedUrl(app);
   if (!isUrl && !path.isAbsolute(newApp)) {
     newApp = path.resolve(process.cwd(), newApp);
@@ -146,7 +146,7 @@ export async function configureApp(
     if (isUrl) {
       // Use the app from remote URL
       logger.info(`Using downloadable app '${newApp}'`);
-      const reqHeaders = { ...DEFAULT_REQ_HEADERS };
+      const reqHeaders = {...DEFAULT_REQ_HEADERS};
       if (cachedAppInfo?.etag) {
         reqHeaders['if-none-match'] = cachedAppInfo.etag;
       } else if (cachedAppInfo?.lastModified) {
@@ -156,7 +156,7 @@ export async function configureApp(
 
       let result = await queryAppLink(newApp, reqHeaders);
       headers = result.headers;
-      let { stream, status } = result;
+      let {stream, status} = result;
       logger.debug(`Response status: ${status}`);
       try {
         if (!util.isEmpty(headers)) {
@@ -192,7 +192,7 @@ export async function configureApp(
           if (!stream.closed) {
             stream.destroy();
           }
-          result = await queryAppLink(newApp, { ...DEFAULT_REQ_HEADERS });
+          result = await queryAppLink(newApp, {...DEFAULT_REQ_HEADERS});
           stream = result.stream;
           headers = result.headers;
           status = result.status;
@@ -243,7 +243,7 @@ export async function configureApp(
       if (cachedFullPath && cachedFullPath !== appPathToCache) {
         await fs.rimraf(cachedFullPath);
       }
-      const integrity: { file?: string; folder?: number } = {};
+      const integrity: {file?: string; folder?: number} = {};
       if ((await fs.stat(appPathToCache)).isDirectory()) {
         integrity.folder = await calculateFolderIntegrity(appPathToCache);
       } else {
@@ -346,7 +346,7 @@ export function parseCapsArray(capValue: string | string[]): string[] {
   } catch (e) {
     const message = `Failed to parse capability as JSON array: ${(e as Error).message}`;
     if (typeof capValue === 'string' && capValue.trimStart().startsWith('[')) {
-      throw new TypeError(message, { cause: e });
+      throw new TypeError(message, {cause: e});
     }
     logger.warn(message);
   }
@@ -374,7 +374,7 @@ export function generateDriverLogPrefix(obj: object | null, _sessionId?: string 
 
 // #region Private helpers
 
-function parseAppLink(appLink: string): URL | { protocol?: string; pathname?: string; href?: string; search?: string } {
+function parseAppLink(appLink: string): URL | {protocol?: string; pathname?: string; href?: string; search?: string} {
   try {
     return new URL(appLink);
   } catch {
@@ -392,7 +392,7 @@ function isEnvOptionEnabled(optionName: string, defaultValue: boolean | null = n
 
 function isSupportedUrl(app: string): boolean {
   try {
-    const { protocol } = parseAppLink(app);
+    const {protocol} = parseAppLink(app);
     return ['http:', 'https:'].includes(protocol ?? '');
   } catch {
     return false;
@@ -427,11 +427,11 @@ function toCacheKey(app: string): string {
 async function queryAppLink(appLink: string, reqHeaders: RawAxiosRequestHeaders): Promise<RemoteAppData> {
   const url = new URL(appLink);
   // Extract credentials, then remove them from the URL for axios
-  const { username, password } = url;
+  const {username, password} = url;
   url.username = '';
   url.password = '';
   const axiosUrl = url.href;
-  const axiosAuth = username ? { username, password } : undefined;
+  const axiosAuth = username ? {username, password} : undefined;
   const requestOpts = {
     url: axiosUrl,
     auth: axiosAuth,
@@ -441,8 +441,8 @@ async function queryAppLink(appLink: string, reqHeaders: RawAxiosRequestHeaders)
     headers: reqHeaders,
   };
   try {
-    const { data: stream, headers, status } = await axios(requestOpts);
-    return { stream, headers, status };
+    const {data: stream, headers, status} = await axios(requestOpts);
+    return {stream, headers, status};
   } catch (err) {
     throw new Error(`Cannot download the app from ${axiosUrl}: ${(err as Error).message}`, {
       cause: err,
@@ -465,11 +465,11 @@ async function fetchApp(srcStream: Readable, dstPath: string): Promise<string> {
       });
     });
   } catch (err) {
-    throw new Error(`Cannot fetch the application: ${(err as Error).message}`, { cause: err });
+    throw new Error(`Cannot fetch the application: ${(err as Error).message}`, {cause: err});
   }
 
   const secondsElapsed = timer.getDuration().asSeconds;
-  const { size } = await fs.stat(dstPath);
+  const {size} = await fs.stat(dstPath);
   logger.debug(
     `The application (${util.toReadableSizeString(size)}) ` +
       `has been downloaded to '${dstPath}' in ${secondsElapsed.toFixed(3)}s`,
@@ -496,7 +496,7 @@ function determineFilename(
     logger.debug(`Content-Disposition: ${headers['content-disposition']}`);
     const match = /filename="([^"]+)/i.exec(String(headers['content-disposition']));
     if (match) {
-      return fs.sanitizeName(match[1], { replacement: SANITIZE_REPLACEMENT });
+      return fs.sanitizeName(match[1], {replacement: SANITIZE_REPLACEMENT});
     }
   }
 
@@ -525,7 +525,7 @@ function verifyAppExtension(app: string, supportedAppExtensions: string[]): stri
 }
 
 async function calculateFolderIntegrity(folderPath: string): Promise<number> {
-  return (await fs.glob('**/*', { cwd: folderPath })).length;
+  return (await fs.glob('**/*', {cwd: folderPath})).length;
 }
 
 async function calculateFileIntegrity(filePath: string): Promise<string> {
@@ -534,7 +534,7 @@ async function calculateFileIntegrity(filePath: string): Promise<string> {
 
 async function isAppIntegrityOk(
   currentPath: string,
-  expectedIntegrity: { file?: string; folder?: number } = {},
+  expectedIntegrity: {file?: string; folder?: number} = {},
 ): Promise<boolean> {
   if (!(await fs.exists(currentPath))) {
     return false;

@@ -1,6 +1,6 @@
-import { expect } from 'chai';
-import { DRIVER_TYPE } from '../../../lib/constants';
-import { ArgSpec } from '../../../lib/schema/arg-spec';
+import {expect} from 'chai';
+import {DRIVER_TYPE} from '../../../lib/constants';
+import {ArgSpec} from '../../../lib/schema/arg-spec';
 
 describe('ArgSpec', function () {
   describe('class method', function () {

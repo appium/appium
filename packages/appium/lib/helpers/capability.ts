@@ -1,14 +1,8 @@
-import { errors, isW3cCaps, processCapabilities, STANDARD_CAPS } from '@appium/base-driver';
-import { util } from '@appium/support';
-import type {
-  BaseDriverCapConstraints,
-  Capabilities,
-  Constraints,
-  NSCapabilities,
-  W3CCapabilities,
-} from '@appium/types';
-import { log as logger } from '../logger';
-import { mapKeys } from '../utils';
+import {errors, isW3cCaps, processCapabilities, STANDARD_CAPS} from '@appium/base-driver';
+import {util} from '@appium/support';
+import type {BaseDriverCapConstraints, Capabilities, Constraints, NSCapabilities, W3CCapabilities} from '@appium/types';
+import {log as logger} from '../logger';
+import {mapKeys} from '../utils';
 
 const W3C_APPIUM_PREFIX = 'appium';
 const STANDARD_CAPS_LOWERCASE = new Set([...STANDARD_CAPS].map((cap) => cap.toLowerCase()));
@@ -47,7 +41,7 @@ export function parseCapsForInnerDriver<C extends Constraints = BaseDriverCapCon
   defaultCapabilities: NSCapabilities<C> = {},
 ): ParsedDriverCaps<C> | InvalidCaps<C> {
   if (!isW3cCaps(w3cCapabilities)) {
-    return { error: makeNonW3cCapsError() };
+    return {error: makeNonW3cCapsError()};
   }
 
   let desiredCaps: Capabilities<C> = {} as Capabilities<C>;
@@ -78,7 +72,7 @@ export function parseCapsForInnerDriver<C extends Constraints = BaseDriverCapCon
       }
 
       if (util.isEmpty(w3cCapabilities.firstMatch)) {
-        w3cCapabilities.firstMatch = [{ [defaultCapKey]: defaultCapValue }] as W3CCapabilities<C>['firstMatch'];
+        w3cCapabilities.firstMatch = [{[defaultCapKey]: defaultCapValue}] as W3CCapabilities<C>['firstMatch'];
       } else {
         (w3cCapabilities.firstMatch[0] as Record<string, unknown>)[defaultCapKey] = defaultCapValue;
       }
@@ -97,7 +91,7 @@ export function parseCapsForInnerDriver<C extends Constraints = BaseDriverCapCon
   }
 
   processedW3CCapabilities = {
-    alwaysMatch: { ...insertAppiumPrefixes(desiredCaps) },
+    alwaysMatch: {...insertAppiumPrefixes(desiredCaps)},
     firstMatch: [{}],
   } as W3CCapabilities<C>;
 

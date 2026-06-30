@@ -22,7 +22,7 @@
  */
 
 const path = require('node:path');
-const { realpath } = require('node:fs/promises');
+const {realpath} = require('node:fs/promises');
 
 /** @type {typeof import('../lib/cli/extension').runExtensionCommand} */
 let runExtensionCommand;
@@ -73,12 +73,12 @@ async function init() {
     return false;
   }
   try {
-    ({ env, util, logger } = require('@appium/support'));
+    ({env, util, logger} = require('@appium/support'));
     // @ts-ignore This is OK
-    ({ runExtensionCommand } = require('../build/lib/cli/extension'));
-    ({ DRIVER_TYPE, PLUGIN_TYPE } = require('../build/lib/constants'));
+    ({runExtensionCommand} = require('../build/lib/cli/extension'));
+    ({DRIVER_TYPE, PLUGIN_TYPE} = require('../build/lib/constants'));
     // @ts-ignore This is OK
-    ({ loadExtensions } = require('../build/lib/extension'));
+    ({loadExtensions} = require('../build/lib/extension'));
     logger.getLogger('Appium').level = 'error';
 
     // if we're doing `npm install -g appium` then we will assume we don't have a local appium.
@@ -133,10 +133,10 @@ async function main() {
   spinner.succeed(`Found Appium home: ${appiumHome}`);
 
   spinner.start('Loading extension data...');
-  const { driverConfig, pluginConfig } = await loadExtensions(appiumHome);
+  const {driverConfig, pluginConfig} = await loadExtensions(appiumHome);
   spinner.succeed('Loaded extension data.');
 
-  const installedStats = { [DRIVER_TYPE]: 0, [PLUGIN_TYPE]: 0 };
+  const installedStats = {[DRIVER_TYPE]: 0, [PLUGIN_TYPE]: 0};
   for (const [type, extEnv] of specs) {
     if (extEnv) {
       for await (let ext of extEnv.split(',')) {

@@ -1,9 +1,9 @@
 import bplistCreate from 'bplist-creator';
-import { parseBuffer } from 'bplist-parser';
-import { build as plistBuild, parse as plistParse, type PlistValue } from 'plist';
-import { fs } from './fs';
+import {parseBuffer} from 'bplist-parser';
+import {build as plistBuild, parse as plistParse, type PlistValue} from 'plist';
+import {fs} from './fs';
 import log from './logger';
-import { truncateString } from './util';
+import {truncateString} from './util';
 
 const BPLIST_IDENTIFIER = {
   BUFFER: Buffer.from('bplist00'),
@@ -69,14 +69,14 @@ export async function updatePlistFile(
   try {
     obj = await parsePlistFile(plist, mustExist);
   } catch (err) {
-    throw new Error(`Could not update plist: ${(err as Error).message}`, { cause: err });
+    throw new Error(`Could not update plist: ${(err as Error).message}`, {cause: err});
   }
   Object.assign(obj as Record<string, unknown>, updatedFields);
   const newPlist = binary ? bplistCreate(obj) : plistBuild(obj as PlistValue);
   try {
     await fs.writeFile(plist, newPlist);
   } catch (err) {
-    throw new Error(`Could not save plist: ${(err as Error).message}`, { cause: err });
+    throw new Error(`Could not save plist: ${(err as Error).message}`, {cause: err});
   }
   if (!quiet) {
     log.debug(`Wrote plist file '${plist}'`);
@@ -137,7 +137,7 @@ export function parsePlist(data: string | Buffer | Uint8Array | ArrayBuffer): ob
       : (plistParse(binaryLikeData.toString()) as object);
   }
 
-  throw new Error(`Unknown type of plist, data: ${truncateString(String(data), { length: 200 })}`);
+  throw new Error(`Unknown type of plist, data: ${truncateString(String(data), {length: 200})}`);
 }
 
 function toBufferIfBinaryLike(data: unknown): Buffer | null {

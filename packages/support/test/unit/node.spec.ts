@@ -1,7 +1,7 @@
-import { expect } from 'chai';
+import {expect} from 'chai';
 import path from 'node:path';
-import { describe, it } from 'node:test';
-import { node } from '../../lib';
+import {describe, it} from 'node:test';
+import {node} from '../../lib';
 
 describe('node utilities', function () {
   describe('getObjectSize', function () {
@@ -50,7 +50,7 @@ describe('node utilities', function () {
     it('should be able to deep freeze objects', function () {
       const obj1 = {};
       expect(node.deepFreeze(obj1)).to.eql(obj1);
-      const obj2 = node.deepFreeze({ a: { b: 'c' } });
+      const obj2 = node.deepFreeze({a: {b: 'c'}});
       expect(() => ((obj2 as any).a.b = 'd')).to.throw();
       expect(node.deepFreeze(1)).to.eql(1);
       expect(node.deepFreeze(null)).to.equal(null);

@@ -1,11 +1,11 @@
 /* eslint-disable no-console */
 
-import { console as supportConsole } from '@appium/support';
+import {console as supportConsole} from '@appium/support';
 import ora from 'ora';
 
 export const JSON_SPACES = 4;
 
-type ErrorLike = Error & { stderr?: unknown };
+type ErrorLike = Error & {stderr?: unknown};
 
 export class RingBuffer<T = any> {
   private readonly size: number;
@@ -48,7 +48,7 @@ export class RingBuffer<T = any> {
  */
 export function errAndQuit(json: boolean, msg: unknown): never {
   if (json) {
-    console.log(JSON.stringify({ error: String(msg) }, null, JSON_SPACES));
+    console.log(JSON.stringify({error: String(msg)}, null, JSON_SPACES));
   } else {
     console.error(supportConsole.styleText('red', String(msg)));
     if ((msg as ErrorLike)?.stderr) {

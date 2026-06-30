@@ -4,16 +4,16 @@
  * @module
  */
 
-import { exec } from 'teen_process';
-import type { Simplify } from 'type-fest';
+import {exec} from 'teen_process';
+import type {Simplify} from 'type-fest';
 import * as YAML from 'yaml';
-import { NAME_MKDOCS_YML, PIP_ENV_VARS, REQUIREMENTS_TXT_PATH } from './constants';
-import { DocutilsError } from './error';
-import { requirePython, stringifyYaml } from './fs';
-import { getLogger } from './logger';
-import type { MkDocsYml } from './model';
-import { createScaffoldTask } from './scaffold';
-import type { ScaffoldTask, ScaffoldTaskOptions } from './scaffold';
+import {NAME_MKDOCS_YML, PIP_ENV_VARS, REQUIREMENTS_TXT_PATH} from './constants';
+import {DocutilsError} from './error';
+import {requirePython, stringifyYaml} from './fs';
+import {getLogger} from './logger';
+import type {MkDocsYml} from './model';
+import {createScaffoldTask} from './scaffold';
+import type {ScaffoldTask, ScaffoldTaskOptions} from './scaffold';
 
 /**
  * Data for the base `mkdocs.yml` file
@@ -54,7 +54,7 @@ export const initMkDocs: ScaffoldTask<InitMkDocsOptions, MkDocsYml> = createScaf
       }
       let repoName = opts.repoName ?? content.repo_name;
       if (repoUrl && !repoName) {
-        let { pathname } = new URL(repoUrl);
+        let {pathname} = new URL(repoUrl);
         pathname = pathname.slice(1);
         const pathparts = pathname.split('/');
         const owner = pathparts[0];
@@ -141,11 +141,7 @@ export type InitOptions = Simplify<
  * Installs Python dependencies
  * @param opts Options
  */
-export async function initPython({
-  pythonPath,
-  dryRun = false,
-  upgrade = false,
-}: InitPythonOptions = {}): Promise<void> {
+export async function initPython({pythonPath, dryRun = false, upgrade = false}: InitPythonOptions = {}): Promise<void> {
   const foundPythonPath = await requirePython(pythonPath);
 
   const args = ['-m', 'pip', 'install', '-r', REQUIREMENTS_TXT_PATH];
@@ -163,8 +159,8 @@ export async function initPython({
     log.debug('Executing command: %s %s (environment variables: %s)', foundPythonPath, args.join(' '), PIP_ENV_VARS);
     log.info('Installing Python dependencies...');
     try {
-      const result = await exec(foundPythonPath, args, { env: PIP_ENV_VARS, shell: true });
-      const { code, stdout } = result;
+      const result = await exec(foundPythonPath, args, {env: PIP_ENV_VARS, shell: true});
+      const {code, stdout} = result;
       if (code !== 0) {
         throw new DocutilsError(`Could not install Python dependencies. Reason: ${stdout}`);
       }
@@ -197,7 +193,7 @@ export async function init({
   upgrade,
 }: InitOptions = {}): Promise<void> {
   if (python) {
-    await initPython({ pythonPath, dryRun, upgrade });
+    await initPython({pythonPath, dryRun, upgrade});
   }
 
   if (mkdocs && !upgrade) {

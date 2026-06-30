@@ -1,5 +1,5 @@
-import { fs, tempDir } from '@appium/support';
-import type { AnyManifestDataVersion } from 'appium/types';
+import {fs, tempDir} from '@appium/support';
+import type {AnyManifestDataVersion} from 'appium/types';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import path from 'node:path';
@@ -10,10 +10,10 @@ import {
   DRIVER_TYPE,
   EXT_SUBCOMMAND_LIST as LIST,
 } from '../../lib/constants';
-import { FAKE_DRIVER_DIR, resolveFixture } from '../helpers';
-import { installLocalExtension, runAppiumJson } from './e2e-helpers';
+import {FAKE_DRIVER_DIR, resolveFixture} from '../helpers';
+import {installLocalExtension, runAppiumJson} from './e2e-helpers';
 
-const { expect } = chai;
+const {expect} = chai;
 chai.use(chaiAsPromised);
 
 describe('manifest handling', function () {
@@ -69,20 +69,20 @@ describe('manifest handling', function () {
 
         let tmpManifest = await readManifest();
         tmpManifest.schemaRev = 2;
-        const drivers = tmpManifest.drivers as Record<string, { installPath?: string }>;
+        const drivers = tmpManifest.drivers as Record<string, {installPath?: string}>;
         if (drivers?.fake) {
           delete drivers.fake.installPath;
         }
         await fs.writeFile(manifestPath, YAML.stringify(tmpManifest));
         tmpManifest = await readManifest();
         expect(tmpManifest.schemaRev).to.equal(2);
-        expect((tmpManifest.drivers as Record<string, { installPath?: string }>)?.fake?.installPath).to.not.exist;
+        expect((tmpManifest.drivers as Record<string, {installPath?: string}>)?.fake?.installPath).to.not.exist;
         await runList();
         manifest = await readManifest();
       });
 
       it('should add an "installPath" field to each extension', function () {
-        const drivers = manifest.drivers as Record<string, { installPath?: string }>;
+        const drivers = manifest.drivers as Record<string, {installPath?: string}>;
         expect(drivers?.fake?.installPath).to.be.a('string');
       });
 

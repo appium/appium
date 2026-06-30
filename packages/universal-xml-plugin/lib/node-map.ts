@@ -6,7 +6,7 @@
  * array of strings. This means that there can be a many-to-one relationship between
  * platform-specific node names and universal node names.
  */
-import type { UniversalNameMap } from './types';
+import type {UniversalNameMap} from './types';
 
 const NODE_MAP: UniversalNameMap = {
   Alert: {

@@ -1,10 +1,10 @@
 import express from 'express';
-import type { Express } from 'express';
+import type {Express} from 'express';
 import path from 'node:path';
 import favicon from 'serve-favicon';
-import { produceCrash, produceError } from './crash';
-import { guineaPig, guineaPigAppBanner, guineaPigScrollable, welcome } from './handlers';
-import { TEST_FIXTURES_DIR } from './static-dir';
+import {produceCrash, produceError} from './crash';
+import {guineaPig, guineaPigAppBanner, guineaPigScrollable, welcome} from './handlers';
+import {TEST_FIXTURES_DIR} from './static-dir';
 
 export interface RegisterTestPagesOpts {
   basePath: string;
@@ -17,7 +17,7 @@ export interface RegisterTestPagesOpts {
  * Appium 4. Driver CI should hard-copy needed fixtures and run a local test HTTP server.
  * @internal
  */
-export function registerTestPages(app: Express, { basePath }: RegisterTestPagesOpts): void {
+export function registerTestPages(app: Express, {basePath}: RegisterTestPagesOpts): void {
   app.use(favicon(path.resolve(TEST_FIXTURES_DIR, 'favicon.ico')));
   app.use(express.static(TEST_FIXTURES_DIR));
 
@@ -30,5 +30,5 @@ export function registerTestPages(app: Express, { basePath }: RegisterTestPagesO
   app.all('/test/guinea-pig-app-banner', guineaPigAppBanner);
 }
 
-export { isLegacyTestPagesEnabled } from './env';
-export { TEST_FIXTURES_DIR } from './static-dir';
+export {isLegacyTestPagesEnabled} from './env';
+export {TEST_FIXTURES_DIR} from './static-dir';

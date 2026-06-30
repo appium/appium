@@ -1,5 +1,5 @@
-import { expect } from 'chai';
-import { adler32 } from '../../../lib/utils/hash';
+import {expect} from 'chai';
+import {adler32} from '../../../lib/utils/hash';
 
 describe('utils/hash', function () {
   describe('adler32()', function () {

@@ -1,5 +1,5 @@
-import { DOMParser, MIME_TYPE } from '@xmldom/xmldom';
-import { select as xpathQuery } from 'xpath';
+import {DOMParser, MIME_TYPE} from '@xmldom/xmldom';
+import {select as xpathQuery} from 'xpath';
 
 /**
  * Runs an XPath query against an XML string.

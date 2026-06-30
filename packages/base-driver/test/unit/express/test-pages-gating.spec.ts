@@ -1,9 +1,9 @@
-import { getTestPort, TEST_HOST } from '@appium/driver-test-support';
+import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
 import axios from 'axios';
-import { expect } from 'chai';
-import { afterEach, beforeEach, describe, it } from 'node:test';
-import { server } from '../../../lib/express/server';
-import { LEGACY_TEST_PAGES_ENV } from '../../../lib/test-pages/env';
+import {expect} from 'chai';
+import {afterEach, beforeEach, describe, it} from 'node:test';
+import {server} from '../../../lib/express/server';
+import {LEGACY_TEST_PAGES_ENV} from '../../../lib/test-pages/env';
 
 describe('legacy test pages gating', function () {
   let previousEnv: string | undefined;
@@ -28,7 +28,7 @@ describe('legacy test pages gating', function () {
       port,
     });
     try {
-      const { status } = await axios.get(`http://${TEST_HOST}:${port}/test/guinea-pig`, {
+      const {status} = await axios.get(`http://${TEST_HOST}:${port}/test/guinea-pig`, {
         validateStatus: null,
       });
       expect(status).to.equal(404);
@@ -45,7 +45,7 @@ describe('legacy test pages gating', function () {
       port,
     });
     try {
-      const { data, status } = await axios.get(`http://${TEST_HOST}:${port}/test/guinea-pig`);
+      const {data, status} = await axios.get(`http://${TEST_HOST}:${port}/test/guinea-pig`);
       expect(status).to.equal(200);
       expect(data).to.include('I am some page content');
     } finally {

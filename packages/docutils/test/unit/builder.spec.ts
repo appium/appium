@@ -1,12 +1,12 @@
-import { fs, tempDir } from '@appium/support';
+import {fs, tempDir} from '@appium/support';
 import * as chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import path from 'node:path';
-import { findDeployVersion } from '../../lib/builder/deploy';
-import { NAME_PACKAGE_JSON } from '../../lib/constants';
+import {findDeployVersion} from '../../lib/builder/deploy';
+import {NAME_PACKAGE_JSON} from '../../lib/constants';
 
 chai.use(chaiAsPromised);
-const { expect } = chai;
+const {expect} = chai;
 
 /**
  * Helper function to create a project directory with package.json

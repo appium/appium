@@ -1,13 +1,13 @@
-import { fs, logger, tempDir, util } from '@appium/support';
-import type { AppiumServer } from '@appium/types';
-import { getResponseForW3CError } from 'appium/driver';
-import { BasePlugin } from 'appium/plugin';
-import type { Express, Request, Response } from 'express';
-import { LRUCache } from 'lru-cache';
-import { EventEmitter } from 'node:stream';
+import {fs, logger, tempDir, util} from '@appium/support';
+import type {AppiumServer} from '@appium/types';
+import {getResponseForW3CError} from 'appium/driver';
+import {BasePlugin} from 'appium/plugin';
+import type {Express, Request, Response} from 'express';
+import {LRUCache} from 'lru-cache';
+import {EventEmitter} from 'node:stream';
 import WebSocket from 'ws';
-import { requireValidItemOptions, Storage, StorageArgumentError, validateStorageItemName } from './storage';
-import type { AddRequestResult, ItemOptions, StorageItem } from './types';
+import {requireValidItemOptions, Storage, StorageArgumentError, validateStorageItemName} from './storage';
+import type {AddRequestResult, ItemOptions, StorageItem} from './types';
 
 const log = logger.getLogger('StoragePlugin');
 
@@ -28,11 +28,11 @@ export class StoragePlugin extends BasePlugin {
       let body: any;
       try {
         const value = await STORAGE_HANDLERS[methodName](req, httpServer);
-        body = { value: value ?? null };
+        body = {value: value ?? null};
       } catch (e) {
         [status, body] = getResponseForW3CError(e);
       }
-      log.debug(`Responding to ${methodName} with ${util.truncateString(JSON.stringify(body.value), { length: 200 })}`);
+      log.debug(`Responding to ${methodName} with ${util.truncateString(JSON.stringify(body.value), {length: 200})}`);
       res.set('content-type', 'application/json; charset=utf-8');
       res.status(status).send(body);
     };

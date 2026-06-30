@@ -1,14 +1,14 @@
-import { logger, util } from '@appium/support';
-import type { AppiumLogger, Core, Driver, DriverMethodDef, MethodMap, PayloadParams } from '@appium/types';
-import type { Application, Request, Response } from 'express';
-import type { MultidimensionalReadonlyArray } from 'type-fest';
-import type { BaseDriver } from '../basedriver/driver';
-import { generateDriverLogPrefix } from '../basedriver/helpers';
-import { log } from '../basedriver/logger';
-import { DEFAULT_BASE_PATH, MAX_LOG_BODY_LENGTH, PROTOCOLS } from '../constants';
-import type { RouteConfiguringFunction } from '../express/server';
-import { isW3cCaps } from '../helpers/capabilities';
-import { omitKeys } from '../utils';
+import {logger, util} from '@appium/support';
+import type {AppiumLogger, Core, Driver, DriverMethodDef, MethodMap, PayloadParams} from '@appium/types';
+import type {Application, Request, Response} from 'express';
+import type {MultidimensionalReadonlyArray} from 'type-fest';
+import type {BaseDriver} from '../basedriver/driver';
+import {generateDriverLogPrefix} from '../basedriver/helpers';
+import {log} from '../basedriver/logger';
+import {DEFAULT_BASE_PATH, MAX_LOG_BODY_LENGTH, PROTOCOLS} from '../constants';
+import type {RouteConfiguringFunction} from '../express/server';
+import {isW3cCaps} from '../helpers/capabilities';
+import {omitKeys} from '../utils';
 import {
   BadParametersError,
   errorFromMJSONWPStatusCode,
@@ -17,9 +17,9 @@ import {
   getResponseForW3CError,
   isErrorType,
 } from './errors';
-import { ensureW3cResponse, formatResponseValue } from './helpers';
-import { METHOD_MAP, NO_SESSION_ID_COMMANDS } from './routes';
-import { validators } from './validators';
+import {ensureW3cResponse, formatResponseValue} from './helpers';
+import {METHOD_MAP, NO_SESSION_ID_COMMANDS} from './routes';
+import {validators} from './validators';
 
 export const CREATE_SESSION_COMMAND = 'createSession';
 export const DELETE_SESSION_COMMAND = 'deleteSession';
@@ -265,12 +265,12 @@ export function routeConfiguringFunction(driver: Core<any>): RouteConfiguringFun
 
   // return a function which will add all the routes to the driver. Here extraMethods might be
   // passed in as defined by Appium plugins, so we need to add those to the default list
-  return function addRoutes(app, { basePath = DEFAULT_BASE_PATH, extraMethodMap = {} } = {}) {
+  return function addRoutes(app, {basePath = DEFAULT_BASE_PATH, extraMethodMap = {}} = {}) {
     // store basePath on the driver instance so it can use it if necessary
     // for example in determining proxy avoidance
     driver.basePath = basePath;
 
-    const allMethods: MethodMap<Driver> = { ...METHOD_MAP, ...extraMethodMap };
+    const allMethods: MethodMap<Driver> = {...METHOD_MAP, ...extraMethodMap};
     for (const [path, methods] of Object.entries(allMethods)) {
       for (const [method, spec] of Object.entries(methods)) {
         const isSessCommand = spec.command ? isSessionCommand(spec.command) : false;
@@ -344,7 +344,7 @@ function wrapParams<T>(paramSets: PayloadParams, jsonObj: T): T | Record<string,
    * the time they are validated and later passed to the commands.
    */
   return (Array.isArray(jsonObj) || typeof jsonObj !== 'object' || jsonObj === null) && paramSets.wrap
-    ? { [paramSets.wrap]: jsonObj }
+    ? {[paramSets.wrap]: jsonObj}
     : jsonObj;
 }
 
@@ -474,14 +474,14 @@ function buildHandler(
         `Calling %s.%s() with args: %s`,
         driver.constructor.name,
         spec.command,
-        logger.markSensitive(util.truncateString(JSON.stringify(args), { length: MAX_LOG_BODY_LENGTH })),
+        logger.markSensitive(util.truncateString(JSON.stringify(args), {length: MAX_LOG_BODY_LENGTH})),
       );
 
       if (didPluginOverrideProxy) {
         // TODO for now we add this information on the args list, but that's mixing purposes here.
         // We really should add another 'options' parameter to 'executeCommand', but this would be
         // a breaking change for all drivers so would need to be handled carefully.
-        args.push({ reqForProxy: req });
+        args.push({reqForProxy: req});
       }
 
       driverRes = await (driver as BaseDriver<any>).executeCommand(spec.command, ...args);
@@ -492,7 +492,7 @@ function buildHandler(
       // If `executeCommand` was overridden and the method returns an object
       // with a protocol and value/error property, re-assign the protocol
       if (util.isPlainObject(driverRes) && Object.hasOwn(driverRes, 'protocol')) {
-        currentProtocol = (driverRes as { protocol?: keyof typeof PROTOCOLS }).protocol || currentProtocol;
+        currentProtocol = (driverRes as {protocol?: keyof typeof PROTOCOLS}).protocol || currentProtocol;
         if (driverRes.error) {
           throw driverRes.error;
         }
@@ -566,7 +566,7 @@ function buildHandler(
 
       currentProtocol = currentProtocol || extractProtocol(driver, sessionId || newSessionId);
 
-      const stacktrace = (err as { stacktrace?: string }).stacktrace;
+      const stacktrace = (err as {stacktrace?: string}).stacktrace;
       let errMsg = stacktrace || actualErr.stack || '';
       if (!errMsg.includes(actualErr.message)) {
         // if the message has more information, add it. but often the message
@@ -616,8 +616,8 @@ async function doJwpProxy(driver: BaseDriver<any>, req: Request, res: Response):
       throw err;
     }
     if (err instanceof Error) {
-      throw new Error(`Could not proxy. Proxy error: ${err.message}`, { cause: err });
+      throw new Error(`Could not proxy. Proxy error: ${err.message}`, {cause: err});
     }
-    throw new Error(`Could not proxy. Proxy error: ${String(err)}`, { cause: err });
+    throw new Error(`Could not proxy. Proxy error: ${String(err)}`, {cause: err});
   }
 }

@@ -1,12 +1,12 @@
-import { env, fs, util } from '@appium/support';
-import type { DriverType, ExtensionType, PluginType } from '@appium/types';
-import type { ExtManifest, ExtPackageJson, ExtRecord, InternalMetadata, ManifestData } from 'appium/types';
+import {env, fs, util} from '@appium/support';
+import type {DriverType, ExtensionType, PluginType} from '@appium/types';
+import type {ExtManifest, ExtPackageJson, ExtRecord, InternalMetadata, ManifestData} from 'appium/types';
 import path from 'node:path';
 import * as YAML from 'yaml';
-import { CURRENT_SCHEMA_REV, DRIVER_TYPE, PLUGIN_TYPE } from '../constants';
-import { packageDidChange } from '../utils';
-import { INSTALL_TYPE_DEV, INSTALL_TYPE_NPM } from './extension-config';
-import { migrate } from './manifest-migrations';
+import {CURRENT_SCHEMA_REV, DRIVER_TYPE, PLUGIN_TYPE} from '../constants';
+import {packageDidChange} from '../utils';
+import {INSTALL_TYPE_DEV, INSTALL_TYPE_NPM} from './extension-config';
+import {migrate} from './manifest-migrations';
 
 const CONFIG_DATA_DRIVER_KEY = `${DRIVER_TYPE}s` as const;
 const CONFIG_DATA_PLUGIN_KEY = `${PLUGIN_TYPE}s` as const;
@@ -115,7 +115,7 @@ export class Manifest {
           throw new Error(
             `Appium had trouble loading the extension installation ` +
               `cache file (${manifestPathResolved}). It may be invalid YAML. Specific error: ${err.message}`,
-            { cause: err },
+            {cause: err},
           );
         }
       }
@@ -164,7 +164,7 @@ export class Manifest {
           `Appium could not create the directory for the manifest file: ${path.dirname(
             manifestPathResolved,
           )}. Original error: ${err.message}`,
-          { cause: err },
+          {cause: err},
         );
       }
       try {
@@ -173,7 +173,7 @@ export class Manifest {
       } catch (err: any) {
         throw new Error(
           `Appium could not write to manifest at ${manifestPathResolved} using APPIUM_HOME ${this.#appiumHome}. Please ensure it is writable. Original error: ${err.message}`,
-          { cause: err },
+          {cause: err},
         );
       }
     })();
@@ -247,7 +247,7 @@ export class Manifest {
     };
 
     if (isDriver(pkgJson)) {
-      const { driverName, ...appiumDriverMeta } = pkgJson.appium;
+      const {driverName, ...appiumDriverMeta} = pkgJson.appium;
       const value = {
         ...appiumDriverMeta,
         ...internal,
@@ -259,7 +259,7 @@ export class Manifest {
       return false;
     }
     if (isPlugin(pkgJson)) {
-      const { pluginName, ...appiumPluginMeta } = pkgJson.appium;
+      const {pluginName, ...appiumPluginMeta} = pkgJson.appium;
       const value = {
         ...appiumPluginMeta,
         ...internal,
@@ -339,9 +339,9 @@ export class Manifest {
 function isExtension(value: unknown): value is ExtPackageJson<ExtensionType> {
   return (
     util.isPlainObject(value) &&
-    util.isPlainObject((value as { appium?: unknown }).appium) &&
-    typeof (value as { name?: unknown }).name === 'string' &&
-    typeof (value as { version?: unknown }).version === 'string'
+    util.isPlainObject((value as {appium?: unknown}).appium) &&
+    typeof (value as {name?: unknown}).name === 'string' &&
+    typeof (value as {version?: unknown}).version === 'string'
   );
 }
 
@@ -349,7 +349,7 @@ function isDriver(value: unknown): value is ExtPackageJson<DriverType> {
   return (
     isExtension(value) &&
     'driverName' in value.appium &&
-    typeof (value.appium as { driverName?: unknown }).driverName === 'string'
+    typeof (value.appium as {driverName?: unknown}).driverName === 'string'
   );
 }
 
@@ -357,6 +357,6 @@ function isPlugin(value: unknown): value is ExtPackageJson<PluginType> {
   return (
     isExtension(value) &&
     'pluginName' in value.appium &&
-    typeof (value.appium as { pluginName?: unknown }).pluginName === 'string'
+    typeof (value.appium as {pluginName?: unknown}).pluginName === 'string'
   );
 }

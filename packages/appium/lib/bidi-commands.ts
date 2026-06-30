@@ -1,6 +1,6 @@
-import type { ExtensionCore } from '@appium/base-driver';
-import { errors } from '@appium/base-driver';
-import { util } from '@appium/support';
+import type {ExtensionCore} from '@appium/base-driver';
+import {errors} from '@appium/base-driver';
+import {util} from '@appium/support';
 import type {
   BiDiResultData,
   ErrorBiDiCommandResponse,
@@ -9,14 +9,14 @@ import type {
   StringRecord,
   SuccessBiDiCommandResponse,
 } from '@appium/types';
-import type { IncomingMessage } from 'node:http';
+import type {IncomingMessage} from 'node:http';
 import os from 'node:os';
-import { promisify } from 'node:util';
+import {promisify} from 'node:util';
 import WebSocket from 'ws';
-import type { AppiumDriver } from './appium';
-import { BIDI_BASE_PATH, BIDI_EVENT_NAME } from './constants';
-import { fetchInterfaces, isBroadcastIp, V4_BROADCAST_IP } from './helpers/network';
-import { capitalize } from './utils';
+import type {AppiumDriver} from './appium';
+import {BIDI_BASE_PATH, BIDI_EVENT_NAME} from './constants';
+import {fetchInterfaces, isBroadcastIp, V4_BROADCAST_IP} from './helpers/network';
+import {capitalize} from './utils';
 
 type ExtensionPlugin = Plugin & ExtensionCore;
 type AnyDriver = ExternalDriver | AppiumDriver;
@@ -62,7 +62,7 @@ export function determineBiDiHost(address: string): string {
 export function onBidiConnection(this: AppiumDriver, ws: WebSocket, req: IncomingMessage): void {
   try {
     const initBiDiSocketFunc: OmitThisParameter<typeof initBidiSocket> = initBidiSocket.bind(this);
-    const { bidiHandlerDriver, bidiHandlerPlugins, proxyClient, send, sendToProxy, logSocketErr } = initBiDiSocketFunc(
+    const {bidiHandlerDriver, bidiHandlerPlugins, proxyClient, send, sendToProxy, logSocketErr} = initBiDiSocketFunc(
       ws,
       req,
     );
@@ -100,12 +100,12 @@ export async function onBidiMessage(
   let resMessage: SuccessBiDiCommandResponse | ErrorBiDiCommandResponse;
   let id: number = 0;
   const driverLog = driver.log;
-  const dataTruncated = util.truncateString(data.toString(), { length: MAX_LOGGED_DATA_LENGTH });
+  const dataTruncated = util.truncateString(data.toString(), {length: MAX_LOGGED_DATA_LENGTH});
   try {
     let method: string;
     let params: StringRecord;
     try {
-      ({ id, method, params } = JSON.parse(data.toString('utf8')));
+      ({id, method, params} = JSON.parse(data.toString('utf8')));
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       throw new errors.InvalidArgumentError(`Could not parse Bidi command '${dataTruncated}': ${message}`);
@@ -129,9 +129,9 @@ export async function onBidiMessage(
       err !== null &&
       typeof err === 'object' &&
       'bidiErrObject' in err &&
-      typeof (err as { bidiErrObject: unknown }).bidiErrObject === 'function'
+      typeof (err as {bidiErrObject: unknown}).bidiErrObject === 'function'
     ) {
-      resMessage = (err as { bidiErrObject: (msgId: number) => ErrorBiDiCommandResponse }).bidiErrObject(id);
+      resMessage = (err as {bidiErrObject: (msgId: number) => ErrorBiDiCommandResponse}).bidiErrObject(id);
     } else {
       resMessage = {
         id,
@@ -261,7 +261,7 @@ function initBidiSocket(this: AppiumDriver, ws: WebSocket, req: IncomingMessage)
         throw new Error(
           `Got request for ${driverName} to proxy bidi connections to upstream socket with ` +
             `url ${bidiProxyUrl}, but this was not a valid url`,
-          { cause: e },
+          {cause: e},
         );
       }
       this.log.info(
@@ -308,7 +308,7 @@ function initBidiSocket(this: AppiumDriver, ws: WebSocket, req: IncomingMessage)
   // bidi socket server (e.g. on a browser)
   const sendToProxy: SendData | null = proxyClient ? sendFactory(proxyClient) : null;
 
-  return { bidiHandlerDriver, bidiHandlerPlugins, proxyClient, send, sendToProxy, logSocketErr };
+  return {bidiHandlerDriver, bidiHandlerPlugins, proxyClient, send, sendToProxy, logSocketErr};
 }
 
 /**
@@ -465,7 +465,7 @@ function initBidiEventListeners(
                 method,
                 params,
               }),
-              { length: MAX_LOGGED_DATA_LENGTH },
+              {length: MAX_LOGGED_DATA_LENGTH},
             )}`,
         );
         return;
@@ -489,13 +489,13 @@ function initBidiEventListeners(
           ext.log?.debug(
             // some old plugins might not have the `log` property
             `<-- BIDI EVENT ${method} (context: '${context}', ` +
-              `params: ${util.truncateString(JSON.stringify(params), { length: MAX_LOGGED_DATA_LENGTH })}). ` +
+              `params: ${util.truncateString(JSON.stringify(params), {length: MAX_LOGGED_DATA_LENGTH})}). ` +
               `All further similar events won't be logged.`,
           );
           eventLogCounts[method] = 1;
         }
         // now we can send the event onto the socket
-        const ev = { type: 'event', context, method, params };
+        const ev = {type: 'event', context, method, params};
         await send(JSON.stringify(ev));
       }
     };

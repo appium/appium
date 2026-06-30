@@ -1,9 +1,9 @@
 import * as chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { argify } from '../../lib/utils';
+import {argify} from '../../lib/utils';
 
 chai.use(chaiAsPromised);
-const { expect } = chai;
+const {expect} = chai;
 
 describe('argify', function () {
   it('should create args from params', function () {

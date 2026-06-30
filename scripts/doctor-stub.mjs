@@ -1,4 +1,4 @@
-import { logger } from '@appium/support';
+import {logger} from '@appium/support';
 
 const log = logger.getLogger('Doctor CLI');
 const DEV_DOC_URL =

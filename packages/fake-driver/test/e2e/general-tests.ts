@@ -1,16 +1,16 @@
-import type { ActionSequence } from '@appium/types';
-import chai, { expect } from 'chai';
+import type {ActionSequence} from '@appium/types';
+import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { deleteSession, initSession, W3C_PREFIXED_CAPS } from '../helpers';
+import {deleteSession, initSession, W3C_PREFIXED_CAPS} from '../helpers';
 
 chai.use(chaiAsPromised);
 
-export function generalTests(context: { port: number }) {
+export function generalTests(context: {port: number}) {
   describe('generic actions', function () {
     let driver: Awaited<ReturnType<typeof initSession>>;
 
     before(async function () {
-      driver = await initSession(W3C_PREFIXED_CAPS, { port: context.port });
+      driver = await initSession(W3C_PREFIXED_CAPS, {port: context.port});
     });
 
     after(async function () {
@@ -19,7 +19,7 @@ export function generalTests(context: { port: number }) {
 
     it.skip('should set geolocation', async function () {
       // TODO unquarantine when WD fixes what it sends the server
-      await driver.setGeoLocation({ latitude: -30, longitude: 30 });
+      await driver.setGeoLocation({latitude: -30, longitude: 30});
     });
     it('should get geolocation', async function () {
       const geo = await driver.getGeoLocation();
@@ -49,31 +49,31 @@ export function generalTests(context: { port: number }) {
       expect(screenshot).to.have.length.above(4000);
     });
     it('should get screen height/width', async function () {
-      const { height, width } = await driver.getWindowSize();
+      const {height, width} = await driver.getWindowSize();
       expect(height).to.be.above(100);
       expect(width).to.be.above(100);
     });
 
     it('should set implicit wait timeout', async function () {
-      await driver.setTimeout({ implicit: 1000 });
+      await driver.setTimeout({implicit: 1000});
     });
     it('should not set invalid implicit wait timeout', async function () {
-      await expect(driver.setTimeout({ implicit: 'foo' as any })).to.be.rejectedWith(/values are not valid/);
+      await expect(driver.setTimeout({implicit: 'foo' as any})).to.be.rejectedWith(/values are not valid/);
     });
 
     // skip these until basedriver supports these timeouts
     it.skip('should set async script timeout', async function () {
-      await driver.setTimeout({ script: 1000 });
+      await driver.setTimeout({script: 1000});
     });
     it.skip('should not set invalid async script timeout', async function () {
-      await expect(driver.setTimeout({ script: 'foo' as any })).to.be.rejectedWith(/values are not valid/);
+      await expect(driver.setTimeout({script: 'foo' as any})).to.be.rejectedWith(/values are not valid/);
     });
 
     it.skip('should set page load timeout', async function () {
-      await driver.setTimeout({ pageLoad: 1000 });
+      await driver.setTimeout({pageLoad: 1000});
     });
     it.skip('should not set page load script timeout', async function () {
-      await expect(driver.setTimeout({ pageLoad: 'foo' as any })).to.be.rejectedWith(/values are not valid/);
+      await expect(driver.setTimeout({pageLoad: 'foo' as any})).to.be.rejectedWith(/values are not valid/);
     });
 
     it('should allow performing actions that do nothing but save them', async function () {
@@ -105,14 +105,14 @@ export function generalTests(context: { port: number }) {
     it('should get and set a fake thing via execute overloads', async function () {
       let thing = await driver.executeScript('fake: getThing', []);
       expect(thing).to.not.exist;
-      await driver.executeScript('fake: setThing', [{ thing: 1234 }]);
+      await driver.executeScript('fake: setThing', [{thing: 1234}]);
       thing = await driver.executeScript('fake: getThing', []);
       expect(thing).to.eql(1234);
     });
 
     it('should add 2 numbers via execute overloads', async function () {
-      await expect(driver.executeScript('fake: addition', [{ num1: 2, num2: 3 }])).to.eventually.eql(5);
-      await expect(driver.executeScript('fake: addition', [{ num1: 2, num2: 3, num3: 4 }])).to.eventually.eql(9);
+      await expect(driver.executeScript('fake: addition', [{num1: 2, num2: 3}])).to.eventually.eql(5);
+      await expect(driver.executeScript('fake: addition', [{num1: 2, num2: 3, num3: 4}])).to.eventually.eql(9);
     });
 
     it('should throw not implemented if an execute overload isnt supported', async function () {
@@ -120,7 +120,7 @@ export function generalTests(context: { port: number }) {
     });
 
     it('should throw an error if a required overload param is missing', async function () {
-      await expect(driver.executeScript('fake: addition', [{ num3: 4 }])).to.be.rejectedWith(
+      await expect(driver.executeScript('fake: addition', [{num3: 4}])).to.be.rejectedWith(
         /required parameters are missing/,
       );
     });
@@ -130,7 +130,7 @@ export function generalTests(context: { port: number }) {
       await expect(driver.executeScript('fake: addition', [4])).to.be.rejectedWith(
         /not receive an appropriate execute/,
       );
-      await expect(driver.executeScript('fake: addition', [{ num1: 2 }, { extra: 'bad' }])).to.be.rejectedWith(
+      await expect(driver.executeScript('fake: addition', [{num1: 2}, {extra: 'bad'}])).to.be.rejectedWith(
         /correct format of arg/,
       );
     });

@@ -1,14 +1,14 @@
 import assert from 'node:assert/strict';
-import { describe, it } from 'node:test';
-import { transformAttrs, transformChildNodes, transformSourceXml } from '../../lib/source';
-import { FIXTURES, readFixture } from '../fixtures';
+import {describe, it} from 'node:test';
+import {transformAttrs, transformChildNodes, transformSourceXml} from '../../lib/source';
+import {FIXTURES, readFixture} from '../fixtures';
 
 describe('source functions', function () {
   describe('transformSourceXml', function () {
     it('should transform an xml doc based on platform', async function () {
       const {
         xml,
-        unknowns: { nodes, attrs },
+        unknowns: {nodes, attrs},
       } = await transformSourceXml(await readFixture(FIXTURES.XML_IOS), 'ios');
       assert.equal(xml, await readFixture(FIXTURES.XML_IOS_TRANSFORMED));
       assert.deepEqual(nodes, []);
@@ -17,7 +17,7 @@ describe('source functions', function () {
     it('should transform an xml doc and include index path', async function () {
       const {
         xml,
-        unknowns: { nodes, attrs },
+        unknowns: {nodes, attrs},
       } = await transformSourceXml(await readFixture(FIXTURES.XML_IOS), 'ios', {
         addIndexPath: true,
       });
@@ -28,7 +28,7 @@ describe('source functions', function () {
     it('should transform an xml doc and return any unknown nodes or attrs', async function () {
       const {
         xml,
-        unknowns: { nodes, attrs },
+        unknowns: {nodes, attrs},
       } = await transformSourceXml(await readFixture(FIXTURES.XML_IOS_EDGE), 'ios');
       assert.equal(xml, await readFixture(FIXTURES.XML_IOS_EDGE_TRANSFORMED));
       assert.deepEqual(nodes, ['SomeRandoElement']);
@@ -47,7 +47,7 @@ describe('source functions', function () {
         nodes: [],
         attrs: [],
       });
-      assert.deepEqual(node, { Button: [{}, {}], Icon: [{}] });
+      assert.deepEqual(node, {Button: [{}, {}], Icon: [{}]});
     });
     it('should leave unknown nodes intact and add them to unknowns list', function () {
       const node = {
@@ -60,7 +60,7 @@ describe('source functions', function () {
         nodes: ['UnknownThingo'],
         attrs: [],
       });
-      assert.deepEqual(node, { Button: [{}], UnknownThingo: [{}], Icon: [{}] });
+      assert.deepEqual(node, {Button: [{}], UnknownThingo: [{}], Icon: [{}]});
     });
     it('should leave nodes for other platforms intact and add them to unknowns list', function () {
       const node = {
@@ -82,17 +82,17 @@ describe('source functions', function () {
   });
   describe('transformAttrs', function () {
     it('should remove attributes in the REMOVE_ATTRS list', function () {
-      const obj: any = { '@_type': 'foo', '@_package': 'yes', '@_class': 'lol' };
+      const obj: any = {'@_type': 'foo', '@_package': 'yes', '@_class': 'lol'};
       const attrs = Object.keys(obj);
       const unknowns = transformAttrs(obj, attrs, 'ios');
       assert.deepEqual(obj, {});
       assert.deepEqual(unknowns, []);
     });
     it('should translate attributes for the platform', function () {
-      const obj: any = { '@_type': 'foo', '@_resource-id': 'someId' };
+      const obj: any = {'@_type': 'foo', '@_resource-id': 'someId'};
       const attrs = Object.keys(obj);
       const unknowns = transformAttrs(obj, attrs, 'android');
-      assert.deepEqual(obj, { '@_id': 'someId' });
+      assert.deepEqual(obj, {'@_id': 'someId'});
       assert.deepEqual(unknowns, []);
     });
     it('should not translate unknown attributes and return them in the unknowns list', function () {
@@ -103,14 +103,14 @@ describe('source functions', function () {
       };
       const attrs = Object.keys(obj);
       const unknowns = transformAttrs(obj, attrs, 'android');
-      assert.deepEqual(obj, { '@_id': 'someId', '@_rando': 'lorian' });
+      assert.deepEqual(obj, {'@_id': 'someId', '@_rando': 'lorian'});
       assert.deepEqual(unknowns, ['rando']);
     });
     it('should not translate attributes for a different platform', function () {
-      const obj: any = { '@_type': 'foo', '@_resource-id': 'someId' };
+      const obj: any = {'@_type': 'foo', '@_resource-id': 'someId'};
       const attrs = Object.keys(obj);
       const unknowns = transformAttrs(obj, attrs, 'ios');
-      assert.deepEqual(obj, { '@_resource-id': 'someId' });
+      assert.deepEqual(obj, {'@_resource-id': 'someId'});
       assert.deepEqual(unknowns, ['resource-id']);
     });
   });

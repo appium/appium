@@ -1,19 +1,19 @@
-import { asyncmap } from 'asyncbox';
+import {asyncmap} from 'asyncbox';
 import B from 'bluebird';
-import { randomUUID } from 'node:crypto';
+import {randomUUID} from 'node:crypto';
 import os from 'node:os';
 import path from 'node:path';
 import stream from 'node:stream';
-import { isDeepStrictEqual, promisify } from 'node:util';
+import {isDeepStrictEqual, promisify} from 'node:util';
 import pluralizeLib from 'pluralize';
 import * as semver from 'semver';
-import { parse as shellParse, quote as shellQuote } from 'shell-quote';
-import { fs } from './fs';
-import { createBase64EncodeStream } from './internal';
-export { shellParse };
-import type { Element } from '@appium/types';
+import {parse as shellParse, quote as shellQuote} from 'shell-quote';
+import {fs} from './fs';
+import {createBase64EncodeStream} from './internal';
+export {shellParse};
+import type {Element} from '@appium/types';
 import * as _lockfile from 'lockfile';
-import { v1 as uuidV1Lib, v3 as uuidV3Lib, v5 as uuidV5Lib } from 'uuid';
+import {v1 as uuidV1Lib, v3 as uuidV3Lib, v5 as uuidV5Lib} from 'uuid';
 
 /** W3C WebDriver element identifier key used in element objects. */
 export const W3C_WEB_ELEMENT_IDENTIFIER = 'element-6066-11e4-a52e-4f735466cecf';
@@ -91,7 +91,7 @@ export function hasValue<T>(val: T): val is NonNullable<T> {
 export function memoize<Fn extends (...args: any[]) => any>(
   fn: Fn,
   resolver?: (...args: Parameters<Fn>) => unknown,
-): Fn & { cache: Map<unknown, ReturnType<Fn>> } {
+): Fn & {cache: Map<unknown, ReturnType<Fn>>} {
   const memoizedFn = function (this: unknown, ...args: Parameters<Fn>) {
     const key = resolver ? resolver.apply(this, args) : args[0];
     if (memoizedFn.cache.has(key)) {
@@ -100,7 +100,7 @@ export function memoize<Fn extends (...args: any[]) => any>(
     const result = fn.apply(this, args);
     memoizedFn.cache.set(key, result);
     return result;
-  } as unknown as Fn & { cache: Map<unknown, ReturnType<Fn>> };
+  } as unknown as Fn & {cache: Map<unknown, ReturnType<Fn>>};
   memoizedFn.cache = new Map<unknown, ReturnType<Fn>>();
   return memoizedFn;
 }
@@ -180,8 +180,8 @@ export function uniq<T>(values: readonly T[]): T[] {
  * @returns Truncated string
  */
 export function truncateString(value: string, options: TruncateStringOptions | number = {}): string {
-  const normalizedOptions = typeof options === 'number' ? { length: options } : options;
-  const { length, omission = '…' } = normalizedOptions;
+  const normalizedOptions = typeof options === 'number' ? {length: options} : options;
+  const {length, omission = '…'} = normalizedOptions;
   const stringValue = value == null ? '' : typeof value === 'number' && Object.is(value, -0) ? '-0' : String(value);
   const maxLength = length ?? 30;
   if (maxLength <= 0) {
@@ -262,7 +262,7 @@ export function localIp(): string | undefined {
  * @param ms - Delay in milliseconds before the promise resolves
  * @returns A Bluebird promise with a `cancel()` method; cancel rejects with CancellationError
  */
-export function cancellableDelay(ms: number): B<void> & { cancel: () => void } {
+export function cancellableDelay(ms: number): B<void> & {cancel: () => void} {
   let timer: NodeJS.Timeout;
   let resolve: () => void;
   let reject: (err: Error) => void;
@@ -273,11 +273,11 @@ export function cancellableDelay(ms: number): B<void> & { cancel: () => void } {
     timer = setTimeout(() => resolve(), ms);
   });
 
-  (delay as B<void> & { cancel: () => void }).cancel = function () {
+  (delay as B<void> & {cancel: () => void}).cancel = function () {
     clearTimeout(timer);
     reject(new B.CancellationError());
   };
-  return delay as B<void> & { cancel: () => void };
+  return delay as B<void> & {cancel: () => void};
 }
 
 /**
@@ -381,7 +381,7 @@ export function filterObject<T extends Record<string, unknown>>(
   obj: T,
   predicate?: ((value: unknown, obj: T) => boolean) | unknown,
 ): Partial<T> {
-  const newObj = { ...obj } as Record<string, unknown>;
+  const newObj = {...obj} as Record<string, unknown>;
   let pred: (v: unknown, o: T) => boolean;
   if (predicate === undefined) {
     pred = (v) => v !== undefined;
@@ -462,7 +462,7 @@ export async function isSameDestination(path1: string, path2: string, ...pathN: 
     return true;
   }
 
-  const mapCb = async (x: string) => (await fs.stat(x, { bigint: true })).ino;
+  const mapCb = async (x: string) => (await fs.stat(x, {bigint: true})).ino;
   return areAllItemsEqual(await asyncmap(allPaths, mapCb));
 }
 
@@ -521,7 +521,7 @@ export interface TruncateStringOptions {
 type LockFileGuardFn<T> = (behavior: () => Promise<T> | T) => Promise<T>;
 
 /** Return type of getLockFileGuard: guard function with a .check() method. */
-type LockFileGuard<T> = LockFileGuardFn<T> & { check: () => Promise<boolean> };
+type LockFileGuard<T> = LockFileGuardFn<T> & {check: () => Promise<boolean>};
 
 /**
  * Compares two version strings using the given operator.
@@ -588,7 +588,7 @@ export async function toInMemoryBase64(srcPath: string, opts: EncodingOptions = 
     throw new Error(`No such file: ${srcPath}`);
   }
 
-  const { maxSize = 1 * GiB } = opts;
+  const {maxSize = 1 * GiB} = opts;
   const resultBuffers: Buffer[] = [];
   let resultBuffersSize = 0;
   const resultWriteStream = new stream.Writable({
@@ -637,9 +637,9 @@ export async function toInMemoryBase64(srcPath: string, opts: EncodingOptions = 
  * @returns Async function that accepts a callback to run under the lock, plus a `.check()` method
  */
 export function getLockFileGuard<T>(lockFile: string, opts: LockFileOptions = {}): LockFileGuard<T> {
-  const { timeout = 120, tryRecovery = false } = opts;
+  const {timeout = 120, tryRecovery = false} = opts;
 
-  const lock = promisify(_lockfile.lock) as (lockfile: string, opts: { wait: number }) => Promise<void>;
+  const lock = promisify(_lockfile.lock) as (lockfile: string, opts: {wait: number}) => Promise<void>;
   const checkLock = promisify(_lockfile.check) as (lockfile: string) => Promise<boolean>;
   const unlock = promisify(_lockfile.unlock) as (lockfile: string) => Promise<void>;
 
@@ -650,7 +650,7 @@ export function getLockFileGuard<T>(lockFile: string, opts: LockFileOptions = {}
       while (!acquired) {
         try {
           if (_lockfile.checkSync(lockFile)) {
-            await lock(lockFile, { wait: timeout * 1000 });
+            await lock(lockFile, {wait: timeout * 1000});
           } else {
             _lockfile.lockSync(lockFile);
           }
@@ -663,7 +663,7 @@ export function getLockFileGuard<T>(lockFile: string, opts: LockFileOptions = {}
           } else {
             throw new Error(
               `Could not acquire lock on '${lockFile}' after ${timeout}s. ` + `Original error: ${err.message}`,
-              { cause: e },
+              {cause: e},
             );
           }
         }
@@ -674,7 +674,7 @@ export function getLockFileGuard<T>(lockFile: string, opts: LockFileOptions = {}
         await unlock(lockFile);
       }
     },
-    { check: () => checkLock(lockFile) },
+    {check: () => checkLock(lockFile)},
   );
 
   return guard;

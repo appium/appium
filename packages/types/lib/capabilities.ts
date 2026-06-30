@@ -1,8 +1,8 @@
-import type { BaseDriverCapConstraints, Constraint, Constraints } from './constraints';
-import type { StandardCapabilities } from './standard-caps';
-import type { AnyCase, StringRecord } from './util';
+import type {BaseDriverCapConstraints, Constraint, Constraints} from './constraints';
+import type {StandardCapabilities} from './standard-caps';
+import type {AnyCase, StringRecord} from './util';
 
-export type { StandardCapabilities };
+export type {StandardCapabilities};
 
 export type W3C_APPIUM_PREFIX = 'appium';
 
@@ -57,7 +57,7 @@ export type ConstraintToCapKind<C extends Constraint> = C['isString'] extends tr
  *
  * In practice, _all_ capabilities are considered optional per types, but various errors might be thrown if some are not present.
  */
-export type ConstraintToCap<C extends Constraint> = C['presence'] extends true | { allowEmpty: boolean }
+export type ConstraintToCap<C extends Constraint> = C['presence'] extends true | {allowEmpty: boolean}
   ? ConstraintToCapKind<C>
   : ConstraintToCapKind<C> | undefined;
 

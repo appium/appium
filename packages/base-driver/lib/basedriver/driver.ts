@@ -1,4 +1,4 @@
-import { util } from '@appium/support';
+import {util} from '@appium/support';
 import {
   type AppiumServer,
   BASE_DESIRED_CAP_CONSTRAINTS,
@@ -18,14 +18,14 @@ import {
   type W3CDriverCaps,
 } from '@appium/types';
 import type AsyncLock from 'async-lock';
-import { fixCaps, isW3cCaps } from '../helpers/capabilities';
-import { resolveExecuteExtensionName } from '../helpers/extension-command-name';
-import { getLevenshteinSuggestion } from '../helpers/levenshtein-match';
-import { calcSignature } from '../helpers/session';
-import { DELETE_SESSION_COMMAND, determineProtocol, errors } from '../protocol';
-import { mergePlainObjects } from '../utils';
-import { processCapabilities, validateCaps } from './capabilities';
-import { DriverCore } from './core';
+import {fixCaps, isW3cCaps} from '../helpers/capabilities';
+import {resolveExecuteExtensionName} from '../helpers/extension-command-name';
+import {getLevenshteinSuggestion} from '../helpers/levenshtein-match';
+import {calcSignature} from '../helpers/session';
+import {DELETE_SESSION_COMMAND, determineProtocol, errors} from '../protocol';
+import {mergePlainObjects} from '../utils';
+import {processCapabilities, validateCaps} from './capabilities';
+import {DriverCore} from './core';
 import * as helpers from './helpers';
 
 type CommandInvoker<C extends Constraints> = BaseDriver<C> & Record<string, ((...args: any[]) => any) | undefined>;
@@ -175,7 +175,7 @@ export class BaseDriver<
       cmd = this.clarifyCommandName(cmd, args);
     }
 
-    this._eventHistory.commands.push({ cmd, startTime, endTime });
+    this._eventHistory.commands.push({cmd, startTime, endTime});
     if (cmd === 'createSession') {
       this.logEvent(EVENT_SESSION_START);
     } else if (cmd === DELETE_SESSION_COMMAND) {
@@ -309,7 +309,7 @@ export class BaseDriver<
     this.sessionCreationTimestampMs = Date.now();
     this.caps = caps;
     // merge caps onto opts so we don't need to worry about what's where
-    this.opts = { ...structuredClone(this.initialOpts), ...this.caps };
+    this.opts = {...structuredClone(this.initialOpts), ...this.caps};
 
     // deal with resets
     // some people like to do weird things by setting noReset and fullReset
@@ -357,7 +357,7 @@ export class BaseDriver<
    * Use {@linkcode EventCommands.getLogEvents} instead to get the event history.
    */
   async getSession() {
-    return (this.caps.eventTimings ? { ...this.caps, events: this.eventHistory } : this.caps) as SingularSessionData<
+    return (this.caps.eventTimings ? {...this.caps, events: this.eventHistory} : this.caps) as SingularSessionData<
       C,
       SessionData
     >;
@@ -367,7 +367,7 @@ export class BaseDriver<
    * Returns capabilities for the session
    */
   async getAppiumSessionCapabilities(): Promise<SessionCapabilities<C>> {
-    return { capabilities: this.caps };
+    return {capabilities: this.caps};
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

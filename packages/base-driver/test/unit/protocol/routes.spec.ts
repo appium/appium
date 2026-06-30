@@ -1,9 +1,9 @@
-import type { HTTPMethod } from '@appium/types';
-import chai, { expect } from 'chai';
+import type {HTTPMethod} from '@appium/types';
+import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import crypto from 'node:crypto';
-import { describe, it } from 'node:test';
-import { METHOD_MAP, routeToCommandName } from '../../../lib/protocol';
+import {describe, it} from 'node:test';
+import {METHOD_MAP, routeToCommandName} from '../../../lib/protocol';
 
 chai.use(chaiAsPromised);
 
@@ -18,7 +18,7 @@ describe('Routes', function () {
         for (const [method, methodMapping] of Object.entries(
           urlMapping as Record<
             string,
-            { command?: string; payloadParams?: { required?: any[]; optional?: any[]; wrap?: string } }
+            {command?: string; payloadParams?: {required?: any[]; optional?: any[]; wrap?: string}}
           >,
         )) {
           shasum.update(method);

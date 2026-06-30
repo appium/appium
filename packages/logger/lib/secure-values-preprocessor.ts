@@ -1,5 +1,5 @@
-import type { LogFilter, LogFilterRegex, LogFiltersConfig, SecureValuePreprocessingRule } from './types';
-import { escapeRegExp, isPlainObject } from './utils';
+import type {LogFilter, LogFilterRegex, LogFiltersConfig, SecureValuePreprocessingRule} from './types';
+import {escapeRegExp, isPlainObject} from './utils';
 
 export const DEFAULT_SECURE_REPLACER = '**SECURE**';
 

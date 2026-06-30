@@ -3,11 +3,11 @@
  * @module
  */
 
-import type { CommandModule, InferredOptionTypes, Options } from 'yargs';
-import { init } from '../../init';
-import { getLogger } from '../../logger';
-import { stopwatch } from '../../utils';
-import { checkMissingPaths } from '../check';
+import type {CommandModule, InferredOptionTypes, Options} from 'yargs';
+import {init} from '../../init';
+import {getLogger} from '../../logger';
+import {stopwatch} from '../../utils';
+import {checkMissingPaths} from '../check';
 
 const log = getLogger('init');
 
@@ -147,7 +147,7 @@ export default {
   },
   async handler(args) {
     const done = stopwatch('init');
-    await init({ ...args, overwrite: args.force, cwd: args.dir });
+    await init({...args, overwrite: args.force, cwd: args.dir});
     log.success('Done (%dms)', done());
   },
 } as CommandModule<object, InitOptions>;

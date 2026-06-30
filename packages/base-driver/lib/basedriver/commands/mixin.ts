@@ -1,5 +1,5 @@
-import type { Constraints } from '@appium/types';
-import { BaseDriver } from '../driver';
+import type {Constraints} from '@appium/types';
+import {BaseDriver} from '../driver';
 
 /**
  * This function assigns a mixin `T` to the `BaseDriver` class' prototype.

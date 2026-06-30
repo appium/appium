@@ -1,14 +1,14 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import type { SinonSandbox, SinonSpy } from 'sinon';
-import { createSandbox } from 'sinon';
-import { getNonDefaultServerArgs, showConfig } from '../../../lib/bootstrap/startup-config';
-import { getParser } from '../../../lib/cli/parser';
-import { PLUGIN_TYPE } from '../../../lib/constants';
-import { finalizeSchema, getDefaultsForSchema, registerSchema, resetSchema } from '../../../lib/schema/schema';
-import { setPath } from '../../../lib/utils';
+import type {SinonSandbox, SinonSpy} from 'sinon';
+import {createSandbox} from 'sinon';
+import {getNonDefaultServerArgs, showConfig} from '../../../lib/bootstrap/startup-config';
+import {getParser} from '../../../lib/cli/parser';
+import {PLUGIN_TYPE} from '../../../lib/constants';
+import {finalizeSchema, getDefaultsForSchema, registerSchema, resetSchema} from '../../../lib/schema/schema';
+import {setPath} from '../../../lib/utils';
 
-const { expect } = chai;
+const {expect} = chai;
 chai.use(chaiAsPromised);
 
 describe('bootstrap/startup-config', function () {
@@ -34,15 +34,15 @@ describe('bootstrap/startup-config', function () {
     describe('when a config file is present', function () {
       it('should dump the current Appium config', function () {
         showConfig(
-          { address: 'bar' },
+          {address: 'bar'},
           {
             config: {
               // @ts-expect-error
-              server: { 'callback-address': 'quux' },
+              server: {'callback-address': 'quux'},
             },
           },
-          { port: 1234 },
-          { allowCors: false },
+          {port: 1234},
+          {allowCors: false},
         );
         expect(log.calledWith('Appium Configuration\n')).to.be.true;
       });
@@ -50,12 +50,12 @@ describe('bootstrap/startup-config', function () {
       it('should skip empty objects', function () {
         showConfig(
           // @ts-expect-error
-          { foo: 'bar', cows: {}, pigs: [], sheep: 0, ducks: false },
-          { config: { server: { address: 'quux' } } },
-          { spam: 'food' },
+          {foo: 'bar', cows: {}, pigs: [], sheep: 0, ducks: false},
+          {config: {server: {address: 'quux'}}},
+          {spam: 'food'},
           {},
         );
-        expect(dir.calledWith({ foo: 'bar', sheep: 0, ducks: false })).to.be.true;
+        expect(dir.calledWith({foo: 'bar', sheep: 0, ducks: false})).to.be.true;
       });
     });
 
@@ -63,9 +63,9 @@ describe('bootstrap/startup-config', function () {
       it('should dump the current Appium config (sans config file contents)', function () {
         showConfig(
           // @ts-expect-error
-          { foo: 'bar', cows: {}, pigs: [], sheep: 0, ducks: false },
+          {foo: 'bar', cows: {}, pigs: [], sheep: 0, ducks: false},
           {},
-          { spam: 'food' },
+          {spam: 'food'},
           {},
         );
         expect(log.calledWith('\n(no configuration file loaded)')).to.be.true;
@@ -98,13 +98,13 @@ describe('bootstrap/startup-config', function () {
       it('should catch a non-default argument', function () {
         args.allowCors = true;
         const nonDefaultArgs = getNonDefaultServerArgs(args);
-        expect(nonDefaultArgs).to.eql({ allowCors: true });
+        expect(nonDefaultArgs).to.eql({allowCors: true});
       });
 
       describe('when arg is an array', function () {
         it('should return the arg as an array', function () {
           args.usePlugins = ['all'];
-          expect(getNonDefaultServerArgs(args)).to.eql({ usePlugins: ['all'] });
+          expect(getNonDefaultServerArgs(args)).to.eql({usePlugins: ['all']});
         });
       });
     });
@@ -114,7 +114,7 @@ describe('bootstrap/startup-config', function () {
         resetSchema();
         await registerSchema(PLUGIN_TYPE, 'crypto-fiend', {
           type: 'object',
-          properties: { elite: { type: 'boolean', default: true } },
+          properties: {elite: {type: 'boolean', default: true}},
         });
         await finalizeSchema();
         await getParser(true);

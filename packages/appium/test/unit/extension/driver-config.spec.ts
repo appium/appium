@@ -1,15 +1,15 @@
-import type { DriverType, ExtensionType } from '@appium/types';
-import type { ExtManifest } from 'appium/types';
+import type {DriverType, ExtensionType} from '@appium/types';
+import type {ExtManifest} from 'appium/types';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { promises as fs } from 'node:fs';
-import type { SinonSandbox } from 'sinon';
-import type { DriverConfig } from '../../../lib/extension/driver-config';
-import { Manifest } from '../../../lib/extension/manifest';
-import { resetSchema } from '../../../lib/schema';
-import { resolveFixture, rewiremock } from '../../helpers';
-import { initMocks } from './mocks';
-import type { MockAppiumSupport, MockResolveFrom, Overrides } from './mocks';
+import {promises as fs} from 'node:fs';
+import type {SinonSandbox} from 'sinon';
+import type {DriverConfig} from '../../../lib/extension/driver-config';
+import {Manifest} from '../../../lib/extension/manifest';
+import {resetSchema} from '../../../lib/schema';
+import {resolveFixture, rewiremock} from '../../helpers';
+import {initMocks} from './mocks';
+import type {MockAppiumSupport, MockResolveFrom, Overrides} from './mocks';
 
 type ExtManifestWithSchema<ExtType extends ExtensionType> = ExtManifest<ExtType> & {
   schema: NonNullable<ExtManifest<ExtType>['schema']>;
@@ -20,7 +20,7 @@ interface DriverConfigConstructor {
   getInstance(manifest: Manifest): DriverConfig | undefined;
 }
 
-const { expect } = chai;
+const {expect} = chai;
 chai.use(chaiAsPromised);
 
 describe('DriverConfig', function () {
@@ -38,9 +38,9 @@ describe('DriverConfig', function () {
   beforeEach(function () {
     manifest = Manifest.getInstance('/somewhere/');
     let overrides: Overrides;
-    ({ MockAppiumSupport, MockResolveFrom, overrides, sandbox } = initMocks());
+    ({MockAppiumSupport, MockResolveFrom, overrides, sandbox} = initMocks());
     MockAppiumSupport.fs.readFile.resolves(yamlFixture);
-    ({ DriverConfig } = rewiremock.proxy(() => require('../../../lib/extension/driver-config'), overrides));
+    ({DriverConfig} = rewiremock.proxy(() => require('../../../lib/extension/driver-config'), overrides));
     resetSchema();
   });
 
@@ -101,7 +101,7 @@ describe('DriverConfig', function () {
     describe('extensionDesc()', function () {
       it('should return the description of the extension', function () {
         const config = DriverConfig.create(manifest);
-        expect(config.extensionDesc('foo', { version: '1.0', automationName: 'bar' } as any)).to.equal(
+        expect(config.extensionDesc('foo', {version: '1.0', automationName: 'bar'} as any)).to.equal(
           `foo@1.0 (automationName 'bar')`,
         );
       });
@@ -132,7 +132,7 @@ describe('DriverConfig', function () {
 
         describe('when provided an object with an empty `platformNames` property', function () {
           it('should return an array having an associated problem', function () {
-            expect(driverConfig.getConfigProblems({ platformNames: [] })).to.deep.include({
+            expect(driverConfig.getConfigProblems({platformNames: []})).to.deep.include({
               err: 'Empty platformNames list.',
               val: [],
             });
@@ -141,7 +141,7 @@ describe('DriverConfig', function () {
 
         describe('when provided an object with a non-array `platformNames` property', function () {
           it('should return an array having an associated problem', function () {
-            expect(driverConfig.getConfigProblems({ platformNames: 'foo' })).to.deep.include({
+            expect(driverConfig.getConfigProblems({platformNames: 'foo'})).to.deep.include({
               err: 'Missing or incorrect supported platformNames list.',
               val: 'foo',
             });
@@ -150,7 +150,7 @@ describe('DriverConfig', function () {
 
         describe('when provided a non-empty array containing a non-string item', function () {
           it('should return an array having an associated problem', function () {
-            expect(driverConfig.getConfigProblems({ platformNames: ['a', 1] })).to.deep.include({
+            expect(driverConfig.getConfigProblems({platformNames: ['a', 1]})).to.deep.include({
               err: 'Incorrectly formatted platformName.',
               val: 1,
             });
@@ -169,8 +169,8 @@ describe('DriverConfig', function () {
         });
         describe('when provided a conflicting automationName', function () {
           it('should return an array having an associated problem', function () {
-            driverConfig.getConfigProblems({ automationName: 'foo' });
-            expect(driverConfig.getConfigProblems({ automationName: 'foo' })).to.deep.include({
+            driverConfig.getConfigProblems({automationName: 'foo'});
+            expect(driverConfig.getConfigProblems({automationName: 'foo'})).to.deep.include({
               err: 'Multiple drivers claim support for the same automationName',
               val: 'foo',
             });
@@ -188,7 +188,7 @@ describe('DriverConfig', function () {
 
       describe('when provided an object with a defined non-string `schema` property', function () {
         it('should return an array having an associated problem', async function () {
-          expect(await driverConfig.getSchemaProblems({ schema: [] })).to.deep.include({
+          expect(await driverConfig.getSchemaProblems({schema: []})).to.deep.include({
             err: 'Incorrectly formatted schema field; must be a path to a schema file or a schema object.',
             val: [],
           });
@@ -198,7 +198,7 @@ describe('DriverConfig', function () {
       describe('when provided a string `schema` property', function () {
         describe('when the property ends in an unsupported extension', function () {
           it('should return an array having an associated problem', async function () {
-            expect(await driverConfig.getSchemaProblems({ schema: 'selenium.java' })).to.deep.include({
+            expect(await driverConfig.getSchemaProblems({schema: 'selenium.java'})).to.deep.include({
               err: 'Schema file has unsupported extension. Allowed: .json, .js, .cjs',
               val: 'selenium.java',
             });
@@ -266,7 +266,7 @@ describe('DriverConfig', function () {
 
       describe('when the extension data is missing `schema`', function () {
         it('should throw', async function () {
-          delete (extData as { schema?: string }).schema;
+          delete (extData as {schema?: string}).schema;
           await expect(driverConfig.readExtensionSchema(extName, extData)).to.be.rejectedWith(
             TypeError,
             /why is this function being called/i,

@@ -1,4 +1,4 @@
-import { getLogger } from './logging';
+import {getLogger} from './logging';
 
 const log = getLogger('Support');
 

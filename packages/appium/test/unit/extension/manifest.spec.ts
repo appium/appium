@@ -1,17 +1,17 @@
-import type { DriverType, PluginType } from '@appium/types';
-import type { ExtManifest, ExtPackageJson, ManifestData } from 'appium/types';
+import type {DriverType, PluginType} from '@appium/types';
+import type {ExtManifest, ExtPackageJson, ManifestData} from 'appium/types';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import EventEmitter from 'node:events';
-import { promises as fs } from 'node:fs';
-import type { SinonSandbox } from 'sinon';
-import { DRIVER_TYPE, PLUGIN_TYPE } from '../../../lib/constants';
-import { APPIUM_VER } from '../../../lib/helpers/build';
-import { resolveFixture, rewiremock } from '../../helpers';
-import { initMocks } from './mocks';
-import type { MockAppiumSupport, MockGlob, MockPackageChanged } from './mocks';
+import {promises as fs} from 'node:fs';
+import type {SinonSandbox} from 'sinon';
+import {DRIVER_TYPE, PLUGIN_TYPE} from '../../../lib/constants';
+import {APPIUM_VER} from '../../../lib/helpers/build';
+import {resolveFixture, rewiremock} from '../../helpers';
+import {initMocks} from './mocks';
+import type {MockAppiumSupport, MockGlob, MockPackageChanged} from './mocks';
 
-const { expect } = chai;
+const {expect} = chai;
 chai.use(chaiAsPromised);
 
 describe('Manifest', function () {
@@ -28,11 +28,11 @@ describe('Manifest', function () {
 
   beforeEach(function () {
     let overrides: ReturnType<typeof initMocks>['overrides'];
-    ({ MockPackageChanged, MockAppiumSupport, MockGlob, overrides, sandbox } = initMocks());
+    ({MockPackageChanged, MockAppiumSupport, MockGlob, overrides, sandbox} = initMocks());
     MockAppiumSupport.fs.readFile.resolves(yamlFixture);
-    ({ Manifest } = rewiremock.proxy(() => require('../../../lib/extension/manifest'), {
+    ({Manifest} = rewiremock.proxy(() => require('../../../lib/extension/manifest'), {
       ...overrides,
-      '../../../lib/extension/manifest-migrations': { migrate: sandbox.stub().resolves() },
+      '../../../lib/extension/manifest-migrations': {migrate: sandbox.stub().resolves()},
     }));
 
     Manifest.getInstance.cache = new Map();
@@ -299,7 +299,7 @@ describe('Manifest', function () {
 
       describe('when the extension has no peer dependency on `appium`', function () {
         beforeEach(function () {
-          delete (extData as { appiumVersion?: string }).appiumVersion;
+          delete (extData as {appiumVersion?: string}).appiumVersion;
         });
 
         it('should work anyway', function () {
@@ -327,7 +327,7 @@ describe('Manifest', function () {
       });
 
       it('should return all extension data for an extension type', function () {
-        expect(manifest.getExtensionData(DRIVER_TYPE)).to.eql({ foo: extData });
+        expect(manifest.getExtensionData(DRIVER_TYPE)).to.eql({foo: extData});
       });
     });
     describe('addExtensionFromPackage()', function () {
@@ -430,9 +430,9 @@ describe('Manifest', function () {
 
       describe('when provided a non-extension', function () {
         it('should throw', function () {
-          expect(() =>
-            manifest.addExtensionFromPackage({ herp: 'derp' } as any, '/some/path/to/package.json'),
-          ).to.throw(/neither a valid driver nor a valid plugin/);
+          expect(() => manifest.addExtensionFromPackage({herp: 'derp'} as any, '/some/path/to/package.json')).to.throw(
+            /neither a valid driver nor a valid plugin/,
+          );
         });
       });
 

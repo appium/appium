@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
-import { describe, it } from 'node:test';
-import { transformSourceXml } from '../../lib/source';
-import { getNodeAttrVal, runQuery, transformQuery } from '../../lib/xpath';
-import { FIXTURES, readFixture } from '../fixtures';
+import {describe, it} from 'node:test';
+import {transformSourceXml} from '../../lib/source';
+import {getNodeAttrVal, runQuery, transformQuery} from '../../lib/xpath';
+import {FIXTURES, readFixture} from '../fixtures';
 
 describe('xpath functions', function () {
   describe('runQuery', function () {
@@ -13,7 +13,7 @@ describe('xpath functions', function () {
   });
   describe('transformQuery', function () {
     it('should transform a query into a single new query', async function () {
-      const { xml } = await transformSourceXml(await readFixture(FIXTURES.XML_IOS), 'ios', {
+      const {xml} = await transformSourceXml(await readFixture(FIXTURES.XML_IOS), 'ios', {
         addIndexPath: true,
       });
       assert.equal(
@@ -22,13 +22,13 @@ describe('xpath functions', function () {
       );
     });
     it('should transform a query into a multiple new queries if asked', async function () {
-      const { xml } = await transformSourceXml(await readFixture(FIXTURES.XML_IOS), 'ios', {
+      const {xml} = await transformSourceXml(await readFixture(FIXTURES.XML_IOS), 'ios', {
         addIndexPath: true,
       });
       assert.equal(transformQuery('//Window', xml, true)?.split('|').length, 2);
     });
     it('should return null for queries that dont find anything', async function () {
-      const { xml } = await transformSourceXml(await readFixture(FIXTURES.XML_IOS), 'ios', {
+      const {xml} = await transformSourceXml(await readFixture(FIXTURES.XML_IOS), 'ios', {
         addIndexPath: true,
       });
       assert.equal(transformQuery('//blah', xml, false), null);

@@ -1,6 +1,6 @@
-import type { DriverType, ExtensionType, PluginType } from '@appium/types';
-import type { SchemaObject } from 'ajv';
-import type { PackageJson, SetRequired } from 'type-fest';
+import type {DriverType, ExtensionType, PluginType} from '@appium/types';
+import type {SchemaObject} from 'ajv';
+import type {PackageJson, SetRequired} from 'type-fest';
 
 /**
  * One of the possible extension installation stratgies
@@ -43,7 +43,7 @@ export interface InternalMetadata {
 /**
  * Shape of the `appium.schema` property in an extension's `package.json` (if it exists)
  */
-export type ExtSchemaMetadata = string | (SchemaObject & { [key: number]: never });
+export type ExtSchemaMetadata = string | (SchemaObject & {[key: number]: never});
 
 /**
  * Manifest data shared by all extensions, as contained in `package.json`
@@ -145,7 +145,7 @@ export type ExtName<ExtType extends ExtensionType> = keyof ExtRecord<ExtType>;
  */
 export type ExtPackageJson<ExtType extends ExtensionType> = SetRequired<PackageJson, 'name' | 'version'> & {
   appium: ExtMetadata<ExtType>;
-  peerDependencies: { appium: string; [key: string]: string };
+  peerDependencies: {appium: string; [key: string]: string};
 };
 
 /**

@@ -1,11 +1,5 @@
-import type {
-  BaseDriverCapConstraints,
-  Capabilities,
-  Constraints,
-  NSCapabilities,
-  W3CCapabilities,
-} from '@appium/types';
-import { expect, use } from 'chai';
+import type {BaseDriverCapConstraints, Capabilities, Constraints, NSCapabilities, W3CCapabilities} from '@appium/types';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {
   insertAppiumPrefixes,
@@ -13,7 +7,7 @@ import {
   pullSettings,
   removeAppiumPrefixes,
 } from '../../../lib/helpers/capability';
-import { BASE_CAPS, W3C_CAPS } from '../../helpers';
+import {BASE_CAPS, W3C_CAPS} from '../../helpers';
 
 describe('helpers/capability', function () {
   beforeEach(async function () {
@@ -24,10 +18,10 @@ describe('helpers/capability', function () {
     it('should return an error if only JSONWP provided', function () {
       const res = parseCapsForInnerDriver(BASE_CAPS as unknown as W3CCapabilities<Constraints>);
       expect('error' in res && res.error).to.be.ok;
-      expect((res as { error: { message: string } }).error.message).to.match(/W3C/);
+      expect((res as {error: {message: string}}).error.message).to.match(/W3C/);
     });
     it('should return W3C caps unchanged if only W3C caps were provided', function () {
-      const { desiredCaps, processedW3CCapabilities } = parseCapsForInnerDriver(W3C_CAPS);
+      const {desiredCaps, processedW3CCapabilities} = parseCapsForInnerDriver(W3C_CAPS);
       expect(desiredCaps).to.deep.equal(BASE_CAPS);
       expect(processedW3CCapabilities).to.deep.equal(W3C_CAPS);
     });
@@ -40,7 +34,7 @@ describe('helpers/capability', function () {
         foo: 'bar',
         baz: 'bla',
       };
-      const { desiredCaps, processedW3CCapabilities } = parseCapsForInnerDriver(W3C_CAPS, {}, defaultW3CCaps);
+      const {desiredCaps, processedW3CCapabilities} = parseCapsForInnerDriver(W3C_CAPS, {}, defaultW3CCaps);
       expect(desiredCaps).to.deep.equal({
         ...expectedDefaultCaps,
         ...BASE_CAPS,
@@ -70,27 +64,27 @@ describe('helpers/capability', function () {
         },
       );
       const errRes = res as unknown as {
-        error: { jsonwpCode: number; error: string; w3cStatus: number };
+        error: {jsonwpCode: number; error: string; w3cStatus: number};
       };
       expect(errRes.error.jsonwpCode).to.eql(61);
       expect(errRes.error.error).to.eql('invalid argument');
       expect(errRes.error.w3cStatus).to.eql(400);
     });
     it('should reject if W3C caps are not passing constraints', function () {
-      const res = parseCapsForInnerDriver(W3C_CAPS as W3CCapabilities<{ hello: { presence: true } }>, {
-        hello: { presence: true },
+      const res = parseCapsForInnerDriver(W3C_CAPS as W3CCapabilities<{hello: {presence: true}}>, {
+        hello: {presence: true},
       });
-      const err = (res as { error?: Error }).error;
+      const err = (res as {error?: Error}).error;
       expect(err!.message).to.match(/required/);
       expect(err).to.be.instanceOf(Error);
     });
     it('should only accept W3C caps that have passing constraints', function () {
       const w3cCaps = {
         ...W3C_CAPS,
-        firstMatch: [{ foo: 'bar' }, { 'appium:hello': 'world' }],
-      } as W3CCapabilities<{ hello: { presence: true } }>;
-      const res = parseCapsForInnerDriver(w3cCaps, { hello: { presence: true } });
-      const error = (res as { error?: { jsonwpCode: number; error: string; w3cStatus: number } }).error;
+        firstMatch: [{foo: 'bar'}, {'appium:hello': 'world'}],
+      } as W3CCapabilities<{hello: {presence: true}}>;
+      const res = parseCapsForInnerDriver(w3cCaps, {hello: {presence: true}});
+      const error = (res as {error?: {jsonwpCode: number; error: string; w3cStatus: number}}).error;
       expect(error!.jsonwpCode).to.eql(61);
       expect(error!.error).to.eql('invalid argument');
       expect(error!.w3cStatus).to.eql(400);
@@ -103,7 +97,7 @@ describe('helpers/capability', function () {
         },
         firstMatch: [{}],
       } as unknown as W3CCapabilities<Constraints>);
-      expect((res as { error?: { error: string } }).error!.error).to.includes('invalid argument');
+      expect((res as {error?: {error: string}}).error!.error).to.includes('invalid argument');
     });
   });
 
@@ -198,11 +192,11 @@ describe('helpers/capability', function () {
       const caps = {
         platformName: 'foo',
         browserName: 'bar',
-        'settings[settingName]': { key: 'baz' },
+        'settings[settingName]': {key: 'baz'},
       };
       const settings = pullSettings(caps);
       expect(settings).to.eql({
-        settingName: { key: 'baz' },
+        settingName: {key: 'baz'},
       });
       expect(caps).to.eql({
         platformName: 'foo',

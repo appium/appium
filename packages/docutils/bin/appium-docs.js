@@ -3,8 +3,8 @@
 
 'use strict';
 
-const { main } = require('../build/lib/cli');
-const { getLogger } = require('../build/lib/logger');
+const {main} = require('../build/lib/cli');
+const {getLogger} = require('../build/lib/logger');
 
 const log = getLogger('cli');
 

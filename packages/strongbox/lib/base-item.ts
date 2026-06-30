@@ -1,7 +1,7 @@
-import { mkdir, readFile, unlink, writeFile } from 'node:fs/promises';
+import {mkdir, readFile, unlink, writeFile} from 'node:fs/promises';
 import path from 'node:path';
-import type { Item, ItemEncoding, Strongbox, Value } from '.';
-import { slugify } from './util';
+import type {Item, ItemEncoding, Strongbox, Value} from '.';
+import {slugify} from './util';
 
 /**
  * Base item implementation
@@ -98,7 +98,7 @@ export class BaseItem<T extends Value, U extends Strongbox = Strongbox> implemen
    */
   public async write(value: T): Promise<void> {
     if (this._value !== value) {
-      await mkdir(path.dirname(this.id), { recursive: true });
+      await mkdir(path.dirname(this.id), {recursive: true});
       await writeFile(this.id, value, this.encoding);
       this._value = value;
     }

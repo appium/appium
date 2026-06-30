@@ -1,10 +1,10 @@
-import { expect, use } from 'chai';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import path from 'node:path';
-import { before, describe, it } from 'node:test';
+import {before, describe, it} from 'node:test';
 import sharp from 'sharp';
-import { fs, node } from '../../lib';
-import { cropBase64Image } from '../../lib/image-util';
+import {fs, node} from '../../lib';
+import {cropBase64Image} from '../../lib/image-util';
 
 use(chaiAsPromised);
 
@@ -38,7 +38,7 @@ describe('image-util', function () {
       });
 
       const croppedImage = sharp(Buffer.from(croppedImageB64, 'base64'));
-      const { width, height } = await croppedImage.metadata();
+      const {width, height} = await croppedImage.metadata();
       expect(width).to.equal(323);
       expect(height).to.equal(485);
     });

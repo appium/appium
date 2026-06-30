@@ -1,19 +1,19 @@
-import { fs, system } from '@appium/support';
-import type { AppiumLogger } from '@appium/types';
-import { expect } from 'chai';
+import {fs, system} from '@appium/support';
+import type {AppiumLogger} from '@appium/types';
+import {expect} from 'chai';
 import * as chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import type { ChildProcess } from 'node:child_process';
-import type { Writable } from 'node:stream';
-import type { SinonSandbox, SinonStub } from 'sinon';
+import type {ChildProcess} from 'node:child_process';
+import type {Writable} from 'node:stream';
+import type {SinonSandbox, SinonStub} from 'sinon';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
-import { ExtensionCommand, injectAppiumSymlinks } from '../../../lib/cli/extension-command';
-import type { ExtensionConfig } from '../../../lib/cli/extension-command';
-import { DriverConfig } from '../../../lib/extension/driver-config';
-import { Manifest } from '../../../lib/extension/manifest';
-import { appiumPackageRoot } from '../../../lib/utils';
-import { FAKE_DRIVER_DIR } from '../../helpers';
+import {ExtensionCommand, injectAppiumSymlinks} from '../../../lib/cli/extension-command';
+import type {ExtensionConfig} from '../../../lib/cli/extension-command';
+import {DriverConfig} from '../../../lib/extension/driver-config';
+import {Manifest} from '../../../lib/extension/manifest';
+import {appiumPackageRoot} from '../../../lib/utils';
+import {FAKE_DRIVER_DIR} from '../../helpers';
 
 /**
  * Relative path from actual `package.json` of `FakeDriver` for the `fake-stdin` script
@@ -41,7 +41,7 @@ describe('ExtensionCommand', function () {
     beforeEach(function () {
       sandbox = sinon.createSandbox();
       const driverConfig = DriverConfig.create(sandbox.createStubInstance(Manifest));
-      ec = new TestExtensionCommand({ config: driverConfig, json: false });
+      ec = new TestExtensionCommand({config: driverConfig, json: false});
     });
 
     afterEach(function () {
@@ -109,8 +109,8 @@ describe('ExtensionCommand', function () {
 
     describe('when there are no installed extensions', function () {
       it('should not create any symlinks', async function () {
-        const driverConfig = { installedExtensions: {} };
-        const pluginConfig = { installedExtensions: {} };
+        const driverConfig = {installedExtensions: {}};
+        const pluginConfig = {installedExtensions: {}};
 
         await injectAppiumSymlinks(asExtensionConfig(driverConfig), asExtensionConfig(pluginConfig), logger);
 
@@ -128,7 +128,7 @@ describe('ExtensionCommand', function () {
             },
           },
         };
-        const pluginConfig = { installedExtensions: {} };
+        const pluginConfig = {installedExtensions: {}};
 
         fsExistsStub.withArgs('/path/to/driver-for-test/node_modules').resolves(true);
         fsExistsStub.withArgs('/path/to/driver-for-test/node_modules/appium').resolves(false);
@@ -155,7 +155,7 @@ describe('ExtensionCommand', function () {
             },
           },
         };
-        const pluginConfig = { installedExtensions: {} };
+        const pluginConfig = {installedExtensions: {}};
 
         fsExistsStub.withArgs('/path/to/driver-for-test/node_modules').resolves(true);
         fsExistsStub.withArgs('/path/to/driver-for-test/node_modules/appium').resolves(false);
@@ -178,7 +178,7 @@ describe('ExtensionCommand', function () {
             },
           },
         };
-        const pluginConfig = { installedExtensions: {} };
+        const pluginConfig = {installedExtensions: {}};
 
         fsExistsStub.withArgs('/path/to/driver-for-test/node_modules').resolves(false);
 
@@ -196,7 +196,7 @@ describe('ExtensionCommand', function () {
             },
           },
         };
-        const pluginConfig = { installedExtensions: {} };
+        const pluginConfig = {installedExtensions: {}};
 
         fsExistsStub.resolves(true);
 
@@ -208,7 +208,7 @@ describe('ExtensionCommand', function () {
 
     describe('when there are npm-installed plugins', function () {
       it('should create symlinks for npm-installed plugins', async function () {
-        const driverConfig = { installedExtensions: {} };
+        const driverConfig = {installedExtensions: {}};
         const pluginConfig = {
           installedExtensions: {
             'plugin-for-test': {
@@ -293,7 +293,7 @@ describe('ExtensionCommand', function () {
               },
             },
           };
-          const pluginConfig = { installedExtensions: {} };
+          const pluginConfig = {installedExtensions: {}};
 
           await injectAppiumSymlinks(asExtensionConfig(driverConfig), asExtensionConfig(pluginConfig), logger);
 
@@ -314,7 +314,7 @@ describe('ExtensionCommand', function () {
             },
           },
         };
-        const pluginConfig = { installedExtensions: {} };
+        const pluginConfig = {installedExtensions: {}};
 
         fsExistsStub.resolves(true);
         fsExistsStub.withArgs('/path/to/npm-driver/node_modules/appium').resolves(false);
@@ -340,7 +340,7 @@ describe('ExtensionCommand', function () {
             },
           },
         };
-        const pluginConfig = { installedExtensions: {} };
+        const pluginConfig = {installedExtensions: {}};
 
         fsExistsStub.resolves(true);
         fsExistsStub.withArgs('/path/to/driver-for-test/node_modules/appium').resolves(false);
@@ -358,8 +358,8 @@ describe('ExtensionCommand', function () {
 
     describe('with null or undefined configs', function () {
       it('should handle null installedExtensions', async function () {
-        const driverConfig = { installedExtensions: null };
-        const pluginConfig = { installedExtensions: null };
+        const driverConfig = {installedExtensions: null};
+        const pluginConfig = {installedExtensions: null};
 
         await injectAppiumSymlinks(asExtensionConfig(driverConfig), asExtensionConfig(pluginConfig), logger);
 

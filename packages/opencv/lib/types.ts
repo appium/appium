@@ -1,4 +1,4 @@
-import type { Rect as AppiumRect } from '@appium/types';
+import type {Rect as AppiumRect} from '@appium/types';
 
 export interface Point {
   x: number;

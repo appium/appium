@@ -1,7 +1,7 @@
-import { util } from '@appium/support';
-import type { ExtensionType } from '@appium/types';
-import type { CliExtensionSubcommand } from 'appium/types';
-import type { ArgumentOptions } from 'argparse';
+import {util} from '@appium/support';
+import type {ExtensionType} from '@appium/types';
+import type {CliExtensionSubcommand} from 'appium/types';
+import type {ArgumentOptions} from 'argparse';
 import {
   DRIVER_TYPE,
   EXT_SUBCOMMAND_DOCTOR,
@@ -12,8 +12,8 @@ import {
   EXT_SUBCOMMAND_UPDATE,
   PLUGIN_TYPE,
 } from '../constants';
-import { INSTALL_TYPES } from '../extension/extension-config';
-import { toParserArgs } from '../schema/cli-args';
+import {INSTALL_TYPES} from '../extension/extension-config';
+import {toParserArgs} from '../schema/cli-args';
 const DRIVER_EXAMPLE = 'xcuitest';
 const PLUGIN_EXAMPLE = 'images';
 

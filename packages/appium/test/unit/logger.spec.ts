@@ -1,8 +1,8 @@
-import { logger } from '@appium/support';
-import { expect, use } from 'chai';
+import {logger} from '@appium/support';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { createSandbox, type SinonSandbox, type SinonSpy } from 'sinon';
-import { clear as logsinkClear, init as logsinkInit } from '../../lib/logsink';
+import {createSandbox, type SinonSandbox, type SinonSpy} from 'sinon';
+import {clear as logsinkClear, init as logsinkInit} from '../../lib/logsink';
 
 const forceLogs = process.env._FORCE_LOGS;
 process.env._FORCE_LOGS = '1';
@@ -41,7 +41,7 @@ describe('logging', function () {
   }
 
   it('should send error, info and debug when loglevel is debug', async function () {
-    await logsinkInit({ loglevel: 'debug' } as Parameters<typeof logsinkInit>[0]);
+    await logsinkInit({loglevel: 'debug'} as Parameters<typeof logsinkInit>[0]);
 
     doLogging();
 
@@ -54,7 +54,7 @@ describe('logging', function () {
   });
 
   it('should send error and info when loglevel is info', async function () {
-    await logsinkInit({ loglevel: 'info' } as Parameters<typeof logsinkInit>[0]);
+    await logsinkInit({loglevel: 'info'} as Parameters<typeof logsinkInit>[0]);
 
     doLogging();
 
@@ -66,7 +66,7 @@ describe('logging', function () {
   });
 
   it('should send error when loglevel is error', async function () {
-    await logsinkInit({ loglevel: 'error' } as Parameters<typeof logsinkInit>[0]);
+    await logsinkInit({loglevel: 'error'} as Parameters<typeof logsinkInit>[0]);
 
     doLogging();
 

@@ -1,5 +1,5 @@
-import { expect } from 'chai';
-import { createAppiumURL, getTestPort, TEST_HOST } from '../../lib';
+import {expect} from 'chai';
+import {createAppiumURL, getTestPort, TEST_HOST} from '../../lib';
 
 describe('TEST_HOST', function () {
   it('should be localhost', function () {

@@ -1,5 +1,5 @@
-import { exec } from 'teen_process';
-import type { ExecError } from 'teen_process';
+import {exec} from 'teen_process';
+import type {ExecError} from 'teen_process';
 
 /*
  * Exit Status for pgrep and pkill (`man pkill`)
@@ -20,7 +20,7 @@ import type { ExecError } from 'teen_process';
 export async function getProcessIds(appName: string): Promise<number[]> {
   let pids: number[];
   try {
-    const { stdout } = await exec('pgrep', ['-x', appName]);
+    const {stdout} = await exec('pgrep', ['-x', appName]);
     pids = stdout
       .trim()
       .split('\n')

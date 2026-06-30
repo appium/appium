@@ -17,7 +17,7 @@ export function requireSharp(): typeof sharp {
         `Cannot load the 'sharp' module needed for images processing. ` +
           `Consider visiting https://sharp.pixelplumbing.com/install ` +
           `for troubleshooting. Original error: ${message}`,
-        { cause: err },
+        {cause: err},
       );
     }
   }

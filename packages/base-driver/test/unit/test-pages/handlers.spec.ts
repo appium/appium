@@ -1,8 +1,8 @@
-import { expect } from 'chai';
-import type { Request, Response } from 'express';
-import { afterEach, beforeEach, describe, it } from 'node:test';
-import { createSandbox } from 'sinon';
-import { welcome } from '../../../lib/test-pages/handlers';
+import {expect} from 'chai';
+import type {Request, Response} from 'express';
+import {afterEach, beforeEach, describe, it} from 'node:test';
+import {createSandbox} from 'sinon';
+import {welcome} from '../../../lib/test-pages/handlers';
 
 describe('welcome', function () {
   let sandbox: sinon.SinonSandbox;

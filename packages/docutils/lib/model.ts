@@ -4,7 +4,7 @@
  * @module
  */
 
-import type { Jsonify, JsonValue } from 'type-fest';
+import type {Jsonify, JsonValue} from 'type-fest';
 
 /**
  * The `nav` prop of an `mkdocs.yml` file

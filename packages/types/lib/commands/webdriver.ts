@@ -1,5 +1,5 @@
-import type { ActionSequence } from '../action';
-import type { Element } from '../util';
+import type {ActionSequence} from '../action';
+import type {Element} from '../util';
 
 /**
  * Interface for all standard WebDriver Classic commands proxied to the external driver.

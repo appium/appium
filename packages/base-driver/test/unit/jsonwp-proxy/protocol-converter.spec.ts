@@ -1,12 +1,12 @@
-import chai, { expect } from 'chai';
+import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { before, beforeEach, describe, it } from 'node:test';
-import { PROTOCOLS } from '../../../lib/constants';
-import { COMMAND_URLS_CONFLICTS, ProtocolConverter } from '../../../lib/jsonwp-proxy/protocol-converter';
+import {before, beforeEach, describe, it} from 'node:test';
+import {PROTOCOLS} from '../../../lib/constants';
+import {COMMAND_URLS_CONFLICTS, ProtocolConverter} from '../../../lib/jsonwp-proxy/protocol-converter';
 
 chai.use(chaiAsPromised);
 
-const { MJSONWP, W3C } = PROTOCOLS;
+const {MJSONWP, W3C} = PROTOCOLS;
 
 /**
  * Type used to access private methods in unit tests.
@@ -29,7 +29,7 @@ describe('Protocol Converter', function () {
         script: 100,
       });
       expect(timeoutObjects.length).to.equal(1);
-      expect(timeoutObjects[0]).to.eql({ type: 'script', ms: 100 });
+      expect(timeoutObjects[0]).to.eql({type: 'script', ms: 100});
     });
     it('should ignore invalid entries while converting from W3C', function () {
       converter.downstreamProtocol = MJSONWP;
@@ -40,7 +40,7 @@ describe('Protocol Converter', function () {
         baz: undefined,
       } as any);
       expect(timeoutObjects.length).to.equal(1);
-      expect(timeoutObjects[0]).to.eql({ type: 'script', ms: 100 });
+      expect(timeoutObjects[0]).to.eql({type: 'script', ms: 100});
     });
     it('should take multiple W3C timeouts and produce multiple MJSONWP compatible objects', function () {
       converter.downstreamProtocol = MJSONWP;
@@ -71,7 +71,7 @@ describe('Protocol Converter', function () {
         ms: 300,
       });
       expect(timeoutObjects.length).to.equal(1);
-      expect(timeoutObjects[0]).to.eql({ implicit: 300 });
+      expect(timeoutObjects[0]).to.eql({implicit: 300});
     });
     it('should not change the input if protocol name is unknown', function () {
       converter.downstreamProtocol = null as any;
@@ -80,7 +80,7 @@ describe('Protocol Converter', function () {
         ms: 300,
       });
       expect(timeoutObjects.length).to.equal(1);
-      expect(timeoutObjects[0]).to.eql({ type: 'implicit', ms: 300 });
+      expect(timeoutObjects[0]).to.eql({type: 'implicit', ms: 300});
     });
     it('should not change the input if protocol name is unchanged', function () {
       converter.downstreamProtocol = MJSONWP;
@@ -89,7 +89,7 @@ describe('Protocol Converter', function () {
         ms: 300,
       });
       expect(timeoutObjects.length).to.equal(1);
-      expect(timeoutObjects[0]).to.eql({ type: 'implicit', ms: 300 });
+      expect(timeoutObjects[0]).to.eql({type: 'implicit', ms: 300});
     });
   });
 

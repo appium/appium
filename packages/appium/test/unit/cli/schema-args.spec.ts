@@ -1,7 +1,7 @@
-import { expect } from 'chai';
-import { createSandbox } from 'sinon';
-import { finalizeSchema, resetSchema, SchemaFinalizationError } from '../../../lib/schema/schema';
-import { rewiremock } from '../../helpers';
+import {expect} from 'chai';
+import {createSandbox} from 'sinon';
+import {finalizeSchema, resetSchema, SchemaFinalizationError} from '../../../lib/schema/schema';
+import {rewiremock} from '../../helpers';
 
 describe('cli/schema-args', function () {
   let toParserArgs: () => Map<string, unknown>;
@@ -9,7 +9,7 @@ describe('cli/schema-args', function () {
 
   beforeEach(function () {
     sandbox = createSandbox();
-    ({ toParserArgs } = rewiremock.proxy(() => require('../../../lib/schema/cli-args')));
+    ({toParserArgs} = rewiremock.proxy(() => require('../../../lib/schema/cli-args')));
   });
 
   afterEach(function () {
@@ -28,10 +28,10 @@ describe('cli/schema-args', function () {
       it('should generate metavars in SCREAMING_SNAKE_CASE', function () {
         const argDefs = toParserArgs();
         const argDefsWithMetavar = [...argDefs].filter(
-          (arg: [string, unknown]) => (arg[1] as { metavar?: string }).metavar,
+          (arg: [string, unknown]) => (arg[1] as {metavar?: string}).metavar,
         );
         expect(argDefsWithMetavar).not.to.be.empty;
-        type ArgEntry = [string, { metavar?: string }];
+        type ArgEntry = [string, {metavar?: string}];
         expect((argDefsWithMetavar as ArgEntry[]).every((arg: ArgEntry) => /[A-Z_]+/.test(arg[1].metavar ?? ''))).to.be
           .true;
       });

@@ -1,10 +1,10 @@
-import { util } from '@appium/support';
-import type { Capabilities, Constraints, NSCapabilities, StandardCapabilities, W3CCapabilities } from '@appium/types';
-import type { KeyAsString, MergeExclusive } from 'type-fest';
-import { errors } from '../protocol/errors';
-import { omit, pickBy } from '../utils';
-import { log } from './logger';
-import { validator } from './validation';
+import {util} from '@appium/support';
+import type {Capabilities, Constraints, NSCapabilities, StandardCapabilities, W3CCapabilities} from '@appium/types';
+import type {KeyAsString, MergeExclusive} from 'type-fest';
+import {errors} from '../protocol/errors';
+import {omit, pickBy} from '../utils';
+import {log} from './logger';
+import {validator} from './validation';
 
 export const APPIUM_VENDOR_PREFIX = 'appium:';
 export const PREFIXED_APPIUM_OPTS_CAP = `${APPIUM_VENDOR_PREFIX}options`;
@@ -62,7 +62,7 @@ export function validateCaps<C extends Constraints>(
   constraints: C | undefined = {} as C,
   opts: ValidateCapsOpts | undefined = {},
 ): Capabilities<C> {
-  const { skipPresenceConstraint } = opts;
+  const {skipPresenceConstraint} = opts;
 
   if (!util.isPlainObject(caps)) {
     throw new errors.InvalidArgumentError(`must be a JSON object`);
@@ -74,12 +74,12 @@ export function validateCaps<C extends Constraints>(
       if (skipPresenceConstraint) {
         return [key, omit(constraint as Record<string, unknown>, 'presence')];
       }
-      if ((constraint as { presence?: unknown }).presence === true) {
+      if ((constraint as {presence?: unknown}).presence === true) {
         return [
           key,
           {
             ...omit(constraint as Record<string, unknown>, 'presence'),
-            presence: { allowEmpty: false },
+            presence: {allowEmpty: false},
           },
         ];
       }
@@ -316,7 +316,7 @@ export function processCapabilities<C extends Constraints, W3CCaps extends W3CCa
   constraints: C | undefined = {} as C,
   shouldValidateCaps: boolean | undefined = true,
 ): Capabilities<C> {
-  const { matchedCaps, validationErrors } = parseCaps(w3cCaps, constraints, shouldValidateCaps);
+  const {matchedCaps, validationErrors} = parseCaps(w3cCaps, constraints, shouldValidateCaps);
 
   // If we found an error throw an exception
   if (!util.hasValue(matchedCaps)) {
@@ -397,7 +397,7 @@ export function promoteAppiumOptionsForObject<C extends Constraints>(obj: NSCapa
  */
 export function promoteAppiumOptions<C extends Constraints>(originalCaps: W3CCapabilities<C>): W3CCapabilities<C> {
   const result = {} as W3CCapabilities<C>;
-  const { alwaysMatch, firstMatch } = originalCaps;
+  const {alwaysMatch, firstMatch} = originalCaps;
   if (util.isPlainObject(alwaysMatch)) {
     result.alwaysMatch = promoteAppiumOptionsForObject(alwaysMatch);
   } else if ('alwaysMatch' in originalCaps) {

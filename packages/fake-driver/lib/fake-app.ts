@@ -1,12 +1,12 @@
-import type { ActionSequence, Location, Orientation } from '@appium/types';
+import type {ActionSequence, Location, Orientation} from '@appium/types';
 import XMLDom from '@xmldom/xmldom';
-import type { Document as XMLDocument, Node as XMLNode } from '@xmldom/xmldom';
-import { fs } from 'appium/support';
-import { readFileSync } from 'node:fs';
+import type {Document as XMLDocument, Node as XMLNode} from '@xmldom/xmldom';
+import {fs} from 'appium/support';
+import {readFileSync} from 'node:fs';
 import path from 'node:path';
 import * as xpath from 'xpath';
-import { FakeElement, type XmlNodeLike } from './fake-element';
-import { log } from './logger';
+import {FakeElement, type XmlNodeLike} from './fake-element';
+import {log} from './logger';
 
 const SCREENSHOT = path.join(__dirname, 'screen.png');
 
@@ -50,7 +50,7 @@ export class FakeApp {
       throw new Error('No title!');
     }
     const node = nodes[0];
-    const firstChild = node.firstChild as unknown as { data: string } | null;
+    const firstChild = node.firstChild as unknown as {data: string} | null;
     return firstChild?.data ?? '';
   }
 
@@ -184,7 +184,7 @@ export class FakeApp {
     if (fromAttrs) {
       return fromAttrs;
     }
-    const node = this.activeAlert?.node as { getAttribute?(name: string): string | null } | undefined;
+    const node = this.activeAlert?.node as {getAttribute?(name: string): string | null} | undefined;
     return node?.getAttribute?.('text') ?? '';
   }
 

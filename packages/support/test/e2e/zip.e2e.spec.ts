@@ -1,18 +1,18 @@
-import { expect, use } from 'chai';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import path from 'node:path';
-import { afterEach, beforeEach, describe, it } from 'node:test';
-import { fs, tempDir } from '../../lib/index';
-import { isWindows } from '../../lib/system';
+import {afterEach, beforeEach, describe, it} from 'node:test';
+import {fs, tempDir} from '../../lib/index';
+import {isWindows} from '../../lib/system';
 import * as zip from '../../lib/zip';
-import { MockReadWriteStream } from '../helpers';
+import {MockReadWriteStream} from '../helpers';
 
 use(chaiAsPromised);
 
 describe('#zip', function () {
   const optionMap = new Map<string, Record<string, boolean | undefined>>([
     ['native JS unzip', {}],
-    ['system unzip', { useSystemUnzip: true }],
+    ['system unzip', {useSystemUnzip: true}],
   ]);
 
   optionMap.forEach((options, desc) => {
@@ -60,7 +60,7 @@ describe('#zip', function () {
 
         it(
           'should reject files written through symlinks that point outside the destination',
-          { skip: isWindows() },
+          {skip: isWindows()},
           async function () {
             const outputPath = path.resolve(tmpRoot, 'output');
             const escapePath = path.resolve(tmpRoot, 'escape');
@@ -102,16 +102,16 @@ describe('#zip', function () {
       });
 
       describe('readEntries()', function () {
-        const expectedEntries: Array<{ name: string; contents?: string }> = [
-          { name: 'unzipped/' },
-          { name: 'unzipped/test-dir/' },
-          { name: 'unzipped/test-dir/a.txt', contents: 'Hello World' },
-          { name: 'unzipped/test-dir/b.txt', contents: 'Foo Bar' },
+        const expectedEntries: Array<{name: string; contents?: string}> = [
+          {name: 'unzipped/'},
+          {name: 'unzipped/test-dir/'},
+          {name: 'unzipped/test-dir/a.txt', contents: 'Hello World'},
+          {name: 'unzipped/test-dir/b.txt', contents: 'Foo Bar'},
         ];
 
         it('should iterate entries (directories and files) of zip file', async function () {
           let i = 0;
-          await zip.readEntries(zippedFilePath, async ({ entry, extractEntryTo }) => {
+          await zip.readEntries(zippedFilePath, async ({entry, extractEntryTo}) => {
             expect(entry.fileName).to.equal(expectedEntries[i].name);
 
             // If it's a file, test that we can extract it to a temporary directory and that the contents are correct.
@@ -207,12 +207,12 @@ describe('#zip', function () {
       });
 
       describe('_extractEntryTo()', function () {
-        let entry: { fileName: string };
+        let entry: {fileName: string};
         let destDir: string;
         let mockZipFile: {
           openReadStream: (e: typeof entry, cb: (err: null, s: MockReadWriteStream) => void) => void;
         };
-        let mockZipStream: MockReadWriteStream & { pipe?: (dest?: unknown) => void };
+        let mockZipStream: MockReadWriteStream & {pipe?: (dest?: unknown) => void};
 
         beforeEach(async function () {
           destDir = await tempDir.openDir();
@@ -290,7 +290,7 @@ describe('#zip', function () {
     });
   });
 
-  describe('unicode filename handling', { skip: isWindows() }, function () {
+  describe('unicode filename handling', {skip: isWindows()}, function () {
     let zippedFilePath: string;
     let assetsPath: string;
     let tmpRoot: string;

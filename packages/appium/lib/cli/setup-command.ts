@@ -1,4 +1,4 @@
-import { fs, system } from '@appium/support';
+import {fs, system} from '@appium/support';
 import type {
   Args,
   CliCommandSetup,
@@ -6,10 +6,10 @@ import type {
   CliExtensionCommand,
   CliExtensionSubcommand,
 } from 'appium/types';
-import { DESKTOP_BROWSERS, DESKTOP_DRIVERS, MOBILE_DRIVERS } from '../constants';
-import type { ExtensionConfig } from '../extension/extension-config';
-import { log } from '../logger';
-import { runExtensionCommand } from './extension';
+import {DESKTOP_BROWSERS, DESKTOP_DRIVERS, MOBILE_DRIVERS} from '../constants';
+import type {ExtensionConfig} from '../extension/extension-config';
+import {log} from '../logger';
+import {runExtensionCommand} from './extension';
 
 /**
  * Subcommands of preset for setup
@@ -221,6 +221,6 @@ function extensionCommandArgs(
   command: CliExtensionSubcommand,
 ): CliExtArgs {
   return extensionCommand === 'plugin'
-    ? { subcommand: 'plugin', pluginCommand: command, plugin: extensionName }
-    : { subcommand: 'driver', driverCommand: command, driver: extensionName };
+    ? {subcommand: 'plugin', pluginCommand: command, plugin: extensionName}
+    : {subcommand: 'driver', driverCommand: command, driver: extensionName};
 }

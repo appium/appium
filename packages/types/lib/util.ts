@@ -1,4 +1,4 @@
-import type { Class as _Class } from 'type-fest';
+import type {Class as _Class} from 'type-fest';
 
 /**
  * Utility type for a object with string-only props
@@ -52,7 +52,7 @@ export type KeysToCamelCase<T> = {
 /**
  * Object `B` has all the keys as object `A` (even if those keys in `A` are otherwise optional).
  */
-export type Associated<A extends object, B extends { [key in keyof Required<A>]: unknown }> = {
+export type Associated<A extends object, B extends {[key in keyof Required<A>]: unknown}> = {
   [Prop in keyof Required<A>]: B[Prop];
 };
 

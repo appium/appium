@@ -1,5 +1,5 @@
-import { expect } from 'chai';
-import { after, afterEach, before, beforeEach, describe, it } from 'node:test';
+import {expect} from 'chai';
+import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
 import {
   assertOutputContains,
   assertOutputDoesntContain,

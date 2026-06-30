@@ -1,12 +1,12 @@
-import type { MessageObject } from '@appium/logger';
+import type {MessageObject} from '@appium/logger';
 import globalLog from '@appium/logger';
-import { fs, util } from '@appium/support';
-import type { ParsedArgs } from 'appium/types';
-import { LRUCache } from 'lru-cache';
-import type { Logform, Logger } from 'winston';
-import { createLogger, format, transports } from 'winston';
+import {fs, util} from '@appium/support';
+import type {ParsedArgs} from 'appium/types';
+import {LRUCache} from 'lru-cache';
+import type {Logform, Logger} from 'winston';
+import {createLogger, format, transports} from 'winston';
 import type Transport from 'winston-transport';
-import { adler32 } from './utils';
+import {adler32} from './utils';
 
 const LEVELS_MAP = {
   debug: 4,
@@ -67,8 +67,8 @@ export async function init(args: ParsedArgs): Promise<void> {
 
   const reportedLoggerErrors = new Set<string>();
   // Capture logs emitted via npmlog and pass them through winston
-  globalLog.on('log', ({ level, message, prefix }: MessageObject) => {
-    const { sessionSignature } = globalLog.asyncStorage.getStore() ?? {};
+  globalLog.on('log', ({level, message, prefix}: MessageObject) => {
+    const {sessionSignature} = globalLog.asyncStorage.getStore() ?? {};
     const prefixes: string[] = [];
     if (sessionSignature) {
       prefixes.push(sessionSignature);
@@ -96,7 +96,7 @@ export async function init(args: ParsedArgs): Promise<void> {
       if (!reportedLoggerErrors.has(err.message) && process.stderr.writable) {
         // eslint-disable-next-line no-console
         console.error(
-          `The log message '${util.truncateString(msg, { length: 30 })}' cannot be written into ` +
+          `The log message '${util.truncateString(msg, {length: 30})}' cannot be written into ` +
             `one or more requested destinations: ${[...transportNames].join(', ')}. ` +
             `Original error: ${err.message}`,
         );
@@ -234,7 +234,7 @@ function formatLog(args: ParsedArgs, targetConsole: boolean): Logform.Format {
   if (['json', 'pretty_json'].includes(args.logFormat ?? '')) {
     return format.combine(
       format((info) => {
-        const infoCopy = { ...info };
+        const infoCopy = {...info};
         const contextInfo = globalLog.asyncStorage.getStore() ?? {};
 
         if (targetConsole && !args.logTimestamp) {
@@ -242,16 +242,16 @@ function formatLog(args: ParsedArgs, targetConsole: boolean): Logform.Format {
         }
 
         if (!util.isEmpty(contextInfo)) {
-          infoCopy.context = { ...contextInfo };
+          infoCopy.context = {...contextInfo};
         }
 
         return infoCopy;
       })(),
-      format.json({ space: args.logFormat === 'pretty_json' ? 2 : undefined }),
+      format.json({space: args.logFormat === 'pretty_json' ? 2 : undefined}),
     );
   }
 
-  return format.printf((info: { timestamp?: string; message?: unknown }) => {
+  return format.printf((info: {timestamp?: string; message?: unknown}) => {
     if (targetConsole) {
       return `${args.logTimestamp ? `${info.timestamp} - ` : ''}${info.message}`;
     }
@@ -289,7 +289,7 @@ export function stripColorCodes(text: string): string {
 }
 
 // Strip the color marking within messages (depends on stripColorCodes)
-const stripColorFormat = format(function stripColor(info: { level: string; message: unknown; [key: string]: unknown }) {
+const stripColorFormat = format(function stripColor(info: {level: string; message: unknown; [key: string]: unknown}) {
   return {
     ...info,
     level: stripColorCodes(info.level),

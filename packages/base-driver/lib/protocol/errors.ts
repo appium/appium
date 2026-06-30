@@ -1,6 +1,6 @@
-import { logger, util } from '@appium/support';
-import type { Class, ErrorBiDiCommandResponse } from '@appium/types';
-import { StatusCodes as HTTPStatusCodes } from 'http-status-codes';
+import {logger, util} from '@appium/support';
+import type {Class, ErrorBiDiCommandResponse} from '@appium/types';
+import {StatusCodes as HTTPStatusCodes} from 'http-status-codes';
 
 const mjsonwpLog = logger.getLogger('MJSONWP');
 const w3cLog = logger.getLogger('W3C');
@@ -1070,7 +1070,7 @@ export function isErrorType<T>(err: any, type: Class<T>): err is T {
  * @param value The error message, or an object with a `message` property
  * @return The error that is associated with provided JSONWP status code
  */
-export function errorFromMJSONWPStatusCode(code: number, value: string | { message: string } = ''): ProtocolError {
+export function errorFromMJSONWPStatusCode(code: number, value: string | {message: string} = ''): ProtocolError {
   const ErrorClass = jsonwpErrorCodeMap[code] ?? UnknownError;
   mjsonwpLog.debug(`Matched JSONWP error code ${code} to ${ErrorClass.name}`);
   // if `value` is an object, pull message from it, otherwise use the plain
@@ -1099,8 +1099,8 @@ export function errorFromW3CJsonCode(signature: string, message: string, stacktr
  *
  * @param err The error that needs to be translated
  */
-export function getResponseForW3CError(err: any): [number, { value: W3CError }] {
-  const protocolErrorToResponse: (e: ProtocolError) => [number, { value: W3CError }] = (e: ProtocolError) => [
+export function getResponseForW3CError(err: any): [number, {value: W3CError}] {
+  const protocolErrorToResponse: (e: ProtocolError) => [number, {value: W3CError}] = (e: ProtocolError) => [
     e.w3cStatus,
     {
       value: {

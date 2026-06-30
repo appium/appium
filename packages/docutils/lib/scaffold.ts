@@ -3,16 +3,16 @@
  * @module
  */
 
-import { fs, util } from '@appium/support';
-import { createPatch } from 'diff';
+import {fs, util} from '@appium/support';
+import {createPatch} from 'diff';
 import path from 'node:path';
-import type { JsonObject, JsonValue } from 'type-fest';
-import { NAME_ERR_ENOENT } from './constants';
-import { DocutilsError } from './error';
-import { readPackageJson, stringifyJson, writeFileString } from './fs';
-import { getLogger } from './logger';
-import type { NormalizedPackageJson } from './utils';
-import { mergeDefaultsDeep, relative } from './utils';
+import type {JsonObject, JsonValue} from 'type-fest';
+import {NAME_ERR_ENOENT} from './constants';
+import {DocutilsError} from './error';
+import {readPackageJson, stringifyJson, writeFileString} from './fs';
+import {getLogger} from './logger';
+import type {NormalizedPackageJson} from './utils';
+import {mergeDefaultsDeep, relative} from './utils';
 
 const log = getLogger('init');
 const dryRunLog = getLogger('dry-run', log);
@@ -137,7 +137,7 @@ export function createScaffoldTask<Opts extends ScaffoldTaskOptions, T extends J
     ...opts
   }: Opts): Promise<ScaffoldTaskResult<T>> => {
     const relativePath = relative(cwd);
-    const { pkgPath, pkg } = await readPackageJson(packageJsonPath ? path.dirname(packageJsonPath) : cwd, true);
+    const {pkgPath, pkg} = await readPackageJson(packageJsonPath ? path.dirname(packageJsonPath) : cwd, true);
     const pkgDir = path.dirname(pkgPath);
     dest = dest ?? path.join(pkgDir, defaultFilename);
     const relativeDest = relativePath(dest);
@@ -173,7 +173,7 @@ export function createScaffoldTask<Opts extends ScaffoldTaskOptions, T extends J
 
       if (dryRun) {
         dryRunLog.info('Would apply the following patch: \n\n%s', patch);
-        result = { path: dest, content: finalDestContent };
+        result = {path: dest, content: finalDestContent};
         return result;
       }
 
@@ -199,7 +199,7 @@ export function createScaffoldTask<Opts extends ScaffoldTaskOptions, T extends J
       log.info('No changes necessary for %s', relativeDest);
     }
     log.success(`${description}: done`);
-    return { path: dest, content: finalDestContent };
+    return {path: dest, content: finalDestContent};
   };
 }
 

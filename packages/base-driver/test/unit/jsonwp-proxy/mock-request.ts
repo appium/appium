@@ -13,7 +13,7 @@ export interface MockRequestResponse {
 type ResFixtureBody = Record<string, unknown>;
 
 export async function request(opts: MockRequestOpts): Promise<MockRequestResponse> {
-  const { url, method } = opts;
+  const {url, method} = opts;
   if (/badurl$/.test(url)) {
     throw new Error('noworky');
   }
@@ -21,29 +21,29 @@ export async function request(opts: MockRequestOpts): Promise<MockRequestRespons
   const [status, data] = resFixture(url, method);
   return {
     status,
-    headers: { 'content-type': 'application/json; charset=utf-8' },
+    headers: {'content-type': 'application/json; charset=utf-8'},
     data,
   };
 }
 
 function resFixture(url: string, method: string): [number, ResFixtureBody] {
   if (/\/status$/.test(url)) {
-    return [200, { status: 0, value: { foo: 'bar' } }];
+    return [200, {status: 0, value: {foo: 'bar'}}];
   }
   if (/\/element\/bad\/text$/.test(url)) {
-    return [500, { status: 11, value: { message: 'Invisible element' } }];
+    return [500, {status: 11, value: {message: 'Invisible element'}}];
   }
   if (/\/element\/200\/text$/.test(url)) {
-    return [200, { status: 11, value: { message: 'Invisible element' } }];
+    return [200, {status: 11, value: {message: 'Invisible element'}}];
   }
   if (/\/element\/200\/value$/.test(url)) {
-    return [200, { status: 0, sessionId: 'innersessionid', value: 'foobar' }];
+    return [200, {status: 0, sessionId: 'innersessionid', value: 'foobar'}];
   }
   if (/\/session$/.test(url) && method === 'POST') {
-    return [200, { status: 0, sessionId: '123', value: { browserName: 'boo' } }];
+    return [200, {status: 0, sessionId: '123', value: {browserName: 'boo'}}];
   }
   if (/\/nochrome$/.test(url)) {
-    return [100, { status: 0, value: { message: 'chrome not reachable' } }];
+    return [100, {status: 0, value: {message: 'chrome not reachable'}}];
   }
   throw new Error("Can't handle url " + url);
 }

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
-import { describe, it } from 'node:test';
-import { BasePlugin } from '../../lib/plugin';
+import {describe, it} from 'node:test';
+import {BasePlugin} from '../../lib/plugin';
 
 describe('base plugin', function () {
   it('should exist', function () {

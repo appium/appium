@@ -1,15 +1,15 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import path from 'node:path';
-import type { SinonSandbox } from 'sinon';
-import { DRIVER_TYPE } from '../../../lib/constants';
-import { resolveEsmEntryPoint } from '../../../lib/extension/extension-config';
-import { APPIUM_VER } from '../../../lib/helpers/build';
-import { FAKE_DRIVER_DIR, PROJECT_ROOT, rewiremock } from '../../helpers';
-import { initMocks } from './mocks';
-import type { MockAppiumSupport } from './mocks';
+import type {SinonSandbox} from 'sinon';
+import {DRIVER_TYPE} from '../../../lib/constants';
+import {resolveEsmEntryPoint} from '../../../lib/extension/extension-config';
+import {APPIUM_VER} from '../../../lib/helpers/build';
+import {FAKE_DRIVER_DIR, PROJECT_ROOT, rewiremock} from '../../helpers';
+import {initMocks} from './mocks';
+import type {MockAppiumSupport} from './mocks';
 
-const { expect } = chai;
+const {expect} = chai;
 chai.use(chaiAsPromised);
 
 describe('ExtensionConfig', function () {
@@ -20,9 +20,9 @@ describe('ExtensionConfig', function () {
 
   beforeEach(function () {
     let overrides: ReturnType<typeof initMocks>['overrides'];
-    ({ MockAppiumSupport, overrides, sandbox } = initMocks());
-    ({ ExtensionConfig } = rewiremock.proxy(() => require('../../../lib/extension/extension-config'), overrides));
-    ({ Manifest } = rewiremock.proxy(() => require('../../../lib/extension/manifest'), overrides));
+    ({MockAppiumSupport, overrides, sandbox} = initMocks());
+    ({ExtensionConfig} = rewiremock.proxy(() => require('../../../lib/extension/extension-config'), overrides));
+    ({Manifest} = rewiremock.proxy(() => require('../../../lib/extension/manifest'), overrides));
   });
 
   afterEach(function () {
@@ -37,17 +37,17 @@ describe('ExtensionConfig', function () {
     });
 
     it('resolves ESM entry point with dot export', function () {
-      expect(resolveEsmEntryPoint({ '.': './index.js' })).to.eql('./index.js');
+      expect(resolveEsmEntryPoint({'.': './index.js'})).to.eql('./index.js');
     });
 
     it('resolves ESM entry point with import export', function () {
-      expect(resolveEsmEntryPoint({ import: './index.js' })).to.eql('./index.js');
+      expect(resolveEsmEntryPoint({import: './index.js'})).to.eql('./index.js');
     });
 
     it('resolves ESM entry point with complex import export', function () {
       expect(
         resolveEsmEntryPoint({
-          '.': { import: './index.js' },
+          '.': {import: './index.js'},
         }),
       ).to.eql('./index.js');
     });
@@ -82,7 +82,7 @@ describe('ExtensionConfig', function () {
       describe('when the extension data is missing a "pkgName" field', function () {
         let pkgName: string;
         beforeEach(function () {
-          ({ pkgName } = extData);
+          ({pkgName} = extData);
           delete extData.pkgName;
         });
 
@@ -258,11 +258,11 @@ describe('ExtensionConfig', function () {
       describe('when there is a single warning', function () {
         beforeEach(function () {
           sandbox.stub(config, 'getProblems').resolves([]);
-          sandbox.stub(config, 'getWarnings').resolves([{ err: 'some warning', val: 'whatever' }]);
+          sandbox.stub(config, 'getWarnings').resolves([{err: 'some warning', val: 'whatever'}]);
         });
 
         it('should display a warning count of 1', async function () {
-          await config._validate({ foo: {} });
+          await config._validate({foo: {}});
           expect(
             (MockAppiumSupport.logger.__logger as any).warn.calledWith(
               'Appium encountered 1 warning while validating drivers found in manifest /some/path/extensions.yaml',
@@ -273,12 +273,12 @@ describe('ExtensionConfig', function () {
 
       describe('when there is a single error', function () {
         beforeEach(function () {
-          sandbox.stub(config, 'getProblems').resolves([{ err: 'some warning', val: 'whatever' }]);
+          sandbox.stub(config, 'getProblems').resolves([{err: 'some warning', val: 'whatever'}]);
           sandbox.stub(config, 'getWarnings').resolves([]);
         });
 
         it('should display an error count of 1', async function () {
-          await config._validate({ foo: {} });
+          await config._validate({foo: {}});
           expect(
             (MockAppiumSupport.logger.__logger as any).error.calledWith(
               'Appium encountered 1 error while validating drivers found in manifest /some/path/extensions.yaml',
@@ -293,7 +293,7 @@ describe('ExtensionConfig', function () {
         // the `ExtensionConfig` instance doesn't know about fake driver, since it hasn't been
         // loaded yet.  all we need for the purposes of the `require()` function is a `mainClass`, so
         // here we go.
-        config.installedExtensions.fake = { pkgName: 'flotsam', mainClass: 'Jetsam' };
+        config.installedExtensions.fake = {pkgName: 'flotsam', mainClass: 'Jetsam'};
       });
 
       describe('when the extension is not actually installed', function () {

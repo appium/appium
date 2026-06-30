@@ -1,5 +1,5 @@
-import { expect } from 'chai';
-import { ansiBeep, ansiColor, escapeRegExp, isPlainObject, setBlocking, unleakString } from '../../lib/utils';
+import {expect} from 'chai';
+import {ansiBeep, ansiColor, escapeRegExp, isPlainObject, setBlocking, unleakString} from '../../lib/utils';
 
 describe('utils', function () {
   describe('ansiColor', function () {
@@ -28,7 +28,7 @@ describe('utils', function () {
 
   describe('setBlocking', function () {
     function createTTYStream(): NodeJS.WriteStream & {
-      _handle: { setBlocking: (value: boolean) => void; last?: boolean };
+      _handle: {setBlocking: (value: boolean) => void; last?: boolean};
     } {
       const handle = {
         last: undefined as boolean | undefined,
@@ -40,7 +40,7 @@ describe('utils', function () {
         isTTY: true,
         _handle: handle,
       } as NodeJS.WriteStream & {
-        _handle: { setBlocking: (value: boolean) => void; last?: boolean };
+        _handle: {setBlocking: (value: boolean) => void; last?: boolean};
       };
     }
 
@@ -64,7 +64,7 @@ describe('utils', function () {
     });
 
     it('should skip streams without a setBlocking handle', function () {
-      const stream = { isTTY: true, _handle: {} } as NodeJS.WriteStream & { _handle: object };
+      const stream = {isTTY: true, _handle: {}} as NodeJS.WriteStream & {_handle: object};
 
       expect(() => setBlocking(true, [stream])).not.to.throw();
     });
@@ -73,7 +73,7 @@ describe('utils', function () {
   describe('isPlainObject', function () {
     it('should return true for plain objects', function () {
       expect(isPlainObject({})).to.be.true;
-      expect(isPlainObject({ a: 1 })).to.be.true;
+      expect(isPlainObject({a: 1})).to.be.true;
       expect(isPlainObject(Object.create(null))).to.be.true;
     });
 

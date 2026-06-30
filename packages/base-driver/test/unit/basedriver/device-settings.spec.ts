@@ -1,11 +1,11 @@
-import { node } from '@appium/support';
-import type { SettingsUpdateListener } from '@appium/types';
-import chai, { expect } from 'chai';
+import {node} from '@appium/support';
+import type {SettingsUpdateListener} from '@appium/types';
+import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { afterEach, beforeEach, describe, it } from 'node:test';
+import {afterEach, beforeEach, describe, it} from 'node:test';
 import sinon from 'sinon';
-import { DeviceSettings, MAX_SETTINGS_SIZE } from '../../../lib/basedriver/device-settings';
-import { InvalidArgumentError } from '../../../lib/protocol/errors';
+import {DeviceSettings, MAX_SETTINGS_SIZE} from '../../../lib/basedriver/device-settings';
+import {InvalidArgumentError} from '../../../lib/protocol/errors';
 
 chai.use(chaiAsPromised);
 
@@ -28,7 +28,7 @@ describe('DeviceSettings', function () {
     });
 
     it('should not hold on to reference of defaults in constructor', function () {
-      const obj = { foo: 'bar' };
+      const obj = {foo: 'bar'};
       const d1 = new DeviceSettings(obj);
       const d2 = new DeviceSettings(obj);
       d1.getSettings().foo = 'baz';
@@ -75,7 +75,7 @@ describe('DeviceSettings', function () {
 
         it('should reject with an InvalidArgumentError', async function () {
           const deviceSettings = new DeviceSettings();
-          await expect(deviceSettings.update({ stuff: 'things' })).to.be.rejectedWith(
+          await expect(deviceSettings.update({stuff: 'things'})).to.be.rejectedWith(
             InvalidArgumentError,
             /object size exceeds/i,
           );
@@ -92,10 +92,10 @@ describe('DeviceSettings', function () {
         describe('when the new settings do not differ', function () {
           it('should not call the `_onSettingsUpdate` listener', async function () {
             const deviceSettings = new DeviceSettings(
-              { stuff: 'things' },
+              {stuff: 'things'},
               onSettingsUpdate as SettingsUpdateListener<Record<string, unknown>>,
             );
-            await deviceSettings.update({ stuff: 'things' });
+            await deviceSettings.update({stuff: 'things'});
             expect(onSettingsUpdate.called).to.be.false;
           });
         });
@@ -106,7 +106,7 @@ describe('DeviceSettings', function () {
               {},
               onSettingsUpdate as SettingsUpdateListener<Record<string, unknown>>,
             );
-            await deviceSettings.update({ stuff: 'things' });
+            await deviceSettings.update({stuff: 'things'});
             expect(onSettingsUpdate.calledOnceWithExactly('stuff', 'things', undefined)).to.be.true;
           });
         });

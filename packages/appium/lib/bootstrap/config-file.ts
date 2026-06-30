@@ -1,12 +1,12 @@
-import { util } from '@appium/support';
-import type { AppiumConfig, NormalizedAppiumConfig } from '@appium/types';
-import type { IOutputError } from '@sidvind/better-ajv-errors';
-import type { ErrorObject, SchemaObject } from 'ajv';
-import { lilconfig, type LilconfigResult, type LoaderSync } from 'lilconfig';
+import {util} from '@appium/support';
+import type {AppiumConfig, NormalizedAppiumConfig} from '@appium/types';
+import type {IOutputError} from '@sidvind/better-ajv-errors';
+import type {ErrorObject, SchemaObject} from 'ajv';
+import {lilconfig, type LilconfigResult, type LoaderSync} from 'lilconfig';
 import * as yaml from 'yaml';
-import { formatErrors } from '../schema/format-errors';
-import { getSchema, validate } from '../schema/schema';
-import { camelCase, getPath, mapKeys, mapValues } from '../utils';
+import {formatErrors} from '../schema/format-errors';
+import {getSchema, validate} from '../schema/schema';
+import {camelCase, getPath, mapKeys, mapValues} from '../utils';
 
 /**
  * A cache of the raw config file (a JSON string) at a filepath.
@@ -64,18 +64,18 @@ export async function readConfigFile(
   const result = filepath ? await loadConfigFile(lc, filepath) : await searchConfigFile(lc);
 
   if (result?.filepath && !result?.isEmpty) {
-    const { pretty = true } = opts;
+    const {pretty = true} = opts;
     try {
       let configResult: ReadConfigFileResult;
       const errors = validate(result.config) as ErrorObject[];
       if (util.isEmpty(errors)) {
-        configResult = { ...result, errors };
+        configResult = {...result, errors};
       } else {
         const reason = formatErrors(errors, result.config as Record<string, unknown>, {
           json: rawConfig.get(result.filepath),
           pretty,
         });
-        configResult = reason ? { ...result, errors, reason } : { ...result, errors };
+        configResult = reason ? {...result, errors, reason} : {...result, errors};
       }
 
       // normalize (to camel case) all top-level property names of the config file

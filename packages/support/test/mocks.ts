@@ -2,11 +2,11 @@
  * A collection of mocks reused across unit tests.
  */
 
-import { createSandbox, type SinonSandbox, type SinonStub } from 'sinon';
+import {createSandbox, type SinonSandbox, type SinonStub} from 'sinon';
 
 /** Override key for rewiremock from `test/unit/*.spec.ts` → `lib/internal` (env imports `./internal`). */
 export const INTERNAL_MODULE_OVERRIDE_KEY = '../../lib/internal' as const;
-import type { NormalizedPackageJson } from '../lib/internal/read-package';
+import type {NormalizedPackageJson} from '../lib/internal/read-package';
 
 export interface MockInternal {
   readPackage: SinonStub;
@@ -55,7 +55,7 @@ export function initMocks(sandbox = createSandbox()): InitMocksResult {
   const MockInternal: MockInternal = {
     readPackage: sandbox.stub().callsFake(async () => mockPkg),
     readPackageSync: sandbox.stub().returns(mockPkg),
-    packageDirectorySync: sandbox.stub().callsFake(({ cwd }: { cwd?: string } = {}) => cwd),
+    packageDirectorySync: sandbox.stub().callsFake(({cwd}: {cwd?: string} = {}) => cwd),
     __pkg: mockPkg,
   };
 

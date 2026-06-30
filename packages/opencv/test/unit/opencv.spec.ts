@@ -1,6 +1,6 @@
-import { expect, use } from 'chai';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { initOpenCv } from '../../lib';
+import {initOpenCv} from '../../lib';
 
 use(chaiAsPromised);
 

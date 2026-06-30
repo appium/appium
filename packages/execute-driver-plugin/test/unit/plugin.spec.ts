@@ -1,7 +1,7 @@
-import { expect, use } from 'chai';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { describe, it } from 'node:test';
-import { ExecuteDriverPlugin } from '../../lib/plugin';
+import {describe, it} from 'node:test';
+import {ExecuteDriverPlugin} from '../../lib/plugin';
 
 use(chaiAsPromised);
 

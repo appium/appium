@@ -1,6 +1,6 @@
-import { BaseDriver } from '.../../../lib/basedriver/driver';
-import { BaseDriverCapConstraints, Driver, DriverOpts, ExternalDriver } from '@appium/types';
-import { expectAssignable } from 'tsd';
+import {BaseDriver} from '.../../../lib/basedriver/driver';
+import {BaseDriverCapConstraints, Driver, DriverOpts, ExternalDriver} from '@appium/types';
+import {expectAssignable} from 'tsd';
 
 expectAssignable<Driver<BaseDriverCapConstraints>>(
   new BaseDriver<BaseDriverCapConstraints>({} as DriverOpts<BaseDriverCapConstraints>),

@@ -1,8 +1,8 @@
-import { expect, use } from 'chai';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { describe, it } from 'node:test';
+import {describe, it} from 'node:test';
 import vm from 'node:vm';
-import { wrapHostBindingForVmContext } from '../../lib/vm-host-binding';
+import {wrapHostBindingForVmContext} from '../../lib/vm-host-binding';
 
 use(chaiAsPromised);
 
@@ -12,7 +12,7 @@ describe('wrapHostBindingForVmContext', function () {
 
   it('should still expose ordinary properties on objects to the VM', function () {
     const d = wrapHostBindingForVmContext(hostishDriver);
-    const sessionId = vm.runInNewContext(`d.sessionId`, { d }, { timeout: 500 });
+    const sessionId = vm.runInNewContext(`d.sessionId`, {d}, {timeout: 500});
     expect(sessionId).to.equal('fake');
   });
 
@@ -21,8 +21,8 @@ describe('wrapHostBindingForVmContext', function () {
     expect(() =>
       vm.runInNewContext(
         `const func = d.constructor.constructor; func('return typeof process')()`,
-        { d },
-        { timeout: 500 },
+        {d},
+        {timeout: 500},
       ),
     ).to.throw();
   });
@@ -34,8 +34,8 @@ describe('wrapHostBindingForVmContext', function () {
         `const p = Object.getPrototypeOf(d);
          const func = p.constructor.constructor;
          func('return typeof process')()`,
-        { d },
-        { timeout: 500 },
+        {d},
+        {timeout: 500},
       ),
     ).to.throw();
   });
@@ -47,8 +47,8 @@ describe('wrapHostBindingForVmContext', function () {
         `const p = d.__proto__;
          const func = p.constructor.constructor;
          func('return typeof process')()`,
-        { d },
-        { timeout: 500 },
+        {d},
+        {timeout: 500},
       ),
     ).to.throw();
   });
@@ -60,8 +60,8 @@ describe('wrapHostBindingForVmContext', function () {
       vm.runInNewContext(
         `const func = setTimeout.constructor.constructor;
          func('return typeof process')()`,
-        { setTimeout: st, clearTimeout: ct },
-        { timeout: 500 },
+        {setTimeout: st, clearTimeout: ct},
+        {timeout: 500},
       ),
     ).to.throw();
   });
@@ -71,8 +71,8 @@ describe('wrapHostBindingForVmContext', function () {
     const ct = wrapHostBindingForVmContext(clearTimeout);
     const waited = vm.runInNewContext(
       `new Promise((resolve) => setTimeout(() => resolve(true), 10))`,
-      { setTimeout: st, clearTimeout: ct },
-      { timeout: 500 },
+      {setTimeout: st, clearTimeout: ct},
+      {timeout: 500},
     ) as Promise<boolean>;
     expect(await waited).to.equal(true);
   });
@@ -87,8 +87,8 @@ describe('wrapHostBindingForVmContext', function () {
       vm.runInNewContext(
         `const func = console.log.constructor.constructor;
          func('return typeof process')()`,
-        { console: sandboxConsole },
-        { timeout: 500 },
+        {console: sandboxConsole},
+        {timeout: 500},
       ),
     ).to.throw();
   });
@@ -101,8 +101,8 @@ describe('wrapHostBindingForVmContext', function () {
       vm.runInNewContext(
         `const func = console.constructor.constructor;
          func('return typeof process')()`,
-        { console: consoleFns },
-        { timeout: 500 },
+        {console: consoleFns},
+        {timeout: 500},
       ),
     ).to.throw();
   });
@@ -116,8 +116,8 @@ describe('wrapHostBindingForVmContext', function () {
         `const m = d.deleteSession;
          const func = m.constructor.constructor;
          func('return typeof process')()`,
-        { d },
-        { timeout: 500 },
+        {d},
+        {timeout: 500},
       ),
     ).to.throw();
   });
@@ -140,8 +140,8 @@ describe('wrapHostBindingForVmContext', function () {
         `const m = d.someMethod;
          const func = m.constructor.constructor;
          func('return typeof process')();`,
-        { d },
-        { timeout: 500 },
+        {d},
+        {timeout: 500},
       ),
     ).to.throw();
   });
@@ -155,8 +155,8 @@ describe('wrapHostBindingForVmContext', function () {
         `const b = d.fn.bind(d);
          const func = b.constructor.constructor;
          func('return typeof process')()`,
-        { d },
-        { timeout: 500 },
+        {d},
+        {timeout: 500},
       ),
     ).to.throw();
   });
@@ -178,8 +178,8 @@ describe('wrapHostBindingForVmContext', function () {
          }
          const func = desc.value.constructor.constructor;
          func('return typeof process')()`,
-        { d },
-        { timeout: 500 },
+        {d},
+        {timeout: 500},
       ),
     ).to.throw();
   });
@@ -188,12 +188,12 @@ describe('wrapHostBindingForVmContext', function () {
     const host = Object.create(Object.prototype);
     host.m = () => {};
     const d = wrapHostBindingForVmContext(host);
-    const same = vm.runInNewContext(`d.m === d.m`, { d }, { timeout: 500 });
+    const same = vm.runInNewContext(`d.m === d.m`, {d}, {timeout: 500});
     expect(same).to.equal(true);
   });
 
   it('should unwrap proxied arguments before invoking host functions', function () {
-    const original = { id: 'host-object' };
+    const original = {id: 'host-object'};
     const host = {
       provide() {
         return original;
@@ -206,14 +206,14 @@ describe('wrapHostBindingForVmContext', function () {
     const roundTripsAsOriginal = vm.runInNewContext(
       `const value = d.provide();
        d.consume(value);`,
-      { d },
-      { timeout: 500 },
+      {d},
+      {timeout: 500},
     );
     expect(roundTripsAsOriginal).to.equal(true);
   });
 
   it('should unwrap proxied arguments before invoking host constructors via new', function () {
-    const original = { id: 'ctor-arg' };
+    const original = {id: 'ctor-arg'};
     const host = {
       Box: class Box {
         public arg: unknown;
@@ -233,8 +233,8 @@ describe('wrapHostBindingForVmContext', function () {
       `const value = d.provide();
        const box = new d.Box(value);
        d.isOriginal(box.arg);`,
-      { d },
-      { timeout: 500 },
+      {d},
+      {timeout: 500},
     );
     expect(ctorArgRoundTripsAsOriginal).to.equal(true);
   });
@@ -252,13 +252,13 @@ describe('wrapHostBindingForVmContext', function () {
     const host = Object.create(Object.prototype);
     host.p = () => Promise.resolve(7);
     const d = wrapHostBindingForVmContext(host);
-    const v = vm.runInNewContext(`(async () => await d.p())()`, { d }, { timeout: 500 }) as Promise<number>;
+    const v = vm.runInNewContext(`(async () => await d.p())()`, {d}, {timeout: 500}) as Promise<number>;
     expect(await v).to.equal(7);
   });
 
   it('should block constructor chaining on values fulfilled from wrapped Promises', async function () {
     const host = Object.create(Object.prototype);
-    host.p = () => Promise.resolve({ x: 1 });
+    host.p = () => Promise.resolve({x: 1});
     const d = wrapHostBindingForVmContext(host);
     await expect(
       vm.runInNewContext(
@@ -267,8 +267,8 @@ describe('wrapHostBindingForVmContext', function () {
           const func = v.constructor.constructor;
           func('return typeof process')();
         })()`,
-        { d },
-        { timeout: 500 },
+        {d},
+        {timeout: 500},
       ),
     ).to.eventually.be.rejected;
   });

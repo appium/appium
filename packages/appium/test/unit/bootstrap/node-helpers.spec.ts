@@ -1,11 +1,11 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { promises as fs } from 'node:fs';
+import {promises as fs} from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { adjustNodePath, checkNodeOk, requireDir } from '../../../lib/bootstrap/node-helpers';
+import {adjustNodePath, checkNodeOk, requireDir} from '../../../lib/bootstrap/node-helpers';
 
-const { expect } = chai;
+const {expect} = chai;
 chai.use(chaiAsPromised);
 
 describe('bootstrap/node-helpers', function () {
@@ -13,7 +13,7 @@ describe('bootstrap/node-helpers', function () {
     const _process = process;
 
     before(function () {
-      process = { ...process }; // eslint-disable-line no-global-assign
+      process = {...process}; // eslint-disable-line no-global-assign
     });
 
     after(function () {

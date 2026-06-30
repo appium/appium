@@ -1,5 +1,5 @@
-import { env, fs, npm, tempDir } from '@appium/support';
-import type { ManifestData } from 'appium/types';
+import {env, fs, npm, tempDir} from '@appium/support';
+import type {ManifestData} from 'appium/types';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import path from 'node:path';
@@ -10,14 +10,14 @@ import {
   EXT_SUBCOMMAND_LIST as LIST,
   PKG_HASHFILE_RELATIVE_PATH,
 } from '../../lib/constants';
-import { resolveFrom } from '../../lib/utils';
-import { FAKE_DRIVER_DIR, resolveFixture } from '../helpers';
-import { installLocalExtension, runAppiumJson } from './e2e-helpers';
+import {resolveFrom} from '../../lib/utils';
+import {FAKE_DRIVER_DIR, resolveFixture} from '../helpers';
+import {installLocalExtension, runAppiumJson} from './e2e-helpers';
 
-const { expect } = chai;
+const {expect} = chai;
 chai.use(chaiAsPromised);
 
-const { MANIFEST_RELATIVE_PATH } = env;
+const {MANIFEST_RELATIVE_PATH} = env;
 const testDriverPath = path.dirname(resolveFixture('test-driver/package.json'));
 
 describe('when Appium is a dependency of the current project', function () {
@@ -52,7 +52,7 @@ describe('when Appium is a dependency of the current project', function () {
     });
 
     it('should automatically discover the extension', async function () {
-      const res = (await runJson([DRIVER_TYPE, LIST])) as Record<string, { installed?: boolean }>;
+      const res = (await runJson([DRIVER_TYPE, LIST])) as Record<string, {installed?: boolean}>;
       expect(res).to.have.property('test');
     });
   });
@@ -70,8 +70,8 @@ describe('when Appium is a dependency of the current project', function () {
 
     describe('without drivers installed', function () {
       it('should list no drivers', async function () {
-        const res = (await runJson([DRIVER_TYPE, LIST])) as Record<string, { installed?: boolean }>;
-        expect(Object.values(res).every(({ installed }) => !installed)).to.be.true;
+        const res = (await runJson([DRIVER_TYPE, LIST])) as Record<string, {installed?: boolean}>;
+        expect(Object.values(res).every(({installed}) => !installed)).to.be.true;
       });
     });
 

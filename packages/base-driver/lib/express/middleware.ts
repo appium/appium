@@ -1,14 +1,14 @@
-import { util } from '@appium/support';
-import type { NextFunction, Request, RequestHandler, Response } from 'express';
-import type { IncomingMessage } from 'node:http';
-import type { Duplex } from 'node:stream';
-import { errors } from '../protocol';
-import { log } from './logger';
-export { handleIdempotency } from './idempotency';
-import type { StringRecord, WSServer } from '@appium/types';
-import { match } from 'path-to-regexp';
-import { calcSignature } from '../helpers/session';
-import { getResponseForW3CError } from '../protocol/errors';
+import {util} from '@appium/support';
+import type {NextFunction, Request, RequestHandler, Response} from 'express';
+import type {IncomingMessage} from 'node:http';
+import type {Duplex} from 'node:stream';
+import {errors} from '../protocol';
+import {log} from './logger';
+export {handleIdempotency} from './idempotency';
+import type {StringRecord, WSServer} from '@appium/types';
+import {match} from 'path-to-regexp';
+import {calcSignature} from '../helpers/session';
+import {getResponseForW3CError} from '../protocol/errors';
 
 const SESSION_ID_PATTERN = /\/session\/([^/]+)/;
 
@@ -61,7 +61,7 @@ export function handleLogContext(req: Request, _res: Response, next: NextFunctio
   const requestId = fetchHeaderValue(req, 'x-request-id') || util.uuidV4();
 
   const sessionId = SESSION_ID_PATTERN.exec(req.url)?.[1];
-  const sessionInfo = sessionId ? { sessionId, sessionSignature: calcSignature(sessionId) } : {};
+  const sessionInfo = sessionId ? {sessionId, sessionSignature: calcSignature(sessionId)} : {};
   const isSensitiveHeaderValue = fetchHeaderValue(req, 'x-appium-is-sensitive');
 
   log.updateAsyncContext(

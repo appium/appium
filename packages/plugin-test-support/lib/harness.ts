@@ -1,12 +1,12 @@
 /* eslint-disable no-console */
-import type { AppiumServer } from '@appium/types';
-import { main as appiumServer } from 'appium';
-import { fs } from 'appium/support';
+import type {AppiumServer} from '@appium/types';
+import {main as appiumServer} from 'appium';
+import {fs} from 'appium/support';
 import AsyncLock from 'async-lock';
-import { createRequire } from 'node:module';
+import {createRequire} from 'node:module';
 import net from 'node:net';
-import { exec } from 'teen_process';
-import type { AppiumEnv, E2ESetupOpts } from './types';
+import {exec} from 'teen_process';
+import type {AppiumEnv, E2ESetupOpts} from './types';
 
 declare const __filename: string;
 const _require = createRequire(__filename);
@@ -55,7 +55,7 @@ export function pluginE2EHarness(opts: E2ESetupOpts): {
 
   const setup = async function setup() {
     const setupAppiumHome = async (): Promise<AppiumEnv> => {
-      const env: AppiumEnv = { ...process.env };
+      const env: AppiumEnv = {...process.env};
 
       if (appiumHome) {
         env.APPIUM_HOME = appiumHome;
@@ -70,10 +70,10 @@ export function pluginE2EHarness(opts: E2ESetupOpts): {
       console.log(`${logSymbols.info} Checking if driver "${driverName}" is installed...`);
       const driverListArgs = [APPIUM_BIN, 'driver', 'list', '--json'];
       console.log(`${logSymbols.info} Running: ${process.execPath} ${driverListArgs.join(' ')}`);
-      const { stdout: driverListJson } = await exec(process.execPath, driverListArgs, {
+      const {stdout: driverListJson} = await exec(process.execPath, driverListArgs, {
         env,
       });
-      const installedDrivers = JSON.parse(driverListJson) as Record<string, { installed?: boolean }>;
+      const installedDrivers = JSON.parse(driverListJson) as Record<string, {installed?: boolean}>;
 
       if (!installedDrivers[driverName]?.installed) {
         console.log(`${logSymbols.warning} Driver "${driverName}" not installed; installing...`);
@@ -92,10 +92,10 @@ export function pluginE2EHarness(opts: E2ESetupOpts): {
     const installPlugin = async (env: AppiumEnv): Promise<void> => {
       console.log(`${logSymbols.info} Checking if plugin "${pluginName}" is installed...`);
       const pluginListArgs = [APPIUM_BIN, 'plugin', 'list', '--json'];
-      const { stdout: pluginListJson } = await exec(process.execPath, pluginListArgs, {
+      const {stdout: pluginListJson} = await exec(process.execPath, pluginListArgs, {
         env,
       });
-      const installedPlugins = JSON.parse(pluginListJson) as Record<string, { installed?: boolean }>;
+      const installedPlugins = JSON.parse(pluginListJson) as Record<string, {installed?: boolean}>;
 
       if (!installedPlugins[pluginName]?.installed) {
         console.log(`${logSymbols.warning} Plugin "${pluginName}" not installed; installing...`);
@@ -130,7 +130,7 @@ export function pluginE2EHarness(opts: E2ESetupOpts): {
     await installDriver(env);
     await installPlugin(env);
     await startAppiumServer();
-    return { server: server as AppiumServer };
+    return {server: server as AppiumServer};
   };
 
   const teardown = async function teardown() {

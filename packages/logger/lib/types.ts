@@ -1,6 +1,6 @@
-import type { AsyncLocalStorage } from 'node:async_hooks';
-import type { EventEmitter } from 'node:events';
-import type { Writable } from 'node:stream';
+import type {AsyncLocalStorage} from 'node:async_hooks';
+import type {EventEmitter} from 'node:events';
+import type {Writable} from 'node:stream';
 
 export interface Logger extends EventEmitter {
   level: string;

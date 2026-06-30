@@ -1,6 +1,6 @@
-import { expect } from 'chai';
-import { describe, it } from 'node:test';
-import { uploadFile } from '../../lib/net';
+import {expect} from 'chai';
+import {describe, it} from 'node:test';
+import {uploadFile} from '../../lib/net';
 
 describe('net', function () {
   describe('uploadFile()', function () {
@@ -8,7 +8,7 @@ describe('net', function () {
       const upload = (remoteUri: string) =>
         uploadFile('/path/to/local/file', remoteUri, {
           method: 'PUT',
-          headers: { 'content-type': 'video/mp4' },
+          headers: {'content-type': 'video/mp4'},
         });
 
       expect(upload).to.be.a('function');

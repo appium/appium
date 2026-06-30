@@ -1,19 +1,19 @@
-import { getTestPort } from '@appium/driver-test-support';
-import type { Driver, MethodMap } from '@appium/types';
-import chai, { expect } from 'chai';
+import {getTestPort} from '@appium/driver-test-support';
+import type {Driver, MethodMap} from '@appium/types';
+import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { afterEach, before, beforeEach, describe, it } from 'node:test';
-import { createSandbox } from 'sinon';
-import { configureServer, normalizeBasePath, server } from '../../../lib/express/server';
-import { routeConfiguringFunction } from '../../../lib/protocol/protocol';
-import { registerTestPages } from '../../../lib/test-pages';
+import {afterEach, before, beforeEach, describe, it} from 'node:test';
+import {createSandbox} from 'sinon';
+import {configureServer, normalizeBasePath, server} from '../../../lib/express/server';
+import {routeConfiguringFunction} from '../../../lib/protocol/protocol';
+import {registerTestPages} from '../../../lib/test-pages';
 
 chai.use(chaiAsPromised);
 
 const newMethodMap = {
   '/session/:sessionId/fake': {
-    GET: { command: 'fakeGet' },
-    POST: { command: 'fakePost', payloadParams: { required: ['fakeParam'] } },
+    GET: {command: 'fakeGet'},
+    POST: {command: 'fakePost', payloadParams: {required: ['fakeParam']}},
   },
 } as MethodMap<Driver>;
 
@@ -23,7 +23,7 @@ const updateServer = async (app: any, httpServer: any) => {
 };
 
 function fakeDriver() {
-  return { sessionExists: () => true, executeCommand: () => {} };
+  return {sessionExists: () => true, executeCommand: () => {}};
 }
 
 describe('server configuration', function () {
@@ -58,7 +58,7 @@ describe('server configuration', function () {
   it('should actually use the middleware', function () {
     const app = fakeApp() as any;
     const configureRoutes = () => {};
-    configureServer({ app, addRoutes: configureRoutes });
+    configureServer({app, addRoutes: configureRoutes});
     expect(app.use.callCount).to.equal(11);
     expect(app.all.callCount).to.equal(0);
   });
@@ -67,7 +67,7 @@ describe('server configuration', function () {
     const app = fakeApp() as any;
     const configureRoutes = () => {};
     // @ts-expect-error registerTestPages is not normally used in this way
-    configureServer({ app, addRoutes: configureRoutes, registerTestPages });
+    configureServer({app, addRoutes: configureRoutes, registerTestPages});
     expect(app.use.callCount).to.equal(15);
     expect(app.all.callCount).to.equal(4);
   });
@@ -77,8 +77,8 @@ describe('server configuration', function () {
     const app2 = fakeApp() as any;
     const driver = fakeDriver();
     const addRoutes = routeConfiguringFunction(driver as any);
-    configureServer({ app: app1, addRoutes });
-    configureServer({ app: app2, addRoutes, extraMethodMap: newMethodMap });
+    configureServer({app: app1, addRoutes});
+    configureServer({app: app2, addRoutes, extraMethodMap: newMethodMap});
     expect(app2.totalCount()).to.eql(app1.totalCount() + 2);
   });
 
@@ -87,8 +87,8 @@ describe('server configuration', function () {
     const app2 = fakeApp() as any;
     const driver = fakeDriver();
     const addRoutes = routeConfiguringFunction(driver as any);
-    configureServer({ app: app1, addRoutes });
-    configureServer({ app: app2, addRoutes, extraMethodMap: [] as any });
+    configureServer({app: app1, addRoutes});
+    configureServer({app: app2, addRoutes, extraMethodMap: [] as any});
     expect(app2.totalCount()).to.eql(app1.totalCount());
   });
 

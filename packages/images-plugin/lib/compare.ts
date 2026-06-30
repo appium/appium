@@ -9,9 +9,9 @@ import {
   type SimilarityOptions,
   type SimilarityResult,
 } from '@appium/opencv';
-import { errors } from 'appium/driver';
-import { GET_SIMILARITY_MODE, MATCH_FEATURES_MODE, MATCH_TEMPLATE_MODE } from './constants';
-import type { ComparisonResult } from './types';
+import {errors} from 'appium/driver';
+import {GET_SIMILARITY_MODE, MATCH_FEATURES_MODE, MATCH_TEMPLATE_MODE} from './constants';
+import type {ComparisonResult} from './types';
 
 /**
  * Performs images comparison using OpenCV framework features.
@@ -49,7 +49,7 @@ export async function compareImages(
         result = await getImagesMatches(img1, img2, options as MatchingOptions);
       } catch {
         // might throw if no matches
-        result = { count: 0 } as MatchingResult;
+        result = {count: 0} as MatchingResult;
       }
       break;
     case GET_SIMILARITY_MODE.toLowerCase():
@@ -83,7 +83,7 @@ export async function compareImages(
  * @param element - occurrence result
  * @returns result with base64-encoded visualization
  */
-function convertVisualizationToBase64(element: Partial<{ visualization: Buffer | null }>): any {
+function convertVisualizationToBase64(element: Partial<{visualization: Buffer | null}>): any {
   return Buffer.isBuffer(element.visualization)
     ? {
         ...element,

@@ -1,4 +1,4 @@
-import type { Logger } from '@appium/logger';
+import type {Logger} from '@appium/logger';
 
 /**
  * A log prefix for {@linkcode AppiumLogger}

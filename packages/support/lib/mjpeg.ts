@@ -1,9 +1,9 @@
 import axios from 'axios';
 import B from 'bluebird';
-import { type Readable, Writable, type WritableOptions } from 'node:stream';
-import { requireSharp } from './image-util';
+import {type Readable, Writable, type WritableOptions} from 'node:stream';
+import {requireSharp} from './image-util';
 import log from './logger';
-import { requirePackage } from './node';
+import {requirePackage} from './node';
 
 /** Constructor for mjpeg-consumer (lazy-loaded) */
 type MJpegConsumerConstructor = new () => NodeJS.ReadWriteStream;
@@ -21,7 +21,7 @@ async function initMJpegConsumer(): Promise<MJpegConsumerConstructor> {
       throw new Error(
         'mjpeg-consumer module is required to use MJPEG-over-HTTP features. ' +
           'Please install it first (npm i -g mjpeg-consumer) and restart Appium.',
-        { cause: e },
+        {cause: e},
       );
     }
   }
@@ -112,7 +112,7 @@ export class MJpegStream extends Writable {
     } catch (e) {
       let message: string;
       if (e && typeof e === 'object' && 'response' in e) {
-        message = JSON.stringify((e as { response: unknown }).response);
+        message = JSON.stringify((e as {response: unknown}).response);
       } else if (e instanceof Error) {
         message = e.message;
       } else {
@@ -142,7 +142,7 @@ export class MJpegStream extends Writable {
       this.registerStartFailure = rej;
     }).timeout(serverTimeout, `Waited ${serverTimeout}ms but the MJPEG server never sent any images`);
 
-    (this.responseStream as Readable & { pipe<T extends Writable>(dest: T): T })
+    (this.responseStream as Readable & {pipe<T extends Writable>(dest: T): T})
       .once('close', onClose)
       .on('error', onErr)
       .pipe(this.consumer as unknown as Writable)

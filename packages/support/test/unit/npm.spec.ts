@@ -1,8 +1,8 @@
-import { expect, use } from 'chai';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import path from 'node:path';
-import { describe, it } from 'node:test';
-import { NPM, resolveFrom } from '../../lib/npm';
+import {describe, it} from 'node:test';
+import {NPM, resolveFrom} from '../../lib/npm';
 
 use(chaiAsPromised);
 

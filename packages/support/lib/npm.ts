@@ -1,12 +1,12 @@
-import type { StringRecord } from '@appium/types';
+import type {StringRecord} from '@appium/types';
 import Module from 'node:module';
 import path from 'node:path';
 import * as semver from 'semver';
-import { exec } from 'teen_process';
-import type { ExecError, TeenProcessExecOptions } from 'teen_process';
-import type { PackageJson } from 'type-fest';
-import { hasAppiumDependency } from './env';
-import { fs } from './fs';
+import {exec} from 'teen_process';
+import type {ExecError, TeenProcessExecOptions} from 'teen_process';
+import type {PackageJson} from 'type-fest';
+import {hasAppiumDependency} from './env';
+import {fs} from './fs';
 import * as system from './system';
 import * as util from './util';
 /**
@@ -69,7 +69,7 @@ export class NPM {
     opts: ExecOpts,
     execOpts: Omit<TeenProcessExecOptions, 'cwd'> = {},
   ): Promise<NpmExecResult> {
-    const { cwd, json, lockFile } = opts;
+    const {cwd, json, lockFile} = opts;
 
     const teenProcessExecOpts: TeenProcessExecOptions = {
       ...execOpts,
@@ -82,7 +82,7 @@ export class NPM {
       argsCopy.push('--json');
     }
     const npmCmd = system.isWindows() ? 'npm.cmd' : 'npm';
-    type ExecRunnerResult = { stdout: string; stderr: string; code: number | null };
+    type ExecRunnerResult = {stdout: string; stderr: string; code: number | null};
     let runner = async (): Promise<ExecRunnerResult> => await exec(npmCmd, argsCopy, teenProcessExecOpts);
     if (lockFile) {
       const acquireLock = util.getLockFileGuard(lockFile);
@@ -92,20 +92,20 @@ export class NPM {
 
     let ret: NpmExecResult;
     try {
-      const { stdout, stderr, code } = await runner();
-      ret = { stdout, stderr, code };
+      const {stdout, stderr, code} = await runner();
+      ret = {stdout, stderr, code};
       try {
         ret.json = JSON.parse(stdout);
       } catch {
         // ignore
       }
     } catch (e) {
-      const { stdout = '', stderr = '', code = null } = e as ExecError;
+      const {stdout = '', stderr = '', code = null} = e as ExecError;
       throw new Error(
         `npm command '${argsCopy.join(
           ' ',
         )}' failed with code ${code}.\n\nSTDOUT:\n${stdout.trim()}\n\nSTDERR:\n${stderr.trim()}`,
-        { cause: e },
+        {cause: e},
       );
     }
     return ret;
@@ -120,8 +120,8 @@ export class NPM {
    */
   async getLatestVersion(cwd: string, pkg: string): Promise<string | null> {
     try {
-      const result = await this.exec('view', [pkg, 'dist-tags'], { json: true, cwd });
-      const json = result.json as { latest?: string } | undefined;
+      const result = await this.exec('view', [pkg, 'dist-tags'], {json: true, cwd});
+      const json = result.json as {latest?: string} | undefined;
       return json?.latest ?? null;
     } catch (err) {
       if (!(err instanceof Error) || !err.message.includes('E404')) {
@@ -143,7 +143,7 @@ export class NPM {
    */
   async getLatestSafeUpgradeVersion(cwd: string, pkg: string, curVersion: string): Promise<string | null> {
     try {
-      const result = await this.exec('view', [pkg, 'versions'], { json: true, cwd });
+      const result = await this.exec('view', [pkg, 'versions'], {json: true, cwd});
       const allVersions = result.json;
       if (!Array.isArray(allVersions)) {
         return null;
@@ -161,7 +161,7 @@ export class NPM {
    * Runs `npm ls`, optionally for a particular package.
    */
   async list(cwd: string, pkg?: string): Promise<unknown> {
-    return (await this.exec('list', pkg ? [pkg] : [], { cwd, json: true })).json;
+    return (await this.exec('list', pkg ? [pkg] : [], {cwd, json: true})).json;
   }
 
   /**
@@ -196,7 +196,7 @@ export class NPM {
    * Installs a package w/ `npm`
    */
   async installPackage(cwd: string, installStr: string, opts: InstallPackageOpts): Promise<NpmInstallReceipt> {
-    const { pkgName, installType } = opts;
+    const {pkgName, installType} = opts;
     let dummyPkgJson: Record<string, unknown>;
     const dummyPkgPath = path.join(cwd, 'package.json');
     try {
@@ -227,20 +227,20 @@ export class NPM {
     });
 
     if (res.json && typeof res.json === 'object' && 'error' in res.json && res.json.error) {
-      throw new Error(String((res.json as { error: unknown }).error));
+      throw new Error(String((res.json as {error: unknown}).error));
     }
 
     const pkgJsonPath = await resolveFrom(cwd, `${pkgName}/package.json`);
     try {
       const pkgJson = await fs.readFile(pkgJsonPath, 'utf8');
       const pkg = JSON.parse(pkgJson) as PackageJson;
-      return { installPath: path.dirname(pkgJsonPath), pkg };
+      return {installPath: path.dirname(pkgJsonPath), pkg};
     } catch (e) {
       throw new Error(
         'The package was not downloaded correctly; its package.json ' +
           'did not exist or was unreadable. We looked for it at ' +
           pkgJsonPath,
-        { cause: e },
+        {cause: e},
       );
     }
   }
@@ -303,7 +303,7 @@ export async function resolveFrom(fromDirectory: string, moduleId: string): Prom
 
   const fromFile = path.join(resolvedFromDirectory, 'noop.js');
   const nodeModule = Module as typeof Module & {
-    _resolveFilename: (id: string, parent: { id: string; filename: string; paths: string[] }) => string;
+    _resolveFilename: (id: string, parent: {id: string; filename: string; paths: string[]}) => string;
     _nodeModulePaths: (from: string) => string[];
   };
   return nodeModule._resolveFilename(moduleId, {

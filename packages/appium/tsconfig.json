@@ -24,11 +24,11 @@
   },
   "include": ["lib", "types", "test"],
   "references": [
-    { "path": "../schema" },
-    { "path": "../types" },
-    { "path": "../support" },
-    { "path": "../base-driver" },
-    { "path": "../base-plugin" },
-    { "path": "../fake-driver" }
+    {"path": "../schema"},
+    {"path": "../types"},
+    {"path": "../support"},
+    {"path": "../base-driver"},
+    {"path": "../base-plugin"},
+    {"path": "../fake-driver"}
   ]
 }

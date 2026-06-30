@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import type { Constraints, Element, IFindCommands } from '@appium/types';
-import { errors } from '../../protocol';
-import type { BaseDriver } from '../driver';
-import { mixin } from './mixin';
+import type {Constraints, Element, IFindCommands} from '@appium/types';
+import {errors} from '../../protocol';
+import type {BaseDriver} from '../driver';
+import {mixin} from './mixin';
 
 declare module '../driver' {
   interface BaseDriver<C extends Constraints> extends IFindCommands {}

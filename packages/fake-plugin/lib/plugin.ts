@@ -7,27 +7,27 @@ import type {
   IpcMessage,
   MethodMap,
 } from '@appium/types';
-import { BasePlugin } from 'appium/plugin';
-import { sleep } from 'asyncbox';
-import type { Application, Request, Response } from 'express';
+import {BasePlugin} from 'appium/plugin';
+import {sleep} from 'asyncbox';
+import type {Application, Request, Response} from 'express';
 
 /** Driver as seen by this plugin; may include plugin-specific session data */
-export type DriverLike = ExternalDriver & { fakeSessionData?: unknown };
+export type DriverLike = ExternalDriver & {fakeSessionData?: unknown};
 
-type ClockStatus = { running: boolean };
+type ClockStatus = {running: boolean};
 
 export class FakePlugin extends BasePlugin {
   static newMethodMap: MethodMap<FakePlugin> = {
     '/session/:sessionId/fake_data': {
-      GET: { command: 'getFakeSessionData', neverProxy: true },
+      GET: {command: 'getFakeSessionData', neverProxy: true},
       POST: {
         command: 'setFakeSessionData',
-        payloadParams: { required: ['data'] },
+        payloadParams: {required: ['data']},
         neverProxy: true,
       },
     },
     '/session/:sessionId/fakepluginargs': {
-      GET: { command: 'getFakePluginArgs', neverProxy: true },
+      GET: {command: 'getFakePluginArgs', neverProxy: true},
     },
   };
 
@@ -63,7 +63,7 @@ export class FakePlugin extends BasePlugin {
     },
     'fake: plugMeIn': {
       command: 'plugMeIn',
-      params: { required: ['socket'] },
+      params: {required: ['socket']},
     },
     'fake: getFakeDriverClockStatus': {
       command: 'getFakeDriverClockStatus',
@@ -84,7 +84,7 @@ export class FakePlugin extends BasePlugin {
   }
 
   static fakeRoute(_req: Request, res: Response): void {
-    res.send(JSON.stringify({ fake: 'fakeResponse' }));
+    res.send(JSON.stringify({fake: 'fakeResponse'}));
   }
 
   static unexpectedData(_req: Request, res: Response): void {
@@ -123,7 +123,7 @@ export class FakePlugin extends BasePlugin {
       await sleep(250);
       this.eventEmitter.emit('bidiEvent', {
         method: 'appium:clock.currentTime',
-        params: { time: Date.now() },
+        params: {time: Date.now()},
       });
     }
   }
@@ -179,10 +179,10 @@ export class FakePlugin extends BasePlugin {
   }
 
   async findElement(
-    next: () => Promise<{ fake?: boolean } & Record<string, unknown>>,
+    next: () => Promise<{fake?: boolean} & Record<string, unknown>>,
     _driver: DriverLike,
     ...args: unknown[]
-  ): Promise<{ fake?: boolean } & Record<string, unknown>> {
+  ): Promise<{fake?: boolean} & Record<string, unknown>> {
     this.log.info(`Before findElement is run with args ${JSON.stringify(args)}`);
     const originalRes = await next();
     this.log.info('After findElement is run');

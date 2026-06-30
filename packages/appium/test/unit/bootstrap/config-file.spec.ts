@@ -1,11 +1,11 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import fs from 'node:fs';
-import { createSandbox, type SinonSandbox, type SinonSpy, type SinonStubbedMember } from 'sinon';
+import {createSandbox, type SinonSandbox, type SinonSpy, type SinonStubbedMember} from 'sinon';
 import * as YAML from 'yaml';
 import * as schema from '../../../lib/schema/schema';
-import { resolveFixture, rewiremock } from '../../helpers';
-type LilconfigResult = { config: unknown; filepath: string; isEmpty?: boolean };
+import {resolveFixture, rewiremock} from '../../helpers';
+type LilconfigResult = {config: unknown; filepath: string; isEmpty?: boolean};
 type AsyncSearcherLoadStub = SinonStubbedMember<() => Promise<LilconfigResult>>;
 type AsyncSearcherSearchStub = SinonStubbedMember<() => Promise<LilconfigResult>>;
 
@@ -20,7 +20,7 @@ interface ReadConfigFileResult {
 type ReadConfigFileFn = (filepath?: string, opts?: object) => Promise<ReadConfigFileResult>;
 type NormalizeConfigFn = (config: unknown) => unknown;
 
-const { expect } = chai;
+const {expect} = chai;
 chai.use(chaiAsPromised);
 
 describe('bootstrap/config-file', function () {
@@ -35,7 +35,7 @@ describe('bootstrap/config-file', function () {
   let sandbox: SinonSandbox;
   let readConfigFile: ReadConfigFileFn;
   let normalizeConfig: NormalizeConfigFn;
-  let lc: { load: AsyncSearcherLoadStub; search: AsyncSearcherSearchStub };
+  let lc: {load: AsyncSearcherLoadStub; search: AsyncSearcherSearchStub};
   let validateSpy: SinonSpy;
 
   before(async function () {
@@ -84,10 +84,7 @@ describe('bootstrap/config-file', function () {
     // loads the `config-file` module using the lilconfig mock.
     // we only mock lilconfig because it'd otherwise be a pain in the rear to test
     // searching for config files, and it increases the likelihood that we'd load the wrong file.
-    ({ readConfigFile, normalizeConfig } = rewiremock.proxy(
-      () => require('../../../lib/bootstrap/config-file'),
-      mocks,
-    ));
+    ({readConfigFile, normalizeConfig} = rewiremock.proxy(() => require('../../../lib/bootstrap/config-file'), mocks));
 
     // just want to be extra-sure `validate()` happens
     sandbox.spy(schema, 'validate');
@@ -102,19 +99,19 @@ describe('bootstrap/config-file', function () {
     let result: ReadConfigFileResult;
 
     it('should support yaml', async function () {
-      const { config } = await readConfigFile(GOOD_YAML_CONFIG_FILEPATH);
+      const {config} = await readConfigFile(GOOD_YAML_CONFIG_FILEPATH);
       expect(config).to.eql(normalizeConfig(GOOD_JSON_CONFIG));
       expect(validateSpy.calledOnce).to.be.true;
     });
 
     it('should support json', async function () {
-      const { config } = await readConfigFile(GOOD_JSON_CONFIG_FILEPATH);
+      const {config} = await readConfigFile(GOOD_JSON_CONFIG_FILEPATH);
       expect(config).to.eql(normalizeConfig(GOOD_JSON_CONFIG));
       expect(validateSpy.calledOnce).to.be.true;
     });
 
     it('should support js', async function () {
-      const { config } = await readConfigFile(GOOD_JS_CONFIG_FILEPATH);
+      const {config} = await readConfigFile(GOOD_JS_CONFIG_FILEPATH);
       expect(config).to.eql(normalizeConfig(GOOD_JSON_CONFIG));
       expect(validateSpy.calledOnce).to.be.true;
     });
@@ -185,7 +182,7 @@ describe('bootstrap/config-file', function () {
           describe('when the config file is invalid', function () {
             beforeEach(async function () {
               (lc.search as any).resolves({
-                config: { foo: 'bar' },
+                config: {foo: 'bar'},
                 filepath: '/path/to/file.json',
               });
               result = await readConfigFile();
@@ -214,7 +211,7 @@ describe('bootstrap/config-file', function () {
 
       describe('when no config file exists at path', function () {
         beforeEach(function () {
-          lc.load.rejects(Object.assign(new Error(), { code: 'ENOENT' }));
+          lc.load.rejects(Object.assign(new Error(), {code: 'ENOENT'}));
         });
 
         it('should reject with user-friendly message', async function () {

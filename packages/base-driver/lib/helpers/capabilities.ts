@@ -1,5 +1,5 @@
-import { util } from '@appium/support';
-import type { AppiumLogger, Capabilities, Constraints, W3CCapabilities } from '@appium/types';
+import {util} from '@appium/support';
+import type {AppiumLogger, Capabilities, Constraints, W3CCapabilities} from '@appium/types';
 
 /**
  * Determine whether the given argument is valid
@@ -36,7 +36,7 @@ export function fixCaps<C extends Constraints>(
   desiredCapConstraints: C,
   log: AppiumLogger,
 ): Capabilities<C> {
-  const caps = { ...oldCaps } as Record<string, unknown>;
+  const caps = {...oldCaps} as Record<string, unknown>;
 
   const logCastWarning = (prefix: string) => log.warn(`${prefix}. This may cause unexpected behavior`);
 

@@ -1,6 +1,6 @@
-import { util } from '@appium/support';
-import type { ActionSequence, Element, ExternalDriver, Rect } from '@appium/types';
-import { errors } from 'appium/driver';
+import {util} from '@appium/support';
+import type {ActionSequence, Element, ExternalDriver, Rect} from '@appium/types';
+import {errors} from 'appium/driver';
 import {
   DEFAULT_SETTINGS,
   IMAGE_EL_TAP_STRATEGY_W3C,
@@ -8,9 +8,9 @@ import {
   IMAGE_STRATEGY,
   IMAGE_TAP_STRATEGIES,
 } from './constants';
-import type { ImageElementFinder } from './finder';
-import { log } from './logger';
-import type { Dimension, ImageElementOpts, ImageSettings, Position } from './types';
+import type {ImageElementFinder} from './finder';
+import {log} from './logger';
+import type {Dimension, ImageElementOpts, ImageSettings, Position} from './types';
 
 const TAP_DURATION_MS = 125;
 
@@ -27,7 +27,7 @@ export class ImageElement {
   readonly finder: ImageElementFinder | null;
   readonly containerRect: Rect | null;
 
-  constructor({ template, rect, score, match = null, finder = null, containerRect = null }: ImageElementOpts) {
+  constructor({template, rect, score, match = null, finder = null, containerRect = null}: ImageElementOpts) {
     this.template = template;
     this.rect = rect;
     this.id = `${IMAGE_ELEMENT_PREFIX}${util.uuidV4()}`;
@@ -41,14 +41,14 @@ export class ImageElement {
    * @returns dimension of element
    */
   get size(): Dimension {
-    return { width: this.rect.width, height: this.rect.height };
+    return {width: this.rect.width, height: this.rect.height};
   }
 
   /**
    * @returns coordinates of top-left corner of element
    */
   get location(): Position {
-    return { x: this.rect.x, y: this.rect.y };
+    return {x: this.rect.x, y: this.rect.y};
   }
 
   /**
@@ -151,7 +151,7 @@ export class ImageElement {
   async click(driver: ExternalDriver): Promise<void> {
     // before we click we need to make sure the element is actually still there
     // where we expect it to be
-    const settings: ImageSettings = { ...DEFAULT_SETTINGS, ...driver.settings.getSettings() };
+    const settings: ImageSettings = {...DEFAULT_SETTINGS, ...driver.settings.getSettings()};
     const {
       autoUpdateImageElementPosition: updatePos,
       checkForImageElementStaleness,
@@ -194,7 +194,7 @@ export class ImageElement {
         );
         if (updatePos) {
           log.warn('Click will proceed at new coordinates');
-          this.rect = { ...newImgEl.rect };
+          this.rect = {...newImgEl.rect};
         } else {
           log.warn(
             'Click will take place at original coordinates. If you ' +
@@ -206,7 +206,7 @@ export class ImageElement {
       }
     }
 
-    const { x, y } = this.center;
+    const {x, y} = this.center;
     log.info(`Will tap on image element at coordinate [${x}, ${y}]`);
 
     if (imageElementTapStrategy === IMAGE_EL_TAP_STRATEGY_W3C) {
@@ -215,12 +215,12 @@ export class ImageElement {
       const action: ActionSequence = {
         type: 'pointer',
         id: 'mouse',
-        parameters: { pointerType: 'touch' },
+        parameters: {pointerType: 'touch'},
         actions: [
-          { type: 'pointerMove', x, y, duration: 0 },
-          { type: 'pointerDown', button: 0 },
-          { type: 'pause', duration: TAP_DURATION_MS },
-          { type: 'pointerUp', button: 0 },
+          {type: 'pointerMove', x, y, duration: 0},
+          {type: 'pointerDown', button: 0},
+          {type: 'pause', duration: TAP_DURATION_MS},
+          {type: 'pointerUp', button: 0},
         ],
       };
 
@@ -238,7 +238,7 @@ export class ImageElement {
     log.info('Will tap using MJSONWP TouchActions');
     const action = {
       action: 'tap',
-      options: { x, y },
+      options: {x, y},
     };
 
     if ('performTouch' in driver && typeof driver.performTouch === 'function') {

@@ -1,10 +1,10 @@
 /* This library is originated from temp.js at http://github.com/bruce/node-temp */
-import { constants } from 'node:fs';
+import {constants} from 'node:fs';
 import os from 'node:os';
 import nodePath from 'node:path';
-import { fs } from './fs';
+import {fs} from './fs';
 import log from './logger';
-import { memoize } from './util';
+import {memoize} from './util';
 
 const RDWR_EXCL = constants.O_CREAT | constants.O_TRUNC | constants.O_RDWR | constants.O_EXCL;
 
@@ -44,7 +44,7 @@ export async function open(affixes: Affixes): Promise<OpenedAffixes> {
   const filePath = await path(affixes, 'f-');
   try {
     const fd = await fs.open(filePath, RDWR_EXCL, 0o600);
-    return { path: filePath, fd };
+    return {path: filePath, fd};
   } catch (err) {
     throw log.errorWithException(err as Error);
   }
@@ -82,7 +82,7 @@ async function tempDir(): Promise<string> {
     ].join(''),
   );
 
-  await fs.mkdir(filePath, { recursive: true });
+  await fs.mkdir(filePath, {recursive: true});
 
   return filePath;
 }
@@ -92,7 +92,7 @@ function parseAffixes(rawAffixes?: string | Affixes, defaultPrefix?: string): Af
   if (rawAffixes !== undefined && rawAffixes !== null) {
     switch (typeof rawAffixes) {
       case 'string':
-        affixes = { prefix: rawAffixes };
+        affixes = {prefix: rawAffixes};
         break;
       case 'object':
         affixes = rawAffixes;

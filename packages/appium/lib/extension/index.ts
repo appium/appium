@@ -1,13 +1,13 @@
-import { timing, util } from '@appium/support';
-import type { DriverClass, ExtensionType, PluginClass } from '@appium/types';
-import type { ExtClass } from 'appium/types';
-import { asyncmap } from 'asyncbox';
-import { USE_ALL_PLUGINS } from '../constants';
-import { log } from '../logger';
-import { zip } from '../utils';
-import { DriverConfig } from './driver-config';
-import { Manifest } from './manifest';
-import { PluginConfig } from './plugin-config';
+import {timing, util} from '@appium/support';
+import type {DriverClass, ExtensionType, PluginClass} from '@appium/types';
+import type {ExtClass} from 'appium/types';
+import {asyncmap} from 'asyncbox';
+import {USE_ALL_PLUGINS} from '../constants';
+import {log} from '../logger';
+import {zip} from '../utils';
+import {DriverConfig} from './driver-config';
+import {Manifest} from './manifest';
+import {PluginConfig} from './plugin-config';
 
 export type ExtensionConfigs = {
   driverConfig: DriverConfig;
@@ -33,7 +33,7 @@ export async function loadExtensions(appiumHome: string): Promise<ExtensionConfi
   const pluginConfig = PluginConfig.getInstance(manifest) ?? PluginConfig.create(manifest);
 
   await Promise.all([driverConfig.validate(), pluginConfig.validate()]);
-  return { driverConfig, pluginConfig };
+  return {driverConfig, pluginConfig};
 }
 
 /**
@@ -128,7 +128,7 @@ async function importExtensions(
         log.debug(err.stack);
       }
     },
-    { concurrency: asyncImportChunkSize },
+    {concurrency: asyncImportChunkSize},
   );
   return zip(extClasses, extNames).filter(([extClass]) => Boolean(extClass)) as Array<
     [ExtClass<ExtensionType>, string]

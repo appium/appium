@@ -1,12 +1,12 @@
-import { fs, tempDir } from '@appium/support';
+import {fs, tempDir} from '@appium/support';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { exec } from 'teen_process';
-import { stripColorCodes } from '../../lib/logsink';
-import { APPIUM_ROOT, getTestPort } from '../helpers';
-import { EXECUTABLE, formatAppiumArgErrorOutput, readAppiumArgErrorFixture, runAppiumRaw } from './e2e-helpers';
+import {exec} from 'teen_process';
+import {stripColorCodes} from '../../lib/logsink';
+import {APPIUM_ROOT, getTestPort} from '../helpers';
+import {EXECUTABLE, formatAppiumArgErrorOutput, readAppiumArgErrorFixture, runAppiumRaw} from './e2e-helpers';
 
-const { expect } = chai;
+const {expect} = chai;
 chai.use(chaiAsPromised);
 
 describe('argument parsing', function () {
@@ -45,7 +45,7 @@ describe('argument parsing', function () {
               String(await getTestPort()),
             ],
             {
-              env: { APPIUM_HOME: appiumHome, PATH: process.env.PATH },
+              env: {APPIUM_HOME: appiumHome, PATH: process.env.PATH},
               cwd: APPIUM_ROOT,
               timeout: 5000,
             },
@@ -59,7 +59,7 @@ describe('argument parsing', function () {
     describe('when color output is supported', function () {
       it('should output a fancy error message', async function () {
         const result = await runAppiumRaw(appiumHome, ['--port=sheep'], {
-          env: { FORCE_COLOR: '1' },
+          env: {FORCE_COLOR: '1'},
         });
         const actual = 'stderr' in result ? result.stderr : '';
         expect(stripColorCodes(actual)).to.not.equal(actual);

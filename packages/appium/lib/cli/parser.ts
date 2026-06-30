@@ -1,7 +1,7 @@
-import type { DriverType, PluginType } from '@appium/types';
-import type { CliExtensionSubcommand } from 'appium/types';
-import { ArgumentParser } from 'argparse';
-import type { SubArgumentParserOptions, SubParser } from 'argparse';
+import type {DriverType, PluginType} from '@appium/types';
+import type {CliExtensionSubcommand} from 'appium/types';
+import {ArgumentParser} from 'argparse';
+import type {SubArgumentParserOptions, SubParser} from 'argparse';
 import path from 'node:path';
 import {
   DRIVER_TYPE,
@@ -15,11 +15,11 @@ import {
   SERVER_SUBCOMMAND,
   SETUP_SUBCOMMAND,
 } from '../constants';
-import { APPIUM_VER } from '../helpers/build';
-import { finalizeSchema, getAllArgSpecs, getArgSpec, hasArgSpec } from '../schema';
-import { setPath } from '../utils';
-import { getExtensionArgs, getServerArgs } from './args';
-import type { ArgumentDefinitions } from './args';
+import {APPIUM_VER} from '../helpers/build';
+import {finalizeSchema, getAllArgSpecs, getArgSpec, hasArgSpec} from '../schema';
+import {setPath} from '../utils';
+import {getExtensionArgs, getServerArgs} from './args';
+import type {ArgumentDefinitions} from './args';
 import {
   DEFAULT_PLUGINS,
   determinePlatformName,
@@ -40,8 +40,8 @@ const NON_SERVER_ARGS = Object.freeze(
   new Set([SETUP_SUBCOMMAND, DRIVER_TYPE, PLUGIN_TYPE, SERVER_SUBCOMMAND, '-h', '--help', '-v', '--version']),
 );
 
-type LooseArgsMap = { [key: string]: any };
-type TransformedArgsMap = LooseArgsMap & { [EXTRA_ARGS]: string[] };
+type LooseArgsMap = {[key: string]: any};
+type TransformedArgsMap = LooseArgsMap & {[EXTRA_ARGS]: string[]};
 
 /**
  * A wrapper around `argparse`
@@ -83,7 +83,7 @@ export class ArgParser {
       version: APPIUM_VER,
     });
 
-    const subParsers = parser.add_subparsers({ dest: 'subcommand' });
+    const subParsers = parser.add_subparsers({dest: 'subcommand'});
 
     // add the 'server' subcommand, and store the raw arguments on the parser
     // object as a way for other parts of the code to work with the arguments
@@ -129,7 +129,7 @@ export class ArgParser {
     const result = Object.entries(args).reduce((unpacked: LooseArgsMap, [key, value]) => {
       const spec = hasArgSpec(key) ? getArgSpec(key) : undefined;
       if (value !== undefined && spec) {
-        const { dest } = spec;
+        const {dest} = spec;
         setPath(unpacked as Record<string, unknown>, dest, value);
       } else {
         // this could be anything that isn't a server arg
@@ -168,7 +168,7 @@ export class ArgParser {
     const serverArgs = getServerArgs();
     for (const [flagsOrNames, opts] of serverArgs) {
       // @ts-ignore TS doesn't like the spread operator here.
-      serverParser.add_argument(...flagsOrNames, { ...opts });
+      serverParser.add_argument(...flagsOrNames, {...opts});
     }
 
     return serverArgs;
@@ -230,17 +230,17 @@ export class ArgParser {
         },
       ];
 
-      for (const { command, args, help, aliases } of parserSpecs) {
-        const parser = extSubParsers.add_parser(command, { help, aliases: aliases ?? [] });
+      for (const {command, args, help, aliases} of parserSpecs) {
+        const parser = extSubParsers.add_parser(command, {help, aliases: aliases ?? []});
 
         ArgParser._patchExit(parser);
 
         for (const [flagsOrNames, opts] of args) {
           // add_argument mutates params so make sure to send in copies instead
           if (flagsOrNames.length === 2) {
-            parser.add_argument(flagsOrNames[0], flagsOrNames[1], { ...opts });
+            parser.add_argument(flagsOrNames[0], flagsOrNames[1], {...opts});
           } else {
-            parser.add_argument(flagsOrNames[0], { ...opts });
+            parser.add_argument(flagsOrNames[0], {...opts});
           }
         }
       }
@@ -291,8 +291,8 @@ export class ArgParser {
       },
     ];
 
-    for (const { command, help } of parserSpecs) {
-      const parser = extSubParsers.add_parser(command, { help });
+    for (const {command, help} of parserSpecs) {
+      const parser = extSubParsers.add_parser(command, {help});
       ArgParser._patchExit(parser);
     }
   }

@@ -5,7 +5,7 @@
  */
 
 import path from 'node:path';
-import type { TeenProcessExecOptions } from 'teen_process';
+import type {TeenProcessExecOptions} from 'teen_process';
 import {
   DEFAULT_DEPLOY_ALIAS_TYPE,
   DEFAULT_DEPLOY_BRANCH,
@@ -16,11 +16,11 @@ import {
   NAME_MIKE,
   NAME_MKDOCS_YML,
 } from '../constants';
-import { DocutilsError } from '../error';
-import { findMike, findMkDocsYml, isMkDocsInstalled, readPackageJson, requirePython } from '../fs';
-import { getLogger } from '../logger';
-import type { SpawnBackgroundProcessOpts } from '../utils';
-import { argify, execWithErrorHandling, spawnBackgroundProcess, stopwatch } from '../utils';
+import {DocutilsError} from '../error';
+import {findMike, findMkDocsYml, isMkDocsInstalled, readPackageJson, requirePython} from '../fs';
+import {getLogger} from '../logger';
+import type {SpawnBackgroundProcessOpts} from '../utils';
+import {argify, execWithErrorHandling, spawnBackgroundProcess, stopwatch} from '../utils';
 
 const log = getLogger('builder:deploy');
 
@@ -213,7 +213,7 @@ export async function findDeployVersion(
   usePrefixedMajorVersion?: boolean,
   cwd = process.cwd(),
 ): Promise<string> {
-  const { pkg } = await readPackageJson(packageJsonPath ? path.dirname(packageJsonPath) : cwd, true);
+  const {pkg} = await readPackageJson(packageJsonPath ? path.dirname(packageJsonPath) : cwd, true);
   const version = pkg.version;
   if (!version) {
     throw new DocutilsError('No "version" field found in package.json; please add one or specify a version to deploy');

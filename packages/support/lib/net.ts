@@ -1,11 +1,11 @@
-import type { HTTPHeaders } from '@appium/types';
-import axios, { type AxiosBasicCredentials, type Method, type RawAxiosRequestConfig } from 'axios';
+import type {HTTPHeaders} from '@appium/types';
+import axios, {type AxiosBasicCredentials, type Method, type RawAxiosRequestConfig} from 'axios';
 import FormData from 'form-data';
 import Ftp from 'jsftp';
-import { fs } from './fs';
+import {fs} from './fs';
 import log from './logger';
-import { Timer } from './timing';
-import { isPlainObject, toReadableSizeString } from './util';
+import {Timer} from './timing';
+import {isPlainObject, toReadableSizeString} from './util';
 
 const DEFAULT_TIMEOUT_MS = 4 * 60 * 1000;
 
@@ -99,9 +99,9 @@ export async function uploadFile(
     throw new Error(`'${localPath}' does not exist or is not accessible`);
   }
 
-  const { isMetered = true } = uploadOptions;
+  const {isMetered = true} = uploadOptions;
   const url = new URL(remoteUri);
-  const { size } = await fs.stat(localPath);
+  const {size} = await fs.stat(localPath);
   if (isMetered) {
     log.info(`Uploading '${localPath}' of ${toReadableSizeString(size)} size to '${remoteUri}'`);
   }
@@ -143,7 +143,7 @@ export async function downloadFile(
   dstPath: string,
   downloadOptions: DownloadOptions = {},
 ): Promise<void> {
-  const { isMetered = true, auth, timeout = DEFAULT_TIMEOUT_MS, headers } = downloadOptions;
+  const {isMetered = true, auth, timeout = DEFAULT_TIMEOUT_MS, headers} = downloadOptions;
 
   const requestOpts: RawAxiosRequestConfig = {
     url: remoteUrl,
@@ -162,7 +162,7 @@ export async function downloadFile(
   let responseLength: number;
   try {
     const writer = fs.createWriteStream(dstPath);
-    const { data: responseStream, headers: responseHeaders } = await axios(requestOpts);
+    const {data: responseStream, headers: responseHeaders} = await axios(requestOpts);
     responseLength = parseInt(String(responseHeaders['content-length'] ?? '0'), 10);
     (responseStream as NodeJS.ReadableStream).pipe(writer);
 
@@ -176,10 +176,10 @@ export async function downloadFile(
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    throw new Error(`Cannot download the file from ${remoteUrl}: ${message}`, { cause: err });
+    throw new Error(`Cannot download the file from ${remoteUrl}: ${message}`, {cause: err});
   }
 
-  const { size } = await fs.stat(dstPath);
+  const {size} = await fs.stat(dstPath);
   if (responseLength && size !== responseLength) {
     await fs.rimraf(dstPath);
     throw new Error(
@@ -210,7 +210,7 @@ function toAxiosAuth(auth: AuthLike | undefined): AxiosBasicCredentials | null {
   if (typeof username !== 'string' || typeof password !== 'string' || !username || !password) {
     return null;
   }
-  return { username, password };
+  return {username, password};
 }
 
 async function uploadFileToHttp(
@@ -226,7 +226,7 @@ async function uploadFileToHttp(
     fileFieldName = 'file',
     formFields,
   } = uploadOptions;
-  const { href } = parsedUri;
+  const {href} = parsedUri;
 
   const requestOpts: RawAxiosRequestConfig = {
     url: href,
@@ -271,14 +271,14 @@ async function uploadFileToHttp(
     `Performing ${method} to ${href} with options (excluding data): ` +
       JSON.stringify(
         (() => {
-          const requestOptsWithoutData = { ...requestOpts } as Record<string, unknown>;
+          const requestOptsWithoutData = {...requestOpts} as Record<string, unknown>;
           delete requestOptsWithoutData.data;
           return requestOptsWithoutData;
         })(),
       ),
   );
 
-  const { status, statusText } = await axios(requestOpts);
+  const {status, statusText} = await axios(requestOpts);
   log.info(`Server response: ${status} ${statusText}`);
 }
 
@@ -288,10 +288,10 @@ async function uploadFileToFtp(
   parsedUri: URL,
   uploadOptions: FtpUploadOptions = {},
 ): Promise<void> {
-  const { auth } = uploadOptions;
-  const { protocol, hostname, port, pathname } = parsedUri;
+  const {auth} = uploadOptions;
+  const {protocol, hostname, port, pathname} = parsedUri;
 
-  const ftpOpts: { host: string; port: number; user?: string; pass?: string } = {
+  const ftpOpts: {host: string; port: number; user?: string; pass?: string} = {
     host: hostname ?? '',
     port: port !== undefined && port !== '' ? Number.parseInt(port, 10) : 21,
   };

@@ -1,4 +1,4 @@
-import { util } from '@appium/support';
+import {util} from '@appium/support';
 import type {
   Constraints,
   DefaultCreateSessionResult,
@@ -8,13 +8,13 @@ import type {
   StringRecord,
   W3CDriverCaps,
 } from '@appium/types';
-import { BaseDriver, determineProtocol, errors } from '../../../lib';
-import { PROTOCOLS } from '../../../lib/constants';
+import {BaseDriver, determineProtocol, errors} from '../../../lib';
+import {PROTOCOLS} from '../../../lib/constants';
 
 class FakeDriver extends BaseDriver<Constraints> {
   static newMethodMap = {
     '/session/:sessionId/noproxy': {
-      GET: { command: 'notProxiedCommand', neverProxy: true },
+      GET: {command: 'notProxiedCommand', neverProxy: true},
     },
   };
 
@@ -133,8 +133,8 @@ class FakeDriver extends BaseDriver<Constraints> {
     return app;
   }
 
-  async getSettings(): Promise<{ status: number; value: string }> {
-    return { status: 13, value: 'Mishandled Driver Error' };
+  async getSettings(): Promise<{status: number; value: string}> {
+    return {status: 13, value: 'Mishandled Driver Error'};
   }
 
   proxyActive(sessionId?: string): boolean {
@@ -157,4 +157,4 @@ class FakeDriver extends BaseDriver<Constraints> {
   }
 }
 
-export { FakeDriver };
+export {FakeDriver};

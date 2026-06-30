@@ -1,15 +1,15 @@
-import type { ExtensionType, PluginType } from '@appium/types';
-import type { ExtManifest } from 'appium/types';
+import type {ExtensionType, PluginType} from '@appium/types';
+import type {ExtManifest} from 'appium/types';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { promises as fs } from 'node:fs';
-import type { SinonSandbox } from 'sinon';
-import { Manifest } from '../../../lib/extension/manifest';
-import type { PluginConfig as PluginConfigInstance } from '../../../lib/extension/plugin-config';
-import { resetSchema } from '../../../lib/schema';
-import { resolveFixture, rewiremock } from '../../helpers';
-import { initMocks } from './mocks';
-import type { MockAppiumSupport, MockResolveFrom, Overrides } from './mocks';
+import {promises as fs} from 'node:fs';
+import type {SinonSandbox} from 'sinon';
+import {Manifest} from '../../../lib/extension/manifest';
+import type {PluginConfig as PluginConfigInstance} from '../../../lib/extension/plugin-config';
+import {resetSchema} from '../../../lib/schema';
+import {resolveFixture, rewiremock} from '../../helpers';
+import {initMocks} from './mocks';
+import type {MockAppiumSupport, MockResolveFrom, Overrides} from './mocks';
 
 type ExtManifestWithSchema<ExtType extends ExtensionType> = ExtManifest<ExtType> & {
   schema: NonNullable<ExtManifest<ExtType>['schema']>;
@@ -20,7 +20,7 @@ interface PluginConfigConstructor {
   getInstance(manifest: Manifest): PluginConfigInstance | undefined;
 }
 
-const { expect } = chai;
+const {expect} = chai;
 chai.use(chaiAsPromised);
 
 describe('PluginConfig', function () {
@@ -38,9 +38,9 @@ describe('PluginConfig', function () {
   beforeEach(function () {
     let overrides: Overrides;
     manifest = Manifest.getInstance('/somewhere/');
-    ({ MockAppiumSupport, MockResolveFrom, sandbox, overrides } = initMocks());
+    ({MockAppiumSupport, MockResolveFrom, sandbox, overrides} = initMocks());
     MockAppiumSupport.fs.readFile.resolves(yamlFixture);
-    ({ PluginConfig } = rewiremock.proxy(() => require('../../../lib/extension/plugin-config'), overrides));
+    ({PluginConfig} = rewiremock.proxy(() => require('../../../lib/extension/plugin-config'), overrides));
     resetSchema();
   });
 
@@ -225,7 +225,7 @@ describe('PluginConfig', function () {
               installSpec: 'foo',
               installType: 'npm',
               mainClass: 'Barrggh',
-              schema: { type: 'object', properties: { foo: { type: 'string' } } },
+              schema: {type: 'object', properties: {foo: {type: 'string'}}},
             } as unknown as ExtManifestWithSchema<PluginType>;
           });
 
@@ -244,7 +244,7 @@ describe('PluginConfig', function () {
               mainClass: 'Barrggh',
               schema: {
                 type: 'object',
-                properties: { foo: { type: 'string' } },
+                properties: {foo: {type: 'string'}},
                 $async: true, // this is not allowed
               },
             } as unknown as ExtManifestWithSchema<PluginType>;
@@ -280,7 +280,7 @@ describe('PluginConfig', function () {
 
       describe('when the extension data is missing `schema`', function () {
         it('should throw', async function () {
-          delete (extData as { schema?: string }).schema;
+          delete (extData as {schema?: string}).schema;
           await expect(pluginConfig.readExtensionSchema(extName, extData)).to.be.rejectedWith(
             TypeError,
             /why is this function being called/i,

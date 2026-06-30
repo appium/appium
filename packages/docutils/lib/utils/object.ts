@@ -1,4 +1,4 @@
-import { util as supportUtil } from '@appium/support';
+import {util as supportUtil} from '@appium/support';
 
 /**
  * Converts a tuple to an object; use for extracting parameter types from a function signature
@@ -24,14 +24,14 @@ export const isStringArray = (value: any): value is string[] =>
  */
 export function mergeDefaultsDeep<T extends Record<string, any>>(target: T, defaults: T): T {
   const out = structuredClone(target);
-  const stack: Array<{ dest: Record<string, any>; src: Record<string, any> }> = [{ dest: out, src: defaults }];
+  const stack: Array<{dest: Record<string, any>; src: Record<string, any>}> = [{dest: out, src: defaults}];
 
   while (stack.length) {
     const next = stack.pop();
     if (!next) {
       continue;
     }
-    const { dest, src } = next;
+    const {dest, src} = next;
     for (const [key, srcVal] of Object.entries(src)) {
       const destVal = dest[key];
       if (destVal === undefined) {
@@ -39,7 +39,7 @@ export function mergeDefaultsDeep<T extends Record<string, any>>(target: T, defa
         continue;
       }
       if (supportUtil.isPlainObject(destVal) && supportUtil.isPlainObject(srcVal)) {
-        stack.push({ dest: destVal, src: srcVal });
+        stack.push({dest: destVal, src: srcVal});
       }
     }
   }

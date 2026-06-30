@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import { logger } from '../../../lib';
+import {logger} from '../../../lib';
 
 let sandbox: sinon.SinonSandbox;
 

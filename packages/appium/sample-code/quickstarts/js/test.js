@@ -1,4 +1,4 @@
-const { remote } = require('webdriverio');
+const {remote} = require('webdriverio');
 
 const capabilities = {
   platformName: 'Android',

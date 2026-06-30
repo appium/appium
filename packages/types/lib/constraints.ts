@@ -6,7 +6,7 @@ export type Constraints = {
 };
 
 export interface Constraint {
-  readonly presence?: boolean | Readonly<{ allowEmpty: boolean }>;
+  readonly presence?: boolean | Readonly<{allowEmpty: boolean}>;
   readonly isString?: boolean;
   readonly isNumber?: boolean;
   readonly isBoolean?: boolean;

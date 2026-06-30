@@ -1,10 +1,10 @@
-import { retryInterval } from 'asyncbox';
-import { expect, use } from 'chai';
+import {retryInterval} from 'asyncbox';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { after, afterEach, before, beforeEach, describe, it } from 'node:test';
-import { createSandbox } from 'sinon';
+import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
+import {createSandbox} from 'sinon';
 import * as teenProcess from 'teen_process';
-import { process, system } from '../../lib';
+import {process, system} from '../../lib';
 
 use(chaiAsPromised);
 
@@ -22,7 +22,7 @@ describe('process', function () {
     sandbox.restore();
   });
 
-  describe('getProcessIds', { skip: system.isWindows() }, function () {
+  describe('getProcessIds', {skip: system.isWindows()}, function () {
     let proc: InstanceType<typeof SubProcess> | undefined;
     before(async function () {
       proc = new SubProcess('tail', ['-f', __filename]);
@@ -46,12 +46,12 @@ describe('process', function () {
       expect(pids).to.have.length(0);
     });
     it('should throw an error if pgrep fails', async function () {
-      (sandbox.stub(teenProcess, 'exec') as any).get(() => sandbox.stub().throws({ message: 'Oops', code: 2 }));
+      (sandbox.stub(teenProcess, 'exec') as any).get(() => sandbox.stub().throws({message: 'Oops', code: 2}));
       await expect(process.getProcessIds('tail')).to.eventually.be.rejectedWith(/Oops/);
     });
   });
 
-  describe('killProcess', { skip: system.isWindows() }, function () {
+  describe('killProcess', {skip: system.isWindows()}, function () {
     let proc: InstanceType<typeof SubProcess>;
     beforeEach(async function () {
       proc = new SubProcess('tail', ['-f', __filename]);
@@ -81,13 +81,13 @@ describe('process', function () {
       ).to.eventually.be.rejected;
     });
     it('should throw an error if pgrep fails', async function () {
-      (sandbox.stub(teenProcess, 'exec') as any).get(() => sandbox.stub().throws({ message: 'Oops', code: 2 }));
+      (sandbox.stub(teenProcess, 'exec') as any).get(() => sandbox.stub().throws({message: 'Oops', code: 2}));
       await expect(process.killProcess('tail')).to.eventually.be.rejectedWith(/Oops/);
     });
     it('should throw an error if pkill fails', async function () {
       const innerExecStub = sandbox.stub();
-      innerExecStub.returns({ stdout: '42\n' });
-      innerExecStub.throws({ message: 'Oops', code: 2 });
+      innerExecStub.returns({stdout: '42\n'});
+      innerExecStub.throws({message: 'Oops', code: 2});
       (sandbox.stub(teenProcess, 'exec') as any).get(() => innerExecStub);
       await expect(process.killProcess('tail')).to.eventually.be.rejectedWith(/Oops/);
     });

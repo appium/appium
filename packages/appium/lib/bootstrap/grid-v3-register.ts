@@ -1,7 +1,7 @@
-import { fs } from '@appium/support';
-import type { StringRecord } from '@appium/types';
+import {fs} from '@appium/support';
+import type {StringRecord} from '@appium/types';
 import axios from 'axios';
-import { log as logger } from '../logger';
+import {log as logger} from '../logger';
 
 /**
  * Selenium **Grid 3** (legacy hub) node integration.
@@ -114,7 +114,7 @@ function hubUri(config: Grid3HubConfiguration): string {
 
 /** POST registration payload to the Selenium Grid 3 hub. */
 async function registerToGrid(
-  postOptions: { url: string; method: string; data: Grid3NodeConfig },
+  postOptions: {url: string; method: string; data: Grid3NodeConfig},
   configHolder: Grid3NodeConfig,
 ): Promise<void> {
   const hubCfg = configHolder.configuration;
@@ -122,7 +122,7 @@ async function registerToGrid(
     return;
   }
   try {
-    const { status } = await axios(postOptions);
+    const {status} = await axios(postOptions);
     if (status !== 200) {
       throw new Error(`Request failed with code ${status}`);
     }
@@ -211,9 +211,9 @@ async function isAlreadyRegistered(configHolder: Grid3NodeConfig): Promise<boole
   }
   const id = hubCfg.id;
   try {
-    const { data, status } = await axios<Grid3ProxyApiResponse>({
+    const {data, status} = await axios<Grid3ProxyApiResponse>({
       url: `${hubUri(hubCfg)}${GRID_V3_PROXY_API_PATH}`,
-      params: { id },
+      params: {id},
       timeout: 10000,
     });
     if (status !== 200) {

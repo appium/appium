@@ -1,8 +1,8 @@
-import { expect } from 'chai';
-import { afterEach, describe, it } from 'node:test';
+import {expect} from 'chai';
+import {afterEach, describe, it} from 'node:test';
 import * as consoleModule from '../../lib/console';
 
-const { CliConsole, stripColors, styleText } = consoleModule;
+const {CliConsole, stripColors, styleText} = consoleModule;
 
 describe('console', function () {
   it('should expose styleText and stripColors on the module namespace', function () {
@@ -37,27 +37,27 @@ describe('console', function () {
       });
 
       it('should return the message unchanged when symbols are disabled', function () {
-        const cli = new CliConsole({ useSymbols: false });
+        const cli = new CliConsole({useSymbols: false});
         expect(cli.decorate('hello', 'success')).to.equal('hello');
       });
 
       it('should prefix the message with a symbol', function () {
-        const cli = new CliConsole({ useColor: false });
+        const cli = new CliConsole({useColor: false});
         const decorated = cli.decorate('done', 'success');
         expect(decorated).to.match(/^.\s+done$/);
       });
 
       it('should colorize when useColor is enabled', function () {
-        const cli = new CliConsole({ useColor: true });
+        const cli = new CliConsole({useColor: true});
         const decorated = cli.decorate('done', 'success')!;
         expect(stripColors(decorated)).to.match(/^.\s+done$/);
       });
 
       describe('when useColor is defaulted from the environment', function () {
-        const originalEnv = { ...process.env };
+        const originalEnv = {...process.env};
 
         afterEach(function () {
-          process.env = { ...originalEnv };
+          process.env = {...originalEnv};
         });
 
         it('should not colorize when NO_COLOR is set', function () {
@@ -79,7 +79,7 @@ describe('console', function () {
         it('should colorize when FORCE_COLOR is set', function () {
           delete process.env.NO_COLOR;
           process.env.FORCE_COLOR = '1';
-          const cli = new CliConsole({ useColor: undefined });
+          const cli = new CliConsole({useColor: undefined});
           const decorated = cli.decorate('done', 'success')!;
           expect(stripColors(decorated)).to.match(/^.\s+done$/);
         });

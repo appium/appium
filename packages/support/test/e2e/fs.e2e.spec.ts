@@ -1,10 +1,10 @@
-import { expect, use } from 'chai';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import path from 'node:path';
-import { afterEach, beforeEach, describe, it } from 'node:test';
-import { fs } from '../../lib/fs';
-import { isWindows } from '../../lib/system';
-import { openDir } from '../../lib/tempdir';
+import {afterEach, beforeEach, describe, it} from 'node:test';
+import {fs} from '../../lib/fs';
+import {isWindows} from '../../lib/system';
+import {openDir} from '../../lib/tempdir';
 
 use(chaiAsPromised);
 
@@ -36,7 +36,7 @@ describe('fs', function () {
       const srcPath = path.join(srcRoot!, 'foo', 'src.file');
       await fs.mkdirp(path.dirname(srcPath));
       await fs.writeFile(srcPath, Buffer.from('bar'));
-      await fs.mv(srcRoot!, dstRoot!, { mkdirp: true });
+      await fs.mv(srcRoot!, dstRoot!, {mkdirp: true});
       expect(await fs.exists(path.join(dstRoot!, path.basename(path.dirname(srcPath))))).to.be.true;
       expect(await fs.exists(path.join(dstRoot!, path.basename(path.dirname(srcPath)), path.basename(srcPath)))).to.be
         .true;
@@ -54,7 +54,7 @@ describe('fs', function () {
       await fs.writeFile(srcPath, Buffer.from('bar'));
       const dstPath = path.join(dstRoot!, path.basename(srcPath));
       await fs.writeFile(dstPath, Buffer.from('foo'));
-      await expect(fs.mv(srcPath, dstPath, { clobber: false })).to.eventually.be.rejected;
+      await expect(fs.mv(srcPath, dstPath, {clobber: false})).to.eventually.be.rejected;
       expect((await fs.readFile(dstPath)).toString()).to.eql('foo');
     });
 
@@ -74,7 +74,7 @@ describe('fs', function () {
 
       // Mock fs.rename to simulate EXDEV (cross-device) error so mv falls back to copy-and-delete.
       const originalRename = fs.rename;
-      (fs as { rename: typeof fs.rename }).rename = async () => {
+      (fs as {rename: typeof fs.rename}).rename = async () => {
         const err = new Error('cross-device link not permitted') as NodeJS.ErrnoException;
         err.code = 'EXDEV';
         throw err;
@@ -87,7 +87,7 @@ describe('fs', function () {
         expect((await fs.readFile(dstPath)).toString()).to.eql('bar');
       } finally {
         // Restore original function.
-        (fs as { rename: typeof fs.rename }).rename = originalRename;
+        (fs as {rename: typeof fs.rename}).rename = originalRename;
       }
     });
   });
@@ -99,7 +99,7 @@ describe('fs', function () {
       });
     });
 
-    describe('when the path exists', { skip: isWindows() }, function () {
+    describe('when the path exists', {skip: isWindows()}, function () {
       describe('when the path is not executable', function () {
         it('should return `false`', async function () {
           await expect(fs.isExecutable(__filename)).to.eventually.be.false;

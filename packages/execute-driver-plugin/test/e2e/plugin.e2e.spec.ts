@@ -1,15 +1,15 @@
 import path from 'node:path';
 
-import { pluginE2EHarness } from '@appium/plugin-test-support';
-import { fs, node } from '@appium/support';
-import { expect, use } from 'chai';
+import {pluginE2EHarness} from '@appium/plugin-test-support';
+import {fs, node} from '@appium/support';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import type { AddressInfo } from 'node:net';
-import { after, before, describe, it } from 'node:test';
-import { exec } from 'teen_process';
-import { remote as wdio } from 'webdriverio';
-import type { Browser } from 'webdriverio';
-import { MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY } from '../../lib/execute-child';
+import type {AddressInfo} from 'node:net';
+import {after, before, describe, it} from 'node:test';
+import {exec} from 'teen_process';
+import {remote as wdio} from 'webdriverio';
+import type {Browser} from 'webdriverio';
+import {MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY} from '../../lib/execute-child';
 
 use(chaiAsPromised);
 
@@ -53,16 +53,16 @@ describe('ExecuteDriverPlugin', function () {
 
   describe('without --allow-insecure set', function () {
     let port: number;
-    const { setup, teardown } = pluginE2EHarness({ ...e2eSetupOpts });
+    const {setup, teardown} = pluginE2EHarness({...e2eSetupOpts});
 
     before(async function () {
       // workaround for https://github.com/nodejs/node/issues/64061
       await exec(process.execPath, ['--version']);
 
-      const { server } = await setup();
+      const {server} = await setup();
       const address = server.address();
       port = (address as AddressInfo).port;
-      driver = await wdio({ ...WDIO_OPTS, port });
+      driver = await wdio({...WDIO_OPTS, port});
     });
     after(async function () {
       try {
@@ -81,15 +81,15 @@ describe('ExecuteDriverPlugin', function () {
 
   describe('with --allow-insecure set', function () {
     let port: number;
-    const { setup, teardown } = pluginE2EHarness({
+    const {setup, teardown} = pluginE2EHarness({
       ...e2eSetupOpts,
-      serverArgs: { allowInsecure: ['*:execute_driver_script'] },
+      serverArgs: {allowInsecure: ['*:execute_driver_script']},
     });
     before(async function () {
-      const { server } = await setup();
+      const {server} = await setup();
       const address = server.address();
       port = (address as AddressInfo).port;
-      driver = await wdio({ ...WDIO_OPTS, port });
+      driver = await wdio({...WDIO_OPTS, port});
     });
     after(async function () {
       try {
@@ -105,12 +105,12 @@ describe('ExecuteDriverPlugin', function () {
         const status = await driver.status();
         return [timeouts, status];
       `;
-      const expectedTimeouts = { command: 60000, implicit: 0 };
-      const { result, logs } = await driver.executeDriverScript(script);
+      const expectedTimeouts = {command: 60000, implicit: 0};
+      const {result, logs} = await driver.executeDriverScript(script);
       expect((result as any)[0]).to.eql(expectedTimeouts);
       expect((result as any)[1].build).to.exist;
       expect((result as any)[1].build.version).to.exist;
-      expect(logs).to.eql({ error: [], warn: [], log: [] });
+      expect(logs).to.eql({error: [], warn: [], log: []});
     });
 
     it('should fail with any script type other than webdriverio currently', async function () {
@@ -122,7 +122,7 @@ describe('ExecuteDriverPlugin', function () {
       const script = `
         return await driver.$("#Button1");
       `;
-      const { result } = await driver.executeDriverScript(script);
+      const {result} = await driver.executeDriverScript(script);
       expect(result).to.eql({
         [W3C_ELEMENT_KEY]: '1',
         [MJSONWP_ELEMENT_KEY]: '1',
@@ -134,12 +134,12 @@ describe('ExecuteDriverPlugin', function () {
         const el = await driver.$("#Button1");
         return {element: el, elements: [el, el]};
       `;
-      const { result } = await driver.executeDriverScript(script);
+      const {result} = await driver.executeDriverScript(script);
       const elObj = {
         [W3C_ELEMENT_KEY]: '1',
         [MJSONWP_ELEMENT_KEY]: '1',
       };
-      expect(result).to.eql({ element: elObj, elements: [elObj, elObj] });
+      expect(result).to.eql({element: elObj, elements: [elObj, elObj]});
     });
 
     it('should store and return logs to the user', async function () {
@@ -150,15 +150,15 @@ describe('ExecuteDriverPlugin', function () {
         console.error("baz");
         return null;
       `;
-      const { logs } = await driver.executeDriverScript(script);
-      expect(logs).to.eql({ log: ['foo', 'foo2'], warn: ['bar'], error: ['baz'] });
+      const {logs} = await driver.executeDriverScript(script);
+      expect(logs).to.eql({log: ['foo', 'foo2'], warn: ['bar'], error: ['baz']});
     });
 
     it('should have appium specific commands available', async function () {
       const script = `
         return typeof driver.lock;
       `;
-      const { result } = await driver.executeDriverScript(script);
+      const {result} = await driver.executeDriverScript(script);
       expect(result).to.eql('function');
     });
 
@@ -166,7 +166,7 @@ describe('ExecuteDriverPlugin', function () {
       const script = `
         return await driver.$("~notfound");
       `;
-      const { result } = await driver.executeDriverScript(script);
+      const {result} = await driver.executeDriverScript(script);
       expect((result as any).error.error).to.equal('no such element');
       expect((result as any).error.message).to.match(/element could not be located/);
       expect((result as any).error.stacktrace).to.include('NoSuchElementError:');

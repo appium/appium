@@ -1,6 +1,6 @@
-import type { DriverType, PluginType, ServerArgs } from '@appium/types';
-import type { SetOptional } from 'type-fest';
-import type { InstallType } from './manifest';
+import type {DriverType, PluginType, ServerArgs} from '@appium/types';
+import type {SetOptional} from 'type-fest';
+import type {InstallType} from './manifest';
 export type CliCommandServer = 'server';
 export type CliCommandSetup = 'setup';
 export type CliCommandDriver = DriverType;

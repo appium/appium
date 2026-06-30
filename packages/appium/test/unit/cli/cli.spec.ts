@@ -1,9 +1,9 @@
-import { fs, npm, tempDir } from '@appium/support';
-import { expect } from 'chai';
-import { createSandbox } from 'sinon';
+import {fs, npm, tempDir} from '@appium/support';
+import {expect} from 'chai';
+import {createSandbox} from 'sinon';
 import DriverCommand from '../../../lib/cli/driver-command';
-import { loadExtensions } from '../../../lib/extension';
-import { Manifest } from '../../../lib/extension/manifest';
+import {loadExtensions} from '../../../lib/extension';
+import {Manifest} from '../../../lib/extension/manifest';
 
 describe('DriverCommand', function () {
   let appiumHome: string;
@@ -31,7 +31,7 @@ describe('DriverCommand', function () {
         installPath: '',
       },
     };
-    dc = new DriverCommand({ config, json: true });
+    dc = new DriverCommand({config, json: true});
   });
 
   afterEach(async function () {

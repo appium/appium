@@ -1,4 +1,4 @@
-import { util } from '@appium/support';
+import {util} from '@appium/support';
 
 const UNSAFE_PATH_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
 
@@ -281,13 +281,13 @@ function copyForDefaultsDeep(value: unknown): unknown {
  */
 function fillUndefinedDeep(target: Record<string, unknown>, source: Record<string, unknown>): Record<string, unknown> {
   const out = copyForDefaultsDeep(target) as Record<string, unknown>;
-  const stack: Array<{ dest: Record<string, unknown>; src: Record<string, unknown> }> = [{ dest: out, src: source }];
+  const stack: Array<{dest: Record<string, unknown>; src: Record<string, unknown>}> = [{dest: out, src: source}];
   while (stack.length) {
     const next = stack.pop();
     if (!next) {
       continue;
     }
-    const { dest, src } = next;
+    const {dest, src} = next;
     for (const [key, srcVal] of Object.entries(src)) {
       const destVal = dest[key];
       if (destVal === undefined) {
@@ -295,7 +295,7 @@ function fillUndefinedDeep(target: Record<string, unknown>, source: Record<strin
         continue;
       }
       if (util.isPlainObject(destVal) && util.isPlainObject(srcVal)) {
-        stack.push({ dest: destVal, src: srcVal });
+        stack.push({dest: destVal, src: srcVal});
       }
     }
   }

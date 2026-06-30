@@ -1,12 +1,12 @@
-import { expect, use } from 'chai';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type fs from 'node:fs/promises';
 import path from 'node:path';
-import { afterEach, beforeEach, describe, it } from 'node:test';
+import {afterEach, beforeEach, describe, it} from 'node:test';
 import rewiremock from 'rewiremock/node';
-import type { SinonSandbox, SinonStub, SinonStubbedMember } from 'sinon';
-import { createSandbox } from 'sinon';
-import type { Item, Strongbox as TStrongbox, StrongboxOpts, Value } from '../../lib';
+import type {SinonSandbox, SinonStub, SinonStubbedMember} from 'sinon';
+import {createSandbox} from 'sinon';
+import type {Item, Strongbox as TStrongbox, StrongboxOpts, Value} from '../../lib';
 
 use(chaiAsPromised);
 
@@ -25,17 +25,17 @@ describe('Strongbox', function () {
 
   beforeEach(function () {
     sandbox = createSandbox();
-    ({ strongbox, DEFAULT_SUFFIX, Strongbox } = rewiremock.proxy(
+    ({strongbox, DEFAULT_SUFFIX, Strongbox} = rewiremock.proxy(
       () => require('../../lib'),
       (r) => ({
         // all of these props are async functions
         'node:fs/promises': r
           .mockThrough((prop) => {
-            MockFs = { ...MockFs, [prop]: sandbox.stub().resolves() };
+            MockFs = {...MockFs, [prop]: sandbox.stub().resolves()};
             return MockFs[prop as keyof typeof fs];
           })
           .dynamic(), // this allows us to change the mock behavior on-the-fly
-        'env-paths': sandbox.stub().returns({ data: DATA_DIR }),
+        'env-paths': sandbox.stub().returns({data: DATA_DIR}),
       }),
     ));
   });
@@ -50,7 +50,7 @@ describe('Strongbox', function () {
       describe('when provided an absolute container path', function () {
         it('should use the provided container path', function () {
           const container = path.resolve(path.sep, 'somewhere');
-          expect(strongbox('test', { container }).container).to.equal(container);
+          expect(strongbox('test', {container}).container).to.equal(container);
         });
       });
 
@@ -58,7 +58,7 @@ describe('Strongbox', function () {
         it('should throw an error', function () {
           const container = path.join('somewhere', 'else');
 
-          expect(() => strongbox('test', { container })).to.throw(
+          expect(() => strongbox('test', {container})).to.throw(
             TypeError,
             `container slug ${container} must be an absolute path`,
           );
@@ -67,7 +67,7 @@ describe('Strongbox', function () {
 
       describe('when provided a suffix', function () {
         it('should use the provided suffix', function () {
-          expect(strongbox('test', { suffix: 'mooo' }).suffix).to.equal('mooo');
+          expect(strongbox('test', {suffix: 'mooo'}).suffix).to.equal('mooo');
         });
       });
     });
@@ -246,7 +246,7 @@ describe('Strongbox', function () {
       });
 
       it('should return an empty array when the container does not exist', async function () {
-        const err = Object.assign(new Error('ENOENT'), { code: 'ENOENT' });
+        const err = Object.assign(new Error('ENOENT'), {code: 'ENOENT'});
         MockFs.opendir.rejects(err);
         await expect(box.listItems()).to.eventually.eql([]);
       });
@@ -297,7 +297,7 @@ describe('Strongbox', function () {
       });
 
       it('should yield nothing when the container does not exist', async function () {
-        const err = Object.assign(new Error('ENOENT'), { code: 'ENOENT' });
+        const err = Object.assign(new Error('ENOENT'), {code: 'ENOENT'});
         MockFs.opendir.rejects(err);
         const out: any[] = [];
         for await (const item of box) {

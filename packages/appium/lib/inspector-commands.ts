@@ -1,4 +1,4 @@
-import { BIDI_COMMANDS as BASE_BIDI_COMMANDS, METHOD_MAP as BASE_METHOD_MAP } from '@appium/base-driver';
+import {BIDI_COMMANDS as BASE_BIDI_COMMANDS, METHOD_MAP as BASE_METHOD_MAP} from '@appium/base-driver';
 import type {
   BiDiCommandItemParam,
   BiDiCommandNamesToInfosMap,
@@ -15,8 +15,8 @@ import type {
   RestCommandItemParam,
   RestMethodsToCommandsMap,
 } from '@appium/types';
-import type { AppiumDriver } from './appium';
-import { mapValues } from './utils';
+import type {AppiumDriver} from './appium';
+import {mapValues} from './utils';
 
 /**
  * Returns available REST and BiDi commands for base, driver and plugins.

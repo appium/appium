@@ -1,4 +1,4 @@
-import { util } from '@appium/support';
+import {util} from '@appium/support';
 import type {
   AppiumLogger,
   Constraints,
@@ -14,10 +14,10 @@ import type {
 } from '@appium/types';
 import AsyncLock from 'async-lock';
 import os from 'node:os';
-import { DEFAULT_BASE_PATH, PROTOCOLS } from '../constants';
-import { errors } from '../protocol';
-import { DeviceSettings } from './device-settings';
-import { ExtensionCore } from './extension-core';
+import {DEFAULT_BASE_PATH, PROTOCOLS} from '../constants';
+import {errors} from '../protocol';
+import {DeviceSettings} from './device-settings';
+import {ExtensionCore} from './extension-core';
 import * as helpers from './helpers';
 
 const NEW_COMMAND_TIMEOUT_MS = 60 * 1000;
@@ -127,7 +127,7 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
     this.webLocatorStrategies = [];
     this.managedDrivers = [];
     this.noCommandTimer = null;
-    this._eventHistory = { commands: [] };
+    this._eventHistory = {commands: []};
     this.shutdownUnexpectedly = false;
     this.commandsQueueGuard = new AsyncLock();
     this.settings = new DeviceSettings();

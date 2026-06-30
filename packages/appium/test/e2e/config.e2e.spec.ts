@@ -1,11 +1,11 @@
 import axios from 'axios';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { createSandbox, type SinonSandbox } from 'sinon';
+import {createSandbox, type SinonSandbox} from 'sinon';
 import * as teenProcess from 'teen_process';
-import { APPIUM_VER, getBuildInfo, getGitRev, updateBuildInfo } from '../../lib/helpers/build';
+import {APPIUM_VER, getBuildInfo, getGitRev, updateBuildInfo} from '../../lib/helpers/build';
 
-const { expect } = chai;
+const {expect} = chai;
 chai.use(chaiAsPromised);
 
 describe('Config', function () {
@@ -34,9 +34,9 @@ describe('Config', function () {
     const SHA = 'a7404fddd50ee1c6ff1aac3d2f259abab0d3291a';
     const DATE = '2022-06-04T02:08:17Z';
 
-    async function verifyBuildInfoUpdate(useLocalGit: boolean, opts: { sha?: string; built?: string } = {}) {
+    async function verifyBuildInfoUpdate(useLocalGit: boolean, opts: {sha?: string; built?: string} = {}) {
       const buildInfo = getBuildInfo();
-      const { sha, built } = opts;
+      const {sha, built} = opts;
 
       const innerExecStub = sandbox.stub().throws();
       if (!useLocalGit) {
@@ -113,7 +113,7 @@ describe('Config', function () {
           },
         },
       });
-      await verifyBuildInfoUpdate(false, { sha: SHA, built: DATE });
+      await verifyBuildInfoUpdate(false, {sha: SHA, built: DATE});
     });
   });
 });

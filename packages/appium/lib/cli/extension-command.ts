@@ -1,5 +1,5 @@
-import { console, env, fs, npm, system, util } from '@appium/support';
-import type { AppiumLogger, ExtensionType, IDoctorCheck } from '@appium/types';
+import {console, env, fs, npm, system, util} from '@appium/support';
+import type {AppiumLogger, ExtensionType, IDoctorCheck} from '@appium/types';
 import type {
   ExtInstallReceipt as AppiumExtInstallReceipt,
   ExtManifest as AppiumExtManifest,
@@ -8,16 +8,16 @@ import type {
   ExtRecord as AppiumExtRecord,
   InstallType,
 } from 'appium/types';
-import { asyncfilter, asyncmap } from 'asyncbox';
-import { spawn } from 'node:child_process';
+import {asyncfilter, asyncmap} from 'asyncbox';
+import {spawn} from 'node:child_process';
 import path from 'node:path';
-import { pathToFileURL } from 'node:url';
-import { inspect } from 'node:util';
+import {pathToFileURL} from 'node:url';
+import {inspect} from 'node:util';
 import * as semver from 'semver';
-import { SubProcess } from 'teen_process';
-import type { PackageJson } from 'type-fest';
-import { Doctor, EXIT_CODE as DOCTOR_EXIT_CODE } from '../doctor/doctor';
-import type { ExtensionConfig as BaseExtensionConfig } from '../extension/extension-config';
+import {SubProcess} from 'teen_process';
+import type {PackageJson} from 'type-fest';
+import {Doctor, EXIT_CODE as DOCTOR_EXIT_CODE} from '../doctor/doctor';
+import type {ExtensionConfig as BaseExtensionConfig} from '../extension/extension-config';
 import {
   INSTALL_TYPE_DEV,
   INSTALL_TYPE_GIT,
@@ -25,8 +25,8 @@ import {
   INSTALL_TYPE_LOCAL,
   INSTALL_TYPE_NPM,
 } from '../extension/extension-config';
-import { appiumPackageRoot, compact, npmPackage, packageDidChange } from '../utils';
-import { RingBuffer, spinWith } from './utils';
+import {appiumPackageRoot, compact, npmPackage, packageDidChange} from '../utils';
+import {RingBuffer, spinWith} from './utils';
 
 const UPDATE_ALL = 'installed';
 const MAX_CONCURRENT_REPO_FETCHES = 5;
@@ -75,7 +75,7 @@ export type ExtensionList<ExtType extends ExtensionType = ExtensionType> = Recor
 /**
  * Return value of {@linkcode ExtensionCliCommand._run}
  */
-export type RunOutput = { output?: string[] };
+export type RunOutput = {output?: string[]};
 
 /**
  * Return type of {@linkcode ExtensionCliCommand.getPostInstallText}.
@@ -111,22 +111,22 @@ type RunOptions = {
 /**
  * Options for {@linkcode ExtensionCliCommand.doctor}.
  */
-type DoctorOptions = { installSpec: string };
+type DoctorOptions = {installSpec: string};
 
 /**
  * Options for {@linkcode ExtensionCliCommand._update}.
  */
-type ExtensionUpdateOpts = { installSpec: string; unsafe: boolean };
+type ExtensionUpdateOpts = {installSpec: string; unsafe: boolean};
 
 /**
  * Part of result of {@linkcode ExtensionCliCommand._update}.
  */
-type UpdateReport = { from: string; to: string | null };
+type UpdateReport = {from: string; to: string | null};
 
 /**
  * Options for {@linkcode ExtensionCliCommand._uninstall}.
  */
-type UninstallOpts = { installSpec: string };
+type UninstallOpts = {installSpec: string};
 
 /**
  * Options for {@linkcode ExtensionCliCommand.installViaNpm}
@@ -141,14 +141,14 @@ type InstallViaNpmArgs = {
 /**
  * Object returned by {@linkcode ExtensionCliCommand.checkForExtensionUpdate}
  */
-type PossibleUpdates = { current: string; safeUpdate: string | null; unsafeUpdate: string | null };
+type PossibleUpdates = {current: string; safeUpdate: string | null; unsafeUpdate: string | null};
 
 /**
  * Options for {@linkcode ExtensionCliCommand._install}
  */
-type InstallOpts = { installSpec: string; installType: InstallType; packageName?: string };
+type InstallOpts = {installSpec: string; installType: InstallType; packageName?: string};
 
-type ListOptions = { showInstalled: boolean; showUpdates: boolean; verbose?: boolean };
+type ListOptions = {showInstalled: boolean; showUpdates: boolean; verbose?: boolean};
 
 type GetInstallationReceiptOpts<ExtType extends ExtensionType = ExtensionType> = {
   installPath: string;
@@ -157,7 +157,7 @@ type GetInstallationReceiptOpts<ExtType extends ExtensionType = ExtensionType> =
   installType: InstallType;
 };
 
-type InstalledExtensionLike = { installType?: InstallType; installPath?: string };
+type InstalledExtensionLike = {installType?: InstallType; installPath?: string};
 
 class NotUpdatableError extends Error {}
 
@@ -185,9 +185,9 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
    *
    * @param opts - constructor options containing extension config and JSON mode
    */
-  constructor({ config, json }: ExtensionCommandOptions<ExtType>) {
+  constructor({config, json}: ExtensionCommandOptions<ExtType>) {
     this.config = config;
-    this.log = new console.CliConsole({ jsonMode: json });
+    this.log = new console.CliConsole({jsonMode: json});
     this.isJsonOutput = Boolean(json);
   }
 
@@ -219,7 +219,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
    * @param opts - list command options
    * @returns map of extension names to list data
    */
-  async list({ showInstalled, showUpdates, verbose = false }: ListOptions): Promise<ExtensionList> {
+  async list({showInstalled, showUpdates, verbose = false}: ListOptions): Promise<ExtensionList> {
     const listData = this._buildListData(showInstalled);
 
     const lsMsg =
@@ -234,7 +234,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
 
     if (verbose) {
       await this._addRepositoryUrlsToListData(listData);
-      this.log.log(inspect(listData, { colors: true, depth: null }));
+      this.log.log(inspect(listData, {colors: true, depth: null}));
       return listData;
     }
 
@@ -257,7 +257,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
   /**
    * Build the initial list data structure from installed and known extensions
    */
-  protected async _install({ installSpec, installType, packageName }: InstallOpts): Promise<Record<string, any>> {
+  protected async _install({installSpec, installType, packageName}: InstallOpts): Promise<Record<string, any>> {
     if (packageName && [INSTALL_TYPE_LOCAL, INSTALL_TYPE_NPM].includes(installType)) {
       throw this._createFatalError(`When using --source=${installType}, cannot also use --package`);
     }
@@ -341,7 +341,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
           installType = INSTALL_TYPE_NPM;
         }
       }
-      installViaNpmOpts = { installSpec, pkgName, pkgVer, installType };
+      installViaNpmOpts = {installSpec, pkgName, pkgVer, installType};
     }
 
     // fail fast here if we can
@@ -383,7 +383,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
     ]);
     const errorMap = new Map([[extName, errors]]);
     const warningMap = new Map([[extName, warnings]]);
-    const { errorSummaries, warningSummaries } = this.config.getValidationResultSummaries(errorMap, warningMap);
+    const {errorSummaries, warningSummaries} = this.config.getValidationResultSummaries(errorMap, warningMap);
 
     if (!util.isEmpty(errorSummaries)) {
       throw this._createFatalError(errorSummaries.join('\n'));
@@ -402,7 +402,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
     }
 
     // log info for the user
-    this.log.info(this.getPostInstallText({ extName, extData: receipt as unknown as ExtInstallReceipt<ExtType> }));
+    this.log.info(this.getPostInstallText({extName, extData: receipt as unknown as ExtInstallReceipt<ExtType>}));
 
     return this.config.installedExtensions;
   }
@@ -416,7 +416,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
    *
    * @return map of all installed extension names to extension data (without the extension just uninstalled)
    */
-  protected async _uninstall({ installSpec }: UninstallOpts): Promise<Record<string, any>> {
+  protected async _uninstall({installSpec}: UninstallOpts): Promise<Record<string, any>> {
     if (!this.config.isInstalled(installSpec)) {
       throw this._createFatalError(`Can't uninstall ${this.type} '${installSpec}'; it is not installed`);
     }
@@ -437,7 +437,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
   /**
    * Attempt to update one or more drivers using NPM
    */
-  protected async _update({ installSpec, unsafe }: ExtensionUpdateOpts): Promise<ExtensionUpdateResult> {
+  protected async _update({installSpec, unsafe}: ExtensionUpdateOpts): Promise<ExtensionUpdateResult> {
     const shouldUpdateAll = installSpec === UPDATE_ALL;
     // if we're specifically requesting an update for an extension, make sure it's installed
     if (!shouldUpdateAll && !this.config.isInstalled(installSpec)) {
@@ -494,7 +494,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
             `If you want to apply this update, re-run with --unsafe`;
           this.log.info(console.styleText('yellow', newMajorUpdateMsg));
         }
-        updates[e] = { from: update.current, to: updateVer };
+        updates[e] = {from: update.current, to: updateVer};
       } catch (err) {
         errors[e] = err instanceof Error ? err : new Error(String(err));
       }
@@ -518,7 +518,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
         this.log.error(console.styleText('red', `  - '${e}' failed to update: ${err}`));
       }
     }
-    return { updates, errors };
+    return {updates, errors};
   }
 
   /**
@@ -531,7 +531,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
     // TODO decide how we want to handle beta versions?
     // this is a helper method, 'ext' is assumed to already be installed here, and of the npm
     // install type
-    const { version, pkgName } = this.config.installedExtensions[ext];
+    const {version, pkgName} = this.config.installedExtensions[ext];
     let unsafeUpdate = await npm.getLatestVersion(this.config.appiumHome, pkgName);
     let safeUpdate = await npm.getLatestSafeUpgradeVersion(this.config.appiumHome, pkgName, version);
     if (unsafeUpdate !== null && !util.compareVersions(unsafeUpdate, '>', version)) {
@@ -547,7 +547,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
       // even the safe update is not later than the current, so it is not actually an update
       safeUpdate = null;
     }
-    return { current: version, safeUpdate, unsafeUpdate };
+    return {current: version, safeUpdate, unsafeUpdate};
   }
 
   /**
@@ -557,7 +557,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
    * successfully loaded and executed for the given extension
    * @throws {Error} If any of the mandatory Doctor checks fails.
    */
-  protected async _doctor({ installSpec }: DoctorOptions): Promise<number> {
+  protected async _doctor({installSpec}: DoctorOptions): Promise<number> {
     if (!this.config.isInstalled(installSpec)) {
       throw this._createFatalError(`The ${this.type} "${installSpec}" is not installed`);
     }
@@ -567,7 +567,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
     if (!(await fs.exists(packageJsonPath))) {
       throw this._createFatalError(`No package.json could be found for "${installSpec}" ${this.type}`);
     }
-    let doctorSpec: { checks: string[] } | undefined;
+    let doctorSpec: {checks: string[]} | undefined;
     try {
       doctorSpec = JSON.parse(await fs.readFile(packageJsonPath, 'utf8')).appium?.doctor;
     } catch (e) {
@@ -714,7 +714,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
       try {
         await runner.join();
         this.log.ok(console.styleText('green', `${scriptName} successfully ran`));
-        return { output: output.getBuff() };
+        return {output: output.getBuff()};
       } catch (err) {
         const errMessage = err instanceof Error ? err.message : String(err);
         const message = `Encountered an error when running '${scriptName}': ${errMessage}`;
@@ -786,10 +786,10 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
     const installStr = installType === INSTALL_TYPE_NPM ? `${pkgName}${pkgVer ? `@${pkgVer}` : ''}` : installSpec;
     const appiumHome = this.config.appiumHome;
     try {
-      const { pkg, installPath } = await spinWith(
+      const {pkg, installPath} = await spinWith(
         this.isJsonOutput,
         installMsg,
-        async () => await npm.installPackage(appiumHome, installStr, { pkgName, installType }),
+        async () => await npm.installPackage(appiumHome, installStr, {pkgName, installType}),
       );
 
       const validatedPkg = await spinWith(this.isJsonOutput, validateMsg, async () =>
@@ -816,7 +816,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
    * @param version - version string identifier to update extension to
    */
   private async updateExtension(installSpec: string, version: string): Promise<void> {
-    const { pkgName, installType } = this.config.installedExtensions[installSpec];
+    const {pkgName, installType} = this.config.installedExtensions[installSpec];
     const extData = await this.installViaNpm({
       installSpec,
       installType,
@@ -826,11 +826,11 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
 
     const extManifest =
       this.type === 'driver'
-        ? (({ driverName, ...rest }) => {
+        ? (({driverName, ...rest}) => {
             void driverName;
             return rest;
           })(extData as ExtInstallReceipt<'driver'>)
-        : (({ pluginName, ...rest }) => {
+        : (({pluginName, ...rest}) => {
             void pluginName;
             return rest;
           })(extData as ExtInstallReceipt<'plugin'>);
@@ -862,7 +862,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
     installType,
     installSpec,
   }: GetInstallationReceiptOpts<ExtType>): ExtInstallReceipt<ExtType> {
-    const { appium, name, version, peerDependencies } = pkg;
+    const {appium, name, version, peerDependencies} = pkg;
 
     const strVersion = version;
     const internal = {
@@ -894,7 +894,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
    * @throws {ReferenceError} If `package.json` has a missing or invalid field
    */
   private validatePackageJson(pkg: PackageJson, installSpec: string): ExtPackageJson<ExtType> {
-    const { appium, name, version } = pkg;
+    const {appium, name, version} = pkg;
 
     const createMissingFieldError = (field: string): ReferenceError =>
       new ReferenceError(`${this.type} "${installSpec}" invalid; missing a \`${field}\` field of its \`package.json\``);
@@ -941,7 +941,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
             data.updateError = (e as Error).message;
           }
         },
-        { concurrency: MAX_CONCURRENT_REPO_FETCHES },
+        {concurrency: MAX_CONCURRENT_REPO_FETCHES},
       );
     });
   }
@@ -959,7 +959,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
             data.repositoryUrl = repoUrl;
           }
         },
-        { concurrency: MAX_CONCURRENT_REPO_FETCHES },
+        {concurrency: MAX_CONCURRENT_REPO_FETCHES},
       );
     });
   }
@@ -993,7 +993,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
    * Format installation status text
    */
   private _formatInstallText(data: ExtensionListData): string {
-    const { installType, installSpec, version } = data;
+    const {installType, installSpec, version} = data;
     let typeTxt: string;
     let isTypeTextStyled = false;
     switch (installType) {
@@ -1025,7 +1025,7 @@ abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType
    * Format update information text
    */
   private _formatUpdateText(data: ExtensionListData): string {
-    const { updateVersion, unsafeUpdateVersion, upToDate, updateError } = data;
+    const {updateVersion, unsafeUpdateVersion, upToDate, updateError} = data;
     if (updateError) {
       return console.styleText('red', ` [Cannot check for updates: ${updateError}]`);
     }
@@ -1188,11 +1188,11 @@ export async function injectAppiumSymlinks(
  */
 function receiptToManifest<ExtType extends ExtensionType>(receipt: ExtInstallReceipt<ExtType>): ExtManifest<ExtType> {
   if ('driverName' in receipt) {
-    const { driverName, ...manifest } = receipt as ExtInstallReceipt<'driver'>;
+    const {driverName, ...manifest} = receipt as ExtInstallReceipt<'driver'>;
     void driverName;
     return manifest as unknown as ExtManifest<ExtType>;
   }
-  const { pluginName, ...manifest } = receipt as ExtInstallReceipt<'plugin'>;
+  const {pluginName, ...manifest} = receipt as ExtInstallReceipt<'plugin'>;
   void pluginName;
   return manifest as unknown as ExtManifest<ExtType>;
 }
@@ -1236,4 +1236,4 @@ async function injectAppiumSymlink(dstFolder: string, logger: AppiumLogger): Pro
 }
 
 export default ExtensionCliCommand;
-export { ExtensionCliCommand as ExtensionCommand };
+export {ExtensionCliCommand as ExtensionCommand};

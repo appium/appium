@@ -1,9 +1,9 @@
-import { fs, logger, tempDir } from '@appium/support';
-import { expect, use } from 'chai';
+import {fs, logger, tempDir} from '@appium/support';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import path from 'node:path';
-import { after, afterEach, before, beforeEach, describe, it } from 'node:test';
-import { Storage, StorageArgumentError, validateStorageItemName } from '../../lib/storage';
+import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
+import {Storage, StorageArgumentError, validateStorageItemName} from '../../lib/storage';
 
 use(chaiAsPromised);
 
@@ -135,7 +135,7 @@ describe('storage', function () {
     const dummyPath = path.join(tmpRoot!, name);
     await fs.writeFile(dummyPath, Buffer.alloc(size));
     const sha1 = await fs.hash(dummyPath);
-    await storage!.add({ name, sha1 }, fs.createReadStream(dummyPath));
+    await storage!.add({name, sha1}, fs.createReadStream(dummyPath));
     return dummyPath;
   }
 });

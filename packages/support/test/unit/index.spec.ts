@@ -1,8 +1,8 @@
-import { expect } from 'chai';
-import { describe, it } from 'node:test';
+import {expect} from 'chai';
+import {describe, it} from 'node:test';
 import AppiumSupport from '../../lib/';
 
-const { system, tempDir, util } = AppiumSupport;
+const {system, tempDir, util} = AppiumSupport;
 
 describe('index', function () {
   describe('default', function () {

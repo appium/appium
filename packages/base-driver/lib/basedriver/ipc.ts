@@ -1,4 +1,4 @@
-import { node } from '@appium/support';
+import {node} from '@appium/support';
 import type {
   AppiumLogger,
   IAppiumIpc,
@@ -8,9 +8,9 @@ import type {
   IpcMessage,
   StringRecord,
 } from '@appium/types';
-import { sleep } from 'asyncbox';
+import {sleep} from 'asyncbox';
 import EventEmitter from 'node:events';
-import { log } from './logger';
+import {log} from './logger';
 
 const DEF_MAX_OBJ_SIZE_BYTES = 1024 * 1024; // 1mb seems like plenty for any plugin to pass a message
 const DEF_MAX_TOPICS = 1000;
@@ -148,7 +148,7 @@ export class AppiumIpc implements IAppiumIpc {
       });
     }
 
-    const message: IpcMessage<T> = { publisher, data: clonedData, topic, timestampMs: Date.now() };
+    const message: IpcMessage<T> = {publisher, data: clonedData, topic, timestampMs: Date.now()};
 
     this.messageByTopic[topic] = message;
 

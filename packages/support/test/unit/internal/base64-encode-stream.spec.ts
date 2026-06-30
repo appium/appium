@@ -1,6 +1,6 @@
-import { expect } from 'chai';
-import { describe, it } from 'node:test';
-import { createBase64EncodeStream } from '../../../lib/internal/base64-encode-stream';
+import {expect} from 'chai';
+import {describe, it} from 'node:test';
+import {createBase64EncodeStream} from '../../../lib/internal/base64-encode-stream';
 
 function splitIntoChunks(data: Buffer, chunkSize: number): Buffer[] {
   const chunks: Buffer[] = [];

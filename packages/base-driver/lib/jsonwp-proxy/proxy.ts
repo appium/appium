@@ -1,14 +1,14 @@
-import { logger, util } from '@appium/support';
-import type { AppiumLogger, HTTPBody, HTTPHeaders, HTTPMethod, ProxyOptions, ProxyResponse } from '@appium/types';
-import type { AxiosError, AxiosResponse, RawAxiosRequestConfig } from 'axios';
-import type { Request, Response } from 'express';
+import {logger, util} from '@appium/support';
+import type {AppiumLogger, HTTPBody, HTTPHeaders, HTTPMethod, ProxyOptions, ProxyResponse} from '@appium/types';
+import type {AxiosError, AxiosResponse, RawAxiosRequestConfig} from 'axios';
+import type {Request, Response} from 'express';
 import http from 'node:http';
 import https from 'node:https';
 import nodeUrl from 'node:url';
-import { match as pathToRegexMatch } from 'path-to-regexp';
-import { DEFAULT_BASE_PATH, MAX_LOG_BODY_LENGTH, PROTOCOLS } from '../constants';
-import { getSummaryByCode } from '../jsonwp-status/status';
-import { isSessionCommand, routeToCommandName } from '../protocol';
+import {match as pathToRegexMatch} from 'path-to-regexp';
+import {DEFAULT_BASE_PATH, MAX_LOG_BODY_LENGTH, PROTOCOLS} from '../constants';
+import {getSummaryByCode} from '../jsonwp-status/status';
+import {isSessionCommand, routeToCommandName} from '../protocol';
 import {
   errorFromMJSONWPStatusCode,
   errorFromW3CJsonCode,
@@ -16,16 +16,16 @@ import {
   getResponseForW3CError,
   isErrorType,
 } from '../protocol/errors';
-import { ensureW3cResponse, formatResponseValue } from '../protocol/helpers';
-import { omit, pick } from '../utils';
-import { ProtocolConverter } from './protocol-converter';
-import { ProxyRequest } from './proxy-request';
+import {ensureW3cResponse, formatResponseValue} from '../protocol/helpers';
+import {omit, pick} from '../utils';
+import {ProtocolConverter} from './protocol-converter';
+import {ProxyRequest} from './proxy-request';
 
 const DEFAULT_LOG = logger.getLogger('WD Proxy');
 const DEFAULT_REQUEST_TIMEOUT = 240000;
 const COMMAND_WITH_SESSION_ID_MATCHER = pathToRegexMatch('{/*prefix}/session/:sessionId{/*command}');
 
-const { MJSONWP, W3C } = PROTOCOLS;
+const {MJSONWP, W3C} = PROTOCOLS;
 
 type Protocol = (typeof PROTOCOLS)[keyof typeof PROTOCOLS];
 
@@ -221,7 +221,7 @@ export class JWProxy {
 
     const throwProxyError = (error: unknown): never => {
       const err = new Error(`The request to ${url} has failed`) as Error & {
-        response: { data: unknown; status: number };
+        response: {data: unknown; status: number};
       };
       err.response = {
         data: error,
@@ -231,7 +231,7 @@ export class JWProxy {
     };
     let isResponseLogged = false;
     try {
-      const { data, status, headers } = await this.request(reqOpts);
+      const {data, status, headers} = await this.request(reqOpts);
       // `data` might be really big
       // Be careful while handling it to avoid memory leaks
       if (!util.isPlainObject(data)) {
@@ -263,7 +263,7 @@ export class JWProxy {
         data,
       ];
     } catch (e: unknown) {
-      const err = e as AxiosError<unknown> & { message: string };
+      const err = e as AxiosError<unknown> & {message: string};
       let proxyErrorMsg = err.message;
       if (util.hasValue(err.response)) {
         if (!isResponseLogged) {
@@ -337,7 +337,7 @@ export class JWProxy {
         }
         throw errorFromMJSONWPStatusCode(
           status,
-          util.isEmpty(message) ? getSummaryByCode(status) : (message as string | { message: string }),
+          util.isEmpty(message) ? getSummaryByCode(status) : (message as string | {message: string}),
         );
       }
     } else if (protocol === W3C) {
@@ -395,7 +395,7 @@ export class JWProxy {
     if (!util.isPlainObject(resBodyObj)) {
       const error = new errors.UnknownError(
         `The downstream server response with the status code ${statusCode} is not a valid JSON object: ` +
-          util.truncateString(`${resBodyObj}`, { length: 300 }),
+          util.truncateString(`${resBodyObj}`, {length: 300}),
       );
       [statusCode, resBodyObj] = getResponseForW3CError(error);
     }

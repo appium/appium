@@ -1,13 +1,13 @@
 /* eslint-disable no-console */
-import { util } from '@appium/support';
-import type { Args } from 'appium/types';
-import { getAllArgSpecs, getDefaultsForSchema } from '../schema/schema';
-import { difference, getPath, pickBy, setPath } from '../utils';
-import type { ReadConfigFileResult } from './config-file';
+import {util} from '@appium/support';
+import type {Args} from 'appium/types';
+import {getAllArgSpecs, getDefaultsForSchema} from '../schema/schema';
+import {difference, getPath, pickBy, setPath} from '../utils';
+import type {ReadConfigFileResult} from './config-file';
 
 interface FlattenedArg {
   value: unknown;
-  argSpec: { dest: string };
+  argSpec: {dest: string};
 }
 
 /**
@@ -22,10 +22,10 @@ export function getNonDefaultServerArgs(parsedArgs: Args): Args {
    */
   const flatten = (args: Args): Record<string, FlattenedArg> => {
     const argSpecs = getAllArgSpecs();
-    const flattened = [...argSpecs.values()].reduce<Record<string, FlattenedArg>>((acc, argSpec: { dest: string }) => {
+    const flattened = [...argSpecs.values()].reduce<Record<string, FlattenedArg>>((acc, argSpec: {dest: string}) => {
       const value = getPath(args, argSpec.dest);
       if (value !== undefined) {
-        acc[argSpec.dest] = { value, argSpec };
+        acc[argSpec.dest] = {value, argSpec};
       }
       return acc;
     }, {});
@@ -78,7 +78,7 @@ export function getNonDefaultServerArgs(parsedArgs: Args): Args {
     if (!entry) {
       continue;
     }
-    const { value, argSpec } = entry;
+    const {value, argSpec} = entry;
     setPath(result as Record<string, unknown>, argSpec.dest, value);
   }
   return result;

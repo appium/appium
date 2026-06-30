@@ -1,18 +1,18 @@
-import { fs, system, util } from '@appium/support';
-import type { ExtensionType } from '@appium/types';
-import type { SchemaObject } from 'ajv';
-import type { ExtClass, ExtManifest, ExtName, ExtRecord, InstallType } from 'appium/types';
+import {fs, system, util} from '@appium/support';
+import type {ExtensionType} from '@appium/types';
+import type {SchemaObject} from 'ajv';
+import type {ExtClass, ExtManifest, ExtName, ExtRecord, InstallType} from 'appium/types';
 import path from 'node:path';
-import { pathToFileURL } from 'node:url';
-import { satisfies } from 'semver';
-import { commandClasses } from '../cli/extension';
-import type { ExtCommand } from '../cli/extension';
-import type { ExtensionList, ExtensionListData, InstalledExtensionListData } from '../cli/extension-command';
-import { APPIUM_VER } from '../helpers/build';
-import { log } from '../logger';
-import { ALLOWED_SCHEMA_EXTENSIONS, isAllowedSchemaFileExtension, registerSchema } from '../schema/schema';
-import { capitalize, resolveFrom } from '../utils';
-import type { Manifest } from './manifest';
+import {pathToFileURL} from 'node:url';
+import {satisfies} from 'semver';
+import {commandClasses} from '../cli/extension';
+import type {ExtCommand} from '../cli/extension';
+import type {ExtensionList, ExtensionListData, InstalledExtensionListData} from '../cli/extension-command';
+import {APPIUM_VER} from '../helpers/build';
+import {log} from '../logger';
+import {ALLOWED_SCHEMA_EXTENSIONS, isAllowedSchemaFileExtension, registerSchema} from '../schema/schema';
+import {capitalize, resolveFrom} from '../utils';
+import type {Manifest} from './manifest';
 
 const DEFAULT_ENTRY_POINT = 'index.js';
 /**
@@ -51,13 +51,13 @@ export const INSTALL_TYPES = new Set<InstallType>([
   INSTALL_TYPE_DEV,
 ]);
 
-export type ExtManifestProblem = { err: string; val: unknown };
+export type ExtManifestProblem = {err: string; val: unknown};
 
 export type ExtManifestWithSchema<E extends ExtensionType> = ExtManifest<E> & {
   schema: NonNullable<ExtManifest<E>['schema']>;
 };
 
-export type ExtensionConfigMutationOpts = { write?: boolean };
+export type ExtensionConfigMutationOpts = {write?: boolean};
 
 /**
  * Shared configuration and validation for installed Appium extensions (drivers or plugins).
@@ -105,7 +105,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     extName: string,
     extManifest: ExtManifestWithSchema<E>,
   ): Promise<SchemaObject | undefined> {
-    const { pkgName, schema: argSchemaPath } = extManifest;
+    const {pkgName, schema: argSchemaPath} = extManifest;
     if (!argSchemaPath) {
       throw new TypeError(
         `No \`schema\` property found in config for ${extType} ${pkgName} -- why is this function being called?`,
@@ -163,7 +163,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
   getValidationResultSummaries(
     errorMap: Map<string, ExtManifestProblem[]> = new Map(),
     warningMap: Map<string, string[]> = new Map(),
-  ): { errorSummaries: string[]; warningSummaries: string[] } {
+  ): {errorSummaries: string[]; warningSummaries: string[]} {
     const errorSummaries: string[] = [];
     for (const [extName, problems] of errorMap.entries()) {
       if (util.isEmpty(problems)) {
@@ -190,7 +190,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
       }
     }
 
-    return { errorSummaries, warningSummaries };
+    return {errorSummaries, warningSummaries};
   }
 
   /**
@@ -204,7 +204,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
   async addExtension(
     extName: string,
     extManifest: ExtManifest<ExtType>,
-    { write = true }: ExtensionConfigMutationOpts = {},
+    {write = true}: ExtensionConfigMutationOpts = {},
   ): Promise<void> {
     this.manifest.setExtension(this.extensionType, extName, extManifest);
     if (write) {
@@ -223,7 +223,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
   async updateExtension(
     extName: ExtName<ExtType>,
     extManifest: ExtManifest<ExtType>,
-    { write = true }: ExtensionConfigMutationOpts = {},
+    {write = true}: ExtensionConfigMutationOpts = {},
   ): Promise<void> {
     const existing = this.installedExtensions[extName];
     this.manifest.setExtension(this.extensionType, extName as string, {
@@ -242,7 +242,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
    *
    * Pass `{ write: false }` to defer flushing until a later manifest write.
    */
-  async removeExtension(extName: ExtName<ExtType>, { write = true }: ExtensionConfigMutationOpts = {}): Promise<void> {
+  async removeExtension(extName: ExtName<ExtType>, {write = true}: ExtensionConfigMutationOpts = {}): Promise<void> {
     this.manifest.deleteExtension(this.extensionType, extName);
     if (write) {
       await this.manifest.write();
@@ -347,7 +347,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
       warningMap.set(extName, warnings);
     }
 
-    const { errorSummaries, warningSummaries } = this.getValidationResultSummaries(errorMap, warningMap);
+    const {errorSummaries, warningSummaries} = this.getValidationResultSummaries(errorMap, warningMap);
 
     if (!util.isEmpty(errorSummaries)) {
       log.error(
@@ -384,8 +384,8 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
       return this.#listDataCache;
     }
     const CommandClass = commandClasses[this.extensionType] as ExtCommand<ExtType>;
-    const cmd = new CommandClass({ config: this, json: true });
-    const listData = await cmd.list({ showInstalled: true, showUpdates: true });
+    const cmd = new CommandClass({config: this, json: true});
+    const listData = await cmd.list({showInstalled: true, showUpdates: true});
     this.#listDataCache = listData;
     return listData;
   }
@@ -394,7 +394,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
    * Warnings about manifest install fields and Appium peer dependency compatibility for one extension.
    */
   protected async getGenericConfigWarnings(extManifest: ExtManifest<ExtType>, extName: string): Promise<string[]> {
-    const { appiumVersion, installSpec, installType, pkgName } = extManifest;
+    const {appiumVersion, installSpec, installType, pkgName} = extManifest;
     const warnings: string[] = [];
 
     const invalidFields: string[] = [];
@@ -426,7 +426,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
       const listData = await this.getListData();
       const extListData = listData[extName] as ExtensionListData<ExtType> | undefined;
       if (extListData?.installed) {
-        const { updateVersion, upToDate } = extListData;
+        const {updateVersion, upToDate} = extListData;
         if (!upToDate && updateVersion) {
           warnings.push(
             createPeerWarning(
@@ -466,7 +466,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
   /** Validates and registers extension CLI/config schema when the manifest defines a `schema` field. */
   protected async getSchemaProblems(extManifest: ExtManifest<ExtType>, extName: string): Promise<ExtManifestProblem[]> {
     const problems: ExtManifestProblem[] = [];
-    const { schema: argSchemaPath } = extManifest;
+    const {schema: argSchemaPath} = extManifest;
     if (ExtensionConfig.extDataHasSchema(extManifest)) {
       if (typeof argSchemaPath === 'string') {
         if (isAllowedSchemaFileExtension(argSchemaPath)) {
@@ -506,7 +506,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
   /** Blocking issues for required manifest fields shared by all extensions (version, package name, main class). */
   protected getGenericConfigProblems(extManifest: ExtManifest<ExtType>, extName: string): ExtManifestProblem[] {
     void extName;
-    const { version, pkgName, mainClass } = extManifest;
+    const {version, pkgName, mainClass} = extManifest;
     const problems: ExtManifestProblem[] = [];
 
     if (typeof version !== 'string') {
@@ -541,7 +541,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
   }
 
   private async _resolveExtension(extName: ExtName<ExtType>): Promise<[string, string]> {
-    const { mainClass } = this.installedExtensions[extName];
+    const {mainClass} = this.installedExtensions[extName];
     const moduleRoot = this.getInstallPath(extName);
     const packageJsonPath = path.join(moduleRoot, 'package.json');
     let extensionManifest: Record<string, any>;
@@ -550,7 +550,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     } catch (e: any) {
       throw new ReferenceError(
         `Could not read the ${this.extensionType} manifest at ${packageJsonPath}: ${e.message}`,
-        { cause: e },
+        {cause: e},
       );
     }
     let entryPointRelativePath: string | undefined;

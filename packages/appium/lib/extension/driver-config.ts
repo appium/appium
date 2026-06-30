@@ -1,11 +1,11 @@
-import { util } from '@appium/support';
-import type { DriverClass, DriverType, StringRecord } from '@appium/types';
-import type { ExtManifest, ExtName, ExtRecord } from 'appium/types';
-import { DRIVER_TYPE } from '../constants';
-import { log } from '../logger';
-import type { ExtManifestProblem } from './extension-config';
-import { ExtensionConfig } from './extension-config';
-import type { Manifest } from './manifest';
+import {util} from '@appium/support';
+import type {DriverClass, DriverType, StringRecord} from '@appium/types';
+import type {ExtManifest, ExtName, ExtRecord} from 'appium/types';
+import {DRIVER_TYPE} from '../constants';
+import {log} from '../logger';
+import type {ExtManifestProblem} from './extension-config';
+import {ExtensionConfig} from './extension-config';
+import type {Manifest} from './manifest';
 
 export type MatchedDriver = {
   driver: DriverClass;
@@ -43,12 +43,12 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
 
   public override extensionDesc(
     driverName: ExtName<DriverType>,
-    { version, automationName }: ExtManifest<DriverType>,
+    {version, automationName}: ExtManifest<DriverType>,
   ): string {
     return `${String(driverName)}@${version} (automationName '${automationName}')`;
   }
 
-  async findMatchingDriver<C extends StringRecord>({ automationName, platformName }: C): Promise<MatchedDriver> {
+  async findMatchingDriver<C extends StringRecord>({automationName, platformName}: C): Promise<MatchedDriver> {
     if (typeof platformName !== 'string') {
       throw new Error('You must include a platformName capability');
     }
@@ -63,7 +63,7 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
     );
 
     try {
-      const { driverName, mainClass, version } = this._getDriverBySupport(automationName, platformName);
+      const {driverName, mainClass, version} = this._getDriverBySupport(automationName, platformName);
       log.info(`The '${driverName}' driver was installed and matched caps.`);
       log.info(`Will require it at ${this.getInstallPath(driverName)}`);
       const driver = await this.requireAsync(driverName as ExtName<DriverType>);
@@ -72,7 +72,7 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
           `Driver '${driverName}' did not export a class with name '${mainClass}'. Contact the author of the driver!`,
         );
       }
-      return { driver, version, driverName };
+      return {driver, version, driverName};
     } catch (err: any) {
       const msg =
         `Could not find a driver for automationName ` +
@@ -80,14 +80,14 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
         `Have you installed a driver that supports those ` +
         `capabilities? Run 'appium driver list --installed' to see. ` +
         `(Lower-level error: ${err.message})`;
-      throw new Error(msg, { cause: err });
+      throw new Error(msg, {cause: err});
     }
   }
 
   protected override getConfigProblems(extManifest: ExtManifest<DriverType>, extName: string): ExtManifestProblem[] {
     void extName;
     const problems: ExtManifestProblem[] = [];
-    const { platformNames, automationName } = extManifest;
+    const {platformNames, automationName} = extManifest;
 
     if (!Array.isArray(platformNames)) {
       problems.push({
@@ -132,15 +132,15 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
   private _getDriverBySupport(
     matchAutomationName: string,
     matchPlatformName: string,
-  ): ExtManifest<DriverType> & { driverName: string } {
+  ): ExtManifest<DriverType> & {driverName: string} {
     const drivers = this.installedExtensions;
     for (const [driverName, driverData] of Object.entries(drivers)) {
-      const { automationName, platformNames } = driverData;
+      const {automationName, platformNames} = driverData;
       const aNameMatches = automationName.toLowerCase() === matchAutomationName.toLowerCase();
       const pNameMatches = platformNames.map((p) => p.toLowerCase()).includes(matchPlatformName.toLowerCase());
 
       if (aNameMatches && pNameMatches) {
-        return { driverName, ...driverData };
+        return {driverName, ...driverData};
       }
 
       if (aNameMatches) {

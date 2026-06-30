@@ -1,5 +1,5 @@
-import { ArgumentTypeError } from 'argparse';
-import { existsSync, readFileSync } from 'node:fs';
+import {ArgumentTypeError} from 'argparse';
+import {existsSync, readFileSync} from 'node:fs';
 
 /**
  * This module provides transformer functions for CLI arguments.
@@ -41,7 +41,7 @@ export const transformers = {
       const msg = loadedFromFile
         ? `The provided value of '${csvOrPath}' must be a valid CSV`
         : `Must be a comma-delimited string, e.g., "foo,bar,baz"`;
-      throw new TypeError(`${msg}. Original error: ${(err as Error).message}`, { cause: err });
+      throw new TypeError(`${msg}. Original error: ${(err as Error).message}`, {cause: err});
     }
   },
 
@@ -64,7 +64,7 @@ export const transformers = {
       return JSON.parse(json);
     } catch (e) {
       const msg = loadedFromFile ? `'${jsonOrPath}' must be a valid JSON` : `The provided value must be a valid JSON`;
-      throw new TypeError(`${msg}. Original error: ${(e as Error).message}`, { cause: e });
+      throw new TypeError(`${msg}. Original error: ${(e as Error).message}`, {cause: e});
     }
   },
 } as const;

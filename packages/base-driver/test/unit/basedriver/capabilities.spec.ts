@@ -1,8 +1,8 @@
-import type { Capabilities, Constraints, W3CCapabilities } from '@appium/types';
-import { BASE_DESIRED_CAP_CONSTRAINTS } from '@appium/types';
-import chai, { expect } from 'chai';
+import type {Capabilities, Constraints, W3CCapabilities} from '@appium/types';
+import {BASE_DESIRED_CAP_CONSTRAINTS} from '@appium/types';
+import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { beforeEach, describe, it } from 'node:test';
+import {beforeEach, describe, it} from 'node:test';
 import {
   APPIUM_VENDOR_PREFIX,
   findNonPrefixedCaps,
@@ -14,7 +14,7 @@ import {
   stripAppiumPrefixes,
   validateCaps,
 } from '../../../lib/basedriver/capabilities';
-import { isW3cCaps } from '../../../lib/helpers/capabilities';
+import {isW3cCaps} from '../../../lib/helpers/capabilities';
 
 chai.use(chaiAsPromised);
 
@@ -36,55 +36,53 @@ describe('caps', function () {
 
     describe('throws errors if constraints are not met', function () {
       it('returns invalid argument error if "present" constraint not met on property', function () {
-        expect(() =>
-          validateCaps({} as Capabilities<{ foo: { presence: true } }>, { foo: { presence: true } }),
-        ).to.throw(/'foo' is required/);
+        expect(() => validateCaps({} as Capabilities<{foo: {presence: true}}>, {foo: {presence: true}})).to.throw(
+          /'foo' is required/,
+        );
       });
 
       it('returns the capability that was passed in if "skipPresenceConstraint" is false', function () {
         expect(
           validateCaps(
-            {} as Capabilities<{ foo: { presence: true } }>,
-            { foo: { presence: true } },
-            { skipPresenceConstraint: true },
+            {} as Capabilities<{foo: {presence: true}}>,
+            {foo: {presence: true}},
+            {skipPresenceConstraint: true},
           ),
         ).to.deep.equal({});
       });
 
       it('returns invalid argument error if "isString" constraint not met on property', function () {
         expect(() =>
-          validateCaps({ foo: 1 } as unknown as Capabilities<{ foo: { isString: true } }>, {
-            foo: { isString: true },
+          validateCaps({foo: 1} as unknown as Capabilities<{foo: {isString: true}}>, {
+            foo: {isString: true},
           }),
         ).to.throw(/'foo' must be of type string/);
       });
 
       it('returns invalid argument error if "isNumber" constraint not met on property', function () {
         expect(() =>
-          validateCaps({ foo: 'bar' } as unknown as Capabilities<{ foo: { isNumber: true } }>, {
-            foo: { isNumber: true },
+          validateCaps({foo: 'bar'} as unknown as Capabilities<{foo: {isNumber: true}}>, {
+            foo: {isNumber: true},
           }),
         ).to.throw(/'foo' must be of type number/);
       });
 
       it('returns invalid argument error if "isBoolean" constraint not met on property', function () {
         expect(() =>
-          validateCaps({ foo: 'bar' } as unknown as Capabilities<{ foo: { isBoolean: true } }>, {
-            foo: { isBoolean: true },
+          validateCaps({foo: 'bar'} as unknown as Capabilities<{foo: {isBoolean: true}}>, {
+            foo: {isBoolean: true},
           }),
         ).to.throw(/'foo' must be of type boolean/);
       });
 
       it('returns invalid argument error if "inclusion" constraint not met on property', function () {
-        expect(() => validateCaps({ foo: '3' }, { foo: { inclusionCaseInsensitive: ['1', '2'] } })).to.throw(
+        expect(() => validateCaps({foo: '3'}, {foo: {inclusionCaseInsensitive: ['1', '2']}})).to.throw(
           /'foo' must be contained/,
         );
       });
 
       it('returns invalid argument error if "inclusionCaseInsensitive" constraint not met on property', function () {
-        expect(() => validateCaps({ foo: 'a' }, { foo: { inclusion: ['A', 'B', 'C'] } })).to.throw(
-          /'foo' must be contained/,
-        );
+        expect(() => validateCaps({foo: 'a'}, {foo: {inclusion: ['A', 'B', 'C']}})).to.throw(/'foo' must be contained/);
       });
     });
 
@@ -97,10 +95,10 @@ describe('caps', function () {
       };
 
       const constraints = {
-        number: { isNumber: true },
-        string: { isString: true },
-        present: { presence: true },
-        notPresent: { presence: false },
+        number: {isNumber: true},
+        string: {isString: true},
+        present: {presence: true},
+        notPresent: {presence: false},
       };
 
       expect(validateCaps(caps as unknown as Capabilities<typeof constraints>, constraints)).to.deep.equal(caps);
@@ -114,11 +112,11 @@ describe('caps', function () {
     });
 
     it('returns a result that matches primary by default (2, 3)', function () {
-      expect(mergeCaps({ hello: 'world' })).to.deep.equal({ hello: 'world' });
+      expect(mergeCaps({hello: 'world'})).to.deep.equal({hello: 'world'});
     });
 
     it('returns invalid argument error if primary and secondary have matching properties (4)', function () {
-      expect(() => mergeCaps({ hello: 'world' }, { hello: 'whirl' })).to.throw(
+      expect(() => mergeCaps({hello: 'world'}, {hello: 'whirl'})).to.throw(
         /property 'hello' should not exist on both primary [\w\W]* and secondary [\w\W]*/,
       );
     });
@@ -154,7 +152,7 @@ describe('caps', function () {
     });
 
     it('sets "requiredCaps" to property named "alwaysMatch" (2)', function () {
-      caps.alwaysMatch = { 'appium:hello': 'world' };
+      caps.alwaysMatch = {'appium:hello': 'world'};
       expect(parseCaps(caps as TestW3CCaps).requiredCaps).to.deep.equal(caps.alwaysMatch);
     });
 
@@ -163,10 +161,8 @@ describe('caps', function () {
     });
 
     it('returns invalid argument error if "requiredCaps" don\'t match "constraints" (2.2)', function () {
-      caps.alwaysMatch = { 'appium:foo': 1 };
-      expect(() => parseCaps(caps as TestW3CCaps, { foo: { isString: true } })).to.throw(
-        /'foo' must be of type string/,
-      );
+      caps.alwaysMatch = {'appium:foo': 1};
+      expect(() => parseCaps(caps as TestW3CCaps, {foo: {isString: true}})).to.throw(/'foo' must be of type string/);
     });
 
     it('sets "allFirstMatchCaps" to property named "firstMatch" (3)', function () {
@@ -187,7 +183,7 @@ describe('caps', function () {
     it('has "validatedFirstMatchCaps" property that is empty by default if no valid firstMatch caps were found (4)', function () {
       expect(
         parseCaps(caps as TestW3CCaps, {
-          foo: { presence: true },
+          foo: {presence: true},
         }).validatedFirstMatchCaps,
       ).to.deep.equal([]);
     });
@@ -200,7 +196,7 @@ describe('caps', function () {
 
       it('returns "null" matchedCaps if nothing matches', function () {
         caps.firstMatch = [{}];
-        expect(parseCaps(caps as TestW3CCaps, { foo: { presence: true } }).matchedCaps).to.equal(null);
+        expect(parseCaps(caps as TestW3CCaps, {foo: {presence: true}}).matchedCaps).to.equal(null);
       });
 
       it(`should return capabilities if presence constraint is matched in at least one of the 'firstMatch' capabilities objects`, function () {
@@ -217,7 +213,7 @@ describe('caps', function () {
         ];
         expect(
           parseCaps(caps as TestW3CCaps, {
-            goodbye: { presence: true },
+            goodbye: {presence: true},
           }).matchedCaps,
         ).to.deep.equal({
           foo: 'bar',
@@ -237,14 +233,14 @@ describe('caps', function () {
             'appium:goodbye': 'world',
           },
         ];
-        expect(parseCaps(caps as TestW3CCaps, { someAttribute: { presence: true } }).matchedCaps).to.equal(null);
+        expect(parseCaps(caps as TestW3CCaps, {someAttribute: {presence: true}}).matchedCaps).to.equal(null);
       });
 
       it('that equals firstMatch if firstMatch contains two objects that pass the provided constraints', function () {
         caps.alwaysMatch = {
           'appium:foo': 'bar',
         };
-        caps.firstMatch = [{ 'appium:foo': 'bar1' }, { 'appium:foo': 'bar2' }];
+        caps.firstMatch = [{'appium:foo': 'bar1'}, {'appium:foo': 'bar2'}];
 
         const constraints = {
           foo: {
@@ -260,7 +256,7 @@ describe('caps', function () {
 
       it('returns no vendor prefix error if the firstMatch[2] does not have it because of no bject', function () {
         caps.alwaysMatch = {};
-        caps.firstMatch = [{ 'appium:foo': 'bar' }, 'foo'];
+        caps.firstMatch = [{'appium:foo': 'bar'}, 'foo'];
         expect(() => parseCaps(caps as TestW3CCaps, {})).to.throw(
           /All non-standard capabilities should have a vendor prefix/,
         );
@@ -269,15 +265,15 @@ describe('caps', function () {
 
     describe('returns a matchedCaps object (6)', function () {
       beforeEach(function () {
-        caps.alwaysMatch = { 'appium:hello': 'world' };
+        caps.alwaysMatch = {'appium:hello': 'world'};
       });
 
       it('which is same as alwaysMatch if firstMatch array is not provided', function () {
-        expect(parseCaps(caps as TestW3CCaps).matchedCaps).to.deep.equal({ hello: 'world' });
+        expect(parseCaps(caps as TestW3CCaps).matchedCaps).to.deep.equal({hello: 'world'});
       });
 
       it('merges caps together', function () {
-        caps.firstMatch = [{ 'appium:foo': 'bar' }];
+        caps.firstMatch = [{'appium:foo': 'bar'}];
         expect(parseCaps(caps as TestW3CCaps).matchedCaps).to.deep.equal({
           hello: 'world',
           foo: 'bar',
@@ -285,7 +281,7 @@ describe('caps', function () {
       });
 
       it('with merged caps', function () {
-        caps.firstMatch = [{ 'appium:hello': 'bar', 'appium:foo': 'foo' }, { 'appium:foo': 'bar' }];
+        caps.firstMatch = [{'appium:hello': 'bar', 'appium:foo': 'foo'}, {'appium:foo': 'bar'}];
         expect(parseCaps(caps as TestW3CCaps).matchedCaps).to.deep.equal({
           hello: 'world',
           foo: 'bar',
@@ -302,43 +298,43 @@ describe('caps', function () {
     it('should return merged caps', function () {
       expect(
         processCapabilities({
-          alwaysMatch: { 'appium:hello': 'world' },
-          firstMatch: [{ 'appium:foo': 'bar' }],
+          alwaysMatch: {'appium:hello': 'world'},
+          firstMatch: [{'appium:foo': 'bar'}],
         } as TestW3CCaps),
-      ).to.deep.equal({ hello: 'world', foo: 'bar' });
+      ).to.deep.equal({hello: 'world', foo: 'bar'});
     });
 
     it('should strip out the "appium:" prefix for non-standard capabilities', function () {
       expect(
         processCapabilities({
-          alwaysMatch: { 'appium:hello': 'world' },
-          firstMatch: [{ 'appium:foo': 'bar' }],
+          alwaysMatch: {'appium:hello': 'world'},
+          firstMatch: [{'appium:foo': 'bar'}],
         } as TestW3CCaps),
-      ).to.deep.equal({ hello: 'world', foo: 'bar' });
+      ).to.deep.equal({hello: 'world', foo: 'bar'});
     });
 
     it('should still accept prefixed caps even if they are standard capabilities (https://www.w3.org/TR/webdriver/#dfn-table-of-standard-capabilities)', function () {
       expect(
         processCapabilities({
-          alwaysMatch: { 'appium:platformName': 'Whatevz' },
-          firstMatch: [{ 'appium:browserName': 'Anything' }],
+          alwaysMatch: {'appium:platformName': 'Whatevz'},
+          firstMatch: [{'appium:browserName': 'Anything'}],
         } as TestW3CCaps),
-      ).to.deep.equal({ platformName: 'Whatevz', browserName: 'Anything' });
+      ).to.deep.equal({platformName: 'Whatevz', browserName: 'Anything'});
     });
 
     it('should prefer standard caps that are non-prefixed to prefixed', function () {
       expect(
         processCapabilities({
-          alwaysMatch: { 'appium:platformName': 'Foo', platformName: 'Bar' },
-          firstMatch: [{ 'appium:browserName': 'FOO', browserName: 'BAR' }],
+          alwaysMatch: {'appium:platformName': 'Foo', platformName: 'Bar'},
+          firstMatch: [{'appium:browserName': 'FOO', browserName: 'BAR'}],
         } as unknown as TestW3CCaps),
-      ).to.deep.equal({ platformName: 'Bar', browserName: 'BAR' });
+      ).to.deep.equal({platformName: 'Bar', browserName: 'BAR'});
     });
     it('should throw exception if duplicates in alwaysMatch and firstMatch', function () {
       expect(() =>
         processCapabilities({
-          alwaysMatch: { platformName: 'Fake', 'appium:fakeCap': 'foobar' },
-          firstMatch: [{ 'appium:platformName': 'bar' }],
+          alwaysMatch: {platformName: 'Fake', 'appium:fakeCap': 'foobar'},
+          firstMatch: [{'appium:platformName': 'bar'}],
         } as TestW3CCaps),
       ).to.throw(/should not exist on both primary/);
     });
@@ -346,8 +342,8 @@ describe('caps', function () {
     it('should not throw an exception if presence constraint is not met on a firstMatch capability', function () {
       const processedCaps = processCapabilities(
         {
-          alwaysMatch: { platformName: 'Fake', 'appium:fakeCap': 'foobar' },
-          firstMatch: [{ 'appium:foo': 'bar' }],
+          alwaysMatch: {platformName: 'Fake', 'appium:fakeCap': 'foobar'},
+          firstMatch: [{'appium:foo': 'bar'}],
         } as TestW3CCaps,
         {
           platformName: {
@@ -368,8 +364,8 @@ describe('caps', function () {
       expect(() =>
         processCapabilities(
           {
-            alwaysMatch: { platformName: 'Fake', 'appium:fakeCap': 'foobar' },
-            firstMatch: [{ 'appium:foo': 'bar' }],
+            alwaysMatch: {platformName: 'Fake', 'appium:fakeCap': 'foobar'},
+            firstMatch: [{'appium:foo': 'bar'}],
           } as TestW3CCaps,
           {
             platformName: {
@@ -387,7 +383,7 @@ describe('caps', function () {
     });
 
     describe('validate Appium constraints', function () {
-      const constraints = { ...BASE_DESIRED_CAP_CONSTRAINTS };
+      const constraints = {...BASE_DESIRED_CAP_CONSTRAINTS};
       const expectedMatchingCaps = {
         platformName: 'Fake',
         automationName: 'Fake',
@@ -424,7 +420,7 @@ describe('caps', function () {
       it('should validate when alwaysMatch and firstMatch[0] have the proper caps when merged together', function () {
         caps = {
           alwaysMatch: Object.fromEntries(Object.entries(matchingCaps).filter(([key]) => key !== 'appium:deviceName')),
-          firstMatch: [{ 'appium:deviceName': 'Fake' }],
+          firstMatch: [{'appium:deviceName': 'Fake'}],
         };
         expect(processCapabilities(caps as TestW3CCaps, constraints)).to.deep.equal(expectedMatchingCaps);
       });
@@ -443,7 +439,7 @@ describe('caps', function () {
       it('should pass if first element in "firstMatch" does validate and second element does not', function () {
         caps = {
           alwaysMatch: {},
-          firstMatch: [matchingCaps, { 'appium:badCaps': 'badCaps' }],
+          firstMatch: [matchingCaps, {'appium:badCaps': 'badCaps'}],
         };
         expect(processCapabilities(caps as TestW3CCaps, constraints)).to.deep.equal(expectedMatchingCaps);
       });
@@ -451,7 +447,7 @@ describe('caps', function () {
       it('should pass if first element in "firstMatch" does not validate and second element does', function () {
         caps = {
           alwaysMatch: {},
-          firstMatch: [{ 'appium:badCaps': 'badCaps' }, matchingCaps],
+          firstMatch: [{'appium:badCaps': 'badCaps'}, matchingCaps],
         };
         expect(processCapabilities(caps as TestW3CCaps, constraints)).to.deep.equal(expectedMatchingCaps);
       });
@@ -478,14 +474,14 @@ describe('caps', function () {
     it('should find alwaysMatch caps with no prefix', function () {
       expect(
         findNonPrefixedCaps({
-          alwaysMatch: { 'non-standard': 'dummy' },
+          alwaysMatch: {'non-standard': 'dummy'},
         } as unknown as TestW3CCaps),
       ).to.eql(['non-standard']);
     });
     it('should not find a standard cap in alwaysMatch', function () {
       expect(
         findNonPrefixedCaps({
-          alwaysMatch: { platformName: 'Any' },
+          alwaysMatch: {platformName: 'Any'},
         } as unknown as TestW3CCaps),
       ).to.eql([]);
     });
@@ -493,7 +489,7 @@ describe('caps', function () {
       expect(
         findNonPrefixedCaps({
           alwaysMatch: {},
-          firstMatch: [{ 'non-standard': 'dummy' }],
+          firstMatch: [{'non-standard': 'dummy'}],
         } as unknown as TestW3CCaps),
       ).to.eql(['non-standard']);
     });
@@ -501,7 +497,7 @@ describe('caps', function () {
       expect(
         findNonPrefixedCaps({
           alwaysMatch: {},
-          firstMatch: [{ platformName: 'Any' }],
+          firstMatch: [{platformName: 'Any'}],
         } as unknown as TestW3CCaps),
       ).to.eql([]);
     });
@@ -509,22 +505,22 @@ describe('caps', function () {
       expect(
         findNonPrefixedCaps({
           alwaysMatch: {},
-          firstMatch: [{}, { 'non-standard': 'dummy' }],
+          firstMatch: [{}, {'non-standard': 'dummy'}],
         } as unknown as TestW3CCaps),
       ).to.eql(['non-standard']);
     });
     it('should remove duplicates from alwaysMatch and firstMatch', function () {
       expect(
         findNonPrefixedCaps({
-          alwaysMatch: { 'non-standard': 'something' },
-          firstMatch: [{ 'non-standard': 'dummy' }],
+          alwaysMatch: {'non-standard': 'something'},
+          firstMatch: [{'non-standard': 'dummy'}],
         } as unknown as TestW3CCaps),
       ).to.eql(['non-standard']);
     });
     it('should remove duplicates from firstMatch', function () {
       expect(
         findNonPrefixedCaps({
-          firstMatch: [{ 'non-standard': 'dummy' }, { 'non-standard': 'dummy 2' }],
+          firstMatch: [{'non-standard': 'dummy'}, {'non-standard': 'dummy 2'}],
         } as unknown as TestW3CCaps),
       ).to.eql(['non-standard']);
     });
@@ -547,7 +543,7 @@ describe('caps', function () {
           browserVersion: 'whateva',
         },
       ];
-      expect(findNonPrefixedCaps({ alwaysMatch, firstMatch } as unknown as TestW3CCaps)).to.eql([
+      expect(findNonPrefixedCaps({alwaysMatch, firstMatch} as unknown as TestW3CCaps)).to.eql([
         'nonStandardOne',
         'nonStandardTwo',
         'nonStandardThree',
@@ -573,7 +569,7 @@ describe('caps', function () {
     it('should do nothing to caps that dont include the options', function () {
       expect(
         promoteAppiumOptions({
-          alwaysMatch: { ...standardCaps, ...appiumCaps },
+          alwaysMatch: {...standardCaps, ...appiumCaps},
         } as unknown as TestW3CCaps),
       ).to.eql({
         alwaysMatch: {
@@ -587,7 +583,7 @@ describe('caps', function () {
         promoteAppiumOptions({
           alwaysMatch: {
             ...standardCaps,
-            [PREFIXED_APPIUM_OPTS_CAP]: { ...nonPrefixedAppiumCaps },
+            [PREFIXED_APPIUM_OPTS_CAP]: {...nonPrefixedAppiumCaps},
           },
         } as unknown as TestW3CCaps),
       ).to.eql({
@@ -604,7 +600,7 @@ describe('caps', function () {
           firstMatch: [
             {
               ...standardCaps,
-              [PREFIXED_APPIUM_OPTS_CAP]: { ...nonPrefixedAppiumCaps },
+              [PREFIXED_APPIUM_OPTS_CAP]: {...nonPrefixedAppiumCaps},
             },
           ],
         } as unknown as TestW3CCaps),
@@ -624,7 +620,7 @@ describe('caps', function () {
           alwaysMatch: {
             ...standardCaps,
             'appium:foo': 'bar',
-            [PREFIXED_APPIUM_OPTS_CAP]: { ...nonPrefixedAppiumCaps, foo: 'baz' },
+            [PREFIXED_APPIUM_OPTS_CAP]: {...nonPrefixedAppiumCaps, foo: 'baz'},
           },
         } as unknown as TestW3CCaps),
       ).to.eql({
@@ -644,14 +640,14 @@ describe('caps', function () {
         undefined,
         [],
         {},
-        { firstMatch: null },
-        { firtMatch: [{}] },
-        { alwaysMatch: null },
-        { firstMatch: [{}], alwaysMatch: null },
-        { firstMatch: [], alwaysMatch: {} },
-        { firstMatch: [] },
-        { firstMatch: {} },
-        { alwaysMatch: [] },
+        {firstMatch: null},
+        {firtMatch: [{}]},
+        {alwaysMatch: null},
+        {firstMatch: [{}], alwaysMatch: null},
+        {firstMatch: [], alwaysMatch: {}},
+        {firstMatch: []},
+        {firstMatch: {}},
+        {alwaysMatch: []},
       ] as any[]) {
         expect(isW3cCaps(invalidCaps)).to.be.false;
       }
@@ -659,10 +655,10 @@ describe('caps', function () {
 
     it('should accept valid W3C capabilities', function () {
       for (const validCaps of [
-        { firstMatch: [{}] },
-        { firstMatch: [{}], alaysMatch: {} },
-        { firtMatch: [{}], alwaysMatch: {} },
-        { alwaysMatch: {} },
+        {firstMatch: [{}]},
+        {firstMatch: [{}], alaysMatch: {}},
+        {firtMatch: [{}], alwaysMatch: {}},
+        {alwaysMatch: {}},
       ] as any[]) {
         expect(isW3cCaps(validCaps)).to.be.true;
       }

@@ -1,12 +1,12 @@
-import type { MatchingOptions, OccurrenceOptions, SimilarityOptions } from '@appium/opencv';
-import { util } from '@appium/support';
-import type { ActionSequence, Element, ExternalDriver, MethodMap } from '@appium/types';
-import { errors } from 'appium/driver';
-import { BasePlugin } from 'appium/plugin';
-import { compareImages } from './compare';
-import { IMAGE_ELEMENT_PREFIX, IMAGE_STRATEGY } from './constants';
-import { ImageElementFinder } from './finder';
-import { ImageElement } from './image-element';
+import type {MatchingOptions, OccurrenceOptions, SimilarityOptions} from '@appium/opencv';
+import {util} from '@appium/support';
+import type {ActionSequence, Element, ExternalDriver, MethodMap} from '@appium/types';
+import {errors} from 'appium/driver';
+import {BasePlugin} from 'appium/plugin';
+import {compareImages} from './compare';
+import {IMAGE_ELEMENT_PREFIX, IMAGE_STRATEGY} from './constants';
+import {ImageElementFinder} from './finder';
+import {ImageElement} from './image-element';
 
 export class ImageElementPlugin extends BasePlugin {
   // this plugin supports a non-standard 'compare images' command
@@ -117,7 +117,7 @@ export class ImageElementPlugin extends BasePlugin {
       return await next();
     }
 
-    return await this.finder.findByImage(Buffer.from(selector, 'base64'), driver, { multiple });
+    return await this.finder.findByImage(Buffer.from(selector, 'base64'), driver, {multiple});
   }
 }
 

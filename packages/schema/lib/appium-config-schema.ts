@@ -1,4 +1,4 @@
-import type { JSONSchema7 } from 'json-schema';
+import type {JSONSchema7} from 'json-schema';
 
 /**
  * The single-source-of-truth of the Appium server configuration.
@@ -149,7 +149,7 @@ export const AppiumConfigJsonSchema = {
           description: 'One or more log filtering rules',
           title: 'log-filters config',
           type: 'array',
-          items: { $ref: '#/$defs/logFilter' },
+          items: {$ref: '#/$defs/logFilter'},
           appiumCliTransformer: 'json',
         },
         'log-level': {
@@ -409,7 +409,7 @@ export const AppiumConfigJsonSchema = {
           },
         },
         {
-          anyOf: [{ $ref: '#/$defs/logFilterText' }, { $ref: '#/$defs/logFilterRegex' }],
+          anyOf: [{$ref: '#/$defs/logFilterText'}, {$ref: '#/$defs/logFilterRegex'}],
         },
       ],
     },

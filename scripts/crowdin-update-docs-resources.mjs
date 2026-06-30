@@ -1,4 +1,4 @@
-import { fs } from '@appium/support';
+import {fs} from '@appium/support';
 import crypto from 'node:crypto';
 import path from 'node:path';
 import {
@@ -46,7 +46,7 @@ function toCrowdinPath(fullPath) {
  * @returns {Promise<number>}
  */
 async function addDirectory(name, parentId) {
-  const { data: directoryData } = await performApiRequest('/directories', {
+  const {data: directoryData} = await performApiRequest('/directories', {
     method: 'POST',
     payload: {
       name,
@@ -63,7 +63,7 @@ async function addDirectory(name, parentId) {
  * @returns {Promise<number>}
  */
 async function addFile(name, storageId, parentDirectoryId) {
-  const { data: fileData } = await performApiRequest('/files', {
+  const {data: fileData} = await performApiRequest('/files', {
     method: 'POST',
     payload: {
       name,
@@ -78,13 +78,13 @@ async function addFile(name, storageId, parentDirectoryId) {
  * @returns {Promise<Record<string, any>[]>}
  */
 async function listFiles() {
-  const { data: filesData } = await performApiRequest('/files', {
+  const {data: filesData} = await performApiRequest('/files', {
     method: 'GET',
     params: {
       limit: MAX_ITEMS_PER_PAGE,
     },
   });
-  return filesData.map(({ data }) => data);
+  return filesData.map(({data}) => data);
 }
 
 /**
@@ -103,7 +103,7 @@ async function deleteFile(fileId) {
  * @return {Promise<Record<string, any>[]>}
  */
 async function listDirectories(parentDirectoryId) {
-  const { data: directoriesData } = await performApiRequest('/directories', {
+  const {data: directoriesData} = await performApiRequest('/directories', {
     method: 'GET',
     params: {
       limit: MAX_ITEMS_PER_PAGE,
@@ -111,7 +111,7 @@ async function listDirectories(parentDirectoryId) {
       recursion: parentDirectoryId ? 10 : undefined,
     },
   });
-  return directoriesData.map(({ data }) => data);
+  return directoriesData.map(({data}) => data);
 }
 
 /**
@@ -121,7 +121,7 @@ async function listDirectories(parentDirectoryId) {
  * @returns {Promise<Record<string, any>>}
  */
 async function addStorage(name, fullPath, contentType) {
-  const { data: storageData } = await performApiRequest('/storages', {
+  const {data: storageData} = await performApiRequest('/storages', {
     method: 'POST',
     headers: {
       'Crowdin-API-FileName': name,
@@ -293,7 +293,7 @@ async function updateMkDocsConfig() {
     throw new Error(`Did not find the MkDocs config at '${matchedFilePath}'`);
   }
   const storageData = await addStorage(encodeURIComponent(CROWIN_MKDOCS_CONFIG), matchedFilePath, MKDOCS_CONTENT_TYPE);
-  const storageMapping = { [matchedFilePath]: storageData.id };
+  const storageMapping = {[matchedFilePath]: storageData.id};
   const existingFilesData = await listFiles();
   const filesMapping = await ensureFileStructure(storageMapping, {}, existingFilesData);
   await updateFiles(filesMapping, storageMapping);

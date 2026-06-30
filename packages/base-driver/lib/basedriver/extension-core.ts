@@ -1,4 +1,4 @@
-import { logger, util } from '@appium/support';
+import {logger, util} from '@appium/support';
 import type {
   AppiumLogger,
   BidiModuleMap,
@@ -8,11 +8,11 @@ import type {
   IpcData,
   StringRecord,
 } from '@appium/types';
-import { EventEmitter } from 'node:events';
-import { MAX_LOG_BODY_LENGTH } from '../constants';
-import { errors } from '../protocol';
-import { BIDI_COMMANDS } from '../protocol/bidi-commands';
-import { generateDriverLogPrefix } from './helpers';
+import {EventEmitter} from 'node:events';
+import {MAX_LOG_BODY_LENGTH} from '../constants';
+import {errors} from '../protocol';
+import {BIDI_COMMANDS} from '../protocol/bidi-commands';
+import {generateDriverLogPrefix} from './helpers';
 
 export class ExtensionCore {
   bidiEventSubs: Record<string, string[]>;
@@ -75,7 +75,7 @@ export class ExtensionCore {
       throw new errors.UnknownCommandError();
     }
 
-    const { command } = this.bidiCommands[moduleName][methodName];
+    const {command} = this.bidiCommands[moduleName][methodName];
     // if the command method isn't part of our spec, also reject
     if (!command) {
       throw new errors.UnknownCommandError();
@@ -97,7 +97,7 @@ export class ExtensionCore {
     const handlerType = next && driver ? 'plugin' : 'driver';
     const [moduleName, methodName] = bidiCmd.split('.');
     this.ensureBidiCommandExists(moduleName, methodName);
-    const { command, params } = this.bidiCommands[moduleName][methodName];
+    const {command, params} = this.bidiCommands[moduleName][methodName];
 
     // TODO improve param parsing and error messages along the lines of what we have in the http
     // handlers
@@ -131,7 +131,7 @@ export class ExtensionCore {
     const finalResponse: BiDiResultData = response === undefined ? {} : (response as BiDiResultData);
     this.log.debug(
       `Responding to bidi command '${bidiCmd}' with ` +
-        `${util.truncateString(JSON.stringify(finalResponse), { length: MAX_LOG_BODY_LENGTH })}`,
+        `${util.truncateString(JSON.stringify(finalResponse), {length: MAX_LOG_BODY_LENGTH})}`,
     );
     return finalResponse;
   }

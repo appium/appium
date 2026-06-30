@@ -1,8 +1,8 @@
-import { expect, use } from 'chai';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { afterEach, beforeEach, describe, it } from 'node:test';
-import { createSandbox } from 'sinon';
-import { timing } from '../../lib';
+import {afterEach, beforeEach, describe, it} from 'node:test';
+import {createSandbox} from 'sinon';
+import {timing} from '../../lib';
 
 use(chaiAsPromised);
 
@@ -21,7 +21,7 @@ describe('timing', function () {
     sandbox.restore();
   });
 
-  describe('bigint', { skip: typeof process.hrtime.bigint !== 'function' }, function () {
+  describe('bigint', {skip: typeof process.hrtime.bigint !== 'function'}, function () {
     beforeEach(function () {
       processMock = sandbox.mock(process.hrtime);
     });

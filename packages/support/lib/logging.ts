@@ -1,5 +1,5 @@
-import globalLog, { type Logger, markSensitive as _markSensitive } from '@appium/logger';
-import type { AppiumLogger, AppiumLoggerContext, AppiumLoggerLevel, AppiumLoggerPrefix } from '@appium/types';
+import globalLog, {type Logger, markSensitive as _markSensitive} from '@appium/logger';
+import type {AppiumLogger, AppiumLoggerContext, AppiumLoggerLevel, AppiumLoggerPrefix} from '@appium/types';
 
 export const LEVELS: readonly AppiumLoggerLevel[] = ['silly', 'verbose', 'debug', 'info', 'http', 'warn', 'error'];
 
@@ -15,7 +15,7 @@ const noop = () => {};
 // mock log object is used in testing mode to silence the output
 const MOCK_LOG = {
   unwrap: () => ({
-    loadSecureValuesPreprocessingRules: () => Promise.resolve({ issues: [], rules: [] }),
+    loadSecureValuesPreprocessingRules: () => Promise.resolve({issues: [], rules: []}),
     level: 'verbose',
     prefix: '',
     log: noop,
@@ -30,7 +30,7 @@ export const log = getLogger();
  * @returns A wrapped Appium logger instance
  */
 export function getLogger(prefix: AppiumLoggerPrefix | null = null): AppiumLogger {
-  const { logger, defaultToVerbose } = _getLogger();
+  const {logger, defaultToVerbose} = _getLogger();
 
   const wrappedLogger = {
     unwrap: () => logger,
@@ -90,11 +90,11 @@ export function getLogger(prefix: AppiumLoggerPrefix | null = null): AppiumLogge
  * in response to the `X-Appium-Is-Sensitive` request header
  * being set to 'true'.
  */
-export function markSensitive<T>(logMessage: T): { [k: string]: T } {
+export function markSensitive<T>(logMessage: T): {[k: string]: T} {
   return _markSensitive(logMessage);
 }
 
-function _getLogger(): { logger: Logger; defaultToVerbose: boolean } {
+function _getLogger(): {logger: Logger; defaultToVerbose: boolean} {
   const testingMode = process.env._TESTING === '1';
   const forceLogMode = process.env._FORCE_LOGS === '1';
   const defaultToVerbose = !globalWithNpmlog._global_npmlog;
@@ -103,7 +103,7 @@ function _getLogger(): { logger: Logger; defaultToVerbose: boolean } {
     globalWithNpmlog._global_npmlog = globalLog;
     logger.maxRecordSize = MAX_LOG_RECORDS_COUNT;
   }
-  return { logger, defaultToVerbose };
+  return {logger, defaultToVerbose};
 }
 
 function getFinalPrefix(prefix: AppiumLoggerPrefix | null | undefined, shouldLogTimestamp = false): string {

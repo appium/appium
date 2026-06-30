@@ -1,8 +1,8 @@
-import { expect, use } from 'chai';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import path from 'node:path';
-import { describe, it } from 'node:test';
-import { fs, node, plist, tempDir } from '../../lib';
+import {describe, it} from 'node:test';
+import {fs, node, plist, tempDir} from '../../lib';
 
 use(chaiAsPromised);
 
@@ -67,11 +67,11 @@ describe('plist', function () {
   });
 
   it('should parse nested data payload returned from plist parser', function () {
-    const innerPayload = plist.createBinaryPlist({ answer: 42 });
-    const outer = plist.createPlist({ payload: innerPayload });
+    const innerPayload = plist.createBinaryPlist({answer: 42});
+    const outer = plist.createPlist({payload: innerPayload});
     const outerParsed = plist.parsePlist(outer as string);
-    const nestedPayload = (outerParsed as { payload: Uint8Array | Buffer | ArrayBuffer }).payload;
+    const nestedPayload = (outerParsed as {payload: Uint8Array | Buffer | ArrayBuffer}).payload;
     const nestedParsed = plist.parsePlist(nestedPayload);
-    expect(nestedParsed).to.deep.equal({ answer: 42 });
+    expect(nestedParsed).to.deep.equal({answer: 42});
   });
 });

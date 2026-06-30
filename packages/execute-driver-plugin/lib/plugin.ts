@@ -1,6 +1,6 @@
-import { timing } from '@appium/support';
-import type { ExternalDriver, MethodMap, NextPluginCallback, PluginCommand } from '@appium/types';
-import { BasePlugin } from 'appium/plugin';
+import {timing} from '@appium/support';
+import type {ExternalDriver, MethodMap, NextPluginCallback, PluginCommand} from '@appium/types';
+import {BasePlugin} from 'appium/plugin';
 import cp from 'node:child_process';
 
 const FEAT_FLAG = 'execute_driver_script';
@@ -12,7 +12,7 @@ export class ExecuteDriverPlugin extends BasePlugin {
     '/session/:sessionId/appium/execute_driver': {
       POST: {
         command: 'executeDriverScript',
-        payloadParams: { required: ['script'], optional: ['type', 'timeout'] },
+        payloadParams: {required: ['script'], optional: ['type', 'timeout']},
       },
     },
   } as const;
@@ -93,7 +93,7 @@ export class ExecuteDriverPlugin extends BasePlugin {
 
         // promise that deals with the result from the child process
         const waitForResult = async () => {
-          const res = await new Promise<{ error?: { message: string }; success?: any }>((resolve) => {
+          const res = await new Promise<{error?: {message: string}; success?: any}>((resolve) => {
             scriptProc.once('message', resolve); // this is node IPC
           });
 
@@ -127,12 +127,12 @@ export class ExecuteDriverPlugin extends BasePlugin {
         // now that the child script is alive, send it the data it needs to start
         // running the driver script
         this.log.info('Sending driver and script data to child');
-        scriptProc.send({ driverOpts, script, timeoutMs });
+        scriptProc.send({driverOpts, script, timeoutMs});
 
         // and set up a race between the response from the child and the timeout
         return await Promise.race([waitForResult(), waitForTimeout()]);
       } catch (err: any) {
-        throw new Error(`Could not execute driver script. Original error was: ${err}`, { cause: err });
+        throw new Error(`Could not execute driver script. Original error was: ${err}`, {cause: err});
       } finally {
         // ensure we always cancel the timeout so that the timeout promise stops
         // spinning and allows this process to die gracefully

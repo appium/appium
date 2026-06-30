@@ -1,12 +1,12 @@
-import type { ActionSequence, Constraints } from '@appium/types';
-import { BaseDriver } from 'appium/driver';
-import { fs, node, util } from 'appium/support';
-import { expect, use } from 'chai';
+import type {ActionSequence, Constraints} from '@appium/types';
+import {BaseDriver} from 'appium/driver';
+import {fs, node, util} from 'appium/support';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import path from 'node:path';
-import { before, describe, it } from 'node:test';
-import { GET_SIMILARITY_MODE, IMAGE_STRATEGY, MATCH_FEATURES_MODE, MATCH_TEMPLATE_MODE } from '../../lib/constants';
-import { ImageElementPlugin } from '../../lib/plugin';
+import {before, describe, it} from 'node:test';
+import {GET_SIMILARITY_MODE, IMAGE_STRATEGY, MATCH_FEATURES_MODE, MATCH_TEMPLATE_MODE} from '../../lib/constants';
+import {ImageElementPlugin} from '../../lib/plugin';
 
 use(chaiAsPromised);
 
@@ -32,7 +32,7 @@ describe('ImageElementPlugin#handle', function () {
     ]);
   });
 
-  describe('compareImages', { timeout: 6000 }, function () {
+  describe('compareImages', {timeout: 6000}, function () {
     it('should compare images via match features mode', async function () {
       const res = await p.compareImages(next, driver as any, MATCH_FEATURES_MODE, testImg1B64, testImg2B64, {});
       expect(res).to.have.property('count');
@@ -80,10 +80,10 @@ describe('ImageElementPlugin#handle', function () {
   });
 
   describe('findElement(s)', function () {
-    (driver as any).settings = { getSettings: () => ({}) };
+    (driver as any).settings = {getSettings: () => ({})};
     (driver as any).isW3CProtocol = () => true;
     (driver as any).getScreenshot = () => testImg2B64;
-    (driver as any).getWindowRect = () => ({ x: 0, y: 0, width: 64, height: 64 });
+    (driver as any).getWindowRect = () => ({x: 0, y: 0, width: 64, height: 64});
     it('should defer execution to regular command if not a find command', async function () {
       const next = async () => true;
       await expect(p.handle(next, driver as any, 'sendKeys')).to.eventually.become(true);
@@ -107,10 +107,10 @@ describe('ImageElementPlugin#handle', function () {
   describe('Element interactions', function () {
     let elId: string;
     before(async function () {
-      (driver as any).settings = { getSettings: () => ({}) };
+      (driver as any).settings = {getSettings: () => ({})};
       (driver as any).isW3CProtocol = () => true;
       (driver as any).getScreenshot = () => testImg2B64;
-      (driver as any).getWindowRect = () => ({ x: 0, y: 0, width: 64, height: 64 });
+      (driver as any).getWindowRect = () => ({x: 0, y: 0, width: 64, height: 64});
       const el = await p.findElement(next, driver as any, IMAGE_STRATEGY, testImg2PartB64);
       elId = util.unwrapElement(el);
     });
@@ -124,12 +124,12 @@ describe('ImageElementPlugin#handle', function () {
         {
           type: 'pointer',
           id: 'mouse',
-          parameters: { pointerType: 'touch' },
+          parameters: {pointerType: 'touch'},
           actions: [
-            { type: 'pointerMove', x: 24, y: 40, duration: 0 },
-            { type: 'pointerDown', button: 0 },
-            { type: 'pause', duration: 125 },
-            { type: 'pointerUp', button: 0 },
+            {type: 'pointerMove', x: 24, y: 40, duration: 0},
+            {type: 'pointerDown', button: 0},
+            {type: 'pause', duration: 125},
+            {type: 'pointerUp', button: 0},
           ],
         },
       ]);
@@ -189,16 +189,16 @@ describe('ImageElementPlugin#handle', function () {
         {
           type: 'pointer',
           id: 'mouse',
-          parameters: { pointerType: 'touch' },
+          parameters: {pointerType: 'touch'},
           actions: [
-            { type: 'pointerMove', x: 0, y: 0, duration: 0, origin: imageEl },
-            { type: 'pointerMove', x: 15, y: 25, duration: 0, origin: imageEl },
+            {type: 'pointerMove', x: 0, y: 0, duration: 0, origin: imageEl},
+            {type: 'pointerMove', x: 15, y: 25, duration: 0, origin: imageEl},
           ],
         },
         {
           type: 'wheel',
           id: 'wheel',
-          actions: [{ type: 'scroll', x: 1, y: 0, deltaX: 1, deltaY: 2, origin: imageEl }],
+          actions: [{type: 'scroll', x: 1, y: 0, deltaX: 1, deltaY: 2, origin: imageEl}],
         },
       ];
       await p.performActions(next, driver as any, actionSequences);
@@ -206,16 +206,16 @@ describe('ImageElementPlugin#handle', function () {
         {
           type: 'pointer',
           id: 'mouse',
-          parameters: { pointerType: 'touch' },
+          parameters: {pointerType: 'touch'},
           actions: [
-            { type: 'pointerMove', x: 24, y: 40, duration: 0 },
-            { type: 'pointerMove', x: 39, y: 65, duration: 0 },
+            {type: 'pointerMove', x: 24, y: 40, duration: 0},
+            {type: 'pointerMove', x: 39, y: 65, duration: 0},
           ],
         },
         {
           type: 'wheel',
           id: 'wheel',
-          actions: [{ type: 'scroll', x: 25, y: 40, deltaX: 1, deltaY: 2 }],
+          actions: [{type: 'scroll', x: 25, y: 40, deltaX: 1, deltaY: 2}],
         },
       ]);
     });
@@ -224,33 +224,33 @@ describe('ImageElementPlugin#handle', function () {
         {
           type: 'pointer',
           id: 'mouse',
-          parameters: { pointerType: 'touch' },
+          parameters: {pointerType: 'touch'},
           actions: [
-            { type: 'pointerMove', x: 1, y: 1, duration: 0 },
-            { type: 'pointerMove', x: 2, y: 2, duration: 10, origin: nativeEl },
-            { type: 'pointerMove', x: 3, y: 3, duration: 20, origin: 'viewport' },
-            { type: 'pointerMove', x: 4, y: 4, duration: 30, origin: 'pointer' },
-            { type: 'pointerDown', button: 0 },
-            { type: 'pause', duration: 125 },
-            { type: 'pointerUp', button: 0 },
+            {type: 'pointerMove', x: 1, y: 1, duration: 0},
+            {type: 'pointerMove', x: 2, y: 2, duration: 10, origin: nativeEl},
+            {type: 'pointerMove', x: 3, y: 3, duration: 20, origin: 'viewport'},
+            {type: 'pointerMove', x: 4, y: 4, duration: 30, origin: 'pointer'},
+            {type: 'pointerDown', button: 0},
+            {type: 'pause', duration: 125},
+            {type: 'pointerUp', button: 0},
           ],
         },
         {
           type: 'wheel',
           id: 'wheel',
           actions: [
-            { type: 'scroll', x: 1, y: 1, deltaX: 1, deltaY: 2 },
-            { type: 'scroll', x: 2, y: 2, deltaX: 2, deltaY: 3, origin: nativeEl },
-            { type: 'scroll', x: 3, y: 3, deltaX: 3, deltaY: 4, origin: 'viewport' },
-            { type: 'scroll', x: 4, y: 4, deltaX: 4, deltaY: 5, origin: 'pointer' },
+            {type: 'scroll', x: 1, y: 1, deltaX: 1, deltaY: 2},
+            {type: 'scroll', x: 2, y: 2, deltaX: 2, deltaY: 3, origin: nativeEl},
+            {type: 'scroll', x: 3, y: 3, deltaX: 3, deltaY: 4, origin: 'viewport'},
+            {type: 'scroll', x: 4, y: 4, deltaX: 4, deltaY: 5, origin: 'pointer'},
           ],
         },
         {
           type: 'key',
           id: 'key',
           actions: [
-            { type: 'keyDown', value: 'a' },
-            { type: 'keyUp', value: 'a' },
+            {type: 'keyDown', value: 'a'},
+            {type: 'keyUp', value: 'a'},
           ],
         },
       ];

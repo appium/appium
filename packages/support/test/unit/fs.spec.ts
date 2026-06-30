@@ -1,17 +1,17 @@
-import { expect, use } from 'chai';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { mkdir, writeFile } from 'node:fs/promises';
+import {mkdir, writeFile} from 'node:fs/promises';
 import path from 'node:path';
-import { after, afterEach, before, beforeEach, describe, it } from 'node:test';
-import { createSandbox } from 'sinon';
-import { exec } from 'teen_process';
-import { fs, system, tempDir } from '../../lib';
+import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
+import {createSandbox} from 'sinon';
+import {exec} from 'teen_process';
+import {fs, system, tempDir} from '../../lib';
 
 use(chaiAsPromised);
 
 const TEST_TIMEOUT = 10000;
 
-describe('fs', { timeout: TEST_TIMEOUT }, function () {
+describe('fs', {timeout: TEST_TIMEOUT}, function () {
   const existingPath = __filename;
   let sandbox: ReturnType<typeof createSandbox>;
 
@@ -111,7 +111,7 @@ describe('fs', { timeout: TEST_TIMEOUT }, function () {
     expect(await fs.exists(newPath)).to.be.false;
   });
 
-  describe('md5()', { timeout: 1200000 }, function () {
+  describe('md5()', {timeout: 1200000}, function () {
     let smallFilePath: string;
     let bigFilePath: string;
     before(async function () {
@@ -153,7 +153,7 @@ describe('fs', { timeout: TEST_TIMEOUT }, function () {
     const stat = await fs.stat(existingPath);
     expect(stat).to.have.property('atime');
   });
-  describe('which()', { skip: system.isWindows() }, function () {
+  describe('which()', {skip: system.isWindows()}, function () {
     it('should find correct executable', async function () {
       const systemNpmPath = (await exec('which', ['npm'])).stdout.trim();
       const npmPath = await fs.which('npm');
@@ -165,7 +165,7 @@ describe('fs', { timeout: TEST_TIMEOUT }, function () {
   });
   it('glob()', async function () {
     const glob = '*.spec.js';
-    const tests = await fs.glob(glob, { cwd: __dirname });
+    const tests = await fs.glob(glob, {cwd: __dirname});
     expect(tests).to.be.an('array');
     expect(tests.length).to.be.above(2);
   });

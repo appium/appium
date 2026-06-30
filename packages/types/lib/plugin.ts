@@ -1,9 +1,9 @@
-import type { AsyncReturnType } from 'type-fest';
-import type { BidiModuleMap, ExecuteMethodMap, MethodMap } from './command-maps';
-import type { DriverCommand, ExternalDriver } from './driver';
-import type { AppiumLogger } from './logger';
-import type { UpdateServerCallback } from './server';
-import type { Class, StringRecord } from './util';
+import type {AsyncReturnType} from 'type-fest';
+import type {BidiModuleMap, ExecuteMethodMap, MethodMap} from './command-maps';
+import type {DriverCommand, ExternalDriver} from './driver';
+import type {AppiumLogger} from './logger';
+import type {UpdateServerCallback} from './server';
+import type {Class, StringRecord} from './util';
 /**
  * The interface describing the constructor and static properties of a Plugin.
  */

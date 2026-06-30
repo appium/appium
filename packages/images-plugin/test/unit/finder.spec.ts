@@ -1,16 +1,16 @@
-import type { Constraints } from '@appium/types';
-import { BaseDriver } from 'appium/driver';
-import { util } from 'appium/support';
-import { expect, use } from 'chai';
+import type {Constraints} from '@appium/types';
+import {BaseDriver} from 'appium/driver';
+import {util} from 'appium/support';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { afterEach, beforeEach, describe, it } from 'node:test';
+import {afterEach, beforeEach, describe, it} from 'node:test';
 import sharp from 'sharp';
-import { createSandbox, type SinonSandbox } from 'sinon';
+import {createSandbox, type SinonSandbox} from 'sinon';
 import * as compareModule from '../../lib/compare';
-import { IMAGE_STRATEGY } from '../../lib/constants';
-import { ImageElementFinder } from '../../lib/finder';
-import { ImageElement } from '../../lib/image-element';
-import { ImageElementPlugin } from '../../lib/plugin';
+import {IMAGE_STRATEGY} from '../../lib/constants';
+import {ImageElementFinder} from '../../lib/finder';
+import {ImageElement} from '../../lib/image-element';
+import {ImageElementPlugin} from '../../lib/plugin';
 
 use(chaiAsPromised);
 
@@ -74,9 +74,9 @@ describe('finding elements by image', function () {
   });
 
   describe('findByImage', function () {
-    const rect = { x: 10, y: 20, width: 30, height: 40 };
+    const rect = {x: 10, y: 20, width: 30, height: 40};
     const score = 0.9;
-    const size = { width: 100, height: 200 };
+    const size = {width: 100, height: 200};
     const screenshot = Buffer.from('iVBORfoo', 'base64');
     const template = Buffer.from('iVBORbar', 'base64');
     let d: PluginDriver;
@@ -89,8 +89,8 @@ describe('finding elements by image', function () {
         y: 0,
         ...size,
       } as any);
-      const screenStub = sandbox.stub(finder, 'getScreenshotForImageFind').returns({ screenshot } as any);
-      return { rectStub, screenStub };
+      const screenStub = sandbox.stub(finder, 'getScreenshotForImageFind').returns({screenshot} as any);
+      return {rectStub, screenStub};
     }
 
     function basicImgElVerify(imgElProto: any, finder: ImageElementFinder) {
@@ -106,32 +106,32 @@ describe('finding elements by image', function () {
       d = new PluginDriver();
       f = new ImageElementFinder();
       compareStub = sandbox.stub(compareModule, 'compareImages');
-      compareStub.resolves({ rect, score });
+      compareStub.resolves({rect, score});
       basicStub(d, f);
     });
 
     it('should find an image element happypath', async function () {
-      const imgElProto = await f.findByImage(template, d as any, { multiple: false });
+      const imgElProto = await f.findByImage(template, d as any, {multiple: false});
       basicImgElVerify(imgElProto, f);
     });
     it('should find image elements happypath', async function () {
-      compareStub.resolves([{ rect, score }]);
-      const els = await f.findByImage(template, d as any, { multiple: true });
+      compareStub.resolves([{rect, score}]);
+      const els = await f.findByImage(template, d as any, {multiple: true});
       expect(els).to.be.an('array').with.length(1);
       basicImgElVerify((els as unknown as ImageElement[])[0], f);
     });
     it('should fail if driver does not support getWindowRect', async function () {
       (d as any).getWindowRect = null;
-      await expect(f.findByImage(template, d as any, { multiple: false })).to.eventually.be.rejectedWith(
+      await expect(f.findByImage(template, d as any, {multiple: false})).to.eventually.be.rejectedWith(
         /driver does not support/,
       );
     });
     it('should fix template size if requested', async function () {
       const newTemplate = 'iVBORbaz';
       const newTemplateBuf = Buffer.from(newTemplate, 'base64');
-      await (d as any).settings.update({ fixImageTemplateSize: true });
+      await (d as any).settings.update({fixImageTemplateSize: true});
       sandbox.stub(f, 'ensureTemplateSize').resolves(newTemplateBuf);
-      const imgElProto = await f.findByImage(template, d as any, { multiple: false });
+      const imgElProto = await f.findByImage(template, d as any, {multiple: false});
       const imgEl = basicImgElVerify(imgElProto, f);
       expect(imgEl!.originalImage).to.eql(newTemplate);
       expect(compareStub.lastCall.args[2]).to.eql(newTemplateBuf);
@@ -140,9 +140,9 @@ describe('finding elements by image', function () {
     it('should fix template size scale if requested', async function () {
       const newTemplate = 'iVBORbaz';
       const newTemplateBuf = Buffer.from(newTemplate, 'base64');
-      await (d as any).settings.update({ fixImageTemplateScale: true });
+      await (d as any).settings.update({fixImageTemplateScale: true});
       sandbox.stub(f, 'fixImageTemplateScale').resolves(newTemplateBuf);
-      const imgElProto = await f.findByImage(template, d as any, { multiple: false });
+      const imgElProto = await f.findByImage(template, d as any, {multiple: false});
       const imgEl = basicImgElVerify(imgElProto, f);
       expect(imgEl!.originalImage).to.eql(newTemplate);
       expect(compareStub.lastCall.args[2]).to.eql(newTemplateBuf);
@@ -152,7 +152,7 @@ describe('finding elements by image', function () {
       // fixImageTemplateScale is always called, but should return the original template
       // when scaling is not requested. We verify this by checking the compareImages call
       // receives the original template, not a modified one.
-      const imgElProto = await f.findByImage(template, d as any, { multiple: false });
+      const imgElProto = await f.findByImage(template, d as any, {multiple: false});
       basicImgElVerify(imgElProto, f);
       // The template passed to compareImages should be the original (or same buffer reference)
       // when fixImageTemplateScale is not requested
@@ -163,20 +163,20 @@ describe('finding elements by image', function () {
 
     it('should throw an error if template match fails', async function () {
       compareStub.rejects(new Error('Cannot find any occurrences'));
-      await expect(f.findByImage(template, d as any, { multiple: false })).to.be.rejectedWith(
+      await expect(f.findByImage(template, d as any, {multiple: false})).to.be.rejectedWith(
         /element could not be located/,
       );
     });
     it('should return empty array for multiple elements if template match fails', async function () {
       compareStub.rejects(new Error('Cannot find any occurrences'));
-      await expect(f.findByImage(template, d as any, { multiple: true })).to.eventually.eql([]);
+      await expect(f.findByImage(template, d as any, {multiple: true})).to.eventually.eql([]);
     });
     it('should respect implicit wait', async function () {
       (d as any).setImplicitWait(10);
       compareStub.resetHistory();
-      compareStub.returns({ rect, score });
+      compareStub.returns({rect, score});
       compareStub.onFirstCall().throws(new Error('Cannot find any occurrences'));
-      const imgElProto = await f.findByImage(template, d as any, { multiple: false });
+      const imgElProto = await f.findByImage(template, d as any, {multiple: false});
       basicImgElVerify(imgElProto, f);
       expect(compareStub.calledTwice).to.be.true;
     });
@@ -201,7 +201,7 @@ describe('finding elements by image', function () {
     });
 
     it('should not fix template size scale if no scale value', async function () {
-      await expect(f.fixImageTemplateScale(basicTemplateBuf, { fixImageTemplateScale: true })).to.eventually.eql(
+      await expect(f.fixImageTemplateScale(basicTemplateBuf, {fixImageTemplateScale: true})).to.eventually.eql(
         basicTemplateBuf,
       );
     });
@@ -291,15 +291,15 @@ describe('finding elements by image', function () {
 
     it('should not resize the template if it is smaller than the screen', async function () {
       const [width, height] = TINY_PNG_DIMS.map((n) => n * 2);
-      await expect(f.ensureTemplateSize(TINY_PNG_BUF, { width, height })).to.eventually.eql(TINY_PNG_BUF);
+      await expect(f.ensureTemplateSize(TINY_PNG_BUF, {width, height})).to.eventually.eql(TINY_PNG_BUF);
     });
     it('should not resize the template if it is the same size as the screen', async function () {
       const [width, height] = TINY_PNG_DIMS;
-      await expect(f.ensureTemplateSize(TINY_PNG_BUF, { width, height })).to.eventually.eql(TINY_PNG_BUF);
+      await expect(f.ensureTemplateSize(TINY_PNG_BUF, {width, height})).to.eventually.eql(TINY_PNG_BUF);
     });
     it('should resize the template if it is bigger than the screen', async function () {
       const [width, height] = TINY_PNG_DIMS.map((n) => n / 2);
-      const newTemplateBuf = await f.ensureTemplateSize(TINY_PNG_BUF, { width, height });
+      const newTemplateBuf = await f.ensureTemplateSize(TINY_PNG_BUF, {width, height});
       expect(newTemplateBuf).to.not.eql(TINY_PNG_BUF);
       expect(newTemplateBuf.length).to.be.below(TINY_PNG_BUF.length);
     });
@@ -324,37 +324,37 @@ describe('finding elements by image', function () {
       ).to.eventually.be.rejectedWith(/driver does not support/);
     });
     it('should not adjust or verify screenshot if asked not to by settings', async function () {
-      await (d as any).settings.update({ fixImageFindScreenshotDims: false });
+      await (d as any).settings.update({fixImageFindScreenshotDims: false});
       const [width, height] = TINY_PNG_DIMS.map((n) => n + 1);
-      const { screenshot, scale } = await f.getScreenshotForImageFind(d as any, { width, height } as any);
+      const {screenshot, scale} = await f.getScreenshotForImageFind(d as any, {width, height} as any);
       expect(screenshot).to.eql(TINY_PNG_BUF);
       expect(scale).to.equal(undefined);
     });
     it('should return screenshot without adjustment if it matches screen size', async function () {
       const [width, height] = TINY_PNG_DIMS;
-      const { screenshot, scale } = await f.getScreenshotForImageFind(d as any, { width, height } as any);
+      const {screenshot, scale} = await f.getScreenshotForImageFind(d as any, {width, height} as any);
       expect(screenshot).to.eql(TINY_PNG_BUF);
       expect(scale).to.equal(undefined);
     });
     it('should return scaled screenshot with same aspect ratio if matching screen aspect ratio', async function () {
       const [width, height] = TINY_PNG_DIMS.map((n) => n * 1.5);
-      const { screenshot, scale } = await f.getScreenshotForImageFind(d as any, { width, height } as any);
+      const {screenshot, scale} = await f.getScreenshotForImageFind(d as any, {width, height} as any);
       expect(screenshot).to.not.eql(TINY_PNG_BUF);
       const screenshotObj = sharp(screenshot);
-      const { width: screenWidth, height: screenHeight } = await screenshotObj.metadata();
+      const {width: screenWidth, height: screenHeight} = await screenshotObj.metadata();
       expect(screenWidth).to.eql(width);
       expect(screenHeight).to.eql(height);
-      expect(scale).to.eql({ xScale: 1.5, yScale: 1.5 });
+      expect(scale).to.eql({xScale: 1.5, yScale: 1.5});
     });
     it('should return scaled screenshot with different aspect ratio if not matching screen aspect ratio', async function () {
       // try first with portrait screen, screen = 8 x 12
       let [width, height] = [TINY_PNG_DIMS[0] * 2, TINY_PNG_DIMS[1] * 3];
-      let expectedScale = { xScale: 2.67, yScale: 4 };
+      let expectedScale = {xScale: 2.67, yScale: 4};
 
-      const { screenshot, scale } = await f.getScreenshotForImageFind(d as any, { width, height } as any);
+      const {screenshot, scale} = await f.getScreenshotForImageFind(d as any, {width, height} as any);
       expect(screenshot).to.not.eql(TINY_PNG_BUF);
       let screenshotObj = sharp(screenshot);
-      let { width: screenWidth, height: screenHeight } = await screenshotObj.metadata();
+      let {width: screenWidth, height: screenHeight} = await screenshotObj.metadata();
       expect(screenWidth).to.eql(width);
       expect(screenHeight).to.eql(height);
       expect(scale!.xScale.toFixed(2)).to.eql(expectedScale.xScale.toString());
@@ -362,15 +362,15 @@ describe('finding elements by image', function () {
 
       // then with landscape screen, screen = 12 x 8
       [width, height] = [TINY_PNG_DIMS[0] * 3, TINY_PNG_DIMS[1] * 2];
-      expectedScale = { xScale: 4, yScale: 2.67 };
+      expectedScale = {xScale: 4, yScale: 2.67};
 
-      const { screenshot: newScreen, scale: newScale } = await f.getScreenshotForImageFind(
+      const {screenshot: newScreen, scale: newScale} = await f.getScreenshotForImageFind(
         d as any,
-        { width, height } as any,
+        {width, height} as any,
       );
       expect(newScreen).to.not.eql(TINY_PNG_BUF);
       screenshotObj = sharp(newScreen);
-      ({ width: screenWidth, height: screenHeight } = await screenshotObj.metadata());
+      ({width: screenWidth, height: screenHeight} = await screenshotObj.metadata());
       expect(screenWidth).to.eql(width);
       expect(screenHeight).to.eql(height);
       expect(newScale!.xScale).to.eql(expectedScale.xScale);
@@ -380,12 +380,12 @@ describe('finding elements by image', function () {
     it('should return scaled screenshot with different aspect ratio if not matching screen aspect ratio with fixImageTemplateScale', async function () {
       // try first with portrait screen, screen = 8 x 12
       let [width, height] = [TINY_PNG_DIMS[0] * 2, TINY_PNG_DIMS[1] * 3];
-      let expectedScale = { xScale: 2.67, yScale: 4 };
+      let expectedScale = {xScale: 2.67, yScale: 4};
 
-      const { screenshot, scale } = await f.getScreenshotForImageFind(d as any, { width, height } as any);
+      const {screenshot, scale} = await f.getScreenshotForImageFind(d as any, {width, height} as any);
       expect(screenshot).to.not.eql(TINY_PNG_BUF);
       let screenshotObj = sharp(screenshot);
-      let { width: screenWidth, height: screenHeight } = await screenshotObj.metadata();
+      let {width: screenWidth, height: screenHeight} = await screenshotObj.metadata();
       expect(screenWidth).to.eql(width);
       expect(screenHeight).to.eql(height);
       expect(scale!.xScale.toFixed(2)).to.eql(expectedScale.xScale.toString());
@@ -401,15 +401,15 @@ describe('finding elements by image', function () {
 
       // then with landscape screen, screen = 12 x 8
       [width, height] = [TINY_PNG_DIMS[0] * 3, TINY_PNG_DIMS[1] * 2];
-      expectedScale = { xScale: 4, yScale: 2.67 };
+      expectedScale = {xScale: 4, yScale: 2.67};
 
-      const { screenshot: newScreen, scale: newScale } = await f.getScreenshotForImageFind(
+      const {screenshot: newScreen, scale: newScale} = await f.getScreenshotForImageFind(
         d as any,
-        { width, height } as any,
+        {width, height} as any,
       );
       expect(newScreen).to.not.eql(TINY_PNG_BUF);
       screenshotObj = sharp(newScreen);
-      ({ width: screenWidth, height: screenHeight } = await screenshotObj.metadata());
+      ({width: screenWidth, height: screenHeight} = await screenshotObj.metadata());
       expect(screenWidth).to.eql(width);
       expect(screenHeight).to.eql(height);
       expect(newScale!.xScale).to.eql(expectedScale.xScale);

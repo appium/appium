@@ -1,15 +1,15 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import path from 'node:path';
-import type { SinonSandbox } from 'sinon';
-import { PKG_HASHFILE_RELATIVE_PATH } from '../../../lib/constants';
-import { rewiremock } from '../../helpers';
-import { initMocks } from './mocks';
-import type { MockAppiumSupport, MockPackageChanged } from './mocks';
+import type {SinonSandbox} from 'sinon';
+import {PKG_HASHFILE_RELATIVE_PATH} from '../../../lib/constants';
+import {rewiremock} from '../../helpers';
+import {initMocks} from './mocks';
+import type {MockAppiumSupport, MockPackageChanged} from './mocks';
 
 type PackageDidChangeFn = (appiumHome?: string) => Promise<boolean>;
 
-const { expect } = chai;
+const {expect} = chai;
 chai.use(chaiAsPromised);
 
 describe('package-changed', function () {
@@ -19,8 +19,8 @@ describe('package-changed', function () {
   let MockAppiumSupport: MockAppiumSupport;
 
   beforeEach(function () {
-    ({ MockPackageChanged, MockAppiumSupport, sandbox } = initMocks());
-    ({ packageDidChange } = rewiremock.proxy(() => require('../../../lib/utils/package-changed'), {
+    ({MockPackageChanged, MockAppiumSupport, sandbox} = initMocks());
+    ({packageDidChange} = rewiremock.proxy(() => require('../../../lib/utils/package-changed'), {
       '../../../lib/utils/is-package-changed': MockPackageChanged,
       '@appium/support': MockAppiumSupport,
     }));

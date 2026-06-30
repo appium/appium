@@ -201,7 +201,7 @@ function mapDescriptorForHost(descriptor: PropertyDescriptor): PropertyDescripto
     mapped.writable = descriptor.writable;
   }
   if ('value' in descriptor) {
-    mapped.value = unwrapIfProxy((descriptor as { value: unknown }).value);
+    mapped.value = unwrapIfProxy((descriptor as {value: unknown}).value);
   }
   if ('get' in descriptor) {
     mapped.get = unwrapIfProxy(descriptor.get) as (() => unknown) | undefined;

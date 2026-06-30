@@ -1,7 +1,7 @@
-import type { NormalizedAppiumConfig } from '@appium/types';
-import betterAjvErrors, { type IOutputError } from '@sidvind/better-ajv-errors';
-import type { ErrorObject } from 'ajv';
-import { getSchema } from './schema';
+import type {NormalizedAppiumConfig} from '@appium/types';
+import betterAjvErrors, {type IOutputError} from '@sidvind/better-ajv-errors';
+import type {ErrorObject} from 'ajv';
+import {getSchema} from './schema';
 
 /**
  * The string should be a raw JSON string.

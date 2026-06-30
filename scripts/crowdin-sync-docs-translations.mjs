@@ -1,7 +1,7 @@
-import { fs, net, tempDir, zip } from '@appium/support';
-import { waitForCondition } from 'asyncbox';
+import {fs, net, tempDir, zip} from '@appium/support';
+import {waitForCondition} from 'asyncbox';
 import _ from 'lodash';
-import { spawn } from 'node:child_process';
+import {spawn} from 'node:child_process';
 import path from 'node:path';
 import {
   CROWIN_MKDOCS_CONFIG,
@@ -34,7 +34,7 @@ const CROWDIN_TO_FS_LANGUAGES_MAP = {
  */
 async function buildTranslations() {
   log.info('Building project translations');
-  const { data: buildData } = await performApiRequest('/translations/builds', {
+  const {data: buildData} = await performApiRequest('/translations/builds', {
     method: 'POST',
   });
   return buildData.id;
@@ -49,7 +49,7 @@ async function downloadTranslations(buildId, dstPath) {
   log.info(`Waiting up to ${BUILD_TIMEOUT_MS / 1000}s for the build #${buildId} to finish`);
   await waitForCondition(
     async () => {
-      const { data: buildData } = await performApiRequest(`/translations/builds/${buildId}`);
+      const {data: buildData} = await performApiRequest(`/translations/builds/${buildId}`);
       switch (buildData.status) {
         case BUILD_STATUS.finished:
           return true;
@@ -65,7 +65,7 @@ async function downloadTranslations(buildId, dstPath) {
       intervalMs: 1000,
     },
   );
-  const { data: downloadData } = await performApiRequest(`/translations/builds/${buildId}/download`);
+  const {data: downloadData} = await performApiRequest(`/translations/builds/${buildId}/download`);
   log.info(`Downloading translations to '${dstPath}'`);
   await net.downloadFile(downloadData.url, dstPath);
 }
@@ -84,7 +84,7 @@ async function syncTranslatedDocuments(srcDir, dstDir) {
   let count = 0;
   for (const relativePath of srcTranslatedDocs) {
     log.info(`Synchronizing '${relativePath}' (${++count} of ${srcTranslatedDocs.length})`);
-    await fs.mv(path.join(srcDir, relativePath), path.join(dstDir, relativePath), { mkdirp: true });
+    await fs.mv(path.join(srcDir, relativePath), path.join(dstDir, relativePath), {mkdirp: true});
   }
 
   const dstDocs = (await walk(dstDir, DOCUMENTS_EXT)).map((p) => path.relative(dstDir, p));
@@ -158,7 +158,7 @@ async function syncTranslatedConfig(srcDir, dstDir, dstLanguage) {
 
 async function main() {
   const buildId = await buildTranslations();
-  const zipPath = await tempDir.path({ prefix: 'translations', suffix: '.zip' });
+  const zipPath = await tempDir.path({prefix: 'translations', suffix: '.zip'});
   try {
     await downloadTranslations(buildId, zipPath);
     const tmpRoot = await tempDir.openDir();

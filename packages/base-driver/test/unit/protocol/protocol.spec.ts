@@ -1,10 +1,10 @@
-import type { InitialOpts } from '@appium/types';
-import chai, { expect } from 'chai';
+import type {InitialOpts} from '@appium/types';
+import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import type { Request } from 'express';
-import { describe, it } from 'node:test';
-import { BaseDriver } from '../../../lib/basedriver/driver';
-import { checkParams, getSessionId } from '../../../lib/protocol/protocol';
+import type {Request} from 'express';
+import {describe, it} from 'node:test';
+import {BaseDriver} from '../../../lib/basedriver/driver';
+import {checkParams, getSessionId} from '../../../lib/protocol/protocol';
 
 chai.use(chaiAsPromised);
 
@@ -14,17 +14,17 @@ describe('Protocol', function () {
     const fakeDriver = new BaseDriver({} as InitialOpts);
 
     it('should pick up the first value as the session id', function () {
-      const req = { params: { sessionId: [sessionId] } } as unknown as Request;
+      const req = {params: {sessionId: [sessionId]}} as unknown as Request;
       expect(getSessionId(fakeDriver as any, req)).to.eql(sessionId);
     });
 
     it('should get session id', function () {
-      const req = { params: { sessionId } } as unknown as Request;
+      const req = {params: {sessionId}} as unknown as Request;
       expect(getSessionId(fakeDriver as any, req)).to.eql(sessionId);
     });
 
     it('should be undefined', function () {
-      const req = { params: { sessionId: undefined } } as unknown as Request;
+      const req = {params: {sessionId: undefined}} as unknown as Request;
       expect(getSessionId(fakeDriver as any, req)).to.eql(undefined);
     });
   });

@@ -1,10 +1,4 @@
-import {
-  errorFromMJSONWPStatusCode,
-  errorFromW3CJsonCode,
-  errors,
-  getResponseForW3CError,
-  isErrorType,
-} from './errors';
+import {errorFromMJSONWPStatusCode, errorFromW3CJsonCode, errors, getResponseForW3CError, isErrorType} from './errors';
 import {
   checkParams,
   CREATE_SESSION_COMMAND,
@@ -18,7 +12,7 @@ import {
   routeConfiguringFunction,
   validateExecuteMethodParams,
 } from './protocol';
-import { ALL_COMMANDS, METHOD_MAP, NO_SESSION_ID_COMMANDS, routeToCommandName } from './routes';
+import {ALL_COMMANDS, METHOD_MAP, NO_SESSION_ID_COMMANDS, routeToCommandName} from './routes';
 
 export {
   ALL_COMMANDS,

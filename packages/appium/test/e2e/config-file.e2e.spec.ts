@@ -1,13 +1,13 @@
-import { system, util } from '@appium/support';
+import {system, util} from '@appium/support';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { readConfigFile } from '../../lib/bootstrap/config-file';
-import { DRIVER_TYPE } from '../../lib/constants';
-import { finalizeSchema, registerSchema, resetSchema } from '../../lib/schema/schema';
+import {readConfigFile} from '../../lib/bootstrap/config-file';
+import {DRIVER_TYPE} from '../../lib/constants';
+import {finalizeSchema, registerSchema, resetSchema} from '../../lib/schema/schema';
 import extSchema from '../fixtures/driver-schema';
-import { resolveFixture } from '../helpers';
+import {resolveFixture} from '../helpers';
 
-const { expect } = chai;
+const {expect} = chai;
 chai.use(chaiAsPromised);
 
 const resolveConfigFixture = (name: string) => resolveFixture('config', name);
@@ -130,8 +130,8 @@ describe('config file behavior', function () {
               config: {
                 server: {
                   logFilters: [
-                    { text: 'foo', replacer: 'bar' },
-                    { pattern: '/foo/', flags: 'i' },
+                    {text: 'foo', replacer: 'bar'},
+                    {pattern: '/foo/', flags: 'i'},
                   ],
                 },
               },
@@ -214,7 +214,7 @@ describe('config file behavior', function () {
                 instancePath: '/server/driver/fake',
                 schemaPath: 'driver-fake.json/additionalProperties',
                 keyword: 'additionalProperties',
-                params: { additionalProperty: 'bubb' },
+                params: {additionalProperty: 'bubb'},
                 message: 'must NOT have additional properties',
                 isIdentifierLocation: true,
               },

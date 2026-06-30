@@ -1,6 +1,6 @@
-import { Buffer } from 'node:buffer';
+import {Buffer} from 'node:buffer';
 import sharp from 'sharp';
-import { OpenCvAutoreleasePool } from './autorelease-pool';
+import {OpenCvAutoreleasePool} from './autorelease-pool';
 import type {
   Match,
   MatchComputationResult,
@@ -113,7 +113,7 @@ export async function getImagesMatches(
 
   const pool = new OpenCvAutoreleasePool();
   try {
-    const { detectorName = 'ORB', visualize = false, goodMatchesFactor, matchFunc = 'BruteForce' } = options;
+    const {detectorName = 'ORB', visualize = false, goodMatchesFactor, matchFunc = 'BruteForce'} = options;
     if (!(detectorName in AVAILABLE_DETECTORS)) {
       throw new Error(
         `'${detectorName}' detector is unknown. ` +
@@ -174,7 +174,7 @@ export async function getImagesMatches(
     }
 
     const extractPoint = (keyPoints: any, indexPropertyName: string) => (match: any) => {
-      const { pt, point } = keyPoints.get(match[indexPropertyName]);
+      const {pt, point} = keyPoints.get(match[indexPropertyName]);
       // https://github.com/justadudewhohacks/opencv4nodejs/issues/584
       return pt || point;
     };
@@ -250,7 +250,7 @@ export async function getImagesSimilarity(
     throw new Error('OpenCV is not initialized.');
   }
 
-  const { method = DEFAULT_MATCHING_METHOD, visualize = false } = options;
+  const {method = DEFAULT_MATCHING_METHOD, visualize = false} = options;
 
   const pool = new OpenCvAutoreleasePool();
   try {
@@ -358,7 +358,7 @@ export async function getImageOccurrence(
     const fullImg = pool.add(fullImgRaw);
     const partialImg = pool.add(partialImgRaw);
     const matched = pool.add(new cv.Mat());
-    const results: Array<{ score: number; rect: Rect; visualization?: Buffer }> = [];
+    const results: Array<{score: number; rect: Rect; visualization?: Buffer}> = [];
     let visualization: Buffer | null = null;
 
     try {
@@ -371,14 +371,14 @@ export async function getImageOccurrence(
           for (let col = 0; col < matched.cols; col++) {
             const score = matched.floatAt(row, col);
             if (score >= threshold) {
-              matches.push({ score, x: col, y: row });
+              matches.push({score, x: col, y: row});
             }
           }
         }
 
         const nearMatches = filterNearMatches(matches, matchNeighbourThreshold);
 
-        for (const { x, y, score } of nearMatches) {
+        for (const {x, y, score} of nearMatches) {
           results.push({
             score,
             rect: {
@@ -390,7 +390,7 @@ export async function getImageOccurrence(
           });
         }
       } else if (minMax.maxVal >= threshold) {
-        const { x, y } = method.includes('SQDIFF') ? minMax.minLoc : minMax.maxLoc;
+        const {x, y} = method.includes('SQDIFF') ? minMax.minLoc : minMax.maxLoc;
         results.push({
           score: minMax.maxVal,
           rect: {
@@ -411,7 +411,7 @@ export async function getImageOccurrence(
       throw new Error(
         `Cannot find any occurrences of the partial image in the full image. ` +
           `Original error: ${e?.message || String(e)}`,
-        { cause: e },
+        {cause: e},
       );
     }
 
@@ -554,9 +554,9 @@ async function cvMatFromImage(img: Buffer): Promise<any> {
   if (!cv) {
     throw new Error('OpenCV is not initialized. Call initOpenCv() first.');
   }
-  const { data, info } = await sharp(img).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
-  const { width, height } = info;
-  return cv.matFromImageData({ data, width, height });
+  const {data, info} = await sharp(img).ensureAlpha().raw().toBuffer({resolveWithObject: true});
+  const {width, height} = info;
+  return cv.matFromImageData({data, width, height});
 }
 
 function filterNearMatches(nonZeroMatchResults: Match[], matchNeighbourThreshold: number): Match[] {
@@ -575,11 +575,4 @@ function distance(point1: Point, point2: Point): number {
 }
 
 // Re-export types for consumers
-export type {
-  MatchingOptions,
-  MatchingResult,
-  OccurrenceOptions,
-  OccurrenceResult,
-  SimilarityOptions,
-  SimilarityResult,
-};
+export type {MatchingOptions, MatchingResult, OccurrenceOptions, OccurrenceResult, SimilarityOptions, SimilarityResult};

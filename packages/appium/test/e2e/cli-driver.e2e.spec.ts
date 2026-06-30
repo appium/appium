@@ -1,10 +1,10 @@
-import { fs, system, tempDir, util } from '@appium/support';
-import type { DriverType } from '@appium/types';
-import type { ExtRecord } from 'appium/types';
+import {fs, system, tempDir, util} from '@appium/support';
+import type {DriverType} from '@appium/types';
+import type {ExtRecord} from 'appium/types';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import path from 'node:path';
-import { exec } from 'teen_process';
+import {exec} from 'teen_process';
 import {
   DRIVER_TYPE,
   EXT_SUBCOMMAND_DOCTOR as DOCTOR,
@@ -14,11 +14,11 @@ import {
   EXT_SUBCOMMAND_UNINSTALL as UNINSTALL,
   KNOWN_DRIVERS,
 } from '../../lib/constants';
-import { omitKeys, resolveFrom } from '../../lib/utils';
-import { FAKE_DRIVER_DIR, resolveFixture } from '../helpers';
-import { installLocalExtension, runAppiumJson, runAppiumRaw } from './e2e-helpers';
+import {omitKeys, resolveFrom} from '../../lib/utils';
+import {FAKE_DRIVER_DIR, resolveFixture} from '../helpers';
+import {installLocalExtension, runAppiumJson, runAppiumRaw} from './e2e-helpers';
 
-const { expect } = chai;
+const {expect} = chai;
 chai.use(chaiAsPromised);
 
 const TEST_DRIVER_DIR = path.dirname(resolveFixture('test-driver/package.json'));
@@ -39,7 +39,7 @@ describe('Driver CLI', function () {
 
   let appiumHome: string;
   let runList: (args?: string[]) => Promise<ExtensionListResult>;
-  let runRun: (args: string[]) => Promise<{ output: string; error?: string }>;
+  let runRun: (args: string[]) => Promise<{output: string; error?: string}>;
   let runInstall: (args: string[]) => Promise<ExtRecord<DriverType>>;
   let runUninstall: (args: string[]) => Promise<ExtRecord<DriverType>>;
   let runDoctor: (args: string[]) => Promise<number>;
@@ -55,7 +55,7 @@ describe('Driver CLI', function () {
     runInstall = (args) => run([DRIVER_TYPE, INSTALL, ...args]) as Promise<ExtRecord<DriverType>>;
     runUninstall = (args) => run([DRIVER_TYPE, UNINSTALL, ...args]) as Promise<ExtRecord<DriverType>>;
     runList = async (args = []) => run([DRIVER_TYPE, LIST, ...args]) as Promise<ExtensionListResult>;
-    runRun = (args) => run([DRIVER_TYPE, RUN, ...args]) as Promise<{ output: string; error?: string }>;
+    runRun = (args) => run([DRIVER_TYPE, RUN, ...args]) as Promise<{output: string; error?: string}>;
     runDoctor = async (args) => run([DRIVER_TYPE, DOCTOR, ...args]) as Promise<number>;
   });
 
@@ -65,7 +65,7 @@ describe('Driver CLI', function () {
 
   describe(LIST, function () {
     it('should list available drivers', async function () {
-      const { stderr } = await runAppiumRaw(appiumHome, [DRIVER_TYPE, LIST], {});
+      const {stderr} = await runAppiumRaw(appiumHome, [DRIVER_TYPE, LIST], {});
       for (const d of Object.keys(KNOWN_DRIVERS)) {
         expect(stderr).to.match(new RegExp(`${d}.+[not installed]`));
       }
@@ -105,9 +105,9 @@ describe('Driver CLI', function () {
       await runInstall([`@appium/fake-driver@${penultimateFakeDriverVersionAsOfRightNow}`, '--source', 'npm']);
       const listResult = (await runList(['--updates'])) as Record<
         string,
-        { updateVersion?: string; unsafeUpdateVersion?: string }
+        {updateVersion?: string; unsafeUpdateVersion?: string}
       >;
-      const { fake } = listResult;
+      const {fake} = listResult;
       const updateVersion = fake?.updateVersion ?? fake?.unsafeUpdateVersion;
       if (!updateVersion) {
         throw new Error(
@@ -115,7 +115,7 @@ describe('Driver CLI', function () {
         );
       }
       expect(util.compareVersions(String(updateVersion), '>', penultimateFakeDriverVersionAsOfRightNow)).to.be.true;
-      const { stderr } = await runAppiumRaw(appiumHome, [DRIVER_TYPE, LIST, '--updates'], {});
+      const {stderr} = await runAppiumRaw(appiumHome, [DRIVER_TYPE, LIST, '--updates'], {});
       expect(stderr).to.match(new RegExp(`fake.+[${updateVersion} available]`));
     });
 

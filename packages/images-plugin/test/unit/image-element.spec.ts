@@ -1,18 +1,18 @@
-import type { Constraints } from '@appium/types';
-import { BaseDriver } from 'appium/driver';
-import { util } from 'appium/support';
-import { expect, use } from 'chai';
+import type {Constraints} from '@appium/types';
+import {BaseDriver} from 'appium/driver';
+import {util} from 'appium/support';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { afterEach, before, beforeEach, describe, it } from 'node:test';
-import { createSandbox, type SinonSandbox } from 'sinon';
-import { IMAGE_ELEMENT_PREFIX } from '../../lib/constants';
-import { ImageElementFinder } from '../../lib/finder';
-import { ImageElement } from '../../lib/image-element';
-import { getImgElFromArgs } from '../../lib/plugin';
+import {afterEach, before, beforeEach, describe, it} from 'node:test';
+import {createSandbox, type SinonSandbox} from 'sinon';
+import {IMAGE_ELEMENT_PREFIX} from '../../lib/constants';
+import {ImageElementFinder} from '../../lib/finder';
+import {ImageElement} from '../../lib/image-element';
+import {getImgElFromArgs} from '../../lib/plugin';
 
 use(chaiAsPromised);
 
-const defRect = { x: 100, y: 110, width: 50, height: 25 };
+const defRect = {x: 100, y: 110, width: 50, height: 25};
 const defTemplate = Buffer.from('iVBORasdf', 'base64');
 
 describe('ImageElement', function () {
@@ -35,7 +35,7 @@ describe('ImageElement', function () {
         rect: defRect,
         score: 1.0,
       });
-      expect(el.size).to.eql({ width: defRect.width, height: defRect.height });
+      expect(el.size).to.eql({width: defRect.width, height: defRect.height});
     });
   });
 
@@ -46,7 +46,7 @@ describe('ImageElement', function () {
         rect: defRect,
         score: 1.0,
       });
-      expect(el.location).to.eql({ x: defRect.x, y: defRect.y });
+      expect(el.location).to.eql({x: defRect.x, y: defRect.y});
     });
   });
 
@@ -93,7 +93,7 @@ describe('ImageElement', function () {
     it('should say two image elements with different rect are not equal', function () {
       const el1 = new ImageElement({
         template: defTemplate,
-        rect: { ...defRect, x: 0 },
+        rect: {...defRect, x: 0},
         score: 1.0,
       });
       const el2 = new ImageElement({
@@ -114,7 +114,7 @@ describe('ImageElement', function () {
         rect: defRect,
         score: 1.0,
       });
-      await d.settings.update({ imageElementTapStrategy: 'bad' });
+      await d.settings.update({imageElementTapStrategy: 'bad'});
       await expect(el.click(d as any)).to.be.rejectedWith(/Incorrect imageElementTapStrategy/);
     });
     it('should try to check for image element staleness, and throw if stale', async function () {
@@ -152,7 +152,7 @@ describe('ImageElement', function () {
         score: 1.0,
         finder: f,
       });
-      const newRect = { ...defRect, x: defRect.x + 10, y: defRect.y + 5 };
+      const newRect = {...defRect, x: defRect.x + 10, y: defRect.y + 5};
       const elPos2 = new ImageElement({
         template: defTemplate,
         rect: newRect,

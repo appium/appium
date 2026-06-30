@@ -1,9 +1,9 @@
-import { expect } from 'chai';
-import { StatusCodes as HTTPStatusCodes } from 'http-status-codes';
+import {expect} from 'chai';
+import {StatusCodes as HTTPStatusCodes} from 'http-status-codes';
 import path from 'node:path';
-import { describe, it } from 'node:test';
-import { errorFromMJSONWPStatusCode, errorFromW3CJsonCode, errors, isErrorType } from '../../../lib';
-import { BadParametersError, getResponseForW3CError } from '../../../lib/protocol/errors';
+import {describe, it} from 'node:test';
+import {errorFromMJSONWPStatusCode, errorFromW3CJsonCode, errors, isErrorType} from '../../../lib';
+import {BadParametersError, getResponseForW3CError} from '../../../lib/protocol/errors';
 
 const basename = path.basename(__filename);
 
@@ -162,7 +162,7 @@ const errorsList: ErrorListItem[] = [
     errorMsg: 'The coordinates provided to an interactions operation are invalid.',
     errorCode: 29,
   },
-  { errorName: 'IMENotAvailableError', errorMsg: 'IME was not available.', errorCode: 30 },
+  {errorName: 'IMENotAvailableError', errorMsg: 'IME was not available.', errorCode: 30},
   {
     errorName: 'IMEEngineActivationFailedError',
     errorMsg: 'An IME engine could not be started.',
@@ -328,7 +328,7 @@ describe('.getResponseForW3CError', function () {
     } catch (e) {
       const [httpStatus, httpResponseBody] = getResponseForW3CError(e as Error);
       expect(httpStatus).to.equal(500);
-      const { error, message, stacktrace } = httpResponseBody.value;
+      const {error, message, stacktrace} = httpResponseBody.value;
       expect(message).to.match(/Some random error/);
       expect(error).to.equal('unknown error');
       expect(stacktrace).to.match(/caused by/);
@@ -340,16 +340,16 @@ describe('.getResponseForW3CError', function () {
     const noSuchElementError = new errors.NoSuchElementError('specific error message');
     const [httpStatus, httpResponseBody] = getResponseForW3CError(noSuchElementError);
     expect(httpStatus).to.equal(404);
-    const { error, message, stacktrace } = httpResponseBody.value;
+    const {error, message, stacktrace} = httpResponseBody.value;
     expect(error).to.equal('no such element');
     expect(message).to.match(/specific error message/);
     expect(stacktrace).to.contain(basename);
   });
   it('should handle BadParametersError', function () {
-    const badParamsError = new BadParametersError({ required: ['foo'] }, ['bar']);
+    const badParamsError = new BadParametersError({required: ['foo']}, ['bar']);
     const [httpStatus, httpResponseBody] = getResponseForW3CError(badParamsError);
     expect(httpStatus).to.equal(400);
-    const { error, message, stacktrace } = httpResponseBody.value;
+    const {error, message, stacktrace} = httpResponseBody.value;
     expect(error).to.equal('invalid argument');
     expect(message).to.match(/foo/);
     expect(message).to.match(/bar/);
@@ -358,7 +358,7 @@ describe('.getResponseForW3CError', function () {
   it('should translate JSONWP errors', function () {
     const [httpStatus, httpResponseBody] = getResponseForW3CError(new errors.NoSuchElementError('My custom message'));
     expect(httpStatus).to.equal(404);
-    const { error, message, stacktrace } = httpResponseBody.value;
+    const {error, message, stacktrace} = httpResponseBody.value;
     expect(message).to.equal('My custom message');
     expect(error).to.equal('no such element');
     expect(stacktrace).to.exist;

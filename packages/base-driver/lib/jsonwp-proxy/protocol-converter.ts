@@ -1,7 +1,7 @@
-import { logger, util } from '@appium/support';
-import type { AppiumLogger, HTTPBody, ProxyResponse } from '@appium/types';
-import { duplicateKeys } from '../basedriver/helpers';
-import { MJSONWP_ELEMENT_KEY, PROTOCOLS, W3C_ELEMENT_KEY } from '../constants';
+import {logger, util} from '@appium/support';
+import type {AppiumLogger, HTTPBody, ProxyResponse} from '@appium/types';
+import {duplicateKeys} from '../basedriver/helpers';
+import {MJSONWP_ELEMENT_KEY, PROTOCOLS, W3C_ELEMENT_KEY} from '../constants';
 
 export type ProxyFunction = (url: string, method: string, body?: HTTPBody) => Promise<[ProxyResponse, HTTPBody]>;
 
@@ -41,7 +41,7 @@ export const COMMAND_URLS_CONFLICTS = [
   },
 ] as const;
 
-const { MJSONWP, W3C } = PROTOCOLS;
+const {MJSONWP, W3C} = PROTOCOLS;
 const DEFAULT_LOG = logger.getLogger('Protocol Converter');
 
 export class ProtocolConverter {
@@ -104,7 +104,7 @@ export class ProtocolConverter {
     }
 
     // Same arguments, but different URLs
-    for (const { commandNames, jsonwpConverter, w3cConverter } of COMMAND_URLS_CONFLICTS) {
+    for (const {commandNames, jsonwpConverter, w3cConverter} of COMMAND_URLS_CONFLICTS) {
       if (!(commandNames as readonly string[]).includes(commandName)) {
         continue;
       }
@@ -191,11 +191,11 @@ export class ProtocolConverter {
       const obj = bodyObj as Record<string, unknown>;
       if (this.downstreamProtocol === W3C && Object.hasOwn(bodyObj, 'name') && !Object.hasOwn(bodyObj, 'handle')) {
         this.log.debug(`Copied 'name' value '${obj.name}' to 'handle' as per W3C spec`);
-        return await this.proxyFunc(url, method, { ...obj, handle: obj.name });
+        return await this.proxyFunc(url, method, {...obj, handle: obj.name});
       }
       if (this.downstreamProtocol === MJSONWP && Object.hasOwn(bodyObj, 'handle') && !Object.hasOwn(bodyObj, 'name')) {
         this.log.debug(`Copied 'handle' value '${obj.handle}' to 'name' as per JSONWP spec`);
-        return await this.proxyFunc(url, method, { ...obj, name: obj.handle });
+        return await this.proxyFunc(url, method, {...obj, name: obj.handle});
       }
     }
     return await this.proxyFunc(url, method, body);
@@ -204,7 +204,7 @@ export class ProtocolConverter {
   private async proxySetValue(url: string, method: string, body: HTTPBody): Promise<[ProxyResponse, HTTPBody]> {
     const bodyObj = util.safeJsonParse(body) as Record<string, unknown> | undefined;
     if (util.isPlainObject(bodyObj) && (util.hasValue(bodyObj?.text) || util.hasValue(bodyObj?.value))) {
-      let { text, value } = bodyObj;
+      let {text, value} = bodyObj;
       if (util.hasValue(text) && !util.hasValue(value)) {
         value = typeof text === 'string' ? [...text] : Array.isArray(text) ? text : [];
         this.log.debug(`Added 'value' property to 'setValue' request body`);
@@ -212,7 +212,7 @@ export class ProtocolConverter {
         text = Array.isArray(value) ? value.join('') : typeof value === 'string' ? value : '';
         this.log.debug(`Added 'text' property to 'setValue' request body`);
       }
-      return await this.proxyFunc(url, method, { ...bodyObj, text, value });
+      return await this.proxyFunc(url, method, {...bodyObj, text, value});
     }
     return await this.proxyFunc(url, method, body);
   }

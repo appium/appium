@@ -1,14 +1,14 @@
-import { pluginE2EHarness } from '@appium/plugin-test-support';
-import { fs, node, tempDir } from '@appium/support';
-import { expect, use } from 'chai';
+import {pluginE2EHarness} from '@appium/plugin-test-support';
+import {fs, node, tempDir} from '@appium/support';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import type { AddressInfo } from 'node:net';
+import type {AddressInfo} from 'node:net';
 import path from 'node:path';
-import { after, afterEach, before, beforeEach, describe, it } from 'node:test';
+import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
 import sharp from 'sharp';
-import { exec } from 'teen_process';
-import { remote as wdio } from 'webdriverio';
-import { GET_SIMILARITY_MODE, MATCH_FEATURES_MODE } from '../../lib/constants';
+import {exec} from 'teen_process';
+import {remote as wdio} from 'webdriverio';
+import {GET_SIMILARITY_MODE, MATCH_FEATURES_MODE} from '../../lib/constants';
 
 use(chaiAsPromised);
 
@@ -35,7 +35,7 @@ const WDIO_OPTS: WebdriverIOConfig = {
 };
 
 describe('ImageElementPlugin', function () {
-  const { setup, teardown } = pluginE2EHarness({
+  const {setup, teardown} = pluginE2EHarness({
     host: TEST_HOST,
     appiumHome: APPIUM_HOME,
     driverName: 'fake',
@@ -51,7 +51,7 @@ describe('ImageElementPlugin', function () {
     // workaround for https://github.com/nodejs/node/issues/64061
     await exec(process.execPath, ['--version']);
 
-    const { server } = await setup();
+    const {server} = await setup();
     const address = server.address();
     WDIO_OPTS.port = (address as AddressInfo).port;
   });
@@ -82,8 +82,8 @@ describe('ImageElementPlugin', function () {
 
   it('should find and interact with image elements', async function () {
     const imageEl = await driver.$(APPSTORE_IMG_PATH);
-    const { x, y } = await imageEl.getLocation();
-    const { width, height } = await imageEl.getSize();
+    const {x, y} = await imageEl.getLocation();
+    const {width, height} = await imageEl.getSize();
     expect(x).to.eql(28);
     expect(y).to.eql(72);
     expect(width).to.eql(80);
@@ -93,12 +93,12 @@ describe('ImageElementPlugin', function () {
     const actionSequence = {
       type: 'pointer',
       id: 'mouse',
-      parameters: { pointerType: 'touch' },
+      parameters: {pointerType: 'touch'},
       actions: [
-        { type: 'pointerMove', x: 0, y: 0, duration: 0, origin: imageEl },
-        { type: 'pointerDown', button: 0 },
-        { type: 'pause', duration: 125 },
-        { type: 'pointerUp', button: 0 },
+        {type: 'pointerMove', x: 0, y: 0, duration: 0, origin: imageEl},
+        {type: 'pointerDown', button: 0},
+        {type: 'pause', duration: 125},
+        {type: 'pointerUp', button: 0},
       ],
     };
     await driver.performActions([actionSequence]);
@@ -106,7 +106,7 @@ describe('ImageElementPlugin', function () {
 
   it('should find subelements', async function () {
     const imageEl = await driver.$(APPSTORE_IMG_PATH);
-    const { width, height } = await imageEl.getSize();
+    const {width, height} = await imageEl.getSize();
     const tmpRoot = await tempDir.openDir();
     try {
       const screenshotPath = path.join(tmpRoot, 'element.png');

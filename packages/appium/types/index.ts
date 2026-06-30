@@ -1,4 +1,4 @@
-import type { DriverClass, DriverType, ExtensionType, PluginClass, PluginType } from '@appium/types';
+import type {DriverClass, DriverType, ExtensionType, PluginClass, PluginType} from '@appium/types';
 
 export * from './cli';
 export * from './manifest';

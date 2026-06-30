@@ -2,18 +2,12 @@
 
 import './logsink'; // must run first: global npmlog / log sink setup (see logsink module)
 import './logger'; // load Appium logger immediately after logsink (order matters for log wiring)
-import { env } from '@appium/support';
-import type { AppiumServer } from '@appium/types';
-import type {
-  Args,
-  CliCommand,
-  CliCommandServer,
-  CliCommandSetupSubcommand,
-  CliExtensionSubcommand,
-} from 'appium/types';
-import { AppiumInitializer } from './bootstrap/appium-initializer';
-import { AppiumMainRunner } from './bootstrap/appium-main-runner';
-import type { ExtCommandInitResult, InitResult, ServerInitData } from './bootstrap/init-types';
+import {env} from '@appium/support';
+import type {AppiumServer} from '@appium/types';
+import type {Args, CliCommand, CliCommandServer, CliCommandSetupSubcommand, CliExtensionSubcommand} from 'appium/types';
+import {AppiumInitializer} from './bootstrap/appium-initializer';
+import {AppiumMainRunner} from './bootstrap/appium-main-runner';
+import type {ExtCommandInitResult, InitResult, ServerInitData} from './bootstrap/init-types';
 
 const initializer = new AppiumInitializer();
 const mainRunner = new AppiumMainRunner();
@@ -53,8 +47,8 @@ if (require.main === module) {
 // Re-export helpers from the same package so `import { … } from 'appium'` stays a supported
 // programmatic API (this file is the package `types` entry). The monorepo does not import these
 // from `'appium'`; consumers use local paths or `@appium/support`. Dropping them is semver-major.
-export { readConfigFile } from './bootstrap/config-file';
-export { finalizeSchema, getSchema, validate } from './schema/schema';
+export {readConfigFile} from './bootstrap/config-file';
+export {finalizeSchema, getSchema, validate} from './schema/schema';
 export const resolveAppiumHome = env.resolveAppiumHome;
 
-export type { ExtCommandInitResult, InitResult, ServerInitData };
+export type {ExtCommandInitResult, InitResult, ServerInitData};

@@ -1,6 +1,6 @@
-import { fs, logger } from '@appium/support';
+import {fs, logger} from '@appium/support';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import {fileURLToPath} from 'node:url';
 
 export const log = logger.getLogger('SYNC-MONOREPO-PACKAGES');
 
@@ -43,7 +43,7 @@ async function writeJson(filepath, data) {
  * @returns {Promise<string[]>} An array of package directory paths.
  */
 async function getPackageDirs() {
-  return (await fs.glob('*/package.json', { cwd: ROOT_PACKAGES_DIR, absolute: true }))
+  return (await fs.glob('*/package.json', {cwd: ROOT_PACKAGES_DIR, absolute: true}))
     .map((pkgJsonPath) => path.dirname(pkgJsonPath))
     .sort();
 }

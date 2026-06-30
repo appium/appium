@@ -1,8 +1,8 @@
-import { util } from '@appium/support';
-import type { NextFunction, Request, Response } from 'express';
-import { LRUCache } from 'lru-cache';
-import { EventEmitter } from 'node:events';
-import { log } from './logger';
+import {util} from '@appium/support';
+import type {NextFunction, Request, Response} from 'express';
+import {LRUCache} from 'lru-cache';
+import {EventEmitter} from 'node:events';
+import {log} from './logger';
 
 interface CachedResponse {
   method: string;
@@ -16,7 +16,7 @@ const IDEMPOTENT_RESPONSES = new LRUCache<string, CachedResponse>({
   ttl: 30 * 60 * 1000,
   updateAgeOnGet: true,
   updateAgeOnHas: true,
-  dispose: ({ responseStateListener }) => {
+  dispose: ({responseStateListener}) => {
     responseStateListener?.removeAllListeners();
   },
 });
@@ -37,7 +37,7 @@ export async function handleIdempotency(req: Request, res: Response, next: NextF
 
   const key = Array.isArray(keyOrArr) ? keyOrArr[0] : keyOrArr;
 
-  log.updateAsyncContext({ idempotencyKey: key });
+  log.updateAsyncContext({idempotencyKey: key});
 
   if (!MONITORED_METHODS.includes(req.method)) {
     next();
@@ -56,7 +56,7 @@ export async function handleIdempotency(req: Request, res: Response, next: NextF
     next();
     return;
   }
-  const { method, path, response, responseStateListener } = cached;
+  const {method, path, response, responseStateListener} = cached;
   if (req.method !== method || req.path !== path) {
     log.warn(`Got two different requests with the same idempotency key '${key}'`);
     log.warn('Is the client generating idempotency keys properly?');

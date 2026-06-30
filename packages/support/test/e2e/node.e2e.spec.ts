@@ -1,7 +1,7 @@
-import { expect, use } from 'chai';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { describe, it } from 'node:test';
-import { node } from '../../lib';
+import {describe, it} from 'node:test';
+import {node} from '../../lib';
 
 use(chaiAsPromised);
 

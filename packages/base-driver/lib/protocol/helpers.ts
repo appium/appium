@@ -1,6 +1,6 @@
-import { util } from '@appium/support';
-import { duplicateKeys } from '../basedriver/helpers';
-import { MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY } from '../constants';
+import {util} from '@appium/support';
+import {duplicateKeys} from '../basedriver/helpers';
+import {MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY} from '../constants';
 
 /**
  * Preprocesses the resulting value for API responses,
@@ -33,7 +33,7 @@ export function ensureW3cResponse(responseBody: Record<string, unknown>): Record
   if (!util.isPlainObject(responseBody)) {
     return responseBody;
   }
-  const result = { ...responseBody };
+  const result = {...responseBody};
   delete result.status;
   delete result.sessionId;
   return result;

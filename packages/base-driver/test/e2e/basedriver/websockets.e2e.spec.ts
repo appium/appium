@@ -1,10 +1,10 @@
-import { getTestPort, TEST_HOST } from '@appium/driver-test-support';
-import chai, { expect } from 'chai';
+import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
+import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { after, before, describe, it } from 'node:test';
+import {after, before, describe, it} from 'node:test';
 import WebSocket from 'ws';
-import { DEFAULT_WS_PATHNAME_PREFIX, routeConfiguringFunction, server } from '../../../lib';
-import { FakeDriver } from '../protocol/fake-driver';
+import {DEFAULT_WS_PATHNAME_PREFIX, routeConfiguringFunction, server} from '../../../lib';
+import {FakeDriver} from '../protocol/fake-driver';
 
 chai.use(chaiAsPromised);
 

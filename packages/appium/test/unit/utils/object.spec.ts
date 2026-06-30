@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+import {expect} from 'chai';
 import {
   bindAll,
   camelCase,
@@ -56,11 +56,11 @@ describe('utils/object', function () {
 
   describe('omitKeys()', function () {
     it('should omit multiple keys from a plain object', function () {
-      expect(omitKeys({ a: 1, b: 2, c: 3 }, ['a', 'c'])).to.eql({ b: 2 });
+      expect(omitKeys({a: 1, b: 2, c: 3}, ['a', 'c'])).to.eql({b: 2});
     });
 
     it('should return the same object when keys is empty', function () {
-      const obj = { a: 1 };
+      const obj = {a: 1};
       expect(omitKeys(obj, [])).to.equal(obj);
     });
 
@@ -71,38 +71,38 @@ describe('utils/object', function () {
 
   describe('pickBy()', function () {
     it('should keep entries that pass the predicate', function () {
-      expect(pickBy({ a: 1, b: '', c: 3 }, (value) => value !== '')).to.eql({ a: 1, c: 3 });
+      expect(pickBy({a: 1, b: '', c: 3}, (value) => value !== '')).to.eql({a: 1, c: 3});
     });
 
     it('should pass key to the predicate', function () {
-      expect(pickBy({ a: 1, b: 2 }, (_value, key) => key === 'a')).to.eql({ a: 1 });
+      expect(pickBy({a: 1, b: 2}, (_value, key) => key === 'a')).to.eql({a: 1});
     });
   });
 
   describe('mapValues()', function () {
     it('should transform values while preserving keys', function () {
-      expect(mapValues({ a: 1, b: 2 }, (v) => v * 2)).to.eql({ a: 2, b: 4 });
+      expect(mapValues({a: 1, b: 2}, (v) => v * 2)).to.eql({a: 2, b: 4});
     });
   });
 
   describe('mapKeys()', function () {
     it('should rename keys while preserving values', function () {
-      expect(mapKeys({ a: 1 }, (_v, key) => `${key}Key`)).to.eql({ aKey: 1 });
+      expect(mapKeys({a: 1}, (_v, key) => `${key}Key`)).to.eql({aKey: 1});
     });
   });
 
   describe('getPath()', function () {
     it('should read nested dot-separated paths', function () {
-      expect(getPath({ a: { b: { c: 3 } } }, 'a.b.c')).to.equal(3);
+      expect(getPath({a: {b: {c: 3}}}, 'a.b.c')).to.equal(3);
     });
 
     it('should return defaultValue when a segment is missing', function () {
-      expect(getPath({ a: 1 }, 'a.b.c', 'default')).to.equal('default');
+      expect(getPath({a: 1}, 'a.b.c', 'default')).to.equal('default');
       expect(getPath(null, 'a', 'default')).to.equal('default');
     });
 
     it('should return defaultValue when the resolved value is undefined', function () {
-      expect(getPath({ a: undefined }, 'a', 'default')).to.equal('default');
+      expect(getPath({a: undefined}, 'a', 'default')).to.equal('default');
     });
 
     it('should read paths with hyphenated property segments', function () {
@@ -110,8 +110,8 @@ describe('utils/object', function () {
         properties: {
           server: {
             properties: {
-              'allow-cors': { appiumCliDest: 'allowCors' },
-              log: { appiumCliDest: 'logFile' },
+              'allow-cors': {appiumCliDest: 'allowCors'},
+              log: {appiumCliDest: 'logFile'},
             },
           },
         },
@@ -125,13 +125,13 @@ describe('utils/object', function () {
     it('should assign nested values and create plain object segments', function () {
       const obj: Record<string, unknown> = {};
       setPath(obj, 'a.b.c', 3);
-      expect(obj).to.eql({ a: { b: { c: 3 } } });
+      expect(obj).to.eql({a: {b: {c: 3}}});
     });
 
     it('should replace non-plain intermediate values with plain objects', function () {
-      const obj: Record<string, unknown> = { a: { b: null } };
+      const obj: Record<string, unknown> = {a: {b: null}};
       setPath(obj, 'a.b.c', 1);
-      expect(obj).to.eql({ a: { b: { c: 1 } } });
+      expect(obj).to.eql({a: {b: {c: 1}}});
     });
 
     it('should no-op on unsafe path segments', function () {
@@ -160,18 +160,18 @@ describe('utils/object', function () {
         },
       };
       const unbound = target.getValue;
-      expect(unbound.call({ value: 99 })).to.equal(99);
+      expect(unbound.call({value: 99})).to.equal(99);
 
       bindAll(target, ['getValue']);
 
       const extracted = target.getValue;
       expect(extracted()).to.equal(1);
-      expect(extracted.call({ value: 99 })).to.equal(1);
+      expect(extracted.call({value: 99})).to.equal(1);
       expect(target.getValue()).to.equal(1);
     });
 
     it('should ignore non-function properties', function () {
-      const target = { a: 1 };
+      const target = {a: 1};
       expect(bindAll(target, ['a'])).to.equal(target);
     });
   });
@@ -215,53 +215,53 @@ describe('utils/object', function () {
   describe('defaultsDeep()', function () {
     it('should fill only undefined properties recursively for plain objects', function () {
       const result = defaultsDeep(
-        { a: 1, nested: { x: 1 } } as Record<string, unknown>,
-        { b: 2, nested: { y: 2, z: 3 } } as Record<string, unknown>,
+        {a: 1, nested: {x: 1}} as Record<string, unknown>,
+        {b: 2, nested: {y: 2, z: 3}} as Record<string, unknown>,
       );
-      expect(result).to.eql({ a: 1, b: 2, nested: { x: 1, y: 2, z: 3 } });
+      expect(result).to.eql({a: 1, b: 2, nested: {x: 1, y: 2, z: 3}});
     });
 
     it('should not overwrite defined nested values with defaults', function () {
       const result = defaultsDeep(
-        { nested: { x: 1, y: 2 } } as Record<string, unknown>,
-        { nested: { x: 9, z: 3 } } as Record<string, unknown>,
+        {nested: {x: 1, y: 2}} as Record<string, unknown>,
+        {nested: {x: 9, z: 3}} as Record<string, unknown>,
       );
-      expect(result).to.eql({ nested: { x: 1, y: 2, z: 3 } });
+      expect(result).to.eql({nested: {x: 1, y: 2, z: 3}});
     });
 
     it('should skip null and undefined sources', function () {
-      expect(defaultsDeep({ a: 1 } as Record<string, unknown>, undefined, { b: 2 } as Record<string, unknown>)).to.eql({
+      expect(defaultsDeep({a: 1} as Record<string, unknown>, undefined, {b: 2} as Record<string, unknown>)).to.eql({
         a: 1,
         b: 2,
       });
       expect(
         defaultsDeep(
-          { a: 1 } as Record<string, unknown>,
+          {a: 1} as Record<string, unknown>,
           null as unknown as Record<string, unknown>,
-          { b: 2 } as Record<string, unknown>,
+          {b: 2} as Record<string, unknown>,
         ),
-      ).to.eql({ a: 1, b: 2 });
+      ).to.eql({a: 1, b: 2});
     });
 
     it('should merge multiple sources in order', function () {
       expect(
         defaultsDeep(
           {} as Record<string, unknown>,
-          { a: 1 } as Record<string, unknown>,
-          { b: 2 } as Record<string, unknown>,
+          {a: 1} as Record<string, unknown>,
+          {b: 2} as Record<string, unknown>,
         ),
-      ).to.eql({ a: 1, b: 2 });
+      ).to.eql({a: 1, b: 2});
     });
 
     it('should not mutate source objects', function () {
-      const source = { nested: { y: 2 } } as Record<string, unknown>;
-      defaultsDeep({ nested: { x: 1 } } as Record<string, unknown>, source);
-      expect(source).to.eql({ nested: { y: 2 } });
+      const source = {nested: {y: 2}} as Record<string, unknown>;
+      defaultsDeep({nested: {x: 1}} as Record<string, unknown>, source);
+      expect(source).to.eql({nested: {y: 2}});
     });
 
     it('should copy functions by reference when filling undefined keys', function () {
       const logHandler = () => {};
-      const result = defaultsDeep({} as Record<string, unknown>, { logHandler } as Record<string, unknown>);
+      const result = defaultsDeep({} as Record<string, unknown>, {logHandler} as Record<string, unknown>);
       expect(result.logHandler).to.equal(logHandler);
     });
 
@@ -269,8 +269,8 @@ describe('utils/object', function () {
       const logHandler = () => {};
       const result = defaultsDeep(
         {} as Record<string, unknown>,
-        { logHandler } as Record<string, unknown>,
-        { port: 4723 } as Record<string, unknown>,
+        {logHandler} as Record<string, unknown>,
+        {port: 4723} as Record<string, unknown>,
       );
       expect(result.logHandler).to.equal(logHandler);
       expect(result.port).to.equal(4723);

@@ -1,18 +1,12 @@
-import type { ServerOpts } from '@appium/base-driver';
-import { util } from '@appium/support';
-import type { AppiumServer } from '@appium/types';
-import type {
-  Args,
-  CliCommand,
-  CliCommandServer,
-  CliCommandSetupSubcommand,
-  CliExtensionSubcommand,
-} from 'appium/types';
+import type {ServerOpts} from '@appium/base-driver';
+import {util} from '@appium/support';
+import type {AppiumServer} from '@appium/types';
+import type {Args, CliCommand, CliCommandServer, CliCommandSetupSubcommand, CliExtensionSubcommand} from 'appium/types';
 import net from 'node:net';
-import { getActiveDrivers, getActivePlugins } from '../extension';
-import { log as logger } from '../logger';
+import {getActiveDrivers, getActivePlugins} from '../extension';
+import {log as logger} from '../logger';
 import registerNode from './grid-v3-register';
-import type { InitResult, ServerInitData } from './init-types';
+import type {InitResult, ServerInitData} from './init-types';
 import {
   buildServerOpts,
   createAppiumServer,
@@ -45,7 +39,7 @@ export class AppiumMainRunner {
       return undefined as Cmd extends CliCommandServer ? AppiumServer : void;
     }
 
-    const { appiumDriver, pluginConfig, driverConfig, parsedArgs, appiumHome } = initResult as ServerInitData;
+    const {appiumDriver, pluginConfig, driverConfig, parsedArgs, appiumHome} = initResult as ServerInitData;
 
     const pluginClasses = await getActivePlugins(
       pluginConfig,
@@ -68,7 +62,7 @@ export class AppiumMainRunner {
       parsedArgs.driversImportChunkSize,
       parsedArgs.useDrivers,
     );
-    const { serverOpts, normalizedBasePath } = buildServerOpts(appiumDriver, parsedArgs, driverClasses, pluginClasses);
+    const {serverOpts, normalizedBasePath} = buildServerOpts(appiumDriver, parsedArgs, driverClasses, pluginClasses);
 
     const server = await this.startHttpServer(serverOpts, appiumDriver, normalizedBasePath);
     if (!server) {

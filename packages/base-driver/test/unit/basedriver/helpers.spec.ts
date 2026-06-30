@@ -1,7 +1,7 @@
-import chai, { expect } from 'chai';
+import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { describe, it } from 'node:test';
-import { duplicateKeys, isPackageOrBundle, parseCapsArray } from '../../../lib/basedriver/helpers';
+import {describe, it} from 'node:test';
+import {duplicateKeys, isPackageOrBundle, parseCapsArray} from '../../../lib/basedriver/helpers';
 
 chai.use(chaiAsPromised);
 
@@ -19,20 +19,20 @@ describe('helpers', function () {
 
   describe('#duplicateKeys', function () {
     it('should translate key in an object', function () {
-      expect(duplicateKeys({ foo: 'hello world' }, 'foo', 'bar')).to.eql({
+      expect(duplicateKeys({foo: 'hello world'}, 'foo', 'bar')).to.eql({
         foo: 'hello world',
         bar: 'hello world',
       });
     });
     it('should translate key in an object within an object', function () {
-      expect(duplicateKeys({ key: { foo: 'hello world' } }, 'foo', 'bar')).to.eql({
-        key: { foo: 'hello world', bar: 'hello world' },
+      expect(duplicateKeys({key: {foo: 'hello world'}}, 'foo', 'bar')).to.eql({
+        key: {foo: 'hello world', bar: 'hello world'},
       });
     });
     it('should translate key in an object with an array', function () {
-      expect(duplicateKeys([{ key: { foo: 'hello world' } }, { foo: 'HELLO WORLD' }], 'foo', 'bar')).to.eql([
-        { key: { foo: 'hello world', bar: 'hello world' } },
-        { foo: 'HELLO WORLD', bar: 'HELLO WORLD' },
+      expect(duplicateKeys([{key: {foo: 'hello world'}}, {foo: 'HELLO WORLD'}], 'foo', 'bar')).to.eql([
+        {key: {foo: 'hello world', bar: 'hello world'}},
+        {foo: 'HELLO WORLD', bar: 'HELLO WORLD'},
       ]);
     });
     it('should duplicate both keys', function () {
@@ -67,7 +67,7 @@ describe('helpers', function () {
     });
     it('should rename keys on big complex objects', function () {
       const input = [
-        { foo: 'bar' },
+        {foo: 'bar'},
         {
           hello: {
             world: {
@@ -81,7 +81,7 @@ describe('helpers', function () {
         0,
       ];
       const expectedOutput = [
-        { foo: 'bar', FOO: 'bar' },
+        {foo: 'bar', FOO: 'bar'},
         {
           hello: {
             world: {

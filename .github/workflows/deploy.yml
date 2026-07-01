@@ -14,13 +14,13 @@ jobs:
     outputs:
       versions: ${{ steps.generate-matrix.outputs.lts }}
     steps:
-    - name: Select all current LTS versions of Node.js
-      id: generate-matrix
-      uses: msimerson/node-lts-versions@v2.0.2
+      - name: Select all current LTS versions of Node.js
+        id: generate-matrix
+        uses: msimerson/node-lts-versions@v2.0.2
 
   check:
     needs:
-    - prepare_matrix
+      - prepare_matrix
     name: Check
     runs-on: ${{ matrix.os }}
     strategy:

@@ -14,15 +14,12 @@
   "sortImports": true,
 
   "ignorePatterns": [
-    "**/node_modules",
-    "**/*-lock.json",
     "**/build/**",
     "**/fixtures/**",
     "**/*.min.*",
     "**/*.md",
     "packages/appium/docs/**",
     "package-lock.json",
-    "package.json",
     "**/.vscode/**",
     "**/*.html",
     "**/generated/**",
@@ -30,6 +27,6 @@
     "packages/types/lib/appium-config.ts",
     "**/*.hbs",
     ".nx/**",
-    "packages/docutils/**/*.{yml,yaml}"
+    "**/*mkdocs.{yml,yaml}"
   ]
 }

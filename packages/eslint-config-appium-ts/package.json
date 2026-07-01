@@ -1,12 +1,12 @@
 {
   "name": "@appium/eslint-config-appium-ts",
-  "type": "module",
   "version": "3.2.3",
+  "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8",
   "description": "Shared ESLint config for Appium projects (TypeScript version)",
   "keywords": [
+    "appium",
     "eslint",
     "eslintconfig",
-    "appium",
     "typescript",
     "typescript-eslint"
   ],
@@ -14,17 +14,21 @@
   "bugs": {
     "url": "https://github.com/appium/appium/issues"
   },
+  "license": "Apache-2.0",
+  "author": "https://github.com/appium",
   "repository": {
     "type": "git",
     "url": "https://github.com/appium/appium.git",
     "directory": "packages/eslint-config-appium-ts"
   },
-  "license": "Apache-2.0",
-  "author": "https://github.com/appium",
-  "exports": "./index.mjs",
   "files": [
     "index.mjs"
   ],
+  "type": "module",
+  "exports": "./index.mjs",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "test:smoke": "exit 0"
   },
@@ -49,9 +53,5 @@
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
     "npm": ">=10"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8"
+  }
 }

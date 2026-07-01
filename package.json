@@ -4,28 +4,31 @@
   "private": true,
   "description": "Automation for Apps.",
   "keywords": [
+    "android",
     "automation",
+    "firefoxos",
+    "ios",
     "javascript",
     "selenium",
-    "webdriver",
-    "ios",
-    "android",
-    "firefoxos",
-    "testing"
+    "testing",
+    "webdriver"
   ],
   "homepage": "https://appium.io",
   "bugs": {
     "url": "https://github.com/appium/appium/issues"
   },
+  "license": "Apache-2.0",
+  "author": "https://github.com/appium",
   "repository": {
     "type": "git",
     "url": "https://github.com/appium/appium.git"
   },
-  "license": "Apache-2.0",
-  "author": "https://github.com/appium",
   "workspaces": [
     "packages/*"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "run-s build:*",
     "build:compile": "tsc -b",
@@ -47,8 +50,8 @@
     "docs:publish": "npm run -w packages/appium publish:docs",
     "doctor": "node ./scripts/doctor-stub.mjs",
     "install-docs-deps": "npm run -w packages/appium install-docs-deps",
-    "format": "oxfmt \"./packages/**/*\" \"./scripts/**/*\"",
-    "format:check": "oxfmt check \"./packages/**/*\" \"./scripts/**/*\"",
+    "format": "oxfmt .",
+    "format:check": "oxfmt --check .",
     "lint": "eslint .",
     "lint:ci": "eslint --quiet .",
     "lint:fix": "run-s \"lint -- --fix\"",
@@ -142,13 +145,6 @@
     "webdriverio": "9.29.0",
     "ws": "8.21.0"
   },
-  "engines": {
-    "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
-    "npm": ">=10"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
   "overrides": {
     "@sidvind/better-ajv-errors": {
       "ajv": "8.20.0"
@@ -157,5 +153,9 @@
       "ajv": "8.20.0"
     },
     "http-cache-semantics": "4.2.0"
+  },
+  "engines": {
+    "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
+    "npm": ">=10"
   }
 }

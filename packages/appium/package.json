@@ -1,29 +1,29 @@
 {
   "name": "appium",
   "version": "3.5.2",
+  "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8",
   "description": "Automation for Apps.",
   "keywords": [
+    "android",
     "automation",
+    "firefoxos",
+    "ios",
     "javascript",
     "selenium",
-    "webdriver",
-    "ios",
-    "android",
-    "firefoxos",
-    "testing"
+    "testing",
+    "webdriver"
   ],
   "homepage": "https://appium.io",
   "bugs": {
     "url": "https://github.com/appium/appium/issues"
   },
+  "license": "Apache-2.0",
+  "author": "https://github.com/appium",
   "repository": {
     "type": "git",
     "url": "https://github.com/appium/appium.git",
     "directory": "packages/appium"
   },
-  "license": "Apache-2.0",
-  "author": "https://github.com/appium",
-  "types": "./build/lib/main.d.ts",
   "bin": {
     "appium": "index.js"
   },
@@ -42,6 +42,10 @@
     "types",
     "tsconfig.json"
   ],
+  "types": "./build/lib/main.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build:docs": "node docs/scripts/build-docs.js",
     "build:docs:preview": "cross-env APPIUM_DOCS_PREVIEW=1 npm run build:docs",
@@ -86,9 +90,5 @@
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
     "npm": ">=10"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8"
+  }
 }

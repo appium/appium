@@ -1,36 +1,40 @@
 {
   "name": "@appium/images-plugin",
   "version": "4.2.7",
+  "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8",
   "description": "Plugin for working with images and image elements in Appium",
   "keywords": [
+    "android",
     "automation",
+    "firefoxos",
+    "ios",
     "javascript",
     "selenium",
-    "webdriver",
-    "ios",
-    "android",
-    "firefoxos",
-    "testing"
+    "testing",
+    "webdriver"
   ],
   "homepage": "https://appium.io",
   "bugs": {
     "url": "https://github.com/appium/appium/issues"
   },
+  "license": "Apache-2.0",
+  "author": "https://github.com/appium",
   "repository": {
     "type": "git",
     "url": "https://github.com/appium/appium.git",
     "directory": "packages/images-plugin"
   },
-  "license": "Apache-2.0",
-  "author": "https://github.com/appium",
-  "main": "./build/lib/index.js",
-  "types": "./build/lib/index.d.ts",
   "files": [
     "build/lib",
     "docs",
     "lib",
     "tsconfig.json"
   ],
+  "main": "./build/lib/index.js",
+  "types": "./build/lib/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "test": "npm run test:unit",
     "test:smoke": "node ./build/lib/index.js",
@@ -53,9 +57,5 @@
   "appium": {
     "pluginName": "images",
     "mainClass": "ImageElementPlugin"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8"
+  }
 }

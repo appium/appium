@@ -7,12 +7,5 @@
   },
   "extends": "@appium/tsconfig/tsconfig.plugin.json",
   "include": ["lib", "test"],
-  "references": [
-    {
-      "path": "../base-plugin"
-    },
-    {"path": "../logger"},
-    {"path": "../support"},
-    {"path": "../types"}
-  ]
+  "references": [{"path": "../base-plugin"}, {"path": "../logger"}, {"path": "../support"}, {"path": "../types"}]
 }

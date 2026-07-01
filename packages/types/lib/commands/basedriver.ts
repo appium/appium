@@ -142,10 +142,7 @@ export interface IExecuteCommands {
    *
    * @returns The result of calling the Execute Method
    */
-  executeMethod<
-    TArgs extends readonly any[] | readonly [StringRecord<unknown>] = unknown[],
-    TReturn = unknown,
-  >(
+  executeMethod<TArgs extends readonly any[] | readonly [StringRecord<unknown>] = unknown[], TReturn = unknown>(
     script: string,
     args: TArgs,
   ): Promise<TReturn>;
@@ -200,11 +197,7 @@ export interface IFindCommands {
    *
    * @returns A possibly-empty list of element objects
    */
-  findElementsFromElement(
-    strategy: string,
-    selector: string,
-    elementId: string,
-  ): Promise<Element[]>;
+  findElementsFromElement(strategy: string, selector: string, elementId: string): Promise<Element[]>;
 
   /**
    * Find an element from a shadow root
@@ -215,11 +208,7 @@ export interface IFindCommands {
    *
    * @returns The element inside the shadow root matching the selector
    */
-  findElementFromShadowRoot?(
-    strategy: string,
-    selector: string,
-    shadowId: string,
-  ): Promise<Element>;
+  findElementFromShadowRoot?(strategy: string, selector: string, shadowId: string): Promise<Element>;
 
   /**
    * Find elements from a shadow root
@@ -230,11 +219,7 @@ export interface IFindCommands {
    *
    * @returns A possibly empty list of elements inside the shadow root matching the selector
    */
-  findElementsFromShadowRoot?(
-    strategy: string,
-    selector: string,
-    shadowId: string,
-  ): Promise<Element[]>;
+  findElementsFromShadowRoot?(strategy: string, selector: string, shadowId: string): Promise<Element[]>;
 
   /**
    * A helper method that returns one or more UI elements based on the search criteria
@@ -260,18 +245,8 @@ export interface IFindCommands {
    *
    * @returns A single element or list of elements
    */
-  findElOrElsWithProcessing(
-    strategy: string,
-    selector: string,
-    mult: true,
-    context?: any,
-  ): Promise<Element[]>;
-  findElOrElsWithProcessing(
-    strategy: string,
-    selector: string,
-    mult: false,
-    context?: any,
-  ): Promise<Element>;
+  findElOrElsWithProcessing(strategy: string, selector: string, mult: true, context?: any): Promise<Element[]>;
+  findElOrElsWithProcessing(strategy: string, selector: string, mult: false, context?: any): Promise<Element>;
 
   /**
    * Get the current page/app source as HTML/XML
@@ -403,10 +378,7 @@ export interface ISessionHandler<
 /**
  * @see {@linkcode ISessionHandler}
  */
-export type DefaultCreateSessionResult<C extends Constraints> = [
-  sessionId: string,
-  capabilities: DriverCaps<C>,
-];
+export type DefaultCreateSessionResult<C extends Constraints> = [sessionId: string, capabilities: DriverCaps<C>];
 
 /**
  * @see {@linkcode ISessionHandler}
@@ -450,10 +422,7 @@ export interface TimestampedMultiSessionData<C extends Constraints = Constraints
  * @typeParam C - The driver's constraints
  * @typeParam T - Any extra data the driver stuffs in here
  */
-export type SessionCapabilities<
-  C extends Constraints = Constraints,
-  T extends StringRecord = StringRecord,
-> = {
+export type SessionCapabilities<C extends Constraints = Constraints, T extends StringRecord = StringRecord> = {
   capabilities: DriverCaps<C>;
 } & T;
 

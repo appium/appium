@@ -1,6 +1,8 @@
-import {expect} from 'chai';
 import {after, before, describe, it} from 'node:test';
-import {getDynamicLogger, restoreWriters, setupWriters, assertOutputContains} from './helpers';
+
+import {expect} from 'chai';
+
+import {assertOutputContains, getDynamicLogger, restoreWriters, setupWriters} from './helpers';
 
 describe('logger with force log', function () {
   let writers: ReturnType<typeof setupWriters>;

@@ -1,7 +1,9 @@
-import {fs, tempDir} from '@appium/support';
 import path from 'node:path';
+
+import {fs, tempDir} from '@appium/support';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+
 import {DRIVER_TYPE} from '../../lib/constants';
 import {resolveFixture} from '../helpers';
 import {installLocalExtension, runAppium} from './e2e-helpers';
@@ -24,11 +26,7 @@ describe('CLI behavior controlled by schema', function () {
     let help: string;
 
     before(async function () {
-      await installLocalExtension(
-        appiumHome,
-        DRIVER_TYPE,
-        path.dirname(resolveFixture('test-driver/package.json')),
-      );
+      await installLocalExtension(appiumHome, DRIVER_TYPE, path.dirname(resolveFixture('test-driver/package.json')));
       help = await runAppium(appiumHome, ['server', '--help']);
     });
 

@@ -123,10 +123,7 @@ export class Doctor {
       manualIssues,
     );
     await handleIssues(
-      [
-        '### Optional Manual Fixes ###',
-        'To fix these optional issues, please do the following manually:',
-      ],
+      ['### Optional Manual Fixes ###', 'To fix these optional issues, please do the following manually:'],
       manualIssuesOptional,
     );
 

@@ -1,24 +1,23 @@
-import {promisify} from 'node:util';
-import * as yauzl from 'yauzl';
-// @ts-ignore - archiver 8.0 types are not available; 7.x types don't match
-import {ZipArchive} from 'archiver';
 import {createWriteStream} from 'node:fs';
 import path from 'node:path';
 import stream from 'node:stream';
 import {text} from 'node:stream/consumers';
 import {pipeline} from 'node:stream/promises';
-import {fs} from './fs';
-import {isWindows} from './system';
-import {createBase64EncodeStream} from './internal';
-import {GiB, memoize, toReadableSizeString} from './util';
-import {Timer} from './timing';
-import log from './logger';
-import {exec} from 'teen_process';
+import {promisify} from 'node:util';
 
-const openZip = promisify(yauzl.open) as (
-  zipPath: string,
-  options?: yauzl.Options,
-) => Promise<yauzl.ZipFile>;
+// @ts-ignore - archiver 8.0 types are not available; 7.x types don't match
+import {ZipArchive} from 'archiver';
+import {exec} from 'teen_process';
+import * as yauzl from 'yauzl';
+
+import {fs} from './fs';
+import {createBase64EncodeStream} from './internal';
+import log from './logger';
+import {isWindows} from './system';
+import {Timer} from './timing';
+import {GiB, memoize, toReadableSizeString} from './util';
+
+const openZip = promisify(yauzl.open) as (zipPath: string, options?: yauzl.Options) => Promise<yauzl.ZipFile>;
 
 const ZIP_MAGIC = 'PK';
 const IFMT = 0b1111000000000000;
@@ -171,11 +170,7 @@ class ZipExtractor {
     const procMode = this.getExtractedMode(mode, isDir) & 0o777;
     // always ensure folders are created
     const destDir = isDir ? dest : path.dirname(dest);
-    const realDestDir = await this.ensureDirWithinRoot(
-      destDir,
-      fileName,
-      isDir ? procMode : undefined,
-    );
+    const realDestDir = await this.ensureDirWithinRoot(destDir, fileName, isDir ? procMode : undefined);
     if (isDir) {
       return;
     }
@@ -185,9 +180,7 @@ class ZipExtractor {
       const link = await text(readStream);
       const resolvedLink = path.resolve(realDestDir, link);
       if (!isContainedPath(resolvedLink, dir)) {
-        throw new Error(
-          `Out of bound symlink target "${link}" found while processing file ${fileName}`,
-        );
+        throw new Error(`Out of bound symlink target "${link}" found while processing file ${fileName}`);
       }
       await fs.symlink(link, dest);
     } else {
@@ -196,11 +189,7 @@ class ZipExtractor {
     }
   }
 
-  private async ensureDirWithinRoot(
-    dirPath: string,
-    fileName: string,
-    mode?: number,
-  ): Promise<string> {
+  private async ensureDirWithinRoot(dirPath: string, fileName: string, mode?: number): Promise<string> {
     const {dir} = this.opts;
     if (!isContainedPath(dirPath, dir)) {
       throw new Error(`Out of bound path "${dirPath}" found while processing file ${fileName}`);
@@ -215,14 +204,9 @@ class ZipExtractor {
     for (const segment of relativePath.split(path.sep)) {
       currentPath = path.join(currentPath, segment);
       try {
-        const [stats, realPath] = await Promise.all([
-          fs.lstat(currentPath),
-          fs.realpath(currentPath),
-        ]);
+        const [stats, realPath] = await Promise.all([fs.lstat(currentPath), fs.realpath(currentPath)]);
         if (!isContainedPath(realPath, dir)) {
-          throw new Error(
-            `Out of bound path "${currentPath}" found while processing file ${fileName}`,
-          );
+          throw new Error(`Out of bound path "${currentPath}" found while processing file ${fileName}`);
         }
         if (!stats.isDirectory() && !stats.isSymbolicLink()) {
           throw new Error(`Cannot create a directory over existing file "${currentPath}"`);
@@ -242,11 +226,7 @@ class ZipExtractor {
     return realPath;
   }
 
-  private async assertFileDestinationWithinRoot(
-    dest: string,
-    realDestDir: string,
-    fileName: string,
-  ): Promise<void> {
+  private async assertFileDestinationWithinRoot(dest: string, realDestDir: string, fileName: string): Promise<void> {
     const {dir} = this.opts;
     let realDest: string | null = null;
     try {
@@ -299,11 +279,7 @@ class ZipExtractor {
  * @param destDir The full path to the destination folder
  * @param opts Extraction options
  */
-export async function extractAllTo(
-  zipFilePath: string,
-  destDir: string,
-  opts: ExtractAllOptions = {},
-): Promise<void> {
+export async function extractAllTo(zipFilePath: string, destDir: string, opts: ExtractAllOptions = {}): Promise<void> {
   if (!path.isAbsolute(destDir)) {
     throw new Error(`Target path '${destDir}' is expected to be absolute`);
   }
@@ -377,8 +353,7 @@ export async function readEntries(
   await processYauzlEntriesSequentially(zipfile, async (entry) => {
     const res = await onEntry({
       entry,
-      extractEntryTo: async (destDir: string) =>
-        await _extractEntryTo(zipfile, entry, destDir, openReadStream),
+      extractEntryTo: async (destDir: string) => await _extractEntryTo(zipfile, entry, destDir, openReadStream),
     });
     return res === false ? false : undefined;
   });
@@ -410,10 +385,7 @@ export async function toInMemoryZip(srcPath: string, opts: ZipOptions = {}): Pro
       if (maxSize > 0 && resultBuffersSize > maxSize) {
         resultWriteStream.emit(
           'error',
-          new Error(
-            `The size of the resulting ` +
-              `archive must not be greater than ${toReadableSizeString(maxSize)}`,
-          ),
+          new Error(`The size of the resulting ` + `archive must not be greater than ${toReadableSizeString(maxSize)}`),
         );
       }
       next();
@@ -445,9 +417,7 @@ export async function toInMemoryZip(srcPath: string, opts: ZipOptions = {}): Pro
   });
   const archiveStreamPromise = new Promise<void>((resolve, reject) => {
     archive.once('finish', resolve);
-    archive.once('error', (e: Error) =>
-      reject(new Error(`Failed to archive '${srcPath}': ${e.message}`)),
-    );
+    archive.once('error', (e: Error) => reject(new Error(`Failed to archive '${srcPath}': ${e.message}`)));
   });
   const timer = isMetered ? new Timer().start() : null;
   if ((await fs.stat(srcPath)).isDirectory()) {

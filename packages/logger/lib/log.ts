@@ -1,18 +1,20 @@
+import {AsyncLocalStorage} from 'node:async_hooks';
 import {EventEmitter} from 'node:events';
+import type {Writable} from 'node:stream';
 import * as util from 'node:util';
+
+import {LRUCache} from 'lru-cache';
+
+import {DEFAULT_SECURE_REPLACER, SecureValuesPreprocessor} from './secure-values-preprocessor';
 import type {
-  MessageObject,
-  StyleObject,
+  LogFiltersConfig,
   Logger,
   LogLevel,
+  MessageObject,
   PreprocessingRulesLoadResult,
-  LogFiltersConfig,
+  StyleObject,
 } from './types';
-import type {Writable} from 'node:stream';
-import {AsyncLocalStorage} from 'node:async_hooks';
 import {ansiBeep, ansiColor, isPlainObject, setBlocking, unleakString} from './utils';
-import {DEFAULT_SECURE_REPLACER, SecureValuesPreprocessor} from './secure-values-preprocessor';
-import {LRUCache} from 'lru-cache';
 
 const DEFAULT_LOG_LEVELS = [
   ['silly', -Infinity, {inverse: true}, 'sill'],
@@ -280,9 +282,7 @@ export class Log extends EventEmitter implements Logger {
 
   private useColor(): boolean {
     // by default, decide based on tty-ness.
-    return (
-      this._colorEnabled ?? Boolean(this.stream && 'isTTY' in this.stream && this.stream.isTTY)
-    );
+    return this._colorEnabled ?? Boolean(this.stream && 'isTTY' in this.stream && this.stream.isTTY);
   }
 
   private emitLog(m: MessageObject): void {
@@ -387,11 +387,7 @@ export class Log extends EventEmitter implements Logger {
     };
 
     // mask sensitive data
-    if (
-      result.arg != null &&
-      typeof result.arg === 'object' &&
-      Object.hasOwn(result.arg, SENSITIVE_MESSAGE_KEY)
-    ) {
+    if (result.arg != null && typeof result.arg === 'object' && Object.hasOwn(result.arg, SENSITIVE_MESSAGE_KEY)) {
       const {isSensitive} = this._asyncStorage.getStore() ?? {};
       result.arg = isSensitive ? DEFAULT_SECURE_REPLACER : result.arg[SENSITIVE_MESSAGE_KEY];
     }

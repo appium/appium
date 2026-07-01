@@ -1,15 +1,17 @@
-import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
+import https from 'node:https';
+import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
+
+import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
+import type {AppiumServer, ServerArgs} from '@appium/types';
+import {sleep} from 'asyncbox';
+import axios from 'axios';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {Application, Request, Response} from 'express';
-import type {ServerArgs, AppiumServer} from '@appium/types';
-import {server} from '../../../lib';
-import axios from 'axios';
 import {createSandbox} from 'sinon';
-import {sleep} from 'asyncbox';
 import {exec} from 'teen_process';
-import https from 'node:https';
-import {TEST_HOST, getTestPort} from '@appium/driver-test-support';
+
+import {server} from '../../../lib';
 
 chai.use(chaiAsPromised);
 

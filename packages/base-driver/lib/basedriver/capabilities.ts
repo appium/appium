@@ -1,16 +1,11 @@
-import type {
-  Constraints,
-  NSCapabilities,
-  Capabilities,
-  W3CCapabilities,
-  StandardCapabilities,
-} from '@appium/types';
-import type {KeyAsString, MergeExclusive} from 'type-fest';
-import {validator} from './validation';
 import {util} from '@appium/support';
+import type {Capabilities, Constraints, NSCapabilities, StandardCapabilities, W3CCapabilities} from '@appium/types';
+import type {KeyAsString, MergeExclusive} from 'type-fest';
+
+import {errors} from '../protocol/errors';
 import {omit, pickBy} from '../utils';
 import {log} from './logger';
-import {errors} from '../protocol/errors';
+import {validator} from './validation';
 
 export const APPIUM_VENDOR_PREFIX = 'appium:';
 export const PREFIXED_APPIUM_OPTS_CAP = `${APPIUM_VENDOR_PREFIX}options`;
@@ -148,9 +143,7 @@ export function isStandardCap(cap: string): boolean {
  * @see https://www.w3.org/TR/webdriver/#dfn-extension-capabilities
  * @internal
  */
-export function stripAppiumPrefixes<C extends Constraints>(
-  caps: NSCapabilities<C>,
-): Capabilities<C> {
+export function stripAppiumPrefixes<C extends Constraints>(caps: NSCapabilities<C>): Capabilities<C> {
   // split into prefixed and non-prefixed.
   // non-prefixed should be standard caps at this point
   const capKeys = Object.keys(caps);
@@ -165,9 +158,7 @@ export function stripAppiumPrefixes<C extends Constraints>(
 
   // Strip out the 'appium:' prefix
   for (const prefixedCap of prefixedCaps) {
-    const strippedCapName = prefixedCap.substring(APPIUM_VENDOR_PREFIX.length) as KeyAsString<
-      Capabilities<C>
-    >;
+    const strippedCapName = prefixedCap.substring(APPIUM_VENDOR_PREFIX.length) as KeyAsString<Capabilities<C>>;
 
     // If it's standard capability that was prefixed, add it to an array of incorrectly prefixed capabilities
     if (isStandardCap(strippedCapName)) {
@@ -284,9 +275,7 @@ export function parseCaps<C extends Constraints>(
     .map((firstMatchCaps) => {
       try {
         // Validate firstMatch caps
-        return shouldValidateCaps
-          ? validateCaps(firstMatchCaps, filteredConstraints)
-          : firstMatchCaps;
+        return shouldValidateCaps ? validateCaps(firstMatchCaps, filteredConstraints) : firstMatchCaps;
       } catch (e) {
         validationErrors.push((e as Error).message);
       }
@@ -335,9 +324,7 @@ export function processCapabilities<C extends Constraints, W3CCaps extends W3CCa
     if (Array.isArray(w3cCaps.firstMatch) && w3cCaps.firstMatch.length > 1) {
       // If there was more than one 'firstMatch' cap, indicate that we couldn't find a matching capabilities set and show all the errors
       throw new errors.InvalidArgumentError(
-        `Could not find matching capabilities from ${JSON.stringify(
-          w3cCaps,
-        )}:\n ${validationErrors.join('\n')}`,
+        `Could not find matching capabilities from ${JSON.stringify(w3cCaps)}:\n ${validationErrors.join('\n')}`,
       );
     } else {
       // Otherwise, just show the singular error message
@@ -352,26 +339,20 @@ export function processCapabilities<C extends Constraints, W3CCaps extends W3CCa
  * Return a copy of a "bare" (single-level, non-W3C) capabilities object which has taken everything
  * within the 'appium:options' capability and promoted it to the top level.
  */
-export function promoteAppiumOptionsForObject<C extends Constraints>(
-  obj: NSCapabilities<C>,
-): NSCapabilities<C> {
+export function promoteAppiumOptionsForObject<C extends Constraints>(obj: NSCapabilities<C>): NSCapabilities<C> {
   const appiumOptions = obj[PREFIXED_APPIUM_OPTS_CAP];
   if (!appiumOptions) {
     return obj;
   }
 
   if (!util.isPlainObject(appiumOptions)) {
-    throw new errors.SessionNotCreatedError(
-      `The ${PREFIXED_APPIUM_OPTS_CAP} capability must be an object`,
-    );
+    throw new errors.SessionNotCreatedError(`The ${PREFIXED_APPIUM_OPTS_CAP} capability must be an object`);
   }
   if (util.isEmpty(appiumOptions)) {
     return obj;
   }
 
-  log.debug(
-    `Found ${PREFIXED_APPIUM_OPTS_CAP} capability present; will promote items inside to caps`,
-  );
+  log.debug(`Found ${PREFIXED_APPIUM_OPTS_CAP} capability present; will promote items inside to caps`);
 
   /**
    * @param {string} capName
@@ -393,9 +374,7 @@ export function promoteAppiumOptionsForObject<C extends Constraints>(
   const preprocessedOptions: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(appiumOptions as Record<string, unknown>)) {
     const verifiedKey = verifyIfAcceptable(key);
-    const finalKey = shouldAddVendorPrefix(verifiedKey)
-      ? `${APPIUM_VENDOR_PREFIX}${verifiedKey}`
-      : verifiedKey;
+    const finalKey = shouldAddVendorPrefix(verifiedKey) ? `${APPIUM_VENDOR_PREFIX}${verifiedKey}` : verifiedKey;
     preprocessedOptions[finalKey] = value;
   }
   // warn if we are going to overwrite any keys on the base caps object
@@ -417,9 +396,7 @@ export function promoteAppiumOptionsForObject<C extends Constraints>(
  * Return a copy of a capabilities object which has taken everything within the 'options'
  * capability and promoted it to the top level.
  */
-export function promoteAppiumOptions<C extends Constraints>(
-  originalCaps: W3CCapabilities<C>,
-): W3CCapabilities<C> {
+export function promoteAppiumOptions<C extends Constraints>(originalCaps: W3CCapabilities<C>): W3CCapabilities<C> {
   const result = {} as W3CCapabilities<C>;
   const {alwaysMatch, firstMatch} = originalCaps;
   if (util.isPlainObject(alwaysMatch)) {

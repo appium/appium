@@ -1,19 +1,21 @@
-import B from 'bluebird';
 import {randomUUID} from 'node:crypto';
 import os from 'node:os';
 import path from 'node:path';
 import stream from 'node:stream';
 import {isDeepStrictEqual, promisify} from 'node:util';
+
 import {asyncmap} from 'asyncbox';
-import {createBase64EncodeStream} from './internal';
+import B from 'bluebird';
 import pluralizeLib from 'pluralize';
-import {fs} from './fs';
 import * as semver from 'semver';
-import {quote as shellQuote, parse as shellParse} from 'shell-quote';
+import {parse as shellParse, quote as shellQuote} from 'shell-quote';
+
+import {fs} from './fs';
+import {createBase64EncodeStream} from './internal';
 export {shellParse};
-import {v1 as uuidV1Lib, v3 as uuidV3Lib, v5 as uuidV5Lib} from 'uuid';
-import * as _lockfile from 'lockfile';
 import type {Element} from '@appium/types';
+import * as _lockfile from 'lockfile';
+import {v1 as uuidV1Lib, v3 as uuidV3Lib, v5 as uuidV5Lib} from 'uuid';
 
 /** W3C WebDriver element identifier key used in element objects. */
 export const W3C_WEB_ELEMENT_IDENTIFIER = 'element-6066-11e4-a52e-4f735466cecf';
@@ -179,14 +181,10 @@ export function uniq<T>(values: readonly T[]): T[] {
  * @param options - Truncation options or max length
  * @returns Truncated string
  */
-export function truncateString(
-  value: string,
-  options: TruncateStringOptions | number = {},
-): string {
+export function truncateString(value: string, options: TruncateStringOptions | number = {}): string {
   const normalizedOptions = typeof options === 'number' ? {length: options} : options;
   const {length, omission = '…'} = normalizedOptions;
-  const stringValue =
-    value == null ? '' : typeof value === 'number' && Object.is(value, -0) ? '-0' : String(value);
+  const stringValue = value == null ? '' : typeof value === 'number' && Object.is(value, -0) ? '-0' : String(value);
   const maxLength = length ?? 30;
   if (maxLength <= 0) {
     return omission;
@@ -216,10 +214,7 @@ export function escapeSpace(str: string): string {
  * @param quoteEscape - Optional character to escape, or `false` to skip
  * @returns Escaped string, or original value if `str` is not a string
  */
-export function escapeSpecialChars(
-  str: string | unknown,
-  quoteEscape?: string | false,
-): string | unknown {
+export function escapeSpecialChars(str: string | unknown, quoteEscape?: string | false): string | unknown {
   if (typeof str !== 'string') {
     return str;
   }
@@ -437,11 +432,7 @@ export function toReadableSizeString(bytes: number | string): string {
  * @returns `true` if `originalPath` is under `root`
  * @throws {Error} If either path is not absolute
  */
-export function isSubPath(
-  originalPath: string,
-  root: string,
-  forcePosix: boolean | null = null,
-): boolean {
+export function isSubPath(originalPath: string, root: string, forcePosix: boolean | null = null): boolean {
   const pathObj = forcePosix ? path.posix : path;
   for (const p of [originalPath, root]) {
     if (!pathObj.isAbsolute(p)) {
@@ -462,11 +453,7 @@ export function isSubPath(
  * @param pathN - Additional paths to compare
  * @returns `true` if all paths resolve to the same file/directory
  */
-export async function isSameDestination(
-  path1: string,
-  path2: string,
-  ...pathN: string[]
-): Promise<boolean> {
+export async function isSameDestination(path1: string, path2: string, ...pathN: string[]): Promise<boolean> {
   const allPaths = [path1, path2, ...pathN];
   if (!(await asyncmap(allPaths, async (p) => fs.exists(p))).every(Boolean)) {
     return false;
@@ -580,11 +567,7 @@ export function quote(args: string | string[]): string {
  * @param options - Options object or boolean: use `inclusive: true` (or `true`) to prefix with the number (e.g. "3 ducks")
  * @returns The correctly inflected word, optionally prefixed with the count
  */
-export function pluralize(
-  word: string,
-  count: number,
-  options: PluralizeOptions | boolean = {},
-): string {
+export function pluralize(word: string, count: number, options: PluralizeOptions | boolean = {}): string {
   let inclusive = false;
   if (typeof options === 'boolean') {
     inclusive = options;
@@ -602,10 +585,7 @@ export function pluralize(
  * @returns Buffer containing the base64-encoded file content
  * @throws {Error} If the file does not exist, is a directory, cannot be read, or exceeds maxSize
  */
-export async function toInMemoryBase64(
-  srcPath: string,
-  opts: EncodingOptions = {},
-): Promise<Buffer> {
+export async function toInMemoryBase64(srcPath: string, opts: EncodingOptions = {}): Promise<Buffer> {
   if (!(await fs.exists(srcPath)) || (await fs.stat(srcPath)).isDirectory()) {
     throw new Error(`No such file: ${srcPath}`);
   }
@@ -620,9 +600,7 @@ export async function toInMemoryBase64(
       if (maxSize > 0 && resultBuffersSize > maxSize) {
         resultWriteStream.emit(
           'error',
-          new Error(
-            `The size of the resulting buffer must not be greater than ${toReadableSizeString(maxSize)}`,
-          ),
+          new Error(`The size of the resulting buffer must not be greater than ${toReadableSizeString(maxSize)}`),
         );
       }
       next();
@@ -642,9 +620,7 @@ export async function toInMemoryBase64(
   });
   const readStreamPromise = new Promise<void>((resolve, reject) => {
     readerStream.once('close', () => resolve());
-    readerStream.once('error', (e: Error) =>
-      reject(new Error(`Failed to read '${srcPath}': ${e.message}`)),
-    );
+    readerStream.once('error', (e: Error) => reject(new Error(`Failed to read '${srcPath}': ${e.message}`)));
   });
   readerStream.pipe(base64EncoderStream);
   base64EncoderStream.pipe(resultWriteStream);
@@ -662,16 +638,10 @@ export async function toInMemoryBase64(
  * @param opts - Options (see {@link LockFileOptions})
  * @returns Async function that accepts a callback to run under the lock, plus a `.check()` method
  */
-export function getLockFileGuard<T>(
-  lockFile: string,
-  opts: LockFileOptions = {},
-): LockFileGuard<T> {
+export function getLockFileGuard<T>(lockFile: string, opts: LockFileOptions = {}): LockFileGuard<T> {
   const {timeout = 120, tryRecovery = false} = opts;
 
-  const lock = promisify(_lockfile.lock) as (
-    lockfile: string,
-    opts: {wait: number},
-  ) => Promise<void>;
+  const lock = promisify(_lockfile.lock) as (lockfile: string, opts: {wait: number}) => Promise<void>;
   const checkLock = promisify(_lockfile.check) as (lockfile: string) => Promise<boolean>;
   const unlock = promisify(_lockfile.unlock) as (lockfile: string) => Promise<void>;
 
@@ -694,8 +664,7 @@ export function getLockFileGuard<T>(
             triedRecovery = true;
           } else {
             throw new Error(
-              `Could not acquire lock on '${lockFile}' after ${timeout}s. ` +
-                `Original error: ${err.message}`,
+              `Could not acquire lock on '${lockFile}' after ${timeout}s. ` + `Original error: ${err.message}`,
               {cause: e},
             );
           }

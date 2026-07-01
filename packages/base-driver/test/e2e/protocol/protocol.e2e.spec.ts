@@ -1,17 +1,19 @@
-import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
+import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
+
+import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
+import type {RouteMatcher} from '@appium/types';
+import axios from 'axios';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {errors, JWProxy} from '../../../lib';
-import {FakeDriver} from './fake-driver';
-import axios from 'axios';
-import {createSandbox} from 'sinon';
-import {StatusCodes as HTTPStatusCodes} from 'http-status-codes';
-import {createProxyServer} from './helpers';
-import {MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY} from '../../../lib/constants';
-import {TEST_HOST, getTestPort} from '@appium/driver-test-support';
-import {createServer} from '../../helpers';
 import type {Application, Request, Response} from 'express';
-import type {RouteMatcher} from '@appium/types';
+import {StatusCodes as HTTPStatusCodes} from 'http-status-codes';
+import {createSandbox} from 'sinon';
+
+import {errors, JWProxy} from '../../../lib';
+import {MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY} from '../../../lib/constants';
+import {createServer} from '../../helpers';
+import {FakeDriver} from './fake-driver';
+import {createProxyServer} from './helpers';
 
 chai.use(chaiAsPromised);
 
@@ -729,9 +731,7 @@ describe('Protocol', function () {
 
       expect(status).to.equal(500);
       expect(data.value.error).to.eql('unknown error');
-      expect(data.value.message).to.eql(
-        'Trying to proxy to a server but the driver is unable to proxy',
-      );
+      expect(data.value.message).to.eql('Trying to proxy to a server but the driver is unable to proxy');
     });
 
     it('should pass on any errors in proxying', async function () {

@@ -1,8 +1,10 @@
+import {describe, it} from 'node:test';
 import vm from 'node:vm';
+
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+
 import {wrapHostBindingForVmContext} from '../../lib/vm-host-binding';
-import {describe, it} from 'node:test';
 
 use(chaiAsPromised);
 
@@ -252,11 +254,7 @@ describe('wrapHostBindingForVmContext', function () {
     const host = Object.create(Object.prototype);
     host.p = () => Promise.resolve(7);
     const d = wrapHostBindingForVmContext(host);
-    const v = vm.runInNewContext(
-      `(async () => await d.p())()`,
-      {d},
-      {timeout: 500},
-    ) as Promise<number>;
+    const v = vm.runInNewContext(`(async () => await d.p())()`, {d}, {timeout: 500}) as Promise<number>;
     expect(await v).to.equal(7);
   });
 

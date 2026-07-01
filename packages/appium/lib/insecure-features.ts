@@ -1,8 +1,8 @@
 import {util} from '@appium/support';
-import {log as logger} from './logger';
+import type {ExternalDriver} from '@appium/types';
 
 import type {AppiumDriver} from './appium';
-import type {ExternalDriver} from '@appium/types';
+import {log as logger} from './logger';
 
 const ALL_DRIVERS_MATCH = '*';
 const FEATURE_NAME_SEPARATOR = ':';
@@ -47,11 +47,7 @@ export function configureGlobalFeatures(this: AppiumDriver) {
  * @param driver
  * @param driverName
  */
-export function configureDriverFeatures(
-  this: AppiumDriver,
-  driver: ExternalDriver,
-  driverName: string,
-) {
+export function configureDriverFeatures(this: AppiumDriver, driver: ExternalDriver, driverName: string) {
   if (this.relaxedSecurityEnabled) {
     this.log.info(
       `Enabling relaxed security for this session as per the server configuration. ` +
@@ -61,10 +57,7 @@ export function configureDriverFeatures(
   }
   const allowedDriverFeatures = filterInsecureFeatures(this.allowInsecure, driverName);
   if (!util.isEmpty(allowedDriverFeatures)) {
-    this.log.info(
-      'Explicitly enabling insecure features for this session ' +
-        'as per the server configuration:',
-    );
+    this.log.info('Explicitly enabling insecure features for this session ' + 'as per the server configuration:');
     allowedDriverFeatures.forEach((a) => this.log.info(`    ${a}`));
     driver.allowInsecure = allowedDriverFeatures;
   }
@@ -72,9 +65,7 @@ export function configureDriverFeatures(
   if (util.isEmpty(deniedDriverFeatures)) {
     return;
   }
-  this.log.info(
-    'Explicitly disabling insecure features for this session ' + 'as per the server configuration:',
-  );
+  this.log.info('Explicitly disabling insecure features for this session ' + 'as per the server configuration:');
   deniedDriverFeatures.forEach((a) => this.log.info(`    ${a}`));
   driver.denyInsecure = deniedDriverFeatures;
 }
@@ -95,10 +86,7 @@ function validateFeatures(features: string[]): string[] {
     if (separatorPos < 0) {
       throw new Error(errMsg);
     }
-    const [automationName, featureName] = [
-      fullName.substring(0, separatorPos),
-      fullName.substring(separatorPos + 1),
-    ];
+    const [automationName, featureName] = [fullName.substring(0, separatorPos), fullName.substring(separatorPos + 1)];
     if (!automationName || !featureName) {
       throw new Error(errMsg);
     }
@@ -115,10 +103,7 @@ function validateFeatures(features: string[]): string[] {
  * @param features
  * @param driverName
  */
-function filterInsecureFeatures(
-  features: string[],
-  driverName: string = ALL_DRIVERS_MATCH,
-): string[] {
+function filterInsecureFeatures(features: string[], driverName: string = ALL_DRIVERS_MATCH): string[] {
   const filterFn = (fullName: string) => {
     const separatorPos = fullName.indexOf(FEATURE_NAME_SEPARATOR);
     if (separatorPos <= 0) {

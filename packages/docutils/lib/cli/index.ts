@@ -5,14 +5,14 @@
  * @module
  */
 
-import {getLogger} from '../logger';
-
 import {hideBin} from 'yargs/helpers';
 import yargs from 'yargs/yargs';
+
 import type {LogLevelMap} from '../constants';
 import {DEFAULT_LOG_LEVEL, NAME_BIN, PKG_ROOT_DIR} from '../constants';
-import {readPackage} from '../utils';
 import {DocutilsError} from '../error';
+import {getLogger} from '../logger';
+import {readPackage} from '../utils';
 import {build, init, validate} from './command';
 import {findConfig} from './config';
 
@@ -85,9 +85,7 @@ export async function main(argv = hideBin(process.argv)) {
             return false;
           }
           const [, arg, missingArg] = match;
-          log.error(
-            `Argument "--${arg}" requires "--${missingArg}"; note that "--${arg}" may be enabled by default`,
-          );
+          log.error(`Argument "--${arg}" requires "--${missingArg}"; note that "--${arg}" may be enabled by default`);
           return true;
         };
 

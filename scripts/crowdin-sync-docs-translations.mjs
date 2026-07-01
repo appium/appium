@@ -1,18 +1,20 @@
+import {spawn} from 'node:child_process';
 import path from 'node:path';
+
 import {fs, net, tempDir, zip} from '@appium/support';
 import {waitForCondition} from 'asyncbox';
-import {spawn} from 'node:child_process';
+import _ from 'lodash';
+
 import {
-  log,
-  walk,
+  CROWIN_MKDOCS_CONFIG,
   DEFAULT_LANGUAGE,
+  DOCUMENTS_EXT,
+  log,
+  ORIGINAL_MKDOCS_CONFIG,
   performApiRequest,
   RESOURCES_ROOT,
-  DOCUMENTS_EXT,
-  ORIGINAL_MKDOCS_CONFIG,
-  CROWIN_MKDOCS_CONFIG,
+  walk,
 } from './crowdin-common.mjs';
-import _ from 'lodash';
 
 const BUILD_TIMEOUT_MS = 1000 * 60 * 10;
 const BUILD_STATUS = {
@@ -30,7 +32,6 @@ const CROWDIN_TO_FS_LANGUAGES_MAP = {
 };
 
 /**
- *
  * @returns {Promise<number>}
  */
 async function buildTranslations() {
@@ -42,7 +43,6 @@ async function buildTranslations() {
 }
 
 /**
- *
  * @param {number} buildId
  * @param {string} dstPath
  * @returns {Promise<void>}
@@ -73,15 +73,12 @@ async function downloadTranslations(buildId, dstPath) {
 }
 
 /**
- *
  * @param {string} srcDir
  * @param {string} dstDir
  * @returns {Promise<void>}
  */
 async function syncTranslatedDocuments(srcDir, dstDir) {
-  const srcTranslatedDocs = (await walk(srcDir, DOCUMENTS_EXT)).map((p) =>
-    path.relative(srcDir, p),
-  );
+  const srcTranslatedDocs = (await walk(srcDir, DOCUMENTS_EXT)).map((p) => path.relative(srcDir, p));
   if (srcTranslatedDocs.length === 0) {
     return;
   }
@@ -101,7 +98,6 @@ async function syncTranslatedDocuments(srcDir, dstDir) {
 }
 
 /**
- *
  * @param {string} yamlPath
  * @returns {Promise<boolean>}
  */
@@ -122,9 +118,7 @@ async function validateYaml(yamlPath) {
           log.info(`'${yamlPath}' is a valid YAML file`);
           resolve(true);
         } else {
-          reject(
-            new Error(`'${yamlPath}' is not valid YAML file. Was it corrupted during translation?`),
-          );
+          reject(new Error(`'${yamlPath}' is not valid YAML file. Was it corrupted during translation?`));
         }
       });
       validatorProcess.once('error', (e) => {
@@ -143,7 +137,6 @@ async function validateYaml(yamlPath) {
 }
 
 /**
- *
  * @param {string} srcDir
  * @param {string} dstDir
  * @param {string} dstLanguage

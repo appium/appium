@@ -1,11 +1,13 @@
-import {describe, it, beforeEach, afterEach} from 'node:test';
+import {afterEach, beforeEach, describe, it} from 'node:test';
+
+import type {Constraints, Driver, EventHistoryCommand} from '@appium/types';
+import axios from 'axios';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import axios from 'axios';
 import {createSandbox} from 'sinon';
+
 import {createServer} from '../../helpers';
 import {MockExecuteDriver} from '../protocol/mock-execute-driver';
-import type {Constraints, Driver, EventHistoryCommand} from '@appium/types';
 
 chai.use(chaiAsPromised);
 

@@ -103,7 +103,7 @@ jobs:
 
   test-smoke:
     needs:
-    - prepare_matrix
+      - prepare_matrix
     name: Smoke Tests
     strategy:
       matrix:
@@ -122,7 +122,7 @@ jobs:
 
   test-unit:
     needs:
-    - prepare_matrix
+      - prepare_matrix
     name: Unit Tests
     strategy:
       matrix:
@@ -141,7 +141,7 @@ jobs:
 
   test-types:
     needs:
-    - prepare_matrix
+      - prepare_matrix
     name: Type Tests
     strategy:
       matrix:
@@ -160,8 +160,8 @@ jobs:
 
   test-e2e:
     needs:
-    - prepare_matrix
-    - prepare_e2e_packages
+      - prepare_matrix
+      - prepare_e2e_packages
     name: E2E Tests - ${{ matrix.package_dir }} (Node ${{ matrix.node-version }})
     if: ${{ github.event_name == 'pull_request' }}
     strategy:

@@ -1,35 +1,34 @@
 {
   "name": "@appium/docutils",
   "version": "2.5.1",
+  "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8",
   "description": "Documentation generation utilities for Appium and related projects",
   "keywords": [
+    "android",
     "automation",
+    "firefoxos",
+    "ios",
     "javascript",
     "selenium",
-    "webdriver",
-    "ios",
-    "android",
-    "firefoxos",
-    "testing"
+    "testing",
+    "webdriver"
   ],
   "homepage": "https://appium.io",
   "bugs": {
     "url": "https://github.com/appium/appium/issues"
   },
+  "license": "Apache-2.0",
+  "author": "https://github.com/appium",
   "repository": {
     "type": "git",
     "url": "https://github.com/appium/appium.git",
     "directory": "packages/docutils"
   },
-  "license": "Apache-2.0",
-  "author": "https://github.com/appium",
-  "main": "./build/lib/index.js",
-  "types": "./build/lib/index.d.ts",
-  "directories": {
-    "lib": "lib"
-  },
   "bin": {
     "appium-docs": "./bin/appium-docs.js"
+  },
+  "directories": {
+    "lib": "lib"
   },
   "files": [
     "base-mkdocs.yml",
@@ -38,6 +37,11 @@
     "tsconfig.json",
     "requirements.txt"
   ],
+  "main": "./build/lib/index.js",
+  "types": "./build/lib/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "test": "npm run test:unit",
     "test:e2e": "mocha --exit --timeout 60s --slow 30s \"./test/e2e/**/*.e2e.spec.ts\"",
@@ -60,9 +64,5 @@
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
     "npm": ">=10"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8"
+  }
 }

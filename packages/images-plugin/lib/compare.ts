@@ -1,16 +1,17 @@
-import {errors} from 'appium/driver';
 import {
+  getImageOccurrence,
   getImagesMatches,
   getImagesSimilarity,
-  getImageOccurrence,
-  type MatchingResult,
-  type OccurrenceResult,
-  type SimilarityResult,
   type MatchingOptions,
-  type SimilarityOptions,
+  type MatchingResult,
   type OccurrenceOptions,
+  type OccurrenceResult,
+  type SimilarityOptions,
+  type SimilarityResult,
 } from '@appium/opencv';
-import {MATCH_FEATURES_MODE, GET_SIMILARITY_MODE, MATCH_TEMPLATE_MODE} from './constants';
+import {errors} from 'appium/driver';
+
+import {GET_SIMILARITY_MODE, MATCH_FEATURES_MODE, MATCH_TEMPLATE_MODE} from './constants';
 import type {ComparisonResult} from './types';
 
 /**
@@ -70,11 +71,7 @@ export async function compareImages(
     default:
       throw new errors.InvalidArgumentError(
         `'${mode}' images comparison mode is unknown. ` +
-          `Only ${JSON.stringify([
-            MATCH_FEATURES_MODE,
-            GET_SIMILARITY_MODE,
-            MATCH_TEMPLATE_MODE,
-          ])} modes are supported.`,
+          `Only ${JSON.stringify([MATCH_FEATURES_MODE, GET_SIMILARITY_MODE, MATCH_TEMPLATE_MODE])} modes are supported.`,
       );
   }
   return convertVisualizationToBase64(result);
@@ -86,7 +83,7 @@ export async function compareImages(
  *
  * @param element - occurrence result
  * @returns result with base64-encoded visualization
- **/
+ */
 function convertVisualizationToBase64(element: Partial<{visualization: Buffer | null}>): any {
   return Buffer.isBuffer(element.visualization)
     ? {

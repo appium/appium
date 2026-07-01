@@ -4,8 +4,9 @@
 
 import {EventEmitter} from 'node:events';
 import path from 'node:path';
-import {createSandbox, type SinonSandbox, type SinonStub} from 'sinon';
+
 import {console as supportConsole, util as supportUtil} from '@appium/support';
+import {createSandbox, type SinonSandbox, type SinonStub} from 'sinon';
 
 export interface MockAppiumSupportFs {
   readFile: SinonStub;
@@ -91,9 +92,7 @@ export function initMocks(sandbox = createSandbox()): InitMocksResult {
       readFile: sandbox.stub().resolves('{}'),
       writeFile: sandbox.stub().resolves(true),
       walk: sandbox.stub().returns({
-        [Symbol.asyncIterator]: sandbox
-          .stub()
-          .returns({next: sandbox.stub().resolves({done: true})}),
+        [Symbol.asyncIterator]: sandbox.stub().returns({next: sandbox.stub().resolves({done: true})}),
       }),
       glob: sandbox.stub().resolves([]),
       mkdirp: sandbox.stub().resolves(),
@@ -114,10 +113,7 @@ export function initMocks(sandbox = createSandbox()): InitMocksResult {
     logger: {
       getLogger: sandbox.stub().callsFake(() => MockAppiumSupport.logger.__logger),
       __logger: sandbox.stub(
-        new (global as typeof globalThis & {console: typeof console}).console.Console(
-          process.stdout,
-          process.stderr,
-        ),
+        new (global as typeof globalThis & {console: typeof console}).console.Console(process.stdout, process.stderr),
       ) as unknown as SinonStub,
     },
     system: {
@@ -150,18 +146,16 @@ export function initMocks(sandbox = createSandbox()): InitMocksResult {
     .stub<[cwd: string, id: string], Promise<string>>()
     .callsFake(async (cwd, id) => path.join(cwd, id));
 
-  const MockGlob = sandbox
-    .stub()
-    .callsFake((spec: string, opts: {cwd: string}, done: () => void) => {
-      const ee = new EventEmitter();
+  const MockGlob = sandbox.stub().callsFake((spec: string, opts: {cwd: string}, done: () => void) => {
+    const ee = new EventEmitter();
+    setTimeout(() => {
+      ee.emit('match', path.join(opts.cwd, 'package.json'));
       setTimeout(() => {
-        ee.emit('match', path.join(opts.cwd, 'package.json'));
-        setTimeout(() => {
-          done();
-        });
+        done();
       });
-      return ee;
-    }) as unknown as MockGlob;
+    });
+    return ee;
+  }) as unknown as MockGlob;
 
   const overrides: Overrides = {
     '@appium/support': MockAppiumSupport,

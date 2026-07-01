@@ -1,9 +1,11 @@
 import path from 'node:path';
+import {afterEach, beforeEach, describe, it} from 'node:test';
+
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {afterEach, beforeEach, describe, it} from 'node:test';
 import type {SinonSandbox} from 'sinon';
 import type {TeenProcessExecResult} from 'teen_process';
+
 import {rewiremock} from '../helpers';
 import {initMocks, type MockReadPackage, type MockTeenProcess} from '../mocks';
 
@@ -99,9 +101,7 @@ describe('env', function () {
           });
 
           it('should resolve with DEFAULT_APPIUM_HOME', async function () {
-            await expect(env.resolveAppiumHome('/somewhere')).to.eventually.equal(
-              env.DEFAULT_APPIUM_HOME,
-            );
+            await expect(env.resolveAppiumHome('/somewhere')).to.eventually.equal(env.DEFAULT_APPIUM_HOME);
           });
         });
 
@@ -125,9 +125,7 @@ describe('env', function () {
               MockReadPackage.readPackage.resolves({devDependencies: {appium: '0.9.0'}} as any);
             });
             it('should resolve with DEFAULT_APPIUM_HOME', async function () {
-              await expect(env.resolveAppiumHome(appiumHome)).to.eventually.equal(
-                env.DEFAULT_APPIUM_HOME,
-              );
+              await expect(env.resolveAppiumHome(appiumHome)).to.eventually.equal(env.DEFAULT_APPIUM_HOME);
             });
           });
 
@@ -137,9 +135,7 @@ describe('env', function () {
             });
 
             it('should resolve with DEFAULT_APPIUM_HOME', async function () {
-              await expect(env.resolveAppiumHome(appiumHome)).to.eventually.equal(
-                env.DEFAULT_APPIUM_HOME,
-              );
+              await expect(env.resolveAppiumHome(appiumHome)).to.eventually.equal(env.DEFAULT_APPIUM_HOME);
             });
           });
         });
@@ -152,9 +148,7 @@ describe('env', function () {
         });
 
         it('should resolve with DEFAULT_APPIUM_HOME', async function () {
-          await expect(env.resolveAppiumHome('/somewhere')).to.eventually.equal(
-            env.DEFAULT_APPIUM_HOME,
-          );
+          await expect(env.resolveAppiumHome('/somewhere')).to.eventually.equal(env.DEFAULT_APPIUM_HOME);
         });
       });
 
@@ -164,9 +158,7 @@ describe('env', function () {
         });
 
         it('should resolve with DEFAULT_APPIUM_HOME', async function () {
-          await expect(env.resolveAppiumHome('/somewhere')).to.eventually.equal(
-            env.DEFAULT_APPIUM_HOME,
-          );
+          await expect(env.resolveAppiumHome('/somewhere')).to.eventually.equal(env.DEFAULT_APPIUM_HOME);
         });
       });
     });

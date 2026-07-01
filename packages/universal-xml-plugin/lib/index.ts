@@ -1,8 +1,9 @@
 export {UniversalXMLPlugin} from './plugin';
 export {transformSourceXml} from './source';
 import fs from 'node:fs/promises';
-import {transformSourceXml} from './source';
+
 import {UniversalXMLPlugin} from './plugin';
+import {transformSourceXml} from './source';
 
 export default UniversalXMLPlugin;
 

@@ -1,6 +1,7 @@
 import {util} from '@appium/support';
 import type {DriverClass, DriverType, StringRecord} from '@appium/types';
 import type {ExtManifest, ExtName, ExtRecord} from 'appium/types';
+
 import {DRIVER_TYPE} from '../constants';
 import {log} from '../logger';
 import type {ExtManifestProblem} from './extension-config';
@@ -48,10 +49,7 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
     return `${String(driverName)}@${version} (automationName '${automationName}')`;
   }
 
-  async findMatchingDriver<C extends StringRecord>({
-    automationName,
-    platformName,
-  }: C): Promise<MatchedDriver> {
+  async findMatchingDriver<C extends StringRecord>({automationName, platformName}: C): Promise<MatchedDriver> {
     if (typeof platformName !== 'string') {
       throw new Error('You must include a platformName capability');
     }
@@ -66,10 +64,7 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
     );
 
     try {
-      const {driverName, mainClass, version} = this._getDriverBySupport(
-        automationName,
-        platformName,
-      );
+      const {driverName, mainClass, version} = this._getDriverBySupport(automationName, platformName);
       log.info(`The '${driverName}' driver was installed and matched caps.`);
       log.info(`Will require it at ${this.getInstallPath(driverName)}`);
       const driver = await this.requireAsync(driverName as ExtName<DriverType>);
@@ -90,10 +85,7 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
     }
   }
 
-  protected override getConfigProblems(
-    extManifest: ExtManifest<DriverType>,
-    extName: string,
-  ): ExtManifestProblem[] {
+  protected override getConfigProblems(extManifest: ExtManifest<DriverType>, extName: string): ExtManifestProblem[] {
     void extName;
     const problems: ExtManifestProblem[] = [];
     const {platformNames, automationName} = extManifest;
@@ -146,9 +138,7 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
     for (const [driverName, driverData] of Object.entries(drivers)) {
       const {automationName, platformNames} = driverData;
       const aNameMatches = automationName.toLowerCase() === matchAutomationName.toLowerCase();
-      const pNameMatches = platformNames
-        .map((p) => p.toLowerCase())
-        .includes(matchPlatformName.toLowerCase());
+      const pNameMatches = platformNames.map((p) => p.toLowerCase()).includes(matchPlatformName.toLowerCase());
 
       if (aNameMatches && pNameMatches) {
         return {driverName, ...driverData};

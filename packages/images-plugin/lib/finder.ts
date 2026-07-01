@@ -1,23 +1,24 @@
-import {LRUCache} from 'lru-cache';
+import type {Element, ExternalDriver, Rect, Size} from '@appium/types';
 import {errors} from 'appium/driver';
-import {ImageElement} from './image-element';
-import {compareImages} from './compare';
-import {log} from './logger';
-import {
-  DEFAULT_SETTINGS,
-  MATCH_TEMPLATE_MODE,
-  DEFAULT_TEMPLATE_IMAGE_SCALE,
-  DEFAULT_FIX_IMAGE_TEMPLATE_SCALE,
-} from './constants';
+import {LRUCache} from 'lru-cache';
 import sharp from 'sharp';
-import type {ExternalDriver, Element, Rect, Size} from '@appium/types';
+
+import {compareImages} from './compare';
+import {
+  DEFAULT_FIX_IMAGE_TEMPLATE_SCALE,
+  DEFAULT_SETTINGS,
+  DEFAULT_TEMPLATE_IMAGE_SCALE,
+  MATCH_TEMPLATE_MODE,
+} from './constants';
+import {ImageElement} from './image-element';
+import {log} from './logger';
 import type {
-  ImageSettings,
   FindByImageOptions,
-  Screenshot,
-  ScreenshotScale,
+  ImageSettings,
   ImageTemplateSettings,
   OccurrenceResultWithVisualization,
+  Screenshot,
+  ScreenshotScale,
 } from './types';
 
 // Used to compare ratio and screen width
@@ -171,12 +172,7 @@ export class ImageElementFinder {
           return true;
         };
 
-        const elOrEls = await compareImages(
-          MATCH_TEMPLATE_MODE,
-          screenshot,
-          template,
-          comparisonOpts,
-        );
+        const elOrEls = await compareImages(MATCH_TEMPLATE_MODE, screenshot, template, comparisonOpts);
         return (Array.isArray(elOrEls) ? elOrEls : [elOrEls]).some(pushIfOk);
       } catch (err: any) {
         // if compareImages fails, we'll get a specific error, but we should
@@ -368,9 +364,7 @@ export class ImageElementFinder {
       const xScale = (1.0 * shotWidth) / screenSize.width;
       const yScale = (1.0 * shotHeight) / screenSize.height;
       const scaleFactor = Math.min(xScale, yScale);
-      const [newWidth, newHeight] = [shotWidth * scaleFactor, shotHeight * scaleFactor].map(
-        Math.trunc,
-      );
+      const [newWidth, newHeight] = [shotWidth * scaleFactor, shotHeight * scaleFactor].map(Math.trunc);
 
       log.warn(
         `Resizing screenshot to ${newWidth}x${newHeight} to match ` +
@@ -464,14 +458,8 @@ export class ImageElementFinder {
 
     // Return if the scale is default, 1, value
     if (
-      Math.round(xScale * FLOAT_PRECISION) ===
-        Math.round(DEFAULT_FIX_IMAGE_TEMPLATE_SCALE * FLOAT_PRECISION) &&
-      Math.round(
-        Number(
-          yScale * FLOAT_PRECISION ===
-            Math.round(DEFAULT_FIX_IMAGE_TEMPLATE_SCALE * FLOAT_PRECISION),
-        ),
-      )
+      Math.round(xScale * FLOAT_PRECISION) === Math.round(DEFAULT_FIX_IMAGE_TEMPLATE_SCALE * FLOAT_PRECISION) &&
+      Math.round(Number(yScale * FLOAT_PRECISION === Math.round(DEFAULT_FIX_IMAGE_TEMPLATE_SCALE * FLOAT_PRECISION)))
     ) {
       return template;
     }
@@ -484,9 +472,7 @@ export class ImageElementFinder {
 
     const scaledWidth = baseTempWidth * xScale;
     const scaledHeight = baseTempHeigh * yScale;
-    log.info(
-      `Scaling template image from ${baseTempWidth}x${baseTempHeigh} to ${scaledWidth}x${scaledHeight}`,
-    );
+    log.info(`Scaling template image from ${baseTempWidth}x${baseTempHeigh} to ${scaledWidth}x${scaledHeight}`);
     log.info(`The ratio is ${xScale} and ${yScale}`);
     imgObj = imgObj.resize({
       width: Math.trunc(scaledWidth),

@@ -1,31 +1,31 @@
-import {omitKeys, resolveFrom} from '../../lib/utils';
-import {exec} from 'teen_process';
-import {fs, system, tempDir, util} from '@appium/support';
 import path from 'node:path';
+
+import {fs, system, tempDir, util} from '@appium/support';
+import type {DriverType} from '@appium/types';
+import type {ExtRecord} from 'appium/types';
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import {exec} from 'teen_process';
+
 import {
   DRIVER_TYPE,
+  EXT_SUBCOMMAND_DOCTOR as DOCTOR,
   EXT_SUBCOMMAND_INSTALL as INSTALL,
   EXT_SUBCOMMAND_LIST as LIST,
   EXT_SUBCOMMAND_RUN as RUN,
   EXT_SUBCOMMAND_UNINSTALL as UNINSTALL,
-  EXT_SUBCOMMAND_DOCTOR as DOCTOR,
   KNOWN_DRIVERS,
 } from '../../lib/constants';
-import type {DriverType} from '@appium/types';
-import type {ExtRecord} from 'appium/types';
+import {omitKeys, resolveFrom} from '../../lib/utils';
 import {FAKE_DRIVER_DIR, resolveFixture} from '../helpers';
 import {installLocalExtension, runAppiumJson, runAppiumRaw} from './e2e-helpers';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
 const {expect} = chai;
 chai.use(chaiAsPromised);
 
 const TEST_DRIVER_DIR = path.dirname(resolveFixture('test-driver/package.json'));
 
-const TEST_DRIVER_INVALID_PEERS_DIR = path.dirname(
-  resolveFixture('test-driver-invalid-peer-dep/package.json'),
-);
+const TEST_DRIVER_INVALID_PEERS_DIR = path.dirname(resolveFixture('test-driver-invalid-peer-dep/package.json'));
 
 interface ExtensionListResult {
   [key: string]: {
@@ -55,12 +55,9 @@ describe('Driver CLI', function () {
     appiumHome = await tempDir.openDir();
     const run = runAppiumJson(appiumHome);
     runInstall = (args) => run([DRIVER_TYPE, INSTALL, ...args]) as Promise<ExtRecord<DriverType>>;
-    runUninstall = (args) =>
-      run([DRIVER_TYPE, UNINSTALL, ...args]) as Promise<ExtRecord<DriverType>>;
-    runList = async (args = []) =>
-      run([DRIVER_TYPE, LIST, ...args]) as Promise<ExtensionListResult>;
-    runRun = (args) =>
-      run([DRIVER_TYPE, RUN, ...args]) as Promise<{output: string; error?: string}>;
+    runUninstall = (args) => run([DRIVER_TYPE, UNINSTALL, ...args]) as Promise<ExtRecord<DriverType>>;
+    runList = async (args = []) => run([DRIVER_TYPE, LIST, ...args]) as Promise<ExtensionListResult>;
+    runRun = (args) => run([DRIVER_TYPE, RUN, ...args]) as Promise<{output: string; error?: string}>;
     runDoctor = async (args) => run([DRIVER_TYPE, DOCTOR, ...args]) as Promise<number>;
   });
 
@@ -107,11 +104,7 @@ describe('Driver CLI', function () {
       const penultimateFakeDriverVersionAsOfRightNow = versions[versions.length - 2];
 
       await resetAppiumHome();
-      await runInstall([
-        `@appium/fake-driver@${penultimateFakeDriverVersionAsOfRightNow}`,
-        '--source',
-        'npm',
-      ]);
+      await runInstall([`@appium/fake-driver@${penultimateFakeDriverVersionAsOfRightNow}`, '--source', 'npm']);
       const listResult = (await runList(['--updates'])) as Record<
         string,
         {updateVersion?: string; unsafeUpdateVersion?: string}
@@ -123,9 +116,7 @@ describe('Driver CLI', function () {
           `No update version found. Expected an update from ${penultimateFakeDriverVersionAsOfRightNow} to a newer version.`,
         );
       }
-      expect(
-        util.compareVersions(String(updateVersion), '>', penultimateFakeDriverVersionAsOfRightNow),
-      ).to.be.true;
+      expect(util.compareVersions(String(updateVersion), '>', penultimateFakeDriverVersionAsOfRightNow)).to.be.true;
       const {stderr} = await runAppiumRaw(appiumHome, [DRIVER_TYPE, LIST, '--updates'], {});
       expect(stderr).to.match(new RegExp(`fake.+[${updateVersion} available]`));
     });
@@ -237,13 +228,7 @@ describe('Driver CLI', function () {
     });
 
     it('should install a driver from a local git repo', async function () {
-      const ret = await runInstall([
-        FAKE_DRIVER_DIR,
-        '--source',
-        'git',
-        '--package',
-        '@appium/fake-driver',
-      ]);
+      const ret = await runInstall([FAKE_DRIVER_DIR, '--source', 'git', '--package', '@appium/fake-driver']);
       expect(ret.fake.pkgName).to.eql('@appium/fake-driver');
       expect(ret.fake.installType).to.eql('git');
       expect(ret.fake.installSpec).to.eql(FAKE_DRIVER_DIR);
@@ -281,11 +266,7 @@ describe('Driver CLI', function () {
 
     describe('when peer dependencies are invalid', function () {
       it('should install the driver anyway', async function () {
-        const ret = await installLocalExtension(
-          appiumHome,
-          DRIVER_TYPE,
-          TEST_DRIVER_INVALID_PEERS_DIR,
-        );
+        const ret = await installLocalExtension(appiumHome, DRIVER_TYPE, TEST_DRIVER_INVALID_PEERS_DIR);
         expect(ret.test.pkgName).to.equal('test-driver-invalid-peer-dep');
         const list = await runList(['--installed']);
         expect(list.test.pkgName).to.equal('test-driver-invalid-peer-dep');
@@ -306,15 +287,9 @@ describe('Driver CLI', function () {
 
     describe('when peer dependencies are valid', function () {
       it('should not display a warning', async function () {
-        const ret = await runAppiumRaw(
-          appiumHome,
-          [DRIVER_TYPE, INSTALL, '--source', 'local', TEST_DRIVER_DIR],
-          {},
-        );
+        const ret = await runAppiumRaw(appiumHome, [DRIVER_TYPE, INSTALL, '--source', 'local', TEST_DRIVER_DIR], {});
         if ('stderr' in ret) {
-          expect(ret.stderr).to.not.match(
-            /may be incompatible with the current version of Appium/i,
-          );
+          expect(ret.stderr).to.not.match(/may be incompatible with the current version of Appium/i);
           expect(ret.stderr).to.match(/successfully installed/i);
         }
       });
@@ -365,8 +340,7 @@ describe('Driver CLI', function () {
     it('should uninstall a driver based on its driver name', async function () {
       const uninstall = await runUninstall(['fake']);
       expect(uninstall).to.not.have.key('fake');
-      await expect(fs.exists(path.join(appiumHome, 'node_modules', '@appium', 'fake-driver'))).to
-        .eventually.be.false;
+      await expect(fs.exists(path.join(appiumHome, 'node_modules', '@appium', 'fake-driver'))).to.eventually.be.false;
     });
   });
 

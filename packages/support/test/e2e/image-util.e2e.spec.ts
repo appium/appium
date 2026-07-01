@@ -1,10 +1,12 @@
 import path from 'node:path';
+import {before, describe, it} from 'node:test';
+
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {before, describe, it} from 'node:test';
 import sharp from 'sharp';
-import {cropBase64Image} from '../../lib/image-util';
+
 import {fs, node} from '../../lib';
+import {cropBase64Image} from '../../lib/image-util';
 
 use(chaiAsPromised);
 

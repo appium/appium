@@ -1,7 +1,9 @@
-import vm from 'node:vm';
 import {promisify} from 'node:util';
+import vm from 'node:vm';
+
 import {logger, util} from '@appium/support';
-import type {DriverScriptMessageEvent, ScriptResult, RunScriptResult} from './types';
+
+import type {DriverScriptMessageEvent, RunScriptResult, ScriptResult} from './types';
 import {wrapHostBindingForVmContext} from './vm-host-binding';
 
 const log = logger.getLogger('ExecuteDriver Child');

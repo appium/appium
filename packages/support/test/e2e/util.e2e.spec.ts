@@ -1,10 +1,12 @@
-import {sleep} from 'asyncbox';
 import path from 'node:path';
+import {afterEach, beforeEach, describe, it} from 'node:test';
+
+import {sleep} from 'asyncbox';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {afterEach, beforeEach, describe, it} from 'node:test';
+
+import {fs, tempDir} from '../../lib/index';
 import * as util from '../../lib/util';
-import {tempDir, fs} from '../../lib/index';
 
 use(chaiAsPromised);
 

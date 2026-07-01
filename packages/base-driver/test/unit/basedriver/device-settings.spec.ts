@@ -1,9 +1,11 @@
-import {describe, it, beforeEach, afterEach} from 'node:test';
+import {afterEach, beforeEach, describe, it} from 'node:test';
+
+import {node} from '@appium/support';
+import type {SettingsUpdateListener} from '@appium/types';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import type {SettingsUpdateListener} from '@appium/types';
-import {node} from '@appium/support';
 import sinon from 'sinon';
+
 import {DeviceSettings, MAX_SETTINGS_SIZE} from '../../../lib/basedriver/device-settings';
 import {InvalidArgumentError} from '../../../lib/protocol/errors';
 
@@ -61,9 +63,10 @@ describe('DeviceSettings', function () {
       describe('when a non-plain-object `newSettings` param is provided', function () {
         it('should reject with an InvalidArgumentError', async function () {
           const deviceSettings = new DeviceSettings();
-          await expect(
-            deviceSettings.update(null as unknown as Record<string, unknown>),
-          ).to.be.rejectedWith(InvalidArgumentError, /with valid JSON/i);
+          await expect(deviceSettings.update(null as unknown as Record<string, unknown>)).to.be.rejectedWith(
+            InvalidArgumentError,
+            /with valid JSON/i,
+          );
         });
       });
 

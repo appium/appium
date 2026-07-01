@@ -1,4 +1,4 @@
-import type {Constraint, Constraints, BaseDriverCapConstraints} from './constraints';
+import type {BaseDriverCapConstraints, Constraint, Constraints} from './constraints';
 import type {StandardCapabilities} from './standard-caps';
 import type {AnyCase, StringRecord} from './util';
 
@@ -57,9 +57,7 @@ export type ConstraintToCapKind<C extends Constraint> = C['isString'] extends tr
  *
  * In practice, _all_ capabilities are considered optional per types, but various errors might be thrown if some are not present.
  */
-export type ConstraintToCap<C extends Constraint> = C['presence'] extends
-  | true
-  | {allowEmpty: boolean}
+export type ConstraintToCap<C extends Constraint> = C['presence'] extends true | {allowEmpty: boolean}
   ? ConstraintToCapKind<C>
   : ConstraintToCapKind<C> | undefined;
 
@@ -69,19 +67,14 @@ export type ConstraintToCap<C extends Constraint> = C['presence'] extends
  * If `T` is already namespaced, well, it'll get _double_-namespaced.
  */
 export type CapsToNSCaps<T extends StringRecord, NS extends string = W3C_APPIUM_PREFIX> = {
-  [K in keyof T as K extends keyof StandardCapabilities
-    ? K
-    : NamespacedString<K & string, NS>]: T[K];
+  [K in keyof T as K extends keyof StandardCapabilities ? K : NamespacedString<K & string, NS>]: T[K];
 };
 
 /**
  * A namespaced string of the format `<NS>:<S>` where `NS` defaults to the value of
  * {@linkcode W3C_APPIUM_PREFIX} and `S` is a string.
  */
-export type NamespacedString<
-  S extends string,
-  NS extends string = W3C_APPIUM_PREFIX,
-> = `${NS}:${S}`;
+export type NamespacedString<S extends string, NS extends string = W3C_APPIUM_PREFIX> = `${NS}:${S}`;
 
 /**
  * Converts {@linkcode Constraint} `C` to a {@linkcode Capabilities} object.
@@ -156,13 +149,11 @@ export type DriverCaps<C extends Constraints = Constraints> = BaseCapabilities &
  * }
  * ```
  */
-export type W3CDriverCaps<C extends Constraints = Constraints> = BaseW3CCapabilities &
-  W3CCapabilities<C>;
+export type W3CDriverCaps<C extends Constraints = Constraints> = BaseW3CCapabilities & W3CCapabilities<C>;
 
 /**
  * Namespaced capabilities for drivers extending `BaseDriver`.
  *
  * Includes {@linkcode BaseNSCapabilities}.
  */
-export type NSDriverCaps<C extends Constraints = Constraints> = BaseNSCapabilities &
-  NSCapabilities<C>;
+export type NSDriverCaps<C extends Constraints = Constraints> = BaseNSCapabilities & NSCapabilities<C>;

@@ -7,10 +7,7 @@ import {defineConfig, globalIgnores} from 'eslint/config';
 const testFileConfigItems = appiumConfig.filter(
   (item) => typeof item?.name === 'string' && item.name.startsWith('Test Files'),
 );
-const testSupportFiles = [
-  'packages/driver-test-support/lib/**',
-  'packages/plugin-test-support/lib/**',
-];
+const testSupportFiles = ['packages/driver-test-support/lib/**', 'packages/plugin-test-support/lib/**'];
 const testSupportConfig = testFileConfigItems.map((item) => ({...item, files: testSupportFiles}));
 
 export default defineConfig([
@@ -28,7 +25,7 @@ export default defineConfig([
     rules: {
       '@typescript-eslint/consistent-type-imports': [
         'error',
-        { fixStyle: 'separate-type-imports', prefer: 'type-imports' },
+        {fixStyle: 'separate-type-imports', prefer: 'type-imports'},
       ],
     },
   },

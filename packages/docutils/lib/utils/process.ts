@@ -1,5 +1,6 @@
 import type {SpawnOptions} from 'node:child_process';
 import {spawn} from 'node:child_process';
+
 import type {ExecError, TeenProcessExecOptions} from 'teen_process';
 import {exec} from 'teen_process';
 
@@ -15,11 +16,7 @@ export type SpawnBackgroundProcessOpts = Omit<SpawnOptions, 'stdio'>;
  * background tasks; we use node's `child_process` directly here to pass `stdio` through, since
  * `teen_process` basically does not respect `{stdio: 'inherit'}`.
  */
-export async function spawnBackgroundProcess(
-  command: string,
-  args: string[],
-  opts: SpawnBackgroundProcessOpts = {},
-) {
+export async function spawnBackgroundProcess(command: string, args: string[], opts: SpawnBackgroundProcessOpts = {}) {
   return new Promise<void>((resolve, reject) => {
     spawn(command, args, {...opts, stdio: 'inherit'})
       .on('error', reject)
@@ -36,18 +33,12 @@ export async function spawnBackgroundProcess(
 /**
  * Wraps {@linkcode exec} with error handling that appends stderr to the thrown error message.
  */
-export async function execWithErrorHandling(
-  cmd: string,
-  args?: string[],
-  opts?: TeenProcessExecOptions,
-) {
+export async function execWithErrorHandling(cmd: string, args?: string[], opts?: TeenProcessExecOptions) {
   try {
     return await exec(cmd, args, opts);
   } catch (err) {
     const execErr = err as ExecError;
-    execErr.message = execErr.stderr
-      ? `${execErr.message}\nCommand error:\n${execErr.stderr}`
-      : execErr.message;
+    execErr.message = execErr.stderr ? `${execErr.message}\nCommand error:\n${execErr.stderr}` : execErr.message;
     throw execErr;
   }
 }

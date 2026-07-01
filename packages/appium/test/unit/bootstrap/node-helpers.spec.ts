@@ -1,8 +1,10 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {promises as fs} from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+
 import {adjustNodePath, checkNodeOk, requireDir} from '../../../lib/bootstrap/node-helpers';
 
 const {expect} = chai;
@@ -75,9 +77,7 @@ describe('bootstrap/node-helpers', function () {
 
   describe('requireDir()', function () {
     it('should fail to use a dir with incorrect permissions', async function () {
-      await expect(requireDir('/private/if_you_run_with_sudo_this_wont_fail')).to.be.rejectedWith(
-        /must exist/,
-      );
+      await expect(requireDir('/private/if_you_run_with_sudo_this_wont_fail')).to.be.rejectedWith(/must exist/);
     });
 
     it('should fail to use an undefined dir', async function () {

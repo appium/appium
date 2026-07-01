@@ -1,16 +1,17 @@
-import {describe, it, before, after} from 'node:test';
-import path from 'node:path';
-import {fs, node} from '@appium/support';
-
-import {configureApp} from '../../../lib/basedriver/helpers';
 import http from 'node:http';
-import finalhandler from 'finalhandler';
-import serveStatic from 'serve-static';
-import contentDisposition from 'content-disposition';
+import path from 'node:path';
+import {after, before, describe, it} from 'node:test';
+
+import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
+import {fs, node} from '@appium/support';
 import {sleep} from 'asyncbox';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {TEST_HOST, getTestPort} from '@appium/driver-test-support';
+import contentDisposition from 'content-disposition';
+import finalhandler from 'finalhandler';
+import serveStatic from 'serve-static';
+
+import {configureApp} from '../../../lib/basedriver/helpers';
 
 chai.use(chaiAsPromised);
 
@@ -40,9 +41,7 @@ describe('app download and configuration', function () {
       expect(contents).to.eql('this is not really an apk\n');
     });
     it('should fail if extensions do not match', async function () {
-      await expect(configureApp(getFixture('FakeIOSApp.app'), '.wrong')).to.be.rejectedWith(
-        /did not have extension/,
-      );
+      await expect(configureApp(getFixture('FakeIOSApp.app'), '.wrong')).to.be.rejectedWith(/did not have extension/);
     });
     it('should fail if zip file does not contain an app whose extension matches', async function () {
       await expect(configureApp(getFixture('FakeIOSApp.app.zip'), '.wrong')).to.be.rejectedWith(
@@ -60,9 +59,9 @@ describe('app download and configuration', function () {
 
       describe('server not available', function () {
         it('should handle server not available', async function () {
-          await expect(
-            configureApp(`${serverUrl}/FakeIOSApp.app.zip`, '.app'),
-          ).to.eventually.be.rejectedWith(/ECONNREFUSED/);
+          await expect(configureApp(`${serverUrl}/FakeIOSApp.app.zip`, '.app')).to.eventually.be.rejectedWith(
+            /ECONNREFUSED/,
+          );
         });
       });
       describe('server available', function () {
@@ -85,9 +84,9 @@ describe('app download and configuration', function () {
               return;
             }
             // for testing zip file content types
-            const contentType = new URLSearchParams(
-              new URL(req.url ?? '', 'http://localhost').search,
-            ).get('content-type');
+            const contentType = new URLSearchParams(new URL(req.url ?? '', 'http://localhost').search).get(
+              'content-type',
+            );
             if (contentType !== null) {
               res.setHeader('content-type', contentType);
             }
@@ -115,10 +114,7 @@ describe('app download and configuration', function () {
         });
 
         it('should download apk file with query string', async function () {
-          const newAppPath = await configureApp(
-            `${serverUrl}/FakeAndroidApp.apk?sv=abc&sr=def`,
-            '.apk',
-          );
+          const newAppPath = await configureApp(`${serverUrl}/FakeAndroidApp.apk?sv=abc&sr=def`, '.apk');
           expect(newAppPath).to.contain('.apk');
           const contents = await fs.readFile(newAppPath, 'utf8');
           expect(contents).to.eql('this is not really an apk\n');
@@ -142,21 +138,20 @@ describe('app download and configuration', function () {
           expect(contents).to.eql('this is not really an apk\n');
         });
         it('should handle zip file that cannot be downloaded', async function () {
-          await expect(configureApp(`${serverUrl}/missing/FakeIOSApp.app.zip`, '.app')).to
-            .eventually.be.rejected;
+          await expect(configureApp(`${serverUrl}/missing/FakeIOSApp.app.zip`, '.app')).to.eventually.be.rejected;
         });
         it('should handle invalid protocol', async function () {
-          await expect(
-            configureApp('file://C:/missing/FakeIOSApp.app.zip', '.app'),
-          ).to.eventually.be.rejectedWith(/is not supported/);
+          await expect(configureApp('file://C:/missing/FakeIOSApp.app.zip', '.app')).to.eventually.be.rejectedWith(
+            /is not supported/,
+          );
           await expect(
             configureApp(`ftp://${TEST_HOST}:${port}/missing/FakeIOSApp.app.zip`, '.app'),
           ).to.eventually.be.rejectedWith(/is not supported/);
         });
         it('should handle missing file in Windows path format', async function () {
-          await expect(
-            configureApp('C:\\missing\\FakeIOSApp.app.zip', '.app'),
-          ).to.eventually.be.rejectedWith(/does not exist or is not accessible/);
+          await expect(configureApp('C:\\missing\\FakeIOSApp.app.zip', '.app')).to.eventually.be.rejectedWith(
+            /does not exist or is not accessible/,
+          );
         });
         it('should treat an unknown mime type as an app', async function () {
           const newAppPath = await configureApp(

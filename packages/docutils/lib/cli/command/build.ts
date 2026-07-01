@@ -4,7 +4,9 @@
  */
 
 import path from 'node:path';
+
 import type {CommandModule, InferredOptionTypes, Options} from 'yargs';
+
 import {buildSite, deploy} from '../../builder';
 import {NAME_BIN} from '../../constants';
 import {getLogger} from '../../logger';

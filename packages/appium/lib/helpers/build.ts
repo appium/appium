@@ -1,7 +1,8 @@
+import {fs, system, util} from '@appium/support';
+import type {BuildInfo} from 'appium/types';
 import axios from 'axios';
 import {exec} from 'teen_process';
-import {system, fs, util} from '@appium/support';
-import type {BuildInfo} from 'appium/types';
+
 import {npmPackage} from '../utils';
 
 export const APPIUM_VER = npmPackage.version;
@@ -52,10 +53,7 @@ export async function getGitRev(useGithubApiFallback = false): Promise<string | 
   return null;
 }
 
-async function getGitTimestamp(
-  commitSha: string,
-  useGithubApiFallback = false,
-): Promise<string | null> {
+async function getGitTimestamp(commitSha: string, useGithubApiFallback = false): Promise<string | null> {
   const fullGitPath = await getFullGitPath();
   if (fullGitPath) {
     try {

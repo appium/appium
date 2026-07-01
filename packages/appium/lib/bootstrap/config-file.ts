@@ -1,12 +1,13 @@
+import {util} from '@appium/support';
+import type {AppiumConfig, NormalizedAppiumConfig} from '@appium/types';
 import type {IOutputError} from '@sidvind/better-ajv-errors';
 import type {ErrorObject, SchemaObject} from 'ajv';
-import {lilconfig, type LoaderSync, type LilconfigResult} from 'lilconfig';
-import {util} from '@appium/support';
+import {lilconfig, type LilconfigResult, type LoaderSync} from 'lilconfig';
 import * as yaml from 'yaml';
-import {camelCase, getPath, mapKeys, mapValues} from '../utils';
-import type {AppiumConfig, NormalizedAppiumConfig} from '@appium/types';
-import {getSchema, validate} from '../schema/schema';
+
 import {formatErrors} from '../schema/format-errors';
+import {getSchema, validate} from '../schema/schema';
+import {camelCase, getPath, mapKeys, mapValues} from '../utils';
 
 /**
  * A cache of the raw config file (a JSON string) at a filepath.
@@ -99,35 +100,22 @@ export async function readConfigFile(
 export function normalizeConfig(config: AppiumConfig): NormalizedAppiumConfig {
   const schema = getSchema();
 
-  const isSchemaTypeObject = (
-    schemaObj: SchemaObject | Record<string, unknown> | undefined,
-  ): boolean =>
+  const isSchemaTypeObject = (schemaObj: SchemaObject | Record<string, unknown> | undefined): boolean =>
     Boolean(
-      (schemaObj as SchemaObject | undefined)?.properties ||
-      (schemaObj as SchemaObject | undefined)?.type === 'object',
+      (schemaObj as SchemaObject | undefined)?.properties || (schemaObj as SchemaObject | undefined)?.type === 'object',
     );
 
   const normalize = (rootConfig: AppiumConfig, section?: string): Record<string, unknown> => {
     const obj =
-      section === undefined
-        ? rootConfig
-        : (getPath(rootConfig, section, rootConfig) as Record<string, unknown>);
+      section === undefined ? rootConfig : (getPath(rootConfig, section, rootConfig) as Record<string, unknown>);
 
     const mappedObj = mapKeys(obj as Record<string, unknown>, (_v, prop) =>
-      String(
-        getPath(
-          schema,
-          `properties.server.properties.${prop}.appiumCliDest`,
-          camelCase(String(prop)),
-        ),
-      ),
+      String(getPath(schema, `properties.server.properties.${prop}.appiumCliDest`, camelCase(String(prop)))),
     );
 
     return mapValues(mappedObj, (value, property) => {
       const nextSection = section ? `${section}.${property}` : property;
-      return isSchemaTypeObject((schema as any).properties?.[property])
-        ? normalize(rootConfig, nextSection)
-        : value;
+      return isSchemaTypeObject((schema as any).properties?.[property]) ? normalize(rootConfig, nextSection) : value;
     });
   };
 
@@ -141,10 +129,9 @@ function yamlLoader(filepath: string, content: string): unknown {
   try {
     return yaml.parse(content);
   } catch (e) {
-    throw new Error(
-      `The YAML config at '${filepath}' cannot be loaded. Original error: ${(e as Error).message}`,
-      {cause: e},
-    );
+    throw new Error(`The YAML config at '${filepath}' cannot be loaded. Original error: ${(e as Error).message}`, {
+      cause: e,
+    });
   }
 }
 
@@ -158,27 +145,22 @@ function jsonLoader(filepath: string, content: string): unknown {
     return JSON.parse(content);
   } catch (e) {
     rawConfig.delete(filepath);
-    throw new Error(
-      `The JSON config at '${filepath}' cannot be loaded. Original error: ${(e as Error).message}`,
-      {cause: e},
-    );
+    throw new Error(`The JSON config at '${filepath}' cannot be loaded. Original error: ${(e as Error).message}`, {
+      cause: e,
+    });
   }
 }
 
 /**
  * Loads a config file from an explicit path
  */
-async function loadConfigFile(
-  lc: LilconfigAsyncSearcher,
-  filepath: string,
-): Promise<LilconfigResult> {
+async function loadConfigFile(lc: LilconfigAsyncSearcher, filepath: string): Promise<LilconfigResult> {
   try {
     // removing "await" will cause any rejection to _not_ be caught in this block!
     return await lc.load(filepath);
   } catch (err) {
     if ((err as NodeJS.ErrnoException).code === 'ENOENT') {
-      (err as NodeJS.ErrnoException).message =
-        `Config file not found at user-provided path: ${filepath}`;
+      (err as NodeJS.ErrnoException).message = `Config file not found at user-provided path: ${filepath}`;
       throw err;
     } else if (err instanceof SyntaxError) {
       // generally invalid JSON

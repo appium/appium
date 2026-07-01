@@ -1,11 +1,13 @@
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
-import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
-import {util, fs, tempDir} from '../../lib';
-import {sleep} from 'asyncbox';
-import {createSandbox} from 'sinon';
 import os from 'node:os';
 import path from 'node:path';
+import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
+
+import {sleep} from 'asyncbox';
+import {expect, use} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import {createSandbox} from 'sinon';
+
+import {fs, tempDir, util} from '../../lib';
 
 use(chaiAsPromised);
 
@@ -409,10 +411,7 @@ describe('util', function () {
     });
     it('should match paths to the same file/folder', async function () {
       expect(
-        await util.isSameDestination(
-          path1,
-          path.resolve(tmpDir, '..', path.basename(tmpDir), path.basename(path1)),
-        ),
+        await util.isSameDestination(path1, path.resolve(tmpDir, '..', path.basename(tmpDir), path.basename(path1))),
       ).to.be.true;
     });
     it('should not match paths if they point to non existing items', async function () {
@@ -654,9 +653,7 @@ describe('util', function () {
 
   describe('escapeRegExp', function () {
     it('should escape regexp metacharacters', function () {
-      expect(util.escapeRegExp('a+b*c?.(x)[y]{z}|^$\\')).to.equal(
-        'a\\+b\\*c\\?\\.\\(x\\)\\[y\\]\\{z\\}\\|\\^\\$\\\\',
-      );
+      expect(util.escapeRegExp('a+b*c?.(x)[y]{z}|^$\\')).to.equal('a\\+b\\*c\\?\\.\\(x\\)\\[y\\]\\{z\\}\\|\\^\\$\\\\');
     });
   });
 
@@ -681,9 +678,7 @@ describe('util', function () {
     });
 
     it('should support custom omission', function () {
-      expect(
-        util.truncateString('abcdefghijklmnopqrstuvwxyz', {length: 10, omission: '..'}),
-      ).to.equal('abcdefgh..');
+      expect(util.truncateString('abcdefghijklmnopqrstuvwxyz', {length: 10, omission: '..'})).to.equal('abcdefgh..');
     });
 
     it('should handle non-string values safely', function () {

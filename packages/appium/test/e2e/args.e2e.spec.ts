@@ -1,15 +1,11 @@
-import {tempDir, fs} from '@appium/support';
-import {exec} from 'teen_process';
+import {fs, tempDir} from '@appium/support';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {
-  readAppiumArgErrorFixture,
-  formatAppiumArgErrorOutput,
-  EXECUTABLE,
-  runAppiumRaw,
-} from './e2e-helpers';
-import {APPIUM_ROOT, getTestPort} from '../helpers';
+import {exec} from 'teen_process';
+
 import {stripColorCodes} from '../../lib/logsink';
+import {APPIUM_ROOT, getTestPort} from '../helpers';
+import {EXECUTABLE, formatAppiumArgErrorOutput, readAppiumArgErrorFixture, runAppiumRaw} from './e2e-helpers';
 
 const {expect} = chai;
 chai.use(chaiAsPromised);

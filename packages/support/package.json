@@ -1,30 +1,29 @@
 {
   "name": "@appium/support",
   "version": "7.2.5",
+  "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8",
   "description": "Support libs used across Appium packages",
   "keywords": [
+    "android",
     "automation",
+    "firefoxos",
+    "ios",
     "javascript",
     "selenium",
-    "webdriver",
-    "ios",
-    "android",
-    "firefoxos",
-    "testing"
+    "testing",
+    "webdriver"
   ],
   "homepage": "https://appium.io",
   "bugs": {
     "url": "https://github.com/appium/appium/issues"
   },
+  "license": "Apache-2.0",
+  "author": "https://github.com/appium",
   "repository": {
     "type": "git",
     "url": "https://github.com/appium/appium.git",
     "directory": "packages/support"
   },
-  "license": "Apache-2.0",
-  "author": "https://github.com/appium",
-  "main": "./build/lib/index.js",
-  "types": "./build/lib/index.d.ts",
   "directories": {
     "lib": "lib"
   },
@@ -33,14 +32,16 @@
     "build/lib",
     "tsconfig.json"
   ],
+  "main": "./build/lib/index.js",
+  "types": "./build/lib/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "test": "npm run test:unit",
     "test:e2e": "node --test --test-force-exit --test-concurrency=1 --test-timeout=20000 \"./build/test/e2e/**/*.spec.js\"",
     "test:smoke": "node ./build/lib/index.js",
     "test:unit": "node --test \"./build/test/unit/**/*.spec.js\""
-  },
-  "devDependencies": {
-    "@appium/tsconfig": "1.1.2"
   },
   "dependencies": {
     "@appium/logger": "2.0.9",
@@ -68,15 +69,14 @@
     "which": "6.0.1",
     "yauzl": "3.4.0"
   },
+  "devDependencies": {
+    "@appium/tsconfig": "1.1.2"
+  },
   "optionalDependencies": {
     "sharp": "0.35.2"
   },
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
     "npm": ">=10"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8"
+  }
 }

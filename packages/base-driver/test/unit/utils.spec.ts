@@ -1,5 +1,7 @@
 import {describe, it} from 'node:test';
+
 import {expect} from 'chai';
+
 import {mergePlainObjects, omit, omitKeys, pick, pickBy} from '../../lib/utils';
 
 describe('utils', function () {

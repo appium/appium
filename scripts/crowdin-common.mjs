@@ -1,6 +1,6 @@
 import path from 'node:path';
 
-import {logger, fs} from '@appium/support';
+import {fs, logger} from '@appium/support';
 import axios from 'axios';
 import _ from 'lodash';
 
@@ -23,7 +23,6 @@ const USER_AGENT = 'Appium CI';
 const API_ROOT = 'https://api.crowdin.com/api/v2';
 
 /**
- *
  * @param {string} dir
  * @param {string} ext
  * @returns {Promise<string[]>}
@@ -49,16 +48,13 @@ export async function walk(dir, ext) {
 }
 
 /**
- *
  * @param {string} [suffix='']
  * @param {ApiRequestOptions} [opts={}]
  * @returns {any}
  */
 export async function performApiRequest(suffix = '', opts = {}) {
   const {method = 'GET', payload, headers, params, isProjectSpecific = true} = opts;
-  const url = isProjectSpecific
-    ? `${API_ROOT}/projects/${PROJECT_ID}${suffix}`
-    : `${API_ROOT}${suffix}`;
+  const url = isProjectSpecific ? `${API_ROOT}/projects/${PROJECT_ID}${suffix}` : `${API_ROOT}${suffix}`;
   log.debug(`Sending ${method} request to ${url}`);
   if (_.isPlainObject(payload)) {
     log.debug(`Request payload: ${JSON.stringify(payload)}`);

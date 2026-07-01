@@ -1,15 +1,32 @@
 {
   "name": "@appium/logger",
   "version": "2.0.9",
-  "author": "https://github.com/appium",
+  "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8",
   "description": "A Universal Logger For The Appium Ecosystem",
+  "keywords": [
+    "android",
+    "automation",
+    "firefoxos",
+    "ios",
+    "javascript",
+    "selenium",
+    "testing",
+    "webdriver"
+  ],
+  "homepage": "https://appium.io",
+  "bugs": {
+    "url": "https://github.com/appium/appium/issues"
+  },
+  "license": "ISC",
+  "author": "https://github.com/appium",
   "repository": {
     "type": "git",
     "url": "https://github.com/appium/appium.git",
     "directory": "packages/logger"
   },
-  "main": "build/index.js",
-  "types": "build/index.d.ts",
+  "directories": {
+    "lib": "./lib"
+  },
   "files": [
     "index.ts",
     "lib",
@@ -19,8 +36,10 @@
     "!build/test",
     "CHANGELOG.md"
   ],
-  "directories": {
-    "lib": "./lib"
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "test": "npm run test:unit",
@@ -30,27 +49,8 @@
   "dependencies": {
     "lru-cache": "11.5.1"
   },
-  "license": "ISC",
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
     "npm": ">=10"
-  },
-  "bugs": {
-    "url": "https://github.com/appium/appium/issues"
-  },
-  "homepage": "https://appium.io",
-  "publishConfig": {
-    "access": "public"
-  },
-  "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8",
-  "keywords": [
-    "automation",
-    "javascript",
-    "selenium",
-    "webdriver",
-    "ios",
-    "android",
-    "firefoxos",
-    "testing"
-  ]
+  }
 }

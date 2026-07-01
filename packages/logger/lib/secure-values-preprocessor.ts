@@ -1,10 +1,5 @@
+import type {LogFilter, LogFilterRegex, LogFiltersConfig, SecureValuePreprocessingRule} from './types';
 import {escapeRegExp, isPlainObject} from './utils';
-import type {
-  SecureValuePreprocessingRule,
-  LogFilterRegex,
-  LogFiltersConfig,
-  LogFilter,
-} from './types';
 
 export const DEFAULT_SECURE_REPLACER = '**SECURE**';
 
@@ -43,23 +38,17 @@ export class SecureValuesPreprocessor {
     } else if (isPlainObject(rule)) {
       if (isLogFilterRegex(rule)) {
         if (typeof rule.pattern !== 'string' || rule.pattern.length === 0) {
-          throw new Error(
-            `${JSON.stringify(rule)} -> The value of 'pattern' must be a valid non-empty string`,
-          );
+          throw new Error(`${JSON.stringify(rule)} -> The value of 'pattern' must be a valid non-empty string`);
         }
         pattern = rule.pattern;
       } else if (Object.hasOwn(rule, 'text')) {
         if (typeof rule.text !== 'string' || rule.text.length === 0) {
-          throw new Error(
-            `${JSON.stringify(rule)} -> The value of 'text' must be a valid non-empty string`,
-          );
+          throw new Error(`${JSON.stringify(rule)} -> The value of 'text' must be a valid non-empty string`);
         }
         pattern = `\\b${escapeRegExp(rule.text)}\\b`;
       }
       if (!pattern) {
-        throw new Error(
-          `${JSON.stringify(rule)} -> Must either have a field named 'pattern' or 'text'`,
-        );
+        throw new Error(`${JSON.stringify(rule)} -> Must either have a field named 'pattern' or 'text'`);
       }
 
       if (Object.hasOwn(rule, 'flags') && rule.flags != null) {

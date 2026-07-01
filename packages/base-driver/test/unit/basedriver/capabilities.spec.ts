@@ -1,19 +1,21 @@
-import {describe, it, beforeEach} from 'node:test';
-import chai, {expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
-import {
-  APPIUM_VENDOR_PREFIX,
-  parseCaps,
-  validateCaps,
-  mergeCaps,
-  processCapabilities,
-  findNonPrefixedCaps,
-  PREFIXED_APPIUM_OPTS_CAP,
-  promoteAppiumOptions,
-  stripAppiumPrefixes,
-} from '../../../lib/basedriver/capabilities';
+import {beforeEach, describe, it} from 'node:test';
+
 import type {Capabilities, Constraints, W3CCapabilities} from '@appium/types';
 import {BASE_DESIRED_CAP_CONSTRAINTS} from '@appium/types';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+
+import {
+  APPIUM_VENDOR_PREFIX,
+  findNonPrefixedCaps,
+  mergeCaps,
+  parseCaps,
+  PREFIXED_APPIUM_OPTS_CAP,
+  processCapabilities,
+  promoteAppiumOptions,
+  stripAppiumPrefixes,
+  validateCaps,
+} from '../../../lib/basedriver/capabilities';
 import {isW3cCaps} from '../../../lib/helpers/capabilities';
 
 chai.use(chaiAsPromised);
@@ -36,9 +38,9 @@ describe('caps', function () {
 
     describe('throws errors if constraints are not met', function () {
       it('returns invalid argument error if "present" constraint not met on property', function () {
-        expect(() =>
-          validateCaps({} as Capabilities<{foo: {presence: true}}>, {foo: {presence: true}}),
-        ).to.throw(/'foo' is required/);
+        expect(() => validateCaps({} as Capabilities<{foo: {presence: true}}>, {foo: {presence: true}})).to.throw(
+          /'foo' is required/,
+        );
       });
 
       it('returns the capability that was passed in if "skipPresenceConstraint" is false', function () {
@@ -76,15 +78,13 @@ describe('caps', function () {
       });
 
       it('returns invalid argument error if "inclusion" constraint not met on property', function () {
-        expect(() =>
-          validateCaps({foo: '3'}, {foo: {inclusionCaseInsensitive: ['1', '2']}}),
-        ).to.throw(/'foo' must be contained/);
+        expect(() => validateCaps({foo: '3'}, {foo: {inclusionCaseInsensitive: ['1', '2']}})).to.throw(
+          /'foo' must be contained/,
+        );
       });
 
       it('returns invalid argument error if "inclusionCaseInsensitive" constraint not met on property', function () {
-        expect(() => validateCaps({foo: 'a'}, {foo: {inclusion: ['A', 'B', 'C']}})).to.throw(
-          /'foo' must be contained/,
-        );
+        expect(() => validateCaps({foo: 'a'}, {foo: {inclusion: ['A', 'B', 'C']}})).to.throw(/'foo' must be contained/);
       });
     });
 
@@ -103,9 +103,7 @@ describe('caps', function () {
         notPresent: {presence: false},
       };
 
-      expect(
-        validateCaps(caps as unknown as Capabilities<typeof constraints>, constraints),
-      ).to.deep.equal(caps);
+      expect(validateCaps(caps as unknown as Capabilities<typeof constraints>, constraints)).to.deep.equal(caps);
     });
   });
 
@@ -166,9 +164,7 @@ describe('caps', function () {
 
     it('returns invalid argument error if "requiredCaps" don\'t match "constraints" (2.2)', function () {
       caps.alwaysMatch = {'appium:foo': 1};
-      expect(() => parseCaps(caps as TestW3CCaps, {foo: {isString: true}})).to.throw(
-        /'foo' must be of type string/,
-      );
+      expect(() => parseCaps(caps as TestW3CCaps, {foo: {isString: true}})).to.throw(/'foo' must be of type string/);
     });
 
     it('sets "allFirstMatchCaps" to property named "firstMatch" (3)', function () {
@@ -197,9 +193,7 @@ describe('caps', function () {
     describe('returns a "validatedFirstMatchCaps" array (5)', function () {
       it('that equals "firstMatch" if firstMatch is one empty object and there are no constraints', function () {
         caps.firstMatch = [{}];
-        expect(parseCaps(caps as TestW3CCaps).validatedFirstMatchCaps).to.deep.equal(
-          caps.firstMatch,
-        );
+        expect(parseCaps(caps as TestW3CCaps).validatedFirstMatchCaps).to.deep.equal(caps.firstMatch);
       });
 
       it('returns "null" matchedCaps if nothing matches', function () {
@@ -241,9 +235,7 @@ describe('caps', function () {
             'appium:goodbye': 'world',
           },
         ];
-        expect(
-          parseCaps(caps as TestW3CCaps, {someAttribute: {presence: true}}).matchedCaps,
-        ).to.equal(null);
+        expect(parseCaps(caps as TestW3CCaps, {someAttribute: {presence: true}}).matchedCaps).to.equal(null);
       });
 
       it('that equals firstMatch if firstMatch contains two objects that pass the provided constraints', function () {
@@ -416,9 +408,7 @@ describe('caps', function () {
           alwaysMatch: matchingCaps,
           firstMatch: [{}],
         };
-        expect(processCapabilities(caps as TestW3CCaps, constraints)).to.deep.equal(
-          expectedMatchingCaps,
-        );
+        expect(processCapabilities(caps as TestW3CCaps, constraints)).to.deep.equal(expectedMatchingCaps);
       });
 
       it('should validate when firstMatch[0] has the proper caps', function () {
@@ -426,21 +416,15 @@ describe('caps', function () {
           alwaysMatch: {},
           firstMatch: [matchingCaps],
         };
-        expect(processCapabilities(caps as TestW3CCaps, constraints)).to.deep.equal(
-          expectedMatchingCaps,
-        );
+        expect(processCapabilities(caps as TestW3CCaps, constraints)).to.deep.equal(expectedMatchingCaps);
       });
 
       it('should validate when alwaysMatch and firstMatch[0] have the proper caps when merged together', function () {
         caps = {
-          alwaysMatch: Object.fromEntries(
-            Object.entries(matchingCaps).filter(([key]) => key !== 'appium:deviceName'),
-          ),
+          alwaysMatch: Object.fromEntries(Object.entries(matchingCaps).filter(([key]) => key !== 'appium:deviceName')),
           firstMatch: [{'appium:deviceName': 'Fake'}],
         };
-        expect(processCapabilities(caps as TestW3CCaps, constraints)).to.deep.equal(
-          expectedMatchingCaps,
-        );
+        expect(processCapabilities(caps as TestW3CCaps, constraints)).to.deep.equal(expectedMatchingCaps);
       });
 
       it('should validate when automationName is omitted', function () {
@@ -450,9 +434,7 @@ describe('caps', function () {
           ),
         };
         expect(processCapabilities(caps as TestW3CCaps, constraints)).to.deep.equal(
-          Object.fromEntries(
-            Object.entries(expectedMatchingCaps).filter(([key]) => key !== 'automationName'),
-          ),
+          Object.fromEntries(Object.entries(expectedMatchingCaps).filter(([key]) => key !== 'automationName')),
         );
       });
 
@@ -461,9 +443,7 @@ describe('caps', function () {
           alwaysMatch: {},
           firstMatch: [matchingCaps, {'appium:badCaps': 'badCaps'}],
         };
-        expect(processCapabilities(caps as TestW3CCaps, constraints)).to.deep.equal(
-          expectedMatchingCaps,
-        );
+        expect(processCapabilities(caps as TestW3CCaps, constraints)).to.deep.equal(expectedMatchingCaps);
       });
 
       it('should pass if first element in "firstMatch" does not validate and second element does', function () {
@@ -471,9 +451,7 @@ describe('caps', function () {
           alwaysMatch: {},
           firstMatch: [{'appium:badCaps': 'badCaps'}, matchingCaps],
         };
-        expect(processCapabilities(caps as TestW3CCaps, constraints)).to.deep.equal(
-          expectedMatchingCaps,
-        );
+        expect(processCapabilities(caps as TestW3CCaps, constraints)).to.deep.equal(expectedMatchingCaps);
       });
 
       it('should fail when bad parameters are passed in more than one firstMatch capability', function () {
@@ -585,10 +563,7 @@ describe('caps', function () {
       automationName: 'XCUITest',
     };
     const appiumCaps = Object.fromEntries(
-      Object.entries(nonPrefixedAppiumCaps).map(([key, value]) => [
-        `${APPIUM_VENDOR_PREFIX}${key}`,
-        value,
-      ]),
+      Object.entries(nonPrefixedAppiumCaps).map(([key, value]) => [`${APPIUM_VENDOR_PREFIX}${key}`, value]),
     );
     const standardCaps = {
       platformName: 'iOS',

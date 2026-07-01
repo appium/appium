@@ -1,3 +1,6 @@
+import os from 'node:os';
+
+import {util} from '@appium/support';
 import type {
   AppiumLogger,
   Constraints,
@@ -12,13 +15,12 @@ import type {
   StringRecord,
 } from '@appium/types';
 import AsyncLock from 'async-lock';
-import {util} from '@appium/support';
-import os from 'node:os';
+
 import {DEFAULT_BASE_PATH, PROTOCOLS} from '../constants';
 import {errors} from '../protocol';
 import {DeviceSettings} from './device-settings';
-import * as helpers from './helpers';
 import {ExtensionCore} from './extension-core';
+import * as helpers from './helpers';
 
 const NEW_COMMAND_TIMEOUT_MS = 60 * 1000;
 
@@ -275,17 +277,12 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
             `the feature name split by a colon. Got '${fullName}' instead`,
         );
       }
-      return [
-        fullName.substring(0, separatorPos).toLowerCase(),
-        fullName.substring(separatorPos + 1),
-      ];
+      return [fullName.substring(0, separatorPos).toLowerCase(), fullName.substring(separatorPos + 1)];
     };
     const parseFullNames = (fullNames: string[]) => fullNames.map(parseFullName);
     const matches = (pair: string[]) => {
       const [automationName, featureName] = pair;
-      return (
-        [currentAutomationName, ALL_DRIVERS_MATCH].includes(automationName) && featureName === name
-      );
+      return [currentAutomationName, ALL_DRIVERS_MATCH].includes(automationName) && featureName === name;
     };
 
     // if we have explicitly denied this feature, return false immediately
@@ -334,9 +331,7 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
     }
 
     if (!validStrategies.includes(strategy)) {
-      throw new errors.InvalidSelectorError(
-        `Locator Strategy '${strategy}' is not supported for this session`,
-      );
+      throw new errors.InvalidSelectorError(`Locator Strategy '${strategy}' is not supported for this session`);
     }
   }
 
@@ -390,7 +385,6 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
   }
 
   /**
-   *
    * @param {Driver} driver
    */
   addManagedDriver(driver: Driver) {

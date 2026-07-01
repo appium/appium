@@ -4,21 +4,19 @@
  */
 
 import path from 'node:path';
+
+import {fs, tempDir} from '@appium/support';
 import * as chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import * as YAML from 'yaml';
 import yargs from 'yargs/yargs';
-import {fs, tempDir} from '@appium/support';
+
 import {buildSite} from '../../lib/builder';
-import {init, initPython} from '../../lib/init';
+import {build as buildCommand, init as initCommand, validate as validateCommand} from '../../lib/cli/command';
+import {DEFAULT_SITE_DIR, NAME_BIN, NAME_MKDOCS_YML, NAME_PACKAGE_JSON} from '../../lib/constants';
 import {stringifyYaml} from '../../lib/fs';
+import {init, initPython} from '../../lib/init';
 import type {MkDocsYml} from '../../lib/model';
-import {NAME_MKDOCS_YML, DEFAULT_SITE_DIR, NAME_PACKAGE_JSON, NAME_BIN} from '../../lib/constants';
-import {
-  build as buildCommand,
-  init as initCommand,
-  validate as validateCommand,
-} from '../../lib/cli/command';
 
 chai.use(chaiAsPromised);
 const {expect} = chai;
@@ -26,18 +24,10 @@ const {expect} = chai;
 /**
  * Helper function to create a project directory with package.json
  */
-async function createProjectDir(
-  testDir: string,
-  subdir: string,
-  packageJson: Record<string, any>,
-): Promise<string> {
+async function createProjectDir(testDir: string, subdir: string, packageJson: Record<string, any>): Promise<string> {
   const projectDir = path.join(testDir, subdir);
   await fs.mkdirp(projectDir);
-  await fs.writeFile(
-    path.join(projectDir, NAME_PACKAGE_JSON),
-    JSON.stringify(packageJson, null, 2),
-    'utf8',
-  );
+  await fs.writeFile(path.join(projectDir, NAME_PACKAGE_JSON), JSON.stringify(packageJson, null, 2), 'utf8');
   return projectDir;
 }
 
@@ -51,11 +41,7 @@ async function createMkdocsYml(projectDir: string, mkdocsYml: MkDocsYml): Promis
 /**
  * Helper function to create a docs directory with a markdown file
  */
-async function createDocsFile(
-  projectDir: string,
-  filename: string,
-  content: string,
-): Promise<void> {
+async function createDocsFile(projectDir: string, filename: string, content: string): Promise<void> {
   const docsDir = path.join(projectDir, 'docs');
   await fs.mkdirp(docsDir);
   await fs.writeFile(path.join(docsDir, filename), content, 'utf8');
@@ -131,11 +117,7 @@ describe('@appium/docutils build e2e', function () {
         plugins: ['search'],
       });
 
-      await createDocsFile(
-        projectDir,
-        'index.md',
-        '# Test Documentation\n\nThis is a test page.\n',
-      );
+      await createDocsFile(projectDir, 'index.md', '# Test Documentation\n\nThis is a test page.\n');
       await ensurePythonDeps(projectDir, this as Mocha.Context);
 
       // Build the site
@@ -168,11 +150,7 @@ describe('@appium/docutils build e2e', function () {
         plugins: ['search'],
       });
 
-      await createDocsFile(
-        projectDir,
-        'index.md',
-        '# Test Documentation 2\n\nThis is another test page.\n',
-      );
+      await createDocsFile(projectDir, 'index.md', '# Test Documentation 2\n\nThis is another test page.\n');
       await ensurePythonDeps(projectDir, this as Mocha.Context);
 
       // Build the site with custom site-dir

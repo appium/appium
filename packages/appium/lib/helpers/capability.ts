@@ -1,13 +1,8 @@
-import type {
-  BaseDriverCapConstraints,
-  Capabilities,
-  Constraints,
-  NSCapabilities,
-  W3CCapabilities,
-} from '@appium/types';
+import {errors, isW3cCaps, processCapabilities, STANDARD_CAPS} from '@appium/base-driver';
 import {util} from '@appium/support';
+import type {BaseDriverCapConstraints, Capabilities, Constraints, NSCapabilities, W3CCapabilities} from '@appium/types';
+
 import {log as logger} from '../logger';
-import {processCapabilities, STANDARD_CAPS, errors, isW3cCaps} from '@appium/base-driver';
 import {mapKeys} from '../utils';
 
 const W3C_APPIUM_PREFIX = 'appium';
@@ -78,9 +73,7 @@ export function parseCapsForInnerDriver<C extends Constraints = BaseDriverCapCon
       }
 
       if (util.isEmpty(w3cCapabilities.firstMatch)) {
-        w3cCapabilities.firstMatch = [
-          {[defaultCapKey]: defaultCapValue},
-        ] as W3CCapabilities<C>['firstMatch'];
+        w3cCapabilities.firstMatch = [{[defaultCapKey]: defaultCapValue}] as W3CCapabilities<C>['firstMatch'];
       } else {
         (w3cCapabilities.firstMatch[0] as Record<string, unknown>)[defaultCapKey] = defaultCapValue;
       }
@@ -128,9 +121,7 @@ export function insertAppiumPrefixes<C extends Constraints = BaseDriverCapConstr
 export function removeAppiumPrefixes<C extends Constraints = BaseDriverCapConstraints>(
   caps: NSCapabilities<C>,
 ): Capabilities<C> {
-  return mapKeys(caps as Record<string, unknown>, (_, key) =>
-    removeAppiumPrefix(String(key)),
-  ) as Capabilities<C>;
+  return mapKeys(caps as Record<string, unknown>, (_, key) => removeAppiumPrefix(String(key))) as Capabilities<C>;
 }
 
 /**
@@ -139,9 +130,7 @@ export function removeAppiumPrefixes<C extends Constraints = BaseDriverCapConstr
  *
  * @returns Parsed settings object; empty if none found.
  */
-export function pullSettings(
-  caps: Record<string, unknown> | null | undefined,
-): Record<string, unknown> {
+export function pullSettings(caps: Record<string, unknown> | null | undefined): Record<string, unknown> {
   if (!util.isPlainObject(caps) || util.isEmpty(caps)) {
     return {};
   }

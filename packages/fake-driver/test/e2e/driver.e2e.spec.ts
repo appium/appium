@@ -1,28 +1,30 @@
-import axios from 'axios';
-import chai, {expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
+import {Agent} from 'node:http';
+
 import {createAppiumURL, getTestPort} from '@appium/driver-test-support';
-import {FakeDriver, startServer} from '../../lib/index';
-import {BASE_CAPS, deleteSession, initSession, TEST_HOST, W3C_PREFIXED_CAPS} from '../helpers';
-import {contextTests} from './context-tests';
-import {findElementTests} from './find-element-tests';
-import {elementTests as elementInteractionTests} from './element-interaction-tests';
-import {alertTests} from './alert-tests';
-import {generalTests} from './general-tests';
-import type {AxiosResponse, RawAxiosRequestConfig} from 'axios';
 import type {
+  AppiumServer,
+  BaseNSCapabilities,
   Capabilities,
   Constraints,
   SingularSessionData,
   W3CCapabilities,
-  AppiumServer,
-  BaseNSCapabilities,
 } from '@appium/types';
-import type {RequireAtLeastOne} from 'type-fest';
-import {Agent} from 'node:http';
-import {server, routeConfiguringFunction, DeviceSettings} from 'appium/driver';
+import {DeviceSettings, routeConfiguringFunction, server} from 'appium/driver';
 import {sleep} from 'asyncbox';
+import axios from 'axios';
+import type {AxiosResponse, RawAxiosRequestConfig} from 'axios';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
+import type {RequireAtLeastOne} from 'type-fest';
+
+import {FakeDriver, startServer} from '../../lib/index';
+import {BASE_CAPS, deleteSession, initSession, TEST_HOST, W3C_PREFIXED_CAPS} from '../helpers';
+import {alertTests} from './alert-tests';
+import {contextTests} from './context-tests';
+import {elementTests as elementInteractionTests} from './element-interaction-tests';
+import {findElementTests} from './find-element-tests';
+import {generalTests} from './general-tests';
 
 chai.use(chaiAsPromised);
 
@@ -51,13 +53,8 @@ interface SessionHelpers<CommandData = unknown, ResponseData = any> {
     cmdNameOrConfig: string | RawAxiosRequestConfig,
     config?: RawAxiosRequestConfig,
   ) => Promise<ResponseData>;
-  startSession: (
-    data: NewSessionData,
-    config?: RawAxiosRequestConfig,
-  ) => Promise<NewSessionResponse>;
-  endSession: (
-    sessionId: string,
-  ) => Promise<AxiosResponse<{value: {error?: string} | null}, {validateStatus: null}>>;
+  startSession: (data: NewSessionData, config?: RawAxiosRequestConfig) => Promise<NewSessionResponse>;
+  endSession: (sessionId: string) => Promise<AxiosResponse<{value: {error?: string} | null}, {validateStatus: null}>>;
   getSession: (sessionId: string) => Promise<SingularSessionData>;
 }
 
@@ -325,12 +322,7 @@ describe(`FakeDriver E2E`, function () {
       await sleep(100);
       const shutdownEventPromise = new Promise<void>((resolve, reject) => {
         setTimeout(
-          () =>
-            reject(
-              new Error(
-                'onUnexpectedShutdown event is expected to be fired within 5 seconds timeout',
-              ),
-            ),
+          () => reject(new Error('onUnexpectedShutdown event is expected to be fired within 5 seconds timeout')),
           5000,
         );
         d.onUnexpectedShutdown(resolve);

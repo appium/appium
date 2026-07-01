@@ -1,14 +1,17 @@
-import {util} from '@appium/support';
-import type {NextFunction, Request, RequestHandler, Response} from 'express';
 import type {IncomingMessage} from 'node:http';
 import type {Duplex} from 'node:stream';
-import {log} from './logger';
+
+import {util} from '@appium/support';
+import type {NextFunction, Request, RequestHandler, Response} from 'express';
+
 import {errors} from '../protocol';
+import {log} from './logger';
 export {handleIdempotency} from './idempotency';
+import type {StringRecord, WSServer} from '@appium/types';
 import {match} from 'path-to-regexp';
+
 import {calcSignature} from '../helpers/session';
 import {getResponseForW3CError} from '../protocol/errors';
-import type {StringRecord, WSServer} from '@appium/types';
 
 const SESSION_ID_PATTERN = /\/session\/([^/]+)/;
 
@@ -39,11 +42,7 @@ export function allowCrossDomain(req: Request, res: Response, next: NextFunction
  * @returns Express request handler
  */
 export function allowCrossDomainAsyncExecute(basePath: string): RequestHandler {
-  function allowCrossDomainAsyncExecuteHandler(
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): void {
+  function allowCrossDomainAsyncExecuteHandler(req: Request, res: Response, next: NextFunction): void {
     const receiveAsyncResponseRegExp = new RegExp(
       `${util.escapeRegExp(basePath)}/session/[a-f0-9-]+/(appium/)?receive_async_response`,
     );
@@ -72,9 +71,7 @@ export function handleLogContext(req: Request, _res: Response, next: NextFunctio
     {
       requestId,
       ...sessionInfo,
-      isSensitive: ['true', '1', 'yes'].includes(
-        String(isSensitiveHeaderValue ?? '').toLowerCase(),
-      ),
+      isSensitive: ['true', '1', 'yes'].includes(String(isSensitiveHeaderValue ?? '').toLowerCase()),
     },
     true,
   );
@@ -151,12 +148,7 @@ export function handleUpgrade(webSocketsMapping: StringRecord<WSServer>): Reques
  * Final error-handling middleware.
  * Logs uncaught errors and returns a W3C-formatted error response unless headers were already sent.
  */
-export function catchAllHandler(
-  err: Error,
-  _req: Request,
-  res: Response,
-  next: NextFunction,
-): void {
+export function catchAllHandler(err: Error, _req: Request, res: Response, next: NextFunction): void {
   if (res.headersSent) {
     next(err);
     return;

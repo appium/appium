@@ -1,4 +1,5 @@
 import type {Constraints, Driver, ILogCommands} from '@appium/types';
+
 import type {BaseDriver} from '../driver';
 import {mixin} from './mixin';
 
@@ -23,8 +24,7 @@ const LogCommands: ILogCommands = {
         Object.entries(this.supportedLogTypes).map(([key, value]) => [key, value.description]),
       );
       throw new Error(
-        `Unsupported log type '${String(logType)}'. ` +
-          `Supported types: ${JSON.stringify(logsTypesWithDescriptions)}`,
+        `Unsupported log type '${String(logType)}'. ` + `Supported types: ${JSON.stringify(logsTypesWithDescriptions)}`,
       );
     }
 

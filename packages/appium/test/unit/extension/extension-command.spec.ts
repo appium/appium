@@ -1,19 +1,21 @@
 import type {ChildProcess} from 'node:child_process';
 import type {Writable} from 'node:stream';
-import type {AppiumLogger} from '@appium/types';
-import type {SinonSandbox, SinonStub} from 'sinon';
-import {DriverConfig} from '../../../lib/extension/driver-config';
-import {ExtensionCommand, injectAppiumSymlinks} from '../../../lib/cli/extension-command';
-import type {ExtensionConfig} from '../../../lib/cli/extension-command';
-import sinon from 'sinon';
-import sinonChai from 'sinon-chai';
-import {FAKE_DRIVER_DIR} from '../../helpers';
-import {Manifest} from '../../../lib/extension/manifest';
+
 import {fs, system} from '@appium/support';
-import {appiumPackageRoot} from '../../../lib/utils';
+import type {AppiumLogger} from '@appium/types';
 import {expect} from 'chai';
 import * as chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import type {SinonSandbox, SinonStub} from 'sinon';
+import sinon from 'sinon';
+import sinonChai from 'sinon-chai';
+
+import {ExtensionCommand, injectAppiumSymlinks} from '../../../lib/cli/extension-command';
+import type {ExtensionConfig} from '../../../lib/cli/extension-command';
+import {DriverConfig} from '../../../lib/extension/driver-config';
+import {Manifest} from '../../../lib/extension/manifest';
+import {appiumPackageRoot} from '../../../lib/utils';
+import {FAKE_DRIVER_DIR} from '../../helpers';
 
 /**
  * Relative path from actual `package.json` of `FakeDriver` for the `fake-stdin` script
@@ -112,11 +114,7 @@ describe('ExtensionCommand', function () {
         const driverConfig = {installedExtensions: {}};
         const pluginConfig = {installedExtensions: {}};
 
-        await injectAppiumSymlinks(
-          asExtensionConfig(driverConfig),
-          asExtensionConfig(pluginConfig),
-          logger,
-        );
+        await injectAppiumSymlinks(asExtensionConfig(driverConfig), asExtensionConfig(pluginConfig), logger);
 
         expect(fsSymlinkStub).to.not.have.been.called;
       });
@@ -137,16 +135,10 @@ describe('ExtensionCommand', function () {
         fsExistsStub.withArgs('/path/to/driver-for-test/node_modules').resolves(true);
         fsExistsStub.withArgs('/path/to/driver-for-test/node_modules/appium').resolves(false);
 
-        await injectAppiumSymlinks(
-          asExtensionConfig(driverConfig),
-          asExtensionConfig(pluginConfig),
-          logger,
-        );
+        await injectAppiumSymlinks(asExtensionConfig(driverConfig), asExtensionConfig(pluginConfig), logger);
 
         expect(fsExistsStub).to.have.been.calledWith('/path/to/driver-for-test/node_modules');
-        expect(fsExistsStub).to.have.been.calledWith(
-          '/path/to/driver-for-test/node_modules/appium',
-        );
+        expect(fsExistsStub).to.have.been.calledWith('/path/to/driver-for-test/node_modules/appium');
         expect(fsSymlinkStub).to.have.been.calledOnce;
         expect(fsSymlinkStub).to.have.been.calledWith(
           appiumPackageRoot,
@@ -170,11 +162,7 @@ describe('ExtensionCommand', function () {
         fsExistsStub.withArgs('/path/to/driver-for-test/node_modules').resolves(true);
         fsExistsStub.withArgs('/path/to/driver-for-test/node_modules/appium').resolves(false);
 
-        await injectAppiumSymlinks(
-          asExtensionConfig(driverConfig),
-          asExtensionConfig(pluginConfig),
-          logger,
-        );
+        await injectAppiumSymlinks(asExtensionConfig(driverConfig), asExtensionConfig(pluginConfig), logger);
 
         expect(fsSymlinkStub).to.have.been.calledWith(
           appiumPackageRoot,
@@ -196,11 +184,7 @@ describe('ExtensionCommand', function () {
 
         fsExistsStub.withArgs('/path/to/driver-for-test/node_modules').resolves(false);
 
-        await injectAppiumSymlinks(
-          asExtensionConfig(driverConfig),
-          asExtensionConfig(pluginConfig),
-          logger,
-        );
+        await injectAppiumSymlinks(asExtensionConfig(driverConfig), asExtensionConfig(pluginConfig), logger);
 
         expect(fsSymlinkStub).to.not.have.been.called;
       });
@@ -218,11 +202,7 @@ describe('ExtensionCommand', function () {
 
         fsExistsStub.resolves(true);
 
-        await injectAppiumSymlinks(
-          asExtensionConfig(driverConfig),
-          asExtensionConfig(pluginConfig),
-          logger,
-        );
+        await injectAppiumSymlinks(asExtensionConfig(driverConfig), asExtensionConfig(pluginConfig), logger);
 
         expect(fsSymlinkStub).to.not.have.been.called;
       });
@@ -243,11 +223,7 @@ describe('ExtensionCommand', function () {
         fsExistsStub.withArgs('/path/to/plugin-for-test/node_modules').resolves(true);
         fsExistsStub.withArgs('/path/to/plugin-for-test/node_modules/appium').resolves(false);
 
-        await injectAppiumSymlinks(
-          asExtensionConfig(driverConfig),
-          asExtensionConfig(pluginConfig),
-          logger,
-        );
+        await injectAppiumSymlinks(asExtensionConfig(driverConfig), asExtensionConfig(pluginConfig), logger);
 
         expect(fsSymlinkStub).to.have.been.calledOnce;
         expect(fsSymlinkStub).to.have.been.calledWith(
@@ -281,11 +257,7 @@ describe('ExtensionCommand', function () {
         fsExistsStub.withArgs('/path/to/driver-for-test/node_modules/appium').resolves(false);
         fsExistsStub.withArgs('/path/to/plugin-for-test/node_modules/appium').resolves(false);
 
-        await injectAppiumSymlinks(
-          asExtensionConfig(driverConfig),
-          asExtensionConfig(pluginConfig),
-          logger,
-        );
+        await injectAppiumSymlinks(asExtensionConfig(driverConfig), asExtensionConfig(pluginConfig), logger);
 
         expect(fsSymlinkStub).to.have.been.calledTwice;
       });
@@ -306,11 +278,7 @@ describe('ExtensionCommand', function () {
           },
         };
 
-        await injectAppiumSymlinks(
-          asExtensionConfig(driverConfig),
-          asExtensionConfig(pluginConfig),
-          logger,
-        );
+        await injectAppiumSymlinks(asExtensionConfig(driverConfig), asExtensionConfig(pluginConfig), logger);
 
         expect(fsSymlinkStub).to.not.have.been.called;
       });
@@ -329,11 +297,7 @@ describe('ExtensionCommand', function () {
           };
           const pluginConfig = {installedExtensions: {}};
 
-          await injectAppiumSymlinks(
-            asExtensionConfig(driverConfig),
-            asExtensionConfig(pluginConfig),
-            logger,
-          );
+          await injectAppiumSymlinks(asExtensionConfig(driverConfig), asExtensionConfig(pluginConfig), logger);
 
           expect(fsSymlinkStub).to.not.have.been.called;
         });
@@ -357,11 +321,7 @@ describe('ExtensionCommand', function () {
         fsExistsStub.resolves(true);
         fsExistsStub.withArgs('/path/to/npm-driver/node_modules/appium').resolves(false);
 
-        await injectAppiumSymlinks(
-          asExtensionConfig(driverConfig),
-          asExtensionConfig(pluginConfig),
-          logger,
-        );
+        await injectAppiumSymlinks(asExtensionConfig(driverConfig), asExtensionConfig(pluginConfig), logger);
 
         expect(fsSymlinkStub).to.have.been.calledOnce;
         expect(fsSymlinkStub).to.have.been.calledWith(
@@ -388,11 +348,7 @@ describe('ExtensionCommand', function () {
         fsExistsStub.withArgs('/path/to/driver-for-test/node_modules/appium').resolves(false);
         fsSymlinkStub.rejects(new Error('Permission denied'));
 
-        await injectAppiumSymlinks(
-          asExtensionConfig(driverConfig),
-          asExtensionConfig(pluginConfig),
-          logger,
-        );
+        await injectAppiumSymlinks(asExtensionConfig(driverConfig), asExtensionConfig(pluginConfig), logger);
 
         expect(logger.info).to.have.been.calledOnce;
         // @ts-ignore
@@ -407,11 +363,7 @@ describe('ExtensionCommand', function () {
         const driverConfig = {installedExtensions: null};
         const pluginConfig = {installedExtensions: null};
 
-        await injectAppiumSymlinks(
-          asExtensionConfig(driverConfig),
-          asExtensionConfig(pluginConfig),
-          logger,
-        );
+        await injectAppiumSymlinks(asExtensionConfig(driverConfig), asExtensionConfig(pluginConfig), logger);
 
         expect(fsSymlinkStub).to.not.have.been.called;
       });
@@ -420,11 +372,7 @@ describe('ExtensionCommand', function () {
         const driverConfig = {};
         const pluginConfig = {};
 
-        await injectAppiumSymlinks(
-          asExtensionConfig(driverConfig),
-          asExtensionConfig(pluginConfig),
-          logger,
-        );
+        await injectAppiumSymlinks(asExtensionConfig(driverConfig), asExtensionConfig(pluginConfig), logger);
 
         expect(fsSymlinkStub).to.not.have.been.called;
       });

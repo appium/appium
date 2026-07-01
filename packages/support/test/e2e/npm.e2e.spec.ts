@@ -1,6 +1,8 @@
+import {describe, it} from 'node:test';
+
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {describe, it} from 'node:test';
+
 import {npm} from '../../lib/npm';
 
 use(chaiAsPromised);
@@ -10,19 +12,13 @@ describe('npm module', function () {
     describe('when the package is not published to the public registry', function () {
       it('should not throw', async function () {
         await expect(
-          npm.getLatestVersion(
-            process.cwd(),
-            'crusher-brush-resize-disfigure-props-desktop-blatancy-prologue',
-          ),
+          npm.getLatestVersion(process.cwd(), 'crusher-brush-resize-disfigure-props-desktop-blatancy-prologue'),
         ).to.not.be.rejected;
       });
 
       it('should resolve with "null"', async function () {
         await expect(
-          npm.getLatestVersion(
-            process.cwd(),
-            'crusher-brush-resize-disfigure-props-desktop-blatancy-prologue',
-          ),
+          npm.getLatestVersion(process.cwd(), 'crusher-brush-resize-disfigure-props-desktop-blatancy-prologue'),
         ).to.eventually.be.null;
       });
     });

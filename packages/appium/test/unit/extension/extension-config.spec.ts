@@ -1,13 +1,15 @@
-import {DRIVER_TYPE} from '../../../lib/constants';
+import path from 'node:path';
+
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import path from 'node:path';
+import type {SinonSandbox} from 'sinon';
+
+import {DRIVER_TYPE} from '../../../lib/constants';
+import {resolveEsmEntryPoint} from '../../../lib/extension/extension-config';
 import {APPIUM_VER} from '../../../lib/helpers/build';
 import {FAKE_DRIVER_DIR, PROJECT_ROOT, rewiremock} from '../../helpers';
 import {initMocks} from './mocks';
-import {resolveEsmEntryPoint} from '../../../lib/extension/extension-config';
 import type {MockAppiumSupport} from './mocks';
-import type {SinonSandbox} from 'sinon';
 
 const {expect} = chai;
 chai.use(chaiAsPromised);
@@ -21,10 +23,7 @@ describe('ExtensionConfig', function () {
   beforeEach(function () {
     let overrides: ReturnType<typeof initMocks>['overrides'];
     ({MockAppiumSupport, overrides, sandbox} = initMocks());
-    ({ExtensionConfig} = rewiremock.proxy(
-      () => require('../../../lib/extension/extension-config'),
-      overrides,
-    ));
+    ({ExtensionConfig} = rewiremock.proxy(() => require('../../../lib/extension/extension-config'), overrides));
     ({Manifest} = rewiremock.proxy(() => require('../../../lib/extension/manifest'), overrides));
   });
 
@@ -156,11 +155,9 @@ describe('ExtensionConfig', function () {
         });
 
         it('should resolve w/ an appropriate warning', async function () {
-          await expect(config.getGenericConfigWarnings(extData, extData.pkgName)).to.eventually.eql(
-            [
-              `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) has 1 invalid or missing field ("installSpec") in \`extensions.yaml\`; this may cause upgrades done via the \`appium\` CLI tool to fail. Please reinstall with \`appium driver uninstall ${extData.pkgName}\` and \`appium driver install ${extData.pkgName}\` to attempt a fix.`,
-            ],
-          );
+          await expect(config.getGenericConfigWarnings(extData, extData.pkgName)).to.eventually.eql([
+            `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) has 1 invalid or missing field ("installSpec") in \`extensions.yaml\`; this may cause upgrades done via the \`appium\` CLI tool to fail. Please reinstall with \`appium driver uninstall ${extData.pkgName}\` and \`appium driver install ${extData.pkgName}\` to attempt a fix.`,
+          ]);
         });
       });
 
@@ -170,11 +167,9 @@ describe('ExtensionConfig', function () {
         });
 
         it('should resolve w/ an appropriate warning', async function () {
-          await expect(config.getGenericConfigWarnings(extData, extData.pkgName)).to.eventually.eql(
-            [
-              `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) has 1 invalid or missing field ("installType") in \`extensions.yaml\`; this may cause upgrades done via the \`appium\` CLI tool to fail. Please reinstall with \`appium driver uninstall ${extData.pkgName}\` and \`appium driver install ${extData.pkgName}\` to attempt a fix.`,
-            ],
-          );
+          await expect(config.getGenericConfigWarnings(extData, extData.pkgName)).to.eventually.eql([
+            `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) has 1 invalid or missing field ("installType") in \`extensions.yaml\`; this may cause upgrades done via the \`appium\` CLI tool to fail. Please reinstall with \`appium driver uninstall ${extData.pkgName}\` and \`appium driver install ${extData.pkgName}\` to attempt a fix.`,
+          ]);
         });
       });
 
@@ -185,11 +180,9 @@ describe('ExtensionConfig', function () {
         });
 
         it('should resolve w/ an appropriate warning', async function () {
-          await expect(config.getGenericConfigWarnings(extData, extData.pkgName)).to.eventually.eql(
-            [
-              `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) has 2 invalid or missing fields ("installSpec", "installType") in \`extensions.yaml\`; this may cause upgrades done via the \`appium\` CLI tool to fail. Please reinstall with \`appium driver uninstall ${extData.pkgName}\` and \`appium driver install ${extData.pkgName}\` to attempt a fix.`,
-            ],
-          );
+          await expect(config.getGenericConfigWarnings(extData, extData.pkgName)).to.eventually.eql([
+            `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) has 2 invalid or missing fields ("installSpec", "installType") in \`extensions.yaml\`; this may cause upgrades done via the \`appium\` CLI tool to fail. Please reinstall with \`appium driver uninstall ${extData.pkgName}\` and \`appium driver install ${extData.pkgName}\` to attempt a fix.`,
+          ]);
         });
       });
 
@@ -204,9 +197,7 @@ describe('ExtensionConfig', function () {
             MockAppiumSupport.npm.getLatestVersion.resolves(null);
           });
           it('should resolve w/ an appropriate warning', async function () {
-            await expect(
-              config.getGenericConfigWarnings(extData, extData.pkgName),
-            ).to.eventually.eql([
+            await expect(config.getGenericConfigWarnings(extData, extData.pkgName)).to.eventually.eql([
               `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to an invalid or missing peer dependency on Appium. Please ask the developer of \`${extData.pkgName}\` to add a peer dependency on \`^appium@${APPIUM_VER}\`.`,
             ]);
           });
@@ -222,9 +213,7 @@ describe('ExtensionConfig', function () {
           });
 
           it('should resolve w/ an appropriate warning', async function () {
-            await expect(
-              config.getGenericConfigWarnings(extData, extData.pkgName),
-            ).to.eventually.eql([
+            await expect(config.getGenericConfigWarnings(extData, extData.pkgName)).to.eventually.eql([
               `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to an invalid or missing peer dependency on Appium. A newer version of \`${extData.pkgName}\` is available; please attempt to upgrade "${extData.pkgName}" to v${updateVersion} or newer.`,
             ]);
           });
@@ -246,9 +235,7 @@ describe('ExtensionConfig', function () {
           });
 
           it('should resolve w/ an appropriate warning', async function () {
-            await expect(
-              config.getGenericConfigWarnings(extData, extData.pkgName),
-            ).to.eventually.eql([
+            await expect(config.getGenericConfigWarnings(extData, extData.pkgName)).to.eventually.eql([
               `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to its peer dependency on Appium ${extData.appiumVersion}. Try to upgrade \`${extData.pkgName}\` to v${updateVersion} or newer.`,
             ]);
           });
@@ -261,9 +248,7 @@ describe('ExtensionConfig', function () {
             MockAppiumSupport.npm.getLatestVersion.resolves(null);
           });
           it('should resolve w/ an appropriate warning', async function () {
-            await expect(
-              config.getGenericConfigWarnings(extData, extData.pkgName),
-            ).to.eventually.eql([
+            await expect(config.getGenericConfigWarnings(extData, extData.pkgName)).to.eventually.eql([
               `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to its peer dependency on Appium ${extData.appiumVersion}. Please install a compatible version of the driver.`,
             ]);
           });
@@ -344,9 +329,7 @@ describe('ExtensionConfig', function () {
           // _resolveExtension reads package.json and uses manifest.main; delegate to real fs for this path
           MockAppiumSupport.fs.readFile
             .withArgs(packageJsonPath, 'utf8')
-            .callsFake(async () =>
-              (await import('node:fs/promises')).readFile(packageJsonPath, 'utf8'),
-            );
+            .callsFake(async () => (await import('node:fs/promises')).readFile(packageJsonPath, 'utf8'));
           MockAppiumSupport.fs.exists.withArgs(entryPointPath).resolves(true);
         });
 

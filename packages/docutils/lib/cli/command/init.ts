@@ -4,6 +4,7 @@
  */
 
 import type {CommandModule, InferredOptionTypes, Options} from 'yargs';
+
 import {init} from '../../init';
 import {getLogger} from '../../logger';
 import {stopwatch} from '../../utils';
@@ -143,9 +144,7 @@ export default {
   command: 'init',
   describe: 'Initialize package for doc generation',
   builder(yargs) {
-    return yargs
-      .options(opts)
-      .check(async (argv) => checkMissingPaths(opts, InitCommandGroup.Paths, argv));
+    return yargs.options(opts).check(async (argv) => checkMissingPaths(opts, InitCommandGroup.Paths, argv));
   },
   async handler(args) {
     const done = stopwatch('init');

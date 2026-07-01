@@ -1,14 +1,16 @@
 import Module from 'node:module';
 import path from 'node:path';
-import * as semver from 'semver';
-import type {PackageJson} from 'type-fest';
+
 import type {StringRecord} from '@appium/types';
-import {hasAppiumDependency} from './env';
+import * as semver from 'semver';
 import {exec} from 'teen_process';
 import type {ExecError, TeenProcessExecOptions} from 'teen_process';
+import type {PackageJson} from 'type-fest';
+
+import {hasAppiumDependency} from './env';
 import {fs} from './fs';
-import * as util from './util';
 import * as system from './system';
+import * as util from './util';
 /**
  * Relative path to directory containing any Appium internal files
  * XXX: this is duplicated in `appium/lib/constants.js`.
@@ -83,8 +85,7 @@ export class NPM {
     }
     const npmCmd = system.isWindows() ? 'npm.cmd' : 'npm';
     type ExecRunnerResult = {stdout: string; stderr: string; code: number | null};
-    let runner = async (): Promise<ExecRunnerResult> =>
-      await exec(npmCmd, argsCopy, teenProcessExecOpts);
+    let runner = async (): Promise<ExecRunnerResult> => await exec(npmCmd, argsCopy, teenProcessExecOpts);
     if (lockFile) {
       const acquireLock = util.getLockFileGuard(lockFile);
       const _runner = runner;
@@ -103,7 +104,9 @@ export class NPM {
     } catch (e) {
       const {stdout = '', stderr = '', code = null} = e as ExecError;
       throw new Error(
-        `npm command '${argsCopy.join(' ')}' failed with code ${code}.\n\nSTDOUT:\n${stdout.trim()}\n\nSTDERR:\n${stderr.trim()}`,
+        `npm command '${argsCopy.join(
+          ' ',
+        )}' failed with code ${code}.\n\nSTDOUT:\n${stdout.trim()}\n\nSTDERR:\n${stderr.trim()}`,
         {cause: e},
       );
     }
@@ -140,11 +143,7 @@ export class NPM {
    * @param curVersion - Current installed version
    * @returns Latest safe upgrade version string, or `null` if none or package not found
    */
-  async getLatestSafeUpgradeVersion(
-    cwd: string,
-    pkg: string,
-    curVersion: string,
-  ): Promise<string | null> {
+  async getLatestSafeUpgradeVersion(cwd: string, pkg: string, curVersion: string): Promise<string | null> {
     try {
       const result = await this.exec('view', [pkg, 'versions'], {json: true, cwd});
       const allVersions = result.json;
@@ -198,11 +197,7 @@ export class NPM {
   /**
    * Installs a package w/ `npm`
    */
-  async installPackage(
-    cwd: string,
-    installStr: string,
-    opts: InstallPackageOpts,
-  ): Promise<NpmInstallReceipt> {
+  async installPackage(cwd: string, installStr: string, opts: InstallPackageOpts): Promise<NpmInstallReceipt> {
     const {pkgName, installType} = opts;
     let dummyPkgJson: Record<string, unknown>;
     const dummyPkgPath = path.join(cwd, 'package.json');
@@ -310,10 +305,7 @@ export async function resolveFrom(fromDirectory: string, moduleId: string): Prom
 
   const fromFile = path.join(resolvedFromDirectory, 'noop.js');
   const nodeModule = Module as typeof Module & {
-    _resolveFilename: (
-      id: string,
-      parent: {id: string; filename: string; paths: string[]},
-    ) => string;
+    _resolveFilename: (id: string, parent: {id: string; filename: string; paths: string[]}) => string;
     _nodeModulePaths: (from: string) => string[];
   };
   return nodeModule._resolveFilename(moduleId, {

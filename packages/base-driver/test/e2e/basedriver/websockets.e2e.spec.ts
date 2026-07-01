@@ -1,10 +1,12 @@
-import {describe, it, before, after} from 'node:test';
+import {after, before, describe, it} from 'node:test';
+
+import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {server, routeConfiguringFunction, DEFAULT_WS_PATHNAME_PREFIX} from '../../../lib';
-import {FakeDriver} from '../protocol/fake-driver';
 import WebSocket from 'ws';
-import {TEST_HOST, getTestPort} from '@appium/driver-test-support';
+
+import {DEFAULT_WS_PATHNAME_PREFIX, routeConfiguringFunction, server} from '../../../lib';
+import {FakeDriver} from '../protocol/fake-driver';
 
 chai.use(chaiAsPromised);
 
@@ -58,10 +60,7 @@ describe('Websockets (e2e)', function () {
           resolve();
         });
         client.once('error', reject);
-        setTimeout(
-          () => reject(new Error('No websocket messages have been received after the timeout')),
-          timeout,
-        );
+        setTimeout(() => reject(new Error('No websocket messages have been received after the timeout')), timeout);
       });
 
       expect(await baseServer.removeWebSocketHandler(endpoint)).to.be.true;

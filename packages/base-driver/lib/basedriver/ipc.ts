@@ -1,16 +1,18 @@
-import {log} from './logger';
-import type {
-  StringRecord,
-  IIpcSubscription,
-  IAppiumIpc,
-  IpcMessage,
-  IpcEvent,
-  AppiumLogger,
-  IpcData,
-} from '@appium/types';
 import EventEmitter from 'node:events';
-import {sleep} from 'asyncbox';
+
 import {node} from '@appium/support';
+import type {
+  AppiumLogger,
+  IAppiumIpc,
+  IIpcSubscription,
+  IpcData,
+  IpcEvent,
+  IpcMessage,
+  StringRecord,
+} from '@appium/types';
+import {sleep} from 'asyncbox';
+
+import {log} from './logger';
 
 const DEF_MAX_OBJ_SIZE_BYTES = 1024 * 1024; // 1mb seems like plenty for any plugin to pass a message
 const DEF_MAX_TOPICS = 1000;
@@ -26,10 +28,7 @@ export type AppiumIpcOpts = {
 
 const ASYNC_ITERATOR_STOP = Symbol('asyncIteratorStop');
 
-export class IpcSubscription<T extends IpcData>
-  extends EventEmitter<IpcEvent<T>>
-  implements IIpcSubscription<T>
-{
+export class IpcSubscription<T extends IpcData> extends EventEmitter<IpcEvent<T>> implements IIpcSubscription<T> {
   constructor(
     public readonly subscriber: string,
     public readonly topic: string,
@@ -110,9 +109,7 @@ export class AppiumIpc implements IAppiumIpc {
   subscribe<T extends IpcData>(topic: string, subscriber: string): IpcSubscription<T> {
     this.log.info(`Subscribing ${subscriber} to topic '${topic}'`);
     if (this.subscriptionExists(topic, subscriber)) {
-      throw new Error(
-        `Subscription already exists for topic "${topic}" and subscriber "${subscriber}"`,
-      );
+      throw new Error(`Subscription already exists for topic "${topic}" and subscriber "${subscriber}"`);
     }
 
     this.ensureTopic(topic);
@@ -157,9 +154,7 @@ export class AppiumIpc implements IAppiumIpc {
 
     this.messageByTopic[topic] = message;
 
-    const subs = this.subs[topic]
-      ? this.subs[topic].filter((sub) => sub.subscriber !== publisher)
-      : [];
+    const subs = this.subs[topic] ? this.subs[topic].filter((sub) => sub.subscriber !== publisher) : [];
 
     for (const sub of subs) {
       sub.emit(EVT_MESSAGE, structuredClone(message));

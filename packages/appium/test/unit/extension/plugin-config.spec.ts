@@ -1,11 +1,13 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {promises as fs} from 'node:fs';
+
 import type {ExtensionType, PluginType} from '@appium/types';
 import type {ExtManifest} from 'appium/types';
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import type {SinonSandbox} from 'sinon';
-import type {PluginConfig as PluginConfigInstance} from '../../../lib/extension/plugin-config';
+
 import {Manifest} from '../../../lib/extension/manifest';
+import type {PluginConfig as PluginConfigInstance} from '../../../lib/extension/plugin-config';
 import {resetSchema} from '../../../lib/schema';
 import {resolveFixture, rewiremock} from '../../helpers';
 import {initMocks} from './mocks';
@@ -40,10 +42,7 @@ describe('PluginConfig', function () {
     manifest = Manifest.getInstance('/somewhere/');
     ({MockAppiumSupport, MockResolveFrom, sandbox, overrides} = initMocks());
     MockAppiumSupport.fs.readFile.resolves(yamlFixture);
-    ({PluginConfig} = rewiremock.proxy(
-      () => require('../../../lib/extension/plugin-config'),
-      overrides,
-    ));
+    ({PluginConfig} = rewiremock.proxy(() => require('../../../lib/extension/plugin-config'), overrides));
     resetSchema();
   });
 
@@ -73,10 +72,7 @@ describe('PluginConfig', function () {
         it('should throw', function () {
           expect(() => PluginConfig.create(manifest)).to.throw(
             Error,
-            new RegExp(
-              `Manifest with APPIUM_HOME ${manifest.appiumHome} already has a PluginConfig`,
-              'i',
-            ),
+            new RegExp(`Manifest with APPIUM_HOME ${manifest.appiumHome} already has a PluginConfig`, 'i'),
           );
         });
       });
@@ -236,8 +232,7 @@ describe('PluginConfig', function () {
           });
 
           it('should return an empty array', async function () {
-            await expect(pluginConfig.getSchemaProblems(externalManifest, 'foo')).to.eventually.be
-              .empty;
+            await expect(pluginConfig.getSchemaProblems(externalManifest, 'foo')).to.eventually.be.empty;
           });
         });
 

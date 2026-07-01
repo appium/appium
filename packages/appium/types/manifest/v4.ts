@@ -111,10 +111,7 @@ export type ExtMetadata<ExtType extends ExtensionType> = (ExtType extends Driver
  * Combination of external + internal extension data with `driverName`/`pluginName` removed (it becomes a key in an {@linkcode ExtRecord} object).
  * Part of `extensions.yaml`.
  */
-export type ExtManifest<ExtType extends ExtensionType> = Omit<
-  ExtMetadata<ExtType>,
-  'driverName' | 'pluginName'
-> &
+export type ExtManifest<ExtType extends ExtensionType> = Omit<ExtMetadata<ExtType>, 'driverName' | 'pluginName'> &
   InternalMetadata;
 
 /**
@@ -146,10 +143,7 @@ export type ExtName<ExtType extends ExtensionType> = keyof ExtRecord<ExtType>;
  * - `appium`: the metadata for the extension
  * - `peerDependencies.appium`: the maximum compatible version of Appium
  */
-export type ExtPackageJson<ExtType extends ExtensionType> = SetRequired<
-  PackageJson,
-  'name' | 'version'
-> & {
+export type ExtPackageJson<ExtType extends ExtensionType> = SetRequired<PackageJson, 'name' | 'version'> & {
   appium: ExtMetadata<ExtType>;
   peerDependencies: {appium: string; [key: string]: string};
 };
@@ -157,5 +151,4 @@ export type ExtPackageJson<ExtType extends ExtensionType> = SetRequired<
 /**
  * A transient format between installation and insertion of extension metadata into the manifest.
  */
-export type ExtInstallReceipt<ExtType extends ExtensionType> = ExtMetadata<ExtType> &
-  InternalMetadata;
+export type ExtInstallReceipt<ExtType extends ExtensionType> = ExtMetadata<ExtType> & InternalMetadata;

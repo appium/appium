@@ -1,8 +1,9 @@
 import type {Element} from '@appium/types';
 import {errors} from 'appium/driver';
-import {FakeElement, type XmlNodeLike} from '../fake-element';
-import type {FakeDriver} from '../driver';
 import {util} from 'appium/support';
+
+import type {FakeDriver} from '../driver';
+import {FakeElement, type XmlNodeLike} from '../fake-element';
 
 const {W3C_WEB_ELEMENT_IDENTIFIER} = util;
 
@@ -107,22 +108,14 @@ async function findElOrElsImpl<Ctx = unknown>(
 export const findElOrEls = findElOrElsImpl;
 
 /** findElement. */
-export async function findElement(
-  this: FakeDriver,
-  strategy: string,
-  selector: string,
-): Promise<Element> {
+export async function findElement(this: FakeDriver, strategy: string, selector: string): Promise<Element> {
   return this.findElOrEls(strategy, selector, false);
 }
 
 // Protocol passes (strategy, selector, elementId) for find-from-element routes.
 
 /** findElements. */
-export async function findElements(
-  this: FakeDriver,
-  strategy: string,
-  selector: string,
-): Promise<Element[]> {
+export async function findElements(this: FakeDriver, strategy: string, selector: string): Promise<Element[]> {
   return this.findElOrEls(strategy, selector, true);
 }
 

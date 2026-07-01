@@ -1,9 +1,11 @@
-import log from './logger';
-import B from 'bluebird';
-import {requireSharp} from './image-util';
-import {Writable, type WritableOptions, type Readable} from 'node:stream';
-import {requirePackage} from './node';
+import {type Readable, Writable, type WritableOptions} from 'node:stream';
+
 import axios from 'axios';
+import B from 'bluebird';
+
+import {requireSharp} from './image-util';
+import log from './logger';
+import {requirePackage} from './node';
 
 /** Constructor for mjpeg-consumer (lazy-loaded) */
 type MJpegConsumerConstructor = new () => NodeJS.ReadWriteStream;
@@ -53,11 +55,7 @@ export class MJpegStream extends Writable {
    * @param errorHandler - additional function that will be called in the case of any errors
    * @param options - Options to pass to the Writable constructor
    */
-  constructor(
-    mJpegUrl: string,
-    errorHandler: (err: Error) => void = noop,
-    options: WritableOptions = {},
-  ) {
+  constructor(mJpegUrl: string, errorHandler: (err: Error) => void = noop, options: WritableOptions = {}) {
     super(options);
     this.errorHandler = errorHandler;
     this.url = mJpegUrl;
@@ -144,10 +142,7 @@ export class MJpegStream extends Writable {
     const startPromise = new B<void>((res, rej) => {
       this.registerStartSuccess = res;
       this.registerStartFailure = rej;
-    }).timeout(
-      serverTimeout,
-      `Waited ${serverTimeout}ms but the MJPEG server never sent any images`,
-    );
+    }).timeout(serverTimeout, `Waited ${serverTimeout}ms but the MJPEG server never sent any images`);
 
     (this.responseStream as Readable & {pipe<T extends Writable>(dest: T): T})
       .once('close', onClose)

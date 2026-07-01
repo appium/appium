@@ -1,15 +1,16 @@
+import type {AddressInfo} from 'node:net';
 import path from 'node:path';
+import {after, before, describe, it} from 'node:test';
 
 import {pluginE2EHarness} from '@appium/plugin-test-support';
-import {remote as wdio} from 'webdriverio';
-import {W3C_ELEMENT_KEY, MJSONWP_ELEMENT_KEY} from '../../lib/execute-child';
 import {fs, node} from '@appium/support';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import type {AddressInfo} from 'node:net';
-import type {Browser} from 'webdriverio';
-import {describe, it, before, after} from 'node:test';
 import {exec} from 'teen_process';
+import {remote as wdio} from 'webdriverio';
+import type {Browser} from 'webdriverio';
+
+import {MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY} from '../../lib/execute-child';
 
 use(chaiAsPromised);
 
@@ -17,15 +18,7 @@ const THIS_PLUGIN_DIR = node.getModuleRootSync('@appium/execute-driver-plugin', 
 const APPIUM_HOME = path.join(THIS_PLUGIN_DIR, 'local_appium_home');
 const FAKE_DRIVER_DIR = path.join(THIS_PLUGIN_DIR, '..', 'fake-driver');
 const TEST_HOST = '127.0.0.1';
-const TEST_FAKE_APP = path.join(
-  APPIUM_HOME,
-  'node_modules',
-  '@appium',
-  'fake-driver',
-  'test',
-  'fixtures',
-  'app.xml',
-);
+const TEST_FAKE_APP = path.join(APPIUM_HOME, 'node_modules', '@appium', 'fake-driver', 'test', 'fixtures', 'app.xml');
 
 const TEST_CAPS = {
   platformName: 'Fake',
@@ -123,9 +116,7 @@ describe('ExecuteDriverPlugin', function () {
 
     it('should fail with any script type other than webdriverio currently', async function () {
       const script = `return 'foo'`;
-      await expect(driver.executeDriverScript(script, 'wd')).to.eventually.be.rejectedWith(
-        /webdriverio/,
-      );
+      await expect(driver.executeDriverScript(script, 'wd')).to.eventually.be.rejectedWith(/webdriverio/);
     });
 
     it('should execute a webdriverio script that returns elements correctly', async function () {
@@ -198,9 +189,9 @@ describe('ExecuteDriverPlugin', function () {
         await new Promise((resolve) => setTimeout(resolve, 1000));
         return true;
       `;
-      await expect(
-        driver.executeDriverScript(script, 'webdriverio', 50),
-      ).to.eventually.be.rejectedWith(/.+50.+timeout.+/);
+      await expect(driver.executeDriverScript(script, 'webdriverio', 50)).to.eventually.be.rejectedWith(
+        /.+50.+timeout.+/,
+      );
     });
   });
 });

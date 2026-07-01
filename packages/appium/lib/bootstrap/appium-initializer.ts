@@ -1,26 +1,5 @@
-import {init as logsinkInit} from '../logsink';
-import {log as logger} from '../logger';
-import {util, env} from '@appium/support';
+import {env, util} from '@appium/support';
 import type {DriverOpts} from '@appium/types';
-import {defaultsDeep} from '../utils';
-import {AppiumDriver, type AppiumDriverConstraints} from '../appium';
-import {runExtensionCommand} from '../cli/extension';
-import {runSetupCommand} from '../cli/setup-command';
-import {getParser, ArgParser} from '../cli/parser';
-import {readConfigFile} from './config-file';
-import {getNonDefaultServerArgs, showConfig} from './startup-config';
-import {adjustNodePath, requireDir, showDebugInfo} from './node-helpers';
-import {loadExtensions, type ExtensionConfigs} from '../extension';
-import {SERVER_SUBCOMMAND} from '../constants';
-import {injectAppiumSymlinks} from '../cli/extension-command';
-import {getDefaultsForSchema} from '../schema/schema';
-import {
-  isDriverCommandArgs,
-  isExtensionCommandArgs,
-  isPluginCommandArgs,
-  isServerCommandArgs,
-  isSetupCommandArgs,
-} from '../schema/cli-args-guards';
 import type {
   Args,
   CliCommand,
@@ -29,8 +8,30 @@ import type {
   CliExtensionSubcommand,
   ParsedArgs,
 } from 'appium/types';
-import {determineAppiumHomeSource, preflightChecks} from './main-helpers';
+
+import {AppiumDriver, type AppiumDriverConstraints} from '../appium';
+import {runExtensionCommand} from '../cli/extension';
+import {injectAppiumSymlinks} from '../cli/extension-command';
+import {ArgParser, getParser} from '../cli/parser';
+import {runSetupCommand} from '../cli/setup-command';
+import {SERVER_SUBCOMMAND} from '../constants';
+import {type ExtensionConfigs, loadExtensions} from '../extension';
+import {log as logger} from '../logger';
+import {init as logsinkInit} from '../logsink';
+import {
+  isDriverCommandArgs,
+  isExtensionCommandArgs,
+  isPluginCommandArgs,
+  isServerCommandArgs,
+  isSetupCommandArgs,
+} from '../schema/cli-args-guards';
+import {getDefaultsForSchema} from '../schema/schema';
+import {defaultsDeep} from '../utils';
+import {readConfigFile} from './config-file';
 import type {InitResult, PreConfigArgs} from './init-types';
+import {determineAppiumHomeSource, preflightChecks} from './main-helpers';
+import {adjustNodePath, requireDir, showDebugInfo} from './node-helpers';
+import {getNonDefaultServerArgs, showConfig} from './startup-config';
 
 /**
  * Parses CLI/programmatic args, loads config and extensions, and returns server-ready state or runs extension/setup flows.
@@ -88,9 +89,7 @@ export class AppiumInitializer {
   private async parsePreConfigArgs<
     Cmd extends CliCommand,
     SubCmd extends CliExtensionSubcommand | CliCommandSetupSubcommand | void,
-  >(
-    args?: Args<Cmd, SubCmd>,
-  ): Promise<{preConfigArgs: PreConfigArgs; throwInsteadOfExit: boolean}> {
+  >(args?: Args<Cmd, SubCmd>): Promise<{preConfigArgs: PreConfigArgs; throwInsteadOfExit: boolean}> {
     const parser = await getParser();
     let throwInsteadOfExit = false;
 
@@ -135,12 +134,7 @@ export class AppiumInitializer {
     ) as unknown as ParsedArgs<CliCommandServer>;
 
     if (preConfigArgs.showConfig) {
-      showConfig(
-        getNonDefaultServerArgs(preConfigArgs as Args),
-        configResult,
-        defaults,
-        serverArgs,
-      );
+      showConfig(getNonDefaultServerArgs(preConfigArgs as Args), configResult, defaults, serverArgs);
       return {} as InitResult<Cmd>;
     }
 
@@ -177,14 +171,10 @@ export class AppiumInitializer {
     if (!serverArgs.logFilters) {
       return;
     }
-    const {issues, rules} = await logger
-      .unwrap()
-      .loadSecureValuesPreprocessingRules(serverArgs.logFilters);
+    const {issues, rules} = await logger.unwrap().loadSecureValuesPreprocessingRules(serverArgs.logFilters);
     const argToLog = util.truncateString(JSON.stringify(serverArgs.logFilters), {length: 150});
     if (!util.isEmpty(issues)) {
-      throw new Error(
-        `The log filtering rules config ${argToLog} has issues: ` + JSON.stringify(issues, null, 2),
-      );
+      throw new Error(`The log filtering rules config ${argToLog} has issues: ` + JSON.stringify(issues, null, 2));
     }
     if (util.isEmpty(rules)) {
       logger.warn(`Found no log filtering rules in the ${argToLog} config. ` + `Is that expected?`);
@@ -209,9 +199,7 @@ export class AppiumInitializer {
     }
 
     if (isDriverCommandArgs(preConfigArgs) || isPluginCommandArgs(preConfigArgs)) {
-      const cmd = isDriverCommandArgs(preConfigArgs)
-        ? preConfigArgs.driverCommand
-        : preConfigArgs.pluginCommand;
+      const cmd = isDriverCommandArgs(preConfigArgs) ? preConfigArgs.driverCommand : preConfigArgs.pluginCommand;
       if (cmd === 'install') {
         await injectAppiumSymlinks(driverConfig, pluginConfig, logger);
       }

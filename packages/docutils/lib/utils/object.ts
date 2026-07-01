@@ -3,10 +3,9 @@ import {util as supportUtil} from '@appium/support';
 /**
  * Converts a tuple to an object; use for extracting parameter types from a function signature
  */
-export type TupleToObject<
-  T extends readonly any[],
-  M extends Record<Exclude<keyof T, keyof any[]>, PropertyKey>,
-> = {[K in Exclude<keyof T, keyof any[]> as M[K]]: T[K]};
+export type TupleToObject<T extends readonly any[], M extends Record<Exclude<keyof T, keyof any[]>, PropertyKey>> = {
+  [K in Exclude<keyof T, keyof any[]> as M[K]]: T[K];
+};
 
 /**
  * Type guard to narrow an array to a string array
@@ -25,9 +24,7 @@ export const isStringArray = (value: any): value is string[] =>
  */
 export function mergeDefaultsDeep<T extends Record<string, any>>(target: T, defaults: T): T {
   const out = structuredClone(target);
-  const stack: Array<{dest: Record<string, any>; src: Record<string, any>}> = [
-    {dest: out, src: defaults},
-  ];
+  const stack: Array<{dest: Record<string, any>; src: Record<string, any>}> = [{dest: out, src: defaults}];
 
   while (stack.length) {
     const next = stack.pop();

@@ -1,4 +1,5 @@
 import type {KeywordDefinition} from 'ajv';
+
 import {transformers} from './cli-transformers';
 
 export type AppiumCliTransformerName = keyof typeof transformers;
@@ -64,8 +65,7 @@ export const keywords: Record<string, KeywordDefinition> = {
     metaSchema: {
       type: 'string',
       enum: Object.keys(transformers) as AppiumCliTransformerName[],
-      description:
-        'The name of a custom transformer to run against the value as provided via the CLI.',
+      description: 'The name of a custom transformer to run against the value as provided via the CLI.',
     },
   },
   /**

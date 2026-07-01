@@ -1,7 +1,5 @@
 /** Compile a lodash-style template string (`<%= expression %>`) into a render function. */
-export function compileLodashTemplate(
-  template: string,
-): (params: Record<string, unknown>) => string {
+export function compileLodashTemplate(template: string): (params: Record<string, unknown>) => string {
   const parts: string[] = [];
   let lastIndex = 0;
   const re = /<%=\s*([\s\S]+?)\s*%>/g;

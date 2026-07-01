@@ -47,16 +47,8 @@ export async function getTestPort(): Promise<number> {
  * Call with `(address, port)` to get `(session, pathname) => url`, or pass all four
  * arguments at once. Use `''` when session or pathname is omitted.
  */
-export function createAppiumURL(
-  address: string,
-  port: string | number,
-): (session: string, pathname: string) => string;
-export function createAppiumURL(
-  address: string,
-  port: string | number,
-  session: string,
-  pathname: string,
-): string;
+export function createAppiumURL(address: string, port: string | number): (session: string, pathname: string) => string;
+export function createAppiumURL(address: string, port: string | number, session: string, pathname: string): string;
 export function createAppiumURL(
   address: string,
   port: string | number,
@@ -69,12 +61,7 @@ export function createAppiumURL(
   }
   return urlFor(session!, pathname!);
 }
-function buildAppiumURL(
-  address: string,
-  port: string | number,
-  session: string,
-  pathname: string,
-): string {
+function buildAppiumURL(address: string, port: string | number, session: string, pathname: string): string {
   let base = address;
   if (!/^https?:\/\//.test(base)) {
     base = `http://${base}`;

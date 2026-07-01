@@ -1,9 +1,11 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {promises as fs} from 'node:fs';
+
 import type {DriverType, ExtensionType} from '@appium/types';
 import type {ExtManifest} from 'appium/types';
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import type {SinonSandbox} from 'sinon';
+
 import type {DriverConfig} from '../../../lib/extension/driver-config';
 import {Manifest} from '../../../lib/extension/manifest';
 import {resetSchema} from '../../../lib/schema';
@@ -40,10 +42,7 @@ describe('DriverConfig', function () {
     let overrides: Overrides;
     ({MockAppiumSupport, MockResolveFrom, overrides, sandbox} = initMocks());
     MockAppiumSupport.fs.readFile.resolves(yamlFixture);
-    ({DriverConfig} = rewiremock.proxy(
-      () => require('../../../lib/extension/driver-config'),
-      overrides,
-    ));
+    ({DriverConfig} = rewiremock.proxy(() => require('../../../lib/extension/driver-config'), overrides));
     resetSchema();
   });
 
@@ -73,10 +72,7 @@ describe('DriverConfig', function () {
         it('should throw', function () {
           expect(() => DriverConfig.create(manifest)).to.throw(
             Error,
-            new RegExp(
-              `Manifest with APPIUM_HOME ${manifest.appiumHome} already has a DriverConfig`,
-              'i',
-            ),
+            new RegExp(`Manifest with APPIUM_HOME ${manifest.appiumHome} already has a DriverConfig`, 'i'),
           );
         });
       });
@@ -107,9 +103,9 @@ describe('DriverConfig', function () {
     describe('extensionDesc()', function () {
       it('should return the description of the extension', function () {
         const config = DriverConfig.create(manifest);
-        expect(
-          config.extensionDesc('foo', {version: '1.0', automationName: 'bar'} as any),
-        ).to.equal(`foo@1.0 (automationName 'bar')`);
+        expect(config.extensionDesc('foo', {version: '1.0', automationName: 'bar'} as any)).to.equal(
+          `foo@1.0 (automationName 'bar')`,
+        );
       });
     });
 
@@ -204,12 +200,10 @@ describe('DriverConfig', function () {
       describe('when provided a string `schema` property', function () {
         describe('when the property ends in an unsupported extension', function () {
           it('should return an array having an associated problem', async function () {
-            expect(await driverConfig.getSchemaProblems({schema: 'selenium.java'})).to.deep.include(
-              {
-                err: 'Schema file has unsupported extension. Allowed: .json, .js, .cjs',
-                val: 'selenium.java',
-              },
-            );
+            expect(await driverConfig.getSchemaProblems({schema: 'selenium.java'})).to.deep.include({
+              err: 'Schema file has unsupported extension. Allowed: .json, .js, .cjs',
+              val: 'selenium.java',
+            });
           });
         });
 

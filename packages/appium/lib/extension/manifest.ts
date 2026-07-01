@@ -1,17 +1,13 @@
-import {env, fs, util} from '@appium/support';
 import path from 'node:path';
-import * as YAML from 'yaml';
+
+import {env, fs, util} from '@appium/support';
 import type {DriverType, ExtensionType, PluginType} from '@appium/types';
-import type {
-  ExtManifest,
-  ExtPackageJson,
-  ExtRecord,
-  InternalMetadata,
-  ManifestData,
-} from 'appium/types';
+import type {ExtManifest, ExtPackageJson, ExtRecord, InternalMetadata, ManifestData} from 'appium/types';
+import * as YAML from 'yaml';
+
 import {CURRENT_SCHEMA_REV, DRIVER_TYPE, PLUGIN_TYPE} from '../constants';
-import {INSTALL_TYPE_DEV, INSTALL_TYPE_NPM} from './extension-config';
 import {packageDidChange} from '../utils';
+import {INSTALL_TYPE_DEV, INSTALL_TYPE_NPM} from './extension-config';
 import {migrate} from './manifest-migrations';
 
 const CONFIG_DATA_DRIVER_KEY = `${DRIVER_TYPE}s` as const;
@@ -120,9 +116,7 @@ export class Manifest {
         } else {
           throw new Error(
             `Appium had trouble loading the extension installation ` +
-              `cache file (${manifestPathResolved}). It may be invalid YAML. Specific error: ${
-                err.message
-              }`,
+              `cache file (${manifestPathResolved}). It may be invalid YAML. Specific error: ${err.message}`,
             {cause: err},
           );
         }
@@ -180,9 +174,7 @@ export class Manifest {
         return true;
       } catch (err: any) {
         throw new Error(
-          `Appium could not write to manifest at ${manifestPathResolved} using APPIUM_HOME ${
-            this.#appiumHome
-          }. Please ensure it is writable. Original error: ${err.message}`,
+          `Appium could not write to manifest at ${manifestPathResolved} using APPIUM_HOME ${this.#appiumHome}. Please ensure it is writable. Original error: ${err.message}`,
           {cause: err},
         );
       }
@@ -337,9 +329,7 @@ export class Manifest {
 
       if (path.relative(this.#appiumHome, resolved).startsWith('.')) {
         throw new Error(
-          `Mismatch between location of APPIUM_HOME and manifest file. APPIUM_HOME: ${
-            this.appiumHome
-          }, manifest file: ${resolved}`,
+          `Mismatch between location of APPIUM_HOME and manifest file. APPIUM_HOME: ${this.appiumHome}, manifest file: ${resolved}`,
         );
       }
     }

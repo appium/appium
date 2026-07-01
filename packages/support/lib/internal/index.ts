@@ -3,11 +3,11 @@
  */
 export {createBase64EncodeStream} from './base64-encode-stream';
 export {
-  packageDirectorySync,
-  readPackage,
-  readPackageSync,
   type NormalizedPackageJson,
   type NormalizeOptions,
+  packageDirectorySync,
   type PackageJson,
+  readPackage,
   type ReadPackageOptions,
+  readPackageSync,
 } from './read-package';

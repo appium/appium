@@ -1,8 +1,10 @@
-import {log} from './logger';
-import {LRUCache} from 'lru-cache';
-import {util} from '@appium/support';
 import {EventEmitter} from 'node:events';
-import type {Request, Response, NextFunction} from 'express';
+
+import {util} from '@appium/support';
+import type {NextFunction, Request, Response} from 'express';
+import {LRUCache} from 'lru-cache';
+
+import {log} from './logger';
 
 interface CachedResponse {
   method: string;
@@ -28,11 +30,7 @@ const MAX_CACHED_PAYLOAD_SIZE_BYTES = 1 * 1024 * 1024; // 1 MiB
  * Middleware that caches and replays responses for idempotent requests using the
  * `x-idempotency-key` header. Only POST and PATCH are cached.
  */
-export async function handleIdempotency(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): Promise<void> {
+export async function handleIdempotency(req: Request, res: Response, next: NextFunction): Promise<void> {
   const keyOrArr = req.headers[IDEMPOTENCY_KEY_HEADER];
   if (util.isEmpty(keyOrArr) || !keyOrArr) {
     next();
@@ -133,8 +131,7 @@ function cacheResponse(key: string, req: Request, res: Response): void {
     responseSize += buf.length;
     if (responseSize > MAX_CACHED_PAYLOAD_SIZE_BYTES) {
       errorMessage =
-        `The actual response size exceeds ` +
-        `the maximum allowed limit of ${MAX_CACHED_PAYLOAD_SIZE_BYTES} bytes`;
+        `The actual response size exceeds ` + `the maximum allowed limit of ${MAX_CACHED_PAYLOAD_SIZE_BYTES} bytes`;
     }
     return originalSocketWriter(
       chunk as string | Buffer | Uint8Array,
@@ -151,10 +148,7 @@ function cacheResponse(key: string, req: Request, res: Response): void {
     }
 
     if (!IDEMPOTENT_RESPONSES.has(key)) {
-      log.info(
-        `Could not cache the response identified by '${key}'. ` +
-          `Cache consistency has been damaged`,
-      );
+      log.info(`Could not cache the response identified by '${key}'. ` + `Cache consistency has been damaged`);
     } else {
       log.info(`Could not cache the response identified by '${key}': ${errorMessage}`);
       IDEMPOTENT_RESPONSES.delete(key);
@@ -173,10 +167,7 @@ function cacheResponse(key: string, req: Request, res: Response): void {
     }
 
     if (!IDEMPOTENT_RESPONSES.has(key)) {
-      log.info(
-        `Could not cache the response identified by '${key}'. ` +
-          `Cache consistency has been damaged`,
-      );
+      log.info(`Could not cache the response identified by '${key}'. ` + `Cache consistency has been damaged`);
     } else if (errorMessage) {
       log.info(`Could not cache the response identified by '${key}': ${errorMessage}`);
       IDEMPOTENT_RESPONSES.delete(key);

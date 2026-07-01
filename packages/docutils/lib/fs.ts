@@ -3,11 +3,13 @@
  * @module
  */
 
-import {fs, util} from '@appium/support';
 import path from 'node:path';
-import {findPackageRoot, readPackage, type NormalizedPackageJson, type PackageJson} from './utils';
+
+import {fs, util} from '@appium/support';
+import {exec} from 'teen_process';
 import type {JsonValue} from 'type-fest';
 import * as YAML from 'yaml';
+
 import {
   MESSAGE_PYTHON_MISSING,
   NAME_MIKE,
@@ -19,7 +21,7 @@ import {
 import {DocutilsError} from './error';
 import {getLogger} from './logger';
 import type {MkDocsYml} from './model';
-import {exec} from 'teen_process';
+import {findPackageRoot, type NormalizedPackageJson, type PackageJson, readPackage} from './utils';
 import {mergeDefaultsDeep} from './utils';
 
 const log = getLogger('fs');
@@ -36,8 +38,7 @@ const findPkgDir = util.memoize(findPackageRoot);
  * @param value Something to yamlify
  * @returns Some nice YAML 4 u
  */
-export const stringifyYaml = (value: JsonValue): string =>
-  YAML.stringify(value, undefined, {indent: 2});
+export const stringifyYaml = (value: JsonValue): string => YAML.stringify(value, undefined, {indent: 2});
 
 /**
  * Pretty-stringifies a JSON value
@@ -63,10 +64,7 @@ const readYaml = util.memoize(async (filepath: string) =>
  * @param cwd Dir it should be in
  * @returns
  */
-export async function findInPkgDir(
-  filename: string,
-  cwd = process.cwd(),
-): Promise<string | undefined> {
+export async function findInPkgDir(filename: string, cwd = process.cwd()): Promise<string | undefined> {
   try {
     return path.join(await findPkgDir(cwd), filename);
   } catch {
@@ -81,9 +79,7 @@ export async function findInPkgDir(
  * @param cwd - Current working directory
  * @returns Path to `mkdocs.yml`
  */
-export const findMkDocsYml = util.memoize(
-  async (cwd = process.cwd()) => await findInPkgDir(NAME_MKDOCS_YML, cwd),
-);
+export const findMkDocsYml = util.memoize(async (cwd = process.cwd()) => await findInPkgDir(NAME_MKDOCS_YML, cwd));
 
 /**
  * Given a directory path, finds closest `package.json` and reads it.
@@ -91,14 +87,8 @@ export const findMkDocsYml = util.memoize(
  * @param normalize - Whether or not to normalize the result. Defaults to `true`.
  * @returns A {@linkcode PackageJson} object if `normalize` is `false`, otherwise a {@linkcode NormalizedPackageJson} object
  */
-async function _readPkgJson(
-  cwd: string,
-  normalize?: true,
-): Promise<{pkgPath: string; pkg: NormalizedPackageJson}>;
-async function _readPkgJson(
-  cwd: string,
-  normalize: false,
-): Promise<{pkgPath: string; pkg: PackageJson}>;
+async function _readPkgJson(cwd: string, normalize?: true): Promise<{pkgPath: string; pkg: NormalizedPackageJson}>;
+async function _readPkgJson(cwd: string, normalize: false): Promise<{pkgPath: string; pkg: PackageJson}>;
 async function _readPkgJson(
   cwd: string,
   normalize?: boolean,
@@ -126,8 +116,7 @@ export const readPackageJson = util.memoize(_readPkgJson);
  * Reads a JSON file and parses it
  */
 export const readJson = util.memoize(
-  async <T extends JsonValue>(filepath: string): Promise<T> =>
-    JSON.parse(await fs.readFile(filepath, 'utf8')),
+  async <T extends JsonValue>(filepath: string): Promise<T> => JSON.parse(await fs.readFile(filepath, 'utf8')),
 );
 
 type WhichFunction = (cmd: string, opts?: {nothrow: boolean}) => Promise<string | null>;
@@ -138,8 +127,7 @@ type WhichFunction = (cmd: string, opts?: {nothrow: boolean}) => Promise<string 
  * @param content - File contents
  */
 export function writeFileString(filepath: string, content: JsonValue) {
-  const data: string =
-    typeof content === 'string' ? content : JSON.stringify(content, undefined, 2);
+  const data: string = typeof content === 'string' ? content : JSON.stringify(content, undefined, 2);
   return fs.writeFile(filepath, data, {
     encoding: 'utf8',
   });
@@ -256,9 +244,7 @@ export const readMkDocsYml: (filepath: string, cwd?: string) => Promise<MkDocsYm
           log.debug('Resolved docs_dir to %s', inheritYml.docs_dir);
         }
         mkDocsYml = mergeDefaultsDeep(mkDocsYml, inheritYml);
-        inheritPath = inheritYml.INHERIT
-          ? path.resolve(path.dirname(inheritPath), inheritYml.INHERIT)
-          : undefined;
+        inheritPath = inheritYml.INHERIT ? path.resolve(path.dirname(inheritPath), inheritYml.INHERIT) : undefined;
       }
     }
     return mkDocsYml;

@@ -1,14 +1,16 @@
+import EventEmitter from 'node:events';
+import {promises as fs} from 'node:fs';
+
 import type {DriverType, PluginType} from '@appium/types';
 import type {ExtManifest, ExtPackageJson, ManifestData} from 'appium/types';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {promises as fs} from 'node:fs';
 import type {SinonSandbox} from 'sinon';
+
 import {DRIVER_TYPE, PLUGIN_TYPE} from '../../../lib/constants';
+import {APPIUM_VER} from '../../../lib/helpers/build';
 import {resolveFixture, rewiremock} from '../../helpers';
 import {initMocks} from './mocks';
-import {APPIUM_VER} from '../../../lib/helpers/build';
-import EventEmitter from 'node:events';
 import type {MockAppiumSupport, MockGlob, MockPackageChanged} from './mocks';
 
 const {expect} = chai;
@@ -92,9 +94,7 @@ describe('Manifest', function () {
 
         it('should return the manifest file path', function () {
           // this path is not the actual path; it's mocked in `MockAppiumSupport.env.resolveManifestPath`.
-          expect(Manifest.getInstance('/some/path').manifestPath).to.equal(
-            '/some/path/extensions.yaml',
-          );
+          expect(Manifest.getInstance('/some/path').manifestPath).to.equal('/some/path/extensions.yaml');
         });
       });
 
@@ -147,16 +147,11 @@ describe('Manifest', function () {
 
       describe('when the manifest path cannot be determined', function () {
         beforeEach(function () {
-          MockAppiumSupport.env.resolveManifestPath.rejects(
-            new Error('Could not determine manifest path'),
-          );
+          MockAppiumSupport.env.resolveManifestPath.rejects(new Error('Could not determine manifest path'));
         });
 
         it('should reject', async function () {
-          await expect(manifest.read()).to.be.rejectedWith(
-            Error,
-            /could not determine manifest path/i,
-          );
+          await expect(manifest.read()).to.be.rejectedWith(Error, /could not determine manifest path/i);
         });
       });
 
@@ -165,8 +160,7 @@ describe('Manifest', function () {
           await Promise.all([manifest.read(), manifest.read()]);
         });
         it('should not read the file twice', function () {
-          expect(MockAppiumSupport.fs.readFile.calledOnceWith('/some/path/extensions.yaml', 'utf8'))
-            .to.be.true;
+          expect(MockAppiumSupport.fs.readFile.calledOnceWith('/some/path/extensions.yaml', 'utf8')).to.be.true;
         });
       });
 
@@ -177,8 +171,7 @@ describe('Manifest', function () {
         });
 
         it('should attempt to read the file at `filepath`', function () {
-          expect(MockAppiumSupport.fs.readFile.calledOnceWith('/some/path/extensions.yaml', 'utf8'))
-            .to.be.true;
+          expect(MockAppiumSupport.fs.readFile.calledOnceWith('/some/path/extensions.yaml', 'utf8')).to.be.true;
         });
 
         describe('when the data has not changed', function () {
@@ -254,10 +247,7 @@ describe('Manifest', function () {
           });
 
           it('should reject', async function () {
-            await expect(manifest.write()).to.be.rejectedWith(
-              Error,
-              /Appium could not write to manifest/i,
-            );
+            await expect(manifest.write()).to.be.rejectedWith(Error, /Appium could not write to manifest/i);
           });
         });
 
@@ -291,9 +281,7 @@ describe('Manifest', function () {
 
       it('should add a clone of the extension manifest to the internal data object', function () {
         manifest.setExtension(DRIVER_TYPE, 'foo', extData);
-        expect(manifest.getExtensionData(DRIVER_TYPE).foo)
-          .to.eql(extData)
-          .and.not.to.equal(extData);
+        expect(manifest.getExtensionData(DRIVER_TYPE).foo).to.eql(extData).and.not.to.equal(extData);
       });
 
       describe('when existing extension added', function () {
@@ -382,8 +370,7 @@ describe('Manifest', function () {
         });
 
         it('should return `true`', function () {
-          expect(manifest.addExtensionFromPackage(packageJson, '/some/path/to/package.json')).to.be
-            .true;
+          expect(manifest.addExtensionFromPackage(packageJson, '/some/path/to/package.json')).to.be.true;
         });
 
         describe('when the driver has already been registered', function () {
@@ -392,8 +379,7 @@ describe('Manifest', function () {
           });
 
           it('should return `false`', function () {
-            expect(manifest.addExtensionFromPackage(packageJson, '/some/path/to/package.json')).to
-              .be.false;
+            expect(manifest.addExtensionFromPackage(packageJson, '/some/path/to/package.json')).to.be.false;
           });
         });
       });
@@ -430,8 +416,7 @@ describe('Manifest', function () {
         });
 
         it('should return `true`', function () {
-          expect(manifest.addExtensionFromPackage(packageJson, '/some/path/to/package.json')).to.be
-            .true;
+          expect(manifest.addExtensionFromPackage(packageJson, '/some/path/to/package.json')).to.be.true;
         });
 
         describe('when the plugin has already been registered', function () {
@@ -440,17 +425,16 @@ describe('Manifest', function () {
           });
 
           it('should return `false`', function () {
-            expect(manifest.addExtensionFromPackage(packageJson, '/some/path/to/package.json')).to
-              .be.false;
+            expect(manifest.addExtensionFromPackage(packageJson, '/some/path/to/package.json')).to.be.false;
           });
         });
       });
 
       describe('when provided a non-extension', function () {
         it('should throw', function () {
-          expect(() =>
-            manifest.addExtensionFromPackage({herp: 'derp'} as any, '/some/path/to/package.json'),
-          ).to.throw(/neither a valid driver nor a valid plugin/);
+          expect(() => manifest.addExtensionFromPackage({herp: 'derp'} as any, '/some/path/to/package.json')).to.throw(
+            /neither a valid driver nor a valid plugin/,
+          );
         });
       });
 
@@ -475,9 +459,7 @@ describe('Manifest', function () {
 
         it('should set the appiumVersion to the current Appium version', function () {
           manifest.addExtensionFromPackage(packageJson, '/some/path/to/package.json');
-          expect(manifest.getExtensionData(DRIVER_TYPE).myDriver.appiumVersion).to.equal(
-            APPIUM_VER,
-          );
+          expect(manifest.getExtensionData(DRIVER_TYPE).myDriver.appiumVersion).to.equal(APPIUM_VER);
         });
       });
     });

@@ -1,5 +1,6 @@
 import {expectAssignable, expectNotAssignable} from 'tsd';
-import {Item, BaseItem, Value, strongbox} from '../..';
+
+import {BaseItem, Item, strongbox, Value} from '../..';
 
 expectAssignable<Item<string>>(new BaseItem('foo', strongbox('foo')));
 expectAssignable<AsyncIterable<Item<any>>>(strongbox('foo'));

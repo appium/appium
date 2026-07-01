@@ -1,10 +1,12 @@
+import {after, before, describe, it} from 'node:test';
+
+import type {Constraints, Driver, DriverCaps} from '@appium/types';
+import axios from 'axios';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import type {Constraints, DriverCaps, Driver} from '@appium/types';
-import {FakeDriver} from '../protocol/fake-driver';
-import axios from 'axios';
-import {describe, it, before, after} from 'node:test';
+
 import {createServer} from '../../helpers';
+import {FakeDriver} from '../protocol/fake-driver';
 
 chai.use(chaiAsPromised);
 

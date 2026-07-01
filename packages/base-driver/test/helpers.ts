@@ -1,6 +1,7 @@
-import type {Constraints, MethodMap, AppiumServer, Driver, ServerArgs} from '@appium/types';
-import {server, routeConfiguringFunction} from '../lib';
-import {TEST_HOST, getTestPort} from '@appium/driver-test-support';
+import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
+import type {AppiumServer, Constraints, Driver, MethodMap, ServerArgs} from '@appium/types';
+
+import {routeConfiguringFunction, server} from '../lib';
 
 export async function createServer<T extends Driver<Constraints>>(
   driver: T,
@@ -40,16 +41,8 @@ export async function createServer<T extends Driver<Constraints>>(
  * Call with `(address, port)` to get `(session, pathname) => url`, or pass all four
  * arguments at once. Use `''` when session or pathname is omitted.
  */
-export function createAppiumURL(
-  address: string,
-  port: string | number,
-): (session: string, pathname: string) => string;
-export function createAppiumURL(
-  address: string,
-  port: string | number,
-  session: string,
-  pathname: string,
-): string;
+export function createAppiumURL(address: string, port: string | number): (session: string, pathname: string) => string;
+export function createAppiumURL(address: string, port: string | number, session: string, pathname: string): string;
 export function createAppiumURL(
   address: string,
   port: string | number,
@@ -63,12 +56,7 @@ export function createAppiumURL(
   return urlFor(session!, pathname!);
 }
 
-function buildAppiumURL(
-  address: string,
-  port: string | number,
-  session: string,
-  pathname: string,
-): string {
+function buildAppiumURL(address: string, port: string | number, session: string, pathname: string): string {
   let base = address;
   if (!/^https?:\/\//.test(base)) {
     base = `http://${base}`;

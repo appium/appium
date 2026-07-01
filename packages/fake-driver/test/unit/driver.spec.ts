@@ -1,10 +1,11 @@
-import chai, {expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
-import {FakeDriver} from '../../lib';
-import {W3C_CAPS, W3C_PREFIXED_CAPS} from '../helpers';
 import type {Constraints, W3CDriverCaps} from '@appium/types';
 import {sleep} from 'asyncbox';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import {createSandbox} from 'sinon';
+
+import {FakeDriver} from '../../lib';
+import {W3C_CAPS, W3C_PREFIXED_CAPS} from '../helpers';
 
 chai.use(chaiAsPromised);
 
@@ -78,12 +79,7 @@ describe('FakeDriver unit suite', function () {
     await sleep(10);
     const p = new Promise<void>((resolve, reject) => {
       setTimeout(
-        () =>
-          reject(
-            new Error(
-              'onUnexpectedShutdown event is expected to be fired within 5 seconds timeout',
-            ),
-          ),
+        () => reject(new Error('onUnexpectedShutdown event is expected to be fired within 5 seconds timeout')),
         5000,
       );
       d.onUnexpectedShutdown(resolve);
@@ -101,12 +97,7 @@ describe('FakeDriver unit suite', function () {
     await d.createSession(w3cCaps);
     const p = new Promise<void>((resolve, reject) => {
       setTimeout(
-        () =>
-          reject(
-            new Error(
-              'onUnexpectedShutdown event is expected to be fired within 5 seconds timeout',
-            ),
-          ),
+        () => reject(new Error('onUnexpectedShutdown event is expected to be fired within 5 seconds timeout')),
         5000,
       );
       d.onUnexpectedShutdown(resolve);
@@ -125,12 +116,7 @@ describe('FakeDriver unit suite', function () {
     await d.createSession(structuredClone(w3cCaps));
     const p = new Promise<void>((resolve, reject) => {
       setTimeout(
-        () =>
-          reject(
-            new Error(
-              'onUnexpectedShutdown event is expected to be fired within 5 seconds timeout',
-            ),
-          ),
+        () => reject(new Error('onUnexpectedShutdown event is expected to be fired within 5 seconds timeout')),
         5000,
       );
       d.onUnexpectedShutdown(resolve);
@@ -576,18 +562,10 @@ describe('FakeDriver', function () {
   });
   it('should start a new session when another non-unique session is running', async function () {
     const d1 = new FakeDriver();
-    const [session1Id] = await d1.createSession(
-      null as any,
-      null as any,
-      structuredClone(W3C_CAPS),
-    );
+    const [session1Id] = await d1.createSession(null as any, null as any, structuredClone(W3C_CAPS));
     expect(session1Id).to.be.a('string');
     const d2 = new FakeDriver();
-    const [session2Id] = await d2.createSession(
-      null as any,
-      null as any,
-      structuredClone(W3C_CAPS),
-    );
+    const [session2Id] = await d2.createSession(null as any, null as any, structuredClone(W3C_CAPS));
     expect(session2Id).to.be.a('string');
     expect(session1Id).to.not.equal(session2Id);
     await d1.deleteSession(session1Id);

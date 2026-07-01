@@ -3,12 +3,14 @@
  * @module
  */
 
+import path from 'node:path';
+
 import type {Loader} from 'lilconfig';
 import {lilconfig} from 'lilconfig';
-import path from 'node:path';
 import * as YAML from 'yaml';
 import parser from 'yargs-parser';
 import {hideBin} from 'yargs/helpers';
+
 import type {LogLevelMap} from '../constants';
 import {DEFAULT_LOG_LEVEL, NAME_BIN} from '../constants';
 import {getLogger, initLogger, isLogLevelString} from '../logger';
@@ -74,9 +76,7 @@ export async function loadConfig(filepath?: string, cwd = process.cwd()): Promis
     },
   });
 
-  const result = filepath
-    ? await searcher.load(path.normalize(filepath))
-    : await searcher.search(cwd);
+  const result = filepath ? await searcher.load(path.normalize(filepath)) : await searcher.search(cwd);
   if (result === null) {
     log.debug('No config found');
     return {};

@@ -46,10 +46,7 @@ export function omitKeys<T extends Record<string, unknown>>(obj: T, keys: readon
 }
 
 /** Return a shallow copy of `obj` containing only listed keys. */
-export function pick<T extends Record<string, unknown>>(
-  obj: T,
-  keys: readonly string[],
-): Partial<T> {
+export function pick<T extends Record<string, unknown>>(obj: T, keys: readonly string[]): Partial<T> {
   const keysToPick = new Set(keys);
   return Object.fromEntries(Object.entries(obj).filter(([k]) => keysToPick.has(k))) as Partial<T>;
 }

@@ -1,42 +1,44 @@
-import express from 'express';
-import type {Express, RequestHandler} from 'express';
 import http from 'node:http';
 import type {Server as HttpServer} from 'node:http';
 import {createRequire} from 'node:module';
-import bodyParser from 'body-parser';
-import methodOverride from 'method-override';
-import {log} from './logger';
-import {startLogFormatter, endLogFormatter} from './express-logging';
-import {
-  allowCrossDomain,
-  defaultToJSONContentType,
-  catchAllHandler,
-  allowCrossDomainAsyncExecute,
-  handleIdempotency,
-  handleUpgrade,
-  tryHandleWebSocketUpgrade,
-  catch404Handler,
-  handleLogContext,
-} from './middleware';
+
 // Import env helper directly — not from the test-pages barrel — so Express handlers and
 // fixture code stay unloaded unless APPIUM_ENABLE_LEGACY_TEST_PAGES is set.
-import {isLegacyTestPagesEnabled} from '../test-pages/env';
-import {
-  addWebSocketHandler,
-  removeWebSocketHandler,
-  removeAllWebSocketHandlers,
-  getWebSocketHandlers,
-} from './websocket';
-import {DEFAULT_BASE_PATH} from '../constants';
 import {fs, timing} from '@appium/support';
 import type {
   AppiumServer,
-  ServerArgs,
-  UpdateServerCallback,
-  MethodMap,
   ExternalDriver,
+  MethodMap,
+  ServerArgs,
   StringRecord,
+  UpdateServerCallback,
 } from '@appium/types';
+import bodyParser from 'body-parser';
+import express from 'express';
+import type {Express, RequestHandler} from 'express';
+import methodOverride from 'method-override';
+
+import {DEFAULT_BASE_PATH} from '../constants';
+import {isLegacyTestPagesEnabled} from '../test-pages/env';
+import {endLogFormatter, startLogFormatter} from './express-logging';
+import {log} from './logger';
+import {
+  allowCrossDomain,
+  allowCrossDomainAsyncExecute,
+  catch404Handler,
+  catchAllHandler,
+  defaultToJSONContentType,
+  handleIdempotency,
+  handleLogContext,
+  handleUpgrade,
+  tryHandleWebSocketUpgrade,
+} from './middleware';
+import {
+  addWebSocketHandler,
+  getWebSocketHandlers,
+  removeAllWebSocketHandlers,
+  removeWebSocketHandler,
+} from './websocket';
 
 const KEEP_ALIVE_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes
 
@@ -265,10 +267,7 @@ async function createServer(app: Express, cliArgs?: Partial<ServerArgs>): Promis
       throw new Error(`The provided SSL ${desc} at '${p}' does not exist or is not accessible`);
     }
   }
-  const [cert, key] = (await Promise.all(certKey.map((p) => fs.readFile(p, 'utf8')))) as [
-    string,
-    string,
-  ];
+  const [cert, key] = (await Promise.all(certKey.map((p) => fs.readFile(p, 'utf8')))) as [string, string];
   log.debug('Enabling TLS/SPDY on the server using the provided certificate');
 
   const spdy = require('spdy') as {
@@ -320,8 +319,7 @@ function configureHttp({
     // shouldUpgradeCallback only returns a boolean to indicate if the upgrade should proceed
     (
       appiumServer as unknown as {shouldUpgradeCallback?: (req: http.IncomingMessage) => boolean}
-    ).shouldUpgradeCallback = (req) =>
-      String(req.headers?.upgrade ?? '').toLowerCase() === 'websocket';
+    ).shouldUpgradeCallback = (req) => String(req.headers?.upgrade ?? '').toLowerCase() === 'websocket';
     appiumServer.on('upgrade', (req, socket, head) => {
       if (!tryHandleWebSocketUpgrade(req, socket, head, appiumServer.webSocketsMapping)) {
         socket.destroy();
@@ -331,9 +329,7 @@ function configureHttp({
 
   // http.Server.close() only stops new connections, but we need to wait until
   // all connections are closed and the `close` event is emitted
-  const originalClose = appiumServer.close.bind(appiumServer) as (
-    callback?: (err?: Error | null) => void,
-  ) => void;
+  const originalClose = appiumServer.close.bind(appiumServer) as (callback?: (err?: Error | null) => void) => void;
   appiumServer.close = async () =>
     await new Promise<void>((_resolve, _reject) => {
       log.info('Closing Appium HTTP server');
@@ -368,9 +364,7 @@ function configureHttp({
 
   appiumServer.once('error', (err: NodeJS.ErrnoException) => {
     if (err.code === 'EADDRNOTAVAIL') {
-      log.error(
-        'Could not start REST http interface listener. ' + 'Requested address is not available.',
-      );
+      log.error('Could not start REST http interface listener. ' + 'Requested address is not available.');
     } else {
       log.error(
         'Could not start REST http interface listener. The requested ' +
@@ -426,10 +420,7 @@ function hasShouldUpgradeCallback(server: HttpServer): boolean {
   // Check if shouldUpgradeCallback is available on http.Server
   // This is a runtime check that works regardless of TypeScript types
   try {
-    return (
-      typeof (server as unknown as {shouldUpgradeCallback?: unknown}).shouldUpgradeCallback !==
-      'undefined'
-    );
+    return typeof (server as unknown as {shouldUpgradeCallback?: unknown}).shouldUpgradeCallback !== 'undefined';
   } catch {
     return false;
   }

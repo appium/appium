@@ -1,5 +1,5 @@
+import type {AppiumLogger, DoctorCheckResult, IDoctorCheck} from '@appium/types';
 import {doctor} from 'appium/support';
-import type {IDoctorCheck, AppiumLogger, DoctorCheckResult} from '@appium/types';
 
 export class EnvVarAndPathCheck implements IDoctorCheck {
   log!: AppiumLogger;

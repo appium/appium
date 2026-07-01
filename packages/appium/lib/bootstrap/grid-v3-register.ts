@@ -1,6 +1,7 @@
-import axios from 'axios';
 import {fs} from '@appium/support';
 import type {StringRecord} from '@appium/types';
+import axios from 'axios';
+
 import {log as logger} from '../logger';
 
 /**
@@ -39,12 +40,7 @@ interface Grid3ProxyApiResponse {
   msg?: string;
 }
 
-export default async function registerNode(
-  data: string,
-  addr: string,
-  port: number,
-  basePath: string,
-): Promise<void>;
+export default async function registerNode(data: string, addr: string, port: number, basePath: string): Promise<void>;
 export default async function registerNode(
   data: Grid3NodeConfig,
   addr?: string,
@@ -80,9 +76,7 @@ export default async function registerNode(
       );
     }
     if (typeof port !== 'number' || !Number.isFinite(port)) {
-      throw logger.errorWithException(
-        'When registering from a node config file path, port must be a finite number.',
-      );
+      throw logger.errorWithException('When registering from a node config file path, port must be a finite number.');
     }
   }
 
@@ -103,8 +97,7 @@ export default async function registerNode(
       configHolder = JSON.parse(fileContent) as Grid3NodeConfig;
     } catch (err) {
       throw logger.errorWithException(
-        `Syntax error in Selenium Grid 3 node configuration file ${configFilePath}: ` +
-          (err as Error).message,
+        `Syntax error in Selenium Grid 3 node configuration file ${configFilePath}: ` + (err as Error).message,
       );
     }
   } else {
@@ -134,29 +127,15 @@ async function registerToGrid(
     if (status !== 200) {
       throw new Error(`Request failed with code ${status}`);
     }
-    logger.debug(
-      `Appium successfully registered with the Selenium Grid 3 hub at ` + hubUri(hubCfg),
-    );
+    logger.debug(`Appium successfully registered with the Selenium Grid 3 hub at ` + hubUri(hubCfg));
   } catch (err) {
-    logger.error(
-      `An attempt to register with the Selenium Grid 3 hub was unsuccessful: ` +
-        (err as Error).message,
-    );
+    logger.error(`An attempt to register with the Selenium Grid 3 hub was unsuccessful: ` + (err as Error).message);
   }
 }
 
-function postRequest(
-  configHolder: Grid3NodeConfig,
-  addr?: string,
-  port?: number,
-  basePath?: string,
-): void {
+function postRequest(configHolder: Grid3NodeConfig, addr?: string, port?: number, basePath?: string): void {
   // Move Selenium Grid 3 (flat) configuration properties into `configuration`
-  if (
-    configHolder != null &&
-    typeof configHolder === 'object' &&
-    !Object.hasOwn(configHolder, 'configuration')
-  ) {
+  if (configHolder != null && typeof configHolder === 'object' && !Object.hasOwn(configHolder, 'configuration')) {
     const configuration: StringRecord = {};
     const holder = configHolder as StringRecord;
     for (const property of Object.keys(holder)) {
@@ -201,11 +180,7 @@ function postRequest(
   }
 
   const registerCycleInterval = cfg.registerCycle;
-  if (
-    registerCycleInterval === undefined ||
-    isNaN(registerCycleInterval) ||
-    registerCycleInterval <= 0
-  ) {
+  if (registerCycleInterval === undefined || isNaN(registerCycleInterval) || registerCycleInterval <= 0) {
     logger.warn(
       `'registerCycle' is not a valid positive number. ` +
         `No registration request will be sent to the Selenium Grid 3 hub.`,
@@ -215,8 +190,7 @@ function postRequest(
   // initiate a new Thread
   let first = true;
   logger.debug(
-    `Starting auto-register thread for Selenium Grid 3. ` +
-      `Will try to register every ${registerCycleInterval} ms.`,
+    `Starting auto-register thread for Selenium Grid 3. ` + `Will try to register every ${registerCycleInterval} ms.`,
   );
   setInterval(async function registerRetry() {
     if (first) {
@@ -231,7 +205,7 @@ function postRequest(
 
 /** Query the Selenium Grid 3 hub to see if this node id is already registered. */
 async function isAlreadyRegistered(configHolder: Grid3NodeConfig): Promise<boolean | undefined> {
-  //check if node is already registered
+  // check if node is already registered
   const hubCfg = configHolder.configuration;
   if (!hubCfg?.id) {
     return;

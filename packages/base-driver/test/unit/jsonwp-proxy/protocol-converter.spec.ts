@@ -1,11 +1,10 @@
-import {describe, it, before, beforeEach} from 'node:test';
+import {before, beforeEach, describe, it} from 'node:test';
+
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+
 import {PROTOCOLS} from '../../../lib/constants';
-import {
-  COMMAND_URLS_CONFLICTS,
-  ProtocolConverter,
-} from '../../../lib/jsonwp-proxy/protocol-converter';
+import {COMMAND_URLS_CONFLICTS, ProtocolConverter} from '../../../lib/jsonwp-proxy/protocol-converter';
 
 chai.use(chaiAsPromised);
 
@@ -28,9 +27,7 @@ describe('Protocol Converter', function () {
     });
     it('should take W3C inputs and produce MJSONWP compatible objects', function () {
       converter.downstreamProtocol = MJSONWP;
-      const timeoutObjects = (
-        converter as unknown as ProtocolConverterTest
-      ).getTimeoutRequestObjects({
+      const timeoutObjects = (converter as unknown as ProtocolConverterTest).getTimeoutRequestObjects({
         script: 100,
       });
       expect(timeoutObjects.length).to.equal(1);
@@ -38,9 +35,7 @@ describe('Protocol Converter', function () {
     });
     it('should ignore invalid entries while converting from W3C', function () {
       converter.downstreamProtocol = MJSONWP;
-      const timeoutObjects = (
-        converter as unknown as ProtocolConverterTest
-      ).getTimeoutRequestObjects({
+      const timeoutObjects = (converter as unknown as ProtocolConverterTest).getTimeoutRequestObjects({
         script: 100,
         sessionId: '5432a4f3-cd89-4781-8905-ea9d3150840c',
         bar: -1,
@@ -73,9 +68,7 @@ describe('Protocol Converter', function () {
     });
     it('should take MJSONWP input and produce W3C compatible object', function () {
       converter.downstreamProtocol = W3C;
-      const timeoutObjects = (
-        converter as unknown as ProtocolConverterTest
-      ).getTimeoutRequestObjects({
+      const timeoutObjects = (converter as unknown as ProtocolConverterTest).getTimeoutRequestObjects({
         type: 'implicit',
         ms: 300,
       });
@@ -84,9 +77,7 @@ describe('Protocol Converter', function () {
     });
     it('should not change the input if protocol name is unknown', function () {
       converter.downstreamProtocol = null as any;
-      const timeoutObjects = (
-        converter as unknown as ProtocolConverterTest
-      ).getTimeoutRequestObjects({
+      const timeoutObjects = (converter as unknown as ProtocolConverterTest).getTimeoutRequestObjects({
         type: 'implicit',
         ms: 300,
       });
@@ -95,9 +86,7 @@ describe('Protocol Converter', function () {
     });
     it('should not change the input if protocol name is unchanged', function () {
       converter.downstreamProtocol = MJSONWP;
-      const timeoutObjects = (
-        converter as unknown as ProtocolConverterTest
-      ).getTimeoutRequestObjects({
+      const timeoutObjects = (converter as unknown as ProtocolConverterTest).getTimeoutRequestObjects({
         type: 'implicit',
         ms: 300,
       });

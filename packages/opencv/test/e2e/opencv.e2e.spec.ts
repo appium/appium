@@ -1,8 +1,10 @@
-import {getImagesMatches, getImagesSimilarity, getImageOccurrence} from '../../lib';
 import path from 'node:path';
+
 import {fs} from '@appium/support';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+
+import {getImageOccurrence, getImagesMatches, getImagesSimilarity} from '../../lib';
 
 use(chaiAsPromised);
 
@@ -48,15 +50,11 @@ describe('OpenCV helpers', function () {
     });
 
     it('should visualize matches between two images and apply goodMatchesFactor', async function () {
-      const {visualization, points1, rect1, points2, rect2} = await getImagesMatches(
-        rotatedImage!,
-        originalImage!,
-        {
-          visualize: true,
-          matchFunc: 'BruteForceHamming',
-          goodMatchesFactor: 40,
-        },
-      );
+      const {visualization, points1, rect1, points2, rect2} = await getImagesMatches(rotatedImage!, originalImage!, {
+        visualize: true,
+        matchFunc: 'BruteForceHamming',
+        goodMatchesFactor: 40,
+      });
       expect(visualization).to.not.be.empty;
       expect(points1.length).to.be.above(4);
       expect(rect1.x).to.be.above(0);

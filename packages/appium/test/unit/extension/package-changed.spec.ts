@@ -1,7 +1,9 @@
+import path from 'node:path';
+
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import path from 'node:path';
 import type {SinonSandbox} from 'sinon';
+
 import {PKG_HASHFILE_RELATIVE_PATH} from '../../../lib/constants';
 import {rewiremock} from '../../helpers';
 import {initMocks} from './mocks';
@@ -41,11 +43,8 @@ describe('package-changed', function () {
 
     it('it should attempt to create the parent dir for the hash file', async function () {
       await packageDidChange('/some/path');
-      expect(
-        MockAppiumSupport.fs.mkdirp.calledWith(
-          path.dirname(path.join('/some/path', PKG_HASHFILE_RELATIVE_PATH)),
-        ),
-      ).to.be.true;
+      expect(MockAppiumSupport.fs.mkdirp.calledWith(path.dirname(path.join('/some/path', PKG_HASHFILE_RELATIVE_PATH))))
+        .to.be.true;
     });
 
     it('should call `isPackageChanged` with a cwd and relative path to hash file', async function () {
@@ -61,10 +60,7 @@ describe('package-changed', function () {
     describe('when it cannot create the parent dir', function () {
       it('should reject', async function () {
         MockAppiumSupport.fs.mkdirp.rejects(new Error('some error'));
-        await expect(packageDidChange('/some/path')).to.be.rejectedWith(
-          Error,
-          /could not create the directory/i,
-        );
+        await expect(packageDidChange('/some/path')).to.be.rejectedWith(Error, /could not create the directory/i);
       });
     });
 
@@ -103,10 +99,7 @@ describe('package-changed', function () {
           MockPackageChanged.__writeHash.throws(new Error('oh noes'));
         });
         it('should reject', async function () {
-          await expect(packageDidChange('/some/where')).to.be.rejectedWith(
-            Error,
-            /could not write hash file/i,
-          );
+          await expect(packageDidChange('/some/where')).to.be.rejectedWith(Error, /could not write hash file/i);
         });
       });
     });

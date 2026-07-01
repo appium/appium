@@ -1,24 +1,19 @@
+import {fs, tempDir} from '@appium/support';
 import type {AppiumServer} from '@appium/types';
 import type {ParsedArgs} from 'appium/types';
-import type {Browser} from 'webdriverio';
-import {fs, tempDir} from '@appium/support';
-import axios from 'axios';
 import {sleep} from 'asyncbox';
+import axios from 'axios';
+import {expect} from 'chai';
+import type {Browser} from 'webdriverio';
 import {remote as wdio} from 'webdriverio';
+
 import {runExtensionCommand} from '../../lib/cli/extension';
 import {DRIVER_TYPE, PLUGIN_TYPE} from '../../lib/constants';
 import {loadExtensions} from '../../lib/extension';
 import {INSTALL_TYPE_LOCAL} from '../../lib/extension/extension-config';
 import {main as appiumServer} from '../../lib/main';
 import {resetSchema} from '../../lib/schema';
-import {
-  FAKE_DRIVER_DIR,
-  FAKE_PLUGIN_DIR,
-  getTestPort,
-  TEST_HOST,
-  W3C_PREFIXED_CAPS,
-} from '../helpers';
-import {expect} from 'chai';
+import {FAKE_DRIVER_DIR, FAKE_PLUGIN_DIR, getTestPort, TEST_HOST, W3C_PREFIXED_CAPS} from '../helpers';
 
 const FAKE_ARGS = {sillyWebServerPort: 1234, host: 'hey'};
 const FAKE_PLUGIN_ARGS = {fake: FAKE_ARGS};
@@ -153,9 +148,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
         const res = usePlugins;
         // we don't need to check the entire object, since it's large, but we can ensure an
         // arg got through.
-        expect((await axios.post(`http://${TEST_HOST}:${port}/cliArgs`)).data.usePlugins).to.eql(
-          res,
-        );
+        expect((await axios.post(`http://${TEST_HOST}:${port}/cliArgs`)).data.usePlugins).to.eql(res);
       });
       it('should modify the method map with new commands', async function () {
         const driver = await wdio(wdOpts as any);
@@ -164,9 +157,9 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
           await axios.post(`${testServerBaseSessionUrl}/${sessionId}/fake_data`, {
             data: {fake: 'data'},
           });
-          expect(
-            (await axios.get(`${testServerBaseSessionUrl}/${sessionId}/fake_data`)).data.value,
-          ).to.eql({fake: 'data'});
+          expect((await axios.get(`${testServerBaseSessionUrl}/${sessionId}/fake_data`)).data.value).to.eql({
+            fake: 'data',
+          });
         } finally {
           await driver.deleteSession();
         }
@@ -176,9 +169,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
         const driver = await wdio(wdOpts as any);
         const {sessionId} = driver;
         try {
-          await expect(driver.getPageSource()).to.eventually.eql(
-            `<Fake>${JSON.stringify([sessionId])}</Fake>`,
-          );
+          await expect(driver.getPageSource()).to.eventually.eql(`<Fake>${JSON.stringify([sessionId])}</Fake>`);
         } finally {
           await driver.deleteSession();
         }
@@ -207,8 +198,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
           await axios.post(`${testServerBaseSessionUrl}/${sessionId}/context`, {
             name: 'PROXY',
           });
-          const handle = (await axios.get(`${testServerBaseSessionUrl}/${sessionId}/window`)).data
-            .value;
+          const handle = (await axios.get(`${testServerBaseSessionUrl}/${sessionId}/window`)).data.value;
           expect(handle).to.eql('<<proxied via proxyCommand>>');
         } finally {
           await axios.post(`${testServerBaseSessionUrl}/${sessionId}/context`, {
@@ -257,9 +247,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
           }
           // prove that we went beyond the new command timeout as a result of sending commands
           expect(Date.now() - start).to.be.above(2500);
-          await expect(driver.getPageSource()).to.eventually.eql(
-            `<Fake>${JSON.stringify([sessionId])}</Fake>`,
-          );
+          await expect(driver.getPageSource()).to.eventually.eql(`<Fake>${JSON.stringify([sessionId])}</Fake>`);
         } finally {
           await driver.deleteSession();
         }

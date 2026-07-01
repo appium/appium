@@ -1,25 +1,21 @@
-import {log as logger} from '../logger';
+import net from 'node:net';
+
+import type {ServerOpts} from '@appium/base-driver';
 import {util} from '@appium/support';
 import type {AppiumServer} from '@appium/types';
-import {getActivePlugins, getActiveDrivers} from '../extension';
+import type {Args, CliCommand, CliCommandServer, CliCommandSetupSubcommand, CliExtensionSubcommand} from 'appium/types';
+
+import {getActiveDrivers, getActivePlugins} from '../extension';
+import {log as logger} from '../logger';
 import registerNode from './grid-v3-register';
+import type {InitResult, ServerInitData} from './init-types';
 import {
-  determineAppiumHomeSource,
-  logStartupInfo,
   buildServerOpts,
   createAppiumServer,
+  determineAppiumHomeSource,
   logServerAddress,
+  logStartupInfo,
 } from './main-helpers';
-import type {InitResult, ServerInitData} from './init-types';
-import type {
-  Args,
-  CliCommand,
-  CliCommandServer,
-  CliCommandSetupSubcommand,
-  CliExtensionSubcommand,
-} from 'appium/types';
-import type {ServerOpts} from '@appium/base-driver';
-import net from 'node:net';
 
 const MAX_SERVER_PROCESS_LISTENERS = 100;
 
@@ -45,8 +41,7 @@ export class AppiumMainRunner {
       return undefined as Cmd extends CliCommandServer ? AppiumServer : void;
     }
 
-    const {appiumDriver, pluginConfig, driverConfig, parsedArgs, appiumHome} =
-      initResult as ServerInitData;
+    const {appiumDriver, pluginConfig, driverConfig, parsedArgs, appiumHome} = initResult as ServerInitData;
 
     const pluginClasses = await getActivePlugins(
       pluginConfig,
@@ -69,12 +64,7 @@ export class AppiumMainRunner {
       parsedArgs.driversImportChunkSize,
       parsedArgs.useDrivers,
     );
-    const {serverOpts, normalizedBasePath} = buildServerOpts(
-      appiumDriver,
-      parsedArgs,
-      driverClasses,
-      pluginClasses,
-    );
+    const {serverOpts, normalizedBasePath} = buildServerOpts(appiumDriver, parsedArgs, driverClasses, pluginClasses);
 
     const server = await this.startHttpServer(serverOpts, appiumDriver, normalizedBasePath);
     if (!server) {
@@ -131,12 +121,7 @@ export class AppiumMainRunner {
   ): Promise<void> {
     try {
       if (parsedArgs.nodeconfig) {
-        await registerNode(
-          parsedArgs.nodeconfig,
-          parsedArgs.address,
-          parsedArgs.port,
-          normalizedBasePath,
-        );
+        await registerNode(parsedArgs.nodeconfig, parsedArgs.address, parsedArgs.port, normalizedBasePath);
       }
     } catch (err: unknown) {
       await server.close();
@@ -144,10 +129,7 @@ export class AppiumMainRunner {
     }
   }
 
-  private attachSignalHandlers(
-    appiumDriver: ServerInitData['appiumDriver'],
-    server: AppiumServer,
-  ): void {
+  private attachSignalHandlers(appiumDriver: ServerInitData['appiumDriver'], server: AppiumServer): void {
     process.setMaxListeners(MAX_SERVER_PROCESS_LISTENERS);
     for (const signal of ['SIGINT', 'SIGTERM'] as const) {
       process.once(signal, async function onSignal() {

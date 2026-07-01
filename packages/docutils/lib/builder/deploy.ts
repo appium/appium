@@ -5,7 +5,9 @@
  */
 
 import path from 'node:path';
+
 import type {TeenProcessExecOptions} from 'teen_process';
+
 import {
   DEFAULT_DEPLOY_ALIAS_TYPE,
   DEFAULT_DEPLOY_BRANCH,
@@ -148,9 +150,7 @@ export async function deploy({
 
   mkDocsYmlPath = mkDocsYmlPath ?? (await findMkDocsYml(cwd));
   if (!mkDocsYmlPath) {
-    throw new DocutilsError(
-      `Could not find ${NAME_MKDOCS_YML} from ${cwd}; please run "${NAME_BIN} init"`,
-    );
+    throw new DocutilsError(`Could not find ${NAME_MKDOCS_YML} from ${cwd}; please run "${NAME_BIN} init"`);
   }
   version = version ?? (await findDeployVersion(packageJsonPath, usePrefixedMajorVersion, cwd));
 
@@ -170,18 +170,12 @@ export async function deploy({
 
   const mikePath = await findMike();
   if (!mikePath) {
-    throw new DocutilsError(
-      `Could not find ${NAME_MIKE} executable; please run "${NAME_BIN} init"`,
-    );
+    throw new DocutilsError(`Could not find ${NAME_MIKE} executable; please run "${NAME_BIN} init"`);
   }
   if (serve) {
     const mikeArgs = [
       ...argify(
-        Object.fromEntries(
-          Object.entries(mikeOpts).filter(
-            ([, value]) => typeof value === 'number' || Boolean(value),
-          ),
-        ),
+        Object.fromEntries(Object.entries(mikeOpts).filter(([, value]) => typeof value === 'number' || Boolean(value))),
       ),
     ];
     stop(); // discard
@@ -193,8 +187,7 @@ export async function deploy({
       ...argify(
         Object.fromEntries(
           Object.entries(mikeOpts).filter(
-            ([key, value]) =>
-              !['port', 'host'].includes(key) && (typeof value === 'number' || Boolean(value)),
+            ([key, value]) => !['port', 'host'].includes(key) && (typeof value === 'number' || Boolean(value)),
           ),
         ),
       ),
@@ -212,16 +205,38 @@ export async function deploy({
 }
 
 /**
+ * Derives a deployment version from `package.json`
+ * @param packageJsonPath Path to `package.json` if known
+ * @param usePrefixedMajorVersion Whether to extract a v-prefixed major version
+ * @param cwd Current working directory
+ */
+export async function findDeployVersion(
+  packageJsonPath?: string,
+  usePrefixedMajorVersion?: boolean,
+  cwd = process.cwd(),
+): Promise<string> {
+  const {pkg} = await readPackageJson(packageJsonPath ? path.dirname(packageJsonPath) : cwd, true);
+  const version = pkg.version;
+  if (!version) {
+    throw new DocutilsError('No "version" field found in package.json; please add one or specify a version to deploy');
+  }
+
+  // If a minor version can be extracted, use MAJOR.MINOR as the deploy version, otherwise use MAJOR.
+  // If usePrefixedMajorVersion is true, always use vMAJOR
+  const versionParts = version.split('.');
+  if (versionParts.length === 1) {
+    return usePrefixedMajorVersion ? `v${version}` : version;
+  }
+  return usePrefixedMajorVersion ? `v${versionParts[0]}` : `${versionParts[0]}.${versionParts[1]}`;
+}
+
+/**
  * Runs `mike serve`
  * @param mikePath Path to `mike` executable
  * @param args Extra args to `mike build`
  * @param opts Extra options for `teen_process.Subprocess.start`
  */
-async function doServe(
-  mikePath: string,
-  args: string[] = [],
-  opts: SpawnBackgroundProcessOpts = {},
-) {
+async function doServe(mikePath: string, args: string[] = [], opts: SpawnBackgroundProcessOpts = {}) {
   const finalArgs = ['serve', ...args];
   log.debug('Executing %s via: %s %O', NAME_MIKE, mikePath, finalArgs);
   return spawnBackgroundProcess(mikePath, finalArgs, opts);
@@ -237,32 +252,4 @@ async function doDeploy(mikePath: string, args: string[] = [], opts: TeenProcess
   const finalArgs = ['deploy', ...args];
   log.debug('Executing %s via: %s %O', NAME_MIKE, mikePath, finalArgs);
   return await execWithErrorHandling(mikePath, finalArgs, opts);
-}
-
-/**
- * Derives a deployment version from `package.json`
- * @param packageJsonPath Path to `package.json` if known
- * @param usePrefixedMajorVersion Whether to extract a v-prefixed major version
- * @param cwd Current working directory
- */
-export async function findDeployVersion(
-  packageJsonPath?: string,
-  usePrefixedMajorVersion?: boolean,
-  cwd = process.cwd(),
-): Promise<string> {
-  const {pkg} = await readPackageJson(packageJsonPath ? path.dirname(packageJsonPath) : cwd, true);
-  const version = pkg.version;
-  if (!version) {
-    throw new DocutilsError(
-      'No "version" field found in package.json; please add one or specify a version to deploy',
-    );
-  }
-
-  // If a minor version can be extracted, use MAJOR.MINOR as the deploy version, otherwise use MAJOR.
-  // If usePrefixedMajorVersion is true, always use vMAJOR
-  const versionParts = version.split('.');
-  if (versionParts.length === 1) {
-    return usePrefixedMajorVersion ? `v${version}` : version;
-  }
-  return usePrefixedMajorVersion ? `v${versionParts[0]}` : `${versionParts[0]}.${versionParts[1]}`;
 }

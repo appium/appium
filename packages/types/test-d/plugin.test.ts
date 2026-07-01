@@ -1,17 +1,18 @@
 import {expectAssignable} from 'tsd';
+
 import type {
   AppiumLogger,
+  DriverCommand,
   DriverCommandToPluginCommand,
-  ExternalDriver,
-  Plugin,
-  StringRecord,
   ExecuteMethodMap,
+  ExternalDriver,
+  NextPluginCallback,
+  Plugin,
   PluginClass,
+  PluginCommand,
   PluginExecuteMethodDef,
   PluginStatic,
-  NextPluginCallback,
-  PluginCommand,
-  DriverCommand,
+  StringRecord,
 } from '..';
 class TestPlugin implements Plugin {
   static executeMethodMap = {
@@ -57,6 +58,4 @@ expectAssignable<PluginCommand>(instance.getPageSource);
 // DriverCommand does not know anything about the driver in which it lives, so `getPageSource` looks
 // like any other `DriverCommand`; it returns a `Promise`!
 expectAssignable<DriverCommand>(instance.getPageSource);
-expectAssignable<PluginCommand<ExternalDriver, [flag: boolean], string | Buffer>>(
-  TestPlugin.prototype.getPageSource,
-);
+expectAssignable<PluginCommand<ExternalDriver, [flag: boolean], string | Buffer>>(TestPlugin.prototype.getPageSource);

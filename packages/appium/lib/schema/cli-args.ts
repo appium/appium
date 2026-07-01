@@ -1,13 +1,14 @@
-import {ArgumentTypeError, type ArgumentOptions} from 'argparse';
 import {util} from '@appium/support';
+import {type ArgumentOptions, ArgumentTypeError} from 'argparse';
 import type {JSONSchema7, JSONSchema7TypeName} from 'json-schema';
-import {kebabCase} from '../utils';
-import {formatErrors} from './format-errors';
-import {flattenSchema, validate} from './schema';
-import {transformers, parseCsvLine} from './cli-transformers';
-import type {ArgSpec} from './arg-spec';
-import type {AppiumJSONSchemaKeywords, AppiumCliTransformerName} from './keywords';
+
 import type {ArgumentDefinitions} from '../cli/args';
+import {kebabCase} from '../utils';
+import type {ArgSpec} from './arg-spec';
+import {parseCsvLine, transformers} from './cli-transformers';
+import {formatErrors} from './format-errors';
+import type {AppiumCliTransformerName, AppiumJSONSchemaKeywords} from './keywords';
+import {flattenSchema, validate} from './schema';
 
 type AppiumJSONSchema = AppiumJSONSchemaKeywords & JSONSchema7;
 type ArgDef = [[string] | [string, string], ArgumentOptions];
@@ -30,9 +31,7 @@ const SHORT_ARG_CUTOFF = 3;
  */
 export function toParserArgs(): ArgumentDefinitions {
   const flattened = flattenSchema().filter(({schema}) => !schema.appiumCliIgnored);
-  return new Map(
-    flattened.map(({schema, argSpec}) => subSchemaToArgDef(schema as AppiumJSONSchema, argSpec)),
-  );
+  return new Map(flattened.map(({schema, argSpec}) => subSchemaToArgDef(schema as AppiumJSONSchema, argSpec)));
 }
 
 /**
@@ -108,9 +107,7 @@ function subSchemaToArgDef(subSchema: AppiumJSONSchema, argSpec: ArgSpec): ArgDe
       argTypeFunction = (value: string) => {
         const o = transformers.json(value);
         if (!util.isPlainObject(o)) {
-          throw new ArgumentTypeError(
-            `'${util.truncateString(String(o), {length: 100})}' must be a plain object`,
-          );
+          throw new ArgumentTypeError(`'${util.truncateString(String(o), {length: 100})}' must be a plain object`);
         }
         return o;
       };
@@ -146,9 +143,7 @@ function subSchemaToArgDef(subSchema: AppiumJSONSchema, argSpec: ArgSpec): ArgDe
     if (type === TYPENAMES.ARRAY) {
       const csvTransformer = argTypeFunction as (x: string) => string[];
       argTypeFunction = (val) =>
-        csvTransformer(val).flatMap((item) =>
-          transformers[appiumCliTransformer as AppiumCliTransformerName](item),
-        );
+        csvTransformer(val).flatMap((item) => transformers[appiumCliTransformer as AppiumCliTransformerName](item));
     } else {
       const baseFn = argTypeFunction ?? ((value: string) => value);
       const transformer = transformers[appiumCliTransformer as AppiumCliTransformerName];
@@ -164,9 +159,7 @@ function subSchemaToArgDef(subSchema: AppiumJSONSchema, argSpec: ArgSpec): ArgDe
     if (type === TYPENAMES.STRING) {
       argOpts.choices = enumValues.map(String);
     } else {
-      throw new TypeError(
-        `Problem with schema for ${arg}; \`enum\` is only supported for \`type: 'string'\``,
-      );
+      throw new TypeError(`Problem with schema for ${arg}; \`enum\` is only supported for \`type: 'string'\``);
     }
   }
 

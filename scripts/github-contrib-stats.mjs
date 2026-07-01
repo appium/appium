@@ -1,5 +1,5 @@
-import axios from 'axios';
 import {logger} from '@appium/support';
+import axios from 'axios';
 
 const log = logger.getLogger('Contributions');
 
@@ -251,7 +251,9 @@ function formatSlackMessage(pullRequests, from, to, generatedAt) {
 
       // Format as simple markdown row with Slack-formatted links
       // Column order changed to: index • author • title • URL for the PR • repo • dates
-      return `${index + 1} • <${authorUrl}|${authorName}> • <${pr.html_url}|${prTitle}> • ${pr.html_url} • <${repoUrl}|${pr.repository}> • Created: ${createdDate} • Merged: ${mergedDate}`;
+      return `${
+        index + 1
+      } • <${authorUrl}|${authorName}> • <${pr.html_url}|${prTitle}> • ${pr.html_url} • <${repoUrl}|${pr.repository}> • Created: ${createdDate} • Merged: ${mergedDate}`;
     });
 
     // Slack section text has a 3000 character limit. Keep under ~2900 to be safe.
@@ -320,12 +322,7 @@ async function main() {
   const sortedPullRequests = sortPullRequests(allPullRequests);
 
   // Output Slack-formatted message to stdout
-  const slackMessage = formatSlackMessage(
-    sortedPullRequests,
-    dateRange.from,
-    dateRange.to,
-    generatedAt,
-  );
+  const slackMessage = formatSlackMessage(sortedPullRequests, dateRange.from, dateRange.to, generatedAt);
 
   // eslint-disable-next-line no-console
   console.log(JSON.stringify(slackMessage, null, 2));

@@ -1,6 +1,7 @@
 import {fs, tempDir} from '@appium/support';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+
 import {EXT_SUBCOMMAND_RUN as RUN, PLUGIN_TYPE} from '../../lib/constants';
 import {FAKE_PLUGIN_DIR} from '../helpers';
 import {installLocalExtension, runAppiumJson} from './e2e-helpers';
@@ -15,8 +16,7 @@ describe('Plugin CLI', function () {
   before(async function () {
     appiumHome = await tempDir.openDir();
     const run = runAppiumJson(appiumHome);
-    runRun = (args) =>
-      run([PLUGIN_TYPE, RUN, ...args]) as Promise<{output: string; error?: string}>;
+    runRun = (args) => run([PLUGIN_TYPE, RUN, ...args]) as Promise<{output: string; error?: string}>;
   });
 
   after(async function () {

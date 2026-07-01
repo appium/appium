@@ -1,8 +1,9 @@
 /* This library is originated from temp.js at http://github.com/bruce/node-temp */
-import {fs} from './fs';
+import {constants} from 'node:fs';
 import os from 'node:os';
 import nodePath from 'node:path';
-import {constants} from 'node:fs';
+
+import {fs} from './fs';
 import log from './logger';
 import {memoize} from './util';
 

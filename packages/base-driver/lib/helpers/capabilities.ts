@@ -1,5 +1,5 @@
-import type {Constraints, W3CCapabilities, Capabilities, AppiumLogger} from '@appium/types';
 import {util} from '@appium/support';
+import type {AppiumLogger, Capabilities, Constraints, W3CCapabilities} from '@appium/types';
 
 /**
  * Determine whether the given argument is valid
@@ -38,8 +38,7 @@ export function fixCaps<C extends Constraints>(
 ): Capabilities<C> {
   const caps = {...oldCaps} as Record<string, unknown>;
 
-  const logCastWarning = (prefix: string) =>
-    log.warn(`${prefix}. This may cause unexpected behavior`);
+  const logCastWarning = (prefix: string) => log.warn(`${prefix}. This may cause unexpected behavior`);
 
   // boolean capabilities can be passed in as strings 'false' and 'true'
   // which we want to translate into boolean values

@@ -1,10 +1,12 @@
-/* eslint-disable no-console */
-import path from 'node:path';
 import os from 'node:os';
+import path from 'node:path';
+
+/* eslint-disable no-console */
+import {fs, npm, system} from '@appium/support';
 import * as semver from 'semver';
-import {system, fs, npm} from '@appium/support';
+
+import {getBuildInfo, updateBuildInfo} from '../helpers/build';
 import {appiumPackageRoot, npmPackage} from '../utils';
-import {updateBuildInfo, getBuildInfo} from '../helpers/build';
 
 const MIN_NODE_VERSION = (npmPackage.engines as Record<string, string>).node;
 
@@ -24,9 +26,7 @@ interface DebugInfoInput {
 export function checkNodeOk(): void {
   const version = getNodeVersion();
   if (!semver.satisfies(version, MIN_NODE_VERSION)) {
-    throw new Error(
-      `Node version must be at least ${MIN_NODE_VERSION}; current is ${version.version}`,
-    );
+    throw new Error(`Node version must be at least ${MIN_NODE_VERSION}; current is ${version.version}`);
   }
 }
 
@@ -67,9 +67,7 @@ export function adjustNodePath(): void {
   if (refreshRequirePaths()) {
     process.env.APPIUM_OMIT_PEER_DEPS = '1';
   } else {
-    process.env.NODE_PATH = nodePathParts
-      .filter((p) => p !== appiumModuleSearchRoot)
-      .join(path.delimiter);
+    process.env.NODE_PATH = nodePathParts.filter((p) => p !== appiumModuleSearchRoot).join(path.delimiter);
   }
 }
 
@@ -77,17 +75,12 @@ export function adjustNodePath(): void {
  * Prints JSON debug info (OS, Node/npm, Appium build, installed drivers/plugins) to stdout.
  * Input combines extension config snapshots with the resolved Appium home path.
  */
-export async function showDebugInfo({
-  driverConfig,
-  pluginConfig,
-  appiumHome,
-}: DebugInfoInput): Promise<void> {
+export async function showDebugInfo({driverConfig, pluginConfig, appiumHome}: DebugInfoInput): Promise<void> {
   const getNpmVersion = async (): Promise<string> => {
     const {stdout} = await npm.exec('--version', [], {cwd: process.cwd()});
     return stdout.trim();
   };
-  const findNpmLocation = async (): Promise<string> =>
-    await fs.which(system.isWindows() ? 'npm.cmd' : 'npm');
+  const findNpmLocation = async (): Promise<string> => await fs.which(system.isWindows() ? 'npm.cmd' : 'npm');
 
   const [npmVersion, npmLocation] = await Promise.all([
     ...[getNpmVersion, findNpmLocation].map((f) => getSafeResult(f, 'unknown')),
@@ -131,11 +124,7 @@ export async function showDebugInfo({
  *
  * @throws {Error}
  */
-export async function requireDir(
-  root: string,
-  requireWriteable = true,
-  displayName = 'folder path',
-): Promise<void> {
+export async function requireDir(root: string, requireWriteable = true, displayName = 'folder path'): Promise<void> {
   let stat;
   try {
     stat = await fs.stat(root);

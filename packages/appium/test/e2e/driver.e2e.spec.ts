@@ -1,29 +1,24 @@
+import {BaseDriver} from '@appium/base-driver';
+import {fs, tempDir} from '@appium/support';
 import type {AppiumServer, DriverClass} from '@appium/types';
 import type {ParsedArgs} from 'appium/types';
-import type {Browser} from 'webdriverio';
-import {BaseDriver} from '@appium/base-driver';
-import {exec} from 'teen_process';
-import {fs, tempDir} from '@appium/support';
-import axios from 'axios';
 import {sleep} from 'asyncbox';
+import axios from 'axios';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {createSandbox} from 'sinon';
 import type {SinonSandbox} from 'sinon';
+import {exec} from 'teen_process';
+import type {Browser} from 'webdriverio';
 import {remote as wdio} from 'webdriverio';
+
 import {runExtensionCommand} from '../../lib/cli/extension';
 import {DRIVER_TYPE} from '../../lib/constants';
 import {loadExtensions} from '../../lib/extension';
 import {INSTALL_TYPE_LOCAL} from '../../lib/extension/extension-config';
-import {main as appiumServer} from '../../lib/main';
 import {removeAppiumPrefixes} from '../../lib/helpers/capability';
-import {
-  FAKE_DRIVER_DIR,
-  getTestPort,
-  TEST_FAKE_APP,
-  TEST_HOST,
-  W3C_PREFIXED_CAPS,
-} from '../helpers';
+import {main as appiumServer} from '../../lib/main';
+import {FAKE_DRIVER_DIR, getTestPort, TEST_FAKE_APP, TEST_HOST, W3C_PREFIXED_CAPS} from '../helpers';
 
 const {expect} = chai;
 chai.use(chaiAsPromised);
@@ -129,9 +124,10 @@ describe('FakeDriver via HTTP', function () {
     it('should update the server with cliArgs', async function () {
       // we don't need to check the entire object, since it's large, but we can ensure an
       // arg got through.
-      expect(
-        (await axios.post(`http://${TEST_HOST}:${port}/fakedriverCliArgs`)).data,
-      ).to.have.property('appiumHome', appiumHome);
+      expect((await axios.post(`http://${TEST_HOST}:${port}/fakedriverCliArgs`)).data).to.have.property(
+        'appiumHome',
+        appiumHome,
+      );
     });
   });
 
@@ -219,9 +215,7 @@ describe('FakeDriver via HTTP', function () {
     it('should list available driver commands', async function () {
       driver.addCommand(
         'listCommands',
-        async () =>
-          (await axios.get(`${testServerBaseSessionUrl}/${driver.sessionId}/appium/commands`)).data
-            .value,
+        async () => (await axios.get(`${testServerBaseSessionUrl}/${driver.sessionId}/appium/commands`)).data.value,
       );
 
       const commands = await driver.listCommands();
@@ -253,9 +247,7 @@ describe('FakeDriver via HTTP', function () {
     it('should list available driver extensions', async function () {
       driver.addCommand(
         'listExtensions',
-        async () =>
-          (await axios.get(`${testServerBaseSessionUrl}/${driver.sessionId}/appium/extensions`))
-            .data.value,
+        async () => (await axios.get(`${testServerBaseSessionUrl}/${driver.sessionId}/appium/extensions`)).data.value,
       );
 
       const extensions = await driver.listExtensions();
@@ -326,10 +318,7 @@ describe('FakeDriver via HTTP', function () {
       };
       const driver = await wdio({...wdOpts, capabilities: localCaps});
       expect(driver.sessionId).to.exist;
-      driver.addCommand(
-        'getStatus',
-        async () => (await axios.get(`${testServerBaseUrl}/status`)).data.value,
-      );
+      driver.addCommand('getStatus', async () => (await axios.get(`${testServerBaseUrl}/status`)).data.value);
 
       // get the session list 6 times over 300ms. each request will be below the new command
       // timeout but since they are not received by the driver the session should still time out
@@ -402,9 +391,7 @@ describe('FakeDriver via HTTP', function () {
       };
 
       // Create the session
-      const {status, value, sessionId} = (
-        await axios.post(testServerBaseSessionUrl, appiumOptsCaps)
-      ).data;
+      const {status, value, sessionId} = (await axios.post(testServerBaseSessionUrl, appiumOptsCaps)).data;
       try {
         expect(status).to.not.exist; // Test that it's a W3C session
         expect(sessionId).to.not.exist;
@@ -430,9 +417,7 @@ describe('FakeDriver via HTTP', function () {
         },
       };
 
-      await expect(axios.post(testServerBaseSessionUrl, badW3Ccaps)).to.eventually.be.rejectedWith(
-        /400/,
-      );
+      await expect(axios.post(testServerBaseSessionUrl, badW3Ccaps)).to.eventually.be.rejectedWith(/400/);
     });
 
     it('should accept a combo of W3C and JSONWP capabilities but completely ignore JSONWP', async function () {
@@ -451,8 +436,7 @@ describe('FakeDriver via HTTP', function () {
         },
       };
 
-      const {status, value, sessionId} = (await axios.post(testServerBaseSessionUrl, combinedCaps))
-        .data;
+      const {status, value, sessionId} = (await axios.post(testServerBaseSessionUrl, combinedCaps)).data;
       try {
         expect(status).to.not.exist;
         expect(sessionId).to.not.exist;
@@ -476,9 +460,7 @@ describe('FakeDriver via HTTP', function () {
           },
         },
       };
-      await expect(axios.post(testServerBaseSessionUrl, w3cCaps)).to.eventually.be.rejectedWith(
-        /500/,
-      );
+      await expect(axios.post(testServerBaseSessionUrl, w3cCaps)).to.eventually.be.rejectedWith(/500/);
     });
 
     it('should accept capabilities that are provided in the firstMatch array', async function () {
@@ -566,9 +548,9 @@ describe('FakeDriver via HTTP', function () {
         await axios.post(`${testServerBaseSessionUrl}/${sessionId}/fakedriver`, {
           thing: {yes: 'lolno'},
         });
-        expect(
-          (await axios.get(`${testServerBaseSessionUrl}/${sessionId}/fakedriver`)).data.value,
-        ).to.eql({yes: 'lolno'});
+        expect((await axios.get(`${testServerBaseSessionUrl}/${sessionId}/fakedriver`)).data.value).to.eql({
+          yes: 'lolno',
+        });
       } finally {
         await driver.deleteSession();
       }

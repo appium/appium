@@ -1,16 +1,10 @@
 import {util} from '@appium/support';
-import {errors, validateExecuteMethodParams} from '../../protocol';
-import type {
-  Constraints,
-  Driver,
-  DriverClass,
-  DriverCommand,
-  IExecuteCommands,
-  StringRecord,
-} from '@appium/types';
+import type {Constraints, Driver, DriverClass, DriverCommand, IExecuteCommands, StringRecord} from '@appium/types';
+
 import {rankLevenshteinCandidates} from '../../helpers/levenshtein-match';
-import {mixin} from './mixin';
+import {errors, validateExecuteMethodParams} from '../../protocol';
 import type {BaseDriver} from '../driver';
+import {mixin} from './mixin';
 
 declare module '../driver' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -34,10 +28,7 @@ const ExecuteCommands = {
             `The current driver version does not define any execute methods.`,
         );
       }
-      const {sorted: sortedMatches, suggestion} = rankLevenshteinCandidates(
-        script,
-        availableScripts,
-      );
+      const {sorted: sortedMatches, suggestion} = rankLevenshteinCandidates(script, availableScripts);
       throw new errors.UnsupportedOperationError(
         (suggestion
           ? `Unsupported execute method '${script}', did you mean '${suggestion}'? `

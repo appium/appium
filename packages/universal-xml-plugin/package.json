@@ -1,35 +1,39 @@
 {
   "name": "@appium/universal-xml-plugin",
   "version": "2.1.6",
+  "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8",
   "description": "Appium plugin for making XML source and XPath queries the same across iOS and Android",
   "keywords": [
+    "android",
     "automation",
+    "firefoxos",
+    "ios",
     "javascript",
     "selenium",
-    "webdriver",
-    "ios",
-    "android",
-    "firefoxos",
-    "testing"
+    "testing",
+    "webdriver"
   ],
   "homepage": "https://appium.io",
   "bugs": {
     "url": "https://github.com/appium/appium/issues"
   },
+  "license": "Apache-2.0",
+  "author": "https://github.com/appium",
   "repository": {
     "type": "git",
     "url": "https://github.com/appium/appium.git",
     "directory": "packages/universal-xml-plugin"
   },
-  "license": "Apache-2.0",
-  "author": "https://github.com/appium",
-  "main": "./build/lib/index.js",
-  "types": "./build/lib/index.d.ts",
   "files": [
     "build/lib",
     "lib",
     "tsconfig.json"
   ],
+  "main": "./build/lib/index.js",
+  "types": "./build/lib/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "test": "npm run test:unit",
     "test:smoke": "node ./build/lib/index.js --smoke-test",
@@ -51,9 +55,5 @@
   "appium": {
     "pluginName": "universal-xml",
     "mainClass": "UniversalXMLPlugin"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8"
+  }
 }

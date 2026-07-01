@@ -1,20 +1,16 @@
 import nodeFs from 'node:fs';
 import path from 'node:path';
-import {log as logger} from './logger';
-import {tempDir, fs, util, timing, node} from '@appium/support';
-import {LRUCache} from 'lru-cache';
+import type {Readable} from 'node:stream';
+
+import {fs, node, tempDir, timing, util} from '@appium/support';
+import type {CachedAppInfo, ConfigureAppOptions, DriverHelpers, HTTPHeaders, PostProcessOptions} from '@appium/types';
 import AsyncLock from 'async-lock';
 import axios from 'axios';
-import type {
-  ConfigureAppOptions,
-  CachedAppInfo,
-  PostProcessOptions,
-  HTTPHeaders,
-  DriverHelpers,
-} from '@appium/types';
 import type {AxiosResponseHeaders, RawAxiosRequestHeaders} from 'axios';
-import type {Readable} from 'node:stream';
+import {LRUCache} from 'lru-cache';
 import type {PackageJson} from 'type-fest';
+
+import {log as logger} from './logger';
 
 // for compat with running tests transpiled and in-place
 export const BASEDRIVER_VER = readBaseDriverVersion();
@@ -31,10 +27,7 @@ const APPLICATIONS_CACHE = new LRUCache<string, CachedAppInfoEntry>({
   ttl: CACHED_APPS_MAX_AGE_MS, // expire after 24 hours
   updateAgeOnGet: true,
   dispose: ({fullPath}, app) => {
-    logger.info(
-      `The application '${app}' cached at '${fullPath}' has ` +
-        `expired after ${CACHED_APPS_MAX_AGE_MS}ms`,
-    );
+    logger.info(`The application '${app}' cached at '${fullPath}' has ` + `expired after ${CACHED_APPS_MAX_AGE_MS}ms`);
     if (fullPath) {
       void fs.rimraf(fullPath);
     }
@@ -52,9 +45,7 @@ process.on('exit', () => {
   }
 
   const appPaths = [...APPLICATIONS_CACHE.values()].map(({fullPath}) => fullPath);
-  logger.debug(
-    `Performing cleanup of ${util.pluralize('cached application', appPaths.length, true)}`,
-  );
+  logger.debug(`Performing cleanup of ${util.pluralize('cached application', appPaths.length, true)}`);
   for (const appPath of appPaths) {
     if (!appPath) {
       continue;
@@ -285,8 +276,7 @@ export async function configureApp(
     }
 
     verifyAppExtension(newApp, supportedAppExtensions);
-    return appCacheKey !== toCacheKey(newApp) &&
-      (packageHash || Object.values(remoteAppProps).some(Boolean))
+    return appCacheKey !== toCacheKey(newApp) && (packageHash || Object.values(remoteAppProps).some(Boolean))
       ? await storeAppInCache(newApp)
       : newApp;
   });
@@ -386,9 +376,7 @@ export function generateDriverLogPrefix(obj: object | null, _sessionId?: string 
 
 // #region Private helpers
 
-function parseAppLink(
-  appLink: string,
-): URL | {protocol?: string; pathname?: string; href?: string; search?: string} {
+function parseAppLink(appLink: string): URL | {protocol?: string; pathname?: string; href?: string; search?: string} {
   try {
     return new URL(appLink);
   } catch {
@@ -438,10 +426,7 @@ function toCacheKey(app: string): string {
   return app;
 }
 
-async function queryAppLink(
-  appLink: string,
-  reqHeaders: RawAxiosRequestHeaders,
-): Promise<RemoteAppData> {
+async function queryAppLink(appLink: string, reqHeaders: RawAxiosRequestHeaders): Promise<RemoteAppData> {
   const url = new URL(appLink);
   // Extract credentials, then remove them from the URL for axios
   const {username, password} = url;
@@ -454,8 +439,7 @@ async function queryAppLink(
     auth: axiosAuth,
     responseType: 'stream' as const,
     timeout: APP_DOWNLOAD_TIMEOUT_MS,
-    validateStatus: (status: number) =>
-      (status >= 200 && status < 300) || status === HTTP_STATUS_NOT_MODIFIED,
+    validateStatus: (status: number) => (status >= 200 && status < 300) || status === HTTP_STATUS_NOT_MODIFIED,
     headers: reqHeaders,
   };
   try {
@@ -510,10 +494,7 @@ function determineFilename(
     replacement: SANITIZE_REPLACEMENT,
   });
   const extname = path.extname(basename);
-  if (
-    headers['content-disposition'] &&
-    /^attachment/i.test(String(headers['content-disposition']))
-  ) {
+  if (headers['content-disposition'] && /^attachment/i.test(String(headers['content-disposition']))) {
     logger.debug(`Content-Disposition: ${headers['content-disposition']}`);
     const match = /filename="([^"]+)/i.exec(String(headers['content-disposition']));
     if (match) {
@@ -522,13 +503,9 @@ function determineFilename(
   }
 
   // assign the default file name and the extension if none has been detected
-  const resultingName = basename
-    ? basename.substring(0, basename.length - extname.length)
-    : DEFAULT_BASENAME;
+  const resultingName = basename ? basename.substring(0, basename.length - extname.length) : DEFAULT_BASENAME;
   let resultingExt = extname;
-  if (
-    !supportedAppExtensions.map((ext) => ext.toLowerCase()).includes(resultingExt.toLowerCase())
-  ) {
+  if (!supportedAppExtensions.map((ext) => ext.toLowerCase()).includes(resultingExt.toLowerCase())) {
     logger.info(
       `The current file extension '${resultingExt}' is not supported. ` +
         `Defaulting to '${supportedAppExtensions[0]}'`,
@@ -539,9 +516,7 @@ function determineFilename(
 }
 
 function verifyAppExtension(app: string, supportedAppExtensions: string[]): string {
-  if (
-    supportedAppExtensions.map((ext) => ext.toLowerCase()).includes(path.extname(app).toLowerCase())
-  ) {
+  if (supportedAppExtensions.map((ext) => ext.toLowerCase()).includes(path.extname(app).toLowerCase())) {
     return app;
   }
   throw new Error(
@@ -592,9 +567,7 @@ function readBaseDriverVersion(): string {
   if (!pkgRoot) {
     throw new Error('Cannot find the @appium/base-driver package root');
   }
-  const pkg = JSON.parse(
-    nodeFs.readFileSync(path.join(pkgRoot, 'package.json'), 'utf8'),
-  ) as PackageJson;
+  const pkg = JSON.parse(nodeFs.readFileSync(path.join(pkgRoot, 'package.json'), 'utf8')) as PackageJson;
   if (typeof pkg.version !== 'string') {
     throw new Error('Invalid `package.json` for @appium/base-driver');
   }

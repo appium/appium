@@ -1,19 +1,14 @@
-import type {
-  BaseDriverCapConstraints,
-  Capabilities,
-  Constraints,
-  NSCapabilities,
-  W3CCapabilities,
-} from '@appium/types';
+import type {BaseDriverCapConstraints, Capabilities, Constraints, NSCapabilities, W3CCapabilities} from '@appium/types';
+import {expect, use} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+
 import {
-  parseCapsForInnerDriver,
   insertAppiumPrefixes,
+  parseCapsForInnerDriver,
   pullSettings,
   removeAppiumPrefixes,
 } from '../../../lib/helpers/capability';
 import {BASE_CAPS, W3C_CAPS} from '../../helpers';
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
 describe('helpers/capability', function () {
   beforeEach(async function () {
@@ -40,11 +35,7 @@ describe('helpers/capability', function () {
         foo: 'bar',
         baz: 'bla',
       };
-      const {desiredCaps, processedW3CCapabilities} = parseCapsForInnerDriver(
-        W3C_CAPS,
-        {},
-        defaultW3CCaps,
-      );
+      const {desiredCaps, processedW3CCapabilities} = parseCapsForInnerDriver(W3C_CAPS, {}, defaultW3CCaps);
       expect(desiredCaps).to.deep.equal({
         ...expectedDefaultCaps,
         ...BASE_CAPS,
@@ -62,9 +53,7 @@ describe('helpers/capability', function () {
           'appium:foo': 'bar2',
         },
       );
-      expect(
-        (res.processedW3CCapabilities!.alwaysMatch as Record<string, unknown>)['appium:foo'],
-      ).to.eql('bar2');
+      expect((res.processedW3CCapabilities!.alwaysMatch as Record<string, unknown>)['appium:foo']).to.eql('bar2');
     });
     it('should not allow invalid default capabilities', function () {
       const res = parseCapsForInnerDriver(

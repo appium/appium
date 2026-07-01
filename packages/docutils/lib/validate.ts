@@ -4,9 +4,11 @@
  * @module
  */
 
-import {fs, util} from '@appium/support';
 import {EventEmitter} from 'node:events';
+
+import {fs, util} from '@appium/support';
 import {exec} from 'teen_process';
+
 import {
   MESSAGE_PYTHON_MISSING,
   NAME_BIN,
@@ -19,7 +21,7 @@ import {
   REQUIREMENTS_TXT_PATH,
 } from './constants';
 import {DocutilsError} from './error';
-import {findMkDocsYml, isMkDocsInstalled, readMkDocsYml, findPython} from './fs';
+import {findMkDocsYml, findPython, isMkDocsInstalled, readMkDocsYml} from './fs';
 import {getLogger} from './logger';
 import type {MkDocsYml, PipPackage} from './model';
 
@@ -263,9 +265,7 @@ export class DocutilsValidator extends EventEmitter {
     const reqs = await this.parseRequirementsTxt();
     const mkDocsPipPkg = reqs.find((pkg) => pkg.name === NAME_MKDOCS);
     if (!mkDocsPipPkg) {
-      throw new DocutilsError(
-        `No ${NAME_MKDOCS} package in ${REQUIREMENTS_TXT_PATH}. This is a bug`,
-      );
+      throw new DocutilsError(`No ${NAME_MKDOCS} package in ${REQUIREMENTS_TXT_PATH}. This is a bug`);
     }
     const {version: mkDocsReqdVersion} = mkDocsPipPkg;
     if (version !== mkDocsReqdVersion) {
@@ -285,9 +285,7 @@ export class DocutilsValidator extends EventEmitter {
 
     const mkDocsYmlPath = this.mkDocsYmlPath ?? (await findMkDocsYml(this.cwd));
     if (!mkDocsYmlPath) {
-      return this.fail(
-        `Could not find ${NAME_MKDOCS_YML} from ${this.cwd}; please run "${NAME_BIN} init"`,
-      );
+      return this.fail(`Could not find ${NAME_MKDOCS_YML} from ${this.cwd}; please run "${NAME_BIN} init"`);
     }
 
     let mkDocsYml: MkDocsYml;
@@ -326,17 +324,9 @@ export class DocutilsValidator extends EventEmitter {
 
     let pipListOutput: string;
     try {
-      ({stdout: pipListOutput} = await exec(pythonPath, [
-        '-m',
-        NAME_PIP,
-        'list',
-        '--format',
-        'json',
-      ]));
+      ({stdout: pipListOutput} = await exec(pythonPath, ['-m', NAME_PIP, 'list', '--format', 'json']));
     } catch {
-      return this.fail(
-        `Could not find ${NAME_PIP} installation for Python at ${pythonPath}. Is it installed?`,
-      );
+      return this.fail(`Could not find ${NAME_PIP} installation for Python at ${pythonPath}. Is it installed?`);
     }
 
     let installedPkgs: PipPackage[];
@@ -367,9 +357,7 @@ export class DocutilsValidator extends EventEmitter {
         `The following required ${util.pluralize(
           'package',
           missingPackages.length,
-        )} could not be found:\n${missingPackages
-          .map((p) => `- ${p.name} @ ${p.version}`)
-          .join('\n')}`,
+        )} could not be found:\n${missingPackages.map((p) => `- ${p.name} @ ${p.version}`).join('\n')}`,
       );
     }
     if (invalidVersionPackages.length) {
@@ -378,10 +366,7 @@ export class DocutilsValidator extends EventEmitter {
           'package',
           invalidVersionPackages.length,
         )} are installed, but at the wrong version:\n${invalidVersionPackages
-          .map(
-            ([expected, actual]) =>
-              `- ${expected.name} @ ${expected.version} (found ${actual.version})`,
-          )
+          .map(([expected, actual]) => `- ${expected.name} @ ${expected.version} (found ${actual.version})`)
           .join('\n')}`,
       );
     }

@@ -1,17 +1,15 @@
-import {runQuery, transformQuery, getNodeAttrVal} from '../../lib/xpath';
-import {transformSourceXml} from '../../lib/source';
-import {FIXTURES, readFixture} from '../fixtures';
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
+
+import {transformSourceXml} from '../../lib/source';
+import {getNodeAttrVal, runQuery, transformQuery} from '../../lib/xpath';
+import {FIXTURES, readFixture} from '../fixtures';
 
 describe('xpath functions', function () {
   describe('runQuery', function () {
     it('should run an xpath query on an XML string and return nodes', async function () {
       assert.equal(runQuery('//*', await readFixture(FIXTURES.XML_IOS)).length, 31);
-      assert.equal(
-        runQuery('//XCUIElementTypeTextField', await readFixture(FIXTURES.XML_IOS)).length,
-        1,
-      );
+      assert.equal(runQuery('//XCUIElementTypeTextField', await readFixture(FIXTURES.XML_IOS)).length, 1);
     });
   });
   describe('transformQuery', function () {

@@ -1,28 +1,21 @@
-import path from 'node:path';
-import {remote as wdio} from 'webdriverio';
-import {pluginE2EHarness} from '@appium/plugin-test-support';
-import {tempDir, fs, node} from '@appium/support';
-import axios from 'axios';
-import {WebSocket} from 'ws';
-import {expect} from 'chai';
 import type {AddressInfo} from 'node:net';
-import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
+import path from 'node:path';
+import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
+
+import {pluginE2EHarness} from '@appium/plugin-test-support';
+import {fs, node, tempDir} from '@appium/support';
+import axios from 'axios';
+import {expect} from 'chai';
 import {exec} from 'teen_process';
+import {remote as wdio} from 'webdriverio';
+import {WebSocket} from 'ws';
 
 const BUFFER_SIZE = 0xffff;
 const THIS_PLUGIN_DIR = node.getModuleRootSync('@appium/storage-plugin', __filename)!;
 const APPIUM_HOME = path.join(THIS_PLUGIN_DIR, 'local_appium_home');
 const FAKE_DRIVER_DIR = path.join(THIS_PLUGIN_DIR, '..', 'fake-driver');
 const TEST_HOST = '127.0.0.1';
-const TEST_FAKE_APP = path.join(
-  APPIUM_HOME,
-  'node_modules',
-  '@appium',
-  'fake-driver',
-  'test',
-  'fixtures',
-  'app.xml',
-);
+const TEST_FAKE_APP = path.join(APPIUM_HOME, 'node_modules', '@appium', 'fake-driver', 'test', 'fixtures', 'app.xml');
 const TEST_CAPS = {
   platformName: 'Fake',
   'appium:automationName': 'Fake',
@@ -67,17 +60,10 @@ describe('StoragePlugin', function () {
     const baseUrl = `http://${TEST_HOST}:${WDIO_OPTS.port}/storage`;
     driver.addCommand(
       'addStorageItem',
-      async (name: string, sha1: string) =>
-        (await axios.post(`${baseUrl}/add`, {name, sha1})).data.value,
+      async (name: string, sha1: string) => (await axios.post(`${baseUrl}/add`, {name, sha1})).data.value,
     );
-    driver.addCommand(
-      'listStorageItems',
-      async () => (await axios.get(`${baseUrl}/list`)).data.value,
-    );
-    driver.addCommand(
-      'resetStorageItems',
-      async () => (await axios.post(`${baseUrl}/reset`)).data.value,
-    );
+    driver.addCommand('listStorageItems', async () => (await axios.get(`${baseUrl}/list`)).data.value);
+    driver.addCommand('resetStorageItems', async () => (await axios.post(`${baseUrl}/reset`)).data.value);
     driver.addCommand(
       'deleteStorageItem',
       async (name: string) => (await axios.post(`${baseUrl}/delete`, {name})).data.value,
@@ -104,9 +90,7 @@ describe('StoragePlugin', function () {
     await Promise.all([addFileToStorage(TEST_FAKE_APP, name1), addFileToStorage(pkgPath, name2)]);
     items = await driver.listStorageItems();
     expect(items.length).to.eql(2);
-    expect(new Set(items.map(({name}: {name: string}) => name))).to.deep.equal(
-      new Set([name1, name2]),
-    );
+    expect(new Set(items.map(({name}: {name: string}) => name))).to.deep.equal(new Set([name1, name2]));
     const isDeleted = await driver.deleteStorageItem(name1);
     expect(isDeleted).to.be.true;
     items = await driver.listStorageItems();

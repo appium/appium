@@ -8,11 +8,8 @@ export type StringRecord<T = any> = Record<string, T>;
 /**
  * Wraps {@linkcode _Class `type-fest`'s `Class`} to include static members.
  */
-export type Class<
-  Proto,
-  StaticMembers extends object = object,
-  Args extends unknown[] = any[],
-> = _Class<Proto, Args> & StaticMembers;
+export type Class<Proto, StaticMembers extends object = object, Args extends unknown[] = any[]> = _Class<Proto, Args> &
+  StaticMembers;
 
 /**
  * The string referring to a "driver"-type extension
@@ -21,7 +18,6 @@ export type DriverType = 'driver';
 
 /**
  * The string referring to a "plugin"-type extension
- *
  */
 export type PluginType = 'plugin';
 
@@ -41,9 +37,7 @@ export type KebabToCamel<S extends string> = S extends `${infer P1}-${infer P2}$
  * Converts an object with kebab-cased keys into camel-cased keys.
  */
 export type ObjectToCamel<T> = {
-  [K in keyof T as KebabToCamel<string & K>]: T[K] extends Record<string, any>
-    ? KeysToCamelCase<T[K]>
-    : T[K];
+  [K in keyof T as KebabToCamel<string & K>]: T[K] extends Record<string, any> ? KeysToCamelCase<T[K]> : T[K];
 };
 
 /**

@@ -1,6 +1,7 @@
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {createSandbox, type SinonSandbox, type SinonStub} from 'sinon';
+
 import type registerNodeType from '../../../lib/bootstrap/grid-v3-register';
 import {rewiremock} from '../../helpers';
 
@@ -61,38 +62,23 @@ describe('bootstrap/grid-v3-register', function () {
         axios: sandbox.stub().resolves({data: '', status: 200}),
       };
 
-      ({default: registerNode} = rewiremock.proxy(
-        () => require('../../../lib/bootstrap/grid-v3-register'),
-        mocks,
-      ) as {default: typeof registerNodeType});
+      ({default: registerNode} = rewiremock.proxy(() => require('../../../lib/bootstrap/grid-v3-register'), mocks) as {
+        default: typeof registerNodeType;
+      });
     });
 
     describe('when provided a path to a config file', function () {
       const binding = {addr: '127.0.0.1', port: 4723, basePath: '' as string};
 
       it('should read the config file', async function () {
-        await registerNode(
-          '/path/to/config-file.json',
-          binding.addr,
-          binding.port,
-          binding.basePath,
-        );
-        expect(
-          mocks['@appium/support'].fs.readFile.calledOnceWith('/path/to/config-file.json', 'utf-8'),
-        ).to.be.true;
+        await registerNode('/path/to/config-file.json', binding.addr, binding.port, binding.basePath);
+        expect(mocks['@appium/support'].fs.readFile.calledOnceWith('/path/to/config-file.json', 'utf-8')).to.be.true;
       });
 
       it('should parse the config file as JSON', async function () {
         const parseSpy = sandbox.spy(JSON, 'parse');
-        await registerNode(
-          '/path/to/config-file.json',
-          binding.addr,
-          binding.port,
-          binding.basePath,
-        );
-        expect(
-          parseSpy.calledOnceWith(await mocks['@appium/support'].fs.readFile.firstCall.returnValue),
-        ).to.be.true;
+        await registerNode('/path/to/config-file.json', binding.addr, binding.port, binding.basePath);
+        expect(parseSpy.calledOnceWith(await mocks['@appium/support'].fs.readFile.firstCall.returnValue)).to.be.true;
       });
 
       describe('when the config file is invalid', function () {
@@ -120,12 +106,7 @@ describe('bootstrap/grid-v3-register', function () {
 
         it('should reject when port is missing', async function () {
           await expect(
-            registerNode(
-              '/path/to/config-file.json',
-              '127.0.0.1',
-              undefined as unknown as number,
-              '',
-            ),
+            registerNode('/path/to/config-file.json', '127.0.0.1', undefined as unknown as number, ''),
           ).to.be.rejectedWith(
             Error,
             /address, port, and basePath are required \(e\.g\. match your Appium `--address`/,
@@ -135,12 +116,7 @@ describe('bootstrap/grid-v3-register', function () {
 
         it('should reject when basePath is missing', async function () {
           await expect(
-            registerNode(
-              '/path/to/config-file.json',
-              '127.0.0.1',
-              4723,
-              undefined as unknown as string,
-            ),
+            registerNode('/path/to/config-file.json', '127.0.0.1', 4723, undefined as unknown as string),
           ).to.be.rejectedWith(
             Error,
             /address, port, and basePath are required \(e\.g\. match your Appium `--address`/,
@@ -149,9 +125,10 @@ describe('bootstrap/grid-v3-register', function () {
         });
 
         it('should reject when port is not a finite number', async function () {
-          await expect(
-            registerNode('/path/to/config-file.json', '127.0.0.1', Number.NaN, ''),
-          ).to.be.rejectedWith(Error, /port must be a finite number/);
+          await expect(registerNode('/path/to/config-file.json', '127.0.0.1', Number.NaN, '')).to.be.rejectedWith(
+            Error,
+            /port must be a finite number/,
+          );
           expect(stubLog.errorWithException.calledOnce).to.be.true;
         });
       });

@@ -5,10 +5,11 @@
 
 import {util} from '@appium/support';
 import type {CommandModule, InferredOptionTypes, Options} from 'yargs';
+
 import {DocutilsError} from '../../error';
+import {getLogger} from '../../logger';
 import type {ValidationKind} from '../../validate';
 import {DocutilsValidator} from '../../validate';
-import {getLogger} from '../../logger';
 import {checkMissingPaths} from '../check';
 
 const log = getLogger('validate');
@@ -83,9 +84,7 @@ export default {
     await validator.validate();
 
     if (errorCount) {
-      throw new DocutilsError(
-        `Validation failed with ${errorCount} ${util.pluralize('error', errorCount)}`,
-      );
+      throw new DocutilsError(`Validation failed with ${errorCount} ${util.pluralize('error', errorCount)}`);
     }
   },
 } as CommandModule<object, ValidateOptions>;

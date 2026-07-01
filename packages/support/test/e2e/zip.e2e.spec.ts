@@ -1,11 +1,13 @@
 import path from 'node:path';
+import {afterEach, beforeEach, describe, it} from 'node:test';
+
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {afterEach, beforeEach, describe, it} from 'node:test';
-import * as zip from '../../lib/zip';
-import {tempDir, fs} from '../../lib/index';
-import {MockReadWriteStream} from '../helpers';
+
+import {fs, tempDir} from '../../lib/index';
 import {isWindows} from '../../lib/system';
+import * as zip from '../../lib/zip';
+import {MockReadWriteStream} from '../helpers';
 
 use(chaiAsPromised);
 
@@ -79,9 +81,7 @@ describe('#zip', function () {
               },
             ]);
 
-            await expect(zip.extractAllTo(dstPath, outputPath, options)).to.be.rejectedWith(
-              /Out of bound/,
-            );
+            await expect(zip.extractAllTo(dstPath, outputPath, options)).to.be.rejectedWith(/Out of bound/);
             if (!options.useSystemUnzip) {
               await expect(fs.exists(path.resolve(outputPath, 'pwn'))).to.eventually.be.false;
             }
@@ -98,9 +98,8 @@ describe('#zip', function () {
           await expect(zip.assertValidZip('blabla')).to.eventually.be.rejected;
         });
         it('should throw an error if the file is invalid', async function () {
-          await expect(
-            zip.assertValidZip(path.resolve(assetsPath, 'unzipped', 'test-dir', 'a.txt')),
-          ).to.eventually.be.rejected;
+          await expect(zip.assertValidZip(path.resolve(assetsPath, 'unzipped', 'test-dir', 'a.txt'))).to.eventually.be
+            .rejected;
         });
       });
 
@@ -142,10 +141,7 @@ describe('#zip', function () {
         });
 
         it('should be rejected if it uses a non-zip file', async function () {
-          const promise = zip.readEntries(
-            path.resolve(assetsPath, 'unzipped', 'test-dir', 'a.txt'),
-            async () => {},
-          );
+          const promise = zip.readEntries(path.resolve(assetsPath, 'unzipped', 'test-dir', 'a.txt'), async () => {});
           await expect(promise).to.eventually.be.rejected;
         });
       });
@@ -161,13 +157,9 @@ describe('#zip', function () {
           await fs.writeFile(path.resolve(tmpRoot, 'test.zip'), buffer);
 
           // Unzip the file and test that it has the same contents as the directory that was zipped.
-          await zip.extractAllTo(
-            path.resolve(tmpRoot, 'test.zip'),
-            path.resolve(tmpRoot, 'output'),
-            {
-              fileNamesEncoding: 'utf8',
-            },
-          );
+          await zip.extractAllTo(path.resolve(tmpRoot, 'test.zip'), path.resolve(tmpRoot, 'output'), {
+            fileNamesEncoding: 'utf8',
+          });
           await expect(
             fs.readFile(path.resolve(tmpRoot, 'output', 'test-dir', 'a.txt'), {
               encoding: 'utf8',
@@ -186,16 +178,10 @@ describe('#zip', function () {
             encodeToBase64: true,
           });
 
-          await fs.writeFile(
-            path.resolve(tmpRoot, 'test.zip'),
-            Buffer.from(buffer.toString(), 'base64'),
-          );
+          await fs.writeFile(path.resolve(tmpRoot, 'test.zip'), Buffer.from(buffer.toString(), 'base64'));
 
           // Unzip the file and test that it has the same contents as the directory that was zipped.
-          await zip.extractAllTo(
-            path.resolve(tmpRoot, 'test.zip'),
-            path.resolve(tmpRoot, 'output'),
-          );
+          await zip.extractAllTo(path.resolve(tmpRoot, 'test.zip'), path.resolve(tmpRoot, 'output'));
           await expect(
             fs.readFile(path.resolve(tmpRoot, 'output', 'test-dir', 'a.txt'), {
               encoding: 'utf8',
@@ -209,9 +195,7 @@ describe('#zip', function () {
         });
 
         it('should be rejected if use a bad path', async function () {
-          await expect(zip.toInMemoryZip(path.resolve(assetsPath, 'bad_path'))).to.be.rejectedWith(
-            /no such/i,
-          );
+          await expect(zip.toInMemoryZip(path.resolve(assetsPath, 'bad_path'))).to.be.rejectedWith(/no such/i);
         });
 
         it('should be rejected if max size is exceeded', async function () {
@@ -228,10 +212,7 @@ describe('#zip', function () {
         let entry: {fileName: string};
         let destDir: string;
         let mockZipFile: {
-          openReadStream: (
-            e: typeof entry,
-            cb: (err: null, s: MockReadWriteStream) => void,
-          ) => void;
+          openReadStream: (e: typeof entry, cb: (err: null, s: MockReadWriteStream) => void) => void;
         };
         let mockZipStream: MockReadWriteStream & {pipe?: (dest?: unknown) => void};
 
@@ -253,9 +234,9 @@ describe('#zip', function () {
           entry = {
             fileName: path.resolve(destDir, '..', 'temp', 'file'),
           };
-          await expect(
-            zip._extractEntryTo(mockZipFile as any, entry as any, destDir),
-          ).to.be.rejectedWith('Out of bound path');
+          await expect(zip._extractEntryTo(mockZipFile as any, entry as any, destDir)).to.be.rejectedWith(
+            'Out of bound path',
+          );
         });
 
         it('should be rejected if zip stream emits an error', async function () {
@@ -265,9 +246,9 @@ describe('#zip', function () {
           mockZipStream.pipe = () => {
             mockZipStream.emit('error', new Error('zip stream error'));
           };
-          await expect(
-            zip._extractEntryTo(mockZipFile as any, entry as any, destDir),
-          ).to.be.rejectedWith('zip stream error');
+          await expect(zip._extractEntryTo(mockZipFile as any, entry as any, destDir)).to.be.rejectedWith(
+            'zip stream error',
+          );
         });
 
         it('should be rejected if write stream emits an error', async function () {
@@ -280,9 +261,9 @@ describe('#zip', function () {
             mockZipStream.end();
             writeStream.end();
           };
-          await expect(
-            zip._extractEntryTo(mockZipFile as any, entry as any, destDir),
-          ).to.be.rejectedWith('write stream error');
+          await expect(zip._extractEntryTo(mockZipFile as any, entry as any, destDir)).to.be.rejectedWith(
+            'write stream error',
+          );
         });
       });
 
@@ -419,16 +400,10 @@ async function createStoredZip(dstPath: string, entries: StoredZipEntry[]): Prom
     [20, 0, 2],
   ]);
 
-  await fs.writeFile(
-    dstPath,
-    Buffer.concat([fileData, centralDirectoryData, endOfCentralDirectory]),
-  );
+  await fs.writeFile(dstPath, Buffer.concat([fileData, centralDirectoryData, endOfCentralDirectory]));
 }
 
-function createZipHeader(
-  size: number,
-  fields: Array<[offset: number, value: number, byteLength: 2 | 4]>,
-): Buffer {
+function createZipHeader(size: number, fields: Array<[offset: number, value: number, byteLength: 2 | 4]>): Buffer {
   const header = Buffer.alloc(size);
   for (const [offset, value, byteLength] of fields) {
     if (byteLength === 2) {

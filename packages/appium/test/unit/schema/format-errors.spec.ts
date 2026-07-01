@@ -1,9 +1,10 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {createSandbox, type SinonSandbox, type SinonStub} from 'sinon';
+
+import type {formatErrors as FormatErrorsFn} from '../../../lib/schema/format-errors';
 import * as schema from '../../../lib/schema/schema';
 import {rewiremock} from '../../helpers';
-import type {formatErrors as FormatErrorsFn} from '../../../lib/schema/format-errors';
 
 const {expect} = chai;
 chai.use(chaiAsPromised);
@@ -31,9 +32,9 @@ describe('schema/format-errors', function () {
 
   describe('formatErrors()', function () {
     /** Minimal placeholder; tests only assert wiring to better-ajv-errors, not real AJV shapes. */
-    const oneError = [
-      {keyword: 'test', instancePath: '', schemaPath: '#', params: {}},
-    ] as Parameters<typeof formatErrors>[0];
+    const oneError = [{keyword: 'test', instancePath: '', schemaPath: '#', params: {}}] as Parameters<
+      typeof formatErrors
+    >[0];
 
     describe('when provided `errors` as an empty array', function () {
       it('should throw', function () {

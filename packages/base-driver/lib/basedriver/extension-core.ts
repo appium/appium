@@ -1,5 +1,6 @@
-import {logger, util} from '@appium/support';
 import {EventEmitter} from 'node:events';
+
+import {logger, util} from '@appium/support';
 import type {
   AppiumLogger,
   BidiModuleMap,
@@ -9,6 +10,7 @@ import type {
   IpcData,
   StringRecord,
 } from '@appium/types';
+
 import {MAX_LOG_BODY_LENGTH} from '../constants';
 import {errors} from '../protocol';
 import {BIDI_COMMANDS} from '../protocol/bidi-commands';
@@ -43,9 +45,7 @@ export class ExtensionCore {
   updateBidiCommands(cmds: BidiModuleMap): void {
     const overlappingKeys = Object.keys(cmds).filter((key) => key in this.bidiCommands);
     if (overlappingKeys.length) {
-      this.log.warn(
-        `Overwriting existing bidi modules: ${JSON.stringify(overlappingKeys)}. This may not be intended!`,
-      );
+      this.log.warn(`Overwriting existing bidi modules: ${JSON.stringify(overlappingKeys)}. This may not be intended!`);
     }
     this.bidiCommands = {
       ...this.bidiCommands,
@@ -107,9 +107,7 @@ export class ExtensionCore {
     if (params?.required?.length) {
       for (const requiredParam of params.required) {
         if (bidiParams[requiredParam] === undefined) {
-          throw new errors.InvalidArgumentError(
-            `The ${requiredParam} parameter was required but you omitted it`,
-          );
+          throw new errors.InvalidArgumentError(`The ${requiredParam} parameter was required but you omitted it`);
         }
         args.push(bidiParams[requiredParam]);
       }
@@ -127,15 +125,12 @@ export class ExtensionCore {
         `method '${command}'`,
     );
     // call the handler with the signature appropriate to extension type (plugin or driver)
-    const commandHandler = (
-      this as unknown as Record<string, (...handlerArgs: any[]) => Promise<unknown>>
-    )[command];
+    const commandHandler = (this as unknown as Record<string, (...handlerArgs: any[]) => Promise<unknown>>)[command];
     const response =
       next && driver
         ? await commandHandler.call(this, next, driver, ...args)
         : await commandHandler.call(this, ...args);
-    const finalResponse: BiDiResultData =
-      response === undefined ? {} : (response as BiDiResultData);
+    const finalResponse: BiDiResultData = response === undefined ? {} : (response as BiDiResultData);
     this.log.debug(
       `Responding to bidi command '${bidiCmd}' with ` +
         `${util.truncateString(JSON.stringify(finalResponse), {length: MAX_LOG_BODY_LENGTH})}`,

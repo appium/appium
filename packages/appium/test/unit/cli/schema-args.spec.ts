@@ -1,7 +1,8 @@
+import {expect} from 'chai';
 import {createSandbox} from 'sinon';
+
 import {finalizeSchema, resetSchema, SchemaFinalizationError} from '../../../lib/schema/schema';
 import {rewiremock} from '../../helpers';
-import {expect} from 'chai';
 
 describe('cli/schema-args', function () {
   let toParserArgs: () => Map<string, unknown>;
@@ -32,11 +33,8 @@ describe('cli/schema-args', function () {
         );
         expect(argDefsWithMetavar).not.to.be.empty;
         type ArgEntry = [string, {metavar?: string}];
-        expect(
-          (argDefsWithMetavar as ArgEntry[]).every((arg: ArgEntry) =>
-            /[A-Z_]+/.test(arg[1].metavar ?? ''),
-          ),
-        ).to.be.true;
+        expect((argDefsWithMetavar as ArgEntry[]).every((arg: ArgEntry) => /[A-Z_]+/.test(arg[1].metavar ?? ''))).to.be
+          .true;
       });
     });
 

@@ -1,18 +1,20 @@
-import {env, fs, npm, tempDir} from '@appium/support';
 import path from 'node:path';
-import {resolveFrom} from '../../lib/utils';
+
+import {env, fs, npm, tempDir} from '@appium/support';
+import type {ManifestData} from 'appium/types';
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import * as YAML from 'yaml';
+
 import {
   DRIVER_TYPE,
   EXT_SUBCOMMAND_INSTALL as INSTALL,
   EXT_SUBCOMMAND_LIST as LIST,
   PKG_HASHFILE_RELATIVE_PATH,
 } from '../../lib/constants';
-import type {ManifestData} from 'appium/types';
+import {resolveFrom} from '../../lib/utils';
 import {FAKE_DRIVER_DIR, resolveFixture} from '../helpers';
 import {installLocalExtension, runAppiumJson} from './e2e-helpers';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
 const {expect} = chai;
 chai.use(chaiAsPromised);

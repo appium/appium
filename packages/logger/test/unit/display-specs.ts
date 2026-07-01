@@ -1,5 +1,6 @@
-import {Log} from '../../lib/log';
 import {waitForCondition} from 'asyncbox';
+
+import {Log} from '../../lib/log';
 
 describe('display', function () {
   let log: Log;

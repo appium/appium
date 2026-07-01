@@ -1,9 +1,11 @@
 import path from 'node:path';
+
 import express from 'express';
 import type {Express} from 'express';
 import favicon from 'serve-favicon';
-import {guineaPig, guineaPigScrollable, guineaPigAppBanner, welcome} from './handlers';
-import {produceError, produceCrash} from './crash';
+
+import {produceCrash, produceError} from './crash';
+import {guineaPig, guineaPigAppBanner, guineaPigScrollable, welcome} from './handlers';
 import {TEST_FIXTURES_DIR} from './static-dir';
 
 export interface RegisterTestPagesOpts {
@@ -30,5 +32,5 @@ export function registerTestPages(app: Express, {basePath}: RegisterTestPagesOpt
   app.all('/test/guinea-pig-app-banner', guineaPigAppBanner);
 }
 
-export {TEST_FIXTURES_DIR} from './static-dir';
 export {isLegacyTestPagesEnabled} from './env';
+export {TEST_FIXTURES_DIR} from './static-dir';

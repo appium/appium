@@ -1,7 +1,9 @@
 import {describe, it} from 'node:test';
+
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {isPackageOrBundle, duplicateKeys, parseCapsArray} from '../../../lib/basedriver/helpers';
+
+import {duplicateKeys, isPackageOrBundle, parseCapsArray} from '../../../lib/basedriver/helpers';
 
 chai.use(chaiAsPromised);
 
@@ -30,9 +32,7 @@ describe('helpers', function () {
       });
     });
     it('should translate key in an object with an array', function () {
-      expect(
-        duplicateKeys([{key: {foo: 'hello world'}}, {foo: 'HELLO WORLD'}], 'foo', 'bar'),
-      ).to.eql([
+      expect(duplicateKeys([{key: {foo: 'hello world'}}, {foo: 'HELLO WORLD'}], 'foo', 'bar')).to.eql([
         {key: {foo: 'hello world', bar: 'hello world'}},
         {foo: 'HELLO WORLD', bar: 'HELLO WORLD'},
       ]);
@@ -109,10 +109,7 @@ describe('parseCapsArray', function () {
   });
   it('should parse array as string into array', function () {
     expect(parseCapsArray('["/tmp/my/app.zip"]')).to.eql(['/tmp/my/app.zip']);
-    expect(parseCapsArray('["/tmp/my/app.zip","/tmp/my/app2.zip"]')).to.eql([
-      '/tmp/my/app.zip',
-      '/tmp/my/app2.zip',
-    ]);
+    expect(parseCapsArray('["/tmp/my/app.zip","/tmp/my/app2.zip"]')).to.eql(['/tmp/my/app.zip', '/tmp/my/app2.zip']);
   });
   it('should return an array without change', function () {
     expect(parseCapsArray(['a', 'b'])).to.eql(['a', 'b']);

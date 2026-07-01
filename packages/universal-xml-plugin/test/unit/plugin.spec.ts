@@ -1,10 +1,12 @@
-import {UniversalXMLPlugin} from '../../lib/plugin';
-import {BaseDriver} from 'appium/driver';
-import {FIXTURES, readFixture} from '../fixtures';
-import {runQuery, getNodeAttrVal} from '../../lib/xpath';
-import type {Constraints} from '@appium/types';
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
+
+import type {Constraints} from '@appium/types';
+import {BaseDriver} from 'appium/driver';
+
+import {UniversalXMLPlugin} from '../../lib/plugin';
+import {getNodeAttrVal, runQuery} from '../../lib/xpath';
+import {FIXTURES, readFixture} from '../fixtures';
 
 describe('UniversalXMLPlugin', function () {
   let next: () => Promise<any>;
@@ -16,20 +18,14 @@ describe('UniversalXMLPlugin', function () {
       (driver as any).getCurrentContext = () => 'NATIVE_APP';
       next = (driver as any).getPageSource = () => readFixture(FIXTURES.XML_IOS);
       (driver as any).caps = {platformName: 'iOS'};
-      assert.equal(
-        await p.getPageSource(next, driver as any),
-        await readFixture(FIXTURES.XML_IOS_TRANSFORMED),
-      );
+      assert.equal(await p.getPageSource(next, driver as any), await readFixture(FIXTURES.XML_IOS_TRANSFORMED));
     });
     it('should transform page source for android', async function () {
       (driver as any).getCurrentContext = () => 'NATIVE_APP';
       next = (driver as any).getPageSource = () => readFixture(FIXTURES.XML_ANDROID);
       (driver as any).caps = {platformName: 'Android'};
       (driver as any).opts = {appPackage: 'io.cloudgrey.the_app'};
-      assert.equal(
-        await p.getPageSource(next, driver as any),
-        await readFixture(FIXTURES.XML_ANDROID_TRANSFORMED),
-      );
+      assert.equal(await p.getPageSource(next, driver as any), await readFixture(FIXTURES.XML_ANDROID_TRANSFORMED));
     });
   });
 
@@ -41,18 +37,10 @@ describe('UniversalXMLPlugin', function () {
       (driver as any).caps = {platformName: 'iOS'};
       // mock out the findElement function to just return an xml node from the fixture
       (driver as any).findElement = async (strategy: string, selector: string) => {
-        const nodes = runQuery(
-          selector,
-          (await readFixture(FIXTURES.XML_IOS)).replace(/<\/?AppiumAUT>/g, ''),
-        );
+        const nodes = runQuery(selector, (await readFixture(FIXTURES.XML_IOS)).replace(/<\/?AppiumAUT>/g, ''));
         return nodes[0];
       };
-      const node = await p.findElement(
-        next,
-        driver as any,
-        'xpath',
-        '//TextInput[@axId="username"]',
-      );
+      const node = await p.findElement(next, driver as any, 'xpath', '//TextInput[@axId="username"]');
       assert.equal(getNodeAttrVal(node as any, 'value'), 'alice');
       assert.equal((node as any).nodeName, 'XCUIElementTypeTextField');
     });
@@ -66,12 +54,7 @@ describe('UniversalXMLPlugin', function () {
         const nodes = runQuery(selector, await readFixture(FIXTURES.XML_ANDROID));
         return nodes[0];
       };
-      const node = await p.findElement(
-        next,
-        driver as any,
-        'xpath',
-        '//TextInput[@axId="username"]',
-      );
+      const node = await p.findElement(next, driver as any, 'xpath', '//TextInput[@axId="username"]');
       assert.equal(getNodeAttrVal(node as any, 'content-desc'), 'username');
       assert.equal((node as any).nodeName, 'android.widget.EditText');
     });

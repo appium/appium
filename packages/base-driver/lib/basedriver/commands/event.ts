@@ -1,5 +1,6 @@
-import type {Constraints, EventHistory, IEventCommands} from '@appium/types';
 import {util} from '@appium/support';
+import type {Constraints, EventHistory, IEventCommands} from '@appium/types';
+
 import type {BaseDriver} from '../driver';
 import {mixin} from './mixin';
 
@@ -16,11 +17,7 @@ const EventCommands: IEventCommands = {
    * separation
    * @param event - the event name
    */
-  async logCustomEvent<C extends Constraints>(
-    this: BaseDriver<C>,
-    vendor: string,
-    event: string,
-  ): Promise<void> {
+  async logCustomEvent<C extends Constraints>(this: BaseDriver<C>, vendor: string, event: string): Promise<void> {
     this.logEvent(`${vendor}:${event}`);
   },
 
@@ -40,15 +37,12 @@ const EventCommands: IEventCommands = {
 
     const typeList = Array.isArray(type) ? type : [type];
 
-    return Object.entries(this.eventHistory).reduce<Partial<EventHistory>>(
-      (acc, [eventType, eventTimes]) => {
-        if (typeList.includes(eventType)) {
-          acc[eventType] = eventTimes;
-        }
-        return acc;
-      },
-      {},
-    ) as Record<string, number>;
+    return Object.entries(this.eventHistory).reduce<Partial<EventHistory>>((acc, [eventType, eventTimes]) => {
+      if (typeList.includes(eventType)) {
+        acc[eventType] = eventTimes;
+      }
+      return acc;
+    }, {}) as Record<string, number>;
   },
 };
 

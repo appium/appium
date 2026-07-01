@@ -1,4 +1,5 @@
 import type {MethodMap} from '@appium/types';
+
 import type {FakeDriver} from '../driver';
 
 export const NEW_METHOD_MAP = {

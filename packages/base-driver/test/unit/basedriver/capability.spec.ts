@@ -1,11 +1,13 @@
-import {describe, it, beforeEach, afterEach} from 'node:test';
-import {asyncmap} from 'asyncbox';
+import {afterEach, beforeEach, describe, it} from 'node:test';
+
 import type {Constraints, InitialOpts, W3CCapabilities} from '@appium/types';
-import {BaseDriver, errors} from '../../../lib/index';
-import {validator} from '../../../lib/basedriver/validation';
-import {createSandbox} from 'sinon';
+import {asyncmap} from 'asyncbox';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {createSandbox} from 'sinon';
+
+import {validator} from '../../../lib/basedriver/validation';
+import {BaseDriver, errors} from '../../../lib/index';
 
 chai.use(chaiAsPromised);
 
@@ -127,21 +129,17 @@ describe('Desired Capabilities', function () {
     expect(logWarnSpy.called).to.be.true;
   });
 
-  it(
-    'should suggest a close known capability name for unknown caps',
-    {timeout: 500},
-    async function () {
-      await d.createSession({
-        alwaysMatch: {
-          platformName: 'iOS',
-          'appium:noReest': true,
-        },
-        firstMatch: [{}],
-      } as unknown as TestW3CCaps);
+  it('should suggest a close known capability name for unknown caps', {timeout: 500}, async function () {
+    await d.createSession({
+      alwaysMatch: {
+        platformName: 'iOS',
+        'appium:noReest': true,
+      },
+      firstMatch: [{}],
+    } as unknown as TestW3CCaps);
 
-      expect(logWarnSpy.calledWith(`  noReest (did you mean 'noReset'?)`)).to.be.true;
-    },
-  );
+    expect(logWarnSpy.calledWith(`  noReest (did you mean 'noReset'?)`)).to.be.true;
+  });
 
   it(
     'should not suggest a capability name when the closest match exceeds the edit-distance threshold',
@@ -358,9 +356,7 @@ describe('Desired Capabilities', function () {
     it('should raise an error if w3c capabilities is not a plain JSON object', async function () {
       const testValues = [true, 'string', [], 100];
       await asyncmap(testValues, (val) =>
-        expect(d.createSession(val as unknown as TestW3CCaps)).to.be.rejectedWith(
-          errors.SessionNotCreatedError,
-        ),
+        expect(d.createSession(val as unknown as TestW3CCaps)).to.be.rejectedWith(errors.SessionNotCreatedError),
       );
     });
   });

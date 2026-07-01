@@ -84,9 +84,7 @@ export function mapValues<T extends Record<string, unknown>, R>(
   obj: T,
   fn: (value: T[keyof T], key: keyof T) => R,
 ): Record<string, R> {
-  return Object.fromEntries(
-    Object.entries(obj).map(([key, value]) => [key, fn(value as T[keyof T], key as keyof T)]),
-  );
+  return Object.fromEntries(Object.entries(obj).map(([key, value]) => [key, fn(value as T[keyof T], key as keyof T)]));
 }
 
 /**
@@ -225,9 +223,7 @@ export function difference<T>(a: readonly T[], b: readonly T[]): T[] {
  * @param sources - Objects merged in order; null/undefined sources are skipped
  * @returns Merged object
  */
-export function defaultsDeep<T extends Record<string, unknown>>(
-  ...sources: Array<Partial<T> | undefined>
-): T {
+export function defaultsDeep<T extends Record<string, unknown>>(...sources: Array<Partial<T> | undefined>): T {
   let result: Record<string, unknown> = {};
   for (const source of sources) {
     if (source == null) {
@@ -283,14 +279,9 @@ function copyForDefaultsDeep(value: unknown): unknown {
  * @param source - Default values
  * @returns Merged clone
  */
-function fillUndefinedDeep(
-  target: Record<string, unknown>,
-  source: Record<string, unknown>,
-): Record<string, unknown> {
+function fillUndefinedDeep(target: Record<string, unknown>, source: Record<string, unknown>): Record<string, unknown> {
   const out = copyForDefaultsDeep(target) as Record<string, unknown>;
-  const stack: Array<{dest: Record<string, unknown>; src: Record<string, unknown>}> = [
-    {dest: out, src: source},
-  ];
+  const stack: Array<{dest: Record<string, unknown>; src: Record<string, unknown>}> = [{dest: out, src: source}];
   while (stack.length) {
     const next = stack.pop();
     if (!next) {

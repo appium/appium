@@ -1,14 +1,16 @@
+import type {AddressInfo} from 'node:net';
 import path from 'node:path';
-import {remote as wdio} from 'webdriverio';
-import {MATCH_FEATURES_MODE, GET_SIMILARITY_MODE} from '../../lib/constants';
+import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
+
 import {pluginE2EHarness} from '@appium/plugin-test-support';
-import {tempDir, fs, node} from '@appium/support';
-import sharp from 'sharp';
+import {fs, node, tempDir} from '@appium/support';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import type {AddressInfo} from 'node:net';
-import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
+import sharp from 'sharp';
 import {exec} from 'teen_process';
+import {remote as wdio} from 'webdriverio';
+
+import {GET_SIMILARITY_MODE, MATCH_FEATURES_MODE} from '../../lib/constants';
 
 use(chaiAsPromised);
 
@@ -20,15 +22,7 @@ const TEST_IMG_1_PATH = path.join(FIXTURES_DIR, 'img1.png');
 const TEST_IMG_2_PATH = path.join(FIXTURES_DIR, 'img2.png');
 const APPSTORE_IMG_PATH = path.join(FIXTURES_DIR, 'appstore.png');
 const TEST_HOST = '127.0.0.1';
-const TEST_FAKE_APP = path.join(
-  APPIUM_HOME,
-  'node_modules',
-  '@appium',
-  'fake-driver',
-  'test',
-  'fixtures',
-  'app.xml',
-);
+const TEST_FAKE_APP = path.join(APPIUM_HOME, 'node_modules', '@appium', 'fake-driver', 'test', 'fixtures', 'app.xml');
 const TEST_CAPS = {
   platformName: 'Fake',
   'appium:automationName': 'Fake',

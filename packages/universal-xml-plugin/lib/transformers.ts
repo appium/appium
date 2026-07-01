@@ -24,9 +24,7 @@ export function android(nodeObj: any, metadata: TransformMetadata): void {
 
   // turn bounds attr into rect-based attrs
   if (nodeObj[`${ATTR_PREFIX}bounds`]) {
-    const boundsArray = nodeObj[`${ATTR_PREFIX}bounds`]
-      .split(/\[|\]|,/)
-      .filter((str: string) => str !== '');
+    const boundsArray = nodeObj[`${ATTR_PREFIX}bounds`].split(/\[|\]|,/).filter((str: string) => str !== '');
     const [x, y, x2, y2] = boundsArray;
     const width = parseInt(x2, 10) - parseInt(x, 10);
     const height = parseInt(y2, 10) - parseInt(y, 10);

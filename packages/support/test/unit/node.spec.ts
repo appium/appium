@@ -1,7 +1,9 @@
-import {expect} from 'chai';
-import {node} from '../../lib';
 import path from 'node:path';
 import {describe, it} from 'node:test';
+
+import {expect} from 'chai';
+
+import {node} from '../../lib';
 
 describe('node utilities', function () {
   describe('getObjectSize', function () {
@@ -26,9 +28,7 @@ describe('node utilities', function () {
 
   describe('getModuleRootSync', function () {
     it("should be able to find current module's root", function () {
-      expect(path.resolve(__dirname)).to.contain(
-        node.getModuleRootSync('@appium/support', __filename)!,
-      );
+      expect(path.resolve(__dirname)).to.contain(node.getModuleRootSync('@appium/support', __filename)!);
     });
 
     it('should return null if no root is found', function () {

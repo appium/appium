@@ -41,19 +41,14 @@ export function rankLevenshteinCandidates(
       },
       {} as StringRecord<string[]>,
     );
-  const sortedDistanceKeys = Object.keys(matchesMap).sort(
-    (a, b) => parseInt(a, 10) - parseInt(b, 10),
-  );
+  const sortedDistanceKeys = Object.keys(matchesMap).sort((a, b) => parseInt(a, 10) - parseInt(b, 10));
   const sorted = sortedDistanceKeys.flatMap((k) => (matchesMap[k] ?? []).sort());
 
   const best = sorted[0];
   const firstDistanceKey = sortedDistanceKeys[0];
   const minDist = firstDistanceKey !== undefined ? parseInt(firstDistanceKey, 10) : NaN;
   const suggestion =
-    maxEditDistance >= 0 &&
-    best !== undefined &&
-    !Number.isNaN(minDist) &&
-    minDist <= maxEditDistance
+    maxEditDistance >= 0 && best !== undefined && !Number.isNaN(minDist) && minDist <= maxEditDistance
       ? best
       : undefined;
   return {sorted, suggestion};

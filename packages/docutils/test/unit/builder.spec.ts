@@ -1,9 +1,11 @@
 import path from 'node:path';
+
 import {fs, tempDir} from '@appium/support';
-import {findDeployVersion} from '../../lib/builder/deploy';
-import {NAME_PACKAGE_JSON} from '../../lib/constants';
 import * as chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+
+import {findDeployVersion} from '../../lib/builder/deploy';
+import {NAME_PACKAGE_JSON} from '../../lib/constants';
 
 chai.use(chaiAsPromised);
 const {expect} = chai;
@@ -11,10 +13,7 @@ const {expect} = chai;
 /**
  * Helper function to create a project directory with package.json
  */
-async function createPackageJson(
-  testDir: string,
-  packageJson: Record<string, any>,
-): Promise<string> {
+async function createPackageJson(testDir: string, packageJson: Record<string, any>): Promise<string> {
   await fs.mkdirp(testDir);
   const packageJsonPath = path.join(testDir, NAME_PACKAGE_JSON);
   await fs.writeFile(packageJsonPath, JSON.stringify(packageJson, null, 2), 'utf8');

@@ -1,4 +1,5 @@
 import {EventEmitter} from 'node:events';
+
 import rewiremock, {addPlugin, overrideEntryPoint, plugins} from 'rewiremock';
 
 overrideEntryPoint(module);

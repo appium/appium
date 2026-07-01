@@ -1,14 +1,15 @@
-import {createSandbox} from 'sinon';
+import {AppiumConfigJsonSchema} from '@appium/schema';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {createSandbox} from 'sinon';
+
 import {DRIVER_TYPE, PLUGIN_TYPE} from '../../../lib/constants';
-import {AppiumConfigJsonSchema} from '@appium/schema';
 import {APPIUM_CONFIG_SCHEMA_ID} from '../../../lib/schema/arg-spec';
+import type * as SchemaModule from '../../../lib/schema/schema';
 import defaultArgsFixture from '../../fixtures/default-args';
 import DRIVER_SCHEMA_FIXTURE from '../../fixtures/driver-schema';
 import flattenedSchemaFixture from '../../fixtures/flattened-schema';
 import {rewiremock} from '../../helpers';
-import type * as SchemaModule from '../../../lib/schema/schema';
 const {expect} = chai;
 chai.use(chaiAsPromised);
 
@@ -71,9 +72,10 @@ describe('schema', function () {
 
       describe('when provided `type` and `name`, but not `schema`', function () {
         it('should throw a TypeError', async function () {
-          await expect(
-            (registerSchema as (...args: unknown[]) => unknown)(DRIVER_TYPE, 'whoopeee'),
-          ).to.be.rejectedWith(TypeError, /expected extension type/i);
+          await expect((registerSchema as (...args: unknown[]) => unknown)(DRIVER_TYPE, 'whoopeee')).to.be.rejectedWith(
+            TypeError,
+            /expected extension type/i,
+          );
         });
       });
 
@@ -185,9 +187,7 @@ describe('schema', function () {
 
       describe('when the schema ID is a reference', function () {
         it('should return the schema for the reference', function () {
-          expect(
-            getSchema(`${APPIUM_CONFIG_SCHEMA_ID}#/properties/server/properties/address`),
-          ).to.exist.and.to.eql(
+          expect(getSchema(`${APPIUM_CONFIG_SCHEMA_ID}#/properties/server/properties/address`)).to.exist.and.to.eql(
             (
               AppiumConfigJsonSchema as {
                 properties: {server: {properties: {address: unknown}}};
@@ -263,11 +263,7 @@ describe('schema', function () {
       let expected: Array<{schema: object; argSpec: object}>;
 
       beforeEach(async function () {
-        await registerSchema(
-          DRIVER_TYPE,
-          'fake',
-          require('@appium/fake-driver/build/lib/fake-driver-schema').default,
-        );
+        await registerSchema(DRIVER_TYPE, 'fake', require('@appium/fake-driver/build/lib/fake-driver-schema').default);
         await finalizeSchema();
 
         expected = [
@@ -398,17 +394,14 @@ describe('schema', function () {
       describe('when provided a schema ID ref', function () {
         describe('when provided a valid value', function () {
           it('should return an empty array of no errors', function () {
-            expect(
-              validate('127.0.0.1', 'appium.json#/properties/server/properties/address'),
-            ).to.eql([]);
+            expect(validate('127.0.0.1', 'appium.json#/properties/server/properties/address')).to.eql([]);
           });
         });
 
         describe('when provided an invalid value', function () {
           it('should return an array containing errors', function () {
-            expect(
-              validate('127.0.0.1', 'appium.json#/properties/server/properties/port'),
-            ).to.be.an('array').and.to.not.be.empty;
+            expect(validate('127.0.0.1', 'appium.json#/properties/server/properties/port')).to.be.an('array').and.to.not
+              .be.empty;
           });
         });
       });
@@ -435,8 +428,7 @@ describe('schema', function () {
 
         describe('when provided an invalid value', function () {
           it('should return an array containing errors', function () {
-            expect(validate({server: {driver: {stuff: {answer: 101}}}})).to.be.an('array').and.to
-              .not.be.empty;
+            expect(validate({server: {driver: {stuff: {answer: 101}}}})).to.be.an('array').and.to.not.be.empty;
           });
         });
       });
@@ -450,8 +442,7 @@ describe('schema', function () {
 
         describe('when provided an invalid value', function () {
           it('should return an array containing errors', function () {
-            expect(validate(101, 'driver-stuff.json#/properties/answer')).to.be.an('array').and.to
-              .not.be.empty;
+            expect(validate(101, 'driver-stuff.json#/properties/answer')).to.be.an('array').and.to.not.be.empty;
           });
         });
       });

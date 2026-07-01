@@ -1,6 +1,7 @@
-import {build as plistBuild, parse as plistParse, type PlistValue} from 'plist';
 import bplistCreate from 'bplist-creator';
 import {parseBuffer} from 'bplist-parser';
+import {build as plistBuild, parse as plistParse, type PlistValue} from 'plist';
+
 import {fs} from './fs';
 import log from './logger';
 import {truncateString} from './util';
@@ -18,11 +19,7 @@ const BPLIST_IDENTIFIER = {
  * @param quiet - If set to false, the plist path will be logged in debug level
  * @returns Parsed plist as a JS object
  */
-export async function parsePlistFile(
-  plist: string,
-  mustExist = true,
-  quiet = true,
-): Promise<object> {
+export async function parsePlistFile(plist: string, mustExist = true, quiet = true): Promise<object> {
   if (!(await fs.exists(plist))) {
     if (mustExist) {
       throw new Error(`Plist file doesn't exist: '${plist}'`);
@@ -136,8 +133,7 @@ export function parsePlist(data: string | Buffer | Uint8Array | ArrayBuffer): ob
 
   const binaryLikeData = toBufferIfBinaryLike(data);
   if (binaryLikeData) {
-    return BPLIST_IDENTIFIER.BUFFER.compare(binaryLikeData, 0, BPLIST_IDENTIFIER.BUFFER.length) ===
-      0
+    return BPLIST_IDENTIFIER.BUFFER.compare(binaryLikeData, 0, BPLIST_IDENTIFIER.BUFFER.length) === 0
       ? parseBinaryPlistRoot(binaryLikeData)
       : (plistParse(binaryLikeData.toString()) as object);
   }

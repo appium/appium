@@ -3,7 +3,6 @@ description: Create a new bug report.
 title: '🐞 bug: <title>'
 labels: [Bug, Needs Triage]
 body:
-
   - type: markdown
     attributes:
       value: ':stop_sign: _Make sure you are reporting an issue. For general questions, please use [http://discuss.appium.io](http://discuss.appium.io)._'
@@ -13,9 +12,9 @@ body:
       label: Is there an existing issue for this?
       description: 'Please [search :mag: the issues](https://github.com/appium/appium/issues) to check if this bug has already been reported.'
       options:
-      - label: I have searched the existing issues
-        required: true
-  
+        - label: I have searched the existing issues
+          required: true
+
   - type: input
     attributes:
       label: Appium Version
@@ -49,7 +48,7 @@ body:
       description: |
         You can retrieve the latest server/driver/plugin version number by running `npm info <package-name> version`. If you are not up to date, please try to reproduce your issue after updating all affected components.
       options:
-      - label: I confirm the issue is still reproducible with the latest component versions
+        - label: I confirm the issue is still reproducible with the latest component versions
 
   - type: textarea
     attributes:
@@ -82,10 +81,10 @@ body:
 
         :warning: _Remember to redact or remove any sensitive information!_
       value: |
-          - Debug details (`appium --show-debug-info`):
-          - Last component version(s) which did _not_ exhibit the problem:
-          - Platform and version of device under test:
-          - Real device or emulator/simulator:
+        - Debug details (`appium --show-debug-info`):
+        - Last component version(s) which did _not_ exhibit the problem:
+        - Platform and version of device under test:
+        - Real device or emulator/simulator:
 
   - type: textarea
     attributes:

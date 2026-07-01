@@ -1,16 +1,17 @@
-import {errors} from 'appium/driver';
 import {util} from '@appium/support';
-import {log} from './logger';
+import type {ActionSequence, Element, ExternalDriver, Rect} from '@appium/types';
+import {errors} from 'appium/driver';
+
 import {
-  IMAGE_STRATEGY,
   DEFAULT_SETTINGS,
-  IMAGE_TAP_STRATEGIES,
-  IMAGE_ELEMENT_PREFIX,
   IMAGE_EL_TAP_STRATEGY_W3C,
+  IMAGE_ELEMENT_PREFIX,
+  IMAGE_STRATEGY,
+  IMAGE_TAP_STRATEGIES,
 } from './constants';
-import type {Rect, Element, ExternalDriver, ActionSequence} from '@appium/types';
 import type {ImageElementFinder} from './finder';
-import type {ImageSettings, Dimension, Position, ImageElementOpts} from './types';
+import {log} from './logger';
+import type {Dimension, ImageElementOpts, ImageSettings, Position} from './types';
 
 const TAP_DURATION_MS = 125;
 
@@ -27,14 +28,7 @@ export class ImageElement {
   readonly finder: ImageElementFinder | null;
   readonly containerRect: Rect | null;
 
-  constructor({
-    template,
-    rect,
-    score,
-    match = null,
-    finder = null,
-    containerRect = null,
-  }: ImageElementOpts) {
+  constructor({template, rect, score, match = null, finder = null, containerRect = null}: ImageElementOpts) {
     this.template = template;
     this.rect = rect;
     this.id = `${IMAGE_ELEMENT_PREFIX}${util.uuidV4()}`;
@@ -92,12 +86,7 @@ export class ImageElement {
    *
    * @returns the result of running a command
    */
-  static async execute(
-    driver: ExternalDriver,
-    imgEl: ImageElement,
-    cmd: string,
-    ...args: any[]
-  ): Promise<any> {
+  static async execute(driver: ExternalDriver, imgEl: ImageElement, cmd: string, ...args: any[]): Promise<any> {
     switch (cmd) {
       case 'click':
         return await imgEl.click(driver);
@@ -134,7 +123,6 @@ export class ImageElement {
   }
 
   /**
-   *
    * @returns this image element as a WebElement
    */
   asElement(): Element {
@@ -273,16 +261,10 @@ export class ImageElement {
    * @param args - Rest of arguments for executeScripts
    * @returns WebDriver element with a special id prefix
    */
-  async find(
-    multiple: boolean,
-    driver: ExternalDriver,
-    ...args: any[]
-  ): Promise<Element | Element[] | ImageElement> {
+  async find(multiple: boolean, driver: ExternalDriver, ...args: any[]): Promise<Element | Element[] | ImageElement> {
     const [strategy, selector] = args;
     if (strategy !== IMAGE_STRATEGY) {
-      throw new errors.InvalidSelectorError(
-        `Lookup strategies other than '${IMAGE_STRATEGY}' are not supported`,
-      );
+      throw new errors.InvalidSelectorError(`Lookup strategies other than '${IMAGE_STRATEGY}' are not supported`);
     }
     if (!this.finder) {
       throw new Error('Finder is not available');

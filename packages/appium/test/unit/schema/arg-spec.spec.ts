@@ -1,6 +1,7 @@
+import {expect} from 'chai';
+
 import {DRIVER_TYPE} from '../../../lib/constants';
 import {ArgSpec} from '../../../lib/schema/arg-spec';
-import {expect} from 'chai';
 
 describe('ArgSpec', function () {
   describe('class method', function () {
@@ -13,17 +14,13 @@ describe('ArgSpec', function () {
     describe('toSchemaRef()', function () {
       describe('when provided no extension information', function () {
         it('should return a schema ID for a specific argument', function () {
-          expect(ArgSpec.toSchemaRef('foo')).to.equal(
-            'appium.json#/properties/server/properties/foo',
-          );
+          expect(ArgSpec.toSchemaRef('foo')).to.equal('appium.json#/properties/server/properties/foo');
         });
       });
 
       describe('when provided extension information', function () {
         it('should return a schema ID for a specific argument within an extension schema', function () {
-          expect(ArgSpec.toSchemaRef('bar', DRIVER_TYPE, 'stuff')).to.equal(
-            'driver-stuff.json#/properties/bar',
-          );
+          expect(ArgSpec.toSchemaRef('bar', DRIVER_TYPE, 'stuff')).to.equal('driver-stuff.json#/properties/bar');
         });
       });
     });
@@ -51,9 +48,7 @@ describe('ArgSpec', function () {
 
       describe('when provided extension information', function () {
         it('should return an extension-specific arg name', function () {
-          expect(ArgSpec.toArg('no-oats', DRIVER_TYPE, 'bad-donkey')).to.equal(
-            'driver-bad-donkey-no-oats',
-          );
+          expect(ArgSpec.toArg('no-oats', DRIVER_TYPE, 'bad-donkey')).to.equal('driver-bad-donkey-no-oats');
         });
       });
     });

@@ -1,8 +1,9 @@
-import type {Driver, DriverMethodDef, HTTPMethod, MethodMap} from '@appium/types';
 import {util} from '@appium/support';
-import {DEFAULT_BASE_PATH} from '../constants';
-import {match} from 'path-to-regexp';
+import type {Driver, DriverMethodDef, HTTPMethod, MethodMap} from '@appium/types';
 import {LRUCache} from 'lru-cache';
+import {match} from 'path-to-regexp';
+
+import {DEFAULT_BASE_PATH} from '../constants';
 
 const COMMAND_NAMES_CACHE = new LRUCache<string, string>({
   max: 1024,
@@ -234,15 +235,7 @@ export const METHOD_MAP = {
     POST: {
       command: 'printPage',
       payloadParams: {
-        optional: [
-          'orientation',
-          'scale',
-          'background',
-          'page',
-          'margin',
-          'shrinkToFit',
-          'pageRanges',
-        ],
+        optional: ['orientation', 'scale', 'background', 'page', 'margin', 'shrinkToFit', 'pageRanges'],
       },
     },
   },
@@ -588,11 +581,7 @@ export const ALL_COMMANDS = Object.values(METHOD_MAP)
  * @param method - HTTP method (used when one path maps to multiple commands)
  * @param basePath - Optional base path prefix to strip before matching
  */
-export function routeToCommandName(
-  endpoint: string,
-  method?: HTTPMethod,
-  basePath?: string,
-): string | undefined {
+export function routeToCommandName(endpoint: string, method?: HTTPMethod, basePath?: string): string | undefined {
   const resolvedBasePath = basePath ?? DEFAULT_BASE_PATH;
   let normalizedEndpoint = resolvedBasePath
     ? endpoint.replace(new RegExp(`^${util.escapeRegExp(resolvedBasePath)}`), '')
@@ -624,9 +613,7 @@ export function routeToCommandName(
     if (possiblePathnames.some((pp) => routeMatcher(pp))) {
       const spec = routeSpec as Record<string, DriverMethodDef<Driver>>;
       const commandForAnyMethod = () => Object.keys(spec).map((key) => spec[key]?.command)[0];
-      const commandName = normalizedMethod
-        ? spec[normalizedMethod]?.command
-        : commandForAnyMethod();
+      const commandName = normalizedMethod ? spec[normalizedMethod]?.command : commandForAnyMethod();
       if (commandName) {
         COMMAND_NAMES_CACHE.set(cacheKey, commandName);
         return commandName;

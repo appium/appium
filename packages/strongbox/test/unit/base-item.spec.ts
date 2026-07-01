@@ -1,13 +1,15 @@
-import path from 'node:path';
-import rewiremock from 'rewiremock/node';
-import type {BaseItem as TBaseItem} from '../../lib/base-item';
-import type {SinonSandbox, SinonStubbedMember} from 'sinon';
-import {createSandbox} from 'sinon';
 import type fs from 'node:fs/promises';
-import {describe, it, beforeEach} from 'node:test';
+import path from 'node:path';
+import {beforeEach, describe, it} from 'node:test';
+
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import rewiremock from 'rewiremock/node';
+import type {SinonSandbox, SinonStubbedMember} from 'sinon';
+import {createSandbox} from 'sinon';
+
 import type {Item, Strongbox} from '../../lib';
+import type {BaseItem as TBaseItem} from '../../lib/base-item';
 
 use(chaiAsPromised);
 

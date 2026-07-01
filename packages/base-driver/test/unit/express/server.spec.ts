@@ -1,12 +1,14 @@
-import {describe, it, before, beforeEach, afterEach} from 'node:test';
+import {afterEach, before, beforeEach, describe, it} from 'node:test';
+
+import {getTestPort} from '@appium/driver-test-support';
+import type {Driver, MethodMap} from '@appium/types';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import type {Driver, MethodMap} from '@appium/types';
-import {server, configureServer, normalizeBasePath} from '../../../lib/express/server';
+import {createSandbox} from 'sinon';
+
+import {configureServer, normalizeBasePath, server} from '../../../lib/express/server';
 import {routeConfiguringFunction} from '../../../lib/protocol/protocol';
 import {registerTestPages} from '../../../lib/test-pages';
-import {createSandbox} from 'sinon';
-import {getTestPort} from '@appium/driver-test-support';
 
 chai.use(chaiAsPromised);
 
@@ -42,11 +44,7 @@ describe('server configuration', function () {
       post: sandbox.spy(),
       delete: sandbox.spy(),
       totalCount: () =>
-        app.use.callCount +
-        app.all.callCount +
-        app.get.callCount +
-        app.post.callCount +
-        app.delete.callCount,
+        app.use.callCount + app.all.callCount + app.get.callCount + app.post.callCount + app.delete.callCount,
     };
     return app;
   }

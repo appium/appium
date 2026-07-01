@@ -1,30 +1,29 @@
 {
   "name": "@appium/opencv",
   "version": "4.1.6",
+  "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8",
   "description": "OpenCV-related helper library",
   "keywords": [
+    "android",
     "automation",
+    "firefoxos",
+    "ios",
     "javascript",
     "selenium",
-    "webdriver",
-    "ios",
-    "android",
-    "firefoxos",
-    "testing"
+    "testing",
+    "webdriver"
   ],
   "homepage": "https://appium.io",
   "bugs": {
     "url": "https://github.com/appium/appium/issues"
   },
+  "license": "Apache-2.0",
+  "author": "https://github.com/appium",
   "repository": {
     "type": "git",
     "url": "https://github.com/appium/appium.git",
     "directory": "packages/opencv"
   },
-  "license": "Apache-2.0",
-  "author": "https://github.com/appium",
-  "main": "./build/lib/index.js",
-  "types": "./build/lib/index.d.ts",
   "directories": {
     "lib": "lib"
   },
@@ -35,6 +34,11 @@
     "!build/tsconfig.tsbuildinfo",
     "!build/test"
   ],
+  "main": "./build/lib/index.js",
+  "types": "./build/lib/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "test": "npm run test:unit",
     "test:e2e": "mocha --exit --timeout 20s --slow 10s \"./test/e2e/**/*.spec.*ts\"",
@@ -48,9 +52,5 @@
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
     "npm": ">=10"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8"
+  }
 }

@@ -1,35 +1,35 @@
-import type AsyncLock from 'async-lock';
 import {util} from '@appium/support';
 import {
-  BASE_DESIRED_CAP_CONSTRAINTS,
   type AppiumServer,
+  BASE_DESIRED_CAP_CONSTRAINTS,
   type BaseDriverCapConstraints,
   type Capabilities,
   type Constraints,
   type DefaultCreateSessionResult,
+  type DefaultDeleteSessionResult,
   type Driver,
   type DriverCaps,
   type DriverData,
+  type InitialOpts,
   type ServerArgs,
+  type SessionCapabilities,
+  type SingularSessionData,
   type StringRecord,
   type W3CDriverCaps,
-  type InitialOpts,
-  type DefaultDeleteSessionResult,
-  type SingularSessionData,
-  type SessionCapabilities,
 } from '@appium/types';
+import type AsyncLock from 'async-lock';
+
 import {fixCaps, isW3cCaps} from '../helpers/capabilities';
+import {resolveExecuteExtensionName} from '../helpers/extension-command-name';
 import {getLevenshteinSuggestion} from '../helpers/levenshtein-match';
 import {calcSignature} from '../helpers/session';
 import {DELETE_SESSION_COMMAND, determineProtocol, errors} from '../protocol';
+import {mergePlainObjects} from '../utils';
 import {processCapabilities, validateCaps} from './capabilities';
 import {DriverCore} from './core';
 import * as helpers from './helpers';
-import {mergePlainObjects} from '../utils';
-import {resolveExecuteExtensionName} from '../helpers/extension-command-name';
 
-type CommandInvoker<C extends Constraints> = BaseDriver<C> &
-  Record<string, ((...args: any[]) => any) | undefined>;
+type CommandInvoker<C extends Constraints> = BaseDriver<C> & Record<string, ((...args: any[]) => any) | undefined>;
 
 const EVENT_SESSION_INIT = 'newSessionRequested';
 const EVENT_SESSION_START = 'newSessionStarted';
@@ -73,11 +73,7 @@ export class BaseDriver<
    */
   protected get _desiredCapConstraints(): Readonly<BaseDriverCapConstraints & C> {
     return Object.freeze(
-      mergePlainObjects(
-        {},
-        BASE_DESIRED_CAP_CONSTRAINTS,
-        this.desiredCapConstraints,
-      ) as BaseDriverCapConstraints & C,
+      mergePlainObjects({}, BASE_DESIRED_CAP_CONSTRAINTS, this.desiredCapConstraints) as BaseDriverCapConstraints & C,
     );
   }
 
@@ -149,11 +145,7 @@ export class BaseDriver<
         // automatic session deletion in this.onCommandTimeout. Of course we don't
         // want to trigger the timer when the user is shutting down the session
         // intentionally
-        if (
-          !wasSessionShutdownUnexpectedly &&
-          this.isCommandsQueueEnabled &&
-          cmd !== DELETE_SESSION_COMMAND
-        ) {
+        if (!wasSessionShutdownUnexpectedly && this.isCommandsQueueEnabled && cmd !== DELETE_SESSION_COMMAND) {
           // resetting existing timeout
           await this.startNewCommandTimeout();
         }
@@ -205,9 +197,7 @@ export class BaseDriver<
     return cmd;
   }
 
-  async startUnexpectedShutdown(
-    err: Error = new errors.NoSuchDriverError('The driver was unexpectedly shut down!'),
-  ) {
+  async startUnexpectedShutdown(err: Error = new errors.NoSuchDriverError('The driver was unexpectedly shut down!')) {
     this.eventEmitter.emit(ON_UNEXPECTED_SHUTDOWN_EVENT, err); // allow others to listen for this
     this.shutdownUnexpectedly = true;
     try {
@@ -227,10 +217,7 @@ export class BaseDriver<
     if (!this.newCommandTimeoutMs) return; // eslint-disable-line curly
 
     this.noCommandTimer = setTimeout(async () => {
-      this.log.warn(
-        `Shutting down because we waited ` +
-          `${this.newCommandTimeoutMs / 1000.0} seconds for a command`,
-      );
+      this.log.warn(`Shutting down because we waited ` + `${this.newCommandTimeoutMs / 1000.0} seconds for a command`);
       const errorMessage =
         `New Command Timeout of ` +
         `${this.newCommandTimeoutMs / 1000.0} seconds ` +
@@ -277,7 +264,6 @@ export class BaseDriver<
   }
 
   /**
-   *
    * Historically the first two arguments were reserved for JSONWP capabilities.
    * Appium 2 has dropped the support of these, so now we only accept capability
    * objects in W3C format and thus allow any of the three arguments to represent
@@ -291,16 +277,12 @@ export class BaseDriver<
     driverData?: DriverData[],
   ): Promise<CreateResult> {
     if (this.sessionId !== null) {
-      throw new errors.SessionNotCreatedError(
-        'Cannot create a new session while one is in progress',
-      );
+      throw new errors.SessionNotCreatedError('Cannot create a new session while one is in progress');
     }
 
     this.log.debug();
 
-    const originalCaps = structuredClone(
-      [w3cCapabilities, w3cCapabilities1, w3cCapabilities2].find(isW3cCaps),
-    );
+    const originalCaps = structuredClone([w3cCapabilities, w3cCapabilities1, w3cCapabilities2].find(isW3cCaps));
     if (!originalCaps) {
       throw new errors.SessionNotCreatedError(
         'Appium only supports W3C-style capability objects. ' +
@@ -311,17 +293,11 @@ export class BaseDriver<
     this.setProtocolW3C();
 
     this.originalCaps = originalCaps;
-    this.log.debug(
-      `Creating session with W3C capabilities: ${JSON.stringify(originalCaps, null, 2)}`,
-    );
+    this.log.debug(`Creating session with W3C capabilities: ${JSON.stringify(originalCaps, null, 2)}`);
 
     let caps: DriverCaps<C>;
     try {
-      caps = processCapabilities(
-        originalCaps,
-        this._desiredCapConstraints,
-        this.shouldValidateCaps,
-      ) as DriverCaps<C>;
+      caps = processCapabilities(originalCaps, this._desiredCapConstraints, this.shouldValidateCaps) as DriverCaps<C>;
       caps = fixCaps(caps, this._desiredCapConstraints, this.log) as DriverCaps<C>;
     } catch (e) {
       const message = e instanceof Error ? e.message : String(e);
@@ -382,9 +358,10 @@ export class BaseDriver<
    * Use {@linkcode EventCommands.getLogEvents} instead to get the event history.
    */
   async getSession() {
-    return (
-      this.caps.eventTimings ? {...this.caps, events: this.eventHistory} : this.caps
-    ) as SingularSessionData<C, SessionData>;
+    return (this.caps.eventTimings ? {...this.caps, events: this.eventHistory} : this.caps) as SingularSessionData<
+      C,
+      SessionData
+    >;
   }
 
   /**
@@ -432,8 +409,7 @@ export class BaseDriver<
       const capError = e instanceof Error ? e : new Error(String(e));
       throw this.log.errorWithException(
         new errors.SessionNotCreatedError(
-          `Session capabilities were not valid for the ` +
-            `following reason(s): ${capError.message}`,
+          `Session capabilities were not valid for the ` + `following reason(s): ${capError.message}`,
           capError,
         ),
       );

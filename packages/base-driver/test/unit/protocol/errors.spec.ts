@@ -1,9 +1,11 @@
-import {describe, it} from 'node:test';
-import {expect} from 'chai';
-import {errors, errorFromMJSONWPStatusCode, errorFromW3CJsonCode, isErrorType} from '../../../lib';
-import {BadParametersError, getResponseForW3CError} from '../../../lib/protocol/errors';
-import {StatusCodes as HTTPStatusCodes} from 'http-status-codes';
 import path from 'node:path';
+import {describe, it} from 'node:test';
+
+import {expect} from 'chai';
+import {StatusCodes as HTTPStatusCodes} from 'http-status-codes';
+
+import {errorFromMJSONWPStatusCode, errorFromW3CJsonCode, errors, isErrorType} from '../../../lib';
+import {BadParametersError, getResponseForW3CError} from '../../../lib/protocol/errors';
 
 const basename = path.basename(__filename);
 
@@ -31,8 +33,7 @@ const errorsList: ErrorListItem[] = [
   },
   {
     errorName: 'ElementNotInteractableError',
-    errorMsg:
-      'A command could not be completed because the element is not pointer- or keyboard interactable',
+    errorMsg: 'A command could not be completed because the element is not pointer- or keyboard interactable',
     error: 'element not interactable',
   },
   {
@@ -54,8 +55,7 @@ const errorsList: ErrorListItem[] = [
   },
   {
     errorName: 'NoSuchFrameError',
-    errorMsg:
-      'A request to switch to a frame could not be satisfied because the frame could not be found.',
+    errorMsg: 'A request to switch to a frame could not be satisfied because the frame could not be found.',
     error: 'no such frame',
     errorCode: 8,
   },
@@ -74,15 +74,13 @@ const errorsList: ErrorListItem[] = [
   },
   {
     errorName: 'StaleElementReferenceError',
-    errorMsg:
-      'An element command failed because the referenced element is no longer attached to the DOM.',
+    errorMsg: 'An element command failed because the referenced element is no longer attached to the DOM.',
     error: 'stale element reference',
     errorCode: 10,
   },
   {
     errorName: 'ElementNotVisibleError',
-    errorMsg:
-      'An element command could not be completed because the element is not visible on the page.',
+    errorMsg: 'An element command could not be completed because the element is not visible on the page.',
     errorCode: 11,
   },
   {
@@ -123,15 +121,13 @@ const errorsList: ErrorListItem[] = [
   },
   {
     errorName: 'NoSuchWindowError',
-    errorMsg:
-      'A request to switch to a different window could not be satisfied because the window could not be found.',
+    errorMsg: 'A request to switch to a different window could not be satisfied because the window could not be found.',
     error: 'no such window',
     errorCode: 23,
   },
   {
     errorName: 'InvalidCookieDomainError',
-    errorMsg:
-      'An illegal attempt was made to set a cookie under a different domain than the current page.',
+    errorMsg: 'An illegal attempt was made to set a cookie under a different domain than the current page.',
     error: 'invalid cookie domain',
     errorCode: 24,
   },
@@ -247,28 +243,14 @@ describe('errorFromMJSONWPStatusCode', function () {
     if (error.errorName !== 'NotYetImplementedError') {
       it((error.errorCode ?? error.errorName) + ' should return correct error', function () {
         if (error.errorCode) {
-          expect(errorFromMJSONWPStatusCode(error.errorCode)).to.have.property(
-            'jsonwpCode',
-            error.errorCode,
-          );
-          expect(errorFromMJSONWPStatusCode(error.errorCode)).to.have.property(
-            'message',
-            error.errorMsg,
-          );
+          expect(errorFromMJSONWPStatusCode(error.errorCode)).to.have.property('jsonwpCode', error.errorCode);
+          expect(errorFromMJSONWPStatusCode(error.errorCode)).to.have.property('message', error.errorMsg);
           if (![13, 33].includes(error.errorCode)) {
-            expect(errorFromMJSONWPStatusCode(error.errorCode, 'abcd')).to.have.property(
-              'jsonwpCode',
-              error.errorCode,
-            );
-            expect(errorFromMJSONWPStatusCode(error.errorCode, 'abcd')).to.have.property(
-              'message',
-              'abcd',
-            );
+            expect(errorFromMJSONWPStatusCode(error.errorCode, 'abcd')).to.have.property('jsonwpCode', error.errorCode);
+            expect(errorFromMJSONWPStatusCode(error.errorCode, 'abcd')).to.have.property('message', 'abcd');
           }
         } else {
-          expect(
-            isErrorType(errorFromMJSONWPStatusCode((error as any).errorCode), errors.UnknownError),
-          ).to.be.true;
+          expect(isErrorType(errorFromMJSONWPStatusCode((error as any).errorCode), errors.UnknownError)).to.be.true;
         }
       });
     }
@@ -292,20 +274,15 @@ describe('errorFromW3CJsonCode', function () {
           expect(err.error).to.equal(error.error);
           expect(err.message).to.include(error.errorMsg);
         } else {
-          expect(
-            isErrorType(
-              errorFromW3CJsonCode(error.error ?? 'unknown error', error.errorMsg),
-              errors.UnknownError,
-            ),
-          ).to.be.true;
+          expect(isErrorType(errorFromW3CJsonCode(error.error ?? 'unknown error', error.errorMsg), errors.UnknownError))
+            .to.be.true;
         }
       });
     }
   }
   it('should parse unknown errors', function () {
     const msg = 'An unknown server-side error occurred while processing the command.';
-    expect(isErrorType(errorFromW3CJsonCode('not a real error code', msg), errors.UnknownError)).to
-      .be.true;
+    expect(isErrorType(errorFromW3CJsonCode('not a real error code', msg), errors.UnknownError)).to.be.true;
     expect(errorFromW3CJsonCode('not a real error code', msg).message).to.match(
       /An unknown server-side error occurred/,
     );
@@ -381,9 +358,7 @@ describe('.getResponseForW3CError', function () {
     expect(stacktrace).to.contain(basename);
   });
   it('should translate JSONWP errors', function () {
-    const [httpStatus, httpResponseBody] = getResponseForW3CError(
-      new errors.NoSuchElementError('My custom message'),
-    );
+    const [httpStatus, httpResponseBody] = getResponseForW3CError(new errors.NoSuchElementError('My custom message'));
     expect(httpStatus).to.equal(404);
     const {error, message, stacktrace} = httpResponseBody.value;
     expect(message).to.equal('My custom message');

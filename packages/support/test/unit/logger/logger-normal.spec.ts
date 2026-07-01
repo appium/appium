@@ -1,11 +1,13 @@
-import {expect} from 'chai';
 import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
+
+import {expect} from 'chai';
+
 import {
+  assertOutputContains,
+  assertOutputDoesntContain,
   getDynamicLogger,
   restoreWriters,
   setupWriters,
-  assertOutputContains,
-  assertOutputDoesntContain,
 } from './helpers';
 
 const LOG_LEVELS = ['silly', 'verbose', 'info', 'http', 'warn', 'error'];

@@ -6,7 +6,9 @@
  */
 
 import path from 'node:path';
+
 import type {TeenProcessExecOptions} from 'teen_process';
+
 import {DEFAULT_SITE_DIR, NAME_BIN, NAME_MKDOCS, NAME_MKDOCS_YML} from '../constants';
 import {DocutilsError} from '../error';
 import {findMkDocsYml, isMkDocsInstalled, readMkDocsYml, requirePython} from '../fs';
@@ -86,13 +88,9 @@ export async function buildSite({
     throw new DocutilsError(`Could not find MkDocs executable; please run "${NAME_BIN} init"`);
   }
 
-  mkDocsYmlPath = mkDocsYmlPath
-    ? path.resolve(process.cwd(), mkDocsYmlPath)
-    : await findMkDocsYml(cwd);
+  mkDocsYmlPath = mkDocsYmlPath ? path.resolve(process.cwd(), mkDocsYmlPath) : await findMkDocsYml(cwd);
   if (!mkDocsYmlPath) {
-    throw new DocutilsError(
-      `Could not find ${NAME_MKDOCS_YML} from ${cwd}; please run "${NAME_BIN} init"`,
-    );
+    throw new DocutilsError(`Could not find ${NAME_MKDOCS_YML} from ${cwd}; please run "${NAME_BIN} init"`);
   }
   const mkdocsArgs = ['-f', mkDocsYmlPath];
   if (siteDir) {
@@ -113,11 +111,7 @@ export async function buildSite({
         log.debug('Found site_dir %s', siteDir);
         relSiteDir = relative(path.dirname(mkDocsYmlPath), siteDir);
       } else {
-        log.warn(
-          'No site_dir specified in args or %s; using default site_dir: %s',
-          NAME_MKDOCS_YML,
-          DEFAULT_SITE_DIR,
-        );
+        log.warn('No site_dir specified in args or %s; using default site_dir: %s', NAME_MKDOCS_YML, DEFAULT_SITE_DIR);
         relSiteDir = relative(cwd, DEFAULT_SITE_DIR);
       }
     }
@@ -132,11 +126,7 @@ export async function buildSite({
  * @param opts Extra options for `teen_process.Subprocess.start`
  * @param mkDocsPath Path to `mkdocs` executable
  */
-async function doServe(
-  pythonPath: string,
-  args: string[] = [],
-  opts: SpawnBackgroundProcessOpts = {},
-) {
+async function doServe(pythonPath: string, args: string[] = [], opts: SpawnBackgroundProcessOpts = {}) {
   const finalArgs = ['-m', NAME_MKDOCS, 'serve', ...args];
   log.debug('Executing %s via: %s, %O', NAME_MKDOCS, pythonPath, finalArgs);
   return spawnBackgroundProcess(pythonPath, finalArgs, opts);

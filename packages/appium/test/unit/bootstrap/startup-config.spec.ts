@@ -1,17 +1,13 @@
-import {setPath} from '../../../lib/utils';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {SinonSandbox, SinonSpy} from 'sinon';
 import {createSandbox} from 'sinon';
-import {getParser} from '../../../lib/cli/parser';
+
 import {getNonDefaultServerArgs, showConfig} from '../../../lib/bootstrap/startup-config';
+import {getParser} from '../../../lib/cli/parser';
 import {PLUGIN_TYPE} from '../../../lib/constants';
-import {
-  finalizeSchema,
-  getDefaultsForSchema,
-  registerSchema,
-  resetSchema,
-} from '../../../lib/schema/schema';
+import {finalizeSchema, getDefaultsForSchema, registerSchema, resetSchema} from '../../../lib/schema/schema';
+import {setPath} from '../../../lib/utils';
 
 const {expect} = chai;
 chai.use(chaiAsPromised);

@@ -5,10 +5,11 @@
  * and generated from a `.js` file in the `appium` package.
  */
 
-import {compileFromFile} from 'json-schema-to-typescript';
-import path from 'node:path';
 import {promises as fs} from 'node:fs';
+import path from 'node:path';
 import {fileURLToPath} from 'node:url';
+
+import {compileFromFile} from 'json-schema-to-typescript';
 const info = 'ℹ';
 const success = '✔';
 const error = '✖';
@@ -46,10 +47,9 @@ async function main() {
     try {
       ts = await compileFromFile(JSON_SCHEMA_PATH);
     } catch (err) {
-      throw new Error(
-        `${error} Could not convert Appium schema JSON to TypeScript: ${err.message}. Does it exist?`,
-        {cause: err},
-      );
+      throw new Error(`${error} Could not convert Appium schema JSON to TypeScript: ${err.message}. Does it exist?`, {
+        cause: err,
+      });
     }
     try {
       await fs.writeFile(OUTPUT_PATH, ts);

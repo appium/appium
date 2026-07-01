@@ -1,21 +1,23 @@
+import type {Server as HttpServer} from 'node:http';
+
+import type {DriverData, IIpcSubscription, InitialOpts, IpcData, IpcMessage} from '@appium/types';
+import {BaseDriver, errors} from 'appium/driver';
 import {sleep} from 'asyncbox';
 import type {Express, Request, Response} from 'express';
-import type {Server as HttpServer} from 'node:http';
-import {BaseDriver, errors} from 'appium/driver';
-import type {DriverData, IIpcSubscription, InitialOpts, IpcData, IpcMessage} from '@appium/types';
-import {desiredCapConstraints} from './desired-caps';
-import type {FakeDriverConstraints} from './desired-caps';
-import type {FakeDriverCaps, W3CFakeDriverCaps} from './types';
-import {FakeApp} from './fake-app';
-import type {FakeElement} from './fake-element';
+
+import {EXECUTE_METHOD_MAP} from './command-maps/execute-method-map';
+import {NEW_BIDI_COMMANDS} from './command-maps/new-bidi-commands';
+import {NEW_METHOD_MAP} from './command-maps/new-method-map';
 import * as alertCommands from './commands/alert';
 import * as contextsCommands from './commands/contexts';
 import * as elementCommands from './commands/element';
 import * as findCommands from './commands/find';
 import * as generalCommands from './commands/general';
-import {NEW_BIDI_COMMANDS} from './command-maps/new-bidi-commands';
-import {NEW_METHOD_MAP} from './command-maps/new-method-map';
-import {EXECUTE_METHOD_MAP} from './command-maps/execute-method-map';
+import {desiredCapConstraints} from './desired-caps';
+import type {FakeDriverConstraints} from './desired-caps';
+import {FakeApp} from './fake-app';
+import type {FakeElement} from './fake-element';
+import type {FakeDriverCaps, W3CFakeDriverCaps} from './types';
 
 export type {FakeDriverConstraints};
 export type {Orientation} from '@appium/types';
@@ -205,8 +207,7 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
     for (const d of driverData) {
       if (d.isUnique) {
         throw new errors.SessionNotCreatedError(
-          'Cannot start session; another ' +
-            'unique session is in progress that requires all resources',
+          'Cannot start session; another ' + 'unique session is in progress that requires all resources',
         );
       }
     }

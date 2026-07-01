@@ -1,6 +1,7 @@
 import {Console as NodeConsole} from 'node:console';
 import {Writable} from 'node:stream';
-import {styleText as nodeStyleText, type InspectOptions} from 'node:util';
+import {type InspectOptions, styleText as nodeStyleText} from 'node:util';
+
 import type {JsonValue} from 'type-fest';
 
 /** ANSI styles supported by Node's `util.styleText`. `grey` is accepted as an alias for `gray`. */
@@ -122,11 +123,7 @@ type SymbolKey = keyof typeof logSymbols;
  */
 class NullWritable extends Writable {
   /* eslint-disable promise/prefer-await-to-callbacks -- Node stream callback API */
-  override _write(
-    chunk: unknown,
-    encoding: BufferEncoding,
-    callback: (error?: Error | null) => void,
-  ): void {
+  override _write(chunk: unknown, encoding: BufferEncoding, callback: (error?: Error | null) => void): void {
     setImmediate(callback);
   }
   /* eslint-enable promise/prefer-await-to-callbacks */

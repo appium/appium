@@ -1,9 +1,11 @@
 import {readFile, rm} from 'node:fs/promises';
-import type {Item, Strongbox} from '../../lib';
-import {strongbox} from '../../lib';
-import {describe, it, beforeEach, afterEach} from 'node:test';
+import {afterEach, beforeEach, describe, it} from 'node:test';
+
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+
+import type {Item, Strongbox} from '../../lib';
+import {strongbox} from '../../lib';
 
 use(chaiAsPromised);
 

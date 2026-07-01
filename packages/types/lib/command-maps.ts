@@ -1,4 +1,5 @@
 import type {ConditionalPick, MultidimensionalReadonlyArray} from 'type-fest';
+
 import type {Driver, DriverCommand} from './driver';
 import type {Plugin, PluginCommand} from './plugin';
 import type {StringRecord} from './util';
@@ -72,10 +73,7 @@ export interface BaseMethodDef {
 /**
  * A definition of an exposed API command in a {@linkcode Driver}.
  */
-export interface DriverMethodDef<
-  T extends Driver,
-  D extends boolean = boolean,
-> extends BaseMethodDef {
+export interface DriverMethodDef<T extends Driver, D extends boolean = boolean> extends BaseMethodDef {
   /**
    * Name of the command.
    */

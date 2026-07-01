@@ -1,26 +1,24 @@
 import {util} from '@appium/support';
-import type {ArgumentOptions} from 'argparse';
 import type {ExtensionType} from '@appium/types';
 import type {CliExtensionSubcommand} from 'appium/types';
+import type {ArgumentOptions} from 'argparse';
+
 import {
   DRIVER_TYPE,
-  PLUGIN_TYPE,
+  EXT_SUBCOMMAND_DOCTOR,
   EXT_SUBCOMMAND_INSTALL,
   EXT_SUBCOMMAND_LIST,
   EXT_SUBCOMMAND_RUN,
   EXT_SUBCOMMAND_UNINSTALL,
   EXT_SUBCOMMAND_UPDATE,
-  EXT_SUBCOMMAND_DOCTOR,
+  PLUGIN_TYPE,
 } from '../constants';
 import {INSTALL_TYPES} from '../extension/extension-config';
 import {toParserArgs} from '../schema/cli-args';
 const DRIVER_EXAMPLE = 'xcuitest';
 const PLUGIN_EXAMPLE = 'images';
 
-export type ArgumentDefinitions = Map<
-  [name: string] | [name: string, alias: string],
-  ArgumentOptions
->;
+export type ArgumentDefinitions = Map<[name: string] | [name: string, alias: string], ArgumentOptions>;
 
 /**
  * This is necessary because we pass the array into `argparse`. `argparse` is bad and mutates things. We don't want that.
@@ -53,10 +51,7 @@ export const getExtensionArgs = util.memoize(function getExtensionArgs(): Record
   ExtensionType,
   Record<CliExtensionSubcommand, ArgumentDefinitions>
 > {
-  const extensionArgs = {} as Record<
-    ExtensionType,
-    Record<CliExtensionSubcommand, ArgumentDefinitions>
-  >;
+  const extensionArgs = {} as Record<ExtensionType, Record<CliExtensionSubcommand, ArgumentDefinitions>>;
   for (const type of EXTENSION_TYPES) {
     extensionArgs[type] = {
       [EXT_SUBCOMMAND_LIST]: makeListArgs(type),
@@ -130,8 +125,7 @@ function makeInstallArgs(type: ExtensionType): ArgumentDefinitions {
       {
         type: 'str',
         help:
-          `Name of the ${type} to install, for example: ` +
-          (type === DRIVER_TYPE ? DRIVER_EXAMPLE : PLUGIN_EXAMPLE),
+          `Name of the ${type} to install, for example: ` + (type === DRIVER_TYPE ? DRIVER_EXAMPLE : PLUGIN_EXAMPLE),
       },
     ],
     [
@@ -152,9 +146,7 @@ function makeInstallArgs(type: ExtensionType): ArgumentDefinitions {
         required: false,
         default: null,
         type: 'str',
-        help:
-          `The Node.js package name of the ${type}. ` +
-          `Required if "source" is set to "git" or "github".`,
+        help: `The Node.js package name of the ${type}. ` + `Required if "source" is set to "git" or "github".`,
         dest: 'packageName',
       },
     ],
@@ -172,8 +164,7 @@ function makeUninstallArgs(type: ExtensionType): ArgumentDefinitions {
       {
         type: 'str',
         help:
-          `Name of the ${type} to uninstall, for example: ` +
-          (type === DRIVER_TYPE ? DRIVER_EXAMPLE : PLUGIN_EXAMPLE),
+          `Name of the ${type} to uninstall, for example: ` + (type === DRIVER_TYPE ? DRIVER_EXAMPLE : PLUGIN_EXAMPLE),
       },
     ],
   ]);

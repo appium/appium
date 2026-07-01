@@ -1,8 +1,10 @@
-import {describe, it, before} from 'node:test';
+import {before, describe, it} from 'node:test';
+
+import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+
 import {JWProxy} from '../../../lib';
-import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
 import {createAppiumURL} from '../../helpers';
 
 chai.use(chaiAsPromised);
@@ -109,15 +111,13 @@ describe('JWProxy', function () {
       expect(proxyUrl).to.equal(createTestURL('barbaz', 'element'));
     });
     it(`should proxy session commands when '/session' is in the url`, function () {
-      const incomingUrl =
-        '/session/82a9b7da-faaf-4a1d-8ef3-5e4fb5812200/cookie/session-something-or-other';
+      const incomingUrl = '/session/82a9b7da-faaf-4a1d-8ef3-5e4fb5812200/cookie/session-something-or-other';
       const j = createJWProxy({sessionId: 'barbaz'});
       const proxyUrl = j.getUrlForProxy(incomingUrl, 'POST');
       expect(proxyUrl).to.equal(createTestURL('barbaz', 'cookie/session-something-or-other'));
     });
     it(`should proxy session commands when '/session' is in the url and not base on the original url`, function () {
-      const incomingUrl =
-        '/session/82a9b7da-faaf-4a1d-8ef3-5e4fb5812200/cookie/session-something-or-other';
+      const incomingUrl = '/session/82a9b7da-faaf-4a1d-8ef3-5e4fb5812200/cookie/session-something-or-other';
       const j = createJWProxy({sessionId: 'barbaz'});
       const proxyUrl = j.getUrlForProxy(incomingUrl, 'POST');
       expect(proxyUrl).to.equal(createTestURL('barbaz', 'cookie/session-something-or-other'));

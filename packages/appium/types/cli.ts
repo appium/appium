@@ -1,5 +1,6 @@
 import type {DriverType, PluginType, ServerArgs} from '@appium/types';
 import type {SetOptional} from 'type-fest';
+
 import type {InstallType} from './manifest';
 export type CliCommandServer = 'server';
 export type CliCommandSetup = 'setup';
@@ -204,9 +205,7 @@ export type ParsedArgs<
 export type Args<
   Cmd extends CliCommand = CliCommandServer,
   SubCmd extends CliExtensionSubcommand | CliCommandSetupSubcommand | void = void,
-> = Cmd extends CliCommandServer
-  ? SetOptional<CommonArgs<Cmd>, keyof ServerArgs>
-  : ParsedArgs<Cmd, SubCmd>;
+> = Cmd extends CliCommandServer ? SetOptional<CommonArgs<Cmd>, keyof ServerArgs> : ParsedArgs<Cmd, SubCmd>;
 
 /**
  * Shown by `appium --build-info`

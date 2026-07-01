@@ -1,9 +1,11 @@
-import {isWindows} from './system';
-import log from './logger';
-import {exec} from 'teen_process';
 import {randomUUID} from 'node:crypto';
-import path from 'node:path';
 import _fs from 'node:fs';
+import path from 'node:path';
+
+import {exec} from 'teen_process';
+
+import log from './logger';
+import {isWindows} from './system';
 
 const OBJECTS_MAPPING = new WeakMap<object, string>();
 
@@ -25,12 +27,7 @@ export async function requirePackage(packageName: string): Promise<unknown> {
   }
 
   try {
-    const globalPackageName = path.resolve(
-      process.env.npm_config_prefix ?? '',
-      'lib',
-      'node_modules',
-      packageName,
-    );
+    const globalPackageName = path.resolve(process.env.npm_config_prefix ?? '', 'lib', 'node_modules', packageName);
     log.debug(`Loading global package '${globalPackageName}'`);
     return require(globalPackageName);
   } catch (err) {
@@ -42,9 +39,7 @@ export async function requirePackage(packageName: string): Promise<unknown> {
     log.debug(`Retrying load of linked package '${packageName}'`);
     return require(packageName);
   } catch (err) {
-    throw log.errorWithException(
-      `Unable to load package '${packageName}': ${(err as Error).message}`,
-    );
+    throw log.errorWithException(`Unable to load package '${packageName}': ${(err as Error).message}`);
   }
 }
 

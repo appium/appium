@@ -1,12 +1,6 @@
 import {expect} from 'chai';
-import {
-  ansiBeep,
-  ansiColor,
-  escapeRegExp,
-  isPlainObject,
-  setBlocking,
-  unleakString,
-} from '../../lib/utils';
+
+import {ansiBeep, ansiColor, escapeRegExp, isPlainObject, setBlocking, unleakString} from '../../lib/utils';
 
 describe('utils', function () {
   describe('ansiColor', function () {

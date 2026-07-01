@@ -1,11 +1,12 @@
-import {fs} from './fs';
-import {isPlainObject, toReadableSizeString} from './util';
-import log from './logger';
-import Ftp from 'jsftp';
-import {Timer} from './timing';
+import type {HTTPHeaders} from '@appium/types';
 import axios, {type AxiosBasicCredentials, type Method, type RawAxiosRequestConfig} from 'axios';
 import FormData from 'form-data';
-import type {HTTPHeaders} from '@appium/types';
+import Ftp from 'jsftp';
+
+import {fs} from './fs';
+import log from './logger';
+import {Timer} from './timing';
+import {isPlainObject, toReadableSizeString} from './util';
 
 const DEFAULT_TIMEOUT_MS = 4 * 60 * 1000;
 
@@ -311,10 +312,7 @@ async function uploadFileToFtp(
   });
 }
 
-function isHttpUploadOptions(
-  opts: HttpUploadOptions | FtpUploadOptions,
-  url: URL,
-): opts is HttpUploadOptions {
+function isHttpUploadOptions(opts: HttpUploadOptions | FtpUploadOptions, url: URL): opts is HttpUploadOptions {
   try {
     return url.protocol === 'http:' || url.protocol === 'https:';
   } catch {
@@ -326,10 +324,7 @@ function isHttpUploadOptions(
  * Returns true if the URL is FTP, i.e. the options are for FTP upload.
  * @deprecated FTP upload via jsftp is deprecated and will be removed in a future major version.
  */
-function isFtpUploadOptions(
-  opts: HttpUploadOptions | FtpUploadOptions,
-  url: URL,
-): opts is FtpUploadOptions {
+function isFtpUploadOptions(opts: HttpUploadOptions | FtpUploadOptions, url: URL): opts is FtpUploadOptions {
   try {
     return url.protocol === 'ftp:';
   } catch {

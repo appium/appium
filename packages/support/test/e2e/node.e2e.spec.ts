@@ -1,6 +1,8 @@
+import {describe, it} from 'node:test';
+
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {describe, it} from 'node:test';
+
 import {node} from '../../lib';
 
 use(chaiAsPromised);
@@ -15,9 +17,7 @@ describe('node utilities', function () {
       await expect(node.requirePackage('npm')).to.not.be.rejected;
     });
     it('should fail to find uninstalled package', async function () {
-      await expect(node.requirePackage('appium-foo-driver')).to.eventually.be.rejectedWith(
-        /Unable to load package/,
-      );
+      await expect(node.requirePackage('appium-foo-driver')).to.eventually.be.rejectedWith(/Unable to load package/);
     });
   });
 });

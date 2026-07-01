@@ -1,12 +1,13 @@
-import {util, timing} from '@appium/support';
-import {asyncmap} from 'asyncbox';
+import {timing, util} from '@appium/support';
 import type {DriverClass, ExtensionType, PluginClass} from '@appium/types';
 import type {ExtClass} from 'appium/types';
+import {asyncmap} from 'asyncbox';
+
 import {USE_ALL_PLUGINS} from '../constants';
 import {log} from '../logger';
+import {zip} from '../utils';
 import {DriverConfig} from './driver-config';
 import {Manifest} from './manifest';
-import {zip} from '../utils';
 import {PluginConfig} from './plugin-config';
 
 export type ExtensionConfigs = {
@@ -59,26 +60,18 @@ export async function getActivePlugins(
       if (pluginName in pluginConfig.installedExtensions) {
         filteredPluginNames.push(pluginName);
       } else if (pluginName === USE_ALL_PLUGINS) {
-        throw new Error(
-          `The reserved plugin name '${pluginName}' cannot be combined with other names.`,
-        );
+        throw new Error(`The reserved plugin name '${pluginName}' cannot be combined with other names.`);
       } else {
         const suffix = util.isEmpty(pluginConfig.installedExtensions)
           ? `You don't have any plugins installed yet.`
-          : `Only the following ${Object.keys(pluginConfig.installedExtensions).length === 1 ? `plugin is` : `plugins are`} ` +
-            `available: ${Object.keys(pluginConfig.installedExtensions)}`;
-        throw new Error(
-          `Could not load the plugin '${pluginName}' because it is not installed. ${suffix}`,
-        );
+          : `Only the following ${
+              Object.keys(pluginConfig.installedExtensions).length === 1 ? `plugin is` : `plugins are`
+            } ` + `available: ${Object.keys(pluginConfig.installedExtensions)}`;
+        throw new Error(`Could not load the plugin '${pluginName}' because it is not installed. ${suffix}`);
       }
     }
   }
-  const pairs = await importExtensions(
-    'plugin',
-    pluginConfig,
-    filteredPluginNames,
-    maxParallelImports,
-  );
+  const pairs = await importExtensions('plugin', pluginConfig, filteredPluginNames, maxParallelImports);
   return new Map(pairs as Array<[PluginClass, string]>);
 }
 
@@ -102,20 +95,14 @@ export async function getActiveDrivers(
       } else {
         const suffix = util.isEmpty(driverConfig.installedExtensions)
           ? `You don't have any drivers installed yet.`
-          : `Only the following ${Object.keys(driverConfig.installedExtensions).length === 1 ? `driver is` : `drivers are`} ` +
-            `available: ${Object.keys(driverConfig.installedExtensions)}`;
-        throw new Error(
-          `Could not load the driver '${driverName}' because it is not installed. ${suffix}`,
-        );
+          : `Only the following ${
+              Object.keys(driverConfig.installedExtensions).length === 1 ? `driver is` : `drivers are`
+            } ` + `available: ${Object.keys(driverConfig.installedExtensions)}`;
+        throw new Error(`Could not load the driver '${driverName}' because it is not installed. ${suffix}`);
       }
     }
   }
-  const pairs = await importExtensions(
-    'driver',
-    driverConfig,
-    filteredDriverNames,
-    maxParallelImports,
-  );
+  const pairs = await importExtensions('driver', driverConfig, filteredDriverNames, maxParallelImports);
   return new Map(pairs as Array<[DriverClass, string]>);
 }
 
@@ -132,9 +119,7 @@ async function importExtensions(
       const timer = new timing.Timer().start();
       try {
         const extClass = await config.requireAsync(extName as never);
-        log.debug(
-          `${extClass.name} has been successfully loaded in ${timer.getDuration().asSeconds.toFixed(3)}s`,
-        );
+        log.debug(`${extClass.name} has been successfully loaded in ${timer.getDuration().asSeconds.toFixed(3)}s`);
         return extClass as ExtClass<ExtensionType>;
       } catch (err: any) {
         log.error(

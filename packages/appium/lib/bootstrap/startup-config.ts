@@ -1,9 +1,10 @@
 /* eslint-disable no-console */
 import {util} from '@appium/support';
-import {getDefaultsForSchema, getAllArgSpecs} from '../schema/schema';
 import type {Args} from 'appium/types';
-import type {ReadConfigFileResult} from './config-file';
+
+import {getAllArgSpecs, getDefaultsForSchema} from '../schema/schema';
 import {difference, getPath, pickBy, setPath} from '../utils';
+import type {ReadConfigFileResult} from './config-file';
 
 interface FlattenedArg {
   value: unknown;
@@ -22,16 +23,13 @@ export function getNonDefaultServerArgs(parsedArgs: Args): Args {
    */
   const flatten = (args: Args): Record<string, FlattenedArg> => {
     const argSpecs = getAllArgSpecs();
-    const flattened = [...argSpecs.values()].reduce<Record<string, FlattenedArg>>(
-      (acc, argSpec: {dest: string}) => {
-        const value = getPath(args, argSpec.dest);
-        if (value !== undefined) {
-          acc[argSpec.dest] = {value, argSpec};
-        }
-        return acc;
-      },
-      {},
-    );
+    const flattened = [...argSpecs.values()].reduce<Record<string, FlattenedArg>>((acc, argSpec: {dest: string}) => {
+      const value = getPath(args, argSpec.dest);
+      if (value !== undefined) {
+        acc[argSpec.dest] = {value, argSpec};
+      }
+      return acc;
+    }, {});
 
     return flattened;
   };
@@ -39,8 +37,7 @@ export function getNonDefaultServerArgs(parsedArgs: Args): Args {
   const args = flatten(parsedArgs);
 
   // hopefully these function names are descriptive enough
-  const typesDiffer = (dest: string): boolean =>
-    typeof args[dest].value !== typeof defaultsFromSchema[dest];
+  const typesDiffer = (dest: string): boolean => typeof args[dest].value !== typeof defaultsFromSchema[dest];
 
   const defaultValueIsArray = (dest: string): boolean => Array.isArray(defaultsFromSchema[dest]);
 
@@ -53,11 +50,9 @@ export function getNonDefaultServerArgs(parsedArgs: Args): Args {
 
   const defaultIsDefined = (dest: string): boolean => defaultsFromSchema[dest] !== undefined;
 
-  const argValueNotArrayOrArraysDiffer = (dest: string) =>
-    !argsValueIsArray(dest) || arraysDiffer(dest);
+  const argValueNotArrayOrArraysDiffer = (dest: string) => !argsValueIsArray(dest) || arraysDiffer(dest);
 
-  const defaultValueNotArrayAndValuesDiffer = (dest: string) =>
-    !defaultValueIsArray(dest) && valuesDiffer(dest);
+  const defaultValueNotArrayAndValuesDiffer = (dest: string) => !defaultValueIsArray(dest) && valuesDiffer(dest);
 
   /**
    * This used to be a hideous conditional, but it's broken up into a hideous function instead.

@@ -1,6 +1,7 @@
-import {argify} from '../../lib/utils';
 import * as chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+
+import {argify} from '../../lib/utils';
 
 chai.use(chaiAsPromised);
 const {expect} = chai;
@@ -23,8 +24,7 @@ describe('argify', function () {
       ...argify(
         Object.fromEntries(
           Object.entries(mikeOpts).filter(
-            ([key, value]) =>
-              !['port', 'host'].includes(key) && (typeof value === 'number' || Boolean(value)),
+            ([key, value]) => !['port', 'host'].includes(key) && (typeof value === 'number' || Boolean(value)),
           ),
         ),
       ),

@@ -1,7 +1,8 @@
+import type {ActionSequence} from '@appium/types';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import type {ActionSequence} from '@appium/types';
-import {initSession, deleteSession, W3C_PREFIXED_CAPS} from '../helpers';
+
+import {deleteSession, initSession, W3C_PREFIXED_CAPS} from '../helpers';
 
 chai.use(chaiAsPromised);
 
@@ -58,9 +59,7 @@ export function generalTests(context: {port: number}) {
       await driver.setTimeout({implicit: 1000});
     });
     it('should not set invalid implicit wait timeout', async function () {
-      await expect(driver.setTimeout({implicit: 'foo' as any})).to.be.rejectedWith(
-        /values are not valid/,
-      );
+      await expect(driver.setTimeout({implicit: 'foo' as any})).to.be.rejectedWith(/values are not valid/);
     });
 
     // skip these until basedriver supports these timeouts
@@ -68,18 +67,14 @@ export function generalTests(context: {port: number}) {
       await driver.setTimeout({script: 1000});
     });
     it.skip('should not set invalid async script timeout', async function () {
-      await expect(driver.setTimeout({script: 'foo' as any})).to.be.rejectedWith(
-        /values are not valid/,
-      );
+      await expect(driver.setTimeout({script: 'foo' as any})).to.be.rejectedWith(/values are not valid/);
     });
 
     it.skip('should set page load timeout', async function () {
       await driver.setTimeout({pageLoad: 1000});
     });
     it.skip('should not set page load script timeout', async function () {
-      await expect(driver.setTimeout({pageLoad: 'foo' as any})).to.be.rejectedWith(
-        /values are not valid/,
-      );
+      await expect(driver.setTimeout({pageLoad: 'foo' as any})).to.be.rejectedWith(/values are not valid/);
     });
 
     it('should allow performing actions that do nothing but save them', async function () {
@@ -117,18 +112,12 @@ export function generalTests(context: {port: number}) {
     });
 
     it('should add 2 numbers via execute overloads', async function () {
-      await expect(driver.executeScript('fake: addition', [{num1: 2, num2: 3}])).to.eventually.eql(
-        5,
-      );
-      await expect(
-        driver.executeScript('fake: addition', [{num1: 2, num2: 3, num3: 4}]),
-      ).to.eventually.eql(9);
+      await expect(driver.executeScript('fake: addition', [{num1: 2, num2: 3}])).to.eventually.eql(5);
+      await expect(driver.executeScript('fake: addition', [{num1: 2, num2: 3, num3: 4}])).to.eventually.eql(9);
     });
 
     it('should throw not implemented if an execute overload isnt supported', async function () {
-      await expect(driver.executeScript('fake: blarg', [])).to.be.rejectedWith(
-        /Unsupported execute method/,
-      );
+      await expect(driver.executeScript('fake: blarg', [])).to.be.rejectedWith(/Unsupported execute method/);
     });
 
     it('should throw an error if a required overload param is missing', async function () {
@@ -138,15 +127,13 @@ export function generalTests(context: {port: number}) {
     });
 
     it('should throw an error if sending in wrong types of params', async function () {
-      await expect(driver.executeScript('fake: addition', [4, 5])).to.be.rejectedWith(
-        /correct format of arg/,
-      );
+      await expect(driver.executeScript('fake: addition', [4, 5])).to.be.rejectedWith(/correct format of arg/);
       await expect(driver.executeScript('fake: addition', [4])).to.be.rejectedWith(
         /not receive an appropriate execute/,
       );
-      await expect(
-        driver.executeScript('fake: addition', [{num1: 2}, {extra: 'bad'}]),
-      ).to.be.rejectedWith(/correct format of arg/);
+      await expect(driver.executeScript('fake: addition', [{num1: 2}, {extra: 'bad'}])).to.be.rejectedWith(
+        /correct format of arg/,
+      );
     });
   });
 }

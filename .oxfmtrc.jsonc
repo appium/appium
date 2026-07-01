@@ -1,0 +1,28 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+
+  // Main format options are synced with .editorconfig
+
+  "semi": true, // same as default
+  "singleQuote": true,
+  "quoteProps": "as-needed", // same as default
+  "trailingComma": "all", // same as default
+  "bracketSpacing": false,
+  "sortImports": true,
+
+  "ignorePatterns": [
+    "**/build/**",
+    "**/fixtures/**",
+    "**/*.min.*",
+    "**/*.md",
+    "packages/appium/docs/**",
+    "**/.vscode/**",
+    "**/*.html",
+    "**/generated/**",
+    "packages/schema/lib/appium-config.schema.json",
+    "packages/types/lib/appium-config.ts",
+    "**/*.hbs",
+    ".nx/**",
+    "**/*mkdocs.{yml,yaml}",
+  ],
+}

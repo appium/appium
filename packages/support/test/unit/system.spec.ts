@@ -1,10 +1,12 @@
+import os from 'node:os';
+import {afterEach, beforeEach, describe, it} from 'node:test';
+
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {afterEach, beforeEach, describe, it} from 'node:test';
-import {system, util} from '../../lib';
-import os from 'node:os';
 import {createSandbox} from 'sinon';
 import * as teen_process from 'teen_process';
+
+import {system, util} from '../../lib';
 
 use(chaiAsPromised);
 
@@ -13,9 +15,7 @@ const libs = {os, system};
 
 describe('system', function () {
   let sandbox: ReturnType<typeof createSandbox>;
-  let osMock: ReturnType<typeof createSandbox>['mock'] extends (obj: infer O) => infer R
-    ? R
-    : never;
+  let osMock: ReturnType<typeof createSandbox>['mock'] extends (obj: infer O) => infer R ? R : never;
   let mocks: Record<string | symbol, any>;
 
   beforeEach(function () {
@@ -79,9 +79,7 @@ describe('system', function () {
       (sandbox.stub(teen_process, 'exec') as any).get(() =>
         sandbox.stub().withArgs('sw_vers', ['-productVersion']).returns({stdout: invalidOsx}),
       );
-      await expect(system.macOsxVersion()).to.eventually.be.rejectedWith(
-        new RegExp(util.escapeRegExp(invalidOsx)),
-      );
+      await expect(system.macOsxVersion()).to.eventually.be.rejectedWith(new RegExp(util.escapeRegExp(invalidOsx)));
     });
   });
 

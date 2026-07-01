@@ -1,4 +1,5 @@
 import type {AsyncReturnType} from 'type-fest';
+
 import type {BidiModuleMap, ExecuteMethodMap, MethodMap} from './command-maps';
 import type {DriverCommand, ExternalDriver} from './driver';
 import type {AppiumLogger} from './logger';
@@ -46,7 +47,6 @@ export interface PluginStatic<P extends Plugin> {
  *     return flag ? source : Buffer.from(source);
  *   }
  * }
- *
  */
 export type DriverCommandToPluginCommand<
   DC extends DriverCommand,

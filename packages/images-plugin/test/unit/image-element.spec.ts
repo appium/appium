@@ -1,14 +1,16 @@
+import {afterEach, before, beforeEach, describe, it} from 'node:test';
+
+import type {Constraints} from '@appium/types';
 import {BaseDriver} from 'appium/driver';
 import {util} from 'appium/support';
-import {ImageElementFinder} from '../../lib/finder';
-import {getImgElFromArgs} from '../../lib/plugin';
-import {ImageElement} from '../../lib/image-element';
-import {createSandbox, type SinonSandbox} from 'sinon';
-import {IMAGE_ELEMENT_PREFIX} from '../../lib/constants';
-import type {Constraints} from '@appium/types';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {describe, it, before, beforeEach, afterEach} from 'node:test';
+import {createSandbox, type SinonSandbox} from 'sinon';
+
+import {IMAGE_ELEMENT_PREFIX} from '../../lib/constants';
+import {ImageElementFinder} from '../../lib/finder';
+import {ImageElement} from '../../lib/image-element';
+import {getImgElFromArgs} from '../../lib/plugin';
 
 use(chaiAsPromised);
 
@@ -259,13 +261,10 @@ describe('ImageElement', function () {
     });
 
     it('should reject executions for unsupported commands', async function () {
-      await expect(ImageElement.execute(driver as any, imgEl, 'foobar')).to.be.rejectedWith(
-        /not yet been implemented/,
-      );
+      await expect(ImageElement.execute(driver as any, imgEl, 'foobar')).to.be.rejectedWith(/not yet been implemented/);
     });
     it('should get displayed status of element', async function () {
-      await expect(ImageElement.execute(driver as any, imgEl, 'elementDisplayed')).to.eventually.be
-        .true;
+      await expect(ImageElement.execute(driver as any, imgEl, 'elementDisplayed')).to.eventually.be.true;
     });
     it('should get size of element', async function () {
       await expect(ImageElement.execute(driver as any, imgEl, 'getSize')).to.eventually.eql({
@@ -286,19 +285,15 @@ describe('ImageElement', function () {
       });
     });
     it('should get rect of element', async function () {
-      await expect(ImageElement.execute(driver as any, imgEl, 'getElementRect')).to.eventually.eql(
-        defRect,
-      );
+      await expect(ImageElement.execute(driver as any, imgEl, 'getElementRect')).to.eventually.eql(defRect);
     });
     it('should get score of element', async function () {
-      await expect(
-        ImageElement.execute(driver as any, imgEl, 'getAttribute', 'score'),
-      ).to.eventually.eql(0);
+      await expect(ImageElement.execute(driver as any, imgEl, 'getAttribute', 'score')).to.eventually.eql(0);
     });
     it('should get visual of element', async function () {
-      await expect(
-        ImageElement.execute(driver as any, imgEl, 'getAttribute', 'visual'),
-      ).to.eventually.eql('aGFwcHkgdGVzdGluZw==');
+      await expect(ImageElement.execute(driver as any, imgEl, 'getAttribute', 'visual')).to.eventually.eql(
+        'aGFwcHkgdGVzdGluZw==',
+      );
     });
     it('should get null as visual of element by default', async function () {
       const imgElement = new ImageElement({
@@ -306,9 +301,7 @@ describe('ImageElement', function () {
         rect: defRect,
         score: 1.0,
       });
-      await expect(
-        ImageElement.execute(driver as any, imgElement, 'getAttribute', 'visual'),
-      ).to.eventually.eql(null);
+      await expect(ImageElement.execute(driver as any, imgElement, 'getAttribute', 'visual')).to.eventually.eql(null);
     });
     it('should not get other attribute', async function () {
       await expect(

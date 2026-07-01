@@ -1,11 +1,13 @@
+import {mkdir, writeFile} from 'node:fs/promises';
+import path from 'node:path';
+import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
+
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
-import {fs, system, tempDir} from '../../lib';
-import path from 'node:path';
-import {mkdir, writeFile} from 'node:fs/promises';
 import {createSandbox} from 'sinon';
 import {exec} from 'teen_process';
+
+import {fs, system, tempDir} from '../../lib';
 
 use(chaiAsPromised);
 
@@ -172,13 +174,12 @@ describe('fs', {timeout: TEST_TIMEOUT}, function () {
 
   describe('walkDir()', function () {
     it('walkDir recursive', async function () {
-      await expect(
-        fs.walkDir(__dirname, true, (item) => item.endsWith(`logger${path.sep}helpers.js`)),
-      ).to.eventually.not.be.null;
+      await expect(fs.walkDir(__dirname, true, (item) => item.endsWith(`logger${path.sep}helpers.js`))).to.eventually
+        .not.be.null;
     });
     it('should walk all elements recursive', async function () {
-      await expect(fs.walkDir(path.join(__dirname, '..', 'e2e', 'fixture'), true, () => undefined))
-        .to.eventually.be.null;
+      await expect(fs.walkDir(path.join(__dirname, '..', 'e2e', 'fixture'), true, () => undefined)).to.eventually.be
+        .null;
     });
     it('should throw error through callback', async function () {
       const err = new Error('Callback error');
@@ -187,9 +188,7 @@ describe('fs', {timeout: TEST_TIMEOUT}, function () {
       expect(stub.calledOnce).to.be.true;
     });
     it('should traverse non-recursively', async function () {
-      const filePath = await fs.walkDir(__dirname, false, (item) =>
-        item.endsWith('logger/helpers.js'),
-      );
+      const filePath = await fs.walkDir(__dirname, false, (item) => item.endsWith('logger/helpers.js'));
       expect(filePath).to.be.null;
     });
   });
@@ -231,10 +230,7 @@ describe('fs', {timeout: TEST_TIMEOUT}, function () {
   describe('readPackageJsonFrom()', function () {
     describe('when not provided an argument', function () {
       it('should throw', function () {
-        expect(() => (fs.readPackageJsonFrom as any)()).to.throw(
-          TypeError,
-          /non-empty, absolute path/,
-        );
+        expect(() => (fs.readPackageJsonFrom as any)()).to.throw(TypeError, /non-empty, absolute path/);
       });
     });
 

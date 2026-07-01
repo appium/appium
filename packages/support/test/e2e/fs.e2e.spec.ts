@@ -1,10 +1,12 @@
 import path from 'node:path';
+import {afterEach, beforeEach, describe, it} from 'node:test';
+
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {afterEach, beforeEach, describe, it} from 'node:test';
+
 import {fs} from '../../lib/fs';
-import {openDir} from '../../lib/tempdir';
 import {isWindows} from '../../lib/system';
+import {openDir} from '../../lib/tempdir';
 
 use(chaiAsPromised);
 
@@ -19,9 +21,7 @@ describe('fs', function () {
     });
 
     afterEach(async function () {
-      await Promise.all(
-        [srcRoot, dstRoot].filter((p): p is string => p != null).map((p) => fs.rimraf(p)),
-      );
+      await Promise.all([srcRoot, dstRoot].filter((p): p is string => p != null).map((p) => fs.rimraf(p)));
       srcRoot = dstRoot = undefined;
     });
 
@@ -40,13 +40,9 @@ describe('fs', function () {
       await fs.writeFile(srcPath, Buffer.from('bar'));
       await fs.mv(srcRoot!, dstRoot!, {mkdirp: true});
       expect(await fs.exists(path.join(dstRoot!, path.basename(path.dirname(srcPath))))).to.be.true;
-      expect(
-        await fs.exists(
-          path.join(dstRoot!, path.basename(path.dirname(srcPath)), path.basename(srcPath)),
-        ),
-      ).to.be.true;
-      expect(await fs.exists(path.join(srcRoot!, path.basename(path.dirname(srcPath))))).to.be
-        .false;
+      expect(await fs.exists(path.join(dstRoot!, path.basename(path.dirname(srcPath)), path.basename(srcPath)))).to.be
+        .true;
+      expect(await fs.exists(path.join(srcRoot!, path.basename(path.dirname(srcPath))))).to.be.false;
     });
 
     it('should fail if source path does not exist', async function () {

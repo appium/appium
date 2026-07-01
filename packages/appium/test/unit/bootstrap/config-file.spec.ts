@@ -1,8 +1,10 @@
+import fs from 'node:fs';
+
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import fs from 'node:fs';
 import {createSandbox, type SinonSandbox, type SinonSpy, type SinonStubbedMember} from 'sinon';
 import * as YAML from 'yaml';
+
 import * as schema from '../../../lib/schema/schema';
 import {resolveFixture, rewiremock} from '../../helpers';
 type LilconfigResult = {config: unknown; filepath: string; isEmpty?: boolean};
@@ -84,10 +86,7 @@ describe('bootstrap/config-file', function () {
     // loads the `config-file` module using the lilconfig mock.
     // we only mock lilconfig because it'd otherwise be a pain in the rear to test
     // searching for config files, and it increases the likelihood that we'd load the wrong file.
-    ({readConfigFile, normalizeConfig} = rewiremock.proxy(
-      () => require('../../../lib/bootstrap/config-file'),
-      mocks,
-    ));
+    ({readConfigFile, normalizeConfig} = rewiremock.proxy(() => require('../../../lib/bootstrap/config-file'), mocks));
 
     // just want to be extra-sure `validate()` happens
     sandbox.spy(schema, 'validate');
@@ -218,9 +217,7 @@ describe('bootstrap/config-file', function () {
         });
 
         it('should reject with user-friendly message', async function () {
-          await expect(readConfigFile('appium.json')).to.be.rejectedWith(
-            /not found at user-provided path/,
-          );
+          await expect(readConfigFile('appium.json')).to.be.rejectedWith(/not found at user-provided path/);
         });
       });
 

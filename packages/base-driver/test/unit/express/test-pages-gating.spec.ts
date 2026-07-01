@@ -1,9 +1,11 @@
-import {describe, it, beforeEach, afterEach} from 'node:test';
-import {expect} from 'chai';
+import {afterEach, beforeEach, describe, it} from 'node:test';
+
+import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
 import axios from 'axios';
+import {expect} from 'chai';
+
 import {server} from '../../../lib/express/server';
 import {LEGACY_TEST_PAGES_ENV} from '../../../lib/test-pages/env';
-import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
 
 describe('legacy test pages gating', function () {
   let previousEnv: string | undefined;

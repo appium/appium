@@ -1,9 +1,11 @@
+import crypto from 'node:crypto';
 import {describe, it} from 'node:test';
+
+import type {HTTPMethod} from '@appium/types';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import type {HTTPMethod} from '@appium/types';
+
 import {METHOD_MAP, routeToCommandName} from '../../../lib/protocol';
-import crypto from 'node:crypto';
 
 chai.use(chaiAsPromised);
 

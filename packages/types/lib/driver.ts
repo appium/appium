@@ -1,5 +1,8 @@
 import type {EventEmitter} from 'node:events';
+import type internal from 'node:stream';
+
 import type {Merge} from 'type-fest';
+
 import type {Capabilities, DriverCaps, W3CCapabilities} from './capabilities';
 import type {BidiModuleMap, BiDiResultData, ExecuteMethodMap, MethodMap} from './command-maps';
 import type {
@@ -7,20 +10,19 @@ import type {
   DefaultDeleteSessionResult,
   DriverData,
   EventHistory,
-  IImplementedCommands,
-  IWDClassicCommands,
   IAppiumCommands,
+  IImplementedCommands,
   IJSONWPCommands,
   IMJSONWPCommands,
   IOtherProtocolCommands,
+  IWDClassicCommands,
 } from './commands';
-import type {Constraints} from './constraints';
 import type {ServerArgs} from './config';
+import type {Constraints} from './constraints';
 import type {HTTPHeaders, HTTPMethod} from './http';
 import type {AppiumLogger} from './logger';
 import type {AppiumServer, UpdateServerCallback} from './server';
 import type {Class, StringRecord} from './util';
-import type internal from 'node:stream';
 /**
  * Interface implemented by the `DeviceSettings` class in `@appium/base-driver`
  */
@@ -30,10 +32,7 @@ export interface IDeviceSettings<T extends StringRecord> {
 }
 
 export interface DriverHelpers {
-  configureApp: (
-    app: string,
-    supportedAppExtensions?: string | string[] | ConfigureAppOptions,
-  ) => Promise<string>;
+  configureApp: (app: string, supportedAppExtensions?: string | string[] | ConfigureAppOptions) => Promise<string>;
   isPackageOrBundle: (app: string) => boolean;
   duplicateKeys: <T>(input: T, firstKey: string, secondKey: string) => T;
   parseCapsArray: (cap: string | string[]) => string[];
@@ -144,9 +143,7 @@ export interface Driver<
   DeleteResult = DefaultDeleteSessionResult,
   SessionData extends StringRecord = StringRecord,
 >
-  extends
-    IImplementedCommands<C, Settings, CreateResult, DeleteResult, SessionData>,
-    Core<C, Settings> {
+  extends IImplementedCommands<C, Settings, CreateResult, DeleteResult, SessionData>, Core<C, Settings> {
   /**
    * The set of command line arguments set for this driver.
    *
@@ -313,11 +310,7 @@ export interface ExternalDriver<
    *
    * @returns The return value of the proxied command
    */
-  proxyCommand?<TReq = any, TRes = unknown>(
-    url: string,
-    method: HTTPMethod,
-    body?: TReq,
-  ): Promise<TRes>;
+  proxyCommand?<TReq = any, TRes = unknown>(url: string, method: HTTPMethod, body?: TReq): Promise<TRes>;
 }
 
 /**
@@ -487,7 +480,6 @@ export interface DownloadAppOptions<Headers = HTTPHeaders> {
 
 export interface ConfigureAppOptions {
   /**
-   *
    * Optional function, which should be applied to the application after it is
    * downloaded/preprocessed.
    *
@@ -497,9 +489,7 @@ export interface ConfigureAppOptions {
    * `appPath` property, then the integrity of it will be verified and stored into the cache.
    * @returns
    */
-  onPostProcess?: (
-    obj: PostProcessOptions,
-  ) => Promise<PostProcessResult | undefined> | PostProcessResult | undefined;
+  onPostProcess?: (obj: PostProcessOptions) => Promise<PostProcessResult | undefined> | PostProcessResult | undefined;
   /**
    * Optional function, which should be applied to the application upon download
    * progress initialization instead of the standard download handler.

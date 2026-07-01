@@ -1,25 +1,19 @@
-import type {ExtensionType} from '@appium/types';
-import type {ExtClass, ExtManifest, ExtName, ExtRecord, InstallType} from 'appium/types';
-import type {SchemaObject} from 'ajv';
-import {util, fs, system} from '@appium/support';
 import path from 'node:path';
-import {capitalize, resolveFrom} from '../utils';
 import {pathToFileURL} from 'node:url';
+
+import {fs, system, util} from '@appium/support';
+import type {ExtensionType} from '@appium/types';
+import type {SchemaObject} from 'ajv';
+import type {ExtClass, ExtManifest, ExtName, ExtRecord, InstallType} from 'appium/types';
 import {satisfies} from 'semver';
+
 import {commandClasses} from '../cli/extension';
-import type {
-  ExtensionList,
-  ExtensionListData,
-  InstalledExtensionListData,
-} from '../cli/extension-command';
 import type {ExtCommand} from '../cli/extension';
+import type {ExtensionList, ExtensionListData, InstalledExtensionListData} from '../cli/extension-command';
 import {APPIUM_VER} from '../helpers/build';
 import {log} from '../logger';
-import {
-  ALLOWED_SCHEMA_EXTENSIONS,
-  isAllowedSchemaFileExtension,
-  registerSchema,
-} from '../schema/schema';
+import {ALLOWED_SCHEMA_EXTENSIONS, isAllowedSchemaFileExtension, registerSchema} from '../schema/schema';
+import {capitalize, resolveFrom} from '../utils';
 import type {Manifest} from './manifest';
 
 const DEFAULT_ENTRY_POINT = 'index.js';
@@ -138,10 +132,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
    * @param extName - Extension key as stored in the manifest
    * @param extManifest - Manifest entry for that extension
    */
-  async getProblems(
-    extName: string,
-    extManifest: ExtManifest<ExtType>,
-  ): Promise<ExtManifestProblem[]> {
+  async getProblems(extName: string, extManifest: ExtManifest<ExtType>): Promise<ExtManifestProblem[]> {
     return [
       ...this.getGenericConfigProblems(extManifest, extName),
       ...this.getConfigProblems(extManifest, extName),
@@ -182,15 +173,10 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
       }
       // remove this extension from the list since it's not valid
       errorSummaries.push(
-        `${this.extensionType} "${extName}" had ${util.pluralize(
-          'error',
-          problems.length,
-        )} and will not be available:`,
+        `${this.extensionType} "${extName}" had ${util.pluralize('error', problems.length)} and will not be available:`,
       );
       for (const problem of problems) {
-        errorSummaries.push(
-          `  - ${problem.err} (Actual value: ` + `${JSON.stringify(problem.val)})`,
-        );
+        errorSummaries.push(`  - ${problem.err} (Actual value: ` + `${JSON.stringify(problem.val)})`);
       }
     }
     const warningSummaries: string[] = [];
@@ -258,10 +244,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
    *
    * Pass `{ write: false }` to defer flushing until a later manifest write.
    */
-  async removeExtension(
-    extName: ExtName<ExtType>,
-    {write = true}: ExtensionConfigMutationOpts = {},
-  ): Promise<void> {
+  async removeExtension(extName: ExtName<ExtType>, {write = true}: ExtensionConfigMutationOpts = {}): Promise<void> {
     this.manifest.deleteExtension(this.extensionType, extName);
     if (write) {
       await this.manifest.write();
@@ -336,19 +319,11 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     extName: string,
     extManifest: ExtManifestWithSchema<ExtType>,
   ): Promise<SchemaObject | undefined> {
-    return await ExtensionConfig._readExtensionSchema(
-      this.appiumHome,
-      this.extensionType,
-      extName,
-      extManifest,
-    );
+    return await ExtensionConfig._readExtensionSchema(this.appiumHome, this.extensionType, extName, extManifest);
   }
 
   /** Optional async warnings for this extension kind; override in subclasses when needed. */
-  protected async getConfigWarnings(
-    _extManifest: ExtManifest<ExtType>,
-    _extName: string,
-  ): Promise<string[]> {
+  protected async getConfigWarnings(_extManifest: ExtManifest<ExtType>, _extName: string): Promise<string[]> {
     void _extManifest;
     void _extName;
     return [];
@@ -374,16 +349,15 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
       warningMap.set(extName, warnings);
     }
 
-    const {errorSummaries, warningSummaries} = this.getValidationResultSummaries(
-      errorMap,
-      warningMap,
-    );
+    const {errorSummaries, warningSummaries} = this.getValidationResultSummaries(errorMap, warningMap);
 
     if (!util.isEmpty(errorSummaries)) {
       log.error(
-        `Appium encountered ${util.pluralize('error', errorMap.size, true)} while validating ${
-          this.extensionType
-        }s found in manifest ${this.manifestPath}`,
+        `Appium encountered ${util.pluralize(
+          'error',
+          errorMap.size,
+          true,
+        )} while validating ${this.extensionType}s found in manifest ${this.manifestPath}`,
       );
       for (const summary of errorSummaries) {
         log.error(summary);
@@ -421,10 +395,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
   /**
    * Warnings about manifest install fields and Appium peer dependency compatibility for one extension.
    */
-  protected async getGenericConfigWarnings(
-    extManifest: ExtManifest<ExtType>,
-    extName: string,
-  ): Promise<string[]> {
+  protected async getGenericConfigWarnings(extManifest: ExtManifest<ExtType>, extName: string): Promise<string[]> {
     const {appiumVersion, installSpec, installType, pkgName} = extManifest;
     const warnings: string[] = [];
 
@@ -440,11 +411,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     const extTypeText = capitalize(this.extensionType);
 
     if (invalidFields.length) {
-      const invalidFieldsEnumerationText = util.pluralize(
-        'invalid or missing field',
-        invalidFields.length,
-        true,
-      );
+      const invalidFieldsEnumerationText = util.pluralize('invalid or missing field', invalidFields.length, true);
       const invalidFieldsText = invalidFields.map((field) => `"${field}"`).join(', ');
 
       warnings.push(
@@ -499,10 +466,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
   }
 
   /** Validates and registers extension CLI/config schema when the manifest defines a `schema` field. */
-  protected async getSchemaProblems(
-    extManifest: ExtManifest<ExtType>,
-    extName: string,
-  ): Promise<ExtManifestProblem[]> {
+  protected async getSchemaProblems(extManifest: ExtManifest<ExtType>, extName: string): Promise<ExtManifestProblem[]> {
     const problems: ExtManifestProblem[] = [];
     const {schema: argSchemaPath} = extManifest;
     if (ExtensionConfig.extDataHasSchema(extManifest)) {
@@ -518,9 +482,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
           }
         } else {
           problems.push({
-            err: `Schema file has unsupported extension. Allowed: ${[
-              ...ALLOWED_SCHEMA_EXTENSIONS,
-            ].join(', ')}`,
+            err: `Schema file has unsupported extension. Allowed: ${[...ALLOWED_SCHEMA_EXTENSIONS].join(', ')}`,
             val: argSchemaPath,
           });
         }
@@ -544,10 +506,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
   }
 
   /** Blocking issues for required manifest fields shared by all extensions (version, package name, main class). */
-  protected getGenericConfigProblems(
-    extManifest: ExtManifest<ExtType>,
-    extName: string,
-  ): ExtManifestProblem[] {
+  protected getGenericConfigProblems(extManifest: ExtManifest<ExtType>, extName: string): ExtManifestProblem[] {
     void extName;
     const {version, pkgName, mainClass} = extManifest;
     const problems: ExtManifestProblem[] = [];
@@ -577,10 +536,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
   }
 
   /** Driver- or plugin-specific blocking validation; override in subclasses when needed. */
-  protected getConfigProblems(
-    _extManifest: ExtManifest<ExtType>,
-    _extName: string,
-  ): ExtManifestProblem[] {
+  protected getConfigProblems(_extManifest: ExtManifest<ExtType>, _extName: string): ExtManifestProblem[] {
     void _extManifest;
     void _extName;
     return [];
@@ -604,13 +560,11 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
       if (extensionManifest.type === 'module' && extensionManifest.exports) {
         entryPointRelativePath = resolveEsmEntryPoint(extensionManifest.exports);
       }
-      entryPointRelativePath =
-        entryPointRelativePath ?? extensionManifest.main ?? DEFAULT_ENTRY_POINT;
+      entryPointRelativePath = entryPointRelativePath ?? extensionManifest.main ?? DEFAULT_ENTRY_POINT;
     } catch (e: any) {
-      throw new ReferenceError(
-        `Could not find the ${this.extensionType} installed at ${moduleRoot}: ${e.message}`,
-        {cause: e},
-      );
+      throw new ReferenceError(`Could not find the ${this.extensionType} installed at ${moduleRoot}: ${e.message}`, {
+        cause: e,
+      });
     }
     const entryPointFullPath = path.resolve(moduleRoot, entryPointRelativePath as string);
     if (!(await fs.exists(entryPointFullPath))) {
@@ -633,10 +587,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
    * @param extName - Manifest key
    * @param extManifest - Entry used for version and kind-specific labels
    */
-  public abstract extensionDesc(
-    extName: ExtName<ExtType>,
-    extManifest: ExtManifest<ExtType>,
-  ): string;
+  public abstract extensionDesc(extName: ExtName<ExtType>, extManifest: ExtManifest<ExtType>): string;
 }
 
 /**

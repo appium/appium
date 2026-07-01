@@ -1,17 +1,14 @@
-import {ImageElementPlugin} from '../../lib/plugin';
-import {
-  MATCH_FEATURES_MODE,
-  GET_SIMILARITY_MODE,
-  MATCH_TEMPLATE_MODE,
-  IMAGE_STRATEGY,
-} from '../../lib/constants';
-import {BaseDriver} from 'appium/driver';
-import {util, fs, node} from 'appium/support';
+import path from 'node:path';
+import {before, describe, it} from 'node:test';
+
 import type {ActionSequence, Constraints} from '@appium/types';
+import {BaseDriver} from 'appium/driver';
+import {fs, node, util} from 'appium/support';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {describe, it, before} from 'node:test';
-import path from 'node:path';
+
+import {GET_SIMILARITY_MODE, IMAGE_STRATEGY, MATCH_FEATURES_MODE, MATCH_TEMPLATE_MODE} from '../../lib/constants';
+import {ImageElementPlugin} from '../../lib/plugin';
 
 use(chaiAsPromised);
 
@@ -39,14 +36,7 @@ describe('ImageElementPlugin#handle', function () {
 
   describe('compareImages', {timeout: 6000}, function () {
     it('should compare images via match features mode', async function () {
-      const res = await p.compareImages(
-        next,
-        driver as any,
-        MATCH_FEATURES_MODE,
-        testImg1B64,
-        testImg2B64,
-        {},
-      );
+      const res = await p.compareImages(next, driver as any, MATCH_FEATURES_MODE, testImg1B64, testImg2B64, {});
       expect(res).to.have.property('count');
       expect((res as any).count).to.eql(0);
     });
@@ -63,23 +53,16 @@ describe('ImageElementPlugin#handle', function () {
       expect((res as any).score).to.be.above(0.2);
     });
     it('should compare images via match template mode', async function () {
-      const res = await p.compareImages(
-        next,
-        driver as any,
-        MATCH_TEMPLATE_MODE,
-        testImg1B64,
-        testImg2B64,
-        {},
-      );
+      const res = await p.compareImages(next, driver as any, MATCH_TEMPLATE_MODE, testImg1B64, testImg2B64, {});
       expect(res).to.have.property('rect');
       expect((res as any).rect.height).to.be.above(0);
       expect((res as any).rect.width).to.be.above(0);
       expect((res as any).score).to.be.above(0.2);
     });
     it('should throw an error if comparison mode is not supported', async function () {
-      await expect(
-        p.compareImages(next, driver as any, 'some mode', '', ''),
-      ).to.eventually.be.rejectedWith(/comparison mode is unknown/);
+      await expect(p.compareImages(next, driver as any, 'some mode', '', '')).to.eventually.be.rejectedWith(
+        /comparison mode is unknown/,
+      );
     });
     it('should throw an error if image template is broken', async function () {
       await expect(
@@ -93,9 +76,8 @@ describe('ImageElementPlugin#handle', function () {
       ).to.eventually.be.rejected;
     });
     it('should throw an error if image template is empty', async function () {
-      await expect(
-        p.compareImages(next, driver as any, MATCH_TEMPLATE_MODE, Buffer.from(''), Buffer.from('')),
-      ).to.eventually.be.rejected;
+      await expect(p.compareImages(next, driver as any, MATCH_TEMPLATE_MODE, Buffer.from(''), Buffer.from(''))).to
+        .eventually.be.rejected;
     });
   });
 
@@ -110,12 +92,8 @@ describe('ImageElementPlugin#handle', function () {
     });
     it('should defer execution to regular command if it is a find command but a different strategy', async function () {
       const next = async () => true;
-      await expect(p.findElement(next, driver as any, 'xpath', '//foo/bar')).to.eventually.become(
-        true,
-      );
-      await expect(p.findElements(next, driver as any, 'xpath', '//foo/bar')).to.eventually.become(
-        true,
-      );
+      await expect(p.findElement(next, driver as any, 'xpath', '//foo/bar')).to.eventually.become(true);
+      await expect(p.findElements(next, driver as any, 'xpath', '//foo/bar')).to.eventually.become(true);
     });
     it('should find an image element inside a screenshot', async function () {
       const el = await p.findElement(next, driver as any, IMAGE_STRATEGY, testImg2PartB64);
@@ -182,9 +160,7 @@ describe('ImageElementPlugin#handle', function () {
       });
     });
     it('should return the match score as the score attr', async function () {
-      await expect(
-        p.handle(next, driver as any, 'getAttribute', 'score', elId),
-      ).to.eventually.be.above(0.7);
+      await expect(p.handle(next, driver as any, 'getAttribute', 'score', elId)).to.eventually.be.above(0.7);
     });
     it('should return the match visualization as the visual attr', async function () {
       (driver as any).settings = {
@@ -194,14 +170,12 @@ describe('ImageElementPlugin#handle', function () {
       };
       const el = await p.findElement(next, driver as any, IMAGE_STRATEGY, testImg2PartB64);
       elId = util.unwrapElement(el);
-      await expect(
-        p.handle(next, driver as any, 'getAttribute', 'visual', elId),
-      ).to.eventually.include('iVBOR');
+      await expect(p.handle(next, driver as any, 'getAttribute', 'visual', elId)).to.eventually.include('iVBOR');
     });
     it('should not allow any other attrs', async function () {
-      await expect(
-        p.handle(next, driver as any, 'getAttribute', 'rando', elId),
-      ).to.eventually.be.rejectedWith(/not yet/i);
+      await expect(p.handle(next, driver as any, 'getAttribute', 'rando', elId)).to.eventually.be.rejectedWith(
+        /not yet/i,
+      );
     });
   });
 

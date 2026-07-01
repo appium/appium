@@ -1,9 +1,10 @@
-import {ArgumentParser} from 'argparse';
-import type {SubArgumentParserOptions, SubParser} from 'argparse';
 import path from 'node:path';
-import {setPath} from '../utils';
+
 import type {DriverType, PluginType} from '@appium/types';
 import type {CliExtensionSubcommand} from 'appium/types';
+import {ArgumentParser} from 'argparse';
+import type {SubArgumentParserOptions, SubParser} from 'argparse';
+
 import {
   DRIVER_TYPE,
   EXT_SUBCOMMAND_DOCTOR,
@@ -16,18 +17,19 @@ import {
   SERVER_SUBCOMMAND,
   SETUP_SUBCOMMAND,
 } from '../constants';
-import {finalizeSchema, getAllArgSpecs, getArgSpec, hasArgSpec} from '../schema';
 import {APPIUM_VER} from '../helpers/build';
+import {finalizeSchema, getAllArgSpecs, getArgSpec, hasArgSpec} from '../schema';
+import {setPath} from '../utils';
 import {getExtensionArgs, getServerArgs} from './args';
 import type {ArgumentDefinitions} from './args';
 import {
   DEFAULT_PLUGINS,
-  SUBCOMMAND_MOBILE,
-  SUBCOMMAND_DESKTOP,
-  SUBCOMMAND_BROWSER,
-  SUBCOMMAND_RESET,
-  getPresetDrivers,
   determinePlatformName,
+  getPresetDrivers,
+  SUBCOMMAND_BROWSER,
+  SUBCOMMAND_DESKTOP,
+  SUBCOMMAND_MOBILE,
+  SUBCOMMAND_RESET,
 } from './setup-command';
 
 export const EXTRA_ARGS = 'extraArgs';
@@ -37,16 +39,7 @@ export const EXTRA_ARGS = 'extraArgs';
  * will automatically inject the `server` subcommand.
  */
 const NON_SERVER_ARGS = Object.freeze(
-  new Set([
-    SETUP_SUBCOMMAND,
-    DRIVER_TYPE,
-    PLUGIN_TYPE,
-    SERVER_SUBCOMMAND,
-    '-h',
-    '--help',
-    '-v',
-    '--version',
-  ]),
+  new Set([SETUP_SUBCOMMAND, DRIVER_TYPE, PLUGIN_TYPE, SERVER_SUBCOMMAND, '-h', '--help', '-v', '--version']),
 );
 
 type LooseArgsMap = {[key: string]: any};
@@ -134,10 +127,7 @@ export class ArgParser {
    *
    * E.g., `{'driver-foo-bar': baz}` becomes `{driver: {foo: {bar: 'baz'}}}`
    */
-  private static _transformParsedArgs(
-    args: LooseArgsMap,
-    unknownArgs: string[] = [],
-  ): TransformedArgsMap {
+  private static _transformParsedArgs(args: LooseArgsMap, unknownArgs: string[] = []): TransformedArgsMap {
     const result = Object.entries(args).reduce((unpacked: LooseArgsMap, [key, value]) => {
       const spec = hasArgSpec(key) ? getArgSpec(key) : undefined;
       if (value !== undefined && spec) {
@@ -330,10 +320,7 @@ export class ArgParser {
       } else if (knownArgs?.pluginCommand === 'ls') {
         knownArgs.pluginCommand = 'list';
       }
-      if (
-        unknownArgs?.length &&
-        (knownArgs.driverCommand === 'run' || knownArgs.pluginCommand === 'run')
-      ) {
+      if (unknownArgs?.length && (knownArgs.driverCommand === 'run' || knownArgs.pluginCommand === 'run')) {
         return ArgParser._transformParsedArgs(knownArgs, unknownArgs);
       } else if (unknownArgs?.length) {
         throw new Error(`[ERROR] Unrecognized arguments: ${unknownArgs.join(' ')}`);

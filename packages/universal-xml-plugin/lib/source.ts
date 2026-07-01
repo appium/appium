@@ -1,14 +1,15 @@
 import {util} from '@appium/support';
 import {XMLBuilder, XMLParser} from 'fast-xml-parser';
-import NODE_MAP from './node-map';
+
 import {ATTR_MAP, REMOVE_ATTRS} from './attr-map';
+import NODE_MAP from './node-map';
 import * as TRANSFORMS from './transformers';
 import type {
   NodesAndAttributes,
-  TransformSourceXmlOptions,
-  TransformNodeOptions,
-  UniversalNameMap,
   TransformMetadata,
+  TransformNodeOptions,
+  TransformSourceXmlOptions,
+  UniversalNameMap,
 } from './types';
 
 export const ATTR_PREFIX = '@_';

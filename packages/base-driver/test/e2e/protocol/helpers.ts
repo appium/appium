@@ -1,5 +1,5 @@
-import Express from 'express';
 import bodyParser from 'body-parser';
+import Express from 'express';
 
 export function createProxyServer(port: number): {
   app: Express.Application;

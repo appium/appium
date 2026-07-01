@@ -1,44 +1,44 @@
-import * as tempDir from './tempdir';
-import * as system from './system';
-import * as util from './util';
-import {fs} from './fs';
-import * as net from './net';
-import * as plist from './plist';
-import {mkdirp} from './mkdirp';
-import * as logger from './logging';
-import * as process from './process';
-import * as zip from './zip';
-import * as imageUtil from './image-util';
-import * as mjpeg from './mjpeg';
-import * as node from './node';
-import * as timing from './timing';
-import * as env from './env';
 import * as console from './console';
 import * as doctor from './doctor';
+import * as env from './env';
+import {fs} from './fs';
+import * as imageUtil from './image-util';
+import * as logger from './logging';
+import * as mjpeg from './mjpeg';
+import {mkdirp} from './mkdirp';
+import * as net from './net';
+import * as node from './node';
+import * as plist from './plist';
+import * as process from './process';
+import * as system from './system';
+import * as tempDir from './tempdir';
+import * as timing from './timing';
+import * as util from './util';
+import * as zip from './zip';
 
 export {npm} from './npm';
 
 const {cancellableDelay} = util;
 
 export {
-  tempDir,
-  system,
-  util,
-  fs,
   cancellableDelay,
-  plist,
-  mkdirp,
-  logger,
-  process,
-  zip,
-  imageUtil,
-  net,
-  mjpeg,
-  node,
-  timing,
-  env,
   console,
   doctor,
+  env,
+  fs,
+  imageUtil,
+  logger,
+  mjpeg,
+  mkdirp,
+  net,
+  node,
+  plist,
+  process,
+  system,
+  tempDir,
+  timing,
+  util,
+  zip,
 };
 export default {
   tempDir,
@@ -65,26 +65,14 @@ export type {ConsoleOpts} from './console';
 export type {TextStyle} from './console';
 export type {CopyFileOptions, ReadFn, WalkDirCallback} from './fs';
 export type {
-  NetOptions,
-  DownloadOptions,
   AuthCredentials,
+  DownloadOptions,
   FtpUploadOptions,
-  NotHttpUploadOptions,
   HttpUploadOptions,
+  NetOptions,
+  NotHttpUploadOptions,
 } from './net';
-export type {InstallPackageOpts, ExecOpts, NpmInstallReceipt} from './npm';
+export type {ExecOpts, InstallPackageOpts, NpmInstallReceipt} from './npm';
 export type {Affixes, OpenedAffixes} from './tempdir';
-export type {
-  PluralizeOptions,
-  EncodingOptions,
-  LockFileOptions,
-  TruncateStringOptions,
-  NonEmptyString,
-} from './util';
-export type {
-  ExtractAllOptions,
-  ZipEntry,
-  ZipOptions,
-  ZipCompressionOptions,
-  ZipSourceOptions,
-} from './zip';
+export type {EncodingOptions, LockFileOptions, NonEmptyString, PluralizeOptions, TruncateStringOptions} from './util';
+export type {ExtractAllOptions, ZipCompressionOptions, ZipEntry, ZipOptions, ZipSourceOptions} from './zip';

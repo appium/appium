@@ -1,5 +1,7 @@
 import {console, util} from '@appium/support';
 import type {ExtMetadata, ExtRecord, InstallType} from 'appium/types';
+
+import {KNOWN_PLUGINS} from '../constants';
 import ExtensionCliCommand from './extension-command';
 import type {
   ExtensionArgs,
@@ -8,7 +10,6 @@ import type {
   PostInstallText,
   RunOutput,
 } from './extension-command';
-import {KNOWN_PLUGINS} from '../constants';
 
 const REQ_PLUGIN_FIELDS = ['pluginName', 'mainClass'];
 type PluginInstallOpts = {plugin: string; installType: InstallType; packageName?: string};
@@ -28,11 +29,7 @@ export default class PluginCliCommand extends ExtensionCliCommand<'plugin'> {
    *
    * @param opts - install options
    */
-  async install({
-    plugin,
-    installType,
-    packageName,
-  }: PluginInstallOpts): Promise<ExtRecord<'plugin'>> {
+  async install({plugin, installType, packageName}: PluginInstallOpts): Promise<ExtRecord<'plugin'>> {
     return await super._install({
       installSpec: plugin,
       installType,
@@ -93,10 +90,7 @@ export default class PluginCliCommand extends ExtensionCliCommand<'plugin'> {
    * @returns formatted success text
    */
   override getPostInstallText({extName, extData}: ExtensionArgs<'plugin'>): PostInstallText {
-    return console.styleText(
-      'green',
-      `Plugin ${extName}@${extData.version} successfully installed`,
-    );
+    return console.styleText('green', `Plugin ${extName}@${extData.version} successfully installed`);
   }
 
   /**
@@ -108,13 +102,9 @@ export default class PluginCliCommand extends ExtensionCliCommand<'plugin'> {
    * @param pluginMetadata - `appium` metadata from extension package
    * @param installSpec - install spec from CLI
    */
-  override validateExtensionFields(
-    pluginMetadata: ExtMetadata<'plugin'>,
-    installSpec: string,
-  ): void {
+  override validateExtensionFields(pluginMetadata: ExtMetadata<'plugin'>, installSpec: string): void {
     const missingFields = REQ_PLUGIN_FIELDS.reduce<string[]>(
-      (acc, field) =>
-        pluginMetadata[field as keyof typeof pluginMetadata] ? acc : [...acc, field],
+      (acc, field) => (pluginMetadata[field as keyof typeof pluginMetadata] ? acc : [...acc, field]),
       [],
     );
 

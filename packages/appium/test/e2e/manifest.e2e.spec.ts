@@ -1,17 +1,19 @@
-import {fs, tempDir} from '@appium/support';
 import path from 'node:path';
+
+import {fs, tempDir} from '@appium/support';
+import type {AnyManifestDataVersion} from 'appium/types';
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import * as YAML from 'yaml';
+
 import {
   CACHE_DIR_RELATIVE_PATH,
   CURRENT_SCHEMA_REV,
   DRIVER_TYPE,
   EXT_SUBCOMMAND_LIST as LIST,
 } from '../../lib/constants';
-import type {AnyManifestDataVersion} from 'appium/types';
 import {FAKE_DRIVER_DIR, resolveFixture} from '../helpers';
 import {installLocalExtension, runAppiumJson} from './e2e-helpers';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
 const {expect} = chai;
 chai.use(chaiAsPromised);
@@ -30,8 +32,7 @@ describe('manifest handling', function () {
     appiumHome = await tempDir.openDir();
     manifestPath = path.join(appiumHome, CACHE_DIR_RELATIVE_PATH, 'extensions.yaml');
     const run = runAppiumJson(appiumHome);
-    runList = async (args = []) =>
-      run([DRIVER_TYPE, LIST, ...args]) as Promise<Record<string, unknown>>;
+    runList = async (args = []) => run([DRIVER_TYPE, LIST, ...args]) as Promise<Record<string, unknown>>;
   });
 
   async function readManifest(): Promise<AnyManifestDataVersion> {
@@ -77,8 +78,7 @@ describe('manifest handling', function () {
         await fs.writeFile(manifestPath, YAML.stringify(tmpManifest));
         tmpManifest = await readManifest();
         expect(tmpManifest.schemaRev).to.equal(2);
-        expect((tmpManifest.drivers as Record<string, {installPath?: string}>)?.fake?.installPath)
-          .to.not.exist;
+        expect((tmpManifest.drivers as Record<string, {installPath?: string}>)?.fake?.installPath).to.not.exist;
         await runList();
         manifest = await readManifest();
       });

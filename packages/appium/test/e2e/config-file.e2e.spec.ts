@@ -1,11 +1,12 @@
-import {DRIVER_TYPE} from '../../lib/constants';
-import {readConfigFile} from '../../lib/bootstrap/config-file';
-import {finalizeSchema, registerSchema, resetSchema} from '../../lib/schema/schema';
-import extSchema from '../fixtures/driver-schema';
-import {resolveFixture} from '../helpers';
 import {system, util} from '@appium/support';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+
+import {readConfigFile} from '../../lib/bootstrap/config-file';
+import {DRIVER_TYPE} from '../../lib/constants';
+import {finalizeSchema, registerSchema, resetSchema} from '../../lib/schema/schema';
+import extSchema from '../fixtures/driver-schema';
+import {resolveFixture} from '../helpers';
 
 const {expect} = chai;
 chai.use(chaiAsPromised);
@@ -200,11 +201,7 @@ describe('config file behavior', function () {
 
         beforeEach(async function () {
           resetSchema();
-          await registerSchema(
-            DRIVER_TYPE,
-            'fake',
-            extSchema as Parameters<typeof registerSchema>[2],
-          );
+          await registerSchema(DRIVER_TYPE, 'fake', extSchema as Parameters<typeof registerSchema>[2]);
           await finalizeSchema();
         });
 

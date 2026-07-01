@@ -1,24 +1,26 @@
+import type {NetworkInterfaceInfo} from 'node:os';
 import {inspect as dump, type InspectOptions} from 'node:util';
-import {log as logger} from '../logger';
+
 import {
-  routeConfiguringFunction as makeRouter,
   normalizeBasePath,
+  routeConfiguringFunction as makeRouter,
   server as baseServer,
   type ServerOpts,
 } from '@appium/base-driver';
 import {console as supportConsole, util} from '@appium/support';
 import type {AppiumServer, Driver, MethodMap, UpdateServerCallback} from '@appium/types';
+import type {Args, CliCommandServer, ParsedArgs} from 'appium/types';
 import {WebSocketServer} from 'ws';
-import type {NetworkInterfaceInfo} from 'node:os';
+
 import type {AppiumDriver} from '../appium';
+import {BIDI_BASE_PATH, LONG_STACKTRACE_LIMIT} from '../constants';
+import type {DriverNameMap, PluginNameMap} from '../extension';
 import {APPIUM_VER, getBuildInfo, getGitRev, updateBuildInfo} from '../helpers/build';
+import {fetchInterfaces, isBroadcastIp, V4_BROADCAST_IP} from '../helpers/network';
+import {log as logger} from '../logger';
+import {validate as validateSchema} from '../schema/schema';
 import {checkNodeOk, requireDir} from './node-helpers';
 import {getNonDefaultServerArgs} from './startup-config';
-import {validate as validateSchema} from '../schema/schema';
-import {fetchInterfaces, V4_BROADCAST_IP, isBroadcastIp} from '../helpers/network';
-import {LONG_STACKTRACE_LIMIT, BIDI_BASE_PATH} from '../constants';
-import type {Args, ParsedArgs, CliCommandServer} from 'appium/types';
-import type {DriverNameMap, PluginNameMap} from '../extension';
 
 const isStdoutTTY = process.stdout.isTTY;
 
@@ -88,10 +90,7 @@ export function logServerAddress(url: string): void {
  * @param args - Parsed server CLI args
  * @param throwInsteadOfExit - When true, rethrows failures instead of calling `process.exit(1)`
  */
-export async function preflightChecks(
-  args: ParsedArgs<CliCommandServer>,
-  throwInsteadOfExit = false,
-): Promise<void> {
+export async function preflightChecks(args: ParsedArgs<CliCommandServer>, throwInsteadOfExit = false): Promise<void> {
   try {
     checkNodeOk();
     if (args.longStacktrace) {
@@ -141,10 +140,7 @@ export async function logStartupInfo(args: ParsedArgs<CliCommandServer>): Promis
 /**
  * Collects `updateServer` hooks from active driver and plugin classes for HTTP server customization.
  */
-export function getServerUpdaters(
-  driverClasses: DriverNameMap,
-  pluginClasses: PluginNameMap,
-): UpdateServerCallback[] {
+export function getServerUpdaters(driverClasses: DriverNameMap, pluginClasses: PluginNameMap): UpdateServerCallback[] {
   return [...driverClasses.keys(), ...pluginClasses.keys()]
     .map((klass) => klass.updateServer)
     .filter(Boolean) as UpdateServerCallback[];
@@ -153,10 +149,7 @@ export function getServerUpdaters(
 /**
  * Merges `newMethodMap` contributions from all active drivers and plugins into one method map.
  */
-export function getExtraMethodMap(
-  driverClasses: DriverNameMap,
-  pluginClasses: PluginNameMap,
-): MethodMap<Driver> {
+export function getExtraMethodMap(driverClasses: DriverNameMap, pluginClasses: PluginNameMap): MethodMap<Driver> {
   return [...driverClasses.keys(), ...pluginClasses.keys()].reduce<MethodMap<Driver>>(
     (map, klass) => ({
       ...map,
@@ -218,12 +211,9 @@ function logNonDefaultArgsWarning(args: Args): void {
   inspect(args);
 }
 
-function logDefaultCapabilitiesWarning(
-  caps: ParsedArgs<CliCommandServer>['defaultCapabilities'],
-): void {
+function logDefaultCapabilitiesWarning(caps: ParsedArgs<CliCommandServer>['defaultCapabilities']): void {
   logger.info(
-    'Default capabilities, which will be added to each request ' +
-      'unless overridden by desired capabilities:',
+    'Default capabilities, which will be added to each request ' + 'unless overridden by desired capabilities:',
   );
   inspect(caps);
 }

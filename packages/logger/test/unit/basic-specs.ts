@@ -1,7 +1,9 @@
+import {Stream} from 'node:stream';
+
 /* eslint-disable no-console */
 import {expect} from 'chai';
+
 import {Log, markSensitive} from '../../lib/log';
-import {Stream} from 'node:stream';
 import type {Log as LogType} from '../../lib/log';
 
 describe('basic', function () {

@@ -1,12 +1,13 @@
-import type {ParsedArgs} from 'appium/types';
 import type {MessageObject} from '@appium/logger';
-import type {Logger, Logform} from 'winston';
-import type Transport from 'winston-transport';
 import globalLog from '@appium/logger';
-import {createLogger, format, transports} from 'winston';
 import {fs, util} from '@appium/support';
-import {adler32} from './utils';
+import type {ParsedArgs} from 'appium/types';
 import {LRUCache} from 'lru-cache';
+import type {Logform, Logger} from 'winston';
+import {createLogger, format, transports} from 'winston';
+import type Transport from 'winston-transport';
+
+import {adler32} from './utils';
 
 const LEVELS_MAP = {
   debug: 4,
@@ -85,9 +86,7 @@ export async function init(args: ParsedArgs): Promise<void> {
       msg = `${finalPrefix} ${msg}`;
     }
     const winstonLevel =
-      level in TO_WINSTON_LEVELS_MAP
-        ? TO_WINSTON_LEVELS_MAP[level as keyof typeof TO_WINSTON_LEVELS_MAP]
-        : 'info';
+      level in TO_WINSTON_LEVELS_MAP ? TO_WINSTON_LEVELS_MAP[level as keyof typeof TO_WINSTON_LEVELS_MAP] : 'info';
     try {
       (log as Logger)[winstonLevel as keyof Logger](msg);
       if (typeof args.logHandler === 'function') {
@@ -121,10 +120,7 @@ export function clear(): void {
 
 // #region private helpers
 
-function createConsoleTransport(
-  args: ParsedArgs,
-  logLvl: string,
-): transports.ConsoleTransportInstance {
+function createConsoleTransport(args: ParsedArgs, logLvl: string): transports.ConsoleTransportInstance {
   const opt: transports.ConsoleTransportOptions = {
     level: logLvl,
     stderrLevels: ['error'],
@@ -199,10 +195,7 @@ async function createTransports(args: ParsedArgs): Promise<Transport[]> {
     } catch (e) {
       const err = e as Error;
       // eslint-disable-next-line no-console
-      console.log(
-        `Tried to attach logging to file '${args.logFile}' but an error ` +
-          `occurred: ${err.message}`,
-      );
+      console.log(`Tried to attach logging to file '${args.logFile}' but an error ` + `occurred: ${err.message}`);
     }
   }
 
@@ -212,10 +205,7 @@ async function createTransports(args: ParsedArgs): Promise<Transport[]> {
     } catch (e) {
       const err = e as Error;
       // eslint-disable-next-line no-console
-      console.log(
-        `Tried to attach logging to Http at ${args.webhook} but ` +
-          `an error occurred: ${err.message}`,
-      );
+      console.log(`Tried to attach logging to Http at ${args.webhook} but ` + `an error occurred: ${err.message}`);
     }
   }
 
@@ -300,11 +290,7 @@ export function stripColorCodes(text: string): string {
 }
 
 // Strip the color marking within messages (depends on stripColorCodes)
-const stripColorFormat = format(function stripColor(info: {
-  level: string;
-  message: unknown;
-  [key: string]: unknown;
-}) {
+const stripColorFormat = format(function stripColor(info: {level: string; message: unknown; [key: string]: unknown}) {
   return {
     ...info,
     level: stripColorCodes(info.level),

@@ -1,6 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {FakePlugin as _FakePlugin, type DriverLike} from '../../lib/plugin';
+
+import {type DriverLike, FakePlugin as _FakePlugin} from '../../lib/plugin';
 
 const {expect} = chai;
 chai.use(chaiAsPromised);
@@ -60,9 +61,9 @@ describe('fake plugin', function () {
 
   it('should handle page source', async function () {
     const p = new FakePlugin('fake');
-    await expect(
-      p.getPageSource(() => Promise.resolve(''), {} as DriverLike, 'arg1', 'arg2'),
-    ).to.eventually.eql('<Fake>["arg1","arg2"]</Fake>');
+    await expect(p.getPageSource(() => Promise.resolve(''), {} as DriverLike, 'arg1', 'arg2')).to.eventually.eql(
+      '<Fake>["arg1","arg2"]</Fake>',
+    );
   });
 
   it('should handle getFakeSessionData', async function () {
@@ -70,19 +71,13 @@ describe('fake plugin', function () {
     await expect(
       p.getFakeSessionData(() => Promise.resolve(null), {fakeSessionData: 'hi'} as DriverLike),
     ).to.eventually.eql('hi');
-    await expect(
-      p.getFakeSessionData(() => Promise.resolve(null), {} as DriverLike),
-    ).to.eventually.eql(null);
+    await expect(p.getFakeSessionData(() => Promise.resolve(null), {} as DriverLike)).to.eventually.eql(null);
   });
 
   it('should handle setFakeSessionData', async function () {
     const p = new FakePlugin('fake');
     const driver = {} as DriverLike;
-    await expect(
-      p.setFakeSessionData(() => Promise.resolve(null), driver, 'foobar'),
-    ).to.eventually.eql(null);
-    await expect(p.getFakeSessionData(() => Promise.resolve(null), driver)).to.eventually.eql(
-      'foobar',
-    );
+    await expect(p.setFakeSessionData(() => Promise.resolve(null), driver, 'foobar')).to.eventually.eql(null);
+    await expect(p.getFakeSessionData(() => Promise.resolve(null), driver)).to.eventually.eql('foobar');
   });
 });

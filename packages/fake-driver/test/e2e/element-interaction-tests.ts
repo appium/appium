@@ -1,6 +1,7 @@
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {initSession, deleteSession, W3C_PREFIXED_CAPS} from '../helpers';
+
+import {deleteSession, initSession, W3C_PREFIXED_CAPS} from '../helpers';
 
 chai.use(chaiAsPromised);
 
@@ -25,9 +26,7 @@ export function elementTests(context: {port: number}) {
       expect(await el.getText()).to.equal('test value');
     });
     it('should not clear an invalid element', async function () {
-      await expect((await driver.$('//MockListItem')).clearValue()).to.be.rejectedWith(
-        /invalid state/,
-      );
+      await expect((await driver.$('//MockListItem')).clearValue()).to.be.rejectedWith(/invalid state/);
     });
     it('should clear an element', async function () {
       const el = await driver.$('//MockInputField');

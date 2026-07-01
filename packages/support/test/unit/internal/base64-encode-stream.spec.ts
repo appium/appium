@@ -1,5 +1,7 @@
-import {expect} from 'chai';
 import {describe, it} from 'node:test';
+
+import {expect} from 'chai';
+
 import {createBase64EncodeStream} from '../../../lib/internal/base64-encode-stream';
 
 function splitIntoChunks(data: Buffer, chunkSize: number): Buffer[] {
@@ -70,9 +72,7 @@ describe('internal/base64-encode-stream', function () {
 
       expect(await encodeChunks([oneByte])).to.equal(oneByte.toString('base64'));
       expect(await encodeChunks([twoBytes])).to.equal(twoBytes.toString('base64'));
-      expect(await encodeChunks(splitIntoChunks(twoBytes, 1))).to.equal(
-        twoBytes.toString('base64'),
-      );
+      expect(await encodeChunks(splitIntoChunks(twoBytes, 1))).to.equal(twoBytes.toString('base64'));
     });
 
     it('should match Buffer base64 encoding for varied payload lengths', async function () {

@@ -1,5 +1,6 @@
-import {TEST_HOST, getTestPort, createAppiumURL} from '../../lib';
 import {expect} from 'chai';
+
+import {createAppiumURL, getTestPort, TEST_HOST} from '../../lib';
 
 describe('TEST_HOST', function () {
   it('should be localhost', function () {
@@ -27,15 +28,11 @@ describe('createAppiumURL()', function () {
 
   it('should create a URL to get an existing session', function () {
     const sessionId = '12345';
-    expect(urlFor(sessionId, 'session')).to.equal(
-      `http://${TEST_HOST}:31337/session/${sessionId}/session`,
-    );
+    expect(urlFor(sessionId, 'session')).to.equal(`http://${TEST_HOST}:31337/session/${sessionId}/session`);
   });
 
   it('should create a URL for a command using an existing session', function () {
     const sessionId = '12345';
-    expect(urlFor(sessionId, 'moocow')).to.equal(
-      `http://${TEST_HOST}:31337/session/${sessionId}/moocow`,
-    );
+    expect(urlFor(sessionId, 'moocow')).to.equal(`http://${TEST_HOST}:31337/session/${sessionId}/moocow`);
   });
 });

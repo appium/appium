@@ -1,5 +1,5 @@
-export {pluginE2EHarness, getPort} from './harness';
-export type {E2ESetupOpts, AppiumEnv} from './types';
+export {getPort, pluginE2EHarness} from './harness';
+export type {AppiumEnv, E2ESetupOpts} from './types';
 
 // Handle smoke test flag
 if (require.main === module && process.argv[2] === '--smoke-test') {

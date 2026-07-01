@@ -1,4 +1,5 @@
 import sinon from 'sinon';
+
 import {logger} from '../../../lib';
 
 let sandbox: sinon.SinonSandbox;
@@ -33,10 +34,7 @@ export function assertOutputContains(writers: ReturnType<typeof setupWriters>, o
   }
 }
 
-export function assertOutputDoesntContain(
-  writers: ReturnType<typeof setupWriters>,
-  output: string,
-) {
+export function assertOutputDoesntContain(writers: ReturnType<typeof setupWriters>, output: string) {
   if (someoneHadOutput(writers, output)) {
     throw new Error(`Expected nothing to have been called with: '${output}'`);
   }

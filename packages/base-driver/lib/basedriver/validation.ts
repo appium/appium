@@ -1,12 +1,10 @@
-import type {Constraint} from '@appium/types';
 import {util} from '@appium/support';
+import type {Constraint} from '@appium/types';
+
 import {log} from './logger';
 
 export class Validator {
-  private readonly _validators: Record<
-    keyof Constraint,
-    (value: any, options?: any, key?: string) => string | null
-  > = {
+  private readonly _validators: Record<keyof Constraint, (value: any, options?: any, key?: string) => string | null> = {
     isString: (value: any, options?: any): string | null => {
       if (value === undefined || options == null) {
         return null;
@@ -108,8 +106,7 @@ export class Validator {
       }
       if (
         !options?.allowEmpty &&
-        ((value !== undefined && util.isEmpty(value)) ||
-          (typeof value === 'string' && !value.trim()))
+        ((value !== undefined && util.isEmpty(value)) || (typeof value === 'string' && !value.trim()))
       ) {
         return 'must not be empty or blank';
       }
@@ -117,10 +114,7 @@ export class Validator {
     },
   };
 
-  validate(
-    values: Record<string, any>,
-    constraints: Record<string, Constraint>,
-  ): Record<string, string[]> | null {
+  validate(values: Record<string, any>, constraints: Record<string, Constraint>): Record<string, string[]> | null {
     const result: Record<string, string[]> = {};
     for (const [key, constraint] of Object.entries(constraints)) {
       const value = values[key];
@@ -129,11 +123,7 @@ export class Validator {
           continue;
         }
 
-        const validationError = this._validators[validatorName as keyof Constraint](
-          value,
-          options,
-          key,
-        );
+        const validationError = this._validators[validatorName as keyof Constraint](value, options, key);
         if (validationError == null) {
           continue;
         }

@@ -1,15 +1,15 @@
-import {BasePlugin} from 'appium/plugin';
-import {sleep} from 'asyncbox';
-import type {Request, Response, Application} from 'express';
 import type {
   AppiumServer,
   BidiModuleMap,
   ExecuteMethodMap,
   ExternalDriver,
+  IIpcSubscription,
   IpcMessage,
   MethodMap,
-  IIpcSubscription,
 } from '@appium/types';
+import {BasePlugin} from 'appium/plugin';
+import {sleep} from 'asyncbox';
+import type {Application, Request, Response} from 'express';
 
 /** Driver as seen by this plugin; may include plugin-specific session data */
 export type DriverLike = ExternalDriver & {fakeSessionData?: unknown};
@@ -128,22 +128,12 @@ export class FakePlugin extends BasePlugin {
     }
   }
 
-  async doSomeMath(
-    next: () => Promise<number>,
-    _driver: DriverLike,
-    num1: number,
-    num2: number,
-  ): Promise<number> {
+  async doSomeMath(next: () => Promise<number>, _driver: DriverLike, num1: number, num2: number): Promise<number> {
     const sum = await next();
     return num1 * num2 + sum;
   }
 
-  async doSomeMath2(
-    _next: () => Promise<unknown>,
-    _driver: DriverLike,
-    num1: number,
-    num2: number,
-  ): Promise<number> {
+  async doSomeMath2(_next: () => Promise<unknown>, _driver: DriverLike, num1: number, num2: number): Promise<number> {
     await sleep(1);
     const result = num1 * num2;
     if (this.ipcPluginMath) {
@@ -165,19 +155,11 @@ export class FakePlugin extends BasePlugin {
     return this.pluginThing;
   }
 
-  async setPluginThing(
-    _next: () => Promise<unknown>,
-    _driver: DriverLike,
-    thing: unknown,
-  ): Promise<void> {
+  async setPluginThing(_next: () => Promise<unknown>, _driver: DriverLike, thing: unknown): Promise<void> {
     this.pluginThing = thing;
   }
 
-  async plugMeIn(
-    _next: () => Promise<unknown>,
-    _driver: DriverLike,
-    socket: string,
-  ): Promise<string> {
+  async plugMeIn(_next: () => Promise<unknown>, _driver: DriverLike, socket: string): Promise<string> {
     await sleep(1);
     return `Plugged in to ${socket}`;
   }
@@ -191,11 +173,7 @@ export class FakePlugin extends BasePlugin {
     return this.fakeDriverClockIsRunning;
   }
 
-  async getPageSource(
-    _next: () => Promise<string>,
-    _driver: DriverLike,
-    ...args: unknown[]
-  ): Promise<string> {
+  async getPageSource(_next: () => Promise<string>, _driver: DriverLike, ...args: unknown[]): Promise<string> {
     await sleep(10);
     return `<Fake>${JSON.stringify(args)}</Fake>`;
   }
@@ -217,11 +195,7 @@ export class FakePlugin extends BasePlugin {
     return driver.fakeSessionData ?? null;
   }
 
-  async setFakeSessionData(
-    _next: () => Promise<unknown>,
-    driver: DriverLike,
-    ...args: unknown[]
-  ): Promise<null> {
+  async setFakeSessionData(_next: () => Promise<unknown>, driver: DriverLike, ...args: unknown[]): Promise<null> {
     await sleep(1);
     driver.fakeSessionData = args[0];
     return null;
@@ -237,12 +211,7 @@ export class FakePlugin extends BasePlugin {
     FakePlugin._unexpectedData = `Session ended because ${cause}`;
   }
 
-  async execute(
-    next: () => Promise<unknown>,
-    driver: DriverLike,
-    script: string,
-    args: unknown[],
-  ): Promise<unknown> {
+  async execute(next: () => Promise<unknown>, driver: DriverLike, script: string, args: unknown[]): Promise<unknown> {
     return await this.executeMethod(next, driver as any, script, args);
   }
 

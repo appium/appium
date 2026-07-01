@@ -1,4 +1,5 @@
 import type {Constraints} from '@appium/types';
+
 import {BaseDriver} from '../driver';
 
 /**

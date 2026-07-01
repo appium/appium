@@ -1,6 +1,7 @@
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {initSession, deleteSession, W3C_PREFIXED_CAPS} from '../helpers';
+
+import {deleteSession, initSession, W3C_PREFIXED_CAPS} from '../helpers';
 
 chai.use(chaiAsPromised);
 
@@ -46,9 +47,7 @@ export function contextTests(context: {port: number}) {
     });
     it('should not set a frame in a native context', async function () {
       await driver.switchContext('NATIVE_APP');
-      await expect(driver.switchToFrame(1)).to.be.rejectedWith(
-        /could not be executed in the current context/,
-      );
+      await expect(driver.switchToFrame(1)).to.be.rejectedWith(/could not be executed in the current context/);
     });
   });
 }

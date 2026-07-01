@@ -1,24 +1,21 @@
 import path from 'node:path';
+import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
+
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
+
 import {fs, node, tempDir} from '../../lib';
 import {
   DEFAULT_APPIUM_HOME,
+  findAppiumDependencyPackage,
   readPackageInDir,
   resolveAppiumHome,
   resolveManifestPath,
-  findAppiumDependencyPackage,
 } from '../../lib/env';
 
 use(chaiAsPromised);
 
-const FIXTURES_ROOT = path.join(
-  node.getModuleRootSync('@appium/support', __filename)!,
-  'test',
-  'e2e',
-  'fixture',
-);
+const FIXTURES_ROOT = path.join(node.getModuleRootSync('@appium/support', __filename)!, 'test', 'e2e', 'fixture');
 
 describe('environment', function () {
   let cwd: string;
@@ -122,10 +119,7 @@ describe('environment', function () {
               path.join(FIXTURES_ROOT, 'appium-v2-dependency.package.json'),
               path.join(cwd, 'package.json'),
             );
-            await fs.copyFile(
-              path.join(FIXTURES_ROOT, 'appium-v2-package'),
-              path.join(cwd, 'node_modules', 'appium'),
-            );
+            await fs.copyFile(path.join(FIXTURES_ROOT, 'appium-v2-package'), path.join(cwd, 'node_modules', 'appium'));
           });
 
           afterEach(async function () {
@@ -142,10 +136,7 @@ describe('environment', function () {
               path.join(FIXTURES_ROOT, 'appium-v1-dependency.package.json'),
               path.join(cwd, 'package.json'),
             );
-            await fs.copyFile(
-              path.join(FIXTURES_ROOT, 'appium-v1-package'),
-              path.join(cwd, 'node_modules', 'appium'),
-            );
+            await fs.copyFile(path.join(FIXTURES_ROOT, 'appium-v1-package'), path.join(cwd, 'node_modules', 'appium'));
           });
 
           afterEach(async function () {

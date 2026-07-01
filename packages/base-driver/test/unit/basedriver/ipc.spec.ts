@@ -1,9 +1,11 @@
 import {describe, it} from 'node:test';
+
+import type {IpcMessage} from '@appium/types';
 import {sleep} from 'asyncbox';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+
 import {AppiumIpc, EVT_MESSAGE} from '../../../lib/basedriver/ipc';
-import type {IpcMessage} from '@appium/types';
 
 chai.use(chaiAsPromised);
 
@@ -204,9 +206,7 @@ describe('AppiumIpc', function () {
       const ipc = new AppiumIpc({maxTopics: 2});
       await ipc.publish('topic1', 'pub', true);
       ipc.subscribe('topic2', 'sub');
-      await expect(ipc.publish('topic3', 'pub', true)).to.eventually.be.rejectedWith(
-        /--max-ipc-topics/,
-      );
+      await expect(ipc.publish('topic3', 'pub', true)).to.eventually.be.rejectedWith(/--max-ipc-topics/);
     });
 
     it('should not allow sharing actual published object, only copies', async function () {

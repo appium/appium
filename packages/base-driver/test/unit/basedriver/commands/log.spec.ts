@@ -1,8 +1,10 @@
-import {describe, it, beforeEach, afterEach} from 'node:test';
+import {afterEach, beforeEach, describe, it} from 'node:test';
+
+import type {InitialOpts} from '@appium/types';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import type {InitialOpts} from '@appium/types';
 import {createSandbox} from 'sinon';
+
 import {BaseDriver} from '../../../../lib';
 
 chai.use(chaiAsPromised);

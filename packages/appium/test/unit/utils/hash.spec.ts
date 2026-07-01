@@ -1,4 +1,5 @@
 import {expect} from 'chai';
+
 import {adler32} from '../../../lib/utils/hash';
 
 describe('utils/hash', function () {

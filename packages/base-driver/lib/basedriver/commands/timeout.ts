@@ -1,8 +1,9 @@
-import {waitForCondition} from 'asyncbox';
 import {util} from '@appium/support';
+import type {Constraints, ITimeoutCommands} from '@appium/types';
+import {waitForCondition} from 'asyncbox';
+
 import {errors} from '../../protocol';
 import type {BaseDriver} from '../driver';
-import type {Constraints, ITimeoutCommands} from '@appium/types';
 import {mixin} from './mixin';
 
 declare module '../driver' {
@@ -40,9 +41,7 @@ const TimeoutCommands: ITimeoutCommands = {
 
     this.log.debug(`W3C timeout argument: ${JSON.stringify({script, pageLoad, implicit})}}`);
     if ([script, pageLoad, implicit].every((value) => value == null)) {
-      throw new errors.InvalidArgumentError(
-        'W3C protocol expects any of script, pageLoad or implicit to be set',
-      );
+      throw new errors.InvalidArgumentError('W3C protocol expects any of script, pageLoad or implicit to be set');
     }
     if (util.hasValue(script)) {
       await this.scriptTimeoutW3C(script);
@@ -110,10 +109,7 @@ const TimeoutCommands: ITimeoutCommands = {
     }
   },
 
-  async implicitWaitForCondition<C extends Constraints>(
-    this: BaseDriver<C>,
-    condFn: (...args: any[]) => Promise<any>,
-  ) {
+  async implicitWaitForCondition<C extends Constraints>(this: BaseDriver<C>, condFn: (...args: any[]) => Promise<any>) {
     this.log.debug(`Waiting up to ${this.implicitWaitMs} ms for condition`);
     const wrappedCondFn = async (...args: any[]) => {
       // reset command timeout

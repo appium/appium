@@ -166,10 +166,7 @@ async function main() {
     `Done. ${installedStats[DRIVER_TYPE]} ${util.pluralize(
       'driver',
       installedStats[DRIVER_TYPE],
-    )} and ${installedStats[PLUGIN_TYPE]} ${util.pluralize(
-      'plugin',
-      installedStats[PLUGIN_TYPE],
-    )} are installed.`,
+    )} and ${installedStats[PLUGIN_TYPE]} ${util.pluralize('plugin', installedStats[PLUGIN_TYPE])} are installed.`,
   );
 }
 

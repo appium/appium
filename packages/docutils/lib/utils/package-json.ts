@@ -1,6 +1,7 @@
-import {fs} from '@appium/support';
 import nodeFs from 'node:fs';
 import path from 'node:path';
+
+import {fs} from '@appium/support';
 import normalizePackageData from 'normalize-package-data';
 import type {PackageJson as TypeFestPackageJson} from 'type-fest';
 
@@ -61,9 +62,7 @@ export function findPackageRootSync(dir: string): string {
 /** Reads and parses `package.json` from `cwd`. */
 export async function readPackage(options?: NormalizeOptions): Promise<NormalizedPackageJson>;
 export async function readPackage(options: ReadPackageOptions): Promise<PackageJson>;
-export async function readPackage(
-  options: ReadPackageOptions = {},
-): Promise<PackageJson | NormalizedPackageJson> {
+export async function readPackage(options: ReadPackageOptions = {}): Promise<PackageJson | NormalizedPackageJson> {
   const {cwd, normalize = true} = options;
   const contents = await fs.readFile(getPackagePath(cwd), 'utf8');
   return parsePackageJson(contents, normalize);
@@ -85,10 +84,7 @@ function getPackagePath(cwd?: string): string {
 
 function parsePackageJson(contents: string, normalize: true): NormalizedPackageJson;
 function parsePackageJson(contents: string, normalize: false): PackageJson;
-function parsePackageJson(
-  contents: string,
-  normalize?: boolean,
-): PackageJson | NormalizedPackageJson;
+function parsePackageJson(contents: string, normalize?: boolean): PackageJson | NormalizedPackageJson;
 function parsePackageJson(contents: string, normalize = true): PackageJson | NormalizedPackageJson {
   const json = JSON.parse(contents) as PackageJson;
   if (normalize === false) {

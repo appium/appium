@@ -1,4 +1,5 @@
 import {expect} from 'chai';
+
 import {
   bindAll,
   camelCase,
@@ -117,9 +118,7 @@ describe('utils/object', function () {
         },
       };
       expect(getPath(schema, 'properties.server.properties.log.appiumCliDest')).to.equal('logFile');
-      expect(getPath(schema, 'properties.server.properties.allow-cors.appiumCliDest')).to.equal(
-        'allowCors',
-      );
+      expect(getPath(schema, 'properties.server.properties.allow-cors.appiumCliDest')).to.equal('allowCors');
     });
   });
 
@@ -232,12 +231,10 @@ describe('utils/object', function () {
     });
 
     it('should skip null and undefined sources', function () {
-      expect(
-        defaultsDeep({a: 1} as Record<string, unknown>, undefined, {b: 2} as Record<
-          string,
-          unknown
-        >),
-      ).to.eql({a: 1, b: 2});
+      expect(defaultsDeep({a: 1} as Record<string, unknown>, undefined, {b: 2} as Record<string, unknown>)).to.eql({
+        a: 1,
+        b: 2,
+      });
       expect(
         defaultsDeep(
           {a: 1} as Record<string, unknown>,
@@ -265,10 +262,7 @@ describe('utils/object', function () {
 
     it('should copy functions by reference when filling undefined keys', function () {
       const logHandler = () => {};
-      const result = defaultsDeep(
-        {} as Record<string, unknown>,
-        {logHandler} as Record<string, unknown>,
-      );
+      const result = defaultsDeep({} as Record<string, unknown>, {logHandler} as Record<string, unknown>);
       expect(result.logHandler).to.equal(logHandler);
     });
 

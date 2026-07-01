@@ -1,6 +1,7 @@
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {logger, fs} from '@appium/support';
+
+import {fs, logger} from '@appium/support';
 
 export const log = logger.getLogger('SYNC-MONOREPO-PACKAGES');
 
@@ -81,7 +82,9 @@ async function syncPackageJsonFields(rootPackageJson, packageDir) {
   }
 
   log.debug(
-    `Updating package.json for ${packageName} at ${packageJsonPath} with fields: ${JSON.stringify(Object.keys(packageJson))}`,
+    `Updating package.json for ${packageName} at ${packageJsonPath} with fields: ${JSON.stringify(
+      Object.keys(packageJson),
+    )}`,
   );
 
   await writeJson(packageJsonPath, packageJson);
@@ -107,11 +110,7 @@ async function main() {
   log.debug(`Copying README to ${APPIUM_PACKAGE_README}`);
   const copyingReadmePromise = fs.copyFile(ROOT_README, APPIUM_PACKAGE_README);
 
-  await Promise.all([
-    ...syncPackageJsonFieldsPromises,
-    ...licenseCopyPromises,
-    copyingReadmePromise,
-  ]);
+  await Promise.all([...syncPackageJsonFieldsPromises, ...licenseCopyPromises, copyingReadmePromise]);
 }
 
 await main();

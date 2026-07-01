@@ -1,10 +1,12 @@
 import path from 'node:path';
-import {log} from '../express/logger';
+
 import {fs} from '@appium/support';
 import {sleep} from 'asyncbox';
 import type {Request, Response} from 'express';
-import {compileLodashTemplate} from './template';
+
+import {log} from '../express/logger';
 import {TEST_FIXTURES_DIR} from './static-dir';
+import {compileLodashTemplate} from './template';
 
 type TemplateParams = Record<string, unknown>;
 

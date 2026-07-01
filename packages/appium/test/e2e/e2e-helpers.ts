@@ -1,12 +1,14 @@
+import path from 'node:path';
+
 /**
  * Helper functions for E2E tests to spawn an `appium` subprocess.
  */
 import {console as supportConsole, fs} from '@appium/support';
-import path from 'node:path';
-import {exec} from 'teen_process';
-import type {ExecError} from 'teen_process';
 import type {DriverType, PluginType} from '@appium/types';
 import type {CliExtensionSubcommand, ExtRecord} from 'appium/types';
+import {exec} from 'teen_process';
+import type {ExecError} from 'teen_process';
+
 import {APPIUM_ROOT, resolveFixture} from '../helpers';
 
 export const EXECUTABLE = path.join(APPIUM_ROOT, 'build', 'lib', 'main.js');
@@ -29,9 +31,7 @@ export interface AppiumRunErrorProps {
   cwd: string;
 }
 
-export type AppiumRunError = Error &
-  AppiumRunErrorProps &
-  ExecError & {stdout: string; stderr: string};
+export type AppiumRunError = Error & AppiumRunErrorProps & ExecError & {stdout: string; stderr: string};
 
 function curry2<A, B, R>(
   fn: (a: A, b: B) => R,
@@ -156,13 +156,9 @@ export async function installLocalExtension<ExtType extends DriverType | PluginT
   type: ExtType,
   pathToExtension: string,
 ): Promise<ExtRecord<ExtType>> {
-  return runAppiumJson(appiumHome, [
-    type,
-    'install',
-    '--source',
-    'local',
-    pathToExtension,
-  ]) as Promise<ExtRecord<ExtType>>;
+  return runAppiumJson(appiumHome, [type, 'install', '--source', 'local', pathToExtension]) as Promise<
+    ExtRecord<ExtType>
+  >;
 }
 
 export async function readAppiumArgErrorFixture(name: string): Promise<string> {

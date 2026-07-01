@@ -1,12 +1,14 @@
-import path from 'node:path';
-import rewiremock from 'rewiremock/node';
-import type {Strongbox as TStrongbox, StrongboxOpts, Item, Value} from '../../lib';
-import type {SinonSandbox, SinonStubbedMember, SinonStub} from 'sinon';
-import {createSandbox} from 'sinon';
 import type fs from 'node:fs/promises';
-import {describe, it, beforeEach, afterEach} from 'node:test';
+import path from 'node:path';
+import {afterEach, beforeEach, describe, it} from 'node:test';
+
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import rewiremock from 'rewiremock/node';
+import type {SinonSandbox, SinonStub, SinonStubbedMember} from 'sinon';
+import {createSandbox} from 'sinon';
+
+import type {Item, Strongbox as TStrongbox, StrongboxOpts, Value} from '../../lib';
 
 use(chaiAsPromised);
 
@@ -130,13 +132,8 @@ describe('Strongbox', function () {
             const item = await box.createItem('test');
             await item.write('boo bah');
 
-            expect(
-              MockFs.writeFile.calledWith(
-                path.resolve(DATA_DIR, DEFAULT_SUFFIX, 'test'),
-                'boo bah',
-                'utf8',
-              ),
-            ).to.be.true;
+            expect(MockFs.writeFile.calledWith(path.resolve(DATA_DIR, DEFAULT_SUFFIX, 'test'), 'boo bah', 'utf8')).to.be
+              .true;
           });
 
           it('should update the underlying value', async function () {
@@ -197,8 +194,7 @@ describe('Strongbox', function () {
 
       it('should write the value to disk', async function () {
         await box.createItemWithValue('test', 'value');
-        expect(MockFs.writeFile.calledWith(path.resolve(DATA_DIR, DEFAULT_SUFFIX, 'test'), 'value'))
-          .to.be.true;
+        expect(MockFs.writeFile.calledWith(path.resolve(DATA_DIR, DEFAULT_SUFFIX, 'test'), 'value')).to.be.true;
       });
 
       describe('when the third parameter is a valid encoding', function () {

@@ -1,4 +1,3 @@
-import type {AppiumDriver} from '../appium';
 import type {
   Args,
   CliCommand,
@@ -7,6 +6,8 @@ import type {
   CliExtensionSubcommand,
   ParsedArgs,
 } from 'appium/types';
+
+import type {AppiumDriver} from '../appium';
 import type {ExtensionConfigs} from '../extension';
 
 /** Empty object returned when `init` completes for non-server CLI flows (extension/setup). */
@@ -25,7 +26,4 @@ export type InitResult<Cmd extends CliCommand = CliCommandServer> = Cmd extends 
   : ExtCommandInitResult;
 
 /** CLI + programmatic args before `init` narrows by `subcommand`. */
-export type PreConfigArgs = Args<
-  CliCommand,
-  CliExtensionSubcommand | CliCommandSetupSubcommand | void
->;
+export type PreConfigArgs = Args<CliCommand, CliExtensionSubcommand | CliCommandSetupSubcommand | void>;

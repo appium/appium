@@ -1,28 +1,29 @@
 {
   "name": "@appium/fake-driver",
   "version": "6.2.1",
+  "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8",
   "description": "Mock driver used internally by Appium for testing. Ignore",
   "keywords": [
+    "android",
     "automation",
+    "firefoxos",
+    "ios",
     "javascript",
     "selenium",
-    "webdriver",
-    "ios",
-    "android",
-    "firefoxos",
-    "testing"
+    "testing",
+    "webdriver"
   ],
   "homepage": "https://appium.io",
   "bugs": {
     "url": "https://github.com/appium/appium/issues"
   },
+  "license": "Apache-2.0",
+  "author": "https://github.com/appium",
   "repository": {
     "type": "git",
     "url": "https://github.com/appium/appium.git",
     "directory": "packages/fake-driver"
   },
-  "license": "Apache-2.0",
-  "author": "https://github.com/appium",
   "directories": {
     "lib": "lib"
   },
@@ -31,6 +32,11 @@
     "build/lib",
     "tsconfig.json"
   ],
+  "main": "./build/lib/index.js",
+  "types": "./build/lib/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "cpy lib/screen.png build",
     "clean": "npx rimraf build/lib/screen.png",
@@ -50,9 +56,6 @@
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
     "npm": ">=10"
-  },
-  "publishConfig": {
-    "access": "public"
   },
   "access": "public",
   "appium": {
@@ -74,8 +77,5 @@
         "./build/lib/doctor/fake2.js"
       ]
     }
-  },
-  "main": "./build/lib/index.js",
-  "types": "./build/lib/index.d.ts",
-  "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8"
+  }
 }

@@ -2,6 +2,7 @@ import type {ExtensionType} from '@appium/types';
 import type {ArgumentOptions} from 'argparse';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+
 import {PLUGIN_TYPE} from '../../../lib/constants';
 import {finalizeSchema, registerSchema, resetSchema} from '../../../lib/schema';
 import {toParserArgs} from '../../../lib/schema/cli-args';
@@ -24,11 +25,7 @@ describe('cli-args', function () {
   async function getArgs(opts: GetArgsOpts = {}) {
     const {extName, extType, schema} = opts;
     if (schema && extName && extType) {
-      await registerSchema(
-        extType as ExtensionType,
-        extName,
-        schema as Parameters<typeof registerSchema>[2],
-      );
+      await registerSchema(extType as ExtensionType, extName, schema as Parameters<typeof registerSchema>[2]);
     }
     await finalizeSchema();
     return Object.fromEntries([...toParserArgs()]) as ParserArgsMap;
@@ -153,10 +150,7 @@ describe('cli-args', function () {
         describe('null', function () {
           it('should throw', async function () {
             const schema = {properties: {foo: {type: 'null'}}, type: 'object'};
-            await expect(getArgs({extType, extName, schema})).to.be.rejectedWith(
-              TypeError,
-              /unknown or disallowed/,
-            );
+            await expect(getArgs({extType, extName, schema})).to.be.rejectedWith(TypeError, /unknown or disallowed/);
           });
         });
 
@@ -166,10 +160,7 @@ describe('cli-args', function () {
               properties: {foo: {type: 'donkey'}},
               type: 'object',
             };
-            await expect(getArgs({extType, extName, schema})).to.be.rejectedWith(
-              Error,
-              /schema is invalid/,
-            );
+            await expect(getArgs({extType, extName, schema})).to.be.rejectedWith(Error, /schema is invalid/);
           });
         });
       });
@@ -228,9 +219,7 @@ describe('cli-args', function () {
             type: 'object',
           };
           result = await getArgs({schema, extName, extType});
-          expect(() => result['--plugin-blob-foo'].type!('123')).to.throw(
-            /must be a plain object/i,
-          );
+          expect(() => result['--plugin-blob-foo'].type!('123')).to.throw(/must be a plain object/i);
         });
 
         describe('when used with `enum`', function () {
@@ -248,9 +237,7 @@ describe('cli-args', function () {
                   type: 'object',
                 };
                 result = await getArgs({schema, extName, extType});
-                expect(() => result['--plugin-blob-foo'].type!('herp')).to.throw(
-                  /must be a valid json/i,
-                );
+                expect(() => result['--plugin-blob-foo'].type!('herp')).to.throw(/must be a valid json/i);
               });
             });
           });

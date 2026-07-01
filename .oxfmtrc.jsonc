@@ -1,15 +1,12 @@
 {
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
 
-  "printWidth": 120,
-  "tabWidth": 2,
-  "useTabs": false,
-  "endOfLine": "lf",
+  // Main format options are synced with .editorconfig
 
-  "semi": true,
+  "semi": true,  // same as default
   "singleQuote": true,
-  "quoteProps": "as-needed",
-  "trailingComma": "all",
+  "quoteProps": "as-needed",  // same as default
+  "trailingComma": "all",  // same as default
   "bracketSpacing": false,
   "sortImports": true,
 
@@ -19,7 +16,6 @@
     "**/*.min.*",
     "**/*.md",
     "packages/appium/docs/**",
-    "package-lock.json",
     "**/.vscode/**",
     "**/*.html",
     "**/generated/**",
@@ -27,6 +23,6 @@
     "packages/types/lib/appium-config.ts",
     "**/*.hbs",
     ".nx/**",
-    "**/*mkdocs.{yml,yaml}"
-  ]
+    "**/*mkdocs.{yml,yaml}",
+  ],
 }

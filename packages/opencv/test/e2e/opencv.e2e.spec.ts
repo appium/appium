@@ -1,6 +1,7 @@
 import path from 'node:path';
+import {describe, it, before} from 'node:test';
 
-import {fs} from '@appium/support';
+import {fs, node} from '@appium/support';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
@@ -8,19 +9,16 @@ import {getImageOccurrence, getImagesMatches, getImagesSimilarity} from '../../l
 
 use(chaiAsPromised);
 
-const FIXTURES_ROOT = path.resolve(__dirname, 'images');
+const FIXTURES_ROOT = path.resolve(node.getModuleRootSync('@appium/opencv', __filename)!, 'test', 'e2e', 'images');
 
-describe('OpenCV helpers', function () {
-  // OpenCV needs several seconds for initialization
-  this.timeout(120000);
-
-  let imgFixture: Buffer | null = null;
-  let fullImage: Buffer | null = null;
-  let partialImage: Buffer | null = null;
-  let originalImage: Buffer | null = null;
-  let changedImage: Buffer | null = null;
-  let rotatedImage: Buffer | null = null;
-  let numberImage: Buffer | null = null;
+describe('OpenCV helpers', {timeout: 120000}, () => {
+  let imgFixture: Buffer;
+  let fullImage: Buffer;
+  let partialImage: Buffer;
+  let originalImage: Buffer;
+  let changedImage: Buffer;
+  let rotatedImage: Buffer;
+  let numberImage: Buffer;
 
   before(async function () {
     const imagePath = path.resolve(FIXTURES_ROOT, 'full-image.b64');

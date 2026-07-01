@@ -3,10 +3,10 @@
 
   // Main format options are synced with .editorconfig
 
-  "semi": true,  // same as default
+  "semi": true, // same as default
   "singleQuote": true,
-  "quoteProps": "as-needed",  // same as default
-  "trailingComma": "all",  // same as default
+  "quoteProps": "as-needed", // same as default
+  "trailingComma": "all", // same as default
   "bracketSpacing": false,
   "sortImports": true,
 

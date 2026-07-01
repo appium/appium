@@ -8,5 +8,5 @@
     "types": ["node", "chai", "chai-as-promised"]
   },
   "include": ["lib", "test"],
-  "references": [{"path": "../types"}]
+  "references": [{"path": "../types"}, {"path": "../logger"}, {"path": "../types"}]
 }

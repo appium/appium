@@ -8,5 +8,6 @@
     "types": ["node", "chai", "chai-as-promised"]
   },
   "extends": "@appium/tsconfig/tsconfig.plugin.json",
-  "include": ["lib", "test"]
+  "include": ["lib", "test"],
+  "references": [{"path": "../base-plugin"}, {"path": "../logger"}, {"path": "../support"}, {"path": "../types"}]
 }

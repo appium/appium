@@ -25,11 +25,9 @@
     "directory": "packages/schema"
   },
   "files": [
-    "build",
+    "build/lib",
     "lib",
-    "tsconfig.json",
-    "!build/tsconfig.tsbuildinfo",
-    "!build/test"
+    "tsconfig.json"
   ],
   "main": "./build/lib/index.js",
   "types": "./build/lib/index.d.ts",

@@ -1,4 +1,5 @@
 import {Stream} from 'node:stream';
+import {describe, it, beforeEach} from 'node:test';
 
 /* eslint-disable no-console */
 import {expect} from 'chai';

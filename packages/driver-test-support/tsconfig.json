@@ -13,7 +13,7 @@
     "paths": {
       "@appium/types": ["../types"]
     },
-    "types": ["mocha", "chai", "node"]
+    "types": ["node"]
   },
   "include": ["lib", "test"],
   "references": [{"path": "../types"}]

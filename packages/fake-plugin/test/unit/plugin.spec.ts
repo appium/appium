@@ -1,10 +1,7 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
+import assert from 'node:assert';
+import {describe, it} from 'node:test';
 
 import {type DriverLike, FakePlugin as _FakePlugin} from '../../lib/plugin';
-
-const {expect} = chai;
-chai.use(chaiAsPromised);
 
 interface MockResponse {
   send: (body: string) => void;
@@ -39,45 +36,48 @@ class FakeExpress {
 
 describe('fake plugin', function () {
   it('should exist', function () {
-    expect(FakePlugin).to.exist;
+    assert.ok(FakePlugin);
   });
 
   it('should update an express app with a fake route', async function () {
     const app = new FakeExpress();
-    await expect(app.get('/fake')).to.be.rejected;
+    assert.rejects(() => app.get('/fake'));
     await FakePlugin.updateServer(app as any, {} as any, {});
-    await expect(app.get('/fake')).to.eventually.eql(JSON.stringify({fake: 'fakeResponse'}));
+    assert.strictEqual(await app.get('/fake'), JSON.stringify({fake: 'fakeResponse'}));
   });
 
   it('should wrap find element', async function () {
     const p = new FakePlugin('fake');
-    await expect(
-      p.findElement(() => Promise.resolve({el: 'fakeEl'}), {} as DriverLike, 'arg1', 'arg2'),
-    ).to.eventually.eql({
-      el: 'fakeEl',
-      fake: true,
-    });
+    assert.deepStrictEqual(
+      await p.findElement(() => Promise.resolve({el: 'fakeEl'}), {} as DriverLike, 'arg1', 'arg2'),
+      {
+        el: 'fakeEl',
+        fake: true,
+      },
+    );
   });
 
   it('should handle page source', async function () {
     const p = new FakePlugin('fake');
-    await expect(p.getPageSource(() => Promise.resolve(''), {} as DriverLike, 'arg1', 'arg2')).to.eventually.eql(
+    assert.strictEqual(
+      await p.getPageSource(() => Promise.resolve(''), {} as DriverLike, 'arg1', 'arg2'),
       '<Fake>["arg1","arg2"]</Fake>',
     );
   });
 
   it('should handle getFakeSessionData', async function () {
     const p = new FakePlugin('fake');
-    await expect(
-      p.getFakeSessionData(() => Promise.resolve(null), {fakeSessionData: 'hi'} as DriverLike),
-    ).to.eventually.eql('hi');
-    await expect(p.getFakeSessionData(() => Promise.resolve(null), {} as DriverLike)).to.eventually.eql(null);
+    assert.strictEqual(
+      await p.getFakeSessionData(() => Promise.resolve(null), {fakeSessionData: 'hi'} as DriverLike),
+      'hi',
+    );
+    assert.strictEqual(await p.getFakeSessionData(() => Promise.resolve(null), {} as DriverLike), null);
   });
 
   it('should handle setFakeSessionData', async function () {
     const p = new FakePlugin('fake');
     const driver = {} as DriverLike;
-    await expect(p.setFakeSessionData(() => Promise.resolve(null), driver, 'foobar')).to.eventually.eql(null);
-    await expect(p.getFakeSessionData(() => Promise.resolve(null), driver)).to.eventually.eql('foobar');
+    assert.strictEqual(await p.setFakeSessionData(() => Promise.resolve(null), driver, 'foobar'), null);
+    assert.strictEqual(await p.getFakeSessionData(() => Promise.resolve(null), driver), 'foobar');
   });
 });

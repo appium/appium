@@ -115,7 +115,7 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
     this.shouldValidateCaps = shouldValidateCaps;
 
     // keeping track of initial opts
-    this.initialOpts = structuredClone(opts);
+    this.initialOpts = {...opts};
 
     this.sessionId = null;
     this.helpers = helpers;

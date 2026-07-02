@@ -1,4 +1,5 @@
 import {Agent} from 'node:http';
+import {describe, it, before, after, type TestContext, beforeEach, afterEach} from 'node:test';
 
 import {createAppiumURL, getTestPort} from '@appium/driver-test-support';
 import type {
@@ -20,11 +21,11 @@ import type {RequireAtLeastOne} from 'type-fest';
 
 import {FakeDriver, startServer} from '../../lib/index';
 import {BASE_CAPS, deleteSession, initSession, TEST_HOST, W3C_PREFIXED_CAPS} from '../helpers';
-import {alertTests} from './alert-tests';
-import {contextTests} from './context-tests';
-import {elementTests as elementInteractionTests} from './element-interaction-tests';
-import {findElementTests} from './find-element-tests';
-import {generalTests} from './general-tests';
+import {alertTests} from './alert.e2e.spec';
+import {contextTests} from './context.e2e.spec';
+import {elementTests as elementInteractionTests} from './element-interaction.e2e.spec';
+import {findElementTests} from './find-element.e2e.spec';
+import {generalTests} from './general.e2e.spec';
 
 chai.use(chaiAsPromised);
 
@@ -93,10 +94,10 @@ describe(`FakeDriver E2E`, function () {
   });
 
   describe('session handling', function () {
-    it('should handle idempotency while creating sessions', async function () {
+    it('should handle idempotency while creating sessions', async function (ctx: TestContext) {
       // TODO: Fix this test for Node 24+
       if (parseInt(process.versions.node.split('.')[0], 10) >= 24) {
-        this.skip();
+        return ctx.skip();
       }
 
       // workaround for https://github.com/node-fetch/node-fetch/issues/1735
@@ -127,10 +128,10 @@ describe(`FakeDriver E2E`, function () {
       expect(data.value).to.be.null;
     });
 
-    it('should handle idempotency while creating parallel sessions', async function () {
+    it('should handle idempotency while creating parallel sessions', async function (ctx: TestContext) {
       // TODO: Fix this test for Node 24+
       if (parseInt(process.versions.node.split('.')[0], 10) >= 24) {
-        this.skip();
+        return ctx.skip();
       }
 
       // workaround for https://github.com/node-fetch/node-fetch/issues/1735

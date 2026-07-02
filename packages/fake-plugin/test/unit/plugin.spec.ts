@@ -1,4 +1,4 @@
-import assert from 'node:assert';
+import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
 import {type DriverLike, FakePlugin as _FakePlugin} from '../../lib/plugin';
@@ -43,23 +43,20 @@ describe('fake plugin', function () {
     const app = new FakeExpress();
     assert.rejects(() => app.get('/fake'));
     await FakePlugin.updateServer(app as any, {} as any, {});
-    assert.strictEqual(await app.get('/fake'), JSON.stringify({fake: 'fakeResponse'}));
+    assert.equal(await app.get('/fake'), JSON.stringify({fake: 'fakeResponse'}));
   });
 
   it('should wrap find element', async function () {
     const p = new FakePlugin('fake');
-    assert.deepStrictEqual(
-      await p.findElement(() => Promise.resolve({el: 'fakeEl'}), {} as DriverLike, 'arg1', 'arg2'),
-      {
-        el: 'fakeEl',
-        fake: true,
-      },
-    );
+    assert.equal(await p.findElement(() => Promise.resolve({el: 'fakeEl'}), {} as DriverLike, 'arg1', 'arg2'), {
+      el: 'fakeEl',
+      fake: true,
+    });
   });
 
   it('should handle page source', async function () {
     const p = new FakePlugin('fake');
-    assert.strictEqual(
+    assert.equal(
       await p.getPageSource(() => Promise.resolve(''), {} as DriverLike, 'arg1', 'arg2'),
       '<Fake>["arg1","arg2"]</Fake>',
     );
@@ -67,17 +64,14 @@ describe('fake plugin', function () {
 
   it('should handle getFakeSessionData', async function () {
     const p = new FakePlugin('fake');
-    assert.strictEqual(
-      await p.getFakeSessionData(() => Promise.resolve(null), {fakeSessionData: 'hi'} as DriverLike),
-      'hi',
-    );
-    assert.strictEqual(await p.getFakeSessionData(() => Promise.resolve(null), {} as DriverLike), null);
+    assert.equal(await p.getFakeSessionData(() => Promise.resolve(null), {fakeSessionData: 'hi'} as DriverLike), 'hi');
+    assert.equal(await p.getFakeSessionData(() => Promise.resolve(null), {} as DriverLike), null);
   });
 
   it('should handle setFakeSessionData', async function () {
     const p = new FakePlugin('fake');
     const driver = {} as DriverLike;
-    assert.strictEqual(await p.setFakeSessionData(() => Promise.resolve(null), driver, 'foobar'), null);
-    assert.strictEqual(await p.getFakeSessionData(() => Promise.resolve(null), driver), 'foobar');
+    assert.equal(await p.setFakeSessionData(() => Promise.resolve(null), driver, 'foobar'), null);
+    assert.equal(await p.getFakeSessionData(() => Promise.resolve(null), driver), 'foobar');
   });
 });

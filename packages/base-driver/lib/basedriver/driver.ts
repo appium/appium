@@ -310,7 +310,7 @@ export class BaseDriver<
     this.sessionCreationTimestampMs = Date.now();
     this.caps = caps;
     // merge caps onto opts so we don't need to worry about what's where
-    this.opts = {...structuredClone(this.initialOpts), ...this.caps};
+    this.opts = {...this.initialOpts, ...this.caps};
 
     // deal with resets
     // some people like to do weird things by setting noReset and fullReset

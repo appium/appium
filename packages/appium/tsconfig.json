@@ -15,6 +15,7 @@
       "@appium/base-driver": ["../base-driver"],
       "@appium/base-plugin": ["../base-plugin"],
       "@appium/fake-driver": ["../fake-driver"],
+      "@appium/logger": ["../logger"],
       "@appium/types": ["../types"],
       "@appium/schema": ["../schema"],
       "appium": ["."]
@@ -24,11 +25,12 @@
   },
   "include": ["lib", "types", "test"],
   "references": [
-    {"path": "../schema"},
-    {"path": "../types"},
-    {"path": "../support"},
     {"path": "../base-driver"},
     {"path": "../base-plugin"},
-    {"path": "../fake-driver"}
+    {"path": "../fake-driver"},
+    {"path": "../logger"},
+    {"path": "../types"},
+    {"path": "../schema"},
+    {"path": "../support"}
   ]
 }

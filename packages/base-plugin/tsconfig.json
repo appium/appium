@@ -6,5 +6,6 @@
     "types": ["node"]
   },
   "extends": "@appium/tsconfig/tsconfig.plugin.json",
-  "include": ["lib", "test"]
+  "include": ["lib", "test"],
+  "references": [{"path": "../base-driver"}, {"path": "../logger"}, {"path": "../support"}, {"path": "../types"}]
 }

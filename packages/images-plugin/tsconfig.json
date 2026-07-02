@@ -13,8 +13,10 @@
   "extends": "@appium/tsconfig/tsconfig.plugin.json",
   "include": ["lib", "test"],
   "references": [
-    {
-      "path": "../opencv"
-    }
+    {"path": "../opencv"},
+    {"path": "../base-plugin"},
+    {"path": "../logger"},
+    {"path": "../support"},
+    {"path": "../types"}
   ]
 }

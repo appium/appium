@@ -48,7 +48,7 @@ describe('fake plugin', function () {
 
   it('should wrap find element', async function () {
     const p = new FakePlugin('fake');
-    assert.equal(await p.findElement(() => Promise.resolve({el: 'fakeEl'}), {} as DriverLike, 'arg1', 'arg2'), {
+    assert.deepEqual(await p.findElement(() => Promise.resolve({el: 'fakeEl'}), {} as DriverLike, 'arg1', 'arg2'), {
       el: 'fakeEl',
       fake: true,
     });

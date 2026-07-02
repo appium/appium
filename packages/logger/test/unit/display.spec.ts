@@ -1,3 +1,5 @@
+import {describe, it, beforeEach} from 'node:test';
+
 import {waitForCondition} from 'asyncbox';
 
 import {Log} from '../../lib/log';

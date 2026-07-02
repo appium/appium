@@ -40,7 +40,7 @@
   },
   "scripts": {
     "test": "npm run test:unit",
-    "test:smoke": "node ./build/index.js",
+    "test:smoke": "node ./build/lib/index.js",
     "test:unit": "node --test --test-timeout=5000 \"./build/test/unit/**/*.spec.js\""
   },
   "dependencies": {

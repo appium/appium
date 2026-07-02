@@ -1,3 +1,5 @@
+import {describe, it, before, after} from 'node:test';
+
 import type {ActionSequence} from '@appium/types';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';

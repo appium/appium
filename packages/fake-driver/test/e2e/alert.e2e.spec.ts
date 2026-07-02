@@ -1,3 +1,5 @@
+import {describe, it, before, after} from 'node:test';
+
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
@@ -41,7 +43,7 @@ export function alertTests(context: {port: number}) {
       try {
         await (await driver.$('#AlertButton')).click();
         await (await driver.$('#nav')).click();
-        this.fail('should have thrown an error');
+        throw new Error('should have thrown an error');
       } catch (err) {
         expect(err).to.be.an('error');
         expect((err as Error).message).to.include('modal dialog was open, blocking this operation');

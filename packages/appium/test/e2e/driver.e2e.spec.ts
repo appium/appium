@@ -31,7 +31,7 @@ let port: number;
 const sillyWebServerPort = 1234;
 const sillyWebServerHost = 'hey';
 const FAKE_ARGS = {sillyWebServerPort, sillyWebServerHost};
-const FAKE_DRIVER_ARGS = {'appium:driver': {fake: FAKE_ARGS}};
+const FAKE_DRIVER_ARGS = {driver: {fake: FAKE_ARGS}};
 const shouldStartServer = process.env.USE_RUNNING_SERVER !== '0';
 /** Cast for webdriverio capabilities typing (RequestedStandaloneCapabilities) */
 const caps = W3C_PREFIXED_CAPS as any;
@@ -168,9 +168,7 @@ describe('FakeDriver via HTTP', function () {
   describe('cli args handling for passed in args', function () {
     const {setup, teardown} = createServer();
     before(async function () {
-      await setup({
-        defaultCapabilities: FAKE_DRIVER_ARGS,
-      });
+      await setup(FAKE_DRIVER_ARGS);
     });
     after(async function () {
       await teardown();
@@ -610,7 +608,8 @@ describe('FakeDriver via HTTP', function () {
     });
   });
 
-  describe('Bidi protocol', function () {
+  // TODO: This test is skipped due to https://github.com/webdriverio/webdriverio/pull/15350
+  describe('Bidi protocol', {skip: Boolean(process.env.CI)}, function () {
     const {setup, teardown} = createServer();
     before(async function () {
       await setup();
@@ -688,7 +687,8 @@ describe('FakeDriver via HTTP', function () {
     });
   });
 
-  describe('Bidi protocol with base path', function () {
+  // TODO: This test is skipped due to https://github.com/webdriverio/webdriverio/pull/15350
+  describe('Bidi protocol with base path', {skip: Boolean(process.env.CI)}, function () {
     const basePath = '/wd/hub';
     const {setup, teardown} = createServer();
     before(async function () {
@@ -729,7 +729,7 @@ describe('FakeDriver via HTTP', function () {
 });
 
 // TODO: This test is skipped due to spdy package incompatibility
-describe('Bidi over SSL', {skip: Boolean(process.env.CI)}, function () {
+describe('Bidi over SSL', {skip: true}, function () {
   async function generateCertificate(certPath: string, keyPath: string) {
     await exec('openssl', [
       'req',

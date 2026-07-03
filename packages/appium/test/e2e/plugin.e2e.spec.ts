@@ -358,7 +358,8 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
     });
   });
 
-  describe('BiDi support', function () {
+  // TODO: This test is skipped due to https://github.com/webdriverio/webdriverio/pull/15350
+  describe('BiDi support', {skip: Boolean(process.env.CI)}, function () {
     describe('with a single plugin', function () {
       let driver: Browser;
       const {setup, teardown} = createServer();
@@ -452,7 +453,8 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
     });
   });
 
-  describe('IPC Support', function () {
+  // TODO: This test is skipped due to https://github.com/webdriverio/webdriverio/pull/15350
+  describe('IPC Support', {skip: Boolean(process.env.CI)}, function () {
     let driver: Browser;
     const {setup, teardown} = createServer();
     before(async function () {

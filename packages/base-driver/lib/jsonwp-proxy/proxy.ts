@@ -241,7 +241,7 @@ export class JWProxy {
         // If it cannot be coerced to an object then the response is wrong
         throwProxyError(data);
       }
-      this.log.debug(`Got response with status ${status}: ${truncateBody(data)}`);
+      this.log.debug(`Got response with status ${status}: %s`, logger.markSensitive(truncateBody(data)));
       isResponseLogged = true;
       const isSessionCreationRequest = url.endsWith('/session') && method === 'POST';
       if (isSessionCreationRequest) {
@@ -269,11 +269,12 @@ export class JWProxy {
       let proxyErrorMsg = err.message;
       if (util.hasValue(err.response)) {
         if (!isResponseLogged) {
-          const error = truncateBody(err.response.data);
+          const error = logger.markSensitive(truncateBody(err.response.data));
           this.log.info(
             util.hasValue(err.response.status)
-              ? `Got response with status ${err.response.status}: ${error}`
-              : `Got response with unknown status: ${error}`,
+              ? `Got response with status ${err.response.status}: %s`
+              : `Got response with unknown status: %s`,
+            error,
           );
         }
       } else {

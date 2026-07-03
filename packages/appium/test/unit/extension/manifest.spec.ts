@@ -138,7 +138,7 @@ describe('Manifest', function () {
           MockAppiumSupport.fs.readFile.resolves('{');
         });
         it('should reject', async function () {
-          await expect(manifest.read()).to.be.rejectedWith(
+          await expect(manifest.read()).to.be.eventually.rejectedWith(
             Error,
             /trouble loading the extension installation cache file/i,
           );

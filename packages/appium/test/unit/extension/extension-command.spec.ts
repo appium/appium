@@ -11,7 +11,7 @@ import type {SinonSandbox, SinonStub} from 'sinon';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 
-import {ExtensionCommand, injectAppiumSymlinks} from '../../../lib/cli/extension-command';
+import {ExtensionCliCommand, injectAppiumSymlinks} from '../../../lib/cli/extension-command';
 import type {ExtensionConfig} from '../../../lib/cli/extension-command';
 import {DriverConfig} from '../../../lib/extension/driver-config';
 import {Manifest} from '../../../lib/extension/manifest';
@@ -32,8 +32,8 @@ describe('ExtensionCommand', function () {
   const asExtensionConfig = (value: unknown): ExtensionConfig<any> => value as ExtensionConfig<any>;
 
   describe('method', function () {
-    let ec: ExtensionCommand;
-    class TestExtensionCommand extends ExtensionCommand {
+    let ec: ExtensionCliCommand;
+    class TestExtensionCommand extends ExtensionCliCommand {
       protected override getPostInstallText(): string {
         return '';
       }

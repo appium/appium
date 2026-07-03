@@ -165,7 +165,7 @@ class NotUpdatableError extends Error {}
 
 class NoUpdatesAvailableError extends Error {}
 
-abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType> {
+export abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType> {
   /**
    * This is the `DriverConfig` or `PluginConfig`, depending on `ExtType`.
    */
@@ -1238,4 +1238,3 @@ async function injectAppiumSymlink(dstFolder: string, logger: AppiumLogger): Pro
 }
 
 export default ExtensionCliCommand;
-export {ExtensionCliCommand as ExtensionCommand};

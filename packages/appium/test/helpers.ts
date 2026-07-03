@@ -1,6 +1,7 @@
 import net from 'node:net';
 import path from 'node:path';
 
+import {node} from '@appium/support';
 import rewiremock, {addPlugin, overrideEntryPoint, plugins} from 'rewiremock';
 
 import {insertAppiumPrefixes} from '../lib/helpers/capability';
@@ -55,7 +56,7 @@ async function getTestPort(): Promise<number> {
 }
 
 function resolveFixture(filename: string, ...pathParts: string[]): string {
-  return path.join(__dirname, 'fixtures', filename, ...pathParts);
+  return path.join(APPIUM_ROOT, 'test', 'fixtures', filename, ...pathParts);
 }
 
 overrideEntryPoint(module);

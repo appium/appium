@@ -2,14 +2,17 @@ import path from 'node:path';
 import {pathToFileURL} from 'node:url';
 
 import {fs, system, util} from '@appium/support';
-import type {ExtensionType} from '@appium/types';
+import type {ExtensionType, StringRecord} from '@appium/types';
 import type {SchemaObject} from 'ajv';
 import type {ExtClass, ExtManifest, ExtName, ExtRecord, InstallType} from 'appium/types';
 import {satisfies} from 'semver';
 
-import {commandClasses} from '../cli/extension';
-import type {ExtCommand} from '../cli/extension';
-import type {ExtensionList, ExtensionListData, InstalledExtensionListData} from '../cli/extension-command';
+import type {
+  ExtensionList,
+  ExtensionListData,
+  InstalledExtensionListData,
+  ExtensionCliCommand,
+} from '../cli/extension-command';
 import {APPIUM_VER} from '../helpers/build';
 import {log} from '../logger';
 import {ALLOWED_SCHEMA_EXTENSIONS, isAllowedSchemaFileExtension, registerSchema} from '../schema/schema';
@@ -385,8 +388,10 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     if (this.#listDataCache) {
       return this.#listDataCache;
     }
-    const CommandClass = commandClasses[this.extensionType] as ExtCommand<ExtType>;
-    const cmd = new CommandClass({config: this, json: true});
+    // Import here to avoid circular dependency with cli/extension
+    const {commandClasses} = await import('../cli/extension.js');
+    const CommandClass = (commandClasses as StringRecord)[this.extensionType];
+    const cmd = new CommandClass({config: this, json: true}) as ExtensionCliCommand<ExtType>;
     const listData = await cmd.list({showInstalled: true, showUpdates: true});
     this.#listDataCache = listData;
     return listData;

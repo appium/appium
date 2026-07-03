@@ -44,9 +44,9 @@
   },
   "scripts": {
     "test": "npm run test:unit",
-    "test:e2e": "mocha --exit --timeout 60s --slow 30s \"./test/e2e/**/*.e2e.spec.ts\"",
+    "test:e2e": "node --test --test-force-exit --test-concurrency=1 --test-timeout=60000 \"./build/test/e2e/**/*.e2e.spec.js\"",
     "test:smoke": "node ./build/lib/index.js",
-    "test:unit": "mocha \"./test/unit/**/*.spec.ts\"",
+    "test:unit": "node --test --test-timeout=50000 \"./build/test/unit/**/*.spec.js\"",
     "start": "node ./build/lib/cli/index.js"
   },
   "dependencies": {

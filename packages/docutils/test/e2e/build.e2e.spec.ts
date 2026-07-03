@@ -4,10 +4,10 @@
  */
 
 import path from 'node:path';
+import {describe, it, before, after, type TestContext} from 'node:test';
 
 import {fs, tempDir} from '@appium/support';
-import * as chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
+import {expect} from 'chai';
 import * as YAML from 'yaml';
 import yargs from 'yargs/yargs';
 
@@ -17,9 +17,6 @@ import {DEFAULT_SITE_DIR, NAME_BIN, NAME_MKDOCS_YML, NAME_PACKAGE_JSON} from '..
 import {stringifyYaml} from '../../lib/fs';
 import {init, initPython} from '../../lib/init';
 import type {MkDocsYml} from '../../lib/model';
-
-chai.use(chaiAsPromised);
-const {expect} = chai;
 
 /**
  * Helper function to create a project directory with package.json
@@ -50,11 +47,12 @@ async function createDocsFile(projectDir: string, filename: string, content: str
 /**
  * Helper function to ensure Python dependencies are installed
  */
-async function ensurePythonDeps(projectDir: string, context: Mocha.Context): Promise<void> {
+async function ensurePythonDeps(projectDir: string): Promise<boolean> {
   try {
     await initPython({cwd: projectDir});
+    return true;
   } catch {
-    context.skip();
+    return false;
   }
 }
 
@@ -98,7 +96,7 @@ describe('@appium/docutils build e2e', function () {
   });
 
   describe('buildSite', function () {
-    it('should build a site with mkdocs', async function () {
+    it('should build a site with mkdocs', async function (ctx: TestContext) {
       const projectDir = await createProjectDir(testDir, 'test1', {
         name: 'test-docs',
         version: '1.0.0',
@@ -118,7 +116,9 @@ describe('@appium/docutils build e2e', function () {
       });
 
       await createDocsFile(projectDir, 'index.md', '# Test Documentation\n\nThis is a test page.\n');
-      await ensurePythonDeps(projectDir, this as Mocha.Context);
+      if (!(await ensurePythonDeps(projectDir))) {
+        return ctx.skip();
+      }
 
       // Build the site
       await buildSite({
@@ -130,7 +130,7 @@ describe('@appium/docutils build e2e', function () {
       await verifySiteBuilt(path.join(projectDir, DEFAULT_SITE_DIR), 'Test Documentation');
     });
 
-    it('should build a site with custom site-dir', async function () {
+    it('should build a site with custom site-dir', async function (ctx: TestContext) {
       const customSiteDir = 'custom-site';
       const projectDir = await createProjectDir(testDir, 'test2', {
         name: 'test-docs-2',
@@ -151,7 +151,9 @@ describe('@appium/docutils build e2e', function () {
       });
 
       await createDocsFile(projectDir, 'index.md', '# Test Documentation 2\n\nThis is another test page.\n');
-      await ensurePythonDeps(projectDir, this as Mocha.Context);
+      if (!(await ensurePythonDeps(projectDir))) {
+        return ctx.skip();
+      }
 
       // Build the site with custom site-dir
       const customSiteDirPath = path.join(projectDir, customSiteDir);

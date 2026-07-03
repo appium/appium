@@ -1,3 +1,5 @@
+import {describe, it, before, after, beforeEach, afterEach, type TestContext} from 'node:test';
+
 import {BaseDriver} from '@appium/base-driver';
 import {fs, tempDir} from '@appium/support';
 import type {AppiumServer, DriverClass} from '@appium/types';
@@ -79,7 +81,6 @@ async function initFakeDriver(appiumHome: string) {
 }
 
 describe('FakeDriver via HTTP', function () {
-  let server: AppiumServer | void;
   let appiumHome: string;
   let FakeDriver: DriverClass;
   let testServerBaseSessionUrl: string;
@@ -99,24 +100,34 @@ describe('FakeDriver via HTTP', function () {
     sandbox.restore();
   });
 
-  function withServer(args: Partial<ParsedArgs> = {}) {
-    // eslint-disable-next-line mocha/no-sibling-hooks
-    before(async function () {
-      const merged = {...args, appiumHome, port, address: TEST_HOST};
-      if (shouldStartServer) {
-        server = await appiumServer(merged);
-      }
-    });
-    // eslint-disable-next-line mocha/no-sibling-hooks
-    after(async function () {
-      if (server) {
-        await server.close();
-      }
-    });
+  function createServer(): {
+    setup: (args?: Partial<ParsedArgs>) => Promise<void>;
+    teardown: () => Promise<void>;
+  } {
+    let server: AppiumServer | void;
+    return {
+      setup: async (args?: Partial<ParsedArgs>) => {
+        const merged = {...(args ?? {}), appiumHome, port, address: TEST_HOST};
+        if (shouldStartServer) {
+          server = await appiumServer(merged);
+        }
+      },
+      teardown: async () => {
+        await server?.close();
+      },
+    };
   }
 
   describe('server updating', function () {
-    withServer();
+    const {setup, teardown} = createServer();
+
+    before(async function () {
+      await setup();
+    });
+    after(async function () {
+      await teardown();
+    });
+
     it('should allow drivers to update the server in arbitrary ways', async function () {
       const {data} = await axios.get(`${testServerBaseUrl}/fakedriver`);
       expect(data).to.eql({fakedriver: 'fakeResponse'});
@@ -132,7 +143,15 @@ describe('FakeDriver via HTTP', function () {
   });
 
   describe('cli args handling for empty args', function () {
-    withServer();
+    const {setup, teardown} = createServer();
+
+    before(async function () {
+      await setup();
+    });
+    after(async function () {
+      await teardown();
+    });
+
     it('should not receive user cli args if none passed in', async function () {
       const driver = await wdio({...wdOpts, capabilities: caps});
       const {sessionId} = driver;
@@ -147,7 +166,16 @@ describe('FakeDriver via HTTP', function () {
   });
 
   describe('cli args handling for passed in args', function () {
-    withServer(FAKE_DRIVER_ARGS);
+    const {setup, teardown} = createServer();
+    before(async function () {
+      await setup({
+        defaultCapabilities: FAKE_DRIVER_ARGS,
+      });
+    });
+    after(async function () {
+      await teardown();
+    });
+
     it('should receive user cli args from a driver if arguments were passed in', async function () {
       const driver = await wdio({...wdOpts, capabilities: caps});
       const {sessionId} = driver;
@@ -162,16 +190,23 @@ describe('FakeDriver via HTTP', function () {
   });
 
   describe('default capabilities via cli', function () {
-    withServer({
-      defaultCapabilities: {
-        'appium:options': {
-          automationName: 'Fake',
-          deviceName: 'Fake',
-          app: TEST_FAKE_APP,
+    const {setup, teardown} = createServer();
+    before(async function () {
+      await setup({
+        defaultCapabilities: {
+          'appium:options': {
+            automationName: 'Fake',
+            deviceName: 'Fake',
+            app: TEST_FAKE_APP,
+          },
+          platformName: 'Fake',
         },
-        platformName: 'Fake',
-      },
+      });
     });
+    after(async function () {
+      await teardown();
+    });
+
     it('should allow appium-prefixed caps sent via appium:options through --default-capabilities', async function () {
       const appiumOptsCaps = {
         capabilities: {
@@ -199,7 +234,14 @@ describe('FakeDriver via HTTP', function () {
   });
 
   describe('inspector commands', function () {
-    withServer();
+    const {setup, teardown} = createServer();
+    before(async function () {
+      await setup();
+    });
+    after(async function () {
+      await teardown();
+    });
+
     let driver: AppiumTestBrowser;
 
     beforeEach(async function () {
@@ -267,7 +309,13 @@ describe('FakeDriver via HTTP', function () {
   });
 
   describe('session handling', function () {
-    withServer();
+    const {setup, teardown} = createServer();
+    before(async function () {
+      await setup();
+    });
+    after(async function () {
+      await teardown();
+    });
 
     it('should start and stop a session and not allow commands after session stopped', async function () {
       const driver = await wdio({...wdOpts, capabilities: caps});
@@ -558,7 +606,14 @@ describe('FakeDriver via HTTP', function () {
   });
 
   describe('Bidi protocol', function () {
-    withServer();
+    const {setup, teardown} = createServer();
+    before(async function () {
+      await setup();
+    });
+    after(async function () {
+      await teardown();
+    });
+
     const capabilities = {...caps, webSocketUrl: true, 'appium:runClock': true};
     let driver: AppiumTestBrowser;
 
@@ -630,7 +685,14 @@ describe('FakeDriver via HTTP', function () {
 
   describe('Bidi protocol with base path', function () {
     const basePath = '/wd/hub';
-    withServer({basePath});
+    const {setup, teardown} = createServer();
+    before(async function () {
+      await setup({basePath});
+    });
+    after(async function () {
+      await teardown();
+    });
+
     const capabilities = {...caps, webSocketUrl: true, 'appium:runClock': true};
     let driver: AppiumTestBrowser;
 
@@ -686,12 +748,14 @@ describe('Bidi over SSL', function () {
   const keyPath = 'certificate.key';
   const capabilities = {...caps, webSocketUrl: true};
   let previousEnvValue: string | undefined;
+  let shouldSkip: boolean = false;
 
   before(async function () {
     // Skip on Node.js 24+ due to spdy package incompatibility (http_parser removed)
     const nodeMajorVersion = parseInt(process.version.slice(1).split('.')[0], 10);
     if (nodeMajorVersion >= 24) {
-      return this.skip();
+      shouldSkip = true;
+      return;
     }
 
     try {
@@ -700,7 +764,8 @@ describe('Bidi over SSL', function () {
       if (process.env.CI) {
         throw e;
       }
-      return this.skip();
+      shouldSkip = true;
+      return;
     }
     appiumHome = await tempDir.openDir();
     wdOpts.port = port = await getTestPort();
@@ -735,7 +800,11 @@ describe('Bidi over SSL', function () {
     }
   });
 
-  it('should still run bidi over ssl', async function () {
+  it('should still run bidi over ssl', async function (ctx: TestContext) {
+    if (shouldSkip) {
+      return ctx.skip();
+    }
+
     expect(await driver.getUrl()).to.not.be.ok;
 
     await driver.browsingContextNavigate({

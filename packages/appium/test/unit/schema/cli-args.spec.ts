@@ -1,3 +1,5 @@
+import {describe, it, beforeEach, afterEach} from 'node:test';
+
 import type {ExtensionType} from '@appium/types';
 import type {ArgumentOptions} from 'argparse';
 import chai from 'chai';

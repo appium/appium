@@ -1,5 +1,7 @@
+import {describe, it, beforeEach, afterEach} from 'node:test';
+
 import {console as supportConsole} from '@appium/support';
-import chai from 'chai';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {SinonSandbox, SinonSpy} from 'sinon';
 import {createSandbox} from 'sinon';
@@ -8,8 +10,7 @@ import {inspect, showBuildInfo} from '../../../lib/bootstrap/main-helpers';
 import {getBuildInfo} from '../../../lib/helpers/build';
 import {log as logger} from '../../../lib/logger';
 
-const {expect} = chai;
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 
 describe('bootstrap/main-helpers', function () {
   let sandbox: SinonSandbox;

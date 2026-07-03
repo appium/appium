@@ -1,3 +1,5 @@
+import {describe, it, beforeEach, afterEach} from 'node:test';
+
 import {AppiumConfigJsonSchema} from '@appium/schema';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';

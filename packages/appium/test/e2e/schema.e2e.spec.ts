@@ -1,15 +1,15 @@
 import path from 'node:path';
+import {describe, it, before, after} from 'node:test';
 
 import {fs, tempDir} from '@appium/support';
-import chai from 'chai';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
 import {DRIVER_TYPE} from '../../lib/constants';
 import {resolveFixture} from '../helpers';
 import {installLocalExtension, runAppium} from './e2e-helpers';
 
-const {expect} = chai;
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 
 describe('CLI behavior controlled by schema', function () {
   let appiumHome: string;

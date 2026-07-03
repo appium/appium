@@ -21,7 +21,7 @@
       "appium": ["."]
     },
     "checkJs": true,
-    "types": ["mocha", "chai", "chai-as-promised", "node"]
+    "types": ["node", "chai", "chai-as-promised"]
   },
   "include": ["lib", "types", "test"],
   "references": [

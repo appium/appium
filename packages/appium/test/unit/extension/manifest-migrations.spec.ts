@@ -1,13 +1,14 @@
+import {describe, it} from 'node:test';
+
 import type {ExtManifest} from 'appium/types';
-import chai from 'chai';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
 import {DRIVER_TYPE} from '../../../lib/constants';
 import {Manifest} from '../../../lib/extension/manifest';
 import {migrate} from '../../../lib/extension/manifest-migrations';
 
-const {expect} = chai;
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 
 describe('manifest-migrations', function () {
   describe('when no installPath property present in manifest', function () {

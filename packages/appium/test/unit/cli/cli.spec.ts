@@ -1,3 +1,5 @@
+import {describe, it, beforeEach, afterEach} from 'node:test';
+
 import {fs, npm, tempDir} from '@appium/support';
 import {expect} from 'chai';
 import {createSandbox} from 'sinon';

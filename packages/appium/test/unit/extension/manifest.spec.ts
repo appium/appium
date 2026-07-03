@@ -1,9 +1,10 @@
 import EventEmitter from 'node:events';
 import {promises as fs} from 'node:fs';
+import {describe, it, beforeEach, afterEach, before} from 'node:test';
 
 import type {DriverType, PluginType} from '@appium/types';
 import type {ExtManifest, ExtPackageJson, ManifestData} from 'appium/types';
-import chai from 'chai';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {SinonSandbox} from 'sinon';
 
@@ -13,8 +14,7 @@ import {resolveFixture, rewiremock} from '../../helpers';
 import {initMocks} from './mocks';
 import type {MockAppiumSupport, MockGlob, MockPackageChanged} from './mocks';
 
-const {expect} = chai;
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 
 describe('Manifest', function () {
   let sandbox: SinonSandbox;

@@ -1,3 +1,5 @@
+import {describe, it, before, after} from 'node:test';
+
 import {fs, tempDir} from '@appium/support';
 import type {AppiumServer} from '@appium/types';
 import type {ParsedArgs} from 'appium/types';
@@ -31,19 +33,19 @@ const wdOpts: {
 
 let baseServerArgs: Partial<ParsedArgs>;
 
-function serverSetup(args: Record<string, unknown>) {
+function createServer(): {
+  setup: (args?: Partial<ParsedArgs>) => Promise<void>;
+  teardown: () => Promise<void>;
+} {
   let server: Awaited<ReturnType<typeof appiumServer>> | null = null;
-
-  /* eslint-disable mocha/no-top-level-hooks -- hooks are intentionally in a helper */
-  before(async function () {
-    server = await appiumServer({...baseServerArgs, ...args});
-  });
-  after(async function () {
-    if (server) {
-      await server.close();
-    }
-  });
-  /* eslint-enable mocha/no-top-level-hooks */
+  return {
+    setup: async (args?: Partial<ParsedArgs>) => {
+      server = await appiumServer({...baseServerArgs, ...(args ?? {})});
+    },
+    teardown: async () => {
+      await server?.close();
+    },
+  };
 }
 
 describe('FakePlugin w/ FakeDriver via HTTP', function () {
@@ -139,7 +141,14 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
   for (const registrationType of ['explicit', 'all']) {
     describe(`with plugin registered via type ${registrationType}`, function () {
       const usePlugins = registrationType === 'explicit' ? ['fake'] : ['all'];
-      serverSetup({usePlugins});
+      const {setup, teardown} = createServer();
+      before(async function () {
+        await setup({usePlugins});
+      });
+      after(async function () {
+        await teardown();
+      });
+
       it('should update the server', async function () {
         const res = {fake: 'fakeResponse'};
         expect((await axios.post(`http://${TEST_HOST}:${port}/fake`)).data).to.eql(res);
@@ -349,16 +358,20 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
   describe('BiDi support', function () {
     describe('with a single plugin', function () {
       let driver: Browser;
+      const {setup, teardown} = createServer();
 
+      before(async function () {
+        await setup();
+      });
       // this 'after' block needs to come before 'serverSetup' so that the delete session happens
       // before the server shutdown
       after(async function () {
-        if (driver) {
-          await driver.deleteSession();
+        try {
+          await driver?.deleteSession();
+        } finally {
+          await teardown();
         }
       });
-
-      serverSetup({});
 
       before(async function () {
         const caps = {...wdOpts.capabilities, webSocketUrl: true, 'appium:runClock': true};
@@ -438,20 +451,21 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
 
   describe('IPC Support', function () {
     let driver: Browser;
+    const {setup, teardown} = createServer();
+    before(async function () {
+      await setup();
+      const caps = {...wdOpts.capabilities, webSocketUrl: true, 'appium:runClock': true};
+      driver = await wdio({...wdOpts, capabilities: caps} as any);
+    });
 
     // this 'after' block needs to come before 'serverSetup' so that the delete session happens
     // before the server shutdown
     after(async function () {
-      if (driver) {
-        await driver.deleteSession();
+      try {
+        await driver?.deleteSession();
+      } finally {
+        await teardown();
       }
-    });
-
-    serverSetup({});
-
-    before(async function () {
-      const caps = {...wdOpts.capabilities, webSocketUrl: true, 'appium:runClock': true};
-      driver = await wdio({...wdOpts, capabilities: caps} as any);
     });
 
     it('should allow driver to publish to plugin', async function () {

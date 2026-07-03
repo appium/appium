@@ -1,4 +1,6 @@
-import chai from 'chai';
+import {describe, it, beforeEach, before, after} from 'node:test';
+
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
 import {readConfigFile} from '../../lib/bootstrap/config-file';
@@ -8,8 +10,7 @@ import {INSTALL_TYPES} from '../../lib/extension/extension-config';
 import * as schema from '../../lib/schema/schema';
 import {resolveFixture} from '../helpers';
 
-const {expect} = chai;
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 
 // these paths should not make assumptions about the current working directory
 const ALLOW_FIXTURE = resolveFixture('allow-feat.txt');

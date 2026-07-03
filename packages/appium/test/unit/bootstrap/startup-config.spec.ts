@@ -1,4 +1,6 @@
-import chai from 'chai';
+import {describe, it, beforeEach, afterEach} from 'node:test';
+
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {SinonSandbox, SinonSpy} from 'sinon';
 import {createSandbox} from 'sinon';
@@ -9,8 +11,7 @@ import {PLUGIN_TYPE} from '../../../lib/constants';
 import {finalizeSchema, getDefaultsForSchema, registerSchema, resetSchema} from '../../../lib/schema/schema';
 import {setPath} from '../../../lib/utils';
 
-const {expect} = chai;
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 
 describe('bootstrap/startup-config', function () {
   let sandbox: SinonSandbox;

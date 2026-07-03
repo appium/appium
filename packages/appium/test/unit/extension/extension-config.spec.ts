@@ -1,6 +1,7 @@
 import path from 'node:path';
+import {describe, it, beforeEach, afterEach} from 'node:test';
 
-import chai from 'chai';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {SinonSandbox} from 'sinon';
 
@@ -11,8 +12,7 @@ import {FAKE_DRIVER_DIR, PROJECT_ROOT, rewiremock} from '../../helpers';
 import {initMocks} from './mocks';
 import type {MockAppiumSupport} from './mocks';
 
-const {expect} = chai;
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 
 describe('ExtensionConfig', function () {
   let sandbox: SinonSandbox;

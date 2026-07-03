@@ -1,7 +1,6 @@
 import net from 'node:net';
 import path from 'node:path';
 
-import {node} from '@appium/support';
 import rewiremock, {addPlugin, overrideEntryPoint, plugins} from 'rewiremock';
 
 import {insertAppiumPrefixes} from '../lib/helpers/capability';

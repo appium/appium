@@ -1,4 +1,3 @@
-import EventEmitter from 'node:events';
 import {promises as fs} from 'node:fs';
 import {describe, it, beforeEach, afterEach, before} from 'node:test';
 
@@ -12,7 +11,7 @@ import {DRIVER_TYPE, PLUGIN_TYPE} from '../../../lib/constants';
 import {APPIUM_VER} from '../../../lib/helpers/build';
 import {resolveFixture, rewiremock} from '../../helpers';
 import {initMocks} from './mocks';
-import type {MockAppiumSupport, MockGlob, MockPackageChanged} from './mocks';
+import type {MockAppiumSupport, MockPackageChanged} from './mocks';
 
 use(chaiAsPromised);
 
@@ -21,7 +20,6 @@ describe('Manifest', function () {
   let yamlFixture: string;
   let MockPackageChanged: MockPackageChanged;
   let MockAppiumSupport: MockAppiumSupport;
-  let MockGlob: MockGlob;
   let Manifest: any;
 
   before(async function () {
@@ -30,7 +28,7 @@ describe('Manifest', function () {
 
   beforeEach(function () {
     let overrides: ReturnType<typeof initMocks>['overrides'];
-    ({MockPackageChanged, MockAppiumSupport, MockGlob, overrides, sandbox} = initMocks());
+    ({MockPackageChanged, MockAppiumSupport, overrides, sandbox} = initMocks());
     MockAppiumSupport.fs.readFile.resolves(yamlFixture);
     ({Manifest} = rewiremock.proxy(() => require('../../../lib/extension/manifest'), {
       ...overrides,

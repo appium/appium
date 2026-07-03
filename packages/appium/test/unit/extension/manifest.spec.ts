@@ -493,32 +493,19 @@ describe('Manifest', function () {
 
       describe('when the underlying implementation emits "error"', function () {
         beforeEach(function () {
-          (MockGlob as any).callsFake(() => {
-            const ee = new EventEmitter();
-            setTimeout(() => {
-              ee.emit('error', new Error('bogus'));
-            });
-            return ee;
-          });
+          MockAppiumSupport.fs.glob.rejects(new Error('bogus'));
         });
-        it('should reject', function () {
-          expect(manifest.syncWithInstalledExtensions()).to.be.rejectedWith(Error, 'bogus');
+        it('should reject', async function () {
+          await expect(manifest.syncWithInstalledExtensions()).to.be.rejectedWith(Error, 'bogus');
         });
       });
 
       describe('when the underlying implementation completes with an error', function () {
         beforeEach(function () {
-          (MockGlob as any).callsFake((...args: any[]) => {
-            const done = args[2] as (err: Error) => void;
-            const ee = new EventEmitter();
-            setTimeout(() => {
-              done(new Error('wack'));
-            });
-            return ee;
-          });
+          MockAppiumSupport.fs.glob.rejects(new Error('wack'));
         });
-        it('should reject', function () {
-          expect(manifest.syncWithInstalledExtensions()).to.be.rejectedWith(Error, 'wack');
+        it('should reject', async function () {
+          await expect(manifest.syncWithInstalledExtensions()).to.be.rejectedWith(Error, 'wack');
         });
       });
     });

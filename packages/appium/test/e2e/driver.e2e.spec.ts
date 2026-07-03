@@ -1,4 +1,4 @@
-import {describe, it, before, after, beforeEach, afterEach, type TestContext} from 'node:test';
+import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
 
 import {BaseDriver} from '@appium/base-driver';
 import {fs, tempDir} from '@appium/support';

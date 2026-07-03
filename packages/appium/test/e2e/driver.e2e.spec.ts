@@ -31,7 +31,7 @@ let port: number;
 const sillyWebServerPort = 1234;
 const sillyWebServerHost = 'hey';
 const FAKE_ARGS = {sillyWebServerPort, sillyWebServerHost};
-const FAKE_DRIVER_ARGS = {driver: {fake: FAKE_ARGS}};
+const FAKE_DRIVER_ARGS = {'appium:driver': {fake: FAKE_ARGS}};
 const shouldStartServer = process.env.USE_RUNNING_SERVER !== '0';
 /** Cast for webdriverio capabilities typing (RequestedStandaloneCapabilities) */
 const caps = W3C_PREFIXED_CAPS as any;
@@ -571,10 +571,12 @@ describe('FakeDriver via HTTP', function () {
           },
         },
       };
+      let sessionId = null;
       const createSessionStub = sandbox
         .stub(FakeDriver.prototype, 'createSession')
         .callsFake(async function (this: InstanceType<DriverClass>, caps) {
           const res = await BaseDriver.prototype.createSession.call(this, caps);
+          sessionId = res[0];
           expect(this.protocol).to.equal('W3C');
           return res;
         });
@@ -585,6 +587,9 @@ describe('FakeDriver via HTTP', function () {
         const {status} = res;
         expect(status).to.eql(200);
       } finally {
+        if (sessionId) {
+          await axios.delete(`${testServerBaseSessionUrl}/${sessionId}`);
+        }
         createSessionStub.restore();
       }
     });
@@ -723,7 +728,8 @@ describe('FakeDriver via HTTP', function () {
   });
 });
 
-describe('Bidi over SSL', function () {
+// TODO: This test is skipped due to spdy package incompatibility
+describe('Bidi over SSL', {skip: Boolean(process.env.CI)}, function () {
   async function generateCertificate(certPath: string, keyPath: string) {
     await exec('openssl', [
       'req',
@@ -748,25 +754,9 @@ describe('Bidi over SSL', function () {
   const keyPath = 'certificate.key';
   const capabilities = {...caps, webSocketUrl: true};
   let previousEnvValue: string | undefined;
-  let shouldSkip: boolean = false;
 
   before(async function () {
-    // Skip on Node.js 24+ due to spdy package incompatibility (http_parser removed)
-    const nodeMajorVersion = parseInt(process.version.slice(1).split('.')[0], 10);
-    if (nodeMajorVersion >= 24) {
-      shouldSkip = true;
-      return;
-    }
-
-    try {
-      await generateCertificate(certPath, keyPath);
-    } catch (e) {
-      if (process.env.CI) {
-        throw e;
-      }
-      shouldSkip = true;
-      return;
-    }
+    await generateCertificate(certPath, keyPath);
     appiumHome = await tempDir.openDir();
     wdOpts.port = port = await getTestPort();
     testServerBaseUrl = `https://${TEST_HOST}:${port}`;
@@ -795,16 +785,10 @@ describe('Bidi over SSL', function () {
 
   afterEach(async function () {
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = previousEnvValue;
-    if (driver) {
-      await driver.deleteSession();
-    }
+    await driver?.deleteSession();
   });
 
-  it('should still run bidi over ssl', async function (ctx: TestContext) {
-    if (shouldSkip) {
-      return ctx.skip();
-    }
-
+  it('should still run bidi over ssl', async function () {
     expect(await driver.getUrl()).to.not.be.ok;
 
     await driver.browsingContextNavigate({

@@ -5,7 +5,8 @@ import type {AppiumServer} from '@appium/types';
 import type {ParsedArgs} from 'appium/types';
 import {sleep} from 'asyncbox';
 import axios from 'axios';
-import {expect} from 'chai';
+import {expect, use} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import type {Browser} from 'webdriverio';
 import {remote as wdio} from 'webdriverio';
 
@@ -16,6 +17,8 @@ import {INSTALL_TYPE_LOCAL} from '../../lib/extension/extension-config';
 import {main as appiumServer} from '../../lib/main';
 import {resetSchema} from '../../lib/schema';
 import {FAKE_DRIVER_DIR, FAKE_PLUGIN_DIR, getTestPort, TEST_HOST, W3C_PREFIXED_CAPS} from '../helpers';
+
+use(chaiAsPromised);
 
 const FAKE_ARGS = {sillyWebServerPort: 1234, host: 'hey'};
 const FAKE_PLUGIN_ARGS = {fake: FAKE_ARGS};

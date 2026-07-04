@@ -1,4 +1,5 @@
 import {promises as fs} from 'node:fs';
+import {describe, it, beforeEach, afterEach, before} from 'node:test';
 
 import type {ExtensionType, PluginType} from '@appium/types';
 import type {ExtManifest} from 'appium/types';

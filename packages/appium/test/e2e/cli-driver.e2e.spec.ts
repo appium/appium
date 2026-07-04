@@ -1,4 +1,5 @@
 import path from 'node:path';
+import {describe, it, before, after, beforeEach, type TestContext} from 'node:test';
 
 import {fs, system, tempDir, util} from '@appium/support';
 import type {DriverType} from '@appium/types';
@@ -36,9 +37,7 @@ interface ExtensionListResult {
   };
 }
 
-describe('Driver CLI', function () {
-  this.timeout(90000);
-
+describe('Driver CLI', {timeout: 90000}, function () {
   let appiumHome: string;
   let runList: (args?: string[]) => Promise<ExtensionListResult>;
   let runRun: (args: string[]) => Promise<{output: string; error?: string}>;
@@ -89,9 +88,9 @@ describe('Driver CLI', function () {
       expect(out).to.eql({});
     });
 
-    it('should show updates for installed drivers with --updates', async function () {
+    it('should show updates for installed drivers with --updates', async function (ctx: TestContext) {
       if (system.isWindows()) {
-        return this.skip();
+        return ctx.skip();
       }
       const versions = JSON.parse(
         (
@@ -204,9 +203,9 @@ describe('Driver CLI', function () {
       });
     });
 
-    it('should install a driver from GitHub', async function () {
+    it('should install a driver from GitHub', async function (ctx: TestContext) {
       if (process.env.CI) {
-        return this.skip();
+        return ctx.skip();
       }
       const ret = await runInstall([
         'appium/appium-fake-driver',
@@ -241,9 +240,9 @@ describe('Driver CLI', function () {
       });
     });
 
-    it('should install a driver from a remote git repo', async function () {
+    it('should install a driver from a remote git repo', async function (ctx: TestContext) {
       if (process.env.CI) {
-        return this.skip();
+        return ctx.skip();
       }
       const ret = await runInstall([
         'git+https://github.com/appium/appium-fake-driver.git',
@@ -320,11 +319,11 @@ describe('Driver CLI', function () {
       expect(listResult.fake).to.deep.include(installResult.fake);
     });
 
-    it.skip('should create a symlink', async function () {
+    it.skip('should create a symlink', async function (ctx: TestContext) {
       const srcStat = await fs.lstat(FAKE_DRIVER_DIR);
       const destStat = await fs.lstat(appiumHome);
       if (srcStat.dev !== destStat.dev) {
-        return this.skip();
+        return ctx.skip();
       }
       const stat = await fs.lstat(installPath);
       expect(stat.isSymbolicLink()).to.be.true;

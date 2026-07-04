@@ -1,3 +1,5 @@
+import {describe, it} from 'node:test';
+
 import chai from 'chai';
 
 import {npmPackage} from '../../../lib/utils/package-json';

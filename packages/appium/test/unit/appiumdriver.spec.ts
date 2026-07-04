@@ -1,4 +1,4 @@
-// @ts-check
+import {describe, it, beforeEach, afterEach, before} from 'node:test';
 
 import {BaseDriver} from '@appium/base-driver';
 import {BasePlugin} from '@appium/base-plugin';
@@ -214,9 +214,9 @@ describe('AppiumDriver', function () {
           .once()
           .throws('Cannot shut down Android driver; it has already shut down');
         mockFakeDrivers[2].expects('deleteSession').once();
-        appium.sessions['abc-123-xyz'] = fakeDrivers[0];
-        appium.sessions['xyz-321-abc'] = fakeDrivers[1];
-        appium.sessions['123-abc-xyz'] = fakeDrivers[2];
+        (appium as any).sessions['abc-123-xyz'] = fakeDrivers[0];
+        (appium as any).sessions['xyz-321-abc'] = fakeDrivers[1];
+        (appium as any).sessions['123-abc-xyz'] = fakeDrivers[2];
 
         let sessions = await appium.getAppiumSessions();
         expect(sessions).to.have.length(3);

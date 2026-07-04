@@ -1,3 +1,5 @@
+import {describe, it} from 'node:test';
+
 import {expect} from 'chai';
 
 import {adler32} from '../../../lib/utils/hash';

@@ -1,5 +1,6 @@
 import type {ChildProcess} from 'node:child_process';
 import type {Writable} from 'node:stream';
+import {describe, it, beforeEach, afterEach} from 'node:test';
 
 import {fs, system} from '@appium/support';
 import type {AppiumLogger} from '@appium/types';
@@ -10,7 +11,7 @@ import type {SinonSandbox, SinonStub} from 'sinon';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 
-import {ExtensionCommand, injectAppiumSymlinks} from '../../../lib/cli/extension-command';
+import {ExtensionCliCommand, injectAppiumSymlinks} from '../../../lib/cli/extension-command';
 import type {ExtensionConfig} from '../../../lib/cli/extension-command';
 import {DriverConfig} from '../../../lib/extension/driver-config';
 import {Manifest} from '../../../lib/extension/manifest';
@@ -31,8 +32,8 @@ describe('ExtensionCommand', function () {
   const asExtensionConfig = (value: unknown): ExtensionConfig<any> => value as ExtensionConfig<any>;
 
   describe('method', function () {
-    let ec: ExtensionCommand;
-    class TestExtensionCommand extends ExtensionCommand {
+    let ec: ExtensionCliCommand;
+    class TestExtensionCommand extends ExtensionCliCommand {
       protected override getPostInstallText(): string {
         return '';
       }
@@ -57,19 +58,21 @@ describe('ExtensionCommand', function () {
       // underlying `ChildProcess` instance.
       // something like `execa` could work around this because it returns a frankenstein of a
       // `Promise` + `ChildProcess`, but I didn't want to add the dep.
-      it('should respond to stdin', function (done) {
+      it('should respond to stdin', async function () {
         // we have to fake writing to STDIN because this is an automated test, after all.
         const proc = (ec as any)._runUnbuffered(FAKE_DRIVER_DIR, FAKE_STDIN_SCRIPT, [], {
           stdio: ['pipe', 'inherit', 'inherit'],
         }) as ChildProcess;
 
-        proc.once('exit', (code: number | null) => {
-          try {
-            expect(code).to.equal(0);
-            done();
-          } catch (err) {
-            done(err);
-          }
+        const exitPromise = new Promise<void>((resolve, reject) => {
+          proc.once('exit', (code: number | null) => {
+            try {
+              expect(code).to.equal(0);
+              resolve();
+            } catch (err) {
+              reject(err);
+            }
+          });
         });
 
         setTimeout(() => {
@@ -79,6 +82,8 @@ describe('ExtensionCommand', function () {
           stdin.write('\n');
           stdin.end();
         }, 200);
+
+        await exitPromise;
       });
     });
   });

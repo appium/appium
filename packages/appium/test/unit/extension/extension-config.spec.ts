@@ -1,6 +1,7 @@
 import path from 'node:path';
+import {describe, it, beforeEach, afterEach} from 'node:test';
 
-import chai from 'chai';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {SinonSandbox} from 'sinon';
 
@@ -11,8 +12,7 @@ import {FAKE_DRIVER_DIR, PROJECT_ROOT, rewiremock} from '../../helpers';
 import {initMocks} from './mocks';
 import type {MockAppiumSupport} from './mocks';
 
-const {expect} = chai;
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 
 describe('ExtensionConfig', function () {
   let sandbox: SinonSandbox;
@@ -214,7 +214,7 @@ describe('ExtensionConfig', function () {
 
           it('should resolve w/ an appropriate warning', async function () {
             await expect(config.getGenericConfigWarnings(extData, extData.pkgName)).to.eventually.eql([
-              `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to an invalid or missing peer dependency on Appium. A newer version of \`${extData.pkgName}\` is available; please attempt to upgrade "${extData.pkgName}" to v${updateVersion} or newer.`,
+              `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to an invalid or missing peer dependency on Appium. Please ask the developer of \`${extData.pkgName}\` to add a peer dependency on \`^appium@${APPIUM_VER}\`.`,
             ]);
           });
         });
@@ -236,7 +236,7 @@ describe('ExtensionConfig', function () {
 
           it('should resolve w/ an appropriate warning', async function () {
             await expect(config.getGenericConfigWarnings(extData, extData.pkgName)).to.eventually.eql([
-              `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to its peer dependency on Appium ${extData.appiumVersion}. Try to upgrade \`${extData.pkgName}\` to v${updateVersion} or newer.`,
+              `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to its peer dependency on Appium ${extData.appiumVersion}. Please install a compatible version of the driver.`,
             ]);
           });
         });

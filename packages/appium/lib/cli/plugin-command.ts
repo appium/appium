@@ -2,7 +2,7 @@ import {console, util} from '@appium/support';
 import type {ExtMetadata, ExtRecord, InstallType} from 'appium/types';
 
 import {KNOWN_PLUGINS} from '../constants';
-import ExtensionCliCommand from './extension-command';
+import {ExtensionCliCommand} from './extension-command';
 import type {
   ExtensionArgs,
   ExtensionCommandOptions,

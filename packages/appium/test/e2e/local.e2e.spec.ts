@@ -1,4 +1,5 @@
 import path from 'node:path';
+import {describe, it, before, after, beforeEach} from 'node:test';
 
 import {env, fs, npm, tempDir} from '@appium/support';
 import type {ManifestData} from 'appium/types';

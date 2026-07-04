@@ -1,5 +1,7 @@
+import {describe, it, afterEach, beforeEach, type TestContext} from 'node:test';
+
 import {system, util} from '@appium/support';
-import chai from 'chai';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
 import {readConfigFile} from '../../lib/bootstrap/config-file';
@@ -8,8 +10,7 @@ import {finalizeSchema, registerSchema, resetSchema} from '../../lib/schema/sche
 import extSchema from '../fixtures/driver-schema';
 import {resolveFixture} from '../helpers';
 
-const {expect} = chai;
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 
 const resolveConfigFixture = (name: string) => resolveFixture('config', name);
 
@@ -235,9 +236,9 @@ describe('config file behavior', function () {
     });
 
     describe('when the config file is invalid JSON', function () {
-      it('should reject with a user-friendly error message', async function () {
+      it('should reject with a user-friendly error message', async function (ctx: TestContext) {
         if (system.isWindows()) {
-          return this.skip();
+          return ctx.skip();
         }
         await expect(readConfigFile(INVALID_JSON_FILEPATH)).to.be.rejectedWith(
           new RegExp(`${util.escapeRegExp(INVALID_JSON_FILEPATH)}`),

@@ -1,3 +1,5 @@
+import {describe, it, beforeEach, afterEach, after} from 'node:test';
+
 import {logger} from '@appium/support';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';

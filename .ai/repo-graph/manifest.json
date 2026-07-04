@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "shards": [
+    {
+      "name": "repo-10945420806069733481-00",
+      "path": "repo-10945420806069733481-00.gmap",
+      "content_hash": "aaef9d59b4508d72"
+    },
+    {
+      "name": "repo-10945420806069733481-01",
+      "path": "repo-10945420806069733481-01.gmap",
+      "content_hash": "5f9863a03ded8237"
+    },
+    {
+      "name": "repo-10945420806069733481-02",
+      "path": "repo-10945420806069733481-02.gmap",
+      "content_hash": "da41d10eab742629"
+    },
+    {
+      "name": "repo-10945420806069733481-03",
+      "path": "repo-10945420806069733481-03.gmap",
+      "content_hash": "58cec7edaffac323"
+    }
+  ]
+}

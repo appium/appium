@@ -3,10 +3,7 @@
     "repo-graph": {
       "type": "stdio",
       "command": "repo-graph",
-      "args": [
-        "--repo",
-        "/Users/elf/code/appium"
-      ]
+      "args": ["--repo", "."]
     }
   }
 }

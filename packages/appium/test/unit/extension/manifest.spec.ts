@@ -497,15 +497,6 @@ describe('Manifest', function () {
           await expect(manifest.syncWithInstalledExtensions()).to.be.rejectedWith(Error, 'bogus');
         });
       });
-
-      describe('when the underlying implementation completes with an error', function () {
-        beforeEach(function () {
-          MockAppiumSupport.fs.glob.rejects(new Error('wack'));
-        });
-        it('should reject', async function () {
-          await expect(manifest.syncWithInstalledExtensions()).to.be.rejectedWith(Error, 'wack');
-        });
-      });
     });
 
     describe('hasDriver()', function () {

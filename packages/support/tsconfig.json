@@ -5,7 +5,7 @@
     "outDir": "build",
     "strict": true,
     "paths": {"@appium/types": ["../types"]},
-    "types": ["node", "chai", "chai-as-promised"]
+    "types": ["node"]
   },
   "include": ["lib", "test"],
   "references": [{"path": "../types"}, {"path": "../logger"}]

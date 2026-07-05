@@ -4,7 +4,7 @@
     "rootDir": ".",
     "outDir": "build",
     "checkJs": true,
-    "types": ["node", "chai"],
+    "types": ["node"],
     "paths": {
       "@appium/support": ["../support"],
       "@appium/types": ["../types"]

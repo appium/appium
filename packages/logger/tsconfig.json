@@ -5,7 +5,7 @@
     "esModuleInterop": true,
     "strict": true,
     "outDir": "build",
-    "types": ["node", "chai"],
+    "types": ["node"],
     "checkJs": true
   },
   "include": ["lib", "test"]

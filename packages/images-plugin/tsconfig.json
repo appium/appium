@@ -8,7 +8,7 @@
     "paths": {
       "@appium/opencv": ["../opencv"]
     },
-    "types": ["node", "chai", "sinon", "chai-as-promised"]
+    "types": ["node"]
   },
   "extends": "@appium/tsconfig/tsconfig.plugin.json",
   "include": ["lib", "test"],

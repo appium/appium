@@ -11,7 +11,7 @@
     "outDir": "build",
     "checkJs": true,
     "strict": true,
-    "types": ["node", "chai", "chai-as-promised"],
+    "types": ["node"],
     "paths": {
       "@appium/types": ["../types"],
       "appium/support": ["../appium/support"],

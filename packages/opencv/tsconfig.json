@@ -5,7 +5,7 @@
     "rootDir": ".",
     "outDir": "build",
     "checkJs": true,
-    "types": ["node", "chai", "chai-as-promised"]
+    "types": ["node"]
   },
   "include": ["lib", "test"]
 }

@@ -5,7 +5,7 @@
     "outDir": "build",
     "strict": true,
     "checkJs": true,
-    "types": ["node", "chai", "chai-as-promised"]
+    "types": ["node"]
   },
   "include": ["lib", "test/unit", "test/e2e"],
   "exclude": ["build"]

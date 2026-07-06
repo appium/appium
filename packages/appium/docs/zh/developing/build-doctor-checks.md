@@ -1,45 +1,33 @@
 ---
-title: Building Doctor Checks
+title: 构建 Doctor Checks
 ---
 
-The idea of Appium Doctor is to assist users with driver or plugin preconditions setup. Sometimes such
-preconditions might be quite complicated and require non-trivial technical knowledge. Doctor checks,
-which are vanilla Node.js class instances written by extension authors, simplify
-the setup process by automating diagnostics and possible fixes for the found issues. These checks
-might also be interactive to ensure better usage experience.
+Appium Doctor 的目标，是帮助用户完成驱动或插件的前置条件配置。 有时这些前置条件可能相当复杂，需要一定的技术知识。 Doctor checks是由扩展作者编写的普通 Node.js 类实例，它可以自动完成诊断并尝试修复发现的问题。 为了提供更好的使用体验，这些检查项有时也会是交互式的。
 
-This tutorial is supposed to be used by plugin or driver authors that would like to help their users
-to deal with complicated setup or configuration steps.
+本教程适用于希望帮助用户处理复杂配置或设置步骤的插件或驱动作者。
 
-## Adding Doctor Checks
+## 添加 Doctor Checks
 
-### Typing Requirements
+### 类型要求
 
-The term `Doctor Check` literally describes a single javascript class instance that implements the
-[IDoctorCheck interface](https://github.com/appium/appium/blob/master/packages/types/lib/doctor.ts).
-The interface defines the following methods and properties:
+术语 `Doctor Check` 的字面含义，是指一个实现了 [IDoctorCheck 接口](https://github.com/appium/appium/blob/master/packages/types/lib/doctor.ts) 的 JavaScript 类实例。
+这个接口定义了以下方法和属性：
 
-- `diagnose(): Promise<DoctorCheckResult>`: Contains the code to diagnose a possible issue
-- `fix(): Promise<string|null>`: Either fixes the actual problem if `hasAutofix()` returns true or
-  returns a string description for possible manual fixes. If this method throws an exception named
-  `FixSkippedError` and `hasAutofix()` returns true then the result of the method invocation
-  is going to be ignored.
-- `hasAutofix(): boolean`: Whether calling `fix()` would resolve the found issue
-- `isOptional(): boolean`: Whether the found issue can be ignored and is not a showstopper
-- `log: AppiumLogger`: May be used for logging. This property may be assigned
-  by the instance itself or by the Appium server if it is left unassigned.
+- `diagnose(): Promise<DoctorCheckResult>`：包含诊断某个问题的代码
+- `fix(): Promise<string|null>`：如果 `hasAutofix()` 返回 true，则修复实际问题；否则返回一段手动修复的说明。 如果此方法抛出名为 `FixSkippedError` 的异常，并且 `hasAutofix()` 返回 true，那么该调用结果将被忽略。
+- `hasAutofix(): boolean`：表示调用 `fix()` 是否能解决发现的问题
+- `isOptional(): boolean`：表示发现的问题是否可以被忽略且不是阻塞性问题
+- `log: AppiumLogger`：可用于日志输出。 这个属性可以由实例自行赋值，也可以由 Appium 服务在未赋值时自动提供。
 
-The `DoctorCheckResult` object returned by the `diagnose()` method must contain the following properties:
+`diagnose()` 方法返回的 `DoctorCheckResult` 对象必须包含以下属性：
 
-- `ok: boolean`: Whether the diagnosis found no issues
-- `optional: boolean`: Whether the diagnosed issue is safe to ignore
-- `message: string`: The text message describing the diagnostic result
+- `ok: boolean`：诊断是否未发现任何问题。
+- `optional: boolean`：诊断出的问题是否可以安全忽略。
+- `message: string`：描述诊断结果的文本信息。
 
-### Manifest Requirements
+### 清单要求
 
-A single extension may export multiple Doctor checks to Appium. In order for these checks to be properly
-picked up by the server CLI after the corresponding extension is installed they might be listed in the
-package .json manifest under the `appium.doctor.checks` section similar to the definition below:
+一个扩展可以向 Appium 导出多个 Doctor checks。 为了让这些检查项在对应扩展安装后能够被服务端 CLI 正确识别，它们需要在package .json 清单文件中列在 `appium.doctor.checks` 部分，格式类似下面这样：
 
 ```json
   // ...
@@ -67,12 +55,11 @@ package .json manifest under the `appium.doctor.checks` section similar to the d
   // ...
 ```
 
-Also, it makes sense to include the [@appium/types](https://www.npmjs.com/package/@appium/types) import
-to the package dev dependencies.
+此外，建议将 [@appium/types](https://www.npmjs.com/package/@appium/types) 加入包的开发依赖中。
 
-### Implementation Example
+### 实现示例
 
-The below example is a "raw" Node.JS implementation that does not use any transpilation:
+下面是一个“原生”的 Node.js 实现示例，没有使用任何转译工具：
 
 ```js
 const {fs, doctor} = require('@appium/support');
@@ -123,8 +110,7 @@ module.exports = {androidHomeCheck};
  */
 ```
 
-This file could be saved as `doctor/android-home-check.js` and then added to the package.json manifest
-as
+这个文件可以保存为 `doctor/android-home-check.js`，然后再将其加入到 package.json 清单中，例如：
 
 ```json
   // ...

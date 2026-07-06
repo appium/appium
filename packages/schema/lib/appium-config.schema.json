@@ -49,6 +49,12 @@
           "type": "array",
           "uniqueItems": true
         },
+        "allow-unknown-args": {
+          "description": "Do not exit if unrecognized command-line arguments are passed to the server; ignore them instead. This can be useful when the Appium CLI is wrapped by external tooling that appends extra flags. Disabled by default, so unknown arguments are still treated as errors.",
+          "title": "allow-unknown-args config",
+          "type": "boolean",
+          "default": false
+        },
         "base-path": {
           "appiumCliAliases": [
             "pa"

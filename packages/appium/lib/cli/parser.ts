@@ -323,6 +323,13 @@ export class ArgParser {
       if (unknownArgs?.length && (knownArgs.driverCommand === 'run' || knownArgs.pluginCommand === 'run')) {
         return ArgParser._transformParsedArgs(knownArgs, unknownArgs);
       } else if (unknownArgs?.length) {
+        if (knownArgs.allowUnknownArgs) {
+          // eslint-disable-next-line no-console
+          console.error(
+            `[WARN] Ignoring unrecognized arguments because '--allow-unknown-args' is set: ${unknownArgs.join(' ')}`,
+          );
+          return ArgParser._transformParsedArgs(knownArgs);
+        }
         throw new Error(`[ERROR] Unrecognized arguments: ${unknownArgs.join(' ')}`);
       }
       return ArgParser._transformParsedArgs(knownArgs);

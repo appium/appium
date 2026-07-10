@@ -7,7 +7,7 @@ import {StatusCodes as HTTPStatusCodes} from 'http-status-codes';
 import {errorFromMJSONWPStatusCode, errorFromW3CJsonCode, errors, isErrorType} from '../../../lib';
 import {BadParametersError, getResponseForW3CError} from '../../../lib/protocol/errors';
 
-const basename = path.basename(__filename);
+const basename = path.basename(__filename, path.extname(__filename));
 
 interface ErrorListItem {
   errorName: string;

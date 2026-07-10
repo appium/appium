@@ -336,7 +336,7 @@ describe('Protocol', function () {
 
           const {error: w3cError, message, stacktrace} = data.value;
           expect(message).to.match(/following required parameter/);
-          expect(stacktrace).to.match(/protocol.js/);
+          expect(stacktrace).to.match(/protocol\.(js|ts)/);
           expect(w3cError).to.be.a('string');
           expect(w3cError).to.equal(errors.InvalidArgumentError.error());
         });
@@ -354,7 +354,7 @@ describe('Protocol', function () {
 
           const {error: w3cError, message, stacktrace} = data.value;
           expect(message).to.match(/Method has not yet been implemented/);
-          expect(stacktrace).to.match(/protocol.js/);
+          expect(stacktrace).to.match(/protocol\.(js|ts)/);
           expect(w3cError).to.be.a('string');
           expect(w3cError).to.equal(errors.NotYetImplementedError.error());
           expect(message).to.match(/Method has not yet been implemented/);
@@ -375,7 +375,7 @@ describe('Protocol', function () {
           expect(status).to.equal(500);
 
           const {error: w3cError, message, stacktrace} = data.value;
-          expect(stacktrace).to.match(/protocol.js/);
+          expect(stacktrace).to.match(/protocol\.(js|ts)/);
           expect(w3cError).to.be.a('string');
           expect(w3cError).to.equal(errors.UnknownError.error());
           expect(message).to.match(/Didn't work/);
@@ -437,7 +437,7 @@ describe('Protocol', function () {
           expect(status).to.equal(408);
 
           const {error: w3cError, message, stacktrace} = data.value;
-          expect(stacktrace).to.match(/protocol.js/);
+          expect(stacktrace).to.match(/protocol\.(js|ts)/);
           expect(w3cError).to.be.a('string');
           expect(w3cError).to.equal(errors.TimeoutError.error());
           expect(message).to.match(/An operation did not complete before its timeout expired/);

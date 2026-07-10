@@ -44,9 +44,9 @@
   },
   "scripts": {
     "test": "npm run test:unit",
-    "test:e2e": "node --test --test-force-exit --test-concurrency=1 --test-timeout=60000 \"./build/test/e2e/**/*.e2e.spec.js\"",
+    "test:e2e": "node --test --enable-source-maps --test-force-exit --test-concurrency=1 --test-timeout=60000 \"./build/test/e2e/**/*.e2e.spec.js\"",
     "test:smoke": "node ./build/lib/index.js",
-    "test:unit": "node --test --test-timeout=50000 \"./build/test/unit/**/*.spec.js\"",
+    "test:unit": "node --test --enable-source-maps --test-timeout=50000 \"./build/test/unit/**/*.spec.js\"",
     "start": "node ./build/lib/cli/index.js"
   },
   "dependencies": {

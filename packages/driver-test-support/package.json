@@ -34,7 +34,7 @@
   "scripts": {
     "test": "npm run test:unit",
     "test:smoke": "node ./build/lib/index.js",
-    "test:unit": "node --test \"./build/test/unit/**/*.spec.js\""
+    "test:unit": "node --test --enable-source-maps \"./build/test/unit/**/*.spec.js\""
   },
   "devDependencies": {
     "@appium/types": "1.5.1"

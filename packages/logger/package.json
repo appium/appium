@@ -41,7 +41,7 @@
   "scripts": {
     "test": "npm run test:unit",
     "test:smoke": "node ./build/lib/index.js",
-    "test:unit": "node --test --test-timeout=5000 \"./build/test/unit/**/*.spec.js\""
+    "test:unit": "node --test --enable-source-maps --test-timeout=5000 \"./build/test/unit/**/*.spec.js\""
   },
   "dependencies": {
     "lru-cache": "11.5.1"

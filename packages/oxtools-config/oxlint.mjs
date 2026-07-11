@@ -1,8 +1,63 @@
+import fs from 'node:fs';
+import path from 'node:path';
+
+export {defineConfig} from 'oxlint';
+
+/**
+ * Default ignore patterns for Appium Oxlint projects.
+ *
+ * Oxlint does not inherit `ignorePatterns` via `extends`, so consumers should
+ * use `resolveIgnorePatterns()` in their root config. See README for usage.
+ */
+export const ignorePatterns = [
+  '**/.*',
+  '**/*-d.ts',
+  '**/*.min.js',
+  '**/build/**',
+  '**/coverage/**',
+  '**/build-fixtures/**',
+];
+
+/**
+ * Read non-comment patterns from a `.gitignore` file.
+ * @param {string} gitignorePath
+ * @returns {string[]}
+ */
+function readGitignorePatterns(gitignorePath) {
+  return fs
+    .readFileSync(gitignorePath, 'utf8')
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line && !line.startsWith('#'));
+}
+
+/**
+ * Resolve ignore patterns for an Appium Oxlint project.
+ *
+ * Mirrors `@appium/eslint-config-appium-ts` `includeIgnoreFile('.gitignore')`:
+ * base patterns are always included, and `.gitignore` is merged when present.
+ *
+ * @param {object} [options]
+ * @param {string} [options.cwd] Project root used to locate `.gitignore`
+ * @param {string[]} [options.additional] Extra project-specific ignore patterns
+ * @returns {string[]}
+ */
+export function resolveIgnorePatterns({cwd = process.cwd(), additional = []} = {}) {
+  const patterns = [...ignorePatterns, ...additional];
+  const gitignorePath = path.resolve(cwd, '.gitignore');
+
+  if (fs.existsSync(gitignorePath)) {
+    patterns.push(...readGitignorePatterns(gitignorePath));
+  }
+
+  return patterns;
+}
+
 /**
  * Shared Oxlint configuration for Appium projects.
  *
  * Migrated from @appium/eslint-config-appium-ts via @oxlint/migrate.
- * Stylistic rules are intentionally omitted; use oxfmt for formatting.
+ * Stylistic rules are intentionally omitted; use `@appium/oxtools-config/oxfmt` instead.
  *
  * Rules not available in Oxlint (no equivalent yet):
  * - @typescript-eslint/member-ordering
@@ -22,13 +77,6 @@ const config = {
   env: {
     builtin: true,
   },
-  ignorePatterns: [
-    '**/.*',
-    '**/*-d.ts',
-    '**/*.min.js',
-    '**/build/**',
-    '**/coverage/**',
-  ],
   overrides: [
     {
       files: ['**/*.{js,mjs,cjs,jsx,mjsx,ts,tsx,mtsx}'],
@@ -157,7 +205,7 @@ const config = {
         'typescript/prefer-namespace-keyword': 'error',
         'typescript/triple-slash-reference': 'error',
         'typescript/consistent-type-imports': [
-          'warn',
+          'error',
           {
             prefer: 'type-imports',
             fixStyle: 'separate-type-imports',

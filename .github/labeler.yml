@@ -73,10 +73,10 @@ labels:
     matcher:
       files: ['packages/eslint-config-appium-ts/**']
 
-  - label: '@appium/oxlint-config-appium'
+  - label: '@appium/oxtools-config'
     sync: true
     matcher:
-      files: ['packages/oxlint-config-appium/**']
+      files: ['packages/oxtools-config/**']
 
   - label: '@appium/execute-driver-plugin'
     sync: true

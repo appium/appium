@@ -14,8 +14,8 @@ import {
   promoteAppiumOptions,
   promoteAppiumOptionsForObject,
   PROTOCOLS,
+  AppiumIpc,
 } from '@appium/base-driver';
-import {AppiumIpc} from '@appium/base-driver';
 import {util} from '@appium/support';
 import type {
   AppiumServer,

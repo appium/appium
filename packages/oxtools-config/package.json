@@ -1,0 +1,47 @@
+{
+  "name": "@appium/oxtools-config",
+  "version": "1.0.0",
+  "description": "Shared Oxlint and Oxfmt config for Appium projects",
+  "keywords": [
+    "appium",
+    "oxfmt",
+    "oxlint",
+    "oxtools",
+    "typescript"
+  ],
+  "homepage": "https://appium.io",
+  "bugs": {
+    "url": "https://github.com/appium/appium/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "https://github.com/appium",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appium/appium.git",
+    "directory": "packages/oxtools-config"
+  },
+  "files": [
+    "oxlint.mjs",
+    "oxfmt.mjs"
+  ],
+  "type": "module",
+  "exports": {
+    "./oxlint": "./oxlint.mjs",
+    "./oxfmt": "./oxfmt.mjs"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test:smoke": "node --input-type=module -e \"import oxlintConfig, {defineConfig, ignorePatterns} from './oxlint.mjs'; import oxfmtConfig, {fmtIgnorePatterns} from './oxfmt.mjs'; if (!oxlintConfig?.overrides?.length) throw new Error('invalid oxlint config'); if (!ignorePatterns?.length) throw new Error('invalid ignorePatterns'); if (typeof defineConfig !== 'function') throw new Error('invalid defineConfig'); if (!oxfmtConfig?.singleQuote) throw new Error('invalid oxfmt config'); if (!fmtIgnorePatterns?.length) throw new Error('invalid fmtIgnorePatterns')\""
+  },
+  "dependencies": {
+    "oxfmt": "0.58.0",
+    "oxlint": "1.73.0",
+    "oxlint-tsgolint": "0.24.0"
+  },
+  "engines": {
+    "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
+    "npm": ">=10"
+  }
+}

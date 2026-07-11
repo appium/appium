@@ -47,7 +47,7 @@
     "@appium/support": "7.2.5",
     "async-lock": "1.4.1",
     "asyncbox": "6.3.4",
-    "lru-cache": "11.5.1",
+    "lru-cache": "11.5.2",
     "ws": "8.21.0"
   },
   "peerDependencies": {

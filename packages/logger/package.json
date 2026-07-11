@@ -44,7 +44,7 @@
     "test:unit": "node --test --enable-source-maps --test-timeout=5000 \"./build/test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "lru-cache": "11.5.1"
+    "lru-cache": "11.5.2"
   },
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0",

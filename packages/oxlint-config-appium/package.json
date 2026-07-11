@@ -1,0 +1,45 @@
+{
+  "name": "@appium/oxlint-config-appium",
+  "version": "1.0.0",
+  "description": "Shared Oxlint config for Appium projects",
+  "keywords": [
+    "appium",
+    "oxlint",
+    "oxlintconfig",
+    "typescript"
+  ],
+  "homepage": "https://appium.io",
+  "bugs": {
+    "url": "https://github.com/appium/appium/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "https://github.com/appium",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appium/appium.git",
+    "directory": "packages/oxlint-config-appium"
+  },
+  "files": [
+    "index.mjs"
+  ],
+  "type": "module",
+  "exports": "./index.mjs",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test:smoke": "node --input-type=module -e \"import config from './index.mjs'; if (!config?.overrides?.length) throw new Error('invalid config')\""
+  },
+  "peerDependencies": {
+    "oxlint": "^1.0.0"
+  },
+  "peerDependenciesMeta": {
+    "oxlint-tsgolint": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
+    "npm": ">=10"
+  }
+}

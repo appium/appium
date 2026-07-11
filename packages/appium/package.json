@@ -81,7 +81,7 @@
     "lru-cache": "11.5.2",
     "ora": "5.4.1",
     "semver": "7.8.5",
-    "teen_process": "4.1.7",
+    "teen_process": "4.1.8",
     "type-fest": "5.8.0",
     "winston": "3.19.0",
     "ws": "8.21.0",

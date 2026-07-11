@@ -44,7 +44,7 @@
   },
   "dependencies": {
     "async-lock": "1.4.1",
-    "teen_process": "4.1.7"
+    "teen_process": "4.1.8"
   },
   "devDependencies": {
     "@appium/types": "1.5.1"

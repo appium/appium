@@ -135,7 +135,7 @@
     "serve-static": "2.2.1",
     "sinon": "22.0.0",
     "sinon-chai": "4.0.1",
-    "teen_process": "4.1.7",
+    "teen_process": "4.1.8",
     "tsd": "0.33.0",
     "typescript": "6.0.3",
     "typescript-eslint": "8.63.0",

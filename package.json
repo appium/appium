@@ -116,7 +116,7 @@
     "conventional-changelog-conventionalcommits": "7.0.2",
     "cpy-cli": "7.0.0",
     "cross-env": "10.1.0",
-    "eslint": "10.6.0",
+    "eslint": "10.7.0",
     "eslint-config-prettier": "10.1.8",
     "eslint-import-resolver-typescript": "4.4.5",
     "eslint-plugin-import-x": "4.17.1",

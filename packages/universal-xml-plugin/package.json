@@ -42,7 +42,7 @@
   "dependencies": {
     "@appium/support": "7.2.5",
     "@xmldom/xmldom": "0.9.10",
-    "fast-xml-parser": "5.9.3",
+    "fast-xml-parser": "5.10.0",
     "xpath": "0.0.34"
   },
   "peerDependencies": {

@@ -82,7 +82,6 @@
     "@eslint/js": "10.0.1",
     "@stylistic/eslint-plugin": "5.10.0",
     "@tsconfig/node20": "20.1.9",
-    "@types/argparse": "2.0.17",
     "@types/async-lock": "1.4.2",
     "@types/bluebird": "3.5.42",
     "@types/chai": "5.2.3",

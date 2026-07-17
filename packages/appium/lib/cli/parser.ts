@@ -3,7 +3,7 @@ import path from 'node:path';
 import type {DriverType, PluginType} from '@appium/types';
 import type {CliExtensionSubcommand} from 'appium/types';
 import {ArgumentParser} from 'argparse';
-import type {SubArgumentParserOptions, SubParser} from 'argparse';
+import type {SubArgumentParserOptions, SubparsersAction} from 'argparse';
 
 import {
   DRIVER_TYPE,
@@ -158,7 +158,7 @@ export class ArgParser {
   /**
    * Adds the `server` subcommand parser and returns its argument definitions.
    */
-  private static _addServerToParser(subParser: SubParser): ArgumentDefinitions {
+  private static _addServerToParser(subParser: SubparsersAction): ArgumentDefinitions {
     const serverParser = subParser.add_parser('server', {
       add_help: true,
       help: 'Start an Appium server',
@@ -179,7 +179,7 @@ export class ArgParser {
   /**
    * Adds extension sub-sub-commands to `driver`/`plugin` subcommands
    */
-  private static _addExtensionCommandsToParser(subParser: SubParser): void {
+  private static _addExtensionCommandsToParser(subParser: SubparsersAction): void {
     for (const type of [DRIVER_TYPE, PLUGIN_TYPE] as [DriverType, PluginType]) {
       const extParser = subParser.add_parser(type, {
         add_help: true,
@@ -252,7 +252,7 @@ export class ArgParser {
   /**
    * Add subcommand and sub-sub commands for 'setup' subcommand.
    */
-  private static _addSetupToParser(subParser: SubParser): void {
+  private static _addSetupToParser(subParser: SubparsersAction): void {
     const setupParser = subParser.add_parser('setup', {
       add_help: true,
       help: 'Batch install or uninstall Appium drivers and plugins',

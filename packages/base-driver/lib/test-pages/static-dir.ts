@@ -1,5 +1,6 @@
-import {node} from '@appium/support';
 import path from 'node:path';
+
+import {node} from '@appium/support';
 
 /**
  * Absolute path to bundled legacy test fixture static files.

@@ -42,12 +42,12 @@ npx oxlint -c oxlint.config.mjs .
 Create `oxfmt.config.mjs` in your project root:
 
 ```js
-import appiumFmtConfig, {fmtIgnorePatterns} from '@appium/oxtools-config/oxfmt';
+import appiumConfig, {defineConfig, ignorePatterns as appiumIgnorePatterns} from '@appium/oxtools-config/oxfmt';
 
-export default {
-  ...appiumFmtConfig,
-  ignorePatterns: [...fmtIgnorePatterns],
-};
+export default defineConfig({
+  ...appiumConfig,
+  ignorePatterns: [...appiumIgnorePatterns],
+});
 ```
 
 Run Oxfmt:

@@ -59,7 +59,7 @@ export function createAppiumURL(
   if (arguments.length === 2) {
     return urlFor;
   }
-  return urlFor(session as string, pathname as string);
+  return urlFor(session!, pathname!);
 }
 function buildAppiumURL(address: string, port: string | number, session: string, pathname: string): string {
   let base = address;

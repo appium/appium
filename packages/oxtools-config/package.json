@@ -33,7 +33,7 @@
     "access": "public"
   },
   "scripts": {
-    "test:smoke": "node --input-type=module -e \"import oxlintConfig, {defineConfig, ignorePatterns} from './oxlint.mjs'; import oxfmtConfig, {fmtIgnorePatterns} from './oxfmt.mjs'; if (!oxlintConfig?.overrides?.length) throw new Error('invalid oxlint config'); if (!ignorePatterns?.length) throw new Error('invalid ignorePatterns'); if (typeof defineConfig !== 'function') throw new Error('invalid defineConfig'); if (!oxfmtConfig?.singleQuote) throw new Error('invalid oxfmt config'); if (!fmtIgnorePatterns?.length) throw new Error('invalid fmtIgnorePatterns')\""
+    "test:smoke": "node scripts/test-smoke.mjs"
   },
   "dependencies": {
     "oxfmt": "0.58.0",

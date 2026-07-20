@@ -1,11 +1,11 @@
-import appiumFmtConfig, {fmtIgnorePatterns} from '@appium/oxtools-config/oxfmt';
+import appiumConfig, {defineConfig, ignorePatterns as appiumIgnorePatterns} from '@appium/oxtools-config/oxfmt';
 
-export default {
-  ...appiumFmtConfig,
+export default defineConfig({
+  ...appiumConfig,
   ignorePatterns: [
-    ...fmtIgnorePatterns,
+    ...appiumIgnorePatterns,
     'packages/appium/docs/**',
     'packages/schema/lib/appium-config.schema.json',
     'packages/types/lib/appium-config.ts',
   ],
-};
+});

@@ -1,7 +1,9 @@
 /**
  * Default ignore patterns for Appium Oxfmt projects.
  */
-export const fmtIgnorePatterns = [
+export {defineConfig} from 'oxfmt';
+
+export const ignorePatterns = [
   '**/.*',
   '**/build/**',
   '**/fixtures/**',
@@ -26,7 +28,7 @@ const config = {
   trailingComma: 'all',
   bracketSpacing: false,
   sortImports: true,
-  ignorePatterns: fmtIgnorePatterns,
+  ignorePatterns,
 };
 
 export default config;

@@ -15,7 +15,7 @@ const libs = {os, system};
 
 describe('system', function () {
   let sandbox: ReturnType<typeof createSandbox>;
-  let osMock: ReturnType<ReturnType<typeof createSandbox>['mock']>;
+  let osMock: ReturnType<typeof createSandbox>['mock'] extends (obj: infer O) => infer R ? R : never;
   let mocks: Record<string | symbol, any>;
 
   beforeEach(function () {

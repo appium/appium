@@ -6,13 +6,7 @@ export {defineConfig} from 'oxlint';
  * Oxlint does not inherit `ignorePatterns` via `extends`, so import and spread
  * this array in your root config. Oxlint also respects `.gitignore` automatically.
  */
-export const ignorePatterns = [
-  '**/.*',
-  '**/*-d.ts',
-  '**/build/**',
-  '**/coverage/**',
-  '**/build-fixtures/**',
-];
+export const ignorePatterns = ['**/.*', '**/*-d.ts', '**/build/**', '**/coverage/**', '**/build-fixtures/**'];
 
 /**
  * Shared Oxlint configuration for Appium projects.

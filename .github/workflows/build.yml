@@ -57,7 +57,7 @@ jobs:
     outputs:
       packages: ${{ steps.discover-packages.outputs.packages }}
     steps:
-      - uses: actions/checkout@v7.0.0
+      - uses: actions/checkout@v7.0.1
       - name: Discover packages with e2e tests
         id: discover-packages
         run: |
@@ -106,7 +106,7 @@ jobs:
         node-version: ${{ fromJSON(needs.prepare_matrix.outputs.versions) }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7.0.0
+      - uses: actions/checkout@v7.0.1
       - name: Setup, install and build
         uses: ./.github/actions/setup-build
         with:
@@ -125,7 +125,7 @@ jobs:
         node-version: ${{ fromJSON(needs.prepare_matrix.outputs.versions) }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7.0.0
+      - uses: actions/checkout@v7.0.1
       - name: Setup, install and build
         uses: ./.github/actions/setup-build
         with:
@@ -144,7 +144,7 @@ jobs:
         node-version: ${{ fromJSON(needs.prepare_matrix.outputs.versions) }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7.0.0
+      - uses: actions/checkout@v7.0.1
       - name: Setup, install and build
         uses: ./.github/actions/setup-build
         with:
@@ -167,7 +167,7 @@ jobs:
         package_dir: ${{ fromJSON(needs.prepare_e2e_packages.outputs.packages) }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7.0.0
+      - uses: actions/checkout@v7.0.1
       - name: Setup, install and build
         uses: ./.github/actions/setup-build
         with:
@@ -184,7 +184,7 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7.0.0
+      - uses: actions/checkout@v7.0.1
       - name: Setup and install (no build)
         uses: ./.github/actions/setup-build
         with:

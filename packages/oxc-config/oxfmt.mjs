@@ -32,13 +32,13 @@ export const editorConfigFallbacks = {
   insertFinalNewline: true,
 };
 
-/** @type {Record<keyof typeof editorConfigFallbacks, string[]>} */
+/** @type {Record<keyof typeof editorConfigFallbacks, string>} */
 const editorConfigOptionKeys = {
-  printWidth: ['max_line_length'],
-  tabWidth: ['indent_size', 'tab_width'],
-  useTabs: ['indent_style'],
-  endOfLine: ['end_of_line'],
-  insertFinalNewline: ['insert_final_newline'],
+  printWidth: 'max_line_length',
+  tabWidth: 'indent_size',
+  useTabs: 'indent_style',
+  endOfLine: 'end_of_line',
+  insertFinalNewline: 'insert_final_newline',
 };
 
 /**
@@ -112,8 +112,8 @@ export function resolveEditorConfigFallbacks(cwd = process.cwd()) {
   /** @type {Partial<typeof editorConfigFallbacks>} */
   const fallbacks = {};
 
-  for (const [oxfmtKey, ecKeys] of Object.entries(editorConfigOptionKeys)) {
-    if (!ecKeys.some((key) => definedKeys.has(key))) {
+  for (const [oxfmtKey, ecKey] of Object.entries(editorConfigOptionKeys)) {
+    if (!definedKeys.has(ecKey)) {
       fallbacks[/** @type {keyof typeof editorConfigFallbacks} */ (oxfmtKey)] =
         editorConfigFallbacks[/** @type {keyof typeof editorConfigFallbacks} */ (oxfmtKey)];
     }

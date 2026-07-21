@@ -108,13 +108,7 @@ describe('argument parsing', function () {
       await expect(
         exec(
           process.execPath,
-          [
-            EXECUTABLE,
-            '--pigs=sheep',
-            '--allow-unknown-args',
-            '--port',
-            String(await getTestPort()),
-          ],
+          [EXECUTABLE, '--pigs=sheep', '--allow-unknown-args', '--port', String(await getTestPort())],
           {
             env: {APPIUM_HOME: appiumHome, PATH: process.env.PATH},
             cwd: APPIUM_ROOT,

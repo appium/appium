@@ -1,8 +1,7 @@
 import path from 'node:path';
 
-import {fs, logger} from '@appium/support';
+import {fs, logger, util} from '@appium/support';
 import axios from 'axios';
-import _ from 'lodash';
 
 export const log = logger.getLogger('CROWDIN');
 
@@ -56,7 +55,7 @@ export async function performApiRequest(suffix = '', opts = {}) {
   const {method = 'GET', payload, headers, params, isProjectSpecific = true} = opts;
   const url = isProjectSpecific ? `${API_ROOT}/projects/${PROJECT_ID}${suffix}` : `${API_ROOT}${suffix}`;
   log.debug(`Sending ${method} request to ${url}`);
-  if (_.isPlainObject(payload)) {
+  if (util.isPlainObject(payload)) {
     log.debug(`Request payload: ${JSON.stringify(payload)}`);
   }
   return (

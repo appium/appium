@@ -3,7 +3,6 @@ import path from 'node:path';
 
 import {fs, net, tempDir, zip} from '@appium/support';
 import {waitForCondition} from 'asyncbox';
-import _ from 'lodash';
 
 import {
   CROWIN_MKDOCS_CONFIG,
@@ -90,7 +89,8 @@ async function syncTranslatedDocuments(srcDir, dstDir) {
   }
 
   const dstDocs = (await walk(dstDir, DOCUMENTS_EXT)).map((p) => path.relative(dstDir, p));
-  const obsoleteDocs = _.difference(dstDocs, srcTranslatedDocs);
+  const srcTranslatedDocsSet = new Set(srcTranslatedDocs);
+  const obsoleteDocs = dstDocs.filter((doc) => !srcTranslatedDocsSet.has(doc));
   for (const relativePath of obsoleteDocs) {
     log.info(`Removing the obsolete document '${relativePath}'`);
     await fs.rimraf(path.join(dstDir, relativePath));

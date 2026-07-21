@@ -21,8 +21,7 @@ import {
 import {DocutilsError} from './error';
 import {getLogger} from './logger';
 import type {MkDocsYml} from './model';
-import {findPackageRoot, type NormalizedPackageJson, type PackageJson, readPackage} from './utils';
-import {mergeDefaultsDeep} from './utils';
+import {findPackageRoot, type NormalizedPackageJson, type PackageJson, mergeDefaultsDeep, readPackage} from './utils';
 
 const log = getLogger('fs');
 

@@ -1,4 +1,5 @@
 import {
+  AppiumIpc,
   BaseDriver,
   CREATE_SESSION_COMMAND,
   DELETE_SESSION_COMMAND,
@@ -15,7 +16,6 @@ import {
   promoteAppiumOptionsForObject,
   PROTOCOLS,
 } from '@appium/base-driver';
-import {AppiumIpc} from '@appium/base-driver';
 import {util} from '@appium/support';
 import type {
   AppiumServer,

@@ -463,7 +463,7 @@ export const METHOD_MAP = {
       },
     },
   },
-  '/session/:sessionId/sensors/:sensorType': {
+  '/session/:sessionId/sensor/:sensorType': {
     GET: {command: 'getVirtualSensorInfo'},
     POST: {command: 'updateVirtualSensorReading', payloadParams: {required: ['reading']}},
     DELETE: {command: 'deleteVirtualSensor'},

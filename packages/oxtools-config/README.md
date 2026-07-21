@@ -59,6 +59,7 @@ npx oxfmt -c oxfmt.config.mjs .
 ## Notes
 
 - **Type-aware linting**: Oxlint config enables `options.typeAware` via the bundled `oxlint-tsgolint` dependency.
+- **`.editorconfig`**: Oxfmt reads `.editorconfig` for unset formatting options (`printWidth`, `tabWidth`, `useTabs`, `endOfLine`, `insertFinalNewline`). The shared Oxfmt config defines Appium fallbacks for those fields only when no `.editorconfig` is found; otherwise it leaves them unset so Oxfmt applies the file's values.
 - **`.gitignore`**: Oxlint and Oxfmt respect `.gitignore` automatically.
 - **`ignorePatterns`**: Oxlint does not inherit `ignorePatterns` via `extends` — import and spread the exported arrays in your root config.
 

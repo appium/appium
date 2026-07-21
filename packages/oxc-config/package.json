@@ -1,12 +1,12 @@
 {
-  "name": "@appium/oxtools-config",
+  "name": "@appium/oxc-config",
   "version": "1.0.0",
   "description": "Shared Oxlint and Oxfmt config for Appium projects",
   "keywords": [
     "appium",
+    "oxc",
     "oxfmt",
     "oxlint",
-    "oxtools",
     "typescript"
   ],
   "homepage": "https://appium.io",
@@ -18,7 +18,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/appium/appium.git",
-    "directory": "packages/oxtools-config"
+    "directory": "packages/oxc-config"
   },
   "files": [
     "oxlint.mjs",

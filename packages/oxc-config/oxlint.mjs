@@ -57,7 +57,7 @@ export function resolveIgnorePatterns({cwd = process.cwd(), additional = []} = {
  * Shared Oxlint configuration for Appium projects.
  *
  * Migrated from @appium/eslint-config-appium-ts via @oxlint/migrate.
- * Stylistic rules are intentionally omitted; use `@appium/oxtools-config/oxfmt` instead.
+ * Stylistic rules are intentionally omitted; use `@appium/oxc-config/oxfmt` instead.
  *
  * Rules not available in Oxlint (no equivalent yet):
  * - @typescript-eslint/member-ordering

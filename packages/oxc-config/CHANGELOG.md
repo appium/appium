@@ -7,4 +7,4 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Features
 
-* **oxtools-config:** initial shared Oxlint and Oxfmt config (renamed from `@appium/oxlint-config-appium`)
+* **oxc-config:** initial shared Oxlint and Oxfmt config (renamed from `@appium/oxlint-config-appium`)

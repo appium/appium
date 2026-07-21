@@ -79,7 +79,7 @@
     "zip-and-upload": "run-s zip upload"
   },
   "devDependencies": {
-    "@appium/oxtools-config": "1.0.0",
+    "@appium/oxc-config": "1.0.0",
     "@eslint/js": "10.0.1",
     "@stylistic/eslint-plugin": "5.10.0",
     "@tsconfig/node20": "20.1.9",

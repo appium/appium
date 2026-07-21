@@ -1,4 +1,4 @@
-import appiumConfig, {defineConfig, ignorePatterns as appiumIgnorePatterns} from '@appium/oxtools-config/oxlint';
+import appiumConfig, {defineConfig, ignorePatterns as appiumIgnorePatterns} from '@appium/oxc-config/oxlint';
 
 export default defineConfig({
   extends: [appiumConfig],

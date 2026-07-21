@@ -15,7 +15,7 @@ const APPIUM_PACKAGE_README = path.join(ROOT_PACKAGES_DIR, 'appium', 'README.md'
 const COMMON_FIELDS_TO_COPY = ['author', 'license', 'bugs', 'homepage'];
 const LOGGER_COMMON_FIELDS_TO_COPY = ['author', 'bugs', 'homepage'];
 
-const KEYWORD_EXCLUDED_PACKAGES = new Set(['eslint-config-appium-ts', 'types']);
+const KEYWORD_EXCLUDED_PACKAGES = new Set(['eslint-config-appium-ts', 'semantic-release-config', 'types']);
 // Package names in this set will not receive the LICENSE file from the root,
 // as they have their own license terms (e.g., ISC for logger).
 const LICENSE_EXCLUDED_PACKAGES = new Set(['logger']);

@@ -1,0 +1,41 @@
+{
+  "name": "@appium/semantic-release-config",
+  "version": "1.0.0",
+  "description": "Shared semantic-release configuration factory for Appium projects",
+  "keywords": [
+    "appium",
+    "release",
+    "semantic-release"
+  ],
+  "homepage": "https://appium.io",
+  "bugs": {
+    "url": "https://github.com/appium/appium/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "https://github.com/appium",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appium/appium.git",
+    "directory": "packages/semantic-release-config"
+  },
+  "files": [
+    "index.mjs"
+  ],
+  "type": "module",
+  "exports": "./index.mjs",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test:smoke": "node -e \"(await import('./index.mjs')).default()\""
+  },
+  "dependencies": {
+    "@semantic-release/changelog": "7.0.0",
+    "@semantic-release/git": "11.0.0",
+    "semantic-release": "25.0.8"
+  },
+  "engines": {
+    "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
+    "npm": ">=10"
+  }
+}

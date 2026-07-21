@@ -101,7 +101,6 @@ async function deleteFile(fileId) {
 
 /**
  * @param {number} [parentDirectoryId]
- * @param {number} [recursion]
  * @return {Promise<Record<string, any>[]>}
  */
 async function listDirectories(parentDirectoryId) {
@@ -110,7 +109,6 @@ async function listDirectories(parentDirectoryId) {
     params: {
       limit: MAX_ITEMS_PER_PAGE,
       directoryId: parentDirectoryId,
-      recursion: parentDirectoryId ? 10 : undefined,
     },
   });
   return directoriesData.map(({data}) => data);

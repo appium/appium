@@ -2,6 +2,7 @@ export default {
   address: '0.0.0.0',
   allowCors: false,
   allowInsecure: [] as string[],
+  allowUnknownArgs: false,
   basePath: '',
   callbackPort: 4723,
   debugLogSpacing: false,

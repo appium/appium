@@ -98,4 +98,24 @@ describe('argument parsing', function () {
       expect(formatAppiumArgErrorOutput(actual)).to.equal(expected);
     });
   });
+
+  describe('when the user provides an unknown argument with --allow-unknown-args', function () {
+    it('should tolerate the unknown argument and start the server', {timeout: 10000}, async function () {
+      // Unlike the unknown-argument case above, `--allow-unknown-args` must not abort parsing:
+      // the unrecognized flag is ignored and the server starts. We assert the run reaches
+      // server startup (and thus hits the exec timeout) instead of exiting early with an
+      // argument-parsing error.
+      await expect(
+        exec(
+          process.execPath,
+          [EXECUTABLE, '--pigs=sheep', '--allow-unknown-args', '--port', String(await getTestPort())],
+          {
+            env: {APPIUM_HOME: appiumHome, PATH: process.env.PATH},
+            cwd: APPIUM_ROOT,
+            timeout: 5000,
+          },
+        ),
+      ).to.be.rejectedWith(Error, /timed out/);
+    });
+  });
 });

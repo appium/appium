@@ -18,6 +18,10 @@ export type AllowCorsConfig = boolean;
  */
 export type AllowInsecureConfig = string[];
 /**
+ * Do not exit if unrecognized command-line arguments are passed to the server; ignore them instead. This can be useful when the Appium CLI is wrapped by external tooling that appends extra flags. Disabled by default, so unknown arguments are still treated as errors.
+ */
+export type AllowUnknownArgsConfig = boolean;
+/**
  * Base path to use as the prefix for all webdriver routes running on the server
  */
 export type BasePathConfig = string;
@@ -197,6 +201,7 @@ export interface ServerConfig {
   address?: AddressConfig;
   "allow-cors"?: AllowCorsConfig;
   "allow-insecure"?: AllowInsecureConfig;
+  "allow-unknown-args"?: AllowUnknownArgsConfig;
   "base-path"?: BasePathConfig;
   "callback-address"?: CallbackAddressConfig;
   "callback-port"?: CallbackPortConfig;

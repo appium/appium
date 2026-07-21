@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 
 import appiumOxfmtConfig, {
   createFormatOptions,
@@ -43,12 +44,12 @@ if (editorConfigFallbacks.printWidth !== 120 || editorConfigFallbacks.endOfLine 
   throw new Error('invalid editorConfigFallbacks');
 }
 
-const optionsWithoutEditorConfig = createFormatOptions('/tmp/no-editorconfig-here');
+const optionsWithoutEditorConfig = createFormatOptions(path.join(os.tmpdir(), 'no-editorconfig-here'));
 if (optionsWithoutEditorConfig.printWidth !== 120) {
   throw new Error('expected editorConfigFallbacks when .editorconfig is absent');
 }
 
-const monorepoRoot = path.resolve(import.meta.dirname, '../../..');
+const monorepoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 const optionsWithEditorConfig = createFormatOptions(monorepoRoot);
 if (optionsWithEditorConfig.printWidth !== undefined || optionsWithEditorConfig.tabWidth !== undefined) {
   throw new Error('expected fully defined .editorconfig options to stay unset');

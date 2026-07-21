@@ -194,7 +194,7 @@ const config = {
       },
     },
     {
-      files: ['**/test/**', '*.spec.*js', '-specs.*js', '*.spec.ts'],
+      files: ['**/test/**'],
       plugins: ['typescript', 'import'],
       rules: {
         'no-unused-expressions': 'off',

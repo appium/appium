@@ -195,5 +195,5 @@ jobs:
           run-build: 'false'
       - name: Lint
         run: npm run lint:ci
-      - name: Prettier
+      - name: Format check
         run: npm run format:check

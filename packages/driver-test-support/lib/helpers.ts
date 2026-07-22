@@ -52,14 +52,14 @@ export function createAppiumURL(address: string, port: string | number, session:
 export function createAppiumURL(
   address: string,
   port: string | number,
-  session?: string,
-  pathname?: string,
+  session: string = '',
+  pathname: string = '',
 ): string | ((session: string, pathname: string) => string) {
   const urlFor = (sess: string, path: string) => buildAppiumURL(address, port, sess, path);
   if (arguments.length === 2) {
     return urlFor;
   }
-  return urlFor(session!, pathname!);
+  return urlFor(session, pathname);
 }
 function buildAppiumURL(address: string, port: string | number, session: string, pathname: string): string {
   let base = address;

@@ -16,7 +16,8 @@ on:
       - 'lerna.json'
       - '.npmrc'
       - '.github/workflows/build.yml' # this file
-      - '.eslintignore'
+      - 'oxlint.config.mjs'
+      - 'oxfmt.config.mjs'
       - '!**/sample-code/**'
       - '!packages/*/docs/**'
   pull_request:
@@ -34,7 +35,8 @@ on:
       - 'lerna.json'
       - '.npmrc'
       - '.github/workflows/build.yml' # this file
-      - '.eslintignore'
+      - 'oxlint.config.mjs'
+      - 'oxfmt.config.mjs'
       - '!**/sample-code/**'
       - '!packages/*/docs/**'
 
@@ -191,7 +193,7 @@ jobs:
           node-version: lts/*
           install-command: npm ci
           run-build: 'false'
-      - name: ESLint
+      - name: Lint
         run: npm run lint:ci
-      - name: Prettier
+      - name: Format check
         run: npm run format:check

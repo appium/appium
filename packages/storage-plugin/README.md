@@ -2,8 +2,8 @@
 
 > Appium plugin for server-side file storage
 
-[![NPM version](http://img.shields.io/npm/v/@appium/storage-plugin.svg)](https://npmjs.org/package/@appium/storage-plugin)
-[![Downloads](http://img.shields.io/npm/dm/@appium/storage-plugin.svg)](https://npmjs.org/package/@appium/storage-plugin)
+[![NPM version](https://img.shields.io/npm/v/@appium/storage-plugin.svg)](https://npmjs.org/package/@appium/storage-plugin)
+[![Downloads](https://img.shields.io/npm/dm/@appium/storage-plugin.svg)](https://npmjs.org/package/@appium/storage-plugin)
 
 This plugin adds the ability to create a dedicated storage space on the server side,
 which can be managed from the client side. This can be useful for files like application packages.

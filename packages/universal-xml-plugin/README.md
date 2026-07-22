@@ -2,8 +2,8 @@
 
 > Appium plugin for transforming platform-specific XML into a universal syntax
 
-[![NPM version](http://img.shields.io/npm/v/@appium/universal-xml-plugin.svg)](https://npmjs.org/package/@appium/universal-xml-plugin)
-[![Downloads](http://img.shields.io/npm/dm/@appium/universal-xml-plugin.svg)](https://npmjs.org/package/@appium/universal-xml-plugin)
+[![NPM version](https://img.shields.io/npm/v/@appium/universal-xml-plugin.svg)](https://npmjs.org/package/@appium/universal-xml-plugin)
+[![Downloads](https://img.shields.io/npm/dm/@appium/universal-xml-plugin.svg)](https://npmjs.org/package/@appium/universal-xml-plugin)
 
 This plugin takes the XML page source retrieved using an iOS or Android driver, and changes various
 node and attribute names to use common terminology that can apply to both platforms.

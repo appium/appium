@@ -2,8 +2,8 @@
 
 > Shared [Oxlint](https://oxc.rs/docs/guide/usage/linter) and [Oxfmt](https://oxc.rs/docs/guide/usage/formatter) configuration for [Appium](https://github.com/appium/appium) and Appium-adjacent projects.
 
-[![NPM version](http://img.shields.io/npm/v/@appium/oxc-config.svg)](https://npmjs.org/package/@appium/oxc-config)
-[![Downloads](http://img.shields.io/npm/dm/@appium/oxc-config.svg)](https://npmjs.org/package/@appium/oxc-config)
+[![NPM version](https://img.shields.io/npm/v/@appium/oxc-config.svg)](https://npmjs.org/package/@appium/oxc-config)
+[![Downloads](https://img.shields.io/npm/dm/@appium/oxc-config.svg)](https://npmjs.org/package/@appium/oxc-config)
 
 This package pins compatible `oxlint`, `oxlint-tsgolint`, and `oxfmt` versions. Import lint and format settings from their respective subpaths:
 

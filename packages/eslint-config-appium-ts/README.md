@@ -2,8 +2,8 @@
 
 > Provides a reusable [ESLint](http://eslint.org/) [shared configuration](http://eslint.org/docs/developer-guide/shareable-configs) for [Appium](https://github.com/appium/appium) and Appium-adjacent projects.
 
-[![NPM version](http://img.shields.io/npm/v/@appium/eslint-config-appium-ts.svg)](https://npmjs.org/package/@appium/eslint-config-appium-ts)
-[![Downloads](http://img.shields.io/npm/dm/@appium/eslint-config-appium-ts.svg)](https://npmjs.org/package/@appium/eslint-config-appium-ts)
+[![NPM version](https://img.shields.io/npm/v/@appium/eslint-config-appium-ts.svg)](https://npmjs.org/package/@appium/eslint-config-appium-ts)
+[![Downloads](https://img.shields.io/npm/dm/@appium/eslint-config-appium-ts.svg)](https://npmjs.org/package/@appium/eslint-config-appium-ts)
 
 ## Usage
 
@@ -22,7 +22,7 @@ import {defineConfig} from 'eslint/config';
 export default defineConfig([
   {
     extends: [appiumConfig],
-    // add any other config changes 
+    // add any other config changes
   },
 ]);
 ```
@@ -34,7 +34,7 @@ import appiumConfig from '@appium/eslint-config-appium-ts';
 
 export default [
   ...appiumConfig,
-  // add any other config changes 
+  // add any other config changes
 ];
 ```
 

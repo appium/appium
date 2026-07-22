@@ -2,8 +2,8 @@
 
 > Documentation-building utilities for Appium
 
-[![NPM version](http://img.shields.io/npm/v/@appium/docutils.svg)](https://npmjs.org/package/@appium/docutils)
-[![Downloads](http://img.shields.io/npm/dm/@appium/docutils.svg)](https://npmjs.org/package/@appium/docutils)
+[![NPM version](https://img.shields.io/npm/v/@appium/docutils.svg)](https://npmjs.org/package/@appium/docutils)
+[![Downloads](https://img.shields.io/npm/dm/@appium/docutils.svg)](https://npmjs.org/package/@appium/docutils)
 
 ## Setup for Main Appium Docs
 

@@ -2,8 +2,8 @@
 
 > Appium plugin for image comparison, visual testing, and image-based functional testing
 
-[![NPM version](http://img.shields.io/npm/v/@appium/images-plugin.svg)](https://npmjs.org/package/@appium/images-plugin)
-[![Downloads](http://img.shields.io/npm/dm/@appium/images-plugin.svg)](https://npmjs.org/package/@appium/images-plugin)
+[![NPM version](https://img.shields.io/npm/v/@appium/images-plugin.svg)](https://npmjs.org/package/@appium/images-plugin)
+[![Downloads](https://img.shields.io/npm/dm/@appium/images-plugin.svg)](https://npmjs.org/package/@appium/images-plugin)
 
 This plugin provides two features for image-based testing:
 

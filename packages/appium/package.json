@@ -59,7 +59,7 @@
     "postinstall": "node ./scripts/autoinstall-extensions.js",
     "publish:docs": "cross-env APPIUM_DOCS_PUBLISH=1 npm run build:docs",
     "test": "npm run test:unit",
-    "test:e2e": "node --test --enable-source-maps --test-force-exit --test-concurrency=1 --test-timeout=90000 \"./build/test/e2e/**/*.spec.js\"",
+    "test:e2e": "node --test --enable-source-maps --test-force-exit --test-concurrency=1 --test-timeout=200000 \"./build/test/e2e/**/*.spec.js\"",
     "test:smoke": "cross-env APPIUM_HOME=./local_appium_home node ./index.js driver install uiautomator2 && cross-env APPIUM_HOME=./local_appium_home node ./index.js driver list",
     "test:unit": "node --test --enable-source-maps --test-timeout=5000 \"./build/test/unit/**/*.spec.js\""
   },

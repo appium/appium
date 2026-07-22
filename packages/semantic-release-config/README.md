@@ -81,10 +81,11 @@ This package only defines the shared config; migrating the ~26 existing appium-o
 their hand-copied `.releaserc` files is a separate, repo-by-repo effort. For each repo:
 
 1. Add `@appium/semantic-release-config` as a devDependency.
-2. Remove that repo's own `semantic-release`, `@semantic-release/changelog`, and
-   `@semantic-release/git` devDependencies — they're pulled in transitively via this package's
-   own pinned `dependencies`, so restating their versions per-repo is no longer necessary (and
-   would risk drifting from the versions this package actually ships).
+2. Remove that repo's own `semantic-release`, `@semantic-release/changelog`,
+   `@semantic-release/git`, and `conventional-changelog-conventionalcommits` devDependencies —
+   they're pulled in transitively via this package's own pinned `dependencies`, so restating
+   their versions per-repo is no longer necessary (and would risk drifting from the versions this
+   package actually ships).
 3. Add a `release.config.mjs` that imports and calls the factory with whatever options reproduce
    that repo's current deviations (see the table above).
 4. **Delete the old `.releaserc`/`.releaserc.json` in the same commit** — see gotcha #2 above.

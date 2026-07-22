@@ -123,6 +123,11 @@ labels:
     matcher:
       files: ['packages/schema/**']
 
+  - label: '@appium/semantic-release-config'
+    sync: true
+    matcher:
+      files: ['packages/semantic-release-config/**']
+
   - label: '@appium/support'
     sync: true
     matcher:

@@ -2,8 +2,8 @@
 
 > Shared [`semantic-release`](https://semantic-release.gitbook.io/semantic-release/) configuration factory for [Appium](https://github.com/appium/appium) and Appium-adjacent projects.
 
-[![NPM version](http://img.shields.io/npm/v/@appium/semantic-release-config.svg)](https://npmjs.org/package/@appium/semantic-release-config)
-[![Downloads](http://img.shields.io/npm/dm/@appium/semantic-release-config.svg)](https://npmjs.org/package/@appium/semantic-release-config)
+[![NPM version](https://img.shields.io/npm/v/@appium/semantic-release-config.svg)](https://npmjs.org/package/@appium/semantic-release-config)
+[![Downloads](https://img.shields.io/npm/dm/@appium/semantic-release-config.svg)](https://npmjs.org/package/@appium/semantic-release-config)
 
 ## Usage
 

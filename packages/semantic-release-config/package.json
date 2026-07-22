@@ -27,7 +27,7 @@
     "access": "public"
   },
   "scripts": {
-    "test:smoke": "node -e \"(await import('./index.mjs')).default()\""
+    "test:smoke": "node scripts/test-smoke.mjs"
   },
   "dependencies": {
     "@semantic-release/changelog": "7.0.0",

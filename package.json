@@ -82,7 +82,7 @@
     "@appium/oxc-config": "1.0.0",
     "@eslint/js": "10.0.1",
     "@stylistic/eslint-plugin": "5.10.0",
-    "@tsconfig/node20": "20.1.9",
+    "@tsconfig/node22": "22.0.0",
     "@types/async-lock": "1.4.2",
     "@types/bluebird": "3.5.42",
     "@types/chai": "5.2.3",

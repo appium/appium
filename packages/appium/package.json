@@ -42,6 +42,7 @@
     "types",
     "tsconfig.json"
   ],
+  "main": "./build/lib/main.js",
   "types": "./build/lib/main.d.ts",
   "publishConfig": {
     "access": "public"

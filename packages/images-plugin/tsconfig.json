@@ -17,6 +17,7 @@
     {"path": "../base-plugin"},
     {"path": "../logger"},
     {"path": "../support"},
-    {"path": "../types"}
+    {"path": "../types"},
+    {"path": "../plugin-test-support"}
   ]
 }

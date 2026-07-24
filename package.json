@@ -137,7 +137,7 @@
     "teen_process": "4.1.9",
     "tsd": "0.33.0",
     "typescript": "6.0.3",
-    "typescript-eslint": "8.64.0",
+    "typescript-eslint": "8.65.0",
     "webdriverio": "9.29.1",
     "ws": "8.21.1"
   },

@@ -3,7 +3,8 @@
   "compilerOptions": {
     "rootDir": ".",
     "outDir": "build",
-    "strict": true
+    "strict": true,
+    "types": ["node"]
   },
   "include": ["lib"]
 }

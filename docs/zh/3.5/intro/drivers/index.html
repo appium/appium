@@ -29,7 +29,7 @@
       
       
       <link rel="icon" href="../../assets/images/appium-logo.png">
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.7">
     
     
       
@@ -37,7 +37,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -3288,7 +3288,7 @@
   <span class="md-ellipsis">
     
   
-    Building Documentation
+    构建文档
   
 
     
@@ -3316,7 +3316,7 @@
   <span class="md-ellipsis">
     
   
-    Building Doctor Checks
+    构建 Doctor Checks
   
 
     
@@ -3344,7 +3344,7 @@
   <span class="md-ellipsis">
     
   
-    Masking Sensitive Log Data
+    屏蔽敏感日志数据
   
 
     
@@ -3765,9 +3765,9 @@
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kd">class</span><span class="w"> </span><span class="nx">MyNewDriver</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">BaseDriver</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>这个空驱动程序不会_做_任何事情，但你可以将它打包成一个 Node.js 模块，在模块的清单文件（<code>package.json</code>）中添加一些与 Appium 相关的字段，然后使用 <code>appium driver install</code> 安装它。</p>
-<p>因此，从技术角度来看，Appium 驱动程序只是一些继承自其他 Appium 代码的代码。 就是这样！ 现在，继承自 <code>BaseDriver</code> 实际上给了我们很多东西，因为 <code>BaseDriver</code> 本质上是整个 WebDriver 协议的封装。 所以驱动程序要做一些有用的事情，只需要_实现_名称与其 WebDriver 协议等效的 Node.js 方法。</p>
-<p>假设我想用这个空驱动程序做点什么；首先我必须决定要实现哪个 WebDriver 命令。 对于我们的例子，让我们选择<a href="https://w3c.github.io/webdriver/#navigate-to">Navigate To</a> WebDriver 命令。 暂时不考虑当这个命令执行时我想让驱动程序_做_什么。 要告诉 Appium 驱动程序可以处理这个命令，我们所要做的就是在驱动程序类中定义一个像这样的方法：<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<p>这个空驱动程序不&#x4F1A;<em>&#x505A;</em>&#x4EFB;何事情，但你可以将它打包成一个 Node.js 模块，在模块的清单文件（<code>package.json</code>）中添加一些与 Appium 相关的字段，然后使用 <code>appium driver install</code> 安装它。</p>
+<p>因此，从技术角度来看，Appium 驱动程序只是一些继承自其他 Appium 代码的代码。 就是这样！ 现在，继承自 <code>BaseDriver</code> 实际上给了我们很多东西，因为 <code>BaseDriver</code> 本质上是整个 WebDriver 协议的封装。 所以驱动程序要做一些有用的事情，只需&#x8981;<em>&#x5B9E;&#x73B0;</em>&#x540D;称与其 WebDriver 协议等效的 Node.js 方法。</p>
+<p>假设我想用这个空驱动程序做点什么；首先我必须决定要实现哪个 WebDriver 命令。 对于我们的例子，让我们选择<a href="https://w3c.github.io/webdriver/#navigate-to">Navigate To</a> WebDriver 命令。 暂时不考虑当这个命令执行时我想让驱动程&#x5E8F;<em>&#x505A;</em>&#x4EC0;么。 要告诉 Appium 驱动程序可以处理这个命令，我们所要做的就是在驱动程序类中定义一个像这样的方法：<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
 <div class="language-js highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">async</span><span class="w"> </span><span class="nx">setUrl</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="c1">// do whatever we want here</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="p">}</span>
@@ -3780,10 +3780,10 @@
 <li>React 应用：加载特定路由</li>
 <li>Unity：转到指定场景</li>
 </ul>
-<p>因此，你可以看到，不同平台上驱动程序实现相同 WebDriver 命令的方式可能存在很大差异。<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup> 然而，_相同_的是它们表达可以处理协议命令的方式。</p>
+<p>因此，你可以看到，不同平台上驱动程序实现相同 WebDriver 命令的方式可能存在很大差异。<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup> 然而，<em>相&#x540C;</em>&#x7684;是它们表达可以处理协议命令的方式。</p>
 <p>我们之所以如此详细地讨论（顺便说一下，你不需要记住这些），是因为重要的是要强调一点，Appium 驱动程序本质上不是任何特定的东西，只是一些可以处理 WebDriver 协议命令的 JS 代码。 从那里去哪里取决于你，驱动程序作者！</p>
 <h2 id="_2">自动化映射<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p>但_通常_驱动程序作者想要做的是为给定的平台提供自动化行为，这些行为在语义上与浏览器的 WebDriver 规范实现非常相似。 当你想查找一个元素时，你应该得到一个 UI 元素的引用。 当你想点击或轻触该元素时，产生的行为应该与人点击或轻触该元素相同。 等等。</p>
+<p>&#x4F46;<em>&#x901A;&#x5E38;</em>&#x9A71;动程序作者想要做的是为给定的平台提供自动化行为，这些行为在语义上与浏览器的 WebDriver 规范实现非常相似。 当你想查找一个元素时，你应该得到一个 UI 元素的引用。 当你想点击或轻触该元素时，产生的行为应该与人点击或轻触该元素相同。 等等。</p>
 <p>因此，驱动程序作者面临的真正挑战不是如何使用 WebDriver 协议（因为 <code>BaseDriver</code> 为你封装了所有这些），而是如何在目标平台上实现实际的自动化。 每个驱动程序都依赖于自己的一套底层技术。 正如<a href="../">概览</a>中提到的，iOS 驱动程序使用 Apple 的一项名为 <a href="https://developer.apple.com/documentation/xctest/xcuielement">XCUITest</a> 的技术。 这些底层自动化技术通常都有自己专有或特殊的 API。 编写驱动程序就是将 WebDriver 协议映射到这个底层 API 的任务（有时是一组不同的底层 API——例如，UiAutomator2 驱动程序不仅依赖于 Google 的 <a href="https://developer.android.com/training/testing/other-components/ui-automator">UiAutomator2</a> 技术，还依赖于只能通过 <a href="https://developer.android.com/tools/adb">ADB</a> 获得的功能，以及只能通过辅助应用内的 Android SDK 获得的功能）。 将所有这些整合到一个单一、可用的 WebDriver 接口中，是驱动程序开发这项非常有用（但极具挑战性）的艺术！</p>
 <h2 id="_3">多层架构<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <p>在实践中，这通常会导致相当复杂的架构。 让我们再次以 iOS 为例。
@@ -3832,7 +3832,7 @@ WebDriver 协议！ 没错，XCUITest 驱动程序的 Objective-C 端本身就�
 <p>因此，理论上你可以将你的 WebDriver 客户端直接指向 WebDriverAgent 并完全绕过 Appium。 然而，这通常不方便，原因如下：&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 <li id="fn:4">
-<p>这不是_完全_相同的调用，因为 Appium 服务器和 WebDriverAgent 服务器会生成不同的会话 ID，但这些差异会被透明地处理。&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+<p>这不&#x662F;<em>&#x5B8C;&#x5168;</em>&#x76F8;同的调用，因为 Appium 服务器和 WebDriverAgent 服务器会生成不同的会话 ID，但这些差异会被透明地处理。&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
@@ -3856,7 +3856,7 @@ WebDriver 协议！ 没错，XCUITest 驱动程序的 Objective-C 端本身就�
     <span class="md-icon" title="最后更新">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="2026年6月18日 21:21:35 UTC"><span class="timeago" datetime="2026-06-18T21:21:35+00:00" locale="zh"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="2026年6月18日 21:21:35 UTC">2026-06-18</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="2026年7月24日 20:22:31 UTC"><span class="timeago" datetime="2026-07-24T20:22:31+00:00" locale="zh"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="2026年7月24日 20:22:31 UTC">2026-07-24</span>
   </span>
 
     
@@ -4023,7 +4023,7 @@ WebDriver 协议！ 没错，XCUITest 驱动程序的 Objective-C 端本身就�
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.action.edit", "content.code.annotate", "content.code.copy", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "navigation.indexes", "navigation.path", "navigation.sections", "navigation.tabs", "navigation.top", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../../js/timeago.min.js"></script>
       

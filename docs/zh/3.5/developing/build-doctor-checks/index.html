@@ -29,15 +29,15 @@
       
       
       <link rel="icon" href="../../assets/images/appium-logo.png">
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.7">
     
     
       
-        <title>Building Doctor Checks - Appium Documentation</title>
+        <title>构建 Doctor Checks - Appium Documentation</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -153,7 +153,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#adding-doctor-checks" class="md-skip">
+        <a href="#doctor-checks" class="md-skip">
           跳转至
         </a>
       
@@ -190,7 +190,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Building Doctor Checks
+              构建 Doctor Checks
             
           </span>
         </div>
@@ -3196,7 +3196,7 @@
   <span class="md-ellipsis">
     
   
-    Building Documentation
+    构建文档
   
 
     
@@ -3231,7 +3231,7 @@
   <span class="md-ellipsis">
     
   
-    Building Doctor Checks
+    构建 Doctor Checks
   
 
     
@@ -3249,7 +3249,7 @@
   <span class="md-ellipsis">
     
   
-    Building Doctor Checks
+    构建 Doctor Checks
   
 
     
@@ -3273,22 +3273,22 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#adding-doctor-checks" class="md-nav__link">
+  <a href="#doctor-checks" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Adding Doctor Checks
+        添加 Doctor Checks
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Adding Doctor Checks">
+    <nav class="md-nav" aria-label="添加 Doctor Checks">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#typing-requirements" class="md-nav__link">
+  <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Typing Requirements
+        类型要求
       
     </span>
   </a>
@@ -3296,10 +3296,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#manifest-requirements" class="md-nav__link">
+  <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Manifest Requirements
+        清单要求
       
     </span>
   </a>
@@ -3307,10 +3307,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#implementation-example" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Implementation Example
+        实现示例
       
     </span>
   </a>
@@ -3345,7 +3345,7 @@
   <span class="md-ellipsis">
     
   
-    Masking Sensitive Log Data
+    屏蔽敏感日志数据
   
 
     
@@ -3624,22 +3624,22 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#adding-doctor-checks" class="md-nav__link">
+  <a href="#doctor-checks" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Adding Doctor Checks
+        添加 Doctor Checks
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Adding Doctor Checks">
+    <nav class="md-nav" aria-label="添加 Doctor Checks">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#typing-requirements" class="md-nav__link">
+  <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Typing Requirements
+        类型要求
       
     </span>
   </a>
@@ -3647,10 +3647,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#manifest-requirements" class="md-nav__link">
+  <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Manifest Requirements
+        清单要求
       
     </span>
   </a>
@@ -3658,10 +3658,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#implementation-example" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Implementation Example
+        实现示例
       
     </span>
   </a>
@@ -3746,41 +3746,29 @@
   
 
 
-  <h1>Building Doctor Checks</h1>
+  <h1>构建 Doctor Checks</h1>
 
-<p>The idea of Appium Doctor is to assist users with driver or plugin preconditions setup. Sometimes such
-preconditions might be quite complicated and require non-trivial technical knowledge. Doctor checks,
-which are vanilla Node.js class instances written by extension authors, simplify
-the setup process by automating diagnostics and possible fixes for the found issues. These checks
-might also be interactive to ensure better usage experience.</p>
-<p>This tutorial is supposed to be used by plugin or driver authors that would like to help their users
-to deal with complicated setup or configuration steps.</p>
-<h2 id="adding-doctor-checks">Adding Doctor Checks<a class="headerlink" href="#adding-doctor-checks" title="Permanent link">&para;</a></h2>
-<h3 id="typing-requirements">Typing Requirements<a class="headerlink" href="#typing-requirements" title="Permanent link">&para;</a></h3>
-<p>The term <code>Doctor Check</code> literally describes a single javascript class instance that implements the
-<a href="https://github.com/appium/appium/blob/master/packages/types/lib/doctor.ts">IDoctorCheck interface</a>.
-The interface defines the following methods and properties:</p>
+<p>Appium Doctor 的目标，是帮助用户完成驱动或插件的前置条件配置。 有时这些前置条件可能相当复杂，需要一定的技术知识。 Doctor checks是由扩展作者编写的普通 Node.js 类实例，它可以自动完成诊断并尝试修复发现的问题。 为了提供更好的使用体验，这些检查项有时也会是交互式的。</p>
+<p>本教程适用于希望帮助用户处理复杂配置或设置步骤的插件或驱动作者。</p>
+<h2 id="doctor-checks">添加 Doctor Checks<a class="headerlink" href="#doctor-checks" title="Permanent link">&para;</a></h2>
+<h3 id="_1">类型要求<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h3>
+<p>术语 <code>Doctor Check</code> 的字面含义，是指一个实现了 <a href="https://github.com/appium/appium/blob/master/packages/types/lib/doctor.ts">IDoctorCheck 接口</a> 的 JavaScript 类实例。
+这个接口定义了以下方法和属性：</p>
 <ul>
-<li><code>diagnose(): Promise&lt;DoctorCheckResult&gt;</code>: Contains the code to diagnose a possible issue</li>
-<li><code>fix(): Promise&lt;string|null&gt;</code>: Either fixes the actual problem if <code>hasAutofix()</code> returns true or
-  returns a string description for possible manual fixes. If this method throws an exception named
-  <code>FixSkippedError</code> and <code>hasAutofix()</code> returns true then the result of the method invocation
-  is going to be ignored.</li>
-<li><code>hasAutofix(): boolean</code>: Whether calling <code>fix()</code> would resolve the found issue</li>
-<li><code>isOptional(): boolean</code>: Whether the found issue can be ignored and is not a showstopper</li>
-<li><code>log: AppiumLogger</code>: May be used for logging. This property may be assigned
-  by the instance itself or by the Appium server if it is left unassigned.</li>
+<li><code>diagnose(): Promise&lt;DoctorCheckResult&gt;</code>：包含诊断某个问题的代码</li>
+<li><code>fix(): Promise&lt;string|null&gt;</code>：如果 <code>hasAutofix()</code> 返回 true，则修复实际问题；否则返回一段手动修复的说明。 如果此方法抛出名为 <code>FixSkippedError</code> 的异常，并且 <code>hasAutofix()</code> 返回 true，那么该调用结果将被忽略。</li>
+<li><code>hasAutofix(): boolean</code>：表示调用 <code>fix()</code> 是否能解决发现的问题</li>
+<li><code>isOptional(): boolean</code>：表示发现的问题是否可以被忽略且不是阻塞性问题</li>
+<li><code>log: AppiumLogger</code>：可用于日志输出。 这个属性可以由实例自行赋值，也可以由 Appium 服务在未赋值时自动提供。</li>
 </ul>
-<p>The <code>DoctorCheckResult</code> object returned by the <code>diagnose()</code> method must contain the following properties:</p>
+<p><code>diagnose()</code> 方法返回的 <code>DoctorCheckResult</code> 对象必须包含以下属性：</p>
 <ul>
-<li><code>ok: boolean</code>: Whether the diagnosis found no issues</li>
-<li><code>optional: boolean</code>: Whether the diagnosed issue is safe to ignore</li>
-<li><code>message: string</code>: The text message describing the diagnostic result</li>
+<li><code>ok: boolean</code>：诊断是否未发现任何问题。</li>
+<li><code>optional: boolean</code>：诊断出的问题是否可以安全忽略。</li>
+<li><code>message: string</code>：描述诊断结果的文本信息。</li>
 </ul>
-<h3 id="manifest-requirements">Manifest Requirements<a class="headerlink" href="#manifest-requirements" title="Permanent link">&para;</a></h3>
-<p>A single extension may export multiple Doctor checks to Appium. In order for these checks to be properly
-picked up by the server CLI after the corresponding extension is installed they might be listed in the
-package .json manifest under the <code>appium.doctor.checks</code> section similar to the definition below:</p>
+<h3 id="_2">清单要求<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<p>一个扩展可以向 Appium 导出多个 Doctor checks。 为了让这些检查项在对应扩展安装后能够被服务端 CLI 正确识别，它们需要在package .json 清单文件中列在 <code>appium.doctor.checks</code> 部分，格式类似下面这样：</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="w">  </span><span class="c1">// ...</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">&quot;appium&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nt">&quot;driverName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;fake&quot;</span><span class="p">,</span>
@@ -3805,10 +3793,9 @@ package .json manifest under the <code>appium.doctor.checks</code> section simil
 </span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="w">  </span><span class="p">},</span>
 </span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a><span class="w">  </span><span class="c1">// ...</span>
 </span></code></pre></div>
-<p>Also, it makes sense to include the <a href="https://www.npmjs.com/package/@appium/types">@appium/types</a> import
-to the package dev dependencies.</p>
-<h3 id="implementation-example">Implementation Example<a class="headerlink" href="#implementation-example" title="Permanent link">&para;</a></h3>
-<p>The below example is a "raw" Node.JS implementation that does not use any transpilation:</p>
+<p>此外，建议将 <a href="https://www.npmjs.com/package/@appium/types">@appium/types</a> 加入包的开发依赖中。</p>
+<h3 id="_3">实现示例<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p>下面是一个“原生”的 Node.js 实现示例，没有使用任何转译工具：</p>
 <div class="language-js highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kd">const</span><span class="w"> </span><span class="p">{</span><span class="nx">fs</span><span class="p">,</span><span class="w"> </span><span class="nx">doctor</span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">require</span><span class="p">(</span><span class="s1">&#39;@appium/support&#39;</span><span class="p">);</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="cm">/** @satisfies {import(&#39;@appium/types&#39;).IDoctorCheck} */</span>
@@ -3856,8 +3843,7 @@ to the package dev dependencies.</p>
 </span><span id="__span-1-45"><a id="__codelineno-1-45" name="__codelineno-1-45" href="#__codelineno-1-45"></a><span class="cm"> * @typedef {import(&#39;@appium/types&#39;).DoctorCheckResult} CheckResult</span>
 </span><span id="__span-1-46"><a id="__codelineno-1-46" name="__codelineno-1-46" href="#__codelineno-1-46"></a><span class="cm"> */</span>
 </span></code></pre></div>
-<p>This file could be saved as <code>doctor/android-home-check.js</code> and then added to the package.json manifest
-as</p>
+<p>这个文件可以保存为 <code>doctor/android-home-check.js</code>，然后再将其加入到 package.json 清单中，例如：</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="w">  </span><span class="c1">// ...</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">&quot;appium&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="c1">// ...</span>
@@ -3890,7 +3876,7 @@ as</p>
     <span class="md-icon" title="最后更新">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="2026年6月18日 21:21:35 UTC"><span class="timeago" datetime="2026-06-18T21:21:35+00:00" locale="zh"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="2026年6月18日 21:21:35 UTC">2026-06-18</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="2026年7月24日 20:22:31 UTC"><span class="timeago" datetime="2026-07-24T20:22:31+00:00" locale="zh"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="2026年7月24日 20:22:31 UTC">2026-07-24</span>
   </span>
 
     
@@ -4057,7 +4043,7 @@ as</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.action.edit", "content.code.annotate", "content.code.copy", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "navigation.indexes", "navigation.path", "navigation.sections", "navigation.tabs", "navigation.top", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../../js/timeago.min.js"></script>
       

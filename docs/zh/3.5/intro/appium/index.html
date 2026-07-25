@@ -29,7 +29,7 @@
       
       
       <link rel="icon" href="../../assets/images/appium-logo.png">
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.7">
     
     
       
@@ -37,7 +37,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -3288,7 +3288,7 @@
   <span class="md-ellipsis">
     
   
-    Building Documentation
+    构建文档
   
 
     
@@ -3316,7 +3316,7 @@
   <span class="md-ellipsis">
     
   
-    Building Doctor Checks
+    构建 Doctor Checks
   
 
     
@@ -3344,7 +3344,7 @@
   <span class="md-ellipsis">
     
   
-    Masking Sensitive Log Data
+    屏蔽敏感日志数据
   
 
     
@@ -3770,7 +3770,7 @@
 </ul>
 <p>这里还有另一个更大的问题，鉴于除了 iOS 和 Android 之外还有更多应用平台：</p>
 <ul>
-<li>我们如何为_所有_平台启用自动化？</li>
+<li>我们如何&#x4E3A;<em>&#x6240;&#x6709;</em>&#x5E73;台启用自动化？</li>
 </ul>
 <p>探索 Appium 对这些问题的答案可能不是学习 Appium 是什么的最快方式，但它肯定是一个好方法！ 所以让我们深入了解。</p>
 <h2 id="appium-api">Appium 的 API 选择<a class="headerlink" href="#appium-api" title="Permanent link">&para;</a></h2>
@@ -3778,31 +3778,31 @@
 <p>多年来，Selenium 与各种 Web 浏览器供应商和 <a href="https://w3.org">W3C</a> 标准小组合作，将其 API 转变为官方 Web 浏览器标准，称为 <a href="https://w3c.github.io/webdriver/">WebDriver 规范</a>。
 所有主要浏览器现在都实现了符合 WebDriver 规范的自动化功能，而无需 Selenium 团队维护任何执行实际自动化的软件；标准获胜！</p>
 <p>Appium 的最初目标是为移动应用（iOS 和 Android）开发自动化标准。 我们本可以发明一些新的东西，但为了团结力量并保持标准的标准化，我们决定采用 WebDriver 规范作为 Appium 的 API。<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup> 虽然网站和移动原生应用的用户交互并不完全相同（一旦我们开始考虑例如由简单遥控器控制的电视平台，差异会更大），但事实是大多数软件 UI 都非常相似。 这意味着 WebDriver 规范提供了自动化 API 原语（查找元素、与元素交互、加载页面或屏幕等） 这些原语或多或少映射到任何平台。</p>
-<p>当然，Appium 希望支持用户交互从 Web 到移动或 Web 到电视确实不同的情况，因此 Appium 还利用 WebDriver 规范的内置_可扩展性_。 结果是，无论您想要自动化哪个平台，当您使用 Appium 时，您将使用标准 WebDriver 规范，但有两个注意事项：</p>
+<p>当然，Appium 希望支持用户交互从 Web 到移动或 Web 到电视确实不同的情况，因此 Appium 还利用 WebDriver 规范的内&#x7F6E;<em>&#x53EF;扩展性</em>。 结果是，无论您想要自动化哪个平台，当您使用 Appium 时，您将使用标准 WebDriver 规范，但有两个注意事项：</p>
 <ul>
 <li>我们可能无法在给定平台上支持特定的 WebDriver API 命令，因此某些命令可能不受支持（例如，在原生移动应用自动化世界中，获取或设置 cookie 是不可能的）。</li>
 <li>我们可能支持超出 WebDriver API 命令列表的自动化行为，尽管任何此类命令将是有效的、符合规范的 WebDriver API 扩展。</li>
 </ul>
-<p>您实际上如何_使用_ WebDriver API，特别是 Appium 的背景下？ 我们将在下面的<a href="#universal-programming-language-access">部分</a>中介绍 Appium 如何提供通用编程语言访问。 您现在只需要知道 Appium 通过实现 WebDriver 协议来引入通用 UI 自动化接口。</p>
+<p>您实际上如&#x4F55;<em>&#x4F7F;用</em> WebDriver API，特别是 Appium 的背景下？ 我们将在下面的<a href="#universal-programming-language-access">部分</a>中介绍 Appium 如何提供通用编程语言访问。 您现在只需要知道 Appium 通过实现 WebDriver 协议来引入通用 UI 自动化接口。</p>
 <h2 id="_1">平台自动化行为<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>下一个问题是，Appium 如何将此协议映射到广泛平台的自动化行为？ 严格来说，Appium 没有！ 它将此责任留给一种称为 Appium <em>驱动程序</em> 的软件模块。 您可以阅读整个<a href="../drivers/">驱动程序</a>的介绍，所以我们现在不会深入细节。</p>
 <p>目前重要的是要理解驱动程序有点像 Appium 的可插拔模块，它赋予 Appium 自动化特定平台（或平台集，取决于驱动程序的目标）的能力。 最终，驱动程序的责任只是实现代表 WebDriver 协议的 Appium 内部接口。 它如何实现此接口完全取决于驱动程序，基于其在特定平台上实现自动化的策略。 通常，在细节上具有更多复杂性和难度，驱动程序通过依赖特定于平台的自动化技术来实现这一点。 例如，Apple 维护一种称为 <a href="https://developer.apple.com/documentation/xctest/user_interface_tests">XCUITest</a> 的 iOS 自动化技术。 支持 iOS 应用自动化的 Appium 驱动程序称为 <a href="https://github.com/appium/appium-xcuitest-driver">XCUITest 驱动程序</a>，因为它最终所做的是将 WebDriver 协议转换为 XCUITest 库调用。</p>
 <p>驱动程序是独立、可插拔模块的原因之一是它们彼此完全不同。 构建和使用不同平台的驱动程序的工具和要求完全不同。 因此，Appium 让您只使用您自动化任务所需的驱动程序。 选择驱动程序并安装它们以便与您的 Appium 实例一起使用非常重要，以至于 Appium 有自己的 <a href="../../reference/cli/extensions/">CLI 来管理驱动程序</a>。</p>
-<p>因此，为了回答我们最初的问题，Appium 为给定平台提供自动化功能访问的方式是 Appium 团队（或任何人<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>）为该平台编写一个_驱动程序_，实现 WebDriver 协议的尽可能多或少的部分。 然后，任何使用 Appium 的人都可以安装驱动程序。</p>
+<p>因此，为了回答我们最初的问题，Appium 为给定平台提供自动化功能访问的方式是 Appium 团队（或任何人<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>）为该平台编写一&#x4E2A;<em>&#x9A71;动程序</em>，实现 WebDriver 协议的尽可能多或少的部分。 然后，任何使用 Appium 的人都可以安装驱动程序。</p>
 <h2 id="_2">通用编程语言访问<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p>但使用 Appium 意味着什么，或者看起来像什么？ 由于 Appium 最终是一个 Node.js 程序，它_可以_看起来像将 Appium 及其驱动程序作为库导入到您自己的 Node.js 程序中。 但这不会满足 Appium 的目标，即为使用任何流行编程语言的人提供自动化功能。</p>
+<p>但使用 Appium 意味着什么，或者看起来像什么？ 由于 Appium 最终是一个 Node.js 程序，&#x5B83;<em>&#x53EF;&#x4EE5;</em>&#x770B;起来像将 Appium 及其驱动程序作为库导入到您自己的 Node.js 程序中。 但这不会满足 Appium 的目标，即为使用任何流行编程语言的人提供自动化功能。</p>
 <p>幸运的是，Appium 继承 Selenium 的遗产意味着我们从一开始就有了这个问题的解决方案。 您看，WebDriver 规范实际上是一个基于 HTTP 的协议，这意味着它被设计为通过网络而不是单个程序的内存使用。</p>
 <p>这种“客户端-服务器”架构的主要好处之一是，它允许自动化实现者（执行自动化的事物，在这种情况下是“服务器”）与自动化运行者（定义应该做什么自动化、以什么步骤等的事物，在这种情况下是“客户端”）完全不同。 基本上，所有“困难的东西”（弄清楚如何在给定平台上实现自动化）可以在服务器的一个地方处理，“瘦”客户端库可以在任何编程语言中编写，这些库只需以适合语言的方式编码对服务器的 HTTP 请求。 换句话说，假设存在高级 HTTP 库，只需在该语言中编写基本的 HTTP 客户端，就可以相对容易地将基本的 Appium / WebDriver 功能引入新的编程语言。</p>
 <p>这里有几个重要的点供 Appium 用户了解：</p>
 <ul>
-<li>Appium 是一个_HTTP 服务器_。 只要您想使用它进行自动化，它必须在某台计算机上作为进程运行。 它必须在网络上可访问，以方便您想要运行自动化的任何计算机访问（无论是同一台机器还是世界另一端的机器）。</li>
+<li>Appium 是一&#x4E2A;<em>&#x48;TTP 服务器</em>。 只要您想使用它进行自动化，它必须在某台计算机上作为进程运行。 它必须在网络上可访问，以方便您想要运行自动化的任何计算机访问（无论是同一台机器还是世界另一端的机器）。</li>
 <li>除非您想编写原始 HTTP 调用或使用 cURL，否则请使用您选择的语言的 <a href="../clients/">Appium 客户端</a>进行自动化。 每个客户端的目标是将 WebDriver 协议封装，以便您不必担心协议本身，而是可以使用感觉适合您语言的对象和方法。</li>
-<li>Appium 服务器和 Appium 客户端_不需要_在同一台计算机上运行。 您只需能够通过某个网络从客户端向服务器发送 HTTP 请求。
+<li>Appium 服务器和 Appium 客户&#x7AEF;<em>&#x4E0D;需&#x8981;</em>&#x5728;同一台计算机上运行。 您只需能够通过某个网络从客户端向服务器发送 HTTP 请求。
   这大大促进了云提供商对 Appium 的使用，因为他们可以托管 Appium 服务器以及任何相关驱动程序和设备，您只需将客户端脚本指向他们的安全端点。</li>
 </ul>
 <p>当然，这一切都不是关于“测试”本身，只是出于自动化目的使用 Appium 及其客户端库。 如果您想出于“测试”目的进行自动化，您可能希望利用测试运行器、测试框架等的帮助，这些都不需要与 Appium 相关；Appium“通用可访问性”的好处之一是它与您发现最适合您情况的任何工具集配合良好。</p>
 <h2 id="appium">Appium 的巨大范围<a class="headerlink" href="#appium" title="Permanent link">&para;</a></h2>
-<p>Appium 的愿景（在单一 API 下自动化一切）是巨大的！ 当然，比开源项目的核心维护者团队大得多。 那么 Appium 如何希望实现这一目标？ 基本上，通过授权社区在 Appium 之上作为_平台_开发功能。 这就是我们所谓的 Appium“生态系统”。</p>
+<p>Appium 的愿景（在单一 API 下自动化一切）是巨大的！ 当然，比开源项目的核心维护者团队大得多。 那么 Appium 如何希望实现这一目标？ 基本上，通过授权社区在 Appium 之上作&#x4E3A;<em>&#x5E73;&#x53F0;</em>&#x5F00;发功能。 这就是我们所谓的 Appium“生态系统”。</p>
 <p>Appium 团队确实自己维护了一些驱动程序（例如，我们之前讨论的 XCUITest 驱动程序）。 但它无法拥有特定于平台的专业知识或维护许多不同平台的驱动程序的能力。 但我们所做的，特别是从 Appium 2 开始，是提供工具来授权社区加入我们的愿景：</p>
 <ul>
 <li>任何人都可以通过创建一个符合适当约定并实现 WebDriver 协议的任何（子|超）集的 Node.js 模块来创建驱动程序。 创建驱动程序通常涉及最少的代码，因为 WebDriver 协议细节被抽象化，许多帮助库可用---这些库为 Appium 团队自己的驱动程序提供动力。</li>
@@ -3853,7 +3853,7 @@
     <span class="md-icon" title="最后更新">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="2026年6月18日 21:21:35 UTC"><span class="timeago" datetime="2026-06-18T21:21:35+00:00" locale="zh"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="2026年6月18日 21:21:35 UTC">2026-06-18</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="2026年7月24日 20:22:31 UTC"><span class="timeago" datetime="2026-07-24T20:22:31+00:00" locale="zh"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="2026年7月24日 20:22:31 UTC">2026-07-24</span>
   </span>
 
     
@@ -4020,7 +4020,7 @@
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.action.edit", "content.code.annotate", "content.code.copy", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "navigation.indexes", "navigation.path", "navigation.sections", "navigation.tabs", "navigation.top", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../../js/timeago.min.js"></script>
       

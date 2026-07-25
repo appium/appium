@@ -29,7 +29,7 @@
       
       
       <link rel="icon" href="../../assets/images/appium-logo.png">
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.7">
     
     
       
@@ -37,7 +37,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -3206,7 +3206,7 @@
   <span class="md-ellipsis">
     
   
-    Building Documentation
+    构建文档
   
 
     
@@ -3234,7 +3234,7 @@
   <span class="md-ellipsis">
     
   
-    Building Doctor Checks
+    构建 Doctor Checks
   
 
     
@@ -3262,7 +3262,7 @@
   <span class="md-ellipsis">
     
   
-    Masking Sensitive Log Data
+    屏蔽敏感日志数据
   
 
     
@@ -3628,7 +3628,7 @@
 
   <h1>Appium 客户端简介</h1>
 
-<p>出于<a href="../appium/">概述</a>中讨论的所有原因，Appium 基于 <a href="https://w3c.github.io/webdriver/">W3C WebDriver 规范</a>。 这意味着 Appium 实现了客户端-服务器架构。 服务器（由 Appium 本身以及您用于自动化的任何驱动程序或插件组成）连接到测试设备，并实际负责在这些设备上实现自动化。 客户端（由_您_驱动，Appium 测试作者）负责通过网络向服务器发送命令，并接收来自服务器的响应。 这些响应可用于判断自动化命令是否成功，或可能包含您查询的关于应用程序状态的信息。 本文档是对客户端方面的概念性介绍。</p>
+<p>出于<a href="../appium/">概述</a>中讨论的所有原因，Appium 基于 <a href="https://w3c.github.io/webdriver/">W3C WebDriver 规范</a>。 这意味着 Appium 实现了客户端-服务器架构。 服务器（由 Appium 本身以及您用于自动化的任何驱动程序或插件组成）连接到测试设备，并实际负责在这些设备上实现自动化。 客户端（&#x7531;<em>&#x60A8;</em>&#x9A71;动，Appium 测试作者）负责通过网络向服务器发送命令，并接收来自服务器的响应。 这些响应可用于判断自动化命令是否成功，或可能包含您查询的关于应用程序状态的信息。 本文档是对客户端方面的概念性介绍。</p>
 <div class="admonition info">
 <p class="admonition-title">Info</p>
 </div>
@@ -3641,7 +3641,7 @@
 <li>获取页面源代码</li>
 <li>截取屏幕截图</li>
 </ul>
-<p>如果您查看 WebDriver 规范中的这些命令，您会注意到它们不是以任何特定编程语言定义的。 它们不是 Java 命令、JavaScript 命令或 Python 命令。 相反，它们形成了可以通过_任何_编程语言访问的 HTTP API（ 如果您愿意，您可以只使用 cURL）。</p>
+<p>如果您查看 WebDriver 规范中的这些命令，您会注意到它们不是以任何特定编程语言定义的。 它们不是 Java 命令、JavaScript 命令或 Python 命令。 相反，它们形成了可以通&#x8FC7;<em>&#x4EFB;&#x4F55;</em>&#x7F16;程语言访问的 HTTP API（ 如果您愿意，您可以只使用 cURL）。</p>
 <p>例如，<code>查找元素</code>命令对应于发送到 HTTP 端点 <code>/session/:sessionid/element</code> 的 HTTP <code>POST</code> 请求（其中<code>:sessionid</code> 是服务器在之前 <code>创建会话</code> 调用中生成的唯一会话 ID 的占位符）。</p>
 <p>此信息主要对开发与 WebDriver 规范一起工作的技术的人有用。 它对试图编写 Appium 或 Selenium 测试的人不是特别有用。 当您编写 Appium 测试时，您希望使用您熟悉的编程语言。 幸运的是，存在一组 <a href="../../ecosystem/clients/">Appium 客户端库</a><sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>，它们负责向 Appium 服务器发起HTTP 的请求。 它们为特定编程语言公开了一组“原生”命令，以便对测试作者来说，它就像您在编写 Python、JavaScript 或 Java。</p>
 <p>以下是使用 Appium 客户端在五种不同编程语言中实现相同的 Appium 命令集的示例（注意，这不是包含所有导入的工作示例代码；请参阅每个客户端库的设置和命令参考说明）：</p>
@@ -3724,7 +3724,7 @@
     <span class="md-icon" title="最后更新">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="2026年6月18日 21:21:35 UTC"><span class="timeago" datetime="2026-06-18T21:21:35+00:00" locale="zh"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="2026年6月18日 21:21:35 UTC">2026-06-18</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="2026年7月24日 20:22:31 UTC"><span class="timeago" datetime="2026-07-24T20:22:31+00:00" locale="zh"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="2026年7月24日 20:22:31 UTC">2026-07-24</span>
   </span>
 
     
@@ -3893,7 +3893,7 @@
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.action.edit", "content.code.annotate", "content.code.copy", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "navigation.indexes", "navigation.path", "navigation.sections", "navigation.tabs", "navigation.top", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../../js/timeago.min.js"></script>
       

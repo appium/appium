@@ -1,6 +1,6 @@
 {
   "name": "@appium/relaxed-caps-plugin",
-  "version": "2.2.4",
+  "version": "2.2.5",
   "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8",
   "description": "An Appium plugin that loosens requirements for vendor prefixes on caps",
   "keywords": [
@@ -44,7 +44,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@appium/types": "1.5.1"
+    "@appium/types": "1.6.0"
   },
   "peerDependencies": {
     "appium": "^3.0.0-beta.0"

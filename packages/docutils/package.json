@@ -1,6 +1,6 @@
 {
   "name": "@appium/docutils",
-  "version": "2.5.1",
+  "version": "2.5.2",
   "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8",
   "description": "Documentation generation utilities for Appium and related projects",
   "keywords": [
@@ -50,7 +50,7 @@
     "start": "node ./build/lib/cli/index.js"
   },
   "dependencies": {
-    "@appium/support": "7.2.5",
+    "@appium/support": "7.2.6",
     "consola": "3.4.2",
     "diff": "9.0.0",
     "lilconfig": "3.1.3",

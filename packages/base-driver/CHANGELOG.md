@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.7.2](https://github.com/appium/appium/compare/@appium/base-driver@10.7.1...@appium/base-driver@10.7.2) (2026-07-25)
+
+
+### Bug Fixes
+
+* **base-driver:** fix typo in generic sensor protocol route ([#22525](https://github.com/appium/appium/issues/22525)) ([6609b2b](https://github.com/appium/appium/commit/6609b2be57dc1036480a31337849bbc2c18f0c24))
+* **base-driver:** Perform shallow clone of initial options ([#22465](https://github.com/appium/appium/issues/22465)) ([de2cd50](https://github.com/appium/appium/commit/de2cd50b9694b7511ec2e18a43e35fac710c7038))
+* **base-driver:** redact proxied response body in proxy logs ([#22470](https://github.com/appium/appium/issues/22470)) ([a9dd7f5](https://github.com/appium/appium/commit/a9dd7f5e4126d6eb52e55541fbada2f5522e05a9))
+* typescript config ([#22540](https://github.com/appium/appium/issues/22540)) ([ea6a2e1](https://github.com/appium/appium/commit/ea6a2e117f56c1d7ff459378700494407c51608e))
+* use module sync in appium/support ([#22514](https://github.com/appium/appium/issues/22514)) ([b566461](https://github.com/appium/appium/commit/b56646198ce0cd45a1ae79b1219c371b6a30cf3e))
+
+
+
 ## [10.7.1](https://github.com/appium/appium/compare/@appium/base-driver@10.7.0...@appium/base-driver@10.7.1) (2026-06-18)
 
 **Note:** Version bump only for package @appium/base-driver

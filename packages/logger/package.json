@@ -1,6 +1,6 @@
 {
   "name": "@appium/logger",
-  "version": "2.0.9",
+  "version": "2.0.10",
   "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8",
   "description": "A Universal Logger For The Appium Ecosystem",
   "keywords": [

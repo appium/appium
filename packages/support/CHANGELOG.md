@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.2.6](https://github.com/appium/appium/compare/@appium/support@7.2.5...@appium/support@7.2.6) (2026-07-25)
+
+
+### Bug Fixes
+
+* **support:** Prevent extraction of external symlinks ([#22436](https://github.com/appium/appium/issues/22436)) ([d9eb36f](https://github.com/appium/appium/commit/d9eb36f413153e28b04b92d8ce4447da270371c0))
+* Typescript references ([#22458](https://github.com/appium/appium/issues/22458)) ([fd70da7](https://github.com/appium/appium/commit/fd70da7ab407bf1f6fec8a3576b9a33f0aef9b69))
+
+
+
 ## [7.2.5](https://github.com/appium/appium/compare/@appium/support@7.2.4...@appium/support@7.2.5) (2026-06-18)
 
 

@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.0](https://github.com/appium/appium/compare/@appium/tsconfig@1.1.2...@appium/tsconfig@1.2.0) (2026-07-25)
+
+
+### Features
+
+* **tsconfig:** hoist typescript version ([#22533](https://github.com/appium/appium/issues/22533)) ([f4d14c1](https://github.com/appium/appium/commit/f4d14c1969a61a77ca0184c53ee6ad7025cc845c))
+
+
+
 ## [1.1.2](https://github.com/appium/appium/compare/@appium/tsconfig@1.1.1...@appium/tsconfig@1.1.2) (2026-03-08)
 
 **Note:** Version bump only for package @appium/tsconfig

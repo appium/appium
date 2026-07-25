@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.5](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@2.2.4...@appium/relaxed-caps-plugin@2.2.5) (2026-07-25)
+
+
+### Bug Fixes
+
+* Typescript references ([#22458](https://github.com/appium/appium/issues/22458)) ([fd70da7](https://github.com/appium/appium/commit/fd70da7ab407bf1f6fec8a3576b9a33f0aef9b69))
+
+
+
 ## [2.2.4](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@2.2.3...@appium/relaxed-caps-plugin@2.2.4) (2026-06-18)
 
 **Note:** Version bump only for package @appium/relaxed-caps-plugin

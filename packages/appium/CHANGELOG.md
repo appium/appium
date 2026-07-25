@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.6.0](https://github.com/appium/appium/compare/appium@3.5.2...appium@3.6.0) (2026-07-25)
+
+
+### Features
+
+* **appium:** add --allow-unknown-args to tolerate unrecognized server CLI arguments ([#22477](https://github.com/appium/appium/issues/22477)) ([f943fab](https://github.com/appium/appium/commit/f943fab1411826212cfb174e3847e610c25f37b7))
+
+
+### Bug Fixes
+
+* **appium:** Duplicated module import ([#22519](https://github.com/appium/appium/issues/22519)) ([154ea18](https://github.com/appium/appium/commit/154ea1825281335569f0d6952db527135c75e153))
+* typescript config ([#22540](https://github.com/appium/appium/issues/22540)) ([ea6a2e1](https://github.com/appium/appium/commit/ea6a2e117f56c1d7ff459378700494407c51608e))
+* Typescript references ([#22458](https://github.com/appium/appium/issues/22458)) ([fd70da7](https://github.com/appium/appium/commit/fd70da7ab407bf1f6fec8a3576b9a33f0aef9b69))
+
+
+
 ## [3.5.2](https://github.com/appium/appium/compare/appium@3.5.1...appium@3.5.2) (2026-06-18)
 
 **Note:** Version bump only for package appium

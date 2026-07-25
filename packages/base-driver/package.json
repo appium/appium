@@ -1,6 +1,6 @@
 {
   "name": "@appium/base-driver",
-  "version": "10.7.1",
+  "version": "10.7.2",
   "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8",
   "description": "Base driver class for Appium drivers",
   "keywords": [
@@ -46,8 +46,8 @@
     "test:types": "tsd"
   },
   "dependencies": {
-    "@appium/support": "7.2.5",
-    "@appium/types": "1.5.1",
+    "@appium/support": "7.2.6",
+    "@appium/types": "1.6.0",
     "async-lock": "1.4.1",
     "asyncbox": "6.3.5",
     "axios": "1.18.1",

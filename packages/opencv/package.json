@@ -1,6 +1,6 @@
 {
   "name": "@appium/opencv",
-  "version": "4.1.6",
+  "version": "4.1.7",
   "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8",
   "description": "OpenCV-related helper library",
   "keywords": [

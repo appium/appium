@@ -1,6 +1,6 @@
 {
   "name": "@appium/base-plugin",
-  "version": "3.3.2",
+  "version": "3.3.3",
   "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8",
   "description": "The base plugin used to create Appium plugins",
   "keywords": [
@@ -44,9 +44,9 @@
     "test:unit": "node --test --enable-source-maps \"./build/test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/base-driver": "10.7.1",
-    "@appium/support": "7.2.5",
-    "@appium/types": "1.5.1"
+    "@appium/base-driver": "10.7.2",
+    "@appium/support": "7.2.6",
+    "@appium/types": "1.6.0"
   },
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0",

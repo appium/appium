@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.1](https://github.com/appium/appium/compare/@appium/plugin-test-support@1.2.4...@appium/plugin-test-support@2.0.1) (2026-07-25)
+
+
+### Bug Fixes
+
+* typescript config ([#22540](https://github.com/appium/appium/issues/22540)) ([ea6a2e1](https://github.com/appium/appium/commit/ea6a2e117f56c1d7ff459378700494407c51608e))
+
+
+
 ## [2.0.0]
 
 ### ⚠ BREAKING CHANGES

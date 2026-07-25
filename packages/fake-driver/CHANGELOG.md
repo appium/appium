@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.2.2](https://github.com/appium/appium/compare/@appium/fake-driver@6.2.1...@appium/fake-driver@6.2.2) (2026-07-25)
+
+
+### Bug Fixes
+
+* Typescript references ([#22458](https://github.com/appium/appium/issues/22458)) ([fd70da7](https://github.com/appium/appium/commit/fd70da7ab407bf1f6fec8a3576b9a33f0aef9b69))
+
+
+
 ## [6.2.1](https://github.com/appium/appium/compare/@appium/fake-driver@6.2.0...@appium/fake-driver@6.2.1) (2026-06-18)
 
 **Note:** Version bump only for package @appium/fake-driver

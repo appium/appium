@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.2.8](https://github.com/appium/appium/compare/@appium/images-plugin@4.2.7...@appium/images-plugin@4.2.8) (2026-07-25)
+
+
+### Bug Fixes
+
+* typescript config ([#22540](https://github.com/appium/appium/issues/22540)) ([ea6a2e1](https://github.com/appium/appium/commit/ea6a2e117f56c1d7ff459378700494407c51608e))
+* Typescript references ([#22458](https://github.com/appium/appium/issues/22458)) ([fd70da7](https://github.com/appium/appium/commit/fd70da7ab407bf1f6fec8a3576b9a33f0aef9b69))
+
+
+
 ## [4.2.7](https://github.com/appium/appium/compare/@appium/images-plugin@4.2.6...@appium/images-plugin@4.2.7) (2026-06-18)
 
 **Note:** Version bump only for package @appium/images-plugin

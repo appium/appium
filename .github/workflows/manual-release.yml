@@ -78,18 +78,41 @@ jobs:
             done
           }
 
+          # Resolves the workspace directory of a package given its npm name.
+          package_dir_for() {
+            local target="$1"
+            for pkg_json in packages/*/package.json; do
+              if [ ! -f "$pkg_json" ]; then
+                continue
+              fi
+              if [ "$(jq -r '.name // empty' "$pkg_json")" = "$target" ]; then
+                dirname "$pkg_json"
+                return 0
+              fi
+            done
+            return 1
+          }
+
           # Publishes each "<pkg_name>@<pkg_version>" package spec passed as an argument.
+          # `lerna publish` has no per-package scope filter, so this runs `npm publish`
+          # directly from each package's directory instead.
           publish_missing_packages() {
-            echo "Publishing missing packages one-by-one with scope"
+            echo "Publishing missing packages one-by-one"
             for pkg_spec in "$@"; do
               pkg_name="${pkg_spec%@*}"
-              echo "Publishing ${pkg_name}"
+              pkg_dir="$(package_dir_for "$pkg_name")"
+              if [ -z "$pkg_dir" ]; then
+                echo "Could not resolve workspace directory for ${pkg_name}; skipping"
+                continue
+              fi
+
+              echo "Publishing ${pkg_spec}"
               set +e
-              npx lerna publish from-package --yes --scope "$pkg_name"
-              scoped_exit_code=$?
+              (cd "$pkg_dir" && npm publish)
+              publish_exit_code=$?
               set -e
-              if [ $scoped_exit_code -ne 0 ]; then
-                echo "Scoped publish exited non-zero for ${pkg_name}; will verify on npm"
+              if [ $publish_exit_code -ne 0 ]; then
+                echo "npm publish exited non-zero for ${pkg_spec}; will verify on npm"
               fi
             done
           }

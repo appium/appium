@@ -52,8 +52,9 @@ jobs:
         run: |
           set -euo pipefail
 
+          # Prints "<pkg_name>@<pkg_version>" to stdout for each non-private workspace package
+          # whose current package.json version is not yet on npm.
           find_missing_packages() {
-            missing=()
             for pkg_json in packages/*/package.json; do
               if [ ! -f "$pkg_json" ]; then
                 continue
@@ -66,21 +67,21 @@ jobs:
               pkg_name="$(jq -r '.name // empty' "$pkg_json")"
               pkg_version="$(jq -r '.version // empty' "$pkg_json")"
               if [ -z "$pkg_name" ] || [ -z "$pkg_version" ]; then
-                echo "Skipping malformed package manifest: $pkg_json"
+                echo "Skipping malformed package manifest: $pkg_json" >&2
                 continue
               fi
 
               pkg_spec="${pkg_name}@${pkg_version}"
               if ! npm view "$pkg_spec" version >/dev/null 2>&1; then
-                missing+=("$pkg_spec")
+                echo "$pkg_spec"
               fi
             done
           }
 
-          # Publishes every package currently listed in the `missing` array (as set by find_missing_packages).
+          # Publishes each "<pkg_name>@<pkg_version>" package spec passed as an argument.
           publish_missing_packages() {
             echo "Publishing missing packages one-by-one with scope"
-            for pkg_spec in "${missing[@]}"; do
+            for pkg_spec in "$@"; do
               pkg_name="${pkg_spec%@*}"
               echo "Publishing ${pkg_name}"
               set +e
@@ -95,7 +96,7 @@ jobs:
 
           if [ "$RECOVER_MISSING_ONLY" = "true" ]; then
             echo "Recovery mode: scanning for packages missing on npm at their current package.json version"
-            find_missing_packages
+            mapfile -t missing < <(find_missing_packages)
 
             if [ ${#missing[@]} -eq 0 ]; then
               echo "No missing packages found; nothing to do"
@@ -110,9 +111,9 @@ jobs:
               exit 0
             fi
 
-            publish_missing_packages
+            publish_missing_packages "${missing[@]}"
 
-            find_missing_packages
+            mapfile -t missing < <(find_missing_packages)
             if [ ${#missing[@]} -gt 0 ]; then
               echo "Recovery incomplete. Still missing:"
               printf ' - %s\n' "${missing[@]}"
@@ -154,14 +155,14 @@ jobs:
               fi
 
               git checkout "$tagged_commit"
-              find_missing_packages
+              mapfile -t missing < <(find_missing_packages)
 
               if [ ${#missing[@]} -gt 0 ]; then
                 echo "Missing package versions on npm before scoped recovery:"
                 printf ' - %s\n' "${missing[@]}"
-                publish_missing_packages
+                publish_missing_packages "${missing[@]}"
 
-                find_missing_packages
+                mapfile -t missing < <(find_missing_packages)
                 if [ ${#missing[@]} -gt 0 ]; then
                   echo "Recovery incomplete after scoped retries. Still missing:"
                   printf ' - %s\n' "${missing[@]}"

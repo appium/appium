@@ -489,7 +489,7 @@ export class TimeoutError extends ProtocolError {
     return 21;
   }
   static w3cStatus() {
-    return HTTPStatusCodes.REQUEST_TIMEOUT;
+    return HTTPStatusCodes.INTERNAL_SERVER_ERROR;
   }
   static error() {
     return 'timeout';
@@ -669,7 +669,7 @@ export class ScriptTimeoutError extends ProtocolError {
     return 28;
   }
   static w3cStatus() {
-    return HTTPStatusCodes.REQUEST_TIMEOUT;
+    return HTTPStatusCodes.INTERNAL_SERVER_ERROR;
   }
   static error() {
     return 'script timeout';

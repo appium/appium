@@ -95,14 +95,18 @@ jobs:
 
           # Publishes each "<pkg_name>@<pkg_version>" package spec passed as an argument.
           # `lerna publish` has no per-package scope filter, so this runs `npm publish`
-          # directly from each package's directory instead.
+          # directly from each package's directory instead. Returns non-zero if any
+          # individual publish failed; npm publish's own exit code is taken as authoritative,
+          # no npm registry re-scan is done to double-check it.
           publish_missing_packages() {
             echo "Publishing missing packages one-by-one"
+            local overall_status=0
             for pkg_spec in "$@"; do
               pkg_name="${pkg_spec%@*}"
               pkg_dir="$(package_dir_for "$pkg_name")"
               if [ -z "$pkg_dir" ]; then
-                echo "Could not resolve workspace directory for ${pkg_name}; skipping"
+                echo "Could not resolve workspace directory for ${pkg_name}"
+                overall_status=1
                 continue
               fi
 
@@ -112,9 +116,11 @@ jobs:
               publish_exit_code=$?
               set -e
               if [ $publish_exit_code -ne 0 ]; then
-                echo "npm publish exited non-zero for ${pkg_spec}; will verify on npm"
+                echo "npm publish failed for ${pkg_spec} (exit code ${publish_exit_code})"
+                overall_status=1
               fi
             done
+            return $overall_status
           }
 
           if [ "$RECOVER_MISSING_ONLY" = "true" ]; then
@@ -134,16 +140,12 @@ jobs:
               exit 0
             fi
 
-            publish_missing_packages "${missing[@]}"
-
-            mapfile -t missing < <(find_missing_packages)
-            if [ ${#missing[@]} -gt 0 ]; then
-              echo "Recovery incomplete. Still missing:"
-              printf ' - %s\n' "${missing[@]}"
+            if ! publish_missing_packages "${missing[@]}"; then
+              echo "Recovery incomplete: one or more packages failed to publish"
               exit 1
             fi
 
-            echo "All publishable workspace package versions are present on npm"
+            echo "All missing packages published successfully"
             exit 0
           fi
 
@@ -183,12 +185,8 @@ jobs:
               if [ ${#missing[@]} -gt 0 ]; then
                 echo "Missing package versions on npm before scoped recovery:"
                 printf ' - %s\n' "${missing[@]}"
-                publish_missing_packages "${missing[@]}"
-
-                mapfile -t missing < <(find_missing_packages)
-                if [ ${#missing[@]} -gt 0 ]; then
-                  echo "Recovery incomplete after scoped retries. Still missing:"
-                  printf ' - %s\n' "${missing[@]}"
+                if ! publish_missing_packages "${missing[@]}"; then
+                  echo "Recovery incomplete: one or more packages failed to publish"
                   exit $release_exit_code
                 fi
               fi

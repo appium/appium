@@ -59,6 +59,28 @@ describe('Log Internals', function () {
     expect(preprocessor.preprocess(':yolo" yo Yolo yyolo')).to.eql(`:${replacer}" yo ${replacer} yyolo`);
   });
 
+  it('should preprocess values starting or ending with non-word characters', async function () {
+    const issues = await preprocessor.loadRules(['P@ssw0rd!', '+15550100', '#hunter2']);
+    expect(issues.length).to.eql(0);
+    const replacer = preprocessor.rules[0].replacer;
+    expect(preprocessor.preprocess('P@ssw0rd! call +15550100 tag #hunter2')).to.eql(
+      `${replacer} call ${replacer} tag ${replacer}`,
+    );
+  });
+
+  it(`should preprocess a value with non-word characters given as 'text'`, async function () {
+    const issues = await preprocessor.loadRules([{text: '$ecret'}]);
+    expect(issues.length).to.eql(0);
+    const replacer = preprocessor.rules[0].replacer;
+    expect(preprocessor.preprocess('the token is $ecret')).to.eql(`the token is ${replacer}`);
+  });
+
+  it('should not preprocess a value which is a part of a longer word', async function () {
+    const issues = await preprocessor.loadRules(['yolo']);
+    expect(issues.length).to.eql(0);
+    expect(preprocessor.preprocess('yolos yyolo')).to.eql('yolos yyolo');
+  });
+
   it('should leave the string unchanged if all rules have issues', async function () {
     const replacer2 = '***';
     const issues = await preprocessor.loadRules([null, {flags: 'i'}, {pattern: '^:(', replacer: replacer2}] as any);

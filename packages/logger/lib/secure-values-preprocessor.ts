@@ -34,7 +34,7 @@ export class SecureValuesPreprocessor {
       if (rule.length === 0) {
         throw new Error(`${JSON.stringify(rule)} -> The value must not be empty`);
       }
-      pattern = `\\b${escapeRegExp(rule)}\\b`;
+      pattern = toExactMatchPattern(rule);
     } else if (isPlainObject(rule)) {
       if (isLogFilterRegex(rule)) {
         if (typeof rule.pattern !== 'string' || rule.pattern.length === 0) {
@@ -45,7 +45,7 @@ export class SecureValuesPreprocessor {
         if (typeof rule.text !== 'string' || rule.text.length === 0) {
           throw new Error(`${JSON.stringify(rule)} -> The value of 'text' must be a valid non-empty string`);
         }
-        pattern = `\\b${escapeRegExp(rule.text)}\\b`;
+        pattern = toExactMatchPattern(rule.text);
       }
       if (!pattern) {
         throw new Error(`${JSON.stringify(rule)} -> Must either have a field named 'pattern' or 'text'`);
@@ -135,4 +135,21 @@ export class SecureValuesPreprocessor {
  */
 function isLogFilterRegex(value: object): value is LogFilterRegex {
   return 'pattern' in value;
+}
+
+/**
+ * Transforms the given text to a pattern, which does not match if the
+ * text is only a part of a longer word.
+ *
+ * `\b` only asserts a boundary next to a word character, so it is only added
+ * to the sides where the text itself begins or ends with one. Otherwise values
+ * like `P@ssw0rd!` would never match anything.
+ *
+ * @param {string} text The text to match
+ * @returns {string} The resulting regular expression source
+ */
+function toExactMatchPattern(text: string): string {
+  const prefix = /^\w/.test(text) ? '\\b' : '';
+  const suffix = /\w$/.test(text) ? '\\b' : '';
+  return `${prefix}${escapeRegExp(text)}${suffix}`;
 }

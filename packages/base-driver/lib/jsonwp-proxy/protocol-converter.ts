@@ -166,7 +166,10 @@ export class ProtocolConverter {
     if (timeoutRequestObjects.length === 0) {
       return await this.proxyFunc(url, method, body);
     }
-    this.log.debug(`Will send the following request bodies to /timeouts: ${JSON.stringify(timeoutRequestObjects)}`);
+    this.log.debug(
+      'Will send the following request bodies to /timeouts: %s',
+      logger.markSensitive(JSON.stringify(timeoutRequestObjects)),
+    );
 
     let response!: ProxyResponse;
     let resBody!: HTTPBody;

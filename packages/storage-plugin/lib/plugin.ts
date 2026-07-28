@@ -34,7 +34,11 @@ export class StoragePlugin extends BasePlugin {
       } catch (e) {
         [status, body] = getResponseForW3CError(e);
       }
-      log.debug(`Responding to ${methodName} with ${util.truncateString(JSON.stringify(body.value), {length: 200})}`);
+      log.debug(
+        'Responding to %s with %s',
+        methodName,
+        logger.markSensitive(util.truncateString(JSON.stringify(body.value), {length: 200})),
+      );
       res.set('content-type', 'application/json; charset=utf-8');
       res.status(status).send(body);
     };

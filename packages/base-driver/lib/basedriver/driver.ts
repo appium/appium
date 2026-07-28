@@ -1,4 +1,4 @@
-import {util} from '@appium/support';
+import {logger, util} from '@appium/support';
 import {
   type AppiumServer,
   BASE_DESIRED_CAP_CONSTRAINTS,
@@ -293,7 +293,10 @@ export class BaseDriver<
     this.setProtocolW3C();
 
     this.originalCaps = originalCaps;
-    this.log.debug(`Creating session with W3C capabilities: ${JSON.stringify(originalCaps, null, 2)}`);
+    this.log.debug(
+      'Creating session with W3C capabilities: %s',
+      logger.markSensitive(JSON.stringify(originalCaps, null, 2)),
+    );
 
     let caps: DriverCaps<C>;
     try {

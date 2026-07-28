@@ -1,7 +1,7 @@
 # editorconfig.org
 root = true
 
-[*]
+[*.{js,cjs,mjs,jsx,ts,cts,mts,tsx,json,jsonc}]
 indent_style = space
 indent_size = 2
 end_of_line = lf

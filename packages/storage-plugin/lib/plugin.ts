@@ -21,10 +21,8 @@ const STORAGE_PREFIX = '/appium/storage';
  */
 const DEPRECATED_STORAGE_PREFIX = '/storage';
 const WS_TTL_MS = 5 * 60 * 1000;
-const STORAGE_HANDLERS: Record<
-  string,
-  (req: Request, httpServer?: AppiumServer, basePath?: string) => Promise<any>
-> = {};
+const STORAGE_HANDLERS: Record<string, (req: Request, httpServer?: AppiumServer, basePath?: string) => Promise<any>> =
+  {};
 const deprecatedRoutesLogged: Set<string> = new Set();
 const STORAGE_ADDITIONS_CACHE: LRUCache<string, () => any> = new LRUCache({
   max: 20,
@@ -34,8 +32,8 @@ const STORAGE_ADDITIONS_CACHE: LRUCache<string, () => any> = new LRUCache({
 
 export class StoragePlugin extends BasePlugin {
   static async updateServer(expressApp: Express, httpServer: AppiumServer): Promise<void> {
-    const buildHandler = (methodName: string, basePath: string, isDeprecated: boolean) =>
-      async (req: Request, res: Response) => {
+    const buildHandler =
+      (methodName: string, basePath: string, isDeprecated: boolean) => async (req: Request, res: Response) => {
         if (isDeprecated && !deprecatedRoutesLogged.has(req.path)) {
           deprecatedRoutesLogged.add(req.path);
           log.warn(
@@ -67,10 +65,7 @@ export class StoragePlugin extends BasePlugin {
     ] as const) {
       expressApp.post(`${basePath}/add`, buildHandler(STORAGE_HANDLERS.addStorageItem.name, basePath, isDeprecated));
       expressApp.get(`${basePath}/list`, buildHandler(STORAGE_HANDLERS.listStorageItems.name, basePath, isDeprecated));
-      expressApp.post(
-        `${basePath}/reset`,
-        buildHandler(STORAGE_HANDLERS.resetStorage.name, basePath, isDeprecated),
-      );
+      expressApp.post(`${basePath}/reset`, buildHandler(STORAGE_HANDLERS.resetStorage.name, basePath, isDeprecated));
       expressApp.post(
         `${basePath}/delete`,
         buildHandler(STORAGE_HANDLERS.deleteStorageItem.name, basePath, isDeprecated),

@@ -33,8 +33,44 @@ runs:
       run: |
         # Replace npm with sfw npm in the install command
         install_cmd="${{ inputs.install-command }}"
-        install_cmd="${install_cmd//npm /sfw npm }"
-        $install_cmd
+        sfw_install_cmd="${install_cmd//npm /sfw npm }"
+
+        # Socket Firewall can fail to reach its own backend (a transient
+        # network error unrelated to the actual npm install) and, in that
+        # case, either exit non-zero or exit 0 without having actually
+        # completed the install, leaving node_modules incomplete. We only
+        # want to fall back to a plain (non-firewalled) install when we can
+        # positively attribute the failure to *that* Socket Firewall error —
+        # a real npm/package problem (bad version, checksum mismatch, failing
+        # postinstall script, etc.) must fail the job as-is, not be silently
+        # retried and potentially masked.
+        sfw_log="$(mktemp)"
+        set +e
+        $sfw_install_cmd 2>&1 | tee "$sfw_log"
+        sfw_exit="${PIPESTATUS[0]}"
+        set -e
+
+        sfw_infra_failure=0
+        if grep -qi 'Socket Firewall encountered an unexpected error' "$sfw_log"; then
+          sfw_infra_failure=1
+        fi
+
+        install_incomplete=0
+        if [ "$sfw_exit" -eq 0 ]; then
+          npm ls --depth=0 >/dev/null 2>&1 || install_incomplete=1
+        fi
+        rm -f "$sfw_log"
+
+        if [ "$sfw_infra_failure" -eq 1 ] && { [ "$sfw_exit" -ne 0 ] || [ "$install_incomplete" -eq 1 ]; }; then
+          echo "::warning::Socket Firewall failed to reach its backend; retrying with a plain npm install"
+          $install_cmd
+        elif [ "$sfw_exit" -ne 0 ]; then
+          echo "::error::npm install failed"
+          exit "$sfw_exit"
+        elif [ "$install_incomplete" -eq 1 ]; then
+          echo "::error::npm install appears incomplete and is not attributable to a Socket Firewall failure"
+          exit 1
+        fi
     - name: Build packages
       if: ${{ inputs.run-build == 'true' }}
       shell: bash

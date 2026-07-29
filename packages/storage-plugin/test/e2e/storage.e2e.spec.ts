@@ -57,7 +57,7 @@ describe('StoragePlugin', function () {
   beforeEach(async function () {
     storageRoot = await tempDir.openDir();
     driver = await wdio(WDIO_OPTS);
-    const baseUrl = `http://${TEST_HOST}:${WDIO_OPTS.port}/storage`;
+    const baseUrl = `http://${TEST_HOST}:${WDIO_OPTS.port}/appium/storage`;
     driver.addCommand(
       'addStorageItem',
       async (name: string, sha1: string) => (await axios.post(`${baseUrl}/add`, {name, sha1})).data.value,
@@ -99,6 +99,12 @@ describe('StoragePlugin', function () {
     await driver.resetStorageItems();
     items = await driver.listStorageItems();
     expect(items.length).to.eql(0);
+  });
+
+  it('should still serve the deprecated /storage endpoints', async function () {
+    const deprecatedBaseUrl = `http://${TEST_HOST}:${WDIO_OPTS.port}/storage`;
+    const {data} = await axios.get(`${deprecatedBaseUrl}/list`);
+    expect(data.value).to.be.empty;
   });
 
   async function addFileToStorage(sourcePath: string, name: string): Promise<void> {

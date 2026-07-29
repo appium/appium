@@ -2,11 +2,11 @@ import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
 import type {Constraints} from '@appium/types';
-import {BaseDriver} from 'appium/driver';
+import {BaseDriver} from 'appium/driver.js';
 
-import {UniversalXMLPlugin} from '../../lib/plugin';
-import {getNodeAttrVal, runQuery} from '../../lib/xpath';
-import {FIXTURES, readFixture} from '../fixtures';
+import {UniversalXMLPlugin} from '../../lib/plugin.js';
+import {getNodeAttrVal, runQuery} from '../../lib/xpath.js';
+import {FIXTURES, readFixture} from '../fixtures/index.js';
 
 describe('UniversalXMLPlugin', function () {
   let next: () => Promise<any>;

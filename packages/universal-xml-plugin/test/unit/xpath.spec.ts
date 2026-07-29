@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {transformSourceXml} from '../../lib/source';
-import {getNodeAttrVal, runQuery, transformQuery} from '../../lib/xpath';
-import {FIXTURES, readFixture} from '../fixtures';
+import {transformSourceXml} from '../../lib/source.js';
+import {getNodeAttrVal, runQuery, transformQuery} from '../../lib/xpath.js';
+import {FIXTURES, readFixture} from '../fixtures/index.js';
 
 describe('xpath functions', function () {
   describe('runQuery', function () {

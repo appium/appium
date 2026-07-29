@@ -1,5 +1,5 @@
 // uses the same format as NODE_MAP in node-map.js
-import type {UniversalNameMap} from './types';
+import type {UniversalNameMap} from './types.js';
 
 export const ATTR_MAP: UniversalNameMap = {
   x: {ios: 'x', android: 'x'},

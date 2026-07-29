@@ -1,10 +1,10 @@
 import type {Driver, MethodMap} from '@appium/types';
 
 /**
- * W3C Web Authentication (virtual authenticator automation).
+ * Web Authentication (virtual authenticator automation).
  * @see https://www.w3.org/TR/webauthn-2/#sctn-automation-add-virtual-authenticator
  */
-export const W3C_WEBAUTHN_ROUTES = {
+export const WEBAUTHN_ROUTES = {
   '/session/:sessionId/webauthn/authenticator': {
     POST: {
       command: 'addVirtualAuthenticator',

@@ -1,9 +1,20 @@
 import type {Driver, MethodMap} from '@appium/types';
 
 /**
- * Appium: Command/extension introspection and event reporting.
+ * Appium-specific routes: sessions, capabilities, settings, and command/extension
+ * introspection. Device interaction routes live in {@link ./appium-device}.
  */
-export const APPIUM_COMMANDS_ROUTES = {
+export const APPIUM_ROUTES = {
+  '/appium/sessions': {
+    GET: {command: 'getAppiumSessions'},
+  },
+  '/session/:sessionId/appium/capabilities': {
+    GET: {command: 'getAppiumSessionCapabilities'},
+  },
+  '/session/:sessionId/appium/settings': {
+    POST: {command: 'updateSettings', payloadParams: {required: ['settings']}},
+    GET: {command: 'getSettings'},
+  },
   '/session/:sessionId/appium/commands': {
     GET: {command: 'listCommands'},
   },

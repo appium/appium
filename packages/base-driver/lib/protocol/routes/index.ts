@@ -5,9 +5,10 @@ import {match} from 'path-to-regexp';
 
 import {DEFAULT_BASE_PATH} from '../../constants';
 import {APPIUM_ROUTES} from './appium';
+import {APPIUM_DEVICE_ROUTES} from './appium-device';
+import {EXTENSION_ROUTES} from './extensions';
 import {JSONWP_ROUTES} from './jsonwp';
 import {MJSONWP_ROUTES} from './mjsonwp';
-import {OTHER_PROTOCOLS_ROUTES} from './other';
 import {W3C_ROUTES} from './w3c';
 
 const COMMAND_NAMES_CACHE = new LRUCache<string, string>({
@@ -26,7 +27,8 @@ export const METHOD_MAP = {
   ...JSONWP_ROUTES,
   ...MJSONWP_ROUTES,
   ...APPIUM_ROUTES,
-  ...OTHER_PROTOCOLS_ROUTES,
+  ...APPIUM_DEVICE_ROUTES,
+  ...EXTENSION_ROUTES,
 } as const satisfies MethodMap<Driver>;
 
 // driver command names

@@ -1,10 +1,10 @@
 import type {Driver, MethodMap} from '@appium/types';
 
 /**
- * W3C Federated Credential Management (FedCM).
+ * Federated Credential Management (FedCM).
  * @see https://www.w3.org/TR/fedcm-1/
  */
-export const W3C_FEDCM_ROUTES = {
+export const FEDCM_ROUTES = {
   '/session/:sessionId/fedcm/canceldialog': {
     POST: {command: 'fedCMCancelDialog'},
   },

@@ -1,10 +1,10 @@
 import type {Driver, MethodMap} from '@appium/types';
 
 /**
- * W3C Compute Pressure.
+ * Compute Pressure.
  * @see https://www.w3.org/TR/compute-pressure/
  */
-export const W3C_PRESSURE_ROUTES = {
+export const PRESSURE_ROUTES = {
   '/session/:sessionId/pressuresource': {
     POST: {
       command: 'createVirtualPressureSource',

@@ -1,10 +1,10 @@
 import type {Driver, MethodMap} from '@appium/types';
 
 /**
- * W3C Generic Sensor.
+ * Generic Sensor.
  * @see https://www.w3.org/TR/generic-sensor/
  */
-export const W3C_SENSOR_ROUTES = {
+export const SENSOR_ROUTES = {
   '/session/:sessionId/sensor': {
     POST: {
       command: 'createVirtualSensor',

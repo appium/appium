@@ -1,7 +1,11 @@
 import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 import {node, fs, util} from '@appium/support';
 
-const THIS_PLUGIN_DIR = node.getModuleRootSync('@appium/universal-xml-plugin', __filename)!;
+const THIS_PLUGIN_DIR = node.getModuleRootSync(
+  '@appium/universal-xml-plugin',
+  fileURLToPath(import.meta.url),
+)!;
 const FIXTURES_DIR = path.join(THIS_PLUGIN_DIR, 'test', 'fixtures');
 
 export const FIXTURES = {

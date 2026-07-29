@@ -1,10 +1,10 @@
 import type {Element, ExternalDriver, NextPluginCallback} from '@appium/types';
-import {errors} from 'appium/driver';
-import {BasePlugin} from 'appium/plugin';
+import {errors} from 'appium/driver.js';
+import {BasePlugin} from 'appium/plugin.js';
 
-import {transformSourceXml} from './source';
-import type {TransformMetadata} from './types';
-import {transformQuery} from './xpath';
+import {transformSourceXml} from './source.js';
+import type {TransformMetadata} from './types.js';
+import {transformQuery} from './xpath.js';
 
 export class UniversalXMLPlugin extends BasePlugin {
   async getPageSource(

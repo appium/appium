@@ -43,10 +43,7 @@ describe('Routes', function () {
         }
       }
       const hash = shasum.digest('hex').substring(0, 8);
-      // Hash intentionally updated: the route definitions were reorganized into
-      // multiple files (see git history), changing iteration order but not the
-      // actual set of routes/commands/params. Update this value again only when
-      // an intentional route/command/param change is made.
+      // Update this value again only when an intentional route/command/param change is made.
       expect(hash).to.equal('a175e178');
     });
   });

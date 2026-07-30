@@ -17,7 +17,7 @@ let SHARED_STORAGE: Storage | null = null;
 const STORAGE_PREFIX = '/appium/storage';
 /**
  * @deprecated Use `STORAGE_PREFIX` (`/appium/storage`) instead. This alias only exists for
- * backward compatibility and will be removed in a future version of Appium.
+ * backward compatibility and will be removed in a future version of the storage plugin.
  */
 const DEPRECATED_STORAGE_PREFIX = '/storage';
 const WS_TTL_MS = 5 * 60 * 1000;
@@ -33,12 +33,14 @@ const STORAGE_ADDITIONS_CACHE: LRUCache<string, () => any> = new LRUCache({
 export class StoragePlugin extends BasePlugin {
   static async updateServer(expressApp: Express, httpServer: AppiumServer): Promise<void> {
     const buildHandler =
-      (methodName: string, basePath: string, isDeprecated: boolean) => async (req: Request, res: Response) => {
-        if (isDeprecated && !deprecatedRoutesLogged.has(req.path)) {
-          deprecatedRoutesLogged.add(req.path);
+      (methodName: string, basePath: string, routePath: string, isDeprecated: boolean) =>
+      async (req: Request, res: Response) => {
+        if (isDeprecated && !deprecatedRoutesLogged.has(routePath)) {
+          deprecatedRoutesLogged.add(routePath);
           log.warn(
-            `The '${req.path}' endpoint has been deprecated and will be removed in a future version ` +
-              `of Appium. Please use '${req.path.replace(DEPRECATED_STORAGE_PREFIX, STORAGE_PREFIX)}' instead`,
+            `The '${routePath}' endpoint has been deprecated and will be removed in a future version ` +
+              `of the storage plugin. Please use ` +
+              `'${routePath.replace(DEPRECATED_STORAGE_PREFIX, STORAGE_PREFIX)}' instead`,
           );
         }
 
@@ -63,12 +65,21 @@ export class StoragePlugin extends BasePlugin {
       [STORAGE_PREFIX, false],
       [DEPRECATED_STORAGE_PREFIX, true],
     ] as const) {
-      expressApp.post(`${basePath}/add`, buildHandler(STORAGE_HANDLERS.addStorageItem.name, basePath, isDeprecated));
-      expressApp.get(`${basePath}/list`, buildHandler(STORAGE_HANDLERS.listStorageItems.name, basePath, isDeprecated));
-      expressApp.post(`${basePath}/reset`, buildHandler(STORAGE_HANDLERS.resetStorage.name, basePath, isDeprecated));
+      expressApp.post(
+        `${basePath}/add`,
+        buildHandler(STORAGE_HANDLERS.addStorageItem.name, basePath, `${basePath}/add`, isDeprecated),
+      );
+      expressApp.get(
+        `${basePath}/list`,
+        buildHandler(STORAGE_HANDLERS.listStorageItems.name, basePath, `${basePath}/list`, isDeprecated),
+      );
+      expressApp.post(
+        `${basePath}/reset`,
+        buildHandler(STORAGE_HANDLERS.resetStorage.name, basePath, `${basePath}/reset`, isDeprecated),
+      );
       expressApp.post(
         `${basePath}/delete`,
-        buildHandler(STORAGE_HANDLERS.deleteStorageItem.name, basePath, isDeprecated),
+        buildHandler(STORAGE_HANDLERS.deleteStorageItem.name, basePath, `${basePath}/delete`, isDeprecated),
       );
     }
   }

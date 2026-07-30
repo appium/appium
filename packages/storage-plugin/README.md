@@ -64,7 +64,7 @@ If a folder with the same name already exists in the storage, an error will be t
 [Refer to the Appium documentation](https://appium.io/docs/en/latest/reference/api/plugins/#storage-plugin).
 
 > [!NOTE]
-> Prior to plugin version 1.1.8, all endpoints were mounted under the `/storage` prefix (e.g. `/storage/add`)
+> Prior to plugin version 1.2.0, all endpoints were mounted under the `/storage` prefix (e.g. `/storage/add`)
 > instead of `/appium/storage`. These legacy routes are still available for backward compatibility,
 > but are deprecated and will be removed in a future version of the plugin.
 

@@ -7,8 +7,8 @@ import chaiAsPromised from 'chai-as-promised';
 import type {SinonSandbox, SinonStubbedMember} from 'sinon';
 import {createSandbox} from 'sinon';
 
-import type {Item, Strongbox} from '../../lib/index.js';
 import type {BaseItem as TBaseItem} from '../../lib/base-item.js';
+import type {Item, Strongbox} from '../../lib/index.js';
 
 use(chaiAsPromised);
 

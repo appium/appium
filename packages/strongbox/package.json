@@ -56,11 +56,11 @@
     "env-paths": "4.0.0"
   },
   "tsd": {
-    "directory": "test/types",
     "compilerOptions": {
       "composite": false,
       "declarationMap": false
-    }
+    },
+    "directory": "test/types"
   },
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0",

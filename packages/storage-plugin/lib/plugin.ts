@@ -14,9 +14,16 @@ import type {AddRequestResult, ItemOptions, StorageItem} from './types';
 const log = logger.getLogger('StoragePlugin');
 
 let SHARED_STORAGE: Storage | null = null;
-const STORAGE_PREFIX = '/storage';
+const STORAGE_PREFIX = '/appium/storage';
+/**
+ * @deprecated Use `STORAGE_PREFIX` (`/appium/storage`) instead. This alias only exists for
+ * backward compatibility and will be removed in a future version of the storage plugin.
+ */
+const DEPRECATED_STORAGE_PREFIX = '/storage';
 const WS_TTL_MS = 5 * 60 * 1000;
-const STORAGE_HANDLERS: Record<string, (req: Request, httpServer?: AppiumServer) => Promise<any>> = {};
+const STORAGE_HANDLERS: Record<string, (req: Request, httpServer?: AppiumServer, basePath?: string) => Promise<any>> =
+  {};
+const deprecatedRoutesLogged: Set<string> = new Set();
 const STORAGE_ADDITIONS_CACHE: LRUCache<string, () => any> = new LRUCache({
   max: 20,
   ttl: WS_TTL_MS,
@@ -25,40 +32,69 @@ const STORAGE_ADDITIONS_CACHE: LRUCache<string, () => any> = new LRUCache({
 
 export class StoragePlugin extends BasePlugin {
   static async updateServer(expressApp: Express, httpServer: AppiumServer): Promise<void> {
-    const buildHandler = (methodName: string) => async (req: Request, res: Response) => {
-      let status = 200;
-      let body: any;
-      try {
-        const value = await STORAGE_HANDLERS[methodName](req, httpServer);
-        body = {value: value ?? null};
-      } catch (e) {
-        [status, body] = getResponseForW3CError(e);
-      }
-      log.debug(
-        'Responding to %s with %s',
-        methodName,
-        logger.markSensitive(util.truncateString(JSON.stringify(body.value), {length: 200})),
-      );
-      res.set('content-type', 'application/json; charset=utf-8');
-      res.status(status).send(body);
-    };
+    const buildHandler =
+      (methodName: string, basePath: string, routePath: string, isDeprecated: boolean) =>
+      async (req: Request, res: Response) => {
+        if (isDeprecated && !deprecatedRoutesLogged.has(routePath)) {
+          deprecatedRoutesLogged.add(routePath);
+          log.warn(
+            `The '${routePath}' endpoint has been deprecated and will be removed in a future version ` +
+              `of the storage plugin. Please use ` +
+              `'${routePath.replace(DEPRECATED_STORAGE_PREFIX, STORAGE_PREFIX)}' instead`,
+          );
+        }
 
-    expressApp.post(`${STORAGE_PREFIX}/add`, buildHandler(STORAGE_HANDLERS.addStorageItem.name));
-    expressApp.get(`${STORAGE_PREFIX}/list`, buildHandler(STORAGE_HANDLERS.listStorageItems.name));
-    expressApp.post(`${STORAGE_PREFIX}/reset`, buildHandler(STORAGE_HANDLERS.resetStorage.name));
-    expressApp.post(`${STORAGE_PREFIX}/delete`, buildHandler(STORAGE_HANDLERS.deleteStorageItem.name));
+        let status = 200;
+        let body: any;
+        try {
+          const value = await STORAGE_HANDLERS[methodName](req, httpServer, basePath);
+          body = {value: value ?? null};
+        } catch (e) {
+          [status, body] = getResponseForW3CError(e);
+        }
+        log.debug(
+          'Responding to %s with %s',
+          methodName,
+          logger.markSensitive(util.truncateString(JSON.stringify(body.value), {length: 200})),
+        );
+        res.set('content-type', 'application/json; charset=utf-8');
+        res.status(status).send(body);
+      };
+
+    for (const [basePath, isDeprecated] of [
+      [STORAGE_PREFIX, false],
+      [DEPRECATED_STORAGE_PREFIX, true],
+    ] as const) {
+      expressApp.post(
+        `${basePath}/add`,
+        buildHandler(STORAGE_HANDLERS.addStorageItem.name, basePath, `${basePath}/add`, isDeprecated),
+      );
+      expressApp.get(
+        `${basePath}/list`,
+        buildHandler(STORAGE_HANDLERS.listStorageItems.name, basePath, `${basePath}/list`, isDeprecated),
+      );
+      expressApp.post(
+        `${basePath}/reset`,
+        buildHandler(STORAGE_HANDLERS.resetStorage.name, basePath, `${basePath}/reset`, isDeprecated),
+      );
+      expressApp.post(
+        `${basePath}/delete`,
+        buildHandler(STORAGE_HANDLERS.deleteStorageItem.name, basePath, `${basePath}/delete`, isDeprecated),
+      );
+    }
   }
 }
 
 STORAGE_HANDLERS.addStorageItem = async function addStorageItem(
   req: Request,
   httpServer?: AppiumServer,
+  basePath: string = STORAGE_PREFIX,
 ): Promise<AddRequestResult> {
   if (!httpServer) {
     throw new Error('httpServer is required to add a storage item');
   }
   const itemOptions = requireValidItemOptions(parseRequestArgs(req, ['name', 'sha1']) as ItemOptions);
-  const [stream, events] = await prepareWebSockets(httpServer, itemOptions);
+  const [stream, events] = await prepareWebSockets(httpServer, itemOptions, basePath);
   return {
     ws: {
       stream,
@@ -107,8 +143,12 @@ function parseRequestArgs(req: Request, requiredKeys: string[]): Record<string, 
   return req.body;
 }
 
-async function prepareWebSockets(httpServer: AppiumServer, itemOptions: ItemOptions): Promise<[string, string]> {
-  const commonPathname = `${STORAGE_PREFIX}/add/${itemOptions.sha1}`;
+async function prepareWebSockets(
+  httpServer: AppiumServer,
+  itemOptions: ItemOptions,
+  basePath: string,
+): Promise<[string, string]> {
+  const commonPathname = `${basePath}/add/${itemOptions.sha1}`;
   const streamPathname = `${commonPathname}/stream`;
   const eventsPathname = `${commonPathname}/events`;
   if (!util.isEmpty(httpServer.getWebSocketHandlers(streamPathname))) {

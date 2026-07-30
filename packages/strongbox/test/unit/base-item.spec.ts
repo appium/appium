@@ -1,44 +1,47 @@
 import type fs from 'node:fs/promises';
 import path from 'node:path';
-import {beforeEach, describe, it} from 'node:test';
+import {before, beforeEach, describe, it, mock} from 'node:test';
 
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import rewiremock from 'rewiremock/node';
 import type {SinonSandbox, SinonStubbedMember} from 'sinon';
 import {createSandbox} from 'sinon';
 
-import type {Item, Strongbox} from '../../lib';
-import type {BaseItem as TBaseItem} from '../../lib/base-item';
+import type {Item, Strongbox} from '../../lib/index.js';
+import type {BaseItem as TBaseItem} from '../../lib/base-item.js';
 
 use(chaiAsPromised);
 
-type MockFs = {
-  [K in keyof typeof fs]: SinonStubbedMember<(typeof fs)[K]>;
-};
+type MockFs = Pick<
+  {[K in keyof typeof fs]: SinonStubbedMember<(typeof fs)[K]>},
+  'mkdir' | 'readFile' | 'unlink' | 'writeFile'
+>;
 
 describe('Strongbox', function () {
   let sandbox: SinonSandbox;
-  let MockFs: MockFs = {} as any;
+  let MockFs: MockFs;
   const DATA_DIR = path.resolve(path.sep, 'some', 'dir');
-  // note to self: looks like this is safe to do before the rewiremock.proxy call
   let BaseItem: typeof TBaseItem;
 
-  beforeEach(function () {
+  before(async function () {
     sandbox = createSandbox();
-    ({BaseItem} = rewiremock.proxy(
-      () => require('../../lib'),
-      (r) => ({
-        // all of these props are async functions
-        'node:fs/promises': r
-          .mockThrough((prop) => {
-            MockFs = {...MockFs, [prop]: sandbox.stub().resolves()};
-            return MockFs[prop as keyof typeof fs];
-          })
-          .dynamic(), // this allows us to change the mock behavior on-the-fly
-        'env-paths': sandbox.stub().returns({data: DATA_DIR}),
-      }),
-    ));
+    MockFs = {
+      mkdir: sandbox.stub(),
+      readFile: sandbox.stub(),
+      unlink: sandbox.stub(),
+      writeFile: sandbox.stub(),
+    };
+    // mocks the module for the lifetime of this file; individual stub
+    // behavior is reset (not the module itself) between tests below
+    mock.module('node:fs/promises', {namedExports: MockFs});
+    ({BaseItem} = await import('../../lib/base-item.js'));
+  });
+
+  beforeEach(function () {
+    sandbox.reset();
+    for (const stub of Object.values(MockFs)) {
+      stub.resolves();
+    }
   });
 
   describe('BaseItem', function () {

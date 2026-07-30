@@ -1,6 +1,6 @@
 import {expectAssignable, expectNotAssignable} from 'tsd';
 
-import {BaseItem, Item, strongbox, Value} from '../..';
+import {BaseItem, Item, strongbox, Value} from '@appium/strongbox';
 
 expectAssignable<Item<string>>(new BaseItem('foo', strongbox('foo')));
 expectAssignable<AsyncIterable<Item<any>>>(strongbox('foo'));

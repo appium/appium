@@ -4,8 +4,8 @@ import {afterEach, beforeEach, describe, it} from 'node:test';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
-import type {Item, Strongbox} from '../../lib';
-import {strongbox} from '../../lib';
+import type {Item, Strongbox} from '../../lib/index.js';
+import {strongbox} from '../../lib/index.js';
 
 use(chaiAsPromised);
 

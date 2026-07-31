@@ -221,6 +221,26 @@ describe('ImageElementPlugin#handle', function () {
         },
       ]);
     });
+    it('should treat omitted x and y as zero when origin is an image element', async function () {
+      const actionSequences: ActionSequence[] = [
+        {
+          type: 'pointer',
+          id: 'mouse',
+          parameters: {pointerType: 'touch'},
+          // The type requires x/y, but the incoming payload is not validated.
+          actions: [{type: 'pointerMove', duration: 0, origin: imageEl} as any],
+        },
+      ];
+      await p.performActions(next, driver as any, actionSequences);
+      expect(actionSequences).to.eql([
+        {
+          type: 'pointer',
+          id: 'mouse',
+          parameters: {pointerType: 'touch'},
+          actions: [{type: 'pointerMove', x: 24, y: 40, duration: 0}],
+        },
+      ]);
+    });
     it('should not be modified except pointerMove and scroll actions includes image element as origin', async function () {
       const actionSequences: ActionSequence[] = [
         {

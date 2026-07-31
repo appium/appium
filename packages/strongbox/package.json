@@ -32,15 +32,23 @@
     "lib",
     "tsconfig.json"
   ],
+  "type": "module",
   "main": "./build/lib/index.js",
   "types": "./build/lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./build/lib/index.d.ts",
+      "import": "./build/lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
     "test": "run-p test:unit test:types",
     "test:smoke": "node .",
-    "test:unit": "node --test --enable-source-maps --test-timeout=5000 \"./build/test/unit/**/*.spec.js\"",
+    "test:unit": "node --test --experimental-test-module-mocks --enable-source-maps --test-timeout=5000 \"./build/test/unit/**/*.spec.js\"",
     "test:types": "tsd",
     "test:e2e": "node --test --enable-source-maps --test-force-exit --test-concurrency=1 --test-timeout=20000 \"./build/test/e2e/**/*.e2e.spec.js\""
   },
@@ -48,6 +56,10 @@
     "env-paths": "4.0.0"
   },
   "tsd": {
+    "compilerOptions": {
+      "composite": false,
+      "declarationMap": false
+    },
     "directory": "test/types"
   },
   "engines": {

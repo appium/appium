@@ -3,8 +3,8 @@ import path from 'node:path';
 
 import envPaths from 'env-paths';
 
-import {BaseItem} from './base-item';
-import {slugify} from './util';
+import {BaseItem} from './base-item.js';
+import {slugify} from './util.js';
 
 /**
  * Valid file encodings.

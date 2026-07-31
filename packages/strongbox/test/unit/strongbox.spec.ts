@@ -1,45 +1,57 @@
 import type fs from 'node:fs/promises';
 import path from 'node:path';
-import {afterEach, beforeEach, describe, it} from 'node:test';
+import {before, beforeEach, describe, it, mock} from 'node:test';
 
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import rewiremock from 'rewiremock/node';
 import type {SinonSandbox, SinonStub, SinonStubbedMember} from 'sinon';
 import {createSandbox} from 'sinon';
 
-import type {Item, Strongbox as TStrongbox, StrongboxOpts, Value} from '../../lib';
+import type * as StrongboxLib from '../../lib/index.js';
+import type {Item, Strongbox as TStrongbox, StrongboxOpts, Value} from '../../lib/index.js';
 
 use(chaiAsPromised);
 
-type MockFs = {
-  [K in keyof typeof fs]: SinonStubbedMember<(typeof fs)[K]>;
-};
+type MockFs = Pick<
+  {[K in keyof typeof fs]: SinonStubbedMember<(typeof fs)[K]>},
+  'opendir' | 'rm' | 'mkdir' | 'readFile' | 'unlink' | 'writeFile'
+>;
 
 describe('Strongbox', function () {
   let strongbox: (name: string, opts?: Partial<StrongboxOpts>) => TStrongbox;
-  let Strongbox: new (name: string, opts?: StrongboxOpts) => TStrongbox;
+  let Strongbox: typeof StrongboxLib.Strongbox;
   let sandbox: SinonSandbox;
   let DEFAULT_SUFFIX: string;
-  let MockFs: MockFs = {} as any;
+  let MockFs: MockFs;
+  let envPathsStub: SinonStub;
 
   const DATA_DIR = path.resolve('some', 'dir', 'strongbox');
 
-  beforeEach(function () {
+  before(async function () {
     sandbox = createSandbox();
-    ({strongbox, DEFAULT_SUFFIX, Strongbox} = rewiremock.proxy(
-      () => require('../../lib'),
-      (r) => ({
-        // all of these props are async functions
-        'node:fs/promises': r
-          .mockThrough((prop) => {
-            MockFs = {...MockFs, [prop]: sandbox.stub().resolves()};
-            return MockFs[prop as keyof typeof fs];
-          })
-          .dynamic(), // this allows us to change the mock behavior on-the-fly
-        'env-paths': sandbox.stub().returns({data: DATA_DIR}),
-      }),
-    ));
+    MockFs = {
+      opendir: sandbox.stub(),
+      rm: sandbox.stub(),
+      mkdir: sandbox.stub(),
+      readFile: sandbox.stub(),
+      unlink: sandbox.stub(),
+      writeFile: sandbox.stub(),
+    };
+    envPathsStub = sandbox.stub();
+    // mocks the modules for the lifetime of this file; individual stub
+    // behavior is reset (not the modules themselves) between tests below
+    mock.module('node:fs/promises', {namedExports: MockFs});
+    mock.module('env-paths', {defaultExport: envPathsStub});
+    ({strongbox, DEFAULT_SUFFIX, Strongbox} = await import('../../lib/index.js'));
+  });
+
+  beforeEach(function () {
+    sandbox.resetHistory();
+    sandbox.resetBehavior();
+    for (const stub of Object.values(MockFs)) {
+      stub.resolves();
+    }
+    envPathsStub.returns({data: DATA_DIR});
   });
 
   describe('static method', function () {
@@ -314,9 +326,5 @@ describe('Strongbox', function () {
         await expect(gen.next()).to.be.rejectedWith('EACCES');
       });
     });
-  });
-
-  afterEach(function () {
-    sandbox.restore();
   });
 });

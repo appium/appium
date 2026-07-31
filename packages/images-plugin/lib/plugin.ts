@@ -94,9 +94,10 @@ export class ImageElementPlugin extends BasePlugin {
           throw new errors.NoSuchElementError();
         }
 
-        // Add the element's center coordinates to the offset value.
-        actionWithEl.x += imgEl.center.x;
-        actionWithEl.y += imgEl.center.y;
+        // Add the element's center to the offset. An unset offset must count as
+        // zero, otherwise the resulting coordinate is NaN.
+        actionWithEl.x = (actionWithEl.x ?? 0) + imgEl.center.x;
+        actionWithEl.y = (actionWithEl.y ?? 0) + imgEl.center.y;
         // Set the origin to the viewport so that the external driver can process it using coordinates.
         delete actionWithEl.origin;
       }

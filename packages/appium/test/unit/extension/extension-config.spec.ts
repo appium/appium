@@ -334,8 +334,12 @@ describe('ExtensionConfig', function () {
         });
 
         it('should return the class by loading from the manifest main entry point', async function () {
+          // `packages/appium` has no dependency on `@appium/relaxed-caps-plugin`, so a literal
+          // specifier here would make tsc try (and fail) to resolve its type declarations; a
+          // non-literal specifier keeps this dynamic import untyped, like `require()` used to be.
+          const relaxedCapsPluginSpecifier = '@appium/relaxed-caps-plugin';
           expect(await config.requireAsync('relaxed-caps')).to.equal(
-            (await import('@appium/relaxed-caps-plugin')).RelaxedCapsPlugin,
+            (await import(relaxedCapsPluginSpecifier)).RelaxedCapsPlugin,
           );
         });
       });

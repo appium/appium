@@ -60,11 +60,21 @@ async function findElOrElsWithProcessing<C extends Constraints>(
     return await this.findElOrEls(strategy, selector, mult, context);
   } catch (err) {
     if (this.opts.printPageSourceOnFindFailure) {
-      const src = await this.getPageSource();
       const message = err instanceof Error ? err.message : String(err);
       this.log.debug(`Error finding element${mult ? 's' : ''}: ${message}`);
-      this.log.debug(`Page source requested through 'printPageSourceOnFindFailure':`);
-      this.log.debug(src);
+      // Fetching the page source is only a diagnostic aid here. If it fails then
+      // the error above is still the one the client must receive.
+      try {
+        const src = await this.getPageSource();
+        this.log.debug(`Page source requested through 'printPageSourceOnFindFailure':`);
+        this.log.debug(src);
+      } catch (pageSourceErr) {
+        const pageSourceMessage = pageSourceErr instanceof Error ? pageSourceErr.message : String(pageSourceErr);
+        this.log.warn(
+          `Could not retrieve the page source requested through ` +
+            `'printPageSourceOnFindFailure': ${pageSourceMessage}`,
+        );
+      }
     }
     // still want the error to occur
     throw err;

@@ -1,6 +1,7 @@
 import type {AddressInfo} from 'node:net';
 import path from 'node:path';
 import {after, before, describe, it} from 'node:test';
+import {fileURLToPath} from 'node:url';
 
 import {pluginE2EHarness} from '@appium/plugin-test-support';
 import {fs, node} from '@appium/support';
@@ -10,11 +11,11 @@ import {exec} from 'teen_process';
 import {remote as wdio} from 'webdriverio';
 import type {Browser} from 'webdriverio';
 
-import {MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY} from '../../lib/execute-child';
+import {MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY} from '../../lib/execute-child.js';
 
 use(chaiAsPromised);
 
-const THIS_PLUGIN_DIR = node.getModuleRootSync('@appium/execute-driver-plugin', __filename)!;
+const THIS_PLUGIN_DIR = node.getModuleRootSync('@appium/execute-driver-plugin', fileURLToPath(import.meta.url))!;
 const APPIUM_HOME = path.join(THIS_PLUGIN_DIR, 'local_appium_home');
 const FAKE_DRIVER_DIR = path.join(THIS_PLUGIN_DIR, '..', 'fake-driver');
 const TEST_HOST = '127.0.0.1';

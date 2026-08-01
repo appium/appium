@@ -1,8 +1,9 @@
 import cp from 'node:child_process';
+import {fileURLToPath} from 'node:url';
 
 import {timing} from '@appium/support';
 import type {ExternalDriver, MethodMap, NextPluginCallback, PluginCommand} from '@appium/types';
-import {BasePlugin} from 'appium/plugin';
+import {BasePlugin} from 'appium/plugin.js';
 
 const FEAT_FLAG = 'execute_driver_script';
 const DEFAULT_SCRIPT_TIMEOUT_MS = 1000 * 60 * 60; // default to 1 hour timeout
@@ -80,7 +81,7 @@ export class ExecuteDriverPlugin extends BasePlugin {
       this.log.info(`Constructed webdriverio driver options; W3C mode is ${driverOpts.isW3C ? 'on' : 'off'}`);
 
       // fork the execution script as a child process
-      const childScript = require.resolve('./execute-child.js');
+      const childScript = fileURLToPath(new URL('./execute-child.js', import.meta.url));
       this.log.info(`Forking process to run webdriver script as child using ${childScript}`);
       const scriptProc = cp.fork(childScript);
 

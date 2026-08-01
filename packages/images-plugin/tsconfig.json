@@ -5,8 +5,14 @@
     "checkJs": true,
     "esModuleInterop": true,
     "strict": true,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "paths": {
-      "@appium/opencv": ["../opencv"]
+      "@appium/opencv": ["../opencv"],
+      "appium": ["../appium"],
+      "appium/driver.js": ["../appium/driver.d.ts"],
+      "appium/plugin.js": ["../appium/plugin.d.ts"],
+      "appium/support.js": ["../appium/support.d.ts"]
     },
     "types": ["node"]
   },

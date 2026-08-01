@@ -1,6 +1,6 @@
 import {util} from '@appium/support';
 import type {ActionSequence, Element, ExternalDriver, Rect} from '@appium/types';
-import {errors} from 'appium/driver';
+import {errors} from 'appium/driver.js';
 
 import {
   DEFAULT_SETTINGS,
@@ -8,10 +8,10 @@ import {
   IMAGE_ELEMENT_PREFIX,
   IMAGE_STRATEGY,
   IMAGE_TAP_STRATEGIES,
-} from './constants';
-import type {ImageElementFinder} from './finder';
-import {log} from './logger';
-import type {Dimension, ImageElementOpts, ImageSettings, Position} from './types';
+} from './constants.js';
+import type {ImageElementFinder} from './finder.js';
+import {log} from './logger.js';
+import type {Dimension, ImageElementOpts, ImageSettings, Position} from './types.js';
 
 const TAP_DURATION_MS = 125;
 

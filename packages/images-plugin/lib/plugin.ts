@@ -1,13 +1,13 @@
 import type {MatchingOptions, OccurrenceOptions, SimilarityOptions} from '@appium/opencv';
 import {util} from '@appium/support';
 import type {ActionSequence, Element, ExternalDriver, MethodMap} from '@appium/types';
-import {errors} from 'appium/driver';
-import {BasePlugin} from 'appium/plugin';
+import {errors} from 'appium/driver.js';
+import {BasePlugin} from 'appium/plugin.js';
 
-import {compareImages} from './compare';
-import {IMAGE_ELEMENT_PREFIX, IMAGE_STRATEGY} from './constants';
-import {ImageElementFinder} from './finder';
-import {ImageElement} from './image-element';
+import {compareImages} from './compare.js';
+import {IMAGE_ELEMENT_PREFIX, IMAGE_STRATEGY} from './constants.js';
+import {ImageElementFinder} from './finder.js';
+import {ImageElement} from './image-element.js';
 
 export class ImageElementPlugin extends BasePlugin {
   // this plugin supports a non-standard 'compare images' command

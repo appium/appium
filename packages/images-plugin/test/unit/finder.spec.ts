@@ -1,20 +1,26 @@
-import {afterEach, beforeEach, describe, it} from 'node:test';
+import {afterEach, beforeEach, describe, it, mock} from 'node:test';
 
 import type {Constraints} from '@appium/types';
-import {BaseDriver} from 'appium/driver';
-import {util} from 'appium/support';
+import {BaseDriver} from 'appium/driver.js';
+import {util} from 'appium/support.js';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sharp from 'sharp';
 import {createSandbox, type SinonSandbox} from 'sinon';
 
-import * as compareModule from '../../lib/compare';
-import {IMAGE_STRATEGY} from '../../lib/constants';
-import {ImageElementFinder} from '../../lib/finder';
-import {ImageElement} from '../../lib/image-element';
-import {ImageElementPlugin} from '../../lib/plugin';
+import {IMAGE_STRATEGY} from '../../lib/constants.js';
+import type {ImageElementFinder as TImageElementFinder} from '../../lib/finder.js';
+import {ImageElement} from '../../lib/image-element.js';
 
 use(chaiAsPromised);
+
+// finder.js and plugin.js both statically import compareImages from compare.js;
+// the mock must be registered before they are loaded, since ESM bindings are
+// resolved at module-evaluation time and cannot be re-stubbed afterwards.
+const compareStub: sinon.SinonStub = createSandbox().stub();
+mock.module('../../lib/compare.js', {namedExports: {compareImages: compareStub}});
+const {ImageElementFinder} = await import('../../lib/finder.js');
+const {ImageElementPlugin} = await import('../../lib/plugin.js');
 
 const plugin = new ImageElementPlugin('test');
 const TINY_PNG =
@@ -82,10 +88,9 @@ describe('finding elements by image', function () {
     const screenshot = Buffer.from('iVBORfoo', 'base64');
     const template = Buffer.from('iVBORbar', 'base64');
     let d: PluginDriver;
-    let f: ImageElementFinder;
-    let compareStub: sinon.SinonStub;
+    let f: TImageElementFinder;
 
-    function basicStub(driver: PluginDriver, finder: ImageElementFinder) {
+    function basicStub(driver: PluginDriver, finder: TImageElementFinder) {
       const rectStub = sandbox.stub(driver, 'getWindowRect').returns({
         x: 0,
         y: 0,
@@ -95,7 +100,7 @@ describe('finding elements by image', function () {
       return {rectStub, screenStub};
     }
 
-    function basicImgElVerify(imgElProto: any, finder: ImageElementFinder) {
+    function basicImgElVerify(imgElProto: any, finder: TImageElementFinder) {
       const imgElId = util.unwrapElement(imgElProto);
       const imgEl = finder.getImageElement(imgElId);
       expect(imgEl).to.be.instanceOf(ImageElement);
@@ -107,7 +112,7 @@ describe('finding elements by image', function () {
     beforeEach(function () {
       d = new PluginDriver();
       f = new ImageElementFinder();
-      compareStub = sandbox.stub(compareModule, 'compareImages');
+      compareStub.reset();
       compareStub.resolves({rect, score});
       basicStub(d, f);
     });
@@ -194,7 +199,7 @@ describe('finding elements by image', function () {
   });
 
   describe('fixImageTemplateScale', function () {
-    let f: ImageElementFinder;
+    let f: TImageElementFinder;
     const basicTemplate = 'iVBORbaz';
     const basicTemplateBuf = Buffer.from(basicTemplate, 'base64');
 
@@ -309,7 +314,7 @@ describe('finding elements by image', function () {
 
   describe('getScreenshotForImageFind', function () {
     let d: PluginDriver;
-    let f: ImageElementFinder;
+    let f: TImageElementFinder;
 
     beforeEach(function () {
       d = new PluginDriver();

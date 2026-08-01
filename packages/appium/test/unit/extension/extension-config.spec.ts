@@ -335,7 +335,7 @@ describe('ExtensionConfig', function () {
 
         it('should return the class by loading from the manifest main entry point', async function () {
           expect(await config.requireAsync('relaxed-caps')).to.equal(
-            require('@appium/relaxed-caps-plugin').RelaxedCapsPlugin,
+            (await import('@appium/relaxed-caps-plugin')).RelaxedCapsPlugin,
           );
         });
       });

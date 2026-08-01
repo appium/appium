@@ -1,7 +1,7 @@
-import {isStandardCap} from 'appium/driver';
-import {BasePlugin} from 'appium/plugin';
+import {isStandardCap} from 'appium/driver.js';
+import {BasePlugin} from 'appium/plugin.js';
 
-import type {CapsRecord, W3CCapsLike} from './types';
+import type {CapsRecord, W3CCapsLike} from './types.js';
 
 const VENDOR_PREFIX = 'appium';
 const HAS_VENDOR_PREFIX_RE = /^.+:/;

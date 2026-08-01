@@ -3,7 +3,7 @@ import {describe, it, beforeEach, afterEach} from 'node:test';
 import {expect} from 'chai';
 import sinon from 'sinon';
 
-import {RelaxedCapsPlugin} from '../../lib/plugin';
+import {RelaxedCapsPlugin} from '../../lib/plugin.js';
 
 const STD_CAPS = {
   browserName: 'chrome',

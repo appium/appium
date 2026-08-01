@@ -9,10 +9,10 @@ import {
   type SimilarityOptions,
   type SimilarityResult,
 } from '@appium/opencv';
-import {errors} from 'appium/driver';
+import {errors} from 'appium/driver.js';
 
-import {GET_SIMILARITY_MODE, MATCH_FEATURES_MODE, MATCH_TEMPLATE_MODE} from './constants';
-import type {ComparisonResult} from './types';
+import {GET_SIMILARITY_MODE, MATCH_FEATURES_MODE, MATCH_TEMPLATE_MODE} from './constants.js';
+import type {ComparisonResult} from './types.js';
 
 /**
  * Performs images comparison using OpenCV framework features.

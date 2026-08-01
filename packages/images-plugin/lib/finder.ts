@@ -1,17 +1,17 @@
 import type {Element, ExternalDriver, Rect, Size} from '@appium/types';
-import {errors} from 'appium/driver';
+import {errors} from 'appium/driver.js';
 import {LRUCache} from 'lru-cache';
 import sharp from 'sharp';
 
-import {compareImages} from './compare';
+import {compareImages} from './compare.js';
 import {
   DEFAULT_FIX_IMAGE_TEMPLATE_SCALE,
   DEFAULT_SETTINGS,
   DEFAULT_TEMPLATE_IMAGE_SCALE,
   MATCH_TEMPLATE_MODE,
-} from './constants';
-import {ImageElement} from './image-element';
-import {log} from './logger';
+} from './constants.js';
+import {ImageElement} from './image-element.js';
+import {log} from './logger.js';
 import type {
   FindByImageOptions,
   ImageSettings,
@@ -19,7 +19,7 @@ import type {
   OccurrenceResultWithVisualization,
   Screenshot,
   ScreenshotScale,
-} from './types';
+} from './types.js';
 
 // Used to compare ratio and screen width
 // Pixel is basically under 1080 for example. 100K is probably enough fo a while.

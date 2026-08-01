@@ -1,6 +1,7 @@
 import type {AddressInfo} from 'node:net';
 import path from 'node:path';
 import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
+import {fileURLToPath} from 'node:url';
 
 import {pluginE2EHarness} from '@appium/plugin-test-support';
 import {fs, node, tempDir} from '@appium/support';
@@ -10,11 +11,11 @@ import sharp from 'sharp';
 import {exec} from 'teen_process';
 import {remote as wdio} from 'webdriverio';
 
-import {GET_SIMILARITY_MODE, MATCH_FEATURES_MODE} from '../../lib/constants';
+import {GET_SIMILARITY_MODE, MATCH_FEATURES_MODE} from '../../lib/constants.js';
 
 use(chaiAsPromised);
 
-const THIS_PLUGIN_DIR = node.getModuleRootSync('@appium/images-plugin', __filename)!;
+const THIS_PLUGIN_DIR = node.getModuleRootSync('@appium/images-plugin', fileURLToPath(import.meta.url))!;
 const APPIUM_HOME = path.join(THIS_PLUGIN_DIR, 'local_appium_home');
 const FAKE_DRIVER_DIR = path.join(THIS_PLUGIN_DIR, '..', 'fake-driver');
 const FIXTURES_DIR = path.join(THIS_PLUGIN_DIR, 'test', 'fixtures');

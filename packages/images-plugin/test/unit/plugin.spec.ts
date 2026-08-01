@@ -1,18 +1,19 @@
 import path from 'node:path';
 import {before, describe, it} from 'node:test';
+import {fileURLToPath} from 'node:url';
 
 import type {ActionSequence, Constraints} from '@appium/types';
-import {BaseDriver} from 'appium/driver';
-import {fs, node, util} from 'appium/support';
+import {BaseDriver} from 'appium/driver.js';
+import {fs, node, util} from 'appium/support.js';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
-import {GET_SIMILARITY_MODE, IMAGE_STRATEGY, MATCH_FEATURES_MODE, MATCH_TEMPLATE_MODE} from '../../lib/constants';
-import {ImageElementPlugin} from '../../lib/plugin';
+import {GET_SIMILARITY_MODE, IMAGE_STRATEGY, MATCH_FEATURES_MODE, MATCH_TEMPLATE_MODE} from '../../lib/constants.js';
+import {ImageElementPlugin} from '../../lib/plugin.js';
 
 use(chaiAsPromised);
 
-const THIS_PLUGIN_DIR = node.getModuleRootSync('@appium/images-plugin', __filename)!;
+const THIS_PLUGIN_DIR = node.getModuleRootSync('@appium/images-plugin', fileURLToPath(import.meta.url))!;
 const FIXTURES_DIR = path.join(THIS_PLUGIN_DIR, 'test', 'fixtures');
 const TEST_IMG_1_PATH = path.join(FIXTURES_DIR, 'img1.png');
 const TEST_IMG_2_PATH = path.join(FIXTURES_DIR, 'img2.png');

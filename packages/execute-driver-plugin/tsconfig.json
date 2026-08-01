@@ -5,6 +5,12 @@
     "checkJs": true,
     "esModuleInterop": true,
     "strict": true,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "paths": {
+      "appium": ["../appium"],
+      "appium/plugin.js": ["../appium/plugin.d.ts"]
+    },
     "types": ["node"]
   },
   "extends": "@appium/tsconfig/tsconfig.plugin.json",

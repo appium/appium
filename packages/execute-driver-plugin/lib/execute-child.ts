@@ -1,10 +1,11 @@
+import {fileURLToPath} from 'node:url';
 import {promisify} from 'node:util';
 import vm from 'node:vm';
 
 import {logger, util} from '@appium/support';
 
-import type {DriverScriptMessageEvent, RunScriptResult, ScriptResult} from './types';
-import {wrapHostBindingForVmContext} from './vm-host-binding';
+import type {DriverScriptMessageEvent, RunScriptResult, ScriptResult} from './types.js';
+import {wrapHostBindingForVmContext} from './vm-host-binding.js';
 
 const log = logger.getLogger('ExecuteDriver Child');
 let send: (res: ScriptResult) => Promise<void>;
@@ -159,7 +160,7 @@ async function main(eventParams: DriverScriptMessageEvent): Promise<void> {
 }
 
 // ensure we're running this script in IPC mode
-if (require.main === module && typeof process.send === 'function') {
+if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1] && typeof process.send === 'function') {
   send = promisify(process.send).bind(process) as (res: ScriptResult) => Promise<void>;
   log.info('Running driver execution in child process');
   process.on('message', main);

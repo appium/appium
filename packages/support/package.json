@@ -47,7 +47,7 @@
     "@appium/logger": "2.0.10",
     "@appium/types": "1.6.0",
     "archiver": "8.0.0",
-    "asyncbox": "6.3.5",
+    "asyncbox": "6.4.2",
     "axios": "1.18.1",
     "bluebird": "3.7.2",
     "bplist-creator": "0.1.1",

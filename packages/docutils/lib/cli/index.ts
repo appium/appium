@@ -5,16 +5,18 @@
  * @module
  */
 
+import {fileURLToPath} from 'node:url';
+
 import {hideBin} from 'yargs/helpers';
 import yargs from 'yargs/yargs';
 
-import type {LogLevelMap} from '../constants';
-import {DEFAULT_LOG_LEVEL, NAME_BIN, PKG_ROOT_DIR} from '../constants';
-import {DocutilsError} from '../error';
-import {getLogger} from '../logger';
-import {readPackage} from '../utils';
-import {build, init, validate} from './command';
-import {findConfig} from './config';
+import type {LogLevelMap} from '../constants.js';
+import {DEFAULT_LOG_LEVEL, NAME_BIN, PKG_ROOT_DIR} from '../constants.js';
+import {DocutilsError} from '../error.js';
+import {getLogger} from '../logger.js';
+import {readPackage} from '../utils/index.js';
+import {build, init, validate} from './command/index.js';
+import {findConfig} from './config.js';
 
 const log = getLogger('cli');
 const IMPLICATIONS_FAILED_REGEX = /implications\s+failed:\n\s*(.+)\s->\s(.+)$/i;
@@ -110,7 +112,7 @@ export async function main(argv = hideBin(process.argv)) {
     .parseAsync();
 }
 
-if (require.main === module) {
+if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   // eslint-disable-next-line promise/prefer-await-to-then, promise/prefer-await-to-callbacks
   main().catch((err) => {
     log.error('Caught otherwise-unhandled rejection (this is probably a bug):', err);

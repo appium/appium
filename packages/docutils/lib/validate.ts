@@ -19,11 +19,11 @@ import {
   NAME_PYTHON,
   NAME_REQUIREMENTS_TXT,
   REQUIREMENTS_TXT_PATH,
-} from './constants';
-import {DocutilsError} from './error';
-import {findMkDocsYml, findPython, isMkDocsInstalled, readMkDocsYml} from './fs';
-import {getLogger} from './logger';
-import type {MkDocsYml, PipPackage} from './model';
+} from './constants.js';
+import {DocutilsError} from './error.js';
+import {findMkDocsYml, findPython, isMkDocsInstalled, readMkDocsYml} from './fs.js';
+import {getLogger} from './logger.js';
+import type {MkDocsYml, PipPackage} from './model.js';
 
 /**
  * Matches the Python version string from `python --version`

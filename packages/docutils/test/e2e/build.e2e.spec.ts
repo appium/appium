@@ -11,12 +11,12 @@ import {expect} from 'chai';
 import * as YAML from 'yaml';
 import yargs from 'yargs/yargs';
 
-import {buildSite} from '../../lib/builder';
-import {build as buildCommand, init as initCommand, validate as validateCommand} from '../../lib/cli/command';
-import {DEFAULT_SITE_DIR, NAME_BIN, NAME_MKDOCS_YML, NAME_PACKAGE_JSON} from '../../lib/constants';
-import {stringifyYaml} from '../../lib/fs';
-import {init, initPython} from '../../lib/init';
-import type {MkDocsYml} from '../../lib/model';
+import {buildSite} from '../../lib/builder/index.js';
+import {build as buildCommand, init as initCommand, validate as validateCommand} from '../../lib/cli/command/index.js';
+import {DEFAULT_SITE_DIR, NAME_BIN, NAME_MKDOCS_YML, NAME_PACKAGE_JSON} from '../../lib/constants.js';
+import {stringifyYaml} from '../../lib/fs.js';
+import {init, initPython} from '../../lib/init.js';
+import type {MkDocsYml} from '../../lib/model.js';
 
 /**
  * Helper function to create a project directory with package.json

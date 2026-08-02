@@ -17,11 +17,17 @@ import {
   NAME_MKDOCS_YML,
   NAME_PACKAGE_JSON,
   NAME_PYTHON,
-} from './constants';
-import {DocutilsError} from './error';
-import {getLogger} from './logger';
-import type {MkDocsYml} from './model';
-import {findPackageRoot, type NormalizedPackageJson, type PackageJson, mergeDefaultsDeep, readPackage} from './utils';
+} from './constants.js';
+import {DocutilsError} from './error.js';
+import {getLogger} from './logger.js';
+import type {MkDocsYml} from './model.js';
+import {
+  findPackageRoot,
+  type NormalizedPackageJson,
+  type PackageJson,
+  mergeDefaultsDeep,
+  readPackage,
+} from './utils/index.js';
 
 const log = getLogger('fs');
 

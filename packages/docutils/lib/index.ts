@@ -3,8 +3,8 @@
  * @module
  */
 
-export * from './builder';
-export * from './constants';
-export * from './logger';
-export * from './scaffold';
-export * from './validate';
+export * from './builder/index.js';
+export * from './constants.js';
+export * from './logger.js';
+export * from './scaffold.js';
+export * from './validate.js';

@@ -46,7 +46,7 @@
   "dependencies": {
     "@appium/support": "7.2.6",
     "async-lock": "1.4.1",
-    "asyncbox": "6.3.5",
+    "asyncbox": "6.4.2",
     "lru-cache": "11.5.2",
     "ws": "8.21.1"
   },

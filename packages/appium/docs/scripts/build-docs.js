@@ -10,7 +10,6 @@
 /* eslint-disable promise/prefer-await-to-callbacks */
 /* eslint-disable promise/prefer-await-to-then */
 
-const {deploy, buildSite} = require('@appium/docutils');
 const {
   log,
   LANGS,
@@ -35,6 +34,9 @@ const push = Boolean(process.env.APPIUM_DOCS_PUBLISH);
  * Builds and optionally deploys docs for each supported language.
  */
 async function main() {
+  // @appium/docutils is ESM-only; this file is CommonJS, so it must be loaded dynamically
+  const {deploy, buildSite} = await import('@appium/docutils');
+
   log.info(`Building Appium docs and committing to ${DOCS_BRANCH}`);
 
   const semVersion = semver.parse(version);

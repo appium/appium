@@ -2,7 +2,7 @@ import {Buffer} from 'node:buffer';
 
 import sharp from 'sharp';
 
-import {OpenCvAutoreleasePool} from './autorelease-pool';
+import {OpenCvAutoreleasePool} from './autorelease-pool.js';
 import type {
   Match,
   MatchComputationResult,
@@ -16,7 +16,7 @@ import type {
   SimilarityOptions,
   SimilarityResult,
   TemplateMatchingMethod,
-} from './types';
+} from './types.js';
 
 let cv: OpenCVBindings | undefined;
 
@@ -69,7 +69,9 @@ const DEFAULT_MATCHING_METHOD: TemplateMatchingMethod = 'TM_CCOEFF_NORMED';
  * ```
  */
 export async function initOpenCv(): Promise<void> {
-  cv = require('opencv-bindings') as OpenCVBindings;
+  // @ts-expect-error opencv-bindings ships no type declarations; remove this once it does
+  const {default: cvBindings} = await import('opencv-bindings');
+  cv = cvBindings as OpenCVBindings;
   while (!cv.getBuildInformation) {
     await new Promise((resolve) => setTimeout(resolve, 500));
   }

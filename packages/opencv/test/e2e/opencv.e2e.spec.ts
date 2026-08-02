@@ -1,15 +1,21 @@
 import path from 'node:path';
 import {describe, it, before} from 'node:test';
+import {fileURLToPath} from 'node:url';
 
 import {fs, node} from '@appium/support';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
-import {getImageOccurrence, getImagesMatches, getImagesSimilarity} from '../../lib';
+import {getImageOccurrence, getImagesMatches, getImagesSimilarity} from '../../lib/index.js';
 
 use(chaiAsPromised);
 
-const FIXTURES_ROOT = path.resolve(node.getModuleRootSync('@appium/opencv', __filename)!, 'test', 'e2e', 'images');
+const FIXTURES_ROOT = path.resolve(
+  node.getModuleRootSync('@appium/opencv', fileURLToPath(import.meta.url))!,
+  'test',
+  'e2e',
+  'images',
+);
 
 describe('OpenCV helpers', {timeout: 120000}, () => {
   let imgFixture: Buffer;

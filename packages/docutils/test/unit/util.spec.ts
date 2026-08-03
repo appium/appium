@@ -2,7 +2,7 @@ import {describe, it} from 'node:test';
 
 import {expect} from 'chai';
 
-import {argify} from '../../lib/utils';
+import {argify} from '../../lib/utils/index.js';
 
 describe('argify', function () {
   it('should create args from params', function () {

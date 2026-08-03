@@ -9,12 +9,12 @@ import path from 'node:path';
 
 import type {TeenProcessExecOptions} from 'teen_process';
 
-import {DEFAULT_SITE_DIR, NAME_BIN, NAME_MKDOCS, NAME_MKDOCS_YML} from '../constants';
-import {DocutilsError} from '../error';
-import {findMkDocsYml, isMkDocsInstalled, readMkDocsYml, requirePython} from '../fs';
-import {getLogger} from '../logger';
-import type {SpawnBackgroundProcessOpts} from '../utils';
-import {execWithErrorHandling, relative, spawnBackgroundProcess, stopwatch} from '../utils';
+import {DEFAULT_SITE_DIR, NAME_BIN, NAME_MKDOCS, NAME_MKDOCS_YML} from '../constants.js';
+import {DocutilsError} from '../error.js';
+import {findMkDocsYml, isMkDocsInstalled, readMkDocsYml, requirePython} from '../fs.js';
+import {getLogger} from '../logger.js';
+import type {SpawnBackgroundProcessOpts} from '../utils/index.js';
+import {execWithErrorHandling, relative, spawnBackgroundProcess, stopwatch} from '../utils/index.js';
 
 const log = getLogger('mkdocs');
 

@@ -9,12 +9,12 @@ import {fs, util} from '@appium/support';
 import {createPatch} from 'diff';
 import type {JsonObject, JsonValue} from 'type-fest';
 
-import {NAME_ERR_ENOENT} from './constants';
-import {DocutilsError} from './error';
-import {readPackageJson, stringifyJson, writeFileString} from './fs';
-import {getLogger} from './logger';
-import type {NormalizedPackageJson} from './utils';
-import {mergeDefaultsDeep, relative} from './utils';
+import {NAME_ERR_ENOENT} from './constants.js';
+import {DocutilsError} from './error.js';
+import {readPackageJson, stringifyJson, writeFileString} from './fs.js';
+import {getLogger} from './logger.js';
+import type {NormalizedPackageJson} from './utils/index.js';
+import {mergeDefaultsDeep, relative} from './utils/index.js';
 
 const log = getLogger('init');
 const dryRunLog = getLogger('dry-run', log);

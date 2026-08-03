@@ -1,10 +1,8 @@
 #!/usr/bin/env node
 // @ts-check
 
-'use strict';
-
-const {main} = require('../build/lib/cli');
-const {getLogger} = require('../build/lib/logger');
+import {main} from '../build/lib/cli/index.js';
+import {getLogger} from '../build/lib/logger.js';
 
 const log = getLogger('cli');
 

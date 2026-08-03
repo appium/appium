@@ -3,5 +3,5 @@
  * @module
  */
 
-export * from './deploy';
-export * from './site';
+export * from './deploy.js';
+export * from './site.js';

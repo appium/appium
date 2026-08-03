@@ -76,6 +76,8 @@ type SessionHandlerDeleteResult = SessionHandlerResult<void>;
  * Tuple shape of the deprecated multi-argument overload of {@link AppiumDriver.createSession}.
  * Shared between that overload's declaration and its implementation signature so the parameter
  * list only needs to be written out once.
+ *
+ * @deprecated Use the single-argument overload of {@link AppiumDriver.createSession} instead.
  */
 type LegacyCreateSessionArgs = [
   w3cCapabilities1: W3CAppiumDriverCaps,

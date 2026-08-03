@@ -322,6 +322,9 @@ export interface ISettingsCommands<T extends object = object> {
  * Tuple shape of the deprecated multi-argument overload of {@linkcode ISessionHandler.createSession}.
  * Shared with {@linkcode BaseDriver.createSession}'s implementation so the parameter list only
  * needs to be written out once.
+ *
+ * @deprecated Use the single-argument overload of {@linkcode ISessionHandler.createSession}
+ * instead.
  */
 export type LegacyCreateSessionArgs<C extends Constraints> = [
   w3cCaps1: W3CDriverCaps<C>,

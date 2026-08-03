@@ -319,6 +319,18 @@ export interface ISettingsCommands<T extends object = object> {
 }
 
 /**
+ * Tuple shape of the deprecated multi-argument overload of {@linkcode ISessionHandler.createSession}.
+ * Shared with {@linkcode BaseDriver.createSession}'s implementation so the parameter list only
+ * needs to be written out once.
+ */
+export type LegacyCreateSessionArgs<C extends Constraints> = [
+  w3cCaps1: W3CDriverCaps<C>,
+  w3cCaps2?: W3CDriverCaps<C>,
+  w3cCaps3?: W3CDriverCaps<C>,
+  driverData?: DriverData[],
+];
+
+/**
  * An interface which creates and deletes sessions.
  */
 export interface ISessionHandler<
@@ -351,12 +363,7 @@ export interface ISessionHandler<
    *
    * @returns The capabilities object representing the created session
    */
-  createSession(
-    w3cCaps1: W3CDriverCaps<C>,
-    w3cCaps2?: W3CDriverCaps<C>,
-    w3cCaps3?: W3CDriverCaps<C>,
-    driverData?: DriverData[],
-  ): Promise<CreateResult>;
+  createSession(...legacyArgs: LegacyCreateSessionArgs<C>): Promise<CreateResult>;
 
   /**
    * Stop an automation session

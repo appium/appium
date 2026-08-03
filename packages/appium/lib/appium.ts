@@ -72,6 +72,17 @@ type SessionHandlerCreateResult = SessionHandlerResult<
 
 type SessionHandlerDeleteResult = SessionHandlerResult<void>;
 
+/**
+ * Tuple shape of the deprecated multi-argument overload of {@link AppiumDriver.createSession}.
+ * Shared between that overload's declaration and its implementation signature so the parameter
+ * list only needs to be written out once.
+ */
+type LegacyCreateSessionArgs = [
+  w3cCapabilities1: W3CAppiumDriverCaps,
+  w3cCapabilities2?: W3CAppiumDriverCaps,
+  w3cCapabilities3?: W3CAppiumDriverCaps,
+];
+
 /** @internal Not part of {@link ExternalDriver}; used only when wiring session IPC. */
 type IpcAssignable = {
   assignIpc?: (ipc: IAppiumIpc) => Promise<void>;
@@ -272,16 +283,9 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
    * @deprecated Legacy call sites may pass the same W3C caps in up to three positions; the first
    * W3C-shaped value wins. Use the single-argument overload of {@linkcode createSession} instead.
    */
-  async createSession(
-    w3cCapabilities1: W3CAppiumDriverCaps,
-    w3cCapabilities2?: W3CAppiumDriverCaps,
-    w3cCapabilities3?: W3CAppiumDriverCaps,
-  ): Promise<SessionHandlerCreateResult>;
-  async createSession(
-    w3cCapabilities1: W3CAppiumDriverCaps,
-    w3cCapabilities2?: W3CAppiumDriverCaps,
-    w3cCapabilities3?: W3CAppiumDriverCaps,
-  ): Promise<SessionHandlerCreateResult> {
+  async createSession(...legacyArgs: LegacyCreateSessionArgs): Promise<SessionHandlerCreateResult>;
+  async createSession(...legacyArgs: LegacyCreateSessionArgs): Promise<SessionHandlerCreateResult> {
+    const [w3cCapabilities1, w3cCapabilities2, w3cCapabilities3] = legacyArgs;
     const defaultCapabilities = structuredClone(this.args.defaultCapabilities);
     const defaultSettings = pullSettings((defaultCapabilities ?? {}) as StringRecord);
     const w3cCapabilities = structuredClone([w3cCapabilities3, w3cCapabilities2, w3cCapabilities1].find(isW3cCaps));

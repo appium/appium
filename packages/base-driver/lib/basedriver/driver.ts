@@ -9,8 +9,8 @@ import {
   type DefaultDeleteSessionResult,
   type Driver,
   type DriverCaps,
-  type DriverData,
   type InitialOpts,
+  type LegacyCreateSessionArgs,
   type ServerArgs,
   type SessionCapabilities,
   type SingularSessionData,
@@ -276,19 +276,9 @@ export class BaseDriver<
    * parameter is also deprecated; use {@linkcode IAppiumIpc} for cross-session coordination
    * instead.
    */
-  async createSession(
-    w3cCapabilities1: W3CDriverCaps<C>,
-    w3cCapabilities2?: W3CDriverCaps<C>,
-    w3cCapabilities3?: W3CDriverCaps<C>,
-    driverData?: DriverData[],
-  ): Promise<CreateResult>;
-  async createSession(
-    w3cCapabilities1: W3CDriverCaps<C>,
-    w3cCapabilities2?: W3CDriverCaps<C>,
-    w3cCapabilities?: W3CDriverCaps<C>,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    driverData?: DriverData[],
-  ): Promise<CreateResult> {
+  async createSession(...legacyArgs: LegacyCreateSessionArgs<C>): Promise<CreateResult>;
+  async createSession(...legacyArgs: LegacyCreateSessionArgs<C>): Promise<CreateResult> {
+    const [w3cCapabilities1, w3cCapabilities2, w3cCapabilities] = legacyArgs;
     if (this.sessionId !== null) {
       throw new errors.SessionNotCreatedError('Cannot create a new session while one is in progress');
     }

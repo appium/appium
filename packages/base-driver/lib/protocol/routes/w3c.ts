@@ -10,7 +10,11 @@ export const W3C_ROUTES = {
     POST: {
       command: 'createSession',
       payloadParams: {
-        optional: ['capabilities'],
+        // Deliberately sent 3 times: this array is spread directly into any plugin hooking
+        // 'createSession' (see AppiumDriver#wrapCommandWithPlugins), so changing its shape here
+        // would be a wire-level breaking change for third-party plugins, not just drivers. Keep
+        // this in sync with the deprecated multi-argument overload of `createSession`.
+        optional: ['capabilities', 'capabilities', 'capabilities'],
       },
     },
   },

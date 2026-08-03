@@ -389,6 +389,13 @@ describe('util', function () {
     it('should detect if a path is not a subpath', function () {
       expect(util.isSubPath('/root/some//../..', '/root')).to.be.false;
     });
+    it('should not detect a sibling whose name starts with the root name', function () {
+      expect(util.isSubPath('/root-backup/some', '/root')).to.be.false;
+      expect(util.isSubPath('/rootly', '/root')).to.be.false;
+    });
+    it('should detect a subpath whose name starts with a dot', function () {
+      expect(util.isSubPath('/root/..some', '/root')).to.be.true;
+    });
     it('should throw if any of the given paths is not absolute', function () {
       expect(() => util.isSubPath('some/..', '/root')).to.throw(/absolute/);
     });

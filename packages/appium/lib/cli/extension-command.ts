@@ -589,7 +589,7 @@ export abstract class ExtensionCliCommand<ExtType extends ExtensionType = Extens
     const paths: string[] = doctorSpec.checks
       .map((p) => {
         const scriptPath = path.resolve(moduleRoot, p);
-        if (!path.normalize(scriptPath).startsWith(path.normalize(moduleRoot))) {
+        if (!util.isSubPath(scriptPath, moduleRoot)) {
           this.log.error(
             `The doctor check script '${p}' from the package manifest '${packageJsonPath}' must be located ` +
               `in the '${moduleRoot}' root folder. It will be skipped`,
@@ -694,8 +694,7 @@ export abstract class ExtensionCliCommand<ExtType extends ExtensionType = Extens
 
     const scriptPath = extScripts[scriptName];
     const moduleRoot = this.config.getInstallPath(installSpec);
-    const normalizedScriptPath = path.normalize(path.resolve(moduleRoot, scriptPath));
-    if (!normalizedScriptPath.startsWith(path.normalize(moduleRoot))) {
+    if (!util.isSubPath(path.resolve(moduleRoot, scriptPath), moduleRoot)) {
       throw this._createFatalError(`The '${scriptPath}' script must be located in the '${moduleRoot}' folder`);
     }
 

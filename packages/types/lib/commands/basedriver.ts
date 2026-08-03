@@ -331,9 +331,16 @@ export interface ISessionHandler<
    * Start a new automation session
    * @see {@link https://w3c.github.io/webdriver/#new-session}
    *
-   * @privateRemarks
-   * The shape of this method is strange because it used to support both JSONWP and W3C
-   * capabilities. This will likely change in the future to simplify.
+   * @param w3cCapabilities - the new session capabilities
+   * @returns The capabilities object representing the created session
+   */
+  createSession(w3cCapabilities: W3CDriverCaps<C>): Promise<CreateResult>;
+  /**
+   * @deprecated Historically this method accepted the same W3C capabilities object in up to three
+   * positions to support the retired JSONWP protocol, and only the first W3C-shaped argument is
+   * ever used. Use the single-argument overload of {@linkcode createSession} instead. The
+   * `driverData` parameter is also deprecated; use {@linkcode IAppiumIpc} for cross-session
+   * coordination instead.
    *
    * @param w3cCaps1 - the new session capabilities
    * @param w3cCaps2 - another place the new session capabilities could be sent (typically left undefined)
@@ -354,6 +361,13 @@ export interface ISessionHandler<
   /**
    * Stop an automation session
    * @see {@link https://w3c.github.io/webdriver/#delete-session}
+   *
+   * @param sessionId - the id of the session that is to be deleted
+   */
+  deleteSession(sessionId?: string): Promise<DeleteResult | void>;
+  /**
+   * @deprecated The `driverData` parameter is unused by {@linkcode BaseDriver}; use
+   * {@linkcode IAppiumIpc} for cross-session coordination instead.
    *
    * @param sessionId - the id of the session that is to be deleted
    * @param driverData - the driver data for other currently-running sessions
@@ -387,6 +401,8 @@ export type DefaultDeleteSessionResult = void;
 
 /**
  * Custom session data for a driver.
+ *
+ * @deprecated Use {@linkcode IAppiumIpc} for cross-session coordination instead.
  */
 export type DriverData = Record<string, unknown>;
 

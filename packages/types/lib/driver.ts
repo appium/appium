@@ -71,6 +71,9 @@ export interface Core<C extends Constraints, Settings extends StringRecord = Str
   eventEmitter: EventEmitter;
   settings: IDeviceSettings<Settings>;
   log: AppiumLogger;
+  /**
+   * @deprecated Use {@linkcode IAppiumIpc} for cross-session coordination instead.
+   */
   driverData: DriverData;
   isCommandsQueueEnabled: boolean;
   eventHistory: EventHistory;

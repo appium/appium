@@ -264,11 +264,24 @@ export class BaseDriver<
   }
 
   /**
-   * Historically the first two arguments were reserved for JSONWP capabilities.
-   * Appium 2 has dropped the support of these, so now we only accept capability
-   * objects in W3C format and thus allow any of the three arguments to represent
-   * the latter.
+   * Start a new automation session.
+   *
+   * @param w3cCapabilities - the new session capabilities in W3C format
    */
+  async createSession(w3cCapabilities: W3CDriverCaps<C>): Promise<CreateResult>;
+  /**
+   * @deprecated Historically the first three arguments were reserved for JSONWP capabilities, and
+   * Appium 2 dropped support for that protocol, so only the first W3C-shaped argument is ever
+   * used. Use the single-argument overload of {@linkcode createSession} instead. The `driverData`
+   * parameter is also deprecated; use {@linkcode IAppiumIpc} for cross-session coordination
+   * instead.
+   */
+  async createSession(
+    w3cCapabilities1: W3CDriverCaps<C>,
+    w3cCapabilities2?: W3CDriverCaps<C>,
+    w3cCapabilities3?: W3CDriverCaps<C>,
+    driverData?: DriverData[],
+  ): Promise<CreateResult>;
   async createSession(
     w3cCapabilities1: W3CDriverCaps<C>,
     w3cCapabilities2?: W3CDriverCaps<C>,
@@ -374,6 +387,9 @@ export class BaseDriver<
     return {capabilities: this.caps};
   }
 
+  /**
+   * Stop the current automation session.
+   */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async deleteSession(sessionId?: string | null) {
     await this.clearNewCommandTimeout();

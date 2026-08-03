@@ -263,9 +263,20 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
 
   /**
    * Creates a session: picks an inner driver from caps, runs plugin hooks, and returns a protocol
-   * envelope with either `[sessionId, caps, protocol]` or an error. Legacy call sites may pass the
-   * same W3C caps in up to three positions; the first W3C-shaped value wins.
+   * envelope with either `[sessionId, caps, protocol]` or an error.
+   *
+   * @param w3cCapabilities - the new session capabilities in W3C format
    */
+  async createSession(w3cCapabilities: W3CAppiumDriverCaps): Promise<SessionHandlerCreateResult>;
+  /**
+   * @deprecated Legacy call sites may pass the same W3C caps in up to three positions; the first
+   * W3C-shaped value wins. Use the single-argument overload of {@linkcode createSession} instead.
+   */
+  async createSession(
+    w3cCapabilities1: W3CAppiumDriverCaps,
+    w3cCapabilities2?: W3CAppiumDriverCaps,
+    w3cCapabilities3?: W3CAppiumDriverCaps,
+  ): Promise<SessionHandlerCreateResult>;
   async createSession(
     w3cCapabilities1: W3CAppiumDriverCaps,
     w3cCapabilities2?: W3CAppiumDriverCaps,

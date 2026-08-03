@@ -10,7 +10,7 @@ export const W3C_ROUTES = {
     POST: {
       command: 'createSession',
       payloadParams: {
-        optional: ['capabilities', 'capabilities', 'capabilities'],
+        optional: ['capabilities'],
       },
     },
   },

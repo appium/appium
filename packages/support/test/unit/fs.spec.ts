@@ -95,7 +95,7 @@ describe('fs', {timeout: TEST_TIMEOUT}, function () {
   });
 
   it('sanitizeName()', function () {
-    assert.deepStrictEqual(
+    assert.strictEqual(
       fs.sanitizeName(':file?.txt', {
         replacement: '-',
       }),

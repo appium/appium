@@ -51,21 +51,21 @@ describe('timing', function () {
 
       const timer = new timing.Timer().start();
       const duration = timer.getDuration();
-      assert.deepStrictEqual(duration.asSeconds, 10.011483102);
+      assert.strictEqual(duration.asSeconds, 10.011483102);
     });
     it('should get correct milliseconds', function () {
       setupMocks();
 
       const timer = new timing.Timer().start();
       const duration = timer.getDuration();
-      assert.deepStrictEqual(duration.asMilliSeconds, 10011.483102);
+      assert.strictEqual(duration.asMilliSeconds, 10011.483102);
     });
     it('should get correct nanoseconds', function () {
       setupMocks();
 
       const timer = new timing.Timer().start();
       const duration = timer.getDuration();
-      assert.deepStrictEqual(duration.asNanoSeconds, 10011483102);
+      assert.strictEqual(duration.asNanoSeconds, 10011483102);
     });
     it('should error if the timer was not started', function () {
       const timer = new timing.Timer();

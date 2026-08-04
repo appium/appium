@@ -82,7 +82,7 @@ describe('MJpeg Stream (e2e)', function () {
     assert.ok(!stream['lastChunk']);
     await stream.start();
     assert.ok(stream['lastChunk']);
-    assert.deepStrictEqual(stream['updateCount'], 1);
+    assert.strictEqual(stream['updateCount'], 1);
 
     await sleep(1000);
     assert.ok(stream['updateCount'] > 1);
@@ -91,20 +91,20 @@ describe('MJpeg Stream (e2e)', function () {
     const endBytes = Buffer.from([0xff, 0xd9]);
     const startPos = (stream['lastChunk'] as Buffer).indexOf(startBytes);
     const endPos = (stream['lastChunk'] as Buffer).indexOf(endBytes);
-    assert.deepStrictEqual(startPos, 0);
-    assert.deepStrictEqual(endPos, 1278);
+    assert.strictEqual(startPos, 0);
+    assert.strictEqual(endPos, 1278);
 
     const b64 = stream.lastChunkBase64;
-    assert.deepStrictEqual(b64, TEST_IMG_JPG);
+    assert.strictEqual(b64, TEST_IMG_JPG);
 
     const png = await stream.lastChunkPNGBase64();
     assert.strictEqual(typeof png, 'string');
-    assert.deepStrictEqual(png!.indexOf('iVBOR'), 0);
+    assert.strictEqual(png!.indexOf('iVBOR'), 0);
 
     stream.stop();
     await sleep(1000);
     assert.ok(!stream['lastChunk']);
-    assert.deepStrictEqual(stream['updateCount'], 0);
+    assert.strictEqual(stream['updateCount'], 0);
     /* eslint-enable dot-notation */
   });
 

@@ -36,9 +36,9 @@ describe('npm', function () {
     ];
     const npm = new NPM();
     it('should get the latest minor upgrade in a list of versions', function () {
-      assert.deepStrictEqual(npm.getLatestSafeUpgradeFromVersions('0.1.0', versions1), '0.2.5');
-      assert.deepStrictEqual(npm.getLatestSafeUpgradeFromVersions('1.0.0', versions1), '1.2.7');
-      assert.deepStrictEqual(npm.getLatestSafeUpgradeFromVersions('0.2.0', versions1), '0.2.5');
+      assert.strictEqual(npm.getLatestSafeUpgradeFromVersions('0.1.0', versions1), '0.2.5');
+      assert.strictEqual(npm.getLatestSafeUpgradeFromVersions('1.0.0', versions1), '1.2.7');
+      assert.strictEqual(npm.getLatestSafeUpgradeFromVersions('0.2.0', versions1), '0.2.5');
     });
     it('should throw if the current version cannot be parsed', function () {
       assert.throws(() => {
@@ -46,7 +46,7 @@ describe('npm', function () {
       });
     });
     it('should ignore an error if one of versions cannot be parsed', function () {
-      assert.deepStrictEqual(npm.getLatestSafeUpgradeFromVersions('0.1.0', ['', '0.2.0']), '0.2.0');
+      assert.strictEqual(npm.getLatestSafeUpgradeFromVersions('0.1.0', ['', '0.2.0']), '0.2.0');
     });
     it('should return null if no newer version is found', function () {
       assert.strictEqual(npm.getLatestSafeUpgradeFromVersions('10', versions1), null);

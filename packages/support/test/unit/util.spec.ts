@@ -184,7 +184,7 @@ describe('util', function () {
       const osMock = sandbox.mock(os);
       osMock.expects('networkInterfaces').returns(ifConfigOut);
       const ip = util.localIp();
-      assert.deepStrictEqual(ip, '123.123.123.123');
+      assert.strictEqual(ip, '123.123.123.123');
       osMock.verify();
     });
   });
@@ -224,15 +224,15 @@ describe('util', function () {
     });
     it('should pass simple string through', function () {
       const str = 'str';
-      assert.deepStrictEqual(util.safeJsonParse(str), str);
+      assert.strictEqual(util.safeJsonParse(str), str);
     });
     it('should pass a number through', function () {
       const num = 42;
-      assert.deepStrictEqual(util.safeJsonParse(num), num);
+      assert.strictEqual(util.safeJsonParse(num), num);
     });
     it('should make a number from a string representation', function () {
       const num = 42;
-      assert.deepStrictEqual(util.safeJsonParse(String(num)), num);
+      assert.strictEqual(util.safeJsonParse(String(num)), num);
     });
   });
 
@@ -240,7 +240,7 @@ describe('util', function () {
     it('should use JSON.stringify if no Buffer involved', function () {
       const obj = {k1: 'v1', k2: 'v2', k3: 'v3'};
       const jsonString = JSON.stringify(obj, null, 2);
-      assert.deepStrictEqual(util.jsonStringify(obj), jsonString);
+      assert.strictEqual(util.jsonStringify(obj), jsonString);
     });
     it('should serialize a Buffer', function () {
       const obj = {
@@ -306,15 +306,15 @@ describe('util', function () {
     });
     it('should unwrap a wrapped element', function () {
       const el = {ELEMENT: 4};
-      assert.deepStrictEqual(util.unwrapElement(el as any), 4);
+      assert.strictEqual(util.unwrapElement(el as any), 4);
     });
     it('should unwrap a wrapped element that uses W3C element identifier', function () {
       const el = {[W3C_WEB_ELEMENT_IDENTIFIER]: 5};
-      assert.deepStrictEqual(util.unwrapElement(el as any), 5);
+      assert.strictEqual(util.unwrapElement(el as any), 5);
     });
     it('should unwrap a wrapped element and prioritize W3C element identifier', function () {
       const el = {ELEMENT: 7, [W3C_WEB_ELEMENT_IDENTIFIER]: 6};
-      assert.deepStrictEqual(util.unwrapElement(el as any), 6);
+      assert.strictEqual(util.unwrapElement(el as any), 6);
     });
   });
 
@@ -429,12 +429,12 @@ describe('util', function () {
 
   describe('compareVersions', function () {
     it('should compare two correct version numbers', function () {
-      assert.deepStrictEqual(util.compareVersions('10.0', '<', '11.0'), true);
-      assert.deepStrictEqual(util.compareVersions('11.0', '>=', '11.0'), true);
-      assert.deepStrictEqual(util.compareVersions('11.0', '==', '11.0'), true);
-      assert.deepStrictEqual(util.compareVersions('13.10', '>', '13.5'), true);
-      assert.deepStrictEqual(util.compareVersions('11.1', '!=', '11.10'), true);
-      assert.deepStrictEqual(util.compareVersions('12.0', '<', 10 as any), false);
+      assert.strictEqual(util.compareVersions('10.0', '<', '11.0'), true);
+      assert.strictEqual(util.compareVersions('11.0', '>=', '11.0'), true);
+      assert.strictEqual(util.compareVersions('11.0', '==', '11.0'), true);
+      assert.strictEqual(util.compareVersions('13.10', '>', '13.5'), true);
+      assert.strictEqual(util.compareVersions('11.1', '!=', '11.10'), true);
+      assert.strictEqual(util.compareVersions('12.0', '<', 10 as any), false);
     });
     it('should throw if any of version arguments is invalid', function () {
       assert.throws(() => util.compareVersions(undefined as any, '<', '11.0'));
@@ -447,37 +447,37 @@ describe('util', function () {
 
   describe('quote', function () {
     it('should quote a string with a space', function () {
-      assert.deepStrictEqual(util.quote(['a', 'b', 'c d']), "a b 'c d'");
+      assert.strictEqual(util.quote(['a', 'b', 'c d']), "a b 'c d'");
     });
     it('should escape double quotes', function () {
-      assert.deepStrictEqual(util.quote(['a', 'b', `it's a "neat thing"`]), `a b "it's a \\"neat thing\\""`);
+      assert.strictEqual(util.quote(['a', 'b', `it's a "neat thing"`]), `a b "it's a \\"neat thing\\""`);
     });
     it("should escape $ ` and '", function () {
-      assert.deepStrictEqual(util.quote(['$', '`', `'`]), '\\$ \\` "\'"');
+      assert.strictEqual(util.quote(['$', '`', `'`]), '\\$ \\` "\'"');
     });
     it('should handle empty array', function () {
-      assert.deepStrictEqual(util.quote([]), '');
+      assert.strictEqual(util.quote([]), '');
     });
     it('should quote a string with newline', function () {
-      assert.deepStrictEqual(util.quote(['a\nb']), `'a\nb'`);
+      assert.strictEqual(util.quote(['a\nb']), `'a\nb'`);
     });
     it('should stringify booleans', function () {
-      assert.deepStrictEqual(util.quote(['a', 1, true, false] as any), 'a 1 true false');
+      assert.strictEqual(util.quote(['a', 1, true, false] as any), 'a 1 true false');
     });
     it('should stringify null and undefined', function () {
-      assert.deepStrictEqual(util.quote(['a', 1, null, undefined] as any), 'a 1 null undefined');
+      assert.strictEqual(util.quote(['a', 1, null, undefined] as any), 'a 1 null undefined');
     });
   });
 
   describe('pluralize', function () {
     it('should pluralize a string', function () {
-      assert.deepStrictEqual(util.pluralize('word', 2), 'words');
+      assert.strictEqual(util.pluralize('word', 2), 'words');
     });
     it('should pluralize a string and prepend the number through boolean', function () {
-      assert.deepStrictEqual(util.pluralize('word', 2, true), '2 words');
+      assert.strictEqual(util.pluralize('word', 2, true), '2 words');
     });
     it('should pluralize a string and prepend the number through options', function () {
-      assert.deepStrictEqual(util.pluralize('word', 2, {inclusive: true}), '2 words');
+      assert.strictEqual(util.pluralize('word', 2, {inclusive: true}), '2 words');
     });
   });
 

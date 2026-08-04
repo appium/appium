@@ -7,13 +7,13 @@ import {node} from '../../lib';
 describe('node utilities', function () {
   describe('getObjectSize', function () {
     it('should be able to calculate size of different object types', function () {
-      assert.deepStrictEqual(node.getObjectSize(1), 8);
-      assert.deepStrictEqual(node.getObjectSize(true), 4);
-      assert.deepStrictEqual(node.getObjectSize('yolo'), 8);
-      assert.deepStrictEqual(node.getObjectSize(null), 0);
-      assert.deepStrictEqual(node.getObjectSize({}), 0);
-      assert.deepStrictEqual(node.getObjectSize(Buffer.from([1, 2, 3])), 3);
-      assert.deepStrictEqual(
+      assert.strictEqual(node.getObjectSize(1), 8);
+      assert.strictEqual(node.getObjectSize(true), 4);
+      assert.strictEqual(node.getObjectSize('yolo'), 8);
+      assert.strictEqual(node.getObjectSize(null), 0);
+      assert.strictEqual(node.getObjectSize({}), 0);
+      assert.strictEqual(node.getObjectSize(Buffer.from([1, 2, 3])), 3);
+      assert.strictEqual(
         node.getObjectSize({
           a: 1,
           b: 2,
@@ -40,11 +40,11 @@ describe('node utilities', function () {
     it('should be able to calculate object identifiers', function () {
       const obj1 = {};
       const obj2 = {};
-      assert.notDeepStrictEqual(node.getObjectId({}), node.getObjectId(obj1));
-      assert.notDeepStrictEqual(node.getObjectId({}), node.getObjectId(obj2));
-      assert.notDeepStrictEqual(node.getObjectId(obj1), node.getObjectId(obj2));
-      assert.deepStrictEqual(node.getObjectId(obj1), node.getObjectId(obj1));
-      assert.deepStrictEqual(node.getObjectId(obj2), node.getObjectId(obj2));
+      assert.notStrictEqual(node.getObjectId({}), node.getObjectId(obj1));
+      assert.notStrictEqual(node.getObjectId({}), node.getObjectId(obj2));
+      assert.notStrictEqual(node.getObjectId(obj1), node.getObjectId(obj2));
+      assert.strictEqual(node.getObjectId(obj1), node.getObjectId(obj1));
+      assert.strictEqual(node.getObjectId(obj2), node.getObjectId(obj2));
     });
   });
 
@@ -54,7 +54,7 @@ describe('node utilities', function () {
       assert.deepStrictEqual(node.deepFreeze(obj1), obj1);
       const obj2 = node.deepFreeze({a: {b: 'c'}});
       assert.throws(() => ((obj2 as any).a.b = 'd'));
-      assert.deepStrictEqual(node.deepFreeze(1), 1);
+      assert.strictEqual(node.deepFreeze(1), 1);
       assert.strictEqual(node.deepFreeze(null), null);
       const obj3 = [1, {}, 3];
       assert.strictEqual(node.deepFreeze(obj3), obj3);

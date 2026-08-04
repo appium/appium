@@ -55,7 +55,7 @@ describe('fs', function () {
       const dstPath = path.join(dstRoot!, path.basename(srcPath));
       await fs.writeFile(dstPath, Buffer.from('foo'));
       await assert.rejects(fs.mv(srcPath, dstPath, {clobber: false}));
-      assert.deepStrictEqual((await fs.readFile(dstPath)).toString(), 'foo');
+      assert.strictEqual((await fs.readFile(dstPath)).toString(), 'foo');
     });
 
     it('should override a file if already exists by default', async function () {
@@ -64,7 +64,7 @@ describe('fs', function () {
       const dstPath = path.join(dstRoot!, path.basename(srcPath));
       await fs.writeFile(dstPath, Buffer.from('foo'));
       await fs.mv(srcPath, dstPath);
-      assert.deepStrictEqual((await fs.readFile(dstPath)).toString(), 'bar');
+      assert.strictEqual((await fs.readFile(dstPath)).toString(), 'bar');
     });
 
     it('should handle cross-device move by falling back to copy-and-delete', async function () {
@@ -84,7 +84,7 @@ describe('fs', function () {
         await fs.mv(srcPath, dstPath);
         assert.strictEqual(await fs.exists(dstPath), true);
         assert.strictEqual(await fs.exists(srcPath), false);
-        assert.deepStrictEqual((await fs.readFile(dstPath)).toString(), 'bar');
+        assert.strictEqual((await fs.readFile(dstPath)).toString(), 'bar');
       } finally {
         // Restore original function.
         (fs as {rename: typeof fs.rename}).rename = originalRename;

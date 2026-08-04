@@ -159,7 +159,7 @@ describe('ExecuteDriverPlugin', function () {
         return typeof driver.lock;
       `;
       const {result} = await driver.executeDriverScript(script);
-      assert.deepStrictEqual(result, 'function');
+      assert.strictEqual(result, 'function');
     });
 
     it('should correctly handle errors that happen in a webdriverio script', async function () {

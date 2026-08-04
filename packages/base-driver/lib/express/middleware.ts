@@ -155,8 +155,18 @@ export function catchAllHandler(err: Error, _req: Request, res: Response, next: 
   }
 
   log.error(`Uncaught error: ${err.message}`);
-  const [status, body] = getResponseForW3CError(err);
+  const [status, body] = getResponseForW3CError(
+    isBodyParseError(err) ? new errors.InvalidArgumentError(err.message) : err,
+  );
   res.status(status).json(body);
+}
+
+/**
+ * Detects the error body-parser raises for a request body that is not valid JSON.
+ * The protocol expects such a request to be rejected as an invalid argument.
+ */
+function isBodyParseError(err: Error): boolean {
+  return (err as Error & {type?: string}).type === 'entity.parse.failed';
 }
 
 /**

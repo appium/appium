@@ -106,6 +106,26 @@ describe('server configuration', function () {
     }
   });
 
+  it('should respond with a W3C error when the request body is not valid JSON', async function () {
+    const driver = fakeDriver();
+    const _server = await server({
+      routeConfiguringFunction: routeConfiguringFunction(driver as any),
+      port,
+    });
+    try {
+      const res = await fetch(`http://127.0.0.1:${port}/session`, {
+        method: 'POST',
+        headers: {'content-type': 'application/json'},
+        body: '{"capabilities": not valid json}',
+      });
+      expect(res.status).to.equal(400);
+      expect(res.headers.get('content-type')).to.include('application/json');
+      expect(await res.json()).to.have.nested.property('value.error', 'invalid argument');
+    } finally {
+      await _server.close();
+    }
+  });
+
   it('should reject if error thrown in configureRoutes parameter', async function () {
     const configureRoutes = () => {
       throw new Error('I am Mr. MeeSeeks look at me!');

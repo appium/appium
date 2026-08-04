@@ -214,7 +214,6 @@ export function configureServer(opts: ConfigureServerOpts): void {
   app.use(defaultToJSONContentType);
   app.use(bodyParser.urlencoded({extended: true}));
   app.use(methodOverride());
-  app.use(catchAllHandler);
 
   // make sure appium never fails because of a file size upload limit
   app.use(bodyParser.json({limit: '1gb'}));
@@ -223,6 +222,10 @@ export function configureServer(opts: ConfigureServerOpts): void {
   app.use(startLogFormatter);
 
   addRoutes(app, {basePath, extraMethodMap});
+
+  // Express only passes errors to an error handler registered after the middleware
+  // that raised them, so this one must be the last of all.
+  app.use(catchAllHandler);
 }
 
 /**

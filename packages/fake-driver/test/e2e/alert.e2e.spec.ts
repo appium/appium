@@ -1,11 +1,7 @@
+import assert from 'node:assert/strict';
 import {describe, it, before, after} from 'node:test';
 
-import chai, {expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
-
 import {deleteSession, initSession, W3C_PREFIXED_CAPS} from '../helpers';
-
-chai.use(chaiAsPromised);
 
 export function alertTests(context: {port: number}) {
   describe('alerts', function () {
@@ -27,17 +23,17 @@ export function alertTests(context: {port: number}) {
     for (const [name, fn] of noAlertCases) {
       it(`should reject ${name} when no alert is present`, async function () {
         const e: unknown = await fn().catch((err: Error) => err);
-        expect(e).to.be.an('error');
-        expect((e as Error).message).to.include(noAlertMessage);
+        assert.ok(e instanceof Error);
+        assert.ok((e as Error).message.includes(noAlertMessage));
       });
     }
     it('should get text of an alert', async function () {
       await (await driver.$('#AlertButton')).click();
-      expect(await driver.getAlertText()).to.equal('Fake Alert');
+      assert.strictEqual(await driver.getAlertText(), 'Fake Alert');
     });
     it('should set the text of an alert', async function () {
       await driver.sendAlertText('foo');
-      expect(await driver.getAlertText()).to.equal('foo');
+      assert.strictEqual(await driver.getAlertText(), 'foo');
     });
     it('should not do other things while an alert is there', async function () {
       try {
@@ -45,8 +41,8 @@ export function alertTests(context: {port: number}) {
         await (await driver.$('#nav')).click();
         throw new Error('should have thrown an error');
       } catch (err) {
-        expect(err).to.be.an('error');
-        expect((err as Error).message).to.include('modal dialog was open, blocking this operation');
+        assert.ok(err instanceof Error);
+        assert.ok((err as Error).message.includes('modal dialog was open, blocking this operation'));
       }
     });
     it.skip('should accept an alert', function () {

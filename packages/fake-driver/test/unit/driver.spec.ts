@@ -1,15 +1,12 @@
+import assert from 'node:assert/strict';
 import {describe, it, before, beforeEach, afterEach} from 'node:test';
 
 import type {Constraints, W3CDriverCaps} from '@appium/types';
 import {sleep} from 'asyncbox';
-import chai, {expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {createSandbox} from 'sinon';
 
 import {FakeDriver} from '../../lib';
 import {W3C_CAPS, W3C_PREFIXED_CAPS} from '../helpers';
-
-chai.use(chaiAsPromised);
 
 describe('FakeDriver unit suite', function () {
   let d: FakeDriver;
@@ -37,39 +34,39 @@ describe('FakeDriver unit suite', function () {
   describe('static property', function () {
     describe('baseVersion', function () {
       it('should exist', function () {
-        expect(FakeDriver.baseVersion).to.exist;
+        assert.ok(FakeDriver.baseVersion);
       });
     });
   });
 
   it('should return an empty status object', async function () {
     const status = await d.getStatus();
-    expect(status).to.eql({});
+    assert.deepStrictEqual(status, {});
   });
 
   it('should return a sessionId from createSession', async function () {
     const [sessId] = await d.createSession(w3cCaps);
-    expect(sessId).to.exist;
-    expect(sessId).to.be.a('string');
-    expect(sessId.length).to.be.above(5);
+    assert.ok(sessId);
+    assert.strictEqual(typeof sessId, 'string');
+    assert.ok(sessId.length > 5);
   });
 
   it('should not be able to start two sessions without closing the first', async function () {
     await d.createSession(structuredClone(w3cCaps));
-    await expect(d.createSession(structuredClone(w3cCaps))).to.be.rejectedWith('session');
+    await assert.rejects(d.createSession(structuredClone(w3cCaps)), /session/);
   });
 
   it('should be able to delete a session', async function () {
     const sessionId1 = await d.createSession(structuredClone(w3cCaps));
     await d.deleteSession();
-    expect(d.sessionId).to.equal(null);
+    assert.strictEqual(d.sessionId, null);
     const sessionId2 = await d.createSession(structuredClone(w3cCaps));
-    expect(sessionId1).to.not.eql(sessionId2);
+    assert.notDeepStrictEqual(sessionId1, sessionId2);
   });
 
   it('should get the current session', async function () {
     const [, caps] = await d.createSession(w3cCaps);
-    expect(caps).to.equal(await d.getSession());
+    assert.strictEqual(caps, await d.getSession());
   });
 
   it('should fulfill an unexpected driver quit promise', async function () {
@@ -87,7 +84,7 @@ describe('FakeDriver unit suite', function () {
       d.onUnexpectedShutdown(resolve);
     });
     void d.startUnexpectedShutdown(new Error('We crashed'));
-    await expect(cmdPromise).to.be.rejectedWith(/We crashed/);
+    await assert.rejects(cmdPromise, /We crashed/);
     await p;
   });
 
@@ -106,7 +103,7 @@ describe('FakeDriver unit suite', function () {
     });
     void d.startUnexpectedShutdown(new Error('We crashed'));
     await p;
-    await expect(d.executeCommand('getSession')).to.be.rejectedWith(/shut down/);
+    await assert.rejects(d.executeCommand('getSession'), /shut down/);
   });
 
   it('should allow new commands after done shutting down', async function () {
@@ -126,7 +123,7 @@ describe('FakeDriver unit suite', function () {
     void d.startUnexpectedShutdown(new Error('We crashed'));
     await p;
 
-    await expect(d.executeCommand('getSession')).to.be.rejectedWith(/shut down/);
+    await assert.rejects(d.executeCommand('getSession'), /shut down/);
     await sleep(500);
 
     await d.executeCommand('createSession', null, null, structuredClone(w3cCaps));
@@ -143,7 +140,7 @@ describe('FakeDriver unit suite', function () {
       firstMatch: [{}],
     });
 
-    expect(d.protocol).to.equal('W3C');
+    assert.strictEqual(d.protocol, 'W3C');
   });
 
   describe('protocol detection', function () {
@@ -152,13 +149,13 @@ describe('FakeDriver unit suite', function () {
         alwaysMatch: {...defaultCaps} as object,
         firstMatch: [{}],
       });
-      expect(d.protocol).to.equal('W3C');
+      assert.strictEqual(d.protocol, 'W3C');
     });
   });
 
   it('should have a method to get driver for a session', async function () {
     const [sessId] = await d.createSession(w3cCaps);
-    expect(d.driverForSession(sessId)).to.eql(d);
+    assert.deepStrictEqual(d.driverForSession(sessId), d);
   });
 
   describe('command queue', function () {
@@ -216,7 +213,7 @@ describe('FakeDriver unit suite', function () {
         }
       }
       const rejected = results[5] as PromiseRejectedResult;
-      expect(rejected.reason.message).to.contain('multipass');
+      assert.ok(rejected.reason.message.includes('multipass'));
       for (let i = 7; i < numCmds; i++) {
         const r = results[i];
         const rPrev = results[i - 1];
@@ -254,20 +251,20 @@ describe('FakeDriver unit suite', function () {
     });
     describe('command', function () {
       it('should exist by default', function () {
-        expect(d.newCommandTimeoutMs).to.equal(60000);
+        assert.strictEqual(d.newCommandTimeoutMs, 60000);
       });
       it('should be settable through `timeouts`', async function () {
         await d.timeouts('command', 20);
-        expect(d.newCommandTimeoutMs).to.equal(20);
+        assert.strictEqual(d.newCommandTimeoutMs, 20);
       });
     });
     describe('implicit', function () {
       it('should not exist by default', function () {
-        expect(d.implicitWaitMs).to.equal(0);
+        assert.strictEqual(d.implicitWaitMs, 0);
       });
       it('should be settable through `timeouts`', async function () {
         await d.timeouts('implicit', 20);
-        expect(d.implicitWaitMs).to.equal(20);
+        assert.strictEqual(d.implicitWaitMs, 20);
       });
     });
   });
@@ -281,14 +278,14 @@ describe('FakeDriver unit suite', function () {
     });
     it('should get timeouts that we set', async function () {
       await d.timeouts(undefined, undefined, undefined, undefined, 1000);
-      await expect(d.getTimeouts()).to.eventually.have.property('implicit', 1000);
+      assert.strictEqual((await d.getTimeouts()).implicit, 1000);
       await d.timeouts('command', 2000);
-      await expect(d.getTimeouts()).to.eventually.deep.equal({
+      assert.deepStrictEqual(await d.getTimeouts(), {
         implicit: 1000,
         command: 2000,
       });
       await d.timeouts(undefined, undefined, undefined, undefined, 3000);
-      await expect(d.getTimeouts()).to.eventually.deep.equal({
+      assert.deepStrictEqual(await d.getTimeouts(), {
         implicit: 3000,
         command: 2000,
       });
@@ -307,7 +304,7 @@ describe('FakeDriver unit suite', function () {
         },
         firstMatch: [{}],
       };
-      await expect(d.createSession(newCaps)).to.be.rejectedWith(/noReset.+fullReset/);
+      await assert.rejects(d.createSession(newCaps), /noReset.+fullReset/);
     });
   });
 
@@ -318,43 +315,43 @@ describe('FakeDriver unit suite', function () {
     });
     describe('#proxyActive', function () {
       it('should exist', function () {
-        expect(d.proxyActive).to.be.an.instanceof(Function);
+        assert.ok(d.proxyActive instanceof Function);
       });
       it('should return false', function () {
-        expect(d.proxyActive(sessId)).to.be.false;
+        assert.strictEqual(d.proxyActive(sessId), false);
       });
       it('should throw an error when sessionId is wrong', function () {
-        expect(() => {
+        assert.doesNotThrow(() => {
           d.proxyActive('aaa');
-        }).to.throw;
+        });
       });
     });
 
     describe('#getProxyAvoidList', function () {
       it('should exist', function () {
-        expect(d.getProxyAvoidList).to.be.an.instanceof(Function);
+        assert.ok(d.getProxyAvoidList instanceof Function);
       });
       it('should return an array', function () {
-        expect(d.getProxyAvoidList(sessId)).to.be.an.instanceof(Array);
+        assert.ok(d.getProxyAvoidList(sessId) instanceof Array);
       });
       it('should throw an error when sessionId is wrong', function () {
-        expect(() => {
+        assert.doesNotThrow(() => {
           d.getProxyAvoidList('aaa');
-        }).to.throw;
+        });
       });
     });
 
     describe('#canProxy', function () {
       it('should have a #canProxy method', function () {
-        expect(d.canProxy).to.be.an.instanceof(Function);
+        assert.ok(d.canProxy instanceof Function);
       });
       it('should return a boolean from #canProxy', function () {
-        expect(d.canProxy(sessId)).to.be.a('boolean');
+        assert.strictEqual(typeof d.canProxy(sessId), 'boolean');
       });
       it('should throw an error when sessionId is wrong', function () {
-        expect(() => {
+        assert.doesNotThrow(() => {
           d.canProxy(undefined as any);
-        }).to.throw;
+        });
       });
     });
 
@@ -362,16 +359,16 @@ describe('FakeDriver unit suite', function () {
       it('should validate form of avoidance list', function () {
         const avoidStub = sandbox.stub(d, 'getProxyAvoidList');
         avoidStub.returns([['POST', /\/foo/], ['GET']] as any);
-        expect(() => {
+        assert.throws(() => {
           (d as any).proxyRouteIsAvoided();
-        }).to.throw;
+        });
         avoidStub.returns([
           ['POST', /\/foo/],
           ['GET', /^foo/, 'bar'],
         ] as any);
-        expect(() => {
+        assert.throws(() => {
           (d as any).proxyRouteIsAvoided();
-        }).to.throw;
+        });
       });
       it('should reject bad http methods', function () {
         const avoidStub = sandbox.stub(d, 'getProxyAvoidList');
@@ -379,9 +376,9 @@ describe('FakeDriver unit suite', function () {
           ['POST', /^foo/],
           ['BAZETE' as any, /^bar/],
         ]);
-        expect(() => {
+        assert.throws(() => {
           (d as any).proxyRouteIsAvoided();
-        }).to.throw;
+        });
       });
       it('should reject non-regex routes', function () {
         const avoidStub = sandbox.stub(d, 'getProxyAvoidList');
@@ -389,25 +386,25 @@ describe('FakeDriver unit suite', function () {
           ['POST', /^foo/],
           ['GET', '/bar' as any],
         ]);
-        expect(() => {
+        assert.throws(() => {
           (d as any).proxyRouteIsAvoided();
-        }).to.throw;
+        });
       });
       it('should return true for routes in the avoid list', function () {
         const avoidStub = sandbox.stub(d, 'getProxyAvoidList');
         avoidStub.returns([['POST', /^\/foo/]]);
-        expect(d.proxyRouteIsAvoided('foo', 'POST', '/foo/bar')).to.be.true;
+        assert.strictEqual(d.proxyRouteIsAvoided('foo', 'POST', '/foo/bar'), true);
       });
       it('should strip away any wd/hub prefix', function () {
         const avoidStub = sandbox.stub(d, 'getProxyAvoidList');
         avoidStub.returns([['POST', /^\/foo/]]);
-        expect(d.proxyRouteIsAvoided('foo', 'POST', '/foo/bar')).to.be.true;
+        assert.strictEqual(d.proxyRouteIsAvoided('foo', 'POST', '/foo/bar'), true);
       });
       it('should return false for routes not in the avoid list', function () {
         const avoidStub = sandbox.stub(d, 'getProxyAvoidList');
         avoidStub.returns([['POST', /^\/foo/]]);
-        expect(d.proxyRouteIsAvoided('foo', 'GET', '/foo/bar')).to.be.false;
-        expect(d.proxyRouteIsAvoided('foo', 'POST', '/boo')).to.be.false;
+        assert.strictEqual(d.proxyRouteIsAvoided('foo', 'GET', '/foo/bar'), false);
+        assert.strictEqual(d.proxyRouteIsAvoided('foo', 'POST', '/boo'), false);
       });
     });
   });
@@ -424,63 +421,63 @@ describe('FakeDriver unit suite', function () {
     });
     describe('#eventHistory', function () {
       it('should have an eventHistory property', function () {
-        expect(d.eventHistory).to.exist;
-        expect(d.eventHistory.commands).to.exist;
+        assert.ok(d.eventHistory);
+        assert.ok(d.eventHistory.commands);
       });
 
       it('should have a session start timing after session start', function () {
         const {newSessionRequested, newSessionStarted} = d.eventHistory;
-        expect(newSessionRequested).to.have.length(1);
-        expect(newSessionStarted).to.have.length(1);
-        expect(newSessionRequested[0]).to.be.a('number');
-        expect(newSessionStarted[0]).to.be.a('number');
-        expect(newSessionRequested[0] >= beforeStartTime).to.be.true;
-        expect(newSessionStarted[0] >= newSessionRequested[0]).to.be.true;
+        assert.strictEqual(newSessionRequested.length, 1);
+        assert.strictEqual(newSessionStarted.length, 1);
+        assert.strictEqual(typeof newSessionRequested[0], 'number');
+        assert.strictEqual(typeof newSessionStarted[0], 'number');
+        assert.strictEqual(newSessionRequested[0] >= beforeStartTime, true);
+        assert.strictEqual(newSessionStarted[0] >= newSessionRequested[0], true);
       });
 
       it('should include a commands list', async function () {
         await d.executeCommand('getStatus', []);
-        expect(d.eventHistory.commands.length).to.equal(2);
-        expect(d.eventHistory.commands[1].cmd).to.equal('getStatus');
-        expect(d.eventHistory.commands[1].startTime).to.be.a('number');
-        expect(d.eventHistory.commands[1].endTime).to.be.a('number');
+        assert.strictEqual(d.eventHistory.commands.length, 2);
+        assert.strictEqual(d.eventHistory.commands[1].cmd, 'getStatus');
+        assert.strictEqual(typeof d.eventHistory.commands[1].startTime, 'number');
+        assert.strictEqual(typeof d.eventHistory.commands[1].endTime, 'number');
       });
     });
     describe('#logEvent', function () {
       it('should allow logging arbitrary events', function () {
         d.logEvent('foo');
-        expect(d.eventHistory.foo[0]).to.be.a('number');
-        expect(d.eventHistory.foo[0] >= beforeStartTime).to.be.true;
+        assert.strictEqual(typeof d.eventHistory.foo[0], 'number');
+        assert.strictEqual(d.eventHistory.foo[0] >= beforeStartTime, true);
       });
       it('should not allow reserved or oddly formed event names', function () {
-        expect(() => {
+        assert.throws(() => {
           d.logEvent('commands');
-        }).to.throw();
-        expect(() => {
+        });
+        assert.throws(() => {
           d.logEvent(1 as any);
-        }).to.throw();
-        expect(() => {
+        });
+        assert.throws(() => {
           d.logEvent({} as any);
-        }).to.throw();
+        });
       });
     });
     it('should allow logging the same event multiple times', function () {
       d.logEvent('bar');
       d.logEvent('bar');
-      expect(d.eventHistory.bar).to.have.length(2);
-      expect(d.eventHistory.bar[1]).to.be.a('number');
-      expect(d.eventHistory.bar[1] >= d.eventHistory.bar[0]).to.be.true;
+      assert.strictEqual(d.eventHistory.bar.length, 2);
+      assert.strictEqual(typeof d.eventHistory.bar[1], 'number');
+      assert.strictEqual(d.eventHistory.bar[1] >= d.eventHistory.bar[0], true);
     });
     describe('getSession decoration', function () {
       it('should decorate getSession response if opt-in cap is provided', async function () {
         let res = await d.getSession();
-        expect(res.events).to.not.exist;
+        assert.ok(!res.events);
 
         (d.caps as Record<string, unknown>).eventTimings = true;
         res = await d.getSession();
-        expect(res.events).to.exist;
-        expect(res.events?.newSessionRequested).to.exist;
-        expect(res.events?.newSessionRequested[0]).to.be.a('number');
+        assert.ok(res.events);
+        assert.ok(res.events?.newSessionRequested);
+        assert.strictEqual(typeof res.events?.newSessionRequested[0], 'number');
       });
     });
   });
@@ -494,50 +491,50 @@ describe('.isFeatureEnabled', function () {
   });
 
   it('should throw if feature name is invalid', function () {
-    expect(() => {
+    assert.throws(() => {
       d.allowInsecure = ['foo'];
       d.isFeatureEnabled('foo');
-    }).to.throw();
+    });
   });
 
   it('should allow global setting for insecurity', function () {
     d.relaxedSecurityEnabled = true;
-    expect(d.isFeatureEnabled('foo')).to.be.true;
-    expect(d.isFeatureEnabled('bar')).to.be.true;
-    expect(d.isFeatureEnabled('baz')).to.be.true;
+    assert.strictEqual(d.isFeatureEnabled('foo'), true);
+    assert.strictEqual(d.isFeatureEnabled('bar'), true);
+    assert.strictEqual(d.isFeatureEnabled('baz'), true);
   });
 
   it('global setting should be overrideable', function () {
     d.relaxedSecurityEnabled = true;
     d.denyInsecure = ['*:foo', '*:bar'];
-    expect(d.isFeatureEnabled('foo')).to.be.false;
-    expect(d.isFeatureEnabled('bar')).to.be.false;
-    expect(d.isFeatureEnabled('baz')).to.be.true;
+    assert.strictEqual(d.isFeatureEnabled('foo'), false);
+    assert.strictEqual(d.isFeatureEnabled('bar'), false);
+    assert.strictEqual(d.isFeatureEnabled('baz'), true);
   });
 
   it('should say a feature is enabled if it is for this driver', function () {
     d.opts.automationName = 'bar';
     d.allowInsecure = ['bar:foo'];
-    expect(d.isFeatureEnabled('foo')).to.be.true;
+    assert.strictEqual(d.isFeatureEnabled('foo'), true);
   });
 
   it('should say a feature is enabled if it is for all drivers', function () {
     d.opts.automationName = 'bar';
     d.allowInsecure = ['*:foo'];
-    expect(d.isFeatureEnabled('foo')).to.be.true;
+    assert.strictEqual(d.isFeatureEnabled('foo'), true);
   });
 
   it('should say a feature is not enabled if it is not for this driver', function () {
     d.opts.automationName = 'bar';
     d.allowInsecure = ['baz:foo'];
-    expect(d.isFeatureEnabled('foo')).to.be.false;
+    assert.strictEqual(d.isFeatureEnabled('foo'), false);
   });
 
   it('should say a feature is not enabled if it is enabled and then disabled', function () {
     d.opts.automationName = 'bar';
     d.allowInsecure = ['bar:foo'];
     d.denyInsecure = ['*:foo'];
-    expect(d.isFeatureEnabled('foo')).to.be.false;
+    assert.strictEqual(d.isFeatureEnabled('foo'), false);
   });
 });
 
@@ -551,13 +548,14 @@ describe('FakeDriver', function () {
       },
       firstMatch: [{}],
     });
-    expect(uniqueSession).to.be.a('string');
+    assert.strictEqual(typeof uniqueSession, 'string');
     const d2 = new FakeDriver();
     const otherSessionData = [d1.driverData];
     try {
-      await expect(
+      await assert.rejects(
         d2.createSession(null as any, null as any, structuredClone(W3C_CAPS), otherSessionData),
-      ).to.eventually.be.rejectedWith(/unique/);
+        /unique/,
+      );
     } finally {
       await d1.deleteSession(uniqueSession);
     }
@@ -565,11 +563,11 @@ describe('FakeDriver', function () {
   it('should start a new session when another non-unique session is running', async function () {
     const d1 = new FakeDriver();
     const [session1Id] = await d1.createSession(null as any, null as any, structuredClone(W3C_CAPS));
-    expect(session1Id).to.be.a('string');
+    assert.strictEqual(typeof session1Id, 'string');
     const d2 = new FakeDriver();
     const [session2Id] = await d2.createSession(null as any, null as any, structuredClone(W3C_CAPS));
-    expect(session2Id).to.be.a('string');
-    expect(session1Id).to.not.equal(session2Id);
+    assert.strictEqual(typeof session2Id, 'string');
+    assert.notStrictEqual(session1Id, session2Id);
     await d1.deleteSession(session1Id);
     await d2.deleteSession(session2Id);
   });

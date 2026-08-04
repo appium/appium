@@ -39,7 +39,7 @@ describe('OpenCV helpers', {timeout: 120000}, () => {
       for (const detectorName of ['AKAZE', 'ORB'] as const) {
         const {count, totalCount} = await getImagesMatches(fullImage!, fullImage!, {detectorName});
         assert.ok(count > 0);
-        assert.deepStrictEqual(totalCount, count);
+        assert.strictEqual(totalCount, count);
       }
     });
 

@@ -1,6 +1,5 @@
+import assert from 'node:assert/strict';
 import {after, before, describe, it} from 'node:test';
-
-import {expect} from 'chai';
 
 import {assertOutputDoesntContain, getDynamicLogger, restoreWriters, setupWriters} from './helpers';
 
@@ -18,13 +17,13 @@ describe('test logger', function () {
   });
 
   it('should contains levels', function () {
-    expect(log.levels).to.have.length.above(3);
-    expect(log.levels[2]).to.equal('debug');
+    assert.ok(log.levels.length > 3);
+    assert.strictEqual(log.levels[2], 'debug');
   });
 
   it('should unwrap', function () {
-    expect(log.unwrap).to.exist;
-    expect(log.unwrap()).to.exist;
+    assert.ok(log.unwrap);
+    assert.ok(log.unwrap());
   });
 
   it('should rewrite npmlog levels during testing', function () {
@@ -35,9 +34,9 @@ describe('test logger', function () {
     log.http(text);
     log.warn(text);
     log.error(text);
-    expect(() => {
+    assert.throws(() => {
       throw log.errorWithException(text);
-    }).to.throw(text);
+    }, new RegExp(text));
     assertOutputDoesntContain(writers, text);
   });
 });

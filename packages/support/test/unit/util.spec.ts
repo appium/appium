@@ -1,15 +1,12 @@
+import assert from 'node:assert/strict';
 import os from 'node:os';
 import path from 'node:path';
 import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
 
 import {sleep} from 'asyncbox';
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {createSandbox} from 'sinon';
 
 import {fs, tempDir, util} from '../../lib';
-
-use(chaiAsPromised);
 
 const {W3C_WEB_ELEMENT_IDENTIFIER} = util;
 
@@ -26,85 +23,85 @@ describe('util', function () {
 
   describe('hasValue', function () {
     it('should exist', function () {
-      expect(util.hasValue).to.exist;
+      assert.ok(util.hasValue);
     });
 
     it('should handle undefined', function () {
-      expect(util.hasValue(undefined as any)).to.be.false;
+      assert.strictEqual(util.hasValue(undefined as any), false);
     });
 
     it('should handle not a number', function () {
-      expect(util.hasValue(NaN as any)).to.be.false;
+      assert.strictEqual(util.hasValue(NaN as any), false);
     });
 
     it('should handle null', function () {
-      expect(util.hasValue(null as any)).to.be.false;
+      assert.strictEqual(util.hasValue(null as any), false);
     });
 
     it('should handle functions', function () {
-      expect(util.hasValue(function () {} as any)).to.be.true;
+      assert.strictEqual(util.hasValue(function () {} as any), true);
     });
 
     it('should handle empty arrays', function () {
-      expect(util.hasValue({} as any)).to.be.true;
+      assert.strictEqual(util.hasValue({} as any), true);
     });
 
     it('should handle zero', function () {
-      expect(util.hasValue(0 as any)).to.be.true;
+      assert.strictEqual(util.hasValue(0 as any), true);
     });
 
     it('should handle simple string', function () {
-      expect(util.hasValue('string')).to.be.true;
+      assert.strictEqual(util.hasValue('string'), true);
     });
 
     it('should handle booleans', function () {
-      expect(util.hasValue(false as any)).to.be.true;
+      assert.strictEqual(util.hasValue(false as any), true);
     });
 
     it('should handle empty strings', function () {
-      expect(util.hasValue('')).to.be.true;
+      assert.strictEqual(util.hasValue(''), true);
     });
   });
 
   describe('hasContent', function () {
     it('should exist', function () {
-      expect(util.hasContent).to.exist;
+      assert.ok(util.hasContent);
     });
 
     it('should handle undefined', function () {
-      expect(util.hasContent(undefined as any)).to.be.false;
+      assert.strictEqual(util.hasContent(undefined as any), false);
     });
 
     it('should handle not a number', function () {
-      expect(util.hasContent(NaN as any)).to.be.false;
+      assert.strictEqual(util.hasContent(NaN as any), false);
     });
 
     it('should handle null', function () {
-      expect(util.hasContent(null as any)).to.be.false;
+      assert.strictEqual(util.hasContent(null as any), false);
     });
 
     it('should handle functions', function () {
-      expect(util.hasContent(function () {} as any)).to.be.false;
+      assert.strictEqual(util.hasContent(function () {} as any), false);
     });
 
     it('should handle empty arrays', function () {
-      expect(util.hasContent({} as any)).to.be.false;
+      assert.strictEqual(util.hasContent({} as any), false);
     });
 
     it('should handle zero', function () {
-      expect(util.hasContent(0 as any)).to.be.false;
+      assert.strictEqual(util.hasContent(0 as any), false);
     });
 
     it('should handle simple string', function () {
-      expect(util.hasContent('string')).to.be.true;
+      assert.strictEqual(util.hasContent('string'), true);
     });
 
     it('should handle booleans', function () {
-      expect(util.hasContent(false as any)).to.be.false;
+      assert.strictEqual(util.hasContent(false as any), false);
     });
 
     it('should handle empty strings', function () {
-      expect(util.hasContent('')).to.be.false;
+      assert.strictEqual(util.hasContent(''), false);
     });
   });
 
@@ -112,19 +109,19 @@ describe('util', function () {
     it('should do nothing to a string without space', function () {
       const actual = 'appium';
       const expected = 'appium';
-      expect(util.escapeSpace(actual)).to.equal(expected);
+      assert.strictEqual(util.escapeSpace(actual), expected);
     });
 
     it('should do escape spaces', function () {
       const actual = '/Applications/ Xcode 6.1.1.app/Contents/Developer';
       const expected = '/Applications/\\ Xcode\\ 6.1.1.app/Contents/Developer';
-      expect(util.escapeSpace(actual)).to.equal(expected);
+      assert.strictEqual(util.escapeSpace(actual), expected);
     });
 
     it('should escape consecutive spaces', function () {
       const actual = 'appium   space';
       const expected = 'appium\\ \\ \\ space';
-      expect(util.escapeSpace(actual)).to.equal(expected);
+      assert.strictEqual(util.escapeSpace(actual), expected);
     });
   });
 
@@ -187,7 +184,7 @@ describe('util', function () {
       const osMock = sandbox.mock(os);
       osMock.expects('networkInterfaces').returns(ifConfigOut);
       const ip = util.localIp();
-      expect(ip).to.eql('123.123.123.123');
+      assert.deepStrictEqual(ip, '123.123.123.123');
       osMock.verify();
     });
   });
@@ -200,42 +197,42 @@ describe('util', function () {
       const delay = util.cancellableDelay(1000);
       await sleep(10);
       delay.cancel();
-      await expect(delay).to.eventually.be.rejectedWith(/cancellation error/);
+      await assert.rejects(delay, /cancellation error/);
     });
   });
 
   describe('safeJsonParse', function () {
     it('should pass object through', function () {
       const obj = {a: 'a', b: 'b'};
-      expect(util.safeJsonParse(obj)).to.equal(obj);
+      assert.strictEqual(util.safeJsonParse(obj), obj);
     });
     it('should correctly parse json string', function () {
       const obj = {a: 'a', b: 'b'};
-      expect(util.safeJsonParse(JSON.stringify(obj))).to.eql(obj);
+      assert.deepStrictEqual(util.safeJsonParse(JSON.stringify(obj)), obj);
     });
     it('should pass an array through', function () {
       const arr = ['a', 'b'];
-      expect(util.safeJsonParse(arr)).to.eql(arr);
+      assert.deepStrictEqual(util.safeJsonParse(arr), arr);
     });
     it('should correctly parse json array', function () {
       const arr = ['a', 'b'];
-      expect(util.safeJsonParse(JSON.stringify(arr))).to.eql(arr);
+      assert.deepStrictEqual(util.safeJsonParse(JSON.stringify(arr)), arr);
     });
     it('should pass null through', function () {
       const obj = null;
-      expect(util.safeJsonParse(obj)).to.be.null;
+      assert.strictEqual(util.safeJsonParse(obj), null);
     });
     it('should pass simple string through', function () {
       const str = 'str';
-      expect(util.safeJsonParse(str)).to.eql(str);
+      assert.deepStrictEqual(util.safeJsonParse(str), str);
     });
     it('should pass a number through', function () {
       const num = 42;
-      expect(util.safeJsonParse(num)).to.eql(num);
+      assert.deepStrictEqual(util.safeJsonParse(num), num);
     });
     it('should make a number from a string representation', function () {
       const num = 42;
-      expect(util.safeJsonParse(String(num))).to.eql(num);
+      assert.deepStrictEqual(util.safeJsonParse(String(num)), num);
     });
   });
 
@@ -243,7 +240,7 @@ describe('util', function () {
     it('should use JSON.stringify if no Buffer involved', function () {
       const obj = {k1: 'v1', k2: 'v2', k3: 'v3'};
       const jsonString = JSON.stringify(obj, null, 2);
-      expect(util.jsonStringify(obj)).to.eql(jsonString);
+      assert.deepStrictEqual(util.jsonStringify(obj), jsonString);
     });
     it('should serialize a Buffer', function () {
       const obj = {
@@ -251,7 +248,7 @@ describe('util', function () {
         k2: 'v2',
         k3: Buffer.from('hi how are you today'),
       };
-      expect(util.jsonStringify(obj)).to.include('hi how are you today');
+      assert.ok(util.jsonStringify(obj).includes('hi how are you today'));
     });
     it('should use the replacer function on non-buffer values', function () {
       const obj = {k1: 'v1', k2: 'v2', k3: 'v3'};
@@ -259,9 +256,9 @@ describe('util', function () {
         return typeof value === 'string' ? value.toUpperCase() : value;
       }
       const jsonString = util.jsonStringify(obj, replacer);
-      expect(jsonString).to.include('V1');
-      expect(jsonString).to.include('V2');
-      expect(jsonString).to.include('V3');
+      assert.ok(jsonString.includes('V1'));
+      assert.ok(jsonString.includes('V2'));
+      assert.ok(jsonString.includes('V3'));
     });
     it('should use the replacer function on buffers', function () {
       const obj = {
@@ -273,9 +270,9 @@ describe('util', function () {
         return typeof value === 'string' ? value.toUpperCase() : value;
       }
       const jsonString = util.jsonStringify(obj, replacer);
-      expect(jsonString).to.include('V1');
-      expect(jsonString).to.include('V2');
-      expect(jsonString).to.include('HI HOW ARE YOU TODAY');
+      assert.ok(jsonString.includes('V1'));
+      assert.ok(jsonString.includes('V2'));
+      assert.ok(jsonString.includes('HI HOW ARE YOU TODAY'));
     });
     it('should use the replacer function recursively', function () {
       const obj = {
@@ -288,42 +285,42 @@ describe('util', function () {
         return typeof value === 'string' ? value.toUpperCase() : value;
       }
       const jsonString = util.jsonStringify(obj, replacer);
-      expect(jsonString).to.include('V1');
-      expect(jsonString).to.include('V2');
-      expect(jsonString).to.include('HI HOW ARE YOU TODAY');
-      expect(jsonString).to.include('V5');
+      assert.ok(jsonString.includes('V1'));
+      assert.ok(jsonString.includes('V2'));
+      assert.ok(jsonString.includes('HI HOW ARE YOU TODAY'));
+      assert.ok(jsonString.includes('V5'));
     });
   });
 
   describe('unwrapElement', function () {
     it('should pass through an unwrapped element', function () {
       const el = 4;
-      expect(util.unwrapElement(el as any)).to.equal(el);
+      assert.strictEqual(util.unwrapElement(el as any), el);
     });
     it('should not throw for null element input', function () {
-      expect(util.unwrapElement(null as any)).to.equal(null);
+      assert.strictEqual(util.unwrapElement(null as any), null);
     });
     it('should pass through an element that is an object', function () {
       const el = {RANDOM: 4};
-      expect(util.unwrapElement(el as any)).to.equal(el);
+      assert.strictEqual(util.unwrapElement(el as any), el);
     });
     it('should unwrap a wrapped element', function () {
       const el = {ELEMENT: 4};
-      expect(util.unwrapElement(el as any)).to.eql(4);
+      assert.deepStrictEqual(util.unwrapElement(el as any), 4);
     });
     it('should unwrap a wrapped element that uses W3C element identifier', function () {
       const el = {[W3C_WEB_ELEMENT_IDENTIFIER]: 5};
-      expect(util.unwrapElement(el as any)).to.eql(5);
+      assert.deepStrictEqual(util.unwrapElement(el as any), 5);
     });
     it('should unwrap a wrapped element and prioritize W3C element identifier', function () {
       const el = {ELEMENT: 7, [W3C_WEB_ELEMENT_IDENTIFIER]: 6};
-      expect(util.unwrapElement(el as any)).to.eql(6);
+      assert.deepStrictEqual(util.unwrapElement(el as any), 6);
     });
   });
 
   describe('wrapElement', function () {
     it('should include ELEMENT and w3c element', function () {
-      expect(util.wrapElement(123 as any)).to.eql({
+      assert.deepStrictEqual(util.wrapElement(123 as any), {
         [util.W3C_WEB_ELEMENT_IDENTIFIER]: 123,
         ELEMENT: 123,
       });
@@ -332,19 +329,19 @@ describe('util', function () {
 
   describe('toReadableSizeString', function () {
     it('should fail if cannot convert to Bytes', function () {
-      expect(() => util.toReadableSizeString('asdasd')).to.throw(/Cannot convert/);
+      assert.throws(() => util.toReadableSizeString('asdasd'), /Cannot convert/);
     });
     it('should properly convert to Bytes', function () {
-      expect(util.toReadableSizeString(0)).to.equal('0 B');
+      assert.strictEqual(util.toReadableSizeString(0), '0 B');
     });
     it('should properly convert to KBytes', function () {
-      expect(util.toReadableSizeString((2048 + 12) as any)).to.equal('2.01 KB');
+      assert.strictEqual(util.toReadableSizeString((2048 + 12) as any), '2.01 KB');
     });
     it('should properly convert to MBytes', function () {
-      expect(util.toReadableSizeString((1024 * 1024 * 3 + 1024 * 10) as any)).to.equal('3.01 MB');
+      assert.strictEqual(util.toReadableSizeString((1024 * 1024 * 3 + 1024 * 10) as any), '3.01 MB');
     });
     it('should properly convert to GBytes', function () {
-      expect(util.toReadableSizeString((1024 * 1024 * 1024 * 5) as any)).to.equal('5.00 GB');
+      assert.strictEqual(util.toReadableSizeString((1024 * 1024 * 1024 * 5) as any), '5.00 GB');
     });
   });
 
@@ -352,23 +349,23 @@ describe('util', function () {
     describe('with undefined predicate', function () {
       it('should filter out undefineds', function () {
         const obj = {a: 'a', b: 'b', c: undefined};
-        expect(util.filterObject(obj)).to.eql({a: 'a', b: 'b'});
+        assert.deepStrictEqual(util.filterObject(obj), {a: 'a', b: 'b'});
       });
       it('should leave nulls alone', function () {
         const obj = {a: 'a', b: 'b', c: null};
-        expect(util.filterObject(obj)).to.eql({a: 'a', b: 'b', c: null});
+        assert.deepStrictEqual(util.filterObject(obj), {a: 'a', b: 'b', c: null});
       });
     });
     describe('with value predicate', function () {
       it('should filter elements by their value', function () {
         const obj = {a: 'a', b: 'b', c: 'c', d: 'a'};
-        expect(util.filterObject(obj, 'a')).to.eql({a: 'a', d: 'a'});
+        assert.deepStrictEqual(util.filterObject(obj, 'a'), {a: 'a', d: 'a'});
       });
     });
     describe('with function predicate', function () {
       it('should filter elements', function () {
         const obj = {a: 'a', b: 'b', c: 'c'};
-        expect(util.filterObject(obj, (v: unknown) => v === 'a' || v === 'c')).to.eql({
+        assert.deepStrictEqual(util.filterObject(obj, (v: unknown) => v === 'a' || v === 'c'), {
           a: 'a',
           c: 'c',
         });
@@ -378,26 +375,26 @@ describe('util', function () {
 
   describe('isSubPath', function () {
     it('should detect simple subpath', function () {
-      expect(util.isSubPath('/root/some', '/root')).to.be.true;
+      assert.strictEqual(util.isSubPath('/root/some', '/root'), true);
     });
     it('should detect complex subpath', function () {
-      expect(util.isSubPath('/root/some/other/../../.', '/root')).to.be.true;
+      assert.strictEqual(util.isSubPath('/root/some/other/../../.', '/root'), true);
     });
     it('should detect subpath ending with a slash', function () {
-      expect(util.isSubPath('/root/some/', '/root')).to.be.true;
+      assert.strictEqual(util.isSubPath('/root/some/', '/root'), true);
     });
     it('should detect if a path is not a subpath', function () {
-      expect(util.isSubPath('/root/some//../..', '/root')).to.be.false;
+      assert.strictEqual(util.isSubPath('/root/some//../..', '/root'), false);
     });
     it('should not detect a sibling whose name starts with the root name', function () {
-      expect(util.isSubPath('/root-backup/some', '/root')).to.be.false;
-      expect(util.isSubPath('/rootly', '/root')).to.be.false;
+      assert.strictEqual(util.isSubPath('/root-backup/some', '/root'), false);
+      assert.strictEqual(util.isSubPath('/rootly', '/root'), false);
     });
     it('should detect a subpath whose name starts with a dot', function () {
-      expect(util.isSubPath('/root/..some', '/root')).to.be.true;
+      assert.strictEqual(util.isSubPath('/root/..some', '/root'), true);
     });
     it('should throw if any of the given paths is not absolute', function () {
-      expect(() => util.isSubPath('some/..', '/root')).to.throw(/absolute/);
+      assert.throws(() => util.isSubPath('some/..', '/root'), /absolute/);
     });
   });
 
@@ -417,69 +414,70 @@ describe('util', function () {
       await fs.rimraf(tmpDir);
     });
     it('should match paths to the same file/folder', async function () {
-      expect(
+      assert.strictEqual(
         await util.isSameDestination(path1, path.resolve(tmpDir, '..', path.basename(tmpDir), path.basename(path1))),
-      ).to.be.true;
+        true,
+      );
     });
     it('should not match paths if they point to non existing items', async function () {
-      expect(await util.isSameDestination(path1, 'blabla')).to.be.false;
+      assert.strictEqual(await util.isSameDestination(path1, 'blabla'), false);
     });
     it('should not match paths to different files', async function () {
-      expect(await util.isSameDestination(path1, path2)).to.be.false;
+      assert.strictEqual(await util.isSameDestination(path1, path2), false);
     });
   });
 
   describe('compareVersions', function () {
     it('should compare two correct version numbers', function () {
-      expect(util.compareVersions('10.0', '<', '11.0')).to.eql(true);
-      expect(util.compareVersions('11.0', '>=', '11.0')).to.eql(true);
-      expect(util.compareVersions('11.0', '==', '11.0')).to.eql(true);
-      expect(util.compareVersions('13.10', '>', '13.5')).to.eql(true);
-      expect(util.compareVersions('11.1', '!=', '11.10')).to.eql(true);
-      expect(util.compareVersions('12.0', '<', 10 as any)).to.eql(false);
+      assert.deepStrictEqual(util.compareVersions('10.0', '<', '11.0'), true);
+      assert.deepStrictEqual(util.compareVersions('11.0', '>=', '11.0'), true);
+      assert.deepStrictEqual(util.compareVersions('11.0', '==', '11.0'), true);
+      assert.deepStrictEqual(util.compareVersions('13.10', '>', '13.5'), true);
+      assert.deepStrictEqual(util.compareVersions('11.1', '!=', '11.10'), true);
+      assert.deepStrictEqual(util.compareVersions('12.0', '<', 10 as any), false);
     });
     it('should throw if any of version arguments is invalid', function () {
-      expect(() => util.compareVersions(undefined as any, '<', '11.0')).to.throw();
-      expect(() => util.compareVersions('11.0', '==', null as any)).to.throw();
+      assert.throws(() => util.compareVersions(undefined as any, '<', '11.0'));
+      assert.throws(() => util.compareVersions('11.0', '==', null as any));
     });
     it('should throw if comparison operator is unsupported', function () {
-      expect(() => util.compareVersions('12.0', 'abc', 10 as any)).to.throw();
+      assert.throws(() => util.compareVersions('12.0', 'abc', 10 as any));
     });
   });
 
   describe('quote', function () {
     it('should quote a string with a space', function () {
-      expect(util.quote(['a', 'b', 'c d'])).to.eql("a b 'c d'");
+      assert.deepStrictEqual(util.quote(['a', 'b', 'c d']), "a b 'c d'");
     });
     it('should escape double quotes', function () {
-      expect(util.quote(['a', 'b', `it's a "neat thing"`])).to.eql(`a b "it's a \\"neat thing\\""`);
+      assert.deepStrictEqual(util.quote(['a', 'b', `it's a "neat thing"`]), `a b "it's a \\"neat thing\\""`);
     });
     it("should escape $ ` and '", function () {
-      expect(util.quote(['$', '`', `'`])).to.eql('\\$ \\` "\'"');
+      assert.deepStrictEqual(util.quote(['$', '`', `'`]), '\\$ \\` "\'"');
     });
     it('should handle empty array', function () {
-      expect(util.quote([])).to.eql('');
+      assert.deepStrictEqual(util.quote([]), '');
     });
     it('should quote a string with newline', function () {
-      expect(util.quote(['a\nb'])).to.eql(`'a\nb'`);
+      assert.deepStrictEqual(util.quote(['a\nb']), `'a\nb'`);
     });
     it('should stringify booleans', function () {
-      expect(util.quote(['a', 1, true, false] as any)).to.eql('a 1 true false');
+      assert.deepStrictEqual(util.quote(['a', 1, true, false] as any), 'a 1 true false');
     });
     it('should stringify null and undefined', function () {
-      expect(util.quote(['a', 1, null, undefined] as any)).to.eql('a 1 null undefined');
+      assert.deepStrictEqual(util.quote(['a', 1, null, undefined] as any), 'a 1 null undefined');
     });
   });
 
   describe('pluralize', function () {
     it('should pluralize a string', function () {
-      expect(util.pluralize('word', 2)).to.eql('words');
+      assert.deepStrictEqual(util.pluralize('word', 2), 'words');
     });
     it('should pluralize a string and prepend the number through boolean', function () {
-      expect(util.pluralize('word', 2, true)).to.eql('2 words');
+      assert.deepStrictEqual(util.pluralize('word', 2, true), '2 words');
     });
     it('should pluralize a string and prepend the number through options', function () {
-      expect(util.pluralize('word', 2, {inclusive: true})).to.eql('2 words');
+      assert.deepStrictEqual(util.pluralize('word', 2, {inclusive: true}), '2 words');
     });
   });
 
@@ -490,9 +488,9 @@ describe('util', function () {
         callCount += 1;
         return value * 2;
       });
-      expect(fn(2)).to.equal(4);
-      expect(fn(2)).to.equal(4);
-      expect(callCount).to.equal(1);
+      assert.strictEqual(fn(2), 4);
+      assert.strictEqual(fn(2), 4);
+      assert.strictEqual(callCount, 1);
     });
 
     it('should memoize by first argument only', function () {
@@ -501,9 +499,9 @@ describe('util', function () {
         callCount += 1;
         return a + b;
       });
-      expect(fn(1, 2)).to.equal(3);
-      expect(fn(1, 999)).to.equal(3);
-      expect(callCount).to.equal(1);
+      assert.strictEqual(fn(1, 2), 3);
+      assert.strictEqual(fn(1, 999), 3);
+      assert.strictEqual(callCount, 1);
     });
 
     it('should memoize using a custom resolver', function () {
@@ -515,9 +513,9 @@ describe('util', function () {
         },
         (_a, b) => b,
       );
-      expect(fn(1, 2)).to.equal(3);
-      expect(fn(999, 2)).to.equal(3);
-      expect(callCount).to.equal(1);
+      assert.strictEqual(fn(1, 2), 3);
+      assert.strictEqual(fn(999, 2), 3);
+      assert.strictEqual(callCount, 1);
     });
 
     it('should use resolver keys to isolate cache entries', function () {
@@ -529,11 +527,11 @@ describe('util', function () {
         },
         (value) => value % 2,
       );
-      expect(fn(2)).to.equal(20);
-      expect(fn(4)).to.equal(20);
-      expect(fn(3)).to.equal(30);
-      expect(fn(5)).to.equal(30);
-      expect(callCount).to.equal(2);
+      assert.strictEqual(fn(2), 20);
+      assert.strictEqual(fn(4), 20);
+      assert.strictEqual(fn(3), 30);
+      assert.strictEqual(fn(5), 30);
+      assert.strictEqual(callCount, 2);
     });
 
     it('should preserve this for resolver and wrapped function', function () {
@@ -551,49 +549,49 @@ describe('util', function () {
         ),
       };
 
-      expect(obj.fn(1)).to.equal('ctx:1');
-      expect(obj.fn(1)).to.equal('ctx:1');
-      expect(obj.calls).to.equal(1);
+      assert.strictEqual(obj.fn(1), 'ctx:1');
+      assert.strictEqual(obj.fn(1), 'ctx:1');
+      assert.strictEqual(obj.calls, 1);
     });
   });
 
   describe('isPlainObject', function () {
     it('should return true for plain objects', function () {
-      expect(util.isPlainObject({})).to.be.true;
-      expect(util.isPlainObject(Object.create(null))).to.be.true;
+      assert.strictEqual(util.isPlainObject({}), true);
+      assert.strictEqual(util.isPlainObject(Object.create(null)), true);
     });
 
     it('should return false for non-plain objects', function () {
-      expect(util.isPlainObject([])).to.be.false;
-      expect(util.isPlainObject(new Date())).to.be.false;
-      expect(util.isPlainObject(null)).to.be.false;
+      assert.strictEqual(util.isPlainObject([]), false);
+      assert.strictEqual(util.isPlainObject(new Date()), false);
+      assert.strictEqual(util.isPlainObject(null), false);
     });
 
     it('should match lodash behavior for edge cases', function () {
       const spoofed = {a: 1, [Symbol.toStringTag]: 'Custom'};
-      expect(util.isPlainObject(spoofed)).to.be.true;
+      assert.strictEqual(util.isPlainObject(spoofed), true);
 
       function CustomCtor(this: any) {
         this.a = 1;
       }
       const withCustomCtorOnProto = Object.create({constructor: CustomCtor});
-      expect(util.isPlainObject(withCustomCtorOnProto)).to.be.false;
+      assert.strictEqual(util.isPlainObject(withCustomCtorOnProto), false);
     });
   });
 
   describe('isEmpty', function () {
     it('should handle strings and arrays', function () {
-      expect(util.isEmpty('')).to.be.true;
-      expect(util.isEmpty('x')).to.be.false;
-      expect(util.isEmpty([])).to.be.true;
-      expect(util.isEmpty([1])).to.be.false;
+      assert.strictEqual(util.isEmpty(''), true);
+      assert.strictEqual(util.isEmpty('x'), false);
+      assert.strictEqual(util.isEmpty([]), true);
+      assert.strictEqual(util.isEmpty([1]), false);
     });
 
     it('should handle objects and collections', function () {
-      expect(util.isEmpty({})).to.be.true;
-      expect(util.isEmpty({a: 1})).to.be.false;
-      expect(util.isEmpty(new Map())).to.be.true;
-      expect(util.isEmpty(new Set([1]))).to.be.false;
+      assert.strictEqual(util.isEmpty({}), true);
+      assert.strictEqual(util.isEmpty({a: 1}), false);
+      assert.strictEqual(util.isEmpty(new Map()), true);
+      assert.strictEqual(util.isEmpty(new Set([1])), false);
     });
 
     it('should handle non-plain objects with enumerable own properties', function () {
@@ -601,26 +599,26 @@ describe('util', function () {
       const emptyInstance = new Thing();
       const nonEmptyInstance = new Thing();
       (nonEmptyInstance as unknown as {a?: number}).a = 1;
-      expect(util.isEmpty(emptyInstance)).to.be.true;
-      expect(util.isEmpty(nonEmptyInstance)).to.be.false;
+      assert.strictEqual(util.isEmpty(emptyInstance), true);
+      assert.strictEqual(util.isEmpty(nonEmptyInstance), false);
 
       const fn = () => undefined;
       (fn as unknown as {x?: number}).x = 1;
-      expect(util.isEmpty(fn)).to.be.false;
+      assert.strictEqual(util.isEmpty(fn), false);
     });
   });
 
   describe('isEqual', function () {
     it('should deeply compare nested objects', function () {
-      expect(util.isEqual({a: [1, {b: 'c'}]}, {a: [1, {b: 'c'}]})).to.be.true;
-      expect(util.isEqual({a: [1, {b: 'c'}]}, {a: [1, {b: 'd'}]})).to.be.false;
+      assert.strictEqual(util.isEqual({a: [1, {b: 'c'}]}, {a: [1, {b: 'c'}]}), true);
+      assert.strictEqual(util.isEqual({a: [1, {b: 'c'}]}, {a: [1, {b: 'd'}]}), false);
     });
 
     it('should compare special values and typed objects', function () {
-      expect(util.isEqual(NaN, NaN)).to.be.true;
-      expect(util.isEqual(new Date('2020-01-01'), new Date('2020-01-01'))).to.be.true;
-      expect(util.isEqual(/abc/gi, /abc/gi)).to.be.true;
-      expect(util.isEqual(Buffer.from('a'), Buffer.from('a'))).to.be.true;
+      assert.strictEqual(util.isEqual(NaN, NaN), true);
+      assert.strictEqual(util.isEqual(new Date('2020-01-01'), new Date('2020-01-01')), true);
+      assert.strictEqual(util.isEqual(/abc/gi, /abc/gi), true);
+      assert.strictEqual(util.isEqual(Buffer.from('a'), Buffer.from('a')), true);
     });
 
     it('should compare maps and sets', function () {
@@ -628,9 +626,9 @@ describe('util', function () {
         ['a', 1],
         ['b', {c: 2}],
       ];
-      expect(util.isEqual(new Map(entries), new Map(entries))).to.be.true;
-      expect(util.isEqual(new Set([1, 2]), new Set([2, 1]))).to.be.true;
-      expect(util.isEqual(new Set([1, 2]), new Set([2, 3]))).to.be.false;
+      assert.strictEqual(util.isEqual(new Map(entries), new Map(entries)), true);
+      assert.strictEqual(util.isEqual(new Set([1, 2]), new Set([2, 1])), true);
+      assert.strictEqual(util.isEqual(new Set([1, 2]), new Set([2, 3])), false);
     });
 
     it('should compare functions by identity only', function () {
@@ -638,8 +636,8 @@ describe('util', function () {
       const fn2 = () => 1;
       (fn1 as any).x = 1;
       (fn2 as any).x = 1;
-      expect(util.isEqual(fn1, fn1)).to.be.true;
-      expect(util.isEqual(fn1, fn2)).to.be.false;
+      assert.strictEqual(util.isEqual(fn1, fn1), true);
+      assert.strictEqual(util.isEqual(fn1, fn2), false);
     });
 
     it('should ignore non-enumerable own properties', function () {
@@ -647,59 +645,62 @@ describe('util', function () {
       const right: Record<string, unknown> = {a: 1};
       Object.defineProperty(left, 'hidden', {value: 1, enumerable: false});
       Object.defineProperty(right, 'hidden', {value: 2, enumerable: false});
-      expect(util.isEqual(left, right)).to.be.true;
+      assert.strictEqual(util.isEqual(left, right), true);
     });
 
     it('should compare errors and boxed symbols like lodash', function () {
-      expect(util.isEqual(new Error('boom'), new Error('boom'))).to.be.true;
-      expect(util.isEqual(new Error('boom'), new Error('kaboom'))).to.be.false;
-      expect(util.isEqual(Object(Symbol.for('x')), Object(Symbol.for('x')))).to.be.true;
-      expect(util.isEqual(Object(Symbol.for('x')), Object(Symbol.for('y')))).to.be.false;
+      assert.strictEqual(util.isEqual(new Error('boom'), new Error('boom')), true);
+      assert.strictEqual(util.isEqual(new Error('boom'), new Error('kaboom')), false);
+      assert.strictEqual(util.isEqual(Object(Symbol.for('x')), Object(Symbol.for('x'))), true);
+      assert.strictEqual(util.isEqual(Object(Symbol.for('x')), Object(Symbol.for('y'))), false);
     });
   });
 
   describe('escapeRegExp', function () {
     it('should escape regexp metacharacters', function () {
-      expect(util.escapeRegExp('a+b*c?.(x)[y]{z}|^$\\')).to.equal('a\\+b\\*c\\?\\.\\(x\\)\\[y\\]\\{z\\}\\|\\^\\$\\\\');
+      assert.strictEqual(
+        util.escapeRegExp('a+b*c?.(x)[y]{z}|^$\\'),
+        'a\\+b\\*c\\?\\.\\(x\\)\\[y\\]\\{z\\}\\|\\^\\$\\\\',
+      );
     });
   });
 
   describe('uniq', function () {
     it('should return a duplicate-free array preserving order', function () {
-      expect(util.uniq([1, 2, 1, 3, 2])).to.eql([1, 2, 3]);
+      assert.deepStrictEqual(util.uniq([1, 2, 1, 3, 2]), [1, 2, 3]);
     });
   });
 
   describe('truncateString', function () {
     it('should not change short strings', function () {
-      expect(util.truncateString('short')).to.equal('short');
+      assert.strictEqual(util.truncateString('short'), 'short');
     });
 
     it('should truncate with default options', function () {
       const src = 'abcdefghijklmnopqrstuvwxyz0123456789';
-      expect(util.truncateString(src)).to.equal('abcdefghijklmnopqrstuvwxyz012…');
+      assert.strictEqual(util.truncateString(src), 'abcdefghijklmnopqrstuvwxyz012…');
     });
 
     it('should support numeric length shorthand', function () {
-      expect(util.truncateString('abcdefghijklmnopqrstuvwxyz', 10)).to.equal('abcdefghi…');
+      assert.strictEqual(util.truncateString('abcdefghijklmnopqrstuvwxyz', 10), 'abcdefghi…');
     });
 
     it('should support custom omission', function () {
-      expect(util.truncateString('abcdefghijklmnopqrstuvwxyz', {length: 10, omission: '..'})).to.equal('abcdefgh..');
+      assert.strictEqual(util.truncateString('abcdefghijklmnopqrstuvwxyz', {length: 10, omission: '..'}), 'abcdefgh..');
     });
 
     it('should handle non-string values safely', function () {
-      expect(() => util.truncateString(undefined as any)).not.to.throw();
-      expect(() => util.truncateString(null as any)).not.to.throw();
-      expect(util.truncateString(undefined as any)).to.equal('');
-      expect(util.truncateString(null as any)).to.equal('');
-      expect(util.truncateString(123456 as any, 5)).to.equal('1234…');
-      expect(util.truncateString({a: 1} as any, 8)).to.equal('[object…');
-      expect(util.truncateString(-0 as any)).to.equal('-0');
+      assert.doesNotThrow(() => util.truncateString(undefined as any));
+      assert.doesNotThrow(() => util.truncateString(null as any));
+      assert.strictEqual(util.truncateString(undefined as any), '');
+      assert.strictEqual(util.truncateString(null as any), '');
+      assert.strictEqual(util.truncateString(123456 as any, 5), '1234…');
+      assert.strictEqual(util.truncateString({a: 1} as any, 8), '[object…');
+      assert.strictEqual(util.truncateString(-0 as any), '-0');
     });
 
     it('should return omission if max length is too small', function () {
-      expect(util.truncateString('hello world', 0)).to.equal('…');
+      assert.strictEqual(util.truncateString('hello world', 0), '…');
     });
   });
 });

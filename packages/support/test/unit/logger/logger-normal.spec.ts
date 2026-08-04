@@ -1,6 +1,5 @@
+import assert from 'node:assert/strict';
 import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
-
-import {expect} from 'chai';
 
 import {
   assertOutputContains,
@@ -33,18 +32,18 @@ describe('normal logger', function () {
     }
   });
   it('throw should not rewrite log levels outside of testing and throw error', function () {
-    expect(() => {
+    assert.throws(() => {
       throw log.errorWithException('msg1');
-    }).to.throw('msg1');
-    expect(() => {
+    }, /msg1/);
+    assert.throws(() => {
       throw log.errorWithException(new Error('msg2'));
-    }).to.throw('msg2');
+    }, /msg2/);
     assertOutputContains(writers, 'msg1');
     assertOutputContains(writers, 'msg2');
   });
   it('should get and set log levels', function () {
     log.level = 'warn';
-    expect(log.level).to.equal('warn');
+    assert.strictEqual(log.level, 'warn');
     log.info('information');
     log.warn('warning');
     assertOutputDoesntContain(writers, 'information');
@@ -91,9 +90,9 @@ describe('normal logger with static prefix', function () {
     }
   });
   it('throw should not rewrite log levels outside of testing and throw error', function () {
-    expect(() => {
+    assert.throws(() => {
       throw log.errorWithException('msg');
-    }).to.throw('msg');
+    }, /msg/);
     assertOutputContains(writers, 'error');
     assertOutputContains(writers, PREFIX);
   });
@@ -122,9 +121,9 @@ describe('normal logger with dynamic prefix', function () {
     }
   });
   it('throw should not rewrite log levels outside of testing and throw error', function () {
-    expect(() => {
+    assert.throws(() => {
       throw log.errorWithException('msg');
-    }).to.throw('msg');
+    }, /msg/);
     assertOutputContains(writers, 'error');
     assertOutputContains(writers, PREFIX);
   });

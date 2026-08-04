@@ -1,8 +1,6 @@
+import assert from 'node:assert/strict';
 import path from 'node:path';
 import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
-
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
 import {fs, node, tempDir} from '../../lib';
 import {
@@ -12,8 +10,6 @@ import {
   resolveAppiumHome,
   resolveManifestPath,
 } from '../../lib/env';
-
-use(chaiAsPromised);
 
 const FIXTURES_ROOT = path.join(node.getModuleRootSync('@appium/support', __filename)!, 'test', 'e2e', 'fixture');
 
@@ -65,13 +61,13 @@ describe('environment', function () {
           });
 
           it('should resolve to the default `APPIUM_HOME`', async function () {
-            await expect(resolveAppiumHome()).to.eventually.equal(DEFAULT_APPIUM_HOME);
+            assert.strictEqual(await resolveAppiumHome(), DEFAULT_APPIUM_HOME);
           });
         });
 
         describe('when providing a `cwd` parameter', function () {
           it('should resolve to the default `APPIUM_HOME`', async function () {
-            await expect(resolveAppiumHome(cwd)).to.eventually.equal(DEFAULT_APPIUM_HOME);
+            assert.strictEqual(await resolveAppiumHome(cwd), DEFAULT_APPIUM_HOME);
           });
         });
       });
@@ -83,13 +79,13 @@ describe('environment', function () {
 
         describe('when providing no `cwd` parameter', function () {
           it('should resolve with `APPIUM_HOME` from env', async function () {
-            await expect(resolveAppiumHome()).to.eventually.equal(process.env.APPIUM_HOME);
+            assert.strictEqual(await resolveAppiumHome(), process.env.APPIUM_HOME);
           });
         });
 
         describe('when providing an `cwd` parameter', function () {
           it('should resolve with `APPIUM_HOME` from env', async function () {
-            await expect(resolveAppiumHome('/root')).to.eventually.equal(process.env.APPIUM_HOME);
+            assert.strictEqual(await resolveAppiumHome('/root'), process.env.APPIUM_HOME);
           });
         });
       });
@@ -97,7 +93,7 @@ describe('environment', function () {
 
     describe('when `appium` is not a dependency', function () {
       it('should resolve with `DEFAULT_APPIUM_HOME`', async function () {
-        await expect(resolveAppiumHome(cwd)).to.eventually.equal(DEFAULT_APPIUM_HOME);
+        assert.strictEqual(await resolveAppiumHome(cwd), DEFAULT_APPIUM_HOME);
       });
     });
     describe('when `appium` is a dependency and APPIUM_HOME is unset', function () {
@@ -127,7 +123,7 @@ describe('environment', function () {
           });
 
           it('should resolve with `cwd`', async function () {
-            await expect(resolveAppiumHome(cwd)).to.eventually.equal(cwd);
+            assert.strictEqual(await resolveAppiumHome(cwd), cwd);
           });
         });
         describe('when `appium` is an old version', function () {
@@ -144,7 +140,7 @@ describe('environment', function () {
           });
 
           it('should resolve with `DEFAULT_APPIUM_HOME`', async function () {
-            await expect(resolveAppiumHome(cwd)).to.eventually.equal(DEFAULT_APPIUM_HOME);
+            assert.strictEqual(await resolveAppiumHome(cwd), DEFAULT_APPIUM_HOME);
           });
         });
       });
@@ -162,7 +158,7 @@ describe('environment', function () {
             await fs.unlink(path.join(cwd, 'package.json'));
           });
           it('should resolve with `cwd`', async function () {
-            await expect(resolveAppiumHome(cwd)).to.eventually.equal(cwd);
+            assert.strictEqual(await resolveAppiumHome(cwd), cwd);
           });
         });
 
@@ -178,7 +174,7 @@ describe('environment', function () {
             await fs.unlink(path.join(cwd, 'package.json'));
           });
           it('should resolve with `DEFAULT_APPIUM_HOME`', async function () {
-            await expect(resolveAppiumHome(cwd)).to.eventually.equal(DEFAULT_APPIUM_HOME);
+            assert.strictEqual(await resolveAppiumHome(cwd), DEFAULT_APPIUM_HOME);
           });
         });
       });

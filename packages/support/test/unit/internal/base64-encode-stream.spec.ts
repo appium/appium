@@ -1,6 +1,5 @@
+import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
-
-import {expect} from 'chai';
 
 import {createBase64EncodeStream} from '../../../lib/internal/base64-encode-stream';
 
@@ -39,30 +38,33 @@ describe('internal/base64-encode-stream', function () {
 
       await new Promise<void>((resolve) => encoder.on('finish', () => resolve()));
 
-      expect(chunks.length).to.be.greaterThan(0);
-      expect(chunks.every((chunk) => Buffer.isBuffer(chunk))).to.equal(true);
+      assert.ok(chunks.length > 0);
+      assert.strictEqual(
+        chunks.every((chunk) => Buffer.isBuffer(chunk)),
+        true,
+      );
     });
 
     it('should encode an empty stream', async function () {
-      expect(await encodeChunks([])).to.equal('');
+      assert.strictEqual(await encodeChunks([]), '');
     });
 
     it('should encode a single chunk', async function () {
       const input = Buffer.from('hello world');
-      expect(await encodeChunks([input])).to.equal(input.toString('base64'));
+      assert.strictEqual(await encodeChunks([input]), input.toString('base64'));
     });
 
     it('should encode input split into single-byte chunks', async function () {
       const input = Buffer.from('The quick brown fox jumps over the lazy dog');
       const encoded = await encodeChunks(splitIntoChunks(input, 1));
-      expect(encoded).to.equal(input.toString('base64'));
+      assert.strictEqual(encoded, input.toString('base64'));
     });
 
     it('should encode input split into chunks that are not multiples of three bytes', async function () {
       const input = Buffer.from([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
       for (const chunkSize of [1, 2, 4, 5, 7]) {
         const encoded = await encodeChunks(splitIntoChunks(input, chunkSize));
-        expect(encoded, `chunk size ${chunkSize}`).to.equal(input.toString('base64'));
+        assert.strictEqual(encoded, input.toString('base64'), `chunk size ${chunkSize}`);
       }
     });
 
@@ -70,9 +72,9 @@ describe('internal/base64-encode-stream', function () {
       const oneByte = Buffer.from('a');
       const twoBytes = Buffer.from('ab');
 
-      expect(await encodeChunks([oneByte])).to.equal(oneByte.toString('base64'));
-      expect(await encodeChunks([twoBytes])).to.equal(twoBytes.toString('base64'));
-      expect(await encodeChunks(splitIntoChunks(twoBytes, 1))).to.equal(twoBytes.toString('base64'));
+      assert.strictEqual(await encodeChunks([oneByte]), oneByte.toString('base64'));
+      assert.strictEqual(await encodeChunks([twoBytes]), twoBytes.toString('base64'));
+      assert.strictEqual(await encodeChunks(splitIntoChunks(twoBytes, 1)), twoBytes.toString('base64'));
     });
 
     it('should match Buffer base64 encoding for varied payload lengths', async function () {
@@ -87,7 +89,7 @@ describe('internal/base64-encode-stream', function () {
 
       for (const payload of payloads) {
         const encoded = await encodeChunks(splitIntoChunks(payload, 3));
-        expect(encoded, `payload length ${payload.length}`).to.equal(payload.toString('base64'));
+        assert.strictEqual(encoded, payload.toString('base64'), `payload length ${payload.length}`);
       }
     });
   });

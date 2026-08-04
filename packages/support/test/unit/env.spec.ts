@@ -1,15 +1,12 @@
+import assert from 'node:assert/strict';
 import path from 'node:path';
 import {afterEach, beforeEach, describe, it} from 'node:test';
 
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import type {SinonSandbox} from 'sinon';
 import type {TeenProcessExecResult} from 'teen_process';
 
 import {rewiremock} from '../helpers';
 import {initMocks, type MockReadPackage, type MockTeenProcess} from '../mocks';
-
-use(chaiAsPromised);
 
 function missingPackageJsonError(): NodeJS.ErrnoException {
   const err = new Error('ENOENT') as NodeJS.ErrnoException;
@@ -45,7 +42,8 @@ describe('env', function () {
   describe('resolveManifestPath()', function () {
     describe('when appium is not resolvable from cwd', function () {
       it('should return a path relative to the default APPIUM_HOME', async function () {
-        expect(await env.resolveManifestPath()).to.equal(
+        assert.strictEqual(
+          await env.resolveManifestPath(),
           path.join(env.DEFAULT_APPIUM_HOME, env.MANIFEST_RELATIVE_PATH),
         );
       });
@@ -54,7 +52,8 @@ describe('env', function () {
     describe('when provided an explicit APPIUM_HOME', function () {
       describe('when a manifest file exists there', function () {
         it('it should return the existing path', async function () {
-          expect(await env.resolveManifestPath('/somewhere/over/the/rainbow')).to.equal(
+          assert.strictEqual(
+            await env.resolveManifestPath('/somewhere/over/the/rainbow'),
             path.join('/somewhere/over/the/rainbow', env.MANIFEST_RELATIVE_PATH),
           );
         });
@@ -65,7 +64,7 @@ describe('env', function () {
   describe('resolveAppiumHome()', function () {
     describe('when param is not absolute', function () {
       it('should reject', async function () {
-        await expect(env.resolveAppiumHome('foo')).to.be.rejectedWith(TypeError, /absolute/i);
+        await assert.rejects(env.resolveAppiumHome('foo'), {name: 'TypeError', message: /absolute/i});
       });
     });
 
@@ -76,7 +75,7 @@ describe('env', function () {
         });
 
         it('should resolve APPIUM_HOME from env', async function () {
-          await expect(env.resolveAppiumHome()).to.eventually.equal(process.env.APPIUM_HOME);
+          assert.strictEqual(await env.resolveAppiumHome(), process.env.APPIUM_HOME);
         });
       });
 
@@ -85,7 +84,8 @@ describe('env', function () {
           process.env.APPIUM_HOME = path.join('some', 'appium-home');
         });
         it('should resolve to an absolute path', async function () {
-          await expect(env.resolveAppiumHome()).to.eventually.equal(
+          assert.strictEqual(
+            await env.resolveAppiumHome(),
             path.join(process.cwd(), process.env.APPIUM_HOME as string),
           );
         });
@@ -101,7 +101,7 @@ describe('env', function () {
           });
 
           it('should resolve with DEFAULT_APPIUM_HOME', async function () {
-            await expect(env.resolveAppiumHome('/somewhere')).to.eventually.equal(env.DEFAULT_APPIUM_HOME);
+            assert.strictEqual(await env.resolveAppiumHome('/somewhere'), env.DEFAULT_APPIUM_HOME);
           });
         });
 
@@ -116,7 +116,7 @@ describe('env', function () {
             });
 
             it('should resolve with the identity', async function () {
-              await expect(env.resolveAppiumHome(appiumHome)).to.eventually.equal(appiumHome);
+              assert.strictEqual(await env.resolveAppiumHome(appiumHome), appiumHome);
             });
           });
 
@@ -125,7 +125,7 @@ describe('env', function () {
               MockReadPackage.readPackage.resolves({devDependencies: {appium: '0.9.0'}} as any);
             });
             it('should resolve with DEFAULT_APPIUM_HOME', async function () {
-              await expect(env.resolveAppiumHome(appiumHome)).to.eventually.equal(env.DEFAULT_APPIUM_HOME);
+              assert.strictEqual(await env.resolveAppiumHome(appiumHome), env.DEFAULT_APPIUM_HOME);
             });
           });
 
@@ -135,7 +135,7 @@ describe('env', function () {
             });
 
             it('should resolve with DEFAULT_APPIUM_HOME', async function () {
-              await expect(env.resolveAppiumHome(appiumHome)).to.eventually.equal(env.DEFAULT_APPIUM_HOME);
+              assert.strictEqual(await env.resolveAppiumHome(appiumHome), env.DEFAULT_APPIUM_HOME);
             });
           });
         });
@@ -148,7 +148,7 @@ describe('env', function () {
         });
 
         it('should resolve with DEFAULT_APPIUM_HOME', async function () {
-          await expect(env.resolveAppiumHome('/somewhere')).to.eventually.equal(env.DEFAULT_APPIUM_HOME);
+          assert.strictEqual(await env.resolveAppiumHome('/somewhere'), env.DEFAULT_APPIUM_HOME);
         });
       });
 
@@ -158,7 +158,7 @@ describe('env', function () {
         });
 
         it('should resolve with DEFAULT_APPIUM_HOME', async function () {
-          await expect(env.resolveAppiumHome('/somewhere')).to.eventually.equal(env.DEFAULT_APPIUM_HOME);
+          assert.strictEqual(await env.resolveAppiumHome('/somewhere'), env.DEFAULT_APPIUM_HOME);
         });
       });
     });
@@ -167,22 +167,23 @@ describe('env', function () {
   describe('readPackageInDir()', function () {
     it('should read package.json from the given directory', async function () {
       await env.readPackageInDir('/somewhere');
-      expect(
+      assert.strictEqual(
         MockReadPackage.readPackage.calledWithExactly({
           cwd: '/somewhere',
           normalize: true,
         }),
-      ).to.be.true;
+        true,
+      );
     });
 
     it('should resolve with undefined when package.json is missing', async function () {
       MockReadPackage.readPackage.rejects(missingPackageJsonError());
-      await expect(env.readPackageInDir('/somewhere')).to.eventually.be.undefined;
+      assert.strictEqual(await env.readPackageInDir('/somewhere'), undefined);
     });
 
     it('should reject when reading package.json fails for reasons other than ENOENT', async function () {
       MockReadPackage.readPackage.rejects(new Error('on the fritz'));
-      await expect(env.readPackageInDir('/somewhere')).to.be.rejectedWith('on the fritz');
+      await assert.rejects(env.readPackageInDir('/somewhere'), /on the fritz/);
     });
   });
 
@@ -195,7 +196,7 @@ describe('env', function () {
         });
 
         it('should resolve `false`', async function () {
-          await expect(env.hasAppiumDependency('/somewhere')).to.eventually.equal(false);
+          assert.strictEqual(await env.hasAppiumDependency('/somewhere'), false);
         });
 
         describe('when it is installed, but extraneous', function () {
@@ -218,7 +219,7 @@ describe('env', function () {
           });
 
           it('should resolve `false`', async function () {
-            await expect(env.hasAppiumDependency('/somewhere')).to.eventually.equal(false);
+            assert.strictEqual(await env.hasAppiumDependency('/somewhere'), false);
           });
         });
       });
@@ -236,7 +237,7 @@ describe('env', function () {
             });
 
             it('should resolve `true`', async function () {
-              await expect(env.hasAppiumDependency('/somewhere')).to.eventually.equal(true);
+              assert.strictEqual(await env.hasAppiumDependency('/somewhere'), true);
             });
           });
 
@@ -245,7 +246,7 @@ describe('env', function () {
               MockReadPackage.readPackage.resolves({optionalDependencies: {appium: '1.x'}} as any);
             });
             it('should resolve `false`', async function () {
-              await expect(env.hasAppiumDependency('/somewhere')).to.eventually.equal(false);
+              assert.strictEqual(await env.hasAppiumDependency('/somewhere'), false);
             });
           });
 
@@ -255,7 +256,7 @@ describe('env', function () {
             });
 
             it('should resolve `false`', async function () {
-              await expect(env.hasAppiumDependency('/somewhere')).to.eventually.equal(false);
+              assert.strictEqual(await env.hasAppiumDependency('/somewhere'), false);
             });
           });
         });
@@ -279,7 +280,7 @@ describe('env', function () {
               } as TeenProcessExecResult<any>);
             });
             it('should resolve `false`', async function () {
-              await expect(env.hasAppiumDependency('/somewhere')).to.eventually.equal(false);
+              assert.strictEqual(await env.hasAppiumDependency('/somewhere'), false);
             });
           });
 
@@ -302,7 +303,7 @@ describe('env', function () {
             });
 
             it('should resolve `false`', async function () {
-              await expect(env.hasAppiumDependency('/somewhere')).to.eventually.equal(false);
+              assert.strictEqual(await env.hasAppiumDependency('/somewhere'), false);
             });
           });
         });

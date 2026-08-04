@@ -1,14 +1,10 @@
+import assert from 'node:assert/strict';
 import {mkdir, writeFile} from 'node:fs/promises';
 import path from 'node:path';
 import {afterEach, beforeEach, describe, it} from 'node:test';
 
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
-
 import {fs, tempDir} from '../../../lib';
 import {packageDirectorySync, readPackage, readPackageSync} from '../../../lib/internal/read-package';
-
-use(chaiAsPromised);
 
 describe('internal/read-package', function () {
   let fixtureRoot: string;
@@ -32,12 +28,12 @@ describe('internal/read-package', function () {
 
   describe('packageDirectorySync()', function () {
     it('should return undefined when no package.json exists in the ancestry', function () {
-      expect(packageDirectorySync({cwd: fixtureRoot})).to.be.undefined;
+      assert.strictEqual(packageDirectorySync({cwd: fixtureRoot}), undefined);
     });
 
     it('should find package.json in the current directory', async function () {
       await writePackageJson(fixtureRoot);
-      expect(packageDirectorySync({cwd: fixtureRoot})).to.equal(fixtureRoot);
+      assert.strictEqual(packageDirectorySync({cwd: fixtureRoot}), fixtureRoot);
     });
 
     it('should find the nearest package.json in a parent directory', async function () {
@@ -45,13 +41,13 @@ describe('internal/read-package', function () {
       const nestedDir = path.join(fixtureRoot, 'nested', 'deep');
       await mkdir(nestedDir, {recursive: true});
 
-      expect(packageDirectorySync({cwd: nestedDir})).to.equal(fixtureRoot);
+      assert.strictEqual(packageDirectorySync({cwd: nestedDir}), fixtureRoot);
     });
   });
 
   describe('readPackageSync()', function () {
     it('should throw when package.json is missing', function () {
-      expect(() => readPackageSync({cwd: fixtureRoot})).to.throw(Error);
+      assert.throws(() => readPackageSync({cwd: fixtureRoot}), Error);
     });
 
     it('should read and normalize package.json', async function () {
@@ -63,9 +59,9 @@ describe('internal/read-package', function () {
 
       const pkg = readPackageSync({cwd: fixtureRoot});
 
-      expect(pkg.name).to.equal('fixture-pkg');
-      expect(pkg.version).to.equal('1.2.3');
-      expect(pkg.repository).to.eql({
+      assert.strictEqual(pkg.name, 'fixture-pkg');
+      assert.strictEqual(pkg.version, '1.2.3');
+      assert.deepStrictEqual(pkg.repository, {
         type: 'git',
         url: 'git+https://github.com/appium/appium.git',
       });
@@ -81,13 +77,13 @@ describe('internal/read-package', function () {
 
       const pkg = readPackageSync({cwd: fixtureRoot, normalize: false});
 
-      expect(pkg.repository).to.equal(repository);
+      assert.strictEqual(pkg.repository, repository);
     });
   });
 
   describe('readPackage()', function () {
     it('should reject when package.json is missing', async function () {
-      await expect(readPackage({cwd: fixtureRoot})).to.be.rejectedWith(Error);
+      await assert.rejects(readPackage({cwd: fixtureRoot}), Error);
     });
 
     it('should read and normalize package.json', async function () {
@@ -99,9 +95,9 @@ describe('internal/read-package', function () {
 
       const pkg = await readPackage({cwd: fixtureRoot});
 
-      expect(pkg.name).to.equal('fixture-pkg');
-      expect(pkg.version).to.equal('4.5.6');
-      expect(pkg.repository).to.eql({
+      assert.strictEqual(pkg.name, 'fixture-pkg');
+      assert.strictEqual(pkg.version, '4.5.6');
+      assert.deepStrictEqual(pkg.repository, {
         type: 'git',
         url: 'git+https://github.com/appium/appium.git',
       });

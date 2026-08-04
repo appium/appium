@@ -1,6 +1,5 @@
+import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
-
-import {expect} from 'chai';
 
 import {uploadFile} from '../../lib/net';
 
@@ -13,7 +12,7 @@ describe('net', function () {
           headers: {'content-type': 'video/mp4'},
         });
 
-      expect(upload).to.be.a('function');
+      assert.strictEqual(typeof upload, 'function');
     });
   });
 });

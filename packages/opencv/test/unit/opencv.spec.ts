@@ -1,6 +1,5 @@
+import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
-
-import {expect} from 'chai';
 
 import {initOpenCv} from '../../lib/index.js';
 
@@ -10,6 +9,6 @@ describe('OpenCV', function () {
     // @ts-expect-error opencv-bindings ships no type declarations; remove this once it does
     const {default: cv} = await import('opencv-bindings');
     const buildInfo = cv.getBuildInformation();
-    expect(buildInfo).to.include('OpenCV');
+    assert.ok(buildInfo.includes('OpenCV'));
   });
 });

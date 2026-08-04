@@ -352,18 +352,12 @@ export interface ISessionHandler<
   createSession(w3cCapabilities: W3CDriverCaps<C>): Promise<CreateResult>;
   /**
    * @deprecated Historically this method accepted the same W3C capabilities object in up to three
-   * positions to support the retired JSONWP protocol, and only the first W3C-shaped argument is
-   * ever used. Use the single-argument overload of {@linkcode createSession} instead. The
-   * `driverData` parameter is also deprecated; use {@linkcode IAppiumIpc} for cross-session
-   * coordination instead.
+   * positions to support the retired JSONWP protocol. These positions are intended to carry the
+   * same value; if they differ, which one wins is unspecified. Use the single-argument overload
+   * of {@linkcode createSession} instead. The `driverData` parameter is also deprecated; use
+   * {@linkcode IAppiumIpc} for cross-session coordination instead.
    *
-   * @param w3cCaps1 - the new session capabilities
-   * @param w3cCaps2 - another place the new session capabilities could be sent (typically left undefined)
-   * @param w3cCaps3 - another place the new session capabilities could be sent (typically left undefined)
-   * @param driverData - a list of DriverData objects representing other sessions running for this
-   * driver on the same Appium server. This information can be used to help ensure no conflict of
-   * resources
-   *
+   * @param legacyArgs - see {@linkcode LegacyCreateSessionArgs}
    * @returns The capabilities object representing the created session
    */
   createSession(...legacyArgs: LegacyCreateSessionArgs<C>): Promise<CreateResult>;

@@ -282,8 +282,9 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
    */
   async createSession(w3cCapabilities: W3CAppiumDriverCaps): Promise<SessionHandlerCreateResult>;
   /**
-   * @deprecated Legacy call sites may pass the same W3C caps in up to three positions; the first
-   * W3C-shaped value wins. Use the single-argument overload of {@linkcode createSession} instead.
+   * @deprecated Legacy call sites may pass the same W3C caps in up to three positions. These
+   * positions are intended to carry the same value; if they differ, which one wins is
+   * unspecified. Use the single-argument overload of {@linkcode createSession} instead.
    */
   async createSession(...legacyArgs: LegacyCreateSessionArgs): Promise<SessionHandlerCreateResult>;
   async createSession(...legacyArgs: LegacyCreateSessionArgs): Promise<SessionHandlerCreateResult> {

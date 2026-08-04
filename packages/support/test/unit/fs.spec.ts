@@ -178,10 +178,7 @@ describe('fs', {timeout: TEST_TIMEOUT}, function () {
       );
     });
     it('should walk all elements recursive', async function () {
-      assert.strictEqual(
-        await fs.walkDir(path.join(__dirname, '..', 'e2e', 'fixture'), true, () => undefined),
-        null,
-      );
+      assert.strictEqual(await fs.walkDir(path.join(__dirname, '..', 'e2e', 'fixture'), true, () => undefined), null);
     });
     it('should throw error through callback', async function () {
       const err = new Error('Callback error');

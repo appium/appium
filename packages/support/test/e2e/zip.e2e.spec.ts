@@ -237,10 +237,7 @@ describe('#zip', function () {
           entry = {
             fileName: path.resolve(destDir, '..', 'temp', 'file'),
           };
-          await assert.rejects(
-            zip._extractEntryTo(mockZipFile as any, entry as any, destDir),
-            /Out of bound path/,
-          );
+          await assert.rejects(zip._extractEntryTo(mockZipFile as any, entry as any, destDir), /Out of bound path/);
         });
 
         it('should be rejected if zip stream emits an error', async function () {
@@ -250,10 +247,7 @@ describe('#zip', function () {
           mockZipStream.pipe = () => {
             mockZipStream.emit('error', new Error('zip stream error'));
           };
-          await assert.rejects(
-            zip._extractEntryTo(mockZipFile as any, entry as any, destDir),
-            /zip stream error/,
-          );
+          await assert.rejects(zip._extractEntryTo(mockZipFile as any, entry as any, destDir), /zip stream error/);
         });
 
         it('should be rejected if write stream emits an error', async function () {
@@ -266,10 +260,7 @@ describe('#zip', function () {
             mockZipStream.end();
             writeStream.end();
           };
-          await assert.rejects(
-            zip._extractEntryTo(mockZipFile as any, entry as any, destDir),
-            /write stream error/,
-          );
+          await assert.rejects(zip._extractEntryTo(mockZipFile as any, entry as any, destDir), /write stream error/);
         });
       });
 

@@ -11,9 +11,7 @@ const textPlistPath = path.join(SUPPORT_ROOT, 'test', 'unit', 'assets', 'sample_
 describe('plist', function () {
   it('should parse plist file as binary', async function () {
     const content = await plist.parsePlistFile(binaryPlistPath);
-    assert.ok(
-      Object.hasOwn(content, 'com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework'),
-    );
+    assert.ok(Object.hasOwn(content, 'com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework'));
   });
 
   it(`should return an empty object if file doesn't exist and mustExist is set to false`, async function () {
@@ -39,41 +37,31 @@ describe('plist', function () {
   it('should read binary plist', async function () {
     const content = await fs.readFile(binaryPlistPath);
     const object = plist.parsePlist(content);
-    assert.ok(
-      Object.hasOwn(object, 'com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework'),
-    );
+    assert.ok(Object.hasOwn(object, 'com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework'));
   });
 
   it('should read text plist', async function () {
     const content = await fs.readFile(textPlistPath);
     const object = plist.parsePlist(content);
-    assert.ok(
-      Object.hasOwn(object, 'com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework'),
-    );
+    assert.ok(Object.hasOwn(object, 'com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework'));
   });
 
   it('should read text plist from Uint8Array', async function () {
     const content = await fs.readFile(textPlistPath);
     const object = plist.parsePlist(new Uint8Array(content));
-    assert.ok(
-      Object.hasOwn(object, 'com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework'),
-    );
+    assert.ok(Object.hasOwn(object, 'com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework'));
   });
 
   it('should read binary plist from Uint8Array', async function () {
     const content = await fs.readFile(binaryPlistPath);
     const object = plist.parsePlist(new Uint8Array(content));
-    assert.ok(
-      Object.hasOwn(object, 'com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework'),
-    );
+    assert.ok(Object.hasOwn(object, 'com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework'));
   });
 
   it('should read binary plist from ArrayBuffer', async function () {
     const content = await fs.readFile(binaryPlistPath);
     const object = plist.parsePlist(content.buffer.slice(content.byteOffset, content.byteOffset + content.byteLength));
-    assert.ok(
-      Object.hasOwn(object, 'com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework'),
-    );
+    assert.ok(Object.hasOwn(object, 'com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework'));
   });
 
   it('should parse nested data payload returned from plist parser', function () {

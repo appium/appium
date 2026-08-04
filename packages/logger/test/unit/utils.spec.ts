@@ -6,15 +6,15 @@ import {ansiBeep, ansiColor, escapeRegExp, isPlainObject, setBlocking, unleakStr
 describe('utils', function () {
   describe('ansiColor', function () {
     it('should encode a single foreground color', function () {
-      assert.deepStrictEqual(ansiColor('red'), '\x1b[31m');
+      assert.strictEqual(ansiColor('red'), '\x1b[31m');
     });
 
     it('should encode multiple styles', function () {
-      assert.deepStrictEqual(ansiColor('cyan', 'bgBlack', 'bold'), '\x1b[36;40;1m');
+      assert.strictEqual(ansiColor('cyan', 'bgBlack', 'bold'), '\x1b[36;40;1m');
     });
 
     it('should encode reset', function () {
-      assert.deepStrictEqual(ansiColor('reset'), '\x1b[0m');
+      assert.strictEqual(ansiColor('reset'), '\x1b[0m');
     });
 
     it('should throw for unknown style names', function () {
@@ -24,7 +24,7 @@ describe('utils', function () {
 
   describe('ansiBeep', function () {
     it('should return the bell character', function () {
-      assert.deepStrictEqual(ansiBeep(), '\x07');
+      assert.strictEqual(ansiBeep(), '\x07');
     });
   });
 
@@ -89,22 +89,22 @@ describe('utils', function () {
 
   describe('escapeRegExp', function () {
     it('should escape regexp metacharacters', function () {
-      assert.deepStrictEqual(escapeRegExp('a.b(c)'), 'a\\.b\\(c\\)');
+      assert.strictEqual(escapeRegExp('a.b(c)'), 'a\\.b\\(c\\)');
     });
   });
 
   describe('unleakString', function () {
     it('should unleak a string', function () {
-      assert.deepStrictEqual(unleakString('yolo'), 'yolo');
+      assert.strictEqual(unleakString('yolo'), 'yolo');
     });
 
     it('should unleak a multiline string', function () {
-      assert.deepStrictEqual(unleakString(' yolo\nbolo '), ' yolo\nbolo ');
+      assert.strictEqual(unleakString(' yolo\nbolo '), ' yolo\nbolo ');
     });
 
     it('should convert an object to a string', function () {
       for (const obj of [{}, null, undefined, [], 0]) {
-        assert.deepStrictEqual(unleakString(obj as any), `${obj}`);
+        assert.strictEqual(unleakString(obj as any), `${obj}`);
       }
     });
   });

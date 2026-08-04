@@ -223,10 +223,10 @@ describe('basic', function () {
     it('replaces sensitive messages', async function () {
       log.updateAsyncStorage({isSensitive: true}, true);
       log.log('verbose', 'test', markSensitive('log 1'));
-      assert.deepStrictEqual(log.record.at(-1)!.message, '**SECURE**');
+      assert.strictEqual(log.record.at(-1)!.message, '**SECURE**');
       log.updateAsyncStorage({isSensitive: false}, true);
       log.log('verbose', 'test', markSensitive('log 1'));
-      assert.deepStrictEqual(log.record.at(-1)!.message, 'log 1');
+      assert.strictEqual(log.record.at(-1)!.message, 'log 1');
     });
 
     it('max record size', function () {

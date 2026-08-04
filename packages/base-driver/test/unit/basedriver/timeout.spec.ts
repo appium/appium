@@ -48,25 +48,25 @@ describe('timeout', function () {
         await driver.timeouts('implicit', 42);
         assert.strictEqual(implicitWaitSpy.calledOnce, true);
         assert.strictEqual(implicitWaitSpy.firstCall.args[0], 42);
-        assert.deepStrictEqual(driver.implicitWaitMs, 42);
+        assert.strictEqual(driver.implicitWaitMs, 42);
       });
       it('should call setImplicitWait when given a string', async function () {
         await driver.timeouts('implicit', '42');
         assert.strictEqual(implicitWaitSpy.calledOnce, true);
         assert.strictEqual(implicitWaitSpy.firstCall.args[0], 42);
-        assert.deepStrictEqual(driver.implicitWaitMs, 42);
+        assert.strictEqual(driver.implicitWaitMs, 42);
       });
       it('should call setImplicitWait when given an integer to implicitDuration', async function () {
         await driver.timeouts(undefined, undefined, undefined, undefined, 42);
         assert.strictEqual(implicitWaitSpy.calledOnce, true);
         assert.strictEqual(implicitWaitSpy.firstCall.args[0], 42);
-        assert.deepStrictEqual(driver.implicitWaitMs, 42);
+        assert.strictEqual(driver.implicitWaitMs, 42);
       });
       it('should call setImplicitWait when given a string to implicitDuration', async function () {
         await driver.timeouts(undefined, undefined, undefined, undefined, '42');
         assert.strictEqual(implicitWaitSpy.calledOnce, true);
         assert.strictEqual(implicitWaitSpy.firstCall.args[0], 42);
-        assert.deepStrictEqual(driver.implicitWaitMs, 42);
+        assert.strictEqual(driver.implicitWaitMs, 42);
       });
     });
   });
@@ -74,7 +74,7 @@ describe('timeout', function () {
   describe('set implicit wait', function () {
     it('should set the implicit wait with an integer', function () {
       driver.setImplicitWait(42);
-      assert.deepStrictEqual(driver.implicitWaitMs, 42);
+      assert.strictEqual(driver.implicitWaitMs, 42);
     });
     describe('with managed driver', function () {
       let managedDriver1: BaseDriver<any, any, any, any, any, any>;
@@ -90,9 +90,9 @@ describe('timeout', function () {
       });
       it('should set the implicit wait on managed drivers', function () {
         driver.setImplicitWait(42);
-        assert.deepStrictEqual(driver.implicitWaitMs, 42);
-        assert.deepStrictEqual(managedDriver1.implicitWaitMs, 42);
-        assert.deepStrictEqual(managedDriver2.implicitWaitMs, 42);
+        assert.strictEqual(driver.implicitWaitMs, 42);
+        assert.strictEqual(managedDriver1.implicitWaitMs, 42);
+        assert.strictEqual(managedDriver2.implicitWaitMs, 42);
       });
     });
   });
@@ -100,7 +100,7 @@ describe('timeout', function () {
   describe('set new command timeout', function () {
     it('should set the new command timeout with an integer', function () {
       driver.setNewCommandTimeout(42);
-      assert.deepStrictEqual(driver.newCommandTimeoutMs, 42);
+      assert.strictEqual(driver.newCommandTimeoutMs, 42);
     });
     describe('with managed driver', function () {
       let managedDriver1: BaseDriver<any, any, any, any, any, any>;
@@ -116,9 +116,9 @@ describe('timeout', function () {
       });
       it('should set the new command timeout on managed drivers', function () {
         driver.setNewCommandTimeout(42);
-        assert.deepStrictEqual(driver.newCommandTimeoutMs, 42);
-        assert.deepStrictEqual(managedDriver1.newCommandTimeoutMs, 42);
-        assert.deepStrictEqual(managedDriver2.newCommandTimeoutMs, 42);
+        assert.strictEqual(driver.newCommandTimeoutMs, 42);
+        assert.strictEqual(managedDriver1.newCommandTimeoutMs, 42);
+        assert.strictEqual(managedDriver2.newCommandTimeoutMs, 42);
       });
     });
   });

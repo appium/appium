@@ -43,7 +43,7 @@ describe('Execute Command Test', function () {
       args,
     });
 
-    assert.deepStrictEqual(res.status, 200);
+    assert.strictEqual(res.status, 200);
     assert.ok(Object.hasOwn(res.data, 'value'));
     assert.deepStrictEqual(res.data.value, {executed: script, args});
 

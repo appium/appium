@@ -78,7 +78,7 @@ describe('server configuration', function () {
     const addRoutes = routeConfiguringFunction(driver as any);
     configureServer({app: app1, addRoutes});
     configureServer({app: app2, addRoutes, extraMethodMap: newMethodMap});
-    assert.deepStrictEqual(app2.totalCount(), app1.totalCount() + 2);
+    assert.strictEqual(app2.totalCount(), app1.totalCount() + 2);
   });
 
   it('should silently reject new methods in plugins if not plain objects', function () {
@@ -88,7 +88,7 @@ describe('server configuration', function () {
     const addRoutes = routeConfiguringFunction(driver as any);
     configureServer({app: app1, addRoutes});
     configureServer({app: app2, addRoutes, extraMethodMap: [] as any});
-    assert.deepStrictEqual(app2.totalCount(), app1.totalCount());
+    assert.strictEqual(app2.totalCount(), app1.totalCount());
   });
 
   it('should allow plugins to update the server', async function () {
@@ -125,14 +125,14 @@ describe('server configuration', function () {
       assert.throws(() => normalizeBasePath(1 as unknown as string));
     });
     it('should remove trailing slashes', function () {
-      assert.deepStrictEqual(normalizeBasePath('/wd/hub/'), '/wd/hub');
-      assert.deepStrictEqual(normalizeBasePath('/foo/'), '/foo');
-      assert.deepStrictEqual(normalizeBasePath('/'), '');
+      assert.strictEqual(normalizeBasePath('/wd/hub/'), '/wd/hub');
+      assert.strictEqual(normalizeBasePath('/foo/'), '/foo');
+      assert.strictEqual(normalizeBasePath('/'), '');
     });
     it('should ensure a leading slash is present', function () {
-      assert.deepStrictEqual(normalizeBasePath('foo'), '/foo');
-      assert.deepStrictEqual(normalizeBasePath('wd/hub'), '/wd/hub');
-      assert.deepStrictEqual(normalizeBasePath('wd/hub/'), '/wd/hub');
+      assert.strictEqual(normalizeBasePath('foo'), '/foo');
+      assert.strictEqual(normalizeBasePath('wd/hub'), '/wd/hub');
+      assert.strictEqual(normalizeBasePath('wd/hub/'), '/wd/hub');
     });
   });
 });

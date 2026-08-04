@@ -10,17 +10,17 @@ describe('AppiumIpc', function () {
   describe('subscriptionExists', function () {
     it('should return false when no topic exists', function () {
       const ipc = new AppiumIpc();
-      assert.deepStrictEqual(ipc.subscriptionExists('foo', 'bar'), false);
+      assert.strictEqual(ipc.subscriptionExists('foo', 'bar'), false);
     });
     it('should return false when topic exists but no subscriber', function () {
       const ipc = new AppiumIpc();
       ipc.subscribe('foo', 'bar');
-      assert.deepStrictEqual(ipc.subscriptionExists('foo', 'baz'), false);
+      assert.strictEqual(ipc.subscriptionExists('foo', 'baz'), false);
     });
     it('should return true when subscriber is subscribed', function () {
       const ipc = new AppiumIpc();
       ipc.subscribe('foo', 'bar');
-      assert.deepStrictEqual(ipc.subscriptionExists('foo', 'bar'), true);
+      assert.strictEqual(ipc.subscriptionExists('foo', 'bar'), true);
     });
   });
 
@@ -89,11 +89,11 @@ describe('AppiumIpc', function () {
       assert.deepStrictEqual(sub1Res!.data, payload);
       assert.deepStrictEqual(sub2Res!.data, payload);
 
-      assert.deepStrictEqual(sub1Res!.publisher, 'zowee');
-      assert.deepStrictEqual(sub2Res!.publisher, 'zowee');
+      assert.strictEqual(sub1Res!.publisher, 'zowee');
+      assert.strictEqual(sub2Res!.publisher, 'zowee');
 
-      assert.deepStrictEqual(sub1Res!.topic, 'foo');
-      assert.deepStrictEqual(sub2Res!.topic, 'foo');
+      assert.strictEqual(sub1Res!.topic, 'foo');
+      assert.strictEqual(sub2Res!.topic, 'foo');
 
       assert.ok(Object.hasOwn(sub1Res!, 'timestampMs'));
       assert.ok(Object.hasOwn(sub2Res!, 'timestampMs'));
@@ -112,7 +112,7 @@ describe('AppiumIpc', function () {
 
       assert.ok(!sub2Res!);
       assert.deepStrictEqual(sub1Res!.data, payload);
-      assert.deepStrictEqual(sub1Res!.publisher, 'baz');
+      assert.strictEqual(sub1Res!.publisher, 'baz');
     });
 
     it('should publish using subscription object', async function () {
@@ -125,8 +125,8 @@ describe('AppiumIpc', function () {
       await sub2.publish(payload);
 
       assert.deepStrictEqual(sub1Res!.data, payload);
-      assert.deepStrictEqual(sub1Res!.publisher, 'baz');
-      assert.deepStrictEqual(sub1Res!.topic, 'foo');
+      assert.strictEqual(sub1Res!.publisher, 'baz');
+      assert.strictEqual(sub1Res!.topic, 'foo');
       assert.ok(Object.hasOwn(sub1Res!, 'timestampMs'));
     });
 
@@ -164,7 +164,7 @@ describe('AppiumIpc', function () {
       promises.push(ipc.publish('foo', 'baz', payload)); // intentionally call without awaiting
       // now that we've fired off a couple publishes, let's unsubscribe
       await sleep(10);
-      assert.deepStrictEqual(rcvdCount, 1); // not 0 or 2
+      assert.strictEqual(rcvdCount, 1); // not 0 or 2
       await Promise.all(promises);
     });
 
@@ -181,16 +181,16 @@ describe('AppiumIpc', function () {
       await ipc.publish('foo', 'baz', payload);
       await sleep(0); // just spin once to let the publish callback do its thing
       assert.deepStrictEqual(sub1Res!.data, payload);
-      assert.deepStrictEqual(sub1Res!.publisher, 'baz');
+      assert.strictEqual(sub1Res!.publisher, 'baz');
       assert.deepStrictEqual(sub1Res2!.data, payload);
-      assert.deepStrictEqual(sub1Res2!.publisher, 'baz');
+      assert.strictEqual(sub1Res2!.publisher, 'baz');
     });
 
     it('should throw an error when trying to publish a large message', async function () {
       const ipc = new AppiumIpc({maxObjSize: 20}); // very small message size
       const payload1 = 'hi'; // not so many bytes
       const payload2 = 'helloworld!'.repeat(100); // lotsa bytes
-      assert.deepStrictEqual(await ipc.publish('foo', 'bar', payload1), undefined);
+      assert.strictEqual(await ipc.publish('foo', 'bar', payload1), undefined);
       await assert.rejects(ipc.publish('foo', 'bar', payload2), /20/);
     });
 
@@ -242,7 +242,7 @@ describe('AppiumIpc', function () {
       await ipc.publish('foo', 'bar', payload1);
       await ipc.publish('foo', 'baz', payload2);
       await ipc.publish('other', 'bar', 5); // should not get message published on other topic
-      assert.deepStrictEqual(ipc.getMessage('foo')!.data, payload2);
+      assert.strictEqual(ipc.getMessage('foo')!.data, payload2);
     });
 
     it('should get the message from the subscription object', async function () {
@@ -259,7 +259,7 @@ describe('AppiumIpc', function () {
       const ipc = new AppiumIpc();
       const p = ipc.publish('foo', 'bar', true); // intentionally avoid waiting
       const msg = ipc.getMessage('foo');
-      assert.deepStrictEqual(msg!.data, true);
+      assert.strictEqual(msg!.data, true);
       await p; // just make sure promise is done
     });
 
@@ -291,8 +291,8 @@ describe('AppiumIpc', function () {
         let i = 0;
         for await (const message of sub2) {
           i++;
-          assert.deepStrictEqual(message.publisher, 'bar');
-          assert.deepStrictEqual(message.topic, 'foo');
+          assert.strictEqual(message.publisher, 'bar');
+          assert.strictEqual(message.topic, 'foo');
           received.push(message.data);
           if (i >= 3) {
             break;
@@ -325,8 +325,8 @@ describe('AppiumIpc', function () {
 
       const rcvLoop = async () => {
         for await (const message of sub2) {
-          assert.deepStrictEqual(message.publisher, 'bar');
-          assert.deepStrictEqual(message.topic, 'foo');
+          assert.strictEqual(message.publisher, 'bar');
+          assert.strictEqual(message.topic, 'foo');
           received.push(message.data);
         }
       };

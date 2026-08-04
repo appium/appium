@@ -14,17 +14,17 @@ describe('Protocol', function () {
 
     it('should pick up the first value as the session id', function () {
       const req = {params: {sessionId: [sessionId]}} as unknown as Request;
-      assert.deepStrictEqual(getSessionId(fakeDriver as any, req), sessionId);
+      assert.strictEqual(getSessionId(fakeDriver as any, req), sessionId);
     });
 
     it('should get session id', function () {
       const req = {params: {sessionId}} as unknown as Request;
-      assert.deepStrictEqual(getSessionId(fakeDriver as any, req), sessionId);
+      assert.strictEqual(getSessionId(fakeDriver as any, req), sessionId);
     });
 
     it('should be undefined', function () {
       const req = {params: {sessionId: undefined}} as unknown as Request;
-      assert.deepStrictEqual(getSessionId(fakeDriver as any, req), undefined);
+      assert.strictEqual(getSessionId(fakeDriver as any, req), undefined);
     });
   });
 

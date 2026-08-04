@@ -65,52 +65,52 @@ describe('proxy', function () {
   });
   describe('getUrlForProxy', function () {
     it('should modify session id, host, and port', function () {
-      assert.deepStrictEqual(
+      assert.strictEqual(
         mockProxy({sessionId: '123'}).getUrlForProxy('http://host.com:1234/session/456/element/200/value', 'POST'),
         `http://${TEST_HOST}:${port}/session/123/element/200/value`,
       );
     });
     it('should prepend scheme, host and port if not provided', function () {
       const j = mockProxy({sessionId: '123'});
-      assert.deepStrictEqual(
+      assert.strictEqual(
         j.getUrlForProxy('/session/456/element/200/value', 'POST'),
         `http://${TEST_HOST}:${port}/session/123/element/200/value`,
       );
-      assert.deepStrictEqual(
+      assert.strictEqual(
         j.getUrlForProxy('/session/456/appium/settings', 'POST'),
         `http://${TEST_HOST}:${port}/session/123/appium/settings`,
       );
     });
     it('should prepend scheme, host, port and session if not provided', function () {
-      assert.deepStrictEqual(
+      assert.strictEqual(
         mockProxy({sessionId: '123'}).getUrlForProxy('/element/200/value', 'POST'),
         `http://${TEST_HOST}:${port}/session/123/element/200/value`,
       );
     });
     it('should keep query parameters', function () {
-      assert.deepStrictEqual(
+      assert.strictEqual(
         mockProxy({sessionId: '123'}).getUrlForProxy('/element/200/value?foo=1&bar=2', 'POST'),
         `http://${TEST_HOST}:${port}/session/123/element/200/value?foo=1&bar=2`,
       );
     });
     it('should fix legacy proxy urls if reqBasePath is unset', function () {
       const j = mockProxy({sessionId: '123', reqBasePath: ''});
-      assert.deepStrictEqual(
+      assert.strictEqual(
         j.getUrlForProxy('/wd/hub/session/456/element/200/value', 'POST'),
         `http://${TEST_HOST}:${port}/session/123/element/200/value`,
       );
-      assert.deepStrictEqual(
+      assert.strictEqual(
         j.getUrlForProxy('/yolo/session/456/element/200/value', 'POST'),
         `http://${TEST_HOST}:${port}/session/123/element/200/value`,
       );
     });
     it('should respect nonstandard incoming request base path', function () {
-      assert.deepStrictEqual(
+      assert.strictEqual(
         mockProxy({sessionId: '123', reqBasePath: ''}).getUrlForProxy('/session/456/element/200/value', 'POST'),
         `http://${TEST_HOST}:${port}/session/123/element/200/value`,
       );
 
-      assert.deepStrictEqual(
+      assert.strictEqual(
         mockProxy({sessionId: '123', reqBasePath: '/my/base/path'}).getUrlForProxy(
           '/my/base/path/session/456/element/200/value',
           'POST',
@@ -118,25 +118,25 @@ describe('proxy', function () {
         `http://${TEST_HOST}:${port}/session/123/element/200/value`,
       );
 
-      assert.deepStrictEqual(
+      assert.strictEqual(
         mockProxy({sessionId: '123', reqBasePath: '/wd/hub'}).getUrlForProxy('/wd/hub/session/456', 'GET'),
         `http://${TEST_HOST}:${port}/session/123`,
       );
 
-      assert.deepStrictEqual(
+      assert.strictEqual(
         mockProxy({reqBasePath: '/my/base/path'}).getUrlForProxy('/my/base/path/session', 'POST'),
         `http://${TEST_HOST}:${port}/session`,
       );
     });
     it('should work with urls which do not have session ids', function () {
       const j = mockProxy({sessionId: '123'});
-      assert.deepStrictEqual(
+      assert.strictEqual(
         j.getUrlForProxy('http://host.com:1234/session', 'POST'),
         `http://${TEST_HOST}:${port}/session`,
       );
 
-      assert.deepStrictEqual(j.getUrlForProxy('/session', 'POST'), `http://${TEST_HOST}:${port}/session`);
-      assert.deepStrictEqual(
+      assert.strictEqual(j.getUrlForProxy('/session', 'POST'), `http://${TEST_HOST}:${port}/session`);
+      assert.strictEqual(
         j.getUrlForProxy('/appium/sessions', 'GET'),
         `http://${TEST_HOST}:${port}/appium/sessions`,
       );
@@ -213,7 +213,7 @@ describe('proxy', function () {
         e = err;
       }
       assert.ok(e);
-      assert.deepStrictEqual(e.error, 'element not visible');
+      assert.strictEqual(e.error, 'element not visible');
     });
     it('should throw when a command fails with a 100', async function () {
       const j = mockProxy({sessionId: '123'});

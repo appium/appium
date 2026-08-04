@@ -29,13 +29,13 @@ describe('app download and configuration', function () {
       const newAppPath = await configureApp(getFixture('FakeIOSApp.app'), '.app');
       assert.ok(newAppPath.includes('FakeIOSApp.app'));
       const contents = await fs.readFile(newAppPath, 'utf8');
-      assert.deepStrictEqual(contents, 'this is not really an app\n');
+      assert.strictEqual(contents, 'this is not really an app\n');
     });
     it('should get the path for a local .apk', async function () {
       const newAppPath = await configureApp(getFixture('FakeAndroidApp.apk'), '.apk');
       assert.ok(newAppPath.includes('FakeAndroidApp.apk'));
       const contents = await fs.readFile(newAppPath, 'utf8');
-      assert.deepStrictEqual(contents, 'this is not really an apk\n');
+      assert.strictEqual(contents, 'this is not really an apk\n');
     });
     it('should fail if extensions do not match', async function () {
       await assert.rejects(configureApp(getFixture('FakeIOSApp.app'), '.wrong'), /did not have extension/);
@@ -110,25 +110,25 @@ describe('app download and configuration', function () {
           const newAppPath = await configureApp(`${serverUrl}/FakeAndroidApp.apk?sv=abc&sr=def`, '.apk');
           assert.ok(newAppPath.includes('.apk'));
           const contents = await fs.readFile(newAppPath, 'utf8');
-          assert.deepStrictEqual(contents, 'this is not really an apk\n');
+          assert.strictEqual(contents, 'this is not really an apk\n');
         });
         it('should download an app file', async function () {
           const newAppPath = await configureApp(`${serverUrl}/FakeIOSApp.app`, '.app');
           assert.ok(newAppPath.includes('.app'));
           const contents = await fs.readFile(newAppPath, 'utf8');
-          assert.deepStrictEqual(contents, 'this is not really an app\n');
+          assert.strictEqual(contents, 'this is not really an app\n');
         });
         it('should accept multiple extensions', async function () {
           const newAppPath = await configureApp(`${serverUrl}/FakeIOSApp.app`, ['.app', '.aab']);
           assert.ok(newAppPath.includes('FakeIOSApp.app'));
           const contents = await fs.readFile(newAppPath, 'utf8');
-          assert.deepStrictEqual(contents, 'this is not really an app\n');
+          assert.strictEqual(contents, 'this is not really an app\n');
         });
         it('should download an apk file', async function () {
           const newAppPath = await configureApp(`${serverUrl}/FakeAndroidApp.apk`, '.apk');
           assert.ok(newAppPath.includes('.apk'));
           const contents = await fs.readFile(newAppPath, 'utf8');
-          assert.deepStrictEqual(contents, 'this is not really an apk\n');
+          assert.strictEqual(contents, 'this is not really an apk\n');
         });
         it('should handle zip file that cannot be downloaded', async function () {
           await assert.rejects(configureApp(`${serverUrl}/missing/FakeIOSApp.app.zip`, '.app'));
@@ -153,7 +153,7 @@ describe('app download and configuration', function () {
           );
           assert.ok(newAppPath.includes('.apk'));
           const contents = await fs.readFile(newAppPath, 'utf8');
-          assert.deepStrictEqual(contents, 'this is not really an apk\n');
+          assert.strictEqual(contents, 'this is not really an apk\n');
         });
       });
     });

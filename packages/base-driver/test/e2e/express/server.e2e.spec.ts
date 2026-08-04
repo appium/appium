@@ -73,7 +73,7 @@ describe('server', function () {
 
   it('should start up with our middleware', async function () {
     const {data} = await axios.get(`http://${TEST_HOST}:${port}/`);
-    assert.deepStrictEqual(data, 'Hello World!');
+    assert.strictEqual(data, 'Hello World!');
   });
   it('should catch errors in the catchall', async function () {
     await assert.rejects(axios.get(`http://${TEST_HOST}:${port}/error`));
@@ -174,7 +174,7 @@ describe('tls server', function () {
 
   it('should start up with our middleware', {skip}, async function () {
     const {data} = await looseClient.get(`https://${TEST_HOST}:${port}/`);
-    assert.deepStrictEqual(data, 'Hello World!');
+    assert.strictEqual(data, 'Hello World!');
   });
   it('should throw if untrusted', {skip}, async function () {
     await assert.rejects(axios.get(`https://${TEST_HOST}:${port}/`));
@@ -225,9 +225,9 @@ describe('server plugins', function () {
       ],
     })) as ServerWithPlugins;
     let {data} = await axios.get(`http://${TEST_HOST}:${port}/plugin1`);
-    assert.deepStrictEqual(data, 'res from plugin1 route');
+    assert.strictEqual(data, 'res from plugin1 route');
     ({data} = await axios.get(`http://${TEST_HOST}:${port}/plugin2`));
-    assert.deepStrictEqual(data, 'res from plugin2 route');
+    assert.strictEqual(data, 'res from plugin2 route');
     assert.strictEqual(hwServer._updated_plugin1, true);
     assert.strictEqual(hwServer._updated_plugin2, true);
   });

@@ -171,7 +171,7 @@ describe('Protocol', function () {
       });
 
       assert.strictEqual(status, 404);
-      assert.deepStrictEqual(data.value.error, 'unknown command');
+      assert.strictEqual(data.value.error, 'unknown command');
       assert.match(data.value.message, /The requested resource could not be found/);
     });
 
@@ -184,7 +184,7 @@ describe('Protocol', function () {
       });
 
       assert.strictEqual(status, 404);
-      assert.deepStrictEqual(data.value.error, 'unknown command');
+      assert.strictEqual(data.value.error, 'unknown command');
       assert.match(data.value.message, /The requested resource could not be found/);
     });
 
@@ -231,8 +231,8 @@ describe('Protocol', function () {
         validateStatus: null,
       });
       assert.strictEqual(status, 500);
-      assert.deepStrictEqual(data.value.error, 'unknown error');
-      assert.deepStrictEqual(data.value.message, 'Mishandled Driver Error');
+      assert.strictEqual(data.value.error, 'unknown error');
+      assert.strictEqual(data.value.message, 'Mishandled Driver Error');
       assert.ok(!data.sessionId);
     });
 
@@ -631,8 +631,8 @@ describe('Protocol', function () {
       });
 
       assert.strictEqual(status, 404);
-      assert.deepStrictEqual(data.value.error, 'invalid session id');
-      assert.deepStrictEqual(data.value.message, 'A session is either terminated or not started');
+      assert.strictEqual(data.value.error, 'invalid session id');
+      assert.strictEqual(data.value.message, 'A session is either terminated or not started');
     });
   });
 
@@ -733,8 +733,8 @@ describe('Protocol', function () {
       });
 
       assert.strictEqual(status, 500);
-      assert.deepStrictEqual(data.value.error, 'unknown error');
-      assert.deepStrictEqual(
+      assert.strictEqual(data.value.error, 'unknown error');
+      assert.strictEqual(
         data.value.message,
         'Trying to proxy to a server but the driver is unable to proxy',
       );
@@ -752,7 +752,7 @@ describe('Protocol', function () {
       });
 
       assert.strictEqual(status, 500);
-      assert.deepStrictEqual(data.value.error, 'unknown error');
+      assert.strictEqual(data.value.error, 'unknown error');
       assert.match(data.value.message, /Proxy error: foo/);
     });
 
@@ -773,8 +773,8 @@ describe('Protocol', function () {
       });
 
       assert.strictEqual(status, 500);
-      assert.deepStrictEqual(data.value.error, 'unknown error');
-      assert.deepStrictEqual(data.value.message, 'No such context found.');
+      assert.strictEqual(data.value.error, 'unknown error');
+      assert.strictEqual(data.value.message, 'No such context found.');
     });
 
     it('should let the proxy handle req/res', async function () {

@@ -29,7 +29,7 @@ describe('proxy', function () {
   });
   it('should proxy status as command', async function () {
     const res = await jwproxy.command('/status', 'GET');
-    assert.deepStrictEqual(res, `I'm fine`);
+    assert.strictEqual(res, `I'm fine`);
   });
   describe('new session', function () {
     afterEach(async function () {

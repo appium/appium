@@ -178,7 +178,7 @@ describe('Desired Capabilities', function () {
       assert.strictEqual(logWarnSpy.called, true);
 
       const sessionCaps = await d.getAppiumSessionCapabilities();
-      assert.deepStrictEqual((sessionCaps.capabilities as Record<string, unknown>).noReset, false);
+      assert.strictEqual((sessionCaps.capabilities as Record<string, unknown>).noReset, false);
     });
 
     it('should allow a string "true"', async function () {
@@ -189,7 +189,7 @@ describe('Desired Capabilities', function () {
       assert.strictEqual(logWarnSpy.called, true);
 
       const sessionCaps = await d.getAppiumSessionCapabilities();
-      assert.deepStrictEqual((sessionCaps.capabilities as Record<string, unknown>).noReset, true);
+      assert.strictEqual((sessionCaps.capabilities as Record<string, unknown>).noReset, true);
     });
 
     it('should allow a string "true" in string capabilities', async function () {
@@ -200,7 +200,7 @@ describe('Desired Capabilities', function () {
       assert.strictEqual(logWarnSpy.called, false);
 
       const sessionCaps = await d.getAppiumSessionCapabilities();
-      assert.deepStrictEqual((sessionCaps.capabilities as Record<string, unknown>).language, 'true');
+      assert.strictEqual((sessionCaps.capabilities as Record<string, unknown>).language, 'true');
     });
   });
 
@@ -213,7 +213,7 @@ describe('Desired Capabilities', function () {
       assert.strictEqual(logWarnSpy.called, true);
 
       const sessionCaps = await d.getAppiumSessionCapabilities();
-      assert.deepStrictEqual((sessionCaps.capabilities as Record<string, unknown>).newCommandTimeout, 1);
+      assert.strictEqual((sessionCaps.capabilities as Record<string, unknown>).newCommandTimeout, 1);
     });
 
     it('should allow a string "1.1"', async function () {
@@ -224,7 +224,7 @@ describe('Desired Capabilities', function () {
       assert.strictEqual(logWarnSpy.called, true);
 
       const sessionCaps = await d.getAppiumSessionCapabilities();
-      assert.deepStrictEqual((sessionCaps.capabilities as Record<string, unknown>).newCommandTimeout, 1.1);
+      assert.strictEqual((sessionCaps.capabilities as Record<string, unknown>).newCommandTimeout, 1.1);
     });
 
     it('should allow a string "1" in string capabilities', async function () {
@@ -235,7 +235,7 @@ describe('Desired Capabilities', function () {
       assert.strictEqual(logWarnSpy.called, false);
 
       const sessionCaps = await d.getAppiumSessionCapabilities();
-      assert.deepStrictEqual((sessionCaps.capabilities as Record<string, unknown>).language, '1');
+      assert.strictEqual((sessionCaps.capabilities as Record<string, unknown>).language, '1');
     });
   });
 

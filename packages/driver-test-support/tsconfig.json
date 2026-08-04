@@ -10,6 +10,8 @@
     "strict": true,
     "rootDir": ".",
     "outDir": "build",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "paths": {
       "@appium/types": ["../types"]
     },

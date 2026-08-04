@@ -32,8 +32,16 @@
     "lib",
     "tsconfig.json"
   ],
+  "type": "module",
   "main": "./build/lib/index.js",
   "types": "./build/lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./build/lib/index.d.ts",
+      "default": "./build/lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "publishConfig": {
     "access": "public"
   },

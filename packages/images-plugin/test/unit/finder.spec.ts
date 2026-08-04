@@ -1,18 +1,15 @@
+import assert from 'node:assert/strict';
 import {afterEach, beforeEach, describe, it, mock} from 'node:test';
 
 import type {Constraints} from '@appium/types';
 import {BaseDriver} from 'appium/driver.js';
 import {util} from 'appium/support.js';
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import sharp from 'sharp';
 import {createSandbox, type SinonSandbox} from 'sinon';
 
 import {IMAGE_STRATEGY} from '../../lib/constants.js';
 import type {ImageElementFinder as TImageElementFinder} from '../../lib/finder.js';
 import {ImageElement} from '../../lib/image-element.js';
-
-use(chaiAsPromised);
 
 // finder.js and plugin.js both statically import compareImages from compare.js;
 // the mock must be registered before they are loaded, since ESM bindings are
@@ -67,15 +64,17 @@ describe('finding elements by image', function () {
       const d = new PluginDriver();
       sandbox.stub(plugin.finder, 'findByImage').returns(true as any);
       sandbox.stub(d, 'findElOrElsWithProcessing').returns(false as any);
-      await expect(d.findElement(IMAGE_STRATEGY, 'foo')).to.eventually.be.true;
-      await expect(d.findElements(IMAGE_STRATEGY, 'foo')).to.eventually.be.true;
+      assert.strictEqual(await d.findElement(IMAGE_STRATEGY, 'foo'), true);
+      assert.strictEqual(await d.findElements(IMAGE_STRATEGY, 'foo'), true);
     });
     it('should not be able to find image element from any other element', async function () {
       const d = new PluginDriver();
-      await expect(d.findElementFromElement(IMAGE_STRATEGY, 'foo', 'elId')).to.be.rejectedWith(
+      await assert.rejects(
+        d.findElementFromElement(IMAGE_STRATEGY, 'foo', 'elId'),
         /Locator Strategy.+is not supported/,
       );
-      await expect(d.findElementsFromElement(IMAGE_STRATEGY, 'foo', 'elId')).to.be.rejectedWith(
+      await assert.rejects(
+        d.findElementsFromElement(IMAGE_STRATEGY, 'foo', 'elId'),
         /Locator Strategy.+is not supported/,
       );
     });
@@ -103,9 +102,9 @@ describe('finding elements by image', function () {
     function basicImgElVerify(imgElProto: any, finder: TImageElementFinder) {
       const imgElId = util.unwrapElement(imgElProto);
       const imgEl = finder.getImageElement(imgElId);
-      expect(imgEl).to.be.instanceOf(ImageElement);
-      expect(imgEl!.rect).to.eql(rect);
-      expect(imgEl!.score).to.eql(score);
+      assert.ok(imgEl instanceof ImageElement);
+      assert.deepStrictEqual(imgEl!.rect, rect);
+      assert.deepStrictEqual(imgEl!.score, score);
       return imgEl;
     }
 
@@ -124,14 +123,13 @@ describe('finding elements by image', function () {
     it('should find image elements happypath', async function () {
       compareStub.resolves([{rect, score}]);
       const els = await f.findByImage(template, d as any, {multiple: true});
-      expect(els).to.be.an('array').with.length(1);
+      assert.ok(Array.isArray(els));
+      assert.strictEqual(els.length, 1);
       basicImgElVerify((els as unknown as ImageElement[])[0], f);
     });
     it('should fail if driver does not support getWindowRect', async function () {
       (d as any).getWindowRect = null;
-      await expect(f.findByImage(template, d as any, {multiple: false})).to.eventually.be.rejectedWith(
-        /driver does not support/,
-      );
+      await assert.rejects(f.findByImage(template, d as any, {multiple: false}), /driver does not support/);
     });
     it('should fix template size if requested', async function () {
       const newTemplate = 'iVBORbaz';
@@ -140,8 +138,8 @@ describe('finding elements by image', function () {
       sandbox.stub(f, 'ensureTemplateSize').resolves(newTemplateBuf);
       const imgElProto = await f.findByImage(template, d as any, {multiple: false});
       const imgEl = basicImgElVerify(imgElProto, f);
-      expect(imgEl!.originalImage).to.eql(newTemplate);
-      expect(compareStub.lastCall.args[2]).to.eql(newTemplateBuf);
+      assert.deepStrictEqual(imgEl!.originalImage, newTemplate);
+      assert.deepStrictEqual(compareStub.lastCall.args[2], newTemplateBuf);
     });
 
     it('should fix template size scale if requested', async function () {
@@ -151,8 +149,8 @@ describe('finding elements by image', function () {
       sandbox.stub(f, 'fixImageTemplateScale').resolves(newTemplateBuf);
       const imgElProto = await f.findByImage(template, d as any, {multiple: false});
       const imgEl = basicImgElVerify(imgElProto, f);
-      expect(imgEl!.originalImage).to.eql(newTemplate);
-      expect(compareStub.lastCall.args[2]).to.eql(newTemplateBuf);
+      assert.deepStrictEqual(imgEl!.originalImage, newTemplate);
+      assert.deepStrictEqual(compareStub.lastCall.args[2], newTemplateBuf);
     });
     it('should not fix template size scale if it is not requested', async function () {
       await (d as any).settings.update({});
@@ -163,20 +161,18 @@ describe('finding elements by image', function () {
       basicImgElVerify(imgElProto, f);
       // The template passed to compareImages should be the original (or same buffer reference)
       // when fixImageTemplateScale is not requested
-      expect(compareStub.called).to.be.true;
+      assert.strictEqual(compareStub.called, true);
       const lastCallArgs = compareStub.lastCall?.args;
-      expect(lastCallArgs![2]).to.eql(template);
+      assert.deepStrictEqual(lastCallArgs![2], template);
     });
 
     it('should throw an error if template match fails', async function () {
       compareStub.rejects(new Error('Cannot find any occurrences'));
-      await expect(f.findByImage(template, d as any, {multiple: false})).to.be.rejectedWith(
-        /element could not be located/,
-      );
+      await assert.rejects(f.findByImage(template, d as any, {multiple: false}), /element could not be located/);
     });
     it('should return empty array for multiple elements if template match fails', async function () {
       compareStub.rejects(new Error('Cannot find any occurrences'));
-      await expect(f.findByImage(template, d as any, {multiple: true})).to.eventually.eql([]);
+      assert.deepStrictEqual(await f.findByImage(template, d as any, {multiple: true}), []);
     });
     it('should respect implicit wait', async function () {
       (d as any).setImplicitWait(10);
@@ -185,16 +181,16 @@ describe('finding elements by image', function () {
       compareStub.onFirstCall().throws(new Error('Cannot find any occurrences'));
       const imgElProto = await f.findByImage(template, d as any, {multiple: false});
       basicImgElVerify(imgElProto, f);
-      expect(compareStub.calledTwice).to.be.true;
+      assert.strictEqual(compareStub.calledTwice, true);
     });
     it('should not add element to cache and return it directly when checking staleness', async function () {
       const imgEl = (await f.findByImage(template, d as any, {
         multiple: false,
         shouldCheckStaleness: true,
       })) as ImageElement;
-      expect(imgEl).to.be.instanceOf(ImageElement);
-      expect(f.getImageElement(imgEl.id)).to.be.undefined;
-      expect(imgEl.rect).to.eql(rect);
+      assert.ok(imgEl instanceof ImageElement);
+      assert.strictEqual(f.getImageElement(imgEl.id), undefined);
+      assert.deepStrictEqual(imgEl.rect, rect);
     });
   });
 
@@ -208,88 +204,99 @@ describe('finding elements by image', function () {
     });
 
     it('should not fix template size scale if no scale value', async function () {
-      await expect(f.fixImageTemplateScale(basicTemplateBuf, {fixImageTemplateScale: true})).to.eventually.eql(
+      assert.deepStrictEqual(
+        await f.fixImageTemplateScale(basicTemplateBuf, {fixImageTemplateScale: true}),
         basicTemplateBuf,
       );
     });
 
     it('should not fix template size scale if it is null', async function () {
-      await expect(f.fixImageTemplateScale(basicTemplateBuf, null as any)).to.eventually.eql(basicTemplateBuf);
+      assert.deepStrictEqual(await f.fixImageTemplateScale(basicTemplateBuf, null as any), basicTemplateBuf);
     });
 
     it('should not fix template size scale if it is not number', async function () {
-      await expect(f.fixImageTemplateScale(basicTemplateBuf, 'wrong-scale' as any)).to.eventually.eql(basicTemplateBuf);
+      assert.deepStrictEqual(
+        await f.fixImageTemplateScale(basicTemplateBuf, 'wrong-scale' as any),
+        basicTemplateBuf,
+      );
     });
 
     it('should fix template size scale', async function () {
-      await expect(
-        f.fixImageTemplateScale(TINY_PNG_BUF, {
+      assert.notDeepStrictEqual(
+        await f.fixImageTemplateScale(TINY_PNG_BUF, {
           fixImageTemplateScale: true,
           xScale: 1.5,
           yScale: 1.5,
         }),
-      ).to.eventually.not.eql(TINY_PNG_BUF);
+        TINY_PNG_BUF,
+      );
     });
 
     it('should not fix template size scale because of fixImageTemplateScale being false', async function () {
-      await expect(
-        f.fixImageTemplateScale(TINY_PNG_BUF, {
+      assert.deepStrictEqual(
+        await f.fixImageTemplateScale(TINY_PNG_BUF, {
           fixImageTemplateScale: false,
           xScale: 1.5,
           yScale: 1.5,
         }),
-      ).to.eventually.eql(TINY_PNG_BUF);
+        TINY_PNG_BUF,
+      );
     });
 
     it('should fix template size scale with default scale', async function () {
-      await expect(
-        f.fixImageTemplateScale(TINY_PNG_BUF, {
+      assert.notDeepStrictEqual(
+        await f.fixImageTemplateScale(TINY_PNG_BUF, {
           defaultImageTemplateScale: 4.0,
         }),
-      ).to.eventually.not.eql(TINY_PNG_BUF);
+        TINY_PNG_BUF,
+      );
     });
 
     it('should fix template size scale with default scale and image scale', async function () {
-      await expect(
-        f.fixImageTemplateScale(TINY_PNG_BUF, {
+      assert.notDeepStrictEqual(
+        await f.fixImageTemplateScale(TINY_PNG_BUF, {
           defaultImageTemplateScale: 4.0,
           fixImageTemplateScale: true,
           xScale: 1.5,
           yScale: 1.5,
         }),
-      ).to.eventually.not.eql(TINY_PNG_BUF);
+        TINY_PNG_BUF,
+      );
     });
 
     it('should not fix template size scale with default scale and image scale', async function () {
-      await expect(
-        f.fixImageTemplateScale(TINY_PNG_BUF, {
+      assert.notDeepStrictEqual(
+        await f.fixImageTemplateScale(TINY_PNG_BUF, {
           defaultImageTemplateScale: 4.0,
           fixImageTemplateScale: false,
           xScale: 1.5,
           yScale: 1.5,
         }),
-      ).to.eventually.not.eql(TINY_PNG_BUF);
+        TINY_PNG_BUF,
+      );
     });
 
     it('should not fix template size scale because of ignoreDefaultImageTemplateScale', async function () {
-      await expect(
-        f.fixImageTemplateScale(TINY_PNG_BUF, {
+      assert.deepStrictEqual(
+        await f.fixImageTemplateScale(TINY_PNG_BUF, {
           defaultImageTemplateScale: 4.0,
           ignoreDefaultImageTemplateScale: true,
         }),
-      ).to.eventually.eql(TINY_PNG_BUF);
+        TINY_PNG_BUF,
+      );
     });
 
     it('should ignore defaultImageTemplateScale to fix template size scale because of ignoreDefaultImageTemplateScale', async function () {
-      await expect(
-        f.fixImageTemplateScale(TINY_PNG_BUF, {
+      assert.notDeepStrictEqual(
+        await f.fixImageTemplateScale(TINY_PNG_BUF, {
           defaultImageTemplateScale: 4.0,
           ignoreDefaultImageTemplateScale: true,
           fixImageTemplateScale: true,
           xScale: 1.5,
           yScale: 1.5,
         }),
-      ).to.eventually.not.eql(TINY_PNG_BUF);
+        TINY_PNG_BUF,
+      );
     });
   });
 
@@ -298,17 +305,17 @@ describe('finding elements by image', function () {
 
     it('should not resize the template if it is smaller than the screen', async function () {
       const [width, height] = TINY_PNG_DIMS.map((n) => n * 2);
-      await expect(f.ensureTemplateSize(TINY_PNG_BUF, {width, height})).to.eventually.eql(TINY_PNG_BUF);
+      assert.deepStrictEqual(await f.ensureTemplateSize(TINY_PNG_BUF, {width, height}), TINY_PNG_BUF);
     });
     it('should not resize the template if it is the same size as the screen', async function () {
       const [width, height] = TINY_PNG_DIMS;
-      await expect(f.ensureTemplateSize(TINY_PNG_BUF, {width, height})).to.eventually.eql(TINY_PNG_BUF);
+      assert.deepStrictEqual(await f.ensureTemplateSize(TINY_PNG_BUF, {width, height}), TINY_PNG_BUF);
     });
     it('should resize the template if it is bigger than the screen', async function () {
       const [width, height] = TINY_PNG_DIMS.map((n) => n / 2);
       const newTemplateBuf = await f.ensureTemplateSize(TINY_PNG_BUF, {width, height});
-      expect(newTemplateBuf).to.not.eql(TINY_PNG_BUF);
-      expect(newTemplateBuf.length).to.be.below(TINY_PNG_BUF.length);
+      assert.notDeepStrictEqual(newTemplateBuf, TINY_PNG_BUF);
+      assert.ok(newTemplateBuf.length < TINY_PNG_BUF.length);
     });
   });
 
@@ -323,35 +330,36 @@ describe('finding elements by image', function () {
     });
 
     it('should fail if driver does not support getScreenshot', async function () {
-      await expect(
+      await assert.rejects(
         new ImageElementFinder().getScreenshotForImageFind(new BaseDriver<Constraints>({} as any) as any, {
           width: 100,
           height: 100,
         }),
-      ).to.eventually.be.rejectedWith(/driver does not support/);
+        /driver does not support/,
+      );
     });
     it('should not adjust or verify screenshot if asked not to by settings', async function () {
       await (d as any).settings.update({fixImageFindScreenshotDims: false});
       const [width, height] = TINY_PNG_DIMS.map((n) => n + 1);
       const {screenshot, scale} = await f.getScreenshotForImageFind(d as any, {width, height} as any);
-      expect(screenshot).to.eql(TINY_PNG_BUF);
-      expect(scale).to.equal(undefined);
+      assert.deepStrictEqual(screenshot, TINY_PNG_BUF);
+      assert.strictEqual(scale, undefined);
     });
     it('should return screenshot without adjustment if it matches screen size', async function () {
       const [width, height] = TINY_PNG_DIMS;
       const {screenshot, scale} = await f.getScreenshotForImageFind(d as any, {width, height} as any);
-      expect(screenshot).to.eql(TINY_PNG_BUF);
-      expect(scale).to.equal(undefined);
+      assert.deepStrictEqual(screenshot, TINY_PNG_BUF);
+      assert.strictEqual(scale, undefined);
     });
     it('should return scaled screenshot with same aspect ratio if matching screen aspect ratio', async function () {
       const [width, height] = TINY_PNG_DIMS.map((n) => n * 1.5);
       const {screenshot, scale} = await f.getScreenshotForImageFind(d as any, {width, height} as any);
-      expect(screenshot).to.not.eql(TINY_PNG_BUF);
+      assert.notDeepStrictEqual(screenshot, TINY_PNG_BUF);
       const screenshotObj = sharp(screenshot);
       const {width: screenWidth, height: screenHeight} = await screenshotObj.metadata();
-      expect(screenWidth).to.eql(width);
-      expect(screenHeight).to.eql(height);
-      expect(scale).to.eql({xScale: 1.5, yScale: 1.5});
+      assert.deepStrictEqual(screenWidth, width);
+      assert.deepStrictEqual(screenHeight, height);
+      assert.deepStrictEqual(scale, {xScale: 1.5, yScale: 1.5});
     });
     it('should return scaled screenshot with different aspect ratio if not matching screen aspect ratio', async function () {
       // try first with portrait screen, screen = 8 x 12
@@ -359,13 +367,13 @@ describe('finding elements by image', function () {
       let expectedScale = {xScale: 2.67, yScale: 4};
 
       const {screenshot, scale} = await f.getScreenshotForImageFind(d as any, {width, height} as any);
-      expect(screenshot).to.not.eql(TINY_PNG_BUF);
+      assert.notDeepStrictEqual(screenshot, TINY_PNG_BUF);
       let screenshotObj = sharp(screenshot);
       let {width: screenWidth, height: screenHeight} = await screenshotObj.metadata();
-      expect(screenWidth).to.eql(width);
-      expect(screenHeight).to.eql(height);
-      expect(scale!.xScale.toFixed(2)).to.eql(expectedScale.xScale.toString());
-      expect(scale!.yScale).to.eql(expectedScale.yScale);
+      assert.deepStrictEqual(screenWidth, width);
+      assert.deepStrictEqual(screenHeight, height);
+      assert.deepStrictEqual(scale!.xScale.toFixed(2), expectedScale.xScale.toString());
+      assert.deepStrictEqual(scale!.yScale, expectedScale.yScale);
 
       // then with landscape screen, screen = 12 x 8
       [width, height] = [TINY_PNG_DIMS[0] * 3, TINY_PNG_DIMS[1] * 2];
@@ -375,13 +383,13 @@ describe('finding elements by image', function () {
         d as any,
         {width, height} as any,
       );
-      expect(newScreen).to.not.eql(TINY_PNG_BUF);
+      assert.notDeepStrictEqual(newScreen, TINY_PNG_BUF);
       screenshotObj = sharp(newScreen);
       ({width: screenWidth, height: screenHeight} = await screenshotObj.metadata());
-      expect(screenWidth).to.eql(width);
-      expect(screenHeight).to.eql(height);
-      expect(newScale!.xScale).to.eql(expectedScale.xScale);
-      expect(newScale!.yScale.toFixed(2)).to.eql(expectedScale.yScale.toString());
+      assert.deepStrictEqual(screenWidth, width);
+      assert.deepStrictEqual(screenHeight, height);
+      assert.deepStrictEqual(newScale!.xScale, expectedScale.xScale);
+      assert.deepStrictEqual(newScale!.yScale.toFixed(2), expectedScale.yScale.toString());
     });
 
     it('should return scaled screenshot with different aspect ratio if not matching screen aspect ratio with fixImageTemplateScale', async function () {
@@ -390,21 +398,22 @@ describe('finding elements by image', function () {
       let expectedScale = {xScale: 2.67, yScale: 4};
 
       const {screenshot, scale} = await f.getScreenshotForImageFind(d as any, {width, height} as any);
-      expect(screenshot).to.not.eql(TINY_PNG_BUF);
+      assert.notDeepStrictEqual(screenshot, TINY_PNG_BUF);
       let screenshotObj = sharp(screenshot);
       let {width: screenWidth, height: screenHeight} = await screenshotObj.metadata();
-      expect(screenWidth).to.eql(width);
-      expect(screenHeight).to.eql(height);
-      expect(scale!.xScale.toFixed(2)).to.eql(expectedScale.xScale.toString());
-      expect(scale!.yScale).to.eql(expectedScale.yScale);
+      assert.deepStrictEqual(screenWidth, width);
+      assert.deepStrictEqual(screenHeight, height);
+      assert.deepStrictEqual(scale!.xScale.toFixed(2), expectedScale.xScale.toString());
+      assert.deepStrictEqual(scale!.yScale, expectedScale.yScale);
       // 8 x 12 stretched TINY_PNG
-      await expect(
-        f.fixImageTemplateScale(screenshot, {
+      assert.notDeepStrictEqual(
+        await f.fixImageTemplateScale(screenshot, {
           fixImageTemplateScale: true,
           xScale: scale!.xScale,
           yScale: scale!.yScale,
         }),
-      ).to.eventually.not.eql(TINY_PNG_BUF);
+        TINY_PNG_BUF,
+      );
 
       // then with landscape screen, screen = 12 x 8
       [width, height] = [TINY_PNG_DIMS[0] * 3, TINY_PNG_DIMS[1] * 2];
@@ -414,21 +423,22 @@ describe('finding elements by image', function () {
         d as any,
         {width, height} as any,
       );
-      expect(newScreen).to.not.eql(TINY_PNG_BUF);
+      assert.notDeepStrictEqual(newScreen, TINY_PNG_BUF);
       screenshotObj = sharp(newScreen);
       ({width: screenWidth, height: screenHeight} = await screenshotObj.metadata());
-      expect(screenWidth).to.eql(width);
-      expect(screenHeight).to.eql(height);
-      expect(newScale!.xScale).to.eql(expectedScale.xScale);
-      expect(newScale!.yScale.toFixed(2)).to.eql(expectedScale.yScale.toString());
+      assert.deepStrictEqual(screenWidth, width);
+      assert.deepStrictEqual(screenHeight, height);
+      assert.deepStrictEqual(newScale!.xScale, expectedScale.xScale);
+      assert.deepStrictEqual(newScale!.yScale.toFixed(2), expectedScale.yScale.toString());
       // 12 x 8 stretched TINY_PNG
-      await expect(
-        f.fixImageTemplateScale(newScreen, {
+      assert.notDeepStrictEqual(
+        await f.fixImageTemplateScale(newScreen, {
           fixImageTemplateScale: true,
           xScale: newScale!.xScale,
           yScale: newScale!.yScale,
         }),
-      ).to.eventually.not.eql(TINY_PNG_BUF);
+        TINY_PNG_BUF,
+      );
     });
   });
 });

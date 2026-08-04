@@ -1,13 +1,9 @@
+import assert from 'node:assert/strict';
 import {readFile, rm} from 'node:fs/promises';
 import {afterEach, beforeEach, describe, it} from 'node:test';
 
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
-
 import type {Item, Strongbox} from '../../lib/index.js';
 import {strongbox} from '../../lib/index.js';
-
-use(chaiAsPromised);
 
 describe('@appium/strongbox', function () {
   describe('default behavior', function () {
@@ -29,11 +25,11 @@ describe('@appium/strongbox', function () {
       });
 
       it('should write the value to the filesystem', async function () {
-        await expect(readFile(item.id, 'utf8')).to.eventually.equal('value');
+        assert.strictEqual(await readFile(item.id, 'utf8'), 'value');
       });
 
       it('should set the value property', async function () {
-        expect(item.value).to.equal('value');
+        assert.strictEqual(item.value, 'value');
       });
 
       describe('when writing a new value', function () {
@@ -42,11 +38,11 @@ describe('@appium/strongbox', function () {
         });
 
         it('should write the value to the filesystem', async function () {
-          await expect(readFile(item.id, 'utf8')).to.eventually.equal('new value');
+          assert.strictEqual(await readFile(item.id, 'utf8'), 'new value');
         });
 
         it('should set the value property', async function () {
-          expect(item.value).to.equal('new value');
+          assert.strictEqual(item.value, 'new value');
         });
       });
 
@@ -56,20 +52,20 @@ describe('@appium/strongbox', function () {
         });
 
         it('should remove the item from the filesystem', async function () {
-          await expect(readFile(item.id, 'utf8')).to.be.rejectedWith('ENOENT');
+          await assert.rejects(readFile(item.id, 'utf8'), /ENOENT/);
         });
 
         it('should set the value property to undefined', async function () {
-          expect(item.value).to.be.undefined;
+          assert.strictEqual(item.value, undefined);
         });
 
         describe('when attempting to read it again', function () {
           it('should resolve w/ undefined', async function () {
-            await expect(item.read()).to.eventually.be.undefined;
+            assert.strictEqual(await item.read(), undefined);
           });
 
           it('should set the value property to undefined', async function () {
-            expect(item.value).to.be.undefined;
+            assert.strictEqual(item.value, undefined);
           });
         });
       });
@@ -80,10 +76,13 @@ describe('@appium/strongbox', function () {
         await box.createItemWithValue('first', 'a');
         await box.createItemWithValue('second item', 'b');
         const items = await box.listItems();
-        expect(items.map((i) => i.name)).to.have.members(['first', 'second item']);
+        assert.deepStrictEqual(
+          items.map((i) => i.name).sort(),
+          ['first', 'second item'].sort(),
+        );
         const byName = Object.fromEntries(items.map((i) => [i.name, i]));
-        await expect(byName.first.read()).to.eventually.equal('a');
-        await expect(byName['second item'].read()).to.eventually.equal('b');
+        assert.strictEqual(await byName.first.read(), 'a');
+        assert.strictEqual(await byName['second item'].read(), 'b');
       });
 
       it('should not load persisted contents until read', async function () {
@@ -93,9 +92,9 @@ describe('@appium/strongbox', function () {
         await writer.createItemWithValue('key', 'payload');
         const reader = strongbox(name);
         const items = await reader.listItems();
-        expect(items).to.have.length(1);
-        expect(items[0].value).to.be.undefined;
-        await expect(items[0].read()).to.eventually.equal('payload');
+        assert.strictEqual(items.length, 1);
+        assert.strictEqual(items[0].value, undefined);
+        assert.strictEqual(await items[0].read(), 'payload');
         await rm(writer.container, {recursive: true, force: true});
       });
     });
@@ -109,8 +108,11 @@ describe('@appium/strongbox', function () {
         for await (const item of box) {
           iterated.push(item);
         }
-        expect(iterated.map((i) => i.name)).to.eql(listed.map((i) => i.name));
-        expect(iterated).to.eql(listed);
+        assert.deepStrictEqual(
+          iterated.map((i) => i.name),
+          listed.map((i) => i.name),
+        );
+        assert.deepStrictEqual(iterated, listed);
       });
     });
 
@@ -131,13 +133,16 @@ describe('@appium/strongbox', function () {
         await first.createItemWithValue('item-b', 'world');
 
         const second = strongbox(NAME);
-        expect(second.container).to.equal(first.container);
+        assert.strictEqual(second.container, first.container);
 
         const items = await second.listItems();
-        expect(items.map((i) => i.name)).to.have.members(['item-a', 'item-b']);
+        assert.deepStrictEqual(
+          items.map((i) => i.name).sort(),
+          ['item-a', 'item-b'].sort(),
+        );
         const byName = Object.fromEntries(items.map((i) => [i.name, i]));
-        await expect(byName['item-a'].read()).to.eventually.equal('hello');
-        await expect(byName['item-b'].read()).to.eventually.equal('world');
+        assert.strictEqual(await byName['item-a'].read(), 'hello');
+        assert.strictEqual(await byName['item-b'].read(), 'world');
       });
     });
   });

@@ -235,13 +235,22 @@ describe('basic', function () {
       log.log('verbose', 'test', 'log 2');
       log.log('verbose', 'test', 'log 3');
       log.log('verbose', 'test', 'log 4');
-      assert.deepStrictEqual(log.record.map(({message}) => message), ['log 2', 'log 3', 'log 4']);
+      assert.deepStrictEqual(
+        log.record.map(({message}) => message),
+        ['log 2', 'log 3', 'log 4'],
+      );
       log.maxRecordSize = 2;
       log.log('verbose', 'test', 'log 5');
-      assert.deepStrictEqual(log.record.map(({message}) => message), ['log 4', 'log 5']);
+      assert.deepStrictEqual(
+        log.record.map(({message}) => message),
+        ['log 4', 'log 5'],
+      );
       log.maxRecordSize = 3;
       log.log('verbose', 'test', 'log 6');
-      assert.deepStrictEqual(log.record.map(({message}) => message), ['log 4', 'log 5', 'log 6']);
+      assert.deepStrictEqual(
+        log.record.map(({message}) => message),
+        ['log 4', 'log 5', 'log 6'],
+      );
     });
   });
 

@@ -90,16 +90,16 @@ describe('StoragePlugin', function () {
     const pkgPath = path.join(THIS_PLUGIN_DIR, 'package.json');
     await Promise.all([addFileToStorage(TEST_FAKE_APP, name1), addFileToStorage(pkgPath, name2)]);
     items = await driver.listStorageItems();
-    assert.deepStrictEqual(items.length, 2);
+    assert.strictEqual(items.length, 2);
     assert.deepStrictEqual(new Set(items.map(({name}: {name: string}) => name)), new Set([name1, name2]));
     const isDeleted = await driver.deleteStorageItem(name1);
     assert.strictEqual(isDeleted, true);
     items = await driver.listStorageItems();
-    assert.deepStrictEqual(items.length, 1);
-    assert.deepStrictEqual(items[0].name, name2);
+    assert.strictEqual(items.length, 1);
+    assert.strictEqual(items[0].name, name2);
     await driver.resetStorageItems();
     items = await driver.listStorageItems();
-    assert.deepStrictEqual(items.length, 0);
+    assert.strictEqual(items.length, 0);
   });
 
   it('should still serve the deprecated /storage endpoints', async function () {

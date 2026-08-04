@@ -52,7 +52,7 @@ describe('storage', function () {
     await fs.writeFile(path.join(storageRoot!, tmpName), Buffer.alloc(1));
     storage = new Storage(storageRoot!, true, false, log);
     const files = await storage.list();
-    assert.deepStrictEqual(files.length, 1);
+    assert.strictEqual(files.length, 1);
     await storage.reset();
     assert.strictEqual(await fs.exists(path.join(storageRoot!, name)), false);
     assert.strictEqual(await fs.exists(path.join(storageRoot!, tmpName)), false);
@@ -65,10 +65,10 @@ describe('storage', function () {
     await fs.writeFile(path.join(storageRoot!, tmpName), Buffer.alloc(1));
     storage = new Storage(storageRoot!, true, true, log);
     let files = await storage.list();
-    assert.deepStrictEqual(files.length, 1);
+    assert.strictEqual(files.length, 1);
     await storage.reset();
     files = await storage.list();
-    assert.deepStrictEqual(files.length, 1);
+    assert.strictEqual(files.length, 1);
     assert.strictEqual(await fs.exists(path.join(storageRoot!, tmpName)), false);
   });
 
@@ -79,9 +79,9 @@ describe('storage', function () {
     await addFileToStorage(name, size);
     let files = await storage.list();
     assert.notStrictEqual(files.length, 0);
-    assert.deepStrictEqual(files[0].name, name);
-    assert.deepStrictEqual(files[0].size, size);
-    assert.deepStrictEqual(files[0].path, path.join(storageRoot!, name));
+    assert.strictEqual(files[0].name, name);
+    assert.strictEqual(files[0].size, size);
+    assert.strictEqual(files[0].path, path.join(storageRoot!, name));
     assert.strictEqual(await storage.delete(name), true);
     files = await storage.list();
     assert.strictEqual(files.length, 0);

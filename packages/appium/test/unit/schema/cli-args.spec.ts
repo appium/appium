@@ -304,7 +304,8 @@ describe('cli-args', function () {
             };
             await assert.rejects(
               getArgs({schema, extName, extType}),
-              (err: Error) => err instanceof TypeError && /`enum` is only supported for `type: 'string'`/i.test(err.message),
+              (err: Error) =>
+                err instanceof TypeError && /`enum` is only supported for `type: 'string'`/i.test(err.message),
             );
           });
         });

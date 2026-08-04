@@ -73,23 +73,35 @@ describe('utils/object', function () {
 
   describe('pickBy()', function () {
     it('should keep entries that pass the predicate', function () {
-      assert.deepStrictEqual(pickBy({a: 1, b: '', c: 3}, (value) => value !== ''), {a: 1, c: 3});
+      assert.deepStrictEqual(
+        pickBy({a: 1, b: '', c: 3}, (value) => value !== ''),
+        {a: 1, c: 3},
+      );
     });
 
     it('should pass key to the predicate', function () {
-      assert.deepStrictEqual(pickBy({a: 1, b: 2}, (_value, key) => key === 'a'), {a: 1});
+      assert.deepStrictEqual(
+        pickBy({a: 1, b: 2}, (_value, key) => key === 'a'),
+        {a: 1},
+      );
     });
   });
 
   describe('mapValues()', function () {
     it('should transform values while preserving keys', function () {
-      assert.deepStrictEqual(mapValues({a: 1, b: 2}, (v) => v * 2), {a: 2, b: 4});
+      assert.deepStrictEqual(
+        mapValues({a: 1, b: 2}, (v) => v * 2),
+        {a: 2, b: 4},
+      );
     });
   });
 
   describe('mapKeys()', function () {
     it('should rename keys while preserving values', function () {
-      assert.deepStrictEqual(mapKeys({a: 1}, (_v, key) => `${key}Key`), {aKey: 1});
+      assert.deepStrictEqual(
+        mapKeys({a: 1}, (_v, key) => `${key}Key`),
+        {aKey: 1},
+      );
     });
   });
 
@@ -232,10 +244,13 @@ describe('utils/object', function () {
     });
 
     it('should skip null and undefined sources', function () {
-      assert.deepStrictEqual(defaultsDeep({a: 1} as Record<string, unknown>, undefined, {b: 2} as Record<string, unknown>), {
-        a: 1,
-        b: 2,
-      });
+      assert.deepStrictEqual(
+        defaultsDeep({a: 1} as Record<string, unknown>, undefined, {b: 2} as Record<string, unknown>),
+        {
+          a: 1,
+          b: 2,
+        },
+      );
       assert.deepStrictEqual(
         defaultsDeep(
           {a: 1} as Record<string, unknown>,

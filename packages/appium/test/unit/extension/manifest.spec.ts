@@ -135,7 +135,8 @@ describe('Manifest', function () {
         it('should reject', async function () {
           await assert.rejects(
             manifest.read(),
-            (err: unknown) => err instanceof Error && /trouble loading the extension installation cache file/i.test(err.message),
+            (err: unknown) =>
+              err instanceof Error && /trouble loading the extension installation cache file/i.test(err.message),
           );
         });
       });

@@ -99,13 +99,10 @@ describe('bootstrap/grid-v3-register', function () {
 
       describe('when address, port, or basePath are omitted', function () {
         it('should reject when addr is missing', async function () {
-          await assert.rejects(
-            registerNode('/path/to/config-file.json', undefined as unknown as string, 4723, ''),
-            {
-              name: 'Error',
-              message: /address, port, and basePath are required \(e\.g\. match your Appium `--address`/,
-            },
-          );
+          await assert.rejects(registerNode('/path/to/config-file.json', undefined as unknown as string, 4723, ''), {
+            name: 'Error',
+            message: /address, port, and basePath are required \(e\.g\. match your Appium `--address`/,
+          });
           assert.strictEqual(stubLog.errorWithException.calledOnce, true);
         });
 
@@ -132,10 +129,10 @@ describe('bootstrap/grid-v3-register', function () {
         });
 
         it('should reject when port is not a finite number', async function () {
-          await assert.rejects(
-            registerNode('/path/to/config-file.json', '127.0.0.1', Number.NaN, ''),
-            {name: 'Error', message: /port must be a finite number/},
-          );
+          await assert.rejects(registerNode('/path/to/config-file.json', '127.0.0.1', Number.NaN, ''), {
+            name: 'Error',
+            message: /port must be a finite number/,
+          });
           assert.strictEqual(stubLog.errorWithException.calledOnce, true);
         });
       });

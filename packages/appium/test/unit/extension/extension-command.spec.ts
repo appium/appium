@@ -139,13 +139,7 @@ describe('ExtensionCommand', function () {
         assert.ok(fsExistsStub.calledWith('/path/to/driver-for-test/node_modules'));
         assert.ok(fsExistsStub.calledWith('/path/to/driver-for-test/node_modules/appium'));
         assert.strictEqual(fsSymlinkStub.calledOnce, true);
-        assert.ok(
-          fsSymlinkStub.calledWith(
-            appiumPackageRoot,
-            '/path/to/driver-for-test/node_modules/appium',
-            'dir',
-          ),
-        );
+        assert.ok(fsSymlinkStub.calledWith(appiumPackageRoot, '/path/to/driver-for-test/node_modules/appium', 'dir'));
       });
 
       it('should create junction symlinks on Windows', async function () {
@@ -166,11 +160,7 @@ describe('ExtensionCommand', function () {
         await injectAppiumSymlinks(asExtensionConfig(driverConfig), asExtensionConfig(pluginConfig), logger);
 
         assert.ok(
-          fsSymlinkStub.calledWith(
-            appiumPackageRoot,
-            '/path/to/driver-for-test/node_modules/appium',
-            'junction',
-          ),
+          fsSymlinkStub.calledWith(appiumPackageRoot, '/path/to/driver-for-test/node_modules/appium', 'junction'),
         );
       });
 
@@ -229,13 +219,7 @@ describe('ExtensionCommand', function () {
         await injectAppiumSymlinks(asExtensionConfig(driverConfig), asExtensionConfig(pluginConfig), logger);
 
         assert.strictEqual(fsSymlinkStub.calledOnce, true);
-        assert.ok(
-          fsSymlinkStub.calledWith(
-            appiumPackageRoot,
-            '/path/to/plugin-for-test/node_modules/appium',
-            'dir',
-          ),
-        );
+        assert.ok(fsSymlinkStub.calledWith(appiumPackageRoot, '/path/to/plugin-for-test/node_modules/appium', 'dir'));
       });
     });
 
@@ -329,13 +313,7 @@ describe('ExtensionCommand', function () {
         await injectAppiumSymlinks(asExtensionConfig(driverConfig), asExtensionConfig(pluginConfig), logger);
 
         assert.strictEqual(fsSymlinkStub.calledOnce, true);
-        assert.ok(
-          fsSymlinkStub.calledWith(
-            appiumPackageRoot,
-            '/path/to/npm-driver/node_modules/appium',
-            'dir',
-          ),
-        );
+        assert.ok(fsSymlinkStub.calledWith(appiumPackageRoot, '/path/to/npm-driver/node_modules/appium', 'dir'));
       });
     });
 

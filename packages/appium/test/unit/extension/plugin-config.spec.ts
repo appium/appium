@@ -68,13 +68,10 @@ describe('PluginConfig', function () {
         });
 
         it('should throw', function () {
-          assert.throws(
-            () => PluginConfig.create(manifest),
-            {
-              name: 'Error',
-              message: new RegExp(`Manifest with APPIUM_HOME ${manifest.appiumHome} already has a PluginConfig`, 'i'),
-            },
-          );
+          assert.throws(() => PluginConfig.create(manifest), {
+            name: 'Error',
+            message: new RegExp(`Manifest with APPIUM_HOME ${manifest.appiumHome} already has a PluginConfig`, 'i'),
+          });
         });
       });
     });

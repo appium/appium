@@ -173,7 +173,9 @@ describe('DriverConfig', function () {
             assert.ok(
               driverConfig
                 .getConfigProblems({})
-                .some((p: unknown) => isDeepStrictEqual(p, {err: 'Missing or incorrect automationName', val: undefined})),
+                .some((p: unknown) =>
+                  isDeepStrictEqual(p, {err: 'Missing or incorrect automationName', val: undefined}),
+                ),
             );
           });
         });

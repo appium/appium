@@ -131,7 +131,10 @@ describe('Driver CLI', {timeout: 90000}, function () {
           `No update version found. Expected an update from ${penultimateFakeDriverVersionAsOfRightNow} to a newer version.`,
         );
       }
-      assert.strictEqual(util.compareVersions(String(updateVersion), '>', penultimateFakeDriverVersionAsOfRightNow), true);
+      assert.strictEqual(
+        util.compareVersions(String(updateVersion), '>', penultimateFakeDriverVersionAsOfRightNow),
+        true,
+      );
       const {stderr} = await runAppiumRaw(appiumHome, [DRIVER_TYPE, LIST, '--updates'], {});
       assert.match(stderr, new RegExp(`fake.+[${updateVersion} available]`));
     });
@@ -355,10 +358,7 @@ describe('Driver CLI', {timeout: 90000}, function () {
     it('should uninstall a driver based on its driver name', async function () {
       const uninstall = await runUninstall(['fake']);
       assert.notDeepStrictEqual(Object.keys(uninstall), ['fake']);
-      assert.strictEqual(
-        await fs.exists(path.join(appiumHome, 'node_modules', '@appium', 'fake-driver')),
-        false,
-      );
+      assert.strictEqual(await fs.exists(path.join(appiumHome, 'node_modules', '@appium', 'fake-driver')), false);
     });
   });
 

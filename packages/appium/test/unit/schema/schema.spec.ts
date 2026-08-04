@@ -94,7 +94,8 @@ describe('schema', function () {
           it('should throw', async function () {
             await assert.rejects(
               (registerSchema as (...args: unknown[]) => Promise<unknown>)(DRIVER_TYPE, 'whoopeee', [45]),
-              (err: Error) => err instanceof SchemaUnsupportedSchemaError && /must be a plain object/i.test(err.message),
+              (err: Error) =>
+                err instanceof SchemaUnsupportedSchemaError && /must be a plain object/i.test(err.message),
             );
           });
         });

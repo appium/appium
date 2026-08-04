@@ -4,14 +4,13 @@ import net from 'node:net';
 /* eslint-disable no-console */
 import type {AppiumServer} from '@appium/types';
 import {main as appiumServer} from 'appium';
-import {fs} from 'appium/support';
+import {fs} from 'appium/support.js';
 import AsyncLock from 'async-lock';
 import {exec} from 'teen_process';
 
-import type {AppiumEnv, E2ESetupOpts} from './types';
+import type {AppiumEnv, E2ESetupOpts} from './types.js';
 
-declare const __filename: string;
-const _require = createRequire(__filename);
+const _require = createRequire(import.meta.url);
 const APPIUM_BIN = _require.resolve('appium') as string;
 const lock = new AsyncLock();
 

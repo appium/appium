@@ -1,15 +1,12 @@
+import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
 import type {ExtensionType} from '@appium/types';
 import type {ArgumentOptions} from 'argparse';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
 import {PLUGIN_TYPE} from '../../../lib/constants';
 import {finalizeSchema, registerSchema, resetSchema} from '../../../lib/schema';
 import {toParserArgs} from '../../../lib/schema/cli-args';
-const {expect} = chai;
-chai.use(chaiAsPromised);
 
 type ParserArgSpec = ArgumentOptions & {
   type?: (v: string) => unknown;
@@ -54,11 +51,11 @@ describe('cli-args', function () {
           });
 
           it('should return options containing `action` prop of `store_const` and no `type`', function () {
-            expect(result['--plugin-blob-foo']).to.have.property('action', 'store_const');
+            assert.strictEqual(result['--plugin-blob-foo'].action, 'store_const');
           });
 
           it('should not contain a `metavar` property', function () {
-            expect(result['--plugin-blob-foo']).not.to.have.property('metavar');
+            assert.ok(!Object.hasOwn(result['--plugin-blob-foo'], 'metavar'));
           });
         });
 
@@ -72,11 +69,11 @@ describe('cli-args', function () {
           });
 
           it('should use the `json` transformer', function () {
-            expect(result['--plugin-blob-foo']).to.have.property('type');
+            assert.ok(Object.hasOwn(result['--plugin-blob-foo'], 'type'));
           });
 
           it('should contain a SCREAMING_SNAKE_CASE `metavar` prop', function () {
-            expect(result['--plugin-blob-foo']).to.have.property('metavar', 'FOO');
+            assert.strictEqual(result['--plugin-blob-foo'].metavar, 'FOO');
           });
         });
 
@@ -87,11 +84,11 @@ describe('cli-args', function () {
           });
 
           it('should use the `csv` transformer', function () {
-            expect(result['--plugin-blob-foo']).to.have.property('type');
+            assert.ok(Object.hasOwn(result['--plugin-blob-foo'], 'type'));
           });
 
           it('should contain a SCREAMING_SNAKE_CASE `metavar` prop', function () {
-            expect(result['--plugin-blob-foo']).to.have.property('metavar', 'FOO');
+            assert.strictEqual(result['--plugin-blob-foo'].metavar, 'FOO');
           });
         });
 
@@ -105,11 +102,11 @@ describe('cli-args', function () {
           });
 
           it('should parse the value as a float', function () {
-            expect(result['--plugin-blob-foo'].type!('10.5')).to.equal(10.5);
+            assert.strictEqual(result['--plugin-blob-foo'].type!('10.5'), 10.5);
           });
 
           it('should contain a SCREAMING_SNAKE_CASE `metavar` prop', function () {
-            expect(result['--plugin-blob-foo']).to.have.property('metavar', 'FOO');
+            assert.strictEqual(result['--plugin-blob-foo'].metavar, 'FOO');
           });
         });
 
@@ -123,11 +120,11 @@ describe('cli-args', function () {
           });
 
           it('should parse the value as an integer', function () {
-            expect(result['--plugin-blob-foo'].type!('10.5')).to.equal(10);
+            assert.strictEqual(result['--plugin-blob-foo'].type!('10.5'), 10);
           });
 
           it('should contain a SCREAMING_SNAKE_CASE `metavar` prop', function () {
-            expect(result['--plugin-blob-foo']).to.have.property('metavar', 'FOO');
+            assert.strictEqual(result['--plugin-blob-foo'].metavar, 'FOO');
           });
         });
 
@@ -141,18 +138,21 @@ describe('cli-args', function () {
           });
 
           it('should parse the value as a string', function () {
-            expect(result['--plugin-blob-foo'].type!('10.5')).to.equal('10.5');
+            assert.strictEqual(result['--plugin-blob-foo'].type!('10.5'), '10.5');
           });
 
           it('should contain a SCREAMING_SNAKE_CASE `metavar` prop', function () {
-            expect(result['--plugin-blob-foo']).to.have.property('metavar', 'FOO');
+            assert.strictEqual(result['--plugin-blob-foo'].metavar, 'FOO');
           });
         });
 
         describe('null', function () {
           it('should throw', async function () {
             const schema = {properties: {foo: {type: 'null'}}, type: 'object'};
-            await expect(getArgs({extType, extName, schema})).to.be.rejectedWith(TypeError, /unknown or disallowed/);
+            await assert.rejects(
+              getArgs({extType, extName, schema}),
+              (err: Error) => err instanceof TypeError && /unknown or disallowed/.test(err.message),
+            );
           });
         });
 
@@ -162,7 +162,10 @@ describe('cli-args', function () {
               properties: {foo: {type: 'donkey'}},
               type: 'object',
             };
-            await expect(getArgs({extType, extName, schema})).to.be.rejectedWith(Error, /schema is invalid/);
+            await assert.rejects(
+              getArgs({extType, extName, schema}),
+              (err: Error) => err instanceof Error && /schema is invalid/.test(err.message),
+            );
           });
         });
       });
@@ -178,7 +181,7 @@ describe('cli-args', function () {
             type: 'object',
           };
           result = await getArgs({schema, extName, extType});
-          expect(result).to.have.property('--plugin-blob-foo,--plugin-blob-fooooo,--plugin-blob-F');
+          assert.ok(Object.hasOwn(result, '--plugin-blob-foo,--plugin-blob-fooooo,--plugin-blob-F'));
         });
       });
 
@@ -197,7 +200,7 @@ describe('cli-args', function () {
             type: 'object',
           };
           result = await getArgs({schema, extName, extType});
-          expect(result['--plugin-blob-foo']).to.have.property('help', 'foo');
+          assert.strictEqual(result['--plugin-blob-foo'].help, 'foo');
         });
       });
 
@@ -210,7 +213,7 @@ describe('cli-args', function () {
             type: 'object',
           };
           result = await getArgs({schema, extName, extType});
-          expect(result['--plugin-blob-foo'].type!('{"herp": "derp"}')).to.eql({
+          assert.deepStrictEqual(result['--plugin-blob-foo'].type!('{"herp": "derp"}'), {
             herp: 'derp',
           });
         });
@@ -221,7 +224,7 @@ describe('cli-args', function () {
             type: 'object',
           };
           result = await getArgs({schema, extName, extType});
-          expect(() => result['--plugin-blob-foo'].type!('123')).to.throw(/must be a plain object/i);
+          assert.throws(() => result['--plugin-blob-foo'].type!('123'), /must be a plain object/i);
         });
 
         describe('when used with `enum`', function () {
@@ -239,7 +242,7 @@ describe('cli-args', function () {
                   type: 'object',
                 };
                 result = await getArgs({schema, extName, extType});
-                expect(() => result['--plugin-blob-foo'].type!('herp')).to.throw(/must be a valid json/i);
+                assert.throws(() => result['--plugin-blob-foo'].type!('herp'), /must be a valid json/i);
               });
             });
           });
@@ -258,7 +261,7 @@ describe('cli-args', function () {
                   type: 'object',
                 };
                 result = await getArgs({schema, extName, extType});
-                expect(result['--plugin-blob-foo'].type!('{"herp": "derp"}')).to.eql({
+                assert.deepStrictEqual(result['--plugin-blob-foo'].type!('{"herp": "derp"}'), {
                   herp: 'derp',
                 });
               });
@@ -277,7 +280,8 @@ describe('cli-args', function () {
                   type: 'object',
                 };
                 result = await getArgs({schema, extName, extType});
-                expect(() => result['--plugin-blob-foo'].type!('{"georgy": "porgy"}')).to.throw(
+                assert.throws(
+                  () => result['--plugin-blob-foo'].type!('{"georgy": "porgy"}'),
                   /one of the allowed values/i,
                 );
               });
@@ -298,9 +302,9 @@ describe('cli-args', function () {
               },
               type: 'object',
             };
-            await expect(getArgs({schema, extName, extType})).to.be.rejectedWith(
-              TypeError,
-              /`enum` is only supported for `type: 'string'`/i,
+            await assert.rejects(
+              getArgs({schema, extName, extType}),
+              (err: Error) => err instanceof TypeError && /`enum` is only supported for `type: 'string'`/i.test(err.message),
             );
           });
         });
@@ -317,8 +321,8 @@ describe('cli-args', function () {
               type: 'object',
             };
             const result = await getArgs({schema, extName, extType});
-            expect(result['--plugin-blob-foo']).to.have.property('choices');
-            expect(result['--plugin-blob-foo'].choices).to.eql(['herp', 'derp']);
+            assert.ok(Object.hasOwn(result['--plugin-blob-foo'], 'choices'));
+            assert.deepStrictEqual(result['--plugin-blob-foo'].choices, ['herp', 'derp']);
           });
         });
       });

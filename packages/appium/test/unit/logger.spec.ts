@@ -1,8 +1,7 @@
+import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach, after} from 'node:test';
 
 import {logger} from '@appium/support';
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {createSandbox, type SinonSandbox, type SinonSpy} from 'sinon';
 
 import {clear as logsinkClear, init as logsinkInit} from '../../lib/logsink';
@@ -17,8 +16,6 @@ describe('logging', function () {
   let stdoutSpy: SinonSpy;
 
   beforeEach(async function () {
-    use(chaiAsPromised);
-
     sandbox = createSandbox();
     stderrSpy = sandbox.spy(process.stderr, 'write') as SinonSpy;
     stdoutSpy = sandbox.spy(process.stdout, 'write') as SinonSpy;
@@ -48,12 +45,12 @@ describe('logging', function () {
 
     doLogging();
 
-    expect(stderrSpy.callCount).to.equal(1);
-    expect(stderrSpy.args[0][0]).to.include(errorMsg);
+    assert.strictEqual(stderrSpy.callCount, 1);
+    assert.ok(stderrSpy.args[0][0].includes(errorMsg));
 
-    expect(stdoutSpy.callCount).to.equal(2);
-    expect(stdoutSpy.args[0][0]).to.include(warnMsg);
-    expect(stdoutSpy.args[1][0]).to.include(debugMsg);
+    assert.strictEqual(stdoutSpy.callCount, 2);
+    assert.ok(stdoutSpy.args[0][0].includes(warnMsg));
+    assert.ok(stdoutSpy.args[1][0].includes(debugMsg));
   });
 
   it('should send error and info when loglevel is info', async function () {
@@ -61,11 +58,11 @@ describe('logging', function () {
 
     doLogging();
 
-    expect(stderrSpy.callCount).to.equal(1);
-    expect(stderrSpy.args[0][0]).to.include(errorMsg);
+    assert.strictEqual(stderrSpy.callCount, 1);
+    assert.ok(stderrSpy.args[0][0].includes(errorMsg));
 
-    expect(stdoutSpy.callCount).to.equal(1);
-    expect(stdoutSpy.args[0][0]).to.include(warnMsg);
+    assert.strictEqual(stdoutSpy.callCount, 1);
+    assert.ok(stdoutSpy.args[0][0].includes(warnMsg));
   });
 
   it('should send error when loglevel is error', async function () {
@@ -73,9 +70,9 @@ describe('logging', function () {
 
     doLogging();
 
-    expect(stderrSpy.callCount).to.equal(1);
-    expect(stderrSpy.args[0][0]).to.include(errorMsg);
+    assert.strictEqual(stderrSpy.callCount, 1);
+    assert.ok(stderrSpy.args[0][0].includes(errorMsg));
 
-    expect(stdoutSpy.callCount).to.equal(0);
+    assert.strictEqual(stdoutSpy.callCount, 0);
   });
 });

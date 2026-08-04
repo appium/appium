@@ -1,26 +1,20 @@
-import {describe, it, before} from 'node:test';
-
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
+import assert from 'node:assert/strict';
+import {describe, it} from 'node:test';
 
 import {fetchInterfaces} from '../../../lib/helpers/network';
 
 describe('helpers/network', function () {
-  before(async function () {
-    use(chaiAsPromised);
-  });
-
   describe('fetchInterfaces()', function () {
     it('should fetch interfaces for ipv4 only', function () {
-      expect(fetchInterfaces(4).length).to.be.greaterThan(0);
+      assert.ok(fetchInterfaces(4).length > 0);
     });
 
     it('should fetch interfaces for ipv6 only', function () {
-      expect(fetchInterfaces(6).length).to.be.greaterThan(0);
+      assert.ok(fetchInterfaces(6).length > 0);
     });
 
     it('should fetch interfaces for ipv4 and ipv6', function () {
-      expect(fetchInterfaces().length).to.be.greaterThan(0);
+      assert.ok(fetchInterfaces().length > 0);
     });
   });
 });

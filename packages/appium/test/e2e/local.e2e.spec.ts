@@ -1,10 +1,9 @@
+import assert from 'node:assert/strict';
 import path from 'node:path';
 import {describe, it, before, after, beforeEach} from 'node:test';
 
 import {env, fs, npm, tempDir} from '@appium/support';
 import type {ManifestData} from 'appium/types';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import * as YAML from 'yaml';
 
 import {
@@ -16,9 +15,6 @@ import {
 import {resolveFrom} from '../../lib/utils';
 import {FAKE_DRIVER_DIR, resolveFixture} from '../helpers';
 import {installLocalExtension, runAppiumJson} from './e2e-helpers';
-
-const {expect} = chai;
-chai.use(chaiAsPromised);
 
 const {MANIFEST_RELATIVE_PATH} = env;
 const testDriverPath = path.dirname(resolveFixture('test-driver/package.json'));
@@ -56,7 +52,7 @@ describe('when Appium is a dependency of the current project', function () {
 
     it('should automatically discover the extension', async function () {
       const res = (await runJson([DRIVER_TYPE, LIST])) as Record<string, {installed?: boolean}>;
-      expect(res).to.have.property('test');
+      assert.ok(Object.hasOwn(res, 'test'));
     });
   });
 
@@ -74,7 +70,10 @@ describe('when Appium is a dependency of the current project', function () {
     describe('without drivers installed', function () {
       it('should list no drivers', async function () {
         const res = (await runJson([DRIVER_TYPE, LIST])) as Record<string, {installed?: boolean}>;
-        expect(Object.values(res).every(({installed}) => !installed)).to.be.true;
+        assert.strictEqual(
+          Object.values(res).every(({installed}) => !installed),
+          true,
+        );
       });
     });
 
@@ -85,7 +84,7 @@ describe('when Appium is a dependency of the current project', function () {
 
       it('should list the driver', async function () {
         const res = (await runJson([DRIVER_TYPE, LIST])) as Record<string, unknown>;
-        expect(res).to.have.property('fake');
+        assert.ok(Object.hasOwn(res, 'fake'));
       });
 
       it('should be resolvable from the local directory', async function () {
@@ -110,12 +109,12 @@ describe('when Appium is a dependency of the current project', function () {
         });
 
         it('should list the driver', function () {
-          expect(res).to.have.property('fake');
+          assert.ok(Object.hasOwn(res, 'fake'));
         });
 
         it('should update the manifest', async function () {
           const manifestParsed = await readManifest();
-          expect(manifestParsed).to.have.nested.property('drivers.fake');
+          assert.ok(manifestParsed.drivers?.fake !== undefined);
         });
 
         describe('when a different driver is installed via "appium driver install"', function () {
@@ -126,14 +125,14 @@ describe('when Appium is a dependency of the current project', function () {
 
           it('should update package.json', async function () {
             const newPkg = JSON.parse(await fs.readFile(appiumHomePkgPath, 'utf8'));
-            expect(newPkg).to.have.nested.property('devDependencies.@appium/test-driver');
+            assert.ok(newPkg.devDependencies?.['@appium/test-driver'] !== undefined);
           });
 
           it('should update the manifest with the new driver', async function () {
             const manifest = await fs.readFile(manifestPath, 'utf8');
             const manifestParsed = YAML.parse(manifest) as ManifestData;
-            expect(manifestParsed).to.have.nested.property('drivers.test');
-            expect(manifestParsed).to.have.nested.property('drivers.fake');
+            assert.ok(manifestParsed.drivers?.test !== undefined);
+            assert.ok(manifestParsed.drivers?.fake !== undefined);
           });
 
           it('should actually install both drivers', async function () {

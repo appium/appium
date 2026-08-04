@@ -1,6 +1,6 @@
+import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
-import {expect} from 'chai';
 import {createSandbox} from 'sinon';
 
 import {finalizeSchema, resetSchema, SchemaFinalizationError} from '../../../lib/schema/schema';
@@ -25,7 +25,9 @@ describe('cli/schema-args', function () {
       afterEach(resetSchema);
 
       it('should return a Map', function () {
-        expect(toParserArgs()).to.be.an.instanceof(Map).and.have.property('size').that.is.above(0);
+        const args = toParserArgs();
+        assert.ok(args instanceof Map);
+        assert.ok(args.size > 0);
       });
 
       it('should generate metavars in SCREAMING_SNAKE_CASE', function () {
@@ -33,17 +35,19 @@ describe('cli/schema-args', function () {
         const argDefsWithMetavar = [...argDefs].filter(
           (arg: [string, unknown]) => (arg[1] as {metavar?: string}).metavar,
         );
-        expect(argDefsWithMetavar).not.to.be.empty;
+        assert.ok(argDefsWithMetavar.length > 0);
         type ArgEntry = [string, {metavar?: string}];
-        expect((argDefsWithMetavar as ArgEntry[]).every((arg: ArgEntry) => /[A-Z_]+/.test(arg[1].metavar ?? ''))).to.be
-          .true;
+        assert.strictEqual(
+          (argDefsWithMetavar as ArgEntry[]).every((arg: ArgEntry) => /[A-Z_]+/.test(arg[1].metavar ?? '')),
+          true,
+        );
       });
     });
 
     describe('when schema has not yet been compiled', function () {
       it('should throw', function () {
         resetSchema();
-        expect(() => toParserArgs()).to.throw(SchemaFinalizationError);
+        assert.throws(() => toParserArgs(), SchemaFinalizationError);
       });
     });
   });

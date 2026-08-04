@@ -4,9 +4,11 @@
     "strict": true,
     "rootDir": ".",
     "outDir": "build",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "paths": {
       "@appium/types": ["../types"],
-      "appium/support": ["../support"],
+      "appium/support.js": ["../appium/support.d.ts"],
       "appium": ["../appium"]
     },
     "types": ["node"]

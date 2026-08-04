@@ -72,10 +72,7 @@ describe('ExecuteDriverPlugin', function () {
     });
 
     it('should not work unless the allowInsecure feature flag is set', async function () {
-      await assert.rejects(
-        driver.executeDriverScript(basicScript),
-        /allow-insecure.+execute_driver_script/i,
-      );
+      await assert.rejects(driver.executeDriverScript(basicScript), /allow-insecure.+execute_driver_script/i);
     });
   });
 
@@ -178,10 +175,7 @@ describe('ExecuteDriverPlugin', function () {
       const script = `
         return {;
       `;
-      await assert.rejects(
-        driver.executeDriverScript(script),
-        /Could not execute driver script.+Unexpected token/,
-      );
+      await assert.rejects(driver.executeDriverScript(script), /Could not execute driver script.+Unexpected token/);
     });
 
     it('should be able to use standard promise and timeout functions in a driver script', async function () {
@@ -189,10 +183,7 @@ describe('ExecuteDriverPlugin', function () {
         await new Promise((resolve) => setTimeout(resolve, 1000));
         return true;
       `;
-      await assert.rejects(
-        driver.executeDriverScript(script, 'webdriverio', 50),
-        /.+50.+timeout.+/,
-      );
+      await assert.rejects(driver.executeDriverScript(script, 'webdriverio', 50), /.+50.+timeout.+/);
     });
   });
 });

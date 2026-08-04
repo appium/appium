@@ -58,10 +58,7 @@ describe('ImageElementPlugin#handle', function () {
       assert.ok((res as any).score > 0.2);
     });
     it('should throw an error if comparison mode is not supported', async function () {
-      await assert.rejects(
-        p.compareImages(next, driver as any, 'some mode', '', ''),
-        /comparison mode is unknown/,
-      );
+      await assert.rejects(p.compareImages(next, driver as any, 'some mode', '', ''), /comparison mode is unknown/);
     });
     it('should throw an error if image template is broken', async function () {
       await assert.rejects(
@@ -75,9 +72,7 @@ describe('ImageElementPlugin#handle', function () {
       );
     });
     it('should throw an error if image template is empty', async function () {
-      await assert.rejects(
-        p.compareImages(next, driver as any, MATCH_TEMPLATE_MODE, Buffer.from(''), Buffer.from('')),
-      );
+      await assert.rejects(p.compareImages(next, driver as any, MATCH_TEMPLATE_MODE, Buffer.from(''), Buffer.from('')));
     });
   });
 

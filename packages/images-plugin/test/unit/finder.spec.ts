@@ -215,10 +215,7 @@ describe('finding elements by image', function () {
     });
 
     it('should not fix template size scale if it is not number', async function () {
-      assert.deepStrictEqual(
-        await f.fixImageTemplateScale(basicTemplateBuf, 'wrong-scale' as any),
-        basicTemplateBuf,
-      );
+      assert.deepStrictEqual(await f.fixImageTemplateScale(basicTemplateBuf, 'wrong-scale' as any), basicTemplateBuf);
     });
 
     it('should fix template size scale', async function () {

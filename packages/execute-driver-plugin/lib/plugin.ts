@@ -95,8 +95,19 @@ export class ExecuteDriverPlugin extends BasePlugin {
 
         // promise that deals with the result from the child process
         const waitForResult = async () => {
-          const res = await new Promise<{error?: {message: string}; success?: any}>((resolve) => {
+          const res = await new Promise<{error?: {message: string}; success?: any}>((resolve, reject) => {
             scriptProc.once('message', resolve); // this is node IPC
+            // the child reports script errors over IPC as well, so reaching any of the
+            // handlers below means it died before it could tell us anything
+            scriptProc.once('error', reject);
+            scriptProc.once('exit', (code, signal) => {
+              reject(
+                new Error(
+                  `The driver script process ended without returning a result ` +
+                    `(exit code: ${code}, signal: ${signal})`,
+                ),
+              );
+            });
           });
 
           this.log.info('Received execute driver script result from child process, shutting it down');

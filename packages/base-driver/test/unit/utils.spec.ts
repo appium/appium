@@ -61,7 +61,10 @@ describe('utils', function () {
 
   describe('pickBy', function () {
     it('should keep entries that pass the predicate', function () {
-      assert.deepStrictEqual(pickBy({a: 1, b: '', c: 3}, (value) => value !== ''), {a: 1, c: 3});
+      assert.deepStrictEqual(
+        pickBy({a: 1, b: '', c: 3}, (value) => value !== ''),
+        {a: 1, c: 3},
+      );
     });
   });
 });

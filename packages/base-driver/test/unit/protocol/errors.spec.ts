@@ -288,10 +288,7 @@ describe('errorFromW3CJsonCode', function () {
   it('should parse unknown errors', function () {
     const msg = 'An unknown server-side error occurred while processing the command.';
     assert.strictEqual(isErrorType(errorFromW3CJsonCode('not a real error code', msg), errors.UnknownError), true);
-    assert.match(
-      errorFromW3CJsonCode('not a real error code', msg).message,
-      /An unknown server-side error occurred/,
-    );
+    assert.match(errorFromW3CJsonCode('not a real error code', msg).message, /An unknown server-side error occurred/);
     assert.strictEqual(errorFromW3CJsonCode('not a real error code', msg).error, 'unknown error');
   });
 });

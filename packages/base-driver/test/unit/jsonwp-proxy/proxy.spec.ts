@@ -136,10 +136,7 @@ describe('proxy', function () {
       );
 
       assert.strictEqual(j.getUrlForProxy('/session', 'POST'), `http://${TEST_HOST}:${port}/session`);
-      assert.strictEqual(
-        j.getUrlForProxy('/appium/sessions', 'GET'),
-        `http://${TEST_HOST}:${port}/appium/sessions`,
-      );
+      assert.strictEqual(j.getUrlForProxy('/appium/sessions', 'GET'), `http://${TEST_HOST}:${port}/appium/sessions`);
     });
     it('should throw an error if url requires a sessionId but its null', function () {
       const j = mockProxy();

@@ -734,10 +734,7 @@ describe('Protocol', function () {
 
       assert.strictEqual(status, 500);
       assert.strictEqual(data.value.error, 'unknown error');
-      assert.strictEqual(
-        data.value.message,
-        'Trying to proxy to a server but the driver is unable to proxy',
-      );
+      assert.strictEqual(data.value.message, 'Trying to proxy to a server but the driver is unable to proxy');
     });
 
     it('should pass on any errors in proxying', async function () {

@@ -77,7 +77,8 @@ describe('DeviceSettings', function () {
           const deviceSettings = new DeviceSettings();
           await assert.rejects(
             deviceSettings.update({stuff: 'things'}),
-            (err: unknown) => err instanceof InvalidArgumentError && /object size exceeds/i.test((err as Error).message),
+            (err: unknown) =>
+              err instanceof InvalidArgumentError && /object size exceeds/i.test((err as Error).message),
           );
         });
       });

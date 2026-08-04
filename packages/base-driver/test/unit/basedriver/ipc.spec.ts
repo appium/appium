@@ -144,10 +144,7 @@ describe('AppiumIpc', function () {
       const ipc = new AppiumIpc();
       const sub1 = ipc.subscribe<boolean>('foo', 'bar');
       sub1.unsubscribe();
-      await assert.rejects(
-        sub1.publish(true),
-        /Cannot publish data to topic from subscription after unsubscribing/,
-      );
+      await assert.rejects(sub1.publish(true), /Cannot publish data to topic from subscription after unsubscribing/);
     });
 
     it('should be no race conditions with publishing and unsubscribing', async function () {

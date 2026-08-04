@@ -125,7 +125,7 @@
     "eslint-plugin-promise": "7.3.0",
     "finalhandler": "2.1.1",
     "json-schema-to-typescript": "15.0.4",
-    "lerna": "9.0.7",
+    "lerna": "10.0.0",
     "mjpeg-consumer": "2.0.0",
     "mjpeg-server": "0.3.1",
     "npm-run-all2": "9.0.3",

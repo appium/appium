@@ -1,14 +1,11 @@
+import assert from 'node:assert/strict';
 import {after, before, describe, it} from 'node:test';
 
 import type {Constraints, Driver, DriverCaps} from '@appium/types';
 import axios from 'axios';
-import chai, {expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
 import {createServer} from '../../helpers';
 import {FakeDriver} from '../protocol/fake-driver';
-
-chai.use(chaiAsPromised);
 
 describe('BaseDriver', function () {
   const DEFAULT_CAPS = {
@@ -46,7 +43,7 @@ describe('BaseDriver', function () {
         url: `${baseUrl}/session/${sessionId}/appium/capabilities`,
         method: 'GET',
       });
-      expect(data.value.capabilities).to.eql(DEFAULT_CAPS);
+      assert.deepStrictEqual(data.value.capabilities, DEFAULT_CAPS);
     });
   });
 });

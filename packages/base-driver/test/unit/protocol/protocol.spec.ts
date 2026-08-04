@@ -1,14 +1,11 @@
+import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
 import type {InitialOpts} from '@appium/types';
-import chai, {expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import type {Request} from 'express';
 
 import {BaseDriver} from '../../../lib/basedriver/driver';
 import {checkParams, getSessionId} from '../../../lib/protocol/protocol';
-
-chai.use(chaiAsPromised);
 
 describe('Protocol', function () {
   describe('getSessionId', function () {
@@ -17,17 +14,17 @@ describe('Protocol', function () {
 
     it('should pick up the first value as the session id', function () {
       const req = {params: {sessionId: [sessionId]}} as unknown as Request;
-      expect(getSessionId(fakeDriver as any, req)).to.eql(sessionId);
+      assert.deepStrictEqual(getSessionId(fakeDriver as any, req), sessionId);
     });
 
     it('should get session id', function () {
       const req = {params: {sessionId}} as unknown as Request;
-      expect(getSessionId(fakeDriver as any, req)).to.eql(sessionId);
+      assert.deepStrictEqual(getSessionId(fakeDriver as any, req), sessionId);
     });
 
     it('should be undefined', function () {
       const req = {params: {sessionId: undefined}} as unknown as Request;
-      expect(getSessionId(fakeDriver as any, req)).to.eql(undefined);
+      assert.deepStrictEqual(getSessionId(fakeDriver as any, req), undefined);
     });
   });
 
@@ -41,7 +38,7 @@ describe('Protocol', function () {
           baz: 'baz',
         },
       );
-      expect(args).to.eql({});
+      assert.deepStrictEqual(args, {});
     });
 
     it('should preserve session id', function () {
@@ -55,7 +52,7 @@ describe('Protocol', function () {
           bar: 'bar',
         },
       );
-      expect(args).to.eql({
+      assert.deepStrictEqual(args, {
         sessionId: 'sessionId',
         id: 'id',
         bar: 'bar',
@@ -73,7 +70,7 @@ describe('Protocol', function () {
           baz: 'baz',
         },
       );
-      expect(args).to.eql({
+      assert.deepStrictEqual(args, {
         bar: 'bar',
         baz: 'baz',
       });
@@ -91,14 +88,14 @@ describe('Protocol', function () {
           baz: 'baz',
         },
       );
-      expect(args).to.eql({
+      assert.deepStrictEqual(args, {
         foo: 'foo',
         bar: 'bar',
       });
     });
 
     it('should fail if required params are missing', function () {
-      expect(() => {
+      assert.throws(() => {
         checkParams(
           {
             required: ['foo'],
@@ -109,7 +106,7 @@ describe('Protocol', function () {
             baz: 'baz',
           },
         );
-      }).to.throw();
+      });
     });
 
     it('should pass if a set of required params is matched', function () {
@@ -124,7 +121,7 @@ describe('Protocol', function () {
           baz: 'baz',
         },
       );
-      expect(args).to.eql({
+      assert.deepStrictEqual(args, {
         foo: 'foo',
         baz: 'baz',
       });

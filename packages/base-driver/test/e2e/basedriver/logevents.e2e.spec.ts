@@ -1,15 +1,12 @@
+import assert from 'node:assert/strict';
 import {afterEach, beforeEach, describe, it} from 'node:test';
 
 import type {Constraints, Driver, EventHistoryCommand} from '@appium/types';
 import axios from 'axios';
-import chai, {expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {createSandbox} from 'sinon';
 
 import {createServer} from '../../helpers';
 import {MockExecuteDriver} from '../protocol/mock-execute-driver';
-
-chai.use(chaiAsPromised);
 
 describe('Execute Command Test', function () {
   let sandbox: sinon.SinonSandbox;
@@ -46,13 +43,13 @@ describe('Execute Command Test', function () {
       args,
     });
 
-    expect(res.status).to.eql(200);
-    expect(res.data).to.have.property('value');
-    expect(res.data.value).to.deep.equal({executed: script, args});
+    assert.deepStrictEqual(res.status, 200);
+    assert.ok(Object.hasOwn(res.data, 'value'));
+    assert.deepStrictEqual(res.data.value, {executed: script, args});
 
     const events = await driver.getLogEvents();
     const command = (events.commands as EventHistoryCommand[])[0];
 
-    expect(command).to.have.property('cmd', 'mobileActivateApp');
+    assert.strictEqual(command.cmd, 'mobileActivateApp');
   });
 });

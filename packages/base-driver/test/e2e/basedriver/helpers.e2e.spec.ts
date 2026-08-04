@@ -1,3 +1,4 @@
+import assert from 'node:assert/strict';
 import http from 'node:http';
 import path from 'node:path';
 import {after, before, describe, it} from 'node:test';
@@ -5,15 +6,11 @@ import {after, before, describe, it} from 'node:test';
 import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
 import {fs, node} from '@appium/support';
 import {sleep} from 'asyncbox';
-import chai, {expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import contentDisposition from 'content-disposition';
 import finalhandler from 'finalhandler';
 import serveStatic from 'serve-static';
 
 import {configureApp} from '../../../lib/basedriver/helpers';
-
-chai.use(chaiAsPromised);
 
 const FIXTURE_ROOT = path.resolve(
   node.getModuleRootSync('@appium/base-driver', __filename)!,
@@ -30,23 +27,21 @@ describe('app download and configuration', function () {
   describe('configureApp', function () {
     it('should get the path for a local .app', async function () {
       const newAppPath = await configureApp(getFixture('FakeIOSApp.app'), '.app');
-      expect(newAppPath).to.contain('FakeIOSApp.app');
+      assert.ok(newAppPath.includes('FakeIOSApp.app'));
       const contents = await fs.readFile(newAppPath, 'utf8');
-      expect(contents).to.eql('this is not really an app\n');
+      assert.deepStrictEqual(contents, 'this is not really an app\n');
     });
     it('should get the path for a local .apk', async function () {
       const newAppPath = await configureApp(getFixture('FakeAndroidApp.apk'), '.apk');
-      expect(newAppPath).to.contain('FakeAndroidApp.apk');
+      assert.ok(newAppPath.includes('FakeAndroidApp.apk'));
       const contents = await fs.readFile(newAppPath, 'utf8');
-      expect(contents).to.eql('this is not really an apk\n');
+      assert.deepStrictEqual(contents, 'this is not really an apk\n');
     });
     it('should fail if extensions do not match', async function () {
-      await expect(configureApp(getFixture('FakeIOSApp.app'), '.wrong')).to.be.rejectedWith(/did not have extension/);
+      await assert.rejects(configureApp(getFixture('FakeIOSApp.app'), '.wrong'), /did not have extension/);
     });
     it('should fail if zip file does not contain an app whose extension matches', async function () {
-      await expect(configureApp(getFixture('FakeIOSApp.app.zip'), '.wrong')).to.be.rejectedWith(
-        /did not have extension/,
-      );
+      await assert.rejects(configureApp(getFixture('FakeIOSApp.app.zip'), '.wrong'), /did not have extension/);
     });
     describe('should download an app from the web', function () {
       let port: number;
@@ -59,9 +54,7 @@ describe('app download and configuration', function () {
 
       describe('server not available', function () {
         it('should handle server not available', async function () {
-          await expect(configureApp(`${serverUrl}/FakeIOSApp.app.zip`, '.app')).to.eventually.be.rejectedWith(
-            /ECONNREFUSED/,
-          );
+          await assert.rejects(configureApp(`${serverUrl}/FakeIOSApp.app.zip`, '.app'), /ECONNREFUSED/);
         });
       });
       describe('server available', function () {
@@ -115,41 +108,41 @@ describe('app download and configuration', function () {
 
         it('should download apk file with query string', async function () {
           const newAppPath = await configureApp(`${serverUrl}/FakeAndroidApp.apk?sv=abc&sr=def`, '.apk');
-          expect(newAppPath).to.contain('.apk');
+          assert.ok(newAppPath.includes('.apk'));
           const contents = await fs.readFile(newAppPath, 'utf8');
-          expect(contents).to.eql('this is not really an apk\n');
+          assert.deepStrictEqual(contents, 'this is not really an apk\n');
         });
         it('should download an app file', async function () {
           const newAppPath = await configureApp(`${serverUrl}/FakeIOSApp.app`, '.app');
-          expect(newAppPath).to.contain('.app');
+          assert.ok(newAppPath.includes('.app'));
           const contents = await fs.readFile(newAppPath, 'utf8');
-          expect(contents).to.eql('this is not really an app\n');
+          assert.deepStrictEqual(contents, 'this is not really an app\n');
         });
         it('should accept multiple extensions', async function () {
           const newAppPath = await configureApp(`${serverUrl}/FakeIOSApp.app`, ['.app', '.aab']);
-          expect(newAppPath).to.contain('FakeIOSApp.app');
+          assert.ok(newAppPath.includes('FakeIOSApp.app'));
           const contents = await fs.readFile(newAppPath, 'utf8');
-          expect(contents).to.eql('this is not really an app\n');
+          assert.deepStrictEqual(contents, 'this is not really an app\n');
         });
         it('should download an apk file', async function () {
           const newAppPath = await configureApp(`${serverUrl}/FakeAndroidApp.apk`, '.apk');
-          expect(newAppPath).to.contain('.apk');
+          assert.ok(newAppPath.includes('.apk'));
           const contents = await fs.readFile(newAppPath, 'utf8');
-          expect(contents).to.eql('this is not really an apk\n');
+          assert.deepStrictEqual(contents, 'this is not really an apk\n');
         });
         it('should handle zip file that cannot be downloaded', async function () {
-          await expect(configureApp(`${serverUrl}/missing/FakeIOSApp.app.zip`, '.app')).to.eventually.be.rejected;
+          await assert.rejects(configureApp(`${serverUrl}/missing/FakeIOSApp.app.zip`, '.app'));
         });
         it('should handle invalid protocol', async function () {
-          await expect(configureApp('file://C:/missing/FakeIOSApp.app.zip', '.app')).to.eventually.be.rejectedWith(
+          await assert.rejects(configureApp('file://C:/missing/FakeIOSApp.app.zip', '.app'), /is not supported/);
+          await assert.rejects(
+            configureApp(`ftp://${TEST_HOST}:${port}/missing/FakeIOSApp.app.zip`, '.app'),
             /is not supported/,
           );
-          await expect(
-            configureApp(`ftp://${TEST_HOST}:${port}/missing/FakeIOSApp.app.zip`, '.app'),
-          ).to.eventually.be.rejectedWith(/is not supported/);
         });
         it('should handle missing file in Windows path format', async function () {
-          await expect(configureApp('C:\\missing\\FakeIOSApp.app.zip', '.app')).to.eventually.be.rejectedWith(
+          await assert.rejects(
+            configureApp('C:\\missing\\FakeIOSApp.app.zip', '.app'),
             /does not exist or is not accessible/,
           );
         });
@@ -158,9 +151,9 @@ describe('app download and configuration', function () {
             `${serverUrl}/FakeAndroidApp.apk?content-type=${encodeURIComponent('application/bip')}`,
             '.apk',
           );
-          expect(newAppPath).to.contain('.apk');
+          assert.ok(newAppPath.includes('.apk'));
           const contents = await fs.readFile(newAppPath, 'utf8');
-          expect(contents).to.eql('this is not really an apk\n');
+          assert.deepStrictEqual(contents, 'this is not really an apk\n');
         });
       });
     });

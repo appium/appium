@@ -1,15 +1,12 @@
+import assert from 'node:assert/strict';
 import {afterEach, beforeEach, describe, it} from 'node:test';
 
 import {node} from '@appium/support';
 import type {SettingsUpdateListener} from '@appium/types';
-import chai, {expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 
 import {DeviceSettings, MAX_SETTINGS_SIZE} from '../../../lib/basedriver/device-settings';
 import {InvalidArgumentError} from '../../../lib/protocol/errors';
-
-chai.use(chaiAsPromised);
 
 describe('DeviceSettings', function () {
   let sandbox: sinon.SinonSandbox;
@@ -25,7 +22,7 @@ describe('DeviceSettings', function () {
   describe('constructor', function () {
     describe('when no parameters are provided to the constructor', function () {
       it('should not throw', function () {
-        expect(() => new DeviceSettings()).not.to.throw();
+        assert.doesNotThrow(() => new DeviceSettings());
       });
     });
 
@@ -34,7 +31,7 @@ describe('DeviceSettings', function () {
       const d1 = new DeviceSettings(obj);
       const d2 = new DeviceSettings(obj);
       d1.getSettings().foo = 'baz';
-      expect(d1.getSettings()).to.not.eql(d2.getSettings());
+      assert.notDeepStrictEqual(d1.getSettings(), d2.getSettings());
     });
   });
 
@@ -46,7 +43,7 @@ describe('DeviceSettings', function () {
           bar: 'foo',
         };
         const deviceSettings = new DeviceSettings(settings);
-        expect(deviceSettings.getSettings()).to.eql(settings);
+        assert.deepStrictEqual(deviceSettings.getSettings(), settings);
       });
     });
 
@@ -54,18 +51,19 @@ describe('DeviceSettings', function () {
       describe('when no parameters are provided', function () {
         it('should reject with an InvalidArgumentError', async function () {
           const deviceSettings = new DeviceSettings();
-          await expect(
+          await assert.rejects(
             (deviceSettings.update as (newSettings?: Record<string, unknown>) => Promise<void>)(),
-          ).to.be.rejectedWith(InvalidArgumentError, /with valid JSON/i);
+            (err: unknown) => err instanceof InvalidArgumentError && /with valid JSON/i.test((err as Error).message),
+          );
         });
       });
 
       describe('when a non-plain-object `newSettings` param is provided', function () {
         it('should reject with an InvalidArgumentError', async function () {
           const deviceSettings = new DeviceSettings();
-          await expect(deviceSettings.update(null as unknown as Record<string, unknown>)).to.be.rejectedWith(
-            InvalidArgumentError,
-            /with valid JSON/i,
+          await assert.rejects(
+            deviceSettings.update(null as unknown as Record<string, unknown>),
+            (err: unknown) => err instanceof InvalidArgumentError && /with valid JSON/i.test((err as Error).message),
           );
         });
       });
@@ -77,9 +75,9 @@ describe('DeviceSettings', function () {
 
         it('should reject with an InvalidArgumentError', async function () {
           const deviceSettings = new DeviceSettings();
-          await expect(deviceSettings.update({stuff: 'things'})).to.be.rejectedWith(
-            InvalidArgumentError,
-            /object size exceeds/i,
+          await assert.rejects(
+            deviceSettings.update({stuff: 'things'}),
+            (err: unknown) => err instanceof InvalidArgumentError && /object size exceeds/i.test((err as Error).message),
           );
         });
       });
@@ -98,7 +96,7 @@ describe('DeviceSettings', function () {
               onSettingsUpdate as SettingsUpdateListener<Record<string, unknown>>,
             );
             await deviceSettings.update({stuff: 'things'});
-            expect(onSettingsUpdate.called).to.be.false;
+            assert.strictEqual(onSettingsUpdate.called, false);
           });
         });
 
@@ -109,7 +107,7 @@ describe('DeviceSettings', function () {
               onSettingsUpdate as SettingsUpdateListener<Record<string, unknown>>,
             );
             await deviceSettings.update({stuff: 'things'});
-            expect(onSettingsUpdate.calledOnceWithExactly('stuff', 'things', undefined)).to.be.true;
+            assert.strictEqual(onSettingsUpdate.calledOnceWithExactly('stuff', 'things', undefined), true);
           });
         });
       });

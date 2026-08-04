@@ -1,3 +1,4 @@
+import assert from 'node:assert/strict';
 import https from 'node:https';
 import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
 
@@ -5,15 +6,11 @@ import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
 import type {AppiumServer, ServerArgs} from '@appium/types';
 import {sleep} from 'asyncbox';
 import axios from 'axios';
-import chai, {expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import type {Application, Request, Response} from 'express';
 import {createSandbox} from 'sinon';
 import {exec} from 'teen_process';
 
 import {server} from '../../../lib';
-
-chai.use(chaiAsPromised);
 
 async function generateCertificate(certPath: string, keyPath: string): Promise<void> {
   await exec('openssl', [
@@ -76,18 +73,19 @@ describe('server', function () {
 
   it('should start up with our middleware', async function () {
     const {data} = await axios.get(`http://${TEST_HOST}:${port}/`);
-    expect(data).to.eql('Hello World!');
+    assert.deepStrictEqual(data, 'Hello World!');
   });
   it('should catch errors in the catchall', async function () {
-    await expect(axios.get(`http://${TEST_HOST}:${port}/error`)).to.be.rejected;
+    await assert.rejects(axios.get(`http://${TEST_HOST}:${port}/error`));
   });
   it('should error if we try to start again on a port that is used', async function () {
-    await expect(
+    await assert.rejects(
       server({
         routeConfiguringFunction() {},
         port,
       }),
-    ).to.be.rejectedWith(/EADDRINUSE/);
+      /EADDRINUSE/,
+    );
   });
   it('should not wait for the server close connections before finishing closing', async function () {
     const bodyPromise = (async () => {
@@ -104,25 +102,27 @@ describe('server', function () {
     const before = Date.now();
     await hwServer.close();
     // expect slightly less than the request waited, since we paused above
-    expect(Date.now() - before).to.not.be.above(800);
+    assert.ok(Date.now() - before <= 800);
 
     await bodyPromise;
   });
   it('should error if we try to start on a bad hostname', {timeout: 60000}, async function () {
-    await expect(
+    await assert.rejects(
       server({
         routeConfiguringFunction: () => {},
         port,
         hostname: 'lolcathost',
       }),
-    ).to.be.rejectedWith(/ENOTFOUND|EADDRNOTAVAIL|EAI_AGAIN/);
-    await expect(
+      /ENOTFOUND|EADDRNOTAVAIL|EAI_AGAIN/,
+    );
+    await assert.rejects(
       server({
         routeConfiguringFunction: () => {},
         port,
         hostname: '1.1.1.1',
       }),
-    ).to.be.rejectedWith(/EADDRNOTAVAIL/);
+      /EADDRNOTAVAIL/,
+    );
   });
 });
 
@@ -174,13 +174,13 @@ describe('tls server', function () {
 
   it('should start up with our middleware', {skip}, async function () {
     const {data} = await looseClient.get(`https://${TEST_HOST}:${port}/`);
-    expect(data).to.eql('Hello World!');
+    assert.deepStrictEqual(data, 'Hello World!');
   });
   it('should throw if untrusted', {skip}, async function () {
-    await expect(axios.get(`https://${TEST_HOST}:${port}/`)).to.eventually.be.rejected;
+    await assert.rejects(axios.get(`https://${TEST_HOST}:${port}/`));
   });
   it('should throw if not secure', {skip}, async function () {
-    await expect(axios.get(`http://${TEST_HOST}:${port}/`)).to.eventually.be.rejected;
+    await assert.rejects(axios.get(`http://${TEST_HOST}:${port}/`));
   });
 });
 
@@ -225,14 +225,14 @@ describe('server plugins', function () {
       ],
     })) as ServerWithPlugins;
     let {data} = await axios.get(`http://${TEST_HOST}:${port}/plugin1`);
-    expect(data).to.eql('res from plugin1 route');
+    assert.deepStrictEqual(data, 'res from plugin1 route');
     ({data} = await axios.get(`http://${TEST_HOST}:${port}/plugin2`));
-    expect(data).to.eql('res from plugin2 route');
-    expect(hwServer._updated_plugin1).to.be.true;
-    expect(hwServer._updated_plugin2).to.be.true;
+    assert.deepStrictEqual(data, 'res from plugin2 route');
+    assert.strictEqual(hwServer._updated_plugin1, true);
+    assert.strictEqual(hwServer._updated_plugin2, true);
   });
   it('should pass on errors from the plugin updateServer method', async function () {
-    await expect(
+    await assert.rejects(
       server({
         routeConfiguringFunction: () => {},
         port,
@@ -242,6 +242,7 @@ describe('server plugins', function () {
           },
         ],
       }),
-    ).to.eventually.be.rejectedWith(/ugh/);
+      /ugh/,
+    );
   });
 });

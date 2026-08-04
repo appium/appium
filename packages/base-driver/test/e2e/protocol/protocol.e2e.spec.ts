@@ -1,10 +1,9 @@
+import assert from 'node:assert/strict';
 import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
 
 import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
 import type {RouteMatcher} from '@appium/types';
 import axios from 'axios';
-import chai, {expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import type {Application, Request, Response} from 'express';
 import {StatusCodes as HTTPStatusCodes} from 'http-status-codes';
 import {createSandbox} from 'sinon';
@@ -14,8 +13,6 @@ import {MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY} from '../../../lib/constants';
 import {createServer} from '../../helpers';
 import {FakeDriver} from './fake-driver';
 import {createProxyServer} from './helpers';
-
-chai.use(chaiAsPromised);
 
 describe('Protocol', function () {
   let sandbox: sinon.SinonSandbox;
@@ -31,7 +28,7 @@ describe('Protocol', function () {
   describe('direct to driver', function () {
     const d = new FakeDriver();
     it('should return response values directly from the driver', async function () {
-      expect(await d.setUrl('http://google.com')).to.contain('google');
+      assert.ok((await d.setUrl('http://google.com')).includes('google'));
     });
   });
 
@@ -59,7 +56,7 @@ describe('Protocol', function () {
         method: 'POST',
         data: {url: 'http://google.com'},
       });
-      expect(data).to.eql({
+      assert.deepStrictEqual(data, {
         value: 'Navigated to: http://google.com',
       });
     });
@@ -70,7 +67,7 @@ describe('Protocol', function () {
         method: 'POST',
         data: {url: 'http://google.com'},
       });
-      expect(data).to.eql({
+      assert.deepStrictEqual(data, {
         value: 'Navigated to: http://google.com',
       });
     });
@@ -86,7 +83,7 @@ describe('Protocol', function () {
         method: 'POST',
         data: reqData.toString(),
       });
-      expect(data).to.eql({
+      assert.deepStrictEqual(data, {
         value: 'Navigated to: http://google.com',
       });
     });
@@ -97,7 +94,7 @@ describe('Protocol', function () {
         method: 'POST',
         data: {},
       });
-      expect(data).to.eql({
+      assert.deepStrictEqual(data, {
         value: 'foo',
       });
     });
@@ -108,14 +105,14 @@ describe('Protocol', function () {
         method: 'POST',
         data: {},
       });
-      expect(data.value).to.eql(['bar', 'foo']);
+      assert.deepStrictEqual(data.value, ['bar', 'foo']);
     });
 
     it('should include url req params in the order: custom, element, session', async function () {
       const {data} = await axios({
         url: `${baseUrl}/session/foo/element/bar/attribute/baz`,
       });
-      expect(data.value).to.eql(['baz', 'bar', 'foo']);
+      assert.deepStrictEqual(data.value, ['baz', 'bar', 'foo']);
     });
 
     it('should respond with 400 Bad Request if parameters missing', async function () {
@@ -125,35 +122,37 @@ describe('Protocol', function () {
         data: {},
         validateStatus: null,
       });
-      expect(status).to.equal(400);
-      expect(JSON.stringify(data)).to.contain('url');
+      assert.strictEqual(status, 400);
+      assert.ok(JSON.stringify(data).includes('url'));
     });
 
     it('should reject requests with a badly formatted body and not crash', async function () {
-      await expect(
+      await assert.rejects(
         axios({
           url: `${baseUrl}/session/foo/url`,
           method: 'POST',
           data: 'oh hello',
         }),
-      ).to.be.rejectedWith(Error);
+        Error,
+      );
 
       const {data} = await axios({
         url: `${baseUrl}/session/foo/url`,
         method: 'POST',
         data: {url: 'http://google.com'},
       });
-      expect(data).to.eql({
+      assert.deepStrictEqual(data, {
         value: 'Navigated to: http://google.com',
       });
     });
 
     it('should get 404 for bad routes', async function () {
-      await expect(
+      await assert.rejects(
         axios({
           url: `${baseUrl}/blargimarg`,
         }),
-      ).to.be.rejectedWith(/404/);
+        /404/,
+      );
     });
 
     it('4xx responses should have content-type of application/json', async function () {
@@ -162,7 +161,7 @@ describe('Protocol', function () {
         validateStatus: null,
       });
 
-      expect(headers['content-type']).to.include('application/json');
+      assert.ok(String(headers['content-type']).includes('application/json'));
     });
 
     it('should return unknown command for routes without a command mapping', async function () {
@@ -171,9 +170,9 @@ describe('Protocol', function () {
         validateStatus: null,
       });
 
-      expect(status).to.equal(404);
-      expect(data.value.error).to.eql('unknown command');
-      expect(data.value.message).to.match(/The requested resource could not be found/);
+      assert.strictEqual(status, 404);
+      assert.deepStrictEqual(data.value.error, 'unknown command');
+      assert.match(data.value.message, /The requested resource could not be found/);
     });
 
     it('should return unknown command for ignored legacy routes', async function () {
@@ -184,19 +183,20 @@ describe('Protocol', function () {
         data: {},
       });
 
-      expect(status).to.equal(404);
-      expect(data.value.error).to.eql('unknown command');
-      expect(data.value.message).to.match(/The requested resource could not be found/);
+      assert.strictEqual(status, 404);
+      assert.deepStrictEqual(data.value.error, 'unknown command');
+      assert.match(data.value.message, /The requested resource could not be found/);
     });
 
     it('should get 400 for bad parameters', async function () {
-      await expect(
+      await assert.rejects(
         axios({
           url: `${baseUrl}/session/foo/url`,
           method: 'POST',
           data: {},
         }),
-      ).to.be.rejectedWith(/400/);
+        /400/,
+      );
     });
 
     it('should ignore special extra payload params in the right contexts', async function () {
@@ -206,13 +206,14 @@ describe('Protocol', function () {
         data: {id: 'baz', sessionId: 'lol', value: ['a'], text: 'bar'},
       });
 
-      await expect(
+      await assert.rejects(
         axios({
           url: `${baseUrl}/session/foo/element/bar/value`,
           method: 'POST',
           data: {id: 'baz'},
         }),
-      ).to.be.rejectedWith(/400/);
+        /400/,
+      );
 
       // make sure adding the optional 'id' doesn't clobber a route where we
       // have an actual required 'id'
@@ -229,21 +230,22 @@ describe('Protocol', function () {
         method: 'GET',
         validateStatus: null,
       });
-      expect(status).to.equal(500);
-      expect(data.value.error).to.eql('unknown error');
-      expect(data.value.message).to.eql('Mishandled Driver Error');
-      expect(data.sessionId).to.not.exist;
+      assert.strictEqual(status, 500);
+      assert.deepStrictEqual(data.value.error, 'unknown error');
+      assert.deepStrictEqual(data.value.message, 'Mishandled Driver Error');
+      assert.ok(!data.sessionId);
     });
 
     describe('w3c sendkeys migration', function () {
       it('should not accept value for sendkeys', async function () {
-        await expect(
+        await assert.rejects(
           axios({
             url: `${baseUrl}/session/foo/element/bar/value`,
             method: 'POST',
             data: {value: 'text to type'},
           }),
-        ).to.be.rejectedWith(/400/);
+          /400/,
+        );
       });
       it('should accept text for sendkeys', async function () {
         const {data} = await axios({
@@ -251,7 +253,7 @@ describe('Protocol', function () {
           method: 'POST',
           data: {text: 'text to type'},
         });
-        expect(data.value).to.eql(['text to type', 'bar']);
+        assert.deepStrictEqual(data.value, ['text to type', 'bar']);
       });
       it('should accept value and text for sendkeys, and use text', async function () {
         const {data} = await axios({
@@ -259,7 +261,7 @@ describe('Protocol', function () {
           method: 'POST',
           data: {value: 'text to ignore', text: 'text to type'},
         });
-        expect(data.value).to.eql(['text to type', 'bar']);
+        assert.deepStrictEqual(data.value, ['text to type', 'bar']);
       });
     });
 
@@ -277,13 +279,14 @@ describe('Protocol', function () {
 
       it('should not allow create session with desired caps (MJSONWP)', async function () {
         const desiredCapabilities = {a: 'b'};
-        await expect(
+        await assert.rejects(
           axios({
             url: `${baseUrl}/session`,
             method: 'POST',
             data: {desiredCapabilities},
           }),
-        ).to.be.rejectedWith(/500/);
+          /500/,
+        );
       });
       it('should allow create session with capabilities (W3C)', async function () {
         const w3cCapabilities = {alwaysMatch: {'appium:e': 'f'}};
@@ -292,10 +295,10 @@ describe('Protocol', function () {
           method: 'POST',
           data: {capabilities: w3cCapabilities},
         });
-        expect(data.status).to.not.exist;
-        expect(data.sessionId).to.not.exist;
-        expect(data.value.capabilities).to.eql(w3cCapabilities);
-        expect(data.value.sessionId).to.exist;
+        assert.ok(!data.status);
+        assert.ok(!data.sessionId);
+        assert.deepStrictEqual(data.value.capabilities, w3cCapabilities);
+        assert.ok(data.value.sessionId);
         sessionId = data.value.sessionId;
       });
 
@@ -332,13 +335,13 @@ describe('Protocol', function () {
               bad: 'params',
             },
           });
-          expect(status).to.equal(400);
+          assert.strictEqual(status, 400);
 
           const {error: w3cError, message, stacktrace} = data.value;
-          expect(message).to.match(/following required parameter/);
-          expect(stacktrace).to.match(/protocol\.(js|ts)/);
-          expect(w3cError).to.be.a('string');
-          expect(w3cError).to.equal(errors.InvalidArgumentError.error());
+          assert.match(message, /following required parameter/);
+          assert.match(stacktrace, /protocol\.(js|ts)/);
+          assert.strictEqual(typeof w3cError, 'string');
+          assert.strictEqual(w3cError, errors.InvalidArgumentError.error());
         });
 
         it(`should throw 405 exception if the command hasn't been implemented yet`, async function () {
@@ -350,14 +353,14 @@ describe('Protocol', function () {
               actions: [],
             },
           });
-          expect(status).to.equal(405);
+          assert.strictEqual(status, 405);
 
           const {error: w3cError, message, stacktrace} = data.value;
-          expect(message).to.match(/Method has not yet been implemented/);
-          expect(stacktrace).to.match(/protocol\.(js|ts)/);
-          expect(w3cError).to.be.a('string');
-          expect(w3cError).to.equal(errors.NotYetImplementedError.error());
-          expect(message).to.match(/Method has not yet been implemented/);
+          assert.match(message, /Method has not yet been implemented/);
+          assert.match(stacktrace, /protocol\.(js|ts)/);
+          assert.strictEqual(typeof w3cError, 'string');
+          assert.strictEqual(w3cError, errors.NotYetImplementedError.error());
+          assert.match(message, /Method has not yet been implemented/);
         });
 
         it(`should throw 500 Unknown Error if the command throws an unexpected exception`, async function () {
@@ -372,13 +375,13 @@ describe('Protocol', function () {
               actions: [],
             },
           });
-          expect(status).to.equal(500);
+          assert.strictEqual(status, 500);
 
           const {error: w3cError, message, stacktrace} = data.value;
-          expect(stacktrace).to.match(/protocol\.(js|ts)/);
-          expect(w3cError).to.be.a('string');
-          expect(w3cError).to.equal(errors.UnknownError.error());
-          expect(message).to.match(/Didn't work/);
+          assert.match(stacktrace, /protocol\.(js|ts)/);
+          assert.strictEqual(typeof w3cError, 'string');
+          assert.strictEqual(w3cError, errors.UnknownError.error());
+          assert.match(message, /Didn't work/);
 
           delete (driver as any).performActions;
         });
@@ -418,7 +421,7 @@ describe('Protocol', function () {
             using: 'whatever',
             value: 'whatever',
           });
-          expect(data.value).to.eql(expectedValue);
+          assert.deepStrictEqual(data.value, expectedValue);
           driver.findElements = findElementsBackup;
         });
 
@@ -434,13 +437,13 @@ describe('Protocol', function () {
               url: 'https://example.com/',
             },
           });
-          expect(status).to.equal(408);
+          assert.strictEqual(status, 408);
 
           const {error: w3cError, message, stacktrace} = data.value;
-          expect(stacktrace).to.match(/protocol\.(js|ts)/);
-          expect(w3cError).to.be.a('string');
-          expect(w3cError).to.equal(errors.TimeoutError.error());
-          expect(message).to.match(/An operation did not complete before its timeout expired/);
+          assert.match(stacktrace, /protocol\.(js|ts)/);
+          assert.strictEqual(typeof w3cError, 'string');
+          assert.strictEqual(w3cError, errors.TimeoutError.error());
+          assert.match(message, /An operation did not complete before its timeout expired/);
 
           setUrlStub.restore();
         });
@@ -452,9 +455,9 @@ describe('Protocol', function () {
               actions: ['a', 'b', 'c'],
             })
           ).data;
-          expect(sessionId).to.not.exist;
-          expect(status).to.not.exist;
-          expect(value).to.equal('It works abc');
+          assert.ok(!sessionId);
+          assert.ok(!status);
+          assert.strictEqual(value, 'It works abc');
           delete (driver as any).performActions;
         });
 
@@ -497,9 +500,9 @@ describe('Protocol', function () {
                 actions: [1, 2, 3],
               })
             ).data;
-            expect(value).to.eql([1, 2, 3]);
-            expect(status).to.not.exist;
-            expect(sessionId).to.not.exist;
+            assert.deepStrictEqual(value, [1, 2, 3]);
+            assert.ok(!status);
+            assert.ok(!sessionId);
           });
 
           it('should return error if a proxied request returns a MJSONWP error response', async function () {
@@ -518,8 +521,8 @@ describe('Protocol', function () {
                 actions: [1, 2, 3],
               },
             });
-            expect(status).to.equal(HTTPStatusCodes.NOT_FOUND);
-            expect(JSON.stringify(data)).to.match(/A problem occurred/);
+            assert.strictEqual(status, HTTPStatusCodes.NOT_FOUND);
+            assert.match(JSON.stringify(data), /A problem occurred/);
           });
 
           it('should return W3C error if a proxied request returns a W3C error response', async function () {
@@ -538,11 +541,11 @@ describe('Protocol', function () {
               validateStatus: null,
               data: {actions: [1, 2, 3]},
             });
-            expect(status).to.equal(500);
+            assert.strictEqual(status, 500);
             const {error: w3cError, message: errMessage, stacktrace} = data.value;
-            expect(w3cError).to.equal('unknown error');
-            expect(stacktrace).to.match(/Some error occurred/);
-            expect(errMessage).to.equal('Some error occurred');
+            assert.strictEqual(w3cError, 'unknown error');
+            assert.match(stacktrace, /Some error occurred/);
+            assert.strictEqual(errMessage, 'Some error occurred');
           });
 
           it('should return error if a proxied request returns a MJSONWP error response but HTTP status code is 200', async function () {
@@ -561,11 +564,11 @@ describe('Protocol', function () {
                 actions: [1, 2, 3],
               },
             });
-            expect(status).to.equal(HTTPStatusCodes.NOT_FOUND);
+            assert.strictEqual(status, HTTPStatusCodes.NOT_FOUND);
             const {error: w3cError, message: errMessage, stacktrace} = data.value;
-            expect(w3cError).to.equal('no such element');
-            expect(errMessage).to.match(/A problem occurred/);
-            expect(stacktrace).to.exist;
+            assert.strictEqual(w3cError, 'no such element');
+            assert.match(errMessage, /A problem occurred/);
+            assert.ok(stacktrace);
           });
 
           it('should return error if a proxied request returns a W3C error response', async function () {
@@ -586,10 +589,10 @@ describe('Protocol', function () {
                 actions: [1, 2, 3],
               },
             });
-            expect(status).to.equal(HTTPStatusCodes.NOT_FOUND);
+            assert.strictEqual(status, HTTPStatusCodes.NOT_FOUND);
             const {error: w3cError, stacktrace} = data.value;
-            expect(w3cError).to.equal('no such element');
-            expect(stacktrace).to.match(/arbitrary stacktrace/);
+            assert.strictEqual(w3cError, 'no such element');
+            assert.match(stacktrace, /arbitrary stacktrace/);
           });
 
           it('should return an error if a proxied request returns a W3C error response', async function () {
@@ -611,10 +614,10 @@ describe('Protocol', function () {
                 actions: [1, 2, 3],
               },
             });
-            expect(status).to.equal(HTTPStatusCodes.INTERNAL_SERVER_ERROR);
+            assert.strictEqual(status, HTTPStatusCodes.INTERNAL_SERVER_ERROR);
             const {error: w3cError, stacktrace} = data.value;
-            expect(w3cError).to.equal('unknown error');
-            expect(stacktrace).to.match(/arbitrary stacktrace/);
+            assert.strictEqual(w3cError, 'unknown error');
+            assert.match(stacktrace, /arbitrary stacktrace/);
           });
         });
       });
@@ -627,9 +630,9 @@ describe('Protocol', function () {
         validateStatus: null,
       });
 
-      expect(status).to.equal(404);
-      expect(data.value.error).to.eql('invalid session id');
-      expect(data.value.message).to.eql('A session is either terminated or not started');
+      assert.strictEqual(status, 404);
+      assert.deepStrictEqual(data.value.error, 'invalid session id');
+      assert.deepStrictEqual(data.value.message, 'A session is either terminated or not started');
     });
   });
 
@@ -665,7 +668,7 @@ describe('Protocol', function () {
         validateStatus: null,
       });
 
-      expect(data.sessionId).to.not.exist;
+      assert.ok(!data.sessionId);
     });
 
     it('should return a new session ID on create', async function () {
@@ -681,9 +684,9 @@ describe('Protocol', function () {
       });
 
       try {
-        expect(data.value.sessionId).to.exist;
-        expect(data.value.sessionId.indexOf('fakeSession_')).to.equal(0);
-        expect(data.value.capabilities).to.eql({
+        assert.ok(data.value.sessionId);
+        assert.strictEqual(data.value.sessionId.indexOf('fakeSession_'), 0);
+        assert.deepStrictEqual(data.value.capabilities, {
           alwaysMatch: {'appium:greeting': 'hello'},
           firstMatch: [{}],
         });
@@ -729,9 +732,12 @@ describe('Protocol', function () {
         data: {url: 'http://google.com'},
       });
 
-      expect(status).to.equal(500);
-      expect(data.value.error).to.eql('unknown error');
-      expect(data.value.message).to.eql('Trying to proxy to a server but the driver is unable to proxy');
+      assert.strictEqual(status, 500);
+      assert.deepStrictEqual(data.value.error, 'unknown error');
+      assert.deepStrictEqual(
+        data.value.message,
+        'Trying to proxy to a server but the driver is unable to proxy',
+      );
     });
 
     it('should pass on any errors in proxying', async function () {
@@ -745,9 +751,9 @@ describe('Protocol', function () {
         data: {url: 'http://google.com'},
       });
 
-      expect(status).to.equal(500);
-      expect(data.value.error).to.eql('unknown error');
-      expect(data.value.message).to.match(/Proxy error: foo/);
+      assert.strictEqual(status, 500);
+      assert.deepStrictEqual(data.value.error, 'unknown error');
+      assert.match(data.value.message, /Proxy error: foo/);
     });
 
     it('should able to throw ProxyRequestError in proxying', async function () {
@@ -766,9 +772,9 @@ describe('Protocol', function () {
         data: {url: 'http://google.com'},
       });
 
-      expect(status).to.equal(500);
-      expect(data.value.error).to.eql('unknown error');
-      expect(data.value.message).to.eql('No such context found.');
+      assert.strictEqual(status, 500);
+      assert.deepStrictEqual(data.value.error, 'unknown error');
+      assert.deepStrictEqual(data.value.message, 'No such context found.');
     });
 
     it('should let the proxy handle req/res', async function () {
@@ -781,8 +787,8 @@ describe('Protocol', function () {
         data: {url: 'http://google.com'},
       });
 
-      expect(status).to.equal(200);
-      expect(data).to.eql({custom: 'data'});
+      assert.strictEqual(status, 200);
+      assert.deepStrictEqual(data, {custom: 'data'});
     });
 
     it('should avoid jsonwp proxying when path matches avoidance list', async function () {
@@ -793,8 +799,8 @@ describe('Protocol', function () {
         data: {url: 'http://google.com'},
       });
 
-      expect(status).to.equal(200);
-      expect(data).to.eql({
+      assert.strictEqual(status, 200);
+      assert.deepStrictEqual(data, {
         value: 'Navigated to: http://google.com',
       });
     });
@@ -809,8 +815,8 @@ describe('Protocol', function () {
           data: {url: 'http://google.com'},
         });
 
-        expect(status).to.equal(500);
-        expect(data.value.message).to.contain('roxy');
+        assert.strictEqual(status, 500);
+        assert.ok(data.value.message.includes('roxy'));
       }
       const lists = ['foo', [['foo']], [['BAR', /lol/]], [['GET', 'foo']]];
       for (const list of lists) {
@@ -825,8 +831,8 @@ describe('Protocol', function () {
         url: `${baseUrl}/status`,
       });
 
-      expect(status).to.equal(200);
-      expect(data).to.eql({
+      assert.strictEqual(status, 200);
+      assert.deepStrictEqual(data, {
         value: "I'm fine",
       });
     });
@@ -834,12 +840,12 @@ describe('Protocol', function () {
     it('should avoid proxying deleteSession commands', async function () {
       driver.getProxyAvoidList = () => [['POST', new RegExp('')]];
 
-      expect(driver.sessionId).to.equal(sessionId);
+      assert.strictEqual(driver.sessionId, sessionId);
       const {status} = await axios.delete(`${baseUrl}/session/${sessionId}`);
 
-      expect(status).to.equal(200);
-      expect(driver.sessionId).to.not.exist;
-      expect(driver.jwpProxyActive).to.be.false;
+      assert.strictEqual(status, 200);
+      assert.ok(!driver.sessionId);
+      assert.strictEqual(driver.jwpProxyActive, false);
     });
 
     it('should avoid proxying when command spec specifies neverProxy', async function () {
@@ -848,8 +854,8 @@ describe('Protocol', function () {
         method: 'GET',
       });
 
-      expect(status).to.equal(200);
-      expect(data).to.eql({
+      assert.strictEqual(status, 200);
+      assert.deepStrictEqual(data, {
         value: 'This was not proxied',
       });
     });

@@ -1,7 +1,7 @@
+import assert from 'node:assert/strict';
 import path from 'node:path';
 import {describe, it} from 'node:test';
 
-import {expect} from 'chai';
 import {StatusCodes as HTTPStatusCodes} from 'http-status-codes';
 
 import {errorFromMJSONWPStatusCode, errorFromW3CJsonCode, errors, isErrorType} from '../../../lib';
@@ -196,7 +196,7 @@ const errorsList: ErrorListItem[] = [
   {
     errorName: 'NoSuchCookieError',
     errorMsg:
-      'No cookie matching the given path name was found amongst the associated cookies of the current browsing context\u2019s active document',
+      'No cookie matching the given path name was found amongst the associated cookies of the current browsing context’s active document',
     error: 'no such cookie',
   },
   {
@@ -229,11 +229,11 @@ describe('errors', function () {
       const ErrClass = (errors as any)[error.errorName];
       const errInstance = new ErrClass();
       if (error.errorCode) {
-        expect(errInstance).to.have.property('jsonwpCode', error.errorCode);
+        assert.strictEqual(errInstance.jsonwpCode, error.errorCode);
       } else {
-        expect(errInstance).to.have.property('error', error.error);
+        assert.strictEqual(errInstance.error, error.error);
       }
-      expect(errInstance).to.have.property('message', error.errorMsg);
+      assert.strictEqual(errInstance.message, error.errorMsg);
     });
   }
 });
@@ -243,22 +243,25 @@ describe('errorFromMJSONWPStatusCode', function () {
     if (error.errorName !== 'NotYetImplementedError') {
       it((error.errorCode ?? error.errorName) + ' should return correct error', function () {
         if (error.errorCode) {
-          expect(errorFromMJSONWPStatusCode(error.errorCode)).to.have.property('jsonwpCode', error.errorCode);
-          expect(errorFromMJSONWPStatusCode(error.errorCode)).to.have.property('message', error.errorMsg);
+          assert.strictEqual(errorFromMJSONWPStatusCode(error.errorCode).jsonwpCode, error.errorCode);
+          assert.strictEqual(errorFromMJSONWPStatusCode(error.errorCode).message, error.errorMsg);
           if (![13, 33].includes(error.errorCode)) {
-            expect(errorFromMJSONWPStatusCode(error.errorCode, 'abcd')).to.have.property('jsonwpCode', error.errorCode);
-            expect(errorFromMJSONWPStatusCode(error.errorCode, 'abcd')).to.have.property('message', 'abcd');
+            assert.strictEqual(errorFromMJSONWPStatusCode(error.errorCode, 'abcd').jsonwpCode, error.errorCode);
+            assert.strictEqual(errorFromMJSONWPStatusCode(error.errorCode, 'abcd').message, 'abcd');
           }
         } else {
-          expect(isErrorType(errorFromMJSONWPStatusCode((error as any).errorCode), errors.UnknownError)).to.be.true;
+          assert.strictEqual(
+            isErrorType(errorFromMJSONWPStatusCode((error as any).errorCode), errors.UnknownError),
+            true,
+          );
         }
       });
     }
   }
   it('should throw unknown error for unknown code', function () {
-    expect(errorFromMJSONWPStatusCode(99)).to.have.property('jsonwpCode', 13);
-    expect(errorFromMJSONWPStatusCode(99)).to.have.property(
-      'message',
+    assert.strictEqual(errorFromMJSONWPStatusCode(99).jsonwpCode, 13);
+    assert.strictEqual(
+      errorFromMJSONWPStatusCode(99).message,
       'An unknown server-side error occurred while processing the command.',
     );
   });
@@ -271,22 +274,25 @@ describe('errorFromW3CJsonCode', function () {
         const w3cError = error.error;
         if (w3cError) {
           const err = errorFromW3CJsonCode(w3cError, error.errorMsg);
-          expect(err.error).to.equal(error.error);
-          expect(err.message).to.include(error.errorMsg);
+          assert.strictEqual(err.error, error.error);
+          assert.ok(err.message.includes(error.errorMsg));
         } else {
-          expect(isErrorType(errorFromW3CJsonCode(error.error ?? 'unknown error', error.errorMsg), errors.UnknownError))
-            .to.be.true;
+          assert.strictEqual(
+            isErrorType(errorFromW3CJsonCode(error.error ?? 'unknown error', error.errorMsg), errors.UnknownError),
+            true,
+          );
         }
       });
     }
   }
   it('should parse unknown errors', function () {
     const msg = 'An unknown server-side error occurred while processing the command.';
-    expect(isErrorType(errorFromW3CJsonCode('not a real error code', msg), errors.UnknownError)).to.be.true;
-    expect(errorFromW3CJsonCode('not a real error code', msg).message).to.match(
+    assert.strictEqual(isErrorType(errorFromW3CJsonCode('not a real error code', msg), errors.UnknownError), true);
+    assert.match(
+      errorFromW3CJsonCode('not a real error code', msg).message,
       /An unknown server-side error occurred/,
     );
-    expect(errorFromW3CJsonCode('not a real error code', msg).error).to.equal('unknown error');
+    assert.strictEqual(errorFromW3CJsonCode('not a real error code', msg).error, 'unknown error');
   });
 });
 
@@ -316,10 +322,10 @@ describe('w3c Status Codes', function () {
     ];
 
     for (const [errorName, expectedErrorCode] of non400Errors) {
-      expect((errors as any)[errorName]).to.exist;
-      expect(new (errors as any)[errorName]()).to.have.property('w3cStatus', expectedErrorCode);
+      assert.ok((errors as any)[errorName]);
+      assert.strictEqual(new (errors as any)[errorName]().w3cStatus, expectedErrorCode);
     }
-    expect(new errors.ElementClickInterceptedError()).to.have.property('w3cStatus', 400);
+    assert.strictEqual(new errors.ElementClickInterceptedError().w3cStatus, 400);
   });
 });
 
@@ -329,41 +335,41 @@ describe('.getResponseForW3CError', function () {
       throw new Error('Some random error');
     } catch (e) {
       const [httpStatus, httpResponseBody] = getResponseForW3CError(e as Error);
-      expect(httpStatus).to.equal(500);
+      assert.strictEqual(httpStatus, 500);
       const {error, message, stacktrace} = httpResponseBody.value;
-      expect(message).to.match(/Some random error/);
-      expect(error).to.equal('unknown error');
-      expect(stacktrace).to.match(/caused by/);
-      expect(stacktrace).to.match(/Some random error/);
-      expect(stacktrace).to.contain(basename);
+      assert.match(message!, /Some random error/);
+      assert.strictEqual(error, 'unknown error');
+      assert.match(stacktrace!, /caused by/);
+      assert.match(stacktrace!, /Some random error/);
+      assert.ok(stacktrace!.includes(basename));
     }
   });
   it('should return an error, message and stacktrace for a NoSuchElementError', function () {
     const noSuchElementError = new errors.NoSuchElementError('specific error message');
     const [httpStatus, httpResponseBody] = getResponseForW3CError(noSuchElementError);
-    expect(httpStatus).to.equal(404);
+    assert.strictEqual(httpStatus, 404);
     const {error, message, stacktrace} = httpResponseBody.value;
-    expect(error).to.equal('no such element');
-    expect(message).to.match(/specific error message/);
-    expect(stacktrace).to.contain(basename);
+    assert.strictEqual(error, 'no such element');
+    assert.match(message!, /specific error message/);
+    assert.ok(stacktrace!.includes(basename));
   });
   it('should handle BadParametersError', function () {
     const badParamsError = new BadParametersError({required: ['foo']}, ['bar']);
     const [httpStatus, httpResponseBody] = getResponseForW3CError(badParamsError);
-    expect(httpStatus).to.equal(400);
+    assert.strictEqual(httpStatus, 400);
     const {error, message, stacktrace} = httpResponseBody.value;
-    expect(error).to.equal('invalid argument');
-    expect(message).to.match(/foo/);
-    expect(message).to.match(/bar/);
-    expect(stacktrace).to.contain(basename);
+    assert.strictEqual(error, 'invalid argument');
+    assert.match(message!, /foo/);
+    assert.match(message!, /bar/);
+    assert.ok(stacktrace!.includes(basename));
   });
   it('should translate JSONWP errors', function () {
     const [httpStatus, httpResponseBody] = getResponseForW3CError(new errors.NoSuchElementError('My custom message'));
-    expect(httpStatus).to.equal(404);
+    assert.strictEqual(httpStatus, 404);
     const {error, message, stacktrace} = httpResponseBody.value;
-    expect(message).to.equal('My custom message');
-    expect(error).to.equal('no such element');
-    expect(stacktrace).to.exist;
+    assert.strictEqual(message, 'My custom message');
+    assert.strictEqual(error, 'no such element');
+    assert.ok(stacktrace);
   });
 });
 
@@ -374,21 +380,21 @@ describe('.getActualError', function () {
         value: 'does not matter',
         status: 7,
       }).getActualError();
-      expect(isErrorType(actualError, errors.NoSuchElementError)).to.be.true;
+      assert.strictEqual(isErrorType(actualError, errors.NoSuchElementError), true);
     });
     it('should map a status code 10, StaleElementReferenceError', function () {
       const actualError = new errors.ProxyRequestError('Error message does not matter', {
         value: 'Does not matter',
         status: 10,
       }).getActualError();
-      expect(isErrorType(actualError, errors.StaleElementReferenceError)).to.be.true;
+      assert.strictEqual(isErrorType(actualError, errors.StaleElementReferenceError), true);
     });
     it('should map an unknown error to UnknownError', function () {
       const actualError = new errors.ProxyRequestError('Error message does not matter', {
         value: 'Does not matter',
         status: -100,
       }).getActualError();
-      expect(isErrorType(actualError, errors.UnknownError)).to.be.true;
+      assert.strictEqual(isErrorType(actualError, errors.UnknownError), true);
     });
     it('should parse a JSON string', function () {
       const actualError = new errors.ProxyRequestError(
@@ -398,7 +404,7 @@ describe('.getActualError', function () {
           status: -100,
         }),
       ).getActualError();
-      expect(isErrorType(actualError, errors.UnknownError)).to.be.true;
+      assert.strictEqual(isErrorType(actualError, errors.UnknownError), true);
     });
   });
 
@@ -413,7 +419,7 @@ describe('.getActualError', function () {
         },
         HTTPStatusCodes.NOT_FOUND,
       ).getActualError();
-      expect(isErrorType(actualError, errors.NoSuchElementError)).to.be.true;
+      assert.strictEqual(isErrorType(actualError, errors.NoSuchElementError), true);
     });
     it('should map a 400 StaleElementReferenceError', function () {
       const actualError = new errors.ProxyRequestError(
@@ -425,7 +431,7 @@ describe('.getActualError', function () {
         },
         HTTPStatusCodes.BAD_REQUEST,
       ).getActualError();
-      expect(isErrorType(actualError, errors.StaleElementReferenceError)).to.be.true;
+      assert.strictEqual(isErrorType(actualError, errors.StaleElementReferenceError), true);
     });
     it('should map an unknown error to UnknownError', function () {
       const actualError = new errors.ProxyRequestError(
@@ -437,7 +443,7 @@ describe('.getActualError', function () {
         },
         456,
       ).getActualError();
-      expect(isErrorType(actualError, errors.UnknownError)).to.be.true;
+      assert.strictEqual(isErrorType(actualError, errors.UnknownError), true);
     });
     it('should parse a JSON string', function () {
       const actualError = new errors.ProxyRequestError(
@@ -449,7 +455,7 @@ describe('.getActualError', function () {
         }),
         HTTPStatusCodes.BAD_REQUEST,
       ).getActualError();
-      expect(isErrorType(actualError, errors.StaleElementReferenceError)).to.be.true;
+      assert.strictEqual(isErrorType(actualError, errors.StaleElementReferenceError), true);
     });
   });
 });

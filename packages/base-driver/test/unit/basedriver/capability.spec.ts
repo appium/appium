@@ -1,15 +1,12 @@
+import assert from 'node:assert/strict';
 import {afterEach, beforeEach, describe, it} from 'node:test';
 
 import type {Constraints, InitialOpts, W3CCapabilities} from '@appium/types';
 import {asyncmap} from 'asyncbox';
-import chai, {expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {createSandbox} from 'sinon';
 
 import {validator} from '../../../lib/basedriver/validation';
 import {BaseDriver, errors} from '../../../lib/index';
-
-chai.use(chaiAsPromised);
 
 // TODO: we need module-level mocks for the logger
 
@@ -35,32 +32,34 @@ describe('Desired Capabilities', function () {
   });
 
   it('should require platformName and deviceName', async function () {
-    await expect(
+    await assert.rejects(
       d.createSession({
         alwaysMatch: {},
         firstMatch: [{}],
       }),
-    ).to.be.rejectedWith(errors.SessionNotCreatedError, /platformName/);
+      (err: any) => err instanceof errors.SessionNotCreatedError && /platformName/.test(err.message),
+    );
   });
 
   it('should require platformName', async function () {
-    await expect(
+    await assert.rejects(
       d.createSession({
         alwaysMatch: {},
         firstMatch: [{}],
       }),
-    ).to.be.rejectedWith(errors.SessionNotCreatedError, /platformName/);
+      (err: any) => err instanceof errors.SessionNotCreatedError && /platformName/.test(err.message),
+    );
   });
 
   it('should not care about cap order', async function () {
-    await expect(
+    await assert.doesNotReject(
       d.createSession({
         alwaysMatch: {
           platformName: 'iOS',
         },
         firstMatch: [{}],
       }),
-    ).to.be.fulfilled;
+    );
   });
 
   it('should check required caps which are added to driver', async function () {
@@ -73,14 +72,15 @@ describe('Desired Capabilities', function () {
       },
     } as Constraints;
 
-    await expect(
+    await assert.rejects(
       d.createSession({
         alwaysMatch: {
           platformName: 'iOS',
         },
         firstMatch: [{}],
       }),
-    ).to.be.rejectedWith(errors.SessionNotCreatedError, /necessary.*proper/);
+      (err: any) => err instanceof errors.SessionNotCreatedError && /necessary.*proper/.test(err.message),
+    );
   });
 
   it('should check added required caps in addition to base', async function () {
@@ -93,18 +93,19 @@ describe('Desired Capabilities', function () {
       },
     } as Constraints;
 
-    await expect(
+    await assert.rejects(
       d.createSession({
         alwaysMatch: {
           'appium:necessary': 'yup',
         },
         firstMatch: [{}],
       }),
-    ).to.be.rejectedWith(errors.SessionNotCreatedError, /platformName/);
+      (err: any) => err instanceof errors.SessionNotCreatedError && /platformName/.test(err.message),
+    );
   });
 
   it('should accept extra capabilities', async function () {
-    await expect(
+    await assert.doesNotReject(
       d.createSession({
         alwaysMatch: {
           platformName: 'iOS',
@@ -113,7 +114,7 @@ describe('Desired Capabilities', function () {
         },
         firstMatch: [{}],
       }),
-    ).to.be.fulfilled;
+    );
   });
 
   it('should log the use of extra caps', {timeout: 500}, async function () {
@@ -126,7 +127,7 @@ describe('Desired Capabilities', function () {
       firstMatch: [{}],
     });
 
-    expect(logWarnSpy.called).to.be.true;
+    assert.strictEqual(logWarnSpy.called, true);
   });
 
   it('should suggest a close known capability name for unknown caps', {timeout: 500}, async function () {
@@ -138,7 +139,7 @@ describe('Desired Capabilities', function () {
       firstMatch: [{}],
     } as unknown as TestW3CCaps);
 
-    expect(logWarnSpy.calledWith(`  noReest (did you mean 'noReset'?)`)).to.be.true;
+    assert.strictEqual(logWarnSpy.calledWith(`  noReest (did you mean 'noReset'?)`), true);
   });
 
   it(
@@ -153,18 +154,19 @@ describe('Desired Capabilities', function () {
         firstMatch: [{}],
       } as unknown as TestW3CCaps);
 
-      expect(logWarnSpy.calledWith(`  qqqqqq (did you mean`)).to.be.false;
-      expect(logWarnSpy.calledWith(`  qqqqqq`)).to.be.true;
+      assert.strictEqual(logWarnSpy.calledWith(`  qqqqqq (did you mean`), false);
+      assert.strictEqual(logWarnSpy.calledWith(`  qqqqqq`), true);
     },
   );
 
   it('should be sensitive to the case of caps', async function () {
-    await expect(
+    await assert.rejects(
       d.createSession({
         alwaysMatch: {platformname: 'iOS'},
         firstMatch: [{}],
       } as unknown as TestW3CCaps),
-    ).to.be.rejectedWith(errors.SessionNotCreatedError, /platformName/);
+      (err: any) => err instanceof errors.SessionNotCreatedError && /platformName/.test(err.message),
+    );
   });
 
   describe('boolean capabilities', function () {
@@ -173,10 +175,10 @@ describe('Desired Capabilities', function () {
         alwaysMatch: {platformName: 'iOS', 'appium:noReset': 'false'},
         firstMatch: [{}],
       } as unknown as TestW3CCaps);
-      expect(logWarnSpy.called).to.be.true;
+      assert.strictEqual(logWarnSpy.called, true);
 
       const sessionCaps = await d.getAppiumSessionCapabilities();
-      expect((sessionCaps.capabilities as Record<string, unknown>).noReset).to.eql(false);
+      assert.deepStrictEqual((sessionCaps.capabilities as Record<string, unknown>).noReset, false);
     });
 
     it('should allow a string "true"', async function () {
@@ -184,10 +186,10 @@ describe('Desired Capabilities', function () {
         alwaysMatch: {platformName: 'iOS', 'appium:noReset': 'true'},
         firstMatch: [{}],
       } as unknown as TestW3CCaps);
-      expect(logWarnSpy.called).to.be.true;
+      assert.strictEqual(logWarnSpy.called, true);
 
       const sessionCaps = await d.getAppiumSessionCapabilities();
-      expect((sessionCaps.capabilities as Record<string, unknown>).noReset).to.eql(true);
+      assert.deepStrictEqual((sessionCaps.capabilities as Record<string, unknown>).noReset, true);
     });
 
     it('should allow a string "true" in string capabilities', async function () {
@@ -195,10 +197,10 @@ describe('Desired Capabilities', function () {
         alwaysMatch: {platformName: 'iOS', 'appium:language': 'true'},
         firstMatch: [{}],
       } as unknown as TestW3CCaps);
-      expect(logWarnSpy.called).to.be.false;
+      assert.strictEqual(logWarnSpy.called, false);
 
       const sessionCaps = await d.getAppiumSessionCapabilities();
-      expect((sessionCaps.capabilities as Record<string, unknown>).language).to.eql('true');
+      assert.deepStrictEqual((sessionCaps.capabilities as Record<string, unknown>).language, 'true');
     });
   });
 
@@ -208,10 +210,10 @@ describe('Desired Capabilities', function () {
         alwaysMatch: {platformName: 'iOS', 'appium:newCommandTimeout': '1'},
         firstMatch: [{}],
       } as unknown as TestW3CCaps);
-      expect(logWarnSpy.called).to.be.true;
+      assert.strictEqual(logWarnSpy.called, true);
 
       const sessionCaps = await d.getAppiumSessionCapabilities();
-      expect((sessionCaps.capabilities as Record<string, unknown>).newCommandTimeout).to.eql(1);
+      assert.deepStrictEqual((sessionCaps.capabilities as Record<string, unknown>).newCommandTimeout, 1);
     });
 
     it('should allow a string "1.1"', async function () {
@@ -219,10 +221,10 @@ describe('Desired Capabilities', function () {
         alwaysMatch: {platformName: 'iOS', 'appium:newCommandTimeout': '1.1'},
         firstMatch: [{}],
       } as unknown as TestW3CCaps);
-      expect(logWarnSpy.called).to.be.true;
+      assert.strictEqual(logWarnSpy.called, true);
 
       const sessionCaps = await d.getAppiumSessionCapabilities();
-      expect((sessionCaps.capabilities as Record<string, unknown>).newCommandTimeout).to.eql(1.1);
+      assert.deepStrictEqual((sessionCaps.capabilities as Record<string, unknown>).newCommandTimeout, 1.1);
     });
 
     it('should allow a string "1" in string capabilities', async function () {
@@ -230,22 +232,23 @@ describe('Desired Capabilities', function () {
         alwaysMatch: {platformName: 'iOS', 'appium:language': '1'},
         firstMatch: [{}],
       } as unknown as TestW3CCaps);
-      expect(logWarnSpy.called).to.be.false;
+      assert.strictEqual(logWarnSpy.called, false);
 
       const sessionCaps = await d.getAppiumSessionCapabilities();
-      expect((sessionCaps.capabilities as Record<string, unknown>).language).to.eql('1');
+      assert.deepStrictEqual((sessionCaps.capabilities as Record<string, unknown>).language, '1');
     });
   });
 
   it('should error if objects in caps', async function () {
-    await expect(
+    await assert.rejects(
       d.createSession({
         alwaysMatch: {
           platformName: {a: 'iOS'},
         } as any,
         firstMatch: [{}],
       }),
-    ).to.be.rejectedWith(errors.SessionNotCreatedError, /platformName/i);
+      (err: any) => err instanceof errors.SessionNotCreatedError && /platformName/i.test(err.message),
+    );
   });
 
   it('should check for deprecated caps', {timeout: 500}, async function () {
@@ -263,7 +266,7 @@ describe('Desired Capabilities', function () {
       firstMatch: [{}],
     });
 
-    expect(deprecatedStub.calledWith(5, true, 'lynx-version')).to.be.true;
+    assert.strictEqual(deprecatedStub.calledWith(5, true, 'lynx-version'), true);
   });
 
   it('should not warn if deprecated=false', {timeout: 500}, async function () {
@@ -279,7 +282,7 @@ describe('Desired Capabilities', function () {
       firstMatch: [{}],
     });
 
-    expect(logWarnSpy.called).to.be.false;
+    assert.strictEqual(logWarnSpy.called, false);
   });
 
   it('should not validate against null/undefined caps', async function () {
@@ -294,7 +297,7 @@ describe('Desired Capabilities', function () {
       await d.deleteSession();
     }
 
-    await expect(
+    await assert.rejects(
       d.createSession({
         alwaysMatch: {
           platformName: 'iOS',
@@ -302,7 +305,8 @@ describe('Desired Capabilities', function () {
         },
         firstMatch: [{}],
       }),
-    ).to.be.rejectedWith(/'foo' must be of type string/);
+      /'foo' must be of type string/,
+    );
 
     try {
       await d.createSession({
@@ -330,12 +334,13 @@ describe('Desired Capabilities', function () {
     it(`should still validate ${JSON.stringify(capValue)} whose presence is required`, async function () {
       d.desiredCapConstraints = {foo: {presence: true}} as Constraints;
 
-      await expect(
+      await assert.rejects(
         d.createSession({
           alwaysMatch: {platformName: 'iOS', 'appium:foo': capValue},
           firstMatch: [{}],
         } as unknown as TestW3CCaps),
-      ).to.be.rejectedWith(/(blank|required)/);
+        /(blank|required)/,
+      );
     });
   }
 
@@ -347,8 +352,8 @@ describe('Desired Capabilities', function () {
         },
         firstMatch: [{}],
       });
-      expect(sessionId).to.exist;
-      expect(caps).to.eql({
+      assert.ok(sessionId);
+      assert.deepStrictEqual(caps, {
         platformName: 'iOS',
       });
     });
@@ -356,7 +361,7 @@ describe('Desired Capabilities', function () {
     it('should raise an error if w3c capabilities is not a plain JSON object', async function () {
       const testValues = [true, 'string', [], 100];
       await asyncmap(testValues, (val) =>
-        expect(d.createSession(val as unknown as TestW3CCaps)).to.be.rejectedWith(errors.SessionNotCreatedError),
+        assert.rejects(d.createSession(val as unknown as TestW3CCaps), errors.SessionNotCreatedError),
       );
     });
   });

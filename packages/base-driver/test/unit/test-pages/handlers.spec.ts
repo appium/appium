@@ -1,6 +1,6 @@
+import assert from 'node:assert/strict';
 import {afterEach, beforeEach, describe, it} from 'node:test';
 
-import {expect} from 'chai';
 import type {Request, Response} from 'express';
 import {createSandbox} from 'sinon';
 
@@ -23,7 +23,7 @@ describe('welcome', function () {
     };
     await welcome({} as Request, res as unknown as Response);
 
-    expect(res.send.calledOnce).to.be.true;
-    expect(res.send.args[0][0]).to.include("Let's browse!");
+    assert.strictEqual(res.send.calledOnce, true);
+    assert.ok(res.send.args[0][0].includes("Let's browse!"));
   });
 });

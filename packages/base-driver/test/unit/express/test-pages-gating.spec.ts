@@ -1,8 +1,8 @@
+import assert from 'node:assert/strict';
 import {afterEach, beforeEach, describe, it} from 'node:test';
 
 import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
 import axios from 'axios';
-import {expect} from 'chai';
 
 import {server} from '../../../lib/express/server';
 import {LEGACY_TEST_PAGES_ENV} from '../../../lib/test-pages/env';
@@ -33,7 +33,7 @@ describe('legacy test pages gating', function () {
       const {status} = await axios.get(`http://${TEST_HOST}:${port}/test/guinea-pig`, {
         validateStatus: null,
       });
-      expect(status).to.equal(404);
+      assert.strictEqual(status, 404);
     } finally {
       await hwServer.close();
     }
@@ -48,8 +48,8 @@ describe('legacy test pages gating', function () {
     });
     try {
       const {data, status} = await axios.get(`http://${TEST_HOST}:${port}/test/guinea-pig`);
-      expect(status).to.equal(200);
-      expect(data).to.include('I am some page content');
+      assert.strictEqual(status, 200);
+      assert.ok(data.includes('I am some page content'));
     } finally {
       await hwServer.close();
     }

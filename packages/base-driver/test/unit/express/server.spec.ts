@@ -1,16 +1,13 @@
+import assert from 'node:assert/strict';
 import {afterEach, before, beforeEach, describe, it} from 'node:test';
 
 import {getTestPort} from '@appium/driver-test-support';
 import type {Driver, MethodMap} from '@appium/types';
-import chai, {expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {createSandbox} from 'sinon';
 
 import {configureServer, normalizeBasePath, server} from '../../../lib/express/server';
 import {routeConfiguringFunction} from '../../../lib/protocol/protocol';
 import {registerTestPages} from '../../../lib/test-pages';
-
-chai.use(chaiAsPromised);
 
 const newMethodMap = {
   '/session/:sessionId/fake': {
@@ -61,8 +58,8 @@ describe('server configuration', function () {
     const app = fakeApp() as any;
     const configureRoutes = () => {};
     configureServer({app, addRoutes: configureRoutes});
-    expect(app.use.callCount).to.equal(11);
-    expect(app.all.callCount).to.equal(0);
+    assert.strictEqual(app.use.callCount, 11);
+    assert.strictEqual(app.all.callCount, 0);
   });
 
   it('should mount legacy test pages when registerTestPages is provided', function () {
@@ -70,8 +67,8 @@ describe('server configuration', function () {
     const configureRoutes = () => {};
     // @ts-expect-error registerTestPages is not normally used in this way
     configureServer({app, addRoutes: configureRoutes, registerTestPages});
-    expect(app.use.callCount).to.equal(15);
-    expect(app.all.callCount).to.equal(4);
+    assert.strictEqual(app.use.callCount, 15);
+    assert.strictEqual(app.all.callCount, 4);
   });
 
   it('should apply new methods in plugins to the standard method map', function () {
@@ -81,7 +78,7 @@ describe('server configuration', function () {
     const addRoutes = routeConfiguringFunction(driver as any);
     configureServer({app: app1, addRoutes});
     configureServer({app: app2, addRoutes, extraMethodMap: newMethodMap});
-    expect(app2.totalCount()).to.eql(app1.totalCount() + 2);
+    assert.deepStrictEqual(app2.totalCount(), app1.totalCount() + 2);
   });
 
   it('should silently reject new methods in plugins if not plain objects', function () {
@@ -91,7 +88,7 @@ describe('server configuration', function () {
     const addRoutes = routeConfiguringFunction(driver as any);
     configureServer({app: app1, addRoutes});
     configureServer({app: app2, addRoutes, extraMethodMap: [] as any});
-    expect(app2.totalCount()).to.eql(app1.totalCount());
+    assert.deepStrictEqual(app2.totalCount(), app1.totalCount());
   });
 
   it('should allow plugins to update the server', async function () {
@@ -103,7 +100,7 @@ describe('server configuration', function () {
       serverUpdaters: [updateServer],
     });
     try {
-      expect((_server as any).updated).to.be.true;
+      assert.strictEqual((_server as any).updated, true);
     } finally {
       await _server.close();
     }
@@ -113,28 +110,29 @@ describe('server configuration', function () {
     const configureRoutes = () => {
       throw new Error('I am Mr. MeeSeeks look at me!');
     };
-    await expect(
+    await assert.rejects(
       server({
         routeConfiguringFunction: configureRoutes,
         port,
       }),
-    ).to.be.rejectedWith('MeeSeeks');
+      /MeeSeeks/,
+    );
   });
 
   describe('#normalizeBasePath', function () {
     it('should throw an error for paths of the wrong type', function () {
-      expect(() => normalizeBasePath(null as unknown as string)).to.throw();
-      expect(() => normalizeBasePath(1 as unknown as string)).to.throw();
+      assert.throws(() => normalizeBasePath(null as unknown as string));
+      assert.throws(() => normalizeBasePath(1 as unknown as string));
     });
     it('should remove trailing slashes', function () {
-      expect(normalizeBasePath('/wd/hub/')).to.eql('/wd/hub');
-      expect(normalizeBasePath('/foo/')).to.eql('/foo');
-      expect(normalizeBasePath('/')).to.eql('');
+      assert.deepStrictEqual(normalizeBasePath('/wd/hub/'), '/wd/hub');
+      assert.deepStrictEqual(normalizeBasePath('/foo/'), '/foo');
+      assert.deepStrictEqual(normalizeBasePath('/'), '');
     });
     it('should ensure a leading slash is present', function () {
-      expect(normalizeBasePath('foo')).to.eql('/foo');
-      expect(normalizeBasePath('wd/hub')).to.eql('/wd/hub');
-      expect(normalizeBasePath('wd/hub/')).to.eql('/wd/hub');
+      assert.deepStrictEqual(normalizeBasePath('foo'), '/foo');
+      assert.deepStrictEqual(normalizeBasePath('wd/hub'), '/wd/hub');
+      assert.deepStrictEqual(normalizeBasePath('wd/hub/'), '/wd/hub');
     });
   });
 });

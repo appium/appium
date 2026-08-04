@@ -98,7 +98,7 @@ export function generalTests(context: {port: number}) {
       ];
       await driver.performActions(actions);
       const [res] = (await driver.getLogs('actions')) as ActionSequence[][];
-      assert.deepStrictEqual(res[0].type, 'pointer');
+      assert.strictEqual(res[0].type, 'pointer');
       assert.strictEqual(res[0].actions.length, 2);
     });
 
@@ -107,12 +107,12 @@ export function generalTests(context: {port: number}) {
       assert.ok(!thing);
       await driver.executeScript('fake: setThing', [{thing: 1234}]);
       thing = await driver.executeScript('fake: getThing', []);
-      assert.deepStrictEqual(thing, 1234);
+      assert.strictEqual(thing, 1234);
     });
 
     it('should add 2 numbers via execute overloads', async function () {
-      assert.deepStrictEqual(await driver.executeScript('fake: addition', [{num1: 2, num2: 3}]), 5);
-      assert.deepStrictEqual(await driver.executeScript('fake: addition', [{num1: 2, num2: 3, num3: 4}]), 9);
+      assert.strictEqual(await driver.executeScript('fake: addition', [{num1: 2, num2: 3}]), 5);
+      assert.strictEqual(await driver.executeScript('fake: addition', [{num1: 2, num2: 3, num3: 4}]), 9);
     });
 
     it('should throw not implemented if an execute overload isnt supported', async function () {

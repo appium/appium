@@ -76,10 +76,7 @@ describe('@appium/strongbox', function () {
         await box.createItemWithValue('first', 'a');
         await box.createItemWithValue('second item', 'b');
         const items = await box.listItems();
-        assert.deepStrictEqual(
-          items.map((i) => i.name).sort(),
-          ['first', 'second item'].sort(),
-        );
+        assert.deepStrictEqual(items.map((i) => i.name).sort(), ['first', 'second item'].sort());
         const byName = Object.fromEntries(items.map((i) => [i.name, i]));
         assert.strictEqual(await byName.first.read(), 'a');
         assert.strictEqual(await byName['second item'].read(), 'b');
@@ -136,10 +133,7 @@ describe('@appium/strongbox', function () {
         assert.strictEqual(second.container, first.container);
 
         const items = await second.listItems();
-        assert.deepStrictEqual(
-          items.map((i) => i.name).sort(),
-          ['item-a', 'item-b'].sort(),
-        );
+        assert.deepStrictEqual(items.map((i) => i.name).sort(), ['item-a', 'item-b'].sort());
         const byName = Object.fromEntries(items.map((i) => [i.name, i]));
         assert.strictEqual(await byName['item-a'].read(), 'hello');
         assert.strictEqual(await byName['item-b'].read(), 'world');

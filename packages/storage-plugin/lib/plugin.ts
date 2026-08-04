@@ -17,6 +17,7 @@ const log = logger.getLogger('StoragePlugin');
 // @appium/types is still CommonJS, so its `ws` Server type resolves through the "require"
 // condition, while this ESM package resolves the same class through "import" — TypeScript
 // treats them as structurally distinct even though they are identical at runtime.
+// TODO: Remove this workaround once @appium/types is migrated to ESM.
 type WSHandlerServer = Parameters<AppiumServer['addWebSocketHandler']>[1];
 
 let SHARED_STORAGE: Storage | null = null;

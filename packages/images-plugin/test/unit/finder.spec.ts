@@ -104,7 +104,7 @@ describe('finding elements by image', function () {
       const imgEl = finder.getImageElement(imgElId);
       assert.ok(imgEl instanceof ImageElement);
       assert.deepStrictEqual(imgEl!.rect, rect);
-      assert.deepStrictEqual(imgEl!.score, score);
+      assert.strictEqual(imgEl!.score, score);
       return imgEl;
     }
 
@@ -138,7 +138,7 @@ describe('finding elements by image', function () {
       sandbox.stub(f, 'ensureTemplateSize').resolves(newTemplateBuf);
       const imgElProto = await f.findByImage(template, d as any, {multiple: false});
       const imgEl = basicImgElVerify(imgElProto, f);
-      assert.deepStrictEqual(imgEl!.originalImage, newTemplate);
+      assert.strictEqual(imgEl!.originalImage, newTemplate);
       assert.deepStrictEqual(compareStub.lastCall.args[2], newTemplateBuf);
     });
 
@@ -149,7 +149,7 @@ describe('finding elements by image', function () {
       sandbox.stub(f, 'fixImageTemplateScale').resolves(newTemplateBuf);
       const imgElProto = await f.findByImage(template, d as any, {multiple: false});
       const imgEl = basicImgElVerify(imgElProto, f);
-      assert.deepStrictEqual(imgEl!.originalImage, newTemplate);
+      assert.strictEqual(imgEl!.originalImage, newTemplate);
       assert.deepStrictEqual(compareStub.lastCall.args[2], newTemplateBuf);
     });
     it('should not fix template size scale if it is not requested', async function () {
@@ -357,8 +357,8 @@ describe('finding elements by image', function () {
       assert.notDeepStrictEqual(screenshot, TINY_PNG_BUF);
       const screenshotObj = sharp(screenshot);
       const {width: screenWidth, height: screenHeight} = await screenshotObj.metadata();
-      assert.deepStrictEqual(screenWidth, width);
-      assert.deepStrictEqual(screenHeight, height);
+      assert.strictEqual(screenWidth, width);
+      assert.strictEqual(screenHeight, height);
       assert.deepStrictEqual(scale, {xScale: 1.5, yScale: 1.5});
     });
     it('should return scaled screenshot with different aspect ratio if not matching screen aspect ratio', async function () {
@@ -370,10 +370,10 @@ describe('finding elements by image', function () {
       assert.notDeepStrictEqual(screenshot, TINY_PNG_BUF);
       let screenshotObj = sharp(screenshot);
       let {width: screenWidth, height: screenHeight} = await screenshotObj.metadata();
-      assert.deepStrictEqual(screenWidth, width);
-      assert.deepStrictEqual(screenHeight, height);
-      assert.deepStrictEqual(scale!.xScale.toFixed(2), expectedScale.xScale.toString());
-      assert.deepStrictEqual(scale!.yScale, expectedScale.yScale);
+      assert.strictEqual(screenWidth, width);
+      assert.strictEqual(screenHeight, height);
+      assert.strictEqual(scale!.xScale.toFixed(2), expectedScale.xScale.toString());
+      assert.strictEqual(scale!.yScale, expectedScale.yScale);
 
       // then with landscape screen, screen = 12 x 8
       [width, height] = [TINY_PNG_DIMS[0] * 3, TINY_PNG_DIMS[1] * 2];
@@ -386,10 +386,10 @@ describe('finding elements by image', function () {
       assert.notDeepStrictEqual(newScreen, TINY_PNG_BUF);
       screenshotObj = sharp(newScreen);
       ({width: screenWidth, height: screenHeight} = await screenshotObj.metadata());
-      assert.deepStrictEqual(screenWidth, width);
-      assert.deepStrictEqual(screenHeight, height);
-      assert.deepStrictEqual(newScale!.xScale, expectedScale.xScale);
-      assert.deepStrictEqual(newScale!.yScale.toFixed(2), expectedScale.yScale.toString());
+      assert.strictEqual(screenWidth, width);
+      assert.strictEqual(screenHeight, height);
+      assert.strictEqual(newScale!.xScale, expectedScale.xScale);
+      assert.strictEqual(newScale!.yScale.toFixed(2), expectedScale.yScale.toString());
     });
 
     it('should return scaled screenshot with different aspect ratio if not matching screen aspect ratio with fixImageTemplateScale', async function () {
@@ -401,10 +401,10 @@ describe('finding elements by image', function () {
       assert.notDeepStrictEqual(screenshot, TINY_PNG_BUF);
       let screenshotObj = sharp(screenshot);
       let {width: screenWidth, height: screenHeight} = await screenshotObj.metadata();
-      assert.deepStrictEqual(screenWidth, width);
-      assert.deepStrictEqual(screenHeight, height);
-      assert.deepStrictEqual(scale!.xScale.toFixed(2), expectedScale.xScale.toString());
-      assert.deepStrictEqual(scale!.yScale, expectedScale.yScale);
+      assert.strictEqual(screenWidth, width);
+      assert.strictEqual(screenHeight, height);
+      assert.strictEqual(scale!.xScale.toFixed(2), expectedScale.xScale.toString());
+      assert.strictEqual(scale!.yScale, expectedScale.yScale);
       // 8 x 12 stretched TINY_PNG
       assert.notDeepStrictEqual(
         await f.fixImageTemplateScale(screenshot, {
@@ -426,10 +426,10 @@ describe('finding elements by image', function () {
       assert.notDeepStrictEqual(newScreen, TINY_PNG_BUF);
       screenshotObj = sharp(newScreen);
       ({width: screenWidth, height: screenHeight} = await screenshotObj.metadata());
-      assert.deepStrictEqual(screenWidth, width);
-      assert.deepStrictEqual(screenHeight, height);
-      assert.deepStrictEqual(newScale!.xScale, expectedScale.xScale);
-      assert.deepStrictEqual(newScale!.yScale.toFixed(2), expectedScale.yScale.toString());
+      assert.strictEqual(screenWidth, width);
+      assert.strictEqual(screenHeight, height);
+      assert.strictEqual(newScale!.xScale, expectedScale.xScale);
+      assert.strictEqual(newScale!.yScale.toFixed(2), expectedScale.yScale.toString());
       // 12 x 8 stretched TINY_PNG
       assert.notDeepStrictEqual(
         await f.fixImageTemplateScale(newScreen, {

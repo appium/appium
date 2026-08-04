@@ -222,7 +222,7 @@ describe('ImageElement', function () {
       const action = touchStub.args[0][0][0].options;
       assert.strictEqual(action.x, el.center.x);
       assert.strictEqual(action.y, el.center.y);
-      assert.deepStrictEqual(w3cStub.callCount, 0);
+      assert.strictEqual(w3cStub.callCount, 0);
     });
     it('should throw if driver does not implement any type of action', async function () {
       const d = new BaseDriver<Constraints>({} as any);
@@ -285,10 +285,10 @@ describe('ImageElement', function () {
       assert.deepStrictEqual(await ImageElement.execute(driver as any, imgEl, 'getElementRect'), defRect);
     });
     it('should get score of element', async function () {
-      assert.deepStrictEqual(await ImageElement.execute(driver as any, imgEl, 'getAttribute', 'score'), 0);
+      assert.strictEqual(await ImageElement.execute(driver as any, imgEl, 'getAttribute', 'score'), 0);
     });
     it('should get visual of element', async function () {
-      assert.deepStrictEqual(
+      assert.strictEqual(
         await ImageElement.execute(driver as any, imgEl, 'getAttribute', 'visual'),
         'aGFwcHkgdGVzdGluZw==',
       );
@@ -299,7 +299,7 @@ describe('ImageElement', function () {
         rect: defRect,
         score: 1.0,
       });
-      assert.deepStrictEqual(await ImageElement.execute(driver as any, imgElement, 'getAttribute', 'visual'), null);
+      assert.strictEqual(await ImageElement.execute(driver as any, imgElement, 'getAttribute', 'visual'), null);
     });
     it('should not get other attribute', async function () {
       await assert.rejects(
@@ -354,7 +354,7 @@ describe('getImgElFromArgs', function () {
   it('should return the image element id from json obj in args', function () {
     const imgEl = `${IMAGE_ELEMENT_PREFIX}foo`;
     const args = [1, 'foo', imgEl];
-    assert.deepStrictEqual(getImgElFromArgs(args), imgEl);
+    assert.strictEqual(getImgElFromArgs(args), imgEl);
   });
   it('should not return anything if image element id not in args', function () {
     const args = [1, 'foo'];

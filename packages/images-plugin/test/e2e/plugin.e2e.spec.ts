@@ -75,7 +75,7 @@ describe('ImageElementPlugin', function () {
       fs.readFile(TEST_IMG_2_PATH, 'base64'),
     ]);
     let comparison = await driver.compareImages(MATCH_FEATURES_MODE, testImg1b64, testImg2b64, {});
-    assert.deepStrictEqual(comparison.count, 0);
+    assert.strictEqual(comparison.count, 0);
     comparison = await driver.compareImages(GET_SIMILARITY_MODE, testImg1b64, testImg2b64, {});
     assert.ok(comparison.score > 0.2);
   });
@@ -84,10 +84,10 @@ describe('ImageElementPlugin', function () {
     const imageEl = await driver.$(APPSTORE_IMG_PATH);
     const {x, y} = await imageEl.getLocation();
     const {width, height} = await imageEl.getSize();
-    assert.deepStrictEqual(x, 28);
-    assert.deepStrictEqual(y, 72);
-    assert.deepStrictEqual(width, 80);
-    assert.deepStrictEqual(height, 91);
+    assert.strictEqual(x, 28);
+    assert.strictEqual(y, 72);
+    assert.strictEqual(width, 80);
+    assert.strictEqual(height, 91);
     await imageEl.click();
 
     const actionSequence = {

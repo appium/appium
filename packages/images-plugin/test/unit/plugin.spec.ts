@@ -36,7 +36,7 @@ describe('ImageElementPlugin#handle', function () {
     it('should compare images via match features mode', async function () {
       const res = await p.compareImages(next, driver as any, MATCH_FEATURES_MODE, testImg1B64, testImg2B64, {});
       assert.ok(Object.hasOwn(res as any, 'count'));
-      assert.deepStrictEqual((res as any).count, 0);
+      assert.strictEqual((res as any).count, 0);
     });
     it('should compare images via get similarity mode', async function () {
       const res = await p.compareImages(

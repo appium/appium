@@ -1,13 +1,10 @@
+import assert from 'node:assert/strict';
 import path from 'node:path';
 import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
 
 import {fs, logger, tempDir} from '@appium/support';
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
 import {Storage, StorageArgumentError, validateStorageItemName} from '../../lib/storage.js';
-
-use(chaiAsPromised);
 
 const log = logger.getLogger();
 
@@ -44,8 +41,8 @@ describe('storage', function () {
   it('should be initially empty', async function () {
     storage = new Storage(storageRoot!, false, false, log);
     const files = await storage.list();
-    expect(files).to.be.empty;
-    expect(await storage.delete('foo')).to.be.false;
+    assert.strictEqual(files.length, 0);
+    assert.strictEqual(await storage.delete('foo'), false);
   });
 
   it('should reset all files if shouldPreserveFiles is not requested', async function () {
@@ -55,10 +52,10 @@ describe('storage', function () {
     await fs.writeFile(path.join(storageRoot!, tmpName), Buffer.alloc(1));
     storage = new Storage(storageRoot!, true, false, log);
     const files = await storage.list();
-    expect(files.length).to.eql(1);
+    assert.deepStrictEqual(files.length, 1);
     await storage.reset();
-    expect(await fs.exists(path.join(storageRoot!, name))).to.be.false;
-    expect(await fs.exists(path.join(storageRoot!, tmpName))).to.be.false;
+    assert.strictEqual(await fs.exists(path.join(storageRoot!, name)), false);
+    assert.strictEqual(await fs.exists(path.join(storageRoot!, tmpName)), false);
   });
 
   it('should only reset partial files if shouldPreserveFiles requested', async function () {
@@ -68,11 +65,11 @@ describe('storage', function () {
     await fs.writeFile(path.join(storageRoot!, tmpName), Buffer.alloc(1));
     storage = new Storage(storageRoot!, true, true, log);
     let files = await storage.list();
-    expect(files.length).to.eql(1);
+    assert.deepStrictEqual(files.length, 1);
     await storage.reset();
     files = await storage.list();
-    expect(files.length).to.eql(1);
-    expect(await fs.exists(path.join(storageRoot!, tmpName))).to.be.false;
+    assert.deepStrictEqual(files.length, 1);
+    assert.strictEqual(await fs.exists(path.join(storageRoot!, tmpName)), false);
   });
 
   it('should perform basic operations', async function () {
@@ -81,13 +78,13 @@ describe('storage', function () {
     const size = 1 * 1024 * 1024;
     await addFileToStorage(name, size);
     let files = await storage.list();
-    expect(files).not.to.be.empty;
-    expect(files[0].name).to.eql(name);
-    expect(files[0].size).to.eql(size);
-    expect(files[0].path).to.eql(path.join(storageRoot!, name));
-    expect(await storage.delete(name)).to.be.true;
+    assert.notStrictEqual(files.length, 0);
+    assert.deepStrictEqual(files[0].name, name);
+    assert.deepStrictEqual(files[0].size, size);
+    assert.deepStrictEqual(files[0].path, path.join(storageRoot!, name));
+    assert.strictEqual(await storage.delete(name), true);
     files = await storage.list();
-    expect(files).to.be.empty;
+    assert.strictEqual(files.length, 0);
   });
 
   it('should be reset and preserve the root', async function () {
@@ -97,8 +94,8 @@ describe('storage', function () {
     await addFileToStorage(name, size);
     await storage.reset();
     const files = await storage.list();
-    expect(files).to.be.empty;
-    expect(await fs.exists(storageRoot!)).to.be.true;
+    assert.strictEqual(files.length, 0);
+    assert.strictEqual(await fs.exists(storageRoot!), true);
   });
 
   it('should be reset and preserve items', async function () {
@@ -108,27 +105,38 @@ describe('storage', function () {
     await addFileToStorage(name, size);
     await storage.reset();
     const files = await storage.list();
-    expect(files).not.to.be.empty;
-    expect(await fs.exists(storageRoot!)).to.be.true;
+    assert.notStrictEqual(files.length, 0);
+    assert.strictEqual(await fs.exists(storageRoot!), true);
   });
 
   describe('validateStorageItemName', function () {
     it('should accept valid file names', function () {
-      expect(() => validateStorageItemName('foo.bar')).not.to.throw();
-      expect(() => validateStorageItemName('foo-bar_baz')).not.to.throw();
+      assert.doesNotThrow(() => validateStorageItemName('foo.bar'));
+      assert.doesNotThrow(() => validateStorageItemName('foo-bar_baz'));
     });
 
     it('should reject names that must be sanitized', function () {
-      expect(() => validateStorageItemName('foo/bar')).to.throw(
-        StorageArgumentError,
-        "The provided name value 'foo/bar' must be a valid file name. Did you mean 'foo_bar'?",
+      assert.throws(
+        () => validateStorageItemName('foo/bar'),
+        (err: unknown) => {
+          assert.ok(err instanceof StorageArgumentError);
+          assert.strictEqual(
+            (err as Error).message,
+            "The provided name value 'foo/bar' must be a valid file name. Did you mean 'foo_bar'?",
+          );
+          return true;
+        },
       );
     });
 
     it('should reject empty file names', function () {
-      expect(() => validateStorageItemName('')).to.throw(
-        StorageArgumentError,
-        "The provided file name '' must not be empty",
+      assert.throws(
+        () => validateStorageItemName(''),
+        (err: unknown) => {
+          assert.ok(err instanceof StorageArgumentError);
+          assert.strictEqual((err as Error).message, "The provided file name '' must not be empty");
+          return true;
+        },
       );
     });
   });

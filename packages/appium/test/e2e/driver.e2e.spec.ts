@@ -175,8 +175,8 @@ describe('FakeDriver via HTTP', function () {
       const {sessionId} = driver;
       try {
         const {data} = await axios.get(`${testServerBaseSessionUrl}/${sessionId}/fakedriverargs`);
-        assert.deepStrictEqual(data.value.sillyWebServerPort, sillyWebServerPort);
-        assert.deepStrictEqual(data.value.sillyWebServerHost, sillyWebServerHost);
+        assert.strictEqual(data.value.sillyWebServerPort, sillyWebServerPort);
+        assert.strictEqual(data.value.sillyWebServerHost, sillyWebServerHost);
       } finally {
         await driver.deleteSession();
       }
@@ -256,13 +256,13 @@ describe('FakeDriver via HTTP', function () {
 
       const commands = await driver.listCommands();
 
-      assert.deepStrictEqual(
+      assert.strictEqual(
         JSON.stringify(commands.rest.base['/session/:sessionId/frame']),
         JSON.stringify({POST: {command: 'setFrame', params: [{name: 'id', required: true}]}}),
       );
       assert.ok(Object.keys(commands.rest.driver).length > 1);
 
-      assert.deepStrictEqual(
+      assert.strictEqual(
         JSON.stringify(commands.bidi.base.session.subscribe),
         JSON.stringify({
           command: 'bidiSubscribe',
@@ -289,7 +289,7 @@ describe('FakeDriver via HTTP', function () {
       );
 
       const extensions = await driver.listExtensions();
-      assert.deepStrictEqual(
+      assert.strictEqual(
         JSON.stringify(extensions.rest.driver['fake: setThing']),
         JSON.stringify({
           command: 'setFakeThing',
@@ -553,7 +553,7 @@ describe('FakeDriver via HTTP', function () {
       const res = await axios.post(testServerBaseSessionUrl, combinedCaps, {
         validateStatus: null,
       });
-      assert.deepStrictEqual(res.status, 400);
+      assert.strictEqual(res.status, 400);
       assert.match(res.data.value.error, /invalid argument/);
     });
 
@@ -583,7 +583,7 @@ describe('FakeDriver via HTTP', function () {
           validateStatus: null,
         });
         const {status} = res;
-        assert.deepStrictEqual(status, 200);
+        assert.strictEqual(status, 200);
       } finally {
         if (sessionId) {
           await axios.delete(`${testServerBaseSessionUrl}/${sessionId}`);
@@ -643,7 +643,7 @@ describe('FakeDriver via HTTP', function () {
         url: 'https://appium.io',
         wait: 'complete',
       });
-      assert.deepStrictEqual(await driver.getUrl(), 'https://appium.io');
+      assert.strictEqual(await driver.getUrl(), 'https://appium.io');
     });
 
     it('should be able to subscribe and unsubscribe to bidi events', async function () {
@@ -683,7 +683,7 @@ describe('FakeDriver via HTTP', function () {
         method: 'appium:fake.getFakeThing',
         params: {},
       } as any));
-      assert.deepStrictEqual(result, 'this is from bidi');
+      assert.strictEqual(result, 'this is from bidi');
     });
   });
 
@@ -723,7 +723,7 @@ describe('FakeDriver via HTTP', function () {
         url: 'https://appium.io',
         wait: 'complete',
       });
-      assert.deepStrictEqual(await driver.getUrl(), 'https://appium.io');
+      assert.strictEqual(await driver.getUrl(), 'https://appium.io');
     });
   });
 });
@@ -796,7 +796,7 @@ describe('Bidi over SSL', {skip: true}, function () {
       url: 'https://appium.io',
       wait: 'complete',
     });
-    assert.deepStrictEqual(await driver.getUrl(), 'https://appium.io');
+    assert.strictEqual(await driver.getUrl(), 'https://appium.io');
   });
 });
 

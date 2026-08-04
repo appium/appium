@@ -50,7 +50,7 @@ describe('helpers/capability', function () {
           'appium:foo': 'bar2',
         },
       );
-      assert.deepStrictEqual((res.processedW3CCapabilities!.alwaysMatch as Record<string, unknown>)['appium:foo'], 'bar2');
+      assert.strictEqual((res.processedW3CCapabilities!.alwaysMatch as Record<string, unknown>)['appium:foo'], 'bar2');
     });
     it('should not allow invalid default capabilities', function () {
       const res = parseCapsForInnerDriver(
@@ -64,9 +64,9 @@ describe('helpers/capability', function () {
       const errRes = res as unknown as {
         error: {jsonwpCode: number; error: string; w3cStatus: number};
       };
-      assert.deepStrictEqual(errRes.error.jsonwpCode, 61);
-      assert.deepStrictEqual(errRes.error.error, 'invalid argument');
-      assert.deepStrictEqual(errRes.error.w3cStatus, 400);
+      assert.strictEqual(errRes.error.jsonwpCode, 61);
+      assert.strictEqual(errRes.error.error, 'invalid argument');
+      assert.strictEqual(errRes.error.w3cStatus, 400);
     });
     it('should reject if W3C caps are not passing constraints', function () {
       const res = parseCapsForInnerDriver(W3C_CAPS as W3CCapabilities<{hello: {presence: true}}>, {
@@ -83,9 +83,9 @@ describe('helpers/capability', function () {
       } as W3CCapabilities<{hello: {presence: true}}>;
       const res = parseCapsForInnerDriver(w3cCaps, {hello: {presence: true}});
       const error = (res as {error?: {jsonwpCode: number; error: string; w3cStatus: number}}).error;
-      assert.deepStrictEqual(error!.jsonwpCode, 61);
-      assert.deepStrictEqual(error!.error, 'invalid argument');
-      assert.deepStrictEqual(error!.w3cStatus, 400);
+      assert.strictEqual(error!.jsonwpCode, 61);
+      assert.strictEqual(error!.error, 'invalid argument');
+      assert.strictEqual(error!.w3cStatus, 400);
     });
     it('should add appium prefixes to W3C caps that are not standard in W3C', function () {
       const res = parseCapsForInnerDriver({

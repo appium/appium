@@ -178,7 +178,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
         const driver = await wdio(wdOpts as any);
         const {sessionId} = driver;
         try {
-          assert.deepStrictEqual(await driver.getPageSource(), `<Fake>${JSON.stringify([sessionId])}</Fake>`);
+          assert.strictEqual(await driver.getPageSource(), `<Fake>${JSON.stringify([sessionId])}</Fake>`);
         } finally {
           await driver.deleteSession();
         }
@@ -208,7 +208,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
             name: 'PROXY',
           });
           const handle = (await axios.get(`${testServerBaseSessionUrl}/${sessionId}/window`)).data.value;
-          assert.deepStrictEqual(handle, '<<proxied via proxyCommand>>');
+          assert.strictEqual(handle, '<<proxied via proxyCommand>>');
         } finally {
           await axios.post(`${testServerBaseSessionUrl}/${sessionId}/context`, {
             name: 'NATIVE_APP',
@@ -256,7 +256,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
           }
           // prove that we went beyond the new command timeout as a result of sending commands
           assert.ok(Date.now() - start > 2500);
-          assert.deepStrictEqual(await driver.getPageSource(), `<Fake>${JSON.stringify([sessionId])}</Fake>`);
+          assert.strictEqual(await driver.getPageSource(), `<Fake>${JSON.stringify([sessionId])}</Fake>`);
         } finally {
           await driver.deleteSession();
         }
@@ -341,17 +341,17 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
 
     it('should handle execute methods using executeMethodMap', async function () {
       const res = await driver.executeScript('fake: plugMeIn', [{socket: 'electrical'}]);
-      assert.deepStrictEqual(res, 'Plugged in to electrical');
+      assert.strictEqual(res, 'Plugged in to electrical');
     });
 
     it('should handle execute methods overridden on the driver', async function () {
       const res = await driver.executeScript('fake: getThing', []);
-      assert.deepStrictEqual(res, 'PLUGIN_FAKE_THING');
+      assert.strictEqual(res, 'PLUGIN_FAKE_THING');
     });
 
     it('should let driver handle unknown execute methods', async function () {
       const sum = await driver.executeScript('fake: addition', [{num1: 2, num2: 3}]);
-      assert.deepStrictEqual(sum, 5);
+      assert.strictEqual(sum, 5);
     });
   });
 
@@ -390,7 +390,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
           params: {thing: 'plugin bidi'},
         });
         ({result} = await (driver as any).send({method: 'appium:fake.getPluginThing', params: {}}));
-        assert.deepStrictEqual(result, 'plugin bidi');
+        assert.strictEqual(result, 'plugin bidi');
       });
 
       it('should subscribe and unsubscribe to/from custom bidi events', async function () {
@@ -400,17 +400,17 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
         });
 
         await (driver as any).send({method: 'appium:fake.getPluginThing', params: {}});
-        assert.deepStrictEqual(retrievals, 0);
+        assert.strictEqual(retrievals, 0);
 
         await (driver as any).sessionSubscribe({events: ['appium:fake.pluginThingRetrieved']});
         await (driver as any).send({method: 'appium:fake.getPluginThing', params: {}});
         await (driver as any).send({method: 'appium:fake.getPluginThing', params: {}});
-        assert.deepStrictEqual(retrievals, 2);
+        assert.strictEqual(retrievals, 2);
 
         await (driver as any).sessionUnsubscribe({events: ['appium:fake.pluginThingRetrieved']});
         await (driver as any).send({method: 'appium:fake.getPluginThing', params: {}});
         await (driver as any).send({method: 'appium:fake.getPluginThing', params: {}});
-        assert.deepStrictEqual(retrievals, 2);
+        assert.strictEqual(retrievals, 2);
       });
 
       it('should subscribe and unsubscribe to/from custom bidi events and merge with driver', async function () {
@@ -424,7 +424,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
 
         await (driver as any).sessionSubscribe({events: ['appium:clock.currentTime']});
         await sleep(800);
-        assert.deepStrictEqual(collectedEvents.length, 5);
+        assert.strictEqual(collectedEvents.length, 5);
 
         await (driver as any).sessionUnsubscribe({events: ['appium:clock.currentTime']});
         collectedEvents.length = 0;
@@ -437,7 +437,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
           method: 'appium:fake.doSomeMath',
           params: {num1: 2, num2: 3},
         });
-        assert.deepStrictEqual(result, 11);
+        assert.strictEqual(result, 11);
       });
 
       it('should override and not call underlying driver bidi method if next is not called', async function () {
@@ -445,7 +445,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
           method: 'appium:fake.doSomeMath2',
           params: {num1: 2, num2: 3},
         });
-        assert.deepStrictEqual(result, 6);
+        assert.strictEqual(result, 6);
       });
     });
   });
@@ -480,14 +480,14 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
 
     it('should allow plugin to publish to driver', async function () {
       let lastMath = await driver.executeScript('fake: getLastPluginMath', []);
-      assert.deepStrictEqual(lastMath, null);
+      assert.strictEqual(lastMath, null);
       const {result} = await (driver as any).send({
         method: 'appium:fake.doSomeMath2',
         params: {num1: 2, num2: 3},
       });
-      assert.deepStrictEqual(result, 6);
+      assert.strictEqual(result, 6);
       lastMath = await driver.executeScript('fake: getLastPluginMath', []);
-      assert.deepStrictEqual(lastMath.result, 6);
+      assert.strictEqual(lastMath.result, 6);
       assert.ok(lastMath.pluginName.includes('FakePlugin'));
     });
   });

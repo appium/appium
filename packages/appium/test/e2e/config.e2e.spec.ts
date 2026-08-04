@@ -25,7 +25,7 @@ describe('Config', function () {
       assert.strictEqual(typeof rev, 'string');
       assert.notStrictEqual(rev, null);
       assert.strictEqual(rev!.length, 40);
-      assert.deepStrictEqual(rev!.match(/[0-9a-f]+/i)![0], rev);
+      assert.strictEqual(rev!.match(/[0-9a-f]+/i)![0], rev);
     });
   });
 

@@ -32,19 +32,19 @@ describe('ExtensionConfig', function () {
 
   describe('ESM module resolution', function () {
     it('resolves ESM entry point with simple export', function () {
-      assert.deepStrictEqual(resolveEsmEntryPoint('./index.js'), './index.js');
+      assert.strictEqual(resolveEsmEntryPoint('./index.js'), './index.js');
     });
 
     it('resolves ESM entry point with dot export', function () {
-      assert.deepStrictEqual(resolveEsmEntryPoint({'.': './index.js'}), './index.js');
+      assert.strictEqual(resolveEsmEntryPoint({'.': './index.js'}), './index.js');
     });
 
     it('resolves ESM entry point with import export', function () {
-      assert.deepStrictEqual(resolveEsmEntryPoint({import: './index.js'}), './index.js');
+      assert.strictEqual(resolveEsmEntryPoint({import: './index.js'}), './index.js');
     });
 
     it('resolves ESM entry point with complex import export', function () {
-      assert.deepStrictEqual(
+      assert.strictEqual(
         resolveEsmEntryPoint({
           '.': {import: './index.js'},
         }),

@@ -42,7 +42,7 @@ describe('parser', function () {
         assert.ok(Object.hasOwn(p.parseArgs([]), 'port'));
       });
       it('should default to the server subcommand', function () {
-        assert.deepStrictEqual(p.parseArgs([]).subcommand, 'server');
+        assert.strictEqual(p.parseArgs([]).subcommand, 'server');
         assert.deepStrictEqual(p.parseArgs([]), p.parseArgs(['server']));
       });
       it('should keep the raw server flags array', function () {
@@ -117,13 +117,13 @@ describe('parser', function () {
       });
 
       it('should parse --address correctly', function () {
-        assert.deepStrictEqual(p.parseArgs(['--address', 'localhost']).address, 'localhost');
-        assert.deepStrictEqual(p.parseArgs(['--address', 'appium.net']).address, 'appium.net');
-        assert.deepStrictEqual(p.parseArgs(['--address', '127.0.0.1']).address, '127.0.0.1');
-        assert.deepStrictEqual(p.parseArgs(['--address', '10.0.0.1']).address, '10.0.0.1');
-        assert.deepStrictEqual(p.parseArgs(['--address', '::']).address, '::');
-        assert.deepStrictEqual(p.parseArgs(['--address', '::1']).address, '::1');
-        assert.deepStrictEqual(
+        assert.strictEqual(p.parseArgs(['--address', 'localhost']).address, 'localhost');
+        assert.strictEqual(p.parseArgs(['--address', 'appium.net']).address, 'appium.net');
+        assert.strictEqual(p.parseArgs(['--address', '127.0.0.1']).address, '127.0.0.1');
+        assert.strictEqual(p.parseArgs(['--address', '10.0.0.1']).address, '10.0.0.1');
+        assert.strictEqual(p.parseArgs(['--address', '::']).address, '::');
+        assert.strictEqual(p.parseArgs(['--address', '::1']).address, '::1');
+        assert.strictEqual(
           p.parseArgs(['--address', '2a02:8888:9a80:158:2418:a474:43c6:1b78']).address,
           '2a02:8888:9a80:158:2418:a474:43c6:1b78',
         );
@@ -251,31 +251,31 @@ describe('parser', function () {
     describe('list', function () {
       it('should allow an empty argument list', function () {
         const args = p.parseArgs([DRIVER_TYPE, 'list']);
-        assert.deepStrictEqual(args.subcommand, DRIVER_TYPE);
-        assert.deepStrictEqual(args.driverCommand, 'list');
-        assert.deepStrictEqual(args.showInstalled, false);
-        assert.deepStrictEqual(args.showUpdates, false);
-        assert.deepStrictEqual(args.json, false);
+        assert.strictEqual(args.subcommand, DRIVER_TYPE);
+        assert.strictEqual(args.driverCommand, 'list');
+        assert.strictEqual(args.showInstalled, false);
+        assert.strictEqual(args.showUpdates, false);
+        assert.strictEqual(args.json, false);
       });
       it('should allow json format', function () {
         const args = p.parseArgs([DRIVER_TYPE, 'list', '--json']);
-        assert.deepStrictEqual(args.json, true);
+        assert.strictEqual(args.json, true);
       });
       it('should allow --installed', function () {
         const args = p.parseArgs([DRIVER_TYPE, 'list', '--installed']);
-        assert.deepStrictEqual(args.showInstalled, true);
+        assert.strictEqual(args.showInstalled, true);
       });
       it('should allow --updates', function () {
         const args = p.parseArgs([DRIVER_TYPE, 'list', '--updates']);
-        assert.deepStrictEqual(args.showUpdates, true);
+        assert.strictEqual(args.showUpdates, true);
       });
       it('should allow "ls" as an alias for "list"', function () {
         const args = p.parseArgs([DRIVER_TYPE, 'ls']);
-        assert.deepStrictEqual(args.subcommand, DRIVER_TYPE);
-        assert.deepStrictEqual(args.driverCommand, 'list');
-        assert.deepStrictEqual(args.showInstalled, false);
-        assert.deepStrictEqual(args.showUpdates, false);
-        assert.deepStrictEqual(args.json, false);
+        assert.strictEqual(args.subcommand, DRIVER_TYPE);
+        assert.strictEqual(args.driverCommand, 'list');
+        assert.strictEqual(args.showInstalled, false);
+        assert.strictEqual(args.showUpdates, false);
+        assert.strictEqual(args.json, false);
       });
     });
     describe('install', function () {
@@ -284,20 +284,20 @@ describe('parser', function () {
       });
       it('should take a driver name to install', function () {
         const args = p.parseArgs([DRIVER_TYPE, 'install', 'foobar']);
-        assert.deepStrictEqual(args.subcommand, DRIVER_TYPE);
-        assert.deepStrictEqual(args.driverCommand, 'install');
-        assert.deepStrictEqual(args.driver, 'foobar');
+        assert.strictEqual(args.subcommand, DRIVER_TYPE);
+        assert.strictEqual(args.driverCommand, 'install');
+        assert.strictEqual(args.driver, 'foobar');
         assert.ok(!args.installType);
-        assert.deepStrictEqual(args.json, false);
+        assert.strictEqual(args.json, false);
       });
       it('should allow json format', function () {
         const args = p.parseArgs([DRIVER_TYPE, 'install', 'foobar', '--json']);
-        assert.deepStrictEqual(args.json, true);
+        assert.strictEqual(args.json, true);
       });
       it('should allow --source', function () {
         for (const source of INSTALL_TYPES) {
           const args = p.parseArgs([DRIVER_TYPE, 'install', 'foobar', '--source', source]);
-          assert.deepStrictEqual(args.installType, source);
+          assert.strictEqual(args.installType, source);
         }
       });
       it('should not allow unknown --source', function () {
@@ -310,14 +310,14 @@ describe('parser', function () {
       });
       it('should take a driver name to uninstall', function () {
         const args = p.parseArgs([DRIVER_TYPE, 'uninstall', 'foobar']);
-        assert.deepStrictEqual(args.subcommand, DRIVER_TYPE);
-        assert.deepStrictEqual(args.driverCommand, 'uninstall');
-        assert.deepStrictEqual(args.driver, 'foobar');
-        assert.deepStrictEqual(args.json, false);
+        assert.strictEqual(args.subcommand, DRIVER_TYPE);
+        assert.strictEqual(args.driverCommand, 'uninstall');
+        assert.strictEqual(args.driver, 'foobar');
+        assert.strictEqual(args.json, false);
       });
       it('should allow json format', function () {
         const args = p.parseArgs([DRIVER_TYPE, 'uninstall', 'foobar', '--json']);
-        assert.deepStrictEqual(args.json, true);
+        assert.strictEqual(args.json, true);
       });
     });
     describe('update', function () {
@@ -326,14 +326,14 @@ describe('parser', function () {
       });
       it('should take a driver name to update', function () {
         const args = p.parseArgs([DRIVER_TYPE, 'update', 'foobar']);
-        assert.deepStrictEqual(args.subcommand, DRIVER_TYPE);
-        assert.deepStrictEqual(args.driverCommand, 'update');
-        assert.deepStrictEqual(args.driver, 'foobar');
-        assert.deepStrictEqual(args.json, false);
+        assert.strictEqual(args.subcommand, DRIVER_TYPE);
+        assert.strictEqual(args.driverCommand, 'update');
+        assert.strictEqual(args.driver, 'foobar');
+        assert.strictEqual(args.json, false);
       });
       it('should allow json format', function () {
         const args = p.parseArgs([DRIVER_TYPE, 'update', 'foobar', '--json']);
-        assert.deepStrictEqual(args.json, true);
+        assert.strictEqual(args.json, true);
       });
     });
     describe('run', function () {
@@ -342,46 +342,46 @@ describe('parser', function () {
       });
       it('should allow no driver scriptName', function () {
         const args = p.parseArgs([DRIVER_TYPE, 'run', 'foo']);
-        assert.deepStrictEqual(args.subcommand, DRIVER_TYPE);
-        assert.deepStrictEqual(args.driverCommand, 'run');
-        assert.deepStrictEqual(args.driver, 'foo');
+        assert.strictEqual(args.subcommand, DRIVER_TYPE);
+        assert.strictEqual(args.driverCommand, 'run');
+        assert.strictEqual(args.driver, 'foo');
         assert.strictEqual(args.scriptName, null);
-        assert.deepStrictEqual(args.json, false);
+        assert.strictEqual(args.json, false);
       });
       it('should take a driverName and scriptName to run', function () {
         const args = p.parseArgs([DRIVER_TYPE, 'run', 'foo', 'bar']);
-        assert.deepStrictEqual(args.subcommand, DRIVER_TYPE);
-        assert.deepStrictEqual(args.driverCommand, 'run');
-        assert.deepStrictEqual(args.driver, 'foo');
-        assert.deepStrictEqual(args.scriptName, 'bar');
-        assert.deepStrictEqual(args.json, false);
+        assert.strictEqual(args.subcommand, DRIVER_TYPE);
+        assert.strictEqual(args.driverCommand, 'run');
+        assert.strictEqual(args.driver, 'foo');
+        assert.strictEqual(args.scriptName, 'bar');
+        assert.strictEqual(args.json, false);
       });
       it('should allow json format for driver', function () {
         const args = p.parseArgs([DRIVER_TYPE, 'run', 'foo', 'bar', '--json']);
-        assert.deepStrictEqual(args.json, true);
+        assert.strictEqual(args.json, true);
       });
       it('should not allow an empty plugin argument list', function () {
         assert.throws(() => p.parseArgs([PLUGIN_TYPE, 'run']));
       });
       it('should allow no plugin scriptName', function () {
         const args = p.parseArgs([PLUGIN_TYPE, 'run', 'foo']);
-        assert.deepStrictEqual(args.subcommand, PLUGIN_TYPE);
-        assert.deepStrictEqual(args.pluginCommand, 'run');
-        assert.deepStrictEqual(args.plugin, 'foo');
+        assert.strictEqual(args.subcommand, PLUGIN_TYPE);
+        assert.strictEqual(args.pluginCommand, 'run');
+        assert.strictEqual(args.plugin, 'foo');
         assert.strictEqual(args.scriptName, null);
-        assert.deepStrictEqual(args.json, false);
+        assert.strictEqual(args.json, false);
       });
       it('should take a pluginName and scriptName to run', function () {
         const args = p.parseArgs([PLUGIN_TYPE, 'run', 'foo', 'bar']);
-        assert.deepStrictEqual(args.subcommand, PLUGIN_TYPE);
-        assert.deepStrictEqual(args.pluginCommand, 'run');
-        assert.deepStrictEqual(args.plugin, 'foo');
-        assert.deepStrictEqual(args.scriptName, 'bar');
-        assert.deepStrictEqual(args.json, false);
+        assert.strictEqual(args.subcommand, PLUGIN_TYPE);
+        assert.strictEqual(args.pluginCommand, 'run');
+        assert.strictEqual(args.plugin, 'foo');
+        assert.strictEqual(args.scriptName, 'bar');
+        assert.strictEqual(args.json, false);
       });
       it('should allow json format for plugin', function () {
         const args = p.parseArgs([PLUGIN_TYPE, 'run', 'foo', 'bar', '--json']);
-        assert.deepStrictEqual(args.json, true);
+        assert.strictEqual(args.json, true);
       });
     });
   });
@@ -398,8 +398,8 @@ describe('parser', function () {
     describe('all', function () {
       it('should allow an empty argument mobile', function () {
         const args = p.parseArgs([SETUP_SUBCOMMAND, 'mobile']);
-        assert.deepStrictEqual(args.subcommand, SETUP_SUBCOMMAND);
-        assert.deepStrictEqual(args.setupCommand, 'mobile');
+        assert.strictEqual(args.subcommand, SETUP_SUBCOMMAND);
+        assert.strictEqual(args.setupCommand, 'mobile');
       });
     });
   });

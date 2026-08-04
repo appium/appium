@@ -157,9 +157,9 @@ describe('Driver CLI', {timeout: 90000}, function () {
 
     it('should install a driver from the list of known drivers', async function () {
       const ret = await runInstall(['uiautomator2']);
-      assert.deepStrictEqual(ret.uiautomator2.pkgName, 'appium-uiautomator2-driver');
-      assert.deepStrictEqual(ret.uiautomator2.installType, 'npm');
-      assert.deepStrictEqual(ret.uiautomator2.installSpec, 'uiautomator2');
+      assert.strictEqual(ret.uiautomator2.pkgName, 'appium-uiautomator2-driver');
+      assert.strictEqual(ret.uiautomator2.installType, 'npm');
+      assert.strictEqual(ret.uiautomator2.installSpec, 'uiautomator2');
       const list = await runList(['--installed']);
       const rest = omitKeys(list.uiautomator2 ?? {}, ['installed', 'repositoryUrl']);
       assertDeepInclude(rest, {
@@ -171,9 +171,9 @@ describe('Driver CLI', {timeout: 90000}, function () {
 
     it('should install a driver from npm', async function () {
       const ret = await runInstall(['@appium/fake-driver', '--source', 'npm']);
-      assert.deepStrictEqual(ret.fake.pkgName, '@appium/fake-driver');
-      assert.deepStrictEqual(ret.fake.installType, 'npm');
-      assert.deepStrictEqual(ret.fake.installSpec, '@appium/fake-driver');
+      assert.strictEqual(ret.fake.pkgName, '@appium/fake-driver');
+      assert.strictEqual(ret.fake.installType, 'npm');
+      assert.strictEqual(ret.fake.installSpec, '@appium/fake-driver');
       const list = await runList(['--installed']);
       const rest = omitKeys(list.fake ?? {}, ['installed', 'repositoryUrl']);
       assertDeepInclude(rest, {
@@ -207,9 +207,9 @@ describe('Driver CLI', {timeout: 90000}, function () {
       const currentFakeDriverVersionAsOfRightNow = '3.0.5';
       const installSpec = `@appium/fake-driver@${currentFakeDriverVersionAsOfRightNow}`;
       const ret = await runInstall([installSpec, '--source', 'npm']);
-      assert.deepStrictEqual(ret.fake.pkgName, '@appium/fake-driver');
-      assert.deepStrictEqual(ret.fake.installType, 'npm');
-      assert.deepStrictEqual(ret.fake.installSpec, installSpec);
+      assert.strictEqual(ret.fake.pkgName, '@appium/fake-driver');
+      assert.strictEqual(ret.fake.installType, 'npm');
+      assert.strictEqual(ret.fake.installSpec, installSpec);
       const list = await runList(['--installed']);
       const rest = omitKeys(list.fake ?? {}, ['installed', 'repositoryUrl']);
       assertDeepInclude(rest, {
@@ -230,9 +230,9 @@ describe('Driver CLI', {timeout: 90000}, function () {
         '--package',
         'appium-fake-driver',
       ]);
-      assert.deepStrictEqual(ret.fake.pkgName, 'appium-fake-driver');
-      assert.deepStrictEqual(ret.fake.installType, 'github');
-      assert.deepStrictEqual(ret.fake.installSpec, 'appium/appium-fake-driver');
+      assert.strictEqual(ret.fake.pkgName, 'appium-fake-driver');
+      assert.strictEqual(ret.fake.installType, 'github');
+      assert.strictEqual(ret.fake.installSpec, 'appium/appium-fake-driver');
       const list = await runList(['--installed']);
       const rest = omitKeys(list.fake ?? {}, ['installed', 'repositoryUrl']);
       assertDeepInclude(rest, {
@@ -244,9 +244,9 @@ describe('Driver CLI', {timeout: 90000}, function () {
 
     it('should install a driver from a local git repo', async function () {
       const ret = await runInstall([FAKE_DRIVER_DIR, '--source', 'git', '--package', '@appium/fake-driver']);
-      assert.deepStrictEqual(ret.fake.pkgName, '@appium/fake-driver');
-      assert.deepStrictEqual(ret.fake.installType, 'git');
-      assert.deepStrictEqual(ret.fake.installSpec, FAKE_DRIVER_DIR);
+      assert.strictEqual(ret.fake.pkgName, '@appium/fake-driver');
+      assert.strictEqual(ret.fake.installType, 'git');
+      assert.strictEqual(ret.fake.installSpec, FAKE_DRIVER_DIR);
       const list = await runList(['--installed', '--json']);
       const rest = omitKeys(list.fake ?? {}, ['installed', 'repositoryUrl']);
       assertDeepInclude(rest, {
@@ -267,9 +267,9 @@ describe('Driver CLI', {timeout: 90000}, function () {
         '--package',
         'appium-fake-driver',
       ]);
-      assert.deepStrictEqual(ret.fake.pkgName, 'appium-fake-driver');
-      assert.deepStrictEqual(ret.fake.installType, 'git');
-      assert.deepStrictEqual(ret.fake.installSpec, 'git+https://github.com/appium/appium-fake-driver');
+      assert.strictEqual(ret.fake.pkgName, 'appium-fake-driver');
+      assert.strictEqual(ret.fake.installType, 'git');
+      assert.strictEqual(ret.fake.installSpec, 'git+https://github.com/appium/appium-fake-driver');
       const list = await runList(['--installed']);
       const rest = omitKeys(list.fake ?? {}, ['installed', 'repositoryUrl']);
       assertDeepInclude(rest, {
@@ -419,7 +419,7 @@ describe('Driver CLI', {timeout: 90000}, function () {
     describe('when the driver defines doctor checks', function () {
       it('should load and run them', async function () {
         const checksLen = await runDoctor([driverName]);
-        assert.deepStrictEqual(checksLen, 2);
+        assert.strictEqual(checksLen, 2);
       });
     });
   });

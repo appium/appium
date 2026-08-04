@@ -1,2 +1,2 @@
-export {StoragePlugin} from './plugin';
-export type * from './types';
+export {StoragePlugin} from './plugin.js';
+export type * from './types.js';

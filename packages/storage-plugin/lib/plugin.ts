@@ -1,17 +1,23 @@
-import {EventEmitter} from 'node:stream';
+import {EventEmitter} from 'node:events';
 
 import {fs, logger, tempDir, util} from '@appium/support';
 import type {AppiumServer} from '@appium/types';
-import {getResponseForW3CError} from 'appium/driver';
-import {BasePlugin} from 'appium/plugin';
+import {getResponseForW3CError} from 'appium/driver.js';
+import {BasePlugin} from 'appium/plugin.js';
 import type {Express, Request, Response} from 'express';
 import {LRUCache} from 'lru-cache';
-import WebSocket from 'ws';
+import {WebSocketServer} from 'ws';
+import type WebSocket from 'ws';
 
-import {requireValidItemOptions, Storage, StorageArgumentError, validateStorageItemName} from './storage';
-import type {AddRequestResult, ItemOptions, StorageItem} from './types';
+import {requireValidItemOptions, Storage, StorageArgumentError, validateStorageItemName} from './storage.js';
+import type {AddRequestResult, ItemOptions, StorageItem} from './types.js';
 
 const log = logger.getLogger('StoragePlugin');
+
+// @appium/types is still CommonJS, so its `ws` Server type resolves through the "require"
+// condition, while this ESM package resolves the same class through "import" — TypeScript
+// treats them as structurally distinct even though they are identical at runtime.
+type WSHandlerServer = Parameters<AppiumServer['addWebSocketHandler']>[1];
 
 let SHARED_STORAGE: Storage | null = null;
 const STORAGE_PREFIX = '/appium/storage';
@@ -155,10 +161,10 @@ async function prepareWebSockets(
     return [streamPathname, eventsPathname];
   }
 
-  const streamServer = new WebSocket.Server({
+  const streamServer = new WebSocketServer({
     noServer: true,
   });
-  const eventsServer = new WebSocket.Server({
+  const eventsServer = new WebSocketServer({
     noServer: true,
   });
   const signaler = new EventEmitter();
@@ -206,8 +212,8 @@ async function prepareWebSockets(
     log.info(`The ${streamPathname} web socket server has notified about an error: ${e.message}`);
   });
   await Promise.all([
-    httpServer.addWebSocketHandler(streamPathname, streamServer),
-    httpServer.addWebSocketHandler(eventsPathname, eventsServer),
+    httpServer.addWebSocketHandler(streamPathname, streamServer as unknown as WSHandlerServer),
+    httpServer.addWebSocketHandler(eventsPathname, eventsServer as unknown as WSHandlerServer),
   ]);
 
   return [streamPathname, eventsPathname];

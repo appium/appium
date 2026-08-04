@@ -10,7 +10,7 @@ import {asyncmap} from 'asyncbox';
 import type {Path} from 'path-scurry';
 import type WebSocket from 'ws';
 
-import type {ItemOptions, StorageItem} from './types';
+import type {ItemOptions, StorageItem} from './types.js';
 
 const MAX_TASKS = 5;
 const TMP_EXT = '.filepart';

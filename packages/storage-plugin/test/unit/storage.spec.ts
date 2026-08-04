@@ -5,7 +5,7 @@ import {fs, logger, tempDir} from '@appium/support';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
-import {Storage, StorageArgumentError, validateStorageItemName} from '../../lib/storage';
+import {Storage, StorageArgumentError, validateStorageItemName} from '../../lib/storage.js';
 
 use(chaiAsPromised);
 

@@ -1,9 +1,8 @@
+import assert from 'node:assert/strict';
 import {Stream} from 'node:stream';
 import {describe, it, beforeEach} from 'node:test';
 
 /* eslint-disable no-console */
-import {expect} from 'chai';
-
 import {Log, markSensitive} from '../../lib/log';
 import type {Log as LogType} from '../../lib/log';
 
@@ -112,7 +111,7 @@ describe('basic', function () {
     });
 
     it('should work', function () {
-      expect(log.stream).to.equal(s);
+      assert.strictEqual(log.stream, s);
       log.on('log', logEvents.push.bind(logEvents) as any);
       log.on('log.info', logInfoEvents.push.bind(logInfoEvents) as any);
       log.on('info prefix', logPrefixEvents.push.bind(logPrefixEvents) as any);
@@ -157,38 +156,38 @@ describe('basic', function () {
       (log as any).noise(false, 'LOUD NOISES');
       (log as any).noise('error', 'erroring');
 
-      expect(result.join('').trim()).to.equal(resultExpect.join('').trim());
+      assert.strictEqual(result.join('').trim(), resultExpect.join('').trim());
       const withoutTimestamps = (x: typeof logEvents) =>
         x.map((m) => {
-          expect(Boolean((m as any).timestamp)).to.be.true;
+          assert.strictEqual(Boolean((m as any).timestamp), true);
           const copy = JSON.parse(JSON.stringify(m));
           delete copy.timestamp;
           return copy;
         });
-      expect(withoutTimestamps(log.record as any)).to.eql(logEventsExpect);
-      expect(withoutTimestamps(logEvents)).to.eql(logEventsExpect);
-      expect(withoutTimestamps(logInfoEvents)).to.eql(logInfoEventsExpect);
-      expect(withoutTimestamps(logPrefixEvents)).to.eql(logPrefixEventsExpect);
+      assert.deepStrictEqual(withoutTimestamps(log.record as any), logEventsExpect);
+      assert.deepStrictEqual(withoutTimestamps(logEvents), logEventsExpect);
+      assert.deepStrictEqual(withoutTimestamps(logInfoEvents), logInfoEventsExpect);
+      assert.deepStrictEqual(withoutTimestamps(logPrefixEvents), logPrefixEventsExpect);
     });
   });
 
   describe('utils', function () {
     it('enableColor', function () {
       log.enableColor();
-      expect((log as any)._format('x', {fg: 'red'})).to.include('\u001b');
+      assert.ok((log as any)._format('x', {fg: 'red'}).includes('\u001b'));
     });
 
     it('disableColor', function () {
       log.disableColor();
-      expect((log as any)._format('x', {fg: 'red'})).to.equal('x');
+      assert.strictEqual((log as any)._format('x', {fg: 'red'}), 'x');
     });
 
     it('_buffer while paused', function () {
       log.pause();
       log.log('verbose', 'test', 'test log');
-      expect(log._buffer.length).to.equal(1);
+      assert.strictEqual(log._buffer.length, 1);
       log.resume();
-      expect(log._buffer.length).to.equal(0);
+      assert.strictEqual(log._buffer.length, 0);
     });
   });
 
@@ -200,7 +199,7 @@ describe('basic', function () {
     it('emits error on bad loglevel', async function () {
       await new Promise<void>((resolve, reject) => {
         log.once('error', (err: Error) => {
-          expect(/Undefined log level: "asdf"/.test(String(err))).to.be.true;
+          assert.strictEqual(/Undefined log level: "asdf"/.test(String(err)), true);
           resolve();
         });
         log.log('asdf', '', 'bad loglevel');
@@ -211,8 +210,8 @@ describe('basic', function () {
     it('resolves stack traces to a plain string', async function () {
       await new Promise<void>((resolve, reject) => {
         log.once('log', (m: {message: string}) => {
-          expect(/Error: with a stack trace/.test(m.message)).to.be.true;
-          expect(/at Test/.test(m.message)).to.be.true;
+          assert.strictEqual(/Error: with a stack trace/.test(m.message), true);
+          assert.strictEqual(/at Test/.test(m.message), true);
           resolve();
         });
         const err = new Error('with a stack trace');
@@ -224,10 +223,10 @@ describe('basic', function () {
     it('replaces sensitive messages', async function () {
       log.updateAsyncStorage({isSensitive: true}, true);
       log.log('verbose', 'test', markSensitive('log 1'));
-      expect(log.record.at(-1)!.message).to.eql('**SECURE**');
+      assert.deepStrictEqual(log.record.at(-1)!.message, '**SECURE**');
       log.updateAsyncStorage({isSensitive: false}, true);
       log.log('verbose', 'test', markSensitive('log 1'));
-      expect(log.record.at(-1)!.message).to.eql('log 1');
+      assert.deepStrictEqual(log.record.at(-1)!.message, 'log 1');
     });
 
     it('max record size', function () {
@@ -236,13 +235,13 @@ describe('basic', function () {
       log.log('verbose', 'test', 'log 2');
       log.log('verbose', 'test', 'log 3');
       log.log('verbose', 'test', 'log 4');
-      expect(log.record.map(({message}) => message)).to.eql(['log 2', 'log 3', 'log 4']);
+      assert.deepStrictEqual(log.record.map(({message}) => message), ['log 2', 'log 3', 'log 4']);
       log.maxRecordSize = 2;
       log.log('verbose', 'test', 'log 5');
-      expect(log.record.map(({message}) => message)).to.eql(['log 4', 'log 5']);
+      assert.deepStrictEqual(log.record.map(({message}) => message), ['log 4', 'log 5']);
       log.maxRecordSize = 3;
       log.log('verbose', 'test', 'log 6');
-      expect(log.record.map(({message}) => message)).to.eql(['log 4', 'log 5', 'log 6']);
+      assert.deepStrictEqual(log.record.map(({message}) => message), ['log 4', 'log 5', 'log 6']);
     });
   });
 
@@ -274,32 +273,32 @@ describe('basic', function () {
 
     it('with nonexistent stream', function () {
       log.stream = null as any;
-      expect((log as any)._format('message')).to.equal(undefined);
+      assert.strictEqual((log as any)._format('message'), undefined);
     });
     it('fg', function () {
       log.enableColor();
       const o = (log as any)._format('test message', {bg: 'blue'});
-      expect(o).to.include('\u001b[44mtest message\u001b[0m');
+      assert.ok(o.includes('\u001b[44mtest message\u001b[0m'));
     });
     it('bg', function () {
       log.enableColor();
       const o = (log as any)._format('test message', {bg: 'white'});
-      expect(o).to.include('\u001b[47mtest message\u001b[0m');
+      assert.ok(o.includes('\u001b[47mtest message\u001b[0m'));
     });
     it('bold', function () {
       log.enableColor();
       const o = (log as any)._format('test message', {bold: true});
-      expect(o).to.include('\u001b[1mtest message\u001b[0m');
+      assert.ok(o.includes('\u001b[1mtest message\u001b[0m'));
     });
     it('underline', function () {
       log.enableColor();
       const o = (log as any)._format('test message', {underline: true});
-      expect(o).to.include('\u001b[4mtest message\u001b[0m');
+      assert.ok(o.includes('\u001b[4mtest message\u001b[0m'));
     });
     it('inverse', function () {
       log.enableColor();
       const o = (log as any)._format('test message', {inverse: true});
-      expect(o).to.include('\u001b[7mtest message\u001b[0m');
+      assert.ok(o.includes('\u001b[7mtest message\u001b[0m'));
     });
   });
 });

@@ -1,6 +1,5 @@
+import assert from 'node:assert/strict';
 import {describe, it, beforeEach} from 'node:test';
-
-import {expect} from 'chai';
 
 import {SecureValuesPreprocessor} from '../../lib/secure-values-preprocessor';
 
@@ -13,18 +12,18 @@ describe('Log Internals', function () {
 
   it('should preprocess a string and make replacements', async function () {
     const issues = await preprocessor.loadRules(['yolo']);
-    expect(issues.length).to.eql(0);
-    expect(preprocessor.rules.length).to.eql(1);
+    assert.deepStrictEqual(issues.length, 0);
+    assert.deepStrictEqual(preprocessor.rules.length, 1);
     const replacer = preprocessor.rules[0].replacer;
-    expect(preprocessor.preprocess(':yolo" yo Yolo yyolo')).to.eql(`:${replacer}" yo Yolo yyolo`);
+    assert.deepStrictEqual(preprocessor.preprocess(':yolo" yo Yolo yyolo'), `:${replacer}" yo Yolo yyolo`);
   });
 
   it('should preprocess a string and make replacements with multiple simple rules', async function () {
     const issues = await preprocessor.loadRules(['yolo', 'yo']);
-    expect(issues.length).to.eql(0);
-    expect(preprocessor.rules.length).to.eql(2);
+    assert.deepStrictEqual(issues.length, 0);
+    assert.deepStrictEqual(preprocessor.rules.length, 2);
     const replacer = preprocessor.rules[0].replacer;
-    expect(preprocessor.preprocess(':yolo" yo Yolo yyolo')).to.eql(`:${replacer}" ${replacer} Yolo yyolo`);
+    assert.deepStrictEqual(preprocessor.preprocess(':yolo" yo Yolo yyolo'), `:${replacer}" ${replacer} Yolo yyolo`);
   });
 
   it('should preprocess a string and make replacements with multiple complex rules', async function () {
@@ -33,18 +32,21 @@ describe('Log Internals', function () {
       {text: 'yolo', flags: 'i'},
       {pattern: '^:', replacer: replacer2},
     ]);
-    expect(issues.length).to.eql(0);
-    expect(preprocessor.rules.length).to.eql(2);
+    assert.deepStrictEqual(issues.length, 0);
+    assert.deepStrictEqual(preprocessor.rules.length, 2);
     const replacer = preprocessor.rules[0].replacer;
-    expect(preprocessor.preprocess(':yolo" yo Yolo yyolo')).to.eql(`${replacer2}${replacer}" yo ${replacer} yyolo`);
+    assert.deepStrictEqual(
+      preprocessor.preprocess(':yolo" yo Yolo yyolo'),
+      `${replacer2}${replacer}" yo ${replacer} yyolo`,
+    );
   });
 
   it(`should preprocess a string and apply a rule where 'pattern' has priority over 'text'`, async function () {
     const replacer = '***';
     const issues = await preprocessor.loadRules([{pattern: '^:', text: 'yo', replacer}]);
-    expect(issues.length).to.eql(0);
-    expect(preprocessor.rules.length).to.eql(1);
-    expect(preprocessor.preprocess(':yolo" yo Yolo yyolo')).to.eql(`${replacer}yolo" yo Yolo yyolo`);
+    assert.deepStrictEqual(issues.length, 0);
+    assert.deepStrictEqual(preprocessor.rules.length, 1);
+    assert.deepStrictEqual(preprocessor.preprocess(':yolo" yo Yolo yyolo'), `${replacer}yolo" yo Yolo yyolo`);
   });
 
   it('should preprocess a string and make replacements with multiple complex rules and issues', async function () {
@@ -53,39 +55,40 @@ describe('Log Internals', function () {
       {text: 'yolo', flags: 'i'},
       {pattern: '^:(', replacer: replacer2},
     ]);
-    expect(issues.length).to.eql(1);
-    expect(preprocessor.rules.length).to.eql(1);
+    assert.deepStrictEqual(issues.length, 1);
+    assert.deepStrictEqual(preprocessor.rules.length, 1);
     const replacer = preprocessor.rules[0].replacer;
-    expect(preprocessor.preprocess(':yolo" yo Yolo yyolo')).to.eql(`:${replacer}" yo ${replacer} yyolo`);
+    assert.deepStrictEqual(preprocessor.preprocess(':yolo" yo Yolo yyolo'), `:${replacer}" yo ${replacer} yyolo`);
   });
 
   it('should preprocess values starting or ending with non-word characters', async function () {
     const issues = await preprocessor.loadRules(['P@ssw0rd!', '+15550100', '#hunter2']);
-    expect(issues.length).to.eql(0);
+    assert.deepStrictEqual(issues.length, 0);
     const replacer = preprocessor.rules[0].replacer;
-    expect(preprocessor.preprocess('P@ssw0rd! call +15550100 tag #hunter2')).to.eql(
+    assert.deepStrictEqual(
+      preprocessor.preprocess('P@ssw0rd! call +15550100 tag #hunter2'),
       `${replacer} call ${replacer} tag ${replacer}`,
     );
   });
 
   it(`should preprocess a value with non-word characters given as 'text'`, async function () {
     const issues = await preprocessor.loadRules([{text: '$ecret'}]);
-    expect(issues.length).to.eql(0);
+    assert.deepStrictEqual(issues.length, 0);
     const replacer = preprocessor.rules[0].replacer;
-    expect(preprocessor.preprocess('the token is $ecret')).to.eql(`the token is ${replacer}`);
+    assert.deepStrictEqual(preprocessor.preprocess('the token is $ecret'), `the token is ${replacer}`);
   });
 
   it('should not preprocess a value which is a part of a longer word', async function () {
     const issues = await preprocessor.loadRules(['yolo']);
-    expect(issues.length).to.eql(0);
-    expect(preprocessor.preprocess('yolos yyolo')).to.eql('yolos yyolo');
+    assert.deepStrictEqual(issues.length, 0);
+    assert.deepStrictEqual(preprocessor.preprocess('yolos yyolo'), 'yolos yyolo');
   });
 
   it('should leave the string unchanged if all rules have issues', async function () {
     const replacer2 = '***';
     const issues = await preprocessor.loadRules([null, {flags: 'i'}, {pattern: '^:(', replacer: replacer2}] as any);
-    expect(issues.length).to.eql(3);
-    expect(preprocessor.rules.length).to.eql(0);
-    expect(preprocessor.preprocess(':yolo" yo Yolo yyolo')).to.eql(':yolo" yo Yolo yyolo');
+    assert.deepStrictEqual(issues.length, 3);
+    assert.deepStrictEqual(preprocessor.rules.length, 0);
+    assert.deepStrictEqual(preprocessor.preprocess(':yolo" yo Yolo yyolo'), ':yolo" yo Yolo yyolo');
   });
 });

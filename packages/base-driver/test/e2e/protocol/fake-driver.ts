@@ -9,7 +9,7 @@ import type {
   W3CDriverCaps,
 } from '@appium/types';
 
-import {BaseDriver, determineProtocol, errors} from '../../../lib';
+import {BaseDriver, determineProtocol, errors, isW3cCaps} from '../../../lib';
 import {PROTOCOLS} from '../../../lib/constants';
 
 class FakeDriver extends BaseDriver<Constraints> {
@@ -42,14 +42,15 @@ class FakeDriver extends BaseDriver<Constraints> {
 
   async createSession(
     desiredCapabilities: W3CDriverCaps<Constraints>,
-    requiredCapabilities: W3CDriverCaps<Constraints>,
-    capabilities: W3CDriverCaps<Constraints>,
+    requiredCapabilities?: W3CDriverCaps<Constraints>,
+    capabilities?: W3CDriverCaps<Constraints>,
   ): Promise<DefaultCreateSessionResult<Constraints>> {
-    if ([desiredCapabilities, requiredCapabilities, capabilities].every((c) => util.isEmpty(c))) {
+    const w3cCapabilities = [desiredCapabilities, requiredCapabilities, capabilities].find(isW3cCaps);
+    if (!w3cCapabilities) {
       throw new errors.SessionNotCreatedError('No capabilities provided');
     }
     this.sessionId = `fakeSession_${util.uuidV4()}`;
-    return [this.sessionId, capabilities] as unknown as DefaultCreateSessionResult<Constraints>;
+    return [this.sessionId, w3cCapabilities] as unknown as DefaultCreateSessionResult<Constraints>;
   }
 
   async executeCommand<T = unknown>(cmd: string, ...args: any[]): Promise<T> {

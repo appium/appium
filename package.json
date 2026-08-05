@@ -97,7 +97,7 @@
     "@types/node": "24.13.3",
     "@types/plist": "3.0.5",
     "@types/pluralize": "0.0.33",
-    "@types/semver": "7.7.1",
+    "@types/semver": "7.8.0",
     "@types/serve-favicon": "2.5.7",
     "@types/shell-quote": "1.7.5",
     "@types/sinon": "22.0.0",

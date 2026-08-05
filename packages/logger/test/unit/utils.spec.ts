@@ -1,31 +1,30 @@
+import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
-
-import {expect} from 'chai';
 
 import {ansiBeep, ansiColor, escapeRegExp, isPlainObject, setBlocking, unleakString} from '../../lib/utils';
 
 describe('utils', function () {
   describe('ansiColor', function () {
     it('should encode a single foreground color', function () {
-      expect(ansiColor('red')).to.eql('\x1b[31m');
+      assert.strictEqual(ansiColor('red'), '\x1b[31m');
     });
 
     it('should encode multiple styles', function () {
-      expect(ansiColor('cyan', 'bgBlack', 'bold')).to.eql('\x1b[36;40;1m');
+      assert.strictEqual(ansiColor('cyan', 'bgBlack', 'bold'), '\x1b[36;40;1m');
     });
 
     it('should encode reset', function () {
-      expect(ansiColor('reset')).to.eql('\x1b[0m');
+      assert.strictEqual(ansiColor('reset'), '\x1b[0m');
     });
 
     it('should throw for unknown style names', function () {
-      expect(() => ansiColor('not-a-style')).to.throw('Unknown color or style name: not-a-style');
+      assert.throws(() => ansiColor('not-a-style'), /Unknown color or style name: not-a-style/);
     });
   });
 
   describe('ansiBeep', function () {
     it('should return the bell character', function () {
-      expect(ansiBeep()).to.eql('\x07');
+      assert.strictEqual(ansiBeep(), '\x07');
     });
   });
 
@@ -53,8 +52,8 @@ describe('utils', function () {
 
       setBlocking(true, [stdout, stderr]);
 
-      expect(stdout._handle.last).to.be.true;
-      expect(stderr._handle.last).to.be.true;
+      assert.strictEqual(stdout._handle.last, true);
+      assert.strictEqual(stderr._handle.last, true);
     });
 
     it('should skip streams that are not TTY', function () {
@@ -63,49 +62,49 @@ describe('utils', function () {
 
       setBlocking(true, [stream]);
 
-      expect(stream._handle.last).to.be.undefined;
+      assert.strictEqual(stream._handle.last, undefined);
     });
 
     it('should skip streams without a setBlocking handle', function () {
       const stream = {isTTY: true, _handle: {}} as NodeJS.WriteStream & {_handle: object};
 
-      expect(() => setBlocking(true, [stream])).not.to.throw();
+      assert.doesNotThrow(() => setBlocking(true, [stream]));
     });
   });
 
   describe('isPlainObject', function () {
     it('should return true for plain objects', function () {
-      expect(isPlainObject({})).to.be.true;
-      expect(isPlainObject({a: 1})).to.be.true;
-      expect(isPlainObject(Object.create(null))).to.be.true;
+      assert.strictEqual(isPlainObject({}), true);
+      assert.strictEqual(isPlainObject({a: 1}), true);
+      assert.strictEqual(isPlainObject(Object.create(null)), true);
     });
 
     it('should return false for non-plain values', function () {
-      expect(isPlainObject(null)).to.be.false;
-      expect(isPlainObject([])).to.be.false;
-      expect(isPlainObject(new Date())).to.be.false;
-      expect(isPlainObject('x')).to.be.false;
+      assert.strictEqual(isPlainObject(null), false);
+      assert.strictEqual(isPlainObject([]), false);
+      assert.strictEqual(isPlainObject(new Date()), false);
+      assert.strictEqual(isPlainObject('x'), false);
     });
   });
 
   describe('escapeRegExp', function () {
     it('should escape regexp metacharacters', function () {
-      expect(escapeRegExp('a.b(c)')).to.eql('a\\.b\\(c\\)');
+      assert.strictEqual(escapeRegExp('a.b(c)'), 'a\\.b\\(c\\)');
     });
   });
 
   describe('unleakString', function () {
     it('should unleak a string', function () {
-      expect(unleakString('yolo')).to.eql('yolo');
+      assert.strictEqual(unleakString('yolo'), 'yolo');
     });
 
     it('should unleak a multiline string', function () {
-      expect(unleakString(' yolo\nbolo ')).to.eql(' yolo\nbolo ');
+      assert.strictEqual(unleakString(' yolo\nbolo '), ' yolo\nbolo ');
     });
 
     it('should convert an object to a string', function () {
       for (const obj of [{}, null, undefined, [], 0]) {
-        expect(unleakString(obj as any)).to.eql(`${obj}`);
+        assert.strictEqual(unleakString(obj as any), `${obj}`);
       }
     });
   });

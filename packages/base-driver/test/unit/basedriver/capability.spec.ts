@@ -37,7 +37,7 @@ describe('Desired Capabilities', function () {
         alwaysMatch: {},
         firstMatch: [{}],
       }),
-      (err: any) => err instanceof errors.SessionNotCreatedError && /platformName/.test(err.message),
+      {name: 'SessionNotCreatedError', message: /platformName/},
     );
   });
 
@@ -47,7 +47,7 @@ describe('Desired Capabilities', function () {
         alwaysMatch: {},
         firstMatch: [{}],
       }),
-      (err: any) => err instanceof errors.SessionNotCreatedError && /platformName/.test(err.message),
+      {name: 'SessionNotCreatedError', message: /platformName/},
     );
   });
 
@@ -79,7 +79,7 @@ describe('Desired Capabilities', function () {
         },
         firstMatch: [{}],
       }),
-      (err: any) => err instanceof errors.SessionNotCreatedError && /necessary.*proper/.test(err.message),
+      {name: 'SessionNotCreatedError', message: /necessary.*proper/},
     );
   });
 
@@ -100,7 +100,7 @@ describe('Desired Capabilities', function () {
         },
         firstMatch: [{}],
       }),
-      (err: any) => err instanceof errors.SessionNotCreatedError && /platformName/.test(err.message),
+      {name: 'SessionNotCreatedError', message: /platformName/},
     );
   });
 
@@ -165,7 +165,7 @@ describe('Desired Capabilities', function () {
         alwaysMatch: {platformname: 'iOS'},
         firstMatch: [{}],
       } as unknown as TestW3CCaps),
-      (err: any) => err instanceof errors.SessionNotCreatedError && /platformName/.test(err.message),
+      {name: 'SessionNotCreatedError', message: /platformName/},
     );
   });
 
@@ -247,7 +247,7 @@ describe('Desired Capabilities', function () {
         } as any,
         firstMatch: [{}],
       }),
-      (err: any) => err instanceof errors.SessionNotCreatedError && /platformName/i.test(err.message),
+      {name: 'SessionNotCreatedError', message: /platformName/i},
     );
   });
 

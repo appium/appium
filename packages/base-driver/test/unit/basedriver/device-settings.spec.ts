@@ -6,7 +6,6 @@ import type {SettingsUpdateListener} from '@appium/types';
 import sinon from 'sinon';
 
 import {DeviceSettings, MAX_SETTINGS_SIZE} from '../../../lib/basedriver/device-settings';
-import {InvalidArgumentError} from '../../../lib/protocol/errors';
 
 describe('DeviceSettings', function () {
   let sandbox: sinon.SinonSandbox;
@@ -51,20 +50,20 @@ describe('DeviceSettings', function () {
       describe('when no parameters are provided', function () {
         it('should reject with an InvalidArgumentError', async function () {
           const deviceSettings = new DeviceSettings();
-          await assert.rejects(
-            (deviceSettings.update as (newSettings?: Record<string, unknown>) => Promise<void>)(),
-            (err: unknown) => err instanceof InvalidArgumentError && /with valid JSON/i.test((err as Error).message),
-          );
+          await assert.rejects((deviceSettings.update as (newSettings?: Record<string, unknown>) => Promise<void>)(), {
+            name: 'InvalidArgumentError',
+            message: /with valid JSON/i,
+          });
         });
       });
 
       describe('when a non-plain-object `newSettings` param is provided', function () {
         it('should reject with an InvalidArgumentError', async function () {
           const deviceSettings = new DeviceSettings();
-          await assert.rejects(
-            deviceSettings.update(null as unknown as Record<string, unknown>),
-            (err: unknown) => err instanceof InvalidArgumentError && /with valid JSON/i.test((err as Error).message),
-          );
+          await assert.rejects(deviceSettings.update(null as unknown as Record<string, unknown>), {
+            name: 'InvalidArgumentError',
+            message: /with valid JSON/i,
+          });
         });
       });
 
@@ -75,11 +74,10 @@ describe('DeviceSettings', function () {
 
         it('should reject with an InvalidArgumentError', async function () {
           const deviceSettings = new DeviceSettings();
-          await assert.rejects(
-            deviceSettings.update({stuff: 'things'}),
-            (err: unknown) =>
-              err instanceof InvalidArgumentError && /object size exceeds/i.test((err as Error).message),
-          );
+          await assert.rejects(deviceSettings.update({stuff: 'things'}), {
+            name: 'InvalidArgumentError',
+            message: /object size exceeds/i,
+          });
         });
       });
 

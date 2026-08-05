@@ -62,19 +62,19 @@ describe('schema', function () {
     describe('error conditions', function () {
       describe('when provided no parameters', function () {
         it('should throw a TypeError', async function () {
-          await assert.rejects(
-            (registerSchema as (...args: unknown[]) => Promise<unknown>)(),
-            (err: Error) => err instanceof TypeError && /expected extension type/i.test(err.message),
-          );
+          await assert.rejects((registerSchema as (...args: unknown[]) => Promise<unknown>)(), {
+            name: 'TypeError',
+            message: /expected extension type/i,
+          });
         });
       });
 
       describe('when provided `type` and `name`, but not `schema`', function () {
         it('should throw a TypeError', async function () {
-          await assert.rejects(
-            (registerSchema as (...args: unknown[]) => Promise<unknown>)(DRIVER_TYPE, 'whoopeee'),
-            (err: Error) => err instanceof TypeError && /expected extension type/i.test(err.message),
-          );
+          await assert.rejects((registerSchema as (...args: unknown[]) => Promise<unknown>)(DRIVER_TYPE, 'whoopeee'), {
+            name: 'TypeError',
+            message: /expected extension type/i,
+          });
         });
       });
 
@@ -84,7 +84,7 @@ describe('schema', function () {
             (registerSchema as (...args: unknown[]) => Promise<unknown>)(DRIVER_TYPE, undefined, {
               title: 'whoopeee',
             }),
-            (err: Error) => err instanceof TypeError && /expected extension type/i.test(err.message),
+            {name: 'TypeError', message: /expected extension type/i},
           );
         });
       });
@@ -94,8 +94,7 @@ describe('schema', function () {
           it('should throw', async function () {
             await assert.rejects(
               (registerSchema as (...args: unknown[]) => Promise<unknown>)(DRIVER_TYPE, 'whoopeee', [45]),
-              (err: Error) =>
-                err instanceof SchemaUnsupportedSchemaError && /must be a plain object/i.test(err.message),
+              {name: 'TypeError', message: /must be a plain object/i},
             );
           });
         });
@@ -106,8 +105,7 @@ describe('schema', function () {
               (registerSchema as (...args: unknown[]) => Promise<unknown>)(DRIVER_TYPE, 'whoopee', {
                 $async: true,
               }),
-              (err: Error) =>
-                err instanceof SchemaUnsupportedSchemaError && /cannot be an async schema/i.test(err.message),
+              {name: 'TypeError', message: /cannot be an async schema/i},
             );
           });
         });
@@ -139,7 +137,7 @@ describe('schema', function () {
               registerSchema(DRIVER_TYPE, 'whoopee', {
                 title: 'cushion?',
               }),
-              (err: Error) => err instanceof Error && /conflicts with an existing schema/.test(err.message),
+              {name: 'Error', message: /conflicts with an existing schema/},
             );
           });
         });

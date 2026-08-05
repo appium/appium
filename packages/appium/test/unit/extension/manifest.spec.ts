@@ -133,11 +133,10 @@ describe('Manifest', function () {
           MockAppiumSupport.fs.readFile.resolves('{');
         });
         it('should reject', async function () {
-          await assert.rejects(
-            manifest.read(),
-            (err: unknown) =>
-              err instanceof Error && /trouble loading the extension installation cache file/i.test(err.message),
-          );
+          await assert.rejects(manifest.read(), {
+            name: 'Error',
+            message: /trouble loading the extension installation cache file/i,
+          });
         });
       });
 
@@ -147,10 +146,7 @@ describe('Manifest', function () {
         });
 
         it('should reject', async function () {
-          await assert.rejects(
-            manifest.read(),
-            (err: unknown) => err instanceof Error && /could not determine manifest path/i.test(err.message),
-          );
+          await assert.rejects(manifest.read(), {name: 'Error', message: /could not determine manifest path/i});
         });
       });
 
@@ -246,10 +242,7 @@ describe('Manifest', function () {
           });
 
           it('should reject', async function () {
-            await assert.rejects(
-              manifest.write(),
-              (err: unknown) => err instanceof Error && /Appium could not write to manifest/i.test(err.message),
-            );
+            await assert.rejects(manifest.write(), {name: 'Error', message: /Appium could not write to manifest/i});
           });
         });
 
@@ -259,11 +252,10 @@ describe('Manifest', function () {
           });
 
           it('should reject', async function () {
-            await assert.rejects(
-              manifest.write(),
-              (err: unknown) =>
-                err instanceof Error && /could not create the directory for the manifest file/i.test(err.message),
-            );
+            await assert.rejects(manifest.write(), {
+              name: 'Error',
+              message: /could not create the directory for the manifest file/i,
+            });
           });
         });
       });

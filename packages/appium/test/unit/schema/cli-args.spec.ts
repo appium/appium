@@ -149,10 +149,10 @@ describe('cli-args', function () {
         describe('null', function () {
           it('should throw', async function () {
             const schema = {properties: {foo: {type: 'null'}}, type: 'object'};
-            await assert.rejects(
-              getArgs({extType, extName, schema}),
-              (err: Error) => err instanceof TypeError && /unknown or disallowed/.test(err.message),
-            );
+            await assert.rejects(getArgs({extType, extName, schema}), {
+              name: 'TypeError',
+              message: /unknown or disallowed/,
+            });
           });
         });
 
@@ -162,10 +162,7 @@ describe('cli-args', function () {
               properties: {foo: {type: 'donkey'}},
               type: 'object',
             };
-            await assert.rejects(
-              getArgs({extType, extName, schema}),
-              (err: Error) => err instanceof Error && /schema is invalid/.test(err.message),
-            );
+            await assert.rejects(getArgs({extType, extName, schema}), {name: 'Error', message: /schema is invalid/});
           });
         });
       });
@@ -302,11 +299,10 @@ describe('cli-args', function () {
               },
               type: 'object',
             };
-            await assert.rejects(
-              getArgs({schema, extName, extType}),
-              (err: Error) =>
-                err instanceof TypeError && /`enum` is only supported for `type: 'string'`/i.test(err.message),
-            );
+            await assert.rejects(getArgs({schema, extName, extType}), {
+              name: 'TypeError',
+              message: /`enum` is only supported for `type: 'string'`/i,
+            });
           });
         });
 

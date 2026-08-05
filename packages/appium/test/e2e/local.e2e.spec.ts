@@ -114,7 +114,7 @@ describe('when Appium is a dependency of the current project', function () {
 
         it('should update the manifest', async function () {
           const manifestParsed = await readManifest();
-          assert.ok(manifestParsed.drivers?.fake !== undefined);
+          assert.ok(manifestParsed.drivers?.fake);
         });
 
         describe('when a different driver is installed via "appium driver install"', function () {
@@ -125,14 +125,14 @@ describe('when Appium is a dependency of the current project', function () {
 
           it('should update package.json', async function () {
             const newPkg = JSON.parse(await fs.readFile(appiumHomePkgPath, 'utf8'));
-            assert.ok(newPkg.devDependencies?.['@appium/test-driver'] !== undefined);
+            assert.ok(newPkg.devDependencies?.['@appium/test-driver']);
           });
 
           it('should update the manifest with the new driver', async function () {
             const manifest = await fs.readFile(manifestPath, 'utf8');
             const manifestParsed = YAML.parse(manifest) as ManifestData;
-            assert.ok(manifestParsed.drivers?.test !== undefined);
-            assert.ok(manifestParsed.drivers?.fake !== undefined);
+            assert.ok(manifestParsed.drivers?.test);
+            assert.ok(manifestParsed.drivers?.fake);
           });
 
           it('should actually install both drivers', async function () {

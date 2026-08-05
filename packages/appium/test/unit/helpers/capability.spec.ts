@@ -3,6 +3,7 @@ import {describe, it} from 'node:test';
 
 import type {BaseDriverCapConstraints, Capabilities, Constraints, NSCapabilities, W3CCapabilities} from '@appium/types';
 
+import type {InvalidCaps} from '../../../lib/helpers/capability';
 import {
   insertAppiumPrefixes,
   parseCapsForInnerDriver,
@@ -14,9 +15,9 @@ import {BASE_CAPS, W3C_CAPS} from '../../helpers';
 describe('helpers/capability', function () {
   describe('parseCapsForInnerDriver()', function () {
     it('should return an error if only JSONWP provided', function () {
-      const res = parseCapsForInnerDriver(BASE_CAPS as unknown as W3CCapabilities<Constraints>);
-      assert.ok('error' in res && res.error);
-      assert.match((res as {error: {message: string}}).error.message, /W3C/);
+      const res = parseCapsForInnerDriver(BASE_CAPS as unknown as W3CCapabilities<Constraints>) as InvalidCaps;
+      assert.ok(res.error);
+      assert.match(res.error.message, /W3C/);
     });
     it('should return W3C caps unchanged if only W3C caps were provided', function () {
       const {desiredCaps, processedW3CCapabilities} = parseCapsForInnerDriver(W3C_CAPS);

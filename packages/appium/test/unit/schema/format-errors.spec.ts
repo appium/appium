@@ -36,19 +36,13 @@ describe('schema/format-errors', function () {
 
     describe('when provided `errors` as an empty array', function () {
       it('should throw', function () {
-        assert.throws(
-          () => formatErrors([]),
-          (err: Error) => err instanceof TypeError && /Array of errors must be non-empty/.test(err.message),
-        );
+        assert.throws(() => formatErrors([]), {name: 'TypeError', message: /Array of errors must be non-empty/});
       });
     });
 
     describe('when provided `errors` as `undefined`', function () {
       it('should throw', function () {
-        assert.throws(
-          () => formatErrors(),
-          (err: Error) => err instanceof TypeError && /Array of errors must be non-empty/.test(err.message),
-        );
+        assert.throws(() => formatErrors(), {name: 'TypeError', message: /Array of errors must be non-empty/});
       });
     });
 

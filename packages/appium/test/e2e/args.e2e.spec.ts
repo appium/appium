@@ -48,7 +48,7 @@ describe('argument parsing', function () {
               timeout: 5000,
             },
           ),
-          (err: unknown) => err instanceof Error && /timed out/.test(err.message),
+          {name: 'Error', message: /timed out/},
         );
       });
     });
@@ -112,7 +112,7 @@ describe('argument parsing', function () {
             timeout: 5000,
           },
         ),
-        (err: unknown) => err instanceof Error && /timed out/.test(err.message),
+        {name: 'Error', message: /timed out/},
       );
     });
   });

@@ -59,10 +59,10 @@ describe('package-changed', function () {
     describe('when it cannot create the parent dir', function () {
       it('should reject', async function () {
         MockAppiumSupport.fs.mkdirp.rejects(new Error('some error'));
-        await assert.rejects(
-          packageDidChange('/some/path'),
-          (err: unknown) => err instanceof Error && /could not create the directory/i.test(err.message),
-        );
+        await assert.rejects(packageDidChange('/some/path'), {
+          name: 'Error',
+          message: /could not create the directory/i,
+        });
       });
     });
 
@@ -101,10 +101,7 @@ describe('package-changed', function () {
           MockPackageChanged.__writeHash.throws(new Error('oh noes'));
         });
         it('should reject', async function () {
-          await assert.rejects(
-            packageDidChange('/some/where'),
-            (err: unknown) => err instanceof Error && /could not write hash file/i.test(err.message),
-          );
+          await assert.rejects(packageDidChange('/some/where'), {name: 'Error', message: /could not write hash file/i});
         });
       });
     });

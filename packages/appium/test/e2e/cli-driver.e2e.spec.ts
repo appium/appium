@@ -357,7 +357,7 @@ describe('Driver CLI', {timeout: 90000}, function () {
 
     it('should uninstall a driver based on its driver name', async function () {
       const uninstall = await runUninstall(['fake']);
-      assert.notDeepStrictEqual(Object.keys(uninstall), ['fake']);
+      assert.ok(!Object.hasOwn(uninstall, 'fake'));
       assert.strictEqual(await fs.exists(path.join(appiumHome, 'node_modules', '@appium', 'fake-driver')), false);
     });
   });

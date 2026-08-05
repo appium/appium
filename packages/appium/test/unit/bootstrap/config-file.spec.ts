@@ -189,7 +189,8 @@ describe('bootstrap/config-file', function () {
             });
 
             it('should resolve with an object having a nonempty array of errors', function () {
-              assert.ok(Array.isArray(result.errors) && result.errors.length > 0);
+              assert.ok(Array.isArray(result.errors));
+              assert.ok(result.errors.length > 0);
             });
           });
         });
@@ -283,7 +284,8 @@ describe('bootstrap/config-file', function () {
             });
 
             it('should resolve with an object having a nonempty array of errors', function () {
-              assert.ok(Array.isArray(result.errors) && result.errors.length > 0);
+              assert.ok(Array.isArray(result.errors));
+              assert.ok(result.errors.length > 0);
             });
           });
         });

@@ -1,7 +1,6 @@
 import assert from 'node:assert/strict';
 import {promises as fs} from 'node:fs';
 import {describe, it, beforeEach, afterEach, before} from 'node:test';
-import {isDeepStrictEqual} from 'node:util';
 
 import type {ExtensionType, PluginType} from '@appium/types';
 import type {ExtManifest} from 'appium/types';
@@ -10,7 +9,7 @@ import type {SinonSandbox} from 'sinon';
 import {Manifest} from '../../../lib/extension/manifest';
 import type {PluginConfig as PluginConfigInstance} from '../../../lib/extension/plugin-config';
 import {resetSchema} from '../../../lib/schema';
-import {resolveFixture, rewiremock} from '../../helpers';
+import {assertArrayIncludesDeep, resolveFixture, rewiremock} from '../../helpers';
 import {initMocks} from './mocks';
 import type {MockAppiumSupport, MockResolveFrom, Overrides} from './mocks';
 
@@ -19,6 +18,7 @@ type ExtManifestWithSchema<ExtType extends ExtensionType> = ExtManifest<ExtType>
 };
 
 interface PluginConfigConstructor {
+  new (...args: never[]): PluginConfigInstance;
   create(manifest: Manifest): PluginConfigInstance;
   getInstance(manifest: Manifest): PluginConfigInstance | undefined;
 }
@@ -53,7 +53,7 @@ describe('PluginConfig', function () {
       describe('when the PluginConfig is not yet associated with a Manifest', function () {
         it('should return a new PluginConfig', function () {
           const config = PluginConfig.create(manifest);
-          assert.ok(config instanceof (PluginConfig as unknown as new (...args: any[]) => unknown));
+          assert.ok(config instanceof PluginConfig);
         });
 
         it('should be associated with the Manifest', function () {
@@ -145,14 +145,10 @@ describe('PluginConfig', function () {
             },
             'foo',
           );
-          assert.ok(
-            problems.some((p: unknown) =>
-              isDeepStrictEqual(p, {
-                err: 'Incorrectly formatted schema field; must be a path to a schema file or a schema object.',
-                val: [],
-              }),
-            ),
-          );
+          assertArrayIncludesDeep(problems, {
+            err: 'Incorrectly formatted schema field; must be a path to a schema file or a schema object.',
+            val: [],
+          });
         });
       });
 
@@ -170,14 +166,10 @@ describe('PluginConfig', function () {
               },
               'foo',
             );
-            assert.ok(
-              problems.some((p: unknown) =>
-                isDeepStrictEqual(p, {
-                  err: 'Schema file has unsupported extension. Allowed: .json, .js, .cjs',
-                  val: 'selenium.java',
-                }),
-              ),
-            );
+            assertArrayIncludesDeep(problems, {
+              err: 'Schema file has unsupported extension. Allowed: .json, .js, .cjs',
+              val: 'selenium.java',
+            });
           });
         });
 

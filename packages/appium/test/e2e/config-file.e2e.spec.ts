@@ -182,23 +182,18 @@ describe('config file behavior', function () {
           assert.strictEqual(result.filepath, BAD_FILEPATH);
           assert.strictEqual(result.errors?.length, 7);
           assert.ok(
-            result.errors?.some((error) => {
-              try {
-                assert.deepStrictEqual(error, {
-                  instancePath: '',
-                  schemaPath: '#/additionalProperties',
-                  keyword: 'additionalProperties',
-                  params: {
-                    additionalProperty: 'appium-home',
-                  },
-                  message: 'must NOT have additional properties',
-                  isIdentifierLocation: true,
-                });
-                return true;
-              } catch {
-                return false;
-              }
-            }),
+            result.errors?.some((error) =>
+              util.isEqual(error, {
+                instancePath: '',
+                schemaPath: '#/additionalProperties',
+                keyword: 'additionalProperties',
+                params: {
+                  additionalProperty: 'appium-home',
+                },
+                message: 'must NOT have additional properties',
+                isIdentifierLocation: true,
+              }),
+            ),
           );
           assert.strictEqual(typeof result.reason, 'string');
         });

@@ -1,7 +1,6 @@
 import assert from 'node:assert/strict';
 import {promises as fs} from 'node:fs';
 import {describe, it, beforeEach, afterEach, before} from 'node:test';
-import {isDeepStrictEqual} from 'node:util';
 
 import type {DriverType, ExtensionType} from '@appium/types';
 import type {ExtManifest} from 'appium/types';
@@ -10,7 +9,7 @@ import type {SinonSandbox} from 'sinon';
 import type {DriverConfig} from '../../../lib/extension/driver-config';
 import {Manifest} from '../../../lib/extension/manifest';
 import {resetSchema} from '../../../lib/schema';
-import {resolveFixture, rewiremock} from '../../helpers';
+import {assertArrayIncludesDeep, resolveFixture, rewiremock} from '../../helpers';
 import {initMocks} from './mocks';
 import type {MockAppiumSupport, MockResolveFrom, Overrides} from './mocks';
 
@@ -19,6 +18,7 @@ type ExtManifestWithSchema<ExtType extends ExtensionType> = ExtManifest<ExtType>
 };
 
 interface DriverConfigConstructor {
+  new (...args: never[]): DriverConfig;
   create(manifest: Manifest): DriverConfig;
   getInstance(manifest: Manifest): DriverConfig | undefined;
 }
@@ -53,7 +53,7 @@ describe('DriverConfig', function () {
       describe('when the DriverConfig is not yet associated with a Manifest', function () {
         it('should return a new DriverConfig', function () {
           const config = DriverConfig.create(manifest);
-          assert.ok(config instanceof (DriverConfig as unknown as new (...args: any[]) => unknown));
+          assert.ok(config instanceof DriverConfig);
         });
 
         it('should be associated with the Manifest', function () {
@@ -124,45 +124,37 @@ describe('DriverConfig', function () {
       describe('property `platformNames`', function () {
         describe('when provided an object with no `platformNames` property', function () {
           it('should return an array having an associated problem', function () {
-            assert.ok(
-              driverConfig
-                .getConfigProblems({})
-                .some((p: unknown) =>
-                  isDeepStrictEqual(p, {err: 'Missing or incorrect supported platformNames list.', val: undefined}),
-                ),
-            );
+            assertArrayIncludesDeep(driverConfig.getConfigProblems({}), {
+              err: 'Missing or incorrect supported platformNames list.',
+              val: undefined,
+            });
           });
         });
 
         describe('when provided an object with an empty `platformNames` property', function () {
           it('should return an array having an associated problem', function () {
-            assert.ok(
-              driverConfig
-                .getConfigProblems({platformNames: []})
-                .some((p: unknown) => isDeepStrictEqual(p, {err: 'Empty platformNames list.', val: []})),
-            );
+            assertArrayIncludesDeep(driverConfig.getConfigProblems({platformNames: []}), {
+              err: 'Empty platformNames list.',
+              val: [],
+            });
           });
         });
 
         describe('when provided an object with a non-array `platformNames` property', function () {
           it('should return an array having an associated problem', function () {
-            assert.ok(
-              driverConfig
-                .getConfigProblems({platformNames: 'foo'})
-                .some((p: unknown) =>
-                  isDeepStrictEqual(p, {err: 'Missing or incorrect supported platformNames list.', val: 'foo'}),
-                ),
-            );
+            assertArrayIncludesDeep(driverConfig.getConfigProblems({platformNames: 'foo'}), {
+              err: 'Missing or incorrect supported platformNames list.',
+              val: 'foo',
+            });
           });
         });
 
         describe('when provided a non-empty array containing a non-string item', function () {
           it('should return an array having an associated problem', function () {
-            assert.ok(
-              driverConfig
-                .getConfigProblems({platformNames: ['a', 1]})
-                .some((p: unknown) => isDeepStrictEqual(p, {err: 'Incorrectly formatted platformName.', val: 1})),
-            );
+            assertArrayIncludesDeep(driverConfig.getConfigProblems({platformNames: ['a', 1]}), {
+              err: 'Incorrectly formatted platformName.',
+              val: 1,
+            });
           });
         });
       });
@@ -170,25 +162,19 @@ describe('DriverConfig', function () {
       describe('property `automationName`', function () {
         describe('when provided an object with a missing `automationName` property', function () {
           it('should return an array having an associated problem', function () {
-            assert.ok(
-              driverConfig
-                .getConfigProblems({})
-                .some((p: unknown) =>
-                  isDeepStrictEqual(p, {err: 'Missing or incorrect automationName', val: undefined}),
-                ),
-            );
+            assertArrayIncludesDeep(driverConfig.getConfigProblems({}), {
+              err: 'Missing or incorrect automationName',
+              val: undefined,
+            });
           });
         });
         describe('when provided a conflicting automationName', function () {
           it('should return an array having an associated problem', function () {
             driverConfig.getConfigProblems({automationName: 'foo'});
-            assert.ok(
-              driverConfig
-                .getConfigProblems({automationName: 'foo'})
-                .some((p: unknown) =>
-                  isDeepStrictEqual(p, {err: 'Multiple drivers claim support for the same automationName', val: 'foo'}),
-                ),
-            );
+            assertArrayIncludesDeep(driverConfig.getConfigProblems({automationName: 'foo'}), {
+              err: 'Multiple drivers claim support for the same automationName',
+              val: 'foo',
+            });
           });
         });
       });
@@ -204,14 +190,10 @@ describe('DriverConfig', function () {
       describe('when provided an object with a defined non-string `schema` property', function () {
         it('should return an array having an associated problem', async function () {
           const problems = await driverConfig.getSchemaProblems({schema: []});
-          assert.ok(
-            problems.some((p: unknown) =>
-              isDeepStrictEqual(p, {
-                err: 'Incorrectly formatted schema field; must be a path to a schema file or a schema object.',
-                val: [],
-              }),
-            ),
-          );
+          assertArrayIncludesDeep(problems, {
+            err: 'Incorrectly formatted schema field; must be a path to a schema file or a schema object.',
+            val: [],
+          });
         });
       });
 
@@ -219,14 +201,10 @@ describe('DriverConfig', function () {
         describe('when the property ends in an unsupported extension', function () {
           it('should return an array having an associated problem', async function () {
             const problems = await driverConfig.getSchemaProblems({schema: 'selenium.java'});
-            assert.ok(
-              problems.some((p: unknown) =>
-                isDeepStrictEqual(p, {
-                  err: 'Schema file has unsupported extension. Allowed: .json, .js, .cjs',
-                  val: 'selenium.java',
-                }),
-              ),
-            );
+            assertArrayIncludesDeep(problems, {
+              err: 'Schema file has unsupported extension. Allowed: .json, .js, .cjs',
+              val: 'selenium.java',
+            });
           });
         });
 
@@ -289,10 +267,10 @@ describe('DriverConfig', function () {
       describe('when the extension data is missing `schema`', function () {
         it('should throw', async function () {
           delete (extData as {schema?: string}).schema;
-          await assert.rejects(
-            driverConfig.readExtensionSchema(extName, extData),
-            (err: unknown) => err instanceof TypeError && /why is this function being called/i.test(err.message),
-          );
+          await assert.rejects(driverConfig.readExtensionSchema(extName, extData), {
+            name: 'TypeError',
+            message: /why is this function being called/i,
+          });
         });
       });
 

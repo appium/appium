@@ -1,18 +1,15 @@
+import assert from 'node:assert/strict';
 import {afterEach, before, beforeEach, describe, it} from 'node:test';
 
 import type {Constraints} from '@appium/types';
 import {BaseDriver} from 'appium/driver.js';
 import {util} from 'appium/support.js';
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {createSandbox, type SinonSandbox} from 'sinon';
 
 import {IMAGE_ELEMENT_PREFIX} from '../../lib/constants.js';
 import {ImageElementFinder} from '../../lib/finder.js';
 import {ImageElement} from '../../lib/image-element.js';
 import {getImgElFromArgs} from '../../lib/plugin.js';
-
-use(chaiAsPromised);
 
 const defRect = {x: 100, y: 110, width: 50, height: 25};
 const defTemplate = Buffer.from('iVBORasdf', 'base64');
@@ -37,7 +34,7 @@ describe('ImageElement', function () {
         rect: defRect,
         score: 1.0,
       });
-      expect(el.size).to.eql({width: defRect.width, height: defRect.height});
+      assert.deepStrictEqual(el.size, {width: defRect.width, height: defRect.height});
     });
   });
 
@@ -48,7 +45,7 @@ describe('ImageElement', function () {
         rect: defRect,
         score: 1.0,
       });
-      expect(el.location).to.eql({x: defRect.x, y: defRect.y});
+      assert.deepStrictEqual(el.location, {x: defRect.x, y: defRect.y});
     });
   });
 
@@ -59,7 +56,7 @@ describe('ImageElement', function () {
         rect: defRect,
         score: 1.0,
       });
-      expect(el.center).to.eql({
+      assert.deepStrictEqual(el.center, {
         x: defRect.x + defRect.width / 2,
         y: defRect.y + defRect.height / 2,
       });
@@ -73,7 +70,7 @@ describe('ImageElement', function () {
         rect: defRect,
         score: 1.0,
       });
-      expect(util.unwrapElement(el.asElement())).to.match(/^appium-image-el/);
+      assert.match(util.unwrapElement(el.asElement()), /^appium-image-el/);
     });
   });
 
@@ -89,8 +86,8 @@ describe('ImageElement', function () {
         rect: defRect,
         score: 1.0,
       });
-      expect(el1.equals(el2)).to.be.true;
-      expect(el2.equals(el1)).to.be.true;
+      assert.strictEqual(el1.equals(el2), true);
+      assert.strictEqual(el2.equals(el1), true);
     });
     it('should say two image elements with different rect are not equal', function () {
       const el1 = new ImageElement({
@@ -103,8 +100,8 @@ describe('ImageElement', function () {
         rect: defRect,
         score: 1.0,
       });
-      expect(el1.equals(el2)).to.be.false;
-      expect(el2.equals(el1)).to.be.false;
+      assert.strictEqual(el1.equals(el2), false);
+      assert.strictEqual(el2.equals(el1), false);
     });
   });
 
@@ -117,7 +114,7 @@ describe('ImageElement', function () {
         score: 1.0,
       });
       await d.settings.update({imageElementTapStrategy: 'bad'});
-      await expect(el.click(d as any)).to.be.rejectedWith(/Incorrect imageElementTapStrategy/);
+      await assert.rejects(el.click(d as any), /Incorrect imageElementTapStrategy/);
     });
     it('should try to check for image element staleness, and throw if stale', async function () {
       const d = new BaseDriver<Constraints>({} as any);
@@ -134,14 +131,14 @@ describe('ImageElement', function () {
         checkForImageElementStaleness: true,
         autoUpdateImageElementPosition: false,
       });
-      await expect(el.click(d as any)).to.be.rejectedWith(/no longer attached/);
+      await assert.rejects(el.click(d as any), /no longer attached/);
 
       // and also if we are updating the element position
       await d.settings.update({
         checkForImageElementStaleness: false,
         autoUpdateImageElementPosition: true,
       });
-      await expect(el.click(d as any)).to.be.rejectedWith(/no longer attached/);
+      await assert.rejects(el.click(d as any), /no longer attached/);
     });
     it('should auto-update element position if requested', async function () {
       const d = new BaseDriver<Constraints>({} as any);
@@ -165,9 +162,9 @@ describe('ImageElement', function () {
       await d.settings.update({
         autoUpdateImageElementPosition: true,
       });
-      expect(el.rect).to.not.eql(newRect);
+      assert.notDeepStrictEqual(el.rect, newRect);
       await el.click(d as any);
-      expect(el.rect).to.eql(newRect);
+      assert.deepStrictEqual(el.rect, newRect);
     });
     it('should tap the center of an element using w3c actions by default', async function () {
       const d = new BaseDriver<Constraints>({} as any);
@@ -184,8 +181,8 @@ describe('ImageElement', function () {
       });
       await el.click(d as any);
       const pointerMoveAction = actionStub.args[0][0][0].actions[0];
-      expect(pointerMoveAction.x).to.equal(el.center.x);
-      expect(pointerMoveAction.y).to.equal(el.center.y);
+      assert.strictEqual(pointerMoveAction.x, el.center.x);
+      assert.strictEqual(pointerMoveAction.y, el.center.y);
     });
     it('should fall back to touchactions if w3c actions do not exist on driver', async function () {
       const d = new BaseDriver<Constraints>({} as any);
@@ -202,8 +199,8 @@ describe('ImageElement', function () {
       });
       await el.click(d as any);
       const action = actionStub.args[0][0][0].options;
-      expect(action.x).to.equal(el.center.x);
-      expect(action.y).to.equal(el.center.y);
+      assert.strictEqual(action.x, el.center.x);
+      assert.strictEqual(action.y, el.center.y);
     });
     it('should use touchactions if requested', async function () {
       const d = new BaseDriver<Constraints>({} as any);
@@ -223,9 +220,9 @@ describe('ImageElement', function () {
       });
       await el.click(d as any);
       const action = touchStub.args[0][0][0].options;
-      expect(action.x).to.equal(el.center.x);
-      expect(action.y).to.equal(el.center.y);
-      expect(w3cStub.callCount).to.eql(0);
+      assert.strictEqual(action.x, el.center.x);
+      assert.strictEqual(action.y, el.center.y);
+      assert.strictEqual(w3cStub.callCount, 0);
     });
     it('should throw if driver does not implement any type of action', async function () {
       const d = new BaseDriver<Constraints>({} as any);
@@ -238,7 +235,7 @@ describe('ImageElement', function () {
       await d.settings.update({
         checkForImageElementStaleness: false,
       });
-      await expect(el.click(d as any)).to.be.rejectedWith(/did not implement/);
+      await assert.rejects(el.click(d as any), /did not implement/);
     });
   });
 
@@ -261,37 +258,38 @@ describe('ImageElement', function () {
     });
 
     it('should reject executions for unsupported commands', async function () {
-      await expect(ImageElement.execute(driver as any, imgEl, 'foobar')).to.be.rejectedWith(/not yet been implemented/);
+      await assert.rejects(ImageElement.execute(driver as any, imgEl, 'foobar'), /not yet been implemented/);
     });
     it('should get displayed status of element', async function () {
-      await expect(ImageElement.execute(driver as any, imgEl, 'elementDisplayed')).to.eventually.be.true;
+      assert.strictEqual(await ImageElement.execute(driver as any, imgEl, 'elementDisplayed'), true);
     });
     it('should get size of element', async function () {
-      await expect(ImageElement.execute(driver as any, imgEl, 'getSize')).to.eventually.eql({
+      assert.deepStrictEqual(await ImageElement.execute(driver as any, imgEl, 'getSize'), {
         width: defRect.width,
         height: defRect.height,
       });
     });
     it('should get location of element', async function () {
-      await expect(ImageElement.execute(driver as any, imgEl, 'getLocation')).to.eventually.eql({
+      assert.deepStrictEqual(await ImageElement.execute(driver as any, imgEl, 'getLocation'), {
         x: defRect.x,
         y: defRect.y,
       });
     });
     it('should get location in view of element', async function () {
-      await expect(ImageElement.execute(driver as any, imgEl, 'getLocation')).to.eventually.eql({
+      assert.deepStrictEqual(await ImageElement.execute(driver as any, imgEl, 'getLocation'), {
         x: defRect.x,
         y: defRect.y,
       });
     });
     it('should get rect of element', async function () {
-      await expect(ImageElement.execute(driver as any, imgEl, 'getElementRect')).to.eventually.eql(defRect);
+      assert.deepStrictEqual(await ImageElement.execute(driver as any, imgEl, 'getElementRect'), defRect);
     });
     it('should get score of element', async function () {
-      await expect(ImageElement.execute(driver as any, imgEl, 'getAttribute', 'score')).to.eventually.eql(0);
+      assert.strictEqual(await ImageElement.execute(driver as any, imgEl, 'getAttribute', 'score'), 0);
     });
     it('should get visual of element', async function () {
-      await expect(ImageElement.execute(driver as any, imgEl, 'getAttribute', 'visual')).to.eventually.eql(
+      assert.strictEqual(
+        await ImageElement.execute(driver as any, imgEl, 'getAttribute', 'visual'),
         'aGFwcHkgdGVzdGluZw==',
       );
     });
@@ -301,15 +299,16 @@ describe('ImageElement', function () {
         rect: defRect,
         score: 1.0,
       });
-      await expect(ImageElement.execute(driver as any, imgElement, 'getAttribute', 'visual')).to.eventually.eql(null);
+      assert.strictEqual(await ImageElement.execute(driver as any, imgElement, 'getAttribute', 'visual'), null);
     });
     it('should not get other attribute', async function () {
-      await expect(
+      await assert.rejects(
         ImageElement.execute(driver as any, imgEl, 'getAttribute', 'content-desc'),
-      ).to.eventually.rejectedWith('Method has not yet been implemented');
+        /Method has not yet been implemented/,
+      );
     });
     it('should click element', async function () {
-      await expect(ImageElement.execute(driver as any, imgEl, 'click')).to.eventually.be.true;
+      assert.strictEqual(await ImageElement.execute(driver as any, imgEl, 'click'), true);
     });
   });
 });
@@ -328,8 +327,8 @@ describe('image element LRU cache', function () {
     });
     const finder = new ImageElementFinder();
     finder.registerImageElement(el1);
-    expect(el1.equals(finder.getImageElement(el1.id)!)).to.be.true;
-    expect(finder.getImageElement(el2.id)).to.be.undefined;
+    assert.strictEqual(el1.equals(finder.getImageElement(el1.id)!), true);
+    assert.strictEqual(finder.getImageElement(el2.id), undefined);
   });
   it('once cache reaches max size, should eject image elements', function () {
     const el1 = new ImageElement({
@@ -344,10 +343,10 @@ describe('image element LRU cache', function () {
     });
     const finder = new ImageElementFinder(1);
     finder.registerImageElement(el1);
-    expect(finder.getImageElement(el1.id)).to.not.be.undefined;
+    assert.notStrictEqual(finder.getImageElement(el1.id), undefined);
     finder.registerImageElement(el2);
-    expect(finder.getImageElement(el1.id)).to.be.undefined;
-    expect(finder.getImageElement(el2.id)).to.not.be.undefined;
+    assert.strictEqual(finder.getImageElement(el1.id), undefined);
+    assert.notStrictEqual(finder.getImageElement(el2.id), undefined);
   });
 });
 
@@ -355,15 +354,15 @@ describe('getImgElFromArgs', function () {
   it('should return the image element id from json obj in args', function () {
     const imgEl = `${IMAGE_ELEMENT_PREFIX}foo`;
     const args = [1, 'foo', imgEl];
-    expect(getImgElFromArgs(args)).to.eql(imgEl);
+    assert.strictEqual(getImgElFromArgs(args), imgEl);
   });
   it('should not return anything if image element id not in args', function () {
     const args = [1, 'foo'];
-    expect(getImgElFromArgs(args)).to.be.undefined;
+    assert.strictEqual(getImgElFromArgs(args), undefined);
   });
   it('should not find image element id in anything but prefix', function () {
     const notImgEl = `foo${IMAGE_ELEMENT_PREFIX}`;
     const args = [1, 'foo', notImgEl];
-    expect(getImgElFromArgs(args)).to.be.undefined;
+    assert.strictEqual(getImgElFromArgs(args), undefined);
   });
 });

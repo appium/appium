@@ -1,3 +1,4 @@
+import assert from 'node:assert/strict';
 import type {AddressInfo} from 'node:net';
 import path from 'node:path';
 import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
@@ -5,15 +6,11 @@ import {fileURLToPath} from 'node:url';
 
 import {pluginE2EHarness} from '@appium/plugin-test-support';
 import {fs, node, tempDir} from '@appium/support';
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import sharp from 'sharp';
 import {exec} from 'teen_process';
 import {remote as wdio} from 'webdriverio';
 
 import {GET_SIMILARITY_MODE, MATCH_FEATURES_MODE} from '../../lib/constants.js';
-
-use(chaiAsPromised);
 
 const THIS_PLUGIN_DIR = node.getModuleRootSync('@appium/images-plugin', fileURLToPath(import.meta.url))!;
 const APPIUM_HOME = path.join(THIS_PLUGIN_DIR, 'local_appium_home');
@@ -78,19 +75,19 @@ describe('ImageElementPlugin', function () {
       fs.readFile(TEST_IMG_2_PATH, 'base64'),
     ]);
     let comparison = await driver.compareImages(MATCH_FEATURES_MODE, testImg1b64, testImg2b64, {});
-    expect(comparison.count).to.eql(0);
+    assert.strictEqual(comparison.count, 0);
     comparison = await driver.compareImages(GET_SIMILARITY_MODE, testImg1b64, testImg2b64, {});
-    expect(comparison.score).to.be.above(0.2);
+    assert.ok(comparison.score > 0.2);
   });
 
   it('should find and interact with image elements', async function () {
     const imageEl = await driver.$(APPSTORE_IMG_PATH);
     const {x, y} = await imageEl.getLocation();
     const {width, height} = await imageEl.getSize();
-    expect(x).to.eql(28);
-    expect(y).to.eql(72);
-    expect(width).to.eql(80);
-    expect(height).to.eql(91);
+    assert.strictEqual(x, 28);
+    assert.strictEqual(y, 72);
+    assert.strictEqual(width, 80);
+    assert.strictEqual(height, 91);
     await imageEl.click();
 
     const actionSequence = {
@@ -124,7 +121,7 @@ describe('ImageElementPlugin', function () {
         })
         .toFile(tmpImgPath);
       const subEl = await imageEl.$(tmpImgPath);
-      expect(subEl).to.not.be.null;
+      assert.notStrictEqual(subEl, null);
     } finally {
       await fs.rimraf(tmpRoot);
     }

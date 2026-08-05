@@ -1,3 +1,4 @@
+import assert from 'node:assert/strict';
 import path from 'node:path';
 import {before, describe, it} from 'node:test';
 import {fileURLToPath} from 'node:url';
@@ -5,13 +6,9 @@ import {fileURLToPath} from 'node:url';
 import type {ActionSequence, Constraints} from '@appium/types';
 import {BaseDriver} from 'appium/driver.js';
 import {fs, node, util} from 'appium/support.js';
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
 import {GET_SIMILARITY_MODE, IMAGE_STRATEGY, MATCH_FEATURES_MODE, MATCH_TEMPLATE_MODE} from '../../lib/constants.js';
 import {ImageElementPlugin} from '../../lib/plugin.js';
-
-use(chaiAsPromised);
 
 const THIS_PLUGIN_DIR = node.getModuleRootSync('@appium/images-plugin', fileURLToPath(import.meta.url))!;
 const FIXTURES_DIR = path.join(THIS_PLUGIN_DIR, 'test', 'fixtures');
@@ -38,8 +35,8 @@ describe('ImageElementPlugin#handle', function () {
   describe('compareImages', {timeout: 6000}, function () {
     it('should compare images via match features mode', async function () {
       const res = await p.compareImages(next, driver as any, MATCH_FEATURES_MODE, testImg1B64, testImg2B64, {});
-      expect(res).to.have.property('count');
-      expect((res as any).count).to.eql(0);
+      assert.ok(Object.hasOwn(res as any, 'count'));
+      assert.strictEqual((res as any).count, 0);
     });
     it('should compare images via get similarity mode', async function () {
       const res = await p.compareImages(
@@ -50,23 +47,21 @@ describe('ImageElementPlugin#handle', function () {
         Buffer.from(testImg2B64, 'base64'),
         {},
       );
-      expect(res).to.have.property('score');
-      expect((res as any).score).to.be.above(0.2);
+      assert.ok(Object.hasOwn(res as any, 'score'));
+      assert.ok((res as any).score > 0.2);
     });
     it('should compare images via match template mode', async function () {
       const res = await p.compareImages(next, driver as any, MATCH_TEMPLATE_MODE, testImg1B64, testImg2B64, {});
-      expect(res).to.have.property('rect');
-      expect((res as any).rect.height).to.be.above(0);
-      expect((res as any).rect.width).to.be.above(0);
-      expect((res as any).score).to.be.above(0.2);
+      assert.ok(Object.hasOwn(res as any, 'rect'));
+      assert.ok((res as any).rect.height > 0);
+      assert.ok((res as any).rect.width > 0);
+      assert.ok((res as any).score > 0.2);
     });
     it('should throw an error if comparison mode is not supported', async function () {
-      await expect(p.compareImages(next, driver as any, 'some mode', '', '')).to.eventually.be.rejectedWith(
-        /comparison mode is unknown/,
-      );
+      await assert.rejects(p.compareImages(next, driver as any, 'some mode', '', ''), /comparison mode is unknown/);
     });
     it('should throw an error if image template is broken', async function () {
-      await expect(
+      await assert.rejects(
         p.compareImages(
           next,
           driver as any,
@@ -74,11 +69,10 @@ describe('ImageElementPlugin#handle', function () {
           Buffer.from('d1423423424'),
           Buffer.from('d1423423424'),
         ),
-      ).to.eventually.be.rejected;
+      );
     });
     it('should throw an error if image template is empty', async function () {
-      await expect(p.compareImages(next, driver as any, MATCH_TEMPLATE_MODE, Buffer.from(''), Buffer.from(''))).to
-        .eventually.be.rejected;
+      await assert.rejects(p.compareImages(next, driver as any, MATCH_TEMPLATE_MODE, Buffer.from(''), Buffer.from('')));
     });
   });
 
@@ -89,21 +83,21 @@ describe('ImageElementPlugin#handle', function () {
     (driver as any).getWindowRect = () => ({x: 0, y: 0, width: 64, height: 64});
     it('should defer execution to regular command if not a find command', async function () {
       const next = async () => true;
-      await expect(p.handle(next, driver as any, 'sendKeys')).to.eventually.become(true);
+      assert.strictEqual(await p.handle(next, driver as any, 'sendKeys'), true);
     });
     it('should defer execution to regular command if it is a find command but a different strategy', async function () {
       const next = async () => true;
-      await expect(p.findElement(next, driver as any, 'xpath', '//foo/bar')).to.eventually.become(true);
-      await expect(p.findElements(next, driver as any, 'xpath', '//foo/bar')).to.eventually.become(true);
+      assert.strictEqual(await p.findElement(next, driver as any, 'xpath', '//foo/bar'), true);
+      assert.strictEqual(await p.findElements(next, driver as any, 'xpath', '//foo/bar'), true);
     });
     it('should find an image element inside a screenshot', async function () {
       const el = await p.findElement(next, driver as any, IMAGE_STRATEGY, testImg2PartB64);
-      expect(util.unwrapElement(el)).to.include('appium-image-element');
+      assert.ok(util.unwrapElement(el).includes('appium-image-element'));
     });
     it('should find image elements inside a screenshot', async function () {
       const els = await p.findElements(next, driver as any, IMAGE_STRATEGY, testImg2PartB64);
-      expect(els).to.have.length(1);
-      expect(util.unwrapElement(els[0])).to.include('appium-image-element');
+      assert.strictEqual(els.length, 1);
+      assert.ok(util.unwrapElement(els[0]).includes('appium-image-element'));
     });
   });
 
@@ -123,7 +117,7 @@ describe('ImageElementPlugin#handle', function () {
         action = a;
       };
       await p.handle(next, driver as any, 'click', elId);
-      expect(action).to.eql([
+      assert.deepStrictEqual(action, [
         {
           type: 'pointer',
           id: 'mouse',
@@ -138,22 +132,22 @@ describe('ImageElementPlugin#handle', function () {
       ]);
     });
     it('should always say the element is displayed', async function () {
-      await expect(p.handle(next, driver as any, 'elementDisplayed', elId)).to.eventually.be.true;
+      assert.strictEqual(await p.handle(next, driver as any, 'elementDisplayed', elId), true);
     });
     it('should return the matched region size', async function () {
-      await expect(p.handle(next, driver as any, 'getSize', elId)).to.eventually.eql({
+      assert.deepStrictEqual(await p.handle(next, driver as any, 'getSize', elId), {
         width: 48,
         height: 48,
       });
     });
     it('should return the matched region location', async function () {
-      await expect(p.handle(next, driver as any, 'getLocation', elId)).to.eventually.eql({
+      assert.deepStrictEqual(await p.handle(next, driver as any, 'getLocation', elId), {
         x: 0,
         y: 16,
       });
     });
     it('should return the region rect', async function () {
-      await expect(p.handle(next, driver as any, 'getElementRect', elId)).to.eventually.eql({
+      assert.deepStrictEqual(await p.handle(next, driver as any, 'getElementRect', elId), {
         x: 0,
         y: 16,
         height: 48,
@@ -161,7 +155,7 @@ describe('ImageElementPlugin#handle', function () {
       });
     });
     it('should return the match score as the score attr', async function () {
-      await expect(p.handle(next, driver as any, 'getAttribute', 'score', elId)).to.eventually.be.above(0.7);
+      assert.ok((await p.handle(next, driver as any, 'getAttribute', 'score', elId)) > 0.7);
     });
     it('should return the match visualization as the visual attr', async function () {
       (driver as any).settings = {
@@ -171,12 +165,11 @@ describe('ImageElementPlugin#handle', function () {
       };
       const el = await p.findElement(next, driver as any, IMAGE_STRATEGY, testImg2PartB64);
       elId = util.unwrapElement(el);
-      await expect(p.handle(next, driver as any, 'getAttribute', 'visual', elId)).to.eventually.include('iVBOR');
+      const visual = await p.handle(next, driver as any, 'getAttribute', 'visual', elId);
+      assert.ok((visual as string).includes('iVBOR'));
     });
     it('should not allow any other attrs', async function () {
-      await expect(p.handle(next, driver as any, 'getAttribute', 'rando', elId)).to.eventually.be.rejectedWith(
-        /not yet/i,
-      );
+      await assert.rejects(p.handle(next, driver as any, 'getAttribute', 'rando', elId), /not yet/i);
     });
   });
 
@@ -205,7 +198,7 @@ describe('ImageElementPlugin#handle', function () {
         },
       ];
       await p.performActions(next, driver as any, actionSequences);
-      expect(actionSequences).to.eql([
+      assert.deepStrictEqual(actionSequences, [
         {
           type: 'pointer',
           id: 'mouse',
@@ -233,7 +226,7 @@ describe('ImageElementPlugin#handle', function () {
         },
       ];
       await p.performActions(next, driver as any, actionSequences);
-      expect(actionSequences).to.eql([
+      assert.deepStrictEqual(actionSequences, [
         {
           type: 'pointer',
           id: 'mouse',
@@ -279,7 +272,7 @@ describe('ImageElementPlugin#handle', function () {
       ];
       const clone = structuredClone(actionSequences);
       await p.performActions(next, driver as any, actionSequences);
-      expect(actionSequences).to.eql(clone);
+      assert.deepStrictEqual(actionSequences, clone);
     });
   });
 });

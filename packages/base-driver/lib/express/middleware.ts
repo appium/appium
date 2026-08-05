@@ -166,7 +166,7 @@ export function catchAllHandler(err: Error, _req: Request, res: Response, next: 
  * The protocol expects such a request to be rejected as an invalid argument.
  */
 function isBodyParseError(err: Error): boolean {
-  return (err as Error & {type?: string}).type === 'entity.parse.failed';
+  return (err as Error & {type?: string})?.type === 'entity.parse.failed';
 }
 
 /**

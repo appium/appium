@@ -222,17 +222,24 @@ So you'll probably end up overriding `createSession`. You can do so by defining 
 driver:
 
 ```js
-async createSession(jwpCaps, reqCaps, w3cCaps, otherDriverData) {
-    const [sessionId, caps] = super.createSession(w3cCaps);
+async createSession(w3cCaps) {
+    const [sessionId, caps] = await super.createSession(w3cCaps);
     // do your own stuff here
     return [sessionId, caps];
 }
 ```
 
-For legacy reasons, your function will receive old-style JSON Wire Protocol desired and required
-caps as the first two arguments. Given that the old protocol isn't supported anymore and clients
-have all been updated, you can instead only rely on the `w3cCaps` parameter. (For a discussion
-about what `otherDriverData` is about, see the section below on concurrent drivers).
+!!! warning "Deprecated"
+
+```
+Older drivers may still define `createSession` with up to four parameters, e.g.
+`createSession(jwpCaps, reqCaps, w3cCaps, otherDriverData)`. This shape is a holdover from the
+retired JSON Wire Protocol, which required desired and required caps as the first two
+arguments; only the first W3C-shaped argument was ever used. The `otherDriverData` parameter is
+likewise deprecated in favor of [IPC](#send-messages-to-plugins-running-on-the-same-session) for
+coordinating with other concurrently-running sessions. New drivers should use the single-argument
+form shown above.
+```
 
 You'll want to make sure to call `super.createSession` in order to get the session ID as well as
 the processed capabilities (note that capabilities are also set on `this.caps`; modifying `caps`
@@ -799,6 +806,14 @@ that multiple simultaneous sessions don't use the same resources:
 3. Have each driver express what resources it is using, then examine currently-used resources from
    other drivers when a new session begins.
 
+!!! warning "Deprecated"
+
+```
+The `driverData`-based mechanism described below is deprecated. Prefer
+[IPC](#send-messages-to-plugins-running-on-the-same-session) for coordinating resources across
+concurrently-running sessions instead.
+```
+
 To support this third strategy, you can implement `get driverData` in your driver to return what
 sorts of resources your driver is currently using, for example:
 
@@ -810,7 +825,7 @@ get driverData() {
 
 Now, when a new session is started on your driver, the `driverData` response from any other
 simultaneously running drivers (of the same type) will also be included, as the last parameter of
-the `createSession` method:
+the deprecated, multi-argument form of the `createSession` method:
 
 ```js
 async createSession(jwpCaps, reqCaps, w3cCaps, driverData)

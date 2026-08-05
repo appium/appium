@@ -105,10 +105,6 @@ describe('@appium/strongbox', function () {
         for await (const item of box) {
           iterated.push(item);
         }
-        assert.deepStrictEqual(
-          iterated.map((i) => i.name),
-          listed.map((i) => i.name),
-        );
         assert.deepStrictEqual(iterated, listed);
       });
     });

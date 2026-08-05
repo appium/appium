@@ -118,9 +118,9 @@ describe('server configuration', function () {
         headers: {'content-type': 'application/json'},
         body: '{"capabilities": not valid json}',
       });
-      expect(res.status).to.equal(400);
-      expect(res.headers.get('content-type')).to.include('application/json');
-      expect(await res.json()).to.have.nested.property('value.error', 'invalid argument');
+      assert.equal(res.status, 400);
+      assert.match(res.headers.get('content-type') ?? '', /application\/json/);
+      assert.equal(((await res.json()) as any).value.error, 'invalid argument');
     } finally {
       await _server.close();
     }

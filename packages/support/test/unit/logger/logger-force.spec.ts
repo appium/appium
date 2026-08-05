@@ -1,6 +1,5 @@
+import assert from 'node:assert/strict';
 import {after, before, describe, it} from 'node:test';
-
-import {expect} from 'chai';
 
 import {assertOutputContains, getDynamicLogger, restoreWriters, setupWriters} from './helpers';
 
@@ -33,9 +32,9 @@ describe('logger with force log', function () {
     assertOutputContains(writers, 'warn');
     log.error('error');
     assertOutputContains(writers, 'error');
-    expect(() => {
+    assert.throws(() => {
       throw log.errorWithException('msg');
-    }).to.throw('msg');
+    }, /msg/);
     assertOutputContains(writers, 'error');
     assertOutputContains(writers, 'msg');
   });

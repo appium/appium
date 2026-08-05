@@ -1,12 +1,8 @@
+import assert from 'node:assert/strict';
 import path from 'node:path';
 import {describe, it} from 'node:test';
 
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
-
 import {fs, node, plist, tempDir} from '../../lib';
-
-use(chaiAsPromised);
 
 const SUPPORT_ROOT = node.getModuleRootSync('@appium/support', __filename)!;
 const binaryPlistPath = path.join(SUPPORT_ROOT, 'test', 'unit', 'assets', 'sample_binary.plist');
@@ -15,14 +11,14 @@ const textPlistPath = path.join(SUPPORT_ROOT, 'test', 'unit', 'assets', 'sample_
 describe('plist', function () {
   it('should parse plist file as binary', async function () {
     const content = await plist.parsePlistFile(binaryPlistPath);
-    expect(content).to.have.property('com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework');
+    assert.ok(Object.hasOwn(content, 'com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework'));
   });
 
   it(`should return an empty object if file doesn't exist and mustExist is set to false`, async function () {
     const mustExist = false;
     const content = await plist.parsePlistFile('doesntExist.plist', mustExist);
-    expect(content).to.be.an('object');
-    expect(content).to.be.empty;
+    assert.strictEqual(typeof content, 'object');
+    assert.strictEqual(Object.keys(content as object).length, 0);
   });
 
   it('should write plist file as binary', async function () {
@@ -35,37 +31,37 @@ describe('plist', function () {
     await plist.updatePlistFile(plistFile, updatedFields, true);
 
     const content = await plist.parsePlistFile(plistFile);
-    expect(content).to.have.property('io.appium.test');
+    assert.ok(Object.hasOwn(content, 'io.appium.test'));
   });
 
   it('should read binary plist', async function () {
     const content = await fs.readFile(binaryPlistPath);
     const object = plist.parsePlist(content);
-    expect(object).to.have.property('com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework');
+    assert.ok(Object.hasOwn(object, 'com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework'));
   });
 
   it('should read text plist', async function () {
     const content = await fs.readFile(textPlistPath);
     const object = plist.parsePlist(content);
-    expect(object).to.have.property('com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework');
+    assert.ok(Object.hasOwn(object, 'com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework'));
   });
 
   it('should read text plist from Uint8Array', async function () {
     const content = await fs.readFile(textPlistPath);
     const object = plist.parsePlist(new Uint8Array(content));
-    expect(object).to.have.property('com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework');
+    assert.ok(Object.hasOwn(object, 'com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework'));
   });
 
   it('should read binary plist from Uint8Array', async function () {
     const content = await fs.readFile(binaryPlistPath);
     const object = plist.parsePlist(new Uint8Array(content));
-    expect(object).to.have.property('com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework');
+    assert.ok(Object.hasOwn(object, 'com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework'));
   });
 
   it('should read binary plist from ArrayBuffer', async function () {
     const content = await fs.readFile(binaryPlistPath);
     const object = plist.parsePlist(content.buffer.slice(content.byteOffset, content.byteOffset + content.byteLength));
-    expect(object).to.have.property('com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework');
+    assert.ok(Object.hasOwn(object, 'com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework'));
   });
 
   it('should parse nested data payload returned from plist parser', function () {
@@ -74,6 +70,6 @@ describe('plist', function () {
     const outerParsed = plist.parsePlist(outer as string);
     const nestedPayload = (outerParsed as {payload: Uint8Array | Buffer | ArrayBuffer}).payload;
     const nestedParsed = plist.parsePlist(nestedPayload);
-    expect(nestedParsed).to.deep.equal({answer: 42});
+    assert.deepStrictEqual(nestedParsed, {answer: 42});
   });
 });

@@ -1,15 +1,11 @@
+import assert from 'node:assert/strict';
 import path from 'node:path';
 import {afterEach, beforeEach, describe, it} from 'node:test';
-
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
 import {fs, tempDir} from '../../lib/index';
 import {isWindows} from '../../lib/system';
 import * as zip from '../../lib/zip';
 import {MockReadWriteStream} from '../helpers';
-
-use(chaiAsPromised);
 
 describe('#zip', function () {
   const optionMap = new Map<string, Record<string, boolean | undefined>>([
@@ -48,16 +44,18 @@ describe('#zip', function () {
 
       describe('extractAllTo()', function () {
         it('should extract contents of a .zip file to a directory', async function () {
-          await expect(
-            fs.readFile(path.resolve(assetsPath, 'unzipped', 'test-dir', 'a.txt'), {
+          assert.strictEqual(
+            await fs.readFile(path.resolve(assetsPath, 'unzipped', 'test-dir', 'a.txt'), {
               encoding: 'utf8',
             }),
-          ).to.eventually.equal('Hello World');
-          await expect(
-            fs.readFile(path.resolve(assetsPath, 'unzipped', 'test-dir', 'b.txt'), {
+            'Hello World',
+          );
+          assert.strictEqual(
+            await fs.readFile(path.resolve(assetsPath, 'unzipped', 'test-dir', 'b.txt'), {
               encoding: 'utf8',
             }),
-          ).to.eventually.equal('Foo Bar');
+            'Foo Bar',
+          );
         });
 
         it(
@@ -81,25 +79,24 @@ describe('#zip', function () {
               },
             ]);
 
-            await expect(zip.extractAllTo(dstPath, outputPath, options)).to.be.rejectedWith(/Out of bound/);
+            await assert.rejects(zip.extractAllTo(dstPath, outputPath, options), /Out of bound/);
             if (!options.useSystemUnzip) {
-              await expect(fs.exists(path.resolve(outputPath, 'pwn'))).to.eventually.be.false;
+              assert.strictEqual(await fs.exists(path.resolve(outputPath, 'pwn')), false);
             }
-            await expect(fs.exists(path.resolve(escapePath, 'owned.txt'))).to.eventually.be.false;
+            assert.strictEqual(await fs.exists(path.resolve(escapePath, 'owned.txt')), false);
           },
         );
       });
 
       describe('assertValidZip', function () {
         it('should not throw an error if a valid ZIP file is passed', async function () {
-          await expect(zip.assertValidZip(zippedFilePath)).to.eventually.be.fulfilled;
+          await assert.doesNotReject(zip.assertValidZip(zippedFilePath));
         });
         it('should throw an error if the file does not exist', async function () {
-          await expect(zip.assertValidZip('blabla')).to.eventually.be.rejected;
+          await assert.rejects(zip.assertValidZip('blabla'));
         });
         it('should throw an error if the file is invalid', async function () {
-          await expect(zip.assertValidZip(path.resolve(assetsPath, 'unzipped', 'test-dir', 'a.txt'))).to.eventually.be
-            .rejected;
+          await assert.rejects(zip.assertValidZip(path.resolve(assetsPath, 'unzipped', 'test-dir', 'a.txt')));
         });
       });
 
@@ -114,17 +111,18 @@ describe('#zip', function () {
         it('should iterate entries (directories and files) of zip file', async function () {
           let i = 0;
           await zip.readEntries(zippedFilePath, async ({entry, extractEntryTo}) => {
-            expect(entry.fileName).to.equal(expectedEntries[i].name);
+            assert.strictEqual(entry.fileName, expectedEntries[i].name);
 
             // If it's a file, test that we can extract it to a temporary directory and that the contents are correct.
             if (expectedEntries[i].contents) {
               await extractEntryTo(tmpRoot);
-              await expect(
-                fs.readFile(path.resolve(tmpRoot, entry.fileName), {
+              assert.strictEqual(
+                await fs.readFile(path.resolve(tmpRoot, entry.fileName), {
                   flag: 'r',
                   encoding: 'utf8',
                 }),
-              ).to.eventually.equal(expectedEntries[i].contents);
+                expectedEntries[i].contents,
+              );
             }
             i++;
           });
@@ -137,12 +135,12 @@ describe('#zip', function () {
             i++;
             return false;
           });
-          expect(i).to.equal(1);
+          assert.strictEqual(i, 1);
         });
 
         it('should be rejected if it uses a non-zip file', async function () {
           const promise = zip.readEntries(path.resolve(assetsPath, 'unzipped', 'test-dir', 'a.txt'), async () => {});
-          await expect(promise).to.eventually.be.rejected;
+          await assert.rejects(promise);
         });
       });
 
@@ -151,7 +149,7 @@ describe('#zip', function () {
           // Convert directory to in-memory buffer.
           const testFolder = path.resolve(assetsPath, 'unzipped');
           const buffer = await zip.toInMemoryZip(testFolder);
-          expect(Buffer.isBuffer(buffer)).to.be.true;
+          assert.strictEqual(Buffer.isBuffer(buffer), true);
 
           // Write the buffer to a zip file.
           await fs.writeFile(path.resolve(tmpRoot, 'test.zip'), buffer);
@@ -160,16 +158,18 @@ describe('#zip', function () {
           await zip.extractAllTo(path.resolve(tmpRoot, 'test.zip'), path.resolve(tmpRoot, 'output'), {
             fileNamesEncoding: 'utf8',
           });
-          await expect(
-            fs.readFile(path.resolve(tmpRoot, 'output', 'test-dir', 'a.txt'), {
+          assert.strictEqual(
+            await fs.readFile(path.resolve(tmpRoot, 'output', 'test-dir', 'a.txt'), {
               encoding: 'utf8',
             }),
-          ).to.eventually.equal('Hello World');
-          await expect(
-            fs.readFile(path.resolve(tmpRoot, 'output', 'test-dir', 'b.txt'), {
+            'Hello World',
+          );
+          assert.strictEqual(
+            await fs.readFile(path.resolve(tmpRoot, 'output', 'test-dir', 'b.txt'), {
               encoding: 'utf8',
             }),
-          ).to.eventually.equal('Foo Bar');
+            'Foo Bar',
+          );
         });
 
         it('should convert a local folder to an in-memory base64-encoded zip buffer', async function () {
@@ -182,29 +182,32 @@ describe('#zip', function () {
 
           // Unzip the file and test that it has the same contents as the directory that was zipped.
           await zip.extractAllTo(path.resolve(tmpRoot, 'test.zip'), path.resolve(tmpRoot, 'output'));
-          await expect(
-            fs.readFile(path.resolve(tmpRoot, 'output', 'test-dir', 'a.txt'), {
+          assert.strictEqual(
+            await fs.readFile(path.resolve(tmpRoot, 'output', 'test-dir', 'a.txt'), {
               encoding: 'utf8',
             }),
-          ).to.eventually.equal('Hello World');
-          await expect(
-            fs.readFile(path.resolve(tmpRoot, 'output', 'test-dir', 'b.txt'), {
+            'Hello World',
+          );
+          assert.strictEqual(
+            await fs.readFile(path.resolve(tmpRoot, 'output', 'test-dir', 'b.txt'), {
               encoding: 'utf8',
             }),
-          ).to.eventually.equal('Foo Bar');
+            'Foo Bar',
+          );
         });
 
         it('should be rejected if use a bad path', async function () {
-          await expect(zip.toInMemoryZip(path.resolve(assetsPath, 'bad_path'))).to.be.rejectedWith(/no such/i);
+          await assert.rejects(zip.toInMemoryZip(path.resolve(assetsPath, 'bad_path')), /no such/i);
         });
 
         it('should be rejected if max size is exceeded', async function () {
           const testFolder = path.resolve(assetsPath, 'unzipped');
-          await expect(
+          await assert.rejects(
             zip.toInMemoryZip(testFolder, {
               maxSize: 1,
             }),
-          ).to.be.rejectedWith(/must not be greater/);
+            /must not be greater/,
+          );
         });
       });
 
@@ -234,9 +237,7 @@ describe('#zip', function () {
           entry = {
             fileName: path.resolve(destDir, '..', 'temp', 'file'),
           };
-          await expect(zip._extractEntryTo(mockZipFile as any, entry as any, destDir)).to.be.rejectedWith(
-            'Out of bound path',
-          );
+          await assert.rejects(zip._extractEntryTo(mockZipFile as any, entry as any, destDir), /Out of bound path/);
         });
 
         it('should be rejected if zip stream emits an error', async function () {
@@ -246,9 +247,7 @@ describe('#zip', function () {
           mockZipStream.pipe = () => {
             mockZipStream.emit('error', new Error('zip stream error'));
           };
-          await expect(zip._extractEntryTo(mockZipFile as any, entry as any, destDir)).to.be.rejectedWith(
-            'zip stream error',
-          );
+          await assert.rejects(zip._extractEntryTo(mockZipFile as any, entry as any, destDir), /zip stream error/);
         });
 
         it('should be rejected if write stream emits an error', async function () {
@@ -261,9 +260,7 @@ describe('#zip', function () {
             mockZipStream.end();
             writeStream.end();
           };
-          await expect(zip._extractEntryTo(mockZipFile as any, entry as any, destDir)).to.be.rejectedWith(
-            'write stream error',
-          );
+          await assert.rejects(zip._extractEntryTo(mockZipFile as any, entry as any, destDir), /write stream error/);
         });
       });
 
@@ -277,16 +274,18 @@ describe('#zip', function () {
 
           // Unzip the file and test that it has the same contents as the directory that was zipped.
           await zip.extractAllTo(dstPath, path.resolve(tmpRoot, 'output'));
-          await expect(
-            fs.readFile(path.resolve(tmpRoot, 'output', 'test-dir', 'a.txt'), {
+          assert.strictEqual(
+            await fs.readFile(path.resolve(tmpRoot, 'output', 'test-dir', 'a.txt'), {
               encoding: 'utf8',
             }),
-          ).to.eventually.equal('Hello World');
-          await expect(
-            fs.readFile(path.resolve(tmpRoot, 'output', 'test-dir', 'b.txt'), {
+            'Hello World',
+          );
+          assert.strictEqual(
+            await fs.readFile(path.resolve(tmpRoot, 'output', 'test-dir', 'b.txt'), {
               encoding: 'utf8',
             }),
-          ).to.eventually.equal('Foo Bar');
+            'Foo Bar',
+          );
         });
       });
     });

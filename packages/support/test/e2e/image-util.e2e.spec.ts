@@ -1,14 +1,11 @@
+import assert from 'node:assert/strict';
 import path from 'node:path';
 import {before, describe, it} from 'node:test';
 
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import sharp from 'sharp';
 
 import {fs, node} from '../../lib';
 import {cropBase64Image} from '../../lib/image-util';
-
-use(chaiAsPromised);
 
 const FIXTURES_ROOT = path.resolve(
   node.getModuleRootSync('@appium/support', __filename)!,
@@ -41,8 +38,8 @@ describe('image-util', function () {
 
       const croppedImage = sharp(Buffer.from(croppedImageB64, 'base64'));
       const {width, height} = await croppedImage.metadata();
-      expect(width).to.equal(323);
-      expect(height).to.equal(485);
+      assert.strictEqual(width, 323);
+      assert.strictEqual(height, 485);
     });
   });
 });

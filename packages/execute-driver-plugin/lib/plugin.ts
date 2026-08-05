@@ -101,6 +101,11 @@ export class ExecuteDriverPlugin extends BasePlugin {
             // handlers below means it died before it could tell us anything
             scriptProc.once('error', reject);
             scriptProc.once('exit', (code, signal) => {
+              // a clean exit is left to the script timeout, since only an abnormal
+              // one tells us for sure that no result is coming
+              if (code === 0) {
+                return;
+              }
               reject(
                 new Error(
                   `The driver script process ended without returning a result ` +

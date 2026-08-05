@@ -523,8 +523,8 @@ describe('FakeDriver via HTTP', function () {
       };
       const {value, sessionId, status} = (await axios.post(testServerBaseSessionUrl, w3cCaps)).data;
       try {
-        assert.ok(status);
-        assert.ok(sessionId);
+        assert.ok(!status); // Test that it's a W3C session
+        assert.ok(!sessionId);
         assert.deepStrictEqual(value.capabilities, removeAppiumPrefixes(caps));
       } finally {
         // End session

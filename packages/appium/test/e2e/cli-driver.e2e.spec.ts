@@ -390,7 +390,7 @@ describe('Driver CLI', {timeout: 90000}, function () {
         it('should pass them to the script', async function () {
           const out = await runRun([driverName, scriptName, '--foo', '--bar']);
           assert.ok(!Object.hasOwn(out, 'error'));
-          assert.match(out.output, /--foo --bar/);
+          assert.match(String(out.output), /--foo --bar/);
         });
       });
     });

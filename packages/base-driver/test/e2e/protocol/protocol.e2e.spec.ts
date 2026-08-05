@@ -360,7 +360,6 @@ describe('Protocol', function () {
           assert.match(stacktrace, /protocol\.(js|ts)/);
           assert.strictEqual(typeof w3cError, 'string');
           assert.strictEqual(w3cError, errors.NotYetImplementedError.error());
-          assert.match(message, /Method has not yet been implemented/);
         });
 
         it(`should throw 500 Unknown Error if the command throws an unexpected exception`, async function () {

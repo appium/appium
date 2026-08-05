@@ -3,11 +3,11 @@
  * @module
  */
 
+import assert from 'node:assert/strict';
 import path from 'node:path';
 import {describe, it, before, after, type TestContext} from 'node:test';
 
 import {fs, tempDir} from '@appium/support';
-import {expect} from 'chai';
 import * as YAML from 'yaml';
 import yargs from 'yargs/yargs';
 
@@ -61,14 +61,14 @@ async function ensurePythonDeps(projectDir: string): Promise<boolean> {
  */
 async function verifySiteBuilt(siteDir: string, expectedContent: string): Promise<void> {
   const siteDirExists = await fs.exists(siteDir);
-  expect(siteDirExists).to.be.true;
+  assert.strictEqual(siteDirExists, true);
 
   const indexHtml = path.join(siteDir, 'index.html');
   const indexHtmlExists = await fs.exists(indexHtml);
-  expect(indexHtmlExists).to.be.true;
+  assert.strictEqual(indexHtmlExists, true);
 
   const indexHtmlContent = await fs.readFile(indexHtml, 'utf8');
-  expect(indexHtmlContent).to.include(expectedContent);
+  assert.ok(indexHtmlContent.includes(expectedContent));
 }
 
 /**
@@ -189,20 +189,20 @@ describe('@appium/docutils build e2e', function () {
 
       // Verify mkdocs.yml was created
       const mkdocsYmlPath = path.join(projectDir, NAME_MKDOCS_YML);
-      expect(await fs.exists(mkdocsYmlPath)).to.be.true;
+      assert.strictEqual(await fs.exists(mkdocsYmlPath), true);
 
       // Read and verify the content of mkdocs.yml
       const mkdocsYml = await readMkdocsYml(projectDir);
 
       // Verify expected fields are present
-      expect(mkdocsYml.INHERIT).to.equal('./node_modules/@appium/docutils/base-mkdocs.yml');
-      expect(mkdocsYml.docs_dir).to.equal('docs');
-      expect(mkdocsYml.site_dir).to.equal('site');
-      expect(mkdocsYml.site_name).to.equal('test-package');
-      expect(mkdocsYml.site_description).to.equal('Test package description');
+      assert.strictEqual(mkdocsYml.INHERIT, './node_modules/@appium/docutils/base-mkdocs.yml');
+      assert.strictEqual(mkdocsYml.docs_dir, 'docs');
+      assert.strictEqual(mkdocsYml.site_dir, 'site');
+      assert.strictEqual(mkdocsYml.site_name, 'test-package');
+      assert.strictEqual(mkdocsYml.site_description, 'Test package description');
       // Repository URL may be normalized with "git+" prefix by read-pkg
-      expect(mkdocsYml.repo_url).to.include('github.com/testuser/test-package');
-      expect(mkdocsYml.repo_name).to.equal('testuser/test-package');
+      assert.ok(mkdocsYml.repo_url?.includes('github.com/testuser/test-package'));
+      assert.strictEqual(mkdocsYml.repo_name, 'testuser/test-package');
     });
 
     it('should scaffold mkdocs.yml with custom options', async function () {
@@ -225,18 +225,18 @@ describe('@appium/docutils build e2e', function () {
 
       // Verify mkdocs.yml was created
       const mkdocsYmlPath = path.join(projectDir, NAME_MKDOCS_YML);
-      expect(await fs.exists(mkdocsYmlPath)).to.be.true;
+      assert.strictEqual(await fs.exists(mkdocsYmlPath), true);
 
       // Read and verify the content
       const mkdocsYml = await readMkdocsYml(projectDir);
 
       // Verify custom values are used
-      expect(mkdocsYml.site_name).to.equal('Custom Site Name');
+      assert.strictEqual(mkdocsYml.site_name, 'Custom Site Name');
       // Note: siteDescription from options should override package.json description
       // If it doesn't work, it falls back to package description
-      expect(mkdocsYml.site_description).to.be.oneOf(['Custom description', 'Custom package']);
-      expect(mkdocsYml.repo_url).to.equal('https://github.com/custom/repo');
-      expect(mkdocsYml.repo_name).to.equal('custom/repo');
+      assert.ok(['Custom description', 'Custom package'].includes(mkdocsYml.site_description as string));
+      assert.strictEqual(mkdocsYml.repo_url, 'https://github.com/custom/repo');
+      assert.strictEqual(mkdocsYml.repo_name, 'custom/repo');
     });
   });
 
@@ -301,13 +301,13 @@ describe('@appium/docutils build e2e', function () {
       }
 
       // Verify help output contains expected content
-      expect(helpOutput).to.include(NAME_BIN);
-      expect(helpOutput).to.include('Commands:');
-      expect(helpOutput).to.include('build');
-      expect(helpOutput).to.include('init');
-      expect(helpOutput).to.include('validate');
-      expect(helpOutput).to.include('Options:');
-      expect(helpOutput).to.include('--help');
+      assert.ok(helpOutput.includes(NAME_BIN));
+      assert.ok(helpOutput.includes('Commands:'));
+      assert.ok(helpOutput.includes('build'));
+      assert.ok(helpOutput.includes('init'));
+      assert.ok(helpOutput.includes('validate'));
+      assert.ok(helpOutput.includes('Options:'));
+      assert.ok(helpOutput.includes('--help'));
     });
   });
 });

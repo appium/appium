@@ -1,8 +1,8 @@
+import assert from 'node:assert/strict';
 import path from 'node:path';
 import {describe, it, before, after} from 'node:test';
 
 import {fs, tempDir} from '@appium/support';
-import {expect} from 'chai';
 
 import {findDeployVersion} from '../../lib/builder/deploy.js';
 import {NAME_PACKAGE_JSON} from '../../lib/constants.js';
@@ -35,14 +35,14 @@ describe('findDeployVersion', function () {
   });
 
   it('should use MAJOR.MINOR version by default', async function () {
-    expect(await findDeployVersion(packageJsonPath)).to.equal('2.3');
+    assert.strictEqual(await findDeployVersion(packageJsonPath), '2.3');
   });
 
   it('should use prefixed MAJOR version if usePrefixedMajorVersion is used', async function () {
-    expect(await findDeployVersion(packageJsonPath, true)).to.equal('v2');
+    assert.strictEqual(await findDeployVersion(packageJsonPath, true), 'v2');
   });
 
   it('should support custom working directory', async function () {
-    expect(await findDeployVersion(undefined, false, testDir)).to.equal('2.3');
+    assert.strictEqual(await findDeployVersion(undefined, false, testDir), '2.3');
   });
 });

@@ -1,6 +1,5 @@
+import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
-
-import {expect} from 'chai';
 
 import {argify} from '../../lib/utils/index.js';
 
@@ -28,7 +27,7 @@ describe('argify', function () {
       ),
       version,
     ];
-    expect(mikeArgs).to.eql([
+    assert.deepStrictEqual(mikeArgs, [
       '--config-file',
       '/path/to/yml',
       '--push',

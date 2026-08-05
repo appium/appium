@@ -1,6 +1,6 @@
+import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
-import {expect} from 'chai';
 import sinon from 'sinon';
 
 import {RelaxedCapsPlugin} from '../../lib/plugin.js';
@@ -55,26 +55,26 @@ describe('relaxed caps plugin', function () {
   const rcp = new RelaxedCapsPlugin('relaxed-caps');
 
   it('should export the name', function () {
-    expect(RelaxedCapsPlugin).to.exist;
+    assert.ok(RelaxedCapsPlugin);
   });
 
   describe('#fixCapsIfW3C', function () {
     // Bracket notation required to call private method in tests
     /* eslint-disable dot-notation */
     it('should not transform standard caps', function () {
-      expect(rcp['fixCapsIfW3C']({alwaysMatch: STD_CAPS})).to.eql({alwaysMatch: STD_CAPS});
+      assert.deepStrictEqual(rcp['fixCapsIfW3C']({alwaysMatch: STD_CAPS}), {alwaysMatch: STD_CAPS});
     });
     it('should transform non-standard caps', function () {
-      expect(rcp['fixCapsIfW3C']({alwaysMatch: MIXED_CAPS})).to.eql({alwaysMatch: ADJUSTED_CAPS});
+      assert.deepStrictEqual(rcp['fixCapsIfW3C']({alwaysMatch: MIXED_CAPS}), {alwaysMatch: ADJUSTED_CAPS});
     });
     it('should not transform already prefixed caps', function () {
-      expect(rcp['fixCapsIfW3C']({firstMatch: [VENDOR_CAPS], alwaysMatch: VENDOR_CAPS})).to.eql({
+      assert.deepStrictEqual(rcp['fixCapsIfW3C']({firstMatch: [VENDOR_CAPS], alwaysMatch: VENDOR_CAPS}), {
         firstMatch: [ADJUSTED_VENDOR_CAPS],
         alwaysMatch: ADJUSTED_VENDOR_CAPS,
       });
     });
     it('should not transform non-W3C caps', function () {
-      expect(rcp['fixCapsIfW3C']({desiredCapabilities: VENDOR_CAPS})).to.eql({
+      assert.deepStrictEqual(rcp['fixCapsIfW3C']({desiredCapabilities: VENDOR_CAPS}), {
         desiredCapabilities: VENDOR_CAPS,
       });
     });

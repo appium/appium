@@ -1,3 +1,4 @@
+import assert from 'node:assert/strict';
 import {describe, it, before, after} from 'node:test';
 
 import {fs, tempDir} from '@appium/support';
@@ -5,8 +6,6 @@ import type {AppiumServer} from '@appium/types';
 import type {ParsedArgs} from 'appium/types';
 import {sleep} from 'asyncbox';
 import axios from 'axios';
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import type {Browser} from 'webdriverio';
 import {remote as wdio} from 'webdriverio';
 
@@ -17,8 +16,6 @@ import {INSTALL_TYPE_LOCAL} from '../../lib/extension/extension-config';
 import {main as appiumServer} from '../../lib/main';
 import {resetSchema} from '../../lib/schema';
 import {FAKE_DRIVER_DIR, FAKE_PLUGIN_DIR, getTestPort, TEST_HOST, W3C_PREFIXED_CAPS} from '../helpers';
-
-use(chaiAsPromised);
 
 const FAKE_ARGS = {sillyWebServerPort: 1234, host: 'hey'};
 const FAKE_PLUGIN_ARGS = {fake: FAKE_ARGS};
@@ -128,7 +125,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
         address: TEST_HOST,
         usePlugins: ['other1', 'other2'],
       };
-      await expect(appiumServer(args)).to.eventually.be.rejected;
+      await assert.rejects(appiumServer(args));
     });
     it('should reject server creation if reserved plugin name is provided with other names', async function () {
       const args = {
@@ -137,7 +134,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
         address: TEST_HOST,
         usePlugins: ['fake', 'all'],
       };
-      await expect(appiumServer(args)).to.eventually.be.rejected;
+      await assert.rejects(appiumServer(args));
     });
   });
 
@@ -154,13 +151,13 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
 
       it('should update the server', async function () {
         const res = {fake: 'fakeResponse'};
-        expect((await axios.post(`http://${TEST_HOST}:${port}/fake`)).data).to.eql(res);
+        assert.deepStrictEqual((await axios.post(`http://${TEST_HOST}:${port}/fake`)).data, res);
       });
       it('should update the server with cliArgs', async function () {
         const res = usePlugins;
         // we don't need to check the entire object, since it's large, but we can ensure an
         // arg got through.
-        expect((await axios.post(`http://${TEST_HOST}:${port}/cliArgs`)).data.usePlugins).to.eql(res);
+        assert.deepStrictEqual((await axios.post(`http://${TEST_HOST}:${port}/cliArgs`)).data.usePlugins, res);
       });
       it('should modify the method map with new commands', async function () {
         const driver = await wdio(wdOpts as any);
@@ -169,7 +166,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
           await axios.post(`${testServerBaseSessionUrl}/${sessionId}/fake_data`, {
             data: {fake: 'data'},
           });
-          expect((await axios.get(`${testServerBaseSessionUrl}/${sessionId}/fake_data`)).data.value).to.eql({
+          assert.deepStrictEqual((await axios.get(`${testServerBaseSessionUrl}/${sessionId}/fake_data`)).data.value, {
             fake: 'data',
           });
         } finally {
@@ -181,7 +178,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
         const driver = await wdio(wdOpts as any);
         const {sessionId} = driver;
         try {
-          await expect(driver.getPageSource()).to.eventually.eql(`<Fake>${JSON.stringify([sessionId])}</Fake>`);
+          assert.strictEqual(await driver.getPageSource(), `<Fake>${JSON.stringify([sessionId])}</Fake>`);
         } finally {
           await driver.deleteSession();
         }
@@ -197,7 +194,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
               value: '//MockWebView',
             })
           ).data.value;
-          expect(el).to.have.property('fake');
+          assert.ok(Object.hasOwn(el, 'fake'));
         } finally {
           await driver.deleteSession();
         }
@@ -211,7 +208,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
             name: 'PROXY',
           });
           const handle = (await axios.get(`${testServerBaseSessionUrl}/${sessionId}/window`)).data.value;
-          expect(handle).to.eql('<<proxied via proxyCommand>>');
+          assert.strictEqual(handle, '<<proxied via proxyCommand>>');
         } finally {
           await axios.post(`${testServerBaseSessionUrl}/${sessionId}/context`, {
             name: 'NATIVE_APP',
@@ -230,17 +227,17 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
         let shutdownErr: Error | undefined;
         try {
           let res = await axios.get(`http://${TEST_HOST}:${port}/unexpected`);
-          expect(res.data).to.not.exist;
+          assert.ok(!res.data);
           await sleep(1500);
           res = await axios.get(`http://${TEST_HOST}:${port}/unexpected`);
-          expect(res.data).to.match(/Session ended/);
-          expect(res.data).to.match(/timeout/);
+          assert.match(res.data, /Session ended/);
+          assert.match(res.data, /timeout/);
           await driver.deleteSession();
         } catch (e) {
           shutdownErr = e instanceof Error ? e : new Error(String(e));
         }
-        expect(shutdownErr).to.exist;
-        expect(shutdownErr!.message).to.match(/either terminated or not started/);
+        assert.ok(shutdownErr);
+        assert.match(shutdownErr!.message, /either terminated or not started/);
       });
 
       it('should allow plugin handled commands to reset newCommandTimeout', async function () {
@@ -258,8 +255,8 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
             await driver.getPageSource();
           }
           // prove that we went beyond the new command timeout as a result of sending commands
-          expect(Date.now() - start).to.be.above(2500);
-          await expect(driver.getPageSource()).to.eventually.eql(`<Fake>${JSON.stringify([sessionId])}</Fake>`);
+          assert.ok(Date.now() - start > 2500);
+          assert.strictEqual(await driver.getPageSource(), `<Fake>${JSON.stringify([sessionId])}</Fake>`);
         } finally {
           await driver.deleteSession();
         }
@@ -284,7 +281,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
       const {sessionId} = driver;
       try {
         const {data} = await axios.get(`${testServerBaseSessionUrl}/${sessionId}/fakepluginargs`);
-        expect(data.value).to.eql(FAKE_ARGS);
+        assert.deepStrictEqual(data.value, FAKE_ARGS);
       } finally {
         await driver.deleteSession();
       }
@@ -308,7 +305,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
         const {sessionId} = driver;
         try {
           const {data} = await axios.get(`${testServerBaseSessionUrl}/${sessionId}/fakepluginargs`);
-          expect(data.value).to.eql({});
+          assert.deepStrictEqual(data.value, {});
         } finally {
           await driver.deleteSession();
         }
@@ -344,17 +341,17 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
 
     it('should handle execute methods using executeMethodMap', async function () {
       const res = await driver.executeScript('fake: plugMeIn', [{socket: 'electrical'}]);
-      expect(res).to.eql('Plugged in to electrical');
+      assert.strictEqual(res, 'Plugged in to electrical');
     });
 
     it('should handle execute methods overridden on the driver', async function () {
       const res = await driver.executeScript('fake: getThing', []);
-      expect(res).to.eql('PLUGIN_FAKE_THING');
+      assert.strictEqual(res, 'PLUGIN_FAKE_THING');
     });
 
     it('should let driver handle unknown execute methods', async function () {
       const sum = await driver.executeScript('fake: addition', [{num1: 2, num2: 3}]);
-      expect(sum).to.eql(5);
+      assert.strictEqual(sum, 5);
     });
   });
 
@@ -387,13 +384,13 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
           method: 'appium:fake.getPluginThing',
           params: {},
         });
-        expect(result).to.not.exist;
+        assert.ok(!result);
         await (driver as any).send({
           method: 'appium:fake.setPluginThing',
           params: {thing: 'plugin bidi'},
         });
         ({result} = await (driver as any).send({method: 'appium:fake.getPluginThing', params: {}}));
-        expect(result).to.eql('plugin bidi');
+        assert.strictEqual(result, 'plugin bidi');
       });
 
       it('should subscribe and unsubscribe to/from custom bidi events', async function () {
@@ -403,17 +400,17 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
         });
 
         await (driver as any).send({method: 'appium:fake.getPluginThing', params: {}});
-        expect(retrievals).to.eql(0);
+        assert.strictEqual(retrievals, 0);
 
         await (driver as any).sessionSubscribe({events: ['appium:fake.pluginThingRetrieved']});
         await (driver as any).send({method: 'appium:fake.getPluginThing', params: {}});
         await (driver as any).send({method: 'appium:fake.getPluginThing', params: {}});
-        expect(retrievals).to.eql(2);
+        assert.strictEqual(retrievals, 2);
 
         await (driver as any).sessionUnsubscribe({events: ['appium:fake.pluginThingRetrieved']});
         await (driver as any).send({method: 'appium:fake.getPluginThing', params: {}});
         await (driver as any).send({method: 'appium:fake.getPluginThing', params: {}});
-        expect(retrievals).to.eql(2);
+        assert.strictEqual(retrievals, 2);
       });
 
       it('should subscribe and unsubscribe to/from custom bidi events and merge with driver', async function () {
@@ -423,16 +420,16 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
         });
 
         await sleep(750);
-        expect(collectedEvents).to.be.empty;
+        assert.strictEqual(collectedEvents.length, 0);
 
         await (driver as any).sessionSubscribe({events: ['appium:clock.currentTime']});
         await sleep(800);
-        expect(collectedEvents.length).to.eql(5);
+        assert.strictEqual(collectedEvents.length, 5);
 
         await (driver as any).sessionUnsubscribe({events: ['appium:clock.currentTime']});
         collectedEvents.length = 0;
         await sleep(800);
-        expect(collectedEvents).to.be.empty;
+        assert.strictEqual(collectedEvents.length, 0);
       });
 
       it('should call underlying driver bidi method if next is called', async function () {
@@ -440,7 +437,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
           method: 'appium:fake.doSomeMath',
           params: {num1: 2, num2: 3},
         });
-        expect(result).to.eql(11);
+        assert.strictEqual(result, 11);
       });
 
       it('should override and not call underlying driver bidi method if next is not called', async function () {
@@ -448,7 +445,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
           method: 'appium:fake.doSomeMath2',
           params: {num1: 2, num2: 3},
         });
-        expect(result).to.eql(6);
+        assert.strictEqual(result, 6);
       });
     });
   });
@@ -475,23 +472,23 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
 
     it('should allow driver to publish to plugin', async function () {
       let running = await driver.executeScript('fake: getFakeDriverClockStatus', []);
-      expect(running).to.be.true;
+      assert.strictEqual(running, true);
       await driver.executeScript('fake: stopClock', []);
       running = await driver.executeScript('fake: getFakeDriverClockStatus', []);
-      expect(running).to.be.false;
+      assert.strictEqual(running, false);
     });
 
     it('should allow plugin to publish to driver', async function () {
       let lastMath = await driver.executeScript('fake: getLastPluginMath', []);
-      expect(lastMath).to.eql(null);
+      assert.strictEqual(lastMath, null);
       const {result} = await (driver as any).send({
         method: 'appium:fake.doSomeMath2',
         params: {num1: 2, num2: 3},
       });
-      expect(result).to.eql(6);
+      assert.strictEqual(result, 6);
       lastMath = await driver.executeScript('fake: getLastPluginMath', []);
-      expect(lastMath.result).to.eql(6);
-      expect(lastMath.pluginName).to.have.string('FakePlugin');
+      assert.strictEqual(lastMath.result, 6);
+      assert.ok(lastMath.pluginName.includes('FakePlugin'));
     });
   });
 });

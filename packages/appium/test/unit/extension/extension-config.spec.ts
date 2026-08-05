@@ -1,8 +1,7 @@
+import assert from 'node:assert/strict';
 import path from 'node:path';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import type {SinonSandbox} from 'sinon';
 
 import {DRIVER_TYPE} from '../../../lib/constants';
@@ -11,8 +10,6 @@ import {APPIUM_VER} from '../../../lib/helpers/build';
 import {FAKE_DRIVER_DIR, PROJECT_ROOT, rewiremock} from '../../helpers';
 import {initMocks} from './mocks';
 import type {MockAppiumSupport} from './mocks';
-
-use(chaiAsPromised);
 
 describe('ExtensionConfig', function () {
   let sandbox: SinonSandbox;
@@ -35,23 +32,24 @@ describe('ExtensionConfig', function () {
 
   describe('ESM module resolution', function () {
     it('resolves ESM entry point with simple export', function () {
-      expect(resolveEsmEntryPoint('./index.js')).to.eql('./index.js');
+      assert.strictEqual(resolveEsmEntryPoint('./index.js'), './index.js');
     });
 
     it('resolves ESM entry point with dot export', function () {
-      expect(resolveEsmEntryPoint({'.': './index.js'})).to.eql('./index.js');
+      assert.strictEqual(resolveEsmEntryPoint({'.': './index.js'}), './index.js');
     });
 
     it('resolves ESM entry point with import export', function () {
-      expect(resolveEsmEntryPoint({import: './index.js'})).to.eql('./index.js');
+      assert.strictEqual(resolveEsmEntryPoint({import: './index.js'}), './index.js');
     });
 
     it('resolves ESM entry point with complex import export', function () {
-      expect(
+      assert.strictEqual(
         resolveEsmEntryPoint({
           '.': {import: './index.js'},
         }),
-      ).to.eql('./index.js');
+        './index.js',
+      );
     });
   });
 
@@ -77,7 +75,7 @@ describe('ExtensionConfig', function () {
     describe('getGenericConfigProblems()', function () {
       describe('when there are no problems with the extension data', function () {
         it('should return an empty array', function () {
-          expect(config.getGenericConfigProblems(extData, extData.pkgName)).to.be.empty;
+          assert.strictEqual(config.getGenericConfigProblems(extData, extData.pkgName).length, 0);
         });
       });
 
@@ -89,7 +87,7 @@ describe('ExtensionConfig', function () {
         });
 
         it('should return a problem', function () {
-          expect(config.getGenericConfigProblems(extData, pkgName)).to.eql([
+          assert.deepStrictEqual(config.getGenericConfigProblems(extData, pkgName), [
             {
               err: 'Invalid or missing `name` field in my `package.json` and/or `extensions.yaml` (must be a string)',
               val: undefined,
@@ -104,7 +102,7 @@ describe('ExtensionConfig', function () {
         });
 
         it('should return a problem', function () {
-          expect(config.getGenericConfigProblems(extData, extData.pkgName)).to.eql([
+          assert.deepStrictEqual(config.getGenericConfigProblems(extData, extData.pkgName), [
             {
               err: 'Invalid or missing `version` field in my `package.json` and/or `extensions.yaml` (must be a string)',
               val: undefined,
@@ -119,7 +117,7 @@ describe('ExtensionConfig', function () {
         });
 
         it('should return a problem', function () {
-          expect(config.getGenericConfigProblems(extData, extData.pkgName)).to.eql([
+          assert.deepStrictEqual(config.getGenericConfigProblems(extData, extData.pkgName), [
             {
               err: 'Invalid or missing `appium.mainClass` field in my `package.json` and/or `mainClass` field in `extensions.yaml` (must be a string)',
               val: undefined,
@@ -155,7 +153,7 @@ describe('ExtensionConfig', function () {
         });
 
         it('should resolve w/ an appropriate warning', async function () {
-          await expect(config.getGenericConfigWarnings(extData, extData.pkgName)).to.eventually.eql([
+          assert.deepStrictEqual(await config.getGenericConfigWarnings(extData, extData.pkgName), [
             `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) has 1 invalid or missing field ("installSpec") in \`extensions.yaml\`; this may cause upgrades done via the \`appium\` CLI tool to fail. Please reinstall with \`appium driver uninstall ${extData.pkgName}\` and \`appium driver install ${extData.pkgName}\` to attempt a fix.`,
           ]);
         });
@@ -167,7 +165,7 @@ describe('ExtensionConfig', function () {
         });
 
         it('should resolve w/ an appropriate warning', async function () {
-          await expect(config.getGenericConfigWarnings(extData, extData.pkgName)).to.eventually.eql([
+          assert.deepStrictEqual(await config.getGenericConfigWarnings(extData, extData.pkgName), [
             `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) has 1 invalid or missing field ("installType") in \`extensions.yaml\`; this may cause upgrades done via the \`appium\` CLI tool to fail. Please reinstall with \`appium driver uninstall ${extData.pkgName}\` and \`appium driver install ${extData.pkgName}\` to attempt a fix.`,
           ]);
         });
@@ -180,7 +178,7 @@ describe('ExtensionConfig', function () {
         });
 
         it('should resolve w/ an appropriate warning', async function () {
-          await expect(config.getGenericConfigWarnings(extData, extData.pkgName)).to.eventually.eql([
+          assert.deepStrictEqual(await config.getGenericConfigWarnings(extData, extData.pkgName), [
             `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) has 2 invalid or missing fields ("installSpec", "installType") in \`extensions.yaml\`; this may cause upgrades done via the \`appium\` CLI tool to fail. Please reinstall with \`appium driver uninstall ${extData.pkgName}\` and \`appium driver install ${extData.pkgName}\` to attempt a fix.`,
           ]);
         });
@@ -197,7 +195,7 @@ describe('ExtensionConfig', function () {
             MockAppiumSupport.npm.getLatestVersion.resolves(null);
           });
           it('should resolve w/ an appropriate warning', async function () {
-            await expect(config.getGenericConfigWarnings(extData, extData.pkgName)).to.eventually.eql([
+            assert.deepStrictEqual(await config.getGenericConfigWarnings(extData, extData.pkgName), [
               `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to an invalid or missing peer dependency on Appium. Please ask the developer of \`${extData.pkgName}\` to add a peer dependency on \`^appium@${APPIUM_VER}\`.`,
             ]);
           });
@@ -213,7 +211,7 @@ describe('ExtensionConfig', function () {
           });
 
           it('should resolve w/ an appropriate warning', async function () {
-            await expect(config.getGenericConfigWarnings(extData, extData.pkgName)).to.eventually.eql([
+            assert.deepStrictEqual(await config.getGenericConfigWarnings(extData, extData.pkgName), [
               `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to an invalid or missing peer dependency on Appium. Please ask the developer of \`${extData.pkgName}\` to add a peer dependency on \`^appium@${APPIUM_VER}\`.`,
             ]);
           });
@@ -235,7 +233,7 @@ describe('ExtensionConfig', function () {
           });
 
           it('should resolve w/ an appropriate warning', async function () {
-            await expect(config.getGenericConfigWarnings(extData, extData.pkgName)).to.eventually.eql([
+            assert.deepStrictEqual(await config.getGenericConfigWarnings(extData, extData.pkgName), [
               `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to its peer dependency on Appium ${extData.appiumVersion}. Please install a compatible version of the driver.`,
             ]);
           });
@@ -248,7 +246,7 @@ describe('ExtensionConfig', function () {
             MockAppiumSupport.npm.getLatestVersion.resolves(null);
           });
           it('should resolve w/ an appropriate warning', async function () {
-            await expect(config.getGenericConfigWarnings(extData, extData.pkgName)).to.eventually.eql([
+            assert.deepStrictEqual(await config.getGenericConfigWarnings(extData, extData.pkgName), [
               `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to its peer dependency on Appium ${extData.appiumVersion}. Please install a compatible version of the driver.`,
             ]);
           });
@@ -265,11 +263,12 @@ describe('ExtensionConfig', function () {
 
         it('should display a warning count of 1', async function () {
           await config._validate({foo: {}});
-          expect(
+          assert.strictEqual(
             (MockAppiumSupport.logger.__logger as any).warn.calledWith(
               'Appium encountered 1 warning while validating drivers found in manifest /some/path/extensions.yaml',
             ),
-          ).to.be.true;
+            true,
+          );
         });
       });
 
@@ -281,11 +280,12 @@ describe('ExtensionConfig', function () {
 
         it('should display an error count of 1', async function () {
           await config._validate({foo: {}});
-          expect(
+          assert.strictEqual(
             (MockAppiumSupport.logger.__logger as any).error.calledWith(
               'Appium encountered 1 error while validating drivers found in manifest /some/path/extensions.yaml',
             ),
-          ).to.be.true;
+            true,
+          );
         });
       });
     });
@@ -300,7 +300,7 @@ describe('ExtensionConfig', function () {
 
       describe('when the extension is not actually installed', function () {
         it('should throw', async function () {
-          await expect(config.requireAsync('fake')).to.be.rejectedWith(/cannot find module/i);
+          await assert.rejects(config.requireAsync('fake'), /cannot find module/i);
         });
       });
 
@@ -312,7 +312,7 @@ describe('ExtensionConfig', function () {
           sandbox.stub(config, 'getInstallPath').returns(FAKE_DRIVER_DIR);
         });
         it('should throw', async function () {
-          await expect(config.requireAsync('fake')).to.be.rejectedWith(/cannot find module/i);
+          await assert.rejects(config.requireAsync('fake'), /cannot find module/i);
         });
       });
 
@@ -338,7 +338,8 @@ describe('ExtensionConfig', function () {
           // specifier here would make tsc try (and fail) to resolve its type declarations; a
           // non-literal specifier keeps this dynamic import untyped, like `require()` used to be.
           const relaxedCapsPluginSpecifier = '@appium/relaxed-caps-plugin';
-          expect(await config.requireAsync('relaxed-caps')).to.equal(
+          assert.strictEqual(
+            await config.requireAsync('relaxed-caps'),
             (await import(relaxedCapsPluginSpecifier)).RelaxedCapsPlugin,
           );
         });

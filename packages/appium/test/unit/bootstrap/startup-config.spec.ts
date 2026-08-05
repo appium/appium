@@ -1,7 +1,6 @@
+import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import type {SinonSandbox, SinonSpy} from 'sinon';
 import {createSandbox} from 'sinon';
 
@@ -10,8 +9,6 @@ import {getParser} from '../../../lib/cli/parser';
 import {PLUGIN_TYPE} from '../../../lib/constants';
 import {finalizeSchema, getDefaultsForSchema, registerSchema, resetSchema} from '../../../lib/schema/schema';
 import {setPath} from '../../../lib/utils';
-
-use(chaiAsPromised);
 
 describe('bootstrap/startup-config', function () {
   let sandbox: SinonSandbox;
@@ -46,7 +43,7 @@ describe('bootstrap/startup-config', function () {
           {port: 1234},
           {allowCors: false},
         );
-        expect(log.calledWith('Appium Configuration\n')).to.be.true;
+        assert.strictEqual(log.calledWith('Appium Configuration\n'), true);
       });
 
       it('should skip empty objects', function () {
@@ -57,7 +54,7 @@ describe('bootstrap/startup-config', function () {
           {spam: 'food'},
           {},
         );
-        expect(dir.calledWith({foo: 'bar', sheep: 0, ducks: false})).to.be.true;
+        assert.strictEqual(dir.calledWith({foo: 'bar', sheep: 0, ducks: false}), true);
       });
     });
 
@@ -70,14 +67,14 @@ describe('bootstrap/startup-config', function () {
           {spam: 'food'},
           {},
         );
-        expect(log.calledWith('\n(no configuration file loaded)')).to.be.true;
+        assert.strictEqual(log.calledWith('\n(no configuration file loaded)'), true);
       });
     });
 
     describe('when no CLI arguments (other than --show-config) provided', function () {
       it('should not dump CLI args', function () {
         showConfig({}, {}, {}, {});
-        expect(log.calledWith('\n(no CLI parameters provided)')).to.be.true;
+        assert.strictEqual(log.calledWith('\n(no CLI parameters provided)'), true);
       });
     });
   });
@@ -94,19 +91,19 @@ describe('bootstrap/startup-config', function () {
 
       it('should show none if we have all the defaults', function () {
         const nonDefaultArgs = getNonDefaultServerArgs(args);
-        expect(nonDefaultArgs).to.be.empty;
+        assert.strictEqual(Object.keys(nonDefaultArgs).length, 0);
       });
 
       it('should catch a non-default argument', function () {
         args.allowCors = true;
         const nonDefaultArgs = getNonDefaultServerArgs(args);
-        expect(nonDefaultArgs).to.eql({allowCors: true});
+        assert.deepStrictEqual(nonDefaultArgs, {allowCors: true});
       });
 
       describe('when arg is an array', function () {
         it('should return the arg as an array', function () {
           args.usePlugins = ['all'];
-          expect(getNonDefaultServerArgs(args)).to.eql({usePlugins: ['all']});
+          assert.deepStrictEqual(getNonDefaultServerArgs(args), {usePlugins: ['all']});
         });
       });
     });
@@ -125,7 +122,7 @@ describe('bootstrap/startup-config', function () {
 
       it('should take extension schemas into account', function () {
         const nonDefaultArgs = getNonDefaultServerArgs(args);
-        expect(nonDefaultArgs).to.be.empty;
+        assert.strictEqual(Object.keys(nonDefaultArgs).length, 0);
       });
 
       it('should catch a non-default argument', function () {
@@ -133,7 +130,7 @@ describe('bootstrap/startup-config', function () {
         const nonDefaultArgs = getNonDefaultServerArgs(args);
         const expected: Record<string, unknown> = {};
         setPath(expected, 'plugin.crypto-fiend.elite', false);
-        expect(nonDefaultArgs).to.eql(expected);
+        assert.deepStrictEqual(nonDefaultArgs, expected);
       });
     });
   });

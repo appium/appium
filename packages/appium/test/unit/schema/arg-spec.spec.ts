@@ -1,6 +1,5 @@
+import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
-
-import {expect} from 'chai';
 
 import {DRIVER_TYPE} from '../../../lib/constants';
 import {ArgSpec} from '../../../lib/schema/arg-spec';
@@ -9,20 +8,20 @@ describe('ArgSpec', function () {
   describe('class method', function () {
     describe('create()', function () {
       it('should return a new ArgSpec', function () {
-        expect(ArgSpec.create('foo')).to.be.an.instanceof(ArgSpec);
+        assert.ok(ArgSpec.create('foo') instanceof ArgSpec);
       });
     });
 
     describe('toSchemaRef()', function () {
       describe('when provided no extension information', function () {
         it('should return a schema ID for a specific argument', function () {
-          expect(ArgSpec.toSchemaRef('foo')).to.equal('appium.json#/properties/server/properties/foo');
+          assert.strictEqual(ArgSpec.toSchemaRef('foo'), 'appium.json#/properties/server/properties/foo');
         });
       });
 
       describe('when provided extension information', function () {
         it('should return a schema ID for a specific argument within an extension schema', function () {
-          expect(ArgSpec.toSchemaRef('bar', DRIVER_TYPE, 'stuff')).to.equal('driver-stuff.json#/properties/bar');
+          assert.strictEqual(ArgSpec.toSchemaRef('bar', DRIVER_TYPE, 'stuff'), 'driver-stuff.json#/properties/bar');
         });
       });
     });
@@ -30,13 +29,13 @@ describe('ArgSpec', function () {
     describe('toSchemaBaseRef()', function () {
       describe('when provided no extension information', function () {
         it('should return the base schema ID', function () {
-          expect(ArgSpec.toSchemaBaseRef()).to.equal('appium.json');
+          assert.strictEqual(ArgSpec.toSchemaBaseRef(), 'appium.json');
         });
       });
 
       describe('when provided extension information', function () {
         it('should return a schema ID for an extension', function () {
-          expect(ArgSpec.toSchemaBaseRef(DRIVER_TYPE, 'stuff')).to.equal('driver-stuff.json');
+          assert.strictEqual(ArgSpec.toSchemaBaseRef(DRIVER_TYPE, 'stuff'), 'driver-stuff.json');
         });
       });
     });
@@ -44,13 +43,13 @@ describe('ArgSpec', function () {
     describe('toArg()', function () {
       describe('when provided no extension information', function () {
         it('should return a bare arg name', function () {
-          expect(ArgSpec.toArg('foo')).to.equal('foo');
+          assert.strictEqual(ArgSpec.toArg('foo'), 'foo');
         });
       });
 
       describe('when provided extension information', function () {
         it('should return an extension-specific arg name', function () {
-          expect(ArgSpec.toArg('no-oats', DRIVER_TYPE, 'bad-donkey')).to.equal('driver-bad-donkey-no-oats');
+          assert.strictEqual(ArgSpec.toArg('no-oats', DRIVER_TYPE, 'bad-donkey'), 'driver-bad-donkey-no-oats');
         });
       });
     });
@@ -58,13 +57,13 @@ describe('ArgSpec', function () {
     describe('extensionInfoFromRootSchemaId()', function () {
       describe('when provided the base schema ID', function () {
         it('should return an empty object', function () {
-          expect(ArgSpec.extensionInfoFromRootSchemaId('appium.json')).to.be.empty;
+          assert.strictEqual(Object.keys(ArgSpec.extensionInfoFromRootSchemaId('appium.json')).length, 0);
         });
       });
 
       describe('when provided the schema ID of an extension schema', function () {
         it('should return a proper object', function () {
-          expect(ArgSpec.extensionInfoFromRootSchemaId('driver-stuff.json')).to.eql({
+          assert.deepStrictEqual(ArgSpec.extensionInfoFromRootSchemaId('driver-stuff.json'), {
             extType: DRIVER_TYPE,
             normalizedExtName: 'stuff',
           });

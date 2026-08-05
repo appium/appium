@@ -1,3 +1,4 @@
+import assert from 'node:assert/strict';
 import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
 
 import {BaseDriver} from '@appium/base-driver';
@@ -6,8 +7,6 @@ import type {AppiumServer, DriverClass} from '@appium/types';
 import type {ParsedArgs} from 'appium/types';
 import {sleep} from 'asyncbox';
 import axios from 'axios';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {createSandbox} from 'sinon';
 import type {SinonSandbox} from 'sinon';
 import {exec} from 'teen_process';
@@ -21,9 +20,6 @@ import {INSTALL_TYPE_LOCAL} from '../../lib/extension/extension-config';
 import {removeAppiumPrefixes} from '../../lib/helpers/capability';
 import {main as appiumServer} from '../../lib/main';
 import {FAKE_DRIVER_DIR, getTestPort, TEST_FAKE_APP, TEST_HOST, W3C_PREFIXED_CAPS} from '../helpers';
-
-const {expect} = chai;
-chai.use(chaiAsPromised);
 
 let testServerBaseUrl: string;
 let port: number;
@@ -130,13 +126,13 @@ describe('FakeDriver via HTTP', function () {
 
     it('should allow drivers to update the server in arbitrary ways', async function () {
       const {data} = await axios.get(`${testServerBaseUrl}/fakedriver`);
-      expect(data).to.eql({fakedriver: 'fakeResponse'});
+      assert.deepStrictEqual(data, {fakedriver: 'fakeResponse'});
     });
     it('should update the server with cliArgs', async function () {
       // we don't need to check the entire object, since it's large, but we can ensure an
       // arg got through.
-      expect((await axios.post(`http://${TEST_HOST}:${port}/fakedriverCliArgs`)).data).to.have.property(
-        'appiumHome',
+      assert.strictEqual(
+        (await axios.post(`http://${TEST_HOST}:${port}/fakedriverCliArgs`)).data.appiumHome,
         appiumHome,
       );
     });
@@ -157,8 +153,8 @@ describe('FakeDriver via HTTP', function () {
       const {sessionId} = driver;
       try {
         const {data} = await axios.get(`${testServerBaseSessionUrl}/${sessionId}/fakedriverargs`);
-        expect(data.value.sillyWebServerPort).to.not.exist;
-        expect(data.value.sillyWebServerHost).to.not.exist;
+        assert.ok(!data.value.sillyWebServerPort);
+        assert.ok(!data.value.sillyWebServerHost);
       } finally {
         await driver.deleteSession();
       }
@@ -179,8 +175,8 @@ describe('FakeDriver via HTTP', function () {
       const {sessionId} = driver;
       try {
         const {data} = await axios.get(`${testServerBaseSessionUrl}/${sessionId}/fakedriverargs`);
-        expect(data.value.sillyWebServerPort).to.eql(sillyWebServerPort);
-        expect(data.value.sillyWebServerHost).to.eql(sillyWebServerHost);
+        assert.strictEqual(data.value.sillyWebServerPort, sillyWebServerPort);
+        assert.strictEqual(data.value.sillyWebServerHost, sillyWebServerHost);
       } finally {
         await driver.deleteSession();
       }
@@ -216,9 +212,9 @@ describe('FakeDriver via HTTP', function () {
       // Create the session
       const {value} = (await axios.post(testServerBaseSessionUrl, appiumOptsCaps)).data;
       try {
-        expect(value.sessionId).to.be.a.string;
-        expect(value).to.exist;
-        expect(value.capabilities).to.deep.equal({
+        assert.strictEqual(typeof value.sessionId, 'string');
+        assert.ok(value);
+        assert.deepStrictEqual(value.capabilities, {
           automationName: 'Fake',
           platformName: 'Fake',
           deviceName: 'Fake',
@@ -260,12 +256,14 @@ describe('FakeDriver via HTTP', function () {
 
       const commands = await driver.listCommands();
 
-      expect(JSON.stringify(commands.rest.base['/session/:sessionId/frame'])).to.eql(
+      assert.strictEqual(
+        JSON.stringify(commands.rest.base['/session/:sessionId/frame']),
         JSON.stringify({POST: {command: 'setFrame', params: [{name: 'id', required: true}]}}),
       );
-      expect(Object.keys(commands.rest.driver).length).to.be.greaterThan(1);
+      assert.ok(Object.keys(commands.rest.driver).length > 1);
 
-      expect(JSON.stringify(commands.bidi.base.session.subscribe)).to.eql(
+      assert.strictEqual(
+        JSON.stringify(commands.bidi.base.session.subscribe),
         JSON.stringify({
           command: 'bidiSubscribe',
           params: [
@@ -280,8 +278,8 @@ describe('FakeDriver via HTTP', function () {
           ],
         }),
       );
-      expect(Object.keys(commands.bidi.base).length).to.be.greaterThan(1);
-      expect(Object.keys(commands.bidi.driver).length).to.be.greaterThan(0);
+      assert.ok(Object.keys(commands.bidi.base).length > 1);
+      assert.ok(Object.keys(commands.bidi.driver).length > 0);
     });
 
     it('should list available driver extensions', async function () {
@@ -291,7 +289,8 @@ describe('FakeDriver via HTTP', function () {
       );
 
       const extensions = await driver.listExtensions();
-      expect(JSON.stringify(extensions.rest.driver['fake: setThing'])).to.eql(
+      assert.strictEqual(
+        JSON.stringify(extensions.rest.driver['fake: setThing']),
         JSON.stringify({
           command: 'setFakeThing',
           params: [
@@ -302,7 +301,7 @@ describe('FakeDriver via HTTP', function () {
           ],
         }),
       );
-      expect(Object.keys(extensions.rest.driver).length).to.be.greaterThan(1);
+      assert.ok(Object.keys(extensions.rest.driver).length > 1);
     });
   });
 
@@ -317,20 +316,20 @@ describe('FakeDriver via HTTP', function () {
 
     it('should start and stop a session and not allow commands after session stopped', async function () {
       const driver = await wdio({...wdOpts, capabilities: caps});
-      expect(driver.sessionId).to.exist;
-      expect(driver.sessionId).to.be.a('string');
+      assert.ok(driver.sessionId);
+      assert.strictEqual(typeof driver.sessionId, 'string');
       await driver.deleteSession();
-      await expect(driver.getTitle()).to.eventually.be.rejected;
+      await assert.rejects(driver.getTitle());
     });
 
     it('should be able to run two FakeDriver sessions simultaneously', async function () {
       const driver1 = await wdio({...wdOpts, capabilities: caps});
-      expect(driver1.sessionId).to.exist;
-      expect(driver1.sessionId).to.be.a('string');
+      assert.ok(driver1.sessionId);
+      assert.strictEqual(typeof driver1.sessionId, 'string');
       const driver2 = await wdio({...wdOpts, capabilities: caps});
-      expect(driver2.sessionId).to.exist;
-      expect(driver2.sessionId).to.be.a('string');
-      expect(driver2.sessionId).to.not.equal(driver1.sessionId);
+      assert.ok(driver2.sessionId);
+      assert.strictEqual(typeof driver2.sessionId, 'string');
+      assert.notStrictEqual(driver2.sessionId, driver1.sessionId);
       await driver1.deleteSession();
       await driver2.deleteSession();
     });
@@ -339,9 +338,9 @@ describe('FakeDriver via HTTP', function () {
       const uniqueCaps = structuredClone(caps);
       uniqueCaps['appium:uniqueApp'] = true;
       const driver1 = await wdio({...wdOpts, capabilities: uniqueCaps});
-      expect(driver1.sessionId).to.exist;
-      expect(driver1.sessionId).to.be.a('string');
-      await expect(wdio({...wdOpts, capabilities: caps})).to.eventually.be.rejected;
+      assert.ok(driver1.sessionId);
+      assert.strictEqual(typeof driver1.sessionId, 'string');
+      await assert.rejects(wdio({...wdOpts, capabilities: caps}));
       await driver1.deleteSession();
     });
 
@@ -351,10 +350,10 @@ describe('FakeDriver via HTTP', function () {
         ...caps,
       };
       const driver = await wdio({...wdOpts, capabilities: localCaps});
-      expect(driver.sessionId).to.exist;
+      assert.ok(driver.sessionId);
 
       await sleep(250);
-      await expect(driver.getPageSource()).to.eventually.be.rejectedWith(/terminated/);
+      await assert.rejects(driver.getPageSource(), /terminated/);
     });
 
     it('should not allow umbrella commands to prevent newCommandTimeout on inner driver', async function () {
@@ -363,7 +362,7 @@ describe('FakeDriver via HTTP', function () {
         ...caps,
       };
       const driver = await wdio({...wdOpts, capabilities: localCaps});
-      expect(driver.sessionId).to.exist;
+      assert.ok(driver.sessionId);
       driver.addCommand('getStatus', async () => (await axios.get(`${testServerBaseUrl}/status`)).data.value);
 
       // get the session list 6 times over 300ms. each request will be below the new command
@@ -372,7 +371,7 @@ describe('FakeDriver via HTTP', function () {
         await (driver as any).getStatus();
         await sleep(50);
       }
-      await expect(driver.getPageSource()).to.eventually.be.rejectedWith(/terminated/);
+      await assert.rejects(driver.getPageSource(), /terminated/);
     });
 
     it('should accept valid W3C capabilities and start a W3C session', async function () {
@@ -387,11 +386,11 @@ describe('FakeDriver via HTTP', function () {
       // Create the session
       const {status, value, sessionId} = (await axios.post(testServerBaseSessionUrl, w3cCaps)).data;
       try {
-        expect(status).to.not.exist; // Test that it's a W3C session
-        expect(sessionId).to.not.exist;
-        expect(value.sessionId).to.be.a('string');
-        expect(value).to.exist;
-        expect(value.capabilities).to.deep.equal({
+        assert.ok(!status); // Test that it's a W3C session
+        assert.ok(!sessionId);
+        assert.strictEqual(typeof value.sessionId, 'string');
+        assert.ok(value);
+        assert.deepStrictEqual(value.capabilities, {
           automationName: 'Fake',
           platformName: 'Fake',
           deviceName: 'Fake',
@@ -404,16 +403,17 @@ describe('FakeDriver via HTTP', function () {
             url: `${testServerBaseSessionUrl}/${value.sessionId}/screenshot`,
           })
         ).data;
-        expect(screenshotStatus).to.not.exist;
-        expect(screenshotValue).to.match(/^iVBOR/); // should be a png
+        assert.ok(!screenshotStatus);
+        assert.match(screenshotValue, /^iVBOR/); // should be a png
 
         // Now use that sessionID to call an arbitrary W3C-only endpoint that isn't implemented to see if it responds with correct error
-        await expect(
+        await assert.rejects(
           axios.post(`${testServerBaseSessionUrl}/${value.sessionId}/execute/async`, {
             script: '',
             args: ['a'],
           }),
-        ).to.eventually.be.rejectedWith(/405/);
+          /405/,
+        );
       } finally {
         // End session
         await axios.delete(`${testServerBaseSessionUrl}/${value.sessionId}`);
@@ -439,11 +439,11 @@ describe('FakeDriver via HTTP', function () {
       // Create the session
       const {status, value, sessionId} = (await axios.post(testServerBaseSessionUrl, appiumOptsCaps)).data;
       try {
-        expect(status).to.not.exist; // Test that it's a W3C session
-        expect(sessionId).to.not.exist;
-        expect(value.sessionId).to.be.a('string');
-        expect(value).to.exist;
-        expect(value.capabilities).to.deep.equal({
+        assert.ok(!status); // Test that it's a W3C session
+        assert.ok(!sessionId);
+        assert.strictEqual(typeof value.sessionId, 'string');
+        assert.ok(value);
+        assert.deepStrictEqual(value.capabilities, {
           automationName: 'Fake',
           platformName: 'Fake',
           deviceName: 'Fake',
@@ -463,7 +463,7 @@ describe('FakeDriver via HTTP', function () {
         },
       };
 
-      await expect(axios.post(testServerBaseSessionUrl, badW3Ccaps)).to.eventually.be.rejectedWith(/400/);
+      await assert.rejects(axios.post(testServerBaseSessionUrl, badW3Ccaps), /400/);
     });
 
     it('should accept a combo of W3C and JSONWP capabilities but completely ignore JSONWP', async function () {
@@ -484,10 +484,10 @@ describe('FakeDriver via HTTP', function () {
 
       const {status, value, sessionId} = (await axios.post(testServerBaseSessionUrl, combinedCaps)).data;
       try {
-        expect(status).to.not.exist;
-        expect(sessionId).to.not.exist;
-        expect(value.sessionId).to.exist;
-        expect(value.capabilities).to.deep.equal({
+        assert.ok(!status);
+        assert.ok(!sessionId);
+        assert.ok(value.sessionId);
+        assert.deepStrictEqual(value.capabilities, {
           ...removeAppiumPrefixes(caps),
           w3cParam: 'w3cParam',
         });
@@ -506,7 +506,7 @@ describe('FakeDriver via HTTP', function () {
           },
         },
       };
-      await expect(axios.post(testServerBaseSessionUrl, w3cCaps)).to.eventually.be.rejectedWith(/500/);
+      await assert.rejects(axios.post(testServerBaseSessionUrl, w3cCaps), /500/);
     });
 
     it('should accept capabilities that are provided in the firstMatch array', async function () {
@@ -523,9 +523,9 @@ describe('FakeDriver via HTTP', function () {
       };
       const {value, sessionId, status} = (await axios.post(testServerBaseSessionUrl, w3cCaps)).data;
       try {
-        expect(status);
-        expect(sessionId);
-        expect(value.capabilities).to.deep.equal(removeAppiumPrefixes(caps));
+        assert.ok(!status); // Test that it's a W3C session
+        assert.ok(!sessionId);
+        assert.deepStrictEqual(value.capabilities, removeAppiumPrefixes(caps));
       } finally {
         // End session
         await axios.delete(`${testServerBaseSessionUrl}/${value.sessionId}`);
@@ -553,8 +553,8 @@ describe('FakeDriver via HTTP', function () {
       const res = await axios.post(testServerBaseSessionUrl, combinedCaps, {
         validateStatus: null,
       });
-      expect(res.status).to.eql(400);
-      expect(res.data.value.error).to.match(/invalid argument/);
+      assert.strictEqual(res.status, 400);
+      assert.match(res.data.value.error, /invalid argument/);
     });
 
     it('should not fall back to MJSONWP even if Inner Driver is not ready for W3C', async function () {
@@ -575,7 +575,7 @@ describe('FakeDriver via HTTP', function () {
         .callsFake(async function (this: InstanceType<DriverClass>, caps) {
           const res = await BaseDriver.prototype.createSession.call(this, caps);
           sessionId = res[0];
-          expect(this.protocol).to.equal('W3C');
+          assert.strictEqual(this.protocol, 'W3C');
           return res;
         });
       try {
@@ -583,7 +583,7 @@ describe('FakeDriver via HTTP', function () {
           validateStatus: null,
         });
         const {status} = res;
-        expect(status).to.eql(200);
+        assert.strictEqual(status, 200);
       } finally {
         if (sessionId) {
           await axios.delete(`${testServerBaseSessionUrl}/${sessionId}`);
@@ -599,7 +599,7 @@ describe('FakeDriver via HTTP', function () {
         await axios.post(`${testServerBaseSessionUrl}/${sessionId}/fakedriver`, {
           thing: {yes: 'lolno'},
         });
-        expect((await axios.get(`${testServerBaseSessionUrl}/${sessionId}/fakedriver`)).data.value).to.eql({
+        assert.deepStrictEqual((await axios.get(`${testServerBaseSessionUrl}/${sessionId}/fakedriver`)).data.value, {
           yes: 'lolno',
         });
       } finally {
@@ -632,18 +632,18 @@ describe('FakeDriver via HTTP', function () {
     });
 
     it('should respond with bidi specific capability when a driver supports it', async function () {
-      expect(driver.capabilities.webSocketUrl);
+      assert.ok(driver.capabilities.webSocketUrl);
     });
 
     it('should interpret the bidi protocol and let the driver handle it by command', async function () {
-      expect(await driver.getUrl()).to.not.be.ok;
+      assert.ok(!(await driver.getUrl()));
 
       await driver.browsingContextNavigate({
         context: 'foo',
         url: 'https://appium.io',
         wait: 'complete',
       });
-      await expect(driver.getUrl()).to.eventually.eql('https://appium.io');
+      assert.strictEqual(await driver.getUrl(), 'https://appium.io');
     });
 
     it('should be able to subscribe and unsubscribe to bidi events', async function () {
@@ -655,18 +655,18 @@ describe('FakeDriver via HTTP', function () {
       // wait for some time to be sure clock events have happened, and assert we don't receive
       // any yet
       await sleep(750);
-      expect(collectedEvents).to.be.empty;
+      assert.strictEqual(collectedEvents.length, 0);
 
       // now subscribe and wait and assert that some events have been collected
       await driver.sessionSubscribe({events: ['appium:clock.currentTime']});
       await sleep(750);
-      expect(collectedEvents).to.not.be.empty;
+      assert.notStrictEqual(collectedEvents.length, 0);
 
       // finally  unsubscribe and wait and assert that some events have been collected
       await driver.sessionUnsubscribe({events: ['appium:clock.currentTime']});
       collectedEvents.length = 0;
       await sleep(750);
-      expect(collectedEvents).to.be.empty;
+      assert.strictEqual(collectedEvents.length, 0);
     });
 
     it('should allow custom bidi commands', async function () {
@@ -674,7 +674,7 @@ describe('FakeDriver via HTTP', function () {
         method: 'appium:fake.getFakeThing',
         params: {},
       } as any);
-      expect(result);
+      assert.ok(result);
       await driver.send({
         method: 'appium:fake.setFakeThing',
         params: {thing: 'this is from bidi'},
@@ -683,7 +683,7 @@ describe('FakeDriver via HTTP', function () {
         method: 'appium:fake.getFakeThing',
         params: {},
       } as any));
-      expect(result).to.eql('this is from bidi');
+      assert.strictEqual(result, 'this is from bidi');
     });
   });
 
@@ -712,18 +712,18 @@ describe('FakeDriver via HTTP', function () {
     });
 
     it('should respond with bidi specific capability when a driver supports it', async function () {
-      expect(driver.capabilities.webSocketUrl);
+      assert.ok(driver.capabilities.webSocketUrl);
     });
 
     it('should interpret the bidi protocol and let the driver handle it by command', async function () {
-      expect(await driver.getUrl()).to.not.be.ok;
+      assert.ok(!(await driver.getUrl()));
 
       await driver.browsingContextNavigate({
         context: 'foo',
         url: 'https://appium.io',
         wait: 'complete',
       });
-      await expect(driver.getUrl()).to.eventually.eql('https://appium.io');
+      assert.strictEqual(await driver.getUrl(), 'https://appium.io');
     });
   });
 });
@@ -789,14 +789,14 @@ describe('Bidi over SSL', {skip: true}, function () {
   });
 
   it('should still run bidi over ssl', async function () {
-    expect(await driver.getUrl()).to.not.be.ok;
+    assert.ok(!(await driver.getUrl()));
 
     await driver.browsingContextNavigate({
       context: 'foo',
       url: 'https://appium.io',
       wait: 'complete',
     });
-    await expect(driver.getUrl()).to.eventually.eql('https://appium.io');
+    assert.strictEqual(await driver.getUrl(), 'https://appium.io');
   });
 });
 
@@ -824,9 +824,9 @@ describe.skip('Logsink', function () {
   });
 
   it('should send logs to a logHandler passed in by a parent package', function () {
-    expect(logs.length).to.be.above(1);
+    assert.ok(logs.length > 1);
     const welcomeIndex = logs[0][1].includes('versions of node') ? 1 : 0;
-    expect(logs[welcomeIndex].length).to.equal(2);
-    expect(logs[welcomeIndex][1]).to.include('Welcome to Appium');
+    assert.strictEqual(logs[welcomeIndex].length, 2);
+    assert.ok(logs[welcomeIndex][1].includes('Welcome to Appium'));
   });
 });

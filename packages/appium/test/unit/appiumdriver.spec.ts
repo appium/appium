@@ -1,3 +1,4 @@
+import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach, before} from 'node:test';
 
 import {BaseDriver} from '@appium/base-driver';
@@ -5,8 +6,6 @@ import {BasePlugin} from '@appium/base-plugin';
 import {FakeDriver} from '@appium/fake-driver';
 import type {Capabilities, Constraints, NSCapabilities, W3CCapabilities} from '@appium/types';
 import {sleep} from 'asyncbox';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import type {SinonMock, SinonSandbox, SinonStubbedMember} from 'sinon';
 import {createSandbox} from 'sinon';
 
@@ -22,9 +21,6 @@ interface MockConfigShape {
   updateBuildInfo: SinonStubbedMember<() => Promise<void>>;
   APPIUM_VER: string;
 }
-
-const {expect} = chai;
-chai.use(chaiAsPromised);
 
 const SESSION_ID = '1';
 const SESSION_DISCOVERY_ENABLED = {allowInsecure: [`*:${SESSION_DISCOVERY_FEATURE}`]};
@@ -90,7 +86,7 @@ describe('AppiumDriver', function () {
       const debugStrub = sandbox.stub((ad as any)._log, 'debug');
       // finally, wait for `updateBuildInfo()` to finish up
       await promise;
-      expect(debugStrub.calledOnce).to.be.true;
+      assert.strictEqual(debugStrub.calledOnce, true);
     });
   });
 
@@ -128,29 +124,29 @@ describe('AppiumDriver', function () {
       }
       it('should not allow insecure features by default', function () {
         createDriver({} as any);
-        expect(appium.allowInsecure).to.be.empty;
-        expect(appium.denyInsecure).to.be.empty;
-        expect(appium.relaxedSecurityEnabled).to.be.false;
+        assert.strictEqual(appium.allowInsecure.length, 0);
+        assert.strictEqual(appium.denyInsecure.length, 0);
+        assert.strictEqual(appium.relaxedSecurityEnabled, false);
       });
       it('should allow insecure features', function () {
         createDriver({allowInsecure: ['foo:bar']} as any);
-        expect(appium.allowInsecure).to.eql(['foo:bar']);
+        assert.deepStrictEqual(appium.allowInsecure, ['foo:bar']);
       });
       it('should deny insecure features', function () {
         createDriver({denyInsecure: ['foo:baz']} as any);
-        expect(appium.denyInsecure).to.eql(['foo:baz']);
+        assert.deepStrictEqual(appium.denyInsecure, ['foo:baz']);
       });
       it('should allow relaxed security', function () {
         createDriver({relaxedSecurityEnabled: true} as any);
-        expect(appium.relaxedSecurityEnabled).to.be.true;
+        assert.strictEqual(appium.relaxedSecurityEnabled, true);
       });
       it('should ignore allowed features in combination with relaxed security', function () {
         createDriver({
           allowInsecure: ['foo:bar'],
           relaxedSecurityEnabled: true,
         } as any);
-        expect(appium.allowInsecure).to.be.empty;
-        expect(appium.relaxedSecurityEnabled).to.be.true;
+        assert.strictEqual(appium.allowInsecure.length, 0);
+        assert.strictEqual(appium.relaxedSecurityEnabled, true);
       });
     });
     describe('createSession', function () {
@@ -219,7 +215,7 @@ describe('AppiumDriver', function () {
         (appium as any).sessions['123-abc-xyz'] = fakeDrivers[2];
 
         let sessions = await appium.getAppiumSessions();
-        expect(sessions).to.have.length(3);
+        assert.strictEqual(sessions.length, 3);
 
         mockFakeDriver
           .expects('createSession')
@@ -229,7 +225,7 @@ describe('AppiumDriver', function () {
         await appium.createSession(W3C_CAPS, W3C_CAPS, W3C_CAPS);
 
         sessions = await appium.getAppiumSessions();
-        expect(sessions).to.have.length(1);
+        assert.strictEqual(sessions.length, 1);
 
         for (const mfd of mockFakeDrivers) {
           mfd.verify();
@@ -276,7 +272,7 @@ describe('AppiumDriver', function () {
         [appium, mockFakeDriver] = getDriverAndFakeDriver(args, ArgsDriver as typeof FakeDriver);
         const {value} = await appium.createSession(W3C_CAPS, W3C_CAPS, W3C_CAPS);
         try {
-          expect(fakeDriver.cliArgs).to.eql({randomArg: 1234});
+          assert.deepStrictEqual(fakeDriver.cliArgs, {randomArg: 1234});
         } finally {
           await appium.deleteSession(value![0]);
         }
@@ -295,10 +291,10 @@ describe('AppiumDriver', function () {
         appium.configureGlobalFeatures();
         const [sessionId] = (await appium.createSession(null as any, null as any, W3C_CAPS)).value!;
         let sessions = await appium.getAppiumSessions();
-        expect(sessions).to.have.length(1);
+        assert.strictEqual(sessions.length, 1);
         await appium.deleteSession(sessionId);
         sessions = await appium.getAppiumSessions();
-        expect(sessions).to.have.length(0);
+        assert.strictEqual(sessions.length, 0);
       });
       it("should call inner driver's deleteSession method", async function () {
         const [sessionId] = (await appium.createSession(null as any, null as any, W3C_CAPS)).value!;
@@ -345,25 +341,25 @@ describe('AppiumDriver', function () {
       });
       it(`should not apply any insecure features by default`, async function () {
         fakeDriver = await getDriverInstance({});
-        expect(fakeDriver.allowInsecure).to.be.empty;
-        expect(fakeDriver.denyInsecure).to.be.empty;
-        expect(fakeDriver.relaxedSecurityEnabled).to.be.false;
+        assert.strictEqual(fakeDriver.allowInsecure.length, 0);
+        assert.strictEqual(fakeDriver.denyInsecure.length, 0);
+        assert.strictEqual(fakeDriver.relaxedSecurityEnabled, false);
       });
       it(`should apply relaxed security`, async function () {
         fakeDriver = await getDriverInstance({relaxedSecurityEnabled: true});
-        expect(fakeDriver.relaxedSecurityEnabled).to.be.true;
+        assert.strictEqual(fakeDriver.relaxedSecurityEnabled, true);
       });
       it(`should apply global-scope insecure features`, async function () {
         fakeDriver = await getDriverInstance({
           allowInsecure: ['*:foo'],
           denyInsecure: ['*:bar'],
         });
-        expect(fakeDriver.allowInsecure).to.eql(['*:foo']);
-        expect(fakeDriver.denyInsecure).to.eql(['*:bar']);
+        assert.deepStrictEqual(fakeDriver.allowInsecure, ['*:foo']);
+        assert.deepStrictEqual(fakeDriver.denyInsecure, ['*:bar']);
       });
       it(`should apply driver-scope insecure features only if the driver name matches`, async function () {
         fakeDriver = await getDriverInstance({allowInsecure: ['fake:foo', 'real:bar']});
-        expect(fakeDriver.allowInsecure).to.eql(['fake:foo']);
+        assert.deepStrictEqual(fakeDriver.allowInsecure, ['fake:foo']);
       });
     });
     describe('getAppiumSessions', function () {
@@ -382,8 +378,8 @@ describe('AppiumDriver', function () {
       });
       it('should return an empty array of sessions', async function () {
         sessions = await appium.getAppiumSessions();
-        expect(sessions).to.be.an('array');
-        expect(sessions).to.be.empty;
+        assert.ok(Array.isArray(sessions));
+        assert.strictEqual(sessions.length, 0);
       });
       it('should return sessions created', async function () {
         const caps1 = {
@@ -404,14 +400,14 @@ describe('AppiumDriver', function () {
         const [session2Id, session2Caps] = (await appium.createSession(null as any, null as any, caps2 as any)).value!;
 
         sessions = await appium.getAppiumSessions();
-        expect(sessions).to.be.an('array');
-        expect(sessions).to.have.length(2);
-        expect(sessions[0].id).to.equal(session1Id);
-        expect(sessions[0]).to.have.property('created');
-        expect(removeAppiumPrefixes(caps1.alwaysMatch as NSCapabilities<Constraints>)).to.eql(session1Caps);
-        expect(sessions[1].id).to.equal(session2Id);
-        expect(sessions[1]).to.have.property('created');
-        expect(removeAppiumPrefixes(caps2.alwaysMatch as NSCapabilities<Constraints>)).to.eql(session2Caps);
+        assert.ok(Array.isArray(sessions));
+        assert.strictEqual(sessions.length, 2);
+        assert.strictEqual(sessions[0].id, session1Id);
+        assert.ok(Object.hasOwn(sessions[0], 'created'));
+        assert.deepStrictEqual(removeAppiumPrefixes(caps1.alwaysMatch as NSCapabilities<Constraints>), session1Caps);
+        assert.strictEqual(sessions[1].id, session2Id);
+        assert.ok(Object.hasOwn(sessions[1], 'created'));
+        assert.deepStrictEqual(removeAppiumPrefixes(caps2.alwaysMatch as NSCapabilities<Constraints>), session2Caps);
       });
     });
     describe('getStatus', function () {
@@ -421,8 +417,8 @@ describe('AppiumDriver', function () {
       });
       it('should return a status', async function () {
         const status = await appium.getStatus();
-        expect(status.build).to.exist;
-        expect(status.build.version).to.exist;
+        assert.ok(status.build);
+        assert.ok(status.build.version);
       });
     });
     describe('sessionExists', function () {});
@@ -440,19 +436,19 @@ describe('AppiumDriver', function () {
 
       it('should remove session if inner driver unexpectedly exits with an error', async function () {
         const [sessionId] = (await appium.createSession(null as any, null as any, structuredClone(W3C_CAPS))).value!;
-        expect(Object.keys(appium.sessions)).to.contain(sessionId);
+        assert.ok(Object.keys(appium.sessions).includes(sessionId));
         appium.sessions[sessionId].eventEmitter.emit('onUnexpectedShutdown', new Error('Oops'));
         // let event loop spin so rejection is handled
         await sleep(1);
-        expect(Object.keys(appium.sessions)).to.not.contain(sessionId);
+        assert.ok(!Object.keys(appium.sessions).includes(sessionId));
       });
       it('should remove session if inner driver unexpectedly exits with no error', async function () {
         const [sessionId] = (await appium.createSession(null as any, null as any, structuredClone(W3C_CAPS))).value!;
-        expect(Object.keys(appium.sessions)).to.contain(sessionId);
+        assert.ok(Object.keys(appium.sessions).includes(sessionId));
         appium.sessions[sessionId].eventEmitter.emit('onUnexpectedShutdown');
         // let event loop spin so rejection is handled
         await sleep(1);
-        expect(Object.keys(appium.sessions)).to.not.contain(sessionId);
+        assert.ok(!Object.keys(appium.sessions).includes(sessionId));
       });
     });
     describe('createPluginInstances', function () {
@@ -502,7 +498,7 @@ describe('AppiumDriver', function () {
             ]),
           );
           for (const plugin of appium.createPluginInstances()) {
-            expect(plugin.cliArgs).to.eql({});
+            assert.deepStrictEqual(plugin.cliArgs, {});
           }
         });
       });
@@ -518,8 +514,8 @@ describe('AppiumDriver', function () {
             ]),
           );
           const [noargs, args] = appium.createPluginInstances();
-          expect(noargs.cliArgs).to.eql({});
-          expect(args.cliArgs).to.eql({randomArg: 2000});
+          assert.deepStrictEqual(noargs.cliArgs, {});
+          assert.deepStrictEqual(args.cliArgs, {randomArg: 2000});
         });
 
         describe('when the default is an "object"', function () {
@@ -534,9 +530,9 @@ describe('AppiumDriver', function () {
               ]),
             );
             const [noargs, args, arrayarg] = appium.createPluginInstances();
-            expect(noargs.cliArgs).to.eql({});
-            expect(args.cliArgs).to.eql({});
-            expect(arrayarg.cliArgs).to.eql({arr: []});
+            assert.deepStrictEqual(noargs.cliArgs, {});
+            assert.deepStrictEqual(args.cliArgs, {});
+            assert.deepStrictEqual(arrayarg.cliArgs, {arr: []});
           });
         });
       });
@@ -546,7 +542,7 @@ describe('AppiumDriver', function () {
           const appium = new AppiumDriver({plugin: {args: {randomArg: 1234}}} as any);
           setPluginClassesForTest(appium, new Map<any, string>([[ArgsPlugin, 'args']]));
           const plugin = appium.createPluginInstances()[0] as BasePlugin;
-          expect(plugin.cliArgs).to.eql({randomArg: 1234});
+          assert.deepStrictEqual(plugin.cliArgs, {randomArg: 1234});
         });
       });
     });
@@ -561,9 +557,9 @@ describe('AppiumDriver', function () {
         const firstPlugins = appium.pluginsForSession(SESSION_ID);
         const secondPlugins = appium.pluginsForSession(SESSION_ID);
 
-        expect(firstPlugins).to.equal(secondPlugins);
-        expect(appium.sessionPlugins[SESSION_ID]).to.equal(firstPlugins);
-        expect(createPluginInstancesSpy.calledOnce).to.be.true;
+        assert.strictEqual(firstPlugins, secondPlugins);
+        assert.strictEqual(appium.sessionPlugins[SESSION_ID], firstPlugins);
+        assert.strictEqual(createPluginInstancesSpy.calledOnce, true);
       });
     });
   });

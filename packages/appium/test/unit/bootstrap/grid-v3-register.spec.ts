@@ -1,7 +1,6 @@
-import {describe, it, beforeEach, afterEach, before} from 'node:test';
+import assert from 'node:assert/strict';
+import {describe, it, beforeEach, afterEach} from 'node:test';
 
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {createSandbox, type SinonSandbox, type SinonStub} from 'sinon';
 
 import type registerNodeType from '../../../lib/bootstrap/grid-v3-register';
@@ -26,10 +25,6 @@ function createStubAppiumLogger(sandbox: SinonSandbox) {
 
 describe('bootstrap/grid-v3-register', function () {
   let sandbox: SinonSandbox;
-
-  before(async function () {
-    use(chaiAsPromised);
-  });
 
   beforeEach(function () {
     sandbox = createSandbox();
@@ -74,13 +69,19 @@ describe('bootstrap/grid-v3-register', function () {
 
       it('should read the config file', async function () {
         await registerNode('/path/to/config-file.json', binding.addr, binding.port, binding.basePath);
-        expect(mocks['@appium/support'].fs.readFile.calledOnceWith('/path/to/config-file.json', 'utf-8')).to.be.true;
+        assert.strictEqual(
+          mocks['@appium/support'].fs.readFile.calledOnceWith('/path/to/config-file.json', 'utf-8'),
+          true,
+        );
       });
 
       it('should parse the config file as JSON', async function () {
         const parseSpy = sandbox.spy(JSON, 'parse');
         await registerNode('/path/to/config-file.json', binding.addr, binding.port, binding.basePath);
-        expect(parseSpy.calledOnceWith(await mocks['@appium/support'].fs.readFile.firstCall.returnValue)).to.be.true;
+        assert.strictEqual(
+          parseSpy.calledOnceWith(await mocks['@appium/support'].fs.readFile.firstCall.returnValue),
+          true,
+        );
       });
 
       describe('when the config file is invalid', function () {
@@ -88,50 +89,51 @@ describe('bootstrap/grid-v3-register', function () {
           mocks['@appium/support'].fs.readFile.resolves('');
         });
         it('should reject with a JSON parse error from the config file', async function () {
-          await expect(
+          await assert.rejects(
             registerNode('/path/to/config-file.json', binding.addr, binding.port, binding.basePath),
-          ).to.be.rejectedWith(Error, /Syntax error in Selenium Grid 3 node configuration file/);
-          expect(stubLog.errorWithException.calledOnce).to.be.true;
+            {name: 'Error', message: /Syntax error in Selenium Grid 3 node configuration file/},
+          );
+          assert.strictEqual(stubLog.errorWithException.calledOnce, true);
         });
       });
 
       describe('when address, port, or basePath are omitted', function () {
         it('should reject when addr is missing', async function () {
-          await expect(
-            registerNode('/path/to/config-file.json', undefined as unknown as string, 4723, ''),
-          ).to.be.rejectedWith(
-            Error,
-            /address, port, and basePath are required \(e\.g\. match your Appium `--address`/,
-          );
-          expect(stubLog.errorWithException.calledOnce).to.be.true;
+          await assert.rejects(registerNode('/path/to/config-file.json', undefined as unknown as string, 4723, ''), {
+            name: 'Error',
+            message: /address, port, and basePath are required \(e\.g\. match your Appium `--address`/,
+          });
+          assert.strictEqual(stubLog.errorWithException.calledOnce, true);
         });
 
         it('should reject when port is missing', async function () {
-          await expect(
+          await assert.rejects(
             registerNode('/path/to/config-file.json', '127.0.0.1', undefined as unknown as number, ''),
-          ).to.be.rejectedWith(
-            Error,
-            /address, port, and basePath are required \(e\.g\. match your Appium `--address`/,
+            {
+              name: 'Error',
+              message: /address, port, and basePath are required \(e\.g\. match your Appium `--address`/,
+            },
           );
-          expect(stubLog.errorWithException.calledOnce).to.be.true;
+          assert.strictEqual(stubLog.errorWithException.calledOnce, true);
         });
 
         it('should reject when basePath is missing', async function () {
-          await expect(
+          await assert.rejects(
             registerNode('/path/to/config-file.json', '127.0.0.1', 4723, undefined as unknown as string),
-          ).to.be.rejectedWith(
-            Error,
-            /address, port, and basePath are required \(e\.g\. match your Appium `--address`/,
+            {
+              name: 'Error',
+              message: /address, port, and basePath are required \(e\.g\. match your Appium `--address`/,
+            },
           );
-          expect(stubLog.errorWithException.calledOnce).to.be.true;
+          assert.strictEqual(stubLog.errorWithException.calledOnce, true);
         });
 
         it('should reject when port is not a finite number', async function () {
-          await expect(registerNode('/path/to/config-file.json', '127.0.0.1', Number.NaN, '')).to.be.rejectedWith(
-            Error,
-            /port must be a finite number/,
-          );
-          expect(stubLog.errorWithException.calledOnce).to.be.true;
+          await assert.rejects(registerNode('/path/to/config-file.json', '127.0.0.1', Number.NaN, ''), {
+            name: 'Error',
+            message: /port must be a finite number/,
+          });
+          assert.strictEqual(stubLog.errorWithException.calledOnce, true);
         });
       });
     });
@@ -139,13 +141,13 @@ describe('bootstrap/grid-v3-register', function () {
     describe('when provided a config object', function () {
       it('should not attempt to read the object as a config file', async function () {
         await registerNode({my: 'config'});
-        expect(mocks['@appium/support'].fs.readFile.called).to.be.false;
+        assert.strictEqual(mocks['@appium/support'].fs.readFile.called, false);
       });
 
       it('should not attempt to parse any JSON', async function () {
         const parseSpy = sandbox.spy(JSON, 'parse');
         await registerNode({my: 'config'});
-        expect(parseSpy.called).to.be.false;
+        assert.strictEqual(parseSpy.called, false);
       });
 
       it('should not hoist inherited properties into configuration', async function () {
@@ -160,10 +162,10 @@ describe('bootstrap/grid-v3-register', function () {
         config.registerCycle = 100;
         await registerNode(config as Parameters<typeof registerNodeType>[0], '127.0.0.1', 4723, '');
         await clock.tickAsync(100);
-        expect(mocks.axios.calledOnce).to.be.true;
+        assert.strictEqual(mocks.axios.calledOnce, true);
         const hubCfg = mocks.axios.firstCall.args[0].data.configuration;
-        expect(hubCfg).to.not.have.property('hubHost', 'evil.example.com');
-        expect(hubCfg.url).to.equal('http://127.0.0.1:4723');
+        assert.notStrictEqual(hubCfg.hubHost, 'evil.example.com');
+        assert.strictEqual(hubCfg.url, 'http://127.0.0.1:4723');
       });
     });
   });

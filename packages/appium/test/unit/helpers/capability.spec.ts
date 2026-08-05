@@ -1,9 +1,9 @@
-import {describe, it, beforeEach} from 'node:test';
+import assert from 'node:assert/strict';
+import {describe, it} from 'node:test';
 
 import type {BaseDriverCapConstraints, Capabilities, Constraints, NSCapabilities, W3CCapabilities} from '@appium/types';
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
+import type {InvalidCaps} from '../../../lib/helpers/capability';
 import {
   insertAppiumPrefixes,
   parseCapsForInnerDriver,
@@ -13,20 +13,16 @@ import {
 import {BASE_CAPS, W3C_CAPS} from '../../helpers';
 
 describe('helpers/capability', function () {
-  beforeEach(async function () {
-    use(chaiAsPromised);
-  });
-
   describe('parseCapsForInnerDriver()', function () {
     it('should return an error if only JSONWP provided', function () {
-      const res = parseCapsForInnerDriver(BASE_CAPS as unknown as W3CCapabilities<Constraints>);
-      expect('error' in res && res.error).to.be.ok;
-      expect((res as {error: {message: string}}).error.message).to.match(/W3C/);
+      const res = parseCapsForInnerDriver(BASE_CAPS as unknown as W3CCapabilities<Constraints>) as InvalidCaps;
+      assert.ok(res.error);
+      assert.match(res.error.message, /W3C/);
     });
     it('should return W3C caps unchanged if only W3C caps were provided', function () {
       const {desiredCaps, processedW3CCapabilities} = parseCapsForInnerDriver(W3C_CAPS);
-      expect(desiredCaps).to.deep.equal(BASE_CAPS);
-      expect(processedW3CCapabilities).to.deep.equal(W3C_CAPS);
+      assert.deepStrictEqual(desiredCaps, BASE_CAPS);
+      assert.deepStrictEqual(processedW3CCapabilities, W3C_CAPS);
     });
     it('should include default capabilities in results', function () {
       const defaultW3CCaps = {
@@ -38,11 +34,11 @@ describe('helpers/capability', function () {
         baz: 'bla',
       };
       const {desiredCaps, processedW3CCapabilities} = parseCapsForInnerDriver(W3C_CAPS, {}, defaultW3CCaps);
-      expect(desiredCaps).to.deep.equal({
+      assert.deepStrictEqual(desiredCaps, {
         ...expectedDefaultCaps,
         ...BASE_CAPS,
       });
-      expect(processedW3CCapabilities!.alwaysMatch).to.deep.equal({
+      assert.deepStrictEqual(processedW3CCapabilities!.alwaysMatch, {
         ...insertAppiumPrefixes(expectedDefaultCaps),
         ...insertAppiumPrefixes(BASE_CAPS),
       });
@@ -55,7 +51,7 @@ describe('helpers/capability', function () {
           'appium:foo': 'bar2',
         },
       );
-      expect((res.processedW3CCapabilities!.alwaysMatch as Record<string, unknown>)['appium:foo']).to.eql('bar2');
+      assert.strictEqual((res.processedW3CCapabilities!.alwaysMatch as Record<string, unknown>)['appium:foo'], 'bar2');
     });
     it('should not allow invalid default capabilities', function () {
       const res = parseCapsForInnerDriver(
@@ -69,17 +65,17 @@ describe('helpers/capability', function () {
       const errRes = res as unknown as {
         error: {jsonwpCode: number; error: string; w3cStatus: number};
       };
-      expect(errRes.error.jsonwpCode).to.eql(61);
-      expect(errRes.error.error).to.eql('invalid argument');
-      expect(errRes.error.w3cStatus).to.eql(400);
+      assert.strictEqual(errRes.error.jsonwpCode, 61);
+      assert.strictEqual(errRes.error.error, 'invalid argument');
+      assert.strictEqual(errRes.error.w3cStatus, 400);
     });
     it('should reject if W3C caps are not passing constraints', function () {
       const res = parseCapsForInnerDriver(W3C_CAPS as W3CCapabilities<{hello: {presence: true}}>, {
         hello: {presence: true},
       });
       const err = (res as {error?: Error}).error;
-      expect(err!.message).to.match(/required/);
-      expect(err).to.be.instanceOf(Error);
+      assert.match(err!.message, /required/);
+      assert.ok(err instanceof Error);
     });
     it('should only accept W3C caps that have passing constraints', function () {
       const w3cCaps = {
@@ -88,9 +84,9 @@ describe('helpers/capability', function () {
       } as W3CCapabilities<{hello: {presence: true}}>;
       const res = parseCapsForInnerDriver(w3cCaps, {hello: {presence: true}});
       const error = (res as {error?: {jsonwpCode: number; error: string; w3cStatus: number}}).error;
-      expect(error!.jsonwpCode).to.eql(61);
-      expect(error!.error).to.eql('invalid argument');
-      expect(error!.w3cStatus).to.eql(400);
+      assert.strictEqual(error!.jsonwpCode, 61);
+      assert.strictEqual(error!.error, 'invalid argument');
+      assert.strictEqual(error!.w3cStatus, 400);
     });
     it('should add appium prefixes to W3C caps that are not standard in W3C', function () {
       const res = parseCapsForInnerDriver({
@@ -100,60 +96,64 @@ describe('helpers/capability', function () {
         },
         firstMatch: [{}],
       } as unknown as W3CCapabilities<Constraints>);
-      expect((res as {error?: {error: string}}).error!.error).to.includes('invalid argument');
+      assert.ok((res as {error?: {error: string}}).error!.error.includes('invalid argument'));
     });
   });
 
   describe('removeAppiumPrefixes()', function () {
     it('should remove appium prefixes from cap names', function () {
-      expect(
+      assert.deepStrictEqual(
         removeAppiumPrefixes({
           'appium:cap1': 'value1',
           'ms:cap2': 'value2',
           someCap: 'someCap',
         } as NSCapabilities<BaseDriverCapConstraints>),
-      ).to.eql({
-        cap1: 'value1',
-        'ms:cap2': 'value2',
-        someCap: 'someCap',
-      });
+        {
+          cap1: 'value1',
+          'ms:cap2': 'value2',
+          someCap: 'someCap',
+        },
+      );
     });
   });
 
   describe('insertAppiumPrefixes()', function () {
     it('should apply prefixes to non-standard capabilities', function () {
-      expect(
+      assert.deepStrictEqual(
         insertAppiumPrefixes({
           someCap: 'someCap',
         } as unknown as Capabilities<BaseDriverCapConstraints>),
-      ).to.deep.equal({
-        'appium:someCap': 'someCap',
-      });
+        {
+          'appium:someCap': 'someCap',
+        },
+      );
     });
     it('should not apply prefixes to standard capabilities', function () {
-      expect(
+      assert.deepStrictEqual(
         insertAppiumPrefixes({
           browserName: 'BrowserName',
           platformName: 'PlatformName',
         } as unknown as Capabilities<BaseDriverCapConstraints>),
-      ).to.deep.equal({
-        browserName: 'BrowserName',
-        platformName: 'PlatformName',
-      });
+        {
+          browserName: 'BrowserName',
+          platformName: 'PlatformName',
+        },
+      );
     });
     it('should not apply prefixes to capabilities that already have a prefix', function () {
-      expect(
+      assert.deepStrictEqual(
         insertAppiumPrefixes({
           'appium:someCap': 'someCap',
           'moz:someOtherCap': 'someOtherCap',
         } as unknown as Capabilities<BaseDriverCapConstraints>),
-      ).to.deep.equal({
-        'appium:someCap': 'someCap',
-        'moz:someOtherCap': 'someOtherCap',
-      });
+        {
+          'appium:someCap': 'someCap',
+          'moz:someOtherCap': 'someOtherCap',
+        },
+      );
     });
     it('should apply prefixes to non-prefixed, non-standard capabilities; should not apply prefixes to any other capabilities', function () {
-      expect(
+      assert.deepStrictEqual(
         insertAppiumPrefixes({
           'appium:someCap': 'someCap',
           'moz:someOtherCap': 'someOtherCap',
@@ -162,14 +162,15 @@ describe('helpers/capability', function () {
           someOtherCap: 'someOtherCap',
           yetAnotherCap: 'yetAnotherCap',
         } as unknown as Capabilities<BaseDriverCapConstraints>),
-      ).to.deep.equal({
-        'appium:someCap': 'someCap',
-        'moz:someOtherCap': 'someOtherCap',
-        browserName: 'BrowserName',
-        platformName: 'PlatformName',
-        'appium:someOtherCap': 'someOtherCap',
-        'appium:yetAnotherCap': 'yetAnotherCap',
-      });
+        {
+          'appium:someCap': 'someCap',
+          'moz:someOtherCap': 'someOtherCap',
+          browserName: 'BrowserName',
+          platformName: 'PlatformName',
+          'appium:someOtherCap': 'someOtherCap',
+          'appium:yetAnotherCap': 'yetAnotherCap',
+        },
+      );
     });
   });
 
@@ -182,11 +183,11 @@ describe('helpers/capability', function () {
         'settings[settingName2]': 'baz2',
       };
       const settings = pullSettings(caps);
-      expect(settings).to.eql({
+      assert.deepStrictEqual(settings, {
         settingName: 'baz',
         settingName2: 'baz2',
       });
-      expect(caps).to.eql({
+      assert.deepStrictEqual(caps, {
         platformName: 'foo',
         browserName: 'bar',
       });
@@ -198,10 +199,10 @@ describe('helpers/capability', function () {
         'settings[settingName]': {key: 'baz'},
       };
       const settings = pullSettings(caps);
-      expect(settings).to.eql({
+      assert.deepStrictEqual(settings, {
         settingName: {key: 'baz'},
       });
-      expect(caps).to.eql({
+      assert.deepStrictEqual(caps, {
         platformName: 'foo',
         browserName: 'bar',
       });
@@ -213,8 +214,8 @@ describe('helpers/capability', function () {
         'setting[settingName]': 'baz',
       };
       const settings = pullSettings(caps);
-      expect(settings).to.eql({});
-      expect(caps).to.eql({
+      assert.deepStrictEqual(settings, {});
+      assert.deepStrictEqual(caps, {
         platformName: 'foo',
         browserName: 'bar',
         'setting[settingName]': 'baz',
@@ -223,8 +224,8 @@ describe('helpers/capability', function () {
     it('should pull empty dict if caps are empty', function () {
       const caps = {};
       const settings = pullSettings(caps);
-      expect(settings).to.eql({});
-      expect(caps).to.eql({});
+      assert.deepStrictEqual(settings, {});
+      assert.deepStrictEqual(caps, {});
     });
     it('should pull combined settings', function () {
       const caps = {
@@ -237,11 +238,11 @@ describe('helpers/capability', function () {
         },
       };
       const settings = pullSettings(caps);
-      expect(settings).to.eql({
+      assert.deepStrictEqual(settings, {
         foo: 'baz2',
         yolo: 'bar',
       });
-      expect(caps).to.eql({
+      assert.deepStrictEqual(caps, {
         platformName: 'foo',
         browserName: 'bar',
       });

@@ -1,15 +1,11 @@
+import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach, before} from 'node:test';
 
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {createSandbox, type SinonSandbox, type SinonStub} from 'sinon';
 
 import type {formatErrors as FormatErrorsFn} from '../../../lib/schema/format-errors';
 import * as schema from '../../../lib/schema/schema';
 import {rewiremock} from '../../helpers';
-
-const {expect} = chai;
-chai.use(chaiAsPromised);
 
 describe('schema/format-errors', function () {
   let sandbox: SinonSandbox;
@@ -40,43 +36,45 @@ describe('schema/format-errors', function () {
 
     describe('when provided `errors` as an empty array', function () {
       it('should throw', function () {
-        expect(() => formatErrors([])).to.throw(TypeError, 'Array of errors must be non-empty');
+        assert.throws(() => formatErrors([]), {name: 'TypeError', message: /Array of errors must be non-empty/});
       });
     });
 
     describe('when provided `errors` as `undefined`', function () {
       it('should throw', function () {
-        expect(() => formatErrors()).to.throw(TypeError, 'Array of errors must be non-empty');
+        assert.throws(() => formatErrors(), {name: 'TypeError', message: /Array of errors must be non-empty/});
       });
     });
 
     describe('when provided `errors` as a non-empty array', function () {
       it('should return a string', function () {
-        expect(formatErrors(oneError)).to.be.a('string');
+        assert.strictEqual(typeof formatErrors(oneError), 'string');
       });
     });
 
     describe('when `opts.pretty` is false', function () {
       it('should call `betterAjvErrors()` with non-CLI output format', function () {
         formatErrors(oneError, {}, {pretty: false});
-        expect(
+        assert.strictEqual(
           betterAjvMock.calledWith(schema.getSchema(), {}, oneError, {
             format: 'js',
             json: undefined,
           }),
-        ).to.be.true;
+          true,
+        );
       });
     });
 
     describe('when `opts.json` is a string', function () {
       it('should call `betterAjvErrors()` with option `json: opts.json`', function () {
         formatErrors(oneError, {}, {json: '{"foo": "bar"}'});
-        expect(
+        assert.strictEqual(
           betterAjvMock.calledWith(schema.getSchema(), {}, oneError, {
             format: 'cli',
             json: '{"foo": "bar"}',
           }),
-        ).to.be.true;
+          true,
+        );
       });
     });
   });

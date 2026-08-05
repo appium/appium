@@ -1,15 +1,12 @@
+import assert from 'node:assert/strict';
 import path from 'node:path';
 import {describe, it, before, after} from 'node:test';
 
 import {fs, tempDir} from '@appium/support';
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
 import {DRIVER_TYPE} from '../../lib/constants';
 import {resolveFixture} from '../helpers';
 import {installLocalExtension, runAppium} from './e2e-helpers';
-
-use(chaiAsPromised);
 
 describe('CLI behavior controlled by schema', function () {
   let appiumHome: string;
@@ -32,17 +29,17 @@ describe('CLI behavior controlled by schema', function () {
 
     describe('appiumCliIgnored', function () {
       it('should still support arguments without this keyword', function () {
-        expect(help).to.match(/oliver-boliver/);
+        assert.match(help, /oliver-boliver/);
       });
 
       it('should cause the argument to be suppressed', function () {
-        expect(help).not.to.match(/mcmonkey-mcbean/);
+        assert.doesNotMatch(help, /mcmonkey-mcbean/);
       });
     });
 
     describe('appiumDeprecated', function () {
       it.skip('should mark the argument as deprecated', function () {
-        expect(help).to.match(/\[DEPRECATED\] funkytelechy/);
+        assert.match(help, /\[DEPRECATED\] funkytelechy/);
       });
     });
   });

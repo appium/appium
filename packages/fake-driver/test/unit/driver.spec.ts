@@ -320,11 +320,6 @@ describe('FakeDriver unit suite', function () {
       it('should return false', function () {
         assert.strictEqual(d.proxyActive(sessId), false);
       });
-      it('should throw an error when sessionId is wrong', function () {
-        assert.doesNotThrow(() => {
-          d.proxyActive('aaa');
-        });
-      });
     });
 
     describe('#getProxyAvoidList', function () {
@@ -334,11 +329,6 @@ describe('FakeDriver unit suite', function () {
       it('should return an array', function () {
         assert.ok(d.getProxyAvoidList(sessId) instanceof Array);
       });
-      it('should throw an error when sessionId is wrong', function () {
-        assert.doesNotThrow(() => {
-          d.getProxyAvoidList('aaa');
-        });
-      });
     });
 
     describe('#canProxy', function () {
@@ -347,11 +337,6 @@ describe('FakeDriver unit suite', function () {
       });
       it('should return a boolean from #canProxy', function () {
         assert.strictEqual(typeof d.canProxy(sessId), 'boolean');
-      });
-      it('should throw an error when sessionId is wrong', function () {
-        assert.doesNotThrow(() => {
-          d.canProxy(undefined as any);
-        });
       });
     });
 

@@ -316,10 +316,6 @@ describe('Strongbox', function () {
         for await (const item of box) {
           fromIter.push(item);
         }
-        assert.deepStrictEqual(
-          fromIter.map((i) => i.name),
-          fromList.map((i) => i.name),
-        );
         assert.deepStrictEqual(fromIter, fromList);
       });
 

@@ -1,12 +1,8 @@
+import assert from 'node:assert/strict';
 import {before, beforeEach, describe, it} from 'node:test';
-
-import chai, {expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
 import {PROTOCOLS} from '../../../lib/constants';
 import {COMMAND_URLS_CONFLICTS, ProtocolConverter} from '../../../lib/jsonwp-proxy/protocol-converter';
-
-chai.use(chaiAsPromised);
 
 const {MJSONWP, W3C} = PROTOCOLS;
 
@@ -30,8 +26,8 @@ describe('Protocol Converter', function () {
       const timeoutObjects = (converter as unknown as ProtocolConverterTest).getTimeoutRequestObjects({
         script: 100,
       });
-      expect(timeoutObjects.length).to.equal(1);
-      expect(timeoutObjects[0]).to.eql({type: 'script', ms: 100});
+      assert.strictEqual(timeoutObjects.length, 1);
+      assert.deepStrictEqual(timeoutObjects[0], {type: 'script', ms: 100});
     });
     it('should ignore invalid entries while converting from W3C', function () {
       converter.downstreamProtocol = MJSONWP;
@@ -41,8 +37,8 @@ describe('Protocol Converter', function () {
         bar: -1,
         baz: undefined,
       } as any);
-      expect(timeoutObjects.length).to.equal(1);
-      expect(timeoutObjects[0]).to.eql({type: 'script', ms: 100});
+      assert.strictEqual(timeoutObjects.length, 1);
+      assert.deepStrictEqual(timeoutObjects[0], {type: 'script', ms: 100});
     });
     it('should take multiple W3C timeouts and produce multiple MJSONWP compatible objects', function () {
       converter.downstreamProtocol = MJSONWP;
@@ -53,15 +49,15 @@ describe('Protocol Converter', function () {
         pageLoad: 200,
         implicit: 300,
       });
-      expect(scriptTimeout).to.eql({
+      assert.deepStrictEqual(scriptTimeout, {
         type: 'script',
         ms: 100,
       });
-      expect(pageLoadTimeout).to.eql({
+      assert.deepStrictEqual(pageLoadTimeout, {
         type: 'page load',
         ms: 200,
       });
-      expect(implicitTimeout).to.eql({
+      assert.deepStrictEqual(implicitTimeout, {
         type: 'implicit',
         ms: 300,
       });
@@ -72,8 +68,8 @@ describe('Protocol Converter', function () {
         type: 'implicit',
         ms: 300,
       });
-      expect(timeoutObjects.length).to.equal(1);
-      expect(timeoutObjects[0]).to.eql({implicit: 300});
+      assert.strictEqual(timeoutObjects.length, 1);
+      assert.deepStrictEqual(timeoutObjects[0], {implicit: 300});
     });
     it('should not change the input if protocol name is unknown', function () {
       converter.downstreamProtocol = null as any;
@@ -81,8 +77,8 @@ describe('Protocol Converter', function () {
         type: 'implicit',
         ms: 300,
       });
-      expect(timeoutObjects.length).to.equal(1);
-      expect(timeoutObjects[0]).to.eql({type: 'implicit', ms: 300});
+      assert.strictEqual(timeoutObjects.length, 1);
+      assert.deepStrictEqual(timeoutObjects[0], {type: 'implicit', ms: 300});
     });
     it('should not change the input if protocol name is unchanged', function () {
       converter.downstreamProtocol = MJSONWP;
@@ -90,8 +86,8 @@ describe('Protocol Converter', function () {
         type: 'implicit',
         ms: 300,
       });
-      expect(timeoutObjects.length).to.equal(1);
-      expect(timeoutObjects[0]).to.eql({type: 'implicit', ms: 300});
+      assert.strictEqual(timeoutObjects.length, 1);
+      assert.deepStrictEqual(timeoutObjects[0], {type: 'implicit', ms: 300});
     });
   });
 
@@ -112,7 +108,7 @@ describe('Protocol Converter', function () {
       await (converter as unknown as ProtocolConverterTest).proxySetValue('', '', {
         text: 'bla',
       });
-      expect(responseBody).to.eql({
+      assert.deepStrictEqual(responseBody, {
         text: 'bla',
         value: ['b', 'l', 'a'],
       });
@@ -121,7 +117,7 @@ describe('Protocol Converter', function () {
       await (converter as unknown as ProtocolConverterTest).proxySetValue('', '', {
         value: ['b', 'l', 'a'],
       });
-      expect(responseBody).to.eql({
+      assert.deepStrictEqual(responseBody, {
         text: 'bla',
         value: ['b', 'l', 'a'],
       });
@@ -131,7 +127,7 @@ describe('Protocol Converter', function () {
         text: 'bla',
         value: ['b', 'l', 'a'],
       });
-      expect(responseBody).to.eql({
+      assert.deepStrictEqual(responseBody, {
         text: 'bla',
         value: ['b', 'l', 'a'],
       });
@@ -149,20 +145,24 @@ describe('Protocol Converter', function () {
       }
     });
     it('should convert "property/value" to "attribute/value"', function () {
-      expect(jsonwpConverter('/session/123/element/456/property/value')).to.equal(
+      assert.strictEqual(
+        jsonwpConverter('/session/123/element/456/property/value'),
         '/session/123/element/456/attribute/value',
       );
     });
     it('should convert "property/:somePropName" to "attribute/:somePropName"', function () {
-      expect(jsonwpConverter('/session/123/element/456/property/somePropName')).to.equal(
+      assert.strictEqual(
+        jsonwpConverter('/session/123/element/456/property/somePropName'),
         '/session/123/element/456/attribute/somePropName',
       );
     });
     it('should not convert from JSONWP to W3C', function () {
-      expect(w3cConverter('/session/123/element/456/attribute/someAttr')).to.equal(
+      assert.strictEqual(
+        w3cConverter('/session/123/element/456/attribute/someAttr'),
         '/session/123/element/456/attribute/someAttr',
       );
-      expect(w3cConverter('/session/123/element/456/property/someProp')).to.equal(
+      assert.strictEqual(
+        w3cConverter('/session/123/element/456/property/someProp'),
         '/session/123/element/456/property/someProp',
       );
     });

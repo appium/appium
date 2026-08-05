@@ -1,13 +1,10 @@
+import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import {describe, it} from 'node:test';
 
 import type {HTTPMethod} from '@appium/types';
-import chai, {expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
 import {METHOD_MAP, routeToCommandName} from '../../../lib/protocol';
-
-chai.use(chaiAsPromised);
 
 describe('Routes', function () {
   describe('ensure protocol consistency', function () {
@@ -44,39 +41,39 @@ describe('Routes', function () {
       }
       const hash = shasum.digest('hex').substring(0, 8);
       // Update this value again only when an intentional route/command/param change is made.
-      expect(hash).to.equal('a175e178');
+      assert.strictEqual(hash, 'a175e178');
     });
   });
 
   describe('check route to command name conversion', function () {
     it('should properly lookup correct command name for endpoint with session', function () {
       const cmdName = routeToCommandName('/timeouts', 'POST');
-      expect(cmdName).to.equal('timeouts');
+      assert.strictEqual(cmdName, 'timeouts');
     });
 
     it('should properly lookup correct command name for endpoint without session', function () {
       const cmdName = routeToCommandName('/status', 'GET');
-      expect(cmdName).to.equal('getStatus');
+      assert.strictEqual(cmdName, 'getStatus');
     });
 
     it('should properly lookup correct command name for endpoint with query params', function () {
       const cmdName = routeToCommandName('/status?foo=1&bar=2', 'GET');
-      expect(cmdName).to.equal('getStatus');
+      assert.strictEqual(cmdName, 'getStatus');
     });
 
     it('should properly lookup correct command name with custom base path', function () {
       const cmdName = routeToCommandName('/wd/hub/status?foo=1&bar=2', 'GET', '/wd/hub');
-      expect(cmdName).to.equal('getStatus');
+      assert.strictEqual(cmdName, 'getStatus');
     });
 
     it('should properly lookup correct command name for endpoint without leading slash', function () {
       const cmdName = routeToCommandName('status', 'GET');
-      expect(cmdName).to.equal('getStatus');
+      assert.strictEqual(cmdName, 'getStatus');
     });
 
     it('should properly lookup correct command name for fully specified endpoint', function () {
       const cmdName = routeToCommandName('/status', 'GET');
-      expect(cmdName).to.equal('getStatus');
+      assert.strictEqual(cmdName, 'getStatus');
     });
 
     it('should not find command name if incorrect input data has been specified', function () {
@@ -86,7 +83,7 @@ describe('Routes', function () {
         ['status', 'POST'],
       ] as [string, string][]) {
         const cmdName = routeToCommandName(route, method as HTTPMethod);
-        expect(cmdName).to.equal(undefined);
+        assert.strictEqual(cmdName, undefined);
       }
     });
   });

@@ -1,44 +1,40 @@
+import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import chai, {expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
-
 import {duplicateKeys, isPackageOrBundle, parseCapsArray} from '../../../lib/basedriver/helpers';
-
-chai.use(chaiAsPromised);
 
 describe('helpers', function () {
   describe('#isPackageOrBundle', function () {
     it('should accept packages and bundles', function () {
-      expect(isPackageOrBundle('io.appium.testapp')).to.be.true;
+      assert.strictEqual(isPackageOrBundle('io.appium.testapp'), true);
     });
     it('should not accept non-packages or non-bundles', function () {
-      expect(isPackageOrBundle('foo')).to.be.false;
-      expect(isPackageOrBundle('/path/to/an.app')).to.be.false;
-      expect(isPackageOrBundle('/path/to/an.apk')).to.be.false;
+      assert.strictEqual(isPackageOrBundle('foo'), false);
+      assert.strictEqual(isPackageOrBundle('/path/to/an.app'), false);
+      assert.strictEqual(isPackageOrBundle('/path/to/an.apk'), false);
     });
   });
 
   describe('#duplicateKeys', function () {
     it('should translate key in an object', function () {
-      expect(duplicateKeys({foo: 'hello world'}, 'foo', 'bar')).to.eql({
+      assert.deepStrictEqual(duplicateKeys({foo: 'hello world'}, 'foo', 'bar'), {
         foo: 'hello world',
         bar: 'hello world',
       });
     });
     it('should translate key in an object within an object', function () {
-      expect(duplicateKeys({key: {foo: 'hello world'}}, 'foo', 'bar')).to.eql({
+      assert.deepStrictEqual(duplicateKeys({key: {foo: 'hello world'}}, 'foo', 'bar'), {
         key: {foo: 'hello world', bar: 'hello world'},
       });
     });
     it('should translate key in an object with an array', function () {
-      expect(duplicateKeys([{key: {foo: 'hello world'}}, {foo: 'HELLO WORLD'}], 'foo', 'bar')).to.eql([
+      assert.deepStrictEqual(duplicateKeys([{key: {foo: 'hello world'}}, {foo: 'HELLO WORLD'}], 'foo', 'bar'), [
         {key: {foo: 'hello world', bar: 'hello world'}},
         {foo: 'HELLO WORLD', bar: 'HELLO WORLD'},
       ]);
     });
     it('should duplicate both keys', function () {
-      expect(
+      assert.deepStrictEqual(
         duplicateKeys(
           {
             keyOne: {
@@ -51,20 +47,21 @@ describe('helpers', function () {
           'foo',
           'bar',
         ),
-      ).to.eql({
-        keyOne: {
-          foo: 'hello world',
-          bar: 'hello world',
+        {
+          keyOne: {
+            foo: 'hello world',
+            bar: 'hello world',
+          },
+          keyTwo: {
+            bar: 'HELLO WORLD',
+            foo: 'HELLO WORLD',
+          },
         },
-        keyTwo: {
-          bar: 'HELLO WORLD',
-          foo: 'HELLO WORLD',
-        },
-      });
+      );
     });
     it('should not do anything to primitives', function () {
       [0, 1, -1, true, false, null, undefined, '', 'Hello World'].forEach((item) => {
-        expect((duplicateKeys as any)(item)).to.equal(item);
+        assert.strictEqual((duplicateKeys as any)(item), item);
       });
     });
     it('should rename keys on big complex objects', function () {
@@ -98,23 +95,26 @@ describe('helpers', function () {
         null,
         0,
       ];
-      expect(duplicateKeys(input as any, 'foo', 'FOO')).to.deep.equal(expectedOutput);
+      assert.deepStrictEqual(duplicateKeys(input as any, 'foo', 'FOO'), expectedOutput);
     });
   });
 });
 
 describe('parseCapsArray', function () {
   it('should parse string into array', function () {
-    expect(parseCapsArray('/tmp/my/app.zip')).to.eql(['/tmp/my/app.zip']);
+    assert.deepStrictEqual(parseCapsArray('/tmp/my/app.zip'), ['/tmp/my/app.zip']);
   });
   it('should parse array as string into array', function () {
-    expect(parseCapsArray('["/tmp/my/app.zip"]')).to.eql(['/tmp/my/app.zip']);
-    expect(parseCapsArray('["/tmp/my/app.zip","/tmp/my/app2.zip"]')).to.eql(['/tmp/my/app.zip', '/tmp/my/app2.zip']);
+    assert.deepStrictEqual(parseCapsArray('["/tmp/my/app.zip"]'), ['/tmp/my/app.zip']);
+    assert.deepStrictEqual(parseCapsArray('["/tmp/my/app.zip","/tmp/my/app2.zip"]'), [
+      '/tmp/my/app.zip',
+      '/tmp/my/app2.zip',
+    ]);
   });
   it('should return an array without change', function () {
-    expect(parseCapsArray(['a', 'b'])).to.eql(['a', 'b']);
+    assert.deepStrictEqual(parseCapsArray(['a', 'b']), ['a', 'b']);
   });
   it('should fail if an invalid JSON array is provided', function () {
-    expect(() => parseCapsArray(`['*']`)).to.throw();
+    assert.throws(() => parseCapsArray(`['*']`));
   });
 });

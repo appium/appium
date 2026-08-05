@@ -1,14 +1,11 @@
+import assert from 'node:assert/strict';
 import {after, afterEach, before, describe, it} from 'node:test';
 
 import {TEST_HOST} from '@appium/driver-test-support';
-import chai, {expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
 import {JWProxy} from '../../../lib';
 import {createServer} from '../../helpers';
 import {FakeDriver} from '../protocol/fake-driver';
-
-chai.use(chaiAsPromised);
 
 describe('proxy', function () {
   let jwproxy: JWProxy;
@@ -27,12 +24,12 @@ describe('proxy', function () {
 
   it('should proxy status straight', async function () {
     const [res, resBody] = await jwproxy.proxy('/status', 'GET');
-    expect(res.statusCode).to.equal(200);
-    expect(resBody.value).to.equal(`I'm fine`);
+    assert.strictEqual(res.statusCode, 200);
+    assert.strictEqual(resBody.value, `I'm fine`);
   });
   it('should proxy status as command', async function () {
     const res = await jwproxy.command('/status', 'GET');
-    expect(res).to.eql(`I'm fine`);
+    assert.strictEqual(res, `I'm fine`);
   });
   describe('new session', function () {
     afterEach(async function () {
@@ -43,8 +40,8 @@ describe('proxy', function () {
       const res = await jwproxy.command('/session', 'POST', {
         capabilities: {alwaysMatch: caps},
       });
-      expect(res.capabilities.alwaysMatch).to.have.property('browserName');
-      expect(jwproxy.sessionId).to.have.length(48);
+      assert.ok(Object.hasOwn(res.capabilities.alwaysMatch, 'browserName'));
+      assert.strictEqual(jwproxy.sessionId!.length, 48);
     });
   });
   describe('delete session', function () {
@@ -53,7 +50,7 @@ describe('proxy', function () {
         capabilities: {alwaysMatch: {browserName: 'fake'}},
       });
       const res = await jwproxy.command('', 'DELETE');
-      expect(res).to.not.exist;
+      assert.ok(!res);
     });
   });
 });

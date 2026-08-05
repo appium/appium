@@ -1,14 +1,11 @@
+import assert from 'node:assert/strict';
 import {after, before, describe, it} from 'node:test';
 
 import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
-import chai, {expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import WebSocket from 'ws';
 
 import {DEFAULT_WS_PATHNAME_PREFIX, routeConfiguringFunction, server} from '../../../lib';
 import {FakeDriver} from '../protocol/fake-driver';
-
-chai.use(chaiAsPromised);
 
 describe('Websockets (e2e)', function () {
   let baseServer: Awaited<ReturnType<typeof server>>;
@@ -44,27 +41,27 @@ describe('Websockets (e2e)', function () {
       const endpoint = `${DEFAULT_WS_PATHNAME_PREFIX}/hello`;
       const timeout = 5000;
       await baseServer.addWebSocketHandler(endpoint, wss);
-      expect(Object.keys(await baseServer.getWebSocketHandlers()).length).to.eql(1);
+      assert.strictEqual(Object.keys(await baseServer.getWebSocketHandlers()).length, 1);
       await new Promise<void>((resolve, reject) => {
         const client = new WebSocket(`ws://${TEST_HOST}:${port}${endpoint}`);
         client.once('upgrade', (res) => {
           try {
-            expect(res.statusCode).to.eql(101);
+            assert.strictEqual(res.statusCode, 101);
           } catch (e) {
             reject(e);
           }
         });
         client.once('message', (data) => {
           const dataStr = typeof data === 'string' ? data : data.toString();
-          expect(dataStr).to.eql(WS_DATA);
+          assert.strictEqual(dataStr, WS_DATA);
           resolve();
         });
         client.once('error', reject);
         setTimeout(() => reject(new Error('No websocket messages have been received after the timeout')), timeout);
       });
 
-      expect(await baseServer.removeWebSocketHandler(endpoint)).to.be.true;
-      expect(Object.keys(await baseServer.getWebSocketHandlers()).length).to.eql(0);
+      assert.strictEqual(await baseServer.removeWebSocketHandler(endpoint), true);
+      assert.strictEqual(Object.keys(await baseServer.getWebSocketHandlers()).length, 0);
       await new Promise<void>((resolve, reject) => {
         const client = new WebSocket(`ws://${TEST_HOST}:${port}${endpoint}`);
         client.on('message', (data) =>

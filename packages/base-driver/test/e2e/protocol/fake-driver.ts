@@ -19,13 +19,13 @@ class FakeDriver extends BaseDriver<Constraints> {
     },
   };
 
-  declare jwpProxyActive: boolean;
+  declare wdProxyActive: boolean;
 
   constructor() {
     super({} as InitialOpts);
     this.protocol = PROTOCOLS.MJSONWP;
     this.sessionId = null;
-    this.jwpProxyActive = false;
+    this.wdProxyActive = false;
   }
 
   sessionExists(sessionId?: string | null): boolean {
@@ -65,7 +65,7 @@ class FakeDriver extends BaseDriver<Constraints> {
   }
 
   async deleteSession(): Promise<void> {
-    this.jwpProxyActive = false;
+    this.wdProxyActive = false;
     this.sessionId = null;
   }
 

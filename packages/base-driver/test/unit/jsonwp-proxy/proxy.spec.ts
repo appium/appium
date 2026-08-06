@@ -3,7 +3,7 @@ import {before, describe, it} from 'node:test';
 
 import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
 
-import {JWProxy} from '../../../lib';
+import {WebDriverProxy} from '../../../lib';
 import {errors, isErrorType} from '../../../lib/protocol/errors';
 import {type MockRequestOpts, request} from './mock-request';
 
@@ -42,7 +42,7 @@ describe('proxy', function () {
   function mockProxy(opts: any = {}) {
     // sets default server/port
     opts = {server: TEST_HOST, port, ...opts};
-    const proxy = new JWProxy(opts);
+    const proxy = new WebDriverProxy(opts);
     (proxy as any).request = async function (...args: any[]) {
       return await request(args[0] as MockRequestOpts);
     };

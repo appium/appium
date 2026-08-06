@@ -8,7 +8,7 @@ import type {Application, Request, Response} from 'express';
 import {StatusCodes as HTTPStatusCodes} from 'http-status-codes';
 import {createSandbox} from 'sinon';
 
-import {errors, JWProxy} from '../../../lib';
+import {errors, WebDriverProxy} from '../../../lib';
 import {MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY} from '../../../lib/constants';
 import {createServer} from '../../helpers';
 import {FakeDriver} from './fake-driver';
@@ -460,10 +460,10 @@ describe('Protocol', function () {
           delete (driver as any).performActions;
         });
 
-        describe('jwproxy', function () {
+        describe('wdproxy', function () {
           let port: number;
           let server: ReturnType<Application['listen']>;
-          let jwproxy: JWProxy;
+          let wdproxy: WebDriverProxy;
           let app: Application;
 
           before(async function () {
@@ -474,10 +474,10 @@ describe('Protocol', function () {
             const res = createProxyServer(port);
             server = res.server;
             app = res.app;
-            jwproxy = new JWProxy({server: TEST_HOST, port});
-            jwproxy.sessionId = sessionId;
+            wdproxy = new WebDriverProxy({server: TEST_HOST, port});
+            wdproxy.sessionId = sessionId;
             (driver as any).performActions = async (actions: object[]) =>
-              await jwproxy.command('/perform-actions', 'POST', actions);
+              await wdproxy.command('/perform-actions', 'POST', actions);
           });
 
           afterEach(async function () {
@@ -841,7 +841,7 @@ describe('Protocol', function () {
 
       assert.strictEqual(status, 200);
       assert.ok(!driver.sessionId);
-      assert.strictEqual(driver.jwpProxyActive, false);
+      assert.strictEqual(driver.wdProxyActive, false);
     });
 
     it('should avoid proxying when command spec specifies neverProxy', async function () {

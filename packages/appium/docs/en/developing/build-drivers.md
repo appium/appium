@@ -525,14 +525,13 @@ route, then the route will not be proxied and instead will be handled by your dr
 example, we are avoiding proxying all `POST` routes that have the `appium` prefix.
 
 Next, we have to set up the proxying itself. The way to do this is to use a special class from
-Appium called `JWProxy`. (The name means "JSON Wire Proxy" and is related to a legacy
-implementation of the protocol). You'll want to create a `JWProxy` object using the details required to
-connect to the remote server:
+Appium called `WebDriverProxy`. You'll want to create a `WebDriverProxy` object using the details
+required to connect to the remote server:
 
 ```js
-// import {JWProxy} from 'appium/driver';
+// import {WebDriverProxy} from 'appium/driver';
 
-const proxy = new JWProxy({
+const proxy = new WebDriverProxy({
     server: 'remote.server',
     port: 1234,
     base: '/',
@@ -544,8 +543,8 @@ this.proxyCommand = proxy.command.bind(proxy);
 
 Here we are creating a proxy object and assigning some of its methods to `this` under the names
 `proxyReqRes` and `proxyCommand`. This is required for Appium to use the proxy, so don't forget
-this step! The `JWProxy` has a variety of other options which you can check out in the source code,
-as well. (TODO: publish options as API docs and link here).
+this step! The `WebDriverProxy` has a variety of other options [which you can check out in the
+source code as well.](https://github.com/appium/appium/blob/master/packages/base-driver/lib/jsonwp-proxy/proxy.ts)
 
 Finally, we need a way to tell Appium when the proxy is active. For your driver it might always
 be active, or it might only be active when in a certain context. You can define the logic as an

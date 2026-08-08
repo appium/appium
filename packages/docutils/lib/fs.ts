@@ -120,8 +120,8 @@ export const readPackageJson = util.memoize(_readPkgJson);
 /**
  * Reads a JSON file and parses it
  */
-export const readJson = util.memoize(
-  async <T extends JsonValue>(filepath: string): Promise<T> => JSON.parse(await fs.readFile(filepath, 'utf8')),
+export const readJson = util.memoize(async <T extends JsonValue>(filepath: string): Promise<T> =>
+  JSON.parse(await fs.readFile(filepath, 'utf8')),
 );
 
 type WhichFunction = (cmd: string, opts?: {nothrow: boolean}) => Promise<string | null>;

@@ -36,7 +36,7 @@
     "test:smoke": "node scripts/test-smoke.mjs"
   },
   "dependencies": {
-    "oxfmt": "0.61.0",
+    "oxfmt": "0.62.0",
     "oxlint": "1.77.0",
     "oxlint-tsgolint": "7.0.2001"
   },

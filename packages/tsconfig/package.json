@@ -35,7 +35,7 @@
     "test:smoke": "node tsconfig.json && node tsconfig.plugin.json"
   },
   "dependencies": {
-    "@tsconfig/node20": "20.1.9",
+    "@tsconfig/node22": "22.0.0",
     "typescript": "6.0.3"
   },
   "engines": {

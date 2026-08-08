@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "oxfmt": "0.61.0",
-    "oxlint": "1.76.0",
+    "oxlint": "1.77.0",
     "oxlint-tsgolint": "7.0.2001"
   },
   "engines": {

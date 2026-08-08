@@ -56,7 +56,7 @@ describe('execute driver plugin', function () {
     await assert.rejects(runScript(dyingProcess(null, 'SIGKILL'), 60000), /ended without returning a result/);
   });
 
-  it('should leave a clean exit to the script timeout', async function () {
-    await assert.rejects(runScript(dyingProcess(0, null), 1), /timed out/);
+  it('should resolve with an undefined result if the child exits cleanly without a message', async function () {
+    assert.equal(await runScript(dyingProcess(0, null), 60000), undefined);
   });
 });

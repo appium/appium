@@ -103,7 +103,7 @@
     "@types/ws": "8.18.1",
     "@types/yargs": "17.0.35",
     "asyncbox": "6.4.2",
-    "conventional-changelog-conventionalcommits": "7.0.2",
+    "conventional-changelog-conventionalcommits": "10.2.1",
     "cpy-cli": "7.0.0",
     "cross-env": "10.1.0",
     "finalhandler": "2.1.1",

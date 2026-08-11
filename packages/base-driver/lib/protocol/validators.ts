@@ -1,7 +1,11 @@
+import {util} from '@appium/support';
+
+const MAX_URL_ERROR_LENGTH = 100;
+
 export const validators = {
   setUrl: (url: any) => {
     if (!URL.canParse(url)) {
-      throw new Error('Url or Uri must be a valid URL');
+      throw new Error(`'${util.truncateString(String(url), {length: MAX_URL_ERROR_LENGTH})}' must be a valid URL`);
     }
   },
   setNetworkConnection: (type: any) => {

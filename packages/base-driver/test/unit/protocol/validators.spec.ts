@@ -13,8 +13,8 @@ describe('validators', function () {
     });
 
     it('should reject an empty or unparseable string', function () {
-      assert.throws(() => validators.setUrl(''), /must be a valid URL/);
-      assert.throws(() => validators.setUrl('example.com'), /must be a valid URL/);
+      assert.throws(() => validators.setUrl(''), /'' must be a valid URL/);
+      assert.throws(() => validators.setUrl('example.com'), /'example\.com' must be a valid URL/);
     });
 
     it('should reject a non-string url without throwing TypeError', function () {
@@ -24,6 +24,7 @@ describe('validators', function () {
           (err: Error) => {
             assert.equal(err.name, 'Error');
             assert.match(err.message, /must be a valid URL/);
+            assert.match(err.message, new RegExp(String(url).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
             return true;
           },
         );

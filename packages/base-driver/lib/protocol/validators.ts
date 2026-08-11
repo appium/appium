@@ -1,8 +1,7 @@
 export const validators = {
   setUrl: (url: any) => {
-    // either an `xyz://`, `about:`, or `data:` scheme is allowed
-    if (typeof url !== 'string' || !url.match(/^([a-zA-Z0-9_+.-]+:\/\/)|(about:)|(data:)/)) {
-      throw new Error('Url or Uri must start with <scheme>://');
+    if (!URL.canParse(url)) {
+      throw new Error('Url or Uri must be a valid URL');
     }
   },
   setNetworkConnection: (type: any) => {

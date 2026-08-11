@@ -5,15 +5,16 @@ import {validators} from '../../../lib/protocol/validators';
 
 describe('validators', function () {
   describe('#setUrl', function () {
-    it('should accept a URL with a scheme', function () {
+    it('should accept a parseable URL', function () {
       assert.doesNotThrow(() => validators.setUrl('http://example.com'));
       assert.doesNotThrow(() => validators.setUrl('about:blank'));
       assert.doesNotThrow(() => validators.setUrl('data:text/plain,hi'));
+      assert.doesNotThrow(() => validators.setUrl('ftp://example.com'));
     });
 
-    it('should reject an empty or schemeless string', function () {
-      assert.throws(() => validators.setUrl(''), /Url or Uri must start with/);
-      assert.throws(() => validators.setUrl('example.com'), /Url or Uri must start with/);
+    it('should reject an empty or unparseable string', function () {
+      assert.throws(() => validators.setUrl(''), /must be a valid URL/);
+      assert.throws(() => validators.setUrl('example.com'), /must be a valid URL/);
     });
 
     it('should reject a non-string url without throwing TypeError', function () {
@@ -22,7 +23,7 @@ describe('validators', function () {
           () => validators.setUrl(url),
           (err: Error) => {
             assert.equal(err.name, 'Error');
-            assert.match(err.message, /Url or Uri must start with/);
+            assert.match(err.message, /must be a valid URL/);
             return true;
           },
         );

@@ -1,8 +1,11 @@
+import {util} from '@appium/support';
+
+const MAX_URL_ERROR_LENGTH = 100;
+
 export const validators = {
   setUrl: (url: any) => {
-    // either an `xyz://`, `about:`, or `data:` scheme is allowed
-    if (!url || !url.match(/^([a-zA-Z0-9_+.-]+:\/\/)|(about:)|(data:)/)) {
-      throw new Error('Url or Uri must start with <scheme>://');
+    if (!URL.canParse(url)) {
+      throw new Error(`'${util.truncateString(String(url), {length: MAX_URL_ERROR_LENGTH})}' must be a valid URL`);
     }
   },
   setNetworkConnection: (type: any) => {

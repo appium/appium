@@ -160,9 +160,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
         assert.deepStrictEqual((await axios.post(`http://${TEST_HOST}:${port}/cliArgs`)).data.usePlugins, res);
       });
       it('should let updateServer intercept requests to routes Appium itself owns via httpServer.frontRouter', async function () {
-        // even though this middleware is registered from inside updateServer, which runs after
-        // Appium's own routes are added, it's mounted on a router Appium pre-mounted before any
-        // route existed — so it's still observed by a request to a built-in route like /status
+        // /status is a built-in route, registered before updateServer runs
         const res = await axios.get(`http://${TEST_HOST}:${port}/status`);
         assert.strictEqual(res.headers['x-fake-plugin-pre-server'], 'true');
       });

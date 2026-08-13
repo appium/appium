@@ -74,12 +74,7 @@ export interface ConfigureServerOpts {
   extraMethodMap?: MethodMap<ExternalDriver>;
   webSocketsMapping?: StringRecord;
   useLegacyUpgradeHandler?: boolean;
-  /**
-   * A router mounted before any route is registered, so that middleware added to it — even
-   * after this function returns, e.g. from within an extension's `updateServer` hook via
-   * `httpServer.frontRouter` — observes every incoming request, including ones matched by
-   * routes Appium (or another extension) registers. See #17411.
-   */
+  /** Router mounted before any route is registered; see {@linkcode AppiumServer.frontRouter}. */
   frontRouter: Router;
 }
 
@@ -230,11 +225,7 @@ export function configureServer(opts: ConfigureServerOpts): void {
   // set up start logging (which depends on bodyParser doing its thing)
   app.use(startLogFormatter);
 
-  // mount the front router before any route is registered. Extensions can still add
-  // middleware to it later (e.g. from within their `updateServer` hook, via
-  // `httpServer.frontRouter`) and have that middleware observe every incoming request,
-  // because Express walks a mounted router's stack per-request rather than at mount time.
-  // See https://github.com/appium/appium/issues/17411
+  // mounted before any route, so middleware added later (e.g. via `updateServer`) still runs first
   app.use(frontRouter);
 
   addRoutes(app, {basePath, extraMethodMap});

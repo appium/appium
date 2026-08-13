@@ -492,17 +492,12 @@ results you'll need to test! Warning: this should be considered an advanced feat
 knowledge of Express, as well as the care not to do anything that could affect the operation of
 other parts of the Appium server!
 
-`updateServer` runs *after* Appium (and every other active extension) has already registered its
-routes. This makes `expressApp.use(...)` a poor way to add global middleware here — Express
-matches middleware and routes in registration order, so middleware added this late will never see
-a request to a path Appium already owns; the matching route handles it first.
-
-If you need middleware that observes *every* incoming request, including ones bound for Appium's
-own routes (for example, request logging or authentication), use the `frontRouter` property of
-the `httpServer` argument instead of `expressApp` directly. Appium mounts this
-[Router](https://expressjs.com/en/4x/api.html#router) before any route — its own or another
-extension's — is registered, so anything you attach to it, even from inside `updateServer`, still
-runs ahead of route matching:
+`updateServer` runs *after* Appium's own routes are registered, so `expressApp.use(...)` here
+won't see requests to paths Appium already owns — Express matches middleware and routes in
+registration order. For middleware that must see *every* request (e.g. logging or auth), use
+`httpServer.frontRouter` instead: Appium mounts this
+[Router](https://expressjs.com/en/4x/api.html#router) before any route is registered, so anything
+attached to it — even from inside `updateServer` — still runs ahead of route matching:
 
 ```js
 static async updateServer(expressApp, httpServer, cliArgs) {

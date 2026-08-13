@@ -9,8 +9,7 @@ import {configureServer, normalizeBasePath, server} from '../../../lib/express/s
 import {routeConfiguringFunction} from '../../../lib/protocol/protocol';
 import {registerTestPages} from '../../../lib/test-pages';
 
-// stand-in for the real `express.Router()` instance `configureHttp` creates; these tests only
-// need something referentially unique to pass through to a spied-on `app.use`
+// stand-in for the router `configureHttp` normally creates
 const fakeFrontRouter = {} as any;
 
 const newMethodMap = {
@@ -111,8 +110,7 @@ describe('server configuration', function () {
   it('should let updateServer intercept requests to routes Appium owns via httpServer.frontRouter', async function () {
     const driver = fakeDriver();
     const addRoutes = routeConfiguringFunction(driver as any);
-    // this is the EXISTING updateServer hook — no new API to learn — reaching a router that
-    // was mounted before any route was registered, so it observes even Appium's own routes
+    // reaches httpServer.frontRouter from the existing updateServer hook
     const interceptingUpdater = async (_app: any, httpServer: any) => {
       httpServer.frontRouter.use((_req: any, res: any, next: any) => {
         res.set('x-pre-server', 'true');

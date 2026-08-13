@@ -42,13 +42,9 @@ export interface AppiumServerExtension {
   /** Returns true if the server operates via HTTPS protocol */
   isSecure(): boolean;
   /**
-   * A standard Express {@linkcode Router} mounted before any route is registered — Appium's own,
-   * or another extension's. Extensions can call any public `Router` method on it (`.use()`,
-   * `.get()`, `.all()`, etc.) from within {@linkcode UpdateServerCallback} to add global
-   * middleware that observes every incoming request, including ones matched by routes already
-   * registered elsewhere. Adding middleware here even works after `updateServer` runs (i.e.
-   * after routes exist), because Express walks a mounted router's stack per-request rather than
-   * at mount time. See https://github.com/appium/appium/issues/17411
+   * A {@linkcode Router} mounted before any route is registered. Use it from
+   * {@linkcode UpdateServerCallback} to add middleware that must see every request, including
+   * ones matched by routes registered elsewhere. See https://github.com/appium/appium/issues/17411
    */
   frontRouter: Router;
 }

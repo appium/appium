@@ -102,8 +102,7 @@ export class FakePlugin extends BasePlugin {
     expressApp.all('/cliArgs', (req, res) => {
       res.send(JSON.stringify(cliArgs));
     });
-    // demonstrates registering global middleware that observes every incoming request, even
-    // ones matched by routes Appium itself already registered before updateServer ran
+    // global middleware, exercised via httpServer.frontRouter
     httpServer.frontRouter.use((_req, res, next) => {
       res.set('x-fake-plugin-pre-server', 'true');
       next();

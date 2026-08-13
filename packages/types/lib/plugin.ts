@@ -10,11 +10,9 @@ import type {Class, StringRecord} from './util';
  */
 export interface PluginStatic<P extends Plugin> {
   /**
-   * Allows a plugin to modify the Appium server instance. Note that by the time this hook runs,
-   * Appium (and every other active extension) has already registered its own routes — to add
-   * global middleware that must see every incoming request, including ones matched by those
-   * routes, use the `frontRouter` property of the `httpServer` object (see
-   * `AppiumServerExtension` in `@appium/types`).
+   * Allows a plugin to modify the Appium server instance. Routes are already registered by the
+   * time this runs; for middleware that must see every request, use `httpServer.frontRouter`
+   * (`AppiumServerExtension` in `@appium/types`).
    */
   updateServer?: UpdateServerCallback;
   /**

@@ -323,6 +323,12 @@ export interface ExternalDriver<
  */
 export interface DriverStatic<T extends Driver> {
   baseVersion: string;
+  /**
+   * Allows a driver to modify the Appium server instance. Note that by the time this hook runs,
+   * Appium (and every other active extension) has already registered its own routes — to add
+   * global middleware that must see every incoming request, including ones matched by those
+   * routes, use `httpServer.frontRouter` (see {@linkcode AppiumServer.frontRouter}).
+   */
   updateServer?: UpdateServerCallback;
   newMethodMap?: MethodMap<T>;
   /**

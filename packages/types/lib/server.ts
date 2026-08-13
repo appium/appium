@@ -1,6 +1,6 @@
 import type {Server as HTTPServer} from 'node:http';
 
-import type {Express} from 'express';
+import type {Express, Router} from 'express';
 import type {Server as WSServer} from 'ws';
 
 import type {ServerArgs} from './config';
@@ -41,6 +41,16 @@ export interface AppiumServerExtension {
   webSocketsMapping: Record<string, WSServer>;
   /** Returns true if the server operates via HTTPS protocol */
   isSecure(): boolean;
+  /**
+   * A standard Express {@linkcode Router} mounted before any route is registered — Appium's own,
+   * or another extension's. Extensions can call any public `Router` method on it (`.use()`,
+   * `.get()`, `.all()`, etc.) from within {@linkcode UpdateServerCallback} to add global
+   * middleware that observes every incoming request, including ones matched by routes already
+   * registered elsewhere. Adding middleware here even works after `updateServer` runs (i.e.
+   * after routes exist), because Express walks a mounted router's stack per-request rather than
+   * at mount time. See https://github.com/appium/appium/issues/17411
+   */
+  frontRouter: Router;
 }
 
 export type {WSServer};

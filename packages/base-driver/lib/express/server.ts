@@ -15,7 +15,7 @@ import type {
 } from '@appium/types';
 import bodyParser from 'body-parser';
 import express from 'express';
-import type {Express, RequestHandler} from 'express';
+import type {Express, RequestHandler, Router} from 'express';
 import methodOverride from 'method-override';
 
 import {DEFAULT_BASE_PATH} from '../constants';
@@ -74,6 +74,13 @@ export interface ConfigureServerOpts {
   extraMethodMap?: MethodMap<ExternalDriver>;
   webSocketsMapping?: StringRecord;
   useLegacyUpgradeHandler?: boolean;
+  /**
+   * A router mounted before any route is registered, so that middleware added to it — even
+   * after this function returns, e.g. from within an extension's `updateServer` hook via
+   * `httpServer.frontRouter` — observes every incoming request, including ones matched by
+   * routes Appium (or another extension) registers. See #17411.
+   */
+  frontRouter: Router;
 }
 
 /** @internal */
@@ -147,6 +154,7 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
           webSocketsMapping: appiumServer.webSocketsMapping,
           useLegacyUpgradeHandler,
           registerTestPages,
+          frontRouter: appiumServer.frontRouter,
         } as ConfigureServerInternalOpts);
         // allow extensions to update the app and http server objects
         for (const updater of serverUpdaters) {
@@ -188,6 +196,7 @@ export function configureServer(opts: ConfigureServerOpts): void {
     extraMethodMap = {},
     webSocketsMapping = {},
     useLegacyUpgradeHandler = true,
+    frontRouter,
   } = opts;
   const {registerTestPages} = opts as ConfigureServerInternalOpts;
   const basePath = normalizeBasePath(rawBasePath);
@@ -220,6 +229,13 @@ export function configureServer(opts: ConfigureServerOpts): void {
 
   // set up start logging (which depends on bodyParser doing its thing)
   app.use(startLogFormatter);
+
+  // mount the front router before any route is registered. Extensions can still add
+  // middleware to it later (e.g. from within their `updateServer` hook, via
+  // `httpServer.frontRouter`) and have that middleware observe every incoming request,
+  // because Express walks a mounted router's stack per-request rather than at mount time.
+  // See https://github.com/appium/appium/issues/17411
+  app.use(frontRouter);
 
   addRoutes(app, {basePath, extraMethodMap});
 
@@ -307,6 +323,7 @@ function configureHttp({
 }: ConfigureHttpOpts): AppiumServer {
   const appiumServer = httpServer as unknown as AppiumServer;
   appiumServer.webSocketsMapping = {};
+  appiumServer.frontRouter = express.Router();
   appiumServer.addWebSocketHandler = addWebSocketHandler;
   appiumServer.removeWebSocketHandler = removeWebSocketHandler;
   appiumServer.removeAllWebSocketHandlers = removeAllWebSocketHandlers;

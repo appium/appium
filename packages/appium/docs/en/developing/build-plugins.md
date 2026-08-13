@@ -477,9 +477,9 @@ capability.
 You probably don't normally need to update the Appium server object (which is an
 [Express](https://expressjs.com/) server having already been
 [configured](https://github.com/appium/appium/blob/master/packages/base-driver/lib/express/server.js)
-in a variety of ways). But, for example, you could add new Express middleware to the server to
-support your plugin's requirements. To update the server you must implement the `static async
-updateServer` method in your class. This method takes three parameters:
+in a variety of ways). But, for example, you could add new routes to the server to support your
+plugin's requirements. To update the server you must implement the `static async updateServer`
+method in your class. This method takes three parameters:
 
 * `expressApp`: the Express app object
 * `httpServer`: the Node HTTP server object
@@ -491,6 +491,27 @@ you're not undoing or overriding anything standard and important. But if you ins
 results you'll need to test! Warning: this should be considered an advanced feature and requires
 knowledge of Express, as well as the care not to do anything that could affect the operation of
 other parts of the Appium server!
+
+`updateServer` runs *after* Appium (and every other active extension) has already registered its
+routes. This makes `expressApp.use(...)` a poor way to add global middleware here — Express
+matches middleware and routes in registration order, so middleware added this late will never see
+a request to a path Appium already owns; the matching route handles it first.
+
+If you need middleware that observes *every* incoming request, including ones bound for Appium's
+own routes (for example, request logging or authentication), use the `frontRouter` property of
+the `httpServer` argument instead of `expressApp` directly. Appium mounts this
+[Router](https://expressjs.com/en/4x/api.html#router) before any route — its own or another
+extension's — is registered, so anything you attach to it, even from inside `updateServer`, still
+runs ahead of route matching:
+
+```js
+static async updateServer(expressApp, httpServer, cliArgs) {
+  httpServer.frontRouter.use((req, res, next) => {
+    console.log(`Incoming request: ${req.method} ${req.url}`);
+    next();
+  });
+}
+```
 
 ### Handle unexpected session shutdown
 

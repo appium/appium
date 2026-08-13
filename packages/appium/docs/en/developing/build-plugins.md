@@ -496,7 +496,7 @@ other parts of the Appium server!
 won't see requests to paths Appium already owns — Express matches middleware and routes in
 registration order. For middleware that must see *every* request (e.g. logging or auth), use
 `httpServer.frontRouter` instead: Appium mounts this
-[Router](https://expressjs.com/en/4x/api.html#router) before any route is registered, so anything
+[Router](https://expressjs.com/en/5x/api/router/) before any route is registered, so anything
 attached to it — even from inside `updateServer` — still runs ahead of route matching:
 
 ```js

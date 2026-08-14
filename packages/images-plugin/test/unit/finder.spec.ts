@@ -210,6 +210,20 @@ describe('finding elements by image', function () {
       );
     });
 
+    it('should not resize when scales are within float precision of 1', async function () {
+      // FLOAT_PRECISION is meant to treat near-1 values as the default scale.
+      // The yScale check previously compared a boolean, so a tiny float error
+      // on y forced an unnecessary resize.
+      assert.deepStrictEqual(
+        await f.fixImageTemplateScale(TINY_PNG_BUF, {
+          fixImageTemplateScale: true,
+          xScale: 1.000001,
+          yScale: 1.000001,
+        }),
+        TINY_PNG_BUF,
+      );
+    });
+
     it('should not fix template size scale if it is null', async function () {
       assert.deepStrictEqual(await f.fixImageTemplateScale(basicTemplateBuf, null as any), basicTemplateBuf);
     });

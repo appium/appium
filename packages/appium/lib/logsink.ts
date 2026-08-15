@@ -143,20 +143,26 @@ function createFileTransport(args: ParsedArgs, logLvl: string): transports.FileT
   return new transports.File(opt);
 }
 
+/**
+ * Parse a `--webhook` / `server.webhook` URI into Winston Http transport options.
+ * The schema requires a URI (e.g. `http://0.0.0.0/hook`), so host/port/path/ssl
+ * are taken from `URL` rather than a naive `host:port` split.
+ */
+export function parseWebhookUri(
+  webhook: string,
+): Pick<transports.HttpTransportOptions, 'host' | 'port' | 'path' | 'ssl'> {
+  const url = new URL(webhook);
+  return {
+    host: url.hostname,
+    port: url.port ? parseInt(url.port, 10) : url.protocol === 'https:' ? 443 : 80,
+    path: `${url.pathname}${url.search}` || '/',
+    ssl: url.protocol === 'https:',
+  };
+}
+
 function createHttpTransport(args: ParsedArgs, logLvl: string): transports.HttpTransportInstance {
-  let host = '127.0.0.1';
-  let port = 9003;
-
-  if (args.webhook?.match(':')) {
-    const hostAndPort = args.webhook.split(':');
-    host = hostAndPort[0];
-    port = parseInt(hostAndPort[1], 10);
-  }
-
   const opt: transports.HttpTransportOptions = {
-    host,
-    port,
-    path: '/',
+    ...parseWebhookUri(args.webhook as string),
     level: logLvl,
     format: format.combine(stripColorFormat, formatLog(args, false)),
   };

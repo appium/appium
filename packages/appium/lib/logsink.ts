@@ -152,11 +152,17 @@ export function parseWebhookUri(
   webhook: string,
 ): Pick<transports.HttpTransportOptions, 'host' | 'port' | 'path' | 'ssl'> {
   const url = new URL(webhook);
+  // 'host:port' parses into a URL whose scheme is the host name, which would
+  // otherwise leave us with an empty host and the port as the path
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+    throw new Error(`Expected an http(s) URL, for example 'http://localhost:9003/logs'`);
+  }
+  const isSsl = url.protocol === 'https:';
   return {
     host: url.hostname,
-    port: url.port ? parseInt(url.port, 10) : url.protocol === 'https:' ? 443 : 80,
-    path: `${url.pathname}${url.search}` || '/',
-    ssl: url.protocol === 'https:',
+    port: url.port ? parseInt(url.port, 10) : isSsl ? 443 : 80,
+    path: `${url.pathname}${url.search}`,
+    ssl: isSsl,
   };
 }
 

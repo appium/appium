@@ -34,4 +34,8 @@ describe('parseWebhookUri', function () {
   it('should reject a value that is not a URI', function () {
     assert.throws(() => parseWebhookUri('not-a-uri'), /Invalid URL/);
   });
+
+  it('should reject a host:port value, which the schema accepts as a URI', function () {
+    assert.throws(() => parseWebhookUri('localhost:9003'), /Expected an http\(s\) URL/);
+  });
 });

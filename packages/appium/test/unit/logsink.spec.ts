@@ -32,10 +32,10 @@ describe('parseWebhookUri', function () {
   });
 
   it('should reject a value that is not a URI', function () {
-    assert.throws(() => parseWebhookUri('not-a-uri'), /Invalid URL/);
+    assert.throws(() => parseWebhookUri('not-a-uri'), /'not-a-uri' is given instead/);
   });
 
   it('should reject a host:port value, which the schema accepts as a URI', function () {
-    assert.throws(() => parseWebhookUri('localhost:9003'), /Expected an http\(s\) URL/);
+    assert.throws(() => parseWebhookUri('localhost:9003'), /must be an http\(s\) URL/);
   });
 });

@@ -159,6 +159,11 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
         // arg got through.
         assert.deepStrictEqual((await axios.post(`http://${TEST_HOST}:${port}/cliArgs`)).data.usePlugins, res);
       });
+      it('should let updateServer intercept requests to routes Appium itself owns via httpServer.frontRouter', async function () {
+        // /status is a built-in route, registered before updateServer runs
+        const res = await axios.get(`http://${TEST_HOST}:${port}/status`);
+        assert.strictEqual(res.headers['x-fake-plugin-pre-server'], 'true');
+      });
       it('should modify the method map with new commands', async function () {
         const driver = await wdio(wdOpts as any);
         const {sessionId} = driver;

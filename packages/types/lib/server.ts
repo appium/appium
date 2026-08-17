@@ -1,6 +1,6 @@
 import type {Server as HTTPServer} from 'node:http';
 
-import type {Express} from 'express';
+import type {Express, Router} from 'express';
 import type {Server as WSServer} from 'ws';
 
 import type {ServerArgs} from './config';
@@ -41,6 +41,12 @@ export interface AppiumServerExtension {
   webSocketsMapping: Record<string, WSServer>;
   /** Returns true if the server operates via HTTPS protocol */
   isSecure(): boolean;
+  /**
+   * A {@linkcode Router} mounted before any route is registered. Use it from
+   * {@linkcode UpdateServerCallback} to add middleware that must see every request, including
+   * ones matched by routes registered elsewhere. See https://github.com/appium/appium/issues/17411
+   */
+  frontRouter: Router;
 }
 
 export type {WSServer};

@@ -9,6 +9,9 @@ import {configureServer, normalizeBasePath, server} from '../../../lib/express/s
 import {routeConfiguringFunction} from '../../../lib/protocol/protocol';
 import {registerTestPages} from '../../../lib/test-pages';
 
+// stand-in for the router `configureHttp` normally creates
+const fakeFrontRouter = {} as any;
+
 const newMethodMap = {
   '/session/:sessionId/fake': {
     GET: {command: 'fakeGet'},
@@ -57,8 +60,8 @@ describe('server configuration', function () {
   it('should actually use the middleware', function () {
     const app = fakeApp() as any;
     const configureRoutes = () => {};
-    configureServer({app, addRoutes: configureRoutes});
-    assert.strictEqual(app.use.callCount, 11);
+    configureServer({app, addRoutes: configureRoutes, frontRouter: fakeFrontRouter});
+    assert.strictEqual(app.use.callCount, 12);
     assert.strictEqual(app.all.callCount, 0);
   });
 
@@ -66,8 +69,8 @@ describe('server configuration', function () {
     const app = fakeApp() as any;
     const configureRoutes = () => {};
     // @ts-expect-error registerTestPages is not normally used in this way
-    configureServer({app, addRoutes: configureRoutes, registerTestPages});
-    assert.strictEqual(app.use.callCount, 15);
+    configureServer({app, addRoutes: configureRoutes, frontRouter: fakeFrontRouter, registerTestPages});
+    assert.strictEqual(app.use.callCount, 16);
     assert.strictEqual(app.all.callCount, 4);
   });
 
@@ -76,8 +79,8 @@ describe('server configuration', function () {
     const app2 = fakeApp() as any;
     const driver = fakeDriver();
     const addRoutes = routeConfiguringFunction(driver as any);
-    configureServer({app: app1, addRoutes});
-    configureServer({app: app2, addRoutes, extraMethodMap: newMethodMap});
+    configureServer({app: app1, addRoutes, frontRouter: fakeFrontRouter});
+    configureServer({app: app2, addRoutes, frontRouter: fakeFrontRouter, extraMethodMap: newMethodMap});
     assert.strictEqual(app2.totalCount(), app1.totalCount() + 2);
   });
 
@@ -86,9 +89,45 @@ describe('server configuration', function () {
     const app2 = fakeApp() as any;
     const driver = fakeDriver();
     const addRoutes = routeConfiguringFunction(driver as any);
-    configureServer({app: app1, addRoutes});
-    configureServer({app: app2, addRoutes, extraMethodMap: [] as any});
+    configureServer({app: app1, addRoutes, frontRouter: fakeFrontRouter});
+    configureServer({app: app2, addRoutes, frontRouter: fakeFrontRouter, extraMethodMap: [] as any});
     assert.strictEqual(app2.totalCount(), app1.totalCount());
+  });
+
+  it('should mount the front router before routes are registered', function () {
+    const callOrder: string[] = [];
+    const app = fakeApp() as any;
+    app.use = sandbox.spy((mw: any) => {
+      if (mw === fakeFrontRouter) {
+        callOrder.push('frontRouter');
+      }
+    });
+    const configureRoutes = () => callOrder.push('route');
+    configureServer({app, addRoutes: configureRoutes, frontRouter: fakeFrontRouter});
+    assert.deepStrictEqual(callOrder, ['frontRouter', 'route']);
+  });
+
+  it('should let updateServer intercept requests to routes Appium owns via httpServer.frontRouter', async function () {
+    const driver = fakeDriver();
+    const addRoutes = routeConfiguringFunction(driver as any);
+    // reaches httpServer.frontRouter from the existing updateServer hook
+    const interceptingUpdater = async (_app: any, httpServer: any) => {
+      httpServer.frontRouter.use((_req: any, res: any, next: any) => {
+        res.set('x-pre-server', 'true');
+        next();
+      });
+    };
+    const _server = await server({
+      routeConfiguringFunction: addRoutes,
+      port,
+      serverUpdaters: [interceptingUpdater],
+    });
+    try {
+      const res = await fetch(`http://127.0.0.1:${port}/status`);
+      assert.strictEqual(res.headers.get('x-pre-server'), 'true');
+    } finally {
+      await _server.close();
+    }
   });
 
   it('should allow plugins to update the server', async function () {

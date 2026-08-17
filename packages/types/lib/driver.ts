@@ -323,6 +323,11 @@ export interface ExternalDriver<
  */
 export interface DriverStatic<T extends Driver> {
   baseVersion: string;
+  /**
+   * Allows a driver to modify the Appium server instance. Routes are already registered by the
+   * time this runs; for middleware that must see every request, use `httpServer.frontRouter`
+   * (see {@linkcode AppiumServer.frontRouter}).
+   */
   updateServer?: UpdateServerCallback;
   newMethodMap?: MethodMap<T>;
   /**

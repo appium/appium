@@ -41,8 +41,9 @@ describe('fake plugin', function () {
 
   it('should update an express app with a fake route', async function () {
     const app = new FakeExpress();
+    const httpServer = {frontRouter: {use: () => {}}};
     assert.rejects(() => app.get('/fake'));
-    await FakePlugin.updateServer(app as any, {} as any, {});
+    await FakePlugin.updateServer(app as any, httpServer as any, {});
     assert.equal(await app.get('/fake'), JSON.stringify({fake: 'fakeResponse'}));
   });
 

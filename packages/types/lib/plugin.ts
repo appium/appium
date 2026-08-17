@@ -10,7 +10,9 @@ import type {Class, StringRecord} from './util';
  */
 export interface PluginStatic<P extends Plugin> {
   /**
-   * Allows a plugin to modify the Appium server instance.
+   * Allows a plugin to modify the Appium server instance. Routes are already registered by the
+   * time this runs; for middleware that must see every request, use `httpServer.frontRouter`
+   * (`AppiumServerExtension` in `@appium/types`).
    */
   updateServer?: UpdateServerCallback;
   /**

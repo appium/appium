@@ -494,10 +494,13 @@ other parts of the Appium server!
 
 `updateServer` runs *after* Appium's own routes are registered, so `expressApp.use(...)` here
 won't see requests to paths Appium already owns — Express matches middleware and routes in
-registration order. For middleware that must see *every* request (e.g. logging or auth), use
-`httpServer.frontRouter` instead: Appium mounts this
+registration order. For middleware that must see requests to those routes too (e.g. logging or
+auth), use `httpServer.frontRouter` instead: Appium mounts this
 [Router](https://expressjs.com/en/5x/api/router/) before any route is registered, so anything
-attached to it — even from inside `updateServer` — still runs ahead of route matching:
+attached to it — even from inside `updateServer` — still runs ahead of route matching. Note this
+is still *after* Appium's own baseline middleware (CORS, WebSocket upgrade handling, body
+parsing, etc.), so it won't see requests Appium itself has already rejected, e.g. a CORS
+preflight failure or a body that failed to parse:
 
 ```js
 static async updateServer(expressApp, httpServer, cliArgs) {

@@ -31,11 +31,21 @@ describe('parseWebhookUri', function () {
     });
   });
 
-  it('should reject a value that is not a URI', function () {
-    assert.throws(() => parseWebhookUri('not-a-uri'), /'not-a-uri' is given instead/);
+  it('should keep understanding the legacy host:port form', function () {
+    assert.deepStrictEqual(parseWebhookUri('localhost:9003'), {
+      host: 'localhost',
+      port: 9003,
+      path: '/',
+      ssl: false,
+    });
   });
 
-  it('should reject a host:port value, which the schema accepts as a URI', function () {
-    assert.throws(() => parseWebhookUri('localhost:9003'), /must be an http\(s\) URL/);
+  it('should fall back to the legacy defaults if there is nothing to parse', function () {
+    assert.deepStrictEqual(parseWebhookUri('not-a-uri'), {
+      host: '127.0.0.1',
+      port: 9003,
+      path: '/',
+      ssl: false,
+    });
   });
 });

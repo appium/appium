@@ -34,8 +34,10 @@ const COLOR_CODE_PATTERN = /\u001b\[(\d+(;\d+)*)?m/g; // eslint-disable-line no-
 
 const HTTPS_PROTOCOL = 'https:';
 const SUPPORTED_WEBHOOK_PROTOCOLS = ['http:', HTTPS_PROTOCOL];
-const DEFAULT_HTTP_PORT = 80;
-const DEFAULT_HTTPS_PORT = 443;
+const DEFAULT_HTTP_WEBHOOK_PORT = 80;
+const DEFAULT_HTTPS_WEBHOOK_PORT = 443;
+const DEFAULT_LEGACY_WEBHOOK_HOST = '127.0.0.1';
+const DEFAULT_LEGACY_WEBHOOK_PORT = 9003;
 
 // https://www.ditig.com/publications/256-colors-cheat-sheet
 const MIN_COLOR = 17;
@@ -149,32 +151,41 @@ function createFileTransport(args: ParsedArgs, logLvl: string): transports.FileT
 }
 
 /**
- * Parse a `--webhook` / `server.webhook` URI into Winston Http transport options.
- * The schema requires a URI (e.g. `http://0.0.0.0/hook`), so host/port/path/ssl
- * are taken from `URL` rather than a naive `host:port` split.
+ * Parse a `--webhook` / `server.webhook` value into Winston Http transport options.
+ *
+ * The schema documents this option as a URI (e.g. `http://0.0.0.0/hook`), and such a
+ * value has its host, port, path and ssl flag taken from `URL`. A bare `host:port`
+ * keeps the meaning it had before, where log records are always posted to the root
+ * path of a plain http listener.
  *
  * @internal
  */
 export function parseWebhookUri(
   webhook: string,
 ): Pick<transports.HttpTransportOptions, 'host' | 'port' | 'path' | 'ssl'> {
-  // 'host:port' is a parseable URI whose scheme is the host name, so the protocol
-  // must be verified as well, otherwise the host would be empty and the port a path
+  // `host:port` is parseable as well, but as a URI whose scheme is the host name,
+  // hence the protocol must be verified before the parsing result can be used
   const url = URL.parse(webhook);
-  if (!url || !SUPPORTED_WEBHOOK_PROTOCOLS.includes(url.protocol)) {
-    throw new Error(
-      `The logging webhook must be an http(s) URL, for example 'http://localhost:9003/logs'. ` +
-        `'${webhook}' is given instead`,
-    );
+  if (url && SUPPORTED_WEBHOOK_PROTOCOLS.includes(url.protocol)) {
+    const isSsl = url.protocol === HTTPS_PROTOCOL;
+    const defaultPort = isSsl ? DEFAULT_HTTPS_WEBHOOK_PORT : DEFAULT_HTTP_WEBHOOK_PORT;
+    return {
+      host: url.hostname,
+      port: url.port ? parseInt(url.port, 10) : defaultPort,
+      path: `${url.pathname}${url.search}`,
+      ssl: isSsl,
+    };
   }
-  const isSsl = url.protocol === HTTPS_PROTOCOL;
-  const defaultPort = isSsl ? DEFAULT_HTTPS_PORT : DEFAULT_HTTP_PORT;
-  return {
-    host: url.hostname,
-    port: url.port ? parseInt(url.port, 10) : defaultPort,
-    path: `${url.pathname}${url.search}`,
-    ssl: isSsl,
-  };
+  if (!webhook.includes(':')) {
+    return {
+      host: DEFAULT_LEGACY_WEBHOOK_HOST,
+      port: DEFAULT_LEGACY_WEBHOOK_PORT,
+      path: '/',
+      ssl: false,
+    };
+  }
+  const [host, port] = webhook.split(':');
+  return {host, port: parseInt(port, 10), path: '/', ssl: false};
 }
 
 function createHttpTransport(args: ParsedArgs, logLvl: string): transports.HttpTransportInstance {

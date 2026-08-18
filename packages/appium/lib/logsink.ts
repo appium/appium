@@ -185,7 +185,12 @@ export function parseWebhookUri(
     };
   }
   const [host, port] = webhook.split(':');
-  return {host, port: parseInt(port, 10), path: '/', ssl: false};
+  return {
+    host: host || DEFAULT_LEGACY_WEBHOOK_HOST,
+    port: parseInt(port, 10) || undefined,
+    path: '/',
+    ssl: false,
+  };
 }
 
 function createHttpTransport(args: ParsedArgs, logLvl: string): transports.HttpTransportInstance {

@@ -40,6 +40,24 @@ describe('parseWebhookUri', function () {
     });
   });
 
+  it('should fall back to the legacy host if only a port is given', function () {
+    assert.deepStrictEqual(parseWebhookUri(':9003'), {
+      host: '127.0.0.1',
+      port: 9003,
+      path: '/',
+      ssl: false,
+    });
+  });
+
+  it('should leave the port to the transport if it is not a number', function () {
+    assert.deepStrictEqual(parseWebhookUri('localhost:nope'), {
+      host: 'localhost',
+      port: undefined,
+      path: '/',
+      ssl: false,
+    });
+  });
+
   it('should fall back to the legacy defaults if there is nothing to parse', function () {
     assert.deepStrictEqual(parseWebhookUri('not-a-uri'), {
       host: '127.0.0.1',

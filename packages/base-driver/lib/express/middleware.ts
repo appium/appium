@@ -44,9 +44,11 @@ export function allowCrossDomain(req: Request, res: Response, next: NextFunction
 export function allowCrossDomainAsyncExecute(basePath: string): RequestHandler {
   function allowCrossDomainAsyncExecuteHandler(req: Request, res: Response, next: NextFunction): void {
     const receiveAsyncResponseRegExp = new RegExp(
-      `${util.escapeRegExp(basePath)}/session/[a-f0-9-]+/(appium/)?receive_async_response`,
+      `^${util.escapeRegExp(basePath)}/session/[a-f0-9-]+/(appium/)?receive_async_response/?$`,
     );
-    if (!receiveAsyncResponseRegExp.test(req.url)) {
+    // Match against req.path (query-stripped) so query-string data cannot be used
+    // to smuggle a match for an otherwise unrelated endpoint.
+    if (!receiveAsyncResponseRegExp.test(req.path)) {
       next();
       return;
     }
@@ -63,7 +65,7 @@ export function allowCrossDomainAsyncExecute(basePath: string): RequestHandler {
 export function handleLogContext(req: Request, _res: Response, next: NextFunction): void {
   const requestId = fetchHeaderValue(req, 'x-request-id') || util.uuidV4();
 
-  const sessionId = SESSION_ID_PATTERN.exec(req.url)?.[1];
+  const sessionId = SESSION_ID_PATTERN.exec(req.path)?.[1];
   const sessionInfo = sessionId ? {sessionId, sessionSignature: calcSignature(sessionId)} : {};
   const isSensitiveHeaderValue = fetchHeaderValue(req, 'x-appium-is-sensitive');
 

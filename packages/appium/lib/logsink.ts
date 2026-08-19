@@ -153,20 +153,23 @@ function createFileTransport(args: ParsedArgs, logLvl: string): transports.FileT
 /**
  * Parse a `--webhook` / `server.webhook` value into Winston Http transport options.
  *
- * The schema documents this option as a URI (e.g. `http://0.0.0.0/hook`), and such a
- * value has its host, port, path and ssl flag taken from `URL`. A bare `host:port`
- * keeps the meaning it had before, where log records are always posted to the root
- * path of a plain http listener.
+ * The schema documents it as a URI (e.g. `http://0.0.0.0/hook`). A bare `host:port`
+ * is still accepted and always posts to the root path over plain http.
  *
  * @internal
  */
 export function parseWebhookUri(
   webhook: string,
 ): Pick<transports.HttpTransportOptions, 'host' | 'port' | 'path' | 'ssl'> {
-  // `host:port` is parseable as well, but as a URI whose scheme is the host name,
-  // hence the protocol must be verified before the parsing result can be used
+  // `host:port` parses too, into a URI whose scheme is the host name and no host at all
   const url = URL.parse(webhook);
-  if (url && SUPPORTED_WEBHOOK_PROTOCOLS.includes(url.protocol)) {
+  if (url?.hostname) {
+    if (!SUPPORTED_WEBHOOK_PROTOCOLS.includes(url.protocol)) {
+      throw new Error(
+        `The logging webhook must be an http(s) URL, for example 'http://localhost:9003/logs'. ` +
+          `'${webhook}' is given instead`,
+      );
+    }
     const isSsl = url.protocol === HTTPS_PROTOCOL;
     const defaultPort = isSsl ? DEFAULT_HTTPS_WEBHOOK_PORT : DEFAULT_HTTP_WEBHOOK_PORT;
     return {
@@ -176,18 +179,10 @@ export function parseWebhookUri(
       ssl: isSsl,
     };
   }
-  if (!webhook.includes(':')) {
-    return {
-      host: DEFAULT_LEGACY_WEBHOOK_HOST,
-      port: DEFAULT_LEGACY_WEBHOOK_PORT,
-      path: '/',
-      ssl: false,
-    };
-  }
-  const [host, port] = webhook.split(':');
+  const [host, port] = webhook.includes(':') ? webhook.split(':') : ['', ''];
   return {
     host: host || DEFAULT_LEGACY_WEBHOOK_HOST,
-    port: parseInt(port, 10) || undefined,
+    port: parseInt(port, 10) || DEFAULT_LEGACY_WEBHOOK_PORT,
     path: '/',
     ssl: false,
   };

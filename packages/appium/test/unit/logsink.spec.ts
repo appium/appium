@@ -49,10 +49,10 @@ describe('parseWebhookUri', function () {
     });
   });
 
-  it('should leave the port to the transport if it is not a number', function () {
+  it('should fall back to the legacy port if it is not a number', function () {
     assert.deepStrictEqual(parseWebhookUri('localhost:nope'), {
       host: 'localhost',
-      port: undefined,
+      port: 9003,
       path: '/',
       ssl: false,
     });
@@ -65,5 +65,9 @@ describe('parseWebhookUri', function () {
       path: '/',
       ssl: false,
     });
+  });
+
+  it('should reject a parseable url with an unsupported protocol', function () {
+    assert.throws(() => parseWebhookUri('ftp://host/x'), /must be an http\(s\) URL/);
   });
 });

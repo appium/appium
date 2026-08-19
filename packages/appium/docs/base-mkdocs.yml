@@ -16,6 +16,8 @@ plugins:
   blog:
     enabled: true
     post_excerpt: required
+  mike:
+    canonical_version: 'latest'
   redirects:
     redirect_maps:
       'intro/requirements.md': 'quickstart/requirements.md'

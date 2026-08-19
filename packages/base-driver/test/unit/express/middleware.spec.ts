@@ -104,7 +104,11 @@ describe('middleware', function () {
     });
 
     it('should set CORS headers for a legitimate receive_async_response request', function () {
-      req = {method: 'GET', url: '/session/aaaaaaaa/receive_async_response', path: '/session/aaaaaaaa/receive_async_response'};
+      req = {
+        method: 'GET',
+        url: '/session/aaaaaaaa/receive_async_response',
+        path: '/session/aaaaaaaa/receive_async_response',
+      };
 
       allowCrossDomainAsyncExecute('')(req, res, next);
 

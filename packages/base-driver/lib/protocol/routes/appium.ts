@@ -8,6 +8,13 @@ export const APPIUM_ROUTES = {
   '/appium/sessions': {
     GET: {command: 'getAppiumSessions'},
   },
+  '/session/:sessionId/appium/context': {
+    GET: {command: 'getCurrentContext'},
+    POST: {command: 'setContext', payloadParams: {required: ['name']}},
+  },
+  '/session/:sessionId/appium/contexts': {
+    GET: {command: 'getContexts'},
+  },
   '/session/:sessionId/appium/capabilities': {
     GET: {command: 'getAppiumSessionCapabilities'},
   },

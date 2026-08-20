@@ -4,6 +4,17 @@ import type {Driver, MethodMap} from '@appium/types';
  * Appium: Device interaction (apps, keyboard, files, clock).
  */
 export const APPIUM_DEVICE_ROUTES = {
+  '/session/:sessionId/appium/device/rotation': {
+    GET: {command: 'getRotation'},
+    POST: {command: 'setRotation', payloadParams: {required: ['x', 'y', 'z']}},
+  },
+  '/session/:sessionId/appium/device/orientation': {
+    GET: {command: 'getOrientation'},
+    POST: {
+      command: 'setOrientation',
+      payloadParams: {required: ['orientation']},
+    },
+  },
   '/session/:sessionId/appium/device/system_time': {
     GET: {command: 'getDeviceTime'},
     POST: {command: 'getDeviceTime', payloadParams: {optional: ['format']}},

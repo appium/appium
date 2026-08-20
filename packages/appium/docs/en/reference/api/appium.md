@@ -106,6 +106,48 @@ Retrieves the [execute methods](../../guides/execute-methods.md) supported in th
 origin (driver-specific or plugin-specific). Refer to [the type definition file](https://github.com/appium/appium/blob/master/packages/types/lib/command.ts)
 for a detailed structure of this object.
 
+### getCurrentAppiumContext
+
+```
+GET /session/:sessionId/appium/context
+```
+
+Retrieves the active application context.
+
+#### Response
+
+`string` - the name of the active context
+
+### setAppiumContext
+
+```
+POST /session/:sessionId/appium/context
+```
+
+Sets an application context as the active context.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`name`|Name of the context to set as the active one|string|
+
+#### Response
+
+`null`
+
+### getAppiumContexts
+
+```
+GET /session/:sessionId/appium/contexts
+```
+
+Retrieves all available application contexts.
+
+#### Response
+
+`string[]` - the names of available contexts
+
 ### getLogEvents
 
 ```
@@ -392,3 +434,71 @@ Retrieves data from a directory on the device under test.
 #### Response
 
 `string` - the Base64-encoded zip file of the directory contents
+
+### getAppiumRotation
+
+```
+GET /session/:sessionId/appium/device/rotation
+```
+
+Retrieves the current spatial orientation of the device under test.
+
+#### Response
+
+`Rotation` - an object with the following properties:
+
+|Name|Description|Type|
+|--|--|--|
+|`x`|Degrees by which the device is rotated on its X axis|number|
+|`y`|Degrees by which the device is rotated on its Y axis|number|
+|`z`|Degrees by which the device is rotated on its Z axis|number|
+
+### setAppiumRotation
+
+```
+POST /session/:sessionId/appium/device/rotation
+```
+
+Sets the spatial orientation of the device under test.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`x`|Degrees by which the device is rotated on its X axis|number|
+|`y`|Degrees by which the device is rotated on its Y axis|number|
+|`z`|Degrees by which the device is rotated on its Z axis|number|
+
+#### Response
+
+`null`
+
+### getAppiumOrientation
+
+```
+GET /session/:sessionId/appium/device/orientation
+```
+
+Retrieves the current orientation of the device under test.
+
+#### Response
+
+`string` - either `PORTRAIT` or `LANDSCAPE`
+
+### setAppiumOrientation
+
+```
+POST /session/:sessionId/appium/device/orientation
+```
+
+Sets the orientation of the device under test.
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`orientation`|New device orientation. Supported values are `PORTRAIT` or `LANDSCAPE`.|string|
+
+#### Response
+
+`null`

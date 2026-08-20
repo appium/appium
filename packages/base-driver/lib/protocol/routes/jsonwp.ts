@@ -25,10 +25,11 @@ export const JSONWP_ROUTES = {
     },
   },
   '/session/:sessionId/orientation': {
-    GET: {command: 'getOrientation'},
+    GET: {command: 'getOrientation', deprecated: true},
     POST: {
       command: 'setOrientation',
       payloadParams: {required: ['orientation']},
+      deprecated: true,
     },
   },
   '/session/:sessionId/location': {
@@ -50,6 +51,6 @@ export const JSONWP_ROUTES = {
     },
   },
   '/session/:sessionId/element/:elementId': {
-    GET: {},
+    GET: {deprecated: true},
   },
 } as const satisfies MethodMap<Driver>;

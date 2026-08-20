@@ -6,15 +6,15 @@ import type {Driver, MethodMap} from '@appium/types';
  */
 export const MJSONWP_ROUTES = {
   '/session/:sessionId/rotation': {
-    GET: {command: 'getRotation'},
-    POST: {command: 'setRotation', payloadParams: {required: ['x', 'y', 'z']}},
+    GET: {command: 'getRotation', deprecated: true},
+    POST: {command: 'setRotation', payloadParams: {required: ['x', 'y', 'z']}, deprecated: true},
   },
   '/session/:sessionId/context': {
-    GET: {command: 'getCurrentContext'},
-    POST: {command: 'setContext', payloadParams: {required: ['name']}},
+    GET: {command: 'getCurrentContext', deprecated: true},
+    POST: {command: 'setContext', payloadParams: {required: ['name']}, deprecated: true},
   },
   '/session/:sessionId/contexts': {
-    GET: {command: 'getContexts'},
+    GET: {command: 'getContexts', deprecated: true},
   },
   '/session/:sessionId/network_connection': {
     GET: {command: 'getNetworkConnection', deprecated: true},

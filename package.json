@@ -119,7 +119,7 @@
     "teen_process": "4.2.1",
     "tsd": "0.33.0",
     "typescript": "6.0.3",
-    "webdriverio": "9.30.1",
+    "webdriverio": "9.31.1",
     "ws": "8.21.3"
   },
   "overrides": {

@@ -109,8 +109,12 @@ export class UniversalXMLPlugin extends BasePlugin {
     if (platformName.toLowerCase() === 'ios') {
       // with the XCUITest driver, the <AppiumAUT> wrapper element is present in the source but is
       // not present in the source considered by WDA, so our index path based xpath queries will
-      // not work with WDA as-is. We need to remove the first path segment.
-      newSelector = newSelector.replace(/^\/\*\[1\]/, '');
+      // not work with WDA as-is. We need to remove the first path segment. A query matching
+      // multiple nodes is a union of paths, so every branch needs the segment removed.
+      newSelector = newSelector
+        .split('|')
+        .map((branch) => branch.trim().replace(/^\/\*\[1\]/, ''))
+        .join(' | ');
     }
     this.log.info(`Selector was translated to: ${newSelector}`);
 

@@ -140,6 +140,10 @@ GET /session/:sessionId/orientation
 
 Retrieves the current orientation of the device under test.
 
+!!! warning "Deprecated"
+
+    Please use [`getAppiumOrientation`](./appium.md#getappiumorientation) instead
+
 #### Response
 
 `string` - either `PORTRAIT` or `LANDSCAPE`
@@ -153,6 +157,10 @@ POST /session/:sessionId/orientation
 > JSONWP documentation: [/session/:sessionId/orientation](https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidorientation)
 
 Sets the orientation of the device under test.
+
+!!! warning "Deprecated"
+
+    Please use [`setAppiumOrientation`](./appium.md#setappiumorientation) instead
 
 #### Parameters
 

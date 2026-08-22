@@ -82,7 +82,6 @@ export class UniversalXMLPlugin extends BasePlugin {
     strategy: string,
     selector: string,
   ): Promise<Element | Element[]> {
-    const platformName = getPlatformName(driver);
     if (
       strategy.toLowerCase() !== 'xpath' ||
       !driver.getCurrentContext ||
@@ -91,7 +90,7 @@ export class UniversalXMLPlugin extends BasePlugin {
       return (await next()) as Element | Element[];
     }
     const xml = await this.getPageSource(null, driver, null, true);
-    let newSelector = transformQuery(selector, xml, multiple);
+    const newSelector = transformQuery(selector, xml, multiple);
 
     // if the selector was not able to be transformed, that means no elements were found that
     // matched, so do the appropriate thing based on element vs elements
@@ -106,16 +105,6 @@ export class UniversalXMLPlugin extends BasePlugin {
       throw new errors.NoSuchElementError();
     }
 
-    if (platformName.toLowerCase() === 'ios') {
-      // with the XCUITest driver, the <AppiumAUT> wrapper element is present in the source but is
-      // not present in the source considered by WDA, so our index path based xpath queries will
-      // not work with WDA as-is. We need to remove the first path segment. A query matching
-      // multiple nodes is a union of paths, so every branch needs the segment removed.
-      newSelector = newSelector
-        .split('|')
-        .map((branch) => branch.trim().replace(/^\/\*\[1\]/, ''))
-        .join(' | ');
-    }
     this.log.info(`Selector was translated to: ${newSelector}`);
 
     // otherwise just run the transformed query!

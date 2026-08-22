@@ -19,14 +19,21 @@ describe('xpath functions', function () {
       });
       assert.equal(
         transformQuery('//TextInput', xml, false),
-        '/*[1]/*[1]/*[1]/*[1]/*[2]/*[1]/*[1]/*[1]/*[1]/*[1]/*[1]/*[2]/*[1]/*[1]/*[1]',
+        '/*[1]/*[1]/*[1]/*[2]/*[1]/*[1]/*[1]/*[1]/*[1]/*[1]/*[2]/*[1]/*[1]/*[1]',
       );
     });
     it('should transform a query into a multiple new queries if asked', async function () {
       const {xml} = await transformSourceXml(await readFixture(FIXTURES.XML_IOS), 'ios', {
         addIndexPath: true,
       });
-      assert.equal(transformQuery('//Window', xml, true)?.split('|').length, 2);
+      assert.equal(transformQuery('//Window', xml, true), '/*[1]/*[1] | /*[1]/*[2]');
+    });
+    it('should skip nodes that have no index path', async function () {
+      const {xml} = await transformSourceXml(await readFixture(FIXTURES.XML_IOS), 'ios', {
+        addIndexPath: true,
+      });
+      // the ios root node is not part of the hierarchy the driver queries, so it cannot be located
+      assert.equal(transformQuery('//UI', xml, false), null);
     });
     it('should return null for queries that dont find anything', async function () {
       const {xml} = await transformSourceXml(await readFixture(FIXTURES.XML_IOS), 'ios', {

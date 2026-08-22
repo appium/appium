@@ -28,22 +28,26 @@ export function transformQuery(query: string, xmlStr: string, multiple: boolean)
     return null;
   }
 
-  const newQueries = nodes.map((node) => {
-    const indexPath = getNodeAttrVal(node, 'indexPath');
-    // at this point indexPath will look like /0/0/1/1/0/1/0/2
-    const newQuery = indexPath
-      .substring(1) // remove leading / so we can split
-      .split('/') // split into indexes
-      .map((indexStr) => {
-        // map to xpath node indexes (1-based)
-        const xpathIndex = parseInt(indexStr, 10) + 1;
-        return `*[${xpathIndex}]`;
-      })
-      .join('/'); // reapply /
+  const newQueries = nodes
+    // the ios root node has no index path because the driver does not include it in the hierarchy
+    // it queries, so there is no locator we can build for it
+    .filter((node) => hasNodeAttr(node, 'indexPath'))
+    .map((node) => {
+      const indexPath = getNodeAttrVal(node, 'indexPath');
+      // at this point indexPath will look like /0/0/1/1/0/1/0/2
+      const newQuery = indexPath
+        .substring(1) // remove leading / so we can split
+        .split('/') // split into indexes
+        .map((indexStr) => {
+          // map to xpath node indexes (1-based)
+          const xpathIndex = parseInt(indexStr, 10) + 1;
+          return `*[${xpathIndex}]`;
+        })
+        .join('/'); // reapply /
 
-    // now to make this a valid xpath from the root, prepend the / we removed earlier
-    return `/${newQuery}`;
-  });
+      // now to make this a valid xpath from the root, prepend the / we removed earlier
+      return `/${newQuery}`;
+    });
 
   if (newQueries.length === 0) {
     return null;
@@ -65,4 +69,15 @@ export function getNodeAttrVal(node: any, attr: string): string {
     throw new Error(`Tried to retrieve a node attribute '${attr}' but the node didn't have it`);
   }
   return (attrObjs[0] as any).value;
+}
+
+/**
+ * Checks whether a node has a given attribute
+ *
+ * @param node - The XML node
+ * @param attr - The attribute name
+ * @returns True if the node has the attribute
+ */
+export function hasNodeAttr(node: any, attr: string): boolean {
+  return Object.values(node.attributes || {}).some((obj: any) => obj.name === attr);
 }

@@ -45,6 +45,19 @@ describe('UniversalXMLPlugin', function () {
       assert.equal((node as any).nodeName, 'XCUIElementTypeTextField');
     });
 
+    it('should return every match when an ios xpath query matches multiple nodes', async function () {
+      (driver as any).getCurrentContext = () => 'NATIVE_APP';
+      next = (driver as any).getPageSource = () => readFixture(FIXTURES.XML_IOS);
+      (driver as any).caps = {platformName: 'iOS'};
+      (driver as any).findElements = async (strategy: string, selector: string) =>
+        runQuery(selector, (await readFixture(FIXTURES.XML_IOS)).replace(/<\/?AppiumAUT>/g, ''));
+      const nodes = await p.findElements(next, driver as any, 'xpath', '//Window');
+      assert.equal(nodes.length, 2);
+      for (const node of nodes) {
+        assert.equal((node as any).nodeName, 'XCUIElementTypeWindow');
+      }
+    });
+
     it('should turn an xpath query into another query run on the original android source', async function () {
       (driver as any).getCurrentContext = () => 'NATIVE_APP';
       next = (driver as any).getPageSource = () => readFixture(FIXTURES.XML_ANDROID);

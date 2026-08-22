@@ -46,7 +46,7 @@
     "test:unit": "node --test --enable-source-maps --test-timeout=10000 \"./build/test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@xmldom/xmldom": "0.9.11",
+    "@xmldom/xmldom": "0.9.12",
     "asyncbox": "6.4.2",
     "xpath": "0.0.34"
   },

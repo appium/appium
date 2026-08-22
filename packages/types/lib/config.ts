@@ -12,9 +12,11 @@ export type AppiumConfig = Partial<AppiumConfiguration>;
  * Camel-cased server config. _Not_ flattened.
  */
 export type NormalizedServerConfig = {
-  [Prop in keyof ServerConfigMapping as AppiumServerJsonSchema[Prop] extends WithDest
-    ? AppiumServerJsonSchema[Prop]['appiumCliDest']
-    : KebabToCamel<Prop>]: ServerConfig[Prop];
+  [
+    Prop in keyof ServerConfigMapping as AppiumServerJsonSchema[Prop] extends WithDest
+      ? AppiumServerJsonSchema[Prop]['appiumCliDest']
+      : KebabToCamel<Prop>
+  ]: ServerConfig[Prop];
 };
 
 /**

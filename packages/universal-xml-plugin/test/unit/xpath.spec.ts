@@ -34,6 +34,16 @@ describe('xpath functions', function () {
       });
       // the ios root node is not part of the hierarchy the driver queries, so it cannot be located
       assert.equal(transformQuery('//UI', xml, false), null);
+      assert.equal(transformQuery('//UI', xml, true), null);
+    });
+    it('should keep the ios root out of a union query', async function () {
+      const {xml} = await transformSourceXml(await readFixture(FIXTURES.XML_IOS), 'ios', {
+        addIndexPath: true,
+      });
+      const branches = transformQuery('//*', xml, true)?.split(' | ') ?? [];
+      // the App node below the root is the first thing the driver can actually match
+      assert.equal(branches[0], '/*[1]');
+      assert.equal(branches.length, runQuery('//*', xml).length - 1);
     });
     it('should return null for queries that dont find anything', async function () {
       const {xml} = await transformSourceXml(await readFixture(FIXTURES.XML_IOS), 'ios', {

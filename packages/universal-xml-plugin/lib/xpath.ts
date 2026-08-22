@@ -1,3 +1,4 @@
+import type {Element} from '@xmldom/xmldom';
 import {DOMParser, MIME_TYPE} from '@xmldom/xmldom';
 import {select as xpathQuery} from 'xpath';
 
@@ -6,12 +7,14 @@ import {select as xpathQuery} from 'xpath';
  * @param query XPath query.
  * @param xmlStr XML source.
  */
-export function runQuery(query: string, xmlStr: string): any[] {
+export function runQuery(query: string, xmlStr: string): Element[] {
   const dom = new DOMParser().parseFromString(xmlStr, MIME_TYPE.XML_TEXT);
   // @ts-expect-error Missing Node properties are not needed.
   // https://github.com/xmldom/xmldom/issues/724
   const nodes = xpathQuery(query, dom);
-  return nodes as any[];
+  // the xpath typings describe lib.dom nodes rather than xmldom ones, so this is the one place
+  // where the two type worlds have to be bridged
+  return nodes as unknown as Element[];
 }
 
 /**
@@ -29,9 +32,9 @@ export function transformQuery(query: string, xmlStr: string, multiple: boolean)
   }
 
   const newQueries = nodes
-    // the ios root node has no index path because the driver does not include it in the hierarchy
-    // it queries, so there is no locator we can build for it
-    .filter((node) => hasNodeAttr(node, 'indexPath'))
+    // nodes with no indexPath cannot be located on the device, so skip them deliberately.
+    // the only such node is the ios AppiumAUT root (see transformSourceXml)
+    .filter((node) => node.hasAttribute('indexPath'))
     .map((node) => {
       const indexPath = getNodeAttrVal(node, 'indexPath');
       // at this point indexPath will look like /0/0/1/1/0/1/0/2
@@ -63,21 +66,10 @@ export function transformQuery(query: string, xmlStr: string, multiple: boolean)
  * @returns The attribute value
  * @throws {Error} If the attribute doesn't exist
  */
-export function getNodeAttrVal(node: any, attr: string): string {
-  const attrObjs = Object.values(node.attributes || {}).filter((obj: any) => obj.name === attr);
-  if (!attrObjs.length) {
+export function getNodeAttrVal(node: Element, attr: string): string {
+  const value = node.getAttribute(attr);
+  if (value === null) {
     throw new Error(`Tried to retrieve a node attribute '${attr}' but the node didn't have it`);
   }
-  return (attrObjs[0] as any).value;
-}
-
-/**
- * Checks whether a node has a given attribute
- *
- * @param node - The XML node
- * @param attr - The attribute name
- * @returns True if the node has the attribute
- */
-export function hasNodeAttr(node: any, attr: string): boolean {
-  return Object.values(node.attributes || {}).some((obj: any) => obj.name === attr);
+  return value;
 }

@@ -608,8 +608,7 @@ describe('FakeDriver via HTTP', function () {
     });
   });
 
-  // TODO: This test is skipped due to https://github.com/webdriverio/webdriverio/pull/15350
-  describe('Bidi protocol', {skip: Boolean(process.env.CI)}, function () {
+  describe('Bidi protocol', function () {
     const {setup, teardown} = createServer();
     before(async function () {
       await setup();
@@ -674,7 +673,7 @@ describe('FakeDriver via HTTP', function () {
         method: 'appium:fake.getFakeThing',
         params: {},
       } as any);
-      assert.ok(result);
+      assert.strictEqual(result, null);
       await driver.send({
         method: 'appium:fake.setFakeThing',
         params: {thing: 'this is from bidi'},
@@ -687,8 +686,7 @@ describe('FakeDriver via HTTP', function () {
     });
   });
 
-  // TODO: This test is skipped due to https://github.com/webdriverio/webdriverio/pull/15350
-  describe('Bidi protocol with base path', {skip: Boolean(process.env.CI)}, function () {
+  describe('Bidi protocol with base path', function () {
     const basePath = '/wd/hub';
     const {setup, teardown} = createServer();
     before(async function () {

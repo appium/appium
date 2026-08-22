@@ -2,10 +2,11 @@ name: Publish docs
 
 on:
   workflow_dispatch:
-  workflow_run:
-    workflows: ['Appium Server Release']
-    types:
-      - completed
+  push:
+    # Runs when any new Appium tag is pushed = there is a new release
+    # Does not trigger for tags with a slash, e.g. 1.0/beta
+    tags:        
+      - 'appium@*'
 
 jobs:
   build:

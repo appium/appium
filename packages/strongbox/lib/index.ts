@@ -327,10 +327,14 @@ export class Strongbox<Options extends StrongboxOpts = StrongboxOpts> implements
   protected checkOptions(opts: Options): Options {
     opts.suffix = slugify(opts.suffix);
     if (opts.container) {
-      opts.container = opts.container.split(path.sep).map(slugify).join(path.sep);
       if (!path.isAbsolute(opts.container)) {
         throw new TypeError(`container slug ${opts.container} must be an absolute path`);
       }
+      // the root has to be left alone, otherwise a windows drive letter loses its colon and the
+      // path stops being absolute
+      const {root} = path.parse(opts.container);
+      const segments = opts.container.slice(root.length).split(path.sep).filter(Boolean);
+      opts.container = path.join(root, ...segments.map(slugify));
     } else {
       opts.container = path.join(envPaths(this.id).data, opts.suffix);
     }

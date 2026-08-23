@@ -15,7 +15,11 @@ permissions:
 jobs:
   version:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master' && contains(fromJSON('["mykola-mokhnach", "jlipps", "eglitise", "KazuCocoa"]'), github.actor)
+    # keep this branch name in sync with env.BETA_BRANCH below - the `env` context isn't available
+    # to jobs.<job_id>.if (GitHub Actions resolves it before job-level env is set up)
+    if: (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/appium4') && contains(fromJSON('["mykola-mokhnach", "jlipps", "eglitise", "KazuCocoa"]'), github.actor)
+    env:
+      BETA_BRANCH: appium4
 
     steps:
       - name: Checkout repository
@@ -38,4 +42,9 @@ jobs:
       - name: Run Lerna version
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx lerna version --exact --yes
+        run: |
+          BETA_FLAGS=""
+          if [ "${{ github.ref_name }}" = "$BETA_BRANCH" ]; then
+            BETA_FLAGS="--conventional-prerelease --preid beta"
+          fi
+          npx lerna version --exact --yes $BETA_FLAGS

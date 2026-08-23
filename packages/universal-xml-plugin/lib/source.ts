@@ -34,9 +34,10 @@ export async function transformSourceXml(
   platform: string,
   {metadata = {} as TransformMetadata, addIndexPath = false}: TransformSourceXmlOptions = {},
 ): Promise<{xml: string; unknowns: NodesAndAttributes}> {
-  // first thing we want to do is modify the ios source root node, because it doesn't include the
-  // necessary index attribute, so we add it if it's not there
-  xmlStr = xmlStr.replace('<AppiumAUT>', '<AppiumAUT index="0">');
+  // the ios <AppiumAUT> root deliberately gets no index path: the XCUITest driver leaves that
+  // wrapper out of the hierarchy it runs queries against, so index paths have to be relative to
+  // the node below it. the android <hierarchy> root does carry an index attribute and is part of
+  // the queried hierarchy, so it keeps its index path
   const xmlObj = singletonXmlParser().parse(xmlStr);
   const unknowns = transformNode(xmlObj, platform, {
     metadata,

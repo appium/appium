@@ -1,5 +1,7 @@
 # @appium/eslint-config-appium-ts
 
+> **Deprecated:** This package is deprecated and will be removed from the Appium monorepo. Please migrate to [`@appium/oxc-config`](https://github.com/appium/appium/tree/master/packages/oxc-config).
+
 > Provides a reusable [ESLint](http://eslint.org/) [shared configuration](http://eslint.org/docs/developer-guide/shareable-configs) for [Appium](https://github.com/appium/appium) and Appium-adjacent projects.
 
 [![NPM version](https://img.shields.io/npm/v/@appium/eslint-config-appium-ts.svg)](https://npmjs.org/package/@appium/eslint-config-appium-ts)

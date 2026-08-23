@@ -330,10 +330,12 @@ export class Strongbox<Options extends StrongboxOpts = StrongboxOpts> implements
       if (!path.isAbsolute(opts.container)) {
         throw new TypeError(`container slug ${opts.container} must be an absolute path`);
       }
-      // the root has to be left alone, otherwise a windows drive letter loses its colon and the
-      // path stops being absolute
-      const {root} = path.parse(opts.container);
-      const segments = opts.container.slice(root.length).split(path.sep).filter(Boolean);
+      // slugify the folders only. the root is what makes the path absolute (a drive letter or UNC
+      // share on windows), and slugify would strip the colon. normalize first so mixed slashes
+      // still split into real segments.
+      const normalized = path.normalize(opts.container);
+      const {root} = path.parse(normalized);
+      const segments = normalized.slice(root.length).split(path.sep).filter(Boolean);
       opts.container = path.join(root, ...segments.map(slugify));
     } else {
       opts.container = path.join(envPaths(this.id).data, opts.suffix);

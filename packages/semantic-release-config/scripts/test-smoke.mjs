@@ -24,7 +24,7 @@ if (appConfig.branches?.[0] !== 'main') {
 const betaConfig = releaseConfig({betaBranch: 'next-major'});
 const expectedBetaBranches = ['master', {name: 'next-major', channel: 'beta', prerelease: 'beta'}];
 if (JSON.stringify(betaConfig.branches) !== JSON.stringify(expectedBetaBranches)) {
-  throw new Error('expected betaBranch to default branches to [\'master\', <beta branch entry>]');
+  throw new Error("expected betaBranch to default branches to ['master', <beta branch entry>]");
 }
 
 const betaWithBranchesConfig = releaseConfig({branches: ['main'], betaBranch: 'next-major', betaChannel: 'next'});

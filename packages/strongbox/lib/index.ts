@@ -327,10 +327,16 @@ export class Strongbox<Options extends StrongboxOpts = StrongboxOpts> implements
   protected checkOptions(opts: Options): Options {
     opts.suffix = slugify(opts.suffix);
     if (opts.container) {
-      opts.container = opts.container.split(path.sep).map(slugify).join(path.sep);
       if (!path.isAbsolute(opts.container)) {
         throw new TypeError(`container slug ${opts.container} must be an absolute path`);
       }
+      // slugify the folders only. the root is what makes the path absolute (a drive letter or UNC
+      // share on windows), and slugify would strip the colon. normalize first so mixed slashes
+      // still split into real segments.
+      const normalized = path.normalize(opts.container);
+      const {root} = path.parse(normalized);
+      const segments = normalized.slice(root.length).split(path.sep).filter(Boolean);
+      opts.container = path.join(root, ...segments.map(slugify));
     } else {
       opts.container = path.join(envPaths(this.id).data, opts.suffix);
     }

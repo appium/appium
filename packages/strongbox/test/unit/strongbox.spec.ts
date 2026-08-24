@@ -63,6 +63,23 @@ describe('Strongbox', function () {
           const container = path.resolve(path.sep, 'somewhere');
           assert.strictEqual(strongbox('test', {container}).container, container);
         });
+
+        it('should slugify the path segments but keep the path absolute', function () {
+          const container = path.resolve(path.sep, 'some dir', 'another one');
+          const {container: actual} = strongbox('test', {container});
+
+          assert.ok(path.isAbsolute(actual));
+          // the root is what makes the path absolute, so it must survive untouched
+          assert.strictEqual(path.parse(actual).root, path.parse(container).root);
+          assert.strictEqual(actual, path.join(path.parse(container).root, 'some-dir', 'another-one'));
+        });
+
+        it('should handle a path written with forward slashes', function () {
+          const {root} = path.parse(path.resolve(path.sep));
+          const {container} = strongbox('test', {container: `${root}some dir/another one`});
+
+          assert.strictEqual(container, path.join(root, 'some-dir', 'another-one'));
+        });
       });
 
       describe('when provided a relative container path', function () {

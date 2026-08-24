@@ -20,6 +20,7 @@
 
 import {readFile} from 'node:fs/promises';
 import path from 'node:path';
+import {pathToFileURL} from 'node:url';
 
 import {ConventionalChangelog} from 'conventional-changelog';
 import {loadPreset} from 'conventional-changelog-preset-loader';
@@ -102,29 +103,36 @@ function normalizePresetConfig(config) {
   return config;
 }
 
-const rootDir = path.resolve(import.meta.dirname, '..');
-const lernaConfig = JSON.parse(await readFile(path.join(rootDir, 'lerna.json'), 'utf8'));
-const preset = lernaConfig.changelogPreset ?? 'conventional-changelog-angular';
+async function main() {
+  const rootDir = path.resolve(import.meta.dirname, '..');
+  const lernaConfig = JSON.parse(await readFile(path.join(rootDir, 'lerna.json'), 'utf8'));
+  const preset = lernaConfig.changelogPreset ?? 'conventional-changelog-angular';
 
-const config = normalizePresetConfig(await loadPreset(preset));
-const generator = new ConventionalChangelog(rootDir);
-generator.config(config);
-generator.context({version: '0.0.0-verify'});
+  const config = normalizePresetConfig(await loadPreset(preset));
+  const generator = new ConventionalChangelog(rootDir);
+  generator.config(config);
+  generator.context({version: '0.0.0-verify'});
 
-try {
-  // draining the stream is enough to exercise commit parsing and template rendering
-  for await (const chunk of generator.writeStream()) {
-    void chunk;
+  try {
+    // draining the stream is enough to exercise commit parsing and template rendering
+    for await (const chunk of generator.writeStream()) {
+      void chunk;
+    }
+  } catch (err) {
+    console.error(`Changelog generation with preset "${preset}" (as configured in lerna.json) threw an error:\n`);
+    console.error(err);
+    console.error(
+      '\nThis usually means the installed versions of "lerna", its "conventional-changelog" ' +
+        'dependency, and the changelog preset package are incompatible with each other.',
+    );
+    process.exitCode = 1;
+    return;
   }
-} catch (err) {
-  console.error(`Changelog generation with preset "${preset}" (as configured in lerna.json) threw an error:\n`);
-  console.error(err);
-  console.error(
-    '\nThis usually means the installed versions of "lerna", its "conventional-changelog" ' +
-      'dependency, and the changelog preset package are incompatible with each other. ' +
-      'See https://github.com/appium/appium/actions/runs/32772306643/job/97575248174 for a past occurrence.',
-  );
-  process.exit(1);
+
+  console.log(`OK: changelog generation with preset "${preset}" completed without error.`);
 }
 
-console.log(`OK: changelog generation with preset "${preset}" completed without error.`);
+// Check if this module is being run directly
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main();
+}

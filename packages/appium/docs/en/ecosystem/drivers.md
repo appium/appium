@@ -130,7 +130,7 @@ appium driver install --source=npm appium-lg-webos-driver
 
 * Target: Linux desktop applications on X11 and Wayland
 * Mode: Native
-* Supported by: Community / `@Itsmeaj`
+* Supported by: `@Itsmeaj`
 
 ```sh title="Install This Driver"
 appium driver install --source=npm @itsmeaj/appium-linux-driver

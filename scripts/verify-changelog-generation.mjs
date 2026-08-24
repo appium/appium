@@ -1,22 +1,12 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
-// Regression guard for https://github.com/appium/appium/actions/runs/32772306643/job/97575248174
+// Regression guard: lerna, its conventional-changelog dependency, and the changelog preset
+// package can drift out of sync (e.g. a preset transform that mutates commits, fed to a writer
+// that freezes them) and only fail during an actual release. This replays lerna's own preset
+// resolution + legacy-config normalization (parserOpts/writerOpts -> parser/writer, replicated
+// below since lerna doesn't expose it publicly) and a real changelog write, failing if it throws.
 //
-// `lerna publish` generates each package's changelog via the `conventional-changelog` package and
-// the preset named in lerna.json's `changelogPreset`. Before handing a resolved preset's config to
-// `conventional-changelog`, lerna normalizes legacy preset shapes (parserOpts/writerOpts ->
-// parser/writer, Handlebars string templates -> render functions) via its own internal
-// normalizePresetConfig/normalizeLegacyWriterOptions helpers, replicated below since lerna doesn't
-// expose them publicly. That shim does not touch a preset's commit `transform` function though, so
-// if the resolved `conventional-changelog` version wraps commits in an immutable object (as of
-// conventional-changelog-writer@9), a preset whose transform still mutates commits directly will
-// throw - that's exactly what broke the run linked above. Nothing else in CI exercises this
-// lerna+conventional-changelog+preset integration, since it only runs during an actual release.
-// This script reproduces lerna's own preset resolution, normalization and changelog write, and
-// fails loudly if any of it throws.
-//
-// If lerna changes how it normalizes/consumes changelog presets, the helpers below may need to be
-// re-synced from lerna's source (search its bundle for "normalizePresetConfig").
+// If lerna changes its preset normalization, re-sync from its bundle ("normalizePresetConfig").
 
 import {readFile} from 'node:fs/promises';
 import path from 'node:path';

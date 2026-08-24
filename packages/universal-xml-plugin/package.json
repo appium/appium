@@ -1,6 +1,6 @@
 {
   "name": "@appium/universal-xml-plugin",
-  "version": "2.1.7",
+  "version": "3.0.0",
   "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8",
   "description": "Appium plugin for making XML source and XPath queries the same across iOS and Android",
   "keywords": [
@@ -48,7 +48,7 @@
     "test:unit": "node --test --enable-source-maps \"./build/test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/support": "7.2.6",
+    "@appium/support": "7.2.7",
     "@xmldom/xmldom": "0.9.12",
     "fast-xml-parser": "5.11.0",
     "xpath": "0.0.34"

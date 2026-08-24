@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.0](https://github.com/appium/appium/compare/@appium/strongbox@1.1.3...@appium/strongbox@2.0.0) (2026-08-24)
+
+### ⚠ BREAKING CHANGES
+
+* **strongbox:** @appium/strongbox is now an ESM-only package. It can no longer be loaded via CommonJS require(); consumers must use import or dynamic import(). No other package in this monorepo currently depends on @appium/strongbox, so this only affects external consumers.
+
+### Features
+
+* **strongbox:** Migrate package to ESM ([#22563](https://github.com/appium/appium/issues/22563)) ([c733c09](https://github.com/appium/appium/commit/c733c090f6688feadd81c9838a0fe58351be3045))
+
+### Bug Fixes
+
+* **strongbox:** custom container paths are always rejected on Windows ([#22665](https://github.com/appium/appium/issues/22665)) ([76ff5aa](https://github.com/appium/appium/commit/76ff5aa69a8f3c6661af47896d8239a1190ad36d))
+
+
 ## [1.1.3](https://github.com/appium/appium/compare/@appium/strongbox@1.1.2...@appium/strongbox@1.1.3) (2026-07-25)
 
 **Note:** Version bump only for package @appium/strongbox

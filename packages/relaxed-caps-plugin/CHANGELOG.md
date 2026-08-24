@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.0](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@2.2.5...@appium/relaxed-caps-plugin@3.0.0) (2026-08-24)
+
+### ⚠ BREAKING CHANGES
+
+* **relaxed-caps-plugin:** @appium/relaxed-caps-plugin is now an ESM-only package. It can no longer be loaded via CommonJS require(); consumers must use import or dynamic import(). Deep imports into the package&#x27;s internals are no longer possible — only the public entry point is exposed via exports.
+
+### Features
+
+* **relaxed-caps-plugin:** Migrate to ESM ([#22573](https://github.com/appium/appium/issues/22573)) ([e625408](https://github.com/appium/appium/commit/e625408f559b4354a0cae38f5a5238d66d2e22ce))
+
+
 ## [2.2.5](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@2.2.4...@appium/relaxed-caps-plugin@2.2.5) (2026-07-25)
 
 

@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.7.0](https://github.com/appium/appium/compare/appium@3.6.0...appium@3.7.0) (2026-08-24)
+
+### Features
+
+* **base-driver:** add httpServer.frontRouter for global extension middleware ([#22632](https://github.com/appium/appium/issues/22632)) ([f06226b](https://github.com/appium/appium/commit/f06226b7bb2fb7ee2f3a61833f4a1d7777d4ef21))
+* **storage-plugin:** Add route aliases ([#22558](https://github.com/appium/appium/issues/22558)) ([a551c38](https://github.com/appium/appium/commit/a551c3817156bbc7e06793227643a2d11c0c0259))
+
+### Bug Fixes
+
+* **appium:** load @appium/docutils dynamically in docs build script ([#22584](https://github.com/appium/appium/issues/22584)) ([2c0f3fd](https://github.com/appium/appium/commit/2c0f3fd9e319c3bc774bdd2a65148da11094c87c))
+* **appium:** parse --webhook as a URI instead of host:port ([#22635](https://github.com/appium/appium/issues/22635)) ([c35a12a](https://github.com/appium/appium/commit/c35a12a51d30fe311ef96ebe386cd9c5540e3927))
+* **support:** do not treat a sibling folder as a subpath of the root ([#22586](https://github.com/appium/appium/issues/22586)) ([3a80498](https://github.com/appium/appium/commit/3a8049887dc673a6658c3821a2882e0145c3aa86))
+
+
 ## [3.6.0](https://github.com/appium/appium/compare/appium@3.5.2...appium@3.6.0) (2026-07-25)
 
 

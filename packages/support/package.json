@@ -1,6 +1,6 @@
 {
   "name": "@appium/support",
-  "version": "7.2.6",
+  "version": "7.2.7",
   "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8",
   "description": "Support libs used across Appium packages",
   "keywords": [
@@ -44,8 +44,8 @@
     "test:unit": "node --test --enable-source-maps \"./build/test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/logger": "2.0.10",
-    "@appium/types": "1.6.0",
+    "@appium/logger": "2.0.11",
+    "@appium/types": "1.7.0",
     "archiver": "8.0.0",
     "asyncbox": "6.4.2",
     "axios": "1.19.0",
@@ -70,7 +70,7 @@
     "yauzl": "3.4.0"
   },
   "devDependencies": {
-    "@appium/tsconfig": "1.2.0"
+    "@appium/tsconfig": "1.2.1"
   },
   "optionalDependencies": {
     "sharp": "^0.x"

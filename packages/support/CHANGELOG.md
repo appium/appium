@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.2.7](https://github.com/appium/appium/compare/@appium/support@7.2.6...@appium/support@7.2.7) (2026-08-24)
+
+### Bug Fixes
+
+* **support:** do not treat a sibling folder as a subpath of the root ([#22586](https://github.com/appium/appium/issues/22586)) ([3a80498](https://github.com/appium/appium/commit/3a8049887dc673a6658c3821a2882e0145c3aa86))
+
+
 ## [7.2.6](https://github.com/appium/appium/compare/@appium/support@7.2.5...@appium/support@7.2.6) (2026-07-25)
 
 

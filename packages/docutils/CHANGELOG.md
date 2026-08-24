@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.0](https://github.com/appium/appium/compare/@appium/docutils@2.5.2...@appium/docutils@3.0.0) (2026-08-24)
+
+### ⚠ BREAKING CHANGES
+
+* **docutils:** @appium/docutils is now an ESM-only package. It can no longer be loaded via CommonJS require(); consumers must use import or dynamic import(). Deep imports into the package&#x27;s internals are no longer possible — only the public entry point is exposed via exports.
+
+### Features
+
+* **docutils:** Migrate to ESM ([#22585](https://github.com/appium/appium/issues/22585)) ([2ed7bb0](https://github.com/appium/appium/commit/2ed7bb04d87cae4d7d6cf28f8d1f226dfa6dd885))
+
+
 ## [2.5.2](https://github.com/appium/appium/compare/@appium/docutils@2.5.1...@appium/docutils@2.5.2) (2026-07-25)
 
 

@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.7.0](https://github.com/appium/appium/compare/@appium/types@1.6.0...@appium/types@1.7.0) (2026-08-24)
+
+### Features
+
+* **base-driver:** add httpServer.frontRouter for global extension middleware ([#22632](https://github.com/appium/appium/issues/22632)) ([f06226b](https://github.com/appium/appium/commit/f06226b7bb2fb7ee2f3a61833f4a1d7777d4ef21))
+
+
 ## [1.6.0](https://github.com/appium/appium/compare/@appium/types@1.5.1...@appium/types@1.6.0) (2026-07-25)
 
 

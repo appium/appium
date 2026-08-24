@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.0](https://github.com/appium/appium/compare/@appium/universal-xml-plugin@2.1.7...@appium/universal-xml-plugin@3.0.0) (2026-08-24)
+
+### ⚠ BREAKING CHANGES
+
+* **universal-xml-plugin:** @appium/universal-xml-plugin is now an ESM-only package. It can no longer be loaded via CommonJS require(); consumers must use import or dynamic import(). Appium&#x27;s own extension loader already loads plugins via dynamic import(), so appium plugin install/use universal-xml is unaffected. Deep imports into the package&#x27;s internals are no longer possible — only the public entry point is exposed via exports.
+
+### Features
+
+* **universal-xml-plugin:** Migrate package to ESM ([#22557](https://github.com/appium/appium/issues/22557)) ([5c87032](https://github.com/appium/appium/commit/5c870329a376a63ee49c8f884efd048f32b33d81))
+
+### Bug Fixes
+
+* **universal-xml-plugin:** iOS findElements drops matches after the first one ([#22644](https://github.com/appium/appium/issues/22644)) ([1f94571](https://github.com/appium/appium/commit/1f945716a02efdbce8872d7c8d073f07f8642454))
+
+
 ## [2.1.7](https://github.com/appium/appium/compare/@appium/universal-xml-plugin@2.1.6...@appium/universal-xml-plugin@2.1.7) (2026-07-25)
 
 

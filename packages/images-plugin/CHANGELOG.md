@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.0.0](https://github.com/appium/appium/compare/@appium/images-plugin@4.2.8...@appium/images-plugin@5.0.0) (2026-08-24)
+
+### ⚠ BREAKING CHANGES
+
+* **images-plugin:** @appium/images-plugin is now an ESM-only package. It can no longer be loaded via CommonJS require(); consumers must use import or dynamic import(). Deep imports into the package&#x27;s internals are no longer possible — only the public entry point is exposed via exports.
+
+### Features
+
+* **images-plugin:** Migrate to ESM ([#22574](https://github.com/appium/appium/issues/22574)) ([d2a981a](https://github.com/appium/appium/commit/d2a981a45f5d07d3eff0598065aa3e9a4ad90963))
+
+### Bug Fixes
+
+* **images-plugin:** avoid NaN coordinates when an action offset is unset ([#22568](https://github.com/appium/appium/issues/22568)) ([77d1598](https://github.com/appium/appium/commit/77d159838f72b6690ed68a8c4da6c55084fd87e0))
+* **images-plugin:** compare yScale with the same float precision as xScale ([#22634](https://github.com/appium/appium/issues/22634)) ([3345970](https://github.com/appium/appium/commit/33459705edc049dc5a175a1950e2a22d08c8ae4f))
+
+
 ## [4.2.8](https://github.com/appium/appium/compare/@appium/images-plugin@4.2.7...@appium/images-plugin@4.2.8) (2026-07-25)
 
 

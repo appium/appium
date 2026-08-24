@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.11](https://github.com/appium/appium/compare/@appium/logger@2.0.10...@appium/logger@2.0.11) (2026-08-24)
+
+### Bug Fixes
+
+* **logger:** mask secure values surrounded by non-word characters ([#22553](https://github.com/appium/appium/issues/22553)) ([8ac6bfc](https://github.com/appium/appium/commit/8ac6bfcc3b044a828bcc16539f83cf5771fe7911))
+
+
 ## [2.0.10](https://github.com/appium/appium/compare/@appium/logger@2.0.9...@appium/logger@2.0.10) (2026-07-25)
 
 **Note:** Version bump only for package @appium/logger

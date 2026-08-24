@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.0.0](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@6.0.7...@appium/execute-driver-plugin@7.0.0) (2026-08-24)
+
+### ⚠ BREAKING CHANGES
+
+* **execute-driver-plugin:** @appium/execute-driver-plugin is now an ESM-only package. It can no longer be loaded via CommonJS require(); consumers must use import or dynamic import(). Deep imports into the package&#x27;s internals are no longer possible — only the public entry point is exposed via exports. 
+* **execute-driver-plugin:** The forked child process (execute-child.js) now runs as ESM as well, since it inherits &quot;type&quot;: &quot;module&quot; from the package&#x27;s package.json.
+
+### Features
+
+* **execute-driver-plugin:** Migrate to ESM ([#22576](https://github.com/appium/appium/issues/22576)) ([d9e8b3b](https://github.com/appium/appium/commit/d9e8b3ba735e4e768bdfcfe120b1acad61bcf782))
+
+### Bug Fixes
+
+* **execute-driver-plugin:** fail fast if the script process dies ([#22607](https://github.com/appium/appium/issues/22607)) ([c9fca97](https://github.com/appium/appium/commit/c9fca97cae4191a32fc488623be0b3bf5905f42a))
+
+
 ## [6.0.7](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@6.0.6...@appium/execute-driver-plugin@6.0.7) (2026-07-25)
 
 

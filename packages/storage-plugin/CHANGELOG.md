@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.0](https://github.com/appium/appium/compare/@appium/storage-plugin@1.1.8...@appium/storage-plugin@2.0.0) (2026-08-24)
+
+### ⚠ BREAKING CHANGES
+
+* **storage-plugin:** @appium/storage-plugin is now an ESM-only package. It can no longer be loaded via CommonJS require(); consumers must use import or dynamic import(). Deep imports into the package&#x27;s internals are no longer possible — only the public entry point is exposed via exports.
+
+### Features
+
+* **storage-plugin:** Add route aliases ([#22558](https://github.com/appium/appium/issues/22558)) ([a551c38](https://github.com/appium/appium/commit/a551c3817156bbc7e06793227643a2d11c0c0259))
+* **storage-plugin:** Migrate to ESM ([#22590](https://github.com/appium/appium/issues/22590)) ([af8efc0](https://github.com/appium/appium/commit/af8efc0882b33e93d4188f4bd8f984da68ca5f2a))
+
+### Bug Fixes
+
+* **base-driver,storage-plugin:** redact sensitive payloads in debug logs ([#22549](https://github.com/appium/appium/issues/22549)) ([281e61c](https://github.com/appium/appium/commit/281e61c297f89e50a016051066cfcf808af9aaf2))
+
+
 ## [1.1.8](https://github.com/appium/appium/compare/@appium/storage-plugin@1.1.7...@appium/storage-plugin@1.1.8) (2026-07-25)
 
 

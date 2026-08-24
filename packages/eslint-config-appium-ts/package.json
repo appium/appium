@@ -53,6 +53,5 @@
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
     "npm": ">=10"
-  },
-  "deprecated": "This package is deprecated and will be removed from the Appium monorepo. Please migrate to @appium/oxc-config."
+  }
 }

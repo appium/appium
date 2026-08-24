@@ -126,7 +126,7 @@ appium driver install --source=npm appium-flutter-integration-driver
 appium driver install --source=npm appium-lg-webos-driver
 ```
 
-### [Linux](https://github.com/fantonglang/appium-linux-driver)
+### [Linux (@fantonglang)](https://github.com/fantonglang/appium-linux-driver)
 
 !!! warning
 
@@ -143,7 +143,7 @@ yarn install
 node ./
 ```
 
-### [Linux (AT-SPI2)](https://github.com/Itsmeaj/appium)
+### [Linux (@Itsmeaj)](https://github.com/Itsmeaj/appium)
 
 * Target: Linux desktop applications on X11 and Wayland
 * Mode: Native

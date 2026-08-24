@@ -197,3 +197,5 @@ jobs:
         run: npm run lint:ci
       - name: Format check
         run: npm run format:check
+      - name: Verify changelog generation
+        run: npm run verify:changelog-generation

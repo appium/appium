@@ -14,9 +14,11 @@ import {pathToFileURL} from 'node:url';
 
 import {ConventionalChangelog} from 'conventional-changelog';
 import {loadPreset} from 'conventional-changelog-preset-loader';
-import Handlebars from 'handlebars';
 
-function normalizeLegacyWriterOptions(writer) {
+// Ported from lerna, which hardcodes Handlebars for legacy string templates - not an assumption
+// this script adds on top. Not a devDependency of its own: lerna depends on it directly, so it's
+// always present alongside lerna itself; `main()` fails loudly if that ever stops being true.
+function normalizeLegacyWriterOptions(writer, Handlebars) {
   if (!writer || typeof writer !== 'object') {
     return writer;
   }
@@ -63,7 +65,7 @@ function normalizeLegacyWriterOptions(writer) {
   return normalized;
 }
 
-function normalizePresetConfig(config) {
+function normalizePresetConfig(config, Handlebars) {
   if (
     config &&
     (config.parser || config.writer || config.whatBump) &&
@@ -71,7 +73,7 @@ function normalizePresetConfig(config) {
     !config.writerOpts &&
     !config.conventionalChangelog
   ) {
-    return {...config, writer: normalizeLegacyWriterOptions(config.writer)};
+    return {...config, writer: normalizeLegacyWriterOptions(config.writer, Handlebars)};
   }
   if (
     config &&
@@ -85,7 +87,7 @@ function normalizePresetConfig(config) {
     const cc = config.conventionalChangelog || config;
     normalized.parser ||= cc.parserOpts || config.parserOpts;
     normalized.writer ||= cc.writerOpts || config.writerOpts;
-    normalized.writer = normalizeLegacyWriterOptions(normalized.writer);
+    normalized.writer = normalizeLegacyWriterOptions(normalized.writer, Handlebars);
     normalized.commits ||= cc.gitRawCommitsOpts || config.gitRawCommitsOpts;
     normalized.whatBump ||= config.recommendedBumpOpts?.whatBump || config.whatBump;
     return normalized;
@@ -94,11 +96,25 @@ function normalizePresetConfig(config) {
 }
 
 async function main() {
+  let Handlebars;
+  try {
+    ({default: Handlebars} = await import('handlebars'));
+  } catch (err) {
+    console.error(
+      'Could not resolve "handlebars". This script relies on it being installed alongside ' +
+        'lerna (which depends on it directly) rather than declaring its own dependency - if ' +
+        'lerna stopped depending on it, add "handlebars" back as a devDependency here.',
+    );
+    console.error(err);
+    process.exitCode = 1;
+    return;
+  }
+
   const rootDir = path.resolve(import.meta.dirname, '..');
   const lernaConfig = JSON.parse(await readFile(path.join(rootDir, 'lerna.json'), 'utf8'));
   const preset = lernaConfig.changelogPreset ?? 'conventional-changelog-angular';
 
-  const config = normalizePresetConfig(await loadPreset(preset));
+  const config = normalizePresetConfig(await loadPreset(preset), Handlebars);
   const generator = new ConventionalChangelog(rootDir);
   generator.config(config);
   generator.context({version: '0.0.0-verify'});

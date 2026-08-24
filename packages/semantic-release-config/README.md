@@ -53,12 +53,50 @@ export default releaseConfig({
 | Option | Type | Default | Effect |
 | --- | --- | --- | --- |
 | `flavor` | `'library' \| 'app'` | `'library'` | `'app'` switches to the `conventionalcommits` commit-analyzer preset, sets `npmPublish: false`, disables GitHub success/fail PR & issue comments, and defaults `@semantic-release/github`'s `assets` to `[]`. |
-| `branches` | `string[]` | _(omitted)_ | Sets the top-level `branches` option. Omit to fall back to semantic-release's own default branches. |
+| `branches` | `string[]` | _(omitted)_ | Sets the top-level `branches` option. Omit to fall back to `['master']` (or semantic-release's own defaults if `betaBranch` is also omitted). |
+| `betaBranch` | `string` | _(none)_ | Name of a long-lived next-major prerelease branch, e.g. `'next-major'`. Appended to `branches` as a prerelease branch entry — see "Next-major beta branches" below. |
+| `betaChannel` | `string` | `'beta'` | Prerelease identifier / npm dist-tag used for `betaBranch`. |
 | `extraGitAssets` | `string[]` | `[]` | Appended to `@semantic-release/git`'s `assets`. |
 | `removeGitAssets` | `string[]` | `[]` | Removed from `@semantic-release/git`'s `assets` (applied after `extraGitAssets`). |
 | `githubAssets` | `Array` | _(flavor default)_ | `@semantic-release/github`'s `assets` option — plain path strings or `{path, label}` objects. |
 | `commitAnalyzerReleaseRules` | `Array` | _(flavor default)_ | Full override of commit-analyzer's `releaseRules`. |
 | `releaseNotesTypeOverrides` | `Record<string, {hidden?: boolean, section?: string}>` | _(none)_ | Shallow-patched onto the default `presetConfig.types`, keyed by commit type, e.g. `{chore: {hidden: true}}`. |
+
+## Next-major beta branches
+
+Some appium-org repos develop a next major version on a long-lived branch (e.g. `next-major`) in
+parallel with normal releases off `master`. Pass `betaBranch` to have every commit on that branch —
+patch, minor, or breaking alike — publish as a `-beta.N` prerelease instead of a stable release:
+
+```js
+export default releaseConfig({
+  flavor: 'library',
+  betaBranch: 'next-major', // whatever your repo actually calls this branch
+});
+```
+
+This appends `{name: <betaBranch>, channel: 'beta', prerelease: 'beta'}` to `branches`, so releases
+from that branch publish to the `beta` npm dist-tag (`npm install my-pkg@beta`) as
+`X.0.0-beta.0`, `X.0.0-beta.1`, etc.
+
+**How the version stays anchored:** once a package's first release on that branch lands on a clean
+`X.0.0-beta.0` (i.e. minor and patch are both `0`), semantic-release's own prerelease logic
+guarantees every subsequent commit on that branch — no matter its conventional-commit type or
+whether it's a breaking change — only advances the `beta.N` counter; it never re-bumps the major
+version underneath the prerelease train. That first release is what has to land cleanly: if the
+earliest commits on the branch are only patch/minor-level, the first beta versions will reflect
+that lower bump and self-correct upward **exactly once**, the moment a genuinely breaking commit
+lands — expected behavior, not a bug. Once the major is settled, it holds until the branch is
+graduated to a stable release.
+
+**Don't rely on remembering to mark the first commit as breaking.** `semantic-release` has no CLI
+override to force a specific version — it's always driven by analyzing actual commits. So
+deliberately land a real breaking-change commit (`BREAKING CHANGE:` footer or `feat!:`) as part of
+the first PR merged after creating the beta branch, rather than depending on one showing up
+naturally. If that slips, manually publishing the very first prerelease by hand (bump
+`package.json` to `X.0.0-beta.0`, tag it, `npm publish --tag beta`) before handing off to
+automated `semantic-release` runs works just as well — either way, what matters is that the
+*first* release on the branch lands on a clean `X.0.0-beta.0`.
 
 ## Gotchas
 

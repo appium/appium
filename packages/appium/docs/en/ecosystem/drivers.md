@@ -133,7 +133,7 @@ appium driver install --source=npm appium-lg-webos-driver
 * Supported by: Community / `@Itsmeaj`
 
 ```sh title="Install This Driver"
-appium driver install --source=npm @stdspa/appium-linux-driver
+appium driver install --source=npm @itsmeaj/appium-linux-driver
 ```
 
 ### [NovaWindows](https://github.com/AutomateThePlanet/appium-novawindows-driver)

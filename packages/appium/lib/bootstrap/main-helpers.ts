@@ -11,11 +11,6 @@ import {console as supportConsole, util} from '@appium/support';
 import type {AppiumServer, Driver, MethodMap, UpdateServerCallback} from '@appium/types';
 import type {Args, CliCommandServer, ParsedArgs} from 'appium/types/index.js';
 import {WebSocketServer} from 'ws';
-// `@appium/types` (not converted to ESM in this change) resolves `ws`'s `Server` type
-// in CJS ("require") mode, which TS treats as a distinct type identity from this
-// file's ESM-resolved `ws` types; import it the same way to match `addWebSocketHandler`'s
-// parameter type.
-import type {Server as WSServer} from 'ws' with {'resolution-mode': 'require'};
 
 import type {AppiumDriver} from '../appium.js';
 import {BIDI_BASE_PATH, LONG_STACKTRACE_LIMIT} from '../constants.js';
@@ -206,8 +201,8 @@ export async function createAppiumServer(
   bidiServer.on('error', appiumDriver.onBidiServerError.bind(appiumDriver));
   const server = await baseServer(serverOpts);
   const bidiBasePath = `${normalizedBasePath}${BIDI_BASE_PATH}`;
-  await server.addWebSocketHandler(bidiBasePath, bidiServer as unknown as WSServer);
-  await server.addWebSocketHandler(`${bidiBasePath}/:sessionId`, bidiServer as unknown as WSServer);
+  await server.addWebSocketHandler(bidiBasePath, bidiServer);
+  await server.addWebSocketHandler(`${bidiBasePath}/:sessionId`, bidiServer);
   return server;
 }
 

@@ -1,6 +1,6 @@
-import type {DriverCaps, W3CDriverCaps} from '../capabilities';
-import type {Constraints} from '../constraints';
-import type {Element, StringRecord} from '../util';
+import type {DriverCaps, W3CDriverCaps} from '../capabilities.js';
+import type {Constraints} from '../constraints.js';
+import type {Element, StringRecord} from '../util.js';
 
 export interface IBidiCommands {
   bidiSubscribe(events: string[], contexts: string[]): Promise<void>;

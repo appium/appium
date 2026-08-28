@@ -3,11 +3,6 @@ import {after, before, describe, it} from 'node:test';
 
 import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
 import WebSocket, {WebSocketServer} from 'ws';
-// `@appium/types` (not converted to ESM in this change) resolves `ws`'s `Server` type
-// in CJS ("require") mode, which TS treats as a distinct type identity from this
-// file's ESM-resolved `ws` types; import it the same way to match `addWebSocketHandler`'s
-// parameter type.
-import type {Server as WSServer} from 'ws' with {'resolution-mode': 'require'};
 
 import {DEFAULT_WS_PATHNAME_PREFIX, routeConfiguringFunction, server} from '../../../lib/index.js';
 import {FakeDriver} from '../protocol/fake-driver.js';
@@ -45,7 +40,7 @@ describe('Websockets (e2e)', function () {
       });
       const endpoint = `${DEFAULT_WS_PATHNAME_PREFIX}/hello`;
       const timeout = 5000;
-      await baseServer.addWebSocketHandler(endpoint, wss as unknown as WSServer);
+      await baseServer.addWebSocketHandler(endpoint, wss);
       assert.strictEqual(Object.keys(await baseServer.getWebSocketHandlers()).length, 1);
       await new Promise<void>((resolve, reject) => {
         const client = new WebSocket(`ws://${TEST_HOST}:${port}${endpoint}`);

@@ -27,12 +27,13 @@
   "files": [
     "tsconfig*.json"
   ],
+  "type": "module",
   "main": "tsconfig.json",
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
-    "test:smoke": "node tsconfig.json && node tsconfig.plugin.json"
+    "test:smoke": "node -e \"require('./tsconfig.json'); require('./tsconfig.plugin.json')\""
   },
   "dependencies": {
     "@tsconfig/node20": "20.1.10",

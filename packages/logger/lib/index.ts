@@ -1,6 +1,6 @@
-export {markSensitive} from './log';
-export type * from './types';
+export {markSensitive} from './log.js';
+export type * from './types.js';
 
-import log from './log';
+import log from './log.js';
 export {log};
 export default log;

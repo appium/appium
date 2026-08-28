@@ -1,9 +1,5 @@
-import loggerPkg, {type Logger, markSensitive as _markSensitive} from '@appium/logger';
+import globalLog, {type Logger, markSensitive as _markSensitive} from '@appium/logger';
 import type {AppiumLogger, AppiumLoggerContext, AppiumLoggerLevel, AppiumLoggerPrefix} from '@appium/types';
-
-// `@appium/logger` is still CJS; under real ESM interop a default import binds to the
-// whole `module.exports`, so unwrap `.default` explicitly to get the actual logger.
-const globalLog: Logger = loggerPkg.default;
 
 export const LEVELS: readonly AppiumLoggerLevel[] = ['silly', 'verbose', 'debug', 'info', 'http', 'warn', 'error'];
 

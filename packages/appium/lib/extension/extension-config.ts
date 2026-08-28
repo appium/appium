@@ -1,4 +1,3 @@
-import {createRequire} from 'node:module';
 import path from 'node:path';
 import {pathToFileURL} from 'node:url';
 
@@ -21,6 +20,9 @@ import {capitalize, resolveFrom} from '../utils/index.js';
 import type {Manifest} from './manifest.js';
 
 const DEFAULT_ENTRY_POINT = 'index.js';
+// Counter for `APPIUM_RELOAD_EXTENSIONS` cache-busting; `Date.now()` alone can collide when two
+// reloads happen within the same millisecond, which would serve the stale cached module.
+let reloadCounter = 0;
 /**
  * "npm" install type
  * Used when extension was installed by npm package name
@@ -306,7 +308,15 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     const [reqPath, mainClass] = await this._resolveExtension(extName);
     log.debug(`Requiring ${this.extensionType} at ${reqPath}`);
     // https://github.com/nodejs/node/issues/31710
-    const importPath = system.isWindows() ? pathToFileURL(reqPath).href : reqPath;
+    let importPath = system.isWindows() ? pathToFileURL(reqPath).href : reqPath;
+    // note: this will only reload the entry point, same as the old require.cache-eviction
+    // approach — files the entry point itself imports are still served from their own cache
+    if (process.env.APPIUM_RELOAD_EXTENSIONS) {
+      // ESM has no public API to evict a module from its cache (unlike CJS's `require.cache`),
+      // so force a fresh copy by giving this import a unique specifier instead.
+      importPath += `?reload=${reloadCounter++}`;
+      log.debug(`Reloading ${this.extensionType} at ${reqPath}`);
+    }
     const mod = (await import(importPath)) as Record<string, ExtClass<ExtType>>;
     const MainClass = mod[mainClass];
     if (!MainClass) {
@@ -587,14 +597,6 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
         `Cannot find a valid ${this.extensionType} main entry point in '${packageJsonPath}'. ` +
           `Assumed entry point: '${entryPointFullPath}'`,
       );
-    }
-    // note: this will only reload the entry point
-    if (process.env.APPIUM_RELOAD_EXTENSIONS) {
-      const req = createRequire(import.meta.url);
-      if (req.cache[entryPointFullPath]) {
-        log.debug(`Removing ${entryPointFullPath} from require cache`);
-        delete req.cache[entryPointFullPath];
-      }
     }
     return [entryPointFullPath, mainClass];
   }

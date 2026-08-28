@@ -11,8 +11,8 @@ import {remote as wdio} from 'webdriverio';
 
 import {runExtensionCommand} from '../../lib/cli/extension.js';
 import {DRIVER_TYPE, PLUGIN_TYPE} from '../../lib/constants.js';
-import {loadExtensions} from '../../lib/extension/index.js';
 import {INSTALL_TYPE_LOCAL} from '../../lib/extension/extension-config.js';
+import {loadExtensions} from '../../lib/extension/index.js';
 import {main as appiumServer} from '../../lib/main.js';
 import {resetSchema} from '../../lib/schema/index.js';
 import {FAKE_DRIVER_DIR, FAKE_PLUGIN_DIR, getTestPort, TEST_HOST, W3C_PREFIXED_CAPS} from '../helpers.js';

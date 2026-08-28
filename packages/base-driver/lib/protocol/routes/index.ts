@@ -4,8 +4,8 @@ import {LRUCache} from 'lru-cache';
 import {match} from 'path-to-regexp';
 
 import {DEFAULT_BASE_PATH} from '../../constants.js';
-import {APPIUM_ROUTES} from './appium.js';
 import {APPIUM_DEVICE_ROUTES} from './appium-device.js';
+import {APPIUM_ROUTES} from './appium.js';
 import {EXTENSION_ROUTES} from './extensions/index.js';
 import {JSONWP_ROUTES} from './jsonwp.js';
 import {MJSONWP_ROUTES} from './mjsonwp.js';

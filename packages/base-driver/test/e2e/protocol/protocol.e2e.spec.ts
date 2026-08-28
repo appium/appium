@@ -8,8 +8,8 @@ import type {Application, Request, Response} from 'express';
 import {StatusCodes as HTTPStatusCodes} from 'http-status-codes';
 import {createSandbox} from 'sinon';
 
-import {errors, WebDriverProxy} from '../../../lib/index.js';
 import {MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY} from '../../../lib/constants.js';
+import {errors, WebDriverProxy} from '../../../lib/index.js';
 import {createServer} from '../../helpers.js';
 import {FakeDriver} from './fake-driver.js';
 import {createProxyServer} from './helpers.js';

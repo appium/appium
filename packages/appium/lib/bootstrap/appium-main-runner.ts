@@ -3,7 +3,13 @@ import net from 'node:net';
 import type {ServerOpts} from '@appium/base-driver';
 import {util} from '@appium/support';
 import type {AppiumServer} from '@appium/types';
-import type {Args, CliCommand, CliCommandServer, CliCommandSetupSubcommand, CliExtensionSubcommand} from 'appium/types/index.js';
+import type {
+  Args,
+  CliCommand,
+  CliCommandServer,
+  CliCommandSetupSubcommand,
+  CliExtensionSubcommand,
+} from 'appium/types/index.js';
 
 import {getActiveDrivers, getActivePlugins} from '../extension/index.js';
 import {log as logger} from '../logger.js';

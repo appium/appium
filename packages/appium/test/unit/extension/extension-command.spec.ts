@@ -12,7 +12,10 @@ import type {SinonSandbox, SinonStub} from 'sinon';
 import sinon from 'sinon';
 
 import {ExtensionCliCommand} from '../../../lib/cli/extension-command.js';
-import type {ExtensionConfig, injectAppiumSymlinks as injectAppiumSymlinksStatic} from '../../../lib/cli/extension-command.js';
+import type {
+  ExtensionConfig,
+  injectAppiumSymlinks as injectAppiumSymlinksStatic,
+} from '../../../lib/cli/extension-command.js';
 import {DriverConfig} from '../../../lib/extension/driver-config.js';
 import {Manifest} from '../../../lib/extension/manifest.js';
 import {appiumPackageRoot} from '../../../lib/utils/index.js';

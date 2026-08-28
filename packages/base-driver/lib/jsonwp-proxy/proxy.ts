@@ -10,7 +10,6 @@ import {match as pathToRegexMatch} from 'path-to-regexp';
 
 import {DEFAULT_BASE_PATH, MAX_LOG_BODY_LENGTH, PROTOCOLS} from '../constants.js';
 import {getSummaryByCode} from '../jsonwp-status/status.js';
-import {isSessionCommand, routeToCommandName} from '../protocol/index.js';
 import {
   errorFromMJSONWPStatusCode,
   errorFromW3CJsonCode,
@@ -19,6 +18,7 @@ import {
   isErrorType,
 } from '../protocol/errors.js';
 import {ensureW3cResponse, formatResponseValue} from '../protocol/helpers.js';
+import {isSessionCommand, routeToCommandName} from '../protocol/index.js';
 import {omit, pick} from '../utils.js';
 import {ProtocolConverter} from './protocol-converter.js';
 import {ProxyRequest} from './proxy-request.js';

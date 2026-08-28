@@ -1,4 +1,10 @@
-import {errorFromMJSONWPStatusCode, errorFromW3CJsonCode, errors, getResponseForW3CError, isErrorType} from './errors.js';
+import {
+  errorFromMJSONWPStatusCode,
+  errorFromW3CJsonCode,
+  errors,
+  getResponseForW3CError,
+  isErrorType,
+} from './errors.js';
 import {
   checkParams,
   CREATE_SESSION_COMMAND,

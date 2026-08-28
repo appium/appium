@@ -16,9 +16,6 @@ import type {BaseDriver} from '../driver.js';
  * @param prototype `BaseDriver.prototype`
  * @param mixin Mixin implementation
  */
-export function mixin<C extends Constraints, T extends Partial<BaseDriver<C>>>(
-  prototype: object,
-  mixin: T,
-): void {
+export function mixin<C extends Constraints, T extends Partial<BaseDriver<C>>>(prototype: object, mixin: T): void {
   Object.assign(prototype, mixin);
 }

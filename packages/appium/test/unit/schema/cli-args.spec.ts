@@ -5,8 +5,8 @@ import type {ExtensionType} from '@appium/types';
 import type {ArgumentOptions} from 'argparse';
 
 import {PLUGIN_TYPE} from '../../../lib/constants.js';
-import {finalizeSchema, registerSchema, resetSchema} from '../../../lib/schema/index.js';
 import {toParserArgs} from '../../../lib/schema/cli-args.js';
+import {finalizeSchema, registerSchema, resetSchema} from '../../../lib/schema/index.js';
 
 type ParserArgSpec = ArgumentOptions & {
   type?: (v: string) => unknown;

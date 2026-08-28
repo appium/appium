@@ -1,6 +1,10 @@
 import assert from 'node:assert/strict';
 import {describe, it, beforeEach} from 'node:test';
 
+// If `@appium/fake-driver` is still CJS, a default import binds to the whole `module.exports`
+// under real ESM interop, so unwrap `.default` when present; a genuine ESM default export
+// wouldn't have that extra layer.
+import fakeDriverSchemaPkg from '@appium/fake-driver/build/lib/fake-driver-schema.js';
 import {AppiumConfigJsonSchema} from '@appium/schema';
 
 import {DRIVER_TYPE, PLUGIN_TYPE} from '../../../lib/constants.js';
@@ -9,10 +13,6 @@ import type * as SchemaModule from '../../../lib/schema/schema.js';
 import defaultArgsFixture from '../../fixtures/default-args.js';
 import DRIVER_SCHEMA_FIXTURE from '../../fixtures/driver-schema.js';
 import flattenedSchemaFixture from '../../fixtures/flattened-schema.js';
-// If `@appium/fake-driver` is still CJS, a default import binds to the whole `module.exports`
-// under real ESM interop, so unwrap `.default` when present; a genuine ESM default export
-// wouldn't have that extra layer.
-import fakeDriverSchemaPkg from '@appium/fake-driver/build/lib/fake-driver-schema.js';
 
 const fakeDriverSchema = (
   'default' in fakeDriverSchemaPkg

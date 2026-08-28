@@ -10,8 +10,8 @@ import type {
 } from 'appium/types/index.js';
 
 import {AppiumDriver, type AppiumDriverConstraints} from '../appium.js';
-import {runExtensionCommand} from '../cli/extension.js';
 import {injectAppiumSymlinks} from '../cli/extension-command.js';
+import {runExtensionCommand} from '../cli/extension.js';
 import {ArgParser, getParser} from '../cli/parser.js';
 import {runSetupCommand} from '../cli/setup-command.js';
 import {SERVER_SUBCOMMAND} from '../constants.js';

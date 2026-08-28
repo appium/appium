@@ -28,7 +28,9 @@ describe('node utilities', function () {
 
   describe('getModuleRootSync', function () {
     it("should be able to find current module's root", function () {
-      assert.ok(path.resolve(import.meta.dirname).includes(node.getModuleRootSync('@appium/support', import.meta.filename)!));
+      assert.ok(
+        path.resolve(import.meta.dirname).includes(node.getModuleRootSync('@appium/support', import.meta.filename)!),
+      );
     });
 
     it('should return null if no root is found', function () {

@@ -24,7 +24,6 @@
     "url": "https://github.com/appium/appium.git",
     "directory": "packages/fake-driver"
   },
-  "type": "module",
   "directories": {
     "lib": "lib"
   },
@@ -33,6 +32,7 @@
     "build/lib",
     "tsconfig.json"
   ],
+  "type": "module",
   "main": "./build/lib/index.js",
   "types": "./build/lib/index.d.ts",
   "publishConfig": {

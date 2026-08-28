@@ -39,7 +39,12 @@ import * as bidiCommands from './bidi-commands.js';
 import {BIDI_BASE_PATH, DRIVER_TYPE, SESSION_DISCOVERY_FEATURE} from './constants.js';
 import type {DriverConfig} from './extension/driver-config.js';
 import {APPIUM_VER, getBuildInfo, updateBuildInfo} from './helpers/build.js';
-import {makeNonW3cCapsError, parseCapsForInnerDriver, type ParsedDriverCaps, pullSettings} from './helpers/capability.js';
+import {
+  makeNonW3cCapsError,
+  parseCapsForInnerDriver,
+  type ParsedDriverCaps,
+  pullSettings,
+} from './helpers/capability.js';
 import * as insecureFeatures from './insecure-features.js';
 import * as inspectorCommands from './inspector-commands.js';
 import {getDefaultsForExtension} from './schema/index.js';

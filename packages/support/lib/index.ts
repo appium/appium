@@ -74,5 +74,11 @@ export type {
 } from './net.js';
 export type {ExecOpts, InstallPackageOpts, NpmInstallReceipt} from './npm.js';
 export type {Affixes, OpenedAffixes} from './tempdir.js';
-export type {EncodingOptions, LockFileOptions, NonEmptyString, PluralizeOptions, TruncateStringOptions} from './util.js';
+export type {
+  EncodingOptions,
+  LockFileOptions,
+  NonEmptyString,
+  PluralizeOptions,
+  TruncateStringOptions,
+} from './util.js';
 export type {ExtractAllOptions, ZipCompressionOptions, ZipEntry, ZipOptions, ZipSourceOptions} from './zip.js';

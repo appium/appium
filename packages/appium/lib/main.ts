@@ -6,7 +6,13 @@ import './logsink.js'; // must run first: global npmlog / log sink setup (see lo
 import './logger.js'; // load Appium logger immediately after logsink (order matters for log wiring)
 import {env} from '@appium/support';
 import type {AppiumServer} from '@appium/types';
-import type {Args, CliCommand, CliCommandServer, CliCommandSetupSubcommand, CliExtensionSubcommand} from 'appium/types/index.js';
+import type {
+  Args,
+  CliCommand,
+  CliCommandServer,
+  CliCommandSetupSubcommand,
+  CliExtensionSubcommand,
+} from 'appium/types/index.js';
 
 import {AppiumInitializer} from './bootstrap/appium-initializer.js';
 import {AppiumMainRunner} from './bootstrap/appium-main-runner.js';

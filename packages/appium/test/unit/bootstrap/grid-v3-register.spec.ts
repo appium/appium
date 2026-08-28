@@ -81,19 +81,13 @@ describe('bootstrap/grid-v3-register', function () {
 
       it('should read the config file', async function () {
         await registerNode('/path/to/config-file.json', binding.addr, binding.port, binding.basePath);
-        assert.strictEqual(
-          readFileStub.calledOnceWith('/path/to/config-file.json', 'utf-8'),
-          true,
-        );
+        assert.strictEqual(readFileStub.calledOnceWith('/path/to/config-file.json', 'utf-8'), true);
       });
 
       it('should parse the config file as JSON', async function () {
         const parseSpy = sandbox.spy(JSON, 'parse');
         await registerNode('/path/to/config-file.json', binding.addr, binding.port, binding.basePath);
-        assert.strictEqual(
-          parseSpy.calledOnceWith(await readFileStub.firstCall.returnValue),
-          true,
-        );
+        assert.strictEqual(parseSpy.calledOnceWith(await readFileStub.firstCall.returnValue), true);
       });
 
       describe('when the config file is invalid', function () {

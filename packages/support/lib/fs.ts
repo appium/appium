@@ -26,7 +26,12 @@ import type {Walker} from 'klaw';
 import sanitize from 'sanitize-filename';
 import which from 'which';
 
-import {type NormalizedPackageJson, type NormalizeOptions, packageDirectorySync, readPackageSync} from './internal/index.js';
+import {
+  type NormalizedPackageJson,
+  type NormalizeOptions,
+  packageDirectorySync,
+  readPackageSync,
+} from './internal/index.js';
 import log from './logger.js';
 import {isWindows} from './system.js';
 import {Timer} from './timing.js';

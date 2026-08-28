@@ -209,8 +209,11 @@ export function resetMockDefaults(mocks: InitMocksResult): void {
  * rather than as a static top-level import.
  */
 export function applyExtensionMocks(mocks: InitMocksResult): void {
+  // `default` is destructured out: on Node 22, passing a `default` key through
+  // `namedExports` makes `mock.module()` generate invalid synthetic module source.
+  const {default: _unusedDefault, ...supportWithoutDefault} = support;
   mock.module('@appium/support', {
-    namedExports: {...support, ...mocks.MockAppiumSupport},
+    namedExports: {...supportWithoutDefault, ...mocks.MockAppiumSupport},
   });
   mock.module('../../../lib/utils/index.js', {
     namedExports: {

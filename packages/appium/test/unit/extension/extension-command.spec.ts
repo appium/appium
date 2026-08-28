@@ -105,8 +105,11 @@ describe('ExtensionCommand', function () {
     // must be re-imported with a cache-busting query to pick up the mock.
     before(function () {
       isWindowsStub = sinon.stub();
+      // `default` is destructured out: on Node 22, passing a `default` key through
+      // `namedExports` makes `mock.module()` generate invalid synthetic module source.
+      const {default: _unusedDefault, ...supportWithoutDefault} = support;
       mock.module('@appium/support', {
-        namedExports: {...support, system: {...support.system, isWindows: isWindowsStub}},
+        namedExports: {...supportWithoutDefault, system: {...support.system, isWindows: isWindowsStub}},
       });
     });
 

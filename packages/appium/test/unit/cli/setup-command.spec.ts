@@ -17,7 +17,10 @@ describe('SetupCommand', function () {
   before(async function () {
     sandbox = createSandbox();
     mockSystem = {isMac: sandbox.stub(), isWindows: sandbox.stub()};
-    mock.module('@appium/support', {namedExports: {...support, system: mockSystem}});
+    // `default` is destructured out: on Node 22, passing a `default` key through
+    // `namedExports` makes `mock.module()` generate invalid synthetic module source.
+    const {default: _unusedDefault, ...supportWithoutDefault} = support;
+    mock.module('@appium/support', {namedExports: {...supportWithoutDefault, system: mockSystem}});
     ({getPresetDrivers} = await import('../../../lib/cli/setup-command.js'));
   });
 

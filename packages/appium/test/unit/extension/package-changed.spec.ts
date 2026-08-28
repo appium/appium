@@ -27,8 +27,11 @@ describe('package-changed', function () {
     mocks = initMocks();
     MockPackageChanged = mocks.MockPackageChanged;
     MockAppiumSupport = mocks.MockAppiumSupport;
+    // `default` is destructured out: on Node 22, passing a `default` key through
+    // `namedExports` makes `mock.module()` generate invalid synthetic module source.
+    const {default: _unusedDefault, ...supportWithoutDefault} = support;
     mock.module('@appium/support', {
-      namedExports: {...support, ...MockAppiumSupport},
+      namedExports: {...supportWithoutDefault, ...MockAppiumSupport},
     });
     mock.module('../../../lib/utils/is-package-changed.js', {
       namedExports: {...isPackageChangedModule, isPackageChanged: MockPackageChanged.isPackageChanged},

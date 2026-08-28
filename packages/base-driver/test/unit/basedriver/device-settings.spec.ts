@@ -75,8 +75,18 @@ describe('DeviceSettings', function () {
           // (frozen), so sinon can't stub `node.getObjectSize` on it directly. Mock
           // the whole `@appium/support` module instead and re-import device-settings.js
           // fresh so it re-links against the mock.
+          //
+          // `default` is destructured out of the spread: on Node 22, passing a `default`
+          // key through `namedExports` (rather than the dedicated `defaultExport` option)
+          // makes `mock.module()` generate invalid synthetic module source
+          // (`SyntaxError: Unexpected token 'default'`); nothing here needs the default
+          // export anyway.
+          const {default: _unusedDefault, ...supportWithoutDefault} = support;
           (t as TestContext).mock.module('@appium/support', {
-            namedExports: {...support, node: {...support.node, getObjectSize: () => MAX_SETTINGS_SIZE + 1}},
+            namedExports: {
+              ...supportWithoutDefault,
+              node: {...support.node, getObjectSize: () => MAX_SETTINGS_SIZE + 1},
+            },
           });
           const {DeviceSettings: MockedDeviceSettings} = await import(
             `../../../lib/basedriver/device-settings.js?t=${importCounter++}`

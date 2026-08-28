@@ -1,12 +1,20 @@
 import type {HTTPHeaders} from '@appium/types';
 import axios, {type AxiosBasicCredentials, type Method, type RawAxiosRequestConfig} from 'axios';
 import FormData from 'form-data';
-import Ftp from 'jsftp';
+import FtpImport from 'jsftp';
 
-import {fs} from './fs';
-import log from './logger';
-import {Timer} from './timing';
-import {isPlainObject, toReadableSizeString} from './util';
+import {fs} from './fs.js';
+import log from './logger.js';
+import {Timer} from './timing.js';
+import {isPlainObject, toReadableSizeString} from './util.js';
+
+// `jsftp`'s CJS `module.exports = Ftp` assigns the class directly, so the
+// default import binding IS the class at runtime; its `@types` package
+// declares this as a modern `export default class`, which nodenext types
+// conservatively as the whole module namespace, hence the cast.
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+type FtpCtor = (typeof import('jsftp'))['default'];
+const Ftp = FtpImport as unknown as FtpCtor;
 
 const DEFAULT_TIMEOUT_MS = 4 * 60 * 1000;
 

@@ -3,13 +3,24 @@ import path from 'node:path';
 import {AppiumConfigJsonSchema} from '@appium/schema';
 import {util} from '@appium/support';
 import type {ExtensionType} from '@appium/types';
-import Ajv, {type ErrorObject, type SchemaObject, type ValidateFunction} from 'ajv';
-import addFormats from 'ajv-formats';
+import AjvImport, {type ErrorObject, type SchemaObject, type ValidateFunction} from 'ajv';
+import addFormatsImport from 'ajv-formats';
 
-import {DRIVER_TYPE, PLUGIN_TYPE} from '../constants';
-import {bindAll, kebabCase, omitKeys, setPath} from '../utils';
-import {APPIUM_CONFIG_SCHEMA_ID, ArgSpec, SERVER_PROP_NAME} from './arg-spec';
-import {keywords} from './keywords';
+import {DRIVER_TYPE, PLUGIN_TYPE} from '../constants.js';
+import {bindAll, kebabCase, omitKeys, setPath} from '../utils/index.js';
+import {APPIUM_CONFIG_SCHEMA_ID, ArgSpec, SERVER_PROP_NAME} from './arg-spec.js';
+import {keywords} from './keywords.js';
+
+// `ajv` and `ajv-formats` are plain CJS with no ESM-specific typings; nodenext types
+// their default imports as the whole module namespace rather than the actual default
+// export, so re-derive the real types via indexed access and cast the values to match.
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+type AjvCtor = (typeof import('ajv'))['default'];
+type AjvInstance = InstanceType<AjvCtor>;
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+type AddFormatsFn = (typeof import('ajv-formats'))['default'];
+const Ajv = AjvImport as unknown as AjvCtor;
+const addFormats = addFormatsImport as unknown as AddFormatsFn;
 
 type StrictSchemaObject = SchemaObject & {additionalProperties: false};
 type FlattenedSchema = {schema: SchemaObject; argSpec: ArgSpec}[];
@@ -53,7 +64,7 @@ class AppiumSchema {
     [DRIVER_TYPE]: new Map(),
     [PLUGIN_TYPE]: new Map(),
   };
-  #ajv: Ajv;
+  #ajv: AjvInstance;
   #finalizedSchemas: Record<string, StrictSchemaObject> | null = null;
 
   private constructor() {
@@ -103,7 +114,7 @@ class AppiumSchema {
   /**
    * Configures and creates an Ajv instance.
    */
-  private static _instantiateAjv(): Ajv {
+  private static _instantiateAjv(): AjvInstance {
     const ajv = addFormats(
       new Ajv({
         // without this not much validation actually happens

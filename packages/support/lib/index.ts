@@ -1,22 +1,22 @@
-import * as console from './console';
-import * as doctor from './doctor';
-import * as env from './env';
-import {fs} from './fs';
-import * as imageUtil from './image-util';
-import * as logger from './logging';
-import * as mjpeg from './mjpeg';
-import {mkdirp} from './mkdirp';
-import * as net from './net';
-import * as node from './node';
-import * as plist from './plist';
-import * as process from './process';
-import * as system from './system';
-import * as tempDir from './tempdir';
-import * as timing from './timing';
-import * as util from './util';
-import * as zip from './zip';
+import * as console from './console.js';
+import * as doctor from './doctor.js';
+import * as env from './env.js';
+import {fs} from './fs.js';
+import * as imageUtil from './image-util.js';
+import * as logger from './logging.js';
+import * as mjpeg from './mjpeg.js';
+import {mkdirp} from './mkdirp.js';
+import * as net from './net.js';
+import * as node from './node.js';
+import * as plist from './plist.js';
+import * as process from './process.js';
+import * as system from './system.js';
+import * as tempDir from './tempdir.js';
+import * as timing from './timing.js';
+import * as util from './util.js';
+import * as zip from './zip.js';
 
-export {npm} from './npm';
+export {npm} from './npm.js';
 
 const {cancellableDelay} = util;
 
@@ -61,9 +61,9 @@ export default {
   doctor,
 };
 
-export type {ConsoleOpts} from './console';
-export type {TextStyle} from './console';
-export type {CopyFileOptions, ReadFn, WalkDirCallback} from './fs';
+export type {ConsoleOpts} from './console.js';
+export type {TextStyle} from './console.js';
+export type {CopyFileOptions, ReadFn, WalkDirCallback} from './fs.js';
 export type {
   AuthCredentials,
   DownloadOptions,
@@ -71,8 +71,8 @@ export type {
   HttpUploadOptions,
   NetOptions,
   NotHttpUploadOptions,
-} from './net';
-export type {ExecOpts, InstallPackageOpts, NpmInstallReceipt} from './npm';
-export type {Affixes, OpenedAffixes} from './tempdir';
-export type {EncodingOptions, LockFileOptions, NonEmptyString, PluralizeOptions, TruncateStringOptions} from './util';
-export type {ExtractAllOptions, ZipCompressionOptions, ZipEntry, ZipOptions, ZipSourceOptions} from './zip';
+} from './net.js';
+export type {ExecOpts, InstallPackageOpts, NpmInstallReceipt} from './npm.js';
+export type {Affixes, OpenedAffixes} from './tempdir.js';
+export type {EncodingOptions, LockFileOptions, NonEmptyString, PluralizeOptions, TruncateStringOptions} from './util.js';
+export type {ExtractAllOptions, ZipCompressionOptions, ZipEntry, ZipOptions, ZipSourceOptions} from './zip.js';

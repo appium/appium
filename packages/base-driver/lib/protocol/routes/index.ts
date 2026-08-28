@@ -3,13 +3,13 @@ import type {Driver, DriverMethodDef, HTTPMethod, MethodMap} from '@appium/types
 import {LRUCache} from 'lru-cache';
 import {match} from 'path-to-regexp';
 
-import {DEFAULT_BASE_PATH} from '../../constants';
-import {APPIUM_ROUTES} from './appium';
-import {APPIUM_DEVICE_ROUTES} from './appium-device';
-import {EXTENSION_ROUTES} from './extensions';
-import {JSONWP_ROUTES} from './jsonwp';
-import {MJSONWP_ROUTES} from './mjsonwp';
-import {W3C_ROUTES} from './w3c';
+import {DEFAULT_BASE_PATH} from '../../constants.js';
+import {APPIUM_ROUTES} from './appium.js';
+import {APPIUM_DEVICE_ROUTES} from './appium-device.js';
+import {EXTENSION_ROUTES} from './extensions/index.js';
+import {JSONWP_ROUTES} from './jsonwp.js';
+import {MJSONWP_ROUTES} from './mjsonwp.js';
+import {W3C_ROUTES} from './w3c.js';
 
 const COMMAND_NAMES_CACHE = new LRUCache<string, string>({
   max: 1024,

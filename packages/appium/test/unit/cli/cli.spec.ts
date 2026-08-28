@@ -4,9 +4,9 @@ import {describe, it, beforeEach, afterEach} from 'node:test';
 import {fs, npm, tempDir} from '@appium/support';
 import {createSandbox} from 'sinon';
 
-import DriverCommand from '../../../lib/cli/driver-command';
-import {loadExtensions} from '../../../lib/extension';
-import {Manifest} from '../../../lib/extension/manifest';
+import DriverCommand from '../../../lib/cli/driver-command.js';
+import {loadExtensions} from '../../../lib/extension/index.js';
+import {Manifest} from '../../../lib/extension/manifest.js';
 
 describe('DriverCommand', function () {
   let appiumHome: string;

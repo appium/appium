@@ -3,9 +3,9 @@ import {type Readable, Writable, type WritableOptions} from 'node:stream';
 import axios from 'axios';
 import B from 'bluebird';
 
-import {requireSharp} from './image-util';
-import log from './logger';
-import {requirePackage} from './node';
+import {requireSharp} from './image-util.js';
+import log from './logger.js';
+import {requirePackage} from './node.js';
 
 /** Constructor for mjpeg-consumer (lazy-loaded) */
 type MJpegConsumerConstructor = new () => NodeJS.ReadWriteStream;

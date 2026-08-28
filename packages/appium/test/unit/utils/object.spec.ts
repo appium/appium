@@ -17,7 +17,7 @@ import {
   pull,
   setPath,
   zip,
-} from '../../../lib/utils/object';
+} from '../../../lib/utils/object.js';
 
 describe('utils/object', function () {
   describe('kebabCase()', function () {

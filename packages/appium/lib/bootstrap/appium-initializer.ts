@@ -7,31 +7,31 @@ import type {
   CliCommandSetupSubcommand,
   CliExtensionSubcommand,
   ParsedArgs,
-} from 'appium/types';
+} from 'appium/types/index.js';
 
-import {AppiumDriver, type AppiumDriverConstraints} from '../appium';
-import {runExtensionCommand} from '../cli/extension';
-import {injectAppiumSymlinks} from '../cli/extension-command';
-import {ArgParser, getParser} from '../cli/parser';
-import {runSetupCommand} from '../cli/setup-command';
-import {SERVER_SUBCOMMAND} from '../constants';
-import {type ExtensionConfigs, loadExtensions} from '../extension';
-import {log as logger} from '../logger';
-import {init as logsinkInit} from '../logsink';
+import {AppiumDriver, type AppiumDriverConstraints} from '../appium.js';
+import {runExtensionCommand} from '../cli/extension.js';
+import {injectAppiumSymlinks} from '../cli/extension-command.js';
+import {ArgParser, getParser} from '../cli/parser.js';
+import {runSetupCommand} from '../cli/setup-command.js';
+import {SERVER_SUBCOMMAND} from '../constants.js';
+import {type ExtensionConfigs, loadExtensions} from '../extension/index.js';
+import {log as logger} from '../logger.js';
+import {init as logsinkInit} from '../logsink.js';
 import {
   isDriverCommandArgs,
   isExtensionCommandArgs,
   isPluginCommandArgs,
   isServerCommandArgs,
   isSetupCommandArgs,
-} from '../schema/cli-args-guards';
-import {getDefaultsForSchema} from '../schema/schema';
-import {defaultsDeep} from '../utils';
-import {readConfigFile} from './config-file';
-import type {InitResult, PreConfigArgs} from './init-types';
-import {determineAppiumHomeSource, preflightChecks} from './main-helpers';
-import {adjustNodePath, requireDir, showDebugInfo} from './node-helpers';
-import {getNonDefaultServerArgs, showConfig} from './startup-config';
+} from '../schema/cli-args-guards.js';
+import {getDefaultsForSchema} from '../schema/schema.js';
+import {defaultsDeep} from '../utils/index.js';
+import {readConfigFile} from './config-file.js';
+import type {InitResult, PreConfigArgs} from './init-types.js';
+import {determineAppiumHomeSource, preflightChecks} from './main-helpers.js';
+import {adjustNodePath, requireDir, showDebugInfo} from './node-helpers.js';
+import {getNonDefaultServerArgs, showConfig} from './startup-config.js';
 
 /**
  * Parses CLI/programmatic args, loads config and extensions, and returns server-ready state or runs extension/setup flows.

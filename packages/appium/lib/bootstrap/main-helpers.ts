@@ -9,18 +9,23 @@ import {
 } from '@appium/base-driver';
 import {console as supportConsole, util} from '@appium/support';
 import type {AppiumServer, Driver, MethodMap, UpdateServerCallback} from '@appium/types';
-import type {Args, CliCommandServer, ParsedArgs} from 'appium/types';
+import type {Args, CliCommandServer, ParsedArgs} from 'appium/types/index.js';
 import {WebSocketServer} from 'ws';
+// `@appium/types` (not converted to ESM in this change) resolves `ws`'s `Server` type
+// in CJS ("require") mode, which TS treats as a distinct type identity from this
+// file's ESM-resolved `ws` types; import it the same way to match `addWebSocketHandler`'s
+// parameter type.
+import type {Server as WSServer} from 'ws' with {'resolution-mode': 'require'};
 
-import type {AppiumDriver} from '../appium';
-import {BIDI_BASE_PATH, LONG_STACKTRACE_LIMIT} from '../constants';
-import type {DriverNameMap, PluginNameMap} from '../extension';
-import {APPIUM_VER, getBuildInfo, getGitRev, updateBuildInfo} from '../helpers/build';
-import {fetchInterfaces, isBroadcastIp, V4_BROADCAST_IP} from '../helpers/network';
-import {log as logger} from '../logger';
-import {validate as validateSchema} from '../schema/schema';
-import {checkNodeOk, requireDir} from './node-helpers';
-import {getNonDefaultServerArgs} from './startup-config';
+import type {AppiumDriver} from '../appium.js';
+import {BIDI_BASE_PATH, LONG_STACKTRACE_LIMIT} from '../constants.js';
+import type {DriverNameMap, PluginNameMap} from '../extension/index.js';
+import {APPIUM_VER, getBuildInfo, getGitRev, updateBuildInfo} from '../helpers/build.js';
+import {fetchInterfaces, isBroadcastIp, V4_BROADCAST_IP} from '../helpers/network.js';
+import {log as logger} from '../logger.js';
+import {validate as validateSchema} from '../schema/schema.js';
+import {checkNodeOk, requireDir} from './node-helpers.js';
+import {getNonDefaultServerArgs} from './startup-config.js';
 
 const isStdoutTTY = process.stdout.isTTY;
 
@@ -201,8 +206,8 @@ export async function createAppiumServer(
   bidiServer.on('error', appiumDriver.onBidiServerError.bind(appiumDriver));
   const server = await baseServer(serverOpts);
   const bidiBasePath = `${normalizedBasePath}${BIDI_BASE_PATH}`;
-  await server.addWebSocketHandler(bidiBasePath, bidiServer);
-  await server.addWebSocketHandler(`${bidiBasePath}/:sessionId`, bidiServer);
+  await server.addWebSocketHandler(bidiBasePath, bidiServer as unknown as WSServer);
+  await server.addWebSocketHandler(`${bidiBasePath}/:sessionId`, bidiServer as unknown as WSServer);
   return server;
 }
 

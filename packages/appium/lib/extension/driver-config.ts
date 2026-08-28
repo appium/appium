@@ -1,12 +1,12 @@
 import {util} from '@appium/support';
 import type {DriverClass, DriverType, StringRecord} from '@appium/types';
-import type {ExtManifest, ExtName, ExtRecord} from 'appium/types';
+import type {ExtManifest, ExtName, ExtRecord} from 'appium/types/index.js';
 
-import {DRIVER_TYPE} from '../constants';
-import {log} from '../logger';
-import type {ExtManifestProblem} from './extension-config';
-import {ExtensionConfig} from './extension-config';
-import type {Manifest} from './manifest';
+import {DRIVER_TYPE} from '../constants.js';
+import {log} from '../logger.js';
+import type {ExtManifestProblem} from './extension-config.js';
+import {ExtensionConfig} from './extension-config.js';
+import type {Manifest} from './manifest.js';
 
 export type MatchedDriver = {
   driver: DriverClass;

@@ -4,9 +4,9 @@ import {fs} from '@appium/support';
 import {sleep} from 'asyncbox';
 import type {Request, Response} from 'express';
 
-import {log} from '../express/logger';
-import {TEST_FIXTURES_DIR} from './static-dir';
-import {compileLodashTemplate} from './template';
+import {log} from '../express/logger.js';
+import {TEST_FIXTURES_DIR} from './static-dir.js';
+import {compileLodashTemplate} from './template.js';
 
 type TemplateParams = Record<string, unknown>;
 

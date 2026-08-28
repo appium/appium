@@ -6,12 +6,12 @@ import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
 import {createSandbox} from 'sinon';
 import {exec} from 'teen_process';
 
-import {fs, system, tempDir} from '../../lib';
+import {fs, system, tempDir} from '../../lib/index.js';
 
 const TEST_TIMEOUT = 10000;
 
 describe('fs', {timeout: TEST_TIMEOUT}, function () {
-  const existingPath = __filename;
+  const existingPath = import.meta.filename;
   let sandbox: ReturnType<typeof createSandbox>;
 
   beforeEach(function () {
@@ -23,7 +23,7 @@ describe('fs', {timeout: TEST_TIMEOUT}, function () {
   });
 
   describe('mkdir()', function () {
-    const dirName = path.resolve(__dirname, 'tmp');
+    const dirName = path.resolve(import.meta.dirname, 'tmp');
 
     it('should make a directory that does not exist', async function () {
       await fs.rimraf(dirName);
@@ -45,13 +45,13 @@ describe('fs', {timeout: TEST_TIMEOUT}, function () {
 
   it('hasAccess()', async function () {
     assert.ok(await fs.exists(existingPath));
-    const nonExistingPath = path.resolve(__dirname, 'wrong-specs.js');
+    const nonExistingPath = path.resolve(import.meta.dirname, 'wrong-specs.js');
     assert.ok(!(await fs.hasAccess(nonExistingPath)));
   });
 
   it('exists()', async function () {
     assert.ok(await fs.exists(existingPath));
-    const nonExistingPath = path.resolve(__dirname, 'wrong-specs.js');
+    const nonExistingPath = path.resolve(import.meta.dirname, 'wrong-specs.js');
     assert.ok(!(await fs.exists(nonExistingPath)));
   });
 
@@ -165,7 +165,7 @@ describe('fs', {timeout: TEST_TIMEOUT}, function () {
   });
   it('glob()', async function () {
     const glob = '*.spec.js';
-    const tests = await fs.glob(glob, {cwd: __dirname});
+    const tests = await fs.glob(glob, {cwd: import.meta.dirname});
     assert.ok(Array.isArray(tests));
     assert.ok(tests.length > 2);
   });
@@ -173,21 +173,21 @@ describe('fs', {timeout: TEST_TIMEOUT}, function () {
   describe('walkDir()', function () {
     it('walkDir recursive', async function () {
       assert.notStrictEqual(
-        await fs.walkDir(__dirname, true, (item) => item.endsWith(`logger${path.sep}helpers.js`)),
+        await fs.walkDir(import.meta.dirname, true, (item) => item.endsWith(`logger${path.sep}helpers.js`)),
         null,
       );
     });
     it('should walk all elements recursive', async function () {
-      assert.strictEqual(await fs.walkDir(path.join(__dirname, '..', 'e2e', 'fixture'), true, () => undefined), null);
+      assert.strictEqual(await fs.walkDir(path.join(import.meta.dirname, '..', 'e2e', 'fixture'), true, () => undefined), null);
     });
     it('should throw error through callback', async function () {
       const err = new Error('Callback error');
       const stub = sandbox.stub().rejects(err);
-      await assert.rejects(fs.walkDir(__dirname, true, stub), err);
+      await assert.rejects(fs.walkDir(import.meta.dirname, true, stub), err);
       assert.strictEqual(stub.calledOnce, true);
     });
     it('should traverse non-recursively', async function () {
-      const filePath = await fs.walkDir(__dirname, false, (item) => item.endsWith('logger/helpers.js'));
+      const filePath = await fs.walkDir(import.meta.dirname, false, (item) => item.endsWith('logger/helpers.js'));
       assert.strictEqual(filePath, null);
     });
   });
@@ -214,7 +214,7 @@ describe('fs', {timeout: TEST_TIMEOUT}, function () {
     describe('when provided an absolute path', function () {
       describe('when the path has a parent `package.json`', function () {
         it('should locate the dir with the closest `package.json`', function () {
-          assert.strictEqual(typeof fs.findRoot(__dirname), 'string');
+          assert.strictEqual(typeof fs.findRoot(import.meta.dirname), 'string');
         });
       });
 
@@ -257,7 +257,7 @@ describe('fs', {timeout: TEST_TIMEOUT}, function () {
 
       describe('when the path has a parent `package.json`', function () {
         it('should read the `package.json` found in the root dir', function () {
-          assert.strictEqual(typeof fs.readPackageJsonFrom(__dirname), 'object');
+          assert.strictEqual(typeof fs.readPackageJsonFrom(import.meta.dirname), 'object');
         });
       });
     });

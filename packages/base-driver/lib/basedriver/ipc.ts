@@ -12,7 +12,7 @@ import type {
 } from '@appium/types';
 import {sleep} from 'asyncbox';
 
-import {log} from './logger';
+import {log} from './logger.js';
 
 const DEF_MAX_OBJ_SIZE_BYTES = 1024 * 1024; // 1mb seems like plenty for any plugin to pass a message
 const DEF_MAX_TOPICS = 1000;

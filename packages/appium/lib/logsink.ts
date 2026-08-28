@@ -1,13 +1,17 @@
-import type {MessageObject} from '@appium/logger';
-import globalLog from '@appium/logger';
+import type {Logger as AppiumGlobalLogger, MessageObject} from '@appium/logger';
+import loggerPkg from '@appium/logger';
 import {fs, util} from '@appium/support';
-import type {ParsedArgs} from 'appium/types';
+import type {ParsedArgs} from 'appium/types/index.js';
 import {LRUCache} from 'lru-cache';
 import type {Logform, Logger} from 'winston';
 import {createLogger, format, transports} from 'winston';
 import type Transport from 'winston-transport';
 
-import {adler32} from './utils';
+import {adler32} from './utils/index.js';
+
+// `@appium/logger` is still CJS; under real ESM interop a default import binds to the
+// whole `module.exports`, so unwrap `.default` explicitly to get the actual logger.
+const globalLog: AppiumGlobalLogger = loggerPkg.default;
 
 const LEVELS_MAP = {
   debug: 4,

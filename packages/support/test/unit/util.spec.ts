@@ -6,7 +6,7 @@ import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
 import {sleep} from 'asyncbox';
 import {createSandbox} from 'sinon';
 
-import {fs, tempDir, util} from '../../lib';
+import {fs, tempDir, util} from '../../lib/index.js';
 
 const {W3C_WEB_ELEMENT_IDENTIFIER} = util;
 

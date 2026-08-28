@@ -24,6 +24,7 @@
     "url": "https://github.com/appium/appium.git",
     "directory": "packages/fake-driver"
   },
+  "type": "module",
   "directories": {
     "lib": "lib"
   },

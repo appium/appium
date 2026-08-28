@@ -7,7 +7,7 @@ import type {
   IpcMessage,
   MethodMap,
 } from '@appium/types';
-import {BasePlugin} from 'appium/plugin';
+import {BasePlugin} from 'appium/plugin.js';
 import {sleep} from 'asyncbox';
 import type {Application, Request, Response} from 'express';
 

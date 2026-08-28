@@ -3,19 +3,19 @@ import net from 'node:net';
 import type {ServerOpts} from '@appium/base-driver';
 import {util} from '@appium/support';
 import type {AppiumServer} from '@appium/types';
-import type {Args, CliCommand, CliCommandServer, CliCommandSetupSubcommand, CliExtensionSubcommand} from 'appium/types';
+import type {Args, CliCommand, CliCommandServer, CliCommandSetupSubcommand, CliExtensionSubcommand} from 'appium/types/index.js';
 
-import {getActiveDrivers, getActivePlugins} from '../extension';
-import {log as logger} from '../logger';
-import registerNode from './grid-v3-register';
-import type {InitResult, ServerInitData} from './init-types';
+import {getActiveDrivers, getActivePlugins} from '../extension/index.js';
+import {log as logger} from '../logger.js';
+import registerNode from './grid-v3-register.js';
+import type {InitResult, ServerInitData} from './init-types.js';
 import {
   buildServerOpts,
   createAppiumServer,
   determineAppiumHomeSource,
   logServerAddress,
   logStartupInfo,
-} from './main-helpers';
+} from './main-helpers.js';
 
 const MAX_SERVER_PROCESS_LISTENERS = 100;
 

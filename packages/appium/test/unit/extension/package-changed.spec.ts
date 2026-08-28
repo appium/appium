@@ -1,32 +1,47 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
-import {describe, it, beforeEach, afterEach} from 'node:test';
+import {describe, it, beforeEach, before, after, mock} from 'node:test';
 
-import type {SinonSandbox} from 'sinon';
+import * as support from '@appium/support';
 
-import {PKG_HASHFILE_RELATIVE_PATH} from '../../../lib/constants';
-import {rewiremock} from '../../helpers';
-import {initMocks} from './mocks';
-import type {MockAppiumSupport, MockPackageChanged} from './mocks';
+import {PKG_HASHFILE_RELATIVE_PATH} from '../../../lib/constants.js';
+import * as isPackageChangedModule from '../../../lib/utils/is-package-changed.js';
+import {initMocks, resetMockDefaults} from './mocks.js';
+import type {InitMocksResult, MockAppiumSupport, MockPackageChanged} from './mocks.js';
 
 type PackageDidChangeFn = (appiumHome?: string) => Promise<boolean>;
 
 describe('package-changed', function () {
   let packageDidChange: PackageDidChangeFn;
-  let sandbox: SinonSandbox;
+  let mocks: InitMocksResult;
   let MockPackageChanged: MockPackageChanged;
   let MockAppiumSupport: MockAppiumSupport;
+  let importCounter = 0;
 
-  beforeEach(function () {
-    ({MockPackageChanged, MockAppiumSupport, sandbox} = initMocks());
-    ({packageDidChange} = rewiremock.proxy(() => require('../../../lib/utils/package-changed'), {
-      '../../../lib/utils/is-package-changed': MockPackageChanged,
-      '@appium/support': MockAppiumSupport,
-    }));
+  // `package-changed.ts` imports `is-package-changed.js` and `@appium/support` *directly*
+  // (not through the `utils/index.js` barrel), so mocking those two leaf specifiers is enough
+  // here — unlike `applyExtensionMocks` in mocks.ts, which mocks the barrel. See that
+  // function's doc comment for why `packageDidChange` is dynamically re-imported fresh per
+  // test rather than as a static top-level import.
+  before(function () {
+    mocks = initMocks();
+    MockPackageChanged = mocks.MockPackageChanged;
+    MockAppiumSupport = mocks.MockAppiumSupport;
+    mock.module('@appium/support', {
+      namedExports: {...support, ...MockAppiumSupport},
+    });
+    mock.module('../../../lib/utils/is-package-changed.js', {
+      namedExports: {...isPackageChangedModule, isPackageChanged: MockPackageChanged.isPackageChanged},
+    });
   });
 
-  afterEach(function () {
-    sandbox.restore();
+  after(function () {
+    mock.reset();
+  });
+
+  beforeEach(async function () {
+    resetMockDefaults(mocks);
+    ({packageDidChange} = await import(`../../../lib/utils/package-changed.js?t=${importCounter++}`));
   });
 
   describe('packageDidChange()', function () {

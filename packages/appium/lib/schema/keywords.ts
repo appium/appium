@@ -1,6 +1,6 @@
 import type {KeywordDefinition} from 'ajv';
 
-import {transformers} from './cli-transformers';
+import {transformers} from './cli-transformers.js';
 
 export type AppiumCliTransformerName = keyof typeof transformers;
 

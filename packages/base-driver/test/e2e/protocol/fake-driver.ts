@@ -9,8 +9,8 @@ import type {
   W3CDriverCaps,
 } from '@appium/types';
 
-import {BaseDriver, determineProtocol, errors, isW3cCaps} from '../../../lib';
-import {PROTOCOLS} from '../../../lib/constants';
+import {BaseDriver, determineProtocol, errors, isW3cCaps} from '../../../lib/index.js';
+import {PROTOCOLS} from '../../../lib/constants.js';
 
 class FakeDriver extends BaseDriver<Constraints> {
   static newMethodMap = {

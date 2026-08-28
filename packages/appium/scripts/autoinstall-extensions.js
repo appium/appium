@@ -21,8 +21,11 @@
  * `npm install -g appium --drivers=uiautomator2,xcuitest --plugins=images`
  */
 
-const path = require('node:path');
-const {realpath} = require('node:fs/promises');
+import {realpath} from 'node:fs/promises';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+
+import ora from 'ora';
 
 /** @type {typeof import('../lib/cli/extension').runExtensionCommand} */
 let runExtensionCommand;
@@ -32,8 +35,6 @@ let DRIVER_TYPE;
 let PLUGIN_TYPE;
 /** @type {typeof import('../lib/extension').loadExtensions} */
 let loadExtensions;
-
-const ora = require('ora');
 
 /** @type {typeof import('@appium/support').env} */
 let env;
@@ -59,7 +60,7 @@ async function isDevEnvironment() {
   return (
     process.env.npm_config_local_prefix &&
     path.join(process.env.npm_config_local_prefix, 'packages', 'appium') ===
-      (await realpath(path.join(__dirname, '..')))
+      (await realpath(path.join(import.meta.dirname, '..')))
   );
 }
 
@@ -73,12 +74,12 @@ async function init() {
     return false;
   }
   try {
-    ({env, util, logger} = require('@appium/support'));
+    ({env, util, logger} = await import('@appium/support'));
     // @ts-ignore This is OK
-    ({runExtensionCommand} = require('../build/lib/cli/extension'));
-    ({DRIVER_TYPE, PLUGIN_TYPE} = require('../build/lib/constants'));
+    ({runExtensionCommand} = await import('../build/lib/cli/extension.js'));
+    ({DRIVER_TYPE, PLUGIN_TYPE} = await import('../build/lib/constants.js'));
     // @ts-ignore This is OK
-    ({loadExtensions} = require('../build/lib/extension'));
+    ({loadExtensions} = await import('../build/lib/extension.js'));
     logger.getLogger('Appium').level = 'error';
 
     // if we're doing `npm install -g appium` then we will assume we don't have a local appium.
@@ -214,14 +215,14 @@ async function checkAndInstallExtension({
   spinner.succeed(`Installed ${type} "${ext}".`);
 }
 
-if (require.main === module) {
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
   main().catch((e) => {
     log(e);
     process.exitCode = 1;
   });
 }
 
-module.exports = main;
+export default main;
 
 /**
  * @typedef CheckAndInstallExtensionsOpts

@@ -5,8 +5,8 @@ import path from 'node:path';
 import {fs, npm, system} from '@appium/support';
 import * as semver from 'semver';
 
-import {getBuildInfo, updateBuildInfo} from '../helpers/build';
-import {appiumPackageRoot, npmPackage} from '../utils';
+import {getBuildInfo, updateBuildInfo} from '../helpers/build.js';
+import {appiumPackageRoot, npmPackage} from '../utils/index.js';
 
 const MIN_NODE_VERSION = (npmPackage.engines as Record<string, string>).node;
 
@@ -38,8 +38,15 @@ export function adjustNodePath(): void {
 
   const refreshRequirePaths = (): boolean => {
     try {
+      // `require` is not a global under ESM, so this intentionally no-ops here (see
+      // the doc comment above) rather than using `createRequire`, which would make it
+      // actually succeed and contradict that documented, intentional behavior.
+      const req = (globalThis as {require?: NodeRequire}).require;
+      if (!req) {
+        return false;
+      }
       // Private API; see https://gist.github.com/branneman/8048520#7-the-hack
-      (require('node:module') as NodeModuleWithInitPaths).Module._initPaths();
+      (req('node:module') as NodeModuleWithInitPaths).Module._initPaths();
       return true;
     } catch {
       return false;

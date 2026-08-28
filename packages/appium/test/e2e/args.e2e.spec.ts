@@ -4,9 +4,9 @@ import {describe, it, before, after} from 'node:test';
 import {fs, tempDir} from '@appium/support';
 import {exec} from 'teen_process';
 
-import {stripColorCodes} from '../../lib/logsink';
-import {APPIUM_ROOT, getTestPort} from '../helpers';
-import {EXECUTABLE, formatAppiumArgErrorOutput, readAppiumArgErrorFixture, runAppiumRaw} from './e2e-helpers';
+import {stripColorCodes} from '../../lib/logsink.js';
+import {APPIUM_ROOT, getTestPort} from '../helpers.js';
+import {EXECUTABLE, formatAppiumArgErrorOutput, readAppiumArgErrorFixture, runAppiumRaw} from './e2e-helpers.js';
 
 describe('argument parsing', function () {
   let appiumHome: string;

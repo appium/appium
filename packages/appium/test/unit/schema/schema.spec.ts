@@ -1,19 +1,26 @@
 import assert from 'node:assert/strict';
-import {describe, it, beforeEach, afterEach} from 'node:test';
+import {describe, it, beforeEach} from 'node:test';
 
 import {AppiumConfigJsonSchema} from '@appium/schema';
-import {createSandbox} from 'sinon';
 
-import {DRIVER_TYPE, PLUGIN_TYPE} from '../../../lib/constants';
-import {APPIUM_CONFIG_SCHEMA_ID} from '../../../lib/schema/arg-spec';
-import type * as SchemaModule from '../../../lib/schema/schema';
-import defaultArgsFixture from '../../fixtures/default-args';
-import DRIVER_SCHEMA_FIXTURE from '../../fixtures/driver-schema';
-import flattenedSchemaFixture from '../../fixtures/flattened-schema';
-import {rewiremock} from '../../helpers';
+import {DRIVER_TYPE, PLUGIN_TYPE} from '../../../lib/constants.js';
+import {APPIUM_CONFIG_SCHEMA_ID} from '../../../lib/schema/arg-spec.js';
+import type * as SchemaModule from '../../../lib/schema/schema.js';
+import defaultArgsFixture from '../../fixtures/default-args.js';
+import DRIVER_SCHEMA_FIXTURE from '../../fixtures/driver-schema.js';
+import flattenedSchemaFixture from '../../fixtures/flattened-schema.js';
+// If `@appium/fake-driver` is still CJS, a default import binds to the whole `module.exports`
+// under real ESM interop, so unwrap `.default` when present; a genuine ESM default export
+// wouldn't have that extra layer.
+import fakeDriverSchemaPkg from '@appium/fake-driver/build/lib/fake-driver-schema.js';
+
+const fakeDriverSchema = (
+  'default' in fakeDriverSchemaPkg
+    ? (fakeDriverSchemaPkg as unknown as {default: typeof fakeDriverSchemaPkg}).default
+    : fakeDriverSchemaPkg
+) as typeof fakeDriverSchemaPkg;
 
 describe('schema', function () {
-  let sandbox: ReturnType<typeof createSandbox>;
   let SchemaFinalizationError: typeof SchemaModule.SchemaFinalizationError;
   let SchemaUnknownSchemaError: typeof SchemaModule.SchemaUnknownSchemaError;
   let SchemaUnsupportedSchemaError: typeof SchemaModule.SchemaUnsupportedSchemaError;
@@ -26,14 +33,12 @@ describe('schema', function () {
   let isFinalized: typeof SchemaModule.isFinalized;
   let validate: typeof SchemaModule.validate;
   let RoachHotelMap: typeof SchemaModule.RoachHotelMap;
-  let mocks: Record<string, ReturnType<ReturnType<typeof createSandbox>['stub']>>;
+  let importCounter = 0;
 
-  beforeEach(function () {
-    sandbox = createSandbox();
-    mocks = {
-      '@sidvind/better-ajv-errors': sandbox.stub(),
-    };
-
+  // `schema.ts` holds its state in a module-level `AppiumSchema` singleton; re-importing it
+  // fresh (cache-busted) each test isolates that singleton per test, same as the explicit
+  // `resetSchema()` call below does for the parts reachable through its public API.
+  beforeEach(async function () {
     ({
       SchemaFinalizationError,
       SchemaUnknownSchemaError,
@@ -47,15 +52,8 @@ describe('schema', function () {
       getDefaultsForSchema,
       flattenSchema,
       validate,
-    } = rewiremock.proxy(
-      () => require('../../../lib/schema/schema') as typeof SchemaModule,
-      mocks,
-    ) as typeof SchemaModule);
+    } = await import(`../../../lib/schema/schema.js?t=${importCounter++}`));
     resetSchema();
-  });
-
-  afterEach(function () {
-    sandbox.restore();
   });
 
   describe('registerSchema()', function () {
@@ -270,7 +268,7 @@ describe('schema', function () {
       let expected: Array<{schema: object; argSpec: object}>;
 
       beforeEach(async function () {
-        await registerSchema(DRIVER_TYPE, 'fake', require('@appium/fake-driver/build/lib/fake-driver-schema').default);
+        await registerSchema(DRIVER_TYPE, 'fake', fakeDriverSchema);
         await finalizeSchema();
 
         expected = [

@@ -1,8 +1,15 @@
 import type {NormalizedAppiumConfig} from '@appium/types';
-import betterAjvErrors, {type IOutputError} from '@sidvind/better-ajv-errors';
+import betterAjvErrorsImport, {type IOutputError} from '@sidvind/better-ajv-errors';
 import type {ErrorObject} from 'ajv';
 
-import {getSchema} from './schema';
+import {getSchema} from './schema.js';
+
+// `@sidvind/better-ajv-errors` has no `"type"` field in its own package.json, so TS's
+// nodenext resolution infers its extensionless `typings.d.ts` as CJS-format and types the
+// default import as the whole module namespace rather than the actual default export.
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+type BetterAjvErrorsFn = (typeof import('@sidvind/better-ajv-errors'))['default'];
+const betterAjvErrors = betterAjvErrorsImport as unknown as BetterAjvErrorsFn;
 
 /**
  * The string should be a raw JSON string.

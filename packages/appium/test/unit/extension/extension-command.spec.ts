@@ -1,24 +1,29 @@
 import assert from 'node:assert/strict';
 import type {ChildProcess} from 'node:child_process';
+import {readFileSync} from 'node:fs';
+import path from 'node:path';
 import type {Writable} from 'node:stream';
-import {describe, it, beforeEach, afterEach} from 'node:test';
+import {describe, it, beforeEach, afterEach, before, after, mock} from 'node:test';
 
-import {fs, system} from '@appium/support';
+import * as support from '@appium/support';
+import {fs} from '@appium/support';
 import type {AppiumLogger} from '@appium/types';
 import type {SinonSandbox, SinonStub} from 'sinon';
 import sinon from 'sinon';
 
-import {ExtensionCliCommand, injectAppiumSymlinks} from '../../../lib/cli/extension-command';
-import type {ExtensionConfig} from '../../../lib/cli/extension-command';
-import {DriverConfig} from '../../../lib/extension/driver-config';
-import {Manifest} from '../../../lib/extension/manifest';
-import {appiumPackageRoot} from '../../../lib/utils';
-import {FAKE_DRIVER_DIR} from '../../helpers';
+import {ExtensionCliCommand} from '../../../lib/cli/extension-command.js';
+import type {ExtensionConfig, injectAppiumSymlinks as injectAppiumSymlinksStatic} from '../../../lib/cli/extension-command.js';
+import {DriverConfig} from '../../../lib/extension/driver-config.js';
+import {Manifest} from '../../../lib/extension/manifest.js';
+import {appiumPackageRoot} from '../../../lib/utils/index.js';
+import {FAKE_DRIVER_DIR} from '../../helpers.js';
 
 /**
  * Relative path from actual `package.json` of `FakeDriver` for the `fake-stdin` script
  */
-const FAKE_STDIN_SCRIPT = require(`${FAKE_DRIVER_DIR}/package.json`).appium.scripts['fake-stdin'];
+const FAKE_STDIN_SCRIPT = JSON.parse(readFileSync(path.join(FAKE_DRIVER_DIR, 'package.json'), 'utf8')).appium.scripts[
+  'fake-stdin'
+];
 
 let sandbox: SinonSandbox;
 
@@ -87,12 +92,31 @@ describe('ExtensionCommand', function () {
     let fsSymlinkStub: SinonStub;
     let isWindowsStub: SinonStub;
     let logger: AppiumLogger;
+    let injectAppiumSymlinks: typeof injectAppiumSymlinksStatic;
+    let importCounter = 0;
 
-    beforeEach(function () {
+    // `system` (unlike `fs`) is an ES module namespace object on `@appium/support`'s public
+    // surface (frozen), so sinon can't stub `system.isWindows` directly. Mock `@appium/support`
+    // with a plain, stubbable replacement for `system` instead. `extension-command.js` is
+    // already statically imported at the top of this file (before this mock exists), so it
+    // must be re-imported with a cache-busting query to pick up the mock.
+    before(function () {
+      isWindowsStub = sinon.stub();
+      mock.module('@appium/support', {
+        namedExports: {...support, system: {...support.system, isWindows: isWindowsStub}},
+      });
+    });
+
+    after(function () {
+      mock.reset();
+    });
+
+    beforeEach(async function () {
       sandbox = sinon.createSandbox();
       fsExistsStub = sandbox.stub(fs, 'exists');
       fsSymlinkStub = sandbox.stub(fs, 'symlink');
-      isWindowsStub = sandbox.stub(system, 'isWindows');
+      isWindowsStub.reset();
+      isWindowsStub.returns(false);
       logger = {
         info: sandbox.stub(),
         warn: sandbox.stub(),
@@ -100,7 +124,7 @@ describe('ExtensionCommand', function () {
         debug: sandbox.stub(),
       } as unknown as AppiumLogger;
 
-      isWindowsStub.returns(false);
+      ({injectAppiumSymlinks} = await import(`../../../lib/cli/extension-command.js?t=${importCounter++}`));
     });
 
     afterEach(function () {

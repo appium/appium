@@ -5,8 +5,8 @@ import type {Constraints, W3CDriverCaps} from '@appium/types';
 import {sleep} from 'asyncbox';
 import {createSandbox} from 'sinon';
 
-import {FakeDriver} from '../../lib';
-import {W3C_CAPS, W3C_PREFIXED_CAPS} from '../helpers';
+import {FakeDriver} from '../../lib/index.js';
+import {W3C_CAPS, W3C_PREFIXED_CAPS} from '../helpers.js';
 
 describe('FakeDriver unit suite', function () {
   let d: FakeDriver;

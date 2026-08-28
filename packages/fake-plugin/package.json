@@ -24,6 +24,7 @@
     "url": "https://github.com/appium/appium.git",
     "directory": "packages/fake-plugin"
   },
+  "type": "module",
   "directories": {
     "lib": "./lib"
   },

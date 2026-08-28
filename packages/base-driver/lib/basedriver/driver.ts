@@ -19,15 +19,29 @@ import {
 } from '@appium/types';
 import type AsyncLock from 'async-lock';
 
-import {fixCaps, isW3cCaps} from '../helpers/capabilities';
-import {resolveExecuteExtensionName} from '../helpers/extension-command-name';
-import {getLevenshteinSuggestion} from '../helpers/levenshtein-match';
-import {calcSignature} from '../helpers/session';
-import {DELETE_SESSION_COMMAND, determineProtocol, errors} from '../protocol';
-import {mergePlainObjects} from '../utils';
-import {processCapabilities, validateCaps} from './capabilities';
-import {DriverCore} from './core';
-import * as helpers from './helpers';
+import {fixCaps, isW3cCaps} from '../helpers/capabilities.js';
+import {resolveExecuteExtensionName} from '../helpers/extension-command-name.js';
+import {getLevenshteinSuggestion} from '../helpers/levenshtein-match.js';
+import {calcSignature} from '../helpers/session.js';
+import {DELETE_SESSION_COMMAND, determineProtocol, errors} from '../protocol/index.js';
+import {mergePlainObjects} from '../utils.js';
+import {processCapabilities, validateCaps} from './capabilities.js';
+import {
+  BidiCommands,
+  EventCommands,
+  ExecuteCommands,
+  FindCommands,
+  LogCommands,
+  TimeoutCommands,
+} from './commands/index.js';
+// Bare re-import so `declare module '../driver.js'` augmentations in the command modules
+// (which add their methods to `BaseDriver`'s type) reach downstream consumers' `driver.d.ts`
+// import graph — the named import above alone isn't part of `BaseDriver`'s emitted type
+// surface, so `tsc` would otherwise drop it from the declaration output.
+import './commands/index.js';
+import {mixin} from './commands/mixin.js';
+import {DriverCore} from './core.js';
+import * as helpers from './helpers.js';
 
 type CommandInvoker<C extends Constraints> = BaseDriver<C> & Record<string, ((...args: any[]) => any) | undefined>;
 
@@ -444,6 +458,11 @@ export class BaseDriver<
   }
 }
 
-export * from './commands';
+mixin(BaseDriver.prototype, BidiCommands);
+mixin(BaseDriver.prototype, EventCommands);
+mixin(BaseDriver.prototype, ExecuteCommands);
+mixin(BaseDriver.prototype, FindCommands);
+mixin(BaseDriver.prototype, LogCommands);
+mixin(BaseDriver.prototype, TimeoutCommands);
 
 export default BaseDriver;

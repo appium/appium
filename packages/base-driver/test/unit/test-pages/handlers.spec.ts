@@ -4,7 +4,7 @@ import {afterEach, beforeEach, describe, it} from 'node:test';
 import type {Request, Response} from 'express';
 import {createSandbox} from 'sinon';
 
-import {welcome} from '../../../lib/test-pages/handlers';
+import {welcome} from '../../../lib/test-pages/handlers.js';
 
 describe('welcome', function () {
   let sandbox: sinon.SinonSandbox;

@@ -4,7 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import {describe, it, beforeEach, afterEach, before, after} from 'node:test';
 
-import {adjustNodePath, checkNodeOk, requireDir} from '../../../lib/bootstrap/node-helpers';
+import {adjustNodePath, checkNodeOk, requireDir} from '../../../lib/bootstrap/node-helpers.js';
 
 describe('bootstrap/node-helpers', function () {
   describe('checkNodeOk()', function () {
@@ -112,9 +112,13 @@ describe('bootstrap/node-helpers', function () {
       }
     });
 
-    it('should adjust NODE_PATH', async function () {
+    it('should no-op under ESM, leaving NODE_PATH unset', function () {
+      // `adjustNodePath()` relies on `require('node:module').Module._initPaths()` to make an
+      // adjusted `NODE_PATH` actually take effect; under ESM there's no `require` global, so it
+      // intentionally leaves `NODE_PATH` unset rather than setting a value Node won't honor.
       adjustNodePath();
-      await assert.doesNotReject(fs.access(process.env.NODE_PATH!));
+      assert.strictEqual(process.env.NODE_PATH, undefined);
+      assert.strictEqual(process.env.APPIUM_OMIT_PEER_DEPS, undefined);
     });
   });
 });

@@ -1,11 +1,13 @@
 import assert from 'node:assert/strict';
-import {afterEach, beforeEach, describe, it} from 'node:test';
+import {afterEach, beforeEach, describe, it, type TestContext} from 'node:test';
 
-import {node} from '@appium/support';
+import * as support from '@appium/support';
 import type {SettingsUpdateListener} from '@appium/types';
 import sinon from 'sinon';
 
-import {DeviceSettings, MAX_SETTINGS_SIZE} from '../../../lib/basedriver/device-settings';
+import {DeviceSettings, MAX_SETTINGS_SIZE} from '../../../lib/basedriver/device-settings.js';
+
+let importCounter = 0;
 
 describe('DeviceSettings', function () {
   let sandbox: sinon.SinonSandbox;
@@ -68,12 +70,18 @@ describe('DeviceSettings', function () {
       });
 
       describe('when the size of the `newSettings` param exceeds `MAX_SETTINGS_SIZE`', function () {
-        beforeEach(function () {
-          sandbox.stub(node, 'getObjectSize').returns(MAX_SETTINGS_SIZE + 1);
-        });
-
-        it('should reject with an InvalidArgumentError', async function () {
-          const deviceSettings = new DeviceSettings();
+        it('should reject with an InvalidArgumentError', async function (t) {
+          // `@appium/support`'s `node` export is an ES module namespace object
+          // (frozen), so sinon can't stub `node.getObjectSize` on it directly. Mock
+          // the whole `@appium/support` module instead and re-import device-settings.js
+          // fresh so it re-links against the mock.
+          (t as TestContext).mock.module('@appium/support', {
+            namedExports: {...support, node: {...support.node, getObjectSize: () => MAX_SETTINGS_SIZE + 1}},
+          });
+          const {DeviceSettings: MockedDeviceSettings} = await import(
+            `../../../lib/basedriver/device-settings.js?t=${importCounter++}`
+          );
+          const deviceSettings = new MockedDeviceSettings();
           await assert.rejects(deviceSettings.update({stuff: 'things'}), {
             name: 'InvalidArgumentError',
             message: /object size exceeds/i,

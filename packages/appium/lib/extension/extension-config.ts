@@ -1,10 +1,11 @@
+import {createRequire} from 'node:module';
 import path from 'node:path';
 import {pathToFileURL} from 'node:url';
 
 import {fs, system, util} from '@appium/support';
 import type {ExtensionType, StringRecord} from '@appium/types';
 import type {SchemaObject} from 'ajv';
-import type {ExtClass, ExtManifest, ExtName, ExtRecord, InstallType} from 'appium/types';
+import type {ExtClass, ExtManifest, ExtName, ExtRecord, InstallType} from 'appium/types/index.js';
 import {satisfies} from 'semver';
 
 import type {
@@ -12,12 +13,12 @@ import type {
   ExtensionListData,
   InstalledExtensionListData,
   ExtensionCliCommand,
-} from '../cli/extension-command';
-import {APPIUM_VER} from '../helpers/build';
-import {log} from '../logger';
-import {ALLOWED_SCHEMA_EXTENSIONS, isAllowedSchemaFileExtension, registerSchema} from '../schema/schema';
-import {capitalize, resolveFrom} from '../utils';
-import type {Manifest} from './manifest';
+} from '../cli/extension-command.js';
+import {APPIUM_VER} from '../helpers/build.js';
+import {log} from '../logger.js';
+import {ALLOWED_SCHEMA_EXTENSIONS, isAllowedSchemaFileExtension, registerSchema} from '../schema/schema.js';
+import {capitalize, resolveFrom} from '../utils/index.js';
+import type {Manifest} from './manifest.js';
 
 const DEFAULT_ENTRY_POINT = 'index.js';
 /**
@@ -119,7 +120,16 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     let moduleObject: any;
     if (typeof argSchemaPath === 'string') {
       const schemaPath = await resolveFrom(appiumHome, path.join(pkgName, argSchemaPath));
-      moduleObject = require(schemaPath);
+      if (path.extname(schemaPath) === '.json') {
+        // `import()` of JSON needs an import attribute Node versions disagree on the
+        // syntax for; parsing directly avoids that entirely.
+        moduleObject = JSON.parse(await fs.readFile(schemaPath, 'utf8'));
+      } else {
+        // https://github.com/nodejs/node/issues/31710
+        const importPath = system.isWindows() ? pathToFileURL(schemaPath).href : schemaPath;
+        const mod = (await import(importPath)) as Record<string, any>;
+        moduleObject = 'default' in mod ? mod.default : mod;
+      }
     } else {
       moduleObject = argSchemaPath;
     }
@@ -579,9 +589,12 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
       );
     }
     // note: this will only reload the entry point
-    if (process.env.APPIUM_RELOAD_EXTENSIONS && require.cache[entryPointFullPath]) {
-      log.debug(`Removing ${entryPointFullPath} from require cache`);
-      delete require.cache[entryPointFullPath];
+    if (process.env.APPIUM_RELOAD_EXTENSIONS) {
+      const req = createRequire(import.meta.url);
+      if (req.cache[entryPointFullPath]) {
+        log.debug(`Removing ${entryPointFullPath} from require cache`);
+        delete req.cache[entryPointFullPath];
+      }
     }
     return [entryPointFullPath, mainClass];
   }

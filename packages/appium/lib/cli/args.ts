@@ -1,6 +1,6 @@
 import {util} from '@appium/support';
 import type {ExtensionType} from '@appium/types';
-import type {CliExtensionSubcommand} from 'appium/types';
+import type {CliExtensionSubcommand} from 'appium/types/index.js';
 import type {ArgumentOptions} from 'argparse';
 
 import {
@@ -12,9 +12,9 @@ import {
   EXT_SUBCOMMAND_UNINSTALL,
   EXT_SUBCOMMAND_UPDATE,
   PLUGIN_TYPE,
-} from '../constants';
-import {INSTALL_TYPES} from '../extension/extension-config';
-import {toParserArgs} from '../schema/cli-args';
+} from '../constants.js';
+import {INSTALL_TYPES} from '../extension/extension-config.js';
+import {toParserArgs} from '../schema/cli-args.js';
 const DRIVER_EXAMPLE = 'xcuitest';
 const PLUGIN_EXAMPLE = 'images';
 

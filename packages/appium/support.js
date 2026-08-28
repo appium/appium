@@ -1,5 +1,3 @@
-'use strict';
-
 // @ts-check
 
 /**
@@ -7,7 +5,6 @@
  *
  * @see https://npm.im/@appium/support
  * @example
- * const { fs, npm } = require('appium/support');
+ * import { fs, npm } from 'appium/support.js';
  */
-
-module.exports = require('@appium/support');
+export * from '@appium/support';

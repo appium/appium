@@ -16,11 +16,11 @@ import type {
 } from '@appium/types';
 import AsyncLock from 'async-lock';
 
-import {DEFAULT_BASE_PATH, PROTOCOLS} from '../constants';
-import {errors} from '../protocol';
-import {DeviceSettings} from './device-settings';
-import {ExtensionCore} from './extension-core';
-import * as helpers from './helpers';
+import {DEFAULT_BASE_PATH, PROTOCOLS} from '../constants.js';
+import {errors} from '../protocol/index.js';
+import {DeviceSettings} from './device-settings.js';
+import {ExtensionCore} from './extension-core.js';
+import * as helpers from './helpers.js';
 
 const NEW_COMMAND_TIMEOUT_MS = 60 * 1000;
 

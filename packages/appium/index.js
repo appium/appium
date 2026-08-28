@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 
-const appium = require('./build/lib/main.js');
+import {fileURLToPath} from 'node:url';
 
-if (require.main === module) {
+import * as appium from './build/lib/main.js';
+
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
   appium.main();
 }
 
-module.exports = appium;
+export * from './build/lib/main.js';

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {duplicateKeys, isPackageOrBundle, parseCapsArray} from '../../../lib/basedriver/helpers';
+import {duplicateKeys, isPackageOrBundle, parseCapsArray} from '../../../lib/basedriver/helpers.js';
 
 describe('helpers', function () {
   describe('#isPackageOrBundle', function () {

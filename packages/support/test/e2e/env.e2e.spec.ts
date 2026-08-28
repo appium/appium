@@ -2,16 +2,16 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
 
-import {fs, node, tempDir} from '../../lib';
+import {fs, node, tempDir} from '../../lib/index.js';
 import {
   DEFAULT_APPIUM_HOME,
   findAppiumDependencyPackage,
   readPackageInDir,
   resolveAppiumHome,
   resolveManifestPath,
-} from '../../lib/env';
+} from '../../lib/env.js';
 
-const FIXTURES_ROOT = path.join(node.getModuleRootSync('@appium/support', __filename)!, 'test', 'e2e', 'fixture');
+const FIXTURES_ROOT = path.join(node.getModuleRootSync('@appium/support', import.meta.filename)!, 'test', 'e2e', 'fixture');
 
 describe('environment', function () {
   let cwd: string;

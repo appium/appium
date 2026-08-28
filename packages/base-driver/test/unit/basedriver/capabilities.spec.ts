@@ -14,8 +14,8 @@ import {
   promoteAppiumOptions,
   stripAppiumPrefixes,
   validateCaps,
-} from '../../../lib/basedriver/capabilities';
-import {isW3cCaps} from '../../../lib/helpers/capabilities';
+} from '../../../lib/basedriver/capabilities.js';
+import {isW3cCaps} from '../../../lib/helpers/capabilities.js';
 
 /** W3C caps argument for parseCaps, processCapabilities, findNonPrefixedCaps, promoteAppiumOptions */
 type TestW3CCaps = W3CCapabilities<Constraints>;

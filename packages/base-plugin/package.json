@@ -32,8 +32,16 @@
     "lib",
     "tsconfig.json"
   ],
+  "type": "module",
   "main": "./build/lib/index.js",
   "types": "./build/lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./build/lib/index.d.ts",
+      "import": "./build/lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "publishConfig": {
     "access": "public"
   },
@@ -41,7 +49,7 @@
     "build": "tsc",
     "test": "npm run test:unit",
     "test:smoke": "node ./build/lib/index.js --smoke-test",
-    "test:unit": "node --test --enable-source-maps \"./build/test/unit/**/*.spec.js\""
+    "test:unit": "node --test --experimental-test-module-mocks --test-concurrency=1 --enable-source-maps \"./build/test/unit/**/*.spec.js\""
   },
   "dependencies": {
     "@appium/base-driver": "10.8.0",

@@ -33,7 +33,7 @@ let runExtensionCommand;
 let DRIVER_TYPE;
 /** @type {typeof import('../lib/constants').PLUGIN_TYPE} */
 let PLUGIN_TYPE;
-/** @type {typeof import('../lib/extension').loadExtensions} */
+/** @type {typeof import('../lib/extension/index.js').loadExtensions} */
 let loadExtensions;
 
 /** @type {typeof import('@appium/support').env} */
@@ -74,12 +74,18 @@ async function init() {
     return false;
   }
   try {
-    ({env, util, logger} = await import('@appium/support'));
-    // @ts-ignore This is OK
-    ({runExtensionCommand} = await import('../build/lib/cli/extension.js'));
-    ({DRIVER_TYPE, PLUGIN_TYPE} = await import('../build/lib/constants.js'));
-    // @ts-ignore This is OK
-    ({loadExtensions} = await import('../build/lib/extension.js'));
+    const [supportMod, extensionCliMod, constantsMod, extensionMod] = await Promise.all([
+      import('@appium/support'),
+      // @ts-ignore This is OK
+      import('../build/lib/cli/extension.js'),
+      import('../build/lib/constants.js'),
+      // @ts-ignore This is OK
+      import('../build/lib/extension/index.js'),
+    ]);
+    ({env, util, logger} = supportMod);
+    ({runExtensionCommand} = extensionCliMod);
+    ({DRIVER_TYPE, PLUGIN_TYPE} = constantsMod);
+    ({loadExtensions} = extensionMod);
     logger.getLogger('Appium').level = 'error';
 
     // if we're doing `npm install -g appium` then we will assume we don't have a local appium.

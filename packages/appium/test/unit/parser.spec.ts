@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {describe, it, beforeEach, before, after} from 'node:test';
 
-import fakeDriverSchemaPkg from '@appium/fake-driver/build/lib/fake-driver-schema.js';
+import fakeDriverSchema from '@appium/fake-driver/build/lib/fake-driver-schema.js';
 
 import {readConfigFile} from '../../lib/bootstrap/config-file.js';
 import {ArgParser, getParser} from '../../lib/cli/parser.js';
@@ -15,14 +15,6 @@ const ALLOW_FIXTURE = resolveFixture('allow-feat.txt');
 const DENY_FIXTURE = resolveFixture('deny-feat.txt');
 const CAPS_FIXTURE = resolveFixture('caps.json');
 const LOG_FILTERS_FIXTURE = resolveFixture('log-filters.json');
-
-// `fake-driver` is still CJS (not yet converted), so its compiled `export default` shows up
-// as a `.default` property on the whole `module.exports` object under ESM interop.
-const fakeDriverSchema = (
-  'default' in fakeDriverSchemaPkg
-    ? (fakeDriverSchemaPkg as unknown as {default: typeof fakeDriverSchemaPkg}).default
-    : fakeDriverSchemaPkg
-) as typeof fakeDriverSchemaPkg;
 
 describe('parser', function () {
   let p: ArgParser;

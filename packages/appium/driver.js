@@ -8,3 +8,4 @@
  * import { BaseDriver, errors } from 'appium/driver.js';
  */
 export * from '@appium/base-driver';
+export {default} from '@appium/base-driver';

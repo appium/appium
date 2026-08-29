@@ -17,8 +17,6 @@ server:
   log-no-colors: false
   long-stacktrace: false
   no-perms-check: false
-  nodeconfig:
-    foo: bar
   relaxed-security: true # not default
   session-override: false
   strict-caps: false

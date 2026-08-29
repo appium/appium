@@ -1,4 +1,4 @@
-export = {
+export default {
   server: {
     address: '0.0.0.0',
     'allow-cors': false,

@@ -2,7 +2,7 @@ import {describe, it, beforeEach} from 'node:test';
 
 import {waitForCondition} from 'asyncbox';
 
-import {Log} from '../../lib/log';
+import {Log} from '../../lib/log.js';
 
 describe('display', function () {
   let log: Log;

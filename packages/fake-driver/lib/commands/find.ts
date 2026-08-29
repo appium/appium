@@ -1,9 +1,9 @@
 import type {Element} from '@appium/types';
-import {errors} from 'appium/driver';
-import {util} from 'appium/support';
+import {errors} from 'appium/driver.js';
+import {util} from 'appium/support.js';
 
-import type {FakeDriver} from '../driver';
-import {FakeElement, type XmlNodeLike} from '../fake-element';
+import type {FakeDriver} from '../driver.js';
+import {FakeElement, type XmlNodeLike} from '../fake-element.js';
 
 const {W3C_WEB_ELEMENT_IDENTIFIER} = util;
 

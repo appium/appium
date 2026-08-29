@@ -1,13 +1,13 @@
 /* eslint-disable no-console */
 import type {Class, DriverType, ExtensionType, PluginType} from '@appium/types';
-import type {Args, CliExtensionCommand, CliExtensionSubcommand} from 'appium/types';
+import type {Args, CliExtensionCommand, CliExtensionSubcommand} from 'appium/types/index.js';
 
-import {DRIVER_TYPE, PLUGIN_TYPE} from '../constants';
-import type {ExtensionConfig} from '../extension/extension-config';
-import {isExtensionCommandArgs} from '../schema/cli-args-guards';
-import DriverCliCommand from './driver-command';
-import PluginCliCommand from './plugin-command';
-import {errAndQuit, JSON_SPACES} from './utils';
+import {DRIVER_TYPE, PLUGIN_TYPE} from '../constants.js';
+import type {ExtensionConfig} from '../extension/extension-config.js';
+import {isExtensionCommandArgs} from '../schema/cli-args-guards.js';
+import DriverCliCommand from './driver-command.js';
+import PluginCliCommand from './plugin-command.js';
+import {errAndQuit, JSON_SPACES} from './utils.js';
 
 export const commandClasses = Object.freeze({
   [DRIVER_TYPE]: DriverCliCommand,

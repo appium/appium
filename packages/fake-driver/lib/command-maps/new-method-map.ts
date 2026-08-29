@@ -1,6 +1,6 @@
 import type {MethodMap} from '@appium/types';
 
-import type {FakeDriver} from '../driver';
+import type {FakeDriver} from '../driver.js';
 
 export const NEW_METHOD_MAP = {
   '/session/:sessionId/fakedriver': {

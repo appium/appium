@@ -5,8 +5,8 @@ import type {Constraints, InitialOpts, W3CCapabilities} from '@appium/types';
 import {asyncmap} from 'asyncbox';
 import {createSandbox} from 'sinon';
 
-import {validator} from '../../../lib/basedriver/validation';
-import {BaseDriver, errors} from '../../../lib/index';
+import {validator} from '../../../lib/basedriver/validation.js';
+import {BaseDriver, errors} from '../../../lib/index.js';
 
 // TODO: we need module-level mocks for the logger
 

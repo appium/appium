@@ -5,12 +5,12 @@ import type {
   CliCommandSetupSubcommand,
   CliExtensionCommand,
   CliExtensionSubcommand,
-} from 'appium/types';
+} from 'appium/types/index.js';
 
-import {DESKTOP_BROWSERS, DESKTOP_DRIVERS, MOBILE_DRIVERS} from '../constants';
-import type {ExtensionConfig} from '../extension/extension-config';
-import {log} from '../logger';
-import {runExtensionCommand} from './extension';
+import {DESKTOP_BROWSERS, DESKTOP_DRIVERS, MOBILE_DRIVERS} from '../constants.js';
+import type {ExtensionConfig} from '../extension/extension-config.js';
+import {log} from '../logger.js';
+import {runExtensionCommand} from './extension.js';
 
 /**
  * Subcommands of preset for setup

@@ -3,11 +3,11 @@ import {describe, it, afterEach, beforeEach, type TestContext} from 'node:test';
 
 import {system, util} from '@appium/support';
 
-import {readConfigFile} from '../../lib/bootstrap/config-file';
-import {DRIVER_TYPE} from '../../lib/constants';
-import {finalizeSchema, registerSchema, resetSchema} from '../../lib/schema/schema';
-import extSchema from '../fixtures/driver-schema';
-import {resolveFixture} from '../helpers';
+import {readConfigFile} from '../../lib/bootstrap/config-file.js';
+import {DRIVER_TYPE} from '../../lib/constants.js';
+import {finalizeSchema, registerSchema, resetSchema} from '../../lib/schema/schema.js';
+import extSchema from '../fixtures/driver-schema.js';
+import {resolveFixture} from '../helpers.js';
 
 const resolveConfigFixture = (name: string) => resolveFixture('config', name);
 

@@ -1,23 +1,23 @@
 import type {Server as HttpServer} from 'node:http';
 
 import type {DriverData, IIpcSubscription, InitialOpts, IpcData, IpcMessage} from '@appium/types';
-import {BaseDriver, errors} from 'appium/driver';
+import {BaseDriver, errors} from 'appium/driver.js';
 import {sleep} from 'asyncbox';
 import type {Express, Request, Response} from 'express';
 
-import {EXECUTE_METHOD_MAP} from './command-maps/execute-method-map';
-import {NEW_BIDI_COMMANDS} from './command-maps/new-bidi-commands';
-import {NEW_METHOD_MAP} from './command-maps/new-method-map';
-import * as alertCommands from './commands/alert';
-import * as contextsCommands from './commands/contexts';
-import * as elementCommands from './commands/element';
-import * as findCommands from './commands/find';
-import * as generalCommands from './commands/general';
-import {desiredCapConstraints} from './desired-caps';
-import type {FakeDriverConstraints} from './desired-caps';
-import {FakeApp} from './fake-app';
-import type {FakeElement} from './fake-element';
-import type {FakeDriverCaps, W3CFakeDriverCaps} from './types';
+import {EXECUTE_METHOD_MAP} from './command-maps/execute-method-map.js';
+import {NEW_BIDI_COMMANDS} from './command-maps/new-bidi-commands.js';
+import {NEW_METHOD_MAP} from './command-maps/new-method-map.js';
+import * as alertCommands from './commands/alert.js';
+import * as contextsCommands from './commands/contexts.js';
+import * as elementCommands from './commands/element.js';
+import * as findCommands from './commands/find.js';
+import * as generalCommands from './commands/general.js';
+import {desiredCapConstraints} from './desired-caps.js';
+import type {FakeDriverConstraints} from './desired-caps.js';
+import {FakeApp} from './fake-app.js';
+import type {FakeElement} from './fake-element.js';
+import type {FakeDriverCaps, W3CFakeDriverCaps} from './types.js';
 
 export type {FakeDriverConstraints};
 export type {Orientation} from '@appium/types';

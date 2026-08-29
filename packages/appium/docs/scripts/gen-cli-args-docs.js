@@ -3,11 +3,14 @@
 /* eslint-disable promise/prefer-await-to-callbacks */
 /* eslint-disable promise/prefer-await-to-then */
 
-const path = require('node:path');
-const {fs} = require('@appium/support');
-const {AppiumConfigJsonSchema} = require('@appium/schema');
+import {realpathSync} from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 
-const DOC_PATH = path.resolve(__dirname, '..', 'en', 'cli', 'args.md');
+import {AppiumConfigJsonSchema} from '@appium/schema';
+import {fs} from '@appium/support';
+
+const DOC_PATH = path.resolve(import.meta.dirname, '..', 'en', 'cli', 'args.md');
 
 const START_TAG = `<!-- AUTOGEN-START -->`;
 const STOP_TAG = `<!-- AUTOGEN-STOP -->`;
@@ -89,10 +92,10 @@ async function writeNewDoc(preStart, argTable, postEnd) {
   await fs.writeFile(DOC_PATH, newContents);
 }
 
-if (require.main === module) {
+if (process.argv[1] && fileURLToPath(import.meta.url) === realpathSync(process.argv[1])) {
   main().catch((err) => {
     throw err;
   });
 }
 
-module.exports = main;
+export default main;

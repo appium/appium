@@ -10,7 +10,7 @@ import type {AxiosResponseHeaders, RawAxiosRequestHeaders} from 'axios';
 import {LRUCache} from 'lru-cache';
 import type {PackageJson} from 'type-fest';
 
-import {log as logger} from './logger';
+import {log as logger} from './logger.js';
 
 // for compat with running tests transpiled and in-place
 export const BASEDRIVER_VER = readBaseDriverVersion();
@@ -563,7 +563,7 @@ function toNaturalNumber(defaultValue: number, envVarName?: string): number {
 }
 
 function readBaseDriverVersion(): string {
-  const pkgRoot = node.getModuleRootSync('@appium/base-driver', __filename);
+  const pkgRoot = node.getModuleRootSync('@appium/base-driver', import.meta.filename);
   if (!pkgRoot) {
     throw new Error('Cannot find the @appium/base-driver package root');
   }

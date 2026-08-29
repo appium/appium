@@ -1,7 +1,7 @@
 import type {DriverClass, DriverType, ExtensionType, PluginClass, PluginType} from '@appium/types';
 
-export * from './cli';
-export * from './manifest';
+export * from './cli.js';
+export * from './manifest/index.js';
 
 /**
  * Known environment variables concerning Appium

@@ -1,6 +1,6 @@
 import type {ExecuteMethodMap} from '@appium/types';
 
-import type {FakeDriver} from '../driver';
+import type {FakeDriver} from '../driver.js';
 
 export const EXECUTE_METHOD_MAP = {
   'fake: addition': {

@@ -4,7 +4,7 @@ import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
 import type {InitialOpts} from '@appium/types';
 import {createSandbox} from 'sinon';
 
-import {BaseDriver} from '../../../lib';
+import {BaseDriver} from '../../../lib/index.js';
 
 describe('timeout', function () {
   let driver: BaseDriver<any, any, any, any, any, any>;

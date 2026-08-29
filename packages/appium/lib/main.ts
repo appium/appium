@@ -1,14 +1,23 @@
 #!/usr/bin/env node
 
-import './logsink'; // must run first: global npmlog / log sink setup (see logsink module)
-import './logger'; // load Appium logger immediately after logsink (order matters for log wiring)
+import {realpathSync} from 'node:fs';
+import {fileURLToPath} from 'node:url';
+
+import './logsink.js'; // must run first: global npmlog / log sink setup (see logsink module)
+import './logger.js'; // load Appium logger immediately after logsink (order matters for log wiring)
 import {env} from '@appium/support';
 import type {AppiumServer} from '@appium/types';
-import type {Args, CliCommand, CliCommandServer, CliCommandSetupSubcommand, CliExtensionSubcommand} from 'appium/types';
+import type {
+  Args,
+  CliCommand,
+  CliCommandServer,
+  CliCommandSetupSubcommand,
+  CliExtensionSubcommand,
+} from 'appium/types/index.js';
 
-import {AppiumInitializer} from './bootstrap/appium-initializer';
-import {AppiumMainRunner} from './bootstrap/appium-main-runner';
-import type {ExtCommandInitResult, InitResult, ServerInitData} from './bootstrap/init-types';
+import {AppiumInitializer} from './bootstrap/appium-initializer.js';
+import {AppiumMainRunner} from './bootstrap/appium-main-runner.js';
+import type {ExtCommandInitResult, InitResult, ServerInitData} from './bootstrap/init-types.js';
 
 const initializer = new AppiumInitializer();
 const mainRunner = new AppiumMainRunner();
@@ -40,16 +49,17 @@ export async function main<
 }
 
 // NOTE: backwards compat for scripts referencing `build/lib/main.js` directly.
-// The executable is `../index.js`, so that module will typically be `require.main`.
-if (require.main === module) {
+// The executable is `../index.js`, so that module will typically not match here.
+// realpath() both sides so this still matches through a bin symlink (see index.js).
+if (process.argv[1] && fileURLToPath(import.meta.url) === realpathSync(process.argv[1])) {
   void main();
 }
 
 // Re-export helpers from the same package so `import { … } from 'appium'` stays a supported
 // programmatic API (this file is the package `types` entry). The monorepo does not import these
 // from `'appium'`; consumers use local paths or `@appium/support`. Dropping them is semver-major.
-export {readConfigFile} from './bootstrap/config-file';
-export {finalizeSchema, getSchema, validate} from './schema/schema';
+export {readConfigFile} from './bootstrap/config-file.js';
+export {finalizeSchema, getSchema, validate} from './schema/schema.js';
 export const resolveAppiumHome = env.resolveAppiumHome;
 
 export type {ExtCommandInitResult, InitResult, ServerInitData};

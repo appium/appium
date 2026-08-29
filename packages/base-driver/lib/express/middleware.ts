@@ -4,14 +4,14 @@ import type {Duplex} from 'node:stream';
 import {util} from '@appium/support';
 import type {NextFunction, Request, RequestHandler, Response} from 'express';
 
-import {errors} from '../protocol';
-import {log} from './logger';
-export {handleIdempotency} from './idempotency';
+import {errors} from '../protocol/index.js';
+import {log} from './logger.js';
+export {handleIdempotency} from './idempotency.js';
 import type {StringRecord, WSServer} from '@appium/types';
 import {match} from 'path-to-regexp';
 
-import {calcSignature} from '../helpers/session';
-import {getResponseForW3CError} from '../protocol/errors';
+import {calcSignature} from '../helpers/session.js';
+import {getResponseForW3CError} from '../protocol/errors.js';
 
 const SESSION_ID_PATTERN = /\/session\/([^/]+)/;
 

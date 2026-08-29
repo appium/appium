@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {parseWebhookUri} from '../../lib/logsink';
+import {parseWebhookUri} from '../../lib/logsink.js';
 
 describe('parseWebhookUri', function () {
   it('should parse an http webhook with a path', function () {

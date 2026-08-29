@@ -1,7 +1,7 @@
 import XMLDom from '@xmldom/xmldom';
 import type {Document as XMLDocument, Node as XMLNode} from '@xmldom/xmldom';
 
-import type {FakeApp} from './fake-app';
+import type {FakeApp} from './fake-app.js';
 
 export interface XmlNodeLike {
   tagName: string;

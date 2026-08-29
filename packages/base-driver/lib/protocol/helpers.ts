@@ -1,7 +1,7 @@
 import {util} from '@appium/support';
 
-import {duplicateKeys} from '../basedriver/helpers';
-import {MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY} from '../constants';
+import {duplicateKeys} from '../basedriver/helpers.js';
+import {MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY} from '../constants.js';
 
 /**
  * Preprocesses the resulting value for API responses,

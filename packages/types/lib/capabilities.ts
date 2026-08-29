@@ -1,6 +1,6 @@
-import type {BaseDriverCapConstraints, Constraint, Constraints} from './constraints';
-import type {StandardCapabilities} from './standard-caps';
-import type {AnyCase, StringRecord} from './util';
+import type {BaseDriverCapConstraints, Constraint, Constraints} from './constraints.js';
+import type {StandardCapabilities} from './standard-caps.js';
+import type {AnyCase, StringRecord} from './util.js';
 
 export type {StandardCapabilities};
 

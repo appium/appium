@@ -18,10 +18,10 @@ import express from 'express';
 import type {Express, RequestHandler, Router} from 'express';
 import methodOverride from 'method-override';
 
-import {DEFAULT_BASE_PATH} from '../constants';
-import {isLegacyTestPagesEnabled} from '../test-pages/env';
-import {endLogFormatter, startLogFormatter} from './express-logging';
-import {log} from './logger';
+import {DEFAULT_BASE_PATH} from '../constants.js';
+import {isLegacyTestPagesEnabled} from '../test-pages/env.js';
+import {endLogFormatter, startLogFormatter} from './express-logging.js';
+import {log} from './logger.js';
 import {
   allowCrossDomain,
   allowCrossDomainAsyncExecute,
@@ -32,13 +32,15 @@ import {
   handleLogContext,
   handleUpgrade,
   tryHandleWebSocketUpgrade,
-} from './middleware';
+} from './middleware.js';
 import {
   addWebSocketHandler,
   getWebSocketHandlers,
   removeAllWebSocketHandlers,
   removeWebSocketHandler,
-} from './websocket';
+} from './websocket.js';
+
+const require = createRequire(import.meta.url);
 
 const KEEP_ALIVE_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes
 
@@ -137,8 +139,7 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
         const useLegacyUpgradeHandler = !hasShouldUpgradeCallback(httpServer);
         let registerTestPages: ConfigureServerInternalOpts['registerTestPages'];
         if (isLegacyTestPagesEnabled()) {
-          const require = createRequire(__filename);
-          registerTestPages = require('../test-pages').registerTestPages;
+          registerTestPages = (await import('../test-pages/index.js')).registerTestPages;
         }
         configureServer({
           app,

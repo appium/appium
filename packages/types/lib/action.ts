@@ -4,7 +4,7 @@
  * @module
  */
 
-import type {Element} from './util';
+import type {Element} from './util.js';
 
 /**
  * @group Actions

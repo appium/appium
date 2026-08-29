@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {describe, it, beforeEach, afterEach, before} from 'node:test';
+import {describe, it, beforeEach, afterEach, before, after, mock} from 'node:test';
 
 import {BaseDriver} from '@appium/base-driver';
 import {BasePlugin} from '@appium/base-plugin';
@@ -7,14 +7,14 @@ import {FakeDriver} from '@appium/fake-driver';
 import type {Capabilities, Constraints, NSCapabilities, W3CCapabilities} from '@appium/types';
 import {sleep} from 'asyncbox';
 import type {SinonMock, SinonSandbox, SinonStubbedMember} from 'sinon';
-import {createSandbox} from 'sinon';
+import {createSandbox, stub} from 'sinon';
 
-import type * as AppiumModule from '../../lib/appium';
-import {PLUGIN_TYPE, SESSION_DISCOVERY_FEATURE} from '../../lib/constants';
-import * as buildInfoModule from '../../lib/helpers/build';
-import {insertAppiumPrefixes, removeAppiumPrefixes} from '../../lib/helpers/capability';
-import {finalizeSchema, registerSchema, resetSchema} from '../../lib/schema/schema';
-import {BASE_CAPS, rewiremock, W3C_CAPS, W3C_PREFIXED_CAPS} from '../helpers';
+import type * as AppiumModule from '../../lib/appium.js';
+import {PLUGIN_TYPE, SESSION_DISCOVERY_FEATURE} from '../../lib/constants.js';
+import * as buildInfoModule from '../../lib/helpers/build.js';
+import {insertAppiumPrefixes, removeAppiumPrefixes} from '../../lib/helpers/capability.js';
+import {finalizeSchema, registerSchema, resetSchema} from '../../lib/schema/schema.js';
+import {BASE_CAPS, W3C_CAPS, W3C_PREFIXED_CAPS} from '../helpers.js';
 
 interface MockConfigShape {
   getBuildInfo: SinonStubbedMember<() => {version: string}>;
@@ -39,27 +39,48 @@ describe('AppiumDriver', function () {
   let sandbox: SinonSandbox;
   let AppiumDriver: typeof AppiumModule.AppiumDriver;
   let MockConfig: MockConfigShape;
+  let importCounter = 0;
+
+  // `MockConfig`'s stub functions are created once (stable identity for `mock.module`, which
+  // throws if re-registered) and reconfigured per test via sinon; `AppiumDriver` is
+  // re-imported fresh (cache-busted) every test to reset its own per-class state.
+  before(function () {
+    MockConfig = {
+      getBuildInfo: undefined as unknown as MockConfigShape['getBuildInfo'],
+      updateBuildInfo: undefined as unknown as MockConfigShape['updateBuildInfo'],
+      APPIUM_VER: '2.0',
+    };
+    MockConfig.getBuildInfo = stub().callsFake(() => ({
+      version: MockConfig.APPIUM_VER,
+    })) as MockConfigShape['getBuildInfo'];
+    MockConfig.updateBuildInfo = stub().resolves() as MockConfigShape['updateBuildInfo'];
+    mock.module('../../lib/helpers/build.js', {
+      namedExports: {
+        ...buildInfoModule,
+        getBuildInfo: MockConfig.getBuildInfo,
+        updateBuildInfo: MockConfig.updateBuildInfo,
+        APPIUM_VER: MockConfig.APPIUM_VER,
+      },
+    });
+  });
+
+  after(function () {
+    mock.reset();
+  });
 
   beforeEach(async function () {
     sandbox = createSandbox();
     resetSchema();
     await finalizeSchema();
 
-    MockConfig = {
-      getBuildInfo: sandbox
-        .stub()
-        .callsFake(() => ({version: MockConfig.APPIUM_VER})) as MockConfigShape['getBuildInfo'],
-      updateBuildInfo: sandbox.stub().resolves() as MockConfigShape['updateBuildInfo'],
-      APPIUM_VER: '2.0',
-    };
-    ({AppiumDriver} = rewiremock.proxy(() => require('../../lib/appium'), {
-      '../../lib/helpers/build': {
-        ...buildInfoModule,
-        getBuildInfo: MockConfig.getBuildInfo,
-        updateBuildInfo: MockConfig.updateBuildInfo,
-        APPIUM_VER: MockConfig.APPIUM_VER,
-      },
-    }));
+    MockConfig.getBuildInfo.resetHistory();
+    MockConfig.getBuildInfo.resetBehavior();
+    MockConfig.getBuildInfo.callsFake(() => ({version: MockConfig.APPIUM_VER}));
+    MockConfig.updateBuildInfo.resetHistory();
+    MockConfig.updateBuildInfo.resetBehavior();
+    MockConfig.updateBuildInfo.resolves();
+
+    ({AppiumDriver} = await import(`../../lib/appium.js?t=${importCounter++}`));
   });
 
   afterEach(function () {

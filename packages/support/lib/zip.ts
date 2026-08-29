@@ -10,12 +10,12 @@ import {ZipArchive} from 'archiver';
 import {exec} from 'teen_process';
 import * as yauzl from 'yauzl';
 
-import {fs} from './fs';
-import {createBase64EncodeStream} from './internal';
-import log from './logger';
-import {isWindows} from './system';
-import {Timer} from './timing';
-import {GiB, memoize, toReadableSizeString} from './util';
+import {fs} from './fs.js';
+import {createBase64EncodeStream} from './internal/index.js';
+import log from './logger.js';
+import {isWindows} from './system.js';
+import {Timer} from './timing.js';
+import {GiB, memoize, toReadableSizeString} from './util.js';
 
 const openZip = promisify(yauzl.open) as (zipPath: string, options?: yauzl.Options) => Promise<yauzl.ZipFile>;
 

@@ -1,4 +1,4 @@
-import {log} from '../logger';
+import {log} from '../logger.js';
 
 log.info('Successfully ran the script');
 

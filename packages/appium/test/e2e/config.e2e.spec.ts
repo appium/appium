@@ -1,17 +1,45 @@
 import assert from 'node:assert/strict';
-import {describe, it, beforeEach, afterEach} from 'node:test';
+import {describe, it, beforeEach, afterEach, before, after, mock} from 'node:test';
 
 import axios from 'axios';
-import {createSandbox, type SinonSandbox} from 'sinon';
+import {createSandbox, type SinonSandbox, type SinonStub} from 'sinon';
 import * as teenProcess from 'teen_process';
 
-import {APPIUM_VER, getBuildInfo, getGitRev, updateBuildInfo} from '../../lib/helpers/build';
+import type {
+  APPIUM_VER as AppiumVerType,
+  getBuildInfo as GetBuildInfoFn,
+  getGitRev as GetGitRevFn,
+  updateBuildInfo as UpdateBuildInfoFn,
+} from '../../lib/helpers/build.js';
 
 describe('Config', function () {
   let sandbox: SinonSandbox;
+  let execStub: SinonStub;
+  let APPIUM_VER: typeof AppiumVerType;
+  let getBuildInfo: typeof GetBuildInfoFn;
+  let getGitRev: typeof GetGitRevFn;
+  let updateBuildInfo: typeof UpdateBuildInfoFn;
+
+  // `teen_process`'s real ESM namespace is frozen, so sinon can't stub `exec` on it directly;
+  // mock the whole module once with a stub that calls through to the real `exec` by default,
+  // reconfigured (via `sandbox`) per test to simulate a missing local git.
+  before(async function () {
+    execStub = createSandbox()
+      .stub()
+      .callsFake((...args: Parameters<typeof teenProcess.exec>) => teenProcess.exec(...args));
+    mock.module('teen_process', {namedExports: {...teenProcess, exec: execStub}});
+    ({APPIUM_VER, getBuildInfo, getGitRev, updateBuildInfo} = await import('../../lib/helpers/build.js'));
+  });
+
+  after(function () {
+    mock.reset();
+  });
 
   beforeEach(function () {
     sandbox = createSandbox();
+    execStub.resetBehavior();
+    execStub.resetHistory();
+    execStub.callsFake((...args: Parameters<typeof teenProcess.exec>) => teenProcess.exec(...args));
   });
 
   afterEach(function () {
@@ -37,9 +65,9 @@ describe('Config', function () {
       const buildInfo = getBuildInfo();
       const {sha, built} = opts;
 
-      const innerExecStub = sandbox.stub().throws();
       if (!useLocalGit) {
-        sandbox.stub(teenProcess, 'exec').get(() => innerExecStub);
+        execStub.resetBehavior();
+        execStub.throws();
       }
       (buildInfo as unknown as Record<string, undefined>)['git-sha'] = undefined;
       (buildInfo as unknown as Record<string, undefined>).built = undefined;
@@ -58,7 +86,7 @@ describe('Config', function () {
       assert.ok(buildInfo.version);
 
       if (!useLocalGit) {
-        assert.ok(innerExecStub.callCount >= 1);
+        assert.ok(execStub.callCount >= 1);
       }
     }
 

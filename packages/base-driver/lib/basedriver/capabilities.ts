@@ -2,10 +2,10 @@ import {util} from '@appium/support';
 import type {Capabilities, Constraints, NSCapabilities, StandardCapabilities, W3CCapabilities} from '@appium/types';
 import type {KeyAsString, MergeExclusive} from 'type-fest';
 
-import {errors} from '../protocol/errors';
-import {omit, pickBy} from '../utils';
-import {log} from './logger';
-import {validator} from './validation';
+import {errors} from '../protocol/errors.js';
+import {omit, pickBy} from '../utils.js';
+import {log} from './logger.js';
+import {validator} from './validation.js';
 
 export const APPIUM_VENDOR_PREFIX = 'appium:';
 export const PREFIXED_APPIUM_OPTS_CAP = `${APPIUM_VENDOR_PREFIX}options`;

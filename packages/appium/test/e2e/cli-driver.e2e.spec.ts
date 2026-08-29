@@ -4,7 +4,7 @@ import {describe, it, before, after, beforeEach, type TestContext} from 'node:te
 
 import {fs, system, tempDir, util} from '@appium/support';
 import type {DriverType} from '@appium/types';
-import type {ExtRecord} from 'appium/types';
+import type {ExtRecord} from 'appium/types/index.js';
 import {exec} from 'teen_process';
 
 import {
@@ -15,10 +15,10 @@ import {
   EXT_SUBCOMMAND_RUN as RUN,
   EXT_SUBCOMMAND_UNINSTALL as UNINSTALL,
   KNOWN_DRIVERS,
-} from '../../lib/constants';
-import {omitKeys, resolveFrom} from '../../lib/utils';
-import {FAKE_DRIVER_DIR, resolveFixture} from '../helpers';
-import {installLocalExtension, runAppiumJson, runAppiumRaw} from './e2e-helpers';
+} from '../../lib/constants.js';
+import {omitKeys, resolveFrom} from '../../lib/utils/index.js';
+import {FAKE_DRIVER_DIR, resolveFixture} from '../helpers.js';
+import {installLocalExtension, runAppiumJson, runAppiumRaw} from './e2e-helpers.js';
 
 const TEST_DRIVER_DIR = path.dirname(resolveFixture('test-driver/package.json'));
 

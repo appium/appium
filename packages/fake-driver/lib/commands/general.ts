@@ -1,7 +1,7 @@
 import type {ActionSequence, Location, Orientation, Rect, Size} from '@appium/types';
-import {errors} from 'appium/driver';
+import {errors} from 'appium/driver.js';
 
-import type {FakeDriver} from '../driver';
+import type {FakeDriver} from '../driver.js';
 
 const ORIENTATIONS = new Set<string>(['LANDSCAPE', 'PORTRAIT']);
 

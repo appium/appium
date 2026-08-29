@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {validators} from '../../../lib/protocol/validators';
+import {validators} from '../../../lib/protocol/validators.js';
 
 describe('validators', function () {
   describe('#setUrl', function () {

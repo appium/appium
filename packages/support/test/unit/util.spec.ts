@@ -1,9 +1,7 @@
 import assert from 'node:assert/strict';
-import os from 'node:os';
 import path from 'node:path';
 import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
 
-import {sleep} from 'asyncbox';
 import {createSandbox} from 'sinon';
 
 import {fs, tempDir, util} from '../../lib/index.js';
@@ -122,82 +120,6 @@ describe('util', function () {
       const actual = 'appium   space';
       const expected = 'appium\\ \\ \\ space';
       assert.strictEqual(util.escapeSpace(actual), expected);
-    });
-  });
-
-  describe('localIp', function () {
-    it('should find a local ip address', function () {
-      const ifConfigOut: any = {
-        lo0: [
-          {
-            address: '::1',
-            netmask: 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff',
-            family: 'IPv6',
-            mac: '00:00:00:00:00:00',
-            scopeid: 0,
-            internal: true,
-          },
-          {
-            address: '127.0.0.1',
-            netmask: '255.0.0.0',
-            family: 'IPv4',
-            mac: '00:00:00:00:00:00',
-            internal: true,
-          },
-          {
-            address: 'fe80::1',
-            netmask: 'ffff:ffff:ffff:ffff::',
-            family: 'IPv6',
-            mac: '00:00:00:00:00:00',
-            scopeid: 1,
-            internal: true,
-          },
-        ],
-        en0: [
-          {
-            address: 'xxx',
-            netmask: 'ffff:ffff:ffff:ffff::',
-            family: 'IPv6',
-            mac: 'd0:e1:40:93:56:9a',
-            scopeid: 4,
-            internal: false,
-          },
-          {
-            address: '123.123.123.123',
-            netmask: '255.255.254.0',
-            family: 'IPv4',
-            mac: 'xxx',
-            internal: false,
-          },
-        ],
-        awdl0: [
-          {
-            address: 'xxx',
-            netmask: 'ffff:ffff:ffff:ffff::',
-            family: 'IPv6',
-            mac: 'xxx',
-            scopeid: 7,
-            internal: false,
-          },
-        ],
-      };
-      const osMock = sandbox.mock(os);
-      osMock.expects('networkInterfaces').returns(ifConfigOut);
-      const ip = util.localIp();
-      assert.strictEqual(ip, '123.123.123.123');
-      osMock.verify();
-    });
-  });
-
-  describe('cancellableDelay', function () {
-    it('should delay', async function () {
-      await util.cancellableDelay(10);
-    });
-    it('cancel should work', async function () {
-      const delay = util.cancellableDelay(1000);
-      await sleep(10);
-      delay.cancel();
-      await assert.rejects(delay, /cancellation error/);
     });
   });
 

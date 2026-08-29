@@ -72,13 +72,9 @@ export const findAppiumDependencyPackage = memoize(async function findAppiumDepe
 
 /**
  * Read a `package.json` in dir `cwd`. If none is found, resolves with `undefined`.
- * @deprecated Package.json helpers in `@appium/support` are deprecated and will be removed in the next major version.
- * Read `package.json` locally instead (for example with `node:fs` and `JSON.parse`).
  * @returns Parsed package data, or `undefined` when `package.json` is missing in `cwd`
  */
-export const readPackageInDir = memoize(async function _readPackageInDir(
-  cwd: string,
-): Promise<NormalizedPackageJson | undefined> {
+async function readPackageInDir(cwd: string): Promise<NormalizedPackageJson | undefined> {
   try {
     return await readPackage({cwd, normalize: true});
   } catch (err) {
@@ -87,7 +83,7 @@ export const readPackageInDir = memoize(async function _readPackageInDir(
     }
     throw err;
   }
-});
+}
 
 function isMissingPackageJsonError(err: unknown): boolean {
   return err instanceof Error && 'code' in err && (err as NodeJS.ErrnoException).code === 'ENOENT';

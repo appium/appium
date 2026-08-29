@@ -2,14 +2,10 @@ import * as console from './console.js';
 import * as doctor from './doctor.js';
 import * as env from './env.js';
 import {fs} from './fs.js';
-import * as imageUtil from './image-util.js';
 import * as logger from './logging.js';
-import * as mjpeg from './mjpeg.js';
-import {mkdirp} from './mkdirp.js';
 import * as net from './net.js';
 import * as node from './node.js';
 import * as plist from './plist.js';
-import * as process from './process.js';
 import * as system from './system.js';
 import * as tempDir from './tempdir.js';
 import * as timing from './timing.js';
@@ -18,22 +14,15 @@ import * as zip from './zip.js';
 
 export {npm} from './npm.js';
 
-const {cancellableDelay} = util;
-
 export {
-  cancellableDelay,
   console,
   doctor,
   env,
   fs,
-  imageUtil,
   logger,
-  mjpeg,
-  mkdirp,
   net,
   node,
   plist,
-  process,
   system,
   tempDir,
   timing,
@@ -45,15 +34,10 @@ export default {
   system,
   util,
   fs,
-  cancellableDelay,
   plist,
-  mkdirp,
   logger,
-  process,
   zip,
-  imageUtil,
   net,
-  mjpeg,
   node,
   timing,
   env,
@@ -63,15 +47,8 @@ export default {
 
 export type {ConsoleOpts} from './console.js';
 export type {TextStyle} from './console.js';
-export type {CopyFileOptions, ReadFn, WalkDirCallback} from './fs.js';
-export type {
-  AuthCredentials,
-  DownloadOptions,
-  FtpUploadOptions,
-  HttpUploadOptions,
-  NetOptions,
-  NotHttpUploadOptions,
-} from './net.js';
+export type {CopyFileOptions, WalkDirCallback} from './fs.js';
+export type {AuthCredentials, DownloadOptions, HttpUploadOptions, NetOptions} from './net.js';
 export type {ExecOpts, InstallPackageOpts, NpmInstallReceipt} from './npm.js';
 export type {Affixes, OpenedAffixes} from './tempdir.js';
 export type {

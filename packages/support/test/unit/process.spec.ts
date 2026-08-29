@@ -104,10 +104,11 @@ describe('process', function () {
       await assert.rejects(mockedProcess.killProcess('tail'), /Oops/);
     });
     it('should throw an error if pkill fails', async function (t) {
-      // Matches the original stub's behavior: a stub given both `.returns()` and
-      // `.throws()` with no argument matcher always throws, so this always fails via
-      // the pgrep call `killProcess` makes internally before it ever reaches pkill.
-      const mockedProcess = await importProcessWithMockedExec(t as TestContext, () => {
+      const mockedProcess = await importProcessWithMockedExec(t as TestContext, (cmd: string) => {
+        if (cmd === 'pgrep') {
+          // let getProcessIds() find a match, so killProcess() proceeds to call pkill
+          return {stdout: '1234\n'};
+        }
         throw {message: 'Oops', code: 2};
       });
       await assert.rejects(mockedProcess.killProcess('tail'), /Oops/);

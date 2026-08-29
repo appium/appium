@@ -45,6 +45,28 @@
   "type": "module",
   "main": "./build/lib/main.js",
   "types": "./build/lib/main.d.ts",
+  "exports": {
+    ".": {
+      "types": "./build/lib/main.d.ts",
+      "import": "./build/lib/main.js"
+    },
+    "./driver.js": {
+      "types": "./driver.d.ts",
+      "import": "./driver.js"
+    },
+    "./plugin.js": {
+      "types": "./plugin.d.ts",
+      "import": "./plugin.js"
+    },
+    "./support.js": {
+      "types": "./support.d.ts",
+      "import": "./support.js"
+    },
+    "./types/index.js": {
+      "types": "./build/types/index.d.ts"
+    },
+    "./package.json": "./package.json"
+  },
   "publishConfig": {
     "access": "public"
   },

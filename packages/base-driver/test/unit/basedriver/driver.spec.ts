@@ -3,7 +3,7 @@ import {describe, it} from 'node:test';
 
 import type {InitialOpts} from '@appium/types';
 
-import {BaseDriver} from '../../../lib';
+import {BaseDriver} from '../../../lib/index.js';
 
 describe('BaseDriver', function () {
   describe('constructor', function () {

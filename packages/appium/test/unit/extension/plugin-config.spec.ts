@@ -1,21 +1,25 @@
 import assert from 'node:assert/strict';
 import {promises as fs} from 'node:fs';
-import {describe, it, beforeEach, afterEach, before} from 'node:test';
+import {describe, it, beforeEach, before, after, mock} from 'node:test';
 
 import type {ExtensionType, PluginType} from '@appium/types';
-import type {ExtManifest} from 'appium/types';
-import type {SinonSandbox} from 'sinon';
+import type {ExtManifest} from 'appium/types/index.js';
 
-import {Manifest} from '../../../lib/extension/manifest';
-import type {PluginConfig as PluginConfigInstance} from '../../../lib/extension/plugin-config';
-import {resetSchema} from '../../../lib/schema';
-import {assertArrayIncludesDeep, resolveFixture, rewiremock} from '../../helpers';
-import {initMocks} from './mocks';
-import type {MockAppiumSupport, MockResolveFrom, Overrides} from './mocks';
+import type {Manifest} from '../../../lib/extension/manifest.js';
+import type {PluginConfig as PluginConfigInstance} from '../../../lib/extension/plugin-config.js';
+import type {resetSchema as ResetSchemaFn} from '../../../lib/schema/index.js';
+import {assertArrayIncludesDeep, resolveFixture} from '../../helpers.js';
+import {applyExtensionMocks, initMocks, resetMockDefaults} from './mocks.js';
+import type {InitMocksResult} from './mocks.js';
 
 type ExtManifestWithSchema<ExtType extends ExtensionType> = ExtManifest<ExtType> & {
   schema: NonNullable<ExtManifest<ExtType>['schema']>;
 };
+// `Manifest`/`PluginConfig` are re-imported dynamically (after mocks are registered, see
+// `applyExtensionMocks` in mocks.ts), so their constructor types can't come from a normal value
+// import; indexed access into the module's namespace type is the only way to spell them.
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+type ManifestClass = (typeof import('../../../lib/extension/manifest.js'))['Manifest'];
 
 interface PluginConfigConstructor {
   new (...args: never[]): PluginConfigInstance;
@@ -26,26 +30,34 @@ interface PluginConfigConstructor {
 describe('PluginConfig', function () {
   let yamlFixture: string;
   let manifest: Manifest;
-  let sandbox: SinonSandbox;
-  let MockAppiumSupport: MockAppiumSupport;
-  let MockResolveFrom: MockResolveFrom;
+  let mocks: InitMocksResult;
+  let Manifest: ManifestClass;
+  let resetSchema: typeof ResetSchemaFn;
   let PluginConfig: PluginConfigConstructor;
+  let importCounter = 0;
 
+  // See the comment on `applyExtensionMocks` in mocks.ts for why `Manifest`/`resetSchema` are
+  // dynamically imported here (after mocks are registered) rather than as static top-level
+  // imports, and why `PluginConfig` is re-imported fresh per test while its dependencies stay
+  // bound to the same (reconfigurable) mock objects.
   before(async function () {
     yamlFixture = await fs.readFile(resolveFixture('manifest', 'v3.yaml'), 'utf8');
+    mocks = initMocks();
+    applyExtensionMocks(mocks);
+    ({Manifest} = await import('../../../lib/extension/manifest.js'));
+    ({resetSchema} = await import('../../../lib/schema/index.js'));
   });
 
-  beforeEach(function () {
-    let overrides: Overrides;
+  after(function () {
+    mock.reset();
+  });
+
+  beforeEach(async function () {
     manifest = Manifest.getInstance('/somewhere/');
-    ({MockAppiumSupport, MockResolveFrom, sandbox, overrides} = initMocks());
-    MockAppiumSupport.fs.readFile.resolves(yamlFixture);
-    ({PluginConfig} = rewiremock.proxy(() => require('../../../lib/extension/plugin-config'), overrides));
+    resetMockDefaults(mocks);
+    mocks.MockAppiumSupport.fs.readFile.resolves(yamlFixture);
+    ({PluginConfig} = await import(`../../../lib/extension/plugin-config.js?t=${importCounter++}`));
     resetSchema();
-  });
-
-  afterEach(function () {
-    sandbox.restore();
   });
 
   describe('class method', function () {
@@ -191,7 +203,7 @@ describe('PluginConfig', function () {
 
           describe('when the property as a path is found', function () {
             beforeEach(function () {
-              MockResolveFrom.resolves(resolveFixture('plugin-schema'));
+              mocks.MockResolveFrom.resolves(resolveFixture('plugin-schema.js'));
             });
 
             it('should return an empty array', async function () {
@@ -270,7 +282,7 @@ describe('PluginConfig', function () {
           installType: 'npm',
           installSpec: 'some-pkg',
         } as unknown as ExtManifestWithSchema<PluginType>;
-        MockResolveFrom.resolves(resolveFixture('plugin-schema.js'));
+        mocks.MockResolveFrom.resolves(resolveFixture('plugin-schema.js'));
         pluginConfig = PluginConfig.create(manifest);
       });
 
@@ -295,7 +307,7 @@ describe('PluginConfig', function () {
         describe('when the schema differs (presumably a different extension)', function () {
           it('should throw', async function () {
             await pluginConfig.readExtensionSchema(extName, extData);
-            MockResolveFrom.resolves(resolveFixture('driver-schema.js'));
+            mocks.MockResolveFrom.resolves(resolveFixture('driver-schema.js'));
             await assert.rejects(
               pluginConfig.readExtensionSchema(extName, extData),
               /conflicts with an existing schema/i,
@@ -307,7 +319,7 @@ describe('PluginConfig', function () {
       describe('when the extension schema has not yet been registered', function () {
         it('should resolve and load the extension schema file', async function () {
           await pluginConfig.readExtensionSchema(extName, extData);
-          assert.strictEqual(MockResolveFrom.calledOnce, true);
+          assert.strictEqual(mocks.MockResolveFrom.calledOnce, true);
         });
       });
     });

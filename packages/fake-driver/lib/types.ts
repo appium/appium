@@ -1,6 +1,6 @@
 import type {DriverCaps, W3CDriverCaps} from '@appium/types';
 
-import type {FakeDriverConstraints} from './desired-caps';
+import type {FakeDriverConstraints} from './desired-caps.js';
 
 /**
  * W3C-style caps for {@link FakeDriver}

@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {DRIVER_TYPE} from '../../../lib/constants';
-import {ArgSpec} from '../../../lib/schema/arg-spec';
+import {DRIVER_TYPE} from '../../../lib/constants.js';
+import {ArgSpec} from '../../../lib/schema/arg-spec.js';
 
 describe('ArgSpec', function () {
   describe('class method', function () {

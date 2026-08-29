@@ -4,7 +4,7 @@ import {describe, it, beforeEach, afterEach, after} from 'node:test';
 import {logger} from '@appium/support';
 import {createSandbox, type SinonSandbox, type SinonSpy} from 'sinon';
 
-import {clear as logsinkClear, init as logsinkInit} from '../../lib/logsink';
+import {clear as logsinkClear, init as logsinkInit} from '../../lib/logsink.js';
 
 const forceLogs = process.env._FORCE_LOGS;
 process.env._FORCE_LOGS = '1';

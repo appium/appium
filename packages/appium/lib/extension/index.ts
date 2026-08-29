@@ -1,14 +1,14 @@
 import {timing, util} from '@appium/support';
 import type {DriverClass, ExtensionType, PluginClass} from '@appium/types';
-import type {ExtClass} from 'appium/types';
+import type {ExtClass} from 'appium/types/index.js';
 import {asyncmap} from 'asyncbox';
 
-import {USE_ALL_PLUGINS} from '../constants';
-import {log} from '../logger';
-import {zip} from '../utils';
-import {DriverConfig} from './driver-config';
-import {Manifest} from './manifest';
-import {PluginConfig} from './plugin-config';
+import {USE_ALL_PLUGINS} from '../constants.js';
+import {log} from '../logger.js';
+import {zip} from '../utils/index.js';
+import {DriverConfig} from './driver-config.js';
+import {Manifest} from './manifest.js';
+import {PluginConfig} from './plugin-config.js';
 
 export type ExtensionConfigs = {
   driverConfig: DriverConfig;

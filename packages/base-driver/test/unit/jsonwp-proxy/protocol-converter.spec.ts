@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import {before, beforeEach, describe, it} from 'node:test';
 
-import {PROTOCOLS} from '../../../lib/constants';
-import {COMMAND_URLS_CONFLICTS, ProtocolConverter} from '../../../lib/jsonwp-proxy/protocol-converter';
+import {PROTOCOLS} from '../../../lib/constants.js';
+import {COMMAND_URLS_CONFLICTS, ProtocolConverter} from '../../../lib/jsonwp-proxy/protocol-converter.js';
 
 const {MJSONWP, W3C} = PROTOCOLS;
 

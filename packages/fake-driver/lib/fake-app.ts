@@ -4,13 +4,13 @@ import path from 'node:path';
 import type {ActionSequence, Location, Orientation} from '@appium/types';
 import XMLDom from '@xmldom/xmldom';
 import type {Document as XMLDocument, Node as XMLNode} from '@xmldom/xmldom';
-import {fs} from 'appium/support';
+import {fs} from 'appium/support.js';
 import * as xpath from 'xpath';
 
-import {FakeElement, type XmlNodeLike} from './fake-element';
-import {log} from './logger';
+import {FakeElement, type XmlNodeLike} from './fake-element.js';
+import {log} from './logger.js';
 
-const SCREENSHOT = path.join(__dirname, 'screen.png');
+const SCREENSHOT = path.join(import.meta.dirname, 'screen.png');
 
 export interface FakeWebView {
   node: XmlNodeLike;

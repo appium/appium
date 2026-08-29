@@ -5,7 +5,7 @@ import * as util from 'node:util';
 
 import {LRUCache} from 'lru-cache';
 
-import {DEFAULT_SECURE_REPLACER, SecureValuesPreprocessor} from './secure-values-preprocessor';
+import {DEFAULT_SECURE_REPLACER, SecureValuesPreprocessor} from './secure-values-preprocessor.js';
 import type {
   LogFiltersConfig,
   Logger,
@@ -13,8 +13,8 @@ import type {
   MessageObject,
   PreprocessingRulesLoadResult,
   StyleObject,
-} from './types';
-import {ansiBeep, ansiColor, isPlainObject, setBlocking, unleakString} from './utils';
+} from './types.js';
+import {ansiBeep, ansiColor, isPlainObject, setBlocking, unleakString} from './utils/index.js';
 
 const DEFAULT_LOG_LEVELS = [
   ['silly', -Infinity, {inverse: true}, 'sill'],

@@ -10,10 +10,10 @@ import contentDisposition from 'content-disposition';
 import finalhandler from 'finalhandler';
 import serveStatic from 'serve-static';
 
-import {configureApp} from '../../../lib/basedriver/helpers';
+import {configureApp} from '../../../lib/basedriver/helpers.js';
 
 const FIXTURE_ROOT = path.resolve(
-  node.getModuleRootSync('@appium/base-driver', __filename)!,
+  node.getModuleRootSync('@appium/base-driver', import.meta.filename)!,
   'test',
   'e2e',
   'fixtures',

@@ -16,8 +16,8 @@ import type {
   RestMethodsToCommandsMap,
 } from '@appium/types';
 
-import type {AppiumDriver} from './appium';
-import {mapValues} from './utils';
+import type {AppiumDriver} from './appium.js';
+import {mapValues} from './utils/index.js';
 
 /**
  * Returns available REST and BiDi commands for base, driver and plugins.

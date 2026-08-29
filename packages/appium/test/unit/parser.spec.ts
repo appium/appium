@@ -4,12 +4,14 @@ import os from 'node:os';
 import path from 'node:path';
 import {describe, it, beforeEach, before, after} from 'node:test';
 
-import {readConfigFile} from '../../lib/bootstrap/config-file';
-import {ArgParser, getParser} from '../../lib/cli/parser';
-import {DRIVER_TYPE, PLUGIN_TYPE, SETUP_SUBCOMMAND} from '../../lib/constants';
-import {INSTALL_TYPES} from '../../lib/extension/extension-config';
-import * as schema from '../../lib/schema/schema';
-import {resolveFixture} from '../helpers';
+import fakeDriverSchema from '@appium/fake-driver/build/lib/fake-driver-schema.js';
+
+import {readConfigFile} from '../../lib/bootstrap/config-file.js';
+import {ArgParser, getParser} from '../../lib/cli/parser.js';
+import {DRIVER_TYPE, PLUGIN_TYPE, SETUP_SUBCOMMAND} from '../../lib/constants.js';
+import {INSTALL_TYPES} from '../../lib/extension/extension-config.js';
+import * as schema from '../../lib/schema/schema.js';
+import {resolveFixture} from '../helpers.js';
 
 // these paths should not make assumptions about the current working directory
 const ALLOW_FIXTURE = resolveFixture('allow-feat.txt');
@@ -198,14 +200,7 @@ describe('parser', function () {
     describe('extension arguments', function () {
       beforeEach(async function () {
         schema.resetSchema();
-        // we have to require() here because babel will not compile stuff in node_modules
-        // (even if it's in the monorepo; there may be a way around this)
-        // anyway, if we do that, we need to use the `default` prop.
-        await schema.registerSchema(
-          DRIVER_TYPE,
-          'fake',
-          require('@appium/fake-driver/build/lib/fake-driver-schema').default,
-        );
+        await schema.registerSchema(DRIVER_TYPE, 'fake', fakeDriverSchema);
         await schema.finalizeSchema();
         p = await getParser(true);
       });

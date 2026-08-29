@@ -32,6 +32,7 @@
     "build/lib",
     "tsconfig.json"
   ],
+  "type": "module",
   "main": "./build/lib/index.js",
   "types": "./build/lib/index.d.ts",
   "publishConfig": {

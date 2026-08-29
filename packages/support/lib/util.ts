@@ -10,8 +10,8 @@ import pluralizeLib from 'pluralize';
 import * as semver from 'semver';
 import {parse as shellParse, quote as shellQuote} from 'shell-quote';
 
-import {fs} from './fs';
-import {createBase64EncodeStream} from './internal';
+import {fs} from './fs.js';
+import {createBase64EncodeStream} from './internal/index.js';
 export {shellParse};
 import type {Element} from '@appium/types';
 import * as _lockfile from 'lockfile';

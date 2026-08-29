@@ -3,7 +3,7 @@ import {describe, it} from 'node:test';
 
 import type {InitialOpts} from '@appium/types';
 
-import {BaseDriver} from '../../../../lib';
+import {BaseDriver} from '../../../../lib/index.js';
 
 describe('logging custom events', function () {
   it('should allow logging of events', async function () {

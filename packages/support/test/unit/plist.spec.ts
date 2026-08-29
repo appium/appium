@@ -2,9 +2,9 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 import {describe, it} from 'node:test';
 
-import {fs, node, plist, tempDir} from '../../lib';
+import {fs, node, plist, tempDir} from '../../lib/index.js';
 
-const SUPPORT_ROOT = node.getModuleRootSync('@appium/support', __filename)!;
+const SUPPORT_ROOT = node.getModuleRootSync('@appium/support', import.meta.filename)!;
 const binaryPlistPath = path.join(SUPPORT_ROOT, 'test', 'unit', 'assets', 'sample_binary.plist');
 const textPlistPath = path.join(SUPPORT_ROOT, 'test', 'unit', 'assets', 'sample_text.plist');
 

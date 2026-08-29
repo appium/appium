@@ -3,8 +3,8 @@ import path from 'node:path';
 
 import * as semver from 'semver';
 
-import {type NormalizedPackageJson, readPackage} from './internal';
-import {memoize} from './util';
+import {type NormalizedPackageJson, readPackage} from './internal/index.js';
+import {memoize} from './util.js';
 
 /**
  * Path to the default `APPIUM_HOME` dir (`~/.appium`).

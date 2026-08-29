@@ -3,8 +3,8 @@ import type internal from 'node:stream';
 
 import type {Merge} from 'type-fest';
 
-import type {Capabilities, DriverCaps, W3CCapabilities} from './capabilities';
-import type {BidiModuleMap, BiDiResultData, ExecuteMethodMap, MethodMap} from './command-maps';
+import type {Capabilities, DriverCaps, W3CCapabilities} from './capabilities.js';
+import type {BidiModuleMap, BiDiResultData, ExecuteMethodMap, MethodMap} from './command-maps.js';
 import type {
   DefaultCreateSessionResult,
   DefaultDeleteSessionResult,
@@ -16,13 +16,13 @@ import type {
   IMJSONWPCommands,
   IOtherProtocolCommands,
   IWDClassicCommands,
-} from './commands';
-import type {ServerArgs} from './config';
-import type {Constraints} from './constraints';
-import type {HTTPHeaders, HTTPMethod} from './http';
-import type {AppiumLogger} from './logger';
-import type {AppiumServer, UpdateServerCallback} from './server';
-import type {Class, StringRecord} from './util';
+} from './commands/index.js';
+import type {ServerArgs} from './config.js';
+import type {Constraints} from './constraints.js';
+import type {HTTPHeaders, HTTPMethod} from './http.js';
+import type {AppiumLogger} from './logger.js';
+import type {AppiumServer, UpdateServerCallback} from './server.js';
+import type {Class, StringRecord} from './util.js';
 /**
  * Interface implemented by the `DeviceSettings` class in `@appium/base-driver`
  */

@@ -2,13 +2,13 @@ import path from 'node:path';
 
 import {env, fs, util} from '@appium/support';
 import type {DriverType, ExtensionType, PluginType} from '@appium/types';
-import type {ExtManifest, ExtPackageJson, ExtRecord, InternalMetadata, ManifestData} from 'appium/types';
+import type {ExtManifest, ExtPackageJson, ExtRecord, InternalMetadata, ManifestData} from 'appium/types/index.js';
 import * as YAML from 'yaml';
 
-import {CURRENT_SCHEMA_REV, DRIVER_TYPE, PLUGIN_TYPE} from '../constants';
-import {packageDidChange} from '../utils';
-import {INSTALL_TYPE_DEV, INSTALL_TYPE_NPM} from './extension-config';
-import {migrate} from './manifest-migrations';
+import {CURRENT_SCHEMA_REV, DRIVER_TYPE, PLUGIN_TYPE} from '../constants.js';
+import {packageDidChange} from '../utils/index.js';
+import {INSTALL_TYPE_DEV, INSTALL_TYPE_NPM} from './extension-config.js';
+import {migrate} from './manifest-migrations.js';
 
 const CONFIG_DATA_DRIVER_KEY = `${DRIVER_TYPE}s` as const;
 const CONFIG_DATA_PLUGIN_KEY = `${PLUGIN_TYPE}s` as const;

@@ -1,7 +1,7 @@
 import {util} from '@appium/support';
 import type {Constraint} from '@appium/types';
 
-import {log} from './logger';
+import {log} from './logger.js';
 
 export class Validator {
   private readonly _validators: Record<keyof Constraint, (value: any, options?: any, key?: string) => string | null> = {

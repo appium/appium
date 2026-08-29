@@ -11,9 +11,9 @@ import {node} from '@appium/support';
 export const TEST_FIXTURES_DIR = resolveTestFixturesDir();
 
 function resolveTestFixturesDir(): string {
-  const packageRoot = node.getModuleRootSync('@appium/base-driver', __filename);
+  const packageRoot = node.getModuleRootSync('@appium/base-driver', import.meta.filename);
   if (!packageRoot) {
-    throw new Error(`Could not find the module root folder for @appium/base-driver from ${__filename}`);
+    throw new Error(`Could not find the module root folder for @appium/base-driver from ${import.meta.filename}`);
   }
   return path.join(packageRoot, 'test-fixtures', 'static');
 }

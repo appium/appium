@@ -1,16 +1,15 @@
 import assert from 'node:assert/strict';
 import net from 'node:net';
 import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 import {isDeepStrictEqual} from 'node:util';
 
-import rewiremock, {addPlugin, overrideEntryPoint, plugins} from 'rewiremock';
-
-import {insertAppiumPrefixes} from '../lib/helpers/capability';
+import {insertAppiumPrefixes} from '../lib/helpers/capability.js';
 
 const TEST_HOST = '127.0.0.1';
 
-const FAKE_DRIVER_DIR = path.dirname(require.resolve('@appium/fake-driver/package.json'));
-const FAKE_PLUGIN_DIR = path.dirname(require.resolve('@appium/fake-plugin/package.json'));
+const FAKE_DRIVER_DIR = path.dirname(fileURLToPath(import.meta.resolve('@appium/fake-driver/package.json')));
+const FAKE_PLUGIN_DIR = path.dirname(fileURLToPath(import.meta.resolve('@appium/fake-plugin/package.json')));
 
 /** This is the monorepo root. */
 const PROJECT_ROOT = path.join(FAKE_DRIVER_DIR, '..', '..');
@@ -67,9 +66,6 @@ function assertArrayIncludesDeep(array: readonly unknown[], expected: unknown): 
   assert.ok(array.some((item) => isDeepStrictEqual(item, expected)));
 }
 
-overrideEntryPoint(module);
-addPlugin(plugins.nodejs);
-
 export {
   APPIUM_ROOT,
   assertArrayIncludesDeep,
@@ -79,7 +75,6 @@ export {
   getTestPort,
   PROJECT_ROOT,
   resolveFixture,
-  rewiremock,
   TEST_FAKE_APP,
   TEST_HOST,
   W3C_CAPS,

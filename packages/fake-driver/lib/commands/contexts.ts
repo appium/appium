@@ -1,8 +1,8 @@
 import type {Document as XMLDocument} from '@xmldom/xmldom';
-import {errors} from 'appium/driver';
+import {errors} from 'appium/driver.js';
 
-import type {FakeDriver} from '../driver';
-import type {FakeWebView} from '../fake-app';
+import type {FakeDriver} from '../driver.js';
+import type {FakeWebView} from '../fake-app.js';
 
 /** NATIVE_APP, PROXY, and WEBVIEW_1, WEBVIEW_2, ... from app model. */
 export function getRawContexts(this: FakeDriver): Record<string, unknown> {

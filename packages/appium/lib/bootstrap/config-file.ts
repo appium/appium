@@ -5,9 +5,9 @@ import type {ErrorObject, SchemaObject} from 'ajv';
 import {lilconfig, type LilconfigResult, type LoaderSync} from 'lilconfig';
 import * as yaml from 'yaml';
 
-import {formatErrors} from '../schema/format-errors';
-import {getSchema, validate} from '../schema/schema';
-import {camelCase, getPath, mapKeys, mapValues} from '../utils';
+import {formatErrors} from '../schema/format-errors.js';
+import {getSchema, validate} from '../schema/schema.js';
+import {camelCase, getPath, mapKeys, mapValues} from '../utils/index.js';
 
 /**
  * A cache of the raw config file (a JSON string) at a filepath.

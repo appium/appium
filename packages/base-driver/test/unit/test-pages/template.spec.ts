@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {compileLodashTemplate} from '../../../lib/test-pages/template';
+import {compileLodashTemplate} from '../../../lib/test-pages/template.js';
 
 describe('compileLodashTemplate', function () {
   it('should render static text', function () {

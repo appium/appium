@@ -3,13 +3,13 @@ import type {AppiumLogger, Core, Driver, DriverMethodDef, MethodMap, PayloadPara
 import type {Application, Request, Response} from 'express';
 import type {MultidimensionalReadonlyArray} from 'type-fest';
 
-import type {BaseDriver} from '../basedriver/driver';
-import {generateDriverLogPrefix} from '../basedriver/helpers';
-import {log} from '../basedriver/logger';
-import {DEFAULT_BASE_PATH, MAX_LOG_BODY_LENGTH, PROTOCOLS} from '../constants';
-import type {RouteConfiguringFunction} from '../express/server';
-import {isW3cCaps} from '../helpers/capabilities';
-import {omitKeys} from '../utils';
+import type {BaseDriver} from '../basedriver/driver.js';
+import {generateDriverLogPrefix} from '../basedriver/helpers.js';
+import {log} from '../basedriver/logger.js';
+import {DEFAULT_BASE_PATH, MAX_LOG_BODY_LENGTH, PROTOCOLS} from '../constants.js';
+import type {RouteConfiguringFunction} from '../express/server.js';
+import {isW3cCaps} from '../helpers/capabilities.js';
+import {omitKeys} from '../utils.js';
 import {
   BadParametersError,
   errorFromMJSONWPStatusCode,
@@ -17,10 +17,10 @@ import {
   errors,
   getResponseForW3CError,
   isErrorType,
-} from './errors';
-import {ensureW3cResponse, formatResponseValue} from './helpers';
-import {METHOD_MAP, NO_SESSION_ID_COMMANDS} from './routes';
-import {validators} from './validators';
+} from './errors.js';
+import {ensureW3cResponse, formatResponseValue} from './helpers.js';
+import {METHOD_MAP, NO_SESSION_ID_COMMANDS} from './routes/index.js';
+import {validators} from './validators.js';
 
 export const CREATE_SESSION_COMMAND = 'createSession';
 export const DELETE_SESSION_COMMAND = 'deleteSession';

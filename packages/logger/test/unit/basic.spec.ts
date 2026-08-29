@@ -3,8 +3,8 @@ import {Stream} from 'node:stream';
 import {describe, it, beforeEach} from 'node:test';
 
 /* eslint-disable no-console */
-import {Log, markSensitive} from '../../lib/log';
-import type {Log as LogType} from '../../lib/log';
+import {Log, markSensitive} from '../../lib/log.js';
+import type {Log as LogType} from '../../lib/log.js';
 
 describe('basic', function () {
   let log: LogType;

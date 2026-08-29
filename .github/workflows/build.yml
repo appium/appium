@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - master
+      - appium4
     # this list of paths could potentially impact the build
     paths:
       - '**/tsconfig*.json'
@@ -23,6 +24,7 @@ on:
   pull_request:
     branches:
       - master
+      - appium4
     paths:
       - '**/tsconfig*.json'
       - 'packages/base-driver/test-fixtures/**/*'

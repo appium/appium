@@ -7,7 +7,7 @@ import {
   getDynamicLogger,
   restoreWriters,
   setupWriters,
-} from './helpers';
+} from './helpers.js';
 
 const LOG_LEVELS = ['silly', 'verbose', 'info', 'http', 'warn', 'error'];
 

@@ -1,10 +1,11 @@
+import {createRequire} from 'node:module';
 import path from 'node:path';
 import {pathToFileURL} from 'node:url';
 
 import {fs, system, util} from '@appium/support';
 import type {ExtensionType, StringRecord} from '@appium/types';
 import type {SchemaObject} from 'ajv';
-import type {ExtClass, ExtManifest, ExtName, ExtRecord, InstallType} from 'appium/types';
+import type {ExtClass, ExtManifest, ExtName, ExtRecord, InstallType} from 'appium/types/index.js';
 import {satisfies} from 'semver';
 
 import type {
@@ -12,14 +13,17 @@ import type {
   ExtensionListData,
   InstalledExtensionListData,
   ExtensionCliCommand,
-} from '../cli/extension-command';
-import {APPIUM_VER} from '../helpers/build';
-import {log} from '../logger';
-import {ALLOWED_SCHEMA_EXTENSIONS, isAllowedSchemaFileExtension, registerSchema} from '../schema/schema';
-import {capitalize, resolveFrom} from '../utils';
-import type {Manifest} from './manifest';
+} from '../cli/extension-command.js';
+import {APPIUM_VER} from '../helpers/build.js';
+import {log} from '../logger.js';
+import {ALLOWED_SCHEMA_EXTENSIONS, isAllowedSchemaFileExtension, registerSchema} from '../schema/schema.js';
+import {capitalize, resolveFrom} from '../utils/index.js';
+import type {Manifest} from './manifest.js';
 
 const DEFAULT_ENTRY_POINT = 'index.js';
+// Counter for `APPIUM_RELOAD_EXTENSIONS` cache-busting; `Date.now()` alone can collide when two
+// reloads happen within the same millisecond, which would serve the stale cached module.
+let reloadCounter = 0;
 /**
  * "npm" install type
  * Used when extension was installed by npm package name
@@ -119,7 +123,16 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     let moduleObject: any;
     if (typeof argSchemaPath === 'string') {
       const schemaPath = await resolveFrom(appiumHome, path.join(pkgName, argSchemaPath));
-      moduleObject = require(schemaPath);
+      if (path.extname(schemaPath) === '.json') {
+        // `import()` of JSON needs an import attribute Node versions disagree on the
+        // syntax for; parsing directly avoids that entirely.
+        moduleObject = JSON.parse(await fs.readFile(schemaPath, 'utf8'));
+      } else {
+        // https://github.com/nodejs/node/issues/31710
+        const importPath = system.isWindows() ? pathToFileURL(schemaPath).href : schemaPath;
+        const mod = (await import(importPath)) as Record<string, any>;
+        moduleObject = 'default' in mod ? mod.default : mod;
+      }
     } else {
       moduleObject = argSchemaPath;
     }
@@ -296,7 +309,23 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     const [reqPath, mainClass] = await this._resolveExtension(extName);
     log.debug(`Requiring ${this.extensionType} at ${reqPath}`);
     // https://github.com/nodejs/node/issues/31710
-    const importPath = system.isWindows() ? pathToFileURL(reqPath).href : reqPath;
+    let importPath = system.isWindows() ? pathToFileURL(reqPath).href : reqPath;
+    // note: this will only reload the entry point, not files it imports internally
+    if (process.env.APPIUM_RELOAD_EXTENSIONS) {
+      // For a CJS extension, `import()` delegates to Node's CJS loader, which caches by
+      // resolved filename and ignores the query string appended below — evict it from
+      // `require.cache` directly so it's actually re-evaluated. (No-op for a genuinely ESM
+      // extension, since it was never in `require.cache` to begin with.)
+      const req = createRequire(import.meta.url);
+      const realEntryPath = await fs.realpath(reqPath);
+      if (req.cache[realEntryPath]) {
+        delete req.cache[realEntryPath];
+      }
+      // For an ESM extension, there's no public API to evict a module from ESM's registry, so
+      // force a fresh copy via a unique specifier instead.
+      importPath += `?reload=${reloadCounter++}`;
+      log.debug(`Reloading ${this.extensionType} at ${reqPath}`);
+    }
     const mod = (await import(importPath)) as Record<string, ExtClass<ExtType>>;
     const MainClass = mod[mainClass];
     if (!MainClass) {
@@ -577,11 +606,6 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
         `Cannot find a valid ${this.extensionType} main entry point in '${packageJsonPath}'. ` +
           `Assumed entry point: '${entryPointFullPath}'`,
       );
-    }
-    // note: this will only reload the entry point
-    if (process.env.APPIUM_RELOAD_EXTENSIONS && require.cache[entryPointFullPath]) {
-      log.debug(`Removing ${entryPointFullPath} from require cache`);
-      delete require.cache[entryPointFullPath];
     }
     return [entryPointFullPath, mainClass];
   }

@@ -11,10 +11,10 @@ import type {
   StringRecord,
 } from '@appium/types';
 
-import {MAX_LOG_BODY_LENGTH} from '../constants';
-import {errors} from '../protocol';
-import {BIDI_COMMANDS} from '../protocol/bidi-commands';
-import {generateDriverLogPrefix} from './helpers';
+import {MAX_LOG_BODY_LENGTH} from '../constants.js';
+import {BIDI_COMMANDS} from '../protocol/bidi-commands.js';
+import {errors} from '../protocol/index.js';
+import {generateDriverLogPrefix} from './helpers.js';
 
 export class ExtensionCore {
   bidiEventSubs: Record<string, string[]>;

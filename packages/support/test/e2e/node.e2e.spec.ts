@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {node} from '../../lib';
+import {node} from '../../lib/index.js';
 
 describe('node utilities', function () {
   describe('requirePackage', function () {

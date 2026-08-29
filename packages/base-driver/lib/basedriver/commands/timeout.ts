@@ -2,18 +2,17 @@ import {util} from '@appium/support';
 import type {Constraints, ITimeoutCommands} from '@appium/types';
 import {waitForCondition} from 'asyncbox';
 
-import {errors} from '../../protocol';
-import type {BaseDriver} from '../driver';
-import {mixin} from './mixin';
+import {errors} from '../../protocol/index.js';
+import type {BaseDriver} from '../driver.js';
 
-declare module '../driver' {
+declare module '../driver.js' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface BaseDriver<C extends Constraints> extends ITimeoutCommands {}
 }
 
 const MIN_TIMEOUT = 0;
 
-const TimeoutCommands: ITimeoutCommands = {
+export const TimeoutCommands: ITimeoutCommands = {
   async timeouts<C extends Constraints>(
     this: BaseDriver<C>,
     type?: string,
@@ -132,5 +131,3 @@ const TimeoutCommands: ITimeoutCommands = {
     return duration;
   },
 };
-
-mixin(TimeoutCommands);

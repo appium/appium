@@ -4,7 +4,7 @@ import {describe, it} from 'node:test';
 
 import type {HTTPMethod} from '@appium/types';
 
-import {METHOD_MAP, routeToCommandName} from '../../../lib/protocol';
+import {METHOD_MAP, routeToCommandName} from '../../../lib/protocol/index.js';
 
 describe('Routes', function () {
   describe('ensure protocol consistency', function () {

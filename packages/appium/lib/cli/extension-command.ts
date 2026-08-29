@@ -12,23 +12,23 @@ import type {
   ExtPackageJson as AppiumExtPackageJson,
   ExtRecord as AppiumExtRecord,
   InstallType,
-} from 'appium/types';
+} from 'appium/types/index.js';
 import {asyncfilter, asyncmap} from 'asyncbox';
 import * as semver from 'semver';
 import {SubProcess} from 'teen_process';
 import type {PackageJson} from 'type-fest';
 
-import {Doctor, EXIT_CODE as DOCTOR_EXIT_CODE} from '../doctor/doctor';
-import type {ExtensionConfig as BaseExtensionConfig} from '../extension/extension-config';
+import {Doctor, EXIT_CODE as DOCTOR_EXIT_CODE} from '../doctor/doctor.js';
+import type {ExtensionConfig as BaseExtensionConfig} from '../extension/extension-config.js';
 import {
   INSTALL_TYPE_DEV,
   INSTALL_TYPE_GIT,
   INSTALL_TYPE_GITHUB,
   INSTALL_TYPE_LOCAL,
   INSTALL_TYPE_NPM,
-} from '../extension/extension-config';
-import {appiumPackageRoot, compact, npmPackage, packageDidChange} from '../utils';
-import {RingBuffer, spinWith} from './utils';
+} from '../extension/extension-config.js';
+import {appiumPackageRoot, compact, npmPackage, packageDidChange} from '../utils/index.js';
+import {RingBuffer, spinWith} from './utils.js';
 
 const UPDATE_ALL = 'installed';
 const MAX_CONCURRENT_REPO_FETCHES = 5;

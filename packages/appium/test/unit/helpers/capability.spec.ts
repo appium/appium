@@ -3,14 +3,14 @@ import {describe, it} from 'node:test';
 
 import type {BaseDriverCapConstraints, Capabilities, Constraints, NSCapabilities, W3CCapabilities} from '@appium/types';
 
-import type {InvalidCaps} from '../../../lib/helpers/capability';
+import type {InvalidCaps} from '../../../lib/helpers/capability.js';
 import {
   insertAppiumPrefixes,
   parseCapsForInnerDriver,
   pullSettings,
   removeAppiumPrefixes,
-} from '../../../lib/helpers/capability';
-import {BASE_CAPS, W3C_CAPS} from '../../helpers';
+} from '../../../lib/helpers/capability.js';
+import {BASE_CAPS, W3C_CAPS} from '../../helpers.js';
 
 describe('helpers/capability', function () {
   describe('parseCapsForInnerDriver()', function () {

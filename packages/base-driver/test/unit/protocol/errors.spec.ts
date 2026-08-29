@@ -4,10 +4,10 @@ import {describe, it} from 'node:test';
 
 import {StatusCodes as HTTPStatusCodes} from 'http-status-codes';
 
-import {errorFromMJSONWPStatusCode, errorFromW3CJsonCode, errors, isErrorType} from '../../../lib';
-import {BadParametersError, getResponseForW3CError} from '../../../lib/protocol/errors';
+import {errorFromMJSONWPStatusCode, errorFromW3CJsonCode, errors, isErrorType} from '../../../lib/index.js';
+import {BadParametersError, getResponseForW3CError} from '../../../lib/protocol/errors.js';
 
-const basename = path.basename(__filename, path.extname(__filename));
+const basename = path.basename(import.meta.filename, path.extname(import.meta.filename));
 
 interface ErrorListItem {
   errorName: string;

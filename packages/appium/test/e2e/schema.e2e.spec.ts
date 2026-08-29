@@ -4,9 +4,9 @@ import {describe, it, before, after} from 'node:test';
 
 import {fs, tempDir} from '@appium/support';
 
-import {DRIVER_TYPE, PLUGIN_TYPE} from '../../lib/constants';
-import {FAKE_DRIVER_DIR, FAKE_PLUGIN_DIR, resolveFixture} from '../helpers';
-import {installLocalExtension, runAppium} from './e2e-helpers';
+import {DRIVER_TYPE, PLUGIN_TYPE} from '../../lib/constants.js';
+import {FAKE_DRIVER_DIR, FAKE_PLUGIN_DIR, resolveFixture} from '../helpers.js';
+import {installLocalExtension, runAppium} from './e2e-helpers.js';
 
 describe('CLI behavior controlled by schema', function () {
   let appiumHome: string;

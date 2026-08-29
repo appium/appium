@@ -4,7 +4,7 @@ import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
 import type {InitialOpts} from '@appium/types';
 import {createSandbox} from 'sinon';
 
-import {BaseDriver} from '../../../lib';
+import {BaseDriver, errors} from '../../../lib';
 
 describe('timeout', function () {
   let driver: BaseDriver<any, any, any, any, any, any>;
@@ -27,6 +27,10 @@ describe('timeout', function () {
 
   describe('timeouts', function () {
     describe('errors', function () {
+      it('should reject an invalid timeout with InvalidArgumentError', function () {
+        assert.throws(() => driver.parseTimeoutArgument('abc'), errors.InvalidArgumentError);
+        assert.throws(() => driver.parseTimeoutArgument(-1), errors.InvalidArgumentError);
+      });
       it('should throw an error if something random is sent', async function () {
         await assert.rejects(driver.timeouts('random timeout', 'howdy'));
       });

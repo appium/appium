@@ -1,7 +1,7 @@
 import {util} from '@appium/support';
 import type {Constraints, Driver, DriverClass} from '@appium/types';
 
-import type {BaseDriver} from '../basedriver/driver';
+import type {BaseDriver} from '../basedriver/driver.js';
 
 /**
  * Resolves the name of extension method corresponding to an `execute` command string

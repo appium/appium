@@ -1,7 +1,7 @@
 /**
  * Package-internal utilities. Not exported from `@appium/support`.
  */
-export {createBase64EncodeStream} from './base64-encode-stream';
+export {createBase64EncodeStream} from './base64-encode-stream.js';
 export {
   type NormalizedPackageJson,
   type NormalizeOptions,
@@ -10,4 +10,4 @@ export {
   readPackage,
   type ReadPackageOptions,
   readPackageSync,
-} from './read-package';
+} from './read-package.js';

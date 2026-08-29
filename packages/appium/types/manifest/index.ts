@@ -3,12 +3,12 @@
  * @module
  */
 
-import * as ManifestV2 from './base';
-import * as ManifestV3 from './v3';
-import * as ManifestV4 from './v4';
+import * as ManifestV2 from './base.js';
+import * as ManifestV3 from './v3.js';
+import * as ManifestV4 from './v4.js';
 // add `import * as ManifestV<new-version> from './v<new-version>';` above
 
-export * from './v4';
+export * from './v4.js';
 // replace above line with `export * from './v<new-version>';`
 
 export {ManifestV2, ManifestV3, ManifestV4};

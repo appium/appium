@@ -1,4 +1,4 @@
-import {fs} from './fs';
+import {fs} from './fs.js';
 
 /**
  * @deprecated Use `fs.mkdirp` instead.

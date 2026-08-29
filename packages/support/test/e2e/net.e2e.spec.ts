@@ -2,8 +2,8 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 import {afterEach, beforeEach, describe, it} from 'node:test';
 
-import {fs, tempDir} from '../../lib/index';
-import {downloadFile} from '../../lib/net';
+import {fs, tempDir} from '../../lib/index.js';
+import {downloadFile} from '../../lib/net.js';
 
 describe('#net', function () {
   let tmpRoot: string;

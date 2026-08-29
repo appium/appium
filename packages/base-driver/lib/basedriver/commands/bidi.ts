@@ -1,29 +1,14 @@
 import {util} from '@appium/support';
 import type {Constraints, DriverStatus, IBidiCommands} from '@appium/types';
 
-import {errors} from '../../protocol/errors';
-import type {BaseDriver} from '../driver';
-import {getSubscriptions, refreshEventSubscriptions} from './bidi-subscriptions';
-import {mixin} from './mixin';
+import type {BaseDriver} from '../driver.js';
 
-declare module '../driver' {
+declare module '../driver.js' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface BaseDriver<C extends Constraints> extends IBidiCommands {}
 }
 
-function assertStringList(value: unknown, name: string): asserts value is string[] {
-  if (!Array.isArray(value) || !value.length || value.some((item) => typeof item !== 'string' || !item.length)) {
-    throw new errors.InvalidArgumentError(`${name} must be a non-empty array of non-empty strings`);
-  }
-}
-
-function assertContexts(value: unknown): asserts value is string[] {
-  if (!Array.isArray(value) || value.some((context) => typeof context !== 'string')) {
-    throw new errors.InvalidArgumentError('contexts must be an array of strings');
-  }
-}
-
-const BidiCommands: IBidiCommands = {
+export const BidiCommands: IBidiCommands = {
   async bidiSubscribe<C extends Constraints>(this: BaseDriver<C>, events: string[], contexts: string[] = ['']) {
     assertStringList(events, 'events');
     assertContexts(contexts);
@@ -84,5 +69,3 @@ const BidiCommands: IBidiCommands = {
     };
   },
 };
-
-mixin(BidiCommands);

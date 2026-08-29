@@ -3,9 +3,9 @@ import {constants} from 'node:fs';
 import os from 'node:os';
 import nodePath from 'node:path';
 
-import {fs} from './fs';
-import log from './logger';
-import {memoize} from './util';
+import {fs} from './fs.js';
+import log from './logger.js';
+import {memoize} from './util.js';
 
 const RDWR_EXCL = constants.O_CREAT | constants.O_TRUNC | constants.O_RDWR | constants.O_EXCL;
 

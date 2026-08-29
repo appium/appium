@@ -35,15 +35,20 @@ import type {
 } from '@appium/types';
 import type WebSocket from 'ws';
 
-import * as bidiCommands from './bidi-commands';
-import {BIDI_BASE_PATH, DRIVER_TYPE, SESSION_DISCOVERY_FEATURE} from './constants';
-import type {DriverConfig} from './extension/driver-config';
-import {APPIUM_VER, getBuildInfo, updateBuildInfo} from './helpers/build';
-import {makeNonW3cCapsError, parseCapsForInnerDriver, type ParsedDriverCaps, pullSettings} from './helpers/capability';
-import * as insecureFeatures from './insecure-features';
-import * as inspectorCommands from './inspector-commands';
-import {getDefaultsForExtension} from './schema';
-import {compact, pickBy, pull} from './utils';
+import * as bidiCommands from './bidi-commands.js';
+import {BIDI_BASE_PATH, DRIVER_TYPE, SESSION_DISCOVERY_FEATURE} from './constants.js';
+import type {DriverConfig} from './extension/driver-config.js';
+import {APPIUM_VER, getBuildInfo, updateBuildInfo} from './helpers/build.js';
+import {
+  makeNonW3cCapsError,
+  parseCapsForInnerDriver,
+  type ParsedDriverCaps,
+  pullSettings,
+} from './helpers/capability.js';
+import * as insecureFeatures from './insecure-features.js';
+import * as inspectorCommands from './inspector-commands.js';
+import {getDefaultsForExtension} from './schema/index.js';
+import {compact, pickBy, pull} from './utils/index.js';
 
 const desiredCapabilityConstraints = {
   automationName: {

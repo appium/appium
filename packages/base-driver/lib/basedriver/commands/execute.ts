@@ -1,17 +1,16 @@
 import {util} from '@appium/support';
 import type {Constraints, Driver, DriverClass, DriverCommand, IExecuteCommands, StringRecord} from '@appium/types';
 
-import {rankLevenshteinCandidates} from '../../helpers/levenshtein-match';
-import {errors, validateExecuteMethodParams} from '../../protocol';
-import type {BaseDriver} from '../driver';
-import {mixin} from './mixin';
+import {rankLevenshteinCandidates} from '../../helpers/levenshtein-match.js';
+import {errors, validateExecuteMethodParams} from '../../protocol/index.js';
+import type {BaseDriver} from '../driver.js';
 
-declare module '../driver' {
+declare module '../driver.js' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface BaseDriver<C extends Constraints> extends IExecuteCommands {}
 }
 
-const ExecuteCommands = {
+export const ExecuteCommands = {
   async executeMethod<C extends Constraints>(
     this: BaseDriver<C>,
     script: string,
@@ -44,5 +43,3 @@ const ExecuteCommands = {
     return await command.call(this, ...args);
   },
 } as IExecuteCommands;
-
-mixin(ExecuteCommands);

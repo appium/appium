@@ -3,7 +3,7 @@ import {describe, it, before, after} from 'node:test';
 
 import type {ActionSequence} from '@appium/types';
 
-import {deleteSession, initSession, W3C_PREFIXED_CAPS} from '../helpers';
+import {deleteSession, initSession, W3C_PREFIXED_CAPS} from '../helpers.js';
 
 export function generalTests(context: {port: number}) {
   describe('generic actions', function () {

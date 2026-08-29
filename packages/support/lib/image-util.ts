@@ -1,4 +1,9 @@
+import {createRequire} from 'node:module';
+
 import type sharp from 'sharp';
+import type {Region} from 'sharp';
+
+const require = createRequire(import.meta.url);
 
 let _sharp: typeof sharp | undefined;
 
@@ -34,7 +39,7 @@ export function requireSharp(): typeof sharp {
  * @param rect The selected region of image
  * @returns base64 encoded string of cropped image
  */
-export async function cropBase64Image(base64Image: string, rect: sharp.Region): Promise<string> {
+export async function cropBase64Image(base64Image: string, rect: Region): Promise<string> {
   const buf = await requireSharp()(Buffer.from(base64Image, 'base64')).extract(rect).toBuffer();
   return buf.toString('base64');
 }

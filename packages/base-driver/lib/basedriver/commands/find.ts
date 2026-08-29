@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type {Constraints, Element, IFindCommands} from '@appium/types';
 
-import {errors} from '../../protocol';
-import type {BaseDriver} from '../driver';
-import {mixin} from './mixin';
+import {errors} from '../../protocol/index.js';
+import type {BaseDriver} from '../driver.js';
 
-declare module '../driver' {
+declare module '../driver.js' {
   interface BaseDriver<C extends Constraints> extends IFindCommands {}
 }
 
@@ -81,7 +80,7 @@ async function findElOrElsWithProcessing<C extends Constraints>(
   }
 }
 
-const FindCommands: IFindCommands = {
+export const FindCommands: IFindCommands = {
   async findElement<C extends Constraints>(this: BaseDriver<C>, strategy: string, selector: string) {
     return await this.findElOrElsWithProcessing(strategy, selector, false);
   },
@@ -116,5 +115,3 @@ const FindCommands: IFindCommands = {
 
   findElOrElsWithProcessing,
 };
-
-mixin(FindCommands);

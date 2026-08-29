@@ -3,7 +3,7 @@ import path from 'node:path';
 import {describe, it, before, after, beforeEach} from 'node:test';
 
 import {fs, tempDir} from '@appium/support';
-import type {AnyManifestDataVersion} from 'appium/types';
+import type {AnyManifestDataVersion} from 'appium/types/index.js';
 import * as YAML from 'yaml';
 
 import {
@@ -11,9 +11,9 @@ import {
   CURRENT_SCHEMA_REV,
   DRIVER_TYPE,
   EXT_SUBCOMMAND_LIST as LIST,
-} from '../../lib/constants';
-import {FAKE_DRIVER_DIR, resolveFixture} from '../helpers';
-import {installLocalExtension, runAppiumJson} from './e2e-helpers';
+} from '../../lib/constants.js';
+import {FAKE_DRIVER_DIR, resolveFixture} from '../helpers.js';
+import {installLocalExtension, runAppiumJson} from './e2e-helpers.js';
 
 describe('manifest handling', function () {
   let appiumHome: string;

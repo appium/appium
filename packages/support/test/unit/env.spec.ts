@@ -1,12 +1,11 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
-import {afterEach, beforeEach, describe, it} from 'node:test';
+import {afterEach, beforeEach, describe, it, type TestContext} from 'node:test';
 
 import type {SinonSandbox} from 'sinon';
 import type {TeenProcessExecResult} from 'teen_process';
 
-import {rewiremock} from '../helpers';
-import {initMocks, type MockReadPackage, type MockTeenProcess} from '../mocks';
+import {initMocks, type MockReadPackage, type MockTeenProcess} from '../mocks.js';
 
 function missingPackageJsonError(): NodeJS.ErrnoException {
   const err = new Error('ENOENT') as NodeJS.ErrnoException;
@@ -20,19 +19,29 @@ describe('env', function () {
   let MockReadPackage: MockReadPackage;
   let MockTeenProcess: MockTeenProcess;
   let envAppiumHome: string | undefined;
+  let importCounter = 0;
 
-  beforeEach(function () {
+  beforeEach(async function (context) {
+    const t = context as TestContext;
     const result = initMocks();
     MockReadPackage = result.MockReadPackage;
     MockTeenProcess = result.MockTeenProcess;
     sandbox = result.sandbox;
-    const overrides = result.overrides;
 
     // Ensure an APPIUM_HOME in the environment does not befoul our tests.
     envAppiumHome = process.env.APPIUM_HOME;
     delete process.env.APPIUM_HOME;
 
-    env = rewiremock.proxy(() => require('../../lib/env'), overrides);
+    // Spread the real module's exports before overriding `readPackage`: `env.js`
+    // transitively loads `util.js` -> `fs.js`, which also import from this same
+    // module, and a mock replaces the *entire* module for every importer in the graph.
+    const realInternal = await import('../../lib/internal/index.js');
+    t.mock.module('../../lib/internal/index.js', {
+      namedExports: {...realInternal, readPackage: result.MockInternal.readPackage},
+    });
+    // Cache-busting query forces a fresh evaluation of env.js on each test, so it
+    // re-links to the mock set above instead of reusing a previous test's binding.
+    env = await import(`../../lib/env.js?t=${importCounter++}`);
 
     env.findAppiumDependencyPackage.cache = new Map();
     env.resolveManifestPath.cache = new Map();

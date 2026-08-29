@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {afterEach, describe, it} from 'node:test';
 
-import {fs, tempDir} from '../../lib';
+import {fs, tempDir} from '../../lib/index.js';
 
 describe('tempdir', function () {
   afterEach(function () {

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {afterEach, describe, it} from 'node:test';
 
-import * as consoleModule from '../../lib/console';
+import * as consoleModule from '../../lib/console.js';
 
 const {CliConsole, stripColors, styleText} = consoleModule;
 

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {createBase64EncodeStream} from '../../../lib/internal/base64-encode-stream';
+import {createBase64EncodeStream} from '../../../lib/internal/base64-encode-stream.js';
 
 function splitIntoChunks(data: Buffer, chunkSize: number): Buffer[] {
   const chunks: Buffer[] = [];

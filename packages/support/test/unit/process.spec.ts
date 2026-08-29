@@ -1,13 +1,29 @@
 import assert from 'node:assert/strict';
-import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
+import {after, afterEach, before, beforeEach, describe, it, type TestContext} from 'node:test';
 
 import {retryInterval} from 'asyncbox';
 import {createSandbox} from 'sinon';
 import * as teenProcess from 'teen_process';
 
-import {process, system} from '../../lib';
+import {process, system} from '../../lib/index.js';
 
 const SubProcess = teenProcess.SubProcess;
+
+let importCounter = 0;
+
+/**
+ * `teen_process` is genuine ESM, so its live bindings cannot be stubbed with sinon
+ * post-import. Mock `exec` via `t.mock.module` and re-import `lib/process.js` fresh
+ * (cache-busted) so it re-links against the mock instead of a previously-cached module.
+ */
+async function importProcessWithMockedExec(t: TestContext, execImpl: (...args: any[]) => any) {
+  // Spread the real module: a mock replaces the *entire* module for every importer
+  // sharing this process, not just the one under test here.
+  t.mock.module('teen_process', {
+    namedExports: {...teenProcess, exec: execImpl},
+  });
+  return import(`../../lib/process.js?t=${importCounter++}`);
+}
 
 describe('process', function () {
   let sandbox: ReturnType<typeof createSandbox>;
@@ -24,7 +40,7 @@ describe('process', function () {
   describe('getProcessIds', {skip: system.isWindows()}, function () {
     let proc: InstanceType<typeof SubProcess> | undefined;
     before(async function () {
-      proc = new SubProcess('tail', ['-f', __filename]);
+      proc = new SubProcess('tail', ['-f', import.meta.filename]);
       await proc.start();
     });
     after(async function () {
@@ -44,16 +60,18 @@ describe('process', function () {
       const pids = await process.getProcessIds('sadfgasdfasdf');
       assert.strictEqual(pids.length, 0);
     });
-    it('should throw an error if pgrep fails', async function () {
-      (sandbox.stub(teenProcess, 'exec') as any).get(() => sandbox.stub().throws({message: 'Oops', code: 2}));
-      await assert.rejects(process.getProcessIds('tail'), /Oops/);
+    it('should throw an error if pgrep fails', async function (t) {
+      const mockedProcess = await importProcessWithMockedExec(t as TestContext, () => {
+        throw {message: 'Oops', code: 2};
+      });
+      await assert.rejects(mockedProcess.getProcessIds('tail'), /Oops/);
     });
   });
 
   describe('killProcess', {skip: system.isWindows()}, function () {
     let proc: InstanceType<typeof SubProcess>;
     beforeEach(async function () {
-      proc = new SubProcess('tail', ['-f', __filename]);
+      proc = new SubProcess('tail', ['-f', import.meta.filename]);
       await proc.start();
     });
     afterEach(async function () {
@@ -79,16 +97,21 @@ describe('process', function () {
         }),
       );
     });
-    it('should throw an error if pgrep fails', async function () {
-      (sandbox.stub(teenProcess, 'exec') as any).get(() => sandbox.stub().throws({message: 'Oops', code: 2}));
-      await assert.rejects(process.killProcess('tail'), /Oops/);
+    it('should throw an error if pgrep fails', async function (t) {
+      const mockedProcess = await importProcessWithMockedExec(t as TestContext, () => {
+        throw {message: 'Oops', code: 2};
+      });
+      await assert.rejects(mockedProcess.killProcess('tail'), /Oops/);
     });
-    it('should throw an error if pkill fails', async function () {
-      const innerExecStub = sandbox.stub();
-      innerExecStub.returns({stdout: '42\n'});
-      innerExecStub.throws({message: 'Oops', code: 2});
-      (sandbox.stub(teenProcess, 'exec') as any).get(() => innerExecStub);
-      await assert.rejects(process.killProcess('tail'), /Oops/);
+    it('should throw an error if pkill fails', async function (t) {
+      const mockedProcess = await importProcessWithMockedExec(t as TestContext, (cmd: string) => {
+        if (cmd === 'pgrep') {
+          // let getProcessIds() find a match, so killProcess() proceeds to call pkill
+          return {stdout: '1234\n'};
+        }
+        throw {message: 'Oops', code: 2};
+      });
+      await assert.rejects(mockedProcess.killProcess('tail'), /Oops/);
     });
   });
 });

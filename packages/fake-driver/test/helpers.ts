@@ -5,7 +5,12 @@ import {node} from '@appium/support';
 import type {Constraints, StringRecord, W3CCapabilities} from '@appium/types';
 import {remote as wdio} from 'webdriverio';
 
-const TEST_APP = path.join(node.getModuleRootSync('@appium/fake-driver', __filename)!, 'test', 'fixtures', 'app.xml');
+const TEST_APP = path.join(
+  node.getModuleRootSync('@appium/fake-driver', import.meta.filename)!,
+  'test',
+  'fixtures',
+  'app.xml',
+);
 
 const BASE_CAPS: StringRecord = {
   platformName: 'Fake',

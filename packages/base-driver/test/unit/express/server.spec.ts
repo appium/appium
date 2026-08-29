@@ -5,9 +5,9 @@ import {getTestPort} from '@appium/driver-test-support';
 import type {Driver, MethodMap} from '@appium/types';
 import {createSandbox} from 'sinon';
 
-import {configureServer, normalizeBasePath, server} from '../../../lib/express/server';
-import {routeConfiguringFunction} from '../../../lib/protocol/protocol';
-import {registerTestPages} from '../../../lib/test-pages';
+import {configureServer, normalizeBasePath, server} from '../../../lib/express/server.js';
+import {routeConfiguringFunction} from '../../../lib/protocol/protocol.js';
+import {registerTestPages} from '../../../lib/test-pages/index.js';
 
 // stand-in for the router `configureHttp` normally creates
 const fakeFrontRouter = {} as any;

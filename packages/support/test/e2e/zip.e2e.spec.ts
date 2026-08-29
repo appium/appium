@@ -2,10 +2,10 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 import {afterEach, beforeEach, describe, it} from 'node:test';
 
-import {fs, tempDir} from '../../lib/index';
-import {isWindows} from '../../lib/system';
-import * as zip from '../../lib/zip';
-import {MockReadWriteStream} from '../helpers';
+import {fs, tempDir} from '../../lib/index.js';
+import {isWindows} from '../../lib/system.js';
+import * as zip from '../../lib/zip.js';
+import {MockReadWriteStream} from '../helpers.js';
 
 describe('#zip', function () {
   const optionMap = new Map<string, Record<string, boolean | undefined>>([

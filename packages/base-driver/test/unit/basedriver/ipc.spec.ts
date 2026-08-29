@@ -4,7 +4,7 @@ import {describe, it} from 'node:test';
 import type {IpcMessage} from '@appium/types';
 import {sleep} from 'asyncbox';
 
-import {AppiumIpc, EVT_MESSAGE} from '../../../lib/basedriver/ipc';
+import {AppiumIpc, EVT_MESSAGE} from '../../../lib/basedriver/ipc.js';
 
 describe('AppiumIpc', function () {
   describe('subscriptionExists', function () {

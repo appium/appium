@@ -1,42 +1,48 @@
 import assert from 'node:assert/strict';
 import {promises as fs} from 'node:fs';
-import {describe, it, beforeEach, afterEach, before} from 'node:test';
+import {describe, it, beforeEach, before, after, mock} from 'node:test';
 
 import type {DriverType, PluginType} from '@appium/types';
-import type {ExtManifest, ExtPackageJson, ManifestData} from 'appium/types';
-import type {SinonSandbox} from 'sinon';
+import type {ExtManifest, ExtPackageJson, ManifestData} from 'appium/types/index.js';
 
-import {DRIVER_TYPE, PLUGIN_TYPE} from '../../../lib/constants';
-import {APPIUM_VER} from '../../../lib/helpers/build';
-import {resolveFixture, rewiremock} from '../../helpers';
-import {initMocks} from './mocks';
-import type {MockAppiumSupport, MockPackageChanged} from './mocks';
+import {DRIVER_TYPE, PLUGIN_TYPE} from '../../../lib/constants.js';
+import {APPIUM_VER} from '../../../lib/helpers/build.js';
+import {resolveFixture} from '../../helpers.js';
+import {applyExtensionMocks, initMocks, resetMockDefaults} from './mocks.js';
+import type {InitMocksResult, MockAppiumSupport, MockPackageChanged} from './mocks.js';
 
 describe('Manifest', function () {
-  let sandbox: SinonSandbox;
   let yamlFixture: string;
+  let mocks: InitMocksResult;
   let MockPackageChanged: MockPackageChanged;
   let MockAppiumSupport: MockAppiumSupport;
+  let migrateStub: ReturnType<InitMocksResult['sandbox']['stub']>;
   let Manifest: any;
+  let importCounter = 0;
 
+  // See the comment on `applyExtensionMocks` in mocks.ts for why `Manifest` is dynamically
+  // re-imported fresh every test rather than statically at the top of this file.
   before(async function () {
     yamlFixture = await fs.readFile(resolveFixture('manifest', 'v3.yaml'), 'utf8');
+    mocks = initMocks();
+    MockPackageChanged = mocks.MockPackageChanged;
+    MockAppiumSupport = mocks.MockAppiumSupport;
+    migrateStub = mocks.sandbox.stub().resolves();
+    applyExtensionMocks(mocks);
+    mock.module('../../../lib/extension/manifest-migrations.js', {
+      namedExports: {migrate: migrateStub},
+    });
   });
 
-  beforeEach(function () {
-    let overrides: ReturnType<typeof initMocks>['overrides'];
-    ({MockPackageChanged, MockAppiumSupport, overrides, sandbox} = initMocks());
+  after(function () {
+    mock.reset();
+  });
+
+  beforeEach(async function () {
+    resetMockDefaults(mocks);
+    migrateStub.resolves();
     MockAppiumSupport.fs.readFile.resolves(yamlFixture);
-    ({Manifest} = rewiremock.proxy(() => require('../../../lib/extension/manifest'), {
-      ...overrides,
-      '../../../lib/extension/manifest-migrations': {migrate: sandbox.stub().resolves()},
-    }));
-
-    Manifest.getInstance.cache = new Map();
-  });
-
-  afterEach(function () {
-    sandbox.restore();
+    ({Manifest} = await import(`../../../lib/extension/manifest.js?t=${importCounter++}`));
   });
 
   describe('class method', function () {
@@ -112,7 +118,7 @@ describe('Manifest', function () {
 
     describe('read()', function () {
       beforeEach(function () {
-        sandbox.stub(manifest, 'syncWithInstalledExtensions').resolves();
+        mocks.sandbox.stub(manifest, 'syncWithInstalledExtensions').resolves();
       });
 
       describe('when the file does not yet exist', function () {
@@ -161,7 +167,7 @@ describe('Manifest', function () {
 
       describe('when the file already exists', function () {
         beforeEach(async function () {
-          sandbox.spy(manifest, 'write');
+          mocks.sandbox.spy(manifest, 'write');
           await manifest.read();
         });
 
@@ -180,7 +186,7 @@ describe('Manifest', function () {
             MockAppiumSupport.env.hasAppiumDependency.resolves(true);
             MockPackageChanged.isPackageChanged.resolves({
               isChanged: true,
-              writeHash: sandbox.stub(),
+              writeHash: mocks.sandbox.stub(),
               hash: 'foasdif',
               oldHash: 'sdjifh',
             });
@@ -201,7 +207,7 @@ describe('Manifest', function () {
 
     describe('write()', function () {
       beforeEach(function () {
-        sandbox.stub(manifest, 'syncWithInstalledExtensions').resolves();
+        mocks.sandbox.stub(manifest, 'syncWithInstalledExtensions').resolves();
       });
 
       describe('when called after `read()`', function () {

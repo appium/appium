@@ -3,19 +3,19 @@ import {describe, it, before, after} from 'node:test';
 
 import {fs, tempDir} from '@appium/support';
 import type {AppiumServer} from '@appium/types';
-import type {ParsedArgs} from 'appium/types';
+import type {ParsedArgs} from 'appium/types/index.js';
 import {sleep} from 'asyncbox';
 import axios from 'axios';
 import type {Browser} from 'webdriverio';
 import {remote as wdio} from 'webdriverio';
 
-import {runExtensionCommand} from '../../lib/cli/extension';
-import {DRIVER_TYPE, PLUGIN_TYPE} from '../../lib/constants';
-import {loadExtensions} from '../../lib/extension';
-import {INSTALL_TYPE_LOCAL} from '../../lib/extension/extension-config';
-import {main as appiumServer} from '../../lib/main';
-import {resetSchema} from '../../lib/schema';
-import {FAKE_DRIVER_DIR, FAKE_PLUGIN_DIR, getTestPort, TEST_HOST, W3C_PREFIXED_CAPS} from '../helpers';
+import {runExtensionCommand} from '../../lib/cli/extension.js';
+import {DRIVER_TYPE, PLUGIN_TYPE} from '../../lib/constants.js';
+import {INSTALL_TYPE_LOCAL} from '../../lib/extension/extension-config.js';
+import {loadExtensions} from '../../lib/extension/index.js';
+import {main as appiumServer} from '../../lib/main.js';
+import {resetSchema} from '../../lib/schema/index.js';
+import {FAKE_DRIVER_DIR, FAKE_PLUGIN_DIR, getTestPort, TEST_HOST, W3C_PREFIXED_CAPS} from '../helpers.js';
 
 const FAKE_ARGS = {sillyWebServerPort: 1234, host: 'hey'};
 const FAKE_PLUGIN_ARGS = {fake: FAKE_ARGS};

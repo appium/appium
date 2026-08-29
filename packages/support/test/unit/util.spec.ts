@@ -8,7 +8,7 @@ import {promisify} from 'node:util';
 import {sleep} from 'asyncbox';
 import {createSandbox} from 'sinon';
 
-import {fs, tempDir, util} from '../../lib';
+import {fs, tempDir, util} from '../../lib/index.js';
 
 const {W3C_WEB_ELEMENT_IDENTIFIER} = util;
 

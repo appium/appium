@@ -1,11 +1,11 @@
 import {util} from '@appium/support';
 import type {PluginType} from '@appium/types';
-import type {ExtManifest, ExtName, ExtRecord} from 'appium/types';
+import type {ExtManifest, ExtName, ExtRecord} from 'appium/types/index.js';
 
-import {PLUGIN_TYPE} from '../constants';
-import {log} from '../logger';
-import {ExtensionConfig} from './extension-config';
-import type {Manifest} from './manifest';
+import {PLUGIN_TYPE} from '../constants.js';
+import {log} from '../logger.js';
+import {ExtensionConfig} from './extension-config.js';
+import type {Manifest} from './manifest.js';
 
 export class PluginConfig extends ExtensionConfig<PluginType> {
   private static readonly _instances = new WeakMap<Manifest, PluginConfig>();

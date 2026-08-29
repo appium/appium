@@ -1,11 +1,14 @@
 import {randomUUID} from 'node:crypto';
 import _fs from 'node:fs';
+import {createRequire} from 'node:module';
 import path from 'node:path';
 
 import {exec} from 'teen_process';
 
-import log from './logger';
-import {isWindows} from './system';
+import log from './logger.js';
+import {isWindows} from './system.js';
+
+const require = createRequire(import.meta.url);
 
 const OBJECTS_MAPPING = new WeakMap<object, string>();
 
@@ -104,7 +107,7 @@ export function deepFreeze<T>(object: T): T {
  *
  * @param moduleName - The name of the module as it is written in package.json
  * @param filePath - Full path to any of files that `moduleName` contains. Use
- * `__filename` to find the root of the module where this helper is called.
+ * `import.meta.filename` to find the root of the module where this helper is called.
  * @returns Full path to the module root, or null if not found
  */
 export function getModuleRootSync(moduleName: string, filePath: string): string | null {

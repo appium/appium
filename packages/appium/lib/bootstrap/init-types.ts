@@ -5,10 +5,10 @@ import type {
   CliCommandSetupSubcommand,
   CliExtensionSubcommand,
   ParsedArgs,
-} from 'appium/types';
+} from 'appium/types/index.js';
 
-import type {AppiumDriver} from '../appium';
-import type {ExtensionConfigs} from '../extension';
+import type {AppiumDriver} from '../appium.js';
+import type {ExtensionConfigs} from '../extension/index.js';
 
 /** Empty object returned when `init` completes for non-server CLI flows (extension/setup). */
 export type ExtCommandInitResult = Record<string, never>;

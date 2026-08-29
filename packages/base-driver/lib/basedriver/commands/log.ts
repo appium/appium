@@ -1,14 +1,13 @@
 import type {Constraints, Driver, ILogCommands} from '@appium/types';
 
-import type {BaseDriver} from '../driver';
-import {mixin} from './mixin';
+import type {BaseDriver} from '../driver.js';
 
-declare module '../driver' {
+declare module '../driver.js' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface BaseDriver<C extends Constraints> extends ILogCommands {}
 }
 
-const LogCommands: ILogCommands = {
+export const LogCommands: ILogCommands = {
   supportedLogTypes: {},
 
   async getLogTypes<C extends Constraints>(this: BaseDriver<C>) {
@@ -31,5 +30,3 @@ const LogCommands: ILogCommands = {
     return await this.supportedLogTypes[logType].getter(this);
   },
 };
-
-mixin(LogCommands);

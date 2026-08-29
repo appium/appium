@@ -3,7 +3,7 @@ import {beforeEach, describe, it} from 'node:test';
 
 import type {InitialOpts} from '@appium/types';
 
-import {BaseDriver, errors} from '../../../../lib';
+import {BaseDriver, errors} from '../../../../lib/index.js';
 
 const PAGE_SOURCE = '<hierarchy />';
 

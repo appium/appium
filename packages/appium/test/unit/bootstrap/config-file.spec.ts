@@ -1,35 +1,30 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import {describe, it, beforeEach, afterEach, before} from 'node:test';
+import {describe, it, beforeEach, before, after, mock} from 'node:test';
 
 import {createSandbox, type SinonSandbox, type SinonSpy, type SinonStubbedMember} from 'sinon';
 import * as YAML from 'yaml';
 
-import * as schema from '../../../lib/schema/schema';
-import {resolveFixture, rewiremock} from '../../helpers';
+import * as schema from '../../../lib/schema/schema.js';
+import {resolveFixture} from '../../helpers.js';
 type LilconfigResult = {config: unknown; filepath: string; isEmpty?: boolean};
 type AsyncSearcherLoadStub = SinonStubbedMember<() => Promise<LilconfigResult>>;
 type AsyncSearcherSearchStub = SinonStubbedMember<() => Promise<LilconfigResult>>;
 
-interface ReadConfigFileResult {
-  config?: unknown;
-  filepath?: string;
-  isEmpty?: boolean;
-  errors?: unknown[];
-  reason?: string;
-}
-
-type ReadConfigFileFn = (filepath?: string, opts?: object) => Promise<ReadConfigFileResult>;
-type NormalizeConfigFn = (config: unknown) => unknown;
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+type ConfigFileModule = typeof import('../../../lib/bootstrap/config-file.js');
+type ReadConfigFileFn = ConfigFileModule['readConfigFile'];
+type NormalizeConfigFn = ConfigFileModule['normalizeConfig'];
+type ReadConfigFileResult = Awaited<ReturnType<ReadConfigFileFn>>;
 
 describe('bootstrap/config-file', function () {
   const GOOD_YAML_CONFIG_FILEPATH = resolveFixture('config', 'appium-config-good.yaml');
   const GOOD_JSON_CONFIG_FILEPATH = resolveFixture('config', 'appium-config-good.json');
   const GOOD_JS_CONFIG_FILEPATH = resolveFixture('config', 'appium-config-good.ts');
   const GOOD_YAML_CONFIG = YAML.parse(fs.readFileSync(GOOD_YAML_CONFIG_FILEPATH, 'utf8'));
-  const GOOD_JSON_CONFIG = require(GOOD_JSON_CONFIG_FILEPATH);
+  const GOOD_JSON_CONFIG = JSON.parse(fs.readFileSync(GOOD_JSON_CONFIG_FILEPATH, 'utf8'));
   const BAD_JSON_CONFIG_FILEPATH = resolveFixture('config', 'appium-config-bad.json');
-  const BAD_JSON_CONFIG = require(BAD_JSON_CONFIG_FILEPATH);
+  const BAD_JSON_CONFIG = JSON.parse(fs.readFileSync(BAD_JSON_CONFIG_FILEPATH, 'utf8'));
 
   let sandbox: SinonSandbox;
   let readConfigFile: ReadConfigFileFn;
@@ -37,61 +32,69 @@ describe('bootstrap/config-file', function () {
   let lc: {load: AsyncSearcherLoadStub; search: AsyncSearcherSearchStub};
   let validateSpy: SinonSpy;
 
+  // `lilconfig`, `@sidvind/better-ajv-errors`, and `validate` (spied-through, since
+  // `schema.validate` is an ES module binding sinon can't spy on directly) are mocked once
+  // against stable objects; `config-file.js` doesn't need per-test freshness since it calls
+  // `lilconfig()` fresh on every `readConfigFile()` invocation anyway, reading whatever `lc.load`
+  // /`lc.search` are currently configured to do.
   before(async function () {
     // generally called via the CLI parser, this needs to be done manually in tests.
     // we don't need to do this before _each_ test, because we're not changing the schema.
     // if we did change the schema, this would need to be in `beforeEach()` and `afterEach()`
     // would need to call `schema.reset()`.
     await schema.finalizeSchema();
-  });
 
-  beforeEach(function () {
     sandbox = createSandbox();
 
-    // we have to manually type this (and `search()`) because we'd only get the real type
-    // when stubbing an object prop; e.g., `stub(lilconfig, 'load')`
     const load = sandbox.stub().resolves({
       config: GOOD_JSON_CONFIG,
       filepath: GOOD_JSON_CONFIG_FILEPATH,
     }) as AsyncSearcherLoadStub;
-    (load as any).withArgs(GOOD_YAML_CONFIG_FILEPATH).resolves({
-      config: GOOD_YAML_CONFIG,
-      filepath: GOOD_YAML_CONFIG_FILEPATH,
-    });
-    (load as any).withArgs(BAD_JSON_CONFIG_FILEPATH).resolves({
-      config: BAD_JSON_CONFIG,
-      filepath: BAD_JSON_CONFIG_FILEPATH,
-    });
-
     const search: AsyncSearcherSearchStub = sandbox.stub().resolves({
       config: GOOD_JSON_CONFIG,
       filepath: GOOD_JSON_CONFIG_FILEPATH,
     }) as AsyncSearcherSearchStub;
+    lc = {load, search};
 
-    lc = {
-      load,
-      search,
-    };
+    validateSpy = sandbox.spy(schema.validate);
 
-    const mocks = {
-      lilconfig: {
-        lilconfig: sandbox.stub().returns(lc),
-      },
-      '@sidvind/better-ajv-errors': sandbox.stub().returns(''),
-    };
+    mock.module('lilconfig', {
+      namedExports: {lilconfig: sandbox.stub().returns(lc)},
+    });
+    mock.module('@sidvind/better-ajv-errors', {defaultExport: sandbox.stub().returns('')});
+    mock.module('../../../lib/schema/schema.js', {
+      namedExports: {...schema, validate: validateSpy},
+    });
 
-    // loads the `config-file` module using the lilconfig mock.
-    // we only mock lilconfig because it'd otherwise be a pain in the rear to test
-    // searching for config files, and it increases the likelihood that we'd load the wrong file.
-    ({readConfigFile, normalizeConfig} = rewiremock.proxy(() => require('../../../lib/bootstrap/config-file'), mocks));
-
-    // just want to be extra-sure `validate()` happens
-    sandbox.spy(schema, 'validate');
-    validateSpy = schema.validate as unknown as SinonSpy;
+    // Cache-busted so this file's mocked `@sidvind/better-ajv-errors`/`schema.js` bindings
+    // (via `formatErrors`/`validate`, both imported transitively) can't leak into any other
+    // file that might otherwise share this module's plain-specifier cache entry.
+    ({readConfigFile, normalizeConfig} = await import(`../../../lib/bootstrap/config-file.js?t=${0}`));
   });
 
-  afterEach(function () {
+  after(function () {
+    mock.reset();
     sandbox.restore();
+  });
+
+  beforeEach(function () {
+    sandbox.resetHistory();
+    lc.load.resolves({
+      config: GOOD_JSON_CONFIG,
+      filepath: GOOD_JSON_CONFIG_FILEPATH,
+    });
+    (lc.load as any).withArgs(GOOD_YAML_CONFIG_FILEPATH).resolves({
+      config: GOOD_YAML_CONFIG,
+      filepath: GOOD_YAML_CONFIG_FILEPATH,
+    });
+    (lc.load as any).withArgs(BAD_JSON_CONFIG_FILEPATH).resolves({
+      config: BAD_JSON_CONFIG,
+      filepath: BAD_JSON_CONFIG_FILEPATH,
+    });
+    lc.search.resolves({
+      config: GOOD_JSON_CONFIG,
+      filepath: GOOD_JSON_CONFIG_FILEPATH,
+    });
   });
 
   describe('readConfigFile()', function () {

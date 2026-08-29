@@ -4,8 +4,8 @@ import {describe, it} from 'node:test';
 import type {InitialOpts} from '@appium/types';
 import type {Request} from 'express';
 
-import {BaseDriver} from '../../../lib/basedriver/driver';
-import {checkParams, getSessionId} from '../../../lib/protocol/protocol';
+import {BaseDriver} from '../../../lib/basedriver/driver.js';
+import {checkParams, getSessionId} from '../../../lib/protocol/protocol.js';
 
 describe('Protocol', function () {
   describe('getSessionId', function () {

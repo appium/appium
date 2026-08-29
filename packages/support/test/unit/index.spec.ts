@@ -1,9 +1,16 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import AppiumSupport from '../../lib/';
+import AppiumSupport from '../../lib//index.js';
 
 const {system, tempDir, util} = AppiumSupport;
+
+// `system`/`tempDir`/`util` are ES module namespace objects (`import * as x from ...`
+// under the hood), which per spec have a null prototype, so `instanceof Object` is
+// always false for them even though `typeof` is 'object'.
+function isObjectLike(value: unknown): boolean {
+  return typeof value === 'object' && value !== null;
+}
 
 describe('index', function () {
   describe('default', function () {
@@ -13,27 +20,27 @@ describe('index', function () {
     });
     it('should expose system object', function () {
       assert.ok(AppiumSupport.system);
-      assert.ok(AppiumSupport.system instanceof Object);
+      assert.ok(isObjectLike(AppiumSupport.system));
     });
     it('should expose tempDir object', function () {
       assert.ok(AppiumSupport.tempDir);
-      assert.ok(AppiumSupport.tempDir instanceof Object);
+      assert.ok(isObjectLike(AppiumSupport.tempDir));
     });
     it('should expose util object', function () {
       assert.ok(AppiumSupport.util);
-      assert.ok(AppiumSupport.util instanceof Object);
+      assert.ok(isObjectLike(AppiumSupport.util));
     });
   });
 
   it('should expose an object as "system" ', function () {
-    assert.ok(system instanceof Object);
+    assert.ok(isObjectLike(system));
   });
 
   it('should expose an object as "tempDir" ', function () {
-    assert.ok(tempDir instanceof Object);
+    assert.ok(isObjectLike(tempDir));
   });
 
   it('should expose an object as "util" ', function () {
-    assert.ok(util instanceof Object);
+    assert.ok(isObjectLike(util));
   });
 });

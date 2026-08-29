@@ -3,8 +3,8 @@ import {mkdir, writeFile} from 'node:fs/promises';
 import path from 'node:path';
 import {afterEach, beforeEach, describe, it} from 'node:test';
 
-import {fs, tempDir} from '../../../lib';
-import {packageDirectorySync, readPackage, readPackageSync} from '../../../lib/internal/read-package';
+import {fs, tempDir} from '../../../lib/index.js';
+import {packageDirectorySync, readPackage, readPackageSync} from '../../../lib/internal/read-package.js';
 
 describe('internal/read-package', function () {
   let fixtureRoot: string;

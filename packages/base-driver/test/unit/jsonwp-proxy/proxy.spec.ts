@@ -3,9 +3,9 @@ import {before, describe, it} from 'node:test';
 
 import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
 
-import {WebDriverProxy} from '../../../lib';
-import {errors, isErrorType} from '../../../lib/protocol/errors';
-import {type MockRequestOpts, request} from './mock-request';
+import {WebDriverProxy} from '../../../lib/index.js';
+import {errors, isErrorType} from '../../../lib/protocol/errors.js';
+import {type MockRequestOpts, request} from './mock-request.js';
 
 function buildReqRes(url: string, method: string, body?: any): [any, any] {
   const req = {originalUrl: url, method, body};

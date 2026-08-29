@@ -2,11 +2,11 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 import {describe, it} from 'node:test';
 
-import {NPM, resolveFrom} from '../../lib/npm';
+import {NPM, resolveFrom} from '../../lib/npm.js';
 
 describe('npm', function () {
   describe('resolveFrom()', function () {
-    const supportRoot = path.join(__dirname, '..', '..');
+    const supportRoot = path.join(import.meta.dirname, '..', '..');
 
     it('should resolve a package path from a directory', async function () {
       const resolved = await resolveFrom(supportRoot, 'semver/package.json');

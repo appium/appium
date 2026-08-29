@@ -4,8 +4,8 @@ import {after, before, describe, it} from 'node:test';
 import type {Constraints, Driver, DriverCaps} from '@appium/types';
 import axios from 'axios';
 
-import {createServer} from '../../helpers';
-import {FakeDriver} from '../protocol/fake-driver';
+import {createServer} from '../../helpers.js';
+import {FakeDriver} from '../protocol/fake-driver.js';
 
 describe('BaseDriver', function () {
   const DEFAULT_CAPS = {

@@ -4,7 +4,7 @@ import {afterEach, beforeEach, describe, it} from 'node:test';
 import type {InitialOpts} from '@appium/types';
 import {createSandbox} from 'sinon';
 
-import {BaseDriver} from '../../../../lib';
+import {BaseDriver} from '../../../../lib/index.js';
 
 const FIRST_LOGS = ['first', 'logs'];
 const SECOND_LOGS = ['second', 'logs'];

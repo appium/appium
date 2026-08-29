@@ -3,9 +3,9 @@ import {after, afterEach, before, describe, it} from 'node:test';
 
 import {TEST_HOST} from '@appium/driver-test-support';
 
-import {WebDriverProxy} from '../../../lib';
-import {createServer} from '../../helpers';
-import {FakeDriver} from '../protocol/fake-driver';
+import {WebDriverProxy} from '../../../lib/index.js';
+import {createServer} from '../../helpers.js';
+import {FakeDriver} from '../protocol/fake-driver.js';
 
 describe('proxy', function () {
   let wdproxy: WebDriverProxy;

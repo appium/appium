@@ -3,8 +3,8 @@ import {before, describe, it} from 'node:test';
 
 import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
 
-import {WebDriverProxy} from '../../../lib';
-import {createAppiumURL} from '../../helpers';
+import {WebDriverProxy} from '../../../lib/index.js';
+import {createAppiumURL} from '../../helpers.js';
 
 describe('WebDriverProxy', function () {
   let port: number;

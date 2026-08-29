@@ -1,3 +1,4 @@
+import {Module} from 'node:module';
 import os from 'node:os';
 import path from 'node:path';
 
@@ -5,13 +6,13 @@ import path from 'node:path';
 import {fs, npm, system} from '@appium/support';
 import * as semver from 'semver';
 
-import {getBuildInfo, updateBuildInfo} from '../helpers/build';
-import {appiumPackageRoot, npmPackage} from '../utils';
+import {getBuildInfo, updateBuildInfo} from '../helpers/build.js';
+import {appiumPackageRoot, npmPackage} from '../utils/index.js';
 
 const MIN_NODE_VERSION = (npmPackage.engines as Record<string, string>).node;
 
-interface NodeModuleWithInitPaths {
-  Module: {_initPaths(): void};
+interface ModuleWithInitPaths {
+  _initPaths(): void;
 }
 
 interface DebugInfoInput {
@@ -31,15 +32,19 @@ export function checkNodeOk(): void {
 }
 
 /**
- * Adjusts NODE_PATH so CJS drivers/plugins can load peer deps. Does not work with ESM.
+ * Adjusts NODE_PATH so CJS drivers/plugins can load peer deps. Does not help ESM
+ * drivers/plugins, since real ESM `import` resolution never consults NODE_PATH.
  */
 export function adjustNodePath(): void {
   const appiumModuleSearchRoot = path.dirname(appiumPackageRoot);
 
   const refreshRequirePaths = (): boolean => {
     try {
-      // Private API; see https://gist.github.com/branneman/8048520#7-the-hack
-      (require('node:module') as NodeModuleWithInitPaths).Module._initPaths();
+      // `Module._initPaths()` re-reads `process.env.NODE_PATH` into Node's global CJS module
+      // search paths; a CJS driver/plugin's own later `require()` calls (even though appium
+      // itself is ESM now) see the update, since this affects the whole process, not just the
+      // caller. Private API; see https://gist.github.com/branneman/8048520#7-the-hack
+      (Module as unknown as ModuleWithInitPaths)._initPaths();
       return true;
     } catch {
       return false;

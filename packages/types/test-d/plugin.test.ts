@@ -13,7 +13,7 @@ import type {
   PluginExecuteMethodDef,
   PluginStatic,
   StringRecord,
-} from '..';
+} from '../lib/index.js';
 class TestPlugin implements Plugin {
   static executeMethodMap = {
     'test: method': {

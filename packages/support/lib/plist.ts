@@ -2,9 +2,9 @@ import bplistCreate from 'bplist-creator';
 import {parseBuffer} from 'bplist-parser';
 import {build as plistBuild, parse as plistParse, type PlistValue} from 'plist';
 
-import {fs} from './fs';
-import log from './logger';
-import {truncateString} from './util';
+import {fs} from './fs.js';
+import log from './logger.js';
+import {truncateString} from './util.js';
 
 const BPLIST_IDENTIFIER = {
   BUFFER: Buffer.from('bplist00'),

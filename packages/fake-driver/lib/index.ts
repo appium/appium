@@ -1,5 +1,5 @@
-import {FakeDriver} from './driver';
-import {startServer} from './server';
+import {FakeDriver} from './driver.js';
+import {startServer} from './server.js';
 
 const DEFAULT_HOST = 'localhost';
 const DEFAULT_PORT = 4774;
@@ -16,4 +16,4 @@ export async function main() {
 }
 
 export {FakeDriver, startServer};
-export type {FakeDriverCaps, W3CFakeDriverCaps} from './types';
+export type {FakeDriverCaps, W3CFakeDriverCaps} from './types.js';

@@ -4,8 +4,7 @@ import type {AddressInfo} from 'node:net';
 import path from 'node:path';
 import {after, before, describe, it} from 'node:test';
 
-import {fs, tempDir} from '../../lib';
-import {uploadFile} from '../../lib/net';
+import {uploadFile} from '../../lib/net.js';
 
 const FILE_BYTES = 100;
 

@@ -1,31 +1,49 @@
 import assert from 'node:assert/strict';
+import * as realFs from 'node:fs/promises';
+import os from 'node:os';
 import path from 'node:path';
-import {describe, it, beforeEach, afterEach} from 'node:test';
+import {describe, it, beforeEach, afterEach, before, after, mock} from 'node:test';
 
-import type {SinonSandbox} from 'sinon';
+import type {SinonStub} from 'sinon';
 
-import {DRIVER_TYPE} from '../../../lib/constants';
-import {resolveEsmEntryPoint} from '../../../lib/extension/extension-config';
-import {APPIUM_VER} from '../../../lib/helpers/build';
-import {FAKE_DRIVER_DIR, PROJECT_ROOT, rewiremock} from '../../helpers';
-import {initMocks} from './mocks';
-import type {MockAppiumSupport} from './mocks';
+import {DRIVER_TYPE} from '../../../lib/constants.js';
+import {APPIUM_VER} from '../../../lib/helpers/build.js';
+import {FAKE_DRIVER_DIR, PROJECT_ROOT} from '../../helpers.js';
+import {applyExtensionMocks, initMocks, resetMockDefaults} from './mocks.js';
+import type {InitMocksResult, MockAppiumSupport} from './mocks.js';
 
 describe('ExtensionConfig', function () {
-  let sandbox: SinonSandbox;
+  let mocks: InitMocksResult;
+  let MockAppiumSupport: MockAppiumSupport;
   let ExtensionConfig: any;
   let Manifest: any;
-  let MockAppiumSupport: MockAppiumSupport;
+  let resolveEsmEntryPoint: any;
+  let importCounter = 0;
 
-  beforeEach(function () {
-    let overrides: ReturnType<typeof initMocks>['overrides'];
-    ({MockAppiumSupport, overrides, sandbox} = initMocks());
-    ({ExtensionConfig} = rewiremock.proxy(() => require('../../../lib/extension/extension-config'), overrides));
-    ({Manifest} = rewiremock.proxy(() => require('../../../lib/extension/manifest'), overrides));
+  // See the comment on `applyExtensionMocks` in mocks.ts: `ExtensionConfig`/`Manifest` are
+  // dynamically re-imported fresh every test (cache-busted) — both need fresh module-level
+  // state per test (`Manifest.getInstance` is memoized per module instance) — while their
+  // shared dependencies stay bound to these same (reconfigurable) mock objects.
+  before(function () {
+    mocks = initMocks();
+    MockAppiumSupport = mocks.MockAppiumSupport;
+    applyExtensionMocks(mocks);
+  });
+
+  after(function () {
+    mock.reset();
+  });
+
+  beforeEach(async function () {
+    resetMockDefaults(mocks);
+    MockAppiumSupport = mocks.MockAppiumSupport;
+    ({ExtensionConfig, resolveEsmEntryPoint} = await import(
+      `../../../lib/extension/extension-config.js?t=${importCounter++}`
+    ));
+    ({Manifest} = await import(`../../../lib/extension/manifest.js?t=${importCounter++}`));
   });
 
   afterEach(function () {
-    sandbox.restore();
     // avoids a warning about too many listeners, caused by an exit handler in base-driver
     process.removeAllListeners('exit');
   });
@@ -212,7 +230,7 @@ describe('ExtensionConfig', function () {
 
           it('should resolve w/ an appropriate warning', async function () {
             assert.deepStrictEqual(await config.getGenericConfigWarnings(extData, extData.pkgName), [
-              `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to an invalid or missing peer dependency on Appium. Please ask the developer of \`${extData.pkgName}\` to add a peer dependency on \`^appium@${APPIUM_VER}\`.`,
+              `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to an invalid or missing peer dependency on Appium. A newer version of \`${extData.pkgName}\` is available; please attempt to upgrade "${extData.pkgName}" to v${updateVersion} or newer.`,
             ]);
           });
         });
@@ -234,7 +252,7 @@ describe('ExtensionConfig', function () {
 
           it('should resolve w/ an appropriate warning', async function () {
             assert.deepStrictEqual(await config.getGenericConfigWarnings(extData, extData.pkgName), [
-              `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to its peer dependency on Appium ${extData.appiumVersion}. Please install a compatible version of the driver.`,
+              `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to its peer dependency on Appium ${extData.appiumVersion}. Try to upgrade \`${extData.pkgName}\` to v${updateVersion} or newer.`,
             ]);
           });
         });
@@ -255,16 +273,39 @@ describe('ExtensionConfig', function () {
     });
 
     describe('_validate()', function () {
+      // `extension-config.ts` calls `log` from `lib/logger.ts`, which creates its singleton
+      // via `@appium/support`'s `getLogger()` at module-load time. `lib/logger.js` gets loaded
+      // (unmocked) transitively via this file's own static `test/helpers.js` import, well
+      // before `applyExtensionMocks()` ever runs, so mocking `@appium/support` can't reach it.
+      // `log` is a plain mutable object though (not a frozen ES module namespace), so stub its
+      // methods directly instead.
+      let logWarnStub: SinonStub;
+      let logErrorStub: SinonStub;
+
+      // Stubbed once: `log` is a persistent singleton (not recreated per test), and sinon
+      // throws if the same method is stubbed twice without restoring in between. History is
+      // cleared every test via `resetMockDefaults`'s `sandbox.resetHistory()`.
+      before(async function () {
+        const {log} = await import('../../../lib/logger.js');
+        logWarnStub = mocks.sandbox.stub(log, 'warn');
+        logErrorStub = mocks.sandbox.stub(log, 'error');
+      });
+
+      after(function () {
+        logWarnStub.restore();
+        logErrorStub.restore();
+      });
+
       describe('when there is a single warning', function () {
         beforeEach(function () {
-          sandbox.stub(config, 'getProblems').resolves([]);
-          sandbox.stub(config, 'getWarnings').resolves([{err: 'some warning', val: 'whatever'}]);
+          mocks.sandbox.stub(config, 'getProblems').resolves([]);
+          mocks.sandbox.stub(config, 'getWarnings').resolves([{err: 'some warning', val: 'whatever'}]);
         });
 
         it('should display a warning count of 1', async function () {
           await config._validate({foo: {}});
           assert.strictEqual(
-            (MockAppiumSupport.logger.__logger as any).warn.calledWith(
+            logWarnStub.calledWith(
               'Appium encountered 1 warning while validating drivers found in manifest /some/path/extensions.yaml',
             ),
             true,
@@ -274,14 +315,14 @@ describe('ExtensionConfig', function () {
 
       describe('when there is a single error', function () {
         beforeEach(function () {
-          sandbox.stub(config, 'getProblems').resolves([{err: 'some warning', val: 'whatever'}]);
-          sandbox.stub(config, 'getWarnings').resolves([]);
+          mocks.sandbox.stub(config, 'getProblems').resolves([{err: 'some warning', val: 'whatever'}]);
+          mocks.sandbox.stub(config, 'getWarnings').resolves([]);
         });
 
         it('should display an error count of 1', async function () {
           await config._validate({foo: {}});
           assert.strictEqual(
-            (MockAppiumSupport.logger.__logger as any).error.calledWith(
+            logErrorStub.calledWith(
               'Appium encountered 1 error while validating drivers found in manifest /some/path/extensions.yaml',
             ),
             true,
@@ -309,7 +350,7 @@ describe('ExtensionConfig', function () {
           // since we can't easily mock `require.resolve()` and `require()`, we need to use a real thing.
           // that real thing will be `@appium/fake-driver`.
           // ()`config.appiumHome` is stubbed already, so we can't just run `getInstallPath` as-is)
-          sandbox.stub(config, 'getInstallPath').returns(FAKE_DRIVER_DIR);
+          mocks.sandbox.stub(config, 'getInstallPath').returns(FAKE_DRIVER_DIR);
         });
         it('should throw', async function () {
           await assert.rejects(config.requireAsync('fake'), /cannot find module/i);
@@ -325,7 +366,7 @@ describe('ExtensionConfig', function () {
           config.installedExtensions['relaxed-caps'] = {
             mainClass: 'RelaxedCapsPlugin',
           };
-          sandbox.stub(config, 'getInstallPath').returns(pluginModuleRoot);
+          mocks.sandbox.stub(config, 'getInstallPath').returns(pluginModuleRoot);
           // _resolveExtension reads package.json and uses manifest.main; delegate to real fs for this path
           MockAppiumSupport.fs.readFile
             .withArgs(packageJsonPath, 'utf8')
@@ -342,6 +383,67 @@ describe('ExtensionConfig', function () {
             await config.requireAsync('relaxed-caps'),
             (await import(relaxedCapsPluginSpecifier)).RelaxedCapsPlugin,
           );
+        });
+      });
+
+      // `entryPointFullPath` is real-CJS/real-ESM specific — Node's `import()` delegates to the
+      // CJS loader for a plain CJS entry point, which caches by resolved filename and ignores
+      // any query string; a genuinely ESM entry point instead has no public cache-eviction API
+      // at all. Both fixtures are written to a real temp dir each test, since every package in
+      // this repo is ESM-only now and there's no longer a real CJS extension to reuse.
+      describe('when APPIUM_RELOAD_EXTENSIONS is set', function () {
+        let tmpDir: string;
+        const prevReloadEnv = process.env.APPIUM_RELOAD_EXTENSIONS;
+
+        beforeEach(async function () {
+          tmpDir = await realFs.mkdtemp(path.join(os.tmpdir(), 'appium-reload-test-'));
+          process.env.APPIUM_RELOAD_EXTENSIONS = '1';
+        });
+
+        afterEach(async function () {
+          if (prevReloadEnv === undefined) {
+            delete process.env.APPIUM_RELOAD_EXTENSIONS;
+          } else {
+            process.env.APPIUM_RELOAD_EXTENSIONS = prevReloadEnv;
+          }
+          await realFs.rm(tmpDir, {recursive: true, force: true});
+        });
+
+        async function writeFixtureAndRequireTwice(extName: string, packageJson: object, entrySource: string) {
+          const packageJsonPath = path.join(tmpDir, 'package.json');
+          const entryPointPath = path.join(tmpDir, 'index.js');
+          await realFs.writeFile(packageJsonPath, JSON.stringify(packageJson));
+          await realFs.writeFile(entryPointPath, entrySource);
+
+          config.installedExtensions[extName] = {mainClass: 'Thing'};
+          mocks.sandbox.stub(config, 'getInstallPath').returns(tmpDir);
+          MockAppiumSupport.fs.readFile
+            .withArgs(packageJsonPath, 'utf8')
+            .callsFake(async () => JSON.stringify(packageJson));
+          MockAppiumSupport.fs.exists.withArgs(entryPointPath).resolves(true);
+          MockAppiumSupport.fs.realpath.withArgs(entryPointPath).callsFake(async () => realFs.realpath(entryPointPath));
+
+          const Class1 = (await config.requireAsync(extName)) as {marker: number};
+          const Class2 = (await config.requireAsync(extName)) as {marker: number};
+          return [Class1.marker, Class2.marker] as const;
+        }
+
+        it('should reevaluate a CJS extension entry point on each call', async function () {
+          const [marker1, marker2] = await writeFixtureAndRequireTwice(
+            'cjs-reload-fixture',
+            {name: 'cjs-reload-fixture', main: 'index.js'},
+            'class Thing {}\nThing.marker = Math.random();\nmodule.exports = {Thing};\n',
+          );
+          assert.notStrictEqual(marker1, marker2);
+        });
+
+        it('should reevaluate an ESM extension entry point on each call', async function () {
+          const [marker1, marker2] = await writeFixtureAndRequireTwice(
+            'esm-reload-fixture',
+            {name: 'esm-reload-fixture', type: 'module', main: 'index.js'},
+            'export class Thing {}\nThing.marker = Math.random();\n',
+          );
+          assert.notStrictEqual(marker1, marker2);
         });
       });
     });

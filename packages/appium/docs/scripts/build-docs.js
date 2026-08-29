@@ -10,18 +10,16 @@
 /* eslint-disable promise/prefer-await-to-callbacks */
 /* eslint-disable promise/prefer-await-to-then */
 
-const {
-  log,
-  LANGS,
-  DOCS_DIR,
-  DOCS_BRANCH,
-  DOCS_PREFIX,
-  DOCS_REMOTE,
-  LATEST_ALIAS,
-} = require('./utils');
-const path = require('node:path');
-const semver = require('semver');
-const {version} = require('../../package.json');
+import {readFileSync} from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+
+import {deploy, buildSite} from '@appium/docutils';
+import semver from 'semver';
+
+import {log, LANGS, DOCS_DIR, DOCS_BRANCH, DOCS_PREFIX, DOCS_REMOTE, LATEST_ALIAS} from './utils.js';
+
+const {version} = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8'));
 
 const branch = process.env.APPIUM_DOCS_BRANCH ?? DOCS_BRANCH;
 const basePrefix = process.env.APPIUM_DOCS_PREFIX ?? DOCS_PREFIX;
@@ -34,9 +32,6 @@ const push = Boolean(process.env.APPIUM_DOCS_PUBLISH);
  * Builds and optionally deploys docs for each supported language.
  */
 async function main() {
-  // @appium/docutils is ESM-only; this file is CommonJS, so it must be loaded dynamically
-  const {deploy, buildSite} = await import('@appium/docutils');
-
   log.info(`Building Appium docs and committing to ${DOCS_BRANCH}`);
 
   const semVersion = semver.parse(version);
@@ -69,10 +64,10 @@ async function main() {
   }
 }
 
-if (require.main === module) {
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
   main().catch((err) => {
     throw err;
   });
 }
 
-module.exports = main;
+export default main;

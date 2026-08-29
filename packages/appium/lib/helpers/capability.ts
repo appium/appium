@@ -2,8 +2,8 @@ import {errors, isW3cCaps, processCapabilities, STANDARD_CAPS} from '@appium/bas
 import {util} from '@appium/support';
 import type {BaseDriverCapConstraints, Capabilities, Constraints, NSCapabilities, W3CCapabilities} from '@appium/types';
 
-import {log as logger} from '../logger';
-import {mapKeys} from '../utils';
+import {log as logger} from '../logger.js';
+import {mapKeys} from '../utils/index.js';
 
 const W3C_APPIUM_PREFIX = 'appium';
 const STANDARD_CAPS_LOWERCASE = new Set([...STANDARD_CAPS].map((cap) => cap.toLowerCase()));

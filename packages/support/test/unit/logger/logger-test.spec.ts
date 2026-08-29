@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {after, before, describe, it} from 'node:test';
 
-import {assertOutputDoesntContain, getDynamicLogger, restoreWriters, setupWriters} from './helpers';
+import {assertOutputDoesntContain, getDynamicLogger, restoreWriters, setupWriters} from './helpers.js';
 
 describe('test logger', function () {
   let writers: ReturnType<typeof setupWriters>;

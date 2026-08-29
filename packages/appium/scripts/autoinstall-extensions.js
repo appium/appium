@@ -21,8 +21,11 @@
  * `npm install -g appium --drivers=uiautomator2,xcuitest --plugins=images`
  */
 
-const path = require('node:path');
-const {realpath} = require('node:fs/promises');
+import {realpath} from 'node:fs/promises';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+
+import ora from 'ora';
 
 /** @type {typeof import('../lib/cli/extension').runExtensionCommand} */
 let runExtensionCommand;
@@ -30,10 +33,8 @@ let runExtensionCommand;
 let DRIVER_TYPE;
 /** @type {typeof import('../lib/constants').PLUGIN_TYPE} */
 let PLUGIN_TYPE;
-/** @type {typeof import('../lib/extension').loadExtensions} */
+/** @type {typeof import('../lib/extension/index.js').loadExtensions} */
 let loadExtensions;
-
-const ora = require('ora');
 
 /** @type {typeof import('@appium/support').env} */
 let env;
@@ -59,7 +60,7 @@ async function isDevEnvironment() {
   return (
     process.env.npm_config_local_prefix &&
     path.join(process.env.npm_config_local_prefix, 'packages', 'appium') ===
-      (await realpath(path.join(__dirname, '..')))
+      (await realpath(path.join(import.meta.dirname, '..')))
   );
 }
 
@@ -73,12 +74,18 @@ async function init() {
     return false;
   }
   try {
-    ({env, util, logger} = require('@appium/support'));
-    // @ts-ignore This is OK
-    ({runExtensionCommand} = require('../build/lib/cli/extension'));
-    ({DRIVER_TYPE, PLUGIN_TYPE} = require('../build/lib/constants'));
-    // @ts-ignore This is OK
-    ({loadExtensions} = require('../build/lib/extension'));
+    const [supportMod, extensionCliMod, constantsMod, extensionMod] = await Promise.all([
+      import('@appium/support'),
+      // @ts-ignore This is OK
+      import('../build/lib/cli/extension.js'),
+      import('../build/lib/constants.js'),
+      // @ts-ignore This is OK
+      import('../build/lib/extension/index.js'),
+    ]);
+    ({env, util, logger} = supportMod);
+    ({runExtensionCommand} = extensionCliMod);
+    ({DRIVER_TYPE, PLUGIN_TYPE} = constantsMod);
+    ({loadExtensions} = extensionMod);
     logger.getLogger('Appium').level = 'error';
 
     // if we're doing `npm install -g appium` then we will assume we don't have a local appium.
@@ -214,14 +221,14 @@ async function checkAndInstallExtension({
   spinner.succeed(`Installed ${type} "${ext}".`);
 }
 
-if (require.main === module) {
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
   main().catch((e) => {
     log(e);
     process.exitCode = 1;
   });
 }
 
-module.exports = main;
+export default main;
 
 /**
  * @typedef CheckAndInstallExtensionsOpts

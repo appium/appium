@@ -10,6 +10,6 @@
       "@appium/schema": ["../schema"]
     }
   },
-  "include": ["lib"],
+  "include": ["lib", "test-d"],
   "references": [{"path": "../schema"}, {"path": "../logger"}]
 }

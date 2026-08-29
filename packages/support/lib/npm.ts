@@ -7,10 +7,10 @@ import {exec} from 'teen_process';
 import type {ExecError, TeenProcessExecOptions} from 'teen_process';
 import type {PackageJson} from 'type-fest';
 
-import {hasAppiumDependency} from './env';
-import {fs} from './fs';
-import * as system from './system';
-import * as util from './util';
+import {hasAppiumDependency} from './env.js';
+import {fs} from './fs.js';
+import * as system from './system.js';
+import * as util from './util.js';
 /**
  * Relative path to directory containing any Appium internal files
  * XXX: this is duplicated in `appium/lib/constants.js`.

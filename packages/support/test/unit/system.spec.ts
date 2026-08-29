@@ -1,23 +1,35 @@
 import assert from 'node:assert/strict';
 import os from 'node:os';
-import {afterEach, beforeEach, describe, it} from 'node:test';
+import {afterEach, beforeEach, describe, it, type TestContext} from 'node:test';
 
 import {createSandbox} from 'sinon';
-import * as teen_process from 'teen_process';
+import * as teenProcess from 'teen_process';
 
-import {system, util} from '../../lib';
+import {system, util} from '../../lib/index.js';
+import {system as systemObj} from '../../lib/system.js';
 
-const SANDBOX = Symbol();
-const libs = {os, system};
+let importCounter = 0;
+
+/**
+ * `teen_process` is genuine ESM, so its live bindings cannot be stubbed with sinon
+ * post-import. Mock `exec` via `t.mock.module` and re-import `lib/system.js` fresh
+ * (cache-busted) so it re-links against the mock instead of a previously-cached module.
+ * Spread the real module: a mock replaces the *entire* module for every importer
+ * sharing this process, not just the one under test here.
+ */
+async function importSystemWithMockedExec(t: TestContext, execImpl: (...args: any[]) => any) {
+  t.mock.module('teen_process', {
+    namedExports: {...teenProcess, exec: execImpl},
+  });
+  return import(`../../lib/system.js?t=${importCounter++}`);
+}
 
 describe('system', function () {
   let sandbox: ReturnType<typeof createSandbox>;
   let osMock: ReturnType<typeof createSandbox>['mock'] extends (obj: infer _O) => infer R ? R : never;
-  let mocks: Record<string | symbol, any>;
 
   beforeEach(function () {
     sandbox = createSandbox();
-    mocks = {};
   });
 
   afterEach(function () {
@@ -50,82 +62,69 @@ describe('system', function () {
   });
 
   describe('mac OSX version', function () {
-    it('should return correct version for 10.10.5', async function () {
-      (sandbox.stub(teen_process, 'exec') as any).get(() =>
-        sandbox.stub().withArgs('sw_vers', ['-productVersion']).returns({stdout: '10.10.5'}),
-      );
-      assert.strictEqual(await system.macOsxVersion(), '10.10');
+    it('should return correct version for 10.10.5', async function (t) {
+      const freshSystem = await importSystemWithMockedExec(t as TestContext, () => ({stdout: '10.10.5'}));
+      assert.strictEqual(await freshSystem.macOsxVersion(), '10.10');
     });
 
-    it('should return correct version for 10.12', async function () {
-      (sandbox.stub(teen_process, 'exec') as any).get(() =>
-        sandbox.stub().withArgs('sw_vers', ['-productVersion']).returns({stdout: '10.12.0'}),
-      );
-      assert.strictEqual(await system.macOsxVersion(), '10.12');
+    it('should return correct version for 10.12', async function (t) {
+      const freshSystem = await importSystemWithMockedExec(t as TestContext, () => ({stdout: '10.12.0'}));
+      assert.strictEqual(await freshSystem.macOsxVersion(), '10.12');
     });
 
-    it('should return correct version for 10.12 with newline', async function () {
-      (sandbox.stub(teen_process, 'exec') as any).get(() =>
-        sandbox.stub().withArgs('sw_vers', ['-productVersion']).returns({stdout: '10.12   \n'}),
-      );
-      assert.strictEqual(await system.macOsxVersion(), '10.12');
+    it('should return correct version for 10.12 with newline', async function (t) {
+      const freshSystem = await importSystemWithMockedExec(t as TestContext, () => ({stdout: '10.12   \n'}));
+      assert.strictEqual(await freshSystem.macOsxVersion(), '10.12');
     });
 
-    it("should throw an error if OSX version can't be determined", async function () {
+    it("should throw an error if OSX version can't be determined", async function (t) {
       const invalidOsx = 'error getting operation system version blabla';
-      (sandbox.stub(teen_process, 'exec') as any).get(() =>
-        sandbox.stub().withArgs('sw_vers', ['-productVersion']).returns({stdout: invalidOsx}),
-      );
-      await assert.rejects(system.macOsxVersion(), new RegExp(util.escapeRegExp(invalidOsx)));
+      const freshSystem = await importSystemWithMockedExec(t as TestContext, () => ({stdout: invalidOsx}));
+      await assert.rejects(freshSystem.macOsxVersion(), new RegExp(util.escapeRegExp(invalidOsx)));
     });
   });
 
   describe('architecture', function () {
-    beforeEach(function () {
-      mocks[SANDBOX] = sandbox;
-      for (const [key, value] of Object.entries(libs)) {
-        mocks[key] = sandbox.mock(value);
-      }
-    });
-
-    afterEach(function () {
-      sandbox.restore();
-    });
-
-    it('should return correct architecture if it is a 64 bit Mac/Linux', async function () {
-      mocks.os.expects('type').thrice().returns('Darwin');
-      (sandbox.stub(teen_process, 'exec') as any).get(() =>
-        sandbox.stub().withArgs('uname', ['-m']).returns({stdout: 'x86_64'}),
-      );
-      const arch = await system.arch();
+    // `system.ts`'s `arch()` calls sibling helpers (`isLinux`, `isWindows`, `isOSWin64`)
+    // via `this`, resolved through the plain `system` object export (not the frozen ES
+    // module namespace) specifically so tests can stub those helpers. See the comment
+    // on `system` in lib/system.ts.
+    it('should return correct architecture if it is a 64 bit Mac/Linux', async function (t) {
+      const osMock = sandbox.mock(os);
+      osMock.expects('type').thrice().returns('Darwin');
+      const freshSystem = await importSystemWithMockedExec(t as TestContext, () => ({stdout: 'x86_64'}));
+      const arch = await freshSystem.system.arch();
       assert.strictEqual(arch, '64');
-      mocks[SANDBOX].verify();
+      osMock.verify();
     });
 
-    it('should return correct architecture if it is a 32 bit Mac/Linux', async function () {
-      mocks.os.expects('type').twice().returns('Linux');
-      (sandbox.stub(teen_process, 'exec') as any).get(() =>
-        sandbox.stub().withArgs('uname', ['-m']).returns({stdout: 'i686'}),
-      );
-      const arch = await system.arch();
+    it('should return correct architecture if it is a 32 bit Mac/Linux', async function (t) {
+      const osMock = sandbox.mock(os);
+      osMock.expects('type').twice().returns('Linux');
+      const freshSystem = await importSystemWithMockedExec(t as TestContext, () => ({stdout: 'i686'}));
+      const arch = await freshSystem.system.arch();
       assert.strictEqual(arch, '32');
-      mocks[SANDBOX].verify();
+      osMock.verify();
     });
 
     it('should return correct architecture if it is a 64 bit Windows', async function () {
-      mocks.os.expects('type').thrice().returns('Windows_NT');
-      mocks.system.expects('isOSWin64').once().returns(true);
-      const arch = await system.arch();
+      const osMock = sandbox.mock(os);
+      osMock.expects('type').thrice().returns('Windows_NT');
+      const isOSWin64Stub = sandbox.stub(systemObj, 'isOSWin64').returns(true);
+      const arch = await systemObj.arch();
       assert.strictEqual(arch, '64');
-      mocks[SANDBOX].verify();
+      osMock.verify();
+      assert.strictEqual(isOSWin64Stub.calledOnce, true);
     });
 
     it('should return correct architecture if it is a 32 bit Windows', async function () {
-      mocks.os.expects('type').thrice().returns('Windows_NT');
-      mocks.system.expects('isOSWin64').once().returns(false);
-      const arch = await system.arch();
+      const osMock = sandbox.mock(os);
+      osMock.expects('type').thrice().returns('Windows_NT');
+      const isOSWin64Stub = sandbox.stub(systemObj, 'isOSWin64').returns(false);
+      const arch = await systemObj.arch();
       assert.strictEqual(arch, '32');
-      mocks[SANDBOX].verify();
+      osMock.verify();
+      assert.strictEqual(isOSWin64Stub.calledOnce, true);
     });
   });
 

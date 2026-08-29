@@ -7,7 +7,7 @@ import {sleep} from 'asyncbox';
 // @ts-ignore - mjpeg-server has no types
 import mJpegServer from 'mjpeg-server';
 
-import {mjpeg} from '../../lib';
+import {mjpeg} from '../../lib/index.js';
 
 const MJPEG_HOST = '127.0.0.1';
 

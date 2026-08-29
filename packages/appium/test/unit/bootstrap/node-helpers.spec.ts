@@ -4,7 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import {describe, it, beforeEach, afterEach, before, after} from 'node:test';
 
-import {adjustNodePath, checkNodeOk, requireDir} from '../../../lib/bootstrap/node-helpers';
+import {adjustNodePath, checkNodeOk, requireDir} from '../../../lib/bootstrap/node-helpers.js';
 
 describe('bootstrap/node-helpers', function () {
   describe('checkNodeOk()', function () {
@@ -115,6 +115,26 @@ describe('bootstrap/node-helpers', function () {
     it('should adjust NODE_PATH', async function () {
       adjustNodePath();
       await assert.doesNotReject(fs.access(process.env.NODE_PATH!));
+    });
+
+    it('should let a CJS module resolve a dependency through the adjusted NODE_PATH', async function () {
+      const {createRequire} = await import('node:module');
+
+      const extraModulesDir = await fs.mkdtemp(path.join(os.tmpdir(), 'appium-node-path-test-'));
+      try {
+        const moduleDir = path.join(extraModulesDir, 'appium-node-path-fixture');
+        await fs.mkdir(moduleDir, {recursive: true});
+        await fs.writeFile(path.join(moduleDir, 'package.json'), JSON.stringify({name: 'appium-node-path-fixture'}));
+        await fs.writeFile(path.join(moduleDir, 'index.js'), 'module.exports = "found via NODE_PATH";');
+
+        process.env.NODE_PATH = extraModulesDir;
+        adjustNodePath();
+
+        const req = createRequire(import.meta.url);
+        assert.strictEqual(req('appium-node-path-fixture'), 'found via NODE_PATH');
+      } finally {
+        await fs.rm(extraModulesDir, {recursive: true, force: true});
+      }
     });
   });
 });

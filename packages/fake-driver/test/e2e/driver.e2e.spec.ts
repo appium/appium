@@ -11,20 +11,20 @@ import type {
   SingularSessionData,
   W3CCapabilities,
 } from '@appium/types';
-import {DeviceSettings, routeConfiguringFunction, server} from 'appium/driver';
+import {DeviceSettings, routeConfiguringFunction, server} from 'appium/driver.js';
 import {sleep} from 'asyncbox';
 import axios from 'axios';
 import type {AxiosResponse, RawAxiosRequestConfig} from 'axios';
 import sinon from 'sinon';
 import type {RequireAtLeastOne} from 'type-fest';
 
-import {FakeDriver, startServer} from '../../lib/index';
-import {BASE_CAPS, deleteSession, initSession, TEST_HOST, W3C_PREFIXED_CAPS} from '../helpers';
-import {alertTests} from './alert.e2e.spec';
-import {contextTests} from './context.e2e.spec';
-import {elementTests as elementInteractionTests} from './element-interaction.e2e.spec';
-import {findElementTests} from './find-element.e2e.spec';
-import {generalTests} from './general.e2e.spec';
+import {FakeDriver, startServer} from '../../lib/index.js';
+import {BASE_CAPS, deleteSession, initSession, TEST_HOST, W3C_PREFIXED_CAPS} from '../helpers.js';
+import {alertTests} from './alert.e2e.spec.js';
+import {contextTests} from './context.e2e.spec.js';
+import {elementTests as elementInteractionTests} from './element-interaction.e2e.spec.js';
+import {findElementTests} from './find-element.e2e.spec.js';
+import {generalTests} from './general.e2e.spec.js';
 
 const shouldStartServer = process.env.USE_RUNNING_SERVER !== '0';
 

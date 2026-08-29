@@ -1,6 +1,6 @@
-import {errors} from 'appium/driver';
+import {errors} from 'appium/driver.js';
 
-import type {FakeDriver} from '../driver';
+import type {FakeDriver} from '../driver.js';
 
 /** Throw if an alert is currently open (blocks other commands). */
 export function assertNoAlert(this: FakeDriver): void {

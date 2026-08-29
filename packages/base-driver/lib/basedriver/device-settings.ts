@@ -1,8 +1,8 @@
 import {node, util} from '@appium/support';
 import type {IDeviceSettings, SettingsUpdateListener, StringRecord} from '@appium/types';
 
-import {errors} from '../protocol/errors';
-import {log} from './logger';
+import {errors} from '../protocol/errors.js';
+import {log} from './logger.js';
 
 /**
  * Maximum size (in bytes) of a given driver's settings object (which is internal to {@linkcode DeviceSettings}).

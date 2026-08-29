@@ -5,8 +5,8 @@ import type {Constraints, Driver, EventHistoryCommand} from '@appium/types';
 import axios from 'axios';
 import {createSandbox} from 'sinon';
 
-import {createServer} from '../../helpers';
-import {MockExecuteDriver} from '../protocol/mock-execute-driver';
+import {createServer} from '../../helpers.js';
+import {MockExecuteDriver} from '../protocol/mock-execute-driver.js';
 
 describe('Execute Command Test', function () {
   let sandbox: sinon.SinonSandbox;

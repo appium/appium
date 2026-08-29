@@ -4,11 +4,11 @@ import {before, describe, it} from 'node:test';
 
 import sharp from 'sharp';
 
-import {fs, node} from '../../lib';
-import {cropBase64Image} from '../../lib/image-util';
+import {cropBase64Image} from '../../lib/image-util.js';
+import {fs, node} from '../../lib/index.js';
 
 const FIXTURES_ROOT = path.resolve(
-  node.getModuleRootSync('@appium/support', __filename)!,
+  node.getModuleRootSync('@appium/support', import.meta.filename)!,
   'test',
   'e2e',
   'fixture',

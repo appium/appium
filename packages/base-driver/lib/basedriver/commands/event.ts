@@ -1,15 +1,14 @@
 import {util} from '@appium/support';
 import type {Constraints, EventHistory, IEventCommands} from '@appium/types';
 
-import type {BaseDriver} from '../driver';
-import {mixin} from './mixin';
+import type {BaseDriver} from '../driver.js';
 
-declare module '../driver' {
+declare module '../driver.js' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface BaseDriver<C extends Constraints> extends IEventCommands {}
 }
 
-const EventCommands: IEventCommands = {
+export const EventCommands: IEventCommands = {
   /**
    * Log a user-defined event in the event log.
    *
@@ -45,5 +44,3 @@ const EventCommands: IEventCommands = {
     }, {}) as Record<string, number>;
   },
 };
-
-mixin(EventCommands);

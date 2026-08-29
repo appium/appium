@@ -15,10 +15,10 @@ import type {
 } from '@appium/types';
 import WebSocket from 'ws';
 
-import type {AppiumDriver} from './appium';
-import {BIDI_BASE_PATH, BIDI_EVENT_NAME} from './constants';
-import {fetchInterfaces, isBroadcastIp, V4_BROADCAST_IP} from './helpers/network';
-import {capitalize} from './utils';
+import type {AppiumDriver} from './appium.js';
+import {BIDI_BASE_PATH, BIDI_EVENT_NAME} from './constants.js';
+import {fetchInterfaces, isBroadcastIp, V4_BROADCAST_IP} from './helpers/network.js';
+import {capitalize} from './utils/index.js';
 
 type ExtensionPlugin = Plugin & ExtensionCore;
 type AnyDriver = ExternalDriver | AppiumDriver;

@@ -1,7 +1,7 @@
 import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
 import type {AppiumServer, Constraints, Driver, MethodMap, ServerArgs} from '@appium/types';
 
-import {routeConfiguringFunction, server} from '../lib';
+import {routeConfiguringFunction, server} from '../lib/index.js';
 
 export async function createServer<T extends Driver<Constraints>>(
   driver: T,

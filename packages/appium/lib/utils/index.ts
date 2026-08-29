@@ -1,6 +1,6 @@
-export {adler32} from './hash';
-export {isPackageChanged} from './is-package-changed';
-export type {IsPackageChangedOptions, IsPackageChangedResult} from './is-package-changed';
+export {adler32} from './hash.js';
+export {isPackageChanged} from './is-package-changed.js';
+export type {IsPackageChangedOptions, IsPackageChangedResult} from './is-package-changed.js';
 export {
   bindAll,
   camelCase,
@@ -17,7 +17,7 @@ export {
   pull,
   setPath,
   zip,
-} from './object';
-export {packageDidChange} from './package-changed';
-export {appiumPackageRoot, npmPackage} from './package-json';
-export {resolveFrom} from './resolve-from';
+} from './object.js';
+export {packageDidChange} from './package-changed.js';
+export {appiumPackageRoot, npmPackage} from './package-json.js';
+export {resolveFrom} from './resolve-from.js';

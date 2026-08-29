@@ -70,9 +70,6 @@
     "serve-favicon": "2.5.1",
     "type-fest": "5.8.0"
   },
-  "optionalDependencies": {
-    "spdy": "4.0.2"
-  },
   "tsd": {
     "compilerOptions": {
       "composite": false,

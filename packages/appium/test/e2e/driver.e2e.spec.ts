@@ -726,8 +726,7 @@ describe('FakeDriver via HTTP', function () {
   });
 });
 
-// TODO: This test is skipped due to spdy package incompatibility
-describe('Bidi over SSL', {skip: true}, function () {
+describe('Bidi over SSL', function () {
   async function generateCertificate(certPath: string, keyPath: string) {
     await exec('openssl', [
       'req',
@@ -782,8 +781,11 @@ describe('Bidi over SSL', {skip: true}, function () {
   });
 
   afterEach(async function () {
-    process.env.NODE_TLS_REJECT_UNAUTHORIZED = previousEnvValue;
-    await driver?.deleteSession();
+    try {
+      await driver?.deleteSession();
+    } finally {
+      process.env.NODE_TLS_REJECT_UNAUTHORIZED = previousEnvValue;
+    }
   });
 
   it('should still run bidi over ssl', async function () {

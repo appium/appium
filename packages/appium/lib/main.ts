@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import {realpathSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
 
 import './logsink.js'; // must run first: global npmlog / log sink setup (see logsink module)
@@ -49,7 +50,8 @@ export async function main<
 
 // NOTE: backwards compat for scripts referencing `build/lib/main.js` directly.
 // The executable is `../index.js`, so that module will typically not match here.
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
+// realpath() both sides so this still matches through a bin symlink (see index.js).
+if (process.argv[1] && fileURLToPath(import.meta.url) === realpathSync(process.argv[1])) {
   void main();
 }
 

@@ -19,6 +19,7 @@ export interface MockAppiumSupportFs {
   glob: SinonStub;
   mkdirp: SinonStub;
   exists: SinonStub;
+  realpath: SinonStub;
 }
 
 export interface MockAppiumSupportEnv {
@@ -88,6 +89,7 @@ export function initMocks(sandbox = createSandbox()): InitMocksResult {
       glob: sandbox.stub().resolves([]),
       mkdirp: sandbox.stub().resolves(),
       exists: sandbox.stub().resolves(true),
+      realpath: sandbox.stub().callsFake(async (p: string) => p),
     },
     env: {
       resolveAppiumHome: sandbox.stub().resolves('/some/path'),

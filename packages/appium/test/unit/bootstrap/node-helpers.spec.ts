@@ -112,13 +112,29 @@ describe('bootstrap/node-helpers', function () {
       }
     });
 
-    it('should no-op under ESM, leaving NODE_PATH unset', function () {
-      // `adjustNodePath()` relies on `require('node:module').Module._initPaths()` to make an
-      // adjusted `NODE_PATH` actually take effect; under ESM there's no `require` global, so it
-      // intentionally leaves `NODE_PATH` unset rather than setting a value Node won't honor.
+    it('should adjust NODE_PATH', async function () {
       adjustNodePath();
-      assert.strictEqual(process.env.NODE_PATH, undefined);
-      assert.strictEqual(process.env.APPIUM_OMIT_PEER_DEPS, undefined);
+      await assert.doesNotReject(fs.access(process.env.NODE_PATH!));
+    });
+
+    it('should let a CJS module resolve a dependency through the adjusted NODE_PATH', async function () {
+      const {createRequire} = await import('node:module');
+
+      const extraModulesDir = await fs.mkdtemp(path.join(os.tmpdir(), 'appium-node-path-test-'));
+      try {
+        const moduleDir = path.join(extraModulesDir, 'appium-node-path-fixture');
+        await fs.mkdir(moduleDir, {recursive: true});
+        await fs.writeFile(path.join(moduleDir, 'package.json'), JSON.stringify({name: 'appium-node-path-fixture'}));
+        await fs.writeFile(path.join(moduleDir, 'index.js'), 'module.exports = "found via NODE_PATH";');
+
+        process.env.NODE_PATH = extraModulesDir;
+        adjustNodePath();
+
+        const req = createRequire(import.meta.url);
+        assert.strictEqual(req('appium-node-path-fixture'), 'found via NODE_PATH');
+      } finally {
+        await fs.rm(extraModulesDir, {recursive: true, force: true});
+      }
     });
   });
 });

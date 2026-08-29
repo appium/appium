@@ -3,6 +3,7 @@
 /* eslint-disable promise/prefer-await-to-callbacks */
 /* eslint-disable promise/prefer-await-to-then */
 
+import {realpathSync} from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 
@@ -91,7 +92,7 @@ async function writeNewDoc(preStart, argTable, postEnd) {
   await fs.writeFile(DOC_PATH, newContents);
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
+if (process.argv[1] && fileURLToPath(import.meta.url) === realpathSync(process.argv[1])) {
   main().catch((err) => {
     throw err;
   });

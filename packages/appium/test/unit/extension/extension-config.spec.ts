@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+import * as realFs from 'node:fs/promises';
+import os from 'node:os';
 import path from 'node:path';
 import {describe, it, beforeEach, afterEach, before, after, mock} from 'node:test';
 
@@ -381,6 +383,67 @@ describe('ExtensionConfig', function () {
             await config.requireAsync('relaxed-caps'),
             (await import(relaxedCapsPluginSpecifier)).RelaxedCapsPlugin,
           );
+        });
+      });
+
+      // `entryPointFullPath` is real-CJS/real-ESM specific — Node's `import()` delegates to the
+      // CJS loader for a plain CJS entry point, which caches by resolved filename and ignores
+      // any query string; a genuinely ESM entry point instead has no public cache-eviction API
+      // at all. Both fixtures are written to a real temp dir each test, since every package in
+      // this repo is ESM-only now and there's no longer a real CJS extension to reuse.
+      describe('when APPIUM_RELOAD_EXTENSIONS is set', function () {
+        let tmpDir: string;
+        const prevReloadEnv = process.env.APPIUM_RELOAD_EXTENSIONS;
+
+        beforeEach(async function () {
+          tmpDir = await realFs.mkdtemp(path.join(os.tmpdir(), 'appium-reload-test-'));
+          process.env.APPIUM_RELOAD_EXTENSIONS = '1';
+        });
+
+        afterEach(async function () {
+          if (prevReloadEnv === undefined) {
+            delete process.env.APPIUM_RELOAD_EXTENSIONS;
+          } else {
+            process.env.APPIUM_RELOAD_EXTENSIONS = prevReloadEnv;
+          }
+          await realFs.rm(tmpDir, {recursive: true, force: true});
+        });
+
+        async function writeFixtureAndRequireTwice(extName: string, packageJson: object, entrySource: string) {
+          const packageJsonPath = path.join(tmpDir, 'package.json');
+          const entryPointPath = path.join(tmpDir, 'index.js');
+          await realFs.writeFile(packageJsonPath, JSON.stringify(packageJson));
+          await realFs.writeFile(entryPointPath, entrySource);
+
+          config.installedExtensions[extName] = {mainClass: 'Thing'};
+          mocks.sandbox.stub(config, 'getInstallPath').returns(tmpDir);
+          MockAppiumSupport.fs.readFile
+            .withArgs(packageJsonPath, 'utf8')
+            .callsFake(async () => JSON.stringify(packageJson));
+          MockAppiumSupport.fs.exists.withArgs(entryPointPath).resolves(true);
+          MockAppiumSupport.fs.realpath.withArgs(entryPointPath).callsFake(async () => realFs.realpath(entryPointPath));
+
+          const Class1 = (await config.requireAsync(extName)) as {marker: number};
+          const Class2 = (await config.requireAsync(extName)) as {marker: number};
+          return [Class1.marker, Class2.marker] as const;
+        }
+
+        it('should reevaluate a CJS extension entry point on each call', async function () {
+          const [marker1, marker2] = await writeFixtureAndRequireTwice(
+            'cjs-reload-fixture',
+            {name: 'cjs-reload-fixture', main: 'index.js'},
+            'class Thing {}\nThing.marker = Math.random();\nmodule.exports = {Thing};\n',
+          );
+          assert.notStrictEqual(marker1, marker2);
+        });
+
+        it('should reevaluate an ESM extension entry point on each call', async function () {
+          const [marker1, marker2] = await writeFixtureAndRequireTwice(
+            'esm-reload-fixture',
+            {name: 'esm-reload-fixture', type: 'module', main: 'index.js'},
+            'export class Thing {}\nThing.marker = Math.random();\n',
+          );
+          assert.notStrictEqual(marker1, marker2);
         });
       });
     });

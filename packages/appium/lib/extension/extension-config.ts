@@ -1,3 +1,4 @@
+import {createRequire} from 'node:module';
 import path from 'node:path';
 import {pathToFileURL} from 'node:url';
 
@@ -309,11 +310,19 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     log.debug(`Requiring ${this.extensionType} at ${reqPath}`);
     // https://github.com/nodejs/node/issues/31710
     let importPath = system.isWindows() ? pathToFileURL(reqPath).href : reqPath;
-    // note: this will only reload the entry point, same as the old require.cache-eviction
-    // approach — files the entry point itself imports are still served from their own cache
+    // note: this will only reload the entry point, not files it imports internally
     if (process.env.APPIUM_RELOAD_EXTENSIONS) {
-      // ESM has no public API to evict a module from its cache (unlike CJS's `require.cache`),
-      // so force a fresh copy by giving this import a unique specifier instead.
+      // For a CJS extension, `import()` delegates to Node's CJS loader, which caches by
+      // resolved filename and ignores the query string appended below — evict it from
+      // `require.cache` directly so it's actually re-evaluated. (No-op for a genuinely ESM
+      // extension, since it was never in `require.cache` to begin with.)
+      const req = createRequire(import.meta.url);
+      const realEntryPath = await fs.realpath(reqPath);
+      if (req.cache[realEntryPath]) {
+        delete req.cache[realEntryPath];
+      }
+      // For an ESM extension, there's no public API to evict a module from ESM's registry, so
+      // force a fresh copy via a unique specifier instead.
       importPath += `?reload=${reloadCounter++}`;
       log.debug(`Reloading ${this.extensionType} at ${reqPath}`);
     }

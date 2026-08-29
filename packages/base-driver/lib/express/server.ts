@@ -1,6 +1,6 @@
 import http from 'node:http';
 import type {Server as HttpServer} from 'node:http';
-import {createRequire} from 'node:module';
+import https from 'node:https';
 
 // Import env helper directly — not from the test-pages barrel — so Express handlers and
 // fixture code stay unloaded unless APPIUM_ENABLE_LEGACY_TEST_PAGES is set.
@@ -15,7 +15,7 @@ import type {
 } from '@appium/types';
 import bodyParser from 'body-parser';
 import express from 'express';
-import type {Express, RequestHandler, Router} from 'express';
+import type {Express, Router} from 'express';
 import methodOverride from 'method-override';
 
 import {DEFAULT_BASE_PATH} from '../constants.js';
@@ -39,8 +39,6 @@ import {
   removeAllWebSocketHandlers,
   removeWebSocketHandler,
 } from './websocket.js';
-
-const require = createRequire(import.meta.url);
 
 const KEEP_ALIVE_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes
 
@@ -279,25 +277,9 @@ async function createServer(app: Express, cliArgs?: Partial<ServerArgs>): Promis
     }
   }
   const [cert, key] = (await Promise.all(certKey.map((p) => fs.readFile(p, 'utf8')))) as [string, string];
-  log.debug('Enabling TLS/SPDY on the server using the provided certificate');
+  log.debug('Enabling TLS on the server using the provided certificate');
 
-  const spdy = require('spdy') as {
-    createServer: (
-      options: {cert: string; key: string; spdy: {plain: boolean; ssl: boolean}},
-      requestListener: RequestHandler,
-    ) => HttpServer;
-  };
-  return spdy.createServer(
-    {
-      cert,
-      key,
-      spdy: {
-        plain: false,
-        ssl: true,
-      },
-    },
-    app,
-  );
+  return https.createServer({cert, key}, app) as unknown as HttpServer;
 }
 
 /**
@@ -320,9 +302,7 @@ function configureHttp({
   appiumServer.removeWebSocketHandler = removeWebSocketHandler;
   appiumServer.removeAllWebSocketHandlers = removeAllWebSocketHandlers;
   appiumServer.getWebSocketHandlers = getWebSocketHandlers;
-  appiumServer.isSecure = function isSecure() {
-    return Boolean((this as unknown as {_spdyState?: {secure?: boolean}})._spdyState?.secure);
-  };
+  appiumServer.isSecure = () => httpServer instanceof https.Server;
 
   // This avoids Express middleware timeout issues with long-lived WebSocket connections
   // See: https://github.com/appium/appium/issues/20760

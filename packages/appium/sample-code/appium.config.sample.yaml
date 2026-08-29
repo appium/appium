@@ -24,8 +24,6 @@ server:
   log-timestamp: true
   long-stacktrace: false
   no-perms-check: false
-  nodeconfig:
-    key: value
   plugin:
     images:
       key: value

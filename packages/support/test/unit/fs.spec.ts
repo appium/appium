@@ -194,5 +194,4 @@ describe('fs', {timeout: TEST_TIMEOUT}, function () {
       assert.strictEqual(filePath, null);
     });
   });
-
 });

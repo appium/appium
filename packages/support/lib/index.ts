@@ -14,21 +14,7 @@ import * as zip from './zip.js';
 
 export {npm} from './npm.js';
 
-export {
-  console,
-  doctor,
-  env,
-  fs,
-  logger,
-  net,
-  node,
-  plist,
-  system,
-  tempDir,
-  timing,
-  util,
-  zip,
-};
+export {console, doctor, env, fs, logger, net, node, plist, system, tempDir, timing, util, zip};
 export default {
   tempDir,
   system,

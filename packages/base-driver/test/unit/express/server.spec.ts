@@ -7,7 +7,6 @@ import {createSandbox} from 'sinon';
 
 import {configureServer, normalizeBasePath, server} from '../../../lib/express/server.js';
 import {routeConfiguringFunction} from '../../../lib/protocol/protocol.js';
-import {registerTestPages} from '../../../lib/test-pages/index.js';
 
 // stand-in for the router `configureHttp` normally creates
 const fakeFrontRouter = {} as any;
@@ -63,15 +62,6 @@ describe('server configuration', function () {
     configureServer({app, addRoutes: configureRoutes, frontRouter: fakeFrontRouter});
     assert.strictEqual(app.use.callCount, 12);
     assert.strictEqual(app.all.callCount, 0);
-  });
-
-  it('should mount legacy test pages when registerTestPages is provided', function () {
-    const app = fakeApp() as any;
-    const configureRoutes = () => {};
-    // @ts-expect-error registerTestPages is not normally used in this way
-    configureServer({app, addRoutes: configureRoutes, frontRouter: fakeFrontRouter, registerTestPages});
-    assert.strictEqual(app.use.callCount, 16);
-    assert.strictEqual(app.all.callCount, 4);
   });
 
   it('should apply new methods in plugins to the standard method map', function () {

@@ -26,8 +26,6 @@ export interface MockAppiumSupportEnv {
   resolveAppiumHome: SinonStub;
   resolveManifestPath: SinonStub;
   hasAppiumDependency: SinonStub;
-  readPackageInDir: SinonStub;
-  __pkg: {name: string; version: string; readme: string; _id: string};
 }
 
 export interface MockAppiumSupportLogger {
@@ -95,13 +93,6 @@ export function initMocks(sandbox = createSandbox()): InitMocksResult {
       resolveAppiumHome: sandbox.stub().resolves('/some/path'),
       resolveManifestPath: sandbox.stub().resolves('/some/path/extensions.yaml'),
       hasAppiumDependency: sandbox.stub().resolves(false),
-      readPackageInDir: sandbox.stub().callsFake(async () => MockAppiumSupport.env.__pkg),
-      __pkg: {
-        name: 'mock-package',
-        version: '1.0.0',
-        readme: '# Mock Package!!',
-        _id: 'mock-package',
-      },
     },
     logger: {
       getLogger: sandbox.stub().callsFake(() => MockAppiumSupport.logger.__logger),
@@ -167,7 +158,6 @@ export function resetMockDefaults(mocks: InitMocksResult): void {
   MockAppiumSupport.env.resolveAppiumHome.resolves('/some/path');
   MockAppiumSupport.env.resolveManifestPath.resolves('/some/path/extensions.yaml');
   MockAppiumSupport.env.hasAppiumDependency.resolves(false);
-  MockAppiumSupport.env.readPackageInDir.callsFake(async () => MockAppiumSupport.env.__pkg);
   MockAppiumSupport.logger.getLogger.callsFake(() => MockAppiumSupport.logger.__logger);
   MockAppiumSupport.system.isWindows.returns(false);
   MockAppiumSupport.npm.getLatestVersion.resolves('2.0.0');

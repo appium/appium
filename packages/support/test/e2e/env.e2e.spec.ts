@@ -5,7 +5,6 @@ import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
 import {
   DEFAULT_APPIUM_HOME,
   findAppiumDependencyPackage,
-  readPackageInDir,
   resolveAppiumHome,
   resolveManifestPath,
 } from '../../lib/env.js';
@@ -31,7 +30,6 @@ describe('environment', function () {
     resolveManifestPath.cache = new Map();
     resolveAppiumHome.cache = new Map();
     findAppiumDependencyPackage.cache = new Map();
-    readPackageInDir.cache = new Map();
 
     oldEnvAppiumHome = process.env.APPIUM_HOME;
     delete process.env.APPIUM_HOME;

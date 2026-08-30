@@ -173,29 +173,6 @@ describe('env', function () {
     });
   });
 
-  describe('readPackageInDir()', function () {
-    it('should read package.json from the given directory', async function () {
-      await env.readPackageInDir('/somewhere');
-      assert.strictEqual(
-        MockReadPackage.readPackage.calledWithExactly({
-          cwd: '/somewhere',
-          normalize: true,
-        }),
-        true,
-      );
-    });
-
-    it('should resolve with undefined when package.json is missing', async function () {
-      MockReadPackage.readPackage.rejects(missingPackageJsonError());
-      assert.strictEqual(await env.readPackageInDir('/somewhere'), undefined);
-    });
-
-    it('should reject when reading package.json fails for reasons other than ENOENT', async function () {
-      MockReadPackage.readPackage.rejects(new Error('on the fritz'));
-      await assert.rejects(env.readPackageInDir('/somewhere'), /on the fritz/);
-    });
-  });
-
   describe('hasAppiumDependency()', function () {
     describe('when Appium is not resolvable from cwd', function () {
       describe('when `appium` is not a dependency of the local package', function () {

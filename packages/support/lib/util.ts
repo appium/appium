@@ -1,11 +1,9 @@
 import {randomUUID} from 'node:crypto';
-import os from 'node:os';
 import path from 'node:path';
 import stream from 'node:stream';
 import {isDeepStrictEqual, promisify} from 'node:util';
 
 import {asyncmap} from 'asyncbox';
-import B from 'bluebird';
 import pluralizeLib from 'pluralize';
 import * as semver from 'semver';
 import {parse as shellParse, quote as shellQuote} from 'shell-quote';
@@ -15,7 +13,6 @@ import {createBase64EncodeStream} from './internal/index.js';
 export {shellParse};
 import type {Element} from '@appium/types';
 import * as _lockfile from 'lockfile';
-import {v1 as uuidV1Lib, v3 as uuidV3Lib, v5 as uuidV5Lib} from 'uuid';
 
 /** W3C WebDriver element identifier key used in element objects. */
 export const W3C_WEB_ELEMENT_IDENTIFIER = 'element-6066-11e4-a52e-4f735466cecf';
@@ -31,33 +28,12 @@ export const GiB = MiB * 1024;
 export type NonEmptyString<T extends string = string> = T extends '' ? never : T;
 
 /**
- * @deprecated This helper is slated for removal. Please migrate callers away from UUID v1.
- */
-export function uuidV1(...args: Parameters<typeof uuidV1Lib>): ReturnType<typeof uuidV1Lib> {
-  return uuidV1Lib(...args);
-}
-
-/**
- * @deprecated This helper is slated for removal. Please migrate callers away from UUID v3.
- */
-export function uuidV3(...args: Parameters<typeof uuidV3Lib>): ReturnType<typeof uuidV3Lib> {
-  return uuidV3Lib(...args);
-}
-
-/**
  * Generates a v4 UUID using Node.js crypto.
  *
  * @returns A UUID v4 string
  */
 export function uuidV4(): string {
   return randomUUID();
-}
-
-/**
- * @deprecated This helper is slated for removal. Please migrate callers away from UUID v5.
- */
-export function uuidV5(...args: Parameters<typeof uuidV5Lib>): ReturnType<typeof uuidV5Lib> {
-  return uuidV5Lib(...args);
 }
 
 /**
@@ -234,64 +210,6 @@ export function escapeSpecialChars(str: string | unknown, quoteEscape?: string |
   }
   const re = new RegExp(quoteEscape, 'g');
   return result.replace(re, `\\${quoteEscape}`);
-}
-
-/**
- * Returns the first non-internal IPv4 address of the machine, if any.
- *
- * @deprecated This helper is slated for removal. Consider implementing this functionality on your side.
- * @returns The local IPv4 address, or `undefined` if none found
- */
-export function localIp(): string | undefined {
-  const ifaces = os.networkInterfaces();
-  for (const addrs of Object.values(ifaces)) {
-    if (!addrs) {
-      continue;
-    }
-    for (const iface of addrs) {
-      if (iface.family === 'IPv4' && !iface.internal) {
-        return iface.address;
-      }
-    }
-  }
-  return undefined;
-}
-
-/**
- * Creates a promise that resolves after a delay and can be cancelled via `.cancel()`.
- *
- * @deprecated This helper is slated for removal. Please migrate callers away from Bluebird.
- * @param ms - Delay in milliseconds before the promise resolves
- * @returns A Bluebird promise with a `cancel()` method; cancel rejects with CancellationError
- */
-export function cancellableDelay(ms: number): B<void> & {cancel: () => void} {
-  let timer: NodeJS.Timeout;
-  let resolve: () => void;
-  let reject: (err: Error) => void;
-
-  const delay = new B<void>((_resolve, _reject) => {
-    resolve = _resolve;
-    reject = _reject;
-    timer = setTimeout(() => resolve(), ms);
-  });
-
-  (delay as B<void> & {cancel: () => void}).cancel = function () {
-    clearTimeout(timer);
-    reject(new B.CancellationError());
-  };
-  return delay as B<void> & {cancel: () => void};
-}
-
-/**
- * Resolves each root path with the given path segments, returning an array of absolute paths.
- *
- * @deprecated This helper is slated for removal. Consider implementing this functionality on your side.
- * @param roots - Base directory paths to resolve against
- * @param args - Path segments to join with each root (e.g. 'foo', 'bar' → root/foo/bar)
- * @returns Array of absolute paths, one per root
- */
-export function multiResolve(roots: string[], ...args: string[]): string[] {
-  return roots.map((root) => path.resolve(root, ...args));
 }
 
 /**

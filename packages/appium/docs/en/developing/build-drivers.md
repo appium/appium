@@ -544,7 +544,7 @@ this.proxyCommand = proxy.command.bind(proxy);
 Here we are creating a proxy object and assigning some of its methods to `this` under the names
 `proxyReqRes` and `proxyCommand`. This is required for Appium to use the proxy, so don't forget
 this step! The `WebDriverProxy` has a variety of other options [which you can check out in the
-source code as well.](https://github.com/appium/appium/blob/master/packages/base-driver/lib/jsonwp-proxy/proxy.ts)
+source code as well.](https://github.com/appium/appium/blob/master/packages/base-driver/lib/wd-proxy/proxy.ts)
 
 Finally, we need a way to tell Appium when the proxy is active. For your driver it might always
 be active, or it might only be active when in a certain context. You can define the logic as an

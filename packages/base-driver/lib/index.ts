@@ -9,22 +9,15 @@ export {BaseDriver};
 export default BaseDriver;
 export {DEFAULT_BASE_PATH, MAX_LOG_BODY_LENGTH, PROTOCOLS, W3C_ELEMENT_KEY} from './constants.js';
 
-// MJSONWP exports
 export * from './protocol/index.js';
-export {errorFromMJSONWPStatusCode as errorFromCode} from './protocol/index.js';
 
 // Express exports
 /** @deprecated Removed in Appium 4. Use hard-copied test fixtures in driver CI instead. */
 export {normalizeBasePath, server} from './express/server.js';
 export {TEST_FIXTURES_DIR as STATIC_DIR} from './test-pages/index.js';
 
-// jsonwp-proxy exports
-/** @deprecated The JWProxy export is deprecated. Please use WebDriverProxy instead */
-export {JWProxy} from './jsonwp-proxy/proxy.js';
-export {JWProxy as WebDriverProxy} from './jsonwp-proxy/proxy.js';
-
-// jsonwp-status exports
-export {codes as statusCodes, getSummaryByCode} from './jsonwp-status/status.js';
+// wd-proxy exports
+export {WebDriverProxy} from './wd-proxy/proxy.js';
 
 // W3C capabilities parser
 export {

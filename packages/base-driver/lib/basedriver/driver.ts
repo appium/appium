@@ -23,7 +23,7 @@ import {fixCaps, isW3cCaps} from '../helpers/capabilities.js';
 import {resolveExecuteExtensionName} from '../helpers/extension-command-name.js';
 import {getLevenshteinSuggestion} from '../helpers/levenshtein-match.js';
 import {calcSignature} from '../helpers/session.js';
-import {DELETE_SESSION_COMMAND, determineProtocol, errors} from '../protocol/index.js';
+import {DELETE_SESSION_COMMAND, errors} from '../protocol/index.js';
 import {mergePlainObjects} from '../utils.js';
 import {processCapabilities, validateCaps} from './capabilities.js';
 import {
@@ -95,15 +95,13 @@ export class BaseDriver<
    * This is the main command handler for the driver. It wraps command
    * execution with timeout logic, checking that we have a valid session,
    * and ensuring that we execute commands one at a time. This method is called
-   * by MJSONWP's express router.
+   * by the WebDriver protocol's express router.
    */
   async executeCommand<T = unknown>(cmd: string, ...args: any[]): Promise<T> {
     // get start time for this command, and log in special cases
     const startTime = Date.now();
 
     if (cmd === 'createSession') {
-      // If creating a session determine if W3C or MJSONWP protocol was requested and remember the choice
-      this.protocol = determineProtocol(args);
       this.logEvent(EVENT_SESSION_INIT);
     } else if (cmd === DELETE_SESSION_COMMAND) {
       this.logEvent(EVENT_SESSION_QUIT_START);

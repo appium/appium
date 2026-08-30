@@ -30,7 +30,6 @@
   "files": [
     "lib",
     "build/lib",
-    "test-fixtures",
     "tsconfig.json"
   ],
   "type": "module",
@@ -67,7 +66,6 @@
     "method-override": "3.0.0",
     "morgan": "1.11.0",
     "path-to-regexp": "8.4.2",
-    "serve-favicon": "2.5.1",
     "type-fest": "5.8.0"
   },
   "tsd": {

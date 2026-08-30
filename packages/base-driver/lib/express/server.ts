@@ -2,8 +2,6 @@ import http from 'node:http';
 import type {Server as HttpServer} from 'node:http';
 import https from 'node:https';
 
-// Import env helper directly — not from the test-pages barrel — so Express handlers and
-// fixture code stay unloaded unless APPIUM_ENABLE_LEGACY_TEST_PAGES is set.
 import {fs, timing} from '@appium/support';
 import type {
   AppiumServer,
@@ -19,7 +17,6 @@ import type {Express, Router} from 'express';
 import methodOverride from 'method-override';
 
 import {DEFAULT_BASE_PATH} from '../constants.js';
-import {isLegacyTestPagesEnabled} from '../test-pages/env.js';
 import {endLogFormatter, startLogFormatter} from './express-logging.js';
 import {log} from './logger.js';
 import {
@@ -78,12 +75,6 @@ export interface ConfigureServerOpts {
   frontRouter: Router;
 }
 
-/** @internal */
-export interface ConfigureServerInternalOpts extends ConfigureServerOpts {
-  /** @deprecated Appium 4 */
-  registerTestPages?: (app: Express, opts: {basePath: string}) => void;
-}
-
 /** Options for {@linkcode configureHttp} */
 export interface ConfigureHttpOpts {
   httpServer: HttpServer;
@@ -135,10 +126,6 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
           gracefulShutdownTimeout: cliArgs.shutdownTimeout,
         });
         const useLegacyUpgradeHandler = !hasShouldUpgradeCallback(httpServer);
-        let registerTestPages: ConfigureServerInternalOpts['registerTestPages'];
-        if (isLegacyTestPagesEnabled()) {
-          registerTestPages = (await import('../test-pages/index.js')).registerTestPages;
-        }
         configureServer({
           app,
           addRoutes: routeConfiguringFunction,
@@ -147,9 +134,8 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
           extraMethodMap,
           webSocketsMapping: appiumServer.webSocketsMapping,
           useLegacyUpgradeHandler,
-          registerTestPages,
           frontRouter: appiumServer.frontRouter,
-        } as ConfigureServerInternalOpts);
+        });
         // allow extensions to update the app and http server objects
         for (const updater of serverUpdaters) {
           await updater(app, appiumServer, cliArgs);
@@ -192,15 +178,10 @@ export function configureServer(opts: ConfigureServerOpts): void {
     useLegacyUpgradeHandler = true,
     frontRouter,
   } = opts;
-  const {registerTestPages} = opts as ConfigureServerInternalOpts;
   const basePath = normalizeBasePath(rawBasePath);
 
   app.use(endLogFormatter);
   app.use(handleLogContext);
-
-  if (registerTestPages) {
-    registerTestPages(app, {basePath});
-  }
 
   // Only use legacy Express middleware for WebSocket upgrades if shouldUpgradeCallback is not available.
   // When shouldUpgradeCallback is available, upgrades are handled directly on the HTTP server

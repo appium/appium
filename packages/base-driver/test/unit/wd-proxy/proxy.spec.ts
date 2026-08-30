@@ -192,6 +192,10 @@ describe('proxy', function () {
       const j = mockProxy({sessionId: '123'});
       await assert.rejects(j.command('/element/bad/text', 'GET'), /Invisible element/);
     });
+    it('should throw when a command returns a non-2xx, non-error-shaped response', async function () {
+      const j = mockProxy({sessionId: '123'});
+      await assert.rejects(j.command('/session/badchrome/nochrome', 'GET'), /chrome not reachable/);
+    });
   });
   describe('req/res proxy', function () {
     it('should successfully proxy via req and send to res', async function () {

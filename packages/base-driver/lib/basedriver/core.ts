@@ -240,10 +240,6 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
     return this as Core<Constraints>;
   }
 
-  isMjsonwpProtocol() {
-    return this.protocol === PROTOCOLS.MJSONWP;
-  }
-
   isW3CProtocol() {
     return this.protocol === PROTOCOLS.W3C;
   }

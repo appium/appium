@@ -566,12 +566,7 @@ export class InvalidCoordinatesError extends InvalidElementCoordinatesError {}
 
 export class IMENotAvailableError extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
-    super(
-      message || 'IME was not available.',
-      IMENotAvailableError.w3cStatus(),
-      IMENotAvailableError.error(),
-      cause,
-    );
+    super(message || 'IME was not available.', IMENotAvailableError.w3cStatus(), IMENotAvailableError.error(), cause);
   }
   static w3cStatus() {
     return HTTPStatusCodes.INTERNAL_SERVER_ERROR;
@@ -651,12 +646,7 @@ export class MoveTargetOutOfBoundsError extends ProtocolError {
 
 export class NoSuchContextError extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
-    super(
-      message || 'No such context found.',
-      UnknownError.w3cStatus(),
-      UnknownError.error(),
-      cause,
-    );
+    super(message || 'No such context found.', UnknownError.w3cStatus(), UnknownError.error(), cause);
   }
 }
 

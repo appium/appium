@@ -297,14 +297,6 @@ export class WebDriverProxy {
   }
 
   /**
-   * Extracts a session id from a WebDriver-style URL.
-   */
-  getSessionIdFromUrl(url: string): string | null {
-    const match = url.match(/\/session\/([^/]+)/);
-    return match ? match[1] : null;
-  }
-
-  /**
    * Proxies an Express `Request`/`Response` pair to the downstream server,
    * converting any downstream errors into a proper W3C HTTP response.
    *
@@ -334,16 +326,6 @@ export class WebDriverProxy {
     }
 
     const resBody = resBodyObj as Record<string, unknown>;
-    if (Object.hasOwn(resBody, 'sessionId')) {
-      const reqSessionId = this.getSessionIdFromUrl(req.originalUrl);
-      if (reqSessionId) {
-        this.log.info(`Replacing sessionId ${resBody.sessionId} with ${reqSessionId}`);
-        resBody.sessionId = reqSessionId;
-      } else if (this.sessionId) {
-        this.log.info(`Replacing sessionId ${resBody.sessionId} with ${this.sessionId}`);
-        resBody.sessionId = this.sessionId;
-      }
-    }
     resBody.value = formatResponseValue(resBody.value as object | undefined);
     res.status(statusCode).json(ensureW3cResponse(resBody));
   }

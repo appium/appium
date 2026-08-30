@@ -34,7 +34,7 @@ function resFixture(url: string, method: string): [number, ResFixtureBody] {
     return [500, {value: {error: 'element not visible', message: 'Invisible element'}}];
   }
   if (/\/element\/200\/value$/.test(url)) {
-    return [200, {sessionId: 'innersessionid', value: 'foobar'}];
+    return [200, {status: 0, sessionId: 'innersessionid', value: 'foobar'}];
   }
   if (/\/session$/.test(url) && method === 'POST') {
     return [200, {value: {sessionId: '123', capabilities: {browserName: 'boo'}}}];

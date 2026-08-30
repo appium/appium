@@ -206,7 +206,7 @@ describe('proxy', function () {
       assert.strictEqual(res.sentCode, 200);
       assert.deepStrictEqual(res.sentBody, {value: {foo: 'bar'}});
     });
-    it('should delete the inner session id', async function () {
+    it('should strip stray status/sessionId fields from a downstream response', async function () {
       const j = mockProxy({sessionId: '123'});
       const [req, res] = buildReqRes('/element/200/value', 'GET');
       await j.proxyReqRes(req, res);

@@ -277,7 +277,7 @@ export class WebDriverProxy {
       throw new errors.UnknownError((err as Error).message);
     }
     const resBody = resBodyObj as Record<string, unknown>;
-    if (response.statusCode < 300) {
+    if (response.statusCode >= 200 && response.statusCode < 300) {
       return resBody.value;
     }
     if (util.isPlainObject(resBody.value) && resBody.value.error) {
@@ -348,11 +348,7 @@ export class WebDriverProxy {
     res.status(statusCode).json(ensureW3cResponse(resBody));
   }
 
-  /**
-   * The `/timeouts` route optionally accepts a legacy `{type, ms}` body shape
-   * alongside the W3C `{script, pageLoad, implicit}` one. Downstream servers
-   * only understand the latter, so reshape the legacy form before proxying.
-   */
+  /** Reshapes a legacy `/timeouts` `{type, ms}` body into the single-key W3C form downstream servers expect. */
   private getTimeoutsRequestBody(body: HTTPBody): HTTPBody {
     const bodyObj = (util.safeJsonParse(body) as Record<string, unknown>) ?? {};
     if (!Object.hasOwn(bodyObj, 'ms') || !Object.hasOwn(bodyObj, 'type')) {

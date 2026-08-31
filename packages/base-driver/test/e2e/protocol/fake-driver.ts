@@ -10,7 +10,7 @@ import type {
 } from '@appium/types';
 
 import {PROTOCOLS} from '../../../lib/constants.js';
-import {BaseDriver, determineProtocol, errors, isW3cCaps} from '../../../lib/index.js';
+import {BaseDriver, errors, isW3cCaps} from '../../../lib/index.js';
 
 class FakeDriver extends BaseDriver<Constraints> {
   static newMethodMap = {
@@ -23,7 +23,7 @@ class FakeDriver extends BaseDriver<Constraints> {
 
   constructor() {
     super({} as InitialOpts);
-    this.protocol = PROTOCOLS.MJSONWP;
+    this.protocol = PROTOCOLS.W3C;
     this.sessionId = null;
     this.wdProxyActive = false;
   }
@@ -57,9 +57,6 @@ class FakeDriver extends BaseDriver<Constraints> {
     const method = (this as unknown as Record<string, (...a: any[]) => unknown>)[cmd];
     if (!method) {
       throw new errors.NotYetImplementedError();
-    }
-    if (cmd === 'createSession') {
-      this.protocol = determineProtocol(args);
     }
     return (await method.call(this, ...args)) as T;
   }
@@ -135,8 +132,8 @@ class FakeDriver extends BaseDriver<Constraints> {
     return app;
   }
 
-  async getSettings(): Promise<{status: number; value: string}> {
-    return {status: 13, value: 'Mishandled Driver Error'};
+  async getSettings(): Promise<{protocol: typeof PROTOCOLS.W3C; error: Error}> {
+    return {protocol: PROTOCOLS.W3C, error: new errors.UnknownError('Mishandled Driver Error')};
   }
 
   proxyActive(sessionId?: string): boolean {

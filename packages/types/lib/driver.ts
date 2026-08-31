@@ -114,7 +114,6 @@ export interface Core<C extends Constraints, Settings extends StringRecord = Str
   getStatus(): Promise<any>;
   sessionExists(sessionId?: string): boolean;
   isW3CProtocol(): boolean;
-  isMjsonwpProtocol(): boolean;
   isFeatureEnabled(name: string): boolean;
   assertFeatureEnabled(name: string): void;
   validateLocatorStrategy(strategy: string, webContext?: boolean): void;

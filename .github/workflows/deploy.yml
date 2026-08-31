@@ -10,22 +10,24 @@ permissions:
 
 jobs:
   prepare_matrix:
-    runs-on: ubuntu-latest
-    outputs:
-      versions: ${{ steps.generate-matrix.outputs.lts }}
-    steps:
-      - name: Select all current LTS versions of Node.js
-        id: generate-matrix
-        uses: msimerson/node-lts-versions@v2.0.2
+    uses: appium/appium-workflows/.github/workflows/node-lts-matrix.yml@main
+
+  filter_matrix:
+    needs:
+      - prepare_matrix
+    name: Filter supported Node versions
+    uses: ./.github/workflows/filter-node-matrix.yml
+    with:
+      versions: ${{ needs.prepare_matrix.outputs.versions }}
 
   check:
     needs:
-      - prepare_matrix
+      - filter_matrix
     name: Check
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        node-version: ${{ fromJSON(needs.prepare_matrix.outputs.versions) }}
+        node-version: ${{ fromJSON(needs.filter_matrix.outputs.versions) }}
         os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
       - name: Use Node.js ${{ matrix.node-version }}

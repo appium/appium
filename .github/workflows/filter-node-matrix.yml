@@ -1,0 +1,32 @@
+name: Filter Supported Node Versions
+
+on:
+  workflow_call:
+    inputs:
+      versions:
+        description: 'JSON array of Node.js versions to filter'
+        required: true
+        type: string
+      min-version:
+        description: 'Minimum major Node.js version to keep'
+        required: false
+        type: number
+        default: 24
+    outputs:
+      versions:
+        description: 'Filtered JSON array of Node.js versions >= min-version'
+        value: ${{ jobs.filter.outputs.versions }}
+
+jobs:
+  filter:
+    runs-on: ubuntu-latest
+    outputs:
+      versions: ${{ steps.filter.outputs.versions }}
+    steps:
+      - name: Drop Node versions below the minimum
+        id: filter
+        run: |
+          versions=$(jq -c --argjson min '${{ inputs.min-version }}' \
+            '[.[] | select((tostring | tonumber) >= $min)]' <<< '${{ inputs.versions }}')
+          echo "versions=$versions" >> "$GITHUB_OUTPUT"
+          echo "Testable Node versions (>= ${{ inputs.min-version }}): $versions"

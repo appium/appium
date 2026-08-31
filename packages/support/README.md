@@ -50,24 +50,21 @@ All utility functions are split into a bunch of different categories. Each categ
 |doctor|Common doctor utilities that can be used by drivers and plugins|
 |env|Several helpers needed by the server to cope with internal dependencies and manifests|
 |fs|Most of the functions here are just thin wrappers over utility functions available in [Promises API](https://nodejs.org/api/fs.html#promises-api)|
-|image-util|Utilities to work with images. Use [sharp](https://github.com/lovell/sharp) under the hood.<br>:bangbang: Node >=18.17 is required to use these utilities|
-|logging|See [the logging section below](#logging)|
-|mjpeg|Helpers needed to implement [MJPEG streaming](https://en.wikipedia.org/wiki/Motion_JPEG#Video_streaming)|
+|logger|See [the logging section below](#logging)|
 |net|Helpers needed for network interactions, for example, upload and download of files|
 |node|Set of Node.js-specific utility functions needed, for example, to ensure objects immutability or to calculate their sizes|
 |npm|Set of `npm`-related helpers|
 |plist|Set of utilities used to read and write data from [plist](https://en.wikipedia.org/wiki/Property_List) files in javascript|
-|process|Helpers for interactions with system processes. These APIs don't support Windows.|
 |system|Set of helper functions needed to determine properties of the current operating system|
-|tempdir|Set of helpers that allow interactions with temporary folders|
+|tempDir|Set of helpers that allow interactions with temporary folders|
 |timing|Helpers that allow to measure execution time|
 |util|Miscellaneous utilities|
 |zip|Helpers that allow to work with archives in `.zip ` format|
 
 ## logging
 
-This is a basic logger defaulting to [npmlog](https://github.com/npm/npmlog) with special
-consideration for running tests (doesn't output logs when run with `_TESTING=1`).
+This is a basic logger defaulting to `@appium/logger` (based on [`npmlog](https://github.com/npm/npmlog))
+with special consideration for running tests (doesn't output logs when run with `_TESTING=1`).
 
 ### Logging levels
 

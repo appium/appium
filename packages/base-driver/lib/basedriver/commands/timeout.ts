@@ -127,7 +127,7 @@ const TimeoutCommands: ITimeoutCommands = {
   parseTimeoutArgument<C extends Constraints>(this: BaseDriver<C>, ms: number | string) {
     const duration = parseInt(String(ms), 10);
     if (Number.isNaN(duration) || duration < MIN_TIMEOUT) {
-      throw new errors.UnknownError(`Invalid timeout value '${ms}'`);
+      throw new errors.InvalidArgumentError(`Invalid timeout value '${ms}'`);
     }
     return duration;
   },

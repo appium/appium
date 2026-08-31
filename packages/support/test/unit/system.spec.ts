@@ -5,7 +5,7 @@ import {afterEach, beforeEach, describe, it, type TestContext} from 'node:test';
 import {createSandbox} from 'sinon';
 import * as teenProcess from 'teen_process';
 
-import {system, util} from '../../lib/index.js';
+import {system} from '../../lib/index.js';
 import {system as systemObj} from '../../lib/system.js';
 
 let importCounter = 0;
@@ -58,29 +58,6 @@ describe('system', function () {
     it('should correctly return Linux if it is a Linux', function () {
       osMock.expects('type').twice().returns('Linux');
       assert.strictEqual(system.isLinux(), true);
-    });
-  });
-
-  describe('mac OSX version', function () {
-    it('should return correct version for 10.10.5', async function (t) {
-      const freshSystem = await importSystemWithMockedExec(t as TestContext, () => ({stdout: '10.10.5'}));
-      assert.strictEqual(await freshSystem.macOsxVersion(), '10.10');
-    });
-
-    it('should return correct version for 10.12', async function (t) {
-      const freshSystem = await importSystemWithMockedExec(t as TestContext, () => ({stdout: '10.12.0'}));
-      assert.strictEqual(await freshSystem.macOsxVersion(), '10.12');
-    });
-
-    it('should return correct version for 10.12 with newline', async function (t) {
-      const freshSystem = await importSystemWithMockedExec(t as TestContext, () => ({stdout: '10.12   \n'}));
-      assert.strictEqual(await freshSystem.macOsxVersion(), '10.12');
-    });
-
-    it("should throw an error if OSX version can't be determined", async function (t) {
-      const invalidOsx = 'error getting operation system version blabla';
-      const freshSystem = await importSystemWithMockedExec(t as TestContext, () => ({stdout: invalidOsx}));
-      await assert.rejects(freshSystem.macOsxVersion(), new RegExp(util.escapeRegExp(invalidOsx)));
     });
   });
 

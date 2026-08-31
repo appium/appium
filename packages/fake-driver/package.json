@@ -47,7 +47,7 @@
   },
   "dependencies": {
     "@xmldom/xmldom": "0.9.12",
-    "asyncbox": "6.4.2",
+    "asyncbox": "6.4.3",
     "xpath": "0.0.34"
   },
   "devDependencies": {

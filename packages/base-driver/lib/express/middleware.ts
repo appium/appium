@@ -44,9 +44,11 @@ export function allowCrossDomain(req: Request, res: Response, next: NextFunction
 export function allowCrossDomainAsyncExecute(basePath: string): RequestHandler {
   function allowCrossDomainAsyncExecuteHandler(req: Request, res: Response, next: NextFunction): void {
     const receiveAsyncResponseRegExp = new RegExp(
-      `${util.escapeRegExp(basePath)}/session/[a-f0-9-]+/(appium/)?receive_async_response`,
+      `^${util.escapeRegExp(basePath)}/session/[a-f0-9-]+/(appium/)?receive_async_response/?$`,
     );
-    if (!receiveAsyncResponseRegExp.test(req.url)) {
+    // Match against req.path (query-stripped) so query-string data cannot be used
+    // to smuggle a match for an otherwise unrelated endpoint.
+    if (!receiveAsyncResponseRegExp.test(req.path)) {
       next();
       return;
     }
@@ -63,7 +65,7 @@ export function allowCrossDomainAsyncExecute(basePath: string): RequestHandler {
 export function handleLogContext(req: Request, _res: Response, next: NextFunction): void {
   const requestId = fetchHeaderValue(req, 'x-request-id') || util.uuidV4();
 
-  const sessionId = SESSION_ID_PATTERN.exec(req.url)?.[1];
+  const sessionId = SESSION_ID_PATTERN.exec(req.path)?.[1];
   const sessionInfo = sessionId ? {sessionId, sessionSignature: calcSignature(sessionId)} : {};
   const isSensitiveHeaderValue = fetchHeaderValue(req, 'x-appium-is-sensitive');
 
@@ -155,8 +157,18 @@ export function catchAllHandler(err: Error, _req: Request, res: Response, next: 
   }
 
   log.error(`Uncaught error: ${err.message}`);
-  const [status, body] = getResponseForW3CError(err);
+  const [status, body] = getResponseForW3CError(
+    isBodyParseError(err) ? new errors.InvalidArgumentError(err.message) : err,
+  );
   res.status(status).json(body);
+}
+
+/**
+ * Detects the error body-parser raises for a request body that is not valid JSON.
+ * The protocol expects such a request to be rejected as an invalid argument.
+ */
+function isBodyParseError(err: Error): boolean {
+  return (err as Error & {type?: string})?.type === 'entity.parse.failed';
 }
 
 /**

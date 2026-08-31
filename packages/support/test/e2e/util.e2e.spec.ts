@@ -1,14 +1,11 @@
+import assert from 'node:assert/strict';
 import path from 'node:path';
 import {afterEach, beforeEach, describe, it} from 'node:test';
 
 import {sleep} from 'asyncbox';
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
 import {fs, tempDir} from '../../lib/index';
 import * as util from '../../lib/util';
-
-use(chaiAsPromised);
 
 describe('#util', function () {
   let tmpRoot: string | null = null;
@@ -32,7 +29,7 @@ describe('#util', function () {
     it('should convert a file to base64 encoding', async function () {
       const data = await util.toInMemoryBase64(tmpFile);
       const fileContent = await fs.readFile(tmpFile);
-      expect(data.toString()).to.eql(fileContent.toString('base64'));
+      assert.strictEqual(data.toString(), fileContent.toString('base64'));
     });
   });
 
@@ -68,13 +65,13 @@ describe('#util', function () {
 
     it('should lock a file during the given behavior', async function () {
       const guard = util.getLockFileGuard(lockFile);
-      await expect(guard.check()).to.eventually.be.false;
+      assert.strictEqual(await guard.check(), false);
       const guardPromise = guard(async () => await guardedBehavior('b', 500));
       await sleep(200);
-      await expect(guard.check()).to.eventually.be.true;
+      assert.strictEqual(await guard.check(), true);
       await guardPromise;
-      await expect(guard.check()).to.eventually.be.false;
-      await expect(testFileContents()).to.eventually.eql('ab');
+      assert.strictEqual(await guard.check(), false);
+      assert.strictEqual(await testFileContents(), 'ab');
     });
 
     it('should recover a broken lock file', async function () {
@@ -84,18 +81,18 @@ describe('#util', function () {
         tryRecovery: true,
       });
       await guard(async () => await guardedBehavior('b', 500));
-      await expect(guard.check()).to.eventually.be.false;
-      await expect(testFileContents()).to.eventually.eql('ab');
+      assert.strictEqual(await guard.check(), false);
+      assert.strictEqual(await testFileContents(), 'ab');
     });
 
     it('should block other behavior until the lock is released', async function () {
       // First prove that without a lock, we get races.
-      await expect(testFileContents()).to.eventually.eql('a');
+      assert.strictEqual(await testFileContents(), 'a');
       const unguardedPromise1 = guardedBehavior('b', 500);
       const unguardedPromise2 = guardedBehavior('c', 100);
       await unguardedPromise1;
       await unguardedPromise2;
-      await expect(testFileContents()).to.eventually.eql('acb');
+      assert.strictEqual(await testFileContents(), 'acb');
 
       // Now prove that with a lock, we don't get any interlopers.
       const guard = util.getLockFileGuard(lockFile);
@@ -103,7 +100,7 @@ describe('#util', function () {
       const guardPromise2 = guard(async () => await guardedBehavior('c', 100));
       await guardPromise1;
       await guardPromise2;
-      await expect(testFileContents()).to.eventually.eql('acbbc');
+      assert.strictEqual(await testFileContents(), 'acbbc');
     });
 
     it('should return the result of the guarded behavior', async function () {
@@ -112,16 +109,16 @@ describe('#util', function () {
       const guardPromise2 = guard(async () => await guardedBehavior('world', 100));
       const ret1 = await guardPromise1;
       const ret2 = await guardPromise2;
-      expect(ret1).to.eql('hello');
-      expect(ret2).to.eql('world');
+      assert.strictEqual(ret1, 'hello');
+      assert.strictEqual(ret2, 'world');
     });
 
     it('should time out if the lock is not released', {timeout: 5000}, async function () {
       const guard = util.getLockFileGuard(lockFile, {timeout: 0.5});
       const p1 = guard(async () => await guardedBehavior('hello', 1200));
       const p2 = guard(async () => await guardedBehavior('world', 10));
-      await expect(p2).to.eventually.be.rejectedWith(/not acquire lock/);
-      await expect(p1).to.eventually.eql('hello');
+      await assert.rejects(p2, /not acquire lock/);
+      assert.strictEqual(await p1, 'hello');
     });
 
     it('should still release lock if guarded behavior fails', {timeout: 5000}, async function () {
@@ -131,8 +128,8 @@ describe('#util', function () {
         throw new Error('bad');
       });
       const p2 = guard(async () => await guardedBehavior('world', 100));
-      await expect(p1).to.eventually.be.rejectedWith(/bad/);
-      await expect(p2).to.eventually.eql('world');
+      await assert.rejects(p1, /bad/);
+      assert.strictEqual(await p2, 'world');
     });
   });
 });

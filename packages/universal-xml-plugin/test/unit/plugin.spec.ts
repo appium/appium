@@ -2,11 +2,11 @@ import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
 import type {Constraints} from '@appium/types';
-import {BaseDriver} from 'appium/driver';
+import {BaseDriver} from 'appium/driver.js';
 
-import {UniversalXMLPlugin} from '../../lib/plugin';
-import {getNodeAttrVal, runQuery} from '../../lib/xpath';
-import {FIXTURES, readFixture} from '../fixtures';
+import {UniversalXMLPlugin} from '../../lib/plugin.js';
+import {getNodeAttrVal, runQuery} from '../../lib/xpath.js';
+import {FIXTURES, readFixture} from '../fixtures/index.js';
 
 describe('UniversalXMLPlugin', function () {
   let next: () => Promise<any>;
@@ -43,6 +43,19 @@ describe('UniversalXMLPlugin', function () {
       const node = await p.findElement(next, driver as any, 'xpath', '//TextInput[@axId="username"]');
       assert.equal(getNodeAttrVal(node as any, 'value'), 'alice');
       assert.equal((node as any).nodeName, 'XCUIElementTypeTextField');
+    });
+
+    it('should return every match when an ios xpath query matches multiple nodes', async function () {
+      (driver as any).getCurrentContext = () => 'NATIVE_APP';
+      next = (driver as any).getPageSource = () => readFixture(FIXTURES.XML_IOS);
+      (driver as any).caps = {platformName: 'iOS'};
+      (driver as any).findElements = async (strategy: string, selector: string) =>
+        runQuery(selector, (await readFixture(FIXTURES.XML_IOS)).replace(/<\/?AppiumAUT>/g, ''));
+      const nodes = await p.findElements(next, driver as any, 'xpath', '//Window');
+      assert.equal(nodes.length, 2);
+      for (const node of nodes) {
+        assert.equal((node as any).nodeName, 'XCUIElementTypeWindow');
+      }
     });
 
     it('should turn an xpath query into another query run on the original android source', async function () {

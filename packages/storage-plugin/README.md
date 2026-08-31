@@ -39,7 +39,7 @@ The procedure for storing a local file on the Appium server is as follows:
 
 - Calculate the [SHA1](https://en.wikipedia.org/wiki/SHA-1) hash of the source file
 - Decide the name of the destination file in the server storage (it can be the same as the original file name)
-- Send a `POST` request to the `/storage/add` endpoint, which will return the `events` and `stream` websocket paths
+- Send a `POST` request to the `/appium/storage/add` endpoint, which will return the `events` and `stream` websocket paths
 - Connect to both web sockets
 - Start listening for messages on the `events` web socket. Each message there is a JSON object wrapped
   to a string. The message must be either `{"value": {"success": true, "name":"app.ipa","sha1":"ccc963411b2621335657963322890305ebe96186"}}` to notify about a successful
@@ -62,6 +62,11 @@ If a folder with the same name already exists in the storage, an error will be t
 ## API
 
 [Refer to the Appium documentation](https://appium.io/docs/en/latest/reference/api/plugins/#storage-plugin).
+
+> [!NOTE]
+> Prior to plugin version 1.2.0, all endpoints were mounted under the `/storage` prefix (e.g. `/storage/add`)
+> instead of `/appium/storage`. These legacy routes are still available for backward compatibility,
+> but are deprecated and will be removed in a future version of the plugin.
 
 The plugin also supports [several environment variables](https://appium.io/docs/en/latest/reference/cli/env-vars/) for further customization.
 

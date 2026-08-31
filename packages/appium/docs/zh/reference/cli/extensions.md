@@ -159,14 +159,14 @@ extensions include scripts.
 #### Usage
 
 ```
-appium {driver|plugin} run <extension-name> <script-name> [script-args]
+appium {driver|plugin} run <extension-name> [<script-name> [<script-args>]]
 ```
 
-| Argument         | Description                                   |
-| ---------------- | --------------------------------------------- |
-| `extension-name` | The short name of the installed extension     |
-| `script-name`    | The name of the script to be run              |
-| `script-args`    | Any additional arguments passed to the script |
+| Argument         | Description                                                                                                              |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `extension-name` | The short name of the installed extension                                                                                |
+| `script-name`    | The name of the script to run. If not provided, a list of available scripts is returned. |
+| `script-args`    | Any additional arguments passed to the script                                                                            |
 
 #### Options
 
@@ -180,6 +180,12 @@ appium {driver|plugin} run <extension-name> <script-name> [script-args]
 
     ```
     appium driver run uiautomator2 reset
+    ```
+
+- List all available scripts included in the XCUITest driver:
+
+    ```
+    appium driver run xcuitest
     ```
 
 ## `update`

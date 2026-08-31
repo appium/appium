@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {describe, it, before} from 'node:test';
 
-import {createAppiumURL, getTestPort, TEST_HOST} from '../../lib';
+import {createAppiumURL, getTestPort, TEST_HOST} from '../../lib/index.js';
 
 describe('TEST_HOST', function () {
   it('should be localhost', function () {

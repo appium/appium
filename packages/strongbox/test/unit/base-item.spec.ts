@@ -1,51 +1,51 @@
+import assert from 'node:assert/strict';
 import type fs from 'node:fs/promises';
 import path from 'node:path';
-import {beforeEach, describe, it} from 'node:test';
+import {before, beforeEach, describe, it, mock} from 'node:test';
 
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
-import rewiremock from 'rewiremock/node';
 import type {SinonSandbox, SinonStubbedMember} from 'sinon';
 import {createSandbox} from 'sinon';
 
-import type {Item, Strongbox} from '../../lib';
-import type {BaseItem as TBaseItem} from '../../lib/base-item';
+import type {BaseItem as TBaseItem} from '../../lib/base-item.js';
+import type {Item, Strongbox} from '../../lib/index.js';
 
-use(chaiAsPromised);
-
-type MockFs = {
-  [K in keyof typeof fs]: SinonStubbedMember<(typeof fs)[K]>;
-};
+type MockFs = Pick<
+  {[K in keyof typeof fs]: SinonStubbedMember<(typeof fs)[K]>},
+  'mkdir' | 'readFile' | 'unlink' | 'writeFile'
+>;
 
 describe('Strongbox', function () {
   let sandbox: SinonSandbox;
-  let MockFs: MockFs = {} as any;
+  let MockFs: MockFs;
   const DATA_DIR = path.resolve(path.sep, 'some', 'dir');
-  // note to self: looks like this is safe to do before the rewiremock.proxy call
   let BaseItem: typeof TBaseItem;
 
-  beforeEach(function () {
+  before(async function () {
     sandbox = createSandbox();
-    ({BaseItem} = rewiremock.proxy(
-      () => require('../../lib'),
-      (r) => ({
-        // all of these props are async functions
-        'node:fs/promises': r
-          .mockThrough((prop) => {
-            MockFs = {...MockFs, [prop]: sandbox.stub().resolves()};
-            return MockFs[prop as keyof typeof fs];
-          })
-          .dynamic(), // this allows us to change the mock behavior on-the-fly
-        'env-paths': sandbox.stub().returns({data: DATA_DIR}),
-      }),
-    ));
+    MockFs = {
+      mkdir: sandbox.stub(),
+      readFile: sandbox.stub(),
+      unlink: sandbox.stub(),
+      writeFile: sandbox.stub(),
+    };
+    // mocks the module for the lifetime of this file; individual stub
+    // behavior is reset (not the module itself) between tests below
+    mock.module('node:fs/promises', {namedExports: MockFs});
+    ({BaseItem} = await import('../../lib/base-item.js'));
+  });
+
+  beforeEach(function () {
+    sandbox.reset();
+    for (const stub of Object.values(MockFs)) {
+      stub.resolves();
+    }
   });
 
   describe('BaseItem', function () {
     describe('constructor', function () {
       it('should set the id property based on the parent container', function () {
         const item = new BaseItem('foo', {container: DATA_DIR} as Strongbox);
-        expect(item.id).to.equal(path.join(DATA_DIR, 'foo'));
+        assert.strictEqual(item.id, path.join(DATA_DIR, 'foo'));
       });
     });
 
@@ -58,7 +58,7 @@ describe('Strongbox', function () {
       describe('clear()', function () {
         it('should remove the item from the filesystem', async function () {
           await item.clear();
-          expect(MockFs.unlink.calledWith(item.id)).to.be.true;
+          assert.strictEqual(MockFs.unlink.calledWith(item.id), true);
         });
 
         describe('if the item does not exist', function () {
@@ -66,7 +66,7 @@ describe('Strongbox', function () {
             MockFs.unlink.rejects({code: 'ENOENT'});
           });
           it('should not reject', async function () {
-            await expect(item.clear()).to.not.be.rejected;
+            await assert.doesNotReject(item.clear());
           });
         });
 
@@ -75,7 +75,7 @@ describe('Strongbox', function () {
             MockFs.unlink.rejects(new Error('ugh'));
           });
           it('should reject', async function () {
-            await expect(item.clear()).to.be.rejectedWith(Error, 'ugh');
+            await assert.rejects(item.clear(), {message: 'ugh'});
           });
         });
       });
@@ -84,13 +84,13 @@ describe('Strongbox', function () {
         beforeEach(function () {
           MockFs.readFile.resolves('skunk');
         });
-        it('should read the item from the fileystem', function () {
-          expect(item.read()).to.eventually.equal('skunk');
+        it('should read the item from the fileystem', async function () {
+          assert.strictEqual(await item.read(), 'skunk');
         });
 
         it('should set the item value to the read value', async function () {
           await item.read();
-          expect(item.value).to.equal('skunk');
+          assert.strictEqual(item.value, 'skunk');
         });
       });
 
@@ -100,11 +100,11 @@ describe('Strongbox', function () {
         });
 
         it('should write the new item value to the filesystem', async function () {
-          expect(MockFs.writeFile.calledWith(item.id, 'bar')).to.be.true;
+          assert.strictEqual(MockFs.writeFile.calledWith(item.id, 'bar'), true);
         });
 
         it('should create the container', function () {
-          expect(MockFs.mkdir.calledWith(path.dirname(item.id), {recursive: true})).to.be.true;
+          assert.strictEqual(MockFs.mkdir.calledWith(path.dirname(item.id), {recursive: true}), true);
         });
       });
     });

@@ -3,10 +3,12 @@
  * @module
  */
 
-const {LogLevels} = require('consola');
 import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 
-import {findPackageRootSync} from './utils';
+import {LogLevels} from 'consola';
+
+import {findPackageRootSync} from './utils/index.js';
 
 /**
  * CLI executable name
@@ -70,7 +72,7 @@ export const DEFAULT_LOG_LEVEL = 'info';
 /**
  * Blocking I/O
  */
-export const PKG_ROOT_DIR = findPackageRootSync(__dirname);
+export const PKG_ROOT_DIR = findPackageRootSync(path.dirname(fileURLToPath(import.meta.url)));
 
 /**
  * Path to the `requirements.txt` file (in this package)

@@ -1,14 +1,11 @@
+import assert from 'node:assert/strict';
 import {before, describe, it} from 'node:test';
 
 import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
-import chai, {expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
-import {JWProxy} from '../../../lib';
+import {WebDriverProxy} from '../../../lib';
 import {errors, isErrorType} from '../../../lib/protocol/errors';
 import {type MockRequestOpts, request} from './mock-request';
-
-chai.use(chaiAsPromised);
 
 function buildReqRes(url: string, method: string, body?: any): [any, any] {
   const req = {originalUrl: url, method, body};
@@ -45,7 +42,7 @@ describe('proxy', function () {
   function mockProxy(opts: any = {}) {
     // sets default server/port
     opts = {server: TEST_HOST, port, ...opts};
-    const proxy = new JWProxy(opts);
+    const proxy = new WebDriverProxy(opts);
     (proxy as any).request = async function (...args: any[]) {
       return await request(args[0] as MockRequestOpts);
     };
@@ -54,96 +51,110 @@ describe('proxy', function () {
 
   it('should override default params', function () {
     const j = mockProxy({server: '127.0.0.2', port});
-    expect(j.server).to.equal('127.0.0.2');
-    expect(j.port).to.equal(port);
+    assert.strictEqual(j.server, '127.0.0.2');
+    assert.strictEqual(j.port, port);
   });
   it('should save session id on session creation', async function () {
     const j = mockProxy();
     const [res, body] = await j.proxy('/session', 'POST', {
       desiredCapabilities: {},
     });
-    expect(res.statusCode).to.equal(200);
-    expect(body).to.eql({status: 0, sessionId: '123', value: {browserName: 'boo'}});
-    expect(j.sessionId).to.equal('123');
+    assert.strictEqual(res.statusCode, 200);
+    assert.deepStrictEqual(body, {status: 0, sessionId: '123', value: {browserName: 'boo'}});
+    assert.strictEqual(j.sessionId, '123');
   });
   describe('getUrlForProxy', function () {
     it('should modify session id, host, and port', function () {
-      expect(
+      assert.strictEqual(
         mockProxy({sessionId: '123'}).getUrlForProxy('http://host.com:1234/session/456/element/200/value', 'POST'),
-      ).to.eql(`http://${TEST_HOST}:${port}/session/123/element/200/value`);
+        `http://${TEST_HOST}:${port}/session/123/element/200/value`,
+      );
     });
     it('should prepend scheme, host and port if not provided', function () {
       const j = mockProxy({sessionId: '123'});
-      expect(j.getUrlForProxy('/session/456/element/200/value', 'POST')).to.eql(
+      assert.strictEqual(
+        j.getUrlForProxy('/session/456/element/200/value', 'POST'),
         `http://${TEST_HOST}:${port}/session/123/element/200/value`,
       );
-      expect(j.getUrlForProxy('/session/456/appium/settings', 'POST')).to.eql(
+      assert.strictEqual(
+        j.getUrlForProxy('/session/456/appium/settings', 'POST'),
         `http://${TEST_HOST}:${port}/session/123/appium/settings`,
       );
     });
     it('should prepend scheme, host, port and session if not provided', function () {
-      expect(mockProxy({sessionId: '123'}).getUrlForProxy('/element/200/value', 'POST')).to.eql(
+      assert.strictEqual(
+        mockProxy({sessionId: '123'}).getUrlForProxy('/element/200/value', 'POST'),
         `http://${TEST_HOST}:${port}/session/123/element/200/value`,
       );
     });
     it('should keep query parameters', function () {
-      expect(mockProxy({sessionId: '123'}).getUrlForProxy('/element/200/value?foo=1&bar=2', 'POST')).to.eql(
+      assert.strictEqual(
+        mockProxy({sessionId: '123'}).getUrlForProxy('/element/200/value?foo=1&bar=2', 'POST'),
         `http://${TEST_HOST}:${port}/session/123/element/200/value?foo=1&bar=2`,
       );
     });
     it('should fix legacy proxy urls if reqBasePath is unset', function () {
       const j = mockProxy({sessionId: '123', reqBasePath: ''});
-      expect(j.getUrlForProxy('/wd/hub/session/456/element/200/value', 'POST')).to.eql(
+      assert.strictEqual(
+        j.getUrlForProxy('/wd/hub/session/456/element/200/value', 'POST'),
         `http://${TEST_HOST}:${port}/session/123/element/200/value`,
       );
-      expect(j.getUrlForProxy('/yolo/session/456/element/200/value', 'POST')).to.eql(
+      assert.strictEqual(
+        j.getUrlForProxy('/yolo/session/456/element/200/value', 'POST'),
         `http://${TEST_HOST}:${port}/session/123/element/200/value`,
       );
     });
     it('should respect nonstandard incoming request base path', function () {
-      expect(
+      assert.strictEqual(
         mockProxy({sessionId: '123', reqBasePath: ''}).getUrlForProxy('/session/456/element/200/value', 'POST'),
-      ).to.eql(`http://${TEST_HOST}:${port}/session/123/element/200/value`);
+        `http://${TEST_HOST}:${port}/session/123/element/200/value`,
+      );
 
-      expect(
+      assert.strictEqual(
         mockProxy({sessionId: '123', reqBasePath: '/my/base/path'}).getUrlForProxy(
           '/my/base/path/session/456/element/200/value',
           'POST',
         ),
-      ).to.eql(`http://${TEST_HOST}:${port}/session/123/element/200/value`);
+        `http://${TEST_HOST}:${port}/session/123/element/200/value`,
+      );
 
-      expect(mockProxy({sessionId: '123', reqBasePath: '/wd/hub'}).getUrlForProxy('/wd/hub/session/456', 'GET')).to.eql(
+      assert.strictEqual(
+        mockProxy({sessionId: '123', reqBasePath: '/wd/hub'}).getUrlForProxy('/wd/hub/session/456', 'GET'),
         `http://${TEST_HOST}:${port}/session/123`,
       );
 
-      expect(mockProxy({reqBasePath: '/my/base/path'}).getUrlForProxy('/my/base/path/session', 'POST')).to.eql(
+      assert.strictEqual(
+        mockProxy({reqBasePath: '/my/base/path'}).getUrlForProxy('/my/base/path/session', 'POST'),
         `http://${TEST_HOST}:${port}/session`,
       );
     });
     it('should work with urls which do not have session ids', function () {
       const j = mockProxy({sessionId: '123'});
-      expect(j.getUrlForProxy('http://host.com:1234/session', 'POST')).to.eql(`http://${TEST_HOST}:${port}/session`);
+      assert.strictEqual(
+        j.getUrlForProxy('http://host.com:1234/session', 'POST'),
+        `http://${TEST_HOST}:${port}/session`,
+      );
 
-      expect(j.getUrlForProxy('/session', 'POST')).to.eql(`http://${TEST_HOST}:${port}/session`);
-      expect(j.getUrlForProxy('/appium/sessions', 'GET')).to.eql(`http://${TEST_HOST}:${port}/appium/sessions`);
+      assert.strictEqual(j.getUrlForProxy('/session', 'POST'), `http://${TEST_HOST}:${port}/session`);
+      assert.strictEqual(j.getUrlForProxy('/appium/sessions', 'GET'), `http://${TEST_HOST}:${port}/appium/sessions`);
     });
     it('should throw an error if url requires a sessionId but its null', function () {
       const j = mockProxy();
-      expect(() => {
+      assert.throws(() => {
         j.getUrlForProxy('/session/456/element/200/value', 'POST');
-      }).to.throw(/not set/);
+      }, /not set/);
     });
     it('should not throw an error if url does not require a session id and its null', function () {
       const newUrl = mockProxy().getUrlForProxy('/status', 'GET');
-      expect(newUrl).to.exist;
+      assert.ok(newUrl);
     });
   });
   describe('straight proxy', function () {
     it('should successfully proxy straight', async function () {
       const j = mockProxy();
       const [res, body] = await j.proxy('/status', 'GET');
-      expect(res.statusCode).to.equal(200);
-      expect(body).to.eql({status: 0, value: {foo: 'bar'}});
+      assert.strictEqual(res.statusCode, 200);
+      assert.deepStrictEqual(body, {status: 0, value: {foo: 'bar'}});
     });
     it('should apply custom headers to downstream requests', async function () {
       const customHeaders = {
@@ -157,22 +168,22 @@ describe('proxy', function () {
         return await request(config);
       };
       await j.proxy('/status', 'GET');
-      expect(capturedConfig).to.have.property('headers');
-      expect(capturedConfig.headers).to.have.property('x-custom-header', 'foobar');
-      expect(capturedConfig.headers).to.have.property('user-agent', 'my-appium-client');
-      expect(capturedConfig.headers).to.have.property('content-type', 'application/json; charset=utf-8');
-      expect(capturedConfig.headers).to.have.property('accept', 'application/json, */*');
+      assert.ok(Object.hasOwn(capturedConfig, 'headers'));
+      assert.strictEqual(capturedConfig.headers['x-custom-header'], 'foobar');
+      assert.strictEqual(capturedConfig.headers['user-agent'], 'my-appium-client');
+      assert.strictEqual(capturedConfig.headers['content-type'], 'application/json; charset=utf-8');
+      assert.strictEqual(capturedConfig.headers.accept, 'application/json, */*');
     });
-    it('should pass along request errors', function () {
+    it('should pass along request errors', async function () {
       const j = mockProxy({sessionId: '123'});
-      expect(j.proxy('/badurl', 'GET')).to.be.rejectedWith('Could not proxy');
+      await assert.rejects(j.proxy('/badurl', 'GET'), /Could not proxy/);
     });
     it('should proxy error responses and codes', async function () {
       const j = mockProxy({sessionId: '123'});
       try {
         await j.proxy('/element/bad/text', 'GET');
       } catch (e: any) {
-        expect(isErrorType(e.getActualError(), errors.ElementNotVisibleError)).to.be.true;
+        assert.strictEqual(isErrorType(e.getActualError(), errors.ElementNotVisibleError), true);
       }
     });
   });
@@ -180,15 +191,15 @@ describe('proxy', function () {
     it('should successfully proxy command', async function () {
       const j = mockProxy();
       const res = await j.command('/status', 'GET');
-      expect(res).to.eql({foo: 'bar'});
+      assert.deepStrictEqual(res, {foo: 'bar'});
     });
-    it('should pass along request errors', function () {
+    it('should pass along request errors', async function () {
       const j = mockProxy({sessionId: '123'});
-      expect(j.command('/badurl', 'GET')).to.be.rejectedWith('Could not proxy');
+      await assert.rejects(j.command('/badurl', 'GET'), /Could not proxy/);
     });
     it('should throw when a command fails', async function () {
       const j = mockProxy({sessionId: '123'});
-      await expect(j.command('/element/bad/text', 'GET')).to.be.rejectedWith(/Invisible element/);
+      await assert.rejects(j.command('/element/bad/text', 'GET'), /Invisible element/);
     });
     it('should throw when a command fails with a 200 because the status is not 0', async function () {
       const j = mockProxy({sessionId: '123'});
@@ -198,8 +209,8 @@ describe('proxy', function () {
       } catch (err: any) {
         e = err;
       }
-      expect(e).to.exist;
-      expect(e.error).to.eql('element not visible');
+      assert.ok(e);
+      assert.strictEqual(e.error, 'element not visible');
     });
     it('should throw when a command fails with a 100', async function () {
       const j = mockProxy({sessionId: '123'});
@@ -209,8 +220,8 @@ describe('proxy', function () {
       } catch (err: any) {
         e = err;
       }
-      expect(e).to.exist;
-      expect(e.message).to.contain('chrome not reachable');
+      assert.ok(e);
+      assert.ok(e.message.includes('chrome not reachable'));
     });
   });
   describe('req/res proxy', function () {
@@ -218,40 +229,41 @@ describe('proxy', function () {
       const j = mockProxy();
       const [req, res] = buildReqRes('/status', 'GET');
       await j.proxyReqRes(req, res);
-      expect(res.headers['content-type']).to.equal('application/json; charset=utf-8');
-      expect(res.sentCode).to.equal(200);
-      expect(res.sentBody).to.eql({value: {foo: 'bar'}});
+      assert.strictEqual(res.headers['content-type'], 'application/json; charset=utf-8');
+      assert.strictEqual(res.sentCode, 200);
+      assert.deepStrictEqual(res.sentBody, {value: {foo: 'bar'}});
     });
     it('should delete the inner session id', async function () {
       const j = mockProxy({sessionId: '123'});
       const [req, res] = buildReqRes('/element/200/value', 'GET');
       await j.proxyReqRes(req, res);
-      expect(res.sentBody).to.eql({value: 'foobar'});
+      assert.deepStrictEqual(res.sentBody, {value: 'foobar'});
     });
     it('should pass through urls that do not require session IDs', async function () {
       const j = mockProxy({sessionId: '123'});
       const [req, res] = buildReqRes('/status', 'GET');
       await j.proxyReqRes(req, res);
-      expect(res.sentBody).to.eql({value: {foo: 'bar'}});
+      assert.deepStrictEqual(res.sentBody, {value: {foo: 'bar'}});
     });
     it('should proxy strange responses', async function () {
       const j = mockProxy({sessionId: '123'});
       const [req, res] = buildReqRes('/nochrome', 'GET');
       await j.proxyReqRes(req, res);
-      expect(res.sentCode).to.equal(100);
-      expect(res.sentBody).to.eql({value: {message: 'chrome not reachable'}});
+      assert.strictEqual(res.sentCode, 100);
+      assert.deepStrictEqual(res.sentBody, {value: {message: 'chrome not reachable'}});
     });
     it('should not proxy post request with invalid body', async function () {
       const j = mockProxy({sessionId: '123'});
       const [req, res] = buildReqRes('/nochrome', 'POST', 'invalid request');
       await j.proxyReqRes(req, res);
-      expect(res.sentCode).to.equal(500);
-      expect(res.sentBody).to.have.property('value');
-      expect((res.sentBody as any).value).to.include({
-        error: 'unknown error',
-        message: 'Cannot interpret the request body as valid JSON. Check the server log for more details.',
-      });
-      expect((res.sentBody as any).value.stacktrace).to.match(/^UnknownError:*/);
+      assert.strictEqual(res.sentCode, 500);
+      assert.ok(Object.hasOwn(res.sentBody, 'value'));
+      assert.strictEqual((res.sentBody as any).value.error, 'unknown error');
+      assert.strictEqual(
+        (res.sentBody as any).value.message,
+        'Cannot interpret the request body as valid JSON. Check the server log for more details.',
+      );
+      assert.match((res.sentBody as any).value.stacktrace, /^UnknownError:*/);
     });
   });
 });

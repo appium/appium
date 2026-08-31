@@ -1,13 +1,10 @@
+import assert from 'node:assert/strict';
 import {afterEach, beforeEach, describe, it} from 'node:test';
 
 import type {InitialOpts} from '@appium/types';
-import chai, {expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {createSandbox} from 'sinon';
 
 import {BaseDriver} from '../../../../lib';
-
-chai.use(chaiAsPromised);
 
 const FIRST_LOGS = ['first', 'logs'];
 const SECOND_LOGS = ['second', 'logs'];
@@ -41,11 +38,11 @@ describe('log commands -', function () {
 
   describe('getLogTypes', function () {
     it('should return empty array when no supported log types', async function () {
-      expect(await driver.getLogTypes()).to.eql([]);
+      assert.deepStrictEqual(await driver.getLogTypes(), []);
     });
     it('should return keys to log type object', async function () {
       driver.supportedLogTypes = SUPPORTED_LOG_TYPES as any;
-      expect(await driver.getLogTypes()).to.eql(['one', 'two']);
+      assert.deepStrictEqual(await driver.getLogTypes(), ['one', 'two']);
     });
   });
 
@@ -57,9 +54,9 @@ describe('log commands -', function () {
       two = sandbox.spy(SUPPORTED_LOG_TYPES.two, 'getter');
     });
     it('should throw error if log type not supported', async function () {
-      await expect(driver.getLog('one')).to.be.rejected;
-      expect(one.called).to.be.false;
-      expect(two.called).to.be.false;
+      await assert.rejects(driver.getLog('one'));
+      assert.strictEqual(one.called, false);
+      assert.strictEqual(two.called, false);
     });
     it('should throw an error with available log types if log type not supported', async function () {
       driver.supportedLogTypes = SUPPORTED_LOG_TYPES as any;
@@ -69,19 +66,20 @@ describe('log commands -', function () {
       } catch (_err) {
         err = _err as Error;
       }
-      expect(err).to.exist;
-      expect(err!.message).to.eql(
+      assert.ok(err);
+      assert.strictEqual(
+        err!.message,
         `Unsupported log type 'three'. Supported types: {"one":"First logs","two":"Seconds logs"}`,
       );
-      expect(one.called).to.be.false;
-      expect(two.called).to.be.false;
+      assert.strictEqual(one.called, false);
+      assert.strictEqual(two.called, false);
     });
     it('should call getter on appropriate log when found', async function () {
       driver.supportedLogTypes = SUPPORTED_LOG_TYPES as any;
       const logs = await driver.getLog('one');
-      expect(logs).to.eql(FIRST_LOGS);
-      expect(one.called).to.be.true;
-      expect(two.called).to.be.false;
+      assert.deepStrictEqual(logs, FIRST_LOGS);
+      assert.strictEqual(one.called, true);
+      assert.strictEqual(two.called, false);
     });
   });
 });

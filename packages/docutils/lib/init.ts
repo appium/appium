@@ -8,13 +8,13 @@ import {exec} from 'teen_process';
 import type {Simplify} from 'type-fest';
 import * as YAML from 'yaml';
 
-import {NAME_MKDOCS_YML, PIP_ENV_VARS, REQUIREMENTS_TXT_PATH} from './constants';
-import {DocutilsError} from './error';
-import {requirePython, stringifyYaml} from './fs';
-import {getLogger} from './logger';
-import type {MkDocsYml} from './model';
-import {createScaffoldTask} from './scaffold';
-import type {ScaffoldTask, ScaffoldTaskOptions} from './scaffold';
+import {NAME_MKDOCS_YML, PIP_ENV_VARS, REQUIREMENTS_TXT_PATH} from './constants.js';
+import {DocutilsError} from './error.js';
+import {requirePython, stringifyYaml} from './fs.js';
+import {getLogger} from './logger.js';
+import type {MkDocsYml} from './model.js';
+import {createScaffoldTask} from './scaffold.js';
+import type {ScaffoldTask, ScaffoldTaskOptions} from './scaffold.js';
 
 /**
  * Data for the base `mkdocs.yml` file

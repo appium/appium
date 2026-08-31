@@ -5,6 +5,8 @@
     "rootDir": ".",
     "outDir": "build",
     "checkJs": true,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "types": ["node"]
   },
   "include": ["lib", "test"]

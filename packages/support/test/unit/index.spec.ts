@@ -1,6 +1,5 @@
+import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
-
-import {expect} from 'chai';
 
 import AppiumSupport from '../../lib/';
 
@@ -9,32 +8,32 @@ const {system, tempDir, util} = AppiumSupport;
 describe('index', function () {
   describe('default', function () {
     it('should expose an object', function () {
-      expect(AppiumSupport).to.exist;
-      expect(AppiumSupport).to.be.an.instanceof(Object);
+      assert.ok(AppiumSupport);
+      assert.ok(AppiumSupport instanceof Object);
     });
     it('should expose system object', function () {
-      expect(AppiumSupport.system).to.exist;
-      expect(AppiumSupport.system).to.be.an.instanceof(Object);
+      assert.ok(AppiumSupport.system);
+      assert.ok(AppiumSupport.system instanceof Object);
     });
     it('should expose tempDir object', function () {
-      expect(AppiumSupport.tempDir).to.exist;
-      expect(AppiumSupport.tempDir).to.be.an.instanceof(Object);
+      assert.ok(AppiumSupport.tempDir);
+      assert.ok(AppiumSupport.tempDir instanceof Object);
     });
     it('should expose util object', function () {
-      expect(AppiumSupport.util).to.exist;
-      expect(AppiumSupport.util).to.be.an.instanceof(Object);
+      assert.ok(AppiumSupport.util);
+      assert.ok(AppiumSupport.util instanceof Object);
     });
   });
 
   it('should expose an object as "system" ', function () {
-    expect(system).to.be.an.instanceof(Object);
+    assert.ok(system instanceof Object);
   });
 
   it('should expose an object as "tempDir" ', function () {
-    expect(tempDir).to.be.an.instanceof(Object);
+    assert.ok(tempDir instanceof Object);
   });
 
   it('should expose an object as "util" ', function () {
-    expect(util).to.be.an.instanceof(Object);
+    assert.ok(util instanceof Object);
   });
 });

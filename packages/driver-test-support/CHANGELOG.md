@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.0](https://github.com/appium/appium/compare/@appium/driver-test-support@2.0.1...@appium/driver-test-support@3.0.0) (2026-08-24)
+
+### ⚠ BREAKING CHANGES
+
+* **driver-test-support:** @appium/driver-test-support is now an ESM-only package. It can no longer be loaded via CommonJS require(); consumers must use import or dynamic import(). Deep imports into the package&#x27;s internals are no longer possible — only the public entry point is exposed via exports.
+
+### Features
+
+* **driver-test-support:** Migrate to ESM ([#22591](https://github.com/appium/appium/issues/22591)) ([b0938e6](https://github.com/appium/appium/commit/b0938e633423dcf41618bbdecdd0f14372d3b1ac))
+
+### Bug Fixes
+
+* **driver-test-support:** make import/require conditions explicit in exports map ([#22605](https://github.com/appium/appium/issues/22605)) ([bd3a120](https://github.com/appium/appium/commit/bd3a12058786ceae18bb8d3d89bc42fd8658fd9f))
+
+
 ## [2.0.1](https://github.com/appium/appium/compare/@appium/driver-test-support@1.2.5...@appium/driver-test-support@2.0.1) (2026-07-25)
 
 **Note:** Version bump only for package @appium/driver-test-support

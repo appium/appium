@@ -1,17 +1,18 @@
+import assert from 'node:assert/strict';
 import type {AddressInfo} from 'node:net';
 import path from 'node:path';
 import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
+import {fileURLToPath} from 'node:url';
 
 import {pluginE2EHarness} from '@appium/plugin-test-support';
 import {fs, node, tempDir} from '@appium/support';
 import axios from 'axios';
-import {expect} from 'chai';
 import {exec} from 'teen_process';
 import {remote as wdio} from 'webdriverio';
 import {WebSocket} from 'ws';
 
 const BUFFER_SIZE = 0xffff;
-const THIS_PLUGIN_DIR = node.getModuleRootSync('@appium/storage-plugin', __filename)!;
+const THIS_PLUGIN_DIR = node.getModuleRootSync('@appium/storage-plugin', fileURLToPath(import.meta.url))!;
 const APPIUM_HOME = path.join(THIS_PLUGIN_DIR, 'local_appium_home');
 const FAKE_DRIVER_DIR = path.join(THIS_PLUGIN_DIR, '..', 'fake-driver');
 const TEST_HOST = '127.0.0.1';
@@ -57,7 +58,7 @@ describe('StoragePlugin', function () {
   beforeEach(async function () {
     storageRoot = await tempDir.openDir();
     driver = await wdio(WDIO_OPTS);
-    const baseUrl = `http://${TEST_HOST}:${WDIO_OPTS.port}/storage`;
+    const baseUrl = `http://${TEST_HOST}:${WDIO_OPTS.port}/appium/storage`;
     driver.addCommand(
       'addStorageItem',
       async (name: string, sha1: string) => (await axios.post(`${baseUrl}/add`, {name, sha1})).data.value,
@@ -83,22 +84,28 @@ describe('StoragePlugin', function () {
 
   it('should manage storage files', async function () {
     let items = await driver.listStorageItems();
-    expect(items).to.be.empty;
+    assert.strictEqual(items.length, 0);
     const name1 = path.basename('foo1.bar');
     const name2 = path.basename('foo2.bar');
     const pkgPath = path.join(THIS_PLUGIN_DIR, 'package.json');
     await Promise.all([addFileToStorage(TEST_FAKE_APP, name1), addFileToStorage(pkgPath, name2)]);
     items = await driver.listStorageItems();
-    expect(items.length).to.eql(2);
-    expect(new Set(items.map(({name}: {name: string}) => name))).to.deep.equal(new Set([name1, name2]));
+    assert.strictEqual(items.length, 2);
+    assert.deepStrictEqual(new Set(items.map(({name}: {name: string}) => name)), new Set([name1, name2]));
     const isDeleted = await driver.deleteStorageItem(name1);
-    expect(isDeleted).to.be.true;
+    assert.strictEqual(isDeleted, true);
     items = await driver.listStorageItems();
-    expect(items.length).to.eql(1);
-    expect(items[0].name).to.eql(name2);
+    assert.strictEqual(items.length, 1);
+    assert.strictEqual(items[0].name, name2);
     await driver.resetStorageItems();
     items = await driver.listStorageItems();
-    expect(items.length).to.eql(0);
+    assert.strictEqual(items.length, 0);
+  });
+
+  it('should still serve the deprecated /storage endpoints', async function () {
+    const deprecatedBaseUrl = `http://${TEST_HOST}:${WDIO_OPTS.port}/storage`;
+    const {data} = await axios.get(`${deprecatedBaseUrl}/list`);
+    assert.strictEqual(data.value.length, 0);
   });
 
   async function addFileToStorage(sourcePath: string, name: string): Promise<void> {

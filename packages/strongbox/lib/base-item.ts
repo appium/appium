@@ -1,8 +1,8 @@
 import {mkdir, readFile, unlink, writeFile} from 'node:fs/promises';
 import path from 'node:path';
 
-import type {Item, ItemEncoding, Strongbox, Value} from '.';
-import {slugify} from './util';
+import type {Item, ItemEncoding, Strongbox, Value} from './index.js';
+import {slugify} from './util.js';
 
 /**
  * Base item implementation

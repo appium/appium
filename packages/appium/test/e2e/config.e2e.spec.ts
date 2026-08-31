@@ -1,15 +1,11 @@
+import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
 import axios from 'axios';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {createSandbox, type SinonSandbox} from 'sinon';
 import * as teenProcess from 'teen_process';
 
 import {APPIUM_VER, getBuildInfo, getGitRev, updateBuildInfo} from '../../lib/helpers/build';
-
-const {expect} = chai;
-chai.use(chaiAsPromised);
 
 describe('Config', function () {
   let sandbox: SinonSandbox;
@@ -26,10 +22,10 @@ describe('Config', function () {
   describe('getGitRev', function () {
     it('should get a reasonable git revision', async function () {
       const rev = await getGitRev();
-      expect(rev).to.be.a('string');
-      expect(rev).to.not.be.null;
-      expect(rev!.length).to.equal(40);
-      expect(rev!.match(/[0-9a-f]+/i)![0]).to.eql(rev);
+      assert.strictEqual(typeof rev, 'string');
+      assert.notStrictEqual(rev, null);
+      assert.strictEqual(rev!.length, 40);
+      assert.strictEqual(rev!.match(/[0-9a-f]+/i)![0], rev);
     });
   });
 
@@ -48,21 +44,21 @@ describe('Config', function () {
       (buildInfo as unknown as Record<string, undefined>)['git-sha'] = undefined;
       (buildInfo as unknown as Record<string, undefined>).built = undefined;
       await updateBuildInfo(true);
-      expect(buildInfo).to.be.an('object');
+      assert.strictEqual(typeof buildInfo, 'object');
       if (sha) {
-        expect(buildInfo['git-sha']).to.equal(sha);
+        assert.strictEqual(buildInfo['git-sha'], sha);
       } else {
-        expect(buildInfo['git-sha']).to.exist;
+        assert.ok(buildInfo['git-sha']);
       }
       if (built) {
-        expect(buildInfo.built).to.equal(built);
+        assert.strictEqual(buildInfo.built, built);
       } else {
-        expect(buildInfo.built).to.exist;
+        assert.ok(buildInfo.built);
       }
-      expect(buildInfo.version).to.exist;
+      assert.ok(buildInfo.version);
 
       if (!useLocalGit) {
-        expect(innerExecStub.callCount).to.be.at.least(1);
+        assert.ok(innerExecStub.callCount >= 1);
       }
     }
 

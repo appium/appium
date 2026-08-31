@@ -5,6 +5,8 @@
     "outDir": "build",
     "strict": true,
     "checkJs": true,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "types": ["node"]
   },
   "include": ["lib", "test/unit", "test/e2e"],

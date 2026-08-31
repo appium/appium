@@ -17,12 +17,12 @@ import {
   NAME_BIN,
   NAME_MIKE,
   NAME_MKDOCS_YML,
-} from '../constants';
-import {DocutilsError} from '../error';
-import {findMike, findMkDocsYml, isMkDocsInstalled, readPackageJson, requirePython} from '../fs';
-import {getLogger} from '../logger';
-import type {SpawnBackgroundProcessOpts} from '../utils';
-import {argify, execWithErrorHandling, spawnBackgroundProcess, stopwatch} from '../utils';
+} from '../constants.js';
+import {DocutilsError} from '../error.js';
+import {findMike, findMkDocsYml, isMkDocsInstalled, readPackageJson, requirePython} from '../fs.js';
+import {getLogger} from '../logger.js';
+import type {SpawnBackgroundProcessOpts} from '../utils/index.js';
+import {argify, execWithErrorHandling, spawnBackgroundProcess, stopwatch} from '../utils/index.js';
 
 const log = getLogger('builder:deploy');
 

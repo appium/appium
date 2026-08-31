@@ -1,7 +1,7 @@
+import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
 import {system} from '@appium/support';
-import {expect} from 'chai';
 import {createSandbox} from 'sinon';
 
 import {getPresetDrivers} from '../../../lib/cli/setup-command';
@@ -21,25 +21,25 @@ describe('SetupCommand', function () {
     it('for drivers on macOS environment', function () {
       sandbox.stub(system, 'isMac').returns(true);
       sandbox.stub(system, 'isWindows').returns(false);
-      expect(getPresetDrivers('mobile')).to.eql(['uiautomator2', 'xcuitest', 'espresso']);
-      expect(getPresetDrivers('browser')).to.eql(['safari', 'gecko', 'chromium']);
-      expect(getPresetDrivers('desktop')).to.eql(['mac2']);
+      assert.deepStrictEqual(getPresetDrivers('mobile'), ['uiautomator2', 'xcuitest', 'espresso']);
+      assert.deepStrictEqual(getPresetDrivers('browser'), ['safari', 'gecko', 'chromium']);
+      assert.deepStrictEqual(getPresetDrivers('desktop'), ['mac2']);
     });
 
     it('for drivers on Windows environment', function () {
       sandbox.stub(system, 'isMac').returns(false);
       sandbox.stub(system, 'isWindows').returns(true);
-      expect(getPresetDrivers('mobile')).to.eql(['uiautomator2', 'espresso']);
-      expect(getPresetDrivers('browser')).to.eql(['gecko', 'chromium']);
-      expect(getPresetDrivers('desktop')).to.eql(['windows']);
+      assert.deepStrictEqual(getPresetDrivers('mobile'), ['uiautomator2', 'espresso']);
+      assert.deepStrictEqual(getPresetDrivers('browser'), ['gecko', 'chromium']);
+      assert.deepStrictEqual(getPresetDrivers('desktop'), ['windows']);
     });
 
     it('for drivers on Linux environment', function () {
       sandbox.stub(system, 'isMac').returns(false);
       sandbox.stub(system, 'isWindows').returns(false);
-      expect(getPresetDrivers('mobile')).to.eql(['uiautomator2', 'espresso']);
-      expect(getPresetDrivers('browser')).to.eql(['gecko', 'chromium']);
-      expect(getPresetDrivers('desktop')).to.eql([]);
+      assert.deepStrictEqual(getPresetDrivers('mobile'), ['uiautomator2', 'espresso']);
+      assert.deepStrictEqual(getPresetDrivers('browser'), ['gecko', 'chromium']);
+      assert.deepStrictEqual(getPresetDrivers('desktop'), []);
     });
   });
 });

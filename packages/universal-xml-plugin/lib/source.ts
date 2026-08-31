@@ -1,16 +1,16 @@
 import {util} from '@appium/support';
 import {XMLBuilder, XMLParser} from 'fast-xml-parser';
 
-import {ATTR_MAP, REMOVE_ATTRS} from './attr-map';
-import NODE_MAP from './node-map';
-import * as TRANSFORMS from './transformers';
+import {ATTR_MAP, REMOVE_ATTRS} from './attr-map.js';
+import NODE_MAP from './node-map.js';
+import * as TRANSFORMS from './transformers.js';
 import type {
   NodesAndAttributes,
   TransformMetadata,
   TransformNodeOptions,
   TransformSourceXmlOptions,
   UniversalNameMap,
-} from './types';
+} from './types.js';
 
 export const ATTR_PREFIX = '@_';
 export const IDX_PATH_PREFIX = `${ATTR_PREFIX}indexPath`;
@@ -34,9 +34,10 @@ export async function transformSourceXml(
   platform: string,
   {metadata = {} as TransformMetadata, addIndexPath = false}: TransformSourceXmlOptions = {},
 ): Promise<{xml: string; unknowns: NodesAndAttributes}> {
-  // first thing we want to do is modify the ios source root node, because it doesn't include the
-  // necessary index attribute, so we add it if it's not there
-  xmlStr = xmlStr.replace('<AppiumAUT>', '<AppiumAUT index="0">');
+  // the ios <AppiumAUT> root deliberately gets no index path: the XCUITest driver leaves that
+  // wrapper out of the hierarchy it runs queries against, so index paths have to be relative to
+  // the node below it. the android <hierarchy> root does carry an index attribute and is part of
+  // the queried hierarchy, so it keeps its index path
   const xmlObj = singletonXmlParser().parse(xmlStr);
   const unknowns = transformNode(xmlObj, platform, {
     metadata,

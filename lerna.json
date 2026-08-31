@@ -14,7 +14,7 @@
     "version": {
       "conventionalCommits": true,
       "createRelease": "github",
-      "allowBranch": ["master", "appium3"],
+      "allowBranch": ["master", "appium4"],
       "exact": true
     }
   },

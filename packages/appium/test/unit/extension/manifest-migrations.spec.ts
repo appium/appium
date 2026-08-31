@@ -1,14 +1,11 @@
+import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
 import type {ExtManifest} from 'appium/types';
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
 import {DRIVER_TYPE} from '../../../lib/constants';
 import {Manifest} from '../../../lib/extension/manifest';
 import {migrate} from '../../../lib/extension/manifest-migrations';
-
-use(chaiAsPromised);
 
 describe('manifest-migrations', function () {
   describe('when no installPath property present in manifest', function () {
@@ -26,7 +23,7 @@ describe('manifest-migrations', function () {
         appiumVersion: '2.0.0',
       } as ExtManifest<'driver'>);
 
-      await expect(migrate(manifest)).to.eventually.be.true;
+      assert.strictEqual(await migrate(manifest), true);
     });
   });
 
@@ -46,7 +43,7 @@ describe('manifest-migrations', function () {
         appiumVersion: '2.0.0',
       } as ExtManifest<'driver'>);
 
-      await expect(migrate(manifest)).to.eventually.be.false;
+      assert.strictEqual(await migrate(manifest), false);
     });
   });
 
@@ -66,7 +63,7 @@ describe('manifest-migrations', function () {
         appiumVersion: '2.0.0',
       } as ExtManifest<'driver'>);
 
-      await expect(migrate(manifest)).to.eventually.be.true;
+      assert.strictEqual(await migrate(manifest), true);
     });
   });
 
@@ -86,7 +83,7 @@ describe('manifest-migrations', function () {
         appiumVersion: '2.0.0',
       } as ExtManifest<'driver'>);
 
-      await expect(migrate(manifest)).to.eventually.be.false;
+      assert.strictEqual(await migrate(manifest), false);
     });
   });
 });

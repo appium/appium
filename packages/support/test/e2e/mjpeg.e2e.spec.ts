@@ -1,16 +1,13 @@
+import assert from 'node:assert/strict';
 import http from 'node:http';
 import net from 'node:net';
 import {after, before, describe, it} from 'node:test';
 
 import {sleep} from 'asyncbox';
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 // @ts-ignore - mjpeg-server has no types
 import mJpegServer from 'mjpeg-server';
 
 import {mjpeg} from '../../lib';
-
-use(chaiAsPromised);
 
 const MJPEG_HOST = '127.0.0.1';
 
@@ -82,37 +79,37 @@ describe('MJpeg Stream (e2e)', function () {
   it('should update mjpeg stream based on new data from mjpeg server', async function () {
     stream = new MJpegStream(serverUrl, () => undefined);
     /* eslint-disable dot-notation -- access private lastChunk/updateCount for assertion */
-    expect(stream['lastChunk']).to.not.exist;
+    assert.ok(!stream['lastChunk']);
     await stream.start();
-    expect(stream['lastChunk']).to.exist;
-    expect(stream['updateCount']).to.eql(1);
+    assert.ok(stream['lastChunk']);
+    assert.strictEqual(stream['updateCount'], 1);
 
     await sleep(1000);
-    expect(stream['updateCount']).to.be.above(1);
+    assert.ok(stream['updateCount'] > 1);
 
     const startBytes = Buffer.from([0xff, 0xd8]);
     const endBytes = Buffer.from([0xff, 0xd9]);
-    const startPos = stream['lastChunk']!.indexOf(startBytes);
-    const endPos = stream['lastChunk']!.indexOf(endBytes);
-    expect(startPos).to.eql(0);
-    expect(endPos).to.eql(1278);
+    const startPos = (stream['lastChunk'] as Buffer).indexOf(startBytes);
+    const endPos = (stream['lastChunk'] as Buffer).indexOf(endBytes);
+    assert.strictEqual(startPos, 0);
+    assert.strictEqual(endPos, 1278);
 
     const b64 = stream.lastChunkBase64;
-    expect(b64).to.eql(TEST_IMG_JPG);
+    assert.strictEqual(b64, TEST_IMG_JPG);
 
     const png = await stream.lastChunkPNGBase64();
-    expect(png).to.be.a('string');
-    expect(png!.indexOf('iVBOR')).to.eql(0);
+    assert.strictEqual(typeof png, 'string');
+    assert.strictEqual(png!.indexOf('iVBOR'), 0);
 
     stream.stop();
     await sleep(1000);
-    expect(stream['lastChunk']).to.not.exist;
-    expect(stream['updateCount']).to.eql(0);
+    assert.ok(!stream['lastChunk']);
+    assert.strictEqual(stream['updateCount'], 0);
     /* eslint-enable dot-notation */
   });
 
   it('should error out if the server cannot be connected', async function () {
     stream = new MJpegStream('http://localhost', () => undefined);
-    await expect(stream.start()).to.eventually.be.rejected;
+    await assert.rejects(stream.start());
   });
 });

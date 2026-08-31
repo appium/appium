@@ -2,10 +2,12 @@ name: Publish docs
 
 on:
   workflow_dispatch:
-  workflow_run:
-    workflows: ['Appium Server Release']
-    types:
-      - completed
+  push:
+    # Runs when any new Appium tag is pushed = there is a new release
+    # Does not trigger for tags with a slash, e.g. 1.0/beta
+    tags:        
+      - appium@*
+      - '!appium@*beta*'
 
 jobs:
   build:
@@ -13,6 +15,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0 # ensure the docs branch is also fetched
       - run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
@@ -24,9 +28,5 @@ jobs:
           run-build: 'true'
       - name: Install dependencies (Python)
         run: npm run install-docs-deps
-      - name: Fetch gh-pages
-        run: |
-          git fetch origin gh-pages:gh-pages || true
       - name: Publish docs
-        run: |
-          npm run docs:publish
+        run: npm run docs:publish

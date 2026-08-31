@@ -1,6 +1,6 @@
 {
   "name": "@appium/support",
-  "version": "7.2.6",
+  "version": "7.2.7",
   "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8",
   "description": "Support libs used across Appium packages",
   "keywords": [
@@ -44,11 +44,11 @@
     "test:unit": "node --test --enable-source-maps \"./build/test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/logger": "2.0.10",
-    "@appium/types": "1.6.0",
+    "@appium/logger": "2.0.11",
+    "@appium/types": "1.7.0",
     "archiver": "8.0.0",
-    "asyncbox": "6.3.5",
-    "axios": "1.18.1",
+    "asyncbox": "6.4.2",
+    "axios": "1.19.0",
     "bluebird": "3.7.2",
     "bplist-creator": "0.1.1",
     "bplist-parser": "0.3.2",
@@ -63,17 +63,17 @@
     "sanitize-filename": "1.6.4",
     "semver": "7.8.5",
     "shell-quote": "1.10.0",
-    "teen_process": "4.1.9",
+    "teen_process": "4.2.1",
     "type-fest": "5.8.0",
-    "uuid": "14.0.1",
+    "uuid": "14.0.2",
     "which": "6.0.1",
     "yauzl": "3.4.0"
   },
   "devDependencies": {
-    "@appium/tsconfig": "1.2.0"
+    "@appium/tsconfig": "1.2.1"
   },
   "optionalDependencies": {
-    "sharp": "0.35.3"
+    "sharp": "^0.x"
   },
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0",

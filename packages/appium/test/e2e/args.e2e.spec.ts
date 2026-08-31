@@ -1,16 +1,12 @@
+import assert from 'node:assert/strict';
 import {describe, it, before, after} from 'node:test';
 
 import {fs, tempDir} from '@appium/support';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {exec} from 'teen_process';
 
 import {stripColorCodes} from '../../lib/logsink';
 import {APPIUM_ROOT, getTestPort} from '../helpers';
 import {EXECUTABLE, formatAppiumArgErrorOutput, readAppiumArgErrorFixture, runAppiumRaw} from './e2e-helpers';
-
-const {expect} = chai;
-chai.use(chaiAsPromised);
 
 describe('argument parsing', function () {
   let appiumHome: string;
@@ -33,7 +29,7 @@ describe('argument parsing', function () {
             'Spicy jalapeno bacon ipsum dolor amet deserunt tempor pork belly aliqua drumstick, occaecat dolor venison et labore. Rump meatball pork chop tail. Consequat adipisicing kielbasa occaecat laborum pig. Qui pork chop chicken nostrud boudin fugiat. Proident ut culpa, chuck nulla sunt pastrami ut tri-tip. Buffalo dolore adipisicing, labore venison elit beef fatback kevin burgdoggen tail pancetta filet mignon. Dolor turducken rump, anim kevin sunt exercitation ham filet mignon beef ribs ad officia eiusmod id cillum.',
         });
 
-        await expect(
+        await assert.rejects(
           exec(
             process.execPath,
             [
@@ -52,7 +48,8 @@ describe('argument parsing', function () {
               timeout: 5000,
             },
           ),
-        ).to.be.rejectedWith(Error, /timed out/);
+          {name: 'Error', message: /timed out/},
+        );
       });
     });
   });
@@ -64,7 +61,7 @@ describe('argument parsing', function () {
           env: {FORCE_COLOR: '1'},
         });
         const actual = 'stderr' in result ? result.stderr : '';
-        expect(stripColorCodes(actual)).to.not.equal(actual);
+        assert.notStrictEqual(stripColorCodes(actual), actual);
       });
     });
 
@@ -72,7 +69,7 @@ describe('argument parsing', function () {
       it('should output a colorless yet fancy error message', async function () {
         const result = await runAppiumRaw(appiumHome, ['--port=sheep'], {});
         const actual = 'stderr' in result ? result.stderr : '';
-        expect(stripColorCodes(actual)).to.equal(actual);
+        assert.strictEqual(stripColorCodes(actual), actual);
       });
     });
   });
@@ -84,7 +81,7 @@ describe('argument parsing', function () {
         readAppiumArgErrorFixture('cli/cli-error-output-boolean.txt'),
       ]);
       const actual = 'stderr' in runResult ? runResult.stderr : '';
-      expect(formatAppiumArgErrorOutput(actual)).to.equal(expected);
+      assert.strictEqual(formatAppiumArgErrorOutput(actual), expected);
     });
   });
 
@@ -95,7 +92,7 @@ describe('argument parsing', function () {
         readAppiumArgErrorFixture('cli/cli-error-output-unknown.txt'),
       ]);
       const actual = 'stderr' in runResult ? runResult.stderr : '';
-      expect(formatAppiumArgErrorOutput(actual)).to.equal(expected);
+      assert.strictEqual(formatAppiumArgErrorOutput(actual), expected);
     });
   });
 
@@ -105,7 +102,7 @@ describe('argument parsing', function () {
       // the unrecognized flag is ignored and the server starts. We assert the run reaches
       // server startup (and thus hits the exec timeout) instead of exiting early with an
       // argument-parsing error.
-      await expect(
+      await assert.rejects(
         exec(
           process.execPath,
           [EXECUTABLE, '--pigs=sheep', '--allow-unknown-args', '--port', String(await getTestPort())],
@@ -115,7 +112,8 @@ describe('argument parsing', function () {
             timeout: 5000,
           },
         ),
-      ).to.be.rejectedWith(Error, /timed out/);
+        {name: 'Error', message: /timed out/},
+      );
     });
   });
 });

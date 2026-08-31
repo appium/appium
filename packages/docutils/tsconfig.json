@@ -4,6 +4,8 @@
     "rootDir": ".",
     "outDir": "build",
     "checkJs": true,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "types": ["node"],
     "paths": {
       "@appium/support": ["../support"],

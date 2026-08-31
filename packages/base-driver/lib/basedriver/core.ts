@@ -140,6 +140,8 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
    * specific driver sessions. This data can be later used to adjust
    * properties for driver instances running in parallel.
    * Override it in inherited driver classes if necessary.
+   *
+   * @deprecated Use {@linkcode IAppiumIpc} for cross-session coordination instead.
    */
   get driverData() {
     return {};

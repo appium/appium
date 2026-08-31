@@ -222,17 +222,24 @@ So you'll probably end up overriding `createSession`. You can do so by defining 
 driver:
 
 ```js
-async createSession(jwpCaps, reqCaps, w3cCaps, otherDriverData) {
-    const [sessionId, caps] = super.createSession(w3cCaps);
+async createSession(w3cCaps) {
+    const [sessionId, caps] = await super.createSession(w3cCaps);
     // do your own stuff here
     return [sessionId, caps];
 }
 ```
 
-For legacy reasons, your function will receive old-style JSON Wire Protocol desired and required
-caps as the first two arguments. Given that the old protocol isn't supported anymore and clients
-have all been updated, you can instead only rely on the `w3cCaps` parameter. (For a discussion
-about what `otherDriverData` is about, see the section below on concurrent drivers).
+!!! warning "Deprecated"
+
+```
+Older drivers may still define `createSession` with up to four parameters, e.g.
+`createSession(jwpCaps, reqCaps, w3cCaps, otherDriverData)`. This shape is a holdover from the
+retired JSON Wire Protocol, which required desired and required caps as the first two
+arguments; only the first W3C-shaped argument was ever used. The `otherDriverData` parameter is
+likewise deprecated in favor of [IPC](#send-messages-to-plugins-running-on-the-same-session) for
+coordinating with other concurrently-running sessions. New drivers should use the single-argument
+form shown above.
+```
 
 You'll want to make sure to call `super.createSession` in order to get the session ID as well as
 the processed capabilities (note that capabilities are also set on `this.caps`; modifying `caps`
@@ -522,14 +529,13 @@ route, then the route will not be proxied and instead will be handled by your dr
 example, we are avoiding proxying all `POST` routes that have the `appium` prefix.
 
 Next, we have to set up the proxying itself. The way to do this is to use a special class from
-Appium called `JWProxy`. (The name means "JSON Wire Proxy" and is related to a legacy
-implementation of the protocol). You'll want to create a `JWProxy` object using the details required to
-connect to the remote server:
+Appium called `WebDriverProxy`. You'll want to create a `WebDriverProxy` object using the details
+required to connect to the remote server:
 
 ```js
-// import {JWProxy} from 'appium/driver';
+// import {WebDriverProxy} from 'appium/driver';
 
-const proxy = new JWProxy({
+const proxy = new WebDriverProxy({
     server: 'remote.server',
     port: 1234,
     base: '/',
@@ -541,8 +547,8 @@ this.proxyCommand = proxy.command.bind(proxy);
 
 Here we are creating a proxy object and assigning some of its methods to `this` under the names
 `proxyReqRes` and `proxyCommand`. This is required for Appium to use the proxy, so don't forget
-this step! The `JWProxy` has a variety of other options which you can check out in the source code,
-as well. (TODO: publish options as API docs and link here).
+this step! The `WebDriverProxy` has a variety of other options which you can check out in the
+source code as well.
 
 Finally, we need a way to tell Appium when the proxy is active. For your driver it might always
 be active, or it might only be active when in a certain context. You can define the logic as an
@@ -799,6 +805,14 @@ that multiple simultaneous sessions don't use the same resources:
 3. Have each driver express what resources it is using, then examine currently-used resources from
    other drivers when a new session begins.
 
+!!! warning "Deprecated"
+
+```
+The `driverData`-based mechanism described below is deprecated. Prefer
+[IPC](#send-messages-to-plugins-running-on-the-same-session) for coordinating resources across
+concurrently-running sessions instead.
+```
+
 To support this third strategy, you can implement `get driverData` in your driver to return what
 sorts of resources your driver is currently using, for example:
 
@@ -810,7 +824,7 @@ get driverData() {
 
 Now, when a new session is started on your driver, the `driverData` response from any other
 simultaneously running drivers (of the same type) will also be included, as the last parameter of
-the `createSession` method:
+the deprecated, multi-argument form of the `createSession` method:
 
 ```js
 async createSession(jwpCaps, reqCaps, w3cCaps, driverData)

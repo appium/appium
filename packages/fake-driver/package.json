@@ -1,6 +1,6 @@
 {
   "name": "@appium/fake-driver",
-  "version": "6.2.2",
+  "version": "6.2.3",
   "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8",
   "description": "Mock driver used internally by Appium for testing. Ignore",
   "keywords": [
@@ -46,12 +46,12 @@
     "test:unit": "node --test --enable-source-maps --test-timeout=10000 \"./build/test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@xmldom/xmldom": "0.9.10",
-    "asyncbox": "6.3.5",
+    "@xmldom/xmldom": "0.9.12",
+    "asyncbox": "6.4.2",
     "xpath": "0.0.34"
   },
   "devDependencies": {
-    "@appium/driver-test-support": "2.0.1"
+    "@appium/driver-test-support": "3.0.0"
   },
   "peerDependencies": {
     "appium": "^3.0.0-beta.0"

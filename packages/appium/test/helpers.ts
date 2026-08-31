@@ -1,5 +1,7 @@
+import assert from 'node:assert/strict';
 import net from 'node:net';
 import path from 'node:path';
+import {isDeepStrictEqual} from 'node:util';
 
 import rewiremock, {addPlugin, overrideEntryPoint, plugins} from 'rewiremock';
 
@@ -58,11 +60,19 @@ function resolveFixture(filename: string, ...pathParts: string[]): string {
   return path.join(APPIUM_ROOT, 'test', 'fixtures', filename, ...pathParts);
 }
 
+/**
+ * Asserts that `array` contains at least one element deeply equal to `expected`.
+ */
+function assertArrayIncludesDeep(array: readonly unknown[], expected: unknown): void {
+  assert.ok(array.some((item) => isDeepStrictEqual(item, expected)));
+}
+
 overrideEntryPoint(module);
 addPlugin(plugins.nodejs);
 
 export {
   APPIUM_ROOT,
+  assertArrayIncludesDeep,
   BASE_CAPS,
   FAKE_DRIVER_DIR,
   FAKE_PLUGIN_DIR,

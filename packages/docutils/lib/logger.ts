@@ -6,16 +6,17 @@
  * @module
  */
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const {ConsolaInstance, createConsola, LogLevel} = require('consola');
-import {DEFAULT_LOG_LEVEL, LogLevelMap} from './constants';
+import {createConsola} from 'consola';
+import type {ConsolaInstance, LogLevel} from 'consola';
+
+import {DEFAULT_LOG_LEVEL, LogLevelMap} from './constants.js';
 
 /**
  * The global log level
  *
  * "Global" inasmuch as any logger created from the root logger will use this level.
  */
-let globalLevel: typeof LogLevel = LogLevelMap[DEFAULT_LOG_LEVEL];
+let globalLevel: LogLevel = LogLevelMap[DEFAULT_LOG_LEVEL];
 
 /**
  * Type guard to see if a string is a recognized log level
@@ -43,7 +44,7 @@ rootLogger.pauseLogs();
 /**
  * A map of tags to loggers
  */
-const loggers: Map<string, WeakRef<typeof ConsolaInstance>> = new Map();
+const loggers: Map<string, WeakRef<ConsolaInstance>> = new Map();
 
 /**
  * Returns a tagged logger, creating and caching one if needed.
@@ -71,7 +72,7 @@ export function getLogger(tag: string, parent = rootLogger) {
  * @remarks Child loggers seem to inherit the "paused" state of the parent, so when this is called, we must resume all of them.
  */
 let hasInitializedLogger = false;
-export const initLogger = (level: keyof typeof LogLevelMap | typeof LogLevel) => {
+export const initLogger = (level: keyof typeof LogLevelMap | LogLevel) => {
   if (hasInitializedLogger) {
     return;
   }

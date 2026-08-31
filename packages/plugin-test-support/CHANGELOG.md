@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.0](https://github.com/appium/appium/compare/@appium/plugin-test-support@2.0.1...@appium/plugin-test-support@3.0.0) (2026-08-24)
+
+### ⚠ BREAKING CHANGES
+
+* **plugin-test-support:** @appium/plugin-test-support is now an ESM-only package. It can no longer be loaded via CommonJS require(); consumers must use import or dynamic import(). Deep imports into the package&#x27;s internals are no longer possible — only the public entry point is exposed via exports.
+
+### Features
+
+* **plugin-test-support:** Migrate to ESM ([#22592](https://github.com/appium/appium/issues/22592)) ([ae549c8](https://github.com/appium/appium/commit/ae549c8613fcc6ece0d767588f96b9cf83fb5117))
+
+
 ## [2.0.1](https://github.com/appium/appium/compare/@appium/plugin-test-support@1.2.4...@appium/plugin-test-support@2.0.1) (2026-07-25)
 
 

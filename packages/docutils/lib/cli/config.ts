@@ -11,10 +11,10 @@ import * as YAML from 'yaml';
 import parser from 'yargs-parser';
 import {hideBin} from 'yargs/helpers';
 
-import type {LogLevelMap} from '../constants';
-import {DEFAULT_LOG_LEVEL, NAME_BIN} from '../constants';
-import {getLogger, initLogger, isLogLevelString} from '../logger';
-import {relative} from '../utils';
+import type {LogLevelMap} from '../constants.js';
+import {DEFAULT_LOG_LEVEL, NAME_BIN} from '../constants.js';
+import {getLogger, initLogger, isLogLevelString} from '../logger.js';
+import {relative} from '../utils/index.js';
 
 const log = getLogger('config');
 

@@ -1,16 +1,13 @@
+import assert from 'node:assert/strict';
 import {describe, it, afterEach, beforeEach, type TestContext} from 'node:test';
 
 import {system, util} from '@appium/support';
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
 import {readConfigFile} from '../../lib/bootstrap/config-file';
 import {DRIVER_TYPE} from '../../lib/constants';
 import {finalizeSchema, registerSchema, resetSchema} from '../../lib/schema/schema';
 import extSchema from '../fixtures/driver-schema';
 import {resolveFixture} from '../helpers';
-
-use(chaiAsPromised);
 
 const resolveConfigFixture = (name: string) => resolveFixture('config', name);
 
@@ -38,7 +35,7 @@ describe('config file behavior', function () {
     describe('when the config file is valid per the schema', function () {
       it('should return a valid config object', async function () {
         const result = await readConfigFile(GOOD_FILEPATH);
-        expect(result).to.deep.equal({
+        assert.deepStrictEqual(result, {
           config: {
             server: {
               address: '0.0.0.0',
@@ -81,14 +78,15 @@ describe('config file behavior', function () {
         describe('when a string', function () {
           it('should return errors', async function () {
             const result = await readConfigFile(BAD_NODECONFIG_FILEPATH);
-            expect(result.errors?.[0]).to.have.property('instancePath', '/server/nodeconfig');
+            assert.strictEqual(result.errors?.[0]?.instancePath, '/server/nodeconfig');
           });
         });
 
         describe('when an object', function () {
           it('should return a valid config object', async function () {
             const result = await readConfigFile(GOOD_FILEPATH);
-            expect(result).to.have.property('errors').that.is.empty;
+            assert.ok(Object.hasOwn(result, 'errors'));
+            assert.strictEqual(result.errors?.length, 0);
           });
         });
       });
@@ -97,21 +95,21 @@ describe('config file behavior', function () {
         describe('when a string path', function () {
           it('should return errors', async function () {
             const result = await readConfigFile(SECURITY_PATH_FILEPATH);
-            expect(result.errors?.[0]).to.have.property('instancePath', '/server/allow-insecure');
+            assert.strictEqual(result.errors?.[0]?.instancePath, '/server/allow-insecure');
           });
         });
 
         describe('when a comma-delimited string', function () {
           it('should return errors', async function () {
             const result = await readConfigFile(SECURITY_DELIMITED_FILEPATH);
-            expect(result.errors?.[0]).to.have.property('instancePath', '/server/allow-insecure');
+            assert.strictEqual(result.errors?.[0]?.instancePath, '/server/allow-insecure');
           });
         });
 
         describe('when an array', function () {
           it('should return a valid config object', async function () {
             const result = await readConfigFile(SECURITY_ARRAY_FILEPATH);
-            expect(result).to.deep.equal({
+            assert.deepStrictEqual(result, {
               config: {
                 server: {
                   allowInsecure: ['*:foo', '*:bar', '*:baz'],
@@ -128,7 +126,7 @@ describe('config file behavior', function () {
         describe('when the log filters are valid', function () {
           it('should return a valid config object', async function () {
             const result = await readConfigFile(LOG_FILTERS_FILEPATH);
-            expect(result).to.deep.equal({
+            assert.deepStrictEqual(result, {
               config: {
                 server: {
                   logFilters: [
@@ -149,7 +147,7 @@ describe('config file behavior', function () {
       describe('without extensions', function () {
         it('should return an object containing errors', async function () {
           const result = await readConfigFile(BAD_FILEPATH);
-          expect(result).to.have.deep.property('config', {
+          assert.deepStrictEqual(result.config, {
             appiumHome: 'foo',
             server: {
               address: '0.0.0.0',
@@ -181,19 +179,23 @@ describe('config file behavior', function () {
               webhook: 'http://0.0.0.0/hook',
             },
           });
-          expect(result).to.have.property('filepath', BAD_FILEPATH);
-          expect(result.errors).to.have.lengthOf(7);
-          expect(result.errors).to.deep.include({
-            instancePath: '',
-            schemaPath: '#/additionalProperties',
-            keyword: 'additionalProperties',
-            params: {
-              additionalProperty: 'appium-home',
-            },
-            message: 'must NOT have additional properties',
-            isIdentifierLocation: true,
-          });
-          expect(result).to.have.property('reason').that.is.a('string');
+          assert.strictEqual(result.filepath, BAD_FILEPATH);
+          assert.strictEqual(result.errors?.length, 7);
+          assert.ok(
+            result.errors?.some((error) =>
+              util.isEqual(error, {
+                instancePath: '',
+                schemaPath: '#/additionalProperties',
+                keyword: 'additionalProperties',
+                params: {
+                  additionalProperty: 'appium-home',
+                },
+                message: 'must NOT have additional properties',
+                isIdentifierLocation: true,
+              }),
+            ),
+          );
+          assert.strictEqual(typeof result.reason, 'string');
         });
       });
 
@@ -211,7 +213,7 @@ describe('config file behavior', function () {
             result = await readConfigFile(UNKNOWN_PROPS_FILEPATH);
           });
           it('should return an object containing errors', function () {
-            expect(result).to.have.deep.property('errors', [
+            assert.deepStrictEqual(result.errors, [
               {
                 instancePath: '/server/driver/fake',
                 schemaPath: 'driver-fake.json/additionalProperties',
@@ -229,7 +231,7 @@ describe('config file behavior', function () {
             result = await readConfigFile(EXT_PROPS_FILEPATH);
           });
           it('should return an object containing no errors', function () {
-            expect(result).to.have.deep.property('errors', []);
+            assert.deepStrictEqual(result.errors, []);
           });
         });
       });
@@ -240,7 +242,8 @@ describe('config file behavior', function () {
         if (system.isWindows()) {
           return ctx.skip();
         }
-        await expect(readConfigFile(INVALID_JSON_FILEPATH)).to.be.rejectedWith(
+        await assert.rejects(
+          readConfigFile(INVALID_JSON_FILEPATH),
           new RegExp(`${util.escapeRegExp(INVALID_JSON_FILEPATH)}`),
         );
       });

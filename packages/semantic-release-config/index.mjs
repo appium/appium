@@ -62,7 +62,13 @@ const APP_GIT_ASSETS = ['package.json', 'package-lock.json', 'CHANGELOG.md'];
  * flavor (`conventionalcommits` commit-analyzer preset, `npmPublish: false`, no GitHub release
  * assets by default, PR/issue comments disabled).
  * @param {string[]} [opts.branches] - Passed through as the top-level `branches` option; omit to
- * use semantic-release's own default branches.
+ * default to `['master']` (or semantic-release's own defaults if `betaBranch` is also omitted).
+ * @param {string} [opts.betaBranch] - Name of a long-lived next-major prerelease branch (e.g.
+ * `'next-major'`). When set, appended to `branches` as `{name, channel: betaChannel, prerelease:
+ * betaChannel}` so every commit on that branch - patch, minor, or breaking alike - only advances
+ * the `-<betaChannel>.N` prerelease counter once anchored at a clean `X.0.0-<betaChannel>.0`.
+ * @param {string} [opts.betaChannel='beta'] - Prerelease identifier / npm dist-tag used for
+ * `betaBranch`.
  * @param {string[]} [opts.extraGitAssets] - Appended to `@semantic-release/git`'s `assets`.
  * @param {string[]} [opts.removeGitAssets] - Removed from `@semantic-release/git`'s `assets`.
  * @param {Array} [opts.githubAssets] - `@semantic-release/github`'s `assets` option.
@@ -78,6 +84,8 @@ export default function semanticReleaseConfig(opts = {}) {
   const {
     flavor = 'library',
     branches,
+    betaBranch,
+    betaChannel = 'beta',
     extraGitAssets = [],
     removeGitAssets = [],
     githubAssets,
@@ -131,8 +139,11 @@ export default function semanticReleaseConfig(opts = {}) {
     plugins: [commitAnalyzerPlugin, releaseNotesGeneratorPlugin, changelogPlugin, npmPlugin, gitPlugin, githubPlugin],
   };
 
-  if (branches) {
-    config.branches = branches;
+  if (branches || betaBranch) {
+    config.branches = [
+      ...(branches ?? ['master']),
+      ...(betaBranch ? [{name: betaBranch, channel: betaChannel, prerelease: betaChannel}] : []),
+    ];
   }
 
   return config;

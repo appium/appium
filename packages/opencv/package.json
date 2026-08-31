@@ -1,6 +1,6 @@
 {
   "name": "@appium/opencv",
-  "version": "4.1.7",
+  "version": "5.0.0",
   "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8",
   "description": "OpenCV-related helper library",
   "keywords": [
@@ -32,8 +32,16 @@
     "build/lib",
     "tsconfig.json"
   ],
+  "type": "module",
   "main": "./build/lib/index.js",
   "types": "./build/lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./build/lib/index.d.ts",
+      "import": "./build/lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "publishConfig": {
     "access": "public"
   },

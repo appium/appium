@@ -20,6 +20,10 @@ GET /session/:sessionId/rotation
 
 Retrieves the current spatial orientation of the device under test.
 
+!!! warning "Deprecated"
+
+    Please use [`getAppiumRotation`](./appium.md#getappiumrotation) instead
+
 #### Response
 
 `Rotation` - an object with the following properties:
@@ -39,6 +43,10 @@ POST /session/:sessionId/rotation
 > MJSONWP documentation: [Device Rotation](https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md#device-rotation)
 
 Sets the spatial orientation of the device under test.
+
+!!! warning "Deprecated"
+
+    Please use [`setAppiumRotation`](./appium.md#setappiumrotation) instead
 
 #### Parameters
 
@@ -62,6 +70,10 @@ GET /session/:sessionId/context
 
 Retrieves the active application context.
 
+!!! warning "Deprecated"
+
+    Please use [`getCurrentAppiumContext`](./appium.md#getcurrentappiumcontext) instead
+
 #### Response
 
 `string` - the name of the active context
@@ -75,6 +87,10 @@ POST /session/:sessionId/context
 > MJSONWP documentation: [Webviews and Other Contexts](https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md#webviews-and-other-contexts)
 
 Sets an application context as the active context.
+
+!!! warning "Deprecated"
+
+    Please use [`setAppiumContext`](./appium.md#setappiumcontext) instead
 
 #### Parameters
 
@@ -95,6 +111,10 @@ GET /session/:sessionId/contexts
 > MJSONWP documentation: [Webviews and Other Contexts](https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md#webviews-and-other-contexts)
 
 Retrieves all available application contexts.
+
+!!! warning "Deprecated"
+
+    Please use [`getAppiumContexts`](./appium.md#getappiumcontexts) instead
 
 #### Response
 

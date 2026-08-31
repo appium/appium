@@ -17,11 +17,17 @@ import {
   NAME_MKDOCS_YML,
   NAME_PACKAGE_JSON,
   NAME_PYTHON,
-} from './constants';
-import {DocutilsError} from './error';
-import {getLogger} from './logger';
-import type {MkDocsYml} from './model';
-import {findPackageRoot, type NormalizedPackageJson, type PackageJson, mergeDefaultsDeep, readPackage} from './utils';
+} from './constants.js';
+import {DocutilsError} from './error.js';
+import {getLogger} from './logger.js';
+import type {MkDocsYml} from './model.js';
+import {
+  findPackageRoot,
+  type NormalizedPackageJson,
+  type PackageJson,
+  mergeDefaultsDeep,
+  readPackage,
+} from './utils/index.js';
 
 const log = getLogger('fs');
 
@@ -114,8 +120,8 @@ export const readPackageJson = util.memoize(_readPkgJson);
 /**
  * Reads a JSON file and parses it
  */
-export const readJson = util.memoize(
-  async <T extends JsonValue>(filepath: string): Promise<T> => JSON.parse(await fs.readFile(filepath, 'utf8')),
+export const readJson = util.memoize(async <T extends JsonValue>(filepath: string): Promise<T> =>
+  JSON.parse(await fs.readFile(filepath, 'utf8')),
 );
 
 type WhichFunction = (cmd: string, opts?: {nothrow: boolean}) => Promise<string | null>;

@@ -1,14 +1,11 @@
+import assert from 'node:assert/strict';
 import os from 'node:os';
 import {afterEach, beforeEach, describe, it} from 'node:test';
 
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {createSandbox} from 'sinon';
 import * as teen_process from 'teen_process';
 
 import {system, util} from '../../lib';
-
-use(chaiAsPromised);
 
 const SANDBOX = Symbol();
 const libs = {os, system};
@@ -38,17 +35,17 @@ describe('system', function () {
 
     it('should correctly return Windows System if it is a Windows', function () {
       osMock.expects('type').returns('Windows_NT');
-      expect(system.isWindows()).to.be.true;
+      assert.strictEqual(system.isWindows(), true);
     });
 
     it('should correctly return Mac if it is a Mac', function () {
       osMock.expects('type').returns('Darwin');
-      expect(system.isMac()).to.be.true;
+      assert.strictEqual(system.isMac(), true);
     });
 
     it('should correctly return Linux if it is a Linux', function () {
       osMock.expects('type').twice().returns('Linux');
-      expect(system.isLinux()).to.be.true;
+      assert.strictEqual(system.isLinux(), true);
     });
   });
 
@@ -57,21 +54,21 @@ describe('system', function () {
       (sandbox.stub(teen_process, 'exec') as any).get(() =>
         sandbox.stub().withArgs('sw_vers', ['-productVersion']).returns({stdout: '10.10.5'}),
       );
-      await expect(system.macOsxVersion()).to.eventually.equal('10.10');
+      assert.strictEqual(await system.macOsxVersion(), '10.10');
     });
 
     it('should return correct version for 10.12', async function () {
       (sandbox.stub(teen_process, 'exec') as any).get(() =>
         sandbox.stub().withArgs('sw_vers', ['-productVersion']).returns({stdout: '10.12.0'}),
       );
-      await expect(system.macOsxVersion()).to.eventually.equal('10.12');
+      assert.strictEqual(await system.macOsxVersion(), '10.12');
     });
 
     it('should return correct version for 10.12 with newline', async function () {
       (sandbox.stub(teen_process, 'exec') as any).get(() =>
         sandbox.stub().withArgs('sw_vers', ['-productVersion']).returns({stdout: '10.12   \n'}),
       );
-      await expect(system.macOsxVersion()).to.eventually.equal('10.12');
+      assert.strictEqual(await system.macOsxVersion(), '10.12');
     });
 
     it("should throw an error if OSX version can't be determined", async function () {
@@ -79,7 +76,7 @@ describe('system', function () {
       (sandbox.stub(teen_process, 'exec') as any).get(() =>
         sandbox.stub().withArgs('sw_vers', ['-productVersion']).returns({stdout: invalidOsx}),
       );
-      await expect(system.macOsxVersion()).to.eventually.be.rejectedWith(new RegExp(util.escapeRegExp(invalidOsx)));
+      await assert.rejects(system.macOsxVersion(), new RegExp(util.escapeRegExp(invalidOsx)));
     });
   });
 
@@ -101,7 +98,7 @@ describe('system', function () {
         sandbox.stub().withArgs('uname', ['-m']).returns({stdout: 'x86_64'}),
       );
       const arch = await system.arch();
-      expect(arch).to.equal('64');
+      assert.strictEqual(arch, '64');
       mocks[SANDBOX].verify();
     });
 
@@ -111,7 +108,7 @@ describe('system', function () {
         sandbox.stub().withArgs('uname', ['-m']).returns({stdout: 'i686'}),
       );
       const arch = await system.arch();
-      expect(arch).to.equal('32');
+      assert.strictEqual(arch, '32');
       mocks[SANDBOX].verify();
     });
 
@@ -119,7 +116,7 @@ describe('system', function () {
       mocks.os.expects('type').thrice().returns('Windows_NT');
       mocks.system.expects('isOSWin64').once().returns(true);
       const arch = await system.arch();
-      expect(arch).to.equal('64');
+      assert.strictEqual(arch, '64');
       mocks[SANDBOX].verify();
     });
 
@@ -127,7 +124,7 @@ describe('system', function () {
       mocks.os.expects('type').thrice().returns('Windows_NT');
       mocks.system.expects('isOSWin64').once().returns(false);
       const arch = await system.arch();
-      expect(arch).to.equal('32');
+      assert.strictEqual(arch, '32');
       mocks[SANDBOX].verify();
     });
   });

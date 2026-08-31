@@ -169,10 +169,17 @@ Modifies the [`createSession`](./webdriver.md#createsession) endpoint:
     All endpoints for this plugin can be invoked without creating a session, allowing you to prepare
     your test environment in advance.
 
+!!! info
+
+    Prior to plugin version 1.2.0, all endpoints below were mounted under the `/storage` prefix
+    (e.g. `/storage/add`) instead of `/appium/storage`. The `/storage`-prefixed routes are still
+    available for backward compatibility, but are deprecated and will be removed in a future
+    version of the plugin.
+
 ### addStorageItem
 
 ```
-POST /storage/add
+POST /appium/storage/add
 ```
 
 Adds a new file to the storage.
@@ -198,8 +205,8 @@ Example:
 ```json
 {
   "ws": {
-    "stream": "/storage/add/ccc963411b2621335657963322890305ebe96186/stream",
-    "events": "/storage/add/ccc963411b2621335657963322890305ebe96186/events"
+    "stream": "/appium/storage/add/ccc963411b2621335657963322890305ebe96186/stream",
+    "events": "/appium/storage/add/ccc963411b2621335657963322890305ebe96186/events"
   },
   "ttlMs": 300000
 }
@@ -208,7 +215,7 @@ Example:
 ### deleteStorageItem
 
 ```
-POST /storage/delete
+POST /appium/storage/delete
 ```
 
 Deletes a file in the storage.
@@ -227,7 +234,7 @@ the storage, or if the delete request is invalid.
 ### listStorageItems
 
 ```
-GET /storage/list
+GET /appium/storage/list
 ```
 
 List all files present in the storage.
@@ -245,7 +252,7 @@ List all files present in the storage.
 ### resetStorage
 
 ```
-POST /storage/reset
+POST /appium/storage/reset
 ```
 
 Deletes all uploaded files and stops any incomplete uploads.

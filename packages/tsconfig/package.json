@@ -1,6 +1,6 @@
 {
   "name": "@appium/tsconfig",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "gitHead": "84b211330dc84849af9cc1f3a5c5ad32e15b2e72",
   "description": "Shared TypeScript Config for Appium",
   "keywords": [
@@ -35,7 +35,7 @@
     "test:smoke": "node tsconfig.json && node tsconfig.plugin.json"
   },
   "dependencies": {
-    "@tsconfig/node20": "20.1.9",
+    "@tsconfig/node20": "20.1.10",
     "typescript": "6.0.3"
   },
   "engines": {

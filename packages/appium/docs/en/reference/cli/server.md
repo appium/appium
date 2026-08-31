@@ -65,7 +65,7 @@ appium
 |`--tmp`|Absolute path to the directory used for temporary files|string|[`os.tmpdir()`](https://nodejs.org/api/os.html#ostmpdir)|
 |`--use-drivers`|List of drivers to activate. By default, all installed drivers are activated.|array<string>|`[]`|
 |`--use-plugins`|List of plugins to activate. By default, no plugins are activated. Set to `["all"]` to activate all installed plugins.|array<string>|`[]`|
-|`--webhook`, `-G`|URL for an HTTP listener where the server logs should be output. This does not affect output on the console.|string||
+|`--webhook`, `-G`|URL for an HTTP listener where the server logs should be output. This does not affect output on the console. A bare `host:port` is also accepted, which posts the logs to the root path over plain http; a value having neither a scheme nor a port falls back to `127.0.0.1:9003`.|string||
 
 ### Info Options
 

@@ -1,9 +1,10 @@
-export {UniversalXMLPlugin} from './plugin';
-export {transformSourceXml} from './source';
+export {UniversalXMLPlugin} from './plugin.js';
+export {transformSourceXml} from './source.js';
 import fs from 'node:fs/promises';
+import {fileURLToPath} from 'node:url';
 
-import {UniversalXMLPlugin} from './plugin';
-import {transformSourceXml} from './source';
+import {UniversalXMLPlugin} from './plugin.js';
+import {transformSourceXml} from './source.js';
 
 export default UniversalXMLPlugin;
 
@@ -33,6 +34,6 @@ export async function main(): Promise<void> {
   }
 }
 
-if (require.main === module) {
+if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   void main();
 }

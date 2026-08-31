@@ -20,3 +20,15 @@ if (!npmPlugin || npmPlugin[1]?.npmPublish !== false) {
 if (appConfig.branches?.[0] !== 'main') {
   throw new Error('expected branches option to be passed through');
 }
+
+const betaConfig = releaseConfig({betaBranch: 'next-major'});
+const expectedBetaBranches = ['master', {name: 'next-major', channel: 'beta', prerelease: 'beta'}];
+if (JSON.stringify(betaConfig.branches) !== JSON.stringify(expectedBetaBranches)) {
+  throw new Error("expected betaBranch to default branches to ['master', <beta branch entry>]");
+}
+
+const betaWithBranchesConfig = releaseConfig({branches: ['main'], betaBranch: 'next-major', betaChannel: 'next'});
+const expectedComposedBranches = ['main', {name: 'next-major', channel: 'next', prerelease: 'next'}];
+if (JSON.stringify(betaWithBranchesConfig.branches) !== JSON.stringify(expectedComposedBranches)) {
+  throw new Error('expected betaBranch to compose with an explicit branches option and custom betaChannel');
+}

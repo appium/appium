@@ -1,8 +1,7 @@
+import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {describe, it, beforeEach, afterEach, before} from 'node:test';
 
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {createSandbox, type SinonSandbox, type SinonSpy, type SinonStubbedMember} from 'sinon';
 import * as YAML from 'yaml';
 
@@ -22,9 +21,6 @@ interface ReadConfigFileResult {
 
 type ReadConfigFileFn = (filepath?: string, opts?: object) => Promise<ReadConfigFileResult>;
 type NormalizeConfigFn = (config: unknown) => unknown;
-
-const {expect} = chai;
-chai.use(chaiAsPromised);
 
 describe('bootstrap/config-file', function () {
   const GOOD_YAML_CONFIG_FILEPATH = resolveFixture('config', 'appium-config-good.yaml');
@@ -103,20 +99,20 @@ describe('bootstrap/config-file', function () {
 
     it('should support yaml', async function () {
       const {config} = await readConfigFile(GOOD_YAML_CONFIG_FILEPATH);
-      expect(config).to.eql(normalizeConfig(GOOD_JSON_CONFIG));
-      expect(validateSpy.calledOnce).to.be.true;
+      assert.deepStrictEqual(config, normalizeConfig(GOOD_JSON_CONFIG));
+      assert.strictEqual(validateSpy.calledOnce, true);
     });
 
     it('should support json', async function () {
       const {config} = await readConfigFile(GOOD_JSON_CONFIG_FILEPATH);
-      expect(config).to.eql(normalizeConfig(GOOD_JSON_CONFIG));
-      expect(validateSpy.calledOnce).to.be.true;
+      assert.deepStrictEqual(config, normalizeConfig(GOOD_JSON_CONFIG));
+      assert.strictEqual(validateSpy.calledOnce, true);
     });
 
     it('should support js', async function () {
       const {config} = await readConfigFile(GOOD_JS_CONFIG_FILEPATH);
-      expect(config).to.eql(normalizeConfig(GOOD_JSON_CONFIG));
-      expect(validateSpy.calledOnce).to.be.true;
+      assert.deepStrictEqual(config, normalizeConfig(GOOD_JSON_CONFIG));
+      assert.strictEqual(validateSpy.calledOnce, true);
     });
 
     describe('when no filepath provided', function () {
@@ -125,12 +121,12 @@ describe('bootstrap/config-file', function () {
       });
 
       it('should search for a config file', function () {
-        expect(lc.search.calledOnce).to.be.true;
-        expect(validateSpy.calledOnce).to.be.true;
+        assert.strictEqual(lc.search.calledOnce, true);
+        assert.strictEqual(validateSpy.calledOnce, true);
       });
 
       it('should not try to load a config file directly', function () {
-        expect(lc.load.called).to.be.false;
+        assert.strictEqual(lc.load.called, false);
       });
 
       describe('when no config file is found', function () {
@@ -141,8 +137,9 @@ describe('bootstrap/config-file', function () {
         });
 
         it('should resolve with an empty object', function () {
-          expect(result).to.be.an('object').that.is.empty;
-          expect(validateSpy.calledOnce).to.be.false;
+          assert.strictEqual(typeof result, 'object');
+          assert.strictEqual(Object.keys(result as object).length, 0);
+          assert.strictEqual(validateSpy.calledOnce, false);
         });
       });
 
@@ -159,13 +156,13 @@ describe('bootstrap/config-file', function () {
           });
 
           it('should resolve with an object with an `isEmpty` property', function () {
-            expect(result).to.have.property('isEmpty', true);
+            assert.strictEqual(result.isEmpty, true);
           });
         });
 
         describe('when the config file is not empty', function () {
           it('should validate the config against a schema', function () {
-            expect(validateSpy.calledOnceWith(GOOD_JSON_CONFIG)).to.be.true;
+            assert.strictEqual(validateSpy.calledOnceWith(GOOD_JSON_CONFIG), true);
           });
 
           describe('when the config file is valid', function () {
@@ -174,7 +171,7 @@ describe('bootstrap/config-file', function () {
             });
 
             it('should resolve with an object having `config` property and empty array of errors', function () {
-              expect(result).to.deep.equal({
+              assert.deepStrictEqual(result, {
                 config: normalizeConfig(GOOD_JSON_CONFIG),
                 errors: [],
                 filepath: GOOD_JSON_CONFIG_FILEPATH,
@@ -192,7 +189,8 @@ describe('bootstrap/config-file', function () {
             });
 
             it('should resolve with an object having a nonempty array of errors', function () {
-              expect(result).to.have.property('errors').that.is.not.empty;
+              assert.ok(Array.isArray(result.errors));
+              assert.ok(result.errors.length > 0);
             });
           });
         });
@@ -205,11 +203,11 @@ describe('bootstrap/config-file', function () {
       });
 
       it('should not attempt to find a config file', function () {
-        expect(lc.search.called).to.be.false;
+        assert.strictEqual(lc.search.called, false);
       });
 
       it('should try to load a config file directly', function () {
-        expect(lc.load.calledOnce).to.be.true;
+        assert.strictEqual(lc.load.calledOnce, true);
       });
 
       describe('when no config file exists at path', function () {
@@ -218,7 +216,7 @@ describe('bootstrap/config-file', function () {
         });
 
         it('should reject with user-friendly message', async function () {
-          await expect(readConfigFile('appium.json')).to.be.rejectedWith(/not found at user-provided path/);
+          await assert.rejects(readConfigFile('appium.json'), /not found at user-provided path/);
         });
       });
 
@@ -228,7 +226,8 @@ describe('bootstrap/config-file', function () {
         });
 
         it('should reject with user-friendly message', async function () {
-          await expect(readConfigFile('appium.json')).to.be.rejectedWith(
+          await assert.rejects(
+            readConfigFile('appium.json'),
             /Config file at user-provided path appium.json is invalid/,
           );
         });
@@ -240,7 +239,7 @@ describe('bootstrap/config-file', function () {
         });
 
         it('should pass error through', async function () {
-          await expect(readConfigFile('appium.json')).to.be.rejectedWith(/guru meditation/);
+          await assert.rejects(readConfigFile('appium.json'), /guru meditation/);
         });
       });
 
@@ -256,13 +255,13 @@ describe('bootstrap/config-file', function () {
           });
 
           it('should resolve with an object with an `isEmpty` property', function () {
-            expect(result).to.have.property('isEmpty', true);
+            assert.strictEqual(result.isEmpty, true);
           });
         });
 
         describe('when the config file is not empty', function () {
           it('should validate the config against a schema', function () {
-            expect(validateSpy.calledOnceWith(GOOD_JSON_CONFIG)).to.be.true;
+            assert.strictEqual(validateSpy.calledOnceWith(GOOD_JSON_CONFIG), true);
           });
 
           describe('when the config file is valid', function () {
@@ -271,7 +270,7 @@ describe('bootstrap/config-file', function () {
             });
 
             it('should resolve with an object having `config` property and empty array of errors', function () {
-              expect(result).to.deep.equal({
+              assert.deepStrictEqual(result, {
                 errors: [],
                 config: normalizeConfig(GOOD_JSON_CONFIG),
                 filepath: GOOD_JSON_CONFIG_FILEPATH,
@@ -285,7 +284,8 @@ describe('bootstrap/config-file', function () {
             });
 
             it('should resolve with an object having a nonempty array of errors', function () {
-              expect(result).to.have.property('errors').that.is.not.empty;
+              assert.ok(Array.isArray(result.errors));
+              assert.ok(result.errors.length > 0);
             });
           });
         });

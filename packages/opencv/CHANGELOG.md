@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.0.0](https://github.com/appium/appium/compare/@appium/opencv@4.1.7...@appium/opencv@5.0.0) (2026-08-24)
+
+### ⚠ BREAKING CHANGES
+
+* **opencv:** @appium/opencv is now an ESM-only package. It can no longer be loaded via CommonJS require(); consumers must use import or dynamic import(). Deep imports into the package&#x27;s internals are no longer possible — only the public entry point is exposed via exports.
+
+### Features
+
+* **opencv:** Migrate to ESM ([#22581](https://github.com/appium/appium/issues/22581)) ([db87f3c](https://github.com/appium/appium/commit/db87f3cdd410802d0094ec731e0ce453252f115a))
+
+
 ## [4.1.7](https://github.com/appium/appium/compare/@appium/opencv@4.1.6...@appium/opencv@4.1.7) (2026-07-25)
 
 **Note:** Version bump only for package @appium/opencv

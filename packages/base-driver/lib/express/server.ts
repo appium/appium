@@ -15,7 +15,7 @@ import type {
 } from '@appium/types';
 import bodyParser from 'body-parser';
 import express from 'express';
-import type {Express, RequestHandler} from 'express';
+import type {Express, RequestHandler, Router} from 'express';
 import methodOverride from 'method-override';
 
 import {DEFAULT_BASE_PATH} from '../constants';
@@ -74,6 +74,8 @@ export interface ConfigureServerOpts {
   extraMethodMap?: MethodMap<ExternalDriver>;
   webSocketsMapping?: StringRecord;
   useLegacyUpgradeHandler?: boolean;
+  /** Router mounted before any route is registered; see {@linkcode AppiumServer.frontRouter}. */
+  frontRouter: Router;
 }
 
 /** @internal */
@@ -147,6 +149,7 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
           webSocketsMapping: appiumServer.webSocketsMapping,
           useLegacyUpgradeHandler,
           registerTestPages,
+          frontRouter: appiumServer.frontRouter,
         } as ConfigureServerInternalOpts);
         // allow extensions to update the app and http server objects
         for (const updater of serverUpdaters) {
@@ -188,6 +191,7 @@ export function configureServer(opts: ConfigureServerOpts): void {
     extraMethodMap = {},
     webSocketsMapping = {},
     useLegacyUpgradeHandler = true,
+    frontRouter,
   } = opts;
   const {registerTestPages} = opts as ConfigureServerInternalOpts;
   const basePath = normalizeBasePath(rawBasePath);
@@ -214,7 +218,6 @@ export function configureServer(opts: ConfigureServerOpts): void {
   app.use(defaultToJSONContentType);
   app.use(bodyParser.urlencoded({extended: true}));
   app.use(methodOverride());
-  app.use(catchAllHandler);
 
   // make sure appium never fails because of a file size upload limit
   app.use(bodyParser.json({limit: '1gb'}));
@@ -222,7 +225,14 @@ export function configureServer(opts: ConfigureServerOpts): void {
   // set up start logging (which depends on bodyParser doing its thing)
   app.use(startLogFormatter);
 
+  // mounted before any route, so middleware added later (e.g. via `updateServer`) still runs first
+  app.use(frontRouter);
+
   addRoutes(app, {basePath, extraMethodMap});
+
+  // Express only passes errors to an error handler registered after the middleware
+  // that raised them, so this one must be the last of all.
+  app.use(catchAllHandler);
 }
 
 /**
@@ -304,6 +314,7 @@ function configureHttp({
 }: ConfigureHttpOpts): AppiumServer {
   const appiumServer = httpServer as unknown as AppiumServer;
   appiumServer.webSocketsMapping = {};
+  appiumServer.frontRouter = express.Router();
   appiumServer.addWebSocketHandler = addWebSocketHandler;
   appiumServer.removeWebSocketHandler = removeWebSocketHandler;
   appiumServer.removeAllWebSocketHandlers = removeAllWebSocketHandlers;

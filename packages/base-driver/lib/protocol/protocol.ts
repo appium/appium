@@ -283,7 +283,7 @@ export function routeConfiguringFunction(driver: Core<any>): RouteConfiguringFun
 }
 
 /**
- * Whether an incoming request should be forwarded to the driver's JWProxy for the given command.
+ * Whether an incoming request should be forwarded to the driver's WebDriverProxy for the given command.
  * @param driver - Active driver
  * @param req - Incoming HTTP request
  * @param command - Resolved driver command name
@@ -422,7 +422,7 @@ function buildHandler(
           typeof driver.pluginsToHandleCmd !== 'function' ||
           driver.pluginsToHandleCmd(spec.command, sessionId).length === 0
         ) {
-          await doJwpProxy(driver as BaseDriver<any>, req, res);
+          await doWdProxy(driver as BaseDriver<any>, req, res);
           return;
         }
         getLogger(driver, sessionId).debug(
@@ -602,7 +602,7 @@ function buildHandler(
   });
 }
 
-async function doJwpProxy(driver: BaseDriver<any>, req: Request, res: Response): Promise<void> {
+async function doWdProxy(driver: BaseDriver<any>, req: Request, res: Response): Promise<void> {
   const sessionId = getSessionId(driver, req) as string;
   getLogger(driver, sessionId).info('Driver proxy active, passing request on via HTTP proxy');
 

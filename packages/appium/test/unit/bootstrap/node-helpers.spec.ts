@@ -1,15 +1,10 @@
+import assert from 'node:assert/strict';
 import {promises as fs} from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import {describe, it, beforeEach, afterEach, before, after} from 'node:test';
 
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
-
 import {adjustNodePath, checkNodeOk, requireDir} from '../../../lib/bootstrap/node-helpers';
-
-const {expect} = chai;
-chai.use(chaiAsPromised);
 
 describe('bootstrap/node-helpers', function () {
   describe('checkNodeOk()', function () {
@@ -50,7 +45,7 @@ describe('bootstrap/node-helpers', function () {
         it(`should fail if node is ${version}`, function () {
           // @ts-expect-error
           process.version = version;
-          expect(checkNodeOk).to.throw();
+          assert.throws(checkNodeOk);
         });
       }
     });
@@ -59,38 +54,38 @@ describe('bootstrap/node-helpers', function () {
       it('should succeed if node is ^20.19.0', function () {
         // @ts-expect-error
         process.version = 'v20.19.0';
-        expect(checkNodeOk).to.not.throw();
+        assert.doesNotThrow(checkNodeOk);
         // @ts-expect-error
         process.version = 'v20.100.0';
-        expect(checkNodeOk).to.not.throw();
+        assert.doesNotThrow(checkNodeOk);
       });
 
       it('should succeed if node is 22.12+', function () {
         // @ts-expect-error
         process.version = 'v22.12.0';
-        expect(checkNodeOk).to.not.throw();
+        assert.doesNotThrow(checkNodeOk);
         // @ts-expect-error
         process.version = 'v100.0.0';
-        expect(checkNodeOk).to.not.throw();
+        assert.doesNotThrow(checkNodeOk);
       });
     });
   });
 
   describe('requireDir()', function () {
     it('should fail to use a dir with incorrect permissions', async function () {
-      await expect(requireDir('/private/if_you_run_with_sudo_this_wont_fail')).to.be.rejectedWith(/must exist/);
+      await assert.rejects(requireDir('/private/if_you_run_with_sudo_this_wont_fail'), /must exist/);
     });
 
     it('should fail to use an undefined dir', async function () {
       // @ts-expect-error
-      await expect(requireDir()).to.be.rejectedWith(/must exist/);
+      await assert.rejects(requireDir(), /must exist/);
     });
 
     it('should fail to use a non-writeable dir', async function () {
       const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'appium-requireDir-test-'));
       try {
         await fs.chmod(tempDir, 0o444);
-        await expect(requireDir(tempDir)).to.be.rejectedWith(/must be writeable/);
+        await assert.rejects(requireDir(tempDir), /must be writeable/);
       } finally {
         await fs.chmod(tempDir, 0o700);
         await fs.rmdir(tempDir);
@@ -98,7 +93,7 @@ describe('bootstrap/node-helpers', function () {
     });
 
     it('should be able to use a dir with correct permissions', async function () {
-      await expect(requireDir('/tmp/test_tmp_dir/with/any/number/of/levels')).to.not.be.rejected;
+      await assert.doesNotReject(requireDir('/tmp/test_tmp_dir/with/any/number/of/levels'));
     });
   });
 
@@ -119,7 +114,7 @@ describe('bootstrap/node-helpers', function () {
 
     it('should adjust NODE_PATH', async function () {
       adjustNodePath();
-      await expect(fs.access(process.env.NODE_PATH!)).to.not.be.rejected;
+      await assert.doesNotReject(fs.access(process.env.NODE_PATH!));
     });
   });
 });

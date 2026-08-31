@@ -94,13 +94,18 @@ export class FakePlugin extends BasePlugin {
 
   static async updateServer(
     expressApp: Application,
-    _httpServer: AppiumServer,
+    httpServer: AppiumServer,
     cliArgs: Record<string, unknown>,
   ): Promise<void> {
     expressApp.all('/fake', FakePlugin.fakeRoute);
     expressApp.all('/unexpected', FakePlugin.unexpectedData);
     expressApp.all('/cliArgs', (req, res) => {
       res.send(JSON.stringify(cliArgs));
+    });
+    // global middleware, exercised via httpServer.frontRouter
+    httpServer.frontRouter.use((_req, res, next) => {
+      res.set('x-fake-plugin-pre-server', 'true');
+      next();
     });
   }
 

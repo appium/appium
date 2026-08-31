@@ -1,14 +1,10 @@
+import assert from 'node:assert/strict';
 import path from 'node:path';
 import {afterEach, beforeEach, describe, it} from 'node:test';
-
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
 import {fs} from '../../lib/fs';
 import {isWindows} from '../../lib/system';
 import {openDir} from '../../lib/tempdir';
-
-use(chaiAsPromised);
 
 describe('fs', function () {
   describe('mv()', function () {
@@ -30,8 +26,8 @@ describe('fs', function () {
       await fs.writeFile(srcPath, Buffer.from('bar'));
       const dstPath = path.join(dstRoot!, path.basename(srcPath));
       await fs.mv(srcPath, dstPath);
-      expect(await fs.exists(path.join(dstRoot!, path.basename(srcPath)))).to.be.true;
-      expect(await fs.exists(path.join(srcRoot!, path.basename(srcPath)))).to.be.false;
+      assert.strictEqual(await fs.exists(path.join(dstRoot!, path.basename(srcPath))), true);
+      assert.strictEqual(await fs.exists(path.join(srcRoot!, path.basename(srcPath))), false);
     });
 
     it('should move folder', async function () {
@@ -39,16 +35,18 @@ describe('fs', function () {
       await fs.mkdirp(path.dirname(srcPath));
       await fs.writeFile(srcPath, Buffer.from('bar'));
       await fs.mv(srcRoot!, dstRoot!, {mkdirp: true});
-      expect(await fs.exists(path.join(dstRoot!, path.basename(path.dirname(srcPath))))).to.be.true;
-      expect(await fs.exists(path.join(dstRoot!, path.basename(path.dirname(srcPath)), path.basename(srcPath)))).to.be
-        .true;
-      expect(await fs.exists(path.join(srcRoot!, path.basename(path.dirname(srcPath))))).to.be.false;
+      assert.strictEqual(await fs.exists(path.join(dstRoot!, path.basename(path.dirname(srcPath)))), true);
+      assert.strictEqual(
+        await fs.exists(path.join(dstRoot!, path.basename(path.dirname(srcPath)), path.basename(srcPath))),
+        true,
+      );
+      assert.strictEqual(await fs.exists(path.join(srcRoot!, path.basename(path.dirname(srcPath)))), false);
     });
 
     it('should fail if source path does not exist', async function () {
       const srcPath = path.join(srcRoot!, 'src.file');
       const dstPath = path.join(dstRoot!, path.basename(srcPath));
-      await expect(fs.mv(srcPath, dstPath)).to.eventually.be.rejected;
+      await assert.rejects(fs.mv(srcPath, dstPath));
     });
 
     it('should fail if destination path already exists and clobber is disabled', async function () {
@@ -56,8 +54,8 @@ describe('fs', function () {
       await fs.writeFile(srcPath, Buffer.from('bar'));
       const dstPath = path.join(dstRoot!, path.basename(srcPath));
       await fs.writeFile(dstPath, Buffer.from('foo'));
-      await expect(fs.mv(srcPath, dstPath, {clobber: false})).to.eventually.be.rejected;
-      expect((await fs.readFile(dstPath)).toString()).to.eql('foo');
+      await assert.rejects(fs.mv(srcPath, dstPath, {clobber: false}));
+      assert.strictEqual((await fs.readFile(dstPath)).toString(), 'foo');
     });
 
     it('should override a file if already exists by default', async function () {
@@ -66,7 +64,7 @@ describe('fs', function () {
       const dstPath = path.join(dstRoot!, path.basename(srcPath));
       await fs.writeFile(dstPath, Buffer.from('foo'));
       await fs.mv(srcPath, dstPath);
-      expect((await fs.readFile(dstPath)).toString()).to.eql('bar');
+      assert.strictEqual((await fs.readFile(dstPath)).toString(), 'bar');
     });
 
     it('should handle cross-device move by falling back to copy-and-delete', async function () {
@@ -84,9 +82,9 @@ describe('fs', function () {
 
       try {
         await fs.mv(srcPath, dstPath);
-        expect(await fs.exists(dstPath)).to.be.true;
-        expect(await fs.exists(srcPath)).to.be.false;
-        expect((await fs.readFile(dstPath)).toString()).to.eql('bar');
+        assert.strictEqual(await fs.exists(dstPath), true);
+        assert.strictEqual(await fs.exists(srcPath), false);
+        assert.strictEqual((await fs.readFile(dstPath)).toString(), 'bar');
       } finally {
         // Restore original function.
         (fs as {rename: typeof fs.rename}).rename = originalRename;
@@ -97,27 +95,27 @@ describe('fs', function () {
   describe('isExecutable()', function () {
     describe('when the path does not exist', function () {
       it('should return `false`', async function () {
-        await expect(fs.isExecutable('/path/to/nowhere')).to.eventually.be.false;
+        assert.strictEqual(await fs.isExecutable('/path/to/nowhere'), false);
       });
     });
 
     describe('when the path exists', {skip: isWindows()}, function () {
       describe('when the path is not executable', function () {
         it('should return `false`', async function () {
-          await expect(fs.isExecutable(__filename)).to.eventually.be.false;
+          assert.strictEqual(await fs.isExecutable(__filename), false);
         });
       });
 
       describe('when the path is executable', function () {
         it('should return `true`', async function () {
-          await expect(fs.isExecutable('/bin/bash')).to.eventually.be.true;
+          assert.strictEqual(await fs.isExecutable('/bin/bash'), true);
         });
       });
     });
 
     describe('when the parameter is not a path', function () {
       it('should return `false`', async function () {
-        await expect(fs.isExecutable(undefined as unknown as string)).to.eventually.be.false;
+        assert.strictEqual(await fs.isExecutable(undefined as unknown as string), false);
       });
     });
   });

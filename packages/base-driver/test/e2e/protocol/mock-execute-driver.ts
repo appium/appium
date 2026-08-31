@@ -10,13 +10,13 @@ class MockExecuteDriver extends BaseDriver<Constraints> {
     },
   };
 
-  declare jwpProxyActive: boolean;
+  declare wdProxyActive: boolean;
 
   constructor() {
     super({} as InitialOpts);
     this.protocol = PROTOCOLS.W3C;
     this.sessionId = null;
-    this.jwpProxyActive = false;
+    this.wdProxyActive = false;
   }
 
   async execute(script: string, args: unknown[]): Promise<{executed: string; args: unknown[]}> {

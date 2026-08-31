@@ -1,6 +1,6 @@
 {
   "name": "@appium/semantic-release-config",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Shared semantic-release configuration factory for Appium projects",
   "keywords": [
     "appium",
@@ -31,9 +31,9 @@
   },
   "dependencies": {
     "@semantic-release/changelog": "7.0.0",
-    "@semantic-release/git": "11.0.0",
+    "@semantic-release/git": "11.0.1",
     "conventional-changelog-conventionalcommits": "9.3.1",
-    "semantic-release": "25.0.8"
+    "semantic-release": "25.0.9"
   },
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0",

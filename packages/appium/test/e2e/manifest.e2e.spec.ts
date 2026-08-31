@@ -1,10 +1,9 @@
+import assert from 'node:assert/strict';
 import path from 'node:path';
 import {describe, it, before, after, beforeEach} from 'node:test';
 
 import {fs, tempDir} from '@appium/support';
 import type {AnyManifestDataVersion} from 'appium/types';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import * as YAML from 'yaml';
 
 import {
@@ -15,9 +14,6 @@ import {
 } from '../../lib/constants';
 import {FAKE_DRIVER_DIR, resolveFixture} from '../helpers';
 import {installLocalExtension, runAppiumJson} from './e2e-helpers';
-
-const {expect} = chai;
-chai.use(chaiAsPromised);
 
 describe('manifest handling', function () {
   let appiumHome: string;
@@ -58,7 +54,7 @@ describe('manifest handling', function () {
       it('should update the manifest file to the latest schema revision', async function () {
         await runList();
         const manifest = await readManifest();
-        expect(manifest.schemaRev).to.equal(CURRENT_SCHEMA_REV);
+        assert.strictEqual(manifest.schemaRev, CURRENT_SCHEMA_REV);
       });
     });
 
@@ -68,7 +64,7 @@ describe('manifest handling', function () {
       before(async function () {
         await installLocalExtension(appiumHome, DRIVER_TYPE, FAKE_DRIVER_DIR);
         const list = await runList();
-        expect(list.fake).to.exist;
+        assert.ok(list.fake);
 
         let tmpManifest = await readManifest();
         tmpManifest.schemaRev = 2;
@@ -78,19 +74,19 @@ describe('manifest handling', function () {
         }
         await fs.writeFile(manifestPath, YAML.stringify(tmpManifest));
         tmpManifest = await readManifest();
-        expect(tmpManifest.schemaRev).to.equal(2);
-        expect((tmpManifest.drivers as Record<string, {installPath?: string}>)?.fake?.installPath).to.not.exist;
+        assert.strictEqual(tmpManifest.schemaRev, 2);
+        assert.ok(!(tmpManifest.drivers as Record<string, {installPath?: string}>)?.fake?.installPath);
         await runList();
         manifest = await readManifest();
       });
 
       it('should add an "installPath" field to each extension', function () {
         const drivers = manifest.drivers as Record<string, {installPath?: string}>;
-        expect(drivers?.fake?.installPath).to.be.a('string');
+        assert.strictEqual(typeof drivers?.fake?.installPath, 'string');
       });
 
       it('should update the manifest file to the latest schema revision', function () {
-        expect(manifest.schemaRev).to.equal(CURRENT_SCHEMA_REV);
+        assert.strictEqual(manifest.schemaRev, CURRENT_SCHEMA_REV);
       });
     });
   });

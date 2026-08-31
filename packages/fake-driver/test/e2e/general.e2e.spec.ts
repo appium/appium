@@ -1,12 +1,9 @@
+import assert from 'node:assert/strict';
 import {describe, it, before, after} from 'node:test';
 
 import type {ActionSequence} from '@appium/types';
-import chai, {expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
 import {deleteSession, initSession, W3C_PREFIXED_CAPS} from '../helpers';
-
-chai.use(chaiAsPromised);
 
 export function generalTests(context: {port: number}) {
   describe('generic actions', function () {
@@ -26,42 +23,42 @@ export function generalTests(context: {port: number}) {
     });
     it('should get geolocation', async function () {
       const geo = await driver.getGeoLocation();
-      expect(geo.latitude).to.exist;
-      expect(geo.longitude).to.exist;
+      assert.ok(geo.latitude !== undefined && geo.latitude !== null);
+      assert.ok(geo.longitude !== undefined && geo.longitude !== null);
     });
     it('should get app source', async function () {
       const source = await driver.getPageSource();
-      expect(source).to.contain('<MockNavBar id="nav"');
+      assert.ok(source.includes('<MockNavBar id="nav"'));
     });
     // TODO do we want to test driver.pageIndex? probably not
 
     it('should get the orientation', async function () {
-      expect(await driver.getOrientation()).to.equal('PORTRAIT');
+      assert.strictEqual(await driver.getOrientation(), 'PORTRAIT');
     });
     it('should set the orientation to something valid', async function () {
       await driver.setOrientation('LANDSCAPE');
-      expect(await driver.getOrientation()).to.equal('LANDSCAPE');
+      assert.strictEqual(await driver.getOrientation(), 'LANDSCAPE');
     });
     it('should not set the orientation to something invalid', async function () {
-      await expect(driver.setOrientation('INSIDEOUT')).to.be.rejectedWith(/Orientation must be/);
+      await assert.rejects(driver.setOrientation('INSIDEOUT'), /Orientation must be/);
     });
 
     it('should get a screenshot', async function () {
       const screenshot = await driver.takeScreenshot();
-      expect(screenshot).to.match(/^iVBOR/);
-      expect(screenshot).to.have.length.above(4000);
+      assert.match(screenshot, /^iVBOR/);
+      assert.ok(screenshot.length > 4000);
     });
     it('should get screen height/width', async function () {
       const {height, width} = await driver.getWindowSize();
-      expect(height).to.be.above(100);
-      expect(width).to.be.above(100);
+      assert.ok(height > 100);
+      assert.ok(width > 100);
     });
 
     it('should set implicit wait timeout', async function () {
       await driver.setTimeout({implicit: 1000});
     });
     it('should not set invalid implicit wait timeout', async function () {
-      await expect(driver.setTimeout({implicit: 'foo' as any})).to.be.rejectedWith(/values are not valid/);
+      await assert.rejects(driver.setTimeout({implicit: 'foo' as any}), /values are not valid/);
     });
 
     // skip these until basedriver supports these timeouts
@@ -69,14 +66,14 @@ export function generalTests(context: {port: number}) {
       await driver.setTimeout({script: 1000});
     });
     it.skip('should not set invalid async script timeout', async function () {
-      await expect(driver.setTimeout({script: 'foo' as any})).to.be.rejectedWith(/values are not valid/);
+      await assert.rejects(driver.setTimeout({script: 'foo' as any}), /values are not valid/);
     });
 
     it.skip('should set page load timeout', async function () {
       await driver.setTimeout({pageLoad: 1000});
     });
     it.skip('should not set page load script timeout', async function () {
-      await expect(driver.setTimeout({pageLoad: 'foo' as any})).to.be.rejectedWith(/values are not valid/);
+      await assert.rejects(driver.setTimeout({pageLoad: 'foo' as any}), /values are not valid/);
     });
 
     it('should allow performing actions that do nothing but save them', async function () {
@@ -101,39 +98,36 @@ export function generalTests(context: {port: number}) {
       ];
       await driver.performActions(actions);
       const [res] = (await driver.getLogs('actions')) as ActionSequence[][];
-      expect(res[0].type).to.eql('pointer');
-      expect(res[0].actions).to.have.length(2);
+      assert.strictEqual(res[0].type, 'pointer');
+      assert.strictEqual(res[0].actions.length, 2);
     });
 
     it('should get and set a fake thing via execute overloads', async function () {
       let thing = await driver.executeScript('fake: getThing', []);
-      expect(thing).to.not.exist;
+      assert.ok(!thing);
       await driver.executeScript('fake: setThing', [{thing: 1234}]);
       thing = await driver.executeScript('fake: getThing', []);
-      expect(thing).to.eql(1234);
+      assert.strictEqual(thing, 1234);
     });
 
     it('should add 2 numbers via execute overloads', async function () {
-      await expect(driver.executeScript('fake: addition', [{num1: 2, num2: 3}])).to.eventually.eql(5);
-      await expect(driver.executeScript('fake: addition', [{num1: 2, num2: 3, num3: 4}])).to.eventually.eql(9);
+      assert.strictEqual(await driver.executeScript('fake: addition', [{num1: 2, num2: 3}]), 5);
+      assert.strictEqual(await driver.executeScript('fake: addition', [{num1: 2, num2: 3, num3: 4}]), 9);
     });
 
     it('should throw not implemented if an execute overload isnt supported', async function () {
-      await expect(driver.executeScript('fake: blarg', [])).to.be.rejectedWith(/Unsupported execute method/);
+      await assert.rejects(driver.executeScript('fake: blarg', []), /Unsupported execute method/);
     });
 
     it('should throw an error if a required overload param is missing', async function () {
-      await expect(driver.executeScript('fake: addition', [{num3: 4}])).to.be.rejectedWith(
-        /required parameters are missing/,
-      );
+      await assert.rejects(driver.executeScript('fake: addition', [{num3: 4}]), /required parameters are missing/);
     });
 
     it('should throw an error if sending in wrong types of params', async function () {
-      await expect(driver.executeScript('fake: addition', [4, 5])).to.be.rejectedWith(/correct format of arg/);
-      await expect(driver.executeScript('fake: addition', [4])).to.be.rejectedWith(
-        /not receive an appropriate execute/,
-      );
-      await expect(driver.executeScript('fake: addition', [{num1: 2}, {extra: 'bad'}])).to.be.rejectedWith(
+      await assert.rejects(driver.executeScript('fake: addition', [4, 5]), /correct format of arg/);
+      await assert.rejects(driver.executeScript('fake: addition', [4]), /not receive an appropriate execute/);
+      await assert.rejects(
+        driver.executeScript('fake: addition', [{num1: 2}, {extra: 'bad'}]),
         /correct format of arg/,
       );
     });

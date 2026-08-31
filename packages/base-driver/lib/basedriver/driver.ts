@@ -1,4 +1,4 @@
-import {util} from '@appium/support';
+import {logger, util} from '@appium/support';
 import {
   type AppiumServer,
   BASE_DESIRED_CAP_CONSTRAINTS,
@@ -9,8 +9,8 @@ import {
   type DefaultDeleteSessionResult,
   type Driver,
   type DriverCaps,
-  type DriverData,
   type InitialOpts,
+  type LegacyCreateSessionArgs,
   type ServerArgs,
   type SessionCapabilities,
   type SingularSessionData,
@@ -264,18 +264,21 @@ export class BaseDriver<
   }
 
   /**
-   * Historically the first two arguments were reserved for JSONWP capabilities.
-   * Appium 2 has dropped the support of these, so now we only accept capability
-   * objects in W3C format and thus allow any of the three arguments to represent
-   * the latter.
+   * Start a new automation session.
+   *
+   * @param w3cCapabilities - the new session capabilities in W3C format
    */
-  async createSession(
-    w3cCapabilities1: W3CDriverCaps<C>,
-    w3cCapabilities2?: W3CDriverCaps<C>,
-    w3cCapabilities?: W3CDriverCaps<C>,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    driverData?: DriverData[],
-  ): Promise<CreateResult> {
+  async createSession(w3cCapabilities: W3CDriverCaps<C>): Promise<CreateResult>;
+  /**
+   * @deprecated Historically the first three arguments were reserved for JSONWP capabilities.
+   * Appium 2 dropped support for that protocol; these positions are now intended to carry the
+   * same W3C capabilities value, and if they differ, which one wins is unspecified. Use the
+   * single-argument overload of {@linkcode createSession} instead. The `driverData` parameter is
+   * also deprecated; use {@linkcode IAppiumIpc} for cross-session coordination instead.
+   */
+  async createSession(...legacyArgs: LegacyCreateSessionArgs<C>): Promise<CreateResult>;
+  async createSession(...legacyArgs: LegacyCreateSessionArgs<C>): Promise<CreateResult> {
+    const [w3cCapabilities1, w3cCapabilities2, w3cCapabilities] = legacyArgs;
     if (this.sessionId !== null) {
       throw new errors.SessionNotCreatedError('Cannot create a new session while one is in progress');
     }
@@ -293,7 +296,10 @@ export class BaseDriver<
     this.setProtocolW3C();
 
     this.originalCaps = originalCaps;
-    this.log.debug(`Creating session with W3C capabilities: ${JSON.stringify(originalCaps, null, 2)}`);
+    this.log.debug(
+      'Creating session with W3C capabilities: %s',
+      logger.markSensitive(JSON.stringify(originalCaps, null, 2)),
+    );
 
     let caps: DriverCaps<C>;
     try {
@@ -371,6 +377,9 @@ export class BaseDriver<
     return {capabilities: this.caps};
   }
 
+  /**
+   * Stop the current automation session.
+   */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async deleteSession(sessionId?: string | null) {
     await this.clearNewCommandTimeout();

@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.8.0](https://github.com/appium/appium/compare/@appium/base-driver@10.7.2...@appium/base-driver@10.8.0) (2026-08-24)
+
+### Features
+
+* **base-driver:** add /appium-prefixed routes for JSONWP/MJSONWP end points ([#22642](https://github.com/appium/appium/issues/22642)) ([d5b3160](https://github.com/appium/appium/commit/d5b316031e3615784d18d1de2e67b02b47fea7fb))
+* **base-driver:** add httpServer.frontRouter for global extension middleware ([#22632](https://github.com/appium/appium/issues/22632)) ([f06226b](https://github.com/appium/appium/commit/f06226b7bb2fb7ee2f3a61833f4a1d7777d4ef21))
+
+### Bug Fixes
+
+* **base-driver,storage-plugin:** redact sensitive payloads in debug logs ([#22549](https://github.com/appium/appium/issues/22549)) ([281e61c](https://github.com/appium/appium/commit/281e61c297f89e50a016051066cfcf808af9aaf2))
+* **base-driver:** anchor CORS async-response regex and match on req.path ([#22639](https://github.com/appium/appium/issues/22639)) ([4422d99](https://github.com/appium/appium/commit/4422d99d45243815a782d11d6b00ea43f43aaf22))
+* **base-driver:** keep the find error if the page source fails ([#22572](https://github.com/appium/appium/issues/22572)) ([03dac9d](https://github.com/appium/appium/commit/03dac9d6e845965d17c7077cc706965afdbc14b6))
+* **base-driver:** reject a non-string url without throwing TypeError ([#22625](https://github.com/appium/appium/issues/22625)) ([26ffad4](https://github.com/appium/appium/commit/26ffad4f24192ac3414d8d82a07107386866ec9a))
+* **base-driver:** return a W3C error for a malformed JSON body ([#22606](https://github.com/appium/appium/issues/22606)) ([68ce0e2](https://github.com/appium/appium/commit/68ce0e2bddd9adb7514d16c840b988a1af92291b))
+
+
 ## [10.7.2](https://github.com/appium/appium/compare/@appium/base-driver@10.7.1...@appium/base-driver@10.7.2) (2026-07-25)
 
 

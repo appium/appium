@@ -1,15 +1,8 @@
-import {
-  errorFromMJSONWPStatusCode,
-  errorFromW3CJsonCode,
-  errors,
-  getResponseForW3CError,
-  isErrorType,
-} from './errors.js';
+import {errorFromW3CJsonCode, errors, getResponseForW3CError, isErrorType} from './errors.js';
 import {
   checkParams,
   CREATE_SESSION_COMMAND,
   DELETE_SESSION_COMMAND,
-  determineProtocol,
   GET_STATUS_COMMAND,
   isSessionCommand,
   LIST_DRIVER_COMMANDS_COMMAND,
@@ -25,8 +18,6 @@ export {
   checkParams,
   CREATE_SESSION_COMMAND,
   DELETE_SESSION_COMMAND,
-  determineProtocol,
-  errorFromMJSONWPStatusCode,
   errorFromW3CJsonCode,
   errors,
   GET_STATUS_COMMAND,

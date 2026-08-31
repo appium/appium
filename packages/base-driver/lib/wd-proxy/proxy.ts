@@ -8,28 +8,16 @@ import type {AxiosError, AxiosResponse, RawAxiosRequestConfig} from 'axios';
 import type {Request, Response} from 'express';
 import {match as pathToRegexMatch} from 'path-to-regexp';
 
-import {DEFAULT_BASE_PATH, MAX_LOG_BODY_LENGTH, PROTOCOLS} from '../constants.js';
-import {getSummaryByCode} from '../jsonwp-status/status.js';
-import {
-  errorFromMJSONWPStatusCode,
-  errorFromW3CJsonCode,
-  errors,
-  getResponseForW3CError,
-  isErrorType,
-} from '../protocol/errors.js';
+import {DEFAULT_BASE_PATH, MAX_LOG_BODY_LENGTH} from '../constants.js';
+import {errorFromW3CJsonCode, errors, getResponseForW3CError, isErrorType} from '../protocol/errors.js';
 import {ensureW3cResponse, formatResponseValue} from '../protocol/helpers.js';
 import {isSessionCommand, routeToCommandName} from '../protocol/index.js';
 import {omit, pick} from '../utils.js';
-import {ProtocolConverter} from './protocol-converter.js';
 import {ProxyRequest} from './proxy-request.js';
 
 const DEFAULT_LOG = logger.getLogger('WD Proxy');
 const DEFAULT_REQUEST_TIMEOUT = 240000;
 const COMMAND_WITH_SESSION_ID_MATCHER = pathToRegexMatch('{/*prefix}/session/:sessionId{/*command}');
-
-const {MJSONWP, W3C} = PROTOCOLS;
-
-type Protocol = (typeof PROTOCOLS)[keyof typeof PROTOCOLS];
 
 const ALLOWED_OPTS = [
   'scheme',
@@ -44,7 +32,7 @@ const ALLOWED_OPTS = [
   'headers',
 ] as const;
 
-export class JWProxy {
+export class WebDriverProxy {
   readonly scheme: string;
   readonly server: string;
   readonly port: number;
@@ -55,9 +43,7 @@ export class JWProxy {
   readonly headers: HTTPHeaders | undefined;
   readonly httpAgent: http.Agent;
   readonly httpsAgent: https.Agent;
-  readonly protocolConverter: ProtocolConverter;
 
-  private _downstreamProtocol: Protocol | null | undefined;
   private _activeRequests: ProxyRequest[];
   private readonly _log: AppiumLogger | undefined;
 
@@ -95,7 +81,6 @@ export class JWProxy {
     this.headers = options.headers;
 
     this._activeRequests = [];
-    this._downstreamProtocol = null;
     const agentOpts = {
       keepAlive: opts.keepAlive ?? true,
       maxSockets: 10,
@@ -103,7 +88,6 @@ export class JWProxy {
     };
     this.httpAgent = new http.Agent(agentOpts);
     this.httpsAgent = new https.Agent(agentOpts);
-    this.protocolConverter = new ProtocolConverter(this.proxy.bind(this), opts.log);
     this._log = opts.log;
 
     this.log.debug(`${this.constructor.name} options: ${JSON.stringify(options)}`);
@@ -111,21 +95,6 @@ export class JWProxy {
 
   get log(): AppiumLogger {
     return this._log ?? DEFAULT_LOG;
-  }
-
-  /**
-   * Gets the protocol used by the downstream server (W3C or MJSONWP).
-   */
-  get downstreamProtocol(): Protocol | null | undefined {
-    return this._downstreamProtocol;
-  }
-
-  /**
-   * Sets the protocol used by the downstream server (W3C or MJSONWP).
-   */
-  set downstreamProtocol(value: Protocol | null | undefined) {
-    this._downstreamProtocol = value;
-    this.protocolConverter.downstreamProtocol = value;
   }
 
   /**
@@ -244,17 +213,9 @@ export class JWProxy {
       this.log.debug(`Got response with status ${status}: %s`, logger.markSensitive(truncateBody(data)));
       isResponseLogged = true;
       const isSessionCreationRequest = url.endsWith('/session') && method === 'POST';
-      if (isSessionCreationRequest) {
-        if (status === 200) {
-          const value = data.value as Record<string, unknown> | undefined;
-          const raw = data.sessionId ?? value?.sessionId;
-          this.sessionId = typeof raw === 'string' ? raw : raw != null ? String(raw) : null;
-        }
-        this.downstreamProtocol = this.getProtocolFromResBody(data) ?? this.downstreamProtocol;
-        this.log.info(`Determined the downstream protocol as '${this.downstreamProtocol}'`);
-      }
-      if (Object.hasOwn(data, 'status') && parseInt(data.status as string, 10) !== 0) {
-        throwProxyError(data);
+      if (isSessionCreationRequest && status === 200) {
+        const raw = (data.value as Record<string, unknown> | undefined)?.sessionId;
+        this.sessionId = typeof raw === 'string' ? raw : raw != null ? String(raw) : null;
       }
       return [
         {
@@ -286,18 +247,6 @@ export class JWProxy {
   }
 
   /**
-   * Detects the downstream protocol from a response body.
-   */
-  getProtocolFromResBody(resObj: Record<string, unknown>): Protocol | undefined {
-    if (Number.isInteger(resObj.status)) {
-      return MJSONWP;
-    }
-    if (resObj.value !== undefined) {
-      return W3C;
-    }
-  }
-
-  /**
    * Proxies a command identified by its HTTP method and URL to the downstream server.
    */
   async proxyCommand(url: string, method: HTTPMethod, body: HTTPBody = null): Promise<[ProxyResponse, HTTPBody]> {
@@ -309,7 +258,8 @@ export class JWProxy {
     }
     this.log.debug(`Matched '${url}' to command name '${commandName}'`);
 
-    return await this.protocolConverter.convertAndProxy(commandName, url, method, body);
+    const proxyBody = commandName === 'timeouts' ? this.getTimeoutsRequestBody(body) : body;
+    return await this.proxy(url, method, proxyBody);
   }
 
   /**
@@ -327,36 +277,16 @@ export class JWProxy {
       throw new errors.UnknownError((err as Error).message);
     }
     const resBody = resBodyObj as Record<string, unknown>;
-    const protocol = this.getProtocolFromResBody(resBody);
-    if (protocol === MJSONWP) {
-      if (response.statusCode === 200 && resBody.status === 0) {
-        return resBody.value;
-      }
-      const status = parseInt(resBody.status as string, 10);
-      if (!isNaN(status) && status !== 0) {
-        let message: unknown = resBody.value;
-        if (util.isPlainObject(message) && Object.hasOwn(message, 'message')) {
-          message = (message as Record<string, unknown>).message;
-        }
-        throw errorFromMJSONWPStatusCode(
-          status,
-          util.isEmpty(message) ? getSummaryByCode(status) : (message as string | {message: string}),
-        );
-      }
-    } else if (protocol === W3C) {
-      if (response.statusCode < 300) {
-        return resBody.value;
-      }
-      if (util.isPlainObject(resBody.value) && resBody.value.error) {
-        const value = resBody.value;
-        throw errorFromW3CJsonCode(
-          value.error as string,
-          (value.message as string) ?? '',
-          value.stacktrace as string | undefined,
-        );
-      }
-    } else if (response.statusCode === 200) {
-      return resBodyObj;
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      return resBody.value;
+    }
+    if (util.isPlainObject(resBody.value) && resBody.value.error) {
+      const value = resBody.value;
+      throw errorFromW3CJsonCode(
+        value.error as string,
+        (value.message as string) ?? '',
+        value.stacktrace as string | undefined,
+      );
     }
     throw new errors.UnknownError(
       `Did not know what to do with response code '${response.statusCode}' ` +
@@ -364,14 +294,6 @@ export class JWProxy {
           length: 300,
         })}'`,
     );
-  }
-
-  /**
-   * Extracts a session id from a WebDriver-style URL.
-   */
-  getSessionIdFromUrl(url: string): string | null {
-    const match = url.match(/\/session\/([^/]+)/);
-    return match ? match[1] : null;
   }
 
   /**
@@ -404,18 +326,18 @@ export class JWProxy {
     }
 
     const resBody = resBodyObj as Record<string, unknown>;
-    if (Object.hasOwn(resBody, 'sessionId')) {
-      const reqSessionId = this.getSessionIdFromUrl(req.originalUrl);
-      if (reqSessionId) {
-        this.log.info(`Replacing sessionId ${resBody.sessionId} with ${reqSessionId}`);
-        resBody.sessionId = reqSessionId;
-      } else if (this.sessionId) {
-        this.log.info(`Replacing sessionId ${resBody.sessionId} with ${this.sessionId}`);
-        resBody.sessionId = this.sessionId;
-      }
-    }
     resBody.value = formatResponseValue(resBody.value as object | undefined);
     res.status(statusCode).json(ensureW3cResponse(resBody));
+  }
+
+  /** Reshapes a legacy `/timeouts` `{type, ms}` body into the single-key W3C form downstream servers expect. */
+  private getTimeoutsRequestBody(body: HTTPBody): HTTPBody {
+    const bodyObj = (util.safeJsonParse(body) as Record<string, unknown>) ?? {};
+    if (!Object.hasOwn(bodyObj, 'ms') || !Object.hasOwn(bodyObj, 'type')) {
+      return body;
+    }
+    const type = bodyObj.type === 'page load' ? 'pageLoad' : bodyObj.type;
+    return {[type as string]: bodyObj.ms} as HTTPBody;
   }
 
   /**

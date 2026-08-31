@@ -4,7 +4,6 @@ import {before, describe, it} from 'node:test';
 import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
 
 import {WebDriverProxy} from '../../../lib/index.js';
-import {errors, isErrorType} from '../../../lib/protocol/errors.js';
 import {type MockRequestOpts, request} from './mock-request.js';
 
 function buildReqRes(url: string, method: string, body?: any): [any, any] {
@@ -57,10 +56,10 @@ describe('proxy', function () {
   it('should save session id on session creation', async function () {
     const j = mockProxy();
     const [res, body] = await j.proxy('/session', 'POST', {
-      desiredCapabilities: {},
+      capabilities: {alwaysMatch: {}},
     });
     assert.strictEqual(res.statusCode, 200);
-    assert.deepStrictEqual(body, {status: 0, sessionId: '123', value: {browserName: 'boo'}});
+    assert.deepStrictEqual(body, {value: {sessionId: '123', capabilities: {browserName: 'boo'}}});
     assert.strictEqual(j.sessionId, '123');
   });
   describe('getUrlForProxy', function () {
@@ -154,7 +153,7 @@ describe('proxy', function () {
       const j = mockProxy();
       const [res, body] = await j.proxy('/status', 'GET');
       assert.strictEqual(res.statusCode, 200);
-      assert.deepStrictEqual(body, {status: 0, value: {foo: 'bar'}});
+      assert.deepStrictEqual(body, {value: {foo: 'bar'}});
     });
     it('should apply custom headers to downstream requests', async function () {
       const customHeaders = {
@@ -178,14 +177,6 @@ describe('proxy', function () {
       const j = mockProxy({sessionId: '123'});
       await assert.rejects(j.proxy('/badurl', 'GET'), /Could not proxy/);
     });
-    it('should proxy error responses and codes', async function () {
-      const j = mockProxy({sessionId: '123'});
-      try {
-        await j.proxy('/element/bad/text', 'GET');
-      } catch (e: any) {
-        assert.strictEqual(isErrorType(e.getActualError(), errors.ElementNotVisibleError), true);
-      }
-    });
   });
   describe('command proxy', function () {
     it('should successfully proxy command', async function () {
@@ -201,27 +192,9 @@ describe('proxy', function () {
       const j = mockProxy({sessionId: '123'});
       await assert.rejects(j.command('/element/bad/text', 'GET'), /Invisible element/);
     });
-    it('should throw when a command fails with a 200 because the status is not 0', async function () {
+    it('should throw when a command returns a non-2xx, non-error-shaped response', async function () {
       const j = mockProxy({sessionId: '123'});
-      let e: any = null;
-      try {
-        await j.command('/element/200/text', 'GET');
-      } catch (err: any) {
-        e = err;
-      }
-      assert.ok(e);
-      assert.strictEqual(e.error, 'element not visible');
-    });
-    it('should throw when a command fails with a 100', async function () {
-      const j = mockProxy({sessionId: '123'});
-      let e: any = null;
-      try {
-        await j.command('/session/badchrome/nochrome', 'GET');
-      } catch (err: any) {
-        e = err;
-      }
-      assert.ok(e);
-      assert.ok(e.message.includes('chrome not reachable'));
+      await assert.rejects(j.command('/session/badchrome/nochrome', 'GET'), /chrome not reachable/);
     });
   });
   describe('req/res proxy', function () {
@@ -233,7 +206,7 @@ describe('proxy', function () {
       assert.strictEqual(res.sentCode, 200);
       assert.deepStrictEqual(res.sentBody, {value: {foo: 'bar'}});
     });
-    it('should delete the inner session id', async function () {
+    it('should strip stray status/sessionId fields from a downstream response', async function () {
       const j = mockProxy({sessionId: '123'});
       const [req, res] = buildReqRes('/element/200/value', 'GET');
       await j.proxyReqRes(req, res);

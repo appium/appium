@@ -10,7 +10,7 @@ import {exec} from 'teen_process';
 import {remote as wdio} from 'webdriverio';
 import type {Browser} from 'webdriverio';
 
-import {MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY} from '../../lib/execute-child.js';
+import {W3C_ELEMENT_KEY} from '../../lib/execute-child.js';
 
 const THIS_PLUGIN_DIR = node.getModuleRootSync('@appium/execute-driver-plugin', fileURLToPath(import.meta.url))!;
 const APPIUM_HOME = path.join(THIS_PLUGIN_DIR, 'local_appium_home');
@@ -122,7 +122,6 @@ describe('ExecuteDriverPlugin', function () {
       const {result} = await driver.executeDriverScript(script);
       assert.deepStrictEqual(result, {
         [W3C_ELEMENT_KEY]: '1',
-        [MJSONWP_ELEMENT_KEY]: '1',
       });
     });
 
@@ -134,7 +133,6 @@ describe('ExecuteDriverPlugin', function () {
       const {result} = await driver.executeDriverScript(script);
       const elObj = {
         [W3C_ELEMENT_KEY]: '1',
-        [MJSONWP_ELEMENT_KEY]: '1',
       };
       assert.deepStrictEqual(result, {element: elObj, elements: [elObj, elObj]});
     });

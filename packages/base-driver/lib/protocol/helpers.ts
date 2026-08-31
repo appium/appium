@@ -1,26 +1,15 @@
 import {util} from '@appium/support';
 
-import {duplicateKeys} from '../basedriver/helpers.js';
-import {MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY} from '../constants.js';
-
 /**
- * Preprocesses the resulting value for API responses,
- * so they have keys for both W3C and JSONWP protocols.
+ * Preprocesses the resulting value for API responses.
  * The argument value is NOT mutated.
  *
  * @param resValue - The actual response value
  * @returns Either modified value or the same one if nothing has been modified
  */
 export function formatResponseValue(resValue: object | undefined): object | null {
-  if (resValue === undefined) {
-    // convert undefined to null
-    return null;
-  }
-  // If the MJSONWP element key format (ELEMENT) was provided,
-  // add a duplicate key (element-6066-11e4-a52e-4f735466cecf)
-  // If the W3C element key format (element-6066-11e4-a52e-4f735466cecf)
-  // was provided, add a duplicate key (ELEMENT)
-  return duplicateKeys(resValue, MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY);
+  // convert undefined to null
+  return resValue === undefined ? null : resValue;
 }
 
 /**

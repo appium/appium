@@ -1,50 +1,8 @@
 import {randomUUID} from 'node:crypto';
 import _fs from 'node:fs';
-import {createRequire} from 'node:module';
 import path from 'node:path';
 
-import {exec} from 'teen_process';
-
-import log from './logger.js';
-import {isWindows} from './system.js';
-
-const require = createRequire(import.meta.url);
-
 const OBJECTS_MAPPING = new WeakMap<object, string>();
-
-/**
- * Utility function to extend node functionality, allowing us to require
- * modules that are installed globally. If the package cannot be required,
- * this will attempt to link the package and then re-require it
- *
- * @param packageName - the name of the package to be required
- * @returns The package object
- * @throws {Error} If the package is not found locally or globally
- */
-export async function requirePackage(packageName: string): Promise<unknown> {
-  try {
-    log.debug(`Loading local package '${packageName}'`);
-    return require(packageName);
-  } catch (err) {
-    log.debug(`Failed to load local package '${packageName}': ${(err as Error).message}`);
-  }
-
-  try {
-    const globalPackageName = path.resolve(process.env.npm_config_prefix ?? '', 'lib', 'node_modules', packageName);
-    log.debug(`Loading global package '${globalPackageName}'`);
-    return require(globalPackageName);
-  } catch (err) {
-    log.debug(`Failed to load global package '${packageName}': ${(err as Error).message}`);
-  }
-
-  try {
-    await linkGlobalPackage(packageName);
-    log.debug(`Retrying load of linked package '${packageName}'`);
-    return require(packageName);
-  } catch (err) {
-    throw log.errorWithException(`Unable to load package '${packageName}': ${(err as Error).message}`);
-  }
-}
 
 /**
  * Calculate the in-depth size in memory of the provided object.
@@ -140,22 +98,6 @@ const ECMA_SIZES = Object.freeze({
 });
 
 type SizeCalculator = (obj: unknown) => number;
-
-async function linkGlobalPackage(packageName: string): Promise<void> {
-  try {
-    log.debug(`Linking package '${packageName}'`);
-    const cmd = isWindows() ? 'npm.cmd' : 'npm';
-    await exec(cmd, ['link', packageName], {timeout: 20000});
-  } catch (err) {
-    const e = err as Error & {stderr?: string};
-    const msg = `Unable to load package '${packageName}', linking failed: ${e.message}`;
-    log.debug(msg);
-    if (e.stderr) {
-      log.debug(e.stderr);
-    }
-    throw new Error(msg, {cause: err});
-  }
-}
 
 function extractAllProperties(obj: object): (string | symbol)[] {
   const stringProperties: (string | symbol)[] = [];

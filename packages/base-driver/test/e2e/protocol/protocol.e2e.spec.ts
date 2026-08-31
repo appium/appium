@@ -384,7 +384,7 @@ describe('Protocol', function () {
           delete (driver as any).performActions;
         });
 
-        it(`should fail with a 408 error if it throws a TimeoutError exception`, async function () {
+        it(`should fail with a 500 error if it throws a TimeoutError exception`, async function () {
           const setUrlStub = sandbox.stub(driver, 'setUrl').callsFake(function () {
             throw new errors.TimeoutError();
           });
@@ -396,7 +396,7 @@ describe('Protocol', function () {
               url: 'https://example.com/',
             },
           });
-          assert.strictEqual(status, 408);
+          assert.strictEqual(status, 500);
 
           const {error: w3cError, message, stacktrace} = data.value;
           assert.match(stacktrace, /protocol\.(js|ts)/);

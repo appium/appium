@@ -8,16 +8,8 @@ import {generateDriverLogPrefix} from '../basedriver/helpers.js';
 import {log} from '../basedriver/logger.js';
 import {DEFAULT_BASE_PATH, MAX_LOG_BODY_LENGTH, PROTOCOLS} from '../constants.js';
 import type {RouteConfiguringFunction} from '../express/server.js';
-import {isW3cCaps} from '../helpers/capabilities.js';
 import {omitKeys} from '../utils.js';
-import {
-  BadParametersError,
-  errorFromMJSONWPStatusCode,
-  errorFromW3CJsonCode,
-  errors,
-  getResponseForW3CError,
-  isErrorType,
-} from './errors.js';
+import {BadParametersError, errorFromW3CJsonCode, errors, getResponseForW3CError, isErrorType} from './errors.js';
 import {ensureW3cResponse, formatResponseValue} from './helpers.js';
 import {METHOD_MAP, NO_SESSION_ID_COMMANDS} from './routes/index.js';
 import {validators} from './validators.js';
@@ -29,14 +21,6 @@ export const LIST_DRIVER_COMMANDS_COMMAND = 'listCommands';
 export const LIST_DRIVER_EXTENSIONS_COMMAND = 'listExtensions';
 
 export const deprecatedCommandsLogged: Set<string> = new Set();
-
-/**
- * Infer W3C vs MJSONWP from new-session capability payloads.
- * @param createSessionArgs - Arguments passed to the createSession command
- */
-export function determineProtocol(createSessionArgs: any[]): keyof typeof PROTOCOLS {
-  return createSessionArgs.some(isW3cCaps) ? PROTOCOLS.W3C : PROTOCOLS.MJSONWP;
-}
 
 /**
  * Extract and validate the sessionId from the Express route parameter.
@@ -288,7 +272,7 @@ export function routeConfiguringFunction(driver: Core<any>): RouteConfiguringFun
  * @param req - Incoming HTTP request
  * @param command - Resolved driver command name
  */
-export function driverShouldDoJwpProxy(driver: Core<any>, req: Request, command: string): boolean {
+export function driverShouldDoWdProxy(driver: Core<any>, req: Request, command: string): boolean {
   const sessionId = getSessionId(driver, req);
   // drivers need to explicitly say when the proxy is active
   if (!driver.proxyActive(sessionId)) {
@@ -407,7 +391,7 @@ function buildHandler(
         throw new errors.NoSuchDriverError();
       }
 
-      // if the driver is currently proxying commands to another JSONWP server, bypass all our
+      // if the driver is currently proxying commands to another WebDriver server, bypass all our
       // checks and assume the upstream server knows what it's doing. But keep this in the
       // try/catch block so if proxying itself fails, we give a message to the client. Of course we
       // only want to do these when we have a session command; the Appium driver must be
@@ -416,7 +400,7 @@ function buildHandler(
       // commands and generally would not want that command to be proxied instead of handled by the
       // plugin)
       let didPluginOverrideProxy = false;
-      if (isSessCmd && !spec.neverProxy && spec.command && driverShouldDoJwpProxy(driver, req, spec.command)) {
+      if (isSessCmd && !spec.neverProxy && spec.command && driverShouldDoWdProxy(driver, req, spec.command)) {
         if (
           !('pluginsToHandleCmd' in driver) ||
           typeof driver.pluginsToHandleCmd !== 'function' ||
@@ -449,12 +433,6 @@ function buildHandler(
         jsonObj = unwrapParams(spec.payloadParams, jsonObj);
       }
 
-      if (spec.command === CREATE_SESSION_COMMAND) {
-        // try to determine protocol by session creation args, so we can throw a
-        // properly formatted error if arguments validation fails
-        currentProtocol = determineProtocol(makeArgs(req.params, jsonObj, spec.payloadParams || {}));
-      }
-
       // ensure that the json payload conforms to the spec
       if (spec.payloadParams) {
         checkParams(spec.payloadParams, jsonObj, currentProtocol);
@@ -464,7 +442,6 @@ function buildHandler(
       // the driver methods
       const args = makeArgs(req.params, jsonObj, spec.payloadParams || {});
       let driverRes: any;
-      // validate command args according to MJSONWP
       const validator = (validators as Record<string, ((...validatorArgs: any[]) => void) | undefined>)[spec.command];
       if (validator) {
         validator(...args);
@@ -506,13 +483,9 @@ function buildHandler(
         getLogger(driver, newSessionId).debug(
           `Cached the protocol value '${currentProtocol}' for the new session ${newSessionId}`,
         );
-        if (currentProtocol === PROTOCOLS.MJSONWP) {
-          driverRes = driverRes[1];
-        } else if (currentProtocol === PROTOCOLS.W3C) {
-          driverRes = {
-            capabilities: driverRes[1],
-          };
-        }
+        driverRes = {
+          capabilities: driverRes[1],
+        };
       }
 
       driverRes = formatResponseValue(driverRes);
@@ -528,13 +501,8 @@ function buildHandler(
         driverRes = null;
       }
 
-      // if the status is not 0,  throw the appropriate error for status code.
-      if (util.hasValue(driverRes)) {
-        if (util.hasValue(driverRes.status) && !isNaN(driverRes.status) && parseInt(driverRes.status, 10) !== 0) {
-          throw errorFromMJSONWPStatusCode(driverRes.status, driverRes.value);
-        } else if (util.isPlainObject(driverRes.value) && driverRes.value.error) {
-          throw errorFromW3CJsonCode(driverRes.value.error, driverRes.value.message, driverRes.value.stacktrace);
-        }
+      if (util.hasValue(driverRes) && util.isPlainObject(driverRes.value) && driverRes.value.error) {
+        throw errorFromW3CJsonCode(driverRes.value.error, driverRes.value.message, driverRes.value.stacktrace);
       }
 
       httpResBody.value = driverRes;

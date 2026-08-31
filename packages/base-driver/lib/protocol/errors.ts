@@ -2,7 +2,6 @@ import {logger, util} from '@appium/support';
 import type {Class, ErrorBiDiCommandResponse} from '@appium/types';
 import {StatusCodes as HTTPStatusCodes} from 'http-status-codes';
 
-const mjsonwpLog = logger.getLogger('MJSONWP');
 const w3cLog = logger.getLogger('W3C');
 
 class BaseError extends Error {
@@ -40,14 +39,12 @@ class BaseError extends Error {
 
 // base error class for all of our errors
 export class ProtocolError extends BaseError {
-  public jsonwpCode: number;
   public error: string;
   public w3cStatus: number;
   protected _stacktrace: string | undefined;
 
-  constructor(msg: string, jsonwpCode: number, w3cStatus: number, w3cErrorSignature: string, cause?: Error) {
+  constructor(msg: string, w3cStatus: number, w3cErrorSignature: string, cause?: Error) {
     super(msg, cause);
-    this.jsonwpCode = jsonwpCode ?? UnknownError.code();
     this.error = w3cErrorSignature ?? UnknownError.error();
     this.w3cStatus = w3cStatus ?? UnknownError.w3cStatus();
     this._stacktrace = undefined;
@@ -89,15 +86,10 @@ export class NoSuchDriverError extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'A session is either terminated or not started',
-      NoSuchDriverError.code(),
       NoSuchDriverError.w3cStatus(),
       NoSuchDriverError.error(),
       cause,
     );
-  }
-
-  static code() {
-    return 6;
   }
   // W3C Error is called InvalidSessionID
   static w3cStatus() {
@@ -112,15 +104,10 @@ export class NoSuchElementError extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'An element could not be located on the page using the given ' + 'search parameters.',
-      NoSuchElementError.code(),
       NoSuchElementError.w3cStatus(),
       NoSuchElementError.error(),
       cause,
     );
-  }
-
-  static code() {
-    return 7;
   }
   static w3cStatus() {
     return HTTPStatusCodes.NOT_FOUND;
@@ -140,19 +127,12 @@ export class NoSuchShadowRootError extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'The element does not have a shadow root attached.',
-      NoSuchShadowRootError.code(),
       NoSuchShadowRootError.w3cStatus(),
       NoSuchShadowRootError.error(),
       cause,
     );
   }
 
-  // W3C-only error. No historical JSONWP code is assigned to
-  // "no such shadow root"; keep a placeholder so the super call
-  // typechecks (other errors in this file follow the same shape).
-  static code() {
-    return 65;
-  }
   static error() {
     return 'no such shadow root';
   }
@@ -165,15 +145,10 @@ export class NoSuchFrameError extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'A request to switch to a frame could not be satisfied because ' + 'the frame could not be found.',
-      NoSuchFrameError.code(),
       NoSuchFrameError.w3cStatus(),
       NoSuchFrameError.error(),
       cause,
     );
-  }
-
-  static code() {
-    return 8;
   }
   static error() {
     return 'no such frame';
@@ -190,15 +165,10 @@ export class UnknownCommandError extends ProtocolError {
         'The requested resource could not be found, or a request was ' +
           'received using an HTTP method that is not supported by the mapped ' +
           'resource.',
-      UnknownCommandError.code(),
       UnknownCommandError.w3cStatus(),
       UnknownCommandError.error(),
       cause,
     );
-  }
-
-  static code() {
-    return 9;
   }
   static w3cStatus() {
     return HTTPStatusCodes.NOT_FOUND;
@@ -212,15 +182,10 @@ export class StaleElementReferenceError extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'An element command failed because the referenced element is no ' + 'longer attached to the DOM.',
-      StaleElementReferenceError.code(),
       StaleElementReferenceError.w3cStatus(),
       StaleElementReferenceError.error(),
       cause,
     );
-  }
-
-  static code() {
-    return 10;
   }
   static w3cStatus() {
     return HTTPStatusCodes.NOT_FOUND;
@@ -234,15 +199,10 @@ export class ElementNotVisibleError extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'An element command could not be completed because the element is ' + 'not visible on the page.',
-      ElementNotVisibleError.code(),
       ElementNotVisibleError.w3cStatus(),
       ElementNotVisibleError.error(),
       cause,
     );
-  }
-
-  static code() {
-    return 11;
   }
   static w3cStatus() {
     return HTTPStatusCodes.BAD_REQUEST;
@@ -258,15 +218,10 @@ export class InvalidElementStateError extends ProtocolError {
       message ||
         'An element command could not be completed because the element is ' +
           'in an invalid state (e.g. attempting to click a disabled element).',
-      InvalidElementStateError.code(),
       InvalidElementStateError.w3cStatus(),
       InvalidElementStateError.error(),
       cause,
     );
-  }
-
-  static code() {
-    return 12;
   }
   static w3cStatus() {
     return HTTPStatusCodes.BAD_REQUEST;
@@ -280,15 +235,10 @@ export class UnknownError extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'An unknown server-side error occurred while processing the command.',
-      UnknownError.code(),
       UnknownError.w3cStatus(),
       UnknownError.error(),
       cause,
     );
-  }
-
-  static code() {
-    return 13;
   }
   static w3cStatus() {
     return HTTPStatusCodes.INTERNAL_SERVER_ERROR;
@@ -302,15 +252,10 @@ export class UnknownMethodError extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'The requested command matched a known URL but did not match an method for that URL',
-      UnknownMethodError.code(),
       UnknownMethodError.w3cStatus(),
       UnknownMethodError.error(),
       cause,
     );
-  }
-
-  static code() {
-    return 405;
   }
   static w3cStatus() {
     return HTTPStatusCodes.METHOD_NOT_ALLOWED;
@@ -324,15 +269,10 @@ export class UnsupportedOperationError extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'A server-side error occurred. Command cannot be supported.',
-      UnsupportedOperationError.code(),
       UnsupportedOperationError.w3cStatus(),
       UnsupportedOperationError.error(),
       cause,
     );
-  }
-
-  static code() {
-    return 405;
   }
   static w3cStatus() {
     return HTTPStatusCodes.INTERNAL_SERVER_ERROR;
@@ -346,15 +286,10 @@ export class ElementIsNotSelectableError extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'An attempt was made to select an element that cannot be selected.',
-      ElementIsNotSelectableError.code(),
       ElementIsNotSelectableError.w3cStatus(),
       ElementIsNotSelectableError.error(),
       cause,
     );
-  }
-
-  static code() {
-    return 15;
   }
   static error() {
     return 'element not selectable';
@@ -370,15 +305,10 @@ export class ElementClickInterceptedError extends ProtocolError {
       message ||
         'The Element Click command could not be completed because the element receiving ' +
           'the events is obscuring the element that was requested clicked',
-      ElementClickInterceptedError.code(),
       ElementClickInterceptedError.w3cStatus(),
       ElementClickInterceptedError.error(),
       cause,
     );
-  }
-
-  static code() {
-    return 64;
   }
   static error() {
     return 'element click intercepted';
@@ -392,15 +322,10 @@ export class ElementNotInteractableError extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'A command could not be completed because the element is not pointer- or keyboard interactable',
-      ElementNotInteractableError.code(),
       ElementNotInteractableError.w3cStatus(),
       ElementNotInteractableError.error(),
       cause,
     );
-  }
-
-  static code() {
-    return 60;
   }
   static error() {
     return 'element not interactable';
@@ -415,7 +340,6 @@ export class InsecureCertificateError extends ProtocolError {
     super(
       message ||
         'Navigation caused the user agent to hit a certificate warning, which is usually the result of an expired or invalid TLS certificate',
-      UnknownError.code(),
       InsecureCertificateError.w3cStatus(),
       InsecureCertificateError.error(),
       cause,
@@ -434,15 +358,10 @@ export class JavaScriptError extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'An error occurred while executing user supplied JavaScript.',
-      JavaScriptError.code(),
       JavaScriptError.w3cStatus(),
       JavaScriptError.error(),
       cause,
     );
-  }
-
-  static code() {
-    return 17;
   }
   static w3cStatus() {
     return HTTPStatusCodes.INTERNAL_SERVER_ERROR;
@@ -456,15 +375,10 @@ export class XPathLookupError extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'An error occurred while searching for an element by XPath.',
-      XPathLookupError.code(),
       XPathLookupError.w3cStatus(),
       XPathLookupError.error(),
       cause,
     );
-  }
-
-  static code() {
-    return 19;
   }
   static w3cStatus() {
     return HTTPStatusCodes.BAD_REQUEST;
@@ -478,15 +392,10 @@ export class TimeoutError extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'An operation did not complete before its timeout expired.',
-      TimeoutError.code(),
       TimeoutError.w3cStatus(),
       TimeoutError.error(),
       cause,
     );
-  }
-
-  static code() {
-    return 21;
   }
   static w3cStatus() {
     return HTTPStatusCodes.REQUEST_TIMEOUT;
@@ -501,15 +410,10 @@ export class NoSuchWindowError extends ProtocolError {
     super(
       message ||
         'A request to switch to a different window could not be satisfied ' + 'because the window could not be found.',
-      NoSuchWindowError.code(),
       NoSuchWindowError.w3cStatus(),
       NoSuchWindowError.error(),
       cause,
     );
-  }
-
-  static code() {
-    return 23;
   }
   static error() {
     return 'no such window';
@@ -523,15 +427,10 @@ export class InvalidArgumentError extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'The arguments passed to the command are either invalid or malformed',
-      InvalidArgumentError.code(),
       InvalidArgumentError.w3cStatus(),
       InvalidArgumentError.error(),
       cause,
     );
-  }
-
-  static code() {
-    return 61;
   }
   static error() {
     return 'invalid argument';
@@ -545,15 +444,10 @@ export class InvalidCookieDomainError extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'An illegal attempt was made to set a cookie under a different ' + 'domain than the current page.',
-      InvalidCookieDomainError.code(),
       InvalidCookieDomainError.w3cStatus(),
       InvalidCookieDomainError.error(),
       cause,
     );
-  }
-
-  static code() {
-    return 24;
   }
   static error() {
     return 'invalid cookie domain';
@@ -568,15 +462,10 @@ export class NoSuchCookieError extends ProtocolError {
     super(
       message ||
         'No cookie matching the given path name was found amongst the associated cookies of the current browsing context’s active document',
-      NoSuchCookieError.code(),
       NoSuchCookieError.w3cStatus(),
       NoSuchCookieError.error(),
       cause,
     );
-  }
-
-  static code() {
-    return 62;
   }
   static w3cStatus() {
     return HTTPStatusCodes.NOT_FOUND;
@@ -590,15 +479,10 @@ export class UnableToSetCookieError extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
     super(
       message || "A request to set a cookie's value could not be satisfied.",
-      UnableToSetCookieError.code(),
       UnableToSetCookieError.w3cStatus(),
       UnableToSetCookieError.error(),
       cause,
     );
-  }
-
-  static code() {
-    return 25;
   }
   static w3cStatus() {
     return HTTPStatusCodes.INTERNAL_SERVER_ERROR;
@@ -612,15 +496,10 @@ export class UnexpectedAlertOpenError extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'A modal dialog was open, blocking this operation',
-      UnexpectedAlertOpenError.code(),
       UnexpectedAlertOpenError.w3cStatus(),
       UnexpectedAlertOpenError.error(),
       cause,
     );
-  }
-
-  static code() {
-    return 26;
   }
   static w3cStatus() {
     return HTTPStatusCodes.INTERNAL_SERVER_ERROR;
@@ -634,15 +513,10 @@ export class NoAlertOpenError extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'An attempt was made to operate on a modal dialog when one was not open.',
-      NoAlertOpenError.code(),
       NoAlertOpenError.w3cStatus(),
       NoAlertOpenError.error(),
       cause,
     );
-  }
-
-  static code() {
-    return 27;
   }
   static w3cStatus() {
     return HTTPStatusCodes.NOT_FOUND;
@@ -658,15 +532,10 @@ export class ScriptTimeoutError extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'A script did not complete before its timeout expired.',
-      ScriptTimeoutError.code(),
       ScriptTimeoutError.w3cStatus(),
       ScriptTimeoutError.error(),
       cause,
     );
-  }
-
-  static code() {
-    return 28;
   }
   static w3cStatus() {
     return HTTPStatusCodes.REQUEST_TIMEOUT;
@@ -680,15 +549,10 @@ export class InvalidElementCoordinatesError extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'The coordinates provided to an interactions operation are invalid.',
-      InvalidElementCoordinatesError.code(),
       InvalidElementCoordinatesError.w3cStatus(),
       InvalidElementCoordinatesError.error(),
       cause,
     );
-  }
-
-  static code() {
-    return 29;
   }
   static w3cStatus() {
     return HTTPStatusCodes.BAD_REQUEST;
@@ -702,17 +566,7 @@ export class InvalidCoordinatesError extends InvalidElementCoordinatesError {}
 
 export class IMENotAvailableError extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
-    super(
-      message || 'IME was not available.',
-      IMENotAvailableError.code(),
-      IMENotAvailableError.w3cStatus(),
-      IMENotAvailableError.error(),
-      cause,
-    );
-  }
-
-  static code() {
-    return 30;
+    super(message || 'IME was not available.', IMENotAvailableError.w3cStatus(), IMENotAvailableError.error(), cause);
   }
   static w3cStatus() {
     return HTTPStatusCodes.INTERNAL_SERVER_ERROR;
@@ -726,15 +580,10 @@ export class IMEEngineActivationFailedError extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'An IME engine could not be started.',
-      IMEEngineActivationFailedError.code(),
       IMEEngineActivationFailedError.w3cStatus(),
       IMEEngineActivationFailedError.error(),
       cause,
     );
-  }
-
-  static code() {
-    return 31;
   }
   static w3cStatus() {
     return HTTPStatusCodes.INTERNAL_SERVER_ERROR;
@@ -748,15 +597,10 @@ export class InvalidSelectorError extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'Argument was an invalid selector (e.g. XPath/CSS).',
-      InvalidSelectorError.code(),
       InvalidSelectorError.w3cStatus(),
       InvalidSelectorError.error(),
       cause,
     );
-  }
-
-  static code() {
-    return 32;
   }
   static w3cStatus() {
     return HTTPStatusCodes.BAD_REQUEST;
@@ -770,15 +614,10 @@ export class SessionNotCreatedError extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
     super(
       `A new session could not be created.${message ? ' Details: ' + message : ''}`,
-      SessionNotCreatedError.code(),
       SessionNotCreatedError.w3cStatus(),
       SessionNotCreatedError.error(),
       cause,
     );
-  }
-
-  static code() {
-    return 33;
   }
   static w3cStatus() {
     return HTTPStatusCodes.INTERNAL_SERVER_ERROR;
@@ -792,15 +631,10 @@ export class MoveTargetOutOfBoundsError extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'Target provided for a move action is out of bounds.',
-      MoveTargetOutOfBoundsError.code(),
       MoveTargetOutOfBoundsError.w3cStatus(),
       MoveTargetOutOfBoundsError.error(),
       cause,
     );
-  }
-
-  static code() {
-    return 34;
   }
   static w3cStatus() {
     return HTTPStatusCodes.INTERNAL_SERVER_ERROR;
@@ -812,17 +646,7 @@ export class MoveTargetOutOfBoundsError extends ProtocolError {
 
 export class NoSuchContextError extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
-    super(
-      message || 'No such context found.',
-      NoSuchContextError.code(),
-      UnknownError.w3cStatus(),
-      UnknownError.error(),
-      cause,
-    );
-  }
-
-  static code() {
-    return 35;
+    super(message || 'No such context found.', UnknownError.w3cStatus(), UnknownError.error(), cause);
   }
 }
 
@@ -830,15 +654,10 @@ export class InvalidContextError extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'That command could not be executed in the current context.',
-      InvalidContextError.code(),
       UnknownError.w3cStatus(),
       UnknownError.error(),
       cause,
     );
-  }
-
-  static code() {
-    return 36;
   }
 }
 
@@ -858,15 +677,10 @@ export class UnableToCaptureScreen extends ProtocolError {
   constructor(message: string = '', cause?: Error) {
     super(
       message || 'A screen capture was made impossible',
-      UnableToCaptureScreen.code(),
       UnableToCaptureScreen.w3cStatus(),
       UnableToCaptureScreen.error(),
       cause,
     );
-  }
-
-  static code() {
-    return 63;
   }
   static w3cStatus() {
     return HTTPStatusCodes.INTERNAL_SERVER_ERROR;
@@ -892,7 +706,6 @@ export class BadParametersError extends InvalidArgumentError {
 export class ProxyRequestError extends BaseError {
   private readonly _w3cError?: W3CError;
   private readonly _w3cErrorStatus?: number;
-  private readonly _jwpError?: MJSONWPError;
 
   constructor(message: string, httpResponseData: any, httpStatus?: number, cause?: Error) {
     const [responseErrorObj, originalMessage] = ProxyRequestError._parseHttpResponse(httpResponseData);
@@ -901,12 +714,9 @@ export class ProxyRequestError extends BaseError {
       cause,
     );
 
-    // If the response error is an object and value is an object, it's a W3C error (for JSONWP value is a string)
     if (util.isPlainObject(responseErrorObj.value) && Object.hasOwn(responseErrorObj.value, 'error')) {
       this._w3cError = responseErrorObj.value as unknown as typeof this._w3cError;
       this._w3cErrorStatus = httpStatus;
-    } else if (Object.hasOwn(responseErrorObj, 'status')) {
-      this._jwpError = responseErrorObj as typeof this._jwpError;
     }
   }
 
@@ -925,10 +735,6 @@ export class ProxyRequestError extends BaseError {
   }
 
   getActualError(): ProtocolError {
-    if (util.hasValue(this._jwpError?.status) && util.hasValue(this._jwpError?.value)) {
-      // If it's MJSONWP error, returns actual error cause for request failure based on `jsonwp.status`
-      return errorFromMJSONWPStatusCode(this._jwpError.status, this._jwpError.value);
-    }
     if (util.hasValue(this._w3cError) && typeof this._w3cErrorStatus === 'number' && this._w3cErrorStatus >= 300) {
       return errorFromW3CJsonCode(
         this._w3cError.error,
@@ -1020,16 +826,6 @@ export const errors = {
   ProxyRequestError,
 } as const;
 
-const jsonwpErrorCodeMap: Record<string, Class<ProtocolError>> = Object.values(errors).reduce(
-  (acc: Record<string, Class<ProtocolError>>, ErrorClass: any) => {
-    if ('code' in ErrorClass) {
-      acc[ErrorClass.code()] = ErrorClass;
-    }
-    return acc;
-  },
-  {},
-);
-
 const w3cErrorCodeMap: Record<string, Class<ProtocolError>> = Object.values(errors).reduce(
   (acc: Record<string, Class<ProtocolError>>, ErrorClass: any) => {
     if ('error' in ErrorClass) {
@@ -1039,12 +835,6 @@ const w3cErrorCodeMap: Record<string, Class<ProtocolError>> = Object.values(erro
   },
   {},
 );
-
-interface MJSONWPError {
-  status: number;
-  value?: any;
-  message?: string;
-}
 
 interface W3CError {
   error: string;
@@ -1062,21 +852,6 @@ interface ParameterRequirements {
  */
 export function isErrorType<T>(err: any, type: Class<T>): err is T {
   return err.constructor?.name === type.name;
-}
-
-/**
- * Retrieve an error derived from MJSONWP status
- * @param code JSONWP status code
- * @param value The error message, or an object with a `message` property
- * @return The error that is associated with provided JSONWP status code
- */
-export function errorFromMJSONWPStatusCode(code: number, value: string | {message: string} = ''): ProtocolError {
-  const ErrorClass = jsonwpErrorCodeMap[code] ?? UnknownError;
-  mjsonwpLog.debug(`Matched JSONWP error code ${code} to ${ErrorClass.name}`);
-  // if `value` is an object, pull message from it, otherwise use the plain
-  // value, or default to an empty string, if null
-  const message = ((value || {}) as any).message || value || '';
-  return new ErrorClass(message);
 }
 
 /**

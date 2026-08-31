@@ -8,7 +8,6 @@ import type {Application, Request, Response} from 'express';
 import {StatusCodes as HTTPStatusCodes} from 'http-status-codes';
 import {createSandbox} from 'sinon';
 
-import {MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY} from '../../../lib/constants.js';
 import {errors, WebDriverProxy} from '../../../lib/index.js';
 import {createServer} from '../../helpers.js';
 import {FakeDriver} from './fake-driver.js';
@@ -50,7 +49,7 @@ describe('Protocol', function () {
       await teardown?.();
     });
 
-    it('should proxy to driver and return valid jsonwp response', async function () {
+    it('should proxy to driver and return a valid response', async function () {
       const {data} = await axios({
         url: `${baseUrl}/session/foo/url`,
         method: 'POST',
@@ -277,7 +276,7 @@ describe('Protocol', function () {
         }
       });
 
-      it('should not allow create session with desired caps (MJSONWP)', async function () {
+      it('should not allow create session with desired caps (legacy format)', async function () {
         const desiredCapabilities = {a: 'b'};
         await assert.rejects(
           axios({
@@ -385,45 +384,6 @@ describe('Protocol', function () {
           delete (driver as any).performActions;
         });
 
-        it(`should translate element format from MJSONWP to W3C`, async function () {
-          const retValue = [
-            {
-              something: {
-                [MJSONWP_ELEMENT_KEY]: 'fooo',
-                other: 'bar',
-              },
-            },
-            {
-              [MJSONWP_ELEMENT_KEY]: 'bar',
-            },
-            'ignore',
-          ];
-
-          const expectedValue = [
-            {
-              something: {
-                [MJSONWP_ELEMENT_KEY]: 'fooo',
-                [W3C_ELEMENT_KEY]: 'fooo',
-                other: 'bar',
-              },
-            },
-            {
-              [MJSONWP_ELEMENT_KEY]: 'bar',
-              [W3C_ELEMENT_KEY]: 'bar',
-            },
-            'ignore',
-          ];
-
-          const findElementsBackup = driver.findElements;
-          driver.findElements = () => Promise.resolve(retValue as any);
-          const {data} = await axios.post(`${sessionUrl}/elements`, {
-            using: 'whatever',
-            value: 'whatever',
-          });
-          assert.deepStrictEqual(data.value, expectedValue);
-          driver.findElements = findElementsBackup;
-        });
-
         it(`should fail with a 408 error if it throws a TimeoutError exception`, async function () {
           const setUrlStub = sandbox.stub(driver, 'setUrl').callsFake(function () {
             throw new errors.TimeoutError();
@@ -485,12 +445,10 @@ describe('Protocol', function () {
             await server.close();
           });
 
-          it('should work if a proxied request returns a response with status 200', async function () {
+          it('should work if a proxied request returns a successful W3C response', async function () {
             app.post('/session/:sessionId/perform-actions', (req, res) => {
               res.json({
-                sessionId: req.params.sessionId,
                 value: req.body,
-                status: 0,
               });
             });
 
@@ -502,26 +460,6 @@ describe('Protocol', function () {
             assert.deepStrictEqual(value, [1, 2, 3]);
             assert.ok(!status);
             assert.ok(!sessionId);
-          });
-
-          it('should return error if a proxied request returns a MJSONWP error response', async function () {
-            app.post('/session/:sessionId/perform-actions', (req, res) => {
-              res.status(500).json({
-                sessionId,
-                status: 6,
-                value: 'A problem occurred',
-              });
-            });
-            const {status, data} = await axios({
-              url: `${sessionUrl}/actions`,
-              method: 'POST',
-              validateStatus: null,
-              data: {
-                actions: [1, 2, 3],
-              },
-            });
-            assert.strictEqual(status, HTTPStatusCodes.NOT_FOUND);
-            assert.match(JSON.stringify(data), /A problem occurred/);
           });
 
           it('should return W3C error if a proxied request returns a W3C error response', async function () {
@@ -545,29 +483,6 @@ describe('Protocol', function () {
             assert.strictEqual(w3cError, 'unknown error');
             assert.match(stacktrace, /Some error occurred/);
             assert.strictEqual(errMessage, 'Some error occurred');
-          });
-
-          it('should return error if a proxied request returns a MJSONWP error response but HTTP status code is 200', async function () {
-            app.post('/session/:sessionId/perform-actions', (req, res) => {
-              res.status(200).json({
-                sessionId: 'Fake Session Id',
-                status: 7,
-                value: 'A problem occurred',
-              });
-            });
-            const {status, data} = await axios({
-              url: `${sessionUrl}/actions`,
-              method: 'POST',
-              validateStatus: null,
-              data: {
-                actions: [1, 2, 3],
-              },
-            });
-            assert.strictEqual(status, HTTPStatusCodes.NOT_FOUND);
-            const {error: w3cError, message: errMessage, stacktrace} = data.value;
-            assert.strictEqual(w3cError, 'no such element');
-            assert.match(errMessage, /A problem occurred/);
-            assert.ok(stacktrace);
           });
 
           it('should return error if a proxied request returns a W3C error response', async function () {
@@ -697,7 +612,7 @@ describe('Protocol', function () {
     });
   });
 
-  describe('via drivers jsonwp proxy', function () {
+  describe('via drivers command proxy', function () {
     let driver: FakeDriver;
     const sessionId = 'foo';
     let baseUrl: string;
@@ -754,12 +669,10 @@ describe('Protocol', function () {
 
     it('should able to throw ProxyRequestError in proxying', async function () {
       (driver as any).proxyReqRes = async function () {
-        const jsonwp = {
-          status: 35,
-          value: 'No such context found.',
-          sessionId: 'foo',
+        const w3cError = {
+          value: {error: 'no such element', message: 'No such context found.'},
         };
-        throw new errors.ProxyRequestError(`Could not proxy command to remote server. `, jsonwp);
+        throw new errors.ProxyRequestError(`Could not proxy command to remote server. `, w3cError, 404);
       };
       const {status, data} = await axios({
         url: `${baseUrl}/session/${sessionId}/url`,
@@ -768,8 +681,8 @@ describe('Protocol', function () {
         data: {url: 'http://google.com'},
       });
 
-      assert.strictEqual(status, 500);
-      assert.strictEqual(data.value.error, 'unknown error');
+      assert.strictEqual(status, 404);
+      assert.strictEqual(data.value.error, 'no such element');
       assert.strictEqual(data.value.message, 'No such context found.');
     });
 
@@ -787,7 +700,7 @@ describe('Protocol', function () {
       assert.deepStrictEqual(data, {custom: 'data'});
     });
 
-    it('should avoid jsonwp proxying when path matches avoidance list', async function () {
+    it('should avoid proxying when path matches avoidance list', async function () {
       driver.getProxyAvoidList = () => [['POST', new RegExp('^/session/[^/]+/url$')]];
       const {status, data} = await axios({
         url: `${baseUrl}/session/${sessionId}/url`,

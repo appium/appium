@@ -223,8 +223,8 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
   }
 
   /**
-   * method required by MJSONWP in order to determine whether it should
-   * respond with an invalid session response
+   * method required by the protocol handler in order to determine whether it
+   * should respond with an invalid session response
    */
   sessionExists(sessionId: string): boolean {
     if (!sessionId) return false; // eslint-disable-line curly
@@ -232,24 +232,16 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
   }
 
   /**
-   * method required by MJSONWP in order to determine if the command should
-   * be proxied directly to the driver
+   * method required by the protocol handler in order to determine if the
+   * command should be proxied directly to the driver
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   driverForSession(sessionId: string): Core<Constraints> | null {
     return this as Core<Constraints>;
   }
 
-  isMjsonwpProtocol() {
-    return this.protocol === PROTOCOLS.MJSONWP;
-  }
-
   isW3CProtocol() {
     return this.protocol === PROTOCOLS.W3C;
-  }
-
-  setProtocolMJSONWP() {
-    this.protocol = PROTOCOLS.MJSONWP;
   }
 
   setProtocolW3C() {

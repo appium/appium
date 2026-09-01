@@ -56,14 +56,6 @@ jobs:
   prepare_matrix:
     uses: appium/appium-workflows/.github/workflows/node-lts-matrix.yml@main
 
-  filter_matrix:
-    needs:
-      - prepare_matrix
-    name: Filter supported Node versions
-    uses: ./.github/workflows/filter-node-matrix.yml
-    with:
-      versions: ${{ needs.prepare_matrix.outputs.versions }}
-
   prepare_e2e_packages:
     runs-on: ubuntu-latest
     outputs:
@@ -111,11 +103,11 @@ jobs:
 
   test-smoke:
     needs:
-      - filter_matrix
+      - prepare_matrix
     name: Smoke Tests
     strategy:
       matrix:
-        node-version: ${{ fromJSON(needs.filter_matrix.outputs.versions) }}
+        node-version: ${{ fromJSON(needs.prepare_matrix.outputs.versions) }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.1
@@ -130,11 +122,11 @@ jobs:
 
   test-unit:
     needs:
-      - filter_matrix
+      - prepare_matrix
     name: Unit Tests
     strategy:
       matrix:
-        node-version: ${{ fromJSON(needs.filter_matrix.outputs.versions) }}
+        node-version: ${{ fromJSON(needs.prepare_matrix.outputs.versions) }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.1
@@ -149,11 +141,11 @@ jobs:
 
   test-types:
     needs:
-      - filter_matrix
+      - prepare_matrix
     name: Type Tests
     strategy:
       matrix:
-        node-version: ${{ fromJSON(needs.filter_matrix.outputs.versions) }}
+        node-version: ${{ fromJSON(needs.prepare_matrix.outputs.versions) }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.1
@@ -168,14 +160,14 @@ jobs:
 
   test-e2e:
     needs:
-      - filter_matrix
+      - prepare_matrix
       - prepare_e2e_packages
     name: E2E Tests - ${{ matrix.package_dir }} (Node ${{ matrix.node-version }})
     if: ${{ github.event_name == 'pull_request' }}
     strategy:
       fail-fast: false
       matrix:
-        node-version: ${{ fromJSON(needs.filter_matrix.outputs.versions) }}
+        node-version: ${{ fromJSON(needs.prepare_matrix.outputs.versions) }}
         package_dir: ${{ fromJSON(needs.prepare_e2e_packages.outputs.packages) }}
     runs-on: ubuntu-latest
     steps:

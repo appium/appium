@@ -12,22 +12,14 @@ jobs:
   prepare_matrix:
     uses: appium/appium-workflows/.github/workflows/node-lts-matrix.yml@main
 
-  filter_matrix:
-    needs:
-      - prepare_matrix
-    name: Filter supported Node versions
-    uses: ./.github/workflows/filter-node-matrix.yml
-    with:
-      versions: ${{ needs.prepare_matrix.outputs.versions }}
-
   check:
     needs:
-      - filter_matrix
+      - prepare_matrix
     name: Check
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        node-version: ${{ fromJSON(needs.filter_matrix.outputs.versions) }}
+        node-version: ${{ fromJSON(needs.prepare_matrix.outputs.versions) }}
         os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
       - name: Use Node.js ${{ matrix.node-version }}

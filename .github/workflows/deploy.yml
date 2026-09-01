@@ -10,13 +10,7 @@ permissions:
 
 jobs:
   prepare_matrix:
-    runs-on: ubuntu-latest
-    outputs:
-      versions: ${{ steps.generate-matrix.outputs.lts }}
-    steps:
-      - name: Select all current LTS versions of Node.js
-        id: generate-matrix
-        uses: msimerson/node-lts-versions@v2.0.2
+    uses: appium/appium-workflows/.github/workflows/node-lts-matrix.yml@main
 
   check:
     needs:

@@ -41,8 +41,10 @@ describe('bootstrap/node-helpers', function () {
         'v20.19.0',
         'v22.10.0',
         'v22.12.0',
+        'v22.22.1',
+        'v23.0.0',
         'v24.0.0',
-        'v24.18.0',
+        'v24.14.0',
         'v25.0.0',
       ];
 
@@ -56,9 +58,18 @@ describe('bootstrap/node-helpers', function () {
     });
 
     describe('supported nodes', function () {
-      it('should succeed if node is ^24.19.0', function () {
+      it('should succeed if node is ^22.22.2', function () {
         // @ts-expect-error
-        process.version = 'v24.19.0';
+        process.version = 'v22.22.2';
+        assert.doesNotThrow(checkNodeOk);
+        // @ts-expect-error
+        process.version = 'v22.100.0';
+        assert.doesNotThrow(checkNodeOk);
+      });
+
+      it('should succeed if node is ^24.15.0', function () {
+        // @ts-expect-error
+        process.version = 'v24.15.0';
         assert.doesNotThrow(checkNodeOk);
         // @ts-expect-error
         process.version = 'v24.100.0';

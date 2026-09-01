@@ -16,7 +16,6 @@ const COMMON_FIELDS_TO_COPY = ['author', 'license', 'bugs', 'homepage'];
 const LOGGER_COMMON_FIELDS_TO_COPY = ['author', 'bugs', 'homepage'];
 
 const KEYWORD_EXCLUDED_PACKAGES = new Set([
-  'eslint-config-appium-ts',
   'oxc-config',
   'semantic-release-config',
   'types',

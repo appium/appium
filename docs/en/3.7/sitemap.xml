@@ -2,306 +2,314 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://appium.io/docs/en/latest/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/blog/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/blog/2024/07/13/appium-conf-2024-call-for-proposals-now-open/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/blog/2024/06/10/announcing-browserstack-as-appiums-strategic-partner/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/blog/2024/06/06/announcing-headspin-as-appiums-development-partner/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/blog/2025/11/25/announcing-lambdatest-as-appiums-newest-development-partner/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/blog/2025/07/01/announcing-lambdatest-as-appium-strategic-partner/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/blog/2024/06/10/announcing-sauce-labs-as-appiums-strategic-partner/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/blog/2024/05/14/announcing-appiums-sponsorship-program/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
+    </url>
+    <url>
+         <loc>https://appium.io/docs/en/latest/blog/2026/09/01/announcing-watchos-simulator-support-in-the-xcuitest-driver/</loc>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/blog/2025/08/07/-appium-3/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/blog/2024/03/07/hello-world/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/contributing/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/developing/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/developing/build-docs/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/developing/build-doctor-checks/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/developing/build-drivers/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/developing/build-plugins/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/developing/config-system/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/developing/sensitive/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/ecosystem/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/ecosystem/clients/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/ecosystem/drivers/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/ecosystem/plugins/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/ecosystem/tools/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/guides/branch-testing/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/guides/caching/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/guides/caps/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/guides/config/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/guides/context/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/guides/event-timing/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/guides/execute-methods/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/guides/grid/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/guides/headers/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/guides/log-filters/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/guides/managing-exts/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/guides/migrating-1-to-2/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/guides/migrating-2-to-3/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/guides/security/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/guides/settings/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/guides/tls/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/intro/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/intro/appium/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/intro/clients/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/intro/drivers/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/intro/history/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/quickstart/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/quickstart/install/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/quickstart/next-steps/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/quickstart/requirements/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/quickstart/test-dotnet/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/quickstart/test-java/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/quickstart/test-js/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/quickstart/test-py/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/quickstart/test-rb/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/quickstart/uiauto2-driver/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/reference/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/reference/api/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/reference/api/appium/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/reference/api/bidi/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/reference/api/jsonwp/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/reference/api/mjsonwp/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/reference/api/others/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/reference/api/plugins/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/reference/api/webdriver/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/reference/cli/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/reference/cli/env-vars/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/reference/cli/extensions/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/reference/cli/insecure-features/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/reference/cli/server/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/reference/cli/setup/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/reference/session/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/reference/session/caps/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/resources/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/sponsors/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
+    </url>
+    <url>
+         <loc>https://appium.io/docs/en/latest/blog/archive/2026/</loc>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/blog/archive/2025/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/en/latest/blog/archive/2024/</loc>
-         <lastmod>2026-08-25</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
 </urlset>

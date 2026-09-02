@@ -1,6 +1,4 @@
-import bplistCreate from 'bplist-creator';
-import {parseBuffer} from 'bplist-parser';
-import {build as plistBuild, parse as plistParse, type PlistValue} from 'plist';
+import {build as plistBuild, buildBinary, parse as plistParse, parseBinary, type PlistValue} from 'plist';
 
 import {fs} from './fs.js';
 import log from './logger.js';
@@ -73,7 +71,7 @@ export async function updatePlistFile(
     throw new Error(`Could not update plist: ${(err as Error).message}`, {cause: err});
   }
   Object.assign(obj as Record<string, unknown>, updatedFields);
-  const newPlist = binary ? bplistCreate(obj) : plistBuild(obj as PlistValue);
+  const newPlist = binary ? createBinaryPlist(obj) : plistBuild(obj as PlistValue);
   try {
     await fs.writeFile(plist, newPlist);
   } catch (err) {
@@ -91,7 +89,7 @@ export async function updatePlistFile(
  * @returns Plist in the form of a binary buffer
  */
 export function createBinaryPlist(data: object): Buffer {
-  return bplistCreate(data);
+  return Buffer.from(buildBinary(data as PlistValue));
 }
 
 /**
@@ -101,7 +99,7 @@ export function createBinaryPlist(data: object): Buffer {
  * @returns Array of parsed root objects (typically one element)
  */
 export function parseBinaryPlist(data: Buffer): object[] {
-  return parseBuffer(data);
+  return [toBufferDeep(parseBinary(data)) as object];
 }
 
 /**
@@ -128,14 +126,14 @@ export function parsePlist(data: string | Buffer | Uint8Array | ArrayBuffer): ob
   if (typeof data === 'string') {
     return data.startsWith(BPLIST_IDENTIFIER.TEXT)
       ? parseBinaryPlistRoot(Buffer.from(data))
-      : (plistParse(data) as object);
+      : (toBufferDeep(plistParse(data)) as object);
   }
 
   const binaryLikeData = toBufferIfBinaryLike(data);
   if (binaryLikeData) {
     return BPLIST_IDENTIFIER.BUFFER.compare(binaryLikeData, 0, BPLIST_IDENTIFIER.BUFFER.length) === 0
       ? parseBinaryPlistRoot(binaryLikeData)
-      : (plistParse(binaryLikeData.toString()) as object);
+      : (toBufferDeep(plistParse(binaryLikeData.toString())) as object);
   }
 
   throw new Error(`Unknown type of plist, data: ${truncateString(String(data), {length: 200})}`);
@@ -160,4 +158,25 @@ function parseBinaryPlistRoot(data: Buffer): object {
     throw new Error(`Binary plist appears to be empty`);
   }
   return parsed[0];
+}
+
+/**
+ * plist@5 returns embedded `<data>`/binary payloads as plain Uint8Array instances,
+ * whereas the previous xml/bplist parsers returned Node Buffers. Recursively upgrade
+ * them back to Buffer so Buffer-only APIs (e.g. `.toString('utf8')`) keep working.
+ */
+function toBufferDeep(value: unknown): unknown {
+  if (Buffer.isBuffer(value) || value instanceof Date) {
+    return value;
+  }
+  if (value instanceof Uint8Array) {
+    return Buffer.from(value.buffer, value.byteOffset, value.byteLength);
+  }
+  if (Array.isArray(value)) {
+    return value.map(toBufferDeep);
+  }
+  if (value !== null && typeof value === 'object') {
+    return Object.fromEntries(Object.entries(value).map(([key, v]) => [key, toBufferDeep(v)]));
+  }
+  return value;
 }

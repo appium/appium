@@ -57,7 +57,6 @@
     "archiver": "8.0.0",
     "asyncbox": "6.4.2",
     "axios": "1.19.0",
-    "bluebird": "3.7.2",
     "bplist-creator": "0.1.1",
     "bplist-parser": "0.3.2",
     "form-data": "4.0.6",

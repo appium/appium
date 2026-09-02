@@ -50,7 +50,7 @@
   },
   "dependencies": {
     "@appium/support": "7.2.7",
-    "webdriverio": "9.31.4"
+    "webdriverio": "9.31.5"
   },
   "peerDependencies": {
     "appium": "^3.0.0-beta.0"

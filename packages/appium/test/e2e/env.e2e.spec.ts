@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
 
-import {fs, tempDir} from '@appium/support';
+import {fs, node, tempDir} from '@appium/support';
 
 import {
   DEFAULT_APPIUM_HOME,
@@ -11,7 +11,10 @@ import {
   resolveManifestPath,
 } from '../../lib/utils/env.js';
 
-const FIXTURES_ROOT = path.join(import.meta.dirname, 'fixture');
+// Resolved from the package root (not `import.meta.dirname`, which points into `build/`):
+// these are static data fixtures, so they only exist in the source tree — tsc has nothing to
+// compile them into.
+const FIXTURES_ROOT = path.join(node.getModuleRootSync('appium', import.meta.filename)!, 'test', 'e2e', 'fixture');
 
 describe('environment', function () {
   let cwd: string;

@@ -72,4 +72,40 @@ describe('plist', function () {
     const nestedParsed = plist.parsePlist(nestedPayload);
     assert.deepStrictEqual(nestedParsed, {answer: 42});
   });
+
+  // Downstream consumers (e.g. appium-ios-device/appium-remote-debugger) call
+  // Buffer-only methods like `.toString('utf8')` on decoded plist `<data>` values,
+  // so binary payloads must keep coming back as real Buffers, not plain Uint8Arrays.
+  it('should return top-level binary data as a Buffer after parsing a binary plist', function () {
+    const message = JSON.stringify({id: 1, method: 'foo'});
+    const bin = plist.createBinaryPlist({WIRMessageDataKey: Buffer.from(message, 'utf8')});
+    const parsed = plist.parsePlist(bin) as {WIRMessageDataKey: Buffer};
+    assert.ok(Buffer.isBuffer(parsed.WIRMessageDataKey));
+    assert.strictEqual(parsed.WIRMessageDataKey.toString('utf8'), message);
+  });
+
+  it('should return nested binary data as Buffers after parsing a binary plist', function () {
+    const bin = plist.createBinaryPlist({
+      __argument: {WIRSocketDataKey: {inner: Buffer.from('nested-data')}},
+      list: [Buffer.from('a'), Buffer.from('b')],
+    });
+    const parsed = plist.parsePlist(bin) as {
+      __argument: {WIRSocketDataKey: {inner: Buffer}};
+      list: Buffer[];
+    };
+    assert.ok(Buffer.isBuffer(parsed.__argument.WIRSocketDataKey.inner));
+    assert.strictEqual(parsed.__argument.WIRSocketDataKey.inner.toString(), 'nested-data');
+    assert.ok(parsed.list.every((item) => Buffer.isBuffer(item)));
+    assert.deepStrictEqual(
+      parsed.list.map((item) => item.toString()),
+      ['a', 'b'],
+    );
+  });
+
+  it('should return binary data as a Buffer after parsing an xml plist', function () {
+    const xml = plist.createPlist({payload: Buffer.from('xml-data')}, false);
+    const parsed = plist.parsePlist(xml) as {payload: Buffer};
+    assert.ok(Buffer.isBuffer(parsed.payload));
+    assert.strictEqual(parsed.payload.toString(), 'xml-data');
+  });
 });

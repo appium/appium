@@ -1,4 +1,7 @@
 import assert from 'node:assert/strict';
+import {mkdirSync, mkdtempSync, rmSync} from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import {describe, it, beforeEach, before, after} from 'node:test';
 
 import {readConfigFile} from '../../lib/bootstrap/config-file';
@@ -95,6 +98,13 @@ describe('parser', function () {
         assert.deepStrictEqual(args.defaultCapabilities, defaultCapabilities);
       });
 
+      it('should parse default capabilities which are longer than the max filename length', function () {
+        // a value this long fails stat() with ENAMETOOLONG instead of ENOENT on posix systems
+        const defaultCapabilities = {'appium:app': 'a'.repeat(300)};
+        const args = p.parseArgs(['--default-capabilities', JSON.stringify(defaultCapabilities)]);
+        assert.deepStrictEqual(args.defaultCapabilities, defaultCapabilities);
+      });
+
       it('should parse default capabilities correctly from a file', function () {
         const defaultCapabilities = {a: 'b'};
         const args = p.parseArgs(['--default-capabilities', CAPS_FIXTURE]);
@@ -141,6 +151,19 @@ describe('parser', function () {
         const parsed = p.parseArgs(['--allow-insecure', ALLOW_FIXTURE, '--deny-insecure', DENY_FIXTURE]);
         assert.deepStrictEqual(parsed.allowInsecure, ['*:feature1', '*:feature2', '*:feature3']);
         assert.deepStrictEqual(parsed.denyInsecure, ['*:nofeature1', '*:nofeature2', '*:nofeature3']);
+      });
+
+      it('should treat --allow-insecure as a feature name even if a directory with that name exists', function () {
+        const tmpDir = mkdtempSync(path.join(os.tmpdir(), 'appium-allow-insecure-'));
+        mkdirSync(path.join(tmpDir, 'adb_shell'));
+        const prevCwd = process.cwd();
+        try {
+          process.chdir(tmpDir);
+          assert.deepStrictEqual(p.parseArgs(['--allow-insecure', 'adb_shell']).allowInsecure, ['adb_shell']);
+        } finally {
+          process.chdir(prevCwd);
+          rmSync(tmpDir, {recursive: true, force: true});
+        }
       });
 
       it('should allow a string for --use-drivers', function () {

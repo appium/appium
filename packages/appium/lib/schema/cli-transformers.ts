@@ -1,4 +1,4 @@
-import {existsSync, readFileSync} from 'node:fs';
+import {readFileSync, statSync} from 'node:fs';
 
 import {ArgumentTypeError} from 'argparse';
 
@@ -28,7 +28,7 @@ export const transformers = {
     let csv = csvOrPath;
     let loadedFromFile = false;
     // Value could be a single CSV token or a filepath; attempt file first.
-    if (existsSync(csvOrPath)) {
+    if (isRegularFile(csvOrPath)) {
       try {
         csv = readFileSync(csvOrPath, 'utf8');
       } catch (err) {
@@ -52,7 +52,7 @@ export const transformers = {
   json: (jsonOrPath: string): Record<string, any> => {
     let json = jsonOrPath;
     let loadedFromFile = false;
-    if (existsSync(jsonOrPath)) {
+    if (isRegularFile(jsonOrPath)) {
       try {
         // Intentionally sync: argparse type hooks are synchronous.
         json = readFileSync(jsonOrPath, 'utf8');
@@ -69,6 +69,21 @@ export const transformers = {
     }
   },
 } as const;
+
+/**
+ * Whether `filepath` is an existing regular file.
+ *
+ * Directories are not files: `--allow-insecure adb_shell` names a feature, not the `./adb_shell`
+ * folder. Any other stat failure means "not a file" too, since these values are usually not paths
+ * at all (a long JSON blob fails with ENAMETOOLONG, not ENOENT).
+ */
+function isRegularFile(filepath: string): boolean {
+  try {
+    return statSync(filepath).isFile();
+  } catch {
+    return false;
+  }
+}
 
 /**
  * Split a file by newline then calls {@link parseCsvLine} on each line.

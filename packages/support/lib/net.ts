@@ -1,6 +1,9 @@
+import {openAsBlob} from 'node:fs';
+import path from 'node:path';
+
 import type {HTTPHeaders} from '@appium/types';
 import axios, {type AxiosBasicCredentials, type Method, type RawAxiosRequestConfig} from 'axios';
-import FormData from 'form-data';
+import mimeTypes from 'mime-types';
 
 import {fs} from './fs.js';
 import log from './logger.js';
@@ -92,13 +95,15 @@ export async function uploadFile(
         `Only http/https protocols are supported.`,
     );
   }
-  if (!uploadOptions.fileFieldName) {
+  // Matches uploadFileToHttp()'s own default: `undefined` means multipart, and this raw-file-size
+  // Content-Length only applies to the non-multipart (explicitly falsy `fileFieldName`) case.
+  if (!(uploadOptions.fileFieldName ?? 'file')) {
     uploadOptions.headers = {
       ...(isPlainObject(uploadOptions.headers) ? uploadOptions.headers : {}),
       'Content-Length': size,
     };
   }
-  await uploadFileToHttp(fs.createReadStream(localPath), url, uploadOptions);
+  await uploadFileToHttp(localPath, url, uploadOptions);
   if (isMetered) {
     log.info(
       `Uploaded '${localPath}' of ${toReadableSizeString(size)} size in ` +
@@ -106,8 +111,6 @@ export async function uploadFile(
     );
   }
 }
-
-// #region Private helpers
 
 /**
  * Downloads the given file via HTTP(S).
@@ -176,6 +179,8 @@ export async function downloadFile(
   }
 }
 
+// #region Private helpers
+
 function toAxiosAuth(auth: AuthLike | undefined): AxiosBasicCredentials | null {
   if (!auth || !isPlainObject(auth)) {
     return null;
@@ -190,7 +195,7 @@ function toAxiosAuth(auth: AuthLike | undefined): AxiosBasicCredentials | null {
 }
 
 async function uploadFileToHttp(
-  localFileStream: NodeJS.ReadableStream,
+  localPath: string,
   parsedUri: URL,
   uploadOptions: HttpUploadOptions = {},
 ): Promise<void> {
@@ -216,6 +221,8 @@ async function uploadFileToHttp(
     requestOpts.auth = axiosAuth;
   }
   if (fileFieldName) {
+    // Native FormData/Blob; axios' Node adapter builds the multipart stream itself for any
+    // spec-compliant FormData, so the `form-data` package is not needed.
     const form = new FormData();
     if (formFields) {
       let pairs: [string, unknown][] = [];
@@ -225,23 +232,33 @@ async function uploadFileToHttp(
         pairs = Object.entries(formFields);
       }
       for (const [key, value] of pairs) {
-        if (key.toLowerCase() !== fileFieldName?.toLowerCase()) {
-          form.append(key, value as string | Buffer);
+        if (key.toLowerCase() === fileFieldName?.toLowerCase()) {
+          continue;
+        }
+        if (typeof value === 'string' || value instanceof Blob) {
+          form.append(key, value);
+        } else if (Buffer.isBuffer(value)) {
+          form.append(key, new Blob([value]));
+        } else {
+          form.append(key, String(value));
         }
       }
     }
     // AWS S3 POST upload requires this to be the last field; do not move before formFields.
-    form.append(fileFieldName, localFileStream);
-    requestOpts.headers = {
-      ...(isPlainObject(headers) ? headers : {}),
-      ...form.getHeaders(),
-    };
+    const fileName = path.basename(localPath);
+    const fileType = mimeTypes.lookup(fileName) || undefined;
+    form.append(fileFieldName, await openAsBlob(localPath, {type: fileType}), fileName);
+    if (isPlainObject(headers)) {
+      requestOpts.headers = headers as RawAxiosRequestConfig['headers'];
+    }
     requestOpts.data = form;
   } else {
     if (isPlainObject(headers)) {
       requestOpts.headers = headers;
     }
-    requestOpts.data = localFileStream;
+    // A plain stream, not a Blob: axios force-overwrites a Blob body's `Content-Type` to
+    // `data.type || 'application/octet-stream'`, clobbering any caller-supplied header.
+    requestOpts.data = fs.createReadStream(localPath);
   }
   log.debug(
     `Performing ${method} to ${href} with options (excluding data): ` +

@@ -92,6 +92,7 @@
     "@types/klaw": "3.0.7",
     "@types/lockfile": "1.0.4",
     "@types/method-override": "3.0.0",
+    "@types/mime-types": "3.0.1",
     "@types/morgan": "1.9.10",
     "@types/node": "24.13.3",
     "@types/plist": "3.0.5",

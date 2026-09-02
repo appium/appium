@@ -108,4 +108,28 @@ describe('plist', function () {
     assert.ok(Buffer.isBuffer(parsed.payload));
     assert.strictEqual(parsed.payload.toString(), 'xml-data');
   });
+
+  // plist@5 dropped `null` entries entirely from xml `build()` output (previously `<null/>`
+  // was preserved) to match Apple's plist DTD, which has no `<null/>` element. This is a
+  // known upstream behavior change (not a bug): a `null` dict value disappears along with
+  // its key, and a `null` array element is removed, shifting later indices. `createBinaryPlist`
+  // is unaffected - it still preserves `null`. Locking this in so a future plist bump doesn't
+  // silently change it again.
+  it('should drop null dict values when creating an xml plist', function () {
+    const xml = plist.createPlist({a: 1, b: null}, false);
+    const parsed = plist.parsePlist(xml);
+    assert.deepStrictEqual(parsed, {a: 1});
+  });
+
+  it('should drop null array elements when creating an xml plist', function () {
+    const xml = plist.createPlist({arr: [1, null, 2]}, false);
+    const parsed = plist.parsePlist(xml) as {arr: unknown[]};
+    assert.deepStrictEqual(parsed.arr, [1, 2]);
+  });
+
+  it('should preserve null values when creating a binary plist', function () {
+    const bin = plist.createBinaryPlist({a: 1, b: null, arr: [1, null, 2]});
+    const parsed = plist.parsePlist(bin);
+    assert.deepStrictEqual(parsed, {a: 1, b: null, arr: [1, null, 2]});
+  });
 });

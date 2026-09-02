@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
 
 import {BaseDriver} from '@appium/base-driver';
-import {httpDelete, httpGet, httpPost, httpRequest} from '@appium/driver-test-support';
+import {httpDelete, httpGet, httpPost} from '@appium/driver-test-support';
 import {fs, tempDir} from '@appium/support';
 import type {AppiumServer, DriverClass} from '@appium/types';
 import type {ParsedArgs} from 'appium/types/index.js';
@@ -396,7 +396,7 @@ describe('FakeDriver via HTTP', function () {
 
         // Now use that sessionId to call /screenshot
         const {status: screenshotStatus, value: screenshotValue} = (
-          await httpRequest(`${testServerBaseSessionUrl}/${value.sessionId}/screenshot`)
+          await httpGet(`${testServerBaseSessionUrl}/${value.sessionId}/screenshot`)
         ).data;
         assert.ok(!screenshotStatus);
         assert.match(screenshotValue, /^iVBOR/); // should be a png

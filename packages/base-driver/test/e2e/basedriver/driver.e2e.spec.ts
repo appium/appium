@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {after, before, describe, it} from 'node:test';
 
-import {httpRequest} from '@appium/driver-test-support';
+import {httpGet} from '@appium/driver-test-support';
 import type {Constraints, Driver, DriverCaps} from '@appium/types';
 
 import {createServer} from '../../helpers.js';
@@ -39,9 +39,7 @@ describe('BaseDriver', function () {
     it('should return capabilities', async function () {
       const capabilities = DEFAULT_CAPS;
       driver.caps = capabilities as unknown as DriverCaps<Constraints>;
-      const {data} = await httpRequest(`${baseUrl}/session/${sessionId}/appium/capabilities`, {
-        method: 'GET',
-      });
+      const {data} = await httpGet(`${baseUrl}/session/${sessionId}/appium/capabilities`);
       assert.deepStrictEqual(data.value.capabilities, DEFAULT_CAPS);
     });
   });

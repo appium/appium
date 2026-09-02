@@ -26,15 +26,37 @@ export interface HttpResult<T = any> {
   headers: Record<string, string>;
 }
 
+export async function httpGet<T = any>(
+  url: string,
+  options: Omit<HttpRequestOptions, 'method' | 'data'> = {},
+): Promise<HttpResult<T>> {
+  return httpRequest<T>(url, {...options, method: 'GET'});
+}
+
+export async function httpPost<T = any>(
+  url: string,
+  data?: unknown,
+  options: Omit<HttpRequestOptions, 'method' | 'data'> = {},
+): Promise<HttpResult<T>> {
+  return httpRequest<T>(url, {...options, method: 'POST', data});
+}
+
+export async function httpDelete<T = any>(
+  url: string,
+  options: Omit<HttpRequestOptions, 'method' | 'data'> = {},
+): Promise<HttpResult<T>> {
+  return httpRequest<T>(url, {...options, method: 'DELETE'});
+}
+
 /**
  * A minimal `fetch`-based HTTP test client with axios-like ergonomics:
  * a `{status, data, headers}` result (JSON auto-parsed), and throw-by-default on non-2xx.
  *
  * Like axios, a string/Buffer `data` is sent as-is (no auto content-type); a plain
  * object/array `data` is JSON-stringified with an `application/json` content-type added
- * (unless already set).
+ * (unless already set). Not exported: use httpGet()/httpPost()/httpDelete() instead.
  */
-export async function httpRequest<T = any>(url: string, options: HttpRequestOptions = {}): Promise<HttpResult<T>> {
+async function httpRequest<T = any>(url: string, options: HttpRequestOptions = {}): Promise<HttpResult<T>> {
   const {method = 'GET', data, headers, throwOnError = true} = options;
   const requestHeaders: Record<string, string> = {...headers};
   const hasBody = typeof data !== 'undefined';
@@ -71,28 +93,6 @@ export async function httpRequest<T = any>(url: string, options: HttpRequestOpti
     throw new Error(`Request failed with status code ${response.status}`);
   }
   return {status: response.status, data: parsedData as T, headers: responseHeaders};
-}
-
-export async function httpGet<T = any>(
-  url: string,
-  options: Omit<HttpRequestOptions, 'method' | 'data'> = {},
-): Promise<HttpResult<T>> {
-  return httpRequest<T>(url, {...options, method: 'GET'});
-}
-
-export async function httpPost<T = any>(
-  url: string,
-  data?: unknown,
-  options: Omit<HttpRequestOptions, 'method' | 'data'> = {},
-): Promise<HttpResult<T>> {
-  return httpRequest<T>(url, {...options, method: 'POST', data});
-}
-
-export async function httpDelete<T = any>(
-  url: string,
-  options: Omit<HttpRequestOptions, 'method' | 'data'> = {},
-): Promise<HttpResult<T>> {
-  return httpRequest<T>(url, {...options, method: 'DELETE'});
 }
 
 let portFetchingPromise: Promise<number> | undefined;

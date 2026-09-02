@@ -1,4 +1,3 @@
-import fs from 'node:fs';
 import fsPromises from 'node:fs/promises';
 import path from 'node:path';
 
@@ -22,36 +21,6 @@ export type ReadPackageOptions = {
 };
 
 export type NormalizeOptions = ReadPackageOptions & {normalize?: true};
-
-export type PackageDirectoryOptions = {
-  /** Directory to search upward from. Defaults to `process.cwd()`. */
-  cwd?: string;
-};
-
-/** Finds the directory containing the nearest `package.json` by walking upward from `cwd`. */
-export function packageDirectorySync({cwd}: PackageDirectoryOptions = {}): string | undefined {
-  let dir = path.resolve(cwd ?? process.cwd());
-  const fsRoot = path.parse(dir).root;
-
-  while (true) {
-    if (fs.existsSync(path.join(dir, 'package.json'))) {
-      return dir;
-    }
-    if (dir === fsRoot) {
-      return undefined;
-    }
-    dir = path.dirname(dir);
-  }
-}
-
-/** Reads and parses `package.json` from `cwd`. */
-export function readPackageSync(options?: NormalizeOptions): NormalizedPackageJson;
-export function readPackageSync(options: ReadPackageOptions): PackageJson;
-export function readPackageSync(options: ReadPackageOptions = {}): PackageJson | NormalizedPackageJson {
-  const {cwd, normalize = true} = options;
-  const contents = fs.readFileSync(getPackagePath(cwd), 'utf8');
-  return parsePackageJson(contents, normalize);
-}
 
 /** Reads and parses `package.json` from `cwd`. */
 export async function readPackage(options?: NormalizeOptions): Promise<NormalizedPackageJson>;

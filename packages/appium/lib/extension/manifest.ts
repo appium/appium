@@ -1,12 +1,16 @@
 import path from 'node:path';
 
-import {env, fs, util} from '@appium/support';
+import {fs, util} from '@appium/support';
 import type {DriverType, ExtensionType, PluginType} from '@appium/types';
 import type {ExtManifest, ExtPackageJson, ExtRecord, InternalMetadata, ManifestData} from 'appium/types/index.js';
 import * as YAML from 'yaml';
 
 import {CURRENT_SCHEMA_REV, DRIVER_TYPE, PLUGIN_TYPE} from '../constants.js';
-import {packageDidChange} from '../utils/index.js';
+import {
+  hasAppiumDependency as checkHasAppiumDependency,
+  packageDidChange,
+  resolveManifestPath,
+} from '../utils/index.js';
 import {INSTALL_TYPE_DEV, INSTALL_TYPE_NPM} from './extension-config.js';
 import {migrate} from './manifest-migrations.js';
 
@@ -128,7 +132,7 @@ export class Manifest {
         shouldWrite = await migrate(this);
       }
 
-      const hasAppiumDependency = await env.hasAppiumDependency(this.appiumHome);
+      const hasAppiumDependency = await checkHasAppiumDependency(this.appiumHome);
 
       if (shouldWrite || (hasAppiumDependency && (await packageDidChange(this.appiumHome)))) {
         shouldWrite = (await this.syncWithInstalledExtensions(hasAppiumDependency)) || shouldWrite;
@@ -324,7 +328,7 @@ export class Manifest {
 
   async #setManifestPath(): Promise<string> {
     if (!this.#manifestPath) {
-      const resolved = await env.resolveManifestPath(this.#appiumHome);
+      const resolved = await resolveManifestPath(this.#appiumHome);
       this.#manifestPath = resolved;
 
       if (path.relative(this.#appiumHome, resolved).startsWith('.')) {

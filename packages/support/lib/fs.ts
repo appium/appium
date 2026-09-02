@@ -17,7 +17,6 @@ import {
 import path from 'node:path';
 import {promisify} from 'node:util';
 
-import B from 'bluebird';
 import {glob} from 'glob';
 import type {GlobOptions} from 'glob';
 import klaw from 'klaw';
@@ -382,8 +381,7 @@ export const fs = {
   stat: fsPromises.stat,
   symlink: fsPromises.symlink,
   unlink: fsPromises.unlink,
-  // TODO: replace with native promisify in Appium 4
-  write: B.promisify(write),
+  write: promisify(write),
   writeFile: fsPromises.writeFile,
 };
 

@@ -53,6 +53,9 @@ export interface HttpUploadOptions extends NetOptions {
   fileFieldName?: string;
   /**
    * Additional form fields. Only considered if `fileFieldName` is set.
+   * `Buffer` values are not supported - native FormData always sends a `Blob`/`Buffer` value
+   * as a file attachment, not a plain field; pass a `string` instead, or a `Blob` if a file
+   * attachment is actually intended.
    */
   formFields?: Record<string, unknown> | [string, unknown][];
 }
@@ -238,7 +241,15 @@ async function uploadFileToHttp(
         if (typeof value === 'string' || value instanceof Blob) {
           form.append(key, value);
         } else if (Buffer.isBuffer(value)) {
-          form.append(key, new Blob([value]));
+          // Per the WHATWG FormData spec, appending a Blob always produces a *file* part
+          // (`filename="blob"`) - unlike the old `form-data` package, which sent a Buffer as
+          // a plain field. There is no native FormData API to send raw bytes as a non-file
+          // field, so fail loud instead of silently changing the multipart classification.
+          throw new TypeError(
+            `formFields.${key}: Buffer values are not supported, because native FormData always sends ` +
+              `them as file attachments rather than plain fields. Pass a string, or a Blob if a file ` +
+              `attachment is actually intended.`,
+          );
         } else {
           form.append(key, String(value));
         }

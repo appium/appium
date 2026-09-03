@@ -795,16 +795,26 @@ that multiple simultaneous sessions don't use the same resources:
 
 1. Have your users specify resource IDs via capabilities (`appium:driverPort` etc)
 1. Just always use free resources (find a new random port for each session)
+1. Have each running instance of your driver publish and subscribe to messages on a shared IPC
+   channel, so sessions can coordinate directly with one another.
+
+The per-session IPC channel described in [Send messages to plugins running on the same
+session](#send-messages-to-plugins-running-on-the-same-session) is isolated per session, so it
+can't be used for this: it doesn't let you talk to *other* sessions of your driver. Instead,
+construct and hold on to your own `AppiumIpc` instance (exported from `appium/driver.js`) at
+module scope in your driver's package, for example as a memoized singleton. Since Node.js caches
+modules, every instance of your driver loaded within the same Appium server process will share
+that one `AppiumIpc` object, and can use it to publish and subscribe to topics across sessions —
+the same way the per-session channel works, just not scoped to a single session. See
+[xcuitest-driver's `session-claim-handler.ts`](https://github.com/appium/appium-xcuitest-driver/blob/master/lib/session-claim-handler.ts)
+for a real example, which uses this technique to detect and resolve conflicting sessions targeting
+the same device UDID.
 
 !!! warning
 
-    Appium doesn't provide any built-in mechanism for a driver to discover what resources other
-    concurrently-running sessions of the same driver are using. This is *not* something the
-    [IPC feature](#send-messages-to-plugins-running-on-the-same-session) can help with either:
-    each session gets its own isolated IPC channel, shared only by the driver and plugins active
-    in that one session, so it cannot be used to coordinate across sessions. If you need
-    cross-session coordination, consider file-based locking or a similar out-of-process mechanism,
-    since sessions may even be running on different Appium server processes entirely.
+    This only works for sessions running within the same Node.js process (i.e. the same Appium
+    server). It cannot coordinate sessions running on different Appium server processes; for that,
+    consider file-based locking or a similar out-of-process mechanism.
 
 !!! warning
 
@@ -958,13 +968,15 @@ export type IpcMessage<T> = {
 #### IPC Notes
 
 There are some important things to keep in mind when using Appium's IPC feature:
-- IPC is only available once `onIpcInit` has been called, at the end of the `createSession` flow.
-  It cannot be used statically or in `createSession` hooks
-- In sum, IPC is only for use during a session (this is also to prevent drivers/plugins from
-  accessing or reading data sent on IPC channels in other sessions.)
-- Each session gets its own isolated IPC channel, shared only by the driver and plugins active
-  in that session. Even multiple concurrent sessions of the *same* driver do not share a channel,
-  so IPC cannot be used to coordinate state or resources across sessions.
+- The `ipcSubscribe` method (and the IPC channel it subscribes to) is only available once
+  `onIpcInit` has been called, at the end of the `createSession` flow. It cannot be used statically
+  or in `createSession` hooks
+- The channel that `ipcSubscribe` gives you access to is scoped to the current session, and is
+  shared only with the plugins active in that same session (this is also to prevent drivers/plugins
+  from accessing or reading data sent on IPC channels in other sessions.) To coordinate across
+  multiple concurrent sessions of your own driver instead, see [Make itself aware of resources
+  other concurrent drivers are
+  using](#make-itself-aware-of-resources-other-concurrent-drivers-are-using).
 - The default max size of an IPC message is 1MB. This can be configured by the server-admin by
   using the `--max-ipc-data-size` arg (value is a number in bytes).
 - If a message exceeds the configured size, any call to `publish` methods will throw, so be

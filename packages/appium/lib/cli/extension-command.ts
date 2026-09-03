@@ -3,7 +3,7 @@ import path from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {inspect} from 'node:util';
 
-import {console, env, fs, npm, system, util} from '@appium/support';
+import {console, fs, npm, system, util} from '@appium/support';
 import type {AppiumLogger, ExtensionType, IDoctorCheck} from '@appium/types';
 import type {
   ExtInstallReceipt as AppiumExtInstallReceipt,
@@ -27,7 +27,7 @@ import {
   INSTALL_TYPE_LOCAL,
   INSTALL_TYPE_NPM,
 } from '../extension/extension-config.js';
-import {appiumPackageRoot, compact, npmPackage, packageDidChange} from '../utils/index.js';
+import {appiumPackageRoot, compact, hasAppiumDependency, npmPackage, packageDidChange} from '../utils/index.js';
 import {RingBuffer, spinWith} from './utils.js';
 
 const UPDATE_ALL = 'installed';
@@ -399,7 +399,7 @@ export abstract class ExtensionCliCommand<ExtType extends ExtensionType = Extens
     await this.config.addExtension(extName, extManifest as any);
 
     // update the hash if we've changed the local `package.json`
-    if (await env.hasAppiumDependency(this.config.appiumHome)) {
+    if (await hasAppiumDependency(this.config.appiumHome)) {
       await packageDidChange(this.config.appiumHome);
     }
 
@@ -790,7 +790,12 @@ export abstract class ExtensionCliCommand<ExtType extends ExtensionType = Extens
       const {pkg, installPath} = await spinWith(
         this.isJsonOutput,
         installMsg,
-        async () => await npm.installPackage(appiumHome, installStr, {pkgName, installType}),
+        async () =>
+          await npm.installPackage(appiumHome, installStr, {
+            pkgName,
+            installType,
+            hasAppiumDependency: await hasAppiumDependency(appiumHome),
+          }),
       );
 
       const validatedPkg = await spinWith(this.isJsonOutput, validateMsg, async () =>

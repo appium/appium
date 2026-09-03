@@ -25,7 +25,7 @@ export type DriverNameMap = Map<DriverClass, string>;
  * - Using the parsed extension data, creates/gets the `ExtensionConfig` subclass instances
  * - Returns these instances
  *
- * If `appiumHome` is needed, use `resolveAppiumHome` from the `env` module in `@appium/support`.
+ * If `appiumHome` is needed, use `resolveAppiumHome` from `../utils/index.js`.
  */
 export async function loadExtensions(appiumHome: string): Promise<ExtensionConfigs> {
   const manifest = Manifest.getInstance(appiumHome);

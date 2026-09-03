@@ -1,6 +1,5 @@
 import * as console from './console.js';
 import * as doctor from './doctor.js';
-import * as env from './env.js';
 import {fs} from './fs.js';
 import * as logger from './logging.js';
 import * as net from './net.js';
@@ -14,7 +13,7 @@ import * as zip from './zip.js';
 
 export {npm} from './npm.js';
 
-export {console, doctor, env, fs, logger, net, node, plist, system, tempDir, timing, util, zip};
+export {console, doctor, fs, logger, net, node, plist, system, tempDir, timing, util, zip};
 export default {
   tempDir,
   system,
@@ -26,7 +25,6 @@ export default {
   net,
   node,
   timing,
-  env,
   console,
   doctor,
 };

@@ -1,10 +1,10 @@
 import {homedir} from 'node:os';
 import path from 'node:path';
 
+import {util} from '@appium/support';
 import * as semver from 'semver';
 
-import {type NormalizedPackageJson, readPackage} from './internal/index.js';
-import {memoize} from './util.js';
+import {type NormalizedPackageJson, readPackage} from './read-package.js';
 
 /**
  * Path to the default `APPIUM_HOME` dir (`~/.appium`).
@@ -33,7 +33,7 @@ export async function hasAppiumDependency(cwd: string): Promise<boolean> {
  *
  * Looks at `dependencies` and `devDependencies` for `appium`.
  */
-export const findAppiumDependencyPackage = memoize(async function findAppiumDependencyPackage(
+export const findAppiumDependencyPackage = util.memoize(async function findAppiumDependencyPackage(
   cwd: string = process.cwd(),
   acceptableVersionRange: string | semver.Range = '>=2.0.0-beta',
 ): Promise<string | undefined> {
@@ -97,7 +97,7 @@ function isMissingPackageJsonError(err: unknown): boolean {
  *
  * All returned paths will be absolute.
  */
-export const resolveAppiumHome = memoize(async function _resolveAppiumHome(
+export const resolveAppiumHome = util.memoize(async function _resolveAppiumHome(
   cwd: string = process.cwd(),
 ): Promise<string> {
   if (!path.isAbsolute(cwd)) {
@@ -117,6 +117,8 @@ export const resolveAppiumHome = memoize(async function _resolveAppiumHome(
  * The assumption is that, if `appiumHome` has been provided, it was resolved via {@link resolveAppiumHome `resolveAppiumHome()`}!  If unsure,
  * don't pass a parameter and let `resolveAppiumHome()` handle it.
  */
-export const resolveManifestPath = memoize(async function _resolveManifestPath(appiumHome?: string): Promise<string> {
+export const resolveManifestPath = util.memoize(async function _resolveManifestPath(
+  appiumHome?: string,
+): Promise<string> {
   return path.join(appiumHome ?? (await resolveAppiumHome()), MANIFEST_RELATIVE_PATH);
 });

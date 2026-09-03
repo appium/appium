@@ -799,9 +799,12 @@ that multiple simultaneous sessions don't use the same resources:
 !!! warning
 
     Appium doesn't provide any built-in mechanism for a driver to discover what resources other
-    concurrently-running sessions of the same driver are using. If you need this, consider
-    file-based locking or a similar out-of-process mechanism, since sessions may be running on
-    different Appium server processes entirely.
+    concurrently-running sessions of the same driver are using. This is *not* something the
+    [IPC feature](#send-messages-to-plugins-running-on-the-same-session) can help with either:
+    each session gets its own isolated IPC channel, shared only by the driver and plugins active
+    in that one session, so it cannot be used to coordinate across sessions. If you need
+    cross-session coordination, consider file-based locking or a similar out-of-process mechanism,
+    since sessions may even be running on different Appium server processes entirely.
 
 !!! warning
 
@@ -959,6 +962,9 @@ There are some important things to keep in mind when using Appium's IPC feature:
   It cannot be used statically or in `createSession` hooks
 - In sum, IPC is only for use during a session (this is also to prevent drivers/plugins from
   accessing or reading data sent on IPC channels in other sessions.)
+- Each session gets its own isolated IPC channel, shared only by the driver and plugins active
+  in that session. Even multiple concurrent sessions of the *same* driver do not share a channel,
+  so IPC cannot be used to coordinate state or resources across sessions.
 - The default max size of an IPC message is 1MB. This can be configured by the server-admin by
   using the `--max-ipc-data-size` arg (value is a number in bytes).
 - If a message exceeds the configured size, any call to `publish` methods will throw, so be

@@ -178,10 +178,10 @@ describe('fs', {timeout: TEST_TIMEOUT}, function () {
       );
     });
     it('should walk all elements recursive', async function () {
-      assert.strictEqual(
-        await fs.walkDir(path.join(import.meta.dirname, '..', 'e2e', 'fixture'), true, () => undefined),
-        null,
-      );
+      // `test/e2e` (rather than `test/e2e/fixture`) is used here so the walked directory's
+      // existence in `build/` doesn't depend on `test/e2e/fixture` happening to contain a
+      // `.json`/`.js` fixture for tsc to compile — it now only holds non-TS assets.
+      assert.strictEqual(await fs.walkDir(path.join(import.meta.dirname, '..', 'e2e'), true, () => undefined), null);
     });
     it('should throw error through callback', async function () {
       const err = new Error('Callback error');

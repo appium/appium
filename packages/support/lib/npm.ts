@@ -7,7 +7,6 @@ import {exec} from 'teen_process';
 import type {ExecError, TeenProcessExecOptions} from 'teen_process';
 import type {PackageJson} from 'type-fest';
 
-import {hasAppiumDependency} from './env.js';
 import {fs} from './fs.js';
 import * as system from './system.js';
 import * as util from './util.js';
@@ -38,6 +37,8 @@ export interface InstallPackageOpts {
   pkgName: string;
   /** Whether to install from a local path or from npm */
   installType?: 'local' | string;
+  /** Whether `cwd` (or an ancestor) already declares a dependency on `appium` */
+  hasAppiumDependency: boolean;
 }
 
 /** Result of {@link NPM.installPackage} */
@@ -198,7 +199,7 @@ export class NPM {
    * Installs a package w/ `npm`
    */
   async installPackage(cwd: string, installStr: string, opts: InstallPackageOpts): Promise<NpmInstallReceipt> {
-    const {pkgName, installType} = opts;
+    const {pkgName, installType, hasAppiumDependency} = opts;
     let dummyPkgJson: Record<string, unknown>;
     const dummyPkgPath = path.join(cwd, 'package.json');
     try {
@@ -214,7 +215,7 @@ export class NPM {
     }
 
     const installOpts = ['--save-dev', '--no-progress', '--no-audit'];
-    if (!(await hasAppiumDependency(cwd))) {
+    if (!hasAppiumDependency) {
       if (process.env.APPIUM_OMIT_PEER_DEPS) {
         installOpts.push('--omit=peer');
       }

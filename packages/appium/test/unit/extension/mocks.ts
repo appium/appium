@@ -22,6 +22,7 @@ export interface MockAppiumSupportFs {
   realpath: SinonStub;
 }
 
+/** Stubs for `resolveAppiumHome`/`resolveManifestPath`/`hasAppiumDependency`, mocked onto `lib/utils/index.js` (not `@appium/support` — they live in `lib/utils/env.ts`). */
 export interface MockAppiumSupportEnv {
   resolveAppiumHome: SinonStub;
   resolveManifestPath: SinonStub;
@@ -204,12 +205,14 @@ export function applyExtensionMocks(mocks: InitMocksResult): void {
   // `default` is destructured out: on Node 22, passing a `default` key through
   // `namedExports` makes `mock.module()` generate invalid synthetic module source.
   const {default: _unusedDefault, ...supportWithoutDefault} = support;
+  const {env, ...appiumSupportMocksWithoutEnv} = mocks.MockAppiumSupport;
   mock.module('@appium/support', {
-    namedExports: {...supportWithoutDefault, ...mocks.MockAppiumSupport},
+    namedExports: {...supportWithoutDefault, ...appiumSupportMocksWithoutEnv},
   });
   mock.module('../../../lib/utils/index.js', {
     namedExports: {
       ...utils,
+      ...env,
       resolveFrom: mocks.MockResolveFrom,
       isPackageChanged: mocks.MockPackageChanged.isPackageChanged,
       // `utils/index.js` re-exports `packageDidChange` from `package-changed.ts`, whose own

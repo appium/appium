@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 import {describe, it, before, after, beforeEach} from 'node:test';
 
-import {env, fs, npm, tempDir} from '@appium/support';
+import {fs, npm, tempDir} from '@appium/support';
 import type {ManifestData} from 'appium/types/index.js';
 import * as YAML from 'yaml';
 
@@ -12,11 +12,9 @@ import {
   EXT_SUBCOMMAND_LIST as LIST,
   PKG_HASHFILE_RELATIVE_PATH,
 } from '../../lib/constants.js';
-import {resolveFrom} from '../../lib/utils/index.js';
+import {MANIFEST_RELATIVE_PATH, resolveFrom} from '../../lib/utils/index.js';
 import {FAKE_DRIVER_DIR, resolveFixture} from '../helpers.js';
 import {installLocalExtension, runAppiumJson} from './e2e-helpers.js';
-
-const {MANIFEST_RELATIVE_PATH} = env;
 const testDriverPath = path.dirname(resolveFixture('test-driver/package.json'));
 
 describe('when Appium is a dependency of the current project', function () {

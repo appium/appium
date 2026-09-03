@@ -1,4 +1,4 @@
-import {env, util} from '@appium/support';
+import {util} from '@appium/support';
 import type {DriverOpts} from '@appium/types';
 import type {
   Args,
@@ -26,7 +26,7 @@ import {
   isSetupCommandArgs,
 } from '../schema/cli-args-guards.js';
 import {getDefaultsForSchema} from '../schema/schema.js';
-import {defaultsDeep} from '../utils/index.js';
+import {defaultsDeep, resolveAppiumHome} from '../utils/index.js';
 import {readConfigFile} from './config-file.js';
 import type {InitResult, PreConfigArgs} from './init-types.js';
 import {determineAppiumHomeSource, preflightChecks} from './main-helpers.js';
@@ -51,7 +51,7 @@ export class AppiumInitializer {
   >(args?: Args<Cmd, SubCmd>): Promise<InitResult<Cmd>> {
     this.throwInsteadOfExit = false;
 
-    const appiumHome = args?.appiumHome ?? (await env.resolveAppiumHome());
+    const appiumHome = args?.appiumHome ?? (await resolveAppiumHome());
     const appiumHomeSourceName = determineAppiumHomeSource(args?.appiumHome);
     await requireDir(appiumHome, false, appiumHomeSourceName);
 

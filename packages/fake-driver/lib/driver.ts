@@ -1,7 +1,7 @@
 import type {Server as HttpServer} from 'node:http';
 
-import type {DriverData, IIpcSubscription, InitialOpts, IpcData, IpcMessage} from '@appium/types';
-import {BaseDriver, errors} from 'appium/driver.js';
+import type {IIpcSubscription, InitialOpts, IpcData, IpcMessage} from '@appium/types';
+import {BaseDriver} from 'appium/driver.js';
 import {sleep} from 'asyncbox';
 import type {Express, Request, Response} from 'express';
 
@@ -137,12 +137,6 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
     return this._bidiProxyUrl;
   }
 
-  override get driverData(): {isUnique: boolean} {
-    return {
-      isUnique: !!this.caps.uniqueApp,
-    };
-  }
-
   static fakeRoute(_req: Request, res: Response): void {
     res.send(JSON.stringify({fakedriver: 'fakeResponse'}));
   }
@@ -202,21 +196,11 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
     w3cCapabilities1: W3CFakeDriverCaps,
     w3cCapabilities2?: W3CFakeDriverCaps,
     w3cCapabilities3?: W3CFakeDriverCaps,
-    driverData: DriverData[] = [],
   ): Promise<[string, FakeDriverCaps]> {
-    for (const d of driverData) {
-      if (d.isUnique) {
-        throw new errors.SessionNotCreatedError(
-          'Cannot start session; another ' + 'unique session is in progress that requires all resources',
-        );
-      }
-    }
-
     const [sessionId, caps] = (await super.createSession(
       w3cCapabilities1,
       w3cCapabilities2,
       w3cCapabilities3,
-      driverData,
     )) as [string, FakeDriverCaps];
     this.caps = caps;
     await this.appModel.loadApp(caps.app);

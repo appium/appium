@@ -231,13 +231,10 @@ async createSession(w3cCaps) {
 
 !!! warning "Deprecated"
 
-    Older drivers may still define `createSession` with up to four parameters, e.g.
-    `createSession(jwpCaps, reqCaps, w3cCaps, otherDriverData)`. This shape is a holdover from the
-    retired JSON Wire Protocol, which required desired and required caps as the first two
-    arguments; only the first W3C-shaped argument was ever used. The `otherDriverData` parameter is
-    likewise deprecated in favor of [IPC](#send-messages-to-plugins-running-on-the-same-session) for
-    coordinating with other concurrently-running sessions. New drivers should use the single-argument
-    form shown above.
+    Older drivers may still define `createSession` with up to three parameters, e.g.
+    `createSession(jwpCaps, reqCaps, w3cCaps)`. This shape is a holdover from the retired JSON Wire
+    Protocol, which required desired and required caps as the first two arguments; only the first
+    W3C-shaped argument was ever used. New drivers should use the single-argument form shown above.
 
 You'll want to make sure to call `super.createSession` in order to get the session ID as well as
 the processed capabilities (note that capabilities are also set on `this.caps`; modifying `caps`
@@ -798,50 +795,19 @@ that multiple simultaneous sessions don't use the same resources:
 
 1. Have your users specify resource IDs via capabilities (`appium:driverPort` etc)
 1. Just always use free resources (find a new random port for each session)
-1. Have each driver express what resources it is using, then examine currently-used resources from
-   other drivers when a new session begins.
-
-!!! warning "Deprecated"
-
-    The `driverData`-based mechanism described below is deprecated. Prefer
-    [IPC](#send-messages-to-plugins-running-on-the-same-session) for coordinating resources across
-    concurrently-running sessions instead.
-
-To support this third strategy, you can implement `get driverData` in your driver to return what
-sorts of resources your driver is currently using, for example:
-
-```js
-get driverData() {
-  return {specialPort: 1234, specialFile: /path/to/file}
-}
-```
-
-Now, when a new session is started on your driver, the `driverData` response from any other
-simultaneously running drivers (of the same type) will also be included, as the last parameter of
-the deprecated, multi-argument form of the `createSession` method:
-
-```js
-async createSession(jwpCaps, reqCaps, w3cCaps, driverData)
-```
-
-You can dig into this `driverData` array to see what resources other drivers are using to help
-determine which ones you want to use for this particular session.
 
 !!! warning
 
-    Be careful here, since `driverData` is only passed between sessions of a single running Appium
-    server. There's nothing to stop a user from running multiple Appium servers and requesting your
-    driver simultaneously on each of them. In this case, you won't be able to ensure independence
-    of resources via `driverData`, so you might consider using file-based locking mechanisms or
-    something similar.
+    Appium doesn't provide any built-in mechanism for a driver to discover what resources other
+    concurrently-running sessions of the same driver are using. If you need this, consider
+    file-based locking or a similar out-of-process mechanism, since sessions may be running on
+    different Appium server processes entirely.
 
 !!! warning
 
-    It's also important to note you will only receive `driverData` for other instances of *your*
-    driver. So unrelated drivers also running may still be using some system resources. In general
-    Appium doesn't provide any features for ensuring unrelated drivers don't interfere with one
-    another, so it's up to the drivers to allow users to specify resource locations or addresses to
-    avoid clashes.
+    Appium also doesn't provide any features for ensuring unrelated drivers don't interfere with
+    one another, so it's up to the drivers to allow users to specify resource locations or
+    addresses to avoid clashes.
 
 ### Log events to the Appium event timeline
 

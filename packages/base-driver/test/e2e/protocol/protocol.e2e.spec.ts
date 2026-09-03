@@ -1,9 +1,8 @@
 import assert from 'node:assert/strict';
 import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
 
-import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
+import {getTestPort, httpDelete, httpGet, httpPost, TEST_HOST} from '@appium/driver-test-support';
 import type {RouteMatcher} from '@appium/types';
-import axios from 'axios';
 import type {Application, Request, Response} from 'express';
 import {StatusCodes as HTTPStatusCodes} from 'http-status-codes';
 import {createSandbox} from 'sinon';
@@ -50,22 +49,14 @@ describe('Protocol', function () {
     });
 
     it('should proxy to driver and return a valid response', async function () {
-      const {data} = await axios({
-        url: `${baseUrl}/session/foo/url`,
-        method: 'POST',
-        data: {url: 'http://google.com'},
-      });
+      const {data} = await httpPost(`${baseUrl}/session/foo/url`, {url: 'http://google.com'});
       assert.deepStrictEqual(data, {
         value: 'Navigated to: http://google.com',
       });
     });
 
     it('should assume requests without a Content-Type are json requests', async function () {
-      const {data} = await axios({
-        url: `${baseUrl}/session/foo/url`,
-        method: 'POST',
-        data: {url: 'http://google.com'},
-      });
+      const {data} = await httpPost(`${baseUrl}/session/foo/url`, {url: 'http://google.com'});
       assert.deepStrictEqual(data, {
         value: 'Navigated to: http://google.com',
       });
@@ -74,13 +65,10 @@ describe('Protocol', function () {
     it('should respond to x-www-form-urlencoded as well as json requests', async function () {
       const reqData = new URLSearchParams();
       reqData.set('url', 'http://google.com');
-      const {data} = await axios({
-        url: `${baseUrl}/session/foo/url`,
+      const {data} = await httpPost(`${baseUrl}/session/foo/url`, reqData.toString(), {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-        method: 'POST',
-        data: reqData.toString(),
       });
       assert.deepStrictEqual(data, {
         value: 'Navigated to: http://google.com',
@@ -88,85 +76,58 @@ describe('Protocol', function () {
     });
 
     it('should include url request parameters for methods to use - sessionid', async function () {
-      const {data} = await axios({
-        url: `${baseUrl}/session/foo/back`,
-        method: 'POST',
-        data: {},
-      });
+      const {data} = await httpPost(`${baseUrl}/session/foo/back`, {});
       assert.deepStrictEqual(data, {
         value: 'foo',
       });
     });
 
     it('should include url request parameters for methods to use - elementid', async function () {
-      const {data} = await axios({
-        url: `${baseUrl}/session/foo/element/bar/click`,
-        method: 'POST',
-        data: {},
-      });
+      const {data} = await httpPost(`${baseUrl}/session/foo/element/bar/click`, {});
       assert.deepStrictEqual(data.value, ['bar', 'foo']);
     });
 
     it('should include url req params in the order: custom, element, session', async function () {
-      const {data} = await axios({
-        url: `${baseUrl}/session/foo/element/bar/attribute/baz`,
-      });
+      const {data} = await httpGet(`${baseUrl}/session/foo/element/bar/attribute/baz`);
       assert.deepStrictEqual(data.value, ['baz', 'bar', 'foo']);
     });
 
     it('should respond with 400 Bad Request if parameters missing', async function () {
-      const {data, status} = await axios({
-        url: `${baseUrl}/session/foo/url`,
-        method: 'POST',
-        data: {},
-        validateStatus: null,
-      });
+      const {data, status} = await httpPost(
+        `${baseUrl}/session/foo/url`,
+        {},
+        {
+          throwOnError: false,
+        },
+      );
       assert.strictEqual(status, 400);
       assert.ok(JSON.stringify(data).includes('url'));
     });
 
     it('should reject requests with a badly formatted body and not crash', async function () {
-      await assert.rejects(
-        axios({
-          url: `${baseUrl}/session/foo/url`,
-          method: 'POST',
-          data: 'oh hello',
-        }),
-        Error,
-      );
+      await assert.rejects(httpPost(`${baseUrl}/session/foo/url`, 'oh hello'), Error);
 
-      const {data} = await axios({
-        url: `${baseUrl}/session/foo/url`,
-        method: 'POST',
-        data: {url: 'http://google.com'},
-      });
+      const {data} = await httpPost(`${baseUrl}/session/foo/url`, {url: 'http://google.com'});
       assert.deepStrictEqual(data, {
         value: 'Navigated to: http://google.com',
       });
     });
 
     it('should get 404 for bad routes', async function () {
-      await assert.rejects(
-        axios({
-          url: `${baseUrl}/blargimarg`,
-        }),
-        /404/,
-      );
+      await assert.rejects(httpGet(`${baseUrl}/blargimarg`), /404/);
     });
 
     it('4xx responses should have content-type of application/json', async function () {
-      const {headers} = await axios({
-        url: `${baseUrl}/blargimargarita`,
-        validateStatus: null,
+      const {headers} = await httpGet(`${baseUrl}/blargimargarita`, {
+        throwOnError: false,
       });
 
       assert.ok(String(headers['content-type']).includes('application/json'));
     });
 
     it('should return unknown command for routes without a command mapping', async function () {
-      const {status, data} = await axios({
-        url: `${baseUrl}/session/foo/element/bar/location`,
-        validateStatus: null,
+      const {status, data} = await httpGet(`${baseUrl}/session/foo/element/bar/location`, {
+        throwOnError: false,
       });
 
       assert.strictEqual(status, 404);
@@ -175,12 +136,13 @@ describe('Protocol', function () {
     });
 
     it('should return unknown command for ignored legacy routes', async function () {
-      const {status, data} = await axios({
-        url: `${baseUrl}/session/foo/buttonup`,
-        method: 'POST',
-        validateStatus: null,
-        data: {},
-      });
+      const {status, data} = await httpPost(
+        `${baseUrl}/session/foo/buttonup`,
+        {},
+        {
+          throwOnError: false,
+        },
+      );
 
       assert.strictEqual(status, 404);
       assert.strictEqual(data.value.error, 'unknown command');
@@ -188,46 +150,27 @@ describe('Protocol', function () {
     });
 
     it('should get 400 for bad parameters', async function () {
-      await assert.rejects(
-        axios({
-          url: `${baseUrl}/session/foo/url`,
-          method: 'POST',
-          data: {},
-        }),
-        /400/,
-      );
+      await assert.rejects(httpPost(`${baseUrl}/session/foo/url`, {}), /400/);
     });
 
     it('should ignore special extra payload params in the right contexts', async function () {
-      await axios({
-        url: `${baseUrl}/session/foo/element/bar/value`,
-        method: 'POST',
-        data: {id: 'baz', sessionId: 'lol', value: ['a'], text: 'bar'},
+      await httpPost(`${baseUrl}/session/foo/element/bar/value`, {
+        id: 'baz',
+        sessionId: 'lol',
+        value: ['a'],
+        text: 'bar',
       });
 
-      await assert.rejects(
-        axios({
-          url: `${baseUrl}/session/foo/element/bar/value`,
-          method: 'POST',
-          data: {id: 'baz'},
-        }),
-        /400/,
-      );
+      await assert.rejects(httpPost(`${baseUrl}/session/foo/element/bar/value`, {id: 'baz'}), /400/);
 
       // make sure adding the optional 'id' doesn't clobber a route where we
       // have an actual required 'id'
-      await axios({
-        url: `${baseUrl}/session/foo/frame`,
-        method: 'POST',
-        data: {id: 'baz'},
-      });
+      await httpPost(`${baseUrl}/session/foo/frame`, {id: 'baz'});
     });
 
     it('should return the correct error even if driver does not throw', async function () {
-      const {status, data} = await axios({
-        url: `${baseUrl}/session/foo/appium/settings`,
-        method: 'GET',
-        validateStatus: null,
+      const {status, data} = await httpGet(`${baseUrl}/session/foo/appium/settings`, {
+        throwOnError: false,
       });
       assert.strictEqual(status, 500);
       assert.strictEqual(data.value.error, 'unknown error');
@@ -237,28 +180,16 @@ describe('Protocol', function () {
 
     describe('w3c sendkeys migration', function () {
       it('should not accept value for sendkeys', async function () {
-        await assert.rejects(
-          axios({
-            url: `${baseUrl}/session/foo/element/bar/value`,
-            method: 'POST',
-            data: {value: 'text to type'},
-          }),
-          /400/,
-        );
+        await assert.rejects(httpPost(`${baseUrl}/session/foo/element/bar/value`, {value: 'text to type'}), /400/);
       });
       it('should accept text for sendkeys', async function () {
-        const {data} = await axios({
-          url: `${baseUrl}/session/foo/element/bar/value`,
-          method: 'POST',
-          data: {text: 'text to type'},
-        });
+        const {data} = await httpPost(`${baseUrl}/session/foo/element/bar/value`, {text: 'text to type'});
         assert.deepStrictEqual(data.value, ['text to type', 'bar']);
       });
       it('should accept value and text for sendkeys, and use text', async function () {
-        const {data} = await axios({
-          url: `${baseUrl}/session/foo/element/bar/value`,
-          method: 'POST',
-          data: {value: 'text to ignore', text: 'text to type'},
+        const {data} = await httpPost(`${baseUrl}/session/foo/element/bar/value`, {
+          value: 'text to ignore',
+          text: 'text to type',
         });
         assert.deepStrictEqual(data.value, ['text to type', 'bar']);
       });
@@ -272,28 +203,17 @@ describe('Protocol', function () {
       });
       afterEach(async function () {
         if (sessionId) {
-          await axios.delete(`${baseUrl}/session/${sessionId}`);
+          await httpDelete(`${baseUrl}/session/${sessionId}`);
         }
       });
 
       it('should not allow create session with desired caps (legacy format)', async function () {
         const desiredCapabilities = {a: 'b'};
-        await assert.rejects(
-          axios({
-            url: `${baseUrl}/session`,
-            method: 'POST',
-            data: {desiredCapabilities},
-          }),
-          /500/,
-        );
+        await assert.rejects(httpPost(`${baseUrl}/session`, {desiredCapabilities}), /500/);
       });
       it('should allow create session with capabilities (W3C)', async function () {
         const w3cCapabilities = {alwaysMatch: {'appium:e': 'f'}};
-        const {data} = await axios({
-          url: `${baseUrl}/session`,
-          method: 'POST',
-          data: {capabilities: w3cCapabilities},
-        });
+        const {data} = await httpPost(`${baseUrl}/session`, {capabilities: w3cCapabilities});
         assert.ok(!data.status);
         assert.ok(!data.sessionId);
         assert.deepStrictEqual(data.value.capabilities, w3cCapabilities);
@@ -307,17 +227,13 @@ describe('Protocol', function () {
         beforeEach(async function () {
           // Start a W3C session
           const {value} = (
-            await axios({
-              url: `${baseUrl}/session`,
-              method: 'POST',
-              data: {
-                capabilities: {
-                  alwaysMatch: {
-                    platformName: 'Fake',
-                    'appium:deviceName': 'Commodore 64',
-                  },
-                  firstMatch: [{}],
+            await httpPost(`${baseUrl}/session`, {
+              capabilities: {
+                alwaysMatch: {
+                  platformName: 'Fake',
+                  'appium:deviceName': 'Commodore 64',
                 },
+                firstMatch: [{}],
               },
             })
           ).data;
@@ -326,14 +242,15 @@ describe('Protocol', function () {
         });
 
         it('should throw 400 Bad Parameters exception if the parameters are bad', async function () {
-          const {status, data} = await axios({
-            url: `${sessionUrl}/actions`,
-            method: 'POST',
-            validateStatus: null,
-            data: {
+          const {status, data} = await httpPost(
+            `${sessionUrl}/actions`,
+            {
               bad: 'params',
             },
-          });
+            {
+              throwOnError: false,
+            },
+          );
           assert.strictEqual(status, 400);
 
           const {error: w3cError, message, stacktrace} = data.value;
@@ -344,14 +261,15 @@ describe('Protocol', function () {
         });
 
         it(`should throw 405 exception if the command hasn't been implemented yet`, async function () {
-          const {status, data} = await axios({
-            url: `${sessionUrl}/actions`,
-            method: 'POST',
-            validateStatus: null,
-            data: {
+          const {status, data} = await httpPost(
+            `${sessionUrl}/actions`,
+            {
               actions: [],
             },
-          });
+            {
+              throwOnError: false,
+            },
+          );
           assert.strictEqual(status, 405);
 
           const {error: w3cError, message, stacktrace} = data.value;
@@ -365,14 +283,15 @@ describe('Protocol', function () {
           (driver as any).performActions = () => {
             throw new Error(`Didn't work`);
           };
-          const {status, data} = await axios({
-            url: `${sessionUrl}/actions`,
-            method: 'POST',
-            validateStatus: null,
-            data: {
+          const {status, data} = await httpPost(
+            `${sessionUrl}/actions`,
+            {
               actions: [],
             },
-          });
+            {
+              throwOnError: false,
+            },
+          );
           assert.strictEqual(status, 500);
 
           const {error: w3cError, message, stacktrace} = data.value;
@@ -388,14 +307,15 @@ describe('Protocol', function () {
           const setUrlStub = sandbox.stub(driver, 'setUrl').callsFake(function () {
             throw new errors.TimeoutError();
           });
-          const {status, data} = await axios({
-            url: `${sessionUrl}/url`,
-            method: 'POST',
-            validateStatus: null,
-            data: {
+          const {status, data} = await httpPost(
+            `${sessionUrl}/url`,
+            {
               url: 'https://example.com/',
             },
-          });
+            {
+              throwOnError: false,
+            },
+          );
           assert.strictEqual(status, 500);
 
           const {error: w3cError, message, stacktrace} = data.value;
@@ -410,7 +330,7 @@ describe('Protocol', function () {
         it(`should pass with 200 HTTP status code if the command returns a value`, async function () {
           (driver as any).performActions = (actions: object[]) => 'It works ' + actions.join('');
           const {status, value, sessionId} = (
-            await axios.post(`${sessionUrl}/actions`, {
+            await httpPost(`${sessionUrl}/actions`, {
               actions: ['a', 'b', 'c'],
             })
           ).data;
@@ -453,7 +373,7 @@ describe('Protocol', function () {
             });
 
             const {status, value, sessionId} = (
-              await axios.post(`${sessionUrl}/actions`, {
+              await httpPost(`${sessionUrl}/actions`, {
                 actions: [1, 2, 3],
               })
             ).data;
@@ -472,12 +392,13 @@ describe('Protocol', function () {
                 },
               });
             });
-            const {status, data} = await axios({
-              url: `${sessionUrl}/actions`,
-              method: 'POST',
-              validateStatus: null,
-              data: {actions: [1, 2, 3]},
-            });
+            const {status, data} = await httpPost(
+              `${sessionUrl}/actions`,
+              {actions: [1, 2, 3]},
+              {
+                throwOnError: false,
+              },
+            );
             assert.strictEqual(status, 500);
             const {error: w3cError, message: errMessage, stacktrace} = data.value;
             assert.strictEqual(w3cError, 'unknown error');
@@ -495,14 +416,15 @@ describe('Protocol', function () {
                 },
               });
             });
-            const {status, data} = await axios({
-              url: `${sessionUrl}/actions`,
-              method: 'POST',
-              validateStatus: null,
-              data: {
+            const {status, data} = await httpPost(
+              `${sessionUrl}/actions`,
+              {
                 actions: [1, 2, 3],
               },
-            });
+              {
+                throwOnError: false,
+              },
+            );
             assert.strictEqual(status, HTTPStatusCodes.NOT_FOUND);
             const {error: w3cError, stacktrace} = data.value;
             assert.strictEqual(w3cError, 'no such element');
@@ -520,14 +442,15 @@ describe('Protocol', function () {
                 },
               });
             });
-            const {status, data} = await axios({
-              url: `${sessionUrl}/actions`,
-              method: 'POST',
-              validateStatus: null,
-              data: {
+            const {status, data} = await httpPost(
+              `${sessionUrl}/actions`,
+              {
                 actions: [1, 2, 3],
               },
-            });
+              {
+                throwOnError: false,
+              },
+            );
             assert.strictEqual(status, HTTPStatusCodes.INTERNAL_SERVER_ERROR);
             const {error: w3cError, stacktrace} = data.value;
             assert.strictEqual(w3cError, 'unknown error');
@@ -538,10 +461,8 @@ describe('Protocol', function () {
     });
 
     it('should send 404 response for invalid session id', async function () {
-      const {status, data} = await axios({
-        url: `${baseUrl}/session/foo/refresh`,
-        method: 'POST',
-        validateStatus: null,
+      const {status, data} = await httpPost(`${baseUrl}/session/foo/refresh`, undefined, {
+        throwOnError: false,
       });
 
       assert.strictEqual(status, 404);
@@ -575,25 +496,22 @@ describe('Protocol', function () {
       const sessionId = 'Vader Sessions';
       driver.sessionId = sessionId;
 
-      const {data} = await axios({
-        url: `${baseUrl}/session/${sessionId}/url`,
-        method: 'POST',
-        data: {url: 'http://google.com'},
-        validateStatus: null,
-      });
+      const {data} = await httpPost(
+        `${baseUrl}/session/${sessionId}/url`,
+        {url: 'http://google.com'},
+        {
+          throwOnError: false,
+        },
+      );
 
       assert.ok(!data.sessionId);
     });
 
     it('should return a new session ID on create', async function () {
-      const {data} = await axios({
-        url: `${baseUrl}/session`,
-        method: 'POST',
-        data: {
-          capabilities: {
-            alwaysMatch: {'appium:greeting': 'hello'},
-            firstMatch: [{}],
-          },
+      const {data} = await httpPost(`${baseUrl}/session`, {
+        capabilities: {
+          alwaysMatch: {'appium:greeting': 'hello'},
+          firstMatch: [{}],
         },
       });
 
@@ -606,7 +524,7 @@ describe('Protocol', function () {
         });
       } finally {
         if (data.value.sessionId) {
-          await axios.delete(`${baseUrl}/session/${data.value.sessionId}`);
+          await httpDelete(`${baseUrl}/session/${data.value.sessionId}`);
         }
       }
     });
@@ -639,12 +557,13 @@ describe('Protocol', function () {
 
     it('should give a nice error if proxying is set but no proxy function exists', async function () {
       (driver as any).canProxy = () => false;
-      const {status, data} = await axios({
-        url: `${baseUrl}/session/${sessionId}/url`,
-        method: 'POST',
-        validateStatus: null,
-        data: {url: 'http://google.com'},
-      });
+      const {status, data} = await httpPost(
+        `${baseUrl}/session/${sessionId}/url`,
+        {url: 'http://google.com'},
+        {
+          throwOnError: false,
+        },
+      );
 
       assert.strictEqual(status, 500);
       assert.strictEqual(data.value.error, 'unknown error');
@@ -655,12 +574,13 @@ describe('Protocol', function () {
       (driver as any).proxyReqRes = async function () {
         throw new Error('foo');
       };
-      const {status, data} = await axios({
-        url: `${baseUrl}/session/${sessionId}/url`,
-        method: 'POST',
-        validateStatus: null,
-        data: {url: 'http://google.com'},
-      });
+      const {status, data} = await httpPost(
+        `${baseUrl}/session/${sessionId}/url`,
+        {url: 'http://google.com'},
+        {
+          throwOnError: false,
+        },
+      );
 
       assert.strictEqual(status, 500);
       assert.strictEqual(data.value.error, 'unknown error');
@@ -674,12 +594,13 @@ describe('Protocol', function () {
         };
         throw new errors.ProxyRequestError(`Could not proxy command to remote server. `, w3cError, 404);
       };
-      const {status, data} = await axios({
-        url: `${baseUrl}/session/${sessionId}/url`,
-        method: 'POST',
-        validateStatus: null,
-        data: {url: 'http://google.com'},
-      });
+      const {status, data} = await httpPost(
+        `${baseUrl}/session/${sessionId}/url`,
+        {url: 'http://google.com'},
+        {
+          throwOnError: false,
+        },
+      );
 
       assert.strictEqual(status, 404);
       assert.strictEqual(data.value.error, 'no such element');
@@ -690,11 +611,7 @@ describe('Protocol', function () {
       (driver as any).proxyReqRes = async function (req: Request, res: Response) {
         res.status(200).json({custom: 'data'});
       };
-      const {status, data} = await axios({
-        url: `${baseUrl}/session/${sessionId}/url`,
-        method: 'POST',
-        data: {url: 'http://google.com'},
-      });
+      const {status, data} = await httpPost(`${baseUrl}/session/${sessionId}/url`, {url: 'http://google.com'});
 
       assert.strictEqual(status, 200);
       assert.deepStrictEqual(data, {custom: 'data'});
@@ -702,11 +619,7 @@ describe('Protocol', function () {
 
     it('should avoid proxying when path matches avoidance list', async function () {
       driver.getProxyAvoidList = () => [['POST', new RegExp('^/session/[^/]+/url$')]];
-      const {status, data} = await axios({
-        url: `${baseUrl}/session/${sessionId}/url`,
-        method: 'POST',
-        data: {url: 'http://google.com'},
-      });
+      const {status, data} = await httpPost(`${baseUrl}/session/${sessionId}/url`, {url: 'http://google.com'});
 
       assert.strictEqual(status, 200);
       assert.deepStrictEqual(data, {
@@ -717,12 +630,13 @@ describe('Protocol', function () {
     it('should fail if avoid proxy list is malformed in some way', async function () {
       async function badProxyAvoidanceList(list: RouteMatcher[]) {
         driver.getProxyAvoidList = () => list;
-        const {status, data} = await axios({
-          url: `${baseUrl}/session/${sessionId}/url`,
-          method: 'POST',
-          validateStatus: null,
-          data: {url: 'http://google.com'},
-        });
+        const {status, data} = await httpPost(
+          `${baseUrl}/session/${sessionId}/url`,
+          {url: 'http://google.com'},
+          {
+            throwOnError: false,
+          },
+        );
 
         assert.strictEqual(status, 500);
         assert.ok(data.value.message.includes('roxy'));
@@ -736,9 +650,7 @@ describe('Protocol', function () {
     it('should avoid proxying non-session commands even if not in the list', async function () {
       driver.getProxyAvoidList = () => [['POST', new RegExp('')]];
 
-      const {status, data} = await axios({
-        url: `${baseUrl}/status`,
-      });
+      const {status, data} = await httpGet(`${baseUrl}/status`);
 
       assert.strictEqual(status, 200);
       assert.deepStrictEqual(data, {
@@ -750,7 +662,7 @@ describe('Protocol', function () {
       driver.getProxyAvoidList = () => [['POST', new RegExp('')]];
 
       assert.strictEqual(driver.sessionId, sessionId);
-      const {status} = await axios.delete(`${baseUrl}/session/${sessionId}`);
+      const {status} = await httpDelete(`${baseUrl}/session/${sessionId}`);
 
       assert.strictEqual(status, 200);
       assert.ok(!driver.sessionId);
@@ -758,10 +670,7 @@ describe('Protocol', function () {
     });
 
     it('should avoid proxying when command spec specifies neverProxy', async function () {
-      const {status, data} = await axios({
-        url: `${baseUrl}/session/${sessionId}/noproxy`,
-        method: 'GET',
-      });
+      const {status, data} = await httpGet(`${baseUrl}/session/${sessionId}/noproxy`);
 
       assert.strictEqual(status, 200);
       assert.deepStrictEqual(data, {

@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import {afterEach, beforeEach, describe, it} from 'node:test';
 
+import {httpPost} from '@appium/driver-test-support';
 import type {Constraints, Driver, EventHistoryCommand} from '@appium/types';
-import axios from 'axios';
 import {createSandbox} from 'sinon';
 
 import {createServer} from '../../helpers.js';
@@ -38,7 +38,7 @@ describe('Execute Command Test', function () {
     const script = 'mobile: activateApp';
     const args = [{appId: 'io.appium.TestApp'}];
 
-    const res = await axios.post(`${baseUrl}/session/foo/execute/sync`, {
+    const res = await httpPost(`${baseUrl}/session/foo/execute/sync`, {
       script,
       args,
     });

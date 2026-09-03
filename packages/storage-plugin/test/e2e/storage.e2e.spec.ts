@@ -6,7 +6,6 @@ import {fileURLToPath} from 'node:url';
 
 import {pluginE2EHarness} from '@appium/plugin-test-support';
 import {fs, node, tempDir} from '@appium/support';
-import axios from 'axios';
 import {exec} from 'teen_process';
 import {remote as wdio} from 'webdriverio';
 import {WebSocket} from 'ws';
@@ -29,6 +28,26 @@ const WDIO_OPTS: WebdriverIOConfig = {
   connectionRetryCount: 0,
   capabilities: TEST_CAPS,
 };
+
+async function getJson(url: string): Promise<any> {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Request failed with status code ${response.status}`);
+  }
+  return response.json();
+}
+
+async function postJson(url: string, data?: unknown): Promise<any> {
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: typeof data === 'undefined' ? undefined : {'content-type': 'application/json'},
+    body: typeof data === 'undefined' ? undefined : JSON.stringify(data),
+  });
+  if (!response.ok) {
+    throw new Error(`Request failed with status code ${response.status}`);
+  }
+  return response.json();
+}
 
 describe('StoragePlugin', function () {
   let driver: any;
@@ -61,14 +80,11 @@ describe('StoragePlugin', function () {
     const baseUrl = `http://${TEST_HOST}:${WDIO_OPTS.port}/appium/storage`;
     driver.addCommand(
       'addStorageItem',
-      async (name: string, sha1: string) => (await axios.post(`${baseUrl}/add`, {name, sha1})).data.value,
+      async (name: string, sha1: string) => (await postJson(`${baseUrl}/add`, {name, sha1})).value,
     );
-    driver.addCommand('listStorageItems', async () => (await axios.get(`${baseUrl}/list`)).data.value);
-    driver.addCommand('resetStorageItems', async () => (await axios.post(`${baseUrl}/reset`)).data.value);
-    driver.addCommand(
-      'deleteStorageItem',
-      async (name: string) => (await axios.post(`${baseUrl}/delete`, {name})).data.value,
-    );
+    driver.addCommand('listStorageItems', async () => (await getJson(`${baseUrl}/list`)).value);
+    driver.addCommand('resetStorageItems', async () => (await postJson(`${baseUrl}/reset`)).value);
+    driver.addCommand('deleteStorageItem', async (name: string) => (await postJson(`${baseUrl}/delete`, {name})).value);
   });
 
   afterEach(async function () {
@@ -104,7 +120,7 @@ describe('StoragePlugin', function () {
 
   it('should still serve the deprecated /storage endpoints', async function () {
     const deprecatedBaseUrl = `http://${TEST_HOST}:${WDIO_OPTS.port}/storage`;
-    const {data} = await axios.get(`${deprecatedBaseUrl}/list`);
+    const data = await getJson(`${deprecatedBaseUrl}/list`);
     assert.strictEqual(data.value.length, 0);
   });
 

@@ -48,7 +48,6 @@ All utility functions are split into a bunch of different categories. Each categ
 |-|-|
 |console|Wrappers for the command line interface abstraction used by the Appium server|
 |doctor|Common doctor utilities that can be used by drivers and plugins|
-|env|Several helpers needed by the server to cope with internal dependencies and manifests|
 |fs|Most of the functions here are just thin wrappers over utility functions available in [Promises API](https://nodejs.org/api/fs.html#promises-api)|
 |logger|See [the logging section below](#logging)|
 |net|Helpers needed for network interactions, for example, upload and download of files|

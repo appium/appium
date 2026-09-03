@@ -1,3 +1,12 @@
+export {
+  DEFAULT_APPIUM_HOME,
+  MANIFEST_BASENAME,
+  MANIFEST_RELATIVE_PATH,
+  findAppiumDependencyPackage,
+  hasAppiumDependency,
+  resolveAppiumHome,
+  resolveManifestPath,
+} from './env.js';
 export {adler32} from './hash.js';
 export {isPackageChanged} from './is-package-changed.js';
 export type {IsPackageChangedOptions, IsPackageChangedResult} from './is-package-changed.js';

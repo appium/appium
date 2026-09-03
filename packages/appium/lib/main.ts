@@ -5,7 +5,6 @@ import {fileURLToPath} from 'node:url';
 
 import './logsink.js'; // must run first: global npmlog / log sink setup (see logsink module)
 import './logger.js'; // load Appium logger immediately after logsink (order matters for log wiring)
-import {env} from '@appium/support';
 import type {AppiumServer} from '@appium/types';
 import type {
   Args,
@@ -18,6 +17,7 @@ import type {
 import {AppiumInitializer} from './bootstrap/appium-initializer.js';
 import {AppiumMainRunner} from './bootstrap/appium-main-runner.js';
 import type {ExtCommandInitResult, InitResult, ServerInitData} from './bootstrap/init-types.js';
+import {resolveAppiumHome as resolveAppiumHomeUtil} from './utils/index.js';
 
 const initializer = new AppiumInitializer();
 const mainRunner = new AppiumMainRunner();
@@ -60,6 +60,6 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === realpathSync(process.a
 // from `'appium'`; consumers use local paths or `@appium/support`. Dropping them is semver-major.
 export {readConfigFile} from './bootstrap/config-file.js';
 export {finalizeSchema, getSchema, validate} from './schema/schema.js';
-export const resolveAppiumHome = env.resolveAppiumHome;
+export const resolveAppiumHome = resolveAppiumHomeUtil;
 
 export type {ExtCommandInitResult, InitResult, ServerInitData};

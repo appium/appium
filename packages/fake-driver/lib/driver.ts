@@ -197,11 +197,10 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
     w3cCapabilities2?: W3CFakeDriverCaps,
     w3cCapabilities3?: W3CFakeDriverCaps,
   ): Promise<[string, FakeDriverCaps]> {
-    const [sessionId, caps] = (await super.createSession(
-      w3cCapabilities1,
-      w3cCapabilities2,
-      w3cCapabilities3,
-    )) as [string, FakeDriverCaps];
+    const [sessionId, caps] = (await super.createSession(w3cCapabilities1, w3cCapabilities2, w3cCapabilities3)) as [
+      string,
+      FakeDriverCaps,
+    ];
     this.caps = caps;
     await this.appModel.loadApp(caps.app);
     if (this.caps.runClock) {

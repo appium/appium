@@ -5,9 +5,6 @@ export const desiredCapConstraints = {
     presence: true,
     isString: true,
   },
-  uniqueApp: {
-    isBoolean: true,
-  },
   runClock: {
     isBoolean: true,
   },

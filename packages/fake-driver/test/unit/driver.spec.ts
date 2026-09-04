@@ -524,27 +524,6 @@ describe('.isFeatureEnabled', function () {
 });
 
 describe('FakeDriver', function () {
-  it('should not start a session when a unique session is already running', async function () {
-    const d1 = new FakeDriver();
-    const [uniqueSession] = await d1.createSession(null as any, null as any, {
-      alwaysMatch: {
-        ...structuredClone(W3C_PREFIXED_CAPS),
-        'appium:uniqueApp': true,
-      },
-      firstMatch: [{}],
-    });
-    assert.strictEqual(typeof uniqueSession, 'string');
-    const d2 = new FakeDriver();
-    const otherSessionData = [d1.driverData];
-    try {
-      await assert.rejects(
-        d2.createSession(null as any, null as any, structuredClone(W3C_CAPS), otherSessionData),
-        /unique/,
-      );
-    } finally {
-      await d1.deleteSession(uniqueSession);
-    }
-  });
   it('should start a new session when another non-unique session is running', async function () {
     const d1 = new FakeDriver();
     const [session1Id] = await d1.createSession(null as any, null as any, structuredClone(W3C_CAPS));

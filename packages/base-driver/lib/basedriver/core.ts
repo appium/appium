@@ -136,18 +136,6 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
   }
 
   /**
-   * This property is used by AppiumDriver to store the data of the
-   * specific driver sessions. This data can be later used to adjust
-   * properties for driver instances running in parallel.
-   * Override it in inherited driver classes if necessary.
-   *
-   * @deprecated Use {@linkcode IAppiumIpc} for cross-session coordination instead.
-   */
-  get driverData() {
-    return {};
-  }
-
-  /**
    * This property controls the way the `executeCommand` method
    * handles new driver commands received from the client.
    * Override it for inherited classes only in special cases.

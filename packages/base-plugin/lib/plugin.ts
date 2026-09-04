@@ -1,6 +1,6 @@
 import {ExtensionCore, generateDriverLogPrefix, validateExecuteMethodParams} from '@appium/base-driver';
+import {node} from '@appium/support';
 import type {
-  AppiumLogger,
   Constraints,
   Driver,
   ExecuteMethodMap,
@@ -24,13 +24,8 @@ export class BasePlugin extends ExtensionCore implements Plugin {
 
   static executeMethodMap: ExecuteMethodMap<BasePluginMapType> = {};
 
-  name: string;
-  cliArgs: Record<string, unknown>;
-
-  /**
-   * @deprecated Use this.log instead of this.logger
-   */
-  declare logger: AppiumLogger;
+  readonly name: string;
+  readonly cliArgs: Readonly<Record<string, unknown>>;
 
   constructor(name: string, cliArgs: Record<string, unknown> = {}, driverId: string | null = null) {
     super();
@@ -38,8 +33,7 @@ export class BasePlugin extends ExtensionCore implements Plugin {
       this.updateLogPrefix(`${generateDriverLogPrefix(this)} <${driverId}>`);
     }
     this.name = name;
-    this.cliArgs = cliArgs;
-    this.logger = this.log;
+    this.cliArgs = node.deepFreeze({...cliArgs});
   }
 
   /**
@@ -65,5 +59,3 @@ export class BasePlugin extends ExtensionCore implements Plugin {
     return await command.call(this, next, driver, ...args);
   }
 }
-
-export default BasePlugin;

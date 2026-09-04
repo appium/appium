@@ -8,7 +8,6 @@ import {pluginE2EHarness} from '@appium/plugin-test-support';
 import {fs, node, tempDir} from '@appium/support';
 import {exec} from 'teen_process';
 import {remote as wdio} from 'webdriverio';
-import {WebSocket} from 'ws';
 
 const BUFFER_SIZE = 0xffff;
 const THIS_PLUGIN_DIR = node.getModuleRootSync('@appium/storage-plugin', fileURLToPath(import.meta.url))!;
@@ -134,46 +133,52 @@ describe('StoragePlugin', function () {
     const eventsWs = new WebSocket(`ws://${TEST_HOST}:${WDIO_OPTS.port}${events}`);
     try {
       await new Promise<void>((resolve, reject) => {
-        streamWs.once('error', reject);
-        eventsWs.once('error', reject);
-        eventsWs.once('message', async (data: Buffer | string) => {
-          let strData: string;
-          if (Buffer.isBuffer(data)) {
-            strData = data.toString();
-          } else if (typeof data === 'string') {
-            strData = data;
-          } else {
-            return;
-          }
-          try {
-            const {value} = JSON.parse(strData);
-            if (value?.success) {
-              resolve();
-            } else {
-              reject(new Error(JSON.stringify(value)));
+        streamWs.addEventListener('error', () => reject(new Error('streamWs connection error')), {once: true});
+        eventsWs.addEventListener('error', () => reject(new Error('eventsWs connection error')), {once: true});
+        eventsWs.addEventListener(
+          'message',
+          async (event) => {
+            const data = event.data;
+            // Native WebSocket.data for a text frame is always a plain string (never a Buffer),
+            // unlike 'ws', so only the string case needs handling here.
+            if (typeof data !== 'string') {
+              return;
             }
-          } catch {
-            // ignore
-          }
-        });
-        streamWs.once('open', async () => {
-          const fhandle = await fs.openFile(sourcePath, 'r');
-          try {
-            let bytesRead = 0;
-            while (bytesRead < size) {
-              const bufferSize = Math.min(BUFFER_SIZE, size - bytesRead);
-              const buffer = Buffer.alloc(bufferSize);
-              await fhandle.read(buffer, 0, bufferSize, bytesRead);
-              streamWs.send(buffer);
-              bytesRead += bufferSize;
+            try {
+              const {value} = JSON.parse(data);
+              if (value?.success) {
+                resolve();
+              } else {
+                reject(new Error(JSON.stringify(value)));
+              }
+            } catch {
+              // ignore
             }
-          } catch (e) {
-            reject(e);
-          } finally {
-            await fhandle.close();
-            streamWs.close();
-          }
-        });
+          },
+          {once: true},
+        );
+        streamWs.addEventListener(
+          'open',
+          async () => {
+            const fhandle = await fs.openFile(sourcePath, 'r');
+            try {
+              let bytesRead = 0;
+              while (bytesRead < size) {
+                const bufferSize = Math.min(BUFFER_SIZE, size - bytesRead);
+                const buffer = Buffer.alloc(bufferSize);
+                await fhandle.read(buffer, 0, bufferSize, bytesRead);
+                streamWs.send(buffer);
+                bytesRead += bufferSize;
+              }
+            } catch (e) {
+              reject(e);
+            } finally {
+              await fhandle.close();
+              streamWs.close();
+            }
+          },
+          {once: true},
+        );
       });
     } finally {
       streamWs.close();

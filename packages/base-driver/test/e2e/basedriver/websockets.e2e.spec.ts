@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {after, before, describe, it} from 'node:test';
 
 import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
-import WebSocket, {WebSocketServer} from 'ws';
+import {WebSocketServer} from 'ws';
 
 import {DEFAULT_WS_PATHNAME_PREFIX, routeConfiguringFunction, server} from '../../../lib/index.js';
 import {FakeDriver} from '../protocol/fake-driver.js';
@@ -34,7 +34,7 @@ describe('Websockets (e2e)', function () {
         noServer: true,
       });
       wss.on('connection', (ws) => {
-        if (ws && ws.readyState === WebSocket.OPEN) {
+        if (ws && ws.readyState === ws.OPEN) {
           ws.send(WS_DATA);
         }
       });
@@ -44,19 +44,16 @@ describe('Websockets (e2e)', function () {
       assert.strictEqual(Object.keys(await baseServer.getWebSocketHandlers()).length, 1);
       await new Promise<void>((resolve, reject) => {
         const client = new WebSocket(`ws://${TEST_HOST}:${port}${endpoint}`);
-        client.once('upgrade', (res) => {
-          try {
-            assert.strictEqual(res.statusCode, 101);
-          } catch (e) {
-            reject(e);
-          }
-        });
-        client.once('message', (data) => {
-          const dataStr = typeof data === 'string' ? data : data.toString();
-          assert.strictEqual(dataStr, WS_DATA);
-          resolve();
-        });
-        client.once('error', reject);
+        client.addEventListener(
+          'message',
+          (event) => {
+            const dataStr = typeof event.data === 'string' ? event.data : event.data.toString();
+            assert.strictEqual(dataStr, WS_DATA);
+            resolve();
+          },
+          {once: true},
+        );
+        client.addEventListener('error', () => reject(new Error('WebSocket connection error')), {once: true});
         setTimeout(() => reject(new Error('No websocket messages have been received after the timeout')), timeout);
       });
 
@@ -64,15 +61,15 @@ describe('Websockets (e2e)', function () {
       assert.strictEqual(Object.keys(await baseServer.getWebSocketHandlers()).length, 0);
       await new Promise<void>((resolve, reject) => {
         const client = new WebSocket(`ws://${TEST_HOST}:${port}${endpoint}`);
-        client.on('message', (data) =>
+        client.addEventListener('message', (event) =>
           reject(
             new Error(
               `No websocket messages are expected after the handler ` +
-                `has been removed. '${data}' is received instead. `,
+                `has been removed. '${event.data}' is received instead. `,
             ),
           ),
         );
-        client.on('error', resolve);
+        client.addEventListener('error', () => resolve());
         setTimeout(resolve, timeout);
       });
     });

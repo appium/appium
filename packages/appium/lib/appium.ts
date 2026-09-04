@@ -4,7 +4,6 @@ import {
   CREATE_SESSION_COMMAND,
   DELETE_SESSION_COMMAND,
   DriverCore,
-  errors,
   type ExtensionCore,
   generateDriverLogPrefix,
   GET_STATUS_COMMAND,
@@ -20,7 +19,6 @@ import {util} from '@appium/support';
 import type {
   AppiumServer,
   DriverCaps,
-  DriverData,
   DriverOpts,
   ExternalDriver,
   IAppiumIpc,
@@ -48,7 +46,7 @@ import {
 import * as insecureFeatures from './insecure-features.js';
 import * as inspectorCommands from './inspector-commands.js';
 import {getDefaultsForExtension} from './schema/index.js';
-import {compact, pickBy, pull} from './utils/index.js';
+import {pickBy} from './utils/index.js';
 
 const desiredCapabilityConstraints = {
   automationName: {
@@ -101,8 +99,6 @@ type IpcAssignable = {
  */
 export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
   readonly sessions: Record<string, ExternalDriver> = {};
-
-  readonly pendingDrivers: Record<string, ExternalDriver[]> = {};
 
   /**
    * The umbrella driver does not observe its own command timeout; inner session drivers do.
@@ -335,9 +331,6 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
         await this.deleteAllSessions();
       }
 
-      let runningDriversData: DriverData[] = [];
-      let otherPendingDriversData: DriverData[] = [];
-
       const driverInstance = new InnerDriver(this.args, true) as unknown as ExternalDriver;
 
       this.configureDriverFeatures(driverInstance, driverName);
@@ -365,37 +358,22 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
       driverInstance.serverPort = this.args.port;
       driverInstance.serverPath = this.args.basePath;
 
-      try {
-        runningDriversData = (await this.curSessionDataForDriver(InnerDriver)) ?? [];
-      } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : String(e);
-        throw new errors.SessionNotCreatedError(msg);
-      }
-      this.pendingDrivers[InnerDriver.name] = this.pendingDrivers[InnerDriver.name] || [];
-      otherPendingDriversData = compact(this.pendingDrivers[InnerDriver.name].map((drv) => drv.driverData));
-      this.pendingDrivers[InnerDriver.name].push(driverInstance);
-
-      try {
-        [innerSessionId, dCaps] = (await driverInstance.createSession(
-          processedW3CCapabilities as never,
-          processedW3CCapabilities,
-          processedW3CCapabilities,
-          [...runningDriversData, ...otherPendingDriversData],
-        )) as [string, DriverCaps<AppiumDriverConstraints> & {webSocketUrl?: string | boolean}];
-        this.sessions[innerSessionId] = driverInstance;
-        // create an IPC channel for the driver and all plugins on this session
-        this.sessionIpcs[innerSessionId] = new AppiumIpc({
-          maxObjSize: this.args.maxIpcDataSize,
-          maxTopics: this.args.maxIpcTopics,
-          log: driverInstance.log,
-        });
-        const extDriver = driverInstance as unknown as IpcAssignable;
-        if (typeof extDriver.assignIpc === 'function') {
-          // TODO remove this existence guard as a breaking change in Appium 3
-          await extDriver.assignIpc(this.sessionIpcs[innerSessionId]);
-        }
-      } finally {
-        pull(this.pendingDrivers[InnerDriver.name], driverInstance);
+      [innerSessionId, dCaps] = (await driverInstance.createSession(
+        processedW3CCapabilities as never,
+        processedW3CCapabilities,
+        processedW3CCapabilities,
+      )) as [string, DriverCaps<AppiumDriverConstraints> & {webSocketUrl?: string | boolean}];
+      this.sessions[innerSessionId] = driverInstance;
+      // create an IPC channel for the driver and all plugins on this session
+      this.sessionIpcs[innerSessionId] = new AppiumIpc({
+        maxObjSize: this.args.maxIpcDataSize,
+        maxTopics: this.args.maxIpcTopics,
+        log: driverInstance.log,
+      });
+      const extDriver = driverInstance as unknown as IpcAssignable;
+      if (typeof extDriver.assignIpc === 'function') {
+        // TODO remove this existence guard as a breaking change in Appium 3
+        await extDriver.assignIpc(this.sessionIpcs[innerSessionId]);
       }
 
       this.attachUnexpectedShutdownHandler(driverInstance, innerSessionId);
@@ -484,41 +462,14 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
   }
 
   /**
-   * Collects `driverData` for every active session whose driver class matches `InnerDriver.name`
-   * (used when creating another session of the same driver type).
-   * @remarks `InnerDriver` is expected to be the driver class; only `.name` is read.
-   */
-  async curSessionDataForDriver(InnerDriver: {name: string}): Promise<DriverData[]> {
-    const data = compact(
-      Object.values(this.sessions)
-        .filter((s) => s.constructor.name === InnerDriver.name)
-        .map((s) => s.driverData),
-    );
-    for (const datum of data) {
-      if (!datum) {
-        throw new Error(
-          `Problem getting session data for driver type ` + `${InnerDriver.name}; does it implement 'get driverData'?`,
-        );
-      }
-    }
-    return data;
-  }
-
-  /**
    * Ends one session: removes it from the master list immediately, then delegates to the inner
-   * driver’s `deleteSession` with sibling-session metadata.
+   * driver’s `deleteSession`.
    */
   async deleteSession(sessionId: string): Promise<SessionHandlerDeleteResult> {
     let protocol: Protocol | undefined;
     try {
-      let otherSessionsData: DriverData[] | undefined;
-      let dstSession: ExternalDriver | undefined;
-      if (this.sessions[sessionId]) {
-        const curConstructorName = this.sessions[sessionId].constructor.name;
-        otherSessionsData = Object.entries(this.sessions)
-          .filter(([key, value]) => value.constructor.name === curConstructorName && key !== sessionId)
-          .map(([, value]) => value.driverData);
-        dstSession = this.sessions[sessionId];
+      const dstSession: ExternalDriver | undefined = this.sessions[sessionId];
+      if (dstSession) {
         protocol = dstSession.protocol;
         this.cleanupBidiSockets(sessionId);
       }
@@ -530,7 +481,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
 
       return {
         protocol,
-        value: await dstSession.deleteSession(sessionId, otherSessionsData),
+        value: await dstSession.deleteSession(sessionId),
       };
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : String(e);

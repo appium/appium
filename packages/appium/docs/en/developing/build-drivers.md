@@ -231,13 +231,10 @@ async createSession(w3cCaps) {
 
 !!! warning "Deprecated"
 
-    Older drivers may still define `createSession` with up to four parameters, e.g.
-    `createSession(jwpCaps, reqCaps, w3cCaps, otherDriverData)`. This shape is a holdover from the
-    retired JSON Wire Protocol, which required desired and required caps as the first two
-    arguments; only the first W3C-shaped argument was ever used. The `otherDriverData` parameter is
-    likewise deprecated in favor of [IPC](#send-messages-to-plugins-running-on-the-same-session) for
-    coordinating with other concurrently-running sessions. New drivers should use the single-argument
-    form shown above.
+    Older drivers may still define `createSession` with up to three parameters, e.g.
+    `createSession(jwpCaps, reqCaps, w3cCaps)`. This shape is a holdover from the retired JSON Wire
+    Protocol, which required desired and required caps as the first two arguments; only the first
+    W3C-shaped argument was ever used. New drivers should use the single-argument form shown above.
 
 You'll want to make sure to call `super.createSession` in order to get the session ID as well as
 the processed capabilities (note that capabilities are also set on `this.caps`; modifying `caps`
@@ -798,50 +795,32 @@ that multiple simultaneous sessions don't use the same resources:
 
 1. Have your users specify resource IDs via capabilities (`appium:driverPort` etc)
 1. Just always use free resources (find a new random port for each session)
-1. Have each driver express what resources it is using, then examine currently-used resources from
-   other drivers when a new session begins.
+1. Have each running instance of your driver publish and subscribe to messages on a shared IPC
+   channel, so sessions can coordinate directly with one another.
 
-!!! warning "Deprecated"
-
-    The `driverData`-based mechanism described below is deprecated. Prefer
-    [IPC](#send-messages-to-plugins-running-on-the-same-session) for coordinating resources across
-    concurrently-running sessions instead.
-
-To support this third strategy, you can implement `get driverData` in your driver to return what
-sorts of resources your driver is currently using, for example:
-
-```js
-get driverData() {
-  return {specialPort: 1234, specialFile: /path/to/file}
-}
-```
-
-Now, when a new session is started on your driver, the `driverData` response from any other
-simultaneously running drivers (of the same type) will also be included, as the last parameter of
-the deprecated, multi-argument form of the `createSession` method:
-
-```js
-async createSession(jwpCaps, reqCaps, w3cCaps, driverData)
-```
-
-You can dig into this `driverData` array to see what resources other drivers are using to help
-determine which ones you want to use for this particular session.
+The per-session IPC channel described in [Send messages to plugins running on the same
+session](#send-messages-to-plugins-running-on-the-same-session) is isolated per session, so it
+can't be used for this: it doesn't let you talk to *other* sessions of your driver. Instead,
+construct and hold on to your own `AppiumIpc` instance (exported from `appium/driver.js`) at
+module scope in your driver's package, for example as a memoized singleton. Since Node.js caches
+modules, every instance of your driver loaded within the same Appium server process will share
+that one `AppiumIpc` object, and can use it to publish and subscribe to topics across sessions —
+the same way the per-session channel works, just not scoped to a single session. See
+[xcuitest-driver's `session-claim-handler.ts`](https://github.com/appium/appium-xcuitest-driver/blob/master/lib/session-claim-handler.ts)
+for a real example, which uses this technique to detect and resolve conflicting sessions targeting
+the same device UDID.
 
 !!! warning
 
-    Be careful here, since `driverData` is only passed between sessions of a single running Appium
-    server. There's nothing to stop a user from running multiple Appium servers and requesting your
-    driver simultaneously on each of them. In this case, you won't be able to ensure independence
-    of resources via `driverData`, so you might consider using file-based locking mechanisms or
-    something similar.
+    This only works for sessions running within the same Node.js process (i.e. the same Appium
+    server). It cannot coordinate sessions running on different Appium server processes; for that,
+    consider file-based locking or a similar out-of-process mechanism.
 
 !!! warning
 
-    It's also important to note you will only receive `driverData` for other instances of *your*
-    driver. So unrelated drivers also running may still be using some system resources. In general
-    Appium doesn't provide any features for ensuring unrelated drivers don't interfere with one
-    another, so it's up to the drivers to allow users to specify resource locations or addresses to
-    avoid clashes.
+    Appium also doesn't provide any features for ensuring unrelated drivers don't interfere with
+    one another, so it's up to the drivers to allow users to specify resource locations or
+    addresses to avoid clashes.
 
 ### Log events to the Appium event timeline
 
@@ -989,10 +968,15 @@ export type IpcMessage<T> = {
 #### IPC Notes
 
 There are some important things to keep in mind when using Appium's IPC feature:
-- IPC is only available once `onIpcInit` has been called, at the end of the `createSession` flow.
-  It cannot be used statically or in `createSession` hooks
-- In sum, IPC is only for use during a session (this is also to prevent drivers/plugins from
-  accessing or reading data sent on IPC channels in other sessions.)
+- The `ipcSubscribe` method (and the IPC channel it subscribes to) is only available once
+  `onIpcInit` has been called, at the end of the `createSession` flow. It cannot be used statically
+  or in `createSession` hooks
+- The channel that `ipcSubscribe` gives you access to is scoped to the current session, and is
+  shared only with the plugins active in that same session (this is also to prevent drivers/plugins
+  from accessing or reading data sent on IPC channels in other sessions.) To coordinate across
+  multiple concurrent sessions of your own driver instead, see [Make itself aware of resources
+  other concurrent drivers are
+  using](#make-itself-aware-of-resources-other-concurrent-drivers-are-using).
 - The default max size of an IPC message is 1MB. This can be configured by the server-admin by
   using the `--max-ipc-data-size` arg (value is a number in bytes).
 - If a message exceeds the configured size, any call to `publish` methods will throw, so be

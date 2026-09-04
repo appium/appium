@@ -331,16 +331,6 @@ describe('FakeDriver via HTTP', function () {
       await driver2.deleteSession();
     });
 
-    it('should not be able to run two FakeDriver sessions simultaneously when one is unique', async function () {
-      const uniqueCaps = structuredClone(caps);
-      uniqueCaps['appium:uniqueApp'] = true;
-      const driver1 = await wdio({...wdOpts, capabilities: uniqueCaps});
-      assert.ok(driver1.sessionId);
-      assert.strictEqual(typeof driver1.sessionId, 'string');
-      await assert.rejects(wdio({...wdOpts, capabilities: caps}));
-      await driver1.deleteSession();
-    });
-
     it('should use the newCommandTimeout of the inner Driver on session creation', async function () {
       const localCaps = {
         'appium:newCommandTimeout': 0.25,

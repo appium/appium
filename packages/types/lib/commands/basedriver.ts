@@ -330,7 +330,6 @@ export type LegacyCreateSessionArgs<C extends Constraints> = [
   w3cCaps1: W3CDriverCaps<C>,
   w3cCaps2?: W3CDriverCaps<C>,
   w3cCaps3?: W3CDriverCaps<C>,
-  driverData?: DriverData[],
 ];
 
 /**
@@ -354,8 +353,7 @@ export interface ISessionHandler<
    * @deprecated Historically this method accepted the same W3C capabilities object in up to three
    * positions to support the retired JSONWP protocol. These positions are intended to carry the
    * same value; if they differ, which one wins is unspecified. Use the single-argument overload
-   * of {@linkcode createSession} instead. The `driverData` parameter is also deprecated; use
-   * {@linkcode IAppiumIpc} for cross-session coordination instead.
+   * of {@linkcode createSession} instead.
    *
    * @param legacyArgs - see {@linkcode LegacyCreateSessionArgs}
    * @returns The capabilities object representing the created session
@@ -369,14 +367,6 @@ export interface ISessionHandler<
    * @param sessionId - the id of the session that is to be deleted
    */
   deleteSession(sessionId?: string): Promise<DeleteResult | void>;
-  /**
-   * @deprecated The `driverData` parameter is unused by {@linkcode BaseDriver}; use
-   * {@linkcode IAppiumIpc} for cross-session coordination instead.
-   *
-   * @param sessionId - the id of the session that is to be deleted
-   * @param driverData - the driver data for other currently-running sessions
-   */
-  deleteSession(sessionId?: string, driverData?: DriverData[]): Promise<DeleteResult | void>;
 
   /**
    * Get the data for the current session
@@ -402,13 +392,6 @@ export type DefaultCreateSessionResult<C extends Constraints> = [sessionId: stri
  * @see {@linkcode ISessionHandler}
  */
 export type DefaultDeleteSessionResult = void;
-
-/**
- * Custom session data for a driver.
- *
- * @deprecated Use {@linkcode IAppiumIpc} for cross-session coordination instead.
- */
-export type DriverData = Record<string, unknown>;
 
 /**
  * Data returned by {@linkcode ISessionHandler.getSession}.

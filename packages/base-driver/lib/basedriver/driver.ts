@@ -285,8 +285,7 @@ export class BaseDriver<
    * @deprecated Historically the first three arguments were reserved for JSONWP capabilities.
    * Appium 2 dropped support for that protocol; these positions are now intended to carry the
    * same W3C capabilities value, and if they differ, which one wins is unspecified. Use the
-   * single-argument overload of {@linkcode createSession} instead. The `driverData` parameter is
-   * also deprecated; use {@linkcode IAppiumIpc} for cross-session coordination instead.
+   * single-argument overload of {@linkcode createSession} instead.
    */
   async createSession(...legacyArgs: LegacyCreateSessionArgs<C>): Promise<CreateResult>;
   async createSession(...legacyArgs: LegacyCreateSessionArgs<C>): Promise<CreateResult> {

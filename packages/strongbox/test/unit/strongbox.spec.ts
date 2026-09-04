@@ -193,6 +193,17 @@ describe('Strongbox', function () {
           assert.strictEqual(item.encoding, 'base64');
         });
       });
+
+      describe('when the name has no alphanumeric characters', function () {
+        it('should reject instead of pointing the item at the container', async function () {
+          for (const name of ['---', '@#$', ' ', '']) {
+            await assert.rejects(box.createItem(name), {
+              name: 'TypeError',
+              message: `Item name '${name}' must contain at least one alphanumeric character`,
+            });
+          }
+        });
+      });
     });
 
     describe('clearAll()', function () {
@@ -281,6 +292,15 @@ describe('Strongbox', function () {
           ['zebra', 'alpha'],
         );
         assert.strictEqual(MockFs.opendir.calledWith(box.container), true);
+      });
+
+      it('should skip files whose name has no alphanumeric characters', async function () {
+        mockOpendir([dirent('good'), dirent('_')]);
+        const items = await box.listItems();
+        assert.deepStrictEqual(
+          items.map((i) => i.name),
+          ['good'],
+        );
       });
 
       it('should return an empty array when the container does not exist', async function () {

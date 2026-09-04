@@ -55,6 +55,7 @@
   "dependencies": {
     "@appium/support": "7.2.7",
     "@appium/types": "1.7.0",
+    "@types/express": "5.0.6",
     "async-lock": "1.4.1",
     "asyncbox": "6.4.2",
     "axios": "1.19.0",

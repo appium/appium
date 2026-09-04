@@ -1,7 +1,7 @@
 import {realpathSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
 
-export {BasePlugin, default} from './plugin.js';
+export {BasePlugin} from './plugin.js';
 
 // Handle smoke test flag. realpath() both sides so this still matches when invoked through a
 // bin symlink, since `import.meta.url` resolves symlinks but `process.argv[1]` does not.

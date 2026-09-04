@@ -1,4 +1,4 @@
-import globalLog, {type MessageObject} from '@appium/logger';
+import {log as globalLog, type MessageObject} from '@appium/logger';
 import {fs, util} from '@appium/support';
 import type {ParsedArgs} from 'appium/types/index.js';
 import {LRUCache} from 'lru-cache';

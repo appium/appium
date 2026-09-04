@@ -43,13 +43,6 @@ export interface Logger extends EventEmitter {
   enableColor(): void;
   disableColor(): void;
 
-  enableProgress(): void;
-  disableProgress(): void;
-  progressEnabled(): boolean;
-
-  enableUnicode(): void;
-  disableUnicode(): void;
-
   pause(): void;
   resume(): void;
 

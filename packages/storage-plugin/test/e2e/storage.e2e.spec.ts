@@ -139,6 +139,8 @@ describe('StoragePlugin', function () {
           'message',
           async (event) => {
             const data = event.data;
+            // Native WebSocket.data for a text frame is always a plain string (never a Buffer),
+            // unlike 'ws', so only the string case needs handling here.
             if (typeof data !== 'string') {
               return;
             }

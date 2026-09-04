@@ -56,7 +56,6 @@
     "@appium/support": "7.2.7",
     "@appium/types": "1.7.0",
     "@types/express": "5.0.6",
-    "@types/ws": "8.18.1",
     "async-lock": "1.4.1",
     "asyncbox": "6.4.2",
     "axios": "1.19.0",
@@ -68,8 +67,7 @@
     "method-override": "3.0.0",
     "morgan": "1.11.0",
     "path-to-regexp": "8.4.2",
-    "type-fest": "5.8.0",
-    "ws": "8.21.3"
+    "type-fest": "5.8.0"
   },
   "tsd": {
     "compilerOptions": {

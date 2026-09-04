@@ -11,7 +11,7 @@ npm install @appium/logger --save
 ## Basic Usage
 
 ```js
-import log from '@appium/logger';
+import {log} from '@appium/logger';
 
 // additional stuff ---------------------------+
 // message ----------+                         |

@@ -45,15 +45,15 @@ export class Log extends EventEmitter implements Logger {
   heading: string;
   stream: Writable | null; // Defaults to process.stderr; set to null when using custom output (e.g. Winston)
 
-  _asyncStorage: AsyncLocalStorage<Record<string, any>>;
-  _colorEnabled?: boolean;
-  _buffer: MessageObject[];
-  _style: Record<LogLevel | string, StyleObject | undefined>;
-  _levels: Record<LogLevel | string, number>;
-  _disp: Record<LogLevel | string, number | string>;
-  _id: number;
-  _paused: boolean;
-  _secureValuesPreprocessor: SecureValuesPreprocessor;
+  private _asyncStorage: AsyncLocalStorage<Record<string, any>>;
+  private _colorEnabled?: boolean;
+  private _buffer: MessageObject[];
+  private _style: Record<LogLevel | string, StyleObject | undefined>;
+  private _levels: Record<LogLevel | string, number>;
+  private _disp: Record<LogLevel | string, number | string>;
+  private _id: number;
+  private _paused: boolean;
+  private _secureValuesPreprocessor: SecureValuesPreprocessor;
 
   private _history: LRUCache<number, MessageObject>;
   private _maxRecordSize: number;
@@ -127,15 +127,6 @@ export class Log extends EventEmitter implements Logger {
 
   disableColor(): void {
     this._colorEnabled = false;
-  }
-
-  // this functionality has been deliberately disabled
-  enableUnicode(): void {}
-  disableUnicode(): void {}
-  enableProgress(): void {}
-  disableProgress(): void {}
-  progressEnabled(): boolean {
-    return false;
   }
 
   /**
@@ -305,7 +296,6 @@ export class Log extends EventEmitter implements Logger {
     // If 'disp' is null or undefined, use the lvl as a default
     // Allows: '', 0 as valid disp
     const disp = this._disp[m.level];
-    this.clearProgress();
     for (const line of m.message.split(/\r?\n/)) {
       const heading = this.heading;
       if (heading) {
@@ -321,7 +311,6 @@ export class Log extends EventEmitter implements Logger {
       this.write(p, this.prefixStyle);
       this.write(` ${line}\n`);
     }
-    this.showProgress();
   }
 
   private _format(msg: string, style: StyleObject = {}): string | undefined {
@@ -404,10 +393,6 @@ export class Log extends EventEmitter implements Logger {
 
     return result;
   }
-
-  // this functionality has been deliberately disabled
-  private clearProgress(): void {}
-  private showProgress(): void {}
 }
 
 /**
@@ -433,4 +418,3 @@ export const GLOBAL_LOG =
     g[GLOBAL_NPMLOG_KEY] = log;
     return log;
   })();
-export default GLOBAL_LOG;

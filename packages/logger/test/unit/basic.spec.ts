@@ -185,9 +185,9 @@ describe('basic', function () {
     it('_buffer while paused', function () {
       log.pause();
       log.log('verbose', 'test', 'test log');
-      assert.strictEqual(log._buffer.length, 1);
+      assert.strictEqual((log as any)._buffer.length, 1);
       log.resume();
-      assert.strictEqual(log._buffer.length, 0);
+      assert.strictEqual((log as any)._buffer.length, 0);
     });
   });
 

@@ -3,11 +3,11 @@ import os from 'node:os';
 import path from 'node:path';
 
 /* eslint-disable no-console */
-import {fs, npm, system} from '@appium/support';
+import {fs, system} from '@appium/support';
 import * as semver from 'semver';
 
 import {getBuildInfo, updateBuildInfo} from '../helpers/build.js';
-import {appiumPackageRoot, npmPackage} from '../utils/index.js';
+import {appiumPackageRoot, npm, npmPackage} from '../utils/index.js';
 
 const MIN_NODE_VERSION = (npmPackage.engines as Record<string, string>).node;
 

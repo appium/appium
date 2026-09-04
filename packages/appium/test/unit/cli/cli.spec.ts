@@ -1,12 +1,13 @@
 import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
-import {fs, npm, tempDir} from '@appium/support';
+import {fs, tempDir} from '@appium/support';
 import {createSandbox} from 'sinon';
 
 import DriverCommand from '../../../lib/cli/driver-command.js';
 import {loadExtensions} from '../../../lib/extension/index.js';
 import {Manifest} from '../../../lib/extension/manifest.js';
+import {npm} from '../../../lib/utils/index.js';
 
 describe('DriverCommand', function () {
   let appiumHome: string;

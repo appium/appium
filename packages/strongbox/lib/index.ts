@@ -223,6 +223,10 @@ export class Strongbox<Options extends StrongboxOpts = StrongboxOpts> implements
       encoding = encodingOrCtor;
       encodingOrCtor = this.defaultItemCtor;
     }
+    if (!slugify(name)) {
+      // the slug is the filename; an empty one would resolve to the container directory itself
+      throw new TypeError(`Item name '${name}' must contain at least one alphanumeric character`);
+    }
     const item = new (encodingOrCtor ?? (this.defaultItemCtor as ItemCtor<T>))(name, this, encoding);
     if (this.getLiveItem(item.id)) {
       throw new ReferenceError(`Item with id "${item.id}" already exists`);
@@ -388,7 +392,8 @@ export class Strongbox<Options extends StrongboxOpts = StrongboxOpts> implements
       throw e;
     }
     for await (const ent of dir) {
-      if (ent.isFile()) {
+      // a basename with no alphanumerics has no slug, so it cannot belong to an item
+      if (ent.isFile() && slugify(ent.name)) {
         yield ent.name;
       }
     }

@@ -257,7 +257,7 @@ throw new errors.NoSuchElementError();
 ### Log messages to the Appium log
 
 You can always use `console.log`, of course, but Appium provides a nice logger for you as
-`this.logger` (it has `.info`, `.debug`, `.log`, `.warn`, `.error` methods on it for differing log
+`this.log` (it has `.info`, `.debug`, `.warn`, `.error` methods on it for differing log
 levels). If you want to create an Appium logger outside of a plugin context (say in a script or
 helper file), you can always construct your own too:
 

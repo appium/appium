@@ -8,4 +8,3 @@
  * import { BasePlugin } from 'appium/plugin.js';
  */
 export * from '@appium/base-plugin';
-export {default} from '@appium/base-plugin';

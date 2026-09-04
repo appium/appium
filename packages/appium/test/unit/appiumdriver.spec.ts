@@ -233,7 +233,7 @@ describe('AppiumDriver', function () {
         mockFakeDriver
           .expects('createSession')
           .once()
-          .withExactArgs(W3C_CAPS, W3C_CAPS, W3C_CAPS, [])
+          .withExactArgs(W3C_CAPS, W3C_CAPS, W3C_CAPS)
           .returns([SESSION_ID, removeAppiumPrefixes(W3C_PREFIXED_CAPS as NSCapabilities<Constraints>)]);
         await appium.createSession(W3C_CAPS);
         mockFakeDriver.verify();
@@ -289,7 +289,7 @@ describe('AppiumDriver', function () {
         mockFakeDriver
           .expects('createSession')
           .once()
-          .withExactArgs(W3C_CAPS, W3C_CAPS, W3C_CAPS, [])
+          .withExactArgs(W3C_CAPS, W3C_CAPS, W3C_CAPS)
           .returns([SESSION_ID, removeAppiumPrefixes(W3C_PREFIXED_CAPS as NSCapabilities<Constraints>)]);
         await appium.createSession(W3C_CAPS, W3C_CAPS, W3C_CAPS);
 
@@ -367,7 +367,7 @@ describe('AppiumDriver', function () {
       });
       it("should call inner driver's deleteSession method", async function () {
         const [sessionId] = (await appium.createSession(null as any, null as any, W3C_CAPS)).value!;
-        mockFakeDriver.expects('deleteSession').once().withExactArgs(sessionId, []).returns(undefined);
+        mockFakeDriver.expects('deleteSession').once().withExactArgs(sessionId).returns(undefined);
         await appium.deleteSession(sessionId);
         mockFakeDriver.verify();
 
@@ -403,7 +403,7 @@ describe('AppiumDriver', function () {
         mockFakeDriver
           .expects('createSession')
           .once()
-          .withExactArgs(undefined, null, W3C_CAPS, [])
+          .withExactArgs(undefined, null, W3C_CAPS)
           .returns([SESSION_ID, removeAppiumPrefixes(W3C_PREFIXED_CAPS as NSCapabilities<Constraints>)]);
         await appium.createSession(undefined as any, null as any, W3C_CAPS);
 

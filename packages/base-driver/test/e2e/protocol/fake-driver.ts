@@ -4,8 +4,6 @@ import type {
   DefaultCreateSessionResult,
   InitialOpts,
   RouteMatcher,
-  SingularSessionData,
-  StringRecord,
   W3CDriverCaps,
 } from '@appium/types';
 
@@ -86,10 +84,6 @@ class FakeDriver extends BaseDriver<Constraints> {
 
   async refresh(): Promise<void> {
     throw new Error('Too Fresh!');
-  }
-
-  async getSession(): Promise<SingularSessionData<Constraints, StringRecord>> {
-    throw new errors.NoSuchDriverError();
   }
 
   async click(elementId: string, sessionId: string): Promise<unknown[]> {

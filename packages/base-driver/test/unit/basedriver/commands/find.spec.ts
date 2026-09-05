@@ -8,7 +8,7 @@ import {BaseDriver, errors} from '../../../../lib/index.js';
 const PAGE_SOURCE = '<hierarchy />';
 
 describe('find commands -', function () {
-  let driver: BaseDriver<any, any, any, any, any, any>;
+  let driver: BaseDriver<any, any, any, any, any>;
 
   beforeEach(function () {
     driver = new BaseDriver({} as InitialOpts);

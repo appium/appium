@@ -229,13 +229,6 @@ async createSession(w3cCaps) {
 }
 ```
 
-!!! warning "Deprecated"
-
-    Older drivers may still define `createSession` with up to three parameters, e.g.
-    `createSession(jwpCaps, reqCaps, w3cCaps)`. This shape is a holdover from the retired JSON Wire
-    Protocol, which required desired and required caps as the first two arguments; only the first
-    W3C-shaped argument was ever used. New drivers should use the single-argument form shown above.
-
 You'll want to make sure to call `super.createSession` in order to get the session ID as well as
 the processed capabilities (note that capabilities are also set on `this.caps`; modifying `caps`
 locally here would have no effect other than changing what the user sees in the create session

@@ -12,8 +12,8 @@
     "checkJs": true,
     "types": ["node"]
   },
-  "include": ["lib", "test"],
-  "exclude": ["build", "test/types"],
+  "include": ["lib", "test/unit", "test/e2e", "test/helpers.ts"],
+  "exclude": ["build"],
   "references": [
     {
       "path": "../support"

@@ -319,20 +319,6 @@ export interface ISettingsCommands<T extends object = object> {
 }
 
 /**
- * Tuple shape of the deprecated multi-argument overload of {@linkcode ISessionHandler.createSession}.
- * Shared with {@linkcode BaseDriver.createSession}'s implementation so the parameter list only
- * needs to be written out once.
- *
- * @deprecated Use the single-argument overload of {@linkcode ISessionHandler.createSession}
- * instead.
- */
-export type LegacyCreateSessionArgs<C extends Constraints> = [
-  w3cCaps1: W3CDriverCaps<C>,
-  w3cCaps2?: W3CDriverCaps<C>,
-  w3cCaps3?: W3CDriverCaps<C>,
-];
-
-/**
  * An interface which creates and deletes sessions.
  */
 export interface ISessionHandler<
@@ -348,16 +334,6 @@ export interface ISessionHandler<
    * @returns The capabilities object representing the created session
    */
   createSession(w3cCapabilities: W3CDriverCaps<C>): Promise<CreateResult>;
-  /**
-   * @deprecated Historically this method accepted the same W3C capabilities object in up to three
-   * positions to support the retired JSONWP protocol. These positions are intended to carry the
-   * same value; if they differ, which one wins is unspecified. Use the single-argument overload
-   * of {@linkcode createSession} instead.
-   *
-   * @param legacyArgs - see {@linkcode LegacyCreateSessionArgs}
-   * @returns The capabilities object representing the created session
-   */
-  createSession(...legacyArgs: LegacyCreateSessionArgs<C>): Promise<CreateResult>;
 
   /**
    * Stop an automation session

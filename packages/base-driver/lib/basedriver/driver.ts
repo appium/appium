@@ -10,7 +10,6 @@ import {
   type Driver,
   type DriverCaps,
   type InitialOpts,
-  type LegacyCreateSessionArgs,
   type ServerArgs,
   type SessionCapabilities,
   type StringRecord,
@@ -278,23 +277,14 @@ export class BaseDriver<
    *
    * @param w3cCapabilities - the new session capabilities in W3C format
    */
-  async createSession(w3cCapabilities: W3CDriverCaps<C>): Promise<CreateResult>;
-  /**
-   * @deprecated Historically the first three arguments were reserved for JSONWP capabilities.
-   * Appium 2 dropped support for that protocol; these positions are now intended to carry the
-   * same W3C capabilities value, and if they differ, which one wins is unspecified. Use the
-   * single-argument overload of {@linkcode createSession} instead.
-   */
-  async createSession(...legacyArgs: LegacyCreateSessionArgs<C>): Promise<CreateResult>;
-  async createSession(...legacyArgs: LegacyCreateSessionArgs<C>): Promise<CreateResult> {
-    const [w3cCapabilities1, w3cCapabilities2, w3cCapabilities] = legacyArgs;
+  async createSession(w3cCapabilities: W3CDriverCaps<C>): Promise<CreateResult> {
     if (this.sessionId !== null) {
       throw new errors.SessionNotCreatedError('Cannot create a new session while one is in progress');
     }
 
     this.log.debug();
 
-    const originalCaps = structuredClone([w3cCapabilities, w3cCapabilities1, w3cCapabilities2].find(isW3cCaps));
+    const originalCaps = isW3cCaps(w3cCapabilities) ? structuredClone(w3cCapabilities) : undefined;
     if (!originalCaps) {
       throw new errors.SessionNotCreatedError(
         'Appium only supports W3C-style capability objects. ' +

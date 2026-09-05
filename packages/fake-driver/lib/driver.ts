@@ -192,15 +192,8 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
    * Create session and load fake app XML from caps.app.
    * Starts clock event emitter if caps.runClock is true.
    */
-  override async createSession(
-    w3cCapabilities1: W3CFakeDriverCaps,
-    w3cCapabilities2?: W3CFakeDriverCaps,
-    w3cCapabilities3?: W3CFakeDriverCaps,
-  ): Promise<[string, FakeDriverCaps]> {
-    const [sessionId, caps] = (await super.createSession(w3cCapabilities1, w3cCapabilities2, w3cCapabilities3)) as [
-      string,
-      FakeDriverCaps,
-    ];
+  override async createSession(w3cCapabilities: W3CFakeDriverCaps): Promise<[string, FakeDriverCaps]> {
+    const [sessionId, caps] = (await super.createSession(w3cCapabilities)) as [string, FakeDriverCaps];
     this.caps = caps;
     await this.appModel.loadApp(caps.app);
     if (this.caps.runClock) {

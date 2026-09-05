@@ -75,19 +75,6 @@ type SessionHandlerCreateResult = SessionHandlerResult<
 
 type SessionHandlerDeleteResult = SessionHandlerResult<void>;
 
-/**
- * Tuple shape of the deprecated multi-argument overload of {@link AppiumDriver.createSession}.
- * Shared between that overload's declaration and its implementation signature so the parameter
- * list only needs to be written out once.
- *
- * @deprecated Use the single-argument overload of {@link AppiumDriver.createSession} instead.
- */
-type LegacyCreateSessionArgs = [
-  w3cCapabilities1: W3CAppiumDriverCaps,
-  w3cCapabilities2?: W3CAppiumDriverCaps,
-  w3cCapabilities3?: W3CAppiumDriverCaps,
-];
-
 /** @internal Not part of {@link ExternalDriver}; used only when wiring session IPC. */
 type IpcAssignable = {
   assignIpc?: (ipc: IAppiumIpc) => Promise<void>;
@@ -279,23 +266,15 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
    * Creates a session: picks an inner driver from caps, runs plugin hooks, and returns a protocol
    * envelope with either `[sessionId, caps, protocol]` or an error.
    *
-   * @param w3cCapabilities - the new session capabilities in W3C format
+   * @param rawW3cCapabilities - the new session capabilities in W3C format
    */
-  async createSession(w3cCapabilities: W3CAppiumDriverCaps): Promise<SessionHandlerCreateResult>;
-  /**
-   * @deprecated Legacy call sites may pass the same W3C caps in up to three positions. These
-   * positions are intended to carry the same value; if they differ, which one wins is
-   * unspecified. Use the single-argument overload of {@linkcode createSession} instead.
-   */
-  async createSession(...legacyArgs: LegacyCreateSessionArgs): Promise<SessionHandlerCreateResult>;
-  async createSession(...legacyArgs: LegacyCreateSessionArgs): Promise<SessionHandlerCreateResult> {
-    const [w3cCapabilities1, w3cCapabilities2, w3cCapabilities3] = legacyArgs;
+  async createSession(rawW3cCapabilities: W3CAppiumDriverCaps): Promise<SessionHandlerCreateResult> {
     const defaultCapabilities = structuredClone(this.args.defaultCapabilities);
     const defaultSettings = pullSettings((defaultCapabilities ?? {}) as StringRecord);
-    const w3cCapabilities = structuredClone([w3cCapabilities3, w3cCapabilities2, w3cCapabilities1].find(isW3cCaps));
-    if (!w3cCapabilities) {
+    if (!isW3cCaps(rawW3cCapabilities)) {
       throw makeNonW3cCapsError();
     }
+    const w3cCapabilities = structuredClone(rawW3cCapabilities);
     const w3cSettings = {
       ...defaultSettings,
       ...pullSettings(w3cCapabilities.alwaysMatch ?? {}),
@@ -358,11 +337,10 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
       driverInstance.serverPort = this.args.port;
       driverInstance.serverPath = this.args.basePath;
 
-      [innerSessionId, dCaps] = (await driverInstance.createSession(
-        processedW3CCapabilities as never,
-        processedW3CCapabilities,
-        processedW3CCapabilities,
-      )) as [string, DriverCaps<AppiumDriverConstraints> & {webSocketUrl?: string | boolean}];
+      [innerSessionId, dCaps] = (await driverInstance.createSession(processedW3CCapabilities as never)) as [
+        string,
+        DriverCaps<AppiumDriverConstraints> & {webSocketUrl?: string | boolean},
+      ];
       this.sessions[innerSessionId] = driverInstance;
       // create an IPC channel for the driver and all plugins on this session
       this.sessionIpcs[innerSessionId] = new AppiumIpc({

@@ -32,9 +32,7 @@ class FakeDriver extends BaseDriver<Constraints> {
     return this;
   }
 
-  async createSession(
-    w3cCapabilities: W3CDriverCaps<Constraints>,
-  ): Promise<DefaultCreateSessionResult<Constraints>> {
+  async createSession(w3cCapabilities: W3CDriverCaps<Constraints>): Promise<DefaultCreateSessionResult<Constraints>> {
     if (!isW3cCaps(w3cCapabilities)) {
       throw new errors.SessionNotCreatedError('No capabilities provided');
     }

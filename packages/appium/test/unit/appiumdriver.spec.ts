@@ -254,11 +254,7 @@ describe('AppiumDriver', function () {
         mockFakeDriver.verify();
       });
       it('should call "createSession" with W3C capabilities argument, if provided', async function () {
-        mockFakeDriver
-          .expects('createSession')
-          .once()
-          .withArgs(W3C_CAPS)
-          .returns([SESSION_ID, BASE_CAPS]);
+        mockFakeDriver.expects('createSession').once().withArgs(W3C_CAPS).returns([SESSION_ID, BASE_CAPS]);
         await appium.createSession(W3C_CAPS);
         mockFakeDriver.verify();
       });

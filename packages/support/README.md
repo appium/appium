@@ -52,7 +52,6 @@ All utility functions are split into a bunch of different categories. Each categ
 |logger|See [the logging section below](#logging)|
 |net|Helpers needed for network interactions, for example, upload and download of files|
 |node|Set of Node.js-specific utility functions needed, for example, to ensure objects immutability or to calculate their sizes|
-|npm|Set of `npm`-related helpers|
 |plist|Set of utilities used to read and write data from [plist](https://en.wikipedia.org/wiki/Property_List) files in javascript|
 |system|Set of helper functions needed to determine properties of the current operating system|
 |tempDir|Set of helpers that allow interactions with temporary folders|

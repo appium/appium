@@ -10,11 +10,12 @@ import {DRIVER_TYPE} from '../../../lib/constants.js';
 import {APPIUM_VER} from '../../../lib/helpers/build.js';
 import {FAKE_DRIVER_DIR, PROJECT_ROOT} from '../../helpers.js';
 import {applyExtensionMocks, initMocks, resetMockDefaults} from './mocks.js';
-import type {InitMocksResult, MockAppiumSupport} from './mocks.js';
+import type {InitMocksResult, MockAppiumSupport, MockNpm} from './mocks.js';
 
 describe('ExtensionConfig', function () {
   let mocks: InitMocksResult;
   let MockAppiumSupport: MockAppiumSupport;
+  let MockNpm: MockNpm;
   let ExtensionConfig: any;
   let Manifest: any;
   let resolveEsmEntryPoint: any;
@@ -27,6 +28,7 @@ describe('ExtensionConfig', function () {
   before(function () {
     mocks = initMocks();
     MockAppiumSupport = mocks.MockAppiumSupport;
+    MockNpm = mocks.MockNpm;
     applyExtensionMocks(mocks);
   });
 
@@ -37,6 +39,7 @@ describe('ExtensionConfig', function () {
   beforeEach(async function () {
     resetMockDefaults(mocks);
     MockAppiumSupport = mocks.MockAppiumSupport;
+    MockNpm = mocks.MockNpm;
     ({ExtensionConfig, resolveEsmEntryPoint} = await import(
       `../../../lib/extension/extension-config.js?t=${importCounter++}`
     ));
@@ -209,8 +212,8 @@ describe('ExtensionConfig', function () {
 
         describe('when an upgrade is not available', function () {
           beforeEach(function () {
-            MockAppiumSupport.npm.getLatestSafeUpgradeVersion.resolves(null);
-            MockAppiumSupport.npm.getLatestVersion.resolves(null);
+            MockNpm.getLatestSafeUpgradeVersion.resolves(null);
+            MockNpm.getLatestVersion.resolves(null);
           });
           it('should resolve w/ an appropriate warning', async function () {
             assert.deepStrictEqual(await config.getGenericConfigWarnings(extData, extData.pkgName), [
@@ -224,8 +227,8 @@ describe('ExtensionConfig', function () {
 
           beforeEach(function () {
             updateVersion = '1.1.0';
-            MockAppiumSupport.npm.getLatestVersion.resolves(updateVersion);
-            MockAppiumSupport.npm.getLatestSafeUpgradeVersion.resolves(updateVersion);
+            MockNpm.getLatestVersion.resolves(updateVersion);
+            MockNpm.getLatestSafeUpgradeVersion.resolves(updateVersion);
           });
 
           it('should resolve w/ an appropriate warning', async function () {
@@ -246,8 +249,8 @@ describe('ExtensionConfig', function () {
 
           beforeEach(function () {
             updateVersion = '1.1.0';
-            MockAppiumSupport.npm.getLatestVersion.resolves(updateVersion);
-            MockAppiumSupport.npm.getLatestSafeUpgradeVersion.resolves(updateVersion);
+            MockNpm.getLatestVersion.resolves(updateVersion);
+            MockNpm.getLatestSafeUpgradeVersion.resolves(updateVersion);
           });
 
           it('should resolve w/ an appropriate warning', async function () {
@@ -260,8 +263,8 @@ describe('ExtensionConfig', function () {
         describe('when no upgrade is available', function () {
           beforeEach(function () {
             MockAppiumSupport.util.compareVersions.returns(false);
-            MockAppiumSupport.npm.getLatestSafeUpgradeVersion.resolves(null);
-            MockAppiumSupport.npm.getLatestVersion.resolves(null);
+            MockNpm.getLatestSafeUpgradeVersion.resolves(null);
+            MockNpm.getLatestVersion.resolves(null);
           });
           it('should resolve w/ an appropriate warning', async function () {
             assert.deepStrictEqual(await config.getGenericConfigWarnings(extData, extData.pkgName), [

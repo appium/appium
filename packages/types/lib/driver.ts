@@ -138,9 +138,8 @@ export interface Driver<
   Settings extends StringRecord = StringRecord,
   CreateResult = DefaultCreateSessionResult<C>,
   DeleteResult = DefaultDeleteSessionResult,
-  SessionData extends StringRecord = StringRecord,
 >
-  extends IImplementedCommands<C, Settings, CreateResult, DeleteResult, SessionData>, Core<C, Settings> {
+  extends IImplementedCommands<C, Settings, CreateResult, DeleteResult>, Core<C, Settings> {
   /**
    * The set of command line arguments set for this driver.
    *
@@ -287,10 +286,9 @@ export interface ExternalDriver<
   Settings extends StringRecord = StringRecord,
   CreateResult = DefaultCreateSessionResult<C>,
   DeleteResult = DefaultDeleteSessionResult,
-  SessionData extends StringRecord = StringRecord,
 >
   extends
-    Driver<C, CArgs, Settings, CreateResult, DeleteResult, SessionData>,
+    Driver<C, CArgs, Settings, CreateResult, DeleteResult>,
     IWDClassicCommands,
     IAppiumCommands,
     IJSONWPCommands,

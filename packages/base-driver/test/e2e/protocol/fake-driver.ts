@@ -1,13 +1,5 @@
 import {util} from '@appium/support';
-import type {
-  Constraints,
-  DefaultCreateSessionResult,
-  InitialOpts,
-  RouteMatcher,
-  SingularSessionData,
-  StringRecord,
-  W3CDriverCaps,
-} from '@appium/types';
+import type {Constraints, DefaultCreateSessionResult, InitialOpts, RouteMatcher, W3CDriverCaps} from '@appium/types';
 
 import {PROTOCOLS} from '../../../lib/constants.js';
 import {BaseDriver, errors, isW3cCaps} from '../../../lib/index.js';
@@ -86,10 +78,6 @@ class FakeDriver extends BaseDriver<Constraints> {
 
   async refresh(): Promise<void> {
     throw new Error('Too Fresh!');
-  }
-
-  async getSession(): Promise<SingularSessionData<Constraints, StringRecord>> {
-    throw new errors.NoSuchDriverError();
   }
 
   async click(elementId: string, sessionId: string): Promise<unknown[]> {

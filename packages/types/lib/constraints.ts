@@ -61,9 +61,6 @@ export const BASE_DESIRED_CAP_CONSTRAINTS = {
   locale: {
     isString: true,
   },
-  eventTimings: {
-    isBoolean: true,
-  },
   printPageSourceOnFindFailure: {
     isBoolean: true,
   },

@@ -339,7 +339,6 @@ export interface ISessionHandler<
   C extends Constraints = Constraints,
   CreateResult = DefaultCreateSessionResult<C>,
   DeleteResult = DefaultDeleteSessionResult,
-  SessionData extends StringRecord = StringRecord,
 > {
   /**
    * Start a new automation session
@@ -369,13 +368,6 @@ export interface ISessionHandler<
   deleteSession(sessionId?: string): Promise<DeleteResult | void>;
 
   /**
-   * Get the data for the current session
-   *
-   * @returns A session data object
-   */
-  getSession(): Promise<SingularSessionData<C, SessionData>>;
-
-  /**
    * Get the capabilities of the current session
    *
    * @returns A session capabilities object
@@ -392,21 +384,6 @@ export type DefaultCreateSessionResult<C extends Constraints> = [sessionId: stri
  * @see {@linkcode ISessionHandler}
  */
 export type DefaultDeleteSessionResult = void;
-
-/**
- * Data returned by {@linkcode ISessionHandler.getSession}.
- *
- * @typeParam C - The driver's capability constraints
- * @typeParam T - Any extra data the driver stuffs in here
- * @privateRemarks The content of this object looks implementation-specific and in practice is not well-defined.  It's _possible_ to fully type this in the future.
- */
-export type SingularSessionData<
-  C extends Constraints = Constraints,
-  T extends StringRecord = StringRecord,
-> = DriverCaps<C> & {
-  events?: EventHistory;
-  error?: string;
-} & T;
 
 /**
  * Data returned by `AppiumDriver.getAppiumSessions`
@@ -437,7 +414,6 @@ export type IImplementedCommands<
   Settings extends StringRecord = StringRecord,
   CreateResult = DefaultCreateSessionResult<C>,
   DeleteResult = DefaultDeleteSessionResult,
-  SessionData extends StringRecord = StringRecord,
 > = IBidiCommands &
   ILogCommands &
   IFindCommands &
@@ -445,4 +421,4 @@ export type IImplementedCommands<
   ITimeoutCommands &
   IEventCommands &
   IExecuteCommands &
-  ISessionHandler<C, CreateResult, DeleteResult, SessionData>;
+  ISessionHandler<C, CreateResult, DeleteResult>;

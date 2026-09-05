@@ -13,7 +13,6 @@ import {
   type LegacyCreateSessionArgs,
   type ServerArgs,
   type SessionCapabilities,
-  type SingularSessionData,
   type StringRecord,
   type W3CDriverCaps,
 } from '@appium/types';
@@ -57,10 +56,9 @@ export class BaseDriver<
   Settings extends StringRecord = StringRecord,
   CreateResult = DefaultCreateSessionResult<C>,
   DeleteResult = DefaultDeleteSessionResult,
-  SessionData extends StringRecord = StringRecord,
 >
   extends DriverCore<C, Settings>
-  implements Driver<C, CArgs, Settings, CreateResult, DeleteResult, SessionData>
+  implements Driver<C, CArgs, Settings, CreateResult, DeleteResult>
 {
   cliArgs: CArgs & ServerArgs;
   caps: DriverCaps<C>;
@@ -367,18 +365,6 @@ export class BaseDriver<
     this.log.info(`Session created with session id: ${this.sessionId}`);
 
     return [this.sessionId, caps] as CreateResult;
-  }
-
-  /**
-   * Returns capabilities for the session and event history (if applicable)
-   * @deprecated Use {@linkcode getAppiumSessionCapabilities} instead for getting the capabilities.
-   * Use {@linkcode EventCommands.getLogEvents} instead to get the event history.
-   */
-  async getSession() {
-    return (this.caps.eventTimings ? {...this.caps, events: this.eventHistory} : this.caps) as SingularSessionData<
-      C,
-      SessionData
-    >;
   }
 
   /**

@@ -9,14 +9,10 @@ const HAS_VENDOR_PREFIX_RE = /^.+:/;
 export class RelaxedCapsPlugin extends BasePlugin {
   async createSession(
     next: () => Promise<unknown>,
-    driver: {createSession: (...args: unknown[]) => Promise<unknown>},
-    caps1: W3CCapsLike | null,
-    caps2?: W3CCapsLike | null,
-    caps3?: W3CCapsLike | null,
-    ...restArgs: unknown[]
+    driver: {createSession: (caps: W3CCapsLike) => Promise<unknown>},
+    caps: W3CCapsLike,
   ): Promise<unknown> {
-    const patchedCaps = [caps1, caps2, caps3].map((c) => (isPlainObject(c) ? this.fixCapsIfW3C(c) : c));
-    return await driver.createSession(...patchedCaps, ...restArgs);
+    return await driver.createSession(isPlainObject(caps) ? this.fixCapsIfW3C(caps) : caps);
   }
 
   private fixCapsIfW3C<T>(caps: T): T {

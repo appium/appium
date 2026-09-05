@@ -1,7 +1,6 @@
 export default {
   server: {
     address: '0.0.0.0',
-    'allow-cors': false,
     'allow-insecure': [] as string[],
     'base-path': '/',
     'callback-address': '0.0.0.0',

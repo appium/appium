@@ -13,7 +13,7 @@ import type {Args, CliCommandServer, ParsedArgs} from 'appium/types/index.js';
 import {WebSocketServer} from 'ws';
 
 import type {AppiumDriver} from '../appium.js';
-import {BIDI_BASE_PATH, LONG_STACKTRACE_LIMIT} from '../constants.js';
+import {BIDI_BASE_PATH, CORS_FEATURE, LONG_STACKTRACE_LIMIT} from '../constants.js';
 import type {DriverNameMap, PluginNameMap} from '../extension/index.js';
 import {APPIUM_VER, getBuildInfo, getGitRev, updateBuildInfo} from '../helpers/build.js';
 import {fetchInterfaces, isBroadcastIp, V4_BROADCAST_IP} from '../helpers/network.js';
@@ -173,7 +173,7 @@ export function buildServerOpts(
     routeConfiguringFunction,
     port: parsedArgs.port,
     hostname: parsedArgs.address,
-    allowCors: parsedArgs.allowCors,
+    allowCors: appiumDriver.isFeatureEnabled(CORS_FEATURE),
     basePath: parsedArgs.basePath,
     serverUpdaters: getServerUpdaters(driverClasses, pluginClasses),
     extraMethodMap: getExtraMethodMap(driverClasses, pluginClasses),

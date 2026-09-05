@@ -10,7 +10,7 @@ import type {SinonMock, SinonSandbox, SinonStubbedMember} from 'sinon';
 import {createSandbox, stub} from 'sinon';
 
 import type * as AppiumModule from '../../lib/appium.js';
-import {PLUGIN_TYPE, SESSION_DISCOVERY_FEATURE} from '../../lib/constants.js';
+import {CORS_FEATURE, PLUGIN_TYPE, SESSION_DISCOVERY_FEATURE} from '../../lib/constants.js';
 import * as buildInfoModule from '../../lib/helpers/build.js';
 import {insertAppiumPrefixes, removeAppiumPrefixes} from '../../lib/helpers/capability.js';
 import {finalizeSchema, registerSchema, resetSchema} from '../../lib/schema/schema.js';
@@ -168,6 +168,22 @@ describe('AppiumDriver', function () {
         } as any);
         assert.strictEqual(appium.allowInsecure.length, 0);
         assert.strictEqual(appium.relaxedSecurityEnabled, true);
+      });
+      it('should not enable cors by default', function () {
+        createDriver({} as any);
+        assert.strictEqual(appium.isFeatureEnabled(CORS_FEATURE), false);
+      });
+      it('should enable cors via allow-insecure=*:cors', function () {
+        createDriver({allowInsecure: [`*:${CORS_FEATURE}`]} as any);
+        assert.strictEqual(appium.isFeatureEnabled(CORS_FEATURE), true);
+      });
+      it('should enable cors via relaxed security', function () {
+        createDriver({relaxedSecurityEnabled: true} as any);
+        assert.strictEqual(appium.isFeatureEnabled(CORS_FEATURE), true);
+      });
+      it('should deny cors via deny-insecure=*:cors even with relaxed security', function () {
+        createDriver({relaxedSecurityEnabled: true, denyInsecure: [`*:${CORS_FEATURE}`]} as any);
+        assert.strictEqual(appium.isFeatureEnabled(CORS_FEATURE), false);
       });
     });
     describe('createSession', function () {

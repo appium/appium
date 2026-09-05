@@ -38,7 +38,6 @@ describe('config file behavior', function () {
           config: {
             server: {
               address: '0.0.0.0',
-              allowCors: false,
               allowInsecure: [],
               basePath: '/',
               callbackAddress: '0.0.0.0',
@@ -130,7 +129,6 @@ describe('config file behavior', function () {
             appiumHome: 'foo',
             server: {
               address: '0.0.0.0',
-              allowCors: 1,
               allowInsecure: {},
               basePath: '/',
               callbackAddress: '0.0.0.0',
@@ -158,7 +156,7 @@ describe('config file behavior', function () {
             },
           });
           assert.strictEqual(result.filepath, BAD_FILEPATH);
-          assert.strictEqual(result.errors?.length, 7);
+          assert.strictEqual(result.errors?.length, 6);
           assert.ok(
             result.errors?.some((error) =>
               util.isEqual(error, {

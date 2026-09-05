@@ -2,7 +2,6 @@
   "appium-home": "foo",
   "server": {
     "address": "0.0.0.0",
-    "allow-cors": 1,
     "allow-insecure": {},
     "base-path": "/",
     "callback-address": "0.0.0.0",

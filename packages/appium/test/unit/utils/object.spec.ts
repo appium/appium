@@ -124,14 +124,14 @@ describe('utils/object', function () {
         properties: {
           server: {
             properties: {
-              'allow-cors': {appiumCliDest: 'allowCors'},
+              'allow-insecure': {appiumCliDest: 'allowInsecure'},
               log: {appiumCliDest: 'logFile'},
             },
           },
         },
       };
       assert.strictEqual(getPath(schema, 'properties.server.properties.log.appiumCliDest'), 'logFile');
-      assert.strictEqual(getPath(schema, 'properties.server.properties.allow-cors.appiumCliDest'), 'allowCors');
+      assert.strictEqual(getPath(schema, 'properties.server.properties.allow-insecure.appiumCliDest'), 'allowInsecure');
     });
   });
 

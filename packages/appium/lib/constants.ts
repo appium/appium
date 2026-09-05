@@ -115,3 +115,8 @@ export const BIDI_EVENT_NAME = 'bidiEvent';
  * The name of the insecure feature that allows retrieving the list of active server sessions
  */
 export const SESSION_DISCOVERY_FEATURE = 'session_discovery';
+
+/**
+ * The name of the insecure feature that allows CORS requests from any host
+ */
+export const CORS_FEATURE = 'cors';

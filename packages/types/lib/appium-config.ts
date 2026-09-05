@@ -10,10 +10,6 @@
  */
 export type AddressConfig = string;
 /**
- * Whether the Appium server should allow web browser connections from any host
- */
-export type AllowCorsConfig = boolean;
-/**
  * Set which insecure features are allowed to run in this server's sessions. Features are defined on a driver level; see documentation for more details. Note that features defined via "deny-insecure" will be disabled, even if also listed here. If string, a path to a text file containing policy or a comma-delimited list.
  */
 export type AllowInsecureConfig = string[];
@@ -199,7 +195,6 @@ export interface AppiumConfiguration {
  */
 export interface ServerConfig {
   address?: AddressConfig;
-  "allow-cors"?: AllowCorsConfig;
   "allow-insecure"?: AllowInsecureConfig;
   "allow-unknown-args"?: AllowUnknownArgsConfig;
   "base-path"?: BasePathConfig;

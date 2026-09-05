@@ -76,7 +76,7 @@ export class AppiumMainRunner {
       return undefined as Cmd extends CliCommandServer ? AppiumServer : void;
     }
 
-    this.warnIfCorsEnabled(parsedArgs);
+    this.warnIfCorsEnabled(serverOpts);
     appiumDriver.server = server;
 
     this.attachSignalHandlers(appiumDriver, server);
@@ -108,8 +108,8 @@ export class AppiumMainRunner {
     }
   }
 
-  private warnIfCorsEnabled(parsedArgs: ServerInitData['parsedArgs']): void {
-    if (parsedArgs.allowCors) {
+  private warnIfCorsEnabled(serverOpts: ServerOpts): void {
+    if (serverOpts.allowCors) {
       logger.warn(
         'You have enabled CORS requests from any host. Be careful not ' +
           'to visit sites which could maliciously try to start Appium ' +

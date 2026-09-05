@@ -24,25 +24,6 @@ export default [
   },
   {
     argSpec: {
-      arg: 'allow-cors',
-      defaultValue: false,
-      dest: 'allowCors',
-      extName: undefined,
-      extType: undefined,
-      name: 'allow-cors',
-      rawDest: 'allowCors',
-      ref: 'appium.json#/properties/server/properties/allow-cors',
-    },
-    schema: {
-      default: false,
-      description:
-        'Whether the Appium server should allow web browser connections from any host',
-      title: 'allow-cors config',
-      type: 'boolean',
-    },
-  },
-  {
-    argSpec: {
       arg: 'allow-insecure',
       defaultValue: [],
       dest: 'allowInsecure',

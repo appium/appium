@@ -89,17 +89,8 @@ describe('relaxed caps plugin', function () {
       const mock = sandbox.mock(driver);
       const w3c = {firstMatch: [MIXED_CAPS]};
       const w3cAdjusted = {firstMatch: [ADJUSTED_CAPS]};
-      mock.expects('createSession').once().withExactArgs(null, null, w3cAdjusted);
-      await rcp.createSession(next, driver, null, null, w3c);
-      mock.verify();
-    });
-
-    it('should work with any argument', async function () {
-      const mock = sandbox.mock(driver);
-      const w3c = {firstMatch: [MIXED_CAPS]};
-      const w3cAdjusted = {firstMatch: [ADJUSTED_CAPS]};
-      mock.expects('createSession').once().withExactArgs(w3cAdjusted, w3cAdjusted, null);
-      await rcp.createSession(next, driver, w3c, w3c, null);
+      mock.expects('createSession').once().withExactArgs(w3cAdjusted);
+      await rcp.createSession(next, driver, w3c);
       mock.verify();
     });
 
@@ -109,8 +100,8 @@ describe('relaxed caps plugin', function () {
       const w3cAdjusted = {
         firstMatch: [ADJUSTED_CAPS, STD_CAPS, ADJUSTED_CAPS],
       };
-      mock.expects('createSession').once().withExactArgs(null, {}, w3cAdjusted);
-      await rcp.createSession(next, driver, null, {}, w3c);
+      mock.expects('createSession').once().withExactArgs(w3cAdjusted);
+      await rcp.createSession(next, driver, w3c);
       mock.verify();
     });
 
@@ -118,8 +109,8 @@ describe('relaxed caps plugin', function () {
       const mock = sandbox.mock(driver);
       const w3c = {alwaysMatch: MIXED_CAPS};
       const w3cAdjusted = {alwaysMatch: ADJUSTED_CAPS};
-      mock.expects('createSession').once().withExactArgs(null, null, w3cAdjusted);
-      await rcp.createSession(next, driver, null, null, w3c);
+      mock.expects('createSession').once().withExactArgs(w3cAdjusted);
+      await rcp.createSession(next, driver, w3c);
       mock.verify();
     });
 
@@ -130,8 +121,8 @@ describe('relaxed caps plugin', function () {
         alwaysMatch: ADJUSTED_CAPS,
         firstMatch: [ADJUSTED_CAPS],
       };
-      mock.expects('createSession').once().withExactArgs(null, null, w3cAdjusted);
-      await rcp.createSession(next, driver, null, null, w3c);
+      mock.expects('createSession').once().withExactArgs(w3cAdjusted);
+      await rcp.createSession(next, driver, w3c);
       mock.verify();
     });
   });

@@ -126,12 +126,12 @@ describe('FakeDriver unit suite', function () {
     await assert.rejects(d.executeCommand('getStatus'), /shut down/);
     await sleep(500);
 
-    await d.executeCommand('createSession', null, null, structuredClone(w3cCaps));
+    await d.executeCommand('createSession', structuredClone(w3cCaps));
     await d.deleteSession();
   });
 
-  it('should distinguish between W3C and JSONWP session', async function () {
-    await d.executeCommand('createSession', null, null, {
+  it('should set the protocol to W3C on session creation', async function () {
+    await d.executeCommand('createSession', {
       alwaysMatch: {
         ...defaultCaps,
         platformName: 'Fake',
@@ -399,7 +399,7 @@ describe('FakeDriver unit suite', function () {
     beforeEach(async function () {
       beforeStartTime = Date.now();
       d.shouldValidateCaps = false;
-      await d.executeCommand('createSession', null, null, {
+      await d.executeCommand('createSession', {
         alwaysMatch: {...defaultCaps},
         firstMatch: [{}],
       });
@@ -514,10 +514,10 @@ describe('.isFeatureEnabled', function () {
 describe('FakeDriver', function () {
   it('should start a new session when another non-unique session is running', async function () {
     const d1 = new FakeDriver();
-    const [session1Id] = await d1.createSession(null as any, null as any, structuredClone(W3C_CAPS));
+    const [session1Id] = await d1.createSession(structuredClone(W3C_CAPS));
     assert.strictEqual(typeof session1Id, 'string');
     const d2 = new FakeDriver();
-    const [session2Id] = await d2.createSession(null as any, null as any, structuredClone(W3C_CAPS));
+    const [session2Id] = await d2.createSession(structuredClone(W3C_CAPS));
     assert.strictEqual(typeof session2Id, 'string');
     assert.notStrictEqual(session1Id, session2Id);
     await d1.deleteSession(session1Id);

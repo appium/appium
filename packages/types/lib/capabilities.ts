@@ -118,11 +118,11 @@ export type NSCapabilities<C extends Constraints, NS extends string = W3C_APPIUM
  * @example
  * ```ts
  * class MyDriver extends BaseDriver<MyDriverConstraints> {
- *   async createSession (w3ccaps: W3CDriverCaps<MyDriverConstraints>, ...args: any[]) {
+ *   async createSession (w3ccaps: W3CDriverCaps<MyDriverConstraints>) {
  *     const [
  *       sessionId: string,
  *       caps: DriverCaps<MyDriverConstraints>
- *     ] = await super.createSession(w3ccaps, ...args);
+ *     ] = await super.createSession(w3ccaps);
  *     // ...
  *   }
  * }
@@ -143,7 +143,7 @@ export type DriverCaps<C extends Constraints = Constraints> = BaseCapabilities &
  * @example
  * ```ts
  * class MyDriver extends BaseDriver<MyDriverConstraints> {
- *   async createSession (w3ccaps: W3CDriverCaps<MyDriverConstraints>, ...args: any[]) {
+ *   async createSession (w3ccaps: W3CDriverCaps<MyDriverConstraints>) {
  *     // ...
  *   }
  * }

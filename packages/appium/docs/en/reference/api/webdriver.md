@@ -25,18 +25,11 @@ POST /session
 
 Creates a new WebDriver session.
 
-Appium implements a modified version of this endpoint for historical reasons. While the W3C
-endpoint only accepts 1 parameter, Appium's implementation allows up to 3 parameters, as this was
-required by the legacy JSON Wire Protocol (JSONWP). Since Appium 2, the JSONWP format is no longer
-supported, and any of the 3 parameters can be used to specify the W3C capabilities.
-
 #### Parameters
 
 |Name|Description|Type|
 |--|--|--|
-|`w3cCapabilities1?`|Capabilities of the new session|`W3CDriverCaps`|
-|`w3cCapabilities2?`|Another location for the new session capabilities (legacy)|`W3CDriverCaps`|
-|`w3cCapabilities?`|Another location for the new session capabilities (legacy)|`W3CDriverCaps`|
+|`capabilities?`|Capabilities of the new session|`W3CDriverCaps`|
 
 #### Response
 

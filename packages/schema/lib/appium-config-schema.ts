@@ -38,12 +38,6 @@ export const AppiumConfigJsonSchema = {
             },
           ],
         },
-        'allow-cors': {
-          description: 'Whether the Appium server should allow web browser connections from any host',
-          title: 'allow-cors config',
-          type: 'boolean',
-          default: false,
-        },
         'allow-insecure': {
           appiumCliTransformer: 'csv',
           default: [],

@@ -27,7 +27,6 @@ appium
 |<div style="width:15em">Argument</div>|Description|Type|<div style="width:7em">Default</div>|
 |--|--|--|--|
 |`--address`, `-a`|IPv4/IPv6 address to listen on|string|`0.0.0.0`|
-|`--allow-cors`|Allow web browser connections from any host|boolean|`false`|
 |`--allow-insecure`|List of [insecure features](../../guides/security.md) that should be allowed in this server's sessions. Individual features can be overridden by `--deny-insecure`. Has no effect in combination with `--relaxed-security`.|array<string>|`[]`|
 |`--allow-unknown-args`|Do not exit if unrecognized command-line arguments are passed to the server; ignore them instead. Useful when the Appium CLI is wrapped by external tooling that appends extra flags.|boolean|`false`|
 |`--base-path`, `-pa`|Base path to use as the prefix for all webdriver routes running on the server|string|`""`|

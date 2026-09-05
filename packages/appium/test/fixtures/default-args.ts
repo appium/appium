@@ -1,6 +1,5 @@
 export default {
   address: '0.0.0.0',
-  allowCors: false,
   allowInsecure: [] as string[],
   allowUnknownArgs: false,
   basePath: '',

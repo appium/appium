@@ -41,7 +41,7 @@ describe('bootstrap/startup-config', function () {
             },
           },
           {port: 1234},
-          {allowCors: false},
+          {sessionOverride: false},
         );
         assert.strictEqual(log.calledWith('Appium Configuration\n'), true);
       });
@@ -95,9 +95,9 @@ describe('bootstrap/startup-config', function () {
       });
 
       it('should catch a non-default argument', function () {
-        args.allowCors = true;
+        args.sessionOverride = true;
         const nonDefaultArgs = getNonDefaultServerArgs(args);
-        assert.deepStrictEqual(nonDefaultArgs, {allowCors: true});
+        assert.deepStrictEqual(nonDefaultArgs, {sessionOverride: true});
       });
 
       describe('when arg is an array', function () {

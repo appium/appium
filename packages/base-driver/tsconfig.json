@@ -13,7 +13,7 @@
     "types": ["node"]
   },
   "include": ["lib", "test"],
-  "exclude": ["build"],
+  "exclude": ["build", "test/types"],
   "references": [
     {
       "path": "../support"

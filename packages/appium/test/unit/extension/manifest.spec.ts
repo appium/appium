@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {promises as fs} from 'node:fs';
-import {describe, it, beforeEach, before, after, mock} from 'node:test';
+import {describe, it, beforeEach, afterEach, before, after, mock} from 'node:test';
 
 import type {DriverType, PluginType} from '@appium/types';
 import type {ExtManifest, ExtPackageJson, ManifestData} from 'appium/types/index.js';
@@ -29,7 +29,7 @@ describe('Manifest', function () {
     MockAppiumSupport = mocks.MockAppiumSupport;
     migrateStub = mocks.sandbox.stub().resolves();
     applyExtensionMocks(mocks);
-    mock.module('../../../lib/extension/manifest-migrations.js', {
+    mock.module('../../../lib/extension/manifest/migrations.js', {
       namedExports: {migrate: migrateStub},
     });
   });
@@ -42,7 +42,7 @@ describe('Manifest', function () {
     resetMockDefaults(mocks);
     migrateStub.resolves();
     MockAppiumSupport.fs.readFile.resolves(yamlFixture);
-    ({Manifest} = await import(`../../../lib/extension/manifest.js?t=${importCounter++}`));
+    ({Manifest} = await import(`../../../lib/extension/manifest/manifest.js?t=${importCounter++}`));
   });
 
   describe('class method', function () {
@@ -143,6 +143,36 @@ describe('Manifest', function () {
             name: 'Error',
             message: /trouble loading the extension installation cache file/i,
           });
+        });
+      });
+
+      describe('when the file is valid YAML but does not match the manifest envelope shape', function () {
+        let logWarnStub: ReturnType<InitMocksResult['sandbox']['stub']>;
+
+        beforeEach(async function () {
+          MockAppiumSupport.fs.readFile.resolves('drivers: not-an-object\nplugins: {}\n');
+          const {log} = await import('../../../lib/logger.js');
+          logWarnStub = mocks.sandbox.stub(log, 'warn');
+        });
+
+        afterEach(function () {
+          logWarnStub.restore();
+        });
+
+        it('should not reject, and should reset to the initial manifest data', async function () {
+          const data = await manifest.read();
+          assert.deepStrictEqual(data.drivers, {});
+          assert.deepStrictEqual(data.plugins, {});
+        });
+
+        it('should log a warning', async function () {
+          await manifest.read();
+          assert.strictEqual(logWarnStub.calledOnce, true);
+        });
+
+        it('should write the reset data back to disk', async function () {
+          await manifest.read();
+          assert.strictEqual(MockAppiumSupport.fs.writeFile.calledOnce, true);
         });
       });
 

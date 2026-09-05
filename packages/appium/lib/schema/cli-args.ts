@@ -2,13 +2,18 @@ import {util} from '@appium/support';
 import {type ArgumentOptions, ArgumentTypeError} from 'argparse';
 import type {JSONSchema7, JSONSchema7TypeName} from 'json-schema';
 
-import type {ArgumentDefinitions} from '../cli/args.js';
 import {kebabCase} from '../utils/index.js';
 import type {ArgSpec} from './arg-spec.js';
-import {parseCsvLine, transformers} from './cli-transformers.js';
+import {
+  parseCsvLine,
+  transformers,
+  type AppiumCliTransformerName,
+  type AppiumJSONSchemaKeywords,
+} from './cli-transformers.js';
 import {formatErrors} from './format-errors.js';
-import type {AppiumCliTransformerName, AppiumJSONSchemaKeywords} from './keywords.js';
 import {flattenSchema, validate} from './schema.js';
+
+export type ArgumentDefinitions = Map<[name: string] | [name: string, alias: string], ArgumentOptions>;
 
 type AppiumJSONSchema = AppiumJSONSchemaKeywords & JSONSchema7;
 type ArgDef = [[string] | [string, string], ArgumentOptions];

@@ -1,7 +1,7 @@
 import type {ManifestDataVersions} from 'appium/types/index.js';
 
-import {CURRENT_SCHEMA_REV, DRIVER_TYPE, PLUGIN_TYPE} from '../constants.js';
-import {log} from '../logger.js';
+import {CURRENT_SCHEMA_REV, DRIVER_TYPE, PLUGIN_TYPE} from '../../constants.js';
+import {log} from '../../logger.js';
 import type {Manifest} from './manifest.js';
 
 const SCHEMA_REV_3 = 3;

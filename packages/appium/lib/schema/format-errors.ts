@@ -1,7 +1,7 @@
 import type {NormalizedAppiumConfig} from '@appium/types';
 import betterAjvErrorsImport, {type IOutputError} from '@sidvind/better-ajv-errors';
-import type {ErrorObject} from 'ajv';
 
+import type {ErrorObject} from './ajv.js';
 import {getSchema} from './schema.js';
 
 // `@sidvind/better-ajv-errors` has no `"type"` field in its own package.json, so TS's

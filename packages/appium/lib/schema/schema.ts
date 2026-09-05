@@ -3,24 +3,12 @@ import path from 'node:path';
 import {AppiumConfigJsonSchema} from '@appium/schema';
 import {util} from '@appium/support';
 import type {ExtensionType} from '@appium/types';
-import AjvImport, {type ErrorObject, type SchemaObject, type ValidateFunction} from 'ajv';
-import addFormatsImport from 'ajv-formats';
 
 import {DRIVER_TYPE, PLUGIN_TYPE} from '../constants.js';
 import {bindAll, kebabCase, omitKeys, setPath} from '../utils/index.js';
+import {addFormats, Ajv, type AjvInstance, type ErrorObject, type SchemaObject, type ValidateFunction} from './ajv.js';
 import {APPIUM_CONFIG_SCHEMA_ID, ArgSpec, SERVER_PROP_NAME} from './arg-spec.js';
 import {keywords} from './keywords.js';
-
-// `ajv` and `ajv-formats` are plain CJS with no ESM-specific typings; nodenext types
-// their default imports as the whole module namespace rather than the actual default
-// export, so re-derive the real types via indexed access and cast the values to match.
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-type AjvCtor = (typeof import('ajv'))['default'];
-type AjvInstance = InstanceType<AjvCtor>;
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-type AddFormatsFn = (typeof import('ajv-formats'))['default'];
-const Ajv = AjvImport as unknown as AjvCtor;
-const addFormats = addFormatsImport as unknown as AddFormatsFn;
 
 type StrictSchemaObject = SchemaObject & {additionalProperties: false};
 type FlattenedSchema = {schema: SchemaObject; argSpec: ArgSpec}[];

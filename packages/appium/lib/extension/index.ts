@@ -27,8 +27,8 @@ export type DriverNameMap = Map<DriverClass, string>;
  *
  * If `appiumHome` is needed, use `resolveAppiumHome` from the `env` module in `@appium/support`.
  */
-export async function loadExtensions(appiumHome: string): Promise<ExtensionConfigs> {
-  const manifest = Manifest.getInstance(appiumHome);
+export async function loadExtensions(appiumHome: string, extensionSearchRoot?: string): Promise<ExtensionConfigs> {
+  const manifest = Manifest.getInstance(appiumHome, extensionSearchRoot);
   await manifest.read();
   const driverConfig = DriverConfig.getInstance(manifest) ?? DriverConfig.create(manifest);
   const pluginConfig = PluginConfig.getInstance(manifest) ?? PluginConfig.create(manifest);

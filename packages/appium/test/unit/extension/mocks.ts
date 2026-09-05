@@ -15,6 +15,7 @@ export interface MockAppiumSupportFs {
   glob: SinonStub;
   mkdirp: SinonStub;
   exists: SinonStub;
+  findRoot: SinonStub;
 }
 
 export interface MockAppiumSupportEnv {
@@ -97,6 +98,7 @@ export function initMocks(sandbox = createSandbox()): InitMocksResult {
       glob: sandbox.stub().resolves([]),
       mkdirp: sandbox.stub().resolves(),
       exists: sandbox.stub().resolves(true),
+      findRoot: sandbox.stub().callsFake((dir: string) => dir),
     },
     env: {
       resolveAppiumHome: sandbox.stub().resolves('/some/path'),

@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import {promises as fs} from 'node:fs';
+import path from 'node:path';
 import {describe, it, beforeEach, afterEach, before} from 'node:test';
 
 import type {DriverType, PluginType} from '@appium/types';
@@ -10,13 +11,14 @@ import {DRIVER_TYPE, PLUGIN_TYPE} from '../../../lib/constants';
 import {APPIUM_VER} from '../../../lib/helpers/build';
 import {resolveFixture, rewiremock} from '../../helpers';
 import {initMocks} from './mocks';
-import type {MockAppiumSupport, MockPackageChanged} from './mocks';
+import type {MockAppiumSupport, MockPackageChanged, MockResolveFrom} from './mocks';
 
 describe('Manifest', function () {
   let sandbox: SinonSandbox;
   let yamlFixture: string;
   let MockPackageChanged: MockPackageChanged;
   let MockAppiumSupport: MockAppiumSupport;
+  let MockResolveFrom: MockResolveFrom;
   let Manifest: any;
 
   before(async function () {
@@ -25,7 +27,7 @@ describe('Manifest', function () {
 
   beforeEach(function () {
     let overrides: ReturnType<typeof initMocks>['overrides'];
-    ({MockPackageChanged, MockAppiumSupport, overrides, sandbox} = initMocks());
+    ({MockPackageChanged, MockAppiumSupport, MockResolveFrom, overrides, sandbox} = initMocks());
     MockAppiumSupport.fs.readFile.resolves(yamlFixture);
     ({Manifest} = rewiremock.proxy(() => require('../../../lib/extension/manifest'), {
       ...overrides,
@@ -54,6 +56,14 @@ describe('Manifest', function () {
           const firstInstance = Manifest.getInstance('/some/path');
           const secondInstance = Manifest.getInstance('/some/other/path');
           assert.notStrictEqual(firstInstance, secondInstance);
+        });
+
+        describe('when called with different extension search roots', function () {
+          it('should return different objects', function () {
+            const firstInstance = Manifest.getInstance('/some/path', '/workspace/packages/one');
+            const secondInstance = Manifest.getInstance('/some/path', '/workspace/packages/two');
+            assert.notStrictEqual(firstInstance, secondInstance);
+          });
         });
       });
     });
@@ -486,6 +496,118 @@ describe('Manifest', function () {
       it('should add a found extension', async function () {
         await manifest.syncWithInstalledExtensions();
         assert.ok(Object.hasOwn(manifest.getExtensionData(DRIVER_TYPE), 'myDriver'));
+      });
+
+      it('should resolve only dependencies declared by an explicit search root', async function () {
+        const searchRoot = path.resolve('/workspace/packages/app');
+        MockAppiumSupport.fs.readFile.callsFake(async (filepath: string) => {
+          if (filepath === path.join(searchRoot, 'package.json')) {
+            return JSON.stringify({devDependencies: {'appium-test-driver': '1.0.0', lodash: '1.0.0'}});
+          }
+          if (filepath.endsWith(path.join('appium-test-driver', 'package.json'))) {
+            return JSON.stringify({
+              name: 'appium-test-driver',
+              version: '1.0.0',
+              appium: {
+                automationName: 'Test',
+                mainClass: 'TestDriver',
+                platformNames: ['Test'],
+                driverName: 'test',
+              },
+            });
+          }
+          return JSON.stringify({name: 'lodash', version: '1.0.0'});
+        });
+
+        await manifest.syncWithInstalledExtensions(true, searchRoot);
+
+        assert.ok(Object.hasOwn(manifest.getExtensionData(DRIVER_TYPE), 'test'));
+        assert.strictEqual(MockAppiumSupport.fs.glob.called, false);
+        assert.strictEqual(MockResolveFrom.calledWith(searchRoot, 'appium-test-driver/package.json'), true);
+        assert.strictEqual(MockResolveFrom.calledWith(searchRoot, 'lodash/package.json'), true);
+      });
+
+      it('should reject an unreadable explicit search root', async function () {
+        const searchRoot = path.resolve('/workspace/packages/app');
+        MockAppiumSupport.fs.readFile.rejects(new Error('permission denied'));
+
+        await assert.rejects(
+          manifest.syncWithInstalledExtensions(false, searchRoot),
+          new RegExp(
+            `Could not read extension search root package manifest.*${path.basename(searchRoot)}.*package.json`,
+            'i',
+          ),
+        );
+      });
+
+      it('should reject malformed dependency data in an explicit search root', async function () {
+        const searchRoot = path.resolve('/workspace/packages/app');
+        MockAppiumSupport.fs.readFile.callsFake(async (filepath: string) =>
+          filepath === path.join(searchRoot, 'package.json') ? JSON.stringify({dependencies: []}) : '{}',
+        );
+
+        await assert.rejects(
+          manifest.syncWithInstalledExtensions(false, searchRoot),
+          /'dependencies' field.*must contain an object/i,
+        );
+      });
+
+      it('should find an extension whose package manifest is not exported', async function () {
+        const searchRoot = path.resolve('/workspace/packages/app');
+        const packageRoot = path.resolve('/workspace/node_modules/appium-driver');
+        const exportsError = Object.assign(new Error('Package subpath ./package.json is not defined by exports'), {
+          code: 'ERR_PACKAGE_PATH_NOT_EXPORTED',
+        });
+        MockAppiumSupport.fs.readFile.callsFake(async (filepath: string) =>
+          filepath === path.join(searchRoot, 'package.json')
+            ? JSON.stringify({dependencies: {'appium-driver': '1.0.0'}})
+            : JSON.stringify({
+                name: 'appium-driver',
+                version: '1.0.0',
+                appium: {
+                  automationName: 'Test',
+                  mainClass: 'TestDriver',
+                  platformNames: ['Test'],
+                  driverName: 'test',
+                },
+              }),
+        );
+        MockResolveFrom.withArgs(searchRoot, 'appium-driver/package.json').rejects(exportsError);
+        MockResolveFrom.withArgs(searchRoot, 'appium-driver').resolves(path.join(packageRoot, 'index.js'));
+        MockAppiumSupport.fs.findRoot.returns(packageRoot);
+
+        await manifest.syncWithInstalledExtensions(false, searchRoot);
+
+        assert.ok(Object.hasOwn(manifest.getExtensionData(DRIVER_TYPE), 'test'));
+      });
+
+      it('should not persist extensions discovered from an explicit search root', async function () {
+        const searchRoot = path.resolve('/workspace/packages/app');
+        const rootManifest = Manifest.getInstance('/some/path', searchRoot);
+        MockAppiumSupport.fs.readFile.callsFake(async (filepath: string) => {
+          if (filepath === '/some/path/extensions.yaml') {
+            return yamlFixture;
+          }
+          if (filepath === path.join(searchRoot, 'package.json')) {
+            return JSON.stringify({dependencies: {'appium-driver': '1.0.0'}});
+          }
+          return JSON.stringify({
+            name: 'appium-driver',
+            version: '1.0.0',
+            appium: {
+              automationName: 'Test',
+              mainClass: 'TestDriver',
+              platformNames: ['Test'],
+              driverName: 'test',
+            },
+          });
+        });
+
+        await rootManifest.read();
+        await rootManifest.write();
+
+        assert.ok(Object.hasOwn(rootManifest.getExtensionData(DRIVER_TYPE), 'test'));
+        assert.doesNotMatch(MockAppiumSupport.fs.writeFile.lastCall.args[1], /appium-driver/);
       });
 
       describe('when the underlying implementation emits "error"', function () {

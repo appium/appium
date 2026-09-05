@@ -6,7 +6,9 @@ import type {ExtManifest, ExtPackageJson, ExtRecord, InternalMetadata, ManifestD
 import * as YAML from 'yaml';
 
 import {CURRENT_SCHEMA_REV, DRIVER_TYPE, PLUGIN_TYPE} from '../constants';
+import {log} from '../logger';
 import {packageDidChange} from '../utils';
+import {resolveFrom} from '../utils/resolve-from';
 import {INSTALL_TYPE_DEV, INSTALL_TYPE_NPM} from './extension-config';
 import {migrate} from './manifest-migrations';
 
@@ -22,24 +24,33 @@ const INITIAL_MANIFEST_DATA: Readonly<ManifestData> = Object.freeze({
 /**
  * Handles reading & writing of extension config files.
  *
- * Only one instance of this class exists per value of `APPIUM_HOME`.
+ * Only one instance of this class exists per `APPIUM_HOME` and extension search root pair.
  */
 export class Manifest {
   /**
-   * Returns the memoized manifest for an `APPIUM_HOME` directory (one instance per home).
+   * Returns the memoized manifest for an `APPIUM_HOME` and extension search root pair.
    *
    * @param appiumHome - `APPIUM_HOME` path used as the cache key
+   * @param extensionSearchRoot - Optional project directory whose dependencies contain extensions
    */
-  static getInstance = util.memoize((appiumHome: string): Manifest => new Manifest(appiumHome));
+  static getInstance = util.memoize(
+    (appiumHome: string, extensionSearchRoot?: string): Manifest =>
+      new Manifest(appiumHome, extensionSearchRoot && path.resolve(extensionSearchRoot)),
+    (appiumHome, extensionSearchRoot) =>
+      JSON.stringify([appiumHome, extensionSearchRoot && path.resolve(extensionSearchRoot)]),
+  );
 
   #data!: ManifestData;
   readonly #appiumHome: string;
+  readonly #extensionSearchRoot: string | undefined;
+  #transientBaseData: ManifestData | undefined;
   #manifestPath: string | undefined = undefined;
   #writing: Promise<boolean> | undefined;
   #reading: Promise<void> | undefined;
 
-  private constructor(appiumHome: string) {
+  private constructor(appiumHome: string, extensionSearchRoot?: string) {
     this.#appiumHome = appiumHome;
+    this.#extensionSearchRoot = extensionSearchRoot;
     this.#data = structuredClone(INITIAL_MANIFEST_DATA) as ManifestData;
   }
 
@@ -103,6 +114,7 @@ export class Manifest {
     }
 
     this.#reading = (async () => {
+      this.#transientBaseData = undefined;
       let data: ManifestData;
       let shouldWrite = false;
       const manifestPathResolved = await this.#setManifestPath();
@@ -137,6 +149,11 @@ export class Manifest {
       if (shouldWrite) {
         await this.write();
       }
+      if (this.#extensionSearchRoot) {
+        const hasSearchRootAppiumDependency = await env.hasAppiumDependency(this.#extensionSearchRoot);
+        this.#transientBaseData = structuredClone(this.#data) as ManifestData;
+        await this.syncWithInstalledExtensions(hasSearchRootAppiumDependency, this.#extensionSearchRoot);
+      }
     })();
 
     try {
@@ -170,7 +187,7 @@ export class Manifest {
         );
       }
       try {
-        await fs.writeFile(manifestPathResolved, YAML.stringify(this.#data), 'utf8');
+        await fs.writeFile(manifestPathResolved, YAML.stringify(this.#getPersistableData()), 'utf8');
         return true;
       } catch (err: any) {
         throw new Error(
@@ -187,12 +204,13 @@ export class Manifest {
   }
 
   /**
-   * Scans `APPIUM_HOME` (root and `node_modules`) for Appium extension packages and merges them into the manifest.
+   * Finds Appium extension packages and merges them into the manifest.
    *
    * @param hasAppiumDependency - When true and the root `package.json` depends on Appium, matching extensions use the `"dev"` install type
+   * @param extensionSearchRoot - Optional project directory whose declared dependencies should be resolved instead of scanning `APPIUM_HOME/node_modules`
    * @returns `true` if any extension entries changed, `false` otherwise
    */
-  async syncWithInstalledExtensions(hasAppiumDependency = false): Promise<boolean> {
+  async syncWithInstalledExtensions(hasAppiumDependency = false, extensionSearchRoot?: string): Promise<boolean> {
     let didChange = false;
 
     const onMatch = async (filepath: string, devType = false): Promise<void> => {
@@ -210,12 +228,48 @@ export class Manifest {
 
     const queue: Promise<void>[] = [onMatch(path.join(this.#appiumHome, 'package.json'), true)];
 
-    const filepaths = await fs.glob('node_modules/{*,@*/*}/package.json', {
-      cwd: this.#appiumHome,
-      absolute: true,
-    });
-    for (const filepath of filepaths) {
-      queue.push(onMatch(filepath));
+    if (extensionSearchRoot) {
+      const searchRoot = path.resolve(extensionSearchRoot);
+      const packageJsonPath = path.join(searchRoot, 'package.json');
+      let pkg: unknown;
+      try {
+        pkg = JSON.parse(await fs.readFile(packageJsonPath, 'utf8')) as unknown;
+      } catch (err) {
+        throw new Error(`Could not read extension search root package manifest at ${packageJsonPath}`, {cause: err});
+      }
+      if (!util.isPlainObject(pkg)) {
+        throw new TypeError(`Extension search root package manifest at ${packageJsonPath} must contain an object`);
+      }
+      const dependencyNames = new Set<string>();
+      for (const field of ['dependencies', 'devDependencies'] as const) {
+        const dependencies = pkg[field];
+        if (dependencies !== undefined && !util.isPlainObject(dependencies)) {
+          throw new TypeError(`The '${field}' field in ${packageJsonPath} must contain an object`);
+        }
+        for (const dependencyName of Object.keys(dependencies ?? {})) {
+          dependencyNames.add(dependencyName);
+        }
+      }
+      for (const dependencyName of dependencyNames) {
+        try {
+          const dependencyPackageJsonPath = await resolvePackageJson(searchRoot, dependencyName);
+          queue.push(onMatch(dependencyPackageJsonPath, true));
+        } catch (err) {
+          log.debug(
+            `Could not inspect declared dependency '${dependencyName}' from extension search root ${searchRoot}: ${
+              err instanceof Error ? err.message : String(err)
+            }`,
+          );
+        }
+      }
+    } else {
+      const filepaths = await fs.glob('node_modules/{*,@*/*}/package.json', {
+        cwd: this.#appiumHome,
+        absolute: true,
+      });
+      for (const filepath of filepaths) {
+        queue.push(onMatch(filepath));
+      }
     }
 
     await Promise.all(queue);
@@ -335,6 +389,39 @@ export class Manifest {
     }
 
     return this.#manifestPath;
+  }
+
+  #getPersistableData(): ManifestData {
+    if (!this.#transientBaseData) {
+      return this.#data;
+    }
+    const data = structuredClone(this.#data) as ManifestData;
+    for (const type of [DRIVER_TYPE, PLUGIN_TYPE] as const) {
+      const key = `${type}s` as const;
+      for (const name of Object.keys(data[key])) {
+        if (!Object.hasOwn(this.#transientBaseData[key], name)) {
+          delete data[key][name];
+        }
+      }
+      for (const [name, manifest] of Object.entries(this.#transientBaseData[key])) {
+        if (!util.isEqual(data[key][name], manifest)) {
+          data[key][name] = manifest;
+        }
+      }
+    }
+    return data;
+  }
+}
+
+async function resolvePackageJson(searchRoot: string, dependencyName: string): Promise<string> {
+  try {
+    return await resolveFrom(searchRoot, `${dependencyName}/package.json`);
+  } catch (err) {
+    if (!(err instanceof Error && 'code' in err && err.code === 'ERR_PACKAGE_PATH_NOT_EXPORTED')) {
+      throw err;
+    }
+    const entryPoint = await resolveFrom(searchRoot, dependencyName);
+    return path.join(fs.findRoot(path.dirname(entryPoint)), 'package.json');
   }
 }
 

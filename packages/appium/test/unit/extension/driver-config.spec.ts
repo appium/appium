@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import {promises as fs} from 'node:fs';
+import path from 'node:path';
 import {describe, it, beforeEach, afterEach, before} from 'node:test';
 
 import type {DriverType, ExtensionType} from '@appium/types';
@@ -11,7 +12,7 @@ import {Manifest} from '../../../lib/extension/manifest';
 import {resetSchema} from '../../../lib/schema';
 import {assertArrayIncludesDeep, resolveFixture, rewiremock} from '../../helpers';
 import {initMocks} from './mocks';
-import type {MockAppiumSupport, MockResolveFrom, Overrides} from './mocks';
+import type {MockAppiumSupport, Overrides} from './mocks';
 
 type ExtManifestWithSchema<ExtType extends ExtensionType> = ExtManifest<ExtType> & {
   schema: NonNullable<ExtManifest<ExtType>['schema']>;
@@ -28,7 +29,6 @@ describe('DriverConfig', function () {
   let manifest: Manifest;
   let sandbox: SinonSandbox;
   let MockAppiumSupport: MockAppiumSupport;
-  let MockResolveFrom: MockResolveFrom;
   let DriverConfig: DriverConfigConstructor;
 
   before(async function () {
@@ -38,7 +38,7 @@ describe('DriverConfig', function () {
   beforeEach(function () {
     manifest = Manifest.getInstance('/somewhere/');
     let overrides: Overrides;
-    ({MockAppiumSupport, MockResolveFrom, overrides, sandbox} = initMocks());
+    ({MockAppiumSupport, overrides, sandbox} = initMocks());
     MockAppiumSupport.fs.readFile.resolves(yamlFixture);
     ({DriverConfig} = rewiremock.proxy(() => require('../../../lib/extension/driver-config'), overrides));
     resetSchema();
@@ -223,15 +223,12 @@ describe('DriverConfig', function () {
           });
 
           describe('when the property as a path is found', function () {
-            beforeEach(function () {
-              MockResolveFrom.resolves(resolveFixture('driver-schema.js'));
-            });
-
             it('should return an empty array', async function () {
               const problems = await driverConfig.getSchemaProblems(
                 {
                   pkgName: 'whatever',
                   schema: 'driver-schema.js',
+                  installPath: path.dirname(resolveFixture('driver-schema.js')),
                 },
                 'foo',
               );
@@ -260,7 +257,7 @@ describe('DriverConfig', function () {
           installType: 'npm',
           installPath: '/somewhere',
         };
-        MockResolveFrom.resolves(resolveFixture('driver-schema.js'));
+        extData.installPath = path.dirname(resolveFixture('driver-schema.js'));
         driverConfig = DriverConfig.create(manifest);
       });
 
@@ -283,10 +280,7 @@ describe('DriverConfig', function () {
 
       describe('when the extension schema has not yet been registered', function () {
         it('should resolve and load the extension schema file', async function () {
-          await driverConfig.readExtensionSchema(extName, extData);
-
-          // we don't have access to the schema registration cache directly, so this is as close as we can get.
-          assert.strictEqual(MockResolveFrom.calledOnce, true);
+          await assert.doesNotReject(driverConfig.readExtensionSchema(extName, extData));
         });
       });
     });

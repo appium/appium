@@ -82,6 +82,15 @@ function makeListArgs(type: ExtensionType): ArgumentDefinitions {
   return new Map([
     ...globalExtensionArgs,
     [
+      ['--ext-search-root'],
+      {
+        required: false,
+        type: 'str',
+        help: 'Search the dependencies of this project directory for installed extensions',
+        dest: 'extSearchRoot',
+      },
+    ],
+    [
       ['--installed'],
       {
         required: false,
@@ -250,6 +259,15 @@ function makeRunArgs(type: ExtensionType): ArgumentDefinitions {
  * These don't make sense in the context of a config file for obvious reasons.
  */
 const serverArgsDisallowedInConfig: ArgumentDefinitions = new Map([
+  [
+    ['--ext-search-root'],
+    {
+      dest: 'extSearchRoot',
+      type: 'str',
+      required: false,
+      help: 'Search the dependencies of this project directory for installed extensions',
+    },
+  ],
   [
     ['--shell'],
     {

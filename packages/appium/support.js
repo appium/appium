@@ -5,7 +5,7 @@
  *
  * @see https://npm.im/@appium/support
  * @example
- * import { fs, npm } from 'appium/support.js';
+ * import { fs, system } from 'appium/support.js';
  */
 export * from '@appium/support';
 export {default} from '@appium/support';

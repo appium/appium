@@ -75,6 +75,11 @@ export const CACHE_DIR_RELATIVE_PATH = path.join('node_modules', '.cache', 'appi
  */
 export const PKG_HASHFILE_RELATIVE_PATH = path.join(CACHE_DIR_RELATIVE_PATH, 'package.hash');
 
+/**
+ * Relative path to lockfile used when installing an extension via `appium`
+ */
+export const INSTALL_LOCKFILE_RELATIVE_PATH = path.join(CACHE_DIR_RELATIVE_PATH, '.install.lock');
+
 export const EXT_SUBCOMMAND_LIST = 'list';
 export const EXT_SUBCOMMAND_INSTALL = 'install';
 export const EXT_SUBCOMMAND_UNINSTALL = 'uninstall';

@@ -48,6 +48,9 @@ export function configureGlobalFeatures(this: AppiumDriver) {
  * @param driverName
  */
 export function configureDriverFeatures(this: AppiumDriver, driver: ExternalDriver, driverName: string) {
+  // the docs tell users to scope a feature with the driver's automationName, which is also what
+  // the driver itself compares against in `isFeatureEnabled`
+  const automationName = this.driverConfig?.installedExtensions?.[driverName]?.automationName;
   if (this.relaxedSecurityEnabled) {
     this.log.info(
       `Enabling relaxed security for this session as per the server configuration. ` +
@@ -55,13 +58,13 @@ export function configureDriverFeatures(this: AppiumDriver, driver: ExternalDriv
     );
     driver.relaxedSecurityEnabled = true;
   }
-  const allowedDriverFeatures = filterInsecureFeatures(this.allowInsecure, driverName);
+  const allowedDriverFeatures = filterInsecureFeatures(this.allowInsecure, driverName, automationName);
   if (!util.isEmpty(allowedDriverFeatures)) {
     this.log.info('Explicitly enabling insecure features for this session ' + 'as per the server configuration:');
     allowedDriverFeatures.forEach((a) => this.log.info(`    ${a}`));
     driver.allowInsecure = allowedDriverFeatures;
   }
-  const deniedDriverFeatures = filterInsecureFeatures(this.denyInsecure, driverName);
+  const deniedDriverFeatures = filterInsecureFeatures(this.denyInsecure, driverName, automationName);
   if (util.isEmpty(deniedDriverFeatures)) {
     return;
   }
@@ -97,20 +100,29 @@ function validateFeatures(features: string[]): string[] {
 
 /**
  * Filters the list of insecure features to only those that are
- * applicable to the given driver name.
+ * applicable to the given driver.
  * Assumes that all feature names have already been validated
+ *
+ * The prefix may be the driver's install name or its automationName, which is the one the
+ * security guide documents. Both are compared case-insensitively, like the prefix check
+ * `isFeatureEnabled` does on the driver side.
  *
  * @param features
  * @param driverName
+ * @param automationName
  */
-function filterInsecureFeatures(features: string[], driverName: string = ALL_DRIVERS_MATCH): string[] {
+function filterInsecureFeatures(features: string[], driverName?: string, automationName?: string): string[] {
+  const acceptedPrefixes = new Set(
+    [ALL_DRIVERS_MATCH, driverName, automationName]
+      .filter((name): name is string => Boolean(name))
+      .map((name) => name.toLowerCase()),
+  );
   const filterFn = (fullName: string) => {
     const separatorPos = fullName.indexOf(FEATURE_NAME_SEPARATOR);
     if (separatorPos <= 0) {
       return false;
     }
-    const automationName = fullName.substring(0, separatorPos);
-    return [driverName, ALL_DRIVERS_MATCH].includes(automationName);
+    return acceptedPrefixes.has(fullName.substring(0, separatorPos).toLowerCase());
   };
   return features.filter(filterFn);
 }

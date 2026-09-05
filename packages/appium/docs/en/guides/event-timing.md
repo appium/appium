@@ -6,13 +6,12 @@ title: Retrieving Event Timings
 ---
 
 Appium comes with the ability to retrieve timing information about startup
-information and command length. This is an advanced feature; the server records
-event timings for every session.
+information and command length. This is an advanced feature; event and
+command timings are collected automatically for the duration of a session.
 
-The timings can be retrieved at any point during a session via the
-`POST /session/:id/appium/events` endpoint (i.e., the response to
-`driver.logs.events` or similar, depending on client). The response body is the
-event history object itself. This is its structure:
+The `POST /session/:id/appium/events` response (i.e., the response to
+`driver.logs.events` or similar, depending on client) has the following
+structure:
 
 ```
 {

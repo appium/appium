@@ -19,8 +19,6 @@ export const W3C_ROUTES = {
     },
   },
   '/session/:sessionId': {
-    // TODO: JSONWP route, remove in the future
-    GET: {command: 'getSession', deprecated: true},
     DELETE: {command: 'deleteSession'},
   },
   '/status': {

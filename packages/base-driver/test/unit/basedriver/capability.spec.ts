@@ -14,7 +14,7 @@ import {BaseDriver, errors} from '../../../lib/index.js';
 type TestW3CCaps = W3CCapabilities<Constraints>;
 
 describe('Desired Capabilities', function () {
-  let d: BaseDriver<any, any, any, any, any, any>;
+  let d: BaseDriver<any, any, any, any, any>;
   let sandbox: sinon.SinonSandbox;
   let logWarnSpy: sinon.SinonSpy;
   let deprecatedStub: sinon.SinonStub;

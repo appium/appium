@@ -21,7 +21,7 @@ const SUPPORTED_LOG_TYPES = {
 
 describe('log commands -', function () {
   let sandbox: sinon.SinonSandbox;
-  let driver: BaseDriver<any, any, any, any, any, any>;
+  let driver: BaseDriver<any, any, any, any, any>;
 
   beforeEach(function () {
     sandbox = createSandbox();

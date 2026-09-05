@@ -41,7 +41,7 @@ describe('Routes', function () {
       }
       const hash = shasum.digest('hex').substring(0, 8);
       // Update this value again only when an intentional route/command/param change is made.
-      assert.strictEqual(hash, '8b461b1a');
+      assert.strictEqual(hash, '2675d7f2');
     });
   });
 

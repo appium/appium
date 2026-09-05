@@ -64,9 +64,9 @@ describe('FakeDriver unit suite', function () {
     assert.notDeepStrictEqual(sessionId1, sessionId2);
   });
 
-  it('should get the current session', async function () {
+  it('should get the current session capabilities', async function () {
     const [, caps] = await d.createSession(w3cCaps);
-    assert.strictEqual(caps, await d.getSession());
+    assert.deepStrictEqual((await d.getAppiumSessionCapabilities()).capabilities, caps);
   });
 
   it('should fulfill an unexpected driver quit promise', async function () {
@@ -103,7 +103,7 @@ describe('FakeDriver unit suite', function () {
     });
     void d.startUnexpectedShutdown(new Error('We crashed'));
     await p;
-    await assert.rejects(d.executeCommand('getSession'), /shut down/);
+    await assert.rejects(d.executeCommand('getStatus'), /shut down/);
   });
 
   it('should allow new commands after done shutting down', async function () {
@@ -123,7 +123,7 @@ describe('FakeDriver unit suite', function () {
     void d.startUnexpectedShutdown(new Error('We crashed'));
     await p;
 
-    await assert.rejects(d.executeCommand('getSession'), /shut down/);
+    await assert.rejects(d.executeCommand('getStatus'), /shut down/);
     await sleep(500);
 
     await d.executeCommand('createSession', null, null, structuredClone(w3cCaps));
@@ -452,18 +452,6 @@ describe('FakeDriver unit suite', function () {
       assert.strictEqual(d.eventHistory.bar.length, 2);
       assert.strictEqual(typeof d.eventHistory.bar[1], 'number');
       assert.strictEqual(d.eventHistory.bar[1] >= d.eventHistory.bar[0], true);
-    });
-    describe('getSession decoration', function () {
-      it('should decorate getSession response if opt-in cap is provided', async function () {
-        let res = await d.getSession();
-        assert.ok(!res.events);
-
-        (d.caps as Record<string, unknown>).eventTimings = true;
-        res = await d.getSession();
-        assert.ok(res.events);
-        assert.ok(res.events?.newSessionRequested);
-        assert.strictEqual(typeof res.events?.newSessionRequested[0], 'number');
-      });
     });
   });
 });

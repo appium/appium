@@ -359,3 +359,38 @@ export async function getParser(debug = false): Promise<ArgParser> {
 
   return new ArgParser(debug);
 }
+
+/**
+ * Extracts `--ext-search-root` before extension schemas are loaded and the full CLI can be parsed.
+ */
+export function getExtensionSearchRoot(args: string[] = process.argv.slice(2)): string | undefined {
+  if ((args[0] === DRIVER_TYPE || args[0] === PLUGIN_TYPE) && args[1] !== EXT_SUBCOMMAND_LIST && args[1] !== 'ls') {
+    return undefined;
+  }
+  let result: string | undefined;
+  for (let index = 0; index < args.length; index++) {
+    const arg = args[index];
+    if (arg === '--') {
+      break;
+    }
+    if (arg.startsWith('--') && '--ext-search-root'.startsWith(arg)) {
+      const value = args[++index];
+      if (!value || value.startsWith('-')) {
+        throw new Error('[ERROR] argument --ext-search-root: expected one argument');
+      }
+      result = value;
+    } else if (arg.includes('=')) {
+      const separatorIndex = arg.indexOf('=');
+      const name = arg.slice(0, separatorIndex);
+      const value = arg.slice(separatorIndex + 1);
+      if (!name.startsWith('--') || !'--ext-search-root'.startsWith(name)) {
+        continue;
+      }
+      if (!value) {
+        throw new Error('[ERROR] argument --ext-search-root: expected one argument');
+      }
+      result = value;
+    }
+  }
+  return result;
+}

@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import {promises as fs} from 'node:fs';
+import path from 'node:path';
 import {describe, it, beforeEach, afterEach, before} from 'node:test';
 
 import type {ExtensionType, PluginType} from '@appium/types';
@@ -11,7 +12,7 @@ import type {PluginConfig as PluginConfigInstance} from '../../../lib/extension/
 import {resetSchema} from '../../../lib/schema';
 import {assertArrayIncludesDeep, resolveFixture, rewiremock} from '../../helpers';
 import {initMocks} from './mocks';
-import type {MockAppiumSupport, MockResolveFrom, Overrides} from './mocks';
+import type {MockAppiumSupport, Overrides} from './mocks';
 
 type ExtManifestWithSchema<ExtType extends ExtensionType> = ExtManifest<ExtType> & {
   schema: NonNullable<ExtManifest<ExtType>['schema']>;
@@ -28,7 +29,6 @@ describe('PluginConfig', function () {
   let manifest: Manifest;
   let sandbox: SinonSandbox;
   let MockAppiumSupport: MockAppiumSupport;
-  let MockResolveFrom: MockResolveFrom;
   let PluginConfig: PluginConfigConstructor;
 
   before(async function () {
@@ -38,7 +38,7 @@ describe('PluginConfig', function () {
   beforeEach(function () {
     let overrides: Overrides;
     manifest = Manifest.getInstance('/somewhere/');
-    ({MockAppiumSupport, MockResolveFrom, sandbox, overrides} = initMocks());
+    ({MockAppiumSupport, sandbox, overrides} = initMocks());
     MockAppiumSupport.fs.readFile.resolves(yamlFixture);
     ({PluginConfig} = rewiremock.proxy(() => require('../../../lib/extension/plugin-config'), overrides));
     resetSchema();
@@ -190,15 +190,12 @@ describe('PluginConfig', function () {
           });
 
           describe('when the property as a path is found', function () {
-            beforeEach(function () {
-              MockResolveFrom.resolves(resolveFixture('plugin-schema'));
-            });
-
             it('should return an empty array', async function () {
               const problems = await pluginConfig.getSchemaProblems(
                 {
                   pkgName: '../fixtures',
                   schema: 'plugin-schema.js',
+                  installPath: path.dirname(resolveFixture('plugin-schema.js')),
                   mainClass: 'Yankovic',
                   version: '1.0.0',
                 },
@@ -269,8 +266,8 @@ describe('PluginConfig', function () {
           version: '0.0.0',
           installType: 'npm',
           installSpec: 'some-pkg',
+          installPath: path.dirname(resolveFixture('plugin-schema.js')),
         } as unknown as ExtManifestWithSchema<PluginType>;
-        MockResolveFrom.resolves(resolveFixture('plugin-schema.js'));
         pluginConfig = PluginConfig.create(manifest);
       });
 
@@ -295,7 +292,7 @@ describe('PluginConfig', function () {
         describe('when the schema differs (presumably a different extension)', function () {
           it('should throw', async function () {
             await pluginConfig.readExtensionSchema(extName, extData);
-            MockResolveFrom.resolves(resolveFixture('driver-schema.js'));
+            extData.installPath = path.dirname(resolveFixture('driver-schema.js'));
             await assert.rejects(
               pluginConfig.readExtensionSchema(extName, extData),
               /conflicts with an existing schema/i,
@@ -306,8 +303,7 @@ describe('PluginConfig', function () {
 
       describe('when the extension schema has not yet been registered', function () {
         it('should resolve and load the extension schema file', async function () {
-          await pluginConfig.readExtensionSchema(extName, extData);
-          assert.strictEqual(MockResolveFrom.calledOnce, true);
+          await assert.doesNotReject(pluginConfig.readExtensionSchema(extName, extData));
         });
       });
     });

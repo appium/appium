@@ -138,6 +138,7 @@ appium {driver|plugin} list
 |<div style="width:7em">Argument</div>|Description|Type|
 |--|--|--|
 |`--installed`|Only list all installed extensions|boolean|
+|`--ext-search-root`|Search the dependencies of this project directory for installed extensions|string|
 |`--json`|Return the result in JSON format|boolean|
 |`--updates`|List all extensions along with information on whether newer versions are available. Only supported for extensions installed via `npm`.|boolean|
 |`--verbose`|Show additional details for each extension|boolean|

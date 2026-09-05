@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {npm} from '../../lib/npm.js';
+import {npm} from '../../lib/utils/index.js';
 
 describe('npm module', function () {
   describe('getLatestVersion()', function () {

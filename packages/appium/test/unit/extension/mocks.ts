@@ -38,7 +38,8 @@ export interface MockAppiumSupportSystem {
   isWindows: SinonStub;
 }
 
-export interface MockAppiumSupportNpm {
+/** Stubs for `npm.getLatestVersion`/`getLatestSafeUpgradeVersion`, mocked onto `lib/utils/index.js` (not `@appium/support` — `npm` lives in `lib/utils/npm.ts`). */
+export interface MockNpm {
   getLatestVersion: SinonStub;
   getLatestSafeUpgradeVersion: SinonStub;
 }
@@ -56,7 +57,6 @@ export interface MockAppiumSupport {
   env: MockAppiumSupportEnv;
   logger: MockAppiumSupportLogger;
   system: MockAppiumSupportSystem;
-  npm: MockAppiumSupportNpm;
   util: MockAppiumSupportUtil;
   console: MockAppiumSupportConsole;
 }
@@ -74,6 +74,7 @@ export interface InitMocksResult {
   MockAppiumSupport: MockAppiumSupport;
   MockPackageChanged: MockPackageChanged;
   MockResolveFrom: MockResolveFrom;
+  MockNpm: MockNpm;
   sandbox: SinonSandbox;
 }
 
@@ -104,10 +105,6 @@ export function initMocks(sandbox = createSandbox()): InitMocksResult {
     system: {
       isWindows: sandbox.stub().returns(false),
     },
-    npm: {
-      getLatestVersion: sandbox.stub().resolves('2.0.0'),
-      getLatestSafeUpgradeVersion: sandbox.stub().resolves('1.1.0'),
-    },
     util: {
       ...supportUtil,
       compareVersions: sandbox.stub().returns(true),
@@ -131,10 +128,16 @@ export function initMocks(sandbox = createSandbox()): InitMocksResult {
     .stub<[cwd: string, id: string], Promise<string>>()
     .callsFake(async (cwd, id) => path.join(cwd, id));
 
+  const MockNpm: MockNpm = {
+    getLatestVersion: sandbox.stub().resolves('2.0.0'),
+    getLatestSafeUpgradeVersion: sandbox.stub().resolves('1.1.0'),
+  };
+
   return {
     MockAppiumSupport,
     MockPackageChanged,
     MockResolveFrom,
+    MockNpm,
     sandbox,
   };
 }
@@ -147,7 +150,7 @@ export function initMocks(sandbox = createSandbox()): InitMocksResult {
  */
 export function resetMockDefaults(mocks: InitMocksResult): void {
   mocks.sandbox.resetHistory();
-  const {MockAppiumSupport, MockPackageChanged, MockResolveFrom} = mocks;
+  const {MockAppiumSupport, MockPackageChanged, MockResolveFrom, MockNpm} = mocks;
   MockAppiumSupport.fs.readFile.resolves('{}');
   MockAppiumSupport.fs.writeFile.resolves(true);
   MockAppiumSupport.fs.walk.returns({
@@ -161,8 +164,8 @@ export function resetMockDefaults(mocks: InitMocksResult): void {
   MockAppiumSupport.env.hasAppiumDependency.resolves(false);
   MockAppiumSupport.logger.getLogger.callsFake(() => MockAppiumSupport.logger.__logger);
   MockAppiumSupport.system.isWindows.returns(false);
-  MockAppiumSupport.npm.getLatestVersion.resolves('2.0.0');
-  MockAppiumSupport.npm.getLatestSafeUpgradeVersion.resolves('1.1.0');
+  MockNpm.getLatestVersion.resolves('2.0.0');
+  MockNpm.getLatestSafeUpgradeVersion.resolves('1.1.0');
   MockAppiumSupport.util.compareVersions.returns(true);
   MockAppiumSupport.console.CliConsole.returns(mocks.sandbox.createStubInstance(supportConsole.CliConsole));
   MockPackageChanged.isPackageChanged.callsFake(async () => ({
@@ -184,8 +187,8 @@ export function resetMockDefaults(mocks: InitMocksResult): void {
  * file in `test/unit/extension/` (the relative specifiers below are resolved from this file's
  * own location, which is the same directory).
  *
- * Mocks `lib/utils/index.js` (the barrel) rather than `resolve-from.js`/`is-package-changed.js`
- * directly: `extension-config.ts` et al. import `resolveFrom` through that barrel, and a
+ * Mocks `lib/utils/index.js` (the barrel) rather than `npm.js`/`is-package-changed.js`
+ * directly: `extension-config.ts` et al. import `resolveFrom`/`npm` through that barrel, and a
  * barrel's re-export is a live binding resolved at the barrel's own link time — mocking the
  * leaf file doesn't retroactively change a barrel that's already linked.
  *
@@ -214,6 +217,7 @@ export function applyExtensionMocks(mocks: InitMocksResult): void {
       ...utils,
       ...env,
       resolveFrom: mocks.MockResolveFrom,
+      npm: mocks.MockNpm,
       isPackageChanged: mocks.MockPackageChanged.isPackageChanged,
       // `utils/index.js` re-exports `packageDidChange` from `package-changed.ts`, whose own
       // `fs`/`isPackageChanged` imports are unavoidably poisoned (bound to the real, unmocked

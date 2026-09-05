@@ -1,25 +1,14 @@
 import Module from 'node:module';
 import path from 'node:path';
 
+import {fs, system, util} from '@appium/support';
 import type {StringRecord} from '@appium/types';
 import * as semver from 'semver';
 import {exec} from 'teen_process';
 import type {ExecError, TeenProcessExecOptions} from 'teen_process';
 import type {PackageJson} from 'type-fest';
 
-import {fs} from './fs.js';
-import * as system from './system.js';
-import * as util from './util.js';
-/**
- * Relative path to directory containing any Appium internal files
- * XXX: this is duplicated in `appium/lib/constants.js`.
- */
-export const CACHE_DIR_RELATIVE_PATH = path.join('node_modules', '.cache', 'appium');
-
-/**
- * Relative path to lockfile used when installing an extension via `appium`
- */
-export const INSTALL_LOCKFILE_RELATIVE_PATH = path.join(CACHE_DIR_RELATIVE_PATH, '.install.lock');
+import {INSTALL_LOCKFILE_RELATIVE_PATH} from '../constants.js';
 
 /** Options for {@link NPM.exec} */
 export interface ExecOpts {

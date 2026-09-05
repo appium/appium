@@ -11,8 +11,6 @@ import * as timing from './timing.js';
 import * as util from './util.js';
 import * as zip from './zip.js';
 
-export {npm} from './npm.js';
-
 export {console, doctor, fs, logger, net, node, plist, system, tempDir, timing, util, zip};
 export default {
   tempDir,
@@ -33,7 +31,6 @@ export type {ConsoleOpts} from './console.js';
 export type {TextStyle} from './console.js';
 export type {CopyFileOptions, WalkDirCallback} from './fs.js';
 export type {AuthCredentials, DownloadOptions, HttpUploadOptions, NetOptions} from './net.js';
-export type {ExecOpts, InstallPackageOpts, NpmInstallReceipt} from './npm.js';
 export type {Affixes, OpenedAffixes} from './tempdir.js';
 export type {
   EncodingOptions,

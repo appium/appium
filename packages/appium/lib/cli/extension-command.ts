@@ -3,7 +3,7 @@ import path from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {inspect} from 'node:util';
 
-import {console, fs, npm, system, util} from '@appium/support';
+import {console, fs, system, util} from '@appium/support';
 import type {AppiumLogger, ExtensionType, IDoctorCheck} from '@appium/types';
 import type {
   ExtInstallReceipt as AppiumExtInstallReceipt,
@@ -27,7 +27,7 @@ import {
   INSTALL_TYPE_LOCAL,
   INSTALL_TYPE_NPM,
 } from '../extension/extension-config.js';
-import {appiumPackageRoot, compact, hasAppiumDependency, npmPackage, packageDidChange} from '../utils/index.js';
+import {appiumPackageRoot, compact, hasAppiumDependency, npm, npmPackage, packageDidChange} from '../utils/index.js';
 import {RingBuffer, spinWith} from './utils.js';
 
 const UPDATE_ALL = 'installed';

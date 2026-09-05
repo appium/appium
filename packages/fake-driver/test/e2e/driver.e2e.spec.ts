@@ -3,13 +3,7 @@ import {Agent} from 'node:http';
 import {describe, it, before, after, type TestContext, beforeEach, afterEach} from 'node:test';
 
 import {createAppiumURL, getTestPort} from '@appium/driver-test-support';
-import type {
-  AppiumServer,
-  BaseNSCapabilities,
-  Capabilities,
-  Constraints,
-  W3CCapabilities,
-} from '@appium/types';
+import type {AppiumServer, BaseNSCapabilities, Capabilities, Constraints, W3CCapabilities} from '@appium/types';
 import {DeviceSettings, routeConfiguringFunction, server} from 'appium/driver.js';
 import {sleep} from 'asyncbox';
 import axios from 'axios';

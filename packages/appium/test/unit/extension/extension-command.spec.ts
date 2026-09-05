@@ -17,7 +17,7 @@ import type {
   injectAppiumSymlinks as injectAppiumSymlinksStatic,
 } from '../../../lib/cli/extension-command.js';
 import {DriverConfig} from '../../../lib/extension/driver-config.js';
-import {Manifest} from '../../../lib/extension/manifest.js';
+import {Manifest} from '../../../lib/extension/manifest/manifest.js';
 import {appiumPackageRoot} from '../../../lib/utils/index.js';
 import {FAKE_DRIVER_DIR} from '../../helpers.js';
 

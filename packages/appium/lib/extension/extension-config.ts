@@ -4,8 +4,7 @@ import {pathToFileURL} from 'node:url';
 
 import {fs, system, util} from '@appium/support';
 import type {ExtensionType, StringRecord} from '@appium/types';
-import type {SchemaObject} from 'ajv';
-import type {ExtClass, ExtManifest, ExtName, ExtRecord, InstallType} from 'appium/types/index.js';
+import type {ExtClass, ExtManifest, ExtName, ExtRecord} from 'appium/types/index.js';
 import {satisfies} from 'semver';
 
 import type {
@@ -16,51 +15,16 @@ import type {
 } from '../cli/extension-command.js';
 import {APPIUM_VER} from '../helpers/build.js';
 import {log} from '../logger.js';
+import type {SchemaObject} from '../schema/ajv.js';
 import {ALLOWED_SCHEMA_EXTENSIONS, isAllowedSchemaFileExtension, registerSchema} from '../schema/schema.js';
 import {capitalize, resolveFrom} from '../utils/index.js';
-import type {Manifest} from './manifest.js';
+import {INSTALL_TYPES, manifestValidator} from './manifest/index.js';
+import type {ExtManifestProblem, Manifest} from './manifest/index.js';
 
 const DEFAULT_ENTRY_POINT = 'index.js';
 // Counter for `APPIUM_RELOAD_EXTENSIONS` cache-busting; `Date.now()` alone can collide when two
 // reloads happen within the same millisecond, which would serve the stale cached module.
 let reloadCounter = 0;
-/**
- * "npm" install type
- * Used when extension was installed by npm package name
- * @remarks _All_ extensions are installed _by_ `npm`, but only this one means the package name was
- * used to specify it
- */
-export const INSTALL_TYPE_NPM = 'npm';
-/**
- * "local" install type
- * Used when extension was installed from a local path
- */
-export const INSTALL_TYPE_LOCAL = 'local';
-/**
- * "github" install type
- * Used when extension was installed via GitHub URL
- */
-export const INSTALL_TYPE_GITHUB = 'github';
-/**
- * "git" install type
- * Used when extensions was installed via Git URL
- */
-export const INSTALL_TYPE_GIT = 'git';
-/**
- * "dev" install type
- * Used when automatically detected as a working copy
- */
-export const INSTALL_TYPE_DEV = 'dev';
-
-export const INSTALL_TYPES = new Set<InstallType>([
-  INSTALL_TYPE_GIT,
-  INSTALL_TYPE_GITHUB,
-  INSTALL_TYPE_LOCAL,
-  INSTALL_TYPE_NPM,
-  INSTALL_TYPE_DEV,
-]);
-
-export type ExtManifestProblem = {err: string; val: unknown};
 
 export type ExtManifestWithSchema<E extends ExtensionType> = ExtManifest<E> & {
   schema: NonNullable<ExtManifest<E>['schema']>;
@@ -542,31 +506,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
   /** Blocking issues for required manifest fields shared by all extensions (version, package name, main class). */
   protected getGenericConfigProblems(extManifest: ExtManifest<ExtType>, extName: string): ExtManifestProblem[] {
     void extName;
-    const {version, pkgName, mainClass} = extManifest;
-    const problems: ExtManifestProblem[] = [];
-
-    if (typeof version !== 'string') {
-      problems.push({
-        err: `Invalid or missing \`version\` field in my \`package.json\` and/or \`extensions.yaml\` (must be a string)`,
-        val: version,
-      });
-    }
-
-    if (typeof pkgName !== 'string') {
-      problems.push({
-        err: `Invalid or missing \`name\` field in my \`package.json\` and/or \`extensions.yaml\` (must be a string)`,
-        val: pkgName,
-      });
-    }
-
-    if (typeof mainClass !== 'string') {
-      problems.push({
-        err: `Invalid or missing \`appium.mainClass\` field in my \`package.json\` and/or \`mainClass\` field in \`extensions.yaml\` (must be a string)`,
-        val: mainClass,
-      });
-    }
-
-    return problems;
+    return manifestValidator.getCommonManifestProblems(extManifest);
   }
 
   /** Driver- or plugin-specific blocking validation; override in subclasses when needed. */

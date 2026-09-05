@@ -18,10 +18,10 @@ import {
   SETUP_SUBCOMMAND,
 } from '../constants.js';
 import {APPIUM_VER} from '../helpers/build.js';
+import type {ArgumentDefinitions} from '../schema/index.js';
 import {finalizeSchema, getAllArgSpecs, getArgSpec, hasArgSpec} from '../schema/index.js';
 import {setPath} from '../utils/index.js';
 import {getExtensionArgs, getServerArgs} from './args.js';
-import type {ArgumentDefinitions} from './args.js';
 import {
   DEFAULT_PLUGINS,
   determinePlatformName,

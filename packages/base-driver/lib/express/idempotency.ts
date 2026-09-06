@@ -1,4 +1,5 @@
 import {EventEmitter} from 'node:events';
+import type {Socket} from 'node:net';
 
 import {util} from '@appium/support';
 import type {NextFunction, Request, Response} from 'express';
@@ -10,17 +11,14 @@ interface CachedResponse {
   method: string;
   path: string;
   response: Buffer | null;
-  responseStateListener: EventEmitter | null | undefined;
+  responseStateListener: EventEmitter | null;
 }
 
 const IDEMPOTENT_RESPONSES = new LRUCache<string, CachedResponse>({
   max: 64,
   ttl: 30 * 60 * 1000,
   updateAgeOnGet: true,
-  updateAgeOnHas: true,
-  dispose: ({responseStateListener}) => {
-    responseStateListener?.removeAllListeners();
-  },
+  dispose: ({responseStateListener}) => responseStateListener?.removeAllListeners(),
 });
 const MONITORED_METHODS = ['POST', 'PATCH'];
 const IDEMPOTENCY_KEY_HEADER = 'x-idempotency-key';
@@ -49,8 +47,7 @@ export function deferIdempotentResponse(res: Response): () => void {
 export async function handleIdempotency(req: Request, res: Response, next: NextFunction): Promise<void> {
   const keyOrArr = req.headers[IDEMPOTENCY_KEY_HEADER];
   if (util.isEmpty(keyOrArr) || !keyOrArr) {
-    next();
-    return;
+    return next();
   }
 
   const key = Array.isArray(keyOrArr) ? keyOrArr[0] : keyOrArr;
@@ -58,44 +55,34 @@ export async function handleIdempotency(req: Request, res: Response, next: NextF
   log.updateAsyncContext({idempotencyKey: key});
 
   if (!MONITORED_METHODS.includes(req.method)) {
-    next();
-    return;
+    return next();
   }
 
   log.debug(`Request idempotency key: ${key}`);
-  if (!IDEMPOTENT_RESPONSES.has(key)) {
-    cacheResponse(key, req, res);
-    next();
-    return;
-  }
-
   const cached = IDEMPOTENT_RESPONSES.get(key);
   if (!cached) {
-    next();
-    return;
+    cacheResponse(key, req, res);
+    return next();
   }
   const {method, path, response, responseStateListener} = cached;
   if (req.method !== method || req.path !== path) {
     log.warn(`Got two different requests with the same idempotency key '${key}'`);
     log.warn('Is the client generating idempotency keys properly?');
-    next();
-    return;
+    return next();
   }
 
   if (response) {
     log.info(`The same request with the idempotency key '${key}' has been already processed`);
     log.info(`Rerouting its response to the current request`);
     if (!res.socket?.writable) {
-      next();
-      return;
+      return next();
     }
-    res.socket.write(response.toString('utf8'));
+    res.socket.write(response);
   } else {
     log.info(`The same request with the idempotency key '${key}' is being processed`);
     log.info(`Waiting for the response to be rerouted to the current request`);
     if (!responseStateListener) {
-      next();
-      return;
+      return next();
     }
     const onClose = () => responseStateListener.removeListener('ready', onReady);
     const onReady = (cachedResponse: Buffer | null) => {
@@ -107,7 +94,7 @@ export async function handleIdempotency(req: Request, res: Response, next: NextF
         void handleIdempotency(req, res, next);
         return;
       }
-      res.socket?.write(cachedResponse.toString('utf8'));
+      res.socket?.write(cachedResponse);
     };
     responseStateListener.once('ready', onReady);
     res.once('close', onClose);
@@ -127,58 +114,16 @@ function cacheResponse(key: string, req: Request, res: Response): void {
     responseStateListener,
   };
   IDEMPOTENT_RESPONSES.set(key, cached);
-  const socket = res.socket;
-  const originalSocketWriter = socket.write.bind(socket);
-  const responseRef = new WeakRef(res);
-  let responseChunks: Buffer[] = [];
-  let responseSize = 0;
-  let errorMessage: string | null = null;
-  const patchedWriter = (
-    chunk: unknown,
-    encoding: BufferEncoding | (() => void),
-    next?: (() => void) | ((err?: Error) => void),
-  ): boolean => {
-    if (errorMessage || !responseRef.deref()) {
-      responseChunks = [];
-      responseSize = 0;
-      return originalSocketWriter(
-        chunk as string | Buffer | Uint8Array,
-        encoding as BufferEncoding,
-        next as (err?: Error | null) => void,
-      );
-    }
-
-    const buf = Buffer.isBuffer(chunk)
-      ? chunk
-      : Buffer.from(chunk as string, typeof encoding === 'string' ? encoding : undefined);
-    responseChunks.push(buf);
-    responseSize += buf.length;
-    if (responseSize > MAX_CACHED_PAYLOAD_SIZE_BYTES) {
-      errorMessage =
-        `The actual response size exceeds ` + `the maximum allowed limit of ${MAX_CACHED_PAYLOAD_SIZE_BYTES} bytes`;
-    }
-    return originalSocketWriter(
-      chunk as string | Buffer | Uint8Array,
-      encoding as BufferEncoding,
-      next as (err?: Error | null) => void,
-    );
-  };
-  socket.write = patchedWriter as typeof socket.write;
-  let didEmitReady = false;
-  const completeResponse = (error?: string) => {
-    if (socket.write === patchedWriter) {
-      socket.write = originalSocketWriter;
-    }
-    if (didEmitReady) {
+  const stopCapture = captureResponse(res.socket);
+  let completed = false;
+  const completeResponse = async (error?: string) => {
+    if (completed) {
       return;
     }
-    const pendingResponse = PENDING_RESPONSES.get(res);
-    if (pendingResponse) {
-      void pendingResponse.then(() => completeResponse(error));
-      return;
-    }
-    didEmitReady = true;
-    errorMessage = error ?? errorMessage;
+    completed = true;
+    const captured = stopCapture();
+    await PENDING_RESPONSES.get(res);
+    const errorMessage = error ?? captured.error;
 
     // Keep waiters alive until they are notified, even when deleting the cache entry.
     cached.responseStateListener = null;
@@ -188,17 +133,52 @@ function cacheResponse(key: string, req: Request, res: Response): void {
       log.info(`Could not cache the response identified by '${key}': ${errorMessage}`);
       IDEMPOTENT_RESPONSES.delete(key);
     } else {
-      cached.response = Buffer.concat(responseChunks);
+      cached.response = captured.response;
     }
-    responseChunks = [];
-    responseSize = 0;
     responseStateListener.emit('ready', cached.response);
   };
-  res.once('error', (e: Error) => completeResponse(e.message));
-  res.once('finish', () => completeResponse());
+  res.once('error', (e: Error) => void completeResponse(e.message));
+  res.once('finish', () => void completeResponse());
   res.once('close', () => {
     if (!res.writableFinished) {
-      completeResponse('Client disconnected before the response was sent');
+      void completeResponse('Client disconnected before the response was sent');
     }
   });
+}
+
+function captureResponse(socket: Socket) {
+  const originalSocketWriter = socket.write.bind(socket);
+  let responseChunks: Buffer[] = [];
+  let responseSize = 0;
+  let errorMessage: string | null = null;
+  const patchedWriter = (
+    chunk: string | Uint8Array,
+    encoding?: BufferEncoding | ((err?: Error | null) => void),
+    next?: (err?: Error | null) => void,
+  ): boolean => {
+    if (typeof encoding === 'function') {
+      next = encoding;
+      encoding = undefined;
+    }
+    if (!errorMessage) {
+      const buf = typeof chunk === 'string' ? Buffer.from(chunk, encoding) : Buffer.from(chunk);
+      responseSize += buf.length;
+      if (responseSize > MAX_CACHED_PAYLOAD_SIZE_BYTES) {
+        errorMessage = `The actual response size exceeds the maximum allowed limit of ${MAX_CACHED_PAYLOAD_SIZE_BYTES} bytes`;
+        responseChunks = [];
+      } else {
+        responseChunks.push(buf);
+      }
+    }
+    return originalSocketWriter(chunk, encoding, next);
+  };
+  socket.write = patchedWriter;
+  return () => {
+    if (socket.write === patchedWriter) {
+      socket.write = originalSocketWriter;
+    }
+    const response = errorMessage ? null : Buffer.concat(responseChunks);
+    responseChunks = [];
+    return {response, error: errorMessage};
+  };
 }

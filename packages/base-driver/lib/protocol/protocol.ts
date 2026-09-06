@@ -601,47 +601,42 @@ function buildHandler(
 
   const newSessionHandler = async (req: Request, res: Response) => {
     const complete = deferIdempotentResponse(res);
-    const responseFinished = new Promise<void>((resolve) => {
-      const onFinished = () => {
-        res.removeListener('finish', onFinished);
-        res.removeListener('close', onFinished);
-        resolve();
-      };
-      res.once('finish', onFinished);
-      res.once('close', onFinished);
-    });
+    const responseClosed = new Promise<void>((resolve) => res.once('close', resolve));
     try {
       const newSessionId = await asyncHandler(req, res);
-      await responseFinished;
-      if (!newSessionId || res.writableFinished) {
-        return;
-      }
-      const sessionLog = getLogger(driver, newSessionId);
-      sessionLog.info(`Client disconnected before receiving session ${newSessionId}. Deleting it`);
-      try {
-        // SAFETY: HTTP route handlers require executeCommand, as on the normal command path above.
-        const result = await (driver as BaseDriver<Constraints>).executeCommand<{error?: unknown} | undefined>(
-          DELETE_SESSION_COMMAND,
-          newSessionId,
-        );
-        if (result?.error) {
-          throw result.error;
-        }
-      } catch (err) {
-        // The client is gone, so report cleanup failures in the server log.
-        sessionLog.warn(`Could not delete abandoned session ${newSessionId}: ${err}`);
+      await responseClosed;
+      if (newSessionId && !res.writableFinished) {
+        await deleteAbandonedSession(driver, newSessionId);
       }
     } finally {
       complete();
     }
   };
+  const handler = spec.command === CREATE_SESSION_COMMAND ? newSessionHandler : asyncHandler;
   // add the method to the app
   const registerRoute = (app as Application & Record<string, (routePath: string, ...handlers: any[]) => void>)[
     method.toLowerCase()
   ].bind(app);
   registerRoute(path, (req: Request, res: Response) => {
-    void (spec.command === CREATE_SESSION_COMMAND ? newSessionHandler(req, res) : asyncHandler(req, res));
+    void handler(req, res);
   });
+}
+
+async function deleteAbandonedSession(driver: Core<Constraints>, sessionId: string): Promise<void> {
+  const sessionLog = getLogger(driver, sessionId);
+  sessionLog.info(`Client disconnected before receiving session ${sessionId}. Deleting it`);
+  const warn = (error: unknown) => sessionLog.warn(`Could not delete abandoned session ${sessionId}: ${error}`);
+  try {
+    const result = await (driver as BaseDriver<Constraints>).executeCommand<{error?: unknown} | undefined>(
+      DELETE_SESSION_COMMAND,
+      sessionId,
+    );
+    if (result?.error) {
+      warn(result.error);
+    }
+  } catch (err) {
+    warn(err);
+  }
 }
 
 async function doWdProxy(driver: BaseDriver<any>, req: Request, res: Response): Promise<void> {

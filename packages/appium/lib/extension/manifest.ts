@@ -415,7 +415,7 @@ export class Manifest {
 
 async function resolvePackageJson(searchRoot: string, dependencyName: string): Promise<string> {
   try {
-    return await resolveFrom(searchRoot, `${dependencyName}/package.json`);
+    return await resolveFrom(searchRoot, path.join(dependencyName, 'package.json'));
   } catch (err) {
     if (!(err instanceof Error && 'code' in err && err.code === 'ERR_PACKAGE_PATH_NOT_EXPORTED')) {
       throw err;

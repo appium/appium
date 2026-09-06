@@ -523,8 +523,11 @@ describe('Manifest', function () {
 
         assert.ok(Object.hasOwn(manifest.getExtensionData(DRIVER_TYPE), 'test'));
         assert.strictEqual(MockAppiumSupport.fs.glob.called, false);
-        assert.strictEqual(MockResolveFrom.calledWith(searchRoot, 'appium-test-driver/package.json'), true);
-        assert.strictEqual(MockResolveFrom.calledWith(searchRoot, 'lodash/package.json'), true);
+        assert.strictEqual(
+          MockResolveFrom.calledWith(searchRoot, path.join('appium-test-driver', 'package.json')),
+          true,
+        );
+        assert.strictEqual(MockResolveFrom.calledWith(searchRoot, path.join('lodash', 'package.json')), true);
       });
 
       it('should reject an unreadable explicit search root', async function () {
@@ -572,7 +575,7 @@ describe('Manifest', function () {
                 },
               }),
         );
-        MockResolveFrom.withArgs(searchRoot, 'appium-driver/package.json').rejects(exportsError);
+        MockResolveFrom.withArgs(searchRoot, path.join('appium-driver', 'package.json')).rejects(exportsError);
         MockResolveFrom.withArgs(searchRoot, 'appium-driver').resolves(path.join(packageRoot, 'index.js'));
         MockAppiumSupport.fs.findRoot.returns(packageRoot);
 

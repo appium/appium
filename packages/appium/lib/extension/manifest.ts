@@ -214,10 +214,11 @@ export class Manifest {
 
     const queue: Promise<void>[] = [onMatch(path.join(this.#appiumHome, 'package.json'), true)];
 
-    for await (const filepath of fs.glob('node_modules/{*,@*/*}/package.json', {
+    const filepaths = await fs.glob('node_modules/{*,@*/*}/package.json', {
       cwd: this.#appiumHome,
       absolute: true,
-    })) {
+    });
+    for (const filepath of filepaths) {
       queue.push(onMatch(filepath));
     }
 

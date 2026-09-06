@@ -126,13 +126,8 @@ export class Storage {
   }
 
   private async _listFiles(): Promise<Dirent[]> {
-    const items: Dirent[] = [];
-    for await (const item of fs.glob('*', {cwd: this._root, withFileTypes: true})) {
-      if (item.isFile()) {
-        items.push(item);
-      }
-    }
-    return items;
+    const items = await fs.glob('*', {cwd: this._root, withFileTypes: true});
+    return items.filter((item) => item.isFile());
   }
 
   private _fullPath(item: Dirent): string {

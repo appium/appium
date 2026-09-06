@@ -74,12 +74,16 @@ export interface GlobOptions {
   withFileTypes?: boolean;
   /** Yield absolute paths instead of paths relative to `cwd`. Ignored when `withFileTypes` is set (a `Dirent`'s location is already recoverable via `parentPath`). */
   absolute?: boolean;
+  /** Return an async generator that yields matches lazily instead of resolving to an array of all of them. */
+  lazy?: boolean;
 }
 
-/** Overloaded call signature for {@linkcode fs.glob}, narrowing its return type based on `withFileTypes`. */
+/** Overloaded call signature for {@linkcode fs.glob}, narrowing its return type based on `withFileTypes`/`lazy`. */
 export interface GlobFn {
-  (pattern: string | readonly string[], options: GlobOptions & {withFileTypes: true}): AsyncGenerator<Dirent>;
-  (pattern: string | readonly string[], options?: GlobOptions): AsyncGenerator<string>;
+  (pattern: string | readonly string[], options: GlobOptions & {withFileTypes: true; lazy: true}): AsyncGenerator<Dirent>;
+  (pattern: string | readonly string[], options: GlobOptions & {withFileTypes: true}): Promise<Dirent[]>;
+  (pattern: string | readonly string[], options: GlobOptions & {lazy: true}): AsyncGenerator<string>;
+  (pattern: string | readonly string[], options?: GlobOptions): Promise<string[]>;
 }
 
 /**
@@ -254,15 +258,27 @@ export const fs = {
   /** Find path to an executable in system `PATH`. @see https://github.com/npm/node-which */
   which,
 
-  /** Given a glob pattern, yields matching paths (or `Dirent`s if `withFileTypes` is set). */
-  glob: (async function* glob(
-    pattern: string | readonly string[],
-    options: GlobOptions = {},
-  ): AsyncGenerator<string | Dirent> {
-    const {cwd, withFileTypes, absolute} = options;
-    for await (const entry of fsPromises.glob(pattern, {cwd, withFileTypes})) {
-      yield absolute && !withFileTypes ? path.join(cwd ?? process.cwd(), entry as string) : entry;
+  /**
+   * Given a glob pattern, resolves to an array of matching paths (or `Dirent`s if `withFileTypes` is set).
+   * Pass `lazy: true` to get an async generator that yields matches one at a time instead.
+   */
+  glob: ((pattern: string | readonly string[], options: GlobOptions = {}) => {
+    const {cwd, withFileTypes, absolute, lazy} = options;
+    async function* generate(): AsyncGenerator<string | Dirent> {
+      for await (const entry of fsPromises.glob(pattern, {cwd, withFileTypes})) {
+        yield absolute && !withFileTypes ? path.join(cwd ?? process.cwd(), entry as string) : entry;
+      }
     }
+    if (lazy) {
+      return generate();
+    }
+    return (async () => {
+      const items: (string | Dirent)[] = [];
+      for await (const item of generate()) {
+        items.push(item);
+      }
+      return items;
+    })();
   }) as GlobFn,
 
   /** Sanitize a filename. @see https://github.com/parshap/node-sanitize-filename */

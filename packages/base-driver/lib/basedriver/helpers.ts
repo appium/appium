@@ -528,7 +528,7 @@ function verifyAppExtension(app: string, supportedAppExtensions: string[]): stri
 
 async function calculateFolderIntegrity(folderPath: string): Promise<number> {
   let count = 0;
-  for await (const _entry of fs.glob('**/*', {cwd: folderPath})) {
+  for await (const _entry of fs.glob('**/*', {cwd: folderPath, lazy: true})) {
     count++;
   }
   return count;

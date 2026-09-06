@@ -6,7 +6,7 @@ import {createSandbox} from 'sinon';
 
 import DriverCommand from '../../../lib/cli/driver-command.js';
 import {loadExtensions} from '../../../lib/extension/index.js';
-import {Manifest} from '../../../lib/extension/manifest.js';
+import {Manifest} from '../../../lib/extension/manifest/manifest.js';
 import {npm} from '../../../lib/utils/index.js';
 
 describe('DriverCommand', function () {

@@ -6,7 +6,7 @@ import fakeDriverSchema from '@appium/fake-driver/build/lib/fake-driver-schema.j
 import {readConfigFile} from '../../lib/bootstrap/config-file.js';
 import {ArgParser, getParser} from '../../lib/cli/parser.js';
 import {DRIVER_TYPE, PLUGIN_TYPE, SETUP_SUBCOMMAND} from '../../lib/constants.js';
-import {INSTALL_TYPES} from '../../lib/extension/extension-config.js';
+import {INSTALL_TYPES} from '../../lib/extension/manifest/index.js';
 import * as schema from '../../lib/schema/schema.js';
 import {resolveFixture} from '../helpers.js';
 

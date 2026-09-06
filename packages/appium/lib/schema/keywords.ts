@@ -1,17 +1,6 @@
-import type {KeywordDefinition} from 'ajv';
-
+import type {KeywordDefinition} from './ajv.js';
 import {transformers} from './cli-transformers.js';
-
-export type AppiumCliTransformerName = keyof typeof transformers;
-
-export interface AppiumJSONSchemaKeywords {
-  appiumCliDest?: string;
-  appiumCliDescription?: string;
-  appiumCliAliases?: string[];
-  appiumCliIgnored?: boolean;
-  appiumCliTransformer?: AppiumCliTransformerName;
-  appiumDeprecated?: boolean;
-}
+import type {AppiumCliTransformerName} from './cli-transformers.js';
 
 /**
  * Collection of keyword definitions to add to the singleton `Ajv` instance.

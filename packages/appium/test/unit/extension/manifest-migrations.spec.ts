@@ -4,8 +4,8 @@ import {describe, it} from 'node:test';
 import type {ExtManifest} from 'appium/types/index.js';
 
 import {DRIVER_TYPE} from '../../../lib/constants.js';
-import {migrate} from '../../../lib/extension/manifest-migrations.js';
-import {Manifest} from '../../../lib/extension/manifest.js';
+import {Manifest} from '../../../lib/extension/manifest/manifest.js';
+import {migrate} from '../../../lib/extension/manifest/migrations.js';
 
 describe('manifest-migrations', function () {
   describe('when no installPath property present in manifest', function () {

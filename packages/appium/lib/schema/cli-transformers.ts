@@ -70,6 +70,17 @@ export const transformers = {
   },
 } as const;
 
+export type AppiumCliTransformerName = keyof typeof transformers;
+
+export interface AppiumJSONSchemaKeywords {
+  appiumCliDest?: string;
+  appiumCliDescription?: string;
+  appiumCliAliases?: string[];
+  appiumCliIgnored?: boolean;
+  appiumCliTransformer?: AppiumCliTransformerName;
+  appiumDeprecated?: boolean;
+}
+
 /**
  * Split a file by newline then calls {@link parseCsvLine} on each line.
  */

@@ -5,6 +5,7 @@ import type Stream from 'node:stream';
 
 import {fs, timing, util} from '@appium/support';
 import type {AppiumLogger} from '@appium/types';
+import {errors} from 'appium/driver.js';
 import AsyncLock from 'async-lock';
 import {asyncmap} from 'asyncbox';
 import type {Path} from 'path-scurry';
@@ -218,7 +219,7 @@ export class Storage {
   }
 }
 
-export class StorageArgumentError extends Error {}
+export class StorageArgumentError extends errors.InvalidArgumentError {}
 
 /**
  * Validates storage item options and returns the same object when valid.

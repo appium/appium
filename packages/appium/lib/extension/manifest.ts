@@ -214,10 +214,7 @@ export class Manifest {
 
     const queue: Promise<void>[] = [onMatch(path.join(this.#appiumHome, 'package.json'), true)];
 
-    const filepaths = await fs.glob('node_modules/{*,@*/*}/package.json', {
-      cwd: this.#appiumHome,
-      absolute: true,
-    });
+    const filepaths = await findNodeModulesPackageJsons(path.join(this.#appiumHome, 'node_modules'));
     for (const filepath of filepaths) {
       queue.push(onMatch(filepath));
     }
@@ -340,6 +337,48 @@ export class Manifest {
 
     return this.#manifestPath;
   }
+}
+
+/**
+ * Finds `package.json` paths for packages directly under `node_modules` (and one level deeper for
+ * scoped `@foo/bar` packages). Unlike `fs.glob`, this follows symlinks, which is how `npm install
+ * <local-path>` (and `npm link`) install packages.
+ */
+async function findNodeModulesPackageJsons(nodeModulesDir: string): Promise<string[]> {
+  let entries: string[];
+  try {
+    entries = await fs.readdir(nodeModulesDir);
+  } catch (err) {
+    if ((err as NodeJS.ErrnoException)?.code === 'ENOENT') {
+      return [];
+    }
+    throw err;
+  }
+
+  const pkgJsonPathsByEntry = await Promise.all(
+    entries.map(async (entry): Promise<string[]> => {
+      const entryPath = path.join(nodeModulesDir, entry);
+      if (!entry.startsWith('@')) {
+        const pkgJsonPath = path.join(entryPath, 'package.json');
+        return (await fs.exists(pkgJsonPath)) ? [pkgJsonPath] : [];
+      }
+
+      let scopedEntries: string[];
+      try {
+        scopedEntries = await fs.readdir(entryPath);
+      } catch {
+        return [];
+      }
+      const scopedPkgJsonPaths = await Promise.all(
+        scopedEntries.map(async (scopedEntry) => {
+          const pkgJsonPath = path.join(entryPath, scopedEntry, 'package.json');
+          return (await fs.exists(pkgJsonPath)) ? pkgJsonPath : null;
+        }),
+      );
+      return scopedPkgJsonPaths.filter((pkgJsonPath) => pkgJsonPath !== null);
+    }),
+  );
+  return pkgJsonPathsByEntry.flat();
 }
 
 function isExtension(value: unknown): value is ExtPackageJson<ExtensionType> {

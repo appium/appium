@@ -264,6 +264,10 @@ export const fs = {
   /**
    * Given a glob pattern, resolves to an array of matching paths (or `Dirent`s if `withFileTypes` is set).
    * Pass `lazy: true` to get an async generator that yields matches one at a time instead.
+   *
+   * Unlike the `glob` npm package, this does NOT follow symlinks when expanding wildcard path
+   * segments. Prefer a manual `readdir`-based walk over a glob pattern for callers that must
+   * traverse through symlinks.
    */
   glob: ((pattern: string | readonly string[], options: GlobOptions = {}) => {
     const {cwd, withFileTypes, absolute, lazy} = options;

@@ -1,5 +1,5 @@
 import {logger, util} from '@appium/support';
-import type {AppiumLogger, Core, Driver, DriverMethodDef, MethodMap, PayloadParams} from '@appium/types';
+import type {AppiumLogger, Constraints, Core, Driver, DriverMethodDef, MethodMap, PayloadParams} from '@appium/types';
 import type {Application, Request, Response} from 'express';
 import type {MultidimensionalReadonlyArray} from 'type-fest';
 
@@ -7,6 +7,7 @@ import type {BaseDriver} from '../basedriver/driver';
 import {generateDriverLogPrefix} from '../basedriver/helpers';
 import {log} from '../basedriver/logger';
 import {DEFAULT_BASE_PATH, MAX_LOG_BODY_LENGTH, PROTOCOLS} from '../constants';
+import {deferIdempotentResponse} from '../express/idempotency';
 import type {RouteConfiguringFunction} from '../express/server';
 import {isW3cCaps} from '../helpers/capabilities';
 import {omitKeys} from '../utils';
@@ -503,6 +504,9 @@ function buildHandler(
       // unpack createSession response
       if (spec.command === CREATE_SESSION_COMMAND) {
         newSessionId = driverRes[0];
+        if (res.destroyed) {
+          return newSessionId;
+        }
         getLogger(driver, newSessionId).debug(
           `Cached the protocol value '${currentProtocol}' for the new session ${newSessionId}`,
         );
@@ -592,13 +596,51 @@ function buildHandler(
       }
       res.status(httpStatus).json(ensureW3cResponse(httpResBody));
     }
+    return newSessionId;
+  };
+
+  const newSessionHandler = async (req: Request, res: Response) => {
+    const complete = deferIdempotentResponse(res);
+    const responseFinished = new Promise<void>((resolve) => {
+      const onFinished = () => {
+        res.removeListener('finish', onFinished);
+        res.removeListener('close', onFinished);
+        resolve();
+      };
+      res.once('finish', onFinished);
+      res.once('close', onFinished);
+    });
+    try {
+      const newSessionId = await asyncHandler(req, res);
+      await responseFinished;
+      if (!newSessionId || res.writableFinished) {
+        return;
+      }
+      const sessionLog = getLogger(driver, newSessionId);
+      sessionLog.info(`Client disconnected before receiving session ${newSessionId}. Deleting it`);
+      try {
+        // SAFETY: HTTP route handlers require executeCommand, as on the normal command path above.
+        const result = await (driver as BaseDriver<Constraints>).executeCommand<{error?: unknown} | undefined>(
+          DELETE_SESSION_COMMAND,
+          newSessionId,
+        );
+        if (result?.error) {
+          throw result.error;
+        }
+      } catch (err) {
+        // The client is gone, so report cleanup failures in the server log.
+        sessionLog.warn(`Could not delete abandoned session ${newSessionId}: ${err}`);
+      }
+    } finally {
+      complete();
+    }
   };
   // add the method to the app
   const registerRoute = (app as Application & Record<string, (routePath: string, ...handlers: any[]) => void>)[
     method.toLowerCase()
   ].bind(app);
   registerRoute(path, (req: Request, res: Response) => {
-    void asyncHandler(req, res);
+    void (spec.command === CREATE_SESSION_COMMAND ? newSessionHandler(req, res) : asyncHandler(req, res));
   });
 }
 

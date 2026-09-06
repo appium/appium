@@ -25,6 +25,22 @@ const IDEMPOTENT_RESPONSES = new LRUCache<string, CachedResponse>({
 const MONITORED_METHODS = ['POST', 'PATCH'];
 const IDEMPOTENCY_KEY_HEADER = 'x-idempotency-key';
 const MAX_CACHED_PAYLOAD_SIZE_BYTES = 1 * 1024 * 1024; // 1 MiB
+const PENDING_RESPONSES = new WeakMap<Response, Promise<void>>();
+
+/** Keep retries pending until the route has finished work that outlives its HTTP connection. */
+export function deferIdempotentResponse(res: Response): () => void {
+  let complete!: () => void;
+  PENDING_RESPONSES.set(
+    res,
+    new Promise<void>((resolve) => {
+      complete = resolve;
+    }),
+  );
+  return () => {
+    PENDING_RESPONSES.delete(res);
+    complete();
+  };
+}
 
 /**
  * Middleware that caches and replays responses for idempotent requests using the
@@ -81,13 +97,20 @@ export async function handleIdempotency(req: Request, res: Response, next: NextF
       next();
       return;
     }
-    responseStateListener.once('ready', (cachedResponse: Buffer | null) => {
-      if (!cachedResponse || !res.socket?.writable) {
-        next();
+    const onClose = () => responseStateListener.removeListener('ready', onReady);
+    const onReady = (cachedResponse: Buffer | null) => {
+      res.removeListener('close', onClose);
+      if (res.destroyed) {
         return;
       }
-      res.socket.write(cachedResponse.toString('utf8'));
-    });
+      if (!cachedResponse) {
+        void handleIdempotency(req, res, next);
+        return;
+      }
+      res.socket?.write(cachedResponse.toString('utf8'));
+    };
+    responseStateListener.once('ready', onReady);
+    res.once('close', onClose);
   }
 }
 
@@ -97,12 +120,13 @@ function cacheResponse(key: string, req: Request, res: Response): void {
   }
 
   const responseStateListener = new EventEmitter();
-  IDEMPOTENT_RESPONSES.set(key, {
+  const cached: CachedResponse = {
     method: req.method,
     path: req.path,
     response: null,
     responseStateListener,
-  });
+  };
+  IDEMPOTENT_RESPONSES.set(key, cached);
   const socket = res.socket;
   const originalSocketWriter = socket.write.bind(socket);
   const responseRef = new WeakRef(res);
@@ -141,58 +165,40 @@ function cacheResponse(key: string, req: Request, res: Response): void {
   };
   socket.write = patchedWriter as typeof socket.write;
   let didEmitReady = false;
-  res.once('error', (e: Error) => {
-    errorMessage = e.message;
+  const completeResponse = (error?: string) => {
     if (socket.write === patchedWriter) {
       socket.write = originalSocketWriter;
     }
-
-    if (!IDEMPOTENT_RESPONSES.has(key)) {
-      log.info(`Could not cache the response identified by '${key}'. ` + `Cache consistency has been damaged`);
-    } else {
-      log.info(`Could not cache the response identified by '${key}': ${errorMessage}`);
-      IDEMPOTENT_RESPONSES.delete(key);
+    if (didEmitReady) {
+      return;
     }
-
-    responseChunks = [];
-    responseSize = 0;
-    if (!didEmitReady) {
-      responseStateListener.emit('ready', null);
-      didEmitReady = true;
+    const pendingResponse = PENDING_RESPONSES.get(res);
+    if (pendingResponse) {
+      void pendingResponse.then(() => completeResponse(error));
+      return;
     }
-  });
-  res.once('finish', () => {
-    if (socket.write === patchedWriter) {
-      socket.write = originalSocketWriter;
-    }
+    didEmitReady = true;
+    errorMessage = error ?? errorMessage;
 
-    if (!IDEMPOTENT_RESPONSES.has(key)) {
+    // Keep waiters alive until they are notified, even when deleting the cache entry.
+    cached.responseStateListener = null;
+    if (IDEMPOTENT_RESPONSES.get(key) !== cached) {
       log.info(`Could not cache the response identified by '${key}'. ` + `Cache consistency has been damaged`);
     } else if (errorMessage) {
       log.info(`Could not cache the response identified by '${key}': ${errorMessage}`);
       IDEMPOTENT_RESPONSES.delete(key);
-    }
-
-    const value = IDEMPOTENT_RESPONSES.get(key);
-    if (value) {
-      value.response = Buffer.concat(responseChunks);
+    } else {
+      cached.response = Buffer.concat(responseChunks);
     }
     responseChunks = [];
     responseSize = 0;
-    if (!didEmitReady) {
-      responseStateListener.emit('ready', value?.response ?? null);
-      didEmitReady = true;
-    }
-  });
+    responseStateListener.emit('ready', cached.response);
+  };
+  res.once('error', (e: Error) => completeResponse(e.message));
+  res.once('finish', () => completeResponse());
   res.once('close', () => {
-    if (socket.write === patchedWriter) {
-      socket.write = originalSocketWriter;
-    }
-
-    if (!didEmitReady) {
-      const value = IDEMPOTENT_RESPONSES.get(key);
-      responseStateListener.emit('ready', value?.response ?? null);
-      didEmitReady = true;
+    if (!res.writableFinished) {
+      completeResponse('Client disconnected before the response was sent');
     }
   });
 }

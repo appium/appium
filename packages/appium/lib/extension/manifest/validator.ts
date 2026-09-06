@@ -9,6 +9,13 @@ export interface EnvelopeValidationResult {
 
 export type ExtManifestProblem = {err: string; val: unknown};
 
+/**
+ * Top-level manifest field an ajv error is about. For `required` errors, ajv reports the missing
+ * field in `params.missingProperty` (since `instancePath` points at the object that's missing it,
+ * not the field itself); for every other keyword, `instancePath` points at the offending field
+ * directly, so its first segment is the field name (ignoring any array index after it, e.g. the
+ * `0` in `/platformNames/0`).
+ */
 function topLevelProp(error: ErrorObject): string | undefined {
   if (error.keyword === 'required') {
     return error.params.missingProperty as string;
@@ -20,6 +27,9 @@ function topLevelProp(error: ErrorObject): string | undefined {
 function hasRootTypeError(errors: ErrorObject[]): boolean {
   return errors.some((error) => error.instancePath === '' && error.keyword === 'type');
 }
+
+const MISSING_PLATFORM_NAMES_ERR = 'Missing or incorrect supported platformNames list.';
+const MISSING_AUTOMATION_NAME_ERR = 'Missing or incorrect automationName';
 
 /** Validates parsed `extensions.yaml` and individual extension manifest entries via a dedicated Ajv instance. */
 class ManifestValidator {
@@ -114,19 +124,20 @@ class ManifestValidator {
     const errors = this.validateDriverProblems.errors ?? [];
     // See the comment in `getCommonManifestProblems` about casting once and reading via `?.`.
     const manifest = extManifest as Record<string, unknown> | null | undefined;
+    const platformNames = manifest?.platformNames;
+    const automationName = manifest?.automationName;
 
     // A root type error means both fields are missing; no per-property error to attribute either to.
     if (hasRootTypeError(errors)) {
       return [
-        {err: 'Missing or incorrect supported platformNames list.', val: manifest?.platformNames},
-        {err: 'Missing or incorrect automationName', val: manifest?.automationName},
+        {err: MISSING_PLATFORM_NAMES_ERR, val: platformNames},
+        {err: MISSING_AUTOMATION_NAME_ERR, val: automationName},
       ];
     }
 
     const problems: ExtManifestProblem[] = [];
     const platformNamesErrors = errors.filter((error) => topLevelProp(error) === 'platformNames');
     const automationNameErrors = errors.filter((error) => topLevelProp(error) === 'automationName');
-    const platformNames = manifest?.platformNames;
 
     const isMissingOrWrongType = platformNamesErrors.some(
       (error) => error.keyword === 'required' || (error.keyword === 'type' && error.instancePath === '/platformNames'),
@@ -134,7 +145,7 @@ class ManifestValidator {
     const isEmpty = platformNamesErrors.some((error) => error.keyword === 'minItems');
 
     if (isMissingOrWrongType) {
-      problems.push({err: 'Missing or incorrect supported platformNames list.', val: platformNames});
+      problems.push({err: MISSING_PLATFORM_NAMES_ERR, val: platformNames});
     } else if (isEmpty) {
       problems.push({err: 'Empty platformNames list.', val: platformNames});
     } else {
@@ -147,7 +158,7 @@ class ManifestValidator {
     }
 
     if (automationNameErrors.length) {
-      problems.push({err: 'Missing or incorrect automationName', val: manifest?.automationName});
+      problems.push({err: MISSING_AUTOMATION_NAME_ERR, val: automationName});
     }
 
     return problems;

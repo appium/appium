@@ -5,14 +5,16 @@ import type {DriverType, ExtensionType, PluginType} from '@appium/types';
 import type {ExtManifest, ExtPackageJson, ExtRecord, InternalMetadata, ManifestData} from 'appium/types/index.js';
 import * as YAML from 'yaml';
 
-import {CURRENT_SCHEMA_REV, DRIVER_TYPE, PLUGIN_TYPE} from '../constants.js';
+import {CURRENT_SCHEMA_REV, DRIVER_TYPE, PLUGIN_TYPE} from '../../constants.js';
+import {log} from '../../logger.js';
 import {
   hasAppiumDependency as checkHasAppiumDependency,
   packageDidChange,
   resolveManifestPath,
-} from '../utils/index.js';
-import {INSTALL_TYPE_DEV, INSTALL_TYPE_NPM} from './extension-config.js';
-import {migrate} from './manifest-migrations.js';
+} from '../../utils/index.js';
+import {INSTALL_TYPE_DEV, INSTALL_TYPE_NPM} from './install-types.js';
+import {migrate} from './migrations.js';
+import {manifestValidator} from './validator.js';
 
 const CONFIG_DATA_DRIVER_KEY = `${DRIVER_TYPE}s` as const;
 const CONFIG_DATA_PLUGIN_KEY = `${PLUGIN_TYPE}s` as const;
@@ -123,6 +125,18 @@ export class Manifest {
               `cache file (${manifestPathResolved}). It may be invalid YAML. Specific error: ${err.message}`,
             {cause: err},
           );
+        }
+      }
+
+      if (!shouldWrite) {
+        const {valid, errors} = manifestValidator.validateManifestEnvelope(data);
+        if (!valid) {
+          log.warn(
+            `Appium had trouble validating the extension installation cache file (${manifestPathResolved}); ` +
+              `it will be reset. Specific error(s): ${manifestValidator.describeValidationErrors(errors)}`,
+          );
+          data = structuredClone(INITIAL_MANIFEST_DATA) as ManifestData;
+          shouldWrite = true;
         }
       }
 

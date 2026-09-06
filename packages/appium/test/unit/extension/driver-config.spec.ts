@@ -5,7 +5,7 @@ import {describe, it, beforeEach, before, after, mock} from 'node:test';
 import type {DriverType, ExtensionType} from '@appium/types';
 import type {ExtManifest} from 'appium/types/index.js';
 
-import type {Manifest} from '../../../lib/extension/manifest.js';
+import type {Manifest} from '../../../lib/extension/manifest/manifest.js';
 import type {resetSchema as ResetSchemaFn} from '../../../lib/schema/index.js';
 import {assertArrayIncludesDeep, resolveFixture} from '../../helpers.js';
 import {applyExtensionMocks, initMocks, resetMockDefaults} from './mocks.js';
@@ -17,7 +17,7 @@ import type {InitMocksResult} from './mocks.js';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 type DriverConfig = ReturnType<(typeof import('../../../lib/extension/driver-config.js'))['DriverConfig']['create']>;
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-type ManifestClass = (typeof import('../../../lib/extension/manifest.js'))['Manifest'];
+type ManifestClass = (typeof import('../../../lib/extension/manifest/manifest.js'))['Manifest'];
 
 type ExtManifestWithSchema<ExtType extends ExtensionType> = ExtManifest<ExtType> & {
   schema: NonNullable<ExtManifest<ExtType>['schema']>;
@@ -55,7 +55,7 @@ describe('DriverConfig', function () {
     yamlFixture = await fs.readFile(resolveFixture('manifest', 'v3.yaml'), 'utf8');
     mocks = initMocks();
     applyExtensionMocks(mocks);
-    ({Manifest} = await import('../../../lib/extension/manifest.js'));
+    ({Manifest} = await import('../../../lib/extension/manifest/manifest.js'));
     ({resetSchema} = await import('../../../lib/schema/index.js'));
   });
 
@@ -139,8 +139,11 @@ describe('DriverConfig', function () {
       });
 
       describe('when provided no arguments', function () {
-        it('should throw', function () {
-          assert.throws(() => driverConfig.getConfigProblems());
+        it('should not throw, and should return a problem for both platformNames and automationName', function () {
+          assert.deepStrictEqual(driverConfig.getConfigProblems(), [
+            {err: 'Missing or incorrect supported platformNames list.', val: undefined},
+            {err: 'Missing or incorrect automationName', val: undefined},
+          ]);
         });
       });
 
@@ -199,6 +202,40 @@ describe('DriverConfig', function () {
               val: 'foo',
             });
           });
+        });
+
+        describe('when two unrelated entries both lack `automationName`', function () {
+          it('should not flag them as duplicates of each other', function () {
+            driverConfig.getConfigProblems({platformNames: ['a']});
+            const problems = driverConfig.getConfigProblems({platformNames: ['b']});
+            assert.ok(
+              !problems.some(
+                (problem: any) => problem.err === 'Multiple drivers claim support for the same automationName',
+              ),
+            );
+          });
+        });
+      });
+
+      describe('when the extension data is not an object at all (e.g. a corrupted manifest entry)', function () {
+        it('should return a problem for both platformNames and automationName', function () {
+          assert.deepStrictEqual(driverConfig.getConfigProblems('garbage'), [
+            {err: 'Missing or incorrect supported platformNames list.', val: undefined},
+            {err: 'Missing or incorrect automationName', val: undefined},
+          ]);
+        });
+      });
+
+      describe('when the extension data is `null` (e.g. an empty YAML value for a manifest entry)', function () {
+        it('should not throw', function () {
+          assert.doesNotThrow(() => driverConfig.getConfigProblems(null));
+        });
+
+        it('should return a problem for both platformNames and automationName', function () {
+          assert.deepStrictEqual(driverConfig.getConfigProblems(null), [
+            {err: 'Missing or incorrect supported platformNames list.', val: undefined},
+            {err: 'Missing or incorrect automationName', val: undefined},
+          ]);
         });
       });
     });

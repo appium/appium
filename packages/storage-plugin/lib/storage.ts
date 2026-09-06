@@ -31,17 +31,17 @@ export class Storage {
   }
 
   async list(): Promise<StorageItem[]> {
-    const items = (await this._listFiles()).filter((item) => !this._fullPath(item).endsWith(TMP_EXT));
+    const items = (await this._listFiles()).filter((item) => !item.name.endsWith(TMP_EXT));
     if (util.isEmpty(items)) {
       return [];
     }
 
-    const stats = await asyncmap(items, (item) => fs.stat(this._fullPath(item)), {
+    const stats = await asyncmap(items, (item) => fs.stat(this._toFullPath(item)), {
       concurrency: MAX_TASKS,
     });
     return items.map((item, index) => ({
       name: item.name,
-      path: this._fullPath(item),
+      path: this._toFullPath(item),
       size: stats[index].size,
     }));
   }
@@ -81,8 +81,8 @@ export class Storage {
     }
 
     const files = (await this._listFiles())
-      .map((item) => this._fullPath(item))
-      .filter((fullPath) => !this._shouldPreserveFiles || path.basename(fullPath).toLowerCase().endsWith(TMP_EXT));
+      .filter((item) => !this._shouldPreserveFiles || item.name.toLowerCase().endsWith(TMP_EXT))
+      .map((item) => this._toFullPath(item));
     if (util.isEmpty(files)) {
       return;
     }
@@ -130,7 +130,7 @@ export class Storage {
     return items.filter((item) => item.isFile());
   }
 
-  private _fullPath(item: Dirent): string {
+  private _toFullPath(item: Dirent): string {
     return path.join(item.parentPath, item.name);
   }
 

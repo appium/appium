@@ -1,5 +1,5 @@
 import {createHash} from 'node:crypto';
-import nativeFs from 'node:fs';
+import nativeFs, {type Dirent} from 'node:fs';
 import path from 'node:path';
 import type Stream from 'node:stream';
 
@@ -7,7 +7,6 @@ import {fs, timing, util} from '@appium/support';
 import type {AppiumLogger} from '@appium/types';
 import AsyncLock from 'async-lock';
 import {asyncmap} from 'asyncbox';
-import type {Path} from 'path-scurry';
 import type WebSocket from 'ws';
 
 import type {ItemOptions, StorageItem} from './types.js';
@@ -32,17 +31,17 @@ export class Storage {
   }
 
   async list(): Promise<StorageItem[]> {
-    const items = (await this._listFiles()).filter((p) => !p.fullpath().endsWith(TMP_EXT));
+    const items = (await this._listFiles()).filter((item) => !this._fullPath(item).endsWith(TMP_EXT));
     if (util.isEmpty(items)) {
       return [];
     }
 
-    const stats = await asyncmap(items, (item) => fs.stat(item.fullpath()), {
+    const stats = await asyncmap(items, (item) => fs.stat(this._fullPath(item)), {
       concurrency: MAX_TASKS,
     });
     return items.map((item, index) => ({
-      name: path.basename(item.fullpath()),
-      path: item.fullpath(),
+      name: item.name,
+      path: this._fullPath(item),
       size: stats[index].size,
     }));
   }
@@ -82,7 +81,7 @@ export class Storage {
     }
 
     const files = (await this._listFiles())
-      .map((p) => p.fullpath())
+      .map((item) => this._fullPath(item))
       .filter((fullPath) => !this._shouldPreserveFiles || path.basename(fullPath).toLowerCase().endsWith(TMP_EXT));
     if (util.isEmpty(files)) {
       return;
@@ -126,12 +125,18 @@ export class Storage {
     }
   }
 
-  private async _listFiles(): Promise<Path[]> {
-    const paths = (await fs.glob('*', {
-      cwd: this._root,
-      withFileTypes: true,
-    })) as unknown as Path[];
-    return paths.filter((item) => item.isFile());
+  private async _listFiles(): Promise<Dirent[]> {
+    const items: Dirent[] = [];
+    for await (const item of fs.glob('*', {cwd: this._root, withFileTypes: true})) {
+      if (item.isFile()) {
+        items.push(item);
+      }
+    }
+    return items;
+  }
+
+  private _fullPath(item: Dirent): string {
+    return path.join(item.parentPath, item.name);
   }
 
   private async _addFromStream(opts: ItemOptions, source: Stream): Promise<void> {

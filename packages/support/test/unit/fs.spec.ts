@@ -165,8 +165,10 @@ describe('fs', {timeout: TEST_TIMEOUT}, function () {
   });
   it('glob()', async function () {
     const glob = '*.spec.js';
-    const tests = await fs.glob(glob, {cwd: import.meta.dirname});
-    assert.ok(Array.isArray(tests));
+    const tests: string[] = [];
+    for await (const test of fs.glob(glob, {cwd: import.meta.dirname})) {
+      tests.push(test);
+    }
     assert.ok(tests.length > 2);
   });
 

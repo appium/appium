@@ -496,7 +496,9 @@ describe('Manifest', function () {
 
       describe('when the underlying implementation emits "error"', function () {
         beforeEach(function () {
-          MockAppiumSupport.fs.glob.rejects(new Error('bogus'));
+          MockAppiumSupport.fs.glob.callsFake(async function* () {
+            throw new Error('bogus');
+          });
         });
         it('should reject', async function () {
           await assert.rejects(manifest.syncWithInstalledExtensions(), /bogus/);

@@ -44,9 +44,11 @@ async function writeJson(filepath, data) {
  * @returns {Promise<string[]>} An array of package directory paths.
  */
 async function getPackageDirs() {
-  return (await fs.glob('*/package.json', {cwd: ROOT_PACKAGES_DIR, absolute: true}))
-    .map((pkgJsonPath) => path.dirname(pkgJsonPath))
-    .sort();
+  const pkgJsonPaths = [];
+  for await (const pkgJsonPath of fs.glob('*/package.json', {cwd: ROOT_PACKAGES_DIR, absolute: true})) {
+    pkgJsonPaths.push(pkgJsonPath);
+  }
+  return pkgJsonPaths.map((pkgJsonPath) => path.dirname(pkgJsonPath)).sort();
 }
 
 /**

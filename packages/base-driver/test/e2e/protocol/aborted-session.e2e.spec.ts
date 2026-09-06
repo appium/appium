@@ -1,0 +1,444 @@
+import assert from 'node:assert/strict';
+import {randomUUID} from 'node:crypto';
+import {EventEmitter, once} from 'node:events';
+import {Agent, request, type ServerResponse} from 'node:http';
+import {afterEach, beforeEach, describe, it} from 'node:test';
+import {setImmediate as nextTurn} from 'node:timers/promises';
+
+import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
+import type {AppiumServer, Constraints, Driver} from '@appium/types';
+import axios from 'axios';
+import {createSandbox} from 'sinon';
+
+import {BaseDriver, routeConfiguringFunction, server} from '../../../lib';
+import {FakeDriver} from './fake-driver';
+
+class SessionDriver extends FakeDriver {
+  readonly sessions = new Set<string>();
+
+  async createSession(...args: Parameters<FakeDriver['createSession']>) {
+    const result = await super.createSession(...args);
+    this.sessions.add(result[0]);
+    return result;
+  }
+
+  sessionExists(sessionId?: string | null) {
+    return typeof sessionId === 'string' && this.sessions.has(sessionId);
+  }
+
+  async deleteSession(sessionId = this.sessionId) {
+    if (sessionId) {
+      this.sessions.delete(sessionId);
+    }
+    await super.deleteSession();
+  }
+}
+
+describe('Aborted session creation', function () {
+  const caps = {capabilities: {alwaysMatch: {platformName: 'Fake'}}};
+  const sandbox = createSandbox();
+  let driver: SessionDriver;
+  let appiumServer: AppiumServer;
+  let baseUrl: string;
+  let events: EventEmitter;
+  let httpAgent: Agent;
+  let pendingRequests: Promise<unknown>[];
+
+  beforeEach(async function () {
+    driver = new SessionDriver();
+    events = new EventEmitter();
+    httpAgent = new Agent({keepAlive: false});
+    pendingRequests = [];
+    await startServer(driver);
+  });
+
+  async function startServer(sessionDriver: Driver) {
+    const port = await getTestPort();
+    baseUrl = `http://${TEST_HOST}:${port}`;
+    appiumServer = await server({
+      routeConfiguringFunction: routeConfiguringFunction(sessionDriver),
+      port,
+      hostname: TEST_HOST,
+    });
+    appiumServer.on('request', (_req, res) => {
+      events.emit('request', res);
+    });
+  }
+
+  afterEach(async function () {
+    events.emit('release');
+    events.emit('cleanup');
+    await Promise.allSettled(pendingRequests);
+    httpAgent.destroy();
+    appiumServer.closeAllConnections();
+    await appiumServer.close();
+    sandbox.restore();
+  });
+
+  function pauseCreation() {
+    const original = driver.createSession.bind(driver);
+    const released = once(events, 'release');
+    return sandbox.stub(driver, 'createSession').callsFake(async (...args) => {
+      events.emit('creating');
+      await released;
+      return original(...args);
+    });
+  }
+
+  function postSession(key?: string) {
+    const response = axios.post<{value: {sessionId: string}}>(`${baseUrl}/session`, caps, {
+      headers: key ? {'X-Idempotency-Key': key} : {},
+      httpAgent,
+      timeout: 5000,
+      validateStatus: null,
+    });
+    pendingRequests.push(response);
+    return response;
+  }
+
+  async function startAbortedRequest(key?: string) {
+    const received = once(events, 'request');
+    const headers: Record<string, string> = {'Content-Type': 'application/json'};
+    if (key) {
+      headers['X-Idempotency-Key'] = key;
+    }
+    const client = request(`${baseUrl}/session`, {
+      method: 'POST',
+      headers,
+      agent: httpAgent,
+    });
+    client.on('error', (error: NodeJS.ErrnoException) => {
+      assert.equal(error.code, 'ECONNRESET');
+    });
+    client.end(JSON.stringify(caps));
+    const response: ServerResponse = (await received)[0];
+    return async () => {
+      const closed = once(response, 'close');
+      client.destroy();
+      await closed;
+    };
+  }
+
+  for (const keyed of [false, true]) {
+    it(`should delete a session created after disconnect${keyed ? ' with an idempotency key' : ''}`, async function () {
+      pauseCreation();
+      const creating = once(events, 'creating');
+      const abort = await startAbortedRequest(keyed ? randomUUID() : undefined);
+      await creating;
+      await abort();
+      assert.equal(driver.sessions.size, 0);
+
+      const original = driver.deleteSession.bind(driver);
+      const deleted = new Promise<void>((resolve) => {
+        sandbox.stub(driver, 'deleteSession').callsFake(async (id) => {
+          await original(id);
+          resolve();
+        });
+      });
+      events.emit('release');
+      await deleted;
+      assert.equal(driver.sessions.size, 0);
+    });
+  }
+
+  it('should keep a session after its response is sent and the connection closes', async function () {
+    const {data} = await postSession();
+    assert.ok(driver.sessionExists(data.value.sessionId));
+    const response = await axios.get(`${baseUrl}/session/${data.value.sessionId}/url`, {httpAgent});
+    assert.equal(response.data.value, 'http://foobar.com');
+  });
+
+  it('should delete a session if the connection closes while sending its response', async function () {
+    const original = driver.deleteSession.bind(driver);
+    const deleted = new Promise<void>((resolve) => {
+      sandbox.stub(driver, 'deleteSession').callsFake(async (id) => {
+        await original(id);
+        resolve();
+      });
+    });
+    appiumServer.frontRouter.use((_req, res, next) => {
+      res.json = () => {
+        res.destroy();
+        return res;
+      };
+      next();
+    });
+    await assert.rejects(postSession(randomUUID()), /socket hang up/);
+    await deleted;
+    assert.equal(driver.sessions.size, 0);
+  });
+
+  it('should preserve an unrelated session when a new session request disconnects', async function () {
+    const existing = (await postSession()).data.value.sessionId;
+    pauseCreation();
+    const creating = once(events, 'creating');
+    const abort = await startAbortedRequest();
+    await creating;
+    await abort();
+    const original = driver.deleteSession.bind(driver);
+    const deleted = new Promise<void>((resolve) => {
+      sandbox.stub(driver, 'deleteSession').callsFake(async (id) => {
+        await original(id);
+        resolve();
+      });
+    });
+    events.emit('release');
+    await deleted;
+    assert.deepEqual([...driver.sessions], [existing]);
+  });
+
+  it('should not delete a session when creation fails', async function () {
+    const creation = pauseCreation();
+    creation.callsFake(async () => {
+      events.emit('creating');
+      await once(events, 'release');
+      throw new Error('Session setup failed');
+    });
+    const deleted = sandbox.spy(driver, 'deleteSession');
+    const creating = once(events, 'creating');
+    const abort = await startAbortedRequest();
+    await creating;
+    await abort();
+    events.emit('release');
+    await axios.get(`${baseUrl}/status`, {httpAgent});
+    assert.equal(driver.sessions.size, 0);
+    assert.equal(deleted.callCount, 0);
+  });
+
+  it('should log a cleanup failure without crashing the server', async function () {
+    pauseCreation();
+    sandbox.stub(driver, 'deleteSession').rejects(new Error('Cleanup failed'));
+    const warned = new Promise<string>((resolve) => {
+      sandbox.stub(driver.log, 'warn').callsFake((message) => resolve(String(message)));
+    });
+    const creating = once(events, 'creating');
+    const abort = await startAbortedRequest();
+    await creating;
+    await abort();
+    events.emit('release');
+    assert.match(await warned, /Could not delete abandoned session.*Cleanup failed/);
+    assert.equal((await axios.get(`${baseUrl}/status`, {httpAgent})).status, 200);
+  });
+
+  it('should replay a successful session response without creating another session', async function () {
+    const key = randomUUID();
+    const first = await postSession(key);
+    const second = await postSession(key);
+    assert.equal(second.data.value.sessionId, first.data.value.sessionId);
+    assert.equal(driver.sessions.size, 1);
+  });
+
+  it('should share a successful response with waiting retries', async function () {
+    const key = randomUUID();
+    const creation = pauseCreation();
+    const creating = once(events, 'creating');
+    const first = postSession(key);
+    await creating;
+    const received = once(events, 'request');
+    const retry = postSession(key);
+    await received;
+    events.emit('release');
+    const [firstResponse, retryResponse] = await Promise.all([first, retry]);
+    assert.equal(firstResponse.data.value.sessionId, retryResponse.data.value.sessionId);
+    assert.equal(driver.sessions.size, 1);
+    assert.equal(creation.callCount, 1);
+  });
+
+  it('should clean up wrapped driver results and log returned cleanup errors', async function () {
+    pauseCreation();
+    const original = driver.executeCommand.bind(driver);
+    sandbox.stub(driver, 'executeCommand').callsFake(async (command, ...args) => {
+      if (command === 'deleteSession') {
+        return {protocol: 'W3C', error: new Error('Wrapped cleanup failure')};
+      }
+      return {protocol: 'W3C', value: await original(command, ...args)};
+    });
+    const warned = new Promise<string>((resolve) => {
+      sandbox.stub(driver.log, 'warn').callsFake((message) => resolve(String(message)));
+    });
+    const creating = once(events, 'creating');
+    const abort = await startAbortedRequest();
+    await creating;
+    await abort();
+    events.emit('release');
+    assert.match(await warned, /Could not delete abandoned session.*Wrapped cleanup failure/);
+  });
+
+  it('should allow a later retry after the original request disconnects', async function () {
+    const key = randomUUID();
+    const creation = pauseCreation();
+    const creating = once(events, 'creating');
+    const abort = await startAbortedRequest(key);
+    await creating;
+    await abort();
+    const retry = postSession(key);
+    events.emit('release');
+    const {data} = await retry;
+    assert.ok(driver.sessionExists(data.value.sessionId));
+    assert.equal(driver.sessions.size, 1);
+    assert.equal(creation.callCount, 2);
+    assert.equal((await postSession(key)).data.value.sessionId, data.value.sessionId);
+  });
+
+  it('should restart waiting retries only once when the original disconnects', async function () {
+    const key = randomUUID();
+    const creation = pauseCreation();
+    const creating = once(events, 'creating');
+    const abort = await startAbortedRequest(key);
+    await creating;
+    const firstReceived = once(events, 'request');
+    const firstRetry = postSession(key);
+    await firstReceived;
+    const secondReceived = once(events, 'request');
+    const secondRetry = postSession(key);
+    await secondReceived;
+    await abort();
+    events.emit('release');
+    const [first, second] = await Promise.all([firstRetry, secondRetry]);
+    assert.equal(first.data.value.sessionId, second.data.value.sessionId);
+    assert.ok(driver.sessionExists(first.data.value.sessionId));
+    assert.equal(driver.sessions.size, 1);
+    assert.equal(creation.callCount, 2);
+  });
+
+  it('should not start another session for a retry that also disconnected', async function () {
+    const key = randomUUID();
+    const creation = pauseCreation();
+    const creating = once(events, 'creating');
+    const abort = await startAbortedRequest(key);
+    await creating;
+    const abortRetry = await startAbortedRequest(key);
+    await abortRetry();
+    await abort();
+    const original = driver.deleteSession.bind(driver);
+    const deleted = new Promise<void>((resolve) => {
+      sandbox.stub(driver, 'deleteSession').callsFake(async (id) => {
+        await original(id);
+        resolve();
+      });
+    });
+    events.emit('release');
+    await deleted;
+    assert.equal(creation.callCount, 1);
+    assert.equal(driver.sessions.size, 0);
+  });
+
+  describe('with the BaseDriver command queue', function () {
+    let queuedDriver: BaseDriver<Constraints>;
+
+    beforeEach(async function () {
+      await appiumServer.close();
+      queuedDriver = new BaseDriver(driver.initialOpts);
+      queuedDriver.newCommandTimeoutMs = 0;
+      await startServer(queuedDriver);
+    });
+
+    it('should release retries when abandoned setup fails', async function () {
+      const key = randomUUID();
+      const originalCreate = queuedDriver.createSession.bind(queuedDriver);
+      const creation = sandbox.stub(queuedDriver, 'createSession').callsFake(originalCreate);
+      creation.onFirstCall().callsFake(async () => {
+        events.emit('creating');
+        await once(events, 'release');
+        throw new Error('Setup failed');
+      });
+      const creating = once(events, 'creating');
+      const abort = await startAbortedRequest(key);
+      await creating;
+      await abort();
+      const received = once(events, 'request');
+      const retry = postSession(key);
+      await received;
+      events.emit('release');
+      const response = await retry;
+      assert.equal(response.status, 200);
+      assert.ok(queuedDriver.sessionExists(response.data.value.sessionId));
+      assert.equal((await postSession(key)).data.value.sessionId, response.data.value.sessionId);
+      await queuedDriver.deleteSession();
+    });
+
+    it('should release retries even if deletion reports an error after cleanup', async function () {
+      const key = randomUUID();
+      const originalCreate = queuedDriver.createSession.bind(queuedDriver);
+      const released = once(events, 'release');
+      sandbox.stub(queuedDriver, 'createSession').callsFake(async (...args) => {
+        const result = await originalCreate(...args);
+        events.emit('creating');
+        await released;
+        return result;
+      });
+      const originalDelete = queuedDriver.deleteSession.bind(queuedDriver);
+      sandbox.stub(queuedDriver, 'deleteSession').callsFake(async (id) => {
+        await originalDelete(id);
+        throw new Error('Cleanup reported an error');
+      });
+      const warned = sandbox.spy(queuedDriver.log, 'warn');
+      const creating = once(events, 'creating');
+      const abort = await startAbortedRequest(key);
+      await creating;
+      await abort();
+      const received = once(events, 'request');
+      const retry = postSession(key);
+      await received;
+      events.emit('release');
+      const response = await retry;
+      assert.equal(response.status, 200);
+      assert.ok(queuedDriver.sessionExists(response.data.value.sessionId));
+      assert.match(String(warned.firstCall.args[0]), /Could not delete abandoned session.*Cleanup reported an error/);
+      await originalDelete();
+    });
+
+    for (const retryBeforeAbort of [true, false]) {
+      it(`should hold ${retryBeforeAbort ? 'waiting' : 'new'} retries until setup and deletion finish`, async function () {
+        const key = randomUUID();
+        const originalCreate = queuedDriver.createSession.bind(queuedDriver);
+        const released = once(events, 'release');
+        const creation = sandbox.stub(queuedDriver, 'createSession').callsFake(async (...args) => {
+          const result = await originalCreate(...args);
+          events.emit('creating');
+          await released;
+          return result;
+        });
+        const originalDelete = queuedDriver.deleteSession.bind(queuedDriver);
+        const cleanup = once(events, 'cleanup');
+        sandbox.stub(queuedDriver, 'deleteSession').callsFake(async (id) => {
+          events.emit('deleting');
+          await cleanup;
+          await originalDelete(id);
+        });
+        const creating = once(events, 'creating');
+        const abort = await startAbortedRequest(key);
+        await creating;
+        if (!retryBeforeAbort) {
+          await abort();
+        }
+        const firstReceived = once(events, 'request');
+        const firstRetry = postSession(key);
+        await firstReceived;
+        const secondReceived = once(events, 'request');
+        const secondRetry = postSession(key);
+        await secondReceived;
+        if (retryBeforeAbort) {
+          await abort();
+        }
+        await nextTurn();
+        assert.equal(creation.callCount, 1);
+        const deleting = once(events, 'deleting');
+        events.emit('release');
+        await deleting;
+        assert.equal(creation.callCount, 1, 'retry must not start before deletion finishes');
+        events.emit('cleanup');
+        const [first, second] = await Promise.all([firstRetry, secondRetry]);
+        assert.equal(first.status, 200);
+        assert.equal(second.status, 200);
+        assert.equal(first.data.value.sessionId, second.data.value.sessionId);
+        assert.ok(queuedDriver.sessionExists(first.data.value.sessionId));
+        assert.equal(creation.callCount, 2);
+        const later = await postSession(key);
+        assert.equal(later.status, 200);
+        assert.equal(later.data.value.sessionId, first.data.value.sessionId);
+        await queuedDriver.deleteSession();
+      });
+    }
+  });
+});

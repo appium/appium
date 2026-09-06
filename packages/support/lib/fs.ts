@@ -80,7 +80,10 @@ export interface GlobOptions {
 
 /** Overloaded call signature for {@linkcode fs.glob}, narrowing its return type based on `withFileTypes`/`lazy`. */
 export interface GlobFn {
-  (pattern: string | readonly string[], options: GlobOptions & {withFileTypes: true; lazy: true}): AsyncGenerator<Dirent>;
+  (
+    pattern: string | readonly string[],
+    options: GlobOptions & {withFileTypes: true; lazy: true},
+  ): AsyncGenerator<Dirent>;
   (pattern: string | readonly string[], options: GlobOptions & {withFileTypes: true}): Promise<Dirent[]>;
   (pattern: string | readonly string[], options: GlobOptions & {lazy: true}): AsyncGenerator<string>;
   (pattern: string | readonly string[], options?: GlobOptions): Promise<string[]>;

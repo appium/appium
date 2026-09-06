@@ -13,7 +13,8 @@ import {
   PLUGIN_TYPE,
 } from '../constants.js';
 import {INSTALL_TYPES} from '../extension/manifest/index.js';
-import {toParserArgs, type ArgumentDefinitions} from '../schema/cli-args.js';
+import {toParserArgs} from '../schema/cli-args.js';
+import type {ArgumentDefinitions} from '../schema/cli-args.js';
 const DRIVER_EXAMPLE = 'xcuitest';
 const PLUGIN_EXAMPLE = 'images';
 

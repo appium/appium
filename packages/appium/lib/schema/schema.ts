@@ -6,7 +6,8 @@ import type {ExtensionType} from '@appium/types';
 
 import {DRIVER_TYPE, PLUGIN_TYPE} from '../constants.js';
 import {bindAll, kebabCase, omitKeys, setPath} from '../utils/index.js';
-import {addFormats, Ajv, type AjvInstance, type ErrorObject, type SchemaObject, type ValidateFunction} from './ajv.js';
+import {addFormats, Ajv} from './ajv.js';
+import type {AjvInstance, ErrorObject, SchemaObject, ValidateFunction} from './ajv.js';
 import {APPIUM_CONFIG_SCHEMA_ID, ArgSpec, SERVER_PROP_NAME} from './arg-spec.js';
 import {keywords} from './keywords.js';
 

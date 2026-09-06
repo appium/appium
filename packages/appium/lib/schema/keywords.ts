@@ -1,5 +1,6 @@
 import type {KeywordDefinition} from './ajv.js';
-import {transformers, type AppiumCliTransformerName} from './cli-transformers.js';
+import {transformers} from './cli-transformers.js';
+import type {AppiumCliTransformerName} from './cli-transformers.js';
 
 /**
  * Collection of keyword definitions to add to the singleton `Ajv` instance.

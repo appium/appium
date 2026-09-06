@@ -1,4 +1,5 @@
-import {Ajv, type ErrorObject, type ValidateFunction} from '../../schema/ajv.js';
+import {Ajv} from '../../schema/ajv.js';
+import type {ErrorObject, ValidateFunction} from '../../schema/ajv.js';
 import {commonExtManifestProblemsSchema, driverExtManifestProblemsSchema, manifestEnvelopeSchema} from './schema.js';
 
 export interface EnvelopeValidationResult {

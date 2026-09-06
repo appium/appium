@@ -30,6 +30,7 @@ describe('schema', function () {
   // fresh (cache-busted) each test isolates that singleton per test, same as the explicit
   // `resetSchema()` call below does for the parts reachable through its public API.
   beforeEach(async function () {
+    const mod = await import(`../../../lib/schema/schema.js?t=${importCounter++}`);
     ({
       SchemaFinalizationError,
       SchemaUnknownSchemaError,
@@ -43,7 +44,7 @@ describe('schema', function () {
       getDefaultsForSchema,
       flattenSchema,
       validate,
-    } = await import(`../../../lib/schema/schema.js?t=${importCounter++}`));
+    } = mod);
     resetSchema();
   });
 

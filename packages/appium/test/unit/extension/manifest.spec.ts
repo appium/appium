@@ -42,7 +42,8 @@ describe('Manifest', function () {
     resetMockDefaults(mocks);
     migrateStub.resolves();
     MockAppiumSupport.fs.readFile.resolves(yamlFixture);
-    ({Manifest} = await import(`../../../lib/extension/manifest.js?t=${importCounter++}`));
+    const mod = await import(`../../../lib/extension/manifest.js?t=${importCounter++}`);
+    ({Manifest} = mod);
   });
 
   describe('class method', function () {

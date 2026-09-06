@@ -1,10 +1,10 @@
 import {util} from '@appium/support';
 import type {AppiumConfig, NormalizedAppiumConfig} from '@appium/types';
 import type {IOutputError} from '@sidvind/better-ajv-errors';
-import type {ErrorObject, SchemaObject} from 'ajv';
 import {lilconfig, type LilconfigResult, type LoaderSync} from 'lilconfig';
 import * as yaml from 'yaml';
 
+import type {ErrorObject, SchemaObject} from '../schema/ajv.js';
 import {formatErrors} from '../schema/format-errors.js';
 import {getSchema, validate} from '../schema/schema.js';
 import {camelCase, getPath, mapKeys, mapValues} from '../utils/index.js';

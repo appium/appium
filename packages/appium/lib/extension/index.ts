@@ -7,7 +7,7 @@ import {USE_ALL_PLUGINS} from '../constants.js';
 import {log} from '../logger.js';
 import {zip} from '../utils/index.js';
 import {DriverConfig} from './driver-config.js';
-import {Manifest} from './manifest.js';
+import {Manifest} from './manifest/index.js';
 import {PluginConfig} from './plugin-config.js';
 
 export type ExtensionConfigs = {

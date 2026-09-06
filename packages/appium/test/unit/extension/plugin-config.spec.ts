@@ -5,7 +5,7 @@ import {describe, it, beforeEach, before, after, mock} from 'node:test';
 import type {ExtensionType, PluginType} from '@appium/types';
 import type {ExtManifest} from 'appium/types/index.js';
 
-import type {Manifest} from '../../../lib/extension/manifest.js';
+import type {Manifest} from '../../../lib/extension/manifest/manifest.js';
 import type {PluginConfig as PluginConfigInstance} from '../../../lib/extension/plugin-config.js';
 import type {resetSchema as ResetSchemaFn} from '../../../lib/schema/index.js';
 import {assertArrayIncludesDeep, resolveFixture} from '../../helpers.js';
@@ -19,7 +19,7 @@ type ExtManifestWithSchema<ExtType extends ExtensionType> = ExtManifest<ExtType>
 // `applyExtensionMocks` in mocks.ts), so their constructor types can't come from a normal value
 // import; indexed access into the module's namespace type is the only way to spell them.
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-type ManifestClass = (typeof import('../../../lib/extension/manifest.js'))['Manifest'];
+type ManifestClass = (typeof import('../../../lib/extension/manifest/manifest.js'))['Manifest'];
 
 interface PluginConfigConstructor {
   new (...args: never[]): PluginConfigInstance;
@@ -44,7 +44,7 @@ describe('PluginConfig', function () {
     yamlFixture = await fs.readFile(resolveFixture('manifest', 'v3.yaml'), 'utf8');
     mocks = initMocks();
     applyExtensionMocks(mocks);
-    ({Manifest} = await import('../../../lib/extension/manifest.js'));
+    ({Manifest} = await import('../../../lib/extension/manifest/manifest.js'));
     ({resetSchema} = await import('../../../lib/schema/index.js'));
   });
 

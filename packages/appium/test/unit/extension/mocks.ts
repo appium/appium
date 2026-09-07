@@ -16,7 +16,7 @@ export interface MockAppiumSupportFs {
   readFile: SinonStub;
   writeFile: SinonStub;
   walk: SinonStub;
-  glob: SinonStub;
+  readdir: SinonStub;
   mkdirp: SinonStub;
   exists: SinonStub;
   realpath: SinonStub;
@@ -86,7 +86,7 @@ export function initMocks(sandbox = createSandbox()): InitMocksResult {
       walk: sandbox.stub().returns({
         [Symbol.asyncIterator]: sandbox.stub().returns({next: sandbox.stub().resolves({done: true})}),
       }),
-      glob: sandbox.stub().resolves([]),
+      readdir: sandbox.stub().resolves([]),
       mkdirp: sandbox.stub().resolves(),
       exists: sandbox.stub().resolves(true),
       realpath: sandbox.stub().callsFake(async (p: string) => p),
@@ -156,7 +156,7 @@ export function resetMockDefaults(mocks: InitMocksResult): void {
   MockAppiumSupport.fs.walk.returns({
     [Symbol.asyncIterator]: mocks.sandbox.stub().returns({next: mocks.sandbox.stub().resolves({done: true})}),
   });
-  MockAppiumSupport.fs.glob.resolves([]);
+  MockAppiumSupport.fs.readdir.resolves([]);
   MockAppiumSupport.fs.mkdirp.resolves();
   MockAppiumSupport.fs.exists.resolves(true);
   MockAppiumSupport.env.resolveAppiumHome.resolves('/some/path');

@@ -424,7 +424,8 @@ describe('ExtensionCommand', function () {
         debug: sandbox.stub(),
       } as unknown as AppiumLogger;
 
-      ({injectAppiumSymlinks} = await import(`../../../lib/cli/extension-command.js?t=${importCounter++}`));
+      const mod = await import(`../../../lib/cli/extension-command.js?t=${importCounter++}`);
+      ({injectAppiumSymlinks} = mod);
     });
 
     afterEach(function () {

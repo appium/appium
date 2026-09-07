@@ -67,7 +67,8 @@ describe('DriverConfig', function () {
     manifest = Manifest.getInstance('/somewhere/');
     resetMockDefaults(mocks);
     mocks.MockAppiumSupport.fs.readFile.resolves(yamlFixture);
-    ({DriverConfig} = await import(`../../../lib/extension/driver-config.js?t=${importCounter++}`));
+    const mod = await import(`../../../lib/extension/driver-config.js?t=${importCounter++}`);
+    ({DriverConfig} = mod);
     resetSchema();
   });
 

@@ -40,10 +40,10 @@ describe('ExtensionConfig', function () {
     resetMockDefaults(mocks);
     MockAppiumSupport = mocks.MockAppiumSupport;
     MockNpm = mocks.MockNpm;
-    ({ExtensionConfig, resolveEsmEntryPoint} = await import(
-      `../../../lib/extension/extension-config.js?t=${importCounter++}`
-    ));
-    ({Manifest} = await import(`../../../lib/extension/manifest/manifest.js?t=${importCounter++}`));
+    const extensionConfigMod = await import(`../../../lib/extension/extension-config.js?t=${importCounter++}`);
+    ({ExtensionConfig, resolveEsmEntryPoint} = extensionConfigMod);
+    const manifestMod = await import(`../../../lib/extension/manifest/manifest.js?t=${importCounter++}`);
+    ({Manifest} = manifestMod);
   });
 
   afterEach(function () {

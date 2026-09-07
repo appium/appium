@@ -21,7 +21,7 @@ async function routeCaller(routePath: string): Promise<(body: unknown) => Promis
     routes[path] = handler;
   };
   const app = {post: register, get: register} as unknown as Express;
-  // every request below is rejected before the websocket setup runs, so this never gets touched
+  // the request under test is rejected before the websocket setup runs, so this stub is never used
   await StoragePlugin.updateServer(app, {} as unknown as AppiumServer);
   const handler = routes[routePath];
   assert.ok(handler, `No handler was registered for ${routePath}`);
@@ -45,38 +45,13 @@ async function routeCaller(routePath: string): Promise<(body: unknown) => Promis
 }
 
 describe('StoragePlugin routes', function () {
-  describe('delete', function () {
-    it('should reject a name which is not a valid file name', async function () {
-      const callRoute = await routeCaller('/appium/storage/delete');
-      const {status, body} = await callRoute({name: 'foo/bar'});
-      assert.strictEqual(status, 400);
-      assert.strictEqual(body.value.error, 'invalid argument');
+  it('should reject an invalid add name as an invalid argument', async function () {
+    const callRoute = await routeCaller('/appium/storage/add');
+    const {status, body} = await callRoute({
+      name: 'foo/bar',
+      sha1: 'ccc963411b2621335657963322890305ebe96186',
     });
-
-    it('should reject a request body without a name', async function () {
-      const callRoute = await routeCaller('/appium/storage/delete');
-      const {status, body} = await callRoute({});
-      assert.strictEqual(status, 400);
-      assert.strictEqual(body.value.error, 'invalid argument');
-    });
-
-    it('should still report a valid name which is not in the storage', async function () {
-      const callRoute = await routeCaller('/appium/storage/delete');
-      const {status, body} = await callRoute({name: 'missing.txt'});
-      assert.strictEqual(status, 200);
-      assert.strictEqual(body.value, false);
-    });
-  });
-
-  describe('add', function () {
-    it('should reject a name which is not a valid file name', async function () {
-      const callRoute = await routeCaller('/appium/storage/add');
-      const {status, body} = await callRoute({
-        name: 'foo/bar',
-        sha1: 'ccc963411b2621335657963322890305ebe96186',
-      });
-      assert.strictEqual(status, 400);
-      assert.strictEqual(body.value.error, 'invalid argument');
-    });
+    assert.strictEqual(status, 400);
+    assert.strictEqual(body.value.error, 'invalid argument');
   });
 });

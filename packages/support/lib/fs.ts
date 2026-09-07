@@ -273,7 +273,7 @@ export const fs = {
     const {cwd, withFileTypes, absolute, lazy} = options;
     async function* generate(): AsyncGenerator<string | Dirent> {
       for await (const entry of fsPromises.glob(pattern, {cwd, withFileTypes})) {
-        yield absolute && !withFileTypes ? path.join(cwd ?? process.cwd(), entry as string) : entry;
+        yield absolute && !withFileTypes ? path.resolve(cwd ?? process.cwd(), entry as string) : entry;
       }
     }
     if (lazy) {

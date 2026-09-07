@@ -10,36 +10,43 @@ declare module '../driver.js' {
   interface BaseDriver<C extends Constraints> extends IExecuteCommands {}
 }
 
-export const ExecuteCommands = {
-  async executeMethod<C extends Constraints>(
-    this: BaseDriver<C>,
-    script: string,
-    protoArgs: readonly [StringRecord<unknown>] | readonly unknown[],
-  ) {
-    const Driver = this.constructor as DriverClass<Driver<C>>;
-    const commandMetadata = {...Driver.executeMethodMap?.[script]};
-    if (!commandMetadata.command) {
-      const availableScripts = Object.keys(Driver.executeMethodMap ?? {});
-      if (util.isEmpty(availableScripts)) {
-        throw new errors.UnsupportedOperationError(
-          `Unsupported execute method '${script}'. ` +
-            `Make sure the installed ${Driver.name} is up-to-date. ` +
-            `The current driver version does not define any execute methods.`,
-        );
-      }
-      const {sorted: sortedMatches, suggestion} = rankLevenshteinCandidates(script, availableScripts);
+/**
+ * Call an `Execute Method` by its name with the given arguments. This method will check that the
+ * driver has registered the method matching the name, and send it the arguments.
+ *
+ * @param script - the name of the Execute Method
+ * @param protoArgs - a singleton array containing an arguments object
+ *
+ * @returns The result of calling the Execute Method
+ */
+export async function executeMethod<C extends Constraints>(
+  this: BaseDriver<C>,
+  script: string,
+  protoArgs: readonly [StringRecord<unknown>] | readonly unknown[],
+) {
+  const Driver = this.constructor as DriverClass<Driver<C>>;
+  const commandMetadata = {...Driver.executeMethodMap?.[script]};
+  if (!commandMetadata.command) {
+    const availableScripts = Object.keys(Driver.executeMethodMap ?? {});
+    if (util.isEmpty(availableScripts)) {
       throw new errors.UnsupportedOperationError(
-        (suggestion
-          ? `Unsupported execute method '${script}', did you mean '${suggestion}'? `
-          : `Unsupported execute method '${script}'. `) +
+        `Unsupported execute method '${script}'. ` +
           `Make sure the installed ${Driver.name} is up-to-date. ` +
-          `Execute methods available in the current driver version are: ` +
-          sortedMatches.join(', '),
+          `The current driver version does not define any execute methods.`,
       );
     }
-    const args = validateExecuteMethodParams(protoArgs as any[], commandMetadata.params);
-    const commandName = commandMetadata.command as keyof BaseDriver<C>;
-    const command = this[commandName] as DriverCommand;
-    return await command.call(this, ...args);
-  },
-} as IExecuteCommands;
+    const {sorted: sortedMatches, suggestion} = rankLevenshteinCandidates(script, availableScripts);
+    throw new errors.UnsupportedOperationError(
+      (suggestion
+        ? `Unsupported execute method '${script}', did you mean '${suggestion}'? `
+        : `Unsupported execute method '${script}'. `) +
+        `Make sure the installed ${Driver.name} is up-to-date. ` +
+        `Execute methods available in the current driver version are: ` +
+        sortedMatches.join(', '),
+    );
+  }
+  const args = validateExecuteMethodParams(protoArgs as any[], commandMetadata.params);
+  const commandName = commandMetadata.command as keyof BaseDriver<C>;
+  const command = this[commandName] as DriverCommand;
+  return await command.call(this, ...args);
+}

@@ -8,64 +8,55 @@ declare module '../driver.js' {
   interface BaseDriver<C extends Constraints> extends IBidiCommands {}
 }
 
-export const BidiCommands: IBidiCommands = {
-  async bidiSubscribe<C extends Constraints>(this: BaseDriver<C>, events: string[], contexts: string[] = ['']) {
-    assertStringList(events, 'events');
-    assertContexts(contexts);
-    const subscription = util.uuidV4();
-    getSubscriptions(this).set(subscription, new Map(events.map((event) => [event, [...contexts]])));
-    refreshEventSubscriptions(this);
-    return {subscription};
-  },
+/**
+ * Subscribe the current BiDi connection to one or more events, optionally scoped to contexts
+ *
+ * @param events - the names of the events to subscribe to
+ * @param contexts - the context ids to scope the subscription to; an empty string means all contexts
+ */
+export async function bidiSubscribe<C extends Constraints>(
+  this: BaseDriver<C>,
+  events: string[],
+  contexts: string[] = [''],
+): Promise<void> {
+  for (const event of events) {
+    this.bidiEventSubs[event] = contexts;
+  }
+}
 
-  async bidiUnsubscribe<C extends Constraints>(
-    this: BaseDriver<C>,
-    events?: string[],
-    contexts?: string[],
-    subscriptions?: string[],
-  ) {
-    const registered = getSubscriptions(this);
-    if (subscriptions === undefined) {
-      const contextsToRemove = contexts ?? [''];
-      assertStringList(events, 'events');
-      assertContexts(contextsToRemove);
-      for (const subscription of registered.values()) {
-        for (const event of events) {
-          const remaining = subscription.get(event)?.filter((c) => !contextsToRemove.includes(c));
-          if (remaining?.length) {
-            subscription.set(event, remaining);
-          } else {
-            subscription.delete(event);
-          }
-        }
-      }
-      refreshEventSubscriptions(this);
-      return;
+/**
+ * Unsubscribe the current BiDi connection from one or more events, optionally scoped to contexts
+ *
+ * @param events - the names of the events to unsubscribe from
+ * @param contexts - the context ids to remove from the subscription; an empty string means all contexts
+ */
+export async function bidiUnsubscribe<C extends Constraints>(
+  this: BaseDriver<C>,
+  events: string[],
+  contexts: string[] = [''],
+): Promise<void> {
+  for (const event of events) {
+    if (!this.bidiEventSubs[event]) {
+      continue;
     }
+    this.bidiEventSubs[event] = this.bidiEventSubs[event].filter((c) => !contexts.includes(c));
+    if (this.bidiEventSubs[event].length === 0) {
+      delete this.bidiEventSubs[event];
+    }
+  }
+}
 
-    assertStringList(subscriptions, 'subscriptions');
-    if (events !== undefined || contexts !== undefined) {
-      throw new errors.InvalidArgumentError('subscriptions cannot be combined with events or contexts');
-    }
-    // validate everything before removing anything
-    for (const id of subscriptions) {
-      if (!registered.has(id)) {
-        throw new errors.InvalidArgumentError(`Unknown subscription id: ${id}`);
-      }
-    }
-    for (const id of subscriptions) {
-      registered.delete(id);
-    }
-    refreshEventSubscriptions(this);
-  },
-
-  async bidiStatus<C extends Constraints>(this: BaseDriver<C>): Promise<DriverStatus> {
-    const result = await this.getStatus();
-    const base: Record<string, unknown> = util.isPlainObject(result) ? {...result} : {};
-    return {
-      ...base,
-      ready: 'ready' in base ? (base.ready as boolean) : true,
-      message: 'message' in base ? (base.message as string) : `${this.constructor.name} is ready to accept commands`,
-    };
-  },
-};
+/**
+ * Get the BiDi `session.status` response, derived from {@linkcode BaseDriver.getStatus}
+ *
+ * @returns The driver status, with `ready`/`message` defaults filled in if not already present
+ */
+export async function bidiStatus<C extends Constraints>(this: BaseDriver<C>): Promise<DriverStatus> {
+  const result = await this.getStatus();
+  const base: Record<string, unknown> = util.isPlainObject(result) ? {...result} : {};
+  return {
+    ...base,
+    ready: 'ready' in base ? (base.ready as boolean) : true,
+    message: 'message' in base ? (base.message as string) : `${this.constructor.name} is ready to accept commands`,
+  };
+}

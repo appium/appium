@@ -1,52 +1,162 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import type {Constraints, Element, IFindCommands} from '@appium/types';
 
 import {errors} from '../../protocol/index.js';
 import type {BaseDriver} from '../driver.js';
 
 declare module '../driver.js' {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface BaseDriver<C extends Constraints> extends IFindCommands {}
 }
 
-async function findElOrEls<C extends Constraints>(
+/**
+ * Find a UI element given a locator strategy and a selector, erroring if it can't be found
+ * @see {@link https://w3c.github.io/webdriver/#find-element}
+ *
+ * @param strategy - the locator strategy
+ * @param selector - the selector to combine with the strategy to find the specific element
+ *
+ * @returns The element object encoding the element id which can be used in element-related
+ * commands
+ */
+export async function findElement<C extends Constraints>(this: BaseDriver<C>, strategy: string, selector: string) {
+  return await this.findElOrElsWithProcessing(strategy, selector, false);
+}
+
+/**
+ * Find a list of all UI elements matching a given locator strategy and a selector
+ * @see {@link https://w3c.github.io/webdriver/#find-elements}
+ *
+ * @param strategy - the locator strategy
+ * @param selector - the selector to combine with the strategy to find the specific elements
+ *
+ * @returns A possibly-empty list of element objects
+ */
+export async function findElements<C extends Constraints>(this: BaseDriver<C>, strategy: string, selector: string) {
+  return await this.findElOrElsWithProcessing(strategy, selector, true);
+}
+
+/**
+ * Find a UI element given a locator strategy and a selector, erroring if it can't be found. Only
+ * look for elements among the set of descendants of a given element
+ * @see {@link https://w3c.github.io/webdriver/#find-element-from-element}
+ *
+ * @param strategy - the locator strategy
+ * @param selector - the selector to combine with the strategy to find the specific element
+ * @param elementId - the id of the element to use as the search basis
+ *
+ * @returns The element object encoding the element id which can be used in element-related
+ * commands
+ */
+export async function findElementFromElement<C extends Constraints>(
+  this: BaseDriver<C>,
+  strategy: string,
+  selector: string,
+  elementId: string,
+) {
+  return await this.findElOrElsWithProcessing(strategy, selector, false, elementId);
+}
+
+/**
+ * Find a list of all UI elements matching a given locator strategy and a selector. Only
+ * look for elements among the set of descendants of a given element
+ * @see {@link https://w3c.github.io/webdriver/#find-elements-from-element}
+ *
+ * @param strategy - the locator strategy
+ * @param selector - the selector to combine with the strategy to find the specific elements
+ * @param elementId - the id of the element to use as the search basis
+ *
+ * @returns A possibly-empty list of element objects
+ */
+export async function findElementsFromElement<C extends Constraints>(
+  this: BaseDriver<C>,
+  strategy: string,
+  selector: string,
+  elementId: string,
+) {
+  return await this.findElOrElsWithProcessing(strategy, selector, true, elementId);
+}
+
+/**
+ * A helper method that returns one or more UI elements based on the search criteria
+ *
+ * @param strategy - the locator strategy
+ * @param selector - the selector
+ * @param mult - whether or not we want to find multiple elements
+ * @param context - the id of the element to scope the search to, if searching within a specific element's descendants
+ *
+ * @returns A single element or list of elements
+ */
+export async function findElOrEls<C extends Constraints>(
   this: BaseDriver<C>,
   strategy: string,
   selector: string,
   mult: true,
   context?: any,
 ): Promise<Element[]>;
-async function findElOrEls<C extends Constraints>(
+export async function findElOrEls<C extends Constraints>(
   this: BaseDriver<C>,
   strategy: string,
   selector: string,
   mult: false,
   context?: any,
 ): Promise<Element>;
-async function findElOrEls<C extends Constraints>(
+export async function findElOrEls<C extends Constraints>(
+  this: BaseDriver<C>,
+  strategy: string,
+  selector: string,
+  mult: boolean,
+  context?: any,
+): Promise<Element[] | Element>;
+export async function findElOrEls<C extends Constraints>(
   this: BaseDriver<C>,
   strategy: string,
   selector: string,
   mult: boolean,
   context?: any,
 ): Promise<Element[] | Element> {
+  void strategy;
+  void selector;
+  void mult;
+  void context;
   throw new errors.NotImplementedError('Not implemented yet for find.');
 }
 
-async function findElOrElsWithProcessing<C extends Constraints>(
+/**
+ * Get the current page/app source as HTML/XML
+ * @see {@link https://w3c.github.io/webdriver/#get-page-source}
+ *
+ * @returns The UI hierarchy in a platform-appropriate format (e.g., HTML for a web page)
+ */
+export async function getPageSource<C extends Constraints>(this: BaseDriver<C>): Promise<string> {
+  throw new errors.NotImplementedError('Not implemented yet for find.');
+}
+
+/**
+ * This is a wrapper for {@linkcode findElOrEls} that validates locator strategies
+ * and implements the `appium:printPageSourceOnFindFailure` capability
+ *
+ * @param strategy - the locator strategy
+ * @param selector - the selector
+ * @param mult - whether or not we want to find multiple elements
+ * @param context - the id of the element to scope the search to, if searching within a specific element's descendants
+ *
+ * @returns A single element or list of elements
+ */
+export async function findElOrElsWithProcessing<C extends Constraints>(
   this: BaseDriver<C>,
   strategy: string,
   selector: string,
   mult: true,
   context?: any,
 ): Promise<Element[]>;
-async function findElOrElsWithProcessing<C extends Constraints>(
+export async function findElOrElsWithProcessing<C extends Constraints>(
   this: BaseDriver<C>,
   strategy: string,
   selector: string,
   mult: false,
   context?: any,
 ): Promise<Element>;
-async function findElOrElsWithProcessing<C extends Constraints>(
+export async function findElOrElsWithProcessing<C extends Constraints>(
   this: BaseDriver<C>,
   strategy: string,
   selector: string,
@@ -55,7 +165,6 @@ async function findElOrElsWithProcessing<C extends Constraints>(
 ): Promise<Element[] | Element> {
   this.validateLocatorStrategy(strategy);
   try {
-    // @ts-expect-error TS does not understand how to deal with the overload here
     return await this.findElOrEls(strategy, selector, mult, context);
   } catch (err) {
     if (this.opts.printPageSourceOnFindFailure) {
@@ -79,39 +188,3 @@ async function findElOrElsWithProcessing<C extends Constraints>(
     throw err;
   }
 }
-
-export const FindCommands: IFindCommands = {
-  async findElement<C extends Constraints>(this: BaseDriver<C>, strategy: string, selector: string) {
-    return await this.findElOrElsWithProcessing(strategy, selector, false);
-  },
-
-  async findElements<C extends Constraints>(this: BaseDriver<C>, strategy: string, selector: string) {
-    return await this.findElOrElsWithProcessing(strategy, selector, true);
-  },
-
-  async findElementFromElement<C extends Constraints>(
-    this: BaseDriver<C>,
-    strategy: string,
-    selector: string,
-    elementId: string,
-  ) {
-    return await this.findElOrElsWithProcessing(strategy, selector, false, elementId);
-  },
-
-  async findElementsFromElement<C extends Constraints>(
-    this: BaseDriver<C>,
-    strategy: string,
-    selector: string,
-    elementId: string,
-  ) {
-    return await this.findElOrElsWithProcessing(strategy, selector, true, elementId);
-  },
-
-  findElOrEls,
-
-  async getPageSource<C extends Constraints>(this: BaseDriver<C>) {
-    throw new errors.NotImplementedError('Not implemented yet for find.');
-  },
-
-  findElOrElsWithProcessing,
-};

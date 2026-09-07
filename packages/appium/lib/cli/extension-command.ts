@@ -4,7 +4,7 @@ import {pathToFileURL} from 'node:url';
 import {inspect} from 'node:util';
 
 import {console, fs, system, util} from '@appium/support';
-import type {AppiumLogger, ExtensionType, IDoctorCheck} from '@appium/types';
+import type {ExtensionType, IDoctorCheck} from '@appium/types';
 import type {
   ExtInstallReceipt as AppiumExtInstallReceipt,
   ExtManifest as AppiumExtManifest,
@@ -161,6 +161,9 @@ type GetInstallationReceiptOpts<ExtType extends ExtensionType = ExtensionType> =
 
 type InstalledExtensionLike = {installType?: InstallType; installPath?: string};
 
+/** Minimal logger shape accepted where callers must control whether output can hit `STDOUT`. */
+type InfoSink = {info(message?: string, ...args: any[]): void};
+
 class NotUpdatableError extends Error {}
 
 class NoUpdatesAvailableError extends Error {}
@@ -191,6 +194,15 @@ export abstract class ExtensionCliCommand<ExtType extends ExtensionType = Extens
     this.config = config;
     this.log = new console.CliConsole({jsonMode: json});
     this.isJsonOutput = Boolean(json);
+  }
+
+  /**
+   * Renders the config's pending manifest-validation summary (from the `loadExtensions()` call at
+   * CLI startup) through this command's own JSON-mode-aware console, so it's suppressed under
+   * `--json` just like any other non-JSON output.
+   */
+  printPendingValidationSummary(): void {
+    this.config.printValidationSummary(this.log);
   }
 
   /**
@@ -1153,13 +1165,14 @@ export abstract class ExtensionCliCommand<ExtType extends ExtensionType = Extens
  *
  * @param driverConfig - active driver extension config
  * @param pluginConfig - active plugin extension config
- * @param logger - logger instance used for non-fatal symlink errors
+ * @param logger - sink for non-fatal symlink errors; pass a JSON-mode-aware `CliConsole` so this
+ * never writes to `STDOUT` under `--json`
  * @returns resolves when symlink injection has completed for all extensions
  */
 export async function injectAppiumSymlinks(
   driverConfig: ExtensionConfig<any>,
   pluginConfig: ExtensionConfig<any>,
-  logger: AppiumLogger,
+  logger: InfoSink,
 ): Promise<void> {
   const isNpmInstalledExtension = (
     details: InstalledExtensionLike,
@@ -1226,7 +1239,7 @@ async function getRemoteExtensionVersionReq(pkgName: string, pkgVer?: string): P
  *
  * @param dstFolder The destination folder where the symlink should be created
  */
-async function injectAppiumSymlink(dstFolder: string, logger: AppiumLogger): Promise<void> {
+async function injectAppiumSymlink(dstFolder: string, logger: InfoSink): Promise<void> {
   try {
     const symlinkPath = path.join(dstFolder, path.basename(appiumPackageRoot));
     if ((await fs.exists(dstFolder)) && !(await fs.exists(symlinkPath))) {

@@ -43,7 +43,12 @@ export class Log extends EventEmitter implements Logger {
   prefixStyle: StyleObject = {fg: 'magenta'};
   headingStyle: StyleObject = {fg: 'white', bg: 'black'};
   heading = '';
-  stream: Writable | null = process.stdout; // Output for levels below `stderrLevel`. Set to null when using custom output (e.g. Winston)
+  // `stream` and `errorStream` both default to STDERR. This class is used directly (unwrapped) by
+  // code that may run during a `--json` CLI command, where a stray STDOUT write corrupts the JSON
+  // payload; call sites that need the STDOUT/STDERR split render through a JSON-mode-aware sink
+  // instead (e.g. `ExtensionConfig.printValidationSummary`) rather than relying on this default.
+  // The server path nulls both streams out once Winston takes over, in logsink.ts.
+  stream: Writable | null = process.stderr; // Output for levels below `stderrLevel`. Set to null when using custom output (e.g. Winston)
   errorStream: Writable | null = process.stderr; // Output for levels at/above `stderrLevel`. Set to null when using custom output (e.g. Winston)
   stderrLevel: LogLevel | string = 'error'; // Minimum severity (inclusive) routed to `errorStream` instead of `stream`
 

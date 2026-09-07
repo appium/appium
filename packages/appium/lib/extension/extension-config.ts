@@ -33,14 +33,41 @@ export type ExtManifestWithSchema<E extends ExtensionType> = ExtManifest<E> & {
 export type ExtensionConfigMutationOpts = {write?: boolean};
 
 /**
+ * Results of the most recent {@linkcode ExtensionConfig.validate} call, not yet rendered anywhere.
+ * `validate()` only computes this; call {@linkcode ExtensionConfig.printValidationSummary} to display it,
+ * so the caller can pick a sink appropriate to its own output context (e.g. a JSON-mode-aware CLI
+ * console, or the server's Winston-backed logger).
+ */
+interface ExtensionValidationSummary {
+  /** Number of extensions considered; used only for pluralizing the summary's lead-in line. */
+  checkedCount: number;
+  errorSummaries: string[];
+  warningSummaries: string[];
+}
+
+/** Minimal logger shape needed to render a {@linkcode ExtensionValidationSummary}. */
+export type ValidationSummarySink = {
+  warn(message?: string, ...args: any[]): void;
+  error(message?: string, ...args: any[]): void;
+};
+
+const EMPTY_VALIDATION_SUMMARY: ExtensionValidationSummary = {
+  checkedCount: 0,
+  errorSummaries: [],
+  warningSummaries: [],
+};
+
+/**
  * Shared configuration and validation for installed Appium extensions (drivers or plugins).
  * Subclasses fix the extension kind; do not instantiate this class directly.
  */
 export abstract class ExtensionConfig<ExtType extends ExtensionType> {
   readonly extensionType: ExtType;
   readonly manifest: Manifest;
-  installedExtensions: ExtRecord<ExtType>;
-  #listDataCache: ExtensionList<ExtType> | undefined;
+  readonly installedExtensions: ExtRecord<ExtType>;
+  /** Populated by {@linkcode ExtensionConfig.validate}; see {@linkcode ExtensionValidationSummary}. */
+  private validationSummary: ExtensionValidationSummary = EMPTY_VALIDATION_SUMMARY;
+  private listDataCache: ExtensionList<ExtType> | undefined;
 
   protected constructor(extensionType: ExtType, manifest: Manifest) {
     this.extensionType = extensionType;
@@ -326,8 +353,8 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
   }
 
   /**
-   * Validates all entries in `exts`, logs summaries, and removes keys that have blocking errors.
-   * Intended for subclasses’ `validate` implementation.
+   * Validates all entries in `exts`, records a summary (see {@linkcode ExtensionConfig.printValidationSummary}),
+   * and removes keys that have blocking errors. Intended for subclasses’ `validate` implementation.
    */
   protected async _validate(exts: ExtRecord<ExtType>): Promise<ExtRecord<ExtType>> {
     const errorMap = new Map<string, ExtManifestProblem[]>();
@@ -346,47 +373,61 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     }
 
     const {errorSummaries, warningSummaries} = this.getValidationResultSummaries(errorMap, warningMap);
+    this.validationSummary = {checkedCount: errorMap.size, errorSummaries, warningSummaries};
+    return exts;
+  }
+
+  /**
+   * Renders the summary from the most recent {@linkcode ExtensionConfig.validate} call via `sink`,
+   * then clears it so a later call doesn't re-print the same summary. Errors take precedence:
+   * warnings are only shown when there were no errors. No-op if there's nothing to report.
+   *
+   * @param sink - Where to write the summary; e.g. a JSON-mode-aware CLI console for extension
+   * subcommands, or the server's own (by then Winston-backed) logger once it has taken over.
+   */
+  printValidationSummary(sink: ValidationSummarySink): void {
+    const {checkedCount, errorSummaries, warningSummaries} = this.validationSummary;
+    this.validationSummary = EMPTY_VALIDATION_SUMMARY;
 
     if (!util.isEmpty(errorSummaries)) {
-      log.error(
+      sink.error(
         `Appium encountered ${util.pluralize(
           'error',
-          errorMap.size,
+          checkedCount,
           true,
         )} while validating ${this.extensionType}s found in manifest ${this.manifestPath}`,
       );
       for (const summary of errorSummaries) {
-        log.error(summary);
+        sink.error(summary);
       }
     } else if (!util.isEmpty(warningSummaries)) {
       // only display warnings if there are no errors!
-      log.warn(
+      sink.warn(
         `Appium encountered ${util.pluralize(
           'warning',
-          warningMap.size,
+          checkedCount,
           true,
         )} while validating ${this.extensionType}s found in manifest ${this.manifestPath}`,
       );
       for (const summary of warningSummaries) {
-        log.warn(summary);
+        sink.warn(summary);
       }
     }
-    return exts;
   }
 
   /**
    * Fetches `appium driver|plugin list`-style data via the CLI command class; result is cached.
    */
   protected async getListData(): Promise<ExtensionList<ExtType>> {
-    if (this.#listDataCache) {
-      return this.#listDataCache;
+    if (this.listDataCache) {
+      return this.listDataCache;
     }
     // Import here to avoid circular dependency with cli/extension
     const {commandClasses} = await import('../cli/extension.js');
     const CommandClass = (commandClasses as StringRecord)[this.extensionType];
     const cmd = new CommandClass({config: this, json: true}) as ExtensionCliCommand<ExtType>;
     const listData = await cmd.list({showInstalled: true, showUpdates: true});
-    this.#listDataCache = listData;
+    this.listDataCache = listData;
     return listData;
   }
 

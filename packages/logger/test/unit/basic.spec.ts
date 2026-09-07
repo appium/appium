@@ -264,8 +264,8 @@ describe('basic', function () {
       (log as any).write(null, 'message');
     });
 
-    it('defaults stream to stdout, errorStream to stderr, and stderrLevel to error', function () {
-      assert.strictEqual(log.stream, process.stdout);
+    it('defaults stream and errorStream to stderr, and stderrLevel to error', function () {
+      assert.strictEqual(log.stream, process.stderr);
       assert.strictEqual(log.errorStream, process.stderr);
       assert.strictEqual(log.stderrLevel, 'error');
     });

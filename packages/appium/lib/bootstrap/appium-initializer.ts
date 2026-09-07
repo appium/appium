@@ -1,4 +1,4 @@
-import {util} from '@appium/support';
+import {console as supportConsole, util} from '@appium/support';
 import type {DriverOpts} from '@appium/types';
 import type {
   Args,
@@ -77,6 +77,8 @@ export class AppiumInitializer {
     }
 
     if (isSetupCommandArgs(preConfigArgs)) {
+      driverConfig.printValidationSummary(logger);
+      pluginConfig.printValidationSummary(logger);
       await runSetupCommand(preConfigArgs, driverConfig, pluginConfig);
       return {} as InitResult<Cmd>;
     }
@@ -135,6 +137,8 @@ export class AppiumInitializer {
 
     if (preConfigArgs.showConfig) {
       showConfig(getNonDefaultServerArgs(preConfigArgs as Args), configResult, defaults, serverArgs);
+      driverConfig.printValidationSummary(logger);
+      pluginConfig.printValidationSummary(logger);
       return {} as InitResult<Cmd>;
     }
 
@@ -144,10 +148,15 @@ export class AppiumInitializer {
         pluginConfig,
         appiumHome,
       });
+      driverConfig.printValidationSummary(logger);
+      pluginConfig.printValidationSummary(logger);
       return {} as InitResult<Cmd>;
     }
 
     await logsinkInit(serverArgs);
+    // Deferred from loadExtensions() so these render through the now-active (Winston-backed) logger.
+    driverConfig.printValidationSummary(logger);
+    pluginConfig.printValidationSummary(logger);
     await this.applyLogFilters(serverArgs);
 
     if (!serverArgs.noPermsCheck) {
@@ -201,7 +210,10 @@ export class AppiumInitializer {
     if (isDriverCommandArgs(preConfigArgs) || isPluginCommandArgs(preConfigArgs)) {
       const cmd = isDriverCommandArgs(preConfigArgs) ? preConfigArgs.driverCommand : preConfigArgs.pluginCommand;
       if (cmd === 'install') {
-        await injectAppiumSymlinks(driverConfig, pluginConfig, logger);
+        // Match the same command's own console so a non-fatal symlink error never lands on
+        // STDOUT under `--json` (unlike the raw npmlog logger, which isn't JSON-mode-aware).
+        const symlinkLog = new supportConsole.CliConsole({jsonMode: Boolean(preConfigArgs.json)});
+        await injectAppiumSymlinks(driverConfig, pluginConfig, symlinkLog);
       }
     }
   }

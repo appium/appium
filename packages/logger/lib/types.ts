@@ -9,7 +9,9 @@ export interface Logger extends EventEmitter {
   prefixStyle: StyleObject;
   headingStyle: StyleObject;
   heading: string;
-  stream: Writable | null; // Defaults to process.stderr; set to null when using custom output (e.g. Winston)
+  stream: Writable | null; // Output for levels below `stderrLevel`; defaults to process.stdout. Set to null when using custom output (e.g. Winston)
+  errorStream: Writable | null; // Output for levels at/above `stderrLevel`; defaults to process.stderr. Set to null when using custom output (e.g. Winston)
+  stderrLevel: string; // Minimum severity (inclusive) routed to `errorStream` instead of `stream`; defaults to 'error'
 
   /**
    * Creates a log message

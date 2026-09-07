@@ -107,6 +107,7 @@ describe('basic', function () {
         end: () => {},
       }) as typeof s;
       log.stream = s as any;
+      log.errorStream = s as any;
       log.heading = 'npm';
     });
 
@@ -174,12 +175,12 @@ describe('basic', function () {
   describe('utils', function () {
     it('enableColor', function () {
       log.enableColor();
-      assert.ok((log as any)._format('x', {fg: 'red'}).includes('\u001b'));
+      assert.ok((log as any)._format(log.stream, 'x', {fg: 'red'}).includes('\u001b'));
     });
 
     it('disableColor', function () {
       log.disableColor();
-      assert.strictEqual((log as any)._format('x', {fg: 'red'}), 'x');
+      assert.strictEqual((log as any)._format(log.stream, 'x', {fg: 'red'}), 'x');
     });
 
     it('_buffer while paused', function () {
@@ -260,8 +261,7 @@ describe('basic', function () {
     });
 
     it('write with no stream', function () {
-      log.stream = null as any;
-      (log as any).write('message');
+      (log as any).write(null, 'message');
     });
   });
 
@@ -281,32 +281,31 @@ describe('basic', function () {
     });
 
     it('with nonexistent stream', function () {
-      log.stream = null as any;
-      assert.strictEqual((log as any)._format('message'), undefined);
+      assert.strictEqual((log as any)._format(null, 'message'), undefined);
     });
     it('fg', function () {
       log.enableColor();
-      const o = (log as any)._format('test message', {bg: 'blue'});
+      const o = (log as any)._format(log.stream, 'test message', {bg: 'blue'});
       assert.ok(o.includes('\u001b[44mtest message\u001b[0m'));
     });
     it('bg', function () {
       log.enableColor();
-      const o = (log as any)._format('test message', {bg: 'white'});
+      const o = (log as any)._format(log.stream, 'test message', {bg: 'white'});
       assert.ok(o.includes('\u001b[47mtest message\u001b[0m'));
     });
     it('bold', function () {
       log.enableColor();
-      const o = (log as any)._format('test message', {bold: true});
+      const o = (log as any)._format(log.stream, 'test message', {bold: true});
       assert.ok(o.includes('\u001b[1mtest message\u001b[0m'));
     });
     it('underline', function () {
       log.enableColor();
-      const o = (log as any)._format('test message', {underline: true});
+      const o = (log as any)._format(log.stream, 'test message', {underline: true});
       assert.ok(o.includes('\u001b[4mtest message\u001b[0m'));
     });
     it('inverse', function () {
       log.enableColor();
-      const o = (log as any)._format('test message', {inverse: true});
+      const o = (log as any)._format(log.stream, 'test message', {inverse: true});
       assert.ok(o.includes('\u001b[7mtest message\u001b[0m'));
     });
   });

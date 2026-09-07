@@ -173,10 +173,23 @@ function toBufferDeep(value: unknown): unknown {
     return Buffer.from(value.buffer, value.byteOffset, value.byteLength);
   }
   if (Array.isArray(value)) {
-    return value.map(toBufferDeep);
+    let changed = false;
+    const result = value.map((v) => {
+      const converted = toBufferDeep(v);
+      changed ||= converted !== v;
+      return converted;
+    });
+    return changed ? result : value;
   }
   if (value !== null && typeof value === 'object') {
-    return Object.fromEntries(Object.entries(value).map(([key, v]) => [key, toBufferDeep(v)]));
+    let changed = false;
+    const result: Record<string, unknown> = {};
+    for (const [key, v] of Object.entries(value)) {
+      const converted = toBufferDeep(v);
+      changed ||= converted !== v;
+      result[key] = converted;
+    }
+    return changed ? result : value;
   }
   return value;
 }

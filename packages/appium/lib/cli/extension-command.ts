@@ -26,7 +26,7 @@ import {
   INSTALL_TYPE_GITHUB,
   INSTALL_TYPE_LOCAL,
   INSTALL_TYPE_NPM,
-} from '../extension/extension-config.js';
+} from '../extension/manifest/index.js';
 import {appiumPackageRoot, compact, hasAppiumDependency, npm, npmPackage, packageDidChange} from '../utils/index.js';
 import {RingBuffer, spinWith} from './utils.js';
 

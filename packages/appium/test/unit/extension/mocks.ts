@@ -178,31 +178,20 @@ export function resetMockDefaults(mocks: InitMocksResult): void {
 }
 
 /**
- * Mocks `@appium/support` and `lib/utils/index.js` for the module-under-test, using the mocks
- * from {@link initMocks}. Call once from a suite's `before()` hook — `before()` only gets a
- * `SuiteContext`, which has no `.mock`, so this uses the standalone `mock` export instead of
- * `t.mock`. That tracker isn't scoped to one test and doesn't auto-restore, so pair this with
- * `after(() => mock.reset())` in the same file to avoid leaking the mock into other spec files
- * (all spec files share one process/module registry under `node --test`). Call from a spec
- * file in `test/unit/extension/` (the relative specifiers below are resolved from this file's
- * own location, which is the same directory).
+ * Mocks `@appium/support` and the `lib/utils/index.js` barrel (not `npm.js`/`is-package-changed.js`
+ * directly — a barrel re-export is a live binding resolved at the barrel's own link time, so
+ * mocking a leaf file doesn't retroactively change an already-linked barrel), using the mocks
+ * from {@link initMocks}.
  *
- * Mocks `lib/utils/index.js` (the barrel) rather than `npm.js`/`is-package-changed.js`
- * directly: `extension-config.ts` et al. import `resolveFrom`/`npm` through that barrel, and a
- * barrel's re-export is a live binding resolved at the barrel's own link time — mocking the
- * leaf file doesn't retroactively change a barrel that's already linked.
+ * Call once from a suite's `before()` (which has no `t.mock`, hence the standalone `mock` export)
+ * in a spec file under `test/unit/extension/`, and pair with `after(() => mock.reset())` — the
+ * tracker doesn't auto-restore and spec files share one module registry under `node --test`.
  *
- * IMPORTANT — this only works if the file that directly imports the mocked module (e.g.
- * `extension-config.js`, which imports `resolveFrom`/`@appium/support`) has never itself been
- * linked before `mock.module()` runs. It is fine if `@appium/support`/`utils/index.js`
- * themselves were already loaded elsewhere (e.g. transitively via `test/helpers.ts`) — Node
- * still redirects any *new* linking of a consumer to the mocked registry entry. What breaks it
- * is a *static* top-level import in the spec file that itself statically imports the direct
- * consumer (e.g. `import {Manifest} from '.../manifest.js'`, since `manifest.ts` directly
- * imports `extension-config.js`) — that import resolves before this file's own `before()` hook
- * runs, permanently binding the consumer to the real, unmocked dependencies. When a spec file
- * needs such a module, import it dynamically inside `before()`, after calling this function,
- * rather than as a static top-level import.
+ * Only works if the module that directly imports the mocked dependency (e.g. `extension-config.js`)
+ * hasn't been linked yet. A *static* top-level import of such a consumer in the spec file (e.g.
+ * `Manifest` from `manifest/manifest.js`, which imports `extension-config.js`) resolves before
+ * this function's `before()` hook runs and permanently binds it to the real dependencies —
+ * import it dynamically inside `before()`, after calling this function, instead.
  */
 export function applyExtensionMocks(mocks: InitMocksResult): void {
   // `default` is destructured out: on Node 22, passing a `default` key through

@@ -42,7 +42,7 @@ describe('ExtensionConfig', function () {
     MockNpm = mocks.MockNpm;
     const extensionConfigMod = await import(`../../../lib/extension/extension-config.js?t=${importCounter++}`);
     ({ExtensionConfig, resolveEsmEntryPoint} = extensionConfigMod);
-    const manifestMod = await import(`../../../lib/extension/manifest.js?t=${importCounter++}`);
+    const manifestMod = await import(`../../../lib/extension/manifest/manifest.js?t=${importCounter++}`);
     ({Manifest} = manifestMod);
   });
 
@@ -139,6 +139,25 @@ describe('ExtensionConfig', function () {
 
         it('should return a problem', function () {
           assert.deepStrictEqual(config.getGenericConfigProblems(extData, extData.pkgName), [
+            {
+              err: 'Invalid or missing `appium.mainClass` field in my `package.json` and/or `mainClass` field in `extensions.yaml` (must be a string)',
+              val: undefined,
+            },
+          ]);
+        });
+      });
+
+      describe('when the extension data is not an object at all (e.g. a corrupted manifest entry)', function () {
+        it('should return a problem for every required field', function () {
+          assert.deepStrictEqual(config.getGenericConfigProblems('garbage' as any, 'derp'), [
+            {
+              err: 'Invalid or missing `version` field in my `package.json` and/or `extensions.yaml` (must be a string)',
+              val: undefined,
+            },
+            {
+              err: 'Invalid or missing `name` field in my `package.json` and/or `extensions.yaml` (must be a string)',
+              val: undefined,
+            },
             {
               err: 'Invalid or missing `appium.mainClass` field in my `package.json` and/or `mainClass` field in `extensions.yaml` (must be a string)',
               val: undefined,

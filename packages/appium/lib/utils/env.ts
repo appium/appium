@@ -74,7 +74,9 @@ export const findAppiumDependencyPackage = util.memoize(async function findAppiu
  * Read a `package.json` in dir `cwd`. If none is found, resolves with `undefined`.
  * @returns Parsed package data, or `undefined` when `package.json` is missing in `cwd`
  */
-async function readPackageInDir(cwd: string): Promise<NormalizedPackageJson | undefined> {
+export const readPackageInDir = util.memoize(async function _readPackageInDir(
+  cwd: string,
+): Promise<NormalizedPackageJson | undefined> {
   try {
     return await readPackage({cwd, normalize: true});
   } catch (err) {
@@ -83,7 +85,7 @@ async function readPackageInDir(cwd: string): Promise<NormalizedPackageJson | un
     }
     throw err;
   }
-}
+});
 
 function isMissingPackageJsonError(err: unknown): boolean {
   return err instanceof Error && 'code' in err && (err as NodeJS.ErrnoException).code === 'ENOENT';

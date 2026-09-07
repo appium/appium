@@ -175,7 +175,9 @@ describe('finding elements by image', function () {
       assert.deepStrictEqual(await f.findByImage(template, d as any, {multiple: true}), []);
     });
     it('should respect implicit wait', async function () {
-      (d as any).setImplicitWait(10);
+      // the wait budget must exceed the 500ms poll interval, otherwise whether the retry happens
+      // at all depends on how quickly the first attempt returns
+      (d as any).setImplicitWait(2000);
       compareStub.resetHistory();
       compareStub.returns({rect, score});
       compareStub.onFirstCall().throws(new Error('Cannot find any occurrences'));

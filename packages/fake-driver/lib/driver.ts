@@ -152,7 +152,7 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
     });
   }
 
-  async onIpcInit(): Promise<void> {
+  override async onIpcInit(): Promise<void> {
     const fakeMathSub = this.ipcSubscribe<number>('pluginMath');
     fakeMathSub.on('message', (message: IpcMessage<number>) => {
       this.log.info(`A connected plugin did some math with result ${message.data}`);
@@ -163,12 +163,12 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
     await this.publishClockStatus();
   }
 
-  proxyActive(sessionId?: string): boolean {
+  override proxyActive(sessionId?: string): boolean {
     void sessionId;
     return this._proxyActive;
   }
 
-  canProxy(sessionId?: string): boolean {
+  override canProxy(sessionId?: string): boolean {
     void sessionId;
     return true;
   }

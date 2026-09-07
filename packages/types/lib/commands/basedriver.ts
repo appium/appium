@@ -162,7 +162,7 @@ export interface IFindCommands {
   findElement(strategy: string, selector: string): Promise<Element>;
 
   /**
-   * Find a a list of all UI elements matching a given a locator strategy and a selector
+   * Find a list of all UI elements matching a given locator strategy and a selector
    * @see {@link https://w3c.github.io/webdriver/#find-elements}
    *
    * @param strategy - the locator strategy
@@ -187,7 +187,7 @@ export interface IFindCommands {
   findElementFromElement(strategy: string, selector: string, elementId: string): Promise<Element>;
 
   /**
-   * Find a a list of all UI elements matching a given a locator strategy and a selector. Only
+   * Find a list of all UI elements matching a given locator strategy and a selector. Only
    * look for elements among the set of descendants of a given element
    * @see {@link https://w3c.github.io/webdriver/#find-elements-from-element}
    *
@@ -227,12 +227,13 @@ export interface IFindCommands {
    * @param strategy - the locator strategy
    * @param selector - the selector
    * @param mult - whether or not we want to find multiple elements
-   * @param context - the element to use as the search context basis if desiredCapabilities
+   * @param context - the id of the element to scope the search to, if searching within a specific element's descendants
    *
    * @returns A single element or list of elements
    */
   findElOrEls(strategy: string, selector: string, mult: true, context?: any): Promise<Element[]>;
   findElOrEls(strategy: string, selector: string, mult: false, context?: any): Promise<Element>;
+  findElOrEls(strategy: string, selector: string, mult: boolean, context?: any): Promise<Element[] | Element>;
 
   /**
    * This is a wrapper for {@linkcode findElOrEls} that validates locator strategies
@@ -241,7 +242,7 @@ export interface IFindCommands {
    * @param strategy - the locator strategy
    * @param selector - the selector
    * @param mult - whether or not we want to find multiple elements
-   * @param context - the element to use as the search context basis if desiredCapabilities
+   * @param context - the id of the element to scope the search to, if searching within a specific element's descendants
    *
    * @returns A single element or list of elements
    */

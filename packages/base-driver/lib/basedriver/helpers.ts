@@ -3,7 +3,7 @@ import path from 'node:path';
 import type {Readable} from 'node:stream';
 
 import {fs, node, tempDir, timing, util} from '@appium/support';
-import type {CachedAppInfo, ConfigureAppOptions, DriverHelpers, HTTPHeaders, PostProcessOptions} from '@appium/types';
+import type {CachedAppInfo, ConfigureAppOptions, HTTPHeaders, PostProcessOptions} from '@appium/types';
 import AsyncLock from 'async-lock';
 import axios from 'axios';
 import type {AxiosResponseHeaders, RawAxiosRequestHeaders} from 'axios';
@@ -577,11 +577,3 @@ function readBaseDriverVersion(): string {
   }
   return pkg.version;
 }
-
-export default {
-  configureApp,
-  isPackageOrBundle,
-  duplicateKeys,
-  parseCapsArray,
-  generateDriverLogPrefix,
-} satisfies DriverHelpers;

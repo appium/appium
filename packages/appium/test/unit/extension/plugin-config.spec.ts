@@ -56,7 +56,8 @@ describe('PluginConfig', function () {
     manifest = Manifest.getInstance('/somewhere/');
     resetMockDefaults(mocks);
     mocks.MockAppiumSupport.fs.readFile.resolves(yamlFixture);
-    ({PluginConfig} = await import(`../../../lib/extension/plugin-config.js?t=${importCounter++}`));
+    const mod = await import(`../../../lib/extension/plugin-config.js?t=${importCounter++}`);
+    ({PluginConfig} = mod);
     resetSchema();
   });
 

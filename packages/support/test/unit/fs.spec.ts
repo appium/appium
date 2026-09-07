@@ -169,6 +169,14 @@ describe('fs', {timeout: TEST_TIMEOUT}, function () {
     assert.ok(Array.isArray(tests));
     assert.ok(tests.length > 2);
   });
+  it('glob() with lazy', async function () {
+    const glob = '*.spec.js';
+    const tests: string[] = [];
+    for await (const test of fs.glob(glob, {cwd: import.meta.dirname, lazy: true})) {
+      tests.push(test);
+    }
+    assert.ok(tests.length > 2);
+  });
 
   describe('walkDir()', function () {
     it('walkDir recursive', async function () {

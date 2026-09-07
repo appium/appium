@@ -57,7 +57,6 @@
     "archiver": "8.0.0",
     "asyncbox": "6.4.2",
     "axios": "1.19.0",
-    "glob": "13.0.6",
     "klaw": "4.1.0",
     "lockfile": "1.0.4",
     "mime-types": "3.0.2",

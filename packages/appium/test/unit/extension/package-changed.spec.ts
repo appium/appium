@@ -44,7 +44,8 @@ describe('package-changed', function () {
 
   beforeEach(async function () {
     resetMockDefaults(mocks);
-    ({packageDidChange} = await import(`../../../lib/utils/package-changed.js?t=${importCounter++}`));
+    const mod = await import(`../../../lib/utils/package-changed.js?t=${importCounter++}`);
+    ({packageDidChange} = mod);
   });
 
   describe('packageDidChange()', function () {

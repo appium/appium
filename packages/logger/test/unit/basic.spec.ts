@@ -263,6 +263,85 @@ describe('basic', function () {
     it('write with no stream', function () {
       (log as any).write(null, 'message');
     });
+
+    it('defaults stream to stdout, errorStream to stderr, and stderrLevel to error', function () {
+      assert.strictEqual(log.stream, process.stdout);
+      assert.strictEqual(log.errorStream, process.stderr);
+      assert.strictEqual(log.stderrLevel, 'error');
+    });
+
+    describe('routing by severity', function () {
+      function createFakeStream() {
+        const chunks: string[] = [];
+        const stream = Object.assign(new Stream(), {
+          write: (m: string) => {
+            chunks.push(m);
+            return true;
+          },
+          writable: true,
+          isTTY: false,
+          end: () => {},
+        });
+        return {stream, chunks};
+      }
+
+      let out: ReturnType<typeof createFakeStream>;
+      let err: ReturnType<typeof createFakeStream>;
+
+      beforeEach(function () {
+        out = createFakeStream();
+        err = createFakeStream();
+        log.stream = out.stream as any;
+        log.errorStream = err.stream as any;
+        log.level = 'silly';
+      });
+
+      it('routes levels below stderrLevel to stream only', function () {
+        log.info('t', 'info message');
+        log.warn('t', 'warn message');
+        assert.deepStrictEqual(err.chunks, []);
+        assert.ok(out.chunks.join('').includes('info message'));
+        assert.ok(out.chunks.join('').includes('warn message'));
+      });
+
+      it('routes the error level to errorStream only', function () {
+        log.error('t', 'error message');
+        assert.deepStrictEqual(out.chunks, []);
+        assert.ok(err.chunks.join('').includes('error message'));
+      });
+
+      it('routes a custom level with a higher severity than error to errorStream', function () {
+        log.addLevel('fatal', 6000, {fg: 'red'}, 'FATAL');
+        (log as any).fatal('t', 'fatal message');
+        assert.deepStrictEqual(out.chunks, []);
+        assert.ok(err.chunks.join('').includes('fatal message'));
+      });
+
+      it('respects a reconfigured stderrLevel threshold', function () {
+        log.stderrLevel = 'warn';
+        log.info('t', 'info message');
+        log.warn('t', 'warn message');
+        assert.ok(out.chunks.join('').includes('info message'));
+        assert.ok(err.chunks.join('').includes('warn message'));
+        assert.ok(!out.chunks.join('').includes('warn message'));
+      });
+
+      it('drops error output when errorStream is null without affecting stream', function () {
+        log.errorStream = null;
+        log.info('t', 'info message');
+        log.error('t', 'error message');
+        assert.strictEqual(err.chunks.length, 0);
+        assert.ok(out.chunks.join('').includes('info message'));
+      });
+
+      it('drops non-error output when stream is null without affecting errorStream', function () {
+        log.stream = null;
+        log.info('t', 'info message');
+        log.error('t', 'error message');
+        assert.strictEqual(out.chunks.length, 0);
+        assert.ok(err.chunks.join('').includes('error message'));
+      });
+    });
   });
 
   describe('emitLog', function () {

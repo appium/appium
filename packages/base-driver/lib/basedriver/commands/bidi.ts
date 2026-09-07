@@ -36,9 +36,10 @@ export async function bidiUnsubscribe<C extends Constraints>(
   contexts: string[] = [''],
 ): Promise<void> {
   for (const event of events) {
-    if (this.bidiEventSubs[event]) {
-      this.bidiEventSubs[event] = this.bidiEventSubs[event].filter((c) => !contexts.includes(c));
+    if (!this.bidiEventSubs[event]) {
+      continue;
     }
+    this.bidiEventSubs[event] = this.bidiEventSubs[event].filter((c) => !contexts.includes(c));
     if (this.bidiEventSubs[event].length === 0) {
       delete this.bidiEventSubs[event];
     }

@@ -11,7 +11,7 @@ title: Appium 驱动程序介绍
 在最基本的层面上，驱动程序只是扩展了 Appium 中包含的一个特殊类的 Node.js 类，这个类叫做 `BaseDriver`。 你可以用以下非常简单的几行代码就拥有一个非常接近"可工作"的驱动程序：
 
 ```js
-import BaseDriver from '@appium/base-driver'
+import {BaseDriver} from '@appium/base-driver'
 
 class MyNewDriver extends BaseDriver {
 }

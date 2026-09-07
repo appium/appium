@@ -64,7 +64,10 @@ describe('StoragePlugin', function () {
     );
     driver.addCommand('listStorageItems', async () => (await httpGet(`${baseUrl}/list`)).data.value);
     driver.addCommand('resetStorageItems', async () => (await httpPost(`${baseUrl}/reset`)).data.value);
-    driver.addCommand('deleteStorageItem', async (name: string) => (await httpPost(`${baseUrl}/delete`, {name})).data.value);
+    driver.addCommand(
+      'deleteStorageItem',
+      async (name: string) => (await httpPost(`${baseUrl}/delete`, {name})).data.value,
+    );
   });
 
   afterEach(async function () {

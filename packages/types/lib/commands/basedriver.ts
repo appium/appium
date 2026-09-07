@@ -233,6 +233,7 @@ export interface IFindCommands {
    */
   findElOrEls(strategy: string, selector: string, mult: true, context?: any): Promise<Element[]>;
   findElOrEls(strategy: string, selector: string, mult: false, context?: any): Promise<Element>;
+  findElOrEls(strategy: string, selector: string, mult: boolean, context?: any): Promise<Element[] | Element>;
 
   /**
    * This is a wrapper for {@linkcode findElOrEls} that validates locator strategies

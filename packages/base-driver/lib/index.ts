@@ -6,7 +6,6 @@ export {DeviceSettings} from './basedriver/device-settings.js';
 export {AppiumIpc} from './basedriver/ipc.js';
 
 export {BaseDriver};
-export default BaseDriver;
 export {DEFAULT_BASE_PATH, MAX_LOG_BODY_LENGTH, PROTOCOLS, W3C_ELEMENT_KEY} from './constants.js';
 
 export * from './protocol/index.js';

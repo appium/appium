@@ -80,7 +80,8 @@ describe('AppiumDriver', function () {
     MockConfig.updateBuildInfo.resetBehavior();
     MockConfig.updateBuildInfo.resolves();
 
-    ({AppiumDriver} = await import(`../../lib/appium.js?t=${importCounter++}`));
+    const mod = await import(`../../lib/appium.js?t=${importCounter++}`);
+    ({AppiumDriver} = mod);
   });
 
   afterEach(function () {

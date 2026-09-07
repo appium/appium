@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import {promises as fs} from 'node:fs';
+import path from 'node:path';
 import {describe, it, beforeEach, afterEach, before, after, mock} from 'node:test';
 
 import type {DriverType, PluginType} from '@appium/types';
@@ -42,7 +43,8 @@ describe('Manifest', function () {
     resetMockDefaults(mocks);
     migrateStub.resolves();
     MockAppiumSupport.fs.readFile.resolves(yamlFixture);
-    ({Manifest} = await import(`../../../lib/extension/manifest/manifest.js?t=${importCounter++}`));
+    const mod = await import(`../../../lib/extension/manifest/manifest.js?t=${importCounter++}`);
+    ({Manifest} = mod);
   });
 
   describe('class method', function () {
@@ -526,10 +528,29 @@ describe('Manifest', function () {
 
       describe('when the underlying implementation emits "error"', function () {
         beforeEach(function () {
-          MockAppiumSupport.fs.glob.rejects(new Error('bogus'));
+          MockAppiumSupport.fs.readdir.rejects(new Error('bogus'));
         });
         it('should reject', async function () {
           await assert.rejects(manifest.syncWithInstalledExtensions(), /bogus/);
+        });
+      });
+
+      describe('when node_modules contains dot-prefixed entries', function () {
+        const nodeModulesDir = path.join('/some/path', 'node_modules');
+        const scopedDir = path.join(nodeModulesDir, '@scope');
+
+        beforeEach(function () {
+          MockAppiumSupport.fs.readdir.withArgs(nodeModulesDir).resolves(['.hidden-driver', 'normal-driver', '@scope']);
+          MockAppiumSupport.fs.readdir.withArgs(scopedDir).resolves(['.hidden-scoped', 'visible-scoped']);
+        });
+
+        it('should not probe dot-prefixed package directories', async function () {
+          await manifest.syncWithInstalledExtensions();
+          const probedPaths = MockAppiumSupport.fs.exists.getCalls().map((call: any) => call.args[0] as string);
+          assert.ok(!probedPaths.some((p) => p.includes('.hidden-driver')));
+          assert.ok(!probedPaths.some((p) => p.includes('.hidden-scoped')));
+          assert.ok(probedPaths.some((p) => p.includes('normal-driver')));
+          assert.ok(probedPaths.some((p) => p.includes('visible-scoped')));
         });
       });
     });

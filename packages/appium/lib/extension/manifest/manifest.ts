@@ -373,7 +373,7 @@ async function findNodeModulesPackageJsons(nodeModulesDir: string): Promise<stri
   }
 
   const pkgJsonPathsByEntry = await asyncmap(
-    entries,
+    entries.filter((entry) => !entry.startsWith('.')),
     async (entry): Promise<string[]> => {
       const entryPath = path.join(nodeModulesDir, entry);
       if (!entry.startsWith('@')) {
@@ -388,7 +388,7 @@ async function findNodeModulesPackageJsons(nodeModulesDir: string): Promise<stri
         return [];
       }
       const scopedPkgJsonPaths = await asyncmap(
-        scopedEntries,
+        scopedEntries.filter((scopedEntry) => !scopedEntry.startsWith('.')),
         async (scopedEntry) => {
           const pkgJsonPath = path.join(entryPath, scopedEntry, 'package.json');
           return (await fs.exists(pkgJsonPath)) ? pkgJsonPath : null;

@@ -77,8 +77,7 @@ export class AppiumInitializer {
     }
 
     if (isSetupCommandArgs(preConfigArgs)) {
-      driverConfig.printValidationSummary(logger);
-      pluginConfig.printValidationSummary(logger);
+      this.printValidationSummaries(driverConfig, pluginConfig);
       await runSetupCommand(preConfigArgs, driverConfig, pluginConfig);
       return {} as InitResult<Cmd>;
     }
@@ -137,8 +136,7 @@ export class AppiumInitializer {
 
     if (preConfigArgs.showConfig) {
       showConfig(getNonDefaultServerArgs(preConfigArgs as Args), configResult, defaults, serverArgs);
-      driverConfig.printValidationSummary(logger);
-      pluginConfig.printValidationSummary(logger);
+      this.printValidationSummaries(driverConfig, pluginConfig);
       return {} as InitResult<Cmd>;
     }
 
@@ -148,15 +146,13 @@ export class AppiumInitializer {
         pluginConfig,
         appiumHome,
       });
-      driverConfig.printValidationSummary(logger);
-      pluginConfig.printValidationSummary(logger);
+      this.printValidationSummaries(driverConfig, pluginConfig);
       return {} as InitResult<Cmd>;
     }
 
     await logsinkInit(serverArgs);
     // Deferred from loadExtensions() so these render through the now-active (Winston-backed) logger.
-    driverConfig.printValidationSummary(logger);
-    pluginConfig.printValidationSummary(logger);
+    this.printValidationSummaries(driverConfig, pluginConfig);
     await this.applyLogFilters(serverArgs);
 
     if (!serverArgs.noPermsCheck) {
@@ -174,6 +170,15 @@ export class AppiumInitializer {
       pluginConfig,
       appiumHome,
     } as InitResult<Cmd>;
+  }
+
+  /** Renders each config's pending `loadExtensions()`-time validation summary via the raw logger. */
+  private printValidationSummaries(
+    driverConfig: ExtensionConfigs['driverConfig'],
+    pluginConfig: ExtensionConfigs['pluginConfig'],
+  ): void {
+    driverConfig.printValidationSummary(logger);
+    pluginConfig.printValidationSummary(logger);
   }
 
   private async applyLogFilters(serverArgs: ParsedArgs<CliCommandServer>): Promise<void> {

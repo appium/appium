@@ -157,7 +157,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
   }
 
   /** The umbrella driver does not queue commands; inner session drivers may. */
-  get isCommandsQueueEnabled(): boolean {
+  override get isCommandsQueueEnabled(): boolean {
     return false;
   }
 

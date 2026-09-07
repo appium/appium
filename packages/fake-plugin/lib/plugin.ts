@@ -109,7 +109,7 @@ export class FakePlugin extends BasePlugin {
     });
   }
 
-  async onIpcInit() {
+  override async onIpcInit(): Promise<void> {
     const clockSub = this.ipcSubscribe<ClockStatus>('clockLifecycle');
     clockSub.on('message', (message: IpcMessage<ClockStatus>) => {
       this.fakeDriverClockIsRunning = message.data.running;

@@ -16,7 +16,8 @@ import type {
 import {APPIUM_VER} from '../helpers/build';
 import {log} from '../logger';
 import {ALLOWED_SCHEMA_EXTENSIONS, isAllowedSchemaFileExtension, registerSchema} from '../schema/schema';
-import {capitalize, resolveFrom, resolvePackageSubpathFrom} from '../utils';
+import {capitalize, resolveFrom} from '../utils';
+import {resolvePackageSubpathFrom} from '../utils/resolve-from';
 import type {Manifest} from './manifest';
 
 const DEFAULT_ENTRY_POINT = 'index.js';

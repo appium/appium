@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import {promises as fs} from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import {describe, it, beforeEach, afterEach, before} from 'node:test';
 
@@ -10,9 +11,10 @@ import type {SinonSandbox} from 'sinon';
 import type {DriverConfig} from '../../../lib/extension/driver-config';
 import {Manifest} from '../../../lib/extension/manifest';
 import {resetSchema} from '../../../lib/schema';
+import {resolvePackageSubpathFrom} from '../../../lib/utils/resolve-from';
 import {assertArrayIncludesDeep, resolveFixture, rewiremock} from '../../helpers';
 import {initMocks} from './mocks';
-import type {MockAppiumSupport, MockResolveFrom, Overrides} from './mocks';
+import type {MockAppiumSupport, MockResolveFrom, MockResolvePackageSubpathFrom, Overrides} from './mocks';
 
 type ExtManifestWithSchema<ExtType extends ExtensionType> = ExtManifest<ExtType> & {
   schema: NonNullable<ExtManifest<ExtType>['schema']>;
@@ -30,6 +32,7 @@ describe('DriverConfig', function () {
   let sandbox: SinonSandbox;
   let MockAppiumSupport: MockAppiumSupport;
   let MockResolveFrom: MockResolveFrom;
+  let MockResolvePackageSubpathFrom: MockResolvePackageSubpathFrom;
   let DriverConfig: DriverConfigConstructor;
 
   before(async function () {
@@ -39,7 +42,7 @@ describe('DriverConfig', function () {
   beforeEach(function () {
     manifest = Manifest.getInstance('/somewhere/');
     let overrides: Overrides;
-    ({MockAppiumSupport, MockResolveFrom, overrides, sandbox} = initMocks());
+    ({MockAppiumSupport, MockResolveFrom, MockResolvePackageSubpathFrom, overrides, sandbox} = initMocks());
     MockAppiumSupport.fs.readFile.resolves(yamlFixture);
     ({DriverConfig} = rewiremock.proxy(() => require('../../../lib/extension/driver-config'), overrides));
     resetSchema();
@@ -238,9 +241,37 @@ describe('DriverConfig', function () {
               );
               assert.strictEqual(problems.length, 0);
               assert.strictEqual(
-                MockResolveFrom.calledOnceWithExactly('/somewhere/', path.join('whatever', 'driver-schema.js')),
+                MockResolveFrom.calledOnceWithExactly('/somewhere/', path.posix.join('whatever', 'driver-schema.js')),
                 true,
               );
+            });
+
+            it('should honor an export-mapped schema from the installed package', async function () {
+              const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'appium-schema-exports-'));
+              const pkgName = 'exported-schema-driver';
+              const installPath = path.join(tempRoot, 'node_modules', pkgName);
+              try {
+                await fs.mkdir(path.join(installPath, 'build'), {recursive: true});
+                await fs.writeFile(
+                  path.join(installPath, 'package.json'),
+                  JSON.stringify({
+                    name: pkgName,
+                    version: '1.0.0',
+                    exports: {'./schema.json': './build/schema.json'},
+                  }),
+                );
+                await fs.writeFile(path.join(installPath, 'build', 'schema.json'), JSON.stringify({type: 'object'}));
+                MockResolvePackageSubpathFrom.callsFake(resolvePackageSubpathFrom);
+
+                const problems = await driverConfig.getSchemaProblems(
+                  {pkgName, schema: 'schema.json', installPath},
+                  'exported',
+                );
+
+                assert.deepStrictEqual(problems, []);
+              } finally {
+                await fs.rm(tempRoot, {recursive: true, force: true});
+              }
             });
           });
         });
@@ -291,7 +322,7 @@ describe('DriverConfig', function () {
           await driverConfig.readExtensionSchema(extName, extData);
 
           assert.strictEqual(
-            MockResolveFrom.calledOnceWithExactly('/somewhere', path.resolve('/somewhere', 'driver-schema.js')),
+            MockResolvePackageSubpathFrom.calledOnceWithExactly('/somewhere', 'some-pkg', 'driver-schema.js'),
             true,
           );
         });

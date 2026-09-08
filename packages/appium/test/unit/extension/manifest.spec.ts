@@ -11,14 +11,14 @@ import {DRIVER_TYPE, PLUGIN_TYPE} from '../../../lib/constants';
 import {APPIUM_VER} from '../../../lib/helpers/build';
 import {resolveFixture, rewiremock} from '../../helpers';
 import {initMocks} from './mocks';
-import type {MockAppiumSupport, MockPackageChanged, MockResolveFrom} from './mocks';
+import type {MockAppiumSupport, MockPackageChanged, MockResolvePackageJsonFrom} from './mocks';
 
 describe('Manifest', function () {
   let sandbox: SinonSandbox;
   let yamlFixture: string;
   let MockPackageChanged: MockPackageChanged;
   let MockAppiumSupport: MockAppiumSupport;
-  let MockResolveFrom: MockResolveFrom;
+  let MockResolvePackageJsonFrom: MockResolvePackageJsonFrom;
   let Manifest: any;
 
   before(async function () {
@@ -27,7 +27,7 @@ describe('Manifest', function () {
 
   beforeEach(function () {
     let overrides: ReturnType<typeof initMocks>['overrides'];
-    ({MockPackageChanged, MockAppiumSupport, MockResolveFrom, overrides, sandbox} = initMocks());
+    ({MockPackageChanged, MockAppiumSupport, MockResolvePackageJsonFrom, overrides, sandbox} = initMocks());
     MockAppiumSupport.fs.readFile.resolves(yamlFixture);
     ({Manifest} = rewiremock.proxy(() => require('../../../lib/extension/manifest'), {
       ...overrides,
@@ -519,15 +519,12 @@ describe('Manifest', function () {
           return JSON.stringify({name: 'lodash', version: '1.0.0'});
         });
 
-        await manifest.syncWithInstalledExtensions(true, searchRoot);
+        await manifest.syncWithDeclaredExtensions(searchRoot, true);
 
         assert.ok(Object.hasOwn(manifest.getExtensionData(DRIVER_TYPE), 'test'));
         assert.strictEqual(MockAppiumSupport.fs.glob.called, false);
-        assert.strictEqual(
-          MockResolveFrom.calledWith(searchRoot, path.join('appium-test-driver', 'package.json')),
-          true,
-        );
-        assert.strictEqual(MockResolveFrom.calledWith(searchRoot, path.join('lodash', 'package.json')), true);
+        assert.strictEqual(MockResolvePackageJsonFrom.calledWith(searchRoot, 'appium-test-driver'), true);
+        assert.strictEqual(MockResolvePackageJsonFrom.calledWith(searchRoot, 'lodash'), true);
       });
 
       it('should reject an unreadable explicit search root', async function () {
@@ -535,7 +532,7 @@ describe('Manifest', function () {
         MockAppiumSupport.fs.readFile.rejects(new Error('permission denied'));
 
         await assert.rejects(
-          manifest.syncWithInstalledExtensions(false, searchRoot),
+          manifest.syncWithDeclaredExtensions(searchRoot),
           new RegExp(
             `Could not read extension search root package manifest.*${path.basename(searchRoot)}.*package.json`,
             'i',
@@ -550,7 +547,7 @@ describe('Manifest', function () {
         );
 
         await assert.rejects(
-          manifest.syncWithInstalledExtensions(false, searchRoot),
+          manifest.syncWithDeclaredExtensions(searchRoot),
           /'dependencies' field.*must contain an object/i,
         );
       });
@@ -558,9 +555,6 @@ describe('Manifest', function () {
       it('should find an extension whose package manifest is not exported', async function () {
         const searchRoot = path.resolve('/workspace/packages/app');
         const packageRoot = path.resolve('/workspace/node_modules/appium-driver');
-        const exportsError = Object.assign(new Error('Package subpath ./package.json is not defined by exports'), {
-          code: 'ERR_PACKAGE_PATH_NOT_EXPORTED',
-        });
         MockAppiumSupport.fs.readFile.callsFake(async (filepath: string) =>
           filepath === path.join(searchRoot, 'package.json')
             ? JSON.stringify({dependencies: {'appium-driver': '1.0.0'}})
@@ -575,24 +569,42 @@ describe('Manifest', function () {
                 },
               }),
         );
-        MockResolveFrom.withArgs(searchRoot, path.join('appium-driver', 'package.json')).rejects(exportsError);
-        MockResolveFrom.withArgs(searchRoot, 'appium-driver').resolves(path.join(packageRoot, 'index.js'));
-        MockAppiumSupport.fs.findRoot.returns(packageRoot);
+        MockResolvePackageJsonFrom.withArgs(searchRoot, 'appium-driver').resolves(
+          path.join(packageRoot, 'package.json'),
+        );
 
-        await manifest.syncWithInstalledExtensions(false, searchRoot);
+        await manifest.syncWithDeclaredExtensions(searchRoot);
 
         assert.ok(Object.hasOwn(manifest.getExtensionData(DRIVER_TYPE), 'test'));
       });
 
       it('should not persist extensions discovered from an explicit search root', async function () {
         const searchRoot = path.resolve('/workspace/packages/app');
+        const standardDriverPath = path.resolve('/some/path/node_modules/appium-standard-driver/package.json');
         const rootManifest = Manifest.getInstance('/some/path', searchRoot);
+        MockAppiumSupport.env.hasAppiumDependency.resolves(true);
+        MockAppiumSupport.fs.glob.resolves([standardDriverPath]);
         MockAppiumSupport.fs.readFile.callsFake(async (filepath: string) => {
           if (filepath === '/some/path/extensions.yaml') {
             return yamlFixture;
           }
+          if (filepath === '/some/path/package.json') {
+            return JSON.stringify({name: 'appium-home', version: '1.0.0'});
+          }
           if (filepath === path.join(searchRoot, 'package.json')) {
             return JSON.stringify({dependencies: {'appium-driver': '1.0.0'}});
+          }
+          if (filepath === standardDriverPath) {
+            return JSON.stringify({
+              name: 'appium-standard-driver',
+              version: '1.0.0',
+              appium: {
+                automationName: 'Standard',
+                mainClass: 'StandardDriver',
+                platformNames: ['Standard'],
+                driverName: 'standard',
+              },
+            });
           }
           return JSON.stringify({
             name: 'appium-driver',
@@ -610,6 +622,9 @@ describe('Manifest', function () {
         await rootManifest.write();
 
         assert.ok(Object.hasOwn(rootManifest.getExtensionData(DRIVER_TYPE), 'test'));
+        assert.ok(Object.hasOwn(rootManifest.getExtensionData(DRIVER_TYPE), 'standard'));
+        assert.strictEqual(MockAppiumSupport.fs.glob.calledOnce, true);
+        assert.match(MockAppiumSupport.fs.writeFile.lastCall.args[1], /appium-standard-driver/);
         assert.doesNotMatch(MockAppiumSupport.fs.writeFile.lastCall.args[1], /appium-driver/);
       });
 

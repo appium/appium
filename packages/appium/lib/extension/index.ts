@@ -1,3 +1,5 @@
+import path from 'node:path';
+
 import {timing, util} from '@appium/support';
 import type {DriverClass, ExtensionType, PluginClass} from '@appium/types';
 import type {ExtClass} from 'appium/types';
@@ -26,9 +28,15 @@ export type DriverNameMap = Map<DriverClass, string>;
  * - Returns these instances
  *
  * If `appiumHome` is needed, use `resolveAppiumHome` from the `env` module in `@appium/support`.
+ *
+ * @param appiumHome - Appium home directory
+ * @param extensionSearchRoot - Optional project directory, normalized here before manifest lookup
  */
 export async function loadExtensions(appiumHome: string, extensionSearchRoot?: string): Promise<ExtensionConfigs> {
-  const manifest = Manifest.getInstance(appiumHome, extensionSearchRoot);
+  const manifest = Manifest.getInstance(
+    appiumHome,
+    extensionSearchRoot ? path.resolve(extensionSearchRoot) : undefined,
+  );
   await manifest.read();
   const driverConfig = DriverConfig.getInstance(manifest) ?? DriverConfig.create(manifest);
   const pluginConfig = PluginConfig.getInstance(manifest) ?? PluginConfig.create(manifest);

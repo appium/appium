@@ -7,9 +7,11 @@ import type {SubArgumentParserOptions, SubparsersAction} from 'argparse';
 
 import {
   DRIVER_TYPE,
+  EXT_SEARCH_ROOT_ARG,
   EXT_SUBCOMMAND_DOCTOR,
   EXT_SUBCOMMAND_INSTALL,
   EXT_SUBCOMMAND_LIST,
+  EXT_SUBCOMMAND_LIST_ALIASES,
   EXT_SUBCOMMAND_RUN,
   EXT_SUBCOMMAND_UNINSTALL,
   EXT_SUBCOMMAND_UPDATE,
@@ -203,7 +205,7 @@ export class ArgParser {
           command: EXT_SUBCOMMAND_LIST,
           args: extensionArgs[type].list,
           help: `List available and installed ${type}s`,
-          aliases: ['ls'],
+          aliases: [...EXT_SUBCOMMAND_LIST_ALIASES],
         },
         {
           command: EXT_SUBCOMMAND_INSTALL,
@@ -315,9 +317,9 @@ export class ArgParser {
       const [knownArgs, unknownArgs] = parsed;
       // XXX: you'd think that argparse, when given an alias for a subcommand,
       // would set this value to the original subcommand name, but it doesn't.
-      if (knownArgs?.driverCommand === 'ls') {
+      if (EXT_SUBCOMMAND_LIST_ALIASES.includes(knownArgs?.driverCommand)) {
         knownArgs.driverCommand = 'list';
-      } else if (knownArgs?.pluginCommand === 'ls') {
+      } else if (EXT_SUBCOMMAND_LIST_ALIASES.includes(knownArgs?.pluginCommand)) {
         knownArgs.pluginCommand = 'list';
       }
       if (unknownArgs?.length && (knownArgs.driverCommand === 'run' || knownArgs.pluginCommand === 'run')) {
@@ -364,7 +366,11 @@ export async function getParser(debug = false): Promise<ArgParser> {
  * Extracts `--ext-search-root` before extension schemas are loaded and the full CLI can be parsed.
  */
 export function getExtensionSearchRoot(args: string[] = process.argv.slice(2)): string | undefined {
-  if ((args[0] === DRIVER_TYPE || args[0] === PLUGIN_TYPE) && args[1] !== EXT_SUBCOMMAND_LIST && args[1] !== 'ls') {
+  const extensionType = args[0];
+  if (
+    (extensionType === DRIVER_TYPE || extensionType === PLUGIN_TYPE) &&
+    !extensionCommandSupportsArg(extensionType, args[1], EXT_SEARCH_ROOT_ARG)
+  ) {
     return undefined;
   }
   let result: string | undefined;
@@ -373,24 +379,34 @@ export function getExtensionSearchRoot(args: string[] = process.argv.slice(2)): 
     if (arg === '--') {
       break;
     }
-    if (arg.startsWith('--') && '--ext-search-root'.startsWith(arg)) {
+    if (arg.startsWith('--') && EXT_SEARCH_ROOT_ARG.startsWith(arg)) {
       const value = args[++index];
       if (!value || value.startsWith('-')) {
-        throw new Error('[ERROR] argument --ext-search-root: expected one argument');
+        throw new Error(`[ERROR] argument ${EXT_SEARCH_ROOT_ARG}: expected one argument`);
       }
       result = value;
     } else if (arg.includes('=')) {
       const separatorIndex = arg.indexOf('=');
       const name = arg.slice(0, separatorIndex);
       const value = arg.slice(separatorIndex + 1);
-      if (!name.startsWith('--') || !'--ext-search-root'.startsWith(name)) {
+      if (!name.startsWith('--') || !EXT_SEARCH_ROOT_ARG.startsWith(name)) {
         continue;
       }
       if (!value) {
-        throw new Error('[ERROR] argument --ext-search-root: expected one argument');
+        throw new Error(`[ERROR] argument ${EXT_SEARCH_ROOT_ARG}: expected one argument`);
       }
       result = value;
     }
   }
   return result;
+}
+
+function extensionCommandSupportsArg(
+  extensionType: DriverType | PluginType,
+  command: string | undefined,
+  arg: string,
+): boolean {
+  const normalizedCommand = EXT_SUBCOMMAND_LIST_ALIASES.includes(command as 'ls') ? EXT_SUBCOMMAND_LIST : command;
+  const definitions = getExtensionArgs()[extensionType][normalizedCommand as CliExtensionSubcommand];
+  return Boolean(definitions && [...definitions.keys()].some((names) => names.includes(arg)));
 }

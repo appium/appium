@@ -16,7 +16,7 @@ import type {
 import {APPIUM_VER} from '../helpers/build';
 import {log} from '../logger';
 import {ALLOWED_SCHEMA_EXTENSIONS, isAllowedSchemaFileExtension, registerSchema} from '../schema/schema';
-import {capitalize, resolveFrom} from '../utils';
+import {capitalize, resolveFrom, resolvePackageSubpathFrom} from '../utils';
 import type {Manifest} from './manifest';
 
 const DEFAULT_ENTRY_POINT = 'index.js';
@@ -118,11 +118,9 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     }
     let moduleObject: any;
     if (typeof argSchemaPath === 'string') {
-      const fromDirectory = extManifest.installPath ?? appiumHome;
-      const moduleId = extManifest.installPath
-        ? path.resolve(extManifest.installPath, argSchemaPath)
-        : path.join(pkgName, argSchemaPath);
-      const schemaPath = await resolveFrom(fromDirectory, moduleId);
+      const schemaPath = extManifest.installPath
+        ? await resolvePackageSubpathFrom(extManifest.installPath, pkgName, argSchemaPath)
+        : await resolveFrom(appiumHome, path.posix.join(pkgName, argSchemaPath.replaceAll('\\', '/')));
       moduleObject = require(schemaPath);
     } else {
       moduleObject = argSchemaPath;

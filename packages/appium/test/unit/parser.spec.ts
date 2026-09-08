@@ -5,6 +5,7 @@ import path from 'node:path';
 import {describe, it, beforeEach, before, after} from 'node:test';
 
 import {readConfigFile} from '../../lib/bootstrap/config-file';
+import {getExtensionArgs} from '../../lib/cli/args';
 import {ArgParser, getExtensionSearchRoot, getParser} from '../../lib/cli/parser';
 import {DRIVER_TYPE, PLUGIN_TYPE, SETUP_SUBCOMMAND} from '../../lib/constants';
 import {INSTALL_TYPES} from '../../lib/extension/extension-config';
@@ -50,6 +51,24 @@ describe('parser', function () {
           getExtensionSearchRoot(['driver', 'run', 'fake', 'script', '--ext-search-root', 'packages/app']),
           undefined,
         );
+      });
+
+      it('should derive extension command support from its registered arguments', function () {
+        const extensionArgs = getExtensionArgs();
+        const searchRootDefinition = [...extensionArgs[DRIVER_TYPE].list].find(([names]) =>
+          names.includes('--ext-search-root'),
+        );
+        assert.ok(searchRootDefinition);
+        const [names, definition] = searchRootDefinition;
+        extensionArgs[DRIVER_TYPE].doctor.set(names, definition);
+        try {
+          assert.strictEqual(
+            getExtensionSearchRoot(['driver', 'doctor', '--ext-search-root', 'packages/app']),
+            'packages/app',
+          );
+        } finally {
+          extensionArgs[DRIVER_TYPE].doctor.delete(names);
+        }
       });
     });
 

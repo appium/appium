@@ -5,6 +5,7 @@ import type {ArgumentOptions} from 'argparse';
 
 import {
   DRIVER_TYPE,
+  EXT_SEARCH_ROOT_ARG,
   EXT_SUBCOMMAND_DOCTOR,
   EXT_SUBCOMMAND_INSTALL,
   EXT_SUBCOMMAND_LIST,
@@ -82,7 +83,7 @@ function makeListArgs(type: ExtensionType): ArgumentDefinitions {
   return new Map([
     ...globalExtensionArgs,
     [
-      ['--ext-search-root'],
+      [EXT_SEARCH_ROOT_ARG],
       {
         required: false,
         type: 'str',
@@ -260,7 +261,7 @@ function makeRunArgs(type: ExtensionType): ArgumentDefinitions {
  */
 const serverArgsDisallowedInConfig: ArgumentDefinitions = new Map([
   [
-    ['--ext-search-root'],
+    [EXT_SEARCH_ROOT_ARG],
     {
       dest: 'extSearchRoot',
       type: 'str',

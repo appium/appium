@@ -12,7 +12,7 @@ import type {PluginConfig as PluginConfigInstance} from '../../../lib/extension/
 import {resetSchema} from '../../../lib/schema';
 import {assertArrayIncludesDeep, resolveFixture, rewiremock} from '../../helpers';
 import {initMocks} from './mocks';
-import type {MockAppiumSupport, MockResolveFrom, Overrides} from './mocks';
+import type {MockAppiumSupport, MockResolveFrom, MockResolvePackageSubpathFrom, Overrides} from './mocks';
 
 type ExtManifestWithSchema<ExtType extends ExtensionType> = ExtManifest<ExtType> & {
   schema: NonNullable<ExtManifest<ExtType>['schema']>;
@@ -30,6 +30,7 @@ describe('PluginConfig', function () {
   let sandbox: SinonSandbox;
   let MockAppiumSupport: MockAppiumSupport;
   let MockResolveFrom: MockResolveFrom;
+  let MockResolvePackageSubpathFrom: MockResolvePackageSubpathFrom;
   let PluginConfig: PluginConfigConstructor;
 
   before(async function () {
@@ -39,7 +40,7 @@ describe('PluginConfig', function () {
   beforeEach(function () {
     let overrides: Overrides;
     manifest = Manifest.getInstance('/somewhere/');
-    ({MockAppiumSupport, MockResolveFrom, sandbox, overrides} = initMocks());
+    ({MockAppiumSupport, MockResolveFrom, MockResolvePackageSubpathFrom, sandbox, overrides} = initMocks());
     MockAppiumSupport.fs.readFile.resolves(yamlFixture);
     ({PluginConfig} = rewiremock.proxy(() => require('../../../lib/extension/plugin-config'), overrides));
     resetSchema();
@@ -207,7 +208,10 @@ describe('PluginConfig', function () {
               );
               assert.strictEqual(problems.length, 0);
               assert.strictEqual(
-                MockResolveFrom.calledOnceWithExactly('/somewhere/', path.join('../fixtures', 'plugin-schema.js')),
+                MockResolveFrom.calledOnceWithExactly(
+                  '/somewhere/',
+                  path.posix.join('../fixtures', 'plugin-schema.js'),
+                ),
                 true,
               );
             });
@@ -316,9 +320,10 @@ describe('PluginConfig', function () {
           await pluginConfig.readExtensionSchema(extName, extData);
 
           assert.strictEqual(
-            MockResolveFrom.calledOnceWithExactly(
+            MockResolvePackageSubpathFrom.calledOnceWithExactly(
               '/workspace/node_modules/some-pkg',
-              path.resolve('/workspace/node_modules/some-pkg', 'plugin-schema.js'),
+              'some-pkg',
+              'plugin-schema.js',
             ),
             true,
           );

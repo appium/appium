@@ -6,7 +6,7 @@ import type {InitialOpts} from '@appium/types';
 import {BaseDriver} from '../../../../lib/index.js';
 
 describe('bidi commands -', function () {
-  let driver: BaseDriver<any, any, any, any, any, any>;
+  let driver: BaseDriver<any, any, any, any, any>;
 
   beforeEach(function () {
     driver = new BaseDriver({} as InitialOpts);

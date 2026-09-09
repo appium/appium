@@ -4,8 +4,6 @@ import os from 'node:os';
 import path from 'node:path';
 import {describe, it, beforeEach, afterEach, before, after, mock} from 'node:test';
 
-import type {SinonStub} from 'sinon';
-
 import {DRIVER_TYPE} from '../../../lib/constants.js';
 import {APPIUM_VER} from '../../../lib/helpers/build.js';
 import {FAKE_DRIVER_DIR, PROJECT_ROOT} from '../../helpers.js';
@@ -295,28 +293,12 @@ describe('ExtensionConfig', function () {
     });
 
     describe('_validate()', function () {
-      // `extension-config.ts` calls `log` from `lib/logger.ts`, which creates its singleton
-      // via `@appium/support`'s `getLogger()` at module-load time. `lib/logger.js` gets loaded
-      // (unmocked) transitively via this file's own static `test/helpers.js` import, well
-      // before `applyExtensionMocks()` ever runs, so mocking `@appium/support` can't reach it.
-      // `log` is a plain mutable object though (not a frozen ES module namespace), so stub its
-      // methods directly instead.
-      let logWarnStub: SinonStub;
-      let logErrorStub: SinonStub;
-
-      // Stubbed once: `log` is a persistent singleton (not recreated per test), and sinon
-      // throws if the same method is stubbed twice without restoring in between. History is
-      // cleared every test via `resetMockDefaults`'s `sandbox.resetHistory()`.
-      before(async function () {
-        const {log} = await import('../../../lib/logger.js');
-        logWarnStub = mocks.sandbox.stub(log, 'warn');
-        logErrorStub = mocks.sandbox.stub(log, 'error');
-      });
-
-      after(function () {
-        logWarnStub.restore();
-        logErrorStub.restore();
-      });
+      // `_validate()` no longer prints directly (see `printValidationSummary()`): it only
+      // records a summary, so callers can render it via whatever sink fits their own output
+      // context (a JSON-mode-aware CLI console, the server's Winston-backed logger, etc.).
+      function createSink() {
+        return {warn: mocks.sandbox.stub(), error: mocks.sandbox.stub()};
+      }
 
       describe('when there is a single warning', function () {
         beforeEach(function () {
@@ -324,10 +306,12 @@ describe('ExtensionConfig', function () {
           mocks.sandbox.stub(config, 'getWarnings').resolves([{err: 'some warning', val: 'whatever'}]);
         });
 
-        it('should display a warning count of 1', async function () {
+        it('should record and print a warning count of 1', async function () {
           await config._validate({foo: {}});
+          const sink = createSink();
+          config.printValidationSummary(sink);
           assert.strictEqual(
-            logWarnStub.calledWith(
+            sink.warn.calledWith(
               'Appium encountered 1 warning while validating drivers found in manifest /some/path/extensions.yaml',
             ),
             true,
@@ -341,14 +325,35 @@ describe('ExtensionConfig', function () {
           mocks.sandbox.stub(config, 'getWarnings').resolves([]);
         });
 
-        it('should display an error count of 1', async function () {
+        it('should record and print an error count of 1', async function () {
           await config._validate({foo: {}});
+          const sink = createSink();
+          config.printValidationSummary(sink);
           assert.strictEqual(
-            logErrorStub.calledWith(
+            sink.error.calledWith(
               'Appium encountered 1 error while validating drivers found in manifest /some/path/extensions.yaml',
             ),
             true,
           );
+        });
+      });
+
+      describe('printValidationSummary()', function () {
+        it('does nothing when there is nothing to report', function () {
+          const sink = createSink();
+          config.printValidationSummary(sink);
+          assert.strictEqual(sink.warn.called, false);
+          assert.strictEqual(sink.error.called, false);
+        });
+
+        it('clears the summary so it is not printed twice', async function () {
+          mocks.sandbox.stub(config, 'getProblems').resolves([]);
+          mocks.sandbox.stub(config, 'getWarnings').resolves([{err: 'some warning', val: 'whatever'}]);
+          await config._validate({foo: {}});
+          config.printValidationSummary(createSink());
+          const sink = createSink();
+          config.printValidationSummary(sink);
+          assert.strictEqual(sink.warn.called, false);
         });
       });
     });

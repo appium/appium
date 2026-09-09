@@ -111,8 +111,9 @@ export async function init(args: ParsedArgs): Promise<void> {
       }
     }
   });
-  // Only Winston produces output; avoid duplicate lines from the logger's default stream
+  // Only Winston produces output; avoid duplicate lines from the logger's default streams
   globalLog.stream = null;
+  globalLog.errorStream = null;
 }
 
 /**

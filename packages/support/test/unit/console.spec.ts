@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {afterEach, describe, it} from 'node:test';
+import {afterEach, describe, it, type TestContext} from 'node:test';
 
 import * as consoleModule from '../../lib/console.js';
 
@@ -93,6 +93,73 @@ describe('console', function () {
         info: 'cyan',
         warning: 'yellow',
         error: 'red',
+      });
+    });
+
+    describe('stream routing', function () {
+      function captureWrites(t: TestContext) {
+        const stdout: string[] = [];
+        const stderr: string[] = [];
+        t.mock.method(process.stdout, 'write', (chunk: string) => {
+          stdout.push(String(chunk));
+          return true;
+        });
+        t.mock.method(process.stderr, 'write', (chunk: string) => {
+          stderr.push(String(chunk));
+          return true;
+        });
+        return {stdout, stderr};
+      }
+
+      it('writes log/ok/debug/info/warn to STDOUT only', function (t) {
+        const {stdout, stderr} = captureWrites(t);
+        const cli = new CliConsole({useSymbols: false});
+        cli.log('a');
+        cli.ok('b');
+        cli.debug('c');
+        cli.info('d');
+        cli.warn('e');
+        assert.deepStrictEqual(stderr, []);
+        assert.strictEqual(stdout.join(''), 'a\nb\nc\nd\ne\n');
+      });
+
+      it('writes error to STDERR only', function (t) {
+        const {stdout, stderr} = captureWrites(t);
+        const cli = new CliConsole({useSymbols: false});
+        cli.error('boom');
+        assert.deepStrictEqual(stdout, []);
+        assert.strictEqual(stderr.join(''), 'boom\n');
+      });
+
+      it('writes json() to STDOUT only', function (t) {
+        const {stdout, stderr} = captureWrites(t);
+        const cli = new CliConsole();
+        cli.json({a: 1});
+        assert.deepStrictEqual(stderr, []);
+        assert.strictEqual(stdout.join(''), `${JSON.stringify({a: 1})}\n`);
+      });
+
+      describe('in JSON mode', function () {
+        it('still writes json() to real STDOUT', function (t) {
+          const {stdout, stderr} = captureWrites(t);
+          const cli = new CliConsole({jsonMode: true});
+          cli.json({a: 1});
+          assert.deepStrictEqual(stderr, []);
+          assert.strictEqual(stdout.join(''), `${JSON.stringify({a: 1})}\n`);
+        });
+
+        it('squelches log/info/warn/ok/debug/error output', function (t) {
+          const {stdout, stderr} = captureWrites(t);
+          const cli = new CliConsole({jsonMode: true, useSymbols: false});
+          cli.log('a');
+          cli.info('b');
+          cli.warn('c');
+          cli.ok('d');
+          cli.debug('e');
+          cli.error('f');
+          assert.deepStrictEqual(stdout, []);
+          assert.deepStrictEqual(stderr, []);
+        });
       });
     });
   });

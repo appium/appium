@@ -79,7 +79,7 @@ function buildHandler(
       const command = spec.command;
 
       const jsonObj = preparePayload(spec, req.body, currentProtocol);
-      const args = buildCommandArgs(req, jsonObj, spec, command, didPluginOverrideProxy);
+      const args = buildCommandArgs(req, jsonObj, spec, command);
 
       // run the driver command wrapped inside the argument validators
       getLogger(driver, sessionId).debug(
@@ -88,6 +88,13 @@ function buildHandler(
         command,
         logger.markSensitive(util.truncateString(JSON.stringify(args), {length: MAX_LOG_BODY_LENGTH})),
       );
+
+      if (didPluginOverrideProxy) {
+        // TODO for now we add this information on the args list, but that's mixing purposes here.
+        // We really should add another 'options' parameter to 'executeCommand', but this would be
+        // a breaking change for all drivers so would need to be handled carefully.
+        args.push({reqForProxy: req});
+      }
 
       const result = await runDriverCommand(driver, command, args, sessionId, currentProtocol);
       currentProtocol = result.currentProtocol;
@@ -163,28 +170,15 @@ function preparePayload(spec: DriverMethodDef<Driver>, jsonObj: any, currentProt
 
 /**
  * Turns the request into the ordered argument list for the driver command, running any
- * command-specific validator and appending proxy info a plugin might need.
+ * command-specific validator. Proxy info a plugin might need is appended separately, after
+ * the args have been logged, since it carries the raw (circular) request/response objects.
  */
-function buildCommandArgs(
-  req: Request,
-  jsonObj: any,
-  spec: DriverMethodDef<Driver>,
-  command: string,
-  didPluginOverrideProxy: boolean,
-): any[] {
+function buildCommandArgs(req: Request, jsonObj: any, spec: DriverMethodDef<Driver>, command: string): any[] {
   const args = makeArgs(req.params, jsonObj, spec.payloadParams || {});
   const validator = getCommandValidator(command);
   if (validator) {
     validator(...args);
   }
-
-  if (didPluginOverrideProxy) {
-    // TODO for now we add this information on the args list, but that's mixing purposes here.
-    // We really should add another 'options' parameter to 'executeCommand', but this would be
-    // a breaking change for all drivers so would need to be handled carefully.
-    args.push({reqForProxy: req});
-  }
-
   return args;
 }
 

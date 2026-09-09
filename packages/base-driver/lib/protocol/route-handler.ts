@@ -11,7 +11,7 @@ import {checkParams, makeArgs, unwrapParams, wrapParams} from './params.js';
 import {tryWdProxy} from './proxy.js';
 import {CREATE_SESSION_COMMAND, DELETE_SESSION_COMMAND, METHOD_MAP} from './routes/index.js';
 import {extractProtocol, getLogger, getSessionId, isSessionCommand} from './session.js';
-import {validators} from './validators.js';
+import {getCommandValidator} from './validators.js';
 
 export const deprecatedCommandsLogged: Set<string> = new Set();
 
@@ -173,7 +173,7 @@ function buildCommandArgs(
   didPluginOverrideProxy: boolean,
 ): any[] {
   const args = makeArgs(req.params, jsonObj, spec.payloadParams || {});
-  const validator = (validators as Record<string, ((...validatorArgs: any[]) => void) | undefined>)[command];
+  const validator = getCommandValidator(command);
   if (validator) {
     validator(...args);
   }

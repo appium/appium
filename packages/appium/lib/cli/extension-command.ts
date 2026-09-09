@@ -432,8 +432,8 @@ export abstract class ExtensionCliCommand<ExtType extends ExtensionType = Extens
    *
    * @return map of all installed extension names to extension data (without the extension just uninstalled)
    */
-  protected async _uninstall({installSpec}: UninstallOpts): Promise<Record<string, any>> {
-    installSpec = this._resolveExtensionName(installSpec);
+  protected async _uninstall({installSpec: rawInstallSpec}: UninstallOpts): Promise<Record<string, any>> {
+    const installSpec = this._resolveExtensionName(rawInstallSpec);
     if (!this.config.isInstalled(installSpec)) {
       throw this._createFatalError(`Can't uninstall ${this.type} '${installSpec}'; it is not installed`);
     }
@@ -454,11 +454,9 @@ export abstract class ExtensionCliCommand<ExtType extends ExtensionType = Extens
   /**
    * Attempt to update one or more drivers using NPM
    */
-  protected async _update({installSpec, unsafe}: ExtensionUpdateOpts): Promise<ExtensionUpdateResult> {
-    const shouldUpdateAll = installSpec === UPDATE_ALL;
-    if (!shouldUpdateAll) {
-      installSpec = this._resolveExtensionName(installSpec);
-    }
+  protected async _update({installSpec: rawInstallSpec, unsafe}: ExtensionUpdateOpts): Promise<ExtensionUpdateResult> {
+    const shouldUpdateAll = rawInstallSpec === UPDATE_ALL;
+    const installSpec = shouldUpdateAll ? rawInstallSpec : this._resolveExtensionName(rawInstallSpec);
     // if we're specifically requesting an update for an extension, make sure it's installed
     if (!shouldUpdateAll && !this.config.isInstalled(installSpec)) {
       throw this._createFatalError(`The ${this.type} "${installSpec}" was not installed, so can't be updated`);
@@ -577,8 +575,8 @@ export abstract class ExtensionCliCommand<ExtType extends ExtensionType = Extens
    * successfully loaded and executed for the given extension
    * @throws {Error} If any of the mandatory Doctor checks fails.
    */
-  protected async _doctor({installSpec}: DoctorOptions): Promise<number> {
-    installSpec = this._resolveExtensionName(installSpec);
+  protected async _doctor({installSpec: rawInstallSpec}: DoctorOptions): Promise<number> {
+    const installSpec = this._resolveExtensionName(rawInstallSpec);
     if (!this.config.isInstalled(installSpec)) {
       throw this._createFatalError(`The ${this.type} "${installSpec}" is not installed`);
     }
@@ -663,12 +661,12 @@ export abstract class ExtensionCliCommand<ExtType extends ExtensionType = Extens
    * not found within `scripts` object.
    */
   protected async _run({
-    installSpec,
+    installSpec: rawInstallSpec,
     scriptName,
     extraArgs = [],
     bufferOutput = false,
   }: RunOptions): Promise<RunOutput> {
-    installSpec = this._resolveExtensionName(installSpec);
+    const installSpec = this._resolveExtensionName(rawInstallSpec);
     if (!this.config.isInstalled(installSpec)) {
       throw this._createFatalError(`The ${this.type} "${installSpec}" is not installed`);
     }

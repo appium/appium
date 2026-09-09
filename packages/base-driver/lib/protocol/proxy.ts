@@ -2,8 +2,8 @@ import type {Core, Driver, DriverMethodDef} from '@appium/types';
 import type {Request, Response} from 'express';
 
 import type {BaseDriver} from '../basedriver/driver.js';
-import {DELETE_SESSION_COMMAND} from './command-names.js';
 import {errors, isErrorType} from './errors.js';
+import {DELETE_SESSION_COMMAND} from './routes/index.js';
 import {getLogger, getSessionId} from './session.js';
 
 export type ProxyOutcome = 'handled' | 'plugin-override' | 'not-proxied';

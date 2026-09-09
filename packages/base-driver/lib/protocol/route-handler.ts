@@ -5,23 +5,13 @@ import type {Application, Request, Response} from 'express';
 import type {BaseDriver} from '../basedriver/driver.js';
 import {DEFAULT_BASE_PATH, MAX_LOG_BODY_LENGTH, PROTOCOLS} from '../constants.js';
 import type {RouteConfiguringFunction} from '../express/server.js';
-import {CREATE_SESSION_COMMAND, DELETE_SESSION_COMMAND} from './command-names.js';
 import {errorFromW3CJsonCode, errors, getResponseForW3CError, isErrorType} from './errors.js';
 import {ensureW3cResponse, formatResponseValue} from './helpers.js';
 import {checkParams, makeArgs, unwrapParams, wrapParams} from './params.js';
 import {tryWdProxy} from './proxy.js';
-import {METHOD_MAP} from './routes/index.js';
+import {CREATE_SESSION_COMMAND, DELETE_SESSION_COMMAND, METHOD_MAP} from './routes/index.js';
 import {extractProtocol, getLogger, getSessionId, isSessionCommand} from './session.js';
 import {validators} from './validators.js';
-
-export {
-  CREATE_SESSION_COMMAND,
-  DELETE_SESSION_COMMAND,
-  GET_STATUS_COMMAND,
-  LIST_DRIVER_COMMANDS_COMMAND,
-  LIST_DRIVER_EXTENSIONS_COMMAND,
-} from './command-names.js';
-export {driverShouldDoWdProxy} from './proxy.js';
 
 export const deprecatedCommandsLogged: Set<string> = new Set();
 

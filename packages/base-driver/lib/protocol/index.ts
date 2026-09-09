@@ -1,17 +1,15 @@
-import {errorFromW3CJsonCode, errors, getResponseForW3CError, isErrorType} from './errors.js';
 import {
-  checkParams,
   CREATE_SESSION_COMMAND,
   DELETE_SESSION_COMMAND,
   GET_STATUS_COMMAND,
-  isSessionCommand,
   LIST_DRIVER_COMMANDS_COMMAND,
   LIST_DRIVER_EXTENSIONS_COMMAND,
-  makeArgs,
-  routeConfiguringFunction,
-  validateExecuteMethodParams,
-} from './protocol.js';
+} from './command-names.js';
+import {errorFromW3CJsonCode, errors, getResponseForW3CError, isErrorType} from './errors.js';
+import {checkParams, makeArgs, validateExecuteMethodParams} from './params.js';
+import {routeConfiguringFunction} from './route-handler.js';
 import {ALL_COMMANDS, METHOD_MAP, NO_SESSION_ID_COMMANDS, routeToCommandName} from './routes/index.js';
+import {isSessionCommand} from './session.js';
 
 export {
   ALL_COMMANDS,

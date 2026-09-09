@@ -39,45 +39,40 @@ interface ArgumentFormatResult {
 }
 
 export class Log extends EventEmitter implements Logger {
-  level: LogLevel | string;
-  prefixStyle: StyleObject;
-  headingStyle: StyleObject;
-  heading: string;
-  stream: Writable | null; // Defaults to process.stderr; set to null when using custom output (e.g. Winston)
+  level: LogLevel | string = 'info';
+  prefixStyle: StyleObject = {fg: 'magenta'};
+  headingStyle: StyleObject = {fg: 'white', bg: 'black'};
+  heading = '';
+  // `stream` and `errorStream` both default to STDERR. This class is used directly (unwrapped) by
+  // code that may run during a `--json` CLI command, where a stray STDOUT write corrupts the JSON
+  // payload; call sites that need the STDOUT/STDERR split render through a JSON-mode-aware sink
+  // instead (e.g. `ExtensionConfig.printValidationSummary`) rather than relying on this default.
+  // The server path nulls both streams out once Winston takes over, in logsink.ts.
+  stream: Writable | null = process.stderr; // Output for levels below `stderrLevel`. Set to null when using custom output (e.g. Winston)
+  errorStream: Writable | null = process.stderr; // Output for levels at/above `stderrLevel`. Set to null when using custom output (e.g. Winston)
+  stderrLevel: LogLevel | string = 'error'; // Minimum severity (inclusive) routed to `errorStream` instead of `stream`
 
-  private _asyncStorage: AsyncLocalStorage<Record<string, any>>;
+  private _asyncStorage: AsyncLocalStorage<Record<string, any>> = new AsyncLocalStorage();
   private _colorEnabled?: boolean;
-  private _buffer: MessageObject[];
-  private _style: Record<LogLevel | string, StyleObject | undefined>;
-  private _levels: Record<LogLevel | string, number>;
-  private _disp: Record<LogLevel | string, number | string>;
-  private _id: number;
-  private _paused: boolean;
-  private _secureValuesPreprocessor: SecureValuesPreprocessor;
+  private _buffer: MessageObject[] = [];
+  private _style: Record<LogLevel | string, StyleObject | undefined> = Object.fromEntries(
+    DEFAULT_LOG_LEVELS.map(([level, , style]) => [level, style]),
+  );
+  private _levels: Record<LogLevel | string, number> = Object.fromEntries(
+    DEFAULT_LOG_LEVELS.map(([level, index]) => [level, index]),
+  );
+  private _disp: Record<LogLevel | string, number | string> = Object.fromEntries(
+    DEFAULT_LOG_LEVELS.map(([level, , , disp]) => [level, disp ?? level]),
+  );
+  private _id = 0;
+  private _paused = false;
+  private _secureValuesPreprocessor: SecureValuesPreprocessor = new SecureValuesPreprocessor();
 
-  private _history: LRUCache<number, MessageObject>;
-  private _maxRecordSize: number;
+  private _history: LRUCache<number, MessageObject> = new LRUCache({max: DEFAULT_HISTORY_SIZE});
+  private _maxRecordSize: number = DEFAULT_HISTORY_SIZE;
 
   constructor() {
     super();
-
-    this.level = 'info';
-    this._buffer = [];
-    this._maxRecordSize = DEFAULT_HISTORY_SIZE;
-    this._history = new LRUCache({max: this.maxRecordSize});
-    this.stream = process.stderr;
-    this.heading = '';
-    this.prefixStyle = {fg: 'magenta'};
-    this.headingStyle = {fg: 'white', bg: 'black'};
-    this._id = 0;
-    this._paused = false;
-    this._asyncStorage = new AsyncLocalStorage();
-    this._secureValuesPreprocessor = new SecureValuesPreprocessor();
-
-    this._style = {};
-    this._levels = {};
-    this._disp = {};
-    this.initDefaultLevels();
 
     // allow 'error' prefix
     this.on('error', () => {});
@@ -271,9 +266,15 @@ export class Log extends EventEmitter implements Logger {
     };
   }
 
-  private useColor(): boolean {
+  private useColor(stream: Writable | null): boolean {
     // by default, decide based on tty-ness.
-    return this._colorEnabled ?? Boolean(this.stream && 'isTTY' in this.stream && this.stream.isTTY);
+    return this._colorEnabled ?? Boolean(stream && 'isTTY' in stream && stream.isTTY);
+  }
+
+  /** The stream a message at the given (already-resolved) severity should be written to. */
+  private streamFor(severity: number): Writable | null {
+    const threshold = this._levels[this.stderrLevel];
+    return threshold !== undefined && severity >= threshold ? this.errorStream : this.stream;
   }
 
   private emitLog(m: MessageObject): void {
@@ -293,33 +294,38 @@ export class Log extends EventEmitter implements Logger {
       return;
     }
 
+    const stream = this.streamFor(l);
+    if (!stream) {
+      return;
+    }
+
     // If 'disp' is null or undefined, use the lvl as a default
     // Allows: '', 0 as valid disp
     const disp = this._disp[m.level];
     for (const line of m.message.split(/\r?\n/)) {
       const heading = this.heading;
       if (heading) {
-        this.write(heading, this.headingStyle);
-        this.write(' ');
+        this.write(stream, heading, this.headingStyle);
+        this.write(stream, ' ');
       }
-      this.write(String(disp), this._style[m.level]);
+      this.write(stream, String(disp), this._style[m.level]);
       const p = m.prefix || '';
       if (p) {
-        this.write(' ');
+        this.write(stream, ' ');
       }
 
-      this.write(p, this.prefixStyle);
-      this.write(` ${line}\n`);
+      this.write(stream, p, this.prefixStyle);
+      this.write(stream, ` ${line}\n`);
     }
   }
 
-  private _format(msg: string, style: StyleObject = {}): string | undefined {
-    if (!this.stream) {
+  private _format(stream: Writable | null, msg: string, style: StyleObject = {}): string | undefined {
+    if (!stream) {
       return;
     }
 
     let output = '';
-    if (this.useColor()) {
+    if (this.useColor(stream)) {
       const settings: string[] = [];
       if (style.fg) {
         settings.push(style.fg);
@@ -344,28 +350,20 @@ export class Log extends EventEmitter implements Logger {
       }
     }
     output += msg;
-    if (this.useColor()) {
+    if (this.useColor(stream)) {
       output += ansiColor('reset');
     }
     return output;
   }
 
-  private write(msg: string, style: StyleObject = {}): void {
-    if (!this.stream) {
+  private write(stream: Writable | null, msg: string, style: StyleObject = {}): void {
+    if (!stream) {
       return;
     }
 
-    const formatted = this._format(msg, style);
+    const formatted = this._format(stream, msg, style);
     if (formatted !== undefined) {
-      this.stream.write(formatted);
-    }
-  }
-
-  private initDefaultLevels(): void {
-    for (const [level, index, style, disp] of DEFAULT_LOG_LEVELS) {
-      this._levels[level] = index;
-      this._style[level] = style;
-      this._disp[level] = disp ?? level;
+      stream.write(formatted);
     }
   }
 

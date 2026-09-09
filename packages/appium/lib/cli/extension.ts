@@ -45,6 +45,7 @@ export async function runExtensionCommand<Cmd extends CliExtensionCommand, SubCm
   }
   const CommandClass = commandClasses[type] as ExtCommand<Cmd>;
   const cmd = new CommandClass({config, json} as any);
+  cmd.printPendingValidationSummary();
   try {
     jsonResult = (await cmd.execute(args)) as Record<string, unknown>;
   } catch (err) {

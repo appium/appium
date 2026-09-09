@@ -107,6 +107,7 @@ describe('basic', function () {
         end: () => {},
       }) as typeof s;
       log.stream = s as any;
+      log.errorStream = s as any;
       log.heading = 'npm';
     });
 
@@ -174,12 +175,12 @@ describe('basic', function () {
   describe('utils', function () {
     it('enableColor', function () {
       log.enableColor();
-      assert.ok((log as any)._format('x', {fg: 'red'}).includes('\u001b'));
+      assert.ok((log as any)._format(log.stream, 'x', {fg: 'red'}).includes('\u001b'));
     });
 
     it('disableColor', function () {
       log.disableColor();
-      assert.strictEqual((log as any)._format('x', {fg: 'red'}), 'x');
+      assert.strictEqual((log as any)._format(log.stream, 'x', {fg: 'red'}), 'x');
     });
 
     it('_buffer while paused', function () {
@@ -260,8 +261,86 @@ describe('basic', function () {
     });
 
     it('write with no stream', function () {
-      log.stream = null as any;
-      (log as any).write('message');
+      (log as any).write(null, 'message');
+    });
+
+    it('defaults stream and errorStream to stderr, and stderrLevel to error', function () {
+      assert.strictEqual(log.stream, process.stderr);
+      assert.strictEqual(log.errorStream, process.stderr);
+      assert.strictEqual(log.stderrLevel, 'error');
+    });
+
+    describe('routing by severity', function () {
+      function createFakeStream() {
+        const chunks: string[] = [];
+        const stream = Object.assign(new Stream(), {
+          write: (m: string) => {
+            chunks.push(m);
+            return true;
+          },
+          writable: true,
+          isTTY: false,
+          end: () => {},
+        });
+        return {stream, chunks};
+      }
+
+      let out: ReturnType<typeof createFakeStream>;
+      let err: ReturnType<typeof createFakeStream>;
+
+      beforeEach(function () {
+        out = createFakeStream();
+        err = createFakeStream();
+        log.stream = out.stream as any;
+        log.errorStream = err.stream as any;
+        log.level = 'silly';
+      });
+
+      it('routes levels below stderrLevel to stream only', function () {
+        log.info('t', 'info message');
+        log.warn('t', 'warn message');
+        assert.deepStrictEqual(err.chunks, []);
+        assert.ok(out.chunks.join('').includes('info message'));
+        assert.ok(out.chunks.join('').includes('warn message'));
+      });
+
+      it('routes the error level to errorStream only', function () {
+        log.error('t', 'error message');
+        assert.deepStrictEqual(out.chunks, []);
+        assert.ok(err.chunks.join('').includes('error message'));
+      });
+
+      it('routes a custom level with a higher severity than error to errorStream', function () {
+        log.addLevel('fatal', 6000, {fg: 'red'}, 'FATAL');
+        (log as any).fatal('t', 'fatal message');
+        assert.deepStrictEqual(out.chunks, []);
+        assert.ok(err.chunks.join('').includes('fatal message'));
+      });
+
+      it('respects a reconfigured stderrLevel threshold', function () {
+        log.stderrLevel = 'warn';
+        log.info('t', 'info message');
+        log.warn('t', 'warn message');
+        assert.ok(out.chunks.join('').includes('info message'));
+        assert.ok(err.chunks.join('').includes('warn message'));
+        assert.ok(!out.chunks.join('').includes('warn message'));
+      });
+
+      it('drops error output when errorStream is null without affecting stream', function () {
+        log.errorStream = null;
+        log.info('t', 'info message');
+        log.error('t', 'error message');
+        assert.strictEqual(err.chunks.length, 0);
+        assert.ok(out.chunks.join('').includes('info message'));
+      });
+
+      it('drops non-error output when stream is null without affecting errorStream', function () {
+        log.stream = null;
+        log.info('t', 'info message');
+        log.error('t', 'error message');
+        assert.strictEqual(out.chunks.length, 0);
+        assert.ok(err.chunks.join('').includes('error message'));
+      });
     });
   });
 
@@ -281,32 +360,31 @@ describe('basic', function () {
     });
 
     it('with nonexistent stream', function () {
-      log.stream = null as any;
-      assert.strictEqual((log as any)._format('message'), undefined);
+      assert.strictEqual((log as any)._format(null, 'message'), undefined);
     });
     it('fg', function () {
       log.enableColor();
-      const o = (log as any)._format('test message', {bg: 'blue'});
+      const o = (log as any)._format(log.stream, 'test message', {bg: 'blue'});
       assert.ok(o.includes('\u001b[44mtest message\u001b[0m'));
     });
     it('bg', function () {
       log.enableColor();
-      const o = (log as any)._format('test message', {bg: 'white'});
+      const o = (log as any)._format(log.stream, 'test message', {bg: 'white'});
       assert.ok(o.includes('\u001b[47mtest message\u001b[0m'));
     });
     it('bold', function () {
       log.enableColor();
-      const o = (log as any)._format('test message', {bold: true});
+      const o = (log as any)._format(log.stream, 'test message', {bold: true});
       assert.ok(o.includes('\u001b[1mtest message\u001b[0m'));
     });
     it('underline', function () {
       log.enableColor();
-      const o = (log as any)._format('test message', {underline: true});
+      const o = (log as any)._format(log.stream, 'test message', {underline: true});
       assert.ok(o.includes('\u001b[4mtest message\u001b[0m'));
     });
     it('inverse', function () {
       log.enableColor();
-      const o = (log as any)._format('test message', {inverse: true});
+      const o = (log as any)._format(log.stream, 'test message', {inverse: true});
       assert.ok(o.includes('\u001b[7mtest message\u001b[0m'));
     });
   });

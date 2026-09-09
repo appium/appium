@@ -13,7 +13,7 @@ describe('display', function () {
     beforeEach(function () {
       actual = '';
       log = new Log();
-      (log as any).write = (msg: string) => {
+      (log as any).write = (_stream: unknown, msg: string) => {
         actual += msg;
       };
     });

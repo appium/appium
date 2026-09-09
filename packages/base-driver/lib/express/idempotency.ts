@@ -1,4 +1,5 @@
 import {EventEmitter} from 'node:events';
+import type {OutgoingHttpHeaders} from 'node:http';
 import type {Socket} from 'node:net';
 
 import {util} from '@appium/support';
@@ -7,10 +8,18 @@ import {LRUCache} from 'lru-cache';
 
 import {log} from './logger';
 
+interface SessionResponse {
+  statusCode: number;
+  headers: OutgoingHttpHeaders;
+  body: string;
+}
+
+type ReplayResponse = Buffer | SessionResponse;
+
 interface CachedResponse {
   method: string;
   path: string;
-  response: Buffer | null;
+  response: ReplayResponse | null;
   responseStateListener: EventEmitter | null;
 }
 
@@ -18,26 +27,18 @@ const IDEMPOTENT_RESPONSES = new LRUCache<string, CachedResponse>({
   max: 64,
   ttl: 30 * 60 * 1000,
   updateAgeOnGet: true,
-  dispose: ({responseStateListener}) => responseStateListener?.removeAllListeners(),
 });
 const MONITORED_METHODS = ['POST', 'PATCH'];
 const IDEMPOTENCY_KEY_HEADER = 'x-idempotency-key';
 const MAX_CACHED_PAYLOAD_SIZE_BYTES = 1 * 1024 * 1024; // 1 MiB
-const PENDING_RESPONSES = new WeakMap<Response, Promise<void>>();
+const RESPONSE_PRESERVERS = new WeakMap<Response, () => void>();
 
-/** Keep retries pending until the route has finished work that outlives its HTTP connection. */
-export function deferIdempotentResponse(res: Response): () => void {
-  let complete!: () => void;
-  PENDING_RESPONSES.set(
-    res,
-    new Promise<void>((resolve) => {
-      complete = resolve;
-    }),
-  );
-  return () => {
-    PENDING_RESPONSES.delete(res);
-    complete();
-  };
+/** Preserve a keyed Create Session result independently of its original connection. */
+export function preserveIdempotentSessionResponse(res: Response): boolean {
+  const preserve = RESPONSE_PRESERVERS.get(res);
+  RESPONSE_PRESERVERS.delete(res);
+  preserve?.();
+  return Boolean(preserve);
 }
 
 /**
@@ -77,7 +78,7 @@ export async function handleIdempotency(req: Request, res: Response, next: NextF
     if (!res.socket?.writable) {
       return next();
     }
-    res.socket.write(response);
+    replayResponse(res, response);
   } else {
     log.info(`The same request with the idempotency key '${key}' is being processed`);
     log.info(`Waiting for the response to be rerouted to the current request`);
@@ -85,7 +86,7 @@ export async function handleIdempotency(req: Request, res: Response, next: NextF
       return next();
     }
     const onClose = () => responseStateListener.removeListener('ready', onReady);
-    const onReady = (cachedResponse: Buffer | null) => {
+    const onReady = (cachedResponse: ReplayResponse | null) => {
       res.removeListener('close', onClose);
       if (res.destroyed) {
         return;
@@ -94,10 +95,18 @@ export async function handleIdempotency(req: Request, res: Response, next: NextF
         void handleIdempotency(req, res, next);
         return;
       }
-      res.socket?.write(cachedResponse);
+      replayResponse(res, cachedResponse);
     };
     responseStateListener.once('ready', onReady);
     res.once('close', onClose);
+  }
+}
+
+function replayResponse(res: Response, response: ReplayResponse): void {
+  if (Buffer.isBuffer(response)) {
+    res.socket?.write(response);
+  } else {
+    res.status(response.statusCode).set(response.headers).send(response.body);
   }
 }
 
@@ -116,32 +125,55 @@ function cacheResponse(key: string, req: Request, res: Response): void {
   IDEMPOTENT_RESPONSES.set(key, cached);
   const stopCapture = captureResponse(res.socket);
   let completed = false;
-  const completeResponse = async (error?: string) => {
+  let preserved = false;
+  const completeResponse = (response: ReplayResponse | null, error?: string | null) => {
     if (completed) {
       return;
     }
     completed = true;
-    const captured = stopCapture();
-    await PENDING_RESPONSES.get(res);
-    const errorMessage = error ?? captured.error;
+    RESPONSE_PRESERVERS.delete(res);
 
-    // Keep waiters alive until they are notified, even when deleting the cache entry.
     cached.responseStateListener = null;
     if (IDEMPOTENT_RESPONSES.get(key) !== cached) {
-      log.info(`Could not cache the response identified by '${key}'. ` + `Cache consistency has been damaged`);
-    } else if (errorMessage) {
-      log.info(`Could not cache the response identified by '${key}': ${errorMessage}`);
+      log.info(`The response cache entry identified by '${key}' was evicted before completion`);
+    } else if (error) {
+      log.info(`Could not cache the response identified by '${key}': ${error}`);
       IDEMPOTENT_RESPONSES.delete(key);
     } else {
-      cached.response = captured.response;
+      cached.response = response;
     }
-    responseStateListener.emit('ready', cached.response);
+    // Existing waiters still need the result if the entry was evicted or is too large to retain.
+    responseStateListener.emit('ready', response);
   };
-  res.once('error', (e: Error) => void completeResponse(e.message));
-  res.once('finish', () => void completeResponse());
+  const completeSocketResponse = (error?: string) => {
+    if (preserved || completed) {
+      return;
+    }
+    const captured = stopCapture();
+    completeResponse(error ? null : captured.response, error ?? captured.error);
+  };
+  RESPONSE_PRESERVERS.set(res, () => {
+    preserved = true;
+    stopCapture();
+    const send = res.send.bind(res);
+    // The protocol handler sends serialized JSON, even after the client has disconnected.
+    res.send = (body: string) => {
+      res.send = send;
+      const result = send(body);
+      completeResponse(
+        {statusCode: res.statusCode, headers: res.getHeaders(), body},
+        Buffer.byteLength(body) > MAX_CACHED_PAYLOAD_SIZE_BYTES
+          ? 'Session response exceeds the cache size limit'
+          : null,
+      );
+      return result;
+    };
+  });
+  res.once('error', (e: Error) => completeSocketResponse(e.message));
+  res.once('finish', () => completeSocketResponse());
   res.once('close', () => {
     if (!res.writableFinished) {
-      void completeResponse('Client disconnected before the response was sent');
+      completeSocketResponse('Client disconnected before the response was sent');
     }
   });
 }

@@ -7,7 +7,7 @@ import type {BaseDriver} from '../basedriver/driver';
 import {generateDriverLogPrefix} from '../basedriver/helpers';
 import {log} from '../basedriver/logger';
 import {DEFAULT_BASE_PATH, MAX_LOG_BODY_LENGTH, PROTOCOLS} from '../constants';
-import {deferIdempotentResponse} from '../express/idempotency';
+import {preserveIdempotentSessionResponse} from '../express/idempotency';
 import type {RouteConfiguringFunction} from '../express/server';
 import {isW3cCaps} from '../helpers/capabilities';
 import {omitKeys} from '../utils';
@@ -504,9 +504,6 @@ function buildHandler(
       // unpack createSession response
       if (spec.command === CREATE_SESSION_COMMAND) {
         newSessionId = driverRes[0];
-        if (res.destroyed) {
-          return newSessionId;
-        }
         getLogger(driver, newSessionId).debug(
           `Cached the protocol value '${currentProtocol}' for the new session ${newSessionId}`,
         );
@@ -600,16 +597,15 @@ function buildHandler(
   };
 
   const newSessionHandler = async (req: Request, res: Response) => {
-    const complete = deferIdempotentResponse(res);
-    const responseClosed = new Promise<void>((resolve) => res.once('close', resolve));
-    try {
-      const newSessionId = await asyncHandler(req, res);
-      await responseClosed;
-      if (newSessionId && !res.writableFinished) {
-        await deleteAbandonedSession(driver, newSessionId);
-      }
-    } finally {
-      complete();
+    if (preserveIdempotentSessionResponse(res)) {
+      return await asyncHandler(req, res);
+    }
+    // Sending after a disconnect can still set writableFinished, so snapshot it at close.
+    const responseClosed = new Promise<boolean>((resolve) => res.once('close', () => resolve(res.writableFinished)));
+    const newSessionId = await asyncHandler(req, res);
+    const responseFinished = await responseClosed;
+    if (newSessionId && !responseFinished) {
+      await deleteAbandonedSession(driver, newSessionId);
     }
   };
   const handler = spec.command === CREATE_SESSION_COMMAND ? newSessionHandler : asyncHandler;

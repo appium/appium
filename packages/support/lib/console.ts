@@ -78,8 +78,8 @@ function isUnicodeSupported(): boolean {
 
 const UNICODE = isUnicodeSupported();
 
-/** Returns whether stderr should use ANSI color by default. */
-function stderrSupportsColor(stream: {isTTY?: boolean} = process.stderr): boolean {
+/** Returns whether the given stream should use ANSI color by default. */
+function streamSupportsColor(stream: {isTTY?: boolean}): boolean {
   const {env} = process;
   if (env.NO_COLOR !== undefined || env.NODE_DISABLE_COLORS !== undefined) {
     return false;
@@ -111,7 +111,7 @@ export interface ConsoleOpts {
   jsonMode?: boolean;
   /** If _falsy_, do not use fancy symbols. */
   useSymbols?: boolean;
-  /** If _falsy_, do not use color output. If _truthy_, forces color output. By default, checks `NO_COLOR`, `FORCE_COLOR`, `TERM`, and stderr TTY. Ignored if `useSymbols` is `false`. */
+  /** If _falsy_, do not use color output. If _truthy_, forces color output. By default, checks `NO_COLOR`, `FORCE_COLOR`, `TERM`, and stdout TTY. Ignored if `useSymbols` is `false`. */
   useColor?: boolean;
 }
 
@@ -133,8 +133,8 @@ class NullWritable extends Writable {
  * A particular console/logging class for Appium's CLI.
  *
  * - By default, uses some fancy symbols
- * - Writes to `STDERR`, generally.
- * - In "JSON mode", `STDERR` is squelched. Use {@linkcode CliConsole.json} to write the JSON.
+ * - Writes to `STDOUT`, except for {@linkcode CliConsole#error}, which writes to `STDERR`.
+ * - In "JSON mode", regular output is squelched. Use {@linkcode CliConsole.json} to write the JSON to `STDOUT`.
  *
  * DO NOT extend this to do anything other than what it already does. Download a library or something.
  */
@@ -146,15 +146,19 @@ export class CliConsole {
     error: 'red',
   };
 
-  readonly #console: InstanceType<typeof NodeConsole>;
-  readonly #useSymbols: boolean;
-  readonly #useColor: boolean;
+  private readonly console: InstanceType<typeof NodeConsole>;
+  private readonly jsonConsole: InstanceType<typeof NodeConsole>;
+  private readonly useSymbols: boolean;
+  private readonly useColor: boolean;
 
   constructor(opts: ConsoleOpts = {}) {
     const {jsonMode = false, useSymbols = true, useColor} = opts;
-    this.#console = new NodeConsole(process.stdout, jsonMode ? new NullWritable() : process.stderr);
-    this.#useSymbols = Boolean(useSymbols);
-    this.#useColor = Boolean(useColor ?? stderrSupportsColor(process.stderr));
+    const nullStream = new NullWritable();
+    this.console = new NodeConsole(jsonMode ? nullStream : process.stdout, jsonMode ? nullStream : process.stderr);
+    // json() must always reach real STDOUT, even in JSON mode where `console` is squelched.
+    this.jsonConsole = new NodeConsole(process.stdout, nullStream);
+    this.useSymbols = Boolean(useSymbols);
+    this.useColor = Boolean(useColor ?? streamSupportsColor(process.stdout));
   }
 
   /**
@@ -163,12 +167,12 @@ export class CliConsole {
    * Returns `undefined` if `msg` is `undefined`.
    */
   decorate(msg: string | undefined, symbol?: SymbolKey): string | undefined {
-    if (typeof msg !== 'string' || typeof symbol !== 'string' || !this.#useSymbols) {
+    if (typeof msg !== 'string' || typeof symbol !== 'string' || !this.useSymbols) {
       return msg;
     }
 
     let newMsg = `${logSymbols[symbol]} ${msg}`;
-    if (this.#useColor) {
+    if (this.useColor) {
       newMsg = styleText(CliConsole.symbolToColor[symbol], newMsg);
     }
     return newMsg;
@@ -180,17 +184,17 @@ export class CliConsole {
    * You probably don't want to call this more than once before exiting (since that will output invalid JSON).
    */
   json(value: JsonValue): void {
-    this.#console.log(JSON.stringify(value));
+    this.jsonConsole.log(JSON.stringify(value));
   }
 
-  /** General logging function. */
+  /** General logging function. Writes to `STDOUT`. */
   log(message?: string, ...args: unknown[]): void {
-    this.#console.error(message, ...args);
+    this.console.log(message, ...args);
   }
 
   /** A "success" message */
   ok(message?: string, ...args: unknown[]): void {
-    this.#console.error(this.decorate(message, 'success'), ...args);
+    this.log(this.decorate(message, 'success'), ...args);
   }
 
   /** Alias for {@linkcode CliConsole.log} */
@@ -200,7 +204,7 @@ export class CliConsole {
 
   /** Wraps {@link console.dir} */
   dump(item: unknown, opts?: InspectOptions): void {
-    this.#console.dir(item, opts);
+    this.console.dir(item, opts);
   }
 
   /** An "info" message */
@@ -213,9 +217,9 @@ export class CliConsole {
     this.log(this.decorate(message, 'warning'), ...args);
   }
 
-  /** An "error" message */
+  /** An "error" message. Writes to `STDERR`. */
   error(message?: string, ...args: unknown[]): void {
-    this.log(this.decorate(message, 'error'), ...args);
+    this.console.error(this.decorate(message, 'error'), ...args);
   }
 }
 

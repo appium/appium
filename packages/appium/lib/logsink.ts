@@ -204,7 +204,7 @@ async function createTransports(args: ParsedArgs): Promise<Transport[]> {
 
   // Server args are normalized in main so we only see dest form (`loglevel`).
   // Fall back to schema default so Winston never sees undefined.
-  const rawLogLevel = args.loglevel ?? 'debug';
+  const rawLogLevel = args.loglevel ?? 'info';
 
   if (rawLogLevel && rawLogLevel.includes(':')) {
     // --log-level arg can optionally provide diff logging levels for console and file, separated by a colon

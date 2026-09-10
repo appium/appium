@@ -6,7 +6,7 @@ import type {Driver, MethodMap} from '@appium/types';
 import {createSandbox} from 'sinon';
 
 import {configureServer, normalizeBasePath, server} from '../../../lib/express/server.js';
-import {routeConfiguringFunction} from '../../../lib/protocol/protocol.js';
+import {routeConfiguringFunction} from '../../../lib/protocol/route-handler.js';
 
 // stand-in for the router `configureHttp` normally creates
 const fakeFrontRouter = {} as any;

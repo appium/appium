@@ -4,7 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import {after, before, describe, it} from 'node:test';
 
-import {transformers} from '../../../lib/schema/cli-transformers';
+import {transformers} from '../../../lib/schema/cli-transformers.js';
 
 describe('cli-transformers', function () {
   let tmpDir: string;

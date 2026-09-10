@@ -38,6 +38,10 @@ const APPLICATIONS_CACHE_GUARD = new AsyncLock();
 const SANITIZE_REPLACEMENT = '-';
 const DEFAULT_BASENAME = 'appium-app';
 const APP_DOWNLOAD_TIMEOUT_MS = 120 * 1000;
+// RFC 5987: filename*=UTF-8''percent-encoded-name  (language tag is optional)
+const FILENAME_STAR_PATTERN = /(?:^|;)\s*filename\*\s*=\s*([^';\s]+)'[^']*'([^;]+)/i;
+const QUOTED_FILENAME_PATTERN = /(?:^|;)\s*filename\s*=\s*"((?:\\.|[^"\\])*)"/i;
+const UNQUOTED_FILENAME_PATTERN = /(?:^|;)\s*filename\s*=\s*([^;\s]+)/i;
 
 process.on('exit', () => {
   if (APPLICATIONS_CACHE.size === 0) {
@@ -491,8 +495,7 @@ async function fetchApp(srcStream: Readable, dstPath: string): Promise<string> {
  * @internal
  */
 export function filenameFromContentDisposition(header: string): string | undefined {
-  // RFC 5987: filename*=UTF-8''percent-encoded-name  (language tag is optional)
-  const encoded = /(?:^|;)\s*filename\*\s*=\s*([^';\s]+)'[^']*'([^;]+)/i.exec(header);
+  const encoded = FILENAME_STAR_PATTERN.exec(header);
   if (encoded?.[2]) {
     try {
       const value = decodeURIComponent(encoded[2].trim().replace(/^["']|["']$/g, ''));
@@ -506,13 +509,12 @@ export function filenameFromContentDisposition(header: string): string | undefin
 
   // an empty quoted value is still the filename parameter, so it must not fall through to the
   // token branch below, which would otherwise capture the quote characters themselves
-  const quoted = /(?:^|;)\s*filename\s*=\s*"((?:\\.|[^"\\])*)"/i.exec(header);
+  const quoted = QUOTED_FILENAME_PATTERN.exec(header);
   if (quoted) {
     return quoted[1].replace(/\\(.)/g, '$1') || undefined;
   }
 
-  // unquoted token; stop at ';' so later parameters are not swallowed
-  const unquoted = /(?:^|;)\s*filename\s*=\s*([^;\s]+)/i.exec(header);
+  const unquoted = UNQUOTED_FILENAME_PATTERN.exec(header);
   if (unquoted?.[1]) {
     return unquoted[1];
   }

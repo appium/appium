@@ -244,7 +244,7 @@ export default [
   {
     argSpec: {
       arg: 'log-level',
-      defaultValue: 'debug',
+      defaultValue: 'info',
       dest: 'loglevel',
       extName: undefined,
       extType: undefined,
@@ -254,7 +254,7 @@ export default [
     },
     schema: {
       appiumCliDest: 'loglevel',
-      default: 'debug',
+      default: 'info',
       description: 'Log level (console[:file])',
       enum: [
         'info',

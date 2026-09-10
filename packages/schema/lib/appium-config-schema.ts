@@ -155,7 +155,7 @@ export const AppiumConfigJsonSchema = {
         },
         'log-level': {
           appiumCliDest: 'loglevel',
-          default: 'debug',
+          default: 'info',
           description: 'Log level (console[:file])',
           enum: [
             'info',

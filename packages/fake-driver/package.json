@@ -49,10 +49,13 @@
   "dependencies": {
     "@xmldom/xmldom": "0.9.12",
     "asyncbox": "6.4.2",
+    "ora": "5.4.1",
     "xpath": "0.0.34"
   },
   "devDependencies": {
-    "@appium/driver-test-support": "3.0.0"
+    "@appium/driver-test-support": "3.0.0",
+    "@appium/types": "1.7.0",
+    "@types/express": "5.0.6"
   },
   "peerDependencies": {
     "appium": "^3.0.0-beta.0"

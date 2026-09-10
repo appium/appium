@@ -55,6 +55,9 @@
     "lru-cache": "11.5.2",
     "sharp": "0.35.3"
   },
+  "devDependencies": {
+    "@appium/types": "1.7.0"
+  },
   "peerDependencies": {
     "appium": "^3.0.0-beta.0"
   },

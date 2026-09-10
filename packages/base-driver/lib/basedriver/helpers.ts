@@ -41,7 +41,10 @@ const APP_DOWNLOAD_TIMEOUT_MS = 120 * 1000;
 // RFC 5987: filename*=UTF-8''percent-encoded-name  (language tag is optional)
 const FILENAME_STAR_PATTERN = /(?:^|;)\s*filename\*\s*=\s*([^';\s]+)'[^']*'([^;]+)/i;
 const QUOTED_FILENAME_PATTERN = /(?:^|;)\s*filename\s*=\s*"((?:\\.|[^"\\])*)"/i;
+// unquoted token; stops at ';' so later parameters are not swallowed
 const UNQUOTED_FILENAME_PATTERN = /(?:^|;)\s*filename\s*=\s*([^;\s]+)/i;
+const SURROUNDING_QUOTES_PATTERN = /^["']|["']$/g;
+const ESCAPED_CHAR_PATTERN = /\\(.)/g;
 
 process.on('exit', () => {
   if (APPLICATIONS_CACHE.size === 0) {
@@ -498,7 +501,7 @@ export function filenameFromContentDisposition(header: string): string | undefin
   const encoded = FILENAME_STAR_PATTERN.exec(header);
   if (encoded?.[2]) {
     try {
-      const value = decodeURIComponent(encoded[2].trim().replace(/^["']|["']$/g, ''));
+      const value = decodeURIComponent(encoded[2].trim().replace(SURROUNDING_QUOTES_PATTERN, ''));
       if (value) {
         return value;
       }
@@ -511,7 +514,7 @@ export function filenameFromContentDisposition(header: string): string | undefin
   // token branch below, which would otherwise capture the quote characters themselves
   const quoted = QUOTED_FILENAME_PATTERN.exec(header);
   if (quoted) {
-    return quoted[1].replace(/\\(.)/g, '$1') || undefined;
+    return quoted[1].replace(ESCAPED_CHAR_PATTERN, '$1') || undefined;
   }
 
   const unquoted = UNQUOTED_FILENAME_PATTERN.exec(header);

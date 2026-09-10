@@ -255,7 +255,7 @@ describe('Protocol', function () {
 
           const {error: w3cError, message, stacktrace} = data.value;
           assert.match(message, /following required parameter/);
-          assert.match(stacktrace, /protocol\.(js|ts)/);
+          assert.match(stacktrace, /params\.(js|ts)/);
           assert.strictEqual(typeof w3cError, 'string');
           assert.strictEqual(w3cError, errors.InvalidArgumentError.error());
         });
@@ -274,7 +274,7 @@ describe('Protocol', function () {
 
           const {error: w3cError, message, stacktrace} = data.value;
           assert.match(message, /Method has not yet been implemented/);
-          assert.match(stacktrace, /protocol\.(js|ts)/);
+          assert.match(stacktrace, /route-handler\.(js|ts)/);
           assert.strictEqual(typeof w3cError, 'string');
           assert.strictEqual(w3cError, errors.NotYetImplementedError.error());
         });
@@ -295,7 +295,7 @@ describe('Protocol', function () {
           assert.strictEqual(status, 500);
 
           const {error: w3cError, message, stacktrace} = data.value;
-          assert.match(stacktrace, /protocol\.(js|ts)/);
+          assert.match(stacktrace, /route-handler\.(js|ts)/);
           assert.strictEqual(typeof w3cError, 'string');
           assert.strictEqual(w3cError, errors.UnknownError.error());
           assert.match(message, /Didn't work/);
@@ -319,7 +319,7 @@ describe('Protocol', function () {
           assert.strictEqual(status, 500);
 
           const {error: w3cError, message, stacktrace} = data.value;
-          assert.match(stacktrace, /protocol\.(js|ts)/);
+          assert.match(stacktrace, /route-handler\.(js|ts)/);
           assert.strictEqual(typeof w3cError, 'string');
           assert.strictEqual(w3cError, errors.TimeoutError.error());
           assert.match(message, /An operation did not complete before its timeout expired/);

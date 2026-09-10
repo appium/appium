@@ -85,3 +85,49 @@ Turn on multiple insecure features for specific drivers:
 ```bash
 appium --allow-insecure=uiautomator2:adb_shell,xcuitest:get_server_logs
 ```
+
+## Restricting Remote App URLs
+
+Several drivers accept a URL instead of a local path in capabilities such as `appium:app`, in which
+case the Appium server downloads the application package from that URL before starting the session.
+By default, any `http:` or `https:` URL is accepted. Server hosts who want to control which URLs
+their server is allowed to download from can do so with the `--app-url-rules` argument (or the
+`server.app-url-rules` property in a [configuration file](./config.md)). Its value is a JSON object
+(or a path to a JSON file) with any of the following properties:
+
+|<div style="width:10em">Rule</div>|Description|Default|
+|----------------------------------|-----------|-------|
+|`allow`|List of regular expressions matched against the full URL. If the list is not empty, a URL must match _at least one_ of them to be accepted|`[]`|
+|`deny`|List of regular expressions matched against the full URL. A URL matching _any_ of them is rejected, even if it also matches an `allow` rule|`[]`|
+|`httpsOnly`|Only accept `https:` URLs|`false`|
+|`allowCredentials`|Accept URLs containing a username and/or password (e.g. `https://user:pass@host/app.apk`)|`true`|
+|`maxRedirects`|Maximum number of HTTP redirects to follow while downloading. Set to `0` to reject any redirect|_(unlimited)_|
+
+The rules are also applied to every URL the server is redirected to while downloading, so
+redirects cannot be used to escape them. If a URL violates any rule, the session is not created and
+the error message explains which rule was violated.
+
+!!! note
+
+    These rules only apply to URLs the server downloads via the standard app configuration helper,
+    which is used for `appium:app` and similar capabilities by all official drivers. Drivers may
+    define custom capabilities with URLs that are processed differently and thus are not covered.
+
+For example, to only allow HTTPS downloads from an internal artifact server, without credentials in
+the URL and without following redirects:
+
+```bash
+appium --app-url-rules='{"allow": ["^https://artifacts\\.example\\.com/"], "httpsOnly": true, "allowCredentials": false, "maxRedirects": 0}'
+```
+
+The same configuration as part of a config file:
+
+```yaml
+server:
+  app-url-rules:
+    allow:
+      - '^https://artifacts\.example\.com/'
+    httpsOnly: true
+    allowCredentials: false
+    maxRedirects: 0
+```

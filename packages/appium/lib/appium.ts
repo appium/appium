@@ -14,6 +14,7 @@ import {
   promoteAppiumOptions,
   promoteAppiumOptionsForObject,
   PROTOCOLS,
+  setAppUrlRules,
 } from '@appium/base-driver';
 import {util} from '@appium/support';
 import type {
@@ -122,6 +123,14 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
 
   configureGlobalFeatures = insecureFeatures.configureGlobalFeatures;
   configureDriverFeatures = insecureFeatures.configureDriverFeatures;
+
+  /**
+   * Applies the rules from `--app-url-rules` (if any) to all remote application URLs
+   * downloaded by drivers in this server process.
+   */
+  configureAppUrlRules(): void {
+    setAppUrlRules(this.args.appUrlRules);
+  }
 
   listCommands = inspectorCommands.listCommands;
   listExtensions = inspectorCommands.listExtensions;

@@ -57,6 +57,15 @@ export const AppiumConfigJsonSchema = {
           type: 'boolean',
           default: false,
         },
+        'app-url-rules': {
+          $comment:
+            'The actual rules are defined in $defs/appUrlRules, since inline `properties` are reserved for extension config sections',
+          allOf: [{$ref: '#/$defs/appUrlRules'}],
+          description:
+            'Rules that remote application URLs (e.g. in the "appium:app" capability) must satisfy before the server downloads them. Session creation is rejected if a URL violates any rule. If a string, a path to a JSON file containing the rules, or raw JSON.',
+          title: 'app-url-rules config',
+          type: 'object',
+        },
         'base-path': {
           appiumCliAliases: ['pa'],
           default: '',
@@ -353,6 +362,48 @@ export const AppiumConfigJsonSchema = {
   title: 'Appium Configuration',
   type: 'object',
   $defs: {
+    appUrlRules: {
+      type: 'object',
+      description: 'Rules that remote application URLs must satisfy',
+      properties: {
+        allow: {
+          description:
+            'Regular expressions matched against the full URL. If non-empty, a URL must match at least one of them to be accepted.',
+          items: {
+            type: 'string',
+            format: 'regex',
+          },
+          type: 'array',
+          uniqueItems: true,
+        },
+        deny: {
+          description: 'Regular expressions matched against the full URL. A URL matching any of them is rejected.',
+          items: {
+            type: 'string',
+            format: 'regex',
+          },
+          type: 'array',
+          uniqueItems: true,
+        },
+        httpsOnly: {
+          description: 'Whether only "https:" URLs are accepted',
+          type: 'boolean',
+          default: false,
+        },
+        allowCredentials: {
+          description: 'Whether URLs containing a username and/or a password are accepted',
+          type: 'boolean',
+          default: true,
+        },
+        maxRedirects: {
+          description:
+            'Maximum number of HTTP redirects to follow while downloading the application. Set to 0 to reject any redirect.',
+          type: 'integer',
+          minimum: 0,
+        },
+      },
+      additionalProperties: false,
+    },
     logFilterText: {
       type: 'object',
       description: 'Log filter with plain text',

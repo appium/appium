@@ -18,6 +18,10 @@ export type AllowInsecureConfig = string[];
  */
 export type AllowUnknownArgsConfig = boolean;
 /**
+ * Rules that remote application URLs (e.g. in the "appium:app" capability) must satisfy before the server downloads them. Session creation is rejected if a URL violates any rule. If a string, a path to a JSON file containing the rules, or raw JSON.
+ */
+export type AppUrlRulesConfig = AppUrlRules;
+/**
  * Base path to use as the prefix for all webdriver routes running on the server
  */
 export type BasePathConfig = string;
@@ -197,6 +201,7 @@ export interface ServerConfig {
   address?: AddressConfig;
   "allow-insecure"?: AllowInsecureConfig;
   "allow-unknown-args"?: AllowUnknownArgsConfig;
+  "app-url-rules"?: AppUrlRulesConfig;
   "base-path"?: BasePathConfig;
   "callback-address"?: CallbackAddressConfig;
   "callback-port"?: CallbackPortConfig;
@@ -232,6 +237,31 @@ export interface ServerConfig {
   webhook?: WebhookConfig;
   "max-ipc-data-size"?: MaxIpcDataSizeConfig;
   "max-ipc-topics"?: MaxIpcTopicsConfig;
+}
+/**
+ * Rules that remote application URLs must satisfy
+ */
+export interface AppUrlRules {
+  /**
+   * Regular expressions matched against the full URL. If non-empty, a URL must match at least one of them to be accepted.
+   */
+  allow?: string[];
+  /**
+   * Regular expressions matched against the full URL. A URL matching any of them is rejected.
+   */
+  deny?: string[];
+  /**
+   * Whether only "https:" URLs are accepted
+   */
+  httpsOnly?: boolean;
+  /**
+   * Whether URLs containing a username and/or a password are accepted
+   */
+  allowCredentials?: boolean;
+  /**
+   * Maximum number of HTTP redirects to follow while downloading the application. Set to 0 to reject any redirect.
+   */
+  maxRedirects?: number;
 }
 /**
  * Set the default desired capabilities, which will be set on each session unless overridden by received capabilities. If a string, a path to a JSON file containing the capabilities, or raw JSON.

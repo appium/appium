@@ -6,10 +6,11 @@ import {fs, node, tempDir, timing, util} from '@appium/support';
 import type {CachedAppInfo, ConfigureAppOptions, HTTPHeaders, PostProcessOptions} from '@appium/types';
 import AsyncLock from 'async-lock';
 import axios from 'axios';
-import type {AxiosResponseHeaders, RawAxiosRequestHeaders} from 'axios';
+import type {AxiosRequestConfig, AxiosResponseHeaders, RawAxiosRequestHeaders} from 'axios';
 import {LRUCache} from 'lru-cache';
 import type {PackageJson} from 'type-fest';
 
+import {assertAppUrlAllowed, getAppUrlRules} from './app-url-rules.js';
 import {log as logger} from './logger.js';
 
 // for compat with running tests transpiled and in-place
@@ -129,7 +130,9 @@ export async function configureApp(
   };
   const {protocol, pathname} = parseAppLink(app);
   const isUrl = isSupportedUrl(app);
-  if (!isUrl && !path.isAbsolute(newApp)) {
+  if (isUrl) {
+    assertAppUrlAllowed(new URL(app));
+  } else if (!path.isAbsolute(newApp)) {
     newApp = path.resolve(process.cwd(), newApp);
     logger.warn(
       `The current application path '${app}' is not absolute ` +
@@ -434,14 +437,27 @@ async function queryAppLink(appLink: string, reqHeaders: RawAxiosRequestHeaders)
   url.password = '';
   const axiosUrl = url.href;
   const axiosAuth = username ? {username, password} : undefined;
-  const requestOpts = {
+  const requestOpts: AxiosRequestConfig = {
     url: axiosUrl,
     auth: axiosAuth,
-    responseType: 'stream' as const,
+    responseType: 'stream',
     timeout: APP_DOWNLOAD_TIMEOUT_MS,
     validateStatus: (status: number) => (status >= 200 && status < 300) || status === HTTP_STATUS_NOT_MODIFIED,
     headers: reqHeaders,
   };
+  const urlRules = getAppUrlRules();
+  if (urlRules) {
+    if (urlRules.maxRedirects !== undefined) {
+      requestOpts.maxRedirects = urlRules.maxRedirects;
+    }
+    // Make sure redirects cannot be used to escape the configured rules
+    requestOpts.beforeRedirect = (redirectOpts) => {
+      const {href} = redirectOpts as {href?: string};
+      if (href) {
+        assertAppUrlAllowed(new URL(href), urlRules);
+      }
+    };
+  }
   try {
     const {data: stream, headers, status} = await axios(requestOpts);
     return {stream, headers, status};

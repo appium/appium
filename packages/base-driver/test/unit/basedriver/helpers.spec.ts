@@ -126,40 +126,26 @@ describe('parseCapsArray', function () {
 
 describe('filenameFromContentDisposition', function () {
   it('should read a quoted filename', function () {
-    assert.strictEqual(
-      filenameFromContentDisposition('attachment; filename="quoted-app.apk"'),
-      'quoted-app.apk',
-    );
+    assert.strictEqual(filenameFromContentDisposition('attachment; filename="quoted-app.apk"'), 'quoted-app.apk');
   });
 
   it('should read an unquoted filename', function () {
-    assert.strictEqual(
-      filenameFromContentDisposition('attachment; filename=unquoted-app.apk'),
-      'unquoted-app.apk',
-    );
+    assert.strictEqual(filenameFromContentDisposition('attachment; filename=unquoted-app.apk'), 'unquoted-app.apk');
   });
 
   it('should prefer RFC 5987 filename* over filename', function () {
     assert.strictEqual(
-      filenameFromContentDisposition(
-        `attachment; filename="wrong.apk"; filename*=UTF-8''from-star.apk`,
-      ),
+      filenameFromContentDisposition(`attachment; filename="wrong.apk"; filename*=UTF-8''from-star.apk`),
       'from-star.apk',
     );
   });
 
   it('should decode a percent-encoded filename*', function () {
-    assert.strictEqual(
-      filenameFromContentDisposition(`attachment; filename*=UTF-8''My%20App.apk`),
-      'My App.apk',
-    );
+    assert.strictEqual(filenameFromContentDisposition(`attachment; filename*=UTF-8''My%20App.apk`), 'My App.apk');
   });
 
   it('should not let an unquoted token swallow later parameters', function () {
-    assert.strictEqual(
-      filenameFromContentDisposition('attachment; filename=app.apk; size=42'),
-      'app.apk',
-    );
+    assert.strictEqual(filenameFromContentDisposition('attachment; filename=app.apk; size=42'), 'app.apk');
   });
 
   it('should keep a quoted filename containing a semicolon', function () {

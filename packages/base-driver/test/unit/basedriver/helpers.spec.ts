@@ -1,7 +1,12 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {duplicateKeys, isPackageOrBundle, parseCapsArray} from '../../../lib/basedriver/helpers';
+import {
+  duplicateKeys,
+  filenameFromContentDisposition,
+  isPackageOrBundle,
+  parseCapsArray,
+} from '../../../lib/basedriver/helpers';
 
 describe('helpers', function () {
   describe('#isPackageOrBundle', function () {
@@ -116,5 +121,64 @@ describe('parseCapsArray', function () {
   });
   it('should fail if an invalid JSON array is provided', function () {
     assert.throws(() => parseCapsArray(`['*']`));
+  });
+});
+
+describe('filenameFromContentDisposition', function () {
+  it('should read a quoted filename', function () {
+    assert.strictEqual(
+      filenameFromContentDisposition('attachment; filename="quoted-app.apk"'),
+      'quoted-app.apk',
+    );
+  });
+
+  it('should read an unquoted filename', function () {
+    assert.strictEqual(
+      filenameFromContentDisposition('attachment; filename=unquoted-app.apk'),
+      'unquoted-app.apk',
+    );
+  });
+
+  it('should prefer RFC 5987 filename* over filename', function () {
+    assert.strictEqual(
+      filenameFromContentDisposition(
+        `attachment; filename="wrong.apk"; filename*=UTF-8''from-star.apk`,
+      ),
+      'from-star.apk',
+    );
+  });
+
+  it('should decode a percent-encoded filename*', function () {
+    assert.strictEqual(
+      filenameFromContentDisposition(`attachment; filename*=UTF-8''My%20App.apk`),
+      'My App.apk',
+    );
+  });
+
+  it('should not let an unquoted token swallow later parameters', function () {
+    assert.strictEqual(
+      filenameFromContentDisposition('attachment; filename=app.apk; size=42'),
+      'app.apk',
+    );
+  });
+
+  it('should keep a quoted filename containing a semicolon', function () {
+    assert.strictEqual(filenameFromContentDisposition('attachment; filename="a;b.apk"'), 'a;b.apk');
+  });
+
+  it('should ignore a parameter which merely ends with filename', function () {
+    assert.strictEqual(filenameFromContentDisposition('attachment; x-filename=sneaky.apk'), undefined);
+  });
+
+  it('should return undefined for an empty quoted filename', function () {
+    assert.strictEqual(filenameFromContentDisposition('attachment; filename=""'), undefined);
+  });
+
+  it('should return undefined when filename* is not decodable', function () {
+    assert.strictEqual(filenameFromContentDisposition(`attachment; filename*=UTF-8''%E0%A4%A`), undefined);
+  });
+
+  it('should return undefined when the header has no filename', function () {
+    assert.strictEqual(filenameFromContentDisposition('attachment'), undefined);
   });
 });

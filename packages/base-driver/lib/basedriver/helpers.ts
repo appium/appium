@@ -485,6 +485,39 @@ async function fetchApp(srcStream: Readable, dstPath: string): Promise<string> {
   return dstPath;
 }
 
+/**
+ * Picks a download filename from a Content-Disposition header.
+ * Prefers RFC 5987 `filename*` over `filename`, and accepts both quoted and unquoted `filename`.
+ * @internal
+ */
+export function filenameFromContentDisposition(header: string): string | undefined {
+  // RFC 5987: filename*=UTF-8''percent-encoded-name  (language tag is optional)
+  const encoded = /(?:^|;)\s*filename\*\s*=\s*([^';\s]+)'[^']*'([^;]+)/i.exec(header);
+  if (encoded?.[2]) {
+    try {
+      const value = decodeURIComponent(encoded[2].trim().replace(/^["']|["']$/g, ''));
+      if (value) {
+        return value;
+      }
+    } catch {
+      // invalid percent-encoding; fall through to filename=
+    }
+  }
+
+  // an empty quoted value is still the filename parameter, so it must not fall through to the
+  // token branch below, which would otherwise capture the quote characters themselves
+  const quoted = /(?:^|;)\s*filename\s*=\s*"((?:\\.|[^"\\])*)"/i.exec(header);
+  if (quoted) {
+    return quoted[1].replace(/\\(.)/g, '$1') || undefined;
+  }
+
+  // unquoted token; stop at ';' so later parameters are not swallowed
+  const unquoted = /(?:^|;)\s*filename\s*=\s*([^;\s]+)/i.exec(header);
+  if (unquoted?.[1]) {
+    return unquoted[1];
+  }
+}
+
 function determineFilename(
   headers: AxiosResponseHeaders | RawAxiosRequestHeaders,
   pathname: string,
@@ -496,9 +529,9 @@ function determineFilename(
   const extname = path.extname(basename);
   if (headers['content-disposition'] && /^attachment/i.test(String(headers['content-disposition']))) {
     logger.debug(`Content-Disposition: ${headers['content-disposition']}`);
-    const match = /filename="([^"]+)/i.exec(String(headers['content-disposition']));
-    if (match) {
-      return fs.sanitizeName(match[1], {replacement: SANITIZE_REPLACEMENT});
+    const fromHeader = filenameFromContentDisposition(String(headers['content-disposition']));
+    if (fromHeader) {
+      return fs.sanitizeName(fromHeader, {replacement: SANITIZE_REPLACEMENT});
     }
   }
 

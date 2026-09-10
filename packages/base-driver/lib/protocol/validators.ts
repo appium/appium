@@ -12,7 +12,7 @@ export const validators = {
   },
   /** @deprecated Only used by the deprecated `setNetworkConnection` MJSONWP route. */
   setNetworkConnection: (type: any) => {
-    if (![0, 1, 2, 4, 6].includes(Number(type))) {
+    if (!Number.isInteger(Number(type)) || ![0, 1, 2, 4, 6].includes(Number(type))) {
       throw new Error('Network type must be one of 0, 1, 2, 4, 6');
     }
   },

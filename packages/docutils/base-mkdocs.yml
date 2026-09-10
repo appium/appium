@@ -35,6 +35,8 @@ markdown_extensions:
 plugins:
   git-revision-date-localized:
     type: timeago
+  mike:
+    canonical_version: 'latest'
   search: {}
 
 theme:

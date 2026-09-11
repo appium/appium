@@ -1,4 +1,4 @@
-export {configureApp} from './app-cache.js';
+export {configureApp, filenameFromContentDisposition} from './app-cache.js';
 export {setAppUrlRules} from './app-url-rules.js';
 export {duplicateKeys, isPackageOrBundle, parseCapsArray} from './caps.js';
 export {generateDriverLogPrefix} from '../../helpers/log-prefix.js';

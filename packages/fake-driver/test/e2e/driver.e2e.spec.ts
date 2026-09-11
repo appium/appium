@@ -68,7 +68,6 @@ describe(`FakeDriver E2E`, function () {
       port,
       hostname: address,
       cliArgs: {} as any,
-      extraMethodMap: FakeDriver.newMethodMap,
     });
     const helpers = createSessionHelpers(port, address);
     startSession = helpers.startSession;

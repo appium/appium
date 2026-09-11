@@ -10,7 +10,6 @@ export async function startServer(port: number, hostname: string) {
     routeConfiguringFunction: routeConfiguringFunction(d),
     port,
     hostname,
-    extraMethodMap: FakeDriver.newMethodMap,
   });
   log.info(`FakeDriver server listening on http://${hostname}:${port}`);
   return server;

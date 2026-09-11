@@ -71,13 +71,13 @@ export async function handleIdempotency(req: Request, res: Response, next: NextF
     log.warn('Is the client generating idempotency keys properly?');
     return next();
   }
+  if (res.destroyed || !res.socket?.writable) {
+    return;
+  }
 
   if (response) {
     log.info(`The same request with the idempotency key '${key}' has been already processed`);
     log.info(`Rerouting its response to the current request`);
-    if (!res.socket?.writable) {
-      return next();
-    }
     replayResponse(res, response);
   } else {
     log.info(`The same request with the idempotency key '${key}' is being processed`);
@@ -86,16 +86,21 @@ export async function handleIdempotency(req: Request, res: Response, next: NextF
       return next();
     }
     const onClose = () => responseStateListener.removeListener('ready', onReady);
-    const onReady = (cachedResponse: ReplayResponse | null) => {
+    const onReady = async (cachedResponse: ReplayResponse | null) => {
       res.removeListener('close', onClose);
-      if (res.destroyed) {
+      if (res.destroyed || !res.socket?.writable) {
         return;
       }
-      if (!cachedResponse) {
-        void handleIdempotency(req, res, next);
-        return;
+      try {
+        if (!cachedResponse) {
+          await handleIdempotency(req, res, next);
+        } else {
+          replayResponse(res, cachedResponse);
+        }
+      } catch (err) {
+        // EventEmitter does not handle rejected listeners; keep errors on this retry's Express chain.
+        next(err);
       }
-      replayResponse(res, cachedResponse);
     };
     responseStateListener.once('ready', onReady);
     res.once('close', onClose);

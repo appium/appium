@@ -600,8 +600,7 @@ function buildHandler(
     if (preserveIdempotentSessionResponse(res)) {
       return await asyncHandler(req, res);
     }
-    // Sending after a disconnect can still set writableFinished, so snapshot it at close.
-    const responseClosed = new Promise<boolean>((resolve) => res.once('close', () => resolve(res.writableFinished)));
+    const responseClosed = trackResponseClose(res);
     const newSessionId = await asyncHandler(req, res);
     const responseFinished = await responseClosed;
     if (newSessionId && !responseFinished) {
@@ -616,6 +615,22 @@ function buildHandler(
   registerRoute(path, (req: Request, res: Response) => {
     void handler(req, res);
   });
+}
+
+function trackResponseClose(res: Response): Promise<boolean> {
+  return new Promise<boolean>((resolve) => {
+    if (isResponseClosed(res)) {
+      resolve(res.writableFinished);
+      return;
+    }
+    // Sending after a disconnect can still set writableFinished, so snapshot it at close.
+    res.once('close', () => resolve(res.writableFinished));
+  });
+}
+
+function isResponseClosed(res: Response): boolean {
+  const socket = res.socket;
+  return res.closed || res.destroyed || res.writableFinished || !socket || socket.destroyed || !socket.writable;
 }
 
 async function deleteAbandonedSession(driver: Core<Constraints>, sessionId: string): Promise<void> {

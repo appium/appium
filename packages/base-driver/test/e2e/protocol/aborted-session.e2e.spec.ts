@@ -169,6 +169,23 @@ describe('Aborted session creation', function () {
     assert.equal(driver.sessions.size, 0);
   });
 
+  it('should delete a session when the client disconnects before the session handler starts', async function () {
+    const middlewareEntered = once(events, 'middleware-entered');
+    const releaseMiddleware = once(events, 'release-middleware');
+    appiumServer.frontRouter.use(async (_req, _res, next) => {
+      events.emit('middleware-entered');
+      await releaseMiddleware;
+      next();
+    });
+    const abort = await startAbortedRequest();
+    await middlewareEntered;
+    await abort();
+    const deleted = whenSessionDeleted();
+    events.emit('release-middleware');
+    await deleted;
+    assert.equal(driver.sessions.size, 0);
+  });
+
   it('should retain the serialized keyed response if its connection closes while sending', async function () {
     const key = randomUUID();
     const creation = sandbox.spy(driver, 'createSession');

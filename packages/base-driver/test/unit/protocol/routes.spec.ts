@@ -1,47 +1,23 @@
 import assert from 'node:assert/strict';
-import crypto from 'node:crypto';
-import {describe, it} from 'node:test';
+import {describe, it, snapshot} from 'node:test';
+import type {TestContext} from 'node:test';
 
 import type {HTTPMethod} from '@appium/types';
 
 import {METHOD_MAP, routeToCommandName} from '../../../lib/protocol/index.js';
 
+// Tests run against the compiled build/test/**/*.js; keep the checked-in snapshot next to the
+// TS source instead, so it's reviewable alongside the route change that produced it.
+snapshot.setResolveSnapshotPath(
+  (testFilePath) => `${testFilePath?.replace('/build/test/', '/test/').replace(/\.js$/, '.ts')}.snapshot`,
+);
+
 describe('Routes', function () {
   describe('ensure protocol consistency', function () {
-    // TODO test against an explicit protocol rather than a hash of a previous
-    // protocol
-    it('should not change protocol between patch versions', function () {
-      const shasum = crypto.createHash('sha1');
-      for (const [url, urlMapping] of Object.entries(METHOD_MAP)) {
-        shasum.update(url);
-        for (const [method, methodMapping] of Object.entries(
-          urlMapping as Record<
-            string,
-            {command?: string; payloadParams?: {required?: any[]; optional?: any[]; wrap?: string}}
-          >,
-        )) {
-          shasum.update(method);
-          if (methodMapping.command) {
-            shasum.update(methodMapping.command);
-          }
-          if (methodMapping.payloadParams) {
-            let allParams = (methodMapping.payloadParams.required ?? []).flat();
-            if (methodMapping.payloadParams.optional) {
-              allParams = allParams.concat((methodMapping.payloadParams.optional ?? []).flat());
-            }
-            for (const param of allParams) {
-              shasum.update(String(param));
-            }
-            if (methodMapping.payloadParams.wrap) {
-              shasum.update('skip');
-              shasum.update(methodMapping.payloadParams.wrap);
-            }
-          }
-        }
-      }
-      const hash = shasum.digest('hex').substring(0, 8);
-      // Update this value again only when an intentional route/command/param change is made.
-      assert.strictEqual(hash, '21fb0683');
+    it('should not change protocol between patch versions', function (t: TestContext) {
+      // Update the snapshot (`--test-update-snapshots`) only when an intentional
+      // route/command/param change is made; review the diff before committing it.
+      t.assert.snapshot(METHOD_MAP);
     });
   });
 

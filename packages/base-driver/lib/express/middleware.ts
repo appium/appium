@@ -35,30 +35,6 @@ export function allowCrossDomain(req: Request, res: Response, next: NextFunction
 }
 
 /**
- * CORS middleware for async execute response endpoints only.
- * Leaves other routes untouched but applies {@link allowCrossDomain} to async response URLs.
- *
- * @param basePath - Server base path (e.g. `/wd/hub` or `/`)
- * @returns Express request handler
- */
-export function allowCrossDomainAsyncExecute(basePath: string): RequestHandler {
-  function allowCrossDomainAsyncExecuteHandler(req: Request, res: Response, next: NextFunction): void {
-    const receiveAsyncResponseRegExp = new RegExp(
-      `^${util.escapeRegExp(basePath)}/session/[a-f0-9-]+/(appium/)?receive_async_response/?$`,
-    );
-    // Match against req.path (query-stripped) so query-string data cannot be used
-    // to smuggle a match for an otherwise unrelated endpoint.
-    if (!receiveAsyncResponseRegExp.test(req.path)) {
-      next();
-      return;
-    }
-    allowCrossDomain(req, res, next);
-  }
-
-  return allowCrossDomainAsyncExecuteHandler;
-}
-
-/**
  * Populates the logger's async context with request and session metadata.
  * Derives `requestId`, optional session id/signature, and `isSensitive` flag from headers/URL.
  */

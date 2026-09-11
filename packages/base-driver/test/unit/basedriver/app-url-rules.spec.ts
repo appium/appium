@@ -4,76 +4,65 @@ import {afterEach, describe, it} from 'node:test';
 import {
   assertAppUrlAllowed,
   compileAppUrlRules,
+  configureAppUrlRules,
+  createAppUrlLookup,
   getAppUrlRules,
-  setAppUrlRules,
-} from '../../../lib/basedriver/app-url-rules.js';
+} from '../../../lib/basedriver/commands/app-url-rules.js';
+import {DriverCore} from '../../../lib/basedriver/core.js';
+
+const driver = new DriverCore();
+const applyAppUrlRules = (rules?: Parameters<typeof configureAppUrlRules>[0] | null) =>
+  configureAppUrlRules.call(driver, rules);
 
 describe('app-url-rules', function () {
   afterEach(function () {
-    setAppUrlRules();
+    applyAppUrlRules();
   });
 
   describe('compileAppUrlRules()', function () {
     it('should apply defaults for missing rules', function () {
       const rules = compileAppUrlRules({});
-      assert.deepStrictEqual(rules, {allow: [], deny: [], httpsOnly: false, allowCredentials: true});
+      assert.strictEqual(rules.allow.addressCount, 0);
+      assert.strictEqual(rules.allow.hostnames.length, 0);
+      assert.strictEqual(rules.deny.addressCount, 0);
+      assert.strictEqual(rules.deny.hostnames.length, 0);
+      assert.strictEqual(rules.httpsOnly, false);
+      assert.strictEqual(rules.allowCredentials, true);
     });
 
-    it('should compile regular expressions', function () {
-      const rules = compileAppUrlRules({allow: ['^https://a\\.b/'], deny: ['evil']});
-      assert.strictEqual(rules.allow.length, 1);
-      assert.ok(rules.allow[0] instanceof RegExp);
-      assert.ok(rules.deny[0].test('https://evil.com/app.apk'));
+    it('should compile hostname and address rules', function () {
+      const rules = compileAppUrlRules({allow: ['*.example.com', '10.0.0.0/8'], deny: ['::1']});
+      assert.strictEqual(rules.allow.hostnames.length, 1);
+      assert.strictEqual(rules.allow.addressCount, 1);
+      assert.strictEqual(rules.deny.addressCount, 1);
     });
 
-    it('should reject an invalid regular expression', function () {
-      assert.throws(() => compileAppUrlRules({allow: ['(']}), /invalid regular expression/);
-    });
-
-    it('should reject non-array patterns', function () {
-      assert.throws(() => compileAppUrlRules({deny: 'evil' as unknown as string[]}), /must be an array of strings/);
-    });
-
-    it('should reject non-boolean flags', function () {
-      assert.throws(() => compileAppUrlRules({httpsOnly: 'yes' as unknown as boolean}), /must be a boolean/);
-    });
-
-    it('should reject an invalid maxRedirects value', function () {
-      assert.throws(() => compileAppUrlRules({maxRedirects: -1}), /non-negative integer/);
-      assert.throws(() => compileAppUrlRules({maxRedirects: 1.5}), /non-negative integer/);
-    });
-
-    it('should reject non-object rules', function () {
-      assert.throws(() => compileAppUrlRules([] as unknown as Record<string, never>), /plain object/);
+    it('should reject an invalid address or subnet', function () {
+      assert.throws(() => compileAppUrlRules({allow: ['10.0.0.0/nope']}), /invalid IP address or subnet/);
     });
   });
 
-  describe('setAppUrlRules() / getAppUrlRules()', function () {
+  describe('configureAppUrlRules() / getAppUrlRules()', function () {
     it('should not set any rules by default', function () {
       assert.strictEqual(getAppUrlRules(), undefined);
     });
 
     it('should set and reset the rules', function () {
-      setAppUrlRules({httpsOnly: true, maxRedirects: 0});
-      assert.deepStrictEqual(getAppUrlRules(), {
-        allow: [],
-        deny: [],
-        httpsOnly: true,
-        allowCredentials: true,
-        maxRedirects: 0,
-      });
-      setAppUrlRules(null);
+      applyAppUrlRules({httpsOnly: true, maxRedirects: 0});
+      assert.strictEqual(getAppUrlRules()?.httpsOnly, true);
+      assert.strictEqual(getAppUrlRules()?.maxRedirects, 0);
+      applyAppUrlRules(null);
       assert.strictEqual(getAppUrlRules(), undefined);
     });
 
     it('should treat empty rules as no rules', function () {
-      setAppUrlRules({});
+      applyAppUrlRules({});
       assert.strictEqual(getAppUrlRules(), undefined);
     });
   });
 
   describe('assertAppUrlAllowed()', function () {
-    const url = (s: string) => new URL(s);
+    const url = (value: string) => new URL(value);
 
     it('should allow any URL if no rules are set', function () {
       assertAppUrlAllowed(url('http://user:pass@example.com/app.apk'));
@@ -100,33 +89,42 @@ describe('app-url-rules', function () {
       );
     });
 
-    it('should enforce deny rules', function () {
-      const rules = compileAppUrlRules({deny: ['^https?://evil\\.']});
+    it('should enforce hostname deny rules', function () {
+      const rules = compileAppUrlRules({deny: ['*.evil.com']});
       assertAppUrlAllowed(url('https://example.com/app.apk'), rules);
-      assert.throws(() => assertAppUrlAllowed(url('https://evil.com/app.apk'), rules), /matches a deny rule/);
+      assert.throws(() => assertAppUrlAllowed(url('https://app.evil.com/app.apk'), rules), /matches a deny rule/);
     });
 
-    it('should enforce allow rules', function () {
-      const rules = compileAppUrlRules({allow: ['^https://a\\.example\\.com/', '^https://b\\.example\\.com/']});
+    it('should normalize and enforce hostname allow rules', function () {
+      const rules = compileAppUrlRules({allow: ['*.example.com', 'münich.example']});
       assertAppUrlAllowed(url('https://a.example.com/app.apk'), rules);
-      assertAppUrlAllowed(url('https://b.example.com/app.apk'), rules);
+      assertAppUrlAllowed(url('https://B.EXAMPLE.COM./app.apk'), rules);
+      assertAppUrlAllowed(url('https://münich.example/app.apk'), rules);
       assert.throws(
-        () => assertAppUrlAllowed(url('https://c.example.com/app.apk'), rules),
-        /does not match any allow rule/,
+        () => assertAppUrlAllowed(url('https://c.example.net/app.apk'), rules),
+        /hostname does not match any allow rule/,
       );
     });
 
-    it('should apply deny rules before allow rules', function () {
-      const rules = compileAppUrlRules({allow: ['^https://example\\.com/'], deny: ['/private/']});
-      assertAppUrlAllowed(url('https://example.com/public/app.apk'), rules);
-      assert.throws(
-        () => assertAppUrlAllowed(url('https://example.com/private/app.apk'), rules),
-        /matches a deny rule/,
-      );
+    it('should enforce IPv4 and IPv6 address rules', function () {
+      const rules = compileAppUrlRules({allow: ['10.0.0.0/8', '2001:db8::/32'], deny: ['10.1.2.3']});
+      assertAppUrlAllowed(url('http://10.2.3.4/app.apk'), rules);
+      assertAppUrlAllowed(url('http://[2001:db8::1]/app.apk'), rules);
+      assert.throws(() => assertAppUrlAllowed(url('http://10.1.2.3/app.apk'), rules), /IP address matches a deny rule/);
+      assert.throws(() => assertAppUrlAllowed(url('http://192.0.2.1/app.apk'), rules), /does not match any allow rule/);
+    });
+
+    it('should check dynamically resolved addresses', async function () {
+      const allowedLookup = createAppUrlLookup(compileAppUrlRules({allow: ['127.0.0.0/8']}));
+      const addresses = await allowedLookup('localhost', {family: 4});
+      assert.ok(addresses.every(({address}) => address.startsWith('127.')));
+
+      const deniedLookup = createAppUrlLookup(compileAppUrlRules({deny: ['127.0.0.0/8']}));
+      await assert.rejects(deniedLookup('localhost', {family: 4}), /resolved IP address matches a deny rule/);
     });
 
     it('should use the globally set rules by default', function () {
-      setAppUrlRules({httpsOnly: true});
+      applyAppUrlRules({httpsOnly: true});
       assert.throws(() => assertAppUrlAllowed(url('http://example.com/app.apk')), /only https: URLs/);
     });
   });

@@ -44,6 +44,7 @@ export const AppiumConfigJsonSchema = {
           description:
             'Set which insecure features are allowed to run in this server\'s sessions. Features are defined on a driver level; see documentation for more details. Note that features defined via "deny-insecure" will be disabled, even if also listed here. If string, a path to a text file containing policy or a comma-delimited list.',
           items: {
+            minLength: 1,
             type: 'string',
           },
           title: 'allow-insecure config',
@@ -109,6 +110,7 @@ export const AppiumConfigJsonSchema = {
           description:
             'Set which insecure features are not allowed to run in this server\'s sessions. Features are defined on a driver level; see documentation for more details. Features listed here will not be enabled even if also listed in "allow-insecure", and even if "relaxed-security" is enabled. If string, a path to a text file containing policy or a comma-delimited list.',
           items: {
+            minLength: 1,
             type: 'string',
           },
           title: 'deny-insecure config',
@@ -368,19 +370,18 @@ export const AppiumConfigJsonSchema = {
       properties: {
         allow: {
           description:
-            'Regular expressions matched against the full URL. If non-empty, a URL must match at least one of them to be accepted.',
+            'Hostname glob patterns, IP addresses, or CIDR subnets. If non-empty, a hostname or its resolved address must match at least one.',
           items: {
             type: 'string',
-            format: 'regex',
           },
           type: 'array',
           uniqueItems: true,
         },
         deny: {
-          description: 'Regular expressions matched against the full URL. A URL matching any of them is rejected.',
+          description:
+            'Hostname glob patterns, IP addresses, or CIDR subnets. A matching hostname or resolved address is rejected.',
           items: {
             type: 'string',
-            format: 'regex',
           },
           type: 'array',
           uniqueItems: true,

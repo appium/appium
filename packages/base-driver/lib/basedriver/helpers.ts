@@ -10,7 +10,7 @@ import type {AxiosRequestConfig, AxiosResponseHeaders, RawAxiosRequestHeaders} f
 import {LRUCache} from 'lru-cache';
 import type {PackageJson} from 'type-fest';
 
-import {assertAppUrlAllowed, getAppUrlRules} from './app-url-rules.js';
+import {assertAppUrlAllowed, createAppUrlLookup, getAppUrlRules} from './commands/app-url-rules.js';
 import {log as logger} from './logger.js';
 
 // for compat with running tests transpiled and in-place
@@ -128,10 +128,12 @@ export async function configureApp(
     maxAge: null,
     etag: null,
   };
-  const {protocol, pathname} = parseAppLink(app);
-  const isUrl = isSupportedUrl(app);
+  const parsedApp = parseAppLink(app);
+  const protocol = parsedApp?.protocol;
+  const pathname = parsedApp?.pathname;
+  const isUrl = isSupportedUrl(parsedApp);
   if (isUrl) {
-    assertAppUrlAllowed(new URL(app));
+    assertAppUrlAllowed(parsedApp);
   } else if (!path.isAbsolute(newApp)) {
     newApp = path.resolve(process.cwd(), newApp);
     logger.warn(
@@ -159,7 +161,7 @@ export async function configureApp(
       }
       logger.debug(`Request headers: ${JSON.stringify(reqHeaders)}`);
 
-      let result = await queryAppLink(newApp, reqHeaders);
+      let result = await queryAppLink(parsedApp, reqHeaders);
       headers = result.headers;
       let {stream, status} = result;
       logger.debug(`Response status: ${status}`);
@@ -197,7 +199,7 @@ export async function configureApp(
           if (!stream.closed) {
             stream.destroy();
           }
-          result = await queryAppLink(newApp, {...DEFAULT_REQ_HEADERS});
+          result = await queryAppLink(parsedApp, {...DEFAULT_REQ_HEADERS});
           stream = result.stream;
           headers = result.headers;
           status = result.status;
@@ -379,11 +381,11 @@ export function generateDriverLogPrefix(obj: object | null, _sessionId?: string 
 
 // #region Private helpers
 
-function parseAppLink(appLink: string): URL | {protocol?: string; pathname?: string; href?: string; search?: string} {
+function parseAppLink(appLink: string): URL | null {
   try {
     return new URL(appLink);
   } catch {
-    return {};
+    return null;
   }
 }
 
@@ -395,13 +397,8 @@ function isEnvOptionEnabled(optionName: string, defaultValue: boolean | null = n
   return !util.isEmpty(value) && !['0', 'false', 'no'].includes(String(value).toLowerCase());
 }
 
-function isSupportedUrl(app: string): boolean {
-  try {
-    const {protocol} = parseAppLink(app);
-    return ['http:', 'https:'].includes(protocol ?? '');
-  } catch {
-    return false;
-  }
+function isSupportedUrl(app: URL | null): app is URL {
+  return ['http:', 'https:'].includes(app?.protocol ?? '');
 }
 
 /**
@@ -410,26 +407,17 @@ function isSupportedUrl(app: string): boolean {
  * e.g. ones stored in S3 using presigned URLs.
  */
 function toCacheKey(app: string): string {
-  if (!isEnvOptionEnabled('APPIUM_APPS_CACHE_IGNORE_URL_QUERY') || !isSupportedUrl(app)) {
+  if (!isEnvOptionEnabled('APPIUM_APPS_CACHE_IGNORE_URL_QUERY')) {
     return app;
   }
-  try {
-    const parsed = parseAppLink(app);
-    const href = 'href' in parsed ? parsed.href : undefined;
-    const search = 'search' in parsed ? parsed.search : undefined;
-    if (href && search) {
-      return href.replace(search, '');
-    }
-    if (href) {
-      return href;
-    }
-  } catch {
-    // ignore
+  const parsed = parseAppLink(app);
+  if (!isSupportedUrl(parsed)) {
+    return app;
   }
-  return app;
+  return parsed.search ? parsed.href.replace(parsed.search, '') : parsed.href;
 }
 
-async function queryAppLink(appLink: string, reqHeaders: RawAxiosRequestHeaders): Promise<RemoteAppData> {
+async function queryAppLink(appLink: URL, reqHeaders: RawAxiosRequestHeaders): Promise<RemoteAppData> {
   const url = new URL(appLink);
   // Extract credentials, then remove them from the URL for axios
   const {username, password} = url;
@@ -447,6 +435,7 @@ async function queryAppLink(appLink: string, reqHeaders: RawAxiosRequestHeaders)
   };
   const urlRules = getAppUrlRules();
   if (urlRules) {
+    requestOpts.lookup = createAppUrlLookup(urlRules);
     if (urlRules.maxRedirects !== undefined) {
       requestOpts.maxRedirects = urlRules.maxRedirects;
     }

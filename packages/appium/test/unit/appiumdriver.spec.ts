@@ -210,8 +210,8 @@ describe('AppiumDriver', function () {
         );
       });
       it('should throw on invalid app URL rules', function () {
-        const appium = new AppiumDriver({appUrlRules: {allow: ['(']}} as any);
-        assert.throws(() => appium.configureAppUrlRules(), /invalid regular expression/);
+        const appium = new AppiumDriver({appUrlRules: {allow: ['10.0.0.0/nope']}} as any);
+        assert.throws(() => appium.configureAppUrlRules(), /invalid IP address or subnet/);
       });
     });
     describe('createSession', function () {

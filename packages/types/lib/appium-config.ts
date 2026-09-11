@@ -243,11 +243,11 @@ export interface ServerConfig {
  */
 export interface AppUrlRules {
   /**
-   * Regular expressions matched against the full URL. If non-empty, a URL must match at least one of them to be accepted.
+   * Hostname glob patterns, IP addresses, or CIDR subnets. If non-empty, a hostname or its resolved address must match at least one.
    */
   allow?: string[];
   /**
-   * Regular expressions matched against the full URL. A URL matching any of them is rejected.
+   * Hostname glob patterns, IP addresses, or CIDR subnets. A matching hostname or resolved address is rejected.
    */
   deny?: string[];
   /**

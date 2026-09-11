@@ -92,7 +92,7 @@ describe('parser', function () {
       });
 
       it('should parse app URL rules correctly from a string', function () {
-        const appUrlRules = {allow: ['^https://apps\\.example\\.com/'], httpsOnly: true, maxRedirects: 0};
+        const appUrlRules = {allow: ['*.example.com', '10.0.0.0/8'], httpsOnly: true, maxRedirects: 0};
         const args = p.parseArgs(['--app-url-rules', JSON.stringify(appUrlRules)]);
         assert.deepStrictEqual(args.appUrlRules, appUrlRules);
       });

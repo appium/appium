@@ -34,7 +34,8 @@ export {DEFAULT_WS_PATHNAME_PREFIX} from './express/websocket.js';
 export {BIDI_COMMANDS} from './protocol/bidi-commands.js';
 
 export {generateDriverLogPrefix} from './basedriver/helpers.js';
-export {setAppUrlRules} from './basedriver/app-url-rules.js';
+/** @internal */
+export {configureAppUrlRules} from './basedriver/commands/app-url-rules.js';
 
 export {isW3cCaps} from './helpers/capabilities.js';
 

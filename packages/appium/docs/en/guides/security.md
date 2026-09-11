@@ -97,15 +97,17 @@ their server is allowed to download from can do so with the `--app-url-rules` ar
 
 |<div style="width:10em">Rule</div>|Description|Default|
 |----------------------------------|-----------|-------|
-|`allow`|List of regular expressions matched against the full URL. If the list is not empty, a URL must match _at least one_ of them to be accepted|`[]`|
-|`deny`|List of regular expressions matched against the full URL. A URL matching _any_ of them is rejected, even if it also matches an `allow` rule|`[]`|
+|`allow`|List of hostname glob patterns, IP addresses, or CIDR subnets. If non-empty, a hostname or its resolved address must match _at least one_|`[]`|
+|`deny`|List of hostname glob patterns, IP addresses, or CIDR subnets. A matching hostname or resolved address is rejected, even if an `allow` rule also matches|`[]`|
 |`httpsOnly`|Only accept `https:` URLs|`false`|
 |`allowCredentials`|Accept URLs containing a username and/or password (e.g. `https://user:pass@host/app.apk`)|`true`|
 |`maxRedirects`|Maximum number of HTTP redirects to follow while downloading. Set to `0` to reject any redirect|_(unlimited)_|
 
-The rules are also applied to every URL the server is redirected to while downloading, so
-redirects cannot be used to escape them. If a URL violates any rule, the session is not created and
-the error message explains which rule was violated.
+Hostnames are normalized before matching and resolved on every download. Address rules apply to
+literal addresses and all dynamically resolved IPv4/IPv6 addresses. The rules are also applied to
+every redirect, so redirects cannot be used to escape them. If a URL violates any rule, the session
+is not created and the error message explains which rule was violated. Hostname patterns support
+`*` and `?` wildcards; URL schemes, ports, paths, queries, and fragments are not matched.
 
 !!! note
 
@@ -117,7 +119,7 @@ For example, to only allow HTTPS downloads from an internal artifact server, wit
 the URL and without following redirects:
 
 ```bash
-appium --app-url-rules='{"allow": ["^https://artifacts\\.example\\.com/"], "httpsOnly": true, "allowCredentials": false, "maxRedirects": 0}'
+appium --app-url-rules='{"allow": ["artifacts.example.com", "10.0.0.0/8"], "httpsOnly": true, "allowCredentials": false, "maxRedirects": 0}'
 ```
 
 The same configuration as part of a config file:
@@ -126,7 +128,8 @@ The same configuration as part of a config file:
 server:
   app-url-rules:
     allow:
-      - '^https://artifacts\.example\.com/'
+      - 'artifacts.example.com'
+      - '10.0.0.0/8'
     httpsOnly: true
     allowCredentials: false
     maxRedirects: 0

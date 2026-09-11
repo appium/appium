@@ -10,8 +10,13 @@ import contentDisposition from 'content-disposition';
 import finalhandler from 'finalhandler';
 import serveStatic from 'serve-static';
 
-import {setAppUrlRules} from '../../../lib/basedriver/app-url-rules.js';
+import {configureAppUrlRules} from '../../../lib/basedriver/commands/app-url-rules.js';
+import {DriverCore} from '../../../lib/basedriver/core.js';
 import {configureApp} from '../../../lib/basedriver/helpers.js';
+
+const driver = new DriverCore();
+const applyAppUrlRules = (rules?: Parameters<typeof configureAppUrlRules>[0] | null) =>
+  configureAppUrlRules.call(driver, rules);
 
 const FIXTURE_ROOT = path.resolve(
   node.getModuleRootSync('@appium/base-driver', import.meta.filename)!,
@@ -164,59 +169,56 @@ describe('app download and configuration', function () {
         });
         describe('with app URL rules', function () {
           afterEach(function () {
-            setAppUrlRules();
+            applyAppUrlRules();
           });
 
           it('should download an app whose URL satisfies the rules', async function () {
-            setAppUrlRules({allow: [`^${serverUrl}/`], deny: ['/missing/'], maxRedirects: 2});
+            applyAppUrlRules({allow: [new URL(serverUrl).hostname], maxRedirects: 2});
             const newAppPath = await configureApp(`${serverUrl}/redirect/2/FakeAndroidApp.apk`, '.apk');
             assert.ok(newAppPath.includes('.apk'));
             const contents = await fs.readFile(newAppPath, 'utf8');
             assert.strictEqual(contents, 'this is not really an apk\n');
           });
+          it('should apply address rules to dynamically resolved hostnames', async function () {
+            applyAppUrlRules({allow: ['127.0.0.0/8']});
+            const newAppPath = await configureApp(`http://localhost:${port}/FakeAndroidApp.apk`, '.apk');
+            assert.ok(newAppPath.includes('.apk'));
+          });
           it('should reject a URL not matching any allow rule', async function () {
-            setAppUrlRules({allow: ['^https://apps\\.example\\.com/']});
+            applyAppUrlRules({allow: ['apps.example.com']});
             await assert.rejects(
               configureApp(`${serverUrl}/FakeAndroidApp.apk`, '.apk'),
-              /is not allowed by the server configuration: the URL does not match any allow rule/,
+              /is not allowed by the server configuration: the IP address does not match any allow rule/,
             );
           });
           it('should reject a URL matching a deny rule', async function () {
-            setAppUrlRules({deny: ['FakeAndroid']});
+            applyAppUrlRules({deny: [new URL(serverUrl).hostname]});
             await assert.rejects(
               configureApp(`${serverUrl}/FakeAndroidApp.apk`, '.apk'),
-              /is not allowed by the server configuration: the URL matches a deny rule/,
+              /is not allowed by the server configuration: the IP address matches a deny rule/,
             );
           });
           it('should reject a non-https URL if httpsOnly is set', async function () {
-            setAppUrlRules({httpsOnly: true});
+            applyAppUrlRules({httpsOnly: true});
             await assert.rejects(
               configureApp(`${serverUrl}/FakeAndroidApp.apk`, '.apk'),
               /is not allowed by the server configuration: only https: URLs are accepted/,
             );
           });
           it('should reject a URL with credentials if allowCredentials is false', async function () {
-            setAppUrlRules({allowCredentials: false});
+            applyAppUrlRules({allowCredentials: false});
             await assert.rejects(
               configureApp(`http://user:pass@${TEST_HOST}:${port}/FakeAndroidApp.apk`, '.apk'),
               /is not allowed by the server configuration: URLs containing credentials are not accepted/,
             );
           });
           it('should reject a download exceeding maxRedirects', async function () {
-            setAppUrlRules({maxRedirects: 1});
+            applyAppUrlRules({maxRedirects: 1});
             await assert.rejects(configureApp(`${serverUrl}/redirect/2/FakeAndroidApp.apk`, '.apk'), /redirect/i);
           });
           it('should reject any redirect if maxRedirects is 0', async function () {
-            setAppUrlRules({maxRedirects: 0});
+            applyAppUrlRules({maxRedirects: 0});
             await assert.rejects(configureApp(`${serverUrl}/redirect/1/FakeAndroidApp.apk`, '.apk'), /Cannot download/);
-          });
-          it('should apply the rules to redirect targets', async function () {
-            // the initial URL (`/redirect/1/...`) does not match this rule, but the redirect target does
-            setAppUrlRules({deny: [`^${serverUrl}/FakeAndroidApp\\.apk$`]});
-            await assert.rejects(
-              configureApp(`${serverUrl}/redirect/1/FakeAndroidApp.apk`, '.apk'),
-              /is not allowed by the server configuration: the URL matches a deny rule/,
-            );
           });
         });
         it('should treat an unknown mime type as an app', async function () {

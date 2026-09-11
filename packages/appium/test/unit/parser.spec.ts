@@ -89,10 +89,7 @@ describe('parser', function () {
         });
 
         it('should throw an error for an invalid value (using "enum")', function () {
-          throwsUncolored(
-            () => p.parseArgs(['--log-level', '-42']),
-            /must be equal to one of the allowed values/i,
-          );
+          throwsUncolored(() => p.parseArgs(['--log-level', '-42']), /must be equal to one of the allowed values/i);
         });
 
         it('should throw an error for incorrectly formatted arg (matching "dest")', function () {

@@ -785,8 +785,7 @@ describe('Bidi over SSL', function () {
   });
 });
 
-// TODO this test only works if the log has not previously been initialized in the same process.
-describe.skip('Logsink', function () {
+describe('Logsink', function () {
   let server: Awaited<ReturnType<typeof appiumServer>> | null = null;
   const logs: [string, string][] = [];
   const logHandler = function (level: string, message: string) {

@@ -49,8 +49,8 @@
     "asyncbox": "6.5.0"
   },
   "devDependencies": {
-    "@appium/types": "1.7.2",
-    "express": "5.2.1"
+    "@appium/types": "1.7.0",
+    "@types/express": "5.0.6"
   },
   "peerDependencies": {
     "appium": "^3.0.0-beta.0"

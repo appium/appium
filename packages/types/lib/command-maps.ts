@@ -1,4 +1,4 @@
-import type {ConditionalPick, MultidimensionalReadonlyArray} from 'type-fest';
+import type {ConditionalPick, IsAny, IsNever, MultidimensionalReadonlyArray} from 'type-fest';
 
 import type {Driver, DriverCommand} from './driver.js';
 import type {Plugin, PluginCommand} from './plugin.js';
@@ -129,18 +129,145 @@ export interface BaseExecuteMethodDef {
 }
 
 /**
- * A definition of an execute method in a {@linkcode Driver}.
+ * The elements of `P` preceding its first optional or rest element, i.e. the parameters a method
+ * accepting `P` requires.
  */
-export interface DriverExecuteMethodDef<T extends Driver> extends BaseExecuteMethodDef {
-  command: keyof ConditionalPick<T, DriverCommand>;
-}
+type RequiredParams<P extends readonly unknown[]> = P extends readonly [infer H, ...infer T]
+  ? [H, ...RequiredParams<T>]
+  : [];
+
+/**
+ * Tuple of `string`s with the same length as `T`.
+ */
+type StringTupleLike<T extends readonly unknown[]> = {[K in keyof T]: string};
+
+/**
+ * Tuple of `any`s with the same length as `T`.
+ */
+type AnyTupleLike<T extends readonly unknown[]> = {[K in keyof T]: any};
+
+/**
+ * The shape of `params` declaring the given required and optional param names.
+ *
+ * Non-tuple (`string[]`) values are also accepted, since their length cannot be checked; this is
+ * the case for maps not declared `as const`.
+ */
+type ExecuteMethodParamsShape<R extends string[], O extends string[]> = (R extends []
+  ? {required?: readonly [] | string[]}
+  : {required: Readonly<R> | string[]}) &
+  (O extends [] ? {optional?: readonly [] | string[]} : {optional: Readonly<O> | string[]});
+
+/**
+ * Union of `params` shapes with exactly `R` required params and any number of optional params up
+ * to the length of `Budget`.
+ */
+type ExecuteMethodParamsWithRequired<R extends string[], Budget extends unknown[], O extends string[] = []> =
+  | ExecuteMethodParamsShape<R, O>
+  | (Budget extends [unknown, ...infer BudgetTail]
+      ? ExecuteMethodParamsWithRequired<R, BudgetTail, [...O, string]>
+      : never);
+
+/**
+ * Union of `params` shapes with at least `R` required params, where the total number of params
+ * does not exceed the length of `R` plus the length of `Budget`.
+ */
+type ExecuteMethodParamsWithin<R extends string[], Budget extends unknown[]> =
+  | ExecuteMethodParamsWithRequired<R, Budget>
+  | (Budget extends [unknown, ...infer BudgetTail] ? ExecuteMethodParamsWithin<[...R, string], BudgetTail> : never);
+
+/**
+ * The shape of `params` for a method with a rest parameter: at least `R` required params, and any
+ * number of further required and optional params.
+ */
+type ExecuteMethodParamsShapeWithRest<R extends string[]> = (R extends []
+  ? {required?: readonly string[]}
+  : {required: Readonly<[...R, ...string[]]> | string[]}) & {optional?: readonly string[]};
+
+/**
+ * Union of all `params` shapes whose `required`/`optional` param counts are compatible with a
+ * method accepting `P`: at runtime, the values of the `required` params are passed first (in
+ * order), followed by the values of the `optional` params (in order, `undefined` if not provided).
+ * So the method must accept at least as many required parameters as there are `required` params,
+ * must not require any of the `optional` ones, and must accept all of them.
+ */
+type ExecuteMethodParamsFor<P extends readonly unknown[]> = number extends Required<P>['length']
+  ? ExecuteMethodParamsShapeWithRest<StringTupleLike<RequiredParams<P>>>
+  : Required<P> extends readonly [...AnyTupleLike<RequiredParams<P>>, ...infer Optional]
+    ? ExecuteMethodParamsWithin<StringTupleLike<RequiredParams<P>>, Optional>
+    : never;
+
+/**
+ * The `params` property of an execute method definition for a method accepting `P`. It is
+ * mandatory if the method has required parameters, since omitting it means the method is invoked
+ * without any arguments.
+ */
+type ExecuteMethodParamsProp<P extends readonly unknown[]> =
+  RequiredParams<P> extends [] ? {params?: ExecuteMethodParamsFor<P>} : {params: ExecuteMethodParamsFor<P>};
+
+/**
+ * An execute method definition which cannot be cross-checked against a method signature.
+ */
+type LooseExecuteMethodDef = BaseExecuteMethodDef & {command: string};
+
+/**
+ * Parameters of a {@linkcode DriverCommand}.
+ */
+type DriverCommandParams<F> = F extends (...args: infer P) => any ? P : never;
+
+/**
+ * Parameters of a {@linkcode PluginCommand}, i.e. those following `next` and `driver`.
+ */
+type PluginCommandParams<F> = F extends (next: any, driver: any, ...args: infer P) => any ? P : never;
+
+/**
+ * Union of execute method definitions for the given command methods (`Commands`), one per
+ * command, whose `params` are cross-checked against the signature of the command they map to.
+ * See {@linkcode ExecuteMethodParamsFor}.
+ */
+type CheckedExecuteMethodDef<Commands, Kind extends 'driver' | 'plugin'> =
+  IsNever<Commands> extends true
+    ? LooseExecuteMethodDef
+    : IsNever<keyof Commands> extends true
+      ? LooseExecuteMethodDef
+      : {
+          [K in keyof Commands]: Omit<BaseExecuteMethodDef, 'params'> & {command: K} & ExecuteMethodParamsProp<
+              Kind extends 'driver' ? DriverCommandParams<Commands[K]> : PluginCommandParams<Commands[K]>
+            >;
+        }[keyof Commands];
+
+/**
+ * A definition of an execute method in a {@linkcode Driver}.
+ *
+ * The `command` must name a {@linkcode DriverCommand} of `T`, and the number of `required` and
+ * `optional` params must be compatible with that method's signature: the method must accept
+ * (at least) the `required` params, and must not require any of the `optional` ones.
+ *
+ * @example
+ * ```ts
+ * class MyDriver extends BaseDriver {
+ *   static executeMethodMap = {
+ *     'my: foo': {command: 'doFoo', params: {required: ['a', 'b'], optional: ['c']}},
+ *   } as const satisfies ExecuteMethodMap<MyDriver>;
+ *
+ *   // required params come first, in order, then optional params
+ *   async doFoo(a: string, b: string, c?: string) {}
+ *   // this would be an error, since `c` is optional in the map but required here:
+ *   // async doFoo(a: string, b: string, c: string) {}
+ * }
+ * ```
+ */
+export type DriverExecuteMethodDef<T extends Driver> =
+  IsAny<T> extends true ? LooseExecuteMethodDef : CheckedExecuteMethodDef<ConditionalPick<T, DriverCommand>, 'driver'>;
 
 /**
  * A definition of an execute method in a {@linkcode Plugin}.
+ *
+ * The `command` must name a {@linkcode PluginCommand} of `T`, and the number of `required` and
+ * `optional` params must be compatible with that method's signature (ignoring its leading `next`
+ * and `driver` parameters). See {@linkcode DriverExecuteMethodDef} for details.
  */
-export interface PluginExecuteMethodDef<T extends Plugin> extends BaseExecuteMethodDef {
-  command: keyof ConditionalPick<T, PluginCommand>;
-}
+export type PluginExecuteMethodDef<T extends Plugin> =
+  IsAny<T> extends true ? LooseExecuteMethodDef : CheckedExecuteMethodDef<ConditionalPick<T, PluginCommand>, 'plugin'>;
 
 /**
  * Definition of an execute method (which overloads the behavior of the `execute` command) in a {@linkcode Driver} or {@linkcode Plugin}.

@@ -21,7 +21,6 @@ import {endLogFormatter, startLogFormatter} from './express-logging.js';
 import {log} from './logger.js';
 import {
   allowCrossDomain,
-  allowCrossDomainAsyncExecute,
   catch404Handler,
   catchAllHandler,
   defaultToJSONContentType,
@@ -191,8 +190,6 @@ export function configureServer(opts: ConfigureServerOpts): void {
   }
   if (allowCors) {
     app.use(allowCrossDomain);
-  } else {
-    app.use(allowCrossDomainAsyncExecute(basePath));
   }
   app.use(handleIdempotency);
   app.use(defaultToJSONContentType);

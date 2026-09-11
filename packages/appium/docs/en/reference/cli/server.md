@@ -44,7 +44,7 @@ appium
 |`--local-timezone`|Use local timezone for log timestamps|boolean|`false`|
 |`--log`, `-g`|Path to a file where the server logs should be output. This does not affect output on the console.|string||
 |`--log-filters`|List of log filtering rules. See the [log filtering guide](../../guides/log-filters.md) for details.|array||
-|`--log-level`|The log level for the server logs. Supported values are `debug`, `info`, `warn`, or `error`. Combining two supported values using a colon (e.g. `warn:debug`) allows to set separate log levels for the console and file outputs, respectively.|string|`debug`|
+|`--log-level`|The log level for the server logs. Supported values are `debug`, `info`, `warn`, or `error`. Combining two supported values using a colon (e.g. `warn:debug`) allows to set separate log levels for the console and file outputs, respectively.|string|`info`|
 |`--log-format`|The log format of the server logs. Supported values are `text`, `json`, or `pretty_json`. Setting the value to `json` disables colors.|string|`text`|
 |`--log-no-colors`|Disable colors in the server log|boolean|`false`|
 |`--log-timestamp`|Show timestamps in the server log|boolean|`false`|

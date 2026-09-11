@@ -88,6 +88,10 @@
     "ws": "8.21.3",
     "yaml": "2.9.0"
   },
+  "devDependencies": {
+    "@types/json-schema": "7.0.15",
+    "winston-transport": "4.9.0"
+  },
   "engines": {
     "node": "^22.22.2 || ^24.15.0 || >=26.0.0",
     "npm": ">=10"

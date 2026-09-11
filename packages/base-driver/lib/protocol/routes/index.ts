@@ -7,9 +7,10 @@ import {DEFAULT_BASE_PATH} from '../../constants.js';
 import {APPIUM_DEVICE_ROUTES} from './appium-device.js';
 import {APPIUM_ROUTES} from './appium.js';
 import {EXTENSION_ROUTES} from './extensions/index.js';
-import {JSONWP_ROUTES} from './jsonwp.js';
-import {MJSONWP_ROUTES} from './mjsonwp.js';
-import {W3C_ROUTES} from './w3c.js';
+import {CREATE_SESSION_COMMAND, GET_STATUS_COMMAND, W3C_ROUTES} from './w3c.js';
+
+export {CREATE_SESSION_COMMAND, DELETE_SESSION_COMMAND, GET_STATUS_COMMAND} from './w3c.js';
+export {LIST_DRIVER_COMMANDS_COMMAND, LIST_DRIVER_EXTENSIONS_COMMAND} from './appium.js';
 
 const COMMAND_NAMES_CACHE = new LRUCache<string, string>({
   max: 1024,
@@ -24,8 +25,6 @@ const COMMAND_NAMES_CACHE = new LRUCache<string, string>({
  */
 export const METHOD_MAP = {
   ...W3C_ROUTES,
-  ...JSONWP_ROUTES,
-  ...MJSONWP_ROUTES,
   ...APPIUM_ROUTES,
   ...APPIUM_DEVICE_ROUTES,
   ...EXTENSION_ROUTES,
@@ -91,4 +90,4 @@ function toCommandNameCacheKey(endpoint: string, method?: string): string {
 }
 
 // driver commands that do not require a session to already exist
-export const NO_SESSION_ID_COMMANDS = ['createSession', 'getStatus', 'getAppiumSessions'];
+export const NO_SESSION_ID_COMMANDS = [CREATE_SESSION_COMMAND, GET_STATUS_COMMAND, 'getAppiumSessions'];

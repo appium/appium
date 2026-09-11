@@ -62,6 +62,14 @@ const desiredCapabilityConstraints = {
 export type AppiumDriverConstraints = typeof desiredCapabilityConstraints;
 export type W3CAppiumDriverCaps = W3CDriverCaps<AppiumDriverConstraints>;
 
+/**
+ * {@link DriverCaps} with `webSocketUrl` widened to `string`: the client sends it as a boolean,
+ * but the inner driver's response carries the resolved BiDi URL as a string.
+ */
+type DriverCapsWithBidiUrl = Omit<DriverCaps<AppiumDriverConstraints>, 'webSocketUrl'> & {
+  webSocketUrl?: string | boolean;
+};
+
 /** Result shape for umbrella {@link AppiumDriver.createSession} / {@link AppiumDriver.deleteSession}. */
 interface SessionHandlerResult<V = unknown> {
   value?: V;
@@ -69,15 +77,13 @@ interface SessionHandlerResult<V = unknown> {
   protocol?: string;
 }
 
-type SessionHandlerCreateResult = SessionHandlerResult<
-  [string, DriverCaps<AppiumDriverConstraints>, string | undefined]
->;
+type SessionHandlerCreateResult = SessionHandlerResult<[string, DriverCapsWithBidiUrl, string | undefined]>;
 
 type SessionHandlerDeleteResult = SessionHandlerResult<void>;
 
 /** @internal Not part of {@link ExternalDriver}; used only when wiring session IPC. */
 type IpcAssignable = {
-  assignIpc?: (ipc: IAppiumIpc) => Promise<void>;
+  assignIpc: (ipc: IAppiumIpc) => Promise<void>;
 };
 
 /**
@@ -285,7 +291,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
 
     const protocol = PROTOCOLS.W3C;
     let innerSessionId: string;
-    let dCaps: DriverCaps<AppiumDriverConstraints> & {webSocketUrl?: string | boolean};
+    let dCaps: DriverCapsWithBidiUrl;
     try {
       // Parse the caps into a format that the InnerDriver will accept
       const parsedCaps = parseCapsForInnerDriver<AppiumDriverConstraints>(
@@ -339,7 +345,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
 
       [innerSessionId, dCaps] = (await driverInstance.createSession(processedW3CCapabilities as never)) as [
         string,
-        DriverCaps<AppiumDriverConstraints> & {webSocketUrl?: string | boolean},
+        DriverCapsWithBidiUrl,
       ];
       this.sessions[innerSessionId] = driverInstance;
       // create an IPC channel for the driver and all plugins on this session
@@ -349,10 +355,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
         log: driverInstance.log,
       });
       const extDriver = driverInstance as unknown as IpcAssignable;
-      if (typeof extDriver.assignIpc === 'function') {
-        // TODO remove this existence guard as a breaking change in Appium 3
-        await extDriver.assignIpc(this.sessionIpcs[innerSessionId]);
-      }
+      await extDriver.assignIpc(this.sessionIpcs[innerSessionId]);
 
       this.attachUnexpectedShutdownHandler(driverInstance, innerSessionId);
 
@@ -384,9 +387,6 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
           `Upstream driver responded with webSocketUrl ${dCaps.webSocketUrl}, will rewrite to ` +
             `${bidiUrl} for response to client`,
         );
-        // @ts-ignore webSocketUrl gets sent by the client as a boolean, but then it is supposed
-        // to come back from the server as a string. TODO figure out how to express this in our
-        // capability constraint system
         dCaps.webSocketUrl = bidiUrl;
       }
     } catch (error: unknown) {
@@ -705,10 +705,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
         }
         // we also want to assign the IPC channel for this session to the plugins
         const extPlugin = p as unknown as IpcAssignable;
-        if (typeof extPlugin.assignIpc === 'function') {
-          // TODO remove this existence guard as a breaking change in Appium 4
-          await extPlugin.assignIpc(this.sessionIpcs[newSessionId]);
-        }
+        await extPlugin.assignIpc(this.sessionIpcs[newSessionId]);
       }
       this.sessionlessPlugins = [];
     }

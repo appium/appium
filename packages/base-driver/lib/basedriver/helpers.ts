@@ -38,6 +38,13 @@ const APPLICATIONS_CACHE_GUARD = new AsyncLock();
 const SANITIZE_REPLACEMENT = '-';
 const DEFAULT_BASENAME = 'appium-app';
 const APP_DOWNLOAD_TIMEOUT_MS = 120 * 1000;
+// RFC 5987: filename*=UTF-8''percent-encoded-name  (language tag is optional)
+const FILENAME_STAR_PATTERN = /(?:^|;)\s*filename\*\s*=\s*([^';\s]+)'[^']*'([^;]+)/i;
+const QUOTED_FILENAME_PATTERN = /(?:^|;)\s*filename\s*=\s*"((?:\\.|[^"\\])*)"/i;
+// unquoted token; stops at ';' so later parameters are not swallowed
+const UNQUOTED_FILENAME_PATTERN = /(?:^|;)\s*filename\s*=\s*([^;\s]+)/i;
+const SURROUNDING_QUOTES_PATTERN = /^["']|["']$/g;
+const ESCAPED_CHAR_PATTERN = /\\(.)/g;
 
 process.on('exit', () => {
   if (APPLICATIONS_CACHE.size === 0) {
@@ -485,6 +492,37 @@ async function fetchApp(srcStream: Readable, dstPath: string): Promise<string> {
   return dstPath;
 }
 
+/**
+ * Picks a download filename from a Content-Disposition header.
+ * Prefers RFC 5987 `filename*` over `filename`, and accepts both quoted and unquoted `filename`.
+ * @internal
+ */
+export function filenameFromContentDisposition(header: string): string | undefined {
+  const encoded = FILENAME_STAR_PATTERN.exec(header);
+  if (encoded?.[2]) {
+    try {
+      const value = decodeURIComponent(encoded[2].trim().replace(SURROUNDING_QUOTES_PATTERN, ''));
+      if (value) {
+        return value;
+      }
+    } catch {
+      // invalid percent-encoding; fall through to filename=
+    }
+  }
+
+  // an empty quoted value is still the filename parameter, so it must not fall through to the
+  // token branch below, which would otherwise capture the quote characters themselves
+  const quoted = QUOTED_FILENAME_PATTERN.exec(header);
+  if (quoted) {
+    return quoted[1].replace(ESCAPED_CHAR_PATTERN, '$1') || undefined;
+  }
+
+  const unquoted = UNQUOTED_FILENAME_PATTERN.exec(header);
+  if (unquoted?.[1]) {
+    return unquoted[1];
+  }
+}
+
 function determineFilename(
   headers: AxiosResponseHeaders | RawAxiosRequestHeaders,
   pathname: string,
@@ -496,9 +534,9 @@ function determineFilename(
   const extname = path.extname(basename);
   if (headers['content-disposition'] && /^attachment/i.test(String(headers['content-disposition']))) {
     logger.debug(`Content-Disposition: ${headers['content-disposition']}`);
-    const match = /filename="([^"]+)/i.exec(String(headers['content-disposition']));
-    if (match) {
-      return fs.sanitizeName(match[1], {replacement: SANITIZE_REPLACEMENT});
+    const fromHeader = filenameFromContentDisposition(String(headers['content-disposition']));
+    if (fromHeader) {
+      return fs.sanitizeName(fromHeader, {replacement: SANITIZE_REPLACEMENT});
     }
   }
 

@@ -49,7 +49,7 @@
     "test": "exit 0"
   },
   "dependencies": {
-    "json-schema": "0.4.0"
+    "@types/json-schema": "7.0.15"
   },
   "engines": {
     "node": "^22.22.2 || ^24.15.0 || >=26.0.0",

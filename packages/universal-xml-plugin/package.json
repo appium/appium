@@ -53,6 +53,9 @@
     "fast-xml-parser": "5.11.0",
     "xpath": "0.0.34"
   },
+  "devDependencies": {
+    "@appium/types": "1.7.0"
+  },
   "peerDependencies": {
     "appium": "^3.0.0-beta.0"
   },

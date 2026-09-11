@@ -55,6 +55,9 @@
     "opencv-bindings": "4.5.5",
     "sharp": "0.35.3"
   },
+  "devDependencies": {
+    "@appium/types": "1.7.0"
+  },
   "engines": {
     "node": "^22.22.2 || ^24.15.0 || >=26.0.0",
     "npm": ">=10"

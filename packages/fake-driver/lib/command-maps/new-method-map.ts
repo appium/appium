@@ -16,4 +16,8 @@ export const NEW_METHOD_MAP = {
   '/session/:sessionId/doubleclick': {
     POST: {command: 'doubleClick'},
   },
+  '/session/:sessionId/location': {
+    GET: {command: 'getGeoLocation'},
+    POST: {command: 'setGeoLocation', payloadParams: {required: ['location']}},
+  },
 } as const satisfies MethodMap<FakeDriver>;

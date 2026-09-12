@@ -429,13 +429,6 @@ export interface LockFileOptions {
   timeout?: number;
   /** If true, attempt to unlock and retry once if the first acquisition times out (e.g. stale lock). */
   tryRecovery?: boolean;
-  /**
-   * If true, and the lock file's location turns out to be unwritable (`EACCES`/`EROFS`/`EPERM` --
-   * e.g. a read-only directory), run the behavior unlocked instead of throwing. Safe when the
-   * behavior itself no-ops or fails the same way on a genuine write attempt: nothing else could be
-   * racing a write against a location nothing can write to in the first place.
-   */
-  runUnlockedIfUnwritable?: boolean;
 }
 
 /** Options for truncateString(). */
@@ -566,7 +559,7 @@ export async function toInMemoryBase64(srcPath: string, opts: EncodingOptions = 
  * @returns Async function that accepts a callback to run under the lock, plus a `.check()` method
  */
 export function getLockFileGuard<T>(lockFile: string, opts: LockFileOptions = {}): LockFileGuard<T> {
-  const {timeout = 120, tryRecovery = false, runUnlockedIfUnwritable = false} = opts;
+  const {timeout = 120, tryRecovery = false} = opts;
 
   const lock = promisify(_lockfile.lock) as (lockfile: string, opts: {wait: number}) => Promise<void>;
   const checkLock = promisify(_lockfile.check) as (lockfile: string) => Promise<boolean>;
@@ -583,11 +576,6 @@ export function getLockFileGuard<T>(lockFile: string, opts: LockFileOptions = {}
           } catch (e) {
             const lockErr = e as NodeJS.ErrnoException;
             if (lockErr.code !== 'EEXIST') {
-              if (runUnlockedIfUnwritable && isUnwritableLocationError(lockErr)) {
-                // We haven't acquired anything yet, so there's nothing to release -- just run the
-                // behavior directly.
-                return await behavior();
-              }
               throw lockErr;
             }
             // Someone else is holding the lock (possibly grabbed it between us checking and
@@ -618,9 +606,4 @@ export function getLockFileGuard<T>(lockFile: string, opts: LockFileOptions = {}
   );
 
   return guard;
-}
-
-/** Whether `err` indicates the lock file's location can't be written to at all (as opposed to merely being held). */
-function isUnwritableLocationError(err: NodeJS.ErrnoException): boolean {
-  return err.code === 'EACCES' || err.code === 'EROFS' || err.code === 'EPERM';
 }

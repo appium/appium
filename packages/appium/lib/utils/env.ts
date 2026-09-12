@@ -1,7 +1,8 @@
-import {homedir} from 'node:os';
+import {createHash} from 'node:crypto';
+import {homedir, tmpdir} from 'node:os';
 import path from 'node:path';
 
-import {fs, util} from '@appium/support';
+import {util} from '@appium/support';
 import * as semver from 'semver';
 
 import {type NormalizedPackageJson, readPackage} from './read-package.js';
@@ -20,11 +21,6 @@ export const MANIFEST_BASENAME = 'extensions.yaml';
  * Relative path to extension manifest file from `APPIUM_HOME`.
  */
 export const MANIFEST_RELATIVE_PATH = path.join('node_modules', '.cache', 'appium', MANIFEST_BASENAME);
-
-/**
- * Relative path to the lockfile guarding the extension manifest from `APPIUM_HOME`.
- */
-export const MANIFEST_LOCKFILE_RELATIVE_PATH = `${MANIFEST_RELATIVE_PATH}.lock`;
 
 /**
  * Resolves `true` if an `appium` dependency can be found somewhere in the given `cwd`.
@@ -131,14 +127,23 @@ export const resolveManifestPath = util.memoize(async function _resolveManifestP
 });
 
 /**
- * Figure out the extension manifest lockfile path based on `appiumHome`.
+ * Figure out the extension manifest lockfile path for `appiumHome`.
+ *
+ * Deliberately lives under the OS temp dir, keyed by a hash of `appiumHome`, rather than
+ * alongside the manifest itself: a directory being unwritable doesn't imply the manifest *file*
+ * inside it is (directory permissions gate creating/removing entries, not overwriting an existing
+ * one), so a lock colocated with the manifest couldn't be relied on to actually be creatable
+ * exactly when protection is needed most. The temp dir is writable in the ordinary case
+ * regardless of `appiumHome`'s own permissions, including a preinstalled, read-only one.
  *
  * See caveat on {@link resolveManifestPath} about pre-resolving `appiumHome`.
  */
 export const resolveManifestLockfilePath = util.memoize(async function _resolveManifestLockfilePath(
   appiumHome?: string,
 ): Promise<string> {
-  return path.join(appiumHome ?? (await resolveAppiumHome()), MANIFEST_LOCKFILE_RELATIVE_PATH);
+  const resolvedHome = path.resolve(appiumHome ?? (await resolveAppiumHome()));
+  const homeHash = createHash('sha256').update(resolvedHome).digest('hex').slice(0, 32);
+  return path.join(tmpdir(), `appium-manifest-${homeHash}.lock`);
 });
 
 /**
@@ -146,29 +151,8 @@ export const resolveManifestLockfilePath = util.memoize(async function _resolveM
  * so callers can't race each other's manifest reads/writes. Covers the *entire* read-modify-write
  * cycle a caller needs protected -- e.g. a manifest reload plus whatever depends on it staying
  * current, such as re-validating extension configs or writing the manifest back out.
- *
- * Falls back to running `behavior` unlocked if the lockfile's location turns out to be
- * unwritable (e.g. a preinstalled, read-only `APPIUM_HOME`): nothing else could be racing a write
- * against a location nothing can write to, and any write `behavior` itself attempts (e.g. a
- * manifest migration) will still fail with the same underlying error.
  */
 export async function withManifestLock<T>(appiumHome: string, behavior: () => Promise<T> | T): Promise<T> {
   const lockFile = await resolveManifestLockfilePath(appiumHome);
-  try {
-    // The manifest itself may not exist yet (e.g. a brand new `APPIUM_HOME`) -- its directory
-    // wouldn't either, and creating the lockfile requires it to already be there. A no-op when
-    // the directory already exists, so this doesn't by itself require `appiumHome` to be writable.
-    await fs.mkdirp(path.dirname(lockFile));
-  } catch (err) {
-    if (!isUnwritableLocationError(err)) {
-      throw err;
-    }
-    return behavior();
-  }
-  return util.getLockFileGuard<T>(lockFile, {runUnlockedIfUnwritable: true})(behavior);
-}
-
-function isUnwritableLocationError(err: unknown): boolean {
-  const code = (err as NodeJS.ErrnoException)?.code;
-  return code === 'EACCES' || code === 'EROFS' || code === 'EPERM';
+  return util.getLockFileGuard<T>(lockFile)(behavior);
 }

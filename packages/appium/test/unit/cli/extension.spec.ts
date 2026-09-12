@@ -160,7 +160,9 @@ describe('runExtensionCommand', function () {
   it('still lists installed extensions when the manifest directory is read-only', async function () {
     // Populate a valid, current-schema manifest first (needs to write), then lock the directory
     // down the way a preinstalled, read-only `APPIUM_HOME` would be -- e.g. `driver list
-    // --installed` against a container image built with the manifest already baked in.
+    // --installed` against a container image built with the manifest already baked in. The lock
+    // lives under the OS temp dir (see `resolveManifestLockfilePath`), not alongside the
+    // manifest, so this doesn't depend on `appiumHome` being writable at all.
     const {driverConfig} = await loadExtensions(appiumHome);
     const manifestDir = path.dirname(await resolveManifestPath(appiumHome));
     await fs.chmod(manifestDir, 0o555);
@@ -170,8 +172,52 @@ describe('runExtensionCommand', function () {
         driverConfig,
       );
       assert.ok(result);
-      // No lock file could have been created in a read-only directory.
-      assert.strictEqual(await fs.exists(await resolveManifestLockfilePath(appiumHome)), false);
+    } finally {
+      await fs.chmod(manifestDir, 0o755);
+    }
+  });
+
+  it('still serializes writes when the manifest directory is non-writable but the manifest file itself is writable', async function () {
+    // A non-writable directory blocks creating new entries in it (e.g. a colocated lockfile),
+    // but not overwriting an existing file's contents -- so a lock derived from directory
+    // writability alone would falsely conclude nothing could race a write here, when the
+    // manifest file itself remains fully writable. This is exactly the setup used above and in
+    // `loadExtensions`'s read-only test, so it's what's actually being locked that matters here.
+    const {driverConfig} = await loadExtensions(appiumHome);
+    const manifestDir = path.dirname(await resolveManifestPath(appiumHome));
+    await fs.chmod(manifestDir, 0o555);
+    try {
+      let firstAcquired = false;
+      let releaseFirst: () => void;
+      const holdUntilReleased = new Promise<void>((resolve) => {
+        releaseFirst = resolve;
+      });
+      const firstLockPromise = withManifestLock(appiumHome, async () => {
+        firstAcquired = true;
+        await holdUntilReleased;
+      });
+      while (!firstAcquired) {
+        await sleep(5);
+      }
+
+      let secondResolved = false;
+      const secondPromise = runExtensionCommand(
+        {subcommand: DRIVER_TYPE, driverCommand: 'list', suppressOutput: true} as any,
+        driverConfig,
+      ).then((result) => {
+        secondResolved = true;
+        return result;
+      });
+
+      // If the non-writable directory made `runExtensionCommand` skip locking, it would resolve
+      // almost immediately here instead of waiting for `firstLockPromise` to release the lock.
+      await sleep(200);
+      assert.strictEqual(secondResolved, false);
+
+      releaseFirst!();
+      await firstLockPromise;
+      await secondPromise;
+      assert.strictEqual(secondResolved, true);
     } finally {
       await fs.chmod(manifestDir, 0o755);
     }
@@ -231,7 +277,8 @@ describe('loadExtensions', function () {
     try {
       const {driverConfig} = await loadExtensions(appiumHome);
       assert.deepStrictEqual(driverConfig.installedExtensions, {});
-      // No lock file could have been created in a read-only directory.
+      // The lock lives under the OS temp dir, not `manifestDir`, and is released once acquired --
+      // i.e. it was never blocked by `manifestDir`'s permissions in the first place.
       assert.strictEqual(await fs.exists(await resolveManifestLockfilePath(appiumHome)), false);
     } finally {
       await fs.chmod(manifestDir, 0o755);

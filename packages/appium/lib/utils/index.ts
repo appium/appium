@@ -1,7 +1,6 @@
 export {
   DEFAULT_APPIUM_HOME,
   MANIFEST_BASENAME,
-  MANIFEST_LOCKFILE_RELATIVE_PATH,
   MANIFEST_RELATIVE_PATH,
   findAppiumDependencyPackage,
   hasAppiumDependency,

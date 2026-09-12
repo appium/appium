@@ -101,8 +101,6 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
   // General commands
   title = generalCommands.title;
   keys = generalCommands.keys;
-  setGeoLocation = generalCommands.setGeoLocation;
-  getGeoLocation = generalCommands.getGeoLocation;
   getPageSource = generalCommands.getPageSource;
   getOrientation = generalCommands.getOrientation;
   setOrientation = generalCommands.setOrientation;

@@ -199,7 +199,7 @@ export function wrapParams<T>(paramSets: PayloadParams, jsonObj: T): T | Record<
 }
 
 /**
- * There are commands like setNetworkConnection which send parameters wrapped inside a key such as
+ * There are commands like setCookie which send parameters wrapped inside a key such as
  * "parameters". This function unwraps them (eg. {"parameters": {"type": 1}} becomes {"type": 1}).
  * @param paramSets - Payload spec, used for its `unwrap` key
  * @param jsonObj - Parsed JSON request body

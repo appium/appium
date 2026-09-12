@@ -146,11 +146,29 @@ export const resolveManifestLockfilePath = util.memoize(async function _resolveM
  * so callers can't race each other's manifest reads/writes. Covers the *entire* read-modify-write
  * cycle a caller needs protected -- e.g. a manifest reload plus whatever depends on it staying
  * current, such as re-validating extension configs or writing the manifest back out.
+ *
+ * Falls back to running `behavior` unlocked if the lockfile's location turns out to be
+ * unwritable (e.g. a preinstalled, read-only `APPIUM_HOME`): nothing else could be racing a write
+ * against a location nothing can write to, and any write `behavior` itself attempts (e.g. a
+ * manifest migration) will still fail with the same underlying error.
  */
 export async function withManifestLock<T>(appiumHome: string, behavior: () => Promise<T> | T): Promise<T> {
   const lockFile = await resolveManifestLockfilePath(appiumHome);
-  // The manifest itself may not exist yet (e.g. a brand new `APPIUM_HOME`) -- its directory
-  // wouldn't either, and creating the lockfile requires it to already be there.
-  await fs.mkdirp(path.dirname(lockFile));
-  return util.getLockFileGuard<T>(lockFile)(behavior);
+  try {
+    // The manifest itself may not exist yet (e.g. a brand new `APPIUM_HOME`) -- its directory
+    // wouldn't either, and creating the lockfile requires it to already be there. A no-op when
+    // the directory already exists, so this doesn't by itself require `appiumHome` to be writable.
+    await fs.mkdirp(path.dirname(lockFile));
+  } catch (err) {
+    if (!isUnwritableLocationError(err)) {
+      throw err;
+    }
+    return behavior();
+  }
+  return util.getLockFileGuard<T>(lockFile, {runUnlockedIfUnwritable: true})(behavior);
+}
+
+function isUnwritableLocationError(err: unknown): boolean {
+  const code = (err as NodeJS.ErrnoException)?.code;
+  return code === 'EACCES' || code === 'EROFS' || code === 'EPERM';
 }

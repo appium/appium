@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import path from 'node:path';
 import {after, afterEach, before, beforeEach, describe, it, mock} from 'node:test';
 
 import {fs, tempDir} from '@appium/support';
@@ -155,6 +156,26 @@ describe('runExtensionCommand', function () {
     driverConfig.printValidationSummary({warn() {}, error: (msg?: string) => void errorMessages.push(msg ?? '')});
     assert.ok(errorMessages.some((msg) => msg.includes('Multiple drivers claim support for the same automationName')));
   });
+
+  it('still lists installed extensions when the manifest directory is read-only', async function () {
+    // Populate a valid, current-schema manifest first (needs to write), then lock the directory
+    // down the way a preinstalled, read-only `APPIUM_HOME` would be -- e.g. `driver list
+    // --installed` against a container image built with the manifest already baked in.
+    const {driverConfig} = await loadExtensions(appiumHome);
+    const manifestDir = path.dirname(await resolveManifestPath(appiumHome));
+    await fs.chmod(manifestDir, 0o555);
+    try {
+      const result = await runExtensionCommand(
+        {subcommand: DRIVER_TYPE, driverCommand: 'list', suppressOutput: true} as any,
+        driverConfig,
+      );
+      assert.ok(result);
+      // No lock file could have been created in a read-only directory.
+      assert.strictEqual(await fs.exists(await resolveManifestLockfilePath(appiumHome)), false);
+    } finally {
+      await fs.chmod(manifestDir, 0o755);
+    }
+  });
 });
 
 describe('loadExtensions', function () {
@@ -198,5 +219,22 @@ describe('loadExtensions', function () {
     await heldLockPromise;
     await loadPromise;
     assert.strictEqual(loadResolved, true);
+  });
+
+  it('succeeds against a read-only manifest directory when no write is needed', async function () {
+    // Populate a valid, current-schema manifest normally first (needs to write).
+    await loadExtensions(appiumHome);
+    Manifest.getInstance.cache = new Map();
+
+    const manifestDir = path.dirname(await resolveManifestPath(appiumHome));
+    await fs.chmod(manifestDir, 0o555);
+    try {
+      const {driverConfig} = await loadExtensions(appiumHome);
+      assert.deepStrictEqual(driverConfig.installedExtensions, {});
+      // No lock file could have been created in a read-only directory.
+      assert.strictEqual(await fs.exists(await resolveManifestLockfilePath(appiumHome)), false);
+    } finally {
+      await fs.chmod(manifestDir, 0o755);
+    }
   });
 });

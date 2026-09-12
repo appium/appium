@@ -3,6 +3,7 @@ import path from 'node:path';
 import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
 
 import {fs, logger, tempDir} from '@appium/support';
+import {errors, getResponseForW3CError} from 'appium/driver.js';
 
 import {Storage, StorageArgumentError, validateStorageItemName} from '../../lib/storage.js';
 
@@ -138,6 +139,18 @@ describe('storage', function () {
           return true;
         },
       );
+    });
+
+    it('should be reported as a W3C invalid argument', function () {
+      try {
+        validateStorageItemName('foo/bar');
+        assert.fail('expected validateStorageItemName to throw');
+      } catch (err) {
+        assert.ok(err instanceof errors.InvalidArgumentError);
+        const [status, body] = getResponseForW3CError(err);
+        assert.strictEqual(status, 400);
+        assert.strictEqual(body.value.error, 'invalid argument');
+      }
     });
   });
 

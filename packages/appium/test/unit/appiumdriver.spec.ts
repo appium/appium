@@ -309,7 +309,10 @@ describe('AppiumDriver', function () {
     describe('configureDriverFeatures', function () {
       let appium: InstanceType<typeof AppiumModule.AppiumDriver>;
 
-      async function getDriverInstance(appiumArgs: any): Promise<FakeDriver> {
+      async function getDriverInstance(
+        appiumArgs: any,
+        {driverName = 'fake', automationName = 'Fake'} = {},
+      ): Promise<FakeDriver> {
         appium = new AppiumDriver(appiumArgs);
         appium.configureGlobalFeatures();
         const fakeDriver = new FakeDriver();
@@ -320,10 +323,11 @@ describe('AppiumDriver', function () {
 
         // stub does not satisfy DriverConfig typing
         (appium as any).driverConfig = {
+          installedExtensions: {[driverName]: {automationName}},
           findMatchingDriver: sandbox.stub().returns({
             driver: mockedDriverReturnerClass,
             version: '1.2.3',
-            driverName: 'fake',
+            driverName,
           }),
         };
 
@@ -360,6 +364,25 @@ describe('AppiumDriver', function () {
       it(`should apply driver-scope insecure features only if the driver name matches`, async function () {
         fakeDriver = await getDriverInstance({allowInsecure: ['fake:foo', 'real:bar']});
         assert.deepStrictEqual(fakeDriver.allowInsecure, ['fake:foo']);
+      });
+
+      it(`should apply driver-scope features when the prefix is the automationName`, async function () {
+        // the docs tell users to prefix with the automationName, which does not have to be
+        // the name the driver is installed under
+        fakeDriver = await getDriverInstance(
+          {allowInsecure: ['MyAutomation:foo', 'real:bar']},
+          {driverName: 'my-driver', automationName: 'MyAutomation'},
+        );
+        assert.deepStrictEqual(fakeDriver.allowInsecure, ['MyAutomation:foo']);
+      });
+
+      it(`should match the feature prefix case-insensitively`, async function () {
+        fakeDriver = await getDriverInstance({
+          allowInsecure: ['FAKE:foo'],
+          denyInsecure: ['Fake:bar'],
+        });
+        assert.deepStrictEqual(fakeDriver.allowInsecure, ['FAKE:foo']);
+        assert.deepStrictEqual(fakeDriver.denyInsecure, ['Fake:bar']);
       });
     });
     describe('getAppiumSessions', function () {

@@ -13,6 +13,12 @@ Provides management options for a specific extension (driver or plugin). Both th
 The following sub-subcommands are supported: `doctor`, `install`, `list`, `run`, `update`,
 and `uninstall`.
 
+For `doctor`, `run`, `update`, and `uninstall`, you can identify an installed extension by its
+short name or its exact npm package name. For example, `appium driver uninstall uiautomator2`
+and `appium driver uninstall appium-uiautomator2-driver` refer to the same installed driver.
+Short names take precedence if a name also matches another extension's package name. Package names
+can include a scope, such as `@appium/fake-driver`, but must not include a version or tag suffix.
+
 ## `doctor`
 
 Runs doctor checks for an installed extension, which validate whether the extension has its prerequisites
@@ -31,7 +37,7 @@ appium {driver|plugin} doctor <extension-name>
 
 |Argument|Description|
 |--|--|
-|`extension-name`|The short name of the installed extension|
+|`extension-name`|The short name or exact npm package name of the installed extension|
 
 #### Options
 
@@ -163,7 +169,7 @@ appium {driver|plugin} run <extension-name> [<script-name> [<script-args>]]
 
 |Argument|Description|
 |--|--|
-|`extension-name`|The short name of the installed extension|
+|`extension-name`|The short name or exact npm package name of the installed extension|
 |`script-name`|The name of the script to run. If not provided, a list of available scripts is returned.|
 |`script-args`|Any additional arguments passed to the script|
 
@@ -200,7 +206,7 @@ appium {driver|plugin} update <extension-name>
 
 |Argument|Description|
 |--|--|
-|`extension-name`|The short name of the installed extension, or `installed` to update all installed extensions|
+|`extension-name`|The short name or exact npm package name of the installed extension, or `installed` to update all installed extensions|
 
 #### Options
 
@@ -235,7 +241,7 @@ appium {driver|plugin} uninstall <extension-name>
 
 |Argument|Description|
 |--|--|
-|`extension-name`|The short name of the installed extension|
+|`extension-name`|The short name or exact npm package name of the installed extension|
 
 #### Options
 

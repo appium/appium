@@ -101,21 +101,14 @@ export class ImageElementFinder {
     } = settings;
 
     log.info(`Finding image element with match threshold ${threshold}`);
-    if (!driver.getWindowRect && !Object.hasOwn(driver, 'getWindowSize')) {
+    if (!driver.getWindowRect) {
       throw new Error("This driver does not support the required 'getWindowRect' command");
     }
-    let screenSize: Size;
-    if (driver.getWindowRect) {
-      const screenRect = await driver.getWindowRect();
-      screenSize = {
-        width: screenRect.width,
-        height: screenRect.height,
-      };
-    } else {
-      // TODO: Drop the deprecated endpoint
-      // @ts-expect-error - deprecated getWindowSize method
-      screenSize = await driver.getWindowSize();
-    }
+    const screenRect = await driver.getWindowRect();
+    const screenSize: Size = {
+      width: screenRect.width,
+      height: screenRect.height,
+    };
 
     // someone might have sent in a template that's larger than the screen
     // dimensions. If so let's check and cut it down to size since the algorithm

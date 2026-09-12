@@ -714,6 +714,12 @@ A couple notes about this system:
    mode!
 1. The `executeMethod` helper will reject with an error if a script name doesn't match one of the
    script names defined as a command in `executeMethodMap`, or if there are missing parameters.
+1. If your driver is written in TypeScript, declare the map `as const satisfies
+   ExecuteMethodMap<MyDriver>` (with `ExecuteMethodMap` imported from `@appium/types`). The
+   compiler then checks that each `command` names a method of your driver, and that the
+   `required`/`optional` params are consistent with that method's signature: the method must not
+   require a parameter which is listed as `optional` (or not listed at all), and must accept all
+   of the listed parameters.
 
 One of the nice things about the Execute Method strategy is that methods implemented in this way
 will be available via the classic or BiDi interfaces (since they will result in the same Appium

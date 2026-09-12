@@ -1,5 +1,5 @@
 import {logger, util} from '@appium/support';
-import type {AppiumLogger, Core, Driver, DriverMethodDef, MethodMap, PayloadParams} from '@appium/types';
+import type {AppiumLogger, Constraints, Core, Driver, DriverMethodDef, MethodMap, PayloadParams} from '@appium/types';
 import type {Application, Request, Response} from 'express';
 import type {MultidimensionalReadonlyArray} from 'type-fest';
 
@@ -7,6 +7,7 @@ import type {BaseDriver} from '../basedriver/driver';
 import {generateDriverLogPrefix} from '../basedriver/helpers';
 import {log} from '../basedriver/logger';
 import {DEFAULT_BASE_PATH, MAX_LOG_BODY_LENGTH, PROTOCOLS} from '../constants';
+import {preserveIdempotentSessionResponse} from '../express/idempotency';
 import type {RouteConfiguringFunction} from '../express/server';
 import {isW3cCaps} from '../helpers/capabilities';
 import {omitKeys} from '../utils';
@@ -592,14 +593,61 @@ function buildHandler(
       }
       res.status(httpStatus).json(ensureW3cResponse(httpResBody));
     }
+    return newSessionId;
   };
+
+  const newSessionHandler = async (req: Request, res: Response) => {
+    if (preserveIdempotentSessionResponse(res)) {
+      return await asyncHandler(req, res);
+    }
+    const responseClosed = trackResponseClose(res);
+    const newSessionId = await asyncHandler(req, res);
+    const responseFinished = await responseClosed;
+    if (newSessionId && !responseFinished) {
+      await deleteAbandonedSession(driver, newSessionId);
+    }
+  };
+  const handler = spec.command === CREATE_SESSION_COMMAND ? newSessionHandler : asyncHandler;
   // add the method to the app
   const registerRoute = (app as Application & Record<string, (routePath: string, ...handlers: any[]) => void>)[
     method.toLowerCase()
   ].bind(app);
   registerRoute(path, (req: Request, res: Response) => {
-    void asyncHandler(req, res);
+    void handler(req, res);
   });
+}
+
+function trackResponseClose(res: Response): Promise<boolean> {
+  return new Promise<boolean>((resolve) => {
+    if (isResponseClosed(res)) {
+      resolve(res.writableFinished);
+      return;
+    }
+    // Sending after a disconnect can still set writableFinished, so snapshot it at close.
+    res.once('close', () => resolve(res.writableFinished));
+  });
+}
+
+function isResponseClosed(res: Response): boolean {
+  const socket = res.socket;
+  return res.closed || res.destroyed || res.writableFinished || !socket || socket.destroyed || !socket.writable;
+}
+
+async function deleteAbandonedSession(driver: Core<Constraints>, sessionId: string): Promise<void> {
+  const sessionLog = getLogger(driver, sessionId);
+  sessionLog.info(`Client disconnected before receiving session ${sessionId}. Deleting it`);
+  const warn = (error: unknown) => sessionLog.warn(`Could not delete abandoned session ${sessionId}: ${error}`);
+  try {
+    const result = await (driver as BaseDriver<Constraints>).executeCommand<{error?: unknown} | undefined>(
+      DELETE_SESSION_COMMAND,
+      sessionId,
+    );
+    if (result?.error) {
+      warn(result.error);
+    }
+  } catch (err) {
+    warn(err);
+  }
 }
 
 async function doWdProxy(driver: BaseDriver<any>, req: Request, res: Response): Promise<void> {

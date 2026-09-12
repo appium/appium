@@ -9,6 +9,7 @@ import {Timer} from './timing';
 import {isPlainObject, toReadableSizeString} from './util';
 
 const DEFAULT_TIMEOUT_MS = 4 * 60 * 1000;
+const DEFAULT_FILE_FIELD_NAME = 'file';
 
 /** Common options for {@linkcode uploadFile} and {@linkcode downloadFile}. */
 export interface NetOptions {
@@ -108,7 +109,11 @@ export async function uploadFile(
   }
   const timer = new Timer().start();
   if (isHttpUploadOptions(uploadOptions, url)) {
-    if (!uploadOptions.fileFieldName) {
+    // mirror the default applied in uploadFileToHttp: only an absent name becomes the multipart
+    // default, so an explicitly falsy one still means a raw body that needs Content-Length
+    const fileFieldName =
+      uploadOptions.fileFieldName === undefined ? DEFAULT_FILE_FIELD_NAME : uploadOptions.fileFieldName;
+    if (!fileFieldName) {
       uploadOptions.headers = {
         ...(isPlainObject(uploadOptions.headers) ? uploadOptions.headers : {}),
         'Content-Length': size,
@@ -224,7 +229,7 @@ async function uploadFileToHttp(
     timeout = DEFAULT_TIMEOUT_MS,
     headers,
     auth,
-    fileFieldName = 'file',
+    fileFieldName = DEFAULT_FILE_FIELD_NAME,
     formFields,
   } = uploadOptions;
   const {href} = parsedUri;

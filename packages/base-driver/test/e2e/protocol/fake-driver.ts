@@ -83,10 +83,6 @@ class FakeDriver extends BaseDriver<Constraints> {
     return ms;
   }
 
-  async setNetworkConnection(type: number): Promise<number> {
-    return type;
-  }
-
   async moveTo(element: string | null, xOffset: number, yOffset: number): Promise<unknown[]> {
     return [element, xOffset, yOffset];
   }

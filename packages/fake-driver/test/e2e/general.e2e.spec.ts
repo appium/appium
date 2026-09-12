@@ -17,14 +17,6 @@ export function generalTests(context: {port: number}) {
       return await deleteSession(driver);
     });
 
-    it('should set geolocation', async function () {
-      await driver.setGeoLocation({latitude: -30, longitude: 30});
-    });
-    it('should get geolocation', async function () {
-      const geo = await driver.getGeoLocation();
-      assert.ok(geo.latitude !== undefined && geo.latitude !== null);
-      assert.ok(geo.longitude !== undefined && geo.longitude !== null);
-    });
     it('should get app source', async function () {
       const source = await driver.getPageSource();
       assert.ok(source.includes('<MockNavBar id="nav"'));

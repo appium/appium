@@ -1,7 +1,7 @@
 import {readFileSync} from 'node:fs';
 import path from 'node:path';
 
-import type {ActionSequence, Location, Orientation} from '@appium/types';
+import type {ActionSequence, Orientation} from '@appium/types';
 import XMLDom from '@xmldom/xmldom';
 import type {Document as XMLDocument, Node as XMLNode} from '@xmldom/xmldom';
 import {fs} from 'appium/support.js';
@@ -23,8 +23,6 @@ export class FakeApp {
   activeWebview: FakeWebView | null;
   activeFrame: XMLDocument | null;
   activeAlert: FakeElement | null;
-  lat: number;
-  long: number;
   rawXml: string;
   currentOrientation: Orientation;
   actionLog: ActionSequence[][];
@@ -37,8 +35,6 @@ export class FakeApp {
     this.activeWebview = null;
     this.activeFrame = null;
     this.activeAlert = null;
-    this.lat = 0;
-    this.long = 0;
     this._width = null;
     this._height = null;
     this.rawXml = '';
@@ -54,13 +50,6 @@ export class FakeApp {
     const node = nodes[0];
     const firstChild = node.firstChild as unknown as {data: string} | null;
     return firstChild?.data ?? '';
-  }
-
-  get currentGeoLocation(): Location {
-    return {
-      latitude: this.lat,
-      longitude: this.long,
-    };
   }
 
   get orientation(): Orientation {

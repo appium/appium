@@ -1,4 +1,4 @@
-import type {ActionSequence, Location, Orientation, Rect, Size} from '@appium/types';
+import type {ActionSequence, Orientation, Rect, Size} from '@appium/types';
 import {errors} from 'appium/driver.js';
 
 import type {FakeDriver} from '../driver.js';
@@ -17,18 +17,6 @@ export async function keys(this: FakeDriver, value: string | string[]): Promise<
     throw new errors.InvalidElementStateError();
   }
   await this.setValue(value, this.focusedElId);
-}
-
-/** setGeoLocation. */
-export async function setGeoLocation(this: FakeDriver, location: Location): Promise<Location> {
-  this.appModel.lat = location.latitude;
-  this.appModel.long = location.longitude;
-  return location;
-}
-
-/** getGeoLocation. */
-export async function getGeoLocation(this: FakeDriver): Promise<Location> {
-  return this.appModel.currentGeoLocation;
 }
 
 /** getPageSource. */

@@ -1,7 +1,7 @@
 import {homedir} from 'node:os';
 import path from 'node:path';
 
-import {util} from '@appium/support';
+import {fs, util} from '@appium/support';
 import * as semver from 'semver';
 
 import {type NormalizedPackageJson, readPackage} from './read-package.js';
@@ -140,3 +140,17 @@ export const resolveManifestLockfilePath = util.memoize(async function _resolveM
 ): Promise<string> {
   return path.join(appiumHome ?? (await resolveAppiumHome()), MANIFEST_LOCKFILE_RELATIVE_PATH);
 });
+
+/**
+ * Runs `behavior` under the cross-process lock guarding the extension manifest for `appiumHome`,
+ * so callers can't race each other's manifest reads/writes. Covers the *entire* read-modify-write
+ * cycle a caller needs protected -- e.g. a manifest reload plus whatever depends on it staying
+ * current, such as re-validating extension configs or writing the manifest back out.
+ */
+export async function withManifestLock<T>(appiumHome: string, behavior: () => Promise<T> | T): Promise<T> {
+  const lockFile = await resolveManifestLockfilePath(appiumHome);
+  // The manifest itself may not exist yet (e.g. a brand new `APPIUM_HOME`) -- its directory
+  // wouldn't either, and creating the lockfile requires it to already be there.
+  await fs.mkdirp(path.dirname(lockFile));
+  return util.getLockFileGuard<T>(lockFile)(behavior);
+}

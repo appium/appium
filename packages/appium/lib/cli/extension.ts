@@ -1,12 +1,12 @@
 /* eslint-disable no-console */
-import {util} from '@appium/support';
 import type {Class, DriverType, ExtensionType, PluginType} from '@appium/types';
 import type {Args, CliExtensionCommand, CliExtensionSubcommand} from 'appium/types/index.js';
 
 import {DRIVER_TYPE, PLUGIN_TYPE} from '../constants.js';
 import type {ExtensionConfig} from '../extension/extension-config.js';
+import {reloadManifest} from '../extension/index.js';
 import {isExtensionCommandArgs} from '../schema/cli-args-guards.js';
-import {resolveManifestLockfilePath} from '../utils/index.js';
+import {withManifestLock} from '../utils/index.js';
 import DriverCliCommand from './driver-command.js';
 import PluginCliCommand from './plugin-command.js';
 import {errAndQuit, JSON_SPACES} from './utils.js';
@@ -46,13 +46,11 @@ export async function runExtensionCommand<Cmd extends CliExtensionCommand, SubCm
   // Serialize this against any other `driver`/`plugin` CLI command running (in this or another
   // process) against the same `APPIUM_HOME`, so concurrent commands can't race to read, mutate,
   // and write the same extension manifest out from under each other.
-  const lockFile = await resolveManifestLockfilePath(config.appiumHome);
-  const acquireLock = util.getLockFileGuard<Record<string, unknown>>(lockFile);
-
-  return acquireLock(async () => {
+  return withManifestLock<Record<string, unknown>>(config.appiumHome, async () => {
     // Refresh from disk while holding the lock, in case another process wrote to the manifest
-    // between this process's startup read and now.
-    await config.manifest.read();
+    // between this process's startup read and now, and revalidate so derived state (installed
+    // extensions, pending validation summary, duplicate-automationName tracking) is current too.
+    await reloadManifest(config.manifest);
 
     let jsonResult: Record<string, unknown> = {};
     const CommandClass = commandClasses[type] as ExtCommand<Cmd>;

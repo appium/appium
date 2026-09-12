@@ -2,12 +2,13 @@ import assert from 'node:assert/strict';
 import {after, afterEach, before, beforeEach, describe, it, mock} from 'node:test';
 
 import {fs, tempDir} from '@appium/support';
+import {sleep} from 'asyncbox';
 import * as YAML from 'yaml';
 
 import {DRIVER_TYPE} from '../../../lib/constants.js';
 import {loadExtensions} from '../../../lib/extension/index.js';
 import {Manifest} from '../../../lib/extension/manifest/manifest.js';
-import {resolveManifestLockfilePath, resolveManifestPath} from '../../../lib/utils/index.js';
+import {resolveManifestLockfilePath, resolveManifestPath, withManifestLock} from '../../../lib/utils/index.js';
 
 const FAKE_DRIVER_MANIFEST = {
   pkgName: '@appium/fake-driver',
@@ -18,6 +19,10 @@ const FAKE_DRIVER_MANIFEST = {
   installType: 'npm',
   installSpec: '@appium/fake-driver',
   installPath: '',
+  // Satisfies any Appium version, so `validate()` (now run on every manifest reload) doesn't
+  // fall into `getGenericConfigWarnings()`'s peer-dependency check, which needs a real `list()`
+  // on the command class -- unlike `execute()`, not something `FakeExtensionCommand` stands in for.
+  appiumVersion: '*',
 };
 
 let executeCalls: any[];
@@ -123,5 +128,75 @@ describe('runExtensionCommand', function () {
     // `installedExtensions` is a live getter, so the same `config` object the caller already
     // held onto also reflects the reload -- it isn't stuck on the pre-lock snapshot.
     assert.ok('fake' in driverConfig.installedExtensions);
+  });
+
+  it('revalidates the reloaded manifest, dropping conflicting entries and refreshing derived duplicate-name tracking', async function () {
+    const {driverConfig} = await loadExtensions(appiumHome);
+
+    // Simulate another process installing a *second* driver -- claiming the same `automationName`
+    // as the first -- while this process was waiting for the lock. A plain re-read (with no
+    // revalidation) would let both stand; only revalidating against fresh `knownAutomationNames`
+    // catches the conflict.
+    const manifestPath = await resolveManifestPath(appiumHome);
+    const onDisk = YAML.parse(await fs.readFile(manifestPath, 'utf8'));
+    onDisk.drivers.fake = FAKE_DRIVER_MANIFEST;
+    onDisk.drivers['fake-2'] = {...FAKE_DRIVER_MANIFEST, pkgName: '@appium/fake-driver-2'};
+    await fs.writeFile(manifestPath, YAML.stringify(onDisk), 'utf8');
+
+    await runExtensionCommand(
+      {subcommand: DRIVER_TYPE, driverCommand: 'list', suppressOutput: true} as any,
+      driverConfig,
+    );
+
+    // Only one of the two same-`automationName` drivers should survive revalidation.
+    assert.deepStrictEqual(Object.keys(driverConfig.installedExtensions), ['fake']);
+
+    const errorMessages: string[] = [];
+    driverConfig.printValidationSummary({warn() {}, error: (msg?: string) => void errorMessages.push(msg ?? '')});
+    assert.ok(errorMessages.some((msg) => msg.includes('Multiple drivers claim support for the same automationName')));
+  });
+});
+
+describe('loadExtensions', function () {
+  let appiumHome: string;
+
+  beforeEach(async function () {
+    appiumHome = await tempDir.openDir();
+    Manifest.getInstance.cache = new Map();
+  });
+
+  afterEach(async function () {
+    await fs.rimraf(appiumHome);
+  });
+
+  it('waits for another process holding the manifest lock instead of reading/writing around it', async function () {
+    let lockAcquired = false;
+    let releaseHold: () => void;
+    const holdUntilReleased = new Promise<void>((resolve) => {
+      releaseHold = resolve;
+    });
+    const heldLockPromise = withManifestLock(appiumHome, async () => {
+      lockAcquired = true;
+      await holdUntilReleased;
+    });
+    while (!lockAcquired) {
+      await sleep(5);
+    }
+
+    let loadResolved = false;
+    const loadPromise = loadExtensions(appiumHome).then((result) => {
+      loadResolved = true;
+      return result;
+    });
+
+    // `loadExtensions()` has nothing to do before it needs the lock, so if it isn't actually
+    // waiting on the same lock file, it would resolve almost immediately here.
+    await sleep(200);
+    assert.strictEqual(loadResolved, false);
+
+    releaseHold!();
+    await heldLockPromise;
+    await loadPromise;
+    assert.strictEqual(loadResolved, true);
   });
 });

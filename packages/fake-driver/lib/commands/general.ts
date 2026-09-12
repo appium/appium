@@ -72,16 +72,6 @@ export async function performActions(this: FakeDriver, actions: ActionSequence[]
 /** releaseActions. */
 export async function releaseActions(this: FakeDriver): Promise<void> {}
 
-/** Supported log types: 'actions'. TODO: add more log types if needed for tests. */
-export async function getLog(this: FakeDriver, type: string): Promise<ActionSequence[][]> {
-  switch (type) {
-    case 'actions':
-      return this.appModel.actionLog;
-    default:
-      throw new Error(`Don't understand log type '${type}'`);
-  }
-}
-
 /** mobileShake. */
 export async function mobileShake(this: FakeDriver): Promise<void> {
   this.shook = true;

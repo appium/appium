@@ -17,8 +17,7 @@ export function generalTests(context: {port: number}) {
       return await deleteSession(driver);
     });
 
-    it.skip('should set geolocation', async function () {
-      // TODO unquarantine when WD fixes what it sends the server
+    it('should set geolocation', async function () {
       await driver.setGeoLocation({latitude: -30, longitude: 30});
     });
     it('should get geolocation', async function () {
@@ -30,8 +29,6 @@ export function generalTests(context: {port: number}) {
       const source = await driver.getPageSource();
       assert.ok(source.includes('<MockNavBar id="nav"'));
     });
-    // TODO do we want to test driver.pageIndex? probably not
-
     it('should get the orientation', async function () {
       assert.strictEqual(await driver.getOrientation(), 'PORTRAIT');
     });

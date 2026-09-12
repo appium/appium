@@ -8,8 +8,6 @@ import {createSandbox} from 'sinon';
 import {validator} from '../../../lib/basedriver/validation.js';
 import {BaseDriver, errors} from '../../../lib/index.js';
 
-// TODO: we need module-level mocks for the logger
-
 /** W3C caps for createSession (tests use partial/invalid caps) */
 type TestW3CCaps = W3CCapabilities<Constraints>;
 

@@ -60,6 +60,7 @@ export class AppiumMainRunner {
     await logStartupInfo(parsedArgs);
 
     appiumDriver.configureGlobalFeatures();
+    appiumDriver.configureAppUrlRules();
 
     const appiumHomeSourceName = determineAppiumHomeSource(args?.appiumHome);
     logger.debug(`The ${appiumHomeSourceName}: ${appiumHome}`);

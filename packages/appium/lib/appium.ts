@@ -33,6 +33,7 @@ import type {
 } from '@appium/types';
 import type WebSocket from 'ws';
 
+import * as appUrlRules from './app-url-rules.js';
 import * as bidiCommands from './bidi-commands.js';
 import {BIDI_BASE_PATH, DRIVER_TYPE, SESSION_DISCOVERY_FEATURE} from './constants.js';
 import type {DriverConfig} from './extension/driver-config.js';
@@ -128,6 +129,9 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
 
   configureGlobalFeatures = insecureFeatures.configureGlobalFeatures;
   configureDriverFeatures = insecureFeatures.configureDriverFeatures;
+
+  /** @internal */
+  configureAppUrlRules = appUrlRules.configureAppUrlRules;
 
   listCommands = inspectorCommands.listCommands;
   listExtensions = inspectorCommands.listExtensions;

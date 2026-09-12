@@ -69,7 +69,9 @@ function getSchemaValidator<Coerced>(
     if (util.isEmpty(errors)) {
       return coerced;
     }
-    throw new ArgumentTypeError('\n\n' + formatErrors(errors, value, {schemaId}));
+    // the error formatter needs the parsed data (not the raw string) to locate errors inside objects
+    const data = util.isPlainObject(coerced) ? coerced : value;
+    throw new ArgumentTypeError('\n\n' + formatErrors(errors, data, {schemaId}));
   };
 }
 
@@ -109,13 +111,13 @@ function subSchemaToArgDef(subSchema: AppiumJSONSchema, argSpec: ArgSpec): ArgDe
       break;
     }
     case TYPENAMES.OBJECT: {
-      argTypeFunction = (value: string) => {
+      argTypeFunction = getSchemaValidator(argSpec, (value: string) => {
         const o = transformers.json(value);
         if (!util.isPlainObject(o)) {
           throw new ArgumentTypeError(`'${util.truncateString(String(o), {length: 100})}' must be a plain object`);
         }
         return o;
-      };
+      });
       break;
     }
     case TYPENAMES.ARRAY: {

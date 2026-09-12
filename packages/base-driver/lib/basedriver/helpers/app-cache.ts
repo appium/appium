@@ -5,10 +5,11 @@ import {fs, tempDir, timing, util} from '@appium/support';
 import type {CachedAppInfo, ConfigureAppOptions, HTTPHeaders, PostProcessOptions} from '@appium/types';
 import AsyncLock from 'async-lock';
 import axios from 'axios';
-import type {AxiosResponseHeaders, RawAxiosRequestHeaders} from 'axios';
+import type {AxiosRequestConfig, AxiosResponseHeaders, RawAxiosRequestHeaders} from 'axios';
 import {LRUCache} from 'lru-cache';
 
 import {log as logger} from '../../helpers/logger.js';
+import {assertAppUrlAllowed, createAppUrlLookup, getAppUrlRules} from '../commands/app-url-rules.js';
 import {BASEDRIVER_VER} from './version.js';
 
 const CACHED_APPS_MAX_AGE_MS = 1000 * 60 * toNaturalNumber(60 * 24, 'APPIUM_APPS_CACHE_MAX_AGE');
@@ -123,9 +124,13 @@ export async function configureApp(
     maxAge: null,
     etag: null,
   };
-  const {protocol, pathname} = parseAppLink(app);
-  const isUrl = isSupportedUrl(app);
-  if (!isUrl && !path.isAbsolute(newApp)) {
+  const parsedApp = parseAppLink(app);
+  const protocol = parsedApp?.protocol;
+  const pathname = parsedApp?.pathname;
+  const isUrl = isSupportedUrl(parsedApp);
+  if (isUrl) {
+    assertAppUrlAllowed(parsedApp);
+  } else if (!path.isAbsolute(newApp)) {
     newApp = path.resolve(process.cwd(), newApp);
     logger.warn(
       `The current application path '${app}' is not absolute ` +
@@ -152,7 +157,7 @@ export async function configureApp(
       }
       logger.debug(`Request headers: ${JSON.stringify(reqHeaders)}`);
 
-      let result = await queryAppLink(newApp, reqHeaders);
+      let result = await queryAppLink(parsedApp, reqHeaders);
       headers = result.headers;
       let {stream, status} = result;
       logger.debug(`Response status: ${status}`);
@@ -190,7 +195,7 @@ export async function configureApp(
           if (!stream.closed) {
             stream.destroy();
           }
-          result = await queryAppLink(newApp, {...DEFAULT_REQ_HEADERS});
+          result = await queryAppLink(parsedApp, {...DEFAULT_REQ_HEADERS});
           stream = result.stream;
           headers = result.headers;
           status = result.status;
@@ -280,11 +285,11 @@ export async function configureApp(
 
 // #region Private helpers
 
-function parseAppLink(appLink: string): URL | {protocol?: string; pathname?: string; href?: string; search?: string} {
+function parseAppLink(appLink: string): URL | null {
   try {
     return new URL(appLink);
   } catch {
-    return {};
+    return null;
   }
 }
 
@@ -296,13 +301,8 @@ function isEnvOptionEnabled(optionName: string, defaultValue: boolean | null = n
   return !util.isEmpty(value) && !['0', 'false', 'no'].includes(String(value).toLowerCase());
 }
 
-function isSupportedUrl(app: string): boolean {
-  try {
-    const {protocol} = parseAppLink(app);
-    return ['http:', 'https:'].includes(protocol ?? '');
-  } catch {
-    return false;
-  }
+function isSupportedUrl(app: URL | null): app is URL {
+  return ['http:', 'https:'].includes(app?.protocol ?? '');
 }
 
 /**
@@ -311,26 +311,17 @@ function isSupportedUrl(app: string): boolean {
  * e.g. ones stored in S3 using presigned URLs.
  */
 function toCacheKey(app: string): string {
-  if (!isEnvOptionEnabled('APPIUM_APPS_CACHE_IGNORE_URL_QUERY') || !isSupportedUrl(app)) {
+  if (!isEnvOptionEnabled('APPIUM_APPS_CACHE_IGNORE_URL_QUERY')) {
     return app;
   }
-  try {
-    const parsed = parseAppLink(app);
-    const href = 'href' in parsed ? parsed.href : undefined;
-    const search = 'search' in parsed ? parsed.search : undefined;
-    if (href && search) {
-      return href.replace(search, '');
-    }
-    if (href) {
-      return href;
-    }
-  } catch {
-    // ignore
+  const parsed = parseAppLink(app);
+  if (!isSupportedUrl(parsed)) {
+    return app;
   }
-  return app;
+  return parsed.search ? parsed.href.replace(parsed.search, '') : parsed.href;
 }
 
-async function queryAppLink(appLink: string, reqHeaders: RawAxiosRequestHeaders): Promise<RemoteAppData> {
+async function queryAppLink(appLink: URL, reqHeaders: RawAxiosRequestHeaders): Promise<RemoteAppData> {
   const url = new URL(appLink);
   // Extract credentials, then remove them from the URL for axios
   const {username, password} = url;
@@ -338,14 +329,28 @@ async function queryAppLink(appLink: string, reqHeaders: RawAxiosRequestHeaders)
   url.password = '';
   const axiosUrl = url.href;
   const axiosAuth = username ? {username, password} : undefined;
-  const requestOpts = {
+  const requestOpts: AxiosRequestConfig = {
     url: axiosUrl,
     auth: axiosAuth,
-    responseType: 'stream' as const,
+    responseType: 'stream',
     timeout: APP_DOWNLOAD_TIMEOUT_MS,
     validateStatus: (status: number) => (status >= 200 && status < 300) || status === HTTP_STATUS_NOT_MODIFIED,
     headers: reqHeaders,
   };
+  const urlRules = getAppUrlRules();
+  if (urlRules) {
+    requestOpts.lookup = createAppUrlLookup(urlRules);
+    if (urlRules.maxRedirects !== undefined) {
+      requestOpts.maxRedirects = urlRules.maxRedirects;
+    }
+    // Make sure redirects cannot be used to escape the configured rules
+    requestOpts.beforeRedirect = (redirectOpts) => {
+      const {href} = redirectOpts as {href?: string};
+      if (href) {
+        assertAppUrlAllowed(new URL(href), urlRules);
+      }
+    };
+  }
   try {
     const {data: stream, headers, status} = await axios(requestOpts);
     return {stream, headers, status};

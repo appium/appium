@@ -44,6 +44,7 @@ export const AppiumConfigJsonSchema = {
           description:
             'Set which insecure features are allowed to run in this server\'s sessions. Features are defined on a driver level; see documentation for more details. Note that features defined via "deny-insecure" will be disabled, even if also listed here. If string, a path to a text file containing policy or a comma-delimited list.',
           items: {
+            minLength: 1,
             type: 'string',
           },
           title: 'allow-insecure config',
@@ -56,6 +57,15 @@ export const AppiumConfigJsonSchema = {
           title: 'allow-unknown-args config',
           type: 'boolean',
           default: false,
+        },
+        'app-url-rules': {
+          $comment:
+            'The actual rules are defined in $defs/appUrlRules, since inline `properties` are reserved for extension config sections',
+          allOf: [{$ref: '#/$defs/appUrlRules'}],
+          description:
+            'Rules that remote application URLs (e.g. in the "appium:app" capability) must satisfy before the server downloads them. Session creation is rejected if a URL violates any rule. If a string, a path to a JSON file containing the rules, or raw JSON.',
+          title: 'app-url-rules config',
+          type: 'object',
         },
         'base-path': {
           appiumCliAliases: ['pa'],
@@ -100,6 +110,7 @@ export const AppiumConfigJsonSchema = {
           description:
             'Set which insecure features are not allowed to run in this server\'s sessions. Features are defined on a driver level; see documentation for more details. Features listed here will not be enabled even if also listed in "allow-insecure", and even if "relaxed-security" is enabled. If string, a path to a text file containing policy or a comma-delimited list.',
           items: {
+            minLength: 1,
             type: 'string',
           },
           title: 'deny-insecure config',
@@ -353,6 +364,47 @@ export const AppiumConfigJsonSchema = {
   title: 'Appium Configuration',
   type: 'object',
   $defs: {
+    appUrlRules: {
+      type: 'object',
+      description: 'Rules that remote application URLs must satisfy',
+      properties: {
+        allow: {
+          description:
+            'Hostname glob patterns, IP addresses, or CIDR subnets. If non-empty, a hostname or its resolved address must match at least one.',
+          items: {
+            type: 'string',
+          },
+          type: 'array',
+          uniqueItems: true,
+        },
+        deny: {
+          description:
+            'Hostname glob patterns, IP addresses, or CIDR subnets. A matching hostname or resolved address is rejected.',
+          items: {
+            type: 'string',
+          },
+          type: 'array',
+          uniqueItems: true,
+        },
+        httpsOnly: {
+          description: 'Whether only "https:" URLs are accepted',
+          type: 'boolean',
+          default: false,
+        },
+        allowCredentials: {
+          description: 'Whether URLs containing a username and/or a password are accepted',
+          type: 'boolean',
+          default: true,
+        },
+        maxRedirects: {
+          description:
+            'Maximum number of HTTP redirects to follow while downloading the application. Set to 0 to reject any redirect.',
+          type: 'integer',
+          minimum: 0,
+        },
+      },
+      additionalProperties: false,
+    },
     logFilterText: {
       type: 'object',
       description: 'Log filter with plain text',

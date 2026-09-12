@@ -99,6 +99,20 @@ describe('parser', function () {
         });
       });
 
+      it('should parse app URL rules correctly from a string', function () {
+        const appUrlRules = {allow: ['*.example.com', '10.0.0.0/8'], httpsOnly: true, maxRedirects: 0};
+        const args = p.parseArgs(['--app-url-rules', JSON.stringify(appUrlRules)]);
+        assert.deepStrictEqual(args.appUrlRules, appUrlRules);
+      });
+
+      it('should throw an error with invalid arg to app URL rules', function () {
+        assert.throws(() => p.parseArgs(['--app-url-rules', '42']));
+        assert.throws(() => p.parseArgs(['--app-url-rules', '[]']));
+        assert.throws(() => p.parseArgs(['--app-url-rules', 'does/not/exist.json']));
+        assert.throws(() => p.parseArgs(['--app-url-rules', '{"unknownRule": true}']));
+        assert.throws(() => p.parseArgs(['--app-url-rules', '{"httpsOnly": "yes"}']));
+      });
+
       it('should parse default capabilities correctly from a string', function () {
         const defaultCapabilities = {a: 'b'};
         const args = p.parseArgs(['--default-capabilities', JSON.stringify(defaultCapabilities)]);

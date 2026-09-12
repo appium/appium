@@ -20,4 +20,4 @@ export {
 } from './object';
 export {packageDidChange} from './package-changed';
 export {appiumPackageRoot, npmPackage} from './package-json';
-export {resolveFrom} from './resolve-from';
+export {resolveFrom, resolvePackageJsonFrom, resolvePackageSubpathFrom} from './resolve-from';

@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
 import {promises as fs} from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import {describe, it, beforeEach, afterEach, before} from 'node:test';
 
 import type {ExtensionType, PluginType} from '@appium/types';
@@ -191,7 +193,7 @@ describe('PluginConfig', function () {
 
           describe('when the property as a path is found', function () {
             beforeEach(function () {
-              MockResolveFrom.resolves(resolveFixture('plugin-schema'));
+              MockResolveFrom.resolves(resolveFixture('plugin-schema.js'));
             });
 
             it('should return an empty array', async function () {
@@ -205,6 +207,13 @@ describe('PluginConfig', function () {
                 'foo',
               );
               assert.strictEqual(problems.length, 0);
+              assert.strictEqual(
+                MockResolveFrom.calledOnceWithExactly(
+                  '/somewhere/',
+                  path.posix.join('../fixtures', 'plugin-schema.js'),
+                ),
+                true,
+              );
             });
           });
         });
@@ -258,20 +267,44 @@ describe('PluginConfig', function () {
     describe('readExtensionSchema()', function () {
       let pluginConfig: any;
       let extData: ExtManifestWithSchema<PluginType>;
+      let tempRoot: string;
 
       const extName = 'stuff';
 
-      beforeEach(function () {
+      beforeEach(async function () {
+        tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'appium-plugin-schema-'));
+        const installPath = path.join(tempRoot, 'node_modules', 'some-pkg');
+        await fs.mkdir(installPath, {recursive: true});
+        await fs.writeFile(
+          path.join(installPath, 'package.json'),
+          JSON.stringify({
+            name: 'some-pkg',
+            version: '1.0.0',
+            exports: {
+              './plugin-schema.json': './plugin-schema.json',
+              './driver-schema.json': './driver-schema.json',
+            },
+          }),
+        );
+        await fs.writeFile(path.join(installPath, 'plugin-schema.json'), JSON.stringify({type: 'object'}));
+        await fs.writeFile(
+          path.join(installPath, 'driver-schema.json'),
+          JSON.stringify({type: 'object', properties: {driver: {type: 'string'}}}),
+        );
         extData = {
           pkgName: 'some-pkg',
-          schema: 'plugin-schema.js',
+          schema: 'plugin-schema.json',
           mainClass: 'SomeClass',
           version: '0.0.0',
           installType: 'npm',
           installSpec: 'some-pkg',
-        } as unknown as ExtManifestWithSchema<PluginType>;
-        MockResolveFrom.resolves(resolveFixture('plugin-schema.js'));
+          installPath,
+        };
         pluginConfig = PluginConfig.create(manifest);
+      });
+
+      afterEach(async function () {
+        await fs.rm(tempRoot, {recursive: true, force: true});
       });
 
       describe('when the extension data is missing `schema`', function () {
@@ -295,7 +328,7 @@ describe('PluginConfig', function () {
         describe('when the schema differs (presumably a different extension)', function () {
           it('should throw', async function () {
             await pluginConfig.readExtensionSchema(extName, extData);
-            MockResolveFrom.resolves(resolveFixture('driver-schema.js'));
+            extData.schema = 'driver-schema.json';
             await assert.rejects(
               pluginConfig.readExtensionSchema(extName, extData),
               /conflicts with an existing schema/i,
@@ -305,9 +338,8 @@ describe('PluginConfig', function () {
       });
 
       describe('when the extension schema has not yet been registered', function () {
-        it('should resolve and load the extension schema file', async function () {
-          await pluginConfig.readExtensionSchema(extName, extData);
-          assert.strictEqual(MockResolveFrom.calledOnce, true);
+        it('should resolve and load the extension schema file from the installed package', async function () {
+          await assert.doesNotReject(pluginConfig.readExtensionSchema(extName, extData));
         });
       });
     });

@@ -104,6 +104,28 @@ describe('Driver CLI', {timeout: 90000}, function () {
       assert.deepStrictEqual(out, {});
     });
 
+    it('should find a driver hoisted above an explicit workspace search root', async function () {
+      await resetAppiumHome();
+      const monorepoRoot = await tempDir.openDir();
+      const searchRoot = path.join(monorepoRoot, 'packages', 'app');
+      const driverRoot = path.join(monorepoRoot, 'node_modules', '@appium', 'test-driver');
+      await fs.mkdirp(searchRoot);
+      await fs.mkdirp(driverRoot);
+      await fs.writeFile(
+        path.join(searchRoot, 'package.json'),
+        JSON.stringify({devDependencies: {'@appium/test-driver': '1.0.0'}}),
+      );
+      await fs.writeFile(
+        path.join(driverRoot, 'package.json'),
+        await fs.readFile(resolveFixture('test-driver/package.json')),
+      );
+
+      const result = await runList(['--installed', '--ext-search-root', searchRoot]);
+
+      assert.strictEqual(result.test.installed, true);
+      assert.strictEqual(result.test.pkgName, '@appium/test-driver');
+    });
+
     it('should show updates for installed drivers with --updates', async function (ctx: TestContext) {
       if (system.isWindows()) {
         return ctx.skip();

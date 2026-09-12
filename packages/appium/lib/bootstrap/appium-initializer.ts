@@ -12,7 +12,7 @@ import type {
 import {AppiumDriver, type AppiumDriverConstraints} from '../appium';
 import {runExtensionCommand} from '../cli/extension';
 import {injectAppiumSymlinks} from '../cli/extension-command';
-import {ArgParser, getParser} from '../cli/parser';
+import {ArgParser, getExtensionSearchRoot, getParser} from '../cli/parser';
 import {runSetupCommand} from '../cli/setup-command';
 import {SERVER_SUBCOMMAND} from '../constants';
 import {type ExtensionConfigs, loadExtensions} from '../extension';
@@ -57,7 +57,8 @@ export class AppiumInitializer {
 
     adjustNodePath();
 
-    const {driverConfig, pluginConfig} = await loadExtensions(appiumHome);
+    const extensionSearchRoot = args ? args.extSearchRoot : getExtensionSearchRoot();
+    const {driverConfig, pluginConfig} = await loadExtensions(appiumHome, extensionSearchRoot);
 
     const {preConfigArgs, throwInsteadOfExit} = await this.parsePreConfigArgs(args);
     this.throwInsteadOfExit = throwInsteadOfExit;

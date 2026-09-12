@@ -76,11 +76,14 @@ export const CACHE_DIR_RELATIVE_PATH = path.join('node_modules', '.cache', 'appi
 export const PKG_HASHFILE_RELATIVE_PATH = path.join(CACHE_DIR_RELATIVE_PATH, 'package.hash');
 
 export const EXT_SUBCOMMAND_LIST = 'list';
+export const EXT_SUBCOMMAND_LIST_ALIASES = ['ls'] as const;
 export const EXT_SUBCOMMAND_INSTALL = 'install';
 export const EXT_SUBCOMMAND_UNINSTALL = 'uninstall';
 export const EXT_SUBCOMMAND_UPDATE = 'update';
 export const EXT_SUBCOMMAND_RUN = 'run';
 export const EXT_SUBCOMMAND_DOCTOR = 'doctor';
+
+export const EXT_SEARCH_ROOT_ARG = '--ext-search-root';
 
 /**
  * Current revision of the manifest (`extensions.yaml`) schema

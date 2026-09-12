@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {Agent} from 'node:http';
-import {describe, it, before, after, type TestContext, beforeEach, afterEach} from 'node:test';
+import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
 
 import {createAppiumURL, getTestPort} from '@appium/driver-test-support';
 import type {AppiumServer, BaseNSCapabilities, Capabilities, Constraints, W3CCapabilities} from '@appium/types';
@@ -82,12 +82,7 @@ describe(`FakeDriver E2E`, function () {
   });
 
   describe('session handling', function () {
-    it('should handle idempotency while creating sessions', async function (ctx: TestContext) {
-      // TODO: Fix this test for Node 24+
-      if (parseInt(process.versions.node.split('.')[0], 10) >= 24) {
-        return ctx.skip();
-      }
-
+    it('should handle idempotency while creating sessions', async function () {
       // workaround for https://github.com/node-fetch/node-fetch/issues/1735
       const httpAgent = new Agent({keepAlive: true});
 
@@ -116,12 +111,7 @@ describe(`FakeDriver E2E`, function () {
       assert.strictEqual(data.value, null);
     });
 
-    it('should handle idempotency while creating parallel sessions', async function (ctx: TestContext) {
-      // TODO: Fix this test for Node 24+
-      if (parseInt(process.versions.node.split('.')[0], 10) >= 24) {
-        return ctx.skip();
-      }
-
+    it('should handle idempotency while creating parallel sessions', async function () {
       // workaround for https://github.com/node-fetch/node-fetch/issues/1735
       const httpAgent = new Agent({keepAlive: true});
 

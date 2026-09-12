@@ -2,8 +2,8 @@ import {logger} from '@appium/support';
 import type {AppiumLogger, Core} from '@appium/types';
 import type {Request} from 'express';
 
-import {generateDriverLogPrefix} from '../basedriver/helpers.js';
 import {PROTOCOLS} from '../constants.js';
+import {generateDriverLogPrefix} from '../helpers/log-prefix.js';
 import {NO_SESSION_ID_COMMANDS} from './routes/index.js';
 
 /**

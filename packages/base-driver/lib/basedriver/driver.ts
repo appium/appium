@@ -60,7 +60,7 @@ import './commands/find.js';
 import './commands/log.js';
 import './commands/timeout.js';
 import {DriverCore} from './core.js';
-import * as helpers from './helpers.js';
+import * as helpers from './helpers/index.js';
 
 type CommandInvoker<C extends Constraints> = BaseDriver<C> & Record<string, ((...args: any[]) => any) | undefined>;
 

@@ -2,8 +2,8 @@ import {util} from '@appium/support';
 import type {PayloadParams} from '@appium/types';
 import type {MultidimensionalReadonlyArray} from 'type-fest';
 
-import {log} from '../basedriver/logger.js';
 import {PROTOCOLS} from '../constants.js';
+import {log} from '../helpers/logger.js';
 import {omitKeys} from '../utils.js';
 import {BadParametersError, errors} from './errors.js';
 

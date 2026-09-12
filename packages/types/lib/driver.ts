@@ -35,7 +35,7 @@ export interface DriverHelpers {
   isPackageOrBundle: (app: string) => boolean;
   duplicateKeys: <T>(input: T, firstKey: string, secondKey: string) => T;
   parseCapsArray: (cap: string | string[]) => string[];
-  generateDriverLogPrefix: (obj: object, sessionId?: string) => string;
+  generateDriverLogPrefix: (obj: object) => string;
 }
 
 export type SettingsUpdateListener<T extends Record<string, unknown> = Record<string, unknown>> = (

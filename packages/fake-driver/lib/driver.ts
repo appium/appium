@@ -31,6 +31,14 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
 
   readonly desiredCapConstraints = desiredCapConstraints;
 
+  /** Registers 'actions' with the base driver's generic getLogTypes/getLog commands. */
+  readonly supportedLogTypes = {
+    actions: {
+      description: 'Log of all actions performed against the driver in this session',
+      getter: () => this.appModel.actionLog,
+    },
+  };
+
   curContext: string;
   readonly appModel: FakeApp;
   _proxyActive: boolean;
@@ -93,8 +101,6 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
   // General commands
   title = generalCommands.title;
   keys = generalCommands.keys;
-  setGeoLocation = generalCommands.setGeoLocation;
-  getGeoLocation = generalCommands.getGeoLocation;
   getPageSource = generalCommands.getPageSource;
   getOrientation = generalCommands.getOrientation;
   setOrientation = generalCommands.setOrientation;
@@ -103,7 +109,6 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
   getWindowRect = generalCommands.getWindowRect;
   performActions = generalCommands.performActions;
   releaseActions = generalCommands.releaseActions;
-  getLog = generalCommands.getLog;
   mobileShake = generalCommands.mobileShake;
   doubleClick = generalCommands.doubleClick;
   execute = generalCommands.execute;
@@ -118,6 +123,7 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
   private _bidiProxyUrl: string | null;
   private _clockRunning = false;
   private ipcFakeThing?: IIpcSubscription<Thing>;
+  private readonly deprecatedCommandsCalled: string[] = [];
 
   constructor(opts: InitialOpts = {} as InitialOpts, shouldValidateCaps = true) {
     super(opts, shouldValidateCaps);
@@ -234,14 +240,14 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
     return this.cliArgs;
   }
 
-  /** TODO: track deprecated commands when called and return their names. */
   async getDeprecatedCommandsCalled(): Promise<string[]> {
     await sleep(1);
-    return [];
+    return this.deprecatedCommandsCalled;
   }
 
   async callDeprecatedCommand(): Promise<void> {
     await sleep(1);
+    this.deprecatedCommandsCalled.push(this.callDeprecatedCommand.name);
   }
 
   async doSomeMath(num1: number, num2: number): Promise<number> {

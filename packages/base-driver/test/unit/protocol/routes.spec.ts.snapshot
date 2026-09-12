@@ -1,0 +1,1008 @@
+exports[`Routes > ensure protocol consistency > should not change protocol between patch versions 1`] = `
+{
+  "/session": {
+    "POST": {
+      "command": "createSession",
+      "payloadParams": {
+        "optional": [
+          "capabilities"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId": {
+    "DELETE": {
+      "command": "deleteSession"
+    }
+  },
+  "/status": {
+    "GET": {
+      "command": "getStatus"
+    }
+  },
+  "/session/:sessionId/timeouts": {
+    "GET": {
+      "command": "getTimeouts"
+    },
+    "POST": {
+      "command": "timeouts",
+      "payloadParams": {
+        "optional": [
+          "type",
+          "ms",
+          "script",
+          "pageLoad",
+          "implicit"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/url": {
+    "GET": {
+      "command": "getUrl"
+    },
+    "POST": {
+      "command": "setUrl",
+      "payloadParams": {
+        "required": [
+          "url"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/forward": {
+    "POST": {
+      "command": "forward"
+    }
+  },
+  "/session/:sessionId/back": {
+    "POST": {
+      "command": "back"
+    }
+  },
+  "/session/:sessionId/refresh": {
+    "POST": {
+      "command": "refresh"
+    }
+  },
+  "/session/:sessionId/title": {
+    "GET": {
+      "command": "title"
+    }
+  },
+  "/session/:sessionId/window": {
+    "GET": {
+      "command": "getWindowHandle"
+    },
+    "POST": {
+      "command": "setWindow",
+      "payloadParams": {
+        "required": [
+          "handle"
+        ]
+      }
+    },
+    "DELETE": {
+      "command": "closeWindow"
+    }
+  },
+  "/session/:sessionId/window/handles": {
+    "GET": {
+      "command": "getWindowHandles"
+    }
+  },
+  "/session/:sessionId/window/new": {
+    "POST": {
+      "command": "createNewWindow",
+      "payloadParams": {
+        "optional": [
+          "type"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/frame": {
+    "POST": {
+      "command": "setFrame",
+      "payloadParams": {
+        "required": [
+          "id"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/frame/parent": {
+    "POST": {
+      "command": "switchToParentFrame"
+    }
+  },
+  "/session/:sessionId/window/rect": {
+    "GET": {
+      "command": "getWindowRect"
+    },
+    "POST": {
+      "command": "setWindowRect",
+      "payloadParams": {
+        "optional": [
+          "x",
+          "y",
+          "width",
+          "height"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/window/maximize": {
+    "POST": {
+      "command": "maximizeWindow"
+    }
+  },
+  "/session/:sessionId/window/minimize": {
+    "POST": {
+      "command": "minimizeWindow"
+    }
+  },
+  "/session/:sessionId/window/fullscreen": {
+    "POST": {
+      "command": "fullScreenWindow"
+    }
+  },
+  "/session/:sessionId/element/active": {
+    "GET": {
+      "command": "active"
+    }
+  },
+  "/session/:sessionId/element/:elementId/shadow": {
+    "GET": {
+      "command": "elementShadowRoot"
+    }
+  },
+  "/session/:sessionId/element": {
+    "POST": {
+      "command": "findElement",
+      "payloadParams": {
+        "required": [
+          "using",
+          "value"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/elements": {
+    "POST": {
+      "command": "findElements",
+      "payloadParams": {
+        "required": [
+          "using",
+          "value"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/element/:elementId/element": {
+    "POST": {
+      "command": "findElementFromElement",
+      "payloadParams": {
+        "required": [
+          "using",
+          "value"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/element/:elementId/elements": {
+    "POST": {
+      "command": "findElementsFromElement",
+      "payloadParams": {
+        "required": [
+          "using",
+          "value"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/shadow/:shadowId/element": {
+    "POST": {
+      "command": "findElementFromShadowRoot",
+      "payloadParams": {
+        "required": [
+          "using",
+          "value"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/shadow/:shadowId/elements": {
+    "POST": {
+      "command": "findElementsFromShadowRoot",
+      "payloadParams": {
+        "required": [
+          "using",
+          "value"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/element/:elementId/selected": {
+    "GET": {
+      "command": "elementSelected"
+    }
+  },
+  "/session/:sessionId/element/:elementId/displayed": {
+    "GET": {
+      "command": "elementDisplayed"
+    }
+  },
+  "/session/:sessionId/element/:elementId/attribute/:name": {
+    "GET": {
+      "command": "getAttribute"
+    }
+  },
+  "/session/:sessionId/element/:elementId/property/:name": {
+    "GET": {
+      "command": "getProperty"
+    }
+  },
+  "/session/:sessionId/element/:elementId/css/:propertyName": {
+    "GET": {
+      "command": "getCssProperty"
+    }
+  },
+  "/session/:sessionId/element/:elementId/text": {
+    "GET": {
+      "command": "getText"
+    }
+  },
+  "/session/:sessionId/element/:elementId/name": {
+    "GET": {
+      "command": "getName"
+    }
+  },
+  "/session/:sessionId/element/:elementId/rect": {
+    "GET": {
+      "command": "getElementRect"
+    }
+  },
+  "/session/:sessionId/element/:elementId/enabled": {
+    "GET": {
+      "command": "elementEnabled"
+    }
+  },
+  "/session/:sessionId/element/:elementId/computedrole": {
+    "GET": {
+      "command": "getComputedRole"
+    }
+  },
+  "/session/:sessionId/element/:elementId/computedlabel": {
+    "GET": {
+      "command": "getComputedLabel"
+    }
+  },
+  "/session/:sessionId/element/:elementId/click": {
+    "POST": {
+      "command": "click"
+    }
+  },
+  "/session/:sessionId/element/:elementId/clear": {
+    "POST": {
+      "command": "clear"
+    }
+  },
+  "/session/:sessionId/element/:elementId/value": {
+    "POST": {
+      "command": "setValue",
+      "payloadParams": {
+        "required": [
+          "text"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/source": {
+    "GET": {
+      "command": "getPageSource"
+    }
+  },
+  "/session/:sessionId/execute/sync": {
+    "POST": {
+      "command": "execute",
+      "payloadParams": {
+        "required": [
+          "script",
+          "args"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/execute/async": {
+    "POST": {
+      "command": "executeAsync",
+      "payloadParams": {
+        "required": [
+          "script",
+          "args"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/cookie": {
+    "GET": {
+      "command": "getCookies"
+    },
+    "POST": {
+      "command": "setCookie",
+      "payloadParams": {
+        "required": [
+          "cookie"
+        ]
+      }
+    },
+    "DELETE": {
+      "command": "deleteCookies"
+    }
+  },
+  "/session/:sessionId/cookie/:name": {
+    "GET": {
+      "command": "getCookie"
+    },
+    "DELETE": {
+      "command": "deleteCookie"
+    }
+  },
+  "/session/:sessionId/actions": {
+    "POST": {
+      "command": "performActions",
+      "payloadParams": {
+        "required": [
+          "actions"
+        ]
+      }
+    },
+    "DELETE": {
+      "command": "releaseActions"
+    }
+  },
+  "/session/:sessionId/alert/dismiss": {
+    "POST": {
+      "command": "postDismissAlert"
+    }
+  },
+  "/session/:sessionId/alert/accept": {
+    "POST": {
+      "command": "postAcceptAlert"
+    }
+  },
+  "/session/:sessionId/alert/text": {
+    "GET": {
+      "command": "getAlertText"
+    },
+    "POST": {
+      "command": "setAlertText",
+      "payloadParams": {
+        "required": [
+          "text"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/screenshot": {
+    "GET": {
+      "command": "getScreenshot"
+    }
+  },
+  "/session/:sessionId/element/:elementId/screenshot": {
+    "GET": {
+      "command": "getElementScreenshot"
+    }
+  },
+  "/session/:sessionId/print": {
+    "POST": {
+      "command": "printPage",
+      "payloadParams": {
+        "optional": [
+          "orientation",
+          "scale",
+          "background",
+          "page",
+          "margin",
+          "shrinkToFit",
+          "pageRanges"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/orientation": {
+    "GET": {
+      "command": "getOrientation",
+      "deprecated": true
+    },
+    "POST": {
+      "command": "setOrientation",
+      "payloadParams": {
+        "required": [
+          "orientation"
+        ]
+      },
+      "deprecated": true
+    }
+  },
+  "/session/:sessionId/rotation": {
+    "GET": {
+      "command": "getRotation",
+      "deprecated": true
+    },
+    "POST": {
+      "command": "setRotation",
+      "payloadParams": {
+        "required": [
+          "x",
+          "y",
+          "z"
+        ]
+      },
+      "deprecated": true
+    }
+  },
+  "/session/:sessionId/context": {
+    "GET": {
+      "command": "getCurrentContext",
+      "deprecated": true
+    },
+    "POST": {
+      "command": "setContext",
+      "payloadParams": {
+        "required": [
+          "name"
+        ]
+      },
+      "deprecated": true
+    }
+  },
+  "/session/:sessionId/contexts": {
+    "GET": {
+      "command": "getContexts",
+      "deprecated": true
+    }
+  },
+  "/appium/sessions": {
+    "GET": {
+      "command": "getAppiumSessions"
+    }
+  },
+  "/session/:sessionId/appium/context": {
+    "GET": {
+      "command": "getCurrentContext"
+    },
+    "POST": {
+      "command": "setContext",
+      "payloadParams": {
+        "required": [
+          "name"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/appium/contexts": {
+    "GET": {
+      "command": "getContexts"
+    }
+  },
+  "/session/:sessionId/appium/capabilities": {
+    "GET": {
+      "command": "getAppiumSessionCapabilities"
+    }
+  },
+  "/session/:sessionId/appium/settings": {
+    "POST": {
+      "command": "updateSettings",
+      "payloadParams": {
+        "required": [
+          "settings"
+        ]
+      }
+    },
+    "GET": {
+      "command": "getSettings"
+    }
+  },
+  "/session/:sessionId/appium/commands": {
+    "GET": {
+      "command": "listCommands"
+    }
+  },
+  "/session/:sessionId/appium/extensions": {
+    "GET": {
+      "command": "listExtensions"
+    }
+  },
+  "/session/:sessionId/appium/events": {
+    "POST": {
+      "command": "getLogEvents",
+      "payloadParams": {
+        "optional": [
+          "type"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/appium/log_event": {
+    "POST": {
+      "command": "logCustomEvent",
+      "payloadParams": {
+        "required": [
+          "vendor",
+          "event"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/appium/device/rotation": {
+    "GET": {
+      "command": "getRotation"
+    },
+    "POST": {
+      "command": "setRotation",
+      "payloadParams": {
+        "required": [
+          "x",
+          "y",
+          "z"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/appium/device/orientation": {
+    "GET": {
+      "command": "getOrientation"
+    },
+    "POST": {
+      "command": "setOrientation",
+      "payloadParams": {
+        "required": [
+          "orientation"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/appium/device/system_time": {
+    "GET": {
+      "command": "getDeviceTime"
+    },
+    "POST": {
+      "command": "getDeviceTime",
+      "payloadParams": {
+        "optional": [
+          "format"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/appium/device/activate_app": {
+    "POST": {
+      "command": "activateApp",
+      "payloadParams": {
+        "required": [
+          [
+            "appId"
+          ],
+          [
+            "bundleId"
+          ]
+        ],
+        "optional": [
+          "options"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/appium/device/terminate_app": {
+    "POST": {
+      "command": "terminateApp",
+      "payloadParams": {
+        "required": [
+          [
+            "appId"
+          ],
+          [
+            "bundleId"
+          ]
+        ],
+        "optional": [
+          "options"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/appium/device/app_state": {
+    "POST": {
+      "command": "queryAppState",
+      "payloadParams": {
+        "required": [
+          [
+            "appId"
+          ],
+          [
+            "bundleId"
+          ]
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/appium/device/install_app": {
+    "POST": {
+      "command": "installApp",
+      "payloadParams": {
+        "required": [
+          "appPath"
+        ],
+        "optional": [
+          "options"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/appium/device/remove_app": {
+    "POST": {
+      "command": "removeApp",
+      "payloadParams": {
+        "required": [
+          [
+            "appId"
+          ],
+          [
+            "bundleId"
+          ]
+        ],
+        "optional": [
+          "options"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/appium/device/app_installed": {
+    "POST": {
+      "command": "isAppInstalled",
+      "payloadParams": {
+        "required": [
+          [
+            "appId"
+          ],
+          [
+            "bundleId"
+          ]
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/appium/device/hide_keyboard": {
+    "POST": {
+      "command": "hideKeyboard",
+      "payloadParams": {
+        "optional": [
+          "strategy",
+          "key",
+          "keyCode",
+          "keyName"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/appium/device/is_keyboard_shown": {
+    "GET": {
+      "command": "isKeyboardShown"
+    }
+  },
+  "/session/:sessionId/appium/device/push_file": {
+    "POST": {
+      "command": "pushFile",
+      "payloadParams": {
+        "required": [
+          "path",
+          "data"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/appium/device/pull_file": {
+    "POST": {
+      "command": "pullFile",
+      "payloadParams": {
+        "required": [
+          "path"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/appium/device/pull_folder": {
+    "POST": {
+      "command": "pullFolder",
+      "payloadParams": {
+        "required": [
+          "path"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/permissions": {
+    "POST": {
+      "command": "setPermissions",
+      "payloadParams": {
+        "required": [
+          "descriptor",
+          "state"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/deviceposture": {
+    "POST": {
+      "command": "setDevicePosture",
+      "payloadParams": {
+        "required": [
+          "posture"
+        ]
+      }
+    },
+    "DELETE": {
+      "command": "clearDevicePosture"
+    }
+  },
+  "/session/:sessionId/sensor": {
+    "POST": {
+      "command": "createVirtualSensor",
+      "payloadParams": {
+        "required": [
+          "type"
+        ],
+        "optional": [
+          "connected",
+          "maxSamplingFrequency",
+          "minSamplingFrequency"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/sensor/:sensorType": {
+    "GET": {
+      "command": "getVirtualSensorInfo"
+    },
+    "POST": {
+      "command": "updateVirtualSensorReading",
+      "payloadParams": {
+        "required": [
+          "reading"
+        ]
+      }
+    },
+    "DELETE": {
+      "command": "deleteVirtualSensor"
+    }
+  },
+  "/session/:sessionId/webauthn/authenticator": {
+    "POST": {
+      "command": "addVirtualAuthenticator",
+      "payloadParams": {
+        "required": [
+          "protocol",
+          "transport"
+        ],
+        "optional": [
+          "hasResidentKey",
+          "hasUserVerification",
+          "isUserConsenting",
+          "isUserVerified"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/webauthn/authenticator/:authenticatorId": {
+    "DELETE": {
+      "command": "removeVirtualAuthenticator"
+    }
+  },
+  "/session/:sessionId/webauthn/authenticator/:authenticatorId/credential": {
+    "POST": {
+      "command": "addAuthCredential",
+      "payloadParams": {
+        "required": [
+          "credentialId",
+          "isResidentCredential",
+          "rpId",
+          "privateKey"
+        ],
+        "optional": [
+          "userHandle",
+          "signCount"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/webauthn/authenticator/:authenticatorId/credentials": {
+    "GET": {
+      "command": "getAuthCredential"
+    },
+    "DELETE": {
+      "command": "removeAllAuthCredentials"
+    }
+  },
+  "/session/:sessionId/webauthn/authenticator/:authenticatorId/credentials/:credentialId": {
+    "DELETE": {
+      "command": "removeAuthCredential"
+    }
+  },
+  "/session/:sessionId/webauthn/authenticator/:authenticatorId/uv": {
+    "POST": {
+      "command": "setUserAuthVerified",
+      "payloadParams": {
+        "required": [
+          "isUserVerified"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/secure-payment-confirmation/set-mode": {
+    "POST": {
+      "command": "setSPCTransactionMode",
+      "payloadParams": {
+        "required": [
+          "mode"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/fedcm/canceldialog": {
+    "POST": {
+      "command": "fedCMCancelDialog"
+    }
+  },
+  "/session/:sessionId/fedcm/selectaccount": {
+    "POST": {
+      "command": "fedCMSelectAccount",
+      "payloadParams": {
+        "required": [
+          "accountIndex"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/fedcm/clickdialogbutton": {
+    "POST": {
+      "command": "fedCMClickDialogButton",
+      "payloadParams": {
+        "required": [
+          "dialogButton"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/fedcm/accountlist": {
+    "GET": {
+      "command": "fedCMGetAccounts"
+    }
+  },
+  "/session/:sessionId/fedcm/gettitle": {
+    "GET": {
+      "command": "fedCMGetTitle"
+    }
+  },
+  "/session/:sessionId/fedcm/getdialogtype": {
+    "GET": {
+      "command": "fedCMGetDialogType"
+    }
+  },
+  "/session/:sessionId/fedcm/setdelayenabled": {
+    "POST": {
+      "command": "fedCMSetDelayEnabled",
+      "payloadParams": {
+        "required": [
+          "enabled"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/fedcm/resetcooldown": {
+    "POST": {
+      "command": "fedCMResetCooldown"
+    }
+  },
+  "/session/:sessionId/pressuresource": {
+    "POST": {
+      "command": "createVirtualPressureSource",
+      "payloadParams": {
+        "required": [
+          "type"
+        ],
+        "optional": [
+          "supported"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/pressuresource/:pressureSourceType": {
+    "POST": {
+      "command": "updateVirtualPressureSource",
+      "payloadParams": {
+        "required": [
+          "sample"
+        ]
+      }
+    },
+    "DELETE": {
+      "command": "deleteVirtualPressureSource"
+    }
+  },
+  "/session/:sessionId/privacy": {
+    "GET": {
+      "command": "getGlobalPrivacyControl"
+    },
+    "POST": {
+      "command": "setGlobalPrivacyControl",
+      "payloadParams": {
+        "required": [
+          "gpc"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/reporting/generate_test_report": {
+    "POST": {
+      "command": "generateTestReport",
+      "payloadParams": {
+        "required": [
+          "message"
+        ],
+        "optional": [
+          "group"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/se/log": {
+    "POST": {
+      "command": "getLog",
+      "payloadParams": {
+        "required": [
+          "type"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/se/log/types": {
+    "GET": {
+      "command": "getLogTypes"
+    }
+  },
+  "/session/:sessionId/:vendor/cdp/execute": {
+    "POST": {
+      "command": "executeCdp",
+      "payloadParams": {
+        "required": [
+          "cmd",
+          "params"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/custom-handlers/set-mode": {
+    "POST": {
+      "command": "setRPHRegistrationMode",
+      "payloadParams": {
+        "required": [
+          "mode"
+        ]
+      }
+    }
+  },
+  "/session/:sessionId/storageaccess": {
+    "POST": {
+      "command": "setStorageAccess",
+      "payloadParams": {
+        "required": [
+          "blocked",
+          "origin"
+        ]
+      }
+    }
+  }
+}
+`;

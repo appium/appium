@@ -27,25 +27,6 @@ export interface IMJSONWPCommands<Ctx = string> {
   getContexts?(): Promise<Ctx[]>;
 
   /**
-   * Get the network connection state of a device
-   * @see {@link https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md#device-modes}
-   *
-   * @returns A number which is a bitmask representing categories like Data, Wifi, and Airplane
-   * mode status
-   */
-  getNetworkConnection?(): Promise<number>;
-
-  /**
-   * Set the network connection of the device
-   * @see {@link https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md#device-modes}
-   *
-   * @param type - the bitmask representing network state
-   * @returns A number which is a bitmask representing categories like Data, Wifi, and Airplane
-   * mode status
-   */
-  setNetworkConnection?(type: number): Promise<number>;
-
-  /**
    * Get the current rotation state of the device
    * @see {@link https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md#device-rotation}
    *

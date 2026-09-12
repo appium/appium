@@ -2,8 +2,8 @@ import {util} from '@appium/support';
 import type {PayloadParams} from '@appium/types';
 import type {MultidimensionalReadonlyArray} from 'type-fest';
 
-import {log} from '../basedriver/logger.js';
 import {PROTOCOLS} from '../constants.js';
+import {log} from '../helpers/logger.js';
 import {omitKeys} from '../utils.js';
 import {BadParametersError, errors} from './errors.js';
 
@@ -199,7 +199,7 @@ export function wrapParams<T>(paramSets: PayloadParams, jsonObj: T): T | Record<
 }
 
 /**
- * There are commands like setNetworkConnection which send parameters wrapped inside a key such as
+ * There are commands like setCookie which send parameters wrapped inside a key such as
  * "parameters". This function unwraps them (eg. {"parameters": {"type": 1}} becomes {"type": 1}).
  * @param paramSets - Payload spec, used for its `unwrap` key
  * @param jsonObj - Parsed JSON request body

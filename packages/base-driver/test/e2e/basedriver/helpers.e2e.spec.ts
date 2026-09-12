@@ -12,7 +12,7 @@ import serveStatic from 'serve-static';
 
 import {configureAppUrlRules} from '../../../lib/basedriver/commands/app-url-rules.js';
 import {DriverCore} from '../../../lib/basedriver/core.js';
-import {configureApp} from '../../../lib/basedriver/helpers.js';
+import {configureApp} from '../../../lib/basedriver/helpers/index.js';
 
 const driver = new DriverCore();
 const applyAppUrlRules = (rules?: Parameters<typeof configureAppUrlRules>[0] | null) =>

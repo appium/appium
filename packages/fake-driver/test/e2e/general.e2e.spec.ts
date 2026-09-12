@@ -17,21 +17,10 @@ export function generalTests(context: {port: number}) {
       return await deleteSession(driver);
     });
 
-    it.skip('should set geolocation', async function () {
-      // TODO unquarantine when WD fixes what it sends the server
-      await driver.setGeoLocation({latitude: -30, longitude: 30});
-    });
-    it('should get geolocation', async function () {
-      const geo = await driver.getGeoLocation();
-      assert.ok(geo.latitude !== undefined && geo.latitude !== null);
-      assert.ok(geo.longitude !== undefined && geo.longitude !== null);
-    });
     it('should get app source', async function () {
       const source = await driver.getPageSource();
       assert.ok(source.includes('<MockNavBar id="nav"'));
     });
-    // TODO do we want to test driver.pageIndex? probably not
-
     it('should get the orientation', async function () {
       assert.strictEqual(await driver.getOrientation(), 'PORTRAIT');
     });

@@ -411,6 +411,59 @@ exports[`Routes > ensure protocol consistency > should not change protocol betwe
       }
     }
   },
+  "/session/:sessionId/orientation": {
+    "GET": {
+      "command": "getOrientation",
+      "deprecated": true
+    },
+    "POST": {
+      "command": "setOrientation",
+      "payloadParams": {
+        "required": [
+          "orientation"
+        ]
+      },
+      "deprecated": true
+    }
+  },
+  "/session/:sessionId/rotation": {
+    "GET": {
+      "command": "getRotation",
+      "deprecated": true
+    },
+    "POST": {
+      "command": "setRotation",
+      "payloadParams": {
+        "required": [
+          "x",
+          "y",
+          "z"
+        ]
+      },
+      "deprecated": true
+    }
+  },
+  "/session/:sessionId/context": {
+    "GET": {
+      "command": "getCurrentContext",
+      "deprecated": true
+    },
+    "POST": {
+      "command": "setContext",
+      "payloadParams": {
+        "required": [
+          "name"
+        ]
+      },
+      "deprecated": true
+    }
+  },
+  "/session/:sessionId/contexts": {
+    "GET": {
+      "command": "getContexts",
+      "deprecated": true
+    }
+  },
   "/appium/sessions": {
     "GET": {
       "command": "getAppiumSessions"

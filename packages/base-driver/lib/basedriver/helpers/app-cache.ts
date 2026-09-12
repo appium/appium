@@ -1,19 +1,15 @@
-import nodeFs from 'node:fs';
 import path from 'node:path';
 import type {Readable} from 'node:stream';
 
-import {fs, node, tempDir, timing, util} from '@appium/support';
+import {fs, tempDir, timing, util} from '@appium/support';
 import type {CachedAppInfo, ConfigureAppOptions, HTTPHeaders, PostProcessOptions} from '@appium/types';
 import AsyncLock from 'async-lock';
 import axios from 'axios';
 import type {AxiosResponseHeaders, RawAxiosRequestHeaders} from 'axios';
 import {LRUCache} from 'lru-cache';
-import type {PackageJson} from 'type-fest';
 
-import {log as logger} from './logger.js';
-
-// for compat with running tests transpiled and in-place
-export const BASEDRIVER_VER = readBaseDriverVersion();
+import {log as logger} from '../../helpers/logger.js';
+import {BASEDRIVER_VER} from './version.js';
 
 const CACHED_APPS_MAX_AGE_MS = 1000 * 60 * toNaturalNumber(60 * 24, 'APPIUM_APPS_CACHE_MAX_AGE');
 const MAX_CACHED_APPS = toNaturalNumber(1024, 'APPIUM_APPS_CACHE_MAX_ITEMS');
@@ -282,98 +278,6 @@ export async function configureApp(
   });
 }
 
-/**
- * Returns whether the given string looks like a package or bundle identifier
- * (e.g. `com.example.app` or `org.company.AnotherApp`).
- *
- * @param app - Value to check (e.g. app path or bundle id).
- * @returns `true` if the value matches a dot-separated identifier pattern.
- */
-export function isPackageOrBundle(app: string): boolean {
-  return /^([a-zA-Z0-9\-_]+\.[a-zA-Z0-9\-_]+)+$/.test(app);
-}
-
-/**
- * Recursively ensures both keys exist with the same value in objects and arrays.
- * For each object, if `firstKey` exists its value is also set at `secondKey`, and vice versa.
- *
- * @param input - Object, array, or primitive to process (arrays/objects traversed recursively).
- * @param firstKey - First key name to mirror.
- * @param secondKey - Second key name to mirror.
- * @returns A deep copy of `input` with both keys present where objects had either key.
- */
-export function duplicateKeys<T>(input: T, firstKey: string, secondKey: string): T {
-  // If array provided, recursively call on all elements
-  if (Array.isArray(input)) {
-    return input.map((item) => duplicateKeys(item, firstKey, secondKey)) as T;
-  }
-
-  // If object, create duplicates for keys and then recursively call on values
-  if (util.isPlainObject(input)) {
-    const resultObj: Record<string, unknown> = {};
-    for (const [key, value] of Object.entries(input as Record<string, unknown>)) {
-      const recursivelyCalledValue = duplicateKeys(value, firstKey, secondKey);
-      if (key === firstKey) {
-        resultObj[secondKey] = recursivelyCalledValue;
-      } else if (key === secondKey) {
-        resultObj[firstKey] = recursivelyCalledValue;
-      }
-      resultObj[key] = recursivelyCalledValue;
-    }
-    return resultObj as T;
-  }
-
-  // Base case. Return primitives without doing anything.
-  return input;
-}
-
-/**
- * Normalizes a capability value to a string array. If already an array, returns it;
- * if a string, parses as JSON array when possible, otherwise returns a single-element array.
- *
- * @param capValue - Capability value: string (including JSON array like `"[\"a\",\"b\"]"`) or string[].
- * @returns Array of strings.
- * @throws {TypeError} If value is not a string/array or JSON parsing fails for array-like input.
- */
-export function parseCapsArray(capValue: string | string[]): string[] {
-  if (Array.isArray(capValue)) {
-    return capValue;
-  }
-
-  try {
-    const parsed = JSON.parse(capValue);
-    if (Array.isArray(parsed)) {
-      return parsed;
-    }
-  } catch (e) {
-    const message = `Failed to parse capability as JSON array: ${(e as Error).message}`;
-    if (typeof capValue === 'string' && capValue.trimStart().startsWith('[')) {
-      throw new TypeError(message, {cause: e});
-    }
-    logger.warn(message);
-  }
-  if (typeof capValue === 'string') {
-    return [capValue];
-  }
-  throw new TypeError(`Expected a string or a valid JSON array; received '${capValue}'`);
-}
-
-/**
- * Builds a short log prefix for a driver instance (e.g. `UiAutomator2@a1b2`).
- *
- * @param obj - Driver or other object; its constructor name and a short id are used.
- * @param _sessionId - Deprecated and unused; kept for {@link DriverHelpers} interface compatibility.
- * @returns Prefix string like `DriverName@xxxx`, or `UnknownDriver@????` if `obj` is null.
- */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- DriverHelpers interface
-export function generateDriverLogPrefix(obj: object | null, _sessionId?: string | null): string {
-  if (!obj) {
-    // This should not happen
-    return 'UnknownDriver@????';
-  }
-  return `${obj.constructor.name}@${node.getObjectId(obj).substring(0, 4)}`;
-}
-
 // #region Private helpers
 
 function parseAppLink(appLink: string): URL | {protocol?: string; pathname?: string; href?: string; search?: string} {
@@ -564,16 +468,4 @@ function toNaturalNumber(defaultValue: number, envVarName?: string): number {
   }
   const num = parseInt(`${process.env[envVarName]}`, 10);
   return num > 0 ? num : defaultValue;
-}
-
-function readBaseDriverVersion(): string {
-  const pkgRoot = node.getModuleRootSync('@appium/base-driver', import.meta.filename);
-  if (!pkgRoot) {
-    throw new Error('Cannot find the @appium/base-driver package root');
-  }
-  const pkg = JSON.parse(nodeFs.readFileSync(path.join(pkgRoot, 'package.json'), 'utf8')) as PackageJson;
-  if (typeof pkg.version !== 'string') {
-    throw new Error('Invalid `package.json` for @appium/base-driver');
-  }
-  return pkg.version;
 }

@@ -1,4 +1,5 @@
-import {homedir} from 'node:os';
+import {createHash} from 'node:crypto';
+import {homedir, tmpdir} from 'node:os';
 import path from 'node:path';
 
 import {util} from '@appium/support';
@@ -124,3 +125,34 @@ export const resolveManifestPath = util.memoize(async function _resolveManifestP
 ): Promise<string> {
   return path.join(appiumHome ?? (await resolveAppiumHome()), MANIFEST_RELATIVE_PATH);
 });
+
+/**
+ * Figure out the extension manifest lockfile path for `appiumHome`.
+ *
+ * Deliberately lives under the OS temp dir, keyed by a hash of `appiumHome`, rather than
+ * alongside the manifest itself: a directory being unwritable doesn't imply the manifest *file*
+ * inside it is (directory permissions gate creating/removing entries, not overwriting an existing
+ * one), so a lock colocated with the manifest couldn't be relied on to actually be creatable
+ * exactly when protection is needed most. The temp dir is writable in the ordinary case
+ * regardless of `appiumHome`'s own permissions, including a preinstalled, read-only one.
+ *
+ * See caveat on {@link resolveManifestPath} about pre-resolving `appiumHome`.
+ */
+export const resolveManifestLockfilePath = util.memoize(async function _resolveManifestLockfilePath(
+  appiumHome?: string,
+): Promise<string> {
+  const resolvedHome = path.resolve(appiumHome ?? (await resolveAppiumHome()));
+  const homeHash = createHash('sha256').update(resolvedHome).digest('hex').slice(0, 32);
+  return path.join(tmpdir(), `appium-manifest-${homeHash}.lock`);
+});
+
+/**
+ * Runs `behavior` under the cross-process lock guarding the extension manifest for `appiumHome`,
+ * so callers can't race each other's manifest reads/writes. Covers the *entire* read-modify-write
+ * cycle a caller needs protected -- e.g. a manifest reload plus whatever depends on it staying
+ * current, such as re-validating extension configs or writing the manifest back out.
+ */
+export async function withManifestLock<T>(appiumHome: string, behavior: () => Promise<T> | T): Promise<T> {
+  const lockFile = await resolveManifestLockfilePath(appiumHome);
+  return util.getLockFileGuard<T>(lockFile)(behavior);
+}

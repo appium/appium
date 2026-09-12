@@ -4,7 +4,9 @@ import type {Args, CliExtensionCommand, CliExtensionSubcommand} from 'appium/typ
 
 import {DRIVER_TYPE, PLUGIN_TYPE} from '../constants.js';
 import type {ExtensionConfig} from '../extension/extension-config.js';
+import {reloadManifest} from '../extension/index.js';
 import {isExtensionCommandArgs} from '../schema/cli-args-guards.js';
+import {withManifestLock} from '../utils/index.js';
 import DriverCliCommand from './driver-command.js';
 import PluginCliCommand from './plugin-command.js';
 import {errAndQuit, JSON_SPACES} from './utils.js';
@@ -30,9 +32,6 @@ export async function runExtensionCommand<Cmd extends CliExtensionCommand, SubCm
   args: Args<Cmd, SubCmd>,
   config: ExtensionConfig<Cmd>,
 ) {
-  // TODO driver config file should be locked while any of these commands are
-  // running to prevent weird situations
-  let jsonResult: Record<string, unknown> = {};
   const {extensionType: type} = config; // NOTE this is the same as `args.subcommand`
   if (!isExtensionCommandArgs(args)) {
     throw new TypeError(`Cannot call ${type} command without a subcommand like 'install'`);
@@ -43,23 +42,35 @@ export async function runExtensionCommand<Cmd extends CliExtensionCommand, SubCm
   if (suppressOutput) {
     json = true;
   }
-  const CommandClass = commandClasses[type] as ExtCommand<Cmd>;
-  const cmd = new CommandClass({config, json} as any);
-  cmd.printPendingValidationSummary();
-  try {
-    jsonResult = (await cmd.execute(args)) as Record<string, unknown>;
-  } catch (err) {
-    // in the suppress output case, we are calling this function internally and should
-    // just throw instead of printing an error and ending the process
-    if (suppressOutput) {
-      throw err;
+
+  // Serialize this against any other `driver`/`plugin` CLI command running (in this or another
+  // process) against the same `APPIUM_HOME`, so concurrent commands can't race to read, mutate,
+  // and write the same extension manifest out from under each other.
+  return withManifestLock<Record<string, unknown>>(config.appiumHome, async () => {
+    // Refresh from disk while holding the lock, in case another process wrote to the manifest
+    // between this process's startup read and now, and revalidate so derived state (installed
+    // extensions, pending validation summary, duplicate-automationName tracking) is current too.
+    await reloadManifest(config.manifest);
+
+    let jsonResult: Record<string, unknown> = {};
+    const CommandClass = commandClasses[type] as ExtCommand<Cmd>;
+    const cmd = new CommandClass({config, json} as any);
+    cmd.printPendingValidationSummary();
+    try {
+      jsonResult = (await cmd.execute(args)) as Record<string, unknown>;
+    } catch (err) {
+      // in the suppress output case, we are calling this function internally and should
+      // just throw instead of printing an error and ending the process
+      if (suppressOutput) {
+        throw err;
+      }
+      errAndQuit(json, err);
     }
-    errAndQuit(json, err);
-  }
 
-  if (json && !suppressOutput) {
-    console.log(JSON.stringify(jsonResult, null, JSON_SPACES));
-  }
+    if (json && !suppressOutput) {
+      console.log(JSON.stringify(jsonResult, null, JSON_SPACES));
+    }
 
-  return jsonResult;
+    return jsonResult;
+  });
 }

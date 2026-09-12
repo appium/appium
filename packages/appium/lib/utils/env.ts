@@ -22,6 +22,11 @@ export const MANIFEST_BASENAME = 'extensions.yaml';
 export const MANIFEST_RELATIVE_PATH = path.join('node_modules', '.cache', 'appium', MANIFEST_BASENAME);
 
 /**
+ * Relative path to the lockfile guarding the extension manifest from `APPIUM_HOME`.
+ */
+export const MANIFEST_LOCKFILE_RELATIVE_PATH = `${MANIFEST_RELATIVE_PATH}.lock`;
+
+/**
  * Resolves `true` if an `appium` dependency can be found somewhere in the given `cwd`.
  */
 export async function hasAppiumDependency(cwd: string): Promise<boolean> {
@@ -123,4 +128,15 @@ export const resolveManifestPath = util.memoize(async function _resolveManifestP
   appiumHome?: string,
 ): Promise<string> {
   return path.join(appiumHome ?? (await resolveAppiumHome()), MANIFEST_RELATIVE_PATH);
+});
+
+/**
+ * Figure out the extension manifest lockfile path based on `appiumHome`.
+ *
+ * See caveat on {@link resolveManifestPath} about pre-resolving `appiumHome`.
+ */
+export const resolveManifestLockfilePath = util.memoize(async function _resolveManifestLockfilePath(
+  appiumHome?: string,
+): Promise<string> {
+  return path.join(appiumHome ?? (await resolveAppiumHome()), MANIFEST_LOCKFILE_RELATIVE_PATH);
 });

@@ -1,10 +1,12 @@
 export {
   DEFAULT_APPIUM_HOME,
   MANIFEST_BASENAME,
+  MANIFEST_LOCKFILE_RELATIVE_PATH,
   MANIFEST_RELATIVE_PATH,
   findAppiumDependencyPackage,
   hasAppiumDependency,
   resolveAppiumHome,
+  resolveManifestLockfilePath,
   resolveManifestPath,
 } from './env.js';
 export {adler32} from './hash.js';

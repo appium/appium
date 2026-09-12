@@ -12,9 +12,9 @@ import type {
 } from '@appium/types';
 
 import {MAX_LOG_BODY_LENGTH} from '../constants.js';
+import {generateDriverLogPrefix} from '../helpers/log-prefix.js';
 import {BIDI_COMMANDS} from '../protocol/bidi-commands.js';
 import {errors} from '../protocol/index.js';
-import {generateDriverLogPrefix} from './helpers.js';
 
 export class ExtensionCore {
   bidiEventSubs: Record<string, string[]>;

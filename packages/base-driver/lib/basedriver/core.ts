@@ -19,7 +19,7 @@ import {DEFAULT_BASE_PATH, PROTOCOLS} from '../constants.js';
 import {errors} from '../protocol/index.js';
 import {DeviceSettings} from './device-settings.js';
 import {ExtensionCore} from './extension-core.js';
-import * as helpers from './helpers.js';
+import * as helpers from './helpers/index.js';
 
 const NEW_COMMAND_TIMEOUT_MS = 60 * 1000;
 

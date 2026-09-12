@@ -11,6 +11,7 @@ import {Timer} from './timing.js';
 import {isPlainObject, toReadableSizeString} from './util.js';
 
 const DEFAULT_TIMEOUT_MS = 4 * 60 * 1000;
+const DEFAULT_FILE_FIELD_NAME = 'file';
 
 /** Common options for {@linkcode uploadFile} and {@linkcode downloadFile}. */
 export interface NetOptions {
@@ -207,7 +208,7 @@ async function uploadFileToHttp(
     timeout = DEFAULT_TIMEOUT_MS,
     headers,
     auth,
-    fileFieldName = 'file',
+    fileFieldName = DEFAULT_FILE_FIELD_NAME,
     formFields,
   } = uploadOptions;
   const {href} = parsedUri;

@@ -8,6 +8,8 @@ import path from 'node:path';
 import {console as supportConsole, util as supportUtil} from '@appium/support';
 import {createSandbox, type SinonSandbox, type SinonStub} from 'sinon';
 
+import {resolvePackageSubpathFrom} from '../../../lib/utils/resolve-from';
+
 export interface MockAppiumSupportFs {
   readFile: SinonStub;
   writeFile: SinonStub;
@@ -71,13 +73,6 @@ export interface MockResolvePackageJsonFrom extends SinonStub<[cwd: string, pack
   (cwd: string, packageName: string): Promise<string>;
 }
 
-export interface MockResolvePackageSubpathFrom extends SinonStub<
-  [installPath: string, packageName: string, subpath: string],
-  Promise<string>
-> {
-  (installPath: string, packageName: string, subpath: string): Promise<string>;
-}
-
 export interface MockGlob extends SinonStub {
   (spec: string, opts: {cwd: string}, done: () => void): EventEmitter;
 }
@@ -87,7 +82,7 @@ export interface Overrides {
   '../../../lib/utils/resolve-from': {
     resolveFrom: MockResolveFrom;
     resolvePackageJsonFrom: MockResolvePackageJsonFrom;
-    resolvePackageSubpathFrom: MockResolvePackageSubpathFrom;
+    resolvePackageSubpathFrom: typeof resolvePackageSubpathFrom;
   };
   '../../../lib/utils/is-package-changed': MockPackageChanged;
   glob: MockGlob;
@@ -98,7 +93,6 @@ export interface InitMocksResult {
   MockPackageChanged: MockPackageChanged;
   MockResolveFrom: MockResolveFrom;
   MockResolvePackageJsonFrom: MockResolvePackageJsonFrom;
-  MockResolvePackageSubpathFrom: MockResolvePackageSubpathFrom;
   MockGlob: MockGlob;
   sandbox: SinonSandbox;
   overrides: Overrides;
@@ -167,9 +161,6 @@ export function initMocks(sandbox = createSandbox()): InitMocksResult {
   const MockResolvePackageJsonFrom: MockResolvePackageJsonFrom = sandbox
     .stub<[cwd: string, packageName: string], Promise<string>>()
     .callsFake(async (cwd, packageName) => path.join(cwd, 'node_modules', packageName, 'package.json'));
-  const MockResolvePackageSubpathFrom: MockResolvePackageSubpathFrom = sandbox
-    .stub<[installPath: string, packageName: string, subpath: string], Promise<string>>()
-    .callsFake(async (installPath, _packageName, subpath) => path.join(installPath, subpath));
 
   const MockGlob = sandbox.stub().callsFake((spec: string, opts: {cwd: string}, done: () => void) => {
     const ee = new EventEmitter();
@@ -187,7 +178,7 @@ export function initMocks(sandbox = createSandbox()): InitMocksResult {
     '../../../lib/utils/resolve-from': {
       resolveFrom: MockResolveFrom,
       resolvePackageJsonFrom: MockResolvePackageJsonFrom,
-      resolvePackageSubpathFrom: MockResolvePackageSubpathFrom,
+      resolvePackageSubpathFrom,
     },
     '../../../lib/utils/is-package-changed': MockPackageChanged,
     glob: MockGlob,
@@ -198,7 +189,6 @@ export function initMocks(sandbox = createSandbox()): InitMocksResult {
     MockPackageChanged,
     MockResolveFrom,
     MockResolvePackageJsonFrom,
-    MockResolvePackageSubpathFrom,
     MockGlob,
     sandbox,
     overrides,

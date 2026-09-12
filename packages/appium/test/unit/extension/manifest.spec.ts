@@ -502,7 +502,16 @@ describe('Manifest', function () {
         const searchRoot = path.resolve('/workspace/packages/app');
         MockAppiumSupport.fs.readFile.callsFake(async (filepath: string) => {
           if (filepath === path.join(searchRoot, 'package.json')) {
-            return JSON.stringify({devDependencies: {'appium-test-driver': '1.0.0', lodash: '1.0.0'}});
+            return JSON.stringify({
+              dependencies: {'appium-test-driver': '1.0.0'},
+              devDependencies: {'appium-test-driver': '1.0.0', lodash: '1.0.0'},
+              optionalDependencies: {
+                'appium-test-driver': '1.0.0',
+                'appium-optional-driver': '1.0.0',
+              },
+              peerDependencies: {'appium-peer-driver': '1.0.0'},
+              overrides: {'appium-override-driver': '1.0.0'},
+            });
           }
           if (filepath.endsWith(path.join('appium-test-driver', 'package.json'))) {
             return JSON.stringify({
@@ -516,15 +525,48 @@ describe('Manifest', function () {
               },
             });
           }
+          if (filepath.endsWith(path.join('appium-optional-driver', 'package.json'))) {
+            return JSON.stringify({
+              name: 'appium-optional-driver',
+              version: '1.0.0',
+              appium: {
+                automationName: 'Optional',
+                mainClass: 'OptionalDriver',
+                platformNames: ['Optional'],
+                driverName: 'optional',
+              },
+            });
+          }
           return JSON.stringify({name: 'lodash', version: '1.0.0'});
         });
 
         await manifest.syncWithDeclaredExtensions(searchRoot, true);
 
         assert.ok(Object.hasOwn(manifest.getExtensionData(DRIVER_TYPE), 'test'));
+        assert.ok(Object.hasOwn(manifest.getExtensionData(DRIVER_TYPE), 'optional'));
         assert.strictEqual(MockAppiumSupport.fs.glob.called, false);
         assert.strictEqual(MockResolvePackageJsonFrom.calledWith(searchRoot, 'appium-test-driver'), true);
+        assert.strictEqual(MockResolvePackageJsonFrom.withArgs(searchRoot, 'appium-test-driver').calledOnce, true);
         assert.strictEqual(MockResolvePackageJsonFrom.calledWith(searchRoot, 'lodash'), true);
+        assert.strictEqual(MockResolvePackageJsonFrom.calledWith(searchRoot, 'appium-optional-driver'), true);
+        assert.strictEqual(MockResolvePackageJsonFrom.calledWith(searchRoot, 'appium-peer-driver'), false);
+        assert.strictEqual(MockResolvePackageJsonFrom.calledWith(searchRoot, 'appium-override-driver'), false);
+      });
+
+      it('should ignore a missing optional dependency', async function () {
+        const searchRoot = path.resolve('/workspace/packages/app');
+        MockAppiumSupport.fs.readFile.callsFake(async (filepath: string) =>
+          filepath === path.join(searchRoot, 'package.json')
+            ? JSON.stringify({optionalDependencies: {'missing-driver': '1.0.0'}})
+            : '{}',
+        );
+        MockResolvePackageJsonFrom.withArgs(searchRoot, 'missing-driver').rejects(
+          Object.assign(new Error('Cannot find package'), {code: 'MODULE_NOT_FOUND'}),
+        );
+
+        await assert.doesNotReject(manifest.syncWithDeclaredExtensions(searchRoot));
+
+        assert.strictEqual(Object.hasOwn(manifest.getExtensionData(DRIVER_TYPE), 'missing-driver'), false);
       });
 
       it('should reject an unreadable explicit search root', async function () {
@@ -549,6 +591,18 @@ describe('Manifest', function () {
         await assert.rejects(
           manifest.syncWithDeclaredExtensions(searchRoot),
           /'dependencies' field.*must contain an object/i,
+        );
+      });
+
+      it('should reject malformed optional dependency data in an explicit search root', async function () {
+        const searchRoot = path.resolve('/workspace/packages/app');
+        MockAppiumSupport.fs.readFile.callsFake(async (filepath: string) =>
+          filepath === path.join(searchRoot, 'package.json') ? JSON.stringify({optionalDependencies: []}) : '{}',
+        );
+
+        await assert.rejects(
+          manifest.syncWithDeclaredExtensions(searchRoot),
+          /'optionalDependencies' field.*must contain an object/i,
         );
       });
 
@@ -588,7 +642,7 @@ describe('Manifest', function () {
           if (filepath === '/some/path/extensions.yaml') {
             return yamlFixture;
           }
-          if (filepath === '/some/path/package.json') {
+          if (filepath === path.join('/some/path', 'package.json')) {
             return JSON.stringify({name: 'appium-home', version: '1.0.0'});
           }
           if (filepath === path.join(searchRoot, 'package.json')) {

@@ -417,7 +417,7 @@ async function readDeclaredDependencyNames(packageJsonPath: string): Promise<str
   }
 
   const dependencyNames = new Set<string>();
-  for (const field of ['dependencies', 'devDependencies'] as const) {
+  for (const field of ['dependencies', 'devDependencies', 'optionalDependencies'] as const) {
     const dependencies = pkg[field];
     if (dependencies !== undefined && !util.isPlainObject(dependencies)) {
       throw new TypeError(`The '${field}' field in ${packageJsonPath} must contain an object`);

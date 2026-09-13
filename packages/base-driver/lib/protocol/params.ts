@@ -2,7 +2,6 @@ import {util} from '@appium/support';
 import type {PayloadParams} from '@appium/types';
 import type {MultidimensionalReadonlyArray} from 'type-fest';
 
-import {PROTOCOLS} from '../constants.js';
 import {log} from '../helpers/logger.js';
 import {omitKeys} from '../utils.js';
 import {BadParametersError, errors} from './errors.js';
@@ -11,7 +10,6 @@ import {BadParametersError, errors} from './errors.js';
  * Validate request arguments against a route payload spec and return filtered params.
  * @param paramSpec - Required/optional parameter definition from the method map
  * @param args - Raw arguments (e.g. JSON body)
- * @param protocol - Active protocol, used when a custom validate function is present
  * @param ensureSessionArgs - Whether to implicitly treat `sessionId`/`id` as known
  * optional params, since HTTP clients sometimes duplicate these URL params into the JSON body.
  * Bidi commands have no such URL params, so callers there should pass `false`.
@@ -19,7 +17,6 @@ import {BadParametersError, errors} from './errors.js';
 export function checkParams(
   paramSpec: PayloadParams,
   args: Record<string, any>,
-  protocol?: keyof typeof PROTOCOLS,
   ensureSessionArgs: boolean = true,
 ): Record<string, any> {
   let requiredParams: string[][] = [];
@@ -43,7 +40,7 @@ export function checkParams(
   // considered to have passed. If it returns something else, that will be the
   // argument to an error which is thrown to the user
   if (paramSpec.validate) {
-    const message = paramSpec.validate(args, protocol ?? PROTOCOLS.W3C);
+    const message = paramSpec.validate(args);
     if (message) {
       throw new errors.InvalidArgumentError(typeof message === 'string' ? message : undefined);
     }

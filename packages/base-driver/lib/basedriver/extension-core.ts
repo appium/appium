@@ -14,7 +14,7 @@ import type {
 import {MAX_LOG_BODY_LENGTH} from '../constants.js';
 import {generateDriverLogPrefix} from '../helpers/log-prefix.js';
 import {BIDI_COMMANDS} from '../protocol/bidi-commands.js';
-import {errors} from '../protocol/index.js';
+import {checkParams, errors, makeArgs} from '../protocol/index.js';
 
 export class ExtensionCore {
   bidiEventSubs: Record<string, string[]>;
@@ -101,22 +101,10 @@ export class ExtensionCore {
     this.ensureBidiCommandExists(moduleName, methodName);
     const {command, params} = this.bidiCommands[moduleName][methodName];
 
-    // TODO improve param parsing and error messages along the lines of what we have in the http
-    // handlers
-    const args: any[] = [];
-    if (params?.required?.length) {
-      for (const requiredParam of params.required) {
-        if (bidiParams[requiredParam] === undefined) {
-          throw new errors.InvalidArgumentError(`The ${requiredParam} parameter was required but you omitted it`);
-        }
-        args.push(bidiParams[requiredParam]);
-      }
-    }
-    if (params?.optional?.length) {
-      for (const optionalParam of params.optional) {
-        args.push(bidiParams[optionalParam]);
-      }
-    }
+    // reuse the same param validation/argument-building logic as the HTTP route handlers,
+    // so bidi commands get the same rich missing-parameter error messages
+    const checkedParams = checkParams(params ?? {}, bidiParams);
+    const args = makeArgs({}, checkedParams, params ?? {});
     const logParams = util.truncateString(JSON.stringify(bidiParams), {
       length: MAX_LOG_BODY_LENGTH,
     });

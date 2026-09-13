@@ -35,6 +35,24 @@ describe('Params', function () {
       });
     });
 
+    it('should drop session/element id when ensureSessionArgs is false (e.g. bidi commands)', function () {
+      const args = checkParams(
+        {
+          optional: ['bar'],
+        },
+        {
+          sessionId: 'sessionId',
+          id: 'id',
+          bar: 'bar',
+        },
+        undefined,
+        false,
+      );
+      assert.deepStrictEqual(args, {
+        bar: 'bar',
+      });
+    });
+
     it('should pass if no required params are needed', function () {
       const args = checkParams(
         {

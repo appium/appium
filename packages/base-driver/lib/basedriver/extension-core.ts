@@ -102,8 +102,9 @@ export class ExtensionCore {
     const {command, params} = this.bidiCommands[moduleName][methodName];
 
     // reuse the same param validation/argument-building logic as the HTTP route handlers,
-    // so bidi commands get the same rich missing-parameter error messages
-    const checkedParams = checkParams(params ?? {}, bidiParams);
+    // so bidi commands get the same rich missing-parameter error messages. Bidi has no URL
+    // params, so sessionId/id are not implicitly allowed through like they are over HTTP.
+    const checkedParams = checkParams(params ?? {}, bidiParams, undefined, false);
     const args = makeArgs({}, checkedParams, params ?? {});
     const logParams = util.truncateString(JSON.stringify(bidiParams), {
       length: MAX_LOG_BODY_LENGTH,

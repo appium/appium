@@ -12,11 +12,15 @@ import {BadParametersError, errors} from './errors.js';
  * @param paramSpec - Required/optional parameter definition from the method map
  * @param args - Raw arguments (e.g. JSON body)
  * @param protocol - Active protocol, used when a custom validate function is present
+ * @param ensureSessionArgs - Whether to implicitly treat `sessionId`/`id` as known
+ * optional params, since HTTP clients sometimes duplicate these URL params into the JSON body.
+ * Bidi commands have no such URL params, so callers there should pass `false`.
  */
 export function checkParams(
   paramSpec: PayloadParams,
   args: Record<string, any>,
   protocol?: keyof typeof PROTOCOLS,
+  ensureSessionArgs: boolean = true,
 ): Record<string, any> {
   let requiredParams: string[][] = [];
   let optionalParams: string[] = [];
@@ -45,13 +49,15 @@ export function checkParams(
     }
   }
 
-  // some clients pass in the session id in the params
-  if (!optionalParams.includes('sessionId')) {
-    optionalParams.push('sessionId');
-  }
-  // some clients pass in an element id in the params
-  if (!optionalParams.includes('id')) {
-    optionalParams.push('id');
+  if (ensureSessionArgs) {
+    // some clients pass in the session id in the params
+    if (!optionalParams.includes('sessionId')) {
+      optionalParams.push('sessionId');
+    }
+    // some clients pass in an element id in the params
+    if (!optionalParams.includes('id')) {
+      optionalParams.push('id');
+    }
   }
 
   if (util.isEmpty(requiredParams)) {

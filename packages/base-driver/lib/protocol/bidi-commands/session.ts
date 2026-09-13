@@ -1,10 +1,5 @@
 import type {BidiMethodMap} from '@appium/types';
 
-const SUBSCRIPTION_REQUEST_PARAMS = {
-  required: ['events'],
-  optional: ['contexts'],
-} as const;
-
 export const SESSION_BIDI_COMMANDS = {
   status: {
     command: 'bidiStatus',
@@ -22,10 +17,16 @@ export const SESSION_BIDI_COMMANDS = {
   },
   subscribe: {
     command: 'bidiSubscribe',
-    params: SUBSCRIPTION_REQUEST_PARAMS,
+    params: {
+      required: ['events'],
+      optional: ['contexts', 'userContexts'],
+    },
   },
   unsubscribe: {
     command: 'bidiUnsubscribe',
-    params: SUBSCRIPTION_REQUEST_PARAMS,
+    params: {
+      // either unsubscribe by previously-returned subscription ids, or by event names
+      required: [['subscriptions'], ['events']],
+    },
   },
 } as const satisfies BidiMethodMap;

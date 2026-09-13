@@ -24,7 +24,8 @@ exports[`BiDi commands > ensure protocol consistency > should not change protoco
           "events"
         ],
         "optional": [
-          "contexts"
+          "contexts",
+          "userContexts"
         ]
       }
     },
@@ -32,10 +33,12 @@ exports[`BiDi commands > ensure protocol consistency > should not change protoco
       "command": "bidiUnsubscribe",
       "params": {
         "required": [
-          "events"
-        ],
-        "optional": [
-          "contexts"
+          [
+            "subscriptions"
+          ],
+          [
+            "events"
+          ]
         ]
       }
     }
@@ -411,7 +414,7 @@ exports[`BiDi commands > ensure protocol consistency > should not change protoco
       "command": "bidiEmulationSetTimezoneOverride",
       "params": {
         "required": [
-          "timezoneId"
+          "timezone"
         ],
         "optional": [
           "contexts",

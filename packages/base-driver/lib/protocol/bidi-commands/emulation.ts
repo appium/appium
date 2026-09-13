@@ -80,7 +80,7 @@ export const EMULATION_BIDI_COMMANDS = {
   setTimezoneOverride: {
     command: 'bidiEmulationSetTimezoneOverride',
     params: {
-      required: ['timezoneId'],
+      required: ['timezone'],
       optional: ['contexts', 'userContexts'],
     },
   },

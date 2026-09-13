@@ -12,7 +12,7 @@ export interface PayloadParams {
   unwrap?: string;
   required?: ReadonlyArray<string> | MultidimensionalReadonlyArray<string, 2>;
   optional?: ReadonlyArray<string>;
-  validate?: (obj: any, protocol: string) => boolean | string | undefined;
+  validate?: (obj: any) => boolean | string | undefined;
   makeArgs?: (obj: any) => any;
 }
 /**

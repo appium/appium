@@ -78,7 +78,7 @@ function buildHandler(
       }
       const command = spec.command;
 
-      const jsonObj = preparePayload(spec, req.body, currentProtocol);
+      const jsonObj = preparePayload(spec, req.body);
       const args = buildCommandArgs(req, jsonObj, spec, command);
 
       // run the driver command wrapped inside the argument validators
@@ -155,7 +155,7 @@ function ensureSessionExists(driver: Core<any>, sessionId: string | undefined, i
 /**
  * Wraps/unwraps and validates the JSON payload against the route's payload spec.
  */
-function preparePayload(spec: DriverMethodDef<Driver>, jsonObj: any, currentProtocol: keyof typeof PROTOCOLS): any {
+function preparePayload(spec: DriverMethodDef<Driver>, jsonObj: any): any {
   if (spec.payloadParams?.wrap) {
     jsonObj = wrapParams(spec.payloadParams, jsonObj);
   }
@@ -163,7 +163,7 @@ function preparePayload(spec: DriverMethodDef<Driver>, jsonObj: any, currentProt
     jsonObj = unwrapParams(spec.payloadParams, jsonObj);
   }
   if (spec.payloadParams) {
-    checkParams(spec.payloadParams, jsonObj, currentProtocol);
+    checkParams(spec.payloadParams, jsonObj);
   }
   return jsonObj;
 }

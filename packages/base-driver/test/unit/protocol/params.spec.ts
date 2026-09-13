@@ -45,7 +45,7 @@ describe('Params', function () {
           id: 'id',
           bar: 'bar',
         },
-        false,
+        {ensureSessionArgs: false},
       );
       assert.deepStrictEqual(args, {
         bar: 'bar',

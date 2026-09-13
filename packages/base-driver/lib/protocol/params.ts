@@ -6,19 +6,27 @@ import {log} from '../helpers/logger.js';
 import {omitKeys} from '../utils.js';
 import {BadParametersError, errors} from './errors.js';
 
+export interface CheckParamsOptions {
+  /**
+   * Whether to implicitly treat `sessionId`/`id` as known optional params, since HTTP clients
+   * sometimes duplicate these URL params into the JSON body. Bidi commands have no such URL
+   * params, so callers there should pass `false`. Defaults to `true`.
+   */
+  ensureSessionArgs?: boolean;
+}
+
 /**
  * Validate request arguments against a route payload spec and return filtered params.
  * @param paramSpec - Required/optional parameter definition from the method map
  * @param args - Raw arguments (e.g. JSON body)
- * @param ensureSessionArgs - Whether to implicitly treat `sessionId`/`id` as known
- * optional params, since HTTP clients sometimes duplicate these URL params into the JSON body.
- * Bidi commands have no such URL params, so callers there should pass `false`.
+ * @param options - Additional options controlling validation behavior
  */
 export function checkParams(
   paramSpec: PayloadParams,
   args: Record<string, any>,
-  ensureSessionArgs: boolean = true,
+  options: CheckParamsOptions = {},
 ): Record<string, any> {
+  const {ensureSessionArgs = true} = options;
   let requiredParams: string[][] = [];
   let optionalParams: string[] = [];
   const actualParamNames: string[] = Object.keys(args);

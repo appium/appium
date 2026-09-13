@@ -5,7 +5,7 @@ import {asyncmap} from 'asyncbox';
 
 import {USE_ALL_PLUGINS} from '../constants.js';
 import {log} from '../logger.js';
-import {zip} from '../utils/index.js';
+import {withManifestLock, zip} from '../utils/index.js';
 import {DriverConfig} from './driver-config.js';
 import {Manifest} from './manifest/index.js';
 import {PluginConfig} from './plugin-config.js';
@@ -19,6 +19,22 @@ export type PluginNameMap = Map<PluginClass, string>;
 export type DriverNameMap = Map<DriverClass, string>;
 
 /**
+ * Re-reads `manifest` from disk and revalidates whichever `DriverConfig`/`PluginConfig`
+ * singletons already exist for it, so their derived state (installed extensions, pending
+ * validation summary, {@link DriverConfig}'s duplicate-`automationName` tracking) reflects the
+ * freshly-read data rather than a stale pre-reload snapshot.
+ *
+ * Callers must run this under {@link withManifestLock} -- both because `manifest.read()` may
+ * itself write the manifest (initialization, migration, or sync with installed packages), and
+ * because anything a caller does afterward that depends on the result staying current (e.g.
+ * writing the manifest back out) needs to stay in the same critical section.
+ */
+export async function reloadManifest(manifest: Manifest): Promise<void> {
+  await manifest.read();
+  await Promise.all([DriverConfig.getInstance(manifest)?.validate(), PluginConfig.getInstance(manifest)?.validate()]);
+}
+
+/**
  * Loads extensions and creates `ExtensionConfig` instances.
  *
  * - Reads the manifest file, creating if necessary
@@ -29,11 +45,11 @@ export type DriverNameMap = Map<DriverClass, string>;
  */
 export async function loadExtensions(appiumHome: string): Promise<ExtensionConfigs> {
   const manifest = Manifest.getInstance(appiumHome);
-  await manifest.read();
   const driverConfig = DriverConfig.getInstance(manifest) ?? DriverConfig.create(manifest);
   const pluginConfig = PluginConfig.getInstance(manifest) ?? PluginConfig.create(manifest);
 
-  await Promise.all([driverConfig.validate(), pluginConfig.validate()]);
+  await withManifestLock(appiumHome, () => reloadManifest(manifest));
+
   return {driverConfig, pluginConfig};
 }
 

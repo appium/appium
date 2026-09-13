@@ -64,7 +64,6 @@ const EMPTY_VALIDATION_SUMMARY: ExtensionValidationSummary = {
 export abstract class ExtensionConfig<ExtType extends ExtensionType> {
   readonly extensionType: ExtType;
   readonly manifest: Manifest;
-  readonly installedExtensions: ExtRecord<ExtType>;
   /** Populated by {@linkcode ExtensionConfig.validate}; see {@linkcode ExtensionValidationSummary}. */
   private validationSummary: ExtensionValidationSummary = EMPTY_VALIDATION_SUMMARY;
   private listDataCache: ExtensionList<ExtType> | undefined;
@@ -72,7 +71,14 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
   protected constructor(extensionType: ExtType, manifest: Manifest) {
     this.extensionType = extensionType;
     this.manifest = manifest;
-    this.installedExtensions = manifest.getExtensionData(extensionType);
+  }
+
+  /**
+   * Live installed-extension map for this extension kind (same object the manifest holds).
+   * Recomputed on every access so it stays in sync across a {@link Manifest.read} reload.
+   */
+  get installedExtensions(): ExtRecord<ExtType> {
+    return this.manifest.getExtensionData(this.extensionType);
   }
 
   /** Path to `extensions.yaml` after the manifest has been read; otherwise undefined. */

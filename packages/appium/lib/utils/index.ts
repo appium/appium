@@ -5,7 +5,9 @@ export {
   findAppiumDependencyPackage,
   hasAppiumDependency,
   resolveAppiumHome,
+  resolveManifestLockfilePath,
   resolveManifestPath,
+  withManifestLock,
 } from './env.js';
 export {adler32} from './hash.js';
 export {isPackageChanged} from './is-package-changed.js';

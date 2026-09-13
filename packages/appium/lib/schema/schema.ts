@@ -169,16 +169,23 @@ class AppiumSchema {
     >) {
       for (const [extName, schema] of extensionSchemas.entries()) {
         const $ref = ArgSpec.toSchemaBaseRef(extType, extName);
-        (schema as any).$id = $ref;
-        (schema as any).additionalProperties = false;
+        // Clone rather than mutate the registered schema in place: extensions whose schema is
+        // freshly re-parsed on every manifest reload (an inline object, as opposed to one
+        // `import()`ed from a file, which Node's module cache returns by the same reference every
+        // time) would otherwise stop deep-equaling their own registered copy on a later
+        // `registerSchema()` call, once this injects `$id`/`additionalProperties` -- causing a
+        // false "conflicts with an existing schema" error and dropping the extension entirely.
+        const finalizedSchema = structuredClone(schema) as StrictSchemaObject;
+        (finalizedSchema as any).$id = $ref;
+        (finalizedSchema as any).additionalProperties = false;
         baseSchema.properties.server.properties[extType].properties[extName] = {
           $ref,
           $comment: extName,
         };
-        await ajv.validateSchema(schema, true);
-        addArgSpecs((schema as any).properties, extType, extName);
-        ajv.addSchema(schema, $ref);
-        finalizedSchemas[$ref] = schema as StrictSchemaObject;
+        await ajv.validateSchema(finalizedSchema, true);
+        addArgSpecs((finalizedSchema as any).properties, extType, extName);
+        ajv.addSchema(finalizedSchema, $ref);
+        finalizedSchemas[$ref] = finalizedSchema;
       }
     }
 

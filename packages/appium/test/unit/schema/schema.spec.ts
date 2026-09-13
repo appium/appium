@@ -119,6 +119,18 @@ describe('schema', function () {
           });
         });
 
+        describe('when the schema is a different object but deeply equal, and has since been finalized', function () {
+          it('should not throw', async function () {
+            // A manifest reload re-parses an extension's inline schema from disk into a fresh
+            // object each time -- `finalizeSchema()` must not have mutated the *registered* copy
+            // in a way that makes it stop matching a later, independently-parsed-but-equal one.
+            const buildSchema = () => ({title: 'whoopee', type: 'object', properties: {}});
+            await registerSchema(DRIVER_TYPE, 'whoopee', buildSchema());
+            await finalizeSchema();
+            await assert.doesNotReject(registerSchema(DRIVER_TYPE, 'whoopee', buildSchema()));
+          });
+        });
+
         describe('when the schema is different', function () {
           it('should throw', async function () {
             const schemaObject = {title: 'whoopee'};
@@ -208,7 +220,13 @@ describe('schema', function () {
       });
 
       it('should return the extension schema', function () {
-        assert.deepStrictEqual(getSchema('driver-stuff.json'), DRIVER_SCHEMA_FIXTURE);
+        // `finalizeSchema()` clones a registered schema before stamping `$id`/`additionalProperties`
+        // onto it, so it doesn't overwrite the original `$id` on the fixture object itself.
+        assert.deepStrictEqual(getSchema('driver-stuff.json'), {
+          ...DRIVER_SCHEMA_FIXTURE,
+          $id: 'driver-stuff.json',
+          additionalProperties: false,
+        });
       });
     });
   });
@@ -334,7 +352,11 @@ describe('schema', function () {
         };
         assert.deepStrictEqual(await finalizeSchema(), {
           [APPIUM_CONFIG_SCHEMA_ID]: baseSchemaWithRefs,
-          'driver-stuff.json': DRIVER_SCHEMA_FIXTURE,
+          'driver-stuff.json': {
+            ...DRIVER_SCHEMA_FIXTURE,
+            $id: 'driver-stuff.json',
+            additionalProperties: false,
+          },
         });
       });
     });

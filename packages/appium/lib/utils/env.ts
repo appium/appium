@@ -1,7 +1,8 @@
+import {createHash} from 'node:crypto';
 import {homedir} from 'node:os';
 import path from 'node:path';
 
-import {util} from '@appium/support';
+import {fs, util} from '@appium/support';
 import * as semver from 'semver';
 
 import {type NormalizedPackageJson, readPackage} from './read-package.js';
@@ -124,3 +125,57 @@ export const resolveManifestPath = util.memoize(async function _resolveManifestP
 ): Promise<string> {
   return path.join(appiumHome ?? (await resolveAppiumHome()), MANIFEST_RELATIVE_PATH);
 });
+
+/**
+ * Relative path, from the user's home dir, to the directory holding manifest lockfiles.
+ *
+ * Deliberately `.cache/appium/locks`, NOT under {@link DEFAULT_APPIUM_HOME} (`~/.appium`): a
+ * custom `APPIUM_HOME` is common, but the *default* one lives at exactly that path, so rooting
+ * locks under it would reintroduce the read-only-`APPIUM_HOME` failure this is meant to avoid
+ * whenever a preinstalled default home is made read-only as a whole.
+ */
+const MANIFEST_LOCKS_DIRNAME = path.join('.cache', 'appium', 'locks');
+
+/**
+ * Figure out the extension manifest lockfile path for `appiumHome`.
+ *
+ * Deliberately lives in a fixed location under the user's home dir (see
+ * {@link MANIFEST_LOCKS_DIRNAME}), keyed by a hash of `appiumHome`'s canonicalized
+ * (symlink-resolved) real path, rather than:
+ * - alongside the manifest itself: a directory being unwritable doesn't imply the manifest
+ *   *file* inside it is (directory permissions gate creating/removing entries, not overwriting
+ *   an existing one), so a lock colocated with the manifest couldn't be relied on to actually be
+ *   creatable exactly when protection is needed most -- see the read-only `APPIUM_HOME` case.
+ * - the OS temp dir: its value depends on `TMPDIR`/platform/user defaults, which can differ
+ *   between two processes protecting the very same `appiumHome`, silently defeating locking.
+ * - the raw (non-canonicalized) `appiumHome` string: a symlink alias and its real target
+ *   otherwise hash to different lock identities despite being the same location on disk.
+ *
+ * This targets same-user coordination (concurrent CLI/server processes for one user); a single
+ * `APPIUM_HOME` deliberately shared across *different* users' processes would need its lock
+ * pointed at a location those users jointly have write access to, which is out of scope here.
+ *
+ * See caveat on {@link resolveManifestPath} about pre-resolving `appiumHome`.
+ */
+export const resolveManifestLockfilePath = util.memoize(async function _resolveManifestLockfilePath(
+  appiumHome?: string,
+): Promise<string> {
+  const rawHome = appiumHome ?? (await resolveAppiumHome());
+  const resolvedHome = await fs.realpath(rawHome).catch(() => path.resolve(rawHome));
+  const homeHash = createHash('sha256').update(resolvedHome).digest('hex').slice(0, 32);
+  return path.join(homedir(), MANIFEST_LOCKS_DIRNAME, `${homeHash}.lock`);
+});
+
+/**
+ * Runs `behavior` under the cross-process lock guarding the extension manifest for `appiumHome`,
+ * so callers can't race each other's manifest reads/writes. Covers the *entire* read-modify-write
+ * cycle a caller needs protected -- e.g. a manifest reload plus whatever depends on it staying
+ * current, such as re-validating extension configs or writing the manifest back out.
+ */
+export async function withManifestLock<T>(appiumHome: string, behavior: () => Promise<T> | T): Promise<T> {
+  const lockFile = await resolveManifestLockfilePath(appiumHome);
+  // The locks directory lives under the user's home dir, independent of `appiumHome`'s own
+  // permissions, but may not exist yet on first use.
+  await fs.mkdirp(path.dirname(lockFile));
+  return util.getLockFileGuard<T>(lockFile)(behavior);
+}

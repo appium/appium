@@ -43,6 +43,7 @@ Subscribes to one or more BiDi events.
 |--|--|--|--|
 |`contexts?`|Contexts in which to subscribe to the specified events. By default, the global context scope is applied.|string[]|`['']`|
 |`events`|Names of events to subscribe to|string[]||
+|`userContexts?`|User contexts in which to subscribe to the specified events. Cannot be used together with `contexts`.|string[]||
 
 #### Response
 
@@ -56,14 +57,18 @@ session.unsubscribe
 
 > WebDriver BiDi documentation: [session.unsubscribe](https://w3c.github.io/webdriver-bidi/#command-session-unsubscribe)
 
-Unsubscribes from one or more BiDi events.
+Unsubscribes from one or more BiDi events, by event name.
 
 #### Parameters
 
 |Name|Description|Type|Default|
 |--|--|--|--|
-|`contexts?`|Contexts in which to unsubscribe from the specified events. By default, the global scope is applied.|string[]|`['']`|
 |`events`|Names of events to unsubscribe from|string[]||
+
+!!! note
+
+    The WebDriver BiDi spec also allows unsubscribing by `subscriptions` (subscription IDs), but
+    this is not yet supported by Appium's base driver.
 
 #### Response
 

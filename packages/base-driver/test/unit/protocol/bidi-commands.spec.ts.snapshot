@@ -39,9 +39,6 @@ exports[`BiDi commands > ensure protocol consistency > should not change protoco
           [
             "events"
           ]
-        ],
-        "optional": [
-          "contexts"
         ]
       }
     }

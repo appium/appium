@@ -9,7 +9,7 @@ import type {AxiosRequestConfig, AxiosResponseHeaders, RawAxiosRequestHeaders} f
 import {LRUCache} from 'lru-cache';
 
 import {log as logger} from '../../helpers/logger.js';
-import {assertAppUrlAllowed, createAppUrlLookup, getAppUrlRules} from '../commands/app-url-rules.js';
+import {appUrlRules} from './app-url-rules.js';
 import {BASEDRIVER_VER} from './version.js';
 
 const CACHED_APPS_MAX_AGE_MS = 1000 * 60 * toNaturalNumber(60 * 24, 'APPIUM_APPS_CACHE_MAX_AGE');
@@ -129,7 +129,7 @@ export async function configureApp(
   const pathname = parsedApp?.pathname;
   const isUrl = isSupportedUrl(parsedApp);
   if (isUrl) {
-    assertAppUrlAllowed(parsedApp);
+    appUrlRules.assertUrlAllowed(parsedApp);
   } else if (!path.isAbsolute(newApp)) {
     newApp = path.resolve(process.cwd(), newApp);
     logger.warn(
@@ -337,22 +337,8 @@ async function queryAppLink(appLink: URL, reqHeaders: RawAxiosRequestHeaders): P
     validateStatus: (status: number) => (status >= 200 && status < 300) || status === HTTP_STATUS_NOT_MODIFIED,
     headers: reqHeaders,
   };
-  const urlRules = getAppUrlRules();
-  if (urlRules) {
-    requestOpts.lookup = createAppUrlLookup(urlRules);
-    if (urlRules.maxRedirects !== undefined) {
-      requestOpts.maxRedirects = urlRules.maxRedirects;
-    }
-    // Make sure redirects cannot be used to escape the configured rules
-    requestOpts.beforeRedirect = (redirectOpts) => {
-      const {href} = redirectOpts as {href?: string};
-      if (href) {
-        assertAppUrlAllowed(new URL(href), urlRules);
-      }
-    };
-  }
   try {
-    const {data: stream, headers, status} = await axios(requestOpts);
+    const {data: stream, headers, status} = await axios(appUrlRules.applyToRequest(requestOpts));
     return {stream, headers, status};
   } catch (err) {
     throw new Error(`Cannot download the app from ${axiosUrl}: ${(err as Error).message}`, {

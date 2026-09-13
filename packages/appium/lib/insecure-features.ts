@@ -41,6 +41,21 @@ export function configureGlobalFeatures(this: AppiumDriver) {
 }
 
 /**
+ * Applies the `--app-url-rules` server argument to the process-wide app URL rules, which are
+ * enforced by the shared app download helper of `@appium/base-driver` for every driver.
+ * Uses `logger` instead of `this.log` to reduce user confusion.
+ *
+ * @throws {TypeError} If any rule is invalid
+ */
+export function configureAppUrlRules(this: AppiumDriver) {
+  const rules = this.args.appUrlRules;
+  this.helpers.setAppUrlRules(rules);
+  if (!util.isEmpty(rules)) {
+    logger.info(`Remote application URLs are restricted by: ${JSON.stringify(rules)}`);
+  }
+}
+
+/**
  * If anything in the umbrella driver's insecure feature configuration applies to this driver,
  * assign it to the driver instance
  *

@@ -443,9 +443,11 @@ describe('manifest lock vs. a read-only default APPIUM_HOME (~/.appium)', functi
       }
 
       let secondResolved = false;
-      const secondPromise = envModule.withManifestLock(appiumHome, async () => {}).then(() => {
-        secondResolved = true;
-      });
+      const secondPromise = envModule
+        .withManifestLock(appiumHome, async () => {})
+        .then(() => {
+          secondResolved = true;
+        });
 
       await sleep(200);
       assert.strictEqual(secondResolved, false);

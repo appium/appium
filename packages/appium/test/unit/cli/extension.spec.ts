@@ -377,3 +377,85 @@ describe('resolveManifestLockfilePath', function () {
     }
   });
 });
+
+describe('manifest lock vs. a read-only default APPIUM_HOME (~/.appium)', function () {
+  // `resolveManifestLockfilePath` roots the lock at the OS-reported home dir -- mock `node:os`
+  // so this test's read-only chmod never touches the real user's actual home, then re-import
+  // `env.js` fresh (after the mock is registered) so its own `homedir()` binding picks it up.
+  let fakeHomeDir: string;
+  // `env.js` is re-imported fresh below (after the `node:os` mock is registered), so its type
+  // can't come from a normal value import.
+  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+  let envModule: typeof import('../../../lib/utils/env.js');
+  let importCounter = 0;
+
+  before(function () {
+    // `env.ts` only imports `homedir` from `node:os`, so that's the only export this needs to
+    // provide (some of `os`'s other exports, e.g. `constants`, aren't configurable and can't be
+    // included in a synthetic module's `namedExports` at all).
+    mock.module('node:os', {namedExports: {homedir: () => fakeHomeDir}});
+  });
+
+  after(function () {
+    mock.reset();
+  });
+
+  beforeEach(async function () {
+    fakeHomeDir = await tempDir.openDir();
+    envModule = await import(`../../../lib/utils/env.js?t=${importCounter++}`);
+  });
+
+  afterEach(async function () {
+    await fs.rimraf(fakeHomeDir);
+  });
+
+  it('keeps the lock outside the default APPIUM_HOME entirely', async function () {
+    const appiumHome = path.join(fakeHomeDir, '.appium');
+    const lockFile = await envModule.resolveManifestLockfilePath(appiumHome);
+    assert.strictEqual(path.relative(appiumHome, lockFile).startsWith('..'), true);
+  });
+
+  it('still allows a read that needs no write, and still serializes concurrent access, when ~/.appium as a whole is read-only', async function () {
+    const appiumHome = path.join(fakeHomeDir, '.appium');
+    Manifest.getInstance.cache = new Map();
+    const manifest = Manifest.getInstance(appiumHome);
+    // Populate a valid, current-schema manifest first (needs to write, before locking it down).
+    await envModule.withManifestLock(appiumHome, () => manifest.read());
+
+    await fs.chmod(appiumHome, 0o555);
+    try {
+      // "loading/listing": a read that doesn't need to write should still succeed.
+      await assert.doesNotReject(envModule.withManifestLock(appiumHome, () => manifest.read()));
+
+      // "lock contention": two commands sharing this (read-only) APPIUM_HOME should still
+      // serialize -- i.e. the read-only directory must not make the lock a no-op.
+      let firstAcquired = false;
+      let releaseFirst: () => void;
+      const holdUntilReleased = new Promise<void>((resolve) => {
+        releaseFirst = resolve;
+      });
+      const firstLockPromise = envModule.withManifestLock(appiumHome, async () => {
+        firstAcquired = true;
+        await holdUntilReleased;
+      });
+      while (!firstAcquired) {
+        await sleep(5);
+      }
+
+      let secondResolved = false;
+      const secondPromise = envModule.withManifestLock(appiumHome, async () => {}).then(() => {
+        secondResolved = true;
+      });
+
+      await sleep(200);
+      assert.strictEqual(secondResolved, false);
+
+      releaseFirst!();
+      await firstLockPromise;
+      await secondPromise;
+      assert.strictEqual(secondResolved, true);
+    } finally {
+      await fs.chmod(appiumHome, 0o755);
+    }
+  });
+});

@@ -127,16 +127,21 @@ export const resolveManifestPath = util.memoize(async function _resolveManifestP
 });
 
 /**
- * Relative path (from {@link DEFAULT_APPIUM_HOME}'s parent, i.e. the user's home dir) to the
- * directory holding manifest lockfiles.
+ * Relative path, from the user's home dir, to the directory holding manifest lockfiles.
+ *
+ * Deliberately `.cache/appium/locks`, NOT under {@link DEFAULT_APPIUM_HOME} (`~/.appium`): a
+ * custom `APPIUM_HOME` is common, but the *default* one lives at exactly that path, so rooting
+ * locks under it would reintroduce the read-only-`APPIUM_HOME` failure this is meant to avoid
+ * whenever a preinstalled default home is made read-only as a whole.
  */
-const MANIFEST_LOCKS_DIRNAME = path.join('.appium', 'locks');
+const MANIFEST_LOCKS_DIRNAME = path.join('.cache', 'appium', 'locks');
 
 /**
  * Figure out the extension manifest lockfile path for `appiumHome`.
  *
- * Deliberately lives in a fixed location under the user's home dir, keyed by a hash of
- * `appiumHome`'s canonicalized (symlink-resolved) real path, rather than:
+ * Deliberately lives in a fixed location under the user's home dir (see
+ * {@link MANIFEST_LOCKS_DIRNAME}), keyed by a hash of `appiumHome`'s canonicalized
+ * (symlink-resolved) real path, rather than:
  * - alongside the manifest itself: a directory being unwritable doesn't imply the manifest
  *   *file* inside it is (directory permissions gate creating/removing entries, not overwriting
  *   an existing one), so a lock colocated with the manifest couldn't be relied on to actually be

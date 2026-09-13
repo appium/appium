@@ -5,12 +5,9 @@ import type {TestContext} from 'node:test';
 import type {HTTPMethod} from '@appium/types';
 
 import {METHOD_MAP, routeToCommandName} from '../../../lib/protocol/index.js';
+import {resolveSourceSnapshotPath} from '../../helpers.js';
 
-// Tests run against the compiled build/test/**/*.js; keep the checked-in snapshot next to the
-// TS source instead, so it's reviewable alongside the route change that produced it.
-snapshot.setResolveSnapshotPath(
-  (testFilePath) => `${testFilePath?.replace('/build/test/', '/test/').replace(/\.js$/, '.ts')}.snapshot`,
-);
+snapshot.setResolveSnapshotPath(resolveSourceSnapshotPath);
 
 describe('Routes', function () {
   describe('ensure protocol consistency', function () {

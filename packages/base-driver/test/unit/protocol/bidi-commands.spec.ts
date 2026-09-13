@@ -2,12 +2,9 @@ import {describe, it, snapshot} from 'node:test';
 import type {TestContext} from 'node:test';
 
 import {BIDI_COMMANDS} from '../../../lib/protocol/index.js';
+import {resolveSourceSnapshotPath} from '../../helpers.js';
 
-// Tests run against the compiled build/test/**/*.js; keep the checked-in snapshot next to the
-// TS source instead, so it's reviewable alongside the bidi command change that produced it.
-snapshot.setResolveSnapshotPath(
-  (testFilePath) => `${testFilePath?.replace('/build/test/', '/test/').replace(/\.js$/, '.ts')}.snapshot`,
-);
+snapshot.setResolveSnapshotPath(resolveSourceSnapshotPath);
 
 describe('BiDi commands', function () {
   describe('ensure protocol consistency', function () {

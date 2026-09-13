@@ -27,6 +27,9 @@ export const SESSION_BIDI_COMMANDS = {
     params: {
       // either unsubscribe by previously-returned subscription ids, or by event names
       required: [['subscriptions'], ['events']],
+      // non-standard: not part of the spec, but kept for backward compatibility, since
+      // bidiUnsubscribe uses it to scope which contexts' subscriptions get removed
+      optional: ['contexts'],
     },
   },
 } as const satisfies BidiMethodMap;

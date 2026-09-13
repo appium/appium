@@ -277,11 +277,103 @@ describe('loadExtensions', function () {
     try {
       const {driverConfig} = await loadExtensions(appiumHome);
       assert.deepStrictEqual(driverConfig.installedExtensions, {});
-      // The lock lives under the OS temp dir, not `manifestDir`, and is released once acquired --
-      // i.e. it was never blocked by `manifestDir`'s permissions in the first place.
+      // The lock lives under the user's home dir, not `manifestDir`, and is released once
+      // acquired -- i.e. it was never blocked by `manifestDir`'s permissions in the first place.
       assert.strictEqual(await fs.exists(await resolveManifestLockfilePath(appiumHome)), false);
     } finally {
       await fs.chmod(manifestDir, 0o755);
+    }
+  });
+});
+
+describe('resolveManifestLockfilePath', function () {
+  let appiumHome: string;
+
+  beforeEach(async function () {
+    appiumHome = await tempDir.openDir();
+    resolveManifestLockfilePath.cache = new Map();
+  });
+
+  afterEach(async function () {
+    await fs.rimraf(appiumHome);
+  });
+
+  it('shares one lock between a symlink alias and its real target', async function () {
+    const symlinkParent = await tempDir.openDir();
+    const symlinkPath = path.join(symlinkParent, 'appium-home-alias');
+    await fs.symlink(appiumHome, symlinkPath);
+    try {
+      let firstAcquired = false;
+      let releaseFirst: () => void;
+      const holdUntilReleased = new Promise<void>((resolve) => {
+        releaseFirst = resolve;
+      });
+      const firstLockPromise = withManifestLock(appiumHome, async () => {
+        firstAcquired = true;
+        await holdUntilReleased;
+      });
+      while (!firstAcquired) {
+        await sleep(5);
+      }
+
+      let secondResolved = false;
+      const secondPromise = withManifestLock(symlinkPath, async () => {}).then(() => {
+        secondResolved = true;
+      });
+
+      // If the symlink alias hashed to a different lock identity than its real target, this
+      // would resolve almost immediately instead of waiting on `firstLockPromise`.
+      await sleep(200);
+      assert.strictEqual(secondResolved, false);
+
+      releaseFirst!();
+      await firstLockPromise;
+      await secondPromise;
+      assert.strictEqual(secondResolved, true);
+    } finally {
+      await fs.rimraf(symlinkParent);
+    }
+  });
+
+  it('shares one lock for the same APPIUM_HOME regardless of TMPDIR', async function () {
+    const originalTmpdir = process.env.TMPDIR;
+    try {
+      let firstAcquired = false;
+      let releaseFirst: () => void;
+      const holdUntilReleased = new Promise<void>((resolve) => {
+        releaseFirst = resolve;
+      });
+      process.env.TMPDIR = await tempDir.openDir();
+      const firstLockPromise = withManifestLock(appiumHome, async () => {
+        firstAcquired = true;
+        await holdUntilReleased;
+      });
+      while (!firstAcquired) {
+        await sleep(5);
+      }
+
+      process.env.TMPDIR = await tempDir.openDir();
+      resolveManifestLockfilePath.cache = new Map();
+      let secondResolved = false;
+      const secondPromise = withManifestLock(appiumHome, async () => {}).then(() => {
+        secondResolved = true;
+      });
+
+      // If the lock path were derived from `os.tmpdir()`, changing `TMPDIR` between the two
+      // calls would give the second one a different lock file, resolving almost immediately.
+      await sleep(200);
+      assert.strictEqual(secondResolved, false);
+
+      releaseFirst!();
+      await firstLockPromise;
+      await secondPromise;
+      assert.strictEqual(secondResolved, true);
+    } finally {
+      if (originalTmpdir === undefined) {
+        delete process.env.TMPDIR;
+      } else {
+        process.env.TMPDIR = originalTmpdir;
+      }
     }
   });
 });

@@ -81,7 +81,13 @@ export function onBidiConnection(this: AppiumDriver, ws: WebSocket, req: Incomin
     // events (below) and, when proxying, unsolicited pushes from the upstream server.
     const eventLogCounts: Record<string, number> = BIDI_EVENTS_MAP.get(bidiHandlerDriver) ?? {};
     BIDI_EVENTS_MAP.set(bidiHandlerDriver, eventLogCounts);
-    const dispatchBidiEvent = createBidiEventDispatcher(ws, bidiHandlerDriver, bidiHandlerPlugins, send, eventLogCounts);
+    const dispatchBidiEvent = createBidiEventDispatcher(
+      ws,
+      bidiHandlerDriver,
+      bidiHandlerPlugins,
+      send,
+      eventLogCounts,
+    );
 
     if (bidiProxyClient) {
       const initBidiProxyHandlersFunc: OmitThisParameter<typeof initBidiProxyHandlers> =
@@ -395,7 +401,9 @@ function initBidiProxyHandlers(
       return;
     }
     if (!parsed.method) {
-      driverLog.warn(`Ignoring unsolicited upstream BiDi message without a method: ${util.truncateString(data.toString(), {length: MAX_LOGGED_DATA_LENGTH})}`);
+      driverLog.warn(
+        `Ignoring unsolicited upstream BiDi message without a method: ${util.truncateString(data.toString(), {length: MAX_LOGGED_DATA_LENGTH})}`,
+      );
       return;
     }
     void dispatchBidiEvent(

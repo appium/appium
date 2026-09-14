@@ -111,7 +111,12 @@ export class BidiProxyClient {
     }
     await new Promise<void>((resolve, reject) => {
       const timeoutId = setTimeout(
-        () => reject(new errors.UnknownError(`The upstream BiDi web socket at ${this.url} did not open after ${this.openTimeoutMs}ms timeout`)),
+        () =>
+          reject(
+            new errors.UnknownError(
+              `The upstream BiDi web socket at ${this.url} did not open after ${this.openTimeoutMs}ms timeout`,
+            ),
+          ),
         this.openTimeoutMs,
       );
       const onOpen = () => {

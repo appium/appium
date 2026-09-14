@@ -87,34 +87,6 @@ export interface ITimeoutCommands {
   getTimeouts(): Promise<Record<string, number>>;
 
   /**
-   * Set the implicit wait value that was sent in via the W3C protocol
-   *
-   * @param ms - the timeout in ms
-   */
-  implicitWaitW3C(ms: number): Promise<void>;
-
-  /**
-   * Set the page load timeout value that was sent in via the W3C protocol
-   *
-   * @param ms - the timeout in ms
-   */
-  pageLoadTimeoutW3C(ms: number): Promise<void>;
-
-  /**
-   * Set the script timeout value that was sent in via the W3C protocol
-   *
-   * @param ms - the timeout in ms
-   */
-  scriptTimeoutW3C(ms: number): Promise<void>;
-
-  /**
-   * Set Appium's new command timeout
-   *
-   * @param ms - the timeout in ms
-   */
-  newCommandTimeout(ms: number): Promise<void>;
-
-  /**
    * Get a timeout value from a number or a string
    *
    * @param ms - the timeout value as a number or a string

@@ -47,13 +47,13 @@ export async function timeouts<C extends Constraints>(
     this.log.debug(`Timeout arguments: ${JSON.stringify({type, ms})}`);
     switch (type) {
       case 'command':
-        return await this.newCommandTimeout(this.parseTimeoutArgument(ms));
+        return this.setNewCommandTimeout(this.parseTimeoutArgument(ms));
       case 'implicit':
-        return await this.implicitWaitW3C(this.parseTimeoutArgument(ms));
+        return this.setImplicitWait(this.parseTimeoutArgument(ms));
       case 'page load':
-        return await this.pageLoadTimeoutW3C(this.parseTimeoutArgument(ms));
+        return this.setPageLoadTimeout(this.parseTimeoutArgument(ms));
       case 'script':
-        return await this.scriptTimeoutW3C(this.parseTimeoutArgument(ms));
+        return this.setScriptTimeout(this.parseTimeoutArgument(ms));
       default:
         throw new Error(`'${type}' type is not supported for the timeout API`);
     }
@@ -61,16 +61,16 @@ export async function timeouts<C extends Constraints>(
 
   this.log.debug(`W3C timeout argument: ${JSON.stringify({script, pageLoad, implicit, command})}`);
   if (util.hasValue(script)) {
-    await this.scriptTimeoutW3C(script);
+    this.setScriptTimeout(this.parseTimeoutArgument(script));
   }
   if (util.hasValue(pageLoad)) {
-    await this.pageLoadTimeoutW3C(pageLoad);
+    this.setPageLoadTimeout(this.parseTimeoutArgument(pageLoad));
   }
   if (util.hasValue(implicit)) {
-    await this.implicitWaitW3C(implicit);
+    this.setImplicitWait(this.parseTimeoutArgument(implicit));
   }
   if (util.hasValue(command)) {
-    await this.newCommandTimeout(command);
+    this.setNewCommandTimeout(this.parseTimeoutArgument(command));
   }
 }
 
@@ -87,42 +87,6 @@ export async function getTimeouts<C extends Constraints>(this: BaseDriver<C>) {
     implicit: this.implicitWaitMs,
     command: this.newCommandTimeoutMs,
   };
-}
-
-/**
- * Set the implicit wait value that was sent in via the W3C protocol
- *
- * @param ms - the timeout in ms
- */
-export async function implicitWaitW3C<C extends Constraints>(this: BaseDriver<C>, ms: number): Promise<void> {
-  this.setImplicitWait(this.parseTimeoutArgument(ms));
-}
-
-/**
- * Set the page load timeout value that was sent in via the W3C protocol
- *
- * @param ms - the timeout in ms
- */
-export async function pageLoadTimeoutW3C<C extends Constraints>(this: BaseDriver<C>, ms: number): Promise<void> {
-  this.setPageLoadTimeout(this.parseTimeoutArgument(ms));
-}
-
-/**
- * Set the script timeout value that was sent in via the W3C protocol
- *
- * @param ms - the timeout in ms
- */
-export async function scriptTimeoutW3C<C extends Constraints>(this: BaseDriver<C>, ms: number): Promise<void> {
-  this.setScriptTimeout(this.parseTimeoutArgument(ms));
-}
-
-/**
- * Set Appium's new command timeout
- *
- * @param ms - the timeout in ms
- */
-export async function newCommandTimeout<C extends Constraints>(this: BaseDriver<C>, ms: number): Promise<void> {
-  this.setNewCommandTimeout(this.parseTimeoutArgument(ms));
 }
 
 /**

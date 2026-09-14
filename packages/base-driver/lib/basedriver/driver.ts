@@ -40,11 +40,7 @@ import {getLog, getLogTypes} from './commands/log.js';
 import {
   getTimeouts,
   implicitWaitForCondition,
-  implicitWaitW3C,
-  newCommandTimeout,
-  pageLoadTimeoutW3C,
   parseTimeoutArgument,
-  scriptTimeoutW3C,
   setImplicitWait,
   setNewCommandTimeout,
   setPageLoadTimeout,
@@ -507,10 +503,6 @@ Object.assign(BaseDriver.prototype, {
   // timeout
   timeouts,
   getTimeouts,
-  implicitWaitW3C,
-  pageLoadTimeoutW3C,
-  scriptTimeoutW3C,
-  newCommandTimeout,
   setImplicitWait,
   setNewCommandTimeout,
   setPageLoadTimeout,

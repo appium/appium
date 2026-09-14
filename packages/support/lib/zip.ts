@@ -15,7 +15,7 @@ import {createBase64EncodeStream} from './internal';
 import log from './logger';
 import {isWindows} from './system';
 import {Timer} from './timing';
-import {GiB, memoize, toReadableSizeString} from './util';
+import {GiB, isSubPath, memoize, toReadableSizeString} from './util';
 
 const openZip = promisify(yauzl.open) as (zipPath: string, options?: yauzl.Options) => Promise<yauzl.ZipFile>;
 
@@ -650,14 +650,8 @@ const getExecutablePath = memoize(
 );
 
 function isContainedPath(originalPath: string, root: string): boolean {
-  for (const p of [originalPath, root]) {
-    if (!path.isAbsolute(p)) {
-      throw new Error(`'${p}' is expected to be an absolute path`);
-    }
-  }
-
-  const relativePath = path.relative(root, originalPath);
-  return !relativePath || (!relativePath.startsWith('..') && !path.isAbsolute(relativePath));
+  // `startsWith('..')` would reject a safe name like `..foo`; isSubPath only treats `..` as a parent
+  return isSubPath(originalPath, root);
 }
 
 export default {

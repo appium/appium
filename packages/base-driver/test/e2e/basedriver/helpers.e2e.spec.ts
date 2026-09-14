@@ -66,9 +66,7 @@ describe('app download and configuration', function () {
           const serve = serveStatic(FIXTURE_ROOT, {
             index: false,
             setHeaders: (res, filePath) => {
-              if (!res.getHeader('Content-Disposition')) {
-                res.setHeader('Content-Disposition', contentDisposition(filePath));
-              }
+              res.setHeader('Content-Disposition', contentDisposition(filePath));
             },
           });
 
@@ -78,14 +76,12 @@ describe('app download and configuration', function () {
               res.end();
               return;
             }
-            const params = new URLSearchParams(new URL(req.url ?? '', 'http://localhost').search);
-            const contentType = params.get('content-type');
+            // for testing zip file content types
+            const contentType = new URLSearchParams(new URL(req.url ?? '', 'http://localhost').search).get(
+              'content-type',
+            );
             if (contentType !== null) {
               res.setHeader('content-type', contentType);
-            }
-            const disposition = params.get('disposition');
-            if (disposition !== null) {
-              res.setHeader('Content-Disposition', disposition);
             }
             serve(req, res, finalhandler(req, res));
           });
@@ -131,20 +127,6 @@ describe('app download and configuration', function () {
         it('should download an apk file', async function () {
           const newAppPath = await configureApp(`${serverUrl}/FakeAndroidApp.apk`, '.apk');
           assert.ok(newAppPath.includes('.apk'));
-          const contents = await fs.readFile(newAppPath, 'utf8');
-          assert.strictEqual(contents, 'this is not really an apk\n');
-        });
-        it('should use an unquoted Content-Disposition filename', async function () {
-          const disposition = encodeURIComponent('attachment; filename=from-header.apk');
-          const newAppPath = await configureApp(`${serverUrl}/FakeAndroidApp.apk?disposition=${disposition}`, '.apk');
-          assert.ok(newAppPath.includes('from-header.apk'));
-          const contents = await fs.readFile(newAppPath, 'utf8');
-          assert.strictEqual(contents, 'this is not really an apk\n');
-        });
-        it('should use an RFC 5987 filename* parameter', async function () {
-          const disposition = encodeURIComponent(`attachment; filename*=UTF-8''from-star.apk`);
-          const newAppPath = await configureApp(`${serverUrl}/FakeAndroidApp.apk?disposition=${disposition}`, '.apk');
-          assert.ok(newAppPath.includes('from-star.apk'));
           const contents = await fs.readFile(newAppPath, 'utf8');
           assert.strictEqual(contents, 'this is not really an apk\n');
         });

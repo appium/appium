@@ -162,8 +162,7 @@ function makeUninstallArgs(type: ExtensionType): ArgumentDefinitions {
       {
         type: 'str',
         help:
-          `Short name or npm package name of the ${type} to uninstall, for example: ` +
-          (type === DRIVER_TYPE ? DRIVER_EXAMPLE : PLUGIN_EXAMPLE),
+          `Name of the ${type} to uninstall, for example: ` + (type === DRIVER_TYPE ? DRIVER_EXAMPLE : PLUGIN_EXAMPLE),
       },
     ],
   ]);
@@ -180,7 +179,7 @@ function makeDoctorArgs(type: ExtensionType): ArgumentDefinitions {
       {
         type: 'str',
         help:
-          `Short name or npm package name of the ${type} to run doctor checks for, for example: ` +
+          `Name of the ${type} to run doctor checks for, for example: ` +
           (type === DRIVER_TYPE ? DRIVER_EXAMPLE : PLUGIN_EXAMPLE),
       },
     ],
@@ -198,7 +197,7 @@ function makeUpdateArgs(type: ExtensionType): ArgumentDefinitions {
       {
         type: 'str',
         help:
-          `Short name or npm package name of the ${type} to update, or "installed" to update all installed ${type}s. ` +
+          `Name of the ${type} to update, or "installed" to update all installed ${type}s. ` +
           `To see available ${type} updates, run "appium ${type} list --installed --updates". ` +
           'For example: ' +
           (type === DRIVER_TYPE ? DRIVER_EXAMPLE : PLUGIN_EXAMPLE),
@@ -227,7 +226,7 @@ function makeRunArgs(type: ExtensionType): ArgumentDefinitions {
       {
         type: 'str',
         help:
-          `Short name or npm package name of the ${type} to run a script from, for example: ` +
+          `Name of the ${type} to run a script from, for example: ` +
           (type === DRIVER_TYPE ? DRIVER_EXAMPLE : PLUGIN_EXAMPLE),
       },
     ],

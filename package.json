@@ -104,7 +104,7 @@
     "@types/ws": "8.18.1",
     "@types/yargs": "17.0.35",
     "asyncbox": "6.4.3",
-    "conventional-changelog-conventionalcommits": "9.3.1",
+    "conventional-changelog-conventionalcommits": "10.4.0",
     "cpy-cli": "7.0.0",
     "cross-env": "10.1.0",
     "finalhandler": "2.1.1",

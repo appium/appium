@@ -47,6 +47,8 @@ import {
   scriptTimeoutW3C,
   setImplicitWait,
   setNewCommandTimeout,
+  setPageLoadTimeout,
+  setScriptTimeout,
   timeouts,
 } from './commands/timeout.js';
 // Bare re-imports so `declare module '../driver.js'` augmentations in the command modules
@@ -511,6 +513,8 @@ Object.assign(BaseDriver.prototype, {
   newCommandTimeout,
   setImplicitWait,
   setNewCommandTimeout,
+  setPageLoadTimeout,
+  setScriptTimeout,
   implicitWaitForCondition,
   parseTimeoutArgument,
 });

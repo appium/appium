@@ -15,13 +15,11 @@ import type {
 } from '@appium/types';
 import AsyncLock from 'async-lock';
 
-import {DEFAULT_BASE_PATH, PROTOCOLS} from '../constants.js';
+import {DEFAULT_BASE_PATH, NEW_COMMAND_TIMEOUT_MS, PROTOCOLS, W3C_TIMEOUTS_MS} from '../constants.js';
 import {errors} from '../protocol/index.js';
 import {DeviceSettings} from './device-settings.js';
 import {ExtensionCore} from './extension-core.js';
 import * as helpers from './helpers.js';
-
-const NEW_COMMAND_TIMEOUT_MS = 60 * 1000;
 
 const ON_UNEXPECTED_SHUTDOWN_EVENT = 'onUnexpectedShutdown';
 
@@ -56,7 +54,9 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
   allowInsecure: string[] = [];
   denyInsecure: string[] = [];
   newCommandTimeoutMs: number = NEW_COMMAND_TIMEOUT_MS;
-  implicitWaitMs: number = 0;
+  scriptTimeoutMs: number = W3C_TIMEOUTS_MS.SCRIPT;
+  pageLoadTimeoutMs: number = W3C_TIMEOUTS_MS.PAGE_LOAD;
+  implicitWaitMs: number = W3C_TIMEOUTS_MS.IMPLICIT_WAIT;
   locatorStrategies: string[] = [];
   webLocatorStrategies: string[] = [];
   managedDrivers: Driver[] = [];

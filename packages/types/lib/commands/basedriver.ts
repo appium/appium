@@ -19,18 +19,26 @@ export interface ITimeoutCommands {
    * Set the various timeouts associated with a session
    * @see {@link https://w3c.github.io/webdriver/#set-timeouts}
    *
-   * @param type - used only for the old (JSONWP) command, the type of the timeout
-   * @param ms - used only for the old (JSONWP) command, the ms for the timeout
+   * @param type - the type of the timeout (deprecated)
+   * @param ms - the ms for the timeout (deprecated)
    * @param script - the number in ms for the script timeout, used for the W3C command
    * @param pageLoad - the number in ms for the pageLoad timeout, used for the W3C command
    * @param implicit - the number in ms for the implicit wait timeout, used for the W3C command
+   * @param command - the number in ms for the Appium-specific command timeout
    */
   timeouts(
+    /**
+     * @deprecated set `script`, `pageLoad`, `implicit` or `command` directly
+     */
     type?: string,
+    /**
+     * @deprecated set `script`, `pageLoad`, `implicit` or `command` directly
+     */
     ms?: number | string,
     script?: number,
     pageLoad?: number,
-    implicit?: number | string,
+    implicit?: number,
+    command?: number,
   ): Promise<void>;
 
   /**
@@ -39,6 +47,20 @@ export interface ITimeoutCommands {
    * @param ms - the timeout in ms
    */
   setNewCommandTimeout(ms: number): void;
+
+  /**
+   * A helper method (not a command) used to set the script timeout value
+   *
+   * @param ms - the script timeout in ms
+   */
+  setScriptTimeout(ms: number): void;
+
+  /**
+   * A helper method (not a command) used to set the page load timeout value
+   *
+   * @param ms - the page load timeout in ms
+   */
+  setPageLoadTimeout(ms: number): void;
 
   /**
    * A helper method (not a command) used to set the implicit wait value

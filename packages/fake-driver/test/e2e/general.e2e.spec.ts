@@ -50,18 +50,17 @@ export function generalTests(context: {port: number}) {
       await assert.rejects(driver.setTimeout({implicit: 'foo' as any}), /values are not valid/);
     });
 
-    // skip these until basedriver supports these timeouts
-    it.skip('should set async script timeout', async function () {
+    it('should set async script timeout', async function () {
       await driver.setTimeout({script: 1000});
     });
-    it.skip('should not set invalid async script timeout', async function () {
+    it('should not set invalid async script timeout', async function () {
       await assert.rejects(driver.setTimeout({script: 'foo' as any}), /values are not valid/);
     });
 
-    it.skip('should set page load timeout', async function () {
+    it('should set page load timeout', async function () {
       await driver.setTimeout({pageLoad: 1000});
     });
-    it.skip('should not set page load script timeout', async function () {
+    it('should not set page load script timeout', async function () {
       await assert.rejects(driver.setTimeout({pageLoad: 'foo' as any}), /values are not valid/);
     });
 

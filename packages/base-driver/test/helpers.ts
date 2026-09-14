@@ -1,7 +1,39 @@
+import nodePath from 'node:path';
+
 import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
+import {node, util} from '@appium/support';
 import type {AppiumServer, Constraints, Driver, MethodMap, ServerArgs} from '@appium/types';
 
 import {routeConfiguringFunction, server} from '../lib/index.js';
+
+const BASE_DRIVER_MODULE_NAME = '@appium/base-driver';
+
+/**
+ * Resolves the absolute root of the `@appium/base-driver` package. Memoized because it walks up
+ * the directory tree checking `package.json` files on every call, and the result is always the
+ * same for the lifetime of a test run.
+ */
+export const getModuleRootPath = util.memoize((moduleName: string, filePath: string): string => {
+  const root = node.getModuleRootSync(moduleName, filePath);
+  if (!root) {
+    throw new Error(`Could not resolve the root of the '${moduleName}' module from '${filePath}'`);
+  }
+  return root;
+});
+
+/**
+ * Snapshot tests run against the compiled `build/test/**\/*.js`; resolve to the checked-in
+ * `.snapshot` file next to the TS source instead, so it's reviewable alongside the change that
+ * produced it.
+ */
+export function resolveSourceSnapshotPath(testFilePath: string | undefined): string {
+  if (!testFilePath) {
+    throw new Error('Cannot resolve a snapshot path without a test file path');
+  }
+  const root = getModuleRootPath(BASE_DRIVER_MODULE_NAME, testFilePath);
+  const relativePath = nodePath.relative(nodePath.join(root, 'build', 'test'), testFilePath);
+  return `${nodePath.join(root, 'test', relativePath).replace(/\.js$/, '.ts')}.snapshot`;
+}
 
 export async function createServer<T extends Driver<Constraints>>(
   driver: T,

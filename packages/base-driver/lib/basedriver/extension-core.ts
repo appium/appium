@@ -13,7 +13,7 @@ import type {
 
 import {MAX_LOG_BODY_LENGTH} from '../constants.js';
 import {generateDriverLogPrefix} from '../helpers/log-prefix.js';
-import {BIDI_COMMANDS} from '../protocol/bidi-commands.js';
+import {BIDI_COMMANDS} from '../protocol/bidi-commands/index.js';
 import {checkParams, errors, makeArgs} from '../protocol/index.js';
 
 export class ExtensionCore {

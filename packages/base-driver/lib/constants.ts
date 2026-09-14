@@ -16,3 +16,16 @@ export const PROTOCOLS = {
 
 // Before Appium 2.0, this default value was '/wd/hub' by historical reasons.
 export const DEFAULT_BASE_PATH = '';
+
+// Default values for W3C WebDriver timeouts configuration
+// https://w3c.github.io/webdriver/#timeouts
+export const W3C_TIMEOUTS_MS = {
+  SCRIPT: 30_000,
+  PAGE_LOAD: 300_000,
+  IMPLICIT_WAIT: 0,
+};
+
+/**
+ * Appium-specific timeout type, not part of the W3C standard.
+ */
+export const NEW_COMMAND_TIMEOUT_MS = 60 * 1000;

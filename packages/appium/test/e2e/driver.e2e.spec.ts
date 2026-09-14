@@ -272,6 +272,10 @@ describe('FakeDriver via HTTP', function () {
               name: 'contexts',
               required: false,
             },
+            {
+              name: 'userContexts',
+              required: false,
+            },
           ],
         }),
       );

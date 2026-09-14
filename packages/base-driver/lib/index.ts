@@ -31,7 +31,7 @@ export {
 export {DEFAULT_WS_PATHNAME_PREFIX} from './express/websocket.js';
 
 // BiDi exports
-export {BIDI_COMMANDS} from './protocol/bidi-commands.js';
+export {BIDI_COMMANDS} from './protocol/bidi-commands/index.js';
 
 export {isW3cCaps} from './helpers/capabilities.js';
 export {generateDriverLogPrefix} from './helpers/log-prefix.js';

@@ -1,0 +1,749 @@
+exports[`BiDi commands > ensure protocol consistency > should not change protocol between patch versions 1`] = `
+{
+  "session": {
+    "status": {
+      "command": "bidiStatus",
+      "params": {}
+    },
+    "new": {
+      "command": "bidiSessionNew",
+      "params": {
+        "required": [
+          "capabilities"
+        ]
+      }
+    },
+    "end": {
+      "command": "bidiSessionEnd",
+      "params": {}
+    },
+    "subscribe": {
+      "command": "bidiSubscribe",
+      "params": {
+        "required": [
+          "events"
+        ],
+        "optional": [
+          "contexts",
+          "userContexts"
+        ]
+      }
+    },
+    "unsubscribe": {
+      "command": "bidiUnsubscribe",
+      "params": {
+        "required": [
+          [
+            "subscriptions"
+          ],
+          [
+            "events"
+          ]
+        ],
+        "optional": [
+          "contexts"
+        ]
+      }
+    }
+  },
+  "browser": {
+    "close": {
+      "command": "bidiBrowserClose",
+      "params": {}
+    },
+    "createUserContext": {
+      "command": "bidiBrowserCreateUserContext",
+      "params": {
+        "optional": [
+          "acceptInsecureCerts",
+          "proxy",
+          "unhandledPromptBehavior"
+        ]
+      }
+    },
+    "getClientWindows": {
+      "command": "bidiBrowserGetClientWindows",
+      "params": {}
+    },
+    "getUserContexts": {
+      "command": "bidiBrowserGetUserContexts",
+      "params": {}
+    },
+    "removeUserContext": {
+      "command": "bidiBrowserRemoveUserContext",
+      "params": {
+        "required": [
+          "userContext"
+        ]
+      }
+    },
+    "setClientWindowState": {
+      "command": "bidiBrowserSetClientWindowState",
+      "params": {
+        "required": [
+          "clientWindow",
+          "state"
+        ],
+        "optional": [
+          "width",
+          "height",
+          "x",
+          "y"
+        ]
+      }
+    },
+    "setDownloadBehavior": {
+      "command": "bidiBrowserSetDownloadBehavior",
+      "params": {
+        "required": [
+          "downloadBehavior"
+        ],
+        "optional": [
+          "userContexts"
+        ]
+      }
+    }
+  },
+  "browsingContext": {
+    "activate": {
+      "command": "bidiBrowsingContextActivate",
+      "params": {
+        "required": [
+          "context"
+        ]
+      }
+    },
+    "captureScreenshot": {
+      "command": "bidiBrowsingContextCaptureScreenshot",
+      "params": {
+        "required": [
+          "context"
+        ],
+        "optional": [
+          "origin",
+          "format",
+          "clip",
+          "imageSize"
+        ]
+      }
+    },
+    "close": {
+      "command": "bidiBrowsingContextClose",
+      "params": {
+        "required": [
+          "context"
+        ],
+        "optional": [
+          "promptUnload"
+        ]
+      }
+    },
+    "create": {
+      "command": "bidiBrowsingContextCreate",
+      "params": {
+        "required": [
+          "type"
+        ],
+        "optional": [
+          "referenceContext",
+          "background",
+          "userContext"
+        ]
+      }
+    },
+    "getTree": {
+      "command": "bidiBrowsingContextGetTree",
+      "params": {
+        "optional": [
+          "maxDepth",
+          "root"
+        ]
+      }
+    },
+    "handleUserPrompt": {
+      "command": "bidiBrowsingContextHandleUserPrompt",
+      "params": {
+        "required": [
+          "context"
+        ],
+        "optional": [
+          "accept",
+          "userText"
+        ]
+      }
+    },
+    "locateNodes": {
+      "command": "bidiBrowsingContextLocateNodes",
+      "params": {
+        "required": [
+          "context",
+          "locator"
+        ],
+        "optional": [
+          "maxNodeCount",
+          "serializationOptions",
+          "startNodes"
+        ]
+      }
+    },
+    "navigate": {
+      "command": "bidiNavigate",
+      "params": {
+        "required": [
+          "context",
+          "url"
+        ],
+        "optional": [
+          "wait"
+        ]
+      }
+    },
+    "print": {
+      "command": "bidiBrowsingContextPrint",
+      "params": {
+        "required": [
+          "context"
+        ],
+        "optional": [
+          "background",
+          "margin",
+          "orientation",
+          "page",
+          "pageRanges",
+          "scale",
+          "shrinkToFit"
+        ]
+      }
+    },
+    "reload": {
+      "command": "bidiBrowsingContextReload",
+      "params": {
+        "required": [
+          "context"
+        ],
+        "optional": [
+          "ignoreCache",
+          "wait"
+        ]
+      }
+    },
+    "setBypassCSP": {
+      "command": "bidiBrowsingContextSetBypassCSP",
+      "params": {
+        "required": [
+          "bypass"
+        ],
+        "optional": [
+          "contexts",
+          "userContexts"
+        ]
+      }
+    },
+    "setViewport": {
+      "command": "bidiBrowsingContextSetViewport",
+      "params": {
+        "optional": [
+          "context",
+          "viewport",
+          "devicePixelRatio",
+          "userContexts"
+        ]
+      }
+    },
+    "startScreencast": {
+      "command": "bidiBrowsingContextStartScreencast",
+      "params": {
+        "required": [
+          "context"
+        ],
+        "optional": [
+          "mimeType",
+          "video",
+          "audio"
+        ]
+      }
+    },
+    "stopScreencast": {
+      "command": "bidiBrowsingContextStopScreencast",
+      "params": {
+        "required": [
+          "screencast"
+        ]
+      }
+    },
+    "traverseHistory": {
+      "command": "bidiBrowsingContextTraverseHistory",
+      "params": {
+        "required": [
+          "context",
+          "delta"
+        ]
+      }
+    }
+  },
+  "emulation": {
+    "setForcedColorsModeThemeOverride": {
+      "command": "bidiEmulationSetForcedColorsModeThemeOverride",
+      "params": {
+        "required": [
+          "theme"
+        ],
+        "optional": [
+          "contexts",
+          "userContexts"
+        ]
+      }
+    },
+    "setGeolocationOverride": {
+      "command": "bidiEmulationSetGeolocationOverride",
+      "params": {
+        "optional": [
+          "coordinates",
+          "error",
+          "contexts",
+          "userContexts"
+        ]
+      }
+    },
+    "setLocaleOverride": {
+      "command": "bidiEmulationSetLocaleOverride",
+      "params": {
+        "required": [
+          "locale"
+        ],
+        "optional": [
+          "contexts",
+          "userContexts"
+        ]
+      }
+    },
+    "setMediaFeaturesOverride": {
+      "command": "bidiEmulationSetMediaFeaturesOverride",
+      "params": {
+        "required": [
+          "features"
+        ],
+        "optional": [
+          "contexts",
+          "userContexts"
+        ]
+      }
+    },
+    "setNetworkConditions": {
+      "command": "bidiEmulationSetNetworkConditions",
+      "params": {
+        "required": [
+          "networkConditions"
+        ],
+        "optional": [
+          "contexts",
+          "userContexts"
+        ]
+      }
+    },
+    "setScreenSettingsOverride": {
+      "command": "bidiEmulationSetScreenSettingsOverride",
+      "params": {
+        "required": [
+          "screenArea"
+        ],
+        "optional": [
+          "contexts",
+          "userContexts"
+        ]
+      }
+    },
+    "setScreenOrientationOverride": {
+      "command": "bidiEmulationSetScreenOrientationOverride",
+      "params": {
+        "required": [
+          "screenOrientation"
+        ],
+        "optional": [
+          "contexts",
+          "userContexts"
+        ]
+      }
+    },
+    "setUserAgentOverride": {
+      "command": "bidiEmulationSetUserAgentOverride",
+      "params": {
+        "required": [
+          "userAgent"
+        ],
+        "optional": [
+          "contexts",
+          "userContexts"
+        ]
+      }
+    },
+    "setViewportMetaOverride": {
+      "command": "bidiEmulationSetViewportMetaOverride",
+      "params": {
+        "required": [
+          "viewportMeta"
+        ],
+        "optional": [
+          "contexts",
+          "userContexts"
+        ]
+      }
+    },
+    "setScriptingEnabled": {
+      "command": "bidiEmulationSetScriptingEnabled",
+      "params": {
+        "required": [
+          "enabled"
+        ],
+        "optional": [
+          "contexts",
+          "userContexts"
+        ]
+      }
+    },
+    "setScrollbarTypeOverride": {
+      "command": "bidiEmulationSetScrollbarTypeOverride",
+      "params": {
+        "required": [
+          "scrollbarType"
+        ],
+        "optional": [
+          "contexts",
+          "userContexts"
+        ]
+      }
+    },
+    "setTimezoneOverride": {
+      "command": "bidiEmulationSetTimezoneOverride",
+      "params": {
+        "required": [
+          "timezone"
+        ],
+        "optional": [
+          "contexts",
+          "userContexts"
+        ]
+      }
+    },
+    "setTouchOverride": {
+      "command": "bidiEmulationSetTouchOverride",
+      "params": {
+        "required": [
+          "maxTouchPoints"
+        ],
+        "optional": [
+          "contexts",
+          "userContexts"
+        ]
+      }
+    }
+  },
+  "network": {
+    "addDataCollector": {
+      "command": "bidiNetworkAddDataCollector",
+      "params": {
+        "required": [
+          "dataTypes",
+          "maxEncodedDataSize"
+        ],
+        "optional": [
+          "collectorType",
+          "contexts",
+          "userContexts"
+        ]
+      }
+    },
+    "addIntercept": {
+      "command": "bidiNetworkAddIntercept",
+      "params": {
+        "required": [
+          "phases"
+        ],
+        "optional": [
+          "contexts",
+          "urlPatterns"
+        ]
+      }
+    },
+    "continueRequest": {
+      "command": "bidiNetworkContinueRequest",
+      "params": {
+        "required": [
+          "request"
+        ],
+        "optional": [
+          "body",
+          "cookies",
+          "headers",
+          "method",
+          "url"
+        ]
+      }
+    },
+    "continueResponse": {
+      "command": "bidiNetworkContinueResponse",
+      "params": {
+        "required": [
+          "request"
+        ],
+        "optional": [
+          "cookies",
+          "credentials",
+          "headers",
+          "reasonPhrase",
+          "statusCode"
+        ]
+      }
+    },
+    "continueWithAuth": {
+      "command": "bidiNetworkContinueWithAuth",
+      "params": {
+        "required": [
+          "request",
+          "action"
+        ],
+        "optional": [
+          "credentials"
+        ]
+      }
+    },
+    "disownData": {
+      "command": "bidiNetworkDisownData",
+      "params": {
+        "required": [
+          "dataType",
+          "collector",
+          "request"
+        ]
+      }
+    },
+    "failRequest": {
+      "command": "bidiNetworkFailRequest",
+      "params": {
+        "required": [
+          "request"
+        ]
+      }
+    },
+    "getData": {
+      "command": "bidiNetworkGetData",
+      "params": {
+        "required": [
+          "dataType",
+          "request"
+        ],
+        "optional": [
+          "collector",
+          "disown"
+        ]
+      }
+    },
+    "provideResponse": {
+      "command": "bidiNetworkProvideResponse",
+      "params": {
+        "required": [
+          "request"
+        ],
+        "optional": [
+          "body",
+          "cookies",
+          "headers",
+          "reasonPhrase",
+          "statusCode"
+        ]
+      }
+    },
+    "removeDataCollector": {
+      "command": "bidiNetworkRemoveDataCollector",
+      "params": {
+        "required": [
+          "collector"
+        ]
+      }
+    },
+    "removeIntercept": {
+      "command": "bidiNetworkRemoveIntercept",
+      "params": {
+        "required": [
+          "intercept"
+        ]
+      }
+    },
+    "setCacheBehavior": {
+      "command": "bidiNetworkSetCacheBehavior",
+      "params": {
+        "required": [
+          "cacheBehavior"
+        ],
+        "optional": [
+          "contexts"
+        ]
+      }
+    },
+    "setExtraHeaders": {
+      "command": "bidiNetworkSetExtraHeaders",
+      "params": {
+        "required": [
+          "headers"
+        ],
+        "optional": [
+          "contexts",
+          "userContexts"
+        ]
+      }
+    }
+  },
+  "script": {
+    "addPreloadScript": {
+      "command": "bidiScriptAddPreloadScript",
+      "params": {
+        "required": [
+          "functionDeclaration"
+        ],
+        "optional": [
+          "arguments",
+          "contexts",
+          "userContexts",
+          "sandbox"
+        ]
+      }
+    },
+    "callFunction": {
+      "command": "bidiScriptCallFunction",
+      "params": {
+        "required": [
+          "functionDeclaration",
+          "awaitPromise",
+          "target"
+        ],
+        "optional": [
+          "arguments",
+          "resultOwnership",
+          "serializationOptions",
+          "this",
+          "userActivation"
+        ]
+      }
+    },
+    "disown": {
+      "command": "bidiScriptDisown",
+      "params": {
+        "required": [
+          "handles",
+          "target"
+        ]
+      }
+    },
+    "evaluate": {
+      "command": "bidiScriptEvaluate",
+      "params": {
+        "required": [
+          "expression",
+          "target",
+          "awaitPromise"
+        ],
+        "optional": [
+          "resultOwnership",
+          "serializationOptions",
+          "userActivation"
+        ]
+      }
+    },
+    "getRealms": {
+      "command": "bidiScriptGetRealms",
+      "params": {
+        "optional": [
+          "context",
+          "type"
+        ]
+      }
+    },
+    "removePreloadScript": {
+      "command": "bidiScriptRemovePreloadScript",
+      "params": {
+        "required": [
+          "script"
+        ]
+      }
+    }
+  },
+  "storage": {
+    "getCookies": {
+      "command": "bidiStorageGetCookies",
+      "params": {
+        "optional": [
+          "filter",
+          "partition"
+        ]
+      }
+    },
+    "setCookie": {
+      "command": "bidiStorageSetCookie",
+      "params": {
+        "required": [
+          "cookie"
+        ],
+        "optional": [
+          "partition"
+        ]
+      }
+    },
+    "deleteCookies": {
+      "command": "bidiStorageDeleteCookies",
+      "params": {
+        "optional": [
+          "filter",
+          "partition"
+        ]
+      }
+    }
+  },
+  "input": {
+    "performActions": {
+      "command": "bidiInputPerformActions",
+      "params": {
+        "required": [
+          "context",
+          "actions"
+        ]
+      }
+    },
+    "releaseActions": {
+      "command": "bidiInputReleaseActions",
+      "params": {
+        "required": [
+          "context"
+        ]
+      }
+    },
+    "setFiles": {
+      "command": "bidiInputSetFiles",
+      "params": {
+        "required": [
+          "context",
+          "element",
+          "files"
+        ]
+      }
+    }
+  },
+  "webExtension": {
+    "install": {
+      "command": "bidiWebExtensionInstall",
+      "params": {
+        "required": [
+          "extensionData"
+        ]
+      }
+    },
+    "uninstall": {
+      "command": "bidiWebExtensionUninstall",
+      "params": {
+        "required": [
+          "extension"
+        ]
+      }
+    }
+  }
+}
+`;

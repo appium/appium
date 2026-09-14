@@ -4,7 +4,9 @@ import os from 'node:os';
 import path from 'node:path';
 import {describe, it, beforeEach, afterEach, before, after, mock} from 'node:test';
 
-import {DRIVER_TYPE} from '../../../lib/constants.js';
+import * as YAML from 'yaml';
+
+import {CURRENT_SCHEMA_REV, DRIVER_TYPE} from '../../../lib/constants.js';
 import {APPIUM_VER} from '../../../lib/helpers/build.js';
 import {FAKE_DRIVER_DIR, PROJECT_ROOT} from '../../helpers.js';
 import {applyExtensionMocks, initMocks, resetMockDefaults} from './mocks.js';
@@ -472,6 +474,25 @@ describe('ExtensionConfig', function () {
           );
           assert.notStrictEqual(marker1, marker2);
         });
+      });
+    });
+
+    describe('installedExtensions', function () {
+      it('reflects the manifest live, including after a reload replaces the underlying data', async function () {
+        assert.deepStrictEqual(config.installedExtensions, {[extData.pkgName]: extData});
+
+        MockAppiumSupport.fs.readFile.resolves(
+          YAML.stringify({
+            drivers: {fake: {pkgName: '@appium/fake-driver', version: '1.0.0', mainClass: 'FakeDriver'}},
+            plugins: {},
+            schemaRev: CURRENT_SCHEMA_REV,
+          }),
+        );
+        // `read()` replaces the manifest's whole in-memory data object; a plain field captured
+        // at construction time (the old implementation) would keep pointing at the pre-reload one.
+        await config.manifest.read();
+
+        assert.deepStrictEqual(Object.keys(config.installedExtensions), ['fake']);
       });
     });
   });

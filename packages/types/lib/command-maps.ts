@@ -12,7 +12,7 @@ export interface PayloadParams {
   unwrap?: string;
   required?: ReadonlyArray<string> | MultidimensionalReadonlyArray<string, 2>;
   optional?: ReadonlyArray<string>;
-  validate?: (obj: any, protocol: string) => boolean | string | undefined;
+  validate?: (obj: any) => boolean | string | undefined;
   makeArgs?: (obj: any) => any;
 }
 /**
@@ -279,14 +279,14 @@ export type ExecuteMethodMap<T extends Plugin | Driver> = T extends Plugin
     : never;
 
 export interface BidiMethodParams {
-  required?: readonly string[];
+  required?: ReadonlyArray<string> | MultidimensionalReadonlyArray<string, 2>;
   optional?: readonly string[];
 }
 
-export interface BidiMethodDef extends BaseExecuteMethodDef {
+export type BidiMethodDef = Omit<BaseExecuteMethodDef, 'params'> & {
   command: string;
   params?: BidiMethodParams;
-}
+};
 
 export interface BidiMethodMap {
   [k: string]: BidiMethodDef;

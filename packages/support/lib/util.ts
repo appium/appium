@@ -571,10 +571,16 @@ export function getLockFileGuard<T>(lockFile: string, opts: LockFileOptions = {}
       let acquired = false;
       while (!acquired) {
         try {
-          if (_lockfile.checkSync(lockFile)) {
-            await lock(lockFile, {wait: timeout * 1000});
-          } else {
+          try {
             _lockfile.lockSync(lockFile);
+          } catch (e) {
+            const lockErr = e as NodeJS.ErrnoException;
+            if (lockErr.code !== 'EEXIST') {
+              throw lockErr;
+            }
+            // Someone else is holding the lock (possibly grabbed it between us checking and
+            // locking) -- wait for them to release it instead of failing outright.
+            await lock(lockFile, {wait: timeout * 1000});
           }
           acquired = true;
         } catch (e) {

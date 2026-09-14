@@ -12,7 +12,7 @@
     "checkJs": true,
     "types": ["node"]
   },
-  "include": ["lib", "test"],
+  "include": ["lib", "test/unit", "test/e2e", "test/helpers.ts"],
   "exclude": ["build"],
   "references": [
     {

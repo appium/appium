@@ -53,7 +53,7 @@
   },
   "dependencies": {
     "opencv-bindings": "4.5.5",
-    "sharp": "0.35.3"
+    "sharp": "0.35.4"
   },
   "devDependencies": {
     "@appium/types": "1.7.0"

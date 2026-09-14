@@ -102,12 +102,12 @@
     "@types/which": "3.0.4",
     "@types/ws": "8.18.1",
     "@types/yargs": "17.0.35",
-    "asyncbox": "6.4.2",
+    "asyncbox": "6.4.3",
     "conventional-changelog-conventionalcommits": "9.3.1",
     "cpy-cli": "7.0.0",
     "cross-env": "10.1.0",
     "finalhandler": "2.1.1",
-    "json-schema-to-typescript": "15.0.4",
+    "json-schema-to-typescript": "16.0.0",
     "lerna": "10.0.1",
     "mjpeg-consumer": "2.0.0",
     "mjpeg-server": "0.3.1",
@@ -118,7 +118,7 @@
     "teen_process": "4.2.1",
     "tsd": "0.33.0",
     "typescript": "6.0.3",
-    "webdriverio": "9.31.2",
+    "webdriverio": "9.31.7",
     "ws": "8.21.3"
   },
   "overrides": {

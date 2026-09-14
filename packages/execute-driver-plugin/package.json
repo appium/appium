@@ -50,7 +50,7 @@
   },
   "dependencies": {
     "@appium/support": "7.2.7",
-    "webdriverio": "9.31.2"
+    "webdriverio": "9.31.7"
   },
   "devDependencies": {
     "@appium/types": "1.7.0"

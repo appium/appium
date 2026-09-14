@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
-import {describe, it, before, beforeEach, afterEach} from 'node:test';
+import {describe, it, beforeEach, afterEach} from 'node:test';
 
 import type {Constraints, W3CDriverCaps} from '@appium/types';
+import {NEW_COMMAND_TIMEOUT_MS, W3C_TIMEOUTS_MS} from 'appium/driver.js';
 import {sleep} from 'asyncbox';
 import {createSandbox} from 'sinon';
 
@@ -246,48 +247,86 @@ describe('FakeDriver unit suite', function () {
   });
 
   describe('timeouts', function () {
-    before(async function () {
-      await d.createSession(w3cCaps);
-    });
-    describe('command', function () {
-      it('should exist by default', function () {
-        assert.strictEqual(d.newCommandTimeoutMs, 60000);
-      });
-      it('should be settable through `timeouts`', async function () {
-        await d.timeouts('command', 20);
-        assert.strictEqual(d.newCommandTimeoutMs, 20);
-      });
-    });
-    describe('implicit', function () {
-      it('should not exist by default', function () {
-        assert.strictEqual(d.implicitWaitMs, 0);
-      });
-      it('should be settable through `timeouts`', async function () {
-        await d.timeouts('implicit', 20);
-        assert.strictEqual(d.implicitWaitMs, 20);
-      });
-    });
-  });
-
-  describe('timeouts (W3C)', function () {
     beforeEach(async function () {
       await d.createSession(w3cCaps);
     });
     afterEach(async function () {
       await d.deleteSession();
     });
-    it('should get timeouts that we set', async function () {
-      await d.timeouts(undefined, undefined, undefined, undefined, 1000);
-      assert.strictEqual((await d.getTimeouts()).implicit, 1000);
-      await d.timeouts('command', 2000);
-      assert.deepStrictEqual(await d.getTimeouts(), {
-        implicit: 1000,
-        command: 2000,
+    describe('default values', function () {
+      it('should have a default value for script timeout', function () {
+        assert.strictEqual(d.scriptTimeoutMs, W3C_TIMEOUTS_MS.SCRIPT);
       });
-      await d.timeouts(undefined, undefined, undefined, undefined, 3000);
-      assert.deepStrictEqual(await d.getTimeouts(), {
-        implicit: 3000,
-        command: 2000,
+      it('should have a default value for page load timeout', function () {
+        assert.strictEqual(d.pageLoadTimeoutMs, W3C_TIMEOUTS_MS.PAGE_LOAD);
+      });
+      it('should have a default value for implicit wait timeout', function () {
+        assert.strictEqual(d.implicitWaitMs, W3C_TIMEOUTS_MS.IMPLICIT_WAIT);
+      });
+      it('should have a default value for command timeout', function () {
+        assert.strictEqual(d.newCommandTimeoutMs, NEW_COMMAND_TIMEOUT_MS);
+      });
+    });
+    describe('set using JSONWP format', function () {
+      it('should allow setting script timeout', async function () {
+        await d.timeouts('script', 20);
+        assert.strictEqual(d.scriptTimeoutMs, 20);
+      });
+      it('should allow setting page load timeout', async function () {
+        await d.timeouts('page load', 20);
+        assert.strictEqual(d.pageLoadTimeoutMs, 20);
+      });
+      it('should allow setting implicit wait timeout', async function () {
+        await d.timeouts('implicit', 20);
+        assert.strictEqual(d.implicitWaitMs, 20);
+      });
+      it('should allow setting command timeout', async function () {
+        await d.timeouts('command', 20);
+        assert.strictEqual(d.newCommandTimeoutMs, 20);
+      });
+    });
+    describe('set using W3C format', function () {
+      it('should allow setting script timeout', async function () {
+        await d.timeouts(undefined, undefined, 20);
+        assert.strictEqual(d.scriptTimeoutMs, 20);
+      });
+      it('should allow setting page load timeout', async function () {
+        await d.timeouts(undefined, undefined, undefined, 20);
+        assert.strictEqual(d.pageLoadTimeoutMs, 20);
+      });
+      it('should allow setting implicit wait timeout', async function () {
+        await d.timeouts(undefined, undefined, undefined, undefined, 20);
+        assert.strictEqual(d.implicitWaitMs, 20);
+      });
+      it('should allow setting command timeout', async function () {
+        await d.timeouts(undefined, undefined, undefined, undefined, undefined, 20);
+        assert.strictEqual(d.newCommandTimeoutMs, 20);
+      });
+    });
+    describe('retrieval', function () {
+      it('should retrieve default timeouts if unset', async function () {
+        assert.deepStrictEqual(await d.getTimeouts(), {
+          script: W3C_TIMEOUTS_MS.SCRIPT,
+          pageLoad: W3C_TIMEOUTS_MS.PAGE_LOAD,
+          implicit: W3C_TIMEOUTS_MS.IMPLICIT_WAIT,
+          command: NEW_COMMAND_TIMEOUT_MS,
+        });
+      });
+      it('should retrieve modified timeouts if changed', async function () {
+        await d.timeouts(undefined, undefined, undefined, 2000, 1000);
+        assert.deepStrictEqual(await d.getTimeouts(), {
+          script: W3C_TIMEOUTS_MS.SCRIPT,
+          pageLoad: 2000,
+          implicit: 1000,
+          command: NEW_COMMAND_TIMEOUT_MS,
+        });
+        await d.timeouts('command', 3000);
+        assert.deepStrictEqual(await d.getTimeouts(), {
+          script: W3C_TIMEOUTS_MS.SCRIPT,
+          pageLoad: 2000,
+          implicit: 1000,
+          command: 3000,
+        });
       });
     });
   });

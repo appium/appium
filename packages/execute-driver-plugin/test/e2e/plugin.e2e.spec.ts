@@ -102,7 +102,7 @@ describe('ExecuteDriverPlugin', function () {
         const status = await driver.status();
         return [timeouts, status];
       `;
-      const expectedTimeouts = {command: 60000, implicit: 0};
+      const expectedTimeouts = {script: 30000, pageLoad: 300000, implicit: 0, command: 60000};
       const {result, logs} = await driver.executeDriverScript(script);
       assert.deepStrictEqual((result as any)[0], expectedTimeouts);
       assert.ok((result as any)[1].build);

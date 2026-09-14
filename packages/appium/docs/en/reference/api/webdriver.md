@@ -84,14 +84,19 @@ GET /session/:sessionId/timeouts
 
 Retrieves the timeout values of the current session.
 
+Appium implements a modified version of this endpoint, by also returning the value of the `command`
+timeout for supported drivers and contexts.
+
 #### Response
 
 `GetTimeoutsResult` - an object with the following properties:
 
 |Name|Description|Type|
 |--|--|--|
-|`command`|Command timeout|number|
+|`script`|Script timeout|number|
+|`pageLoad`|Page load timeout|number|
 |`implicit`|Implicit wait timeout|number|
+|`command`|Appium command timeout|number|
 
 ### timeouts
 
@@ -103,13 +108,17 @@ POST /session/:sessionId/timeouts
 
 Sets the timeout values of the current session.
 
+Appium implements a modified version of this endpoint by adding the optional `command` parameter
+for supported drivers and contexts.
+
 #### Parameters
 
 |Name|Description|Type|
 |--|--|--|
+|`script?`|Script timeout (in milliseconds)|number|
 |`implicit?`|Implicit wait timeout (in milliseconds)|number|
 |`pageLoad?`|Page load timeout (in milliseconds)|number|
-|`script?`|Script timeout (in milliseconds)|number|
+|`command?`|Appium command timeout (in milliseconds)|number|
 
 #### Response
 

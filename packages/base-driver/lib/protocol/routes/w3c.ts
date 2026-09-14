@@ -31,7 +31,7 @@ export const W3C_ROUTES = {
     POST: {
       command: 'timeouts',
       payloadParams: {
-        optional: ['type', 'ms', 'script', 'pageLoad', 'implicit'],
+        optional: ['type', 'ms', 'script', 'pageLoad', 'implicit', 'command'],
       },
     },
   },

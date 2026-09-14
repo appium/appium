@@ -32,7 +32,8 @@ exports[`Routes > ensure protocol consistency > should not change protocol betwe
           "ms",
           "script",
           "pageLoad",
-          "implicit"
+          "implicit",
+          "command"
         ]
       }
     }

@@ -21,6 +21,7 @@ interface CachedResponse {
   path: string;
   response: ReplayResponse | null;
   responseStateListener: EventEmitter | null;
+  pendingResponses: Set<Response>;
 }
 
 const IDEMPOTENT_RESPONSES = new LRUCache<string, CachedResponse>({
@@ -31,14 +32,13 @@ const IDEMPOTENT_RESPONSES = new LRUCache<string, CachedResponse>({
 const MONITORED_METHODS = ['POST', 'PATCH'];
 const IDEMPOTENCY_KEY_HEADER = 'x-idempotency-key';
 const MAX_CACHED_PAYLOAD_SIZE_BYTES = 1 * 1024 * 1024; // 1 MiB
-const RESPONSE_PRESERVERS = new WeakMap<Response, () => void>();
+const RESPONSE_PRESERVERS = new WeakMap<Response, () => () => boolean>();
 
-/** Preserve a keyed Create Session result independently of its original connection. */
-export function preserveIdempotentSessionResponse(res: Response): boolean {
+/** Preserve a keyed Create Session result and return a callback to discard it if no clients remain. */
+export function preserveIdempotentSessionResponse(res: Response): (() => boolean) | undefined {
   const preserve = RESPONSE_PRESERVERS.get(res);
   RESPONSE_PRESERVERS.delete(res);
-  preserve?.();
-  return Boolean(preserve);
+  return preserve?.();
 }
 
 /**
@@ -85,8 +85,12 @@ export async function handleIdempotency(req: Request, res: Response, next: NextF
     if (!responseStateListener) {
       return next();
     }
-    const onClose = () => responseStateListener.removeListener('ready', onReady);
+    const onClose = () => {
+      cached.pendingResponses.delete(res);
+      responseStateListener.removeListener('ready', onReady);
+    };
     const onReady = async (cachedResponse: ReplayResponse | null) => {
+      cached.pendingResponses.delete(res);
       res.removeListener('close', onClose);
       if (res.destroyed || !res.socket?.writable) {
         return;
@@ -102,6 +106,7 @@ export async function handleIdempotency(req: Request, res: Response, next: NextF
         next(err);
       }
     };
+    cached.pendingResponses.add(res);
     responseStateListener.once('ready', onReady);
     res.once('close', onClose);
   }
@@ -126,6 +131,7 @@ function cacheResponse(key: string, req: Request, res: Response): void {
     path: req.path,
     response: null,
     responseStateListener,
+    pendingResponses: new Set(),
   };
   IDEMPOTENT_RESPONSES.set(key, cached);
   const stopCapture = captureResponse(res.socket);
@@ -172,6 +178,17 @@ function cacheResponse(key: string, req: Request, res: Response): void {
           : null,
       );
       return result;
+    };
+    return () => {
+      if (
+        !completed &&
+        (res.destroyed || !res.socket?.writable) &&
+        ![...cached.pendingResponses].some((pending) => !pending.destroyed && pending.socket?.writable)
+      ) {
+        completeResponse(null, 'All clients disconnected before session creation finished');
+        return true;
+      }
+      return false;
     };
   });
   res.once('error', (e: Error) => completeSocketResponse(e.message));

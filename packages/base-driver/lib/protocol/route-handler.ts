@@ -55,7 +55,7 @@ function buildHandler(
   driver: Core<any>,
   isSessCmd: boolean,
 ): void {
-  const asyncHandler = async (req: Request, res: Response) => {
+  const asyncHandler = async (req: Request, res: Response, abandonIfDisconnected?: () => boolean) => {
     let httpResBody = {} as any;
     let httpStatus = 200;
     let newSessionId: string | undefined;
@@ -113,13 +113,18 @@ function buildHandler(
       [httpStatus, httpResBody] = buildErrorResponse(err, driver, sessionId || newSessionId);
     }
 
-    sendHandlerResponse(res, httpStatus, httpResBody, newSessionId, currentProtocol);
+    if (newSessionId && abandonIfDisconnected?.()) {
+      await deleteAbandonedSession(driver, newSessionId);
+    } else {
+      sendHandlerResponse(res, httpStatus, httpResBody, newSessionId, currentProtocol);
+    }
     return newSessionId;
   };
 
   const newSessionHandler = async (req: Request, res: Response) => {
-    if (preserveIdempotentSessionResponse(res)) {
-      return await asyncHandler(req, res);
+    const abandonIfDisconnected = preserveIdempotentSessionResponse(res);
+    if (abandonIfDisconnected) {
+      return await asyncHandler(req, res, abandonIfDisconnected);
     }
     const responseClosed = trackResponseClose(res);
     const newSessionId = await asyncHandler(req, res);

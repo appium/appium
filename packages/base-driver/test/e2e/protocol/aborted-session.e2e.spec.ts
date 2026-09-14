@@ -270,18 +270,20 @@ describe('Aborted session creation', function () {
     assert.equal(deleted.callCount, 0);
   });
 
-  it('should log a cleanup failure without crashing the server', async function () {
-    pauseCreation();
-    sandbox.stub(driver, 'deleteSession').rejects(new Error('Cleanup failed'));
-    const warned = whenWarned();
-    const creating = once(events, 'creating');
-    const abort = await startAbortedRequest();
-    await creating;
-    await abort();
-    events.emit('release');
-    assert.match(await warned, /Could not delete abandoned session.*Cleanup failed/);
-    assert.equal((await axios.get(`${baseUrl}/status`, {httpAgent})).status, 200);
-  });
+  for (const key of [undefined, randomUUID()]) {
+    it(`should log ${key ? 'keyed' : 'unkeyed'} cleanup failure without crashing the server`, async function () {
+      pauseCreation();
+      sandbox.stub(driver, 'deleteSession').rejects(new Error('Cleanup failed'));
+      const warned = whenWarned();
+      const creating = once(events, 'creating');
+      const abort = await startAbortedRequest(key);
+      await creating;
+      await abort();
+      events.emit('release');
+      assert.match(await warned, /Could not delete abandoned session.*Cleanup failed/);
+      assert.equal((await axios.get(`${baseUrl}/status`, {httpAgent})).status, 200);
+    });
+  }
 
   it('should replay a successful session response without creating another session', async function () {
     const key = randomUUID();
@@ -375,7 +377,9 @@ describe('Aborted session creation', function () {
     const abort = await startAbortedRequest(key);
     await creating;
     await abort();
+    const received = once(events, 'request');
     const retry = postSession(key);
+    await received;
     events.emit('release');
     const {data} = await retry;
     assert.ok(driver.sessionExists(data.value.sessionId));
@@ -405,26 +409,53 @@ describe('Aborted session creation', function () {
     assert.equal(creation.callCount, 1);
   });
 
-  it('should not start another session for a retry that also disconnected', async function () {
-    const key = randomUUID();
-    const creation = pauseCreation();
-    const creating = once(events, 'creating');
-    const abort = await startAbortedRequest(key);
-    await creating;
-    const abortRetry = await startAbortedRequest(key);
-    await abortRetry();
-    await abort();
-    const deleted = sandbox.spy(driver, 'deleteSession');
-    events.emit('release');
-    await axios.get(`${baseUrl}/status`, {httpAgent});
-    const [originalSessionId] = driver.sessions;
-    assert.ok(originalSessionId);
-    const response = await postSession(key);
-    assert.equal(creation.callCount, 1);
-    assert.equal(deleted.callCount, 0);
-    assert.deepEqual([...driver.sessions], [response.data.value.sessionId]);
-    assert.equal(response.data.value.sessionId, originalSessionId);
-  });
+  for (const survivor of ['original', 'retry']) {
+    it(`should keep the session for a connected ${survivor} after another retry disconnects`, async function () {
+      const key = randomUUID();
+      const creation = pauseCreation();
+      const creating = once(events, 'creating');
+      const original = survivor === 'original' ? postSession(key) : undefined;
+      const abort = original ? undefined : await startAbortedRequest(key);
+      await creating;
+      const received = once(events, 'request');
+      const response = original ?? postSession(key);
+      if (!original) {
+        await received;
+      }
+      const abortRetry = await startAbortedRequest(key);
+      await abortRetry();
+      await abort?.();
+      events.emit('release');
+      const {data} = await response;
+      assert.deepEqual([...driver.sessions], [data.value.sessionId]);
+      assert.equal(creation.callCount, 1);
+    });
+  }
+
+  for (const disconnectedRetry of [false, true]) {
+    it(`should delete an abandoned keyed session with ${disconnectedRetry ? 'a disconnected retry' : 'no retry'}`, async function () {
+      const key = randomUUID();
+      const creation = pauseCreation();
+      const creating = once(events, 'creating');
+      const abort = await startAbortedRequest(key);
+      await creating;
+      if (disconnectedRetry) {
+        const abortRetry = await startAbortedRequest(key);
+        await abortRetry();
+      }
+      await abort();
+      const deleted = whenSessionDeleted();
+      events.emit('release');
+      await deleted;
+      assert.equal(driver.sessions.size, 0);
+      assert.equal(creation.callCount, 1);
+      const abandonedId = (await creation.firstCall.returnValue)[0];
+      const response = await postSession(key);
+      assert.equal(creation.callCount, 2);
+      assert.notEqual(response.data.value.sessionId, abandonedId);
+      assert.deepEqual([...driver.sessions], [response.data.value.sessionId]);
+    });
+  }
 
   it('should deliver an oversized session response to waiting retries without repeating setup', async function () {
     const key = randomUUID();

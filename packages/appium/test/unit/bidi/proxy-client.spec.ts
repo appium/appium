@@ -4,7 +4,7 @@ import {after, before, describe, it} from 'node:test';
 
 import {WebSocketServer} from 'ws';
 
-import {BidiProxyClient} from '../../lib/bidi-proxy-client.js';
+import {BidiProxyClient} from '../../../lib/bidi/proxy-client.js';
 
 async function startUpstreamServer(): Promise<{wss: WebSocketServer; url: string}> {
   const wss = new WebSocketServer({port: 0, host: '127.0.0.1'});

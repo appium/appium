@@ -4,7 +4,7 @@ import {describe, it} from 'node:test';
 import type {AppiumLogger, BidiEventOrigin, BidiEventPayload} from '@appium/types';
 import WebSocket from 'ws';
 
-import {createBidiEventDispatcher} from '../../lib/bidi-commands.js';
+import {createBidiEventDispatcher} from '../../../lib/bidi/events.js';
 
 interface LoggedLine {
   level: 'debug' | 'warn';

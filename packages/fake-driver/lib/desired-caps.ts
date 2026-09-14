@@ -8,6 +8,9 @@ export const desiredCapConstraints = {
   runClock: {
     isBoolean: true,
   },
+  bidiProxyUrl: {
+    isString: true,
+  },
 } as const satisfies Constraints;
 
 export type FakeDriverConstraints = typeof desiredCapConstraints;

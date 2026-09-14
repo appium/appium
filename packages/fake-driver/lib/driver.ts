@@ -205,6 +205,7 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
     if (this.caps.runClock) {
       void this.startClock();
     }
+    this._bidiProxyUrl = this.caps.bidiProxyUrl ?? null;
     return [sessionId, caps];
   }
 

@@ -3,12 +3,16 @@ import os from 'node:os';
 import {promisify} from 'node:util';
 
 import type {ExtensionCore} from '@appium/base-driver';
-import {errors} from '@appium/base-driver';
+import {checkParams, errors} from '@appium/base-driver';
 import {util} from '@appium/support';
 import type {
+  BidiEventOrigin,
+  BidiEventPayload,
   BiDiResultData,
   ErrorBiDiCommandResponse,
   ExternalDriver,
+  IBidiCommands,
+  NextBidiEventCallback,
   Plugin,
   StringRecord,
   SuccessBiDiCommandResponse,
@@ -16,6 +20,7 @@ import type {
 import WebSocket from 'ws';
 
 import type {AppiumDriver} from './appium.js';
+import {BidiProxyClient} from './bidi-proxy-client.js';
 import {BIDI_BASE_PATH, BIDI_EVENT_NAME} from './constants.js';
 import {fetchInterfaces, isBroadcastIp, V4_BROADCAST_IP} from './helpers/network.js';
 import {capitalize} from './utils/index.js';
@@ -24,12 +29,12 @@ type ExtensionPlugin = Plugin & ExtensionCore;
 type AnyDriver = ExternalDriver | AppiumDriver;
 type SendData = (data: string | Buffer) => Promise<void>;
 type LogSocketError = (err: Error) => void;
+type BidiDispatch = (event: BidiEventPayload, origin: BidiEventOrigin) => Promise<void>;
 interface InitBiDiSocketResult {
   bidiHandlerDriver: AnyDriver;
   bidiHandlerPlugins: ExtensionPlugin[];
-  proxyClient: WebSocket | null;
+  bidiProxyClient: BidiProxyClient | null;
   send: SendData;
-  sendToProxy: SendData | null;
   logSocketErr: LogSocketError;
 }
 
@@ -38,6 +43,8 @@ const MAX_WS_CODE_VAL = 1015;
 const WS_FALLBACK_CODE = 1011; // server encountered an error while fulfilling request
 const BIDI_EVENTS_MAP: WeakMap<AnyDriver, Record<string, number>> = new WeakMap();
 const MAX_LOGGED_DATA_LENGTH = 300;
+const SESSION_SUBSCRIBE = 'session.subscribe';
+const SESSION_UNSUBSCRIBE = 'session.unsubscribe';
 
 /**
  * Clients cannot use broadcast addresses, like 0.0.0.0 or ::
@@ -64,22 +71,26 @@ export function determineBiDiHost(address: string): string {
 export function onBidiConnection(this: AppiumDriver, ws: WebSocket, req: IncomingMessage): void {
   try {
     const initBiDiSocketFunc: OmitThisParameter<typeof initBidiSocket> = initBidiSocket.bind(this);
-    const {bidiHandlerDriver, bidiHandlerPlugins, proxyClient, send, sendToProxy, logSocketErr} = initBiDiSocketFunc(
-      ws,
-      req,
-    );
+    const {bidiHandlerDriver, bidiHandlerPlugins, bidiProxyClient, send, logSocketErr} = initBiDiSocketFunc(ws, req);
 
     const initBidiSocketHandlersFunc: OmitThisParameter<typeof initBidiSocketHandlers> =
       initBidiSocketHandlers.bind(this);
-    initBidiSocketHandlersFunc(ws, proxyClient, send, sendToProxy, bidiHandlerDriver, bidiHandlerPlugins, logSocketErr);
-    if (proxyClient) {
+    initBidiSocketHandlersFunc(ws, bidiProxyClient, send, bidiHandlerDriver, bidiHandlerPlugins, logSocketErr);
+
+    // Build the event-interception chain once per connection, shared by driver/plugin-emitted
+    // events (below) and, when proxying, unsolicited pushes from the upstream server.
+    const eventLogCounts: Record<string, number> = BIDI_EVENTS_MAP.get(bidiHandlerDriver) ?? {};
+    BIDI_EVENTS_MAP.set(bidiHandlerDriver, eventLogCounts);
+    const dispatchBidiEvent = createBidiEventDispatcher(ws, bidiHandlerDriver, bidiHandlerPlugins, send, eventLogCounts);
+
+    if (bidiProxyClient) {
       const initBidiProxyHandlersFunc: OmitThisParameter<typeof initBidiProxyHandlers> =
         initBidiProxyHandlers.bind(bidiHandlerDriver);
-      initBidiProxyHandlersFunc(proxyClient, ws, send);
+      initBidiProxyHandlersFunc(bidiProxyClient, ws, dispatchBidiEvent);
     }
     const initBidiEventListenersFunc: OmitThisParameter<typeof initBidiEventListeners> =
       initBidiEventListeners.bind(this);
-    initBidiEventListenersFunc(ws, bidiHandlerDriver, bidiHandlerPlugins, send);
+    initBidiEventListenersFunc(ws, bidiHandlerDriver, bidiHandlerPlugins, dispatchBidiEvent);
   } catch (err) {
     this.log.error(err);
     try {
@@ -92,12 +103,15 @@ export function onBidiConnection(this: AppiumDriver, ws: WebSocket, req: Incomin
  * @param data
  * @param driver
  * @param plugins
+ * @param bidiProxyClient - when set, the driver is proxying bidi commands to an upstream server;
+ * the base (innermost) handler forwards through it instead of calling a local driver method.
  */
 export async function onBidiMessage(
   this: AppiumDriver,
   data: Buffer,
   driver: AnyDriver,
   plugins: ExtensionPlugin[],
+  bidiProxyClient: BidiProxyClient | null = null,
 ): Promise<SuccessBiDiCommandResponse | ErrorBiDiCommandResponse> {
   let resMessage: SuccessBiDiCommandResponse | ErrorBiDiCommandResponse;
   let id: number = 0;
@@ -119,7 +133,10 @@ export async function onBidiMessage(
     if (!params) {
       throw new errors.InvalidArgumentError(`Missing params for BiDi operation in '${dataTruncated}`);
     }
-    const executeWrappedCommand = wrapCommandWithPlugins(driver as ExtensionCore, plugins, method, params);
+    const baseHandler = bidiProxyClient
+      ? buildProxyBidiBaseHandler(driver as ExtensionCore, bidiProxyClient, method, params)
+      : undefined;
+    const executeWrappedCommand = wrapCommandWithPlugins(driver as ExtensionCore, plugins, method, params, baseHandler);
     const result = await executeWrappedCommand();
     resMessage = {
       id,
@@ -174,14 +191,14 @@ export function cleanupBidiSockets(this: AppiumDriver, sessionId: string): void 
   } catch {}
   delete this.bidiSockets[sessionId];
 
-  const proxyClient = this.bidiProxyClients[sessionId];
-  if (!proxyClient) {
+  const bidiProxyClient = this.bidiProxyClients[sessionId];
+  if (!bidiProxyClient) {
     return;
   }
   this.log.debug(`Also closing proxy connection to upstream bidi server`);
   try {
     // 1000 means normal closure, which seems correct when Appium is acting as the client
-    proxyClient.close(1000);
+    bidiProxyClient.close(1000);
   } catch {}
   delete this.bidiProxyClients[sessionId];
 }
@@ -191,9 +208,10 @@ function wrapCommandWithPlugins(
   plugins: ExtensionCore[],
   method: string,
   params: StringRecord,
+  baseHandler: () => Promise<BiDiResultData> = async () => await driver.executeBidiCommand(method, params),
 ): () => Promise<BiDiResultData> {
   const [moduleName, methodName] = method.split('.');
-  let next = async () => await driver.executeBidiCommand(method, params);
+  let next = baseHandler;
   for (const plugin of plugins.filter((p) => p.doesBidiCommandExist(moduleName, methodName))) {
     next = (
       (_next) => async () =>
@@ -201,6 +219,45 @@ function wrapCommandWithPlugins(
     )(next);
   }
   return next;
+}
+
+/**
+ * The base (innermost) bidi command handler used when the driver is proxying bidi commands to an
+ * upstream server. Unlike {@link ExtensionCore.executeBidiCommand}, this does not require a
+ * local handler method to exist for the command -- it forwards to the upstream server, and only
+ * validates params locally when the command is one Appium's canonical bidi command map (or the
+ * driver's own registered commands) recognizes. Unknown/vendor modules pass through
+ * permissively, so a real upstream implementation can support commands Appium has no static
+ * knowledge of.
+ */
+function buildProxyBidiBaseHandler(
+  driver: ExtensionCore & Partial<IBidiCommands>,
+  bidiProxyClient: BidiProxyClient,
+  method: string,
+  params: StringRecord,
+): () => Promise<BiDiResultData> {
+  return async () => {
+    const [moduleName, methodName] = method.split('.');
+    if (!moduleName || !methodName) {
+      throw new errors.UnknownCommandError(
+        `Did not receive a valid BiDi module and method name of the form moduleName.methodName. ` +
+          `Instead received '${moduleName}.${methodName}'`,
+      );
+    }
+    const known = driver.bidiCommands[moduleName]?.[methodName];
+    if (known?.params) {
+      checkParams(known.params, params, {ensureSessionArgs: false});
+    }
+    const result = await bidiProxyClient.executeCommand(method, params);
+    // Keep Appium's local bidiEventSubs bookkeeping in sync, since the event dispatcher's
+    // send-gate relies on it uniformly for both locally-emitted and proxied events.
+    if (method === SESSION_SUBSCRIBE && typeof driver.bidiSubscribe === 'function') {
+      await driver.bidiSubscribe(params.events, params.contexts);
+    } else if (method === SESSION_UNSUBSCRIBE && typeof driver.bidiUnsubscribe === 'function') {
+      await driver.bidiUnsubscribe(params.events, params.contexts);
+    }
+    return result;
+  };
 }
 
 // #region Private functions
@@ -232,7 +289,7 @@ function initBidiSocket(this: AppiumDriver, ws: WebSocket, req: IncomingMessage)
   // (if no session id is included in the bidi connection request)
 
   let bidiHandlerDriver: AnyDriver;
-  let proxyClient: WebSocket | null = null;
+  let bidiProxyClient: BidiProxyClient | null = null;
   const bidiHandlerPlugins: ExtensionPlugin[] = [];
   if (sessionMatch) {
     // If we found a session id, see if it matches an active session
@@ -255,6 +312,10 @@ function initBidiSocket(this: AppiumDriver, ws: WebSocket, req: IncomingMessage)
     }
     this.bidiSockets[sessionId].push(ws);
 
+    // Plugins get a chance to intercept bidi commands/events regardless of whether the driver
+    // handles them locally or proxies them to an upstream server.
+    bidiHandlerPlugins.push(...(this.pluginsForSession(sessionId) as ExtensionPlugin[]));
+
     const bidiProxyUrl = bidiHandlerDriver.bidiProxyUrl;
     if (bidiProxyUrl) {
       try {
@@ -266,14 +327,9 @@ function initBidiSocket(this: AppiumDriver, ws: WebSocket, req: IncomingMessage)
           {cause: e},
         );
       }
-      this.log.info(
-        `Bidi connection for ${driverName} will be proxied to ${bidiProxyUrl}. ` +
-          `Plugins will not handle bidi commands`,
-      );
-      proxyClient = new WebSocket(bidiProxyUrl);
-      this.bidiProxyClients[sessionId] = proxyClient;
-    } else {
-      bidiHandlerPlugins.push(...(this.pluginsForSession(sessionId) as ExtensionPlugin[]));
+      this.log.info(`Bidi connection for ${driverName} will be proxied to ${bidiProxyUrl}`);
+      bidiProxyClient = new BidiProxyClient(bidiProxyUrl, {log: bidiHandlerDriver.log});
+      this.bidiProxyClients[sessionId] = bidiProxyClient;
     }
   } else {
     this.log.info('Bidi websocket connection made to main server');
@@ -306,50 +362,67 @@ function initBidiSocket(this: AppiumDriver, ws: WebSocket, req: IncomingMessage)
   // Construct our send method for sending messages to the client
   const send: SendData = sendFactory(ws);
 
-  // Construct a conditional send method for proxying messages from the client to an upstream
-  // bidi socket server (e.g. on a browser)
-  const sendToProxy: SendData | null = proxyClient ? sendFactory(proxyClient) : null;
-
-  return {bidiHandlerDriver, bidiHandlerPlugins, proxyClient, send, sendToProxy, logSocketErr};
+  return {bidiHandlerDriver, bidiHandlerPlugins, bidiProxyClient, send, logSocketErr};
 }
 
 /**
- * Set up handlers on upstream bidi socket we are proxying to/from
+ * Set up handlers on the upstream bidi connection we are proxying to/from
  *
- * @param proxyClient - the websocket connection to/from the
+ * @param bidiProxyClient - the client wrapping the connection to/from the
  * upstream socket (the one we're proxying to/from)
  * @param ws - the websocket connection to/from the client
- * @param send - a method used to send data to the
- * client
+ * @param dispatchBidiEvent - the shared event-interception dispatcher for this connection
  */
-function initBidiProxyHandlers(this: AnyDriver, proxyClient: WebSocket, ws: WebSocket, send: SendData): void {
-  // Set up handlers for events that might come from the upstream bidi socket connection if
+function initBidiProxyHandlers(
+  this: AnyDriver,
+  bidiProxyClient: BidiProxyClient,
+  ws: WebSocket,
+  dispatchBidiEvent: BidiDispatch,
+): void {
+  // Set up handlers for messages that might come from the upstream bidi socket connection if
   // we're in proxy mode
   const driverLog = this.log;
 
-  // Here we're receiving a message from the upstream socket server. We want to pass it on to
-  // the client
-  proxyClient.on('message', send);
+  // Messages that don't correlate to a pending command (BiDi events, or anything else
+  // unsolicited) get parsed and routed through the same interception chain used for
+  // driver/plugin-emitted events.
+  bidiProxyClient.onUnsolicitedMessage((data) => {
+    let parsed: {method?: string; params?: StringRecord; context?: string};
+    try {
+      parsed = JSON.parse(data.toString());
+    } catch (err) {
+      driverLog.warn(`Could not parse unsolicited upstream BiDi message: ${(err as Error).message}`);
+      return;
+    }
+    if (!parsed.method) {
+      driverLog.warn(`Ignoring unsolicited upstream BiDi message without a method: ${util.truncateString(data.toString(), {length: MAX_LOGGED_DATA_LENGTH})}`);
+      return;
+    }
+    void dispatchBidiEvent(
+      {method: parsed.method, params: parsed.params ?? {}, context: parsed.context},
+      {type: 'proxy'},
+    );
+  });
 
   // If the upstream socket server closes the connection, should close the connection to the
   // client as well
-  proxyClient.on('close', (code, reason) => {
+  bidiProxyClient.onClose((code, reason) => {
     driverLog.debug(
       `Upstream bidi socket closed connection (code ${code}, reason: '${reason}'). ` +
         `Closing proxy connection to client`,
     );
-    const intCode: number = typeof code === 'number' ? (code as number) : parseInt(code, 10);
-    if (Number.isNaN(intCode) || intCode < MIN_WS_CODE_VAL || intCode > MAX_WS_CODE_VAL) {
+    let closeCode: number = code;
+    if (Number.isNaN(closeCode) || closeCode < MIN_WS_CODE_VAL || closeCode > MAX_WS_CODE_VAL) {
       driverLog.warn(
         `Received code ${code} from upstream socket, but this is not a valid ` +
           `websocket code. Rewriting to ${WS_FALLBACK_CODE} for ws compatibility`,
       );
-      code = WS_FALLBACK_CODE;
+      closeCode = WS_FALLBACK_CODE;
     }
-    ws.close(code, reason);
+    ws.close(closeCode, reason);
   });
 
-  proxyClient.on('error', (err) => {
+  bidiProxyClient.onError((err) => {
     driverLog.warn(`Got error on upstream bidi socket connection: ${err.message}`);
   });
 }
@@ -358,12 +431,10 @@ function initBidiProxyHandlers(this: AnyDriver, proxyClient: WebSocket, ws: WebS
  * Set up handlers on the bidi socket connection to the client
  *
  * @param ws - the websocket connection to/from the client
- * @param proxyClient - the websocket connection to/from the
+ * @param bidiProxyClient - the client wrapping the connection to/from the
  * upstream socket (the one we're proxying to/from, if we're proxying)
  * @param send - a method used to send data to the
  * client
- * @param sendToProxy - a method used to send data to the
- * upstream socket
  * @param bidiHandlerDriver - the driver
  * handling the bidi commands
  * @param bidiHandlerPlugins - plugins that might also handle bidi commands
@@ -372,9 +443,8 @@ function initBidiProxyHandlers(this: AnyDriver, proxyClient: WebSocket, ws: WebS
 function initBidiSocketHandlers(
   this: AppiumDriver,
   ws: WebSocket,
-  proxyClient: WebSocket | null,
+  bidiProxyClient: BidiProxyClient | null,
   send: SendData,
-  sendToProxy: SendData | null,
   bidiHandlerDriver: AnyDriver,
   bidiHandlerPlugins: ExtensionPlugin[],
   logSocketErr: LogSocketError,
@@ -389,17 +459,12 @@ function initBidiSocketHandlers(
 
   // Now set up handlers for the various events that might happen on the websocket connection
   // coming from the client
-  // First is incoming messages from the client
+  // First is incoming messages from the client. onBidiMessage itself decides (via
+  // bidiProxyClient) whether the base handler proxies the command upstream or executes it
+  // locally -- either way, plugins get a chance to intercept it first.
   ws.on('message', async (data: Buffer) => {
-    if (proxyClient && sendToProxy) {
-      // if we're meant to proxy to an upstream bidi socket, just do that
-      // TODO trying to determine how this proxying behaviour would interface with plugins is too
-      // complex for now, so just ignore plugins in this case
-      await sendToProxy(data.toString('utf8'));
-    } else {
-      const res = await this.onBidiMessage(data, bidiHandlerDriver, bidiHandlerPlugins);
-      await send(JSON.stringify(res));
-    }
+    const res = await this.onBidiMessage(data, bidiHandlerDriver, bidiHandlerPlugins, bidiProxyClient);
+    await send(JSON.stringify(res));
   });
 
   // Next consider if the client closes the socket connection on us
@@ -411,9 +476,9 @@ function initBidiSocketHandlers(
     driverLog.debug(`BiDi socket connection closed (code ${code}, reason: '${reason}')`);
 
     // If we're proxying, might as well close the upstream connection and clean it up
-    if (proxyClient) {
+    if (bidiProxyClient) {
       driverLog.debug('Also closing BiDi proxy socket connection');
-      proxyClient.close(code, reason);
+      bidiProxyClient.close(code, reason);
     }
 
     const eventLogCounts = BIDI_EVENTS_MAP.get(bidiHandlerDriver);
@@ -424,25 +489,103 @@ function initBidiSocketHandlers(
 }
 
 /**
- * Set up bidi event listeners
+ * Builds a single, per-connection BiDi event dispatcher shared by driver/plugin-emitted events
+ * (see {@link initBidiEventListeners}) and, when proxying, unsolicited pushes from the upstream
+ * server (see {@link initBidiProxyHandlers}). Every event -- regardless of origin -- folds
+ * through the same plugin `handleBidiEvent` chain (last-declared plugin runs first, mirroring
+ * {@link wrapCommandWithPlugins}'s command-chain ordering) before the driver's `bidiEventSubs`
+ * subscription gate decides whether it's actually sent to the client.
+ *
+ * Dispatched events are processed by a per-connection FIFO queue: `dispatch()` itself returns
+ * immediately (so callers, e.g. an `eventEmitter.emit`, are never blocked), but the internal
+ * fold+send work for each event is serialized, guaranteeing wire order matches emission order.
+ * A slow/blocking plugin `handleBidiEvent` implementation will therefore delay all subsequent
+ * BiDi events on this connection, including ones from other plugins/origins.
+ *
+ * @param ws - the websocket connection to/from the client
+ * @param bidiHandlerDriver - the driver handling the bidi commands
+ * @param bidiHandlerPlugins - plugins that might also handle bidi commands
+ * @param send - a method used to send data to the client
+ * @param eventLogCounts - per-driver debug-log-once counters, shared with the close handler's stats log
+ */
+export function createBidiEventDispatcher(
+  ws: WebSocket,
+  bidiHandlerDriver: AnyDriver,
+  bidiHandlerPlugins: ExtensionPlugin[],
+  send: SendData,
+  eventLogCounts: Record<string, number>,
+): BidiDispatch {
+  let queue: Promise<void> = Promise.resolve();
+
+  const terminal = async (event: BidiEventPayload): Promise<void> => {
+    if (ws.readyState !== WebSocket.OPEN) {
+      return;
+    }
+    const context = event.context || '';
+    const {method, params} = event;
+    const eventSubs = bidiHandlerDriver.bidiEventSubs[method];
+    if (!Array.isArray(eventSubs) || !eventSubs.includes(context)) {
+      return;
+    }
+    if (method in eventLogCounts) {
+      ++eventLogCounts[method];
+    } else {
+      bidiHandlerDriver.log.debug(
+        `<-- BIDI EVENT ${method} (context: '${context}', ` +
+          `params: ${util.truncateString(JSON.stringify(params), {length: MAX_LOGGED_DATA_LENGTH})}). ` +
+          `All further similar events won't be logged.`,
+      );
+      eventLogCounts[method] = 1;
+    }
+    await send(JSON.stringify({type: 'event', context, method, params}));
+  };
+
+  return function dispatch(event, origin) {
+    queue = queue.then(async () => {
+      let step: (ev: BidiEventPayload) => Promise<void> = terminal;
+      // last-declared plugin implementing handleBidiEvent is outermost/runs first, matching
+      // wrapCommandWithPlugins's command-chain ordering
+      for (const plugin of bidiHandlerPlugins) {
+        const handleBidiEvent = plugin.handleBidiEvent;
+        if (typeof handleBidiEvent !== 'function') {
+          continue;
+        }
+        const inner = step;
+        step = async (ev) => {
+          const next: NextBidiEventCallback = async (maybeEv) => inner(maybeEv ?? ev);
+          await handleBidiEvent.call(plugin, next, bidiHandlerDriver as ExternalDriver, ev, origin);
+        };
+      }
+      try {
+        await step(event);
+      } catch (err) {
+        bidiHandlerDriver.log.warn(
+          `Error while running a plugin's BiDi event interceptor for '${event.method}': ` +
+            `${err instanceof Error ? err.message : err}. Event was dropped.`,
+        );
+      }
+    });
+    return queue;
+  };
+}
+
+/**
+ * Set up bidi event listeners for driver- and plugin-emitted events, normalizing each into a
+ * {@link BidiEventPayload} and routing it through the shared `dispatchBidiEvent`.
  *
  * @param ws - the websocket connection to/from the client
  * @param bidiHandlerDriver - the driver
  * handling the bidi commands
- * @param send - a method used to send data to the
- * client
+ * @param bidiHandlerPlugins - plugins that might also handle bidi commands
+ * @param dispatchBidiEvent - the shared event-interception dispatcher for this connection
  */
 function initBidiEventListeners(
   this: AppiumDriver,
   ws: WebSocket,
   bidiHandlerDriver: AnyDriver,
   bidiHandlerPlugins: ExtensionPlugin[],
-  send: SendData,
+  dispatchBidiEvent: BidiDispatch,
 ): void {
-  // If the driver emits a bidi event that should maybe get sent to the client, check to make
-  // sure the client is subscribed and then pass it on
-  const eventLogCounts: Record<string, number> = BIDI_EVENTS_MAP.get(bidiHandlerDriver) ?? {};
-  BIDI_EVENTS_MAP.set(bidiHandlerDriver, eventLogCounts);
   const eventListenerFactory = (extType: 'driver' | 'plugin', ext: ExtensionCore) => {
     const eventListener = async ({
       context,
@@ -483,23 +626,9 @@ function initBidiEventListeners(
         return;
       }
 
-      const eventSubs = bidiHandlerDriver.bidiEventSubs[method];
-      if (Array.isArray(eventSubs) && eventSubs.includes(context)) {
-        if (method in eventLogCounts) {
-          ++eventLogCounts[method];
-        } else {
-          ext.log?.debug(
-            // some old plugins might not have the `log` property
-            `<-- BIDI EVENT ${method} (context: '${context}', ` +
-              `params: ${util.truncateString(JSON.stringify(params), {length: MAX_LOGGED_DATA_LENGTH})}). ` +
-              `All further similar events won't be logged.`,
-          );
-          eventLogCounts[method] = 1;
-        }
-        // now we can send the event onto the socket
-        const ev = {type: 'event', context, method, params};
-        await send(JSON.stringify(ev));
-      }
+      const origin: BidiEventOrigin =
+        extType === 'plugin' ? {type: 'plugin', pluginName: (ext as ExtensionPlugin).name} : {type: 'driver'};
+      await dispatchBidiEvent({method, params, context}, origin);
     };
     return eventListener;
   };

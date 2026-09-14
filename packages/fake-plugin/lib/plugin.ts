@@ -1,11 +1,14 @@
 import type {
   AppiumServer,
+  BidiEventOrigin,
+  BidiEventPayload,
   BidiModuleMap,
   ExecuteMethodMap,
   ExternalDriver,
   IIpcSubscription,
   IpcMessage,
   MethodMap,
+  NextBidiEventCallback,
 } from '@appium/types';
 import {BasePlugin} from 'appium/plugin.js';
 import {sleep} from 'asyncbox';
@@ -53,6 +56,9 @@ export class FakePlugin extends BasePlugin {
         params: {
           required: ['num1', 'num2'],
         },
+      },
+      emitVetoedEvent: {
+        command: 'emitVetoedEvent',
       },
     },
   };
@@ -158,6 +164,40 @@ export class FakePlugin extends BasePlugin {
       params: {},
     });
     return this.pluginThing;
+  }
+
+  async emitVetoedEvent(): Promise<void> {
+    this.eventEmitter.emit('bidiEvent', {
+      method: 'appium:fake.vetoedEvent',
+      params: {},
+    });
+  }
+
+  /**
+   * Demo/test-only BiDi event interceptor, gated by the `interceptBidiEvents` cliArg so the
+   * default (non-adopting) behavior stays a transparent passthrough: modifies driver-emitted
+   * `appium:clock.currentTime` events, vetoes `appium:fake.vetoedEvent` entirely, and passes
+   * everything else through unchanged.
+   */
+  async handleBidiEvent(
+    next: NextBidiEventCallback,
+    _driver: DriverLike,
+    event: BidiEventPayload,
+    origin: BidiEventOrigin,
+  ): Promise<void> {
+    if (!this.cliArgs.interceptBidiEvents) {
+      await next();
+      return;
+    }
+    if (event.method === 'appium:clock.currentTime' && origin.type === 'driver') {
+      await next({...event, params: {...event.params, intercepted: true}});
+      return;
+    }
+    if (event.method === 'appium:fake.vetoedEvent') {
+      // veto: don't call next()
+      return;
+    }
+    await next();
   }
 
   async setPluginThing(_next: () => Promise<unknown>, _driver: DriverLike, thing: unknown): Promise<void> {

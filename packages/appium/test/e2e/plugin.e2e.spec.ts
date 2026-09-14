@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import type {AddressInfo} from 'node:net';
 import {describe, it, before, after} from 'node:test';
 
 import {httpGet, httpPost} from '@appium/driver-test-support';
@@ -8,6 +9,7 @@ import type {ParsedArgs} from 'appium/types/index.js';
 import {sleep} from 'asyncbox';
 import type {Browser} from 'webdriverio';
 import {remote as wdio} from 'webdriverio';
+import {WebSocketServer} from 'ws';
 
 import {runExtensionCommand} from '../../lib/cli/extension.js';
 import {DRIVER_TYPE, PLUGIN_TYPE} from '../../lib/constants.js';
@@ -450,6 +452,168 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
           params: {num1: 2, num2: 3},
         });
         assert.strictEqual(result, 6);
+      });
+    });
+
+    describe('with a proxying driver', function () {
+      let driver: Browser | null;
+      const {setup, teardown} = createServer();
+      let upstreamServer: WebSocketServer;
+      let upstreamUrl: string;
+      let upstreamClosed: Promise<void>;
+
+      before(async function () {
+        const wss = new WebSocketServer({port: 0, host: '127.0.0.1'});
+        await new Promise<void>((resolve) => wss.once('listening', resolve));
+        const {port: upstreamPort} = wss.address() as AddressInfo;
+        upstreamUrl = `ws://127.0.0.1:${upstreamPort}`;
+        upstreamClosed = new Promise<void>((resolve) => {
+          wss.on('connection', (ws) => {
+            ws.on('close', () => resolve());
+            ws.on('message', (data) => {
+              const {id, method, params} = JSON.parse(data.toString());
+              switch (method) {
+                case 'session.subscribe':
+                case 'session.unsubscribe':
+                  ws.send(JSON.stringify({id, type: 'success', result: {}}));
+                  break;
+                case 'appium:fake.doSomeMath':
+                  ws.send(JSON.stringify({id, type: 'success', result: params.num1 + params.num2}));
+                  break;
+                case 'vendor.echo':
+                  ws.send(JSON.stringify({id, type: 'success', result: params}));
+                  break;
+                case 'vendor.triggerEvent':
+                  ws.send(JSON.stringify({id, type: 'success', result: {}}));
+                  ws.send(JSON.stringify({type: 'event', method: 'vendor.ping', params: {pong: true}}));
+                  break;
+                default:
+                  ws.send(
+                    JSON.stringify({
+                      id,
+                      type: 'error',
+                      error: 'unknown command',
+                      message: `no handler for ${method}`,
+                    }),
+                  );
+              }
+            });
+          });
+        });
+        upstreamServer = wss;
+        await setup();
+      });
+
+      // this 'after' block needs to come before 'serverSetup' so that the delete session happens
+      // before the server shutdown
+      after(async function () {
+        try {
+          await driver?.deleteSession();
+        } finally {
+          await teardown();
+          upstreamServer.close();
+        }
+      });
+
+      before(async function () {
+        const caps = {...wdOpts.capabilities, webSocketUrl: true, 'appium:bidiProxyUrl': upstreamUrl};
+        driver = await wdio({...wdOpts, capabilities: caps} as any);
+      });
+
+      it('should proxy a plugin-wrapped bidi command to the upstream server when next() is called', async function () {
+        const {result} = await (driver as any).send({
+          method: 'appium:fake.doSomeMath',
+          params: {num1: 2, num2: 3},
+        });
+        assert.strictEqual(result, 11);
+      });
+
+      it('should not invoke the upstream server if the plugin overrides and does not call next()', async function () {
+        const {result} = await (driver as any).send({
+          method: 'appium:fake.doSomeMath2',
+          params: {num1: 2, num2: 3},
+        });
+        assert.strictEqual(result, 6);
+      });
+
+      it('should permissively pass through an unrecognized/vendor bidi command', async function () {
+        const {result} = await (driver as any).send({
+          method: 'vendor.echo',
+          params: {value: 42},
+        });
+        assert.deepStrictEqual(result, {value: 42});
+      });
+
+      it('should deliver a proxied event once the client subscribes (dual bidiEventSubs bookkeeping)', async function () {
+        const collected: unknown[] = [];
+        (driver as any).on('vendor.ping', (ev: unknown) => collected.push(ev));
+
+        await (driver as any).sessionSubscribe({events: ['vendor.ping']});
+        await (driver as any).send({method: 'vendor.triggerEvent', params: {}});
+        await sleep(300);
+
+        assert.strictEqual(collected.length, 1);
+        assert.deepStrictEqual(collected[0], {pong: true});
+      });
+
+      it('should close the upstream connection when the session ends', async function () {
+        await driver?.deleteSession();
+        driver = null;
+        await upstreamClosed;
+      });
+    });
+
+    describe('BiDi event interception', function () {
+      let driver: Browser;
+      const {setup, teardown} = createServer();
+
+      before(async function () {
+        await setup({plugin: {fake: {interceptBidiEvents: true}}});
+      });
+      // this 'after' block needs to come before 'serverSetup' so that the delete session happens
+      // before the server shutdown
+      after(async function () {
+        try {
+          await driver?.deleteSession();
+        } finally {
+          await teardown();
+        }
+      });
+
+      before(async function () {
+        const caps = {...wdOpts.capabilities, webSocketUrl: true, 'appium:runClock': true};
+        driver = await wdio({...wdOpts, capabilities: caps} as any);
+      });
+
+      it('should let a plugin modify a driver-emitted event before it reaches the client', async function () {
+        // FakePlugin also emits its own 'appium:clock.currentTime' events (merged with the
+        // driver's, per the non-interception test above), and handleBidiEvent only modifies the
+        // driver-origin ones -- so we expect a mix, not every received event to carry the marker.
+        const collected: {time: number; intercepted?: boolean}[] = [];
+        (driver as any).on('appium:clock.currentTime', (ev: {time: number; intercepted?: boolean}) => {
+          collected.push(ev);
+        });
+
+        await (driver as any).sessionSubscribe({events: ['appium:clock.currentTime']});
+        await sleep(800);
+        await (driver as any).sessionUnsubscribe({events: ['appium:clock.currentTime']});
+
+        assert.ok(collected.length > 0);
+        assert.ok(collected.some((ev) => ev.intercepted === true));
+      });
+
+      it('should let a plugin veto an event so the client never receives it, despite being subscribed', async function () {
+        let received = 0;
+        (driver as any).on('appium:fake.vetoedEvent', () => {
+          received++;
+        });
+
+        await (driver as any).sessionSubscribe({events: ['appium:fake.vetoedEvent']});
+        await (driver as any).send({method: 'appium:fake.emitVetoedEvent', params: {}});
+        await (driver as any).send({method: 'appium:fake.emitVetoedEvent', params: {}});
+        await sleep(200);
+
+        assert.strictEqual(received, 0);
       });
     });
   });

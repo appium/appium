@@ -1,9 +1,10 @@
 import {logger, util} from '@appium/support';
-import type {Core, Driver, DriverMethodDef, MethodMap} from '@appium/types';
+import type {Constraints, Core, Driver, DriverMethodDef, MethodMap} from '@appium/types';
 import type {Application, Request, Response} from 'express';
 
 import type {BaseDriver} from '../basedriver/driver.js';
 import {DEFAULT_BASE_PATH, MAX_LOG_BODY_LENGTH, PROTOCOLS} from '../constants.js';
+import {preserveIdempotentSessionResponse} from '../express/idempotency.js';
 import type {RouteConfiguringFunction} from '../express/server.js';
 import {errorFromW3CJsonCode, errors, getResponseForW3CError, isErrorType} from './errors.js';
 import {ensureW3cResponse, formatResponseValue} from './helpers.js';
@@ -113,14 +114,61 @@ function buildHandler(
     }
 
     sendHandlerResponse(res, httpStatus, httpResBody, newSessionId, currentProtocol);
+    return newSessionId;
   };
+
+  const newSessionHandler = async (req: Request, res: Response) => {
+    if (preserveIdempotentSessionResponse(res)) {
+      return await asyncHandler(req, res);
+    }
+    const responseClosed = trackResponseClose(res);
+    const newSessionId = await asyncHandler(req, res);
+    const responseFinished = await responseClosed;
+    if (newSessionId && !responseFinished) {
+      await deleteAbandonedSession(driver, newSessionId);
+    }
+  };
+  const handler = spec.command === CREATE_SESSION_COMMAND ? newSessionHandler : asyncHandler;
   // add the method to the app
   const registerRoute = (app as Application & Record<string, (routePath: string, ...handlers: any[]) => void>)[
     method.toLowerCase()
   ].bind(app);
   registerRoute(path, (req: Request, res: Response) => {
-    void asyncHandler(req, res);
+    void handler(req, res);
   });
+}
+
+function trackResponseClose(res: Response): Promise<boolean> {
+  return new Promise<boolean>((resolve) => {
+    if (isResponseClosed(res)) {
+      resolve(res.writableFinished);
+      return;
+    }
+    // Sending after a disconnect can still set writableFinished, so snapshot it at close.
+    res.once('close', () => resolve(res.writableFinished));
+  });
+}
+
+function isResponseClosed(res: Response): boolean {
+  const socket = res.socket;
+  return res.closed || res.destroyed || res.writableFinished || !socket || socket.destroyed || !socket.writable;
+}
+
+async function deleteAbandonedSession(driver: Core<Constraints>, sessionId: string): Promise<void> {
+  const sessionLog = getLogger(driver, sessionId);
+  sessionLog.info(`Client disconnected before receiving session ${sessionId}. Deleting it`);
+  const warn = (error: unknown) => sessionLog.warn(`Could not delete abandoned session ${sessionId}: ${error}`);
+  try {
+    const result = await (driver as BaseDriver<Constraints>).executeCommand<{error?: unknown} | undefined>(
+      DELETE_SESSION_COMMAND,
+      sessionId,
+    );
+    if (result?.error) {
+      warn(result.error);
+    }
+  } catch (err) {
+    warn(err);
+  }
 }
 
 /**

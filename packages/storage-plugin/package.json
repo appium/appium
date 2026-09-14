@@ -58,11 +58,14 @@
     "lru-cache": "11.5.2",
     "ws": "8.21.3"
   },
+  "devDependencies": {
+    "@appium/types": "1.7.0"
+  },
   "peerDependencies": {
     "appium": "^3.0.0-beta.0"
   },
   "engines": {
-    "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
+    "node": "^22.22.2 || ^24.15.0 || >=26.0.0",
     "npm": ">=10"
   },
   "appium": {

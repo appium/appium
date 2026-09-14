@@ -4,10 +4,10 @@ import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
 import type {InitialOpts} from '@appium/types';
 import {createSandbox} from 'sinon';
 
-import {BaseDriver, errors} from '../../../lib';
+import {BaseDriver, errors} from '../../../lib/index.js';
 
 describe('timeout', function () {
-  let driver: BaseDriver<any, any, any, any, any, any>;
+  let driver: BaseDriver<any, any, any, any, any>;
   let implicitWaitSpy: sinon.SinonSpy;
   let sandbox: sinon.SinonSandbox;
 
@@ -81,8 +81,8 @@ describe('timeout', function () {
       assert.strictEqual(driver.implicitWaitMs, 42);
     });
     describe('with managed driver', function () {
-      let managedDriver1: BaseDriver<any, any, any, any, any, any>;
-      let managedDriver2: BaseDriver<any, any, any, any, any, any>;
+      let managedDriver1: BaseDriver<any, any, any, any, any>;
+      let managedDriver2: BaseDriver<any, any, any, any, any>;
       before(function () {
         managedDriver1 = new BaseDriver({} as InitialOpts);
         managedDriver2 = new BaseDriver({} as InitialOpts);
@@ -107,8 +107,8 @@ describe('timeout', function () {
       assert.strictEqual(driver.newCommandTimeoutMs, 42);
     });
     describe('with managed driver', function () {
-      let managedDriver1: BaseDriver<any, any, any, any, any, any>;
-      let managedDriver2: BaseDriver<any, any, any, any, any, any>;
+      let managedDriver1: BaseDriver<any, any, any, any, any>;
+      let managedDriver2: BaseDriver<any, any, any, any, any>;
       before(function () {
         managedDriver1 = new BaseDriver({} as InitialOpts);
         managedDriver2 = new BaseDriver({} as InitialOpts);

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {type DriverLike, FakePlugin as _FakePlugin} from '../../lib/plugin';
+import {type DriverLike, FakePlugin as _FakePlugin} from '../../lib/plugin.js';
 
 interface MockResponse {
   send: (body: string) => void;

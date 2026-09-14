@@ -1,5 +1,8 @@
 import type {Driver, MethodMap} from '@appium/types';
 
+export const LIST_DRIVER_COMMANDS_COMMAND = 'listCommands';
+export const LIST_DRIVER_EXTENSIONS_COMMAND = 'listExtensions';
+
 /**
  * Appium-specific routes: sessions, capabilities, settings, and command/extension
  * introspection. Device interaction routes live in {@link ./appium-device}.
@@ -23,10 +26,10 @@ export const APPIUM_ROUTES = {
     GET: {command: 'getSettings'},
   },
   '/session/:sessionId/appium/commands': {
-    GET: {command: 'listCommands'},
+    GET: {command: LIST_DRIVER_COMMANDS_COMMAND},
   },
   '/session/:sessionId/appium/extensions': {
-    GET: {command: 'listExtensions'},
+    GET: {command: LIST_DRIVER_EXTENSIONS_COMMAND},
   },
   '/session/:sessionId/appium/events': {
     POST: {command: 'getLogEvents', payloadParams: {optional: ['type']}},

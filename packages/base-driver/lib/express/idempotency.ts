@@ -6,7 +6,7 @@ import {util} from '@appium/support';
 import type {NextFunction, Request, Response} from 'express';
 import {LRUCache} from 'lru-cache';
 
-import {log} from './logger';
+import {log} from './logger.js';
 
 interface SessionResponse {
   statusCode: number;

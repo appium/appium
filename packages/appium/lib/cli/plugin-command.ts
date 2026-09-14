@@ -1,15 +1,15 @@
 import {console, util} from '@appium/support';
-import type {ExtMetadata, ExtRecord, InstallType} from 'appium/types';
+import type {ExtMetadata, ExtRecord, InstallType} from 'appium/types/index.js';
 
-import {KNOWN_PLUGINS} from '../constants';
-import {ExtensionCliCommand} from './extension-command';
+import {KNOWN_PLUGINS} from '../constants.js';
+import {ExtensionCliCommand} from './extension-command.js';
 import type {
   ExtensionArgs,
   ExtensionCommandOptions,
   ExtensionUpdateResult,
   PostInstallText,
   RunOutput,
-} from './extension-command';
+} from './extension-command.js';
 
 const REQ_PLUGIN_FIELDS = ['pluginName', 'mainClass'];
 type PluginInstallOpts = {plugin: string; installType: InstallType; packageName?: string};

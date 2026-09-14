@@ -3,7 +3,7 @@ import type {Server as HTTPServer} from 'node:http';
 import type {Express, Router} from 'express';
 import type {Server as WSServer} from 'ws';
 
-import type {ServerArgs} from './config';
+import type {ServerArgs} from './config.js';
 
 /**
  * Appium's slightly-modified {@linkcode HTTPServer http.Server}.

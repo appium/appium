@@ -1,17 +1,23 @@
 import assert from 'node:assert/strict';
 import {promises as fs} from 'node:fs';
-import {describe, it, beforeEach, afterEach, before} from 'node:test';
+import {describe, it, beforeEach, before, after, mock} from 'node:test';
 
 import type {DriverType, ExtensionType} from '@appium/types';
-import type {ExtManifest} from 'appium/types';
-import type {SinonSandbox} from 'sinon';
+import type {ExtManifest} from 'appium/types/index.js';
 
-import type {DriverConfig} from '../../../lib/extension/driver-config';
-import {Manifest} from '../../../lib/extension/manifest';
-import {resetSchema} from '../../../lib/schema';
-import {assertArrayIncludesDeep, resolveFixture, rewiremock} from '../../helpers';
-import {initMocks} from './mocks';
-import type {MockAppiumSupport, MockResolveFrom, Overrides} from './mocks';
+import type {Manifest} from '../../../lib/extension/manifest/manifest.js';
+import type {resetSchema as ResetSchemaFn} from '../../../lib/schema/index.js';
+import {assertArrayIncludesDeep, resolveFixture} from '../../helpers.js';
+import {applyExtensionMocks, initMocks, resetMockDefaults} from './mocks.js';
+import type {InitMocksResult} from './mocks.js';
+
+// `DriverConfig`/`Manifest` are re-imported dynamically (after mocks are registered, see
+// `applyExtensionMocks` in mocks.ts), so their constructor types can't come from a normal value
+// import; indexed access into the module's namespace type is the only way to spell them.
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+type DriverConfig = ReturnType<(typeof import('../../../lib/extension/driver-config.js'))['DriverConfig']['create']>;
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+type ManifestClass = (typeof import('../../../lib/extension/manifest/manifest.js'))['Manifest'];
 
 type ExtManifestWithSchema<ExtType extends ExtensionType> = ExtManifest<ExtType> & {
   schema: NonNullable<ExtManifest<ExtType>['schema']>;
@@ -26,26 +32,44 @@ interface DriverConfigConstructor {
 describe('DriverConfig', function () {
   let yamlFixture: string;
   let manifest: Manifest;
-  let sandbox: SinonSandbox;
-  let MockAppiumSupport: MockAppiumSupport;
-  let MockResolveFrom: MockResolveFrom;
+  let mocks: InitMocksResult;
+  let Manifest: ManifestClass;
+  let resetSchema: typeof ResetSchemaFn;
   let DriverConfig: DriverConfigConstructor;
+  let importCounter = 0;
 
+  // `t.mock.module()` registers once, against stable stub objects (see `resetMockDefaults`).
+  // `driver-config.js` is re-imported fresh every test below (its internal, non-cache-busted
+  // import of `extension-config.js` stays bound to a cached module instance across tests —
+  // but that instance was linked against these same stub *objects*, whose *behavior* each
+  // test reconfigures via `resetMockDefaults`/sinon, not by rebinding the module). The reason
+  // we still re-import here rather than once in `before()`: `DriverConfig` keeps its own
+  // WeakMap of Manifest -> DriverConfig, and re-importing gives each test a fresh one.
+  //
+  // `Manifest`/`resetSchema` are dynamically imported here too, rather than as static
+  // top-level imports: `manifest.ts` itself statically imports `extension-config.js`, and a
+  // *static* import of `Manifest` at the top of this file would resolve (and permanently bind
+  // `extension-config.js` to the real, unmocked `resolveFrom`/`@appium/support`) before this
+  // `before()` hook — and its `applyExtensionMocks()` call — ever runs.
   before(async function () {
     yamlFixture = await fs.readFile(resolveFixture('manifest', 'v3.yaml'), 'utf8');
+    mocks = initMocks();
+    applyExtensionMocks(mocks);
+    ({Manifest} = await import('../../../lib/extension/manifest/manifest.js'));
+    ({resetSchema} = await import('../../../lib/schema/index.js'));
   });
 
-  beforeEach(function () {
+  after(function () {
+    mock.reset();
+  });
+
+  beforeEach(async function () {
     manifest = Manifest.getInstance('/somewhere/');
-    let overrides: Overrides;
-    ({MockAppiumSupport, MockResolveFrom, overrides, sandbox} = initMocks());
-    MockAppiumSupport.fs.readFile.resolves(yamlFixture);
-    ({DriverConfig} = rewiremock.proxy(() => require('../../../lib/extension/driver-config'), overrides));
+    resetMockDefaults(mocks);
+    mocks.MockAppiumSupport.fs.readFile.resolves(yamlFixture);
+    const mod = await import(`../../../lib/extension/driver-config.js?t=${importCounter++}`);
+    ({DriverConfig} = mod);
     resetSchema();
-  });
-
-  afterEach(function () {
-    sandbox.restore();
   });
 
   describe('class method', function () {
@@ -116,8 +140,11 @@ describe('DriverConfig', function () {
       });
 
       describe('when provided no arguments', function () {
-        it('should throw', function () {
-          assert.throws(() => driverConfig.getConfigProblems());
+        it('should not throw, and should return a problem for both platformNames and automationName', function () {
+          assert.deepStrictEqual(driverConfig.getConfigProblems(), [
+            {err: 'Missing or incorrect supported platformNames list.', val: undefined},
+            {err: 'Missing or incorrect automationName', val: undefined},
+          ]);
         });
       });
 
@@ -177,6 +204,40 @@ describe('DriverConfig', function () {
             });
           });
         });
+
+        describe('when two unrelated entries both lack `automationName`', function () {
+          it('should not flag them as duplicates of each other', function () {
+            driverConfig.getConfigProblems({platformNames: ['a']});
+            const problems = driverConfig.getConfigProblems({platformNames: ['b']});
+            assert.ok(
+              !problems.some(
+                (problem: any) => problem.err === 'Multiple drivers claim support for the same automationName',
+              ),
+            );
+          });
+        });
+      });
+
+      describe('when the extension data is not an object at all (e.g. a corrupted manifest entry)', function () {
+        it('should return a problem for both platformNames and automationName', function () {
+          assert.deepStrictEqual(driverConfig.getConfigProblems('garbage'), [
+            {err: 'Missing or incorrect supported platformNames list.', val: undefined},
+            {err: 'Missing or incorrect automationName', val: undefined},
+          ]);
+        });
+      });
+
+      describe('when the extension data is `null` (e.g. an empty YAML value for a manifest entry)', function () {
+        it('should not throw', function () {
+          assert.doesNotThrow(() => driverConfig.getConfigProblems(null));
+        });
+
+        it('should return a problem for both platformNames and automationName', function () {
+          assert.deepStrictEqual(driverConfig.getConfigProblems(null), [
+            {err: 'Missing or incorrect supported platformNames list.', val: undefined},
+            {err: 'Missing or incorrect automationName', val: undefined},
+          ]);
+        });
       });
     });
 
@@ -224,7 +285,7 @@ describe('DriverConfig', function () {
 
           describe('when the property as a path is found', function () {
             beforeEach(function () {
-              MockResolveFrom.resolves(resolveFixture('driver-schema.js'));
+              mocks.MockResolveFrom.resolves(resolveFixture('driver-schema.js'));
             });
 
             it('should return an empty array', async function () {
@@ -260,7 +321,7 @@ describe('DriverConfig', function () {
           installType: 'npm',
           installPath: '/somewhere',
         };
-        MockResolveFrom.resolves(resolveFixture('driver-schema.js'));
+        mocks.MockResolveFrom.resolves(resolveFixture('driver-schema.js'));
         driverConfig = DriverConfig.create(manifest);
       });
 
@@ -286,7 +347,7 @@ describe('DriverConfig', function () {
           await driverConfig.readExtensionSchema(extName, extData);
 
           // we don't have access to the schema registration cache directly, so this is as close as we can get.
-          assert.strictEqual(MockResolveFrom.calledOnce, true);
+          assert.strictEqual(mocks.MockResolveFrom.calledOnce, true);
         });
       });
     });

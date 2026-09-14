@@ -38,12 +38,6 @@ export const AppiumConfigJsonSchema = {
             },
           ],
         },
-        'allow-cors': {
-          description: 'Whether the Appium server should allow web browser connections from any host',
-          title: 'allow-cors config',
-          type: 'boolean',
-          default: false,
-        },
         'allow-insecure': {
           appiumCliTransformer: 'csv',
           default: [],
@@ -161,7 +155,7 @@ export const AppiumConfigJsonSchema = {
         },
         'log-level': {
           appiumCliDest: 'loglevel',
-          default: 'debug',
+          default: 'info',
           description: 'Log level (console[:file])',
           enum: [
             'info',
@@ -231,13 +225,6 @@ export const AppiumConfigJsonSchema = {
           description: 'Skip various permission checks on the server startup if set to true',
           title: 'no-perms-check config',
           type: 'boolean',
-        },
-        nodeconfig: {
-          $comment: 'Selenium Grid 3 is unmaintained and Selenium Grid 4 no longer supports this file.',
-          description:
-            'Path to configuration JSON file to register Appium as a node with Selenium Grid 3; otherwise the configuration itself',
-          title: 'nodeconfig config',
-          type: 'object',
         },
         plugin: {
           description: 'Plugin-specific configuration. Keys should correspond to plugin package names',

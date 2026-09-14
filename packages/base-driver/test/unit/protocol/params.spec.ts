@@ -1,0 +1,123 @@
+import assert from 'node:assert/strict';
+import {describe, it} from 'node:test';
+
+import {checkParams} from '../../../lib/protocol/params.js';
+
+describe('Params', function () {
+  describe('checkParams', function () {
+    it('should pass if no params are needed, but some are given', function () {
+      const args = checkParams(
+        {},
+        {
+          foo: 'foo',
+          bar: 'bar',
+          baz: 'baz',
+        },
+      );
+      assert.deepStrictEqual(args, {});
+    });
+
+    it('should preserve session id', function () {
+      const args = checkParams(
+        {
+          optional: ['bar', 'baz'],
+        },
+        {
+          sessionId: 'sessionId',
+          id: 'id',
+          bar: 'bar',
+        },
+      );
+      assert.deepStrictEqual(args, {
+        sessionId: 'sessionId',
+        id: 'id',
+        bar: 'bar',
+      });
+    });
+
+    it('should drop session/element id when ensureSessionArgs is false (e.g. bidi commands)', function () {
+      const args = checkParams(
+        {
+          optional: ['bar'],
+        },
+        {
+          sessionId: 'sessionId',
+          id: 'id',
+          bar: 'bar',
+        },
+        {ensureSessionArgs: false},
+      );
+      assert.deepStrictEqual(args, {
+        bar: 'bar',
+      });
+    });
+
+    it('should pass if no required params are needed', function () {
+      const args = checkParams(
+        {
+          optional: ['bar', 'baz'],
+        },
+        {
+          foo: 'foo',
+          bar: 'bar',
+          baz: 'baz',
+        },
+      );
+      assert.deepStrictEqual(args, {
+        bar: 'bar',
+        baz: 'baz',
+      });
+    });
+
+    it('should drop unknown params', function () {
+      const args = checkParams(
+        {
+          required: ['foo'],
+          optional: ['bar'],
+        },
+        {
+          foo: 'foo',
+          bar: 'bar',
+          baz: 'baz',
+        },
+      );
+      assert.deepStrictEqual(args, {
+        foo: 'foo',
+        bar: 'bar',
+      });
+    });
+
+    it('should fail if required params are missing', function () {
+      assert.throws(() => {
+        checkParams(
+          {
+            required: ['foo'],
+            optional: ['bar'],
+          },
+          {
+            bar: 'bar',
+            baz: 'baz',
+          },
+        );
+      });
+    });
+
+    it('should pass if a set of required params is matched', function () {
+      const args = checkParams(
+        {
+          required: [['foo'], ['bar']],
+          optional: ['baz'],
+        },
+        {
+          foo: 'foo',
+          bar: 'bar',
+          baz: 'baz',
+        },
+      );
+      assert.deepStrictEqual(args, {
+        foo: 'foo',
+        baz: 'baz',
+      });
+    });
+  });
+});

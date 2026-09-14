@@ -9,25 +9,58 @@ import {
   type DefaultDeleteSessionResult,
   type Driver,
   type DriverCaps,
-  type InitialOpts,
-  type LegacyCreateSessionArgs,
+  type LogDefRecord,
   type ServerArgs,
   type SessionCapabilities,
-  type SingularSessionData,
   type StringRecord,
   type W3CDriverCaps,
 } from '@appium/types';
 import type AsyncLock from 'async-lock';
 
-import {fixCaps, isW3cCaps} from '../helpers/capabilities';
-import {resolveExecuteExtensionName} from '../helpers/extension-command-name';
-import {getLevenshteinSuggestion} from '../helpers/levenshtein-match';
-import {calcSignature} from '../helpers/session';
-import {DELETE_SESSION_COMMAND, determineProtocol, errors} from '../protocol';
-import {mergePlainObjects} from '../utils';
-import {processCapabilities, validateCaps} from './capabilities';
-import {DriverCore} from './core';
-import * as helpers from './helpers';
+import {fixCaps, isW3cCaps} from '../helpers/capabilities.js';
+import {resolveExecuteExtensionName} from '../helpers/extension-command-name.js';
+import {getLevenshteinSuggestion} from '../helpers/levenshtein-match.js';
+import {calcSignature} from '../helpers/session.js';
+import {DELETE_SESSION_COMMAND, errors} from '../protocol/index.js';
+import {mergePlainObjects} from '../utils.js';
+import {processCapabilities, validateCaps} from './capabilities.js';
+import {bidiStatus, bidiSubscribe, bidiUnsubscribe} from './commands/bidi.js';
+import {getLogEvents, logCustomEvent} from './commands/event.js';
+import {executeMethod} from './commands/execute.js';
+import {
+  findElement,
+  findElementFromElement,
+  findElements,
+  findElementsFromElement,
+  findElOrEls,
+  findElOrElsWithProcessing,
+  getPageSource,
+} from './commands/find.js';
+import {getLog, getLogTypes} from './commands/log.js';
+import {
+  getTimeouts,
+  implicitWaitForCondition,
+  implicitWaitW3C,
+  newCommandTimeout,
+  pageLoadTimeoutW3C,
+  parseTimeoutArgument,
+  scriptTimeoutW3C,
+  setImplicitWait,
+  setNewCommandTimeout,
+  timeouts,
+} from './commands/timeout.js';
+// Bare re-imports so `declare module '../driver.js'` augmentations in the command modules
+// (which add their methods to `BaseDriver`'s type) reach downstream consumers' `driver.d.ts`
+// import graph — the named imports above alone aren't part of `BaseDriver`'s emitted type
+// surface, so `tsc` would otherwise drop them from the declaration output.
+import './commands/bidi.js';
+import './commands/event.js';
+import './commands/execute.js';
+import './commands/find.js';
+import './commands/log.js';
+import './commands/timeout.js';
+import {DriverCore} from './core.js';
+import * as helpers from './helpers/index.js';
 
 type CommandInvoker<C extends Constraints> = BaseDriver<C> & Record<string, ((...args: any[]) => any) | undefined>;
 
@@ -43,26 +76,19 @@ export class BaseDriver<
   Settings extends StringRecord = StringRecord,
   CreateResult = DefaultCreateSessionResult<C>,
   DeleteResult = DefaultDeleteSessionResult,
-  SessionData extends StringRecord = StringRecord,
 >
   extends DriverCore<C, Settings>
-  implements Driver<C, CArgs, Settings, CreateResult, DeleteResult, SessionData>
+  implements Driver<C, CArgs, Settings, CreateResult, DeleteResult>
 {
-  cliArgs: CArgs & ServerArgs;
-  caps: DriverCaps<C>;
+  cliArgs: CArgs & ServerArgs = {} as CArgs & ServerArgs;
+  caps: DriverCaps<C> = {} as DriverCaps<C>;
   originalCaps!: W3CDriverCaps<C>;
   desiredCapConstraints!: C;
   server?: AppiumServer;
   serverHost?: string;
   serverPort?: number;
   serverPath?: string;
-
-  constructor(opts: InitialOpts, shouldValidateCaps = true) {
-    super(opts, shouldValidateCaps);
-
-    this.caps = {} as DriverCaps<C>;
-    this.cliArgs = {} as CArgs & ServerArgs;
-  }
+  supportedLogTypes: Readonly<LogDefRecord> = {};
 
   /**
    * Contains the base constraints plus whatever the subclass wants to add.
@@ -81,15 +107,13 @@ export class BaseDriver<
    * This is the main command handler for the driver. It wraps command
    * execution with timeout logic, checking that we have a valid session,
    * and ensuring that we execute commands one at a time. This method is called
-   * by MJSONWP's express router.
+   * by the WebDriver protocol's express router.
    */
   async executeCommand<T = unknown>(cmd: string, ...args: any[]): Promise<T> {
     // get start time for this command, and log in special cases
     const startTime = Date.now();
 
     if (cmd === 'createSession') {
-      // If creating a session determine if W3C or MJSONWP protocol was requested and remember the choice
-      this.protocol = determineProtocol(args);
       this.logEvent(EVENT_SESSION_INIT);
     } else if (cmd === DELETE_SESSION_COMMAND) {
       this.logEvent(EVENT_SESSION_QUIT_START);
@@ -186,6 +210,16 @@ export class BaseDriver<
     return res;
   }
 
+  /**
+   * A helper method to modify the command name before it's logged.
+   *
+   * Useful for resolving generic commands like 'execute' to a more specific
+   * name based on arguments (e.g., identifying custom extensions).
+   *
+   * @param cmd - The original command name
+   * @param args - Arguments passed to the command
+   * @returns A potentially updated command name
+   */
   clarifyCommandName(cmd: string, args: string[]): string {
     if (cmd === 'execute') {
       const firstArg = args?.[0];
@@ -197,7 +231,15 @@ export class BaseDriver<
     return cmd;
   }
 
-  async startUnexpectedShutdown(err: Error = new errors.NoSuchDriverError('The driver was unexpectedly shut down!')) {
+  /**
+   * Signify to any owning processes that this driver encountered an error which should cause the
+   * session to terminate immediately (for example an upstream service failed)
+   *
+   * @param err - the Error object which is causing the shutdown
+   */
+  async startUnexpectedShutdown(
+    err: Error = new errors.NoSuchDriverError('The driver was unexpectedly shut down!'),
+  ): Promise<void> {
     this.eventEmitter.emit(ON_UNEXPECTED_SHUTDOWN_EVENT, err); // allow others to listen for this
     this.shutdownUnexpectedly = true;
     try {
@@ -209,12 +251,18 @@ export class BaseDriver<
     }
   }
 
-  async startNewCommandTimeout() {
+  /**
+   * Start the timer for the New Command Timeout, which when it runs out, will stop the current
+   * session
+   */
+  async startNewCommandTimeout(): Promise<void> {
     // make sure there are no rogue timeouts
     await this.clearNewCommandTimeout();
 
     // if command timeout is 0, it is disabled
-    if (!this.newCommandTimeoutMs) return; // eslint-disable-line curly
+    if (!this.newCommandTimeoutMs) {
+      return;
+    }
 
     this.noCommandTimer = setTimeout(async () => {
       this.log.warn(`Shutting down because we waited ` + `${this.newCommandTimeoutMs / 1000.0} seconds for a command`);
@@ -227,40 +275,20 @@ export class BaseDriver<
     }, this.newCommandTimeoutMs);
   }
 
-  assignServer(server: AppiumServer, host: string, port: number, path: string) {
+  /**
+   * A helper function used to assign server information to the driver instance so the driver knows
+   * where the server is Running
+   *
+   * @param server - the server object
+   * @param host - the server hostname
+   * @param port - the server port
+   * @param path - the server base url
+   */
+  assignServer(server: AppiumServer, host: string, port: number, path: string): void {
     this.server = server;
     this.serverHost = host;
     this.serverPort = port;
     this.serverPath = path;
-  }
-
-  /*
-   * Restart the session with the original caps,
-   * preserving the timeout config.
-   */
-  async reset() {
-    this.log.debug('Resetting app mid-session');
-    this.log.debug('Running generic full reset');
-
-    // preserving state
-    const currentConfig = {
-      implicitWaitMs: this.implicitWaitMs,
-      newCommandTimeoutMs: this.newCommandTimeoutMs,
-      sessionId: this.sessionId,
-      shutdownUnexpectedly: this.shutdownUnexpectedly,
-    };
-
-    try {
-      if (this.sessionId !== null) {
-        await this.deleteSession(this.sessionId);
-      }
-      this.log.debug('Restarting app');
-      await this.createSession(this.originalCaps);
-    } finally {
-      // always restore state.
-      Object.assign(this, currentConfig);
-    }
-    await this.clearNewCommandTimeout();
   }
 
   /**
@@ -268,24 +296,14 @@ export class BaseDriver<
    *
    * @param w3cCapabilities - the new session capabilities in W3C format
    */
-  async createSession(w3cCapabilities: W3CDriverCaps<C>): Promise<CreateResult>;
-  /**
-   * @deprecated Historically the first three arguments were reserved for JSONWP capabilities.
-   * Appium 2 dropped support for that protocol; these positions are now intended to carry the
-   * same W3C capabilities value, and if they differ, which one wins is unspecified. Use the
-   * single-argument overload of {@linkcode createSession} instead. The `driverData` parameter is
-   * also deprecated; use {@linkcode IAppiumIpc} for cross-session coordination instead.
-   */
-  async createSession(...legacyArgs: LegacyCreateSessionArgs<C>): Promise<CreateResult>;
-  async createSession(...legacyArgs: LegacyCreateSessionArgs<C>): Promise<CreateResult> {
-    const [w3cCapabilities1, w3cCapabilities2, w3cCapabilities] = legacyArgs;
+  async createSession(w3cCapabilities: W3CDriverCaps<C>): Promise<CreateResult> {
     if (this.sessionId !== null) {
       throw new errors.SessionNotCreatedError('Cannot create a new session while one is in progress');
     }
 
     this.log.debug();
 
-    const originalCaps = structuredClone([w3cCapabilities, w3cCapabilities1, w3cCapabilities2].find(isW3cCaps));
+    const originalCaps = isW3cCaps(w3cCapabilities) ? structuredClone(w3cCapabilities) : undefined;
     if (!originalCaps) {
       throw new errors.SessionNotCreatedError(
         'Appium only supports W3C-style capability objects. ' +
@@ -346,7 +364,7 @@ export class BaseDriver<
       this.newCommandTimeoutMs = (this.caps.newCommandTimeout as number) * 1000;
     }
 
-    this._log.prefix = helpers.generateDriverLogPrefix(this);
+    this.log.prefix = helpers.generateDriverLogPrefix(this);
 
     this.log.updateAsyncContext({
       sessionId: this.sessionId,
@@ -359,18 +377,6 @@ export class BaseDriver<
   }
 
   /**
-   * Returns capabilities for the session and event history (if applicable)
-   * @deprecated Use {@linkcode getAppiumSessionCapabilities} instead for getting the capabilities.
-   * Use {@linkcode EventCommands.getLogEvents} instead to get the event history.
-   */
-  async getSession() {
-    return (this.caps.eventTimings ? {...this.caps, events: this.eventHistory} : this.caps) as SingularSessionData<
-      C,
-      SessionData
-    >;
-  }
-
-  /**
    * Returns capabilities for the session
    */
   async getAppiumSessionCapabilities(): Promise<SessionCapabilities<C>> {
@@ -379,9 +385,12 @@ export class BaseDriver<
 
   /**
    * Stop the current automation session.
+   * @see {@link https://w3c.github.io/webdriver/#delete-session}
+   *
+   * @param sessionId - the id of the session that is to be deleted
    */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async deleteSession(sessionId?: string | null) {
+  async deleteSession(sessionId?: string | null): Promise<void> {
+    void sessionId;
     await this.clearNewCommandTimeout();
     if (this.isCommandsQueueEnabled && this.commandsQueueGuard.isBusy()) {
       // simple hack to release pending commands if they exist
@@ -394,7 +403,12 @@ export class BaseDriver<
     this.sessionId = null;
   }
 
-  logExtraCaps(caps: Capabilities<C>) {
+  /**
+   * A helper function to log unrecognized capabilities to the console
+   *
+   * @param caps - the capabilities
+   */
+  logExtraCaps(caps: Capabilities<C>): void {
     const knownCaps = Object.keys(this._desiredCapConstraints);
     const knownCapsSet = new Set(knownCaps);
     const extraCaps = Object.keys(caps).filter((cap) => !knownCapsSet.has(cap));
@@ -407,6 +421,13 @@ export class BaseDriver<
     }
   }
 
+  /**
+   * Validate the capabilities used to start a session
+   *
+   * @param caps - the capabilities
+   *
+   * @returns Whether or not the capabilities are valid
+   */
   validateDesiredCaps(caps: any): caps is DriverCaps<C> {
     if (!this.shouldValidateCaps) {
       return true;
@@ -429,14 +450,25 @@ export class BaseDriver<
     return true;
   }
 
-  async updateSettings(newSettings: Settings) {
+  /**
+   * Update the session's settings dictionary with a new settings object
+   *
+   * @param newSettings - A key-value map of setting names to values. Settings not named in the map
+   * will not have their value adjusted.
+   */
+  async updateSettings(newSettings: Settings): Promise<void> {
     if (!this.settings) {
       throw this.log.errorWithException('Cannot update settings; settings object not found');
     }
     return await this.settings.update(newSettings);
   }
 
-  async getSettings() {
+  /**
+   * Get the current settings for the session
+   *
+   * @returns The settings object
+   */
+  async getSettings(): Promise<Settings> {
     if (!this.settings) {
       throw this.log.errorWithException('Cannot get settings; settings object not found');
     }
@@ -444,6 +476,41 @@ export class BaseDriver<
   }
 }
 
-export * from './commands';
+Object.assign(BaseDriver.prototype, {
+  // bidi
+  bidiSubscribe,
+  bidiUnsubscribe,
+  bidiStatus,
 
-export default BaseDriver;
+  // event
+  logCustomEvent,
+  getLogEvents,
+
+  // execute
+  executeMethod,
+
+  // find
+  findElement,
+  findElements,
+  findElementFromElement,
+  findElementsFromElement,
+  findElOrEls,
+  getPageSource,
+  findElOrElsWithProcessing,
+
+  // log
+  getLogTypes,
+  getLog,
+
+  // timeout
+  timeouts,
+  getTimeouts,
+  implicitWaitW3C,
+  pageLoadTimeoutW3C,
+  scriptTimeoutW3C,
+  newCommandTimeout,
+  setImplicitWait,
+  setNewCommandTimeout,
+  implicitWaitForCondition,
+  parseTimeoutArgument,
+});

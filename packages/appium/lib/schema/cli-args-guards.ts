@@ -8,9 +8,9 @@ import type {
   CliCommandSetupSubcommand,
   CliExtensionCommand,
   CliExtensionSubcommand,
-} from 'appium/types';
+} from 'appium/types/index.js';
 
-import {DRIVER_TYPE, PLUGIN_TYPE, SERVER_SUBCOMMAND, SETUP_SUBCOMMAND} from '../constants';
+import {DRIVER_TYPE, PLUGIN_TYPE, SERVER_SUBCOMMAND, SETUP_SUBCOMMAND} from '../constants.js';
 
 type AnyArgs = Args<CliCommand, CliExtensionSubcommand | CliCommandSetupSubcommand | void>;
 

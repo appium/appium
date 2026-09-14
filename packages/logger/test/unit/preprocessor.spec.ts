@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {describe, it, beforeEach} from 'node:test';
 
-import {SecureValuesPreprocessor} from '../../lib/secure-values-preprocessor';
+import {SecureValuesPreprocessor} from '../../lib/secure-values-preprocessor.js';
 
 describe('Log Internals', function () {
   let preprocessor: SecureValuesPreprocessor;

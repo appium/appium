@@ -1,5 +1,3 @@
-'use strict';
-
 // @ts-check
 
 /**
@@ -7,8 +5,6 @@
  *
  * @see https://npm.im/@appium/base-driver
  * @example
- * const { BaseDriver, errors } = require('appium/driver');
+ * import { BaseDriver, errors } from 'appium/driver.js';
  */
-
-/** @type {import('@appium/base-driver')} */
-module.exports = require('@appium/base-driver');
+export * from '@appium/base-driver';

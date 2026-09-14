@@ -24,25 +24,6 @@ export default [
   },
   {
     argSpec: {
-      arg: 'allow-cors',
-      defaultValue: false,
-      dest: 'allowCors',
-      extName: undefined,
-      extType: undefined,
-      name: 'allow-cors',
-      rawDest: 'allowCors',
-      ref: 'appium.json#/properties/server/properties/allow-cors',
-    },
-    schema: {
-      default: false,
-      description:
-        'Whether the Appium server should allow web browser connections from any host',
-      title: 'allow-cors config',
-      type: 'boolean',
-    },
-  },
-  {
-    argSpec: {
       arg: 'allow-insecure',
       defaultValue: [],
       dest: 'allowInsecure',
@@ -263,7 +244,7 @@ export default [
   {
     argSpec: {
       arg: 'log-level',
-      defaultValue: 'debug',
+      defaultValue: 'info',
       dest: 'loglevel',
       extName: undefined,
       extType: undefined,
@@ -273,7 +254,7 @@ export default [
     },
     schema: {
       appiumCliDest: 'loglevel',
-      default: 'debug',
+      default: 'info',
       description: 'Log level (console[:file])',
       enum: [
         'info',
@@ -372,26 +353,6 @@ export default [
       description: 'Do not check that needed files are readable and/or writable',
       title: 'no-perms-check config',
       type: 'boolean',
-    },
-  },
-  {
-    argSpec: {
-      arg: 'nodeconfig',
-      defaultValue: undefined,
-      dest: 'nodeconfig',
-      extName: undefined,
-      extType: undefined,
-      name: 'nodeconfig',
-      rawDest: 'nodeconfig',
-      ref: 'appium.json#/properties/server/properties/nodeconfig',
-    },
-    schema: {
-      $comment:
-        'Selenium Grid 3 is unmaintained and Selenium Grid 4 no longer supports this file.',
-      description:
-        'Path to configuration JSON file to register Appium as a node with Selenium Grid 3; otherwise the configuration itself',
-      title: 'nodeconfig config',
-      type: 'object',
     },
   },
   {

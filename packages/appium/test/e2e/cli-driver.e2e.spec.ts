@@ -4,7 +4,7 @@ import {describe, it, before, after, beforeEach, type TestContext} from 'node:te
 
 import {fs, system, tempDir, util} from '@appium/support';
 import type {DriverType} from '@appium/types';
-import type {ExtRecord} from 'appium/types';
+import type {ExtRecord} from 'appium/types/index.js';
 import {exec} from 'teen_process';
 
 import {
@@ -15,10 +15,10 @@ import {
   EXT_SUBCOMMAND_RUN as RUN,
   EXT_SUBCOMMAND_UNINSTALL as UNINSTALL,
   KNOWN_DRIVERS,
-} from '../../lib/constants';
-import {omitKeys, resolveFrom} from '../../lib/utils';
-import {FAKE_DRIVER_DIR, resolveFixture} from '../helpers';
-import {installLocalExtension, runAppiumJson, runAppiumRaw} from './e2e-helpers';
+} from '../../lib/constants.js';
+import {omitKeys, resolveFrom} from '../../lib/utils/index.js';
+import {FAKE_DRIVER_DIR, resolveFixture} from '../helpers.js';
+import {installLocalExtension, runAppiumJson, runAppiumRaw} from './e2e-helpers.js';
 
 const TEST_DRIVER_DIR = path.dirname(resolveFixture('test-driver/package.json'));
 
@@ -82,9 +82,9 @@ describe('Driver CLI', {timeout: 90000}, function () {
 
   describe(LIST, function () {
     it('should list available drivers', async function () {
-      const {stderr} = await runAppiumRaw(appiumHome, [DRIVER_TYPE, LIST], {});
+      const {stdout} = await runAppiumRaw(appiumHome, [DRIVER_TYPE, LIST], {});
       for (const d of Object.keys(KNOWN_DRIVERS)) {
-        assert.match(stderr, new RegExp(`${d}.+[not installed]`));
+        assert.match(stdout, new RegExp(`${d}.+[not installed]`));
       }
     });
 
@@ -135,8 +135,8 @@ describe('Driver CLI', {timeout: 90000}, function () {
         util.compareVersions(String(updateVersion), '>', penultimateFakeDriverVersionAsOfRightNow),
         true,
       );
-      const {stderr} = await runAppiumRaw(appiumHome, [DRIVER_TYPE, LIST, '--updates'], {});
-      assert.match(stderr, new RegExp(`fake.+[${updateVersion} available]`));
+      const {stdout} = await runAppiumRaw(appiumHome, [DRIVER_TYPE, LIST, '--updates'], {});
+      assert.match(stdout, new RegExp(`fake.+[${updateVersion} available]`));
     });
 
     describe('if a driver is not published to npm', function () {
@@ -296,9 +296,9 @@ describe('Driver CLI', {timeout: 90000}, function () {
           [DRIVER_TYPE, INSTALL, '--source', 'local', TEST_DRIVER_INVALID_PEERS_DIR],
           {},
         );
-        if ('stderr' in ret) {
-          assert.match(ret.stderr, /may be incompatible with the current version of Appium/i);
-          assert.match(ret.stderr, /successfully installed/i);
+        if ('stdout' in ret) {
+          assert.match(ret.stdout, /may be incompatible with the current version of Appium/i);
+          assert.match(ret.stdout, /successfully installed/i);
         }
       });
     });
@@ -306,9 +306,9 @@ describe('Driver CLI', {timeout: 90000}, function () {
     describe('when peer dependencies are valid', function () {
       it('should not display a warning', async function () {
         const ret = await runAppiumRaw(appiumHome, [DRIVER_TYPE, INSTALL, '--source', 'local', TEST_DRIVER_DIR], {});
-        if ('stderr' in ret) {
-          assert.doesNotMatch(ret.stderr, /may be incompatible with the current version of Appium/i);
-          assert.match(ret.stderr, /successfully installed/i);
+        if ('stdout' in ret) {
+          assert.doesNotMatch(ret.stdout, /may be incompatible with the current version of Appium/i);
+          assert.match(ret.stdout, /successfully installed/i);
         }
       });
     });

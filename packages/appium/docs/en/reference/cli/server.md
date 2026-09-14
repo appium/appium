@@ -27,7 +27,6 @@ appium
 |<div style="width:15em">Argument</div>|Description|Type|<div style="width:7em">Default</div>|
 |--|--|--|--|
 |`--address`, `-a`|IPv4/IPv6 address to listen on|string|`0.0.0.0`|
-|`--allow-cors`|Allow web browser connections from any host|boolean|`false`|
 |`--allow-insecure`|List of [insecure features](../../guides/security.md) that should be allowed in this server's sessions. Individual features can be overridden by `--deny-insecure`. Has no effect in combination with `--relaxed-security`.|array<string>|`[]`|
 |`--allow-unknown-args`|Do not exit if unrecognized command-line arguments are passed to the server; ignore them instead. Useful when the Appium CLI is wrapped by external tooling that appends extra flags.|boolean|`false`|
 |`--base-path`, `-pa`|Base path to use as the prefix for all webdriver routes running on the server|string|`""`|
@@ -44,7 +43,7 @@ appium
 |`--local-timezone`|Use local timezone for log timestamps|boolean|`false`|
 |`--log`, `-g`|Path to a file where the server logs should be output. This does not affect output on the console.|string||
 |`--log-filters`|List of log filtering rules. See the [log filtering guide](../../guides/log-filters.md) for details.|array||
-|`--log-level`|The log level for the server logs. Supported values are `debug`, `info`, `warn`, or `error`. Combining two supported values using a colon (e.g. `warn:debug`) allows to set separate log levels for the console and file outputs, respectively.|string|`debug`|
+|`--log-level`|The log level for the server logs. Supported values are `debug`, `info`, `warn`, or `error`. Combining two supported values using a colon (e.g. `warn:debug`) allows to set separate log levels for the console and file outputs, respectively.|string|`info`|
 |`--log-format`|The log format of the server logs. Supported values are `text`, `json`, or `pretty_json`. Setting the value to `json` disables colors.|string|`text`|
 |`--log-no-colors`|Disable colors in the server log|boolean|`false`|
 |`--log-timestamp`|Show timestamps in the server log|boolean|`false`|
@@ -52,7 +51,6 @@ appium
 |`--max-ipc-data-size`|Maximum byte size of IPC message objects.|integer|`1048576` (1MB)|
 |`--max-ipc-topics`|Maximum number of IPC topics per session.|integer|`1000`|
 |`--no-perms-check`|Skip various permission checks on the server startup|boolean|`false`|
-|`--nodeconfig`|JSON configuration for registering Appium as a node with Selenium Grid 3|object||
 |`--plugin`|Plugin-specific configuration. Keys should correspond to plugin package names|object||
 |`--plugins-import-chunk-size`|Maximum number of plugins that can be imported in parallel on server startup|number|`7`|
 |`--port`, `-p`|Port to listen on|integer|`4723`|

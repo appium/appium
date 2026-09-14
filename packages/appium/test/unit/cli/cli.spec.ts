@@ -1,12 +1,13 @@
 import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
-import {fs, npm, tempDir} from '@appium/support';
+import {fs, tempDir} from '@appium/support';
 import {createSandbox} from 'sinon';
 
-import DriverCommand from '../../../lib/cli/driver-command';
-import {loadExtensions} from '../../../lib/extension';
-import {Manifest} from '../../../lib/extension/manifest';
+import DriverCommand from '../../../lib/cli/driver-command.js';
+import {loadExtensions} from '../../../lib/extension/index.js';
+import {Manifest} from '../../../lib/extension/manifest/manifest.js';
+import {npm} from '../../../lib/utils/index.js';
 
 describe('DriverCommand', function () {
   let appiumHome: string;
@@ -22,7 +23,7 @@ describe('DriverCommand', function () {
     Manifest.getInstance.cache = new Map();
     sandbox.stub(fs, 'exists').resolves(false);
     config = (await loadExtensions(appiumHome)).driverConfig;
-    config.installedExtensions = {
+    Object.assign(config.installedExtensions, {
       [driver]: {
         version: '1.0.0',
         pkgName,
@@ -33,7 +34,7 @@ describe('DriverCommand', function () {
         installSpec: pkgName,
         installPath: '',
       },
-    };
+    });
     dc = new DriverCommand({config, json: true});
   });
 

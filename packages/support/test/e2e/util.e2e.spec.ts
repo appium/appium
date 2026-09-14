@@ -4,8 +4,8 @@ import {afterEach, beforeEach, describe, it} from 'node:test';
 
 import {sleep} from 'asyncbox';
 
-import {fs, tempDir} from '../../lib/index';
-import * as util from '../../lib/util';
+import {fs, tempDir} from '../../lib/index.js';
+import * as util from '../../lib/util.js';
 
 describe('#util', function () {
   let tmpRoot: string | null = null;

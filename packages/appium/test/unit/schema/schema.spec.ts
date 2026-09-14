@@ -1,19 +1,17 @@
 import assert from 'node:assert/strict';
-import {describe, it, beforeEach, afterEach} from 'node:test';
+import {describe, it, beforeEach} from 'node:test';
 
+import fakeDriverSchema from '@appium/fake-driver/build/lib/fake-driver-schema.js';
 import {AppiumConfigJsonSchema} from '@appium/schema';
-import {createSandbox} from 'sinon';
 
-import {DRIVER_TYPE, PLUGIN_TYPE} from '../../../lib/constants';
-import {APPIUM_CONFIG_SCHEMA_ID} from '../../../lib/schema/arg-spec';
-import type * as SchemaModule from '../../../lib/schema/schema';
-import defaultArgsFixture from '../../fixtures/default-args';
-import DRIVER_SCHEMA_FIXTURE from '../../fixtures/driver-schema';
-import flattenedSchemaFixture from '../../fixtures/flattened-schema';
-import {rewiremock} from '../../helpers';
+import {DRIVER_TYPE, PLUGIN_TYPE} from '../../../lib/constants.js';
+import {APPIUM_CONFIG_SCHEMA_ID} from '../../../lib/schema/arg-spec.js';
+import type * as SchemaModule from '../../../lib/schema/schema.js';
+import defaultArgsFixture from '../../fixtures/default-args.js';
+import DRIVER_SCHEMA_FIXTURE from '../../fixtures/driver-schema.js';
+import flattenedSchemaFixture from '../../fixtures/flattened-schema.js';
 
 describe('schema', function () {
-  let sandbox: ReturnType<typeof createSandbox>;
   let SchemaFinalizationError: typeof SchemaModule.SchemaFinalizationError;
   let SchemaUnknownSchemaError: typeof SchemaModule.SchemaUnknownSchemaError;
   let SchemaUnsupportedSchemaError: typeof SchemaModule.SchemaUnsupportedSchemaError;
@@ -26,14 +24,13 @@ describe('schema', function () {
   let isFinalized: typeof SchemaModule.isFinalized;
   let validate: typeof SchemaModule.validate;
   let RoachHotelMap: typeof SchemaModule.RoachHotelMap;
-  let mocks: Record<string, ReturnType<ReturnType<typeof createSandbox>['stub']>>;
+  let importCounter = 0;
 
-  beforeEach(function () {
-    sandbox = createSandbox();
-    mocks = {
-      '@sidvind/better-ajv-errors': sandbox.stub(),
-    };
-
+  // `schema.ts` holds its state in a module-level `AppiumSchema` singleton; re-importing it
+  // fresh (cache-busted) each test isolates that singleton per test, same as the explicit
+  // `resetSchema()` call below does for the parts reachable through its public API.
+  beforeEach(async function () {
+    const mod = await import(`../../../lib/schema/schema.js?t=${importCounter++}`);
     ({
       SchemaFinalizationError,
       SchemaUnknownSchemaError,
@@ -47,15 +44,8 @@ describe('schema', function () {
       getDefaultsForSchema,
       flattenSchema,
       validate,
-    } = rewiremock.proxy(
-      () => require('../../../lib/schema/schema') as typeof SchemaModule,
-      mocks,
-    ) as typeof SchemaModule);
+    } = mod);
     resetSchema();
-  });
-
-  afterEach(function () {
-    sandbox.restore();
   });
 
   describe('registerSchema()', function () {
@@ -126,6 +116,18 @@ describe('schema', function () {
             const schemaObject = {title: 'whoopee'};
             await registerSchema(DRIVER_TYPE, 'whoopee', schemaObject);
             await assert.doesNotReject(registerSchema(DRIVER_TYPE, 'whoopee', schemaObject));
+          });
+        });
+
+        describe('when the schema is a different object but deeply equal, and has since been finalized', function () {
+          it('should not throw', async function () {
+            // A manifest reload re-parses an extension's inline schema from disk into a fresh
+            // object each time -- `finalizeSchema()` must not have mutated the *registered* copy
+            // in a way that makes it stop matching a later, independently-parsed-but-equal one.
+            const buildSchema = () => ({title: 'whoopee', type: 'object', properties: {}});
+            await registerSchema(DRIVER_TYPE, 'whoopee', buildSchema());
+            await finalizeSchema();
+            await assert.doesNotReject(registerSchema(DRIVER_TYPE, 'whoopee', buildSchema()));
           });
         });
 
@@ -218,7 +220,13 @@ describe('schema', function () {
       });
 
       it('should return the extension schema', function () {
-        assert.deepStrictEqual(getSchema('driver-stuff.json'), DRIVER_SCHEMA_FIXTURE);
+        // `finalizeSchema()` clones a registered schema before stamping `$id`/`additionalProperties`
+        // onto it, so it doesn't overwrite the original `$id` on the fixture object itself.
+        assert.deepStrictEqual(getSchema('driver-stuff.json'), {
+          ...DRIVER_SCHEMA_FIXTURE,
+          $id: 'driver-stuff.json',
+          additionalProperties: false,
+        });
       });
     });
   });
@@ -270,7 +278,7 @@ describe('schema', function () {
       let expected: Array<{schema: object; argSpec: object}>;
 
       beforeEach(async function () {
-        await registerSchema(DRIVER_TYPE, 'fake', require('@appium/fake-driver/build/lib/fake-driver-schema').default);
+        await registerSchema(DRIVER_TYPE, 'fake', fakeDriverSchema);
         await finalizeSchema();
 
         expected = [
@@ -344,7 +352,11 @@ describe('schema', function () {
         };
         assert.deepStrictEqual(await finalizeSchema(), {
           [APPIUM_CONFIG_SCHEMA_ID]: baseSchemaWithRefs,
-          'driver-stuff.json': DRIVER_SCHEMA_FIXTURE,
+          'driver-stuff.json': {
+            ...DRIVER_SCHEMA_FIXTURE,
+            $id: 'driver-stuff.json',
+            additionalProperties: false,
+          },
         });
       });
     });

@@ -1,13 +1,12 @@
-import type {MessageObject} from '@appium/logger';
-import globalLog from '@appium/logger';
+import {log as globalLog, type MessageObject} from '@appium/logger';
 import {fs, util} from '@appium/support';
-import type {ParsedArgs} from 'appium/types';
+import type {ParsedArgs} from 'appium/types/index.js';
 import {LRUCache} from 'lru-cache';
 import type {Logform, Logger} from 'winston';
 import {createLogger, format, transports} from 'winston';
 import type Transport from 'winston-transport';
 
-import {adler32} from './utils';
+import {adler32} from './utils/index.js';
 
 const LEVELS_MAP = {
   debug: 4,
@@ -112,8 +111,9 @@ export async function init(args: ParsedArgs): Promise<void> {
       }
     }
   });
-  // Only Winston produces output; avoid duplicate lines from the logger's default stream
+  // Only Winston produces output; avoid duplicate lines from the logger's default streams
   globalLog.stream = null;
+  globalLog.errorStream = null;
 }
 
 /**
@@ -204,7 +204,7 @@ async function createTransports(args: ParsedArgs): Promise<Transport[]> {
 
   // Server args are normalized in main so we only see dest form (`loglevel`).
   // Fall back to schema default so Winston never sees undefined.
-  const rawLogLevel = args.loglevel ?? 'debug';
+  const rawLogLevel = args.loglevel ?? 'info';
 
   if (rawLogLevel && rawLogLevel.includes(':')) {
     // --log-level arg can optionally provide diff logging levels for console and file, separated by a colon

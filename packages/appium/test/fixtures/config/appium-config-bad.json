@@ -2,7 +2,6 @@
   "appium-home": "foo",
   "server": {
     "address": "0.0.0.0",
-    "allow-cors": 1,
     "allow-insecure": {},
     "base-path": "/",
     "callback-address": "0.0.0.0",
@@ -18,7 +17,6 @@
     "log-timestamp": false,
     "long-stacktrace": false,
     "no-perms-check": false,
-    "nodeconfig": {},
     "port": "31337",
     "relaxed-security": false,
     "session-override": false,

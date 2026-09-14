@@ -9,7 +9,7 @@ type AppiumPackageJson = PackageJson & {
 };
 
 function readPackageJsonSync(): {pkgRoot: string; pkg: AppiumPackageJson} {
-  let current = path.resolve(__dirname);
+  let current = path.resolve(import.meta.dirname);
   const root = path.parse(current).root;
   let pkgRoot: string;
   while (true) {
@@ -18,13 +18,13 @@ function readPackageJsonSync(): {pkgRoot: string; pkg: AppiumPackageJson} {
       break;
     }
     if (current === root) {
-      throw new Error(`Could not find \`package.json\` from ${__dirname}`);
+      throw new Error(`Could not find \`package.json\` from ${import.meta.dirname}`);
     }
     current = path.dirname(current);
   }
   const pkg = JSON.parse(nodeFs.readFileSync(path.join(pkgRoot, 'package.json'), 'utf8')) as PackageJson;
   if (typeof pkg.name !== 'string' || typeof pkg.version !== 'string') {
-    throw new Error(`Invalid \`package.json\` near ${__dirname}`);
+    throw new Error(`Invalid \`package.json\` near ${import.meta.dirname}`);
   }
   return {pkgRoot, pkg: pkg as AppiumPackageJson};
 }

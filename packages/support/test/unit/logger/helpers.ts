@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 
-import {logger} from '../../../lib';
+import {logger} from '../../../lib/index.js';
 
 let sandbox: sinon.SinonSandbox;
 

@@ -3,13 +3,13 @@ import path from 'node:path';
 import {AppiumConfigJsonSchema} from '@appium/schema';
 import {util} from '@appium/support';
 import type {ExtensionType} from '@appium/types';
-import Ajv, {type ErrorObject, type SchemaObject, type ValidateFunction} from 'ajv';
-import addFormats from 'ajv-formats';
 
-import {DRIVER_TYPE, PLUGIN_TYPE} from '../constants';
-import {bindAll, kebabCase, omitKeys, setPath} from '../utils';
-import {APPIUM_CONFIG_SCHEMA_ID, ArgSpec, SERVER_PROP_NAME} from './arg-spec';
-import {keywords} from './keywords';
+import {DRIVER_TYPE, PLUGIN_TYPE} from '../constants.js';
+import {bindAll, kebabCase, omitKeys, setPath} from '../utils/index.js';
+import {addFormats, Ajv} from './ajv.js';
+import type {AjvInstance, ErrorObject, SchemaObject, ValidateFunction} from './ajv.js';
+import {APPIUM_CONFIG_SCHEMA_ID, ArgSpec, SERVER_PROP_NAME} from './arg-spec.js';
+import {keywords} from './keywords.js';
 
 type StrictSchemaObject = SchemaObject & {additionalProperties: false};
 type FlattenedSchema = {schema: SchemaObject; argSpec: ArgSpec}[];
@@ -53,7 +53,7 @@ class AppiumSchema {
     [DRIVER_TYPE]: new Map(),
     [PLUGIN_TYPE]: new Map(),
   };
-  #ajv: Ajv;
+  #ajv: AjvInstance;
   #finalizedSchemas: Record<string, StrictSchemaObject> | null = null;
 
   private constructor() {
@@ -103,7 +103,7 @@ class AppiumSchema {
   /**
    * Configures and creates an Ajv instance.
    */
-  private static _instantiateAjv(): Ajv {
+  private static _instantiateAjv(): AjvInstance {
     const ajv = addFormats(
       new Ajv({
         // without this not much validation actually happens
@@ -169,16 +169,23 @@ class AppiumSchema {
     >) {
       for (const [extName, schema] of extensionSchemas.entries()) {
         const $ref = ArgSpec.toSchemaBaseRef(extType, extName);
-        (schema as any).$id = $ref;
-        (schema as any).additionalProperties = false;
+        // Clone rather than mutate the registered schema in place: extensions whose schema is
+        // freshly re-parsed on every manifest reload (an inline object, as opposed to one
+        // `import()`ed from a file, which Node's module cache returns by the same reference every
+        // time) would otherwise stop deep-equaling their own registered copy on a later
+        // `registerSchema()` call, once this injects `$id`/`additionalProperties` -- causing a
+        // false "conflicts with an existing schema" error and dropping the extension entirely.
+        const finalizedSchema = structuredClone(schema) as StrictSchemaObject;
+        (finalizedSchema as any).$id = $ref;
+        (finalizedSchema as any).additionalProperties = false;
         baseSchema.properties.server.properties[extType].properties[extName] = {
           $ref,
           $comment: extName,
         };
-        await ajv.validateSchema(schema, true);
-        addArgSpecs((schema as any).properties, extType, extName);
-        ajv.addSchema(schema, $ref);
-        finalizedSchemas[$ref] = schema as StrictSchemaObject;
+        await ajv.validateSchema(finalizedSchema, true);
+        addArgSpecs((finalizedSchema as any).properties, extType, extName);
+        ajv.addSchema(finalizedSchema, $ref);
+        finalizedSchemas[$ref] = finalizedSchema;
       }
     }
 

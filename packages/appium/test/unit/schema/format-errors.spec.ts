@@ -1,31 +1,39 @@
 import assert from 'node:assert/strict';
-import {describe, it, beforeEach, afterEach, before} from 'node:test';
+import {describe, it, beforeEach, before, after, mock} from 'node:test';
 
 import {createSandbox, type SinonSandbox, type SinonStub} from 'sinon';
 
-import type {formatErrors as FormatErrorsFn} from '../../../lib/schema/format-errors';
-import * as schema from '../../../lib/schema/schema';
-import {rewiremock} from '../../helpers';
+import type {formatErrors as FormatErrorsFn} from '../../../lib/schema/format-errors.js';
+import * as schema from '../../../lib/schema/schema.js';
 
 describe('schema/format-errors', function () {
   let sandbox: SinonSandbox;
   let formatErrors: typeof FormatErrorsFn;
   let betterAjvMock: SinonStub;
 
+  // `betterAjvMock` and the `mock.module()` registration are set up once: `mock.module()`
+  // throws if called twice for the same specifier without a reset in between, so per-test
+  // reconfiguration goes through `sandbox.resetHistory()` (keeping the same stub identity)
+  // rather than re-registering the mock.
   before(async function () {
     await schema.finalizeSchema();
+    sandbox = createSandbox();
+    betterAjvMock = sandbox.stub().returns('');
+    mock.module('@sidvind/better-ajv-errors', {defaultExport: betterAjvMock});
+    // Cache-busted: `format-errors.js` is also imported (unmocked) by other files, e.g.
+    // `cli-args.ts`. Importing it here under the plain specifier would leave that shared cache
+    // entry permanently bound to this mock for the rest of the process.
+    ({formatErrors} = await import(`../../../lib/schema/format-errors.js?t=${0}`));
+  });
+
+  after(function () {
+    mock.reset();
+    sandbox.restore();
   });
 
   beforeEach(function () {
-    sandbox = createSandbox();
-    betterAjvMock = sandbox.stub().returns('');
-    ({formatErrors} = rewiremock.proxy(() => require('../../../lib/schema/format-errors'), {
-      '@sidvind/better-ajv-errors': betterAjvMock,
-    }));
-  });
-
-  afterEach(function () {
-    sandbox.restore();
+    sandbox.resetHistory();
+    betterAjvMock.returns('');
   });
 
   describe('formatErrors()', function () {

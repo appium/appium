@@ -1,7 +1,6 @@
-export = {
+export default {
   server: {
     address: '0.0.0.0',
-    'allow-cors': false,
     'allow-insecure': [] as string[],
     'base-path': '/',
     'callback-address': '0.0.0.0',
@@ -17,9 +16,6 @@ export = {
     'log-timestamp': false,
     'long-stacktrace': false,
     'no-perms-check': false,
-    nodeconfig: {
-      foo: 'bar',
-    },
     port: 31337,
     'relaxed-security': false,
     'session-override': false,

@@ -10,7 +10,7 @@ import type {Application, Request, Response} from 'express';
 import {createSandbox} from 'sinon';
 import {exec} from 'teen_process';
 
-import {server} from '../../../lib';
+import {server} from '../../../lib/index.js';
 
 async function generateCertificate(certPath: string, keyPath: string): Promise<void> {
   await exec('openssl', [

@@ -1,5 +1,5 @@
 // @ts-nocheck
-module.exports = {
+export default {
   find: function (driver, logger, selector, multiple) { // eslint-disable-line object-shorthand
     if (!driver || !driver.opts) {
       throw new Error('Expected driver object');

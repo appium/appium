@@ -14,12 +14,6 @@ import type {AddRequestResult, ItemOptions, StorageItem} from './types.js';
 
 const log = logger.getLogger('StoragePlugin');
 
-// @appium/types is still CommonJS, so its `ws` Server type resolves through the "require"
-// condition, while this ESM package resolves the same class through "import" — TypeScript
-// treats them as structurally distinct even though they are identical at runtime.
-// TODO: Remove this workaround once @appium/types is migrated to ESM.
-type WSHandlerServer = Parameters<AppiumServer['addWebSocketHandler']>[1];
-
 let SHARED_STORAGE: Storage | null = null;
 const STORAGE_PREFIX = '/appium/storage';
 /**
@@ -213,8 +207,8 @@ async function prepareWebSockets(
     log.info(`The ${streamPathname} web socket server has notified about an error: ${e.message}`);
   });
   await Promise.all([
-    httpServer.addWebSocketHandler(streamPathname, streamServer as unknown as WSHandlerServer),
-    httpServer.addWebSocketHandler(eventsPathname, eventsServer as unknown as WSHandlerServer),
+    httpServer.addWebSocketHandler(streamPathname, streamServer),
+    httpServer.addWebSocketHandler(eventsPathname, eventsServer),
   ]);
 
   return [streamPathname, eventsPathname];

@@ -48,12 +48,6 @@ export interface AppiumLogger {
   silly(...args: any[]): void;
   http(...args: any[]): void;
   /**
-   * @deprecated Use {@link errorWithException} instead
-   * @param {...any} args
-   * @throws {Error}
-   */
-  errorAndThrow(...args: any[]): never;
-  /**
    * Logs given arguments at the error level and returns
    * the error object.
    *

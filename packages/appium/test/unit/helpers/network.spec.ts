@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {fetchInterfaces} from '../../../lib/helpers/network';
+import {fetchInterfaces} from '../../../lib/helpers/network.js';
 
 describe('helpers/network', function () {
   describe('fetchInterfaces()', function () {

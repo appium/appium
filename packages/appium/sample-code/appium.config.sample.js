@@ -1,7 +1,6 @@
 module.exports = {
   server: {
     address: '127.0.0.1',
-    'allow-cors': true,
     'allow-insecure': ['*:foo', '*:bar'],
     'base-path': '/',
     'callback-address': '127.0.0.1',
@@ -24,9 +23,6 @@ module.exports = {
     'log-timestamp': true,
     'long-stacktrace': false,
     'no-perms-check': false,
-    nodeconfig: {
-      key: 'value',
-    },
     plugin: {
       images: {
         key: 'value',

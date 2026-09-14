@@ -1,4 +1,4 @@
-import {env, util} from '@appium/support';
+import {console as supportConsole, util} from '@appium/support';
 import type {DriverOpts} from '@appium/types';
 import type {
   Args,
@@ -7,31 +7,31 @@ import type {
   CliCommandSetupSubcommand,
   CliExtensionSubcommand,
   ParsedArgs,
-} from 'appium/types';
+} from 'appium/types/index.js';
 
-import {AppiumDriver, type AppiumDriverConstraints} from '../appium';
-import {runExtensionCommand} from '../cli/extension';
-import {injectAppiumSymlinks} from '../cli/extension-command';
-import {ArgParser, getParser} from '../cli/parser';
-import {runSetupCommand} from '../cli/setup-command';
-import {SERVER_SUBCOMMAND} from '../constants';
-import {type ExtensionConfigs, loadExtensions} from '../extension';
-import {log as logger} from '../logger';
-import {init as logsinkInit} from '../logsink';
+import {AppiumDriver, type AppiumDriverConstraints} from '../appium.js';
+import {injectAppiumSymlinks} from '../cli/extension-command.js';
+import {runExtensionCommand} from '../cli/extension.js';
+import {ArgParser, getParser} from '../cli/parser.js';
+import {runSetupCommand} from '../cli/setup-command.js';
+import {SERVER_SUBCOMMAND} from '../constants.js';
+import {type ExtensionConfigs, loadExtensions} from '../extension/index.js';
+import {log as logger} from '../logger.js';
+import {init as logsinkInit} from '../logsink.js';
 import {
   isDriverCommandArgs,
   isExtensionCommandArgs,
   isPluginCommandArgs,
   isServerCommandArgs,
   isSetupCommandArgs,
-} from '../schema/cli-args-guards';
-import {getDefaultsForSchema} from '../schema/schema';
-import {defaultsDeep} from '../utils';
-import {readConfigFile} from './config-file';
-import type {InitResult, PreConfigArgs} from './init-types';
-import {determineAppiumHomeSource, preflightChecks} from './main-helpers';
-import {adjustNodePath, requireDir, showDebugInfo} from './node-helpers';
-import {getNonDefaultServerArgs, showConfig} from './startup-config';
+} from '../schema/cli-args-guards.js';
+import {getDefaultsForSchema} from '../schema/schema.js';
+import {defaultsDeep, resolveAppiumHome} from '../utils/index.js';
+import {readConfigFile} from './config-file.js';
+import type {InitResult, PreConfigArgs} from './init-types.js';
+import {determineAppiumHomeSource, preflightChecks} from './main-helpers.js';
+import {adjustNodePath, requireDir, showDebugInfo} from './node-helpers.js';
+import {getNonDefaultServerArgs, showConfig} from './startup-config.js';
 
 /**
  * Parses CLI/programmatic args, loads config and extensions, and returns server-ready state or runs extension/setup flows.
@@ -51,7 +51,7 @@ export class AppiumInitializer {
   >(args?: Args<Cmd, SubCmd>): Promise<InitResult<Cmd>> {
     this.throwInsteadOfExit = false;
 
-    const appiumHome = args?.appiumHome ?? (await env.resolveAppiumHome());
+    const appiumHome = args?.appiumHome ?? (await resolveAppiumHome());
     const appiumHomeSourceName = determineAppiumHomeSource(args?.appiumHome);
     await requireDir(appiumHome, false, appiumHomeSourceName);
 
@@ -77,6 +77,7 @@ export class AppiumInitializer {
     }
 
     if (isSetupCommandArgs(preConfigArgs)) {
+      this.printValidationSummaries(driverConfig, pluginConfig);
       await runSetupCommand(preConfigArgs, driverConfig, pluginConfig);
       return {} as InitResult<Cmd>;
     }
@@ -135,6 +136,7 @@ export class AppiumInitializer {
 
     if (preConfigArgs.showConfig) {
       showConfig(getNonDefaultServerArgs(preConfigArgs as Args), configResult, defaults, serverArgs);
+      this.printValidationSummaries(driverConfig, pluginConfig);
       return {} as InitResult<Cmd>;
     }
 
@@ -144,10 +146,13 @@ export class AppiumInitializer {
         pluginConfig,
         appiumHome,
       });
+      this.printValidationSummaries(driverConfig, pluginConfig);
       return {} as InitResult<Cmd>;
     }
 
     await logsinkInit(serverArgs);
+    // Deferred from loadExtensions() so these render through the now-active (Winston-backed) logger.
+    this.printValidationSummaries(driverConfig, pluginConfig);
     await this.applyLogFilters(serverArgs);
 
     if (!serverArgs.noPermsCheck) {
@@ -165,6 +170,15 @@ export class AppiumInitializer {
       pluginConfig,
       appiumHome,
     } as InitResult<Cmd>;
+  }
+
+  /** Renders each config's pending `loadExtensions()`-time validation summary via the raw logger. */
+  private printValidationSummaries(
+    driverConfig: ExtensionConfigs['driverConfig'],
+    pluginConfig: ExtensionConfigs['pluginConfig'],
+  ): void {
+    driverConfig.printValidationSummary(logger);
+    pluginConfig.printValidationSummary(logger);
   }
 
   private async applyLogFilters(serverArgs: ParsedArgs<CliCommandServer>): Promise<void> {
@@ -201,7 +215,10 @@ export class AppiumInitializer {
     if (isDriverCommandArgs(preConfigArgs) || isPluginCommandArgs(preConfigArgs)) {
       const cmd = isDriverCommandArgs(preConfigArgs) ? preConfigArgs.driverCommand : preConfigArgs.pluginCommand;
       if (cmd === 'install') {
-        await injectAppiumSymlinks(driverConfig, pluginConfig, logger);
+        // Match the same command's own console so a non-fatal symlink error never lands on
+        // STDOUT under `--json` (unlike the raw npmlog logger, which isn't JSON-mode-aware).
+        const symlinkLog = new supportConsole.CliConsole({jsonMode: Boolean(preConfigArgs.json)});
+        await injectAppiumSymlinks(driverConfig, pluginConfig, symlinkLog);
       }
     }
   }

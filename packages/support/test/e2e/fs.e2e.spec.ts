@@ -2,9 +2,9 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 import {afterEach, beforeEach, describe, it} from 'node:test';
 
-import {fs} from '../../lib/fs';
-import {isWindows} from '../../lib/system';
-import {openDir} from '../../lib/tempdir';
+import {fs} from '../../lib/fs.js';
+import {isWindows} from '../../lib/system.js';
+import {openDir} from '../../lib/tempdir.js';
 
 describe('fs', function () {
   describe('mv()', function () {
@@ -102,7 +102,7 @@ describe('fs', function () {
     describe('when the path exists', {skip: isWindows()}, function () {
       describe('when the path is not executable', function () {
         it('should return `false`', async function () {
-          assert.strictEqual(await fs.isExecutable(__filename), false);
+          assert.strictEqual(await fs.isExecutable(import.meta.filename), false);
         });
       });
 

@@ -15,12 +15,7 @@ const APPIUM_PACKAGE_README = path.join(ROOT_PACKAGES_DIR, 'appium', 'README.md'
 const COMMON_FIELDS_TO_COPY = ['author', 'license', 'bugs', 'homepage'];
 const LOGGER_COMMON_FIELDS_TO_COPY = ['author', 'bugs', 'homepage'];
 
-const KEYWORD_EXCLUDED_PACKAGES = new Set([
-  'eslint-config-appium-ts',
-  'oxc-config',
-  'semantic-release-config',
-  'types',
-]);
+const KEYWORD_EXCLUDED_PACKAGES = new Set(['oxc-config', 'semantic-release-config', 'types']);
 // Package names in this set will not receive the LICENSE file from the root,
 // as they have their own license terms (e.g., ISC for logger).
 const LICENSE_EXCLUDED_PACKAGES = new Set(['logger']);
@@ -49,9 +44,8 @@ async function writeJson(filepath, data) {
  * @returns {Promise<string[]>} An array of package directory paths.
  */
 async function getPackageDirs() {
-  return (await fs.glob('*/package.json', {cwd: ROOT_PACKAGES_DIR, absolute: true}))
-    .map((pkgJsonPath) => path.dirname(pkgJsonPath))
-    .sort();
+  const pkgJsonPaths = await fs.glob('*/package.json', {cwd: ROOT_PACKAGES_DIR, absolute: true});
+  return pkgJsonPaths.map((pkgJsonPath) => path.dirname(pkgJsonPath)).sort();
 }
 
 /**

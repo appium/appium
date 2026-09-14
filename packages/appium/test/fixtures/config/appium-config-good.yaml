@@ -1,7 +1,6 @@
 server:
   address: '0.0.0.0'
   port: 31337
-  allow-cors: false
   allow-insecure: []
   base-path: /
   callback-address: '0.0.0.0'
@@ -17,8 +16,6 @@ server:
   log-no-colors: false
   long-stacktrace: false
   no-perms-check: false
-  nodeconfig:
-    foo: bar
   relaxed-security: true # not default
   session-override: false
   strict-caps: false

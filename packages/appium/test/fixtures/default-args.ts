@@ -1,6 +1,5 @@
 export default {
   address: '0.0.0.0',
-  allowCors: false,
   allowInsecure: [] as string[],
   allowUnknownArgs: false,
   basePath: '',
@@ -12,7 +11,7 @@ export default {
   requestTimeout: 3600,
   localTimezone: false,
   logFormat: 'text',
-  loglevel: 'debug',
+  loglevel: 'info',
   logNoColors: false,
   logTimestamp: false,
   longStacktrace: false,

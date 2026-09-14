@@ -1,23 +1,23 @@
 import type {Server as HttpServer} from 'node:http';
 
-import type {DriverData, IIpcSubscription, InitialOpts, IpcData, IpcMessage} from '@appium/types';
-import {BaseDriver, errors} from 'appium/driver';
+import type {IIpcSubscription, InitialOpts, IpcData, IpcMessage} from '@appium/types';
+import {BaseDriver} from 'appium/driver.js';
 import {sleep} from 'asyncbox';
 import type {Express, Request, Response} from 'express';
 
-import {EXECUTE_METHOD_MAP} from './command-maps/execute-method-map';
-import {NEW_BIDI_COMMANDS} from './command-maps/new-bidi-commands';
-import {NEW_METHOD_MAP} from './command-maps/new-method-map';
-import * as alertCommands from './commands/alert';
-import * as contextsCommands from './commands/contexts';
-import * as elementCommands from './commands/element';
-import * as findCommands from './commands/find';
-import * as generalCommands from './commands/general';
-import {desiredCapConstraints} from './desired-caps';
-import type {FakeDriverConstraints} from './desired-caps';
-import {FakeApp} from './fake-app';
-import type {FakeElement} from './fake-element';
-import type {FakeDriverCaps, W3CFakeDriverCaps} from './types';
+import {EXECUTE_METHOD_MAP} from './command-maps/execute-method-map.js';
+import {NEW_BIDI_COMMANDS} from './command-maps/new-bidi-commands.js';
+import {NEW_METHOD_MAP} from './command-maps/new-method-map.js';
+import * as alertCommands from './commands/alert.js';
+import * as contextsCommands from './commands/contexts.js';
+import * as elementCommands from './commands/element.js';
+import * as findCommands from './commands/find.js';
+import * as generalCommands from './commands/general.js';
+import {desiredCapConstraints} from './desired-caps.js';
+import type {FakeDriverConstraints} from './desired-caps.js';
+import {FakeApp} from './fake-app.js';
+import type {FakeElement} from './fake-element.js';
+import type {FakeDriverCaps, W3CFakeDriverCaps} from './types.js';
 
 export type {FakeDriverConstraints};
 export type {Orientation} from '@appium/types';
@@ -30,6 +30,14 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
   static executeMethodMap = EXECUTE_METHOD_MAP;
 
   readonly desiredCapConstraints = desiredCapConstraints;
+
+  /** Registers 'actions' with the base driver's generic getLogTypes/getLog commands. */
+  readonly supportedLogTypes = {
+    actions: {
+      description: 'Log of all actions performed against the driver in this session',
+      getter: () => this.appModel.actionLog,
+    },
+  };
 
   curContext: string;
   readonly appModel: FakeApp;
@@ -93,8 +101,6 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
   // General commands
   title = generalCommands.title;
   keys = generalCommands.keys;
-  setGeoLocation = generalCommands.setGeoLocation;
-  getGeoLocation = generalCommands.getGeoLocation;
   getPageSource = generalCommands.getPageSource;
   getOrientation = generalCommands.getOrientation;
   setOrientation = generalCommands.setOrientation;
@@ -103,7 +109,6 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
   getWindowRect = generalCommands.getWindowRect;
   performActions = generalCommands.performActions;
   releaseActions = generalCommands.releaseActions;
-  getLog = generalCommands.getLog;
   mobileShake = generalCommands.mobileShake;
   doubleClick = generalCommands.doubleClick;
   execute = generalCommands.execute;
@@ -118,6 +123,7 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
   private _bidiProxyUrl: string | null;
   private _clockRunning = false;
   private ipcFakeThing?: IIpcSubscription<Thing>;
+  private readonly deprecatedCommandsCalled: string[] = [];
 
   constructor(opts: InitialOpts = {} as InitialOpts, shouldValidateCaps = true) {
     super(opts, shouldValidateCaps);
@@ -137,12 +143,6 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
     return this._bidiProxyUrl;
   }
 
-  override get driverData(): {isUnique: boolean} {
-    return {
-      isUnique: !!this.caps.uniqueApp,
-    };
-  }
-
   static fakeRoute(_req: Request, res: Response): void {
     res.send(JSON.stringify({fakedriver: 'fakeResponse'}));
   }
@@ -158,7 +158,7 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
     });
   }
 
-  async onIpcInit(): Promise<void> {
+  override async onIpcInit(): Promise<void> {
     const fakeMathSub = this.ipcSubscribe<number>('pluginMath');
     fakeMathSub.on('message', (message: IpcMessage<number>) => {
       this.log.info(`A connected plugin did some math with result ${message.data}`);
@@ -169,12 +169,12 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
     await this.publishClockStatus();
   }
 
-  proxyActive(sessionId?: string): boolean {
+  override proxyActive(sessionId?: string): boolean {
     void sessionId;
     return this._proxyActive;
   }
 
-  canProxy(sessionId?: string): boolean {
+  override canProxy(sessionId?: string): boolean {
     void sessionId;
     return true;
   }
@@ -198,26 +198,8 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
    * Create session and load fake app XML from caps.app.
    * Starts clock event emitter if caps.runClock is true.
    */
-  override async createSession(
-    w3cCapabilities1: W3CFakeDriverCaps,
-    w3cCapabilities2?: W3CFakeDriverCaps,
-    w3cCapabilities3?: W3CFakeDriverCaps,
-    driverData: DriverData[] = [],
-  ): Promise<[string, FakeDriverCaps]> {
-    for (const d of driverData) {
-      if (d.isUnique) {
-        throw new errors.SessionNotCreatedError(
-          'Cannot start session; another ' + 'unique session is in progress that requires all resources',
-        );
-      }
-    }
-
-    const [sessionId, caps] = (await super.createSession(
-      w3cCapabilities1,
-      w3cCapabilities2,
-      w3cCapabilities3,
-      driverData,
-    )) as [string, FakeDriverCaps];
+  override async createSession(w3cCapabilities: W3CFakeDriverCaps): Promise<[string, FakeDriverCaps]> {
+    const [sessionId, caps] = (await super.createSession(w3cCapabilities)) as [string, FakeDriverCaps];
     this.caps = caps;
     await this.appModel.loadApp(caps.app);
     if (this.caps.runClock) {
@@ -258,14 +240,14 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
     return this.cliArgs;
   }
 
-  /** TODO: track deprecated commands when called and return their names. */
   async getDeprecatedCommandsCalled(): Promise<string[]> {
     await sleep(1);
-    return [];
+    return this.deprecatedCommandsCalled;
   }
 
   async callDeprecatedCommand(): Promise<void> {
     await sleep(1);
+    this.deprecatedCommandsCalled.push(this.callDeprecatedCommand.name);
   }
 
   async doSomeMath(num1: number, num2: number): Promise<number> {

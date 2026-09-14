@@ -5,8 +5,8 @@ import type {Constraints, W3CDriverCaps} from '@appium/types';
 import {sleep} from 'asyncbox';
 import {createSandbox} from 'sinon';
 
-import {FakeDriver} from '../../lib';
-import {W3C_CAPS, W3C_PREFIXED_CAPS} from '../helpers';
+import {FakeDriver} from '../../lib/index.js';
+import {W3C_CAPS, W3C_PREFIXED_CAPS} from '../helpers.js';
 
 describe('FakeDriver unit suite', function () {
   let d: FakeDriver;
@@ -64,9 +64,9 @@ describe('FakeDriver unit suite', function () {
     assert.notDeepStrictEqual(sessionId1, sessionId2);
   });
 
-  it('should get the current session', async function () {
+  it('should get the current session capabilities', async function () {
     const [, caps] = await d.createSession(w3cCaps);
-    assert.strictEqual(caps, await d.getSession());
+    assert.deepStrictEqual((await d.getAppiumSessionCapabilities()).capabilities, caps);
   });
 
   it('should fulfill an unexpected driver quit promise', async function () {
@@ -103,7 +103,7 @@ describe('FakeDriver unit suite', function () {
     });
     void d.startUnexpectedShutdown(new Error('We crashed'));
     await p;
-    await assert.rejects(d.executeCommand('getSession'), /shut down/);
+    await assert.rejects(d.executeCommand('getStatus'), /shut down/);
   });
 
   it('should allow new commands after done shutting down', async function () {
@@ -123,15 +123,15 @@ describe('FakeDriver unit suite', function () {
     void d.startUnexpectedShutdown(new Error('We crashed'));
     await p;
 
-    await assert.rejects(d.executeCommand('getSession'), /shut down/);
+    await assert.rejects(d.executeCommand('getStatus'), /shut down/);
     await sleep(500);
 
-    await d.executeCommand('createSession', null, null, structuredClone(w3cCaps));
+    await d.executeCommand('createSession', structuredClone(w3cCaps));
     await d.deleteSession();
   });
 
-  it('should distinguish between W3C and JSONWP session', async function () {
-    await d.executeCommand('createSession', null, null, {
+  it('should set the protocol to W3C on session creation', async function () {
+    await d.executeCommand('createSession', {
       alwaysMatch: {
         ...defaultCaps,
         platformName: 'Fake',
@@ -399,7 +399,7 @@ describe('FakeDriver unit suite', function () {
     beforeEach(async function () {
       beforeStartTime = Date.now();
       d.shouldValidateCaps = false;
-      await d.executeCommand('createSession', null, null, {
+      await d.executeCommand('createSession', {
         alwaysMatch: {...defaultCaps},
         firstMatch: [{}],
       });
@@ -452,18 +452,6 @@ describe('FakeDriver unit suite', function () {
       assert.strictEqual(d.eventHistory.bar.length, 2);
       assert.strictEqual(typeof d.eventHistory.bar[1], 'number');
       assert.strictEqual(d.eventHistory.bar[1] >= d.eventHistory.bar[0], true);
-    });
-    describe('getSession decoration', function () {
-      it('should decorate getSession response if opt-in cap is provided', async function () {
-        let res = await d.getSession();
-        assert.ok(!res.events);
-
-        (d.caps as Record<string, unknown>).eventTimings = true;
-        res = await d.getSession();
-        assert.ok(res.events);
-        assert.ok(res.events?.newSessionRequested);
-        assert.strictEqual(typeof res.events?.newSessionRequested[0], 'number');
-      });
     });
   });
 });
@@ -524,33 +512,12 @@ describe('.isFeatureEnabled', function () {
 });
 
 describe('FakeDriver', function () {
-  it('should not start a session when a unique session is already running', async function () {
-    const d1 = new FakeDriver();
-    const [uniqueSession] = await d1.createSession(null as any, null as any, {
-      alwaysMatch: {
-        ...structuredClone(W3C_PREFIXED_CAPS),
-        'appium:uniqueApp': true,
-      },
-      firstMatch: [{}],
-    });
-    assert.strictEqual(typeof uniqueSession, 'string');
-    const d2 = new FakeDriver();
-    const otherSessionData = [d1.driverData];
-    try {
-      await assert.rejects(
-        d2.createSession(null as any, null as any, structuredClone(W3C_CAPS), otherSessionData),
-        /unique/,
-      );
-    } finally {
-      await d1.deleteSession(uniqueSession);
-    }
-  });
   it('should start a new session when another non-unique session is running', async function () {
     const d1 = new FakeDriver();
-    const [session1Id] = await d1.createSession(null as any, null as any, structuredClone(W3C_CAPS));
+    const [session1Id] = await d1.createSession(structuredClone(W3C_CAPS));
     assert.strictEqual(typeof session1Id, 'string');
     const d2 = new FakeDriver();
-    const [session2Id] = await d2.createSession(null as any, null as any, structuredClone(W3C_CAPS));
+    const [session2Id] = await d2.createSession(structuredClone(W3C_CAPS));
     assert.strictEqual(typeof session2Id, 'string');
     assert.notStrictEqual(session1Id, session2Id);
     await d1.deleteSession(session1Id);

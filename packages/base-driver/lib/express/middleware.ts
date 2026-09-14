@@ -4,14 +4,14 @@ import type {Duplex} from 'node:stream';
 import {util} from '@appium/support';
 import type {NextFunction, Request, RequestHandler, Response} from 'express';
 
-import {errors} from '../protocol';
-import {log} from './logger';
-export {handleIdempotency} from './idempotency';
+import {errors} from '../protocol/index.js';
+import {log} from './logger.js';
+export {handleIdempotency} from './idempotency.js';
 import type {StringRecord, WSServer} from '@appium/types';
 import {match} from 'path-to-regexp';
 
-import {calcSignature} from '../helpers/session';
-import {getResponseForW3CError} from '../protocol/errors';
+import {calcSignature} from '../helpers/session.js';
+import {getResponseForW3CError} from '../protocol/errors.js';
 
 const SESSION_ID_PATTERN = /\/session\/([^/]+)/;
 
@@ -32,30 +32,6 @@ export function allowCrossDomain(req: Request, res: Response, next: NextFunction
     return;
   }
   next();
-}
-
-/**
- * CORS middleware for async execute response endpoints only.
- * Leaves other routes untouched but applies {@link allowCrossDomain} to async response URLs.
- *
- * @param basePath - Server base path (e.g. `/wd/hub` or `/`)
- * @returns Express request handler
- */
-export function allowCrossDomainAsyncExecute(basePath: string): RequestHandler {
-  function allowCrossDomainAsyncExecuteHandler(req: Request, res: Response, next: NextFunction): void {
-    const receiveAsyncResponseRegExp = new RegExp(
-      `^${util.escapeRegExp(basePath)}/session/[a-f0-9-]+/(appium/)?receive_async_response/?$`,
-    );
-    // Match against req.path (query-stripped) so query-string data cannot be used
-    // to smuggle a match for an otherwise unrelated endpoint.
-    if (!receiveAsyncResponseRegExp.test(req.path)) {
-      next();
-      return;
-    }
-    allowCrossDomain(req, res, next);
-  }
-
-  return allowCrossDomainAsyncExecuteHandler;
 }
 
 /**

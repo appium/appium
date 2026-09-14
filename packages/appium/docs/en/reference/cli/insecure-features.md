@@ -14,6 +14,7 @@ they can only be enabled using the wildcard (`*`) prefix:
 | Feature Name      | Description                                                                   |
 |-------------------|-------------------------------------------------------------------------------|
 |`session_discovery`|Allows retrieving the list of active server sessions via `GET /appium/sessions`|
+|`cors`             |Allows web browser connections to the server from any host                    |
 
 
 Of course, Appium drivers and plugins are free to define additional insecure features of their own.

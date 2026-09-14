@@ -4,7 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import {describe, it, beforeEach, afterEach, before, after} from 'node:test';
 
-import {adjustNodePath, checkNodeOk, requireDir} from '../../../lib/bootstrap/node-helpers';
+import {adjustNodePath, checkNodeOk, requireDir} from '../../../lib/bootstrap/node-helpers.js';
 
 describe('bootstrap/node-helpers', function () {
   describe('checkNodeOk()', function () {
@@ -38,7 +38,14 @@ describe('bootstrap/node-helpers', function () {
         'v14.17.5',
         'v16.0.0',
         'v20.18.0',
+        'v20.19.0',
         'v22.10.0',
+        'v22.12.0',
+        'v22.22.1',
+        'v23.0.0',
+        'v24.0.0',
+        'v24.14.0',
+        'v25.0.0',
       ];
 
       for (const version of unsupportedVersions) {
@@ -51,21 +58,30 @@ describe('bootstrap/node-helpers', function () {
     });
 
     describe('supported nodes', function () {
-      it('should succeed if node is ^20.19.0', function () {
+      it('should succeed if node is ^22.22.2', function () {
         // @ts-expect-error
-        process.version = 'v20.19.0';
+        process.version = 'v22.22.2';
         assert.doesNotThrow(checkNodeOk);
         // @ts-expect-error
-        process.version = 'v20.100.0';
+        process.version = 'v22.100.0';
         assert.doesNotThrow(checkNodeOk);
       });
 
-      it('should succeed if node is 22.12+', function () {
+      it('should succeed if node is ^24.15.0', function () {
         // @ts-expect-error
-        process.version = 'v22.12.0';
+        process.version = 'v24.15.0';
         assert.doesNotThrow(checkNodeOk);
         // @ts-expect-error
-        process.version = 'v100.0.0';
+        process.version = 'v24.100.0';
+        assert.doesNotThrow(checkNodeOk);
+      });
+
+      it('should succeed if node is ^26.0.0', function () {
+        // @ts-expect-error
+        process.version = 'v26.0.0';
+        assert.doesNotThrow(checkNodeOk);
+        // @ts-expect-error
+        process.version = 'v26.100.0';
         assert.doesNotThrow(checkNodeOk);
       });
     });
@@ -115,6 +131,26 @@ describe('bootstrap/node-helpers', function () {
     it('should adjust NODE_PATH', async function () {
       adjustNodePath();
       await assert.doesNotReject(fs.access(process.env.NODE_PATH!));
+    });
+
+    it('should let a CJS module resolve a dependency through the adjusted NODE_PATH', async function () {
+      const {createRequire} = await import('node:module');
+
+      const extraModulesDir = await fs.mkdtemp(path.join(os.tmpdir(), 'appium-node-path-test-'));
+      try {
+        const moduleDir = path.join(extraModulesDir, 'appium-node-path-fixture');
+        await fs.mkdir(moduleDir, {recursive: true});
+        await fs.writeFile(path.join(moduleDir, 'package.json'), JSON.stringify({name: 'appium-node-path-fixture'}));
+        await fs.writeFile(path.join(moduleDir, 'index.js'), 'module.exports = "found via NODE_PATH";');
+
+        process.env.NODE_PATH = extraModulesDir;
+        adjustNodePath();
+
+        const req = createRequire(import.meta.url);
+        assert.strictEqual(req('appium-node-path-fixture'), 'found via NODE_PATH');
+      } finally {
+        await fs.rm(extraModulesDir, {recursive: true, force: true});
+      }
     });
   });
 });

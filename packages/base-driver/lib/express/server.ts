@@ -1,9 +1,7 @@
 import http from 'node:http';
 import type {Server as HttpServer} from 'node:http';
-import {createRequire} from 'node:module';
+import https from 'node:https';
 
-// Import env helper directly — not from the test-pages barrel — so Express handlers and
-// fixture code stay unloaded unless APPIUM_ENABLE_LEGACY_TEST_PAGES is set.
 import {fs, timing} from '@appium/support';
 import type {
   AppiumServer,
@@ -15,16 +13,14 @@ import type {
 } from '@appium/types';
 import bodyParser from 'body-parser';
 import express from 'express';
-import type {Express, RequestHandler, Router} from 'express';
+import type {Express, Router} from 'express';
 import methodOverride from 'method-override';
 
-import {DEFAULT_BASE_PATH} from '../constants';
-import {isLegacyTestPagesEnabled} from '../test-pages/env';
-import {endLogFormatter, startLogFormatter} from './express-logging';
-import {log} from './logger';
+import {DEFAULT_BASE_PATH} from '../constants.js';
+import {endLogFormatter, startLogFormatter} from './express-logging.js';
+import {log} from './logger.js';
 import {
   allowCrossDomain,
-  allowCrossDomainAsyncExecute,
   catch404Handler,
   catchAllHandler,
   defaultToJSONContentType,
@@ -32,13 +28,13 @@ import {
   handleLogContext,
   handleUpgrade,
   tryHandleWebSocketUpgrade,
-} from './middleware';
+} from './middleware.js';
 import {
   addWebSocketHandler,
   getWebSocketHandlers,
   removeAllWebSocketHandlers,
   removeWebSocketHandler,
-} from './websocket';
+} from './websocket.js';
 
 const KEEP_ALIVE_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes
 
@@ -76,12 +72,6 @@ export interface ConfigureServerOpts {
   useLegacyUpgradeHandler?: boolean;
   /** Router mounted before any route is registered; see {@linkcode AppiumServer.frontRouter}. */
   frontRouter: Router;
-}
-
-/** @internal */
-export interface ConfigureServerInternalOpts extends ConfigureServerOpts {
-  /** @deprecated Appium 4 */
-  registerTestPages?: (app: Express, opts: {basePath: string}) => void;
 }
 
 /** Options for {@linkcode configureHttp} */
@@ -135,11 +125,6 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
           gracefulShutdownTimeout: cliArgs.shutdownTimeout,
         });
         const useLegacyUpgradeHandler = !hasShouldUpgradeCallback(httpServer);
-        let registerTestPages: ConfigureServerInternalOpts['registerTestPages'];
-        if (isLegacyTestPagesEnabled()) {
-          const require = createRequire(__filename);
-          registerTestPages = require('../test-pages').registerTestPages;
-        }
         configureServer({
           app,
           addRoutes: routeConfiguringFunction,
@@ -148,9 +133,8 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
           extraMethodMap,
           webSocketsMapping: appiumServer.webSocketsMapping,
           useLegacyUpgradeHandler,
-          registerTestPages,
           frontRouter: appiumServer.frontRouter,
-        } as ConfigureServerInternalOpts);
+        });
         // allow extensions to update the app and http server objects
         for (const updater of serverUpdaters) {
           await updater(app, appiumServer, cliArgs);
@@ -193,15 +177,10 @@ export function configureServer(opts: ConfigureServerOpts): void {
     useLegacyUpgradeHandler = true,
     frontRouter,
   } = opts;
-  const {registerTestPages} = opts as ConfigureServerInternalOpts;
   const basePath = normalizeBasePath(rawBasePath);
 
   app.use(endLogFormatter);
   app.use(handleLogContext);
-
-  if (registerTestPages) {
-    registerTestPages(app, {basePath});
-  }
 
   // Only use legacy Express middleware for WebSocket upgrades if shouldUpgradeCallback is not available.
   // When shouldUpgradeCallback is available, upgrades are handled directly on the HTTP server
@@ -211,8 +190,6 @@ export function configureServer(opts: ConfigureServerOpts): void {
   }
   if (allowCors) {
     app.use(allowCrossDomain);
-  } else {
-    app.use(allowCrossDomainAsyncExecute(basePath));
   }
   app.use(handleIdempotency);
   app.use(defaultToJSONContentType);
@@ -278,25 +255,9 @@ async function createServer(app: Express, cliArgs?: Partial<ServerArgs>): Promis
     }
   }
   const [cert, key] = (await Promise.all(certKey.map((p) => fs.readFile(p, 'utf8')))) as [string, string];
-  log.debug('Enabling TLS/SPDY on the server using the provided certificate');
+  log.debug('Enabling TLS on the server using the provided certificate');
 
-  const spdy = require('spdy') as {
-    createServer: (
-      options: {cert: string; key: string; spdy: {plain: boolean; ssl: boolean}},
-      requestListener: RequestHandler,
-    ) => HttpServer;
-  };
-  return spdy.createServer(
-    {
-      cert,
-      key,
-      spdy: {
-        plain: false,
-        ssl: true,
-      },
-    },
-    app,
-  );
+  return https.createServer({cert, key}, app) as unknown as HttpServer;
 }
 
 /**
@@ -319,9 +280,7 @@ function configureHttp({
   appiumServer.removeWebSocketHandler = removeWebSocketHandler;
   appiumServer.removeAllWebSocketHandlers = removeAllWebSocketHandlers;
   appiumServer.getWebSocketHandlers = getWebSocketHandlers;
-  appiumServer.isSecure = function isSecure() {
-    return Boolean((this as unknown as {_spdyState?: {secure?: boolean}})._spdyState?.secure);
-  };
+  appiumServer.isSecure = () => httpServer instanceof https.Server;
 
   // This avoids Express middleware timeout issues with long-lived WebSocket connections
   // See: https://github.com/appium/appium/issues/20760

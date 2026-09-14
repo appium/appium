@@ -4,7 +4,6 @@ import {
   CREATE_SESSION_COMMAND,
   DELETE_SESSION_COMMAND,
   DriverCore,
-  errors,
   type ExtensionCore,
   generateDriverLogPrefix,
   GET_STATUS_COMMAND,
@@ -20,7 +19,6 @@ import {util} from '@appium/support';
 import type {
   AppiumServer,
   DriverCaps,
-  DriverData,
   DriverOpts,
   ExternalDriver,
   IAppiumIpc,
@@ -35,15 +33,20 @@ import type {
 } from '@appium/types';
 import type WebSocket from 'ws';
 
-import * as bidiCommands from './bidi-commands';
-import {BIDI_BASE_PATH, DRIVER_TYPE, SESSION_DISCOVERY_FEATURE} from './constants';
-import type {DriverConfig} from './extension/driver-config';
-import {APPIUM_VER, getBuildInfo, updateBuildInfo} from './helpers/build';
-import {makeNonW3cCapsError, parseCapsForInnerDriver, type ParsedDriverCaps, pullSettings} from './helpers/capability';
-import * as insecureFeatures from './insecure-features';
-import * as inspectorCommands from './inspector-commands';
-import {getDefaultsForExtension} from './schema';
-import {compact, pickBy, pull} from './utils';
+import * as bidiCommands from './bidi-commands.js';
+import {BIDI_BASE_PATH, DRIVER_TYPE, SESSION_DISCOVERY_FEATURE} from './constants.js';
+import type {DriverConfig} from './extension/driver-config.js';
+import {APPIUM_VER, getBuildInfo, updateBuildInfo} from './helpers/build.js';
+import {
+  makeNonW3cCapsError,
+  parseCapsForInnerDriver,
+  type ParsedDriverCaps,
+  pullSettings,
+} from './helpers/capability.js';
+import * as insecureFeatures from './insecure-features.js';
+import * as inspectorCommands from './inspector-commands.js';
+import {getDefaultsForExtension} from './schema/index.js';
+import {pickBy} from './utils/index.js';
 
 const desiredCapabilityConstraints = {
   automationName: {
@@ -59,6 +62,14 @@ const desiredCapabilityConstraints = {
 export type AppiumDriverConstraints = typeof desiredCapabilityConstraints;
 export type W3CAppiumDriverCaps = W3CDriverCaps<AppiumDriverConstraints>;
 
+/**
+ * {@link DriverCaps} with `webSocketUrl` widened to `string`: the client sends it as a boolean,
+ * but the inner driver's response carries the resolved BiDi URL as a string.
+ */
+type DriverCapsWithBidiUrl = Omit<DriverCaps<AppiumDriverConstraints>, 'webSocketUrl'> & {
+  webSocketUrl?: string | boolean;
+};
+
 /** Result shape for umbrella {@link AppiumDriver.createSession} / {@link AppiumDriver.deleteSession}. */
 interface SessionHandlerResult<V = unknown> {
   value?: V;
@@ -66,28 +77,13 @@ interface SessionHandlerResult<V = unknown> {
   protocol?: string;
 }
 
-type SessionHandlerCreateResult = SessionHandlerResult<
-  [string, DriverCaps<AppiumDriverConstraints>, string | undefined]
->;
+type SessionHandlerCreateResult = SessionHandlerResult<[string, DriverCapsWithBidiUrl, string | undefined]>;
 
 type SessionHandlerDeleteResult = SessionHandlerResult<void>;
 
-/**
- * Tuple shape of the deprecated multi-argument overload of {@link AppiumDriver.createSession}.
- * Shared between that overload's declaration and its implementation signature so the parameter
- * list only needs to be written out once.
- *
- * @deprecated Use the single-argument overload of {@link AppiumDriver.createSession} instead.
- */
-type LegacyCreateSessionArgs = [
-  w3cCapabilities1: W3CAppiumDriverCaps,
-  w3cCapabilities2?: W3CAppiumDriverCaps,
-  w3cCapabilities3?: W3CAppiumDriverCaps,
-];
-
 /** @internal Not part of {@link ExternalDriver}; used only when wiring session IPC. */
 type IpcAssignable = {
-  assignIpc?: (ipc: IAppiumIpc) => Promise<void>;
+  assignIpc: (ipc: IAppiumIpc) => Promise<void>;
 };
 
 /**
@@ -96,8 +92,6 @@ type IpcAssignable = {
  */
 export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
   readonly sessions: Record<string, ExternalDriver> = {};
-
-  readonly pendingDrivers: Record<string, ExternalDriver[]> = {};
 
   /**
    * The umbrella driver does not observe its own command timeout; inner session drivers do.
@@ -169,7 +163,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
   }
 
   /** The umbrella driver does not queue commands; inner session drivers may. */
-  get isCommandsQueueEnabled(): boolean {
+  override get isCommandsQueueEnabled(): boolean {
     return false;
   }
 
@@ -278,23 +272,15 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
    * Creates a session: picks an inner driver from caps, runs plugin hooks, and returns a protocol
    * envelope with either `[sessionId, caps, protocol]` or an error.
    *
-   * @param w3cCapabilities - the new session capabilities in W3C format
+   * @param rawW3cCapabilities - the new session capabilities in W3C format
    */
-  async createSession(w3cCapabilities: W3CAppiumDriverCaps): Promise<SessionHandlerCreateResult>;
-  /**
-   * @deprecated Legacy call sites may pass the same W3C caps in up to three positions. These
-   * positions are intended to carry the same value; if they differ, which one wins is
-   * unspecified. Use the single-argument overload of {@linkcode createSession} instead.
-   */
-  async createSession(...legacyArgs: LegacyCreateSessionArgs): Promise<SessionHandlerCreateResult>;
-  async createSession(...legacyArgs: LegacyCreateSessionArgs): Promise<SessionHandlerCreateResult> {
-    const [w3cCapabilities1, w3cCapabilities2, w3cCapabilities3] = legacyArgs;
+  async createSession(rawW3cCapabilities: W3CAppiumDriverCaps): Promise<SessionHandlerCreateResult> {
     const defaultCapabilities = structuredClone(this.args.defaultCapabilities);
     const defaultSettings = pullSettings((defaultCapabilities ?? {}) as StringRecord);
-    const w3cCapabilities = structuredClone([w3cCapabilities3, w3cCapabilities2, w3cCapabilities1].find(isW3cCaps));
-    if (!w3cCapabilities) {
+    if (!isW3cCaps(rawW3cCapabilities)) {
       throw makeNonW3cCapsError();
     }
+    const w3cCapabilities = structuredClone(rawW3cCapabilities);
     const w3cSettings = {
       ...defaultSettings,
       ...pullSettings(w3cCapabilities.alwaysMatch ?? {}),
@@ -305,7 +291,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
 
     const protocol = PROTOCOLS.W3C;
     let innerSessionId: string;
-    let dCaps: DriverCaps<AppiumDriverConstraints> & {webSocketUrl?: string | boolean};
+    let dCaps: DriverCapsWithBidiUrl;
     try {
       // Parse the caps into a format that the InnerDriver will accept
       const parsedCaps = parseCapsForInnerDriver<AppiumDriverConstraints>(
@@ -329,9 +315,6 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
       if (this.args.sessionOverride) {
         await this.deleteAllSessions();
       }
-
-      let runningDriversData: DriverData[] = [];
-      let otherPendingDriversData: DriverData[] = [];
 
       const driverInstance = new InnerDriver(this.args, true) as unknown as ExternalDriver;
 
@@ -360,38 +343,19 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
       driverInstance.serverPort = this.args.port;
       driverInstance.serverPath = this.args.basePath;
 
-      try {
-        runningDriversData = (await this.curSessionDataForDriver(InnerDriver)) ?? [];
-      } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : String(e);
-        throw new errors.SessionNotCreatedError(msg);
-      }
-      this.pendingDrivers[InnerDriver.name] = this.pendingDrivers[InnerDriver.name] || [];
-      otherPendingDriversData = compact(this.pendingDrivers[InnerDriver.name].map((drv) => drv.driverData));
-      this.pendingDrivers[InnerDriver.name].push(driverInstance);
-
-      try {
-        [innerSessionId, dCaps] = (await driverInstance.createSession(
-          processedW3CCapabilities as never,
-          processedW3CCapabilities,
-          processedW3CCapabilities,
-          [...runningDriversData, ...otherPendingDriversData],
-        )) as [string, DriverCaps<AppiumDriverConstraints> & {webSocketUrl?: string | boolean}];
-        this.sessions[innerSessionId] = driverInstance;
-        // create an IPC channel for the driver and all plugins on this session
-        this.sessionIpcs[innerSessionId] = new AppiumIpc({
-          maxObjSize: this.args.maxIpcDataSize,
-          maxTopics: this.args.maxIpcTopics,
-          log: driverInstance.log,
-        });
-        const extDriver = driverInstance as unknown as IpcAssignable;
-        if (typeof extDriver.assignIpc === 'function') {
-          // TODO remove this existence guard as a breaking change in Appium 3
-          await extDriver.assignIpc(this.sessionIpcs[innerSessionId]);
-        }
-      } finally {
-        pull(this.pendingDrivers[InnerDriver.name], driverInstance);
-      }
+      [innerSessionId, dCaps] = (await driverInstance.createSession(processedW3CCapabilities as never)) as [
+        string,
+        DriverCapsWithBidiUrl,
+      ];
+      this.sessions[innerSessionId] = driverInstance;
+      // create an IPC channel for the driver and all plugins on this session
+      this.sessionIpcs[innerSessionId] = new AppiumIpc({
+        maxObjSize: this.args.maxIpcDataSize,
+        maxTopics: this.args.maxIpcTopics,
+        log: driverInstance.log,
+      });
+      const extDriver = driverInstance as unknown as IpcAssignable;
+      await extDriver.assignIpc(this.sessionIpcs[innerSessionId]);
 
       this.attachUnexpectedShutdownHandler(driverInstance, innerSessionId);
 
@@ -423,9 +387,6 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
           `Upstream driver responded with webSocketUrl ${dCaps.webSocketUrl}, will rewrite to ` +
             `${bidiUrl} for response to client`,
         );
-        // @ts-ignore webSocketUrl gets sent by the client as a boolean, but then it is supposed
-        // to come back from the server as a string. TODO figure out how to express this in our
-        // capability constraint system
         dCaps.webSocketUrl = bidiUrl;
       }
     } catch (error: unknown) {
@@ -479,41 +440,14 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
   }
 
   /**
-   * Collects `driverData` for every active session whose driver class matches `InnerDriver.name`
-   * (used when creating another session of the same driver type).
-   * @remarks `InnerDriver` is expected to be the driver class; only `.name` is read.
-   */
-  async curSessionDataForDriver(InnerDriver: {name: string}): Promise<DriverData[]> {
-    const data = compact(
-      Object.values(this.sessions)
-        .filter((s) => s.constructor.name === InnerDriver.name)
-        .map((s) => s.driverData),
-    );
-    for (const datum of data) {
-      if (!datum) {
-        throw new Error(
-          `Problem getting session data for driver type ` + `${InnerDriver.name}; does it implement 'get driverData'?`,
-        );
-      }
-    }
-    return data;
-  }
-
-  /**
    * Ends one session: removes it from the master list immediately, then delegates to the inner
-   * driver’s `deleteSession` with sibling-session metadata.
+   * driver’s `deleteSession`.
    */
   async deleteSession(sessionId: string): Promise<SessionHandlerDeleteResult> {
     let protocol: Protocol | undefined;
     try {
-      let otherSessionsData: DriverData[] | undefined;
-      let dstSession: ExternalDriver | undefined;
-      if (this.sessions[sessionId]) {
-        const curConstructorName = this.sessions[sessionId].constructor.name;
-        otherSessionsData = Object.entries(this.sessions)
-          .filter(([key, value]) => value.constructor.name === curConstructorName && key !== sessionId)
-          .map(([, value]) => value.driverData);
-        dstSession = this.sessions[sessionId];
+      const dstSession: ExternalDriver | undefined = this.sessions[sessionId];
+      if (dstSession) {
         protocol = dstSession.protocol;
         this.cleanupBidiSockets(sessionId);
       }
@@ -525,7 +459,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
 
       return {
         protocol,
-        value: await dstSession.deleteSession(sessionId, otherSessionsData),
+        value: await dstSession.deleteSession(sessionId),
       };
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : String(e);
@@ -771,10 +705,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
         }
         // we also want to assign the IPC channel for this session to the plugins
         const extPlugin = p as unknown as IpcAssignable;
-        if (typeof extPlugin.assignIpc === 'function') {
-          // TODO remove this existence guard as a breaking change in Appium 4
-          await extPlugin.assignIpc(this.sessionIpcs[newSessionId]);
-        }
+        await extPlugin.assignIpc(this.sessionIpcs[newSessionId]);
       }
       this.sessionlessPlugins = [];
     }

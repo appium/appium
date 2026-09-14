@@ -1,12 +1,14 @@
+import {openAsBlob} from 'node:fs';
+import path from 'node:path';
+
 import type {HTTPHeaders} from '@appium/types';
 import axios, {type AxiosBasicCredentials, type Method, type RawAxiosRequestConfig} from 'axios';
-import FormData from 'form-data';
-import Ftp from 'jsftp';
+import mimeTypes from 'mime-types';
 
-import {fs} from './fs';
-import log from './logger';
-import {Timer} from './timing';
-import {isPlainObject, toReadableSizeString} from './util';
+import {fs} from './fs.js';
+import log from './logger.js';
+import {Timer} from './timing.js';
+import {isPlainObject, toReadableSizeString} from './util.js';
 
 const DEFAULT_TIMEOUT_MS = 4 * 60 * 1000;
 
@@ -51,24 +53,16 @@ export interface HttpUploadOptions extends NetOptions {
   fileFieldName?: string;
   /**
    * Additional form fields. Only considered if `fileFieldName` is set.
+   * `Buffer` values are not supported - native FormData always sends a `Blob`/`Buffer` value
+   * as a file attachment, not a plain field; pass a `string` instead, or a `Blob` if a file
+   * attachment is actually intended.
    */
   formFields?: Record<string, unknown> | [string, unknown][];
 }
 
-/**
- * Options for {@linkcode uploadFile} when the remote uses the `ftp` protocol.
- * @deprecated FTP upload via jsftp is deprecated and will be removed in a future major version.
- * Use HTTP(S) upload instead.
- */
-export interface FtpUploadOptions extends NetOptions {}
-
-/** @deprecated Use {@linkcode FtpUploadOptions} instead. */
-export type NotHttpUploadOptions = FtpUploadOptions;
-
 type AuthLike = AuthCredentials | AxiosBasicCredentials;
 
 type HttpRemoteUri = `http://${string}` | `https://${string}`;
-type FtpRemoteUri = `ftp://${string}`;
 
 /** Uploads the given file to a remote location via HTTP(S). */
 export async function uploadFile(
@@ -76,16 +70,6 @@ export async function uploadFile(
   remoteUri: HttpRemoteUri,
   uploadOptions?: HttpUploadOptions,
 ): Promise<void>;
-/**
- * Uploads the given file to a remote location via FTP.
- * @deprecated FTP upload via jsftp is deprecated and will be removed in a future major version.
- * Use HTTP(S) upload instead.
- */
-export async function uploadFile(
-  localPath: string,
-  remoteUri: FtpRemoteUri,
-  uploadOptions?: FtpUploadOptions,
-): Promise<void>;
 export async function uploadFile(
   localPath: string,
   remoteUri: string,
@@ -94,7 +78,7 @@ export async function uploadFile(
 export async function uploadFile(
   localPath: string,
   remoteUri: string,
-  uploadOptions: HttpUploadOptions | FtpUploadOptions = {},
+  uploadOptions: HttpUploadOptions = {},
 ): Promise<void> {
   if (!(await fs.exists(localPath))) {
     throw new Error(`'${localPath}' does not exist or is not accessible`);
@@ -107,23 +91,22 @@ export async function uploadFile(
     log.info(`Uploading '${localPath}' of ${toReadableSizeString(size)} size to '${remoteUri}'`);
   }
   const timer = new Timer().start();
-  if (isHttpUploadOptions(uploadOptions, url)) {
-    if (!uploadOptions.fileFieldName) {
-      uploadOptions.headers = {
-        ...(isPlainObject(uploadOptions.headers) ? uploadOptions.headers : {}),
-        'Content-Length': size,
-      };
-    }
-    await uploadFileToHttp(fs.createReadStream(localPath), url, uploadOptions);
-  } else if (isFtpUploadOptions(uploadOptions, url)) {
-    await uploadFileToFtp(fs.createReadStream(localPath), url, uploadOptions);
-  } else {
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') {
     throw new Error(
       `Cannot upload the file at '${localPath}' to '${remoteUri}'. ` +
         `Unsupported remote protocol '${url.protocol}'. ` +
-        `Only http/https and ftp/ftps protocols are supported.`,
+        `Only http/https protocols are supported.`,
     );
   }
+  // Matches uploadFileToHttp()'s own default: `undefined` means multipart, and this raw-file-size
+  // Content-Length only applies to the non-multipart (explicitly falsy `fileFieldName`) case.
+  if (!(uploadOptions.fileFieldName ?? 'file')) {
+    uploadOptions.headers = {
+      ...(isPlainObject(uploadOptions.headers) ? uploadOptions.headers : {}),
+      'Content-Length': size,
+    };
+  }
+  await uploadFileToHttp(localPath, url, uploadOptions);
   if (isMetered) {
     log.info(
       `Uploaded '${localPath}' of ${toReadableSizeString(size)} size in ` +
@@ -131,8 +114,6 @@ export async function uploadFile(
     );
   }
 }
-
-// #region Private helpers
 
 /**
  * Downloads the given file via HTTP(S).
@@ -201,6 +182,8 @@ export async function downloadFile(
   }
 }
 
+// #region Private helpers
+
 function toAxiosAuth(auth: AuthLike | undefined): AxiosBasicCredentials | null {
   if (!auth || !isPlainObject(auth)) {
     return null;
@@ -215,7 +198,7 @@ function toAxiosAuth(auth: AuthLike | undefined): AxiosBasicCredentials | null {
 }
 
 async function uploadFileToHttp(
-  localFileStream: NodeJS.ReadableStream,
+  localPath: string,
   parsedUri: URL,
   uploadOptions: HttpUploadOptions = {},
 ): Promise<void> {
@@ -241,6 +224,8 @@ async function uploadFileToHttp(
     requestOpts.auth = axiosAuth;
   }
   if (fileFieldName) {
+    // Native FormData/Blob; axios' Node adapter builds the multipart stream itself for any
+    // spec-compliant FormData, so the `form-data` package is not needed.
     const form = new FormData();
     if (formFields) {
       let pairs: [string, unknown][] = [];
@@ -250,23 +235,41 @@ async function uploadFileToHttp(
         pairs = Object.entries(formFields);
       }
       for (const [key, value] of pairs) {
-        if (key.toLowerCase() !== fileFieldName?.toLowerCase()) {
-          form.append(key, value as string | Buffer);
+        if (key.toLowerCase() === fileFieldName?.toLowerCase()) {
+          continue;
+        }
+        if (typeof value === 'string' || value instanceof Blob) {
+          form.append(key, value);
+        } else if (Buffer.isBuffer(value)) {
+          // Per the WHATWG FormData spec, appending a Blob always produces a *file* part
+          // (`filename="blob"`) - unlike the old `form-data` package, which sent a Buffer as
+          // a plain field. There is no native FormData API to send raw bytes as a non-file
+          // field, so fail loud instead of silently changing the multipart classification.
+          throw new TypeError(
+            `formFields.${key}: Buffer values are not supported, because native FormData always sends ` +
+              `them as file attachments rather than plain fields. Pass a string, or a Blob if a file ` +
+              `attachment is actually intended.`,
+          );
+        } else {
+          form.append(key, String(value));
         }
       }
     }
     // AWS S3 POST upload requires this to be the last field; do not move before formFields.
-    form.append(fileFieldName, localFileStream);
-    requestOpts.headers = {
-      ...(isPlainObject(headers) ? headers : {}),
-      ...form.getHeaders(),
-    };
+    const fileName = path.basename(localPath);
+    const fileType = mimeTypes.lookup(fileName) || undefined;
+    form.append(fileFieldName, await openAsBlob(localPath, {type: fileType}), fileName);
+    if (isPlainObject(headers)) {
+      requestOpts.headers = headers as RawAxiosRequestConfig['headers'];
+    }
     requestOpts.data = form;
   } else {
     if (isPlainObject(headers)) {
       requestOpts.headers = headers;
     }
-    requestOpts.data = localFileStream;
+    // A plain stream, not a Blob: axios force-overwrites a Blob body's `Content-Type` to
+    // `data.type || 'application/octet-stream'`, clobbering any caller-supplied header.
+    requestOpts.data = fs.createReadStream(localPath);
   }
   log.debug(
     `Performing ${method} to ${href} with options (excluding data): ` +
@@ -281,55 +284,6 @@ async function uploadFileToHttp(
 
   const {status, statusText} = await axios(requestOpts);
   log.info(`Server response: ${status} ${statusText}`);
-}
-
-/** @deprecated FTP upload via jsftp is deprecated and will be removed in a future major version. */
-async function uploadFileToFtp(
-  localFileStream: string | Buffer | NodeJS.ReadableStream,
-  parsedUri: URL,
-  uploadOptions: FtpUploadOptions = {},
-): Promise<void> {
-  const {auth} = uploadOptions;
-  const {protocol, hostname, port, pathname} = parsedUri;
-
-  const ftpOpts: {host: string; port: number; user?: string; pass?: string} = {
-    host: hostname ?? '',
-    port: port !== undefined && port !== '' ? Number.parseInt(port, 10) : 21,
-  };
-  if (auth?.user && auth?.pass) {
-    ftpOpts.user = auth.user;
-    ftpOpts.pass = auth.pass;
-  }
-  log.debug(`${protocol.slice(0, -1)} upload options: ${JSON.stringify(ftpOpts)}`);
-  return await new Promise<void>((resolve, reject) => {
-    new Ftp(ftpOpts).put(localFileStream, pathname, (err) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve();
-      }
-    });
-  });
-}
-
-function isHttpUploadOptions(opts: HttpUploadOptions | FtpUploadOptions, url: URL): opts is HttpUploadOptions {
-  try {
-    return url.protocol === 'http:' || url.protocol === 'https:';
-  } catch {
-    return false;
-  }
-}
-
-/**
- * Returns true if the URL is FTP, i.e. the options are for FTP upload.
- * @deprecated FTP upload via jsftp is deprecated and will be removed in a future major version.
- */
-function isFtpUploadOptions(opts: HttpUploadOptions | FtpUploadOptions, url: URL): opts is FtpUploadOptions {
-  try {
-    return url.protocol === 'ftp:';
-  } catch {
-    return false;
-  }
 }
 
 // #endregion

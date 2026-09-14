@@ -5,12 +5,12 @@ import {
   type CopyOptions,
   createReadStream,
   createWriteStream,
+  type Dirent,
   type MakeDirectoryOptions,
   open,
   type PathLike,
   promises as fsPromises,
   read,
-  type ReadAsyncOptions,
   rmSync,
   type Stats,
   write,
@@ -18,35 +18,15 @@ import {
 import path from 'node:path';
 import {promisify} from 'node:util';
 
-import B from 'bluebird';
-import {glob} from 'glob';
-import type {GlobOptions} from 'glob';
 import klaw from 'klaw';
 import type {Walker} from 'klaw';
 import sanitize from 'sanitize-filename';
 import which from 'which';
 
-import {type NormalizedPackageJson, type NormalizeOptions, packageDirectorySync, readPackageSync} from './internal';
-import log from './logger';
-import {isWindows} from './system';
-import {Timer} from './timing';
-import {memoize, pluralize} from './util';
-
-const findRootCached = memoize(packageDirectorySync, (opts: {cwd?: string} | undefined) => opts?.cwd);
-
-/**
- * File metadata shape used by legacy `ncp` transform callbacks.
- * @deprecated
- * @see https://www.npmjs.com/package/@types/ncp
- */
-export interface CopyFileDescriptor {
-  name: string;
-  mode: number;
-  /** Accessed time */
-  atime: Date;
-  /** Modified time */
-  mtime: Date;
-}
+import log from './logger.js';
+import {isWindows} from './system.js';
+import {Timer} from './timing.js';
+import {pluralize} from './util.js';
 
 /**
  * Options for {@linkcode fs.copyFile}.
@@ -67,14 +47,6 @@ export interface CopyFileOptions {
   filter?: RegExp | ((filename: string) => boolean);
   /** Follow symlinks instead of copying them. Maps to `dereference`. */
   dereference?: boolean;
-  /** @deprecated Ignored. No `fs.cp` equivalent (per-file stream transform). */
-  transform?: (read: NodeJS.ReadableStream, write: NodeJS.WritableStream, file: CopyFileDescriptor) => void;
-  /** @deprecated Ignored. No `fs.cp` equivalent (fail-fast vs collect errors). */
-  stopOnErr?: boolean;
-  /** @deprecated Ignored. No `fs.cp` equivalent (error log sink). */
-  errs?: PathLike;
-  /** @deprecated Ignored. No `fs.cp` equivalent (concurrency limit). */
-  limit?: number;
 }
 
 /** Options for {@linkcode fs.mv} */
@@ -83,8 +55,6 @@ export interface MvOptions {
   mkdirp?: boolean;
   /** Set to false to throw if the destination file already exists */
   clobber?: boolean;
-  /** @deprecated Legacy, not used */
-  limit?: number;
 }
 
 /**
@@ -93,18 +63,42 @@ export interface MvOptions {
  */
 export type WalkDirCallback = (itemPath: string, isDirectory: boolean) => boolean | void | Promise<boolean | void>;
 
+/** Options for {@linkcode fs.glob}. Deliberately narrower than `node:fs`'s own `GlobOptions` so callers are insulated from its shape. */
+export interface GlobOptions {
+  /**
+   * Current working directory to resolve `pattern` and results against.
+   * @default process.cwd()
+   */
+  cwd?: string;
+  /** Yield `Dirent`s instead of path strings. */
+  withFileTypes?: boolean;
+  /** Yield absolute paths instead of paths relative to `cwd`. Ignored when `withFileTypes` is set (a `Dirent`'s location is already recoverable via `parentPath`). */
+  absolute?: boolean;
+  /** Return an async generator that yields matches lazily instead of resolving to an array of all of them. */
+  lazy?: boolean;
+}
+
 /**
- * Promisified fs.read signature.
- * @template TBuffer - Buffer type (e.g. NodeJS.ArrayBufferView)
- * @deprecated use `typeof read.__promisify__` instead
+ * Overloaded call signature for {@linkcode fs.glob}, narrowing its return type based on
+ * `withFileTypes`/`lazy`. When either flag is a non-literal `boolean` (e.g. a `GlobOptions`
+ * variable), the return type widens to a union instead of picking a single (possibly wrong) shape.
  */
-export type ReadFn<TBuffer extends NodeJS.ArrayBufferView = NodeJS.ArrayBufferView> = (
-  fd: number,
-  buffer: TBuffer | ReadAsyncOptions<TBuffer>,
-  offset?: number,
-  length?: number,
-  position?: number | null,
-) => B<{bytesRead: number; buffer: TBuffer}>;
+export interface GlobFn {
+  (
+    pattern: string | readonly string[],
+    options: GlobOptions & {withFileTypes: true; lazy: true},
+  ): AsyncGenerator<Dirent>;
+  (pattern: string | readonly string[], options: GlobOptions & {withFileTypes: true; lazy?: false}): Promise<Dirent[]>;
+  (
+    pattern: string | readonly string[],
+    options: GlobOptions & {withFileTypes: true},
+  ): Promise<Dirent[]> | AsyncGenerator<Dirent>;
+  (pattern: string | readonly string[], options: GlobOptions & {lazy: true}): AsyncGenerator<string>;
+  (
+    pattern: string | readonly string[],
+    options?: GlobOptions,
+  ): Promise<string[]> | Promise<Dirent[]> | AsyncGenerator<string> | AsyncGenerator<Dirent>;
+}
 
 /**
  * Maps {@link CopyFileOptions} (including legacy `ncp` fields) to `fs.cp` options.
@@ -279,12 +273,31 @@ export const fs = {
   which,
 
   /**
-   * Given a glob pattern, resolve with list of files matching that pattern.
-   * @see https://github.com/isaacs/node-glob
+   * Given a glob pattern, resolves to an array of matching paths (or `Dirent`s if `withFileTypes` is set).
+   * Pass `lazy: true` to get an async generator that yields matches one at a time instead.
+   *
+   * Unlike the `glob` npm package, this does NOT follow symlinks when expanding wildcard path
+   * segments. Prefer a manual `readdir`-based walk over a glob pattern for callers that must
+   * traverse through symlinks.
    */
-  glob(pattern: string, options?: GlobOptions): Promise<string[]> {
-    return Promise.resolve((options ? glob(pattern, options) : glob(pattern)) as Promise<string[]>);
-  },
+  glob: ((pattern: string | readonly string[], options: GlobOptions = {}) => {
+    const {cwd, withFileTypes, absolute, lazy} = options;
+    async function* generate(): AsyncGenerator<string | Dirent> {
+      for await (const entry of fsPromises.glob(pattern, {cwd, withFileTypes})) {
+        yield absolute && !withFileTypes ? path.resolve(cwd ?? process.cwd(), entry as string) : entry;
+      }
+    }
+    if (lazy) {
+      return generate();
+    }
+    return (async () => {
+      const items: (string | Dirent)[] = [];
+      for await (const item of generate()) {
+        items.push(item);
+      }
+      return items;
+    })();
+  }) as GlobFn,
 
   /** Sanitize a filename. @see https://github.com/parshap/node-sanitize-filename */
   sanitizeName: sanitize,
@@ -400,41 +413,6 @@ export const fs = {
     /* eslint-enable promise/prefer-await-to-callbacks */
   },
 
-  /**
-   * Reads the closest `package.json` from absolute path `dir`.
-   * @deprecated Package.json helpers in `@appium/support` are deprecated and will be removed in the next major version.
-   * Read `package.json` locally instead (for example with `node:fs` and `JSON.parse`).
-   * @throws If there were problems finding or reading `package.json`
-   */
-  readPackageJsonFrom(dir: string, opts: NormalizeOptions & {cwd?: string} = {}): NormalizedPackageJson {
-    const cwd = fs.findRoot(dir);
-    try {
-      return readPackageSync({normalize: true, ...opts, cwd});
-    } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      (err as Error).message = `Failed to read a \`package.json\` from dir \`${dir}\`:\n\n${message}`;
-      throw err;
-    }
-  },
-
-  /**
-   * Finds the project root directory from `dir`.
-   * @deprecated Package.json helpers in `@appium/support` are deprecated and will be removed in the next major version.
-   * Locate `package.json` locally instead.
-   * @throws TypeError If `dir` is not a non-empty absolute path
-   * @throws Error If project root could not be found
-   */
-  findRoot(dir: string): string {
-    if (!dir || !path.isAbsolute(dir)) {
-      throw new TypeError('`findRoot()` must be provided a non-empty, absolute path');
-    }
-    const result = findRootCached({cwd: dir});
-    if (!result) {
-      throw new Error(`\`findRoot()\` could not find \`package.json\` from ${dir}`);
-    }
-    return result;
-  },
-
   access: fsPromises.access,
   appendFile: fsPromises.appendFile,
   chmod: fsPromises.chmod,
@@ -458,18 +436,8 @@ export const fs = {
   stat: fsPromises.stat,
   symlink: fsPromises.symlink,
   unlink: fsPromises.unlink,
-  // TODO: replace with native promisify in Appium 4
-  write: B.promisify(write),
+  write: promisify(write),
   writeFile: fsPromises.writeFile,
-
-  /** @deprecated Use `constants.F_OK` instead. */
-  F_OK: constants.F_OK,
-  /** @deprecated Use `constants.R_OK` instead. */
-  R_OK: constants.R_OK,
-  /** @deprecated Use `constants.W_OK` instead. */
-  W_OK: constants.W_OK,
-  /** @deprecated Use `constants.X_OK` instead. */
-  X_OK: constants.X_OK,
 };
 
 export default fs;

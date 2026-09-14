@@ -1,10 +1,10 @@
 /* eslint-disable no-console */
 import {util} from '@appium/support';
-import type {Args} from 'appium/types';
+import type {Args} from 'appium/types/index.js';
 
-import {getAllArgSpecs, getDefaultsForSchema} from '../schema/schema';
-import {difference, getPath, pickBy, setPath} from '../utils';
-import type {ReadConfigFileResult} from './config-file';
+import {getAllArgSpecs, getDefaultsForSchema} from '../schema/schema.js';
+import {difference, getPath, pickBy, setPath} from '../utils/index.js';
+import type {ReadConfigFileResult} from './config-file.js';
 
 interface FlattenedArg {
   value: unknown;

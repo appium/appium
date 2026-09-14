@@ -3,13 +3,16 @@ import type {Driver, DriverMethodDef, HTTPMethod, MethodMap} from '@appium/types
 import {LRUCache} from 'lru-cache';
 import {match} from 'path-to-regexp';
 
-import {DEFAULT_BASE_PATH} from '../../constants';
-import {APPIUM_ROUTES} from './appium';
-import {APPIUM_DEVICE_ROUTES} from './appium-device';
-import {EXTENSION_ROUTES} from './extensions';
-import {JSONWP_ROUTES} from './jsonwp';
-import {MJSONWP_ROUTES} from './mjsonwp';
-import {W3C_ROUTES} from './w3c';
+import {DEFAULT_BASE_PATH} from '../../constants.js';
+import {APPIUM_DEVICE_ROUTES} from './appium-device.js';
+import {APPIUM_ROUTES} from './appium.js';
+import {EXTENSION_ROUTES} from './extensions/index.js';
+import {JSONWP_ROUTES} from './jsonwp.js';
+import {MJSONWP_ROUTES} from './mjsonwp.js';
+import {CREATE_SESSION_COMMAND, GET_STATUS_COMMAND, W3C_ROUTES} from './w3c.js';
+
+export {CREATE_SESSION_COMMAND, DELETE_SESSION_COMMAND, GET_STATUS_COMMAND} from './w3c.js';
+export {LIST_DRIVER_COMMANDS_COMMAND, LIST_DRIVER_EXTENSIONS_COMMAND} from './appium.js';
 
 const COMMAND_NAMES_CACHE = new LRUCache<string, string>({
   max: 1024,
@@ -91,4 +94,4 @@ function toCommandNameCacheKey(endpoint: string, method?: string): string {
 }
 
 // driver commands that do not require a session to already exist
-export const NO_SESSION_ID_COMMANDS = ['createSession', 'getStatus', 'getAppiumSessions'];
+export const NO_SESSION_ID_COMMANDS = [CREATE_SESSION_COMMAND, GET_STATUS_COMMAND, 'getAppiumSessions'];

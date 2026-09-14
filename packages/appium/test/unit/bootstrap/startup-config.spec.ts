@@ -4,11 +4,11 @@ import {describe, it, beforeEach, afterEach} from 'node:test';
 import type {SinonSandbox, SinonSpy} from 'sinon';
 import {createSandbox} from 'sinon';
 
-import {getNonDefaultServerArgs, showConfig} from '../../../lib/bootstrap/startup-config';
-import {getParser} from '../../../lib/cli/parser';
-import {PLUGIN_TYPE} from '../../../lib/constants';
-import {finalizeSchema, getDefaultsForSchema, registerSchema, resetSchema} from '../../../lib/schema/schema';
-import {setPath} from '../../../lib/utils';
+import {getNonDefaultServerArgs, showConfig} from '../../../lib/bootstrap/startup-config.js';
+import {getParser} from '../../../lib/cli/parser.js';
+import {PLUGIN_TYPE} from '../../../lib/constants.js';
+import {finalizeSchema, getDefaultsForSchema, registerSchema, resetSchema} from '../../../lib/schema/schema.js';
+import {setPath} from '../../../lib/utils/index.js';
 
 describe('bootstrap/startup-config', function () {
   let sandbox: SinonSandbox;
@@ -41,7 +41,7 @@ describe('bootstrap/startup-config', function () {
             },
           },
           {port: 1234},
-          {allowCors: false},
+          {sessionOverride: false},
         );
         assert.strictEqual(log.calledWith('Appium Configuration\n'), true);
       });
@@ -95,9 +95,9 @@ describe('bootstrap/startup-config', function () {
       });
 
       it('should catch a non-default argument', function () {
-        args.allowCors = true;
+        args.sessionOverride = true;
         const nonDefaultArgs = getNonDefaultServerArgs(args);
-        assert.deepStrictEqual(nonDefaultArgs, {allowCors: true});
+        assert.deepStrictEqual(nonDefaultArgs, {sessionOverride: true});
       });
 
       describe('when arg is an array', function () {

@@ -4,7 +4,7 @@ import {afterEach, beforeEach, describe, it} from 'node:test';
 import type {InitialOpts} from '@appium/types';
 import {createSandbox} from 'sinon';
 
-import {BaseDriver} from '../../../../lib';
+import {BaseDriver} from '../../../../lib/index.js';
 
 const FIRST_LOGS = ['first', 'logs'];
 const SECOND_LOGS = ['second', 'logs'];
@@ -21,7 +21,7 @@ const SUPPORTED_LOG_TYPES = {
 
 describe('log commands -', function () {
   let sandbox: sinon.SinonSandbox;
-  let driver: BaseDriver<any, any, any, any, any, any>;
+  let driver: BaseDriver<any, any, any, any, any>;
 
   beforeEach(function () {
     sandbox = createSandbox();

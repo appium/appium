@@ -7,7 +7,7 @@ import type {
   IpcMessage,
   MethodMap,
 } from '@appium/types';
-import {BasePlugin} from 'appium/plugin';
+import {BasePlugin} from 'appium/plugin.js';
 import {sleep} from 'asyncbox';
 import type {Application, Request, Response} from 'express';
 
@@ -109,7 +109,7 @@ export class FakePlugin extends BasePlugin {
     });
   }
 
-  async onIpcInit() {
+  override async onIpcInit(): Promise<void> {
     const clockSub = this.ipcSubscribe<ClockStatus>('clockLifecycle');
     clockSub.on('message', (message: IpcMessage<ClockStatus>) => {
       this.fakeDriverClockIsRunning = message.data.running;

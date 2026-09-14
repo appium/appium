@@ -1,16 +1,8 @@
 import {util} from '@appium/support';
-import type {
-  Constraints,
-  DefaultCreateSessionResult,
-  InitialOpts,
-  RouteMatcher,
-  SingularSessionData,
-  StringRecord,
-  W3CDriverCaps,
-} from '@appium/types';
+import type {Constraints, DefaultCreateSessionResult, InitialOpts, RouteMatcher, W3CDriverCaps} from '@appium/types';
 
-import {BaseDriver, determineProtocol, errors, isW3cCaps} from '../../../lib';
-import {PROTOCOLS} from '../../../lib/constants';
+import {PROTOCOLS} from '../../../lib/constants.js';
+import {BaseDriver, errors, isW3cCaps} from '../../../lib/index.js';
 
 class FakeDriver extends BaseDriver<Constraints> {
   static newMethodMap = {
@@ -23,7 +15,7 @@ class FakeDriver extends BaseDriver<Constraints> {
 
   constructor() {
     super({} as InitialOpts);
-    this.protocol = PROTOCOLS.MJSONWP;
+    this.protocol = PROTOCOLS.W3C;
     this.sessionId = null;
     this.wdProxyActive = false;
   }
@@ -40,13 +32,8 @@ class FakeDriver extends BaseDriver<Constraints> {
     return this;
   }
 
-  async createSession(
-    desiredCapabilities: W3CDriverCaps<Constraints>,
-    requiredCapabilities?: W3CDriverCaps<Constraints>,
-    capabilities?: W3CDriverCaps<Constraints>,
-  ): Promise<DefaultCreateSessionResult<Constraints>> {
-    const w3cCapabilities = [desiredCapabilities, requiredCapabilities, capabilities].find(isW3cCaps);
-    if (!w3cCapabilities) {
+  async createSession(w3cCapabilities: W3CDriverCaps<Constraints>): Promise<DefaultCreateSessionResult<Constraints>> {
+    if (!isW3cCaps(w3cCapabilities)) {
       throw new errors.SessionNotCreatedError('No capabilities provided');
     }
     this.sessionId = `fakeSession_${util.uuidV4()}`;
@@ -57,9 +44,6 @@ class FakeDriver extends BaseDriver<Constraints> {
     const method = (this as unknown as Record<string, (...a: any[]) => unknown>)[cmd];
     if (!method) {
       throw new errors.NotYetImplementedError();
-    }
-    if (cmd === 'createSession') {
-      this.protocol = determineProtocol(args);
     }
     return (await method.call(this, ...args)) as T;
   }
@@ -91,20 +75,12 @@ class FakeDriver extends BaseDriver<Constraints> {
     throw new Error('Too Fresh!');
   }
 
-  async getSession(): Promise<SingularSessionData<Constraints, StringRecord>> {
-    throw new errors.NoSuchDriverError();
-  }
-
   async click(elementId: string, sessionId: string): Promise<unknown[]> {
     return [elementId, sessionId];
   }
 
   async implicitWait(ms: number): Promise<number> {
     return ms;
-  }
-
-  async setNetworkConnection(type: number): Promise<number> {
-    return type;
   }
 
   async moveTo(element: string | null, xOffset: number, yOffset: number): Promise<unknown[]> {
@@ -135,8 +111,8 @@ class FakeDriver extends BaseDriver<Constraints> {
     return app;
   }
 
-  async getSettings(): Promise<{status: number; value: string}> {
-    return {status: 13, value: 'Mishandled Driver Error'};
+  async getSettings(): Promise<{protocol: typeof PROTOCOLS.W3C; error: Error}> {
+    return {protocol: PROTOCOLS.W3C, error: new errors.UnknownError('Mishandled Driver Error')};
   }
 
   proxyActive(sessionId?: string): boolean {

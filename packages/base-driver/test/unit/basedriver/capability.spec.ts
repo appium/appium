@@ -5,16 +5,14 @@ import type {Constraints, InitialOpts, W3CCapabilities} from '@appium/types';
 import {asyncmap} from 'asyncbox';
 import {createSandbox} from 'sinon';
 
-import {validator} from '../../../lib/basedriver/validation';
-import {BaseDriver, errors} from '../../../lib/index';
-
-// TODO: we need module-level mocks for the logger
+import {validator} from '../../../lib/basedriver/validation.js';
+import {BaseDriver, errors} from '../../../lib/index.js';
 
 /** W3C caps for createSession (tests use partial/invalid caps) */
 type TestW3CCaps = W3CCapabilities<Constraints>;
 
 describe('Desired Capabilities', function () {
-  let d: BaseDriver<any, any, any, any, any, any>;
+  let d: BaseDriver<any, any, any, any, any>;
   let sandbox: sinon.SinonSandbox;
   let logWarnSpy: sinon.SinonSpy;
   let deprecatedStub: sinon.SinonStub;

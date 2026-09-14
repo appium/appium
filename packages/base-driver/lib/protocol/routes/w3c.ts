@@ -1,5 +1,9 @@
 import type {Driver, MethodMap} from '@appium/types';
 
+export const CREATE_SESSION_COMMAND = 'createSession';
+export const DELETE_SESSION_COMMAND = 'deleteSession';
+export const GET_STATUS_COMMAND = 'getStatus';
+
 /**
  * Standard W3C WebDriver routes.
  * @see https://www.w3.org/TR/webdriver2/
@@ -8,23 +12,17 @@ export const W3C_ROUTES = {
   // Sessions
   '/session': {
     POST: {
-      command: 'createSession',
+      command: CREATE_SESSION_COMMAND,
       payloadParams: {
-        // Deliberately sent 3 times: this array is spread directly into any plugin hooking
-        // 'createSession' (see AppiumDriver#wrapCommandWithPlugins), so changing its shape here
-        // would be a wire-level breaking change for third-party plugins, not just drivers. Keep
-        // this in sync with the deprecated multi-argument overload of `createSession`.
-        optional: ['capabilities', 'capabilities', 'capabilities'],
+        optional: ['capabilities'],
       },
     },
   },
   '/session/:sessionId': {
-    // TODO: JSONWP route, remove in the future
-    GET: {command: 'getSession', deprecated: true},
-    DELETE: {command: 'deleteSession'},
+    DELETE: {command: DELETE_SESSION_COMMAND},
   },
   '/status': {
-    GET: {command: 'getStatus'},
+    GET: {command: GET_STATUS_COMMAND},
   },
 
   // Timeouts

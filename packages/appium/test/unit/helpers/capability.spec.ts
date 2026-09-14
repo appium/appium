@@ -3,14 +3,14 @@ import {describe, it} from 'node:test';
 
 import type {BaseDriverCapConstraints, Capabilities, Constraints, NSCapabilities, W3CCapabilities} from '@appium/types';
 
-import type {InvalidCaps} from '../../../lib/helpers/capability';
+import type {InvalidCaps} from '../../../lib/helpers/capability.js';
 import {
   insertAppiumPrefixes,
   parseCapsForInnerDriver,
   pullSettings,
   removeAppiumPrefixes,
-} from '../../../lib/helpers/capability';
-import {BASE_CAPS, W3C_CAPS} from '../../helpers';
+} from '../../../lib/helpers/capability.js';
+import {BASE_CAPS, W3C_CAPS} from '../../helpers.js';
 
 describe('helpers/capability', function () {
   describe('parseCapsForInnerDriver()', function () {
@@ -63,9 +63,8 @@ describe('helpers/capability', function () {
         },
       );
       const errRes = res as unknown as {
-        error: {jsonwpCode: number; error: string; w3cStatus: number};
+        error: {error: string; w3cStatus: number};
       };
-      assert.strictEqual(errRes.error.jsonwpCode, 61);
       assert.strictEqual(errRes.error.error, 'invalid argument');
       assert.strictEqual(errRes.error.w3cStatus, 400);
     });
@@ -83,8 +82,7 @@ describe('helpers/capability', function () {
         firstMatch: [{foo: 'bar'}, {'appium:hello': 'world'}],
       } as W3CCapabilities<{hello: {presence: true}}>;
       const res = parseCapsForInnerDriver(w3cCaps, {hello: {presence: true}});
-      const error = (res as {error?: {jsonwpCode: number; error: string; w3cStatus: number}}).error;
-      assert.strictEqual(error!.jsonwpCode, 61);
+      const error = (res as {error?: {error: string; w3cStatus: number}}).error;
       assert.strictEqual(error!.error, 'invalid argument');
       assert.strictEqual(error!.w3cStatus, 400);
     });

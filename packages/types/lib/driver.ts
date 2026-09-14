@@ -3,12 +3,11 @@ import type internal from 'node:stream';
 
 import type {Merge} from 'type-fest';
 
-import type {Capabilities, DriverCaps, W3CCapabilities} from './capabilities';
-import type {BidiModuleMap, BiDiResultData, ExecuteMethodMap, MethodMap} from './command-maps';
+import type {Capabilities, DriverCaps, W3CCapabilities} from './capabilities.js';
+import type {BidiModuleMap, BiDiResultData, ExecuteMethodMap, MethodMap} from './command-maps.js';
 import type {
   DefaultCreateSessionResult,
   DefaultDeleteSessionResult,
-  DriverData,
   EventHistory,
   IAppiumCommands,
   IImplementedCommands,
@@ -16,13 +15,13 @@ import type {
   IMJSONWPCommands,
   IOtherProtocolCommands,
   IWDClassicCommands,
-} from './commands';
-import type {ServerArgs} from './config';
-import type {Constraints} from './constraints';
-import type {HTTPHeaders, HTTPMethod} from './http';
-import type {AppiumLogger} from './logger';
-import type {AppiumServer, UpdateServerCallback} from './server';
-import type {Class, StringRecord} from './util';
+} from './commands/index.js';
+import type {ServerArgs} from './config.js';
+import type {Constraints} from './constraints.js';
+import type {HTTPHeaders, HTTPMethod} from './http.js';
+import type {AppiumLogger} from './logger.js';
+import type {AppiumServer, UpdateServerCallback} from './server.js';
+import type {Class, StringRecord} from './util.js';
 /**
  * Interface implemented by the `DeviceSettings` class in `@appium/base-driver`
  */
@@ -36,7 +35,7 @@ export interface DriverHelpers {
   isPackageOrBundle: (app: string) => boolean;
   duplicateKeys: <T>(input: T, firstKey: string, secondKey: string) => T;
   parseCapsArray: (cap: string | string[]) => string[];
-  generateDriverLogPrefix: (obj: object, sessionId?: string) => string;
+  generateDriverLogPrefix: (obj: object) => string;
 }
 
 export type SettingsUpdateListener<T extends Record<string, unknown> = Record<string, unknown>> = (
@@ -71,10 +70,6 @@ export interface Core<C extends Constraints, Settings extends StringRecord = Str
   eventEmitter: EventEmitter;
   settings: IDeviceSettings<Settings>;
   log: AppiumLogger;
-  /**
-   * @deprecated Use {@linkcode IAppiumIpc} for cross-session coordination instead.
-   */
-  driverData: DriverData;
   isCommandsQueueEnabled: boolean;
   eventHistory: EventHistory;
   bidiEventSubs: Record<string, string[]>;
@@ -114,7 +109,6 @@ export interface Core<C extends Constraints, Settings extends StringRecord = Str
   getStatus(): Promise<any>;
   sessionExists(sessionId?: string): boolean;
   isW3CProtocol(): boolean;
-  isMjsonwpProtocol(): boolean;
   isFeatureEnabled(name: string): boolean;
   assertFeatureEnabled(name: string): void;
   validateLocatorStrategy(strategy: string, webContext?: boolean): void;
@@ -144,9 +138,8 @@ export interface Driver<
   Settings extends StringRecord = StringRecord,
   CreateResult = DefaultCreateSessionResult<C>,
   DeleteResult = DefaultDeleteSessionResult,
-  SessionData extends StringRecord = StringRecord,
 >
-  extends IImplementedCommands<C, Settings, CreateResult, DeleteResult, SessionData>, Core<C, Settings> {
+  extends IImplementedCommands<C, Settings, CreateResult, DeleteResult>, Core<C, Settings> {
   /**
    * The set of command line arguments set for this driver.
    *
@@ -293,10 +286,9 @@ export interface ExternalDriver<
   Settings extends StringRecord = StringRecord,
   CreateResult = DefaultCreateSessionResult<C>,
   DeleteResult = DefaultDeleteSessionResult,
-  SessionData extends StringRecord = StringRecord,
 >
   extends
-    Driver<C, CArgs, Settings, CreateResult, DeleteResult, SessionData>,
+    Driver<C, CArgs, Settings, CreateResult, DeleteResult>,
     IWDClassicCommands,
     IAppiumCommands,
     IJSONWPCommands,

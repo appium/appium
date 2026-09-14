@@ -1,21 +1,21 @@
 import assert from 'node:assert/strict';
 import {describe, it, before, after} from 'node:test';
 
+import {httpGet, httpPost} from '@appium/driver-test-support';
 import {fs, tempDir} from '@appium/support';
 import type {AppiumServer} from '@appium/types';
-import type {ParsedArgs} from 'appium/types';
+import type {ParsedArgs} from 'appium/types/index.js';
 import {sleep} from 'asyncbox';
-import axios from 'axios';
 import type {Browser} from 'webdriverio';
 import {remote as wdio} from 'webdriverio';
 
-import {runExtensionCommand} from '../../lib/cli/extension';
-import {DRIVER_TYPE, PLUGIN_TYPE} from '../../lib/constants';
-import {loadExtensions} from '../../lib/extension';
-import {INSTALL_TYPE_LOCAL} from '../../lib/extension/extension-config';
-import {main as appiumServer} from '../../lib/main';
-import {resetSchema} from '../../lib/schema';
-import {FAKE_DRIVER_DIR, FAKE_PLUGIN_DIR, getTestPort, TEST_HOST, W3C_PREFIXED_CAPS} from '../helpers';
+import {runExtensionCommand} from '../../lib/cli/extension.js';
+import {DRIVER_TYPE, PLUGIN_TYPE} from '../../lib/constants.js';
+import {loadExtensions} from '../../lib/extension/index.js';
+import {INSTALL_TYPE_LOCAL} from '../../lib/extension/manifest/index.js';
+import {main as appiumServer} from '../../lib/main.js';
+import {resetSchema} from '../../lib/schema/index.js';
+import {FAKE_DRIVER_DIR, FAKE_PLUGIN_DIR, getTestPort, TEST_HOST, W3C_PREFIXED_CAPS} from '../helpers.js';
 
 const FAKE_ARGS = {sillyWebServerPort: 1234, host: 'hey'};
 const FAKE_PLUGIN_ARGS = {fake: FAKE_ARGS};
@@ -151,27 +151,27 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
 
       it('should update the server', async function () {
         const res = {fake: 'fakeResponse'};
-        assert.deepStrictEqual((await axios.post(`http://${TEST_HOST}:${port}/fake`)).data, res);
+        assert.deepStrictEqual((await httpPost(`http://${TEST_HOST}:${port}/fake`)).data, res);
       });
       it('should update the server with cliArgs', async function () {
         const res = usePlugins;
         // we don't need to check the entire object, since it's large, but we can ensure an
         // arg got through.
-        assert.deepStrictEqual((await axios.post(`http://${TEST_HOST}:${port}/cliArgs`)).data.usePlugins, res);
+        assert.deepStrictEqual((await httpPost(`http://${TEST_HOST}:${port}/cliArgs`)).data.usePlugins, res);
       });
       it('should let updateServer intercept requests to routes Appium itself owns via httpServer.frontRouter', async function () {
         // /status is a built-in route, registered before updateServer runs
-        const res = await axios.get(`http://${TEST_HOST}:${port}/status`);
+        const res = await httpGet(`http://${TEST_HOST}:${port}/status`);
         assert.strictEqual(res.headers['x-fake-plugin-pre-server'], 'true');
       });
       it('should modify the method map with new commands', async function () {
         const driver = await wdio(wdOpts as any);
         const {sessionId} = driver;
         try {
-          await axios.post(`${testServerBaseSessionUrl}/${sessionId}/fake_data`, {
+          await httpPost(`${testServerBaseSessionUrl}/${sessionId}/fake_data`, {
             data: {fake: 'data'},
           });
-          assert.deepStrictEqual((await axios.get(`${testServerBaseSessionUrl}/${sessionId}/fake_data`)).data.value, {
+          assert.deepStrictEqual((await httpGet(`${testServerBaseSessionUrl}/${sessionId}/fake_data`)).data.value, {
             fake: 'data',
           });
         } finally {
@@ -194,7 +194,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
         const {sessionId} = driver;
         try {
           const el = (
-            await axios.post(`${testServerBaseSessionUrl}/${sessionId}/element`, {
+            await httpPost(`${testServerBaseSessionUrl}/${sessionId}/element`, {
               using: 'xpath',
               value: '//MockWebView',
             })
@@ -209,13 +209,13 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
         const driver = await wdio(wdOpts as any);
         const {sessionId} = driver;
         try {
-          await axios.post(`${testServerBaseSessionUrl}/${sessionId}/context`, {
+          await httpPost(`${testServerBaseSessionUrl}/${sessionId}/context`, {
             name: 'PROXY',
           });
-          const handle = (await axios.get(`${testServerBaseSessionUrl}/${sessionId}/window`)).data.value;
+          const handle = (await httpGet(`${testServerBaseSessionUrl}/${sessionId}/window`)).data.value;
           assert.strictEqual(handle, '<<proxied via proxyCommand>>');
         } finally {
-          await axios.post(`${testServerBaseSessionUrl}/${sessionId}/context`, {
+          await httpPost(`${testServerBaseSessionUrl}/${sessionId}/context`, {
             name: 'NATIVE_APP',
           });
           await driver.deleteSession();
@@ -231,10 +231,10 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
         const driver = await wdio(newOpts as any);
         let shutdownErr: Error | undefined;
         try {
-          let res = await axios.get(`http://${TEST_HOST}:${port}/unexpected`);
+          let res = await httpGet(`http://${TEST_HOST}:${port}/unexpected`);
           assert.ok(!res.data);
           await sleep(1500);
-          res = await axios.get(`http://${TEST_HOST}:${port}/unexpected`);
+          res = await httpGet(`http://${TEST_HOST}:${port}/unexpected`);
           assert.match(res.data, /Session ended/);
           assert.match(res.data, /timeout/);
           await driver.deleteSession();
@@ -285,7 +285,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
       const driver = await wdio(wdOpts as any);
       const {sessionId} = driver;
       try {
-        const {data} = await axios.get(`${testServerBaseSessionUrl}/${sessionId}/fakepluginargs`);
+        const {data} = await httpGet(`${testServerBaseSessionUrl}/${sessionId}/fakepluginargs`);
         assert.deepStrictEqual(data.value, FAKE_ARGS);
       } finally {
         await driver.deleteSession();
@@ -309,7 +309,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
         const driver = await wdio(wdOpts as any);
         const {sessionId} = driver;
         try {
-          const {data} = await axios.get(`${testServerBaseSessionUrl}/${sessionId}/fakepluginargs`);
+          const {data} = await httpGet(`${testServerBaseSessionUrl}/${sessionId}/fakepluginargs`);
           assert.deepStrictEqual(data.value, {});
         } finally {
           await driver.deleteSession();

@@ -1,10 +1,10 @@
+import {createRequire} from 'node:module';
 import path from 'node:path';
 import {pathToFileURL} from 'node:url';
 
 import {fs, system, util} from '@appium/support';
 import type {ExtensionType, StringRecord} from '@appium/types';
-import type {SchemaObject} from 'ajv';
-import type {ExtClass, ExtManifest, ExtName, ExtRecord, InstallType} from 'appium/types';
+import type {ExtClass, ExtManifest, ExtName, ExtRecord} from 'appium/types/index.js';
 import {satisfies} from 'semver';
 
 import type {
@@ -12,51 +12,19 @@ import type {
   ExtensionListData,
   InstalledExtensionListData,
   ExtensionCliCommand,
-} from '../cli/extension-command';
-import {APPIUM_VER} from '../helpers/build';
-import {log} from '../logger';
-import {ALLOWED_SCHEMA_EXTENSIONS, isAllowedSchemaFileExtension, registerSchema} from '../schema/schema';
-import {capitalize, resolveFrom} from '../utils';
-import type {Manifest} from './manifest';
+} from '../cli/extension-command.js';
+import {APPIUM_VER} from '../helpers/build.js';
+import {log} from '../logger.js';
+import type {SchemaObject} from '../schema/ajv.js';
+import {ALLOWED_SCHEMA_EXTENSIONS, isAllowedSchemaFileExtension, registerSchema} from '../schema/schema.js';
+import {capitalize, resolveFrom} from '../utils/index.js';
+import {INSTALL_TYPES, manifestValidator} from './manifest/index.js';
+import type {ExtManifestProblem, Manifest} from './manifest/index.js';
 
 const DEFAULT_ENTRY_POINT = 'index.js';
-/**
- * "npm" install type
- * Used when extension was installed by npm package name
- * @remarks _All_ extensions are installed _by_ `npm`, but only this one means the package name was
- * used to specify it
- */
-export const INSTALL_TYPE_NPM = 'npm';
-/**
- * "local" install type
- * Used when extension was installed from a local path
- */
-export const INSTALL_TYPE_LOCAL = 'local';
-/**
- * "github" install type
- * Used when extension was installed via GitHub URL
- */
-export const INSTALL_TYPE_GITHUB = 'github';
-/**
- * "git" install type
- * Used when extensions was installed via Git URL
- */
-export const INSTALL_TYPE_GIT = 'git';
-/**
- * "dev" install type
- * Used when automatically detected as a working copy
- */
-export const INSTALL_TYPE_DEV = 'dev';
-
-export const INSTALL_TYPES = new Set<InstallType>([
-  INSTALL_TYPE_GIT,
-  INSTALL_TYPE_GITHUB,
-  INSTALL_TYPE_LOCAL,
-  INSTALL_TYPE_NPM,
-  INSTALL_TYPE_DEV,
-]);
-
-export type ExtManifestProblem = {err: string; val: unknown};
+// Counter for `APPIUM_RELOAD_EXTENSIONS` cache-busting; `Date.now()` alone can collide when two
+// reloads happen within the same millisecond, which would serve the stale cached module.
+let reloadCounter = 0;
 
 export type ExtManifestWithSchema<E extends ExtensionType> = ExtManifest<E> & {
   schema: NonNullable<ExtManifest<E>['schema']>;
@@ -65,19 +33,52 @@ export type ExtManifestWithSchema<E extends ExtensionType> = ExtManifest<E> & {
 export type ExtensionConfigMutationOpts = {write?: boolean};
 
 /**
+ * Results of the most recent {@linkcode ExtensionConfig.validate} call, not yet rendered anywhere.
+ * `validate()` only computes this; call {@linkcode ExtensionConfig.printValidationSummary} to display it,
+ * so the caller can pick a sink appropriate to its own output context (e.g. a JSON-mode-aware CLI
+ * console, or the server's Winston-backed logger).
+ */
+interface ExtensionValidationSummary {
+  /** Number of extensions considered; used only for pluralizing the summary's lead-in line. */
+  checkedCount: number;
+  errorSummaries: string[];
+  warningSummaries: string[];
+}
+
+/** Minimal logger shape needed to render a {@linkcode ExtensionValidationSummary}. */
+export type ValidationSummarySink = {
+  warn(message?: string, ...args: any[]): void;
+  error(message?: string, ...args: any[]): void;
+};
+
+const EMPTY_VALIDATION_SUMMARY: ExtensionValidationSummary = {
+  checkedCount: 0,
+  errorSummaries: [],
+  warningSummaries: [],
+};
+
+/**
  * Shared configuration and validation for installed Appium extensions (drivers or plugins).
  * Subclasses fix the extension kind; do not instantiate this class directly.
  */
 export abstract class ExtensionConfig<ExtType extends ExtensionType> {
   readonly extensionType: ExtType;
   readonly manifest: Manifest;
-  installedExtensions: ExtRecord<ExtType>;
-  #listDataCache: ExtensionList<ExtType> | undefined;
+  /** Populated by {@linkcode ExtensionConfig.validate}; see {@linkcode ExtensionValidationSummary}. */
+  private validationSummary: ExtensionValidationSummary = EMPTY_VALIDATION_SUMMARY;
+  private listDataCache: ExtensionList<ExtType> | undefined;
 
   protected constructor(extensionType: ExtType, manifest: Manifest) {
     this.extensionType = extensionType;
     this.manifest = manifest;
-    this.installedExtensions = manifest.getExtensionData(extensionType);
+  }
+
+  /**
+   * Live installed-extension map for this extension kind (same object the manifest holds).
+   * Recomputed on every access so it stays in sync across a {@link Manifest.read} reload.
+   */
+  get installedExtensions(): ExtRecord<ExtType> {
+    return this.manifest.getExtensionData(this.extensionType);
   }
 
   /** Path to `extensions.yaml` after the manifest has been read; otherwise undefined. */
@@ -119,7 +120,16 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     let moduleObject: any;
     if (typeof argSchemaPath === 'string') {
       const schemaPath = await resolveFrom(appiumHome, path.join(pkgName, argSchemaPath));
-      moduleObject = require(schemaPath);
+      if (path.extname(schemaPath) === '.json') {
+        // `import()` of JSON needs an import attribute Node versions disagree on the
+        // syntax for; parsing directly avoids that entirely.
+        moduleObject = JSON.parse(await fs.readFile(schemaPath, 'utf8'));
+      } else {
+        // https://github.com/nodejs/node/issues/31710
+        const importPath = system.isWindows() ? pathToFileURL(schemaPath).href : schemaPath;
+        const mod = (await import(importPath)) as Record<string, any>;
+        moduleObject = 'default' in mod ? mod.default : mod;
+      }
     } else {
       moduleObject = argSchemaPath;
     }
@@ -296,7 +306,23 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     const [reqPath, mainClass] = await this._resolveExtension(extName);
     log.debug(`Requiring ${this.extensionType} at ${reqPath}`);
     // https://github.com/nodejs/node/issues/31710
-    const importPath = system.isWindows() ? pathToFileURL(reqPath).href : reqPath;
+    let importPath = system.isWindows() ? pathToFileURL(reqPath).href : reqPath;
+    // note: this will only reload the entry point, not files it imports internally
+    if (process.env.APPIUM_RELOAD_EXTENSIONS) {
+      // For a CJS extension, `import()` delegates to Node's CJS loader, which caches by
+      // resolved filename and ignores the query string appended below — evict it from
+      // `require.cache` directly so it's actually re-evaluated. (No-op for a genuinely ESM
+      // extension, since it was never in `require.cache` to begin with.)
+      const req = createRequire(import.meta.url);
+      const realEntryPath = await fs.realpath(reqPath);
+      if (req.cache[realEntryPath]) {
+        delete req.cache[realEntryPath];
+      }
+      // For an ESM extension, there's no public API to evict a module from ESM's registry, so
+      // force a fresh copy via a unique specifier instead.
+      importPath += `?reload=${reloadCounter++}`;
+      log.debug(`Reloading ${this.extensionType} at ${reqPath}`);
+    }
     const mod = (await import(importPath)) as Record<string, ExtClass<ExtType>>;
     const MainClass = mod[mainClass];
     if (!MainClass) {
@@ -333,8 +359,8 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
   }
 
   /**
-   * Validates all entries in `exts`, logs summaries, and removes keys that have blocking errors.
-   * Intended for subclasses’ `validate` implementation.
+   * Validates all entries in `exts`, records a summary (see {@linkcode ExtensionConfig.printValidationSummary}),
+   * and removes keys that have blocking errors. Intended for subclasses’ `validate` implementation.
    */
   protected async _validate(exts: ExtRecord<ExtType>): Promise<ExtRecord<ExtType>> {
     const errorMap = new Map<string, ExtManifestProblem[]>();
@@ -353,47 +379,61 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     }
 
     const {errorSummaries, warningSummaries} = this.getValidationResultSummaries(errorMap, warningMap);
+    this.validationSummary = {checkedCount: errorMap.size, errorSummaries, warningSummaries};
+    return exts;
+  }
+
+  /**
+   * Renders the summary from the most recent {@linkcode ExtensionConfig.validate} call via `sink`,
+   * then clears it so a later call doesn't re-print the same summary. Errors take precedence:
+   * warnings are only shown when there were no errors. No-op if there's nothing to report.
+   *
+   * @param sink - Where to write the summary; e.g. a JSON-mode-aware CLI console for extension
+   * subcommands, or the server's own (by then Winston-backed) logger once it has taken over.
+   */
+  printValidationSummary(sink: ValidationSummarySink): void {
+    const {checkedCount, errorSummaries, warningSummaries} = this.validationSummary;
+    this.validationSummary = EMPTY_VALIDATION_SUMMARY;
 
     if (!util.isEmpty(errorSummaries)) {
-      log.error(
+      sink.error(
         `Appium encountered ${util.pluralize(
           'error',
-          errorMap.size,
+          checkedCount,
           true,
         )} while validating ${this.extensionType}s found in manifest ${this.manifestPath}`,
       );
       for (const summary of errorSummaries) {
-        log.error(summary);
+        sink.error(summary);
       }
     } else if (!util.isEmpty(warningSummaries)) {
       // only display warnings if there are no errors!
-      log.warn(
+      sink.warn(
         `Appium encountered ${util.pluralize(
           'warning',
-          warningMap.size,
+          checkedCount,
           true,
         )} while validating ${this.extensionType}s found in manifest ${this.manifestPath}`,
       );
       for (const summary of warningSummaries) {
-        log.warn(summary);
+        sink.warn(summary);
       }
     }
-    return exts;
   }
 
   /**
    * Fetches `appium driver|plugin list`-style data via the CLI command class; result is cached.
    */
   protected async getListData(): Promise<ExtensionList<ExtType>> {
-    if (this.#listDataCache) {
-      return this.#listDataCache;
+    if (this.listDataCache) {
+      return this.listDataCache;
     }
     // Import here to avoid circular dependency with cli/extension
     const {commandClasses} = await import('../cli/extension.js');
     const CommandClass = (commandClasses as StringRecord)[this.extensionType];
     const cmd = new CommandClass({config: this, json: true}) as ExtensionCliCommand<ExtType>;
     const listData = await cmd.list({showInstalled: true, showUpdates: true});
-    this.#listDataCache = listData;
+    this.listDataCache = listData;
     return listData;
   }
 
@@ -513,31 +553,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
   /** Blocking issues for required manifest fields shared by all extensions (version, package name, main class). */
   protected getGenericConfigProblems(extManifest: ExtManifest<ExtType>, extName: string): ExtManifestProblem[] {
     void extName;
-    const {version, pkgName, mainClass} = extManifest;
-    const problems: ExtManifestProblem[] = [];
-
-    if (typeof version !== 'string') {
-      problems.push({
-        err: `Invalid or missing \`version\` field in my \`package.json\` and/or \`extensions.yaml\` (must be a string)`,
-        val: version,
-      });
-    }
-
-    if (typeof pkgName !== 'string') {
-      problems.push({
-        err: `Invalid or missing \`name\` field in my \`package.json\` and/or \`extensions.yaml\` (must be a string)`,
-        val: pkgName,
-      });
-    }
-
-    if (typeof mainClass !== 'string') {
-      problems.push({
-        err: `Invalid or missing \`appium.mainClass\` field in my \`package.json\` and/or \`mainClass\` field in \`extensions.yaml\` (must be a string)`,
-        val: mainClass,
-      });
-    }
-
-    return problems;
+    return manifestValidator.getCommonManifestProblems(extManifest);
   }
 
   /** Driver- or plugin-specific blocking validation; override in subclasses when needed. */
@@ -577,11 +593,6 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
         `Cannot find a valid ${this.extensionType} main entry point in '${packageJsonPath}'. ` +
           `Assumed entry point: '${entryPointFullPath}'`,
       );
-    }
-    // note: this will only reload the entry point
-    if (process.env.APPIUM_RELOAD_EXTENSIONS && require.cache[entryPointFullPath]) {
-      log.debug(`Removing ${entryPointFullPath} from require cache`);
-      delete require.cache[entryPointFullPath];
     }
     return [entryPointFullPath, mainClass];
   }

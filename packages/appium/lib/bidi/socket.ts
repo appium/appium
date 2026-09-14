@@ -3,7 +3,7 @@ import os from 'node:os';
 import {promisify} from 'node:util';
 
 import {util} from '@appium/support';
-import WebSocket from 'ws';
+import type WebSocket from 'ws';
 
 import type {AppiumDriver} from '../appium.js';
 import {BIDI_BASE_PATH} from '../constants.js';

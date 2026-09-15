@@ -67,6 +67,7 @@
     "method-override": "3.0.0",
     "morgan": "1.11.0",
     "path-to-regexp": "8.4.2",
+    "picomatch": "4.0.7",
     "type-fest": "5.8.0"
   },
   "tsd": {

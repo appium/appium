@@ -206,9 +206,18 @@ export async function createAppiumServer(
   return server;
 }
 
+/**
+ * Server args whose values describe the server's internal network and must not leak to clients
+ * via server logs
+ */
+const SENSITIVE_ARGS: ReadonlySet<keyof Args> = new Set(['appUrlRules']);
+
 function logNonDefaultArgsWarning(args: Args): void {
+  const shownArgs = Object.fromEntries(
+    Object.entries(args).map(([name, value]) => [name, SENSITIVE_ARGS.has(name as keyof Args) ? '<redacted>' : value]),
+  );
   logger.info('Non-default server args:');
-  inspect(args);
+  inspect(shownArgs);
 }
 
 function logDefaultCapabilitiesWarning(caps: ParsedArgs<CliCommandServer>['defaultCapabilities']): void {

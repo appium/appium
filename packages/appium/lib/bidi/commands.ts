@@ -34,6 +34,101 @@ function getSubscriptionTracking(bidiProxyClient: BidiProxyClient): Map<string, 
 }
 
 /**
+ * Removes local `bidiEventSubs` coverage for a departed subscription's (event, context) pairs,
+ * but only for pairs no other still-tracked subscription also covers -- so unsubscribing one of
+ * several overlapping `session.subscribe` calls to the same event/context doesn't cut off
+ * delivery for the others.
+ */
+async function unsubscribeUncoveredContexts(
+  driver: Partial<IBidiCommands>,
+  tracking: Map<string, TrackedSubscription>,
+  departed: TrackedSubscription,
+): Promise<void> {
+  if (typeof driver.bidiUnsubscribe !== 'function') {
+    return;
+  }
+  for (const event of departed.events) {
+    const stillCovered = new Set<string>();
+    for (const sub of tracking.values()) {
+      if (sub.events.includes(event)) {
+        for (const context of sub.contexts) {
+          stillCovered.add(context);
+        }
+      }
+    }
+    const contextsToRemove = departed.contexts.filter((context) => !stillCovered.has(context));
+    if (contextsToRemove.length) {
+      await driver.bidiUnsubscribe([event], contextsToRemove);
+    }
+  }
+}
+
+/**
+ * Drops tracked subscriptions whose (event, context) coverage is no longer reflected in
+ * `bidiEventSubs`. Needed after an `events`/`contexts`-form unsubscribe (which bypasses id
+ * tracking and mutates `bidiEventSubs` directly), so a stale tracked id doesn't later cause
+ * {@link unsubscribeUncoveredContexts} to think an already-removed subscription is still active.
+ */
+function pruneStaleTracking(bidiEventSubs: Record<string, string[]>, tracking: Map<string, TrackedSubscription>): void {
+  for (const [subscriptionId, sub] of tracking) {
+    const stillCovered = sub.events.some((event) => {
+      const activeContexts = bidiEventSubs[event];
+      return Array.isArray(activeContexts) && sub.contexts.some((context) => activeContexts.includes(context));
+    });
+    if (!stillCovered) {
+      tracking.delete(subscriptionId);
+    }
+  }
+}
+
+/**
+ * Keeps Appium's local `bidiEventSubs` bookkeeping in sync with proxied `session.subscribe`/
+ * `session.unsubscribe` calls, since the event dispatcher's send-gate relies on it uniformly for
+ * both locally-emitted and proxied events. The upstream command has already succeeded by the
+ * time this runs, so callers treat failures here as best-effort (logged, not surfaced to the
+ * client) rather than turning an already-successful upstream operation into a client-facing error.
+ */
+async function syncLocalSubscriptionState(
+  driver: ExtensionCore & Partial<IBidiCommands>,
+  bidiProxyClient: BidiProxyClient,
+  method: string,
+  params: StringRecord,
+  result: BiDiResultData,
+): Promise<void> {
+  if (method === SESSION_SUBSCRIBE && typeof driver.bidiSubscribe === 'function') {
+    const events = (params.events ?? []) as string[];
+    const contexts = (params.contexts ?? ['']) as string[];
+    await driver.bidiSubscribe(events, contexts);
+    // Standard BiDi `session.subscribe` results carry the new subscription's id, which a later
+    // `session.unsubscribe` may reference instead of repeating events/contexts.
+    const subscriptionId = (result as {subscription?: string} | undefined)?.subscription;
+    if (subscriptionId) {
+      getSubscriptionTracking(bidiProxyClient).set(subscriptionId, {events, contexts});
+    }
+  } else if (method === SESSION_UNSUBSCRIBE && typeof driver.bidiUnsubscribe === 'function') {
+    const subscriptionIds = params.subscriptions as string[] | undefined;
+    if (Array.isArray(subscriptionIds)) {
+      const tracking = getSubscriptionTracking(bidiProxyClient);
+      for (const subscriptionId of subscriptionIds) {
+        const tracked = tracking.get(subscriptionId);
+        if (!tracked) {
+          driver.log.warn(
+            `Could not sync local BiDi subscription bookkeeping: subscription id '${subscriptionId}' ` +
+              `was not tracked locally, even though the upstream unsubscribe already succeeded.`,
+          );
+          continue;
+        }
+        tracking.delete(subscriptionId);
+        await unsubscribeUncoveredContexts(driver, tracking, tracked);
+      }
+    } else if (Array.isArray(params.events)) {
+      await driver.bidiUnsubscribe(params.events as string[], (params.contexts as string[] | undefined) ?? ['']);
+      pruneStaleTracking(driver.bidiEventSubs, getSubscriptionTracking(bidiProxyClient));
+    }
+  }
+}
+
+/**
  * @param data
  * @param driver
  * @param plugins
@@ -145,32 +240,15 @@ function buildProxyBidiBaseHandler(
       checkParams(known.params, params, {ensureSessionArgs: false});
     }
     const result = await bidiProxyClient.executeCommand(method, params);
-    // Keep Appium's local bidiEventSubs bookkeeping in sync, since the event dispatcher's
-    // send-gate relies on it uniformly for both locally-emitted and proxied events.
-    if (method === SESSION_SUBSCRIBE && typeof driver.bidiSubscribe === 'function') {
-      const events = (params.events ?? []) as string[];
-      const contexts = (params.contexts ?? ['']) as string[];
-      await driver.bidiSubscribe(events, contexts);
-      // Standard BiDi `session.subscribe` results carry the new subscription's id, which a
-      // later `session.unsubscribe` may reference instead of repeating events/contexts.
-      const subscriptionId = (result as {subscription?: string} | undefined)?.subscription;
-      if (subscriptionId) {
-        getSubscriptionTracking(bidiProxyClient).set(subscriptionId, {events, contexts});
-      }
-    } else if (method === SESSION_UNSUBSCRIBE && typeof driver.bidiUnsubscribe === 'function') {
-      const subscriptionIds = params.subscriptions as string[] | undefined;
-      if (Array.isArray(subscriptionIds)) {
-        const tracking = getSubscriptionTracking(bidiProxyClient);
-        for (const subscriptionId of subscriptionIds) {
-          const tracked = tracking.get(subscriptionId);
-          if (tracked) {
-            await driver.bidiUnsubscribe(tracked.events, tracked.contexts);
-            tracking.delete(subscriptionId);
-          }
-        }
-      } else if (Array.isArray(params.events)) {
-        await driver.bidiUnsubscribe(params.events as string[], (params.contexts as string[] | undefined) ?? ['']);
-      }
+    try {
+      await syncLocalSubscriptionState(driver, bidiProxyClient, method, params, result);
+    } catch (err) {
+      // The upstream command already succeeded -- don't turn that success into a client-facing
+      // error just because our local bookkeeping failed to keep up.
+      driver.log.warn(
+        `Failed to sync local BiDi subscription bookkeeping after upstream '${method}' succeeded: ` +
+          `${err instanceof Error ? err.message : err}`,
+      );
     }
     return result;
   };

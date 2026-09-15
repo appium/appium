@@ -122,4 +122,18 @@ describe('BidiProxyClient', function () {
       client.close();
     }
   });
+
+  it('rejects a pending command if no response arrives within commandTimeoutMs, without leaking the connection', async function () {
+    wss.removeAllListeners('connection');
+    wss.once('connection', () => {
+      // accept the connection but never reply
+    });
+
+    const client = new BidiProxyClient(url, {commandTimeoutMs: 50});
+    try {
+      await assert.rejects(client.executeCommand('never.responds', {}), /timeout/i);
+    } finally {
+      client.close();
+    }
+  });
 });

@@ -4,7 +4,8 @@ import {describe, it} from 'node:test';
 import type {AppiumLogger, BidiEventOrigin, BidiEventPayload} from '@appium/types';
 import WebSocket from 'ws';
 
-import {createBidiEventDispatcher} from '../../../lib/bidi/events.js';
+import {createBidiEventDispatcher, initBidiProxyHandlers} from '../../../lib/bidi/events.js';
+import type {BidiProxyClient} from '../../../lib/bidi/proxy-client.js';
 
 interface LoggedLine {
   level: 'debug' | 'warn';
@@ -83,6 +84,17 @@ describe('createBidiEventDispatcher', function () {
     await dispatch({method: 'browsingContext.load', params: {}, context: 'ctx-2'}, {type: 'driver'});
 
     assert.equal(sent.length, 0);
+  });
+
+  it('sends an event to a real context id when subscribed with the "" (all contexts) wildcard', async function () {
+    const {send, sent} = makeSend();
+    const driver = makeDriver({'browsingContext.load': ['']});
+    const dispatch = createBidiEventDispatcher(makeWs(), driver as any, [], send, {});
+
+    await dispatch({method: 'browsingContext.load', params: {}, context: 'real-ctx-id'}, {type: 'driver'});
+
+    assert.equal(sent.length, 1);
+    assert.equal(JSON.parse(sent[0]).context, 'real-ctx-id');
   });
 
   it('runs plugins in last-declared-first order, matching the command chain convention', async function () {
@@ -258,5 +270,53 @@ describe('createBidiEventDispatcher', function () {
 
     assert.deepEqual(seenOrigins, [{type: 'proxy'}]);
     assert.equal(sent.length, 1);
+  });
+});
+
+describe('initBidiProxyHandlers', function () {
+  function makeFakeProxyClient() {
+    const handlers: {
+      close?: (code: number, reason: Buffer) => void;
+    } = {};
+    const client = {
+      onUnsolicitedMessage: () => {},
+      onClose: (handler: (code: number, reason: Buffer) => void) => {
+        handlers.close = handler;
+      },
+      onError: () => {},
+    } as unknown as BidiProxyClient;
+    return {client, handlers};
+  }
+
+  it('rewrites a reserved WS close code (e.g. 1006, abnormal closure) to the fallback code', function () {
+    const driver = makeDriver({});
+    const {client, handlers} = makeFakeProxyClient();
+    const closedWith: {code?: number} = {};
+    const ws = {
+      close: (code: number) => {
+        closedWith.code = code;
+      },
+    } as unknown as WebSocket;
+
+    initBidiProxyHandlers.call(driver as any, client, ws, (async () => {}) as any);
+    handlers.close?.(1006, Buffer.from('abnormal closure'));
+
+    assert.equal(closedWith.code, 1011);
+  });
+
+  it('passes through a valid, non-reserved close code unchanged', function () {
+    const driver = makeDriver({});
+    const {client, handlers} = makeFakeProxyClient();
+    const closedWith: {code?: number} = {};
+    const ws = {
+      close: (code: number) => {
+        closedWith.code = code;
+      },
+    } as unknown as WebSocket;
+
+    initBidiProxyHandlers.call(driver as any, client, ws, (async () => {}) as any);
+    handlers.close?.(1000, Buffer.from('normal closure'));
+
+    assert.equal(closedWith.code, 1000);
   });
 });

@@ -573,6 +573,9 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
 
         assert.strictEqual(collected.length, 1);
         assert.deepStrictEqual(collected[0], {pong: true});
+
+        // clean up so this subscription doesn't leak into later tests in this block
+        await (driver as any).sessionUnsubscribe({events: ['vendor.ping']});
       });
 
       it('should deliver a proxied event whose context is nested in params.context (standard BiDi shape)', async function () {
@@ -584,6 +587,8 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
         await sleep(300);
 
         assert.strictEqual(collected.length, 1);
+
+        await (driver as any).sessionUnsubscribe({events: ['vendor.contextPing'], contexts: ['vendor-ctx-1']});
       });
 
       it('should deliver a proxied event covered by a module-wide subscription', async function () {
@@ -624,6 +629,49 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
         await (driver as any).send({method: 'vendor.triggerEvent', params: {}});
         await sleep(300);
         assert.strictEqual(collected.length, 0);
+      });
+
+      it('should keep an overlapping subscription alive when unsubscribing a different subscription id to the same event', async function () {
+        const collected: unknown[] = [];
+        (driver as any).on('vendor.ping', (ev: unknown) => collected.push(ev));
+
+        const {result: sub1} = await (driver as any).send({
+          method: 'session.subscribe',
+          params: {events: ['vendor.ping']},
+        });
+        const {result: sub2} = await (driver as any).send({
+          method: 'session.subscribe',
+          params: {events: ['vendor.ping']},
+        });
+        assert.ok(sub1.subscription);
+        assert.ok(sub2.subscription);
+        assert.notStrictEqual(sub1.subscription, sub2.subscription);
+
+        await (driver as any).send({
+          method: 'session.unsubscribe',
+          params: {subscriptions: [sub1.subscription]},
+        });
+        await (driver as any).send({method: 'vendor.triggerEvent', params: {}});
+        await sleep(300);
+        // sub2 is still active, so the event must still be delivered
+        assert.strictEqual(collected.length, 1);
+
+        await (driver as any).send({
+          method: 'session.unsubscribe',
+          params: {subscriptions: [sub2.subscription]},
+        });
+        collected.length = 0;
+        await (driver as any).send({method: 'vendor.triggerEvent', params: {}});
+        await sleep(300);
+        assert.strictEqual(collected.length, 0);
+      });
+
+      it('should not throw when unsubscribing an unknown/untracked subscription id', async function () {
+        const {result} = await (driver as any).send({
+          method: 'session.unsubscribe',
+          params: {subscriptions: ['nonexistent-subscription-id']},
+        });
+        assert.deepStrictEqual(result, {});
       });
 
       it('should close the upstream connection when the session ends', async function () {

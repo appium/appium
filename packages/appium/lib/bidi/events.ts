@@ -12,7 +12,13 @@ import WebSocket from 'ws';
 import type {AppiumDriver} from '../appium.js';
 import {BIDI_EVENT_NAME} from '../constants.js';
 import {capitalize} from '../utils/index.js';
-import {MAX_LOGGED_DATA_LENGTH, MAX_WS_CODE_VAL, MIN_WS_CODE_VAL, WS_FALLBACK_CODE} from './constants.js';
+import {
+  MAX_LOGGED_DATA_LENGTH,
+  MAX_WS_CODE_VAL,
+  MIN_WS_CODE_VAL,
+  RESERVED_WS_CODES,
+  WS_FALLBACK_CODE,
+} from './constants.js';
 import type {BidiProxyClient} from './proxy-client.js';
 import type {AnyDriver, BidiDispatch, ExtensionPlugin, SendData} from './types.js';
 
@@ -31,13 +37,15 @@ export function getBidiEventLogCounts(driver: AnyDriver): Record<string, number>
 /**
  * BiDi's `session.subscribe` allows subscribing to either a specific event (`browsingContext.load`)
  * or an entire module (`browsingContext`, covering all of its events). `bidiEventSubs` may
- * therefore hold either kind of key, so a matching event must be checked against both.
+ * therefore hold either kind of key, so a matching event must be checked against both. An
+ * empty-string context entry means "all contexts" (per `bidiSubscribe`'s contract), so it
+ * matches any actual context id, not just the literal empty string.
  */
 function isEventSubscribed(bidiEventSubs: Record<string, string[]>, method: string, context: string): boolean {
   const moduleName = method.split('.')[0];
   return [method, moduleName].some((key) => {
     const subs = bidiEventSubs[key];
-    return Array.isArray(subs) && subs.includes(context);
+    return Array.isArray(subs) && (subs.includes('') || subs.includes(context));
   });
 }
 
@@ -92,24 +100,29 @@ export function createBidiEventDispatcher(
     await send(JSON.stringify({type: 'event', context, method, params}));
   };
 
+  // Build the plugin interception chain once per connection rather than per event --
+  // bidiHandlerPlugins is fixed for the connection's lifetime, so there's nothing to gain from
+  // re-iterating/re-allocating it on every dispatch. `origin` varies per event, so it's threaded
+  // through as an explicit argument rather than captured in a per-dispatch closure.
+  let chain: (ev: BidiEventPayload, origin: BidiEventOrigin) => Promise<void> = terminal;
+  for (const plugin of bidiHandlerPlugins) {
+    const handleBidiEvent = plugin.handleBidiEvent;
+    if (typeof handleBidiEvent !== 'function') {
+      continue;
+    }
+    // last-declared plugin implementing handleBidiEvent is outermost/runs first, matching
+    // wrapCommandWithPlugins's command-chain ordering
+    const inner = chain;
+    chain = async (ev, origin) => {
+      const next: NextBidiEventCallback = async (maybeEv) => inner(maybeEv ?? ev, origin);
+      await handleBidiEvent.call(plugin, next, bidiHandlerDriver as ExternalDriver, ev, origin);
+    };
+  }
+
   return function dispatch(event, origin) {
     queue = queue.then(async () => {
-      let step: (ev: BidiEventPayload) => Promise<void> = terminal;
-      // last-declared plugin implementing handleBidiEvent is outermost/runs first, matching
-      // wrapCommandWithPlugins's command-chain ordering
-      for (const plugin of bidiHandlerPlugins) {
-        const handleBidiEvent = plugin.handleBidiEvent;
-        if (typeof handleBidiEvent !== 'function') {
-          continue;
-        }
-        const inner = step;
-        step = async (ev) => {
-          const next: NextBidiEventCallback = async (maybeEv) => inner(maybeEv ?? ev);
-          await handleBidiEvent.call(plugin, next, bidiHandlerDriver as ExternalDriver, ev, origin);
-        };
-      }
       try {
-        await step(event);
+        await chain(event, origin);
       } catch (err) {
         bidiHandlerDriver.log.warn(
           `Error while running a plugin's BiDi event interceptor for '${event.method}': ` +
@@ -231,8 +244,10 @@ export function initBidiProxyHandlers(
     }
     const params = parsed.params ?? {};
     // Standard BiDi event envelopes don't carry a top-level `context` -- context-scoped events
-    // (e.g. `browsingContext.load`) nest it inside `params.context` instead.
-    const context = parsed.context ?? (params.context as string | undefined);
+    // (e.g. `browsingContext.load`) nest it inside `params.context` instead. Normalize a missing
+    // context to '' here (rather than leaving it undefined), matching how driver/plugin-origin
+    // events are normalized in initBidiEventListeners, so origin never changes what plugins see.
+    const context = parsed.context ?? (params.context as string | undefined) ?? '';
     void dispatchBidiEvent({method: parsed.method, params, context}, {type: 'proxy'});
   });
 
@@ -244,14 +259,23 @@ export function initBidiProxyHandlers(
         `Closing proxy connection to client`,
     );
     let closeCode: number = code;
-    if (Number.isNaN(closeCode) || closeCode < MIN_WS_CODE_VAL || closeCode > MAX_WS_CODE_VAL) {
+    if (
+      Number.isNaN(closeCode) ||
+      closeCode < MIN_WS_CODE_VAL ||
+      closeCode > MAX_WS_CODE_VAL ||
+      RESERVED_WS_CODES.has(closeCode)
+    ) {
       driverLog.warn(
-        `Received code ${code} from upstream socket, but this is not a valid ` +
-          `websocket code. Rewriting to ${WS_FALLBACK_CODE} for ws compatibility`,
+        `Received code ${code} from upstream socket, but this is not a valid code to send ` +
+          `explicitly in a close frame. Rewriting to ${WS_FALLBACK_CODE} for ws compatibility`,
       );
       closeCode = WS_FALLBACK_CODE;
     }
-    ws.close(closeCode, reason);
+    try {
+      ws.close(closeCode, reason);
+    } catch (err) {
+      driverLog.warn(`Error closing client-facing BiDi socket: ${(err as Error).message}`);
+    }
   });
 
   bidiProxyClient.onError((err) => {

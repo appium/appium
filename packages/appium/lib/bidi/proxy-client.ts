@@ -5,15 +5,18 @@ import WebSocket from 'ws';
 
 const DEFAULT_LOG = logger.getLogger('BiDi Proxy');
 const DEFAULT_OPEN_TIMEOUT_MS = 5000;
+const DEFAULT_COMMAND_TIMEOUT_MS = 30000;
 
 export interface BidiProxyClientOptions {
   log?: AppiumLogger;
   openTimeoutMs?: number;
+  commandTimeoutMs?: number;
 }
 
 interface PendingRequest {
   resolve: (result: BiDiResultData) => void;
   reject: (err: Error) => void;
+  timeoutId: NodeJS.Timeout;
 }
 
 type UnsolicitedMessageHandler = (data: WebSocket.RawData) => void;
@@ -28,11 +31,11 @@ type ErrorHandler = (err: Error) => void;
  * {@link BidiProxyClient.onUnsolicitedMessage}.
  */
 export class BidiProxyClient {
-  readonly url: string;
-
+  private readonly url: string;
   private readonly socket: WebSocket;
   private readonly log: AppiumLogger;
   private readonly openTimeoutMs: number;
+  private readonly commandTimeoutMs: number;
   private nextId = 1;
   private readonly pending: Map<number, PendingRequest> = new Map();
   private readonly unsolicitedHandlers: UnsolicitedMessageHandler[] = [];
@@ -44,28 +47,36 @@ export class BidiProxyClient {
     this.url = url;
     this.log = opts.log ?? DEFAULT_LOG;
     this.openTimeoutMs = opts.openTimeoutMs ?? DEFAULT_OPEN_TIMEOUT_MS;
+    this.commandTimeoutMs = opts.commandTimeoutMs ?? DEFAULT_COMMAND_TIMEOUT_MS;
     this.socket = new WebSocket(url);
     this.socket.on('message', (data) => this.handleMessage(data));
     this.socket.on('close', (code: number, reason: Buffer) => this.handleClose(code, reason));
     this.socket.on('error', (err: Error) => this.handleError(err));
   }
 
-  get isOpen(): boolean {
-    return this.socket.readyState === WebSocket.OPEN;
-  }
-
   /**
    * Sends `{id, method, params}` upstream (with a freshly-minted internal id) and waits for the
    * correlated response, unwrapping `result` on success or throwing a `bidiErrObject`-capable
-   * error (built via {@link errorFromW3CJsonCode}) on a `type: 'error'` response.
+   * error (built via {@link errorFromW3CJsonCode}) on a `type: 'error'` response. Rejects if no
+   * response is received within `commandTimeoutMs`.
    */
   async executeCommand(method: string, params: StringRecord): Promise<BiDiResultData> {
     await this.waitUntilOpen();
     const id = this.nextId++;
     return await new Promise<BiDiResultData>((resolve, reject) => {
-      this.pending.set(id, {resolve, reject});
+      const timeoutId = setTimeout(() => {
+        this.pending.delete(id);
+        reject(
+          new errors.UnknownError(
+            `Did not receive a response for BiDi command '${method}' from ${this.url} ` +
+              `after ${this.commandTimeoutMs}ms timeout`,
+          ),
+        );
+      }, this.commandTimeoutMs);
+      this.pending.set(id, {resolve, reject, timeoutId});
       this.socket.send(JSON.stringify({id, method, params}), (err) => {
         if (err) {
+          clearTimeout(timeoutId);
           this.pending.delete(id);
           reject(err);
         }
@@ -109,27 +120,34 @@ export class BidiProxyClient {
     if (this.socket.readyState !== WebSocket.CONNECTING) {
       throw new errors.UnknownError(`The upstream BiDi web socket at ${this.url} is not open`);
     }
-    await new Promise<void>((resolve, reject) => {
-      const timeoutId = setTimeout(
-        () =>
-          reject(
-            new errors.UnknownError(
-              `The upstream BiDi web socket at ${this.url} did not open after ${this.openTimeoutMs}ms timeout`,
+    let onOpen: () => void = () => {};
+    let onErr: (err: Error) => void = () => {};
+    try {
+      await new Promise<void>((resolve, reject) => {
+        const timeoutId = setTimeout(
+          () =>
+            reject(
+              new errors.UnknownError(
+                `The upstream BiDi web socket at ${this.url} did not open after ${this.openTimeoutMs}ms timeout`,
+              ),
             ),
-          ),
-        this.openTimeoutMs,
-      );
-      const onOpen = () => {
-        clearTimeout(timeoutId);
-        resolve();
-      };
-      const onErr = (err: Error) => {
-        clearTimeout(timeoutId);
-        reject(err);
-      };
-      this.socket.once('open', onOpen);
-      this.socket.once('error', onErr);
-    });
+          this.openTimeoutMs,
+        );
+        onOpen = () => {
+          clearTimeout(timeoutId);
+          resolve();
+        };
+        onErr = (err: Error) => {
+          clearTimeout(timeoutId);
+          reject(err);
+        };
+        this.socket.once('open', onOpen);
+        this.socket.once('error', onErr);
+      });
+    } finally {
+      this.socket.off('open', onOpen);
+      this.socket.off('error', onErr);
+    }
   }
 
   // #region private event handlers on the underlying socket
@@ -151,6 +169,7 @@ export class BidiProxyClient {
       return;
     }
     this.pending.delete(id);
+    clearTimeout(entry.timeoutId);
     if (parsed.type === 'error') {
       entry.reject(errorFromW3CJsonCode(parsed.error, parsed.message, parsed.stacktrace));
     } else {
@@ -172,19 +191,28 @@ export class BidiProxyClient {
     this.closed = true;
     this.rejectAllPending(new errors.UnknownError('Upstream BiDi connection closed before a response was received'));
     for (const handler of this.closeHandlers) {
-      handler(code, reason);
+      try {
+        handler(code, reason);
+      } catch (err) {
+        this.log.warn(`Error in upstream BiDi close handler: ${(err as Error).message}`);
+      }
     }
   }
 
   private handleError(err: Error): void {
     this.rejectAllPending(err);
     for (const handler of this.errorHandlers) {
-      handler(err);
+      try {
+        handler(err);
+      } catch (handlerErr) {
+        this.log.warn(`Error in upstream BiDi error handler: ${(handlerErr as Error).message}`);
+      }
     }
   }
 
   private rejectAllPending(err: Error): void {
-    for (const {reject} of this.pending.values()) {
+    for (const {reject, timeoutId} of this.pending.values()) {
+      clearTimeout(timeoutId);
       reject(err);
     }
     this.pending.clear();

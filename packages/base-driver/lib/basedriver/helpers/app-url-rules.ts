@@ -375,8 +375,12 @@ function toRedirectUrl(redirectOpts: Record<string, any>): URL {
 
 /**
  * Returns the proxy URL the HTTP client would route a request to the given URL through,
- * according to the `<scheme>_proxy`, `all_proxy` and `no_proxy` environment variables
- * (mirroring the `proxy-from-env` logic used by axios), or an empty string if none applies.
+ * according to the `<scheme>_proxy`, `all_proxy` and `no_proxy` environment variables,
+ * or an empty string if none applies.
+ *
+ * This mirrors the logic of `proxy-from-env@2` used by axios. In particular, the `npm_config_*`
+ * variables are NOT consulted anymore (unlike `proxy-from-env@1`), so they must not be consulted
+ * here either: otherwise the validator would disagree with axios about whether a request is proxied.
  */
 function getEnvProxyUrl(url: URL): string {
   const proto = url.protocol.replace(/:$/, '');
@@ -384,11 +388,7 @@ function getEnvProxyUrl(url: URL): string {
   if (!shouldProxy(url.hostname, port)) {
     return '';
   }
-  const proxy =
-    getEnv(`npm_config_${proto}_proxy`) ||
-    getEnv(`${proto}_proxy`) ||
-    getEnv('npm_config_proxy') ||
-    getEnv('all_proxy');
+  const proxy = getEnv(`${proto}_proxy`) || getEnv('all_proxy');
   return proxy && !proxy.includes('://') ? `${proto}://${proxy}` : proxy;
 }
 
@@ -397,7 +397,7 @@ function getEnvProxyUrl(url: URL): string {
  * @param port - The effective port of the URL
  */
 function shouldProxy(hostname: string, port: number): boolean {
-  const noProxy = (getEnv('npm_config_no_proxy') || getEnv('no_proxy')).toLowerCase();
+  const noProxy = getEnv('no_proxy').toLowerCase();
   if (!noProxy) {
     return true;
   }

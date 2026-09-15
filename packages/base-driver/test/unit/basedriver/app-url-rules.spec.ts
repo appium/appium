@@ -291,6 +291,25 @@ describe('app-url-rules', function () {
         appUrlRules.applyToRequest({url: 'http://example.com/app.apk'});
       });
 
+      it('should ignore npm_config_* variables like the HTTP client does', function () {
+        // proxy-from-env@2 (used by axios) no longer reads npm_config_no_proxy/npm_config_proxy,
+        // so they must not affect whether a request is considered proxied either
+        appUrlRules.configure({deny: ['127.0.0.0/8']});
+        process.env.HTTP_PROXY = 'http://proxy.example.com:8080';
+        delete process.env.NO_PROXY;
+        delete process.env.no_proxy;
+        process.env.npm_config_no_proxy = '*';
+        assert.throws(
+          () => appUrlRules.applyToRequest({url: 'http://example.com/app.apk'}),
+          /is not allowed by the server configuration/,
+        );
+        delete process.env.npm_config_no_proxy;
+        delete process.env.HTTP_PROXY;
+        process.env.npm_config_proxy = 'http://proxy.example.com:8080';
+        process.env.npm_config_http_proxy = 'http://proxy.example.com:8080';
+        appUrlRules.applyToRequest({url: 'http://example.com/app.apk'});
+      });
+
       it('should reject a proxied redirect if address rules are configured', function () {
         appUrlRules.configure({deny: ['127.0.0.0/8']});
         process.env.HTTP_PROXY = 'http://proxy.example.com:8080';

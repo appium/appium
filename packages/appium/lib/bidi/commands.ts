@@ -14,6 +14,25 @@ import {MAX_LOGGED_DATA_LENGTH, SESSION_SUBSCRIBE, SESSION_UNSUBSCRIBE} from './
 import type {BidiProxyClient} from './proxy-client.js';
 import type {AnyDriver, ExtensionPlugin} from './types.js';
 
+interface TrackedSubscription {
+  events: string[];
+  contexts: string[];
+}
+
+// Per-proxy-client bookkeeping of upstream subscription ids -> the events/contexts they cover,
+// so a later `session.unsubscribe` by id (the standard BiDi form) can be translated into the
+// event/context form that the local `bidiUnsubscribe` bookkeeping understands.
+const SUBSCRIPTION_TRACKING: WeakMap<BidiProxyClient, Map<string, TrackedSubscription>> = new WeakMap();
+
+function getSubscriptionTracking(bidiProxyClient: BidiProxyClient): Map<string, TrackedSubscription> {
+  let tracking = SUBSCRIPTION_TRACKING.get(bidiProxyClient);
+  if (!tracking) {
+    tracking = new Map();
+    SUBSCRIPTION_TRACKING.set(bidiProxyClient, tracking);
+  }
+  return tracking;
+}
+
 /**
  * @param data
  * @param driver
@@ -129,9 +148,29 @@ function buildProxyBidiBaseHandler(
     // Keep Appium's local bidiEventSubs bookkeeping in sync, since the event dispatcher's
     // send-gate relies on it uniformly for both locally-emitted and proxied events.
     if (method === SESSION_SUBSCRIBE && typeof driver.bidiSubscribe === 'function') {
-      await driver.bidiSubscribe(params.events, params.contexts);
+      const events = (params.events ?? []) as string[];
+      const contexts = (params.contexts ?? ['']) as string[];
+      await driver.bidiSubscribe(events, contexts);
+      // Standard BiDi `session.subscribe` results carry the new subscription's id, which a
+      // later `session.unsubscribe` may reference instead of repeating events/contexts.
+      const subscriptionId = (result as {subscription?: string} | undefined)?.subscription;
+      if (subscriptionId) {
+        getSubscriptionTracking(bidiProxyClient).set(subscriptionId, {events, contexts});
+      }
     } else if (method === SESSION_UNSUBSCRIBE && typeof driver.bidiUnsubscribe === 'function') {
-      await driver.bidiUnsubscribe(params.events, params.contexts);
+      const subscriptionIds = params.subscriptions as string[] | undefined;
+      if (Array.isArray(subscriptionIds)) {
+        const tracking = getSubscriptionTracking(bidiProxyClient);
+        for (const subscriptionId of subscriptionIds) {
+          const tracked = tracking.get(subscriptionId);
+          if (tracked) {
+            await driver.bidiUnsubscribe(tracked.events, tracked.contexts);
+            tracking.delete(subscriptionId);
+          }
+        }
+      } else if (Array.isArray(params.events)) {
+        await driver.bidiUnsubscribe(params.events as string[], (params.contexts as string[] | undefined) ?? ['']);
+      }
     }
     return result;
   };

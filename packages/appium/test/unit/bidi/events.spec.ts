@@ -64,6 +64,27 @@ describe('createBidiEventDispatcher', function () {
     assert.equal(sent.length, 0);
   });
 
+  it('sends an event covered by a module-wide subscription (subscribed to the bare module name)', async function () {
+    const {send, sent} = makeSend();
+    const driver = makeDriver({browsingContext: ['']});
+    const dispatch = createBidiEventDispatcher(makeWs(), driver as any, [], send, {});
+
+    await dispatch({method: 'browsingContext.load', params: {}, context: ''}, {type: 'driver'});
+
+    assert.equal(sent.length, 1);
+    assert.equal(JSON.parse(sent[0]).method, 'browsingContext.load');
+  });
+
+  it('does not send an event when the module-wide subscription is for a different context', async function () {
+    const {send, sent} = makeSend();
+    const driver = makeDriver({browsingContext: ['ctx-1']});
+    const dispatch = createBidiEventDispatcher(makeWs(), driver as any, [], send, {});
+
+    await dispatch({method: 'browsingContext.load', params: {}, context: 'ctx-2'}, {type: 'driver'});
+
+    assert.equal(sent.length, 0);
+  });
+
   it('runs plugins in last-declared-first order, matching the command chain convention', async function () {
     const order: string[] = [];
     const {send, sent} = makeSend();

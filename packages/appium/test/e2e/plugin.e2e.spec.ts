@@ -474,6 +474,10 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
               const {id, method, params} = JSON.parse(data.toString());
               switch (method) {
                 case 'session.subscribe':
+                  // real BiDi servers return a subscription id, which callers may later use to
+                  // unsubscribe instead of repeating events/contexts
+                  ws.send(JSON.stringify({id, type: 'success', result: {subscription: `sub-${id}`}}));
+                  break;
                 case 'session.unsubscribe':
                   ws.send(JSON.stringify({id, type: 'success', result: {}}));
                   break;
@@ -486,6 +490,21 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
                 case 'vendor.triggerEvent':
                   ws.send(JSON.stringify({id, type: 'success', result: {}}));
                   ws.send(JSON.stringify({type: 'event', method: 'vendor.ping', params: {pong: true}}));
+                  break;
+                case 'vendor.triggerContextEvent':
+                  ws.send(JSON.stringify({id, type: 'success', result: {}}));
+                  // standard BiDi event envelopes nest context inside params, not at the top level
+                  ws.send(
+                    JSON.stringify({
+                      type: 'event',
+                      method: 'vendor.contextPing',
+                      params: {context: 'vendor-ctx-1', pong: true},
+                    }),
+                  );
+                  break;
+                case 'vendor.triggerModuleEvent':
+                  ws.send(JSON.stringify({id, type: 'success', result: {}}));
+                  ws.send(JSON.stringify({type: 'event', method: 'vendor.moduleEvent', params: {pong: true}}));
                   break;
                 default:
                   ws.send(
@@ -554,6 +573,57 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
 
         assert.strictEqual(collected.length, 1);
         assert.deepStrictEqual(collected[0], {pong: true});
+      });
+
+      it('should deliver a proxied event whose context is nested in params.context (standard BiDi shape)', async function () {
+        const collected: unknown[] = [];
+        (driver as any).on('vendor.contextPing', (ev: unknown) => collected.push(ev));
+
+        await (driver as any).sessionSubscribe({events: ['vendor.contextPing'], contexts: ['vendor-ctx-1']});
+        await (driver as any).send({method: 'vendor.triggerContextEvent', params: {}});
+        await sleep(300);
+
+        assert.strictEqual(collected.length, 1);
+      });
+
+      it('should deliver a proxied event covered by a module-wide subscription', async function () {
+        const collected: unknown[] = [];
+        (driver as any).on('vendor.moduleEvent', (ev: unknown) => collected.push(ev));
+
+        // subscribing to the bare module name (not a specific event) covers every event in it
+        await (driver as any).sessionSubscribe({events: ['vendor']});
+        await (driver as any).send({method: 'vendor.triggerModuleEvent', params: {}});
+        await sleep(300);
+
+        assert.strictEqual(collected.length, 1);
+
+        // clean up so this broad subscription doesn't leak into later tests in this block
+        await (driver as any).sessionUnsubscribe({events: ['vendor']});
+      });
+
+      it('should unsubscribe a proxied session using a subscription id (standard BiDi form)', async function () {
+        const collected: unknown[] = [];
+        (driver as any).on('vendor.ping', (ev: unknown) => collected.push(ev));
+
+        const {result: subResult} = await (driver as any).send({
+          method: 'session.subscribe',
+          params: {events: ['vendor.ping']},
+        });
+        const subscriptionId = subResult.subscription;
+        assert.ok(subscriptionId);
+
+        await (driver as any).send({method: 'vendor.triggerEvent', params: {}});
+        await sleep(300);
+        assert.strictEqual(collected.length, 1);
+
+        await (driver as any).send({
+          method: 'session.unsubscribe',
+          params: {subscriptions: [subscriptionId]},
+        });
+        collected.length = 0;
+        await (driver as any).send({method: 'vendor.triggerEvent', params: {}});
+        await sleep(300);
+        assert.strictEqual(collected.length, 0);
       });
 
       it('should close the upstream connection when the session ends', async function () {

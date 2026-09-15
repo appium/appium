@@ -29,6 +29,19 @@ export function getBidiEventLogCounts(driver: AnyDriver): Record<string, number>
 }
 
 /**
+ * BiDi's `session.subscribe` allows subscribing to either a specific event (`browsingContext.load`)
+ * or an entire module (`browsingContext`, covering all of its events). `bidiEventSubs` may
+ * therefore hold either kind of key, so a matching event must be checked against both.
+ */
+function isEventSubscribed(bidiEventSubs: Record<string, string[]>, method: string, context: string): boolean {
+  const moduleName = method.split('.')[0];
+  return [method, moduleName].some((key) => {
+    const subs = bidiEventSubs[key];
+    return Array.isArray(subs) && subs.includes(context);
+  });
+}
+
+/**
  * Builds a single, per-connection BiDi event dispatcher shared by driver/plugin-emitted events
  * (see {@link initBidiEventListeners}) and, when proxying, unsolicited pushes from the upstream
  * server (see {@link initBidiProxyHandlers}). Every event -- regardless of origin -- folds
@@ -63,8 +76,7 @@ export function createBidiEventDispatcher(
     }
     const context = event.context || '';
     const {method, params} = event;
-    const eventSubs = bidiHandlerDriver.bidiEventSubs[method];
-    if (!Array.isArray(eventSubs) || !eventSubs.includes(context)) {
+    if (!isEventSubscribed(bidiHandlerDriver.bidiEventSubs, method, context)) {
       return;
     }
     if (method in eventLogCounts) {
@@ -217,10 +229,11 @@ export function initBidiProxyHandlers(
       );
       return;
     }
-    void dispatchBidiEvent(
-      {method: parsed.method, params: parsed.params ?? {}, context: parsed.context},
-      {type: 'proxy'},
-    );
+    const params = parsed.params ?? {};
+    // Standard BiDi event envelopes don't carry a top-level `context` -- context-scoped events
+    // (e.g. `browsingContext.load`) nest it inside `params.context` instead.
+    const context = parsed.context ?? (params.context as string | undefined);
+    void dispatchBidiEvent({method: parsed.method, params, context}, {type: 'proxy'});
   });
 
   // If the upstream socket server closes the connection, should close the connection to the

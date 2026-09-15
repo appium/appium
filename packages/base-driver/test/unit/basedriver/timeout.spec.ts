@@ -9,6 +9,9 @@ import {BaseDriver, errors} from '../../../lib/index.js';
 describe('timeout', function () {
   let driver: BaseDriver<any, any, any, any, any>;
   let implicitWaitSpy: sinon.SinonSpy;
+  let pageLoadTimeoutSpy: sinon.SinonSpy;
+  let scriptTimeoutSpy: sinon.SinonSpy;
+  let newCommandTimeoutSpy: sinon.SinonSpy;
   let sandbox: sinon.SinonSandbox;
 
   before(function () {
@@ -18,19 +21,28 @@ describe('timeout', function () {
   beforeEach(function () {
     sandbox = createSandbox();
     driver.implicitWaitMs = 0;
+    driver.pageLoadTimeoutMs = 0;
+    driver.scriptTimeoutMs = 0;
+    driver.newCommandTimeoutMs = 0;
     implicitWaitSpy = sandbox.spy(driver, 'setImplicitWait');
+    pageLoadTimeoutSpy = sandbox.spy(driver, 'setPageLoadTimeout');
+    scriptTimeoutSpy = sandbox.spy(driver, 'setScriptTimeout');
+    newCommandTimeoutSpy = sandbox.spy(driver, 'setNewCommandTimeout');
   });
 
   afterEach(function () {
     sandbox.restore();
   });
 
+  describe('parseTimeoutArgument', function () {
+    it('should reject an invalid timeout with InvalidArgumentError', function () {
+      assert.throws(() => driver.parseTimeoutArgument('abc'), errors.InvalidArgumentError);
+      assert.throws(() => driver.parseTimeoutArgument(-1), errors.InvalidArgumentError);
+    });
+  });
+
   describe('timeouts', function () {
-    describe('errors', function () {
-      it('should reject an invalid timeout with InvalidArgumentError', function () {
-        assert.throws(() => driver.parseTimeoutArgument('abc'), errors.InvalidArgumentError);
-        assert.throws(() => driver.parseTimeoutArgument(-1), errors.InvalidArgumentError);
-      });
+    describe('JSONWP errors', function () {
       it('should throw an error if something random is sent', async function () {
         await assert.rejects(driver.timeouts('random timeout', 'howdy'));
       });
@@ -40,37 +52,57 @@ describe('timeout', function () {
       it('should throw an errors if timeout type is unknown', async function () {
         await assert.rejects(driver.timeouts('random timeout', 42));
       });
-      it('should throw an error if something random is sent to scriptDuration', async function () {
-        await assert.rejects(driver.timeouts(undefined, undefined, 123, undefined, undefined));
+    });
+    describe('W3C errors', function () {
+      it('should not throw if no parameters are provided', async function () {
+        await assert.doesNotReject(driver.timeouts());
       });
-      it('should throw an error if something random is sent to pageLoadDuration', async function () {
-        await assert.rejects(driver.timeouts(undefined, undefined, undefined, 123, undefined));
+      it('should not throw if none of the W3C standard parameters are provided', async function () {
+        await assert.doesNotReject(driver.timeouts(undefined, undefined, undefined, undefined, undefined, 100));
       });
     });
     describe('implicit wait', function () {
-      it('should call setImplicitWait when given an integer', async function () {
+      it('should call setImplicitWait when given an integer using the JSONWP format', async function () {
         await driver.timeouts('implicit', 42);
         assert.strictEqual(implicitWaitSpy.calledOnce, true);
         assert.strictEqual(implicitWaitSpy.firstCall.args[0], 42);
         assert.strictEqual(driver.implicitWaitMs, 42);
       });
-      it('should call setImplicitWait when given a string', async function () {
+      it('should call setImplicitWait when given a string using the JSONWP format', async function () {
         await driver.timeouts('implicit', '42');
         assert.strictEqual(implicitWaitSpy.calledOnce, true);
         assert.strictEqual(implicitWaitSpy.firstCall.args[0], 42);
         assert.strictEqual(driver.implicitWaitMs, 42);
       });
-      it('should call setImplicitWait when given an integer to implicitDuration', async function () {
+      it('should call setImplicitWait when given an integer using the W3C format', async function () {
         await driver.timeouts(undefined, undefined, undefined, undefined, 42);
         assert.strictEqual(implicitWaitSpy.calledOnce, true);
         assert.strictEqual(implicitWaitSpy.firstCall.args[0], 42);
         assert.strictEqual(driver.implicitWaitMs, 42);
       });
-      it('should call setImplicitWait when given a string to implicitDuration', async function () {
-        await driver.timeouts(undefined, undefined, undefined, undefined, '42');
-        assert.strictEqual(implicitWaitSpy.calledOnce, true);
-        assert.strictEqual(implicitWaitSpy.firstCall.args[0], 42);
-        assert.strictEqual(driver.implicitWaitMs, 42);
+    });
+    describe('page load timeout', function () {
+      it('should call setPageLoadTimeout when using the W3C format', async function () {
+        await driver.timeouts(undefined, undefined, undefined, 42);
+        assert.strictEqual(pageLoadTimeoutSpy.calledOnce, true);
+        assert.strictEqual(pageLoadTimeoutSpy.firstCall.args[0], 42);
+        assert.strictEqual(driver.pageLoadTimeoutMs, 42);
+      });
+    });
+    describe('script timeout', function () {
+      it('should call setScriptTimeout when using the W3C format', async function () {
+        await driver.timeouts(undefined, undefined, 42);
+        assert.strictEqual(scriptTimeoutSpy.calledOnce, true);
+        assert.strictEqual(scriptTimeoutSpy.firstCall.args[0], 42);
+        assert.strictEqual(driver.scriptTimeoutMs, 42);
+      });
+    });
+    describe('new command timeout', function () {
+      it('should call setNewCommandTimeout when using the W3C format', async function () {
+        await driver.timeouts(undefined, undefined, undefined, undefined, undefined, 42);
+        assert.strictEqual(newCommandTimeoutSpy.calledOnce, true);
+        assert.strictEqual(newCommandTimeoutSpy.firstCall.args[0], 42);
+        assert.strictEqual(driver.newCommandTimeoutMs, 42);
       });
     });
   });
@@ -97,6 +129,58 @@ describe('timeout', function () {
         assert.strictEqual(driver.implicitWaitMs, 42);
         assert.strictEqual(managedDriver1.implicitWaitMs, 42);
         assert.strictEqual(managedDriver2.implicitWaitMs, 42);
+      });
+    });
+  });
+
+  describe('set page load timeout', function () {
+    it('should set the page load timeout with an integer', function () {
+      driver.setPageLoadTimeout(42);
+      assert.strictEqual(driver.pageLoadTimeoutMs, 42);
+    });
+    describe('with managed driver', function () {
+      let managedDriver1: BaseDriver<any, any, any, any, any>;
+      let managedDriver2: BaseDriver<any, any, any, any, any>;
+      before(function () {
+        managedDriver1 = new BaseDriver({} as InitialOpts);
+        managedDriver2 = new BaseDriver({} as InitialOpts);
+        driver.addManagedDriver(managedDriver1);
+        driver.addManagedDriver(managedDriver2);
+      });
+      after(function () {
+        driver.managedDrivers = [];
+      });
+      it('should set the page load timeout on managed drivers', function () {
+        driver.setPageLoadTimeout(42);
+        assert.strictEqual(driver.pageLoadTimeoutMs, 42);
+        assert.strictEqual(managedDriver1.pageLoadTimeoutMs, 42);
+        assert.strictEqual(managedDriver2.pageLoadTimeoutMs, 42);
+      });
+    });
+  });
+
+  describe('set script timeout', function () {
+    it('should set the script timeout with an integer', function () {
+      driver.setScriptTimeout(42);
+      assert.strictEqual(driver.scriptTimeoutMs, 42);
+    });
+    describe('with managed driver', function () {
+      let managedDriver1: BaseDriver<any, any, any, any, any>;
+      let managedDriver2: BaseDriver<any, any, any, any, any>;
+      before(function () {
+        managedDriver1 = new BaseDriver({} as InitialOpts);
+        managedDriver2 = new BaseDriver({} as InitialOpts);
+        driver.addManagedDriver(managedDriver1);
+        driver.addManagedDriver(managedDriver2);
+      });
+      after(function () {
+        driver.managedDrivers = [];
+      });
+      it('should set the script timeout on managed drivers', function () {
+        driver.setScriptTimeout(42);
+        assert.strictEqual(driver.scriptTimeoutMs, 42);
+        assert.strictEqual(managedDriver1.scriptTimeoutMs, 42);
+        assert.strictEqual(managedDriver2.scriptTimeoutMs, 42);
       });
     });
   });

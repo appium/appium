@@ -128,7 +128,6 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
 
   configureGlobalFeatures = insecureFeatures.configureGlobalFeatures;
   configureDriverFeatures = insecureFeatures.configureDriverFeatures;
-  configureAppUrlRules = insecureFeatures.configureAppUrlRules;
 
   listCommands = inspectorCommands.listCommands;
   listExtensions = inspectorCommands.listExtensions;

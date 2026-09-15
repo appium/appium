@@ -53,6 +53,12 @@ describe('app-url-rules', function () {
       assert.throws(() => appUrlRules.configure({allow: ['10.0.0.0/nope']}), /invalid IP address or subnet/);
       assert.throws(() => appUrlRules.configure({deny: ['a/b/c']}), /invalid IP address or hostname/);
       assert.throws(() => appUrlRules.configure({deny: ['example.com/8']}), /invalid IP address or hostname/);
+      assert.throws(() => appUrlRules.configure({deny: ['']}), /invalid IP address or hostname/);
+      assert.strictEqual(appUrlRules.config, undefined);
+    });
+
+    it('should reject unknown rules', function () {
+      assert.throws(() => appUrlRules.configure({allowPorts: [443]} as any), /'allowPorts' is not supported/);
       assert.strictEqual(appUrlRules.config, undefined);
     });
 
@@ -71,7 +77,7 @@ describe('app-url-rules', function () {
         /is not allowed by the server configuration/,
       );
       assert.throws(
-        () => otherCopy.appUrlRules.applyToRequest({url: 'http://example.com/app.apk'}),
+        () => otherCopy.appUrlRules.assertRequestAllowed({url: 'http://example.com/app.apk'}),
         /is not allowed by the server configuration/,
       );
 
@@ -91,6 +97,13 @@ describe('app-url-rules', function () {
   describe('assertUrlAllowed()', function () {
     it('should allow any URL if no rules are set', function () {
       appUrlRules.assertUrlAllowed(url('http://user:pass@example.com/app.apk'));
+    });
+
+    it('should return the given URL for chaining', function () {
+      const appUrl = url('https://example.com/app.apk');
+      assert.strictEqual(appUrlRules.assertUrlAllowed(appUrl), appUrl);
+      appUrlRules.configure({httpsOnly: true});
+      assert.strictEqual(appUrlRules.assertUrlAllowed(appUrl), appUrl);
     });
 
     it('should enforce httpsOnly', function () {
@@ -115,22 +128,27 @@ describe('app-url-rules', function () {
       );
     });
 
-    it('should only log the violated rule instead of reporting it to the client', function () {
+    it('should only log the violated rule at debug level instead of reporting it to the client', function () {
       const warnings: string[] = [];
+      const debugs: string[] = [];
       const warn = mock.method(logger, 'warn', (message: string) => {
         warnings.push(message);
       });
+      const debug = mock.method(logger, 'debug', (message: string) => {
+        debugs.push(message);
+      });
       try {
         appUrlRules.configure({deny: ['*.evil.com']});
+        const message = `The application URL 'https://app.evil.com/app.apk' ${NOT_ALLOWED}`;
         assert.throws(
           () => appUrlRules.assertUrlAllowed(url('https://app.evil.com/app.apk')),
-          (e: Error) => e.message === `The application URL 'https://app.evil.com/app.apk' ${NOT_ALLOWED}`,
+          (e: Error) => e.message === message,
         );
-        assert.deepStrictEqual(warnings, [
-          `The application URL 'https://app.evil.com/app.apk' ${NOT_ALLOWED}: the hostname matches a deny rule`,
-        ]);
+        assert.deepStrictEqual(warnings, [message]);
+        assert.deepStrictEqual(debugs, [`${message}: the hostname matches a deny rule`]);
       } finally {
         warn.mock.restore();
+        debug.mock.restore();
       }
     });
 
@@ -154,10 +172,52 @@ describe('app-url-rules', function () {
     it('should normalize and enforce hostname allow rules', function () {
       appUrlRules.configure({allow: ['*.example.com', 'münich.example']});
       appUrlRules.assertUrlAllowed(url('https://a.example.com/app.apk'));
+      appUrlRules.assertUrlAllowed(url('https://a.b.example.com/app.apk'));
       appUrlRules.assertUrlAllowed(url('https://B.EXAMPLE.COM./app.apk'));
       appUrlRules.assertUrlAllowed(url('https://münich.example/app.apk'));
+      appUrlRules.assertUrlAllowed(url('https://xn--mnich-kva.example/app.apk'));
+      for (const hostname of ['example.com', 'c.example.net', 'example.com.evil.net']) {
+        assert.throws(
+          () => appUrlRules.assertUrlAllowed(url(`https://${hostname}/app.apk`)),
+          /is not allowed by the server configuration/,
+          hostname,
+        );
+      }
+    });
+
+    it('should support picomatch glob patterns', function () {
+      appUrlRules.configure({
+        allow: ['apps.{staging,prod}.example.com', 'build-?.example.com', 'node[0-9].example.com', 'münich.*'],
+      });
+      for (const hostname of [
+        'apps.staging.example.com',
+        'apps.prod.example.com',
+        'build-a.example.com',
+        'node7.example.com',
+        'münich.example',
+        'xn--mnich-kva.example.org',
+      ]) {
+        appUrlRules.assertUrlAllowed(url(`https://${hostname}/app.apk`));
+      }
+      for (const hostname of [
+        'apps.dev.example.com',
+        'build-ab.example.com',
+        'nodex.example.com',
+        'munich.example',
+        'a.münich.example',
+      ]) {
+        assert.throws(
+          () => appUrlRules.assertUrlAllowed(url(`https://${hostname}/app.apk`)),
+          /is not allowed by the server configuration/,
+          hostname,
+        );
+      }
+    });
+
+    it('should match dots in hostname patterns literally', function () {
+      appUrlRules.configure({allow: ['app.example.com']});
       assert.throws(
-        () => appUrlRules.assertUrlAllowed(url('https://c.example.net/app.apk')),
+        () => appUrlRules.assertUrlAllowed(url('https://appxexample.com/app.apk')),
         /is not allowed by the server configuration/,
       );
     });
@@ -177,6 +237,111 @@ describe('app-url-rules', function () {
     });
   });
 
+  describe('assertRequestAllowed()', function () {
+    const requestOpts: AxiosRequestConfig = {url: 'http://localhost/app.apk', responseType: 'stream'};
+
+    it('should return the request options for chaining', function () {
+      assert.strictEqual(appUrlRules.assertRequestAllowed(requestOpts), requestOpts);
+      appUrlRules.configure({deny: ['*.evil.com']});
+      assert.strictEqual(appUrlRules.assertRequestAllowed(requestOpts), requestOpts);
+    });
+
+    it('should validate the request URL', function () {
+      appUrlRules.configure({httpsOnly: true});
+      assert.throws(() => appUrlRules.assertRequestAllowed(requestOpts), /is not allowed by the server configuration/);
+      assert.throws(
+        () => appUrlRules.assertRequestAllowed({url: '/app.apk', baseURL: 'http://localhost'}),
+        /is not allowed by the server configuration/,
+      );
+      appUrlRules.assertRequestAllowed({url: '/app.apk', baseURL: 'https://localhost'});
+    });
+
+    describe('with an HTTP proxy', function () {
+      const env = {...process.env};
+
+      afterEach(function () {
+        for (const key of Object.keys(process.env)) {
+          if (!(key in env)) {
+            delete process.env[key];
+          }
+        }
+        Object.assign(process.env, env);
+      });
+
+      it('should reject a proxied request if address rules are configured', function () {
+        appUrlRules.configure({deny: ['127.0.0.0/8', '::1']});
+        appUrlRules.assertRequestAllowed({url: 'http://example.com/app.apk'});
+        process.env.HTTP_PROXY = 'http://user:pass@proxy.example.com:8080';
+        delete process.env.NO_PROXY;
+        delete process.env.no_proxy;
+        assert.throws(
+          () => appUrlRules.assertRequestAllowed({url: 'http://example.com/app.apk'}),
+          (e: Error) => e.message.includes(NOT_ALLOWED) && !e.message.includes('pass'),
+        );
+        // an explicitly configured proxy takes precedence over the environment
+        assert.throws(
+          () =>
+            appUrlRules.assertRequestAllowed({
+              url: 'http://example.com/app.apk',
+              proxy: {host: 'other.proxy', port: 3128},
+            }),
+          /is not allowed by the server configuration/,
+        );
+        // the environment is ignored if the proxy is explicitly disabled
+        appUrlRules.assertRequestAllowed({url: 'http://example.com/app.apk', proxy: false});
+        // hosts excluded from proxying are fine
+        process.env.NO_PROXY = 'example.com';
+        appUrlRules.assertRequestAllowed({url: 'http://example.com/app.apk'});
+      });
+
+      it('should ignore npm_config_* variables like the HTTP client does', function () {
+        // proxy-from-env@2 (used by axios) no longer reads npm_config_no_proxy/npm_config_proxy,
+        // so they must not affect whether a request is considered proxied either
+        appUrlRules.configure({deny: ['127.0.0.0/8']});
+        process.env.HTTP_PROXY = 'http://proxy.example.com:8080';
+        delete process.env.NO_PROXY;
+        delete process.env.no_proxy;
+        process.env.npm_config_no_proxy = '*';
+        assert.throws(
+          () => appUrlRules.assertRequestAllowed({url: 'http://example.com/app.apk'}),
+          /is not allowed by the server configuration/,
+        );
+        delete process.env.npm_config_no_proxy;
+        delete process.env.HTTP_PROXY;
+        process.env.npm_config_proxy = 'http://proxy.example.com:8080';
+        process.env.npm_config_http_proxy = 'http://proxy.example.com:8080';
+        appUrlRules.assertRequestAllowed({url: 'http://example.com/app.apk'});
+      });
+
+      it('should reject a proxied redirect if address rules are configured', function () {
+        appUrlRules.configure({deny: ['127.0.0.0/8']});
+        process.env.HTTP_PROXY = 'http://proxy.example.com:8080';
+        process.env.NO_PROXY = 'example.com';
+        const result = appUrlRules.applyToRequest({url: 'http://example.com/app.apk'});
+        result.beforeRedirect!({href: 'http://example.com/other.apk'}, {} as any, {} as any);
+        assert.throws(
+          () => result.beforeRedirect!({href: 'http://example.net/app.apk'}, {} as any, {} as any),
+          /is not allowed by the server configuration/,
+        );
+      });
+
+      it('should allow a proxied request if only hostname rules are configured', function () {
+        appUrlRules.configure({allow: ['*.example.com'], httpsOnly: true});
+        process.env.HTTPS_PROXY = 'http://proxy.example.com:8080';
+        delete process.env.NO_PROXY;
+        delete process.env.no_proxy;
+        appUrlRules.assertRequestAllowed({url: 'https://apps.example.com/app.apk'});
+        // the proxy hostname is resolved instead of the destination, so no lookup must be installed
+        const result = appUrlRules.applyToRequest({url: 'https://apps.example.com/app.apk'});
+        assert.strictEqual(result.lookup, undefined);
+        assert.throws(
+          () => appUrlRules.assertRequestAllowed({url: 'https://apps.example.net/app.apk'}),
+          /is not allowed by the server configuration/,
+        );
+      });
+    });
+  });
+
   describe('applyToRequest()', function () {
     const requestOpts: AxiosRequestConfig = {url: 'http://localhost/app.apk', responseType: 'stream'};
 
@@ -184,9 +349,9 @@ describe('app-url-rules', function () {
       assert.strictEqual(appUrlRules.applyToRequest(requestOpts), requestOpts);
     });
 
-    it('should validate the request URL', function () {
+    it('should not validate the request URL itself', function () {
       appUrlRules.configure({httpsOnly: true});
-      assert.throws(() => appUrlRules.applyToRequest(requestOpts), /is not allowed by the server configuration/);
+      assert.notStrictEqual(appUrlRules.applyToRequest(requestOpts), requestOpts);
     });
 
     it('should apply maxRedirects and validate redirect targets', function () {
@@ -254,87 +419,6 @@ describe('app-url-rules', function () {
         deniedLookup('localhost', {family: 4}),
         /The application host 'localhost' is not allowed by the server configuration/,
       );
-    });
-
-    describe('with an HTTP proxy', function () {
-      const env = {...process.env};
-
-      afterEach(function () {
-        for (const key of Object.keys(process.env)) {
-          if (!(key in env)) {
-            delete process.env[key];
-          }
-        }
-        Object.assign(process.env, env);
-      });
-
-      it('should reject a proxied request if address rules are configured', function () {
-        appUrlRules.configure({deny: ['127.0.0.0/8', '::1']});
-        appUrlRules.applyToRequest({url: 'http://example.com/app.apk'});
-        process.env.HTTP_PROXY = 'http://user:pass@proxy.example.com:8080';
-        delete process.env.NO_PROXY;
-        delete process.env.no_proxy;
-        assert.throws(
-          () => appUrlRules.applyToRequest({url: 'http://example.com/app.apk'}),
-          (e: Error) => e.message.includes(NOT_ALLOWED) && !e.message.includes('pass'),
-        );
-        // an explicitly configured proxy takes precedence over the environment
-        assert.throws(
-          () =>
-            appUrlRules.applyToRequest({url: 'http://example.com/app.apk', proxy: {host: 'other.proxy', port: 3128}}),
-          /is not allowed by the server configuration/,
-        );
-        // the environment is ignored if the proxy is explicitly disabled
-        appUrlRules.applyToRequest({url: 'http://example.com/app.apk', proxy: false});
-        // hosts excluded from proxying are fine
-        process.env.NO_PROXY = 'example.com';
-        appUrlRules.applyToRequest({url: 'http://example.com/app.apk'});
-      });
-
-      it('should ignore npm_config_* variables like the HTTP client does', function () {
-        // proxy-from-env@2 (used by axios) no longer reads npm_config_no_proxy/npm_config_proxy,
-        // so they must not affect whether a request is considered proxied either
-        appUrlRules.configure({deny: ['127.0.0.0/8']});
-        process.env.HTTP_PROXY = 'http://proxy.example.com:8080';
-        delete process.env.NO_PROXY;
-        delete process.env.no_proxy;
-        process.env.npm_config_no_proxy = '*';
-        assert.throws(
-          () => appUrlRules.applyToRequest({url: 'http://example.com/app.apk'}),
-          /is not allowed by the server configuration/,
-        );
-        delete process.env.npm_config_no_proxy;
-        delete process.env.HTTP_PROXY;
-        process.env.npm_config_proxy = 'http://proxy.example.com:8080';
-        process.env.npm_config_http_proxy = 'http://proxy.example.com:8080';
-        appUrlRules.applyToRequest({url: 'http://example.com/app.apk'});
-      });
-
-      it('should reject a proxied redirect if address rules are configured', function () {
-        appUrlRules.configure({deny: ['127.0.0.0/8']});
-        process.env.HTTP_PROXY = 'http://proxy.example.com:8080';
-        process.env.NO_PROXY = 'example.com';
-        const result = appUrlRules.applyToRequest({url: 'http://example.com/app.apk'});
-        result.beforeRedirect!({href: 'http://example.com/other.apk'}, {} as any, {} as any);
-        assert.throws(
-          () => result.beforeRedirect!({href: 'http://example.net/app.apk'}, {} as any, {} as any),
-          /is not allowed by the server configuration/,
-        );
-      });
-
-      it('should allow a proxied request if only hostname rules are configured', function () {
-        appUrlRules.configure({allow: ['*.example.com'], httpsOnly: true});
-        process.env.HTTPS_PROXY = 'http://proxy.example.com:8080';
-        delete process.env.NO_PROXY;
-        delete process.env.no_proxy;
-        const result = appUrlRules.applyToRequest({url: 'https://apps.example.com/app.apk'});
-        // the proxy hostname is resolved instead of the destination, so no lookup must be installed
-        assert.strictEqual(result.lookup, undefined);
-        assert.throws(
-          () => appUrlRules.applyToRequest({url: 'https://apps.example.net/app.apk'}),
-          /is not allowed by the server configuration/,
-        );
-      });
     });
   });
 });

@@ -370,7 +370,7 @@ export const AppiumConfigJsonSchema = {
       properties: {
         allow: {
           description:
-            'Hostname glob patterns, IP addresses, or CIDR subnets. If non-empty, a hostname or its resolved address must match at least one.',
+            'Hostname patterns (picomatch glob syntax, e.g. "*.example.com"), IP addresses, or CIDR subnets. If non-empty, a hostname or its resolved address must match at least one.',
           items: {
             type: 'string',
           },
@@ -379,7 +379,7 @@ export const AppiumConfigJsonSchema = {
         },
         deny: {
           description:
-            'Hostname glob patterns, IP addresses, or CIDR subnets. A matching hostname or resolved address is rejected.',
+            'Hostname patterns (picomatch glob syntax, e.g. "*.example.com"), IP addresses, or CIDR subnets. A matching hostname or resolved address is rejected.',
           items: {
             type: 'string',
           },

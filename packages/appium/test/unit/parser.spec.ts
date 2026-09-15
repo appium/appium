@@ -106,11 +106,21 @@ describe('parser', function () {
       });
 
       it('should throw an error with invalid arg to app URL rules', function () {
-        assert.throws(() => p.parseArgs(['--app-url-rules', '42']));
-        assert.throws(() => p.parseArgs(['--app-url-rules', '[]']));
-        assert.throws(() => p.parseArgs(['--app-url-rules', 'does/not/exist.json']));
-        assert.throws(() => p.parseArgs(['--app-url-rules', '{"unknownRule": true}']));
-        assert.throws(() => p.parseArgs(['--app-url-rules', '{"httpsOnly": "yes"}']));
+        const throwsUncolored = (args: string[], regex: RegExp) =>
+          assert.throws(() => {
+            try {
+              p.parseArgs(['--app-url-rules', ...args]);
+            } catch (e) {
+              throw new Error(stripColorCodes((e as Error).message), {cause: e});
+            }
+          }, regex);
+        throwsUncolored(['42'], /'42' must be a plain object/);
+        throwsUncolored(['[]'], /'\[\]' must be a plain object/);
+        throwsUncolored(['does/not/exist.json'], /invalid.+value: 'does\/not\/exist\.json'/);
+        throwsUncolored(['{"unknownRule": true}'], /unknownRule is not expected to be here/);
+        throwsUncolored(['{"httpsOnly": "yes"}'], /type must be boolean/);
+        throwsUncolored(['{"maxRedirects": -1}'], /minimum must be >= 0/);
+        throwsUncolored(['{"allow": "example.com"}'], /type must be array/);
       });
 
       it('should parse default capabilities correctly from a string', function () {

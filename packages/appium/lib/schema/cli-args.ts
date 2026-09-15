@@ -114,7 +114,9 @@ function subSchemaToArgDef(subSchema: AppiumJSONSchema, argSpec: ArgSpec): ArgDe
       argTypeFunction = getSchemaValidator(argSpec, (value: string) => {
         const o = transformers.json(value);
         if (!util.isPlainObject(o)) {
-          throw new ArgumentTypeError(`'${util.truncateString(String(o), {length: 100})}' must be a plain object`);
+          throw new ArgumentTypeError(
+            `'${util.truncateString(JSON.stringify(o), {length: 100})}' must be a plain object`,
+          );
         }
         return o;
       });

@@ -3,11 +3,12 @@ import type {LookupAddress, LookupAllOptions} from 'node:dns';
 import net from 'node:net';
 import {domainToASCII} from 'node:url';
 
-import {util} from '@appium/support';
 import type {AppUrlRulesConfig} from '@appium/types';
 import type {AxiosRequestConfig} from 'axios';
+import picomatch from 'picomatch';
 
 import {log as logger} from '../../helpers/logger.js';
+import {EnvProxyResolver} from './env-proxy.js';
 
 /**
  * Key of the process-wide store holding the active rules.
@@ -15,9 +16,21 @@ import {log as logger} from '../../helpers/logger.js';
  * A `Symbol.for` key is shared by every copy of this module loaded into the process, so rules
  * configured by the Appium server also apply to drivers which resolve their own copy of
  * `@appium/base-driver` (e.g. from `APPIUM_HOME`), as long as that copy supports app URL rules.
+ *
+ * The key must stay the same across major versions of this package, so older copies keep
+ * enforcing the rules. The store only holds the raw configuration, which every copy validates
+ * itself: a copy that does not understand a rule fails closed instead of ignoring it.
  */
 const GLOBAL_STORE_KEY = Symbol.for('@appium/base-driver:app-url-rules');
-const DEFAULT_PORTS: Record<string, number> = {http: 80, https: 443};
+const KNOWN_RULES: ReadonlySet<keyof AppUrlRulesConfig> = new Set([
+  'allow',
+  'deny',
+  'httpsOnly',
+  'allowCredentials',
+  'maxRedirects',
+]);
+/** Characters which make a hostname pattern a glob (see https://github.com/micromatch/picomatch) */
+const GLOB_CHARS = /[*?[\]{}()!+@|\\]/;
 const NOT_ALLOWED_SUFFIX = 'is not allowed by the server configuration';
 
 interface AppUrlRulesStore {
@@ -31,7 +44,9 @@ type LookupFunction = (hostname: string, options: LookupAllOptions, callback: Lo
  * Replaces the process-wide rules remote application URLs must satisfy before they are
  * downloaded by {@linkcode configureApp}. Empty or absent rules lift all restrictions.
  *
- * @internal Only meant to be called by the Appium server while applying its arguments
+ * Only meant to be called by the Appium server while applying its arguments. It is not tagged
+ * `@internal`, since that would strip it from the published typings the server compiles against.
+ *
  * @throws {TypeError} If any rule is invalid
  */
 export function setAppUrlRules(rules?: AppUrlRulesConfig | null): void {
@@ -42,7 +57,7 @@ export function setAppUrlRules(rules?: AppUrlRulesConfig | null): void {
  * A compiled `allow` or `deny` list of hostname patterns, IP addresses and subnets
  */
 class HostRuleList {
-  private readonly _hostnames: RegExp[] = [];
+  private readonly _hostnames: picomatch.Matcher[] = [];
   private readonly _addresses = new net.BlockList();
   private _addressCount = 0;
 
@@ -69,7 +84,7 @@ class HostRuleList {
    * @param hostname - A normalized hostname (see {@linkcode normalizeHostname})
    */
   matchesHostname(hostname: string): boolean {
-    return this._hostnames.some((pattern) => pattern.test(hostname));
+    return this._hostnames.some((isMatch) => isMatch(hostname));
   }
 
   matchesAddress(address: string, family: number): boolean {
@@ -102,7 +117,11 @@ class HostRuleList {
     if (prefix !== undefined || !pattern) {
       this._throwInvalid('IP address or hostname', pattern);
     }
-    this._hostnames.push(toHostnameRegExp(normalizeHostname(pattern)));
+    try {
+      this._hostnames.push(picomatch(normalizeHostname(pattern), {dot: true}));
+    } catch (e) {
+      this._throwInvalid('hostname pattern', pattern, e);
+    }
   }
 
   private _throwInvalid(what: string, pattern: string, cause?: unknown): never {
@@ -124,7 +143,15 @@ class AppUrlRulesValidator {
   /** The maximum number of redirects to follow, or `undefined` to keep the client's default */
   readonly maxRedirects?: number;
 
-  constructor(rules: AppUrlRulesConfig) {
+  constructor(
+    rules: AppUrlRulesConfig,
+    private readonly _envProxy: EnvProxyResolver,
+  ) {
+    for (const rule of Object.keys(rules)) {
+      if (!KNOWN_RULES.has(rule as keyof AppUrlRulesConfig)) {
+        throw new TypeError(`The app URL rule '${rule}' is not supported`);
+      }
+    }
     this._allow = new HostRuleList('allow', rules.allow);
     this._deny = new HostRuleList('deny', rules.deny);
     this._httpsOnly = rules.httpsOnly ?? false;
@@ -145,9 +172,10 @@ class AppUrlRulesValidator {
   /**
    * Validates a URL against the static rules (scheme, credentials, hostname and literal addresses).
    *
+   * @returns The given URL, for chaining
    * @throws {Error} If the URL violates any rule
    */
-  assertUrlAllowed(url: URL): void {
+  assertUrlAllowed(url: URL): URL {
     const reject = (reason: string) => this._reject(`The application URL '${redactUrl(url)}'`, reason);
     if (this._httpsOnly && url.protocol !== 'https:') {
       reject('only https: URLs are accepted');
@@ -165,7 +193,7 @@ class AppUrlRulesValidator {
       reject('the IP address matches a deny rule');
     }
     if (this._allow.isEmpty || this._allow.matchesHostname(hostname)) {
-      return;
+      return url;
     }
     if (addressFamily) {
       if (!this._allow.matchesAddress(hostname, addressFamily)) {
@@ -174,6 +202,7 @@ class AppUrlRulesValidator {
     } else if (!this._allow.hasAddressRules) {
       reject('the hostname does not match any allow rule');
     }
+    return url;
   }
 
   /**
@@ -181,22 +210,22 @@ class AppUrlRulesValidator {
    * be enforced for it: if the request is routed through an HTTP proxy, the proxy resolves the
    * destination itself, so dynamically resolved addresses cannot be validated.
    *
+   * @returns The given URL, for chaining
    * @throws {Error} If the URL violates any rule or the rules cannot be enforced for it
    */
-  assertRequestAllowed(url: URL, proxy: AxiosRequestConfig['proxy']): void {
+  assertRequestAllowed(url: URL, proxy: AxiosRequestConfig['proxy']): URL {
     this.assertUrlAllowed(url);
     if (!this.hasAddressRules) {
-      return;
+      return url;
     }
-    const proxyUrl = proxy ? String(proxy.host) : proxy === false ? '' : getEnvProxyUrl(url);
-    if (proxyUrl) {
+    const isProxied = proxy === false ? false : Boolean(proxy || this._envProxy.getProxyForUrl(url));
+    if (isProxied) {
       this._reject(
         `The application URL '${redactUrl(url)}'`,
-        `the request would be routed through the HTTP proxy '${redactUrl(proxyUrl)}', ` +
-          `so the configured IP address rules cannot be enforced. Either exclude the host from proxying ` +
-          `(e.g. via the NO_PROXY environment variable) or only use hostname-based rules`,
+        'the request would be routed through an HTTP proxy, so the configured IP address rules cannot be enforced',
       );
     }
+    return url;
   }
 
   /**
@@ -242,9 +271,15 @@ class AppUrlRulesValidator {
     return allowed;
   }
 
+  /**
+   * Reports a violation to the client with a generic error. The actual reason is only written to
+   * the server log at debug level, since server logs may be visible to clients as well and must
+   * not reveal anything about the configured rules.
+   */
   private _reject(subject: string, reason: string): never {
     const message = `${subject} ${NOT_ALLOWED_SUFFIX}`;
-    logger.warn(`${message}: ${reason}`);
+    logger.warn(message);
+    logger.debug(`${message}: ${reason}`);
     throw new Error(message);
   }
 }
@@ -253,14 +288,18 @@ class AppUrlRulesValidator {
  * Process-wide rules for remote application URLs (e.g. the `appium:app` capability).
  *
  * The rules are configured once by the Appium server (see {@linkcode setAppUrlRules}) and consumed
- * by the shared app download helper, which only needs to
- * {@linkcode AppUrlRules.assertUrlAllowed | validate a URL} and
- * {@linkcode AppUrlRules.applyToRequest | apply the rules to the download request}.
+ * by the shared app download helper, which
+ * {@linkcode AppUrlRules.assertUrlAllowed | validates the URL},
+ * {@linkcode AppUrlRules.assertRequestAllowed | validates the download request} and
+ * {@linkcode AppUrlRules.applyToRequest | applies the rules to the download request}.
  */
 class AppUrlRules {
   private _compiled?: {source: AppUrlRulesConfig; validator: AppUrlRulesValidator};
 
-  constructor(private readonly _store: AppUrlRulesStore = getGlobalStore()) {}
+  constructor(
+    private readonly _store: AppUrlRulesStore = getGlobalStore(),
+    private readonly _envProxy: EnvProxyResolver = new EnvProxyResolver(),
+  ) {}
 
   /**
    * The currently configured rules, or `undefined` if remote application URLs are not restricted
@@ -282,17 +321,33 @@ class AppUrlRules {
     }
     // keep a private copy, so later mutations by the caller cannot bypass the compiled rules
     const source: AppUrlRulesConfig = structuredClone(rules);
-    this._compiled = {source, validator: new AppUrlRulesValidator(source)};
+    this._compiled = {source, validator: this._compile(source)};
     this._store.rules = source;
   }
 
   /**
    * Validates a URL against the static rules (scheme, credentials, hostname and literal addresses).
    *
+   * @returns The given URL, for chaining
    * @throws {Error} If the URL violates any rule
    */
-  assertUrlAllowed(url: URL): void {
+  assertUrlAllowed(url: URL): URL {
     this._validator?.assertUrlAllowed(url);
+    return url;
+  }
+
+  /**
+   * Validates the URL of a download request against the static rules and makes sure the rules
+   * can actually be enforced for the request (see {@linkcode applyToRequest}): if the request is
+   * routed through an HTTP proxy, the proxy resolves the destination itself, so rules containing
+   * IP addresses cannot be applied to dynamically resolved addresses.
+   *
+   * @returns The given request options, for chaining
+   * @throws {Error} If the request URL violates any rule or the rules cannot be enforced for it
+   */
+  assertRequestAllowed(requestOpts: AxiosRequestConfig): AxiosRequestConfig {
+    this._validator?.assertRequestAllowed(toRequestUrl(requestOpts), requestOpts.proxy);
+    return requestOpts;
   }
 
   /**
@@ -301,14 +356,13 @@ class AppUrlRules {
    * `maxRedirects` and each redirect target is validated as well. The options are returned
    * unchanged if no rules are configured.
    *
-   * @throws {Error} If the request URL violates any rule or the rules cannot be enforced for it
+   * This does not validate the request itself, see {@linkcode assertRequestAllowed}.
    */
   applyToRequest(requestOpts: AxiosRequestConfig): AxiosRequestConfig {
     const validator = this._validator;
     if (!validator) {
       return requestOpts;
     }
-    validator.assertRequestAllowed(new URL(String(requestOpts.url), requestOpts.baseURL), requestOpts.proxy);
     const result: AxiosRequestConfig = {...requestOpts};
     if (validator.hasAddressRules) {
       result.lookup = validator.createLookup() as AxiosRequestConfig['lookup'];
@@ -335,9 +389,13 @@ class AppUrlRules {
     }
     // another copy of this module may have replaced the rules
     if (this._compiled?.source !== source) {
-      this._compiled = {source, validator: new AppUrlRulesValidator(source)};
+      this._compiled = {source, validator: this._compile(source)};
     }
     return this._compiled.validator;
+  }
+
+  private _compile(source: AppUrlRulesConfig): AppUrlRulesValidator {
+    return new AppUrlRulesValidator(source, this._envProxy);
   }
 }
 
@@ -352,6 +410,10 @@ function getGlobalStore(): AppUrlRulesStore {
   const globalStores = globalThis as typeof globalThis & {[GLOBAL_STORE_KEY]?: AppUrlRulesStore};
   globalStores[GLOBAL_STORE_KEY] ??= {};
   return globalStores[GLOBAL_STORE_KEY];
+}
+
+function toRequestUrl(requestOpts: AxiosRequestConfig): URL {
+  return new URL(String(requestOpts.url), requestOpts.baseURL);
 }
 
 /**
@@ -373,73 +435,6 @@ function toRedirectUrl(redirectOpts: Record<string, any>): URL {
   }
 }
 
-/**
- * Returns the proxy URL the HTTP client would route a request to the given URL through,
- * according to the `<scheme>_proxy`, `all_proxy` and `no_proxy` environment variables,
- * or an empty string if none applies.
- *
- * This mirrors the logic of `proxy-from-env@2` used by axios. In particular, the `npm_config_*`
- * variables are NOT consulted anymore (unlike `proxy-from-env@1`), so they must not be consulted
- * here either: otherwise the validator would disagree with axios about whether a request is proxied.
- */
-function getEnvProxyUrl(url: URL): string {
-  const proto = url.protocol.replace(/:$/, '');
-  const port = parseInt(url.port, 10) || DEFAULT_PORTS[proto] || 0;
-  if (!shouldProxy(url.hostname, port)) {
-    return '';
-  }
-  const proxy = getEnv(`${proto}_proxy`) || getEnv('all_proxy');
-  return proxy && !proxy.includes('://') ? `${proto}://${proxy}` : proxy;
-}
-
-/**
- * @param hostname - The hostname of the URL (IPv6 addresses are wrapped in brackets)
- * @param port - The effective port of the URL
- */
-function shouldProxy(hostname: string, port: number): boolean {
-  const noProxy = getEnv('no_proxy').toLowerCase();
-  if (!noProxy) {
-    return true;
-  }
-  if (noProxy === '*') {
-    return false;
-  }
-  return noProxy.split(/[,\s]/).every((entry) => {
-    if (!entry) {
-      return true;
-    }
-    const withPort = /^(.+):(\d+)$/.exec(entry);
-    let entryHostname = withPort ? withPort[1] : entry;
-    const entryPort = withPort ? parseInt(withPort[2], 10) : 0;
-    if (entryPort && entryPort !== port) {
-      return true;
-    }
-    if (!/^[.*]/.test(entryHostname)) {
-      return hostname !== entryHostname;
-    }
-    if (entryHostname.startsWith('*')) {
-      entryHostname = entryHostname.slice(1);
-    }
-    return !hostname.endsWith(entryHostname);
-  });
-}
-
-function getEnv(key: string): string {
-  return process.env[key.toLowerCase()] || process.env[key.toUpperCase()] || '';
-}
-
-/**
- * Converts a hostname pattern to a regular expression, where `*` matches any sequence of
- * characters (including dots) and `?` matches any single character.
- */
-function toHostnameRegExp(pattern: string): RegExp {
-  const source = pattern
-    .split(/([*?])/)
-    .map((part) => (part === '*' ? '.*' : part === '?' ? '.' : util.escapeRegExp(part)))
-    .join('');
-  return new RegExp(`^${source}$`);
-}
-
 function toFamilyName(family: number): 'ipv4' | 'ipv6' {
   return family === 4 ? 'ipv4' : 'ipv6';
 }
@@ -452,12 +447,13 @@ function normalizeHostname(hostname: string): string {
   if (net.isIP(normalized)) {
     return normalized;
   }
-  if (!normalized.includes('*') && !normalized.includes('?')) {
+  if (!GLOB_CHARS.test(normalized)) {
     return domainToASCII(normalized);
   }
+  // only the literal labels of a pattern can be converted to punycode
   return normalized
     .split('.')
-    .map((label) => (label.includes('*') || label.includes('?') ? label : domainToASCII(label)))
+    .map((label) => (GLOB_CHARS.test(label) ? label : domainToASCII(label)))
     .join('.');
 }
 

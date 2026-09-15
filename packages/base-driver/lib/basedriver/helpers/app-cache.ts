@@ -338,6 +338,7 @@ async function queryAppLink(appLink: URL, reqHeaders: RawAxiosRequestHeaders): P
     headers: reqHeaders,
   };
   try {
+    appUrlRules.assertRequestAllowed(requestOpts);
     const {data: stream, headers, status} = await axios(appUrlRules.applyToRequest(requestOpts));
     return {stream, headers, status};
   } catch (err) {

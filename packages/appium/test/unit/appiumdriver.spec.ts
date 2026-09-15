@@ -137,39 +137,6 @@ describe('AppiumDriver', function () {
 
       return [appium, mockFakeDriver];
     }
-    describe('configureAppUrlRules', function () {
-      let appium: InstanceType<typeof AppiumModule.AppiumDriver>;
-
-      function createDriver(cliArgs: any) {
-        appium = new AppiumDriver(cliArgs);
-        appium.configureAppUrlRules();
-      }
-      afterEach(function () {
-        // reset the process-wide rules
-        createDriver({} as any);
-      });
-      it('should not restrict app URLs by default', async function () {
-        createDriver({} as any);
-        // the URL is accepted and the download is attempted (and fails, since the host does not exist)
-        await assert.rejects(
-          appium.helpers.configureApp('http://appium.invalid/app.apk', '.apk'),
-          /Cannot download the app/,
-        );
-      });
-      it('should apply app URL rules to remote apps downloaded by any driver', async function () {
-        createDriver({appUrlRules: {httpsOnly: true}} as any);
-        await assert.rejects(
-          new FakeDriver().helpers.configureApp('http://appium.invalid/app.apk', '.apk'),
-          /is not allowed by the server configuration/,
-        );
-      });
-      it('should throw on invalid app URL rules', function () {
-        assert.throws(
-          () => createDriver({appUrlRules: {allow: ['10.0.0.0/nope']}} as any),
-          /invalid IP address or subnet/,
-        );
-      });
-    });
     describe('configureGlobalFeatures', function () {
       let appium: InstanceType<typeof AppiumModule.AppiumDriver>;
 

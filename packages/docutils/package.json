@@ -65,7 +65,7 @@
     "normalize-package-data": "8.0.0",
     "teen_process": "4.2.1",
     "type-fest": "5.9.0",
-    "yaml": "2.9.0",
+    "yaml": "2.9.1",
     "yargs": "18.1.0",
     "yargs-parser": "22.0.0"
   },

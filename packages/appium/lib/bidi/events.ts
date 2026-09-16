@@ -243,11 +243,14 @@ export function initBidiProxyHandlers(
       return;
     }
     const params = parsed.params ?? {};
-    // Standard BiDi event envelopes don't carry a top-level `context` -- context-scoped events
-    // (e.g. `browsingContext.load`) nest it inside `params.context` instead. Normalize a missing
-    // context to '' here (rather than leaving it undefined), matching how driver/plugin-origin
-    // events are normalized in initBidiEventListeners, so origin never changes what plugins see.
-    const context = parsed.context ?? (params.context as string | undefined) ?? '';
+    // Standard BiDi event envelopes don't carry a top-level `context`. Most events nest it
+    // directly in `params.context` (e.g. `browsingContext.load`), but log events instead carry
+    // it in `params.source.context` (a log entry's context lives on its `source`, not the entry
+    // itself). Normalize a missing context to '' here (rather than leaving it undefined),
+    // matching how driver/plugin-origin events are normalized in initBidiEventListeners, so
+    // origin never changes what plugins see.
+    const source = params.source as {context?: string} | undefined;
+    const context = parsed.context ?? (params.context as string | undefined) ?? source?.context ?? '';
     void dispatchBidiEvent({method: parsed.method, params, context}, {type: 'proxy'});
   });
 

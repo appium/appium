@@ -474,9 +474,19 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
               const {id, method, params} = JSON.parse(data.toString());
               switch (method) {
                 case 'session.subscribe':
-                  // real BiDi servers return a subscription id, which callers may later use to
-                  // unsubscribe instead of repeating events/contexts
-                  ws.send(JSON.stringify({id, type: 'success', result: {subscription: `sub-${id}`}}));
+                  if (Array.isArray(params.events) && params.events.includes('vendor.preSubscribeBurst')) {
+                    // simulate an upstream server that pushes an event belonging to the
+                    // subscription while still processing it, before the success response
+                    ws.send(JSON.stringify({type: 'event', method: 'vendor.preSubscribeBurst', params: {}}));
+                    setTimeout(
+                      () => ws.send(JSON.stringify({id, type: 'success', result: {subscription: `sub-${id}`}})),
+                      20,
+                    );
+                  } else {
+                    // real BiDi servers return a subscription id, which callers may later use to
+                    // unsubscribe instead of repeating events/contexts
+                    ws.send(JSON.stringify({id, type: 'success', result: {subscription: `sub-${id}`}}));
+                  }
                   break;
                 case 'session.unsubscribe':
                   ws.send(JSON.stringify({id, type: 'success', result: {}}));
@@ -505,6 +515,23 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
                 case 'vendor.triggerModuleEvent':
                   ws.send(JSON.stringify({id, type: 'success', result: {}}));
                   ws.send(JSON.stringify({type: 'event', method: 'vendor.moduleEvent', params: {pong: true}}));
+                  break;
+                case 'vendor.triggerCustomContextEvent':
+                  ws.send(JSON.stringify({id, type: 'success', result: {}}));
+                  ws.send(
+                    JSON.stringify({type: 'event', method: 'vendor.multiCtxPing', params: {context: params.context}}),
+                  );
+                  break;
+                case 'vendor.triggerLogEvent':
+                  ws.send(JSON.stringify({id, type: 'success', result: {}}));
+                  // log events nest their context under `source`, not directly in params
+                  ws.send(
+                    JSON.stringify({
+                      type: 'event',
+                      method: 'vendor.logAdded',
+                      params: {source: {context: 'vendor-log-ctx'}, text: 'hello'},
+                    }),
+                  );
                   break;
                 default:
                   ws.send(
@@ -672,6 +699,70 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
           params: {subscriptions: ['nonexistent-subscription-id']},
         });
         assert.deepStrictEqual(result, {});
+      });
+
+      it('should deliver a proxied log event whose context is nested in params.source.context', async function () {
+        const collected: unknown[] = [];
+        (driver as any).on('vendor.logAdded', (ev: unknown) => collected.push(ev));
+
+        await (driver as any).sessionSubscribe({events: ['vendor.logAdded'], contexts: ['vendor-log-ctx']});
+        await (driver as any).send({method: 'vendor.triggerLogEvent', params: {}});
+        await sleep(300);
+
+        assert.strictEqual(collected.length, 1);
+
+        await (driver as any).sessionUnsubscribe({events: ['vendor.logAdded'], contexts: ['vendor-log-ctx']});
+      });
+
+      it('should deliver an event the upstream server pushes while still processing session.subscribe', async function () {
+        const collected: unknown[] = [];
+        (driver as any).on('vendor.preSubscribeBurst', (ev: unknown) => collected.push(ev));
+
+        await (driver as any).send({
+          method: 'session.subscribe',
+          params: {events: ['vendor.preSubscribeBurst']},
+        });
+        await sleep(300);
+
+        assert.strictEqual(collected.length, 1);
+
+        await (driver as any).sessionUnsubscribe({events: ['vendor.preSubscribeBurst']});
+      });
+
+      it('should preserve coverage for an earlier subscription to a different context on the same event', async function () {
+        const collected: {context?: string}[] = [];
+        (driver as any).on('vendor.multiCtxPing', (ev: {context?: string}) => collected.push(ev));
+
+        const {result: subTab1} = await (driver as any).send({
+          method: 'session.subscribe',
+          params: {events: ['vendor.multiCtxPing'], contexts: ['tab-1']},
+        });
+        const {result: subTab2} = await (driver as any).send({
+          method: 'session.subscribe',
+          params: {events: ['vendor.multiCtxPing'], contexts: ['tab-2']},
+        });
+
+        await (driver as any).send({method: 'vendor.triggerCustomContextEvent', params: {context: 'tab-1'}});
+        await (driver as any).send({method: 'vendor.triggerCustomContextEvent', params: {context: 'tab-2'}});
+        await sleep(300);
+        assert.strictEqual(collected.length, 2);
+
+        // unsubscribing tab-2's subscription must not drop tab-1's still-active coverage
+        await (driver as any).send({
+          method: 'session.unsubscribe',
+          params: {subscriptions: [subTab2.subscription]},
+        });
+        collected.length = 0;
+        await (driver as any).send({method: 'vendor.triggerCustomContextEvent', params: {context: 'tab-1'}});
+        await (driver as any).send({method: 'vendor.triggerCustomContextEvent', params: {context: 'tab-2'}});
+        await sleep(300);
+        assert.strictEqual(collected.length, 1);
+        assert.strictEqual(collected[0].context, 'tab-1');
+
+        await (driver as any).send({
+          method: 'session.unsubscribe',
+          params: {subscriptions: [subTab1.subscription]},
+        });
       });
 
       it('should close the upstream connection when the session ends', async function () {

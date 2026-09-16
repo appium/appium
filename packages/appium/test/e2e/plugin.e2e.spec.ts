@@ -533,6 +533,11 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
                     }),
                   );
                   break;
+                case 'vendor.triggerAB':
+                  ws.send(JSON.stringify({id, type: 'success', result: {}}));
+                  ws.send(JSON.stringify({type: 'event', method: 'vendor.a', params: {}}));
+                  ws.send(JSON.stringify({type: 'event', method: 'vendor.b', params: {}}));
+                  break;
                 default:
                   ws.send(
                     JSON.stringify({
@@ -763,6 +768,44 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
           method: 'session.unsubscribe',
           params: {subscriptions: [subTab1.subscription]},
         });
+      });
+
+      it('should not resurrect coverage a plain-form unsubscribe already removed from a still-tracked subscription', async function () {
+        const aEvents: unknown[] = [];
+        const bEvents: unknown[] = [];
+        (driver as any).on('vendor.a', (ev: unknown) => aEvents.push(ev));
+        (driver as any).on('vendor.b', (ev: unknown) => bEvents.push(ev));
+
+        // sub1: a single global subscription covering both vendor.a and vendor.b
+        await (driver as any).send({
+          method: 'session.subscribe',
+          params: {events: ['vendor.a', 'vendor.b']},
+        });
+
+        // drop vendor.a via the plain events-form, which bypasses id tracking -- sub1's tracked
+        // record must shrink to just vendor.b, not merely be left stale
+        await (driver as any).sessionUnsubscribe({events: ['vendor.a']});
+
+        // sub2: a separate, narrower subscription to vendor.a for one context
+        const {result: subTab1} = await (driver as any).send({
+          method: 'session.subscribe',
+          params: {events: ['vendor.a'], contexts: ['tab-1']},
+        });
+
+        // unsubscribing sub2 by id must not resurrect sub1's already-removed global vendor.a
+        // coverage via the union in syncCoverage
+        await (driver as any).send({
+          method: 'session.unsubscribe',
+          params: {subscriptions: [subTab1.subscription]},
+        });
+
+        await (driver as any).send({method: 'vendor.triggerAB', params: {}});
+        await sleep(300);
+
+        assert.strictEqual(aEvents.length, 0);
+        assert.strictEqual(bEvents.length, 1);
+
+        await (driver as any).sessionUnsubscribe({events: ['vendor.b']});
       });
 
       it('should close the upstream connection when the session ends', async function () {

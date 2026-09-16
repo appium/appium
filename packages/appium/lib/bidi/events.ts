@@ -34,18 +34,78 @@ export function getBidiEventLogCounts(driver: AnyDriver): Record<string, number>
   return eventLogCounts;
 }
 
+// Per-driver browsing-context parent tracking (child context id -> parent context id), built
+// from observed browsingContext.contextCreated events. BiDi context-scoped subscriptions cover
+// the subscribed context's descendants too (e.g. an iframe nested under a subscribed top-level
+// tab), so the gate needs this ancestry to correctly match events from a subscribed context's
+// children.
+const CONTEXT_PARENTS_MAP: WeakMap<AnyDriver, Map<string, string>> = new WeakMap();
+
+function getContextParents(driver: AnyDriver): Map<string, string> {
+  let parents = CONTEXT_PARENTS_MAP.get(driver);
+  if (!parents) {
+    parents = new Map();
+    CONTEXT_PARENTS_MAP.set(driver, parents);
+  }
+  return parents;
+}
+
+/**
+ * Observes `browsingContext.contextCreated`/`contextDestroyed` events -- regardless of whether
+ * they'll ultimately pass the subscription gate or a plugin's veto -- to keep the per-driver
+ * context ancestry map current. Tracking happens independently of delivery so a plugin that
+ * modifies/vetoes these events doesn't blind the gate to context relationships it needs for
+ * *other* events.
+ */
+function trackContextHierarchy(driver: AnyDriver, event: BidiEventPayload): void {
+  if (event.method === 'browsingContext.contextCreated') {
+    const context = event.params?.context as string | undefined;
+    const parent = event.params?.parent as string | undefined;
+    if (context && parent) {
+      getContextParents(driver).set(context, parent);
+    }
+  } else if (event.method === 'browsingContext.contextDestroyed') {
+    const context = event.params?.context as string | undefined;
+    if (context) {
+      getContextParents(driver).delete(context);
+    }
+  }
+}
+
 /**
  * BiDi's `session.subscribe` allows subscribing to either a specific event (`browsingContext.load`)
  * or an entire module (`browsingContext`, covering all of its events). `bidiEventSubs` may
  * therefore hold either kind of key, so a matching event must be checked against both. An
  * empty-string context entry means "all contexts" (per `bidiSubscribe`'s contract), so it
- * matches any actual context id, not just the literal empty string.
+ * matches any actual context id, not just the literal empty string. A context-scoped subscription
+ * also covers that context's descendants (e.g. subscribing to a tab covers its iframes), so a
+ * non-matching context is walked up its observed ancestry chain before giving up.
  */
-function isEventSubscribed(bidiEventSubs: Record<string, string[]>, method: string, context: string): boolean {
+function isEventSubscribed(
+  bidiEventSubs: Record<string, string[]>,
+  method: string,
+  context: string,
+  contextParents: Map<string, string>,
+): boolean {
   const moduleName = method.split('.')[0];
   return [method, moduleName].some((key) => {
     const subs = bidiEventSubs[key];
-    return Array.isArray(subs) && (subs.includes('') || subs.includes(context));
+    if (!Array.isArray(subs)) {
+      return false;
+    }
+    if (subs.includes('') || subs.includes(context)) {
+      return true;
+    }
+    const seen = new Set<string>([context]);
+    let ancestor = contextParents.get(context);
+    while (ancestor !== undefined && !seen.has(ancestor)) {
+      if (subs.includes(ancestor)) {
+        return true;
+      }
+      seen.add(ancestor);
+      ancestor = contextParents.get(ancestor);
+    }
+    return false;
   });
 }
 
@@ -77,6 +137,7 @@ export function createBidiEventDispatcher(
   eventLogCounts: Record<string, number>,
 ): BidiDispatch {
   let queue: Promise<void> = Promise.resolve();
+  const contextParents = getContextParents(bidiHandlerDriver);
 
   const terminal = async (event: BidiEventPayload): Promise<void> => {
     if (ws.readyState !== WebSocket.OPEN) {
@@ -84,7 +145,7 @@ export function createBidiEventDispatcher(
     }
     const context = event.context || '';
     const {method, params} = event;
-    if (!isEventSubscribed(bidiHandlerDriver.bidiEventSubs, method, context)) {
+    if (!isEventSubscribed(bidiHandlerDriver.bidiEventSubs, method, context, contextParents)) {
       return;
     }
     if (method in eventLogCounts) {
@@ -120,6 +181,10 @@ export function createBidiEventDispatcher(
   }
 
   return function dispatch(event, origin) {
+    // Track context ancestry from the raw event, before plugin interception, so a plugin that
+    // modifies/vetoes a browsingContext.contextCreated event doesn't blind the gate to a
+    // relationship it needs for matching *other* events.
+    trackContextHierarchy(bidiHandlerDriver, event);
     queue = queue.then(async () => {
       try {
         await chain(event, origin);

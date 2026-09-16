@@ -77,19 +77,25 @@ async function syncCoverage(
 }
 
 /**
- * Drops tracked subscriptions whose (event, context) coverage is no longer reflected in
- * `bidiEventSubs`. Needed after an `events`/`contexts`-form unsubscribe (which bypasses id
- * tracking and mutates `bidiEventSubs` directly), so a stale tracked id doesn't later cause
- * {@link syncCoverage} to think an already-removed subscription is still active.
+ * Drops event coverage from tracked subscriptions that's no longer reflected in `bidiEventSubs`,
+ * removing the whole record only once none of its events remain covered. Needed after an
+ * `events`/`contexts`-form unsubscribe (which bypasses id tracking and mutates `bidiEventSubs`
+ * directly): a record can be only *partially* invalidated -- e.g. a subscription covering both
+ * `['a', 'b']` where a later plain-form unsubscribe removes only `a` -- and if the stale `a`
+ * entry were left in place, a subsequent {@link syncCoverage} call for `a` (triggered by an
+ * unrelated subscribe/unsubscribe) would incorrectly resurrect it from the union.
  */
 function pruneStaleTracking(bidiEventSubs: Record<string, string[]>, tracking: Map<string, TrackedSubscription>): void {
   for (const [subscriptionId, sub] of tracking) {
-    const stillCovered = sub.events.some((event) => {
+    const isCovered = (event: string) => {
       const activeContexts = bidiEventSubs[event];
       return Array.isArray(activeContexts) && sub.contexts.some((context) => activeContexts.includes(context));
-    });
-    if (!stillCovered) {
+    };
+    const remainingEvents = sub.events.filter(isCovered);
+    if (remainingEvents.length === 0) {
       tracking.delete(subscriptionId);
+    } else if (remainingEvents.length !== sub.events.length) {
+      tracking.set(subscriptionId, {events: remainingEvents, contexts: sub.contexts});
     }
   }
 }

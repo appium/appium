@@ -97,6 +97,34 @@ describe('createBidiEventDispatcher', function () {
     assert.equal(JSON.parse(sent[0]).context, 'real-ctx-id');
   });
 
+  it('delivers an event from a descendant context observed via a prior browsingContext.contextCreated event', async function () {
+    const {send, sent} = makeSend();
+    const driver = makeDriver({browsingContext: ['tab-1']});
+    const dispatch = createBidiEventDispatcher(makeWs(), driver as any, [], send, {});
+
+    // frame-1's own contextCreated event is itself covered, as a descendant of tab-1, and
+    // observing it is what teaches the dispatcher about the frame-1 -> tab-1 relationship
+    await dispatch(
+      {method: 'browsingContext.contextCreated', params: {context: 'frame-1', parent: 'tab-1'}, context: 'frame-1'},
+      {type: 'driver'},
+    );
+    assert.equal(sent.length, 1);
+
+    await dispatch({method: 'browsingContext.load', params: {}, context: 'frame-1'}, {type: 'driver'});
+
+    assert.equal(sent.length, 2);
+  });
+
+  it('does not deliver an event from an unrelated, untracked context', async function () {
+    const {send, sent} = makeSend();
+    const driver = makeDriver({browsingContext: ['tab-1']});
+    const dispatch = createBidiEventDispatcher(makeWs(), driver as any, [], send, {});
+
+    await dispatch({method: 'browsingContext.load', params: {}, context: 'unrelated-ctx'}, {type: 'driver'});
+
+    assert.equal(sent.length, 0);
+  });
+
   it('runs plugins in last-declared-first order, matching the command chain convention', async function () {
     const order: string[] = [];
     const {send, sent} = makeSend();

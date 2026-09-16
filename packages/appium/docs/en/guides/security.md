@@ -85,3 +85,118 @@ Turn on multiple insecure features for specific drivers:
 ```bash
 appium --allow-insecure=uiautomator2:adb_shell,xcuitest:get_server_logs
 ```
+
+## Restricting Remote App URLs
+
+Several drivers accept a URL instead of a local path in capabilities such as `appium:app`, in which
+case the Appium server downloads the application package from that URL before starting the session.
+By default, any `http:` or `https:` URL is accepted. Server hosts who want to control which URLs
+their server is allowed to download from can do so with the `--app-url-rules` argument (or the
+`server.app-url-rules` property in a [configuration file](./config.md)). Its value is a JSON object
+(or a path to a JSON file) with any of the following properties:
+
+|<div style="width:10em">Rule</div>|Description|Default|
+|----------------------------------|-----------|-------|
+|`allow`|List of hostname patterns, IP addresses, or CIDR subnets. If non-empty, a hostname or its resolved address must match _at least one_|`[]`|
+|`deny`|List of hostname patterns, IP addresses, or CIDR subnets. A matching hostname or resolved address is rejected, even if an `allow` rule also matches|`[]`|
+|`httpsOnly`|Only accept `https:` URLs|`false`|
+|`allowCredentials`|Accept URLs containing a username and/or password (e.g. `https://user:pass@host/app.apk`)|`true`|
+|`maxRedirects`|Maximum number of HTTP redirects to follow while downloading. Set to `0` to reject any redirect|`21`|
+
+Hostnames are normalized (lowercased, converted to Punycode, trailing dot removed) before matching
+and resolved on every download. Address rules apply to literal addresses and all dynamically
+resolved IPv4/IPv6 addresses. The rules are also applied to every redirect, so redirects cannot be
+used to escape them. If a URL violates any rule, the session is not created and a generic error
+is returned. The violated rule is deliberately neither reported to the client nor written to the
+server log, since server logs are often handed over to clients as well. URL schemes, ports, paths,
+queries, and fragments are not matched.
+
+Hostname patterns use the [picomatch](https://github.com/micromatch/picomatch#globbing-features)
+glob syntax and are matched against the whole hostname:
+
+|Pattern|Matches|
+|-------|-------|
+|`artifacts.example.com`|Exactly this hostname|
+|`*.example.com`|Any subdomain of `example.com` (including nested ones, like `a.b.example.com`), but not `example.com` itself|
+|`*example.com`|Any hostname ending with `example.com`, including `example.com` itself|
+|`apps.{staging,prod}.example.com`|`apps.staging.example.com` and `apps.prod.example.com`|
+|`build-?.example.com`|`build-1.example.com`, `build-a.example.com`, etc.|
+|`node[0-9].example.com`|`node0.example.com` to `node9.example.com`|
+
+IP address rules match a single address (`192.0.2.10`, `2001:db8::1`) or a whole subnet in CIDR
+notation (`10.0.0.0/8`, `2001:db8::/32`). IPv4 rules also match IPv4-mapped IPv6 addresses
+(e.g. `::ffff:10.1.2.3`).
+
+!!! note
+
+    These rules only apply to URLs the server downloads via the standard app configuration helper,
+    which is used for `appium:app` and similar capabilities by all official drivers. Drivers may
+    define custom capabilities with URLs that are processed differently and thus are not covered.
+
+!!! note
+
+    If the server downloads applications through an HTTP proxy (configured via the `HTTP_PROXY`,
+    `HTTPS_PROXY` and `NO_PROXY` environment variables), the proxy resolves the destination host
+    itself, so rules containing IP addresses or subnets cannot be enforced for proxied downloads.
+    Such downloads are rejected; either exclude the download hosts from proxying via `NO_PROXY`
+    or only use hostname-based rules.
+
+### Examples
+
+Only allow HTTPS downloads from an internal artifact server, without credentials in the URL and
+without following redirects:
+
+```bash
+appium --app-url-rules='{"allow": ["artifacts.example.com", "10.0.0.0/8"], "httpsOnly": true, "allowCredentials": false, "maxRedirects": 0}'
+```
+
+The same configuration as part of a config file:
+
+```yaml
+server:
+  app-url-rules:
+    allow:
+      - 'artifacts.example.com'
+      - '10.0.0.0/8'
+    httpsOnly: true
+    allowCredentials: false
+    maxRedirects: 0
+```
+
+Allow downloads from any subdomain of `example.com` and from two IPv6 subnets, except from the
+staging environment:
+
+```yaml
+server:
+  app-url-rules:
+    allow:
+      - '*.example.com'
+      - '2001:db8:1::/48'
+      - '2001:db8:2::/48'
+    deny:
+      - '*.staging.example.com'
+```
+
+Allow downloads from anywhere, except from the server itself, private networks, link-local
+addresses (such as cloud metadata services), and any `.internal` hostname:
+
+```yaml
+server:
+  app-url-rules:
+    deny:
+      - 'localhost'
+      - '*.internal'
+      - '127.0.0.0/8'
+      - '10.0.0.0/8'
+      - '172.16.0.0/12'
+      - '192.168.0.0/16'
+      - '169.254.0.0/16'
+      - '::1/128'
+      - 'fc00::/7'
+      - 'fe80::/10'
+```
+
+The rules in the last example are applied to the addresses each hostname resolves to, so they
+cannot be bypassed via DNS. Note that the `deny` list also blocks any download from the server's
+own private network, so a private artifact server must be excluded from the `deny` rules in order
+to work.

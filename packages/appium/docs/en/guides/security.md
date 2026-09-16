@@ -106,9 +106,10 @@ their server is allowed to download from can do so with the `--app-url-rules` ar
 Hostnames are normalized (lowercased, converted to Punycode, trailing dot removed) before matching
 and resolved on every download. Address rules apply to literal addresses and all dynamically
 resolved IPv4/IPv6 addresses. The rules are also applied to every redirect, so redirects cannot be
-used to escape them. If a URL violates any rule, the session is not created; the client only
-receives a generic error, while the violated rule is written to the server log at `debug` level.
-URL schemes, ports, paths, queries, and fragments are not matched.
+used to escape them. If a URL violates any rule, the session is not created and a generic error
+is returned. The violated rule is deliberately neither reported to the client nor written to the
+server log, since server logs are often handed over to clients as well. URL schemes, ports, paths,
+queries, and fragments are not matched.
 
 Hostname patterns use the [picomatch](https://github.com/micromatch/picomatch#globbing-features)
 glob syntax and are matched against the whole hostname:

@@ -104,7 +104,7 @@ class HostRuleList {
           this._addresses.addAddress(address, toFamilyName(family));
         } else {
           if (!/^\d+$/.test(prefix)) {
-            throw new Error('prefix must be an integer');
+            throw new Error(`The subnet prefix '${prefix}' must be a non-negative integer`);
           }
           this._addresses.addSubnet(address, Number(prefix), toFamilyName(family));
         }
@@ -132,8 +132,8 @@ class HostRuleList {
 /**
  * Validates application URLs, download requests and resolved addresses against a fixed set of rules.
  *
- * A violation is reported to the client with a generic error, while the actual reason is only
- * written to the server log.
+ * A violation is reported with a generic error which does not reveal the violated rule
+ * (see {@linkcode AppUrlRulesValidator._reject}).
  */
 class AppUrlRulesValidator {
   private readonly _allow: HostRuleList;
@@ -176,31 +176,33 @@ class AppUrlRulesValidator {
    * @throws {Error} If the URL violates any rule
    */
   assertUrlAllowed(url: URL): URL {
-    const reject = (reason: string) => this._reject(`The application URL '${redactUrl(url)}'`, reason);
+    const reject = () => this._reject(`The application URL '${redactUrl(url)}'`);
     if (this._httpsOnly && url.protocol !== 'https:') {
-      reject('only https: URLs are accepted');
+      reject();
     }
     if (!this._allowCredentials && (url.username || url.password)) {
-      reject('URLs containing credentials are not accepted');
+      reject();
     }
 
     const hostname = normalizeHostname(url.hostname);
     const addressFamily = net.isIP(hostname);
+    // a deny rule always wins over an allow rule
     if (this._deny.matchesHostname(hostname)) {
-      reject('the hostname matches a deny rule');
+      reject();
     }
     if (addressFamily && this._deny.matchesAddress(hostname, addressFamily)) {
-      reject('the IP address matches a deny rule');
+      reject();
     }
     if (this._allow.isEmpty || this._allow.matchesHostname(hostname)) {
       return url;
     }
     if (addressFamily) {
       if (!this._allow.matchesAddress(hostname, addressFamily)) {
-        reject('the IP address does not match any allow rule');
+        reject();
       }
     } else if (!this._allow.hasAddressRules) {
-      reject('the hostname does not match any allow rule');
+      // a hostname not matching any allow rule may still resolve to an allowed address
+      reject();
     }
     return url;
   }
@@ -220,10 +222,8 @@ class AppUrlRulesValidator {
     }
     const isProxied = proxy === false ? false : Boolean(proxy || this._envProxy.getProxyForUrl(url));
     if (isProxied) {
-      this._reject(
-        `The application URL '${redactUrl(url)}'`,
-        'the request would be routed through an HTTP proxy, so the configured IP address rules cannot be enforced',
-      );
+      // the proxy would resolve the destination itself, so the address rules cannot be enforced
+      this._reject(`The application URL '${redactUrl(url)}'`);
     }
     return url;
   }
@@ -257,29 +257,28 @@ class AppUrlRulesValidator {
   }
 
   private _filterResolvedAddresses(hostname: string, addresses: LookupAddress[]): LookupAddress[] {
-    const reject = (reason: string) => this._reject(`The application host '${hostname}'`, reason);
+    const reject = () => this._reject(`The application host '${hostname}'`);
     if (addresses.some(({address, family}) => this._deny.matchesAddress(address, family))) {
-      reject('a resolved IP address matches a deny rule');
+      reject();
     }
     if (this._allow.isEmpty || this._allow.matchesHostname(hostname)) {
       return addresses;
     }
     const allowed = addresses.filter(({address, family}) => this._allow.matchesAddress(address, family));
     if (!allowed.length) {
-      reject('no resolved IP address matches an allow rule');
+      reject();
     }
     return allowed;
   }
 
   /**
-   * Reports a violation to the client with a generic error. The actual reason is only written to
-   * the server log at debug level, since server logs may be visible to clients as well and must
-   * not reveal anything about the configured rules.
+   * Reports a violation with a generic error. The violated rule is deliberately not included in
+   * the error nor written to the server log: server logs are usually handed over to clients, and
+   * must not reveal anything about the configured rules.
    */
-  private _reject(subject: string, reason: string): never {
+  private _reject(subject: string): never {
     const message = `${subject} ${NOT_ALLOWED_SUFFIX}`;
     logger.warn(message);
-    logger.debug(`${message}: ${reason}`);
     throw new Error(message);
   }
 }

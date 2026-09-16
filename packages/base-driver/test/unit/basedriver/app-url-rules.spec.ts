@@ -50,7 +50,16 @@ describe('app-url-rules', function () {
     });
 
     it('should reject an invalid address or subnet', function () {
-      assert.throws(() => appUrlRules.configure({allow: ['10.0.0.0/nope']}), /invalid IP address or subnet/);
+      assert.throws(
+        () => appUrlRules.configure({allow: ['10.0.0.0/nope']}),
+        (e: TypeError) =>
+          /invalid IP address or subnet '10\.0\.0\.0\/nope'/.test(e.message) &&
+          /subnet prefix 'nope' must be a non-negative integer/.test((e.cause as Error).message),
+      );
+      assert.throws(
+        () => appUrlRules.configure({allow: ['10.0.0.0/33']}),
+        (e: TypeError) => /invalid IP address or subnet '10\.0\.0\.0\/33'/.test(e.message) && e.cause instanceof Error,
+      );
       assert.throws(() => appUrlRules.configure({deny: ['a/b/c']}), /invalid IP address or hostname/);
       assert.throws(() => appUrlRules.configure({deny: ['example.com/8']}), /invalid IP address or hostname/);
       assert.throws(() => appUrlRules.configure({deny: ['']}), /invalid IP address or hostname/);
@@ -128,15 +137,13 @@ describe('app-url-rules', function () {
       );
     });
 
-    it('should only log the violated rule at debug level instead of reporting it to the client', function () {
-      const warnings: string[] = [];
-      const debugs: string[] = [];
-      const warn = mock.method(logger, 'warn', (message: string) => {
-        warnings.push(message);
-      });
-      const debug = mock.method(logger, 'debug', (message: string) => {
-        debugs.push(message);
-      });
+    it('should neither report nor log the violated rule', function () {
+      const logged: string[] = [];
+      const mocks = (['error', 'warn', 'info', 'debug'] as const).map((level) =>
+        mock.method(logger, level, (message: string) => {
+          logged.push(message);
+        }),
+      );
       try {
         appUrlRules.configure({deny: ['*.evil.com']});
         const message = `The application URL 'https://app.evil.com/app.apk' ${NOT_ALLOWED}`;
@@ -144,11 +151,9 @@ describe('app-url-rules', function () {
           () => appUrlRules.assertUrlAllowed(url('https://app.evil.com/app.apk')),
           (e: Error) => e.message === message,
         );
-        assert.deepStrictEqual(warnings, [message]);
-        assert.deepStrictEqual(debugs, [`${message}: the hostname matches a deny rule`]);
+        assert.deepStrictEqual(logged, [message]);
       } finally {
-        warn.mock.restore();
-        debug.mock.restore();
+        mocks.forEach((m) => m.mock.restore());
       }
     });
 

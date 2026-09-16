@@ -60,6 +60,8 @@ export class AppiumMainRunner {
     await logStartupInfo(parsedArgs);
 
     appiumDriver.configureGlobalFeatures();
+    // the rules are enforced by the shared app download helper of every driver
+    appiumDriver.helpers.setAppUrlRules(parsedArgs.appUrlRules);
 
     const appiumHomeSourceName = determineAppiumHomeSource(args?.appiumHome);
     logger.debug(`The ${appiumHomeSourceName}: ${appiumHome}`);

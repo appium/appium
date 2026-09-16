@@ -99,6 +99,30 @@ describe('parser', function () {
         });
       });
 
+      it('should parse app URL rules correctly from a string', function () {
+        const appUrlRules = {allow: ['*.example.com', '10.0.0.0/8'], httpsOnly: true, maxRedirects: 0};
+        const args = p.parseArgs(['--app-url-rules', JSON.stringify(appUrlRules)]);
+        assert.deepStrictEqual(args.appUrlRules, appUrlRules);
+      });
+
+      it('should throw an error with invalid arg to app URL rules', function () {
+        const throwsUncolored = (args: string[], regex: RegExp) =>
+          assert.throws(() => {
+            try {
+              p.parseArgs(['--app-url-rules', ...args]);
+            } catch (e) {
+              throw new Error(stripColorCodes((e as Error).message), {cause: e});
+            }
+          }, regex);
+        throwsUncolored(['42'], /'42' must be a plain object/);
+        throwsUncolored(['[]'], /'\[\]' must be a plain object/);
+        throwsUncolored(['does/not/exist.json'], /invalid.+value: 'does\/not\/exist\.json'/);
+        throwsUncolored(['{"unknownRule": true}'], /unknownRule is not expected to be here/);
+        throwsUncolored(['{"httpsOnly": "yes"}'], /type must be boolean/);
+        throwsUncolored(['{"maxRedirects": -1}'], /minimum must be >= 0/);
+        throwsUncolored(['{"allow": "example.com"}'], /type must be array/);
+      });
+
       it('should parse default capabilities correctly from a string', function () {
         const defaultCapabilities = {a: 'b'};
         const args = p.parseArgs(['--default-capabilities', JSON.stringify(defaultCapabilities)]);

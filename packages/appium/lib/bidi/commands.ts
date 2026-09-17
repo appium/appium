@@ -11,26 +11,68 @@ import type {
 
 import type {AppiumDriver} from '../appium.js';
 import {MAX_LOGGED_DATA_LENGTH, SESSION_SUBSCRIBE, SESSION_UNSUBSCRIBE} from './constants.js';
+import {getTopLevelContext} from './events.js';
 import type {BidiProxyClient} from './proxy-client.js';
 import type {AnyDriver, ExtensionPlugin} from './types.js';
 
 interface TrackedSubscription {
-  events: string[];
-  contexts: string[];
+  // event name (a specific event, or a bare module name for a module-wide subscription) ->
+  // contexts currently covered for that event within this subscription. Tracked per-event
+  // (rather than as one shared `contexts` list) so a subscription covering several events can be
+  // partially narrowed -- e.g. by a plain-form unsubscribe of just one of its events -- without
+  // losing the still-valid coverage of its other events.
+  events: Record<string, string[]>;
 }
 
-// Per-proxy-client bookkeeping of upstream subscription ids -> the events/contexts they cover,
-// so a later `session.unsubscribe` by id (the standard BiDi form) can be translated into the
-// event/context form that the local `bidiUnsubscribe` bookkeeping understands.
-const SUBSCRIPTION_TRACKING: WeakMap<BidiProxyClient, Map<string, TrackedSubscription>> = new WeakMap();
+// Session-scoped (keyed by driver, like `bidiEventSubs` itself) bookkeeping of upstream
+// subscription ids -> the events/contexts they cover, so a later `session.unsubscribe` by id (the
+// standard BiDi form) can be translated into the event/context form that the local
+// `bidiUnsubscribe` bookkeeping understands. Keyed by driver rather than by `BidiProxyClient` so
+// coverage survives across reconnects (a new client WS connection to the same session gets a new
+// `BidiProxyClient`) instead of being rebuilt from scratch and dropping another connection's
+// still-valid subscriptions.
+const SUBSCRIPTION_TRACKING: WeakMap<AnyDriver, Map<string, TrackedSubscription>> = new WeakMap();
 
-function getSubscriptionTracking(bidiProxyClient: BidiProxyClient): Map<string, TrackedSubscription> {
-  let tracking = SUBSCRIPTION_TRACKING.get(bidiProxyClient);
+function getSubscriptionTracking(driver: AnyDriver): Map<string, TrackedSubscription> {
+  let tracking = SUBSCRIPTION_TRACKING.get(driver);
   if (!tracking) {
     tracking = new Map();
-    SUBSCRIPTION_TRACKING.set(bidiProxyClient, tracking);
+    SUBSCRIPTION_TRACKING.set(driver, tracking);
   }
   return tracking;
+}
+
+/**
+ * Expands `events` with any other tracking keys that overlap it through BiDi's module/event
+ * relationship -- a bare module name (e.g. `log`) is expanded to include every specific-event key
+ * of that module currently reflected in `bidiEventSubs` (e.g. `log.entryAdded`), and a specific
+ * event is expanded to include its bare module name if that module is itself subscribed. Without
+ * a full BiDi event registry (deliberately out of scope -- BiDi's module system is open-ended),
+ * there's no way to know a module's complete membership, so narrowing one member out of an active
+ * module-wide subscription can't be represented precisely: the expanded set is used to
+ * conservatively drop local coverage across every related key rather than leave the module-wide
+ * key granting coverage the caller just asked to remove. Under-delivering a sibling event this
+ * way is a safer failure than over-delivering one the client never asked for.
+ */
+function expandRelatedEventKeys(bidiEventSubs: Record<string, string[]>, events: Iterable<string>): Set<string> {
+  const expanded = new Set<string>();
+  for (const event of events) {
+    expanded.add(event);
+    const dotIndex = event.indexOf('.');
+    if (dotIndex === -1) {
+      for (const key of Object.keys(bidiEventSubs)) {
+        if (key.startsWith(`${event}.`)) {
+          expanded.add(key);
+        }
+      }
+    } else {
+      const moduleName = event.slice(0, dotIndex);
+      if (bidiEventSubs[moduleName]) {
+        expanded.add(moduleName);
+      }
+    }
+  }
+  return expanded;
 }
 
 // Placeholder ids for subscriptions the upstream server hasn't (yet, or ever) returned a real
@@ -57,10 +99,8 @@ async function syncCoverage(
   for (const event of events) {
     const desired = new Set<string>();
     for (const sub of tracking.values()) {
-      if (sub.events.includes(event)) {
-        for (const context of sub.contexts) {
-          desired.add(context);
-        }
+      for (const context of sub.events[event] ?? []) {
+        desired.add(context);
       }
     }
     if (desired.size) {
@@ -77,25 +117,52 @@ async function syncCoverage(
 }
 
 /**
- * Drops event coverage from tracked subscriptions that's no longer reflected in `bidiEventSubs`,
- * removing the whole record only once none of its events remain covered. Needed after an
- * `events`/`contexts`-form unsubscribe (which bypasses id tracking and mutates `bidiEventSubs`
- * directly): a record can be only *partially* invalidated -- e.g. a subscription covering both
- * `['a', 'b']` where a later plain-form unsubscribe removes only `a` -- and if the stale `a`
- * entry were left in place, a subsequent {@link syncCoverage} call for `a` (triggered by an
- * unrelated subscribe/unsubscribe) would incorrectly resurrect it from the union.
+ * Drops (event, context) pairs from tracked subscriptions that are no longer reflected in
+ * `bidiEventSubs`, dropping an event entry entirely once none of its contexts remain covered, and
+ * the whole record once none of its events remain covered. Only the given `events` keys are
+ * re-evaluated (rather than every currently-tracked event), so an unrelated event's coverage --
+ * which this particular unsubscribe never touched -- can't be mistakenly narrowed by a stale
+ * `bidiEventSubs` read. Needed after a plain `events`/`contexts`-form unsubscribe (which bypasses
+ * id tracking and mutates `bidiEventSubs` directly): a record can be only *partially* invalidated
+ * -- e.g. a subscription covering `['tab-1', 'tab-2']` for one event, where a later plain-form
+ * unsubscribe removes only `tab-1` -- and if the stale `tab-1` entry were left in place, a
+ * subsequent {@link syncCoverage} call for that event (triggered by an unrelated
+ * subscribe/unsubscribe) would incorrectly resurrect it from the union.
  */
-function pruneStaleTracking(bidiEventSubs: Record<string, string[]>, tracking: Map<string, TrackedSubscription>): void {
+function pruneStaleTracking(
+  bidiEventSubs: Record<string, string[]>,
+  tracking: Map<string, TrackedSubscription>,
+  events: Iterable<string>,
+): void {
+  const eventSet = new Set(events);
   for (const [subscriptionId, sub] of tracking) {
-    const isCovered = (event: string) => {
+    let changed = false;
+    const nextEvents: Record<string, string[]> = {...sub.events};
+    for (const event of Object.keys(sub.events)) {
+      if (!eventSet.has(event)) {
+        continue;
+      }
       const activeContexts = bidiEventSubs[event];
-      return Array.isArray(activeContexts) && sub.contexts.some((context) => activeContexts.includes(context));
-    };
-    const remainingEvents = sub.events.filter(isCovered);
-    if (remainingEvents.length === 0) {
+      const remainingContexts = Array.isArray(activeContexts)
+        ? sub.events[event].filter((context) => activeContexts.includes(context))
+        : [];
+      if (remainingContexts.length === sub.events[event].length) {
+        continue;
+      }
+      changed = true;
+      if (remainingContexts.length === 0) {
+        delete nextEvents[event];
+      } else {
+        nextEvents[event] = remainingContexts;
+      }
+    }
+    if (!changed) {
+      continue;
+    }
+    if (Object.keys(nextEvents).length === 0) {
       tracking.delete(subscriptionId);
-    } else if (remainingEvents.length !== sub.events.length) {
-      tracking.set(subscriptionId, {events: remainingEvents, contexts: sub.contexts});
+    } else {
+      tracking.set(subscriptionId, {events: nextEvents});
     }
   }
 }
@@ -119,19 +186,36 @@ async function executeProxiedSubscribe(
     return await bidiProxyClient.executeCommand(SESSION_SUBSCRIBE, params);
   }
   const events = (params.events ?? []) as string[];
-  const contexts = (params.contexts ?? ['']) as string[];
-  const tracking = getSubscriptionTracking(bidiProxyClient);
+  const rawContexts = (params.contexts ?? ['']) as string[];
+  // BiDi normalizes session.subscribe context ids to their top-level traversable (subscribing
+  // with a frame's id also covers its whole tab and sibling frames), so local coverage has to
+  // track the same top-level scope -- otherwise a valid event from a sibling/ancestor context the
+  // upstream subscription actually covers would be rejected by the local gate.
+  const contexts = [
+    ...new Set(rawContexts.map((context) => (context ? getTopLevelContext(driver, context) : context))),
+  ];
+  const tracking = getSubscriptionTracking(driver as AnyDriver);
   const placeholderId = nextPlaceholderSubscriptionId();
-  tracking.set(placeholderId, {events, contexts});
+  const eventsRecord: Record<string, string[]> = {};
+  for (const event of events) {
+    eventsRecord[event] = contexts;
+  }
+  tracking.set(placeholderId, {events: eventsRecord});
   try {
     await syncCoverage(driver, tracking, events);
     const result = await bidiProxyClient.executeCommand(SESSION_SUBSCRIBE, params);
     // Standard BiDi `session.subscribe` results carry the new subscription's id, which a later
-    // `session.unsubscribe` may reference instead of repeating events/contexts. The coverage
-    // itself is unchanged (same events/contexts as the placeholder), so no need to re-apply it.
+    // `session.unsubscribe` may reference instead of repeating events/contexts. The placeholder
+    // may have already been narrowed (or fully removed) by a concurrent unsubscribe while this
+    // upstream round trip was in flight, so promote its *current* tracked value rather than
+    // recreating it from the original arguments -- otherwise a concurrent narrowing would be
+    // undone -- and don't resurrect a placeholder a concurrent unsubscribe fully removed.
     const subscriptionId = (result as {subscription?: string} | undefined)?.subscription;
+    const current = tracking.get(placeholderId);
     tracking.delete(placeholderId);
-    tracking.set(subscriptionId ?? placeholderId, {events, contexts});
+    if (current) {
+      tracking.set(subscriptionId ?? placeholderId, current);
+    }
     return result;
   } catch (err) {
     tracking.delete(placeholderId);
@@ -159,7 +243,7 @@ async function syncLocalUnsubscribe(
   if (typeof driver.bidiUnsubscribe !== 'function') {
     return;
   }
-  const tracking = getSubscriptionTracking(bidiProxyClient);
+  const tracking = getSubscriptionTracking(driver as AnyDriver);
   const subscriptionIds = params.subscriptions as string[] | undefined;
   if (Array.isArray(subscriptionIds)) {
     const affectedEvents = new Set<string>();
@@ -173,14 +257,17 @@ async function syncLocalUnsubscribe(
         continue;
       }
       tracking.delete(subscriptionId);
-      for (const event of tracked.events) {
+      for (const event of Object.keys(tracked.events)) {
         affectedEvents.add(event);
       }
     }
     await syncCoverage(driver, tracking, affectedEvents);
   } else if (Array.isArray(params.events)) {
-    await driver.bidiUnsubscribe(params.events as string[], (params.contexts as string[] | undefined) ?? ['']);
-    pruneStaleTracking(driver.bidiEventSubs, tracking);
+    const events = params.events as string[];
+    const contexts = (params.contexts as string[] | undefined) ?? [''];
+    const expandedEvents = expandRelatedEventKeys(driver.bidiEventSubs, events);
+    await driver.bidiUnsubscribe([...expandedEvents], contexts);
+    pruneStaleTracking(driver.bidiEventSubs, tracking, expandedEvents);
   }
 }
 

@@ -136,4 +136,52 @@ describe('BidiProxyClient', function () {
       client.close();
     }
   });
+
+  it('does not time out a legitimate long-running command when no commandTimeoutMs is configured', async function () {
+    wss.removeAllListeners('connection');
+    wss.once('connection', (ws) => {
+      ws.once('message', (data) => {
+        const {id} = JSON.parse(data.toString());
+        // simulate a command that legitimately takes longer than the old fixed 30s default
+        setTimeout(() => ws.send(JSON.stringify({id, type: 'success', result: {done: true}})), 100);
+      });
+    });
+
+    const client = new BidiProxyClient(url);
+    try {
+      const result = await client.executeCommand('input.performActions', {});
+      assert.deepEqual(result, {done: true});
+    } finally {
+      client.close();
+    }
+  });
+
+  it('preserves a BiDi-specific error code the classic WebDriver error map does not recognize', async function () {
+    wss.removeAllListeners('connection');
+    wss.once('connection', (ws) => {
+      ws.once('message', (data) => {
+        const {id} = JSON.parse(data.toString());
+        ws.send(
+          JSON.stringify({
+            id,
+            type: 'error',
+            error: 'no such handle',
+            message: 'the handle is not known',
+            stacktrace: 'trace',
+          }),
+        );
+      });
+    });
+
+    const client = new BidiProxyClient(url);
+    try {
+      await assert.rejects(client.executeCommand('script.callFunction', {}), (err: any) => {
+        assert.equal(err.error, 'no such handle');
+        assert.equal(err.message, 'the handle is not known');
+        return true;
+      });
+    } finally {
+      client.close();
+    }
+  });
 });

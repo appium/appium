@@ -5,18 +5,24 @@ import WebSocket from 'ws';
 
 const DEFAULT_LOG = logger.getLogger('BiDi Proxy');
 const DEFAULT_OPEN_TIMEOUT_MS = 5000;
-const DEFAULT_COMMAND_TIMEOUT_MS = 30000;
+// No command timeout by default: legitimate BiDi commands (e.g. input.performActions with a long
+// pause action) can legitimately take far longer than any one fixed cap we could pick, and an
+// upstream server that eventually does respond to a timed-out command has nowhere to deliver that
+// response (the pending request is already gone). Callers that want a cap can opt in via
+// `commandTimeoutMs`.
+const DEFAULT_COMMAND_TIMEOUT_MS = 0;
 
 export interface BidiProxyClientOptions {
   log?: AppiumLogger;
   openTimeoutMs?: number;
+  /** No timeout is applied unless this is set to a positive value. */
   commandTimeoutMs?: number;
 }
 
 interface PendingRequest {
   resolve: (result: BiDiResultData) => void;
   reject: (err: Error) => void;
-  timeoutId: NodeJS.Timeout;
+  timeoutId?: NodeJS.Timeout;
 }
 
 type UnsolicitedMessageHandler = (data: WebSocket.RawData) => void;
@@ -64,15 +70,18 @@ export class BidiProxyClient {
     await this.waitUntilOpen();
     const id = this.nextId++;
     return await new Promise<BiDiResultData>((resolve, reject) => {
-      const timeoutId = setTimeout(() => {
-        this.pending.delete(id);
-        reject(
-          new errors.UnknownError(
-            `Did not receive a response for BiDi command '${method}' from ${this.url} ` +
-              `after ${this.commandTimeoutMs}ms timeout`,
-          ),
-        );
-      }, this.commandTimeoutMs);
+      const timeoutId =
+        this.commandTimeoutMs > 0
+          ? setTimeout(() => {
+              this.pending.delete(id);
+              reject(
+                new errors.UnknownError(
+                  `Did not receive a response for BiDi command '${method}' from ${this.url} ` +
+                    `after ${this.commandTimeoutMs}ms timeout`,
+                ),
+              );
+            }, this.commandTimeoutMs)
+          : undefined;
       this.pending.set(id, {resolve, reject, timeoutId});
       this.socket.send(JSON.stringify({id, method, params}), (err) => {
         if (err) {
@@ -171,10 +180,28 @@ export class BidiProxyClient {
     this.pending.delete(id);
     clearTimeout(entry.timeoutId);
     if (parsed.type === 'error') {
-      entry.reject(errorFromW3CJsonCode(parsed.error, parsed.message, parsed.stacktrace));
+      entry.reject(this.bidiErrorFromUpstream(parsed.error, parsed.message, parsed.stacktrace));
     } else {
       entry.resolve(parsed.result ?? {});
     }
+  }
+
+  /**
+   * {@link errorFromW3CJsonCode} only knows the classic WebDriver error map, so BiDi-only error
+   * codes (e.g. `no such handle`, `no such request`, `no such script`, `no such user context`)
+   * fall back to a generic `UnknownError`. Preserve the original upstream signature in that case
+   * instead of relabeling it, so BiDi-aware clients can still identify the failure.
+   */
+  private bidiErrorFromUpstream(signature: string, message: string, stacktrace?: string): Error {
+    const resultError = errorFromW3CJsonCode(signature, message, stacktrace);
+    if (
+      resultError instanceof errors.UnknownError &&
+      typeof signature === 'string' &&
+      signature.toLowerCase() !== errors.UnknownError.error()
+    ) {
+      resultError.error = signature;
+    }
+    return resultError;
   }
 
   private dispatchUnsolicited(data: WebSocket.RawData): void {

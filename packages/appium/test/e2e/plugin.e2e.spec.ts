@@ -808,6 +808,68 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
         await (driver as any).sessionUnsubscribe({events: ['vendor.b']});
       });
 
+      it(
+        'should stop delivering an individual event narrowed out of an active module-wide ' +
+          'subscription, conservatively dropping the whole module rather than a full BiDi event registry',
+        async function () {
+          const aEvents: unknown[] = [];
+          const bEvents: unknown[] = [];
+          (driver as any).on('vendor.a', (ev: unknown) => aEvents.push(ev));
+          (driver as any).on('vendor.b', (ev: unknown) => bEvents.push(ev));
+
+          // subscribe to the whole 'vendor' module, then narrow by unsubscribing just vendor.a
+          await (driver as any).send({method: 'session.subscribe', params: {events: ['vendor']}});
+          await (driver as any).sessionUnsubscribe({events: ['vendor.a']});
+
+          await (driver as any).send({method: 'vendor.triggerAB', params: {}});
+          await sleep(300);
+
+          // vendor.a was explicitly unsubscribed -- must not arrive
+          assert.strictEqual(aEvents.length, 0);
+          // without a full BiDi event registry (deliberately out of scope, since BiDi's module
+          // system is open-ended), narrowing one member out of an active module-wide subscription
+          // can't be represented precisely, so coverage for the whole module is conservatively
+          // dropped rather than leaving the module key wrongly granting vendor.a coverage
+          assert.strictEqual(bEvents.length, 0);
+
+          await (driver as any).sessionUnsubscribe({events: ['vendor']});
+        },
+      );
+
+      it(
+        'should not resurrect a context narrowed by a plain-form unsubscribe when an unrelated ' +
+          'subscription to the same event later syncs coverage',
+        async function () {
+          const collected: unknown[] = [];
+          (driver as any).on('vendor.multiCtxPing', (ev: unknown) => collected.push(ev));
+
+          await (driver as any).send({
+            method: 'session.subscribe',
+            params: {events: ['vendor.multiCtxPing'], contexts: ['tab-1', 'tab-2']},
+          });
+          // plain-form unsubscribe narrows just tab-1 out of the tracked record above
+          await (driver as any).sessionUnsubscribe({events: ['vendor.multiCtxPing'], contexts: ['tab-1']});
+
+          // an unrelated subscription to the same event, then unsubscribed by id -- this triggers
+          // a coverage rebuild (union over all tracked records) for vendor.multiCtxPing
+          const {result: subTab3} = await (driver as any).send({
+            method: 'session.subscribe',
+            params: {events: ['vendor.multiCtxPing'], contexts: ['tab-3']},
+          });
+          await (driver as any).send({
+            method: 'session.unsubscribe',
+            params: {subscriptions: [subTab3.subscription]},
+          });
+
+          await (driver as any).send({method: 'vendor.triggerCustomContextEvent', params: {context: 'tab-1'}});
+          await sleep(300);
+
+          assert.strictEqual(collected.length, 0);
+
+          await (driver as any).sessionUnsubscribe({events: ['vendor.multiCtxPing'], contexts: ['tab-2']});
+        },
+      );
+
       it('should close the upstream connection when the session ends', async function () {
         await driver?.deleteSession();
         driver = null;

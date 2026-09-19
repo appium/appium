@@ -1132,7 +1132,11 @@ export abstract class ExtensionCliCommand<ExtType extends ExtensionType = Extens
 
     await spinWith(this.isJsonOutput, `Checking if '${pkgName}' is compatible`, async () => {
       const [serverVersion, extVersionRequirement] = await getRemoteExtensionVersionReq(pkgName, pkgVer);
-      if (serverVersion && extVersionRequirement && !semver.satisfies(serverVersion, extVersionRequirement)) {
+      if (
+        serverVersion &&
+        extVersionRequirement &&
+        !semver.satisfies(serverVersion, extVersionRequirement, {includePrerelease: true})
+      ) {
         throw this._createFatalError(
           `'${installSpec}' cannot be installed because the server version it requires (${extVersionRequirement}) ` +
             `does not meet the currently installed one (${serverVersion}). Please install ` +

@@ -13,11 +13,6 @@ on:
         required: true
         type: boolean
         default: false
-      bootstrap_packages:
-        description: 'One-time beta-branch bootstrap only: comma-separated package names (e.g. @appium/base-driver,@appium/support) to force-bump to their next-major beta (premajor --preid beta), bypassing conventional-commit detection. Leave empty for a normal release.'
-        required: false
-        type: string
-        default: ''
       allow_legacy_peer_deps:
         description: 'Beta branch only: pass --legacy-peer-deps to lerna''s internal npm calls, for when a dependent''s peerDependencies range still lags a just-bumped major (causes ERESOLVE otherwise). Leave off unless you hit that failure.'
         required: true
@@ -63,7 +58,6 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DRY_RUN: ${{ inputs.dry_run }}
           RECOVER_MISSING_ONLY: ${{ inputs.recover_missing_only }}
-          BOOTSTRAP_PACKAGES: ${{ inputs.bootstrap_packages }}
           ALLOW_LEGACY_PEER_DEPS: ${{ inputs.allow_legacy_peer_deps }}
         run: |
           set -euo pipefail
@@ -85,29 +79,6 @@ jobs:
           if [ "${{ github.ref_name }}" = "$BETA_BRANCH" ]; then
             BETA_FLAGS="--conventional-prerelease --preid beta $LEGACY_PEER_DEPS_FLAGS"
             DIST_TAG_FLAGS="--dist-tag beta"
-          fi
-
-          # One-time bootstrap for packages just starting their beta train: force them
-          # straight to <next-major>.0.0-beta.0 instead of waiting for/relying on a commit that
-          # happens to be marked as breaking. Not part of the normal release flow below - this
-          # exits early on its own.
-          if [ -n "$BOOTSTRAP_PACKAGES" ]; then
-            if [ "${{ github.ref_name }}" != "$BETA_BRANCH" ]; then
-              echo "bootstrap_packages is only meaningful on the $BETA_BRANCH branch" >&2
-              exit 1
-            fi
-            if [ "$RECOVER_MISSING_ONLY" = "true" ]; then
-              echo "bootstrap_packages cannot be combined with recover_missing_only" >&2
-              exit 1
-            fi
-
-            echo "Bootstrapping ${BOOTSTRAP_PACKAGES} to their next-major beta (premajor --preid beta), bypassing conventional-commit detection"
-            if [ "$DRY_RUN" = "true" ]; then
-              printf "n\n" | npx lerna version premajor --preid beta --exact --no-git-tag-version --no-push --force-publish="$BOOTSTRAP_PACKAGES" $LEGACY_PEER_DEPS_FLAGS
-            else
-              npx lerna publish premajor --preid beta --exact --force-publish="$BOOTSTRAP_PACKAGES" --dist-tag beta --yes $LEGACY_PEER_DEPS_FLAGS
-            fi
-            exit 0
           fi
 
           # Prints "<pkg_name>@<pkg_version>" to stdout for each non-private workspace package

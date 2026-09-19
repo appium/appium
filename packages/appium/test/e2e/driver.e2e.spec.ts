@@ -570,14 +570,15 @@ describe('FakeDriver via HTTP', function () {
         },
       };
       let sessionId = null;
-      const createSessionStub = sandbox
-        .stub(FakeDriver.prototype, 'createSession')
-        .callsFake(async function (this: InstanceType<DriverClass>, caps) {
-          const res = await BaseDriver.prototype.createSession.call(this, caps);
-          sessionId = res[0];
-          assert.strictEqual(this.protocol, 'W3C');
-          return res;
-        });
+      const createSessionStub = sandbox.stub(FakeDriver.prototype, 'createSession').callsFake(async function (
+        this: InstanceType<DriverClass>,
+        caps,
+      ) {
+        const res = await BaseDriver.prototype.createSession.call(this, caps);
+        sessionId = res[0];
+        assert.strictEqual(this.protocol, 'W3C');
+        return res;
+      });
       try {
         const res = await axios.post(testServerBaseSessionUrl, combinedCaps, {
           validateStatus: null,

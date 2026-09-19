@@ -18,6 +18,11 @@ on:
         required: false
         type: string
         default: ''
+      allow_legacy_peer_deps:
+        description: 'Beta branch only: pass --legacy-peer-deps to lerna''s internal npm calls, for when a dependent''s peerDependencies range still lags a just-bumped major (causes ERESOLVE otherwise). Leave off unless you hit that failure.'
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -59,6 +64,7 @@ jobs:
           DRY_RUN: ${{ inputs.dry_run }}
           RECOVER_MISSING_ONLY: ${{ inputs.recover_missing_only }}
           BOOTSTRAP_PACKAGES: ${{ inputs.bootstrap_packages }}
+          ALLOW_LEGACY_PEER_DEPS: ${{ inputs.allow_legacy_peer_deps }}
         run: |
           set -euo pipefail
 
@@ -66,13 +72,18 @@ jobs:
           # target major (see packages/semantic-release-config's "Next-major beta branches" docs
           # for the equivalent semantic-release behavior this mirrors).
           #
-          # --npm-client-args=--legacy-peer-deps: independent next-major beta.0 bumps can briefly
-          # outrun a dependent's committed peerDependencies range; skips lerna's internal lockfile
-          # ERESOLVE on that until a follow-up release catches the range up.
+          # allow_legacy_peer_deps: independent next-major beta.0 bumps can briefly outrun a
+          # dependent's committed peerDependencies range, aborting lerna's internal lockfile
+          # refresh with ERESOLVE. Opt-in only - it masks a real (if temporary) peer mismatch.
+          LEGACY_PEER_DEPS_FLAGS=""
+          if [ "$ALLOW_LEGACY_PEER_DEPS" = "true" ]; then
+            LEGACY_PEER_DEPS_FLAGS="--npm-client-args=--legacy-peer-deps"
+          fi
+
           BETA_FLAGS=""
           DIST_TAG_FLAGS=""
           if [ "${{ github.ref_name }}" = "$BETA_BRANCH" ]; then
-            BETA_FLAGS="--conventional-prerelease --preid beta --npm-client-args=--legacy-peer-deps"
+            BETA_FLAGS="--conventional-prerelease --preid beta $LEGACY_PEER_DEPS_FLAGS"
             DIST_TAG_FLAGS="--dist-tag beta"
           fi
 
@@ -92,9 +103,9 @@ jobs:
 
             echo "Bootstrapping ${BOOTSTRAP_PACKAGES} to their next-major beta (premajor --preid beta), bypassing conventional-commit detection"
             if [ "$DRY_RUN" = "true" ]; then
-              printf "n\n" | npx lerna version premajor --preid beta --exact --no-git-tag-version --no-push --force-publish="$BOOTSTRAP_PACKAGES" --npm-client-args=--legacy-peer-deps
+              printf "n\n" | npx lerna version premajor --preid beta --exact --no-git-tag-version --no-push --force-publish="$BOOTSTRAP_PACKAGES" $LEGACY_PEER_DEPS_FLAGS
             else
-              npx lerna publish premajor --preid beta --exact --force-publish="$BOOTSTRAP_PACKAGES" --dist-tag beta --yes --npm-client-args=--legacy-peer-deps
+              npx lerna publish premajor --preid beta --exact --force-publish="$BOOTSTRAP_PACKAGES" --dist-tag beta --yes $LEGACY_PEER_DEPS_FLAGS
             fi
             exit 0
           fi

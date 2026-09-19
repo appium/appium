@@ -36,7 +36,7 @@
     "test:smoke": "node -e \"require('./tsconfig.json'); require('./tsconfig.plugin.json')\""
   },
   "dependencies": {
-    "@tsconfig/node20": "20.1.10",
+    "@tsconfig/node22": "22.0.0",
     "typescript": "6.0.3"
   },
   "engines": {

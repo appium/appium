@@ -1143,6 +1143,35 @@ export abstract class ExtensionCliCommand<ExtType extends ExtensionType = Extens
   }
 
   /**
+   * Checks whether the given extension is compatible with the currently installed server
+   */
+  private async _checkInstallCompatibility({
+    installSpec,
+    pkgName,
+    pkgVer,
+    installType,
+  }: InstallViaNpmArgs): Promise<void> {
+    if (INSTALL_TYPE_NPM !== installType) {
+      return;
+    }
+
+    await spinWith(this.isJsonOutput, `Checking if '${pkgName}' is compatible`, async () => {
+      const [serverVersion, extVersionRequirement] = await getRemoteExtensionVersionReq(pkgName, pkgVer);
+      if (
+        serverVersion &&
+        extVersionRequirement &&
+        !semver.satisfies(serverVersion, extVersionRequirement, {includePrerelease: true})
+      ) {
+        throw this._createFatalError(
+          `'${installSpec}' cannot be installed because the server version it requires (${extVersionRequirement}) ` +
+            `does not meet the currently installed one (${serverVersion}). Please install ` +
+            `a compatible server version first.`,
+        );
+      }
+    });
+  }
+
+  /**
    * For any `package.json` fields which a particular type of extension requires, validate the
    * presence and form of those fields on the `package.json` data, throwing an error if anything is
    * amiss.
